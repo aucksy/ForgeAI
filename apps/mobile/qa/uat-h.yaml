@@ -13,6 +13,10 @@ appId: com.mettleup.app
 ---
 - runFlow: gate-demo.yaml
 # ---------------------------------------------------------------- the Profile count before
+# The Profile count sits at the very top, where it cannot be centred: with centerElement on, Maestro keeps
+# scrolling UP to centre it and can run out its time (gate run 43001735779 on 744bbdde: the count read 71,
+# the step still failed). No centring here, and 30 s: the count is re-read on the visit (~8-13 s on a phone
+# emulator with 71 workouts).
 - tapOn:
     text: "^Profile$"
     index: 0
@@ -22,8 +26,7 @@ appId: com.mettleup.app
 - scrollUntilVisible:
     element: '^Workouts: [\d,]+$'
     direction: UP
-    centerElement: true
-    timeout: 15000
+    timeout: 30000
 - copyTextFrom: '^Workouts: [\d,]+$'
 - runScript:
     file: js/uat-num.js
@@ -186,8 +189,7 @@ appId: com.mettleup.app
 - scrollUntilVisible:
     element: "^Workouts: ${output.n0 + 1}$"
     direction: UP
-    centerElement: true
-    timeout: 15000
+    timeout: 30000
 # ---------------------------------------------------------------- 2. edit it and press "Save changes"
 - runFlow:
     file: sub-profile-tile.yaml
@@ -347,6 +349,5 @@ appId: com.mettleup.app
 - scrollUntilVisible:
     element: "^Workouts: ${output.n0}$"
     direction: UP
-    centerElement: true
-    timeout: 15000
+    timeout: 30000
 - takeScreenshot: uh-10-profile-count-back
