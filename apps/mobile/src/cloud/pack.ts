@@ -373,9 +373,14 @@ export function unpackPrefs(json: string): PrefRow[] | null {
 /**
  * R-436: the exercises of the member's last finished empty workout, as a 'p' item with id
  * EMPTY_WORKOUT_ID (the server's kind list already holds 'p': no server change).
- *   [1, [ref, sets], [ref, sets], …]   in the workout's order
+ *   [1, [sets, ref], [sets, ref], …]   in the workout's order
  * The leading 1 (the format's version, never an array) makes an OLDER app's unpackPrefs refuse it,
  * so an older phone leaves it out instead of reading it as rest lengths.
+ * Each row starts with the NUMBER (0.77.0 adversarial review, 11 Nov 2026): an older app's backup
+ * "Add to what's here" (backupRestore planAdd) does not call unpackPrefs; it keeps every row whose first
+ * value is a string and writes it as a rest length, so a [ref, sets] row became a 3-second rest. A row
+ * that starts with a number is dropped there. The first shape, [ref, sets], is still read (QA test
+ * copies made before this change; it never shipped in a release).
  */
 export const EMPTY_WORKOUT_ID = 'empty';
 
@@ -385,7 +390,7 @@ export interface EmptyWorkoutRef {
 }
 
 export function packEmptyWorkout(items: readonly EmptyWorkoutRef[]): string {
-  return JSON.stringify([1, ...items.map((i) => [i.ref, i.sets])]);
+  return JSON.stringify([1, ...items.map((i) => [i.sets, i.ref])]);
 }
 
 export function unpackEmptyWorkout(json: string): EmptyWorkoutRef[] | null {
@@ -393,8 +398,12 @@ export function unpackEmptyWorkout(json: string): EmptyWorkoutRef[] | null {
   if (!a || a[0] !== 1) return null;
   const out: EmptyWorkoutRef[] = [];
   for (const r of a.slice(1)) {
-    if (!Array.isArray(r) || typeof r[0] !== 'string' || r[0] === '') return null;
-    out.push({ ref: r[0], sets: num(at(r, 1)) ?? 1 });
+    if (!Array.isArray(r)) return null;
+    // [sets, ref] (now) or [ref, sets] (the first shape).
+    const refAt = typeof r[1] === 'string' ? 1 : 0;
+    const ref = r[refAt];
+    if (typeof ref !== 'string' || ref === '') return null;
+    out.push({ ref, sets: num(at(r, 1 - refAt)) ?? 1 });
   }
   return out;
 }

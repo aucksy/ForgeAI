@@ -13,9 +13,12 @@ import { Text, View } from 'react-native';
 
 import { RestoredUntidyError, shownBackupError } from '@/cloud/backupWords';
 import { askConfirm, Card, GhostButton, PrimaryButton } from '@/components/ui';
+import { InlineError } from '@/components/ui/InlineError';
 import { clockTime, tinyDateWithYear, toISO } from '@/lib/date';
 import { success, warn } from '@/lib/haptics';
 import { undoRestoreBody, useBackup } from '@/store/backupStore';
+import { JoinAgreement } from '@/shop/JoinAgreement';
+import { useTermsAgreement } from '@/shop/useTermsAgreement';
 import { useChat } from '@/store/chatStore';
 import { useDashboard } from '@/store/dashboardStore';
 import { useSettings } from '@/store/settingsStore';
@@ -204,6 +207,10 @@ export function DriveRestoreCard() {
 
   const [error, setError] = useState<string | null>(null);
   const [note, setNote] = useState<string | null>(null);
+  // D7 (0.77.0 adversarial review, 11 Nov 2026): this button opens Google's sign-in too, so the same
+  // 18+ / terms box as "Continue with Google" sits above it until it has been ticked once on this phone.
+  const agreement = useTermsAgreement();
+  const [notAgreed, setNotAgreed] = useState<string | null>(null);
 
   useEffect(() => {
     void init();
@@ -230,6 +237,12 @@ export function DriveRestoreCard() {
     try {
       // Not linked yet: pick the Google account the old backup is in (Google's own sign-in).
       if (!useBackup.getState().googleEmail) {
+        const words = await agreement.check();
+        setNotAgreed(words);
+        if (words) {
+          warn();
+          return;
+        }
         const linked = await linkGoogle();
         if (!linked) return; // they closed Google's sign-in
       }
@@ -313,6 +326,15 @@ export function DriveRestoreCard() {
       <Text style={{ fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}>{DRIVE_RESTORE_WORDS.title}</Text>
       <Body>{email ? DRIVE_RESTORE_WORDS.linked(email) : DRIVE_RESTORE_WORDS.body}</Body>
       <View style={{ marginTop: space.lg, gap: space.sm }}>
+        {!email && agreement.ask ? (
+          <JoinAgreement
+            agreed={agreement.ticked}
+            onChange={(v) => {
+              agreement.tick(v);
+              setNotAgreed(null);
+            }}
+          />
+        ) : null}
         <PrimaryButton
           label={busy ? 'Working…' : DRIVE_RESTORE_WORDS.button}
           icon="clock"
@@ -320,6 +342,7 @@ export function DriveRestoreCard() {
           disabled={busy}
           onPress={() => void onRestore()}
         />
+        <InlineError message={notAgreed} />
         {canUndoRestore ? (
           <GhostButton
             label="Undo the last restore"

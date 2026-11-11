@@ -9,7 +9,8 @@
 #  4. Interruption: ticked, the app killed and opened again: the box is remembered (not shown again).
 #  5. "Load demo data instead" starts this phone afresh, so (like "Erase all data") it forgets the tick:
 #     Settings -> "Backup and restore" shows the box above "Continue with Google"; a tap without it shows the
-#     message; ticked, the page left and opened again: no box.
+#     message; ticked, the page left and opened again: no box. 5b: "Find my Drive backup" (Google's sign-in too)
+#     shows the same box and refuses without it; after the tick it shows no box.
 #  Not testable in the cloud: Google's own sign-in after the tick (it cannot run here; checked on his phone).
 #  Pictures rel-d7-*.png. Runs alone with only=uage, and in the whole uat part. Leaves the app on the tabs.
 appId: com.mettleup.app
@@ -126,6 +127,35 @@ appId: com.mettleup.app
     timeout: 10000
 - assertVisible: "^Keep your workouts on MettleUp$"
 - takeScreenshot: rel-d7-5-settings-not-ticked
+# 5b. "Find my Drive backup" opens Google's sign-in too (0.77.0 review): the same box, and no sign-in without it.
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Bring back a Google Drive backup$"
+- tapOn: "^Bring back a Google Drive backup$"
+- extendedWaitUntil:
+    visible: "^Find my Drive backup$"
+    timeout: 15000
+- assertVisible:
+    text: "I'm 18 or older, and I agree to MettleUp's terms and privacy notice"
+    checked: false
+- assertNotVisible: "Please tick the box above.*"
+- tapOn: "^Find my Drive backup$"
+- extendedWaitUntil:
+    visible: "^Please tick the box above\\. You need to be 18 or older and agree to the terms and privacy notice\\.$"
+    timeout: 10000
+- assertVisible: "^Find my Drive backup$"
+- assertNotVisible: "Working…"
+- takeScreenshot: rel-d7-5b-drive-not-ticked
+- back
+- extendedWaitUntil:
+    visible: "^Keep your workouts on MettleUp$"
+    timeout: 15000
+- scrollUntilVisible:
+    element: "^Continue with Google$"
+    direction: UP
+    centerElement: true
+    timeout: 20000
 - tapOn: "I'm 18 or older.*"
 - assertVisible:
     text: "I'm 18 or older.*"
@@ -146,4 +176,16 @@ appId: com.mettleup.app
     timeout: 20000
 - assertNotVisible: "I'm 18 or older.*"
 - takeScreenshot: rel-d7-7-settings-remembered
+# The tick given above also counts for "Find my Drive backup" (one tick per phone).
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Bring back a Google Drive backup$"
+- tapOn: "^Bring back a Google Drive backup$"
+- extendedWaitUntil:
+    visible: "^Find my Drive backup$"
+    timeout: 15000
+- assertNotVisible: "I'm 18 or older.*"
+- takeScreenshot: rel-d7-8-drive-remembered
+- back
 - runFlow: sub-back-to-tabs.yaml
