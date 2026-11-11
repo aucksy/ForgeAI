@@ -20,7 +20,46 @@ Member-words rules, Hinglish wherever the app has it, tests, cloud UAT (375 px, 
 eyes (owner), deploy the admin panel the usual way, ADMIN_NEWS only if owners would notice. No live database change,
 no release, no reply-time promise.
 
-**Status:** started.
+**Owner's yes (11 Nov 2026, relayed by the coordinator):** "yes" to the Hinglish terms tick-box line "Main MettleUp ke
+terms aur data agreement se sehmat hoon." (English: "I agree to the MettleUp terms and the data agreement."). Until
+then it stayed English (ba8ecc0a); switched on in c117af7b. Legal words: neither language changes without his yes.
+
+**Done (commits e6728890, ba8ecc0a, c117af7b, 214ff457, 1939cdff, dceb859d, 7c319929):**
+- (1) Sign-in PIN hint: "No PIN yet? Ask your gym owner for a sign-in code, and type it here." Hinglish: "Abhi PIN nahi
+  hai? Gym owner se sign-in code maango aur yahan daalo." (staff cannot open Staff & sign-in; only an owner makes codes).
+- (2) Set-up form tick line in Hinglish: "Main MettleUp ke terms aur data agreement se sehmat hoon." (links keep the
+  words "terms" and "data agreement"). The once-only terms card for older gyms stays English. Test pins the exact line.
+- (3) 20 Hinglish lines to the "aap ... hain / karenge / sakte hain" form, e.g. "MettleUp pe naye hain?", "Pehle se
+  MettleUp use karte hain?", "Isi number se aap kisi bhi phone ya computer par sign in karenge.", "Aap kya bechte hain,
+  aur kitne mein". Commands stay short ("Sign in karo"), like the buttons. A test fails any "karoge", "sakte ho", "naye ho".
+- (4) Import from Excel on Members: already there (top of Members and in the empty list, since d9deb5e3, 15 Oct); no
+  code change; pictured and checked that it opens the import.
+- (5) Money -> Dues tiles and rows: "N memberships not fully paid" (was "N memberships").
+- Fresh eyes: the age filters now count PEOPLE (they counted memberships: "All 26" over 24 rows); a line under them,
+  only when someone has 2+ unpaid memberships: "A member with more than one unpaid membership is listed once, in the
+  group of the oldest one."; the computer table column "Due since" -> "Due for" (it shows "711 days").
+- ADMIN_NEWS 2026-11-11 (merged): "Money → Dues: each filter ("Up to 30 days" and the others) now shows how many people
+  are in its list. Each tile says how many memberships are not fully paid." + "Open Dues".
+- Tests: hinglish (aap rule, hint, terms line), plural (unpaidMemberships), dues.spec, r447/r448 words, r450-uat.spec.
+
+**CI / UAT:** 42959962972 green on ba8ecc0a; 42962823975 and 42965024810 red (my test locators: "Collect" also matched
+the "Collections" tab; the table header reads as a cell); 42967630585 green on dceb859d; 42970636446 green on 7c319929
+(deployed). Pictures r450-*.png (24) in dashboard-uat-pictures, 375 px Android phone and 1366x768, read: sign-in hint
+(English, Hinglish), Hinglish set-up with the tick line (phone, computer), the gym made from it, English set-up, desk
+code sign-in and staff page, Members empty with Import (phone, computer, Hinglish), Plans Hinglish, Dues (2 members,
+after collect, demo gym phone and computer, filters line), What's new.
+
+**Fresh eyes (owner, pictures only), 2 rounds:** round 1 found the filter counts disagreeing with the rows and "Due
+since" (fixed). Round 2 found "Over 60 days" tile 23 vs filter 21 (fixed by the explaining line) and the What's new line
+claiming everything matches (reworded). Not changed: "sehmat hoon" felt bookish to the reviewer (his approved words);
+"Open Settings" twice in What's new (two older lines); test gym code QA0002 (test server); placeholder text looks
+filled in; "Not started yet" unclear; Age pill repeats "Due for"; colours of 31-60 vs up to 30; "Chalta hua dekho".
+
+**Deploy (11 Nov):** dashboard-dist from CI 42970636446 (7c319929), `npx wrangler deploy` from deploy/panel,
+forgeai-panel version 2706f670-b076-4397-93cb-e9f0affc6caf. app.mettleup.fit and forgeai.aakashpahuja.in serve
+index-BFaojCiA.js with the new words (curl).
+
+**Status:** done, live.
 
 ## R-449. Four R-447 review leftovers in the admin panel: where the Install and MettleUp access cards sit, "members · memberships", demo "real gym code", Hinglish "6-digit PIN" — 11 Nov 2026
 
