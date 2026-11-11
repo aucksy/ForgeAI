@@ -92,13 +92,13 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   'Starts empty. You add your own members and prices.': 'Gym khaali shuru hota hai. Aap apne members aur daam khud daalte ho.',
   'See it working': 'Chalta hua dekho',
   // R-449 (R-447 fresh eyes): "You get a real gym code" puzzled someone only trying the demo.
-  'Opens a sample gym with made-up members, payments and a shop. To try the member side too, join this gym from the MettleUp app on a phone and order something. The order shows up here.':
-    'Ek sample gym khulta hai, jismein nakli members, payments aur shop hain. Member wala hissa bhi dekhna hai? Phone par MettleUp app se is gym ko join karo aur kuch order karo. Order yahan dikhega.',
+  'Opens a sample gym with made-up members, payments and a shop. To try the member side too, open “Invite members” in the demo and scan its QR with the MettleUp app on a phone. Order something there, and the order shows up in the demo’s Shop.':
+    'Ek sample gym khulta hai, jismein dummy members, payments aur shop hain. Member wala hissa bhi dekhna hai? Demo mein “Members ko bulao” kholo aur uska QR phone par MettleUp app se scan karo. Wahan kuch order karo, order demo ki Shop mein dikhega.',
   'Start demo': 'Demo shuru karo',
   // R-449: the line at the top of the sign-in page after signing out (R-448 fresh eyes: it stayed English).
-  'You are signed out of this device.': 'Aap is device se sign out ho gaye ho.',
+  'You are signed out of this device.': 'Aap is device se sign out ho gaye hain.',
   'You were signed out of this gym. Ask the gym owner for a new code. If you are the owner, make one on a device where you are signed in.':
-    'Aap is gym se sign out ho gaye. Gym owner se naya code maango. Agar aap owner ho, to jis device par sign in ho wahan naya code banao.',
+    'Aap is gym se sign out ho gaye hain. Gym owner se naya code maango. Agar aap owner hain, to jis device par sign in hain, wahan naya code banao.',
   'You no longer have access to this gym. Talk to the gym owner.': 'Ab aap is gym ko nahi khol sakte. Gym owner se baat karo.',
   'That demo gym is no longer available. Start a new one below.': 'Woh demo gym ab nahi hai. Neeche naya demo shuru karo.',
   'Starting your demo gym…': 'Aapka demo gym shuru ho raha hai…',

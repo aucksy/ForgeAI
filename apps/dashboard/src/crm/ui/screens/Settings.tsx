@@ -26,7 +26,7 @@ import { t } from '../../lang/lang';
 import { JoinCodeCard } from '../../shop/JoinCode';
 import { useShop } from '../../shop/ShopProvider';
 import { useCrm } from '../../store';
-import { navigate } from '../router';
+import { Link, navigate } from '../router';
 import { dateISOFromEpoch, formatDay } from '../../logic/dates';
 import { checkGymDetails } from '../../logic/gst';
 import { countOf, recordsLine } from '../../logic/plural';
@@ -75,7 +75,7 @@ const TAB_PATH: Record<SettingsTab, string> = { gym: '/settings', app: '/setting
 const TAB_SUBTITLE: Record<SettingsTab, string> = {
   gym: 'Gym details, opening times, screen language and the admin app',
   app: 'What your members see in the MettleUp app',
-  data: 'Going online, staff sign-in, backups and your gym’s records',
+  data: 'Your sign-in, staff, backups and your gym’s records',
 };
 /** Where a greyed-out button sends the owner first. */
 const GO_ONLINE = 'First put your gym online in Settings → Sign-in & data.';
@@ -201,8 +201,6 @@ export function SettingsScreen({ section }: { section?: string }) {
       {tab === 'gym' && (
       <>
       <LanguageCard />
-      {/* R-449: the admin app on this phone or computer, next to the screen language (both are about this device). */}
-      <InstallCard />
       {/* R-247: going online is what protects the gym, so a gym that is not online yet is told here too. */}
       {!online && (
         <Card style={{ marginBottom: space.lg }}>
@@ -257,6 +255,10 @@ export function SettingsScreen({ section }: { section?: string }) {
           </Button>
         </div>
       </Card>
+
+      {/* R-449: the admin app on this phone or computer (was under Sign-in & data). Under the gym details, so it
+          never pushes them down (fresh eyes); phones also get the slim card on Today. */}
+      <InstallCard />
 
       {/* F79 (R-328): members pay online: the UPI QR and the gym's own payment company. */}
       <Card style={{ marginBottom: space.lg }}>
@@ -365,7 +367,11 @@ export function SettingsScreen({ section }: { section?: string }) {
         {/* R-449: MettleUp access moved to Help and feedback; an owner who looks for it here is told where. */}
         {online && canErase && (
           <p style={{ margin: `${space.sm}px 0 0`, fontFamily: font.body, fontSize: 13, color: color.inkMuted }}>
-            MettleUp support can look at your records only if you let them. To let them, or to see when they looked: Help and feedback → MettleUp access.
+            MettleUp support can look at your records only if you let them. To let them, or to see when they looked, open{' '}
+            <Link to="/feedback" style={{ color: color.accent, textDecoration: 'underline', fontWeight: 600 }}>
+              Help and feedback → MettleUp access
+            </Link>
+            .
           </p>
         )}
         {termsLine && (

@@ -343,7 +343,7 @@ export const HELP_ARTICLES = [
       'Open Settings (on a phone, under More). It has three tabs. ' +
       '"Gym": Language (English or Hinglish), the card to put the admin app on your phone or computer, then under "Gym details" your gym name, phone, address, GSTIN and UPI ID. Tap "Save details". ' +
       '"Member app": your gym code, and links to branding, gym timings, challenges and busy machines. ' +
-      '"Sign-in & data": "Staff & sign-in", "Download a backup" (an Excel file of all your gym data), "Your gym’s records" (how many members, plans sold, payments and check-ins are saved), "Clear offline copy" and "Delete our gym from MettleUp". ' +
+      '"Sign-in & data": "Staff & sign-in", "Download a backup" (an Excel file of all your gym data), "Your gym’s records" (how many members, memberships sold, payments and check-ins are saved), "Clear offline copy" and "Delete our gym from MettleUp". ' +
       '"MettleUp access" is on Help and feedback.',
     screens: ['apps/dashboard/src/crm/ui/screens/Settings.tsx'],
   },

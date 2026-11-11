@@ -163,7 +163,7 @@ export function Welcome() {
             {t('See it working')}
           </h2>
           <p style={{ margin: `6px 0 0`, fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>
-            {t('Opens a sample gym with made-up members, payments and a shop. To try the member side too, join this gym from the MettleUp app on a phone and order something. The order shows up here.')}
+            {t('Opens a sample gym with made-up members, payments and a shop. To try the member side too, open “Invite members” in the demo and scan its QR with the MettleUp app on a phone. Order something there, and the order shows up in the demo’s Shop.')}
           </p>
 
           {error && (

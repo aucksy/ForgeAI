@@ -2,7 +2,9 @@
 // them as "dashboard-uat-pictures"), named r449-*.png. The four R-447 fresh-eyes leftovers:
 //  1. "Install the admin app" is on Settings' first tab, Gym (was under "Sign-in & data"); "MettleUp access" is on
 //     Help and feedback (was under "Sign-in & data"), and Sign-in & data says where it went.
-//  2. "Your gym’s records": "0 members · 0 memberships" is now "0 members · 0 plans sold (new and renewals)".
+//  2. "Your gym’s records": "0 members · 0 memberships" is now "0 members · 0 memberships sold (new and renewals)".
+//  Fresh-eyes fixes (owner role): the install card sits under "Gym details" (it pushed them down); the pointer to
+//  MettleUp access is a link; the demo card says how to join (Invite members, scan the QR) and where the order shows.
 //  3. The demo card no longer says "You get a real gym code".
 //  4. Hinglish says "6-digit PIN" (was "6 number ka PIN"), the same on every line.
 //  Also: "You are signed out of this device." has Hinglish.
@@ -33,16 +35,18 @@ const ANDROID_CHROME =
 
 const PHONE_INSTALL = 'Put the admin app on your phone';
 const COMPUTER_INSTALL = 'Install the admin app on this computer';
-const POINTER = 'MettleUp support can look at your records only if you let them. To let them, or to see when they looked: Help and feedback → MettleUp access.';
+const POINTER = 'MettleUp support can look at your records only if you let them. To let them, or to see when they looked, open Help and feedback → MettleUp access.';
 const DEMO_NEW =
-  'Opens a sample gym with made-up members, payments and a shop. To try the member side too, join this gym from the MettleUp app on a phone and order something. The order shows up here.';
+  'Opens a sample gym with made-up members, payments and a shop. To try the member side too, open “Invite members” in the demo and scan its QR with the MettleUp app on a phone. Order something there, and the order shows up in the demo’s Shop.';
 const DEMO_NEW_HI =
-  'Ek sample gym khulta hai, jismein nakli members, payments aur shop hain. Member wala hissa bhi dekhna hai? Phone par MettleUp app se is gym ko join karo aur kuch order karo. Order yahan dikhega.';
-const RECORDS = /^\d+ members? · \d+ plans? sold \(new and renewals\) · \d+ payments? · \d+ check-ins?\. Set up /;
+  'Ek sample gym khulta hai, jismein dummy members, payments aur shop hain. Member wala hissa bhi dekhna hai? Demo mein “Members ko bulao” kholo aur uska QR phone par MettleUp app se scan karo. Wahan kuch order karo, order demo ki Shop mein dikhega.';
+const RECORDS = /^\d+ members? · \d+ memberships? sold \(new and renewals\) · \d+ payments? · \d+ check-ins?\. Set up /;
 
 const tabButton = (page, name) => page.getByRole('group', { name: 'Settings view' }).getByRole('button', { name });
 const heading = (page, name) => page.getByRole('heading', { name, exact: true });
 const top = async (loc) => (await loc.boundingBox()).y;
+/** Scroll a line to the middle of the screen (clear of the phone's bottom bar) before a picture. */
+const centre = (loc) => loc.evaluate((el) => el.scrollIntoView({ block: 'center' }));
 
 async function signOutHere(page) {
   await open(page, 'Staff & sign-in');
@@ -59,13 +63,14 @@ test.describe('R449 phone (375 px, Android Chrome)', () => {
     await openApp(page);
     await startOnlineGym(page);
 
-    // Gym tab (Settings opens on it): the install card, right under the language card and above the gym details.
+    // Gym tab (Settings opens on it): the install card, under the gym details (fresh eyes: above them it pushed them down).
     await openSettings(page, 'Gym');
     await expect(page.getByText('Gym details, opening times, screen language and the admin app', { exact: true })).toBeVisible();
     const install = heading(page, PHONE_INSTALL);
     await expect(install).toBeVisible();
-    expect(await top(install)).toBeGreaterThan(await top(heading(page, 'Language')));
-    expect(await top(install)).toBeLessThan(await top(heading(page, 'Gym details')));
+    expect(await top(install)).toBeGreaterThan(await top(heading(page, 'Gym details')));
+    expect(await top(install)).toBeLessThan(await top(heading(page, 'Payments')));
+    await centre(install);
     // Regression: the steps still open from here.
     await page.getByRole('button', { name: 'Show me how' }).click();
     await expect(page.getByText('In Chrome, tap ⋮ at the top right.')).toBeVisible();
@@ -75,19 +80,25 @@ test.describe('R449 phone (375 px, Android Chrome)', () => {
 
     // Sign-in & data: no install card, no MettleUp access card; the records line in plain words; the pointer.
     await tabButton(page, 'Sign-in & data').click();
-    await expect(page.getByText('Going online, staff sign-in, backups and your gym’s records', { exact: true })).toBeVisible();
+    await expect(page.getByText('Your sign-in, staff, backups and your gym’s records', { exact: true })).toBeVisible();
     await expect(heading(page, 'Your gym’s records')).toBeVisible();
     await expect(heading(page, PHONE_INSTALL)).toHaveCount(0);
     await expect(heading(page, 'MettleUp access')).toHaveCount(0);
-    await expect(page.getByRole('main').getByText(RECORDS)).toBeVisible();
-    await expect(page.getByRole('main')).not.toContainText('membership');
+    const records = page.getByRole('main').getByText(RECORDS);
+    await expect(records).toBeVisible();
+    await expect(records).toContainText('memberships sold (new and renewals)');
+    await expect(page.getByRole('main')).not.toContainText(' memberships ·');
     await expect(page.getByText(POINTER, { exact: true })).toBeVisible();
     await expectFitsPhone(page, 'on Settings → Sign-in & data');
-    await heading(page, 'Your gym’s records').scrollIntoViewIfNeeded();
+    await centre(records);
     await shot(page, 'phone-settings-data-records');
     await shot(page, 'phone-settings-data-full', true);
+    // The pointer is a link to Help and feedback.
+    await page.getByRole('link', { name: 'Help and feedback → MettleUp access' }).click();
+    await expect(page.getByRole('heading', { name: 'Help and feedback', level: 1 })).toBeVisible();
+    await expect(heading(page, 'MettleUp access')).toBeVisible();
 
-    // Help and feedback: the message box first, then Your questions, then MettleUp access.
+    // Help and feedback (also from the menu): the message box first, then Your questions, then MettleUp access.
     await open(page, 'Help and feedback');
     const access = heading(page, 'MettleUp access');
     await expect(access).toBeVisible();
@@ -105,17 +116,22 @@ test.describe('R449 phone (375 px, Android Chrome)', () => {
     await shot(page, 'phone-help-full', true);
   });
 
-  test('2 the demo gym: the records line with real numbers says "plans sold"', async ({ page }) => {
+  test('2+3 the demo gym: the records line with real numbers; Invite members has the QR the demo card names', async ({ page }) => {
     await openApp(page);
     await startDemo(page);
     await openSettings(page, 'Sign-in & data');
     const line = page.getByRole('main').getByText(RECORDS);
     await expect(line).toContainText('128 members · ');
-    await expect(line).toContainText(' plans sold (new and renewals) · ');
+    await expect(line).toContainText(' memberships sold (new and renewals) · ');
     // Negative: a demo gym is never online, so no pointer to MettleUp access (that needs an online gym).
     await expect(page.getByText(POINTER, { exact: true })).toHaveCount(0);
-    await heading(page, 'Your gym’s records').scrollIntoViewIfNeeded();
+    await centre(line);
     await shot(page, 'phone-demo-records');
+    // The demo card says: open "Invite members" in the demo and scan its QR. It is there.
+    await open(page, 'Invite members');
+    await expect(heading(page, 'Front-desk QR poster')).toBeVisible();
+    await centre(heading(page, 'Front-desk QR poster'));
+    await shot(page, 'phone-demo-invite-qr');
   });
 
   test('3+4 sign-in page: the demo card words; Hinglish "6-digit PIN" on sign in and set up', async ({ page }) => {
@@ -152,7 +168,7 @@ test.describe('R449 phone (375 px, Android Chrome)', () => {
     await expect(status).toBeVisible();
     await shot(page, 'phone-signed-out');
     await page.getByRole('radio', { name: 'Hinglish' }).click();
-    await expect(page.getByText('Aap is device se sign out ho gaye ho.', { exact: true })).toBeVisible();
+    await expect(page.getByText('Aap is device se sign out ho gaye hain.', { exact: true })).toBeVisible();
     await expect(page.getByText('You are signed out of this device.')).toHaveCount(0);
     await expectFitsPhone(page, 'signed out, in Hinglish');
     await shot(page, 'phone-signed-out-hinglish');
