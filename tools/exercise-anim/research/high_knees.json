@@ -1,0 +1,53 @@
+{
+  "format": "v1-stills",
+  "exercise": {
+    "key": "high_knees",
+    "name": "High Knees",
+    "equipment": "bodyweight",
+    "library_primary": ["cardio"],
+    "library_secondary": ["quads", "calves"],
+    "library_steps": ["Stand tall with your feet hip-width apart.", "Run on the spot, driving each knee up to hip height.", "Pump your arms and land softly on the balls of your feet."],
+    "status": "draft",
+    "version": null,
+    "researched_on": "2026-11-11",
+    "one_line_summary": "Running on the spot, trunk tall. Picture 1: left knee driven up to about hip height (hip ~80 deg, knee ~90 deg) while standing on the ball of the right foot, right arm forward and left arm back; picture 2: the mirror.",
+    "evidence_grade": "C"
+  },
+  "setup": [
+    {"item": "stance", "target": "Feet hip-width; stay in one spot.", "tolerance": "visual", "why": "Library step; S2 cue to stay in place.", "source_ids": ["S2"], "grade": "D"},
+    {"item": "trunk", "target": "Upright, core braced, no slouch or lean back.", "tolerance": "lean under 10 deg", "why": "S2 cue.", "source_ids": ["S2"], "grade": "D"}
+  ],
+  "movement": [
+    {"joint": "lifted hip (left in picture 1)", "measure": "hip flexion, 0 = standing, 90 = thigh level", "start": "80 deg", "end": "(mirrored in picture 2)", "start_num": 80, "end_num": 80, "tolerance": "70-95 (S2: hip height is as high as needed)", "source_ids": ["S1", "S2"], "grade": "C"},
+    {"joint": "lifted knee", "measure": "knee bend", "start": "90 deg (shin about vertical)", "end": "(mirrored)", "start_num": 90, "end_num": 90, "tolerance": "75-110", "source_ids": ["S2"], "grade": "D"},
+    {"joint": "stance leg", "measure": "knee bend / heel", "start": "knee ~25 deg, on the ball of the foot (heel up ~25 deg)", "end": "(mirrored)", "start_num": 25, "end_num": 25, "tolerance": "knee 10-35", "source_ids": ["S2"], "grade": "D"},
+    {"joint": "arms", "measure": "elev / plane / elbow (opposite arm to the lifted knee goes forward)", "start": "forward arm 50 / 90 / 90; back arm 35 / -90 / 90", "end": "(mirrored)", "start_num": 50, "end_num": 50, "tolerance": "elbow 70-100", "source_ids": ["S1"], "grade": "D"},
+    {"joint": "pelvis height", "measure": "root raised from standing", "start": "+0.03 m (up on the ball of the foot)", "end": "same", "start_num": 0.03, "end_num": 0.03, "tolerance": "0-0.05", "source_ids": ["S2"], "grade": "D"},
+    {"joint": "trunk, head", "measure": "lean", "start": "upright", "end": "upright", "start_num": 0, "end_num": 0, "tolerance": "under 10 deg", "source_ids": ["S2"], "grade": "D"}
+  ],
+  "muscles": [
+    {"muscle": "Quadriceps (rectus femoris)", "anatomy": "Rectus femoris, vasti", "mask_key": "quads", "tier": "primary", "glow": 1.0, "emg": "Quadriceps active around foot strike and support in jogging, running and sprinting (S1 Fig. 3)", "role": "Library primary is 'cardio' (no muscle). For the picture the front thigh is lit: rectus femoris helps lift the knee and the quads absorb each landing. Library lists quads as secondary.", "surface": "Front of the thigh.", "source_ids": ["S1"], "grade": "C"},
+    {"muscle": "Calves", "anatomy": "Gastrocnemius, soleus", "mask_key": "calves", "tier": "secondary", "glow": 0.35, "emg": "Gastrocnemius active late swing through support at all speeds (S1 Fig. 3)", "role": "Land and push off on the ball of the foot; library secondary.", "surface": "Back of the lower leg.", "source_ids": ["S1", "S2"], "grade": "C"},
+    {"muscle": "Hip flexor (iliacus)", "anatomy": "Iliopsoas", "mask_key": "none", "tier": "deep", "glow": 0, "emg": "Fine-wire iliacus active from just after toe-off through forward swing, longer at higher speed (S1)", "role": "Main knee-drive muscle; lies deep in the pelvis, so not lit.", "surface": "Deep, front of the hip.", "source_ids": ["S1"], "grade": "C"},
+    {"muscle": "Glutes", "anatomy": "Gluteus maximus, medius", "mask_key": "glutes", "tier": "stabiliser", "glow": 0, "emg": "Late swing and early support activity (S1)", "role": "Hold the pelvis on the stance leg.", "surface": "Buttock.", "source_ids": ["S1"], "grade": "C"},
+    {"muscle": "Abdominals", "anatomy": "Rectus abdominis", "mask_key": "abs", "tier": "stabiliser", "glow": 0, "emg": "Consistent only in sprinting, around toe-off and early swing (S1)", "role": "Keep the trunk upright.", "surface": "Front of the belly.", "source_ids": ["S1", "S2"], "grade": "C"}
+  ],
+  "tempo": null,
+  "mistakes": [
+    {"mistake": "Leaning back to get the knee higher", "what_it_looks_like": "Trunk tips back, hips forward.", "why_it_matters": "S2: stay upright, no slouching or leaning back.", "source_ids": ["S2"]},
+    {"mistake": "Landing flat-footed / heavy", "what_it_looks_like": "Heel slams down, knee locked.", "why_it_matters": "Library: land softly on the balls of the feet.", "source_ids": ["S2"]}
+  ],
+  "sources": [
+    {"id": "S1", "citation": "Moran GT, Mann RA, Dougherty SE, Moran SA. Biomechanics of running: electromyographic analysis of the hip during jogging, running and sprinting. ISBS Conference Proceedings Archive, pp. 439-446.", "url": "https://ojs.ub.uni-konstanz.de/cpa/article/view/2130/1989", "type": "emg", "what_it_gave": "15 trained sprinters: swing-phase hip flexion ~40 deg jogging, 60 running, 80 sprinting; iliacus (fine wire) active after toe-off through forward swing; quadriceps, gastrocnemius, gluteal timing."},
+    {"id": "S2", "citation": "The Prehab Guys. Exercise library: High Knees - In Place.", "url": "https://theprehabguys.com/vimeo-video/high-knees-in-place-2/", "type": "coach", "what_it_gave": "Knee as high as tolerated, hip level is enough; upright trunk, core on, no slouch or lean back; push off the opposite toes; stay in one spot."}
+  ],
+  "clip_check": [
+    {"check": "Lifted thigh angle (hip flexion)", "target": "80 deg (70-95)", "measured": "", "pass": "", "tool": "measure_pose.py"},
+    {"check": "Lifted knee bend", "target": "90 deg (75-110)", "measured": "", "pass": "", "tool": "measure_pose.py"},
+    {"check": "Stance foot: ball on the floor, heel up", "target": "lowest point -0.002..+0.002 m", "measured": "", "pass": "", "tool": "probe_feet.py"},
+    {"check": "Arm opposite the lifted knee is the forward arm", "target": "yes", "measured": "", "pass": "", "tool": "render, look"},
+    {"check": "Trunk upright", "target": "lean under 10 deg", "measured": "", "pass": "", "tool": "measure_pose.py"},
+    {"check": "Picture 2 is the mirror", "target": "yes", "measured": "", "pass": "", "tool": "render, look"},
+    {"check": "Quads are the strongest red in both pictures", "target": "yes", "measured": "", "pass": "", "tool": "render, crop"}
+  ]
+}

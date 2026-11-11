@@ -1,0 +1,50 @@
+{
+  "format": "v1-stills",
+  "exercise": {
+    "key": "zottman_curl",
+    "name": "Zottman Curl",
+    "equipment": "dumbbell",
+    "library_primary": ["biceps"],
+    "library_secondary": ["forearms"],
+    "library_steps": ["Stand with a dumbbell in each hand, palms facing forward.", "Curl both dumbbells up, then turn your palms to face down at the top.", "Lower slowly with palms down, then turn them back up at the bottom."],
+    "status": "draft",
+    "version": null,
+    "researched_on": "2026-11-11",
+    "one_line_summary": "Standing, both dumbbells. Picture 1: arms hanging, palms forward (start of the palm-up curl). Picture 2: top of the curl (~124 deg) with the palms already turned down, ready for the slow palms-down lowering.",
+    "evidence_grade": "B"
+  },
+  "setup": [
+    {"item": "stance", "target": "Feet hip-width, knees soft, trunk upright and still.", "tolerance": "lean 0-5 deg", "why": "No swing.", "source_ids": ["S1"], "grade": "B"},
+    {"item": "grip", "target": "Up: palms forward/up (supinated). At the top the forearms turn so the palms face down (pronated) for the way down.", "tolerance": "turn happens at the top, not mid-way", "why": "Library steps; the palm-down lowering shifts work to the brachioradialis (S2).", "source_ids": ["S2"], "grade": "B"}
+  ],
+  "movement": [
+    {"joint": "both elbows", "measure": "bend, 0 = straight", "start": "13 deg", "end": "124 deg", "start_num": 13, "end_num": 124, "tolerance": "end 115-135", "source_ids": ["S1", "S3"], "grade": "B"},
+    {"joint": "both forearms (turn)", "measure": "palm direction", "start": "palm forward (supinated)", "end": "palm down/forward (pronated, turned ~180 deg)", "start_num": 0, "end_num": 180, "tolerance": "turn in the forearm, wrist twist under 20 deg", "source_ids": ["S2"], "grade": "B"},
+    {"joint": "both shoulders", "measure": "elev / plane", "start": "7 / 56", "end": "7 / 56 (still)", "start_num": 7, "end_num": 7, "tolerance": "elev 0-15", "source_ids": ["S3"], "grade": "C"},
+    {"joint": "trunk, hips, knees, wrists", "measure": "standing rest; wrists straight", "start": "upright", "end": "upright", "start_num": 0, "end_num": 0, "tolerance": "lean under 5 deg", "source_ids": ["S1"], "grade": "B"}
+  ],
+  "muscles": [
+    {"muscle": "Biceps", "anatomy": "Biceps brachii", "mask_key": "biceps", "tier": "primary", "glow": 1.0, "emg": "Unchanged across hand positions in elbow flexion (S2); main flexor in the palm-up curl (S1)", "role": "Lifts the weight palm-up; what the exercise is for (library primary).", "surface": "Front of the upper arm.", "source_ids": ["S1", "S2"], "grade": "B"},
+    {"muscle": "Brachioradialis (forearm)", "anatomy": "Brachioradialis", "mask_key": "forearms", "tier": "secondary", "glow": 0.35, "emg": "Share significantly higher with the hand pronated than supinated or neutral, in every 25 deg band (S2)", "role": "Controls the palms-down lowering; the point of the Zottman twist.", "surface": "Thumb side of the upper forearm.", "source_ids": ["S2"], "grade": "B"},
+    {"muscle": "Brachialis", "anatomy": "Brachialis", "mask_key": "none", "tier": "deep", "glow": 0, "emg": "not measured", "role": "Elbow flexor in every grip; under the biceps.", "surface": "Under the lower biceps.", "source_ids": ["S2"], "grade": "C"},
+    {"muscle": "Forearm turners", "anatomy": "Pronator teres, supinator", "mask_key": "none", "tier": "deep", "glow": 0, "emg": "not measured", "role": "Turn the palm at the top and bottom.", "surface": "Deep forearm.", "source_ids": ["S2"], "grade": "C"}
+  ],
+  "tempo": null,
+  "mistakes": [
+    {"mistake": "Turning the palm mid-way or never", "what_it_looks_like": "Palms down while lifting, or palms still up on the way down.", "why_it_matters": "Loses the palm-up lift / palm-down lowering split.", "source_ids": ["S2"]},
+    {"mistake": "Elbows drifting forward, trunk swinging", "what_it_looks_like": "Upper arms leave the sides.", "why_it_matters": "Front delt and momentum do the work.", "source_ids": ["S1", "S3"]}
+  ],
+  "sources": [
+    {"id": "S1", "citation": "Marcolin G, et al. 2018. Differences in electromyographic activity of biceps brachii and brachioradialis while performing three variants of curl. PeerJ 6:e5165.", "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC6047503/fullTextXML", "type": "emg", "what_it_gave": "Standing dumbbell curl, 65 % 1RM, range 123 +- 12 deg; trunk policed."},
+    {"id": "S2", "citation": "Kleiber T, et al. 2015. Front Physiol 6:215, doi 10.3389/fphys.2015.00215 (EMG of biceps brachii and brachioradialis in elbow flexion by hand position).", "url": "https://frontiersin.org/articles/10.3389/fphys.2015.00215/full", "type": "emg", "what_it_gave": "Brachioradialis share higher in pronation (every band 0-130 deg); biceps unchanged across positions."},
+    {"id": "S3", "citation": "American Council on Exercise. Exercise Library: Standing Bicep Curl.", "url": "https://www.acefitness.org/resources/everyone/exercise-library/322/standing-bicep-curl/", "type": "guideline", "what_it_gave": "Elbows close to the sides, hands to the shoulders, lower slowly."}
+  ],
+  "clip_check": [
+    {"check": "Elbow bend start / end (both arms)", "target": "13 (5-20) / 124 (115-135)", "measured": "", "pass": "", "tool": "measure_pose.py"},
+    {"check": "Start picture palms forward; end picture palms down", "target": "yes", "measured": "", "pass": "", "tool": "render, look"},
+    {"check": "Forearm turn lives in the forearm (wrist twist)", "target": "under 20 deg", "measured": "", "pass": "", "tool": "measure_twist.py"},
+    {"check": "Hanging dumbbells clear of the thighs", "target": "gap >= 0", "measured": "", "pass": "", "tool": "render, look"},
+    {"check": "Feet flat on the floor", "target": "-0.002..+0.002 m", "measured": "", "pass": "", "tool": "probe_feet.py"},
+    {"check": "Biceps is the strongest red in both pictures", "target": "yes", "measured": "", "pass": "", "tool": "render, crop"}
+  ]
+}

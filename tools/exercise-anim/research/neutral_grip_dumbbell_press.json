@@ -1,0 +1,53 @@
+{
+  "format": "v1-stills",
+  "exercise": {
+    "key": "neutral_grip_dumbbell_press",
+    "name": "Neutral-Grip Dumbbell Press",
+    "equipment": "dumbbell",
+    "library_primary": ["chest"],
+    "library_secondary": ["triceps", "front_delts"],
+    "library_steps": [
+      "Lie on a flat bench with dumbbells at your chest, palms facing each other.",
+      "Press them up until your arms are straight.",
+      "Lower them slowly, keeping your elbows close to your sides."
+    ],
+    "status": "draft",
+    "version": 1,
+    "researched_on": "2026-11-11",
+    "one_line_summary": "Flat bench, palms facing each other, elbows tucked about 40 deg from the body at the bottom with forearms vertical; press to near-straight arms over the lower chest. Chest is the target; triceps and front delts help.",
+    "evidence_grade": "C"
+  },
+  "setup": [
+    {"item": "body on bench", "target": "Lie flat: head, upper back and hips on the pad, feet flat on the floor either side of the bench, knees about 90-110 deg.", "tolerance": "back gap to pad -0.02..+0.02 m", "why": "Both EMG studies kept head and thoracic back on the bench.", "source_ids": ["S2"], "grade": "B"},
+    {"item": "grip", "target": "Neutral grip: palms face each other, handles run head-to-foot, thumbs toward the head.", "tolerance": "handle within 15 deg of the body's long axis", "why": "Defines the exercise; Muyor 2023 tested a neutral grip against a prone grip.", "source_ids": ["S1"], "grade": "B"}
+  ],
+  "movement": [
+    {"joint": "shoulder (elev)", "measure": "upper arm angle from the torso side line, 0 = by the side", "start": "40 deg (elbows tucked)", "end": "85 deg (arm vertical)", "start_num": 40, "end_num": 85, "tolerance": "start 30-50; end 80-90", "source_ids": ["S1", "S2"], "grade": "C"},
+    {"joint": "shoulder (plane)", "measure": "0 = out to the side, +90 = straight up out of the chest, negative = below the torso line", "start": "-25 deg (elbows a little below the bench line)", "end": "88 deg", "start_num": -25, "end_num": 88, "tolerance": "start -35..-15; end 80-90", "source_ids": ["S2"], "grade": "C"},
+    {"joint": "elbow", "measure": "bend, 0 = straight", "start": "forearm vertical (about 90-100 deg)", "end": "near straight (forearm vertical, under 10 deg)", "start_num": 95, "end_num": 5, "tolerance": "end 0-15, never hyperextended", "source_ids": ["S2"], "grade": "C"},
+    {"joint": "trunk, hips, legs", "measure": "stay still", "start": "flat on the bench, feet on floor", "end": "same", "start_num": 0, "end_num": 0, "tolerance": "no hip lift", "source_ids": ["S2"], "grade": "C"}
+  ],
+  "muscles": [
+    {"muscle": "Pectoralis major (all portions)", "mask_key": "chest", "tier": "primary", "emg": "Seated neutral-grip press: clavicular ~30% MVIC, more than the wide prone bench press (~25%) (S1). Flat bench gives the highest sternal/costal activity of five angles (S2).", "source_ids": ["S1", "S2"], "grade": "B"},
+    {"muscle": "Triceps brachii", "mask_key": "triceps", "tier": "secondary", "emg": "~12-16% MVIC in bench press variants, higher with the narrower grip (S1); ~15% at all bench angles (S2).", "source_ids": ["S1", "S2"], "grade": "B"},
+    {"muscle": "Anterior deltoid", "mask_key": "front_delts", "tier": "secondary", "emg": "~24% MVIC, no grip or exercise difference (S1).", "source_ids": ["S1"], "grade": "B"},
+    {"muscle": "Forearm flexors (grip)", "mask_key": "forearms", "tier": "stabiliser", "emg": "not measured; hold the dumbbells", "source_ids": [], "grade": "D"}
+  ],
+  "tempo": null,
+  "mistakes": [
+    {"mistake": "Elbows flared out to 90 deg", "what_it_looks_like": "Upper arms straight out from the shoulders at the bottom, palms drifting to face the feet.", "why_it_matters": "Turns it into a regular wide press; the library cue is elbows close to the sides.", "source_ids": ["S1"]},
+    {"mistake": "Hips lifted off the bench", "what_it_looks_like": "Bridge under the lower back at the top.", "why_it_matters": "Both studies kept the back and head on the bench.", "source_ids": ["S2"]}
+  ],
+  "sources": [
+    {"id": "S1", "citation": "Muyor JM, Rodriguez-Ridao D, Oliva-Lozano JM. 2023. Comparison of muscle activity between the horizontal bench press and the seated chest press exercises using several grips. J Hum Kinet 87:23-34.", "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10203828/", "type": "emg", "what_it_gave": "n=20, 60% 1RM, 2 s/2 s. Neutral grip seated press: clavicular pec ~30% MVIC vs ~25% wide bench; front delt ~24% everywhere; triceps 16% narrow vs 12% wide bench."},
+    {"id": "S2", "citation": "Rodriguez-Ridao D, Antequera-Vique JA, Martin-Fuentes I, Muyor JM. 2020. Effect of five bench inclinations on the electromyographic activity of the pectoralis major, anterior deltoid, and triceps brachii during the bench press exercise. Int J Environ Res Public Health 17(19):7339.", "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7579505/", "type": "emg", "what_it_gave": "0-60 deg benches. Flat bench highest sternal/costal pec. Technique: lowered to ~1 cm over the sternum, shoulders ~45 deg abducted, pressed to straight arms without hyperextension, head and back on the bench."}
+  ],
+  "clip_check": [
+    {"check": "Start: upper arm elev / plane", "target": "40 / -25 deg (elev 30-50)", "measured": "", "pass": ""},
+    {"check": "End: arms near straight, dumbbells over lower-mid chest", "target": "elbow < 15 deg, elev 80-90", "measured": "", "pass": ""},
+    {"check": "Back on the pad", "target": "gap -0.02..+0.02 m (probe_bench.py)", "measured": "", "pass": ""},
+    {"check": "Feet flat on the floor", "target": "lowest point -0.002..+0.002 m (probe_feet.py)", "measured": "", "pass": ""},
+    {"check": "Hands on the handles, palms facing each other", "target": "handles run head-to-foot", "measured": "", "pass": ""},
+    {"check": "Chest is the strongest red in both pictures", "target": "yes", "measured": "", "pass": ""}
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "key": "burpee",
+  "name": "Burpee",
+  "primary": ["cardio"],
+  "secondary": ["quads", "chest"],
+  "camera": {"yaw": -82, "pitch": 12, "lens": 50, "fill": 0.9, "res": 640, "samples": 20},
+  "timing": {"fps": 30, "keys": [[0, "start"], [1, "end"], [2, "start"]]},
+  "poses": {
+    "start": {
+      "root": {"loc": [0, 0.056, 0.971], "rot": [0, 0, 0]},
+      "feet": {"L": {"at": [0.13, -0.01, 0.074], "rot": [0, 0, 6]}},
+      "knees": {"L": [0.16, -1.0, 0.52]},
+      "hands": {"L": {"axis": [0, 1, 0], "arm": {"elev": 8, "plane": 10, "elbow": 10, "bend": [0, 1, 0], "tilt": 0}}}
+    },
+    "end": {
+      "root": {"loc": [0, 0, 0.545], "rot": [68, 0, 0]},
+      "feet": {"L": {"at": [0.12, 0.807, 0.147], "rot": [50, 0, 0]}},
+      "knees": {"L": [0.13, 0.45, -0.5]},
+      "hands": {"L": {"axis": [-1, 0, 0], "arm": {"elev": 68, "plane": 82, "elbow": 5, "bend": [0, 0, 1], "tilt": 0}}}
+    }
+  },
+  "research": "Start = standing rest (NASM: feet hip-width, arms relaxed). End = high plank, top of the push-up. Body line: shoulder joints 0.65 m up (arm ~0.60 + fist ~0.05), ankles on the toes ~0.15 m up, shoulder-to-ankle 1.37 m -> sin a = 0.50/1.37 -> 22 deg above horizontal -> root rot X 90-22 = 68. Rx(68): shoulder mid = root + (0,-0.463,0.105); ankle = root + (0.13,0.807,-0.398). Shoulder z 0.65 -> root z 0.545, ankle z 0.147, root y 0 -> shoulders y -0.46, ankles y 0.81. Arms vertical in world = elev 68, plane 90 in torso frame (plane 82 = hands a little wider than the shoulders). Hands: the rig's hand is a grip, so the plank shows FISTS on the floor (knuckle plank, axis [-1,0,0] like a press grip), not flat palms - no wrist-extension control. Feet rot X 50 = toes on the floor, heels up. Knee pole below = kneecaps down. Hips on the straight line (Yamashita 2023: high or sagging hips = failed rep; NASM: hips must not drop). Facts and checks: research/burpee.json."
+}

@@ -1,0 +1,58 @@
+{
+  "format": "v1-stills",
+  "exercise": {
+    "key": "copenhagen_plank",
+    "name": "Copenhagen Plank",
+    "equipment": "bodyweight",
+    "type": "time",
+    "library_primary": ["adductors"],
+    "library_secondary": ["obliques", "abs"],
+    "steps": [
+      "Lie on your side next to a bench, propped up on your forearm.",
+      "Place your top foot or knee on the bench.",
+      "Lift your hips until your body is straight, lower leg off the floor.",
+      "Hold, then lower and switch sides."
+    ],
+    "status": "draft",
+    "version": null,
+    "researched_on": "2026-11-11",
+    "one_line_summary": "A hold (one picture): side plank on the right forearm (elbow under the shoulder), top (left) leg straight with the ankle resting on a flat bench, bottom (right) leg straight and lifted just under the bench, hips up so head-shoulders-hips-ankles make one line. The top leg's adductors hold the body up; obliques and abs hold the trunk.",
+    "evidence_grade": "B"
+  },
+  "setup": [
+    {"item": "support arm", "target": "Bottom forearm on the floor, elbow straight under the shoulder, forearm pointing forward.", "tolerance": "elbow within 0.05 m of under the shoulder", "why": "Side-plank base; S4 'support yourself on your forearm'.", "source_ids": ["S4"], "grade": "D"},
+    {"item": "top leg on the bench (lever)", "target": "Long lever: top leg straight, inside of the ankle/foot on a flat bench (seat top 0.44 m).", "tolerance": "knee 0-10 deg; ankle on the pad 0.05-0.10 m in from its edge", "why": "S2: the long lever gives higher peak and mean adductor torque than the short (knee) lever; S4: ankle on bench = longest lever. Library allows foot or knee; the foot version is the one the name usually shows.", "source_ids": ["S2", "S4"], "grade": "A"},
+    {"item": "bottom leg", "target": "Straight, lifted off the floor, under the bench (pressing up toward it).", "tolerance": "foot clear of the floor; does not touch the bench frame", "why": "Library step 3 (lower leg off the floor); S4 'press it up into the underside of the bench'.", "source_ids": ["S4"], "grade": "D"},
+    {"item": "body line", "target": "Hips up, no sag, no forward rotation of hips or shoulders.", "tolerance": "hip within 0.04 m of the shoulder-ankle line", "why": "S4 common mistakes: sagging hips, rotating forward.", "source_ids": ["S4"], "grade": "D"}
+  ],
+  "movement": [
+    {"joint": "whole body (hold)", "measure": "body line tilt along its length; root rot (0, -86, -90) = on the right side, head +Y, chest -X", "start": "shoulders ~4 deg higher than ankles", "end": "same (hold)", "start_num": 4, "end_num": 4, "path": "Held still.", "tolerance": "0-10 deg", "source_ids": ["S4"], "grade": "D"},
+    {"joint": "top hip (adduction)", "measure": "top leg in line with the trunk, ankle on the bench", "start": "0 deg (neutral, in line)", "end": "0 deg", "start_num": 0, "end_num": 0, "path": "Held: the adductors pull the body up toward the top leg.", "tolerance": "+-5 deg", "source_ids": ["S1", "S2"], "grade": "A"},
+    {"joint": "knees", "measure": "knee bend", "start": "~9 deg both", "end": "~9 deg", "start_num": 9, "end_num": 9, "path": "Straight legs.", "tolerance": "0-15 deg", "source_ids": ["S4"], "grade": "D"},
+    {"joint": "support shoulder / elbow", "measure": "upper arm vertical (elev 86, plane 0), elbow 90", "start": "86 / 90", "end": "86 / 90", "start_num": 90, "end_num": 90, "path": "Held.", "tolerance": "elbow 80-100", "source_ids": ["S4"], "grade": "D"}
+  ],
+  "muscles": [
+    {"muscle": "Adductors (top leg)", "anatomy": "Adductor longus, magnus, brevis, gracilis", "mask_key": "adductors", "tier": "primary", "glow": 1.0, "emg": "Copenhagen adduction is one of the two high-intensity adductor exercises; adductor longus peak nEMG across the 8 exercises 14-108% MVC (S1, abstract gives the range only). Long lever > short lever for peak and mean torque (S2). Modified vs standard stage-1 position: no difference in adductor longus EMG (S3).", "role": "Pull the body up toward the supported top leg; what the exercise is for.", "surface": "Inner thigh, from the pubic bone down the inside of the thigh toward the knee.", "source_ids": ["S1", "S2", "S3"], "grade": "A"},
+    {"muscle": "Obliques", "anatomy": "Obliquus externus / internus abdominis", "mask_key": "obliques", "tier": "secondary", "glow": 0.35, "emg": "Abdominal peak nEMG 5-48% MVC across the adduction exercises (S1); side planks give high oblique EMG in general (S4 lists obliques).", "role": "Hold the trunk up sideways (anti side-bend).", "surface": "Sides of the waist.", "source_ids": ["S1", "S4"], "grade": "B"},
+    {"muscle": "Abs (rectus abdominis)", "anatomy": "Rectus abdominis", "mask_key": "abs", "tier": "secondary", "glow": 0.35, "emg": "Within the abdominal 5-48% MVC range (S1).", "role": "Keeps the trunk from twisting or arching.", "surface": "Front of the belly.", "source_ids": ["S1", "S4"], "grade": "B"},
+    {"muscle": "Glutes", "anatomy": "Gluteus medius / maximus", "mask_key": "glutes", "tier": "stabiliser", "glow": 0, "emg": "Gluteal peak nEMG 5-48% MVC (S1).", "role": "Hold the hips level and extended.", "surface": "Buttock and side of the hip.", "source_ids": ["S1"], "grade": "B"}
+  ],
+  "tempo": null,
+  "mistakes": [
+    {"mistake": "Hips sagging", "what_it_looks_like": "The pelvis drops below the shoulder-ankle line.", "why_it_matters": "S4: usually obliques not engaged; less adductor load.", "source_ids": ["S4"]},
+    {"mistake": "Rolling forward", "what_it_looks_like": "Hips and shoulders turn toward the floor.", "why_it_matters": "S4: breaks the straight line.", "source_ids": ["S4"]}
+  ],
+  "sources": [
+    {"id": "S1", "citation": "Serner A, Jakobsen MD, Andersen LL, Holmich P, Sundstrup E, Thorborg K. 2014. EMG evaluation of hip adduction exercises for soccer players: implications for exercise selection in prevention and treatment of groin injuries. Br J Sports Med 48(14):1108-1114. doi:10.1136/bjsports-2012-091746", "url": "https://europepmc.org/article/MED/23511698", "type": "emg", "what_it_gave": "Copenhagen adduction = high-intensity adductor exercise; adductor longus 14-108% MVC across exercises; gluteal and abdominal 5-48%."},
+    {"id": "S2", "citation": "Marusic J, Cvjeticanin O, Supej M, Babic J, Sarabon N. 2026. Biomechanics of Copenhagen adduction exercise and eccentric hip adductor exercises on a novel isokinetic dynamometer with within-session repeatability. Scand J Med Sci Sports 36(9):e70365. doi:10.1111/sms.70365", "url": "https://europepmc.org/article/MED/42687355", "type": "biomechanics", "what_it_gave": "Long-lever Copenhagen gives higher peak and mean adductor torque than short lever."},
+    {"id": "S3", "citation": "Hinnekens S, Fickers E, Vervloet G. 2024. Effectiveness of the Copenhagen adduction modified position stage 1: EMG measurements and hand-held dynamometer analysis in young and healthy men. J Bodyw Mov Ther 39:251-257. doi:10.1016/j.jbmt.2024.02.017", "url": "https://europepmc.org/article/MED/38876635", "type": "emg", "what_it_gave": "Adductor longus EMG and force similar in modified and standard positions."},
+    {"id": "S4", "citation": "Garage Strength. Copenhagen Plank (coaching article).", "url": "https://www.garagestrength.com/blogs/news/copenhagen-plank", "type": "coach", "what_it_gave": "Forearm on the floor; top leg knee (short), calf (mid) or ankle (long) on the bench; bottom leg straight under the bench; straight line; mistakes: sagging, rotating forward, breath holding."}
+  ],
+  "clip_check": [
+    {"check": "Support elbow under the shoulder, forearm on the floor", "target": "elbow within 0.05 m of under the right shoulder; forearm z 0.02-0.05", "measured": "", "pass": "", "tool": "measure_pose.py"},
+    {"check": "Top ankle rests on the bench pad", "target": "gap -0.01..+0.01 m to the pad top (0.44)", "measured": "", "pass": "", "tool": "probe_bench.py / picture"},
+    {"check": "Bottom leg off the floor, not through the bench", "target": "lowest leg point > 0.1 m; no overlap with seat, post or rail", "measured": "", "pass": "", "tool": "probe_feet.py + picture"},
+    {"check": "Straight body line", "target": "hip within 0.04 m of the shoulder-ankle line", "measured": "", "pass": "", "tool": "measure_pose.py"},
+    {"check": "Primary muscle strongest red", "target": "inner thigh (adductors) strongest red; obliques and abs light", "measured": "", "pass": "", "tool": "picture"}
+  ]
+}

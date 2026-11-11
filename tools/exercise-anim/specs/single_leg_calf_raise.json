@@ -1,0 +1,29 @@
+{
+  "key": "single_leg_calf_raise",
+  "name": "Single-Leg Dumbbell Calf Raise",
+  "primary": ["calves"],
+  "secondary": [],
+  "scene": {"boxes": [{"size": [0.6, 0.30, 0.15], "loc": [0, -0.10, 0]}, {"size": [0.15, 1.2, 2.0], "loc": [-0.80, 0, 0]}]},
+  "props": {"db_L": {"type": "dumbbell"}},
+  "camera": {"yaw": 80, "pitch": 10, "lens": 50, "fill": 0.9, "res": 640, "samples": 20},
+  "timing": {"fps": 30, "keys": [[0, "start"], [1, "end"], [2, "start"]]},
+  "defaults": {
+    "hands": {
+      "L": {"prop": "db_L", "axis": [0, 1, 0], "arm": {"elev": 8, "plane": 10, "elbow": 10, "bend": [0, 1, 0], "tilt": 0}},
+      "R": {"axis": [0, 1, 0], "arm": {"elev": 80, "plane": 10, "elbow": 20, "bend": [0, 1, 0], "tilt": 0}}
+    }
+  },
+  "poses": {
+    "start": {
+      "root": {"loc": [0.03, 0.243, 1.064], "rot": [0, 0, 0]},
+      "feet": {"L": {"at": [0.12, 0.177, 0.172], "rot": [-20, 0, 0]}, "R": {"at": [-0.08, 0.635, 0.539], "rot": [100, 0, 0]}},
+      "knees": {"L": [0.12, -1.0, 0.6], "R": [-0.08, -1.0, 0.65]}
+    },
+    "end": {
+      "root": {"loc": [0.03, 0.158, 1.183], "rot": [0, 0, 0]},
+      "feet": {"L": {"at": [0.12, 0.092, 0.291], "rot": [35, 0, 0]}, "R": {"at": [-0.08, 0.55, 0.658], "rot": [100, 0, 0]}},
+      "knees": {"L": [0.12, -1.0, 0.7], "R": [-0.08, -1.0, 0.75]}
+    }
+  },
+  "research": "Step 0.15 m high, y -0.25..+0.05 (heel hangs off its +Y edge). Ball of the left foot fixed at B=(0.12,0.02,0.15). Rest ankle sits (0,+0.14,+0.074) from the ball; foot rot X t pivots that: t=-20 -> ankle B+(0,0.157,0.022)=(0.12,0.177,0.172), heel ~z 0.09 behind the edge (dropped); t=+35 -> ankle B+(0,0.072,0.141)=(0.12,0.092,0.291), high on the toes. Straight stance leg: pelvis = ankle + (0,0.066,0.892), shifted x +0.03 over the stance foot -> (0.03,0.243,1.064) and (0.03,0.158,1.183). Free right leg: thigh vertical under hip R, knee 80 deg, foot behind (rot X 100 = toes pointing back-down). Right hand on a wall block (inner face x -0.725) instead of a rail (no rail prop): arm elev 80, plane 10, elbow 20, hand ~0.53 m out from the shoulder at x ~-0.19 -> about x -0.72. Left hand holds the dumbbell (same side as stance leg, per library). Camera yaw +80 = his left side, so the wall is behind him and the dumbbell faces the camera. Sources: ACE wall calf raise (knee straight, hand on wall), ACE Jo 2015 (heel below the step, rise high). Facts and checks: research/single_leg_calf_raise.json."
+}

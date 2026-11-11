@@ -1,0 +1,57 @@
+{
+  "format": "v1-stills",
+  "exercise": {
+    "key": "single_arm_dumbbell_upright_row",
+    "name": "Single-Arm Dumbbell Upright Row",
+    "equipment": "dumbbell",
+    "library_primary": ["side_delts"],
+    "library_secondary": ["traps", "biceps"],
+    "library_steps": ["Hold a dumbbell in one hand and grip a post with the other.", "Pull the dumbbell up close to your body, elbow leading, to chest height.", "Lower it slowly. Finish all reps, then switch arms."],
+    "status": "draft",
+    "version": null,
+    "researched_on": "2026-11-11",
+    "one_line_summary": "Standing tall, free hand on a post; the dumbbell starts hanging in front of the thigh, palm toward the body, and is pulled up close to the body, elbow leading and higher than the hand, until the elbow is just under shoulder height and the dumbbell is at lower-chest height.",
+    "evidence_grade": "C"
+  },
+  "setup": [
+    {"item": "stance", "target": "Feet hip-width, knees soft, trunk upright.", "tolerance": "trunk lean 0-5 deg", "why": "No body swing.", "source_ids": ["S2"], "grade": "C"},
+    {"item": "grip", "target": "Overhand (palm toward the body), dumbbell in front of the thigh, arm long.", "tolerance": "dumbbell clear of the thigh", "why": "Upright-row grip; a single dumbbell lets the hand sit out wide like a wide bar grip.", "source_ids": ["S1", "S2"], "grade": "B"},
+    {"item": "free hand", "target": "Right hand grips an upright post at chest-shoulder height.", "tolerance": "hand 1.1-1.35 m high", "why": "Library step; steadies the body.", "source_ids": ["S2"], "grade": "D"},
+    {"item": "shoulder blades", "target": "Drawn back and steady, not rounded forward.", "tolerance": "visual", "why": "A forward, downward-turned blade narrows the space the upper arm moves through.", "source_ids": ["S2"], "grade": "C"}
+  ],
+  "movement": [
+    {"joint": "left shoulder (raise)", "measure": "elev: upper arm from the side of the trunk, 0 = hanging, 90 = level", "start": "25 deg (arm hanging a little forward so the dumbbell clears the thigh)", "end": "80 deg (elbow just under shoulder height)", "start_num": 25, "end_num": 80, "tolerance": "start 10-30; end 70-90, never above shoulder", "source_ids": ["S2"], "grade": "C"},
+    {"joint": "left shoulder (plane)", "measure": "0 = out to the side, +90 = straight forward", "start": "90 deg (hanging in front)", "end": "30 deg (elbow out to the side, a little forward)", "start_num": 90, "end_num": 30, "tolerance": "end 15-45", "source_ids": ["S1", "S2"], "grade": "C"},
+    {"joint": "left elbow", "measure": "bend, 0 = straight", "start": "about 14 deg", "end": "about 130 deg (hand below and inside the elbow)", "start_num": 14, "end_num": 130, "tolerance": "start 0-20; end 110-140", "source_ids": ["S2"], "grade": "C"},
+    {"joint": "dumbbell height", "measure": "handle centre above the floor", "start": "about 0.87 m (front of the thigh)", "end": "about 1.24 m (lower chest)", "start_num": 0.87, "end_num": 1.24, "tolerance": "end 1.15-1.30 m", "source_ids": ["S2"], "grade": "C"},
+    {"joint": "right arm (post hand)", "measure": "elev / plane / elbow", "start": "70 / 15 / 15", "end": "same (still)", "start_num": 70, "end_num": 70, "tolerance": "+-5 deg", "source_ids": ["S2"], "grade": "D"},
+    {"joint": "trunk, hips, knees", "measure": "standing rest", "start": "upright", "end": "upright (still)", "start_num": 0, "end_num": 0, "tolerance": "lean under 5 deg", "source_ids": ["S2"], "grade": "C"}
+  ],
+  "muscles": [
+    {"muscle": "Side delt", "anatomy": "Deltoideus, pars acromialis", "mask_key": "side_delts", "tier": "primary", "glow": 1.0, "emg": "Concentric activity rose significantly with grip width (p < 0.001), 16 trained men, 85 % 1RM (S1); %MVIC values not in the abstract", "role": "Lifts the upper arm out to the side; what the exercise is for (library primary).", "surface": "Outer cap of the shoulder.", "source_ids": ["S1", "S2"], "grade": "B"},
+    {"muscle": "Upper trapezius", "anatomy": "Trapezius, pars descendens", "mask_key": "traps", "tier": "secondary", "glow": 0.35, "emg": "Upper and middle trapezius rose with grip width in the lowering phase (S1); named target in S2", "role": "Lifts and turns the shoulder blade upward as the elbow rises.", "surface": "Top of the shoulder between neck and acromion.", "source_ids": ["S1", "S2"], "grade": "B"},
+    {"muscle": "Front delt", "anatomy": "Deltoideus, pars clavicularis", "mask_key": "front_delts", "tier": "secondary", "glow": 0.35, "emg": "Measured, significant change in the lowering phase with grip (S1)", "role": "Helps raise the arm, which travels a little in front of the body.", "surface": "Front of the shoulder cap.", "source_ids": ["S1"], "grade": "B"},
+    {"muscle": "Biceps", "anatomy": "Biceps brachii", "mask_key": "biceps", "tier": "stabiliser", "glow": 0, "emg": "Fell as grip widened (S1)", "role": "Library secondary; bends the elbow but the load is on the shoulder. Not lit so the shoulder reads as the target; secondary slots are used by trapezius and front delt.", "surface": "Front of the upper arm.", "source_ids": ["S1"], "grade": "B"},
+    {"muscle": "Rear delt", "anatomy": "Deltoideus, pars spinalis", "mask_key": "rear_delts", "tier": "stabiliser", "glow": 0, "emg": "Concentric activity rose with grip width (S1)", "role": "Helps abduct; steadies the arm.", "surface": "Back of the shoulder cap.", "source_ids": ["S1"], "grade": "B"},
+    {"muscle": "Supraspinatus", "anatomy": "Supraspinatus", "mask_key": "none", "tier": "deep", "glow": 0, "emg": "not measured", "role": "Helps start abduction; under the trapezius.", "surface": "Above the shoulder blade spine.", "source_ids": ["S2"], "grade": "C"}
+  ],
+  "tempo": null,
+  "mistakes": [
+    {"mistake": "Elbow above the shoulder / dumbbell to the chin", "what_it_looks_like": "Elbow higher than the shoulder at the top.", "why_it_matters": "Raises shoulder impingement risk; S2 stops the elbow at shoulder level, weight at the lower ribs.", "source_ids": ["S2"]},
+    {"mistake": "Hand leading the elbow", "what_it_looks_like": "Hand higher than the elbow at the top (a curl, not a row).", "why_it_matters": "Turns it into a biceps lift; library says elbow leading.", "source_ids": ["S2"]}
+  ],
+  "sources": [
+    {"id": "S1", "citation": "McAllister MJ, Schilling BK, Hammond KG, Weiss LW, Farney TM. 2013. Effect of grip width on electromyographic activity during the upright row. J Strength Cond Res 27(1):181-187.", "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID:22362088%20AND%20SRC:MED&resultType=core&format=json", "type": "emg", "what_it_gave": "16 trained men, grips 50/100/200 % of shoulder width at 85 % 1RM: wider grip = more deltoid and trapezius, less biceps. Muscles: front, side, rear delt, upper and middle trapezius, biceps."},
+    {"id": "S2", "citation": "Hastings B. 2024 (5 Apr). Upright rows. Les Mills.", "url": "https://www.lesmills.com/us/articles/upright-rows", "type": "coach", "what_it_gave": "Lift only to the lower ribs, elbows no higher than shoulder level, wide grip, shoulder blades back and steady; targets deltoids and traps."}
+  ],
+  "clip_check": [
+    {"check": "Left elbow height at the end picture", "target": "elev 80 (70-90), elbow not above the shoulder", "measured": "", "pass": "", "tool": "measure_pose.py"},
+    {"check": "Elbow higher than the hand at the end picture", "target": "yes", "measured": "", "pass": "", "tool": "measure_pose.py"},
+    {"check": "Dumbbell clear of the thigh at the start picture", "target": "gap >= 0 cm", "measured": "", "pass": "", "tool": "render, look"},
+    {"check": "Dumbbell height end", "target": "1.15-1.30 m", "measured": "", "pass": "", "tool": "measure_pose.py"},
+    {"check": "Right hand closed on the post, both pictures", "target": "fist centre within 2 cm of the post", "measured": "", "pass": "", "tool": "render, look"},
+    {"check": "Wrist not bent more than ~30 deg at the top", "target": "<= 30 deg", "measured": "", "pass": "", "tool": "measure_wrist.py"},
+    {"check": "Feet flat on the floor", "target": "-0.002..+0.002 m", "measured": "", "pass": "", "tool": "probe_feet.py"},
+    {"check": "Side delt is the strongest red in both pictures", "target": "yes", "measured": "", "pass": "", "tool": "render, crop"}
+  ]
+}

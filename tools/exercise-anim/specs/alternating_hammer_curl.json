@@ -1,0 +1,28 @@
+{
+  "key": "alternating_hammer_curl",
+  "name": "Alternating Hammer Curl",
+  "primary": ["biceps"],
+  "secondary": ["forearms"],
+  "props": {"db_L": {"type": "dumbbell"}, "db_R": {"type": "dumbbell"}},
+  "camera": {"yaw": -55, "pitch": 8, "lens": 50, "fill": 0.9, "res": 640, "samples": 20},
+  "timing": {"fps": 30, "keys": [[0, "start"], [1, "end"], [2, "start"]]},
+  "poses": {
+    "start": {
+      "feet": {"L": {"at": [0.13, -0.01, 0.074], "rot": [0, 0, 6]}, "R": {"at": [-0.13, -0.01, 0.074], "rot": [0, 0, -6]}},
+      "knees": {"L": [0.16, -1.0, 0.52], "R": [-0.16, -1.0, 0.52]},
+      "hands": {
+        "L": {"prop": "db_L", "axis": [0, -0.65, 0.76], "arm": {"elev": 10, "plane": 45, "elbow": 124, "bend": [0, 1, 0], "tilt": 0}},
+        "R": {"prop": "db_R", "axis": [0, 0.94, 0.34], "arm": {"elev": 10, "plane": 45, "elbow": 13, "bend": [0, 1, 0], "tilt": 0}}
+      }
+    },
+    "end": {
+      "feet": {"L": {"at": [0.13, -0.01, 0.074], "rot": [0, 0, 6]}, "R": {"at": [-0.13, -0.01, 0.074], "rot": [0, 0, -6]}},
+      "knees": {"L": [0.16, -1.0, 0.52], "R": [-0.16, -1.0, 0.52]},
+      "hands": {
+        "L": {"prop": "db_L", "axis": [0, 0.94, 0.34], "arm": {"elev": 10, "plane": 45, "elbow": 13, "bend": [0, 1, 0], "tilt": 0}},
+        "R": {"prop": "db_R", "axis": [0, -0.65, 0.76], "arm": {"elev": 10, "plane": 45, "elbow": 124, "bend": [0, 1, 0], "tilt": 0}}
+      }
+    }
+  },
+  "research": "Picture 1 left curled / right hanging, picture 2 reversed. Upper arms elev 10, plane 45 (a little wider than the palm-up curl so the back plate of the hanging dumbbell clears the thigh: fist ~0.30 m out from the midline, back plate edge x >= 0.21). Elbow 13 -> 124 (S1 range 123 +- 12). Neutral grip, axis kept square to the forearm in the forward-up plane: torso frame, du = (sin10 cos45, sin10 sin45, -cos10) = (0.123, 0.123, -0.985); hanging forearm (13 deg fold forward) = (0.117, 0.343, -0.933) -> axis forward minus its forearm part = (0, 0.94, 0.34) (thumb forward); curled forearm (124 deg) = (-0.081, 0.754, 0.652) -> thumb-up axis square to it = (0, -0.65, 0.76) (index toward the shoulder). Same numbers for the right hand (axis has no x, so the mirror is identical). S2 Kleiber 2015: biceps the same in neutral and supinated. Facts: research/alternating_hammer_curl.json."
+}

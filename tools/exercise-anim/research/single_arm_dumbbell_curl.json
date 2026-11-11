@@ -1,0 +1,54 @@
+{
+  "format": "v1-stills",
+  "exercise": {
+    "key": "single_arm_dumbbell_curl",
+    "name": "Single-Arm Dumbbell Curl",
+    "equipment": "dumbbell",
+    "library_primary": ["biceps"],
+    "library_secondary": ["forearms"],
+    "library_steps": ["Hold one dumbbell at your side, palm forward, free hand on your hip.", "Curl the dumbbell to your shoulder, keeping your elbow by your side.", "Lower slowly, finish all reps, then switch arms."],
+    "status": "draft",
+    "version": null,
+    "researched_on": "2026-11-11",
+    "one_line_summary": "Standing tall, free hand on the hip; one dumbbell, palm forward, curls from a nearly straight arm to about 124 deg of elbow bend while the upper arm stays by the side.",
+    "evidence_grade": "B"
+  },
+  "setup": [
+    {"item": "stance", "target": "Feet hip-width, knees soft, trunk upright and still.", "tolerance": "trunk lean 0-5 deg", "why": "S1 watched trunk and knee movement to stop cheating.", "source_ids": ["S1"], "grade": "B"},
+    {"item": "grip", "target": "Palm forward (supinated) the whole lift.", "tolerance": "handle within 15 deg of across-the-body", "why": "Library step; ACE palms up; the palm-up forearm is where the biceps pulls best (S2 reasoning).", "source_ids": ["S2", "S3"], "grade": "B"},
+    {"item": "free hand", "target": "Right fist on the right hip, elbow out to the side.", "tolerance": "visual", "why": "Library step; keeps the free arm out of the picture of the working arm.", "source_ids": ["S3"], "grade": "D"}
+  ],
+  "movement": [
+    {"joint": "left elbow", "measure": "bend, 0 = straight", "start": "13 deg (arm long, not locked)", "end": "124 deg (dumbbell near the shoulder)", "start_num": 13, "end_num": 124, "tolerance": "start 5-20; end 115-135", "source_ids": ["S1", "S3"], "grade": "B"},
+    {"joint": "left shoulder", "measure": "elev / plane: upper arm hanging, a little forward", "start": "7 / 56", "end": "7 / 56 (still, elbow by the side)", "start_num": 7, "end_num": 7, "tolerance": "elev 0-15 at both", "source_ids": ["S3"], "grade": "C"},
+    {"joint": "left forearm turn", "measure": "palm direction", "start": "forward (supinated)", "end": "up/toward the shoulder (supinated)", "start_num": 0, "end_num": 0, "tolerance": "no turn to thumb-up", "source_ids": ["S3"], "grade": "C"},
+    {"joint": "right arm (on hip)", "measure": "elev / plane / elbow", "start": "55 / -15 / about 96", "end": "same (still)", "start_num": 55, "end_num": 55, "tolerance": "+-5 deg", "source_ids": ["S3"], "grade": "D"},
+    {"joint": "trunk, hips, knees, wrist", "measure": "standing rest; wrist straight", "start": "upright", "end": "upright (no lean back)", "start_num": 0, "end_num": 0, "tolerance": "lean under 5 deg; wrist within 10 deg", "source_ids": ["S1"], "grade": "B"}
+  ],
+  "muscles": [
+    {"muscle": "Biceps", "anatomy": "Biceps brachii", "mask_key": "biceps", "tier": "primary", "glow": 1.0, "emg": "Main flexor measured in the alternating dumbbell curl at 65 % 1RM (S1); activity unchanged across hand positions in unloaded flexion (S2)", "role": "Bends the elbow and keeps the palm up; what the exercise is for.", "surface": "Front of the upper arm.", "source_ids": ["S1", "S2"], "grade": "A"},
+    {"muscle": "Brachioradialis (forearm)", "anatomy": "Brachioradialis", "mask_key": "forearms", "tier": "secondary", "glow": 0.35, "emg": "Active in every curl variant; lower in the dumbbell curl than bar curls (S1)", "role": "Helps bend the elbow.", "surface": "Thumb side of the upper forearm.", "source_ids": ["S1", "S2"], "grade": "A"},
+    {"muscle": "Brachialis", "anatomy": "Brachialis", "mask_key": "none", "tier": "deep", "glow": 0, "emg": "not measured", "role": "Elbow flexor under the biceps.", "surface": "Under the lower biceps.", "source_ids": ["S2"], "grade": "C"},
+    {"muscle": "Front delt", "anatomy": "Deltoideus, pars clavicularis", "mask_key": "front_delts", "tier": "stabiliser", "glow": 0, "emg": "not measured", "role": "Holds the upper arm by the side.", "surface": "Front of the shoulder.", "source_ids": ["S3"], "grade": "D"},
+    {"muscle": "Grip", "anatomy": "Finger flexors", "mask_key": "none", "tier": "stabiliser", "glow": 0, "emg": "not measured", "role": "Holds the handle.", "surface": "Inner forearm.", "source_ids": ["S3"], "grade": "D"}
+  ],
+  "tempo": null,
+  "mistakes": [
+    {"mistake": "Elbow drifting forward", "what_it_looks_like": "Upper arm swings forward at the top.", "why_it_matters": "Front delt takes load; ACE keeps elbows by the sides.", "source_ids": ["S3"]},
+    {"mistake": "Leaning back to swing the weight", "what_it_looks_like": "Trunk tips back, knees dip.", "why_it_matters": "Momentum, not the biceps; S1 policed it.", "source_ids": ["S1"]}
+  ],
+  "sources": [
+    {"id": "S1", "citation": "Marcolin G, et al. 2018. Differences in electromyographic activity of biceps brachii and brachioradialis while performing three variants of curl. PeerJ 6:e5165.", "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC6047503/fullTextXML", "type": "emg", "what_it_gave": "Standing alternating dumbbell curl vs straight and EZ bar, 65 % 1RM, 3 s reps, elbow range 123 +- 12 deg; trunk and knees policed; EZ > dumbbell for brachioradialis."},
+    {"id": "S2", "citation": "Kleiber T, et al. 2015. Front Physiol 6:215, doi 10.3389/fphys.2015.00215 (EMG of biceps brachii and brachioradialis in elbow flexion by hand position).", "url": "https://frontiersin.org/articles/10.3389/fphys.2015.00215/full", "type": "emg", "what_it_gave": "16 subjects, 0-130 deg flexion: biceps the same in all hand positions; brachioradialis share higher only when pronated; supinated = neutral."},
+    {"id": "S3", "citation": "American Council on Exercise. Exercise Library: Standing Bicep Curl.", "url": "https://www.acefitness.org/resources/everyone/exercise-library/322/standing-bicep-curl/", "type": "guideline", "what_it_gave": "Palms up, elbows close to the sides, hands to the shoulders, lower slowly."}
+  ],
+  "clip_check": [
+    {"check": "Left elbow bend start / end", "target": "13 (5-20) / 124 (115-135)", "measured": "", "pass": "", "tool": "measure_pose.py"},
+    {"check": "Left upper arm still by the side (elev both pictures)", "target": "0-15 deg", "measured": "", "pass": "", "tool": "measure_pose.py"},
+    {"check": "Palm forward / up, no forearm twist", "target": "wrist twist under 20 deg", "measured": "", "pass": "", "tool": "measure_twist.py"},
+    {"check": "Dumbbell clear of the thigh at the start", "target": "gap >= 0", "measured": "", "pass": "", "tool": "render, look"},
+    {"check": "Right fist resting on the hip (not floating, not inside)", "target": "0-2 cm from the skin", "measured": "", "pass": "", "tool": "render, look"},
+    {"check": "Feet flat on the floor", "target": "-0.002..+0.002 m", "measured": "", "pass": "", "tool": "probe_feet.py"},
+    {"check": "Biceps is the strongest red in both pictures", "target": "yes", "measured": "", "pass": "", "tool": "render, crop"}
+  ]
+}

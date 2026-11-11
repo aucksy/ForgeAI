@@ -1,0 +1,28 @@
+{
+  "key": "waiter_curl",
+  "name": "Waiter Curl",
+  "primary": ["biceps"],
+  "secondary": ["forearms"],
+  "props": {"db_L": {"type": "dumbbell"}},
+  "camera": {"yaw": -50, "pitch": 8, "lens": 50, "fill": 0.9, "res": 640, "samples": 20},
+  "timing": {"fps": 30, "keys": [[0, "start"], [1, "end"], [2, "start"]]},
+  "poses": {
+    "start": {
+      "feet": {"L": {"at": [0.13, -0.01, 0.074], "rot": [0, 0, 6]}, "R": {"at": [-0.13, -0.01, 0.074], "rot": [0, 0, -6]}},
+      "knees": {"L": [0.16, -1.0, 0.52], "R": [-0.16, -1.0, 0.52]},
+      "hands": {
+        "L": {"prop": "db_L", "axis": [0, 0, 1], "arm": {"elev": 8, "plane": 60, "fore_world": [-0.563, -0.429, -0.709], "tilt": 0}},
+        "R": {"axis": [0, 0, 1], "arm": {"elev": 8, "plane": 60, "fore_world": [0.563, -0.429, -0.709], "tilt": 0}}
+      }
+    },
+    "end": {
+      "feet": {"L": {"at": [0.13, -0.01, 0.074], "rot": [0, 0, 6]}, "R": {"at": [-0.13, -0.01, 0.074], "rot": [0, 0, -6]}},
+      "knees": {"L": [0.16, -1.0, 0.52], "R": [-0.16, -1.0, 0.52]},
+      "hands": {
+        "L": {"prop": "db_L", "axis": [0, 0, 1], "arm": {"elev": 12, "plane": 70, "fore_world": [-0.586, -0.686, 0.435], "tilt": 0}},
+        "R": {"axis": [0, 0, 1], "arm": {"elev": 12, "plane": 70, "fore_world": [0.586, -0.686, 0.435], "tilt": 0}}
+      }
+    }
+  },
+  "research": "One upright dumbbell (handle vertical, axis +z) on db_L; the right hand sits beside it with no prop, mirror-symmetric arm angles (fore_world is world and not mirrored, so R is written with x flipped). Fists aimed at x = +-0.045 so the two hands meet at the midline. Torso frame, upper arm 0.27, forearm+hand 0.33, left shoulder (0.22, 0, 0). START: elev 8 plane 60 -> elbow (0.238, 0.033, -0.267); fist target (0.045, 0.18, -0.51) -> forearm (-0.193, 0.147, -0.243)/0.343 = (-0.563, 0.429, -0.709) torso = world (-0.563, -0.429, -0.709); elbow bend 43 deg; fist ~world (0.045, -0.20, 0.93), bottom plate ~0.10 m in front of the thigh line. END: elev 12 plane 70 -> elbow (0.239, 0.053, -0.264); fist target (0.045, 0.28, -0.12) -> forearm (-0.586, 0.686, 0.435) torso = world (-0.586, -0.686, 0.435); elbow bend ~110 deg; fist ~world (0.045, -0.30, 1.32) = chest height. Elbows stay by the sides (elev 8-12). Known limit: a vertical handle is 45 deg (start) / 26 deg (end) off square to the forearm, so the wrists bend back; that matches the real palms-up hold but must be looked at. Sources: S1 Marcolin 2018, S2 Kleiber 2015, S3 ACE curl cues. Facts: research/waiter_curl.json."
+}

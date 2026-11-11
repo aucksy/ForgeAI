@@ -1,0 +1,24 @@
+{
+  "key": "incline_y_raise",
+  "name": "Incline Y-Raise",
+  "primary": ["upper_back"],
+  "secondary": ["traps", "rear_delts", "side_delts"],
+  "scene": {"bench": {"deg": 30, "loc": [0, 0, 0], "rot_z": 180}},
+  "props": {"db_L": {"type": "dumbbell"}, "db_R": {"type": "dumbbell"}},
+  "camera": {"yaw": -72, "pitch": 18, "lens": 50, "fill": 0.9, "res": 640, "samples": 20},
+  "timing": {"fps": 30, "keys": [[0, "start"], [1, "end"], [2, "start"]]},
+  "defaults": {
+    "root": {"loc": [0, -0.166, 0.732], "rot": [60, 0, 0]},
+    "feet": {"L": {"at": [0.45, 0.25, 0.074], "rot": [0, 0, 25]}},
+    "knees": {"L": [0.75, 0.0, 0.0]}
+  },
+  "poses": {
+    "start": {
+      "hands": {"L": {"prop": "db_L", "axis": [0, 0.5, 0.866], "arm": {"elev": 60, "plane": 88, "elbow": 8, "bend": [0, 0, 1], "tilt": 0}}}
+    },
+    "end": {
+      "hands": {"L": {"prop": "db_L", "axis": [0, -1, 0], "arm": {"elev": 140, "plane": 5, "elbow": 8, "bend": [0, 1, 0], "tilt": 0}}}
+    }
+  },
+  "research": "Same body-on-bench as chest_supported_reverse_fly: bench 30 deg rot_z 180, root rot X +60, pelvis joint at pad s=0.30 + 0.17 m along the pad normal = (0,-0.166,0.732); straddle feet (+-0.45,0.25,0.074) so the thighs clear the seat. Start: world-down in torso frame = elev 60, plane 90 (arms hang). End: elev 140, plane 5 -> arm direction in torso (0.62,0.06,0.77): 39 deg out from the head line and ~3 deg toward the floor from the torso plane = a Y level with the body (Ekstrom 2003: prone overhead raise in line with lower trap). Thumbs: start axis [0,0.5,0.866] (thumb toward the head), end axis [0,-1,0] (thumb up, away from the floor). Elbows ~straight (8). Light dumbbells. Facts and checks: research/incline_y_raise.json."
+}

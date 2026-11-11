@@ -1,0 +1,24 @@
+{
+  "key": "reverse_hyperextension",
+  "name": "Reverse Hyperextension",
+  "primary": ["glutes"],
+  "secondary": ["hamstrings", "lower_back"],
+  "scene": {"box": {"size": [0.45, 0.95, 1.0], "loc": [0, -0.575, 0]}},
+  "camera": {"yaw": -88, "pitch": 10, "lens": 50, "fill": 0.9, "res": 640, "samples": 20},
+  "timing": {"fps": 30, "keys": [[0, "start"], [1, "end"], [2, "start"]]},
+  "defaults": {
+    "root": {"loc": [0, 0, 1.18], "rot": [90, 0, 0]},
+    "hands": {"L": {"axis": [0, 0, 1], "arm": {"elev": 105, "plane": 80, "elbow": 95, "bend_world": [0, 0, 1], "tilt": 0}}}
+  },
+  "poses": {
+    "start": {
+      "feet": {"L": {"at": [0.13, 0.225, 0.279], "rot": [30, 0, 0]}},
+      "knees": {"L": [0.13, -1.0, 0.65]}
+    },
+    "end": {
+      "feet": {"L": {"at": [0.13, 0.877, 1.14], "rot": [120, 0, 0]}},
+      "knees": {"L": [0.13, 0.55, -0.5]}
+    }
+  },
+  "research": "No high bench prop, so a 0.45 x 0.95 x 1.0 m box is the 'high bench' (y -1.05..-0.10, top z 1.0). Face down: root rot X +90 (head toward -Y). Chest front ~0.18 m ahead of the pelvis joint -> root z 1.0+0.18 = 1.18, y 0; hip joints = root + Rx(90)(+-0.11,-0.051,0.003) = (+-0.11,-0.003,1.129), 0.097 m past the box end so the thigh front (~0.08) clears the end face. Start: legs 15 deg behind vertical, 0.88 m hip-ankle -> ankle (0.13,0.225,0.279); foot rot X 30 (neutral for that leg tilt is 15, +15 pointed) -> toe tip ~0.13 above floor. End: legs level, ankle (0.13,0.877,1.14) = 1 cm above the hip line; foot rot X 120 = toes pointing back/down, pointed. Knee pole: anterior faces -Y when hanging, -Z when level. Hands hold the box sides: upper arm elev 105 / plane 80 (down and toward the head), elbow 95, forearm folds up (bend_world up) so the hand sits at the side near the top edge, no prop. Lawrence 2019 (hip ROM 76.6 deg in RHE) -> 75 deg start. Facts and checks: research/reverse_hyperextension.json."
+}

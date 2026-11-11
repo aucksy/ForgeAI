@@ -1,0 +1,55 @@
+{
+  "format": "v1-stills",
+  "exercise": {
+    "key": "suitcase_carry",
+    "name": "Suitcase Carry",
+    "equipment": "dumbbell",
+    "library_primary": ["obliques"],
+    "library_secondary": ["forearms", "traps", "abs"],
+    "library_steps": ["Hold one heavy dumbbell at your side, other arm free.", "Walk tall without leaning toward the weight.", "Set it down, then carry it the same distance in the other hand."],
+    "status": "draft",
+    "version": null,
+    "researched_on": "2026-11-11",
+    "one_line_summary": "Walking tall with one heavy dumbbell hanging in the left hand and the right arm free; the trunk stays upright and level instead of leaning toward the weight. Picture 1: left foot forward; picture 2: right foot forward.",
+    "evidence_grade": "B"
+  },
+  "setup": [
+    {"item": "load", "target": "One dumbbell in one hand (left in the pictures), arm straight at the side, palm in.", "tolerance": "dumbbell clear of the thigh", "why": "Library step.", "source_ids": ["S1", "S2"], "grade": "A"},
+    {"item": "posture", "target": "Tall and level: shoulders level, no lean toward or away from the weight.", "tolerance": "side-bend under 5 deg", "why": "The side opposite the load must hold the trunk up; that is the training effect (S2).", "source_ids": ["S1", "S2"], "grade": "A"},
+    {"item": "free arm", "target": "Right arm hanging relaxed, a little away from the side.", "tolerance": "elev 0-20", "why": "Library: other arm free.", "source_ids": ["S3"], "grade": "D"}
+  ],
+  "movement": [
+    {"joint": "front leg (left in picture 1)", "measure": "ankle / knee", "start": "ankle 0.15 m in front of the hip, foot flat, knee ~13 deg", "end": "(mirrored in picture 2)", "start_num": 13, "end_num": 13, "tolerance": "knee 0-20", "source_ids": ["S1"], "grade": "D"},
+    {"joint": "back leg (right in picture 1)", "measure": "ankle / knee / heel", "start": "ankle 0.17 m behind the hip, heel up ~15 deg, knee ~36 deg", "end": "(mirrored in picture 2)", "start_num": 36, "end_num": 36, "tolerance": "knee 20-45", "source_ids": ["S1"], "grade": "D"},
+    {"joint": "left (loaded) arm", "measure": "elev / elbow", "start": "10 / 5 (straight, clear of the thigh)", "end": "same", "start_num": 10, "end_num": 10, "tolerance": "elev 5-15", "source_ids": ["S3"], "grade": "D"},
+    {"joint": "right (free) arm", "measure": "elev / elbow", "start": "12 / 10 (hanging, a little out)", "end": "same", "start_num": 12, "end_num": 12, "tolerance": "elev 0-20", "source_ids": ["S3"], "grade": "D"},
+    {"joint": "trunk", "measure": "side-bend and lean", "start": "0 (upright, level shoulders)", "end": "0", "start_num": 0, "end_num": 0, "tolerance": "under 5 deg; peak lateral bend in S1 one-hand carries was small (~5 deg)", "source_ids": ["S1"], "grade": "A"}
+  ],
+  "muscles": [
+    {"muscle": "Obliques (side opposite the load)", "anatomy": "Obliquus externus and internus abdominis", "mask_key": "obliques", "tier": "primary", "glow": 1.0, "emg": "30 kg in the right hand: left external oblique 47.3 % MVC, left internal oblique 32.5 % vs 3.9 % / 6.1 % with 15 kg in each hand (S2)", "role": "Hold the trunk upright against the one-sided pull; what the exercise is for. (The mask lights both sides.)", "surface": "Side of the waist between ribs and hip bone.", "source_ids": ["S1", "S2"], "grade": "A"},
+    {"muscle": "Rectus abdominis", "anatomy": "Rectus abdominis", "mask_key": "abs", "tier": "secondary", "glow": 0.35, "emg": "Left rectus 26.0 % MVC at 30 kg in the right hand (S2), 55 % of the top oblique", "role": "Co-stiffens the trunk.", "surface": "Front of the belly.", "source_ids": ["S2"], "grade": "A"},
+    {"muscle": "Forearm grip", "anatomy": "Finger flexors", "mask_key": "forearms", "tier": "secondary", "glow": 0.35, "emg": "Not measured in S1/S2", "role": "Holds the dumbbell; library secondary.", "surface": "Inner forearm (loaded side).", "source_ids": ["S3"], "grade": "D"},
+    {"muscle": "Upper trapezius", "anatomy": "Trapezius, pars descendens", "mask_key": "traps", "tier": "secondary", "glow": 0.35, "emg": "Not measured in S1/S2", "role": "Keeps the loaded shoulder from being pulled down; library secondary.", "surface": "Top of the shoulder.", "source_ids": ["S1"], "grade": "D"},
+    {"muscle": "Quadratus lumborum", "anatomy": "Quadratus lumborum", "mask_key": "none", "tier": "deep", "glow": 0, "emg": "Modelled (S1); with the lateral abdominal wall it holds the pelvis level (S1, S2 discussion)", "role": "Lateral trunk support.", "surface": "Deep low back.", "source_ids": ["S1", "S2"], "grade": "B"},
+    {"muscle": "Low-back extensors", "anatomy": "Erector spinae", "mask_key": "lower_back", "tier": "stabiliser", "glow": 0, "emg": "Left lumbar ES 25.3 % MVC at 30 kg right-hand carry (S2)", "role": "Hold the spine upright.", "surface": "Either side of the lower spine.", "source_ids": ["S2"], "grade": "A"},
+    {"muscle": "Gluteus medius", "anatomy": "Gluteus medius", "mask_key": "glutes", "tier": "stabiliser", "glow": 0, "emg": "Measured in S1", "role": "Holds the pelvis level on the stance leg.", "surface": "Upper outer buttock.", "source_ids": ["S1", "S3"], "grade": "C"}
+  ],
+  "tempo": null,
+  "mistakes": [
+    {"mistake": "Leaning toward the weight", "what_it_looks_like": "Loaded shoulder drops, trunk bends to that side.", "why_it_matters": "Library step 2; the trunk muscles stop working against the load.", "source_ids": ["S1", "S2"]},
+    {"mistake": "Leaning far away / hiking the free arm out", "what_it_looks_like": "Trunk tips away, free arm held out wide.", "why_it_matters": "Counter-balance replaces trunk strength.", "source_ids": ["S1"]}
+  ],
+  "sources": [
+    {"id": "S1", "citation": "McGill SM, McDermott A, Fenwick CMJ. 2009. Comparison of different strongman events: trunk muscle activation and lumbar spine motion, load, and stiffness. J Strength Cond Res 23(4):1148-1161.", "url": "https://instituteofmotion.com/wp-content/uploads/2018/03/Trunk-Activation-Strong-Man.pdf", "type": "emg", "what_it_gave": "Left- and right-hand suitcase carries (~37-42 kg bar): trunk EMG, spine motion (small lateral bend, larger twist with a waddling gait); quadratus lumborum and abdominal wall hold the pelvis."},
+    {"id": "S2", "citation": "McGill SM, Marshall L, Andersen J. 2013. Low back loads while walking and carrying: comparing the load carried in one hand or in both hands. Ergonomics 56(2):293-302.", "url": "https://www.backfitpro.com/medical-scientific-articles/2013/[48]McGill,S.(2013)Low-back-loads-while-walking-and-carrying[Ergonomics].pdf", "type": "emg", "what_it_gave": "Table 3: one-hand 30 kg vs both-hands 15+15 kg EMG; opposite-side external oblique 47.3 vs 3.9 % MVC; L4/L5 compression 2874 vs 1628 N."},
+    {"id": "S3", "citation": "McCall P. 2014. Strongman training for your clients. ACE ProSource.", "url": "https://www.acefitness.org/continuing-education/prosource/equipment-special-issue/4994/strongman-training-for-your-clients/", "type": "guideline", "what_it_gave": "Suitcase carry = heavy weight on one side, walked a set distance; internal oblique, quadratus lumborum, gluteus medius stabilise the pelvis."}
+  ],
+  "clip_check": [
+    {"check": "Shoulders level, no side-bend toward the dumbbell", "target": "under 5 deg", "measured": "", "pass": "", "tool": "measure_pose.py"},
+    {"check": "Only the left hand holds a dumbbell; right hand open/relaxed", "target": "yes", "measured": "", "pass": "", "tool": "render, look"},
+    {"check": "Front foot flat, back foot on its ball", "target": "-0.002..+0.002 m", "measured": "", "pass": "", "tool": "probe_feet.py"},
+    {"check": "Dumbbell clear of the thigh", "target": "gap >= 0", "measured": "", "pass": "", "tool": "render, look"},
+    {"check": "Picture 2 is the mirror step", "target": "yes", "measured": "", "pass": "", "tool": "render, look"},
+    {"check": "Obliques are the strongest red in both pictures", "target": "yes", "measured": "", "pass": "", "tool": "render, crop"}
+  ]
+}

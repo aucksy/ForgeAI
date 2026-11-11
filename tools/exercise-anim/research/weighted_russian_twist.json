@@ -1,0 +1,55 @@
+{
+  "format": "v1-stills",
+  "exercise": {
+    "key": "weighted_russian_twist",
+    "name": "Weighted Russian Twist",
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "library_primary": ["obliques"],
+    "library_secondary": ["abs"],
+    "steps": [
+      "Sit with knees bent, lean back slightly and keep your back straight.",
+      "Hold a plate, dumbbell or medicine ball in front of your chest.",
+      "Turn your shoulders to bring the weight beside each hip in turn."
+    ],
+    "status": "draft",
+    "version": null,
+    "researched_on": "2026-11-11",
+    "one_line_summary": "Seated on the floor, knees bent ~90 deg, feet on the floor, trunk leaned back ~40 deg with a straight back, one dumbbell held at the chest. The shoulders turn ~45 deg to one side so the weight comes beside the hip; the hips and legs stay still. Obliques are the target, rectus abdominis holds the lean.",
+    "evidence_grade": "C"
+  },
+  "setup": [
+    {"item": "seat and lean", "target": "Sit on the floor, trunk leaned back about 40-45 deg from upright, back straight (not rounded).", "tolerance": "lean 30-45 deg", "why": "ACE V-twist: lean back to about 45 deg, straight back. Library: lean back slightly, back straight. 40 deg is the middle.", "source_ids": ["S2"], "grade": "C"},
+    {"item": "legs", "target": "Knees bent about 90 deg, feet flat on the floor (the easier, safer version; feet lifted is the harder version).", "tolerance": "knee 80-100 deg", "why": "ACE V-twist keeps knees ~90 deg; feet on the floor is the textbook beginner form.", "source_ids": ["S2"], "grade": "C"},
+    {"item": "load", "target": "One dumbbell held in front of the chest with both hands, elbows bent.", "tolerance": "weight 0.2-0.35 m in front of the chest", "why": "Library step 2.", "source_ids": ["S2"], "grade": "C"}
+  ],
+  "movement": [
+    {"joint": "trunk rotation (spine05..spine01 Y, summed)", "measure": "turn of the shoulders relative to the pelvis; 0 = square", "start": "0 deg (weight in front of the chest)", "end": "about 45 deg to his right (weight beside the right hip)", "start_num": 0, "end_num": -45, "path": "Shoulders and rib cage turn together; the turn comes from the trunk, not just the arms.", "tolerance": "end 35-60 deg", "source_ids": ["S1", "S2", "S3"], "grade": "C"},
+    {"joint": "trunk lean (root rot X)", "measure": "deg back from upright", "start": "40 deg", "end": "40 deg", "start_num": -40, "end_num": -40, "path": "Held; does not sit up or fall back as it turns.", "tolerance": "+-5 deg", "source_ids": ["S2"], "grade": "C"},
+    {"joint": "hips, knees, feet", "measure": "knee bend and foot position", "start": "knee 90 deg, feet flat", "end": "same", "start_num": 90, "end_num": 90, "path": "Still: the knees do not sway with the turn.", "tolerance": "knee 80-100 deg; feet do not slide", "source_ids": ["S2"], "grade": "C"},
+    {"joint": "arms", "measure": "elbow bend", "start": "~100 deg (weight at the chest)", "end": "left ~30 deg (reaching across), right ~100 deg", "start_num": 100, "end_num": 30, "path": "Arms carry the weight down beside the hip as the trunk turns.", "tolerance": "+-15 deg", "source_ids": ["S2"], "grade": "D"}
+  ],
+  "muscles": [
+    {"muscle": "Obliques (external and internal)", "anatomy": "Obliquus externus and internus abdominis", "mask_key": "obliques", "tier": "primary", "glow": 1.0, "emg": "No study measured the Russian twist itself (searched). Closest: curl-up with twist IO 57.3% MVIC vs 61.7% without twist (Crommert, in S1); standing band torso-twist recorded EO in S3 (values in a figure only).", "role": "Turn the rib cage on the pelvis; what the exercise is for (library primary).", "surface": "Sides of the waist, from the lower ribs down to the hip bone, angled toward the belly.", "source_ids": ["S1", "S3"], "grade": "B"},
+    {"muscle": "Abs (rectus abdominis)", "anatomy": "Rectus abdominis", "mask_key": "abs", "tier": "secondary", "glow": 0.35, "emg": "Holds the trunk leaned back against gravity; V-sit hold reaches ~80% MVIC RA (Maeo, in S1).", "role": "Holds the lean (anti-extension) while the obliques turn.", "surface": "Vertical bands down the front of the belly.", "source_ids": ["S1"], "grade": "B"},
+    {"muscle": "Hip flexors", "anatomy": "Iliopsoas, rectus femoris", "mask_key": "none", "tier": "stabiliser", "glow": 0, "emg": "Not measured for this exercise.", "role": "Hold the leaned-back hip angle.", "surface": "Front of the hip.", "source_ids": ["S2"], "grade": "D"}
+  ],
+  "tempo": null,
+  "mistakes": [
+    {"mistake": "Rounding the back", "what_it_looks_like": "Shoulders slump forward, the trunk is a C instead of a straight lean.", "why_it_matters": "ACE asks for a straight back; slumping loads the spine and takes the lean off the abs.", "source_ids": ["S2"]},
+    {"mistake": "Swinging only the arms", "what_it_looks_like": "The weight moves side to side but the chest stays square.", "why_it_matters": "The obliques turn the trunk; arm swinging misses the point.", "source_ids": ["S2"]}
+  ],
+  "sources": [
+    {"id": "S1", "citation": "Oliva-Lozano JM, Muyor JM. 2020. Core muscle activity during physical fitness exercises: a systematic review. Int J Environ Res Public Health 17(12):4306. doi:10.3390/ijerph17124306", "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7345922/", "type": "review", "what_it_gave": "Curl-up with/without twist IO 57.3/61.7% MVIC; V-sit RA ~80% MVIC."},
+    {"id": "S2", "citation": "American Council on Exercise. V-Twist (ACE Exercise Library).", "url": "https://acefitness.org/resources/everyone/exercise-library/305/v-twist", "type": "guideline", "what_it_gave": "Lean back ~45 deg, knees ~90 deg, straight back, rotate shoulders side to side."},
+    {"id": "S3", "citation": "Calatayud J, Escriche-Escuder A, Cruz-Montecinos C, et al. 2019. Tolerability and muscle activity of core muscle exercises in chronic low-back pain. Int J Environ Res Public Health 16(19):3509. doi:10.3390/ijerph16193509", "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6801665/", "type": "emg", "what_it_gave": "Torso-twist (trunk rotation with hips still) recorded with RA/EO EMG; rotation with legs and hips still."}
+  ],
+  "clip_check": [
+    {"check": "Start: shoulders square, weight centred at the chest", "target": "spine twist 0 deg", "measured": "", "pass": "", "tool": "measure_pose.py"},
+    {"check": "End: shoulders turned to his right", "target": "35-60 deg; weight beside the right hip, facing the camera side", "measured": "", "pass": "", "tool": "measure_pose.py + picture"},
+    {"check": "Trunk lean the same in both pictures", "target": "40 +-5 deg back", "measured": "", "pass": "", "tool": "measure_pose.py"},
+    {"check": "Buttocks and feet on the floor", "target": "lowest point -0.002..+0.002 m; feet flat", "measured": "", "pass": "", "tool": "probe_feet.py"},
+    {"check": "Back straight (no slump)", "target": "spine X bends under 5 deg each", "measured": "", "pass": "", "tool": "picture"},
+    {"check": "Primary muscle strongest red", "target": "obliques strongest red, abs lighter, in both pictures", "measured": "", "pass": "", "tool": "picture"}
+  ]
+}

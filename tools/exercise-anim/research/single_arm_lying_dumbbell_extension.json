@@ -1,0 +1,54 @@
+{
+  "format": "v1-stills",
+  "exercise": {
+    "key": "single_arm_lying_dumbbell_extension",
+    "name": "Single-Arm Lying Dumbbell Extension",
+    "equipment": "dumbbell",
+    "library_primary": ["triceps"],
+    "library_secondary": [],
+    "library_steps": [
+      "Lie on a flat bench holding one dumbbell straight above your shoulder.",
+      "Bend your elbow to lower the dumbbell beside your head.",
+      "Straighten your arm, finish your reps, then switch arms."
+    ],
+    "status": "draft",
+    "version": 1,
+    "researched_on": "2026-11-11",
+    "one_line_summary": "Lying flat, one arm straight up with the upper arm tipped ~10 deg toward the head; only the elbow bends (to ~100 deg) so the dumbbell comes down beside the head, palm facing in. Triceps does the work; the other hand rests on the stomach.",
+    "evidence_grade": "C"
+  },
+  "setup": [
+    {"item": "body on bench", "target": "Flat on the bench, head on the pad, feet flat on the floor.", "tolerance": "back gap -0.02..+0.02 m", "why": "Stable base; only the elbow should move.", "source_ids": ["S1"], "grade": "C"},
+    {"item": "working arm", "target": "Upper arm vertical or tipped up to ~10 deg toward the head, held still all set.", "tolerance": "elev 90-105 deg from the torso", "why": "Moving the upper arm turns it into a pullover; tipping back keeps the shoulder flexed, which lengthens the long head.", "source_ids": ["S1", "S2"], "grade": "C"},
+    {"item": "grip", "target": "Neutral (palm facing in), thumb toward the head at the top.", "tolerance": "none", "why": "Lets the dumbbell pass beside the head instead of over the face.", "source_ids": [], "grade": "D"},
+    {"item": "free arm", "target": "Rests on the stomach or holds the working upper arm.", "tolerance": "none", "why": "One-arm exercise; the free arm is not loaded.", "source_ids": [], "grade": "D"}
+  ],
+  "movement": [
+    {"joint": "elbow", "measure": "bend, 0 = straight", "start": "5 deg (straight, not locked)", "end": "100 deg (dumbbell beside the ear)", "start_num": 5, "end_num": 100, "tolerance": "end 90-115", "source_ids": ["S1", "S3"], "grade": "C"},
+    {"joint": "shoulder (elev / plane)", "measure": "stays still", "start": "100 / 90 deg", "end": "100 / 90 deg", "start_num": 100, "end_num": 100, "tolerance": "change < 5 deg", "source_ids": ["S1"], "grade": "C"},
+    {"joint": "trunk, legs, free arm", "measure": "stay still", "start": "flat", "end": "same", "start_num": 0, "end_num": 0, "tolerance": "none", "source_ids": [], "grade": "D"}
+  ],
+  "muscles": [
+    {"muscle": "Triceps brachii (all heads)", "mask_key": "triceps", "tier": "primary", "emg": "Lying extension reached 62% of the triangle push-up (S1). Shoulder-flexed (overhead) elbow extension grew the long head 1.5x more than a neutral arm (S2). The three heads activate alike at 60-120 deg elbow angles (S3).", "source_ids": ["S1", "S2", "S3"], "grade": "B"},
+    {"muscle": "Anterior deltoid / shoulder flexors", "mask_key": "front_delts", "tier": "stabiliser", "emg": "not measured; hold the upper arm up", "source_ids": [], "grade": "D"},
+    {"muscle": "Forearm flexors (grip)", "mask_key": "forearms", "tier": "stabiliser", "emg": "not measured", "source_ids": [], "grade": "D"}
+  ],
+  "tempo": null,
+  "mistakes": [
+    {"mistake": "Upper arm swings", "what_it_looks_like": "Elbow drops toward the head or the feet as the weight lowers.", "why_it_matters": "Shoulder takes over; the upper arm must stay still.", "source_ids": ["S1"]},
+    {"mistake": "Dumbbell lowered onto the face", "what_it_looks_like": "Weight comes down over the nose instead of beside the ear.", "why_it_matters": "Safety; library cue is beside the head.", "source_ids": []}
+  ],
+  "sources": [
+    {"id": "S1", "citation": "Boehler B, Porcari JP, Kline D, Hendrix CR, Foster C, Anders M. 2011. ACE-sponsored research: best triceps exercises. ACE Certified News, Aug 2011.", "url": "https://www.acefitness.org/certifiednewsarticle/1562/ace-sponsored-research-best-triceps-exercises", "type": "emg + coaching", "what_it_gave": "Triceps EMG as % of triangle push-up: kickbacks 87, dips 87, overhead extension 76, lying barbell extension 62. Upper arm kept stationary in every extension."},
+    {"id": "S2", "citation": "Maeo S, Wu Y, Huang M, et al. 2023. Triceps brachii hypertrophy is substantially greater after elbow extension training performed in the overhead versus neutral arm position. Eur J Sport Sci 23(7):1240-1250.", "url": "https://europepmc.org/article/MED/35819335", "type": "training", "what_it_gave": "Overhead arm: long head +28.5% vs +19.6% neutral; whole triceps +19.9% vs +13.9% after 12 weeks."},
+    {"id": "S3", "citation": "Akima H, Maeda H, Koike T, Ishida K. 2021. Effect of elbow joint angles on electromyographic activity versus force relationships of synergistic muscles of the triceps brachii. PLoS ONE 16(6):e0252644.", "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8174684/", "type": "emg", "what_it_gave": "Medial, lateral and long heads did not differ at 60, 90 or 120 deg elbow angles."}
+  ],
+  "clip_check": [
+    {"check": "Working upper arm same angle in both pictures", "target": "elev 100, plane 90, change < 5 deg", "measured": "", "pass": ""},
+    {"check": "Start elbow / end elbow", "target": "5 / 100 deg", "measured": "", "pass": ""},
+    {"check": "End dumbbell beside the head, not over the face or in the pad", "target": "clear by > 0.02 m", "measured": "", "pass": ""},
+    {"check": "Back on the pad, feet on the floor", "target": "probe_bench / probe_feet in range", "measured": "", "pass": ""},
+    {"check": "Free hand resting on the stomach, no prop", "target": "yes", "measured": "", "pass": ""},
+    {"check": "Triceps strongest red in both pictures", "target": "yes", "measured": "", "pass": ""}
+  ]
+}

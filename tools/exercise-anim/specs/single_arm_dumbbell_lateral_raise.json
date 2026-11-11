@@ -1,0 +1,31 @@
+{
+  "key": "single_arm_dumbbell_lateral_raise",
+  "name": "Single-Arm Dumbbell Lateral Raise",
+  "primary": ["side_delts"],
+  "secondary": ["traps"],
+  "scene": {"box": {"size": [0.05, 0.05, 1.6], "loc": [-0.735, -0.246, 0]}},
+  "props": {"db_L": {"type": "dumbbell"}},
+  "camera": {"yaw": 30, "pitch": 8, "lens": 50, "fill": 0.9, "res": 640, "samples": 20},
+  "timing": {"fps": 30, "keys": [[0, "start"], [1, "end"], [2, "start"]]},
+  "poses": {
+    "start": {
+      "feet": {"L": {"at": [0.13, -0.01, 0.074], "rot": [0, 0, 6]}, "R": {"at": [-0.13, -0.01, 0.074], "rot": [0, 0, -6]}},
+      "knees": {"L": [0.16, -1.0, 0.52], "R": [-0.16, -1.0, 0.52]},
+      "hands": {
+        "L": {"prop": "db_L", "axis": [0, 1, 0], "arm": {"elev": 8, "plane": 20, "elbow": 15, "bend": [0, 1, -0.2], "tilt": 0}},
+        "R": {"axis": [0, 0, 1], "arm": {"elev": 70, "plane": 15, "elbow": 15, "bend": [0, 1, 0], "tilt": 0}}
+      },
+      "bones": {"clavicle.L": [0, 0, 0], "clavicle.R": [0, 0, 0]}
+    },
+    "end": {
+      "feet": {"L": {"at": [0.13, -0.01, 0.074], "rot": [0, 0, 6]}, "R": {"at": [-0.13, -0.01, 0.074], "rot": [0, 0, -6]}},
+      "knees": {"L": [0.16, -1.0, 0.52], "R": [-0.16, -1.0, 0.52]},
+      "hands": {
+        "L": {"prop": "db_L", "axis": [0, 1, 0.15], "arm": {"elev": 88, "plane": 20, "elbow": 18, "bend": [0, 1, 0], "tilt": 18}},
+        "R": {"axis": [0, 0, 1], "arm": {"elev": 70, "plane": 15, "elbow": 15, "bend": [0, 1, 0], "tilt": 0}}
+      },
+      "bones": {"clavicle.L": [0, 0, 5], "clavicle.R": [0, 0, 0]}
+    }
+  },
+  "research": "Working (left) arm copies the owner-approved lateral_raise angles: start elev 8 / plane 20 / elbow 15, end elev 88 / plane 20 / elbow 18, tilt 0 -> 18, collarbone 0 -> 5 (S1 Campos 2020: side 30.3, rear 24.0, front 21.2 % MVIC; S2 ACE: to shoulder height, elbows soft and leading, shoulder blades down). Right hand grips an upright post (library step), arm held still: elev 70, plane 15, elbow 15 forward. Post position arithmetic (torso frame, upper arm 0.27 m, forearm+hand to fist centre 0.33 m): du = (-sin70 cos15, sin70 sin15, -cos70) = (-0.908, 0.243, -0.342); fold = (0.228, 0.970, 0.086); forearm = du cos15 + fold sin15 = (-0.818, 0.486, -0.308); fist = shoulder R (-0.22, 0, 0) + 0.27 du + 0.33 forearm = (-0.735, 0.226, -0.194) -> world (x, -0.02 - y, 1.44 + z) = (-0.735, -0.246, 1.246). Post = box 0.05 x 0.05 x 1.6 m standing on the floor under that point. Post hand axis vertical (thumb up), 18 deg off square to the forearm (forearm z -0.308). Feet standing rest (ankles +-0.13, z 0.074). Camera yaw +30 so the working arm faces the camera. Facts: research/single_arm_dumbbell_lateral_raise.json."
+}

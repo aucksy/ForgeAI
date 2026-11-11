@@ -1,0 +1,26 @@
+{
+  "key": "dumbbell_step_up",
+  "name": "Dumbbell Step-Up",
+  "primary": ["quads"],
+  "secondary": ["glutes", "hamstrings"],
+  "scene": {"box": {"size": [0.7, 0.45, 0.40], "loc": [0, -0.56, 0]}},
+  "props": {"db_L": {"type": "dumbbell"}, "db_R": {"type": "dumbbell"}},
+  "camera": {"yaw": -80, "pitch": 12, "lens": 50, "fill": 0.9, "res": 640, "samples": 20},
+  "timing": {"fps": 30, "keys": [[0, "start"], [1, "end"], [2, "start"]]},
+  "defaults": {
+    "hands": {"L": {"prop": "db_L", "axis": [0, 1, 0], "arm": {"elev": 10, "plane": 10, "elbow": 10, "bend": [0, 1, 0], "tilt": 0}}}
+  },
+  "poses": {
+    "start": {
+      "root": {"loc": [0, 0.051, 0.965], "rot": [8, 0, 0]},
+      "feet": {"L": {"at": [0.13, -0.45, 0.474], "rot": [0, 0, 4]}, "R": {"at": [-0.13, 0.02, 0.074], "rot": [0, 0, -6]}},
+      "knees": {"L": [0.16, -1.3, 0.95], "R": [-0.16, -1.0, 0.52]}
+    },
+    "end": {
+      "root": {"loc": [0, -0.384, 1.372], "rot": [0, 0, 0]},
+      "feet": {"L": {"at": [0.13, -0.45, 0.474], "rot": [0, 0, 4]}, "R": {"at": [-0.13, -0.45, 0.474], "rot": [0, 0, -4]}},
+      "knees": {"L": [0.16, -1.4, 0.92], "R": [-0.16, -1.4, 0.92]}
+    }
+  },
+  "research": "Box 0.40 m high (Muyor 2020 used 40 cm; knee ~90 deg with foot on top), y -0.785..-0.335. Start: left ankle on box at z 0.074+0.40=0.474, y -0.45 (heel ~-0.40, toes ~-0.60, all on the box); hips at z 0.962, y 0 -> hip L to ankle L = 0.66 m -> knee ~84 deg, thigh near level, shin near vertical. Right ankle on floor (-0.13,0.02,0.074): hip-ankle 0.89 m -> knee ~18 deg. Pelvis joint = hip centre + (0,0.051,-0.003) = (0,0.051,0.965), trunk 8 deg forward. End: both ankles on box at y -0.45, z 0.474; pelvis = ankle + rest offset (0,0.066,0.897) + 0.40 -> (0,-0.384,1.372), legs ~straight (hip-ankle 0.895). Arms hang, palms in (ACE). EMG: quads highest (Muyor 2020 PMC7112217), glut max 54.7% MVIC forward step-up (Boren 2011 PMC3201064). Facts and checks: research/dumbbell_step_up.json."
+}

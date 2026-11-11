@@ -1,0 +1,34 @@
+{
+  "key": "single_arm_lying_dumbbell_extension",
+  "name": "Single-Arm Lying Dumbbell Extension",
+  "primary": ["triceps"],
+  "secondary": [],
+  "scene": {"bench": {"deg": 0}},
+  "props": {"db_L": {"type": "dumbbell"}},
+  "camera": {"yaw": 70, "pitch": 18, "lens": 50, "fill": 0.9, "res": 640, "samples": 20},
+  "timing": {"fps": 30, "keys": [[0, "start"], [1, "end"], [2, "start"]]},
+  "defaults": {
+    "bones": {"spine05": [-7, 0, 0], "spine04": [-7, 0, 0], "spine03": [-7, 0, 0], "spine02": [-6, 0, 0], "neck01": [8, 0, 0], "head": [6, 0, 0]}
+  },
+  "poses": {
+    "start": {
+      "root": {"loc": [0, 0.05, 0.55], "rot": [-98, 0, 0]},
+      "feet": {"L": {"at": [0.3, -0.4, 0.075], "rot": [0, 0, 15]}},
+      "knees": {"L": [0.55, -1.0, 0.9]},
+      "hands": {
+        "L": {"prop": "db_L", "axis": [0, -0.17, 0.98], "arm": {"elev": 100, "plane": 90, "elbow": 5, "bend": [0, 0, 1], "tilt": 0}},
+        "R": {"axis": [0, 0, 1], "arm": {"elev": 25, "plane": 50, "elbow": 80, "bend": [-0.7, 0.7, 0], "tilt": 0}}
+      }
+    },
+    "end": {
+      "root": {"loc": [0, 0.05, 0.55], "rot": [-98, 0, 0]},
+      "feet": {"L": {"at": [0.3, -0.4, 0.075], "rot": [0, 0, 15]}},
+      "knees": {"L": [0.55, -1.0, 0.9]},
+      "hands": {
+        "L": {"prop": "db_L", "axis": [0, -0.94, -0.34], "arm": {"elev": 100, "plane": 90, "elbow": 100, "bend": [0, 0, 1], "tilt": 0}},
+        "R": {"axis": [0, 0, 1], "arm": {"elev": 25, "plane": 50, "elbow": 80, "bend": [-0.7, 0.7, 0], "tilt": 0}}
+      }
+    }
+  },
+  "research": "Same flat-bench body as neutral_grip_dumbbell_press (root (0,0.05,0.55) rot -98 = face-up + the proven 8 deg extra, spine -7/-7/-7/-6; root z = pad 0.44 + ~0.11, estimate, tune with probe_bench). Left arm works (camera yaw +70 = his left side). Upper arm elev 100 / plane 90 = straight up out of the chest, tipped 10 deg toward the head, both poses. du = (0, sin100, -cos100) = (0, 0.985, 0.174); fold toward the head (bend [0,0,1]). Elbow 5 -> 100: elbow at S + 0.29 du = (0.22, 0.29, 0.05); forearm = du cos100 + bperp sin100 = (0, -0.34, 0.94); hand = E + 0.33 fore = (0.22, 0.17, 0.36) torso = beside the ear, 0.17 above the shoulder line. Neutral handle = the fold direction, square to the forearm: start bperp (0, -0.17, 0.98); end rotated 100 deg = (0, -0.94, -0.34) (handle nearly vertical beside the head). Right hand (no prop) rests on the stomach: elev 25, plane 50, elbow 80 folded toward the midline. S1 Boehler 2011 (ACE, upper arm still), S2 Maeo 2023 (shoulder-flexed position), S3 Akima 2021."
+}

@@ -1,0 +1,25 @@
+{
+  "key": "seated_hammer_curl",
+  "name": "Seated Hammer Curl",
+  "primary": ["biceps"],
+  "secondary": ["forearms"],
+  "scene": {"bench": {"deg": 85}},
+  "props": {"db_L": {"type": "dumbbell"}, "db_R": {"type": "dumbbell"}},
+  "camera": {"yaw": -50, "pitch": 10, "lens": 50, "fill": 0.9, "res": 640, "samples": 20},
+  "timing": {"fps": 30, "keys": [[0, "start"], [1, "end"], [2, "start"]]},
+  "poses": {
+    "start": {
+      "root": {"loc": [0, -0.035, 0.494], "rot": [-6, 0, 0]},
+      "feet": {"L": {"at": [0.37, -0.58, 0.075], "rot": [0, 0, 18]}},
+      "knees": {"L": [0.62, -1.0, 0.9]},
+      "hands": {"L": {"prop": "db_L", "axis": [0, 1, 0], "arm": {"elev": 10, "plane": 10, "elbow": 5, "bend": [0, 1, 0], "tilt": 0}}}
+    },
+    "end": {
+      "root": {"loc": [0, -0.035, 0.494], "rot": [-6, 0, 0]},
+      "feet": {"L": {"at": [0.37, -0.58, 0.075], "rot": [0, 0, 18]}},
+      "knees": {"L": [0.62, -1.0, 0.9]},
+      "hands": {"L": {"prop": "db_L", "axis": [0, -0.57, 0.82], "arm": {"elev": 15, "plane": 15, "elbow": 125, "bend": [0, 1, 0], "tilt": 0}}}
+    }
+  },
+  "research": "Seated body copied from the proven dumbbell_shoulder_press: bench 85 deg, root (0,-0.035,0.494) rot -6, feet (+-0.37,-0.58), knees pole (0.62,-1,0.9). Shoulder ~ (0.22,-0.06,0.97) world. Start elev 10 / plane 10, elbow 5: hand x = 0.22 + 0.6 sin10 cos10 = 0.32, z = 0.97 - 0.59 = 0.38, so the neutral dumbbell (plates along Y, r 0.088) spans x 0.23-0.41: clear of the seat (half-width 0.15) and the thigh root (~0.20). Neutral axis [0,1,0] = thumbs forward. End elev 15 / plane 15 (<= 10 deg elbow drift), elbow 125 folding forward (bend [0,1,0]). Thumb turns with the forearm: [0,1,0] rotated 125 deg about X in the down->forward sense = (0, cos125, sin125) = [0, -0.57, 0.82] (thumb up and back). S1 Coratella 2023 (neutral vs supinated EMG, arm parallel to trunk), S2 Oliveira 2009 (curl range)."
+}

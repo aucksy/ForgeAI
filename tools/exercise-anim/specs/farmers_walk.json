@@ -1,0 +1,28 @@
+{
+  "key": "farmers_walk",
+  "name": "Farmer's Walk",
+  "primary": ["forearms", "traps"],
+  "secondary": ["abs", "glutes"],
+  "props": {"db_L": {"type": "dumbbell"}, "db_R": {"type": "dumbbell"}},
+  "camera": {"yaw": -70, "pitch": 10, "lens": 50, "fill": 0.9, "res": 640, "samples": 20},
+  "timing": {"fps": 30, "keys": [[0, "start"], [1, "end"], [2, "start"]]},
+  "poses": {
+    "start": {
+      "root": {"loc": [0, 0.056, 0.951], "rot": [0, 0, 0]},
+      "feet": {"L": {"at": [0.12, -0.15, 0.074], "rot": [0, 0, 4]}, "R": {"at": [-0.12, 0.17, 0.108], "rot": [15, 0, -4]}},
+      "knees": {"L": [0.16, -1.0, 0.52], "R": [-0.16, -1.0, 0.52]},
+      "hands": {
+        "L": {"prop": "db_L", "axis": [0, 1, 0], "arm": {"elev": 10, "plane": 0, "elbow": 5, "bend": [0, 1, 0], "tilt": 0}}
+      }
+    },
+    "end": {
+      "root": {"loc": [0, 0.056, 0.951], "rot": [0, 0, 0]},
+      "feet": {"L": {"at": [0.12, 0.17, 0.108], "rot": [15, 0, 4]}, "R": {"at": [-0.12, -0.15, 0.074], "rot": [0, 0, -4]}},
+      "knees": {"L": [0.16, -1.0, 0.52], "R": [-0.16, -1.0, 0.52]},
+      "hands": {
+        "L": {"prop": "db_L", "axis": [0, 1, 0], "arm": {"elev": 10, "plane": 0, "elbow": 5, "bend": [0, 1, 0], "tilt": 0}}
+      }
+    }
+  },
+  "research": "Two moments of a short walking step (double support). Root lowered 0.02 m (rest 0.971 -> 0.951), so hip joints sit at z ~0.954. Picture 1: left foot forward and flat, ankle (0.12, -0.15, 0.074) = 0.155 m in front of the hip (hip y 0.005); hip-ankle distance sqrt(0.155^2 + 0.88^2) = 0.894 m vs 0.90 leg -> knee ~13 deg. Right foot behind on its ball: ankle 0.165 m behind the hip; heel up 15 deg (rot X +15 = toes down): ball offset from ankle (0, -0.14, -0.06) turns to z -0.094, so ankle z = 0.014 + 0.094 = 0.108; hip-ankle sqrt(0.165^2 + 0.846^2) = 0.862 -> cos rule 0.862^2 = 2(0.45^2)(1 - cos k) -> knee ~33-36 deg. Step 0.32 m. Picture 2 swaps the legs. Arms straight, elev 10 out to the side (fist ~0.32 m from the midline so the neutral-grip plates, radius 0.088, clear the thighs at x ~0.20), elbow 5, palms in; right arm mirrors. Trunk upright, shoulders level. S2 McGill 2013 (split load, spine), S1 McGill 2009 (farmer's walk EMG), S3 ACE. Facts: research/farmers_walk.json."
+}

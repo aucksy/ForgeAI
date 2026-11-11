@@ -1,0 +1,48 @@
+{
+  "format": "v1-stills",
+  "exercise": {
+    "key": "incline_y_raise",
+    "name": "Incline Y-Raise",
+    "equipment": "dumbbell",
+    "library_primary": ["upper_back"],
+    "library_secondary": ["traps", "rear_delts", "side_delts"],
+    "library_steps": ["Lie chest-down on an incline bench, a light dumbbell in each hand.", "With thumbs up, raise your arms forward and out into a Y shape.", "Lower them slowly until they hang straight down."],
+    "status": "draft",
+    "researched_on": "2026-11-11",
+    "one_line_summary": "Chest down on a 30 deg incline bench: light dumbbells hang straight down (start), then straight arms rise forward and out into a Y, about 40 deg either side of the head line, level with the torso, thumbs up (end)."
+  },
+  "setup": [
+    {"item": "bench", "target": "Low incline, chest on the pad, chin past the top, feet on the floor.", "tolerance": "pad 30-45 deg", "source_ids": ["S3"]},
+    {"item": "load and grip", "target": "Light dumbbells, thumbs pointing up at the top.", "tolerance": "", "source_ids": ["S3"]}
+  ],
+  "movement": [
+    {"joint": "shoulder elevation", "measure": "arm angle in torso frame (elev: 0 = along the side toward the feet, 180 = overhead)", "start": "60 (hanging straight down in world terms)", "end": "about 140 (Y, in line with the torso)", "start_num": 60, "end_num": 140, "tolerance": "end 130-150", "source_ids": ["S1"]},
+    {"joint": "Y width", "measure": "angle of each arm from the head line", "start": "-", "end": "about 40 deg", "start_num": 0, "end_num": 40, "tolerance": "30-45", "source_ids": ["S1", "S3"]},
+    {"joint": "elbow", "measure": "near straight, held", "start": "about 8 deg", "end": "about 8 deg", "start_num": 8, "end_num": 8, "tolerance": "0-15", "source_ids": ["S3"]},
+    {"joint": "trunk", "measure": "stays on the pad", "start": "", "end": "", "start_num": 0, "end_num": 0, "tolerance": "chest gap < 0.02 m", "source_ids": ["S3"]},
+    {"joint": "legs", "measure": "still, feet on the floor either side of the seat", "start": "", "end": "", "start_num": 0, "end_num": 0, "tolerance": "", "source_ids": ["S3"]}
+  ],
+  "muscles": [
+    {"muscle": "Lower and middle trapezius (upper back)", "mask_key": "upper_back", "tier": "primary", "role": "Library primary. Prone overhead raise in line with the lower trapezius gave the highest lower-trap and among the highest middle-trap EMG (S1).", "source_ids": ["S1"]},
+    {"muscle": "Trapezius (lower fibres, upward rotation)", "mask_key": "traps", "tier": "secondary", "role": "Rotate the shoulder blade up as the arm passes overhead.", "source_ids": ["S1", "S2"]},
+    {"muscle": "Posterior deltoid", "mask_key": "rear_delts", "tier": "secondary", "role": "Lifts the arm against gravity in prone raises (~42% MVIC in prone horizontal abduction, S2).", "source_ids": ["S2"]},
+    {"muscle": "Middle deltoid", "mask_key": "side_delts", "tier": "secondary", "role": "Library secondary; elevates the arm in the Y.", "source_ids": ["S1"]}
+  ],
+  "tempo": null,
+  "mistakes": [
+    {"mistake": "Shrugging toward the ears", "what_it_looks_like": "Shoulders ride up as the arms rise.", "why_it_matters": "Upper traps take over from the lower traps.", "source_ids": ["S1", "S2"]},
+    {"mistake": "Lifting the chest off the pad", "what_it_looks_like": "Torso arches up to get the arms higher.", "why_it_matters": "Lower back does the lift.", "source_ids": ["S3"]}
+  ],
+  "sources": [
+    {"id": "S1", "citation": "Ekstrom RA, Donatelli RA, Soderberg GL. 2003. Surface electromyographic analysis of exercises for the trapezius and serratus anterior muscles. J Orthop Sports Phys Ther 33(5):247-258.", "url": "https://bearworks.missouristate.edu/articles-chhs/1184", "type": "emg", "what_it_gave": "30 subjects, 10 exercises: prone arm raise overhead in line with the lower trapezius = highest lower-trap EMG and tied highest middle-trap EMG."},
+    {"id": "S2", "citation": "Kim S, Kang M. 2020. Influence of pre-emptive scapular posterior tilt on scapular muscle activation and scapulohumeral movements during shoulder horizontal abduction in the prone position. J Int Acad Phys Ther Res 11(4):2173-2177.", "url": "https://koreascience.kr/article/JAKO202022558937288.pdf", "type": "emg", "what_it_gave": "Prone raises load lower trap (58-69%), middle trap (~50%) and posterior deltoid (38-42%) MVIC; posterior tilt raises lower-trap share."},
+    {"id": "S3", "citation": "MettleUp exercise library entry incline_y_raise (steps).", "url": "docs/exercise-library/part_*.json", "type": "library", "what_it_gave": "Chest-down on an incline bench, thumbs up, raise forward and out into a Y, lower until arms hang."}
+  ],
+  "clip_check": [
+    {"check": "Start: arms hang vertically", "target": "within 10 deg", "measured": "", "pass": ""},
+    {"check": "End: arms in a Y, in line with the torso", "target": "30-45 deg from head line; within 10 deg of the torso plane", "measured": "", "pass": ""},
+    {"check": "Thumbs up at the top", "target": "handle index end above pinky end", "measured": "", "pass": ""},
+    {"check": "Chest on the pad; feet on the floor", "target": "gap -0.02..+0.02; -0.002..+0.002", "measured": "", "pass": ""},
+    {"check": "Upper back the strongest red in both pictures", "target": "yes", "measured": "", "pass": ""}
+  ]
+}

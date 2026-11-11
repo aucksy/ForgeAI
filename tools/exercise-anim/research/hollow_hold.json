@@ -1,0 +1,55 @@
+{
+  "format": "v1-stills",
+  "exercise": {
+    "key": "hollow_hold",
+    "name": "Hollow Hold",
+    "equipment": "bodyweight",
+    "type": "time",
+    "library_primary": ["abs"],
+    "library_secondary": [],
+    "steps": [
+      "Lie face up with your arms stretched past your head.",
+      "Press your lower back into the floor and lift your arms, shoulders and legs.",
+      "Hold that curved shape, legs straight and low, for the time."
+    ],
+    "status": "draft",
+    "version": null,
+    "researched_on": "2026-11-11",
+    "one_line_summary": "A hold (one picture): lying face up, low back pressed flat, shoulders curled ~30 deg off the floor, arms straight overhead by the ears, legs straight, together and low (~10 deg off the floor). A shallow banana shape. Rectus abdominis is the target.",
+    "evidence_grade": "C"
+  },
+  "setup": [
+    {"item": "low back", "target": "Pressed into the floor, no gap under the low back.", "tolerance": "pelvis does not arch off; lumbar flat", "why": "ACE hollow-body cue: no space between the back and the floor.", "source_ids": ["S1"], "grade": "C"},
+    {"item": "arms", "target": "Straight overhead, biceps by the ears, lifted with the shoulders.", "tolerance": "arms 160-180 deg overhead in the torso frame", "why": "ACE: arms reaching overhead, biceps by the ears; library step 1.", "source_ids": ["S1"], "grade": "C"},
+    {"item": "legs", "target": "Straight and together, toes pointed, held low (heels roughly 0.2-0.3 m off the floor).", "tolerance": "leg line 5-20 deg above the floor", "why": "Library: legs straight and low. Lower legs = longer lever = harder; they must never drop so low that the back arches.", "source_ids": ["S1"], "grade": "C"}
+  ],
+  "movement": [
+    {"joint": "trunk curl (spine05..spine01 X summed)", "measure": "upper-trunk forward bend; 0 = flat", "start": "29 deg (hold)", "end": "29 deg (hold)", "start_num": 29, "end_num": 29, "path": "Held still.", "tolerance": "20-40 deg; shoulder blades off the floor", "source_ids": ["S1"], "grade": "C"},
+    {"joint": "hip (leg line to the floor)", "measure": "angle of the straight legs above the floor", "start": "10 deg", "end": "10 deg", "start_num": 10, "end_num": 10, "path": "Held still.", "tolerance": "5-20 deg", "source_ids": ["S1"], "grade": "C"},
+    {"joint": "knee", "measure": "knee bend", "start": "~9 deg", "end": "~9 deg", "start_num": 9, "end_num": 9, "path": "Straight.", "tolerance": "0-15 deg", "source_ids": ["S1"], "grade": "C"},
+    {"joint": "shoulder", "measure": "arm elevation (180 = along the spine overhead)", "start": "170 deg", "end": "170 deg", "start_num": 170, "end_num": 170, "path": "Held by the ears.", "tolerance": "160-180", "source_ids": ["S1"], "grade": "C"},
+    {"joint": "pelvis", "measure": "pelvis flat, root rot X -90", "start": "-90", "end": "-90", "start_num": -90, "end_num": -90, "path": "Still; lumbar flat (spine05 small flexion, never extension).", "tolerance": "+-5 deg", "source_ids": ["S1"], "grade": "C"}
+  ],
+  "muscles": [
+    {"muscle": "Abs (rectus abdominis)", "anatomy": "Rectus abdominis", "mask_key": "abs", "tier": "primary", "glow": 1.0, "emg": "No EMG study of the gymnastics hollow hold found (searched; 'abdominal hollowing' studies are a different, drawing-in manoeuvre). Closest: V-sit hold ~80% MVIC RA (Maeo, in S2).", "role": "Holds the rib cage curled to the pelvis and the low back flat against the lever of arms and legs.", "surface": "Vertical bands down the front of the belly.", "source_ids": ["S2"], "grade": "B"},
+    {"muscle": "Obliques", "anatomy": "Obliquus externus / internus abdominis", "mask_key": "obliques", "tier": "stabiliser", "glow": 0, "emg": "Not measured.", "role": "Help hold the trunk.", "surface": "Sides of the waist.", "source_ids": ["S2"], "grade": "D"},
+    {"muscle": "Hip flexors", "anatomy": "Iliopsoas, rectus femoris", "mask_key": "none", "tier": "deep", "glow": 0, "emg": "Not measured.", "role": "Hold the straight legs up.", "surface": "Front of the hip.", "source_ids": ["S1"], "grade": "D"}
+  ],
+  "tempo": null,
+  "mistakes": [
+    {"mistake": "Low back arching off the floor", "what_it_looks_like": "A gap appears under the low back, legs too low.", "why_it_matters": "ACE: the back must stay pressed down; an arch loads the spine instead of the abs.", "source_ids": ["S1"]},
+    {"mistake": "Arms dropped to the sides / chin tucked hard", "what_it_looks_like": "Arms by the hips or head cranked forward.", "why_it_matters": "Loses the hollow shape; not the textbook position.", "source_ids": ["S1"]}
+  ],
+  "sources": [
+    {"id": "S1", "citation": "Jo S (ACE). 10-Minute Core Workout: Hollow-body Rock (ACE blog).", "url": "https://www.acefitness.org/resources/everyone/blog/5602/10-minute-core-workout/", "type": "guideline", "what_it_gave": "Hollow-body position: legs extended, arms overhead biceps by the ears, glutes/inner thighs/abs squeezed, low back pushed into the floor with no space."},
+    {"id": "S2", "citation": "Oliva-Lozano JM, Muyor JM. 2020. Core muscle activity during physical fitness exercises: a systematic review. Int J Environ Res Public Health 17(12):4306. doi:10.3390/ijerph17124306", "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7345922/", "type": "review", "what_it_gave": "V-sit ~80% MVIC RA (close variant)."}
+  ],
+  "clip_check": [
+    {"check": "Shoulders off the floor", "target": "spine curl 20-40 deg", "measured": "", "pass": "", "tool": "measure_pose.py"},
+    {"check": "Low back / pelvis on the floor, no arch", "target": "lowest point -0.002..+0.002 m at the sacrum; spine05 >= 0", "measured": "", "pass": "", "tool": "probe_feet.py"},
+    {"check": "Legs straight, together, low", "target": "knee 0-15; leg line 5-20 deg; heels 0.15-0.35 m up", "measured": "", "pass": "", "tool": "measure_pose.py"},
+    {"check": "Arms overhead by the ears", "target": "elev 160-180; hands above floor", "measured": "", "pass": "", "tool": "measure_pose.py + picture"},
+    {"check": "Armpit skin overhead", "target": "no crease, pinch or streak (close-up)", "measured": "", "pass": "", "tool": "zoom_pose.py"},
+    {"check": "Primary muscle strongest red", "target": "abs strongest red", "measured": "", "pass": "", "tool": "picture"}
+  ]
+}

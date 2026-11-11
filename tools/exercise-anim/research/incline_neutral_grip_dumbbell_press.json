@@ -1,0 +1,55 @@
+{
+  "format": "v1-stills",
+  "exercise": {
+    "key": "incline_neutral_grip_dumbbell_press",
+    "name": "Incline Neutral-Grip Dumbbell Press",
+    "equipment": "dumbbell",
+    "library_primary": ["chest"],
+    "library_secondary": ["front_delts", "triceps"],
+    "library_steps": [
+      "Lie on an incline bench with dumbbells at your chest, palms facing in.",
+      "Press them up until your arms are straight.",
+      "Lower them slowly back to your chest."
+    ],
+    "status": "draft",
+    "version": 1,
+    "researched_on": "2026-11-11",
+    "one_line_summary": "30 deg incline bench, palms facing each other, elbows about 45 deg from the body at the bottom with forearms vertical; press to near-straight arms over the upper chest. Chest (upper part most) is the target; front delts and triceps help.",
+    "evidence_grade": "C"
+  },
+  "setup": [
+    {"item": "bench angle", "target": "30 deg incline.", "tolerance": "30-45 deg", "why": "Upper (clavicular) pec activity peaked at 30 deg; front delt took over at 45-60 deg.", "source_ids": ["S1"], "grade": "B"},
+    {"item": "body on bench", "target": "Hips on the seat, back and head on the pad, feet flat and wide on the floor.", "tolerance": "back gap -0.02..+0.02 m", "why": "Study kept head and thoracic back on the bench.", "source_ids": ["S1"], "grade": "B"},
+    {"item": "grip", "target": "Neutral: palms face each other, thumbs toward the head, handles horizontal.", "tolerance": "handle within 15 deg of the body's long axis", "why": "Defines the exercise; a neutral grip kept clavicular pec activity at least as high as a prone grip.", "source_ids": ["S2"], "grade": "B"}
+  ],
+  "movement": [
+    {"joint": "shoulder (elev)", "measure": "upper arm angle from the torso side line", "start": "45 deg", "end": "118 deg (arm vertical in the room, over the upper chest)", "start_num": 45, "end_num": 118, "tolerance": "start 35-55", "source_ids": ["S1", "S2"], "grade": "C"},
+    {"joint": "shoulder (plane)", "measure": "0 = side, +90 = out of the chest, negative = below the torso line", "start": "-30 deg", "end": "88 deg", "start_num": -30, "end_num": 88, "tolerance": "start -35..-20", "source_ids": ["S1"], "grade": "C"},
+    {"joint": "elbow", "measure": "bend, 0 = straight", "start": "forearm vertical (~90 deg)", "end": "near straight", "start_num": 90, "end_num": 5, "tolerance": "end 0-15", "source_ids": ["S1"], "grade": "C"},
+    {"joint": "trunk, hips, legs", "measure": "stay still", "start": "on the pad", "end": "same", "start_num": 0, "end_num": 0, "tolerance": "no hip lift", "source_ids": ["S1"], "grade": "C"}
+  ],
+  "muscles": [
+    {"muscle": "Pectoralis major (clavicular part most)", "mask_key": "chest", "tier": "primary", "emg": "Clavicular pec ~30% MVIC at 30 deg, its highest of five angles (S1); neutral-grip seated press ~30% (S2).", "source_ids": ["S1", "S2"], "grade": "B"},
+    {"muscle": "Anterior deltoid", "mask_key": "front_delts", "tier": "secondary", "emg": "Rises with incline; highest at 60 deg (S1). ~24% MVIC in S2.", "source_ids": ["S1", "S2"], "grade": "B"},
+    {"muscle": "Triceps brachii", "mask_key": "triceps", "tier": "secondary", "emg": "~15% MVIC at every angle (S1).", "source_ids": ["S1"], "grade": "B"},
+    {"muscle": "Forearm flexors (grip)", "mask_key": "forearms", "tier": "stabiliser", "emg": "not measured", "source_ids": [], "grade": "D"}
+  ],
+  "tempo": null,
+  "mistakes": [
+    {"mistake": "Bench set too steep", "what_it_looks_like": "Back pad near upright, press becomes a shoulder press.", "why_it_matters": "Above 45 deg the front delt dominates (S1).", "source_ids": ["S1"]},
+    {"mistake": "Elbows flared straight out", "what_it_looks_like": "Upper arms at 90 deg to the body at the bottom.", "why_it_matters": "Loses the neutral-grip, elbows-in pattern the library describes.", "source_ids": ["S2"]}
+  ],
+  "sources": [
+    {"id": "S1", "citation": "Rodriguez-Ridao D, Antequera-Vique JA, Martin-Fuentes I, Muyor JM. 2020. Effect of five bench inclinations on the electromyographic activity of the pectoralis major, anterior deltoid, and triceps brachii during the bench press exercise. Int J Environ Res Public Health 17(19):7339.", "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7579505/", "type": "emg", "what_it_gave": "0/15/30/45/60 deg at 60% 1RM: clavicular pec peak at 30 deg (~30% MVIC); front delt highest at 45-60; triceps ~15% everywhere. Shoulders ~45 deg abducted when lowering."},
+    {"id": "S2", "citation": "Muyor JM, Rodriguez-Ridao D, Oliva-Lozano JM. 2023. Comparison of muscle activity between the horizontal bench press and the seated chest press exercises using several grips. J Hum Kinet 87:23-34.", "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10203828/", "type": "emg", "what_it_gave": "Neutral grip: clavicular pec ~30% MVIC; front delt ~24% with no grip effect."}
+  ],
+  "clip_check": [
+    {"check": "Bench angle", "target": "30 deg", "measured": "", "pass": ""},
+    {"check": "Start: elev / plane, forearm vertical", "target": "45 / -30 deg", "measured": "", "pass": ""},
+    {"check": "End: arms vertical over upper chest, near straight", "target": "elbow < 15 deg", "measured": "", "pass": ""},
+    {"check": "Back on pad, hips on seat", "target": "gap -0.02..+0.02 m (probe_bench.py)", "measured": "", "pass": ""},
+    {"check": "Feet flat on the floor", "target": "-0.002..+0.002 m", "measured": "", "pass": ""},
+    {"check": "Palms face each other, hands on handles", "target": "yes", "measured": "", "pass": ""},
+    {"check": "Chest strongest red in both pictures", "target": "yes", "measured": "", "pass": ""}
+  ]
+}

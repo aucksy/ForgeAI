@@ -1,0 +1,24 @@
+{
+  "key": "dumbbell_leg_curl",
+  "name": "Dumbbell Leg Curl",
+  "primary": ["hamstrings"],
+  "secondary": [],
+  "note": "DUMBBELL NOT DRAWN: the rig can only attach a dumbbell to a hand, so the dumbbell held between the feet is missing from both pictures. Do not ship as-is without a label or a feet-held dumbbell prop.",
+  "scene": {"bench": {"deg": 0, "loc": [0, 0, 0], "rot_z": 180}},
+  "camera": {"yaw": -88, "pitch": 12, "lens": 50, "fill": 0.9, "res": 640, "samples": 20},
+  "timing": {"fps": 30, "keys": [[0, "start"], [1, "end"], [2, "start"]]},
+  "defaults": {
+    "root": {"loc": [0, -0.047, 0.64], "rot": [90, 0, 0]},
+    "knees": {"L": [0.13, 0.40, -0.5]},
+    "hands": {"L": {"axis": [0, 0, 1], "arm": {"elev": 100, "plane": 85, "elbow": 80, "bend_world": [0, 0, 1], "tilt": 0}}}
+  },
+  "poses": {
+    "start": {
+      "feet": {"L": {"at": [0.13, 0.84, 0.52], "rot": [90, 0, 0]}}
+    },
+    "end": {
+      "feet": {"L": {"at": [0.13, 0.40, 0.99], "rot": [180, 0, 0]}}
+    }
+  },
+  "research": "Flat bench (deg 0) turned rot_z 180: pad top z 0.44 runs y -0.03..-0.85 (head end), seat y +0.01..+0.35 (knee end). Face down, root rot X +90 (head toward -Y). Chest ~0.18-0.20 m ahead of the pelvis joint -> root z 0.64; hip joints = root + Rx(90)(+-0.11,-0.051,0.003) = (+-0.11,-0.05,0.589). Thigh 0.45 -> knee joint y ~0.40 = 0.05 past the bench end (library: knees just past the end). Start: shin straight back, ankle (0.13,0.84,0.52), hip-ankle 0.89 m (~straight); foot rot X 90 = toes to the floor (ankle neutral, as when trapping a dumbbell). End: shin vertical, ankle (0.13,0.40,0.99): hip-ankle 0.60 m -> ~92 deg knee; foot rot X 180 = toes point away from the hips (still dorsiflexed). Knee pole below (z -0.5) keeps the kneecaps facing the floor. Hands grip under the pad near the head: elev 100, plane 85, elbow 80, forearm up; no prop. Hirose 2021 PMC7872291 (prone curl, hip neutral, 30/90 deg); Soga 2021 JSSM. The dumbbell between the feet cannot be drawn (see note). Facts and checks: research/dumbbell_leg_curl.json."
+}

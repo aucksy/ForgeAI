@@ -1,0 +1,29 @@
+{
+  "key": "weighted_crunch",
+  "name": "Weighted Crunch",
+  "primary": ["abs"],
+  "secondary": [],
+  "props": {"db_L": {"type": "dumbbell"}},
+  "camera": {"yaw": -85, "pitch": 15, "lens": 50, "fill": 0.9, "res": 640, "samples": 20},
+  "timing": {"fps": 30, "keys": [[0, "start"], [1, "end"], [2, "start"]]},
+  "defaults": {
+    "root": {"loc": [0, 0, 0.11], "rot": [-90, 0, 0]},
+    "feet": {"L": {"at": [0.12, -0.627, 0.074], "rot": [0, 0, 0]}},
+    "knees": {"L": [0.14, -0.5, 1.0]},
+    "hands": {
+      "L": {"prop": "db_L", "axis": [0, 0, 1],
+            "arm": {"elev": 14.5, "plane": -53, "elbow": 120, "bend": [-0.58, 0.77, -0.25], "tilt": 0}}
+    }
+  },
+  "poses": {
+    "start": {
+      "bones": {"spine05": [0, 0, 0], "spine04": [0, 0, 0], "spine03": [0, 0, 0], "spine02": [0, 0, 0], "spine01": [0, 0, 0],
+                "neck01": [6, 0, 0], "head": [4, 0, 0]}
+    },
+    "end": {
+      "bones": {"spine05": [2, 0, 0], "spine04": [6, 0, 0], "spine03": [8, 0, 0], "spine02": [9, 0, 0], "spine01": [7, 0, 0],
+                "neck01": [6, 0, 0], "head": [4, 0, 0]}
+    }
+  },
+  "research": "Supine (root rot X -90, head toward +Y), pelvis joint 0.11 m up -> hip L (0.11, 0.003, 0.161), shoulders (+-0.22, 0.469, 0.186). Knees 90 deg: hip-ankle = 0.45*sqrt2 = 0.636; ankle z 0.074 so dy = sqrt(0.636^2-0.087^2-0.01^2) = 0.630 -> ankle (0.12, -0.627, 0.074), foot flat toes -Y. Dumbbell (handle along the body, plates touching the chest) gripped by the left hand at torso (0.07, 0.20, -0.17); arm solved with upper arm 0.269 + forearm-to-grip 0.33: |S-H| = 0.302 -> elbow 120 deg; elbow placed low by the ribs (torso (0.26,-0.05,-0.26), world z ~0.13) -> elev 14.5, plane -53, bend [-0.58,0.77,-0.25]. Right hand mirrors to x -0.07, beside the plate (plate edge x -0.018), no prop. End: spine curl 2+6+8+9+7 = 32 deg, lumbar ~2, shoulder blades off the floor, pelvis and feet unchanged (Escamilla 2006 S1, Moraes 2009 S2, Oliva-Lozano 2020 S3). Facts: research/weighted_crunch.json."
+}

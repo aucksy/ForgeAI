@@ -1,0 +1,29 @@
+{
+  "key": "high_knees",
+  "name": "High Knees",
+  "primary": ["cardio"],
+  "secondary": ["quads", "calves"],
+  "camera": {"yaw": -70, "pitch": 10, "lens": 50, "fill": 0.9, "res": 640, "samples": 20},
+  "timing": {"fps": 30, "keys": [[0, "start"], [1, "end"], [2, "start"]]},
+  "poses": {
+    "start": {
+      "root": {"loc": [0, 0.056, 1.0], "rot": [0, 0, 0]},
+      "feet": {"L": {"at": [0.12, -0.36, 0.482], "rot": [0, 0, 4]}, "R": {"at": [-0.12, 0.01, 0.127], "rot": [25, 0, -4]}},
+      "knees": {"L": [0.14, -1.2, 1.0], "R": [-0.16, -1.0, 0.52]},
+      "hands": {
+        "L": {"axis": [0, 0.574, 0.819], "arm": {"elev": 35, "plane": -90, "elbow": 90, "bend": [0, 1, 0], "tilt": 0}},
+        "R": {"axis": [0, -0.766, 0.643], "arm": {"elev": 50, "plane": 90, "elbow": 90, "bend": [0, 0, 1], "tilt": 0}}
+      }
+    },
+    "end": {
+      "root": {"loc": [0, 0.056, 1.0], "rot": [0, 0, 0]},
+      "feet": {"L": {"at": [0.12, 0.01, 0.127], "rot": [25, 0, 4]}, "R": {"at": [-0.12, -0.36, 0.482], "rot": [0, 0, -4]}},
+      "knees": {"L": [0.16, -1.0, 0.52], "R": [-0.14, -1.2, 1.0]},
+      "hands": {
+        "L": {"axis": [0, -0.766, 0.643], "arm": {"elev": 50, "plane": 90, "elbow": 90, "bend": [0, 0, 1], "tilt": 0}},
+        "R": {"axis": [0, 0.574, 0.819], "arm": {"elev": 35, "plane": -90, "elbow": 90, "bend": [0, 1, 0], "tilt": 0}}
+      }
+    }
+  },
+  "research": "Running on the spot; no props (loose fists, thumbs up). Root raised 0.029 to z 1.000 (on the ball of the stance foot), hips at z ~1.003. Picture 1, left knee up: hip flexion 80 (S1: ~80 deg in sprint swing; S2: hip height is enough), knee 90. Thigh dir (0, -sin80, -cos80) = (0, -0.985, -0.174) -> knee = hip (0.11, 0.005, 1.003) + 0.45 x = (0.12, -0.438, 0.925); shin square to the thigh, pointing down and slightly back (0, 0.174, -0.985) -> ankle = (0.12, -0.36, 0.482); check hip-ankle = 0.636 = 0.45 x sqrt2 (90 deg knee). Knee pole forward and up (0.14, -1.2, 1.0). Stance right foot on its ball: heel up 25 deg (rot X +25 = toes down); ball offset (0, -0.14, -0.06) rotates to z -0.113 -> ankle z = 0.014 + 0.113 = 0.127; hip-ankle 0.876 -> knee ~25 deg. Arms pump opposite to the legs: forward arm elev 50, plane 90, elbow 90 folding up (bend +z); back arm elev 35, plane -90, elbow 90 folding forward. Fist axes square to each forearm, thumb up: forward forearm (0, 0.643, 0.766) -> axis (0, -0.766, 0.643); back forearm (0, 0.819, -0.574) -> axis (0, 0.574, 0.819). Picture 2 mirrors. Library primary 'cardio' has no mask; research file lights quads (primary) and calves. Facts: research/high_knees.json."
+}

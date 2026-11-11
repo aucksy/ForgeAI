@@ -1,0 +1,54 @@
+{
+  "format": "v1-stills",
+  "exercise": {
+    "key": "seated_knee_tuck",
+    "name": "Seated Knee Tuck",
+    "equipment": "bodyweight",
+    "type": "reps",
+    "library_primary": ["abs"],
+    "library_secondary": [],
+    "steps": [
+      "Sit on a bench edge or the floor, leaning back on your hands.",
+      "Pull your knees in toward your chest as you lean slightly forward.",
+      "Push your legs back out straight without letting your feet touch down."
+    ],
+    "status": "draft",
+    "version": null,
+    "researched_on": "2026-11-11",
+    "one_line_summary": "Seated on the floor, leaning back ~45 deg on the hands behind the hips. Legs start long and hovering just off the floor; the knees pull in to the chest as the trunk comes ~7 deg more upright, then the legs push back out without the feet touching down. Rectus abdominis is the target; hip flexors do much of the leg work (not lit).",
+    "evidence_grade": "C"
+  },
+  "setup": [
+    {"item": "seat and hands", "target": "Sit on the floor, hands on the floor behind the hips, arms nearly straight, trunk leaned back ~45 deg, back straight.", "tolerance": "lean 35-50 deg; elbows 0-60 deg", "why": "Library step 1; Spotebi: hands on the mat, trunk leaned back, back straight.", "source_ids": ["S1"], "grade": "D"},
+    {"item": "legs out", "target": "Legs long and together, lifted so the heels hover a few cm to ~20 cm off the floor.", "tolerance": "leg line 5-20 deg above the floor; heels never touch", "why": "Library step 3 and S1: extend without touching the mat.", "source_ids": ["S1"], "grade": "D"}
+  ],
+  "movement": [
+    {"joint": "knee", "measure": "knee bend, 0 = straight", "start": "~10 deg (legs out)", "end": "~115 deg (tucked)", "start_num": 10, "end_num": 115, "path": "Knees draw straight in toward the chest, feet stay off the floor.", "tolerance": "start 0-20; end 100-130", "source_ids": ["S1"], "grade": "D"},
+    {"joint": "hip (thigh to the floor)", "measure": "thigh angle above the floor", "start": "~12 deg", "end": "~55 deg (knee near the chest)", "start_num": 12, "end_num": 55, "path": "Thighs come up as the knees bend.", "tolerance": "+-10 deg", "source_ids": ["S1"], "grade": "D"},
+    {"joint": "trunk lean (root rot X)", "measure": "deg back from upright", "start": "45 deg", "end": "38 deg (leans slightly forward to meet the knees)", "start_num": -45, "end_num": -38, "path": "Library step 2: lean slightly forward as the knees come in; back stays straight.", "tolerance": "+-5 deg", "source_ids": ["S1"], "grade": "D"},
+    {"joint": "hands", "measure": "hand position on the floor", "start": "planted ~0.5 m behind the hip joint, shoulder width", "end": "same spot", "start_num": 0, "end_num": 0, "path": "Hands do not move; elbows straighten a little as the trunk comes up.", "tolerance": "hands within 0.03 m of the floor", "source_ids": ["S1"], "grade": "D"}
+  ],
+  "muscles": [
+    {"muscle": "Abs (rectus abdominis)", "anatomy": "Rectus abdominis", "mask_key": "abs", "tier": "primary", "glow": 1.0, "emg": "No EMG study of this exact move found. Close variant: V-sit (trunk and legs raised, seated) ~80% MVIC RA (Maeo, in S2).", "role": "Holds the pelvis and trunk while the legs move; curls the pelvis toward the ribs at the tuck.", "surface": "Vertical bands down the front of the belly.", "source_ids": ["S2"], "grade": "B"},
+    {"muscle": "Hip flexors", "anatomy": "Iliopsoas, rectus femoris", "mask_key": "none", "tier": "deep", "glow": 0, "emg": "Rectus femoris is highest in leg-driven sit-up-type moves (S3); S1 lists hip flexors as secondary.", "role": "Lift and pull the thighs in; no mask exists, so not lit.", "surface": "Front of the hip and upper thigh.", "source_ids": ["S1", "S3"], "grade": "B"},
+    {"muscle": "Quads", "anatomy": "Quadriceps femoris", "mask_key": "quads", "tier": "stabiliser", "glow": 0, "emg": "Not measured.", "role": "Straighten the knees on the way out (S1 secondary).", "surface": "Front of the thigh.", "source_ids": ["S1"], "grade": "D"},
+    {"muscle": "Obliques", "anatomy": "Obliquus externus abdominis", "mask_key": "obliques", "tier": "stabiliser", "glow": 0, "emg": "Not measured.", "role": "Keep the trunk steady.", "surface": "Sides of the waist.", "source_ids": ["S2"], "grade": "D"}
+  ],
+  "tempo": null,
+  "mistakes": [
+    {"mistake": "Feet touching down between reps", "what_it_looks_like": "Heels rest on the floor at the 'out' position.", "why_it_matters": "Library and S1: the legs stay off the floor so the abs keep working.", "source_ids": ["S1"]},
+    {"mistake": "Rounded back / collapsing onto the hands", "what_it_looks_like": "Shoulders slump, back rounds.", "why_it_matters": "S1: keep the back straight and the upper body stable.", "source_ids": ["S1"]}
+  ],
+  "sources": [
+    {"id": "S1", "citation": "Spotebi. Seated Knee Tucks (exercise guide).", "url": "https://spotebi.com/exercise-guide/seated-knee-tucks/", "type": "coach", "what_it_gave": "Hands on the mat, trunk leaned back, knees to chest, extend fully without touching the mat, back straight; primary abs, secondary hip flexors and quads."},
+    {"id": "S2", "citation": "Oliva-Lozano JM, Muyor JM. 2020. Core muscle activity during physical fitness exercises: a systematic review. Int J Environ Res Public Health 17(12):4306. doi:10.3390/ijerph17124306", "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7345922/", "type": "review", "what_it_gave": "V-sit ~80% MVIC RA (close seated variant)."},
+    {"id": "S3", "citation": "Escamilla RF, McTaggart MS, Fricklas EJ, et al. 2006. An electromyographic analysis of commercial and common abdominal exercises. J Orthop Sports Phys Ther 36(2):45-57. doi:10.2519/jospt.2006.36.2.45", "url": "https://europepmc.org/article/MED/16494072", "type": "emg", "what_it_gave": "Rectus femoris highest in hip-driven exercises (bent-knee sit-up and leg-driven devices)."}
+  ],
+  "clip_check": [
+    {"check": "Out: legs long, heels off the floor", "target": "knee 0-20 deg; heel bottom 0.03-0.25 m above floor", "measured": "", "pass": "", "tool": "measure_pose.py + probe_feet.py"},
+    {"check": "In: knees near the chest, feet off the floor", "target": "knee 100-130 deg; heels > 0.01 m above floor", "measured": "", "pass": "", "tool": "measure_pose.py + probe_feet.py"},
+    {"check": "Buttocks on the floor, hands on the floor in both pictures", "target": "seat -0.002..+0.002 m; hand z 0.02-0.05", "measured": "", "pass": "", "tool": "probe_feet.py"},
+    {"check": "Trunk lean", "target": "start 45, end 38 (+-5) deg; back straight", "measured": "", "pass": "", "tool": "measure_pose.py"},
+    {"check": "Primary muscle strongest red", "target": "abs strongest red in both pictures", "measured": "", "pass": "", "tool": "picture"}
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "format": "v1-stills",
+  "exercise": {
+    "key": "hindu_push_up",
+    "name": "Hindu Push-Up",
+    "equipment": "bodyweight",
+    "type": "reps",
+    "library_primary": ["chest"],
+    "library_secondary": ["front_delts", "triceps"],
+    "steps": [
+      "Start with hips high and arms straight, your body making an upside-down V.",
+      "Bend your elbows and swoop your chest down and forward, close to the floor.",
+      "Straighten your arms to lift your chest, hips low, looking ahead.",
+      "Push your hips back up into the V to finish the rep."
+    ],
+    "status": "draft",
+    "version": null,
+    "researched_on": "2026-11-11",
+    "one_line_summary": "Two pictures: (1) the upside-down V (hips high, arms straight and in line with the back, heels toward the floor, head between the arms); (2) the arched finish (arms straight under the shoulders, hips low just off the floor, back arched, chest up, looking ahead). Hands and feet stay planted. Chest is the target; front delts and triceps help.",
+    "evidence_grade": "D"
+  },
+  "setup": [
+    {"item": "hands", "target": "Hands about shoulder-width, planted for the whole rep.", "tolerance": "hands do not slide", "why": "The movement swoops between two fixed contact points (S1).", "source_ids": ["S1"], "grade": "D"},
+    {"item": "feet", "target": "Feet about hip-to-shoulder width (ankles ~0.40 m apart), on the balls of the feet.", "tolerance": "0.3-0.5 m", "why": "Traditional dand stance; feet stay put while the ankles roll (S1).", "source_ids": ["S1"], "grade": "D"}
+  ],
+  "movement": [
+    {"joint": "hips (V to arch)", "measure": "pelvis rot X (90 = flat face-down); hip joint height", "start": "134.6 (pelvis tipped head-down 45 deg), hip joint ~0.83 m", "end": "62 (pelvis head-up 28 deg), hip joint ~0.32 m", "start_num": 134.6, "end_num": 62, "path": "Library: elbows bend and the chest swoops forward close to the floor, then the arms straighten with the hips low.", "tolerance": "V hip angle 70-95 deg; end hips clear of the floor", "source_ids": ["S1"], "grade": "D"},
+    {"joint": "spine", "measure": "spine05..spine01 X summed (negative = arch back)", "start": "0 (straight back in the V)", "end": "-34 (arched, chest up)", "start_num": 0, "end_num": -34, "path": "Back goes from flat to arched (cobra / up-dog).", "tolerance": "end -25..-40", "source_ids": ["S1"], "grade": "D"},
+    {"joint": "shoulder", "measure": "arm elevation in the torso frame", "start": "177 (arms in line with the back)", "end": "45 (arms vertical under the shoulders with the trunk ~45 deg up)", "start_num": 177, "end_num": 45, "path": "Shoulders travel forward over and past the hands.", "tolerance": "+-8", "source_ids": ["S1"], "grade": "D"},
+    {"joint": "elbow", "measure": "elbow bend in the two pictures", "start": "~2 (straight)", "end": "~2 (straight)", "start_num": 2, "end_num": 2, "path": "Bends deeply only in the middle swoop (not pictured).", "tolerance": "0-10", "source_ids": ["S1"], "grade": "D"},
+    {"joint": "head / neck", "measure": "neck01 + head X", "start": "0 (between the arms)", "end": "-16 (looking ahead)", "start_num": 0, "end_num": -16, "path": "Library step 3: looking ahead.", "tolerance": "end -5..-25", "source_ids": ["S1"], "grade": "D"},
+    {"joint": "knees", "measure": "knee bend", "start": "~5 (straight)", "end": "~5", "start_num": 5, "end_num": 5, "path": "Legs straight.", "tolerance": "0-15", "source_ids": ["S1"], "grade": "D"}
+  ],
+  "muscles": [
+    {"muscle": "Chest", "anatomy": "Pectoralis major", "mask_key": "chest", "tier": "primary", "glow": 1.0, "emg": "No EMG study of the Hindu push-up (searched). Push-up (close variant): pectoralis near-maximal relative activation across hand positions (S2).", "role": "Pushes the body up in the press-up phase; library primary.", "surface": "Front of the upper chest from the breastbone out to the armpit.", "source_ids": ["S1", "S2"], "grade": "B"},
+    {"muscle": "Triceps", "anatomy": "Triceps brachii", "mask_key": "triceps", "tier": "secondary", "glow": 0.35, "emg": "In push-ups triceps activation was higher than pectoralis in absolute terms (S2).", "role": "Straightens the elbows.", "surface": "Back of the upper arm.", "source_ids": ["S1", "S2"], "grade": "B"},
+    {"muscle": "Front delts", "anatomy": "Deltoideus pars clavicularis", "mask_key": "front_delts", "tier": "secondary", "glow": 0.35, "emg": "Not measured; listed among the muscles worked (S1).", "role": "Drive the arm forward and hold the V overhead position.", "surface": "Front of the shoulder.", "source_ids": ["S1"], "grade": "D"},
+    {"muscle": "Abs", "anatomy": "Rectus abdominis", "mask_key": "abs", "tier": "stabiliser", "glow": 0, "emg": "Not measured; listed as worked (S1).", "role": "Control the arch and the V.", "surface": "Front of the belly.", "source_ids": ["S1"], "grade": "D"}
+  ],
+  "tempo": null,
+  "mistakes": [
+    {"mistake": "Hips resting on the floor at the finish", "what_it_looks_like": "Thighs and pelvis flop onto the floor in the arched position.", "why_it_matters": "Library: hips low, not down; the arms and shoulders should hold the body.", "source_ids": ["S1"]},
+    {"mistake": "Bent arms in the V", "what_it_looks_like": "Elbows bent, head dropped toward the floor in the start.", "why_it_matters": "Library step 1: arms straight.", "source_ids": ["S1"]}
+  ],
+  "sources": [
+    {"id": "S1", "citation": "Wikipedia. Hindu push-up (dand).", "url": "https://en.wikipedia.org/wiki/Hindu_push-up", "type": "coach", "what_it_gave": "Inverted V start, bend elbows and drop the chin, sweep the hips under and the chest/head up with straight arms, push the hips back to the V; muscles: abdominals, pectorals, triceps, deltoids, serratus."},
+    {"id": "S2", "citation": "Intziegianni K, Katsamis E, Michaelides M, Parpa K. 2026. Electromyographic activation of the pectoralis major and triceps brachii muscles during standard, diamond, and wide hand position push-ups. Muscles 5(1):18. doi:10.3390/muscles5010018", "url": "https://europepmc.org/article/MED/41892990", "type": "emg", "what_it_gave": "Push-ups: pectoralis and triceps near-maximal relative activation; triceps > pectoralis in raw amplitude."}
+  ],
+  "clip_check": [
+    {"check": "Start V: arms straight in line with the back, hips high", "target": "elbow 0-10; hip angle 70-95 deg; hip joint > 0.7 m", "measured": "", "pass": "", "tool": "measure_pose.py"},
+    {"check": "End arch: arms straight under the shoulders, hips low but off the floor", "target": "elbow 0-10; pelvis skin 0.05-0.20 m above the floor", "measured": "", "pass": "", "tool": "measure_pose.py + probe_feet.py"},
+    {"check": "Hands planted at the same spot in both pictures", "target": "hand moves < 0.03 m; hand z 0.02-0.05", "measured": "", "pass": "", "tool": "measure_pose.py"},
+    {"check": "Balls of the feet on the floor in both", "target": "lowest foot point -0.002..+0.002 m; ball moves < 0.04 m", "measured": "", "pass": "", "tool": "probe_feet.py"},
+    {"check": "Overhead armpit skin in the V", "target": "no crease or pinch (close-up)", "measured": "", "pass": "", "tool": "zoom_pose.py"},
+    {"check": "Primary muscle strongest red", "target": "chest strongest red in both pictures (it faces the floor: check it shows from the camera)", "measured": "", "pass": "", "tool": "picture"}
+  ]
+}

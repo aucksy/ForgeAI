@@ -42,8 +42,23 @@ jobs:
       - id: m
         run: python3 tools/exercise-anim/pipeline/ci_matrix.py "${{ inputs.keys }}" >> "$GITHUB_OUTPUT"
 
+  # The CC0 MakeHuman files, fetched ONCE per run (the MakeHuman server is slow: ~40 KB/s) and shared with every
+  # render job through the cache. setup_assets.py reads only the ~18 MB it needs out of the 360 MB packs.
+  assets:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - id: mh
+        uses: actions/cache@v4
+        with:
+          path: tools/exercise-anim/assets/mh
+          key: exclips-mh-assets-v2
+      - if: steps.mh.outputs.cache-hit != 'true'
+        run: python3 tools/exercise-anim/pipeline/setup_assets.py
+
   render:
-    needs: plan
+    needs: [plan, assets]
     runs-on: ubuntu-latest
     timeout-minutes: 150
     strategy:
@@ -54,14 +69,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Cache Blender and the CC0 MakeHuman packs
+      - name: Cache Blender
         id: cache
         uses: actions/cache@v4
         with:
-          path: |
-            ~/blender
-            ~/mh-dl
-          key: exclips-blender-${{ env.BLENDER_VERSION }}-mpfb-2.0.18-mh-v1
+          path: ~/blender
+          key: exclips-blender-${{ env.BLENDER_VERSION }}-v2
+
+      - name: CC0 MakeHuman files (from the assets job)
+        uses: actions/cache/restore@v4
+        with:
+          path: tools/exercise-anim/assets/mh
+          key: exclips-mh-assets-v2
+          fail-on-cache-miss: true
 
       - name: Install Blender ${{ env.BLENDER_VERSION }} (official build, checksum verified)
         if: steps.cache.outputs.cache-hit != 'true'

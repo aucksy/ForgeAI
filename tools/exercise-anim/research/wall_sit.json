@@ -1,0 +1,49 @@
+{
+  "format": "v1-stills",
+  "exercise": {
+    "key": "wall_sit",
+    "name": "Wall Sit",
+    "equipment": "bodyweight",
+    "library_primary": ["quads"],
+    "library_secondary": ["glutes"],
+    "library_steps": ["Stand with your back flat against a wall, feet a step out in front.", "Slide down until your thighs are level with the floor.", "Keep your knees over your ankles and hold for the time."],
+    "status": "draft",
+    "researched_on": "2026-11-11",
+    "one_line_summary": "One held picture: back and head flat on a wall, thighs level with the floor, knees at 90 deg directly over the ankles, arms hanging."
+  },
+  "setup": [
+    {"item": "feet", "target": "Hip-width, far enough from the wall that the shins are vertical at the bottom (ACE: 6-12 in to start, then slide down).", "tolerance": "shin within 10 deg of vertical", "source_ids": ["S1"]},
+    {"item": "back", "target": "Whole back and back of the head on the wall.", "tolerance": "gap < 0.03 m", "source_ids": ["S1"]}
+  ],
+  "movement": [
+    {"joint": "knee", "measure": "knee flexion (held)", "start": "90 deg", "end": "90 deg", "start_num": 90, "end_num": 90, "tolerance": "80-100", "source_ids": ["S1", "S3"]},
+    {"joint": "hip", "measure": "hip flexion (held), thigh level with floor", "start": "90 deg", "end": "90 deg", "start_num": 90, "end_num": 90, "tolerance": "80-100", "source_ids": ["S1"]},
+    {"joint": "shin", "measure": "tilt from vertical, knee over ankle", "start": "0 deg", "end": "0 deg", "start_num": 0, "end_num": 0, "tolerance": "0-10", "source_ids": ["S1", "S2"]},
+    {"joint": "trunk", "measure": "upright, on the wall", "start": "0 deg", "end": "0 deg", "start_num": 0, "end_num": 0, "tolerance": "0-5", "source_ids": ["S1"]},
+    {"joint": "arms", "measure": "hang at the sides (still)", "start": "elev 10", "end": "elev 10", "start_num": 10, "end_num": 10, "tolerance": "", "source_ids": ["S1"]}
+  ],
+  "muscles": [
+    {"muscle": "Quadriceps", "mask_key": "quads", "tier": "primary", "role": "Hold the knee at 90 deg. Upright trunk + vertical tibia keeps demand on the knee extensors; quad EMG peaks near 90 deg knee angle.", "source_ids": ["S2", "S3"]},
+    {"muscle": "Gluteus maximus", "mask_key": "glutes", "tier": "secondary", "role": "Library secondary; hip extensor holding the hip at 90 deg with the trunk upright (lower hip moment than the knee).", "source_ids": ["S2"]},
+    {"muscle": "Calves", "mask_key": "calves", "tier": "stabiliser", "role": "Keep the feet planted.", "source_ids": ["S1"]},
+    {"muscle": "Abdominals", "mask_key": "abs", "tier": "stabiliser", "role": "Keep the back flat on the wall.", "source_ids": ["S1"]}
+  ],
+  "tempo": null,
+  "mistakes": [
+    {"mistake": "Knees past the toes / feet too close", "what_it_looks_like": "Shins slope forward, knees ahead of the toes.", "why_it_matters": "Not the 90/90 position; more knee strain.", "source_ids": ["S1"]},
+    {"mistake": "Sitting too high", "what_it_looks_like": "Thighs well above level.", "why_it_matters": "Much easier; not the exercise shown.", "source_ids": ["S1"]}
+  ],
+  "sources": [
+    {"id": "S1", "citation": "American Council on Exercise. 5 variations of the body-weight squat (wall squat).", "url": "https://www.acefitness.org/education-and-resources/professional/expert-articles/5875/5-variations-of-the-body-weight-squat/", "type": "ace", "what_it_gave": "Feet 6-12 in from the wall, slide down until thighs parallel, hold up to 30 s, whole back and head on the wall, right angle at the knees, knees in line with the ankles."},
+    {"id": "S2", "citation": "Straub RK, Powers CM. 2024. A biomechanical review of the squat exercise: implications for clinical practice. Int J Sports Phys Ther 19(4):490-501.", "url": "https://rcastoragev2.blob.core.windows.net/dc2594d143c119cd3c8cb0d8b426c881/ijspt_2024_19_4_94600.PMC10987311.pdf", "type": "review", "what_it_gave": "Upright trunk raises the knee flexion moment and lowers the hip moment; upright tibia lowers the knee moment; medium depth = 90-110 deg / thigh parallel."},
+    {"id": "S3", "citation": "Marchetti PH, da Silva JJ, Schoenfeld BJ, et al. 2016. Muscle activation differs between three different knee joint-angle positions during a maximal isometric back squat exercise. J Sports Med.", "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4967668/", "type": "emg", "what_it_gave": "Isometric squat: quadriceps activity highest at 90 deg knee angle."}
+  ],
+  "clip_check": [
+    {"check": "Knee angle", "target": "80-100 deg", "measured": "", "pass": ""},
+    {"check": "Thigh level with floor", "target": "within 10 deg", "measured": "", "pass": ""},
+    {"check": "Knee over ankle (shin vertical)", "target": "within 10 deg", "measured": "", "pass": ""},
+    {"check": "Back and buttocks touching the wall, not inside it", "target": "gap -0.01..+0.03 m", "measured": "", "pass": ""},
+    {"check": "Feet flat on floor", "target": "lowest point -0.002..+0.002 m", "measured": "", "pass": ""},
+    {"check": "Quads the strongest red", "target": "yes", "measured": "", "pass": ""}
+  ]
+}

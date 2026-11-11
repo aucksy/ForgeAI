@@ -1,0 +1,53 @@
+{
+  "format": "v1-stills",
+  "exercise": {
+    "key": "incline_bench_preacher_curl",
+    "name": "Incline Bench Preacher Curl",
+    "equipment": "dumbbell",
+    "library_primary": ["biceps"],
+    "library_secondary": ["forearms"],
+    "library_steps": [
+      "Stand behind an incline bench and drape one arm over the backrest.",
+      "Curl the dumbbell up with your upper arm pressed on the pad.",
+      "Lower slowly, finish your reps, then switch arms."
+    ],
+    "status": "draft",
+    "version": 1,
+    "researched_on": "2026-11-11",
+    "one_line_summary": "Standing behind a 60 deg back pad, armpit over its top edge, upper arm lying down the pad (shoulder flexed ~60 deg); palm up, the elbow goes from ~20 deg (nearly straight) to ~120 deg. Biceps is the target, with most effort near the stretched bottom.",
+    "evidence_grade": "B"
+  },
+  "setup": [
+    {"item": "bench", "target": "Back pad set steep (60 deg), athlete behind it, chest against the back of the pad, armpit hooked over the top edge.", "tolerance": "pad 45-60 deg", "why": "The pad fixes the upper arm in shoulder flexion, the defining preacher position; 60 deg lets a standing adult reach the top edge.", "source_ids": ["S1", "S2"], "grade": "C"},
+    {"item": "upper arm", "target": "Whole back of the upper arm flat on the pad, stays there.", "tolerance": "shoulder flexion 50-75 deg", "why": "Biceps EMG peaked at 75 deg shoulder flexion in an isometric curl (S2).", "source_ids": ["S2"], "grade": "B"},
+    {"item": "grip", "target": "Supinated (palm up), one dumbbell; other hand rests on the pad.", "tolerance": "none", "why": "Library: one arm at a time.", "source_ids": ["S1"], "grade": "C"},
+    {"item": "legs", "target": "Feet hip-width behind the bench, knees soft, leaning into the pad.", "tolerance": "knee bend 20-40 deg", "why": "Gets the shoulder down to pad height.", "source_ids": [], "grade": "D"}
+  ],
+  "movement": [
+    {"joint": "elbow", "measure": "bend, 0 = straight", "start": "20 deg (not locked)", "end": "120 deg (forearm ~60 deg above level, before vertical)", "start_num": 20, "end_num": 120, "tolerance": "start 10-25; end 110-130", "source_ids": ["S1"], "grade": "B"},
+    {"joint": "shoulder (elev / plane)", "measure": "upper arm angle from the torso; stays still on the pad", "start": "60 / 88 deg", "end": "60 / 88 deg", "start_num": 60, "end_num": 60, "tolerance": "change < 5", "source_ids": ["S2"], "grade": "C"},
+    {"joint": "trunk, legs", "measure": "stay still", "start": "leaning ~30 deg into the pad", "end": "same", "start_num": 30, "end_num": 30, "tolerance": "no rocking", "source_ids": [], "grade": "D"}
+  ],
+  "muscles": [
+    {"muscle": "Biceps brachii", "mask_key": "biceps", "tier": "primary", "emg": "Preacher curl: ~80% of max RMS early in the lift, falling toward the top; higher than standing/incline curls in the first third, lower in the last third (S1). Shoulder flexion 75 deg gave the highest biceps EMG (115.6%) of 30-90 deg (S2).", "source_ids": ["S1", "S2"], "grade": "B"},
+    {"muscle": "Brachioradialis / forearm flexors", "mask_key": "forearms", "tier": "secondary", "emg": "flexor carpi radialis did not differ across shoulder angles (S2)", "source_ids": ["S2"], "grade": "C"},
+    {"muscle": "Brachialis", "mask_key": "none", "tier": "deep", "emg": "not measured", "source_ids": [], "grade": "D"}
+  ],
+  "tempo": null,
+  "mistakes": [
+    {"mistake": "Upper arm lifts off the pad", "what_it_looks_like": "Elbow rises as the dumbbell comes up.", "why_it_matters": "Library: upper arm pressed on the pad; shoulder takes over.", "source_ids": ["S1"]},
+    {"mistake": "Dropping into a locked elbow", "what_it_looks_like": "Arm snaps fully straight at the bottom.", "why_it_matters": "The bottom is where preacher effort is highest; stop short of lockout (subjects started at ~20 deg).", "source_ids": ["S1"]}
+  ],
+  "sources": [
+    {"id": "S1", "citation": "Oliveira LF, Matta TT, Alves DS, Garcia MAC, Vieira TMM. 2009. Effect of the shoulder position on the biceps brachii EMG in different dumbbell curls. J Sports Sci Med 8:24-29.", "url": "https://www.jssm.org/jssm-08-24.xml-Fulltext", "type": "emg", "what_it_gave": "Dumbbell preacher vs standing vs incline curl. Preacher: high biceps activity only near extension, lower in the top third; shorter ROM; reps began at ~20 deg elbow flexion."},
+    {"id": "S2", "citation": "Moon J, Shin I, Kang M, et al. 2013. The effect of shoulder flexion angles on the recruitment of upper-extremity muscles during isometric contraction. J Phys Ther Sci 25(10):1299-1301.", "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3820192/", "type": "emg", "what_it_gave": "n=13 trained men, shoulder flexion 30-90 deg on a curl machine: biceps EMG and force peaked at 75 deg (115.6%)."}
+  ],
+  "clip_check": [
+    {"check": "Upper arm lies on the pad in both pictures", "target": "gap 0-0.03 m, elev change < 5", "measured": "", "pass": ""},
+    {"check": "Start / end elbow", "target": "20 / 120 deg", "measured": "", "pass": ""},
+    {"check": "Torso not inside the pad or strut", "target": "clear", "measured": "", "pass": ""},
+    {"check": "Feet flat on the floor behind the bench, clear of the bench foot", "target": "probe_feet in range", "measured": "", "pass": ""},
+    {"check": "Palm up on the handle; free hand on the pad, no prop", "target": "yes", "measured": "", "pass": ""},
+    {"check": "Biceps strongest red in both pictures", "target": "yes", "measured": "", "pass": ""}
+  ]
+}

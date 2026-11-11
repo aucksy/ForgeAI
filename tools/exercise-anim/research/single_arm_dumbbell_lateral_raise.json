@@ -1,0 +1,57 @@
+{
+  "format": "v1-stills",
+  "exercise": {
+    "key": "single_arm_dumbbell_lateral_raise",
+    "name": "Single-Arm Dumbbell Lateral Raise",
+    "equipment": "dumbbell",
+    "library_primary": ["side_delts"],
+    "library_secondary": ["traps"],
+    "library_steps": ["Hold a dumbbell in one hand and grip a post with the other.", "Raise the dumbbell out to the side up to shoulder height.", "Lower it slowly. Finish all reps, then switch arms."],
+    "status": "draft",
+    "version": null,
+    "researched_on": "2026-11-11",
+    "one_line_summary": "Standing tall, free hand holding an upright post; the working arm (left in the picture) rises out to the side, a little in front of the body, to shoulder height (90 deg) with a soft, fixed elbow and palm down. No shrug, no lean, no swing.",
+    "evidence_grade": "B"
+  },
+  "setup": [
+    {"item": "stance", "target": "Feet about hip-width, knees soft, trunk upright (no lean toward or away from the post).", "tolerance": "trunk lean 0-5 deg", "why": "A still trunk stops momentum doing the lift.", "source_ids": ["S2"], "grade": "C"},
+    {"item": "free hand", "target": "Right hand grips an upright post at about chest-shoulder height, arm out to the side and a little forward, elbow soft.", "tolerance": "hand 1.1-1.35 m high", "why": "Library steps; the post steadies the body so only the working shoulder moves.", "source_ids": ["S2"], "grade": "D"},
+    {"item": "grip", "target": "Neutral grip at the start (palm facing the thigh), turning to palm-down as the arm rises.", "tolerance": "handle within 20 deg of level at the top", "why": "ACE: closed neutral grip, wrists neutral.", "source_ids": ["S2"], "grade": "C"},
+    {"item": "shoulder blades", "target": "Down and back, held there the whole set.", "tolerance": "collarbone lift 0-5 deg", "why": "ACE cue; stops the upper trap taking over.", "source_ids": ["S2"], "grade": "C"}
+  ],
+  "movement": [
+    {"joint": "left shoulder (raise)", "measure": "elev: upper arm from the side of the trunk, 0 = hanging, 90 = level with the floor", "start": "8 deg (dumbbell clear of the thigh)", "end": "88 deg (arm level with the shoulder)", "start_num": 8, "end_num": 88, "tolerance": "start 0-15; end 85-95", "source_ids": ["S1", "S2"], "grade": "B"},
+    {"joint": "left shoulder (plane)", "measure": "plane: 0 = straight out to the side, +90 = straight forward", "start": "20 deg", "end": "20 deg", "start_num": 20, "end_num": 20, "tolerance": "10-30 deg", "source_ids": ["S2"], "grade": "C"},
+    {"joint": "left elbow", "measure": "bend, 0 = straight", "start": "15 deg", "end": "18 deg (held, not bent further)", "start_num": 15, "end_num": 18, "tolerance": "10-25 deg", "source_ids": ["S2"], "grade": "C"},
+    {"joint": "left upper-arm roll", "measure": "handle tilt at the top (front end up = slight outward turn)", "start": "neutral", "end": "front edge tipped up a little (tilt 18)", "start_num": 0, "end_num": 18, "tolerance": "0-25 deg; never thumb-down", "source_ids": ["S2"], "grade": "C"},
+    {"joint": "right arm (post hand)", "measure": "elev / plane / elbow", "start": "70 / 15 / 15", "end": "70 / 15 / 15 (does not move)", "start_num": 70, "end_num": 70, "tolerance": "+-5 deg", "source_ids": ["S2"], "grade": "D"},
+    {"joint": "trunk, hips, knees", "measure": "standing rest pose", "start": "upright, knees soft", "end": "same (still)", "start_num": 0, "end_num": 0, "tolerance": "lean under 5 deg", "source_ids": ["S2"], "grade": "C"},
+    {"joint": "left collarbone (shrug)", "measure": "clavicle Z, deg", "start": "0", "end": "5 (natural, small)", "start_num": 0, "end_num": 5, "tolerance": "0-8 deg", "source_ids": ["S2"], "grade": "C"}
+  ],
+  "muscles": [
+    {"muscle": "Side delt", "anatomy": "Deltoideus, pars acromialis", "mask_key": "side_delts", "tier": "primary", "glow": 1.0, "emg": "30.3 % MVIC, highest delt head (seated lateral raise, 60 % 1RM, S1)", "role": "Lifts the arm out to the side; what the exercise is for.", "surface": "Outer cap of the shoulder, from the acromion down to the outer upper arm.", "source_ids": ["S1"], "grade": "B"},
+    {"muscle": "Rear delt", "anatomy": "Deltoideus, pars spinalis", "mask_key": "rear_delts", "tier": "secondary", "glow": 0.35, "emg": "24.0 % MVIC (S1), 79 % of the side delt", "role": "Helps abduct the arm in the scapular plane.", "surface": "Back of the shoulder cap.", "source_ids": ["S1"], "grade": "B"},
+    {"muscle": "Front delt", "anatomy": "Deltoideus, pars clavicularis", "mask_key": "front_delts", "tier": "secondary", "glow": 0.35, "emg": "21.2 % MVIC (S1), 70 % of the side delt", "role": "Helps, more so because the arm rises a little in front of the body.", "surface": "Front of the shoulder cap.", "source_ids": ["S1"], "grade": "B"},
+    {"muscle": "Upper trapezius", "anatomy": "Trapezius, pars descendens", "mask_key": "traps", "tier": "stabiliser", "glow": 0, "emg": "not measured in S1/S2", "role": "Library secondary; holds and turns the shoulder blade upward. Not lit: no EMG in the sources opened, and the cue is to keep it quiet (no shrug). Lit as secondary in the two-arm lateral_raise file, which has its own sources.", "surface": "Top of the shoulder between neck and acromion.", "source_ids": ["S2"], "grade": "C"},
+    {"muscle": "Supraspinatus", "anatomy": "Supraspinatus", "mask_key": "none", "tier": "deep", "glow": 0, "emg": "not measured", "role": "Starts the raise; lies under the trapezius.", "surface": "Under the trapezius above the shoulder blade spine.", "source_ids": ["S1"], "grade": "C"},
+    {"muscle": "Forearm grip", "anatomy": "Finger flexors", "mask_key": "forearms", "tier": "stabiliser", "glow": 0, "emg": "not measured", "role": "Holds the dumbbell and the post.", "surface": "Inner forearm.", "source_ids": ["S2"], "grade": "D"}
+  ],
+  "tempo": null,
+  "mistakes": [
+    {"mistake": "Raising above shoulder height or shrugging", "what_it_looks_like": "Hand above the shoulder, shoulder hitched to the ear.", "why_it_matters": "Upper trap takes over; impingement risk.", "source_ids": ["S2"]},
+    {"mistake": "Leaning away from the post", "what_it_looks_like": "Trunk tilts sideways as the arm rises.", "why_it_matters": "Swing replaces shoulder work.", "source_ids": ["S2"]}
+  ],
+  "sources": [
+    {"id": "S1", "citation": "Campos YAC, Vianna JM, Guimaraes MP, et al. 2020. Different shoulder exercises affect the activation of deltoid portions in resistance-trained individuals. J Hum Kinet 75:5-14.", "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC7706677/fullTextXML", "type": "emg", "what_it_gave": "Lateral raise, 60 % 1RM, 13 trained men: side 30.3, rear 24.0, front 21.2 % MVIC."},
+    {"id": "S2", "citation": "American Council on Exercise. Exercise Library: Lateral Raise.", "url": "https://www.acefitness.org/resources/everyone/exercise-library/26/lateral-raise/", "type": "guideline", "what_it_gave": "Neutral grip start, elbows slightly bent and leading, raise to shoulder height, small upward tilt of the front edge past 60-70 deg, shoulder blades down and back, wrists neutral, no back arch."}
+  ],
+  "clip_check": [
+    {"check": "Left arm elev, start picture", "target": "8 deg (0-15)", "measured": "", "pass": "", "tool": "measure_pose.py"},
+    {"check": "Left arm elev, end picture", "target": "88 deg (85-95)", "measured": "", "pass": "", "tool": "measure_pose.py"},
+    {"check": "Left elbow bend, both pictures", "target": "15-18 deg (10-25)", "measured": "", "pass": "", "tool": "measure_pose.py"},
+    {"check": "Right hand closed on the post, both pictures", "target": "fist centre within 2 cm of the post centre line", "measured": "", "pass": "", "tool": "render, look"},
+    {"check": "Left hand wraps the dumbbell handle", "target": "yes", "measured": "", "pass": "", "tool": "render, look"},
+    {"check": "Feet flat on the floor", "target": "lowest point -0.002..+0.002 m", "measured": "", "pass": "", "tool": "probe_feet.py"},
+    {"check": "Side delt is the strongest red in both pictures", "target": "yes", "measured": "", "pass": "", "tool": "render, crop"}
+  ]
+}

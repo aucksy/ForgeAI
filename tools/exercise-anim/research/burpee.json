@@ -1,0 +1,50 @@
+{
+  "format": "v1-stills",
+  "exercise": {
+    "key": "burpee",
+    "name": "Burpee",
+    "equipment": "bodyweight",
+    "library_primary": ["cardio"],
+    "library_secondary": ["quads", "chest"],
+    "library_steps": ["From standing, squat down and put your hands on the floor.", "Jump your feet back into a push-up position and do one push-up.", "Jump your feet back in, then jump up with your arms overhead."],
+    "status": "draft",
+    "researched_on": "2026-11-11",
+    "one_line_summary": "Two pictures: standing tall, feet hip-width, arms relaxed (start); high plank at the top of the push-up, arms straight under the shoulders, body one straight line from head to heels on the toes (end)."
+  },
+  "setup": [
+    {"item": "start", "target": "Standing, feet about hip-width, arms relaxed at the sides.", "tolerance": "", "source_ids": ["S1", "S2"]},
+    {"item": "plank", "target": "Hands under the shoulders, arms straight, body straight - hips neither high nor sagging.", "tolerance": "hip within 0.05 m of the shoulder-ankle line", "source_ids": ["S1", "S2"]}
+  ],
+  "movement": [
+    {"joint": "whole body", "measure": "body line angle from horizontal (spec root rot X = 90 - this)", "start": "90 deg (standing)", "end": "about 22 deg (shoulders 0.65 m up, ankles 0.15 m up)", "start_num": 0, "end_num": 68, "tolerance": "end root rot X 64-72", "source_ids": ["S1", "S2"]},
+    {"joint": "shoulder", "measure": "arm vertical to the floor (elev in torso frame)", "start": "8 (hanging)", "end": "68 (= straight down in world when the body is at 68)", "start_num": 8, "end_num": 68, "tolerance": "arms within 10 deg of vertical", "source_ids": ["S1"]},
+    {"joint": "elbow", "measure": "near straight", "start": "10", "end": "5 (top of the push-up)", "start_num": 10, "end_num": 5, "tolerance": "0-15", "source_ids": ["S1"]},
+    {"joint": "hip and knee", "measure": "straight in both (standing; plank)", "start": "0-5", "end": "0-5", "start_num": 0, "end_num": 0, "tolerance": "0-10", "source_ids": ["S2"]},
+    {"joint": "ankle", "measure": "end: on the toes, heels up", "start": "flat", "end": "foot rot X +50", "start_num": 0, "end_num": 50, "tolerance": "", "source_ids": ["S1"]}
+  ],
+  "muscles": [
+    {"muscle": "Whole body / heart and lungs", "mask_key": "none", "tier": "primary", "role": "The burpee is a conditioning drill (library primary: cardio); used as a VO2 field test (S2).", "source_ids": ["S2"]},
+    {"muscle": "Quadriceps", "mask_key": "quads", "tier": "secondary", "role": "Squat down and jump up (NASM primary).", "source_ids": ["S1"]},
+    {"muscle": "Pectoralis major", "mask_key": "chest", "tier": "secondary", "role": "The push-up (NASM primary).", "source_ids": ["S1"]},
+    {"muscle": "Gluteus maximus", "mask_key": "glutes", "tier": "secondary", "role": "Squat and jump (NASM primary).", "source_ids": ["S1"]},
+    {"muscle": "Triceps", "mask_key": "triceps", "tier": "stabiliser", "role": "Push-up and straight-arm plank (NASM secondary).", "source_ids": ["S1"]},
+    {"muscle": "Front deltoid", "mask_key": "front_delts", "tier": "stabiliser", "role": "Push-up (NASM secondary: deltoids).", "source_ids": ["S1"]},
+    {"muscle": "Abdominals", "mask_key": "abs", "tier": "stabiliser", "role": "Hold the plank line (NASM secondary: core).", "source_ids": ["S1", "S2"]}
+  ],
+  "tempo": null,
+  "mistakes": [
+    {"mistake": "Hips sagging in the plank", "what_it_looks_like": "Belly drops toward the floor.", "why_it_matters": "Strains the low back; counts as a failed rep in S2.", "source_ids": ["S1", "S2"]},
+    {"mistake": "Hips piked high", "what_it_looks_like": "Bottom up in an inverted V.", "why_it_matters": "Not a plank; failed rep in S2.", "source_ids": ["S2"]}
+  ],
+  "sources": [
+    {"id": "S1", "citation": "National Academy of Sports Medicine. Squat Thrust Burpees (exercise library).", "url": "https://www.nasm.org/resource-center/exercise-library/squat-thrust-burpees", "type": "nasm", "what_it_gave": "Stand hip-width, squat, hands outside the feet, feet back to push-up position, one push-up, feet in, jump with arms overhead; don't let hips drop; primary quads, pecs, glutes; secondary triceps, delts, core, hip flexors."},
+    {"id": "S2", "citation": "Yamashita Y. 2023. The 3-minute burpee test: a minimalistic alternative to the conventional estimated oxygen uptake test. Cureus 15(3):e35841.", "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10080365/", "type": "field-test", "what_it_gave": "Four stages: squat, plank, push-up, jump; begin and end standing; plank with hips too high or too low = failed rep."}
+  ],
+  "clip_check": [
+    {"check": "Start: standing tall, feet flat", "target": "-0.002..+0.002 m", "measured": "", "pass": ""},
+    {"check": "End: straight body line", "target": "hip within 0.05 m of shoulder-ankle line", "measured": "", "pass": ""},
+    {"check": "End: hands on the floor under the shoulders", "target": "lowest hand point -0.005..+0.005 m; hand y within 0.08 m of shoulder y", "measured": "", "pass": ""},
+    {"check": "End: toes on the floor, heels up", "target": "-0.005..+0.005 m", "measured": "", "pass": ""},
+    {"check": "Red spread: quads/chest/glutes lit, no single muscle dominating", "target": "yes", "measured": "", "pass": ""}
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "key": "hollow_hold",
+  "name": "Hollow Hold",
+  "primary": ["abs"],
+  "secondary": [],
+  "skin": {"preserve_volume": true, "calm_armpits": {"amount": 0.45, "radius": 0.05, "fade": 0.05, "down": 0.08, "hl_cut": 0.8}},
+  "camera": {"yaw": -85, "pitch": 12, "lens": 50, "fill": 0.9, "res": 640, "samples": 20},
+  "timing": {"fps": 30, "keys": [[0, "hold"], [1, "hold"]]},
+  "poses": {
+    "hold": {
+      "root": {"loc": [0, 0, 0.11], "rot": [-90, 0, 0]},
+      "bones": {"spine05": [4, 0, 0], "spine04": [6, 0, 0], "spine03": [7, 0, 0], "spine02": [7, 0, 0], "spine01": [5, 0, 0],
+                "neck01": [3, 0, 0], "head": [2, 0, 0]},
+      "feet": {"L": {"at": [0.05, -0.885, 0.318], "rot": [-10, 0, 0]}},
+      "knees": {"L": [0.08, -0.45, 0.9]},
+      "hands": {"L": {"axis": [0, 1, 0], "arm": {"elev": 170, "plane": 90, "elbow": 5, "bend": [0, 1, 0]}}}
+    }
+  },
+  "research": "Supine, pelvis flat (root rot X -90, pelvis joint 0.11 m) -> hip L (0.11, 0.003, 0.161). Upper trunk curled 4+6+7+7+5 = 29 deg (spine05 +4 = lumbar flattened, never arched) so the shoulder blades leave the floor. Legs straight and together, 10 deg off the floor: hip-ankle 0.905 (soft ~9 deg knee), dx -0.06, dy -0.888, dz +0.157 -> ankle (0.05,-0.885,0.318), heels ~0.25 m up; ankles 0.10 apart = feet touching; toes pointed (rot X -10 follows the leg line). Knee pole up (+Z). Arms by the ears: elev 170 / plane 90 in the torso frame (10 deg toward the ceiling from the spine line), elbows 5 -> with the ~15 deg torso tilt the arms sit ~25 deg above the floor. skin options copied from the approved overhead shoulder press (preserve volume, calm armpits). Sources S1 ACE hollow-body (low back pressed down, biceps by ears), S2 Oliva-Lozano 2020 (V-sit RA ~80%)."
+}

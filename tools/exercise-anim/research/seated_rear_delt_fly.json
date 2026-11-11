@@ -1,0 +1,53 @@
+{
+  "format": "v1-stills",
+  "exercise": {
+    "key": "seated_rear_delt_fly",
+    "name": "Seated Rear Delt Fly",
+    "equipment": "dumbbell",
+    "library_primary": ["rear_delts"],
+    "library_secondary": ["upper_back"],
+    "library_steps": [
+      "Sit on the end of a bench and lean forward, chest near your knees.",
+      "Hold dumbbells below your legs, palms facing each other.",
+      "Raise your arms out to the sides, then lower slowly."
+    ],
+    "status": "draft",
+    "version": 1,
+    "researched_on": "2026-11-11",
+    "one_line_summary": "Sitting on the end of a bench, flat back leaning ~60 deg forward over the thighs; arms hang beside the calves with soft elbows (~15 deg) and palms in, then rise out to the sides until the elbows reach shoulder height (arms square to the torso). Rear delts are the target; upper back helps.",
+    "evidence_grade": "B"
+  },
+  "setup": [
+    {"item": "seat and lean", "target": "Sit near the bench edge, feet flat, bend forward with a flat back until the torso rests on or near the thighs.", "tolerance": "torso 50-75 deg from vertical", "why": "ACE study setup; resting the torso removes lower-back fatigue.", "source_ids": ["S1"], "grade": "B"},
+    {"item": "arms and grip", "target": "Arms hang under/beside the legs, palms facing each other, elbows softly bent.", "tolerance": "elbow 10-30 deg, fixed", "why": "ACE: fixed 10-30 deg elbow. Neutral hand position gave more rear-delt EMG than palms-down.", "source_ids": ["S1", "S2"], "grade": "B"}
+  ],
+  "movement": [
+    {"joint": "shoulder (elev / plane, torso frame)", "measure": "plane 90 = arm hanging toward the floor in front of the chest, 0 = straight out to the side", "start": "elev 70, plane 80 (hanging)", "end": "elev 88, plane 0 (out to the side, square to the torso)", "start_num": 80, "end_num": 0, "tolerance": "end: elbows at shoulder height, not behind the torso line", "source_ids": ["S1", "S2"], "grade": "B"},
+    {"joint": "elbow", "measure": "bend, fixed", "start": "15 deg", "end": "15 deg", "start_num": 15, "end_num": 15, "tolerance": "10-30, change < 5", "source_ids": ["S1"], "grade": "B"},
+    {"joint": "trunk, legs", "measure": "stay still", "start": "~60 deg forward lean", "end": "same", "start_num": 60, "end_num": 60, "tolerance": "no rising up", "source_ids": ["S1"], "grade": "C"}
+  ],
+  "muscles": [
+    {"muscle": "Posterior deltoid", "mask_key": "rear_delts", "tier": "primary", "emg": "Seated rear lateral raise was one of the two highest rear-delt exercises of ten (S1). Machine reverse fly, neutral grip: 90.3% vs 86.5% MVIC palms-down (S2).", "source_ids": ["S1", "S2"], "grade": "B"},
+    {"muscle": "Middle trapezius / rhomboids", "mask_key": "upper_back", "tier": "secondary", "emg": "not measured in S1/S2; retract the shoulder blades during horizontal abduction", "source_ids": [], "grade": "D"},
+    {"muscle": "Middle deltoid", "mask_key": "side_delts", "tier": "secondary", "emg": "trend higher with neutral grip (p = 0.087) (S2)", "source_ids": ["S2"], "grade": "C"},
+    {"muscle": "Infraspinatus", "mask_key": "none", "tier": "deep", "emg": "70.4% vs 61.7% MVIC neutral vs palms-down (S2)", "source_ids": ["S2"], "grade": "B"},
+    {"muscle": "Spinal erectors (hold the lean)", "mask_key": "lower_back", "tier": "stabiliser", "emg": "not measured", "source_ids": [], "grade": "D"}
+  ],
+  "tempo": null,
+  "mistakes": [
+    {"mistake": "Torso rises as the arms lift", "what_it_looks_like": "Chest comes up off the thighs at the top.", "why_it_matters": "Turns it into a row/lateral raise; ACE keeps the torso on the thighs.", "source_ids": ["S1"]},
+    {"mistake": "Elbows bend more to lift", "what_it_looks_like": "Arms fold into a row at the top.", "why_it_matters": "ACE uses a fixed 10-30 deg elbow.", "source_ids": ["S1"]}
+  ],
+  "sources": [
+    {"id": "S1", "citation": "Sweeney S, Porcari JP, Camic C, Kovacs A, Foster C. 2014. Dynamite delts: ACE research identifies top shoulder exercises. ACE ProSource, Sept 2014.", "url": "https://www.acefitness.org/education-and-resources/professional/prosource/september-2014/4972/dynamite-delts-ace-research-identifies-top-shoulder-exercises/", "type": "emg + coaching", "what_it_gave": "Seated rear lateral raise: sit on the bench edge, bend over (torso on thighs if possible), flat back, dumbbells under the legs, raise out to the sides until elbows reach shoulder height, arms perpendicular to the torso, fixed 10-30 deg elbow. Tied top rear-delt exercise."},
+    {"id": "S2", "citation": "Schoenfeld B, Sonmez RGT, Kolber MJ, Contreras B, Harris R, Ozen S. 2013. Effect of hand position on EMG activity of the posterior shoulder musculature during a horizontal abduction exercise. J Strength Cond Res 27(10):2644-2649.", "url": "https://www.lookgreatnaked.com/articles/effect_of_hand_position_on_EMG_activity_of_the_posterior_shoulder_musculature.pdf", "type": "emg", "what_it_gave": "n=19 trained men, reverse fly machine, 90 deg flexion to humerus parallel to torso. Neutral vs pronated: rear delt 90.3 vs 86.5% MVIC, infraspinatus 70.4 vs 61.7%."}
+  ],
+  "clip_check": [
+    {"check": "Torso lean, flat back, same in both pictures", "target": "~60 deg from vertical", "measured": "", "pass": ""},
+    {"check": "Start: dumbbells hang beside the calves, not inside legs or floor", "target": "clear > 0.02 m", "measured": "", "pass": ""},
+    {"check": "End: elbows at shoulder height, arms square to the torso", "target": "elev 85-90, plane 0..-5", "measured": "", "pass": ""},
+    {"check": "Elbow bend fixed", "target": "15 deg both", "measured": "", "pass": ""},
+    {"check": "Hips on bench end, feet flat", "target": "probe_feet in range", "measured": "", "pass": ""},
+    {"check": "Rear delts strongest red in both pictures", "target": "yes", "measured": "", "pass": ""}
+  ]
+}

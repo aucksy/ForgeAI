@@ -1,0 +1,18 @@
+{
+  "key": "wall_sit",
+  "name": "Wall Sit",
+  "primary": ["quads"],
+  "secondary": ["glutes"],
+  "scene": {"box": {"size": [1.2, 0.2, 1.8], "loc": [0, 0.39, 0]}},
+  "camera": {"yaw": -78, "pitch": 10, "lens": 50, "fill": 0.9, "res": 640, "samples": 20},
+  "timing": {"fps": 30, "keys": [[0, "hold"], [1, "hold"]]},
+  "poses": {
+    "hold": {
+      "root": {"loc": [0, 0.201, 0.521], "rot": [0, 0, 0]},
+      "feet": {"L": {"at": [0.14, -0.30, 0.074], "rot": [0, 0, 6]}},
+      "knees": {"L": [0.16, -1.0, 0.55]},
+      "hands": {"L": {"axis": [0, 1, 0], "arm": {"elev": 10, "plane": 15, "elbow": 10, "bend": [0, 1, 0], "tilt": 0}}}
+    }
+  },
+  "research": "90/90 hold (ACE: thighs parallel, knees over ankles, back + head on the wall). Ankle L (0.14,-0.30,0.074); shin vertical -> knee (0.14,-0.30,0.524); thigh level -> hip L (0.11,0.15,0.524); hip-ankle 0.64 m = 90 deg knee. Pelvis joint = hip centre + (0,0.051,-0.003) = (0,0.201,0.521). Wall block 1.2 x 0.2 x 1.8 m, front face at y 0.29: buttocks ~0.12-0.14 behind the hip joint (y ~0.27-0.29) and upper back ~0.08 behind the pelvis joint (y ~0.28) - estimates, so measure the back gap and slide the wall (loc y) to -0.01..+0.03 m. Arms hang (elev 10, plane 15 so the hands stay off the wall), hands at z ~0.40 beside the thighs. Sources: ACE wall squat; Straub & Powers 2024 (upright trunk + vertical tibia); Marchetti 2016 PMC4967668 (quads peak ~90 deg). Facts and checks: research/wall_sit.json."
+}

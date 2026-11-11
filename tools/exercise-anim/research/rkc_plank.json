@@ -1,0 +1,57 @@
+{
+  "format": "v1-stills",
+  "exercise": {
+    "key": "rkc_plank",
+    "name": "RKC Plank",
+    "equipment": "bodyweight",
+    "type": "time",
+    "library_primary": ["abs"],
+    "library_secondary": ["obliques", "glutes"],
+    "steps": [
+      "Get into a forearm plank with elbows slightly ahead of your shoulders.",
+      "Squeeze your glutes, thighs and fists as hard as you can.",
+      "Pull your elbows toward your toes without moving, and hold."
+    ],
+    "status": "draft",
+    "version": null,
+    "researched_on": "2026-11-11",
+    "one_line_summary": "A hold (one picture): forearm plank on the toes with the elbows close together (~0.15 m) and placed forward of the shoulders (upper arm ~10 deg past vertical, elbow ~100 deg), fists thumb-up, feet together, glutes squeezed into a posterior pelvic tilt, body one straight rigid line. Rectus abdominis is the target; obliques and glutes clearly work.",
+    "evidence_grade": "A"
+  },
+  "setup": [
+    {"item": "elbows", "target": "Elbows about 6 in (0.15 m) apart, forward toward the head so the elbow angle is ~100 deg.", "tolerance": "elbow gap 0.10-0.20 m; elbow 95-110 deg interior", "why": "NSCA technique column (S2): elbows ~6 in apart at nose level, ~100 deg; the longer lever is what raises EMG (S1).", "source_ids": ["S1", "S2"], "grade": "A"},
+    {"item": "hands", "target": "Fists, thumbs up, little fingers on the floor.", "tolerance": "none", "why": "S2.", "source_ids": ["S2"], "grade": "C"},
+    {"item": "feet", "target": "Feet together, on the toes.", "tolerance": "ankle gap under 0.15 m", "why": "S2: feet together (narrow base).", "source_ids": ["S2"], "grade": "C"},
+    {"item": "pelvis", "target": "Glutes squeezed hard: pubic bone toward the belly button, tailbone toward the feet (posterior tilt).", "tolerance": "pelvis tipped 3-8 deg posterior vs neutral", "why": "S1/S2; posterior tilt raises EO (S1).", "source_ids": ["S1", "S2"], "grade": "A"}
+  ],
+  "movement": [
+    {"joint": "body line (hold)", "measure": "torso slope; rot X 90 = flat face-down", "start": "~85.7 effective (shoulders 4.3 deg higher than the ankles)", "end": "same", "start_num": 85.7, "end_num": 85.7, "path": "Held rigid.", "tolerance": "+-3 deg", "source_ids": ["S2"], "grade": "C"},
+    {"joint": "pelvis (posterior tilt)", "measure": "pelvis rot X vs the torso line", "start": "-5 deg (root 80.7 with spine05 +3, spine04 +2 bringing the trunk back to the line)", "end": "same", "start_num": -5, "end_num": -5, "path": "Held.", "tolerance": "-3..-8 deg", "source_ids": ["S1", "S2"], "grade": "B"},
+    {"joint": "shoulder", "measure": "upper arm elev / plane (torso frame)", "start": "96.5 / 123 (elbow ahead of and inside the shoulder)", "end": "same", "start_num": 96.5, "end_num": 96.5, "path": "Held.", "tolerance": "elev 92-102", "source_ids": ["S2"], "grade": "C"},
+    {"joint": "elbow", "measure": "elbow bend, 0 = straight (bend 80 = interior 100)", "start": "80", "end": "80", "start_num": 80, "end_num": 80, "path": "Held; forearms flat.", "tolerance": "70-85", "source_ids": ["S2"], "grade": "C"},
+    {"joint": "knees", "measure": "knee bend", "start": "~0-9 deg (locked, quads squeezed)", "end": "same", "start_num": 5, "end_num": 5, "path": "Held.", "tolerance": "0-12", "source_ids": ["S2"], "grade": "C"}
+  ],
+  "muscles": [
+    {"muscle": "Abs (rectus abdominis)", "anatomy": "Rectus abdominis (upper and lower)", "mask_key": "abs", "tier": "primary", "glow": 1.0, "emg": "Long-lever posterior-tilt plank > traditional plank for upper RA (p<0.001) and lower abdominal stabilisers (p<0.001) (S1). Plank with scapular adduction and posterior pelvic tilt: RA ~78% MVIC (Cortell-Tormo, in S3).", "role": "Resists the trunk sagging under the longer lever; what the exercise is for.", "surface": "Vertical bands down the front of the belly.", "source_ids": ["S1", "S3"], "grade": "A"},
+    {"muscle": "Obliques", "anatomy": "Obliquus externus / internus abdominis", "mask_key": "obliques", "tier": "secondary", "glow": 0.35, "emg": "EO higher than traditional plank (p<0.001) (S1); posterior-tilt plank: EO 110.8 +- 65.8% and IO 119.9 +- 60.3% MVIC (Cortell-Tormo, in S3).", "role": "Brace the trunk; the posterior tilt raises them most. EMG equals or beats RA, but the exercise's named purpose (abs) keeps the primary slot.", "surface": "Sides of the waist.", "source_ids": ["S1", "S3"], "grade": "A"},
+    {"muscle": "Glutes", "anatomy": "Gluteus maximus", "mask_key": "glutes", "tier": "secondary", "glow": 0.35, "emg": "Not measured in S1; contracted 'as strongly as possible' by design (S2).", "role": "Hold the posterior pelvic tilt and the hips extended.", "surface": "Buttocks.", "source_ids": ["S2"], "grade": "C"},
+    {"muscle": "Quads", "anatomy": "Quadriceps", "mask_key": "quads", "tier": "stabiliser", "glow": 0, "emg": "Not measured.", "role": "Lock the knees (library: squeeze thighs).", "surface": "Front of the thigh.", "source_ids": ["S2"], "grade": "D"}
+  ],
+  "tempo": null,
+  "mistakes": [
+    {"mistake": "Hips dropping or sagging", "what_it_looks_like": "Belly sinks below the shoulder-ankle line.", "why_it_matters": "S2: the body must stay rigid; called the common error.", "source_ids": ["S2"]},
+    {"mistake": "Elbows under the shoulders, wide", "what_it_looks_like": "Looks like a normal plank.", "why_it_matters": "Removes the long lever that makes this variation harder (S1).", "source_ids": ["S1"]}
+  ],
+  "sources": [
+    {"id": "S1", "citation": "Schoenfeld BJ, Contreras B, Tiryaki-Sonmez G, Willardson JM, Fontana F. 2014. An electromyographic comparison of a modified version of the plank with a long lever and posterior tilt versus the traditional plank exercise. Sports Biomech 13(3):296-306. doi:10.1080/14763141.2014.942355", "url": "https://europepmc.org/article/MED/25325773", "type": "emg", "what_it_gave": "LLPTP > traditional for upper RA, lower abdominals, EO; long lever contributes more than the tilt; tilt alone raises EO."},
+    {"id": "S2", "citation": "Schoenfeld BJ, Contreras BM. 2013. Exercise technique: the long-lever posterior-tilt plank. Strength Cond J (NSCA).", "url": "https://www.lookgreatnaked.com/articles/long_lever_posterior_tilt_plank.pdf", "type": "guideline", "what_it_gave": "Feet together, fists thumbs up, elbows ~6 in apart at nose level, elbow ~100 deg, straight line, glutes max, pubic bone up / tailbone down; 2-3 x 10-30 s."},
+    {"id": "S3", "citation": "Oliva-Lozano JM, Muyor JM. 2020. Core muscle activity during physical fitness exercises: a systematic review. Int J Environ Res Public Health 17(12):4306. doi:10.3390/ijerph17124306", "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7345922/", "type": "review", "what_it_gave": "Front plank with scapular adduction + posterior pelvic tilt (Cortell-Tormo): IO 119.9%, EO 110.8%, RA ~78% MVIC."}
+  ],
+  "clip_check": [
+    {"check": "Elbows ahead of and closer than the shoulders", "target": "elbow gap 0.10-0.20 m; elbow 0.03-0.08 m toward the head from under the shoulder", "measured": "", "pass": "", "tool": "measure_pose.py"},
+    {"check": "Elbow interior angle", "target": "95-110 deg; forearms flat (z 0.02-0.05)", "measured": "", "pass": "", "tool": "measure_pose.py"},
+    {"check": "Toes on the floor, feet together", "target": "lowest foot point -0.002..+0.002 m; ankle gap < 0.15 m", "measured": "", "pass": "", "tool": "probe_feet.py"},
+    {"check": "Straight rigid line", "target": "hip within 0.03 m of the shoulder-ankle line", "measured": "", "pass": "", "tool": "measure_pose.py"},
+    {"check": "Primary muscle strongest red", "target": "abs strongest red; obliques and glutes light", "measured": "", "pass": "", "tool": "picture"}
+  ]
+}

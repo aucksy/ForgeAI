@@ -1,0 +1,18 @@
+{
+  "key": "knee_plank",
+  "name": "Knee Plank",
+  "primary": ["abs"],
+  "secondary": [],
+  "camera": {"yaw": -85, "pitch": 12, "lens": 50, "fill": 0.9, "res": 640, "samples": 20},
+  "timing": {"fps": 30, "keys": [[0, "hold"], [1, "hold"]]},
+  "poses": {
+    "hold": {
+      "root": {"loc": [0, 0, 0.253], "rot": [73.3, 0, 0]},
+      "bones": {"spine05": [0, 0, 0], "spine04": [0, 0, 0], "spine03": [0, 0, 0], "spine02": [0, 0, 0], "neck01": [0, 0, 0], "head": [0, 0, 0]},
+      "feet": {"L": {"at": [0.12, 0.857, 0.07], "rot": [170, 0, 0]}},
+      "knees": {"L": [0.13, 0.4, -0.5]},
+      "hands": {"L": {"axis": [0, -0.96, 0.29], "arm": {"elev": 73.3, "plane": 90, "elbow": 90, "bend_world": [0, -1, 0]}}}
+    }
+  },
+  "research": "Face down (root rot X 90 = prone, head -Y); body sloped up toward the head by 16.7 deg -> rot X 73.3. Shoulder joint height = upper arm 0.269 + elbow 0.045 = 0.315; knee joint ~0.04-0.05. Shoulder->knee along the body 0.92, rise 0.265 -> asin(0.265/0.92) = 16.7 deg. Rotated shoulder offset z +0.062 -> root z 0.253; shoulders (+-0.22,-0.471,0.315), hip L (0.11,-0.018,0.205), straight-line knee (0.15,0.407,0.041). Thigh 0.45 from the hip lands the knee there; shin lies on the floor behind: ankle (0.12,0.857,0.07) (hip-ankle 0.885 -> knee bend ~21 deg, the angle between the sloping thigh and the flat shin); tops of the feet down (rot X 170: toes point +Y, slightly into the floor). Knee pole below (+front of the knee faces the floor). Arms: world down in the torso frame = (0,0.958,-0.287) -> elev 73.3, plane 90 = upper arm vertical, elbow under the shoulder; elbow 90 with bend_world -Y lays the forearm flat toward the head, hand ~0.045 high; fists thumb-up (axis = world up in the torso frame). Sources S1 NASM plank progressions, S2 Calatayud 2019, S3 Schoenfeld 2014."
+}

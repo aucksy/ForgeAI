@@ -1,0 +1,53 @@
+{
+  "format": "v1-stills",
+  "exercise": {
+    "key": "curtsy_lunge",
+    "name": "Curtsy Lunge",
+    "equipment": "dumbbell",
+    "library_primary": ["glutes"],
+    "library_secondary": ["quads", "abductors"],
+    "library_steps": ["Stand tall, holding a dumbbell at each side.", "Step one foot behind and across the other, like a curtsy.", "Lower until your back knee nearly touches the floor, chest up.", "Drive off your front heel to return, then switch legs."],
+    "status": "draft",
+    "researched_on": "2026-11-11",
+    "one_line_summary": "Standing with dumbbells at the sides, the right foot steps back and across behind the left; both knees bend until the back knee is just above the floor, chest up, most weight on the front (left) leg."
+  },
+  "setup": [
+    {"item": "stance", "target": "Stand tall, feet hip-width, a dumbbell hanging at each side, palms in.", "tolerance": "feet 0.8-1.2x hip width", "source_ids": ["S3"]},
+    {"item": "weight", "target": "Most of the weight stays on the front leg; the back leg is for balance.", "tolerance": "front foot flat, back foot on the ball", "source_ids": ["S2"]}
+  ],
+  "movement": [
+    {"joint": "front knee (left)", "measure": "knee flexion, 0 = straight", "start": "about 5 deg (standing)", "end": "about 85-90 deg, knee over the mid-foot, not caving in", "start_num": 5, "end_num": 85, "tolerance": "end 75-100 deg", "source_ids": ["S2", "S3"]},
+    {"joint": "back knee (right)", "measure": "knee flexion; height of the knee joint above the floor", "start": "about 5 deg", "end": "about 75-80 deg, knee joint ~0.20 m above the floor (kneecap a hand-width off it)", "start_num": 5, "end_num": 77, "tolerance": "knee joint 0.15-0.25 m above floor", "source_ids": ["S3"]},
+    {"joint": "back foot placement", "measure": "right ankle relative to left ankle", "start": "beside the left foot (x -0.13)", "end": "about 0.8 m behind and crossed ~0.23 m toward the left (x +0.10), heel up", "start_num": -0.13, "end_num": 0.10, "tolerance": "crossed past the midline, behind the front foot", "source_ids": ["S2", "S3"]},
+    {"joint": "pelvis height", "measure": "pelvis joint z (m)", "start": "0.97", "end": "about 0.63", "start_num": 0.97, "end_num": 0.63, "tolerance": "0.58-0.68", "source_ids": ["S3"]},
+    {"joint": "trunk", "measure": "forward lean from vertical", "start": "0 deg", "end": "about 6 deg, chest up", "start_num": 0, "end_num": 6, "tolerance": "0-15 deg", "source_ids": ["S3"]},
+    {"joint": "arms", "measure": "stay still", "start": "hanging at the sides holding dumbbells", "end": "same", "start_num": 10, "end_num": 10, "tolerance": "dumbbells clear of the thighs", "source_ids": ["S3"]}
+  ],
+  "muscles": [
+    {"muscle": "Gluteus maximus and medius", "mask_key": "glutes", "tier": "primary", "role": "Library primary. Transverse (crossing) lunge gave the highest gluteal EMG of the lunges in Distefano's data quoted by S1 (49% MVIC max, 48% med).", "source_ids": ["S1"]},
+    {"muscle": "Quadriceps", "mask_key": "quads", "tier": "secondary", "role": "Extends the front knee; vasti were the most active muscles in lunges and step-ups in S4.", "source_ids": ["S4"]},
+    {"muscle": "Gluteus medius / hip abductors", "mask_key": "abductors", "tier": "secondary", "role": "Keeps the front knee and pelvis from caving in; library secondary.", "source_ids": ["S1", "S2"]},
+    {"muscle": "Hamstrings", "mask_key": "hamstrings", "tier": "stabiliser", "role": "Co-contract at the hip and knee (biceps femoris lower than quads/glutes in lunges).", "source_ids": ["S4"]},
+    {"muscle": "Adductors", "mask_key": "adductors", "tier": "stabiliser", "role": "Control the crossed-leg position.", "source_ids": ["S2"]},
+    {"muscle": "Grip", "mask_key": "forearms", "tier": "stabiliser", "role": "Hold the dumbbells.", "source_ids": ["S3"]}
+  ],
+  "tempo": null,
+  "mistakes": [
+    {"mistake": "Front knee caving in", "what_it_looks_like": "Front knee drops inside the big toe at the bottom.", "why_it_matters": "Loads the knee badly and takes the glute out of the move.", "source_ids": ["S2"]},
+    {"mistake": "Weight on the back leg", "what_it_looks_like": "Torso shifts back over the rear foot.", "why_it_matters": "The front glute does less of the work.", "source_ids": ["S2"]}
+  ],
+  "sources": [
+    {"id": "S1", "citation": "Boren K, Conrey C, Le Coguic J, et al. 2011. Electromyographic analysis of gluteus medius and gluteus maximus during rehabilitation exercises. Int J Sports Phys Ther 6(3):206-223.", "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3201064/", "type": "emg", "what_it_gave": "Table 1 (summary of Distefano): forward lunge 44/42, sideways 41/39, transverse lunge 49/48 % MVIC glut max/med."},
+    {"id": "S2", "citation": "The Prehab Guys. Curtsey lunge (exercise library).", "url": "https://theprehabguys.com/vimeo-video/curtsey-lunge-2/", "type": "clinical-library", "what_it_gave": "Step back and across like a curtsy; keep most weight on the front leg; do not let the front knee cave in or bow out."},
+    {"id": "S3", "citation": "MettleUp exercise library entry curtsy_lunge (steps), checked against S2.", "url": "docs/exercise-library/part_*.json", "type": "library", "what_it_gave": "Back knee nearly touches the floor, chest up, drive off the front heel."},
+    {"id": "S4", "citation": "Muyor JM, Martin-Fuentes I, Rodriguez-Ridao D, Antequera-Vique JA. 2020. Electromyographic activity in the gluteus medius, gluteus maximus, biceps femoris, vastus lateralis, vastus medialis and rectus femoris during the Monopodal Squat, Forward Lunge and Lateral Step-Up exercises. PLoS One 15(4):e0230841.", "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7112217", "type": "emg", "what_it_gave": "Forward lunge to 90 deg front knee: vasti highest, then glutes; biceps femoris lowest."}
+  ],
+  "clip_check": [
+    {"check": "Front knee flexion in end picture", "target": "75-100 deg", "measured": "", "pass": ""},
+    {"check": "Back knee joint height above floor in end picture", "target": "0.15-0.25 m, not touching", "measured": "", "pass": ""},
+    {"check": "Back foot crossed behind the front foot", "target": "right ankle x > 0 and y > front ankle y + 0.5 m", "measured": "", "pass": ""},
+    {"check": "Front foot flat on floor in both pictures", "target": "lowest point -0.002..+0.002 m", "measured": "", "pass": ""},
+    {"check": "Hands on the dumbbell handles, dumbbells clear of thighs", "target": "no overlap", "measured": "", "pass": ""},
+    {"check": "Glutes the strongest red in both pictures", "target": "yes", "measured": "", "pass": ""}
+  ]
+}

@@ -37,9 +37,56 @@ def fetch(name, url):
     urllib.request.urlretrieve(url, path)
     return path
 
+class RangeFile:
+    """A read-only, seekable view of a remote file over HTTP Range requests (11 Nov 2026: the MakeHuman
+    server sends ~40 KB/s, so the 280 MB system pack took hours; the few files we need are under 20 MB)."""
+    def __init__(self, url, block=1 << 20):
+        self.url, self.pos, self.block, self.cache = url, 0, block, {}
+        req = urllib.request.Request(url, method="HEAD")
+        self.size = int(urllib.request.urlopen(req, timeout=60).headers["Content-Length"])
+    def seekable(self): return True
+    def readable(self): return True
+    def tell(self): return self.pos
+    def seek(self, off, whence=0):
+        self.pos = off if whence == 0 else (self.pos + off if whence == 1 else self.size + off)
+        return self.pos
+    def _blk(self, i):
+        if i not in self.cache:
+            a = i * self.block; b = min(self.size, a + self.block) - 1
+            for attempt in range(5):
+                try:
+                    r = urllib.request.Request(self.url, headers={"Range": f"bytes={a}-{b}"})
+                    self.cache[i] = urllib.request.urlopen(r, timeout=300).read(); break
+                except Exception:
+                    if attempt == 4: raise
+        return self.cache[i]
+    def read(self, n=-1):
+        if n is None or n < 0: n = self.size - self.pos
+        n = max(0, min(n, self.size - self.pos)); out = bytearray()
+        while n > 0:
+            i, o = divmod(self.pos, self.block); chunk = self._blk(i)[o:o + n]
+            out += chunk; self.pos += len(chunk); n -= len(chunk)
+        return bytes(out)
+    def close(self): pass
+
+
+def open_zip(name, url):
+    local = os.path.join(DL, name)
+    legacy = os.path.join(DL, name.replace("makehuman_", ""))
+    for p in (local, legacy):
+        if os.path.isfile(p):
+            return zipfile.ZipFile(p)
+    if os.environ.get("FORGEANIM_FULL_DL"):
+        return zipfile.ZipFile(fetch(name, url))
+    print("reading only the needed files from", url)
+    return zipfile.ZipFile(RangeFile(url, block=256 << 10))
+
+
 def main():
+    if os.path.isfile(os.path.join(DEST, "packs", "skins02.json")) and os.path.isdir(os.path.join(DEST, "skins", "mindfront_aksel_skin")):
+        print("assets already in", DEST); return
     os.makedirs(DEST, exist_ok=True)
-    zips = {n: zipfile.ZipFile(fetch(n, u)) for n, u in PACKS.items()}
+    zips = {n: open_zip(n, u) for n, u in PACKS.items()}
     n = 0
     for zname, prefix in WANT:
         for member in zips[zname].namelist():

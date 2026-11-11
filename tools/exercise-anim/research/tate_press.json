@@ -1,0 +1,51 @@
+{
+  "format": "v1-stills",
+  "exercise": {
+    "key": "tate_press",
+    "name": "Tate Press",
+    "equipment": "dumbbell",
+    "library_primary": ["triceps"],
+    "library_secondary": [],
+    "library_steps": [
+      "Lie on a flat bench, dumbbells held straight up, inner ends almost touching.",
+      "Bend your elbows out to the sides to bring the dumbbells to your chest.",
+      "Press them back up by straightening your arms."
+    ],
+    "status": "draft",
+    "version": 1,
+    "researched_on": "2026-11-11",
+    "one_line_summary": "Flat bench, palms toward the feet, dumbbells held straight up end to end; elbows bend OUT to the sides (~115 deg) so the inner ends of the dumbbells tip down onto the middle of the chest; press back up. Triceps does the work.",
+    "evidence_grade": "D"
+  },
+  "setup": [
+    {"item": "body on bench", "target": "Flat on the bench, feet flat on the floor.", "tolerance": "back gap -0.02..+0.02 m", "why": "Stable base.", "source_ids": ["S1"], "grade": "C"},
+    {"item": "grip and start", "target": "Palms face the feet (pronated), dumbbells pressed straight up over the chest, inner ends almost touching, elbows pointing out.", "tolerance": "gap between inner ends 0-5 cm", "why": "Defines the Tate press; elbows out is what makes it different from a skull crusher.", "source_ids": ["S1"], "grade": "C"}
+  ],
+  "movement": [
+    {"joint": "elbow", "measure": "bend, 0 = straight", "start": "5 deg", "end": "115 deg (inner dumbbell ends on the chest)", "start_num": 5, "end_num": 115, "tolerance": "end 100-130", "source_ids": ["S1"], "grade": "D"},
+    {"joint": "shoulder (elev)", "measure": "upper arm from the torso side line", "start": "88 deg (arm vertical)", "end": "82 deg", "start_num": 88, "end_num": 82, "tolerance": "+-8", "source_ids": ["S1"], "grade": "D"},
+    {"joint": "shoulder (plane)", "measure": "0 = out to the side, +90 = straight up from the chest", "start": "93 deg (hands slightly inward so the ends nearly touch)", "end": "45 deg (elbows drift out to the sides)", "start_num": 93, "end_num": 45, "tolerance": "end 35-60", "source_ids": ["S1"], "grade": "D"},
+    {"joint": "trunk, legs", "measure": "stay still", "start": "flat", "end": "same", "start_num": 0, "end_num": 0, "tolerance": "none", "source_ids": [], "grade": "D"}
+  ],
+  "muscles": [
+    {"muscle": "Triceps brachii (medial and lateral heads stressed)", "mask_key": "triceps", "tier": "primary", "emg": "No Tate press EMG found. Elbow-extension exercises reach 62-87% of the triangle push-up (S2). Coaching source says it targets the medial head (S1).", "source_ids": ["S1", "S2"], "grade": "D"},
+    {"muscle": "Pectoralis major / anterior deltoid (hold the arms up)", "mask_key": "chest", "tier": "stabiliser", "emg": "not measured", "source_ids": [], "grade": "D"},
+    {"muscle": "Forearm flexors (grip)", "mask_key": "forearms", "tier": "stabiliser", "emg": "not measured", "source_ids": [], "grade": "D"}
+  ],
+  "tempo": null,
+  "mistakes": [
+    {"mistake": "Elbows tucked in", "what_it_looks_like": "Elbows point toward the feet; dumbbells come down like a close-grip press.", "why_it_matters": "Loses the elbows-out pattern that defines the exercise.", "source_ids": ["S1"]},
+    {"mistake": "Shoulders do the moving", "what_it_looks_like": "Upper arms swing down to the bench instead of the elbows bending.", "why_it_matters": "Becomes a press; triceps work drops.", "source_ids": ["S1"]}
+  ],
+  "sources": [
+    {"id": "S1", "citation": "Muscle & Strength. Dumbbell Tate Press exercise profile.", "url": "https://www.muscleandstrength.com/exercises/dumbbell-tate-press", "type": "coaching", "what_it_gave": "Lie supine, dumbbells pressed up, palms facing forward (toward the feet), elbows out to the sides; bend the elbows to lower the dumbbells to the chest, extend to return. Targets the medial triceps head, 10-15 reps."},
+    {"id": "S2", "citation": "Boehler B, Porcari JP, Kline D, Hendrix CR, Foster C, Anders M. 2011. ACE-sponsored research: best triceps exercises. ACE Certified News, Aug 2011.", "url": "https://www.acefitness.org/certifiednewsarticle/1562/ace-sponsored-research-best-triceps-exercises", "type": "emg", "what_it_gave": "Triceps EMG across eight exercises (62-100% of triangle push-up); no Tate press tested."}
+  ],
+  "clip_check": [
+    {"check": "Start: arms vertical, dumbbells end to end, gap 0-5 cm, not overlapping", "target": "elev 88, plane 93", "measured": "", "pass": ""},
+    {"check": "End: elbows out to the sides, inner ends touch the chest, dumbbells not inside chest or each other", "target": "elbow 115, plane 45", "measured": "", "pass": ""},
+    {"check": "Palms toward the feet in both pictures", "target": "yes", "measured": "", "pass": ""},
+    {"check": "Back on pad, feet on floor", "target": "probe_bench / probe_feet in range", "measured": "", "pass": ""},
+    {"check": "Triceps strongest red in both pictures", "target": "yes", "measured": "", "pass": ""}
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "format": "v1-stills",
+  "exercise": {
+    "key": "reverse_hyperextension",
+    "name": "Reverse Hyperextension",
+    "equipment": "bodyweight",
+    "library_primary": ["glutes"],
+    "library_secondary": ["hamstrings", "lower_back"],
+    "library_steps": ["Lie on your stomach on a high bench, hips right at its end.", "Hold the bench and let your legs hang toward the floor.", "Lift your legs until they line up with your body, then lower slowly."],
+    "status": "draft",
+    "researched_on": "2026-11-11",
+    "one_line_summary": "Face down on a 1 m high box with the hips at its end, hands holding its sides: straight legs hang down about 15 deg behind vertical (start), then lift until they are level, in line with the body (end)."
+  },
+  "setup": [
+    {"item": "support height", "target": "High enough that hanging legs clear the floor (picture: 1.0 m box as the 'high bench').", "tolerance": "toes >= 0.05 m above floor", "source_ids": ["S3"]},
+    {"item": "hips", "target": "Hip crease just past the end so the legs swing freely.", "tolerance": "hip joints 0.05-0.12 m past the edge", "source_ids": ["S3"]},
+    {"item": "hands", "target": "Hold the bench sides near the head.", "tolerance": "", "source_ids": ["S3"]}
+  ],
+  "movement": [
+    {"joint": "hip", "measure": "hip flexion (thigh vs trunk), 0 = in line", "start": "about 75 deg (legs hang 15 deg behind vertical)", "end": "about 0 deg (legs level with the body, not above it)", "start_num": 75, "end_num": 0, "tolerance": "start 60-90; end -10..+5", "source_ids": ["S1", "S3"]},
+    {"joint": "knee", "measure": "near straight, held", "start": "about 5 deg", "end": "about 5 deg", "start_num": 5, "end_num": 5, "tolerance": "0-20", "source_ids": ["S3"]},
+    {"joint": "lumbar spine", "measure": "stays neutral; no big arch at the top", "start": "neutral", "end": "neutral", "start_num": 0, "end_num": 0, "tolerance": "", "source_ids": ["S1", "S2"]},
+    {"joint": "trunk and arms", "measure": "still on the bench", "start": "", "end": "", "start_num": 0, "end_num": 0, "tolerance": "chest gap < 0.02 m", "source_ids": ["S2"]}
+  ],
+  "muscles": [
+    {"muscle": "Gluteus maximus", "mask_key": "glutes", "tier": "primary", "role": "Extends the hip to lift the legs; library primary.", "source_ids": ["S1"]},
+    {"muscle": "Hamstrings", "mask_key": "hamstrings", "tier": "secondary", "role": "Hip extension with the knee straight (biceps femoris measured in S1).", "source_ids": ["S1"]},
+    {"muscle": "Erector spinae", "mask_key": "lower_back", "tier": "secondary", "role": "Activity equal to the regular hyperextension; reverse version gives a larger low-back extension moment (S1).", "source_ids": ["S1", "S2"]},
+    {"muscle": "Grip and lats", "mask_key": "forearms", "tier": "stabiliser", "role": "Hold the body on the bench.", "source_ids": ["S3"]}
+  ],
+  "tempo": null,
+  "mistakes": [
+    {"mistake": "Swinging the legs", "what_it_looks_like": "Legs fly up past level on momentum.", "why_it_matters": "Pendulum momentum replaces muscle work and loads the low back (S2).", "source_ids": ["S2"]},
+    {"mistake": "Over-arching at the top", "what_it_looks_like": "Legs go well above the body line, lower back cranks.", "why_it_matters": "Low-back moment is already high in this exercise (S1).", "source_ids": ["S1"]}
+  ],
+  "sources": [
+    {"id": "S1", "citation": "Lawrence MA, Chin A, Swanson BT. 2019. Biomechanical comparison of the reverse hyperextension machine and the hyperextension exercise. J Strength Cond Res 33(8):2053-2056.", "url": "https://read.qxmd.com/read/30946266/biomechanical-comparison-of-the-reverse-hyperextension-machine-and-the-hyperextension-exercise", "type": "biomechanics-emg", "what_it_gave": "n=20; RHE: thigh-trunk ROM 76.6 vs 64.7, lumbar flexion 20.4 vs 31.1, equal erector activity, higher low-back moment; HE higher integrated glut max/biceps femoris."},
+    {"id": "S2", "citation": "Sci-Sport. Biomechanical comparison between Reverse Hyperextension and Back Extension (summary of Lawrence 2019).", "url": "https://sci-sport.com/en/biomechanical-comparison-between-reverse-hyperextension-and-back-extension-179/", "type": "review-summary", "what_it_gave": "Upper body still, lower body moves; pendulum momentum explains why the larger moment did not raise EMG; 10 women, 10 men."},
+    {"id": "S3", "citation": "MettleUp exercise library entry reverse_hyperextension (steps).", "url": "docs/exercise-library/part_*.json", "type": "library", "what_it_gave": "High bench, hips at the end, hold the bench, legs hang, lift until in line with the body."}
+  ],
+  "clip_check": [
+    {"check": "Start: hip flexion", "target": "60-90 deg, toes clear of floor", "measured": "", "pass": ""},
+    {"check": "End: legs in line with trunk", "target": "-10..+5 deg", "measured": "", "pass": ""},
+    {"check": "Chest/belly on the box top, not inside it", "target": "gap -0.02..+0.02 m", "measured": "", "pass": ""},
+    {"check": "Thighs clear of the box end face", "target": "no overlap", "measured": "", "pass": ""},
+    {"check": "Hands at the box sides", "target": "within 0.03 m of side face", "measured": "", "pass": ""},
+    {"check": "Glutes the strongest red in both pictures", "target": "yes", "measured": "", "pass": ""}
+  ]
+}

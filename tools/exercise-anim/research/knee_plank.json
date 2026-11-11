@@ -1,0 +1,53 @@
+{
+  "format": "v1-stills",
+  "exercise": {
+    "key": "knee_plank",
+    "name": "Knee Plank",
+    "equipment": "bodyweight",
+    "type": "time",
+    "library_primary": ["abs"],
+    "library_secondary": [],
+    "steps": [
+      "Rest on your forearms and knees, elbows under your shoulders.",
+      "Make a straight line from your head to your knees and squeeze your stomach.",
+      "Breathe steadily and hold for the time."
+    ],
+    "status": "draft",
+    "version": null,
+    "researched_on": "2026-11-11",
+    "one_line_summary": "A hold (one picture): face down on the forearms (elbows under the shoulders, forearms parallel) and knees, shins resting on the floor; head, shoulders, hips and knees in one straight line sloping ~17 deg. The beginner regression of the forearm plank; rectus abdominis is the target.",
+    "evidence_grade": "C"
+  },
+  "setup": [
+    {"item": "forearms", "target": "Elbows directly under the shoulders, forearms parallel on the floor, fists or palms down.", "tolerance": "elbow within 0.05 m of under the shoulder", "why": "NASM forearm plank set-up; library step 1.", "source_ids": ["S1"], "grade": "C"},
+    {"item": "knees", "target": "Knees on the floor about hip-width, shins resting on the floor behind, tops of the feet down.", "tolerance": "knee contact; feet may be down or lifted", "why": "NASM knee plank: straight line from head through the knees.", "source_ids": ["S1"], "grade": "C"},
+    {"item": "body line", "target": "Head, shoulders, hips and knees in one straight line; ribs down, glutes squeezed.", "tolerance": "hip within 0.03 m of the shoulder-knee line", "why": "NASM cues; no sag, no pike.", "source_ids": ["S1"], "grade": "C"}
+  ],
+  "movement": [
+    {"joint": "trunk / hip line", "measure": "root rot X; 90 = flat face-down; 73.3 = body sloping up 16.7 deg to the shoulders", "start": "73.3 (hold)", "end": "73.3 (hold)", "start_num": 73.3, "end_num": 73.3, "path": "Held; spine bones at 0 (neutral).", "tolerance": "+-3 deg; spine bends under 3 deg", "source_ids": ["S1"], "grade": "C"},
+    {"joint": "shoulder", "measure": "upper arm vertical (elev 73.3, plane 90 in the torso frame)", "start": "vertical", "end": "vertical", "start_num": 73.3, "end_num": 73.3, "path": "Held.", "tolerance": "+-5 deg from vertical", "source_ids": ["S1"], "grade": "C"},
+    {"joint": "elbow", "measure": "elbow bend", "start": "90 deg", "end": "90 deg", "start_num": 90, "end_num": 90, "path": "Held; forearm flat on the floor.", "tolerance": "80-100", "source_ids": ["S1"], "grade": "C"},
+    {"joint": "knee", "measure": "knee bend (thigh slopes, shin flat)", "start": "~21 deg", "end": "~21 deg", "start_num": 21, "end_num": 21, "path": "Held.", "tolerance": "10-40 deg", "source_ids": ["S1"], "grade": "D"}
+  ],
+  "muscles": [
+    {"muscle": "Abs (rectus abdominis)", "anatomy": "Rectus abdominis", "mask_key": "abs", "tier": "primary", "glow": 1.0, "emg": "Front plank (toes) RA 46% (IQR 26-61) of peak, 48% with bracing (S2, chronic low-back-pain patients); the knee version is a lower-load regression (S1); long-lever / longer planks raise RA further (S3).", "role": "Stops the hips sagging (anti-extension).", "surface": "Vertical bands down the front of the belly.", "source_ids": ["S2", "S3"], "grade": "B"},
+    {"muscle": "Obliques", "anatomy": "Obliquus externus abdominis", "mask_key": "obliques", "tier": "stabiliser", "glow": 0, "emg": "EO 77% (60-97) in the braced front plank (S2).", "role": "Brace the trunk. Not lit: the library lists abs only; with no study of the knee version, the plank's purpose (abs) wins the single lit slot.", "surface": "Sides of the waist.", "source_ids": ["S2"], "grade": "B"},
+    {"muscle": "Front delts / chest", "anatomy": "Anterior deltoid, serratus anterior", "mask_key": "front_delts", "tier": "stabiliser", "glow": 0, "emg": "Not measured.", "role": "Hold the shoulders over the elbows.", "surface": "Front of the shoulder.", "source_ids": ["S1"], "grade": "D"}
+  ],
+  "tempo": null,
+  "mistakes": [
+    {"mistake": "Sagging hips", "what_it_looks_like": "The belly drops below the shoulder-knee line.", "why_it_matters": "Loads the low back instead of the abs (NASM).", "source_ids": ["S1"]},
+    {"mistake": "Piked hips", "what_it_looks_like": "Hips pushed up above the line.", "why_it_matters": "Takes the load off the abs (NASM).", "source_ids": ["S1"]}
+  ],
+  "sources": [
+    {"id": "S1", "citation": "National Academy of Sports Medicine. The plank: coaching, progressions and variations for every client (NASM blog).", "url": "https://www.nasm.org/resource-center/blog/training/the-plank-coaching-progressions-and-variations-for-every-client", "type": "guideline", "what_it_gave": "Elbows under shoulders, forearms parallel, straight line; knee plank = straight line head through knees, beginner regression; mistakes sag/pike."},
+    {"id": "S2", "citation": "Calatayud J, Escriche-Escuder A, Cruz-Montecinos C, et al. 2019. Tolerability and muscle activity of core muscle exercises in chronic low-back pain. Int J Environ Res Public Health 16(19):3509. doi:10.3390/ijerph16193509", "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6801665/", "type": "emg", "what_it_gave": "Front plank RA 46%, braced RA 48% / EO 77% (normalised to session peak); lateral knee plank tested."},
+    {"id": "S3", "citation": "Schoenfeld BJ, Contreras B, Tiryaki-Sonmez G, Willardson JM, Fontana F. 2014. An electromyographic comparison of a modified version of the plank with a long lever and posterior tilt versus the traditional plank exercise. Sports Biomech 13(3):296-306. doi:10.1080/14763141.2014.942355", "url": "https://europepmc.org/article/MED/25325773", "type": "emg", "what_it_gave": "Lever length drives plank abdominal EMG (long > traditional); shorter lever = easier."}
+  ],
+  "clip_check": [
+    {"check": "Elbows under the shoulders, forearms on the floor", "target": "within 0.05 m; forearm z 0.02-0.05", "measured": "", "pass": "", "tool": "measure_pose.py"},
+    {"check": "Knees and shins on the floor", "target": "knee lowest point -0.002..+0.005 m", "measured": "", "pass": "", "tool": "probe_feet.py"},
+    {"check": "Straight line head-shoulder-hip-knee", "target": "hip within 0.03 m of the line", "measured": "", "pass": "", "tool": "measure_pose.py"},
+    {"check": "Primary muscle strongest red", "target": "abs strongest red (seen from the side, under the body)", "measured": "", "pass": "", "tool": "picture"}
+  ]
+}

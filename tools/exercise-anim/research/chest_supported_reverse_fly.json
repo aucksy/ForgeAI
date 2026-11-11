@@ -1,0 +1,49 @@
+{
+  "format": "v1-stills",
+  "exercise": {
+    "key": "chest_supported_reverse_fly",
+    "name": "Chest-Supported Reverse Fly",
+    "equipment": "dumbbell",
+    "library_primary": ["rear_delts"],
+    "library_secondary": ["upper_back"],
+    "library_steps": ["Lie face down on a flat or low incline bench, dumbbells hanging down.", "Raise your arms out to the sides, elbows slightly bent.", "Squeeze your shoulder blades together at the top, then lower slowly."],
+    "status": "draft",
+    "researched_on": "2026-11-11",
+    "one_line_summary": "Chest down on a 30 deg incline bench, feet on the floor: dumbbells hang straight down (start), then arms rise out to the sides to about shoulder level, elbows softly bent, shoulder blades squeezed (end)."
+  },
+  "setup": [
+    {"item": "bench", "target": "Low incline, chest on the pad, chin just past the top, feet on the floor.", "tolerance": "pad 0-45 deg (library flat/low; ACE seated version 45-60)", "source_ids": ["S1", "S3"]},
+    {"item": "grip", "target": "Palms facing each other at the bottom; thumbs toward the head.", "tolerance": "", "source_ids": ["S1"]}
+  ],
+  "movement": [
+    {"joint": "shoulder (horizontal abduction)", "measure": "arm angle from hanging straight down (world) to level", "start": "0 deg (hanging under the shoulders)", "end": "about 90 deg (arms level, out to the sides, in line with the ears or a little in front)", "start_num": 0, "end_num": 90, "tolerance": "end 80-95", "source_ids": ["S1", "S2"]},
+    {"joint": "elbow", "measure": "bend, held", "start": "about 12 deg", "end": "about 15 deg", "start_num": 12, "end_num": 15, "tolerance": "10-25, never a row", "source_ids": ["S1"]},
+    {"joint": "scapula", "measure": "retraction", "start": "relaxed", "end": "squeezed together", "start_num": 0, "end_num": 1, "tolerance": "", "source_ids": ["S1", "S3"]},
+    {"joint": "trunk", "measure": "stays on the pad (still)", "start": "on pad", "end": "on pad", "start_num": 0, "end_num": 0, "tolerance": "chest gap < 0.02 m", "source_ids": ["S1"]},
+    {"joint": "legs", "measure": "still: feet on the floor either side of the seat", "start": "", "end": "", "start_num": 0, "end_num": 0, "tolerance": "", "source_ids": ["S1"]}
+  ],
+  "muscles": [
+    {"muscle": "Posterior deltoid", "mask_key": "rear_delts", "tier": "primary", "role": "Main mover of horizontal abduction; prone horizontal abduction ~42% MVIC (S2).", "source_ids": ["S2"]},
+    {"muscle": "Middle trapezius and rhomboids", "mask_key": "upper_back", "tier": "secondary", "role": "Squeeze the shoulder blades together; middle trap ~51% MVIC in prone horizontal abduction (S2); top MT exercise in S3.", "source_ids": ["S2", "S3"]},
+    {"muscle": "Lower trapezius", "mask_key": "traps", "tier": "secondary", "role": "~58% MVIC in prone horizontal abduction (S2).", "source_ids": ["S2"]},
+    {"muscle": "Infraspinatus / teres minor", "mask_key": "none", "tier": "deep", "role": "Rotator cuff steadies the humeral head.", "source_ids": ["S2"]}
+  ],
+  "tempo": null,
+  "mistakes": [
+    {"mistake": "Chest lifting off the pad", "what_it_looks_like": "Back arches and the torso comes up as the arms rise.", "why_it_matters": "Momentum and the lower back do the work.", "source_ids": ["S1"]},
+    {"mistake": "Turning it into a row", "what_it_looks_like": "Elbows bend a lot and pull back.", "why_it_matters": "Lats and biceps take over from the rear delts.", "source_ids": ["S1"]}
+  ],
+  "sources": [
+    {"id": "S1", "citation": "American Council on Exercise. Incline Reverse Fly (exercise library).", "url": "https://www.acefitness.org/resources/everyone/exercise-library/34/incline-reverse-fly/", "type": "ace", "what_it_gave": "Torso on the pad (45-60 deg), arms hang, palms facing, elbows slightly bent, raise to near shoulder level in line with or slightly in front of the ears, squeeze the shoulder blades, keep torso on pad."},
+    {"id": "S2", "citation": "Kim S, Kang M. 2020. Influence of pre-emptive scapular posterior tilt on scapular muscle activation and scapulohumeral movements during shoulder horizontal abduction in the prone position. J Int Acad Phys Ther Res 11(4):2173-2177.", "url": "https://koreascience.kr/article/JAKO202022558937288.pdf", "type": "emg", "what_it_gave": "General prone horizontal abduction (n=15): middle trap 50.6, lower trap 58.2, posterior deltoid 41.9 % MVIC."},
+    {"id": "S3", "citation": "Ekstrom RA, Donatelli RA, Soderberg GL. 2003. Surface electromyographic analysis of exercises for the trapezius and serratus anterior muscles. J Orthop Sports Phys Ther 33(5):247-258.", "url": "https://bearworks.missouristate.edu/articles-chhs/1184", "type": "emg", "what_it_gave": "Middle trapezius highest in prone shoulder horizontal extension with external rotation (and prone overhead raise)."}
+  ],
+  "clip_check": [
+    {"check": "Start: arms hang vertically under the shoulders", "target": "within 10 deg of vertical", "measured": "", "pass": ""},
+    {"check": "End: arms level, out to the sides", "target": "80-95 deg from hanging; hands not above shoulder height", "measured": "", "pass": ""},
+    {"check": "Chest on the pad in both pictures", "target": "gap -0.02..+0.02 m (probe_bench)", "measured": "", "pass": ""},
+    {"check": "Thighs clear of pad and seat; feet flat on floor", "target": "no overlap; -0.002..+0.002", "measured": "", "pass": ""},
+    {"check": "Hands on the handles; dumbbells clear of bench and floor", "target": "no overlap", "measured": "", "pass": ""},
+    {"check": "Rear delts the strongest red in both pictures", "target": "yes", "measured": "", "pass": ""}
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "key": "two_arm_dumbbell_kickback",
+  "name": "Two-Arm Dumbbell Kickback",
+  "primary": ["triceps"],
+  "secondary": [],
+  "props": {"db_L": {"type": "dumbbell"}, "db_R": {"type": "dumbbell"}},
+  "camera": {"yaw": -85, "pitch": 8, "lens": 50, "fill": 0.9, "res": 640, "samples": 20},
+  "timing": {"fps": 30, "keys": [[0, "start"], [1, "end"], [2, "start"]]},
+  "defaults": {
+    "bones": {"neck01": [-10, 0, 0], "head": [-5, 0, 0]}
+  },
+  "poses": {
+    "start": {
+      "root": {"loc": [0, 0.2, 0.97], "rot": [60, 0, 0]},
+      "feet": {"L": {"at": [0.13, -0.01, 0.074], "rot": [0, 0, 6]}},
+      "knees": {"L": [0.16, -1.0, 0.52]},
+      "hands": {"L": {"prop": "db_L", "axis": [0, 0.5, 0.87], "arm": {"elev": 20, "plane": -90, "elbow": 80, "bend_world": [0, 0, -1], "tilt": 0}}}
+    },
+    "end": {
+      "root": {"loc": [0, 0.2, 0.97], "rot": [60, 0, 0]},
+      "feet": {"L": {"at": [0.13, -0.01, 0.074], "rot": [0, 0, 6]}},
+      "knees": {"L": [0.16, -1.0, 0.52]},
+      "hands": {"L": {"prop": "db_L", "axis": [0, 0.94, -0.34], "arm": {"elev": 20, "plane": -90, "elbow": 5, "bend_world": [0, 0, -1], "tilt": 0}}}
+    }
+  },
+  "research": "Standing hinge, flat back: root rot X +60 (+X = lean forward), spine bones 0, neck/head -15 to keep the head in line. Hip offset from root after +60 = (0.11, -0.03, -0.04): root (0,0.20,0.97) -> hip (0.11,0.17,0.93); ankles at the standing spot (+-0.13,-0.01,0.074): hip-ankle 0.87 m -> knee bend ~29 deg (soft knees), hips back over the heels. Shoulder = root + (0.22,-0.44,0.17) -> (0.22,-0.24,1.14). Torso frame (lean 60): Y_t = (0,-0.5,-0.87), Z_t = (0,-0.87,0.5) world. Upper arm elev 20 / plane -90: du_t = (0,-0.34,-0.94) -> world (0, 0.98, -0.17) = 10 deg below level, pointing back (ACE: parallel to/close to the torso). Start forearm vertical: angle between du and world down = acos(0.17) = 80 -> elbow 80, bend_world down. End elbow 5. Neutral axis: start thumbs forward = world -Y in torso = [0,0.5,0.87] (square to the vertical forearm); end the thumb turns with the forearm 80 deg -> world (0,-0.17,-0.98) = torso [0,0.94,-0.34] (handle vertical at lockout). S1 Boehler 2011 (ACE kickback form + EMG), S2 Akima 2021."
+}

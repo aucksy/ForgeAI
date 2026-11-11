@@ -1,0 +1,25 @@
+{
+  "key": "copenhagen_plank",
+  "name": "Copenhagen Plank",
+  "primary": ["adductors"],
+  "secondary": ["obliques", "abs"],
+  "scene": {"bench": {"deg": 0, "loc": [-0.05, -1.18, 0], "rot_z": 180}},
+  "camera": {"yaw": -90, "pitch": 12, "lens": 50, "fill": 0.9, "res": 640, "samples": 20},
+  "timing": {"fps": 30, "keys": [[0, "hold"], [1, "hold"]]},
+  "poses": {
+    "hold": {
+      "root": {"loc": [0, 0, 0.502], "rot": [0, -86, -90]},
+      "bones": {"spine05": [0, 0, 0], "spine04": [0, 0, 0], "spine03": [0, 0, 0], "spine02": [0, 0, 0], "neck01": [0, 0, 0]},
+      "feet": {
+        "L": {"at": [-0.051, -0.901, 0.485], "rot": [0, -86, -90]},
+        "R": {"at": [-0.051, -0.888, 0.285], "rot": [0, -86, -90]}
+      },
+      "knees": {"L": [-0.6, -0.45, 0.62], "R": [-0.6, -0.45, 0.40]},
+      "hands": {
+        "R": {"axis": [1, 0, 0], "arm": {"elev": 86, "plane": 0, "elbow": 90, "bend": [0, 1, 0]}},
+        "L": {"axis": [0, 1, 0], "arm": {"elev": 15, "plane": 0, "elbow": 20, "bend": [0, 1, 0]}}
+      }
+    }
+  },
+  "research": "On the RIGHT side: root rot (0,-86,-90) = Ry(-86) lays him on his right side, Rz(-90) turns the body along Y: head +Y, chest faces -X (camera yaw -90 sees the chest and the body line), left side up, head end 4 deg higher. Right (support) shoulder must sit at forearm-on-floor height: upper arm 0.269 + elbow 0.045 = 0.315; rotated shoulder R offset z -0.187 -> root z 0.502. Then shoulders R (-0.076,0.483,0.315) / L (-0.076,0.453,0.754), hips L (-0.051,-0.005,0.612) / R (-0.051,0.011,0.392). Support arm: world down in the torso frame = (-0.998,0,-0.07) -> R elev 86, plane 0 (upper arm vertical), elbow 90 with bend [0,1,0] = forearm on the floor pointing toward the chest side (-X), fist thumb-up (axis torso +X = world up). Top arm rests along the flank (elev 15, elbow 20). Long lever (Marusic 2026 S2): top leg straight, hip-ankle 0.905, ankle on the flat bench pad (top 0.44 + 0.045 ankle half-width) -> dz = 0.485-0.612, dy = -sqrt(0.905^2-0.127^2) = -0.896 -> ankle L (-0.051,-0.901,0.485). Bottom leg straight under the bench: ankle R z 0.285 (pad underside 0.365) -> dy -0.899 -> (-0.051,-0.888,0.285). Bench flat (deg 0), rot_z 180 puts the seat end toward the athlete: seat edge at world y = -1.18 + 0.36 = -0.82, so the top ankle sits 0.08 m in on the pad; seat post at y -1.00 and front foot bar at y -0.70 (z 0.05) stay clear of the bottom leg (~z 0.3). Feet rot = body rot (toes toward the chest side, neutral ankle); explicit R feet/knees because rot does not mirror. Knee poles toward the chest side (-X). Sources S1 Serner 2014, S2 Marusic 2026, S3 Hinnekens 2024, S4 Garage Strength."
+}

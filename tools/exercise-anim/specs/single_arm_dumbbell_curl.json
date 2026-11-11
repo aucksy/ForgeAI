@@ -1,0 +1,28 @@
+{
+  "key": "single_arm_dumbbell_curl",
+  "name": "Single-Arm Dumbbell Curl",
+  "primary": ["biceps"],
+  "secondary": ["forearms"],
+  "props": {"db_L": {"type": "dumbbell"}},
+  "camera": {"yaw": 50, "pitch": 8, "lens": 50, "fill": 0.9, "res": 640, "samples": 20},
+  "timing": {"fps": 30, "keys": [[0, "start"], [1, "end"], [2, "start"]]},
+  "poses": {
+    "start": {
+      "feet": {"L": {"at": [0.13, -0.01, 0.074], "rot": [0, 0, 6]}, "R": {"at": [-0.13, -0.01, 0.074], "rot": [0, 0, -6]}},
+      "knees": {"L": [0.16, -1.0, 0.52], "R": [-0.16, -1.0, 0.52]},
+      "hands": {
+        "L": {"prop": "db_L", "axis": [1, 0, 0], "arm": {"elev": 7, "plane": 56, "elbow": 13, "bend": [0, 1, 0], "tilt": 0}},
+        "R": {"axis": [-0.111, 0.969, 0.133], "arm": {"elev": 55, "plane": -15, "fore_world": [0.63, -0.176, -0.756], "tilt": 0}}
+      }
+    },
+    "end": {
+      "feet": {"L": {"at": [0.13, -0.01, 0.074], "rot": [0, 0, 6]}, "R": {"at": [-0.13, -0.01, 0.074], "rot": [0, 0, -6]}},
+      "knees": {"L": [0.16, -1.0, 0.52], "R": [-0.16, -1.0, 0.52]},
+      "hands": {
+        "L": {"prop": "db_L", "axis": [1, 0, 0], "arm": {"elev": 7, "plane": 56, "elbow": 124, "bend": [0, 1, 0], "tilt": 0}},
+        "R": {"axis": [-0.111, 0.969, 0.133], "arm": {"elev": 55, "plane": -15, "fore_world": [0.63, -0.176, -0.756], "tilt": 0}}
+      }
+    }
+  },
+  "research": "Left arm curls; numbers converted from the approved dumbbell_curl clip (hand/pivot positions -> angles): upper arm elev 7, plane 56 (elbow by the side, slightly forward), elbow 13 -> 124, fold forward, palm up (axis +x). S1 Marcolin 2018: elbow range 123 +- 12 deg; S3 ACE: elbows by the sides, hands to the shoulders. Start fist ~world (0.28, -0.15, 0.87): dumbbell in front of / beside the thigh. Right fist on the hip (library step): target torso (-0.23, 0.0, -0.40) = world (-0.23, -0.02, 1.04); elev 55 plane -15 -> du (-0.791, -0.212, -0.574), elbow = (-0.22,0,0) + 0.27 du = (-0.434, -0.057, -0.155); forearm = target - elbow = (0.204, 0.057, -0.245), length 0.32 (needs 0.33), unit (0.63, 0.176, -0.756) torso = world (0.63, -0.176, -0.756) (fore_world is world and not mirrored); elbow bend ~96 deg; fist axis = forward made square to the forearm (thumb forward). Camera yaw +50 (working arm side). Facts: research/single_arm_dumbbell_curl.json."
+}

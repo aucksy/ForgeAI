@@ -1,0 +1,48 @@
+{
+  "format": "v1-stills",
+  "exercise": {
+    "key": "dumbbell_leg_curl",
+    "name": "Dumbbell Leg Curl",
+    "equipment": "dumbbell",
+    "library_primary": ["hamstrings"],
+    "library_secondary": [],
+    "library_steps": ["Lie on your front along a bench, knees just past the end.", "Grip a light dumbbell firmly between your feet.", "Curl your heels towards your hips, then lower slowly."],
+    "status": "draft",
+    "researched_on": "2026-11-11",
+    "one_line_summary": "Face down along a flat bench, knees just past its end, a light dumbbell squeezed between the feet: legs near straight (start), knees curled to about 90 deg with shins vertical (end), hips pressed into the pad."
+  },
+  "setup": [
+    {"item": "position", "target": "Face down, thighs on the pad, knee joints just past the end so the knees can bend.", "tolerance": "knee joint 0.03-0.08 m past the end", "source_ids": ["S3"]},
+    {"item": "dumbbell", "target": "One light dumbbell held vertically between the feet, ankles flexed to trap it.", "tolerance": "", "source_ids": ["S3"]},
+    {"item": "known gap", "target": "The picture rig cannot hold a dumbbell without a hand, so the dumbbell between the feet is NOT drawn. The picture must say so or be replaced.", "tolerance": "", "source_ids": []}
+  ],
+  "movement": [
+    {"joint": "knee", "measure": "knee flexion, 0 = straight", "start": "about 5 deg", "end": "about 90-95 deg (shin vertical; more than 90 lets the dumbbell slip)", "start_num": 5, "end_num": 92, "tolerance": "end 80-100", "source_ids": ["S1", "S2"]},
+    {"joint": "ankle", "measure": "dorsiflexed to hold the dumbbell (held)", "start": "neutral, toes toward the floor", "end": "neutral, toes away from the hips", "start_num": 0, "end_num": 0, "tolerance": "", "source_ids": ["S3"]},
+    {"joint": "hip", "measure": "stays flat on the pad, about 0 deg (neutral, as in S1)", "start": "0", "end": "0", "start_num": 0, "end_num": 0, "tolerance": "0-10, hips do not lift", "source_ids": ["S1"]},
+    {"joint": "trunk and arms", "measure": "still, hands hold the bench", "start": "", "end": "", "start_num": 0, "end_num": 0, "tolerance": "", "source_ids": ["S3"]}
+  ],
+  "muscles": [
+    {"muscle": "Hamstrings (biceps femoris, semitendinosus, semimembranosus)", "mask_key": "hamstrings", "tier": "primary", "role": "Flex the knee. Biceps femoris long head relatively more at low knee angles, semitendinosus more at larger angles (S2 intro; S1 regional shift between 30 and 90 deg).", "source_ids": ["S1", "S2"]},
+    {"muscle": "Gastrocnemius", "mask_key": "calves", "tier": "secondary", "role": "Two-joint knee flexor that helps the curl (library lists no secondary; anatomical synergist).", "source_ids": ["S2"]},
+    {"muscle": "Gluteus maximus", "mask_key": "glutes", "tier": "stabiliser", "role": "Only ~20-30% of its hip-extension level during leg curls (S1); keeps the hips down.", "source_ids": ["S1"]}
+  ],
+  "tempo": null,
+  "mistakes": [
+    {"mistake": "Hips lifting off the bench", "what_it_looks_like": "Bottom rises as the heels come up.", "why_it_matters": "Shortens the hamstrings at the hip and cheats the range.", "source_ids": ["S1"]},
+    {"mistake": "Curling past 90 deg", "what_it_looks_like": "Shins tip toward the hips.", "why_it_matters": "The dumbbell can slip out from between the feet.", "source_ids": ["S3"]}
+  ],
+  "sources": [
+    {"id": "S1", "citation": "Hirose N, Kagaya Y, Tsuruike M. 2021. The task dependent differences in electromyography activity of hamstring muscles during leg curls and hip extensions. PLoS One 16(2):e0245838.", "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7872291/", "type": "emg", "what_it_gave": "Prone isometric leg curls at 30 and 90 deg knee, hip neutral; BFlh/ST ratio and proximal-distal pattern change with knee angle; glut max 20-30% of hip-extension level."},
+    {"id": "S2", "citation": "Soga T, Nishiumi D, Furusho A, Akiyama K, Hirose N. 2021. Effect of different slopes of the lower leg during the Nordic hamstring exercise on hamstring electromyography activity. J Sports Sci Med 20:216-221.", "url": "https://www.jssm.org/jssm-20-216.xml%3EFulltext", "type": "emg", "what_it_gave": "Prone leg curl at 45 deg used for MVIC; BFlh favoured at lower knee flexion, ST at larger angles (cited background)."},
+    {"id": "S3", "citation": "MettleUp exercise library entry dumbbell_leg_curl (steps).", "url": "docs/exercise-library/part_*.json", "type": "library", "what_it_gave": "Lie on the front, knees past the end, dumbbell between the feet, curl heels toward hips, lower slowly."}
+  ],
+  "clip_check": [
+    {"check": "End knee flexion", "target": "80-100 deg", "measured": "", "pass": ""},
+    {"check": "Start knee near straight", "target": "0-15 deg", "measured": "", "pass": ""},
+    {"check": "Thighs and chest on the pad, hips not lifted", "target": "gap -0.02..+0.02 m", "measured": "", "pass": ""},
+    {"check": "Knee joint just past the bench end", "target": "0.03-0.08 m", "measured": "", "pass": ""},
+    {"check": "Dumbbell between the feet shown, or the picture labelled 'dumbbell not shown'", "target": "yes", "measured": "", "pass": ""},
+    {"check": "Hamstrings the strongest red in both pictures", "target": "yes", "measured": "", "pass": ""}
+  ]
+}

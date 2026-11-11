@@ -1,0 +1,55 @@
+{
+  "format": "v1-stills",
+  "exercise": {
+    "key": "plank_shoulder_tap",
+    "name": "Plank Shoulder Tap",
+    "equipment": "bodyweight",
+    "type": "reps",
+    "library_primary": ["abs"],
+    "library_secondary": ["obliques", "front_delts"],
+    "steps": [
+      "Start in a push-up position with your feet a little wider than hips.",
+      "Lift one hand to tap the opposite shoulder without rocking your hips.",
+      "Put the hand down and repeat with the other side."
+    ],
+    "status": "draft",
+    "version": null,
+    "researched_on": "2026-11-11",
+    "one_line_summary": "High plank on straight arms (hands under the shoulders), feet a little wider than the hips, body one straight line. One hand lifts and taps the opposite shoulder while the hips stay square and still, then returns. Rectus abdominis is the target (anti-extension + anti-rotation); obliques and the supporting front delt clearly work.",
+    "evidence_grade": "C"
+  },
+  "setup": [
+    {"item": "hands", "target": "Hands under the shoulders, arms straight.", "tolerance": "hand within 0.05 m of under the shoulder", "why": "S2 set-up; library step 1 (push-up position).", "source_ids": ["S2"], "grade": "D"},
+    {"item": "feet", "target": "On the toes, a little wider than hip-width (ankles ~0.34 m apart).", "tolerance": "0.25-0.45 m", "why": "Wider feet = more stable, hips rock less (S2); library step 1.", "source_ids": ["S2"], "grade": "D"},
+    {"item": "body line", "target": "Head to heels straight, abs braced, glutes squeezed.", "tolerance": "hip within 0.04 m of the shoulder-ankle line", "why": "S1, S2.", "source_ids": ["S1", "S2"], "grade": "C"}
+  ],
+  "movement": [
+    {"joint": "tapping arm (left)", "measure": "arm elev / plane / elbow in the torso frame", "start": "70.2 / 90 / 4 (hand on the floor under the shoulder)", "end": "82.4 / 118 / 91 (hand on the right shoulder)", "start_num": 4, "end_num": 91, "path": "Lifts, crosses under the chin, taps the front-top of the opposite shoulder, returns.", "tolerance": "hand within 0.05 m of the shoulder at the tap", "source_ids": ["S2"], "grade": "D"},
+    {"joint": "support arm (right)", "measure": "elev / elbow", "start": "70.2 / 4", "end": "70.2 / 4", "start_num": 4, "end_num": 4, "path": "Stays straight under the shoulder.", "tolerance": "elbow 0-10", "source_ids": ["S2"], "grade": "D"},
+    {"joint": "pelvis / trunk", "measure": "pelvis turn about the long axis and hip height", "start": "square, line slope 19.8 deg", "end": "square (no turn), same height", "start_num": 0, "end_num": 0, "path": "'Keep the hips quiet' (S1): no rocking or rotating.", "tolerance": "turn under 5 deg; hip height +-0.02 m", "source_ids": ["S1", "S2"], "grade": "C"},
+    {"joint": "knees", "measure": "knee bend", "start": "~9 deg", "end": "~9 deg", "start_num": 9, "end_num": 9, "path": "Straight.", "tolerance": "0-15", "source_ids": ["S2"], "grade": "D"}
+  ],
+  "muscles": [
+    {"muscle": "Abs (rectus abdominis)", "anatomy": "Rectus abdominis", "mask_key": "abs", "tier": "primary", "glow": 1.0, "emg": "No EMG study of shoulder taps found (searched). Close variants: planks with an unstable or moving demand (stir-the-pot) reach >61% MVIC RA, EO and IO (S3).", "role": "Holds the trunk straight against sagging while support drops to three points.", "surface": "Vertical bands down the front of the belly.", "source_ids": ["S3"], "grade": "B"},
+    {"muscle": "Obliques", "anatomy": "Obliquus externus / internus abdominis", "mask_key": "obliques", "tier": "secondary", "glow": 0.35, "emg": "Stir-the-pot plank EO and IO >61% MVIC; ball plank with hip extension 'very high' EO/IO (S3).", "role": "Stop the hips rotating when one hand lifts (anti-rotation, S1).", "surface": "Sides of the waist.", "source_ids": ["S1", "S3"], "grade": "B"},
+    {"muscle": "Front delts", "anatomy": "Deltoideus pars clavicularis (support side)", "mask_key": "front_delts", "tier": "secondary", "glow": 0.35, "emg": "Not measured for this move; serratus anterior 41-60% MVIC in the moving plank (S3).", "role": "The support shoulder holds more body weight on one arm.", "surface": "Front of the shoulder.", "source_ids": ["S3"], "grade": "C"},
+    {"muscle": "Glutes", "anatomy": "Gluteus maximus / medius", "mask_key": "glutes", "tier": "stabiliser", "glow": 0, "emg": "Not measured.", "role": "Keep the body line straight (S2).", "surface": "Buttocks.", "source_ids": ["S2"], "grade": "D"}
+  ],
+  "tempo": null,
+  "mistakes": [
+    {"mistake": "Hips rocking or rotating", "what_it_looks_like": "The pelvis twists toward the lifted hand.", "why_it_matters": "Loses the anti-rotation work (S1, S2).", "source_ids": ["S1", "S2"]},
+    {"mistake": "Hips sagging or piking", "what_it_looks_like": "Belly drops or the bottom pokes up.", "why_it_matters": "S2 common mistakes.", "source_ids": ["S2"]}
+  ],
+  "sources": [
+    {"id": "S1", "citation": "National Academy of Sports Medicine. The plank: coaching, progressions and variations for every client (NASM blog).", "url": "https://www.nasm.org/resource-center/blog/training/the-plank-coaching-progressions-and-variations-for-every-client", "type": "guideline", "what_it_gave": "Shoulder taps: 'keep the hips quiet', anti-rotation focus, needs a 30-45 s plank first."},
+    {"id": "S2", "citation": "Redefining Strength. Plank with Shoulder Taps (coaching article).", "url": "https://redefiningstrength.com/plank-with-shoulder-taps/", "type": "coach", "what_it_gave": "Hands under shoulders, feet wider for stability, tap the opposite shoulder, hips square; mistakes."},
+    {"id": "S3", "citation": "Youdas JW, Coleman KC, Holstad EE, Long SD, Veldkamp NL, Hollman JH. 2018. Magnitudes of muscle activation of spine stabilizers in healthy adults during prone on elbow planking exercises with and without a fitness ball. Physiother Theory Pract 34(3):212-222. doi:10.1080/09593985.2017.1377792", "url": "https://europepmc.org/article/MED/28922049", "type": "emg", "what_it_gave": "Moving/unstable planks: RA, EO, IO >61% MVIC; serratus 41-60%."}
+  ],
+  "clip_check": [
+    {"check": "Start: both hands under the shoulders, arms straight", "target": "hand z 0.02-0.05; elbow 0-10", "measured": "", "pass": "", "tool": "measure_pose.py"},
+    {"check": "End: left hand on the right shoulder", "target": "within 0.05 m of the shoulder skin, not through it", "measured": "", "pass": "", "tool": "picture"},
+    {"check": "Hips square and level in both pictures", "target": "pelvis turn < 5 deg; height change < 0.02 m", "measured": "", "pass": "", "tool": "measure_pose.py"},
+    {"check": "Toes on the floor, feet a little wider than hips", "target": "lowest point -0.002..+0.002; ankles 0.25-0.45 m apart", "measured": "", "pass": "", "tool": "probe_feet.py"},
+    {"check": "Primary muscle strongest red", "target": "abs strongest red; obliques and front delts light", "measured": "", "pass": "", "tool": "picture"}
+  ]
+}

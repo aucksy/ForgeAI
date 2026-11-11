@@ -1,0 +1,26 @@
+{
+  "key": "zottman_curl",
+  "name": "Zottman Curl",
+  "primary": ["biceps"],
+  "secondary": ["forearms"],
+  "props": {"db_L": {"type": "dumbbell"}, "db_R": {"type": "dumbbell"}},
+  "camera": {"yaw": -50, "pitch": 8, "lens": 50, "fill": 0.9, "res": 640, "samples": 20},
+  "timing": {"fps": 30, "keys": [[0, "start"], [1, "end"], [2, "start"]]},
+  "poses": {
+    "start": {
+      "feet": {"L": {"at": [0.13, -0.01, 0.074], "rot": [0, 0, 6]}, "R": {"at": [-0.13, -0.01, 0.074], "rot": [0, 0, -6]}},
+      "knees": {"L": [0.16, -1.0, 0.52], "R": [-0.16, -1.0, 0.52]},
+      "hands": {
+        "L": {"prop": "db_L", "axis": [1, 0.12, 0], "arm": {"elev": 7, "plane": 56, "elbow": 13, "bend": [0, 1, 0], "tilt": 0}}
+      }
+    },
+    "end": {
+      "feet": {"L": {"at": [0.13, -0.01, 0.074], "rot": [0, 0, 6]}, "R": {"at": [-0.13, -0.01, 0.074], "rot": [0, 0, -6]}},
+      "knees": {"L": [0.16, -1.0, 0.52], "R": [-0.16, -1.0, 0.52]},
+      "hands": {
+        "L": {"prop": "db_L", "axis": [-1, 0.12, 0], "arm": {"elev": 7, "plane": 56, "elbow": 124, "bend": [0, 1, 0], "tilt": 0}}
+      }
+    }
+  },
+  "research": "Both arms together (right mirrors left). Start: arms hanging, elev 7 / plane 56 / elbow 13, palms forward (axis +x, index outward). End: top of the curl, elbow 124, palms turned down (axis -x, index toward the midline = pronated). Angles from the approved dumbbell_curl clip; range per S1 Marcolin 2018 (123 +- 12 deg). The small +y (0.12) in both axes keeps the in-between frames from passing through a zero-length handle axis (a straight +x -> -x blend would hit (0,0,0) at the halfway frame). Why the turn matters: S2 Kleiber 2015, brachioradialis share higher when pronated. Facts: research/zottman_curl.json."
+}

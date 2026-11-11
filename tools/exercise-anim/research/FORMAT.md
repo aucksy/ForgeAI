@@ -61,3 +61,11 @@ only. Peer-reviewed first. A number with no source is not allowed.
 check, target, measured (from `measure_pose.py` / `measure_twist.py` / the rendered frames), pass (yes/no),
 tool. Must include: every movement row, the twist checks (upper-arm roll range, elbow hinge drift, wrist
 twist), and "primary muscle is the strongest red in the bottom, middle and top frames".
+
+## Short form for exercise pictures (`"format": "v1-stills"`, 11 Nov 2026)
+Exercises that get two still pictures (start + end; a hold gets one) use a shorter file, 4-10 KB:
+the same section names, but `tempo` may be `null`, `mistakes` keeps the 1-3 that a still picture could show,
+`movement` gives only the start and end of each joint that moves plus the joints that must stay still, and
+`clip_check` holds the picture checks (start/end pose numbers, feet or body on the floor/pad, hands on the
+handle, primary muscle the strongest red in both pictures). At least 2 sources per file, every one a real
+page that was opened and read (no citation from memory); peer-reviewed first, then ACE / NASM / NSCA.

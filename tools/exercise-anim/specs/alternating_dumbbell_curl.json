@@ -1,0 +1,28 @@
+{
+  "key": "alternating_dumbbell_curl",
+  "name": "Alternating Dumbbell Curl",
+  "primary": ["biceps"],
+  "secondary": ["forearms"],
+  "props": {"db_L": {"type": "dumbbell"}, "db_R": {"type": "dumbbell"}},
+  "camera": {"yaw": -50, "pitch": 8, "lens": 50, "fill": 0.9, "res": 640, "samples": 20},
+  "timing": {"fps": 30, "keys": [[0, "start"], [1, "end"], [2, "start"]]},
+  "poses": {
+    "start": {
+      "feet": {"L": {"at": [0.13, -0.01, 0.074], "rot": [0, 0, 6]}, "R": {"at": [-0.13, -0.01, 0.074], "rot": [0, 0, -6]}},
+      "knees": {"L": [0.16, -1.0, 0.52], "R": [-0.16, -1.0, 0.52]},
+      "hands": {
+        "L": {"prop": "db_L", "axis": [1, 0, 0], "arm": {"elev": 7, "plane": 56, "elbow": 124, "bend": [0, 1, 0], "tilt": 0}},
+        "R": {"prop": "db_R", "axis": [-1, 0, 0], "arm": {"elev": 7, "plane": 56, "elbow": 13, "bend": [0, 1, 0], "tilt": 0}}
+      }
+    },
+    "end": {
+      "feet": {"L": {"at": [0.13, -0.01, 0.074], "rot": [0, 0, 6]}, "R": {"at": [-0.13, -0.01, 0.074], "rot": [0, 0, -6]}},
+      "knees": {"L": [0.16, -1.0, 0.52], "R": [-0.16, -1.0, 0.52]},
+      "hands": {
+        "L": {"prop": "db_L", "axis": [1, 0, 0], "arm": {"elev": 7, "plane": 56, "elbow": 13, "bend": [0, 1, 0], "tilt": 0}},
+        "R": {"prop": "db_R", "axis": [-1, 0, 0], "arm": {"elev": 7, "plane": 56, "elbow": 124, "bend": [0, 1, 0], "tilt": 0}}
+      }
+    }
+  },
+  "research": "Two moments of the alternation: picture 1 left curled (elbow 124) with right hanging (elbow 13); picture 2 the reverse. Both upper arms elev 7, plane 56 (by the side, slightly forward), fold forward, palms up (axis +x left, -x right). Angles converted from the approved dumbbell_curl clip positions: down hand-pivot (0.039, 0.10, -0.306) -> 13 deg; top (0.011, 0.249, 0.209) -> 124 deg. S1 Marcolin 2018 (this exact exercise, range 123 +- 12 deg, trunk policed), S2 Kleiber 2015, S3 ACE (elbows by the sides). Standing rest feet. Facts: research/alternating_dumbbell_curl.json."
+}

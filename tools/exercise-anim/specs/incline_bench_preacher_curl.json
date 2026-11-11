@@ -1,0 +1,31 @@
+{
+  "key": "incline_bench_preacher_curl",
+  "name": "Incline Bench Preacher Curl",
+  "primary": ["biceps"],
+  "secondary": ["forearms"],
+  "scene": {"bench": {"deg": 60}},
+  "props": {"db_L": {"type": "dumbbell"}},
+  "camera": {"yaw": 75, "pitch": 12, "lens": 50, "fill": 0.9, "res": 640, "samples": 20},
+  "timing": {"fps": 30, "keys": [[0, "start"], [1, "end"], [2, "start"]]},
+  "poses": {
+    "start": {
+      "root": {"loc": [0, 0.71, 0.92], "rot": [30, 0, 0]},
+      "feet": {"L": {"at": [0.15, 0.88, 0.074], "rot": [0, 0, 8]}},
+      "knees": {"L": [0.16, 0.3, 0.55]},
+      "hands": {
+        "L": {"prop": "db_L", "axis": [1, 0, 0], "arm": {"elev": 60, "plane": 88, "elbow": 20, "bend_world": [0, 0, 1], "tilt": 0}},
+        "R": {"axis": [1, 0, 0], "arm": {"elev": 50, "plane": 95, "elbow": 60, "bend_world": [0, 0, 1], "tilt": 0}}
+      }
+    },
+    "end": {
+      "root": {"loc": [0, 0.71, 0.92], "rot": [30, 0, 0]},
+      "feet": {"L": {"at": [0.15, 0.88, 0.074], "rot": [0, 0, 8]}},
+      "knees": {"L": [0.16, 0.3, 0.55]},
+      "hands": {
+        "L": {"prop": "db_L", "axis": [1, 0, 0], "arm": {"elev": 60, "plane": 88, "elbow": 120, "bend_world": [0, 0, 1], "tilt": 0}},
+        "R": {"axis": [1, 0, 0], "arm": {"elev": 50, "plane": 95, "elbow": 60, "bend_world": [0, 0, 1], "tilt": 0}}
+      }
+    }
+  },
+  "research": "Bench 60 deg (45 puts the pad top at z ~1.0, too low for a standing body without a deep squat). Pad: hinge (0,0.01,0.40), length 0.82 rising toward +Y; top surface plane through (0,-0.02,0.42) with normal n = (0,-0.87,0.5); top edge ~ (y 0.40, z 1.15). Athlete stands behind it (+Y side) facing -Y and leans in. Lean 30 (root rot X +30): shoulder = root + (0.22, -0.30, 0.37). Want shoulder joint over the top edge, 6 cm off the pad plane (arm radius): S = (0.22, 0.41, 1.29) -> root (0, 0.71, 0.92). Upper arm down the pad slope (0,-0.5,-0.87) world; torso-to-hips direction is (0,0.5,-0.87), so the angle between = 60 deg -> elev 60 / plane 88 (S2: 75 best, 60 close). Elbow = S + 0.29 slope = (0.22, 0.27, 1.04), normal distance to pad 0.06 m = resting on it. Elbow 20 -> 120 folding up (bend_world up): forearm ends ~60 deg above level toward -Y. Supinated axis [1,0,0]. Hip ~(0.11,0.66,0.90); ankles (+-0.15,0.88,0.074) behind the bench foot (y 0.72): hip-ankle 0.85 m -> knee bend ~38 deg, leaning into the pad. Right hand (no prop) rests on the pad top. S1 Oliveira 2009, S2 Moon 2013."
+}

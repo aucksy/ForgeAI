@@ -1,0 +1,52 @@
+{
+  "format": "v1-stills",
+  "exercise": {
+    "key": "two_arm_dumbbell_kickback",
+    "name": "Two-Arm Dumbbell Kickback",
+    "equipment": "dumbbell",
+    "library_primary": ["triceps"],
+    "library_secondary": [],
+    "library_steps": [
+      "Hold a dumbbell in each hand and lean forward from your hips, back flat.",
+      "Keep your upper arms by your sides and straighten both arms back.",
+      "Bend your elbows slowly to return."
+    ],
+    "status": "draft",
+    "version": 1,
+    "researched_on": "2026-11-11",
+    "one_line_summary": "Standing hip hinge ~60 deg with a flat back and soft knees; upper arms held just behind the body line, nearly level with the floor; elbows go from ~80 deg (forearms hanging vertical) to straight, palms facing in. Triceps does the work.",
+    "evidence_grade": "B"
+  },
+  "setup": [
+    {"item": "hinge", "target": "Feet hip-width, knees soft, hinge at the hips until the torso is ~60 deg forward, back flat, head in line.", "tolerance": "torso 45-75 deg from vertical; knee 15-35 deg", "why": "ACE: torso stiff, head aligned, no low-back arching or rotation. Two-arm version has no hand on the thigh, so a moderate lean.", "source_ids": ["S1"], "grade": "C"},
+    {"item": "upper arms", "target": "Close to the torso, about parallel to it (elbows a little above the back line), and still.", "tolerance": "elev 10-30 deg behind the torso", "why": "ACE: upper arm parallel and close to the torso, must not rise during the movement.", "source_ids": ["S1"], "grade": "B"},
+    {"item": "grip and shoulder", "target": "Neutral grip, palms facing in; shoulder blades set down and back.", "tolerance": "none", "why": "ACE kickback cues.", "source_ids": ["S1"], "grade": "C"}
+  ],
+  "movement": [
+    {"joint": "elbow", "measure": "bend, 0 = straight", "start": "80 deg (forearm hangs vertical)", "end": "5 deg (fully straight, not hyperextended)", "start_num": 80, "end_num": 5, "tolerance": "start 75-95; end 0-10", "source_ids": ["S1"], "grade": "B"},
+    {"joint": "shoulder (elev / plane)", "measure": "upper arm angle from the torso; plane -90 = straight behind", "start": "20 / -90 deg", "end": "20 / -90 deg", "start_num": 20, "end_num": 20, "tolerance": "change < 5", "source_ids": ["S1"], "grade": "B"},
+    {"joint": "trunk, hips, knees", "measure": "stay still", "start": "~60 deg hinge", "end": "same", "start_num": 60, "end_num": 60, "tolerance": "change < 5", "source_ids": ["S1"], "grade": "C"}
+  ],
+  "muscles": [
+    {"muscle": "Triceps brachii", "mask_key": "triceps", "tier": "primary", "emg": "Kickback 87 +- 27% of the triangle push-up, not significantly different from the best exercise (S1). Triceps EMG per unit force changes near full extension (120 deg) (S2) - the kickback is hardest at lockout.", "source_ids": ["S1", "S2"], "grade": "B"},
+    {"muscle": "Posterior deltoid (holds the arm back)", "mask_key": "rear_delts", "tier": "stabiliser", "emg": "not measured", "source_ids": [], "grade": "D"},
+    {"muscle": "Spinal erectors / glutes (hold the hinge)", "mask_key": "lower_back", "tier": "stabiliser", "emg": "not measured", "source_ids": [], "grade": "D"}
+  ],
+  "tempo": null,
+  "mistakes": [
+    {"mistake": "Upper arms swing", "what_it_looks_like": "Elbows drop to the hips at the start and lift at lockout.", "why_it_matters": "ACE: the upper arm must not rise; the shoulder then does the work.", "source_ids": ["S1"]},
+    {"mistake": "Rounded or arching back", "what_it_looks_like": "Hunched upper back or sagging low back during the hinge.", "why_it_matters": "ACE: torso stiff, no low-back arching.", "source_ids": ["S1"]}
+  ],
+  "sources": [
+    {"id": "S1", "citation": "Boehler B, Porcari JP, Kline D, Hendrix CR, Foster C, Anders M. 2011. ACE-sponsored research: best triceps exercises. ACE Certified News, Aug 2011.", "url": "https://www.acefitness.org/certifiednewsarticle/1562/ace-sponsored-research-best-triceps-exercises", "type": "emg + coaching", "what_it_gave": "Kickback 87% of triangle push-up. Form: lean forward, torso stiff, head in line; upper arm parallel and close to the torso, stationary; elbow ~90 deg or forearm vertical; extend fully; scapula depressed and retracted."},
+    {"id": "S2", "citation": "Akima H, Maeda H, Koike T, Ishida K. 2021. Effect of elbow joint angles on electromyographic activity versus force relationships of synergistic muscles of the triceps brachii. PLoS ONE 16(6):e0252644.", "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8174684/", "type": "emg", "what_it_gave": "Triceps heads at 60/90/120 deg elbow extension: heads alike; RMS-force relation shifts at the most extended angle."}
+  ],
+  "clip_check": [
+    {"check": "Hinge angle and flat back, same in both pictures", "target": "~60 deg", "measured": "", "pass": ""},
+    {"check": "Upper arms unchanged between pictures", "target": "elev 20, plane -90; change < 5", "measured": "", "pass": ""},
+    {"check": "Start forearm vertical / end arm straight", "target": "elbow 80 / 5 deg", "measured": "", "pass": ""},
+    {"check": "Feet flat on the floor", "target": "-0.002..+0.002 m", "measured": "", "pass": ""},
+    {"check": "Palms face in, dumbbells clear of thighs", "target": "clear > 0.02 m", "measured": "", "pass": ""},
+    {"check": "Triceps strongest red in both pictures", "target": "yes", "measured": "", "pass": ""}
+  ]
+}

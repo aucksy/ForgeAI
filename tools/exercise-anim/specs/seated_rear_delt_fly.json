@@ -1,0 +1,28 @@
+{
+  "key": "seated_rear_delt_fly",
+  "name": "Seated Rear Delt Fly",
+  "primary": ["rear_delts"],
+  "secondary": ["upper_back"],
+  "scene": {"bench": {"deg": 0}},
+  "props": {"db_L": {"type": "dumbbell"}, "db_R": {"type": "dumbbell"}},
+  "camera": {"yaw": -35, "pitch": 15, "lens": 50, "fill": 0.9, "res": 640, "samples": 20},
+  "timing": {"fps": 30, "keys": [[0, "start"], [1, "end"], [2, "start"]]},
+  "defaults": {
+    "bones": {"spine05": [4, 0, 0], "spine04": [4, 0, 0], "spine03": [4, 0, 0], "spine02": [4, 0, 0], "neck01": [-10, 0, 0], "head": [-5, 0, 0]}
+  },
+  "poses": {
+    "start": {
+      "root": {"loc": [0, -0.22, 0.47], "rot": [45, 0, 0]},
+      "feet": {"L": {"at": [0.09, -0.72, 0.074], "rot": [0, 0, 5]}},
+      "knees": {"L": [0.12, -1.2, 0.8]},
+      "hands": {"L": {"prop": "db_L", "axis": [0, 0.42, 0.91], "arm": {"elev": 70, "plane": 80, "elbow": 15, "bend": [-1, 0, 0], "tilt": 0}}}
+    },
+    "end": {
+      "root": {"loc": [0, -0.22, 0.47], "rot": [45, 0, 0]},
+      "feet": {"L": {"at": [0.09, -0.72, 0.074], "rot": [0, 0, 5]}},
+      "knees": {"L": [0.12, -1.2, 0.8]},
+      "hands": {"L": {"prop": "db_L", "axis": [0, 0, 1], "arm": {"elev": 88, "plane": 0, "elbow": 15, "bend": [0, 1, -0.3], "tilt": 0}}}
+    }
+  },
+  "research": "Flat bench (deg 0); sit on its seat end (seat spans y -0.35..-0.01, top 0.44). Root (0,-0.22,0.47): seated root 0.494 in the proven press, ~2 cm lower because the pelvis tilts forward. Lean: root rot X +45 (+X = forward) plus spine +4 x4 -> torso ~60 deg from vertical, back kept flat (ACE); neck/head -15 to keep the gaze neutral. Hip then ~(0.11,-0.25,0.45); ankles (+-0.09,-0.72,0.074): hip-ankle 0.59 m -> knee ~80 deg, clear of the bench foot rail at y -0.48. Shoulders land over the knees (~0.43 forward, 0.2 up from the hip) = chest near knees. Torso frame for a 60 deg lean: world down = (0, 0.87, -0.5) torso -> a hanging arm is elev 60 / plane 90; used elev 70 / plane 80 so hands hang ~0.1 m outside the shoulders (x ~0.32) and the plates (r 0.088) clear the calves (x <= 0.16). Hand ~0.57 below the shoulder (z ~0.66) -> z ~0.1, plates just off the floor. Neutral axis start = world forward (thumbs toward the toes) in torso = (0, cos lean, sin lean); [0, 0.42, 0.91] assumes the lean lands nearer 65 deg (rest-pose spine adds a few degrees) - square to the hanging forearm either way within ~5 deg. End elev 88 / plane 0 = arm square to the torso, horizontal (elbows at shoulder height), palms down, thumbs toward the head [0,0,1]. Elbow fixed 15. S1 Sweeney 2014 (ACE seated rear lateral raise), S2 Schoenfeld 2013 (neutral grip)."
+}

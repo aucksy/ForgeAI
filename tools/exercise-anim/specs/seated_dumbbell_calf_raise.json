@@ -1,0 +1,40 @@
+{
+  "key": "seated_dumbbell_calf_raise",
+  "name": "Seated Dumbbell Calf Raise",
+  "primary": ["calves"],
+  "secondary": [],
+  "scene": {
+    "bench": {"deg": 85},
+    "box": {"size": [0.26, 0.14, 0.08], "loc": [0.12, -0.7, 0]}
+  },
+  "props": {"db_L": {"type": "dumbbell"}},
+  "camera": {"yaw": 80, "pitch": 10, "lens": 50, "fill": 0.9, "res": 640, "samples": 20},
+  "timing": {"fps": 30, "keys": [[0, "start"], [1, "end"], [2, "start"]]},
+  "poses": {
+    "start": {
+      "root": {"loc": [0, -0.035, 0.494], "rot": [-6, 0, 0]},
+      "feet": {
+        "L": {"at": [0.12, -0.496, 0.113], "rot": [-15, 0, 0]},
+        "R": {"at": [-0.22, -0.5, 0.074], "rot": [0, 0, -8]}
+      },
+      "knees": {"L": [0.14, -1.0, 0.9], "R": [-0.24, -1.0, 0.6]},
+      "hands": {
+        "L": {"prop": "db_L", "axis": [-1, 0, 0], "arm": {"elev": 30, "plane": 30, "elbow": 93, "bend": [-0.65, 0.76, 0], "tilt": 0}},
+        "R": {"axis": [1, 0, 0], "arm": {"elev": 25, "plane": 40, "elbow": 75, "bend": [0, 1, 0], "tilt": 0}}
+      }
+    },
+    "end": {
+      "root": {"loc": [0, -0.035, 0.494], "rot": [-6, 0, 0]},
+      "feet": {
+        "L": {"at": [0.12, -0.567, 0.219], "rot": [30, 0, 0]},
+        "R": {"at": [-0.22, -0.5, 0.074], "rot": [0, 0, -8]}
+      },
+      "knees": {"L": [0.14, -1.0, 0.9], "R": [-0.24, -1.0, 0.6]},
+      "hands": {
+        "L": {"prop": "db_L", "axis": [-1, 0, 0], "arm": {"elev": 25, "plane": 35, "elbow": 100, "bend": [-0.6, 0.75, 0.3], "tilt": 0}},
+        "R": {"axis": [1, 0, 0], "arm": {"elev": 25, "plane": 40, "elbow": 75, "bend": [0, 1, 0], "tilt": 0}}
+      }
+    }
+  },
+  "research": "Seated body from the proven dumbbell_shoulder_press (bench 85, root (0,-0.035,0.494) rot -6). Block 0.26x0.14x0.08 m centred (0.12,-0.70): top z 0.08, spans y -0.77..-0.63. Left forefoot on it, ball of foot fixed at y_b = -0.66, z 0.08, heel off the back edge. Foot model: ankle sits 0.15 behind and 0.074 above the ball (rest foot; estimate). Foot rot X +a raises the heel. Start a = -15 (S1 range start): ankle = ball + (0.15 cos15 + 0.074 sin15, -0.15 sin15 + 0.074 cos15) = (-0.66+0.164, 0.08+0.033) = (y -0.496, z 0.113). End a = +30: (0.15 cos30 - 0.074 sin30, 0.15 sin30 + 0.074 cos30) = (0.093, 0.139) -> (y -0.567, z 0.219). Hip ~(0.11,-0.02,0.50): hip-ankle 0.62-0.64 m, knee ~90 deg; the thigh lifts ~7 cm at the end. Right foot flat (z 0.074). Dumbbell across the lower left thigh (handle ~ (0.12,-0.40,0.70) world, palm down, axis [-1,0,0]): shoulder (0.22,-0.06,0.97) -> hand vector (-0.10, 0.34 fwd, -0.27) = 0.44 m -> elbow ~93 deg with elev 30 / plane 30 folding forward-in; end the knee is ~7 cm higher -> elev 25 / plane 35 / elbow 100. Right hand (no prop) rests palm-down on the right thigh. S1 Kovacs 2024 (knee 90, -15..+30 deg ankle), S2 StrengthLog."
+}

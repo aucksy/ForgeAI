@@ -1,0 +1,54 @@
+{
+  "format": "v1-stills",
+  "exercise": {
+    "key": "incline_dumbbell_skull_crusher",
+    "name": "Incline Dumbbell Skull Crusher",
+    "equipment": "dumbbell",
+    "library_primary": ["triceps"],
+    "library_secondary": [],
+    "library_steps": [
+      "Lie back on an incline bench, dumbbells held straight up, palms facing in.",
+      "Bend your elbows to lower the dumbbells behind your head.",
+      "Straighten your arms back up without moving your upper arms."
+    ],
+    "status": "draft",
+    "version": 1,
+    "researched_on": "2026-11-11",
+    "one_line_summary": "30 deg incline bench, both arms straight up (vertical in the room), palms facing in; only the elbows bend, to ~95 deg, so the dumbbells drop behind the head. Triceps (long head stretched) does the work.",
+    "evidence_grade": "C"
+  },
+  "setup": [
+    {"item": "bench angle", "target": "Low incline, 30 deg.", "tolerance": "15-45 deg", "why": "Incline puts the shoulder in more flexion than a flat skull crusher (more overhead), which favours the long head.", "source_ids": ["S2", "S3"], "grade": "C"},
+    {"item": "body on bench", "target": "Hips on the seat, back and head on the pad, feet flat.", "tolerance": "back gap -0.02..+0.02 m", "why": "Stable base.", "source_ids": ["S3"], "grade": "C"},
+    {"item": "arms", "target": "Arms straight up (vertical in the room), shoulder-width, palms facing each other.", "tolerance": "upper arm within 10 deg of vertical", "why": "Library start; upper arms then stay still.", "source_ids": ["S1"], "grade": "C"}
+  ],
+  "movement": [
+    {"joint": "elbow", "measure": "bend, 0 = straight", "start": "5 deg", "end": "95 deg (dumbbells behind and beside the head)", "start_num": 5, "end_num": 95, "tolerance": "end 85-110", "source_ids": ["S1"], "grade": "C"},
+    {"joint": "shoulder (elev / plane)", "measure": "upper arm angle from the torso; stays still", "start": "120 / 90 deg", "end": "120 / 90 deg", "start_num": 120, "end_num": 120, "tolerance": "change < 5 deg", "source_ids": ["S1"], "grade": "C"},
+    {"joint": "trunk, legs", "measure": "stay still", "start": "on the pad", "end": "same", "start_num": 0, "end_num": 0, "tolerance": "no arching", "source_ids": [], "grade": "D"}
+  ],
+  "muscles": [
+    {"muscle": "Triceps brachii (long head emphasised)", "mask_key": "triceps", "tier": "primary", "emg": "Lying extension 62% of triangle push-up (S1). Shoulder-flexed elbow extension grew the long head +28.5% vs +19.6% neutral (S2).", "source_ids": ["S1", "S2"], "grade": "B"},
+    {"muscle": "Shoulder flexors / extensors holding the upper arm", "mask_key": "front_delts", "tier": "stabiliser", "emg": "not measured", "source_ids": [], "grade": "D"},
+    {"muscle": "Lats (eccentric hold of the overhead upper arm)", "mask_key": "lats", "tier": "stabiliser", "emg": "not measured", "source_ids": [], "grade": "D"},
+    {"muscle": "Forearm flexors (grip)", "mask_key": "forearms", "tier": "stabiliser", "emg": "not measured", "source_ids": [], "grade": "D"}
+  ],
+  "tempo": null,
+  "mistakes": [
+    {"mistake": "Upper arms drift", "what_it_looks_like": "Elbows flare out or swing toward the feet as the weight comes up.", "why_it_matters": "Library cue: do not move the upper arms; otherwise it becomes a pullover-press.", "source_ids": ["S1"]},
+    {"mistake": "Elbows splay wide", "what_it_looks_like": "Elbows point out to the sides instead of up.", "why_it_matters": "Shortens the range and loads the elbow unevenly.", "source_ids": []}
+  ],
+  "sources": [
+    {"id": "S1", "citation": "Boehler B, Porcari JP, Kline D, Hendrix CR, Foster C, Anders M. 2011. ACE-sponsored research: best triceps exercises. ACE Certified News, Aug 2011.", "url": "https://www.acefitness.org/certifiednewsarticle/1562/ace-sponsored-research-best-triceps-exercises", "type": "emg + coaching", "what_it_gave": "Lying barbell extension 62%, overhead extension 76%, kickback 87% of the triangle push-up; stationary upper arm."},
+    {"id": "S2", "citation": "Maeo S, Wu Y, Huang M, et al. 2023. Triceps brachii hypertrophy is substantially greater after elbow extension training performed in the overhead versus neutral arm position. Eur J Sport Sci 23(7):1240-1250.", "url": "https://europepmc.org/article/MED/35819335", "type": "training", "what_it_gave": "Overhead (shoulder-flexed) training: long head 1.5x and whole triceps 1.4x the growth of the neutral arm."},
+    {"id": "S3", "citation": "Rodriguez-Ridao D, Antequera-Vique JA, Martin-Fuentes I, Muyor JM. 2020. Effect of five bench inclinations on the EMG activity of the pectoralis major, anterior deltoid, and triceps brachii during the bench press exercise. IJERPH 17(19):7339.", "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7579505/", "type": "emg", "what_it_gave": "Bench angle definitions (0-60 deg) and the head-and-back-on-bench setup used for the 30 deg body."}
+  ],
+  "clip_check": [
+    {"check": "Upper arms vertical in the room and unchanged between pictures", "target": "elev 120, plane 90; change < 5 deg", "measured": "", "pass": ""},
+    {"check": "Start elbow / end elbow", "target": "5 / 95 deg", "measured": "", "pass": ""},
+    {"check": "End dumbbells behind the head, not inside head or pad", "target": "clear > 0.02 m", "measured": "", "pass": ""},
+    {"check": "Back on pad, feet on floor", "target": "probe_bench / probe_feet in range", "measured": "", "pass": ""},
+    {"check": "Palms face each other, hands on handles", "target": "yes", "measured": "", "pass": ""},
+    {"check": "Triceps strongest red in both pictures", "target": "yes", "measured": "", "pass": ""}
+  ]
+}

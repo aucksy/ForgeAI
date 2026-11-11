@@ -1,0 +1,54 @@
+{
+  "format": "v1-stills",
+  "exercise": {
+    "key": "seated_dumbbell_calf_raise",
+    "name": "Seated Dumbbell Calf Raise",
+    "equipment": "dumbbell",
+    "library_primary": ["calves"],
+    "library_secondary": [],
+    "library_steps": [
+      "Sit on a bench and set the front of one foot on a block.",
+      "Rest a dumbbell on that knee and hold it in place.",
+      "Raise your heel as high as you can, then lower slowly.",
+      "Finish your reps, then switch legs."
+    ],
+    "status": "draft",
+    "version": 1,
+    "researched_on": "2026-11-11",
+    "one_line_summary": "Seated, knee bent ~90 deg, ball of one foot on an 8 cm block with the heel hanging off; heel drops ~15 deg below the block then rises ~30 deg (ankle only, knee angle unchanged) while the hand holds a dumbbell across that knee. Soleus (calves) is the target.",
+    "evidence_grade": "B"
+  },
+  "setup": [
+    {"item": "seat and knee", "target": "Sit tall on a bench, working knee bent about 90 deg, shin near vertical.", "tolerance": "knee 80-100 deg", "why": "With the knee bent the gastrocnemius is shortened and the soleus does more of the work.", "source_ids": ["S1", "S2"], "grade": "B"},
+    {"item": "foot on block", "target": "Ball of the foot on the block edge, heel hanging off behind it.", "tolerance": "block 5-10 cm", "why": "Lets the heel drop below the block for full range.", "source_ids": ["S2"], "grade": "C"},
+    {"item": "load", "target": "Dumbbell lies across the lower thigh just behind the knee, held with the hand.", "tolerance": "none", "why": "Loads the calf through the knee; library setup.", "source_ids": [], "grade": "D"},
+    {"item": "other leg", "target": "Foot flat on the floor, relaxed.", "tolerance": "none", "why": "One leg at a time.", "source_ids": [], "grade": "D"}
+  ],
+  "movement": [
+    {"joint": "ankle (working leg)", "measure": "0 = foot square to the shin; - = heel down (dorsiflexion), + = heel up (plantarflexion)", "start": "-15 deg (heel below the block)", "end": "+30 deg (heel high)", "start_num": -15, "end_num": 30, "tolerance": "start -20..-10; end 25-35", "source_ids": ["S1"], "grade": "B"},
+    {"joint": "knee (working leg)", "measure": "bend", "start": "~90 deg", "end": "~90 deg (thigh lifts with the heel; knee angle unchanged)", "start_num": 90, "end_num": 90, "tolerance": "change < 10 deg", "source_ids": ["S2"], "grade": "C"},
+    {"joint": "trunk, other leg, arms", "measure": "stay still (hand rides up with the knee)", "start": "upright", "end": "same", "start_num": 0, "end_num": 0, "tolerance": "none", "source_ids": [], "grade": "D"}
+  ],
+  "muscles": [
+    {"muscle": "Soleus + gastrocnemius (calf)", "mask_key": "calves", "tier": "primary", "emg": "Knee flexed 90 deg: medial gastrocnemius EMG ~35% lower than knee straight, soleus same or up to 15-28% higher at slow speeds (S1). Seated version 'mostly trains the soleus' (S2).", "source_ids": ["S1", "S2"], "grade": "B"},
+    {"muscle": "Tibialis anterior (controls the drop)", "mask_key": "none", "tier": "stabiliser", "emg": "not measured", "source_ids": [], "grade": "D"},
+    {"muscle": "Forearm / grip holding the dumbbell", "mask_key": "forearms", "tier": "stabiliser", "emg": "not measured", "source_ids": [], "grade": "D"}
+  ],
+  "tempo": null,
+  "mistakes": [
+    {"mistake": "Bouncing short reps", "what_it_looks_like": "Heel never drops below the block or rises only a little.", "why_it_matters": "Study range was 15 deg dorsiflexion to 30 deg plantarflexion; short reps lose most of it.", "source_ids": ["S1"]},
+    {"mistake": "Pushing with the knee/hip", "what_it_looks_like": "Thigh lifted by the hip or arms instead of the ankle.", "why_it_matters": "Takes work off the calf.", "source_ids": ["S2"]}
+  ],
+  "sources": [
+    {"id": "S1", "citation": "Kovacs B, Csala D, Yang S, Tihanyi J, Gu Y, Hortobagyi T. 2024. Knee position affects medial gastrocnemius and soleus activation during dynamic plantarflexion: no evidence for an inter-muscle compensation in healthy young adults. Biology Open 13(12):bio061810.", "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11708772/", "type": "emg", "what_it_gave": "n=30; knee 0 vs 90 deg; plantarflexion from 15 deg dorsiflexion to 30 deg plantarflexion. Knee-flexed: torque -31%, medial gastrocnemius EMG -35%, soleus +15-28% early in slow reps."},
+    {"id": "S2", "citation": "StrengthLog. How to do seated calf raise: muscles worked and proper form.", "url": "https://www.strengthlog.com/seated-calf-raise/", "type": "coaching", "what_it_gave": "Toes and ball of the foot on the support; lower with a controlled ankle bend, push up by extending the ankles; mostly trains the soleus because the gastrocnemius is shortened."}
+  ],
+  "clip_check": [
+    {"check": "Start: working heel below the block", "target": "ankle -15 deg", "measured": "", "pass": ""},
+    {"check": "End: heel high, ball of foot still on the block (not sliding)", "target": "ankle +30 deg, ball within 1 cm", "measured": "", "pass": ""},
+    {"check": "Forefoot rests on block top (no float, no sink)", "target": "-0.005..+0.005 m", "measured": "", "pass": ""},
+    {"check": "Other foot flat on the floor", "target": "probe_feet in range", "measured": "", "pass": ""},
+    {"check": "Dumbbell rests on the lower thigh, hand on handle", "target": "gap < 0.02 m", "measured": "", "pass": ""},
+    {"check": "Calf strongest red in both pictures", "target": "yes", "measured": "", "pass": ""}
+  ]
+}

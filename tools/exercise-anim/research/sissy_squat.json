@@ -1,0 +1,49 @@
+{
+  "format": "v1-stills",
+  "exercise": {
+    "key": "sissy_squat",
+    "name": "Sissy Squat",
+    "equipment": "bodyweight",
+    "library_primary": ["quads"],
+    "library_secondary": [],
+    "library_steps": ["Hold a post with one hand and rise onto the balls of your feet.", "Lean back as your knees travel forward, hips and shoulders in line.", "Lower as far as is comfortable, then push back up using your thighs."],
+    "status": "draft",
+    "researched_on": "2026-11-11",
+    "one_line_summary": "Up on the balls of the feet, the knees travel far forward while the body leans back as one straight line from knees to shoulders, to about 100 deg of knee bend (end), from standing tall on the toes (start)."
+  },
+  "setup": [
+    {"item": "feet", "target": "Hip-width, up on the balls of the feet (heels raised).", "tolerance": "heel lift 30-45 deg", "source_ids": ["S1", "S3"]},
+    {"item": "support", "target": "Library: one hand on a post. Picture: arms reach forward for balance (no post prop); noted as a deviation.", "tolerance": "", "source_ids": ["S3"]}
+  ],
+  "movement": [
+    {"joint": "knee", "measure": "knee flexion, 0 = straight", "start": "about 5 deg", "end": "about 100 deg (mid-range, 'as far as comfortable')", "start_num": 5, "end_num": 100, "tolerance": "end 80-110", "source_ids": ["S1", "S2"]},
+    {"joint": "shin", "measure": "forward tilt from vertical (top toward the toes)", "start": "about 0 deg", "end": "about 60 deg", "start_num": 0, "end_num": 60, "tolerance": "end 50-70", "source_ids": ["S1"]},
+    {"joint": "hip", "measure": "hip flexion; thigh and trunk stay in one line", "start": "0 deg", "end": "about 0 deg (hips stay open)", "start_num": 0, "end_num": 0, "tolerance": "0-15", "source_ids": ["S3"]},
+    {"joint": "trunk + thigh line", "measure": "lean back from vertical (spec root rot X)", "start": "0 deg", "end": "about 40 deg back", "start_num": 0, "end_num": -40, "tolerance": "30-50", "source_ids": ["S1", "S3"]},
+    {"joint": "ankle / heel", "measure": "foot pitch, heel up (spec foot rot X)", "start": "+40 deg", "end": "+40 deg (stays on the balls)", "start_num": 40, "end_num": 40, "tolerance": "stays still", "source_ids": ["S3"]},
+    {"joint": "arms", "measure": "reach forward for balance, about level with the floor in world terms", "start": "elev 90 (torso upright)", "end": "elev 50 in torso frame (= horizontal in world when leaning back 40)", "start_num": 90, "end_num": 50, "tolerance": "", "source_ids": ["S3"]}
+  ],
+  "muscles": [
+    {"muscle": "Quadriceps", "mask_key": "quads", "tier": "primary", "role": "Knee extensors carry almost all the load: tibia much more inclined than the trunk = knee-extensor-biased squat (S1); quad EMG peaks around 90 deg knee angle (S2).", "source_ids": ["S1", "S2"]},
+    {"muscle": "Abdominals", "mask_key": "abs", "tier": "stabiliser", "role": "Hold the straight knee-to-shoulder line while leaning back.", "source_ids": ["S3"]},
+    {"muscle": "Hip flexors / rectus femoris line", "mask_key": "none", "tier": "deep", "role": "Hips held open; rectus femoris is part of quads mask.", "source_ids": ["S1"]},
+    {"muscle": "Calves", "mask_key": "calves", "tier": "stabiliser", "role": "Keep the heels raised.", "source_ids": ["S3"]}
+  ],
+  "tempo": null,
+  "mistakes": [
+    {"mistake": "Bending at the hips", "what_it_looks_like": "Bottom sticks back, trunk folds forward like a normal squat.", "why_it_matters": "Shifts load to the hips; it stops being a sissy squat.", "source_ids": ["S1", "S3"]},
+    {"mistake": "Going deeper than is comfortable", "what_it_looks_like": "Knees past ~110 deg with heels slamming down.", "why_it_matters": "Knee flexion moment keeps rising with depth (S1).", "source_ids": ["S1"]}
+  ],
+  "sources": [
+    {"id": "S1", "citation": "Straub RK, Powers CM. 2024. A biomechanical review of the squat exercise: implications for clinical practice. Int J Sports Phys Ther 19(4):490-501.", "url": "https://rcastoragev2.blob.core.windows.net/dc2594d143c119cd3c8cb0d8b426c881/ijspt_2024_19_4_94600.PMC10987311.pdf", "type": "review", "what_it_gave": "Forward tibia raises the knee flexion moment; heel elevation increases tibia inclination and quad demand; tibia inclination >10 deg beyond trunk inclination = knee-extensor bias; knee moment rises with depth."},
+    {"id": "S2", "citation": "Marchetti PH, da Silva JJ, Schoenfeld BJ, et al. 2016. Muscle activation differs between three different knee joint-angle positions during a maximal isometric back squat exercise. J Sports Med 2016:3846123.", "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4967668/", "type": "emg", "what_it_gave": "Quadriceps activity highest at 90 deg knee angle vs 20 and 140."},
+    {"id": "S3", "citation": "MettleUp exercise library entry sissy_squat (steps).", "url": "docs/exercise-library/part_*.json", "type": "library", "what_it_gave": "Balls of feet, lean back, knees forward, hips and shoulders in line, lower as far as comfortable."}
+  ],
+  "clip_check": [
+    {"check": "End knee flexion", "target": "80-110 deg", "measured": "", "pass": ""},
+    {"check": "End hip angle (thigh-trunk in line)", "target": "0-15 deg flexion", "measured": "", "pass": ""},
+    {"check": "Balls of both feet on the floor, heels up, in both pictures", "target": "lowest point -0.002..+0.002 m; heel z > 0.04", "measured": "", "pass": ""},
+    {"check": "Body balanced over the forefoot (pelvis-shoulder midpoint near the toes in y)", "target": "within 0.15 m", "measured": "", "pass": ""},
+    {"check": "Quads the strongest red in both pictures", "target": "yes", "measured": "", "pass": ""}
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "key": "single_arm_dumbbell_upright_row",
+  "name": "Single-Arm Dumbbell Upright Row",
+  "primary": ["side_delts"],
+  "secondary": ["traps", "biceps"],
+  "scene": {"box": {"size": [0.05, 0.05, 1.6], "loc": [-0.735, -0.246, 0]}},
+  "props": {"db_L": {"type": "dumbbell"}},
+  "camera": {"yaw": 30, "pitch": 10, "lens": 50, "fill": 0.9, "res": 640, "samples": 20},
+  "timing": {"fps": 30, "keys": [[0, "start"], [1, "end"], [2, "start"]]},
+  "poses": {
+    "start": {
+      "feet": {"L": {"at": [0.13, -0.01, 0.074], "rot": [0, 0, 6]}, "R": {"at": [-0.13, -0.01, 0.074], "rot": [0, 0, -6]}},
+      "knees": {"L": [0.16, -1.0, 0.52], "R": [-0.16, -1.0, 0.52]},
+      "hands": {
+        "L": {"prop": "db_L", "axis": [-1, 0, 0], "arm": {"elev": 25, "plane": 90, "fore_world": [0, -0.196, -0.981], "tilt": 0}},
+        "R": {"axis": [0, 0, 1], "arm": {"elev": 70, "plane": 15, "elbow": 15, "bend": [0, 1, 0], "tilt": 0}}
+      }
+    },
+    "end": {
+      "feet": {"L": {"at": [0.13, -0.01, 0.074], "rot": [0, 0, 6]}, "R": {"at": [-0.13, -0.01, 0.074], "rot": [0, 0, -6]}},
+      "knees": {"L": [0.16, -1.0, 0.52], "R": [-0.16, -1.0, 0.52]},
+      "hands": {
+        "L": {"prop": "db_L", "axis": [-0.82, 0, 0.57], "arm": {"elev": 80, "plane": 30, "fore_world": [-0.884, -0.052, -0.466], "tilt": 0}},
+        "R": {"axis": [0, 0, 1], "arm": {"elev": 70, "plane": 15, "elbow": 15, "bend": [0, 1, 0], "tilt": 0}}
+      }
+    }
+  },
+  "research": "Left arm works, right hand grips a post (same post and post-arm as single_arm_dumbbell_lateral_raise: fist at world (-0.735, -0.246, 1.246)). Torso frame, upper arm 0.27 m, forearm+hand 0.33 m, left shoulder (0.22, 0, 0). START: elev 25 plane 90 -> du (0, 0.423, -0.906), elbow (0.22, 0.114, -0.245); forearm (0, 0.196, -0.981) -> fist (0.22, 0.179, -0.569) = world (0.22, -0.20, 0.87): dumbbell (handle across, palm to body, axis -x) in front of the thigh, back plate edge about 0.11 m in front of the hip line, so it clears the thigh (thigh front about -0.09). Elbow bend 14 deg. END: elev 80 plane 30 -> du (0.853, 0.492, -0.174), elbow (0.450, 0.133, -0.047) = just under shoulder height; target fist (0.16, 0.15, -0.20) -> forearm (-0.884, 0.052, -0.466) (world y flipped in fore_world), fist about world (0.16, -0.17, 1.24) = lower chest; elbow bend 130 deg, elbow above and outside the hand (elbow leads). Handle slanted (axis -0.82, 0, 0.57): a square-to-forearm handle would stand near-vertical; this keeps it mostly level with ~27 deg wrist deviation (check measure_wrist). Sources: S1 McAllister 2013 (delt + trap rise with wide grip), S2 Les Mills 2024 (elbow no higher than shoulder, weight to the lower ribs). Facts: research/single_arm_dumbbell_upright_row.json."
+}

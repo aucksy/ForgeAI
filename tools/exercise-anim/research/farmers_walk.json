@@ -1,0 +1,54 @@
+{
+  "format": "v1-stills",
+  "exercise": {
+    "key": "farmers_walk",
+    "name": "Farmer's Walk",
+    "equipment": "dumbbell",
+    "library_primary": ["forearms", "traps"],
+    "library_secondary": ["abs", "glutes"],
+    "library_steps": ["Pick up a heavy dumbbell in each hand and stand tall.", "Walk with short, quick steps, shoulders back and arms straight.", "Bend your knees to set the weights down at the end."],
+    "status": "draft",
+    "version": null,
+    "researched_on": "2026-11-11",
+    "one_line_summary": "Walking tall with a heavy dumbbell hanging in each hand, arms straight, shoulders back, short steps. Picture 1: left foot forward, right foot pushing off; picture 2: the next step, right foot forward.",
+    "evidence_grade": "C"
+  },
+  "setup": [
+    {"item": "load", "target": "One dumbbell per hand, equal weight, hanging at the sides, palms facing in.", "tolerance": "dumbbells clear of the thighs", "why": "Library step; splitting the load evenly cut spine compression 44 % vs one hand at 30 kg (S2).", "source_ids": ["S2", "S3"], "grade": "B"},
+    {"item": "posture", "target": "Tall trunk, shoulders back (not shrugged up, not rounded), head level.", "tolerance": "trunk lean under 5 deg", "why": "Library step; the stiffened torso carries the load (S1).", "source_ids": ["S1"], "grade": "C"},
+    {"item": "step", "target": "Short steps: about 0.3 m heel-to-toe-line between the feet.", "tolerance": "0.2-0.45 m", "why": "Library: short, quick steps keep the loads from swinging.", "source_ids": ["S1"], "grade": "D"}
+  ],
+  "movement": [
+    {"joint": "front leg (left in picture 1)", "measure": "ankle position / knee bend", "start": "ankle 0.15 m in front of the hip, foot flat, knee ~13 deg", "end": "(mirrored in picture 2)", "start_num": 13, "end_num": 13, "tolerance": "knee 0-20 deg", "source_ids": ["S1"], "grade": "D"},
+    {"joint": "back leg (right in picture 1)", "measure": "ankle position / knee bend / heel lift", "start": "ankle 0.17 m behind the hip, heel up ~15 deg on the ball of the foot, knee ~36 deg", "end": "(mirrored in picture 2)", "start_num": 36, "end_num": 36, "tolerance": "knee 20-45; heel 5-25 deg", "source_ids": ["S1"], "grade": "D"},
+    {"joint": "both shoulders", "measure": "elev (arm out from the side) / elbow", "start": "10 / 5 (arms straight, just clear of the thighs)", "end": "same", "start_num": 10, "end_num": 10, "tolerance": "elev 5-15; elbow 0-10", "source_ids": ["S3"], "grade": "D"},
+    {"joint": "trunk", "measure": "lean and side-bend", "start": "upright", "end": "upright", "start_num": 0, "end_num": 0, "tolerance": "lean and side-bend under 5 deg", "source_ids": ["S1", "S2"], "grade": "B"},
+    {"joint": "pelvis height", "measure": "root lowered from standing", "start": "-0.02 m", "end": "-0.02 m", "start_num": -0.02, "end_num": -0.02, "tolerance": "-0.04..0", "source_ids": ["S1"], "grade": "D"}
+  ],
+  "muscles": [
+    {"muscle": "Forearm grip", "anatomy": "Finger flexors, brachioradialis", "mask_key": "forearms", "tier": "primary", "glow": 1.0, "emg": "Not measured in S1/S2 (torso and hip EMG only); S3 uses the carry to build grip", "role": "Holds the heavy dumbbells; library primary and what most people feel first.", "surface": "Inner and thumb-side forearm.", "source_ids": ["S3"], "grade": "D"},
+    {"muscle": "Upper trapezius", "anatomy": "Trapezius, pars descendens", "mask_key": "traps", "tier": "primary", "glow": 1.0, "emg": "Not measured in S1/S2", "role": "Holds the shoulder girdle up against the pull of the weights; library primary.", "surface": "Top of the shoulders between neck and acromion.", "source_ids": ["S1"], "grade": "D"},
+    {"muscle": "Gluteus medius", "anatomy": "Gluteus medius", "mask_key": "glutes", "tier": "secondary", "glow": 0.35, "emg": "Measured in S1 events; with internal oblique, quadratus lumborum and adductors it holds the pelvis level in single-leg stance (S3 summarising S1)", "role": "Keeps the hips level each step.", "surface": "Upper outer buttock.", "source_ids": ["S1", "S3"], "grade": "C"},
+    {"muscle": "Abdominal wall", "anatomy": "Rectus abdominis, obliques", "mask_key": "abs", "tier": "secondary", "glow": 0.35, "emg": "Abdominals peaked during the walking phase of the farmer's walk (S1); low (about 2-8 % MVC) with 10-30 kg split between both hands (S2)", "role": "Stiffens the trunk; library secondary.", "surface": "Front of the belly.", "source_ids": ["S1", "S2"], "grade": "B"},
+    {"muscle": "Low-back extensors", "anatomy": "Erector spinae", "mask_key": "lower_back", "tier": "stabiliser", "glow": 0, "emg": "Peaked during the lift-off, not the walk (S1)", "role": "Holds the spine upright.", "surface": "Either side of the lower spine.", "source_ids": ["S1"], "grade": "B"},
+    {"muscle": "Quadratus lumborum", "anatomy": "Quadratus lumborum", "mask_key": "none", "tier": "deep", "glow": 0, "emg": "Modelled, not surface EMG (S1)", "role": "Supports the pelvis in the frontal plane.", "surface": "Deep low back.", "source_ids": ["S1"], "grade": "C"}
+  ],
+  "tempo": null,
+  "mistakes": [
+    {"mistake": "Shrugging or rounding the shoulders", "what_it_looks_like": "Shoulders up at the ears or rolled forward.", "why_it_matters": "Library cue: shoulders back, stand tall.", "source_ids": ["S1"]},
+    {"mistake": "Leaning or side-bending", "what_it_looks_like": "Trunk tips forward or to one side.", "why_it_matters": "Raises spine load; the carry is meant to be done with a stiff, upright trunk.", "source_ids": ["S1", "S2"]}
+  ],
+  "sources": [
+    {"id": "S1", "citation": "McGill SM, McDermott A, Fenwick CMJ. 2009. Comparison of different strongman events: trunk muscle activation and lumbar spine motion, load, and stiffness. J Strength Cond Res 23(4):1148-1161.", "url": "https://instituteofmotion.com/wp-content/uploads/2018/03/Trunk-Activation-Strong-Man.pdf", "type": "emg", "what_it_gave": "Farmer's walk with 75 kg per hand vs suitcase carries: 16-channel trunk/hip EMG; abdominals peaked while walking in the farmer's walk, low-back extensors at the lift; stiff torso supports the hips."},
+    {"id": "S2", "citation": "McGill SM, Marshall L, Andersen J. 2013. Low back loads while walking and carrying: comparing the load carried in one hand or in both hands. Ergonomics 56(2):293-302.", "url": "https://www.backfitpro.com/medical-scientific-articles/2013/[48]McGill,S.(2013)Low-back-loads-while-walking-and-carrying[Ergonomics].pdf", "type": "biomechanics", "what_it_gave": "6 men: 15 kg per hand = 1628 N L4/L5 vs 2874 N for 30 kg in one hand; trunk EMG 2-10 % MVC with loads split between hands."},
+    {"id": "S3", "citation": "McCall P. 2014. Strongman training for your clients. ACE ProSource.", "url": "https://www.acefitness.org/continuing-education/prosource/equipment-special-issue/4994/strongman-training-for-your-clients/", "type": "guideline", "what_it_gave": "Farmer's walk = a heavy object in each hand walked a set distance; grab the dumbbell end for more grip work; McGill's carries show internal oblique, quadratus lumborum, gluteus medius and adductor magnus keep the pelvis stable."}
+  ],
+  "clip_check": [
+    {"check": "Front foot flat, back foot on its ball (toes on the floor)", "target": "lowest points -0.002..+0.002 m", "measured": "", "pass": "", "tool": "probe_feet.py"},
+    {"check": "Step length (ankle to ankle, along the walk)", "target": "0.32 m (0.2-0.45)", "measured": "", "pass": "", "tool": "measure_pose.py"},
+    {"check": "Arms straight, dumbbells clear of the thighs", "target": "elbow 0-10 deg; gap >= 0", "measured": "", "pass": "", "tool": "measure_pose.py, render"},
+    {"check": "Trunk upright, no side-bend", "target": "under 5 deg", "measured": "", "pass": "", "tool": "measure_pose.py"},
+    {"check": "Picture 2 is the mirror step (right foot forward)", "target": "yes", "measured": "", "pass": "", "tool": "render, look"},
+    {"check": "Forearms and traps are the strongest red in both pictures", "target": "yes", "measured": "", "pass": "", "tool": "render, crop"}
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "format": "v1-stills",
+  "exercise": {
+    "key": "waiter_curl",
+    "name": "Waiter Curl",
+    "equipment": "dumbbell",
+    "library_primary": ["biceps"],
+    "library_secondary": ["forearms"],
+    "library_steps": ["Hold one dumbbell upright, both palms flat under its top end.", "Keep your elbows at your sides and curl it up to your chest.", "Lower slowly until your arms are straight."],
+    "status": "draft",
+    "version": null,
+    "researched_on": "2026-11-11",
+    "one_line_summary": "Standing, one dumbbell held upright in front of the hips by both hands under its top end; elbows stay by the sides while it is curled up to chest height (~110 deg of elbow bend) and lowered back to long arms.",
+    "evidence_grade": "C"
+  },
+  "setup": [
+    {"item": "stance", "target": "Feet hip-width, knees soft, trunk upright and still.", "tolerance": "lean 0-5 deg", "why": "No swing.", "source_ids": ["S1"], "grade": "B"},
+    {"item": "hold", "target": "Dumbbell vertical, both hands together at the midline under the top end, palms up.", "tolerance": "dumbbell within 20 deg of vertical", "why": "Library step; the open, palms-up hold keeps the forearms supinated.", "source_ids": ["S2"], "grade": "D"},
+    {"item": "elbows", "target": "At the sides, pointing down, the whole lift.", "tolerance": "upper arm elev 0-15 deg", "why": "Library step and ACE curl cue.", "source_ids": ["S3"], "grade": "C"}
+  ],
+  "movement": [
+    {"joint": "both elbows", "measure": "bend, 0 = straight", "start": "about 43 deg (hands meet in front of the hips)", "end": "about 110 deg (dumbbell at chest height)", "start_num": 43, "end_num": 110, "tolerance": "start 20-50; end 100-130", "source_ids": ["S1", "S3"], "grade": "C"},
+    {"joint": "both shoulders", "measure": "elev / plane", "start": "8 / 60", "end": "12 / 70 (elbows stay by the sides)", "start_num": 8, "end_num": 12, "tolerance": "elev 0-15", "source_ids": ["S3"], "grade": "C"},
+    {"joint": "dumbbell height", "measure": "grip centre above the floor", "start": "about 0.93 m", "end": "about 1.32 m (chest)", "start_num": 0.93, "end_num": 1.32, "tolerance": "end 1.20-1.40 m", "source_ids": ["S3"], "grade": "D"},
+    {"joint": "forearms", "measure": "palm direction", "start": "palms up/in (supinated)", "end": "same", "start_num": 0, "end_num": 0, "tolerance": "no turn", "source_ids": ["S2"], "grade": "C"},
+    {"joint": "trunk, hips, knees", "measure": "standing rest", "start": "upright", "end": "upright", "start_num": 0, "end_num": 0, "tolerance": "lean under 5 deg", "source_ids": ["S1"], "grade": "B"}
+  ],
+  "muscles": [
+    {"muscle": "Biceps", "anatomy": "Biceps brachii", "mask_key": "biceps", "tier": "primary", "glow": 1.0, "emg": "Biceps is the main elbow flexor in standing dumbbell curls (S1); its activity does not depend on hand position (S2). No study on this exact variant was found.", "role": "Bends the elbows; library primary.", "surface": "Front of the upper arm.", "source_ids": ["S1", "S2"], "grade": "C"},
+    {"muscle": "Brachioradialis (forearm)", "anatomy": "Brachioradialis", "mask_key": "forearms", "tier": "secondary", "glow": 0.35, "emg": "Active in all curls (S1); lower share with the hand supinated than pronated (S2)", "role": "Helps bend the elbow; the forearms also hold the open-palm grip.", "surface": "Thumb side of the upper forearm.", "source_ids": ["S1", "S2"], "grade": "C"},
+    {"muscle": "Brachialis", "anatomy": "Brachialis", "mask_key": "none", "tier": "deep", "glow": 0, "emg": "not measured", "role": "Elbow flexor under the biceps.", "surface": "Under the lower biceps.", "source_ids": ["S2"], "grade": "C"},
+    {"muscle": "Front delt", "anatomy": "Deltoideus, pars clavicularis", "mask_key": "front_delts", "tier": "stabiliser", "glow": 0, "emg": "not measured", "role": "Keeps the elbows by the sides.", "surface": "Front of the shoulder.", "source_ids": ["S3"], "grade": "D"}
+  ],
+  "tempo": null,
+  "mistakes": [
+    {"mistake": "Elbows flaring out or forward", "what_it_looks_like": "Elbows leave the sides as the dumbbell rises.", "why_it_matters": "Shoulders take the lift.", "source_ids": ["S3"]},
+    {"mistake": "Leaning back", "what_it_looks_like": "Trunk tips back at the top.", "why_it_matters": "Momentum replaces the biceps.", "source_ids": ["S1"]}
+  ],
+  "sources": [
+    {"id": "S1", "citation": "Marcolin G, et al. 2018. Differences in electromyographic activity of biceps brachii and brachioradialis while performing three variants of curl. PeerJ 6:e5165.", "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC6047503/fullTextXML", "type": "emg", "what_it_gave": "Standing curl EMG (dumbbell vs bars), forearm position changes brachioradialis activity; trunk motion policed."},
+    {"id": "S2", "citation": "Kleiber T, et al. 2015. Front Physiol 6:215, doi 10.3389/fphys.2015.00215 (EMG of biceps brachii and brachioradialis in elbow flexion by hand position).", "url": "https://frontiersin.org/articles/10.3389/fphys.2015.00215/full", "type": "emg", "what_it_gave": "Biceps the same across hand positions; brachioradialis share higher only when pronated."},
+    {"id": "S3", "citation": "American Council on Exercise. Exercise Library: Standing Bicep Curl.", "url": "https://www.acefitness.org/resources/everyone/exercise-library/322/standing-bicep-curl/", "type": "guideline", "what_it_gave": "Palms up, elbows close to the sides, hands toward the shoulders, lower slowly."}
+  ],
+  "clip_check": [
+    {"check": "Elbow bend start / end", "target": "~43 (20-50) / ~110 (100-130)", "measured": "", "pass": "", "tool": "measure_pose.py"},
+    {"check": "Elbows by the sides (elev both pictures)", "target": "0-15 deg", "measured": "", "pass": "", "tool": "measure_pose.py"},
+    {"check": "Dumbbell vertical, both hands at it, no hand inside a plate", "target": "yes", "measured": "", "pass": "", "tool": "render, look"},
+    {"check": "Dumbbell clear of the hips/thighs at the start", "target": "gap >= 0", "measured": "", "pass": "", "tool": "render, look"},
+    {"check": "Wrist bend", "target": "note value (palms-up hold bends the wrist back)", "measured": "", "pass": "", "tool": "measure_wrist.py"},
+    {"check": "Feet flat on the floor", "target": "-0.002..+0.002 m", "measured": "", "pass": "", "tool": "probe_feet.py"},
+    {"check": "Biceps is the strongest red in both pictures", "target": "yes", "measured": "", "pass": "", "tool": "render, crop"}
+  ]
+}

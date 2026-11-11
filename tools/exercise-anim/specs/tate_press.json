@@ -1,0 +1,28 @@
+{
+  "key": "tate_press",
+  "name": "Tate Press",
+  "primary": ["triceps"],
+  "secondary": [],
+  "scene": {"bench": {"deg": 0}},
+  "props": {"db_L": {"type": "dumbbell"}, "db_R": {"type": "dumbbell"}},
+  "camera": {"yaw": -45, "pitch": 22, "lens": 50, "fill": 0.9, "res": 640, "samples": 20},
+  "timing": {"fps": 30, "keys": [[0, "start"], [1, "end"], [2, "start"]]},
+  "defaults": {
+    "bones": {"spine05": [-7, 0, 0], "spine04": [-7, 0, 0], "spine03": [-7, 0, 0], "spine02": [-6, 0, 0], "neck01": [8, 0, 0], "head": [6, 0, 0]}
+  },
+  "poses": {
+    "start": {
+      "root": {"loc": [0, 0.05, 0.55], "rot": [-98, 0, 0]},
+      "feet": {"L": {"at": [0.3, -0.4, 0.075], "rot": [0, 0, 15]}},
+      "knees": {"L": [0.55, -1.0, 0.9]},
+      "hands": {"L": {"prop": "db_L", "axis": [-1, 0, 0], "arm": {"elev": 88, "plane": 93, "elbow": 5, "bend": [-1, -0.2, -0.2], "pole": [1, 0, 0], "tilt": 0}}}
+    },
+    "end": {
+      "root": {"loc": [0, 0.05, 0.55], "rot": [-98, 0, 0]},
+      "feet": {"L": {"at": [0.3, -0.4, 0.075], "rot": [0, 0, 15]}},
+      "knees": {"L": [0.55, -1.0, 0.9]},
+      "hands": {"L": {"prop": "db_L", "axis": [-0.34, -0.94, -0.07], "arm": {"elev": 82, "plane": 45, "elbow": 115, "bend": [-1, -0.2, -0.2], "pole": [1, 0, 0], "tilt": 0}}}
+    }
+  },
+  "research": "Same flat-bench body as neutral_grip_dumbbell_press (root rot -98, z 0.55 estimate; probe_bench to tune). Dumbbell ~0.36 m long (half 0.18). Start elev 88 / plane 93: hand x = 0.22 - 0.6 sin3 = 0.19 -> inner ends ~0.01 from the midline each (gap ~2 cm, 'almost touching'); pronated axis [-1,0,0]. End elev 82 / plane 45: du = (0.70, 0.70, 0.14), E = (0.40, 0.20, -0.04); fold toward the midline and chest (bend [-1,-0.2,-0.2]) gives bperp (-0.70, 0.70, -0.14); elbow 115: forearm = (-0.93, 0.34, -0.19), hand = E + 0.33 fore = (0.10, 0.32, -0.10) torso. Handle tipped so its inner end points at the chest: the -X axis turned 70 deg with the forearm = (-0.34, -0.94, -0.07); inner plate reaches ~0.15 above the shoulder line = chest surface (~0.12). Hands at x +-0.10 put the two inner plates (r 0.088) about touching at the midline; if they overlap, lower elbow to 110. pole [1,0,0] keeps the elbows pointing out. S1 Muscle & Strength Tate press profile, S2 Boehler 2011."
+}

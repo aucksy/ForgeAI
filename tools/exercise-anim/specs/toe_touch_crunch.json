@@ -1,0 +1,26 @@
+{
+  "key": "toe_touch_crunch",
+  "name": "Toe Touch Crunch",
+  "primary": ["abs"],
+  "secondary": [],
+  "camera": {"yaw": -85, "pitch": 12, "lens": 50, "fill": 0.9, "res": 640, "samples": 20},
+  "timing": {"fps": 30, "keys": [[0, "start"], [1, "end"], [2, "start"]]},
+  "defaults": {
+    "root": {"loc": [0, 0, 0.11], "rot": [-90, 0, 0]},
+    "feet": {"L": {"at": [0.07, -0.02, 1.064], "rot": [-95, 0, 0]}},
+    "knees": {"L": [0.12, 0.5, 0.62]}
+  },
+  "poses": {
+    "start": {
+      "bones": {"spine05": [0, 0, 0], "spine04": [0, 0, 0], "spine03": [0, 0, 0], "spine02": [0, 0, 0], "spine01": [0, 0, 0],
+                "neck01": [4, 0, 0], "head": [0, 0, 0]},
+      "hands": {"L": {"axis": [0, 0, 1], "arm": {"elev": 85, "plane": 90, "elbow": 5, "bend": [0, 0, 1]}}}
+    },
+    "end": {
+      "bones": {"spine05": [2, 0, 0], "spine04": [7, 0, 0], "spine03": [9, 0, 0], "spine02": [10, 0, 0], "spine01": [8, 0, 0],
+                "neck01": [5, 0, 0], "head": [3, 0, 0]},
+      "hands": {"L": {"axis": [0, 0, 1], "arm": {"elev": 70, "plane": 90, "elbow": 5, "bend": [0, 0, 1]}}}
+    }
+  },
+  "research": "Supine (root rot X -90, head +Y, pelvis joint 0.11 m) -> hip L (0.11, 0.003, 0.161). Thighs vertical (ACE S1): ankle straight above the hip at hip-ankle 0.905 (thigh 0.457 + shin 0.449 = 0.906, ~9 deg soft knee): ankle (0.07,-0.02,1.064) (legs together, dx -0.04, dy -0.023, dz 0.903). Knee pole toward the head (front of a vertical thigh faces +Y). Feet rot X -95 = toes pointed at the ceiling. Arms: start elev 85 / plane 90 (straight out of the chest, 5 deg toward the feet) -> hands ~0.6 m over the shoulders. End: spine curl 2+7+9+10+8 = 36 deg (torso chord ~20 deg up) and elev 70 -> arms ~40 deg off vertical toward the feet; shoulder ~(y 0.45, z 0.31) + 0.6 m -> hands ~(y 0.06, z 0.77), at mid-shin, as ACE 'slide hands toward the ankles'. Legs unchanged. Sources S1 ACE, S2 Escamilla 2006, S3 Oliva-Lozano 2020."
+}

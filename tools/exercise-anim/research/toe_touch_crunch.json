@@ -1,0 +1,55 @@
+{
+  "format": "v1-stills",
+  "exercise": {
+    "key": "toe_touch_crunch",
+    "name": "Toe Touch Crunch",
+    "equipment": "bodyweight",
+    "type": "reps",
+    "library_primary": ["abs"],
+    "library_secondary": [],
+    "steps": [
+      "Lie face up with your legs pointing straight at the ceiling.",
+      "Reach your hands toward your toes, lifting your shoulders off the floor.",
+      "Lower your shoulders slowly, keeping your legs still."
+    ],
+    "status": "draft",
+    "version": null,
+    "researched_on": "2026-11-11",
+    "one_line_summary": "Lying face up, legs held vertical (thighs at 90 deg to the floor, knees nearly straight), arms reaching up. The upper trunk curls ~35 deg so the shoulder blades leave the floor and the hands reach toward the shins/toes; legs and low back stay still. Rectus abdominis is the target.",
+    "evidence_grade": "C"
+  },
+  "setup": [
+    {"item": "legs", "target": "Legs raised so the thighs are vertical, knees straight or softly bent, toes pointed away.", "tolerance": "thigh 85-95 deg to the floor; knee bend 0-20 deg", "why": "ACE vertical toe touches: thighs vertical, not past vertical (past vertical shifts load onto the low back).", "source_ids": ["S1"], "grade": "C"},
+    {"item": "low back", "target": "Low back pressed into the floor through the whole rep.", "tolerance": "pelvis does not roll up", "why": "ACE cue; the curl is in the upper trunk.", "source_ids": ["S1"], "grade": "C"},
+    {"item": "arms", "target": "Arms long, reaching up toward the feet.", "tolerance": "elbows 0-15 deg", "why": "Library step 2.", "source_ids": ["S1"], "grade": "C"}
+  ],
+  "movement": [
+    {"joint": "trunk curl (spine05..spine01 X summed)", "measure": "upper-trunk forward bend off the floor", "start": "0 deg (shoulders down)", "end": "about 35 deg (shoulder blades completely off the floor)", "start_num": 0, "end_num": 36, "path": "Roll up and down; do not jerk.", "tolerance": "end 25-45 deg; lumbar under 5 deg", "source_ids": ["S1", "S2"], "grade": "C"},
+    {"joint": "hips / legs", "measure": "thigh angle to the floor", "start": "90 deg (vertical)", "end": "90 deg", "start_num": 90, "end_num": 90, "path": "Still. Legs do not swing toward the head.", "tolerance": "85-95 deg", "source_ids": ["S1"], "grade": "C"},
+    {"joint": "knee", "measure": "knee bend, 0 = straight", "start": "about 9 deg", "end": "about 9 deg", "start_num": 9, "end_num": 9, "path": "Still.", "tolerance": "0-20 deg", "source_ids": ["S1"], "grade": "C"},
+    {"joint": "arms", "measure": "arm elevation in the torso frame (90 = straight out of the chest)", "start": "85 deg", "end": "70 deg (reaching toward the shins)", "start_num": 85, "end_num": 70, "path": "Arms stay long and follow the trunk up.", "tolerance": "+-10 deg", "source_ids": ["S1"], "grade": "D"},
+    {"joint": "neck", "measure": "neck in line with the upper back", "start": "~4 deg", "end": "~8 deg", "start_num": 4, "end_num": 8, "path": "No chin-to-chest pull.", "tolerance": "0-15 deg", "source_ids": ["S1"], "grade": "C"}
+  ],
+  "muscles": [
+    {"muscle": "Abs (rectus abdominis)", "anatomy": "Rectus abdominis", "mask_key": "abs", "tier": "primary", "glow": 1.0, "emg": "Crunch among the highest for upper/lower RA (S2, no % in abstract); V-sit (legs and trunk raised) ~80% MVIC RA (Maeo, in S3).", "role": "Curls the rib cage toward the pelvis.", "surface": "Vertical bands down the front of the belly.", "source_ids": ["S2", "S3"], "grade": "B"},
+    {"muscle": "Obliques", "anatomy": "Obliquus externus / internus abdominis", "mask_key": "obliques", "tier": "stabiliser", "glow": 0, "emg": "High in crunches (S2).", "role": "Help the curl; not lit (not the target).", "surface": "Sides of the waist.", "source_ids": ["S2"], "grade": "B"},
+    {"muscle": "Hip flexors", "anatomy": "Iliopsoas, rectus femoris", "mask_key": "none", "tier": "stabiliser", "glow": 0, "emg": "Not measured for this exercise.", "role": "Hold the legs vertical.", "surface": "Front of the hip.", "source_ids": ["S1"], "grade": "D"}
+  ],
+  "tempo": null,
+  "mistakes": [
+    {"mistake": "Legs drifting past vertical", "what_it_looks_like": "Feet swing toward the face as the trunk curls.", "why_it_matters": "ACE: shifts weight onto the low back.", "source_ids": ["S1"]},
+    {"mistake": "Pulling with the neck", "what_it_looks_like": "Head pushed forward, shoulders barely leave the floor.", "why_it_matters": "Neck strain (ACE).", "source_ids": ["S1"]}
+  ],
+  "sources": [
+    {"id": "S1", "citation": "American Council on Exercise. Vertical Toe Touches (ACE Exercise Library).", "url": "https://www.acefitness.org/resources/everyone/exercise-library/243/vertical-toe-touches/", "type": "guideline", "what_it_gave": "Thighs vertical, toes pointed, curl until shoulder blades leave the floor, hands slide toward the ankles, low back pressed down, do not pass vertical."},
+    {"id": "S2", "citation": "Escamilla RF, McTaggart MS, Fricklas EJ, et al. 2006. An electromyographic analysis of commercial and common abdominal exercises. J Orthop Sports Phys Ther 36(2):45-57. doi:10.2519/jospt.2006.36.2.45", "url": "https://europepmc.org/article/MED/16494072", "type": "emg", "what_it_gave": "Crunch among the highest for RA and obliques."},
+    {"id": "S3", "citation": "Oliva-Lozano JM, Muyor JM. 2020. Core muscle activity during physical fitness exercises: a systematic review. Int J Environ Res Public Health 17(12):4306. doi:10.3390/ijerph17124306", "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7345922/", "type": "review", "what_it_gave": "V-sit ~80% MVIC RA (close variant: trunk and legs raised)."}
+  ],
+  "clip_check": [
+    {"check": "Thighs vertical in both pictures", "target": "85-95 deg to the floor", "measured": "", "pass": "", "tool": "measure_pose.py"},
+    {"check": "Start: shoulders on the floor", "target": "spine curl 0 deg", "measured": "", "pass": "", "tool": "measure_pose.py"},
+    {"check": "End: shoulder blades off, hands toward the shins", "target": "curl 25-45 deg; hands within ~0.2 m of the shins", "measured": "", "pass": "", "tool": "measure_pose.py + picture"},
+    {"check": "Pelvis on the floor", "target": "lowest point -0.002..+0.002 m", "measured": "", "pass": "", "tool": "probe_feet.py"},
+    {"check": "Primary muscle strongest red", "target": "abs strongest red in both pictures", "measured": "", "pass": "", "tool": "picture"}
+  ]
+}
