@@ -7,6 +7,19 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-449. Four R-447 review leftovers in the admin panel: where the Install and MettleUp access cards sit, "members · memberships", demo "real gym code", Hinglish "6-digit PIN" — 11 Nov 2026
+
+**Asked (11 Nov, coordinator for the owner):** fix the 4 open R-447 fresh-eyes findings in the owner web app:
+(1) "Install the admin app" and "MettleUp access" sit under Settings -> "Sign-in & data", where an owner would not
+look: move them (or retitle the tab) after looking at the screen; (2) "0 members · 0 memberships" is confusing (what
+is a membership vs a member?): make it plain; (3) demo text "real gym code" confuses someone trying the demo: reword;
+(4) the Hinglish for "6-digit PIN" reads awkward: natural Roman Hinglish, the same everywhere. Also, if simple:
+"You are signed out of this device." has no Hinglish (R-448). Member-words rules, Hinglish wherever the app has it,
+tests, cloud UAT (375 px, 1366x768) with pictures read, fresh eyes (owner), deploy the admin panel the usual way,
+ADMIN_NEWS only if owners would notice. No live database change, no release, no reply-time promise.
+
+**Status:** started.
+
 ## R-448. "Clear this device's saved data" reworded; a forgotten PIN gets a real way back in — 10 Nov 2026
 
 **He said (10 Nov, "okay go ahead" to two R-447 fresh-eyes findings):** (1) Settings -> Sign-in & data, "Clear this
