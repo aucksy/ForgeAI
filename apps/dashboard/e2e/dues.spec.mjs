@@ -53,7 +53,7 @@ test('J14 dues list: 10, 40 and 70 days in their age groups; collect from the li
   await expect(tile(page, 'Total due')).toContainText('3 members');
   for (const m of OWE) {
     await expect(tile(page, m.group)).toContainText('₹2,000');
-    await expect(tile(page, m.group)).toContainText('1 membership');
+    await expect(tile(page, m.group)).toContainText('1 membership not fully paid');
     const row = duesRow(page, m.name);
     await expect(row).toContainText(`${m.days} days`);
     await expect(row).toContainText(m.group);
@@ -85,7 +85,7 @@ test('J14 dues list: 10, 40 and 70 days in their age groups; collect from the li
   // He leaves the list; his age group empties; the badge and every total drop by one person.
   await expect(duesRow(page, 'Lalit Bansal')).toHaveCount(0);
   await expect(tile(page, '31–60 days')).toContainText('₹0');
-  await expect(tile(page, '31–60 days')).toContainText('0 memberships');
+  await expect(tile(page, '31–60 days')).toContainText('0 memberships not fully paid');
   await expect(tile(page, 'Total due')).toContainText('₹4,000');
   await expect(tile(page, 'Total due')).toContainText('2 members');
   await expect(chip(page, '31–60 days')).toHaveText(/0/);

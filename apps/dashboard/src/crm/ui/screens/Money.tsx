@@ -37,6 +37,7 @@ import {
 } from '../../logic/collections';
 import { csvDocument, csvFilename } from '../../logic/csv';
 import { formatINR, paiseToRupees, sumPaise } from '../../logic/money';
+import { unpaidMemberships } from '../../logic/plural';
 import { formatPhone, phoneForExport } from '../../logic/members';
 import { methodLabel, methodOptions } from '../../logic/payments';
 import type { MemberView, Payment, PaymentMethod } from '../../types';
@@ -701,11 +702,7 @@ function Dues({ onToast }: { onToast: (msg: string) => void }) {
               label={AGING_LABEL[t.bucket]}
               value={formatINR(t.amountP)}
               tone={t.amountP > 0 ? tileTone(t.bucket) : undefined}
-              sub={
-                t.countN === 1
-                  ? `${t.countN} membership`
-                  : `${t.countN} memberships`
-              }
+              sub={unpaidMemberships(t.countN)}
             />
           ))}
         </Grid>
@@ -759,8 +756,7 @@ function Dues({ onToast }: { onToast: (msg: string) => void }) {
                       </span>
                     </Link>
                     <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkSecondary }}>
-                      {p.terms.length}{' '}
-                      {p.terms.length === 1 ? 'membership' : 'memberships'} ·{' '}
+                      {unpaidMemberships(p.terms.length)} ·{' '}
                       {ageLabel(p.oldestAgeDays)}
                     </div>
                     <Row gap={space.xs}>

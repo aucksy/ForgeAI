@@ -209,7 +209,7 @@ test.describe('R448-2 Forgot your PIN: WhatsApp first, then the other ways', () 
     await page.getByRole('button', { name: 'PIN bhool gaye?', exact: true }).click();
     await page.getByRole('button', { name: 'WhatsApp nahi chal raha? Wapas aane ke aur tareeke' }).click();
     const hi = page.getByRole('region', { name: 'Wapas aane ke aur tareeke' });
-    await expect(hi).toContainText('1. Kisi aur phone, computer ya browser par sign in ho?');
+    await expect(hi).toContainText('1. Kisi aur phone, computer ya browser par sign in hain?');
     await expect(hi).toContainText('contact@mettleup.fit');
     await hi.scrollIntoViewIfNeeded();
     await shot(page, 'phone-forgot-other-ways-hinglish');

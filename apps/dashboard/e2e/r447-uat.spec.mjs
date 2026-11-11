@@ -98,11 +98,11 @@ test.describe('R447-1 sign-in page on a phone (375 px)', () => {
 
     // Hinglish: the same two lines in Hindi words.
     await page.getByRole('radio', { name: 'Hinglish' }).tap();
-    await expect(page.getByText('MettleUp pe naye ho?', { exact: true })).toBeVisible();
+    await expect(page.getByText('MettleUp pe naye hain?', { exact: true })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Naya gym banao', exact: true })).toBeVisible();
     await shot(page, 'phone-signin-hinglish');
     await page.getByRole('button', { name: 'Naya gym banao', exact: true }).tap();
-    await expect(page.getByText('Pehle se MettleUp use karte ho?', { exact: true })).toBeVisible();
+    await expect(page.getByText('Pehle se MettleUp use karte hain?', { exact: true })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Sign in karo', exact: true })).toBeVisible();
     await shot(page, 'phone-setup-hinglish', true);
     await page.getByRole('button', { name: 'Sign in karo', exact: true }).tap();

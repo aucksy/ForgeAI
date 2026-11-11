@@ -75,21 +75,21 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   'Sign in': 'Sign in karo',
   'Set up a new gym': 'Naya gym banao',
   // R-447: the quiet line under the sign-in form (and under the set-up form).
-  'New to MettleUp?': 'MettleUp pe naye ho?',
+  'New to MettleUp?': 'MettleUp pe naye hain?',
   // R-447: under the computer's side menu when it is longer than the window.
   'More below': 'Neeche aur hai',
-  'Already use MettleUp?': 'Pehle se MettleUp use karte ho?',
+  'Already use MettleUp?': 'Pehle se MettleUp use karte hain?',
   'Sign in with your mobile number and your 6-digit PIN.': 'Apne mobile number aur 6-digit PIN se sign in karo.',
   // R-446: inside the iPhone home-screen app (iPhone keeps its storage apart from Safari).
   'Welcome to the admin app. Please sign in once more here. iPhone keeps this app apart from Safari. After this, you stay signed in.':
-    'Admin app mein aapka swagat hai. Yahan ek baar phir sign in karo. iPhone is app ko Safari se alag rakhta hai. Iske baad aap sign in hi rahoge.',
+    'Admin app mein aapka swagat hai. Yahan ek baar phir sign in karo. iPhone is app ko Safari se alag rakhta hai. Iske baad aap sign in hi rahenge.',
   'Owner and forgot your PIN? Open MettleUp in Safari, where you are still signed in. Go to More → Staff & sign-in, tap “Make sign-in code” and type that code here.':
-    'Owner ho aur PIN bhool gaye? Safari mein MettleUp kholo, wahan aap abhi bhi sign in ho. More → Staff & sign-in par jao, “Make sign-in code” dabao aur woh code yahan likho.',
+    'Owner hain aur PIN bhool gaye? Safari mein MettleUp kholo, wahan aap abhi bhi sign in hain. More → Staff & sign-in par jao, “Make sign-in code” dabao aur woh code yahan likho.',
   'Start your gym': 'Apna gym shuru karo',
-  'New here? Set up your gym': 'Naye ho? Apna gym banao',
+  'New here? Set up your gym': 'Naye hain? Apna gym banao',
   'Free for 3 months. No card. Your members’ app is free, always.':
     '3 mahine free. Card nahi chahiye. Aapke members ki app hamesha free hai.',
-  'Starts empty. You add your own members and prices.': 'Gym khaali shuru hota hai. Aap apne members aur daam khud daalte ho.',
+  'Starts empty. You add your own members and prices.': 'Gym khaali shuru hota hai. Aap apne members aur daam khud daalte hain.',
   'See it working': 'Chalta hua dekho',
   // R-449 (R-447 fresh eyes): "You get a real gym code" puzzled someone only trying the demo.
   'Opens a sample gym with made-up members, payments and a shop. To try the member side too, open “Invite members” in the demo and scan its QR with the MettleUp app on a phone. Order something there, and the order shows up in the demo’s Shop.':
@@ -107,18 +107,19 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   'Something went wrong. Please try again.': 'Kuch gadbad ho gayi. Phir se try karo.',
   'Your mobile number': 'Aapka mobile number',
   'PIN (6 digits)': 'PIN (6 digit)',
-  'No PIN yet? Type the one-time code your gym owner gives you (Settings → Staff & sign-in).':
-    'Abhi PIN nahi hai? Gym owner ka diya hua ek baar wala code daalo (Settings → Staff aur sign-in).',
+  // R-450: was "(Settings → Staff & sign-in)", a page staff cannot open; only an owner makes codes.
+  'No PIN yet? Ask your gym owner for a sign-in code, and type it here.':
+    'Abhi PIN nahi hai? Gym owner se sign-in code maango aur yahan daalo.',
   'Signing in…': 'Sign in ho raha hai…',
   'Need help? Email MettleUp at': 'Madad chahiye? MettleUp ko is email par likho:',
   'Type a 10-digit mobile number, like 98290 12345.': '10-digit mobile number daalo, jaise 98290 12345.',
   'Type your 6-digit PIN, or the code your gym owner gave you.': 'Apna 6-digit PIN daalo, ya gym owner ka diya hua code daalo.',
   'Gym name': 'Gym ka naam',
   'Your name': 'Aapka naam',
-  'You sign in with this number on any phone or computer.': 'Isi number se aap kisi bhi phone ya computer par sign in karoge.',
+  'You sign in with this number on any phone or computer.': 'Isi number se aap kisi bhi phone ya computer par sign in karenge.',
   'Choose a 6-digit PIN': '6-digit PIN chuno',
   'Type the PIN again': 'PIN dobara daalo',
-  'You sign in with your mobile number and this PIN. Keep it private.': 'Aap mobile number aur is PIN se sign in karoge. Ise kisi ko mat batao.',
+  'You sign in with your mobile number and this PIN. Keep it private.': 'Aap mobile number aur is PIN se sign in karenge. Ise kisi ko mat batao.',
   'Your PIN must be 6 digits.': 'PIN 6 digit ka hona chahiye.',
   'Don’t use the same digit six times. Pick a PIN that is hard to guess.': 'Ek hi digit 6 baar mat daalo, jaise 111111. Aisa PIN chuno jo koi guess na kar sake.',
   'Don’t use digits in order, like 123456 or 654321. Pick a PIN that is hard to guess.':
@@ -128,6 +129,9 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   'The two PINs are not the same. Type the same PIN in both boxes.': 'Dono PIN alag hain. Dono box mein ek hi PIN daalo.',
   'Type your gym’s name.': 'Apne gym ka naam daalo.',
   'Type your name.': 'Apna naam daalo.',
+  // R-450: the tick-box line on the set-up form ({terms} and {agreement} are the two links, kept in English).
+  // Legal wording: a translation only, same meaning; the owner says yes to it.
+  'I agree to the MettleUp {terms} and the {agreement}.': 'Main MettleUp ke {terms} aur {agreement} se sehmat hoon.',
   'Tick the box to agree to the terms. Then tap “Create my gym” again.':
     'Terms maanne ke liye box par tick karo. Phir “Gym banao” dobara dabao.',
   // F187 (R-383): a code on WhatsApp for Forgot PIN and the new-gym number check.
@@ -136,15 +140,15 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   // R-448: the ways back in besides WhatsApp (auth/signin.ts OTHER_WAYS).
   'Other ways back in': 'Wapas aane ke aur tareeke',
   '1. Signed in on another phone, computer or browser? There, open Staff & sign-in (on a phone: More; on a computer: Settings → Sign-in & data). Next to your name, tap “Make sign-in code”. Then type that code on Sign in, in the PIN box.':
-    '1. Kisi aur phone, computer ya browser par sign in ho? Wahan Staff & sign-in kholo (phone par: More; computer par: Settings → Sign-in & data). Apne naam ke aage “Make sign-in code” dabao. Phir woh code Sign in par PIN wale box mein likho.',
+    '1. Kisi aur phone, computer ya browser par sign in hain? Wahan Staff & sign-in kholo (phone par: More; computer par: Settings → Sign-in & data). Apne naam ke aage “Make sign-in code” dabao. Phir woh code Sign in par PIN wale box mein likho.',
   '2. Another owner of your gym can make a code for you the same way. Front desk staff: ask your gym owner for a code.':
     '2. Aapke gym ka koi aur owner bhi isi tarah aapke liye code bana sakta hai. Front desk staff: gym owner se code maango.',
   '3. Not signed in anywhere? Email contact@mettleup.fit with your gym name and mobile number. We call you to check it is you, then give you a sign-in code.':
-    '3. Kahin bhi sign in nahi ho? Apne gym ka naam aur mobile number contact@mettleup.fit par email karo. Hum aapko call karke check karenge ki aap hi ho, phir sign-in code denge.',
-  'After you sign in with a code, you can choose a new PIN straight away.': 'Code se sign in karne ke baad aap turant naya PIN chun sakte ho.',
+    '3. Kahin bhi sign in nahi hain? Apne gym ka naam aur mobile number contact@mettleup.fit par email karo. Hum aapko call karke check karenge ki aap hi hain, phir sign-in code denge.',
+  'After you sign in with a code, you can choose a new PIN straight away.': 'Code se sign in karne ke baad aap turant naya PIN chun sakte hain.',
   'Can’t use WhatsApp? Other ways back in': 'WhatsApp nahi chal raha? Wapas aane ke aur tareeke',
   'We send a 6-digit code to your mobile number on WhatsApp. Then you choose a new PIN.':
-    'Hum aapke mobile number par WhatsApp se 6-digit code bhejenge. Phir aap naya PIN chuno.',
+    'Hum aapke mobile number par WhatsApp se 6-digit code bhejenge. Phir aap naya PIN chunenge.',
   'If {phone} has an account, a code is on its way on WhatsApp. It works for 10 minutes.':
     'Agar {phone} ka account hai, to WhatsApp par code aa raha hai. Yeh 10 minute tak chalega.',
   'Code from WhatsApp': 'WhatsApp wala code',
@@ -156,7 +160,7 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   'Send a new code': 'Naya code bhejo',
   'Back to sign in': 'Wapas sign in par jao',
   'You sign in with this number. We check it with a code on WhatsApp.':
-    'Aap is number se sign in karoge. Hum WhatsApp par code bhejkar ise check karte hain.',
+    'Aap is number se sign in karenge. Hum WhatsApp par code bhejkar ise check karte hain.',
   'We sent a 6-digit code to {phone} on WhatsApp. It works for 10 minutes.':
     'Humne {phone} par WhatsApp se 6-digit code bheja hai. Yeh 10 minute tak chalega.',
   'Get code on WhatsApp': 'WhatsApp par code lo',
@@ -164,7 +168,7 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   'Verify with WhatsApp': 'WhatsApp se check karo',
   'Tick the box to agree to the terms. Then tap “Verify with WhatsApp”.': 'Terms maanne ke liye box par tick karo. Phir “WhatsApp se check karo” dabao.',
   'First we check that this mobile number is yours. You send us one WhatsApp message. It is free.':
-    'Pehle hum check karte hain ki yeh mobile number aapka hai. Aap humein ek WhatsApp message bhejo. Yeh free hai.',
+    'Pehle hum check karte hain ki yeh mobile number aapka hai. Aap humein ek WhatsApp message bhejenge. Yeh free hai.',
   'What happens': 'Kya hoga',
   '1. WhatsApp opens with a message ready to send.': '1. WhatsApp khulega, message pehle se likha hoga.',
   '2. Tap Send. Do not change the message.': '2. Send dabao. Message mein kuch mat badlo.',
@@ -212,7 +216,7 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   'This check has run out. Tap "Verify with WhatsApp" to check your number again.':
     'Yeh check khatam ho gaya. Number dobara check karne ke liye "WhatsApp se check karo" dabao.',
   'You sign in with this number. You check it by sending us one WhatsApp message. It is free.':
-    'Aap is number se sign in karoge. Ise check karne ke liye humein ek WhatsApp message bhejo. Yeh free hai.',
+    'Aap is number se sign in karenge. Ise check karne ke liye humein ek WhatsApp message bhejo. Yeh free hai.',
   'Sign in instead': 'Iske badle sign in karo',
   'Setting up…': 'Gym ban raha hai…',
   'Create my gym': 'Gym banao',
@@ -339,7 +343,7 @@ export const HINGLISH: Readonly<Record<string, string>> = {
     'Member app aur shop abhi chalu nahi hain. Sirf owner inhe chalu kar sakta hai.',
   'Let members order from your gym in the MettleUp app.': 'Members ko MettleUp app mein aapke gym se order karne do.',
   'Turn on the shop to get your gym code. It comes with 12 sample products you can change or delete.':
-    'Gym code paane ke liye shop chalu karo. Ismein 12 sample products aate hain, jinhe aap badal ya hata sakte ho.',
+    'Gym code paane ke liye shop chalu karo. Ismein 12 sample products aate hain, jinhe aap badal ya hata sakte hain.',
   'Turning on…': 'Chalu ho raha hai…',
   'Turn on the shop': 'Shop chalu karo',
   'Members join in the MettleUp app with this gym code:': 'Members is gym code se MettleUp app mein judte hain:',
@@ -379,7 +383,7 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   'Nobody in this batch fits this filter. Pick “All batches” to see everyone.':
     'Is batch mein is filter wala koi nahi hai. Sabko dekhne ke liye “Saare batch” chuno.',
   'Try part of a name, or the last four digits of their mobile number.': 'Naam ka thoda hissa daalo, ya mobile number ke aakhri 4 digit.',
-  'Add your first member. Then you can sell them a membership.': 'Apna pehla member jodo. Phir aap unhe membership de sakte ho.',
+  'Add your first member. Then you can sell them a membership.': 'Apna pehla member jodo. Phir aap unhe membership de sakte hain.',
   Member: 'Member',
   Status: 'Status',
   Plan: 'Plan',
@@ -413,7 +417,7 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   'Notes (optional)': 'Notes (zaroori nahi)',
   'Injuries, preferences, who referred them…': 'Chot, pasand, kisne bheja…',
   'Batch (optional)': 'Batch (zaroori nahi)',
-  'The time they train. Next time, you can pick it with one tap.': 'Woh kis time aate hain. Agli baar ek tap mein chun sakte ho.',
+  'The time they train. Next time, you can pick it with one tap.': 'Woh kis time aate hain. Agli baar aap ek tap mein chun sakte hain.',
   Batch: 'Batch',
   None: 'Koi nahi',
   '+ New batch': '+ Naya batch',
@@ -431,7 +435,7 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   'The emergency number looks wrong. Check it and type it again.': 'Emergency number galat lag raha hai. Check karke dobara daalo.',
 
   // ── Plans ──────────────────────────────────────────────────────────────
-  'What you sell, and for how much': 'Aap kya bechte ho, aur kitne mein',
+  'What you sell, and for how much': 'Aap kya bechte hain, aur kitne mein',
   '+ Add plan': '+ Plan jodo',
   'No plans yet': 'Abhi koi plan nahi',
   'Add your own, or start from a typical Indian gym price list and edit the numbers.':

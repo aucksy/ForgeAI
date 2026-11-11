@@ -20,7 +20,8 @@ import { QUICK_ACTIONS } from '../../src/crm/logic/quickActions';
 import { TILE_FILTERS, tileLabel } from '../../src/crm/logic/homeTiles';
 import { STATE_LABEL } from '../../src/crm/logic/membership';
 import { START_PROMISE } from '../../src/crm/logic/trial';
-import { CHECK_RAN_OUT, OTHER_WAYS, PIN_HINT, REMOVED_WORDS, SIGNED_OUT_WORDS } from '../../src/crm/auth/signin';
+import { CHECK_RAN_OUT, NO_PIN_HINT, OTHER_WAYS, PIN_HINT, REMOVED_WORDS, SIGNED_OUT_WORDS } from '../../src/crm/auth/signin';
+import { TERMS_LINE } from '../../src/crm/auth/TermsGate';
 
 const ROOT = fileURLToPath(new URL('../../src/crm', import.meta.url));
 const DICT = join('lang', 'hinglish.ts');
@@ -95,6 +96,22 @@ describe('the Hinglish dictionary', () => {
     expect(HINGLISH['Sign in with your mobile number and your 6-digit PIN.']).toBe('Apne mobile number aur 6-digit PIN se sign in karo.');
   });
 
+  // R-450 (R-449 fresh eyes): "aap ... karoge" mixed the polite "aap" with the casual verb. A line that talks
+  // about the reader says "hain" / "karenge" / "sakte hain"; a command stays short ("Sign in karo"), like the buttons.
+  it('talks to the owner one way: "aap ... karenge / hain", never "karoge" or "sakte ho"', () => {
+    const casual = /\b[a-z]+oge\b|\b[a-z]+te ho\b|\bho[.?,!]|\b(owner|naye) ho\b/i;
+    expect(entries.filter(([, hi]) => casual.test(hi)).map(([en]) => en)).toEqual([]);
+    expect(HINGLISH['You sign in with this number on any phone or computer.']).toBe('Isi number se aap kisi bhi phone ya computer par sign in karenge.');
+    expect(HINGLISH['What you sell, and for how much']).toBe('Aap kya bechte hain, aur kitne mein');
+    expect(HINGLISH['New to MettleUp?']).toBe('MettleUp pe naye hain?');
+  });
+
+  it('R-450: the PIN hint says who makes a code, and names no page; the terms line is a translation with both links', () => {
+    expect(NO_PIN_HINT).not.toMatch(/Settings|Staff & sign-in/);
+    expect(HINGLISH[NO_PIN_HINT]).toBe('Abhi PIN nahi hai? Gym owner se sign-in code maango aur yahan daalo.');
+    expect(HINGLISH[TERMS_LINE]).toBe('Main MettleUp ke {terms} aur {agreement} se sehmat hoon.');
+  });
+
   it('a sentence stays a sentence: an English line ending in a full stop ends in one in Hinglish', () => {
     const bad = entries.filter(([en, hi]) => /\.$/.test(en) && !/\.$/.test(hi));
     expect(bad.map(([en]) => en)).toEqual([]);
@@ -120,6 +137,9 @@ describe('the translated screens are complete', () => {
       START_PROMISE,
       ...Object.values(OTHER_WAYS),
       PIN_HINT,
+      // R-450: the PIN box's hint and the set-up form's terms tick line.
+      NO_PIN_HINT,
+      TERMS_LINE,
       CHECK_RAN_OUT,
       // R-449: the sign-in page's notice line after a sign-out (drawn through t(notice)).
       'You are signed out of this device.',

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { countOf, recordsLine } from '../../src/crm/logic/plural';
+import { countOf, recordsLine, unpaidMemberships } from '../../src/crm/logic/plural';
 
 describe('countOf (U-A8: "1 members")', () => {
   it('says one thing in the singular', () => {
@@ -34,5 +34,14 @@ describe('recordsLine (Settings → Sign-in & data, "Your gym’s records")', ()
     expect(recordsLine({ members: 1, memberships: 1, payments: 1, visits: 1 })).toBe(
       '1 member · 1 membership sold (new and renewals) · 1 payment · 1 check-in.',
     );
+  });
+});
+
+// R-450 (R-449 fresh eyes): Money's dues tiles said "N memberships" with no word for what was counted.
+describe('unpaidMemberships (Money → Dues tiles and rows)', () => {
+  it('says what the number counts', () => {
+    expect(unpaidMemberships(0)).toBe('0 memberships not fully paid');
+    expect(unpaidMemberships(1)).toBe('1 membership not fully paid');
+    expect(unpaidMemberships(3)).toBe('3 memberships not fully paid');
   });
 });

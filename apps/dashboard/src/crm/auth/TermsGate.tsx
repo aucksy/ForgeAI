@@ -16,6 +16,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react';
 
+import { t } from '../lang/lang';
 import { Button, Card, CheckField, ErrorBanner, SectionTitle, color, font, space } from '../ui/kit';
 import { useAuth } from './AuthProvider';
 import { authErrorWords } from './signin';
@@ -23,20 +24,37 @@ import { acceptTerms, DATA_AGREEMENT_URL, getTerms, needsTerms, TERMS_URL, TERMS
 
 export { TERMS_VERSION } from './terms';
 
-/** "I agree to the MettleUp terms and the data agreement", with both links (they open a new tab). */
-export function TermsWords() {
+/**
+ * The tick-box line. `{terms}` and `{agreement}` become the two links, whose words stay "terms" and "data
+ * agreement" in both languages (the pages they open are in English).
+ * R-450 (R-449 fresh eyes): the Hinglish set-up form showed this line in English. The Hinglish is a translation
+ * only, same meaning (legal wording: the owner says yes to it).
+ */
+export const TERMS_LINE = 'I agree to the MettleUp {terms} and the {agreement}.';
+
+/**
+ * "I agree to the MettleUp terms and the data agreement.", with both links (they open a new tab).
+ * `translated`: in the language chosen on this device (the set-up form); the once-only terms card stays English
+ * like the rest of that card.
+ */
+export function TermsWords({ translated = false }: { translated?: boolean } = {}) {
   const link = { color: color.accentBright, textDecoration: 'underline' } as const;
+  const line = translated ? t(TERMS_LINE) : TERMS_LINE;
   return (
     <>
-      I agree to the MettleUp{' '}
-      <a href={TERMS_URL} target="_blank" rel="noopener noreferrer" style={link}>
-        terms
-      </a>{' '}
-      and the{' '}
-      <a href={DATA_AGREEMENT_URL} target="_blank" rel="noopener noreferrer" style={link}>
-        data agreement
-      </a>
-      .
+      {line.split(/(\{terms\}|\{agreement\})/).map((part, i) =>
+        part === '{terms}' ? (
+          <a key={i} href={TERMS_URL} target="_blank" rel="noopener noreferrer" style={link}>
+            terms
+          </a>
+        ) : part === '{agreement}' ? (
+          <a key={i} href={DATA_AGREEMENT_URL} target="_blank" rel="noopener noreferrer" style={link}>
+            data agreement
+          </a>
+        ) : (
+          part
+        ),
+      )}
     </>
   );
 }

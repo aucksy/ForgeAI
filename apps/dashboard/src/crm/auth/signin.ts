@@ -205,6 +205,13 @@ export function newPinError(pin: string, again: string, phone: string | null | u
 /** The plain words under the PIN boxes (owner's wording, R-117). */
 export const PIN_HINT = 'You sign in with your mobile number and this PIN. Keep it private.';
 
+/**
+ * R-450 (R-449 fresh eyes): under the sign-in PIN box. It said "(Settings → Staff & sign-in)", a page the person
+ * cannot open from the sign-in screen, and where staff could not make a code anyway: only an owner makes sign-in
+ * codes (PeopleScreen; permissions.ts gives staff no gym-management rights). So it says who to ask.
+ */
+export const NO_PIN_HINT = 'No PIN yet? Ask your gym owner for a sign-in code, and type it here.';
+
 export function peopleFromRows(raw: unknown): PersonRow[] {
   const out: PersonRow[] = [];
   for (const item of Array.isArray(raw) ? raw : []) {

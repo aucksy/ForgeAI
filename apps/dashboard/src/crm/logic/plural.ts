@@ -16,3 +16,12 @@ export function countOf(n: number, one: string, many = `${one}s`): string {
 export function recordsLine(c: { members: number; memberships: number; payments: number; visits: number }): string {
   return `${countOf(c.members, 'member')} · ${countOf(c.memberships, 'membership sold', 'memberships sold')} (new and renewals) · ${countOf(c.payments, 'payment')} · ${countOf(c.visits, 'check-in')}.`;
 }
+
+/**
+ * Money → Dues (R-450, R-449 fresh eyes): the age-group tiles and each person's line said "3 memberships", a bare
+ * number beside an amount. What it counts is memberships sold (R-449's word) that still have money due, so it says
+ * so: "3 memberships not fully paid". PURE.
+ */
+export function unpaidMemberships(n: number): string {
+  return countOf(n, 'membership not fully paid', 'memberships not fully paid');
+}

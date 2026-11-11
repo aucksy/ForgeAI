@@ -28,6 +28,7 @@ import {
   createGymUnsure,
   formatMobile,
   newPinError,
+  NO_PIN_HINT,
   normalizeMobile,
 } from './signin';
 import { TermsWords, TERMS_VERSION } from './TermsGate';
@@ -119,7 +120,9 @@ export function SignInForm({ submitLabel, startPhone = '', heading }: { submitLa
         value={code}
         onChange={(v) => setCode(cleanCode(v))}
         placeholder="000000"
-        hint={t('No PIN yet? Type the one-time code your gym owner gives you (Settings → Staff & sign-in).')}
+        // R-450: staff cannot open the page that makes codes (only an owner can, PeopleScreen), and they are
+        // signed out here anyway: say what they can do.
+        hint={t(NO_PIN_HINT)}
       />
       {error && (
         <div style={{ marginTop: space.md }}>
@@ -294,7 +297,7 @@ export function StartGymForm({ onSignInInstead }: { onSignInInstead?: (phone: st
       {whatsApp && <BotTrap value={trap} onChange={setTrap} />}
       <PinFields pin={pin} again={pinAgain} onPin={setPin} onAgain={setPinAgain} />
       <CheckField checked={agreed} onChange={setAgreed}>
-        <TermsWords />
+        <TermsWords translated />
       </CheckField>
       {checkedHere && proof && <NumberChecked ten={proof.phone} />}
       {waitingForMessage && begun && (
