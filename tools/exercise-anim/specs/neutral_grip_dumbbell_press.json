@@ -1,28 +1,198 @@
 {
   "key": "neutral_grip_dumbbell_press",
   "name": "Neutral-Grip Dumbbell Press",
-  "primary": ["chest"],
-  "secondary": ["triceps", "front_delts"],
-  "scene": {"bench": {"deg": 0}},
-  "props": {"db_L": {"type": "dumbbell"}, "db_R": {"type": "dumbbell"}},
-  "camera": {"yaw": -70, "pitch": 18, "lens": 50, "fill": 0.9, "res": 640, "samples": 20},
-  "timing": {"fps": 30, "keys": [[0, "start"], [1, "end"], [2, "start"]]},
+  "primary": [
+    "chest"
+  ],
+  "secondary": [
+    "triceps",
+    "front_delts"
+  ],
+  "scene": {
+    "bench": {
+      "deg": 0
+    }
+  },
+  "props": {
+    "db_L": {
+      "type": "dumbbell"
+    },
+    "db_R": {
+      "type": "dumbbell"
+    }
+  },
+  "camera": {
+    "yaw": -70,
+    "pitch": 18,
+    "lens": 50,
+    "fill": 0.9,
+    "res": 640,
+    "samples": 20
+  },
+  "timing": {
+    "fps": 30,
+    "keys": [
+      [
+        0,
+        "start"
+      ],
+      [
+        1,
+        "end"
+      ],
+      [
+        2,
+        "start"
+      ]
+    ]
+  },
   "defaults": {
-    "bones": {"spine05": [-7, 0, 0], "spine04": [-7, 0, 0], "spine03": [-7, 0, 0], "spine02": [-6, 0, 0], "neck01": [8, 0, 0], "head": [6, 0, 0]}
+    "bones": {
+      "spine05": [
+        -1,
+        0,
+        0
+      ],
+      "spine04": [
+        -1,
+        0,
+        0
+      ],
+      "spine03": [
+        -1,
+        0,
+        0
+      ],
+      "spine02": [
+        -1,
+        0,
+        0
+      ],
+      "neck01": [
+        8,
+        0,
+        0
+      ],
+      "head": [
+        6,
+        0,
+        0
+      ]
+    }
   },
   "poses": {
     "start": {
-      "root": {"loc": [0, 0.05, 0.55], "rot": [-98, 0, 0]},
-      "feet": {"L": {"at": [0.3, -0.4, 0.075], "rot": [0, 0, 15]}},
-      "knees": {"L": [0.55, -1.0, 0.9]},
-      "hands": {"L": {"prop": "db_L", "axis": [0, 0, 1], "arm": {"elev": 40, "plane": -25, "elbow": "fore_vertical", "bend_world": [0, 0, 1], "tilt": 0}}}
+      "root": {
+        "loc": [
+          0,
+          0.05,
+          0.55
+        ],
+        "rot": [
+          -90,
+          0,
+          0
+        ]
+      },
+      "feet": {
+        "L": {
+          "at": [
+            0.3,
+            -0.4,
+            0.075
+          ],
+          "rot": [
+            0,
+            0,
+            15
+          ]
+        }
+      },
+      "knees": {
+        "L": [
+          0.55,
+          -1.0,
+          0.9
+        ]
+      },
+      "hands": {
+        "L": {
+          "prop": "db_L",
+          "axis": [
+            0,
+            0,
+            1
+          ],
+          "arm": {
+            "elev": 40,
+            "plane": -25,
+            "elbow": "fore_vertical",
+            "bend_world": [
+              0,
+              0,
+              1
+            ],
+            "tilt": 0
+          }
+        }
+      }
     },
     "end": {
-      "root": {"loc": [0, 0.05, 0.55], "rot": [-98, 0, 0]},
-      "feet": {"L": {"at": [0.3, -0.4, 0.075], "rot": [0, 0, 15]}},
-      "knees": {"L": [0.55, -1.0, 0.9]},
-      "hands": {"L": {"prop": "db_L", "axis": [0, 0, 1], "arm": {"elev": 85, "plane": 88, "elbow": "fore_vertical", "bend_world": [0, 0, 1], "tilt": 0}}}
+      "root": {
+        "loc": [
+          0,
+          0.05,
+          0.55
+        ],
+        "rot": [
+          -90,
+          0,
+          0
+        ]
+      },
+      "feet": {
+        "L": {
+          "at": [
+            0.3,
+            -0.4,
+            0.075
+          ],
+          "rot": [
+            0,
+            0,
+            15
+          ]
+        }
+      },
+      "knees": {
+        "L": [
+          0.55,
+          -1.0,
+          0.9
+        ]
+      },
+      "hands": {
+        "L": {
+          "prop": "db_L",
+          "axis": [
+            0,
+            0,
+            1
+          ],
+          "arm": {
+            "elev": 85,
+            "plane": 88,
+            "elbow": "fore_vertical",
+            "bend_world": [
+              0,
+              0,
+              1
+            ],
+            "tilt": 0
+          }
+        }
+      }
     }
   },
-  "research": "Flat bench (deg 0): pad top 0.44 m from y -0.35 to 0.85; head toward +Y. Body copied from the proven incline press: root rot = -(pad 0 + 90 face-up + 8) = -98, spine -7/-7/-7/-6. Root z 0.55 = pad 0.44 + ~0.11 pelvis-joint-to-sacrum depth (estimate; tune with probe_bench, want back gap -0.02..+0.02). Hip then ~(0.11, 0.06, 0.60); ankle (0.30,-0.40,0.075): hip-ankle 0.72 m -> knee ~107 deg with 0.45/0.45 legs; x 0.30 clears the bench foot rail (half-width 0.24). Start: elbows tucked elev 40, plane -25 (incline press uses 55/-30; library says elbows close), forearm vertical. End: elev 85 plane 88, near-straight, dumbbells over lower-mid chest. Neutral axis [0,0,1] = thumbs toward head, square to a vertical forearm when lying flat. S1 Muyor 2023 (neutral grip), S2 Rodriguez-Ridao 2020 (flat bench, ~45 deg abduction, back on bench)."
+  "research": "Flat bench (deg 0): pad top 0.44 m from y -0.35 to 0.85; head toward +Y. Body copied from the proven incline press: root rot = -(pad 0 + 90 face-up + 8) = -98, spine -7/-7/-7/-6. Root z 0.55 = pad 0.44 + ~0.11 pelvis-joint-to-sacrum depth (estimate; tune with probe_bench, want back gap -0.02..+0.02). Hip then ~(0.11, 0.06, 0.60); ankle (0.30,-0.40,0.075): hip-ankle 0.72 m -> knee ~107 deg with 0.45/0.45 legs; x 0.30 clears the bench foot rail (half-width 0.24). Start: elbows tucked elev 40, plane -25 (incline press uses 55/-30; library says elbows close), forearm vertical. End: elev 85 plane 88, near-straight, dumbbells over lower-mid chest. Neutral axis [0,0,1] = thumbs toward head, square to a vertical forearm when lying flat. S1 Muyor 2023 (neutral grip), S2 Rodriguez-Ridao 2020 (flat bench, ~45 deg abduction, back on bench). QA 11 Nov: body arched off the end of the flat pad (rot -98 + 27 deg spine arch); now lies flat (rot -90, spine -1 each)."
 }

@@ -1,0 +1,121 @@
+"""Turn the cloud stills (transparent PNGs) into app pictures in one look. Plain Python (Pillow + numpy), seconds.
+
+  python tools/exercise-anim/export_pictures.py <stills_dir> <out_dir> --look A [--theme dark] [--keys a,b]
+  python tools/exercise-anim/export_pictures.py <stills_dir> <out_dir> --look A --preview   # PNG, for sample pages
+
+<stills_dir> holds <key>__start.png and <key>__end.png (a hold has only __start.png), as made by
+`make_clip.py ... stills` in exercise-clips.yml (mode: stills) or downloaded from the "exercise-stills" release.
+Writes <key>__start.webp, <key>__end.webp and <key>__thumb.webp: the same sizes as the RepDB pictures
+(apps/mobile/scripts/build-exercise-pictures.py: 384 px square, 144 px thumb), so they sit in the same frames.
+
+The render never contains the look: background, framing and size are added here. So a new look = re-run this
+script, never a re-render. The approved look is the "Approved look:" line in DAILY-LOG.md (empty = do not export
+into the app; sample pages only).
+"""
+import argparse
+import glob
+import os
+
+import numpy as np
+from PIL import Image, ImageFilter
+
+SIZE = 384      # as the RepDB start/end pictures
+THUMB = 144     # as the RepDB list picture
+QUALITY = 80
+
+# App planes (packages/theme/src/palette.ts): surface #10131C (the card the pictures sit on), surfaceRaised #171B27.
+LOOKS = {
+    # A: flat card colour, edge to edge with the picture frame, exactly like the recoloured RepDB pictures.
+    "A": {"name": "Flat card", "dark": {"bg": "#10131C", "glow": None, "floor": "#1C212E"},
+          "light": {"bg": "#F1F2F4", "glow": None, "floor": "#E2E4E8"}, "pad": 0.08},
+    # B: the card colour with a soft light behind the athlete and a floor shadow: more depth, still dark.
+    "B": {"name": "Soft spotlight", "dark": {"bg": "#10131C", "glow": "#2A3142", "floor": None},
+          "light": {"bg": "#E9EBEF", "glow": "#FFFFFF", "floor": None}, "pad": 0.10, "shadow": 0.55},
+    # C: a light studio tile (the Hevy / Gymvisual look): the grey body and red muscles read best on light grey.
+    "C": {"name": "Studio tile", "dark": {"bg": "#D9DCE1", "glow": "#F4F5F7", "floor": None},
+          "light": {"bg": "#D9DCE1", "glow": "#F4F5F7", "floor": None}, "pad": 0.10, "shadow": 0.35},
+}
+
+
+def _rgb(h):
+    h = h.lstrip("#")
+    return np.array([int(h[i:i + 2], 16) for i in (0, 2, 4)], float) / 255
+
+
+def background(look, theme, side):
+    L = LOOKS[look][theme]
+    bg = np.ones((side, side, 3)) * _rgb(L["bg"])
+    if L.get("glow"):
+        y, x = np.mgrid[0:side, 0:side] / side
+        r = np.sqrt((x - 0.5) ** 2 + ((y - 0.45) * 1.15) ** 2)
+        w = np.clip(1 - r / 0.62, 0, 1) ** 1.6
+        bg = bg + (_rgb(L["glow"]) - bg) * w[..., None]
+    return bg
+
+
+def union_box(alphas):
+    """One crop for start AND end, so the athlete does not jump between the two pictures."""
+    a = np.maximum.reduce([x > 0.04 for x in alphas])
+    ys, xs = np.nonzero(a)
+    return xs.min(), ys.min(), xs.max(), ys.max()
+
+
+def compose(rgba, box, look, theme, side=SIZE):
+    """Square crop around `box` with the look's padding, the athlete laid over the look's background."""
+    x0, y0, x1, y1 = box
+    pad = LOOKS[look]["pad"]
+    s = max(x1 - x0, y1 - y0) * (1 + 2 * pad)
+    cx, cy = (x0 + x1) / 2, (y0 + y1) / 2
+    W, H = rgba.size
+    big = Image.new("RGBA", (int(s) + 2, int(s) + 2), (0, 0, 0, 0))
+    big.paste(rgba, (int(round(s / 2 - cx)), int(round(s / 2 - cy))))
+    im = big.resize((side, side), Image.LANCZOS)
+    a = np.asarray(im, float) / 255
+    alpha, col = a[..., 3:4], a[..., :3]
+    # Shadow-catcher pixels are black with low alpha: a soft floor shadow. Keep them weaker on dark backgrounds.
+    sh = LOOKS[look].get("shadow", 0.4)
+    is_shadow = (col.max(-1, keepdims=True) < 0.05) & (alpha < 0.9)
+    alpha = np.where(is_shadow, alpha * sh, alpha)
+    out = background(look, theme, side) * (1 - alpha) + col * alpha
+    return Image.fromarray((np.clip(out, 0, 1) * 255).astype(np.uint8))
+
+
+def thumb(rgba, look, theme):
+    a = np.asarray(rgba, float)[..., 3] / 255
+    body = a > 0.5   # the athlete and equipment, not the faint shadow
+    ys, xs = np.nonzero(body)
+    return compose(rgba, (xs.min(), ys.min(), xs.max(), ys.max()), look, theme, THUMB)
+
+
+def export_key(stills, key, out, look, theme, preview=False):
+    paths = {t: os.path.join(stills, f"{key}__{t}.png") for t in ("start", "end")}
+    ims = {t: Image.open(p).convert("RGBA") for t, p in paths.items() if os.path.exists(p)}
+    if "start" not in ims:
+        raise SystemExit(f"{key}: no {key}__start.png in {stills}")
+    box = union_box([np.asarray(i, float)[..., 3] / 255 for i in ims.values()])
+    os.makedirs(out, exist_ok=True)
+    ext, kw = (".png", {}) if preview else (".webp", {"quality": QUALITY, "method": 6})
+    written = []
+    for t, im in ims.items():
+        p = os.path.join(out, f"{key}__{t}{ext}")
+        compose(im, box, look, theme).save(p, **kw); written.append(p)
+    p = os.path.join(out, f"{key}__thumb{ext}")
+    thumb(ims["start"], look, theme).save(p, **kw); written.append(p)
+    return written
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("stills"); ap.add_argument("out")
+    ap.add_argument("--look", required=True, choices=sorted(LOOKS))
+    ap.add_argument("--theme", default="dark", choices=["dark", "light"])
+    ap.add_argument("--keys", default="")
+    ap.add_argument("--preview", action="store_true")
+    a = ap.parse_args()
+    keys = [k for k in a.keys.split(",") if k] or sorted({os.path.basename(p).split("__")[0] for p in glob.glob(os.path.join(a.stills, "*__start.png"))})
+    for k in keys:
+        print(k, len(export_key(a.stills, k, a.out, a.look, a.theme, a.preview)), "files")
+
+
+if __name__ == "__main__":
+    main()

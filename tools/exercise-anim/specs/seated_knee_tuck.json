@@ -1,26 +1,173 @@
 {
   "key": "seated_knee_tuck",
   "name": "Seated Knee Tuck",
-  "primary": ["abs"],
+  "primary": [
+    "abs"
+  ],
   "secondary": [],
-  "camera": {"yaw": -85, "pitch": 12, "lens": 50, "fill": 0.9, "res": 640, "samples": 20},
-  "timing": {"fps": 30, "keys": [[0, "start"], [1, "end"], [2, "start"]]},
+  "camera": {
+    "yaw": -85,
+    "pitch": 12,
+    "lens": 50,
+    "fill": 0.9,
+    "res": 640,
+    "samples": 20
+  },
+  "timing": {
+    "fps": 30,
+    "keys": [
+      [
+        0,
+        "start"
+      ],
+      [
+        1,
+        "end"
+      ],
+      [
+        2,
+        "start"
+      ]
+    ]
+  },
   "defaults": {
-    "bones": {"spine05": [0, 0, 0], "spine04": [0, 0, 0], "spine03": [0, 0, 0], "spine02": [0, 0, 0], "neck01": [4, 0, 0]}
+    "bones": {
+      "spine05": [
+        0,
+        0,
+        0
+      ],
+      "spine04": [
+        0,
+        0,
+        0
+      ],
+      "spine03": [
+        0,
+        0,
+        0
+      ],
+      "spine02": [
+        0,
+        0,
+        0
+      ],
+      "neck01": [
+        4,
+        0,
+        0
+      ]
+    }
   },
   "poses": {
     "start": {
-      "root": {"loc": [0, 0, 0.12], "rot": [-45, 0, 0]},
-      "feet": {"L": {"at": [0.12, -0.919, 0.346], "rot": [-20, 0, 0]}},
-      "knees": {"L": [0.13, -0.5, 1.0]},
-      "hands": {"L": {"axis": [-1, 0, 0], "arm": {"elev": 103.0, "plane": -81.9, "elbow": 55.9, "bend": [-0.12, -0.24, -0.96]}}}
+      "root": {
+        "loc": [
+          0,
+          0,
+          0.1481
+        ],
+        "rot": [
+          -45,
+          0,
+          0
+        ]
+      },
+      "feet": {
+        "L": {
+          "at": [
+            0.12,
+            -0.919,
+            0.346
+          ],
+          "rot": [
+            -20,
+            0,
+            0
+          ]
+        }
+      },
+      "knees": {
+        "L": [
+          0.13,
+          -0.5,
+          1.0
+        ]
+      },
+      "hands": {
+        "L": {
+          "axis": [
+            -1,
+            0,
+            0
+          ],
+          "arm": {
+            "elev": 103.0,
+            "plane": -81.9,
+            "elbow": 55.9,
+            "bend": [
+              -0.12,
+              -0.24,
+              -0.96
+            ]
+          }
+        }
+      }
     },
     "end": {
-      "root": {"loc": [0, 0, 0.12], "rot": [-38, 0, 0]},
-      "feet": {"L": {"at": [0.12, -0.523, 0.121], "rot": [0, 0, 0]}},
-      "knees": {"L": [0.13, -0.6, 1.0]},
-      "hands": {"L": {"axis": [-1, 0, 0], "arm": {"elev": 83.8, "plane": -84.5, "elbow": 28.7, "bend": [-0.15, 0.09, -0.98]}}}
+      "root": {
+        "loc": [
+          0,
+          0,
+          0.199
+        ],
+        "rot": [
+          -38,
+          0,
+          0
+        ]
+      },
+      "feet": {
+        "L": {
+          "at": [
+            0.12,
+            -0.523,
+            0.121
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      "knees": {
+        "L": [
+          0.13,
+          -0.6,
+          1.0
+        ]
+      },
+      "hands": {
+        "L": {
+          "axis": [
+            -1,
+            0,
+            0
+          ],
+          "arm": {
+            "elev": 83.8,
+            "plane": -84.5,
+            "elbow": 28.7,
+            "bend": [
+              -0.15,
+              0.09,
+              -0.98
+            ]
+          }
+        }
+      }
     }
   },
-  "research": "Seated on the floor, root 0.12 m (sit bones ~0.02 m after the lean). Start lean 45 deg (root rot X -45): hip L (0.11,-0.034,0.158), shoulders (+-0.22, 0.278, 0.505). Legs out: hip-ankle 0.905 (straight-ish), rising 12 deg: dy = -0.905cos12 = -0.885, dz = +0.188 -> ankle (0.12,-0.919,0.346), heels ~0.27 m up, toes pointed (rot X -20). End lean 38 deg: hip (0.11,-0.038,0.154); thigh 55 deg up -> knee (0.12,-0.30,0.51); shin down-forward -> ankle (0.12,-0.523,0.121): hip-ankle 0.486 -> knee bend ~115 deg, heel ~0.05 m off the floor. Hands planted in both pictures at world (+-0.25, 0.52, 0.035), 0.52 m behind the pelvis joint, fingers toward the feet (axis [-1,0,0]); arm angles solved from shoulder->hand in each torso frame with upper arm 0.269 + forearm-to-hand 0.33: start |S-H| 0.530 -> elbow 56, elev 103, plane -82 (elbow points back); end |S-H| 0.581 -> elbow 29, elev 84, plane -84.5. Source S1 Spotebi (coach), S2 Oliva-Lozano 2020 (V-sit RA ~80%), S3 Escamilla 2006."
+  "research": "Seated on the floor, root 0.12 m (sit bones ~0.02 m after the lean). Start lean 45 deg (root rot X -45): hip L (0.11,-0.034,0.158), shoulders (+-0.22, 0.278, 0.505). Legs out: hip-ankle 0.905 (straight-ish), rising 12 deg: dy = -0.905cos12 = -0.885, dz = +0.188 -> ankle (0.12,-0.919,0.346), heels ~0.27 m up, toes pointed (rot X -20). End lean 38 deg: hip (0.11,-0.038,0.154); thigh 55 deg up -> knee (0.12,-0.30,0.51); shin down-forward -> ankle (0.12,-0.523,0.121): hip-ankle 0.486 -> knee bend ~115 deg, heel ~0.05 m off the floor. Hands planted in both pictures at world (+-0.25, 0.52, 0.035), 0.52 m behind the pelvis joint, fingers toward the feet (axis [-1,0,0]); arm angles solved from shoulder->hand in each torso frame with upper arm 0.269 + forearm-to-hand 0.33: start |S-H| 0.530 -> elbow 56, elev 103, plane -82 (elbow points back); end |S-H| 0.581 -> elbow 29, elev 84, plane -84.5. Source S1 Spotebi (coach), S2 Oliva-Lozano 2020 (V-sit RA ~80%), S3 Escamilla 2006. QA 11 Nov: whole body moved by the measured lowest point so it rests on the floor (cloud run 43079162675)."
 }

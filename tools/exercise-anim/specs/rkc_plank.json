@@ -1,18 +1,121 @@
 {
   "key": "rkc_plank",
   "name": "RKC Plank",
-  "primary": ["abs"],
-  "secondary": ["obliques", "glutes"],
-  "camera": {"yaw": -85, "pitch": 12, "lens": 50, "fill": 0.9, "res": 640, "samples": 20},
-  "timing": {"fps": 30, "keys": [[0, "hold"], [1, "hold"]]},
+  "primary": [
+    "abs"
+  ],
+  "secondary": [
+    "obliques",
+    "glutes"
+  ],
+  "camera": {
+    "yaw": -85,
+    "pitch": 12,
+    "lens": 50,
+    "fill": 0.9,
+    "res": 640,
+    "samples": 20
+  },
+  "timing": {
+    "fps": 30,
+    "keys": [
+      [
+        0,
+        "hold"
+      ],
+      [
+        1,
+        "hold"
+      ]
+    ]
+  },
   "poses": {
     "hold": {
-      "root": {"loc": [0, 0, 0.308], "rot": [80.7, 0, 0]},
-      "bones": {"spine05": [3, 0, 0], "spine04": [2, 0, 0], "spine03": [0, 0, 0], "spine02": [0, 0, 0], "neck01": [0, 0, 0], "head": [0, 0, 0]},
-      "feet": {"L": {"at": [0.06, 0.892, 0.165], "rot": [70, 0, 0]}},
-      "knees": {"L": [0.08, 0.45, -0.5]},
-      "hands": {"L": {"axis": [0, -1, 0.07], "arm": {"elev": 96.5, "plane": 123, "elbow": 80, "bend_world": [0, -1, 0]}}}
+      "root": {
+        "loc": [
+          0,
+          0,
+          0.3578
+        ],
+        "rot": [
+          80.7,
+          0,
+          0
+        ]
+      },
+      "bones": {
+        "spine05": [
+          3,
+          0,
+          0
+        ],
+        "spine04": [
+          2,
+          0,
+          0
+        ],
+        "spine03": [
+          0,
+          0,
+          0
+        ],
+        "spine02": [
+          0,
+          0,
+          0
+        ],
+        "neck01": [
+          0,
+          0,
+          0
+        ],
+        "head": [
+          0,
+          0,
+          0
+        ]
+      },
+      "feet": {
+        "L": {
+          "at": [
+            0.06,
+            0.892,
+            0.165
+          ],
+          "rot": [
+            70,
+            0,
+            0
+          ]
+        }
+      },
+      "knees": {
+        "L": [
+          0.08,
+          0.45,
+          -0.5
+        ]
+      },
+      "hands": {
+        "L": {
+          "axis": [
+            0,
+            -1,
+            0.07
+          ],
+          "arm": {
+            "elev": 96.5,
+            "plane": 123,
+            "elbow": 80,
+            "bend_world": [
+              0,
+              -1,
+              0
+            ]
+          }
+        }
+      }
     }
   },
-  "research": "Prone forearm plank, long lever (NSCA S2). Elbow interior ~100 deg -> forearm flat toward the head, upper arm tilted 10 deg past vertical toward the feet: elbow 0.269*sin10 = 0.047 m ahead of the shoulder; elbows ~0.15 m apart (x +-0.075) vs shoulders +-0.22 -> dx -0.145; vertical h = sqrt(0.269^2-0.145^2-0.047^2) = 0.222; shoulder z = 0.222 + 0.045 = 0.267. Ankles on the toes z 0.165 (foot rot 70: ball ~0.157 under the ankle). Body line rise 0.102 over 1.37 m -> 4.3 deg -> torso at rot X 85.7: shoulder offset z -0.041 -> root z 0.308. Posterior tilt: pelvis root rot 80.7 (5 deg 'lean back' of the pelvis), spine05 +3 / spine04 +2 bring the trunk back onto the 85.7 line. Upper arm direction world (-0.539,-0.175,-0.825) -> torso (-0.539,0.836,0.113) -> elev 96.5, plane 123 (forward and inward). Elbow bend 80 (= interior 100) with bend_world -Y makes the forearm horizontal: check fore = du cos80 + bperp sin80 = (0.001,-1.0,0.001). Fists thumb-up: axis = world up in the torso frame (0,-1,0.07). Feet together: hip L (0.11,-0.011,0.258) -> ankle (0.06,0.892,0.165), hip-ankle 0.909 = locked knee. Sources S1 Schoenfeld 2014, S2 Schoenfeld & Contreras 2013 NSCA, S3 Oliva-Lozano 2020."
+  "research": "Prone forearm plank, long lever (NSCA S2). Elbow interior ~100 deg -> forearm flat toward the head, upper arm tilted 10 deg past vertical toward the feet: elbow 0.269*sin10 = 0.047 m ahead of the shoulder; elbows ~0.15 m apart (x +-0.075) vs shoulders +-0.22 -> dx -0.145; vertical h = sqrt(0.269^2-0.145^2-0.047^2) = 0.222; shoulder z = 0.222 + 0.045 = 0.267. Ankles on the toes z 0.165 (foot rot 70: ball ~0.157 under the ankle). Body line rise 0.102 over 1.37 m -> 4.3 deg -> torso at rot X 85.7: shoulder offset z -0.041 -> root z 0.308. Posterior tilt: pelvis root rot 80.7 (5 deg 'lean back' of the pelvis), spine05 +3 / spine04 +2 bring the trunk back onto the 85.7 line. Upper arm direction world (-0.539,-0.175,-0.825) -> torso (-0.539,0.836,0.113) -> elev 96.5, plane 123 (forward and inward). Elbow bend 80 (= interior 100) with bend_world -Y makes the forearm horizontal: check fore = du cos80 + bperp sin80 = (0.001,-1.0,0.001). Fists thumb-up: axis = world up in the torso frame (0,-1,0.07). Feet together: hip L (0.11,-0.011,0.258) -> ankle (0.06,0.892,0.165), hip-ankle 0.909 = locked knee. Sources S1 Schoenfeld 2014, S2 Schoenfeld & Contreras 2013 NSCA, S3 Oliva-Lozano 2020. QA 11 Nov: whole body moved by the measured lowest point so it rests on the floor (cloud run 43079162675)."
 }
