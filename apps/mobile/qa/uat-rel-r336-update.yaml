@@ -20,7 +20,11 @@ appId: com.mettleup.app
 - assertVisible: "(?i)version 0\\.\\d+\\.0 is ready"
 - assertVisible: "Tap \"Update now\" to download the file, then open it to install\\. Your workouts stay safe\\."
 - assertVisible: "1\\. See which muscles are ready to train today\\."
-- assertVisible: "3\\. Invite a friend to your gym\\."
+# Pinned buttons (0.77.0): the last row can sit below the fold on the owner phone.
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "3\\. Invite a friend to your gym\\."
 - assertNotVisible: "And the changes from .*"
 - assertVisible: "Update now"
 - takeScreenshot: rel-r336-01-full-screen
@@ -64,8 +68,16 @@ appId: com.mettleup.app
     visible: "A new MettleUp is here"
     timeout: 30000
 - assertVisible: "(?i)you are 3 versions behind"
-- assertVisible: "2\\. A quick workout for the time you have\\."
-- assertVisible: "And the changes from 2 earlier updates\\."
+# 0.77.0: the buttons are pinned at the bottom and only the words scroll; on the large-text owner phone the
+# rows and the earlier-updates line can sit below the fold (round 4, run 43062165154): find them.
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "2\\. A quick workout for the time you have\\."
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "And the changes from 2 earlier updates\\."
 - takeScreenshot: rel-r336-04-three-behind
 # Android's back is "Later".
 - back

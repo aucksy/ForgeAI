@@ -183,7 +183,7 @@ OLD_PARTS="a b c d e f g h h3 p1 p2 i link i2 j j2 j3 k l n p9 r br inv invf p7 
 # R-123: ubk = a fresh install restores a backup FILE from the welcome screen (routines in order,
 # settings, profile), then saves a new one from Settings -> Back up and restore (qa/uat-bk.yaml).
 UAT_PARTS="uh ur un ud ue ubk ub uf ua uv ug uk"
-GATE_PARTS="w dnd longrest anim mk clip uat u355 u344 u358 u366 usel ugym u15 u76 u198 u194 u401 u199 u404 u438 u444 ulook uage u439 u436"
+GATE_PARTS="w dnd longrest anim mk clip uat u355 u344 u358 u366 usel ugym u15 u76 u198 u194 u401 u199 u404 u438 u444 ulook uage u439 u436 u336"
 qa_list() { echo "$1" | tr ',;' '  ' | tr '[:upper:]' '[:lower:]' | xargs; }
 QA_ONLY_LIST=$(qa_list "${QA_ONLY:-}")
 QA_EXTRA_LIST=$(qa_list "${QA_EXTRA:-}")
@@ -2044,6 +2044,19 @@ part_u401() {
   [ "$rc" = 0 ] || status=1
   return $rc
 }
+# R-336 alone (0.77.0 gate, round 4 run 43062165154: UATR336 failed on the owner phone once the update
+# screen's buttons were pinned): the full-screen update and its offline case, from a fresh install with
+# the demo, so a fix can be proven without the ~3 h "uat" chain. Runs only with only=u336.
+part_u336() {
+  local rc=0
+  gate_flow u336_seed gate-demo.yaml || { status=1; return 1; }
+  uat_flow uatr336 uat-rel-r336-update.yaml || rc=1
+  adb shell cmd connectivity airplane-mode enable >/dev/null 2>&1 || adb shell settings put global airplane_mode_on 1
+  uat_flow uatr336b uat-rel-r336-b-offline.yaml || rc=1
+  adb shell cmd connectivity airplane-mode disable >/dev/null 2>&1 || adb shell settings put global airplane_mode_on 0
+  [ "$rc" = 0 ] || status=1
+  return $rc
+}
 # F199 (owner R-403, 8 Nov 2026): the Progress tab moved into Profile. From a fresh install with the demo:
 # no Progress tab; Profile's chart, Today line and "Your progress" rows (each opens its page, Back returns);
 # a picked week's box and a Last 12 months month's box open their workouts (one workout: that workout);
@@ -2369,6 +2382,7 @@ qa_runs u438 && ! qa_runs uat && { log "gate part U438 begins"; part_u438; }
 qa_runs u444 && ! qa_runs uat && { log "gate part U444 begins"; part_u444; }
 qa_runs u439 && ! qa_runs uat && { log "gate part U439 begins"; part_u439; }
 qa_runs u436 && ! qa_runs uat && { log "gate part U436 begins"; part_u436; }
+qa_runs u336 && ! qa_runs uat && { log "gate part U336 begins"; part_u336; }
 qa_runs ulook && ! qa_runs uat && { log "gate part ULOOK begins"; part_ulook; }
 qa_runs uage && ! qa_runs uat && { log "gate part UAGE begins"; part_uage; }
 # R-359/R-345 (5 Nov 2026): the In use journey alone (pictures rel-345/357/359), with only=u15.

@@ -173,6 +173,12 @@ appId: com.mettleup.app
       id: "date-line-chart"
     timeout: 15000
 # ---------------------------------------------------------------- 4. Last 12 months: a month opens its workouts
+# 0.77.0 gate (round 4, run 43062170667): Back from the week's workouts can leave the page scrolled with the
+# range ("Last 12 weeks") above the screen's top edge: bring it into view first.
+- scrollUntilVisible:
+    element: "^Last 12 weeks$"
+    direction: UP
+    timeout: 20000
 - tapOn: "^Last 12 weeks$"
 - extendedWaitUntil:
     visible: "^Last 12 months$"
@@ -210,7 +216,11 @@ appId: com.mettleup.app
     visible:
       id: "date-line-chart"
     timeout: 15000
-# Back to Last 12 weeks (a saved choice).
+# Back to Last 12 weeks (a saved choice). The range can sit above the screen after Back (see section 4).
+- scrollUntilVisible:
+    element: "^Last 12 months$"
+    direction: UP
+    timeout: 20000
 - tapOn: "^Last 12 months$"
 - extendedWaitUntil:
     visible: "^Last 12 weeks$"
