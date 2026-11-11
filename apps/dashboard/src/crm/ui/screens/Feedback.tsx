@@ -1,4 +1,8 @@
-/** More → Send feedback (launch H7): write to MettleUp; the words are in logic/feedback.ts. */
+/**
+ * More → Send feedback (launch H7): write to MettleUp; the words are in logic/feedback.ts.
+ * R-449: the owner's "MettleUp access" card (let MettleUp support look, and every look) lives here, under
+ * the questions, where an owner goes when support needs to see his records (it was under Settings → Sign-in & data).
+ */
 
 import { useEffect, useRef, useState } from 'react';
 
@@ -13,6 +17,8 @@ import {
   type HelpReply,
 } from '../../logic/feedback';
 import { anyWaiting, HELP_HISTORY_WORDS as H, questionShows, type HelpQuestion } from '../../logic/helpHistory';
+import { useAuth, useCan } from '../../auth/AuthProvider';
+import { ForgeAccessCard } from '../ForgeAccessCard';
 import { Button, Card, PageHeader, TextField, color, font, space } from '../kit';
 
 const POLL_MS = 5_000;
@@ -22,6 +28,9 @@ export function FeedbackScreen() {
   const [sending, setSending] = useState(false);
   const [note, setNote] = useState<{ ok: boolean; words: string; reply?: HelpReply } | null>(null);
   const [rated, setRated] = useState<'yes' | 'no' | null>(null);
+  // MettleUp access: owners of an online gym only (the server refuses anyone else), as on Settings before.
+  const online = useAuth().session?.online === true;
+  const owner = useCan()('eraseOrDemo');
 
   // R-319 item 10: "Your questions", kept in this browser, with late answers and the team's replies.
   const [history, setHistory] = useState<HelpQuestion[]>(() => readHistory());
@@ -105,6 +114,7 @@ export function FeedbackScreen() {
         </div>
       </Card>
       <YourQuestions history={history} setHistory={setHistory} />
+      {online && owner && <ForgeAccessCard />}
     </>
   );
 }

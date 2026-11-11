@@ -79,7 +79,7 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   // R-447: under the computer's side menu when it is longer than the window.
   'More below': 'Neeche aur hai',
   'Already use MettleUp?': 'Pehle se MettleUp use karte ho?',
-  'Sign in with your mobile number and your 6-digit PIN.': 'Apne mobile number aur 6 number ke PIN se sign in karo.',
+  'Sign in with your mobile number and your 6-digit PIN.': 'Apne mobile number aur 6-digit PIN se sign in karo.',
   // R-446: inside the iPhone home-screen app (iPhone keeps its storage apart from Safari).
   'Welcome to the admin app. Please sign in once more here. iPhone keeps this app apart from Safari. After this, you stay signed in.':
     'Admin app mein aapka swagat hai. Yahan ek baar phir sign in karo. iPhone is app ko Safari se alag rakhta hai. Iske baad aap sign in hi rahoge.',
@@ -91,33 +91,40 @@ export const HINGLISH: Readonly<Record<string, string>> = {
     '3 mahine free. Card nahi chahiye. Aapke members ki app hamesha free hai.',
   'Starts empty. You add your own members and prices.': 'Gym khaali shuru hota hai. Aap apne members aur daam khud daalte ho.',
   'See it working': 'Chalta hua dekho',
-  'Opens a sample gym with made-up members, payments and a shop. You get a real gym code. A phone with the MettleUp app can join and order, and you see the order here.':
-    'Ek sample gym khulta hai, jismein nakli members, payments aur shop hain. Aapko asli gym code milta hai. MettleUp app wala phone join karke order kar sakta hai, aur order aapko yahan dikhta hai.',
+  // R-449 (R-447 fresh eyes): "You get a real gym code" puzzled someone only trying the demo.
+  'Opens a sample gym with made-up members, payments and a shop. To try the member side too, join this gym from the MettleUp app on a phone and order something. The order shows up here.':
+    'Ek sample gym khulta hai, jismein nakli members, payments aur shop hain. Member wala hissa bhi dekhna hai? Phone par MettleUp app se is gym ko join karo aur kuch order karo. Order yahan dikhega.',
   'Start demo': 'Demo shuru karo',
+  // R-449: the line at the top of the sign-in page after signing out (R-448 fresh eyes: it stayed English).
+  'You are signed out of this device.': 'Aap is device se sign out ho gaye ho.',
+  'You were signed out of this gym. Ask the gym owner for a new code. If you are the owner, make one on a device where you are signed in.':
+    'Aap is gym se sign out ho gaye. Gym owner se naya code maango. Agar aap owner ho, to jis device par sign in ho wahan naya code banao.',
+  'You no longer have access to this gym. Talk to the gym owner.': 'Ab aap is gym ko nahi khol sakte. Gym owner se baat karo.',
+  'That demo gym is no longer available. Start a new one below.': 'Woh demo gym ab nahi hai. Neeche naya demo shuru karo.',
   'Starting your demo gym…': 'Aapka demo gym shuru ho raha hai…',
   'Try again': 'Phir se try karo',
   'Open the demo without the shop. It works without internet.': 'Shop ke bina demo kholo. Yeh bina internet ke chalta hai.',
   'Something went wrong. Please try again.': 'Kuch gadbad ho gayi. Phir se try karo.',
   'Your mobile number': 'Aapka mobile number',
-  'PIN (6 digits)': 'PIN (6 number)',
+  'PIN (6 digits)': 'PIN (6 digit)',
   'No PIN yet? Type the one-time code your gym owner gives you (Settings → Staff & sign-in).':
     'Abhi PIN nahi hai? Gym owner ka diya hua ek baar wala code daalo (Settings → Staff aur sign-in).',
   'Signing in…': 'Sign in ho raha hai…',
   'Need help? Email MettleUp at': 'Madad chahiye? MettleUp ko is email par likho:',
-  'Type a 10-digit mobile number, like 98290 12345.': '10 number ka mobile number daalo, jaise 98290 12345.',
-  'Type your 6-digit PIN, or the code your gym owner gave you.': 'Apna 6 number ka PIN daalo, ya gym owner ka diya hua code daalo.',
+  'Type a 10-digit mobile number, like 98290 12345.': '10-digit mobile number daalo, jaise 98290 12345.',
+  'Type your 6-digit PIN, or the code your gym owner gave you.': 'Apna 6-digit PIN daalo, ya gym owner ka diya hua code daalo.',
   'Gym name': 'Gym ka naam',
   'Your name': 'Aapka naam',
   'You sign in with this number on any phone or computer.': 'Isi number se aap kisi bhi phone ya computer par sign in karoge.',
-  'Choose a 6-digit PIN': '6 number ka PIN chuno',
+  'Choose a 6-digit PIN': '6-digit PIN chuno',
   'Type the PIN again': 'PIN dobara daalo',
   'You sign in with your mobile number and this PIN. Keep it private.': 'Aap mobile number aur is PIN se sign in karoge. Ise kisi ko mat batao.',
-  'Your PIN must be 6 digits.': 'PIN 6 number ka hona chahiye.',
-  'Don’t use the same digit six times. Pick a PIN that is hard to guess.': 'Ek hi number chhe baar mat daalo. Aisa PIN chuno jo koi guess na kar sake.',
+  'Your PIN must be 6 digits.': 'PIN 6 digit ka hona chahiye.',
+  'Don’t use the same digit six times. Pick a PIN that is hard to guess.': 'Ek hi digit 6 baar mat daalo, jaise 111111. Aisa PIN chuno jo koi guess na kar sake.',
   'Don’t use digits in order, like 123456 or 654321. Pick a PIN that is hard to guess.':
-    'Line se number mat daalo, jaise 123456 ya 654321. Aisa PIN chuno jo koi guess na kar sake.',
+    'Ek ke baad ek digit mat daalo, jaise 123456 ya 654321. Aisa PIN chuno jo koi guess na kar sake.',
   'Don’t use the end of your mobile number. Pick a PIN that is hard to guess.':
-    'Mobile number ke aakhri number mat daalo. Aisa PIN chuno jo koi guess na kar sake.',
+    'Mobile number ke aakhri 6 digit mat daalo. Aisa PIN chuno jo koi guess na kar sake.',
   'The two PINs are not the same. Type the same PIN in both boxes.': 'Dono PIN alag hain. Dono box mein ek hi PIN daalo.',
   'Type your gym’s name.': 'Apne gym ka naam daalo.',
   'Type your name.': 'Apna naam daalo.',
@@ -137,12 +144,12 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   'After you sign in with a code, you can choose a new PIN straight away.': 'Code se sign in karne ke baad aap turant naya PIN chun sakte ho.',
   'Can’t use WhatsApp? Other ways back in': 'WhatsApp nahi chal raha? Wapas aane ke aur tareeke',
   'We send a 6-digit code to your mobile number on WhatsApp. Then you choose a new PIN.':
-    'Hum aapke mobile number par WhatsApp se 6 number ka code bhejenge. Phir aap naya PIN chuno.',
+    'Hum aapke mobile number par WhatsApp se 6-digit code bhejenge. Phir aap naya PIN chuno.',
   'If {phone} has an account, a code is on its way on WhatsApp. It works for 10 minutes.':
     'Agar {phone} ka account hai, to WhatsApp par code aa raha hai. Yeh 10 minute tak chalega.',
   'Code from WhatsApp': 'WhatsApp wala code',
-  'Type the 6-digit code from WhatsApp.': 'WhatsApp wala 6 number ka code daalo.',
-  'Choose a new 6-digit PIN': 'Naya 6 number ka PIN chuno',
+  'Type the 6-digit code from WhatsApp.': 'WhatsApp wala 6-digit code daalo.',
+  'Choose a new 6-digit PIN': 'Naya 6-digit PIN chuno',
   'Please wait…': 'Thoda ruko…',
   'Set new PIN and sign in': 'Naya PIN rakho aur sign in karo',
   'Send code on WhatsApp': 'WhatsApp par code bhejo',
@@ -151,7 +158,7 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   'You sign in with this number. We check it with a code on WhatsApp.':
     'Aap is number se sign in karoge. Hum WhatsApp par code bhejkar ise check karte hain.',
   'We sent a 6-digit code to {phone} on WhatsApp. It works for 10 minutes.':
-    'Humne {phone} par WhatsApp se 6 number ka code bheja hai. Yeh 10 minute tak chalega.',
+    'Humne {phone} par WhatsApp se 6-digit code bheja hai. Yeh 10 minute tak chalega.',
   'Get code on WhatsApp': 'WhatsApp par code lo',
   // "Verify with WhatsApp" (8 Nov 2026): the person sends us one WhatsApp message (auth/WhatsAppVerify.tsx).
   'Verify with WhatsApp': 'WhatsApp se check karo',
@@ -371,7 +378,7 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   'No members yet': 'Abhi koi member nahi',
   'Nobody in this batch fits this filter. Pick “All batches” to see everyone.':
     'Is batch mein is filter wala koi nahi hai. Sabko dekhne ke liye “Saare batch” chuno.',
-  'Try part of a name, or the last four digits of their mobile number.': 'Naam ka thoda hissa daalo, ya mobile number ke aakhri chaar number.',
+  'Try part of a name, or the last four digits of their mobile number.': 'Naam ka thoda hissa daalo, ya mobile number ke aakhri 4 digit.',
   'Add your first member. Then you can sell them a membership.': 'Apna pehla member jodo. Phir aap unhe membership de sakte ho.',
   Member: 'Member',
   Status: 'Status',

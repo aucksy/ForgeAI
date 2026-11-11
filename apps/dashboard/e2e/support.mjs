@@ -1247,7 +1247,7 @@ export async function eraseAndStartFresh(page) {
   const confirm = sheet(page, 'Erase everything?');
   await expect(confirm).toBeVisible();
   await confirm.getByRole('button', { name: 'Erase everything' }).tap();
-  await expect(page.getByText('0 members · 0 memberships · 0 payments · 0 check-ins.', { exact: false })).toBeVisible();
+  await expect(page.getByText('0 members · 0 plans sold (new and renewals) · 0 payments · 0 check-ins.', { exact: false })).toBeVisible();
 }
 
 /** A fresh, empty gym in this browser: the demo first (how a new owner gets in), then erased. */

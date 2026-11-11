@@ -341,10 +341,10 @@ export const HELP_ARTICLES = [
     title: 'Change your gym details and admin settings',
     text:
       'Open Settings (on a phone, under More). It has three tabs. ' +
-      '"Gym": under "Gym details", your gym name, phone, address, GSTIN and UPI ID. Tap "Save details". ' +
+      '"Gym": Language (English or Hinglish), the card to put the admin app on your phone or computer, then under "Gym details" your gym name, phone, address, GSTIN and UPI ID. Tap "Save details". ' +
       '"Member app": your gym code, and links to branding, gym timings, challenges and busy machines. ' +
-      '"Sign-in & data": "Staff & sign-in", "Download a backup" (an Excel file of all your gym data), "Your gym’s records" (how many members, payments and visits are saved, and where), and a danger zone that can erase everything. ' +
-      'Settings also has Language (English or Hinglish) and "Dark or light".',
+      '"Sign-in & data": "Staff & sign-in", "Download a backup" (an Excel file of all your gym data), "Your gym’s records" (how many members, plans sold, payments and check-ins are saved), "Clear offline copy" and "Delete our gym from MettleUp". ' +
+      '"MettleUp access" is on Help and feedback.',
     screens: ['apps/dashboard/src/crm/ui/screens/Settings.tsx'],
   },
   {
@@ -799,7 +799,8 @@ export const HELP_ARTICLES = [
       'Type, or tap Speak and talk in Hindi or English, then tap Send. ' +
       'To hide the round button, turn off "Show the feedback button on every screen" on that page. You can also drag it up or down. ' +
       'Admin app: tap More, then "Help and feedback", type your message, then tap Send. ' +
-      'A question may get an answer at once. Tap Yes or No to say if it helped. Every message is read.',
+      'A question may get an answer at once. Tap Yes or No to say if it helped. Every message is read. ' +
+      'Owners: "MettleUp access", lower on that page, lets MettleUp support read your records for one hour, and lists every time they looked.',
     screens: ['apps/mobile/src/app/settings/feedback.tsx', 'apps/dashboard/src/crm/ui/screens/Feedback.tsx'],
   },
   {

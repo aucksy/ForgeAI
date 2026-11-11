@@ -3,9 +3,11 @@
  *
  * R-247 (owner 31 Oct 2026: "the settings section is ... disorganized and it's too much to understand.
  * ... put similar themed tabs under the settings section as well"): three tabs, like Money and
- * Attendance: Gym (/settings: details, branches, timings), Member app (/settings/app: the app code,
- * branding, challenges) and Sign-in & data (/settings/data: going online, the app on this device, the
- * gym's records, MettleUp support access).
+ * Attendance: Gym (/settings: screen language, the admin app on this device, details, branches, timings),
+ * Member app (/settings/app: the app code, branding, challenges) and Sign-in & data (/settings/data: going
+ * online, a backup, the gym's records). R-449 (R-447 fresh eyes): "Install the admin app" moved to the Gym
+ * tab (the tab Settings opens on, and the menu row promises "app"); MettleUp access moved to Help and
+ * feedback, where an owner goes when MettleUp support needs to look.
  *
  * "Load demo gym" and "Start fresh" are both destructive, so both confirm first and
  * both say plainly what will happen. The mobile app learned this the hard way in
@@ -27,7 +29,7 @@ import { useCrm } from '../../store';
 import { navigate } from '../router';
 import { dateISOFromEpoch, formatDay } from '../../logic/dates';
 import { checkGymDetails } from '../../logic/gst';
-import { countOf } from '../../logic/plural';
+import { countOf, recordsLine } from '../../logic/plural';
 import { unreadableCopy } from '../../data/local';
 import { isDemoGym } from '../../data/demo';
 import { downloadSavedData } from '../../store';
@@ -48,7 +50,6 @@ import {
   font,
   space,
 } from '../kit';
-import { ForgeAccessCard } from '../ForgeAccessCard';
 import { BranchesCard } from '../../branches/BranchesCard';
 import { useBranches } from '../../branches/context';
 import { useTerms } from '../../auth/TermsGate';
@@ -72,9 +73,9 @@ export function settingsTabFor(section: string | undefined): SettingsTab {
 
 const TAB_PATH: Record<SettingsTab, string> = { gym: '/settings', app: '/settings/app', data: '/settings/data' };
 const TAB_SUBTITLE: Record<SettingsTab, string> = {
-  gym: 'Your gym’s name, address, branches and opening times',
+  gym: 'Gym details, opening times, screen language and the admin app',
   app: 'What your members see in the MettleUp app',
-  data: 'Going online, this device, and your gym’s records',
+  data: 'Going online, staff sign-in, backups and your gym’s records',
 };
 /** Where a greyed-out button sends the owner first. */
 const GO_ONLINE = 'First put your gym online in Settings → Sign-in & data.';
@@ -200,6 +201,8 @@ export function SettingsScreen({ section }: { section?: string }) {
       {tab === 'gym' && (
       <>
       <LanguageCard />
+      {/* R-449: the admin app on this phone or computer, next to the screen language (both are about this device). */}
+      <InstallCard />
       {/* R-247: going online is what protects the gym, so a gym that is not online yet is told here too. */}
       {!online && (
         <Card style={{ marginBottom: space.lg }}>
@@ -343,8 +346,6 @@ export function SettingsScreen({ section }: { section?: string }) {
       {/* Sign-in first: "put your records online" is the one thing here that protects the gym. */}
       <SignInCard />
 
-      <InstallCard />
-
       {/* Launch audit 3 Nov 2026: keeping a copy is a good habit, not a danger: its own card. */}
       {canErase && <DownloadDataCard />}
 
@@ -352,7 +353,7 @@ export function SettingsScreen({ section }: { section?: string }) {
         {/* R-447: was "Your data", too close to the backup card above it ("Keep a copy of your data"). */}
         <SectionTitle>Your gym’s records</SectionTitle>
         <p style={{ margin: 0, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
-          {`${countOf(counts.members, 'member')} · ${countOf(counts.memberships, 'membership')} · ${countOf(counts.payments, 'payment')} · ${countOf(counts.visits, 'check-in')}. Set up ${formatDay(dateISOFromEpoch(gym.createdAt))}.`}
+          {`${recordsLine(counts)} Set up ${formatDay(dateISOFromEpoch(gym.createdAt))}.`}
         </p>
         <p style={{ margin: `${space.sm}px 0 0`, fontFamily: font.body, fontSize: 13, color: color.inkMuted }}>
           {online
@@ -361,6 +362,12 @@ export function SettingsScreen({ section }: { section?: string }) {
               ? 'Saved in this browser only. A demo gym is never put online.'
               : 'Saved in this browser only. Put your gym online (above) to keep it safe and open it anywhere.'}
         </p>
+        {/* R-449: MettleUp access moved to Help and feedback; an owner who looks for it here is told where. */}
+        {online && canErase && (
+          <p style={{ margin: `${space.sm}px 0 0`, fontFamily: font.body, fontSize: 13, color: color.inkMuted }}>
+            MettleUp support can look at your records only if you let them. To let them, or to see when they looked: Help and feedback → MettleUp access.
+          </p>
+        )}
         {termsLine && (
           <p style={{ margin: `${space.sm}px 0 0`, fontFamily: font.body, fontSize: 13, color: color.inkMuted }}>
             {termsLine}
@@ -438,9 +445,6 @@ export function SettingsScreen({ section }: { section?: string }) {
         </Row>
         )}
       </Card>
-
-      {/* #51: when MettleUp support looked at this gym's records, and the button to let them. */}
-      {online && canErase && <ForgeAccessCard />}
       </>
       )}
 

@@ -39,7 +39,7 @@ test('J10b Load demo gym and Erase and start fresh: say what they replace, then 
   await openSettings(page, 'Sign-in & data');
   const main = page.getByRole('main');
   // The demo gym of 17 Oct 2026 (a fixed seed: the same gym every time).
-  const dataLine = main.getByText(/^\d+ members · \d+ memberships · \d+ payments · \d+ check-ins\./);
+  const dataLine = main.getByText(/^\d+ members · \d+ plans? sold \(new and renewals\) · \d+ payments · \d+ check-ins\./);
   await expect(dataLine).toContainText('128 members');
   const demoLine = (await dataLine.textContent()) ?? '';
   const [, payments, visits] = /(\d+) payments · (\d+) check-ins/.exec(demoLine) ?? [];
@@ -79,7 +79,7 @@ test('J10b Load demo gym and Erase and start fresh: say what they replace, then 
   await expect(erase).toContainText('You will be left with an empty gym: no members, no plans, no payments.');
   await erase.getByRole('button', { name: 'Erase everything' }).tap();
   await expect(page.getByText('Started fresh.')).toBeVisible();
-  await expect(dataLine).toHaveText(/^0 members · 0 memberships · 0 payments · 0 check-ins\./);
+  await expect(dataLine).toHaveText(/^0 members · 0 plans sold \(new and renewals\) · 0 payments · 0 check-ins\./);
   await expect(page.getByRole('banner')).toContainText('Iron Temple Fitness');
   await open(page, 'Members');
   await expect(page.getByText('No members yet')).toBeVisible();
@@ -89,7 +89,7 @@ test('J10b Load demo gym and Erase and start fresh: say what they replace, then 
   // After a reload it is still empty (nothing came back from storage).
   await page.reload();
   await openSettings(page, 'Sign-in & data');
-  await expect(dataLine).toHaveText(/^0 members · 0 memberships · 0 payments · 0 check-ins\./);
+  await expect(dataLine).toHaveText(/^0 members · 0 plans sold \(new and renewals\) · 0 payments · 0 check-ins\./);
 });
 
 test('J10c Start over with a new demo gym: back to the first screen', async ({ page }) => {

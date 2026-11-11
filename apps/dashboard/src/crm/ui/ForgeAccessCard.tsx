@@ -1,5 +1,5 @@
 /**
- * Settings → Your data → MettleUp access (#51, MettleUp HQ step 3). The gym owner sees every time
+ * Help and feedback → MettleUp access (R-449; was Settings → Sign-in & data) (#51, MettleUp HQ step 3). The gym owner sees every time
  * MettleUp support opened this gym's records (the gym's own "Let MettleUp support look" button, or
  * MettleUp in an emergency), what was looked at, and every other MettleUp action on the gym. The
  * button opens read-only support access for one hour; "Close it now" ends it early.

@@ -140,7 +140,8 @@ export function Welcome() {
               color: color.inkSecondary,
             }}
           >
-            {notice}
+            {/* R-449: the sign-out lines have Hinglish too (t() keeps any other line in English). */}
+            {t(notice)}
           </div>
         )}
 
@@ -162,7 +163,7 @@ export function Welcome() {
             {t('See it working')}
           </h2>
           <p style={{ margin: `6px 0 0`, fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>
-            {t('Opens a sample gym with made-up members, payments and a shop. You get a real gym code. A phone with the MettleUp app can join and order, and you see the order here.')}
+            {t('Opens a sample gym with made-up members, payments and a shop. To try the member side too, join this gym from the MettleUp app on a phone and order something. The order shows up here.')}
           </p>
 
           {error && (

@@ -99,7 +99,8 @@ test.describe('iPhone Safari', () => {
     // Negative: plain Safari (not the home-screen app) never shows the "sign in once more" note.
     await expect(page.getByRole('note')).toHaveCount(0);
     await startOnlineGym(page);
-    await openSettings(page, 'Sign-in & data');
+    // R-449: the install card is on Settings' first tab, Gym (it was under Sign-in & data).
+    await openSettings(page, 'Gym');
     const card = installCard(page);
     await card.scrollIntoViewIfNeeded();
     await expect(card).toContainText(PHONE_LINE);
@@ -180,7 +181,8 @@ test.describe('iPhone Safari', () => {
     // Signed in inside the app: no install card on Today, and Settings says it is on the home screen.
     await startOnlineGym(page);
     await expect(page.getByRole('heading', { name: 'Put the admin app on your phone', exact: true })).toHaveCount(0);
-    await openSettings(page, 'Sign-in & data');
+    // R-449: the install card is on Settings' first tab, Gym (it was under Sign-in & data).
+    await openSettings(page, 'Gym');
     // Fresh-eyes: inside the app it no longer says "open it from the icon" (the owner is already in it).
     await expect(page.getByText('You are using the admin app from your home screen. It stays here, ready in one tap.')).toBeVisible();
     await shot(page, 'iphone-app-settings-installed');
@@ -193,7 +195,8 @@ test.describe('iPhone Chrome', () => {
   test('R446-d Chrome on iPhone: the Share icon is in the address bar (no ••• step)', async ({ page }) => {
     await openApp(page);
     await startOnlineGym(page);
-    await openSettings(page, 'Sign-in & data');
+    // R-449: the install card is on Settings' first tab, Gym (it was under Sign-in & data).
+    await openSettings(page, 'Gym');
     const card = installCard(page);
     await card.scrollIntoViewIfNeeded();
     await expectSteps(card, [
@@ -223,7 +226,8 @@ test.describe('Android Chrome', () => {
   test('R446-f Android Settings card: "Show me how" first, the 3 steps after a tap, then no dead button', async ({ page }) => {
     await openApp(page);
     await startOnlineGym(page);
-    await openSettings(page, 'Sign-in & data');
+    // R-449: the install card is on Settings' first tab, Gym (it was under Sign-in & data).
+    await openSettings(page, 'Gym');
     const card = installCard(page);
     await card.scrollIntoViewIfNeeded();
     await expect(stepsList(card)).toHaveCount(0);
@@ -259,7 +263,7 @@ test.describe('computer', () => {
     await startOnlineGym(page);
     await page.setViewportSize({ width: 1280, height: 900 });
     await page.evaluate(() => {
-      window.location.hash = '/settings/data';
+      window.location.hash = '/settings';
     });
     await expect(page.getByRole('heading', { name: 'Settings', exact: true })).toBeVisible();
     const card = installCard(page, COMPUTER_TITLE);

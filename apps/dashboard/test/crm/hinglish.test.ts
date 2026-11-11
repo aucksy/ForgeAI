@@ -20,7 +20,7 @@ import { QUICK_ACTIONS } from '../../src/crm/logic/quickActions';
 import { TILE_FILTERS, tileLabel } from '../../src/crm/logic/homeTiles';
 import { STATE_LABEL } from '../../src/crm/logic/membership';
 import { START_PROMISE } from '../../src/crm/logic/trial';
-import { CHECK_RAN_OUT, OTHER_WAYS, PIN_HINT } from '../../src/crm/auth/signin';
+import { CHECK_RAN_OUT, OTHER_WAYS, PIN_HINT, REMOVED_WORDS, SIGNED_OUT_WORDS } from '../../src/crm/auth/signin';
 
 const ROOT = fileURLToPath(new URL('../../src/crm', import.meta.url));
 const DICT = join('lang', 'hinglish.ts');
@@ -84,6 +84,17 @@ describe('the Hinglish dictionary', () => {
     }
   });
 
+  // R-449 (R-447 fresh eyes): "6 number ka PIN" read awkward. Owners say "6-digit PIN", so the Hinglish keeps
+  // "digit" for a PIN, a code or a mobile number, the same on every screen.
+  it('says "digit" the way owners do: "6-digit PIN", never "6 number ka PIN"', () => {
+    const digitLines = entries.filter(([en]) => /\bdigits?\b/i.test(en));
+    expect(digitLines.length).toBeGreaterThan(8);
+    expect(digitLines.filter(([, hi]) => !/\bdigit\b/.test(hi)).map(([en]) => en)).toEqual([]);
+    expect(entries.filter(([, hi]) => /\b\d+ number (ka|ke)\b|\(6 number\)|chhe baar/.test(hi)).map(([en]) => en)).toEqual([]);
+    expect(HINGLISH['Choose a 6-digit PIN']).toBe('6-digit PIN chuno');
+    expect(HINGLISH['Sign in with your mobile number and your 6-digit PIN.']).toBe('Apne mobile number aur 6-digit PIN se sign in karo.');
+  });
+
   it('a sentence stays a sentence: an English line ending in a full stop ends in one in Hinglish', () => {
     const bad = entries.filter(([en, hi]) => /\.$/.test(en) && !/\.$/.test(hi));
     expect(bad.map(([en]) => en)).toEqual([]);
@@ -110,6 +121,10 @@ describe('the translated screens are complete', () => {
       ...Object.values(OTHER_WAYS),
       PIN_HINT,
       CHECK_RAN_OUT,
+      // R-449: the sign-in page's notice line after a sign-out (drawn through t(notice)).
+      'You are signed out of this device.',
+      SIGNED_OUT_WORDS,
+      REMOVED_WORDS,
     ];
     expect(dynamic.filter((k) => !(k in HINGLISH))).toEqual([]);
   });

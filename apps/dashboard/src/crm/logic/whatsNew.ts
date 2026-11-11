@@ -51,6 +51,15 @@ export const ADMIN_NEWS: readonly AdminNewsEntry[] = [
         text: 'In Settings → Sign-in & data, the button "Clear this device’s saved data" is now "Clear offline copy", with a note on what it does. It never deletes your gym’s records online.',
         go: { label: 'Open Settings', path: '/settings/data' },
       },
+      {
+        // R-449 (R-447 fresh eyes): two cards moved to where an owner looks for them; deployed the same day, merged.
+        text: 'The card to put the admin app on your phone or computer is now on the first Settings tab, Gym.',
+        go: { label: 'Open Settings', path: '/settings' },
+      },
+      {
+        text: '"MettleUp access", where you let MettleUp support look at your records and see each time they did, is now on Help and feedback.',
+        go: { label: 'Open Help and feedback', path: '/feedback' },
+      },
     ],
   },
   {
@@ -77,7 +86,8 @@ export const ADMIN_NEWS: readonly AdminNewsEntry[] = [
         // hides; the home-screen app opened signed out; "new" dots showed to brand-new gyms. Deployed 10 Nov 2026,
         // after this day's first update had gone live, so merged into it (one id per day).
         text: 'On iPhone, Settings now shows clear numbered steps to put the admin app on your home screen. The first time you open it from there, sign in once more. After that, you stay signed in.',
-        go: { label: 'Open Settings', path: '/settings/data' },
+        // R-449: the install card moved to the Gym tab.
+        go: { label: 'Open Settings', path: '/settings' },
       },
       {
         text: 'The small "new" dots in the menu now only show for things added after your gym joined MettleUp.',

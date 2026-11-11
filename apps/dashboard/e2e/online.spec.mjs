@@ -41,7 +41,7 @@ test('J20 put the browser gym online: the records go up and the owner is signed 
   // Settings now says online; the member is read back from the server.
   await openSettings(page, 'Sign-in & data');
   await expect(page.getByRole('main')).toContainText('Saved online. Safe if a phone or computer breaks.');
-  await expect(page.getByRole('main')).toContainText('1 member · 0 memberships · 0 payments · 0 check-ins.');
+  await expect(page.getByRole('main')).toContainText('1 member · 0 plans sold (new and renewals) · 0 payments · 0 check-ins.');
   await expect(page.getByRole('button', { name: 'Erase and start fresh' })).toHaveCount(0);
   await page.reload();
   await open(page, 'Members');
@@ -95,7 +95,7 @@ test('J21 going online stops half-way: nothing lost; "Finish going online" ends 
     { timeout: 15_000 },
   );
   // Still this browser's gym, all 420 here; the button now finishes the same move.
-  await expect(page.getByRole('main')).toContainText('420 members · 0 memberships');
+  await expect(page.getByRole('main')).toContainText('420 members · 0 plans sold');
   await expect(page.getByRole('main')).toContainText('Saved in this browser only.');
   await expect(card.getByLabel('Your name')).toHaveCount(0);
   await expectFitsPhone(page, 'after going online stopped');

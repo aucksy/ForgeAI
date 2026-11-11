@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { countOf } from '../../src/crm/logic/plural';
+import { countOf, recordsLine } from '../../src/crm/logic/plural';
 
 describe('countOf (U-A8: "1 members")', () => {
   it('says one thing in the singular', () => {
@@ -16,5 +16,23 @@ describe('countOf (U-A8: "1 members")', () => {
   it('takes an irregular plural', () => {
     expect(countOf(2, 'person', 'people')).toBe('2 people');
     expect(countOf(1, 'person', 'people')).toBe('1 person');
+  });
+});
+
+// R-449 (R-447 fresh eyes): "0 members · 0 memberships" read as two words for the same thing.
+describe('recordsLine (Settings → Sign-in & data, "Your gym’s records")', () => {
+  it('says "plans sold", never "memberships"', () => {
+    const line = recordsLine({ members: 128, memberships: 140, payments: 300, visits: 2000 });
+    expect(line).toBe('128 members · 140 plans sold (new and renewals) · 300 payments · 2000 check-ins.');
+    expect(line).not.toMatch(/membership/);
+  });
+
+  it('a new gym, and one of each', () => {
+    expect(recordsLine({ members: 0, memberships: 0, payments: 0, visits: 0 })).toBe(
+      '0 members · 0 plans sold (new and renewals) · 0 payments · 0 check-ins.',
+    );
+    expect(recordsLine({ members: 1, memberships: 1, payments: 1, visits: 1 })).toBe(
+      '1 member · 1 plan sold (new and renewals) · 1 payment · 1 check-in.',
+    );
   });
 });
