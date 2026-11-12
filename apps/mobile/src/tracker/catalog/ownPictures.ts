@@ -39,10 +39,20 @@ export const OWN_PICTURES: Readonly<Record<string, ExercisePictures>> = {
     thumb: require('../../../assets/exercise-pictures-own/hollow_hold__thumb.webp'),
     end: null,
   },
+  incline_bench_preacher_curl: {
+    start: require('../../../assets/exercise-pictures-own/incline_bench_preacher_curl__start.webp'),
+    thumb: require('../../../assets/exercise-pictures-own/incline_bench_preacher_curl__thumb.webp'),
+    end: require('../../../assets/exercise-pictures-own/incline_bench_preacher_curl__end.webp'),
+  },
   incline_dumbbell_skull_crusher: {
     start: require('../../../assets/exercise-pictures-own/incline_dumbbell_skull_crusher__start.webp'),
     thumb: require('../../../assets/exercise-pictures-own/incline_dumbbell_skull_crusher__thumb.webp'),
     end: require('../../../assets/exercise-pictures-own/incline_dumbbell_skull_crusher__end.webp'),
+  },
+  incline_neutral_grip_dumbbell_press: {
+    start: require('../../../assets/exercise-pictures-own/incline_neutral_grip_dumbbell_press__start.webp'),
+    thumb: require('../../../assets/exercise-pictures-own/incline_neutral_grip_dumbbell_press__thumb.webp'),
+    end: require('../../../assets/exercise-pictures-own/incline_neutral_grip_dumbbell_press__end.webp'),
   },
   knee_plank: {
     start: require('../../../assets/exercise-pictures-own/knee_plank__start.webp'),
@@ -59,6 +69,46 @@ export const OWN_PICTURES: Readonly<Record<string, ExercisePictures>> = {
     thumb: require('../../../assets/exercise-pictures-own/seated_hammer_curl__thumb.webp'),
     end: require('../../../assets/exercise-pictures-own/seated_hammer_curl__end.webp'),
   },
+  seated_rear_delt_fly: {
+    start: require('../../../assets/exercise-pictures-own/seated_rear_delt_fly__start.webp'),
+    thumb: require('../../../assets/exercise-pictures-own/seated_rear_delt_fly__thumb.webp'),
+    end: require('../../../assets/exercise-pictures-own/seated_rear_delt_fly__end.webp'),
+  },
+  single_arm_dumbbell_curl: {
+    start: require('../../../assets/exercise-pictures-own/single_arm_dumbbell_curl__start.webp'),
+    thumb: require('../../../assets/exercise-pictures-own/single_arm_dumbbell_curl__thumb.webp'),
+    end: require('../../../assets/exercise-pictures-own/single_arm_dumbbell_curl__end.webp'),
+  },
+  single_arm_dumbbell_lateral_raise: {
+    start: require('../../../assets/exercise-pictures-own/single_arm_dumbbell_lateral_raise__start.webp'),
+    thumb: require('../../../assets/exercise-pictures-own/single_arm_dumbbell_lateral_raise__thumb.webp'),
+    end: require('../../../assets/exercise-pictures-own/single_arm_dumbbell_lateral_raise__end.webp'),
+  },
+  single_arm_dumbbell_upright_row: {
+    start: require('../../../assets/exercise-pictures-own/single_arm_dumbbell_upright_row__start.webp'),
+    thumb: require('../../../assets/exercise-pictures-own/single_arm_dumbbell_upright_row__thumb.webp'),
+    end: require('../../../assets/exercise-pictures-own/single_arm_dumbbell_upright_row__end.webp'),
+  },
+  single_arm_lying_dumbbell_extension: {
+    start: require('../../../assets/exercise-pictures-own/single_arm_lying_dumbbell_extension__start.webp'),
+    thumb: require('../../../assets/exercise-pictures-own/single_arm_lying_dumbbell_extension__thumb.webp'),
+    end: require('../../../assets/exercise-pictures-own/single_arm_lying_dumbbell_extension__end.webp'),
+  },
+  single_leg_calf_raise: {
+    start: require('../../../assets/exercise-pictures-own/single_leg_calf_raise__start.webp'),
+    thumb: require('../../../assets/exercise-pictures-own/single_leg_calf_raise__thumb.webp'),
+    end: require('../../../assets/exercise-pictures-own/single_leg_calf_raise__end.webp'),
+  },
+  sissy_squat: {
+    start: require('../../../assets/exercise-pictures-own/sissy_squat__start.webp'),
+    thumb: require('../../../assets/exercise-pictures-own/sissy_squat__thumb.webp'),
+    end: require('../../../assets/exercise-pictures-own/sissy_squat__end.webp'),
+  },
+  suitcase_carry: {
+    start: require('../../../assets/exercise-pictures-own/suitcase_carry__start.webp'),
+    thumb: require('../../../assets/exercise-pictures-own/suitcase_carry__thumb.webp'),
+    end: require('../../../assets/exercise-pictures-own/suitcase_carry__end.webp'),
+  },
   tate_press: {
     start: require('../../../assets/exercise-pictures-own/tate_press__start.webp'),
     thumb: require('../../../assets/exercise-pictures-own/tate_press__thumb.webp'),
@@ -69,10 +119,20 @@ export const OWN_PICTURES: Readonly<Record<string, ExercisePictures>> = {
     thumb: require('../../../assets/exercise-pictures-own/toe_touch_crunch__thumb.webp'),
     end: require('../../../assets/exercise-pictures-own/toe_touch_crunch__end.webp'),
   },
+  two_arm_dumbbell_kickback: {
+    start: require('../../../assets/exercise-pictures-own/two_arm_dumbbell_kickback__start.webp'),
+    thumb: require('../../../assets/exercise-pictures-own/two_arm_dumbbell_kickback__thumb.webp'),
+    end: require('../../../assets/exercise-pictures-own/two_arm_dumbbell_kickback__end.webp'),
+  },
   wall_sit: {
     start: require('../../../assets/exercise-pictures-own/wall_sit__start.webp'),
     thumb: require('../../../assets/exercise-pictures-own/wall_sit__thumb.webp'),
     end: null,
+  },
+  weighted_crunch: {
+    start: require('../../../assets/exercise-pictures-own/weighted_crunch__start.webp'),
+    thumb: require('../../../assets/exercise-pictures-own/weighted_crunch__thumb.webp'),
+    end: require('../../../assets/exercise-pictures-own/weighted_crunch__end.webp'),
   },
 };
 /* eslint-enable @typescript-eslint/no-require-imports */

@@ -128,6 +128,9 @@ describe('our own pictures (the grey 3D athlete, for exercises RepDB has no pict
     'alternating_dumbbell_curl', 'alternating_hammer_curl', 'dumbbell_step_up', 'farmers_walk', 'high_knees',
     'hollow_hold', 'incline_dumbbell_skull_crusher', 'knee_plank', 'reverse_hyperextension', 'seated_hammer_curl',
     'tate_press', 'toe_touch_crunch', 'wall_sit',
+    'incline_bench_preacher_curl', 'incline_neutral_grip_dumbbell_press', 'seated_rear_delt_fly', 'single_arm_dumbbell_curl',
+    'single_arm_dumbbell_lateral_raise', 'single_arm_dumbbell_upright_row', 'single_arm_lying_dumbbell_extension',
+    'single_leg_calf_raise', 'sissy_squat', 'suitcase_carry', 'two_arm_dumbbell_kickback', 'weighted_crunch',
   ];
   // Holds: one picture, no end picture.
   const HOLDS = ['hollow_hold', 'knee_plank', 'wall_sit'];

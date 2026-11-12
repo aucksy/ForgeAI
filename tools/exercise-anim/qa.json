@@ -1,271 +1,283 @@
 {
- "alternating_dumbbell_curl": {
-  "rendered": "2026-11-11",
-  "run": "43079162675",
-  "qa": "pass",
-  "tries": 1
- },
- "alternating_hammer_curl": {
-  "rendered": "2026-11-11",
-  "run": "43079162675",
-  "qa": "pass",
-  "tries": 1
- },
- "burpee": {
-  "rendered": "2026-11-11",
-  "run": "43079162675",
-  "qa": "fail",
-  "reason": "end: hands float in front of the body instead of on the floor",
-  "tries": 1
- },
- "chest_supported_reverse_fly": {
-  "rendered": "2026-11-11",
-  "run": "43079162675",
-  "qa": "fail",
-  "reason": "legs splay out sideways with knees near the floor; end raise hard to read from the camera",
-  "tries": 1
- },
- "copenhagen_plank": {
-  "rendered": "2026-11-11",
-  "run": "43079162675",
-  "qa": "fail",
-  "reason": "athlete tiny in the frame; held on the hand, not the forearm",
-  "tries": 1
- },
- "curtsy_lunge": {
-  "rendered": "2026-11-11",
-  "run": "43079162675",
-  "qa": "pass",
-  "tries": 1,
-  "note": "back toe 2 cm into the floor (not visible at picture size)"
- },
- "dumbbell_leg_curl": {
-  "rendered": "2026-11-11",
-  "run": "43079162675",
-  "qa": "fail",
-  "reason": "no dumbbell between the feet (rig can only hold weights in hands)",
-  "tries": 1
- },
- "dumbbell_step_up": {
-  "rendered": "2026-11-11",
-  "run": "43079162675",
-  "qa": "pass",
-  "tries": 1
- },
- "farmers_walk": {
-  "rendered": "2026-11-11",
-  "run": "43079162675",
-  "qa": "pass",
-  "tries": 1,
-  "note": "back toe 1 cm into the floor"
- },
- "high_knees": {
-  "rendered": "2026-11-11",
-  "run": "43079162675",
-  "qa": "pass",
-  "tries": 1,
-  "note": "standing toe 2 cm into the floor"
- },
- "hindu_push_up": {
-  "rendered": "2026-11-11",
-  "run": "43079162675",
-  "qa": "fail",
-  "reason": "end pose sinks 25 cm into the floor",
-  "tries": 1
- },
- "hollow_hold": {
-  "rendered": "2026-11-11",
-  "run": "43082982264",
-  "qa": "pass",
-  "tries": 2,
-  "note": "passed on the retry (floor height / flat-bench fix)"
- },
- "incline_bench_preacher_curl": {
-  "rendered": "2026-11-11",
-  "run": "43079162675",
-  "qa": "pass",
-  "tries": 1
- },
- "incline_dumbbell_skull_crusher": {
-  "rendered": "2026-11-11",
-  "run": "43079162675",
-  "qa": "pass",
-  "tries": 1
- },
- "incline_neutral_grip_dumbbell_press": {
-  "rendered": "2026-11-11",
-  "run": "43079162675",
-  "qa": "pass",
-  "tries": 1
- },
- "incline_y_raise": {
-  "rendered": "2026-11-11",
-  "run": "43079162675",
-  "qa": "fail",
-  "reason": "legs splay out sideways with knees near the floor",
-  "tries": 1
- },
- "knee_plank": {
-  "rendered": "2026-11-11",
-  "run": "43082982264",
-  "qa": "pass",
-  "tries": 2,
-  "note": "passed on the retry; forearm 1 cm into the floor"
- },
- "neutral_grip_dumbbell_press": {
-  "rendered": "2026-11-11",
-  "run": "43082982264",
-  "qa": "fail",
-  "reason": "head hangs off the end of the flat pad and the back arches (flat-bench lying pose needs a probe_bench fit)",
-  "tries": 2
- },
- "plank_shoulder_tap": {
-  "rendered": "2026-11-11",
-  "run": "43082982264",
-  "qa": "fail",
-  "reason": "hands sink 5 cm into the floor; moving the body did not help (the hands follow the arm angles)",
-  "tries": 2
- },
- "reverse_hyperextension": {
-  "rendered": "2026-11-11",
-  "run": "43079162675",
-  "qa": "pass",
-  "tries": 1,
-  "note": "a plain high block stands in for the reverse-hyper bench"
- },
- "rkc_plank": {
-  "rendered": "2026-11-11",
-  "run": "43082982264",
-  "qa": "fail",
-  "reason": "forearms sink 5 cm into the floor; moving the body did not help (arm angles put the forearms below the floor)",
-  "tries": 2
- },
- "seated_dumbbell_calf_raise": {
-  "rendered": "2026-11-11",
-  "run": "43079162675",
-  "qa": "fail",
-  "reason": "start and end look the same (heel lift too small to see)",
-  "tries": 1
- },
- "seated_hammer_curl": {
-  "rendered": "2026-11-11",
-  "run": "43079162675",
-  "qa": "pass",
-  "tries": 1
- },
- "seated_knee_tuck": {
-  "rendered": "2026-11-11",
-  "run": "43082982264",
-  "qa": "pass",
-  "tries": 2,
-  "note": "passed on the retry (floor height / flat-bench fix)"
- },
- "seated_rear_delt_fly": {
-  "rendered": "2026-11-11",
-  "run": "43079162675",
-  "qa": "pass",
-  "tries": 1
- },
- "single_arm_dumbbell_curl": {
-  "rendered": "2026-11-11",
-  "run": "43079162675",
-  "qa": "pass",
-  "tries": 1
- },
- "single_arm_dumbbell_lateral_raise": {
-  "rendered": "2026-11-11",
-  "run": "43079162675",
-  "qa": "pass",
-  "tries": 1,
-  "note": "free hand holds a plain post"
- },
- "single_arm_dumbbell_upright_row": {
-  "rendered": "2026-11-11",
-  "run": "43079162675",
-  "qa": "pass",
-  "tries": 1,
-  "note": "free hand holds a plain post"
- },
- "single_arm_lying_dumbbell_extension": {
-  "rendered": "2026-11-11",
-  "run": "43082982264",
-  "qa": "pass",
-  "tries": 2,
-  "note": "passed on the retry (floor height / flat-bench fix)"
- },
- "single_leg_calf_raise": {
-  "rendered": "2026-11-11",
-  "run": "43079162675",
-  "qa": "fail",
-  "reason": "free hand floats in front of the wall",
-  "tries": 1
- },
- "sissy_squat": {
-  "rendered": "2026-11-11",
-  "run": "43079162675",
-  "qa": "fail",
-  "reason": "end leans forward instead of back; feet 3.5 cm into the floor",
-  "tries": 1
- },
- "suitcase_carry": {
-  "rendered": "2026-11-11",
-  "run": "43079162675",
-  "qa": "pass",
-  "tries": 1,
-  "note": "back toe 1 cm into the floor"
- },
- "tate_press": {
-  "rendered": "2026-11-11",
-  "run": "43082982264",
-  "qa": "pass",
-  "tries": 2,
-  "note": "passed on the retry (floor height / flat-bench fix)"
- },
- "toe_touch_crunch": {
-  "rendered": "2026-11-11",
-  "run": "43082982264",
-  "qa": "pass",
-  "tries": 2,
-  "note": "passed on the retry (floor height / flat-bench fix)"
- },
- "two_arm_dumbbell_kickback": {
-  "rendered": "2026-11-11",
-  "run": "43079162675",
-  "qa": "pass",
-  "tries": 1,
-  "note": "triceps red sits high, near the back of the shoulder"
- },
- "waiter_curl": {
-  "rendered": "2026-11-11",
-  "run": "43079162675",
-  "qa": "fail",
-  "reason": "dumbbell held flat, not standing upright",
-  "tries": 1
- },
- "wall_sit": {
-  "rendered": "2026-11-11",
-  "run": "43079162675",
-  "qa": "pass",
-  "tries": 1
- },
- "weighted_crunch": {
-  "rendered": "2026-11-11",
-  "run": "43079162675",
-  "qa": "fail",
-  "reason": "no hands in the recipe: dumbbell not on the chest",
-  "tries": 1
- },
- "weighted_russian_twist": {
-  "rendered": "2026-11-11",
-  "run": "43079162675",
-  "qa": "fail",
-  "reason": "no hands in the recipe: dumbbell not in the hands",
-  "tries": 1
- },
- "zottman_curl": {
-  "rendered": "2026-11-11",
-  "run": "43079162675",
-  "qa": "pass",
-  "tries": 1
- }
+  "alternating_dumbbell_curl": {
+    "rendered": "2026-11-11",
+    "run": "43079162675",
+    "qa": "pass",
+    "tries": 1
+  },
+  "alternating_hammer_curl": {
+    "rendered": "2026-11-11",
+    "run": "43079162675",
+    "qa": "pass",
+    "tries": 1
+  },
+  "burpee": {
+    "rendered": "2026-11-12",
+    "run": "43161740739",
+    "qa": "fail",
+    "reason": "end plank on closed fists (knuckles), not flat hands: the rig has only fists, so a floor hand cannot be shown correctly",
+    "tries": 2
+  },
+  "chest_supported_reverse_fly": {
+    "rendered": "2026-11-12",
+    "run": "43161740739",
+    "qa": "fail",
+    "reason": "bench is flat, not inclined; end: the near arm hangs down to the floor while the far arm rises (arms do not match); start dumbbell through the bench base",
+    "tries": 2
+  },
+  "copenhagen_plank": {
+    "rendered": "2026-11-12",
+    "run": "43161740739",
+    "qa": "fail",
+    "reason": "camera looks straight down so it reads as lying flat; support arm straight and angled out with a fist, not a forearm under the shoulder; top hand floats in the air",
+    "tries": 2
+  },
+  "curtsy_lunge": {
+    "rendered": "2026-11-12",
+    "run": "43161740739",
+    "qa": "fail",
+    "reason": "end: the back leg steps back to its own side, not behind the front leg (a diagonal reverse lunge, not a curtsy)",
+    "tries": 2
+  },
+  "dumbbell_leg_curl": {
+    "rendered": "2026-11-12",
+    "run": "43161740739",
+    "qa": "fail",
+    "reason": "hands hang open in the air beside the bench legs instead of holding the bench",
+    "tries": 2
+  },
+  "dumbbell_step_up": {
+    "rendered": "2026-11-11",
+    "run": "43079162675",
+    "qa": "pass",
+    "tries": 1
+  },
+  "farmers_walk": {
+    "rendered": "2026-11-11",
+    "run": "43079162675",
+    "qa": "pass",
+    "tries": 1,
+    "note": "back toe 1 cm into the floor"
+  },
+  "high_knees": {
+    "rendered": "2026-11-11",
+    "run": "43079162675",
+    "qa": "pass",
+    "tries": 1,
+    "note": "standing toe 2 cm into the floor"
+  },
+  "hindu_push_up": {
+    "rendered": "2026-11-12",
+    "run": "43161740739",
+    "qa": "fail",
+    "reason": "hands are closed fists on the floor, not flat palms (the rig has only fists)",
+    "tries": 2
+  },
+  "hollow_hold": {
+    "rendered": "2026-11-11",
+    "run": "43082982264",
+    "qa": "pass",
+    "tries": 2,
+    "note": "passed on the retry (floor height / flat-bench fix)"
+  },
+  "incline_bench_preacher_curl": {
+    "rendered": "2026-11-12",
+    "run": "43161740739",
+    "qa": "pass",
+    "reason": "numbers, close-up and fresh reviewer all clean (12 Nov 2026)",
+    "tries": 2
+  },
+  "incline_dumbbell_skull_crusher": {
+    "rendered": "2026-11-11",
+    "run": "43079162675",
+    "qa": "pass",
+    "tries": 1
+  },
+  "incline_neutral_grip_dumbbell_press": {
+    "rendered": "2026-11-12",
+    "run": "43161740739",
+    "qa": "pass",
+    "reason": "numbers, close-up and fresh reviewer all clean (12 Nov 2026)",
+    "tries": 2
+  },
+  "incline_y_raise": {
+    "rendered": "2026-11-12",
+    "run": "43161740739",
+    "qa": "fail",
+    "reason": "bench is flat, not inclined; end: only the far arm rises into the Y, the near dumbbell hangs to the floor",
+    "tries": 2
+  },
+  "knee_plank": {
+    "rendered": "2026-11-11",
+    "run": "43082982264",
+    "qa": "pass",
+    "tries": 2,
+    "note": "passed on the retry; forearm 1 cm into the floor"
+  },
+  "neutral_grip_dumbbell_press": {
+    "rendered": "2026-11-11",
+    "run": "43082982264",
+    "qa": "fail",
+    "reason": "head hangs off the end of the flat pad and the back arches (flat-bench lying pose needs a probe_bench fit)",
+    "tries": 2
+  },
+  "plank_shoulder_tap": {
+    "rendered": "2026-11-11",
+    "run": "43082982264",
+    "qa": "fail",
+    "reason": "hands sink 5 cm into the floor; moving the body did not help (the hands follow the arm angles)",
+    "tries": 2
+  },
+  "reverse_hyperextension": {
+    "rendered": "2026-11-11",
+    "run": "43079162675",
+    "qa": "pass",
+    "tries": 1,
+    "note": "a plain high block stands in for the reverse-hyper bench"
+  },
+  "rkc_plank": {
+    "rendered": "2026-11-11",
+    "run": "43082982264",
+    "qa": "fail",
+    "reason": "forearms sink 5 cm into the floor; moving the body did not help (arm angles put the forearms below the floor)",
+    "tries": 2
+  },
+  "seated_dumbbell_calf_raise": {
+    "rendered": "2026-11-12",
+    "run": "43161740739",
+    "qa": "fail",
+    "reason": "start foot is flat on the floor beside the block, not on it; the hand hovers over the dumbbell; the far foot stays on the floor",
+    "tries": 2
+  },
+  "seated_hammer_curl": {
+    "rendered": "2026-11-11",
+    "run": "43079162675",
+    "qa": "pass",
+    "tries": 1
+  },
+  "seated_knee_tuck": {
+    "rendered": "2026-11-12",
+    "run": "43161740739",
+    "qa": "fail",
+    "reason": "body 2.8 cm into the floor (lowest_body_z -0.028) in start and end",
+    "tries": 3
+  },
+  "seated_rear_delt_fly": {
+    "rendered": "2026-11-12",
+    "run": "43161740739",
+    "qa": "pass",
+    "reason": "numbers, close-up and fresh reviewer all clean (12 Nov 2026)",
+    "tries": 2
+  },
+  "side_plank": {
+    "rendered": "2026-11-12",
+    "run": "43161740739",
+    "qa": "fail",
+    "reason": "camera looks straight down so it reads as lying flat; support arm straight and angled out with a fist, not a forearm under the shoulder; top hand floats in the air",
+    "tries": 1
+  },
+  "single_arm_dumbbell_curl": {
+    "rendered": "2026-11-12",
+    "run": "43161740739",
+    "qa": "pass",
+    "reason": "numbers, close-up and fresh reviewer all clean (12 Nov 2026)",
+    "tries": 2
+  },
+  "single_arm_dumbbell_lateral_raise": {
+    "rendered": "2026-11-12",
+    "run": "43161740739",
+    "qa": "pass",
+    "reason": "numbers, close-up and fresh reviewer all clean (12 Nov 2026)",
+    "tries": 2
+  },
+  "single_arm_dumbbell_upright_row": {
+    "rendered": "2026-11-12",
+    "run": "43161740739",
+    "qa": "pass",
+    "reason": "numbers, close-up and fresh reviewer all clean (12 Nov 2026)",
+    "tries": 2
+  },
+  "single_arm_lying_dumbbell_extension": {
+    "rendered": "2026-11-12",
+    "run": "43161740739",
+    "qa": "pass",
+    "reason": "numbers, close-up and fresh reviewer all clean (12 Nov 2026)",
+    "tries": 3
+  },
+  "single_leg_calf_raise": {
+    "rendered": "2026-11-12",
+    "run": "43161740739",
+    "qa": "pass",
+    "reason": "numbers, close-up and fresh reviewer all clean (12 Nov 2026)",
+    "tries": 2
+  },
+  "sissy_squat": {
+    "rendered": "2026-11-12",
+    "run": "43161740739",
+    "qa": "pass",
+    "reason": "numbers, close-up and fresh reviewer all clean (12 Nov 2026)",
+    "tries": 2
+  },
+  "suitcase_carry": {
+    "rendered": "2026-11-12",
+    "run": "43161740739",
+    "qa": "pass",
+    "reason": "numbers, close-up and fresh reviewer all clean (12 Nov 2026)",
+    "tries": 2
+  },
+  "tate_press": {
+    "rendered": "2026-11-11",
+    "run": "43082982264",
+    "qa": "pass",
+    "tries": 2,
+    "note": "passed on the retry (floor height / flat-bench fix)"
+  },
+  "toe_touch_crunch": {
+    "rendered": "2026-11-11",
+    "run": "43082982264",
+    "qa": "pass",
+    "tries": 2,
+    "note": "passed on the retry (floor height / flat-bench fix)"
+  },
+  "two_arm_dumbbell_kickback": {
+    "rendered": "2026-11-12",
+    "run": "43161740739",
+    "qa": "pass",
+    "reason": "numbers, close-up and fresh reviewer all clean (12 Nov 2026)",
+    "tries": 2
+  },
+  "waiter_curl": {
+    "rendered": "2026-11-12",
+    "run": "43161740739",
+    "qa": "fail",
+    "reason": "both fists wrap the handle instead of palms cupped under the top plate (the rig has only fists)",
+    "tries": 2
+  },
+  "wall_sit": {
+    "rendered": "2026-11-11",
+    "run": "43079162675",
+    "qa": "pass",
+    "tries": 1
+  },
+  "weighted_crunch": {
+    "rendered": "2026-11-12",
+    "run": "43161740739",
+    "qa": "pass",
+    "reason": "numbers, close-up and fresh reviewer all clean (12 Nov 2026)",
+    "tries": 2
+  },
+  "weighted_russian_twist": {
+    "rendered": "2026-11-12",
+    "run": "43161740739",
+    "qa": "fail",
+    "reason": "end: one hand floats open beside the lower plate instead of holding the dumbbell",
+    "tries": 2
+  },
+  "zottman_curl": {
+    "rendered": "2026-11-12",
+    "run": "43161740739",
+    "qa": "fail",
+    "reason": "end: one arm fully curled, the other half-curled with its dumbbell pressing into the stomach",
+    "tries": 2
+  }
 }
