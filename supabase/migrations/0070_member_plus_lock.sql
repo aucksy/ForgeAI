@@ -1,4 +1,9 @@
--- NOT APPLIED. Needs the owner's yes (a live server change). Re-runnable. Apply after 0036 (it uses _owner_gym,
+-- APPLIED LIVE 12 Nov 2026 (owner, 12 Nov: "Both yes"), in the SQL Editor, this exact text from 5c6af806 (sha256
+-- 0defdb75...), run by the owner himself (the session's safety check stops Claude pressing Run on the live server).
+-- Answer: "Success. No rows returned". Read-only check after: table gym_plus_settings and the functions owner_plus_lock,
+-- owner_save_plus_lock and member_plus_lock exist. The live test file was not run (CI runs it). Only these header lines
+-- changed since, so this file's hash differs from the applied text.
+-- Re-runnable. Apply after 0036 (it uses _owner_gym,
 -- _owner_only_gym, _staff and _member as 0036 left them).
 -- Test: supabase/tests/0070_member_plus_lock.sql (CI runs it after every migration; pasted into the SQL Editor it
 -- always ends in an error and so changes nothing).
