@@ -7,6 +7,15 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-470. Free credits only for yearly plans; a small taste in the trial — 12 Nov 2026
+He said: no free credits in the trial (costs money); trial users can buy packs. Free credits only when a gym pays
+for a YEARLY plan, not monthly; I decide 50 or 100; show it on the website for yearly. The button is always there.
+Then thinking aloud: maybe 10 trial credits, he can spend Rs 10 a trial, "unless they taste how good it is they
+will never buy it".
+Decided (pricing delegated): trial 20 credits once (real cost Rs 2-4: a credit costs us ~Rs 0.1-0.2, not Rs 1);
+monthly plans 0; yearly and founding lifetime 100 a month (cost <= Rs 15 a month). Trial asking capped at 20 a day.
+Spec section 3 updated; server builder told.
+
 ## R-469. Website too: an AI Assistant section with real examples, no Diwali — 12 Nov 2026
 He said: the "Pro + AI" replacement must include the website; highlight the feature with a few great examples from
 our use cases; not Diwali ("it's kind of gone"). Thinking out loud.

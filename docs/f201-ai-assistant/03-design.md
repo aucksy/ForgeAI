@@ -93,8 +93,18 @@ Real AI cost (Haiku 5.5 at $0.10/M in, $0.50/M out, help.js rates): question ~Rs
 - **Asking is free.** Voice is free. Rewrites are free. Errors, questions back and cancelled drafts are free.
 - **A credit is spent only when a task is DONE**: a message sent, a member/payment/enquiry/expense saved = 1 credit.
   A workout or diet plan saved = 3 credits. The cost is printed on the button before he taps it.
-- **Free credits:** 30 welcome credits once per gym; then every month (IST month, not carried over):
-  Starter 20, Pro (and trial, founding, legacy 'ai') 60.
+- **Free credits (owner, 12 Nov, R-470 — replaces the old 30 welcome + 20/60 a month):**
+  - **Trial: 20 starter credits, once per gym** (reason 'welcome'), so an owner can taste it. Real AI cost to us
+    about Rs 2-4 a gym. No monthly free credits during the trial.
+  - **Monthly plan (Starter or Pro): no free credits.** Packs only.
+  - **Yearly plan or founding lifetime: 100 free credits every month** (IST month, not carried over, used before
+    pack credits), while `gyms.billing in ('yearly','lifetime') and paid_until > now()`. Real cost to us about
+    Rs 15 a month at most (~2% of a yearly Starter). The website shows it on the yearly price only:
+    "Yearly: 100 AI credits every month, free".
+  - Asking stays free on every plan and in the trial (fair use 50 a day, 10 voice minutes); a trial gym gets
+    20 requests a day (cost guard: a 3-month trial must not cost more than it can earn).
+  - The AI Assistant button shows for every owner, trial or not. At 0 credits asking and drafts still work; the
+    send/save button says "Get credits to send" and opens the packs.
 - **Packs** (never expire, used after the month's free ones): Rs 149 = 50 credits; Rs 399 = 150 credits (marked
   "Most popular"); Rs 999 = 500 credits. Prices exclude GST like the plans (check plans.ts wording).
 - Low balance (<= 5): a quiet line on the assistant screen. No pop-ups. At 0: tasks still draft; the button says
