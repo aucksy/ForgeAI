@@ -198,7 +198,7 @@ export function talkStatusLine(t: TalkThread, today: DateISO): string | null {
 export const MEMBER_MESSAGE_WORDS = {
   title: 'Member messages',
   navHint: 'Questions, feedback and complaints from members',
-  intro: 'Members write to the gym from "Message your gym" on the Gym tab of their MettleUp app. Your reply shows in their app. If they have notifications on, their phone tells them.',
+  intro: 'Members write to you from "Message your gym" on the Gym tab of their app. Your reply shows in their app, and on their phone if notifications are on.',
   staffNote: 'Complaints go to the owner only, so they are not shown here.',
   keptNote: 'Messages are deleted 180 days after the last one in a conversation, or as soon as the member leaves the gym.',
   filterLabel: 'Show',
