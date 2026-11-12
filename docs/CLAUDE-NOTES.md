@@ -7,6 +7,12 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-453. EU/UK privacy lines for the public Play launch, and the help AI capped at $80 a month — 12 Nov 2026
+
+He said (12 Nov 2026): the member app goes public on Google Play in all countries, EU/EEA and UK included; to adding privacy lines for Europe and the UK: "yes add those lines why not". On the help answers' AI cap: "Nah we dont have to stop on 500Rs / We have 100 dollars free credits from Claude every month / So let's keep it for 80 dollars max cieling".
+
+What I did: section 12 "If you live in the EU, EEA or UK" in docs/legal/privacy.body.html (controller, a legal reason per use, body weight and measurements as health data with explicit consent at sign-in, transfers under the providers' standard contractual clauses, GDPR rights, complaints to the local authority or the UK ICO, 18+ everywhere, no decisions by computer alone); nothing collected or shared changed. ADMIN_NEWS 2026-11-12 line. deploy/panel/help.js MONTHLY_CAP_USD = 80 (MONTHLY_CAP_INR derived). Hindi unchanged (the English wins; the Hindi draft of section 12 waits for him to read it aloud). Not added, on purpose: an EU/UK representative (costs money, his call) and a separate health-data consent tick (an app change).
+
 ## R-452. Members see the team's replies: red dot on the chat button, conversation on a tap — 12 Nov 2026
 **He said:** "I feel like that we should have a badge right around the floating feedback button ... when they tap it right there, they should see the manual answer. ... there are scenarios where the AI did actually answer in the beginning, but then I had to probably correct it or send a top-up on it manually. So they should be able to identify all this." Problem: his HQ answers (rows 78, 80 on 12 Nov) never reached the member.
 
