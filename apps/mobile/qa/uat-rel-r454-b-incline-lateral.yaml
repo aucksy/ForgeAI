@@ -86,7 +86,7 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: "^Next set: 22\.5 kg × 15 · Done: 0 of today's 1,420 kg each$"
+      FIND: '^Next set: 22\.5 kg × 15 · Done: 0 of today''s 1,420 kg each$'
 - takeScreenshot: rel-r454-f-lateral-before
 - runFlow:
     file: sub-uat-r439-set.yaml
