@@ -7,6 +7,13 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-468. Where owners find the AI Assistant: a floating button, bottom right — 12 Nov 2026
+He asked: where is the entry point on the computer and the phone? He pictured a highlighted floating "AI Assistant"
+button in the bottom right of the admin app; unsure for the installed phone app; asked to see it.
+Done: canvas boards 8-10 (v12): phone Members page with the button above the bottom bar; computer Today page with the
+button bottom right; computer with the side panel open. Spec 03-design.md UI section: placement, shrink on scroll,
+when it hides, bottom space on every page.
+
 ## R-467. "Questions, voice, drafts: Free" still costs us? Fair use tightened — 12 Nov 2026
 He asked (Credits screen): are free questions, voice and drafts really free for us, or covered by the credit money?
 My answer: they cost us; the plan fee and pack money cover it. A question ~Rs 0.05, a draft ~Rs 0.1, a voice clip

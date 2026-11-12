@@ -129,7 +129,17 @@ Real AI cost (Haiku 5.5 at $0.10/M in, $0.50/M out, help.js rates): question ~Rs
 - Test set: 30 owner-style clips (names, rupees, "PT", "dues", dates) before choosing the default for good.
 
 ## 6. Where it lives (UI)
-- Nav: "AI Assistant" (owner only) under Today; phone More list too. Route `/assistant`.
+- **Entry point (owner, 12 Nov, R-468): a bright floating "AI Assistant" button, bottom right, on every page** (owner
+  only; canvas boards 8-10). Orange pill with a sparkle icon, 56-58 px tall.
+  - Computer: 28 px from the right and bottom edges. A tap opens a 420 px side panel on the right (the Assistant home:
+    Today for you, Try saying, the type/speak box). The page stays visible and usable behind it; X closes it.
+  - Phone (and the installed admin app): 16 px from the right, just above the bottom bar (bottom 90 px). A tap
+    opens the full Assistant screen. While the owner scrolls down a list it shrinks to a round sparkle button and
+    grows back when scrolling stops or goes up. Every page gets extra space at the bottom so the last row and its
+    buttons are never hidden behind it.
+  - Hidden: on the Assistant screen itself, while a pop-up sheet or the keyboard is open, for desk staff and
+    trainers, and while toasts or the undo bar show (they sit above it at bottom 92 px, centred: no overlap).
+- Nav: "AI Assistant" (owner only) under Today on a computer; phone More list too. Route `/assistant`.
 - Today screen: an "Ask AI" bar + "Today for you" (top 2 ideas) linking to /assistant.
 - /assistant: balance pill (top right, opens Credits sheet); composer (text box "Type or speak — Hindi or
   English", mic, send); first visit: "Try saying" examples in groups (Messages, Members, Money, Questions) — tapping
