@@ -41,7 +41,8 @@ describe('the list itself', () => {
         expect(l.text.length).toBeLessThanOrEqual(220);
         // Member words (R-98): none of the inside words.
         expect(l.text).not.toMatch(/\b(volume|PR|session|sync|FCM|D1|Supabase|RPC)\b/);
-        if (l.go) expect(l.go.path).toMatch(/^\/[a-z/]+$/);
+        // A route may have a hyphen (R-459: /member-messages).
+        if (l.go) expect(l.go.path).toMatch(/^\/[a-z/-]+$/);
       }
     }
   });
