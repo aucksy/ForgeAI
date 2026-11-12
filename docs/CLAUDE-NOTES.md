@@ -80,6 +80,12 @@ Steps and results (filled in as they happen):
       the top edge. The member sees the same page they left (not an app bug). The flow now waits for the button
       (in the release commit, plus a part u61 to run it alone). Missed: it passed before by where one swipe happened
       to stop. Since 12 Nov (IST) the 4-week text is a day longer, so the scroll lands differently.
+  12. Release commit 933e4bf4, owner (43141461077, shard 4): UATR401 could not tap "Got it" on the old What's new
+      card. With app.json at 0.77.0 the card shows 0.77.0's 6 lines and a "Light or dark" link, so "Got it" sits
+      below the edge (it is part of the scrolling Workout tab, as on every release). Fixed with sub-find. Missed:
+      every gate round ran with app.json still at 0.76.0, so the card the flow photographs changed with the bump
+      itself. Lesson: run the What's new parts (only=u401) on the bump commit before any whole round.
+      Gate path: owner whole run on the fixed commit; default = 43106098012 on ef48b297 + partials on the tag commit.
   From now on (coordinator, 11 Nov): before any whole round, grep every flow for what the release changed, fix in
   one commit, run the affected parts alone, then the whole round.
 
