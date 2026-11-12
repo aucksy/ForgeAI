@@ -19,7 +19,6 @@ import { Card, GhostButton, PrimaryButton, Screen } from '@/components/ui';
 import { InlineError } from '@/components/ui/InlineError';
 import { getProfile } from '@/db/repos/userRepo';
 import { tinyDateWithYear, todayISO } from '@/lib/date';
-import { goBack } from '@/lib/goBack';
 import { getMemberPhone } from '@/onboarding/db/dataActions';
 import {
   checkProblemWords,
@@ -61,6 +60,11 @@ const inputStyle = () =>
 
 export default function FindGymScreen() {
   const router = useRouter();
+  // A Gym-tab page: back, or (opened alone, from a link) the Gym tab itself.
+  const leave = (): void => {
+    if (router.canGoBack()) router.back();
+    else router.replace('/shop');
+  };
   const [step, setStep] = useState<Step>({ kind: 'form' });
   const [phone, setPhone] = useState('');
   const [name, setName] = useState('');
@@ -198,7 +202,7 @@ export default function FindGymScreen() {
   const heading = { fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink } as const;
 
   return (
-    <Screen title={FIND_GYM.title} onBack={() => goBack(router, '/shop')}>
+    <Screen title={FIND_GYM.title} onBack={leave}>
       <View style={{ gap: space.lg, paddingBottom: space.xxl }} testID="find-gym-screen">
         {qa ? <Text style={{ ...body, fontFamily: type.bodySemi, color: color.accent }}>{FIND_GYM.testBuild}</Text> : null}
 
@@ -300,7 +304,7 @@ export default function FindGymScreen() {
             />
             <Text style={small}>{FIND_GYM.leadNote}</Text>
             <PrimaryButton label={FIND_GYM.tell} onPress={tell} />
-            <GhostButton label={FIND_GYM.skip} onPress={() => goBack(router, '/shop')} />
+            <GhostButton label={FIND_GYM.skip} onPress={leave} />
           </Card>
         ) : null}
       </View>

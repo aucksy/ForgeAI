@@ -115,7 +115,7 @@ describe('found, not found, Tell my gym', () => {
   });
   it('never a banned word', () => {
     const all = [
-      ...Object.values(FIND_GYM).filter((v): v is string => typeof v === 'string'),
+      ...(Object.values(FIND_GYM) as unknown[]).filter((v): v is string => typeof v === 'string'),
       FIND_GYM.foundTitle('X'),
       FIND_GYM.foundBody('X'),
       FIND_GYM.foundEnds('1 Dec 2026'),
