@@ -79,9 +79,11 @@ create table if not exists public.gym_talk_messages (
   staff_id   uuid references public.gym_staff(staff_id) on delete set null,
   staff_name text check (staff_name is null or length(staff_name) <= 80),
   body       text not null check (length(body) between 1 and 1000),
-  created_at timestamptz not null default now()
+  created_at timestamptz not null default now(),
+  -- Written order, for lines with the same time (two lines in one transaction share now()).
+  seq        bigint generated always as identity
 );
-create index if not exists gym_talk_messages_by_thread on public.gym_talk_messages(thread_id, created_at);
+create index if not exists gym_talk_messages_by_thread on public.gym_talk_messages(thread_id, created_at, seq);
 alter table public.gym_talk_messages enable row level security;
 revoke all on public.gym_talk_messages from public, anon, authenticated;
 
@@ -128,8 +130,8 @@ create or replace function public._talk_lines(p_thread uuid, gym_view boolean) r
                   when gym_view then nullif(btrim(coalesce(x.staff_name, '')), '')
                   else nullif(split_part(btrim(coalesce(x.staff_name, '')), ' ', 1), '') end,
       'text', x.body,
-      'at', public._tq_ms(x.created_at)) order by x.created_at, x.msg_id), '[]'::jsonb)
-  from (select * from public.gym_talk_messages m where m.thread_id = p_thread order by m.created_at desc, m.msg_id desc limit 50) x
+      'at', public._tq_ms(x.created_at)) order by x.created_at, x.seq), '[]'::jsonb)
+  from (select * from public.gym_talk_messages m where m.thread_id = p_thread order by m.created_at desc, m.seq desc limit 50) x
 $$;
 
 -- A gym reply the member has not read yet?
