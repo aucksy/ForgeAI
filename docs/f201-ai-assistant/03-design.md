@@ -130,6 +130,8 @@ Real AI cost (Haiku 5.5 at $0.10/M in, $0.50/M out, help.js rates): question ~Rs
 - /assistant: balance pill (top right, opens Credits sheet); composer (text box "Type or speak — Hindi or
   English", mic, send); first visit: "Try saying" examples in groups (Messages, Members, Money, Questions) — tapping
   one fills the box; "Today for you" ideas; then the conversation of request -> cards; History tab.
+- Voice: while listening, a timer and "Up to 30 seconds"; then "What I heard (you can fix it)" with two buttons:
+  "Cancel" and "Send to AI Helper" (owner, 12 Nov 2026, R-466: never "Done, use this").
 - Cards: AnswerCard, MessageCard, ChangeCard, AskBackCard, CannotCard, all in kit.tsx style.
 - Credits sheet: balance, this month's free left, packs, history of spends.
 - HQ: per-gym balance + "Add credits" + month usage.

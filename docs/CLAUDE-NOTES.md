@@ -7,6 +7,10 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-466. F201 voice screen: the confirm button says "Send to AI Helper" — 12 Nov 2026
+He said: on the voice screen (after speaking) the button "Done, use this" is misleading; use "Send to AI Helper" instead.
+Done: design canvas Voice board changed (canvas v10); spec 03-design.md UI section now names it. Open: the rest of the design says "AI Assistant"; asked him whether to rename the whole feature to "AI Helper".
+
 ## R-465. F201 go: build the AI assistant for gym owners, paid with AI credits (replaces "Pro + AI") — 12 Nov 2026
 He said (verbatim in docs/f201-ai-assistant/00-START-HERE.md): implement F201 "accurately and very thoroughly"; design the agentic AI with all the useful tasks, not just the Diwali message; show new owners a list of common uses; typing plus good voice so he can speak Hindi; the AI drafts, shows it, then sends it in the app. "You're the boss. You make all the right decisions." Same turn: replace every place the AI plan is mentioned with the new offer; asked whether every task costs the same.
 My answer (chat): no. A question ~Rs 0.3, a group message ~Rs 0.5-1, a trainer plan ~Rs 1.5-3, voice +Rs 0.1-0.3. Plan: fixed credits per task type, shown before Send; numbers set after research.
