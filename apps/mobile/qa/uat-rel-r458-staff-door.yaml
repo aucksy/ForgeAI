@@ -22,6 +22,12 @@ appId: com.mettleup.app
     timeout: 15000
 - tapOn: "Your mobile number"
 - inputText: "${PHONE}"
+# The keyboard covers the PIN box on a phone: close it and scroll to the box first (run 43188461918).
+- hideKeyboard
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Your 6-digit PIN or sign-in code"
 - tapOn: "Your 6-digit PIN or sign-in code"
 - inputText: "000000"
 - hideKeyboard
@@ -38,6 +44,10 @@ appId: com.mettleup.app
 - assertVisible: "Your PIN is only checked\\. It is never saved on this phone\\."
 - takeScreenshot: rel-r458-2-wrong
 # ---------------------------------------------------------------- happy path: the owner's own code
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Your 6-digit PIN or sign-in code"
 - tapOn: "Your 6-digit PIN or sign-in code"
 - inputText: "${PIN}"
 - hideKeyboard
