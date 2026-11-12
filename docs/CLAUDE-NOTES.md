@@ -19,15 +19,16 @@ Done:
   (scripts/legal_pages.py --check: same). legalPages.test.ts +1 test pins the line inside 4B and on the page. No other
   member-facing privacy notice exists: the in-app "What my gym can see" screen is only the sharing switches, and
   docs/launch/PRIVACY-NOTICE*.md are retired pointers. The privacy page goes live with the next panel deploy.
-- Panel deploy NOT done (stopped on purpose). Since the last deploy (7c319929, 11 Nov, version 2706f670) main also
-  carries F56 work that is not finished or approved to go live and is NOT hidden by a missing server function:
+- Panel deploy NOT done (stopped on purpose). The last deploy was 12 Nov 06:46 UTC (12:16 IST), forgeai-panel version 092b47b6
+  (wrangler deployments list; not written in these notes; the live site already shows privacy section 12 and the
+  12 Nov news line, and no Member messages). Since then main also carries F56 work that is not finished or approved to go live and is NOT hidden by a missing server function:
   the help articles "mettleup-plus" (prices Rs 149 / 999 / 2,499, the free month), "plus-lock-admin" and
   "find-my-gym-by-number" go straight into the live AI help answers (help.js helpSystem uses every article), so
   members of today's app could be told about a paid plan that does not exist; and phoneInbound.js purpose "member"
   (R-458: "deploy the panel Worker" was on his yes list) which F56's Find my gym screen calls. The admin cards
   themselves are fine (Member messages works now; PlusLockCard hides until 0070).
-  Also shipping, approved or harmless: privacy section 12 (R-453), help cap $80 (R-453), R-452 reply list (works
-  before D1 0014 with one reply each), R-454 / R-452 help article wording (describes the next app release).
+  Also shipping, approved or harmless: Member messages + its badge fix (R-459), the privacy line above, R-454 help
+  article wording (describes the next app release), leads.js source 'member-app' (F56 part c).
 - ADMIN_NEWS_PENDING "Member messages" line stays pending (moves in the deploy commit). Its words say "members can now
   send"; members need the next app release for the Gym tab row, so reword at the deploy if the app is not out yet.
 Way around (for the next deploy): hide not-live articles from the AI prompt until their feature is on (a flag the
