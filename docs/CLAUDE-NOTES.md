@@ -7,6 +7,20 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-459. Members message their gym; the gym answers in "Member messages" — 12 Nov 2026
+
+He said: "Do we have an option in the app for user to send queries or feedback for the gym from inside the gym section? And does the admin app has a place for them to know these questions and respond? If not, we gotta build it." (Build after 2:15 pm.)
+
+Found: neither existed. Help and feedback (and R-452's replies) goes to US, MettleUp, not the gym. "Ask a trainer" (0053) goes to one trainer, the member cannot write back. Messages & offers is the gym writing TO members.
+
+Research (plan doc): gym CRMs sold in India (FitnessForce, Wellyx, Zenoti) advertise bookings and payments, not a member-to-gym inbox; the repeated complaint in gym reviews and industry guides is feedback nobody answers. Ideas taken: (1) "Seen by your gym" + "Done" + the reply in one place; (2) "Send without my name" for feedback only, truly nameless on the server, still answerable; (3) complaints to the owner only, so a member can complain about staff.
+
+My view: a must-have for a gym app; keep it a simple conversation per message, not a chat app. Complaints owner-only, so a member can complain about the desk.
+
+Built (no money, no live change): server supabase/migrations/0069_member_messages.sql (NOT applied; 0068 was taken by R-458) + supabase/tests/0069_member_messages.sql + security.sql list; member app Gym tab "Message your gym" (Question / Feedback / Complaint, nameless feedback, replies with a red dot and the Gym tab badge, Write back), hidden until 0069 answers; QA builds use a pretend gym so the device UAT sees every screen; admin "Member messages" (types, waiting / replied / done, reply, mark as done), hidden until 0069; ADMIN_NEWS_PENDING line. Tests: 15 member + 14 admin + SQL test + e2e journey + device flow uatgt. Fresh-reader words review applied. Plan: docs/plans/gym-member-messages.md.
+
+Needs his yes: apply 0069 to the live server; the privacy-notice line in the plan; then the panel deploy (moves the ADMIN_NEWS line) and the next app release.
+
 ## R-458. Phone number finds the member's gym; the owner's sign-in opens the gym's look — 12 Nov 2026
 
 He said: "double check we already have that cross system interaction about detecting user's phone number, and if it's in one of the gym's database and the membership is active, then automatically ... give the user the option to enable or unlock all app features because their membership with certain gym is detected, active membership. Similarly, if owner is logging in using their phone number, then automatically their gym's colors and branding and features will be unlocked. ... Research and plan this properly and then implement."
