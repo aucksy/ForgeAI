@@ -683,6 +683,12 @@ test('the Cron Trigger: Cloudflare clean-up first, then the gym server, which wr
   const kept = await quiet(() => nightly(env(), { fetchImpl: purgeDown.fetchImpl }));
   assert.equal(kept.ok, true);
   assert.deepEqual(kept.qaGyms, { error: 'failed' });
+  // The old AI request purge runs last (R-477); its failure never fails the clean-up either.
+  assert.equal(net.rpcCalls('hq_ai_purge_old').length, 1);
+  const aiDown = fakeNet({ db: { hq_nightly_cleanup: { ok: true } }, dbFail: { hq_ai_purge_old: 'boom' } });
+  const kept2 = await quiet(() => nightly(env(), { fetchImpl: aiDown.fetchImpl }));
+  assert.equal(kept2.ok, true);
+  assert.deepEqual(kept2.aiOld, { error: 'failed' });
   const down = fakeNet({ dbFail: { hq_nightly_cleanup: 'boom' } });
   await assert.rejects(quiet(() => nightly(env(), { fetchImpl: down.fetchImpl })));
   assert.equal(indiaDay(new Date('2026-10-23T18:31:00Z')), '2026-10-24');

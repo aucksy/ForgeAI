@@ -369,6 +369,23 @@ begin
   return public.hq_ai_wallet(p_actor, p_gym);
 end $$;
 
+-- Every night (HQ worker, after hq_nightly_cleanup): the 400-day rule for EVERY gym, also one that no longer uses the
+-- AI Assistant (owner_ai_task_save does it only for the gym that saves; R-477). Requests older than 400 days are
+-- deleted; a spend's note (the request's first words) is cleared; the credit amounts stay (money records).
+create or replace function public.hq_ai_purge_old()
+  returns jsonb language plpgsql volatile security definer set search_path = public as $$
+declare tasks int; notes int;
+begin
+  perform public._hq_guard();
+  perform set_config('lock_timeout', '3s', true);
+  delete from public.gym_ai_tasks where created_at < now() - interval '400 days';
+  get diagnostics tasks = row_count;
+  update public.gym_ai_credit_ledger set note = null
+   where reason = 'spend' and note is not null and created_at < now() - interval '400 days';
+  get diagnostics notes = row_count;
+  return jsonb_build_object('ok', true, 'tasks', tasks, 'notes', notes);
+end $$;
+
 -- ------------------------------------------------------------------ grants
 revoke all on function public._ai_month()                     from public, anon, authenticated;
 revoke all on function public._ai_plan(uuid)                   from public, anon, authenticated;
@@ -395,5 +412,7 @@ revoke all on function public.hq_ai_wallet(text, uuid)                   from pu
 revoke all on function public.hq_ai_grant(text, uuid, int, text, text)   from public, anon, authenticated;
 grant execute on function public.hq_ai_wallet(text, uuid)                to service_role;
 grant execute on function public.hq_ai_grant(text, uuid, int, text, text) to service_role;
+revoke all on function public.hq_ai_purge_old()                         from public, anon, authenticated;
+grant execute on function public.hq_ai_purge_old()                      to service_role;
 
 notify pgrst, 'reload schema';

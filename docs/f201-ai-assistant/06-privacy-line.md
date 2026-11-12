@@ -2,7 +2,8 @@
 
 Checked against the code on 12 Nov 2026: deploy/panel/assist.js (what Claude sees: the header comment, cleanCtx,
 assistSystem / assistPrompt; masking: maskText; voice: Groq unless SARVAM_API_KEY is set) and deploy/panel/assistPlan.js
-(the workout plan writer: checkPlanAsk, planSystem / exerciseListText / planPrompt). Sarvam is NOT named because its key is not set; add a
+(the workout plan writer: checkPlanAsk, planSystem / exerciseListText / planPrompt). The 400 days: owner_ai_task_save and, every night for every gym, hq_ai_purge_old (0071, HQ worker nightly; R-477).
+Sarvam is NOT named because its key is not set; add a
 Sarvam line (and check Sarvam's own retention terms first) only when that key goes in.
 
 ## 1. New bullet in section E (the gym side), right after "Importing an old member list"
@@ -17,7 +18,8 @@ Sarvam line (and check Sarvam's own retention terms first) only when that key go
 > mentions, with mobile numbers and emails hidden) and the names of the gym's exercises; never the member's name or
 > records. A spoken request goes through our server to Groq, which turns it into text;
 > neither we nor Groq keep the recording. Anthropic does not use any of this to train its AI. We keep each request,
-> what the owner did with it and the credits it used, so the owner can see them in the admin app.
+> what the owner did with it and the credits it used for 400 days, so the owner can see them in the admin app.
+> After 400 days the request and its words are deleted; only the number of credits used stays, for our accounts.
 
 ## 2. Table of outside companies (section on who we share with)
 

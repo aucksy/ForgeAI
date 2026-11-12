@@ -197,6 +197,15 @@ export async function nightly(env, { fetchImpl = fetch, now = new Date() } = {})
       console.error('[hq-cron] test-gym purge failed', e instanceof Error ? e.message : 'error');
       out.qaGyms = { error: 'failed' };
     }
+    // F201 privacy (R-477): AI Assistant requests older than 400 days, for every gym (supabase 0071). Its own try:
+    // a failure here (or 0071 not applied yet) never fails the clean-up above.
+    try {
+      out.aiOld = await rpc(env, 'hq_ai_purge_old', {}, { fetchImpl });
+      console.log('[hq-cron] old AI requests deleted', JSON.stringify(out.aiOld));
+    } catch (e) {
+      console.error('[hq-cron] old AI request purge failed', e instanceof Error ? e.message : 'error');
+      out.aiOld = { error: 'failed' };
+    }
     return out;
   } catch (e) {
     console.error('[hq-cron] gym server clean-up failed', e instanceof Error ? e.message : 'error');

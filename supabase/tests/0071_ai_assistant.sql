@@ -197,6 +197,21 @@ begin
   checks := checks + 1; fails := fails || pg_temp.t71_is('8bOtherGymKept',
     (select (count(*) > 0)::text from public.gym_ai_credit_ledger where gym_id = ga and reason = 'spend' and note is not null), 'true');
 
+  -- 8c. The nightly purge (R-477) does the same for a gym that never saves again: its old request goes, its old
+  -- spend note is cleared, a new request stays; only the service role may run it.
+  insert into public.gym_ai_tasks(task_id, gym_id, request, created_at) values (gen_random_uuid(), gd, 'old ask', now() - interval '401 days');
+  insert into public.gym_ai_tasks(task_id, gym_id, request) values (gen_random_uuid(), gd, 'new ask');
+  insert into public.gym_ai_credit_ledger(gym_id, delta, reason, task_id, note, created_at)
+    values (gd, -1, 'spend', gen_random_uuid(), 'old words', now() - interval '401 days');
+  r := public.hq_ai_purge_old();
+  checks := checks + 1; fails := fails || pg_temp.t71_is('8cPurge',
+    (select string_agg(request, ',' order by request) from public.gym_ai_tasks where gym_id = gd and request in ('old ask', 'new ask'))
+    || '/' || (select coalesce(note, 'null') from public.gym_ai_credit_ledger where gym_id = gd and reason = 'spend' and delta = -1 and created_at < now() - interval '400 days'),
+    'new ask/null');
+  checks := checks + 1; fails := fails || pg_temp.t71_is('8cGrants',
+    (has_function_privilege('anon', 'public.hq_ai_purge_old()', 'execute') or has_function_privilege('authenticated', 'public.hq_ai_purge_old()', 'execute'))::text
+    || '/' || has_function_privilege('service_role', 'public.hq_ai_purge_old()', 'execute')::text, 'false/true');
+
   -- 9. A paused gym spends nothing.
   perform set_config('forgeai.hq', 'on', true);
   update public.gyms set status = 'suspended' where gym_id = gc;

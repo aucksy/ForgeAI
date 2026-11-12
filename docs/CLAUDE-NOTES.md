@@ -7,6 +7,13 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-477. Old AI requests are deleted for EVERY gym, every night — 13 Nov 2026 (away work)
+Found while writing the privacy line: 0071 deleted requests older than 400 days only when that same gym saved a new one,
+so a gym that stopped using the AI Assistant kept them forever and the privacy line would be untrue. Added
+hq_ai_purge_old() to 0071 (service role only; db test 8c) and a step in the HQ nightly clean-up (own try, after the
+test-gym purge; node tests). Privacy draft 06 now says "400 days, then deleted; only the credit count stays".
+Goes live with 0071 + the HQ worker deploy (his yes).
+
 ## R-476. Website hero line and the numbers section — 13 Nov 2026 (night, he went to sleep: "you make rest of the decisions")
 He: hero subtext like "MettleUp is an advanced gym software which gives all your members a free app which keeps them
 coming"; stats should show lead conversion and member retention, "something like up to 70% lead conversion and up to
