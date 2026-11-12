@@ -134,8 +134,25 @@ appId: com.mettleup.app
 - takeScreenshot: 171-reading-link
 # ---------------------------------------------------------------- 1. found
 - extendedWaitUntil:
-    visible: "We found 6 routines in .Jaipur."
+    visible: "We found 6 routines in .Jaipur.|Hevy took too long to answer.*"
     timeout: 60000
+    optional: true
+# The link is read live from hevy.com. One slow answer from Hevy (owner phone, run 43224049125) is the
+# network, not the app: read it once more, as a member would. A second miss still fails below.
+- runFlow:
+    when:
+      visible: "Hevy took too long to answer.*"
+    commands:
+      - takeScreenshot: 171b-hevy-slow-once
+      - tapOn: "Read link"
+      - extendedWaitUntil:
+          visible: "We found 6 routines in .Jaipur."
+          timeout: 60000
+          optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'We found 6 routines in .Jaipur.'
 - runFlow:
     file: sub-see.yaml
     env:
