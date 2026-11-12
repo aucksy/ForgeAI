@@ -7,6 +7,14 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-455. Watch: make it obvious that the numbers can be changed with the dial — 12 Nov 2026
+
+He said: on the watch it is not clear that you can tap the numbers and change them with the dial; rethink the design, keep it minimal. Then: "Build it after 2:15 p.m."
+
+Found: the weight and reps pills look like labels (no outline until selected); a crown turn with nothing selected does nothing (WatchLog.crown returns early); the "Turn the dial" hint and crown arc show only after a tap.
+
+Plan (my pick, told him): (1) a crown turn with nothing selected picks reps and changes it; (2) thin low-contrast outline on each pill + the crown arc always shown, dim at rest; (3) one-time tip "Tap a number, then turn the dial" in place of Previous on the first set of each exercise until used 3 times. Wear OS only; Apple Watch gets a PARITY line. A helper starts at 2:19 pm; pictures go to him before any release.
+
 ## R-454. Rep goals never ask for fewer reps than last time at the same weight — 12 Nov 2026
 
 He said (12 Nov 2026), on his Incline Dumbbell Press (last time 40 kg x 13 @9, 12 @9.5, 10 @9.5, 8 @9.5, range top 12; the app aimed 40 x 12, 12, 11, 9, "Next set: 40 kg x 12 · Done: 0 of today's 1,760 kg"): "Never suggesting less than before." And later the same day: "ensure that we still have the logic of real-time changing the suggestions based on what you have done in a given set".
