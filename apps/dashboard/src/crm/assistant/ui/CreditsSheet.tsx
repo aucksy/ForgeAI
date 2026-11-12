@@ -88,6 +88,7 @@ export function CreditsSheet({ wallet, onClose, plansOn }: { wallet: AiWallet; o
                 <button
                   key={p.credits}
                   type="button"
+                  aria-label={`${p.popular ? `${t('Popular')}: ` : ''}${t('{n} credits for {price}', { n: p.credits, price: `₹${p.inr.toLocaleString('en-IN')}` })}`}
                   aria-pressed={asked === p.credits}
                   onClick={() => setAsked(p.credits)}
                   style={{

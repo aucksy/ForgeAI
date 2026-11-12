@@ -65,7 +65,7 @@ export function AssistantHome({ assistKey, wallet, panel = false }: { assistKey:
   const convo = useConversation(assistKey, data, reload, () => setCredits(true));
   const { turns } = convo;
   const box = useRef<HTMLTextAreaElement>(null);
-  const endRef = useRef<HTMLDivElement>(null);
+  const lastTurn = useRef<HTMLDivElement>(null);
   const opener = useOpener();
   const canSpeak = useMemo(() => isVoiceSupported(), []);
   const suggestions = useMemo(() => todaySuggestions(data), [data]);
@@ -93,10 +93,10 @@ export function AssistantHome({ assistKey, wallet, panel = false }: { assistKey:
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [opener.pending]);
 
-  // The newest card in view.
+  // The newest request at the top, its cards below it (a card left under the box could not be read).
   const lastId = turns.length > 0 ? `${turns[turns.length - 1].id}:${turns[turns.length - 1].status}` : '';
   useEffect(() => {
-    if (lastId) endRef.current?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    if (lastId) lastTurn.current?.scrollIntoView({ block: 'start', behavior: 'smooth' });
   }, [lastId]);
 
   const ctl: CardControls = {
@@ -214,8 +214,12 @@ export function AssistantHome({ assistKey, wallet, panel = false }: { assistKey:
 
   const conversation = (
     <div style={{ display: 'grid', gap: space.lg }}>
-      {turns.map((turn) => (
-        <div key={turn.id} style={{ display: 'flex', flexDirection: 'column', gap: space.md }}>
+      {turns.map((turn, i) => (
+        <div
+          key={turn.id}
+          ref={i === turns.length - 1 ? lastTurn : undefined}
+          style={{ display: 'flex', flexDirection: 'column', gap: space.md, scrollMarginTop: compact ? 88 : 24 }}
+        >
           <RequestBubble text={turn.request} spoken={turn.spoken} />
           {turn.status === 'asking' ? (
             <p role="status" style={{ ...quiet, display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -237,7 +241,6 @@ export function AssistantHome({ assistKey, wallet, panel = false }: { assistKey:
           {t('Start a new chat')}
         </Button>
       </div>
-      <div ref={endRef} />
     </div>
   );
 

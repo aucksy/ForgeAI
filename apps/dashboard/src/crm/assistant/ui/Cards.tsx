@@ -118,7 +118,7 @@ export function CardView({ turnId, card, data, ctl }: { turnId: string; card: Ca
             <Button variant="ghost" onClick={() => ctl.go(path)}>
               {t('Open {page}', { page: t(page) })}
             </Button>
-            <p style={quiet}>{t('Free. This never uses credits.')}</p>
+            {/* No credit line: "never uses credits" turns false once the worker writes plans (3 credits, R-471). */}
           </div>
         </CardFrame>
       );

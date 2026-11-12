@@ -43,9 +43,16 @@ async function colours(page, mode) {
   await expect.poll(() => page.evaluate(() => document.documentElement.dataset.theme)).toBe(mode);
 }
 
-/** One picture in the dark colours and one in the light, then back to dark. */
-async function shots(page, name, fullPage = false) {
+/** One picture in the dark colours and one in the light, then back to dark. `focus`: the card to show, scrolled to the top. */
+async function shots(page, name, fullPage = false, focus = null) {
   const size = (page.viewportSize()?.width ?? 390) > 860 ? 'computer' : 'phone';
+  if (focus) {
+    await focus.evaluate((el) => {
+      el.scrollIntoView({ block: 'start' });
+      window.scrollBy(0, -96);
+    });
+    await page.waitForTimeout(400);
+  }
   await colours(page, 'dark');
   await page.waitForTimeout(250);
   await page.screenshot({ path: `${DIR}/assistant-${name}-${size}-dark.png`, fullPage });
@@ -220,7 +227,7 @@ test('AI Assistant: hidden without 0071; the button, cards, credits, voice, the 
   await expect(answer).toContainText('Asha Verma');
   await expect(answer).toContainText('Free. Questions never use credits.');
   expect(server.log.filter((c) => c.fn === 'owner_ai_spend')).toHaveLength(0);
-  await shots(page, '03-answer-card');
+  await shots(page, '03-answer-card', false, answer);
 
   // 4. One request, two things: two cards, two buttons, two prices, two tasks.
   await ask(page, 'Kal gym band hai sabko batao, aur bijli ka bill 3200 cash diya');
@@ -236,10 +243,8 @@ test('AI Assistant: hidden without 0071; the button, cards, credits, voice, the 
   const saved = server.log.filter((c) => c.fn === 'owner_ai_task_save');
   expect(new Set(saved.map((c) => c.args.p_id)).size).toBe(2);
   expect(saved.map((c) => c.args.p_actions.length)).toEqual([1, 1]);
-  await message.scrollIntoViewIfNeeded();
-  await shots(page, '04-message-card');
-  await expense.scrollIntoViewIfNeeded();
-  await shots(page, '05-change-card');
+  await shots(page, '04-message-card', false, message);
+  await shots(page, '05-change-card', false, expense);
   await expense.getByRole('button', { name: 'Save expense · 1 credit' }).tap();
   await expect(expense).toContainText('Expense saved.');
   await expect(main.getByRole('button', { name: /AI credits\. Open AI credits\./ }).first()).toContainText('83 credits');
@@ -262,22 +267,22 @@ test('AI Assistant: hidden without 0071; the button, cards, credits, voice, the 
   // 6. AskBack, where to do it, cannot, a plan.
   await ask(page, 'Rahul ko message bhejo');
   await expect(main.getByRole('article', { name: 'A question back' }).last()).toContainText('Which message should Rahul get?');
-  await shots(page, '06-askback-card');
+  await shots(page, '06-askback-card', false, main.getByRole('article', { name: 'A question back' }).last());
   await ask(page, 'Gold plan ka price badlo');
   const where = main.getByRole('article', { name: 'Where to do it' }).last();
   await expect(where).toContainText('Where: /plans');
   await expect(where.getByRole('button', { name: 'Open Plans' })).toBeVisible();
-  await shots(page, '07-open-page-card');
+  await shots(page, '07-open-page-card', false, where);
   await ask(page, 'Asha ko call karo');
   const cannot = main.getByRole('article', { name: 'Something the assistant cannot do' }).last();
   await expect(cannot).toContainText('I cannot make phone calls.');
   await expect(cannot.getByRole('button', { name: 'Open Help and feedback' })).toBeVisible();
-  await shots(page, '08-cannot-card');
+  await shots(page, '08-cannot-card', false, cannot);
   await ask(page, 'Asha ke liye workout plan banao');
   const plan = main.getByRole('article', { name: 'Workout plans' }).last();
   await expect(plan).toContainText('The AI Assistant cannot write workout plans yet.');
   await expect(plan).not.toContainText(/credit/);
-  await shots(page, '09-plan-not-ready-card');
+  await shots(page, '09-plan-not-ready-card', false, plan);
 
   // 7. No credits: the draft still shows; the button opens the packs.
   ai.balance = 0;
@@ -296,7 +301,7 @@ test('AI Assistant: hidden without 0071; the button, cards, credits, voice, the 
   await expect(credits).toContainText('₹399');
   await expect(credits).toContainText('Popular');
   await expect(credits).not.toContainText('Workout or diet plan saved');
-  await credits.getByRole('button', { name: /^150/ }).tap();
+  await credits.getByRole('button', { name: 'Popular: 150 credits for ₹399' }).tap();
   await expect(credits).toContainText('Buying credits here is not ready yet.');
   await shots(page, '10-credits-sheet');
   await credits.getByRole('button', { name: 'Close' }).tap();

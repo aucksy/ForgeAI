@@ -956,4 +956,5 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   'Entry machines': 'Entry machines',
   'Pay MettleUp': 'MettleUp ko pay karo',
   Task: 'Kaam',
+  '{n} credits for {price}': '{price} mein {n} credits',
 };
