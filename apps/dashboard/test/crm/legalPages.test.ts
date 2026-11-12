@@ -65,6 +65,21 @@ describe('R-76: the join screen’s legal links open real pages, never the admin
     expect(src('privacy-hi.body.html')).toContain('दोनों में फर्क हो तो अंग्रेज़ी वाला मान्य है');
   });
 
+  // R-459 (owner, 12 Nov 2026: "All yes"): the approved line about messages to the gym, word for word, in
+  // section 4B (what goes to your gym), on the published page too.
+  it('R-459: the privacy notice says how long messages to the gym are kept, word for word', () => {
+    const line =
+      "Messages you send to your gym from the Gym tab (questions, feedback, complaints) and the gym's replies are kept for 180 days after the last message, and deleted when you leave the gym. Feedback you send without your name is shown to the gym without your name.";
+    const body = src('privacy.body.html');
+    expect(body).toContain(line);
+    const b = body.indexOf('<h3>B. If you join a gym</h3>');
+    const c = body.indexOf('<h3>C. ');
+    expect(b).toBeGreaterThan(-1);
+    expect(body.indexOf(line)).toBeGreaterThan(b);
+    expect(body.indexOf(line)).toBeLessThan(c);
+    expect(readFileSync(pub('privacy.html'), 'utf8').replace(/\r\n/g, '\n')).toContain(line);
+  });
+
   it('the panel’s offline worker never keeps them as its own page', () => {
     const sw = readFileSync(pub('sw.js'), 'utf8');
     const src = /const SKIP = (\/.+\/);/.exec(sw)?.[1];

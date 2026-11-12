@@ -1,4 +1,9 @@
--- NOT APPLIED LIVE. Waits for the owner's yes ("No LIVE database changes without my yes").
+-- APPLIED LIVE 12 Nov 2026 (owner, 12 Nov: "All yes"), in the SQL Editor, this exact text from 1ce95b12 (sha256 a246392e...).
+-- Answer: "Success. No rows returned". Read-only check after: the tables gym_talk_threads and gym_talk_messages and the
+-- trigger gym_members_talk_left exist; member_push_notes' kind check includes 'gym_reply'. The live run of
+-- supabase/tests/0069 was not done; CI runs it. Only these header lines changed since 1ce95b12, so this file's hash is
+-- no longer a246392e (the SQL below is the same, byte for byte).
+-- Was: NOT APPLIED LIVE. Waits for the owner's yes ("No LIVE database changes without my yes").
 --
 -- 0069: "Message your gym" (member app, Gym tab) and "Member messages" (admin app). Owner, 12 Nov 2026: "Do we have
 -- an option in the app for user to send queries or feedback for the gym from inside the gym section? And does the
