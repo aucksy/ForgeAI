@@ -172,7 +172,7 @@ export async function aiWallet(key: string, rpc: typeof call = call): Promise<Ai
   try {
     const r = await rpc<unknown>('owner_ai_wallet', { p_key: key });
     if (!r || typeof r !== 'object' || Array.isArray(r) || (r as { ok?: unknown }).ok !== true) {
-      console.info('[assistant] the wallet is not on this gym's server yet');
+      console.info('[assistant] the wallet is not on this gym’s server yet');
       return null;
     }
     const w = r as Record<string, unknown>;
