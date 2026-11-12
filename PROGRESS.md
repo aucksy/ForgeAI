@@ -24,6 +24,11 @@
   only while the plan switch is on (planSync followGymLock). Shared code, Android and iPhone; no native part.
   Tests: apps/mobile/test/shop/findGym.test.ts (12), apps/dashboard/test/crm/plusLock.test.ts (7), deploy/panel
   leads.test.mjs (10). UAT: part u461 extended (Find my gym: not found, Tell my gym, Skip, empty name, found + Join).
+  UAT u461 (parts a-d, 12 Nov 2026): default phone 43216729788 (with part br, the code join) passed; his phone
+  (360 dp, font 1.3, IST) 43224070560 passed; largest text (font 2.0, 360 dp, IST) 43224075686 passed. 21 pictures
+  each, read. Fixes from the rounds: the code card's Next was also spoken "Find my gym" (renamed "Join with this
+  code"); the flow tapped the pop-up backdrop that shares the "Close" name; the gym-name hint was cut off at the
+  largest text (now "Gym name (optional)"). Help: the 3 F56 articles carry `unreleased` (kept out of the live help).
   NEEDS BEFORE IT WORKS LIVE: the panel deploy (the 'member' WhatsApp check + the 'member-app' lead source); 0070 live
   (his yes); the real WhatsApp check can only be tried on a phone after that deploy.
   What's new draft (only when payments go live): "No gym? MettleUp Plus adds the watch app, older charts, suggested

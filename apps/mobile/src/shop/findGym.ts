@@ -174,7 +174,8 @@ export const FIND_GYM = {
   notFoundWhy: 'We look only for a plan that runs today, under the number and first name your gym has for you.',
   tell: 'Tell my gym',
   skip: 'Skip',
-  gymNameLabel: 'Your gym’s name (optional)',
+  // Short: at the largest text the longer "Your gym’s name (optional)" was cut off (run 43224075686).
+  gymNameLabel: 'Gym name (optional)',
   cityLabel: 'City (optional)',
   leadNote: 'If you type your gym’s name and city, the MettleUp team may contact your gym. We never share your number.',
   testBuild: 'Test build: no WhatsApp message. This answer is made up.',
