@@ -7,6 +7,23 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-464. Privacy notice: Find my gym and Tell my gym lines; panel redeployed — 12 Nov 2026
+He said (12 Nov 2026, in the main chat, via the coordinator): "Both yes" to two lines, word for word:
+"Find my gym: if you check your mobile number in the app, we look for it on the member lists of gyms that use MettleUp,
+only to show you your own gym. The number is checked once and is not kept for this." and "Tell my gym: if you type
+your gym's name and city, we keep only those two, so our team can contact that gym. We never share your number."
+Done: both lines as the first items of section 4B "If you join a gym" (before how a member joins with the gym's code),
+"What changed" line updated, Hindi unchanged (the English wins); page rebuilt (legal_pages.py --check same);
+legalPages.test.ts +1 test pins both inside 4B and on the page (1d718f78). CI 43239090796 was red on the mobile type
+check from f67a79ce (plus.tsx put a testID on the frozen Card): fixed with a wrapping View (ff3f233e, same look).
+CI 43239612714 green on ff3f233e (incl. dashboard tests, build, crawl, admin journeys). Re-checked what ships since
+a7d06da1: only the privacy page and its test. Deploy: that run's dashboard-dist, `npx wrangler deploy` from
+deploy/panel of a clean worktree of ff3f233e, forgeai-panel version 727bdcc7-6292-4f44-9638-31e9bad181bb (same
+admin bundle index-D_U0gsfa.js). curl: mettleup.fit/privacy, mettleup.fit/privacy.html and app.mettleup.fit/privacy.html
+show both lines word for word. Note: 0070 was applied live by another session meanwhile (faf6483c); with it live, the
+admin card "Free MettleUp Plus for your members" (already in the live bundle since a7d06da1) now shows in Settings ->
+Member app. Not mine to change; flagged to the coordinator.
+
 ## R-463. R-459 goes live: 0069 applied, privacy line added, admin panel deployed — 12 Nov 2026
 **Deploy (12 Nov, evening):** the stop below was cleared by the coordinator: 06cc670f added `unreleased` to help
 articles, so the 3 F56 articles stay out of the live help (59 of 62 live); the Worker's "member" purpose ships (owner

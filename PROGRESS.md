@@ -18,7 +18,7 @@
   member_claim_phone, memory only, so the plan unlocks at once); owners and desk staff were already free in part (a).
   (c) not found -> "We did not find your gym" + "Tell my gym" (the member's own share sheet, a ready message with
   https://gyms.mettleup.fit/?from=member; optional gym name + city sent as a lead, source 'member-app', never the
-  number; deploy/panel/leads.js) + "Skip". (d) the gym owner's switch: supabase/migrations/0070_member_plus_lock.sql
+  number; deploy/panel/leads.js) + "Skip". Privacy notice section 4B has the two approved lines (Find my gym, Tell my gym; owner "Both yes", 12 Nov; LIVE with panel version 727bdcc7, R-464). (d) the gym owner's switch: supabase/migrations/0070_member_plus_lock.sql
   (NOT APPLIED; test supabase/tests/0070_member_plus_lock.sql, 17 checks, + security.sql), admin app Settings -> Member
   app card "Free MettleUp Plus for your members" (owner edits, desk reads; hidden until 0070), and the app reads it
   only while the plan switch is on (planSync followGymLock). Shared code, Android and iPhone; no native part.
