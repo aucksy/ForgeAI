@@ -38,6 +38,16 @@ export interface AdminNewsEntry {
 /** Newest first. member-words: Gemini second opinion + facts checked against the commits (28 Oct 2026). */
 export const ADMIN_NEWS: readonly AdminNewsEntry[] = [
   {
+    // 12 Nov 2026: MettleUp goes public on Google Play in every country; the owner said yes to EU/UK privacy
+    // lines ("yes add those lines why not"). Section 12 of docs/legal/privacy.body.html; nothing collected changed.
+    id: '2026-11-12',
+    lines: [
+      {
+        text: 'The MettleUp privacy notice has a new section for members in the EU, the EEA and the UK. It explains their rights and the legal reason for each use of their data. Read it at mettleup.fit/privacy.',
+      },
+    ],
+  },
+  {
     // R-448 (owner "okay go ahead", 10 Nov 2026; deployed 11 Nov IST).
     id: '2026-11-11',
     lines: [
