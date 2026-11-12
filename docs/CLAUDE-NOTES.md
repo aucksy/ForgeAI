@@ -20,7 +20,13 @@ nothing until F56 exists; (2) the number is still proven first with the free Wha
 (the F184 recommend link: a miss becomes a gym lead); (4) membership ends -> a short grace, then the paid features lock
 with "Renew at Iron Temple to keep every feature free" (a renewal nudge the gym values). Owners and staff: everything
 free, always. Option B: his vision as written, now, without F56 (a join nudge with nothing to unlock).
-Status: waiting for his A or B. Replaces the A/B asked in R-458 (that plan's member search, 0068, stays the engine).
+DECIDED (12 Nov, his reply): yes to the vision, built with F56. The number is proven by the WhatsApp sign-in check
+first (he: "there is a verification in place that you keep forgetting": never again cite the stranger risk). Not found ->
+"unlock every feature free if your gym uses MettleUp", with share-to-the-gym-owner or skip (my pick: the member shares a
+ready WhatsApp message from their own phone, optional gym name + city as a lead, never a send from us). Membership ends ->
+he is unsure about locking; he asked whether the GYM OWNER should choose. My view: yes, an owner switch in the admin app;
+never lock the member's own data (history, routines, records), only F56's paid extras, after a 7-day grace. Open: the
+switch's default (A: on, B: off) and his yes to apply 0068 on the live gym server.
 
 ## R-460. Sturdier phone tests, "flows to check", and a three-step round that fails fast — 12 Nov 2026
 
