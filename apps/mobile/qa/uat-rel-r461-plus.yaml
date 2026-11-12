@@ -96,7 +96,13 @@ appId: com.mettleup.app
 # in-view: a pop-up sheet over the page, it does not scroll
 - assertVisible: "^Your workouts, history and routines stay free, and nothing was deleted\\..*"
 - takeScreenshot: rel-r461-06-month-ended
-- tapOn: "^Close$"
+# The sheet's dimmed backdrop and its × are also called "Close". At 360 dp / large text the middle of the backdrop
+# lies on the sheet itself, so a plain tap did nothing (runs 43216721563, 43216725540): tap the button under
+# "See MettleUp Plus" instead (the same trap as phase1-b.yaml's "Keep original").
+- tapOn:
+    text: "^Close$"
+    below:
+      text: "^See MettleUp Plus$"
 - extendedWaitUntil:
     notVisible: "^Your free month has ended$"
     timeout: 10000
@@ -122,7 +128,11 @@ appId: com.mettleup.app
 # in-view: a pop-up sheet over the page, it does not scroll
 - assertVisible: "^See MettleUp Plus$"
 - takeScreenshot: rel-r461-07-charts-locked
-- tapOn: "^Not now$"
+# The backdrop and the × are also called "Not now": tap the button under "See MettleUp Plus".
+- tapOn:
+    text: "^Not now$"
+    below:
+      text: "^See MettleUp Plus$"
 - extendedWaitUntil:
     notVisible: "^Charts older than 3 months are part of MettleUp Plus$"
     timeout: 10000
@@ -157,7 +167,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Thank you! MettleUp Plus is open\\.$"
     timeout: 15000
-- tapOn: "^Close$"
+# The backdrop and the × are also called "Close": tap the button under the message.
+- tapOn:
+    text: "^Close$"
+    below:
+      text: "^Thank you! MettleUp Plus is open\\.$"
 - runFlow:
     file: sub-see.yaml
     env:
