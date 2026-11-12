@@ -114,8 +114,9 @@ jobs:
       # Run 43182150918: the FIRST launch in a look showed plain white (light) / plain black (dark) for
       # several seconds: iOS had not yet made its picture of the launch screen for that look. So each look
       # is opened twice: launch-<look>-first.png is the first launch after install / after the switch,
-      # launch-<look>.png the second (what a member sees on every later start). The picture is the
-      # earliest frame after the launch that is neither black, plain white nor the home screen.
+      # launch-<look>.png the second (what a member sees on every later start). The picture is the colour
+      # that filled the whole screen longest between the launch and the app's first screen; the step fails
+      # if no frame in that stretch is plain (a logo or text would show as "other pixels in the middle").
       - name: Picture tools (Pillow, ffmpeg)
         run: |
           python3 -m pip install --quiet --break-system-packages pillow imageio-ffmpeg || python3 -m pip install --quiet pillow imageio-ffmpeg
@@ -137,7 +138,7 @@ jobs:
                           os.path.join(tmp, "%04d.png")], check=True)
           frames = sorted(glob.glob(os.path.join(tmp, "*.png")))
           print(f"{look}: {len(frames)} frames, launch at {launch_ms} ms into the recording")
-          chosen, last_key = None, None
+          rows, last_key = [], None
           for i, f in enumerate(frames):
               t = i * 100 - launch_ms
               im = Image.open(f).convert("RGB")
@@ -150,22 +151,46 @@ jobs:
               mid = list(small.crop((0, h // 6, w, h * 5 // 6)).getdata())
               off = sum(1 for c in mid if max(abs(a - b) for a, b in zip(c, top)) > 24) / len(mid)
               hexc = "%02X%02X%02X" % top
+              rows.append((f, t, hexc, share, off))
               key = (hexc, round(off * 50))
               if key != last_key:
                   last_key = key
                   name = f"{look}-{t:+06d}ms-{hexc}.png"
                   shutil.copy(f, os.path.join(keep, name))
                   print(f"  {name}: #{hexc} on {share:.0%}, other pixels in the middle {off:.2%}")
-              blank = sum(top) < 30 or min(top) >= 252  # black, or plain white (video colours drift a little)
-              if chosen is None and t >= 0 and not blank and share >= 0.6:
-                  chosen = (f, t, hexc, off)
-          if chosen is None:
-              level = "warning" if look.endswith("-1") else "error"
-              print(f"::{level}::no {look} launch picture: every frame after the launch was black, white or the home screen")
+          # The launch screen = the colour that fills the whole screen longest after the launch, before the
+          # app's first screen with something on it (run 43188698852: the zoom from the icon is black, then
+          # the launch screen, then the app's own plain background for a moment, then the first screen).
+          full = lambda r: r[3] >= 0.9 and r[4] < 0.01
+          seen_full, runs, cur, nxt = False, [], [], None
+          for r in rows:
+              if r[1] < 0:
+                  continue
+              if full(r):
+                  seen_full = True
+                  if cur and cur[-1][2] != r[2]:
+                      runs.append(cur); cur = []
+                  cur.append(r)
+              elif seen_full:
+                  nxt = r
+                  break
+          # The first frame with something on it is kept too (launch-<look>-next.png): it must be the app's
+          # own first screen. A logo there instead would be a launch screen this script cannot tell apart.
+          if nxt:
+              shutil.copy(nxt[0], out.replace(".png", "-next.png"))
+              print(f"first frame with something on it: {nxt[1]} ms after launch (saved as {os.path.basename(out).replace('.png', '-next.png')})")
+          if cur:
+              runs.append(cur)
+          if not runs:
+              print(f"::error::{look}: no plain full-screen frame after the launch: a logo or text may be on the launch screen")
               sys.exit(0)
-          f, t, hexc, off = chosen
+          best = max(runs, key=len)
+          f, t, hexc, share, off = best[len(best) // 2]
           shutil.copy(f, out)
-          print(f"{os.path.basename(out)} = {t} ms after launch: #{hexc}, other pixels in the middle {off:.2%}")
+          print(f"{os.path.basename(out)} = {t} ms after launch: #{hexc} on {share:.0%}, other pixels in the middle "
+                f"{off:.2%}, held {len(best) * 100} ms; plain phases: " + ", ".join(f"#{r[0][2]} {len(r) * 100} ms" for r in runs))
+          # Nothing on it is the promise (no logo before a gym's own). The colour itself is reported, not judged:
+          # the simulator may paint its own plain white / black instead of #F6F4F0 / #1B1F26.
           PY
           # One launch, filmed from 1.5 s before it until 25 s after. film <name> <picture file>
           film() {
