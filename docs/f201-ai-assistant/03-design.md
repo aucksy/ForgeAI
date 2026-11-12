@@ -197,8 +197,10 @@ Real AI cost (Haiku 5.5 at $0.10/M in, $0.50/M out, help.js rates): question ~Rs
 
 ## 8. "Pro + AI" goes away
 - plans.ts: keep the 'ai' id valid (old rows, old migrations), drop it from every place that shows or sells it.
-- Landing page pricing: the third card becomes "AI Assistant — on every plan" (free monthly credits per plan, packs
-  from Rs 149). Words in 05-words.md; public website words shown to him before deploy.
+- Landing page pricing: ONLY Starter and Pro. **R-474 (owner, 13 Nov): no AI Assistant price card and no pack prices
+  on the website.** The AI Assistant is shown as a feature in its own section (below), with what is free (20 in the
+  trial; yearly 50 Starter / 100 Pro a month). Pack prices appear only in the app, when an owner runs out. The yearly
+  price lines keep "+ 50 / + 100 AI credits every month, free". Public website words shown to him before deploy.
 - **Website feature section (owner, 12 Nov, R-469):** mettleup.fit gets its own "AI Assistant" section, not only the
   pricing card. Three real examples, one of each kind, each shown as a short self-looping demo (typed or spoken line
   -> the card the assistant makes), in English with the Hinglish line as said:

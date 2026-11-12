@@ -76,24 +76,16 @@ describe('prices: one list, every place agrees', () => {
       const pack = /<h3[^>]*>Pro</.test(card) ? 'pro' : 'starter';
       expect(card).toContain(`+ ${AI_CREDITS.yearlyFreeEachMonth[pack]} AI credits every month, free`);
     }
-    // F201: the third card is the AI Assistant, on every plan, "Coming soon", with the packs from the one list.
-    const ai = cards.find((c) => /<h3[^>]*>AI Assistant/.test(c)) ?? '';
-    expect(cards).toHaveLength(3);
-    expect(ai).toContain('Coming soon');
-    expect(ai).not.toMatch(/class="p[my]"/);
-    const packs = [...ai.matchAll(/<div class="pk[^"]*">[^]*?([\d,]+) credits<\/[^]*?<span>₹([\d,]+)<\/span><\/div>/g)].map((x) => [
-      rupees(x[1]),
-      rupees(x[2]),
-      /class="pk pop"/.test(x[0]),
-    ]);
-    expect(packs).toEqual(AI_CREDITS.packs.map((p) => [p.credits, p.rupees, p.popular]));
-    expect(ai).toContain('Most popular');
-    expect(ai).toContain(`${AI_CREDITS.perTask} credit when you send a message`);
-    expect(ai).toContain(`${AI_CREDITS.perPlan} credits when the AI writes a workout or diet plan`);
-    expect(ai).toContain(`Free trial: ${AI_CREDITS.trialFree} credits, once`);
-    expect(ai).toContain(`free credits every month: ${AI_CREDITS.yearlyFreeEachMonth.starter} on Starter, ${AI_CREDITS.yearlyFreeEachMonth.pro} on Pro`);
-    expect(ai).toContain('Monthly plans: no free credits');
-    expect(ai).toContain('never expire');
+    // R-474 (13 Nov): the AI Assistant is a feature, not a third price card; pack prices only in the app.
+    expect(cards).toHaveLength(2);
+    expect(section).not.toContain('class="card ai');
+    for (const p of AI_CREDITS.packs) expect(html).not.toContain(`${p.credits} credits</b>`); // no pack on the site
+    expect(html).not.toContain('class="packs"');
+    // The AI section says what is free, from the one list.
+    const as = html.slice(html.indexOf('id="assistant"'), html.indexOf('</section>', html.indexOf('id="assistant"')));
+    expect(as).toContain(`${AI_CREDITS.trialFree} AI credits in your free trial`);
+    expect(as).toContain(`free credits every month: ${AI_CREDITS.yearlyFreeEachMonth.starter} on Starter, ${AI_CREDITS.yearlyFreeEachMonth.pro} on Pro`);
+    expect(as).toContain('Coming soon');
     // The founding offer: price (in the text and the big number), 25 gyms, the last day.
     const found = section.slice(section.indexOf('class="found'));
     expect(found).toContain(`Pay ${shown(FOUNDING_OFFER.rupees)} once`);

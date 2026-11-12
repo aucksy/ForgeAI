@@ -7,6 +7,16 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-474. Website: the AI Assistant is a feature, not a price card — 13 Nov 2026
+He (13 Nov, before sleep): "we are not showing the AI assistant and its pricing alongside the plans. It's primarily a
+feature that we have to showcase ... If they use it and if they run out of the credits, that's when they buy it and get
+to know what the pricing is"; it keeps its own section with 1-3 easy use cases, in the site's current theme.
+Done: the AI price card and pack prices removed from the gyms page; pricing is Starter + Pro (2 columns, centred);
+the AI section (3 self-looping demos, already in the theme) gains one line on free credits (trial 20; yearly 50/100;
+a credit only when it sends or saves). Yearly "+ 50/+ 100 AI credits" lines and the founding line stay.
+He also asked: "How is asking free? ... it's still gonna cost us, right?" Answer given: yes, ~Rs 0.05 a question to us;
+owners are not charged; fair use 50 a day (20 in trial) and the global monthly cap bound it.
+
 ## R-473. Yearly free credits by plan: Starter 50, Pro 100 — 12 Nov 2026
 He (12 Nov, night): "the BASIC PLAN should have 50 and the PRO should have 100" (both got 100 despite the price
 difference). Done: AI_CREDITS.yearlyFreeEachMonth = { starter: 50, pro: 100 } (packages/theme/src/plans.ts);

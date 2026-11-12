@@ -127,14 +127,13 @@ for (const [name, size] of [['phone', { width: 390, height: 844 }], ['computer',
     await sec.screenshot({ path: `${DIR}/gyms-ai-assistant-${name}.png` });
     await page.emulateMedia({ reducedMotion: 'no-preference' });
 
-    // The price cards: Starter, Pro and the AI Assistant (credits on every plan); the old third pack is gone.
+    // The price cards: only Starter and Pro (R-474: the AI Assistant is a feature, not a price card).
+    await expect(page.locator('#assistant .as-credits')).toContainText('20 AI credits in your free trial');
     const cards = page.locator('#cards');
     await cards.scrollIntoViewIfNeeded();
-    await expect(cards.locator('.card')).toHaveCount(3);
-    const ai = cards.locator('.card.ai');
-    await expect(ai.locator('h3')).toContainText('AI Assistant');
-    await expect(ai.locator('h3')).toContainText('Coming soon');
-    await expect(ai.locator('.pk')).toHaveText([/50 credits\s*₹149/, /150 credits\s*Most popular\s*₹399/, /500 credits\s*₹999/]);
+    await expect(cards.locator('.card')).toHaveCount(2);
+    await expect(cards).not.toContainText('AI Assistant');
+    await expect(cards).not.toContainText('₹149');
     await expect(cards).not.toContainText('Pro + AI');
     await expect(cards).not.toContainText('₹24,990');
     const yearlyLine = cards.locator('.aiy');
@@ -145,8 +144,6 @@ for (const [name, size] of [['phone', { width: 390, height: 844 }], ['computer',
     await expect(yearlyLine.nth(1)).toContainText('+ 100 AI credits every month, free'); // Pro
     await expect(yearlyLine.first()).toBeVisible();
     await expect(page.locator('.found')).toContainText('100 free AI credits every month');
-    // "See what it does" goes to the section.
-    await expect(ai.getByRole('link', { name: 'See what it does' })).toHaveAttribute('href', '#assistant');
     await noSideways(page);
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.waitForTimeout(300);
@@ -155,7 +152,7 @@ for (const [name, size] of [['phone', { width: 390, height: 844 }], ['computer',
     // Hindi: the words change; the owner's spoken lines stay as he says them.
     await page.locator('#lang').click();
     await expect(page.locator('#as-h')).toContainText('AI असिस्टेंट');
-    await expect(ai.locator('h3')).toContainText('जल्द आ रहा है');
+    await expect(page.locator('#assistant .as-head')).toContainText('जल्द आ रहा है');
     await expect(page.locator('#as-msg .as-t')).toHaveText('Kal gym band rahega, sabko batao');
     await sec.scrollIntoViewIfNeeded();
     await page.waitForTimeout(300);
