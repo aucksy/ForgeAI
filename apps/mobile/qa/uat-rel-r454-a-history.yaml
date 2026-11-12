@@ -153,38 +153,38 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-uat-r439-add.yaml
     env:
-      SEARCH: "chest dip"
-      EX: "Chest Dip"
+      SEARCH: "dips"
+      EX: "Dips"
 - runFlow:
     file: sub-uat-r439-set.yaml
     env:
-      EX: "Chest Dip"
+      EX: "Dips"
       N: "1"
       KG: "none"
       REPS: "16"
 - runFlow:
     file: sub-uat-r454-row.yaml
     env:
-      EX: "Chest Dip"
+      EX: "Dips"
       PREV: "1"
       N: "2"
 - runFlow:
     file: sub-uat-r439-set.yaml
     env:
-      EX: "Chest Dip"
+      EX: "Dips"
       N: "2"
       KG: "none"
       REPS: "15"
 - runFlow:
     file: sub-uat-r454-row.yaml
     env:
-      EX: "Chest Dip"
+      EX: "Dips"
       PREV: "2"
       N: "3"
 - runFlow:
     file: sub-uat-r439-set.yaml
     env:
-      EX: "Chest Dip"
+      EX: "Dips"
       N: "3"
       KG: "none"
       REPS: "8"

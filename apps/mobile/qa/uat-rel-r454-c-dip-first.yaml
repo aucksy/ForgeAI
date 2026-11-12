@@ -15,34 +15,34 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: "Chest Dip set 1 reps"
+      FIND: "Dips set 1 reps"
 - takeScreenshot: rel-r454-j-dip-before
 - runFlow:
     file: sub-type.yaml
     env:
-      FIELD: "Chest Dip set 1 reps"
+      FIELD: "Dips set 1 reps"
       VALUE: " 17"
 - runFlow:
     file: sub-uat-r439-rpe.yaml
     env:
-      BUTTON: "Add RPE for Chest Dip set 1"
+      BUTTON: "Add RPE for Dips set 1"
       PICK: 'RPE 8\.5: .*'
 - extendedWaitUntil:
-    visible: 'Chest Dip set 1 complete\. Tap to undo'
+    visible: 'Dips set 1 complete\. Tap to undo'
     timeout: 10000
 - runFlow: sub-uat-r439-clear.yaml
 - runFlow:
     file: sub-type.yaml
     env:
-      FIELD: "Chest Dip set 2 reps"
+      FIELD: "Dips set 2 reps"
       VALUE: " 14"
 - runFlow:
     file: sub-uat-r439-rpe.yaml
     env:
-      BUTTON: "Add RPE for Chest Dip set 2"
+      BUTTON: "Add RPE for Dips set 2"
       PICK: 'RPE 9\.5: .*'
 - extendedWaitUntil:
-    visible: 'Chest Dip set 2 complete\. Tap to undo'
+    visible: 'Dips set 2 complete\. Tap to undo'
     timeout: 10000
 - runFlow: sub-uat-r439-clear.yaml
 - runFlow:
@@ -57,7 +57,7 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-uat-r454-hint.yaml
     env:
-      EX: "Chest Dip"
+      EX: "Dips"
       N: "3"
       KG: "none"
       REPS: "9"
