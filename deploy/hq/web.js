@@ -165,20 +165,25 @@ export async function saveReply(db, id, reply, now) {
 
 /**
  * ONE help question for the English helper (english.js), by its id: who sent it, its words, the AI's
- * earlier answer and the team's earlier reply. Never any other row. null when there is no such row.
+ * earlier answer and every earlier team reply. Never any other row. null when there is no such row.
  * Before panel migrations 0008/0009 the answer and reply are ''.
  */
 export async function getHelpQuestion(db, id) {
   if (!Number.isInteger(id) || id < 1) return null;
-  let row;
-  try {
-    row = await db.prepare('SELECT id, source, text, answer, reply FROM feedback WHERE id = ?').bind(id).first();
-  } catch (e) {
-    if (!missingColumn(e)) throw e;
-    row = await db.prepare('SELECT id, source, text FROM feedback WHERE id = ?').bind(id).first();
+  // Newest columns first: the reply list (panel 0014, R-452), then one reply (0008/0009), then the words only.
+  let row = null;
+  for (const cols of ['id, source, text, answer, reply, reply_at, replies', 'id, source, text, answer, reply, reply_at', 'id, source, text']) {
+    try {
+      row = await db.prepare(`SELECT ${cols} FROM feedback WHERE id = ?`).bind(id).first();
+      break;
+    } catch (e) {
+      if (!missingColumn(e)) throw e;
+    }
   }
   if (!row) return null;
-  return { id: row.id, source: row.source === 'admin' ? 'admin' : 'member', question: String(row.text || ''), aiAnswer: String(row.answer || ''), earlierReply: String(row.reply || '') };
+  // Every team reply sent so far, oldest first (a correction or a top-up after the first one).
+  const earlierReply = replyListOf(row.replies, row.reply, row.reply_at).map((x, i) => `${i + 1}. ${x.text}`).join(String.fromCharCode(10));
+  return { id: row.id, source: row.source === 'admin' ? 'admin' : 'member', question: String(row.text || ''), aiAnswer: String(row.answer || ''), earlierReply };
 }
 
 /**

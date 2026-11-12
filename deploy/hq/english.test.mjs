@@ -28,6 +28,11 @@ const NOW = new Date('2026-11-12T06:00:00Z');
 const ROWS = {
   1: { id: 1, source: 'member', text: 'Mera plan freeze kaise karu? Main 2 hafte bahar hoon.', answer: 'Ask your gym at the desk.', reply: '' },
   2: { id: 2, source: 'member', text: 'OTHER PERSON: my phone is 9876500000 and I live at Flat 7', answer: '', reply: '' },
+  // R-452 (panel 0014): a question the team already answered twice (a correction after the first reply).
+  3: {
+    id: 3, source: 'admin', text: 'How do I add a member?', answer: '', reply: 'Correction: use the plus button.', reply_at: '2026-11-11T10:00:00Z',
+    replies: JSON.stringify([{ text: 'Correction: use the plus button.', at: '2026-11-11T10:00:00Z' }, { text: 'Open Members.', at: '2026-11-10T10:00:00Z' }]),
+  },
 };
 
 /** A stand-in for Cloudflare D1: only "SELECT ... FROM feedback WHERE id = ?" is answered. */
@@ -166,6 +171,17 @@ test('the prompt holds this question, its AI answer and the draft, and nothing o
   const net2 = fakeNet((model, body) => res(200, answer(isProbe(body) ? 'OK' : 'Done.')));
   await call('POST', '/api/english/rewrite', { id: 1, draft: 'ok', question: ROWS[2].text, aiAnswer: 'Flat 7' }, env(), net2);
   assert.ok(!net2.calls.some((c) => allText(c.body).includes('OTHER PERSON') || allText(c.body).includes('Flat 7')));
+});
+
+test('every earlier team reply on that question goes along, oldest first', async () => {
+  clearEnglishMemo();
+  const net = fakeNet((model, body) => res(200, answer(isProbe(body) ? 'OK' : 'Done.')));
+  await call('POST', '/api/english/rewrite', { id: 3, draft: 'also u can import from excel' }, env(), net);
+  const user = net.calls.find((c) => !isProbe(c.body)).body.contents[0].parts[0].text;
+  const a = user.indexOf('1. Open Members.');
+  const b = user.indexOf('2. Correction: use the plus button.');
+  assert.ok(a > 0 && b > a, 'both replies, in time order');
+  assert.ok(user.includes('admin app'));
 });
 
 test('free tier: refused before any member text goes to Google, and remembered', async () => {
