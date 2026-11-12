@@ -152,6 +152,14 @@ shards, no shard over ~2 h; (4) run the affected parts in the cloud on both phon
 - Cloud proof on dcd47380 (default phone, 43205679411): canary green 12 min, pieces 2 and 3 green
   (58 / 67 min); f199 passed (its earlier Reps-chart miss was a flake); piece 6 red on that u454 parse
   error and fail-fast cancelled 1, 4 and 5 within a minute.
+- Two more script faults the new rounds found (both fixed): (1) "Skip rest" taps: Maestro waits for a
+  still screen BEFORE a tap and then taps where the button was; the rest countdown never goes still, so
+  it waited ~6 s and on the owner phone the 30 s rest ended first and the tap opened the next
+  exercise's menu (43219573265, phase1-a). All 9 now cap that wait (waitToSettleTimeoutMs: 300).
+  (2) u458's privacy line sits below the screen once the wrong-PIN error shows (43220408476); the lint
+  missed it because the words live three imports from the Gym tab, so the lint now follows three.
+- Piece times seen on the new shape: canary 12-13 min, 2 gym-backup ~60, 3 uat-a ~70, 4 workout +
+  UAT chain 74-82 (was ~4.5 h), build 15-21.
 
 ## R-459. Members message their gym; the gym answers in "Member messages" — 12 Nov 2026
 
