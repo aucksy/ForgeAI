@@ -7,6 +7,14 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-456. In use screen: only "I'm back" closes it, not a tap anywhere — 12 Nov 2026
+
+He said: "the banner on the phone after resting that shows in use is actually going away if you simply tap anywhere on the screen. That should only go away if someone taps on I am back." (He gave this before: R-345, 5 Nov.)
+
+Found: MachineInUse.tsx wraps the whole screen in one Pressable with onPress={onClose} (label "Tap to close"), and the foot strip around the tick also closes on release. The "I'm back" pill is only a View inside it.
+
+Fix (with the 2:16 pm "In use" equipment-names helper, same file): make "I'm back" the only close button (a real Pressable with its own label; big target); the screen body and the tick strip no longer close it; the end of the rest still closes it; the phone's Back gesture still closes it (Android expects it; a stranger tapping is the problem, not Back). Shared code: Android + iPhone. Tests + UAT: a tap on the body and on the strip keeps it open; "I'm back" closes it.
+
 ## R-455. Watch: make it obvious that the numbers can be changed with the dial — 12 Nov 2026
 
 He said: on the watch it is not clear that you can tap the numbers and change them with the dial; rethink the design, keep it minimal. Then: "Build it after 2:15 p.m."
