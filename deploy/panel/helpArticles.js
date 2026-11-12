@@ -789,6 +789,19 @@ export const HELP_ARTICLES = [
       'Tap "Share to an AI app" and pick ChatGPT, Gemini or any app on your phone. MettleUp sends nothing itself; you choose where the text goes. Your name, phone number and body weight are left out.',
     screens: ['apps/mobile/src/app/settings/ask-ai.tsx'],
   },
+  {
+    id: 'mettleup-plus',
+    who: 'member',
+    title: 'MettleUp Plus: what is free and what is paid',
+    text:
+      'When MettleUp Plus is switched on, Profile, then Settings, shows a "MettleUp Plus" row. Tap it to see where you stand. ' +
+      'Free for everyone, always: logging every workout, your full history, routines, the rest timer on your phone, backup and export, and charts of the last 3 months. ' +
+      'MettleUp Plus adds: MettleUp on your watch, charts older than 3 months, suggested weight and reps, the 1-rep max and plate calculators, and more than 7 exercises of your own. ' +
+      'Everyone gets every feature free for their first month. Members of a gym that uses MettleUp get every feature free, and so do gym owners and desk staff. ' +
+      'Prices: 149 rupees a month, 999 rupees a year, or 2,499 rupees once for life, paid through Google Play. Tap "I already paid" to bring back a purchase on a new phone. ' +
+      'Your workouts and history are never locked or deleted.',
+    screens: ['apps/mobile/src/app/plus.tsx'],
+  },
   // ------------------------------------------------------------------ both apps
   {
     id: 'send-feedback',
@@ -836,6 +849,7 @@ export const NO_HELP_SCREENS = {
   'apps/mobile/src/app/qa-sleep.tsx': 'Redirect: a test-build link for the sleep line pictures (R-344); goes straight back.',
   'apps/mobile/src/app/qa-look.tsx': 'Redirect: a test-build link for the gym colour pictures on the light and dark looks; goes straight back.',
   'apps/mobile/src/app/qa-dots.tsx': 'Redirect: a test-build link for the new-feature dot pictures (F198); goes straight back.',
+  'apps/mobile/src/app/qa-plan.tsx': 'Redirect: a test-build link that switches MettleUp Plus on for one phone test (R-461); goes straight back.',
   'apps/mobile/src/app/qa-help.tsx': 'Redirect: a test-build link that adds a made-up answered question for the reply pictures (R-452); goes straight back.',
   'apps/mobile/src/app/analytics.tsx': 'Redirect: an old link that opens Charts.',
   'apps/mobile/src/app/bodyweight.tsx': 'Redirect: an old link that opens Body.',
