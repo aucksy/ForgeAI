@@ -7,6 +7,21 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-461. His vision: a found gym membership unlocks every paid feature (phone-number search + F56) — 12 Nov 2026
+He said (12 Nov, after reading the R-458 plan): solo users of the member app will have paid features locked (F56). When
+someone signs in and we detect an active membership at a MettleUp gym, or that they own or staff a MettleUp gym, we tell
+them: we found your membership (or your gym), join through it and every feature is unlocked free. The point: a person
+who installed the app from outside sees a real reason to join through their gym. "You can decide the right language."
+My view (sent in chat): his vision is right and is the best version; it turns R-458 from a convenience into the reason
+to join, and it is what F56's pay screen ("Train at a MettleUp gym? Enter your gym code") becomes, automatically.
+My additions, offered as option A: (1) build it together with F56, because nothing is locked today, so "unlock" means
+nothing until F56 exists; (2) the number is still proven first with the free WhatsApp check, framed as the benefit
+("See if your gym gives you MettleUp free"); (3) not found -> "Is your gym not on MettleUp yet? Tell them about it"
+(the F184 recommend link: a miss becomes a gym lead); (4) membership ends -> a short grace, then the paid features lock
+with "Renew at Iron Temple to keep every feature free" (a renewal nudge the gym values). Owners and staff: everything
+free, always. Option B: his vision as written, now, without F56 (a join nudge with nothing to unlock).
+Status: waiting for his A or B. Replaces the A/B asked in R-458 (that plan's member search, 0068, stays the engine).
+
 ## R-460. Sturdier phone tests, "flows to check", and a three-step round that fails fast — 12 Nov 2026
 
 **Asked (main chat, for the owner after 0.77.0's gate rounds):** (1) make every Maestro check on a page that
