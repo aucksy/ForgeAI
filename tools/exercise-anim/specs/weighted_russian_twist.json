@@ -1,33 +1,224 @@
 {
   "key": "weighted_russian_twist",
   "name": "Weighted Russian Twist",
-  "primary": ["obliques"],
-  "secondary": ["abs"],
-  "props": {"db_L": {"type": "dumbbell"}},
-  "camera": {"yaw": -80, "pitch": 18, "lens": 50, "fill": 0.9, "res": 640, "samples": 20},
-  "timing": {"fps": 30, "keys": [[0, "start"], [1, "end"], [2, "start"]]},
+  "primary": [
+    "obliques"
+  ],
+  "secondary": [
+    "abs"
+  ],
+  "props": {
+    "db_L": {
+      "type": "dumbbell"
+    }
+  },
+  "camera": {
+    "yaw": -30,
+    "pitch": 30,
+    "lens": 50,
+    "fill": 0.9,
+    "res": 640,
+    "samples": 20
+  },
+  "timing": {
+    "fps": 30,
+    "keys": [
+      [
+        0,
+        "start"
+      ],
+      [
+        1,
+        "end"
+      ],
+      [
+        2,
+        "start"
+      ]
+    ]
+  },
   "defaults": {
-    "root": {"loc": [0, 0, 0.12], "rot": [-40, 0, 0]},
-    "feet": {"L": {"at": [0.13, -0.668, 0.074], "rot": [0, 0, 0]}},
-    "knees": {"L": [0.15, -0.7, 1.0]}
+    "root": {
+      "loc": [
+        0,
+        0,
+        0.12
+      ],
+      "rot": [
+        -40,
+        0,
+        0
+      ]
+    },
+    "feet": {
+      "L": {
+        "at": [
+          0.13,
+          -0.668,
+          0.074
+        ],
+        "rot": [
+          0,
+          0,
+          0
+        ]
+      }
+    },
+    "knees": {
+      "L": [
+        0.15,
+        -0.7,
+        1.0
+      ]
+    }
   },
   "poses": {
     "start": {
-      "bones": {"spine05": [0, 0, 0], "spine04": [0, 0, 0], "spine03": [0, 0, 0], "spine02": [0, 0, 0], "spine01": [0, 0, 0], "neck01": [0, 0, 0]},
+      "bones": {
+        "spine05": [
+          0,
+          6,
+          0
+        ],
+        "spine04": [
+          0,
+          8,
+          0
+        ],
+        "spine03": [
+          0,
+          10,
+          0
+        ],
+        "spine02": [
+          0,
+          11,
+          0
+        ],
+        "spine01": [
+          0,
+          10,
+          0
+        ],
+        "neck01": [
+          0,
+          5,
+          0
+        ]
+      },
       "hands": {
-        "L": {"prop": "db_L", "axis": [0, 0, 1],
-              "arm": {"elev": 12.9, "plane": 46.8, "elbow": 101.8, "bend": [-0.56, 0.83, 0.05], "tilt": 0}}
+        "L": {
+          "prop": "db_L",
+          "axis": [
+            0.475,
+            0.067,
+            0.877
+          ],
+          "arm": {
+            "elev": 12.4,
+            "plane": 47.4,
+            "elbow": 101.8,
+            "bend": [
+              -0.555,
+              0.83,
+              0.052
+            ],
+            "tilt": 0
+          }
+        },
+        "R": {
+          "axis": [
+            -0.478,
+            0.048,
+            0.877
+          ],
+          "arm": {
+            "elev": 12.0,
+            "plane": 38.9,
+            "elbow": 103.2,
+            "bend": [
+              -0.518,
+              0.855,
+              0.029
+            ],
+            "tilt": 0
+          }
+        }
       }
     },
     "end": {
-      "bones": {"spine05": [0, -6, 0], "spine04": [0, -8, 0], "spine03": [0, -10, 0], "spine02": [0, -11, 0], "spine01": [0, -10, 0], "neck01": [0, -5, 0]},
+      "bones": {
+        "spine05": [
+          0,
+          -6,
+          0
+        ],
+        "spine04": [
+          0,
+          -8,
+          0
+        ],
+        "spine03": [
+          0,
+          -10,
+          0
+        ],
+        "spine02": [
+          0,
+          -11,
+          0
+        ],
+        "spine01": [
+          0,
+          -10,
+          0
+        ],
+        "neck01": [
+          0,
+          -5,
+          0
+        ]
+      },
       "hands": {
-        "L": {"prop": "db_L", "axis": [0, 0, 1],
-              "arm": {"elev": 41.8, "plane": 136.0, "elbow": 29.8, "bend": [-0.82, 0.08, 0.57], "tilt": 0}},
-        "R": {"prop": "db_R", "axis": [0, 0, 1],
-              "arm": {"elev": 34.8, "plane": -40.3, "elbow": 101.3, "bend": [0.0, 0.91, -0.41], "tilt": 0}}
+        "L": {
+          "prop": "db_L",
+          "axis": [
+            0.475,
+            0.067,
+            0.877
+          ],
+          "arm": {
+            "elev": 12.4,
+            "plane": 47.4,
+            "elbow": 101.8,
+            "bend": [
+              -0.555,
+              0.83,
+              0.052
+            ],
+            "tilt": 0
+          }
+        },
+        "R": {
+          "axis": [
+            -0.478,
+            0.048,
+            0.877
+          ],
+          "arm": {
+            "elev": 12.0,
+            "plane": 38.9,
+            "elbow": 103.2,
+            "bend": [
+              -0.518,
+              0.855,
+              0.029
+            ],
+            "tilt": 0
+          }
+        }
       }
     }
   },
-  "research": "Seated, lean back 40 deg (root rot X -40; ACE V-twist ~45, library 'slightly'), root 0.12 m so the sit bones touch the floor (ischium offset rotated -> z ~0.02). Hip L (0.11,-0.037,0.155); knees 90 deg -> hip-ankle 0.636, ankle z 0.074 -> dy = sqrt(0.636^2-0.081^2) = 0.631 -> ankle (0.13,-0.668,0.074), feet flat. Shoulders (+-0.22, 0.243, 0.528). Start: dumbbell (handle along the trunk) in the left hand at torso (0.07,0.30,-0.18), 0.30 m in front of the shoulder line; |S-H| 0.381 -> elbow 102, elev 12.9, plane 46.8; right hand mirrors to x -0.07 beside the plate (edge -0.018). End: shoulders turn 45 deg to HIS RIGHT (toward the camera at -X) via spine Y -6/-8/-10/-11/-10 and neck -5 (ASSUMED: negative Y = turn right; flip all signs if the render turns left). Left hand crosses to torso (-0.18,0.27,-0.32) beside the right hip: |S-H| 0.579 -> elbow 30, elev 41.8, plane 136. Right hand (explicit, no prop) beside the outer plate at torso (-0.31,0.22,-0.30): elbow 101, elev 34.8, plane -40.3. Hips, knees and feet unchanged. Sources S1 Oliva-Lozano 2020, S2 ACE V-twist, S3 Calatayud 2019."
+  "research": "Seated, lean back 40 deg (root rot X -40), root 0.12, feet flat, knees ~90 (unchanged; ankle (0.13,-0.668,0.074)). 12 Nov fix: the dumbbell never showed because its handle axis [0,0,1] was parallel to the torso 'up' the prop frame is built from (zero-size matrix). Now: left hand grips the handle centre at torso (0.07,0.30,-0.18), handle along the trunk turned 29 deg in the chest plane (axis [0.475,0.067,0.877], perpendicular to the forearm); plates clear the chest (~0.21 vs skin ~0.165) and sit ~8 cm above the thighs. Right hand (no prop) at torso (-0.085,0.30,-0.18), beside the lower plate (~8 mm clear). Arms are the SAME in both poses (torso frame): the weight stays in front of the chest and the trunk carries it. Start = shoulders turned 45 deg to HIS LEFT (spine Y +6/+8/+10/+11/+10, neck +5), end = 45 deg to HIS RIGHT (same, negative; the 11 Nov render confirmed negative Y = right). Camera yaw -30 / pitch 30 (front-right, above the knees) so the weight shows on both sides. Sources S1 Oliva-Lozano 2020, S2 ACE V-twist, S3 Calatayud 2019."
 }

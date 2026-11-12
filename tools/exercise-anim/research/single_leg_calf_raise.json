@@ -14,17 +14,17 @@
   "setup": [
     {"item": "foot", "target": "Ball of the foot firmly on the step edge, heel hanging off.", "tolerance": "ball 2-4 cm in from the edge", "source_ids": ["S2"]},
     {"item": "knee", "target": "Standing knee straight (not locked) throughout.", "tolerance": "0-10 deg", "source_ids": ["S1", "S2"]},
-    {"item": "support", "target": "Free hand on a wall or rail for balance only; free leg bent behind.", "tolerance": "", "source_ids": ["S1"]}
+    {"item": "support", "target": "Free (right) hand on a wall in front for balance only (fist on the wall face, wall in profile from the side camera); free leg bent behind.", "tolerance": "", "source_ids": ["S1"]}
   ],
   "movement": [
-    {"joint": "stance ankle (left)", "measure": "foot pitch vs flat, + = heel up (spec foot rot X)", "start": "about -20 deg (heel below the step)", "end": "about +35 deg (high on the toes)", "start_num": -20, "end_num": 35, "tolerance": "start -10..-25; end 30-45", "source_ids": ["S2"]},
-    {"joint": "ankle joint height", "measure": "ankle centre z (m), ball fixed at step top 0.15", "start": "0.172", "end": "0.291", "start_num": 0.172, "end_num": 0.291, "tolerance": "+-0.02", "source_ids": ["S2"]},
+    {"joint": "stance ankle (left)", "measure": "foot pitch vs flat, + = heel up (spec foot rot X)", "start": "about -15 deg (heel below the step; sole pivots over the step edge)", "end": "about +30 deg (high on the toes)", "start_num": -15, "end_num": 30, "tolerance": "start -10..-25; end 25-45", "source_ids": ["S2"]},
+    {"joint": "ankle joint height", "measure": "ankle centre z (m); rigid toes: start ball on the edge corner, end toe tip on the step top 0.15", "start": "0.192", "end": "0.313", "start_num": 0.192, "end_num": 0.313, "tolerance": "+-0.02", "source_ids": ["S2"]},
     {"joint": "stance knee", "measure": "knee flexion", "start": "about 5 deg", "end": "about 5 deg", "start_num": 5, "end_num": 5, "tolerance": "0-10 (stays still)", "source_ids": ["S1", "S2"]},
     {"joint": "free leg (right)", "measure": "knee flexion", "start": "about 80 deg, foot behind", "end": "same", "start_num": 80, "end_num": 80, "tolerance": "stays still", "source_ids": ["S1"]},
-    {"joint": "body", "measure": "rises straight up with the ankle, no hip bend", "start": "pelvis z 1.064", "end": "pelvis z 1.183", "start_num": 1.064, "end_num": 1.183, "tolerance": "+-0.02", "source_ids": ["S2"]}
+    {"joint": "body", "measure": "rises straight up with the ankle, no hip bend", "start": "pelvis z 1.084", "end": "pelvis z 1.205", "start_num": 1.084, "end_num": 1.205, "tolerance": "+-0.02", "source_ids": ["S2"]}
   ],
   "muscles": [
-    {"muscle": "Gastrocnemius and soleus", "mask_key": "calves", "tier": "primary", "role": "Lift the heel. Straight knee keeps the gastrocnemius (the main calf muscle) working.", "source_ids": ["S1", "S2"]},
+    {"muscle": "Gastrocnemius and soleus", "mask_key": "calves", "tier": "primary", "role": "Lift the heel. Straight knee keeps the gastrocnemius (the main calf muscle) working. Lit on the working (left) side only; the free leg's calf is not working.", "source_ids": ["S1", "S2"]},
     {"muscle": "Gluteus medius", "mask_key": "abductors", "tier": "stabiliser", "role": "Keeps the pelvis level on one leg.", "source_ids": ["S1"]},
     {"muscle": "Grip", "mask_key": "forearms", "tier": "stabiliser", "role": "Holds the dumbbell.", "source_ids": ["S2"]}
   ],
@@ -40,9 +40,9 @@
   "clip_check": [
     {"check": "Start: heel below the step top", "target": "heel z < 0.15 and behind the edge", "measured": "", "pass": ""},
     {"check": "End: high on the toes", "target": "foot pitch 30-45 deg, ball on step", "measured": "", "pass": ""},
-    {"check": "Ball of foot on the step in both pictures, not through it", "target": "+-0.005 m", "measured": "", "pass": ""},
+    {"check": "Ball of foot on the step in both pictures, not through it", "target": "start: sole on the step's back edge corner +-0.005 m; end: toe tip on the step top (lowest foot point z 0.150..0.152); heel z start ~0.112, end ~0.277", "measured": "", "pass": ""},
     {"check": "Stance knee straight in both", "target": "0-10 deg", "measured": "", "pass": ""},
-    {"check": "Left hand on the dumbbell; right hand at the wall face", "target": "hand within 0.03 m of wall, not inside", "measured": "", "pass": ""},
-    {"check": "Calves the strongest red in both pictures", "target": "yes", "measured": "", "pass": ""}
+    {"check": "Left hand on the dumbbell; right hand at the wall face", "target": "right fist knuckles on the wall face y -0.40 (grip centre ~(-0.19,-0.36,1.45)), within 0.03 m, not inside, in both pictures", "measured": "", "pass": ""},
+    {"check": "Calves the strongest red in both pictures", "target": "yes; only the LEFT (working) calf lit (highlight_side L)", "measured": "", "pass": ""}
   ]
 }

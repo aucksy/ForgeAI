@@ -8,7 +8,7 @@
     "library_secondary": ["quads", "chest"],
     "library_steps": ["From standing, squat down and put your hands on the floor.", "Jump your feet back into a push-up position and do one push-up.", "Jump your feet back in, then jump up with your arms overhead."],
     "status": "draft",
-    "researched_on": "2026-11-11",
+    "researched_on": "2026-11-12",
     "one_line_summary": "Two pictures: standing tall, feet hip-width, arms relaxed (start); high plank at the top of the push-up, arms straight under the shoulders, body one straight line from head to heels on the toes (end)."
   },
   "setup": [
@@ -16,11 +16,11 @@
     {"item": "plank", "target": "Hands under the shoulders, arms straight, body straight - hips neither high nor sagging.", "tolerance": "hip within 0.05 m of the shoulder-ankle line", "source_ids": ["S1", "S2"]}
   ],
   "movement": [
-    {"joint": "whole body", "measure": "body line angle from horizontal (spec root rot X = 90 - this)", "start": "90 deg (standing)", "end": "about 22 deg (shoulders 0.65 m up, ankles 0.15 m up)", "start_num": 0, "end_num": 68, "tolerance": "end root rot X 64-72", "source_ids": ["S1", "S2"]},
-    {"joint": "shoulder", "measure": "arm vertical to the floor (elev in torso frame)", "start": "8 (hanging)", "end": "68 (= straight down in world when the body is at 68)", "start_num": 8, "end_num": 68, "tolerance": "arms within 10 deg of vertical", "source_ids": ["S1"]},
+    {"joint": "whole body", "measure": "body line angle from horizontal (spec root rot X = 90 - this)", "start": "90 deg (standing)", "end": "about 21 deg (shoulders 0.68 m up, ankles 0.22 m up)", "start_num": 0, "end_num": 69.1, "tolerance": "end root rot X 65-73", "source_ids": ["S1", "S2"]},
+    {"joint": "shoulder", "measure": "arm vertical to the floor (elev in torso frame)", "start": "8 (hanging)", "end": "68.3 (= straight down in the world when the body is at 69.1)", "start_num": 8, "end_num": 68.3, "tolerance": "arms within 10 deg of vertical", "source_ids": ["S1"]},
     {"joint": "elbow", "measure": "near straight", "start": "10", "end": "5 (top of the push-up)", "start_num": 10, "end_num": 5, "tolerance": "0-15", "source_ids": ["S1"]},
     {"joint": "hip and knee", "measure": "straight in both (standing; plank)", "start": "0-5", "end": "0-5", "start_num": 0, "end_num": 0, "tolerance": "0-10", "source_ids": ["S2"]},
-    {"joint": "ankle", "measure": "end: on the toes, heels up", "start": "flat", "end": "foot rot X +50", "start_num": 0, "end_num": 50, "tolerance": "", "source_ids": ["S1"]}
+    {"joint": "ankle", "measure": "end: on the toes, heels up", "start": "flat", "end": "on the toes, heels up: foot rot X +70 (the one angle with a measured toe depth, 0.2158 m below the ankle)", "start_num": 0, "end_num": 70, "tolerance": "", "source_ids": ["S1"]}
   ],
   "muscles": [
     {"muscle": "Whole body / heart and lungs", "mask_key": "none", "tier": "primary", "role": "The burpee is a conditioning drill (library primary: cardio); used as a VO2 field test (S2).", "source_ids": ["S2"]},
@@ -43,8 +43,9 @@
   "clip_check": [
     {"check": "Start: standing tall, feet flat", "target": "-0.002..+0.002 m", "measured": "", "pass": ""},
     {"check": "End: straight body line", "target": "hip within 0.05 m of shoulder-ankle line", "measured": "", "pass": ""},
-    {"check": "End: hands on the floor under the shoulders", "target": "lowest hand point -0.005..+0.005 m; hand y within 0.08 m of shoulder y", "measured": "", "pass": ""},
-    {"check": "End: toes on the floor, heels up", "target": "-0.005..+0.005 m", "measured": "", "pass": ""},
-    {"check": "Red spread: quads/chest/glutes lit, no single muscle dominating", "target": "yes", "measured": "", "pass": ""}
+    {"check": "End: hands on the floor under the shoulders", "target": "lowest hand point -0.005..+0.005 m; hand y within 0.08 m of shoulder y; designed grip centre z 0.082 (fist reaches ~0.08 below it)", "measured": "", "pass": ""},
+    {"check": "End: toes on the floor, heels up", "target": "-0.005..+0.005 m; designed ankle z 0.218 at foot rot 70 (+0.002)", "measured": "", "pass": ""},
+    {"check": "Red spread: quads/chest/glutes lit, no single muscle dominating", "target": "yes", "measured": "", "pass": ""},
+    {"check": "End: trunk really leans into the plank (root turn baked)", "target": "end picture shows the plank line, not a standing trunk (needs the 12 Nov animate.py root-key fix)", "measured": "", "pass": ""}
   ]
 }

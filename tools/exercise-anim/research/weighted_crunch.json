@@ -5,7 +5,9 @@
     "name": "Weighted Crunch",
     "equipment": "dumbbell",
     "type": "weight_reps",
-    "library_primary": ["abs"],
+    "library_primary": [
+      "abs"
+    ],
     "library_secondary": [],
     "steps": [
       "Lie face up with knees bent and feet flat on the floor.",
@@ -14,43 +16,258 @@
     ],
     "status": "draft",
     "version": null,
-    "researched_on": "2026-11-11",
+    "researched_on": "2026-11-12",
     "one_line_summary": "Lying face up, knees bent about 90 deg, feet flat; one dumbbell held on the chest. The upper back curls up about 30 deg until the shoulder blades leave the floor, low back stays down, then lowers. Rectus abdominis is the target.",
     "evidence_grade": "B"
   },
   "setup": [
-    {"item": "lying position", "target": "Face up on the floor, low back resting on the floor.", "tolerance": "pelvis flat; no arch under the low back", "why": "A crunch curls the upper trunk only; the pelvis and low back stay down (curl, not sit-up).", "source_ids": ["S1", "S3"], "grade": "B"},
-    {"item": "knees and feet", "target": "Knees bent about 90 deg, feet flat on the floor about hip-width apart.", "tolerance": "knee bend 80-100 deg; feet 0.2-0.3 m apart", "why": "Bent knees keep the hip flexors (rectus femoris) quieter than straight-leg sit-ups; S1 found high rectus femoris EMG in the bent-knee sit-up, not the crunch.", "source_ids": ["S1"], "grade": "B"},
-    {"item": "load", "target": "One dumbbell held flat on the middle of the chest with both hands, elbows bent and close to the ribs.", "tolerance": "dumbbell on the sternum, not behind the head", "why": "S2 loaded the crunch at 20-100% of 1RM; the load on the chest raises abdominal EMG. Library step 2.", "source_ids": ["S2"], "grade": "A"}
+    {
+      "item": "lying position",
+      "target": "Face up on the floor, low back resting on the floor.",
+      "tolerance": "pelvis flat; no arch under the low back",
+      "why": "A crunch curls the upper trunk only; the pelvis and low back stay down (curl, not sit-up).",
+      "source_ids": [
+        "S1",
+        "S3"
+      ],
+      "grade": "B"
+    },
+    {
+      "item": "knees and feet",
+      "target": "Knees bent about 90 deg, feet flat on the floor about hip-width apart.",
+      "tolerance": "knee bend 80-100 deg; feet 0.2-0.3 m apart",
+      "why": "Bent knees keep the hip flexors (rectus femoris) quieter than straight-leg sit-ups; S1 found high rectus femoris EMG in the bent-knee sit-up, not the crunch.",
+      "source_ids": [
+        "S1"
+      ],
+      "grade": "B"
+    },
+    {
+      "item": "load",
+      "target": "One dumbbell held flat on the middle of the chest with both hands, elbows bent and close to the ribs.",
+      "tolerance": "dumbbell on the sternum, not behind the head",
+      "why": "S2 loaded the crunch at 20-100% of 1RM; the load on the chest raises abdominal EMG. Library step 2.",
+      "source_ids": [
+        "S2"
+      ],
+      "grade": "A"
+    }
   ],
   "movement": [
-    {"joint": "trunk curl (spine flexion, spine05..spine01 summed)", "measure": "deg of forward bend of the upper trunk off the floor; 0 = lying flat", "start": "0 deg (shoulders on the floor)", "end": "about 30 deg (shoulder blades just off the floor)", "start_num": 0, "end_num": 32, "path": "Upper back rolls up, lower back stays on the floor; same path down, slow.", "tolerance": "end 25-40 deg; lumbar (spine05) under 5 deg", "source_ids": ["S1", "S3"], "grade": "B"},
-    {"joint": "pelvis / hips", "measure": "pelvis angle to the floor", "start": "flat (root rot X -90)", "end": "flat, unchanged", "start_num": -90, "end_num": -90, "path": "Does not move. Hips do not flex further; this is a crunch, not a sit-up.", "tolerance": "+-3 deg", "source_ids": ["S1"], "grade": "B"},
-    {"joint": "knee", "measure": "knee bend, 0 = straight", "start": "90 deg", "end": "90 deg", "start_num": 90, "end_num": 90, "path": "Still. Feet stay flat on the floor.", "tolerance": "80-100 deg", "source_ids": ["S1"], "grade": "C"},
-    {"joint": "neck / head", "measure": "neck01 + head forward bend", "start": "about 10 deg (chin slightly tucked)", "end": "about 10 deg", "start_num": 10, "end_num": 10, "path": "Head moves with the trunk; chin is not yanked to the chest.", "tolerance": "0-20 deg", "source_ids": ["S3"], "grade": "C"},
-    {"joint": "arms (holding the weight)", "measure": "arm angles in the torso frame", "start": "elev 14.5, plane -53, elbow 120 (hands on the chest)", "end": "same (the weight rides with the chest)", "start_num": 120, "end_num": 120, "path": "Arms do not move relative to the chest; they do not throw the weight up.", "tolerance": "elbow 105-135 deg", "source_ids": ["S2"], "grade": "B"}
+    {
+      "joint": "trunk curl (spine flexion, spine05..spine01 summed)",
+      "measure": "deg of forward bend of the upper trunk off the floor; 0 = lying flat",
+      "start": "0 deg (shoulders on the floor)",
+      "end": "about 40 deg of spine curl (torso chord ~23 deg up; shoulder blades clearly off the floor)",
+      "start_num": 0,
+      "end_num": 40,
+      "path": "Upper back rolls up, lower back stays on the floor; same path down, slow.",
+      "tolerance": "end 25-40 deg; lumbar (spine05) under 5 deg (12 Nov: 32 -> 40 so the two pictures differ; toe_touch_crunch 36 deg read as ~20 deg chord)",
+      "source_ids": [
+        "S1",
+        "S3"
+      ],
+      "grade": "B"
+    },
+    {
+      "joint": "pelvis / hips",
+      "measure": "pelvis angle to the floor",
+      "start": "flat (root rot X -90)",
+      "end": "flat, unchanged",
+      "start_num": -90,
+      "end_num": -90,
+      "path": "Does not move. Hips do not flex further; this is a crunch, not a sit-up.",
+      "tolerance": "+-3 deg",
+      "source_ids": [
+        "S1"
+      ],
+      "grade": "B"
+    },
+    {
+      "joint": "knee",
+      "measure": "knee bend, 0 = straight",
+      "start": "90 deg",
+      "end": "90 deg",
+      "start_num": 90,
+      "end_num": 90,
+      "path": "Still. Feet stay flat on the floor.",
+      "tolerance": "80-100 deg",
+      "source_ids": [
+        "S1"
+      ],
+      "grade": "C"
+    },
+    {
+      "joint": "neck / head",
+      "measure": "neck01 + head forward bend",
+      "start": "about 10 deg (chin slightly tucked)",
+      "end": "about 10 deg",
+      "start_num": 10,
+      "end_num": 10,
+      "path": "Head moves with the trunk; chin is not yanked to the chest.",
+      "tolerance": "0-20 deg",
+      "source_ids": [
+        "S3"
+      ],
+      "grade": "C"
+    },
+    {
+      "joint": "arms (holding the weight)",
+      "measure": "arm angles in the torso frame",
+      "start": "elev 14.5, plane -53, elbow 120 (hands on the chest)",
+      "end": "same (the weight rides with the chest)",
+      "start_num": 120,
+      "end_num": 120,
+      "path": "Arms do not move relative to the chest; they do not throw the weight up.",
+      "tolerance": "elbow 105-135 deg",
+      "source_ids": [
+        "S2"
+      ],
+      "grade": "B"
+    }
   ],
   "muscles": [
-    {"muscle": "Abs (rectus abdominis)", "anatomy": "Rectus abdominis, upper and lower parts", "mask_key": "abs", "tier": "primary", "glow": 1.0, "emg": "Crunch is among the highest exercises for upper and lower RA (S1, abstract gives no %); RA rises with external load, most at 100% 1RM (S2).", "role": "Main mover: curls the rib cage toward the pelvis.", "surface": "The two vertical bands down the front of the belly, from the lower ribs/breastbone to the pubic bone, either side of the midline.", "source_ids": ["S1", "S2"], "grade": "A"},
-    {"muscle": "Obliques (external oblique)", "anatomy": "Obliquus externus abdominis", "mask_key": "obliques", "tier": "stabiliser", "glow": 0, "emg": "Crunch is among the highest for external and internal oblique in S1; S2 measured EO rising with load (no % in abstract).", "role": "Helps the curl and holds the trunk straight; not the target, so not lit.", "surface": "Sides of the waist from the lower ribs to the hip bone.", "source_ids": ["S1", "S2"], "grade": "B"},
-    {"muscle": "Hip flexors (rectus femoris / iliopsoas)", "anatomy": "Rectus femoris, iliopsoas", "mask_key": "none", "tier": "stabiliser", "glow": 0, "emg": "Low in the crunch compared with the bent-knee sit-up (S1).", "role": "Holds the bent legs; should stay quiet.", "surface": "Front of the hip and thigh.", "source_ids": ["S1"], "grade": "B"}
+    {
+      "muscle": "Abs (rectus abdominis)",
+      "anatomy": "Rectus abdominis, upper and lower parts",
+      "mask_key": "abs",
+      "tier": "primary",
+      "glow": 1.0,
+      "emg": "Crunch is among the highest exercises for upper and lower RA (S1, abstract gives no %); RA rises with external load, most at 100% 1RM (S2).",
+      "role": "Main mover: curls the rib cage toward the pelvis.",
+      "surface": "The two vertical bands down the front of the belly, from the lower ribs/breastbone to the pubic bone, either side of the midline.",
+      "source_ids": [
+        "S1",
+        "S2"
+      ],
+      "grade": "A"
+    },
+    {
+      "muscle": "Obliques (external oblique)",
+      "anatomy": "Obliquus externus abdominis",
+      "mask_key": "obliques",
+      "tier": "stabiliser",
+      "glow": 0,
+      "emg": "Crunch is among the highest for external and internal oblique in S1; S2 measured EO rising with load (no % in abstract).",
+      "role": "Helps the curl and holds the trunk straight; not the target, so not lit.",
+      "surface": "Sides of the waist from the lower ribs to the hip bone.",
+      "source_ids": [
+        "S1",
+        "S2"
+      ],
+      "grade": "B"
+    },
+    {
+      "muscle": "Hip flexors (rectus femoris / iliopsoas)",
+      "anatomy": "Rectus femoris, iliopsoas",
+      "mask_key": "none",
+      "tier": "stabiliser",
+      "glow": 0,
+      "emg": "Low in the crunch compared with the bent-knee sit-up (S1).",
+      "role": "Holds the bent legs; should stay quiet.",
+      "surface": "Front of the hip and thigh.",
+      "source_ids": [
+        "S1"
+      ],
+      "grade": "B"
+    }
   ],
   "tempo": null,
   "mistakes": [
-    {"mistake": "Sitting all the way up", "what_it_looks_like": "Low back leaves the floor and the trunk passes ~45 deg.", "why_it_matters": "Turns it into a sit-up: hip flexors take over (S1).", "source_ids": ["S1"]},
-    {"mistake": "Pulling the head forward", "what_it_looks_like": "Chin jammed into the chest while the shoulders barely move.", "why_it_matters": "Strains the neck; the abs do little.", "source_ids": ["S3"]}
+    {
+      "mistake": "Sitting all the way up",
+      "what_it_looks_like": "Low back leaves the floor and the trunk passes ~45 deg.",
+      "why_it_matters": "Turns it into a sit-up: hip flexors take over (S1).",
+      "source_ids": [
+        "S1"
+      ]
+    },
+    {
+      "mistake": "Pulling the head forward",
+      "what_it_looks_like": "Chin jammed into the chest while the shoulders barely move.",
+      "why_it_matters": "Strains the neck; the abs do little.",
+      "source_ids": [
+        "S3"
+      ]
+    }
   ],
   "sources": [
-    {"id": "S1", "citation": "Escamilla RF, McTaggart MS, Fricklas EJ, et al. 2006. An electromyographic analysis of commercial and common abdominal exercises: implications for rehabilitation and training. J Orthop Sports Phys Ther 36(2):45-57. doi:10.2519/jospt.2006.36.2.45", "url": "https://europepmc.org/article/MED/16494072", "type": "emg", "what_it_gave": "Crunch among the highest for upper/lower RA and obliques; rectus femoris highest in bent-knee sit-up, not the crunch."},
-    {"id": "S2", "citation": "Moraes AC, Pinto RS, Valamatos MJ, et al. 2009. EMG activation of abdominal muscles in the crunch exercise performed with different external loads. Phys Ther Sport 10(2):57-62. doi:10.1016/j.ptsp.2009.01.001", "url": "https://europepmc.org/article/MED/19376473", "type": "emg", "what_it_gave": "Crunch at 20-100% 1RM: RA and EO activation rise with load, greatest at 100%."},
-    {"id": "S3", "citation": "Oliva-Lozano JM, Muyor JM. 2020. Core muscle activity during physical fitness exercises: a systematic review. Int J Environ Res Public Health 17(12):4306. doi:10.3390/ijerph17124306", "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7345922/", "type": "review", "what_it_gave": "Crunch and curl-up data across studies (crunch highest IO of traditional exercises; curl-up IO ~62% MVIC)."}
+    {
+      "id": "S1",
+      "citation": "Escamilla RF, McTaggart MS, Fricklas EJ, et al. 2006. An electromyographic analysis of commercial and common abdominal exercises: implications for rehabilitation and training. J Orthop Sports Phys Ther 36(2):45-57. doi:10.2519/jospt.2006.36.2.45",
+      "url": "https://europepmc.org/article/MED/16494072",
+      "type": "emg",
+      "what_it_gave": "Crunch among the highest for upper/lower RA and obliques; rectus femoris highest in bent-knee sit-up, not the crunch."
+    },
+    {
+      "id": "S2",
+      "citation": "Moraes AC, Pinto RS, Valamatos MJ, et al. 2009. EMG activation of abdominal muscles in the crunch exercise performed with different external loads. Phys Ther Sport 10(2):57-62. doi:10.1016/j.ptsp.2009.01.001",
+      "url": "https://europepmc.org/article/MED/19376473",
+      "type": "emg",
+      "what_it_gave": "Crunch at 20-100% 1RM: RA and EO activation rise with load, greatest at 100%."
+    },
+    {
+      "id": "S3",
+      "citation": "Oliva-Lozano JM, Muyor JM. 2020. Core muscle activity during physical fitness exercises: a systematic review. Int J Environ Res Public Health 17(12):4306. doi:10.3390/ijerph17124306",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7345922/",
+      "type": "review",
+      "what_it_gave": "Crunch and curl-up data across studies (crunch highest IO of traditional exercises; curl-up IO ~62% MVIC)."
+    }
   ],
   "clip_check": [
-    {"check": "Start: trunk flat, spine bend sum", "target": "0 deg (shoulders on the floor)", "measured": "", "pass": "", "tool": "measure_pose.py"},
-    {"check": "End: spine bend sum", "target": "25-40 deg, shoulder blades off the floor, low back down", "measured": "", "pass": "", "tool": "measure_pose.py + picture"},
-    {"check": "Pelvis and feet on the floor in both pictures", "target": "lowest point -0.002..+0.002 m; soles flat", "measured": "", "pass": "", "tool": "probe_feet.py"},
-    {"check": "Knee bend", "target": "80-100 deg both pictures", "measured": "", "pass": "", "tool": "measure_pose.py"},
-    {"check": "Dumbbell sits on the chest, held by the left hand, right hand beside it", "target": "plates touch the chest, do not cut into it", "measured": "", "pass": "", "tool": "picture"},
-    {"check": "Primary muscle strongest red", "target": "abs strongest red in start and end", "measured": "", "pass": "", "tool": "picture"}
+    {
+      "check": "Start: trunk flat, spine bend sum",
+      "target": "0 deg (shoulders on the floor)",
+      "measured": "",
+      "pass": "",
+      "tool": "measure_pose.py"
+    },
+    {
+      "check": "End: spine bend sum",
+      "target": "25-40 deg, shoulder blades off the floor, low back down",
+      "measured": "",
+      "pass": "",
+      "tool": "measure_pose.py + picture"
+    },
+    {
+      "check": "Pelvis and feet on the floor in both pictures",
+      "target": "lowest point -0.002..+0.002 m; soles flat",
+      "measured": "",
+      "pass": "",
+      "tool": "probe_feet.py"
+    },
+    {
+      "check": "Knee bend",
+      "target": "80-100 deg both pictures",
+      "measured": "",
+      "pass": "",
+      "tool": "measure_pose.py"
+    },
+    {
+      "check": "Dumbbell sits on the chest, held by the left hand, right hand beside it",
+      "target": "plates touch the chest, do not cut into it",
+      "measured": "",
+      "pass": "",
+      "tool": "picture"
+    },
+    {
+      "check": "Primary muscle strongest red",
+      "target": "abs strongest red in start and end",
+      "measured": "",
+      "pass": "",
+      "tool": "picture"
+    },
+    {
+      "check": "Dumbbell visible and in the hands",
+      "target": "left fist on the handle centre, right hand beside the lower plate; plates resting on the chest, not inside it",
+      "measured": "FK 12 Nov: grip torso (0.07,0.25,-0.17), handle 30 deg off the spine line (old axis [0,0,1] made a zero-size dumbbell), right fist 8 mm clear of the plate",
+      "pass": ""
+    },
+    {
+      "check": "Upper back and buttocks on the floor in the start picture",
+      "target": "lowest_body_z -0.002..+0.002 and no gap under the shoulder blades in the side view",
+      "measured": "estimate 12 Nov: upper back ~+0.006 (root 0.10, rot -92); buttocks not measured",
+      "pass": ""
+    }
   ]
 }

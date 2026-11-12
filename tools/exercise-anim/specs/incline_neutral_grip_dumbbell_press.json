@@ -5,7 +5,7 @@
   "secondary": ["front_delts", "triceps"],
   "scene": {"bench": {"deg": 30}},
   "props": {"db_L": {"type": "dumbbell"}, "db_R": {"type": "dumbbell"}},
-  "camera": {"yaw": -65, "pitch": 18, "lens": 50, "fill": 0.9, "res": 640, "samples": 20},
+  "camera": {"yaw": 30, "pitch": 30, "lens": 50, "fill": 0.9, "res": 640, "samples": 20},
   "timing": {"fps": 30, "keys": [[0, "start"], [1, "end"], [2, "start"]]},
   "defaults": {
     "bones": {"spine05": [-7, 0, 0], "spine04": [-7, 0, 0], "spine03": [-7, 0, 0], "spine02": [-6, 0, 0], "neck01": [8, 0, 0], "head": [6, 0, 0]}
@@ -24,5 +24,5 @@
       "hands": {"L": {"prop": "db_L", "axis": [0, -0.47, 0.88], "arm": {"elev": 118, "plane": 88, "elbow": "fore_vertical", "bend_world": [0, 0, 1], "tilt": 0}}}
     }
   },
-  "research": "Body, bench (30 deg), feet and spine copied unchanged from the proven incline_dumbbell_press (owner-approved, probe_bench passed). Its top pose elev 118 = a vertical arm, so the torso frame sits ~62 deg back from vertical: world up in torso = (0, sin62, cos62) = (0, 0.88, 0.47). Neutral handle must be horizontal and point toward the head, square to a vertical forearm: world +Y in torso = (0, -cos62, sin62) = [0, -0.47, 0.88]. Start elev 45 / plane -30 (10 deg more tucked than the prone press for palms-in), forearm vertical; end elev 118 / plane 88 as the proven press. S1 Rodriguez-Ridao 2020 (30 deg best for upper pec, ~45 deg abduction), S2 Muyor 2023 (neutral grip)."
+  "research": "Body, bench (30 deg), feet and spine copied unchanged from the proven incline_dumbbell_press (owner-approved, probe_bench passed). Its top pose elev 118 = a vertical arm, so the torso frame sits ~62 deg back from vertical: world up in torso = (0, sin62, cos62) = (0, 0.88, 0.47). Neutral handle must be horizontal and point toward the head, square to a vertical forearm: world +Y in torso = (0, -cos62, sin62) = [0, -0.47, 0.88]. Start elev 45 / plane -30 (10 deg more tucked than the prone press for palms-in), forearm vertical; end elev 118 / plane 88 as the proven press. Fix 12 Nov (review: handles looked like one straight line): the axis was already right (the cloud QA side view shows both handles pointing head-to-feet, parallel); from yaw -65 a head-to-feet handle and the left-right gap between the dumbbells both run across the picture, so they read as one line. Camera now yaw +30 / pitch 30 (front-left, above, like the approved incline press): the two handles show as parallel diagonals side by side. S1 Rodriguez-Ridao 2020 (30 deg best for upper pec, ~45 deg abduction), S2 Muyor 2023 (neutral grip)."
 }

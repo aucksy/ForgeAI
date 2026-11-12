@@ -158,7 +158,14 @@ def grip_forearm_angle(rig, side, G_local):
 
 def frame_from(c, x_axis, y_hint):
     x = Vector(x_axis).normalized()
-    y = Vector(y_hint); y = (y - x * y.dot(x)).normalized()
+    h = Vector(y_hint); y = h - x * h.dot(x)
+    if y.length < 1e-3 * max(h.length, 1e-9):
+        # hint along the axis (an upright dumbbell, waiter curl, 12 Nov 2026): the leftover was rounding noise, so the
+        # frame came out skewed and the dumbbell was drawn tilted/flat. A dumbbell is round about its handle, so any
+        # perpendicular will do; a fixed one keeps it from spinning between frames.
+        h = Vector((0, 1, 0)) if abs(x.y) < 0.9 else Vector((1, 0, 0))
+        y = h - x * h.dot(x)
+    y.normalize()
     z = x.cross(y)
     M = Matrix((x, y, z)).transposed().to_4x4(); M.translation = Vector(c)
     return M

@@ -15,7 +15,7 @@
   },
   "setup": [
     {"item": "stance", "target": "Feet hip-width, knees soft, trunk upright and still.", "tolerance": "lean 0-5 deg", "why": "No swing.", "source_ids": ["S1"], "grade": "B"},
-    {"item": "hold", "target": "Dumbbell vertical, both hands together at the midline under the top end, palms up.", "tolerance": "dumbbell within 20 deg of vertical", "why": "Library step; the open, palms-up hold keeps the forearms supinated.", "source_ids": ["S2"], "grade": "D"},
+    {"item": "hold", "target": "Dumbbell vertical, both hands together at the midline under the top end, palms up. Picture: the rig's hands are closed fists, so two fists sit side by side under the top plate with the handle between them (prop_offset).", "tolerance": "dumbbell within 20 deg of vertical", "why": "Library step; the open, palms-up hold keeps the forearms supinated.", "source_ids": ["S2"], "grade": "D"},
     {"item": "elbows", "target": "At the sides, pointing down, the whole lift.", "tolerance": "upper arm elev 0-15 deg", "why": "Library step and ACE curl cue.", "source_ids": ["S3"], "grade": "C"}
   ],
   "movement": [
@@ -44,7 +44,7 @@
   "clip_check": [
     {"check": "Elbow bend start / end", "target": "~43 (20-50) / ~110 (100-130)", "measured": "", "pass": "", "tool": "measure_pose.py"},
     {"check": "Elbows by the sides (elev both pictures)", "target": "0-15 deg", "measured": "", "pass": "", "tool": "measure_pose.py"},
-    {"check": "Dumbbell vertical, both hands at it, no hand inside a plate", "target": "yes", "measured": "", "pass": "", "tool": "render, look"},
+    {"check": "Dumbbell vertical, both hands at it, no hand inside a plate", "target": "handle within 5 deg of vertical (axis +z, frame_from fallback 12 Nov 2026); top plate just above both fists", "measured": "", "pass": "", "tool": "render, look"},
     {"check": "Dumbbell clear of the hips/thighs at the start", "target": "gap >= 0", "measured": "", "pass": "", "tool": "render, look"},
     {"check": "Wrist bend", "target": "note value (palms-up hold bends the wrist back)", "measured": "", "pass": "", "tool": "measure_wrist.py"},
     {"check": "Feet flat on the floor", "target": "-0.002..+0.002 m", "measured": "", "pass": "", "tool": "probe_feet.py"},

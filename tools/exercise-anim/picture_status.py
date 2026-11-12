@@ -57,6 +57,7 @@ NEEDS = {
     "l_sit": "parallettes or dip bars",
     "swimming": "water", "outdoor_run": "outdoor scene (or a plain running stride)",
     "hiking": "outdoor scene", "walking": "plain walking stride (possible; low value)",
+    "stomach_vacuum": "a belly that draws in (the rig has no per-pose belly shape; research/stomach_vacuum.json)",
 }
 
 

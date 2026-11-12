@@ -6,12 +6,7 @@
     "equipment": "dumbbell",
     "library_primary": ["calves"],
     "library_secondary": [],
-    "library_steps": [
-      "Sit on a bench and set the front of one foot on a block.",
-      "Rest a dumbbell on that knee and hold it in place.",
-      "Raise your heel as high as you can, then lower slowly.",
-      "Finish your reps, then switch legs."
-    ],
+    "library_steps": ["Sit on a bench and set the front of one foot on a block.", "Rest a dumbbell on that knee and hold it in place.", "Raise your heel as high as you can, then lower slowly.", "Finish your reps, then switch legs."],
     "status": "draft",
     "version": 1,
     "researched_on": "2026-11-11",
@@ -25,8 +20,8 @@
     {"item": "other leg", "target": "Foot flat on the floor, relaxed.", "tolerance": "none", "why": "One leg at a time.", "source_ids": [], "grade": "D"}
   ],
   "movement": [
-    {"joint": "ankle (working leg)", "measure": "0 = foot square to the shin; - = heel down (dorsiflexion), + = heel up (plantarflexion)", "start": "-15 deg (heel below the block)", "end": "+30 deg (heel high)", "start_num": -15, "end_num": 30, "tolerance": "start -20..-10; end 25-35", "source_ids": ["S1"], "grade": "B"},
-    {"joint": "knee (working leg)", "measure": "bend", "start": "~90 deg", "end": "~90 deg (thigh lifts with the heel; knee angle unchanged)", "start_num": 90, "end_num": 90, "tolerance": "change < 10 deg", "source_ids": ["S2"], "grade": "C"},
+    {"joint": "ankle (working leg)", "measure": "0 = foot square to the shin; - = heel down (dorsiflexion), + = heel up (plantarflexion)", "start": "-15 deg (heel below the block)", "end": "+25 deg (heel high; rigid toes pivot on the toe tip, so 25 deg already lifts the heel 15 cm)", "start_num": -15, "end_num": 25, "tolerance": "start -20..-10; end 25-35", "source_ids": ["S1"], "grade": "B"},
+    {"joint": "knee (working leg)", "measure": "bend", "start": "~90 deg", "end": "~91 deg (thigh lifts ~9 cm at the knee; knee angle unchanged)", "start_num": 90, "end_num": 90, "tolerance": "change < 10 deg", "source_ids": ["S2"], "grade": "C"},
     {"joint": "trunk, other leg, arms", "measure": "stay still (hand rides up with the knee)", "start": "upright", "end": "same", "start_num": 0, "end_num": 0, "tolerance": "none", "source_ids": [], "grade": "D"}
   ],
   "muscles": [
@@ -44,11 +39,11 @@
     {"id": "S2", "citation": "StrengthLog. How to do seated calf raise: muscles worked and proper form.", "url": "https://www.strengthlog.com/seated-calf-raise/", "type": "coaching", "what_it_gave": "Toes and ball of the foot on the support; lower with a controlled ankle bend, push up by extending the ankles; mostly trains the soleus because the gastrocnemius is shortened."}
   ],
   "clip_check": [
-    {"check": "Start: working heel below the block", "target": "ankle -15 deg", "measured": "", "pass": ""},
-    {"check": "End: heel high, ball of foot still on the block (not sliding)", "target": "ankle +30 deg, ball within 1 cm", "measured": "", "pass": ""},
-    {"check": "Forefoot rests on block top (no float, no sink)", "target": "-0.005..+0.005 m", "measured": "", "pass": ""},
+    {"check": "Start: working heel below the block", "target": "ankle -15 deg, heel z ~0.042 (below the block top 0.08)", "measured": "", "pass": ""},
+    {"check": "End: heel high, ball of foot still on the block (not sliding)", "target": "ankle +25 deg, heel z ~0.189 (heel rises ~15 cm), ball over the block edge", "measured": "", "pass": ""},
+    {"check": "Forefoot rests on block top (no float, no sink)", "target": "start: sole on the block's back edge corner; end: toe tip on the block top; -0.005..+0.005 m", "measured": "", "pass": ""},
     {"check": "Other foot flat on the floor", "target": "probe_feet in range", "measured": "", "pass": ""},
     {"check": "Dumbbell rests on the lower thigh, hand on handle", "target": "gap < 0.02 m", "measured": "", "pass": ""},
-    {"check": "Calf strongest red in both pictures", "target": "yes", "measured": "", "pass": ""}
+    {"check": "Calf strongest red in both pictures", "target": "yes; only the LEFT (working) calf lit (highlight_side L)", "measured": "", "pass": ""}
   ]
 }

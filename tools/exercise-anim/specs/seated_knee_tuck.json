@@ -53,7 +53,12 @@
         0
       ],
       "neck01": [
-        4,
+        14,
+        0,
+        0
+      ],
+      "head": [
+        8,
         0,
         0
       ]
@@ -102,13 +107,13 @@
             0
           ],
           "arm": {
-            "elev": 103.0,
-            "plane": -81.9,
-            "elbow": 55.9,
+            "elev": 95.3,
+            "plane": -83.1,
+            "elbow": 44.5,
             "bend": [
-              -0.12,
-              -0.24,
-              -0.96
+              -0.13,
+              -0.11,
+              -0.98
             ]
           }
         }
@@ -119,10 +124,10 @@
         "loc": [
           0,
           0,
-          0.199
+          0.1481
         ],
         "rot": [
-          -38,
+          -45,
           0,
           0
         ]
@@ -131,11 +136,11 @@
         "L": {
           "at": [
             0.12,
-            -0.523,
-            0.121
+            -0.5,
+            0.3
           ],
           "rot": [
-            0,
+            -15,
             0,
             0
           ]
@@ -156,12 +161,12 @@
             0
           ],
           "arm": {
-            "elev": 83.8,
-            "plane": -84.5,
-            "elbow": 28.7,
+            "elev": 95.3,
+            "plane": -83.1,
+            "elbow": 44.5,
             "bend": [
-              -0.15,
-              0.09,
+              -0.13,
+              -0.11,
               -0.98
             ]
           }
@@ -169,5 +174,5 @@
       }
     }
   },
-  "research": "Seated on the floor, root 0.12 m (sit bones ~0.02 m after the lean). Start lean 45 deg (root rot X -45): hip L (0.11,-0.034,0.158), shoulders (+-0.22, 0.278, 0.505). Legs out: hip-ankle 0.905 (straight-ish), rising 12 deg: dy = -0.905cos12 = -0.885, dz = +0.188 -> ankle (0.12,-0.919,0.346), heels ~0.27 m up, toes pointed (rot X -20). End lean 38 deg: hip (0.11,-0.038,0.154); thigh 55 deg up -> knee (0.12,-0.30,0.51); shin down-forward -> ankle (0.12,-0.523,0.121): hip-ankle 0.486 -> knee bend ~115 deg, heel ~0.05 m off the floor. Hands planted in both pictures at world (+-0.25, 0.52, 0.035), 0.52 m behind the pelvis joint, fingers toward the feet (axis [-1,0,0]); arm angles solved from shoulder->hand in each torso frame with upper arm 0.269 + forearm-to-hand 0.33: start |S-H| 0.530 -> elbow 56, elev 103, plane -82 (elbow points back); end |S-H| 0.581 -> elbow 29, elev 84, plane -84.5. Source S1 Spotebi (coach), S2 Oliva-Lozano 2020 (V-sit RA ~80%), S3 Escamilla 2006. QA 11 Nov: whole body moved by the measured lowest point so it rests on the floor (cloud run 43079162675)."
+  "research": "Seated on the floor, root 0.12 m (sit bones ~0.02 m after the lean). Start lean 45 deg (root rot X -45): hip L (0.11,-0.034,0.158), shoulders (+-0.22, 0.278, 0.505). Legs out: hip-ankle 0.905 (straight-ish), rising 12 deg: dy = -0.905cos12 = -0.885, dz = +0.188 -> ankle (0.12,-0.919,0.346), heels ~0.27 m up, toes pointed (rot X -20). End lean 38 deg: hip (0.11,-0.038,0.154); thigh 55 deg up -> knee (0.12,-0.30,0.51); shin down-forward -> ankle (0.12,-0.523,0.121): hip-ankle 0.486 -> knee bend ~115 deg, heel ~0.05 m off the floor. Hands planted in both pictures at world (+-0.25, 0.52, 0.035), 0.52 m behind the pelvis joint, fingers toward the feet (axis [-1,0,0]); arm angles solved from shoulder->hand in each torso frame with upper arm 0.269 + forearm-to-hand 0.33: start |S-H| 0.530 -> elbow 56, elev 103, plane -82 (elbow points back); end |S-H| 0.581 -> elbow 29, elev 84, plane -84.5. Source S1 Spotebi (coach), S2 Oliva-Lozano 2020 (V-sit RA ~80%), S3 Escamilla 2006. Fix 12 Nov (review: end feet on the floor, head tipped far back): the feet never touch the floor. End keeps the start torso (lean 45, root z 0.1481 measured on the floor) and pulls the knees in: ankle (0.12,-0.50,0.30), toes pointed 15 deg -> hip-ankle 0.48 m, knee ~(0.12,-0.18,0.61), thigh 71 deg up, knee bent ~116 deg, toes ~0.2 m off the floor. Neck 14 + head 8 deg forward so the gaze runs along the spine toward the knees. Hands: the old arm angles were solved for root z 0.12, but the root was later raised to the measured floor height, so the hands floated 3 cm (start) and 8 cm (end); re-solved for root 0.1481 -> fists at (+-0.25, 0.52, 0.035) on the floor in both pictures (elev 95.3 / plane -83.1 / elbow 44.5). The lean-38 end could not reach the floor at all (shoulder 0.65 m from the hand spot, arm 0.60 m). QA 11 Nov: whole body moved by the measured lowest point so it rests on the floor (cloud run 43079162675)."
 }

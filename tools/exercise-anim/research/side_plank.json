@@ -1,0 +1,54 @@
+{
+  "format": "v1-stills",
+  "exercise": {
+    "key": "side_plank",
+    "name": "Side Plank",
+    "equipment": "bodyweight",
+    "type": "time",
+    "library_primary": ["obliques"],
+    "library_secondary": ["abs", "abductors"],
+    "steps": ["Lie on your side, propped on one forearm, elbow under your shoulder.", "Lift your hips so your body forms a straight line.", "Hold for the time, then switch sides."],
+    "status": "draft",
+    "version": null,
+    "researched_on": "2026-11-12",
+    "one_line_summary": "A hold (one picture): on the right side, right forearm on the floor with the elbow under the shoulder and the forearm pointing forward, legs straight with the feet stacked (side of the bottom foot on the floor), hips lifted so head, shoulders, hips and ankles make one straight line. The weight-bearing (floor-side) obliques hold the trunk up; both glute medius work hard; the abs only steady.",
+    "evidence_grade": "A"
+  },
+  "setup": [
+    {"item": "support arm", "target": "Right forearm flat on the floor, elbow directly under the right shoulder, forearm pointing forward (chest side), fist relaxed thumb-up.", "tolerance": "elbow within 0.05 m of under the shoulder", "why": "ACE: 'Place your right elbow directly under your shoulder'; Youdas TESS = trunk-elevated side support on the forearm.", "source_ids": ["S2", "S1"], "grade": "C"},
+    {"item": "legs and feet", "target": "Legs straight, left leg stacked on the right, feet on top of each other; only the side of the bottom foot touches the floor.", "tolerance": "knees 0-10 deg; top ankle over the bottom ankle", "why": "ACE: 'Stack your left leg over your right, with your feet on top of each other ... keeping contact with the side of your right foot'.", "source_ids": ["S2"], "grade": "C"},
+    {"item": "body line", "target": "Hips lifted: head, shoulders, hips and ankles in one straight line; head in line with the spine; no forward roll.", "tolerance": "hip within 0.04 m of the shoulder-ankle line", "why": "ACE (head aligned with the spine, stiff spine); Youdas: side bridge held in a neutral spine position.", "source_ids": ["S1", "S2"], "grade": "A"}
+  ],
+  "movement": [
+    {"joint": "whole body (hold)", "measure": "body line tilt from the floor; spec root rot (0, -74.6, -90) = lying on the right side, head +Y, chest -X", "start": "~15 deg (shoulder joint 0.325 m up, bottom ankle 0.07 m up)", "end": "same (hold)", "start_num": 15, "end_num": 15, "path": "Held still.", "tolerance": "10-20 deg (set by forearm height and leg length)", "source_ids": ["S1", "S2"], "grade": "A"},
+    {"joint": "support shoulder", "measure": "upper arm vertical under the shoulder (elev 74.6, plane 0 in the torso frame)", "start": "vertical", "end": "vertical", "start_num": 0, "end_num": 0, "path": "Held.", "tolerance": "+-10 deg", "source_ids": ["S2"], "grade": "C"},
+    {"joint": "support elbow", "measure": "elbow bend, forearm flat on the floor", "start": "90", "end": "90", "start_num": 90, "end_num": 90, "path": "Held.", "tolerance": "80-100", "source_ids": ["S2"], "grade": "C"},
+    {"joint": "hips / spine", "measure": "hip and trunk side-bend", "start": "0 (straight line)", "end": "0", "start_num": 0, "end_num": 0, "path": "Held: no sag, no pike, no forward roll.", "tolerance": "+-5 deg", "source_ids": ["S1", "S2"], "grade": "A"},
+    {"joint": "knees", "measure": "knee bend", "start": "~0-5 (straight)", "end": "same", "start_num": 3, "end_num": 3, "path": "Straight legs.", "tolerance": "0-10", "source_ids": ["S2"], "grade": "C"},
+    {"joint": "top arm", "measure": "resting along the flank", "start": "elev 15, elbow 20", "end": "same", "start_num": 15, "end_num": 15, "path": "Held.", "tolerance": "free (not loaded)", "source_ids": ["S2"], "grade": "D"}
+  ],
+  "muscles": [
+    {"muscle": "Obliques (floor side)", "anatomy": "Obliquus externus / internus abdominis, weight-bearing side", "mask_key": "obliques", "tier": "primary", "glow": 1.0, "emg": "Side-bridge (TESS) external oblique 37.2 +- 22.7 % MVIC on the weight-bearing side vs 11.7 +- 8.2 % on the top side (S1, n=25). Ekstrom 2007: the side-bridge is one of only two of 9 exercises that load the external oblique enough for strengthening (S3).", "role": "Hold the trunk up against gravity sideways (anti side-bend); what the exercise is for (library primary). Glute medius EMG is higher, but the exercise's purpose is the lateral core, so obliques take the primary slot (FORMAT purpose rule). Lit on the floor side only (highlight_side R).", "surface": "Side of the waist between the lowest ribs and the hip bone, wrapping onto the front of the belly.", "source_ids": ["S1", "S3"], "grade": "A"},
+    {"muscle": "Hip abductors (glute medius)", "anatomy": "Gluteus medius", "mask_key": "abductors", "tier": "secondary", "glow": 0.35, "emg": "TESS gluteus medius 73.6 +- 30.6 % MVIC weight-bearing side, 48.1 +- 24.3 % top side (S1); side-bridge one of the two best glute medius exercises of 9 (S3).", "role": "Hold the pelvis up and level (bottom side) and the top leg in line (top side). Both sides well above 40 % of the primary, so lit on both sides.", "surface": "Upper outer hip, below the iliac crest, above the hip joint.", "source_ids": ["S1", "S3"], "grade": "A"},
+    {"muscle": "Abs (rectus abdominis)", "anatomy": "Rectus abdominis", "mask_key": "abs", "tier": "stabiliser", "glow": 0, "emg": "TESS 12.8 +- 6.5 % MVIC weight-bearing side, 5.6 +- 5.0 % top side (S1): about a third of the obliques, under the 40 % secondary bar.", "role": "Keeps the trunk from arching or twisting. Library lists abs as secondary; the EMG does not support lighting it.", "surface": "Front of the belly.", "source_ids": ["S1"], "grade": "A"},
+    {"muscle": "Back extensors", "anatomy": "Longissimus thoracis, lumbar multifidus", "mask_key": "lower_back", "tier": "stabiliser", "glow": 0, "emg": "TESS longissimus ~19-20 %, multifidus 33.6 % (down) / 11.3 % (up) MVIC (S1).", "role": "Hold the neutral spine.", "surface": "Either side of the low-back spine.", "source_ids": ["S1"], "grade": "A"}
+  ],
+  "tempo": null,
+  "mistakes": [
+    {"mistake": "Hips sagging", "what_it_looks_like": "Pelvis drops below the shoulder-ankle line.", "why_it_matters": "Loses the straight-line side bridge (S2: lift the hips and knees off the mat).", "source_ids": ["S2"]},
+    {"mistake": "Elbow not under the shoulder", "what_it_looks_like": "Forearm planted out ahead of or behind the shoulder.", "why_it_matters": "S2: right elbow directly under the shoulder, kept there.", "source_ids": ["S2"]},
+    {"mistake": "Rolling forward", "what_it_looks_like": "Chest and hips turn toward the floor.", "why_it_matters": "Not the measured neutral side-bridge (S1).", "source_ids": ["S1"]}
+  ],
+  "sources": [
+    {"id": "S1", "citation": "Youdas JW, Boor MMP, Darfler AL, Koenig MK, Mills KM, Hollman JH. 2014. Surface electromyographic analysis of core trunk and hip muscles during selected rehabilitation exercises in the side-bridge to neutral spine position. Sports Health 6(5):416-421. doi:10.1177/1941738114539266", "url": "https://europepmc.org/article/PMC/PMC4137676", "type": "emg", "what_it_gave": "Table 2, TESS (forearm side bridge) %MVIC on the weight-bearing vs top side: RA 12.8/5.6, EO 37.2/11.7, LT 19.1/20.2, LM 33.6/11.3, GM 73.6/48.1; weight-bearing side higher for nearly all muscles."},
+    {"id": "S2", "citation": "American Council on Exercise. Side Plank with Straight Leg (exercise library).", "url": "https://acefitness.org/exerciselibrary/101/side-plank-with-straight-leg", "type": "guideline", "what_it_gave": "Lie on the right side, legs extended, left leg stacked on the right with the feet on top of each other; right elbow directly under the shoulder; head in line with the spine; lift the hips and knees keeping contact with the side of the right foot; target abs, butt/hips."},
+    {"id": "S3", "citation": "Ekstrom RA, Donatelli RA, Carp KC. 2007. Electromyographic analysis of core trunk, hip, and thigh muscles during 9 rehabilitation exercises. J Orthop Sports Phys Ther 37(12):754-762. doi:10.2519/jospt.2007.2550", "url": "https://consensus.app/papers/details/w:1c937b06-9d8c-41f4-9748-5bbca7630a33/", "type": "emg", "what_it_gave": "Abstract: the side-bridge could be used for strengthening the gluteus medius and the external oblique (above 45 % MVIC); most other exercises stayed under 45 %."}
+  ],
+  "clip_check": [
+    {"check": "Support forearm on the floor, elbow under the right shoulder", "target": "lowest body point -0.005..+0.005 m (forearm / fist); elbow y within 0.05 m of the shoulder", "measured": "", "pass": "", "tool": "<key>__stills.json lowest_body_z + picture"},
+    {"check": "Side of the bottom foot on the floor, feet stacked", "target": "bottom foot touches z 0 (not into it); top ankle over the bottom one", "measured": "", "pass": "", "tool": "picture (qa side view)"},
+    {"check": "Straight body line", "target": "hip within 0.04 m of the shoulder-ankle line (designed: on the line)", "measured": "", "pass": "", "tool": "picture"},
+    {"check": "Forearm readable", "target": "forearm visible lying on the floor (camera yaw -110, pitch 20, not straight down its length)", "measured": "", "pass": "", "tool": "picture"},
+    {"check": "Primary muscle strongest red", "target": "floor-side obliques the strongest red; both glute medius light; nothing else lit", "measured": "", "pass": "", "tool": "picture (the floor-side waist faces down: check it reads)"}
+  ]
+}

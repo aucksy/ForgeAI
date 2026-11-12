@@ -12,7 +12,7 @@
     "one_line_summary": "Up on the balls of the feet, the knees travel far forward while the body leans back as one straight line from knees to shoulders, to about 100 deg of knee bend (end), from standing tall on the toes (start)."
   },
   "setup": [
-    {"item": "feet", "target": "Hip-width, up on the balls of the feet (heels raised).", "tolerance": "heel lift 30-45 deg", "source_ids": ["S1", "S3"]},
+    {"item": "feet", "target": "Hip-width, up on the balls of the feet (heels raised).", "tolerance": "heel lift 25-45 deg", "source_ids": ["S1", "S3"]},
     {"item": "support", "target": "Library: one hand on a post. Picture: arms reach forward for balance (no post prop); noted as a deviation.", "tolerance": "", "source_ids": ["S3"]}
   ],
   "movement": [
@@ -20,7 +20,7 @@
     {"joint": "shin", "measure": "forward tilt from vertical (top toward the toes)", "start": "about 0 deg", "end": "about 60 deg", "start_num": 0, "end_num": 60, "tolerance": "end 50-70", "source_ids": ["S1"]},
     {"joint": "hip", "measure": "hip flexion; thigh and trunk stay in one line", "start": "0 deg", "end": "about 0 deg (hips stay open)", "start_num": 0, "end_num": 0, "tolerance": "0-15", "source_ids": ["S3"]},
     {"joint": "trunk + thigh line", "measure": "lean back from vertical (spec root rot X)", "start": "0 deg", "end": "about 40 deg back", "start_num": 0, "end_num": -40, "tolerance": "30-50", "source_ids": ["S1", "S3"]},
-    {"joint": "ankle / heel", "measure": "foot pitch, heel up (spec foot rot X)", "start": "+40 deg", "end": "+40 deg (stays on the balls)", "start_num": 40, "end_num": 40, "tolerance": "stays still", "source_ids": ["S3"]},
+    {"joint": "ankle / heel", "measure": "foot pitch, heel up (spec foot rot X)", "start": "+30 deg (rigid toes: toe tip on the floor, heel z ~0.13)", "end": "+30 deg (stays on the toes)", "start_num": 30, "end_num": 30, "tolerance": "stays still", "source_ids": ["S3"]},
     {"joint": "arms", "measure": "reach forward for balance, about level with the floor in world terms", "start": "elev 90 (torso upright)", "end": "elev 50 in torso frame (= horizontal in world when leaning back 40)", "start_num": 90, "end_num": 50, "tolerance": "", "source_ids": ["S3"]}
   ],
   "muscles": [

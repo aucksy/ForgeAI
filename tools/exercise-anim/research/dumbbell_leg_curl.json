@@ -13,8 +13,7 @@
   },
   "setup": [
     {"item": "position", "target": "Face down, thighs on the pad, knee joints just past the end so the knees can bend.", "tolerance": "knee joint 0.03-0.08 m past the end", "source_ids": ["S3"]},
-    {"item": "dumbbell", "target": "One light dumbbell held vertically between the feet, ankles flexed to trap it.", "tolerance": "", "source_ids": ["S3"]},
-    {"item": "known gap", "target": "The picture rig cannot hold a dumbbell without a hand, so the dumbbell between the feet is NOT drawn. The picture must say so or be replaced.", "tolerance": "", "source_ids": []}
+    {"item": "dumbbell", "target": "One light dumbbell squeezed between the feet (feet together, ankles flexed), top plate on the soles. Drawn with the feet-held prop (props.feet, 12 Nov 2026).", "tolerance": "", "source_ids": ["S3"]}
   ],
   "movement": [
     {"joint": "knee", "measure": "knee flexion, 0 = straight", "start": "about 5 deg", "end": "about 90-95 deg (shin vertical; more than 90 lets the dumbbell slip)", "start_num": 5, "end_num": 92, "tolerance": "end 80-100", "source_ids": ["S1", "S2"]},
@@ -42,7 +41,7 @@
     {"check": "Start knee near straight", "target": "0-15 deg", "measured": "", "pass": ""},
     {"check": "Thighs and chest on the pad, hips not lifted", "target": "gap -0.02..+0.02 m", "measured": "", "pass": ""},
     {"check": "Knee joint just past the bench end", "target": "0.03-0.08 m", "measured": "", "pass": ""},
-    {"check": "Dumbbell between the feet shown, or the picture labelled 'dumbbell not shown'", "target": "yes", "measured": "", "pass": ""},
+    {"check": "Dumbbell between the feet shown, or the picture labelled 'dumbbell not shown'", "target": "dumbbell drawn between the feet, handle along the shins, top plate on the soles, no plate inside a foot or shin", "measured": "", "pass": ""},
     {"check": "Hamstrings the strongest red in both pictures", "target": "yes", "measured": "", "pass": ""}
   ]
 }

@@ -1,0 +1,203 @@
+{
+  "format": "v1-stills",
+  "exercise": {
+    "key": "stomach_vacuum",
+    "name": "Stomach Vacuum",
+    "equipment": "bodyweight",
+    "type": "time",
+    "library_primary": [
+      "abs"
+    ],
+    "library_secondary": [],
+    "steps": [
+      "Kneel on all fours, hands under shoulders, back flat like a table.",
+      "Breathe all the way out, then pull your belly button up toward your spine.",
+      "Hold it in while taking small breaths, then relax."
+    ],
+    "status": "draft",
+    "version": null,
+    "researched_on": "2026-11-12",
+    "one_line_summary": "On all fours with a flat back, breathe out and draw the belly button up and in toward the spine, then hold. Nothing else moves: the whole exercise is the belly wall sinking in, driven by the deep transversus abdominis.",
+    "evidence_grade": "B",
+    "picture_decision": "CANNOT SHOW (12 Nov 2026). Start and end differ only in the belly wall drawn in by a few cm; every joint is identical. The rig poses bones only (spine, limbs); it has no per-pose belly shape (the MPFB body targets are baked once at build, then cleared), so the end picture would be the start picture. The muscle that does the work (transversus abdominis) is deep and is never lit; lighting the six-pack instead would teach the wrong muscle. No recipe written. Possible later only with a pipeline change: a per-pose belly shape key (e.g. MPFB's stomach target, CC0) that visibly hollows the belly, checked on a side-view picture."
+  },
+  "setup": [
+    {
+      "item": "position",
+      "target": "All fours: hands under the shoulders, knees under the hips, back flat.",
+      "tolerance": "back neutral",
+      "why": "Library steps; quadruped is one of the positions where TrA thickening during drawing-in is largest.",
+      "source_ids": [
+        "S4"
+      ],
+      "grade": "B"
+    },
+    {
+      "item": "breath",
+      "target": "Breathe all the way out first, then draw in and hold with small breaths.",
+      "tolerance": "",
+      "why": "Library steps; deep exhalation gave the largest TrA contraction ratio.",
+      "source_ids": [
+        "S5"
+      ],
+      "grade": "B"
+    }
+  ],
+  "movement": [
+    {
+      "joint": "belly wall (navel)",
+      "measure": "navel drawn up and in toward the spine",
+      "start": "relaxed belly",
+      "end": "belly hollowed (TrA ~1.35-1.45x its resting thickness)",
+      "start_num": 0,
+      "end_num": 1,
+      "path": "Slow draw-in after a full breath out, held.",
+      "tolerance": "",
+      "source_ids": [
+        "S2",
+        "S4"
+      ],
+      "grade": "B"
+    },
+    {
+      "joint": "spine, hips, shoulders, arms, legs",
+      "measure": "must stay still",
+      "start": "flat back on all fours",
+      "end": "same",
+      "start_num": 0,
+      "end_num": 0,
+      "path": "No rounding or arching: the lumbar spine stays neutral.",
+      "tolerance": "no visible change",
+      "source_ids": [
+        "S4"
+      ],
+      "grade": "B"
+    }
+  ],
+  "muscles": [
+    {
+      "muscle": "Transversus abdominis",
+      "anatomy": "Transversus abdominis",
+      "mask_key": "none",
+      "tier": "deep",
+      "glow": 0,
+      "emg": "Ultrasound: TrA contraction ratio during hollowing 1.44 +-0.24 (healthy) / 1.35 +-0.14 (low back pain) (S2); hollowing raised TrA thickness more than bracing (S3).",
+      "role": "Draws the belly wall in; what the exercise is for. Lies under the obliques, so never lit.",
+      "surface": "Deep layer of the side and front belly wall, under the obliques.",
+      "source_ids": [
+        "S1",
+        "S2",
+        "S3"
+      ],
+      "grade": "A"
+    },
+    {
+      "muscle": "Internal oblique",
+      "anatomy": "Obliquus internus abdominis",
+      "mask_key": "none",
+      "tier": "deep",
+      "glow": 0,
+      "emg": "Thickens with TrA during hollowing (S3).",
+      "role": "Helps draw the waist in.",
+      "surface": "Under the external oblique.",
+      "source_ids": [
+        "S3"
+      ],
+      "grade": "A"
+    },
+    {
+      "muscle": "Abs (rectus abdominis)",
+      "anatomy": "Rectus abdominis",
+      "mask_key": "abs",
+      "tier": "stabiliser",
+      "glow": 0,
+      "emg": "Thinner during hollowing than bracing (S3): hollowing is meant to favour the deep layer.",
+      "role": "Not the target (the library lists 'abs' as the closest available group).",
+      "surface": "Front of the belly.",
+      "source_ids": [
+        "S3"
+      ],
+      "grade": "A"
+    }
+  ],
+  "tempo": null,
+  "mistakes": [
+    {
+      "mistake": "Rounding the back to fake the draw-in",
+      "what_it_looks_like": "The back humps up instead of the belly sinking.",
+      "why_it_matters": "The spine should stay neutral; the belly wall moves, not the back.",
+      "source_ids": [
+        "S4"
+      ]
+    },
+    {
+      "mistake": "Bracing instead of hollowing",
+      "what_it_looks_like": "Belly pushed out and tight.",
+      "why_it_matters": "Bracing loads the outer abs; hollowing is the deep-muscle drill.",
+      "source_ids": [
+        "S3",
+        "S6"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "S1",
+      "citation": "Lee DH et al. 2018. Is abdominal hollowing exercise using real-time ultrasound imaging feedback helpful for selective strengthening of the transversus abdominis muscle? Medicine.",
+      "url": "https://consensus.app/papers/details/w:443cdba9-ecf2-4b09-aa71-f017720018ad/",
+      "type": "emg",
+      "what_it_gave": "Abdominal hollowing targets TrA (ultrasound + EMG, TrA-IO/EO ratio)."
+    },
+    {
+      "id": "S2",
+      "citation": "Pulkovski N et al. 2011. Ultrasound assessment of transversus abdominis muscle contraction ratio during abdominal hollowing: a useful tool to distinguish between patients with chronic low back pain and healthy controls? European Spine Journal.",
+      "url": "https://consensus.app/papers/details/w:e7655c28-4d28-414e-b87b-0e6564426e44/",
+      "type": "emg",
+      "what_it_gave": "TrA contraction ratio during hollowing: 1.44 healthy, 1.35 low back pain (n=100)."
+    },
+    {
+      "id": "S3",
+      "citation": "Jung KH et al. 2026. Effects of abdominal bracing versus abdominal hollowing on abdominal muscle thickness and activation during static and dynamic trunk stabilization tasks in healthy adults. Medical Science Monitor.",
+      "url": "https://consensus.app/papers/details/w:1e108ae3-6db7-45be-a656-4010932f21bd/",
+      "type": "emg",
+      "what_it_gave": "Hollowing: TrA 4.08 vs 2.41 mm and IO thicker than bracing; RA thicker in bracing."
+    },
+    {
+      "id": "S4",
+      "citation": "Tsartsapakis I et al. 2024. A comparison between core stability exercises and muscle thickness using two different activation maneuvers. Journal of Functional Morphology and Kinesiology.",
+      "url": "https://consensus.app/papers/details/w:012ce1bf-d200-49a7-994f-25d72b304f19/",
+      "type": "emg",
+      "what_it_gave": "Hollowing raised TrA/IO thickness more than bracing across positions incl. bird dog (all fours); TrA thickened most."
+    },
+    {
+      "id": "S5",
+      "citation": "Hu N et al. 2024. The investigation of ultrasound to assess lateral abdominal wall activation with different types of core exercises. BMC Sports Science, Medicine and Rehabilitation.",
+      "url": "https://consensus.app/papers/details/w:9feec39b-65ee-40e8-bbc2-4a6856810b5e/",
+      "type": "emg",
+      "what_it_gave": "Deep exhalation gave the largest TrA contraction ratio."
+    },
+    {
+      "id": "S6",
+      "citation": "Brookbush Institute. Abdominal Drawing-In Maneuver (ADIM), glossary.",
+      "url": "https://brookbushinstitute.com/glossary/abdominal-drawing-in-maneuver-adim",
+      "type": "guideline",
+      "what_it_gave": "Drawing-in = light TrA contraction drawing the lower belly in; distinct from the maximal 'vacuum'."
+    }
+  ],
+  "clip_check": [
+    {
+      "check": "Start and end clearly different",
+      "target": "belly visibly drawn in on the end picture",
+      "measured": "not possible: the rig has no per-pose belly shape; joints identical",
+      "pass": "no",
+      "tool": "reasoning (no render)"
+    },
+    {
+      "check": "Primary muscle the strongest red",
+      "target": "transversus abdominis",
+      "measured": "deep muscle, no mask; lighting the six-pack would be wrong",
+      "pass": "no",
+      "tool": "reasoning"
+    }
+  ]
+}

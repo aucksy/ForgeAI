@@ -5,6 +5,7 @@
     "triceps"
   ],
   "secondary": [],
+  "highlight_side": "L",
   "scene": {
     "bench": {
       "deg": 0
@@ -131,18 +132,18 @@
         },
         "R": {
           "axis": [
+            0.26,
             0,
-            0,
-            1
+            0.96
           ],
           "arm": {
-            "elev": 25,
-            "plane": 50,
-            "elbow": 80,
+            "elev": 30,
+            "plane": -34,
+            "elbow": 108,
             "bend": [
-              -0.7,
-              0.7,
-              0
+              -0.66,
+              0.56,
+              -0.49
             ],
             "tilt": 0
           }
@@ -205,18 +206,18 @@
         },
         "R": {
           "axis": [
+            0.26,
             0,
-            0,
-            1
+            0.96
           ],
           "arm": {
-            "elev": 25,
-            "plane": 50,
-            "elbow": 80,
+            "elev": 30,
+            "plane": -34,
+            "elbow": 108,
             "bend": [
-              -0.7,
-              0.7,
-              0
+              -0.66,
+              0.56,
+              -0.49
             ],
             "tilt": 0
           }
@@ -224,5 +225,5 @@
       }
     }
   },
-  "research": "Same flat-bench body as neutral_grip_dumbbell_press (root (0,0.05,0.55) rot -98 = face-up + the proven 8 deg extra, spine -7/-7/-7/-6; root z = pad 0.44 + ~0.11, estimate, tune with probe_bench). Left arm works (camera yaw +70 = his left side). Upper arm elev 100 / plane 90 = straight up out of the chest, tipped 10 deg toward the head, both poses. du = (0, sin100, -cos100) = (0, 0.985, 0.174); fold toward the head (bend [0,0,1]). Elbow 5 -> 100: elbow at S + 0.29 du = (0.22, 0.29, 0.05); forearm = du cos100 + bperp sin100 = (0, -0.34, 0.94); hand = E + 0.33 fore = (0.22, 0.17, 0.36) torso = beside the ear, 0.17 above the shoulder line. Neutral handle = the fold direction, square to the forearm: start bperp (0, -0.17, 0.98); end rotated 100 deg = (0, -0.94, -0.34) (handle nearly vertical beside the head). Right hand (no prop) rests on the stomach: elev 25, plane 50, elbow 80 folded toward the midline. S1 Boehler 2011 (ACE, upper arm still), S2 Maeo 2023 (shoulder-flexed position), S3 Akima 2021. QA 11 Nov: body arched off the end of the flat pad (rot -98 + 27 deg spine arch); now lies flat (rot -90, spine -1 each)."
+  "research": "Same flat-bench body as neutral_grip_dumbbell_press (root (0,0.05,0.55) rot -98 = face-up + the proven 8 deg extra, spine -7/-7/-7/-6; root z = pad 0.44 + ~0.11, estimate, tune with probe_bench). Left arm works (camera yaw +70 = his left side). Upper arm elev 100 / plane 90 = straight up out of the chest, tipped 10 deg toward the head, both poses. du = (0, sin100, -cos100) = (0, 0.985, 0.174); fold toward the head (bend [0,0,1]). Elbow 5 -> 100: elbow at S + 0.29 du = (0.22, 0.29, 0.05); forearm = du cos100 + bperp sin100 = (0, -0.34, 0.94); hand = E + 0.33 fore = (0.22, 0.17, 0.36) torso = beside the ear, 0.17 above the shoulder line. Neutral handle = the fold direction, square to the forearm: start bperp (0, -0.17, 0.98); end rotated 100 deg = (0, -0.94, -0.34) (handle nearly vertical beside the head). Right hand (no prop) rests on the stomach (fix 12 Nov: the old elev 25 / plane 50 / elbow 80 held it 33 cm up in mid-air): fist centre at torso (-0.08, 0.13, -0.30) = on the upper belly, elbow dropped beside the bench at torso (-0.33, -0.08, -0.23): elev 30 / plane -34 / elbow 108, palm on the belly, thumb toward the head (axis [0.26,0,0.96]). highlight_side L. S1 Boehler 2011 (ACE, upper arm still), S2 Maeo 2023 (shoulder-flexed position), S3 Akima 2021. QA 11 Nov: body arched off the end of the flat pad (rot -98 + 27 deg spine arch); now lies flat (rot -90, spine -1 each)."
 }

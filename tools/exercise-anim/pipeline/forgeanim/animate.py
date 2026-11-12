@@ -259,6 +259,25 @@ class Clip:
                 prop.matrix_world = R.frame_from(c, axis if s == "L" else -axis, up)
             R.place_hand(rig, s, c, axis, self.G[s])
         R.update()
+        self.place_feet_props()
+
+    def place_feet_props(self):
+        """props.<name>.feet = {"fwd": m, "shift": m}: a dumbbell squeezed between the feet (dumbbell leg curl).
+        Handle along the shins (knee -> ankle, past the ankle = the sole side), centred between the two ankles, moved
+        `fwd` along the feet toward the toes and `shift` along the handle. The feet must be close together."""
+        rig = self.rig
+        for name, p in self.spec.get("props", {}).items():
+            ft = p.get("feet")
+            if ft is None or name not in self.props:
+                continue
+            ank = (R.world_head(rig, "foot.L") + R.world_head(rig, "foot.R")) / 2
+            knee = (R.world_head(rig, "lowerleg01.L") + R.world_head(rig, "lowerleg01.R")) / 2
+            shin = (ank - knee).normalized()
+            toe = sum((R.world_tail(rig, f"foot.{s}") - R.world_head(rig, f"foot.{s}") for s in R.SIDES), Vector())
+            toe = (toe - shin * toe.dot(shin)).normalized()
+            c = ank + toe * ft.get("fwd", 0.12) + shin * ft.get("shift", 0.0)
+            self.props[name].matrix_world = R.frame_from(c, shin, toe)
+        R.update()
 
     FK_BONES = ("upperarm01", "upperarm02", "lowerarm01", "lowerarm02")
     GIRDLE_BONES = ("clavicle", "shoulder01")
@@ -365,7 +384,10 @@ class Clip:
             Wm = Gw @ Ginv
             hand.location = Wm.translation; hand.rotation_quaternion = Wm.to_quaternion()
             if prop is not None:
-                prop.matrix_world = R.frame_from(c, ax_w if s == "L" else -ax_w, T.to_3x3() @ Vector((0, 0, 1)))
+                # "prop_offset" (torso frame, m): the weight sits off the fist centre, e.g. a waiter curl holds an
+                # upright dumbbell under its top plate with the handle between the two fists
+                off = T.to_3x3() @ Vector(h.get("prop_offset", (0, 0, 0)))
+                prop.matrix_world = R.frame_from(c + off, ax_w if s == "L" else -ax_w, T.to_3x3() @ Vector((0, 0, 1)))
             R.update()
             return self._wrist_off_rest(s)
 
@@ -496,7 +518,10 @@ class Clip:
         for f in range(n):
             scene.frame_set(f)
             self.apply(self.pose_at(f / fps, keys, cache))
-            pb["root"].keyframe_insert("location", frame=f); pb["root"].keyframe_insert("rotation_quaternion", frame=f)
+            # MPFB sets every bone to XYZ euler, so keying only rotation_quaternion dropped the root's turn: every frame
+            # rendered with the LAST pose's lean (sissy squat end stood upright, 12 Nov 2026). Key the channel in use.
+            pb["root"].keyframe_insert("location", frame=f)
+            pb["root"].keyframe_insert("rotation_quaternion" if pb["root"].rotation_mode == "QUATERNION" else "rotation_euler", frame=f)
             for b in bone_names:
                 if b in pb:
                     pb[b].keyframe_insert("rotation_euler", frame=f)

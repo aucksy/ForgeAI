@@ -3,27 +3,26 @@
   "name": "Single-Leg Dumbbell Calf Raise",
   "primary": ["calves"],
   "secondary": [],
-  "scene": {"boxes": [{"size": [0.6, 0.30, 0.15], "loc": [0, -0.10, 0]}, {"size": [0.15, 1.2, 2.0], "loc": [-0.80, 0, 0]}]},
+  "scene": {"boxes": [{"size": [0.6, 0.3, 0.15], "loc": [0, -0.1, 0]}, {"size": [0.7, 0.12, 1.9], "loc": [-0.2, -0.46, 0]}]},
   "props": {"db_L": {"type": "dumbbell"}},
   "camera": {"yaw": 80, "pitch": 10, "lens": 50, "fill": 0.9, "res": 640, "samples": 20},
   "timing": {"fps": 30, "keys": [[0, "start"], [1, "end"], [2, "start"]]},
   "defaults": {
-    "hands": {
-      "L": {"prop": "db_L", "axis": [0, 1, 0], "arm": {"elev": 8, "plane": 10, "elbow": 10, "bend": [0, 1, 0], "tilt": 0}},
-      "R": {"axis": [0, 1, 0], "arm": {"elev": 80, "plane": 10, "elbow": 20, "bend": [0, 1, 0], "tilt": 0}}
-    }
+    "hands": {"L": {"prop": "db_L", "axis": [0, 1, 0], "arm": {"elev": 8, "plane": 10, "elbow": 10, "bend": [0, 1, 0], "tilt": 0}}, "R": {"axis": [0, 0, 1], "arm": {"elev": 51.7, "plane": 90, "fore_world": [0, -0.981, 0.192], "tilt": 0}}}
   },
   "poses": {
     "start": {
-      "root": {"loc": [0.03, 0.243, 1.064], "rot": [0, 0, 0]},
-      "feet": {"L": {"at": [0.12, 0.177, 0.172], "rot": [-20, 0, 0]}, "R": {"at": [-0.08, 0.635, 0.539], "rot": [100, 0, 0]}},
-      "knees": {"L": [0.12, -1.0, 0.6], "R": [-0.08, -1.0, 0.65]}
+      "root": {"loc": [0.03, 0.251, 1.084], "rot": [0, 0, 0]},
+      "feet": {"L": {"at": [0.12, 0.185, 0.192], "rot": [-15, 0, 0]}, "R": {"at": [-0.08, 0.643, 0.559], "rot": [100, 0, 0]}},
+      "knees": {"L": [0.12, -1.0, 0.62], "R": [-0.08, -1.0, 0.67]}
     },
     "end": {
-      "root": {"loc": [0.03, 0.158, 1.183], "rot": [0, 0, 0]},
-      "feet": {"L": {"at": [0.12, 0.092, 0.291], "rot": [35, 0, 0]}, "R": {"at": [-0.08, 0.55, 0.658], "rot": [100, 0, 0]}},
-      "knees": {"L": [0.12, -1.0, 0.7], "R": [-0.08, -1.0, 0.75]}
+      "root": {"loc": [0.03, 0.183, 1.205], "rot": [0, 0, 0]},
+      "feet": {"L": {"at": [0.12, 0.117, 0.313], "rot": [30, 0, 0]}, "R": {"at": [-0.08, 0.575, 0.68], "rot": [100, 0, 0]}},
+      "knees": {"L": [0.12, -1.0, 0.72], "R": [-0.08, -1.0, 0.77]},
+      "hands": {"R": {"axis": [0, 0, 1], "arm": {"elev": 30.6, "plane": 90, "fore_world": [0, -1.0, 0.023], "tilt": 0}}}
     }
   },
-  "research": "Step 0.15 m high, y -0.25..+0.05 (heel hangs off its +Y edge). Ball of the left foot fixed at B=(0.12,0.02,0.15). Rest ankle sits (0,+0.14,+0.074) from the ball; foot rot X t pivots that: t=-20 -> ankle B+(0,0.157,0.022)=(0.12,0.177,0.172), heel ~z 0.09 behind the edge (dropped); t=+35 -> ankle B+(0,0.072,0.141)=(0.12,0.092,0.291), high on the toes. Straight stance leg: pelvis = ankle + (0,0.066,0.892), shifted x +0.03 over the stance foot -> (0.03,0.243,1.064) and (0.03,0.158,1.183). Free right leg: thigh vertical under hip R, knee 80 deg, foot behind (rot X 100 = toes pointing back-down). Right hand on a wall block (inner face x -0.725) instead of a rail (no rail prop): arm elev 80, plane 10, elbow 20, hand ~0.53 m out from the shoulder at x ~-0.19 -> about x -0.72. Left hand holds the dumbbell (same side as stance leg, per library). Camera yaw +80 = his left side, so the wall is behind him and the dumbbell faces the camera. Sources: ACE wall calf raise (knee straight, hand on wall), ACE Jo 2015 (heel below the step, rise high). Facts and checks: research/single_leg_calf_raise.json."
+  "research": "12 Nov 2026 fix. The wall moved IN FRONT of him (box 0.7 x 0.12 x 1.9 at y -0.46: face y -0.40), so from the side camera (yaw +80) the wall is a slab in profile and the right fist is seen touching its face (before, the wall stood behind him and the fist read as floating in front of it). Right fist (thumb up, axis +z) grip centre fixed at world (-0.19,-0.36,1.45) in both pictures, knuckles ~0.04 ahead = on the wall face. Arm solved as joint angles, plane 90 (forward), elbow below the line: start shoulder R (-0.19,0.175,1.553) -> elev 51.7, forearm world (0,-0.981,0.192), elbow 49 deg; end shoulder (-0.19,0.107,1.674) -> elev 30.6, forearm (0,-1.0,0.023), elbow 61 deg (upper arm 0.269, forearm+fist 0.33). Step 0.15 high, y -0.25..+0.05. Rigid toes (toe tip (0,-0.196,-0.074) from the ankle, ball (0,-0.12,-0.074), heel (0,0.05,-0.07)): START heel down, foot rot X -15, the sole pivots over the step's back edge (ball on the corner (0.05,0.15)): ankle (0.12,0.185,0.192), toe tip z 0.172, heel z 0.112 (3.8 cm below the step top, hanging off it). END foot rot +30, toe tip on the step (z 0.151), ball over the edge: ankle (0.12,0.117,0.313), heel z 0.277: heel rises 16.5 cm. Straight stance leg: pelvis = ankle + (0,0.066,0.892), x +0.03 -> (0.03,0.251,1.084) / (0.03,0.183,1.205); hip-ankle 0.895 m both. Free right leg bent behind (same offsets as before). Only the LEFT calf is lit (highlight_side L). Facts: research/single_leg_calf_raise.json.",
+  "highlight_side": "L"
 }

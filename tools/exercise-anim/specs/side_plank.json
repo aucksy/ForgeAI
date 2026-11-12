@@ -1,0 +1,25 @@
+{
+  "key": "side_plank",
+  "name": "Side Plank",
+  "primary": ["obliques"],
+  "secondary": ["abs", "abductors"],
+  "highlight_side": {"obliques": "R"},
+  "camera": {"yaw": -110, "pitch": 20, "lens": 50, "fill": 0.9, "res": 640, "samples": 20},
+  "timing": {"fps": 30, "keys": [[0, "hold"], [1, "hold"]]},
+  "poses": {
+    "hold": {
+      "root": {"loc": [0, 0, 0.4126], "rot": [0, -74.6, -90]},
+      "bones": {"spine05": [0, 0, 0], "spine04": [0, 0, 0], "spine03": [0, 0, 0], "spine02": [0, 0, 0], "neck01": [0, 0, 0], "head": [0, 0, 0]},
+      "feet": {
+        "R": {"at": [-0.051, -0.831, 0.070], "rot": [0, -74.6, -90]},
+        "L": {"at": [-0.051, -0.857, 0.166], "rot": [0, -74.6, -90]}
+      },
+      "knees": {"R": [-0.6, -0.40, 0.19], "L": [-0.6, -0.44, 0.34]},
+      "hands": {
+        "R": {"axis": [1, 0, 0], "arm": {"elev": 74.6, "plane": 0, "elbow": 90, "bend": [0, 1, 0]}},
+        "L": {"axis": [0, 1, 0], "arm": {"elev": 15, "plane": 0, "elbow": 20, "bend": [0, 1, 0]}}
+      }
+    }
+  },
+  "research": "12 Nov 2026, new. Same body set-up as copenhagen_plank (lying on the RIGHT side: root rot Ry tilts him onto his right side, Rz(-90) turns head to +Y, chest faces -X), feet stacked on the floor instead of on a bench. Numbers from a sagittal FK twin of animate.py (rest joints RECIPES.md + rig spine heads) and two cloud measurements: (1) copenhagen_plank run 43079162675 had the support elbow joint at z 0.046 and its lowest body point at -0.0087, so forearm skin + thumb-up fist reach ~0.055 below the elbow joint -> elbow joint z 0.056 here (lowest ~+0.001); (2) the bottom foot lying on its outer edge reaches 0.067 below the ankle joint at this rot (MPFB base mesh, scaled 1.056 to the athlete's 0.076 m ankle height; the same model gives the measured toe depths at foot rot 50/70 within 4 mm) -> right ankle z 0.070. Solved: body tilt Ry -74.6 (15 deg line from shoulder to ankle), root z 0.4126 -> shoulders R (-0.076,0.511,0.325) / L (-0.076,0.394,0.749), hips R (-0.051,0.032,0.307) / L (-0.051,-0.026,0.519), right ankle on the body line 0.895 from the hip = (-0.051,-0.831,0.070). Feet stacked: left ankle = right ankle + 0.10 along the body's left axis (0,-0.266,0.964) (malleoli touching) = (-0.051,-0.857,0.166), hip-ankle 0.903 (straight, under the 0.906 reach). Support arm: world down in the torso frame -> R elev 74.6, plane 0 (upper arm vertical, elbow (-0.076,0.511,0.056) right under the shoulder), elbow 90 with bend [0,1,0] = forearm flat on the floor pointing to the chest side (-X), fist thumb-up (axis torso +X = world up). Top arm rests along the flank (as copenhagen). Feet rot = body rot (outer edge of the right foot down); explicit R feet/knees because rot does not mirror; knee poles to the chest side. Camera yaw -110 / pitch 20 (chest side, a little from the head end and above) so the forearm on the floor reads as a forearm: from yaw -90 it points straight at the camera and looked like a hand on the floor (copenhagen QA). Muscles from research/side_plank.json: floor-side obliques primary (highlight_side R, Youdas TESS 37 % vs 12 % top side), glute medius both sides secondary, abs not lit. Sources S1 Youdas 2014, S2 ACE, S3 Ekstrom 2007."
+}

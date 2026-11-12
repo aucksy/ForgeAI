@@ -6,11 +6,11 @@
   "camera": {"yaw": -82, "pitch": 10, "lens": 50, "fill": 0.9, "res": 640, "samples": 20},
   "timing": {"fps": 30, "keys": [[0, "start"], [1, "end"], [2, "start"]]},
   "defaults": {
-    "feet": {"L": {"at": [0.12, -0.09, 0.147], "rot": [40, 0, 6]}}
+    "feet": {"L": {"at": [0.12, -0.085, 0.163], "rot": [30, 0, 6]}}
   },
   "poses": {
     "start": {
-      "root": {"loc": [0, -0.024, 1.035], "rot": [0, 0, 0]},
+      "root": {"loc": [0, -0.019, 1.062], "rot": [0, 0, 0]},
       "knees": {"L": [0.15, -1.0, 0.55]},
       "hands": {"L": {"axis": [-1, 0, 0], "arm": {"elev": 90, "plane": 88, "elbow": 5, "bend": [0, 0, 1], "tilt": 0}}},
       "bones": {"neck01": [0, 0, 0], "head": [0, 0, 0]}
@@ -19,8 +19,8 @@
       "root": {"loc": [0, -0.154, 0.682], "rot": [-40, 0, 0]},
       "knees": {"L": [0.15, -1.2, 0.4]},
       "hands": {"L": {"axis": [-1, 0, 0], "arm": {"elev": 50, "plane": 88, "elbow": 5, "bend": [0, 0, 1], "tilt": 0}}},
-      "bones": {"neck01": [12, 0, 0], "head": [10, 0, 0]}
+      "bones": {"neck01": [18, 0, 0], "head": [12, 0, 0]}
     }
   },
-  "research": "On the balls of the feet both pictures: ball fixed at (0.12,-0.15,0); foot rot X +40 lifts the ankle to B+(0,0.060,0.147) = (0.12,-0.09,0.147). Start: straight legs, pelvis = ankle + (0,0.066,0.897) - 0.01 = (0,-0.024,1.035). End: shin tilts 60 deg forward -> knee (0.12,-0.48,0.37); thigh leans back 40 deg -> hip L (0.11,-0.19,0.72); knee flexion 60+40 = 100 deg; trunk in line with thigh: root rot X -40; pelvis joint = hip centre + Rx(-40)(0,0.051,-0.003) = (0,-0.154,0.682). Hip L to ankle 0.58 m checks out with 100 deg. Shin 60 deg vs trunk 40 deg = tibia 20 deg more inclined = knee-extensor bias (Straub & Powers 2024). Quad EMG peaks near 90 deg (Marchetti 2016 PMC4967668). Library says hold a post; there is no post prop, so both arms reach forward for balance (elev 50 in torso frame = level in world when leaning back 40). Neck/head tip forward 12/10 so he looks ahead. Facts and checks: research/sissy_squat.json."
+  "research": "12 Nov 2026 fix. Two causes of the failed end picture: (1) pipeline bug: MPFB bones are XYZ-euler but the bake keyed only the root's rotation_quaternion, so the root's lean was never keyed and every frame showed the LAST pose's lean (0): the end stood upright with the hips bent instead of leaning back 40. animate.bake now keys the channel in use. (2) feet: the rig's toes do not bend, so the lowest point is the toe tip, not the ball. Toe tip sits (0,-0.196,-0.074) from the ankle in the rest foot (fitted to three cloud floor readings: sissy -0.0356 m at rot 40/z 0.147, calf raise 0.1185 and 0.0902). Foot rot X 30 (heel up): toe = ankle + (0,-0.133,-0.162) -> ankle z 0.163 puts the toe tip at z 0.001; heel z 0.127 (clearly up). Ankle (0.12,-0.085,0.163) both pictures, toe tip y -0.218. START: root (0,-0.019,1.062), hip-ankle 0.90 m, knee ~11 deg (soft). END: root (0,-0.154,0.682) rot X -40 -> hip L (0.11,-0.191,0.717); knee (0.118,-0.485,0.367); knee flexion 103, hip flexion 1 (thigh and trunk one line leaning back 40), shin 63 deg forward. Shoulders y +0.09 = 31 cm behind the knees, toes at -0.22. Arms elev 50 in the torso frame = level with the floor when leaning back 40. Neck/head 18/12 forward so he looks ahead. Facts and checks: research/sissy_squat.json."
 }
