@@ -26,9 +26,9 @@ appId: com.mettleup.app
     file: sub-uat-r439-rpe.yaml
     env:
       BUTTON: "Add RPE for Dips set 1"
-      PICK: 'RPE 8\.5: .*'
+      PICK: 'RPE 8[.]5: .*'
 - extendedWaitUntil:
-    visible: 'Dips set 1 complete\. Tap to undo'
+    visible: 'Dips set 1 complete[.] Tap to undo'
     timeout: 10000
 - runFlow: sub-uat-r439-clear.yaml
 - runFlow:
@@ -40,9 +40,9 @@ appId: com.mettleup.app
     file: sub-uat-r439-rpe.yaml
     env:
       BUTTON: "Add RPE for Dips set 2"
-      PICK: 'RPE 9\.5: .*'
+      PICK: 'RPE 9[.]5: .*'
 - extendedWaitUntil:
-    visible: 'Dips set 2 complete\. Tap to undo'
+    visible: 'Dips set 2 complete[.] Tap to undo'
     timeout: 10000
 - runFlow: sub-uat-r439-clear.yaml
 - runFlow:
@@ -64,7 +64,7 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: '^40 reps done · Previous: 39 · \+1$'
+      FIND: '^40 reps done · Previous: 39 · [+]1$'
 - assertNotVisible: "(?i).*keep the same weight.*"
 - assertNotVisible: "(?i).*(reached|beaten).*"
 - takeScreenshot: rel-r454-l-dip-done
@@ -72,7 +72,7 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: "^First time · find a weight for \\d+–\\d+ reps$"
+      FIND: "^First time · find a weight for [0-9]+–[0-9]+ reps$"
 - takeScreenshot: rel-r454-m-first-time-before
 - runFlow:
     file: sub-uat-r439-set.yaml
@@ -98,7 +98,7 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: "^Target First time · find a weight for \\d+–\\d+ reps\\. Tap for why\\.$"
+      FIND: "^Target First time · find a weight for [0-9]+–[0-9]+ reps[.] Tap for why[.]$"
 - assertNotVisible: "^240 kg( each)? done.*"
 - takeScreenshot: rel-r454-n-first-time-after
 - runFlow: sub-uat-r439-finish.yaml
