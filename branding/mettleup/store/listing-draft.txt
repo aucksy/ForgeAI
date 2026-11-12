@@ -1,10 +1,42 @@
 TITLE: MettleUp: Gym Workout Tracker
-SHORT: Log every set, beat last week's weight, and see your strength grow. Free.
-FULL1: MettleUp is a free workout log for the gym. Tap each set as you finish it, and see what you lifted last time right beside it.
-FULL2: Beat last week: each exercise shows the kilos to beat today, and the app tells you the moment you set a new record.
-FULL3: See your progress: a chart for every lift, a body map of the muscles you trained, body weight and private progress photos.
-FULL4: Plans that work: ready programs like Push Pull Legs, or build your own routines in folders.
-FULL5: Works without internet: no signal in the gym, no problem. Your workouts stay on your phone.
-FULL6: Better with your gym: if your gym uses MettleUp, join with its code or QR poster. You get your trainer's plans, check in with one scan, see your membership, and order from the gym's shop.
-FULL7: Bring your history: import your workouts from Hevy or Strong.
-FULL8: Free to use. No ads.
+SHORT: Gym log and workout planner: beat last time's weight on every set, even offline.
+FULL1: MettleUp is a gym workout tracker and workout log for weight lifting and strength training. Use it as your gym log: tap each set as you finish it, and see what you lifted last time right beside it.
+FULL2: LOG EVERY SET
+FULL3: • Log weight and reps, time or distance for more than 400 exercises with steps and drawings, or add your own.
+FULL4: • Mark warm-up, drop and failure sets, and rate how hard each set felt (RPE).
+FULL5: • Pair exercises into supersets and keep a note on any exercise.
+FULL6: • A rest timer starts after every set and buzzes when rest is over, even with the screen off.
+FULL7: • Tick off a set from the live workout card in your phone's notifications, without opening the app.
+FULL8: • The plate calculator shows which plates to load, using the plates and bars your gym really has.
+FULL9: BEAT LAST TIME (PROGRESSIVE OVERLOAD)
+FULL10: • Each exercise suggests today's weight and reps from your own history, so you add a little weight or one more rep at a time.
+FULL11: • The start screen shows the kilos to beat today.
+FULL12: • After your workout, see which exercises went up, stayed the same or went down since last time.
+FULL13: • A pop-up tells you the moment you set a new record: heaviest weight, most reps or best set.
+FULL14: WORKOUT PLANNER AND ROUTINES
+FULL15: • Start a ready program: Push Pull Legs (PPL), Upper / Lower, Full Body Basics or Strength Starter.
+FULL16: • Or let the app build a plan for what you have: a full gym, dumbbells, a bar, or no equipment for a home workout.
+FULL17: • Build your own routines and keep them in folders.
+FULL18: • Take an easy week every 6 weeks if you want one, without spoiling your records.
+FULL19: SEE YOUR PROGRESS
+FULL20: • A chart for every lift, plus weekly charts of kilos lifted, reps and time.
+FULL21: • A body map shows which muscles you trained in the last 7 days.
+FULL22: • See your strength level (Beginner, Intermediate or Advanced) for squat, bench press, deadlift and other main lifts, and work out your 1-rep max.
+FULL23: • Track body weight and measurements, and keep private progress photos to compare side by side.
+FULL24: • Get a monthly report, a year in review and badges as you keep training.
+FULL25: YOUR WORKOUTS ARE SAFE
+FULL26: • Works offline: log a full workout with no internet in the gym.
+FULL27: • Back up to Google Drive, or save one backup file you can keep.
+FULL28: • Export your workouts to Excel.
+FULL29: • Switching apps? Import your workout history and routines from Hevy or Strong.
+FULL30: • Use kg or pounds, and send your workouts to Health Connect.
+FULL31: WATCH AND PHONE EXTRAS
+FULL32: • Wear OS watch app: see the rest countdown, feel a buzz when rest ends, check your heart rate and log sets from your wrist.
+FULL33: • Home-screen widgets, and workout reminders on the days and times you pick.
+FULL34: BETTER WITH YOUR GYM
+FULL35: • If your gym uses MettleUp, join with its code or QR poster.
+FULL36: • Check in with one scan, and see your plan, end date and days left.
+FULL37: • Get your gym's messages and offers, its opening hours, and how busy it is right now.
+FULL38: • Ask the desk to pause or renew your plan from the app.
+FULL39: • If your gym offers them, you also get your trainer's workout and diet plans, the gym's shop, and a monthly challenge with a leaderboard.
+FULL40: Logging your workouts is free, and there are no ads. Download MettleUp and start your first workout today.
