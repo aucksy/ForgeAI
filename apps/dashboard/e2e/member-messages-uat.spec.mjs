@@ -210,8 +210,11 @@ test('Member messages: not ready, the list, types, reply, done, the desk, a gone
   await desk.context().close();
 
   // 7. A message that is gone (the member left the gym): plain words, then the list again without it.
-  talk.gone.add('c1');
+  // (Adding the desk person left the owner on Staff & sign-in: back to the page first, then Ravi leaves.)
+  await go(page, '/member-messages');
   const ravi = cards.filter({ hasText: 'Ravi Kumar' });
+  await expect(ravi).toBeVisible();
+  talk.gone.add('c1');
   await ravi.getByLabel('Your reply').fill('Sorry, fixed tomorrow.');
   await ravi.getByRole('button', { name: 'Send reply' }).tap();
   await expect(main.getByText('This message is no longer here. The member may have left the gym.')).toBeVisible();
