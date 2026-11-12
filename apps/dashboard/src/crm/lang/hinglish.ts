@@ -32,6 +32,8 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   Trainers: 'Trainers',
   // R-319 item 1 (4 Nov 2026): words: owner checks at UAT.
   Questions: 'Sawaal',
+  // Owner, 12 Nov 2026 (0069): words: owner checks at UAT.
+  'Member messages': 'Members ke messages',
   Challenges: 'Challenges',
   Branding: 'Logo aur rang',
   'Gym timings': 'Gym ka time',

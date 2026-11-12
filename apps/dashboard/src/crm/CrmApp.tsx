@@ -64,6 +64,8 @@ import { TrainersScreen } from './ui/screens/Trainers';
 import { useTrainerAccess } from './ui/TrainerParts';
 import { useQuestionCount } from './ui/QuestionParts';
 import { QuestionsScreen } from './ui/screens/Questions';
+import { useMemberMessageCount } from './ui/MemberMessageParts';
+import { MemberMessagesScreen } from './ui/screens/MemberMessages';
 import { ChallengesScreen } from './ui/screens/Challenges';
 import { FeedbackScreen } from './ui/screens/Feedback';
 import { MessagesScreen } from './ui/screens/Messages';
@@ -167,6 +169,8 @@ export function Routes({ online }: { online: boolean }) {
   const trainerNav = trainerAccess === 'owner' || trainerAccess === 'trainer';
   // R-319 item 1: questions members asked in the app, for the person they picked (null: hidden, no 0053).
   const questionsOpen = useQuestionCount(trainerNav);
+  // Owner, 12 Nov 2026: "Message your gym" from members, badged with those waiting (null: hidden, no 0069 yet).
+  const talkWaiting = useMemberMessageCount();
 
   // Never set up: no plans, no members, and still the placeholder name.
   // An online gym is always set up: it was named when it was made, and its welcome screen's
@@ -236,6 +240,11 @@ export function Routes({ online }: { online: boolean }) {
       ...(trainerNav && questionsOpen !== null
         ? [{ path: '/questions', label: t('Questions'), icon: 'feedback', badge: questionsOpen || undefined } as NavItem]
         : []),
+      // Owner, 12 Nov 2026: questions, feedback and complaints members send the gym from the app (owner and staff;
+      // the server keeps complaints for the owner). Hidden until the gym's server has 0069.
+      ...(talkWaiting !== null
+        ? [{ path: '/member-messages', label: t('Member messages'), icon: 'feedback', badge: talkWaiting || undefined } as NavItem]
+        : []),
       // R-133 (26 Oct 2026): a monthly challenge and the leaderboard. The owner changes; the desk reads.
       { path: '/challenges', label: t('Challenges'), icon: 'trophy' },
       // R-119 (owner, 24 Oct 2026): the gym's logo and colours, one tap from the menu instead of
@@ -249,7 +258,7 @@ export function Routes({ online }: { online: boolean }) {
       ...(demo ? [] : [{ path: '/feedback', label: t('Help and feedback'), icon: 'feedback', group: 'setup' } as NavItem]),
     ]);
     // `lang`: the labels are words, so a language switch makes them again.
-  }, [memberViews, snapshot, today, newCount, role, allBranches, demo, lang, trainerNav, questionsOpen, needsTotal]);
+  }, [memberViews, snapshot, today, newCount, role, allBranches, demo, lang, trainerNav, questionsOpen, talkWaiting, needsTotal]);
   // Step 3 (15 Oct 2026): five on a phone's bottom bar, like GoGym4U and GymBook — Aaj, Members,
   // Hisaab, Hazri and More (Plans, Shop, Settings). Six or seven icons were too small to read.
   const phoneNav = useMemo<NavItem[]>(() => {
@@ -291,6 +300,7 @@ function offlinePage(head: string | undefined, id: string | undefined): string |
   if (head === 'diet') return 'Diet plans';
   if (head === 'challenges') return 'Challenges';
   if (head === 'questions') return 'Questions';
+  if (head === 'member-messages') return 'Member messages';
   if (head === 'trainers') return 'Trainers';
   if (head === 'feedback') return 'Help and feedback';
   if (head === 'branches') return 'All branches';
@@ -367,6 +377,9 @@ function Screen({ segments, role }: { segments: string[]; role: Role }) {
     case 'questions':
       // R-319 item 1: the server shows each person only the questions addressed to them; others are told so.
       return <QuestionsScreen />;
+    case 'member-messages':
+      // Owner, 12 Nov 2026: members' "Message your gym"; the server keeps complaints for the owner (0069).
+      return <MemberMessagesScreen />;
     case 'challenges':
       return <ChallengesScreen />;
     case 'feedback':

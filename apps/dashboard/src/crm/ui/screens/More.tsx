@@ -18,6 +18,8 @@ import { Link } from '../router';
 import { useTrainerAccess } from '../TrainerParts';
 import { useQuestionCount } from '../QuestionParts';
 import { QUESTION_WORDS } from '../../logic/askQuestions';
+import { MEMBER_MESSAGE_WORDS } from '../../logic/memberMessages';
+import { useMemberMessageCount } from '../MemberMessageParts';
 import { t } from '../../lang/lang';
 
 interface Row {
@@ -46,6 +48,7 @@ export function MoreScreen() {
   const trainerAccess = useTrainerAccess();
   const trainerNav = trainerAccess === 'owner' || trainerAccess === 'trainer';
   const questionsOpen = useQuestionCount(trainerNav);
+  const talkWaiting = useMemberMessageCount();
   // Staff never sees Expenses (permissions.ts); the rest stays, with words that fit what they can do.
   const rows: Row[] = navFor<Row>(role, [
     { path: '/growth', group: 'run', label: 'Your growth', hint: 'Is the gym growing since MettleUp? Month by month', icon: 'growth' },
@@ -69,6 +72,10 @@ export function MoreScreen() {
     // R-319 item 1: members' "Ask a trainer" questions for this person; hidden until 0053 (count null).
     ...(trainerNav && questionsOpen !== null
       ? [{ path: '/questions', group: 'talk', label: 'Questions', hint: QUESTION_WORDS.navHint, icon: 'feedback', badge: questionsOpen } as Row]
+      : []),
+    // Owner, 12 Nov 2026: members' "Message your gym" (owner and staff; complaints the owner's). Hidden until 0069.
+    ...(talkWaiting !== null
+      ? [{ path: '/member-messages', group: 'talk', label: 'Member messages', hint: MEMBER_MESSAGE_WORDS.navHint, icon: 'feedback', badge: talkWaiting } as Row]
       : []),
     { path: '/shop', group: 'run', label: 'Shop', hint: 'Orders from the app', icon: 'shop', badge: newCount },
     { path: '/messages', group: 'talk', label: 'Messages & offers', hint: 'Messages, offers and wishes to members', icon: 'messages' },

@@ -437,4 +437,16 @@ function notifyNewsSeen(): void {
  * Owner-visible changes built but NOT deployed yet. They move to the top of ADMIN_NEWS (with `id` set to
  * the deploy day) in the same commit as the admin-panel deploy (R-333). Never shown before the change is live.
  */
-export const ADMIN_NEWS_PENDING: readonly AdminNewsEntry[] = [];
+export const ADMIN_NEWS_PENDING: readonly AdminNewsEntry[] = [
+  {
+    // Owner, 12 Nov 2026: Member messages (0069). Moves to ADMIN_NEWS only when 0069 is live AND the panel is deployed.
+    id: 'pending-member-messages',
+    lines: [
+      {
+        text: 'New page "Member messages": members can now send your gym a question, feedback or a complaint from the Gym tab of their app. Reply there and mark each one as done. Complaints are shown to the owner only.',
+        go: { label: 'Open Member messages', path: '/member-messages' },
+        feature: true,
+      },
+    ],
+  },
+];

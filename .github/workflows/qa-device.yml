@@ -110,13 +110,14 @@ jobs:
       # F198 (7 Nov 2026): 'newDots' lets mettleup://qa-dots?at=<UTC>&reset=1 set the new-feature dots' clock (qa/uat-rel-f198-dots.yaml).
       # Light mode (9 Nov 2026): 'gymLook' lets mettleup://qa-look?accent=F7D411 show a gym's colour for one run (qa/uat-rel-look-*.yaml).
       # R-452 (12 Nov 2026): 'helpReply' lets mettleup://qa-help?reply=1 add a made-up answered question with two team replies (qa/uat-rel-r452-help-replies.yaml).
+      # Message your gym (12 Nov 2026): 'gymTalk' runs the page on a pretend gym kept in the phone while the server has no 0069; it answers each new message once (qa/uat-rel-gym-talk.yaml).
       - name: QA-only stand-ins in app.json
         run: |
           python3 - <<'PY'
           import json
           f = 'apps/mobile/app.json'
           j = json.load(open(f, encoding='utf-8'))
-          j['expo'].setdefault('extra', {})['qaStandIns'] = ['friendInvite', 'passMember', 'updateOffer', 'sleepSample', 'newDots', 'gymLook', 'helpReply']
+          j['expo'].setdefault('extra', {})['qaStandIns'] = ['friendInvite', 'passMember', 'updateOffer', 'sleepSample', 'newDots', 'gymLook', 'helpReply', 'gymTalk']
           open(f, 'w', encoding='utf-8').write(json.dumps(j, indent=2, ensure_ascii=False) + chr(10))
           print('qaStandIns', j['expo']['extra']['qaStandIns'])
           PY

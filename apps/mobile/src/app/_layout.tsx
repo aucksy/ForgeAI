@@ -136,6 +136,9 @@ export default function RootLayout() {
     // Back while the logo is still up → shown at once; later → the next time the app comes back
     // with no workout open (below). Joined phones only; quiet on failure.
     void refreshGymNow().catch(() => undefined);
+    // "Message your gym" (0069): the gym's unread replies badge the Gym tab (one small read; hidden without 0069).
+    const talkCount = (): void => void import('@/shop/gymTalkSync').then((m) => m.refreshTalkForPhone()).catch(() => undefined);
+    talkCount();
     // Back to the foreground: a look that is waiting is shown now (under the gym's logo) unless a
     // workout is open, and the gym is asked again at most about once an hour.
     // Review fix: only after a real time away (a share sheet or picker is not a new visit).
@@ -152,6 +155,7 @@ export default function RootLayout() {
       // Light or dark: a phone change that waited for a workout is shown now if none is open.
       followLook(false);
       void refreshGymIfDue().catch(() => undefined);
+      talkCount();
     });
     // A new look once the app is up (join, Leave, an owner's change shown): the home-screen
     // widgets and the reminders scheduled with the old colour are drawn again in the new one.

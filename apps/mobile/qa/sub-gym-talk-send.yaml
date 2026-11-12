@@ -1,0 +1,35 @@
+# Sub-flow of uat-rel-gym-talk.yaml (not a part of its own): on "Message your gym", the negative checks (no
+# "Send without my name" for a question or a complaint), then a feedback sent without the name, and its card.
+# Starts at the top of the page; ends with the sent card on screen.
+appId: com.mettleup.app
+---
+- assertVisible: "^Ask about timings, fees, classes and more\\. For workout help, use Ask a trainer\\.$"
+- assertNotVisible: "^Send without my name$"
+- tapOn: "^Complaint$"
+- assertVisible: "^Tell them what went wrong\\. Only the gym owner reads complaints\\.$"
+- assertNotVisible: "^Send without my name$"
+- takeScreenshot: rel-gt-02-complaint-picked
+- tapOn: "^Feedback$"
+- assertVisible: "^Send without my name$"
+- assertVisible: "^Your gym can still reply here, but it will not see who sent it\\.$"
+- tapOn:
+    id: "gym-talk-anon"
+- tapOn: "For example: Please add a second squat rack\\."
+- inputText: "QA check: please add a second squat rack"
+- hideKeyboard
+- assertVisible: "^40 of 1000 letters$"
+- takeScreenshot: rel-gt-03-typed
+- tapOn: "^Send message$"
+- extendedWaitUntil:
+    visible: "^Sent\\. When your gym replies, you will see it below\\.$"
+    timeout: 30000
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Feedback · (Today|Yesterday), [0-9]{1,2}:[0-9]{2} [ap]m · Sent without your name$"
+- assertVisible: "QA check: please add a second squat rack"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Sent\\. Waiting for a reply\\.$"
+- takeScreenshot: rel-gt-04-sent

@@ -28,6 +28,7 @@ import { askAnswerFromRow, planRequestsFromRow, type PlanRequest, type PlanReque
 import { reportAnswerFromRow, reportRequestsFromRow, type ReportRequest, type ReportRequestsAnswer } from './gymReport';
 import { trainerHelpFrom, trainerStatusFrom, type TrainerStatus, type TrainerSummary } from './trainerShare';
 import { askChoicesFrom, askQuestionsFrom, askSentFrom, type AskChoices, type AskQuestion } from './askTrainer';
+import { talkSentFrom, talkThreadsFrom, talkUnreadFrom, type TalkKind, type TalkThread } from './gymTalk';
 import { friendInviteFrom, type FriendInvite } from './bringFriend';
 import { staffDoorFromRow, type StaffDoorAnswer } from './staffDoor';
 import type { RecentWorkout } from './trainerRecent';
@@ -599,4 +600,38 @@ export async function apiFriendInvite(key: string): Promise<{ ok: true; data: Fr
   if (!r.ok) return r.noSuchFunction ? { ok: false, missing: true } : { ok: false, error: r.error };
   const invite = friendInviteFrom(r.data);
   return invite ? { ok: true, data: invite } : { ok: false, refused: true };
+}
+
+// ------------------------------------------------------------------ message your gym (0069)
+
+/** The member's threads with a reply not read yet (member_talk_unread). `missing`: 0069 is not live yet. */
+export async function apiTalkUnread(key: string): Promise<AskCall<number>> {
+  const r = await call('member_talk_unread', { p_key: key }, READ_MS);
+  if (!r.ok) return askFail(r);
+  const n = talkUnreadFrom(r.data);
+  return n != null ? { ok: true, data: n } : { ok: false, error: { kind: 'other' } };
+}
+
+/** The member's last 20 threads, newest first (member_talk_list; it marks the gym's replies read). */
+export async function apiTalkList(key: string): Promise<AskCall<TalkThread[]>> {
+  const r = await call('member_talk_list', { p_key: key }, READ_MS);
+  if (!r.ok) return askFail(r);
+  const list = talkThreadsFrom(r.data);
+  return list ? { ok: true, data: list } : { ok: false, error: { kind: 'other' } };
+}
+
+/** Start a thread: a question, feedback (may be without the name) or a complaint. */
+export async function apiTalkSend(key: string, kind: TalkKind, anonymous: boolean, text: string): Promise<AskCall<TalkThread>> {
+  const r = await call('member_talk_send', { p_key: key, p_kind: kind, p_anonymous: anonymous, p_text: text }, WRITE_MS);
+  if (!r.ok) return askFail(r);
+  const t = talkSentFrom(r.data);
+  return t ? { ok: true, data: t } : { ok: false, error: { kind: 'other' } };
+}
+
+/** Write back in a thread (a done thread opens again). */
+export async function apiTalkReply(key: string, threadId: string, text: string): Promise<AskCall<TalkThread>> {
+  const r = await call('member_talk_reply', { p_key: key, p_thread: threadId, p_text: text }, WRITE_MS);
+  if (!r.ok) return askFail(r);
+  const t = talkSentFrom(r.data);
+  return t ? { ok: true, data: t } : { ok: false, error: { kind: 'other' } };
 }
