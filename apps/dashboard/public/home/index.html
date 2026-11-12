@@ -391,6 +391,47 @@ select.field{appearance:none;background-image:linear-gradient(45deg,transparent 
 .alsos span{padding:8px 13px;border-radius:999px;background:var(--card);box-shadow:inset 0 0 0 1px var(--line);font:700 13.5px var(--text);color:var(--ink2)}
 .alsos b{color:var(--ink3);font:800 12px var(--text);letter-spacing:.1em;text-transform:uppercase;align-self:center;margin-right:4px}
 
+/* ---------- AI Assistant (F201, coming soon): the owner's words, then the card the assistant makes ---------- */
+.as-head{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.as-said{display:flex;align-items:flex-start;gap:8px;max-width:94%;margin:0 0 10px auto;padding:9px 12px;border-radius:16px 16px 4px 16px;background:var(--flavour);color:var(--on-flavour);font:800 13.5px/1.35 var(--app-body);transition:background .5s var(--ease)}
+.as-said svg{flex:none;width:15px;height:15px;margin-top:1px}
+.as-w{display:grid}
+.as-w>span{grid-area:1/1}
+.as-ghost{visibility:hidden}
+.as-said.typing .as-t::after{content:"";display:inline-block;width:2px;height:13px;margin-left:1px;vertical-align:-2px;background:currentColor;animation:blink 1s steps(1) infinite}
+.as-card{border-radius:18px;transition:opacity .45s var(--ease),translate .45s var(--ease)}
+.armed .as-card:not(.in){opacity:0;translate:0 12px}
+.as-row{transition:opacity .4s var(--ease),translate .4s var(--ease)}
+.armed .as-row:not(.in){opacity:0;translate:0 8px}
+.as-card .uh b{font-size:14px}
+.as-free{flex:none;padding:3px 8px;border-radius:999px;background:color-mix(in oklab,var(--good) 18%,transparent);color:var(--good);font:800 10.5px var(--app-body)}
+.as-amt{flex:none;font:800 12.5px var(--app-body)}
+.as-more{margin-top:6px;font:700 11.5px var(--app-body);color:var(--app-ink2)}
+.as-note{padding:9px 11px;border-radius:12px;background:#F6F7F9;color:#111;font:600 12px/1.4 var(--app-body)}
+.as-note b{display:block;font:800 12.5px var(--app-body);margin-bottom:2px}
+.as-kv{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:7px 2px;border-top:1px solid var(--app-line);font:600 12px var(--app-body);color:var(--app-ink2)}
+.as-kv:first-of-type{border-top:0}
+.as-kv b{color:var(--app-ink);font-weight:800;text-align:right}
+.as-btn{position:relative;display:block;margin-top:10px;padding:9px 10px;border-radius:999px;text-align:center;background:var(--flavour);color:var(--on-flavour);font:800 12.5px var(--app-body);transition:background .4s,color .4s}
+.as-btn .s2{display:none}
+.as-card.done .as-btn{background:color-mix(in oklab,var(--good) 18%,transparent);color:var(--good)}
+.as-card.done .as-btn .s1{display:none}
+.as-card.done .as-btn .s2{display:inline}
+.as-made{margin-top:8px;font:700 11.5px var(--app-body);color:var(--good);transition:opacity .4s}
+.as-card:not(.done) .as-made{opacity:0}
+.as-say{display:flex;align-items:center;gap:12px;margin-top:26px;font:800 clamp(1.15rem,2.4vw,1.5rem)/1.3 var(--display);letter-spacing:-.02em}
+:lang(hi) .as-say{letter-spacing:0}
+.as-say i{display:grid;place-items:center;flex:none;width:44px;height:44px;border-radius:14px;background:var(--ember);color:var(--on-flavour)}
+.as-say svg{width:22px;height:22px}
+/* the AI Assistant price card: three credit packs instead of a monthly price */
+.packs{display:grid;gap:8px;margin-top:18px}
+.pk{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px;border-radius:14px;background:var(--bg2);box-shadow:inset 0 0 0 1px var(--line);font:700 15px var(--text)}
+.pk b{display:flex;align-items:center;flex-wrap:wrap;gap:4px 8px;font-weight:800}
+.pk>span{flex:none;font:800 22px/1 var(--display);letter-spacing:-.03em}
+.pk.pop{box-shadow:inset 0 0 0 1.5px color-mix(in oklab,var(--ember) 65%,transparent)}
+.aiy{display:none;align-items:center;flex-wrap:wrap;gap:6px 8px;margin-top:10px;font:800 14px var(--text);color:var(--good)}
+.yr .aiy{display:flex}
+
 /* ---------- safe ---------- */
 .safe{padding-block:clamp(56px,8vw,96px)}
 .safe .box{display:grid;gap:28px;padding:clamp(24px,4vw,44px);border-radius:28px;background:radial-gradient(80% 120% at 0% 0%,color-mix(in oklab,var(--good) 9%,transparent),transparent 60%),var(--card);box-shadow:inset 0 0 0 1px var(--line)}
@@ -875,6 +916,68 @@ select.field{appearance:none;background-image:linear-gradient(45deg,transparent 
   </div>
 </section>
 
+<!-- 5b. AI ASSISTANT (F201, R-469): COMING SOON. Three self-looping demos: what the owner says, then the card the
+     assistant makes. It is not live: the header, the footnote and the price card say "Coming soon". -->
+<section class="sec" id="assistant" aria-labelledby="as-h" style="padding-top:0">
+  <div class="wrap">
+    <div class="as-head"><span class="eyebrow" data-hi="AI असिस्टेंट">AI Assistant</span><span class="tag soon" data-hi="जल्द आ रहा है">Coming soon</span></div>
+    <h2 id="as-h" class="h2" data-hi="बस बोलिए। &lt;span class=&quot;hot&quot;&gt;AI असिस्टेंट सब तैयार कर देगा।&lt;/span&gt;">Just say it. <span class="hot">The AI Assistant gets it ready.</span></h2>
+    <p class="lede" data-hi="जो चाहिए, टाइप कीजिए या बोलिए। AI असिस्टेंट आपके जिम के रिकॉर्ड से जवाब देता है, और मैसेज और रिन्यूअल तैयार कर देता है। जब तक आप “Send” या “Save” टैप नहीं करते, कुछ भी भेजा या सेव नहीं होता।">Type or speak what you need. The AI Assistant answers from your gym’s records and gets messages and renewals ready. Nothing is sent or saved until you tap “Send” or “Save”.</p>
+
+    <div class="bento">
+      <article class="cell as-cell rv" id="as-ask">
+        <div class="hd"><h3 data-hi="अपने जिम के बारे में पूछिए">Ask about your gym</h3></div>
+        <p data-hi="पूछिए किसने पैसे नहीं दिए। आपको लिस्ट और टोटल दिख जाएगा।">Ask who has not paid. You see the list and the total.</p>
+        <div class="mini" aria-hidden="true">
+          <div class="as-said"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg><span class="as-w"><span class="as-ghost">Kisne paise nahi diye?</span><span class="as-t">Kisne paise nahi diye?</span></span></div>
+          <div class="ui as-card in">
+            <div class="uh"><b>14 members owe ₹38,500</b><span class="as-free">Free</span></div>
+            <div class="urow as-row in"><span class="av">P</span><span class="nm"><b>Pooja Jain</b><small>Monthly plan</small></span><span class="as-amt">₹4,500</span></div>
+            <div class="urow as-row in"><span class="av">R</span><span class="nm"><b>Ramesh S.</b><small>3-month plan</small></span><span class="as-amt">₹3,000</span></div>
+            <div class="urow as-row in"><span class="av">A</span><span class="nm"><b>Asha Verma</b><small>Monthly plan</small></span><span class="as-amt">₹2,500</span></div>
+            <div class="as-more as-row in">and 11 more</div>
+            <span class="as-btn"><span class="s1">Remind them politely</span></span>
+          </div>
+        </div>
+      </article>
+
+      <article class="cell as-cell rv" id="as-msg" data-done="1">
+        <div class="hd"><h3 data-hi="अपने मेंबर्स को मैसेज कीजिए">Message your members</h3></div>
+        <p data-hi="बताइए मेंबर्स को क्या कहना है। पहले मैसेज पढ़िए, फिर “Send” टैप कीजिए।">Say what to tell your members. You read the message first, then tap “Send”.</p>
+        <div class="mini" aria-hidden="true">
+          <div class="as-said"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg><span class="as-w"><span class="as-ghost">Kal gym band rahega, sabko batao</span><span class="as-t">Kal gym band rahega, sabko batao</span></span></div>
+          <div class="ui as-card in done">
+            <div class="uh"><b>Message to all members</b><span>212 members</span></div>
+            <div class="as-note as-row in"><b>Gym closed tomorrow</b>The gym is closed tomorrow. We are open as usual the day after. See you then!</div>
+            <span class="as-btn"><span class="s1">Send to 212 members · 1 credit</span><span class="s2">Sent in the app ✓</span></span>
+            <div class="as-made">It is in every member’s app inbox.</div>
+          </div>
+        </div>
+      </article>
+
+      <article class="cell as-cell rv" id="as-renew" data-done="1">
+        <div class="hd"><h3 data-hi="मेंबर का प्लान रिन्यू कीजिए">Renew a member’s plan</h3></div>
+        <p data-hi="बताइए किसका, कितने महीने का और पेमेंट कैसे हुई। चेक कीजिए, “Save” टैप कीजिए, और रसीद बन जाती है।">Say the name, how many months and how they paid. Check it, tap “Save”, and the receipt is made.</p>
+        <div class="mini" aria-hidden="true">
+          <div class="as-said"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg><span class="as-w"><span class="as-ghost">Rahul ka plan 3 mahine renew karo, 4500 cash</span><span class="as-t">Rahul ka plan 3 mahine renew karo, 4500 cash</span></span></div>
+          <div class="ui as-card in done">
+            <div class="uh"><b>Renew a plan</b><span>Ready to save</span></div>
+            <div class="as-kv as-row in"><span>Member</span><b>Rahul Sharma</b></div>
+            <div class="as-kv as-row in"><span>Plan</span><b>3 months</b></div>
+            <div class="as-kv as-row in"><span>Starts</span><b>When his plan ends</b></div>
+            <div class="as-kv as-row in"><span>Paid</span><b>₹4,500 cash</b></div>
+            <span class="as-btn"><span class="s1">Save · 1 credit</span><span class="s2">Saved ✓</span></span>
+            <div class="as-made">Receipt 1042 is made.</div>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <p class="as-say rv"><i><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></i><span data-hi="हिंदी या English में बोलिए। सवाल पूछना फ़्री है।">Speak in Hindi or English. Asking is free.</span></p>
+    <p class="ex" style="text-align:left" data-hi="सैंपल नाम और नंबर। AI असिस्टेंट जल्द आ रहा है: अभी ऐप में नहीं है।">Example names and numbers. The AI Assistant is coming soon: it is not in the app yet.</p>
+  </div>
+</section>
+
 <!-- 6. SAFE -->
 <section class="safe" aria-labelledby="data-h">
   <div class="wrap">
@@ -904,6 +1007,7 @@ select.field{appearance:none;background-image:linear-gradient(45deg,transparent 
         <h3 data-hi="स्टार्टर">Starter</h3>
         <p class="desc" data-hi="यह डेस्क का सारा काम करता है और हर मेंबर को ऐप देता है।">It runs all the desk work and gives every member the app.</p>
         <div class="price"><span class="pm"><b>₹999</b> <span data-hi="पर मंथ">a month</span></span><span class="py"><b>₹9,990</b> <span data-hi="साल का">a year</span></span></div>
+        <p class="aiy"><span data-hi="+ हर महीने 100 AI क्रेडिट फ़्री">+ 100 AI credits every month, free</span> <span class="tag soon" data-hi="जल्द आ रहा है">Coming soon</span></p>
         <a class="btn ghost" href="https://app.mettleup.fit/start" data-hi="3 महीने फ़्री शुरू करें">Start free for 3 months</a>
         <ul>
           <li><span class="ck" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M3 8.5l3.2 3L13 4.5" stroke="currentColor" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span data-hi="हर मेंबर के लिए फ़्री वर्कआउट ऐप, आपके जिम के नाम के साथ">Free workout app for every member, with your gym's name</span></li>
@@ -921,6 +1025,7 @@ select.field{appearance:none;background-image:linear-gradient(45deg,transparent 
         <h3>Pro</h3>
         <p class="desc" data-hi="इसमें स्टार्टर की सारी चीज़ें हैं, साथ में आपका लोगो, शॉप और ट्रेनर प्लान्स।">It has everything in Starter, plus your logo, your shop and trainer plans.</p>
         <div class="price"><span class="pm"><b>₹1,499</b> <span data-hi="पर मंथ">a month</span></span><span class="py"><b>₹14,990</b> <span data-hi="साल का">a year</span></span></div>
+        <p class="aiy"><span data-hi="+ हर महीने 100 AI क्रेडिट फ़्री">+ 100 AI credits every month, free</span> <span class="tag soon" data-hi="जल्द आ रहा है">Coming soon</span></p>
         <a class="btn" href="https://app.mettleup.fit/start" data-hi="3 महीने फ़्री शुरू करें">Start free for 3 months</a>
         <ul>
           <li><span class="ck" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M3 8.5l3.2 3L13 4.5" stroke="currentColor" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span data-hi="स्टार्टर की सारी चीज़ें, और:">Everything in Starter, and:</span></li>
@@ -933,16 +1038,24 @@ select.field{appearance:none;background-image:linear-gradient(45deg,transparent 
         </ul>
         <p class="soonl"><span class="tag soon" data-hi="जल्द">Coming</span> <span data-hi="ऐप में फ़ीस पे करना, और एंट्री गेट">Paying fees in the app, and the entry gate</span></p>
       </div>
-      <div class="card rv">
-        <h3>Pro + AI <span class="tag soon" data-hi="जल्द">Coming</span></h3>
-        <p class="desc" data-hi="Pro की सारी चीज़ें, और मेंबर्स के लिए AI कोच और आपके लिए AI हेल्पर।">Everything in Pro, and an AI coach for members and an AI helper for you.</p>
-        <div class="price"><span class="pm"><b>₹2,499</b> <span data-hi="पर मंथ">a month</span></span><span class="py"><b>₹24,990</b> <span data-hi="साल का">a year</span></span></div>
-        <a class="btn ghost" href="https://app.mettleup.fit/start" data-hi="3 महीने फ़्री शुरू करें">Start free for 3 months</a>
+      <div class="card ai rv">
+        <h3 data-hi="AI असिस्टेंट &lt;span class=&quot;tag soon&quot;&gt;जल्द आ रहा है&lt;/span&gt;">AI Assistant <span class="tag soon">Coming soon</span></h3>
+        <p class="desc" data-hi="हर प्लान में। सवाल पूछना फ़्री है। क्रेडिट तभी लगते हैं जब आप कुछ भेजते या सेव करते हैं।">On every plan. Asking is free. You use credits only when you send or save something.</p>
+        <div class="packs">
+          <div class="pk"><b data-hi="50 क्रेडिट">50 credits</b><span>₹149</span></div>
+          <div class="pk pop"><b><span data-hi="150 क्रेडिट">150 credits</span> <span class="tag pro" data-hi="सबसे पॉपुलर">Most popular</span></b><span>₹399</span></div>
+          <div class="pk"><b data-hi="500 क्रेडिट">500 credits</b><span>₹999</span></div>
+        </div>
+        <a class="btn ghost" href="#assistant" data-hi="देखिए यह क्या करता है">See what it does</a>
         <ul>
-          <li><span class="ck" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M3 8.5l3.2 3L13 4.5" stroke="currentColor" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span data-hi="Pro की सारी चीज़ें, और:">Everything in Pro, and:</span></li>
-          <li><span class="ck" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M3 8.5l3.2 3L13 4.5" stroke="currentColor" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span data-hi="मेंबरों के लिए AI कोच">AI coach for members</span></li>
-          <li><span class="ck" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M3 8.5l3.2 3L13 4.5" stroke="currentColor" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span data-hi="आपके लिए AI हेल्पर">AI helper for you</span></li>
+          <li><span class="ck" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M3 8.5l3.2 3L13 4.5" stroke="currentColor" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span data-hi="सवाल पूछना फ़्री, हिंदी या English में">Ask questions for free, in Hindi or English</span></li>
+          <li><span class="ck" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M3 8.5l3.2 3L13 4.5" stroke="currentColor" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span data-hi="मैसेज भेजने पर, या मेंबर, पेमेंट, इंक्वायरी या खर्च सेव करने पर 1 क्रेडिट">1 credit when you send a message, or save a member, payment, enquiry or expense</span></li>
+          <li><span class="ck" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M3 8.5l3.2 3L13 4.5" stroke="currentColor" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span data-hi="AI वर्कआउट या डाइट प्लान लिखे तो 3 क्रेडिट">3 credits when the AI writes a workout or diet plan</span></li>
+          <li><span class="ck" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M3 8.5l3.2 3L13 4.5" stroke="currentColor" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span data-hi="फ़्री ट्रायल: 20 क्रेडिट, एक बार">Free trial: 20 credits, once</span></li>
+          <li><span class="ck" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M3 8.5l3.2 3L13 4.5" stroke="currentColor" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span data-hi="सालाना प्लान और फाउंडिंग जिम: हर महीने 100 क्रेडिट फ़्री">Yearly plans and founding gyms: 100 free credits every month</span></li>
+          <li><span class="ck" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M3 8.5l3.2 3L13 4.5" stroke="currentColor" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span data-hi="मंथली प्लान: फ़्री क्रेडिट नहीं; ज़रूरत हो तो पैक खरीदें">Monthly plans: no free credits; buy a pack when you need one</span></li>
         </ul>
+        <p class="soonl" data-hi="खरीदे हुए क्रेडिट कभी एक्सपायर नहीं होते। बचे हुए फ़्री क्रेडिट अगले महीने में नहीं जुड़ते।">Credits you buy never expire. Unused free credits do not carry over to the next month.</p>
       </div>
     </div>
     <p class="pnote" data-hi="प्राइस हर ब्रांच के हैं: आपकी पहली ब्रांच का फुल प्राइस, हर एक्स्ट्रा ब्रांच का हाफ प्राइस। फ़्री 3 महीने के बाद UPI या बैंक ट्रांसफर से पे करें और रिसीट पाएं। कभी भी स्टॉप करें: आपका सारा डेटा एक टैप में Excel में।">Prices are per branch: your first branch pays full price, each extra branch pays half. After the free 3 months, pay by UPI or bank transfer and get a receipt. Stop any time: all your data goes to Excel in one tap.</p>
@@ -951,7 +1064,7 @@ select.field{appearance:none;background-image:linear-gradient(45deg,transparent 
       <div>
         <h3 data-hi="फाउंडिंग जिम: Pro लाइफ़टाइम के लिए, एक बार की पेमेंट।">Founding gym: Pro for life, one payment.</h3>
         <p data-hi="एक ब्रांच के लिए एक बार ₹29,999 पे करें, और Pro के लिए फिर कभी पे मत करें। सिर्फ पहले 25 जिम, और सिर्फ 31 मार्च 2027 तक।">Pay ₹29,999 once for one branch, and never pay for Pro again. Only for the first 25 gyms, and only until 31 March 2027.</p>
-        <p class="small" data-hi="पहले अपने फ़्री 3 महीने स्टार्ट करें, और उनके खत्म होने से पहले हमें बताएं। AI पैक आने पर एक्स्ट्रा होगा।">Start your free 3 months first, and tell us before they end. The AI pack is extra when it comes.</p>
+        <p class="small" data-hi="पहले अपने फ़्री 3 महीने स्टार्ट करें, और उनके खत्म होने से पहले हमें बताएं। AI असिस्टेंट आने पर आपको हर महीने 100 AI क्रेडिट फ़्री मिलेंगे।">Start your free 3 months first, and tell us before they end. When the AI Assistant comes, you also get 100 free AI credits every month.</p>
       </div>
       <div class="big">₹29,999<small data-hi="एक बार, लाइफ़टाइम">once, for life</small></div>
     </div>

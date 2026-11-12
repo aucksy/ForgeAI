@@ -171,7 +171,12 @@ test('where a gym stands, and its one badge', () => {
   assert.equal(L.billingState({ ...paying, paidUntil: '2026-10-01T05:00:00Z' }, T0), 'lapsed');
   assert.equal(L.billingBadge({ ...paying, paidUntil: '2026-10-01T05:00:00Z' }, T0).words, 'Pro: payment due since 1 Oct 2026');
   assert.equal(L.billingState(trialGym({ plan: 'ai', billing: 'lifetime' }), T0), 'lifetime');
-  assert.equal(L.planWords(trialGym({ plan: 'ai', billing: 'lifetime' })), 'AI, lifetime');
+  // F201: a gym still on the retired 'ai' pack is shown as Pro; the picker offers Starter and Pro only.
+  assert.equal(L.planWords(trialGym({ plan: 'ai', billing: 'lifetime' })), 'Pro, lifetime');
+  assert.deepEqual(L.PLAN_CHOICES.map(([v]) => v), ['', 'starter', 'pro']);
+  assert.equal(L.planPickValue('ai'), 'pro');
+  assert.equal(L.planPickValue('starter'), 'starter');
+  assert.equal(L.planPickValue(null), '');
 });
 
 test('the gym-list filters', () => {
@@ -260,7 +265,7 @@ test('Export gyms (CSV): gym-level facts only, safe for Excel', () => {
   assert.equal(lines[0], 'Gym name,Gym code,Owner name,Owner mobile,Started,Status,Free trial ends,Plan,Billing,Paid until,Members in the register,Members in the app');
   assert.equal(lines[1], '"Iron, ""The"" Gym",IRON01,Ravi Kumar,9829012345,24 Oct 2026,Active (checked),24 Jan 2027,,,,120,40');
   assert.ok(lines[2].startsWith(`"'=HYPERLINK(""x"")",IRON01,'+Ravi,`), 'a formula never runs');
-  assert.ok(lines[2].includes(',AI,lifetime,for ever,'));
+  assert.ok(lines[2].includes(',Pro,lifetime,for ever,'), "the retired 'ai' pack reads as Pro (F201)");
   assert.doesNotMatch(csv, /fullName|memberName|Member name/i, 'nothing about members but the two counts');
   assert.equal(L.csvName(T0), 'mettleup-gyms-2026-10-24.csv');
 });
@@ -302,13 +307,14 @@ test("BRANCH_PRICES are the landing page's monthly prices (one source of truth: 
 test('the landing page carries the prices the owner picked on 30 Oct 2026 (#30 A), in English and Hindi', () => {
   // Raw HTML, so the Hindi copies (Hinglish since R-247, 31 Oct 2026) in data-hi count too.
   const html = readFileSync(new URL('../../dashboard/public/home/index.html', import.meta.url), 'utf8');
-  for (const want of ['₹999', '₹9,990', '₹1,499', '₹14,990', '₹2,499', '₹24,990', 'Pro + AI', '₹29,999',
+  for (const want of ['₹999', '₹9,990', '₹1,499', '₹14,990', '₹29,999',
     'first 25 gyms, and only until 31 March 2027', 'पहले 25 जिम, और सिर्फ 31 मार्च 2027 तक', 'FIRST 25', 'पहले 25',
     'each extra branch pays half', 'हर एक्स्ट्रा ब्रांच का हाफ प्राइस']) {
     assert.ok(html.includes(want), `landing page is missing "${want}"`);
   }
   // The old prices, and "Own it" (offered on the phone only, never on the website).
-  for (const gone of ['₹1,999', '₹19,990', '₹2,999', 'FIRST 50', 'पहले 50', 'first 50', '₹19,990 once', '₹4,990']) {
+  // F201 (12 Nov 2026): the old third pack and its prices are gone; the AI Assistant is sold as credits.
+  for (const gone of ['₹1,999', '₹19,990', '₹2,999', 'FIRST 50', 'पहले 50', 'first 50', '₹19,990 once', '₹4,990', 'Pro + AI', '₹24,990']) {
     assert.ok(!html.includes(gone), `landing page still says "${gone}"`);
   }
 });

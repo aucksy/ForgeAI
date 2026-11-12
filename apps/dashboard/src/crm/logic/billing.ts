@@ -9,7 +9,7 @@
  * PURE: no React, no network.
  */
 
-import { PACK_PRICES, RECEIPT_GST_LINE } from '@forgeai/theme';
+import { PACK_PRICES, packName, RECEIPT_GST_LINE, shownPack } from '@forgeai/theme';
 
 import { formatINR, type Paise } from './money';
 import { payDate } from './payMettleUp';
@@ -156,7 +156,7 @@ export const UPGRADE_NOTE = 'You pay only the difference for the days left. Your
 /** A planned move to a cheaper plan, in words; null when none. PURE. */
 export function scheduledLine(info: BillingInfo): string | null {
   if (!info.scheduled) return null;
-  const name = info.scheduled.plan === 'starter' ? 'Starter' : info.scheduled.plan === 'pro' ? 'Pro' : info.scheduled.plan;
+  const name = packName(info.scheduled.plan) || info.scheduled.plan;
   // Starter bought during the free trial (0063): it starts when the trial ends.
   if (info.trialEndsAt && Date.parse(info.trialEndsAt) === Date.parse(info.scheduled.from)) {
     return `${name} starts when your free trial ends on ${payDate(info.scheduled.from)}.`;
@@ -166,7 +166,8 @@ export function scheduledLine(info: BillingInfo): string | null {
 
 /** The line that explains a downgrade before the owner buys Starter while on Pro. PURE. */
 export function downgradeNote(info: BillingInfo): string | null {
-  if (!((info.plan === 'pro' || info.plan === 'ai') && (info.daysLeft ?? 0) > 0 && info.paidUntil)) return null;
+  // The retired 'ai' pack is Pro here too.
+  if (!(shownPack(info.plan) === 'pro' && (info.daysLeft ?? 0) > 0 && info.paidUntil)) return null;
   return `Buying Starter now? It starts when your paid Pro days end on ${payDate(info.paidUntil)}. No money back for the days left.`;
 }
 

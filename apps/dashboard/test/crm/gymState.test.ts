@@ -23,6 +23,10 @@ describe('gymStateFromRow', () => {
     expect(gymStateFromRow(null)).toBeNull();
     expect(gymStateFromRow([])).toBeNull();
   });
+  it("F201: the retired 'ai' pack reads as Pro", () => {
+    expect(gymStateFromRow(row('active', 'ai'))?.plan).toBe('pro');
+    expect(gymStateFromRow(row('active', 'gold'))?.plan).toBeNull();
+  });
 });
 
 describe('lapseBanner', () => {

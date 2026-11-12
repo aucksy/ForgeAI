@@ -7,12 +7,14 @@
  * this is only words. No banner at all when the server has not sent the trial (before 0030 is
  * applied, a browser-only gym, a demo gym, or a gym that already has a plan).
  */
+import { shownPack, type SoldPack } from '@forgeai/theme';
 
 /** What the server says about the gym's trial and plan (owner_hq_access "trial", 0030). */
 export interface GymTrial {
   startsAt: string | null;
   endsAt: string | null;
-  plan: 'starter' | 'pro' | 'ai' | null;
+  /** The retired 'ai' pack comes through as 'pro'. */
+  plan: SoldPack | null;
   billing: 'monthly' | 'yearly' | 'lifetime' | null;
   paidUntil: string | null;
 }
@@ -48,7 +50,7 @@ export function trialFromRow(raw: unknown): GymTrial | null {
   const r = raw as Record<string, unknown>;
   const endsAt = str(r.endsAt);
   if (!endsAt) return null;
-  const plan = r.plan === 'starter' || r.plan === 'pro' || r.plan === 'ai' ? r.plan : null;
+  const plan = shownPack(r.plan);
   const billing = r.billing === 'monthly' || r.billing === 'yearly' || r.billing === 'lifetime' ? r.billing : null;
   return { startsAt: str(r.startsAt), endsAt, plan, billing, paidUntil: str(r.paidUntil) };
 }

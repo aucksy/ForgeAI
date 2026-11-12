@@ -19,7 +19,7 @@ the Terms page. One place is still marked **[TO CONFIRM]** (the founding payment
 
 ## 3. About us (about.html)
 - MettleUp is gym software for India, made and run by you alone in Jaipur.
-- What it does (desk app for the gym, free workout app for members) and the prices from the website: Starter ₹999 / ₹9,990, Pro ₹1,499 / ₹14,990, Pro + AI ₹2,499 / ₹24,990 (coming), extra branch half price, founding offer ₹29,999 once (first 25 gyms, until 31 Mar 2027).
+- What it does (desk app for the gym, free workout app for members) and the prices from the website: Starter ₹999 / ₹9,990, Pro ₹1,499 / ₹14,990, extra branch half price, the AI Assistant (coming soon) on every plan, paid with AI credits (packs ₹149 = 50, ₹399 = 150, ₹999 = 500; 20 free in the trial, 100 free a month on yearly plans and founding gyms; F201, 12 Nov 2026, replaced the old third pack), founding offer ₹29,999 once (first 25 gyms, until 31 Mar 2027).
 - "Not registered under GST; no GST is charged."
 
 ## 4. Delivery (delivery.html)

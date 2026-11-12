@@ -459,11 +459,15 @@ test('after 0030: the list says ready; trial and plan changes go to the database
   assert.equal((await api('POST', '/api/gym/trial', { gymId: GYM, endsAt: '2027-02-24T00:00:00+05:30', reason: 'Moving 300 members' }, env(), net)).status, 200);
   assert.deepEqual(JSON.parse(net.rpcCalls('hq_set_trial')[0].init.body), { p_actor: OWNER, p_gym: GYM, p_new_end: '2027-02-23T18:30:00.000Z', p_reason: 'Moving 300 members' });
   // Lifetime has no paid-until; "no plan" sends no billing either.
-  await api('POST', '/api/gym/plan', { gymId: GYM, plan: 'ai', billing: 'lifetime', paidUntil: '2030-01-01T00:00:00Z', reason: 'Lifetime deal' }, env(), net);
+  await api('POST', '/api/gym/plan', { gymId: GYM, plan: 'pro', billing: 'lifetime', paidUntil: '2030-01-01T00:00:00Z', reason: 'Lifetime deal' }, env(), net);
   await api('POST', '/api/gym/plan', { gymId: GYM, plan: '', billing: 'monthly', paidUntil: '2027-01-01T00:00:00Z', reason: 'Mistake' }, env(), net);
   const [life, none] = net.rpcCalls('hq_set_plan').map((c) => JSON.parse(c.init.body));
-  assert.deepEqual([life.p_plan, life.p_billing, life.p_paid_until], ['ai', 'lifetime', null]);
+  assert.deepEqual([life.p_plan, life.p_billing, life.p_paid_until], ['pro', 'lifetime', null]);
   assert.deepEqual([none.p_plan, none.p_billing, none.p_paid_until], [null, null, null]);
+  // F201: the retired 'ai' pack is never set anew; the database is not even asked.
+  const ai = await api('POST', '/api/gym/plan', { gymId: GYM, plan: 'ai', billing: 'lifetime', reason: 'Old pack' }, env(), net);
+  assert.equal(ai.status, 400);
+  assert.equal(net.rpcCalls('hq_set_plan').length, 2);
   // A refusal comes back as its word.
   const capped = fakeNet({ dbFail: { hq_set_trial: 'TRIAL_CAP' } });
   assert.deepEqual(await (await api('POST', '/api/gym/trial', { gymId: GYM, endsAt: '2028-01-01T00:00:00Z', reason: 'Owner asked' }, env(), capped)).json(), { error: 'TRIAL_CAP' });

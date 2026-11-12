@@ -31,6 +31,8 @@ describe('the free-trial banner (R-97, 0030)', () => {
       startsAt: '2026-10-24T05:00:00Z', endsAt: '2027-01-24T05:00:00Z', plan: 'pro', billing: 'yearly', paidUntil: null,
     });
     expect(trialFromRow({ endsAt: '2027-01-24T05:00:00Z', plan: 'gold', billing: 'weekly' })?.plan).toBeNull();
+    // F201: the retired 'ai' pack still reads, as Pro.
+    expect(trialFromRow({ endsAt: '2027-01-24T05:00:00Z', plan: 'ai', billing: 'lifetime' })?.plan).toBe('pro');
     expect(trialFromRow({ endsAt: 'soon' })).toBeNull();
     expect(trialFromRow(null)).toBeNull();
     expect(trialFromRow([])).toBeNull();
@@ -62,7 +64,7 @@ describe('the free-trial banner (R-97, 0030)', () => {
 
   it('no banner with a plan, or when nothing is known', () => {
     expect(trialBanner(trial({ plan: 'pro', billing: 'yearly', paidUntil: '2027-10-24T05:00:00Z' }), NOW)).toBeNull();
-    expect(trialBanner(trial({ endsAt: '2026-10-01T05:00:00Z', plan: 'ai', billing: 'lifetime' }), NOW)).toBeNull();
+    expect(trialBanner(trial({ endsAt: '2026-10-01T05:00:00Z', plan: 'pro', billing: 'lifetime' }), NOW)).toBeNull();
     expect(trialBanner(null, NOW)).toBeNull();
   });
 

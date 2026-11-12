@@ -8,7 +8,7 @@
  * Paying reopens everything; data is never deleted. The banner shows ONLY while PLAN_GATE_ON is on
  * (and the server says its switch is on too). PURE: no React, no network.
  */
-import type { GymState } from '@forgeai/theme';
+import { shownPack, type GymState, type SoldPack } from '@forgeai/theme';
 
 import { trialDate } from './trial';
 
@@ -16,8 +16,8 @@ import { trialDate } from './trial';
 export interface GymStateInfo {
   gateOn: boolean;
   state: GymState;
-  /** null while the gym is on its free trial. */
-  plan: 'starter' | 'pro' | 'ai' | null;
+  /** null while the gym is on its free trial. The retired 'ai' pack comes through as 'pro'. */
+  plan: SoldPack | null;
   endsAt: string | null;
   graceUntil: string | null;
   basicUntil: string | null;
@@ -32,7 +32,7 @@ export function gymStateFromRow(raw: unknown): GymStateInfo | null {
   const r = raw as Record<string, unknown>;
   const state = STATES.find((s) => s === r.state);
   if (!state) return null;
-  const plan = r.plan === 'starter' || r.plan === 'pro' || r.plan === 'ai' ? r.plan : null;
+  const plan = shownPack(r.plan);
   return {
     gateOn: r.gateOn === true,
     state,

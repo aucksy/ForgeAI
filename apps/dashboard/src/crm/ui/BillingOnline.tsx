@@ -147,7 +147,7 @@ export function PayOnline({ ownerKey }: { ownerKey: string }) {
                   </p>
                 </div>
               )}
-              <p style={small}>The price for one branch. Pro + AI is not on sale yet.</p>
+              <p style={small}>The price for one branch.</p>
             </div>
           </div>
         </Card>

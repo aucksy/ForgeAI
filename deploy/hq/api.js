@@ -72,7 +72,8 @@ const text = (v, n) => (typeof v === 'string' ? v.trim().slice(0, n) : '');
 const moment = (v) => (typeof v === 'string' && v.length <= 40 && !Number.isNaN(Date.parse(v)) ? new Date(v).toISOString() : null);
 /** The gym row came from a database with 0030 (free trial and plan). Before it, the page says so. */
 const plansReady = (g) => Boolean(g) && typeof g === 'object' && Object.prototype.hasOwnProperty.call(g, 'trialEndsAt');
-const PLANS = ['starter', 'pro', 'ai'];
+// F201: HQ sets Starter or Pro only. The retired 'ai' pack stays valid in the database for old rows, never set anew.
+const PLANS = ['starter', 'pro'];
 const PAY_STATUSES = ['pending', 'confirmed', 'rejected', 'all'];
 const CHECK_LISTS = ['open', 'done', 'all'];
 const CHECK_HOWS = ['refunded', 'applied_by_hand'];

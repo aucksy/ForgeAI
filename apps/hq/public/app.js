@@ -48,6 +48,7 @@ import {
   paymentWords,
   underpaidWords,
   megabytes,
+  planPickValue,
   planWords,
   recordCells,
   rupees,
@@ -407,7 +408,7 @@ function planCard(g, id, ready) {
     : note('This free trial is already as long as it can be.', 'warn');
 
   // The plan, set by hand after a payment.
-  const planPick = select(PLAN_CHOICES, g.plan || '');
+  const planPick = select(PLAN_CHOICES, planPickValue(g.plan));
   const billPick = select(BILLING_CHOICES, g.billing || 'monthly');
   const until = h('input', { type: 'date', value: indiaDayOf(g.paidUntil) });
   const planWhy = h('input', { maxlength: '300', placeholder: 'Why (for example: paid ₹4,999 by UPI on 24 Oct)' });

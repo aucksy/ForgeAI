@@ -77,6 +77,13 @@ offline, several branches. The price table now leads with the exclusive items, e
 - **Sub:** It is kept in India. Our staff cannot open your member list unless you let them in for 1 hour, and you see every look.
 
 ## 12. Prices
+> **12 Nov 2026 (F201, R-469/R-470):** the third pack ("AI") is gone. The third price card is now "AI Assistant
+> (coming soon)": on every plan, asking is free, 1 credit per message sent or member / payment / enquiry / expense
+> saved, 3 per AI-written workout or diet plan; packs ₹149 = 50, ₹399 = 150 (most popular), ₹999 = 500, never
+> expire; free trial 20 credits once; yearly plans and founding gyms 100 free credits a month; monthly plans none.
+> The yearly price of Starter and Pro says "+ 100 AI credits every month, free". The page also has a new "AI
+> Assistant" section (three looping demos). The words below are the 24 Oct version, kept for the record.
+
 - **Headline:** One price for you. Your members pay nothing.
 - **Sub:** Every pack starts with 3 months free, for as many members as you have. No card, no setup fee. (G+)
 - **Packs (per branch):** Starter ₹999 a month (₹9,990 a year) · Pro ₹1,999 a month (₹19,990 a year) · AI ₹2,999 a month, coming.
@@ -96,6 +103,7 @@ offline, several branches. The price table now leads with the exclusive items, e
 - **Headline:** Founding gym: Pro for life, one payment.
 - **Sub:** Pay ₹29,999 once for one branch, and never pay for Pro again. Only for the first 50 gyms. (G+)
 - **How:** Start your free 3 months first, and tell us before they end. The AI pack is extra when it comes.
+  (12 Nov 2026, F201: now "When the AI Assistant comes, you also get 100 free AI credits every month.")
 
 ## 14. Start
 - **Headline:** Start your 3-month free trial today. (G)

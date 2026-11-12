@@ -318,9 +318,17 @@ const IST_MS = 5.5 * 60 * 60 * 1000;
 export const TRIAL_CAP_MONTHS = 6;
 export const ENDING_SOON_DAYS = 14;
 
-export const PLAN_WORDS = { starter: 'Starter', pro: 'Pro', ai: 'AI' };
+// F201 (12 Nov 2026): the old third pack 'ai' is retired. The AI Assistant is sold as AI credits on every plan
+// instead. A gym still on 'ai' (an old row) is treated as Pro, so it is shown as Pro and the picker offers
+// only Starter and Pro (saving it writes 'pro').
+export const PLAN_WORDS = { starter: 'Starter', pro: 'Pro', ai: 'Pro' };
 export const BILLING_WORDS = { monthly: 'monthly', yearly: 'yearly', lifetime: 'lifetime' };
-export const PLAN_CHOICES = [['', 'No plan yet (free trial)'], ['starter', 'Starter'], ['pro', 'Pro'], ['ai', 'AI']];
+export const PLAN_CHOICES = [['', 'No plan yet (free trial)'], ['starter', 'Starter'], ['pro', 'Pro']];
+
+/** The plan picker's starting value for a gym: the retired 'ai' pack starts on Pro. */
+export function planPickValue(plan) {
+  return plan === 'ai' ? 'pro' : plan || '';
+}
 export const BILLING_CHOICES = [['monthly', 'Monthly'], ['yearly', 'Yearly'], ['lifetime', 'Lifetime (paid once)']];
 export const NOT_READY_WORDS = 'Trials need the database update (waiting for your yes).';
 
@@ -394,7 +402,7 @@ export function trialWords(g, now = Date.now()) {
   return `Free trial: ${left === 1 ? '1 day' : `${left} days`} left`;
 }
 
-/** "Pro, yearly, paid until 24 Oct 2027", "AI, lifetime", or "" with no plan. */
+/** "Pro, yearly, paid until 24 Oct 2027", "Pro, lifetime", or "" with no plan. */
 export function planWords(g) {
   if (!g.plan) return '';
   const name = PLAN_WORDS[g.plan] || g.plan;

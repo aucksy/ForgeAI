@@ -276,6 +276,34 @@
     ]);
   })();
 
+  // AI Assistant (F201, coming soon): the owner's words type in, the card the assistant makes slides up, its rows
+  // fill in, and its button is pressed (a message is then sent, a renewal saved and its receipt made). One loop
+  // per card, like the others. The HTML holds the finished state.
+  (function () {
+    all('.as-cell').forEach(function (cell) {
+      var said = cell.querySelector('.as-said'), words = cell.querySelector('.as-t'), card = cell.querySelector('.as-card');
+      if (!said || !words || !card) return;
+      var rows = all('.as-row', cell), btn = cell.querySelector('.as-btn');
+      var text = words.textContent, per = 45, steps = [];
+      for (var k = 1; k <= text.length; k++) {
+        (function (k) { steps.push([300 + k * per, function () { words.textContent = text.slice(0, k); }]); })(k);
+      }
+      var at = 300 + text.length * per + 300;
+      steps.push([at, function () { said.classList.remove('typing'); card.classList.add('in'); }]);
+      rows.forEach(function (r, i) { steps.push([at + 350 + i * 280, function () { r.classList.add('in'); }]); });
+      var t = at + 350 + rows.length * 280 + 600;
+      steps.push([t, function () { tap(btn); }]);
+      if (cell.dataset.done) steps.push([t + 350, function () { card.classList.add('done'); }]);
+      loopScene(cell, function () {
+        cell.classList.add('armed');
+        said.classList.add('typing');
+        words.textContent = '';
+        card.classList.remove('in', 'done');
+        rows.forEach(function (r) { r.classList.remove('in'); });
+      }, steps);
+    });
+  })();
+
   // The watch (R-325): next set, the dial turned (20 -> 22.5 kg), the tick: saved and resting. Real screens.
   (function () {
     var stage = $('watch-scene');

@@ -97,6 +97,9 @@ describe('buttons and lines', () => {
     expect(scheduledLine(tr)).toBe('Starter starts when your free trial ends on 6 Feb 2027.');
     expect(downgradeNote(billingFromRow(base))).toContain('No money back for the days left.');
     expect(downgradeNote(billingFromRow({ ...base, plan: 'starter' }))).toBeNull();
+    // F201: a gym still on the retired 'ai' pack is treated as Pro.
+    expect(downgradeNote(billingFromRow({ ...base, plan: 'ai' }))).toContain('your paid Pro days end');
+    expect(scheduledLine(billingFromRow({ ...base, scheduled: { plan: 'ai', from: '2026-12-09T23:59:59+05:30' } }))).toMatch(/^Pro starts/);
   });
 
   it('every refusal has plain words, and an unknown one too', () => {

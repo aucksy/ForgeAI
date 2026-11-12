@@ -262,7 +262,7 @@ test('checkout: the link is made for the SERVER\'s amount, never the browser\'s'
   assert.deepEqual(calls[1].args, { p_checkout: 'c9', p_link_id: 'plink_NEW1', p_link_url: 'https://rzp.io/i/test1' });
 });
 
-test('checkout: refusals from the server come back as their word; Pro + AI is refused before the server', async () => {
+test("checkout: refusals from the server come back as their word; the retired 'ai' pack is refused before the server", async () => {
   const call = async () => {
     throw new DbError('FOUNDING_FULL', 400);
   };

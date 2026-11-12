@@ -9,7 +9,10 @@
  *    leaderboard, the workout offer (extra plan days for members who work out often), trainer plans +
  *    diet plans + body measurements in members' phones, and "Your numbers" (fees collected, new
  *    members, busiest hours; with the "Your growth" page they open).
- *  - Pro + AI: not sold yet; treated as Pro until its AI parts exist.
+ *  - 'ai': the retired third pack (on the website as "Coming", never sold). F201 (12 Nov 2026) replaced it
+ *    with the AI Assistant, sold as AI credits on EVERY plan (AI_CREDITS below). The word stays valid
+ *    because old rows and old migrations use it; a gym on 'ai' is treated, named and shown as Pro.
+ *    Nothing shows or sells it any more (apps/dashboard/test/crm/retiredAiPack.test.ts checks that).
  *  - Founding gym ("Pro for life", the website) and "Own it" ("Pro for one branch", the research
  *    note) are not packs of their own: HQ writes them as pack 'pro' with billing 'lifetime' / 'yearly'
  *    (hq_set_plan, 0030). So they are Pro.
@@ -36,9 +39,15 @@
  */
 export const PLAN_GATE_ON = false;
 
-/** The packs a gym can be on: the words HQ keeps in gyms.plan (0030's check constraint). */
+/**
+ * The words gyms.plan may hold (0030's check constraint). 'ai' is the retired third pack: still a valid
+ * word (old rows, old migrations), treated as Pro, never shown or sold. Show a pack with packName().
+ */
 export type GymPack = 'starter' | 'pro' | 'ai';
 export const GYM_PACKS: readonly GymPack[] = ['starter', 'pro', 'ai'];
+
+/** The packs that exist for a gym owner today: the website, Pay MettleUp and HQ's plan picker. */
+export type SoldPack = 'starter' | 'pro';
 
 /** The features only Pro (and up) has. Everything else is in every pack and is never gated. */
 export type ProFeature = 'branding' | 'shop' | 'challenge' | 'workoutOffer' | 'trainerPlans' | 'yourNumbers';
@@ -48,7 +57,7 @@ export const PRO_FEATURES: readonly ProFeature[] = ['branding', 'shop', 'challen
 export const PACK_FEATURES: Readonly<Record<GymPack, readonly ProFeature[]>> = {
   starter: [],
   pro: PRO_FEATURES,
-  // Pro + AI: not sold until its AI parts are built (#30); until then exactly Pro.
+  // The retired 'ai' pack: exactly Pro.
   ai: PRO_FEATURES,
 };
 
@@ -57,6 +66,18 @@ export function packOf(raw: unknown): GymPack | null {
   if (typeof raw !== 'string') return null;
   const w = raw.trim().toLowerCase();
   return (GYM_PACKS as readonly string[]).includes(w) ? (w as GymPack) : null;
+}
+
+/** The pack a gym is shown as: the retired 'ai' is Pro; null for none or an unknown word. PURE. */
+export function shownPack(raw: unknown): SoldPack | null {
+  const p = packOf(raw);
+  return p === 'ai' ? 'pro' : p;
+}
+
+/** A pack's name as owners read it: "Starter" or "Pro" (the retired 'ai' is "Pro"); '' for none. PURE. */
+export function packName(raw: unknown): string {
+  const p = shownPack(raw);
+  return p === 'starter' ? 'Starter' : p === 'pro' ? 'Pro' : '';
 }
 
 /**
@@ -90,16 +111,35 @@ export interface PackPrice {
   yearly: number;
 }
 
-/** The approved prices (OWNER-INBOX #30 A, 30 Oct 2026), per branch, in rupees. */
-export const PACK_PRICES: Readonly<Record<GymPack, PackPrice>> = {
+/** The approved prices (OWNER-INBOX #30 A, 30 Oct 2026), per branch, in rupees. The retired 'ai' pack has none. */
+export const PACK_PRICES: Readonly<Record<SoldPack, PackPrice>> = {
   starter: { monthly: 999, yearly: 9_990 },
   pro: { monthly: 1_499, yearly: 14_990 },
-  // Pro + AI: shown on the website as "Coming"; nobody can buy it until its AI parts exist.
-  ai: { monthly: 2_499, yearly: 24_990 },
 };
 
-/** The packs a gym can pay for today (Pro + AI is "Coming"). */
-export const PACKS_FOR_SALE: readonly GymPack[] = ['starter', 'pro'];
+/** The packs a gym can pay for today. */
+export const PACKS_FOR_SALE: readonly SoldPack[] = ['starter', 'pro'];
+
+/**
+ * THE AI ASSISTANT'S CREDITS (F201, docs/f201-ai-assistant/03-design.md section 3; R-470, 12 Nov 2026), on
+ * every plan; they replaced the retired 'ai' pack. Asking is free. 1 credit when a message is sent or a member,
+ * payment, enquiry or expense is saved; 3 credits for a workout or diet plan the AI writes. Free credits: 20
+ * once in the free trial, none on a monthly plan, 100 every month on a yearly plan or the founding lifetime
+ * offer. Packs never expire. The server keeps the same numbers (0071 owner_ai_wallet) and the website shows
+ * them (apps/dashboard/public/home/index.html); pricesOneSource.test.ts checks that all three agree.
+ */
+export const AI_CREDITS = {
+  perTask: 1,
+  perPlan: 3,
+  trialFree: 20,
+  monthlyFree: 0,
+  yearlyFreeEachMonth: 100,
+  packs: [
+    { credits: 50, rupees: 149, popular: false },
+    { credits: 150, rupees: 399, popular: true },
+    { credits: 500, rupees: 999, popular: false },
+  ],
+} as const;
 
 /** The founding offer: Pro for life for one branch, one payment, first 25 gyms, until 31 Mar 2027. */
 export const FOUNDING_OFFER = { rupees: 29_999, gyms: 25, lastDay: '2027-03-31' } as const;

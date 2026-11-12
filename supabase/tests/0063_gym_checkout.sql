@@ -56,7 +56,7 @@ begin
   if err <> 'NOT_OPEN' or (public.owner_billing(k_a)->>'checkoutOn')::boolean then fails := fails || ' 1:' || err; end if;
   update public.app_config set value = '{"on": true}'::jsonb where key = 'billing_checkout';
 
-  -- 2. Refusals: the desk, Pro + AI, an unknown company, a lifetime gym.
+  -- 2. Refusals: the desk, the retired 'ai' pack, an unknown company, a lifetime gym.
   begin perform public.hq_billing_checkout_start(k_desk, 'pro', 'monthly', 'razorpay'); err := 'none';
   exception when others then err := sqlerrm; end;
   checks := checks + 1;

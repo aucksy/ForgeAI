@@ -12,7 +12,7 @@
  * PURE: no React, no network.
  */
 
-import { PACK_PRICES } from '@forgeai/theme';
+import { PACK_PRICES, packName } from '@forgeai/theme';
 
 import { formatINR, rupeesToPaise, type Paise } from './money';
 import { upiPayLink, validUpiId } from './upiPay';
@@ -25,8 +25,8 @@ export type PayStatus = 'pending' | 'confirmed' | 'rejected';
 /**
  * The approved prices for ONE branch, in paise. Billing step 1 (R-385): read from the one price list,
  * packages/theme/src/plans.ts (PACK_PRICES); never typed here. The server keeps the same list (0060
- * _mettleup_price) and a test checks they agree (test/crm/pricesOneSource.test.ts). Pro + AI is not on
- * sale yet, so it is not here.
+ * _mettleup_price) and a test checks they agree (test/crm/pricesOneSource.test.ts). Only Starter and Pro
+ * are sold; the retired 'ai' pack is never offered (the AI Assistant is sold as credits instead, F201).
  */
 const paiseOf = (p: PayPlan): Readonly<Record<PayBilling, Paise>> => ({
   monthly: rupeesToPaise(PACK_PRICES[p].monthly),
@@ -38,7 +38,6 @@ export const PRICES: Readonly<Record<PayPlan, Readonly<Record<PayBilling, Paise>
 };
 
 export const PLAN_NAMES: Readonly<Record<PayPlan, string>> = { starter: 'Starter', pro: 'Pro' };
-const PLAN_ANY: Readonly<Record<string, string>> = { starter: 'Starter', pro: 'Pro', ai: 'Pro + AI' };
 
 /** MettleUp's payment details, as the server sent them to the owner. */
 export interface PayTo {
@@ -193,9 +192,9 @@ export function payDate(at: string): string {
   return new Date(at).toLocaleDateString('en-GB', { timeZone: 'Asia/Kolkata', day: 'numeric', month: 'short', year: 'numeric' });
 }
 
-/** "Pro, monthly". PURE. */
+/** "Pro, monthly". The retired 'ai' pack reads "Pro" (it is treated as Pro). PURE. */
 export function planLabel(plan: string, billing: string | null): string {
-  const name = PLAN_ANY[plan] ?? plan;
+  const name = packName(plan) || plan;
   return billing === 'monthly' || billing === 'yearly' || billing === 'lifetime' ? `${name}, ${billing}` : name;
 }
 

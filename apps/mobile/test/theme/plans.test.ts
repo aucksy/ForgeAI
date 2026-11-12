@@ -5,7 +5,19 @@
  */
 import { describe, expect, it } from 'vitest';
 
-import { GYM_PACKS, PLAN_GATE_ON, PRO_FEATURES, hasFeature, lockedFeatures, packOf } from '@forgeai/theme';
+import {
+  AI_CREDITS,
+  GYM_PACKS,
+  PACK_PRICES,
+  PACKS_FOR_SALE,
+  PLAN_GATE_ON,
+  PRO_FEATURES,
+  hasFeature,
+  lockedFeatures,
+  packName,
+  packOf,
+  shownPack,
+} from '@forgeai/theme';
 
 import { linkFromJoin, linkWithPack } from '../../src/shop/gym';
 import { gymShortcutPlan } from '../../src/shop/gymShortcut';
@@ -31,7 +43,7 @@ describe('switch on', () => {
     expect([...PRO_FEATURES].sort()).toEqual(['branding', 'challenge', 'shop', 'trainerPlans', 'workoutOffer', 'yourNumbers']);
   });
 
-  it('Pro and Pro + AI keep everything', () => {
+  it("Pro and the retired 'ai' pack keep everything", () => {
     for (const plan of ['pro', 'ai', ' PRO ']) expect(lockedFeatures({ plan }, true)).toEqual([]);
   });
 
@@ -46,6 +58,39 @@ describe('switch on', () => {
     expect(packOf('ai')).toBe('ai');
     expect(packOf('founding')).toBeNull();
     expect(packOf(null)).toBeNull();
+  });
+});
+
+describe("F201: the retired 'ai' pack (replaced by the AI Assistant's credits on every plan)", () => {
+  it('stays a valid word, for old rows, and is shown and named as Pro', () => {
+    expect(GYM_PACKS).toContain('ai');
+    expect(shownPack('ai')).toBe('pro');
+    expect(shownPack(' Starter ')).toBe('starter');
+    expect(shownPack('gold')).toBeNull();
+    expect(packName('ai')).toBe('Pro');
+    expect(packName('pro')).toBe('Pro');
+    expect(packName('starter')).toBe('Starter');
+    expect(packName(null)).toBe('');
+  });
+
+  it('is never priced or sold', () => {
+    expect(Object.keys(PACK_PRICES).sort()).toEqual(['pro', 'starter']);
+    expect([...PACKS_FOR_SALE]).toEqual(['starter', 'pro']);
+  });
+
+  it('the credits offer is the decided one (03-design section 3, R-470)', () => {
+    expect(AI_CREDITS).toEqual({
+      perTask: 1,
+      perPlan: 3,
+      trialFree: 20,
+      monthlyFree: 0,
+      yearlyFreeEachMonth: 100,
+      packs: [
+        { credits: 50, rupees: 149, popular: false },
+        { credits: 150, rupees: 399, popular: true },
+        { credits: 500, rupees: 999, popular: false },
+      ],
+    });
   });
 });
 

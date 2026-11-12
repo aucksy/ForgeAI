@@ -11,6 +11,7 @@ import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 import {
+  AI_CREDITS,
   PLAN_BASIC_DAYS,
   FOUNDING_OFFER,
   PLAN_GRACE_DAYS,
@@ -43,10 +44,10 @@ function lastDefinition(fn: string): string {
 
 describe('prices: one list, every place agrees', () => {
   it('the list is the approved one', () => {
+    // F201: the retired 'ai' pack has no price; the AI Assistant is sold as credits (AI_CREDITS).
     expect(PACK_PRICES).toEqual({
       starter: { monthly: 999, yearly: 9990 },
       pro: { monthly: 1499, yearly: 14990 },
-      ai: { monthly: 2499, yearly: 24990 },
     });
     expect(PACKS_FOR_SALE).toEqual(['starter', 'pro']);
     expect(FOUNDING_OFFER).toEqual({ rupees: 29999, gyms: 25, lastDay: '2027-03-31' });
@@ -56,10 +57,11 @@ describe('prices: one list, every place agrees', () => {
     const html = text('apps/dashboard/public/home/index.html');
     const section = html.slice(html.indexOf('id="pricing"'), html.indexOf('</section>', html.indexOf('id="pricing"')));
     const cards = section.split(/<div class="card[ "]/).slice(1);
-    const names: Record<string, (typeof GYM_PACKS)[number]> = { Starter: 'starter', Pro: 'pro', 'Pro + AI': 'ai' };
+    const names: Record<string, (typeof PACKS_FOR_SALE)[number]> = { Starter: 'starter', Pro: 'pro' };
     const seen: string[] = [];
     for (const card of cards) {
       const name = /<h3[^>]*>([^<]+)/.exec(card)?.[1]?.trim() ?? '';
+      if (name === 'AI Assistant') continue; // checked below: credits, not a plan price
       const pack = names[name];
       expect(pack, `unknown card "${name}"`).toBeDefined();
       const m = /class="pm"><b>([^<]+)<\/b>/.exec(card)?.[1] ?? '';
@@ -68,16 +70,50 @@ describe('prices: one list, every place agrees', () => {
       expect(rupees(y), `${name} yearly`).toBe(PACK_PRICES[pack!].yearly);
       seen.push(pack!);
     }
-    expect(seen.sort()).toEqual([...GYM_PACKS].sort());
-    // Pro + AI is marked "Coming" (not for sale).
-    const ai = cards.find((c) => /<h3>Pro \+ AI/.test(c)) ?? '';
-    expect(ai).toContain('Coming');
+    expect(seen.sort()).toEqual([...PACKS_FOR_SALE].sort());
+    // Both plans say what the yearly price adds: 100 AI credits every month, free.
+    for (const card of cards.filter((c) => !/<h3[^>]*>AI Assistant/.test(c))) {
+      expect(card).toContain(`+ ${AI_CREDITS.yearlyFreeEachMonth} AI credits every month, free`);
+    }
+    // F201: the third card is the AI Assistant, on every plan, "Coming soon", with the packs from the one list.
+    const ai = cards.find((c) => /<h3[^>]*>AI Assistant/.test(c)) ?? '';
+    expect(cards).toHaveLength(3);
+    expect(ai).toContain('Coming soon');
+    expect(ai).not.toMatch(/class="p[my]"/);
+    const packs = [...ai.matchAll(/<div class="pk[^"]*">[^]*?([\d,]+) credits<\/[^]*?<span>₹([\d,]+)<\/span><\/div>/g)].map((x) => [
+      rupees(x[1]),
+      rupees(x[2]),
+      /class="pk pop"/.test(x[0]),
+    ]);
+    expect(packs).toEqual(AI_CREDITS.packs.map((p) => [p.credits, p.rupees, p.popular]));
+    expect(ai).toContain('Most popular');
+    expect(ai).toContain(`${AI_CREDITS.perTask} credit when you send a message`);
+    expect(ai).toContain(`${AI_CREDITS.perPlan} credits when the AI writes a workout or diet plan`);
+    expect(ai).toContain(`Free trial: ${AI_CREDITS.trialFree} credits, once`);
+    expect(ai).toContain(`${AI_CREDITS.yearlyFreeEachMonth} free credits every month`);
+    expect(ai).toContain('Monthly plans: no free credits');
+    expect(ai).toContain('never expire');
     // The founding offer: price (in the text and the big number), 25 gyms, the last day.
     const found = section.slice(section.indexOf('class="found'));
     expect(found).toContain(`Pay ${shown(FOUNDING_OFFER.rupees)} once`);
     expect(found).toContain(`<div class="big">${shown(FOUNDING_OFFER.rupees)}`);
     expect(found).toContain(`first ${FOUNDING_OFFER.gyms} gyms`);
     expect(found).toContain('31 March 2027');
+    expect(found).toContain(`${AI_CREDITS.yearlyFreeEachMonth} free AI credits every month`);
+  });
+
+  it("the server's AI credit packs and free credits (0071) are the same as the one list", () => {
+    const wallet = lastDefinition('owner_ai_wallet');
+    expect(wallet).not.toBe('');
+    const packs = [...wallet.matchAll(/jsonb_build_object\('credits', (\d+), 'inr', (\d+)(, 'popular', true)?\)/g)].map((x) => [
+      Number(x[1]),
+      Number(x[2]),
+      !!x[3],
+    ]);
+    expect(packs).toEqual(AI_CREDITS.packs.map((p) => [p.credits, p.rupees, p.popular]));
+    const sql = text('supabase/migrations/0071_ai_assistant.sql');
+    expect(sql).toMatch(new RegExp(`welcome +${AI_CREDITS.trialFree} starter credits`));
+    expect(sql).toMatch(new RegExp(`monthly +${AI_CREDITS.yearlyFreeEachMonth} every India month`));
   });
 
   it('Pay MettleUp charges the same prices and types none of its own', () => {
@@ -98,7 +134,7 @@ describe('prices: one list, every place agrees', () => {
     expect(Number(m![2])).toBe(PACK_PRICES.pro.monthly);
   });
 
-  it("the server's price function charges the same prices, in paise, and nothing for Pro + AI", () => {
+  it("the server's price function charges the same prices, in paise, and nothing for the retired 'ai' pack", () => {
     const fn = lastDefinition('_mettleup_price');
     expect(fn).not.toBe('');
     const rows = [...fn.matchAll(/when '([a-z]+)\/([a-z]+)'\s+then\s+(\d+)/g)].map((x) => [x[1], x[2], Number(x[3])] as const);

@@ -30,8 +30,11 @@ Not tax advice: a CA should confirm the tax lines once money comes in.
 - **Yearly plans and the founding lifetime offer:** always a single payment. Indian bank rules (RBI, Apr 2026) make the customer approve every automatic charge above ₹15,000, so automatic yearly renewal would fail anyway.
 - **Upgrade (Starter to Pro):** works at once; they pay only the difference for the days left.
 - **Downgrade:** takes effect when the current period ends. No money back for the days left. No money back on any payment (DECIDED 6 Nov 2026, R-387), except a double or too-high payment made by mistake.
-- **Free trial:** 3 months with Pro features (AI extras are not sold until they exist). One trial per verified phone.
-- **Pro + AI:** not for sale until the AI features are built (the website says "Coming").
+- **Free trial:** 3 months with Pro features, plus 20 AI credits once (F201). One trial per verified phone.
+- **The old third pack (plan word 'ai') is retired (F201, 12 Nov 2026).** The AI Assistant is sold as AI credits on
+  every plan instead (03-design.md section 3; packs ₹149 = 50, ₹399 = 150, ₹999 = 500; 100 free a month on yearly plans
+  and founding lifetime gyms). 'ai' stays a valid word in the database for old rows and means Pro; nothing shows or
+  sells it (0072 names it "Pro" on receipts; HQ can no longer set it).
 - **Extra branches at half price:** phase 2.
 - **Test mode** until he says "payments live" (standing rule).
 

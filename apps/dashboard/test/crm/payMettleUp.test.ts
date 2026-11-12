@@ -45,10 +45,11 @@ const payment = (extra: Partial<MettleUpPayment> = {}): MettleUpPayment => ({
 });
 
 describe('prices (the approved list, #30 A)', () => {
-  it('Starter and Pro, monthly and yearly; Pro + AI is not on sale here', () => {
+  it("Starter and Pro, monthly and yearly; the retired 'ai' pack is not on sale here (F201)", () => {
     expect(PRICES).toEqual({ starter: { monthly: 99_900, yearly: 999_000 }, pro: { monthly: 149_900, yearly: 1_499_000 } });
     expect(priceOf('pro', 'yearly')).toBe(1_499_000);
     expect(priceOf('ai', 'monthly')).toBeNull();
+    expect(priceOf('ai', 'yearly')).toBeNull();
     expect(priceOf('pro', 'lifetime')).toBeNull();
   });
 });
@@ -168,6 +169,8 @@ describe('what the owner sees', () => {
     );
     expect(planNow({ plan: 'starter', billing: 'yearly', paidUntil: '2026-11-01T18:29:59Z', trialEndsAt: null }, NOW)).toMatch(/was paid until 1 Nov 2026\. Pay below/);
     expect(planNow({ plan: 'pro', billing: 'lifetime', paidUntil: null, trialEndsAt: null }, NOW)).toBe('Your plan: Pro, lifetime. Nothing more to pay.');
+    // F201: a gym still on the retired 'ai' pack reads as Pro.
+    expect(planNow({ plan: 'ai', billing: 'lifetime', paidUntil: null, trialEndsAt: null }, NOW)).toBe('Your plan: Pro, lifetime. Nothing more to pay.');
   });
 
   it('the Today line asks for the next payment in the last 7 days of a paid plan, and after it', () => {

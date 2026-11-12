@@ -35,7 +35,7 @@ My answer to the cost question: no. Tasks differ (a question ~Rs 0.3, a group me
 - [ ] Design spec: tasks catalogue, safety model, credits, voice, screens -> 03-design.md
 - [ ] Claude Design canvas for the screens
 - [ ] Build: server (migration, AI worker, credits ledger), panel UI, member app delivery
-- [ ] Replace every "Pro + AI" mention
+- [x] Replace every "Pro + AI" mention
 - [ ] Tests + cloud CI + UAT pictures
 - [ ] His yeses: live migration, privacy wording, prices
 
