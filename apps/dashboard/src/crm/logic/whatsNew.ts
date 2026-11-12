@@ -45,6 +45,13 @@ export const ADMIN_NEWS: readonly AdminNewsEntry[] = [
       {
         text: 'The MettleUp privacy notice has a new section for members in the EU, the EEA and the UK. It explains their rights and the legal reason for each use of their data. Read it at mettleup.fit/privacy.',
       },
+      {
+        // R-459 (owner, 12 Nov 2026: "All yes"; 0069 live, panel deployed the same day). Members get the Gym tab
+        // row with the next app release, so the line does not promise they can send today (coordinator's words).
+        text: 'New: Member messages. When members update their app, they can send you questions, feedback and complaints here.',
+        go: { label: 'Open Member messages', path: '/member-messages' },
+        feature: true,
+      },
     ],
   },
   {
@@ -439,16 +446,6 @@ function notifyNewsSeen(): void {
  */
 export const ADMIN_NEWS_PENDING: readonly AdminNewsEntry[] = [
   {
-    // Owner, 12 Nov 2026: Member messages (0069). Moves to ADMIN_NEWS only when 0069 is live AND the panel is deployed.
-    id: 'pending-member-messages',
-    lines: [
-      {
-        text: 'New page "Member messages": members can now send your gym a question, feedback or a complaint from the Gym tab of their app. Reply there and mark each one as done. Complaints are shown to the owner only.',
-        go: { label: 'Open Member messages', path: '/member-messages' },
-        feature: true,
-      },
-    ],
-  },  {
     // F56 R-461, 12 Nov 2026: the MettleUp Plus switch (0070). Moves to ADMIN_NEWS only when 0070 is live, the panel is
     // deployed AND the app's paid plan is switched on (MEMBER_PLAN_GATE_ON); until then the card is hidden anyway.
     id: 'pending-plus-lock',
