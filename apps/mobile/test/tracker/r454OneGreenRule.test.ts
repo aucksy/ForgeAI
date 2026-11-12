@@ -7,6 +7,9 @@
  * short") after passing last time's 1,720 kg, and a plan reached early went green with a set still open.
  * The words follow the colour: green always reads "<done> done · Previous: <prev> · +<diff>".
  */
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+
 import { describe, expect, it } from 'vitest';
 
 import { kgBeaten, kgLiveLine, kgProgress, lineGreen, repLiveLine, type KgPlan, type KgRow } from '@/tracker/lib/kgTarget';
@@ -121,17 +124,23 @@ describe('one green rule: reps only (same rule as kilos)', () => {
   });
 });
 
-describe('the finished line names totals without "each" (owner, 12 Nov 2026)', () => {
-  const each = (kg: number) => `${total(kg)} each`;
-  it('dumbbells: "each" while the sets run, none on the green line', () => {
-    expect(kgLiveLine(kg, kgProgress(kg, [open(40, 13), open(40, 12), open(40, 11), open(40, 9)]), each, weight, total)).toBe("Next set: 40 kg × 13 · Done: 0 of today's 1,800 kg each");
-    const all = kgProgress(kg, [done(40, 13), done(40, 12), done(40, 11), done(40, 9)]);
-    expect(kgLiveLine(kg, all, each, weight, total)).toBe('1,800 kg done · Previous: 1,720 kg · +80 kg');
-    const same = kgProgress(kg, [done(40, 13), done(40, 12), done(40, 10), done(40, 8)]);
-    expect(kgLiveLine(kg, same, each, weight, total)).toBe('1,720 kg done · Previous: 1,720 kg · same as last time');
-  });
-  it('without a separate finished wording the line keeps the one it was given', () => {
+describe('totals never say "each" (owner, 12 Nov 2026)', () => {
+  // The workout card hands kgLiveLine a total wording without "each" (ExerciseLogCard); "each" stays on
+  // the per-set weight ("Suggested: 40 kg each · 13, 12, 11, 9", the KG EACH column).
+  const card = readFileSync(join(__dirname, '../../src/tracker/components/ExerciseLogCard.tsx'), 'utf8');
+  const today = readFileSync(join(__dirname, '../../src/tracker/components/ExerciseKgRow.tsx'), 'utf8');
+  it('his Incline: the running line, the green line and the same-as-last-time line', () => {
+    const rows = [open(40, 13), open(40, 12), open(40, 11), open(40, 9)];
+    expect(kgLiveLine(kg, kgProgress(kg, rows), total, weight)).toBe("Next set: 40 kg × 13 · Done: 0 of today's 1,800 kg");
     const all = kgProgress(kg, [done(40, 13), done(40, 12), done(40, 11), done(40, 9)]);
     expect(kgLiveLine(kg, all, total, weight)).toBe('1,800 kg done · Previous: 1,720 kg · +80 kg');
+    const same = kgProgress(kg, [done(40, 13), done(40, 12), done(40, 10), done(40, 8)]);
+    expect(kgLiveLine(kg, same, total, weight)).toBe('1,720 kg done · Previous: 1,720 kg · same as last time');
+  });
+  it('the workout card and the Today kg-to-beat row add no "each" to a total', () => {
+    const live = card.slice(card.indexOf('kgLiveLine(kgPlanned'), card.indexOf('beaten: lineGreen'));
+    expect(live).not.toMatch(/each/);
+    const beat = today.slice(today.indexOf('kgToBeatLine(plan'), today.indexOf('const sets ='));
+    expect(beat).not.toMatch(/each/);
   });
 });

@@ -62,9 +62,10 @@ appId: com.mettleup.app
       KG: "none"
       REPS: "9"
 - runFlow:
-    file: sub-find.yaml
+    file: sub-uat-r454-line.yaml
     env:
-      FIND: '^40 reps done · Previous: 39 · [+]1$|^Target .* 40 reps done · Previous: 39 · [+]1[.] Tap for why[.]$'
+      EX: "Dips"
+      WANT: "40 reps done · Previous: 39 · +1"
 - assertNotVisible: "(?i).*keep the same weight.*"
 - assertNotVisible: "(?i).*(reached|beaten).*"
 - takeScreenshot: rel-r454-l-dip-done
