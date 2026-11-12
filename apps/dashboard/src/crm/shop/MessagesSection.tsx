@@ -22,10 +22,10 @@ import { useCallback, useMemo, useRef, useState } from 'react';
 import {
   AUDIENCE_LABEL,
   AUDIENCE_TYPES,
+  appIdsOf,
   appPhones,
   audienceMembers,
   audiencePlans,
-  phone10,
   reachOf,
   everyoneCount,
   startingAudience,
@@ -194,11 +194,7 @@ export function MessagesSection({ startWith }: { startWith?: string }) {
   // 0025: the group's own app members (matched by mobile number, as the server matches check-ins).
   const groupAppIds = useMemo(() => {
     if (!groups || everyone) return null;
-    const wanted = new Set(groupMembers.map((v) => phone10(v.member.phone)).filter((p): p is string => p !== null));
-    return (appMembers ?? []).filter((a) => {
-      const p = phone10(a.phone);
-      return p !== null && wanted.has(p);
-    }).map((a) => a.memberId);
+    return appIdsOf(groupMembers, appMembers ?? []);
   }, [groups, everyone, groupMembers, appMembers]);
   const baseReach = reachOf(target, groupMembers, phones, appMembers?.length ?? 0);
   const reach = groups ? { ...baseReach, widerInApp: false } : baseReach;

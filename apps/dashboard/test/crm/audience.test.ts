@@ -5,6 +5,7 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  appIdsOf,
   appPhones,
   audienceMembers,
   audiencePlans,
@@ -154,5 +155,22 @@ describe('in the app, or not', () => {
   it('a smaller group: its own members with the app, and the app message would reach more', () => {
     const ending = audienceMembers({ type: 'ending7' }, data);
     expect(reachOf({ type: 'ending7' }, ending, phones, 2)).toEqual({ group: 1, inApp: 1, notInApp: 0, widerInApp: true });
+  });
+});
+
+describe('appIdsOf (F201: Messages and the AI Helper send a group message to these app ids)', () => {
+  it('matches the group to the app members by mobile number, the way the server does', () => {
+    const group = [
+      { member: makeMember({ id: 'a', phone: '+919829011111' }) },
+      { member: makeMember({ id: 'b', phone: '+919829022222' }) },
+      { member: makeMember({ id: 'c', phone: '' }) },
+    ];
+    const app = [
+      { memberId: 'app1', phone: '09829011111' },
+      { memberId: 'app2', phone: '+91 98290 33333' },
+      { memberId: 'app3', phone: null },
+    ];
+    expect(appIdsOf(group, app)).toEqual(['app1']);
+    expect(appIdsOf([], app)).toEqual([]);
   });
 });

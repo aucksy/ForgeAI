@@ -188,3 +188,20 @@ export function everyoneCount(views: readonly Pick<MemberView, 'member'>[], appM
 export function withoutApp(group: readonly MemberView[], phones: ReadonlySet<string>): MemberView[] {
   return group.filter((v) => !hasApp(v, phones));
 }
+
+/**
+ * The app member ids (the server's `p_to`, 0025) of a group's members: each member matched to the gym's
+ * app members by mobile number, as the server matches. Messages and the assistant both send through it.
+ */
+export function appIdsOf(
+  group: readonly Pick<MemberView, 'member'>[],
+  appMembers: readonly { memberId: string; phone: string | null }[],
+): string[] {
+  const wanted = new Set(group.map((v) => phone10(v.member.phone)).filter((p): p is string => p !== null));
+  return appMembers
+    .filter((a) => {
+      const p = phone10(a.phone);
+      return p !== null && wanted.has(p);
+    })
+    .map((a) => a.memberId);
+}
