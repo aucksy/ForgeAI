@@ -294,7 +294,7 @@ test('AI Assistant: hidden without 0071; the button, cards, credits, voice, the 
   await expect(fab).toHaveCount(0);
   await expect(main).toContainText('Try saying');
   await expect(main).toContainText('Kisne paise nahi diye?');
-  await expect(main).toContainText('Asking is free. A task uses 1 credit only when you send or save it.');
+  await expect(main).toContainText('Asking is free. A task uses credits only when you send or save it.');
   await expect(main).not.toContainText(/Diwali|Holi|Eid|Christmas/);
   await expectFitsPhone(page, 'on the assistant');
   await shots(page, '02-home');
@@ -391,6 +391,7 @@ test('AI Assistant: hidden without 0071; the button, cards, credits, voice, the 
   await expect(credits).toContainText('Workout plan saved');
   // R-473: the wallet's own number (monthly_free), never one typed into the screen.
   await expect(credits).toContainText('Your plan gets 100 free credits every month.');
+  await expect(credits).toContainText('You have no credits left. Questions stay free.');
   await credits.getByRole('button', { name: 'Popular: 150 credits for ₹399' }).tap();
   await expect(credits).toContainText('Buying credits here is not ready yet.');
   await shots(page, '14-credits-sheet');

@@ -207,7 +207,7 @@ export function AssistantHome({ assistKey, wallet, panel = false }: { assistKey:
           {t('See all {n} things it can do', { n: SHOWN_EXAMPLES.length })}
         </button>
       </section>
-      <p style={quiet}>{t('Asking is free. A task uses 1 credit only when you send or save it.')}</p>
+      <p style={quiet}>{t('Asking is free. A task uses credits only when you send or save it.')}</p>
     </>
   );
 

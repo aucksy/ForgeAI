@@ -80,7 +80,11 @@ export function CreditsSheet({ wallet, onClose, plansOn }: { wallet: AiWallet; o
           </span>
           {freeLine ? <p style={{ ...quiet, color: color.inkSecondary }}>{freeLine}</p> : null}
           {monthLine ? <p style={{ ...quiet, color: color.inkSecondary }}>{monthLine}</p> : null}
-          {low ? <p style={{ ...quiet, color: color.warning, fontWeight: 700 }}>{t('Your credits are running low. Questions stay free.')}</p> : null}
+          {low ? (
+            <p style={{ ...quiet, color: color.warning, fontWeight: 700 }}>
+              {wallet.balance <= 0 ? t('You have no credits left. Questions stay free.') : t('Your credits are running low. Questions stay free.')}
+            </p>
+          ) : null}
         </div>
 
         <section aria-label={t('What uses credits')} style={{ display: 'grid', gap: 4 }}>
