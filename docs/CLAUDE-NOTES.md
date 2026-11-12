@@ -7,6 +7,16 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-472. Away work: Pro + AI retired, website AI section, Diwali demo line, privacy draft — 12 Nov 2026
+Pro + AI helper (a529) done: 8d4ff485 + a32a5b94; "Pro + AI" gone from everything shown or sold; gyms on 'ai' act as
+Pro; HQ cannot pick it; NEW migration 0072 (receipts call 'ai' "Pro", NOT APPLIED, needs his yes); website pricing
+card "AI Assistant · Coming soon" + yearly "+ 100 AI credits every month, free" + a 3-demo AI section (EN + HI);
+1,985 dashboard tests pass; pictures docs/f201-ai-assistant/shots/website/ (read: fine at 390 and 1280).
+Decided: credit packs say nothing about GST, the same as the plans (no new GST talk).
+Did myself: the website's older message demo said "Gym closed on 1 Nov for Diwali": now "Gym closed this Sunday for
+cleaning. Open as usual on Monday." Drafted the AI Assistant privacy lines (docs/f201-ai-assistant/06-privacy-line.md)
+from the code; they wait for his yes word for word with the website words, 0071, 0072, D1 0015 and the worker deploy.
+
 ## R-471. Panel logic done; two calls made under his pricing delegation — 12 Nov 2026
 Panel builder (a22c) finished the assistant logic (CI 43255510354, 43256824627; 59 tests). It found: credits are
 charged per task, not per action; plans were template picks sold at 3 credits; the panel blocked the microphone
