@@ -38,8 +38,9 @@ appId: com.mettleup.app
     timeout: 3000
 - takeScreenshot: rel-pics-02-tate
 - back
+# The search keeps its text after back: clear it with the X (eraseText left letters behind on 12 Nov).
+- tapOn: "Clear the search"
 - tapOn: "Search exercises"
-- eraseText
 - inputText: " alternating hammer curl"
 - hideKeyboard
 - tapOn:
@@ -52,8 +53,9 @@ appId: com.mettleup.app
 - takeScreenshot: rel-pics-03-hammer
 - back
 # A hold: one picture, labelled Hold, no End.
+# The search keeps its text after back: clear it with the X (eraseText left letters behind on 12 Nov).
+- tapOn: "Clear the search"
 - tapOn: "Search exercises"
-- eraseText
 - inputText: " wall sit"
 - hideKeyboard
 - tapOn:
@@ -67,8 +69,9 @@ appId: com.mettleup.app
 - takeScreenshot: rel-pics-04-wall-sit
 - back
 # Negative: no picture of either kind, so no picture frame.
+# The search keeps its text after back: clear it with the X (eraseText left letters behind on 12 Nov).
+- tapOn: "Clear the search"
 - tapOn: "Search exercises"
-- eraseText
 - inputText: " iso-lateral chest press"
 - hideKeyboard
 - tapOn:
@@ -82,8 +85,9 @@ appId: com.mettleup.app
 - takeScreenshot: rel-pics-05-no-picture
 - back
 # Regression: a RepDB exercise keeps its pictures.
+# The search keeps its text after back: clear it with the X (eraseText left letters behind on 12 Nov).
+- tapOn: "Clear the search"
 - tapOn: "Search exercises"
-- eraseText
 - inputText: " barbell curl"
 - hideKeyboard
 - tapOn:
