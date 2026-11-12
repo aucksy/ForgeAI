@@ -809,7 +809,9 @@ export const HELP_ARTICLES = [
     title: 'Get a reply from the MettleUp team',
     text:
       'When the answer did not solve your question, or there was no answer, the MettleUp team replies. ' +
-      'Member app: open Profile → Settings → "Help and feedback". Under "Your questions" every question you sent from this phone is kept with its answer, and the reply shows as "Reply from the MettleUp team", marked New until you see it. The phone shows a pop-up when the reply arrives if gym messages are on. ' +
+      'Member app: a red dot with a number shows on the small round button at the edge of the screen. Tap it to read the reply. ' +
+      'You see your question, then "Quick answer" (the automatic answer), then each "Reply from the MettleUp team" in order, marked New until you read it. ' +
+      'All your questions are also in Profile → Settings → "Help and feedback", under "Your questions". ' +
       'Admin app: the same list, "Your questions", is on More → "Help and feedback" in the browser you asked from.',
   },
 ];
@@ -831,6 +833,7 @@ export const NO_HELP_SCREENS = {
   'apps/mobile/src/app/qa-sleep.tsx': 'Redirect: a test-build link for the sleep line pictures (R-344); goes straight back.',
   'apps/mobile/src/app/qa-look.tsx': 'Redirect: a test-build link for the gym colour pictures on the light and dark looks; goes straight back.',
   'apps/mobile/src/app/qa-dots.tsx': 'Redirect: a test-build link for the new-feature dot pictures (F198); goes straight back.',
+  'apps/mobile/src/app/qa-help.tsx': 'Redirect: a test-build link that adds a made-up answered question for the reply pictures (R-452); goes straight back.',
   'apps/mobile/src/app/analytics.tsx': 'Redirect: an old link that opens Charts.',
   'apps/mobile/src/app/bodyweight.tsx': 'Redirect: an old link that opens Body.',
   'apps/mobile/src/app/library/index.tsx': 'Redirect: an old link that opens Exercises.',

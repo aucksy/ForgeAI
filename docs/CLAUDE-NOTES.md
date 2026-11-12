@@ -7,6 +7,15 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-452. Members see the team's replies: red dot on the chat button, conversation on a tap — 12 Nov 2026
+**He said:** "I feel like that we should have a badge right around the floating feedback button ... when they tap it right there, they should see the manual answer. ... there are scenarios where the AI did actually answer in the beginning, but then I had to probably correct it or send a top-up on it manually. So they should be able to identify all this." Problem: his HQ answers (rows 78, 80 on 12 Nov) never reached the member.
+
+**Why they never saw them (read-only check of the live rows):** the rows, key and sender were all right. But the app asked for replies only when Settings -> Help and feedback was opened (never while open, never anywhere else), sent no push without gym messages, and the round button's sheet never showed a reply.
+
+**Done (phone + iPhone unless named):** check on open and on coming back to the front; red dot with count on the round button (shows even when switched off, hides once read) and the workout top-bar button; sheet opens on the conversation ("Quick answer" + "automatic", then each "Reply from the MettleUp team" in order, New tag); same in Settings; Android-only local pop-up when notifications are already allowed (PARITY line). Bugs fixed: a second reply replaced the first; demo load wiped the help id; a failed read let the next question overwrite the kept list; two ids could be made at once; Erase left questions in memory.
+
+**Needs his yes:** apply migration 0014 (feedback.replies) once with `npx wrangler d1 execute forgeai-web --remote --file migrations/0014_help_reply_list.sql` from deploy/panel, then deploy the panel Worker (deploy/panel) and the HQ Worker (deploy/hq). Until then everything works with one reply each (newest).
+
 ## R-451. Release 0.77.0 (member app, phone + watch) — 11 Nov 2026
 
 He said "Release" in chat on 11 Nov 2026 at about 12:28 IST (proof, R-309). It covers every item in PROGRESS.md

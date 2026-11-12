@@ -66,19 +66,35 @@ export async function listFeedback(db, { status = null, limit = 200 } = {}) {
   const read = async (cols, where = '', args = []) =>
     (await db.prepare(`SELECT ${cols} FROM feedback ${where} ORDER BY at DESC LIMIT ?`).bind(...args, lim).all()).results ?? [];
   const where = status && FEEDBACK_STATUS.includes(status) ? ['WHERE status = ?', [status]] : ['', []];
+  const help = async (cols) =>
+    status === 'needs-reply' ? (await read(cols, `WHERE ${NEEDS_REPLY_SQL}`)).map(withNeeds) : (await read(cols, ...where)).map(withNeeds);
   try {
-    if (status === 'needs-reply') return (await read(`${FEEDBACK_COLS}, ${HELP_COLS}`, `WHERE ${NEEDS_REPLY_SQL}`)).map(withNeeds);
-    return (await read(`${FEEDBACK_COLS}, ${HELP_COLS}`, ...where)).map(withNeeds);
+    // R-452 (migration 0014): every reply the team sent, oldest first.
+    return await help(`${FEEDBACK_COLS}, ${HELP_COLS}, replies`);
+  } catch (e) {
+    if (!missingColumn(e)) throw e;
+  }
+  try {
+    // Before 0014: one reply each (shown as a list of one).
+    return await help(`${FEEDBACK_COLS}, ${HELP_COLS}`);
   } catch (e) {
     if (!missingColumn(e)) throw e;
     console.warn('[hq-web] help columns missing (panel migrations 0008/0009 not applied?)');
     if (status === 'needs-reply') return [];
-    return (await read(FEEDBACK_COLS, ...where)).map((r) => ({ ...r, answer: '', helped: '', covered: '', reply: '', reply_at: '', can_push: 0, needsReply: false }));
+    return (await read(FEEDBACK_COLS, ...where)).map((r) => ({ ...r, answer: '', helped: '', covered: '', reply: '', reply_at: '', can_push: 0, needsReply: false, replyList: [], replyListKept: false }));
   }
 }
 
 function withNeeds(r) {
-  return { ...r, can_push: Number(r.can_push) ? 1 : 0, needsReply: needsReply(r) };
+  const { replies, ...rest } = r;
+  return {
+    ...rest,
+    can_push: Number(r.can_push) ? 1 : 0,
+    needsReply: needsReply(r),
+    // Every reply, oldest first; replyListKept: HQ adds a new reply under the others (0014), else it replaces.
+    replyList: replyListOf(replies, r.reply, r.reply_at),
+    replyListKept: replies !== undefined,
+  };
 }
 
 export const REPLY_MAX = 1500;
@@ -88,17 +104,61 @@ export function cleanReply(v) {
   return (typeof v === 'string' ? v : '').replace(/\r\n?/g, '\n').replace(/[ \t]+/g, ' ').replace(/\n{3,}/g, '\n\n').trim().slice(0, REPLY_MAX);
 }
 
+/** At most this many team replies are kept per question (the same as panel help.js MAX_TEAM_REPLIES). */
+export const MAX_TEAM_REPLIES = 20;
+
+/**
+ * Every team reply to one question, oldest first: the saved JSON list (panel migration 0014), or the one
+ * `reply` column as a list of one. PURE (the same rule as panel help.js replyListOf).
+ */
+export function replyListOf(raw, reply = '', replyAt = '') {
+  let list = [];
+  if (typeof raw === 'string' && raw.trim()) {
+    try {
+      const j = JSON.parse(raw);
+      if (Array.isArray(j)) {
+        list = j
+          .filter((x) => x && typeof x.text === 'string' && x.text.trim())
+          .map((x) => ({ text: x.text.trim(), at: typeof x.at === 'string' ? x.at : '' }));
+      }
+    } catch (e) {
+      console.warn('[hq-web] a saved reply list is not JSON; using the one reply', e instanceof Error ? e.message : 'error');
+    }
+  }
+  const one = String(reply || '').trim();
+  if (!list.length && one) list = [{ text: one, at: String(replyAt || '') }];
+  return list.sort((a, b) => (a.at < b.at ? -1 : a.at > b.at ? 1 : 0)).slice(-MAX_TEAM_REPLIES);
+}
+
 /**
  * Save the team's reply to one message; the message is marked done. -> { pushTo } (the phone's push
  * address, '' when none; cleared here so it is used once) or null when there is no such message.
+ * R-452: with panel migration 0014 a new reply is ADDED under the earlier ones (a correction or a top-up
+ * after the AI's answer or an earlier reply); `reply` / `reply_at` always hold the newest, for older apps.
+ * Before 0014 the new reply replaces the old one, as before.
  */
 export async function saveReply(db, id, reply, now) {
   if (!Number.isInteger(id) || id < 1 || !reply) return null;
-  const row = await db.prepare('SELECT id, push_to FROM feedback WHERE id = ?').bind(id).first();
+  const at = now.toISOString();
+  let row;
+  try {
+    row = await db.prepare('SELECT id, push_to, reply, reply_at, replies FROM feedback WHERE id = ?').bind(id).first();
+  } catch (e) {
+    if (!missingColumn(e)) throw e;
+    // Before 0014: one reply per question, the new one replaces it.
+    const old = await db.prepare('SELECT id, push_to FROM feedback WHERE id = ?').bind(id).first();
+    if (!old) return null;
+    await db
+      .prepare("UPDATE feedback SET reply = ?, reply_at = ?, push_to = '', status = 'done', sorted_at = ? WHERE id = ?")
+      .bind(reply, at, at, id)
+      .run();
+    return { pushTo: String(old.push_to || '') };
+  }
   if (!row) return null;
+  const list = [...replyListOf(row.replies, row.reply, row.reply_at), { text: reply, at }].slice(-MAX_TEAM_REPLIES);
   await db
-    .prepare("UPDATE feedback SET reply = ?, reply_at = ?, push_to = '', status = 'done', sorted_at = ? WHERE id = ?")
-    .bind(reply, now.toISOString(), now.toISOString(), id)
+    .prepare("UPDATE feedback SET reply = ?, reply_at = ?, replies = ?, push_to = '', status = 'done', sorted_at = ? WHERE id = ?")
+    .bind(reply, at, JSON.stringify(list), at, id)
     .run();
   return { pushTo: String(row.push_to || '') };
 }

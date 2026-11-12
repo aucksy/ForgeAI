@@ -1,0 +1,15 @@
+-- NOT APPLIED. Needs the owner's yes. Cloudflare D1 `forgeai-web` (our web server's own small database),
+-- NOT the gym server: no gym or member records are in it.
+-- Apply ONCE with (from deploy/panel; this one file only, so no other waiting migration goes with it):
+--   npx wrangler d1 execute forgeai-web --remote --file migrations/0014_help_reply_list.sql
+--
+-- Help replies in order (owner, 12 Nov 2026: "the AI did actually answer in the beginning, but then I had
+-- to probably correct it or send a top-up on it manually. So they should be able to identify all this").
+-- Until now HQ kept ONE reply per question (feedback.reply): a second reply replaced the first.
+-- `replies` keeps every reply the team sent, oldest first, as JSON: [{"text": "...", "at": "<ISO time>"}].
+-- `reply` / `reply_at` stay as they are and keep the NEWEST reply, so older apps and the admin app read
+-- what they read today.
+-- ADDITIVE only: one new column with a default; nothing is rewritten. A question replied to before this
+-- has replies = '' and the Workers read its one `reply` as a list of one. Until this is applied the
+-- Workers carry on as before (hq web.js saves one reply, panel help.js hands back a list of one).
+ALTER TABLE feedback ADD COLUMN replies TEXT NOT NULL DEFAULT ''; -- every team reply, oldest first: JSON [{text, at}]

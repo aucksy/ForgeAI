@@ -6,9 +6,9 @@
  * PURE rules only (the screen and the store read them; test/lib/feedbackButton.test.ts):
  *  - where it may sit: docked on the left or right edge, never over the top bar of a screen and never
  *    over the bottom (tab bar, the minimised workout bar, a screen's main button);
- *  - when it hides: switched off in Settings, the keyboard is open, the feedback page itself, and the
- *    live workout screen (that screen has its own button in its top bar, clear of the set ticks,
- *    the rest timer and Finish);
+ *  - when it hides: switched off in Settings (unless a reply from the team waits unread, R-452), the
+ *    keyboard is open, the feedback page itself, and the live workout screen (that screen has its own
+ *    button in its top bar, clear of the set ticks, the rest timer and Finish);
  *  - the screen name sent with the message.
  */
 
@@ -106,9 +106,12 @@ export function parseSpot(raw: string | null | undefined): ButtonSpot {
   }
 }
 
-/** Does the floating button show on this screen right now? */
-export function showsFloatingButton(p: { pathname: string; enabled: boolean; keyboardOpen: boolean }): boolean {
-  if (!p.enabled || p.keyboardOpen) return false;
+/**
+ * Does the floating button show on this screen right now? R-452: a reply from the MettleUp team that is not
+ * read yet (`unread`) brings it back even when the member switched it off, until they read the reply.
+ */
+export function showsFloatingButton(p: { pathname: string; enabled: boolean; keyboardOpen: boolean; unread?: number }): boolean {
+  if ((!p.enabled && !(p.unread && p.unread > 0)) || p.keyboardOpen) return false;
   return !HIDDEN_ON.has(normalPath(p.pathname));
 }
 

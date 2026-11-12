@@ -183,7 +183,7 @@ OLD_PARTS="a b c d e f g h h3 p1 p2 i link i2 j j2 j3 k l n p9 r br inv invf p7 
 # R-123: ubk = a fresh install restores a backup FILE from the welcome screen (routines in order,
 # settings, profile), then saves a new one from Settings -> Back up and restore (qa/uat-bk.yaml).
 UAT_PARTS="uh ur un ud ue ubk ub uf ua uv ug uk"
-GATE_PARTS="w dnd longrest anim mk clip uat u355 u344 u358 u366 usel ugym u15 u76 u198 u194 u401 u199 u404 u438 u444 ulook uage u439 u436 u336 u61 upic"
+GATE_PARTS="w dnd longrest anim mk clip uat u355 u344 u358 u366 usel ugym u15 u76 u198 u194 u401 u199 u404 u438 u444 ulook uage u439 u436 u336 u61 upic u452"
 qa_list() { echo "$1" | tr ',;' '  ' | tr '[:upper:]' '[:lower:]' | xargs; }
 QA_ONLY_LIST=$(qa_list "${QA_ONLY:-}")
 QA_EXTRA_LIST=$(qa_list "${QA_EXTRA:-}")
@@ -1996,6 +1996,7 @@ part_uat() {
   part_u199
   part_u404
   part_upic
+  part_u452
   part_u438
   part_u444
   part_u439
@@ -2088,7 +2089,8 @@ part_u199() {
 # Runs alone with only=ulook (not part of the whole run). Pictures rel-look-*.png.
 part_ulook() {
   local rc=0 was
-  was=$(adb shell cmd uimode night 2>/dev/null | tr -d '' | sed 's/.*: //')
+  was=$(adb shell cmd uimode night 2>/dev/null | tr -d '
+' | sed 's/.*: //')
   log "UAT LOOK: phone night mode was '$was'; setting it to light"
   adb shell cmd uimode night no >/dev/null 2>&1 || true
   uat_flow ulookw1 uat-rel-look-welcome.yaml -e LOOK=light || rc=1
@@ -2130,6 +2132,20 @@ part_upic() {
   [ "$rc" = 0 ] || status=1
   return $rc
 }
+# R-452 (owner, 12 Nov 2026): replies from the MettleUp team. The QA build's made-up answered question
+# (mettleup://qa-help?reply=1): the red dot with "2" on the round button, the sheet opens on the conversation
+# (question, Quick answer, the team's replies in order), read = dot gone, also after a restart, the same in
+# Settings -> Help and feedback, and the button switched off still shows while a reply is unread. From a fresh
+# install with the demo. Also runs alone with only=u452. Pictures rel-r452-*.png.
+part_u452() {
+  local rc=0
+  gate_flow u452_seed gate-demo.yaml || { status=1; return 1; }
+  uat_flow uatr452 uat-rel-r452-help-replies.yaml || rc=1
+  mkdir -p "$OUT/uat-release"
+  { find "$OUT" -path "$OUT/uat-release" -prune -o -name "rel-r452-*.png" -print 2>/dev/null; find "$PWD" -maxdepth 1 -name "rel-r452-*.png" 2>/dev/null; } | while read -r f; do cp "$f" "$OUT/uat-release/" 2>/dev/null; done
+  [ "$rc" = 0 ] || status=1
+  return $rc
+}
 # R-438 (owner, 10 Nov 2026, design 2 "Watch in hand"): the phone's "Your watch app has an update" pop-up, on
 # the QA build's made-up watch (a cloud phone has none; mettleup://qa-update?watch=old). From a fresh install
 # with the demo. Flow a: an up-to-date watch shows nothing, the pop-up, "Later", back, a restart within 24 hours
@@ -2140,16 +2156,21 @@ part_u438() {
   local rc=0 now was
   gate_flow u438_seed gate-demo.yaml || { status=1; return 1; }
   uat_flow uatr438a uat-rel-r438-a-watch-update.yaml || rc=1
-  now=$(adb shell date +%s | tr -d '')
+  now=$(adb shell date +%s | tr -d '
+')
   adb shell settings put global auto_time 0 >/dev/null 2>&1 || true
   adb shell "su 0 date @$((now + 90000))" >/dev/null 2>&1 || true
-  log "UAT R438 b: phone clock moved to $(adb shell date '+%F %T %z' | tr -d '') (25 hours on)"
+  log "UAT R438 b: phone clock moved to $(adb shell date '+%F %T %z' | tr -d '
+') (25 hours on)"
   uat_flow uatr438b uat-rel-r438-b-watch-update.yaml || rc=1
-  now=$(adb shell date +%s | tr -d '')
+  now=$(adb shell date +%s | tr -d '
+')
   adb shell "su 0 date @$((now - 90000))" >/dev/null 2>&1 || true
   adb shell settings put global auto_time 1 >/dev/null 2>&1 || true
-  log "UAT R438: phone clock back to $(adb shell date '+%F %T' | tr -d '')"
-  was=$(adb shell cmd uimode night 2>/dev/null | tr -d '' | sed 's/.*: //')
+  log "UAT R438: phone clock back to $(adb shell date '+%F %T' | tr -d '
+')"
+  was=$(adb shell cmd uimode night 2>/dev/null | tr -d '
+' | sed 's/.*: //')
   if [ "$was" = "yes" ]; then adb shell cmd uimode night no >/dev/null 2>&1 || true; else adb shell cmd uimode night yes >/dev/null 2>&1 || true; fi
   log "UAT R438 c: phone night mode was '$was'; flipped for the other look"
   sleep 4
@@ -2161,12 +2182,14 @@ part_u438() {
   [ "$was" = "yes" ] && { look1=light; look2=dark; }
   adb logcat -c 2>/dev/null || true
   uat_flow uatr440x uat-rel-r440-popup-bars.yaml -e LOOK=$look1 -e BEHIND=1 || rc=1
-  adb logcat -d -s ForgeBars:I 2>/dev/null | tr -d '' | grep ForgeBars | sed "s/^.*ForgeBars[^:]*: /UAT R440 ForgeBars $look1: /" | head -12 | while read -r l; do log "$l"; done
+  adb logcat -d -s ForgeBars:I 2>/dev/null | tr -d '
+' | grep ForgeBars | sed "s/^.*ForgeBars[^:]*: /UAT R440 ForgeBars $look1: /" | head -12 | while read -r l; do log "$l"; done
   adb shell cmd uimode night "${was:-no}" >/dev/null 2>&1 || true
   sleep 4
   adb logcat -c 2>/dev/null || true
   uat_flow uatr440y uat-rel-r440-popup-bars.yaml -e LOOK=$look2 -e BEHIND=2 || rc=1
-  adb logcat -d -s ForgeBars:I 2>/dev/null | tr -d '' | grep ForgeBars | sed "s/^.*ForgeBars[^:]*: /UAT R440 ForgeBars $look2: /" | head -12 | while read -r l; do log "$l"; done
+  adb logcat -d -s ForgeBars:I 2>/dev/null | tr -d '
+' | grep ForgeBars | sed "s/^.*ForgeBars[^:]*: /UAT R440 ForgeBars $look2: /" | head -12 | while read -r l; do log "$l"; done
   [ "$rc" = 0 ] || status=1
   return $rc
 }
@@ -2401,6 +2424,7 @@ qa_runs u401 && ! qa_runs uat && { log "gate part U401 begins"; part_u401; }
 qa_runs u199 && ! qa_runs uat && { log "gate part U199 begins"; part_u199; }
 qa_runs u404 && ! qa_runs uat && { log "gate part U404 begins"; part_u404; }
 qa_runs upic && ! qa_runs uat && { log "gate part UPIC begins"; part_upic; }
+qa_runs u452 && ! qa_runs uat && { log "gate part U452 begins"; part_u452; }
 qa_runs u438 && ! qa_runs uat && { log "gate part U438 begins"; part_u438; }
 qa_runs u444 && ! qa_runs uat && { log "gate part U444 begins"; part_u444; }
 qa_runs u439 && ! qa_runs uat && { log "gate part U439 begins"; part_u439; }

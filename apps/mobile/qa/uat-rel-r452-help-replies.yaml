@@ -1,0 +1,143 @@
+# Part UAT, R-452 (owner, 12 Nov 2026): "a badge right around the floating feedback button ... when they tap
+# it right there, they should see the manual answer ... the AI did actually answer in the beginning, but then I
+# had to probably correct it or send a top-up on it manually. So they should be able to identify all this".
+# The QA build's 'helpReply' stand-in: mettleup://qa-help?reply=1 adds a made-up question with a quick automatic
+# answer and two replies from the team, unread (lib/helpHistory.ts qaStandInQuestion; no real reply in HQ).
+# Types (R-364): happy path (red dot with "2" on the round button, a tap opens the sheet straight on the
+# conversation: question, "Quick answer" + "automatic", then reply 1 and reply 2 in that order), negative (no dot
+# before any reply; no dot after it was read), interruption (app killed and opened: still read, no dot), setting
+# change (the round button switched off: it still shows while a reply is unread, and hides again once read),
+# the same conversation in Settings -> "Help and feedback". Pictures rel-r452-*.png. Runs alone with only=u452.
+# The workout top-bar button's dot is the same drawing (FeedbackButton.tsx UnreadDot); not driven here.
+appId: com.mettleup.app
+---
+- runFlow: sub-back-to-tabs.yaml
+- tapOn:
+    text: "^Workout$"
+    index: 0
+- extendedWaitUntil:
+    visible: "^Send feedback about this screen$"
+    timeout: 30000
+# ---------------------------------------------------------------- negative: no reply, no dot
+- assertNotVisible: ".*new repl(y|ies) from the MettleUp team.*"
+- takeScreenshot: rel-r452-00-no-dot
+# ---------------------------------------------------------------- two replies arrive
+- openLink: "mettleup://qa-help?reply=1"
+- extendedWaitUntil:
+    visible: "^Send feedback about this screen\\. 2 new replies from the MettleUp team$"
+    timeout: 30000
+- takeScreenshot: rel-r452-01-red-dot
+- tapOn: "^Send feedback about this screen\\. 2 new replies from the MettleUp team$"
+# The sheet opens straight on the conversation, not on the message box.
+- extendedWaitUntil:
+    visible: "^The MettleUp team answered you$"
+    timeout: 15000
+- assertNotVisible: "^Type here, or tap Speak$"
+- assertVisible: "^QA check: can I pause my plan for a month\\?$"
+- assertVisible:
+    text: ".*Quick answer.*"
+    below: "^QA check: can I pause my plan for a month\\?$"
+- assertVisible: ".*automatic.*"
+- takeScreenshot: rel-r452-02-sheet-conversation
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: ".*QA reply 2: a correction, yearly plans can pause for 45 days\\..*"
+# In time order: the correction sits under the first reply, both under the quick answer.
+- assertVisible:
+    text: ".*QA reply 2: a correction, yearly plans can pause for 45 days\\..*"
+    below: ".*QA reply 1: yes, you can pause for up to 30 days\\..*"
+# Both replies are marked New while the sheet shows them (the screen reader hears it in the reply's label).
+- assertVisible: "^Reply from the MettleUp team, New, .*QA reply 2: a correction.*"
+- takeScreenshot: rel-r452-03-sheet-replies-in-order
+- assertVisible: "^Ask something new$"
+# ---------------------------------------------------------------- read: the dot goes
+- back
+- extendedWaitUntil:
+    visible: "^Send feedback about this screen$"
+    timeout: 15000
+- assertNotVisible: ".*new repl(y|ies) from the MettleUp team.*"
+- takeScreenshot: rel-r452-04-dot-gone
+# ---------------------------------------------------------------- interruption: killed and opened
+- stopApp
+- launchApp
+- tapOn:
+    text: "Wait"
+    optional: true
+- runFlow: sub-back-to-tabs.yaml
+- tapOn:
+    text: "^Workout$"
+    index: 0
+- extendedWaitUntil:
+    visible: "^Send feedback about this screen$"
+    timeout: 30000
+- assertNotVisible: ".*new repl(y|ies) from the MettleUp team.*"
+# ---------------------------------------------------------------- the same conversation in Settings
+- runFlow:
+    file: sub-settings-page.yaml
+    env:
+      PAGE: "Help and feedback"
+- extendedWaitUntil:
+    visible: "^Send$"
+    timeout: 15000
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^QA check: can I pause my plan for a month\\?$"
+- assertVisible: ".*Quick answer.*"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: ".*QA reply 2: a correction, yearly plans can pause for 45 days\\..*"
+- assertVisible:
+    text: ".*QA reply 2: a correction, yearly plans can pause for 45 days\\..*"
+    below: ".*QA reply 1: yes, you can pause for up to 30 days\\..*"
+- takeScreenshot: rel-r452-05-settings-conversation
+# ---------------------------------------------------------------- the round button switched off
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Show the feedback button on every screen"
+- tapOn: "Show the feedback button on every screen"
+- assertVisible:
+    text: "Show the feedback button on every screen"
+    checked: false
+- runFlow: sub-back-to-tabs.yaml
+- tapOn:
+    text: "^Workout$"
+    index: 0
+- extendedWaitUntil:
+    visible: "^Workout$"
+    timeout: 15000
+- assertNotVisible: "^Send feedback about this screen.*"
+- takeScreenshot: rel-r452-06-off-no-button
+# A new reply while it is off: the button comes back with its dot.
+- openLink: "mettleup://qa-help?reply=1"
+- extendedWaitUntil:
+    visible: "^Send feedback about this screen\\. 2 new replies from the MettleUp team$"
+    timeout: 30000
+- takeScreenshot: rel-r452-07-off-but-dot
+- tapOn: "^Send feedback about this screen\\. 2 new replies from the MettleUp team$"
+- extendedWaitUntil:
+    visible: "^The MettleUp team answered you$"
+    timeout: 15000
+- back
+# Read: hidden again, as the member chose.
+- extendedWaitUntil:
+    notVisible: "^Send feedback about this screen.*"
+    timeout: 15000
+- takeScreenshot: rel-r452-08-off-hidden-again
+# Put back on for the parts after this one.
+- runFlow:
+    file: sub-settings-page.yaml
+    env:
+      PAGE: "Help and feedback"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Show the feedback button on every screen"
+- tapOn: "Show the feedback button on every screen"
+- assertVisible:
+    text: "Show the feedback button on every screen"
+    checked: true
+- runFlow: sub-back-to-tabs.yaml

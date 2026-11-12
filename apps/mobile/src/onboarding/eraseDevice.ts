@@ -195,6 +195,10 @@ function deviceSteps(): EraseStep[] {
         useTrackerPrefs.setState(useTrackerPrefs.getInitialState(), true);
         const { usePhonePrefs } = await import('@/tracker/phone/phonePrefs');
         usePhonePrefs.getState().reset();
+        // R-452: the help questions went with the database; the copy in memory goes too (before, the next
+        // question saved every erased one back).
+        const { useHelpHistory } = await import('@/lib/helpHistoryStore');
+        useHelpHistory.getState().forget();
       },
     },
     {

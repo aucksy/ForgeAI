@@ -1,75 +1,47 @@
 /**
  * "Your questions" under Settings → Help and feedback (R-319 item 10, R-320): every question sent from
- * this phone, newest first, with the AI's answer (and the "Did this solve it?" tap), a waiting line while
- * the answer is on its way, and the MettleUp team's reply ("New" until this screen has shown it).
+ * this phone, newest first, each as a conversation (HelpConversation, R-452): the question, the quick
+ * automatic answer (with "Did this solve it?"), then every reply from the MettleUp team in time order,
+ * "New" until this screen has shown it.
  * Answers that came late and replies are asked for when the screen opens, every few seconds while an
- * answer is still on its way, and when a "the team replied" pop-up was tapped (it opens this screen).
+ * answer is still on its way, every minute while the screen stays open (R-452: before, a reply typed in HQ
+ * while the member had this page open never showed until they left and came back), and when a "the team
+ * replied" pop-up was tapped (it opens this screen). The red dot on the round button counts what is unread.
  * Rules: lib/helpHistory.ts. Kept on the phone: lib/helpHistoryStore.ts.
  */
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Text, View } from 'react-native';
 
-import { HelpReply } from '@/components/feedback/HelpReply';
+import { HelpConversation } from '@/components/feedback/HelpConversation';
 import { senderId } from '@/lib/feedback';
-import { anyWaiting, HELP_HISTORY_WORDS as W, questionShows, type HelpQuestion } from '@/lib/helpHistory';
+import { anyWaiting, HELP_HISTORY_WORDS as W } from '@/lib/helpHistory';
 import { useHelpHistory } from '@/lib/helpHistoryStore';
-import { color, radius, space, type } from '@/theme/tokens';
+import { color, space, type } from '@/theme/tokens';
 
 const POLL_MS = 5_000;
+/** While the page stays open with nothing on its way, the team's replies are asked for this often. */
+const SLOW_POLL_MS = 60_000;
 
-function day(at: number): string {
-  try {
-    return new Date(at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
-  } catch (e) {
-    console.warn('[help] date not shown', e);
-    return '';
-  }
-}
-
-function Question({ q, isNew, now }: { q: HelpQuestion; isNew: boolean; now: number }) {
-  const shows = questionShows(q, now);
-  return (
-    <View style={{ gap: space.sm, paddingVertical: space.md, borderTopWidth: 1, borderTopColor: color.border }}>
-      <Text style={{ fontFamily: type.body, fontSize: type.size.caption, color: color.inkMuted }}>{day(q.at)}</Text>
-      <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.body, lineHeight: 22, color: color.ink }}>{q.text}</Text>
-      {shows === 'waiting' ? (
-        <Text accessibilityLiveRegion="polite" style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkSecondary }}>
-          {W.waiting}
-        </Text>
-      ) : null}
-      {shows === 'answer' ? <HelpReply key={`${q.key}:${q.rated ?? ''}`} reply={{ id: q.id, text: q.answer, ai: q.ai }} rated={q.rated} /> : null}
-      {shows === 'team-will-reply' ? (
-        <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkSecondary }}>{W.teamWillReply}</Text>
-      ) : null}
-      {q.reply ? (
-        <View
-          accessibilityLabel={`${W.replyTitle}${isNew ? `, ${W.newBadge}` : ''}: ${q.reply}`}
-          style={{ gap: space.xs, padding: space.md, borderRadius: radius.md, borderWidth: 1, borderColor: isNew ? color.accent : color.border, backgroundColor: color.surfaceSunken }}
-        >
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm }}>
-            <Text style={{ flexShrink: 1, fontFamily: type.bodyBold, fontSize: type.size.sub, color: color.ink }}>{W.replyTitle}</Text>
-            {isNew ? (
-              <Text
-                style={{ fontFamily: type.bodyBold, fontSize: type.size.caption, color: color.onAccent, backgroundColor: color.accent, borderRadius: radius.pill, paddingHorizontal: space.sm, overflow: 'hidden' }}
-              >
-                {W.newBadge}
-              </Text>
-            ) : null}
-          </View>
-          <Text style={{ fontFamily: type.body, fontSize: type.size.body, lineHeight: 22, color: color.ink }}>{q.reply}</Text>
-        </View>
-      ) : null}
-    </View>
-  );
+/**
+ * The replies seen before this screen opened, per question: what came after stays "New" while it is open,
+ * though it counts as read at once (the red dot goes). A reply that arrives while it is open is New too.
+ */
+function useSeenWhenOpened(): Map<string, string> {
+  const items = useHelpHistory((s) => s.items);
+  const loaded = useHelpHistory((s) => s.loaded);
+  const [seen, setSeen] = useState<Map<string, string> | null>(null);
+  useEffect(() => {
+    if (!loaded || seen) return;
+    setSeen(new Map(items.map((q) => [q.key, q.seenAt])));
+  }, [loaded, items, seen]);
+  return seen ?? new Map();
 }
 
 export function HelpQuestions() {
   const items = useHelpHistory((s) => s.items);
   const loaded = useHelpHistory((s) => s.loaded);
   const [now, setNow] = useState(() => Date.now());
-  // The replies not seen when the screen opened stay "New" while it is open; they count as seen at once.
-  const [newKeys, setNewKeys] = useState<Set<string>>(() => new Set());
-  const seenOnce = useRef(new Set<string>());
+  const seenWhenOpened = useSeenWhenOpened();
 
   useEffect(() => {
     let alive = true;
@@ -85,25 +57,24 @@ export function HelpQuestions() {
     };
   }, []);
 
-  // A reply arrives or is found: marked New here once, and seen in the store.
+  // Shown on screen = read: the red dot on the round button goes.
   useEffect(() => {
-    const fresh = items.filter((q) => q.reply && !q.replySeen && !seenOnce.current.has(`${q.key}:${q.replyAt}`));
-    if (fresh.length === 0) return;
-    for (const q of fresh) seenOnce.current.add(`${q.key}:${q.replyAt}`);
-    setNewKeys((prev) => new Set([...prev, ...fresh.map((q) => q.key)]));
-    void useHelpHistory.getState().markSeen();
-  }, [items]);
+    if (loaded && items.some((q) => q.replies.length && q.replies[q.replies.length - 1].at > q.seenAt)) void useHelpHistory.getState().markSeen();
+  }, [items, loaded]);
 
   // An answer on its way: ask again every few seconds, and redraw so "waiting" turns over in time.
+  // Nothing on its way: ask once a minute for the team's replies while the page stays open.
   const waiting = anyWaiting(items, now);
   useEffect(() => {
-    if (!waiting) return;
-    const t = setInterval(() => {
-      setNow(Date.now());
-      void (async () => {
-        await useHelpHistory.getState().refresh(await senderId());
-      })();
-    }, POLL_MS);
+    const t = setInterval(
+      () => {
+        setNow(Date.now());
+        void (async () => {
+          await useHelpHistory.getState().refresh(await senderId());
+        })();
+      },
+      waiting ? POLL_MS : SLOW_POLL_MS,
+    );
     return () => clearInterval(t);
   }, [waiting]);
 
@@ -116,7 +87,7 @@ export function HelpQuestions() {
       {items.length === 0 ? (
         <Text style={{ fontFamily: type.body, fontSize: type.size.sub, lineHeight: 20, color: color.inkSecondary }}>{W.empty}</Text>
       ) : (
-        items.map((q) => <Question key={q.key} q={q} isNew={newKeys.has(q.key)} now={now} />)
+        items.map((q) => <HelpConversation key={q.key} q={q} now={now} newSince={seenWhenOpened.get(q.key) ?? ''} />)
       )}
     </View>
   );

@@ -7,9 +7,10 @@ import { DatabaseSync } from 'node:sqlite';
 
 const MIGRATIONS = new URL('./migrations/', import.meta.url);
 
-export function sqliteD1() {
+/** `skip`: migration file names to leave out (a test of the Worker before that migration is applied live). */
+export function sqliteD1({ skip = [] } = {}) {
   const db = new DatabaseSync(':memory:');
-  for (const f of readdirSync(MIGRATIONS).filter((n) => n.endsWith('.sql')).sort()) {
+  for (const f of readdirSync(MIGRATIONS).filter((n) => n.endsWith('.sql') && !skip.includes(n)).sort()) {
     db.exec(readFileSync(new URL(f, MIGRATIONS), 'utf8'));
   }
   const statement = (sql, args = []) => ({

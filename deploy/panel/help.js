@@ -229,11 +229,38 @@ export async function handleHelp(request, env, now = new Date(), opts = {}) {
 }
 
 export const MAX_REPLY_KEYS = 50;
+/** At most this many team replies are kept per question (hq web.js keeps the same number). */
+export const MAX_TEAM_REPLIES = 20;
+
+/**
+ * Every team reply to one question, oldest first: the saved list (migration 0014, JSON [{ text, at }]), or
+ * the one `reply` column as a list of one (a question replied to before 0014, or 0014 not applied). PURE.
+ */
+export function replyListOf(raw, reply = '', replyAt = '') {
+  let list = [];
+  if (typeof raw === 'string' && raw.trim()) {
+    try {
+      const j = JSON.parse(raw);
+      if (Array.isArray(j)) {
+        list = j
+          .filter((x) => x && typeof x.text === 'string' && x.text.trim())
+          .map((x) => ({ text: x.text.trim(), at: typeof x.at === 'string' ? x.at : '' }));
+      }
+    } catch (e) {
+      console.warn('[help] a saved reply list is not JSON; using the one reply', e instanceof Error ? e.message : e);
+    }
+  }
+  const one = String(reply || '').trim();
+  if (!list.length && one) list = [{ text: one, at: String(replyAt || '') }];
+  return list.sort((a, b) => (a.at < b.at ? -1 : a.at > b.at ? 1 : 0)).slice(-MAX_TEAM_REPLIES);
+}
 
 /**
  * POST /api/help/replies { sender, keys: [secret, ...] } -> 200 { items: [{ key, id, at, answer, covered,
- * reply, replyAt }] }: the questions this install asked with those secrets, with the AI answer and the
- * team's reply ('' when none yet). Nothing for a pair that does not match. Before migration 0009: [].
+ * reply, replyAt, replies: [{ text, at }] }] }: the questions this install asked with those secrets, with the
+ * AI answer and the team's replies ('' / [] when none yet). `reply` / `replyAt` are the newest reply alone
+ * (older apps read only those); `replies` is every reply, oldest first (R-452; before migration 0014 a list of
+ * the one reply). Nothing for a pair that does not match. Before migration 0009: [].
  */
 export async function handleHelpReplies(request, env) {
   if (request.method !== 'POST') return answer(405, { error: 'Use POST.' });
@@ -250,16 +277,23 @@ export async function handleHelpReplies(request, env) {
   const byHash = new Map();
   for (const k of keys) byHash.set(await sha256Hex(k), k);
   const hashes = [...byHash.keys()];
+  const marks = hashes.map(() => '?').join(', ');
+  const read = (cols) =>
+    env.WEB.prepare(`SELECT ${cols} FROM feedback WHERE sender = ? AND reply_key IN (${marks})`)
+      .bind(sender, ...hashes)
+      .all();
   let rows;
   try {
-    rows = (await env.WEB.prepare(
-      `SELECT id, at, answer, covered, reply, reply_at, reply_key FROM feedback WHERE sender = ? AND reply_key IN (${hashes.map(() => '?').join(', ')})`,
-    )
-      .bind(sender, ...hashes)
-      .all()).results ?? [];
+    rows = (await read('id, at, answer, covered, reply, reply_at, reply_key, replies')).results ?? [];
   } catch (e) {
-    console.warn('[help] replies not readable (migration 0009 not applied?)', e instanceof Error ? e.message : e);
-    return answer(200, { items: [] });
+    // Before migration 0014 (every team reply in order): the one reply column, as a list of one.
+    try {
+      rows = (await read('id, at, answer, covered, reply, reply_at, reply_key')).results ?? [];
+    } catch (e2) {
+      console.warn('[help] replies not readable (migration 0009 not applied?)', e2 instanceof Error ? e2.message : e2);
+      return answer(200, { items: [] });
+    }
+    console.warn('[help] reply list not readable (migration 0014 not applied?); one reply each', e instanceof Error ? e.message : e);
   }
   const items = rows.map((r) => ({
     key: byHash.get(r.reply_key),
@@ -267,8 +301,11 @@ export async function handleHelpReplies(request, env) {
     at: r.at,
     answer: String(r.answer || ''),
     covered: String(r.covered || ''),
+    // The newest reply alone, for older apps (and the admin app) that read one.
     reply: String(r.reply || ''),
     replyAt: String(r.reply_at || ''),
+    // Every reply from the team, oldest first (R-452).
+    replies: replyListOf(r.replies, r.reply, r.reply_at),
   }));
   return answer(200, { items });
 }

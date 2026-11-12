@@ -112,6 +112,13 @@ export const KEPT_META_KEYS = [
   'first_run_at',
 ] as const;
 
+/**
+ * R-452: kept when the demo is LOADED (not by "Erase all data"): this phone's anonymous help id and its help
+ * questions. The id is how the help box knows the replies are this phone's; before, loading the demo made a
+ * new id, and the replies to every question asked before could never be read again.
+ */
+export const DEMO_KEEPS_META_KEYS = ['feedback_sender', 'help_questions'] as const;
+
 /** The demo's own `meta` keys (kept exported for older callers; an erase now clears all but KEPT). */
 export const OWNED_META_KEYS = ['seeded', 'demo_data', 'activeWorkoutDraft'] as const;
 
@@ -294,12 +301,9 @@ async function reconcileKeptRecords(): Promise<void> {
 
 // ---------------------------------------------------------------- writes
 
-async function wipe(tx: TxLike): Promise<void> {
+async function wipe(tx: TxLike, keep: readonly string[] = KEPT_META_KEYS): Promise<void> {
   for (const table of WIPE_TABLES_IN_ORDER) await tx.runAsync(`DELETE FROM ${table}`);
-  await tx.runAsync(
-    `DELETE FROM meta WHERE key NOT IN (${KEPT_META_KEYS.map(() => '?').join(', ')})`,
-    [...KEPT_META_KEYS],
-  );
+  await tx.runAsync(`DELETE FROM meta WHERE key NOT IN (${keep.map(() => '?').join(', ')})`, [...keep]);
 }
 
 /**
@@ -378,8 +382,8 @@ export async function completeOnboarding(input: OnboardingInput): Promise<void> 
 }
 
 /** The database and the files the app keeps for it. Used by erase and by loading the demo. */
-async function wipeDatabaseAndFiles(): Promise<void> {
-  await enqueueWrite(() => getDb().withExclusiveTransactionAsync(wipe));
+async function wipeDatabaseAndFiles(keep: readonly string[] = KEPT_META_KEYS): Promise<void> {
+  await enqueueWrite(() => getDb().withExclusiveTransactionAsync((tx) => wipe(tx, keep)));
   // Phase 3: progress photos are files in the app's storage. The rows went in the wipe;
   // the pictures go now, so nothing private outlives an erase.
   await deleteAllProgressPhotoFiles().catch(() => undefined);
@@ -407,7 +411,7 @@ export async function eraseAllData(): Promise<string[]> {
  * generator via forceReseed() (which bypasses the launch-seed memo).
  */
 export async function loadDemoData(): Promise<void> {
-  await wipeDatabaseAndFiles();
+  await wipeDatabaseAndFiles([...KEPT_META_KEYS, ...DEMO_KEEPS_META_KEYS]);
   // Flag BEFORE seeding: if the app dies mid-seed, "flagged but empty" is a
   // harmless state, whereas "seeded but unflagged" would present Arjun's 13 weeks
   // as the member's own training with no demo badge — the exact W1 failure.

@@ -17,6 +17,7 @@ import {
   helpSystem,
   indiaMonth,
   readAnswer,
+  replyListOf,
 } from './help.js';
 import { sqliteD1 } from './sqliteD1.mjs';
 
@@ -179,6 +180,27 @@ test('replies: only the install that asked, only with its secret, gets the answe
   assert.equal((await ask({ sender: SENDER, keys: [] }))[0], 400);
   assert.equal((await ask({ sender: 'x', keys: [SECRET] }))[0], 400);
   assert.equal((await handleHelpReplies(new Request('https://x/api/help/replies'), e)).status, 405);
+});
+
+// R-452: every team reply, oldest first, beside the newest alone (older apps and the admin app read `reply`).
+test('replies: every team reply in order (migration 0014), and a list of one before it', async () => {
+  const e = env();
+  const ai = fakeClaude({ answer: 'Open Gym, then Pause.', covered: false });
+  const j = await (await handleHelp(post('/api/help', { source: 'member', text: 'Pause?', sender: SENDER, replyKey: SECRET }), e, new Date(), { fetchImpl: ai.fetchImpl })).json();
+  const list = [{ text: 'Yes, up to 30 days.', at: '2026-11-12T05:13:00.000Z' }, { text: 'Correction: 45 days.', at: '2026-11-12T05:20:00.000Z' }];
+  e.WEB.sqlite.prepare('UPDATE feedback SET reply = ?, reply_at = ?, replies = ? WHERE id = ?').run(list[1].text, list[1].at, JSON.stringify(list), j.id);
+  const [item] = (await (await handleHelpReplies(post('/api/help/replies', { sender: SENDER, keys: [SECRET] }), e)).json()).items;
+  assert.deepEqual(item.replies, list);
+  assert.deepEqual([item.reply, item.replyAt], [list[1].text, list[1].at]);
+  // Before 0014 (live today): no replies column; the one reply comes back as a list of one.
+  const old = env({ WEB: sqliteD1({ skip: ['0014_help_reply_list.sql'] }) });
+  const j2 = await (await handleHelp(post('/api/help', { source: 'member', text: 'Pause?', sender: SENDER, replyKey: SECRET }), old, new Date(), { fetchImpl: ai.fetchImpl })).json();
+  old.WEB.sqlite.prepare("UPDATE feedback SET reply = 'Yes.', reply_at = '2026-11-12T05:13:00.000Z' WHERE id = ?").run(j2.id);
+  const [item2] = (await (await handleHelpReplies(post('/api/help/replies', { sender: SENDER, keys: [SECRET] }), old)).json()).items;
+  assert.deepEqual(item2.replies, [{ text: 'Yes.', at: '2026-11-12T05:13:00.000Z' }]);
+  assert.equal(item2.reply, 'Yes.');
+  // No reply yet: an empty list.
+  assert.deepEqual(replyListOf('', '', ''), []);
 });
 
 test('pure parts of replies: secret, push address, covered', () => {

@@ -671,7 +671,14 @@ function feedbackCard(r) {
   const replyOut = h('div');
   const box = h('textarea', { rows: '3', maxlength: '1500', placeholder: 'Your reply. The person reads it in the app’s Help and feedback.' });
   const ai = aiLine(r);
-  const replySent = r.reply ? h('div', { class: 'reply-sent' }, h('p', { class: 'muted' }, `Your reply${r.reply_at ? `, ${when(r.reply_at)}` : ''}:`), h('p', { class: 'quote' }, r.reply)) : null;
+  // R-452: every reply sent, oldest first (a correction or a top-up shows under the first one).
+  const sentList = Array.isArray(r.replyList) && r.replyList.length ? r.replyList : r.reply ? [{ text: r.reply, at: r.reply_at || '' }] : [];
+  const replySent = sentList.length
+    ? h('div', { class: 'stack' }, sentList.map((x, i) => h('div', { class: 'reply-sent' },
+      h('p', { class: 'muted' }, `${sentList.length > 1 ? `Your reply ${i + 1}` : 'Your reply'}${x.at ? `, ${when(x.at)}` : ''}:`), h('p', { class: 'quote' }, x.text))))
+    : null;
+  // Panel migration 0014 applied: a new reply is added under the others; before it, it replaces the one shown.
+  const addsUnder = r.replyListKept === true;
   return h('div', { class: `card${r.needsReply ? ' warn' : ''}` },
     h('p', { class: 'muted' },
       r.needsReply ? h('span', { class: 'flag bad' }, 'Needs reply') : null, r.needsReply ? ' ' : null,
@@ -682,12 +689,14 @@ function feedbackCard(r) {
     replySent,
     // Only messages sent from the help box can be replied to (they carry the app's reply secret).
     r.covered ? h('div', { class: 'stack' },
-      field(r.reply ? 'Send a new reply (it replaces the one above)' : 'Reply', box,
-        r.can_push ? 'Their phone also gets a pop-up: “The MettleUp team replied”.' : 'No pop-up: they see it the next time they open Help and feedback.'),
+      field(r.reply ? (addsUnder ? 'Send another reply (it shows under the one above, in order)' : 'Send a new reply (it replaces the one above)') : 'Reply', box,
+        r.can_push
+          ? 'Their phone also gets a pop-up: “The MettleUp team replied”.'
+          : 'They see it the next time they open the app: newer apps show a red dot on the round chat button, and the answer is in Help and feedback.'),
       englishTools(r, box, replyOut),
       action('Send reply', async () => {
         const res = await api('/api/feedback/reply', { id: r.id, reply: box.value });
-        replyOut.replaceChildren(note(res.pushed === 'sent' ? 'Sent. Their phone got a pop-up.' : 'Sent. They see it in Help and feedback.', 'good'));
+        replyOut.replaceChildren(note(res.pushed === 'sent' ? 'Sent. Their phone got a pop-up.' : 'Sent. They see it the next time they open the app.', 'good'));
         box.value = '';
         void refreshNeeds();
       }, { out: replyOut, tone: 'primary' }),

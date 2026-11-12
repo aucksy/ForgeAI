@@ -72,17 +72,33 @@ export function feedbackAnswer(status: number, body: unknown): FeedbackResult {
   return { ok: false, words: status >= 400 && status < 500 && error ? error : FEEDBACK_WORDS.offline };
 }
 
+/** The install id being made right now (R-452 review: two first asks at once made two ids, and the replies
+ * to a question sent with the one that lost could never be read). Only while it is made; never kept. */
+let making: Promise<string> | null = null;
+
 export async function senderId(): Promise<string> {
   try {
     const saved = await getMeta(SENDER_KEY);
     if (saved) return saved;
-    const id = uuid();
-    await enqueueWrite(() => setMeta(SENDER_KEY, id));
-    return id;
   } catch (e) {
     console.warn('[feedback] no install id', e);
     return '';
   }
+  making ??= (async () => {
+    try {
+      const again = await getMeta(SENDER_KEY);
+      if (again) return again;
+      const id = uuid();
+      await enqueueWrite(() => setMeta(SENDER_KEY, id));
+      return id;
+    } catch (e) {
+      console.warn('[feedback] no install id', e);
+      return '';
+    } finally {
+      making = null;
+    }
+  })();
+  return making;
 }
 
 /** Is this answer worth trying the next address for? No box there (404) or a server error. PURE. */
@@ -181,8 +197,10 @@ export async function sendFeedback(
   // R-319 item 10: kept on this phone in "Your questions" at once, waiting for its answer.
   const key = newHelpKey();
   const history = useHelpHistory.getState();
-  if (key) await history.add(key, clean.slice(0, FEEDBACK_MAX));
-  const result = await sendToBoxes(clean, extra, key);
+  // R-452: kept with the question, so the phone's own pop-up never repeats the one HQ sends for the first reply.
+  const pushTo = key ? await pushAddress() : '';
+  if (key) await history.add(key, clean.slice(0, FEEDBACK_MAX), pushTo !== '');
+  const result = await sendToBoxes(clean, extra, key, pushTo);
   if (key) {
     await history.settle(
       key,
@@ -196,6 +214,7 @@ async function sendToBoxes(
   clean: string,
   extra: { app?: string; gym?: string; screen?: string; input?: 'voice' | 'typed' },
   replyKey: string,
+  pushTo: string,
 ): Promise<FeedbackResult & { covered?: boolean }> {
   const body = {
     source: 'member',
@@ -209,7 +228,7 @@ async function sendToBoxes(
     sender: await senderId(),
     // R-319 item 10: this question's secret and the phone's push address (older boxes ignore both).
     ...(replyKey ? { replyKey } : {}),
-    ...(replyKey ? { pushTo: await pushAddress() } : {}),
+    ...(replyKey ? { pushTo } : {}),
   };
   try {
     // The help box waits for Claude's answer (up to 15 s on the server), so it gets longer (sendToHelp).

@@ -407,6 +407,18 @@ describe('loadDemoData', () => {
     await loadDemoData();
     expect(h.state.meta.has('seeded')).toBe(false); // the seed's early-return is disarmed
   });
+
+  it('R-452: keeps this phone’s help id and help questions (an erase still drops them)', async () => {
+    h.state.meta.set('feedback_sender', 'install-1');
+    h.state.meta.set('help_questions', '[]');
+    await loadDemoData();
+    // Before: a new id after the demo, and the replies to every earlier question could never be read again.
+    expect(h.state.meta.get('feedback_sender')).toBe('install-1');
+    expect(h.state.meta.get('help_questions')).toBe('[]');
+    await eraseAllData();
+    expect(h.state.meta.has('feedback_sender')).toBe(false);
+    expect(h.state.meta.has('help_questions')).toBe(false);
+  });
 });
 
 describe('adoptImportedData (Phase 3 review)', () => {

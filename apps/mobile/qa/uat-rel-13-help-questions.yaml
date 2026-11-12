@@ -5,8 +5,8 @@
 #    "Your questions" with its answer, or with "The MettleUp team will reply here." when there is no AI
 #    answer (until about 12 Nov 2026 the help box's AI credit is low, so the plain thanks is expected).
 #  - Still there after the app starts again (kept on the phone).
-# The team's reply ("Reply from the MettleUp team", "New") needs a reply typed in HQ; checked by hand
-# once the panel's 0009 is applied (see docs/plans/R-319-alerts.md, "Checks").
+# The team's replies ("Reply from the MettleUp team", "New", the red dot on the round button) are driven
+# with a made-up answered question in flow uat-rel-r452-help-replies.yaml (part u452, R-452).
 # Note: this sends ONE real message to MettleUp's help box, marked as a QA message.
 appId: com.mettleup.app
 ---

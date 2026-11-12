@@ -27,7 +27,7 @@ import {
 import { handleApi } from './api.js';
 import { refusalCode, rpc } from './db.js';
 import { clearReleaseMemo, releases, removeFiles } from './outside.js';
-import { checkMessage, cleanReply, costRupees, deleteRequestsInFeedback, needsReply, indiaDay, nightlyWeb, setAiLimit, aiLimits, aiUsageByGym, setFeedbackStatus } from './web.js';
+import { checkMessage, cleanReply, costRupees, deleteRequestsInFeedback, needsReply, indiaDay, nightlyWeb, setAiLimit, aiLimits, aiUsageByGym, setFeedbackStatus, replyListOf, saveReply, listFeedback, MAX_TEAM_REPLIES } from './web.js';
 import worker, { CSP, PUBLIC_FILES, handle, nightly, sameOrigin, secure } from './worker.js';
 
 const enc = new TextEncoder();
@@ -875,6 +875,59 @@ test('Feedback shows the AI answer, the tap and "Needs reply"; a reply is saved,
   assert.equal(fcmSent.length, 1);
   assert.equal((await (await api('GET', '/api/needs', null, e, n2)).json()).helpNeedsReply, 1);
   assert.equal((await api('POST', '/api/feedback/reply', { id: 999, reply: 'Hello there' }, e, n2)).status, 400);
+});
+
+// R-452 (owner, 12 Nov 2026: "I had to probably correct it or send a top-up on it manually. So they should be
+// able to identify all this"): with panel migration 0014 every reply is kept, in order.
+test('with panel migration 0014: a second reply is added under the first, in order; reply holds the newest', { skip: !sqlite && 'no node:sqlite here' }, async () => {
+  const web = d1([...ALL_PANEL_MIGRATIONS, '0014_help_reply_list.sql']);
+  web.raw.exec(`INSERT INTO feedback (at, source, text, answer, covered, sender, reply_key) VALUES
+    ('2026-11-12T05:07:29Z', 'member', 'Can I pause my plan?', 'Open Gym, then Pause.', 'no', 'install-1', 'h1')`);
+  const id = web.raw.prepare('SELECT id FROM feedback').get().id;
+  assert.deepEqual(await saveReply(web, id, 'Yes, up to 30 days.', new Date('2026-11-12T05:13:00Z')), { pushTo: '' });
+  await saveReply(web, id, 'Correction: 45 days for yearly plans.', new Date('2026-11-12T05:20:00Z'));
+  const row = web.raw.prepare('SELECT reply, reply_at, replies, status FROM feedback WHERE id = ?').get(id);
+  assert.equal(row.reply, 'Correction: 45 days for yearly plans.');
+  assert.equal(row.reply_at, '2026-11-12T05:20:00.000Z');
+  assert.equal(row.status, 'done');
+  assert.deepEqual(JSON.parse(row.replies), [
+    { text: 'Yes, up to 30 days.', at: '2026-11-12T05:13:00.000Z' },
+    { text: 'Correction: 45 days for yearly plans.', at: '2026-11-12T05:20:00.000Z' },
+  ]);
+  const [listed] = await listFeedback(web);
+  assert.equal(listed.replyListKept, true);
+  assert.deepEqual(listed.replyList.map((x) => x.text), ['Yes, up to 30 days.', 'Correction: 45 days for yearly plans.']);
+  assert.ok(!('replies' in listed), 'the raw column is not sent to the page');
+  // A question replied to before 0014 (replies '') keeps its first reply when a second comes.
+  web.raw.exec(`INSERT INTO feedback (at, source, text, covered, sender, reply_key, reply, reply_at) VALUES
+    ('2026-11-12T05:12:55Z', 'member', 'Old one', 'no', 'install-1', 'h2', 'First answer.', '2026-11-12T05:13:43.678Z')`);
+  const old = web.raw.prepare("SELECT id FROM feedback WHERE text = 'Old one'").get().id;
+  await saveReply(web, old, 'A top-up.', new Date('2026-11-12T06:00:00Z'));
+  assert.deepEqual(JSON.parse(web.raw.prepare('SELECT replies FROM feedback WHERE id = ?').get(old).replies).map((x) => x.text), ['First answer.', 'A top-up.']);
+  assert.equal(await saveReply(web, 999, 'Hi', new Date()), null);
+});
+
+test('before panel migration 0014: a new reply replaces the old one, and the list shows one', { skip: !sqlite && 'no node:sqlite here' }, async () => {
+  const web = d1(ALL_PANEL_MIGRATIONS);
+  web.raw.exec(`INSERT INTO feedback (at, source, text, covered, sender, reply_key) VALUES ('2026-11-12T05:07:29Z', 'member', 'Q', 'no', 'install-1', 'h1')`);
+  const id = web.raw.prepare('SELECT id FROM feedback').get().id;
+  await saveReply(web, id, 'One.', new Date('2026-11-12T05:13:00Z'));
+  await saveReply(web, id, 'Two.', new Date('2026-11-12T05:20:00Z'));
+  const [listed] = await listFeedback(web);
+  assert.equal(listed.replyListKept, false);
+  assert.deepEqual(listed.replyList, [{ text: 'Two.', at: '2026-11-12T05:20:00.000Z' }]);
+  assert.equal(listed.needsReply, false);
+});
+
+test('replyListOf: the saved list oldest first, else the one reply; broken JSON falls back; at most MAX_TEAM_REPLIES', () => {
+  assert.deepEqual(replyListOf('', '', ''), []);
+  assert.deepEqual(replyListOf('', ' Hi ', '2026-11-12T05:00:00Z'), [{ text: 'Hi', at: '2026-11-12T05:00:00Z' }]);
+  assert.deepEqual(replyListOf('not json', 'Hi', 'x'), [{ text: 'Hi', at: 'x' }]);
+  assert.deepEqual(replyListOf(JSON.stringify([{ text: 'b', at: '2' }, { text: 'a', at: '1' }, { text: ' ', at: '3' }, null]), 'b', '2').map((x) => x.text), ['a', 'b']);
+  const many = JSON.stringify(Array.from({ length: MAX_TEAM_REPLIES + 3 }, (_, i) => ({ text: `r${i}`, at: String(100 + i) })));
+  const kept = replyListOf(many);
+  assert.equal(kept.length, MAX_TEAM_REPLIES);
+  assert.equal(kept.at(-1).text, `r${MAX_TEAM_REPLIES + 2}`);
 });
 
 test('before panel migration 0009: Feedback still lists, a reply says it needs the update', { skip: !sqlite && 'no node:sqlite here' }, async () => {

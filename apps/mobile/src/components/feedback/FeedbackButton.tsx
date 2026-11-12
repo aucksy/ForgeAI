@@ -7,21 +7,30 @@
  * Voice (R-206): the sheet's FeedbackComposer records the member, our server turns it into text with
  * Groq's Whisper, and the text lands in the box to check before Send. The message records that it was
  * spoken ("input: voice").
+ *
+ * R-452 (owner, 12 Nov 2026: "a badge right around the floating feedback button ... when they tap it right
+ * there, they should see the manual answer"): a red dot with the number of unread replies from the MettleUp
+ * team sits on the round button and on the workout top-bar button; a tap opens the sheet straight on those
+ * conversations (the question, the quick automatic answer, the team's replies in order). The round button
+ * comes back while a reply is unread even when the member switched it off. The app asks for replies when it
+ * opens and comes back to the front (lib/helpHistoryStore.ts checkHelpReplies).
  */
 import Constants from 'expo-constants';
 import { usePathname } from 'expo-router';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Animated, PanResponder, Pressable, Text, View, useWindowDimensions } from 'react-native';
+import { Animated, AppState, PanResponder, Pressable, Text, View, useWindowDimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { FeedbackComposer } from '@/components/feedback/FeedbackComposer';
 import { useWatchLog, WatchLogSwitch } from '@/components/feedback/WatchLogSwitch';
 import { sendWatchLog, WATCH_LOG_WORDS } from '@/lib/watchDiag';
 import { useKeyboardFrame } from '@/components/KeyboardRoom';
-import { Icon, PrimaryButton, Sheet } from '@/components/ui';
-import { FEEDBACK_WORDS, sendFeedback, type HelpReply as HelpReplyData } from '@/lib/feedback';
+import { GhostButton, Icon, PrimaryButton, Sheet } from '@/components/ui';
+import { FEEDBACK_WORDS, senderId, sendFeedback, type HelpReply as HelpReplyData } from '@/lib/feedback';
+import { HelpConversation } from '@/components/feedback/HelpConversation';
 import { HelpReply } from '@/components/feedback/HelpReply';
-import { HELP_HISTORY_WORDS } from '@/lib/helpHistory';
+import { dotNumber, HELP_HISTORY_WORDS, unreadQuestions, unreadReplies, unreadWords } from '@/lib/helpHistory';
+import { checkHelpReplies, useHelpHistory } from '@/lib/helpHistoryStore';
 import {
   DRAG_SLOP,
   FEEDBACK_BUTTON_SIZE,
@@ -47,26 +56,93 @@ export function FeedbackButtonHost() {
   const enabled = useFeedbackButton((s) => s.enabled);
   const spot = useFeedbackButton((s) => s.spot);
   const sheetFor = useFeedbackButton((s) => s.sheetFor);
+  const unread = useHelpHistory((s) => unreadReplies(s.items));
 
   useEffect(() => {
     void useFeedbackButton.getState().load();
+    void useHelpHistory.getState().load();
+  }, []);
+
+  // R-452: replies from the team are asked for when the app opens and each time it comes back to the front.
+  useEffect(() => {
+    const check = () =>
+      void checkHelpReplies({
+        sender: senderId,
+        alert: async (count) => {
+          const { showHelpReplyAlert } = await import('@/lib/helpReplyAlert');
+          await showHelpReplyAlert(count);
+        },
+      });
+    check();
+    const sub = AppState.addEventListener('change', (st) => {
+      if (st === 'active') check();
+    });
+    return () => sub.remove();
   }, []);
 
   const room: ScreenRoom = useMemo(
     () => ({ width, height, insetTop: insets.top, insetBottom: insets.bottom }),
     [width, height, insets.top, insets.bottom],
   );
-  const shows = loaded && sheetFor == null && showsFloatingButton({ pathname, enabled, keyboardOpen: kb != null });
+  const shows = loaded && sheetFor == null && showsFloatingButton({ pathname, enabled, keyboardOpen: kb != null, unread });
 
   return (
     <>
-      {shows ? <FloatingButton room={room} spot={spot} onTap={() => useFeedbackButton.getState().open(feedbackScreenName(pathname))} /> : null}
+      {shows ? (
+        <FloatingButton room={room} spot={spot} unread={unread} onTap={() => useFeedbackButton.getState().open(feedbackScreenName(pathname))} />
+      ) : null}
       <FeedbackSheet screen={sheetFor} onClose={() => useFeedbackButton.getState().close()} />
     </>
   );
 }
 
-function FloatingButton({ room, spot, onTap }: { room: ScreenRoom; spot: ReturnType<typeof useFeedbackButton.getState>['spot']; onTap: () => void }) {
+/** Size of the red dot with the number of unread replies (R-452). */
+const DOT = 18;
+
+/** The red dot with the number of unread replies from the team. Drawn only; the button says it aloud. */
+function UnreadDot({ count, at }: { count: number; at: { left?: number; right?: number; top: number } }) {
+  if (count < 1) return null;
+  return (
+    <View
+      testID="feedback-unread-dot"
+      pointerEvents="none"
+      style={{
+        position: 'absolute',
+        ...at,
+        minWidth: DOT,
+        height: DOT,
+        paddingHorizontal: 4,
+        borderRadius: DOT / 2,
+        backgroundColor: color.critical,
+        borderWidth: 1.5,
+        borderColor: color.surfaceRaised,
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      <Text allowFontScaling={false} style={{ fontFamily: type.bodyBold, fontSize: 10, lineHeight: 12, color: color.onAccent }}>
+        {dotNumber(count)}
+      </Text>
+    </View>
+  );
+}
+
+/** What the button says aloud: its name, then the unread replies (R-452). */
+function buttonLabel(unread: number): string {
+  return unread > 0 ? `${FEEDBACK_BUTTON_WORDS.button}. ${unreadWords(unread)}` : FEEDBACK_BUTTON_WORDS.button;
+}
+
+function FloatingButton({
+  room,
+  spot,
+  unread,
+  onTap,
+}: {
+  room: ScreenRoom;
+  spot: ReturnType<typeof useFeedbackButton.getState>['spot'];
+  unread: number;
+  onTap: () => void;
+}) {
   const at = spotToXY(spot, room);
   const pos = useRef(new Animated.ValueXY(at)).current;
   const start = useRef(at);
@@ -109,7 +185,7 @@ function FloatingButton({ room, spot, onTap }: { room: ScreenRoom; spot: ReturnT
       <Pressable
         onPress={onTap}
         accessibilityRole="button"
-        accessibilityLabel={FEEDBACK_BUTTON_WORDS.button}
+        accessibilityLabel={buttonLabel(unread)}
         style={{
           // 48 dp = FEEDBACK_BUTTON_SIZE (written out so the touch-size lint can read it).
           width: 48,
@@ -123,10 +199,14 @@ function FloatingButton({ room, spot, onTap }: { room: ScreenRoom; spot: ReturnT
           borderWidth: 1,
           borderColor: color.borderStrong,
           opacity: 0.92,
+          // R-452: the red dot sits just past the edge of the button.
+          overflow: 'visible',
           ...shadow.card,
         }}
       >
         <Icon name="chat" size={18} color={color.accent} />
+        {/* Half the button sits behind the screen edge (PEEK): the dot goes on the half that shows. */}
+        <UnreadDot count={unread} at={spot.side === 'left' ? { right: -2, top: -6 } : { left: -2, top: -6 }} />
       </Pressable>
     </Animated.View>
   );
@@ -137,13 +217,15 @@ export function FeedbackHeaderButton({ screen }: { screen: string }) {
   // Launch audit 3 Nov 2026: the top-bar button stays for everyone (it covers nothing); only the
   // floating one follows the Settings switch (on by default).
   const loaded = useFeedbackButton((s) => s.loaded);
+  // R-452: the same red dot as the round button.
+  const unread = useHelpHistory((s) => unreadReplies(s.items));
   if (!loaded) return <View style={{ width: 42 }} />;
   return (
     <Pressable
       onPress={() => useFeedbackButton.getState().open(screen)}
       hitSlop={6}
       accessibilityRole="button"
-      accessibilityLabel={FEEDBACK_BUTTON_WORDS.button}
+      accessibilityLabel={buttonLabel(unread)}
       style={{
         width: 42,
         height: 42,
@@ -153,9 +235,11 @@ export function FeedbackHeaderButton({ screen }: { screen: string }) {
         backgroundColor: color.surfaceRaised,
         borderWidth: 1,
         borderColor: color.border,
+        overflow: 'visible',
       }}
     >
       <Icon name="chat" size={20} color={color.inkSecondary} />
+      <UnreadDot count={unread} at={{ right: -4, top: -4 }} />
     </Pressable>
   );
 }
@@ -170,13 +254,37 @@ function FeedbackSheet({ screen, onClose }: { screen: string | null; onClose: ()
   // R-441: "Add my watch's screen log" (only with a MettleUp watch log on this phone), looked up when it opens.
   const watchLog = useWatchLog(screen != null);
   const [logNote, setLogNote] = useState<{ ok: boolean; words: string } | null>(null);
+  const items = useHelpHistory((s) => s.items);
+  // R-452: `talk` set = the sheet shows conversations (`keys`: the unread ones it opened on; null = every
+  // question kept); `since`: what counts as New while it is open. Not set = the message box.
+  const [talk, setTalk] = useState<{ keys: string[] | null; since: Map<string, string>; fresh: boolean } | null>(null);
+  const [now, setNow] = useState(() => Date.now());
 
   // A fresh sheet each time it opens; an unsent message stays while it is closed and opened again.
+  // A reply from the team not read yet: the sheet opens straight on it.
   useEffect(() => {
     if (screen == null) return;
     setNote(null);
     setLogNote(null);
+    setNow(Date.now());
+    const list = useHelpHistory.getState().items;
+    const fresh = unreadQuestions(list);
+    setTalk(fresh.length ? { keys: fresh.map((q) => q.key), since: new Map(list.map((q) => [q.key, q.seenAt])), fresh: true } : null);
   }, [screen]);
+
+  // Shown = read: the red dot goes as soon as the conversation is on screen.
+  const shownKeys = useMemo(() => (talk ? (talk.keys ?? items.map((q) => q.key)) : null), [talk, items]);
+  useEffect(() => {
+    if (screen == null || !shownKeys) return;
+    if (items.some((q) => shownKeys.includes(q.key) && q.replies.length > 0 && q.replies[q.replies.length - 1].at > q.seenAt)) {
+      void useHelpHistory.getState().markSeen(shownKeys);
+    }
+  }, [screen, shownKeys, items]);
+
+  const showAll = () => {
+    setNow(Date.now());
+    setTalk({ keys: null, since: new Map(useHelpHistory.getState().items.map((q) => [q.key, q.seenAt])), fresh: false });
+  };
 
   const send = async () => {
     if (busy.current || screen == null) return;
@@ -199,6 +307,28 @@ function FeedbackSheet({ screen, onClose }: { screen: string | null; onClose: ()
       setNote({ ok: false, words: r.words });
     }
   };
+
+  if (talk && shownKeys) {
+    const shown = items.filter((q) => shownKeys.includes(q.key));
+    return (
+      <Sheet
+        visible={screen != null}
+        title={talk.fresh ? HELP_HISTORY_WORDS.newRepliesTitle : HELP_HISTORY_WORDS.title}
+        onClose={onClose}
+        footer={<PrimaryButton label={HELP_HISTORY_WORDS.askNew} icon="chat" onPress={() => setTalk(null)} />}
+      >
+        <View style={{ gap: space.sm }}>
+          {shown.length === 0 ? (
+            <Text style={{ fontFamily: type.body, fontSize: type.size.sub, lineHeight: 20, color: color.inkSecondary }}>{HELP_HISTORY_WORDS.empty}</Text>
+          ) : (
+            shown.map((q, i) => <HelpConversation key={q.key} q={q} now={now} newSince={talk.since.get(q.key) ?? ''} first={i === 0} />)
+          )}
+          {talk.fresh && items.length > shown.length ? <GhostButton label={HELP_HISTORY_WORDS.seeQuestions} icon="list" onPress={showAll} /> : null}
+          <Text style={{ fontFamily: type.body, fontSize: type.size.caption, lineHeight: 18, color: color.inkMuted }}>{HELP_HISTORY_WORDS.keptHere}</Text>
+        </View>
+      </Sheet>
+    );
+  }
 
   return (
     <Sheet
@@ -246,6 +376,7 @@ function FeedbackSheet({ screen, onClose }: { screen: string | null; onClose: ()
             {logNote.words}
           </Text>
         ) : null}
+        {items.length > 0 && !sending ? <GhostButton label={HELP_HISTORY_WORDS.seeQuestions} icon="list" onPress={showAll} /> : null}
         <Text style={{ fontFamily: type.body, fontSize: type.size.caption, lineHeight: 18, color: color.inkMuted }}>{FEEDBACK_BUTTON_WORDS.hideHow}</Text>
       </View>
     </Sheet>

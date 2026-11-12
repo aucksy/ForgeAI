@@ -172,14 +172,14 @@ features:
       functions: [forge-phone.takeSharedFile, forge-phone.onSharedFile]
 
   - id: reminders-and-gym-notices
-    name: Workout reminders, gym reminders, gym notices, background notice check, push [2a Group A]
+    name: Workout reminders, gym reminders, gym notices, background notice check, push, the pop-up for a help reply from the MettleUp team [2a Group A, R-452]
     android: done
     ios: todo
-    reason: These switch off on everything but Android today. Needs APNs (Firebase iOS SDK or APNs key), pushToken passing 'ios', and BGTaskScheduler.
+    reason: These switch off on everything but Android today. Needs APNs (Firebase iOS SDK or APNs key), pushToken passing 'ios', and BGTaskScheduler. The help reply pop-up (helpReplyAlert.ts) only needs a local notification and a foreground handler on iPhone; until then iPhone shows the red dot on the feedback button and the reply in the sheet (shared code).
     blocking: false
     covers:
       files: [src/tracker/phone/reminders.ts, src/shop/gymReminders.ts, src/shop/noticeAlertsRun.ts,
-              src/shop/noticeTaskSync.ts, src/shop/pushToken.ts]
+              src/shop/noticeTaskSync.ts, src/shop/pushToken.ts, src/lib/helpReplyAlert.ts]
       plugins: [expo-notifications]
       app_json_android: [googleServicesFile]
 

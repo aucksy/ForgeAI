@@ -74,6 +74,17 @@ describe('the floating feedback button (R-149)', () => {
     expect(showsFloatingButton({ enabled: false, keyboardOpen: false, pathname: '/' })).toBe(false);
   });
 
+  it('R-452: a reply from the team not read yet brings the button back while it is switched off, and only then', () => {
+    const off = { enabled: false, keyboardOpen: false };
+    expect(showsFloatingButton({ ...off, pathname: '/', unread: 1 })).toBe(true);
+    expect(showsFloatingButton({ ...off, pathname: '/', unread: 0 })).toBe(false);
+    // Read: hidden again. Still never over the keyboard, the live workout (its top-bar button has the dot) or the feedback page.
+    expect(showsFloatingButton({ ...off, pathname: '/', keyboardOpen: true, unread: 2 })).toBe(false);
+    expect(showsFloatingButton({ ...off, pathname: '/session/active', unread: 2 })).toBe(false);
+    expect(showsFloatingButton({ ...off, pathname: '/settings/feedback', unread: 2 })).toBe(false);
+    expect(showsFloatingButton({ enabled: true, keyboardOpen: false, pathname: '/', unread: 3 })).toBe(true);
+  });
+
   it('names the screen, never a record or a code', () => {
     expect(feedbackScreenName('/')).toBe('home');
     expect(feedbackScreenName('/session/active')).toBe('session/active');
