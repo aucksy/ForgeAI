@@ -98,11 +98,15 @@ begin
   r := public.member_find_gyms(p, 'Asha');
   checks := checks + 1; fails := fails || pg_temp.t68_is('5many', r->>'error', 'TOO_MANY');
 
-  -- 6. A suspended gym is not listed.
+  -- 6. A suspended gym is not listed. (Only HQ may change a gym's status, 0027: switch the HQ flag on around it.)
+  perform set_config('forgeai.hq', 'on', true);
   update public.gyms set status = 'suspended' where gym_id = gb;
+  perform set_config('forgeai.hq', 'off', true);
   r := public.member_find_gyms(pg_temp.t68_proof('member', asha_ph, repeat('9', 32)), 'Asha');
   checks := checks + 1; fails := fails || pg_temp.t68_is('6suspended', jsonb_array_length(r->'gyms')::text, '1');
+  perform set_config('forgeai.hq', 'on', true);
   update public.gyms set status = 'active' where gym_id = gb;
+  perform set_config('forgeai.hq', 'off', true);
 
   -- 7. Link after joining Alpha: a desk request still waiting is closed; the proof is used up; once only.
   insert into public.gym_members(gym_id, name, key_hash) values (ga, 'Asha', public._hash_key(km)) returning member_id into mid;
