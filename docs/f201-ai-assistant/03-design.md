@@ -184,6 +184,15 @@ Real AI cost (Haiku 5.5 at $0.10/M in, $0.50/M out, help.js rates): question ~Rs
 - plans.ts: keep the 'ai' id valid (old rows, old migrations), drop it from every place that shows or sells it.
 - Landing page pricing: the third card becomes "AI Assistant — on every plan" (free monthly credits per plan, packs
   from Rs 149). Words in 05-words.md; public website words shown to him before deploy.
+- **Website feature section (owner, 12 Nov, R-469):** mettleup.fit gets its own "AI Assistant" section, not only the
+  pricing card. Three real examples, one of each kind, each shown as a short self-looping demo (typed or spoken line
+  -> the card the assistant makes), in English with the Hinglish line as said:
+  1. Ask: "Kisne paise nahi diye?" -> "14 members owe Rs 38,500" + "Remind them politely".
+  2. Message: "Kal gym band rahega, sabko batao" -> the message, shown before it goes, sent in the app.
+  3. Change: "Rahul ka plan 3 mahine renew karo, 4500 cash" -> renewal ready to save, receipt made.
+  Plus one line: "Speak in Hindi or English. Asking is free." **No Diwali or other dated festival example** (owner:
+  Diwali has gone). Claims rule (mettleup-marketing): the section says "Coming soon" until the feature is live in
+  the panel; the words pass member-words and his yes before deploy.
 - HQ, billing, tests, docs updated; old migrations never edited.
 
 ## 9. Order of work

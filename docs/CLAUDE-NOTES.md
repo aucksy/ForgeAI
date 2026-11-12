@@ -7,6 +7,12 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-469. Website too: an AI Assistant section with real examples, no Diwali — 12 Nov 2026
+He said: the "Pro + AI" replacement must include the website; highlight the feature with a few great examples from
+our use cases; not Diwali ("it's kind of gone"). Thinking out loud.
+Plan (spec 03-design.md section 8): a website section with 3 looping demos (ask who owes, close-the-gym message,
+renew Rahul), pricing card "AI Assistant on every plan". "Coming soon" until live; words to him before deploy.
+
 ## R-468. Where owners find the AI Assistant: a floating button, bottom right — 12 Nov 2026
 He asked: where is the entry point on the computer and the phone? He pictured a highlighted floating "AI Assistant"
 button in the bottom right of the admin app; unsure for the installed phone app; asked to see it.
