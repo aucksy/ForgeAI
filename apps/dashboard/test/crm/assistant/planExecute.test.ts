@@ -228,7 +228,7 @@ describe('doing a confirmed task', () => {
     });
     const dr = draftOf({ tool: 'extend', input: { member: 'Pooja', days: 7, reason: 'travel' } });
     const r = await executeTask({ id: 't3', drafts: [dr] }, d, deps);
-    expect(r).toMatchObject({ ok: false, reason: 'no_credits' });
+    expect(r).toMatchObject({ ok: false, reason: 'no_credits', words: { text: 'You have no AI credits left. Get credits to send this.' } });
     expect(calls).toEqual([]);
   });
 

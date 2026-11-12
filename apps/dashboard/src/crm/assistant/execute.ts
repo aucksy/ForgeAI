@@ -261,7 +261,7 @@ async function run(task: Task, d: PlanData, deps: ExecuteDeps): Promise<ExecuteR
     } catch (err) {
       const code = errorCode(err);
       console.warn('[assistant] spend failed', taskId, err);
-      if (code === 'NO_CREDITS') return { ok: false, taskId, reason: 'no_credits', words: line('You have no AI credits left. Buy more in Settings.'), steps: [] };
+      if (code === 'NO_CREDITS') return { ok: false, taskId, reason: 'no_credits', words: line('You have no AI credits left. Get credits to send this.'), steps: [] };
       if (code === 'ALREADY_SPENT') return { ok: false, taskId, reason: 'already', words: line('This was done already.'), steps: [] };
       return { ok: false, taskId, reason: 'spend_failed', words: line('The AI credits could not be checked. Check the internet and try again.'), steps: [] };
     }

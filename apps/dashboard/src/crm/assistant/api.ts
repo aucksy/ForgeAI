@@ -142,7 +142,11 @@ export interface AiWallet {
   lowAt: number;
 }
 
-/** The owner's AI credits (owner_ai_wallet; grants the welcome and this month's free credits). Null on failure. */
+/**
+ * The owner's AI credits (owner_ai_wallet). The server adds the free ones first (03-design §3, R-470): 20 once in the
+ * trial; 100 a month on a yearly or lifetime plan; none on a monthly plan (packs only). `monthlyFree` is 0 then.
+ * Nothing here hard-codes those numbers: the screen shows what the server sends. Null on failure.
+ */
 export async function aiWallet(key: string, rpc: typeof call = call): Promise<AiWallet | null> {
   try {
     const r = (await rpc<Record<string, unknown>>('owner_ai_wallet', { p_key: key })) ?? {};

@@ -7,7 +7,7 @@
   Permissions-Policy: camera=(self), microphone=(self), geolocation=()
 
 # F107 (29 Oct 2026): the camera is allowed only to the panel itself, for the desk's "Take photo".
-# F201 (12 Nov 2026): the microphone too, only to the panel itself, for the AI Helper's "speak instead of type".
+# F201 (12 Nov 2026): the microphone too, only to the panel itself, for the AI Assistant's "speak instead of type".
 # Launch A6 (21 Oct 2026): the security policy above lets the panel run only its own scripts and
 # talk only to the gym server (plus Cloudflare's own visit counter, which Cloudflare adds to the
 # page). The invite and check-in pages carry one small script the Worker
