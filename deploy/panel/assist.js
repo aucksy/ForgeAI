@@ -7,11 +7,15 @@
 //  POST /api/assist          { text, spoken, lang, ctx }   -> 200 { actions: [{ tool, input }], note, left, masked }
 //  POST /api/assist/rewrite  { title_en, body_en, title_hi, body_hi, how } -> 200 { title_en, body_en, title_hi, body_hi, left }
 //  POST /api/assist/voice    multipart audio + seconds     -> 200 { text, provider }
+//  POST /api/assist/plan     { goal, level, days_per_week, minutes, focus, equipment, exercises, lang }
+//                            -> 200 { plan (a WorkoutPlanDraft), summary, left, dropped } (assistPlan.js, R-471)
 // Every route: header X-Forge-Key (the panel's sign-in key), the gym OWNER only (staff_me, like aiMatch.js).
 //
 // What Claude sees: the sentence with every phone number and email masked ([PHONE_1], [EMAIL_1]; put back in
 // the answer here), today's date, the gym's name, plan names / lengths / prices, batch names, trainer first
-// names and the message language. NEVER the member list, phones, dues or visits. The sentence is data, never
+// names and the message language. The plan writer (/plan) sends instead the goal, level, days, minutes, the
+// owner's short focus and equipment words (masked) and the gym's exercise list (assistPlan.js). NEVER the member
+// list, phones, dues or visits. The sentence is data, never
 // an order (system prompt rule + strict tool schemas + our own checks below and in the admin app).
 //
 // Cost control (03-design §3, owner R-467 and R-470, 12 Nov 2026): ASSIST_PER_DAY requests per paid gym per India day,
@@ -25,6 +29,7 @@
 import Anthropic from '@anthropic-ai/sdk';
 
 import { AI_PAGE_IDS, MESSAGE_LANGS, PAGES, TOOL_KIND, toolsForClaude } from './assistCatalogue.js';
+import { MAX_PLAN_BODY, PLAN_TOOL, checkPlanAsk, cleanPlan, exerciseListText, planPrompt, planSystem } from './assistPlan.js';
 import { indiaDay, whoIsAsking } from './aiMatch.js';
 import { SUPABASE } from './proxy.js';
 import { GROQ_MODEL, GROQ_URL, cleanText, takeClip } from './voice.js';
@@ -54,6 +59,8 @@ export const MAX_TITLE = 60;
 export const MAX_MESSAGE = 300;
 export const TIMEOUT_MS = 20_000;
 export const VOICE_TIMEOUT_MS = 25_000;
+/** A plan is a longer answer (~1-2k tokens out) than an ask. */
+export const PLAN_TIMEOUT_MS = 45_000;
 
 export const SARVAM_URL = 'https://api.sarvam.ai/speech-to-text';
 /** saaras:v3 with mode codemix writes Hinglish as it is spoken (Latin + Devanagari). Var SARVAM_MODEL overrides. */
@@ -334,9 +341,13 @@ const tokensOf = (msg) => {
   };
 };
 
+/** The one Claude client every route uses: the assistant key, no retries (a retry would double the cost), our timeout. */
+function claudeClient(env, fetchImpl, timeoutMs) {
+  return new Anthropic({ apiKey: claudeKey(env), fetch: fetchImpl, maxRetries: 0, timeout: timeoutMs });
+}
+
 async function askClaude(env, v, fetchImpl, timeoutMs) {
-  const client = new Anthropic({ apiKey: claudeKey(env), fetch: fetchImpl, maxRetries: 0, timeout: timeoutMs });
-  const msg = await client.messages.create({
+  const msg = await claudeClient(env, fetchImpl, timeoutMs).messages.create({
     model: ASSIST_MODEL,
     max_tokens: 2000,
     system: [{ type: 'text', text: assistSystem(), cache_control: { type: 'ephemeral' } }],
@@ -373,8 +384,7 @@ export function rewriteSystem() {
 }
 
 async function askRewrite(env, draft, how, fetchImpl, timeoutMs) {
-  const client = new Anthropic({ apiKey: claudeKey(env), fetch: fetchImpl, maxRetries: 0, timeout: timeoutMs });
-  const msg = await client.messages.create({
+  const msg = await claudeClient(env, fetchImpl, timeoutMs).messages.create({
     model: ASSIST_MODEL,
     max_tokens: 1500,
     system: [{ type: 'text', text: rewriteSystem(), cache_control: { type: 'ephemeral' } }],
@@ -396,6 +406,36 @@ async function askRewrite(env, draft, how, fetchImpl, timeoutMs) {
     body_hi: typeof j?.body_hi === 'string' ? j.body_hi.trim().slice(0, MAX_MESSAGE) : '',
   };
   return { ...t, out: out.body_en || out.body_hi ? out : null, why: 'empty rewrite' };
+}
+
+/**
+ * The plan writer's call: one forced write_plan call (strict schema), the rules cached, the gym's exercise list
+ * cached too (the same list for every plan of that gym), then the owner's goal, level and days.
+ */
+async function askPlan(env, v, fetchImpl, timeoutMs) {
+  const msg = await claudeClient(env, fetchImpl, timeoutMs).messages.create({
+    model: ASSIST_MODEL,
+    max_tokens: 4000,
+    system: [{ type: 'text', text: planSystem(), cache_control: { type: 'ephemeral' } }],
+    tools: [{ name: PLAN_TOOL.name, description: PLAN_TOOL.description, input_schema: PLAN_TOOL.input_schema, strict: true }],
+    tool_choice: { type: 'tool', name: PLAN_TOOL.name },
+    messages: [
+      {
+        role: 'user',
+        content: [
+          { type: 'text', text: exerciseListText(v.exercises), cache_control: { type: 'ephemeral' } },
+          { type: 'text', text: planPrompt(v) },
+        ],
+      },
+    ],
+    output_config: { effort: 'medium' },
+  });
+  const t = tokensOf(msg);
+  if (msg.stop_reason !== 'tool_use' && msg.stop_reason !== 'end_turn') return { ...t, out: null, why: `stop_reason ${msg.stop_reason}` };
+  const call = (Array.isArray(msg.content) ? msg.content : []).find((b) => b?.type === 'tool_use' && b.name === PLAN_TOOL.name);
+  if (!call) return { ...t, out: null, why: 'no write_plan call' };
+  const out = cleanPlan(call.input, v);
+  return { ...t, out, why: out.refused ? 'plan not usable' : '' };
 }
 
 // ------------------------------------------------------------------ counts (D1)
@@ -449,7 +489,7 @@ export async function takeSeconds(db, gymId, day, secs, perDayCap = VOICE_SECOND
 /**
  * Method, setup, sign-in key and size. -> { refused: Response } | { key }
  */
-async function guard(request, env) {
+async function guard(request, env, maxBody = MAX_BODY) {
   if (request.method !== 'POST') return { refused: answer(405, { error: 'Use POST.' }) };
   if (!claudeKey(env) || !env.WEB) {
     // quiet: no key yet is the owner's setup step; the admin app hides the assistant on 'off'.
@@ -457,7 +497,7 @@ async function guard(request, env) {
   }
   const key = request.headers.get('X-Forge-Key') || '';
   if (key.length < 16 || key.length > 300 || /\s/.test(key)) return { refused: answer(401, { error: 'Sign in first.' }) };
-  if (Number(request.headers.get('Content-Length') || 0) > MAX_BODY) return { refused: answer(413, { error: 'Too long.' }) };
+  if (Number(request.headers.get('Content-Length') || 0) > maxBody) return { refused: answer(413, { error: 'Too long.' }) };
   return { key };
 }
 
@@ -493,9 +533,9 @@ async function ownerAndAllowance(key, env, now, fetchImpl) {
   return { gymId: who.gymId, day, month, left: Math.max(0, cap - used) };
 }
 
-async function readJson(request) {
+async function readJson(request, maxBody = MAX_BODY) {
   const raw = await request.text();
-  if (raw.length > MAX_BODY) return { refused: answer(413, { error: 'Too long.' }) };
+  if (raw.length > maxBody) return { refused: answer(413, { error: 'Too long.' }) };
   try {
     return { body: JSON.parse(raw) };
   } catch {
@@ -596,6 +636,53 @@ export async function handleAssistRewrite(request, env, { now = new Date(), fetc
     return answer(502, { reason: 'failed', error: 'The AI did not answer. Try again, or change it yourself.' });
   }
   return answer(200, { ...unmask(res.out, map), left: g.left });
+}
+
+/**
+ * POST /api/assist/plan  (header X-Forge-Key) the AI writes a workout plan (owner R-471; assistPlan.js).
+ *   { what?: 'workout', goal: 'muscle'|'fat_loss'|'strength'|'general', level: 'beginner'|'intermediate'|'advanced',
+ *     days_per_week: 2-6, minutes?: 30-120, focus?: <=200 letters, equipment?: <=120 letters,
+ *     exercises: [{ key, name, kind?, primary?, custom? }] (the gym's list, at most 500), lang: 'en'|'hi' }
+ *   200 { plan: WorkoutPlanDraft (no starting weights, sent to nobody), summary, left, dropped }
+ *   400 bad body ({ reason: 'too_few' } fewer than 8 usable exercises; { reason: 'not_yet' } a diet plan)
+ *   502 { reason: 'too_few' } the AI's plan had too few known exercises · { reason: 'failed' }
+ *   and every refusal of /api/assist (401, 403, 405, 413, 429 'limit', 503 'off' | 'unreachable' | 'cap').
+ * One request of the gym's daily fair-use count, like an ask. NO CREDITS here: the admin app spends 3 through
+ * owner_ai_spend only when the owner taps Save.
+ */
+export async function handleAssistPlan(request, env, { now = new Date(), fetchImpl = fetch, timeoutMs = PLAN_TIMEOUT_MS } = {}) {
+  const g0 = await guard(request, env, MAX_PLAN_BODY);
+  if (g0.refused) return g0.refused;
+  const r = await readJson(request, MAX_PLAN_BODY);
+  if (r.refused) return r.refused;
+  const checked = checkPlanAsk(r.body);
+  if (checked.error) return answer(400, { ...(checked.reason ? { reason: checked.reason } : {}), error: checked.error });
+  const g = await ownerAndAllowance(g0.key, env, now, fetchImpl);
+  if (g.refused) return g.refused;
+
+  let res;
+  try {
+    res = await askPlan(env, checked.value, fetchImpl, timeoutMs);
+  } catch (e) {
+    console.error('[assist] plan call failed', scrub(e, env));
+    res = { out: null, tokensIn: 0, tokensOut: 0, why: 'call failed' };
+  }
+  const ok = Boolean(res.out?.plan);
+  await noteCall(env, g, !ok, res.tokensIn, res.tokensOut);
+  if (res.out?.refused) {
+    // Counts only, never the owner's words.
+    console.error(`[assist] plan not usable: dropped=${res.out.dropped ?? 0} list=${checked.value.exercises.length}`);
+    return answer(502, { reason: 'too_few', error: `${res.out.refused} Try again, or make it in Workout plans.` });
+  }
+  if (!ok) {
+    console.error('[assist] no usable plan:', res.why);
+    return answer(502, { reason: 'failed', error: 'The AI did not answer. Try again in a minute.' });
+  }
+  const p = res.out.plan;
+  console.log(
+    `[assist] plan ok days=${p.routines.length} exercises=${p.routines.reduce((n, x) => n + x.exercises.length, 0)} dropped=${res.out.dropped} in=${res.tokensIn} out=${res.tokensOut}`,
+  );
+  return answer(200, { plan: p, summary: res.out.summary, left: g.left, dropped: res.out.dropped });
 }
 
 /** The providers that can turn speech into text, best first. PURE. */

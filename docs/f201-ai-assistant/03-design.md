@@ -217,3 +217,76 @@ Real AI cost (Haiku 5.5 at $0.10/M in, $0.50/M out, help.js rates): question ~Rs
 4. CI green, UAT pictures at 390 and 1280, fresh-eyes review.
 5. His yes: live migration 0071, privacy line, website words. Then panel deploy (feature hidden until the wallet RPC
    answers, so a deploy before the migration shows nothing).
+
+## AI plan writer (server)
+Built 12 Nov 2026 for R-471 (a plan costs 3 credits only because the AI WRITES it). Code: `deploy/panel/assistPlan.js`
+(pure: body check, prompt, tool, cleaner) + `handleAssistPlan` in `deploy/panel/assist.js`. Tests:
+`deploy/panel/assistPlan.test.mjs`. Not deployed.
+
+**Route.** `POST /api/assist/plan`, header `X-Forge-Key`, gym OWNER only. Same guard as `/api/assist`: the same
+refusals, ONE request of the same daily fair-use count (50 paid / 20 trial), the same monthly money cap
+(`assist_usage`). Body may be up to 80 KB (an ask: 20 KB) so the whole exercise list fits.
+
+**Body.**
+- `what`: `'workout'` (or left out). `'diet'` -> 400 `{ reason: 'not_yet' }` (see below).
+- `goal`: `'muscle' | 'fat_loss' | 'strength' | 'general'` (the catalogue's `muscle_gain`, `general_fitness`,
+  `beginner` are taken too). `level`: `'beginner' | 'intermediate' | 'advanced'` (left out = beginner).
+- `days_per_week`: 2-6 (0 or left out = 4). `minutes`: 30-120, optional.
+- `focus` (<= 200 letters) and `equipment` (<= 120): the owner's own words, masked like `/api/assist` (phones and
+  emails become `[PHONE_1]`, `[EMAIL_1]`; they are never put back, and are cut out of anything Claude writes).
+- `exercises`: the gym's list, at most 500: `{ key, name, kind?, primary?, custom? }`. `key` = the library key
+  (`exerciseCatalog.ts`, `[a-z0-9_]`), `kind` = its log type, `primary` = its main muscles (helps Claude build push /
+  pull / legs days). A gym-made exercise: `custom: true` + at least one muscle; it comes back with `catalogKey: null`.
+  Bad keys, repeats and names holding a phone or email are left out. Fewer than 8 usable -> 400 `{ reason: 'too_few' }`
+  before any AI call.
+- `lang`: `'en' | 'hi'` (the notes, the plan and day names, and the summary line).
+- NOT sent and never accepted: the member's name, phone or any record. The client adds the member when saving.
+
+**Response 200** `{ plan, summary, left, dropped }`.
+- `plan`: a `WorkoutPlanDraft` that passes `workoutPlanProblem`: name "Fat loss · 4 days · Beginner"; `note` (<= 300
+  letters, or null); one routine per training day, exactly `days_per_week`, named "Day 1 · Push" ("दिन 1 · ..." in
+  Hindi), `dayType` one of the six; 2-10 exercises a day, ONLY keys the client sent, names / log type / muscles from
+  the client's list; sets 1-20, reps 1-100 (min <= max), rest 0-600 s; exercise notes <= 100 letters or null; NO
+  `setList` (no starting weights: the trainer adds them); `assign` empty. Kept under the 20 KB record cap (exercise
+  notes are dropped first; still too big = refused).
+- `summary`: one plain line for the card, e.g. "A 4-day fat loss plan for a beginner: 22 exercises, about 60 minutes
+  a day. The trainer adds the weights." The client may show its own `t()` line instead (the words have not been
+  through member-words yet).
+- `left`: asks left today. `dropped`: exercises Claude named that were not in the list (dropped).
+
+**Refusals.** 400 bad body (`reason: 'too_few' | 'not_yet'` where it helps) · 401 · 403 (not the owner, demo gym) ·
+405 · 413 · 429 `{ reason: 'limit' }` · 502 `{ reason: 'too_few' }` (the AI's plan had fewer usable days than asked:
+"The AI wrote 2 usable days of 4 from your exercise list. Try again, or make it in Workout plans.") · 502
+`{ reason: 'failed' }` · 503 `{ reason: 'off' | 'unreachable' | 'cap' }`. A failed or unusable answer is counted as
+failed and uses one ask of the day, never a credit.
+
+**How Claude is called.** `claude-haiku-5-5`, ONE tool `write_plan` with a strict schema and a forced
+`tool_choice: { type: 'tool' }`, effort medium, max 4000 tokens out, 45 s timeout, no retries. The rules are cached;
+the exercise list is a cached block of its own (the same for every plan of that gym, so a second plan within 5
+minutes reads it cheaply).
+
+**Cost per call** (Haiku 5.5: $0.10 per million tokens in, $0.50 out; Rs 88 a dollar). In: ~700 rules + ~400 tool +
+~18 a list line x 450 exercises + ~100 request = ~9,300 tokens -> $0.0009. Out: ~35 tokens an exercise + notes =
+~1,200 (4 days) to ~2,500 (6 days, advanced) -> $0.0006-0.0013. **About Rs 0.13 a plan, at most ~Rs 0.20.** Three
+tries before a Save is still under Rs 0.60 against 3 credits (Rs 9 at the Rs 149 = 50 pack). Counted under
+ASSIST_CAP_USD with everything else.
+
+**What the client must still do** (apps/dashboard/src/crm/assistant; not touched here):
+1. The `plan_writer` card (`what: 'workout'`): drop the "cannot write workout plans yet" text; show goal, level, days
+   (and optional minutes / focus) pre-filled from the `draft_workout_plan` input, and a "Write the plan" button.
+2. Call `/api/assist/plan` with the gym's exercise list (`EXERCISE_CATALOG` keys, names, `logType` as `kind`,
+   `primary`; plus the gym's own typed exercises as `custom: true`), with the focus masked in the browser as for asks.
+3. Show the plan for editing in the existing workout-plan builder (as a new plan for that member: put the member in
+   `assign.memberIds`), with the summary line. Starting weights stay the trainer's.
+4. Save = 3 credits: `owner_ai_task_save` then `owner_ai_spend(3)` right before `saveWorkoutPlan`; on a failed save
+   `owner_ai_refund`. A plan the owner throws away costs nothing. Never charge 3 credits for a plan opened from a
+   ready-made template (R-471).
+5. Words on the card go through member-words; the privacy line below needs his yes before deploy.
+
+**Diet plans stay "not yet".** The diet draft (`dietPlans.ts` `DietDraft`) is a simple shape (title, goal, kcal,
+protein, meals of free-text lines, notes), but it is not safe to write in this route yet: (1) calories and protein
+depend on the member's weight and height, which we do not send to the AI, so the numbers would be guesses printed as
+targets; (2) a diet is mostly about allergies and health conditions, which would make the owner type health details
+that the privacy draft does not cover; (3) food lines are free text, so our code cannot check them against a list the
+way exercise keys are checked (a peanut line for an allergic member could not be caught). The `diet` card keeps its
+"cannot write diet plans yet" text and `what: 'diet'` answers 400 `not_yet`.
