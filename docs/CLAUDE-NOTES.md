@@ -222,6 +222,10 @@ shards, no shard over ~2 h; (4) run the affected parts in the cloud on both phon
   missed it because the words live three imports from the Gym tab, so the lint now follows three.
 - Piece times seen on the new shape: canary 12-13 min, 2 gym-backup ~60, 3 uat-a ~70, 4 workout +
   UAT chain 74-82 (was ~4.5 h), build 15-21.
+- Part L's live Hevy link: one "Hevy took too long to answer" (owner, 43224049125) is the network; the
+  flow now reads the link once more, then still demands "We found 6 routines".
+- WHOLE ROUNDS GREEN on the new shape: default phone 43239286609 (267f861c) 134 min, owner phone
+  43240713376 (87fe819f) 133 min; every piece green, longest piece 6 (117 / 109 min) and 1 (108 / 114).
 
 ## R-459. Members message their gym; the gym answers in "Member messages" — 12 Nov 2026
 
