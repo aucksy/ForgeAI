@@ -22,13 +22,24 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Resume Workout Timer"
     timeout: 10000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Resume Workout Timer'
 - tapOn: "Resume Workout Timer"
 - extendedWaitUntil:
     visible: 'Timer paused .* to .* while no sets were logged\.'
     timeout: 15000
-- assertVisible: "Count the paused time in the workout"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Count the paused time in the workout'
 - assertVisible: '^Workout duration (\d+ minutes? )?\d+ seconds?\. Tap to pause\.$'
 - takeScreenshot: ua-03-count-it-offered
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Count the paused time in the workout'
 - tapOn: "Count the paused time in the workout"
 - extendedWaitUntil:
     notVisible: 'Timer paused .* while no sets were logged\.'
@@ -52,19 +63,36 @@ appId: com.mettleup.app
     file: sub-find.yaml
     env:
       FIND: 'Open for 1h( \d\dm)?\. When did you finish\?'
-- assertVisible: '^Ended at .*'
-- assertVisible: "^Now$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Ended at .*'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Now$'
 - assertVisible:
     text: '^Ended at .*'
     checked: true
 # "Ended at" (picked first): the length stops at the last set + its rest.
-- assertVisible: '^\d+ exercises? · \d+ sets? · \d+ min$'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^\d+ exercises? · \d+ sets? · \d+ min$'
 - takeScreenshot: ua-05-ended-at-question
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Now$'
 - tapOn: "^Now$"
 - extendedWaitUntil:
     visible: '^\d+ exercises? · \d+ sets? · 1h( \d\dm)?$'
     timeout: 5000
 - takeScreenshot: ua-06-now-picked
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Ended at .*'
 - tapOn: '^Ended at .*'
 - extendedWaitUntil:
     visible: '^\d+ exercises? · \d+ sets? · \d+ min$'
@@ -76,6 +104,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Workout complete$"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Workout complete$'
 - waitForAnimationToEnd:
     timeout: 3000
 - tapOn:

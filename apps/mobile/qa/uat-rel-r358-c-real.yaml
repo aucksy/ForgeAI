@@ -11,7 +11,10 @@ appId: com.mettleup.app
     file: sub-uat-r358-start.yaml
     env:
       COUNTING: "keep"
-- assertVisible: ".*REPS/SIDE.*"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '.*REPS/SIDE.*'
 # Flow b's history must be 10 x 18 (not a mistyped 183): set 1 is pre-filled from it.
 - assertNotVisible: "183"
 # Set 1 typed and ticked here (not via sub-uat-r358-set): the pop-up is looked for straight after the
@@ -50,6 +53,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Resume workout|Dumbbell Preacher Curl set 1 complete.*"
     timeout: 60000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Resume workout|Dumbbell Preacher Curl set 1 complete.*'
 - tapOn:
     text: "Resume workout"
     optional: true

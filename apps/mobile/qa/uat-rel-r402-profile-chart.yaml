@@ -33,7 +33,10 @@ appId: com.mettleup.app
     when:
       visible: "^Your workouts$"
     commands:
-      - assertVisible: ".*\\d+ workouts?.*"
+      - runFlow:
+          file: sub-see.yaml
+          env:
+            FIND: '.*\d+ workouts?.*'
 - takeScreenshot: rel-r402-03-box-opened-week
 # Back: the Profile chart is still there (regression: "See these workouts" still works too).
 - back

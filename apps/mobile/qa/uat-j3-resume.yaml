@@ -12,6 +12,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Workout$|Log a set to finish|Finish workout"
     timeout: 60000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Workout$|Log a set to finish|Finish workout'
 - runFlow:
     when:
       notVisible: "Log a set to finish|Finish workout"

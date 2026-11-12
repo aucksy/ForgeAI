@@ -44,11 +44,20 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Could not save$|^Workout complete$"
     timeout: 60000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Could not save$|^Workout complete$'
 - runFlow:
     when:
       visible: "^Could not save$"
     commands:
       - takeScreenshot: uf-05-full-could-not-save
+      - runFlow:
+          file: sub-see.yaml
+          env:
+            FIND: '^Close$'
       - tapOn: "^Close$"
       - extendedWaitUntil:
           notVisible: "^Could not save$"
@@ -64,6 +73,11 @@ appId: com.mettleup.app
       - extendedWaitUntil:
           visible: "Workout in progress"
           timeout: 20000
+          optional: true
+      - runFlow:
+          file: sub-see.yaml
+          env:
+            FIND: 'Workout in progress'
       - assertVisible: '^2 sets done · 1 exercise$'
       - tapOn:
           text: "^Resume workout$"

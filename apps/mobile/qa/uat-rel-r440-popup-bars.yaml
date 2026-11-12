@@ -11,6 +11,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Profile$|Your watch app has an update|Check your watch"
     timeout: 60000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Profile$|Your watch app has an update|Check your watch'
 # Flow c ends on "Check your watch"; flow a on the Workout tab.
 - tapOn:
     text: "^Got it$"
@@ -19,6 +24,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "A new MettleUp is here"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'A new MettleUp is here'
 - waitForAnimationToEnd:
     timeout: 3000
 - takeScreenshot: rel-r440-01-phone-update-${LOOK}
@@ -43,6 +53,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Your watch app has an update"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Your watch app has an update'
 - waitForAnimationToEnd:
     timeout: 3000
 - takeScreenshot: rel-r440-02-watch-card-${LOOK}

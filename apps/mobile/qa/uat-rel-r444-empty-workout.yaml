@@ -27,6 +27,10 @@ appId: com.mettleup.app
 - tapOn: "^Done$"
 # ---------------------------------------------------------------- 2. the next empty workout: open at once, then the card
 - runFlow: sub-workout-fresh.yaml
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Start empty workout'
 - tapOn: "Start empty workout"
 - tapOn:
     text: "(?i)^allow$"
@@ -34,13 +38,28 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Add exercise"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Add exercise'
 - extendedWaitUntil:
     visible: "Dumbbell Preacher Curl set 1 weight, .*"
     timeout: 20000
-- assertVisible: "We added the exercises from your last empty workout\\."
-- assertVisible: "Start blank"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'We added the exercises from your last empty workout\.'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Start blank'
 - takeScreenshot: rel-r444-11-remembered-card
 # ---------------------------------------------------------------- 3. "Start blank" (negative: nothing pre-added stays)
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Start blank'
 - tapOn: "Start blank"
 - extendedWaitUntil:
     notVisible: "We added the exercises from your last empty workout\\."

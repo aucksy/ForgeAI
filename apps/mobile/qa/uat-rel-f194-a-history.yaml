@@ -9,6 +9,10 @@ appId: com.mettleup.app
 ---
 - runFlow: gate-demo.yaml
 - runFlow: sub-workout-fresh.yaml
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Start empty workout'
 - tapOn: "Start empty workout"
 - tapOn:
     text: "(?i)^allow$"
@@ -17,6 +21,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Add exercise"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Add exercise'
 - tapOn: "Add exercise"
 - extendedWaitUntil:
     visible: "Search exercises"
@@ -65,7 +74,10 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Machine and cable steps, Automatic\\. Change$"
     timeout: 15000
-- assertVisible: "The app learns each machine.s steps from the weights you log\\."
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'The app learns each machine.s steps from the weights you log\.'
 - takeScreenshot: rel-f194-a2-plates-page-default
 - runFlow: xc-sub-back-to-tabs.yaml
 # Save this workout as a routine from the Profile feed (a card added on the spot gets no Target), and open it.
@@ -73,6 +85,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Edit profile"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Edit profile'
 - scrollUntilVisible:
     element: "More for .*"
     centerElement: true
@@ -83,6 +100,10 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Save as routine"
     timeout: 10000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Save as routine'
 - tapOn: "Save as routine"
 - extendedWaitUntil:
     visible: "Your plan only changes if you pick it."
@@ -93,11 +114,23 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Saved as a routine"
     timeout: 15000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Open routine$'
 - tapOn: "^Open routine$"
 - extendedWaitUntil:
     visible: "Edit routine"
     timeout: 15000
-- assertVisible: "Close-Grip Lat Pulldown"
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Edit routine'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Close-Grip Lat Pulldown'
 - scrollUntilVisible:
     element: "^Start routine$"
     centerElement: true

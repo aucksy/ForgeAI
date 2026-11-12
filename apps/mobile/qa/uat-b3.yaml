@@ -7,15 +7,32 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: 'Keep this file somewhere safe\. If you need help, send it to your gym, who can pass it to MettleUp to open\.'
     timeout: 20000
-- assertVisible: "MettleUp could not start"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'MettleUp could not start'
 - takeScreenshot: ub-04-file-saved-note
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Try again$'
 - tapOn: "^Try again$"
 - extendedWaitUntil:
     visible: "^Try again$"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Try again$'
 - extendedWaitUntil:
     visible: "MettleUp could not start"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'MettleUp could not start'
 # R-277: the welcome opens on "Get stronger every week" (its one-screen start view).
 - assertNotVisible: "Step 1 of 3|Your name|Start fresh|Get stronger every week|Use without an account|Load demo data instead"
 - assertNotVisible: "^Profile$"

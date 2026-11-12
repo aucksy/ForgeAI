@@ -17,20 +17,52 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Same as phone: the app turns light or dark when your phone does."
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Same as phone: the app turns light or dark when your phone does.'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Dark$'
 - tapOn: "^Dark$"
 - extendedWaitUntil:
     visible: "Same as phone: the app turns light or dark when your phone does."
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Same as phone: the app turns light or dark when your phone does.'
 - takeScreenshot: rel-look-chips-1-dark-on-a-light-phone
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Light$'
 - tapOn: "^Light$"
 - extendedWaitUntil:
     visible: "Same as phone: the app turns light or dark when your phone does."
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Same as phone: the app turns light or dark when your phone does.'
 - takeScreenshot: rel-look-chips-2-light
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Same as phone$'
 - tapOn: "^Same as phone$"
 - extendedWaitUntil:
     visible: "Same as phone: the app turns light or dark when your phone does."
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Same as phone: the app turns light or dark when your phone does.'
 - takeScreenshot: rel-look-chips-3-same-as-phone
 - back
 - back

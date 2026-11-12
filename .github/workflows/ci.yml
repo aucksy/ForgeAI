@@ -34,6 +34,29 @@ jobs:
               except Exception as e: bad.append(f'{p}: {e}')
           print(chr(10).join(bad) or 'all phone-test files parse'); sys.exit(1 if bad else 0)"
 
+      # 12 Nov 2026 (0.77.0 lost hours to UATF61 and the update-screen flows): Maestro's assertVisible and
+      # extendedWaitUntil never scroll, so a bare check on a page that scrolls fails the day the text sits
+      # off screen. The pages that scroll are listed in apps/mobile/qa/scrollable-screens.yaml (generated
+      # from the app); a NEW bare check there fails here (scripts/ci/flow-scroll-baseline.json may only go
+      # down). Use the sub-flow sub-see.yaml, or mark a line `# in-view` when it must be seen unscrolled.
+      - name: Phone-test scroll lint
+        run: |
+          python3 -m unittest discover -s scripts/ci -p 'test_flow_tools.py'
+          python3 scripts/ci/flow_scroll_lint.py
+
+      # 12 Nov 2026: which phone flows use what this push changed (its words, screens, links and
+      # sub-flows). A warning list in the run summary, never a failure; the release gate runs them first.
+      - name: Phone flows to check
+        continue-on-error: true
+        env:
+          BEFORE: ${{ github.event.before }}
+        run: |
+          base="$BEFORE"
+          if [ -z "$base" ] || [ "$base" = 0000000000000000000000000000000000000000 ]; then base=HEAD~1; fi
+          git fetch --quiet --depth=200 origin "${{ github.sha }}" || true
+          git cat-file -e "$base^{commit}" 2>/dev/null || git fetch --quiet --depth=200 origin "$base" || true
+          python3 scripts/ci/flows_to_check.py --base "$base" --head "${{ github.sha }}" --summary "$GITHUB_STEP_SUMMARY"
+
       - name: Silent-catch ratchet
         run: python3 scripts/ci/silent_catch_ratchet.py
 

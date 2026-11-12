@@ -19,7 +19,10 @@ appId: com.mettleup.app
       text: "^Invite a friend$"
     direction: DOWN
     timeout: 20000
-- assertVisible: "^Bring a friend$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Bring a friend$'
 - assertVisible: '^Send a friend a link to your gym\. They leave their number, and the gym calls them\.$'
 - takeScreenshot: rel-f147-1-friend-card
 # ---------------------------------------------------------------- without 0056: the QA stand-in, said on screen
@@ -37,6 +40,10 @@ appId: com.mettleup.app
       - assertVisible: "^Friends who joined: 0$"
       - assertNotVisible: "^When a friend joins, .*"
 # ---------------------------------------------------------------- the share menu with the ready message
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Invite a friend$'
 - tapOn: "^Invite a friend$"
 - waitForAnimationToEnd:
     timeout: 5000

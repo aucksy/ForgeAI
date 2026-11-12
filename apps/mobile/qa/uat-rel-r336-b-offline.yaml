@@ -11,6 +11,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "A new MettleUp is here"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'A new MettleUp is here'
 - assertVisible: "(?i)you are 5 versions behind"
 - takeScreenshot: rel-r336-12-offline
 - runFlow:

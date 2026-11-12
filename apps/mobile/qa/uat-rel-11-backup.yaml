@@ -22,8 +22,19 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Keep your workouts on MettleUp$"
     timeout: 15000
-- assertVisible: '^Sign in with Google to keep your workouts safe\. MettleUp then saves your workouts, routines and body weight to your account by itself\..*'
-- assertVisible: "^Continue with Google$"
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Keep your workouts on MettleUp$'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Sign in with Google to keep your workouts safe\. MettleUp then saves your workouts, routines and body weight to your account by itself\..*'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Continue with Google$'
 - assertNotVisible: ".*Google Drive backup on.*|^Link Google Drive$|^Back up now$"
 - assertNotVisible: "Android backs this up.*"
 - assertNotVisible: "Include photos in my backup"
@@ -32,8 +43,14 @@ appId: com.mettleup.app
     file: sub-find.yaml
     env:
       FIND: "^Download my data$"
-- assertVisible: "^One file with everything, a copy for your own records$"
-- assertVisible: "^Restore from a backup$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^One file with everything, a copy for your own records$'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Restore from a backup$'
 - runFlow:
     file: sub-find.yaml
     env:
@@ -49,7 +66,15 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Save the backup file$"
     timeout: 15000
-- assertVisible: '.*A copy for your own records: keep it in Files, Google Drive or WhatsApp\..*'
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Save the backup file$'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '.*A copy for your own records: keep it in Files, Google Drive or WhatsApp\..*'
 - takeScreenshot: rel-112-download-my-data
 - back
 # ---------------------------------------------------------------- the old Drive backup: bring back only
@@ -61,7 +86,15 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Find my Drive backup$"
     timeout: 15000
-- assertVisible: '^Backed up to Google Drive with an older version of MettleUp\?.*'
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Find my Drive backup$'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Backed up to Google Drive with an older version of MettleUp\?.*'
 - assertNotVisible: "^Back up now$"
 - takeScreenshot: rel-113-drive-bring-back-only
 - back

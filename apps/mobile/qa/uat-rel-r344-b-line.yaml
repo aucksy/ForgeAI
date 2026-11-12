@@ -22,10 +22,18 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: '.*Lighter than last time\. Every workout counts\..*'
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '.*Lighter than last time\. Every workout counts\..*'
 - extendedWaitUntil:
     visible: 'You slept 5 h 10 min last night\. A weaker day after short sleep is normal\. Aim for 7 hours or more tonight\.'
     timeout: 15000
-- assertVisible: 'Test build: made-up sleep\.'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Test build: made-up sleep\.'
 - assertNotVisible: ".*protein.*"
 - takeScreenshot: rel-r344-05-sleep-line
 # Large text pushes "Done" below the edge (run 41994649037, font 2.0).
@@ -42,9 +50,19 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: '.*Lighter than last time\. Every workout counts\..*'
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '.*Lighter than last time\. Every workout counts\..*'
 - extendedWaitUntil:
     visible: 'Eat enough protein\. A palm-sized portion with each meal helps your muscles recover\.'
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Eat enough protein\. A palm-sized portion with each meal helps your muscles recover\.'
 - assertNotVisible: "You slept .*"
 - assertNotVisible: 'Test build: made-up sleep\.'
 - takeScreenshot: rel-r344-06-protein-tip
@@ -61,6 +79,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: '.*Lighter than last time\. Every workout counts\..*'
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '.*Lighter than last time\. Every workout counts\..*'
 - extendedWaitUntil:
     visible: ".*protein.*|You slept .*"
     timeout: 5000

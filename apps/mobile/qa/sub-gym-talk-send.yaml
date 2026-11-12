@@ -3,22 +3,50 @@
 # Starts at the top of the page; ends with the sent card on screen.
 appId: com.mettleup.app
 ---
-- assertVisible: "^Ask about timings, fees, classes and more\\. For workout help, use Ask a trainer\\.$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Ask about timings, fees, classes and more\. For workout help, use Ask a trainer\.$'
 - assertNotVisible: "^Send without my name$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Complaint$'
 - tapOn: "^Complaint$"
-- assertVisible: "^Tell them what went wrong\\. Only the gym owner reads complaints\\.$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Tell them what went wrong\. Only the gym owner reads complaints\.$'
 - assertNotVisible: "^Send without my name$"
 - takeScreenshot: rel-gt-02-complaint-picked
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Feedback$'
 - tapOn: "^Feedback$"
-- assertVisible: "^Send without my name$"
-- assertVisible: "^Your gym can still reply here, but it will not see who sent it\\.$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Send without my name$'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Your gym can still reply here, but it will not see who sent it\.$'
 - tapOn:
     id: "gym-talk-anon"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'For example: Please add a second squat rack\.'
 - tapOn: "For example: Please add a second squat rack\\."
 - inputText: "QA check: please add a second squat rack"
 - hideKeyboard
 - assertVisible: "^40 of 1000 letters$"
 - takeScreenshot: rel-gt-03-typed
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Send message$'
 - tapOn: "^Send message$"
 - extendedWaitUntil:
     visible: "^Sent\\. When your gym replies, you will see it below\\.$"

@@ -63,25 +63,47 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Share as a picture"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Share as a picture'
 - tapOn: "Share as a picture"
 - extendedWaitUntil:
     visible: "Send it to WhatsApp, Instagram or any app."
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Send it to WhatsApp, Instagram or any app.'
 - runFlow:
     when:
       visible: "^Story$"
     commands:
+      - runFlow:
+          file: sub-see.yaml
+          env:
+            FIND: '^Post$'
       - tapOn: "^Post$"
 - runFlow:
     when:
       visible: "^See-through$"
     commands:
+      - runFlow:
+          file: sub-see.yaml
+          env:
+            FIND: '^Dark$'
       - tapOn: "^Dark$"
 - takeScreenshot: rel-f146-20-workout-share-sheet-top
 - scrollUntilVisible:
     element: "^Your gym$"
     centerElement: true
     timeout: 15000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Hide$'
 - tapOn: "^Hide$"
 - scrollUntilVisible:
     element: "The picture never shows your name, your gym or your body weight\\."
@@ -92,6 +114,10 @@ appId: com.mettleup.app
     direction: UP
     centerElement: true
     timeout: 10000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Show$'
 - tapOn: "^Show$"
 - scrollUntilVisible:
     element: "The picture shows your gym\\. It never shows your name or body weight\\."
@@ -100,6 +126,10 @@ appId: com.mettleup.app
     element: "^Share picture$"
     timeout: 10000
 - takeScreenshot: rel-f146-22-workout-share-gym-shown
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Share picture$'
 - tapOn: "^Share picture$"
 # Android's own share menu (only the system chooser shows these words).
 - extendedWaitUntil:
@@ -120,6 +150,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Add measures"
     timeout: 20000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Add measures'
 - scrollUntilVisible:
     element: "Progress photos"
     direction: UP
@@ -130,12 +165,25 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Add a photo"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Add a photo'
 # Two photos: the first dated the 1st of last month, the second the 15th.
 - runFlow:
     when:
       notVisible: "Share before and after"
     commands:
+      - runFlow:
+          file: sub-see.yaml
+          env:
+            FIND: 'Add a photo'
       - tapOn: "Add a photo"
+      - runFlow:
+          file: sub-see.yaml
+          env:
+            FIND: 'Choose from gallery'
       - tapOn: "Choose from gallery"
       - extendedWaitUntil:
           visible: '(?i)photo taken on.*|^Albums$'
@@ -155,6 +203,15 @@ appId: com.mettleup.app
       - extendedWaitUntil:
           visible: 'When was this photo taken\?'
           timeout: 20000
+          optional: true
+      - runFlow:
+          file: sub-see.yaml
+          env:
+            FIND: 'When was this photo taken\?'
+      - runFlow:
+          file: sub-see.yaml
+          env:
+            FIND: 'Previous month'
       - tapOn: "Previous month"
       - tapOn: '\d{4}-\d{2}-01'
       - extendedWaitUntil:
@@ -164,7 +221,15 @@ appId: com.mettleup.app
     when:
       notVisible: "Share before and after"
     commands:
+      - runFlow:
+          file: sub-see.yaml
+          env:
+            FIND: 'Add a photo'
       - tapOn: "Add a photo"
+      - runFlow:
+          file: sub-see.yaml
+          env:
+            FIND: 'Choose from gallery'
       - tapOn: "Choose from gallery"
       - extendedWaitUntil:
           visible: '(?i)photo taken on.*|^Albums$'
@@ -184,19 +249,51 @@ appId: com.mettleup.app
       - extendedWaitUntil:
           visible: 'When was this photo taken\?'
           timeout: 20000
+          optional: true
+      - runFlow:
+          file: sub-see.yaml
+          env:
+            FIND: 'When was this photo taken\?'
+      - runFlow:
+          file: sub-see.yaml
+          env:
+            FIND: 'Previous month'
       - tapOn: "Previous month"
       - tapOn: '\d{4}-\d{2}-15'
 - extendedWaitUntil:
     visible: "Share before and after"
     timeout: 20000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Share before and after'
 - takeScreenshot: rel-f146-30-photos-with-share-button
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Share before and after'
 - tapOn: "Share before and after"
 - extendedWaitUntil:
     visible: "Put two of your progress photos side by side in one picture\\."
     timeout: 15000
-- assertVisible: "^Before$"
-- assertVisible: "^After$"
-- assertVisible: "The older photo is Before\\. Tap Before or After to pick another photo\\."
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Put two of your progress photos side by side in one picture\.'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Before$'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^After$'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'The older photo is Before\. Tap Before or After to pick another photo\.'
 - takeScreenshot: rel-f146-31-before-after-sheet-top
 - scrollUntilVisible:
     element: "Your photos stay on this phone until you tap Share picture\\. The picture shows your gym\\. It never shows your name or body weight\\."
@@ -211,6 +308,10 @@ appId: com.mettleup.app
       enabled: true
     timeout: 20000
 - takeScreenshot: rel-f146-32-before-after-sheet-ready
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Share picture$'
 - tapOn: "^Share picture$"
 - extendedWaitUntil:
     visible: '(Sharing image|Sharing 1 image|No recommended people to share with)'
@@ -231,6 +332,10 @@ appId: com.mettleup.app
     element: "^Share picture$"
     timeout: 10000
 - takeScreenshot: rel-f146-34-before-after-story-preview
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Share picture$'
 - tapOn: "^Share picture$"
 - extendedWaitUntil:
     visible: '(Sharing image|Sharing 1 image|No recommended people to share with)'
@@ -239,6 +344,10 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Share picture$"
     timeout: 10000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Post$'
 - tapOn: "^Post$"
 - back
 - runFlow: sub-back-to-tabs.yaml

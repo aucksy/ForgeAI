@@ -26,16 +26,37 @@ appId: com.mettleup.app
     element: "^Routines$"
     centerElement: true
     timeout: 30000
-- assertVisible: "New folder"
-- assertVisible: "New routine"
-- assertVisible: "Find a plan"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'New folder'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'New routine'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Find a plan'
 - takeScreenshot: 80-workout-folders
 # ---------------------------------------------------------------- ready programs
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Find a plan'
 - tapOn: "Find a plan"
 - extendedWaitUntil:
     visible: "Build a plan"
     timeout: 20000
-- assertVisible: "Full Body Basics.*"
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Build a plan'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Full Body Basics.*'
 - takeScreenshot: 81-explore-programs
 - scrollUntilVisible:
     element: "Dumbbell Full Body,.*"
@@ -45,7 +66,16 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Follow this plan"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Follow this plan'
 - takeScreenshot: 82-program-dumbbell
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Follow this plan'
 - tapOn: "Follow this plan"
 # Following lands back on the Workout tab. Easy weeks start on (the open owner decision's
 # default): the Up next card names the plan's routine with its week line, week 1 with the easy
@@ -75,6 +105,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Build a plan"
     timeout: 20000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Build a plan'
 - tapOn: "Build a plan"
 # Audit Phase 4 (RP-17): the answers come in 5 short steps, each with Next (and Back after the
 # first): goal and experience → days and split → equipment → sore spots → time and easy weeks.
@@ -84,28 +119,56 @@ appId: com.mettleup.app
 - waitForAnimationToEnd
 - assertNotVisible: "^Back$"
 - takeScreenshot: 84b-builder-step-1
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Next$'
 - tapOn: "^Next$"
 - extendedWaitUntil:
     visible: "Step 2 of 5"
     timeout: 10000
 - tapOn: "^4$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Upper / Lower$'
 - tapOn: "^Upper / Lower$"
 # Back goes one step back with the answers kept (the plan below is still "Upper / Lower · 4
 # days"); Next again.
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Back$'
 - tapOn: "^Back$"
 - extendedWaitUntil:
     visible: "Step 1 of 5"
     timeout: 10000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Next$'
 - tapOn: "^Next$"
 - extendedWaitUntil:
     visible: "Step 2 of 5"
     timeout: 10000
 - takeScreenshot: 84c-builder-step-2-kept
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Next$'
 - tapOn: "^Next$"
 - extendedWaitUntil:
     visible: "Step 3 of 5"
     timeout: 10000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Dumbbells only$'
 - tapOn: "^Dumbbells only$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Next$'
 - tapOn: "^Next$"
 - extendedWaitUntil:
     visible: "Step 4 of 5"
@@ -133,6 +196,10 @@ appId: com.mettleup.app
     visible: "Keep Goblet Squat"
     timeout: 5000
 - takeScreenshot: 85-leave-out-picker
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Done$'
 - tapOn: "^Done$"
 - scrollUntilVisible:
     element: "Goblet Squat ✕"
@@ -156,9 +223,20 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Save and follow"
     timeout: 15000
-- assertVisible: "^Save$"
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Save and follow'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Save$'
 - assertVisible: "Upper / Lower · 4 days"
-- assertVisible: "Without a pull-up bar, rows stand in for pull-ups."
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Without a pull-up bar, rows stand in for pull-ups.'
 - takeScreenshot: 87-built-plan
 - scrollUntilVisible:
     element: "Swap Dumbbell Floor Press"
@@ -184,7 +262,10 @@ appId: com.mettleup.app
     direction: UP
     timeout: 20000
 - tapOn: "Routines, more information"
-- assertVisible: "Body-weight moves get harder in steps.*"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Body-weight moves get harder in steps.*'
 - takeScreenshot: 90-plan-ladder-info
 - scrollUntilVisible:
     element: "Save and follow"
@@ -198,6 +279,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Start empty workout|Upper / Lower · 4 days folder, .*"
     timeout: 20000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Start empty workout|Upper / Lower · 4 days folder, .*'
 - scrollUntilVisible:
     element: "Up next: .*"
     direction: UP
@@ -225,12 +311,29 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Start routine"
     timeout: 15000
-- assertVisible: '\d+ sets? · .*'
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Start routine'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '\d+ sets? · .*'
 - takeScreenshot: 91b-routine-preview
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Edit routine'
 - tapOn: "Edit routine"
 - extendedWaitUntil:
     visible: "More for this routine"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'More for this routine'
 # The member's library may name it "Push-up" or "Push Up".
 - tapOn: "Swap Push[- ][Uu]p"
 - extendedWaitUntil:
@@ -244,15 +347,27 @@ appId: com.mettleup.app
     notVisible: "Swap Push[- ][Uu]p"
     timeout: 10000
 - takeScreenshot: 93-routine-swapped
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'More for this routine'
 - tapOn: "More for this routine"
 - extendedWaitUntil:
     visible: "Share routine"
     timeout: 10000
 - takeScreenshot: 94-routine-menu
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Share routine'
 - tapOn: "Share routine"
 - extendedWaitUntil:
     visible: "Send as text"
     timeout: 10000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Send as text'
 - tapOn: "Send as text"
 # Android's share menu: text only the system chooser shows (not ForgeAI's "Share routine",
 # which the old loose regex matched).
@@ -261,7 +376,15 @@ appId: com.mettleup.app
     timeout: 20000
 - takeScreenshot: 95-share-text
 - back
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'More for this routine'
 - tapOn: "More for this routine"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Move to folder'
 - tapOn: "Move to folder"
 - extendedWaitUntil:
     visible: "Dumbbell Full Body, 2 routines"
@@ -287,10 +410,18 @@ appId: com.mettleup.app
     centerElement: true
     timeout: 20000
 - tapOn: "More for Upper / Lower · 4 days"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Share folder'
 - tapOn: "Share folder"
 - extendedWaitUntil:
     visible: "Send as a file"
     timeout: 10000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Send as a file'
 - tapOn: "Send as a file"
 # Android's share menu: text only the system chooser shows (not ForgeAI's "Share folder").
 - extendedWaitUntil:
@@ -306,6 +437,10 @@ appId: com.mettleup.app
     centerElement: true
     timeout: 20000
 - tapOn: "More for Push Pull Legs — 6 Day"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Follow this plan'
 - tapOn: "Follow this plan"
 # Following redraws the list (the Up next card and the tag change above), so the folder's own row
 # can land just above the screen (run 38150955406): scroll back up to it.
@@ -340,6 +475,10 @@ appId: com.mettleup.app
     timeout: 10000
 - assertVisible: "Easy week every 6 weeks, On"
 - takeScreenshot: 98-folder-menu
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Take an easy week now'
 - tapOn: "Take an easy week now"
 # RP-04: an easy week taken now is the 7 days from the tap, its end date always shown. The
 # easy-week note and "Train normally this week" must show on the Up next card whatever it says
@@ -352,7 +491,10 @@ appId: com.mettleup.app
     timeout: 20000
 # RP-04: the note carries the end date ("Until Fri, 16 Oct.").
 - assertVisible: 'Easy week: half the sets, the same weights\. Until [A-Z][a-z]{2}, \d{1,2} [A-Z][a-z]{2}\.'
-- assertVisible: "Train normally this week"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Train normally this week'
 - takeScreenshot: 99-workout-easy-week
 # Start a routine of the plan from its card: the followed folder sits first, open; its first
 # routine "Push Day A" (whose second lift is Overhead Press), spoken "Start routine Push Day A".
@@ -368,6 +510,10 @@ appId: com.mettleup.app
       visible: "A workout is already open"
     commands:
       - takeScreenshot: 99b-workout-already-open
+      - runFlow:
+          file: sub-see.yaml
+          env:
+            FIND: 'Discard and start new'
       - tapOn: "Discard and start new"
 - tapOn:
     text: "(?i)^allow$"
@@ -375,6 +521,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Easy week: half the sets, the same weights.*"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Easy week: half the sets, the same weights.*'
 - assertVisible: "Target Easy week.*"
 - takeScreenshot: 100-easy-workout
 # A huge weight is a record in a normal week (part A); an easy week never claims one.
@@ -441,6 +592,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Workout complete"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Workout complete'
 # The finish note knows it was a planned easy week (not "80% less kg lifted"). Audit Phase 7: a
 # plain line of facts with no "IN SHORT" heading or sparkle (src/tracker/services/coachNote.ts):
 # "Easy week: 1 working set at your usual weights, lighter on purpose."
@@ -483,6 +639,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: '(?i).*(recent|downloads|files|qa-shared).*'
     timeout: 20000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '(?i).*(recent|downloads|files|qa-shared).*'
 - runFlow:
     when:
       notVisible: "qa-shared.*"
@@ -503,6 +664,10 @@ appId: com.mettleup.app
 # Audit Phase 7 (packet B): the notice is the app's own sheet now, not Android's pop-up; its one
 # button names what it does, "Close" (src/lib/tell.ts NOTICE_BUTTON), never "OK". Closing it
 # lands on the Workout tab, the new folder open.
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Close$'
 - tapOn: "^Close$"
 - extendedWaitUntil:
     notVisible: "Routines added"
@@ -549,11 +714,26 @@ appId: com.mettleup.app
     visible: "Move down"
     timeout: 10000
 - assertNotVisible: "Move up"
-- assertVisible: "Move to folder…"
-- assertVisible: "Share routine"
-- assertVisible: "Duplicate routine"
-- assertVisible: "Edit routine"
-- assertVisible: "Delete routine"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Move to folder…'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Share routine'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Duplicate routine'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Edit routine'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Delete routine'
 - takeScreenshot: 110-routine-menu-moves
 - back
 - extendedWaitUntil:

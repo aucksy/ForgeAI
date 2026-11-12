@@ -27,6 +27,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Add measures"
     timeout: 20000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Add measures'
 - runFlow:
     file: sub-find.yaml
     env:

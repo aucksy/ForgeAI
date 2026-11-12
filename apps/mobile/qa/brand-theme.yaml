@@ -32,6 +32,11 @@ appId: com.mettleup.app
       - extendedWaitUntil:
           visible: "^(Leave gym|Leave anyway|Cancel orders? and leave)$"
           timeout: 15000
+          optional: true
+      - runFlow:
+          file: sub-see.yaml
+          env:
+            FIND: '^(Leave gym|Leave anyway|Cancel orders? and leave)$'
       - tapOn: "^(Leave gym|Leave anyway|Cancel orders? and leave)$"
       - extendedWaitUntil:
           notVisible: "Your gym: ${BGYM}"
@@ -83,6 +88,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Pay at the desk"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Pay at the desk'
 - assertVisible: "Your gym: ${BGYM}"
 # Owner profile (360 dp, font 1.3): membership, Check in and My orders come first, so the "Shop"
 # heading is below the screen's edge (run 40107401680): scroll down to it (trap 27).
@@ -100,6 +110,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: '^Shaker bottle 700.ml$'
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Shaker bottle 700.ml$'
 - scrollUntilVisible:
     element: "Add to bag"
     centerElement: true
@@ -125,7 +140,14 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Leave ${BGYM}\\?"
     timeout: 10000
-- assertVisible: ".*goes back to MettleUp's colours.*"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '.*goes back to MettleUp''s colours.*'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Leave gym$'
 - tapOn: "^Leave gym$"
 # The app re-draws in ForgeAI's look (it may come back on the Workout tab). Release A: no gym, so
 # the Gym tab is its "Join your gym" screen.
@@ -138,5 +160,10 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Profile$|^Your profile$"
     timeout: 20000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Profile$|^Your profile$'
 - runFlow: sub-gym-none.yaml
 - takeScreenshot: br-08-left-forgeai-look

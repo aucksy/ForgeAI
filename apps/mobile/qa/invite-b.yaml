@@ -5,10 +5,24 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "You're already in .*"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'You''re already in .*'
 - assertVisible: 'You''re already in ${TGYM}\. Nothing to do\.'
 - takeScreenshot: inv-03-already-in
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Open your gym$'
 - tapOn: "^Open your gym$"
 # the run's shop gym lists products, so its page is its shop.
 - extendedWaitUntil:
     visible: "Pay at the desk"
     timeout: 20000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Pay at the desk'

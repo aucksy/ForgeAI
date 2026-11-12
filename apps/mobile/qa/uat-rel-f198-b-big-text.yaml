@@ -22,24 +22,43 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Edit profile"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Edit profile'
 - assertVisible:
     id: "new-dot-gear"
 - takeScreenshot: rel-f198-big-02-settings-button-dot
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Settings'
 - tapOn: "Settings"
 - scrollUntilVisible:
     element:
       id: "new-dot-row-health"
     centerElement: true
     timeout: 30000
-- assertVisible: "^Health apps$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Health apps$'
 - takeScreenshot: rel-f198-big-03-row-dot
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Health apps$'
 - tapOn: "^Health apps$"
 - scrollUntilVisible:
     element:
       id: "new-dot-page-health"
     centerElement: true
     timeout: 30000
-- assertVisible: "^Sleep and workouts$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Sleep and workouts$'
 - takeScreenshot: rel-f198-big-04-beside-sleep-and-workouts
 - back
 - scrollUntilVisible:

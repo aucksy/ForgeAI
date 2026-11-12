@@ -7,6 +7,56 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-460. Sturdier phone tests, "flows to check", and a three-step round that fails fast — 12 Nov 2026
+
+**Asked (main chat, for the owner after 0.77.0's gate rounds):** (1) make every Maestro check on a page that
+scrolls find its target first, through one shared sub-flow, and add a CI lint against new bare checks;
+(2) say why the "update the tests with the change" rule missed r336/f199 and UATF61, and build a tool that
+lists the flows a change touches; (3) three-step testing: the affected parts first, a ~10-minute canary
+in every whole round, the whole round failing fast and cancelling older rounds, re-run only failed
+shards, no shard over ~2 h; (4) run the affected parts in the cloud on both phones.
+
+**Why the rule missed them (finding):**
+- r336 / f199 (2ec8112a pinned "Update now" and "Later" to the bottom of the update screen): the rule is
+  "find the flows that use the words you changed" and it was done by hand. That commit changed NO words,
+  only where the buttons sit, so a word search finds nothing. Its proof run was picked by feature (u438,
+  u401), not by every flow that opens that screen (r336 does). f199 failed because Back left Profile
+  scrolled down; an earlier run happened to land at the top. Nothing in the change named either flow.
+- UATF61 ("Ask an AI" after closing the share menu): no app change at all. A bare check of a page title
+  after Back passes or fails by where the page was left. No rule keyed on changes can catch that; only a
+  rule on how flows are written can.
+
+**Done:**
+- `apps/mobile/qa/sub-see.yaml`: look down, then up, then the same assert; nothing moves when the thing is
+  already in view, so a check that passed before does the same steps. Waits of 15 s or more stay waits
+  (now optional) with the helper after them; short waits and passing messages ("Saving", "Copied") stay
+  as they were; buttons pinned to the screen edge are listed and stay bare.
+- 133 flows rewritten: 1,049 checks, waits and taps now go through the helper (437 of them waits), including the flows added on 12 Nov (gym talk, R-454, R-456, R-458, pictures, R-452 replies). Left
+  alone: the icon-shortcut (UK) flows (another helper), the store/iPhone flows, and the sub-flows the
+  journeys share.
+- `scripts/ci/flow_scroll_lint.py` (ci.yml step "Phone-test scroll lint"): reads which app pages scroll
+  from the app's own code into `apps/mobile/qa/scrollable-screens.yaml` (85 pages scroll) and fails on a
+  new bare check or wait on one of them; 356 older ones are counted in
+  `scripts/ci/flow-scroll-baseline.json`, which may only go down. Bare taps are a warning. `# in-view:` on
+  the line above marks a check that must pass without scrolling.
+- `scripts/ci/flows_to_check.py` (ci.yml step "Phone flows to check", a warning in the run summary on
+  every push): from the changed app files, the flows that use their changed words, any word of the
+  changed screen, their testIDs, their `mettleup://` links, and every flow running a changed sub-flow;
+  prints the parts to run (`only=`). On 2ec8112a it prints `u401,u438,u336`, the flow 0.77.0 lost.
+- Round shape (qa-device.yml, qa_shards.py, run-device-qa.sh): one build, then at the same time
+  0-canary (u444 u401, ~15 min), 0-affected (the parts using what changed since the last green whole run
+  of that phone, up to 12) and six shards: 1 history-routines (~115 min, the longest), 2 gym-backup,
+  3 uat-a, 4 W + the UAT chain itself (uatc), 5 and 6 the UAT u-parts (new u-parts must be added to UAT_SPLIT in scripts/ci/qa_shards.py; its test fails otherwise). Fail-fast: the first red piece
+  cancels the rest, and inside a piece the emulator stops before its next part (QA_FAILFAST, with the
+  device log and crash scan kept). A newer whole run on the same branch and phone cancels the older one.
+  A red round is finished by re-running its failed and cancelled jobs (proven before: 43106098012
+  attempt 2); the report still checks every shard ran its parts AND its extras.
+- Release gate (phone_gate.py, R-375): a phone-test-only change after a whole run is covered only when
+  the partial runs on the release commit ran EVERY flow the changed files reach (one part per flow), not
+  just any part. Tests in scripts/ci/test_phone_gate.py, test_qa_shards.py, test_flow_tools.py.
+- Expected round time: ~2 h 15 min (build ~20 min + the longest shard), was ~4 h 10 min with the UAT
+  chain in one shard; a broken screen most flows pass through is red after ~35 min.
+
 ## R-459. Members message their gym; the gym answers in "Member messages" — 12 Nov 2026
 
 He said: "Do we have an option in the app for user to send queries or feedback for the gym from inside the gym section? And does the admin app has a place for them to know these questions and respond? If not, we gotta build it." (Build after 2:15 pm.)

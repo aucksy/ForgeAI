@@ -35,6 +35,10 @@ appId: com.mettleup.app
     centerElement: true
     timeout: 20000
 - takeScreenshot: p1-plate-off
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Back to the standard set'
 - tapOn: "Back to the standard set"
 - takeScreenshot: p1-standard-again
 - back

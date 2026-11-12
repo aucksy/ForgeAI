@@ -7,15 +7,34 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Profile$|Your watch app has an update"
     timeout: 60000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Profile$|Your watch app has an update'
 - openLink: "mettleup://qa-update?watchtap=opened&watch=forget"
 - extendedWaitUntil:
     visible: "Your watch app has an update"
     timeout: 20000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Your watch app has an update'
 - takeScreenshot: rel-r438-12-offer-other-look
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Update on watch'
 - tapOn: "Update on watch"
 - extendedWaitUntil:
     visible: "Check your watch"
     timeout: 20000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Check your watch'
 - takeScreenshot: rel-r438-13-check-your-watch-other-look
 - tapOn: "^Got it$"
 - openLink: "mettleup://qa-update?watch=off"

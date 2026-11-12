@@ -24,7 +24,15 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Last 7 days"
     timeout: 30000
-- assertVisible: "Sets per muscle group"
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Last 7 days'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Sets per muscle group'
 # A new member's Statistics is one line ("No workouts yet", src/app/stats.tsx) — not this member.
 # (Not checked on the phone for a new member: no part reaches the tabs before part A loads the demo.)
 - assertNotVisible: "No workouts yet"
@@ -40,20 +48,39 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Monthly report"
     timeout: 20000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Monthly report'
 # PG-30: the rule-written note is no longer signed "COACH" while the coach is hidden.
 - extendedWaitUntil:
     visible: "IN SHORT"
     timeout: 20000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'IN SHORT'
 - assertNotVisible: "COACH"
 - takeScreenshot: 41-month-report
 # Audit Phase 3 (PG-22): full numbers use Latin digits and the PHONE's grouping. This emulator is
 # en-US, so a month's volume reads "228,288 kg", never the Indian "2,28,288" the app used to force.
 - assertNotVisible: '(?s).*\d,\d\d,\d\d\d.*'
 # The share button sits in the header, which scrolls away: use it before scrolling.
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Share as a picture'
 - tapOn: "Share as a picture"
 - extendedWaitUntil:
     visible: "Send it to WhatsApp, Instagram or any app."
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Send it to WhatsApp, Instagram or any app.'
 # Owner profile (360 dp, font 1.3): the preview fills the sheet and the button is below it.
 - scrollUntilVisible:
     element: "Share picture"
@@ -66,14 +93,31 @@ appId: com.mettleup.app
     centerElement: true
     timeout: 15000
 - tapOn: "^Story$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^See-through$'
 - tapOn: "^See-through$"
 # 0.72.0 (F146, share/gymBrand.ts shareSheetNote): the see-through note now reads "It has no
 # background, so you can place it on a photo or an Instagram story." then what the picture shows.
 - extendedWaitUntil:
     visible: 'It has no background, so you can place it on a photo or an Instagram story\..*'
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'It has no background, so you can place it on a photo or an Instagram story\..*'
 - takeScreenshot: 44b-share-story-see-through
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Post$'
 - tapOn: "^Post$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Dark$'
 - tapOn: "^Dark$"
 - back
 - scrollUntilVisible:
@@ -120,9 +164,19 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Year in review"
     timeout: 20000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Year in review'
 - extendedWaitUntil:
     visible: "IN SHORT"
     timeout: 20000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'IN SHORT'
 - takeScreenshot: 45-year-review
 - assertNotVisible: '(?s).*\d,\d\d,\d\d\d.*'
 # D10: the year's tile counts lifts ("Lifts up"), and the streak tile is in weeks (D9).
@@ -130,7 +184,10 @@ appId: com.mettleup.app
     element: "Lifts up"
     timeout: 15000
 - assertNotVisible: "New records"
-- assertVisible: "Longest streak"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Longest streak'
 - scrollUntilVisible:
     element: "Most trained"
     timeout: 15000
@@ -148,6 +205,10 @@ appId: com.mettleup.app
     centerElement: true
     timeout: 20000
 - takeScreenshot: 47-statistics-records
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'See all records'
 - tapOn: "See all records"
 - extendedWaitUntil:
     visible: '^Records$'
@@ -201,6 +262,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Edit profile"
     timeout: 20000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Edit profile'
 - scrollUntilVisible:
     element: '^Weeks in a row: [\d,]+$'
     direction: UP
@@ -226,7 +292,15 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Last time · .*"
     timeout: 15000
-- assertVisible: "Treadmill Run"
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Last time · .*'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Treadmill Run'
 - assertNotVisible: "No sets logged yet"
 - takeScreenshot: 40b-any-exercise-trend
 - back
@@ -240,6 +314,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Progress photos"
     timeout: 20000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Progress photos'
 # Owner profile (360 dp, font 1.3): the line under the graph can be below the screen's edge.
 - runFlow:
     file: sub-find.yaml
@@ -272,12 +351,24 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: '765 kg — that.s .*× your last\. Keep it\?'
     timeout: 10000
-- assertVisible: "Fix it"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Fix it'
 - takeScreenshot: 47d-weight-typo-question
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Keep it'
 - tapOn: "Keep it"
 - extendedWaitUntil:
     visible: "Progress photos"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Progress photos'
 - scrollUntilVisible:
     element: '.*, 765 kg\. Fix or delete'
     centerElement: true
@@ -287,7 +378,10 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Fix this weigh-in"
     timeout: 10000
-- assertVisible: "Delete this entry"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Delete this entry'
 - tapOn:
     text: "Body weight in kg"
     below:
@@ -297,6 +391,10 @@ appId: com.mettleup.app
 - takeScreenshot: 47f-weigh-in-sheet
 # The sheet rides above the keyboard, so its Save is on screen (no hideKeyboard: Back would
 # close the sheet).
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Save$'
 - tapOn: "^Save$"
 - extendedWaitUntil:
     notVisible: "Fix this weigh-in"
@@ -361,6 +459,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Progress photos"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Progress photos'
 - scrollUntilVisible:
     element: "^Waist$"
     direction: UP
@@ -384,8 +487,15 @@ appId: com.mettleup.app
     visible: "Fix this waist entry"
     timeout: 10000
 - assertVisible: 'Day: Today\. Change the day'
-- assertVisible: "^Save$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Save$'
 - takeScreenshot: 53b-measurement-entry-sheet
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Delete this entry'
 - tapOn: "Delete this entry"
 - extendedWaitUntil:
     visible: 'Undo: Waist on .* deleted'
@@ -411,14 +521,35 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Add a photo"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Add a photo'
 # D11: photos are not in the backup until the member turns it on (Settings → Backup).
-- assertVisible: 'Private\. They stay on this phone\.'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Private\. They stay on this phone\.'
 - takeScreenshot: 54-photos-empty
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Add a photo'
 - tapOn: "Add a photo"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Choose from gallery'
 - tapOn: "Choose from gallery"
 - extendedWaitUntil:
     visible: '(?i)photos|albums|recent|.*photo.*'
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '(?i)photos|albums|recent|.*photo.*'
 - takeScreenshot: 55-system-photo-picker
 # Android's photo picker: each picture is labelled "Photo taken on <date>"; its thumbnail
 # view id is a second way in if the label differs on this system image.
@@ -439,8 +570,20 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: 'When was this photo taken\?'
     timeout: 20000
-- assertVisible: 'It came without a date of its own.*'
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'When was this photo taken\?'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'It came without a date of its own.*'
 - takeScreenshot: 55b-photo-undated-question
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Previous month'
 - tapOn: "Previous month"
 - tapOn: '\d{4}-\d{2}-01'
 - extendedWaitUntil:
@@ -449,11 +592,24 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: 'Progress photo, .*'
     timeout: 20000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Add a photo'
 - tapOn: "Add a photo"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Choose from gallery'
 - tapOn: "Choose from gallery"
 - extendedWaitUntil:
     visible: '(?i)photos|albums|recent|.*photo.*'
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '(?i)photos|albums|recent|.*photo.*'
 - tapOn:
     text: '(?i)photo taken on.*'
     index: 1
@@ -469,6 +625,15 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: 'When was this photo taken\?'
     timeout: 20000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'When was this photo taken\?'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Previous month'
 - tapOn: "Previous month"
 - tapOn: '\d{4}-\d{2}-15'
 - extendedWaitUntil:
@@ -477,6 +642,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Compare two photos"
     timeout: 20000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Compare two photos'
 - takeScreenshot: 56-photos-grid
 # The viewer: zoom, "Save to phone gallery", "Change date", "Delete photo" (PG-16/17/18).
 - tapOn:
@@ -485,11 +655,21 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Delete photo"
     timeout: 10000
-- assertVisible: "Save to phone gallery"
-- assertVisible: "Change date"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Save to phone gallery'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Change date'
 - takeScreenshot: 57-photo-viewer
 # Change date: the photo's own month opens; the 8th is a week from either sample's day (the
 # 1st and the 15th), so the compare below must read "1 week apart" whichever photo this is.
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Change date'
 - tapOn: "Change date"
 - extendedWaitUntil:
     visible: "Photo date"
@@ -502,6 +682,10 @@ appId: com.mettleup.app
 - takeScreenshot: 57b-photo-date-changed
 # Save to phone gallery hands the photo to Android's share list (the app has no gallery
 # module). Assert text only the SYSTEM chooser shows, as part E does; Back closes it.
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Save to phone gallery'
 - tapOn: "Save to phone gallery"
 - extendedWaitUntil:
     visible: '(Sharing image|Sharing 1 image|No recommended people to share with)'
@@ -511,6 +695,10 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Close photo"
     timeout: 10000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Close photo'
 - tapOn: "Close photo"
 - extendedWaitUntil:
     visible: "Compare two photos"
@@ -519,6 +707,10 @@ appId: com.mettleup.app
 - assertNotVisible: "Couldn.t hand the photo over.*"
 # PG-18: compare shows each photo WHOLE (sample 1 is tall 600x800, sample 2 wide 800x600 with
 # orange side bands that a cropped view would cut off — look for both bands in 58).
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Compare two photos'
 - tapOn: "Compare two photos"
 - tapOn:
     text: 'Progress photo, .*'
@@ -529,9 +721,20 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Before"
     timeout: 15000
-- assertVisible: "After"
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Before'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'After'
 - assertVisible: "1 week apart"
-- assertVisible: "Tap a photo to open it and pinch to zoom."
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Tap a photo to open it and pinch to zoom.'
 - takeScreenshot: 58-photo-compare
 - tapOn: 'Before, .*\. Open to zoom'
 - extendedWaitUntil:
@@ -540,12 +743,20 @@ appId: com.mettleup.app
 - takeScreenshot: 58b-compare-before-full
 - doubleTapOn: "Before photo"
 - takeScreenshot: 58c-compare-before-zoomed
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Close photo'
 - tapOn: "Close photo"
 - tapOn: 'After, .*\. Open to zoom'
 - extendedWaitUntil:
     visible: 'After · .*'
     timeout: 10000
 - takeScreenshot: 58d-compare-after-full
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Close photo'
 - tapOn: "Close photo"
 - back
 - back

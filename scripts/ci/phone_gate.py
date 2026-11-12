@@ -174,6 +174,36 @@ def green_partials(sha, kind):
             and partial_kind(r.get("display_title")) == kind]
 
 
+def partial_parts(title):
+    """PURE. The parts a partial qa-device.yml run ran, from its name ("Device QA (partial u401,u438, api 34,
+    profile owner)" -> {"u401", "u438"}). Empty when the name says none."""
+    m = re.search(r"\(partial (.*?), api \d+", title or "")
+    return set(m.group(1).replace(",", " ").split()) if m else set()
+
+
+def parts_needed(paper):
+    """flow -> the parts that run it, for every flow a changed phone-test file reaches (the file itself and
+    every flow that runs it as a sub-flow; scripts/ci/flows_to_check.py). None = could not tell; then the
+    R-375 rule as the owner approved it applies (any passing partial run on the release commit)."""
+    try:
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        import flows_to_check as ftc
+        reached = ftc.flows_reached(list(paper))
+        pmap = ftc.part_map()
+    except Exception as e:  # noqa: BLE001 said in the log; the approved R-375 rule still holds
+        say(f"could not map the changed phone-test files to parts ({e}); any passing partial run counts")
+        return None
+    return {f: pmap[f] for f in reached if f in pmap}
+
+
+def unproven(need, partials):
+    """PURE. The changed flows that no passing partial run ran (none of the parts that run it), sorted."""
+    ran = set()
+    for r in partials:
+        ran |= partial_parts(r.get("display_title"))
+    return sorted(f for f, ps in need.items() if not (ps & ran))
+
+
 def is_qa_flow_path(name):
     """The phone test's own files (Maestro flows, its scripts and sample data). Never built into the APK."""
     return name.startswith(QA_DIR)
@@ -359,6 +389,17 @@ def cover(sha, kind):
                 say(f"journeys: only phone-test files the journeys never use changed after {cur[:12]}")
                 return cur, r
             parts = green_partials(sha, kind)
+            # 12 Nov 2026: the partial runs must have run EVERY flow the changed files reach (one part per
+            # flow is enough), not just any part: 0.77.0's r336 broke while the partial ran u438 / u401.
+            need = parts_needed(paper) if parts else None
+            left = unproven(need, parts) if need else []
+            if left:
+                PARTIAL_NEEDED[kind] = (f"phone-test files changed after the whole run on {cur[:12]} ({', '.join(paper[:5])}), "
+                                        f"and no passing partial run on {sha[:12]} ran {', '.join(left[:5])}: run "
+                                        f"'{QA_WORKFLOW}' on {sha[:12]} with `only` = "
+                                        + ",".join(sorted({min(need[f]) for f in left})) + f", `profile` = {kind}")
+                say(f"{kind}: the partial runs on this commit did not run {len(left)} changed flow(s): {', '.join(left[:8])}")
+                return None
             if parts:
                 p = parts[0]
                 say(f"{kind}: phone-test files changed after {cur[:12]} ({', '.join(paper[:5])}); the partial run "

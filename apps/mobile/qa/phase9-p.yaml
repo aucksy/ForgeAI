@@ -35,6 +35,10 @@ appId: com.mettleup.app
 - repeat:
     times: 7
     commands:
+      - runFlow:
+          file: sub-see.yaml
+          env:
+            FIND: 'Fewer workouts a week'
       - tapOn: "Fewer workouts a week"
 - assertVisible:
     text: "^Off$"
@@ -43,12 +47,19 @@ appId: com.mettleup.app
 - repeat:
     times: 3
     commands:
+      - runFlow:
+          file: sub-see.yaml
+          env:
+            FIND: 'More workouts a week'
       - tapOn: "More workouts a week"
 - assertVisible:
     text: "^3$"
     below:
       text: "(?i)^weekly goal$"
-- assertVisible: "Workouts a week. The Workout tab shows how many are left."
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Workouts a week. The Workout tab shows how many are left.'
 - takeScreenshot: p9-01-weekly-goal
 # 13 Oct 2026: "Previous values" (Any workout / Same routine), Release A: Settings → "Last time's
 # numbers", its own page. R-61 (22 Oct 2026): "Same folder" is retired.
@@ -60,8 +71,15 @@ appId: com.mettleup.app
 - scrollUntilVisible:
     element: "^Same routine$"
     timeout: 30000
-- assertVisible: "^Any workout$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Any workout$'
 - assertNotVisible: "^Same folder$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Any workout$'
 - tapOn: "^Any workout$"
 - scrollUntilVisible:
     # C3-3 + R-61: heavy and light days of one folder keep their own Target; a newer workout elsewhere leads.
@@ -87,6 +105,10 @@ appId: com.mettleup.app
 - takeScreenshot: p9-02-workout-goal
 # ---------------------------------------------------------------- 2. the entry bar
 - runFlow: sub-workout-fresh.yaml
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Start empty workout'
 - tapOn: "Start empty workout"
 - tapOn:
     text: "(?i)^allow$"
@@ -95,6 +117,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Add exercise"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Add exercise'
 - tapOn: "Add exercise"
 - extendedWaitUntil:
     visible: "Search exercises"
@@ -133,6 +160,10 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^(102\\.5|105)$"
     timeout: 5000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Copy to sets below'
 - tapOn: "Copy to sets below"
 # The bench starts with as many sets as last time. After part I (one set in lb, plus the one
 # added above) it has 2, so 1 set below. Run 38870025551 (owner profile) had part I fail before its
@@ -201,6 +232,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Workout complete"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Workout complete'
 - tapOn:
     text: "Keep original"
     optional: true
@@ -210,6 +246,10 @@ appId: com.mettleup.app
     centerElement: true
     timeout: 20000
 - takeScreenshot: p9-06-finish
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Share as text'
 - tapOn: "Share as text"
 # Android's share menu (only the SYSTEM chooser has these).
 - extendedWaitUntil:
@@ -254,11 +294,19 @@ appId: com.mettleup.app
     centerElement: true
     timeout: 20000
 - tapOn: "Options for .*"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Start records fresh.*'
 - tapOn: "Start records fresh.*"
 - extendedWaitUntil:
     visible: 'Start records fresh\?'
     timeout: 10000
 - takeScreenshot: p9-08-records-fresh-ask
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Start fresh$'
 - tapOn: "^Start fresh$"
 - scrollUntilVisible:
     element: "(Records since|No records since) .*"
@@ -271,10 +319,18 @@ appId: com.mettleup.app
     centerElement: true
     timeout: 20000
 - tapOn: "Options for .*"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Count all records again'
 - tapOn: "Count all records again"
 - extendedWaitUntil:
     visible: 'Count all records again\?'
     timeout: 10000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Count all again$'
 - tapOn: "^Count all again$"
 - extendedWaitUntil:
     notVisible: "(Records since|No records since) .*"
@@ -296,6 +352,10 @@ appId: com.mettleup.app
 - repeat:
     times: 7
     commands:
+      - runFlow:
+          file: sub-see.yaml
+          env:
+            FIND: 'Fewer workouts a week'
       - tapOn: "Fewer workouts a week"
 - assertVisible:
     text: "^Off$"

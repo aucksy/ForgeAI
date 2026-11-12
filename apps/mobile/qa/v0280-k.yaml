@@ -6,6 +6,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: '(?i).*(downloads|recent|files|qa-hevy).*'
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '(?i).*(downloads|recent|files|qa-hevy).*'
 - runFlow:
     when:
       notVisible: "qa-hevy.*"
@@ -23,11 +28,25 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "MettleUp"
     timeout: 20000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'MettleUp'
 - takeScreenshot: 159b-share-menu
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'MettleUp'
 - tapOn: "MettleUp"
 - extendedWaitUntil:
     visible: "Already in MettleUp"
     timeout: 60000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Already in MettleUp'
 - assertVisible: "qa-hevy.csv"
 # Audit Phase 4 (IM-09): part J imported this file already, so the preview says so first and
 # offers no "Merge 12 workouts" that would add 0.

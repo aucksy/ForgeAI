@@ -5,9 +5,21 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "We couldn.t find this gym"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'We couldn.t find this gym'
 - assertVisible: 'No gym has the code ZZZZZ9, so scan the poster at your gym or type your gym''s code again\.'
-- assertVisible: "^Scan the poster$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Scan the poster$'
 - takeScreenshot: inv-06-unknown-code
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Type a gym code$'
 - tapOn: "^Type a gym code$"
 # Release A: the Gym tab's "Join your gym" screen with its code box.
 - extendedWaitUntil:
@@ -16,5 +28,8 @@ appId: com.mettleup.app
 - scrollUntilVisible:
     element: "Gym code"
     timeout: 20000
-- assertVisible: "^Join your gym$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Join your gym$'
 - takeScreenshot: inv-06b-type-a-code

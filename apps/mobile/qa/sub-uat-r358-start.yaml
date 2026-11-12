@@ -14,6 +14,10 @@ appId: com.mettleup.app
           timeout: 15000
       - tapOn: "^Done$"
 - runFlow: sub-workout-fresh.yaml
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Start empty workout'
 - tapOn: "Start empty workout"
 - tapOn:
     text: "(?i)^allow$"
@@ -22,6 +26,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Add exercise"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Add exercise'
 - tapOn: "Add exercise"
 - extendedWaitUntil:
     visible: "Search exercises"
@@ -42,6 +51,10 @@ appId: com.mettleup.app
       - tapOn:
           text: "More for Dumbbell Preacher Curl.*"
           index: 0
+      - runFlow:
+          file: sub-see.yaml
+          env:
+            FIND: 'Counting'
       - tapOn: "Counting"
       - extendedWaitUntil:
           visible: ".*Past workouts keep theirs.*"

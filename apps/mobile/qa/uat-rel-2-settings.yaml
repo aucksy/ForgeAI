@@ -13,9 +13,18 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^How the app picks your next weight$"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^How the app picks your next weight$'
 - assertNotVisible: "^When I'm stuck at a weight$"
 - assertNotVisible: "^Ask me$"
 - takeScreenshot: rel-10-more-workout-choices
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^How the app picks your next weight$'
 - tapOn: "^How the app picks your next weight$"
 - extendedWaitUntil:
     visible: '^Weight step, Standard\. Change$'

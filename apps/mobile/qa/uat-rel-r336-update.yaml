@@ -17,8 +17,16 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "A new MettleUp is here"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'A new MettleUp is here'
 - assertVisible: "(?i)version 0\\.\\d+\\.0 is ready"
-- assertVisible: "Tap \"Update now\" to download the file, then open it to install\\. Your workouts stay safe\\."
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Tap "Update now" to download the file, then open it to install\. Your workouts stay safe\.'
 - assertVisible: "1\\. See which muscles are ready to train today\\."
 # Pinned buttons (0.77.0): the last row can sit below the fold on the owner phone.
 - runFlow:
@@ -32,7 +40,10 @@ appId: com.mettleup.app
     file: sub-find.yaml
     env:
       FIND: "^Later$"
-- assertVisible: "Test build: a made-up update\\."
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Test build: a made-up update\.'
 - takeScreenshot: rel-r336-02-full-screen-bottom
 # ---------------------------------------------------------------- 2. Later -> the orange line on the Workout tab
 - tapOn: "^Later$"
@@ -47,6 +58,10 @@ appId: com.mettleup.app
 - takeScreenshot: rel-r336-03-workout-line
 # R-412 (owner, 9 Nov 2026): "What's new" right after the words opens this version's lines inside the line.
 - assertNotVisible: "1\\. See which muscles are ready to train today\\."
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^What''s new$'
 - tapOn: "^What's new$"
 - extendedWaitUntil:
     visible: "1\\. See which muscles are ready to train today\\."
@@ -56,17 +71,29 @@ appId: com.mettleup.app
 - assertVisible: "A new version of MettleUp is ready\\. Update"
 - assertNotVisible: "Downloading.*"
 - takeScreenshot: rel-r412-01-line-whats-new-open
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Hide what''s new$'
 - tapOn: "^Hide what's new$"
 - extendedWaitUntil:
     notVisible: "1\\. See which muscles are ready to train today\\."
     timeout: 5000
-- assertVisible: "^What's new$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^What''s new$'
 - takeScreenshot: rel-r412-02-line-whats-new-closed
 # ---------------------------------------------------------------- 3. three versions behind: rows + earlier line
 - openLink: "mettleup://qa-update?behind=3"
 - extendedWaitUntil:
     visible: "A new MettleUp is here"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'A new MettleUp is here'
 - assertVisible: "(?i)you are 3 versions behind"
 # 0.77.0: the buttons are pinned at the bottom and only the words scroll; on the large-text owner phone the
 # rows and the earlier-updates line can sit below the fold (round 4, run 43062165154): find them.
@@ -88,6 +115,10 @@ appId: com.mettleup.app
 - takeScreenshot: rel-r336-05-after-back
 # ---------------------------------------------------------------- 5. negative (R-364): never during a workout
 - runFlow: sub-workout-fresh.yaml
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Start empty workout'
 - tapOn: "Start empty workout"
 - tapOn:
     text: "(?i)^allow$"
@@ -96,6 +127,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Add exercise"
     timeout: 20000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Add exercise'
 - openLink: "mettleup://qa-update?behind=2"
 - extendedWaitUntil:
     visible: "A new MettleUp is here"
@@ -111,6 +147,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "A new MettleUp is here"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'A new MettleUp is here'
 - assertVisible: "(?i)you are 2 versions behind"
 - takeScreenshot: rel-r336-08-after-workout-next-launch
 - runFlow:
@@ -142,6 +183,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "A new MettleUp is here"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'A new MettleUp is here'
 - stopApp
 - launchApp
 - extendedWaitUntil:

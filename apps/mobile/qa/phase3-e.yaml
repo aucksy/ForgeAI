@@ -13,6 +13,10 @@ appId: com.mettleup.app
 # No workout left open by an earlier part (run 38144864717: one failed part's open workout made
 # the next three fail).
 - runFlow: sub-workout-fresh.yaml
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Start empty workout'
 - tapOn: "Start empty workout"
 - tapOn:
     text: "(?i)^allow$"
@@ -21,6 +25,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Add exercise"
     timeout: 20000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Add exercise'
 - tapOn: "Add exercise"
 - tapOn: "Search exercises"
 - inputText: " pull-up"
@@ -68,11 +77,20 @@ appId: com.mettleup.app
       - extendedWaitUntil:
           visible: "Workout complete"
           timeout: 30000
+          optional: true
+      - runFlow:
+          file: sub-see.yaml
+          env:
+            FIND: 'Workout complete'
       - scrollUntilVisible:
           element: "Done"
           timeout: 20000
       - tapOn: "Done"
       - runFlow: sub-workout-fresh.yaml
+      - runFlow:
+          file: sub-see.yaml
+          env:
+            FIND: 'Start empty workout'
       - tapOn: "Start empty workout"
       - tapOn:
           text: "(?i)^allow$"
@@ -81,6 +99,11 @@ appId: com.mettleup.app
       - extendedWaitUntil:
           visible: "Add exercise"
           timeout: 20000
+          optional: true
+      - runFlow:
+          file: sub-see.yaml
+          env:
+            FIND: 'Add exercise'
       - tapOn: "Add exercise"
       - tapOn: "Search exercises"
       - inputText: " pull-up"
@@ -134,11 +157,21 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Workout complete"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Workout complete'
 # Audit Phase 3 (D10): the finish line counts LIFTS that beat a best — one lift here (pull-ups),
 # whatever kinds of record it set ("… · 1 lift beat its best").
 - extendedWaitUntil:
     visible: '.* · 1 lift beat its best'
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '.* · 1 lift beat its best'
 # LW-10 / PG-04: a workout without a routine is named by when it started ("Afternoon workout
 # done"); the share picture below carries the same name as its title — never "Full Body".
 - assertVisible: '(Morning|Afternoon|Evening|Night) workout done'
@@ -161,12 +194,21 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Send it to WhatsApp, Instagram or any app."
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Send it to WhatsApp, Instagram or any app.'
 # Owner profile (360 dp, font 1.3): the preview fills the sheet and the button is below it.
 - scrollUntilVisible:
     element: "Share picture"
     centerElement: true
     timeout: 15000
 - takeScreenshot: 62-workout-share-picture
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Share picture'
 - tapOn: "Share picture"
 # Android's share menu (the chooser) lists the apps that can take a picture. Assert text only the
 # SYSTEM chooser shows: ForgeAI's own sheet says "Share picture", which an old loose regex matched.
@@ -202,6 +244,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Summary$"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Summary$'
 # Audit Phase 4 (EX-07): the Summary leads with the member's own answer — "Last time · Today" and
 # "Best · <kind>", in the way the exercise is logged.
 # Owner profile (360 dp, font 1.3): each line scrolled to before it is checked.
@@ -235,6 +282,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Summary$"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Summary$'
 - runFlow:
     file: sub-find.yaml
     env:
@@ -259,6 +311,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: '.*Open the workout'
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '.*Open the workout'
 - assertNotVisible: 'Showing the last .*'
 - takeScreenshot: 66b-bench-history-tab
 # ---------------------------------------------------------------- the coach is hidden

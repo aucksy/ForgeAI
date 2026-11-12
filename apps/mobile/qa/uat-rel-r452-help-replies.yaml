@@ -18,6 +18,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Send feedback about this screen$"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Send feedback about this screen$'
 # ---------------------------------------------------------------- negative: no reply, no dot
 - assertNotVisible: ".*new repl(y|ies) from the MettleUp team.*"
 - takeScreenshot: rel-r452-00-no-dot
@@ -32,8 +37,16 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^The MettleUp team answered you$"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^The MettleUp team answered you$'
 - assertNotVisible: "^Type here, or tap Speak$"
-- assertVisible: "^QA check: can I pause my plan for a month\\?$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^QA check: can I pause my plan for a month\?$'
 - assertVisible:
     text: ".*Quick answer.*"
     below: "^QA check: can I pause my plan for a month\\?$"
@@ -50,12 +63,20 @@ appId: com.mettleup.app
 # Both replies are marked New while the sheet shows them (the screen reader hears it in the reply's label).
 - assertVisible: "^Reply from the MettleUp team, New, .*QA reply 2: a correction.*"
 - takeScreenshot: rel-r452-03-sheet-replies-in-order
-- assertVisible: "^Ask something new$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Ask something new$'
 # ---------------------------------------------------------------- read: the dot goes
 - back
 - extendedWaitUntil:
     visible: "^Send feedback about this screen$"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Send feedback about this screen$'
 - assertNotVisible: ".*new repl(y|ies) from the MettleUp team.*"
 - takeScreenshot: rel-r452-04-dot-gone
 # ---------------------------------------------------------------- interruption: killed and opened
@@ -71,6 +92,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Send feedback about this screen$"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Send feedback about this screen$'
 - assertNotVisible: ".*new repl(y|ies) from the MettleUp team.*"
 # ---------------------------------------------------------------- the same conversation in Settings
 - runFlow:
@@ -80,6 +106,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Send$"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Send$'
 - runFlow:
     file: sub-find.yaml
     env:
@@ -99,6 +130,7 @@ appId: com.mettleup.app
     env:
       FIND: "Show the feedback button on every screen"
 - tapOn: "Show the feedback button on every screen"
+# in-view: the switch just tapped (sub-find centred it)
 - assertVisible:
     text: "Show the feedback button on every screen"
     checked: false
@@ -121,6 +153,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^The MettleUp team answered you$"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^The MettleUp team answered you$'
 - back
 # Read: hidden again, as the member chose.
 - extendedWaitUntil:
@@ -137,6 +174,7 @@ appId: com.mettleup.app
     env:
       FIND: "Show the feedback button on every screen"
 - tapOn: "Show the feedback button on every screen"
+# in-view: the switch just tapped (sub-find centred it)
 - assertVisible:
     text: "Show the feedback button on every screen"
     checked: true

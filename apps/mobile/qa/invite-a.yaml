@@ -7,10 +7,20 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Gym code ${TCODE}"
     timeout: 30000
-- assertVisible: "^Join your gym$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Join your gym$'
 # R-77: the intro no longer talks about ordering (the shop shows only when the gym has one).
-- assertVisible: 'Join to see your membership and your gym''s messages here\. Your workouts stay on this phone\.'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Join to see your membership and your gym''s messages here\. Your workouts stay on this phone\.'
 - takeScreenshot: inv-01-join-screen
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Your name'
 - tapOn: "Your name"
 - eraseText: 70
 - inputText: "QA Member"
@@ -39,4 +49,9 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Pay at the desk"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Pay at the desk'
 - takeScreenshot: inv-02b-joined-shop

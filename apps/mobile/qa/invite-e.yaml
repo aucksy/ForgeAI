@@ -8,6 +8,10 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Gym code .*"
     timeout: 30000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Your name'
 - tapOn: "Your name"
 - eraseText: 70
 - inputText: "QA Member"
@@ -39,21 +43,38 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "QA: gym closed on Sunday"
     timeout: 20000
-- assertVisible: "Gym closed"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Gym closed'
 - takeScreenshot: inv-08-inbox
 - back
 - extendedWaitUntil:
     visible: "^Messages from your gym$"
     timeout: 20000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Messages from your gym$'
 - assertNotVisible: "Messages from your gym, 1 new"
 # Release A (A4): Leave is in Settings → Your gym only.
 - runFlow: sub-leave-gym.yaml
 - extendedWaitUntil:
     visible: 'Leave QA Inbox Gym\?'
     timeout: 15000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Leave gym$'
 - tapOn: "^Leave gym$"
 # Release A: in no gym, Settings offers "Join your gym" and the Gym tab is its join screen.
 - extendedWaitUntil:
     visible: "^Join your gym$"
     timeout: 20000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Join your gym$'
 - runFlow: sub-gym-none.yaml

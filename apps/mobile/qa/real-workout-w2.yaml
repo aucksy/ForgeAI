@@ -27,7 +27,10 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Log a set to finish|Finish workout"
     timeout: 30000
-- assertVisible: "WORKOUT DURATION"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'WORKOUT DURATION'
 - assertNotVisible: "ELAPSED"
 - takeScreenshot: w-20-workout-open
 # The set table's header carries RPE (Track RPE on), at this width too.
@@ -55,7 +58,15 @@ appId: com.mettleup.app
 - tapOn:
     text: "More for .*Bench Press.*"
     index: 0
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Rest timer'
 - tapOn: "Rest timer"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Rest 0:30'
 - tapOn: "Rest 0:30"
 - extendedWaitUntil:
     notVisible: 'For .*Remembered for next time\.'

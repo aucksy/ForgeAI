@@ -23,6 +23,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Edit profile"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Edit profile'
 - scrollUntilVisible:
     element: '^Workouts: [\d,]+$'
     direction: UP
@@ -40,12 +45,26 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Log a past workout"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Log a past workout'
 - tapOn: "Log a past workout"
 - extendedWaitUntil:
     visible: "Pick the day, when it started and how long it lasted."
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Pick the day, when it started and how long it lasted.'
 # Last month's first Sunday: the demo rests on Sundays (src/db/seed/history.ts; only YESTERDAY can
 # be a Sunday make-up), so the day is empty and the workout logged is the day's only one.
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Previous month'
 - tapOn: "Previous month"
 - tapOn:
     text: '^Sun, \d{1,2} [A-Z][a-z]{2}( \d{4})?$'
@@ -90,11 +109,19 @@ appId: com.mettleup.app
             - extendedWaitUntil:
                 visible: "Remove set"
                 timeout: 10000
+            - runFlow:
+                file: sub-see.yaml
+                env:
+                  FIND: 'Remove set'
             - tapOn: "Remove set"
 - runFlow:
     when:
       notVisible: 'Barbell Bench Press set 2(, RPE [\d.]+)?\. Change set type'
     commands:
+      - runFlow:
+          file: sub-see.yaml
+          env:
+            FIND: '^Add set$'
       - tapOn: "^Add set$"
 - runFlow:
     file: sub-type.yaml
@@ -166,6 +193,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Log a past workout"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Log a past workout'
 - runFlow:
     file: sub-find.yaml
     env:
@@ -186,6 +218,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Edit profile"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Edit profile'
 - scrollUntilVisible:
     element: "^Workouts: ${output.n0 + 1}$"
     direction: UP
@@ -198,6 +235,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Log a past workout"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Log a past workout'
 - runFlow:
     file: sub-find.yaml
     env:
@@ -206,10 +248,18 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: '${output.pageDate} 20\d\d · 18:00.*'
     timeout: 20000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'More'
 - tapOn: "More"
 - extendedWaitUntil:
     visible: "Edit workout"
     timeout: 10000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Edit workout'
 - tapOn: "Edit workout"
 - extendedWaitUntil:
     visible: "Editing a saved workout"
@@ -285,6 +335,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Log a past workout"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Log a past workout'
 - runFlow:
     file: sub-find.yaml
     env:
@@ -320,18 +375,34 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Delete workout"
     timeout: 10000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Delete workout'
 - tapOn: "Delete workout"
 - extendedWaitUntil:
     visible: 'Delete this workout\?'
     timeout: 10000
-- assertVisible: "This removes the workout and its sets."
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'This removes the workout and its sets.'
 - takeScreenshot: uh-08-delete-question
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Delete$'
 - tapOn: "^Delete$"
 # Back on Calendar, where it was (the day's month on screen; "Log a past workout" is above the edge):
 # the day has no workout any more, its month one fewer.
 - extendedWaitUntil:
     visible: "Search workouts"
     timeout: 20000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Search workouts'
 - extendedWaitUntil:
     notVisible: 'Delete this workout\?'
     timeout: 10000
@@ -346,6 +417,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Edit profile"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Edit profile'
 - scrollUntilVisible:
     element: "^Workouts: ${output.n0}$"
     direction: UP

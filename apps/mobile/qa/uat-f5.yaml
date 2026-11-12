@@ -10,6 +10,10 @@ appId: com.mettleup.app
     when:
       visible: "^Resume workout$"
     commands:
+      - runFlow:
+          file: sub-see.yaml
+          env:
+            FIND: '^Resume workout$'
       - tapOn: "^Resume workout$"
       - extendedWaitUntil:
           visible: "Minimise workout. It keeps running."
@@ -38,6 +42,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Workout complete$"
     timeout: 60000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Workout complete$'
 - waitForAnimationToEnd:
     timeout: 3000
 - tapOn:
@@ -63,6 +72,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Edit profile"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Edit profile'
 - scrollUntilVisible:
     element: "^Workouts: ${WANT}$"
     direction: UP
@@ -76,6 +90,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Log a past workout"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Log a past workout'
 - runFlow:
     file: sub-find.yaml
     env:
@@ -84,6 +103,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^More$"
     timeout: 20000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^More$'
 - runFlow:
     file: sub-find.yaml
     env:

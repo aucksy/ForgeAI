@@ -25,6 +25,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Skip$|Get stronger every week|Load demo data instead"
     timeout: 90000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Skip$|Get stronger every week|Load demo data instead'
 - tapOn:
     text: "^Skip$"
     optional: true
@@ -39,11 +44,21 @@ appId: com.mettleup.app
 - assertVisible:
     text: "I'm 18 or older, and I agree to MettleUp's terms and privacy notice"
     checked: false
-- assertVisible: "^Terms$"
-- assertVisible: "^Privacy notice$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Terms$'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Privacy notice$'
 - assertNotVisible: "Please tick the box above.*"
 - takeScreenshot: rel-d7-1-welcome-box
 # ---------------------------------------------------------------- 2. Continue without the tick
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Continue with Google$'
 - tapOn: "^Continue with Google$"
 - extendedWaitUntil:
     visible: "^Please tick the box above\\. You need to be 18 or older and agree to the terms and privacy notice\\.$"
@@ -52,20 +67,36 @@ appId: com.mettleup.app
 - assertNotVisible: "Signing in…"
 - takeScreenshot: rel-d7-2-welcome-not-ticked
 # ---------------------------------------------------------------- 3. tick, untick, tick
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'I''m 18 or older.*'
 - tapOn: "I'm 18 or older.*"
 - assertVisible:
     text: "I'm 18 or older.*"
     checked: true
 - assertNotVisible: "Please tick the box above.*"
 - takeScreenshot: rel-d7-3-welcome-ticked
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'I''m 18 or older.*'
 - tapOn: "I'm 18 or older.*"
 - assertVisible:
     text: "I'm 18 or older.*"
     checked: false
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Continue with Google$'
 - tapOn: "^Continue with Google$"
 - extendedWaitUntil:
     visible: "^Please tick the box above\\. You need to be 18 or older and agree to the terms and privacy notice\\.$"
     timeout: 10000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'I''m 18 or older.*'
 - tapOn: "I'm 18 or older.*"
 - assertVisible:
     text: "I'm 18 or older.*"
@@ -81,6 +112,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Skip$|Get stronger every week|Load demo data instead"
     timeout: 90000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Skip$|Get stronger every week|Load demo data instead'
 - tapOn:
     text: "^Skip$"
     optional: true
@@ -113,6 +149,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Keep your workouts on MettleUp$"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Keep your workouts on MettleUp$'
 - scrollUntilVisible:
     element: "^Continue with Google$"
     centerElement: true
@@ -121,13 +162,20 @@ appId: com.mettleup.app
     text: "I'm 18 or older, and I agree to MettleUp's terms and privacy notice"
     checked: false
 - assertNotVisible: "Please tick the box above.*"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Continue with Google$'
 - tapOn: "^Continue with Google$"
 - extendedWaitUntil:
     visible: "^Please tick the box above\\. You need to be 18 or older and agree to the terms and privacy notice\\.$"
     timeout: 10000
 # Google's sign-in did not open: still on the page, the button right above the line (the card's title is
 # scrolled off the top on his phone, run 42992878027).
-- assertVisible: "^Continue with Google$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Continue with Google$'
 - takeScreenshot: rel-d7-5-settings-not-ticked
 # 5b. "Find my Drive backup" opens Google's sign-in too (0.77.0 review): the same box, and no sign-in without it.
 - runFlow:
@@ -138,15 +186,27 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Find my Drive backup$"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Find my Drive backup$'
 - assertVisible:
     text: "I'm 18 or older, and I agree to MettleUp's terms and privacy notice"
     checked: false
 - assertNotVisible: "Please tick the box above.*"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Find my Drive backup$'
 - tapOn: "^Find my Drive backup$"
 - extendedWaitUntil:
     visible: "^Please tick the box above\\. You need to be 18 or older and agree to the terms and privacy notice\\.$"
     timeout: 10000
-- assertVisible: "^Find my Drive backup$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Find my Drive backup$'
 - assertNotVisible: "Working…"
 - takeScreenshot: rel-d7-5b-drive-not-ticked
 - back
@@ -158,6 +218,10 @@ appId: com.mettleup.app
     direction: UP
     centerElement: true
     timeout: 20000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'I''m 18 or older.*'
 - tapOn: "I'm 18 or older.*"
 - assertVisible:
     text: "I'm 18 or older.*"
@@ -172,6 +236,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Keep your workouts on MettleUp$"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Keep your workouts on MettleUp$'
 - scrollUntilVisible:
     element: "^Continue with Google$"
     centerElement: true
@@ -187,6 +256,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Find my Drive backup$"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Find my Drive backup$'
 - assertNotVisible: "I'm 18 or older.*"
 - takeScreenshot: rel-d7-8-drive-remembered
 - back

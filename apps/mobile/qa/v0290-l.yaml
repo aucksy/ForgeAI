@@ -34,10 +34,20 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Choose Hevy file"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Choose Hevy file'
 - tapOn: "Choose Hevy file"
 - extendedWaitUntil:
     visible: '(?i).*(recent|downloads|files|qa-jaipur).*'
     timeout: 20000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '(?i).*(recent|downloads|files|qa-jaipur).*'
 - runFlow:
     when:
       notVisible: "qa-jaipur.*"
@@ -52,6 +62,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Date range$"
     timeout: 20000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Date range$'
 - assertVisible: "Sep 2026 → Oct 2026"
 - scrollUntilVisible:
     element: "Import 12 workouts"
@@ -62,6 +77,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "12 workouts imported"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '12 workouts imported'
 # Two uses of each name are not "routines" yet (that takes 3): no routine steps offered here.
 - scrollUntilVisible:
     element: "^(Done|Not now)$"
@@ -80,6 +100,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Choose Hevy file"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Choose Hevy file'
 - scrollUntilVisible:
     element: "^Paste a Hevy link$"
     centerElement: true
@@ -88,17 +113,33 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Copy your routines from Hevy"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Copy your routines from Hevy'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Hevy share link'
 - tapOn: "Hevy share link"
 - inputText: "https://hevy.com/folder/177335"
 - hideKeyboard
 - takeScreenshot: 170-import-routines-link
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Read link'
 - tapOn: "Read link"
 - takeScreenshot: 171-reading-link
 # ---------------------------------------------------------------- 1. found
 - extendedWaitUntil:
     visible: "We found 6 routines in .Jaipur."
     timeout: 60000
-- assertVisible: "Push 1"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Push 1'
 - takeScreenshot: 172-link-routines-found
 # ---------------------------------------------------------------- 2. checking is optional
 # Audit Phase 4: a link comes over exactly as saved, so the list goes straight on with one Next;
@@ -107,12 +148,22 @@ appId: com.mettleup.app
     element: "Check each one"
     centerElement: true
     timeout: 15000
-- assertVisible: "^Next$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Next$'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Check each one'
 - tapOn: "Check each one"
 - extendedWaitUntil:
     visible: "1 of 6"
     timeout: 10000
-- assertVisible: "As saved in Hevy.*"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'As saved in Hevy.*'
 # R-335 (98ff8e0e): the check screen names the library's name too ("Chin Up → Chin-Up").
 - assertVisible: "Chin Up → Chin-Up"
 - assertVisible: "3 sets · 9–12 reps"
@@ -151,7 +202,15 @@ appId: com.mettleup.app
 - assertVisible: "Decline Leg Raise \\(Gurgaon\\)"
 - assertVisible: "Same as MettleUp.s .*\\?"
 - takeScreenshot: 174b-link-new-exercise
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Keep as new'
 - tapOn: "Keep as new"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Next$'
 - tapOn: "^Next$"
 # ---------------------------------------------------------------- 3. follow, in his real rotation
 # IM-03: his history (step 0) gives the order he does them in, so the folder goes in that order.
@@ -160,6 +219,10 @@ appId: com.mettleup.app
     timeout: 10000
 - assertVisible: ".*in the order you do them: Push 1, Pull 1, Legs 1, Push 2, Pull 2, Leg 2\\..*"
 - takeScreenshot: 175-link-follow
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Follow (it|them)$'
 - tapOn: "^Follow (it|them)$"
 # ---------------------------------------------------------------- 4. done
 - extendedWaitUntil:
@@ -170,6 +233,10 @@ appId: com.mettleup.app
 - assertVisible: ".*1 new exercise added to your library\\..*"
 - takeScreenshot: 176-link-saved
 # "Open routines" lands on the Workout tab: the followed folder "Jaipur (6)", open, its cards.
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Open routines'
 - tapOn: "Open routines"
 - scrollUntilVisible:
     element: 'Jaipur \(6\)'
@@ -208,6 +275,10 @@ appId: com.mettleup.app
 # ---------------------------------------------------------------- continuity (v0.29.1, owner)
 # Start the routine copied from the link: the PREVIOUS column shows the Hevy history imported in
 # part J (Skullcrusher 12 kg × 11 on 29 Sep; shown in pounds after part I: 26.5 × 11).
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Start routine'
 - tapOn: "Start routine"
 # LW-24: with a workout already open the app asks (Resume / Discard and start new) instead of
 # "Finish your current workout first". None should be open here; if one is, start this one.
@@ -216,10 +287,19 @@ appId: com.mettleup.app
       visible: "A workout is already open"
     commands:
       - takeScreenshot: 178b-workout-already-open
+      - runFlow:
+          file: sub-see.yaml
+          env:
+            FIND: 'Discard and start new'
       - tapOn: "Discard and start new"
 - extendedWaitUntil:
     visible: "WORKOUT DURATION"
     timeout: 20000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'WORKOUT DURATION'
 # Swipe on the set numbers (left edge), not on the number boxes; repeat until it shows.
 - repeat:
     times: 12
@@ -258,6 +338,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Workout complete|Update routine"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Workout complete|Update routine'
 - waitForAnimationToEnd:
     timeout: 3000
 # LW-11: if the summary asks "Update routine?", keep the routine as copied (the button under it).
@@ -290,6 +375,9 @@ appId: com.mettleup.app
     direction: UP
     centerElement: true
     timeout: 20000
-- assertVisible: '(.*\. )?Next: Pull 1(\. .*)?'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '(.*\. )?Next: Pull 1(\. .*)?'
 - assertVisible: "Start Pull 1"
 - takeScreenshot: 179c-workout-up-next-pull-1

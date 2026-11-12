@@ -18,6 +18,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Send$"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Send$'
 - runFlow:
     file: sub-find.yaml
     env:
@@ -43,7 +48,10 @@ appId: com.mettleup.app
     file: sub-find.yaml
     env:
       FIND: "^QA check: how do I pause my plan$"
-- assertVisible: "^Your questions$|^QA check: how do I pause my plan$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Your questions$|^QA check: how do I pause my plan$'
 # The answer's last line sits below the screen's edge when the help box answers at length (gate run
 # 43001735779, owner phone: an 8-line AI answer, "Did this solve it?" off screen): scroll to it.
 - runFlow:

@@ -9,6 +9,10 @@ appId: com.mettleup.app
     visible: "^Profile$"
     timeout: 30000
 - runFlow: sub-workout-fresh.yaml
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Start empty workout'
 - tapOn: "Start empty workout"
 - tapOn:
     text: "(?i)^allow$"
@@ -16,8 +20,14 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Dumbbell Preacher Curl set 1 weight, .*"
     timeout: 20000
-- assertVisible: "We added the exercises from your last empty workout\\."
-- assertVisible: "Start blank"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'We added the exercises from your last empty workout\.'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Start blank'
 - assertNotVisible: "More for Goblet Squat"
 - takeScreenshot: rel-r436-b1-offline-prefilled
 - runFlow: xc-sub-back-to-tabs.yaml

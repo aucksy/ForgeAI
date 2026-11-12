@@ -49,11 +49,25 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Choose Strong file"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Choose Strong file'
 - takeScreenshot: 120-strong-import
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Choose Strong file'
 - tapOn: "Choose Strong file"
 - extendedWaitUntil:
     visible: '(?i).*(recent|downloads|files|qa-strong).*'
     timeout: 20000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '(?i).*(recent|downloads|files|qa-strong).*'
 - runFlow:
     when:
       notVisible: "qa-strong.*"
@@ -68,6 +82,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "This file does not say its units.*"
     timeout: 20000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'This file does not say its units.*'
 # Audit Phase 4 (IM-06): asked with a real set from the file (its heaviest: Squat 185), and
 # nothing is chosen for the member — the import button waits for the answer.
 - assertVisible: 'Squat \(Barbell\) 185 — kg or lb\?'
@@ -90,8 +109,15 @@ appId: com.mettleup.app
     element: "First and last name"
     centerElement: true
     timeout: 15000
-- assertVisible: "The demo goes first"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'The demo goes first'
 - assertVisible: ".*Your own \\d+ workouts? stays?\\."
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'First and last name'
 - tapOn: "First and last name"
 - inputText: "Test Member"
 - hideKeyboard
@@ -112,9 +138,21 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "2 workouts imported"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '2 workouts imported'
 # The demo's removal can be undone on this screen (a safety copy was taken first).
-- assertVisible: "Undo import"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Undo import'
 - takeScreenshot: 122-strong-imported
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Done$'
 - tapOn: "^Done$"
 # ---------------------------------------------------------------- a Strong file through "Import from Hevy"
 # Audit Phase 4 (IM-18): a file is told apart by its content — the Strong file picked through
@@ -130,10 +168,20 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Choose Hevy file"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Choose Hevy file'
 - tapOn: "Choose Hevy file"
 - extendedWaitUntil:
     visible: '(?i).*(recent|downloads|files|qa-strong).*'
     timeout: 20000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '(?i).*(recent|downloads|files|qa-strong).*'
 - runFlow:
     when:
       notVisible: "qa-strong.*"
@@ -148,7 +196,10 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "All 2 workouts are already here"
     timeout: 20000
-- assertVisible: "Import from Strong"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Import from Strong'
 - assertNotVisible: "Migrate from Hevy"
 - takeScreenshot: 122b-strong-through-hevy-all-here
 - tapOn: "Go back"
@@ -166,6 +217,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "lb, miles"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'lb, miles'
 - tapOn: "lb, miles"
 - takeScreenshot: 123-units-lb-miles
 # Units → Settings → Profile: the feed (History's list until redesign R2) in lb.
@@ -174,6 +230,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Edit profile"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Edit profile'
 - scrollUntilVisible:
     element: "More for .*"
     centerElement: true
@@ -197,6 +258,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Last time.*"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Last time.*'
 - scrollUntilVisible:
     element: '.*/mi.*'
     centerElement: true
@@ -214,6 +280,10 @@ appId: com.mettleup.app
     centerElement: true
     timeout: 30000
 - takeScreenshot: 126-settings-list
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Health apps$'
 - tapOn: "^Health apps$"
 # v0.39.0: the script took Health Connect access AWAY before this part (the install grants it),
 # so the page must say "Connect" and Connect must really open the system's permission screen.
@@ -222,6 +292,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Connect$"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Connect$'
 - tapOn:
     text: "^Connect$"
     below:
@@ -229,6 +304,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: '(?i)^(allow all|allow|get started)$'
     timeout: 20000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '(?i)^(allow all|allow|get started)$'
 - tapOn:
     text: '(?i)^(get started|continue|next)$'
     optional: true
@@ -240,6 +320,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Send past workouts|^Health Connect$"
     timeout: 20000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Send past workouts|^Health Connect$'
 # Audit Phase 6 (PH-03): the row says it is on, and what goes where. Owner profile (360 dp, font
 # 1.3): the lower rows can sit below the screen's edge, so each is scrolled to.
 - runFlow:
@@ -267,8 +352,14 @@ appId: com.mettleup.app
     visible: 'Sent [\d,]+ workouts? to Health Connect\.'
     timeout: 30000
 # R-72: where to look, and a lasting "Last sent" line.
-- assertVisible: 'To see them in Google Health: Connections → Partner apps → allow Exercise\.'
-- assertVisible: 'Last sent: Today, \d\d:\d\d · [\d,]+ past workouts?'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'To see them in Google Health: Connections → Partner apps → allow Exercise\.'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Last sent: Today, \d\d:\d\d · [\d,]+ past workouts?'
 - takeScreenshot: 129-health-connect-sent
 # ---------------------------------------------------------------- reminders
 # Health Connect → Settings → Notifications.
@@ -282,7 +373,10 @@ appId: com.mettleup.app
     centerElement: true
     timeout: 15000
 # Off, the row says what it would do (audit Phase 6: on the usual days, at the usual time).
-- assertVisible: 'A quiet reminder on your usual training days, at your usual time\.'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'A quiet reminder on your usual training days, at your usual time\.'
 # Two "Workout reminders" on screen: the row's title (not tappable) and its switch (named after
 # the row). Tap one; if the row still reads "off", tap the other.
 - tapOn:
@@ -354,12 +448,26 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: '(?i).*(add to home screen|add automatically|^add$).*'
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '(?i).*(add to home screen|add automatically|^add$).*'
 - takeScreenshot: 131-widget-add-dialog
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '(?i)^(add to home screen|add)$'
 - tapOn: '(?i)^(add to home screen|add)$'
 - pressKey: Home
 - extendedWaitUntil:
     visible: '^TODAY$'
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^TODAY$'
 - takeScreenshot: 132-home-screen-widget
 # Back in the app, the Widgets page counts the one just placed (re-read on every return). The app
 # comes back on that page; if Android restarted it, it opens on the Workout tab: go there again.
@@ -372,6 +480,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Home-screen widgets|^Profile$"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Home-screen widgets|^Profile$'
 - runFlow:
     when:
       notVisible: "Home-screen widgets"
@@ -404,6 +517,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Add exercise"
     timeout: 20000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Add exercise'
 - tapOn: "Add exercise"
 - tapOn: "Search exercises"
 - inputText: " bench press"
@@ -455,6 +573,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Workout complete"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Workout complete'
 # An empty workout has no routine to update; if the summary ever asks (LW-11, the app's own
 # sheet), keep the routine as it is: the button under "Update routine".
 - tapOn:
@@ -470,11 +593,21 @@ appId: com.mettleup.app
     centerElement: true
     timeout: 15000
 - assertVisible: "0 of 4"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Add photo'
 - tapOn: "Add photo"
 - extendedWaitUntil:
     visible: "Add a photo to this workout"
     timeout: 10000
-- assertVisible: "Take a photo"
-- assertVisible: "Choose from gallery"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Take a photo'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Choose from gallery'
 - takeScreenshot: 134b-workout-photo-choice
 - back

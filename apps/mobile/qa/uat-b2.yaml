@@ -14,13 +14,25 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "MettleUp could not start"
     timeout: 60000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'MettleUp could not start'
 - assertVisible: 'MettleUp couldn.t open your data\. Your workouts are still on this phone\. Tap Try again\.'
-- assertVisible: "^Try again$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Try again$'
 - assertVisible: "^Save my data file$"
 # R-277: the welcome opens on "Get stronger every week" (its one-screen start view).
 - assertNotVisible: "Step 1 of 3|Your name|Start fresh|Get stronger every week|Use without an account|Load demo data instead"
 - assertNotVisible: "^Profile$"
 - takeScreenshot: ub-02-error-screen
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Details$'
 - tapOn: "^Details$"
 - extendedWaitUntil:
     visible: "Opening the database failed: .*"

@@ -22,6 +22,10 @@ appId: com.mettleup.app
     element: '(?i)body figure'
     centerElement: true
     timeout: 20000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Female$'
 - tapOn: "^Female$"
 - takeScreenshot: 70-settings-units-body-figure
 # Back to Profile (Your profile → Settings → Profile); the last-7-days body map is Statistics' first part.
@@ -34,6 +38,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Last 7 days"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Last 7 days'
 - scrollUntilVisible:
     element: '.*female figure.*'
     timeout: 15000
@@ -42,6 +51,10 @@ appId: com.mettleup.app
 # ---------------------------------------------------------------- a run: best pace
 # No workout left open by an earlier part (run 38144864717: part E's open workout failed this).
 - runFlow: sub-workout-fresh.yaml
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Start empty workout'
 - tapOn: "Start empty workout"
 - tapOn:
     text: "(?i)^allow$"
@@ -50,13 +63,26 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Add exercise"
     timeout: 20000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Add exercise'
 - tapOn: "Add exercise"
 # Audit Phase 4 (EX-06): the one exercise list — with nothing typed, the last workouts' exercises
 # come first under "Recent" (parts C and E logged some today), then "All exercises".
 - extendedWaitUntil:
     visible: "(?i)^recent$"
     timeout: 15000
-- assertVisible: "All muscles"
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '(?i)^recent$'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'All muscles'
 - takeScreenshot: 71b-add-exercise-recent
 - scrollUntilVisible:
     element: "(?i)^all exercises$"
@@ -96,6 +122,10 @@ appId: com.mettleup.app
     text: "Skip rest"
     optional: true
 # Set 2: 2 km in 9:00 — 4:30 /km beats 5:00 /km.
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Add set'
 - tapOn: "Add set"
 - tapOn:
     text: ".* set 2 distance, kilometres"
@@ -136,11 +166,21 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Workout complete"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Workout complete'
 # Audit Phase 3 (D10): the finish line counts LIFTS that beat a best — the run is one lift, even
 # if it set more than one kind of record ("… · 1 lift beat its best").
 - extendedWaitUntil:
     visible: '.* · 1 lift beat its best'
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '.* · 1 lift beat its best'
 # LW-10 / PG-04: a workout without a routine is named by when it started ("Morning workout"; the
 # member can rename it on the finish sheet), and so is its share picture (75) — never "Full Body".
 - assertVisible: '(Morning|Afternoon|Evening|Night) workout done'
@@ -163,6 +203,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Send it to WhatsApp, Instagram or any app."
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Send it to WhatsApp, Instagram or any app.'
 # Owner profile (360 dp, font 1.3): the preview fills the sheet and the button is below it.
 - scrollUntilVisible:
     element: "Share picture"
@@ -196,6 +241,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Summary$"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Summary$'
 # "Longest distance" is also the chart picker's label above the chart now (design pass): scroll
 # to the records heading first, then to the row.
 - scrollUntilVisible:
@@ -217,5 +267,8 @@ appId: com.mettleup.app
     centerElement: true
     timeout: 20000
 - tapOn: "Personal records, more information"
-- assertVisible: "Best pace counts only sets of 1 km or more, so a short sprint can't set it."
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Best pace counts only sets of 1 km or more, so a short sprint can''t set it.'
 - takeScreenshot: 77-run-records-info

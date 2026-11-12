@@ -31,6 +31,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^How to$"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^How to$'
 # Summary, at the top: the clip (or its still frame) in a white frame.
 - extendedWaitUntil:
     visible: "${WANT} Lateral Raise"
@@ -39,10 +44,19 @@ appId: com.mettleup.app
     timeout: 3000
 - takeScreenshot: clip-${REDUCED}-01-summary
 - takeScreenshot: clip-${REDUCED}-02-summary-later
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^How to$'
 - tapOn: "^How to$"
 - extendedWaitUntil:
     visible: "How to do it"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'How to do it'
 - takeScreenshot: clip-${REDUCED}-03-how-to
 # The how-to sheet plays the same clip (no drawing credit: the clip is ours, CC0 parts).
 - tapOn:
@@ -78,6 +92,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^How to$"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^How to$'
 - assertNotVisible: "Moving demo of .*|Picture of .*"
 - takeScreenshot: clip-${REDUCED}-06-no-clip
 - back

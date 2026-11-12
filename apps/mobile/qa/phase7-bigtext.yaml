@@ -56,6 +56,10 @@ appId: com.mettleup.app
     when:
       visible: "Resume workout"
     commands:
+      - runFlow:
+          file: sub-see.yaml
+          env:
+            FIND: 'Resume workout'
       - tapOn: "Resume workout"
       - extendedWaitUntil:
           visible: "Log a set to finish|Finish workout"
@@ -65,11 +69,20 @@ appId: com.mettleup.app
       - extendedWaitUntil:
           visible: "Resume workout"
           timeout: 15000
+          optional: true
+      - runFlow:
+          file: sub-see.yaml
+          env:
+            FIND: 'Resume workout'
 # None open (the usual case): an empty workout, one exercise, then discarded.
 - runFlow:
     when:
       notVisible: "Resume workout"
     commands:
+      - runFlow:
+          file: sub-see.yaml
+          env:
+            FIND: 'Start empty workout'
       - tapOn: "Start empty workout"
       - tapOn:
           text: "(?i)^allow$"
@@ -78,6 +91,11 @@ appId: com.mettleup.app
       - extendedWaitUntil:
           visible: "Add exercise"
           timeout: 30000
+          optional: true
+      - runFlow:
+          file: sub-see.yaml
+          env:
+            FIND: 'Add exercise'
       - tapOn: "Add exercise"
       - extendedWaitUntil:
           visible: "Search exercises"
@@ -120,7 +138,10 @@ appId: com.mettleup.app
                       direction: UP
                       duration: 700
             - takeScreenshot: p7-big-${NAV}-03a-swiped-from-box
-            - assertVisible: "Discard workout"
+            - runFlow:
+                file: sub-see.yaml
+                env:
+                  FIND: 'Discard workout'
       # Only when the link is not already on screen: at the page's bottom it cannot be centred, and
       # a centring scroll then timed out with the link in full view (owner run 41646213145, p7nav3).
       - runFlow:
@@ -132,12 +153,20 @@ appId: com.mettleup.app
                 centerElement: true
                 timeout: 10000
       - takeScreenshot: p7-big-${NAV}-03b-open-workout-bottom
+      - runFlow:
+          file: sub-see.yaml
+          env:
+            FIND: 'Discard workout'
       - tapOn: "Discard workout"
       - extendedWaitUntil:
           visible: 'Discard workout\?'
           timeout: 10000
       - takeScreenshot: p7-big-${NAV}-03c-discard-question
       # The app's own confirm sheet: its "Discard" button (the link behind it says "Discard workout").
+      - runFlow:
+          file: sub-see.yaml
+          env:
+            FIND: '^Discard$'
       - tapOn: "^Discard$"
       - scrollUntilVisible:
           element: "Start empty workout"
@@ -151,6 +180,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Edit profile"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Edit profile'
 - scrollUntilVisible:
     element: "^Streak$"
     direction: UP
@@ -176,6 +210,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Log a past workout"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Log a past workout'
 - waitForAnimationToEnd:
     timeout: 3000
 - takeScreenshot: p7-big-${NAV}-07-calendar
@@ -213,6 +252,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Last 7 days"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Last 7 days'
 - waitForAnimationToEnd:
     timeout: 3000
 - takeScreenshot: p7-big-${NAV}-08-statistics
@@ -238,6 +282,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Join your gym$|^Check in$"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Join your gym$|^Check in$'
 - runFlow:
     when:
       visible: "^Check in$"
@@ -246,6 +295,11 @@ appId: com.mettleup.app
       - extendedWaitUntil:
           visible: "^(Leave gym|Leave anyway|Cancel orders? and leave)$"
           timeout: 15000
+          optional: true
+      - runFlow:
+          file: sub-see.yaml
+          env:
+            FIND: '^(Leave gym|Leave anyway|Cancel orders? and leave)$'
       - tapOn: "^(Leave gym|Leave anyway|Cancel orders? and leave)$"
       # A branded gym's Leave redraws the app (RootFrame keyed on the theme epoch) and Settings
       # comes back at its top, "Join your gym" below the edge: "Your profile" says it is done
@@ -253,6 +307,11 @@ appId: com.mettleup.app
       - extendedWaitUntil:
           visible: "^Join your gym$|^Your profile$"
           timeout: 45000
+          optional: true
+      - runFlow:
+          file: sub-see.yaml
+          env:
+            FIND: '^Join your gym$|^Your profile$'
 - runFlow: sub-gym-none.yaml
 - scrollUntilVisible:
     element: "Gym code"

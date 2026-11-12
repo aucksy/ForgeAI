@@ -18,6 +18,10 @@ appId: com.mettleup.app
 # Redesign R1/R4: "Start empty workout" sits under the Up next card. No workout left open by an
 # earlier part (run 38144864717: part E's open workout failed this part, then H1D and H2).
 - runFlow: sub-workout-fresh.yaml
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Start empty workout'
 - tapOn: "Start empty workout"
 - tapOn:
     text: "(?i)^allow$"
@@ -26,6 +30,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Add exercise"
     timeout: 20000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Add exercise'
 - tapOn: "Add exercise"
 - tapOn: "Search exercises"
 - inputText: " bench press"
@@ -40,6 +49,10 @@ appId: com.mettleup.app
     timeout: 15000
 # A known rest length, so the card's numbers can be checked.
 - tapOn: "More for Barbell Bench Press"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Rest timer'
 - tapOn: "Rest timer"
 - tapOn: "Rest 3:00"
 - scrollUntilVisible:
@@ -47,6 +60,10 @@ appId: com.mettleup.app
     centerElement: true
     timeout: 15000
 - tapOn: "Add set"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Add set'
 - tapOn: "Add set"
 - scrollUntilVisible:
     element: "More for Barbell Bench Press"
@@ -105,9 +122,15 @@ appId: com.mettleup.app
 # Phase 2 (RT-05): the card's big line counts down: '2:53 left · Barbell Bench Press, set 2'.
 - assertVisible: '.*Barbell Bench Press, set 2'
 # Phase 6: three buttons, Done first, then +15 s, then Skip (left to right in the shade).
-- assertVisible: '^Done$'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Done$'
 - assertVisible: '\+15 s'
-- assertVisible: '^Skip$'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Skip$'
 - assertVisible:
     text: '\+15 s'
     rightOf:

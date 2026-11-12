@@ -33,6 +33,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Log a set to finish|Finish workout|^Add exercise$"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Log a set to finish|Finish workout|^Add exercise$'
 # ---------------------------------------------------------------- two exercises: dumbbell + machine
 - runFlow:
     file: sub-find.yaml
@@ -77,6 +82,10 @@ appId: com.mettleup.app
 - tapOn:
     text: "More for .*Lateral Raise.*"
     index: 0
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Rest timer'
 - tapOn: "Rest timer"
 - tapOn: "Rest 5:00"
 - extendedWaitUntil:
@@ -89,6 +98,10 @@ appId: com.mettleup.app
 - tapOn:
     text: "More for .*Leg Extension.*"
     index: 0
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Rest timer'
 - tapOn: "Rest timer"
 - tapOn: "Rest 5:00"
 - extendedWaitUntil:
@@ -137,7 +150,10 @@ appId: com.mettleup.app
     env:
       FIND: "More for .*Leg Extension.*"
 # Its spoken label is "Previous is from <day>, <routine>" (the words on screen may read "Last: ...").
-- assertVisible: '(.*Last: .*|Previous is from .*|Previous: .*)'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '(.*Last: .*|Previous is from .*|Previous: .*)'
 - takeScreenshot: rel-359-01-card-last-row
 # ---------------------------------------------------------------- 1. dumbbell: the bar and its hint
 - runFlow:
@@ -157,7 +173,10 @@ appId: com.mettleup.app
     timeout: 3000
     optional: true
 - assertNotVisible: '.*[Ii]n use\. .*Back in .*'
-- assertVisible: "^Tap to show In use$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Tap to show In use$'
 - takeScreenshot: rel-345-01-dumbbell-rest-bar-hint
 - tapOn:
     text: 'Rest, \d+ seconds left\. Show machine in use'
@@ -191,7 +210,10 @@ appId: com.mettleup.app
     timeout: 5000
 - takeScreenshot: rel-345-03-after-im-back
 - assertVisible: "Skip rest"
-- assertVisible: "^Tap to show In use$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Tap to show In use$'
 - copyTextFrom: 'Rest, \d+ seconds left\. Show machine in use'
 - evalScript: ${output.restA = maestro.copiedText}
 - extendedWaitUntil:
@@ -212,7 +234,10 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Skip rest"
     timeout: 20000
-- assertVisible: "^Tap to show In use$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Tap to show In use$'
 - assertNotVisible: '.*[Ii]n use\. .*Back in .*'
 - takeScreenshot: rel-345-10-back-from-home
 - swipe:
@@ -233,7 +258,10 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Skip rest"
     timeout: 10000
-- assertVisible: "^Tap to show In use$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Tap to show In use$'
 - assertNotVisible: '.*[Ii]n use\. .*Back in .*'
 - takeScreenshot: rel-345-12-shade-closed
 # ---------------------------------------------------------------- 3. a tap ON the tick
@@ -282,7 +310,10 @@ appId: com.mettleup.app
     commands:
       - takeScreenshot: rel-345-06b-OBS-hint-GONE-after-tick
 # The bar names the new state (R-345 fix): In use now opens by itself after this exercise's sets.
-- assertVisible: "^In use opens after each set$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^In use opens after each set$'
 # Turn it back off from the In use screen: the bar's hint comes back.
 - tapOn:
     text: 'Rest, \d+ seconds left\. Show machine in use'
@@ -300,7 +331,10 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     notVisible: '.*[Ii]n use\. .*Back in .*'
     timeout: 5000
-- assertVisible: "^Tap to show In use$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Tap to show In use$'
 - takeScreenshot: rel-345-07-bar-after-tick-off
 # ---------------------------------------------------------------- R-364 untick, tick again
 - runFlow:
@@ -323,7 +357,10 @@ appId: com.mettleup.app
     timeout: 2500
     optional: true
 - assertNotVisible: '.*[Ii]n use\. .*Back in .*'
-- assertVisible: "^Tap to show In use$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Tap to show In use$'
 - takeScreenshot: rel-345-13-untick-retick-bar
 - tapOn: "Skip rest"
 - extendedWaitUntil:
@@ -353,7 +390,10 @@ appId: com.mettleup.app
 # R-346 (owner, 5 Nov 2026): the watch's rest lines for this machine's next set, never the kg to beat.
 # R-457: Leg Extension is a machine: MACHINE IN USE.
 - assertVisible: 'Machine in use\. (Previous .+\. )?Next .+\. Back in .*'
-- assertVisible: '^Next .+ × \d+$'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Next .+ × \d+$'
 - assertNotVisible: '.*to beat the previous total.*'
 - takeScreenshot: rel-345-08-machine-in-use-by-itself
 # R-456: a middle tap keeps it open; "I'm back" closes it.
@@ -372,7 +412,10 @@ appId: com.mettleup.app
     notVisible: '.*[Ii]n use\. .*Back in .*'
     timeout: 5000
 - assertVisible: "Skip rest"
-- assertVisible: "^In use opens after each set$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^In use opens after each set$'
 - takeScreenshot: rel-345-09-machine-bar-after-close
 # ---------------------------------------------------------------- R-364 edit a set during the rest
 - runFlow:
@@ -385,7 +428,10 @@ appId: com.mettleup.app
       FIELD: "Leg Extension set 2 reps"
       VALUE: " 9"
 - assertVisible: "Skip rest"
-- assertVisible: "^In use opens after each set$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^In use opens after each set$'
 - assertNotVisible: '.*[Ii]n use\. .*Back in .*'
 - tapOn:
     text: 'Rest, \d+ seconds left\. Show machine in use'
@@ -443,7 +489,10 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: '.*[Ii]n use\. .*Back in .*'
     timeout: 8000
-- assertVisible: "Single-Arm Overhead Cable Extension"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Single-Arm Overhead Cable Extension'
 - assertVisible: 'Cable in use\. .*Back in .*'
 - assertVisible:
     text: "Show after every set of this exercise"

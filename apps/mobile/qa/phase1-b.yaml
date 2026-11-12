@@ -17,11 +17,19 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Resume workout"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Resume workout'
 - takeScreenshot: 12a-workout-tab-resume-card
 # Audit Phase 7 (packet B, src/tracker/lib/miniBar.ts) / redesign R1: on the Workout tab the Up
 # next card itself says "Workout in progress" with "Resume workout", so the minimised bar is NOT
 # shown there (two of the same thing). Every other tab keeps the bar (Profile, below).
-- assertVisible: "Workout in progress"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Workout in progress'
 - assertNotVisible: ".*Tap to open the workout"
 - takeScreenshot: 12-workout-in-progress-card
 # Owner profile (360 dp, font 1.3): the red link can sit below the screen's edge.
@@ -42,6 +50,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Resume workout"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Resume workout'
 - tapOn:
     text: "^Profile$"
     index: 0
@@ -69,7 +82,15 @@ appId: com.mettleup.app
 - tapOn:
     text: "More for (?!Barbell Bench Press).*"
     index: 0
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Remove exercise'
 - tapOn: "Remove exercise"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '(?i)^remove$'
 - tapOn: "(?i)^remove$"
 - takeScreenshot: 13-exercise-removed
 # Phase 2 (LW-02): Finish opens the "Finish workout?" sheet; its own "Finish workout" saves.
@@ -89,6 +110,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Update routine"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Update routine'
 - assertVisible: 'Update ".*"\?'
 - takeScreenshot: 14-update-routine-prompt
 # Audit Phase 5 (PG-04): the finish screen and its share picture name the workout after the
@@ -106,6 +132,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Workout complete"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Workout complete'
 # The banner reads "<workout name> done" (the share picture's title is the same name).
 - assertVisible: "${output.routineName} done"
 - takeScreenshot: 15-finish-summary
@@ -122,6 +153,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Adds a box to each set.*"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Adds a box to each set.*'
 - takeScreenshot: 16-settings-workouts
 - back
 - runFlow:

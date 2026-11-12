@@ -16,15 +16,35 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Check in at ${GYM}$"
     timeout: 45000
-- assertVisible: 'Tap Check in when you are at the gym\.'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Tap Check in when you are at the gym\.'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Check in$'
 - tapOn: "^Check in$"
 - extendedWaitUntil:
     visible: 'Type the mobile number your gym has for you\. The app asks only once\.'
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Type the mobile number your gym has for you\. The app asks only once\.'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Your mobile number'
 - tapOn: "Your mobile number"
 - inputText: "98765 00031"
 - hideKeyboard
 - takeScreenshot: rel-70-checkin-number-typed
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Check in$'
 - tapOn: "^Check in$"
 - extendedWaitUntil:
     visible: '(You''re checked in at [0-9]{1,2}:[0-9]{2} [ap]m|First check-in: go to the front desk and ask them to confirm your mobile number\. When they say it is done, tap Check in below\. You do this only once\.)'

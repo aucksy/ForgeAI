@@ -153,6 +153,27 @@ class Gate(unittest.TestCase):
         self.paper = ["apps/mobile/qa/sub-find.yaml"]
         self.assertEqual(pg.main(), 1)
 
+    # 12 Nov 2026: the partial runs must have run every flow the changed files reach.
+    def test_partial_parts(self):
+        self.assertEqual(pg.partial_parts("Device QA (partial u401,u438, api 34, profile owner)"), {"u401", "u438"})
+        self.assertEqual(pg.partial_parts(self.P_OWNER), {"w"})
+        self.assertEqual(pg.partial_parts(OWNER), set())
+
+    def test_unproven(self):
+        need = {"r336.yaml": {"uat", "uatc"}, "u438.yaml": {"u438"}}
+        runs = [{"display_title": "Device QA (partial u438, api 34, profile owner)"}]
+        self.assertEqual(pg.unproven(need, runs), ["r336.yaml"])
+        runs.append({"display_title": "Device QA (partial uatc, api 34, profile owner)"})
+        self.assertEqual(pg.unproven(need, runs), [])
+
+    def test_a_partial_of_the_wrong_part_blocks(self):
+        pg.PARTIAL_NEEDED.clear()
+        wrong = "Device QA (partial u438, api 34, profile %s)"
+        self.runs = {"A": [DEFAULT, OWNER, JOURNEYS], "B": [wrong % "owner", wrong % "default"]}
+        self.paper = self.FLOW
+        self.assertEqual(pg.main(), 1)
+        self.assertTrue(any("real-workout-w1.yaml" in l and "`only` = w" in l for l in pg.lines))
+
     def test_partial_runs_alone_still_never_count(self):
         self.runs = {"B": [self.P_OWNER, self.P_DEFAULT, JOURNEYS]}
         self.assertEqual(pg.main(), 1)

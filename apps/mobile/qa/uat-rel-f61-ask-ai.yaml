@@ -20,9 +20,23 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Ask an AI$"
     timeout: 15000
-- assertVisible: "Get advice on your training from an AI app you already use, like ChatGPT or Gemini\\..*"
-- assertVisible: "MettleUp sends nothing\\. You choose where the text goes\\. Your name, phone number and body weight are left out\\."
-- assertVisible: "Share to an AI app"
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Ask an AI$'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Get advice on your training from an AI app you already use, like ChatGPT or Gemini\..*'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'MettleUp sends nothing\. You choose where the text goes\. Your name, phone number and body weight are left out\.'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Share to an AI app'
 - takeScreenshot: rel-f61-01-ask-ai-top
 - runFlow:
     file: sub-find.yaml
@@ -53,4 +67,9 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Share to an AI app"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Share to an AI app'
 - assertNotVisible: "Sharing text"

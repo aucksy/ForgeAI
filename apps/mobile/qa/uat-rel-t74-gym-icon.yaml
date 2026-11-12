@@ -22,15 +22,31 @@ appId: com.mettleup.app
     element: "^Gym logo on my home screen$"
     centerElement: true
     timeout: 30000
-- assertVisible: "^Opens MettleUp from your home screen$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Opens MettleUp from your home screen$'
 - takeScreenshot: rel-t74-10-settings-row
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Gym logo on my home screen$'
 - tapOn: "^Gym logo on my home screen$"
 # Android's own question (the launcher's "Add to home screen" sheet). Its words differ between
 # launchers: any of its add buttons.
 - extendedWaitUntil:
     visible: "(?i)^(add to home screen|add automatically|add)$"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '(?i)^(add to home screen|add automatically|add)$'
 - takeScreenshot: rel-t74-11-android-asks
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '(?i)^(add to home screen|add automatically|add)$'
 - tapOn: "(?i)^(add to home screen|add automatically|add)$"
 - waitForAnimationToEnd:
     timeout: 5000

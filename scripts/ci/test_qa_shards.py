@@ -17,7 +17,7 @@ def write(root, shard, text):
 class Shards(unittest.TestCase):
     def test_the_shards_hold_exactly_the_whole_run(self):
         self.assertEqual(qa_shards.problems(), [])
-        got = [p for _, parts in qa_shards.SHARDS for p in parts.split()]
+        got = [p for _, parts in qa_shards.SHARDS for p in parts.split() if p != "none"]
         self.assertEqual(sorted(got), sorted(qa_shards.expected()))
 
     def test_chains_stay_together_in_the_scripts_order(self):
@@ -38,14 +38,30 @@ class Shards(unittest.TestCase):
         alien = qa_shards.SHARDS + [("5-x", "zz")]
         self.assertIn("part zz is in a shard but not in the whole run", qa_shards.problems(alien))
 
-    def test_matrix_whole_run_four_shards_extras_with_w(self):
+    def test_matrix_whole_run_canary_shards_extras_with_w(self):
         m = qa_shards.matrix("", "dnd,mk")["include"]
-        self.assertEqual(len(m), 4)
-        self.assertTrue(all(row["only"] == "" for row in m))
+        self.assertEqual(m[0], {"shard": "0-canary", "parts": "", "only": qa_shards.CANARY, "extra": ""})
+        shards = [row for row in m if row["only"] == ""]
+        # No "uat" asked for: the extras-only shards 5 and 6 have nothing to run and are left out.
+        self.assertEqual([r["shard"] for r in shards], ["1-history-routines", "2-gym-backup", "3-uat-a", "4-workout"])
         with_w = [row for row in m if "w" in row["parts"].split()]
         self.assertEqual(len(with_w), 1)
         self.assertEqual(with_w[0]["extra"], "dnd mk")
-        self.assertTrue(all(row["extra"] == "" for row in m if row is not with_w[0]))
+        self.assertTrue(all(row["extra"] == "" for row in shards if row is not with_w[0]))
+
+    def test_matrix_splits_the_uat_chain(self):
+        m = {r["shard"]: r for r in qa_shards.matrix("", "uat,dnd")["include"]}
+        self.assertEqual(m["4-workout"]["extra"], "dnd uatc")
+        self.assertEqual(m["5-uat-b"]["parts"], "none")
+        got = (m["5-uat-b"]["extra"] + " " + m["6-uat-c"]["extra"]).split()
+        self.assertEqual(sorted(got), sorted(qa_shards.uat_parts()))
+
+    def test_matrix_affected_piece(self):
+        m = qa_shards.matrix("", "", affected="u401,u438,u336")["include"]
+        self.assertEqual(m[1], {"shard": "0-affected", "parts": "", "only": "u401 u438 u336", "extra": ""})
+        many = ",".join(qa_shards.expected()[: qa_shards.AFFECTED_MAX + 1])
+        self.assertFalse(any(r["shard"] == "0-affected" for r in qa_shards.matrix("", "", affected=many)["include"]))
+        self.assertFalse(any(r["shard"] == "0-affected" for r in qa_shards.matrix("", "")["include"]))
 
     def test_matrix_partial_run_is_one_piece(self):
         m = qa_shards.matrix("uf, uk", "")["include"]
@@ -54,10 +70,11 @@ class Shards(unittest.TestCase):
     def test_check_passes_only_when_every_shard_finished_green(self):
         with tempfile.TemporaryDirectory() as root:
             for name, parts in qa_shards.SHARDS:
-                write(root, name, "parts=%s\nstatus=0\n" % parts)
+                if parts != "none":
+                    write(root, name, "parts=%s\nextra=\nstatus=0\n" % parts)
             self.assertEqual(qa_shards.check(root), [])
             name, parts = qa_shards.SHARDS[1]
-            write(root, name, "parts=%s\nstatus=1\n" % parts)
+            write(root, name, "parts=%s\nextra=\nstatus=1\n" % parts)
             self.assertTrue(any("ended with a failure" in e for e in qa_shards.check(root)))
             os.remove(os.path.join(root, name, "shard-done.txt"))
             errs = qa_shards.check(root)
@@ -67,12 +84,29 @@ class Shards(unittest.TestCase):
     def test_check_catches_a_shard_that_ran_other_parts(self):
         with tempfile.TemporaryDirectory() as root:
             for name, parts in qa_shards.SHARDS:
-                write(root, name, "parts=%s\nstatus=0\n" % parts)
+                if parts != "none":
+                    write(root, name, "parts=%s\nextra=\nstatus=0\n" % parts)
             name, parts = qa_shards.SHARDS[0]
-            write(root, name, "parts=%s\nstatus=0\n" % parts.replace(" i2", ""))
+            write(root, name, "parts=%s\nextra=\nstatus=0\n" % parts.replace(" i2", ""))
             errs = qa_shards.check(root)
             self.assertTrue(any("shard 1-history-routines ran" in e for e in errs))
             self.assertTrue(any(e == "parts never run: i2" for e in errs))
+
+    def test_check_wants_the_split_uat_extras(self):
+        ex = qa_shards.shard_extras("uat")
+        with tempfile.TemporaryDirectory() as root:
+            for name, parts in qa_shards.SHARDS:
+                write(root, name, "parts=%s\nextra=%s\nstatus=0\n" % (parts, ex[name]))
+            self.assertEqual(qa_shards.check(root, extra="uat"), [])
+            write(root, "6-uat-c", "parts=none\nextra=u401\nstatus=0\n")
+            self.assertTrue(any("shard 6-uat-c ran the extras" in e for e in qa_shards.check(root, extra="uat")))
+            os.remove(os.path.join(root, "5-uat-b", "shard-done.txt"))
+            self.assertTrue(any("5-uat-b" in e for e in qa_shards.check(root, extra="uat")))
+
+    def test_the_uat_split_covers_the_chain(self):
+        split = [p for v in qa_shards.UAT_SPLIT.values() for p in v.split() if p != "uatc"]
+        self.assertEqual(sorted(split), sorted(qa_shards.uat_parts()))
+        self.assertEqual(len(split), len(set(split)))
 
     def test_the_runner_knows_shards(self):
         text = open(qa_shards.SCRIPT, encoding="utf-8").read()
@@ -84,9 +118,11 @@ class Shards(unittest.TestCase):
     def test_the_workflow_builds_once_and_checks_every_shard(self):
         wf = open(os.path.join(qa_shards.ROOT, ".github", "workflows", "qa-device.yml"), encoding="utf-8").read()
         self.assertEqual(wf.count("./gradlew assembleRelease"), 1)
-        self.assertIn("fail-fast: false", wf)
+        self.assertIn("fail-fast: true", wf)
+        self.assertIn("cancel-in-progress: true", wf)
+        self.assertIn("QA_FAILFAST=", wf)
         self.assertIn("needs.build.outputs.sha256", wf)
-        self.assertIn("python3 scripts/ci/qa_shards.py check qa-out", wf)
+        self.assertIn('python3 scripts/ci/qa_shards.py check qa-out "${{ inputs.extra }}"', wf)
         self.assertIn('QA_SHARD="${{ matrix.parts }}"', wf)
 
 

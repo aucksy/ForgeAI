@@ -32,8 +32,20 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Could not save$"
     timeout: 60000
-- assertVisible: 'Something went wrong saving your workout\. Your sets are still here — tap Finish to try again\.'
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Could not save$'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Something went wrong saving your workout\. Your sets are still here — tap Finish to try again\.'
 - takeScreenshot: uf-03-could-not-save
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Close$'
 - tapOn: "^Close$"
 - extendedWaitUntil:
     notVisible: "^Could not save$"
@@ -55,6 +67,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Routines$|Workout in progress|Start routine .*|^New routine$"
     timeout: 20000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Routines$|Workout in progress|Start routine .*|^New routine$'
 - runFlow:
     file: sub-find.yaml
     env:

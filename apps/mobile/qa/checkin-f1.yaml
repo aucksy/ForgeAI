@@ -9,6 +9,10 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: 'Gym code .*'
     timeout: 30000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Your name'
 - tapOn: 'Your name'
 - eraseText: 70
 - inputText: 'QA Member'
@@ -35,9 +39,15 @@ appId: com.mettleup.app
     visible: '^QA Check-in Gym$'
     timeout: 30000
 - assertVisible: '^Gym$'
-- assertVisible: '^Your gym$'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Your gym$'
 - assertNotVisible: 'Bag, .*'
 # Release A: membership first, then "Check in" (the phone's camera reads the poster); no Leave here (A4).
-- assertVisible: '^Check in$'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Check in$'
 - assertNotVisible: '^Leave$'
 - takeScreenshot: inv-f1-gym-tab

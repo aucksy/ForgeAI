@@ -27,6 +27,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Start routine$"
     timeout: 20000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Start routine$'
 - copyTextFrom:
     text: '(\d+ warm-ups? · )?\d+ sets? · .*'
     index: 0
@@ -91,6 +96,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "A workout is already open"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'A workout is already open'
 - assertVisible: 'Resume it, or discard it and start this one\. Discarding deletes its 1 set\.'
 - takeScreenshot: ur-02-already-open
 # The sheet's own button (the Workout tab's card behind it says "Resume workout" too).
@@ -118,6 +128,15 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "A workout is already open"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'A workout is already open'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Discard and start new'
 - tapOn: "Discard and start new"
 - tapOn:
     text: "(?i)^allow$"
@@ -255,6 +274,10 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Remove set"
     timeout: 10000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Remove set'
 - tapOn: "Remove set"
 - assertNotVisible: "${output.exRe} set ${output.rsets} weight, kilograms"
 - runFlow:
@@ -294,6 +317,10 @@ appId: com.mettleup.app
     timeout: 30000
 - assertVisible: 'You did a different number of sets on .*${output.exRe}.*'
 - takeScreenshot: ur-09-update-routine-question
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Update routine'
 - tapOn: "Update routine"
 - extendedWaitUntil:
     visible: '"Push Day A" is updated for next time\.'
@@ -323,6 +350,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Start routine$"
     timeout: 20000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Start routine$'
 - copyTextFrom:
     text: '(\d+ warm-ups? · )?\d+ sets? · .*'
     index: 0

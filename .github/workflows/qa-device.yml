@@ -15,11 +15,23 @@ name: Device QA (Android emulator)
 # this workflow on the tagged commit or its parent (release-apk.yml's phone-gate job). The
 # `workflow_call` trigger lets a later release workflow call it directly with `uses:` + `needs:`;
 # note that a called run is recorded under the CALLER's workflow, not under this file's name.
+#
+# 12 Nov 2026 (owner, 11 Nov: "fail fast"; 0.77.0 lost hours to whole rounds that ran on after a failure):
+# a whole run is now three steps at once on separate emulators, after the one build:
+#   0-canary   ~10-15 min: the screens most flows pass through (qa_shards.py CANARY);
+#   0-affected the parts that use what changed since the last green whole run of this phone
+#              (scripts/ci/flows_to_check.py; skipped when none, or more than AFFECTED_MAX);
+#   1..6       the shards (no shard over ~2 h; the opt-in "uat" chain is split over 4-6).
+# The matrix fails fast: the first red piece cancels every other piece of the round, and inside a
+# piece the emulator stops before its next part (QA_FAILFAST). A newer whole run on the same branch
+# and phone cancels an older one still running (concurrency below). To finish a red round after
+# fixing a phone-test file, re-run the failed (and cancelled) jobs of that run: the green shards keep
+# their evidence and job report checks all of them again (the release gate reads the run's result).
 on:
   workflow_dispatch:
     inputs:
       only:
-        description: "Run only these parts, comma separated: any of the whole run's (a b c d e f g h h3 p1 p2 i link i2 j j2 j3 k l n p9 r br inv invf p7 p0 m) and w (real workout), dnd, longrest, anim, mk (Monkey), clip (exercise demo clips), uat (release UAT of the waiting features), u198 (new-feature dots), u194 (machine and cable steps), u401 (old What's new card + Profile chart box), u199 (Progress inside Profile), u404 (bar charts open their workouts), upic (our own exercise pictures), u452 (replies from the MettleUp team: red dot and conversation), u456 (In use closes only on I'm back; BENCH or MACHINE IN USE), u438 (watch update pop-up), u444 (empty workout remembered, opens at once), u439 (set hints follow the same set last time), u436 (empty workout memory: discard, repeat, restart, offline; start-up splash), u454 (rep aims never under last time; one finished line; his Incline, Lateral Raise, Chest Dip), ulook (light and dark looks), uage (18+ tick before Continue with Google), u458 (gym owner opens their gym with their admin sign-in). Empty = the whole phone test. A partial run never opens the release gate."
+        description: "Run only these parts, comma separated (scripts/ci/flows_to_check.py prints which ones a change needs): any of the whole run's (a b c d e f g h h3 p1 p2 i link i2 j j2 j3 k l n p9 r br inv invf p7 p0 m) and w (real workout), dnd, longrest, anim, mk (Monkey), clip (exercise demo clips), uat (release UAT of the waiting features), uatc (only the UAT chain itself, without its u-parts), u198 (new-feature dots), u194 (machine and cable steps), u401 (old What's new card + Profile chart box), u199 (Progress inside Profile), u404 (bar charts open their workouts), upic (our own exercise pictures), u452 (replies from the MettleUp team: red dot and conversation), u456 (In use closes only on I'm back; BENCH or MACHINE IN USE), u438 (watch update pop-up), u444 (empty workout remembered, opens at once), u439 (set hints follow the same set last time), u436 (empty workout memory: discard, repeat, restart, offline; start-up splash), u454 (rep aims never under last time; one finished line; his Incline, Lateral Raise, Chest Dip), ulook (light and dark looks), uage (18+ tick before Continue with Google), u458 (gym owner opens their gym with their admin sign-in). Empty = the whole phone test. A partial run never opens the release gate."
         required: false
         default: ""
       extra:
@@ -56,6 +68,12 @@ run-name: >-
   || (inputs.profile == 'owner' && format('Device QA (owner phone, api 34{0})', (inputs.extra != '' && inputs.extra != null) && format(', + {0}', inputs.extra) || ''))
   || ((inputs.extra != '' && inputs.extra != null) && format('Device QA (Android emulator, + {0})', inputs.extra) || 'Device QA (Android emulator)') }}
 
+# One whole round per branch, phone, API and extras at a time: a new one cancels the older one still
+# running (its result is stale). Partial runs never cancel each other (their own group each).
+concurrency:
+  group: ${{ ((inputs.only == '' || inputs.only == null) && (inputs.env == '' || inputs.env == null)) && format('qa-device-whole-{0}-{1}-{2}', github.ref, inputs.profile || 'default', inputs.api || '34') || format('qa-device-partial-{0}', github.run_id) }}
+  cancel-in-progress: true
+
 jobs:
   # The pieces of this run: 4 shards for a whole run, one piece for a partial run (`only`).
   plan:
@@ -63,13 +81,30 @@ jobs:
     timeout-minutes: 5
     outputs:
       matrix: ${{ steps.plan.outputs.matrix }}
+    permissions:
+      actions: read
+      contents: read
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      # The parts that use what changed since the last green whole run of this phone (a warning list,
+      # never a failure): they run first, next to the shards, as piece 0-affected.
+      - name: Flows to check since the last green whole run
+        if: ${{ inputs.only == '' || inputs.only == null }}
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          python3 -m pip install --quiet pyyaml || true
+          python3 scripts/ci/flows_to_check.py --base "green:${{ inputs.profile || 'default' }}" --summary "$GITHUB_STEP_SUMMARY" > /dev/null || true
+          python3 scripts/ci/flows_to_check.py --base "green:${{ inputs.profile || 'default' }}" --parts > affected.txt || true
+          echo "affected parts: $(cat affected.txt)"
       - name: Plan the shards
         id: plan
         run: |
-          python3 scripts/ci/qa_shards.py matrix "${{ inputs.only }}" "${{ inputs.extra }}" > matrix.json
+          python3 scripts/ci/qa_shards.py matrix "${{ inputs.only }}" "${{ inputs.extra }}" "$(cat affected.txt 2>/dev/null)" > matrix.json
           cat matrix.json
           echo "matrix=$(cat matrix.json)" >> "$GITHUB_OUTPUT"
 
@@ -159,8 +194,9 @@ jobs:
     # opt-in "uat" chain (~3 h 25 min with 0.77.0's parts) and hit 240 inside W (run 43020416051): 330 now.
     timeout-minutes: 330
     strategy:
-      # Every shard runs to its end even when another fails: the evidence of all of them is kept.
-      fail-fast: false
+      # 12 Nov 2026 (owner: "fail fast"): the first red piece cancels the rest of the round (each uploads
+      # what it has). Was false (every shard ran to its end: 4 h for a round that was red at 20 min).
+      fail-fast: true
       matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
     name: device-qa (${{ matrix.shard }})
     steps:
@@ -211,7 +247,7 @@ jobs:
           profile: pixel_6
           disable-animations: true
           emulator-options: -no-snapshot -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-          script: QA_ONLY="${{ matrix.only }}" QA_SHARD="${{ matrix.parts }}" QA_EXTRA="${{ matrix.extra }}" QA_PROFILE="${{ inputs.profile || 'default' }}" QA_ENV="${{ inputs.env }}" bash apps/mobile/qa/run-device-qa.sh "$GITHUB_WORKSPACE/qa.apk"
+          script: QA_FAILFAST="${{ (inputs.only == '' || inputs.only == null) && '1' || '' }}" QA_ONLY="${{ matrix.only }}" QA_SHARD="${{ matrix.parts }}" QA_EXTRA="${{ matrix.extra }}" QA_PROFILE="${{ inputs.profile || 'default' }}" QA_ENV="${{ inputs.env }}" bash apps/mobile/qa/run-device-qa.sh "$GITHUB_WORKSPACE/qa.apk"
 
       # Parts run / passed / failed, every skipped step, the crash / ANR / JS-error scan and the
       # rest-alert timing, on the run's summary page.
@@ -258,7 +294,7 @@ jobs:
             echo "Partial run: one piece; its own job decides the result."
             [ "${{ needs.device-qa.result }}" = "success" ]
           else
-            python3 scripts/ci/qa_shards.py check qa-out | tee qa-out/shard-check.txt
+            python3 scripts/ci/qa_shards.py check qa-out "${{ inputs.extra }}" | tee qa-out/shard-check.txt
             [ "${PIPESTATUS[0]}" -eq 0 ] || exit 1
             [ "${{ needs.device-qa.result }}" = "success" ] || { echo "::error::A shard failed (see its summary)."; exit 1; }
           fi

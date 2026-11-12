@@ -1,0 +1,138 @@
+# Pages of the member app that SCROLL, and so can hide what a phone-test flow checks (trap 7).
+# Read by scripts/ci/flow_scroll_lint.py. The `screens:` list is WRITTEN by that script from the app's
+# code (python3 scripts/ci/flow_scroll_lint.py --write-screens); CI fails when it is out of date.
+# Edit only `overlays:` (full-screen pop-ups drawn by a layout, not a route) and `pinned:` (texts that
+# never scroll away: the tab bar, buttons pinned to the bottom, Android's own dialogs).
+
+overlays:
+  - apps/mobile/src/components/UpdatePrompt.tsx
+  - apps/mobile/src/components/WatchUpdatePrompt.tsx
+
+pinned:
+  - "^Profile$"
+  - "^Workout$"
+  - "^Gym$"
+  - "^(Shop|Gym)$"
+  - "^Shop$"
+  - "Wait"
+  - "(?i)^allow$"
+  - "(?i)^don.t allow$"
+  - "Skip rest"
+  - "15 seconds less"
+  - "15 seconds more"
+  - "Rest alerts are off. Turn on notifications"
+  - "Finish workout"
+  - "^Finish workout$"
+  - "Log a set to finish"
+  - "Log a set to finish|Finish workout"
+  - "Save workout"
+  - "Save changes"
+  - "Minimise workout. It keeps running."
+  - "Minimise workout.*"
+  - "Go back"
+  - "Search exercises"
+  - "Search your workouts by exercise or workout name"
+  - "Update now"
+  - "^Update now$"
+  - "^Later$"
+  - "Later"
+  - "Restart now"
+  - "Got it"
+  - "^Got it$"
+
+screens:
+  - {route: "apps/mobile/src/app/(tabs)/coach.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/(tabs)/profile.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/(tabs)/progress.tsx", scrolls: false}
+  - {route: "apps/mobile/src/app/(tabs)/shop.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/(tabs)/workout.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/analytics.tsx", scrolls: false}
+  - {route: "apps/mobile/src/app/badges.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/bodyweight.tsx", scrolls: false}
+  - {route: "apps/mobile/src/app/c/[code].tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/calendar.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/credits.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/edit-profile.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/exercise/[id].tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/exercises.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/history.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/import/index.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/import/routines.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/index.tsx", scrolls: false}
+  - {route: "apps/mobile/src/app/j/[code].tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/library/hidden.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/library/index.tsx", scrolls: false}
+  - {route: "apps/mobile/src/app/library/new.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/measurements/index.tsx", scrolls: false}
+  - {route: "apps/mobile/src/app/measurements/log.tsx", scrolls: false}
+  - {route: "apps/mobile/src/app/measures/add.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/measures/index.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/nutrition.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/one-rep-max.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/photos/compare.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/photos/index.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/plan/avoid.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/plan/build.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/programs/[key].tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/programs/index.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/progress/pick-lift.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/quick.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/ready.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/records.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/report/[period].tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/routines/[id].tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/routines/add-exercise.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/routines/first.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/routines/index.tsx", scrolls: false}
+  - {route: "apps/mobile/src/app/routines/view/[id].tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/scan.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/session/[id].tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/session/active.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/session/add-exercise.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/session/finish.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/settings/about.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/settings/ask-ai.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/settings/backup.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/settings/coach.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/settings/data.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/settings/details.tsx", scrolls: false}
+  - {route: "apps/mobile/src/app/settings/drive-restore.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/settings/effort.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/settings/export.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/settings/feedback.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/settings/gym-sees.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/settings/gym.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/settings/health.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/settings/import.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/settings/index.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/settings/last-time.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/settings/look.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/settings/muscle-tips.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/settings/news.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/settings/next-weight.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/settings/notifications.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/settings/phone-backup.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/settings/plates.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/settings/rest.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/settings/restore-backup.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/settings/save-backup.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/settings/units.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/settings/watch.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/settings/weekly-goal.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/settings/widgets.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/settings/workout-choices.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/settings/workouts.tsx", scrolls: false}
+  - {route: "apps/mobile/src/app/shop/[id].tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/shop/ask.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/shop/bag.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/shop/diet.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/shop/hours.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/shop/inbox.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/shop/mate/[id].tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/shop/message.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/shop/orders.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/stats.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/today.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/workout/start.tsx", scrolls: true}
+  - {route: "apps/mobile/src/components/UpdatePrompt.tsx", scrolls: true}
+  - {route: "apps/mobile/src/components/WatchUpdatePrompt.tsx", scrolls: true}

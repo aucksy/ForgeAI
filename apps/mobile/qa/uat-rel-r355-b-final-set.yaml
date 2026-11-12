@@ -10,6 +10,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Skip rest|Finish workout"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Skip rest|Finish workout'
 - tapOn:
     text: "Skip rest"
     optional: true

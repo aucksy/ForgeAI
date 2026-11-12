@@ -188,6 +188,13 @@ def describe(cmd):
     return k
 
 
+def sub_see_look(cmd):
+    """One of sub-see.yaml's two optional looks (12 Nov 2026): a scrollUntilVisible at 10 % visibility. One
+    of them finds nothing whenever the thing is above (or below) the screen; that is not a check left out."""
+    k, v = next(iter(cmd.items()), (None, None))
+    return bool(k) and "scrollUntilVisible" in k and isinstance(v, dict) and v.get("visibilityPercentage") == 10
+
+
 def skipped(out, quiet=False):
     rows = []
     for path in sorted(glob.glob(os.path.join(out, "part-*", "*", "*", "commands.json"))):
@@ -205,6 +212,8 @@ def skipped(out, quiet=False):
                 # A skipped block that holds an assertion is a CHECK that did not run this time.
                 kind = "CHECK NOT RUN: conditional " if '"assertConditionCommand"' in json.dumps(cmd) else "conditional "
                 rows.append((part, seq, kind + describe(cmd) + " -- condition was false, block not run"))
+            elif st == "WARNED" and sub_see_look(cmd):
+                continue  # sub-see.yaml looked one way and found nothing; its assert right after is the check
             elif st == "WARNED":
                 rows.append((part, seq, "optional " + describe(cmd) + " -- not on screen, step not run"))
     lines = [f"SKIPPED: part {p} step {s}: {why}" for p, s, why in rows]

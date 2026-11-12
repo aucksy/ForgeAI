@@ -40,7 +40,10 @@ appId: com.mettleup.app
       id: "today-goal"
     centerElement: true
     timeout: 20000
-- assertVisible: "Today: .*"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Today: .*'
 - takeScreenshot: rel-f199-02-chart-and-today
 - scrollUntilVisible:
     element: "(?i)^your progress$"
@@ -59,6 +62,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Last 7 days"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Last 7 days'
 - takeScreenshot: rel-f199-04-charts
 - back
 - extendedWaitUntil:
@@ -106,6 +114,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Add measures"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Add measures'
 - takeScreenshot: rel-f199-07-body
 - back
 - extendedWaitUntil:
@@ -118,13 +131,21 @@ appId: com.mettleup.app
       id: "progress-row-report-.*"
     centerElement: true
     timeout: 20000
-- assertVisible: "Monthly report|Year in review"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Monthly report|Year in review'
 - tapOn:
     id: "progress-row-report-.*"
     index: 0
 - extendedWaitUntil:
     visible: "Share as a picture"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Share as a picture'
 - takeScreenshot: rel-f199-08-report
 - back
 - extendedWaitUntil:
@@ -145,6 +166,10 @@ appId: com.mettleup.app
         id: "chart-see-workouts"
     commands:
       # A week is still picked from before: back to the total first.
+      - runFlow:
+          file: sub-see.yaml
+          env:
+            FIND: 'Show 12-week total'
       - tapOn: "Show 12-week total"
 - tapOn:
     id: "date-line-chart"
@@ -154,18 +179,29 @@ appId: com.mettleup.app
     timeout: 5000
 - assertVisible:
     id: "chart-see-workouts"
-- assertVisible: "Show 12-week total"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Show 12-week total'
 - takeScreenshot: rel-f199-10-week-picked
 - tapOn:
     id: "chart-open-workout"
 - extendedWaitUntil:
     visible: "^Your workouts$|^Share$"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Your workouts$|^Share$'
 - runFlow:
     when:
       visible: "^Your workouts$"
     commands:
-      - assertVisible: ".*\\d+ workouts? in .*"
+      - runFlow:
+          file: sub-see.yaml
+          env:
+            FIND: '.*\d+ workouts? in .*'
 - takeScreenshot: rel-f199-11-week-box-opened
 - back
 - extendedWaitUntil:
@@ -183,6 +219,10 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Last 12 months$"
     timeout: 10000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Last 12 months$'
 - tapOn: "^Last 12 months$"
 - extendedWaitUntil:
     visible: "Tap a point to see one month"
@@ -196,7 +236,10 @@ appId: com.mettleup.app
     visible:
       id: "chart-open-workout"
     timeout: 5000
-- assertVisible: "Show 12-month total"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Show 12-month total'
 - assertVisible:
     id: "chart-see-workouts"
 - takeScreenshot: rel-f199-12-month-picked
@@ -205,6 +248,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Your workouts$|^Share$"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Your workouts$|^Share$'
 - runFlow:
     when:
       visible: "^Your workouts$"
@@ -225,10 +273,19 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Last 12 weeks$"
     timeout: 10000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Last 12 weeks$'
 - tapOn: "^Last 12 weeks$"
 - extendedWaitUntil:
     visible: "Tap a point to see one week|Show 12-week total"
     timeout: 20000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Tap a point to see one week|Show 12-week total'
 # ---------------------------------------------------------------- 5. the chips keep the chart tappable
 - scrollUntilVisible:
     element: "^Duration$"
@@ -259,7 +316,10 @@ appId: com.mettleup.app
       id: "today-goal"
     centerElement: true
     timeout: 15000
-- assertVisible: "Today: .*"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Today: .*'
 - scrollUntilVisible:
     element: "^Reps$"
     direction: UP
@@ -295,12 +355,21 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Your workouts$"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Your workouts$'
 - back
 - extendedWaitUntil:
     visible:
       id: "date-line-chart"
     timeout: 15000
 # Back to Kg lifted (a saved choice): the Today line returns.
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Kg lifted$'
 - tapOn: "^Kg lifted$"
 - extendedWaitUntil:
     visible:

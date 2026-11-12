@@ -44,6 +44,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Edit profile"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Edit profile'
 - scrollUntilVisible:
     element: "^ ?QA Restore$"
     direction: UP
@@ -57,10 +62,20 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Add measures"
     timeout: 20000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Add measures'
 - tapOn: "Add measures"
 - extendedWaitUntil:
     visible: "Fill in any you like."
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Fill in any you like.'
 - runFlow:
     file: sub-type.yaml
     env:
@@ -74,6 +89,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Body$"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Body$'
 - runFlow:
     file: sub-find.yaml
     env:

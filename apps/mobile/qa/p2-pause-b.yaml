@@ -7,6 +7,10 @@ appId: com.mettleup.app
     visible: 'Workout duration .*paused\. Tap to resume\.'
     timeout: 20000
 - tapOn: 'Workout duration .*paused\. Tap to resume\.'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Resume Workout Timer'
 - tapOn: "Resume Workout Timer"
 - extendedWaitUntil:
     notVisible: "^Paused$"

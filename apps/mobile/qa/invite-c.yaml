@@ -33,6 +33,10 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: 'Leave ${BGYM}\?'
     timeout: 10000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Leave gym$'
 - tapOn: "^Leave gym$"
 # Leaving a branded gym redraws the app in ForgeAI's colours (it may land on the Workout tab, or stay
 # on Settings, now offering "Join your gym"; as in part BR). Release A: the Gym tab is its join screen.
@@ -45,4 +49,9 @@ appId: com.mettleup.app
     # is below the edge; "Your profile" (its first row) says we are there (run 40097554901).
     visible: "^Profile$|^Join your gym$|^Your profile$"
     timeout: 20000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Profile$|^Join your gym$|^Your profile$'
 - runFlow: sub-gym-none.yaml

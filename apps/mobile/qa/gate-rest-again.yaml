@@ -10,6 +10,10 @@ appId: com.mettleup.app
 - tapOn:
     text: "More for .*"
     index: 0
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Rest timer'
 - tapOn: "Rest timer"
 - tapOn: "${REST}"
 - tapOn:

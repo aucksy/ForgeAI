@@ -11,6 +11,10 @@
 appId: com.mettleup.app
 ---
 - takeScreenshot: w-30-shade-after-warmup-rest
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Rest is over|Set \d+ of \d+.*|.*Bench Press.*|Workout in progress'
 - tapOn: 'Rest is over|Set \d+ of \d+.*|.*Bench Press.*|Workout in progress'
 - extendedWaitUntil:
     visible: "Log a set to finish|Finish workout"
@@ -67,6 +71,10 @@ appId: com.mettleup.app
     visible: "^Drop set$"
     timeout: 10000
 # 15 Oct 2026: the set-type sheet is set type only — a tap applies and closes it (no ✓ "Done").
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Drop set$'
 - tapOn: "^Drop set$"
 - extendedWaitUntil:
     notVisible: "^Drop set$"
@@ -176,7 +184,15 @@ appId: com.mettleup.app
 - tapOn:
     text: "More for .*Lateral Raise.*"
     index: 0
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Rest timer'
 - tapOn: "Rest timer"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Rest 0:30'
 - tapOn: "Rest 0:30"
 - extendedWaitUntil:
     notVisible: 'For .*Remembered for next time\.'
@@ -184,6 +200,10 @@ appId: com.mettleup.app
 - tapOn:
     text: "More for .*Lateral Raise.*"
     index: 0
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Superset$'
 - tapOn: "^Superset$"
 - extendedWaitUntil:
     visible: "Superset with .*Triceps.*"
@@ -199,7 +219,15 @@ appId: com.mettleup.app
 - tapOn:
     text: "More for .*Triceps.*"
     index: 0
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Rest timer'
 - tapOn: "Rest timer"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Rest 0:30'
 - tapOn: "Rest 0:30"
 - extendedWaitUntil:
     notVisible: 'For .*Remembered for next time\.'

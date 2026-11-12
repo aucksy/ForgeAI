@@ -47,6 +47,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: 'Up next: .*'
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Up next: .*'
 - scrollUntilVisible:
     element: "^Start$"
     direction: UP
@@ -62,6 +67,10 @@ appId: com.mettleup.app
 - tapOn:
     text: "More for .*"
     index: 0
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Rest timer'
 - tapOn: "Rest timer"
 - tapOn: "${REST}"
 - tapOn:

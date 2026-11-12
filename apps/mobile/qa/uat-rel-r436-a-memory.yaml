@@ -31,6 +31,10 @@ appId: com.mettleup.app
 - runFlow: sub-uat-r439-finish.yaml
 # ---------------------------------------------------------------- 2. pre-filled; Goblet Squat added + ticked -> the line goes; Discard
 - runFlow: sub-workout-fresh.yaml
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Start empty workout'
 - tapOn: "Start empty workout"
 - tapOn:
     text: "(?i)^allow$"
@@ -38,8 +42,14 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Dumbbell Preacher Curl set 1 weight, .*"
     timeout: 20000
-- assertVisible: "We added the exercises from your last empty workout\\."
-- assertVisible: "Start blank"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'We added the exercises from your last empty workout\.'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Start blank'
 - takeScreenshot: rel-r436-a1-prefilled
 - runFlow:
     file: sub-uat-r439-add.yaml
@@ -62,6 +72,10 @@ appId: com.mettleup.app
 - runFlow: xc-sub-back-to-tabs.yaml
 - runFlow: sub-workout-fresh.yaml
 # ---------------------------------------------------------------- 3. after Discard: still the curl only, never Goblet Squat
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Start empty workout'
 - tapOn: "Start empty workout"
 - tapOn:
     text: "(?i)^allow$"
@@ -69,7 +83,10 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Dumbbell Preacher Curl set 1 weight, .*"
     timeout: 20000
-- assertVisible: "We added the exercises from your last empty workout\\."
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'We added the exercises from your last empty workout\.'
 - assertNotVisible: "More for Goblet Squat"
 - assertNotVisible: "Goblet Squat set 1 weight, .*"
 - takeScreenshot: rel-r436-a3-after-discard-curl-only
@@ -80,7 +97,10 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Dumbbell Preacher Curl set 1 weight, .*"
     timeout: 20000
-- assertVisible: "We added the exercises from your last empty workout\\."
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'We added the exercises from your last empty workout\.'
 - takeScreenshot: rel-r436-a4-back-from-background
 # launchApp stops the app first (am force-stop), then opens it.
 - launchApp
@@ -90,6 +110,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Profile$|Dumbbell Preacher Curl set 1 weight, .*"
     timeout: 60000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Profile$|Dumbbell Preacher Curl set 1 weight, .*'
 - runFlow:
     when:
       notVisible: "Dumbbell Preacher Curl set 1 weight, .*"
@@ -106,8 +131,14 @@ appId: com.mettleup.app
     visible: "Dumbbell Preacher Curl set 1 weight, .*"
     timeout: 20000
 - runFlow: sub-uat-r436-top.yaml
-- assertVisible: "We added the exercises from your last empty workout\\."
-- assertVisible: "Start blank"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'We added the exercises from your last empty workout\.'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Start blank'
 - assertNotVisible: "More for Goblet Squat"
 - takeScreenshot: rel-r436-a5-after-app-killed
 # ---------------------------------------------------------------- 5. the first tick on a pre-added card: the line goes
@@ -132,6 +163,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Edit profile"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Edit profile'
 - scrollUntilVisible:
     element: "More for .*"
     centerElement: true
@@ -142,6 +178,10 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Repeat workout"
     timeout: 10000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Repeat workout'
 - tapOn: "Repeat workout"
 - extendedWaitUntil:
     visible: "Dumbbell Preacher Curl set 1 weight, .*"
@@ -164,6 +204,10 @@ appId: com.mettleup.app
 - runFlow: sub-uat-r439-finish.yaml
 # ---------------------------------------------------------------- 7. after the Repeat: still the curl only
 - runFlow: sub-workout-fresh.yaml
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Start empty workout'
 - tapOn: "Start empty workout"
 - tapOn:
     text: "(?i)^allow$"
@@ -171,7 +215,10 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Dumbbell Preacher Curl set 1 weight, .*"
     timeout: 20000
-- assertVisible: "We added the exercises from your last empty workout\\."
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'We added the exercises from your last empty workout\.'
 - assertNotVisible: "More for Goblet Squat"
 - assertNotVisible: "Goblet Squat set 1 weight, .*"
 - takeScreenshot: rel-r436-a8-after-repeat-curl-only

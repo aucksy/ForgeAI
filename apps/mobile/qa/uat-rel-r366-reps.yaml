@@ -41,6 +41,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Edit profile"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Edit profile'
 - scrollUntilVisible:
     element: "More for .*"
     centerElement: true
@@ -51,6 +56,10 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Save as routine"
     timeout: 10000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Save as routine'
 - tapOn: "Save as routine"
 - extendedWaitUntil:
     visible: "Your plan only changes if you pick it."
@@ -61,12 +70,24 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Saved as a routine"
     timeout: 15000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Open routine$'
 - tapOn: "^Open routine$"
 # Run 42008396524: the routine opens on "Edit routine" with "Start routine" below the edge.
 - extendedWaitUntil:
     visible: "Edit routine"
     timeout: 15000
-- assertVisible: "Pull[- ][Uu]p"
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Edit routine'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Pull[- ][Uu]p'
 - scrollUntilVisible:
     element: "^Start routine$"
     centerElement: true

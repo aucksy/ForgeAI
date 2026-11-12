@@ -32,6 +32,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Edit profile"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Edit profile'
 - takeScreenshot: rel-look-${LOOK}-02-profile
 - runFlow:
     file: sub-progress-row.yaml
@@ -40,6 +45,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Last 7 days"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Last 7 days'
 - takeScreenshot: rel-look-${LOOK}-03-charts
 - scrollUntilVisible:
     element:
@@ -75,6 +85,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Your workouts$|^[0-9]+ workouts?$"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Your workouts$|^[0-9]+ workouts?$'
 - takeScreenshot: rel-look-${LOOK}-05-history
 - back
 # ---------------------------------------------------------------- Settings: the new row and its page
@@ -84,10 +99,19 @@ appId: com.mettleup.app
     centerElement: true
     timeout: 20000
 - takeScreenshot: rel-look-${LOOK}-06-settings
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Light or dark$'
 - tapOn: "^Light or dark$"
 - extendedWaitUntil:
     visible: "Same as phone: the app turns light or dark when your phone does."
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Same as phone: the app turns light or dark when your phone does.'
 - takeScreenshot: rel-look-${LOOK}-07-light-or-dark
 - back
 - back
@@ -147,6 +171,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Edit profile"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Edit profile'
 - takeScreenshot: rel-look-${LOOK}-12-gym-profile
 - openLink: "mettleup://qa-look?accent=none"
 - extendedWaitUntil:

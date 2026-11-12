@@ -32,13 +32,23 @@ appId: com.mettleup.app
     visible: "Start position of Tate Press"
     timeout: 20000
 - assertVisible: "End position of Tate Press"
-- assertVisible: "^Start$"
-- assertVisible: "^End$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Start$'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^End$'
 - waitForAnimationToEnd:
     timeout: 3000
 - takeScreenshot: rel-pics-02-tate
 - back
 # The search keeps its text after back: clear it with the X (eraseText left letters behind on 12 Nov).
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Clear the search'
 - tapOn: "Clear the search"
 - tapOn: "Search exercises"
 - inputText: " alternating hammer curl"
@@ -54,6 +64,10 @@ appId: com.mettleup.app
 - back
 # A hold: one picture, labelled Hold, no End.
 # The search keeps its text after back: clear it with the X (eraseText left letters behind on 12 Nov).
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Clear the search'
 - tapOn: "Clear the search"
 - tapOn: "Search exercises"
 - inputText: " wall sit"
@@ -70,6 +84,10 @@ appId: com.mettleup.app
 - back
 # Negative: no picture of either kind, so no picture frame.
 # The search keeps its text after back: clear it with the X (eraseText left letters behind on 12 Nov).
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Clear the search'
 - tapOn: "Clear the search"
 - tapOn: "Search exercises"
 - inputText: " iso-lateral chest press"
@@ -80,12 +98,21 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^How to$"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^How to$'
 - assertNotVisible: "Start position of.*"
 - assertNotVisible: "Hold position of.*"
 - takeScreenshot: rel-pics-05-no-picture
 - back
 # Regression: a RepDB exercise keeps its pictures.
 # The search keeps its text after back: clear it with the X (eraseText left letters behind on 12 Nov).
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Clear the search'
 - tapOn: "Clear the search"
 - tapOn: "Search exercises"
 - inputText: " barbell curl"

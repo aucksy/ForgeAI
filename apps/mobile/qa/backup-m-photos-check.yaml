@@ -19,11 +19,20 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Add measures"
     timeout: 20000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Add measures'
 - scrollUntilVisible:
     element: "Progress photos"
     direction: UP
     timeout: 20000
 - assertNotVisible: "Add a progress photo"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'See all progress photos'
 - tapOn: "See all progress photos"
 - extendedWaitUntil:
     visible: 'Progress photo, .*'
@@ -35,7 +44,16 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Delete photo"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Delete photo'
 - takeScreenshot: 188-after-reinstall-photo-open
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Close photo'
 - tapOn: "Close photo"
 - runFlow: sub-back-to-tabs.yaml
 # R-320: Android's own backup (the workout count, "Include photos in my backup") left the Backup page,
@@ -44,6 +62,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Your workouts$|^[0-9]+ workouts?$|^No workouts yet$"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Your workouts$|^[0-9]+ workouts?$|^No workouts yet$'
 - scrollUntilVisible:
     element: "Include photos in my backup"
     centerElement: true

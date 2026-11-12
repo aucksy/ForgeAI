@@ -50,6 +50,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Notifications are off for MettleUp, so no reminder can arrive\\."
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Notifications are off for MettleUp, so no reminder can arrive\.'
 - scrollUntilVisible:
     element: "Turn on notifications"
     centerElement: true

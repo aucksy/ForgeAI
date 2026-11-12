@@ -20,6 +20,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Your mobile number"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Your mobile number'
 - tapOn: "Your mobile number"
 - inputText: "${PHONE}"
 # The keyboard covers the PIN box on a phone: close it and scroll to the box first (run 43188461918).

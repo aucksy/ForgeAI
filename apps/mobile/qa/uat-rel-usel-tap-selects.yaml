@@ -201,6 +201,10 @@ appId: com.mettleup.app
     text: "^ ?70$"
     rightOf: "^Target$"
 - takeScreenshot: rel-usel-f-plates-70
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Close the plate calculator'
 - tapOn: "Close the plate calculator"
 - extendedWaitUntil:
     notVisible: "Close the plate calculator"
@@ -227,6 +231,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Update routine|Workout complete"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Update routine|Workout complete'
 - runFlow:
     when:
       visible: "Update routine"
@@ -238,4 +247,9 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Workout complete"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Workout complete'
 - takeScreenshot: rel-usel-finish

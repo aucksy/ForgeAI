@@ -22,12 +22,22 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Skip$|Start fresh|Get stronger every week|Welcome to MettleUp|Step 1 of 3|Restore from a backup|Load demo data instead"
     timeout: 90000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Skip$|Start fresh|Get stronger every week|Welcome to MettleUp|Step 1 of 3|Restore from a backup|Load demo data instead'
 - tapOn:
     text: "^Skip$"
     optional: true
 - extendedWaitUntil:
     visible: "Start fresh|Get stronger every week|Welcome to MettleUp|Restore from a backup|Load demo data instead"
     timeout: 90000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Start fresh|Get stronger every week|Welcome to MettleUp|Restore from a backup|Load demo data instead'
 # ---------------------------------------------------------------- 1. "Join my gym" and its two ways in
 # Owner profile (360 dp, font 1.3): the buttons can sit below the edge (trap 27).
 - runFlow:
@@ -38,6 +48,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Join your gym$"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Join your gym$'
 - runFlow:
     file: sub-find.yaml
     env:
@@ -59,6 +74,10 @@ appId: com.mettleup.app
     when:
       notVisible: "^ZZZZZ9$"
     commands:
+      - runFlow:
+          file: sub-see.yaml
+          env:
+            FIND: 'Gym code'
       - tapOn: "Gym code"
       - eraseText: 10
       - inputText: "ZZZZZ9"
@@ -88,6 +107,10 @@ appId: com.mettleup.app
     when:
       notVisible: "${TGYM} found.*"
     commands:
+      - runFlow:
+          file: sub-see.yaml
+          env:
+            FIND: 'Gym code'
       - tapOn: "Gym code"
       - eraseText: 10
       - inputText: "${TCODE}"
@@ -122,6 +145,10 @@ appId: com.mettleup.app
 # A tap while the fast scroll still moves only stops it (run 41395557501): wait, tap, and tap once more
 # if the Join your gym screen is still there.
 - waitForAnimationToEnd
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Back$'
 - tapOn: "^Back$"
 - extendedWaitUntil:
     visible: "Get stronger every week"
@@ -132,6 +159,10 @@ appId: com.mettleup.app
       visible: "^Scan the poster at your gym$"
     commands:
       - waitForAnimationToEnd
+      - runFlow:
+          file: sub-see.yaml
+          env:
+            FIND: '^Back$'
       - tapOn: "^Back$"
 - extendedWaitUntil:
     visible: "Get stronger every week"

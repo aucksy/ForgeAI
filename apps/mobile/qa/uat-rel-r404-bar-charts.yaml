@@ -22,6 +22,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Last 7 days"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Last 7 days'
 - scrollUntilVisible:
     element:
       id: "bar-chart"
@@ -38,7 +43,10 @@ appId: com.mettleup.app
     visible:
       id: "chart-open-workout"
     timeout: 5000
-- assertVisible: ".*[0-9.]+ sets?"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '.*[0-9.]+ sets?'
 - takeScreenshot: rel-r404-02-week-bar-box
 - tapOn:
     id: "chart-open-workout"
@@ -50,7 +58,10 @@ appId: com.mettleup.app
     when:
       visible: "^Your workouts$"
     commands:
-      - assertVisible: ".*\\d+ workouts?.*"
+      - runFlow:
+          file: sub-see.yaml
+          env:
+            FIND: '.*\d+ workouts?.*'
 - takeScreenshot: rel-r404-03-week-opened
 - back
 - extendedWaitUntil:
@@ -71,6 +82,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Last 7 days"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Last 7 days'
 - scrollUntilVisible:
     element:
       id: "bar-chart"
@@ -100,6 +116,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Share as a picture"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Share as a picture'
 - scrollUntilVisible:
     element:
       id: "bar-chart"
@@ -140,7 +161,10 @@ appId: com.mettleup.app
     visible:
       id: "chart-open-workout"
     timeout: 5000
-- assertVisible: ".*\\d+ workouts?"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '.*\d+ workouts?'
 - takeScreenshot: rel-r404-08-month-bar-box
 - tapOn:
     id: "chart-open-workout"

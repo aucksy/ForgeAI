@@ -20,7 +20,16 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Add a photo"
     timeout: 20000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Add a photo'
 - tapOn: "Add a photo"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Take a photo'
 - tapOn: "Take a photo"
 - extendedWaitUntil:
     visible: '(?i).*(take pictures and record video|allow forgeai to take).*'
@@ -30,4 +39,9 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: 'Camera not allowed\..*'
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Camera not allowed\..*'
 - takeScreenshot: p0-camera-denied-message

@@ -20,6 +20,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Edit profile"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Edit profile'
 # ---------------------------------------------------------------- 7. the line chart
 - runFlow:
     file: sub-find.yaml
@@ -35,18 +40,37 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^See these workouts$"
     timeout: 5000
-- assertVisible: "Show 12-week total"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Show 12-week total'
 - takeScreenshot: rel-71-chart-point-picked
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^See these workouts$'
 - tapOn: "^See these workouts$"
 - extendedWaitUntil:
     visible: '^[1-9]\d* workouts? in .*'
     timeout: 15000
-- assertVisible: "^Your workouts$"
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^[1-9]\d* workouts? in .*'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Your workouts$'
 - takeScreenshot: rel-72-workouts-of-that-week
 - back
 - extendedWaitUntil:
     visible: "Show 12-week total"
     timeout: 10000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Show 12-week total'
 - tapOn: "Show 12-week total"
 - runFlow:
     file: sub-find.yaml
@@ -60,7 +84,10 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Which app are you moving from\\?$"
     timeout: 15000
-- assertVisible: "^Bring in your workouts from another app$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Bring in your workouts from another app$'
 - assertNotVisible: "^Import routines$"
 - takeScreenshot: rel-73-import-which-app
 - tapOn:
@@ -68,7 +95,15 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Choose Strong file"
     timeout: 15000
-- assertVisible: '.*Settings → Export Strong Data\.$'
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Choose Strong file'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '.*Settings → Export Strong Data\.$'
 - runFlow:
     file: sub-find.yaml
     env:
@@ -84,6 +119,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Choose Hevy file"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Choose Hevy file'
 - assertVisible: "Bring your Hevy history in"
 - runFlow:
     file: sub-find.yaml
@@ -98,6 +138,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Copy your routines from Hevy"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Copy your routines from Hevy'
 - takeScreenshot: rel-76-hevy-link-page
 - runFlow: sub-back-to-tabs.yaml
 # ---------------------------------------------------------------- 5. erase: no account, no Drive
@@ -113,10 +158,19 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: 'Erase all data\?'
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Erase all data\?'
 - assertVisible: 'Every workout, record, routine, body entry, photo and video, .*This phone goes back to new\..*'
 - assertNotVisible: '.*Your backup file in Google Drive stays.*'
 - assertNotVisible: "^Erase this phone only$"
 - takeScreenshot: rel-77-erase-question-no-account
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Cancel$'
 - tapOn: "^Cancel$"
 - extendedWaitUntil:
     notVisible: 'Erase all data\?'

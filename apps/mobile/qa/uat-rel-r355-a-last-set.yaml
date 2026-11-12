@@ -26,6 +26,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Log a set to finish|Finish workout|^Add exercise$"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Log a set to finish|Finish workout|^Add exercise$'
 # ---------------------------------------------------------------- A: Leg Extension
 - runFlow:
     file: sub-find.yaml

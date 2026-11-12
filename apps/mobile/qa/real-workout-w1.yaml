@@ -19,12 +19,22 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Skip$|Start fresh|Get stronger every week|Welcome to MettleUp|Step 1 of 3|Restore from a backup|Load demo data instead"
     timeout: 90000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Skip$|Start fresh|Get stronger every week|Welcome to MettleUp|Step 1 of 3|Restore from a backup|Load demo data instead'
 - tapOn:
     text: "^Skip$"
     optional: true
 - extendedWaitUntil:
     visible: "Start fresh|Get stronger every week|Welcome to MettleUp|Step 1 of 3|Your name|^Next$|Restore from a backup|Load demo data instead"
     timeout: 90000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Start fresh|Get stronger every week|Welcome to MettleUp|Step 1 of 3|Your name|^Next$|Restore from a backup|Load demo data instead'
 # R-277: the first screen is the one-screen welcome. The switcher's way in: "Bring workouts" -> "From Hevy"
 # (its import opens after Start training). Tapping it goes straight on to step 1, then the name.
 - runFlow:
@@ -45,6 +55,10 @@ appId: com.mettleup.app
     element: "Step 1 of 3"
     direction: UP
     timeout: 20000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Your name'
 - tapOn: "Your name"
 - inputText: "Aakash"
 - hideKeyboard
@@ -66,6 +80,10 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Step 3 of 3"
     timeout: 15000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Build muscle'
 - tapOn: "Build muscle"
 - scrollUntilVisible:
     element: "Intermediate"
@@ -77,6 +95,10 @@ appId: com.mettleup.app
     centerElement: true
     timeout: 20000
 - takeScreenshot: w-01-welcome-step-3
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Start training'
 - tapOn: "Start training"
 # ---------------------------------------------------------------- the Hevy import (~500 workouts)
 # U-M2 (UAT, 17 Oct 2026): "From Hevy" promises the import opens by itself after Start training, so
@@ -84,11 +106,25 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Choose Hevy file"
     timeout: 60000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Choose Hevy file'
 - assertVisible: "Bring your Hevy history in"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Choose Hevy file'
 - tapOn: "Choose Hevy file"
 - extendedWaitUntil:
     visible: '(?i).*(recent|downloads|files|qa-hevy).*'
     timeout: 20000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '(?i).*(recent|downloads|files|qa-hevy).*'
 - runFlow:
     when:
       notVisible: "qa-hevy-big.*"
@@ -103,9 +139,17 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Date range$"
     timeout: 120000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Date range$'
 - takeScreenshot: w-02-import-preview
 # Three years: the range must carry its years (Feb 2024 → Feb 2027).
-- assertVisible: '.*2024 → .*2027'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '.*2024 → .*2027'
 - tapOn:
     text: "^Merge$"
     optional: true
@@ -119,6 +163,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: '[\d,]+ workouts imported'
     timeout: 300000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '[\d,]+ workouts imported'
 - assertVisible: "${output.imported} imported"
 - takeScreenshot: w-03-imported
 - scrollUntilVisible:
@@ -145,10 +194,23 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Follow (this|these) as your plan\\?"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Follow (this|these) as your plan\?'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Follow (it|them)$'
 - tapOn: "^Follow (it|them)$"
 - extendedWaitUntil:
     visible: "3 routines in From Hevy"
     timeout: 20000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Open routines'
 - tapOn: "Open routines"
 # ---------------------------------------------------------------- effort on (as the owner has it)
 # Release A (A8): "Rate how hard each set felt" (was Track RPE) has its own page; the page's title
@@ -160,6 +222,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Adds a box to each set.*"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Adds a box to each set.*'
 - runFlow:
     when:
       visible:
@@ -181,6 +248,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Any workout$"
     timeout: 20000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Any workout$'
 - takeScreenshot: w-05b-previous-values
 # R-284: Last time's numbers → More workout choices → Settings → Profile.
 - back
@@ -195,6 +267,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Edit profile"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Edit profile'
 - assertVisible: '^Workouts: [1-9][\d,]+$'
 - assertVisible: '^Weeks in a row: [1-9][\d,]*$'
 - takeScreenshot: w-06-profile-top
@@ -217,6 +294,10 @@ appId: com.mettleup.app
     when:
       visible: "Show 12-week total"
     commands:
+      - runFlow:
+          file: sub-see.yaml
+          env:
+            FIND: 'Show 12-week total'
       - tapOn: "Show 12-week total"
 - scrollUntilVisible:
     element: '(Kg|Lb) lifted in the last 12 weeks · .*'
@@ -228,6 +309,10 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Show$"
     timeout: 10000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Last 12 months$'
 - tapOn: "^Last 12 months$"
 - extendedWaitUntil:
     visible: "Range: Last 12 months. Change"
@@ -237,6 +322,10 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Show$"
     timeout: 10000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^All time$'
 - tapOn: "^All time$"
 - extendedWaitUntil:
     visible: "(Kg|Lb) lifted since .* · .*"
@@ -260,6 +349,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Last 7 days"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Last 7 days'
 - takeScreenshot: w-10-statistics-monday
 - back
 - tapOn:

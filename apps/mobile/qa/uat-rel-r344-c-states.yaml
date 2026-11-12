@@ -40,6 +40,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: '.*Lighter than last time\. Every workout counts\..*'
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '.*Lighter than last time\. Every workout counts\..*'
 - assertNotVisible: "You slept .*"
 - assertNotVisible: 'Test build: made-up sleep\.'
 - takeScreenshot: rel-r344-09-off-no-line
@@ -107,7 +112,14 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Remove MettleUp's access to Health Connect\\?"
     timeout: 10000
-- assertVisible: ".*stop reading your weight, steps and sleep\\..*"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '.*stop reading your weight, steps and sleep\..*'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Remove access$'
 - tapOn: "^Remove access$"
 - extendedWaitUntil:
     visible: "Removed\\. MettleUp can no longer use Health Connect\\..*"
@@ -133,6 +145,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: '.*Lighter than last time\. Every workout counts\..*'
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '.*Lighter than last time\. Every workout counts\..*'
 - assertNotVisible: "You slept .*"
 - takeScreenshot: rel-r344-13-removed-no-line
 # Large text pushes "Done" below the edge (run 41994649037, font 2.0).

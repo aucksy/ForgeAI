@@ -16,15 +16,28 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Start empty workout|Resume workout"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Start empty workout|Resume workout'
 - runFlow:
     when:
       visible: "Resume workout"
     commands:
+      - runFlow:
+          file: sub-see.yaml
+          env:
+            FIND: 'Resume workout'
       - tapOn: "Resume workout"
 - runFlow:
     when:
       visible: "Start empty workout"
     commands:
+      - runFlow:
+          file: sub-see.yaml
+          env:
+            FIND: 'Start empty workout'
       - tapOn: "Start empty workout"
       - runFlow: sub-start-blank.yaml
 - extendedWaitUntil:
@@ -35,9 +48,16 @@ appId: com.mettleup.app
     visible: "Pause Workout Timer"
     timeout: 10000
 - takeScreenshot: p2-timer-menu
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Pause Workout Timer'
 - tapOn: "Pause Workout Timer"
 - extendedWaitUntil:
     visible: 'Workout paused\. Ticking a set resumes it\..*'
     timeout: 10000
-- assertVisible: "^Paused$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Paused$'
 - takeScreenshot: p2-paused

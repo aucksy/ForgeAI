@@ -87,10 +87,20 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^How to$"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^How to$'
 - tapOn: "^How to$"
 - extendedWaitUntil:
     visible: "How to do it"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'How to do it'
 - takeScreenshot: 23-exercise-page
 # 0.62.0 put the start/end pictures on top of How to: on the owner's phone (360 dp, font 1.3) the
 # versions line is below the edge now (run 40999691263), so scroll to it before the check.
@@ -103,6 +113,10 @@ appId: com.mettleup.app
 # ---------------------------------------------------------------- empty workout, new set kinds
 # Back on Profile: the empty workout starts from the Workout tab (none left open by part B).
 - runFlow: sub-workout-fresh.yaml
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Start empty workout'
 - tapOn: "Start empty workout"
 - tapOn:
     text: "(?i)^allow$"
@@ -111,6 +125,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Add exercise"
     timeout: 20000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Add exercise'
 # Plank: TIME column + stopwatch.
 - tapOn: "Add exercise"
 - tapOn: "Search exercises"
@@ -217,14 +236,27 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "KG EACH"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'KG EACH'
 - tapOn:
     text: "More for Dumbbell Bench Press.*"
     index: 0
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Counting'
 - tapOn: "Counting"
 - extendedWaitUntil:
     visible: ".*Past workouts keep theirs.*"
     timeout: 10000
 - takeScreenshot: 27-counting-sheet
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Two dumbbells.*'
 - tapOn: "Two dumbbells.*"
 # Treadmill: KM + TIME.
 - scrollUntilVisible:
@@ -264,6 +296,10 @@ appId: com.mettleup.app
     visible: 'Finish workout\?'
     timeout: 10000
 - assertVisible: '\d+ sets? ha(s|ve) numbers but .*ticked\.'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Save them'
 - tapOn: "Save them"
 - takeScreenshot: 28b-finish-sheet-save-them
 # The sheet's own button: the one above its "Keep going" (the screen's button sits behind it).
@@ -274,6 +310,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Workout complete"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Workout complete'
 # LW-10 / PG-04: a workout without a routine is named by when it started ("Afternoon workout
 # done"; the share picture's title is the same name) — never the old placeholder "Full Body".
 - assertVisible: '(Morning|Afternoon|Evening|Night) workout done'
@@ -311,13 +352,30 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Search exercises"
     timeout: 20000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Create an exercise'
 - tapOn: "Create an exercise"
 - extendedWaitUntil:
     visible: "How you log it"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'How you log it'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Exercise name'
 - tapOn: "Exercise name"
 - inputText: " Wall Plank Hold"
 - hideKeyboard
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Time$'
 - tapOn: "^Time$"
 # Owner profile (360 dp, font 1.3): the muscle and gear chips run past the screen's edge.
 - scrollUntilVisible:
@@ -335,10 +393,19 @@ appId: com.mettleup.app
     element: "Save exercise"
     timeout: 15000
 - takeScreenshot: 33-new-exercise-photo
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Save exercise'
 - tapOn: "Save exercise"
 - extendedWaitUntil:
     visible: "Wall Plank Hold"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Wall Plank Hold'
 - runFlow:
     file: sub-find.yaml
     env:

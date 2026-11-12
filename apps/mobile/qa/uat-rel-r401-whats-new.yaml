@@ -29,6 +29,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "A new MettleUp is here"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'A new MettleUp is here'
 - takeScreenshot: rel-r401-02-full-screen
 # 0.77.0: the buttons stay at the bottom of the full screen; "Later" is on screen with no scroll.
 - assertVisible: "^Later$"
@@ -54,6 +59,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "A new MettleUp is here|A new version of MettleUp is ready.*"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'A new MettleUp is here|A new version of MettleUp is ready.*'
 - tapOn:
     text: "^Later$"
     optional: true

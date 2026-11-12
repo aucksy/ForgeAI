@@ -10,15 +10,38 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Your watch app has an update"
     timeout: 60000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Your watch app has an update'
 - takeScreenshot: rel-r438-06-next-day-again
 # ---------------------------------------------------------------- 2. the watch's Play Store opened
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Update on watch'
 - tapOn: "Update on watch"
 - extendedWaitUntil:
     visible: "Check your watch"
     timeout: 20000
-- assertVisible: "Look at your watch and tap Update there\\..*"
-- assertVisible: "Tap this on your watch"
-- assertVisible: "Nothing on your watch\\? Try again"
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Check your watch'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Look at your watch and tap Update there\..*'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Tap this on your watch'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Nothing on your watch\? Try again'
 - takeScreenshot: rel-r438-07-check-your-watch
 - tapOn: "^Got it$"
 - extendedWaitUntil:
@@ -39,17 +62,43 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Your watch app has an update"
     timeout: 20000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Your watch app has an update'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Update on watch'
 - tapOn: "Update on watch"
 - extendedWaitUntil:
     visible: "The update did not start"
     timeout: 20000
-- assertVisible: "Open Play Store on your watch, search for MettleUp and tap Update\\."
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'The update did not start'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Open Play Store on your watch, search for MettleUp and tap Update\.'
 - takeScreenshot: rel-r438-08-did-not-start
 # Try again keeps the plain answer (the stand-in still fails).
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Try again$'
 - tapOn: "^Try again$"
 - extendedWaitUntil:
     visible: "The update did not start"
     timeout: 20000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'The update did not start'
 - tapOn: "^Got it$"
 - extendedWaitUntil:
     notVisible: "The update did not start"
@@ -59,11 +108,28 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Your watch app has an update"
     timeout: 20000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Your watch app has an update'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Update on watch'
 - tapOn: "Update on watch"
 - extendedWaitUntil:
     visible: "Your watch is not connected"
     timeout: 20000
-- assertVisible: "Check that Bluetooth is on.*"
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Your watch is not connected'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Check that Bluetooth is on.*'
 - takeScreenshot: rel-r438-09-not-connected
 - tapOn: "^Got it$"
 - extendedWaitUntil:
@@ -71,6 +137,10 @@ appId: com.mettleup.app
     timeout: 10000
 # ---------------------------------------------------------------- 5. negative: never during a workout
 - runFlow: sub-workout-fresh.yaml
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Start empty workout'
 - tapOn: "Start empty workout"
 - tapOn:
     text: "(?i)^allow$"
@@ -79,6 +149,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Add exercise"
     timeout: 20000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Add exercise'
 - openLink: "mettleup://qa-update?watchtap=opened&watch=forget"
 - extendedWaitUntil:
     visible: "Your watch app has an update"
@@ -94,6 +169,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Your watch app has an update"
     timeout: 60000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Your watch app has an update'
 - takeScreenshot: rel-r438-11-after-workout-next-open
 # "Later" can sit below the screen's edge (more lines, a bigger font): scroll to it first.
 - runFlow:

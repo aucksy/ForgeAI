@@ -31,10 +31,20 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Choose Hevy file"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Choose Hevy file'
 - tapOn: "Choose Hevy file"
 - extendedWaitUntil:
     visible: '(?i).*(recent|downloads|files|qa-hevy).*'
     timeout: 20000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '(?i).*(recent|downloads|files|qa-hevy).*'
 - runFlow:
     when:
       notVisible: "qa-hevy.*"
@@ -49,9 +59,17 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Date range$"
     timeout: 20000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Date range$'
 # Audit Phase 4 (IM-08): the date range carries its years — 3 "Legs Old" in March 2024 to
 # September 2026 — so years of history never read like months.
-- assertVisible: "Mar 2024 → Sep 2026"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Mar 2024 → Sep 2026'
 # Every name in this file is one ForgeAI knows (some under another name): nothing to ask.
 - assertNotVisible: '.* new to MettleUp'
 # Phase 1 (DS-05 / IM-01): part I's import took the demo away, so this is an ordinary import over
@@ -72,11 +90,20 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "12 workouts imported"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '12 workouts imported'
 - scrollUntilVisible:
     element: "Bring my routines in"
     centerElement: true
     timeout: 15000
 - takeScreenshot: 141-hevy-imported-routines-next
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Bring my routines in'
 - tapOn: "Bring my routines in"
 # ---------------------------------------------------------------- 1. routines found
 - extendedWaitUntil:
@@ -93,9 +120,19 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Also done in Push A"
     timeout: 10000
-- assertVisible: "1 of 2"
-- assertVisible: "Triceps Pushdown"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '1 of 2'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Triceps Pushdown'
 # R-335 (98ff8e0e): file imports show the library's name too ("Chest Fly (Machine) → Pec Deck Fly").
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Chest Fly \(Machine\) → Pec Deck Fly'
 - tapOn: "Chest Fly \\(Machine\\) → Pec Deck Fly"
 - takeScreenshot: 143-check-push-a
 - scrollUntilVisible:
@@ -106,7 +143,10 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "2 of 2"
     timeout: 10000
-- assertVisible: "Pull A"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Pull A'
 - takeScreenshot: 144-check-pull-a
 - scrollUntilVisible:
     element: "^Next$"
@@ -119,6 +159,10 @@ appId: com.mettleup.app
     timeout: 10000
 - assertVisible: ".*in the order you do them: Push A, Pull A.*"
 - takeScreenshot: 145-follow-question
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Follow (it|them)$'
 - tapOn: "^Follow (it|them)$"
 # ---------------------------------------------------------------- 4. done
 - extendedWaitUntil:
@@ -126,6 +170,10 @@ appId: com.mettleup.app
     timeout: 15000
 - takeScreenshot: 146-routines-saved
 # "Open routines" lands on the Workout tab: the followed folder, open, "From Hevy (2)".
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Open routines'
 - tapOn: "Open routines"
 - scrollUntilVisible:
     element: 'From Hevy \(2\)'
@@ -148,7 +196,10 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: 'Push Day · \d+ exercises · From Hevy.*'
     timeout: 15000
-- assertVisible: "Start routine"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Start routine'
 # v0.29.1: five exercises now (Skull Crusher added to the file), so it is below the fold.
 - scrollUntilVisible:
     element: "Pec Deck Fly"
@@ -172,6 +223,10 @@ appId: com.mettleup.app
     when:
       visible: "See exercises"
     commands:
+      - runFlow:
+          file: sub-see.yaml
+          env:
+            FIND: 'See exercises'
       - tapOn: "See exercises"
       # Owner profile (360 dp, font 1.3): the button sits below the day's exercises.
       - scrollUntilVisible:
@@ -192,10 +247,19 @@ appId: com.mettleup.app
     timeout: 30000
 - tapOn:
     id: "import-from-hevy"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Choose Hevy file'
 - tapOn: "Choose Hevy file"
 - extendedWaitUntil:
     visible: '(?i).*(recent|downloads|files|qa-hevy).*'
     timeout: 20000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '(?i).*(recent|downloads|files|qa-hevy).*'
 - runFlow:
     when:
       notVisible: "qa-hevy.*"
@@ -210,6 +274,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Already in MettleUp"
     timeout: 20000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Already in MettleUp'
 # Audit Phase 4 (IM-09): a file already imported says so first, and offers no "Merge 12" that
 # would add 0 — straight on to the routines.
 - scrollUntilVisible:
@@ -237,6 +306,10 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Follow (this|these) as your plan\\?"
     timeout: 10000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Follow (it|them)$'
 - tapOn: "^Follow (it|them)$"
 - extendedWaitUntil:
     visible: ".*From Hevy is updated from this file.*"
@@ -244,6 +317,10 @@ appId: com.mettleup.app
 - takeScreenshot: 151-reimport-updated
 # One "From Hevy" folder (updated), not a second one. "Open routines" lands on the Workout tab:
 # no Back here (Back on the first tab leaves the app).
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Open routines'
 - tapOn: "Open routines"
 - scrollUntilVisible:
     element: 'From Hevy \(2\)'
@@ -260,6 +337,10 @@ appId: com.mettleup.app
     when:
       visible: "See exercises"
     commands:
+      - runFlow:
+          file: sub-see.yaml
+          env:
+            FIND: 'See exercises'
       - tapOn: "See exercises"
       # Owner profile (360 dp, font 1.3): the button sits below the day's exercises.
       - scrollUntilVisible:
@@ -270,6 +351,10 @@ appId: com.mettleup.app
       - back
 # ---------------------------------------------------------------- "Create “…”" inside a workout
 - runFlow: sub-workout-fresh.yaml
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Start empty workout'
 - tapOn: "Start empty workout"
 - runFlow: sub-start-blank.yaml
 - scrollUntilVisible:
@@ -288,6 +373,15 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "How you log it"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'How you log it'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Distance$'
 - tapOn: "^Distance$"
 - scrollUntilVisible:
     element: "Distance in"
@@ -324,4 +418,8 @@ appId: com.mettleup.app
     centerElement: true
     timeout: 15000
 - tapOn: "Discard workout"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Discard$'
 - tapOn: "^Discard$"

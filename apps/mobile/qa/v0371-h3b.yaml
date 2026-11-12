@@ -57,7 +57,10 @@ appId: com.mettleup.app
           from:
             text: 'Rest 0:30 · ends .*'
           direction: DOWN
-- assertVisible: '.*All sets done.*'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '.*All sets done.*'
 - assertNotVisible: 'Open MettleUp to .*'
 - takeScreenshot: h3b-shade-rest-after-complete-set-app-closed
 - pressKey: Back

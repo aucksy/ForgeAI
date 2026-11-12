@@ -157,7 +157,15 @@ appId: com.mettleup.app
 - tapOn:
     text: "More for .*Lateral Raise.*"
     index: 0
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Rest timer'
 - tapOn: "Rest timer"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Rest 0:30'
 - tapOn: "Rest 0:30"
 - extendedWaitUntil:
     notVisible: 'For .*Remembered for next time\.'
@@ -175,7 +183,10 @@ appId: com.mettleup.app
     timeout: 3000
     optional: true
 - assertNotVisible: '.*[Ii]n use\. .*Back in .*'
-- assertVisible: "^Tap to show In use$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Tap to show In use$'
 - takeScreenshot: rel-38-lateral-raise-tap-in-use
 # The clock opens it by hand.
 - tapOn:

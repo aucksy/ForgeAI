@@ -65,6 +65,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Resume workout"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Resume workout'
 - tapOn: "Resume workout"
 - extendedWaitUntil:
     visible: "More for Barbell Bench Press"
@@ -75,7 +80,15 @@ appId: com.mettleup.app
 - takeScreenshot: 114-app-after-skip-on-card
 # ---------------------------------------------------------------- rest ends with the app open
 - tapOn: "More for Barbell Bench Press"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Rest timer'
 - tapOn: "Rest timer"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Rest 0:30'
 - tapOn: "Rest 0:30"
 # LW-27: set 1 was ticked in H1, set 2 by "Done" on the card in H1D; set 3 is
 # "Mark Barbell Bench Press set 3 complete" (the last set still rests: a rest follows every set).

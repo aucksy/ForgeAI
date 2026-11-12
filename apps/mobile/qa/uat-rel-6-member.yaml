@@ -28,14 +28,32 @@ appId: com.mettleup.app
     file: sub-find.yaml
     env:
       FIND: '^Your workouts are only on this phone\. Sign in with Google and MettleUp keeps them safe in your account\.$'
-- assertVisible: "^Sign in to keep them safe$"
-- assertVisible: "^Hide for 30 days$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Sign in to keep them safe$'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Hide for 30 days$'
 - takeScreenshot: rel-60-backup-card
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Sign in to keep them safe$'
 - tapOn: "^Sign in to keep them safe$"
 - extendedWaitUntil:
     visible: "^Backup and restore$"
     timeout: 15000
-- assertVisible: "^Continue with Google$"
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Backup and restore$'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Continue with Google$'
 - takeScreenshot: rel-61-backup-page-from-card
 - back
 - runFlow:
@@ -82,6 +100,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Send$"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Send$'
 - runFlow:
     file: sub-find.yaml
     env:
@@ -96,10 +119,25 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^We couldn't find this gym$"
     timeout: 45000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^We couldn''t find this gym$'
 - assertVisible: "^No gym has the code ZZZZZ9, so scan the poster at your gym or type your gym's code again\\.$"
-- assertVisible: "^Scan the poster$"
-- assertVisible: "^Type a gym code$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Scan the poster$'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Type a gym code$'
 - takeScreenshot: rel-65-gym-not-found
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Type a gym code$'
 - tapOn: "^Type a gym code$"
 - extendedWaitUntil:
     notVisible: "^We couldn't find this gym$"
@@ -107,5 +145,8 @@ appId: com.mettleup.app
 - scrollUntilVisible:
     element: "Gym code"
     timeout: 20000
-- assertVisible: "^Join your gym$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Join your gym$'
 - takeScreenshot: rel-66-type-a-gym-code

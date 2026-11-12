@@ -21,6 +21,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Adds a box to each set.*"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Adds a box to each set.*'
 - runFlow:
     when:
       visible:
@@ -37,6 +42,10 @@ appId: com.mettleup.app
 - runFlow: xc-sub-back-to-tabs.yaml
 # ---------------------------------------------------------------- last time
 - runFlow: sub-workout-fresh.yaml
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Start empty workout'
 - tapOn: "Start empty workout"
 - tapOn:
     text: "(?i)^allow$"
@@ -45,6 +54,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Add exercise"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Add exercise'
 # Incline Dumbbell Press 40 x 13, 12, 10, 8
 - runFlow:
     file: sub-uat-r439-add.yaml
@@ -195,6 +209,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Edit profile"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Edit profile'
 - scrollUntilVisible:
     element: "More for .*"
     centerElement: true
@@ -205,6 +224,10 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Save as routine"
     timeout: 10000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Save as routine'
 - tapOn: "Save as routine"
 - extendedWaitUntil:
     visible: "Your plan only changes if you pick it."
@@ -215,11 +238,23 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Saved as a routine"
     timeout: 15000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Open routine$'
 - tapOn: "^Open routine$"
 - extendedWaitUntil:
     visible: "Edit routine"
     timeout: 15000
-- assertVisible: "Incline Dumbbell Press"
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Edit routine'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Incline Dumbbell Press'
 # ---------------------------------------------------------------- a never-done exercise in the routine (first time)
 - scrollUntilVisible:
     element: "^Add exercise$"
@@ -237,6 +272,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Edit routine"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Edit routine'
 - runFlow:
     file: sub-find.yaml
     env:

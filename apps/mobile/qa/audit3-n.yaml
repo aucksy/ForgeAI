@@ -25,6 +25,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Edit profile"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Edit profile'
 # ---------------------------------------------------------------- the Profile feed (History's list)
 # HI-01: an endless list under month lines that carry their own count ("October · 9 workouts";
 # "March 2024 · 3 workouts" for another year).
@@ -45,14 +50,36 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Log a past workout"
     timeout: 30000
-- assertVisible: "^Month$"
-- assertVisible: "^Year$"
-- assertVisible: "Search workouts"
-- assertVisible: "Rest days.*"
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Log a past workout'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Month$'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Year$'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Search workouts'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Rest days.*'
 # D9: THE streak, in weeks (today has workouts, so at least "1 week in a row").
 - extendedWaitUntil:
     visible: '.*[\d,]+ weeks? in a row.*'
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '.*[\d,]+ weeks? in a row.*'
 - assertNotVisible: '(?i).*day streak.*'
 - takeScreenshot: 190-calendar-top
 # ---------------------------------------------------------------- calendar: month and year views
@@ -72,12 +99,25 @@ appId: com.mettleup.app
     visible: 'Show 20\d\d'
     timeout: 15000
 - takeScreenshot: 192b-calendar-year
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Month$'
 - tapOn: "^Month$"
 - extendedWaitUntil:
     visible: "Log a past workout"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Log a past workout'
 # ---------------------------------------------------------------- search across all years
 # The search icon (spoken "Search workouts") opens the box, already focused.
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Search workouts'
 - tapOn: "Search workouts"
 - extendedWaitUntil:
     visible: "Search your workouts by exercise or workout name"
@@ -102,12 +142,23 @@ appId: com.mettleup.app
     timeout: 15000
 - takeScreenshot: 194-old-workout-page
 # "Edit this workout" is gone from the page: ⋯ ("More") → "Edit workout".
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'More'
 - tapOn: "More"
 - extendedWaitUntil:
     visible: "Edit workout"
     timeout: 10000
-- assertVisible: "Repeat workout"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Repeat workout'
 - takeScreenshot: 194a-old-workout-more
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Edit workout'
 - tapOn: "Edit workout"
 # LW-24: nothing should be open here; if one is (an earlier part stopped mid-workout), discard it.
 - runFlow:
@@ -115,14 +166,24 @@ appId: com.mettleup.app
       visible: "A workout is already open"
     commands:
       - takeScreenshot: 194b-workout-already-open
+      - runFlow:
+          file: sub-see.yaml
+          env:
+            FIND: 'Discard it and edit this one'
       - tapOn: "Discard it and edit this one"
 - extendedWaitUntil:
     visible: "Editing a saved workout"
     timeout: 20000
 # The date reads with its year; the start time can be edited (HI-15).
 - assertVisible: "Date, Fri, 15 Mar 2024. Change"
-- assertVisible: "Start hour, 0 to 23"
-- assertVisible: "Start minute, 0 to 59"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Start hour, 0 to 23'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Start minute, 0 to 59'
 - takeScreenshot: 195-edit-old-workout
 # HI-07: Android Back on the editor asks first; it never leaves the edit open behind.
 - back
@@ -130,6 +191,10 @@ appId: com.mettleup.app
     visible: 'Discard changes\?'
     timeout: 10000
 - takeScreenshot: 196-edit-back-asks
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Discard$'
 - tapOn: "^Discard$"
 # Back on the saved workout, unchanged (wait for the editor to go first).
 - extendedWaitUntil:
@@ -144,14 +209,28 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Close search|Search workouts"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Close search|Search workouts'
 - runFlow:
     when:
       visible: "Close search"
     commands:
+      - runFlow:
+          file: sub-see.yaml
+          env:
+            FIND: 'Close search'
       - tapOn: "Close search"
 - extendedWaitUntil:
     visible: "Log a past workout"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Log a past workout'
 - back
 - extendedWaitUntil:
     visible: "^Workout$"
@@ -174,10 +253,20 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Log a past workout"
     timeout: 20000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Log a past workout'
 - tapOn: "Log a past workout"
 - extendedWaitUntil:
     visible: "Pick the day, when it started and how long it lasted."
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Pick the day, when it started and how long it lasted.'
 # The button says what it will log: yesterday at 18:00 ("Log Fri, 9 Oct · 18:00").
 - assertVisible: 'Log [A-Z][a-z]{2}, \d{1,2} [A-Z][a-z]{2}( \d{4})? · 18:00'
 - takeScreenshot: 198-log-past-sheet
@@ -185,15 +274,27 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Logging a past workout"
     timeout: 20000
-- assertVisible: "PAST WORKOUT"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'PAST WORKOUT'
 - takeScreenshot: 199-past-workout-editor
 - back
 - extendedWaitUntil:
     visible: 'Discard this workout\?'
     timeout: 10000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Discard$'
 - tapOn: "^Discard$"
 # Back to Calendar, nothing saved.
 - extendedWaitUntil:
     visible: "Log a past workout"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Log a past workout'
 - takeScreenshot: 199b-past-workout-discarded

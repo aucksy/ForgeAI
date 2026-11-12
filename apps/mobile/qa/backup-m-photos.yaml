@@ -20,6 +20,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Add measures"
     timeout: 20000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Add measures'
 - scrollUntilVisible:
     element: "Progress photos"
     direction: UP
@@ -30,11 +35,24 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Add a photo"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Add a photo'
 - runFlow:
     when:
       notVisible: 'Progress photo, .*'
     commands:
+      - runFlow:
+          file: sub-see.yaml
+          env:
+            FIND: 'Add a photo'
       - tapOn: "Add a photo"
+      - runFlow:
+          file: sub-see.yaml
+          env:
+            FIND: 'Choose from gallery'
       - tapOn: "Choose from gallery"
       - extendedWaitUntil:
           visible: '(?i)photo taken on.*|^Albums$'
@@ -54,11 +72,20 @@ appId: com.mettleup.app
       - extendedWaitUntil:
           visible: 'When was this photo taken\?|Progress photo, .*'
           timeout: 20000
+          optional: true
+      - runFlow:
+          file: sub-see.yaml
+          env:
+            FIND: 'When was this photo taken\?|Progress photo, .*'
       # The sample pictures carry no date: the app asks which day (any day will do here).
       - runFlow:
           when:
             visible: 'When was this photo taken\?'
           commands:
+            - runFlow:
+                file: sub-see.yaml
+                env:
+                  FIND: 'Previous month'
             - tapOn: "Previous month"
             - tapOn: '\d{4}-\d{2}-01'
       - extendedWaitUntil:
@@ -72,6 +99,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Your workouts$|^[0-9]+ workouts?$|^No workouts yet$"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Your workouts$|^[0-9]+ workouts?$|^No workouts yet$'
 - scrollUntilVisible:
     element: "Include photos in my backup"
     centerElement: true

@@ -9,6 +9,10 @@ appId: com.mettleup.app
 # live card, titled with the exercise, "Set N of M · …", is back once that alert goes; v0.37.1: it
 # goes when the app comes to the front). Either opens the workout; an older build's "Workout in
 # progress" card too.
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Rest is over|Set \d+ of \d+.*|Workout in progress'
 - tapOn: 'Rest is over|Set \d+ of \d+.*|Workout in progress'
 - extendedWaitUntil:
     visible: "Log a set to finish|Finish workout"

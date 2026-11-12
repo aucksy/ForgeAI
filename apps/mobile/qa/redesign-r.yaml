@@ -65,10 +65,22 @@ appId: com.mettleup.app
     element: "^Routines$"
     centerElement: true
     timeout: 30000
-- assertVisible: "Start empty workout"
-- assertVisible: "New folder"
-- assertVisible: "New routine"
-- assertVisible: "Find a plan"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Start empty workout'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'New folder'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'New routine'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Find a plan'
 # Part L follows "Jaipur": its folder is first, open, tagged "Following".
 - scrollUntilVisible:
     element: 'Jaipur \(6\)'
@@ -81,19 +93,40 @@ appId: com.mettleup.app
     element: "Start routine Pull 1"
     centerElement: true
     timeout: 20000
-- assertVisible: "Pull 1, next, .*"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Pull 1, next, .*'
 - takeScreenshot: r-02b-workout-next-routine
 # ---------------------------------------------------------------- a routine's ⋯
 - tapOn: "More for Pull 1"
 - extendedWaitUntil:
     visible: "Share routine"
     timeout: 10000
-- assertVisible: "Duplicate routine"
-- assertVisible: "Edit routine"
-- assertVisible: "Move up"
-- assertVisible: "Move down"
-- assertVisible: "Move to folder…"
-- assertVisible: "Delete routine"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Duplicate routine'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Edit routine'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Move up'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Move down'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Move to folder…'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Delete routine'
 - takeScreenshot: r-03-routine-menu
 - back
 - extendedWaitUntil:
@@ -113,11 +146,26 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Rename folder"
     timeout: 10000
-- assertVisible: "Add new routine"
-- assertVisible: "Share folder"
-- assertVisible: "Easy weeks….*"
-- assertVisible: "Stop following"
-- assertVisible: "Delete folder"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Add new routine'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Share folder'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Easy weeks….*'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Stop following'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Delete folder'
 - takeScreenshot: r-04-folder-menu
 - back
 - extendedWaitUntil:
@@ -133,15 +181,29 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Build a plan"
     timeout: 20000
-- assertVisible: "A plan built for you, or a ready program."
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Build a plan'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'A plan built for you, or a ready program.'
 - takeScreenshot: r-05-explore
 # Release A (A11): Find a plan links to the one import home, Settings → Bring in from Hevy or Strong.
 - scrollUntilVisible:
     element: "Bring in from Hevy or Strong"
     centerElement: true
     timeout: 30000
-- assertVisible: "Bring routines in"
-- assertVisible: "Import a routine file"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Bring routines in'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Import a routine file'
 - takeScreenshot: r-05b-explore-bring-routines-in
 - back
 - extendedWaitUntil:
@@ -154,8 +216,19 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Edit profile"
     timeout: 30000
-- assertVisible: "Settings"
-- assertVisible: "Share this month as a picture"
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Edit profile'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Settings'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Share this month as a picture'
 - assertVisible: '^Workouts: [\d,]+$'
 - assertVisible: '^Weeks in a row: [\d,]+$'
 - assertVisible: '^Records: [\d,]+$'
@@ -207,6 +280,10 @@ appId: com.mettleup.app
     index: 0
 - takeScreenshot: r-08-chart-bar-tapped
 # The way back to the range's total (the big number is the 12-week total until a bar is tapped).
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Show 12-week total'
 - tapOn: "Show 12-week total"
 - scrollUntilVisible:
     element: "(Kg|Lb) lifted in the last 12 weeks · .*"
@@ -223,8 +300,15 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Show$"
     timeout: 10000
-- assertVisible: "^All time$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^All time$'
 - takeScreenshot: r-08b-chart-range-sheet
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Last 12 months$'
 - tapOn: "^Last 12 months$"
 - scrollUntilVisible:
     element: "Range: Last 12 months. Change"
@@ -240,6 +324,10 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Show$"
     timeout: 10000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^All time$'
 - tapOn: "^All time$"
 - scrollUntilVisible:
     element: "Range: All time. Change"
@@ -276,6 +364,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Last 7 days"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Last 7 days'
 - runFlow:
     file: sub-find.yaml
     env:
@@ -294,7 +387,10 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Search exercises"
     timeout: 20000
-- assertVisible: "Create an exercise"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Create an exercise'
 - takeScreenshot: r-10-exercises
 - back
 - runFlow:
@@ -304,6 +400,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Add measures"
     timeout: 20000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Add measures'
 - runFlow:
     file: sub-find.yaml
     env:
@@ -321,6 +422,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Log a past workout|Search workouts|^Year$"
     timeout: 20000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Log a past workout|Search workouts|^Year$'
 - runFlow:
     file: sub-find.yaml
     env:
@@ -339,6 +445,10 @@ appId: com.mettleup.app
     centerElement: true
     timeout: 20000
 - takeScreenshot: r-12-calendar
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Year$'
 - tapOn: "^Year$"
 - extendedWaitUntil:
     visible: 'Show 20\d\d'
@@ -349,6 +459,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Edit profile"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Edit profile'
 - scrollUntilVisible:
     element: "More for .*"
     centerElement: true
@@ -360,11 +475,26 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Save as routine"
     timeout: 10000
-- assertVisible: "Repeat workout"
-- assertVisible: "Edit workout"
-- assertVisible: "Share as a picture"
-- assertVisible: "Share as text"
-- assertVisible: "Delete workout"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Repeat workout'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Edit workout'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Share as a picture'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Share as text'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Delete workout'
 - takeScreenshot: r-13b-feed-menu
 - back
 - extendedWaitUntil:
@@ -379,11 +509,18 @@ appId: com.mettleup.app
     timeout: 15000
 - takeScreenshot: r-14-workout-page
 # Redesign R5: Edit / Repeat sit behind ⋯ ("More"), as on the feed.
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'More'
 - tapOn: "More"
 - extendedWaitUntil:
     visible: "Edit workout"
     timeout: 10000
-- assertVisible: "Repeat workout"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Repeat workout'
 - takeScreenshot: r-14b-workout-page-more
 - back
 - extendedWaitUntil:
@@ -401,18 +538,47 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Summary$"
     timeout: 15000
-- assertVisible: "^History$"
-- assertVisible: "^How to$"
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Summary$'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^History$'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^How to$'
 - takeScreenshot: r-15-exercise-summary
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^History$'
 - tapOn: "^History$"
 - extendedWaitUntil:
     visible: '.*Open the workout'
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '.*Open the workout'
 - takeScreenshot: r-15b-exercise-history
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^How to$'
 - tapOn: "^How to$"
 - extendedWaitUntil:
     visible: "How to do it"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'How to do it'
 - takeScreenshot: r-15c-exercise-how-to
 # The exercise page → the workout page → Profile.
 - back
@@ -421,9 +587,18 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-settings-open.yaml
 # Release A (A7): one page in 6 headed groups. Rows are checked, never the (capital) headings.
-- assertVisible: "^Your profile$"
-- assertVisible: "^Units$"
-- assertVisible: "^Weekly goal$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Your profile$'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Units$'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Weekly goal$'
 - takeScreenshot: r-16-settings
 - scrollUntilVisible:
     element: "^About$"
@@ -470,6 +645,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "lb, miles"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'lb, miles'
 - takeScreenshot: r-17-settings-units
 - back
 - runFlow:
@@ -479,6 +659,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Workout sounds"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Workout sounds'
 - takeScreenshot: r-18-settings-workouts
 - back
 # Release A (A8): the other page split out of the old Workouts page.
@@ -489,7 +674,15 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Weight step$"
     timeout: 15000
-- assertVisible: "^Reps to aim for$"
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Weight step$'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Reps to aim for$'
 - takeScreenshot: r-18b-settings-next-weight
 - back
 - runFlow:
@@ -499,6 +692,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Credits"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Credits'
 - takeScreenshot: r-19-settings-about
 - back
 # Settings → Profile → Edit profile (the pencil). Nothing is typed, so nothing changes.
@@ -506,12 +704,23 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Edit profile"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Edit profile'
 - tapOn: "Edit profile"
 - extendedWaitUntil:
     visible: 'Bio, up to \d+ characters'
     timeout: 15000
-- assertVisible: "Name"
-- assertVisible: "Link"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Name'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Link'
 - takeScreenshot: r-20-edit-profile
 # Release A (A9): one profile editor, "Your profile": what Settings → Your details held is below,
 # and Body figure moved in from Units.
@@ -561,10 +770,20 @@ appId: com.mettleup.app
     visible: "^${TGYM}$"
     timeout: 45000
 # Release A: the Gym tab, membership first, then Check in (A3); no Leave at its foot (A4).
-- assertVisible: "Pay at the desk"
-- assertVisible: "Bag, empty"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Pay at the desk'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Bag, empty'
 # R-225 (0.62.0): the Gym tab opens on its "Shop" part when the gym sells things; Check in is in the
 # "My gym" part (runs 40999689414, 40999691263 failed here). Then back to the Shop part.
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^My gym$'
 - tapOn: "^My gym$"
 - runFlow:
     file: sub-find.yaml
@@ -585,7 +804,10 @@ appId: com.mettleup.app
     element: "^Shop$"
     direction: UP
     timeout: 20000
-- assertVisible: "My orders"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'My orders'
 - takeScreenshot: r-21c-shop-grid
 - scrollUntilVisible:
     element: 'Shaker bottle 700 ml, .*'
@@ -597,6 +819,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: '^Shaker bottle 700.ml$'
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Shaker bottle 700.ml$'
 - takeScreenshot: r-22-shop-product
 - scrollUntilVisible:
     element: "Add to bag"
@@ -618,19 +845,34 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Bag$"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Bag$'
 - scrollUntilVisible:
     element: "^Place order$"
     centerElement: true
     timeout: 15000
-- assertVisible: 'Pay at the desk when you collect it\. Nothing is charged in the app\.'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Pay at the desk when you collect it\. Nothing is charged in the app\.'
 - assertNotVisible: "Place demo order"
 - takeScreenshot: r-23-bag
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Place order$'
 - tapOn: "^Place order$"
 # The order goes to the gym's server; My orders opens with the placed line on top.
 - extendedWaitUntil:
     visible: 'Order \d+ placed\. Pay at the desk when you collect it\.'
     timeout: 45000
-- assertVisible: "^My orders$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^My orders$'
 # The pill says "Ordered"; the line under it only adds what the pill does not (never the word again).
 - extendedWaitUntil:
     visible: "^The gym is getting it ready$"
@@ -656,6 +898,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^You cancelled this order$"
     timeout: 45000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^You cancelled this order$'
 # A cancelled order can no longer be cancelled (its button goes once the sheet has slid away).
 - extendedWaitUntil:
     notVisible: "Cancel order"
@@ -681,10 +928,19 @@ appId: com.mettleup.app
     visible: 'Leave ${TGYM}\?'
     timeout: 10000
 - takeScreenshot: r-27-leave-question
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Leave gym$'
 - tapOn: "^Leave gym$"
 - extendedWaitUntil:
     visible: "^Join your gym$"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Join your gym$'
 - runFlow: sub-gym-none.yaml
 - takeScreenshot: r-27b-left-no-gym-tab
 # UAT U-G1 (17 Oct 2026): Leave WITH an open order. A member who left with an order still
@@ -715,6 +971,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: '^Shaker bottle 700.ml$'
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Shaker bottle 700.ml$'
 # The stock before the order ("25 in stock" / "Only 2 left"), kept for the check at the end.
 - runFlow:
     file: sub-find.yaml
@@ -744,6 +1005,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Bag$"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Bag$'
 - scrollUntilVisible:
     element: "^Place order$"
     centerElement: true
@@ -779,6 +1045,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Join your gym$"
     timeout: 45000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Join your gym$'
 - runFlow: sub-gym-none.yaml
 - takeScreenshot: r-27d-left-order-cancelled
 # The proof: a fresh join sees the shaker's stock back where it was before the order.
@@ -804,6 +1075,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: '^Shaker bottle 700.ml$'
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Shaker bottle 700.ml$'
 - runFlow:
     file: sub-find.yaml
     env:
@@ -827,12 +1103,24 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: 'Leave ${TGYM}\?'
     timeout: 15000
-- assertVisible: "Your workouts stay on this phone. You can join again with the code."
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Your workouts stay on this phone. You can join again with the code.'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Leave gym$'
 - tapOn: "^Leave gym$"
 # No gym: Settings offers "Join your gym" again, and so does the Gym tab.
 - extendedWaitUntil:
     visible: "^Join your gym$"
     timeout: 45000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Join your gym$'
 - runFlow: sub-gym-none.yaml
 - assertNotVisible: "^${TGYM}$"
 - takeScreenshot: r-28-no-gym-join-again

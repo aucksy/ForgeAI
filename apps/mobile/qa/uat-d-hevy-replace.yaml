@@ -14,10 +14,20 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Choose Hevy file"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Choose Hevy file'
 - tapOn: "Choose Hevy file"
 - extendedWaitUntil:
     visible: '(?i).*(recent|downloads|files|qa-hevy).*'
     timeout: 20000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '(?i).*(recent|downloads|files|qa-hevy).*'
 - runFlow:
     when:
       notVisible: "qa-hevy\\.csv"
@@ -32,6 +42,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Date range$"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Date range$'
 - runFlow:
     file: sub-find.yaml
     env:
@@ -59,4 +74,9 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^12 workouts imported$"
     timeout: 120000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^12 workouts imported$'
 - takeScreenshot: ud-06c-replaced

@@ -34,7 +34,16 @@ appId: com.mettleup.app
     when:
       visible: "^Pay your gym$"
     commands:
-      - assertVisible: '^Scan this QR with any UPI app\.$'
-      - assertVisible: '^Pay by UPI app$'
-      - assertVisible: '^Press and hold to copy the UPI ID\.$'
+      - runFlow:
+          file: sub-see.yaml
+          env:
+            FIND: '^Scan this QR with any UPI app\.$'
+      - runFlow:
+          file: sub-see.yaml
+          env:
+            FIND: '^Pay by UPI app$'
+      - runFlow:
+          file: sub-see.yaml
+          env:
+            FIND: '^Press and hold to copy the UPI ID\.$'
       - takeScreenshot: rel-f79-2-pay-card

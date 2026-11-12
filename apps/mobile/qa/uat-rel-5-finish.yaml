@@ -27,6 +27,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Update routine|Workout complete"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Update routine|Workout complete'
 - runFlow:
     when:
       visible: "Update routine"
@@ -39,6 +44,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Workout complete"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Workout complete'
 - assertNotVisible: '(?i).*add a set.*'
 - runFlow:
     file: sub-find.yaml
@@ -49,6 +59,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Share$"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Share$'
 - assertVisible: "${LASTDAY} · 04:10.*"
 - assertVisible: "Machine Day"
 - takeScreenshot: rel-52-compared-workout-opened
@@ -63,6 +78,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Summary$"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Summary$'
 - scrollUntilVisible:
     element:
       id: "date-line-chart"
@@ -72,10 +92,18 @@ appId: com.mettleup.app
 # Negative first: "Heaviest weight" has no total, so no line.
 - assertNotVisible:
     id: "chart-range-total"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Heaviest weight'
 - tapOn: "Heaviest weight"
 - extendedWaitUntil:
     visible: "Chart shows"
     timeout: 5000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Kg lifted$'
 - tapOn: "^Kg lifted$"
 - extendedWaitUntil:
     visible:
@@ -83,6 +111,10 @@ appId: com.mettleup.app
       text: 'Total, (last 3 months|last 12 months|all time): [0-9,]+ kg in [0-9]+ workouts?'
     timeout: 5000
 - takeScreenshot: rel-398a-range-total
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^All time$'
 - tapOn: "^All time$"
 - extendedWaitUntil:
     visible:

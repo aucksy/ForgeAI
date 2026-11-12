@@ -3,7 +3,14 @@
 # and the Profile's "Workouts: N" exactly as before the damage (-e WORKOUTS=N from step 1).
 appId: com.mettleup.app
 ---
-- assertVisible: "MettleUp could not start"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'MettleUp could not start'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Try again$'
 - tapOn: "^Try again$"
 - extendedWaitUntil:
     visible: "^Profile$"
@@ -15,6 +22,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Edit profile"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Edit profile'
 - scrollUntilVisible:
     element: "^Workouts: ${WORKOUTS}$"
     direction: UP

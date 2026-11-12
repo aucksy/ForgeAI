@@ -64,7 +64,10 @@ appId: com.mettleup.app
     visible: '.*Barbell Bench Press, set 3'
     timeout: 10000
 - assertNotVisible: 'Open MettleUp to .*'
-- assertVisible: '^Done$'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Done$'
 - takeScreenshot: 112b-shade-after-done
 # ---------------------------------------------------------------- the app again
 - pressKey: Back
@@ -78,6 +81,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "More for Barbell Bench Press|Resume workout|^Workout$"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'More for Barbell Bench Press|Resume workout|^Workout$'
 - waitForAnimationToEnd:
     timeout: 5000
 - runFlow:
@@ -90,6 +98,11 @@ appId: com.mettleup.app
       - extendedWaitUntil:
           visible: "Resume workout"
           timeout: 20000
+          optional: true
+      - runFlow:
+          file: sub-see.yaml
+          env:
+            FIND: 'Resume workout'
       - tapOn: "Resume workout"
 - extendedWaitUntil:
     visible: "More for Barbell Bench Press"

@@ -13,6 +13,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: 'Up next: .*'
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Up next: .*'
 - scrollUntilVisible:
     element: "^Start$"
     direction: UP

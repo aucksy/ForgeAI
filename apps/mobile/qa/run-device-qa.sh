@@ -13,7 +13,31 @@ mkdir -p "$OUT"
 export PATH="$PATH:$HOME/.maestro/bin"
 status=0
 
-log() { echo "[qa] $*" | tee -a "$OUT/timeline.txt"; }
+log() {
+  case "$*" in "part "*" start"*|"gate part "*" begins"*) qa_failfast ;; esac
+  echo "[qa] $*" | tee -a "$OUT/timeline.txt"
+}
+# 12 Nov 2026 (owner, 11 Nov: "fail fast"): with QA_FAILFAST=1 (every piece of a whole run, qa-device.yml) the
+# emulator stops before the NEXT part once a part failed, instead of running the rest for hours; the matrix
+# then cancels the other shards of the round. The failed part still finishes (its screenshot, hierarchy and
+# FAILED line), and the evidence so far is uploaded. Checked where every part starts (its "part X start" line).
+qa_failfast() {
+  [ "${QA_FAILFAST:-}" = 1 ] && [ "${status:-0}" != 0 ] || return 0
+  echo "[qa] FAIL FAST: a part failed (the FAILED line above); this emulator stops here, before the next part." | tee -a "$OUT/timeline.txt"
+  if [ -n "${QA_SHARD_LIST:-}" ]; then
+    printf 'parts=%s\nextra=%s\nstatus=%s\nstopped=fail-fast\n' "$QA_SHARD_LIST" "${QA_EXTRA_LIST:-}" "$status" > "$OUT/shard-done.txt"
+  fi
+  # The same end-of-run evidence as a run that went to its end: the device log, Android's crash and ANR
+  # reports, the crash scan and the skipped steps.
+  adb logcat -d > "$OUT/logcat.txt" 2>/dev/null || true
+  : > "$OUT/dropbox.txt"
+  for tag in data_app_crash data_app_native_crash data_app_anr; do
+    adb shell dumpsys dropbox --print "$tag" >> "$OUT/dropbox.txt" 2>/dev/null || true
+  done
+  python3 "$QA_DIR/qa_report.py" scan "$OUT" >> "$OUT/timeline.txt" 2>&1 || true
+  python3 "$QA_DIR/qa_report.py" skipped "$OUT" > /dev/null 2>&1 || true
+  exit 1
+}
 # ---------------------------------------------------------------- the run's OWN gyms (9 Nov 2026)
 # The fixed test gyms FORGE1 ("ForgeAI Test Gym") and RAMS01 ("RAM'S FITNESS CLUB IMPACT") are gone
 # (deleted with every other test gym, 9 Nov 2026). A part that needs a gym asks qa_gym for one: made
@@ -183,7 +207,7 @@ OLD_PARTS="a b c d e f g h h3 p1 p2 i link i2 j j2 j3 k l n p9 r br inv invf p7 
 # R-123: ubk = a fresh install restores a backup FILE from the welcome screen (routines in order,
 # settings, profile), then saves a new one from Settings -> Back up and restore (qa/uat-bk.yaml).
 UAT_PARTS="uh ur un ud ue ubk ub uf ua uv ug uk"
-GATE_PARTS="w dnd longrest anim mk clip uat u355 u344 u358 u366 usel ugym u15 u76 u198 u194 u401 u199 u404 u438 u444 ulook uage u439 u436 u336 u61 upic u452 u456 u458 u454"
+GATE_PARTS="w dnd longrest anim mk clip uat uatc u355 u344 u358 u366 usel ugym u15 u76 u198 u194 u401 u199 u404 u438 u444 ulook uage u439 u436 u336 u61 upic u452 u456 u458 u454"
 qa_list() { echo "$1" | tr ',;' '  ' | tr '[:upper:]' '[:lower:]' | xargs; }
 QA_ONLY_LIST=$(qa_list "${QA_ONLY:-}")
 QA_EXTRA_LIST=$(qa_list "${QA_EXTRA:-}")
@@ -197,9 +221,9 @@ if [ -n "$QA_SHARD_LIST" ] && [ -n "$QA_ONLY_LIST" ]; then
   log "SHARD FAILED: QA_SHARD and QA_ONLY together (a shard is part of a whole run; only is a partial run)"; status=1
 fi
 for p in $QA_SHARD_LIST; do
-  case " $OLD_PARTS $UAT_PARTS w " in
+  case " $OLD_PARTS $UAT_PARTS w none " in
     *" $p "*) ;;
-    *) log "UNKNOWN PART '$p' in QA_SHARD (known: $OLD_PARTS $UAT_PARTS w)"; status=1 ;;
+    *) log "UNKNOWN PART '$p' in QA_SHARD (known: $OLD_PARTS $UAT_PARTS w, or none = this shard's extras only)"; status=1 ;;
   esac
 done
 for p in $QA_ONLY_LIST; do
@@ -1952,7 +1976,42 @@ part_uat_gym() {  # $1 = the phone's today (YYYY-MM-DD)
   python3 "$QA_DIR/uat_gym.py" sign-out U 2>&1 | sed 's/^/[uat gym] /' | tee -a "$OUT/timeline.txt"
   return $rc
 }
+# 12 Nov 2026: the chain itself (u15 .. R-336 offline) is part_uat_core, extra "uatc" in a split whole run
+# (scripts/ci/qa_shards.py UAT_SPLIT); its u-parts then run in shards 5 and 6. `only=uat` / `extra=uat`
+# on one emulator still runs everything below, in this order.
 part_uat() {
+  part_uat_core
+  part_u344
+  part_u355
+  part_u358
+  part_u366
+  part_usel
+  part_u198
+  part_u194
+  part_u401
+  part_u199
+  part_u404
+  part_upic
+  part_u452
+  part_u456
+  part_u438
+  part_u444
+  part_u439
+  part_u436
+  part_u454
+  part_uage
+  part_u458
+  part_ulook
+  uat_gather
+}
+# Every rel-*.png the UAT flows took, in qa-out/uat-release/ for reading.
+uat_gather() {
+  mkdir -p "$OUT/uat-release"
+  { find "$OUT" -path "$OUT/uat-release" -prune -o -name "rel-*.png" -print 2>/dev/null; find "$PWD" -maxdepth 1 -name "rel-*.png" 2>/dev/null; } \
+    | while read -r f; do cp "$f" "$OUT/uat-release/" 2>/dev/null; done
+  log "UAT: $(find "$OUT/uat-release" -name "rel-*.png" 2>/dev/null | wc -l | tr -d ' ') screenshots in qa-out/uat-release/"
+}
+part_uat_core() {
   local today lastday
   today=$(adb shell date +%Y-%m-%d | tr -d '\r')
   lastday=$(python3 "$QA_DIR/tools/make_uat_hevy.py" "$OUT/qa-uat-hevy.csv" --today "$today")
@@ -1987,31 +2046,6 @@ part_uat() {
   log "R336 offline: airplane_mode_on=$(adb shell settings get global airplane_mode_on | tr -d '\r')"
   uat_flow uatr336b uat-rel-r336-b-offline.yaml
   adb shell cmd connectivity airplane-mode disable >/dev/null 2>&1 || adb shell settings put global airplane_mode_on 0
-  part_u344
-  part_u355
-  part_u358
-  part_u366
-  part_usel
-  part_u198
-  part_u194
-  part_u401
-  part_u199
-  part_u404
-  part_upic
-  part_u452
-  part_u456
-  part_u438
-  part_u444
-  part_u439
-  part_u436
-  part_u454
-  part_uage
-  part_u458
-  part_ulook
-  mkdir -p "$OUT/uat-release"
-  { find "$OUT" -path "$OUT/uat-release" -prune -o -name "rel-*.png" -print 2>/dev/null; find "$PWD" -maxdepth 1 -name "rel-*.png" 2>/dev/null; } \
-    | while read -r f; do cp "$f" "$OUT/uat-release/" 2>/dev/null; done
-  log "UAT: $(find "$OUT/uat-release" -name "rel-*.png" 2>/dev/null | wc -l | tr -d ' ') screenshots in qa-out/uat-release/"
 }
 # Owner bug (5 Nov 2026, u358 flow b saved 10 x 183): every tap on a weight or reps box selects the whole
 # number, ticked or not, with the keyboard closed or open, after the app went to the background, and in
@@ -2484,6 +2518,7 @@ part_u355() {
   return $rc
 }
 qa_runs uat && { log "gate part UAT begins"; part_uat; }
+qa_runs uatc && ! qa_runs uat && { log "gate part UATC begins"; part_uat_core; }
 qa_runs u355 && ! qa_runs uat && { log "gate part U355 begins"; part_u355; }
 qa_runs ugym && ! qa_runs uat && { log "gate part UGYM begins"; part_ugym || status=1; }
 qa_runs u344 && ! qa_runs uat && { log "gate part U344 begins"; part_u344; }
@@ -2518,6 +2553,8 @@ part_u76() {
 }
 qa_runs u76 && { log "gate part U76 begins"; part_u76; }
 
+# The u-parts run alone (a split round's shards 5 and 6, or `only`): their pictures in qa-out/uat-release/ too.
+! qa_runs uat && [ -n "$(find "$OUT" -name 'rel-*.png' -print -quit 2>/dev/null)" ] && uat_gather
 qa_runs dnd && { log "gate part DND begins"; part_dnd; }
 qa_runs clip && { log "gate part CLIP begins"; part_clip; }
 qa_runs longrest && { log "gate part LONGREST begins"; part_longrest; }
@@ -2708,6 +2745,6 @@ python3 "$QA_DIR/qa_report.py" scan "$OUT" | tee -a "$OUT/timeline.txt"
 python3 "$QA_DIR/qa_report.py" skipped "$OUT" | tee -a "$OUT/timeline.txt"
 log "done, status $status"
 if [ -n "$QA_SHARD_LIST" ]; then
-  printf 'parts=%s\nstatus=%s\n' "$QA_SHARD_LIST" "$status" > "$OUT/shard-done.txt"
+  printf 'parts=%s\nextra=%s\nstatus=%s\n' "$QA_SHARD_LIST" "$QA_EXTRA_LIST" "$status" > "$OUT/shard-done.txt"
 fi
 exit $status

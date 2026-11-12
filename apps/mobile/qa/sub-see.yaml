@@ -1,0 +1,30 @@
+# Sub-flow (called with runFlow; not a part of its own): FIND (a regex for a visible text) must be on the
+# screen. When it is already in view NOTHING moves (scrollUntilVisible looks before it swipes), so a check
+# that passed before does exactly what it did. When it is below the bottom edge, look down; when it is
+# above the top edge (Back from a share menu leaves a page scrolled: UATF61, 0.77.0 round 5), look up.
+# Then it must be visible: a scroll before a check, never a weaker check.
+#   - runFlow:
+#       file: sub-see.yaml
+#       env:
+#         FIND: "Share to an AI app"
+# 12 Nov 2026 (scripts/ci/flow_scroll_lint.py): every check of a text on a page that scrolls goes through
+# this or sub-find.yaml (centred: use it before a tap that follows a long scroll, trap 13).
+# visibilityPercentage 10: a thing partly in view counts as in view, as it does for assertVisible and
+# tapOn, so nothing scrolls in a run that passed before.
+# No `when: notVisible` here: that condition waits for the thing to go away when it IS visible, which
+# would cost seconds on every check. No `env:` default (trap 22).
+appId: com.mettleup.app
+---
+- scrollUntilVisible:
+    element: "${FIND}"
+    direction: DOWN
+    timeout: 15000
+    visibilityPercentage: 10
+    optional: true
+- scrollUntilVisible:
+    element: "${FIND}"
+    direction: UP
+    timeout: 20000
+    visibilityPercentage: 10
+    optional: true
+- assertVisible: "${FIND}"

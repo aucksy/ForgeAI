@@ -20,10 +20,23 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Search exercises"
     timeout: 20000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Create an exercise'
 - tapOn: "Create an exercise"
 - extendedWaitUntil:
     visible: "How you log it"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'How you log it'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Exercise name'
 - tapOn: "Exercise name"
 - inputText: " QA Bench Twin"
 - hideKeyboard
@@ -67,10 +80,24 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Log a past workout"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Log a past workout'
 - tapOn: "Log a past workout"
 - extendedWaitUntil:
     visible: "Pick the day, when it started and how long it lasted."
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Pick the day, when it started and how long it lasted.'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Previous month'
 - tapOn: "Previous month"
 - tapOn:
     text: '^Sun, \d{1,2} [A-Z][a-z]{2}( \d{4})?$'
@@ -110,6 +137,10 @@ appId: com.mettleup.app
             - extendedWaitUntil:
                 visible: "Remove set"
                 timeout: 10000
+            - runFlow:
+                file: sub-see.yaml
+                env:
+                  FIND: 'Remove set'
             - tapOn: "Remove set"
 - runFlow:
     file: sub-type.yaml
@@ -180,6 +211,10 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Merge into…"
     timeout: 10000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Merge into…'
 - tapOn: "Merge into…"
 - extendedWaitUntil:
     visible: "Merge QA Bench Twin into…"
@@ -198,6 +233,10 @@ appId: com.mettleup.app
     timeout: 10000
 - assertVisible: 'Its 1 workout, routines and records move to Barbell Bench Press, and QA Bench Twin is removed\. This can.t be undone\.'
 - takeScreenshot: ug-04-merge-question
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Merge$'
 - tapOn: "^Merge$"
 # ---------------------------------------------------------------- 3. the history moved
 - extendedWaitUntil:

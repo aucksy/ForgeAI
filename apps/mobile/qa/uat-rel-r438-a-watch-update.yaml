@@ -23,8 +23,16 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Your watch app has an update"
     timeout: 20000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Your watch app has an update'
 - assertVisible: "(?i)new version: 0\\.\\d+(\\.\\d+)?"
-- assertVisible: "Update on watch"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Update on watch'
 - assertVisible: "^Later$"
 - takeScreenshot: rel-r438-02-offer
 # ---------------------------------------------------------------- 3. "Later" closes it
@@ -50,6 +58,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Your watch app has an update"
     timeout: 20000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Your watch app has an update'
 - back
 - extendedWaitUntil:
     notVisible: "Your watch app has an update"

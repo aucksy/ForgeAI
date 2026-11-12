@@ -24,13 +24,20 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Gym code ${BCODE}"
     timeout: 30000
-- assertVisible: "^Join your gym$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Join your gym$'
 - assertVisible: "^${BGYM}$"
 - runFlow:
     file: sub-find.yaml
     env:
       FIND: 'Join to see your membership and your gym''s messages here\. Your workouts stay on this phone\.'
 - takeScreenshot: br-w00-invite
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Your name'
 - tapOn: "Your name"
 - eraseText: 70
 - inputText: "QA Member"
@@ -68,7 +75,10 @@ appId: com.mettleup.app
     commands:
       - assertVisible: "^Put ${BGYM} on your home screen$"
       - assertVisible: "^Add to home screen$"
-      - assertVisible: "^Not now$"
+      - runFlow:
+          file: sub-see.yaml
+          env:
+            FIND: '^Not now$'
       - takeScreenshot: br-w02-icon-offer
       - tapOn:
           text: "^Not now$"
@@ -109,8 +119,15 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: '^Leave ${BGYM}\?$'
     timeout: 15000
-- assertVisible: '.*goes back to MettleUp''s colours\. Your workouts stay on this phone\. You can join again with the code\.'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '.*goes back to MettleUp''s colours\. Your workouts stay on this phone\. You can join again with the code\.'
 - takeScreenshot: br-w05-leave-question
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Leave gym$'
 - tapOn: "^Leave gym$"
 # Leaving a branded gym re-draws the app in ForgeAI's look (it may come back on the Workout tab, or
 # stay on this page, now offering "Join your gym").
@@ -120,6 +137,11 @@ appId: com.mettleup.app
     # is below the edge; "Your profile" (its first row) says we are there (run 40097554901).
     visible: "^Profile$|^Join your gym$|^Your profile$"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Profile$|^Join your gym$|^Your profile$'
 - runFlow: sub-back-to-tabs.yaml
 - runFlow: sub-gym-none.yaml
 - assertNotVisible: "Your gym: ${BGYM}"

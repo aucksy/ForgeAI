@@ -30,6 +30,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Log a set to finish|Finish workout|^Add exercise$"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Log a set to finish|Finish workout|^Add exercise$'
 # ---------------------------------------------------------------- two exercises: a bench move + a machine
 - runFlow:
     file: sub-find.yaml
@@ -70,6 +75,10 @@ appId: com.mettleup.app
 - tapOn:
     text: "More for .*Incline Dumbbell Press.*"
     index: 0
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Rest timer'
 - tapOn: "Rest timer"
 - tapOn: "Rest 5:00"
 - extendedWaitUntil:
@@ -82,6 +91,10 @@ appId: com.mettleup.app
 - tapOn:
     text: "More for .*Leg Extension.*"
     index: 0
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Rest timer'
 - tapOn: "Rest timer"
 - tapOn: "Rest 1:00"
 - extendedWaitUntil:
@@ -138,7 +151,10 @@ appId: com.mettleup.app
     timeout: 14000
 - assertVisible: 'Bench in use\. .*Back in \d+ seconds\.'
 - assertNotVisible: '.*Tap to close.*'
-- assertVisible: "^I.m back$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^I.m back$'
 - takeScreenshot: rel-456-02-bench-in-use
 # Negative (R-456): the middle of the screen.
 - tapOn:
@@ -214,7 +230,10 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     notVisible: '.*[Ii]n use\. .*Back in .*'
     timeout: 5000
-- assertVisible: "^Tap to show Bench in use$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Tap to show Bench in use$'
 - takeScreenshot: rel-456-07-bar-says-bench
 - tapOn: "Skip rest"
 - extendedWaitUntil:
@@ -230,7 +249,10 @@ appId: com.mettleup.app
     visible: '.*[Ii]n use\. .*Back in .*'
     timeout: 14000
 - assertVisible: 'Machine in use\. .*Back in \d+ seconds\.'
-- assertVisible: "Leg Extension"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Leg Extension'
 - takeScreenshot: rel-456-08-machine-in-use
 - tapOn:
     point: "50%,50%"

@@ -15,12 +15,22 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Skip$|Start fresh|Get stronger every week|Welcome to MettleUp|Step 1 of 3|Restore from a backup|Load demo data instead"
     timeout: 90000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Skip$|Start fresh|Get stronger every week|Welcome to MettleUp|Step 1 of 3|Restore from a backup|Load demo data instead'
 - tapOn:
     text: "^Skip$"
     optional: true
 - extendedWaitUntil:
     visible: "Start fresh|Get stronger every week|Welcome to MettleUp|Step 1 of 3|Your name|^Next$|Restore from a backup|Load demo data instead"
     timeout: 90000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Start fresh|Get stronger every week|Welcome to MettleUp|Step 1 of 3|Your name|^Next$|Restore from a backup|Load demo data instead'
 # R-277: the first screen is the one-screen start view (no step label); "Load demo data instead" is
 # its last link, so scroll down to it.
 - scrollUntilVisible:

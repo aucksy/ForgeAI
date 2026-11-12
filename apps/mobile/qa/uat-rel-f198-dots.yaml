@@ -34,13 +34,27 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Edit profile"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Edit profile'
 - assertVisible:
     id: "new-dot-gear"
 - takeScreenshot: rel-f198-02-settings-button-dot
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Settings'
 - tapOn: "Settings"
 - extendedWaitUntil:
     visible: "^Your profile$|^Your details$"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Your profile$|^Your details$'
 - scrollUntilVisible:
     element: "^Health apps$"
     centerElement: true
@@ -53,6 +67,10 @@ appId: com.mettleup.app
 - assertNotVisible:
     id: "new-dot-row-rest"
 - takeScreenshot: rel-f198-03-row-dot
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Health apps$'
 - tapOn: "^Health apps$"
 - scrollUntilVisible:
     element: "^Sleep and workouts$"
@@ -76,16 +94,28 @@ appId: com.mettleup.app
       id: "new-dot-row-ask-ai"
     centerElement: true
     timeout: 30000
-- assertVisible: "^Ask an AI about your workouts$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Ask an AI about your workouts$'
 - takeScreenshot: rel-f198-05-health-row-clear-ask-ai-still
 - back
 - extendedWaitUntil:
     visible: "Edit profile"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Edit profile'
 - assertVisible:
     id: "new-dot-gear"
 - assertVisible:
     id: "new-dot-tab-profile"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Settings'
 - tapOn: "Settings"
 - scrollUntilVisible:
     element: "^Ask an AI about your workouts$"
@@ -96,6 +126,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Share to an AI app"
     timeout: 20000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Share to an AI app'
 - assertNotVisible:
     id: "new-dot-page-ask-ai"
 - takeScreenshot: rel-f198-06-ask-ai-page-no-dot
@@ -104,12 +139,21 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Edit profile"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Edit profile'
 - assertNotVisible:
     id: "new-dot-gear"
 - assertNotVisible:
     id: "new-dot-tab-profile"
 - takeScreenshot: rel-f198-07-all-clear
 # ---------------------------------------------------------------- next visit: the page's own dot is gone too
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Settings'
 - tapOn: "Settings"
 - scrollUntilVisible:
     element: "^Health apps$"
@@ -152,6 +196,15 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Edit profile"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Edit profile'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Settings'
 - tapOn: "Settings"
 - scrollUntilVisible:
     element: "^Health apps$"
@@ -175,6 +228,15 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Edit profile"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Edit profile'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Settings'
 - tapOn: "Settings"
 - scrollUntilVisible:
     element: "^Health apps$"
@@ -193,6 +255,10 @@ appId: com.mettleup.app
       id: "new-dot-row-plates"
     timeout: 20000
 - takeScreenshot: rel-f198-11-day-30-only-steps
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Plates and bars$'
 - tapOn: "^Plates and bars$"
 - extendedWaitUntil:
     visible: "^Machine and cable steps, .*Change$"
@@ -202,6 +268,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Plates and bars$"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Plates and bars$'
 - assertNotVisible:
     id: "new-dot-row-plates"
 # 0.77.0's "Light or dark" (11 Nov, day 25) is still lit on 6 Dec: its row sits above, under You. Opening its
@@ -216,20 +287,39 @@ appId: com.mettleup.app
       id: "new-dot-row-look"
     timeout: 20000
 - takeScreenshot: rel-f198-12b-light-or-dark-dot
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Light or dark$'
 - tapOn: "^Light or dark$"
 - extendedWaitUntil:
     visible: "^Same as phone.*"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Same as phone.*'
 - back
 - extendedWaitUntil:
     visible: "^Light or dark$"
     timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Light or dark$'
 - assertNotVisible:
     id: "new-dot-row-look"
 - back
 - extendedWaitUntil:
     visible: "Edit profile"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Edit profile'
 - assertNotVisible:
     id: "new-dot-gear"
 - assertNotVisible:

@@ -22,6 +22,10 @@ appId: com.mettleup.app
           element: "Resume workout"
           centerElement: true
           timeout: 15000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Resume workout'
 - tapOn: "Resume workout"
 - extendedWaitUntil:
     visible: "More for Close-Grip Lat Pulldown"
