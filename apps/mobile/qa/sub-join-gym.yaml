@@ -40,11 +40,12 @@ appId: com.mettleup.app
 - assertVisible: "^${CODE}$"
 # The keyboard is open after typing, so this is not Android's Back (sub-agree.yaml's trap).
 - hideKeyboard
-# "Next" (spoken "Find my gym") opens the invite screen for that code.
+# "Next" (spoken "Join with this code"; "Find my gym" is the find-by-number card since F56) opens the invite
+# screen for that code.
 - scrollUntilVisible:
-    element: "Find my gym"
+    element: "^Join with this code$"
     timeout: 15000
-- tapOn: "Find my gym"
+- tapOn: "^Join with this code$"
 # ---------------------------------------------------------------- the invite screen (the live gym_preview)
 - extendedWaitUntil:
     visible: "Gym code ${CODE}"

@@ -32,6 +32,8 @@ export function JoinGymCard({ scan = false }: { scan?: boolean }) {
     router.push(path);
   };
 
+  // F56 (12 Nov 2026): spoken "Join with this code", not "Find my gym": that is now the Gym tab's other card (find by
+  // mobile number), and two buttons with one name confused screen readers and the phone tests (run 43212511204).
   return (
     <GlassCard style={{ gap: space.md }}>
       <View style={{ gap: space.xs }}>
@@ -76,9 +78,9 @@ export function JoinGymCard({ scan = false }: { scan?: boolean }) {
       />
       <InlineError message={error} />
       {scan ? (
-        <GhostButton label="Next" accessibilityLabel="Find my gym" onPress={next} />
+        <GhostButton label="Next" accessibilityLabel="Join with this code" onPress={next} />
       ) : (
-        <PrimaryButton label="Next" accessibilityLabel="Find my gym" onPress={next} />
+        <PrimaryButton label="Next" accessibilityLabel="Join with this code" onPress={next} />
       )}
     </GlassCard>
   );
