@@ -11,7 +11,8 @@
 -- member / payment / enquiry / expense saved = 1 credit; a workout or diet plan saved = 3). The balance is ONE number.
 -- Free credits (owner 12 Nov 2026, R-470, 03-design.md section 3):
 --   welcome   20 starter credits once per gym (the first time the owner opens the assistant), trial or not.
---   monthly   100 every India month ONLY for a paid yearly plan or a founding lifetime gym (_ai_monthly_free:
+--   monthly   50 (Starter) or 100 (Pro) every India month ONLY for a paid yearly plan or a founding lifetime gym
+--             (R-473, 12 Nov 2026: the dearer plan gets more; 'ai' = the retired pack, which acts as Pro) (_ai_monthly_free:
 --             billing 'yearly' with paid_until > now(), or billing 'lifetime', whose paid_until is null = for ever).
 --             The trial and monthly plans get none (packs only). Added the first time the wallet is read that month.
 --             NOT carried over: when a new month starts, what is left of the last month's free ones goes ('expire'
@@ -27,7 +28,7 @@
 --                                     status drafted | done | cancelled | failed, credits, result. Kept 400 days.
 --   gym_ai_credit_ledger              every credit in and out (kept: it is money). A spend's note holds the
 --                                     request's first words, so it is cleared after 400 days, like the request.
---   owner_ai_wallet(key)              {ok, balance, free_left, monthly_free (100 or 0), plan, billing, trial, month,
+--   owner_ai_wallet(key)              {ok, balance, free_left, monthly_free (100, 50 or 0), plan, billing, trial, month,
 --                                     low_at, packs[], recent[]}. Adds the welcome and this month's free credits first
 --                                     (idempotent).
 --   owner_ai_status(key)              {ok, paid, trial}: for the panel worker's fair use (a trial or unpaid gym gets 20
@@ -134,9 +135,10 @@ $$;
 -- Free credits this month (R-470): 100 for a paid yearly plan or a founding lifetime gym, else 0.
 create or replace function public._ai_monthly_free(p_gym uuid) returns int
   language sql stable security definer set search_path = public as $$
-  select coalesce((select case when g.billing = 'lifetime' and (g.paid_until is null or g.paid_until > now()) then 100
-                               when g.billing = 'yearly' and g.paid_until > now() then 100
-                               else 0 end
+  select coalesce((select case when not ((g.billing = 'lifetime' and (g.paid_until is null or g.paid_until > now()))
+                                         or (g.billing = 'yearly' and g.paid_until > now())) then 0
+                               when g.plan = 'starter' then 50
+                               else 100 end
                      from public.gyms g where g.gym_id = p_gym), 0)
 $$;
 

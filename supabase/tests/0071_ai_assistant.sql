@@ -86,6 +86,12 @@ begin
     (public.owner_ai_status(kob)->>'paid') || (public.owner_ai_status(kob)->>'trial') || '/' ||
     (public.owner_ai_status(koc)->>'paid') || '/' || (public.owner_ai_status(koe)->>'paid') || (public.owner_ai_status(koe)->>'trial'),
     'falsetrue/truefalse/true/falsefalse');
+  -- R-473: a paid yearly STARTER plan gets 50 a month (Pro 100, above). ge pays for a year again:
+  perform set_config('forgeai.hq', 'on', true);
+  update public.gyms set paid_until = now() + interval '200 days' where gym_id = ge;
+  perform set_config('forgeai.hq', 'off', true);
+  r := public.owner_ai_wallet(koe);
+  checks := checks + 1; fails := fails || pg_temp.t71_is('1yearlyStarter', (r->>'balance') || '/' || (r->>'free_left') || '/' || (r->>'monthly_free'), '70/50/50');
 
   -- 2. Owner only: the front desk and a trainer are refused; a made-up key too.
   checks := checks + 1; fails := fails || pg_temp.t71_is('2deskWallet', pg_temp.t71_run(format('select public.owner_ai_wallet(%L)', kd)), 'OWNER_ONLY');

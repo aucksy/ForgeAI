@@ -141,7 +141,8 @@ for (const [name, size] of [['phone', { width: 390, height: 844 }], ['computer',
     await expect(yearlyLine.first()).toBeHidden();
     await page.locator('#bill-y').click();
     await expect(yearlyLine).toHaveCount(2);
-    for (const i of [0, 1]) await expect(yearlyLine.nth(i)).toContainText('+ 100 AI credits every month, free');
+    await expect(yearlyLine.nth(0)).toContainText('+ 50 AI credits every month, free'); // Starter (R-473)
+    await expect(yearlyLine.nth(1)).toContainText('+ 100 AI credits every month, free'); // Pro
     await expect(yearlyLine.first()).toBeVisible();
     await expect(page.locator('.found')).toContainText('100 free AI credits every month');
     // "See what it does" goes to the section.

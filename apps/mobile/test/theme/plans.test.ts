@@ -78,13 +78,13 @@ describe("F201: the retired 'ai' pack (replaced by the AI Assistant's credits on
     expect([...PACKS_FOR_SALE]).toEqual(['starter', 'pro']);
   });
 
-  it('the credits offer is the decided one (03-design section 3, R-470)', () => {
+  it('the credits offer is the decided one (03-design section 3, R-470, R-473)', () => {
     expect(AI_CREDITS).toEqual({
       perTask: 1,
       perPlan: 3,
       trialFree: 20,
       monthlyFree: 0,
-      yearlyFreeEachMonth: 100,
+      yearlyFreeEachMonth: { starter: 50, pro: 100 },
       packs: [
         { credits: 50, rupees: 149, popular: false },
         { credits: 150, rupees: 399, popular: true },

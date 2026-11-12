@@ -7,6 +7,13 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-473. Yearly free credits by plan: Starter 50, Pro 100 — 12 Nov 2026
+He (12 Nov, night): "the BASIC PLAN should have 50 and the PRO should have 100" (both got 100 despite the price
+difference). Done: AI_CREDITS.yearlyFreeEachMonth = { starter: 50, pro: 100 } (packages/theme/src/plans.ts);
+0071 _ai_monthly_free: paid yearly/lifetime -> plan 'starter' 50, else (pro, 'ai') 100; founding lifetime is Pro =
+100. Website yearly lines: Starter "+ 50", Pro "+ 100"; AI card line and design doc updated. Trial 20 once and
+monthly plans 0 unchanged. Still NOT APPLIED (0071 waits for his yes with the rest).
+
 ## R-472. Away work: Pro + AI retired, website AI section, Diwali demo line, privacy draft — 12 Nov 2026
 Pro + AI helper (a529) done: 8d4ff485 + a32a5b94; "Pro + AI" gone from everything shown or sold; gyms on 'ai' act as
 Pro; HQ cannot pick it; NEW migration 0072 (receipts call 'ai' "Pro", NOT APPLIED, needs his yes); website pricing

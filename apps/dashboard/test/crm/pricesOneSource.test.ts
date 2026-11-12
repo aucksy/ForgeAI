@@ -71,9 +71,10 @@ describe('prices: one list, every place agrees', () => {
       seen.push(pack!);
     }
     expect(seen.sort()).toEqual([...PACKS_FOR_SALE].sort());
-    // Both plans say what the yearly price adds: 100 AI credits every month, free.
+    // Both plans say what the yearly price adds (R-473): Starter 50, Pro 100 AI credits every month, free.
     for (const card of cards.filter((c) => !/<h3[^>]*>AI Assistant/.test(c))) {
-      expect(card).toContain(`+ ${AI_CREDITS.yearlyFreeEachMonth} AI credits every month, free`);
+      const pack = /<h3[^>]*>Pro</.test(card) ? 'pro' : 'starter';
+      expect(card).toContain(`+ ${AI_CREDITS.yearlyFreeEachMonth[pack]} AI credits every month, free`);
     }
     // F201: the third card is the AI Assistant, on every plan, "Coming soon", with the packs from the one list.
     const ai = cards.find((c) => /<h3[^>]*>AI Assistant/.test(c)) ?? '';
@@ -90,7 +91,7 @@ describe('prices: one list, every place agrees', () => {
     expect(ai).toContain(`${AI_CREDITS.perTask} credit when you send a message`);
     expect(ai).toContain(`${AI_CREDITS.perPlan} credits when the AI writes a workout or diet plan`);
     expect(ai).toContain(`Free trial: ${AI_CREDITS.trialFree} credits, once`);
-    expect(ai).toContain(`${AI_CREDITS.yearlyFreeEachMonth} free credits every month`);
+    expect(ai).toContain(`free credits every month: ${AI_CREDITS.yearlyFreeEachMonth.starter} on Starter, ${AI_CREDITS.yearlyFreeEachMonth.pro} on Pro`);
     expect(ai).toContain('Monthly plans: no free credits');
     expect(ai).toContain('never expire');
     // The founding offer: price (in the text and the big number), 25 gyms, the last day.
@@ -99,7 +100,7 @@ describe('prices: one list, every place agrees', () => {
     expect(found).toContain(`<div class="big">${shown(FOUNDING_OFFER.rupees)}`);
     expect(found).toContain(`first ${FOUNDING_OFFER.gyms} gyms`);
     expect(found).toContain('31 March 2027');
-    expect(found).toContain(`${AI_CREDITS.yearlyFreeEachMonth} free AI credits every month`);
+    expect(found).toContain(`${AI_CREDITS.yearlyFreeEachMonth.pro} free AI credits every month`);
   });
 
   it("the server's AI credit packs and free credits (0071) are the same as the one list", () => {
@@ -113,7 +114,10 @@ describe('prices: one list, every place agrees', () => {
     expect(packs).toEqual(AI_CREDITS.packs.map((p) => [p.credits, p.rupees, p.popular]));
     const sql = text('supabase/migrations/0071_ai_assistant.sql');
     expect(sql).toMatch(new RegExp(`welcome +${AI_CREDITS.trialFree} starter credits`));
-    expect(sql).toMatch(new RegExp(`monthly +${AI_CREDITS.yearlyFreeEachMonth} every India month`));
+    expect(sql).toMatch(new RegExp(`monthly +${AI_CREDITS.yearlyFreeEachMonth.starter} \\(Starter\\) or ${AI_CREDITS.yearlyFreeEachMonth.pro} \\(Pro\\) every India month`));
+    const free = lastDefinition('_ai_monthly_free');
+    expect(free).toContain(`g.plan = 'starter' then ${AI_CREDITS.yearlyFreeEachMonth.starter}`);
+    expect(free).toContain(`else ${AI_CREDITS.yearlyFreeEachMonth.pro} end`);
   });
 
   it('Pay MettleUp charges the same prices and types none of its own', () => {

@@ -101,10 +101,11 @@ Real AI cost (Haiku 5.5 at $0.10/M in, $0.50/M out, help.js rates): question ~Rs
   - **Trial: 20 starter credits, once per gym** (reason 'welcome'), so an owner can taste it. Real AI cost to us
     about Rs 2-4 a gym. No monthly free credits during the trial.
   - **Monthly plan (Starter or Pro): no free credits.** Packs only.
-  - **Yearly plan or founding lifetime: 100 free credits every month** (IST month, not carried over, used before
+  - **Yearly plan or founding lifetime: free credits every month, 50 on Starter, 100 on Pro** (owner, 12 Nov,
+    R-473: the dearer plan gets more; founding lifetime is Pro, so 100) (IST month, not carried over, used before
     pack credits), while `gyms.billing in ('yearly','lifetime') and paid_until > now()`. Real cost to us about
     Rs 15 a month at most (~2% of a yearly Starter). The website shows it on the yearly price only:
-    "Yearly: 100 AI credits every month, free".
+    "+ 50 AI credits every month, free" (Starter) and "+ 100 ..." (Pro).
   - Asking stays free on every plan and in the trial (fair use 50 a day, 10 voice minutes); a trial gym gets
     20 requests a day (cost guard: a 3-month trial must not cost more than it can earn).
   - The AI Assistant button shows for every owner, trial or not. At 0 credits asking and drafts still work; the

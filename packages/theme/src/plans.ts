@@ -124,8 +124,8 @@ export const PACKS_FOR_SALE: readonly SoldPack[] = ['starter', 'pro'];
  * THE AI ASSISTANT'S CREDITS (F201, docs/f201-ai-assistant/03-design.md section 3; R-470, 12 Nov 2026), on
  * every plan; they replaced the retired 'ai' pack. Asking is free. 1 credit when a message is sent or a member,
  * payment, enquiry or expense is saved; 3 credits for a workout or diet plan the AI writes. Free credits: 20
- * once in the free trial, none on a monthly plan, 100 every month on a yearly plan or the founding lifetime
- * offer. Packs never expire. The server keeps the same numbers (0071 owner_ai_wallet) and the website shows
+ * once in the free trial, none on a monthly plan; every month on a yearly plan: 50 on Starter, 100 on Pro (owner,
+ * 12 Nov 2026, R-473: the dearer plan gets more); the founding lifetime offer is Pro, so 100. Packs never expire. The server keeps the same numbers (0071 owner_ai_wallet) and the website shows
  * them (apps/dashboard/public/home/index.html); pricesOneSource.test.ts checks that all three agree.
  */
 export const AI_CREDITS = {
@@ -133,7 +133,7 @@ export const AI_CREDITS = {
   perPlan: 3,
   trialFree: 20,
   monthlyFree: 0,
-  yearlyFreeEachMonth: 100,
+  yearlyFreeEachMonth: { starter: 50, pro: 100 },
   packs: [
     { credits: 50, rupees: 149, popular: false },
     { credits: 150, rupees: 399, popular: true },
