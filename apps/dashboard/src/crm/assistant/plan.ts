@@ -12,8 +12,8 @@ import type { MessageLang as GymMessageLang } from '../logic/messageWords';
 import { formatINR, rupeesToPaise, type Paise } from '../logic/money';
 import { owedListOn } from '../logic/ownerNumbers';
 import { saleDefaults, validateSale } from '../logic/selling';
-import { draftFromReadyPlan, READY_PLANS, type ReadyPlan } from '../logic/workoutPlans';
-import { draftFromStarter, STARTER_DIETS, type DietDraft, type StarterDiet } from '../logic/dietPlans';
+import { workoutPlanProblem } from '../logic/workoutPlans';
+import type { DietDraft } from '../logic/dietPlans';
 import { appIdsOf, appPhones, withoutApp } from '../logic/audience';
 import { calmNudge, capProblem, draftProblem, sendAtFromLocal, type MessageKind, type SentMessage } from '../shop/messages';
 import type { ExpenseCategory, MemberView, Membership, PaymentMethod, Plan, WorkoutPlanDraft } from '../types';
@@ -117,16 +117,20 @@ export interface ExpenseDraftA extends DraftBase {
 
 export interface WorkoutDraftA extends DraftBase {
   tool: 'draft_workout_plan';
-  /** The member it is for ('' = none yet). Saved with nobody assigned: the trainer sends it from Workouts. */
+  /** The member it is for ('' = none: the owner ticks members in the builder). It is in `plan.assign.memberIds`. */
   memberId: string;
-  templateKey: string;
+  /**
+   * R-471: only a plan the AI WROTE is ever saved for credits (aiPlanDraft, from POST /api/assist/plan). There is
+   * no other way to make this draft: a ready-made template is never sold as AI.
+   */
+  writtenBy: 'ai';
   plan: WorkoutPlanDraft;
 }
 
+/** No path makes a diet draft yet: diet plans stay "not yet" (03-design, "AI plan writer (server)"). */
 export interface DietDraftA extends DraftBase {
   tool: 'draft_diet_plan';
   memberId: string;
-  templateKey: string;
   diet: DietDraft;
 }
 
@@ -203,23 +207,12 @@ export function messageWords(input: ToolInputs['draft_message'], gymLang: GymMes
   return { title: en.title || hi.title, body: en.body || hi.body };
 }
 
-const WORKOUT_LEVEL: Record<string, string> = { beginner: 'Beginner', intermediate: 'Intermediate', advanced: 'Advanced' };
-
-/** The ready plan that fits a goal, level and days a week best (logic/programTemplates.json). */
-export function pickReadyPlan(input: Pick<ToolInputs['draft_workout_plan'], 'goal' | 'level' | 'days_per_week'>): ReadyPlan {
-  const level = input.goal === 'beginner' ? 'Beginner' : WORKOUT_LEVEL[input.level] ?? 'Beginner';
-  const daysOf = (t: ReadyPlan) => Number(/(\d+) days? a week/.exec(t.meta)?.[1] ?? 3);
-  const score = (t: ReadyPlan) =>
-    (t.meta.startsWith(level) ? 0 : 10) +
-    (input.days_per_week > 0 ? Math.abs(daysOf(t) - input.days_per_week) : 0) +
-    (input.goal === 'strength' && /strength/i.test(t.name) ? -1 : 0);
-  return [...READY_PLANS].sort((a, b) => score(a) - score(b))[0];
-}
-
-/** The starter diet that fits a goal and food choice (logic/dietPlans.ts STARTER_DIETS). */
-export function pickStarterDiet(input: Pick<ToolInputs['draft_diet_plan'], 'goal' | 'food'>): StarterDiet {
-  const goalKey = input.goal === 'fat_loss' ? 'fat-loss' : input.goal === 'muscle_gain' ? 'muscle-gain' : 'maintenance';
-  return STARTER_DIETS.find((s) => s.key.startsWith(goalKey)) ?? STARTER_DIETS[0];
+/**
+ * The draft for a plan the AI WROTE (POST /api/assist/plan, planWriter.ts writtenPlan), as the owner left it in the
+ * builder. 3 credits (the catalogue's price for a plan). `memberId`: the member it is for, '' for none. PURE.
+ */
+export function aiPlanDraft(plan: WorkoutPlanDraft, memberId: string, requestId: string): WorkoutDraftA {
+  return { tool: 'draft_workout_plan', requestId, credits: TOOL_CREDITS.draft_workout_plan, memberId, writtenBy: 'ai', plan };
 }
 
 // ------------------------------------------------------------------ action -> draft
@@ -396,43 +389,11 @@ export function planAction(action: Action, d: PlanData, requestId: string, chose
         },
       };
     }
-    case 'draft_workout_plan': {
-      const i = action.input;
-      let memberId = '';
-      if (i.member.trim() || chosenId) {
-        const m = member(i.member, d, chosenId);
-        if (!('view' in m)) return m;
-        memberId = m.view.member.id;
-      }
-      const t = pickReadyPlan(i);
-      const plan = draftFromReadyPlan(t, []);
-      const forName = memberId ? d.views.find((v) => v.member.id === memberId)?.member.fullName ?? '' : '';
-      return {
-        kind: 'draft',
-        draft: {
-          ...base,
-          tool: 'draft_workout_plan',
-          memberId,
-          templateKey: t.key,
-          plan: { ...plan, name: forName ? `${t.name} · ${forName}`.slice(0, 80) : plan.name, note: i.notes.trim() || plan.note, assign: { memberIds: [], planIds: [] } },
-        },
-      };
-    }
-    case 'draft_diet_plan': {
-      const i = action.input;
-      let memberId = '';
-      if (i.member.trim() || chosenId) {
-        const m = member(i.member, d, chosenId);
-        if (!('view' in m)) return m;
-        memberId = m.view.member.id;
-      }
-      const t = pickStarterDiet(i);
-      const diet = draftFromStarter(t, []);
-      return {
-        kind: 'draft',
-        draft: { ...base, tool: 'draft_diet_plan', memberId, templateKey: t.key, diet: { ...diet, notes: [diet.notes, i.notes.trim()].filter(Boolean).join('\n') } },
-      };
-    }
+    // R-471: a plan is never a draft straight from the AI's request. A workout plan is WRITTEN first (the plan
+    // writer card, conversation.ts, then aiPlanDraft); a diet plan is not written yet. No template, no charge.
+    case 'draft_workout_plan':
+    case 'draft_diet_plan':
+      return null;
     default:
       return null;
   }
@@ -593,8 +554,14 @@ export function checkDraft(dr: Draft, d: PlanData): DraftCheck {
     }
     case 'draft_workout_plan': {
       if (dr.memberId && !findView(dr.memberId, d)) problems.push(problem('memberId', 'This member is not on your list.'));
+      if (dr.writtenBy !== 'ai') problems.push(problem('plan', 'Only a plan the AI wrote uses credits.'));
       if (!dr.plan.name.trim()) problems.push(problem('name', 'Give the plan a name.'));
       if (dr.plan.routines.length === 0) problems.push(problem('routines', 'The plan has no workout days.'));
+      else {
+        // The builder's own check (sets, reps, names, the 20 KB record): the plan saves only if Workout plans would.
+        const bad = workoutPlanProblem(dr.plan);
+        if (bad) problems.push({ field: 'plan', message: line(bad) });
+      }
       break;
     }
     case 'draft_diet_plan': {

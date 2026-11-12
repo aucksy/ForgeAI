@@ -5,6 +5,10 @@
  * Every message or change card is ONE task with its OWN button and price (R-471). The price is on the button
  * before the tap. With too few credits the draft still shows and the button says "Get credits to send" and opens
  * the packs. Nothing is sent or saved until the owner taps that card's own button.
+ *
+ * The workout plan writer (R-471): goal, level and days a week from what the AI heard, and "Write the plan" (free).
+ * The written plan opens in the Workout plans builder; its Save carries the 3-credit price. Diet plans are not
+ * written yet: that card says so plainly and never mentions credits.
  */
 import { useState, type ReactNode } from 'react';
 
@@ -21,6 +25,10 @@ import type { AnswerRow, FollowUp } from '../answer';
 import { PAGES, type Line } from '../catalogue';
 import { CARD_TITLE, chooseOnCard, confirmWords, updateCard, withDraft, withMessage, type CardModel, type MessageState } from '../conversation';
 import { checkDraft, messageReach, type Draft, type MessageDraftA, type PlanData } from '../plan';
+import { GOAL_WORDS, LEVEL_WORDS, PLAN_DAYS, PLAN_FOCUS_MAX, PLAN_GOALS, PLAN_LEVELS, exerciseCount, type PlanGoal, type PlanLevel } from '../planWriter';
+import type { WorkoutWriterCard } from '../conversation';
+import { WorkoutPlanSheet } from '../../ui/screens/WorkoutPlans';
+import type { WorkoutPlanDraft } from '../../types';
 import { CardFrame, CardHead, Chip, body, quiet, say } from './parts';
 
 type DraftCard = Extract<CardModel, { kind: 'draft' }>;
@@ -39,6 +47,10 @@ export interface CardControls {
   openCredits: () => void;
   /** The WhatsApp one-by-one list for members without the app. */
   openQueue: (people: readonly MemberView[], text: string) => void;
+  /** The AI writes the workout plan (free). */
+  writePlan: (turnId: string, card: WorkoutWriterCard) => void;
+  /** Save the written plan from the builder (3 credits). Null = saved; else the words to show in the builder. */
+  savePlan: (turnId: string, card: WorkoutWriterCard, plan: WorkoutPlanDraft) => Promise<string | null>;
 }
 
 export function CardView({ turnId, card, data, ctl }: { turnId: string; card: CardModel; data: PlanData; ctl: CardControls }) {
@@ -102,27 +114,20 @@ export function CardView({ turnId, card, data, ctl }: { turnId: string; card: Ca
           </div>
         </CardFrame>
       );
-    case 'plan_writer': {
-      const path = card.what === 'workout' ? '/workouts' : '/diet';
-      const page = card.what === 'workout' ? 'Workout plans' : 'Diet plans';
+    case 'plan_writer':
+      if (card.what === 'workout') return <PlanWriterView turnId={turnId} card={card} data={data} ctl={ctl} />;
       return (
-        <CardFrame label={t(page)}>
-          <CardHead title={t(page)} />
+        <CardFrame label={t('Diet plans')}>
+          <CardHead title={t('Diet plans')} />
           <div style={{ padding: space.lg, display: 'grid', gap: space.md }}>
-            <p style={body}>
-              {card.what === 'workout'
-                ? t('The AI Assistant cannot write workout plans yet. Make one in Workout plans: start from a ready plan and change it for the member.')
-                : t('The AI Assistant cannot write diet plans yet. Make one in Diet plans: start from a ready plan and change it for the member.')}
-            </p>
-            <p style={quiet}>{t('Where: {path}', { path })}</p>
-            <Button variant="ghost" onClick={() => ctl.go(path)}>
-              {t('Open {page}', { page: t(page) })}
+            <p style={body}>{t('The AI Assistant cannot write diet plans yet. Make one in Diet plans: start from a ready plan and change it for the member.')}</p>
+            <p style={quiet}>{t('Where: {path}', { path: '/diet' })}</p>
+            <Button variant="ghost" onClick={() => ctl.go('/diet')}>
+              {t('Open {page}', { page: t('Diet plans') })}
             </Button>
-            {/* No credit line: "never uses credits" turns false once the worker writes plans (3 credits, R-471). */}
           </div>
         </CardFrame>
       );
-    }
     case 'help':
       return (
         <CardFrame label={t('A how-to question')}>
@@ -136,6 +141,136 @@ export function CardView({ turnId, card, data, ctl }: { turnId: string; card: Ca
         </CardFrame>
       );
   }
+}
+
+// ------------------------------------------------------------------ the workout plan writer (R-471)
+
+/** The plan's price (03-design §3, the catalogue's price for a plan), shown on the card and on Save. */
+const PLAN_CREDITS = 3;
+
+/** The words on the builder's Save: the price, or "Get credits to save" when there are too few. PURE. */
+export function planSaveWords(balance: number | null, credits: number = PLAN_CREDITS): { label: Line; needCredits: boolean } {
+  if (balance !== null && balance < credits) return { label: { text: 'Get credits to save' }, needCredits: true };
+  return { label: { text: 'Save plan · {credits} credits', vars: { credits } }, needCredits: false };
+}
+
+function PlanWriterView({ turnId, card, data, ctl }: { turnId: string; card: WorkoutWriterCard; data: PlanData; ctl: CardControls }) {
+  const title = t('Workout plan');
+  const set = (patch: Partial<WorkoutWriterCard>) => updateCard(turnId, card.id, (c) => (c.kind === 'plan_writer' && c.what === 'workout' ? { ...c, ...patch } : c));
+  const setAsk = (patch: Partial<WorkoutWriterCard['ask']>) => set({ ask: { ...card.ask, ...patch } });
+  const member = card.memberId ? data.allViews.find((v) => v.member.id === card.memberId)?.member ?? null : null;
+  const busy = card.status === 'writing' || card.status === 'saving';
+  const save = planSaveWords(ctl.balance);
+
+  if (card.status === 'done') {
+    return (
+      <CardFrame label={title}>
+        <CardHead title={title} />
+        <div role="status" style={{ padding: space.lg, display: 'grid', gap: space.md }}>
+          <p style={{ ...body, color: color.goodText, fontWeight: 700 }}>{card.outcome ? say(card.outcome) : t('Done.')}</p>
+          <Button variant="ghost" onClick={() => ctl.go('/workouts')}>
+            {t('Open {page}', { page: t('Workout plans') })}
+          </Button>
+        </div>
+      </CardFrame>
+    );
+  }
+
+  return (
+    <CardFrame label={title}>
+      <CardHead title={title} />
+      {card.options.length > 0 && !card.memberId ? (
+        <Chooser typed={card.memberTyped} options={card.options} onPick={(id) => updateCard(turnId, card.id, (c) => chooseOnCard(c, id, data))} />
+      ) : null}
+      <div style={{ padding: `${space.sm}px ${space.lg}px ${space.lg}px`, display: 'grid', gap: space.sm }}>
+        <dl style={{ margin: 0 }}>
+          <Row label={t('For')}>
+            <b>{member ? member.fullName : t('Nobody yet')}</b>
+          </Row>
+        </dl>
+        {!member && card.memberTyped && card.options.length === 0 ? (
+          <p style={quiet}>{t('Nobody called “{name}” is on your members list. You can pick members in the plan before you save it.', { name: card.memberTyped })}</p>
+        ) : null}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: `0 ${space.md}px` }}>
+          <SelectField
+            label={t('Goal')}
+            value={card.ask.goal}
+            onChange={(v) => setAsk({ goal: v as PlanGoal })}
+            options={PLAN_GOALS.map((g) => ({ value: g, label: t(GOAL_WORDS[g]) }))}
+          />
+          <SelectField
+            label={t('Level')}
+            value={card.ask.level}
+            onChange={(v) => setAsk({ level: v as PlanLevel })}
+            options={PLAN_LEVELS.map((l) => ({ value: l, label: t(LEVEL_WORDS[l]) }))}
+          />
+          <SelectField
+            label={t('Days a week')}
+            value={String(card.ask.days)}
+            onChange={(v) => setAsk({ days: Number(v) })}
+            options={PLAN_DAYS.map((n) => ({ value: String(n), label: String(n) }))}
+          />
+        </div>
+        <TextField
+          label={t('Anything to keep in mind (optional)')}
+          value={card.ask.focus}
+          onChange={(v) => setAsk({ focus: v.slice(0, PLAN_FOCUS_MAX) })}
+          placeholder={t('Knee pain, no running')}
+        />
+        {card.plan ? (
+          <div style={{ display: 'grid', gap: 4, marginTop: space.sm, padding: 12, borderRadius: 12, background: color.surfaceSunken }}>
+            <b style={{ fontFamily: font.body, fontSize: 15, color: color.ink, overflowWrap: 'anywhere' }}>{card.plan.name}</b>
+            <span style={quiet}>{card.summary || t('{days} days, {n} exercises.', { days: card.plan.routines.length, n: exerciseCount(card.plan) })}</span>
+          </div>
+        ) : null}
+        {card.outcome ? (
+          <p role="status" style={{ ...body, color: color.warning, fontWeight: 700 }}>
+            {say(card.outcome)}
+          </p>
+        ) : null}
+        {card.status === 'writing' ? (
+          <p role="status" style={quiet}>
+            {t('The AI is writing the plan from your gym’s exercises. This takes up to a minute.')}
+          </p>
+        ) : null}
+        <div style={{ display: 'grid', gap: space.sm, marginTop: space.sm }}>
+          {card.plan ? (
+            <Button full wrap disabled={busy} onClick={() => set({ editing: true })}>
+              {t('Open the plan')}
+            </Button>
+          ) : null}
+          <Button full wrap needsInternet variant={card.plan ? 'ghost' : undefined} disabled={busy} onClick={() => ctl.writePlan(turnId, card)}>
+            {card.status === 'writing' ? t('Writing…') : card.plan ? t('Write it again') : t('Write the plan')}
+          </Button>
+        </div>
+        <p style={quiet}>{t('Writing the plan is free. Saving it uses {n} credits.', { n: PLAN_CREDITS })}</p>
+      </div>
+      {card.editing && card.plan ? (
+        <WorkoutPlanSheet
+          key={card.requestId}
+          initial={card.plan}
+          title={t('Workout plan by the AI')}
+          intro={
+            <p style={{ ...quiet, color: color.inkSecondary }}>
+              {card.summary ? `${card.summary} ` : ''}
+              {t('Check it, change anything you like, then save. Nothing goes to members before you save.')}
+            </p>
+          }
+          saveLabel={say(save.label)}
+          onClose={() => set({ editing: false })}
+          onChange={(plan) => updateCard(turnId, card.id, (c) => (c.kind === 'plan_writer' && c.what === 'workout' && c.status !== 'done' ? { ...c, plan } : c))}
+          saveInstead={async (plan) => {
+            if (save.needCredits) {
+              set({ editing: false });
+              ctl.openCredits();
+              return null;
+            }
+            return ctl.savePlan(turnId, card, plan);
+          }}
+        />
+      ) : null}
+    </CardFrame>
+  );
 }
 
 // ------------------------------------------------------------------ answers

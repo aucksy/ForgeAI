@@ -204,12 +204,14 @@ export const ALL_HELP_ARTICLES = [
     who: 'owner',
     title: 'Ask the AI Assistant, or give it a task',
     text:
-      'Only the gym owner sees the AI Assistant. Tap "AI Assistant" at the bottom right, or open it from the menu (on a phone: More). ' +
-      'Type and tap the arrow. Or tap the microphone, speak in Hindi or English, and tap "Send to AI Assistant". ' +
+      'Only the gym owner sees the AI Assistant. Tap "AI Assistant" at the bottom right, or open it from the menu. ' +
+      'Type and tap the arrow, or tap the microphone and speak in Hindi or English. ' +
       'Questions, like "Who has not paid?", are free. ' +
-      'A task, like a message, a renewal or a payment, shows as a card. Check it, change it if needed, then tap its button. Nothing is sent or saved before that tap. ' +
-      'Each card costs 1 credit, shown on its button. Tap the credits at the top to see what you have. ' +
-      'It cannot write workout or diet plans yet.',
+      'A task, like a message or a payment, becomes a card. Nothing is sent or saved until you tap its button, which shows the credits it uses. ' +
+      'It can also write a workout plan for a member from your gym\'s exercises, for free. ' +
+      'The plan opens in Workout plans for you to change; saving it uses 3 credits. ' +
+      'It cannot write diet plans yet. ' +
+      'The credits at the top show how many you have.',
     screens: ['apps/dashboard/src/crm/ui/screens/Assistant.tsx'],
   },
   {

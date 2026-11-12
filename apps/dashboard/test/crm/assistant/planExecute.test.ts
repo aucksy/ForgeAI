@@ -96,13 +96,9 @@ describe('drafts', () => {
     expect(fields({ ...exp, amountP: 0 } as Draft)).toEqual(['amountP']);
   });
 
-  it('workout and diet plans: from the ready-made plans, saved with nobody assigned', () => {
-    const w = draftOf({ tool: 'draft_workout_plan', input: { member: 'Pooja', goal: 'muscle_gain', days_per_week: 4, level: 'intermediate', notes: '' } });
-    expect(w).toMatchObject({ memberId: 'm_pooja', templateKey: 'gym_upper_lower_intermediate', credits: 3 });
-    expect(w.tool === 'draft_workout_plan' && w.plan.assign).toEqual({ memberIds: [], planIds: [] });
-    expect(fields(w)).toEqual([]);
-    const diet = draftOf({ tool: 'draft_diet_plan', input: { member: '', goal: 'fat_loss', food: 'veg', notes: '' } });
-    expect(diet).toMatchObject({ memberId: '', templateKey: 'fat-loss-veg-1600' });
+  it('R-471: workout and diet plans never become a draft from a ready-made plan (the AI writes it first: planWriter.test.ts)', () => {
+    expect(planAction({ tool: 'draft_workout_plan', input: { member: 'Pooja', goal: 'muscle_gain', days_per_week: 4, level: 'intermediate', notes: '' } }, d, 'r-w')).toBeNull();
+    expect(planAction({ tool: 'draft_diet_plan', input: { member: '', goal: 'fat_loss', food: 'veg', notes: '' } }, d, 'r-d')).toBeNull();
   });
 });
 

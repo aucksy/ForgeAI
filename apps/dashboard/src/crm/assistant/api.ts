@@ -129,6 +129,31 @@ export async function transcribe(
   return { ok: true, text: b.text.trim() };
 }
 
+// ------------------------------------------------------------------ the AI plan writer (R-471)
+
+/** The writer may take up to 45 s on the server (assist.js PLAN_TIMEOUT_MS); the browser waits a little longer. */
+export const PLAN_TIMEOUT_MS = 55_000;
+
+export type PlanAnswer = { ok: true; plan: unknown; summary: string; left: number | null } | AssistFail;
+
+/**
+ * POST /api/assist/plan: the AI writes a workout plan from the gym's own exercise list (planWriter.ts builds the
+ * body). The owner's focus words are masked and never put back (the server cuts placeholders out of the plan). The
+ * same refusals as an ask (fair use, switched off, the money cap); no credits are spent here, only on Save.
+ */
+export async function writePlan(
+  key: string,
+  body: { focus: string } & Record<string, unknown>,
+  fetcher: Fetcher = fetch,
+  timeoutMs = PLAN_TIMEOUT_MS,
+): Promise<PlanAnswer> {
+  const r = await post('/api/assist/plan', key, JSON.stringify({ ...body, focus: maskText(body.focus).text }), true, timeoutMs, fetcher);
+  if (r.status === 0) return { ok: false, words: line('slow' in r && r.slow ? SLOW : OFFLINE), reason: 'slow' in r && r.slow ? 'slow' : 'offline', status: 0 };
+  const b = (r.body ?? {}) as Record<string, unknown>;
+  if (r.status !== 200 || !b.plan || typeof b.plan !== 'object') return failOf(r.status, r.body, 'plan');
+  return { ok: true, plan: b.plan, summary: typeof b.summary === 'string' ? b.summary.trim().slice(0, 300) : '', left: left(b) };
+}
+
 // ------------------------------------------------------------------ credits and history (supabase 0071)
 
 export interface AiWalletRow {
@@ -144,7 +169,10 @@ export interface AiWallet {
   balance: number;
   /** This month's free credits still unused (used first; they end with the month). */
   freeLeft: number;
-  /** Free credits a month on this gym's plan: 100 on a paid yearly or lifetime plan, else 0 (04-server-status). */
+  /**
+   * Free credits a month on this gym's plan, as the server says (R-473: a paid yearly Starter gets 50, a paid yearly
+   * Pro or founding lifetime 100; monthly plans and the trial 0). Screens show this number, never their own.
+   */
   monthlyFree: number;
   plan: string;
   /** 'monthly' | 'yearly' | 'lifetime' | '' (the gym's billing). */
@@ -163,9 +191,9 @@ export interface AiWallet {
 
 /**
  * The owner's AI credits (owner_ai_wallet, docs/f201-ai-assistant/04-server-status.md). The server adds the free ones
- * first (03-design §3, R-470): 20 starter credits once; 100 a month on a paid yearly or lifetime plan; none on a
- * monthly plan or in the trial (packs only). Nothing here hard-codes those numbers: the screen shows what the server
- * sends. Null when the gym's server has no assistant yet (no 0071: the RPC is missing, or answers without `ok`),
+ * first (03-design §3, R-470 and R-473): 20 starter credits once in the trial; every month on a paid yearly plan, 50 on
+ * Starter and 100 on Pro (founding lifetime is Pro); none on a monthly plan (packs only). Nothing here hard-codes
+ * those numbers: the screen shows what the server sends (monthly_free). Null when the gym's server has no assistant yet (no 0071: the RPC is missing, or answers without `ok`),
  * offline, or refused: the whole assistant then stays hidden.
  */
 export async function aiWallet(key: string, rpc: typeof call = call): Promise<AiWallet | null> {

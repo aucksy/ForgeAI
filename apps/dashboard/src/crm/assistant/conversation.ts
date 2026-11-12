@@ -5,18 +5,21 @@
  *
  * R-471 (12 Nov 2026): ONE CARD = ONE TASK = ONE CHARGE. Every message or change card carries its own task id,
  * its own button and its own price, and is saved and paid for alone, so a refund never undoes another card.
- * R-471 too: a workout or diet plan costs 3 credits only because the AI WRITES it for that member. The panel
- * worker cannot write plans yet, so a plan request shows a plain card that says so and opens the plans page;
- * a template is never sold as AI.
+ * R-471 too: a workout plan costs 3 credits only because the AI WRITES it for that member. A plan request shows the
+ * plan writer card (goal, level, days a week, "Write the plan"); the written plan opens in the Workout plans builder
+ * and is saved, and paid for, from there. A template is never sold as AI. Diet plans are not written yet: that card
+ * says so and opens Diet plans, with no price.
  *
  * The cards are worked out here (PURE); the turns are kept in memory per panel key, so the side panel on a
  * computer and the full screen show the same conversation. History (past tasks) comes from the server.
  */
 import { useSyncExternalStore } from 'react';
 
-import { answerAction, isAskTool, type AnswerResult } from './answer';
+import { answerAction, isAskTool, pickMember, type AnswerResult, type AnswerRow } from './answer';
 import { line, pageById, pagePath, type Action, type Line } from './catalogue';
 import type { MessageWords } from './api';
+import { planAskFrom, type PlanAsk } from './planWriter';
+import type { WorkoutPlanDraft } from '../types';
 import { isDraftTool, messageWords, planAction, type Draft, type PlanData, type PlanResult } from './plan';
 import type { StepResult } from './execute';
 
@@ -51,8 +54,63 @@ export type CardModel =
   | { kind: 'ask_back'; id: string; question: string; options: string[] }
   | { kind: 'open_page'; id: string; why: string; steps: string[]; path: string | null; name: string }
   | { kind: 'cannot'; id: string; reason: string }
-  | { kind: 'plan_writer'; id: string; what: 'workout' | 'diet' }
+  | { kind: 'plan_writer'; id: string; what: 'diet' }
+  | WorkoutWriterCard
   | { kind: 'help'; id: string; question: string };
+
+/** Where the plan writer card is: choices -> writing -> written (the builder) -> saving -> saved. */
+export type WriterStatus = 'open' | 'writing' | 'written' | 'saving' | 'done';
+
+/** The AI plan writer's card (R-471): one plan = one task = 3 credits, paid only when the owner saves it. */
+export interface WorkoutWriterCard {
+  kind: 'plan_writer';
+  id: string;
+  what: 'workout';
+  /** The AI's draft_workout_plan request: saved with the task (owner_ai_task_save). */
+  action: Action;
+  ask: PlanAsk;
+  /** The member it is for: the name the AI heard, the member picked ('' = none), and the choice when two match. */
+  memberTyped: string;
+  memberId: string;
+  options: AnswerRow[];
+  taskId: string;
+  requestId: string;
+  status: WriterStatus;
+  /** The written plan, as the owner left it in the builder. */
+  plan: WorkoutPlanDraft | null;
+  /** The writer's one line about the plan. */
+  summary: string;
+  /** The builder is open. */
+  editing: boolean;
+  /** What happened last (a refusal, "saved"). */
+  outcome: Line | null;
+  /** Set once saved: where to see it. */
+  path: string | null;
+}
+
+/** The plan writer card for a draft_workout_plan request: the member found by name when exactly one matches. PURE. */
+export function writerCard(action: Extract<Action, { tool: 'draft_workout_plan' }>, d: PlanData, newId: () => string, id = newId()): WorkoutWriterCard {
+  const typed = (action.input?.member ?? '').trim();
+  const picked = typed ? pickMember(typed, d.views) : null;
+  return {
+    kind: 'plan_writer',
+    id,
+    what: 'workout',
+    action,
+    ask: planAskFrom(action.input),
+    memberTyped: typed,
+    memberId: picked?.kind === 'one' ? picked.view.member.id : '',
+    options: picked?.kind === 'choose' ? picked.options : [],
+    taskId: newId(),
+    requestId: newId(),
+    status: 'open',
+    plan: null,
+    summary: '',
+    editing: false,
+    outcome: null,
+    path: null,
+  };
+}
 
 export interface Turn {
   id: string;
@@ -85,7 +143,7 @@ export function cardsFor(actions: readonly Action[], d: PlanData, newId: () => s
     }
     switch (action.tool) {
       case 'draft_workout_plan':
-        cards.push({ kind: 'plan_writer', id, what: 'workout' });
+        cards.push(writerCard(action, d, newId, id));
         continue;
       case 'draft_diet_plan':
         cards.push({ kind: 'plan_writer', id, what: 'diet' });
@@ -132,6 +190,10 @@ export function chooseOnCard(card: CardModel, chosenId: string, d: PlanData): Ca
   if (card.kind === 'draft') {
     const result = planAction(card.action, d, card.requestId, chosenId);
     return result ? { ...card, result } : card;
+  }
+  if (card.kind === 'plan_writer' && card.what === 'workout') {
+    const v = d.views.find((x) => x.member.id === chosenId);
+    return v ? { ...card, memberId: v.member.id, options: [] } : card;
   }
   return card;
 }

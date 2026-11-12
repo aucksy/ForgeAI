@@ -23,9 +23,12 @@ import { useAssistantData } from './useAssistantData';
 import { useConversation } from './useConversation';
 import { VoiceSheet } from './VoiceSheet';
 
-/** Plans are not written by the AI yet (no writer in the panel worker): their examples stay out of the lists. */
-export const PLANS_ON = false;
-const SHOWN_EXAMPLES = EXAMPLES.filter((e) => PLANS_ON || (e.tool !== 'draft_workout_plan' && e.tool !== 'draft_diet_plan'));
+/**
+ * R-471: the AI writes WORKOUT plans (POST /api/assist/plan), so their example shows. Diet plans are not written
+ * yet: any diet example stays out of the lists.
+ */
+export const WORKOUT_PLANS_ON = true;
+const SHOWN_EXAMPLES = EXAMPLES.filter((e) => e.tool !== 'draft_diet_plan' && (WORKOUT_PLANS_ON || e.tool !== 'draft_workout_plan'));
 
 /**
  * The short "Try saying" list, from the catalogue's examples: who owes, a renewal, this month's collection and a
@@ -110,6 +113,8 @@ export function AssistantHome({ assistKey, wallet, panel = false }: { assistKey:
     rewrite: (turnId, card, how) => void convo.rewrite(turnId, card, how),
     openCredits: () => setCredits(true),
     openQueue: (people, words) => setQueue({ people, text: words }),
+    writePlan: (turnId, card) => void convo.writePlan(turnId, card),
+    savePlan: (turnId, card, plan) => convo.savePlan(turnId, card, plan),
   };
 
   const onKey = (e: KeyboardEvent<HTMLTextAreaElement>): void => {
@@ -328,7 +333,7 @@ export function AssistantHome({ assistKey, wallet, panel = false }: { assistKey:
         </div>
       ) : null}
 
-      {credits ? <CreditsSheet wallet={wallet} plansOn={PLANS_ON} onClose={() => setCredits(false)} /> : null}
+      {credits ? <CreditsSheet wallet={wallet} plansOn={WORKOUT_PLANS_ON} onClose={() => setCredits(false)} /> : null}
       {voice ? (
         <VoiceSheet
           assistKey={assistKey}

@@ -9,9 +9,10 @@ import { describe, expect, it } from 'vitest';
 import { EXAMPLES, PAGES } from '../../../src/crm/assistant/catalogue';
 import { CARD_TITLE, SAVE_WORDS, confirmWords } from '../../../src/crm/assistant/conversation';
 import type { Draft } from '../../../src/crm/assistant/plan';
-import { GROUP_WORDS, PLANS_ON, STATUS_WORDS, historyWhen } from '../../../src/crm/assistant/ui/AssistantHome';
+import { GROUP_WORDS, STATUS_WORDS, WORKOUT_PLANS_ON, historyWhen } from '../../../src/crm/assistant/ui/AssistantHome';
 import { KIND_WORDS, pageName } from '../../../src/crm/assistant/ui/Cards';
-import { monthEndWords, walletRowWords } from '../../../src/crm/assistant/ui/CreditsSheet';
+import { monthEndWords, monthlyWords, walletRowWords } from '../../../src/crm/assistant/ui/CreditsSheet';
+import { GOAL_WORDS, LEVEL_WORDS } from '../../../src/crm/assistant/planWriter';
 import { hasDevanagari } from '../../../src/crm/assistant/ui/useConversation';
 import { clockWords } from '../../../src/crm/assistant/ui/VoiceSheet';
 import { HINGLISH } from '../../../src/crm/lang/hinglish';
@@ -44,6 +45,10 @@ describe('the assistant speaks Hinglish too', () => {
       ...Object.values(KIND_WORDS),
       ...Object.values(GROUP_WORDS),
       ...Object.values(STATUS_WORDS),
+      ...Object.values(GOAL_WORDS),
+      ...Object.values(LEVEL_WORDS),
+      'Get credits to save',
+      'Save plan · {credits} credits',
       'Send the message',
       'Schedule the message',
       'Send to 1 member',
@@ -67,8 +72,19 @@ describe('the assistant speaks Hinglish too', () => {
     expect(EXAMPLES.filter((e) => dated.test(e.text)).map((e) => e.text)).toEqual([]);
   });
 
-  it('workout and diet plans stay off until the server has an AI writer (R-471: never sell a template as AI)', () => {
-    expect(PLANS_ON).toBe(false);
+  it('R-471: workout plans are on (the AI writes them); no diet example is ever offered', () => {
+    expect(WORKOUT_PLANS_ON).toBe(true);
+    expect(EXAMPLES.some((e) => e.tool === 'draft_workout_plan')).toBe(true);
+    const home = readFileSync(join(ASSISTANT, 'ui', 'AssistantHome.tsx'), 'utf8');
+    expect(home).toMatch(/e\.tool !== 'draft_diet_plan'/);
+  });
+
+  it('the diet card never mentions credits; nothing on the screens types a free-credit number (R-473)', () => {
+    const cards = noComments(readFileSync(join(ASSISTANT, 'ui', 'Cards.tsx'), 'utf8'));
+    const diet = cards.slice(cards.indexOf("label={t('Diet plans')}"), cards.indexOf("case 'help':"));
+    expect(diet.length).toBeGreaterThan(100);
+    expect(diet).not.toMatch(/credit/i);
+    for (const f of files(join(ASSISTANT, 'ui'))) expect(noComments(readFileSync(f, 'utf8')), f).not.toMatch(/\b(50|100) (free |AI )?credits\b/i);
   });
 });
 
@@ -93,6 +109,13 @@ describe('the button on a card', () => {
 });
 
 describe('small helpers on the screens', () => {
+  it('the free credits each month come from the wallet, never a typed number (R-473)', () => {
+    expect(monthlyWords({ monthlyFree: 50, trial: false, billing: 'yearly' })).toBe('Your plan gets 50 free credits every month.');
+    expect(monthlyWords({ monthlyFree: 100, trial: false, billing: 'lifetime' })).toBe('Your plan gets 100 free credits every month.');
+    expect(monthlyWords({ monthlyFree: 0, trial: false, billing: 'monthly' })).toBe('Yearly plans get free credits every month.');
+    expect(monthlyWords({ monthlyFree: 0, trial: true, billing: '' })).toBeNull();
+  });
+
   it('the free credits end on the last day of the month', () => {
     expect(monthEndWords('2026-11')).toBe('30 Nov');
     expect(monthEndWords('2028-02')).toBe('29 Feb');

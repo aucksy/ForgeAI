@@ -189,8 +189,13 @@ async function runStep(dr: Draft, d: PlanData, deps: ExecuteDeps): Promise<StepR
       return { tool: dr.tool, ok: true, words: line('Expense saved.'), path: '/expenses' };
     }
     case 'draft_workout_plan': {
-      await once(`${dr.requestId}:workout`, async () => (await writer.saveWorkoutPlan(dr.plan)).id);
-      return { tool: dr.tool, ok: true, words: line('Workout plan saved. Send it to members from Workouts.'), path: '/workouts' };
+      // Only a plan the AI wrote ever reaches here (R-471; checkDraft refused anything else before the spend).
+      await once(`${dr.requestId}:workout`, async () => (await writer.saveWorkoutPlan({ ...dr.plan, createdBy: taker.id, createdByName: taker.name })).id);
+      const name = dr.memberId ? d.allViews.find((v) => v.member.id === dr.memberId)?.member.fullName ?? '' : '';
+      const words = name
+        ? line('Workout plan saved for {name}. It is in Workout plans.', { name })
+        : line('Workout plan saved. It is in Workout plans, ready to send to members.');
+      return { tool: dr.tool, ok: true, words, path: '/workouts' };
     }
     case 'draft_diet_plan': {
       const { payload, problem } = dietPayload(dr.diet);

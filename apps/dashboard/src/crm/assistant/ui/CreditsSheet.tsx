@@ -49,6 +49,13 @@ export function walletRowWords(r: AiWalletRow): string {
   }
 }
 
+/** The line about free credits each month, from the wallet (R-473): the plan's own number, or how to get some. */
+export function monthlyWords(w: Pick<AiWallet, 'monthlyFree' | 'trial' | 'billing'>): string | null {
+  if (w.monthlyFree > 0) return t('Your plan gets {n} free credits every month.', { n: w.monthlyFree });
+  if (w.trial) return null;
+  return w.billing === 'monthly' ? t('Yearly plans get free credits every month.') : null;
+}
+
 export function CreditsSheet({ wallet, onClose, plansOn }: { wallet: AiWallet; onClose: () => void; plansOn: boolean }) {
   const [asked, setAsked] = useState<number | null>(null);
   useEffect(() => {
@@ -60,6 +67,8 @@ export function CreditsSheet({ wallet, onClose, plansOn }: { wallet: AiWallet; o
       ? t("{n} of them are this month's free credits. They are used first and end on {day}.", { n: Math.min(wallet.freeLeft, wallet.balance), day: ends })
       : null;
   const low = wallet.balance <= wallet.lowAt;
+  // R-473: the number is the server's (monthly_free: 50 on a yearly Starter, 100 on a yearly Pro), never typed here.
+  const monthLine = monthlyWords(wallet);
   return (
     <Sheet title={t('AI credits')} onClose={onClose}>
       <div style={{ display: 'grid', gap: space.lg }}>
@@ -70,6 +79,7 @@ export function CreditsSheet({ wallet, onClose, plansOn }: { wallet: AiWallet; o
             <span style={{ fontFamily: font.body, fontSize: 16, fontWeight: 700, color: color.ink }}>{wallet.balance === 1 ? t('credit') : t('credits')}</span>
           </span>
           {freeLine ? <p style={{ ...quiet, color: color.inkSecondary }}>{freeLine}</p> : null}
+          {monthLine ? <p style={{ ...quiet, color: color.inkSecondary }}>{monthLine}</p> : null}
           {low ? <p style={{ ...quiet, color: color.warning, fontWeight: 700 }}>{t('Your credits are running low. Questions stay free.')}</p> : null}
         </div>
 
@@ -77,7 +87,7 @@ export function CreditsSheet({ wallet, onClose, plansOn }: { wallet: AiWallet; o
           <h3 style={headStyle}>{t('What uses credits')}</h3>
           <PriceRow label={t('Questions, voice, drafts')} price={t('Free')} />
           <PriceRow label={t('Message sent, member or payment saved')} price={t('1 credit')} />
-          {plansOn ? <PriceRow label={t('Workout or diet plan saved')} price={t('{n} credits', { n: 3 })} /> : null}
+          {plansOn ? <PriceRow label={t('Workout plan saved')} price={t('{n} credits', { n: 3 })} /> : null}
         </section>
 
         {wallet.packs.length > 0 ? (

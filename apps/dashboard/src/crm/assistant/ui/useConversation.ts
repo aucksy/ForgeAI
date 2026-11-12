@@ -2,8 +2,10 @@
  * F201: what the Assistant screen DOES: ask the AI, show its cards, rewrite a message, and send or save one card
  * (its own task, its own charge, R-471). The side panel on a computer and the full screen on a phone share it.
  *
- * Money and records are touched ONLY in `confirm`, which runs from a card's own button: the task is saved again
- * (free), then executeTask spends the card's credits and does the one thing (assistant/execute.ts).
+ * Money and records are touched ONLY in `confirm`, which runs from a card's own button, and in `savePlan`, which runs
+ * from the Workout plans builder's Save on a plan the AI wrote (R-471): the task is saved again (free), then
+ * executeTask spends the card's credits and does the one thing (assistant/execute.ts), giving them back if it fails.
+ * Writing a plan (`writePlan`) is free, like asking.
  */
 import { useCallback, useMemo } from 'react';
 
@@ -13,12 +15,14 @@ import { getLang, t } from '../../lang/lang';
 import * as shopApi from '../../shop/api';
 import { saveDiet } from '../../shop/bodyApi';
 import { useCrm } from '../../store';
-import { askAssistant, rewriteMessage, type AssistFail } from '../api';
+import { askAssistant, rewriteMessage, writePlan as askForPlan, type AssistFail } from '../api';
 import { line } from '../catalogue';
 import { buildAssistContext } from '../context';
-import { addTurn, cardsFor, updateCard, updateTurn, useTurns, withMessage, type CardModel, type Turn } from '../conversation';
+import { addTurn, cardsFor, updateCard, updateTurn, useTurns, withMessage, type CardModel, type Turn, type WorkoutWriterCard } from '../conversation';
 import { executeTask, saveTask, type ExecuteDeps } from '../execute';
-import type { PlanData } from '../plan';
+import { aiPlanDraft, type PlanData } from '../plan';
+import { gymExerciseList, planLang, planRequestBody, writtenPlan } from '../planWriter';
+import type { WorkoutPlanDraft } from '../../types';
 import { markAssistantOff, noteBalance, refreshAssistantWallet } from '../useAssistant';
 import { newId } from './parts';
 
@@ -43,7 +47,13 @@ export interface Conversation {
   ask: (text: string, spoken: boolean) => Promise<void>;
   confirm: (turnId: string, card: DraftCard) => Promise<void>;
   rewrite: (turnId: string, card: DraftCard, how: string) => Promise<void>;
+  /** The AI writes the plan (free); it opens in the builder. */
+  writePlan: (turnId: string, card: WorkoutWriterCard) => Promise<void>;
+  /** Save the plan as he left it in the builder: 3 credits, given back if the save fails. Null = saved; else why not. */
+  savePlan: (turnId: string, card: WorkoutWriterCard, plan: WorkoutPlanDraft) => Promise<string | null>;
 }
+
+const isWriter = (c: CardModel): c is WorkoutWriterCard => c.kind === 'plan_writer' && c.what === 'workout';
 
 export function useConversation(key: string, data: PlanData, reload: () => Promise<void>, openCredits: () => void): Conversation {
   const turns = useTurns(key);
@@ -173,5 +183,72 @@ export function useConversation(key: string, data: PlanData, reload: () => Promi
     [key, data],
   );
 
-  return { turns, ask, confirm, rewrite };
+  const writePlan = useCallback(
+    async (turnId: string, card: WorkoutWriterCard) => {
+      if (card.status === 'writing' || card.status === 'saving' || card.status === 'done') return;
+      updateCard(turnId, card.id, (c) => (isWriter(c) ? { ...c, status: 'writing', outcome: null } : c));
+      const body = planRequestBody(card.ask, gymExerciseList(data.snapshot.workoutPlans), planLang(data.gymLang));
+      const r = await askForPlan(key, body);
+      if (!r.ok) {
+        hideIfOff(r);
+        updateCard(turnId, card.id, (c) => (isWriter(c) ? { ...c, status: c.plan ? 'written' : 'open', outcome: r.words } : c));
+        return;
+      }
+      const view = card.memberId ? data.allViews.find((v) => v.member.id === card.memberId) : undefined;
+      const plan = writtenPlan(r.plan, view ? { id: view.member.id, name: view.member.fullName } : null);
+      if (!plan) {
+        console.warn('[assistant] the written plan did not pass the builder check', card.taskId);
+        updateCard(turnId, card.id, (c) => (isWriter(c) ? { ...c, status: c.plan ? 'written' : 'open', outcome: line('The AI wrote a plan that could not be used. Try again.') } : c));
+        return;
+      }
+      updateCard(turnId, card.id, (c) => (isWriter(c) ? { ...c, status: 'written', plan, summary: r.summary, editing: true, outcome: null } : c));
+      // The task is saved now (free) so History keeps it; the 3 credits are spent only on Save.
+      const turn = turns.find((t) => t.id === turnId);
+      void saveTask(deps, { id: card.taskId, request: turn?.request ?? '', spoken: turn?.spoken ?? false, actions: [card.action] });
+    },
+    [key, data, deps, turns],
+  );
+
+  const savePlan = useCallback(
+    async (turnId: string, card: WorkoutWriterCard, plan: WorkoutPlanDraft): Promise<string | null> => {
+      const memberId = plan.assign.memberIds.length === 1 ? plan.assign.memberIds[0] : '';
+      updateCard(turnId, card.id, (c) => (isWriter(c) ? { ...c, status: 'saving', plan, outcome: null } : c));
+      const turn = turns.find((t) => t.id === turnId);
+      await saveTask(deps, { id: card.taskId, request: turn?.request ?? '', spoken: turn?.spoken ?? false, actions: [card.action] });
+      const back = (outcome: ReturnType<typeof line>, taskId = card.taskId) =>
+        updateCard(turnId, card.id, (c) => (isWriter(c) ? { ...c, status: 'written', outcome, taskId } : c));
+      try {
+        const r = await executeTask({ id: card.taskId, drafts: [aiPlanDraft(plan, memberId, card.requestId)] }, data, deps);
+        if (r.ok || r.reason === 'already') {
+          if (r.ok) noteBalance(r.balance);
+          void refreshAssistantWallet(key);
+          const words = r.ok ? (r.steps[0]?.words ?? line('Done.')) : r.words;
+          updateCard(turnId, card.id, (c) => (isWriter(c) ? { ...c, status: 'done', editing: false, outcome: words, path: '/workouts' } : c));
+          return null;
+        }
+        if (r.reason === 'failed') {
+          void refreshAssistantWallet(key);
+          const words = r.refunded ? line('{words} Your credits were given back.', { words: t(r.words.text, r.words.vars) }) : r.words;
+          // A new task id once the credits came back: the server allows one spend a task.
+          back(words, r.refunded ? newId() : card.taskId);
+          return t(words.text, words.vars);
+        }
+        back(r.words);
+        if (r.reason === 'no_credits') {
+          void refreshAssistantWallet(key);
+          updateCard(turnId, card.id, (c) => (isWriter(c) ? { ...c, editing: false } : c));
+          openCredits();
+        }
+        return t(r.words.text, r.words.vars);
+      } catch (err) {
+        console.warn('[assistant] the plan did not save', card.taskId, err);
+        const words = line('That did not work. Check the internet and try again.');
+        back(words);
+        return t(words.text);
+      }
+    },
+    [turns, data, deps, key, openCredits],
+  );
+
+  return { turns, ask, confirm, rewrite, writePlan, savePlan };
 }

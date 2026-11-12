@@ -290,15 +290,30 @@ function PlanRow({ plan, first, actions }: { plan: WorkoutPlan; first: boolean; 
 /**
  * Make or change a plan. Exported for Member detail's "Send a plan" (opened with that member
  * already ticked). `onSaved` gets the saved plan and whether it was new.
+ *
+ * F201 (R-471): the AI Assistant opens a plan the AI wrote here, with its own title, a line about the
+ * plan (`intro`), the price on Save (`saveLabel`) and its own save (`saveInstead`: spends the credits,
+ * saves, gives them back on a failure; it answers null when saved, else the words to show).
+ * `onChange` hands back every edit, so closing and opening again keeps them.
  */
 export function WorkoutPlanSheet({
   initial,
   onClose,
   onSaved,
+  title,
+  intro,
+  saveLabel,
+  saveInstead,
+  onChange,
 }: {
   initial: WorkoutPlanDraft;
   onClose: () => void;
   onSaved?: (plan: WorkoutPlan, isNew: boolean) => void;
+  title?: string;
+  intro?: ReactNode;
+  saveLabel?: string;
+  saveInstead?: (clean: WorkoutPlanDraft) => Promise<string | null>;
+  onChange?: (draft: WorkoutPlanDraft) => void;
 }) {
   const { saveWorkoutPlan } = useCrm();
   const { session } = useAuth();
@@ -308,6 +323,11 @@ export function WorkoutPlanSheet({
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const isNew = !initial.id;
+  const onChangeRef = useRef(onChange);
+  onChangeRef.current = onChange;
+  useEffect(() => {
+    onChangeRef.current?.(draft);
+  }, [draft]);
   // F148: the video link box shows once the server keeps links (0051).
   const videos = useWodServer() === 'yes';
 
@@ -328,6 +348,13 @@ export function WorkoutPlanSheet({
     const problem = workoutPlanProblem(clean);
     if (problem) return setError(problem);
     setSaving(true);
+    if (saveInstead) {
+      const why = await saveInstead(clean).catch((e: unknown) => (e instanceof Error ? e.message : 'Could not save this plan.'));
+      setSaving(false);
+      if (why) setError(why);
+      else onClose();
+      return;
+    }
     try {
       const taker = takerOf(session);
       const plan = await saveWorkoutPlan({
@@ -346,7 +373,7 @@ export function WorkoutPlanSheet({
 
   return (
     <Sheet
-      title={isNew ? 'New workout plan' : 'Edit workout plan'}
+      title={title ?? (isNew ? 'New workout plan' : 'Edit workout plan')}
       onClose={onClose}
       wide
       footer={
@@ -355,12 +382,13 @@ export function WorkoutPlanSheet({
             Cancel
           </Button>
           <Button onClick={submit} disabled={saving}>
-            {saving ? 'Saving…' : isNew ? 'Save plan' : 'Save changes'}
+            {saving ? 'Saving…' : saveLabel ?? (isNew ? 'Save plan' : 'Save changes')}
           </Button>
         </>
       }
     >
       {error && <ErrorBanner>{error}</ErrorBanner>}
+      {intro}
       <p style={{ margin: 0, fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>{membersSeeIt(online)}</p>
       <TextField
         label="Plan name"
@@ -370,7 +398,7 @@ export function WorkoutPlanSheet({
           setDraft((d) => ({ ...d, name: v }));
         }}
         placeholder="Beginner 3 days"
-        autoFocus={isNew}
+        autoFocus={isNew && !saveInstead}
       />
       <TextField
         label="Note for members (optional)"

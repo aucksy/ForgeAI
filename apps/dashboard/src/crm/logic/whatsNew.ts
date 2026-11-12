@@ -463,7 +463,7 @@ export const ADMIN_NEWS_PENDING: readonly AdminNewsEntry[] = [
     id: 'pending-ai-assistant',
     lines: [
       {
-        text: 'New: the AI Assistant. Ask about your gym in Hindi or English, like who has not paid, for free. It can also draft a message, a renewal or a payment for you. Nothing is sent or saved until you tap the card’s button, and each card shows its price in credits.',
+        text: 'New: the AI Assistant. Ask about your gym in Hindi or English, for free. It can also get a message or a payment ready, or write a workout plan. Nothing is sent or saved until you tap its button.',
         go: { label: 'Open the AI Assistant', path: '/assistant' },
         feature: true,
       },

@@ -28,7 +28,7 @@ CI: green on all three, both jobs (check + database): runs 43252372390, 43254291
 ### Gym server RPCs (all take the owner's key first; staff and trainers get OWNER_ONLY)
 | Call | Returns | Refusals |
 |---|---|---|
-| `owner_ai_wallet(p_key)` | `{ok, balance, free_left, monthly_free (100 or 0), plan, billing, trial, month, low_at: 5, packs: [{credits, inr, popular?}], recent: [{at, delta, reason, note, task_id}]}`. The first read adds the starter 20 and this month's free credits | BAD_KEY, OWNER_ONLY |
+| `owner_ai_wallet(p_key)` | `{ok, balance, free_left, monthly_free (50, 100 or 0; R-473), plan, billing, trial, month, low_at: 5, packs: [{credits, inr, popular?}], recent: [{at, delta, reason, note, task_id}]}`. The first read adds the starter 20 and this month's free credits | BAD_KEY, OWNER_ONLY |
 | `owner_ai_task_save(p_key, p_id uuid, p_request text, p_spoken bool, p_actions jsonb)` | `{ok, id, status: 'drafted'}`. Free; saving a drafted task again updates it | INVALID, NOT_FOUND, ALREADY_DONE, TOO_MANY |
 | `owner_ai_spend(p_key, p_task_id, p_credits 1-9, p_result jsonb)` | `{ok, task_id, credits, balance, free_left}`. Call it right BEFORE running the action | NO_CREDITS, ALREADY_SPENT, NOT_FOUND, SUSPENDED, INVALID |
 | `owner_ai_refund(p_key, p_task_id)` | `{ok, task_id, refunded, balance, free_left}`. Once, within 10 minutes of the spend | NOT_FOUND, ALREADY_REFUNDED, TOO_LATE |
