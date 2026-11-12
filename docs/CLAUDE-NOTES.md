@@ -32,7 +32,7 @@ Risk told: a cross-gym search by a TYPED number would tell anyone which gym a pe
 Plan: docs/plans/phone-membership-detect.md (prices, sources, D1 WhatsApp check free vs SMS ~Rs 40 / Rs 380 a month at 100 / 1,000 + Rs 5,900 DLT once; Firebase $0.07 a text; Truecaller missed call blocked by Play's July 2026 call-log rule; D2 ask before joining).
 
 Built (no money, no live change):
-- Member app, Gym tab with no gym: "Do you run a gym on MettleUp?" -> "Sign in as gym staff" (mobile + PIN or one-time code, live staff_sign_in, signed out at once, nothing kept) -> "Join <gym>". Tests test/shop/staffDoor.test.ts (10); UAT part u458 written, not run yet. Next release after UAT.
+- Member app, Gym tab with no gym: "Do you run a gym on MettleUp?" -> "Sign in as gym staff" (mobile + PIN or one-time code, live staff_sign_in, signed out at once, nothing kept) -> "Join <gym>". Tests test/shop/staffDoor.test.ts (10); UAT u458 passed on both phones (43195519997, his phone 43195524523); the PIN box hint was shortened after his phone size cut it. Next release after UAT.
 - Server, NOT applied: supabase/migrations/0068_member_find_gym.sql (member_find_gyms(proof, name), member_claim_phone(key, proof), tries table, phone_checked_at, a phone index) + supabase/tests/0068 (34 checks) + security.sql list.
 - Worker, NOT deployed: deploy/panel/phoneInbound.js purpose "member" (inbound only; "go back to the MettleUp app"); phoneInbound.test.mjs 19 pass.
 
