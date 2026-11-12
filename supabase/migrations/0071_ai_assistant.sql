@@ -132,11 +132,12 @@ create or replace function public._ai_trial(p_gym uuid) returns boolean
      and not public._ai_paid(p_gym)
 $$;
 
--- Free credits this month (R-470): 100 for a paid yearly plan or a founding lifetime gym, else 0.
+-- Free credits this month (R-470, R-473): 50 (Starter) or 100 (Pro) for a paid yearly plan or a founding lifetime gym, else 0.
 create or replace function public._ai_monthly_free(p_gym uuid) returns int
   language sql stable security definer set search_path = public as $$
-  select coalesce((select case when not ((g.billing = 'lifetime' and (g.paid_until is null or g.paid_until > now()))
-                                         or (g.billing = 'yearly' and g.paid_until > now())) then 0
+  -- coalesce: a missing billing or paid_until means NOT paid (a NULL here once gave a trial gym 100 a month).
+  select coalesce((select case when not coalesce((g.billing = 'lifetime' and (g.paid_until is null or g.paid_until > now()))
+                                                  or (g.billing = 'yearly' and g.paid_until > now()), false) then 0
                                when g.plan = 'starter' then 50
                                else 100 end
                      from public.gyms g where g.gym_id = p_gym), 0)
