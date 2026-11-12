@@ -127,6 +127,14 @@ for (const [name, size] of [['phone', { width: 390, height: 844 }], ['computer',
     await sec.screenshot({ path: `${DIR}/gyms-ai-assistant-${name}.png` });
     await page.emulateMedia({ reducedMotion: 'no-preference' });
 
+    // R-476: the hero says what MettleUp is; every number in the stats names a published source.
+    await expect(page.locator('.claim')).toContainText('MettleUp is advanced gym software');
+    const stats = page.locator('.stats .stat');
+    await expect(stats).toHaveCount(3);
+    for (const i of [0, 1, 2]) {
+      const ref = await stats.nth(i).locator('sup a').getAttribute('href');
+      await expect(page.locator(ref)).toContainText(/(19|20)\d\d\./);
+    }
     // The price cards: only Starter and Pro (R-474: the AI Assistant is a feature, not a price card).
     await expect(page.locator('#assistant .as-credits')).toContainText('20 AI credits in your free trial');
     const cards = page.locator('#cards');

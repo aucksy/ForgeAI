@@ -206,8 +206,8 @@ select.field{appearance:none;background-image:linear-gradient(45deg,transparent 
 .stats{padding-block:clamp(40px,6vw,72px);border-block:1px solid var(--line);background:linear-gradient(180deg,var(--bg2),var(--bg))}
 .stats .wrap{display:grid;gap:28px 14px;grid-template-columns:repeat(3,1fr)}
 .stats .say,.src{grid-column:1/-1}
-@media (max-width:859px){.stat .n{font-size:clamp(2rem,10vw,3rem)}.stat p{font-size:13.5px}}
-@media (min-width:860px){.stats .say{grid-column:auto}.stats .wrap{grid-template-columns:1.3fr 1fr 1fr 1fr;align-items:end}}
+@media (max-width:859px){.stats .wrap{grid-template-columns:auto 1fr;gap:22px 16px}.stat{grid-column:1/-1;display:grid;grid-template-columns:subgrid;align-items:center}.stat .n{font-size:clamp(2rem,10vw,3rem)}.stat p{margin-top:0;font-size:14.5px;max-width:none}}
+@media (min-width:860px){.stats .say{grid-column:auto}.stats .wrap{grid-template-columns:1.3fr 1fr 1fr 1fr;align-items:start}}
 .stats .say{font:800 clamp(1.5rem,3vw,2.1rem)/1.12 var(--display);letter-spacing:-.03em}
 :lang(hi) .stats .say{letter-spacing:0;line-height:1.3}
 .stat .n{display:block;font:800 clamp(3rem,7vw,4.4rem)/1 var(--display);letter-spacing:-.05em}
@@ -217,6 +217,7 @@ select.field{appearance:none;background-image:linear-gradient(45deg,transparent 
 .stat p{margin-top:8px;color:var(--ink2);font-size:15.5px;max-width:15em}
 .stat sup a{color:var(--ink3);text-decoration:none;font-size:11px}
 .src{grid-column:1/-1;font-size:12.5px;color:var(--ink3)}
+.src+.src{margin-top:-8px}
 
 /* ---------- feature scenes ---------- */
 .feat .wrap{display:grid;gap:44px;align-items:center}
@@ -568,7 +569,7 @@ select.field{appearance:none;background-image:linear-gradient(45deg,transparent 
     <div>
       <a class="offer" href="#pricing"><b data-hi="ऑफ़र">OFFER</b><span data-hi="पहले 25 जिम्स एक बार पे करके Pro लाइफ़टाइम पाते हैं।">The first 25 gyms pay once and get Pro for life.</span></a>
       <h1 id="h1" data-hi="मेंबर जब अपनी प्रोग्रेस देखते हैं, तो वे &lt;span class=&quot;hot&quot;&gt;ज़्यादा समय तक&lt;/span&gt; जुड़े रहते हैं।">Members stay longer when they see <span class="hot">progress.</span></h1>
-      <p class="claim" data-hi="MettleUp आपके जिम का डेस्क चलाता है। साथ में यह हर मेंबर को आपके जिम के नाम से फ़्री वर्कआउट ऐप देता है।">MettleUp runs your gym's desk. It also gives every member a free workout app in your gym's name.</p>
+      <p class="claim" data-hi="MettleUp एक एडवांस्ड जिम सॉफ़्टवेयर है। यह हर मेंबर को आपके जिम के नाम से एक फ़्री ऐप देता है, जो उन्हें बार-बार जिम आने की वजह देता है।">MettleUp is advanced gym software. It gives every member a free app in your gym's name, and a reason to keep coming back.</p>
       <div class="ctas">
         <a class="btn" href="https://app.mettleup.fit/start"><span data-hi="3 महीने फ़्री शुरू करें">Start free for 3 months</span><svg class="arr" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6" stroke="currentColor" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
         <a class="btn ghost" href="https://app.mettleup.fit/demo" data-hi="डेमो जिम देखें">See the demo gym</a>
@@ -644,14 +645,17 @@ select.field{appearance:none;background-image:linear-gradient(45deg,transparent 
   </div>
 </section>
 
-<!-- 2. WHY IT MATTERS, in three numbers -->
+<!-- 2. WHY IT MATTERS, in three numbers. R-476 (13 Nov): enquiries and retention. Every number is a published
+     study, never a MettleUp result: our own numbers come only from pilot gyms (mettleup-marketing rule 6, ASCI). -->
 <section class="stats" aria-labelledby="why-h">
   <div class="wrap">
-    <h2 id="why-h" class="say rv" data-hi="फ़ीस जमा करें। &lt;span class=&quot;hot&quot;&gt;मेंबर्स को टिकाए रखें।&lt;/span&gt;">Collect fees. <span class="hot">Help members stay.</span></h2>
+    <h2 id="why-h" class="say rv" data-hi="ज़्यादा एन्क्वायरी जीतें। &lt;span class=&quot;hot&quot;&gt;मेंबर्स को टिकाए रखें।&lt;/span&gt;">Win more enquiries. <span class="hot">Help members stay.</span></h2>
     <div class="stat rv"><span class="n bad"><span class="count" data-to="63">63</span>%</span><p><span data-hi="नए मेंबर्स तीसरे महीने से पहले छोड़ देते हैं।">of new members quit before month 3.</span><sup><a href="#src1">1</a></sup></p></div>
-    <div class="stat rv"><span class="n good">₹0</span><p data-hi="आपके मेंबर्स के लिए। ऐप उनके लिए फ़्री है।">for your members. The app is free for them.</p></div>
-    <div class="stat rv"><span class="n em" data-hi="2 मिनट">2 min</span><p data-hi="में आपका जिम तैयार हो जाता है।">to get your gym ready.</p></div>
+    <div class="stat rv"><span class="n good"><span class="count" data-to="7">7</span>×</span><p><span data-hi="ज़्यादा मौका कि बात आगे बढ़े, जब आप एन्क्वायरी को 1 घंटे के अंदर वापस कॉल करें। MettleUp हर एन्क्वायरी को एक लिस्ट में रखता है।">more chance of a real talk when you call an enquiry back within 1 hour. MettleUp keeps every enquiry in one list.</span><sup><a href="#src2">2</a></sup></p></div>
+    <div class="stat rv"><span class="n em"><span class="count" data-to="138">138</span></span><p><span data-hi="स्टडीज़: जो लोग अपनी प्रोग्रेस ट्रैक करते हैं, वे अपने लक्ष्य ज़्यादा बार पूरे करते हैं। आपके मेंबर्स ऐप में अपनी प्रोग्रेस देखते हैं।">studies: people who track their progress reach their goals more often. Your members see theirs in the app.</span><sup><a href="#src3">3</a></sup></p></div>
     <p class="src" id="src1" data-hi="1. एक जिम के 5,240 मेंबर्स: Sperandei et al., J. Sci. Med. Sport, 2016.">1. 5,240 members at one gym: Sperandei et al., J. Sci. Med. Sport, 2016.</p>
+    <p class="src" id="src2" data-hi="2. 2,241 कंपनियों की जाँच: Oldroyd, McElheran और Elkington, Harvard Business Review, 2011।">2. 2,241 companies checked: Oldroyd, McElheran and Elkington, Harvard Business Review, 2011.</p>
+    <p class="src" id="src3" data-hi="3. 138 स्टडीज़, 19,951 लोग: Harkin et al., Psychological Bulletin, 2016।">3. 138 studies, 19,951 people: Harkin et al., Psychological Bulletin, 2016.</p>
   </div>
 </section>
 

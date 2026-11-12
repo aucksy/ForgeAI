@@ -7,6 +7,17 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-476. Website hero line and the numbers section — 13 Nov 2026 (night, he went to sleep: "you make rest of the decisions")
+He: hero subtext like "MettleUp is an advanced gym software which gives all your members a free app which keeps them
+coming"; stats should show lead conversion and member retention, "something like up to 70% lead conversion and up to
+50% more member retention", with research behind it. Done (NOT live: the site goes live only with a panel deploy, his yes):
+hero = "MettleUp is advanced gym software. It gives every member a free app in your gym's name, and a reason to keep
+coming back." Stats = 63% quit before month 3 (Sperandei 2016), 7x more chance of a real talk when an enquiry is
+called back within 1 hour (HBR 2011, Oldroyd et al., 2,241 companies), 138 studies: tracking progress helps people
+reach goals (Harkin et al., Psychol. Bull. 2016). Heading "Win more enquiries. Help members stay." Removed ₹0 and
+2 min (free app is in the hero). NOT used: "up to 70% / 50%": no study backs either number (only vendor blogs:
+Glofox 45%), so it breaks ASCI and mettleup-marketing rule 6; offered to him as option B in the morning.
+
 ## R-475. No money cap for paying gyms; the cap is for trial gyms only — 13 Nov 2026
 He: "This safety cap of about $15 does not make sense to me because if these are paying gyms ... because we are
 earning from them we cannot stop processing their requests ... it should be applicable to try out". Also asked what
