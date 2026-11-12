@@ -6,8 +6,11 @@
 // The help library grows with the app (owner's HARD RULE, R-319 item 10): every screen file is listed
 // in one article's `screens`, or in NO_HELP_SCREENS with a reason. Check: node scripts/ci/help_coverage.mjs
 // Tests: node --test deploy/panel/helpArticles.test.mjs
+// NOT RELEASED YET: an article with `unreleased: '<why>'` explains a screen that is built but switched off. It counts
+// for the screen check (ALL_HELP_ARTICLES) but stays out of the live help (HELP_ARTICLES: the AI help answers and
+// the help library) until its feature is switched on at release; then delete its `unreleased` line in that release.
 
-export const HELP_ARTICLES = [
+export const ALL_HELP_ARTICLES = [
   // ------------------------------------------------------------------ gym owners and front desk
   {
     id: 'today-page',
@@ -197,6 +200,7 @@ export const HELP_ARTICLES = [
   },
   {
     id: 'plus-lock-admin',
+    unreleased: 'F56 owner switch: hidden until 0070 is live and MettleUp Plus is switched on (R-461).',
     who: 'owner',
     title: 'Free MettleUp Plus for your members, and when it ends',
     text:
@@ -802,6 +806,7 @@ export const HELP_ARTICLES = [
   },
   {
     id: 'find-my-gym-by-number',
+    unreleased: 'F56 Find my gym: needs the panel member WhatsApp check deployed and the app released (R-461).',
     who: 'member',
     title: 'Find your gym with your mobile number',
     text:
@@ -814,13 +819,14 @@ export const HELP_ARTICLES = [
   },
   {
     id: 'mettleup-plus',
+    unreleased: 'F56 MettleUp Plus: ships switched off until he says payments live (R-461).',
     who: 'member',
     title: 'MettleUp Plus: what is free and what is paid',
     text:
       'Free for everyone, always: logging workouts, your history, routines, the rest timer, backup and export, and charts of the last 3 months. ' +
       'MettleUp Plus adds the watch app, older charts, suggested weight and reps, the 1-rep max and plate calculators, and more than 7 exercises of your own. ' +
       'New members get every feature free for their first month. Members of a gym that uses MettleUp, gym owners and desk staff get every feature free. ' +
-      'Prices: 149 rupees a month, 999 rupees a year, or 2,499 rupees once, through Google Play. On a new phone, open Settings, "MettleUp Plus" and tap "I already paid". ' +
+      'The prices are on the MettleUp Plus screen, paid through Google Play. On a new phone, open Settings, "MettleUp Plus" and tap "I already paid". ' +
       'Your workouts and history are never locked.',
     screens: ['apps/mobile/src/app/plus.tsx'],
   },
@@ -856,6 +862,9 @@ export const HELP_ARTICLES = [
  * screen goes into an article's `screens` first; it lands here only when there is truly nothing a
  * member or a gym could ask about it.
  */
+/** The live help: every article except the ones marked `unreleased`. The AI help and the help library read only this. */
+export const HELP_ARTICLES = ALL_HELP_ARTICLES.filter((a) => !a.unreleased);
+
 export const NO_HELP_SCREENS = {
   'apps/dashboard/src/crm/ui/screens/MettleUpReceipt.tsx': 'Not live yet (billing step 3: one MettleUp receipt, opened from Pay MettleUp; server 0063 is not applied). Its help goes in the Pay MettleUp article when that goes live.',
   'apps/dashboard/src/crm/ui/screens/PayMettleUp.tsx': 'Not live yet (T79 Pay MettleUp: server 0060 is not applied and MettleUp has not added its payment details); the screen says so itself. Its help article is written when it goes live.',

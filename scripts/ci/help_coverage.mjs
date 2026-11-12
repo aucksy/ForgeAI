@@ -76,7 +76,8 @@ export function coverageProblems(onDisk, articles, noHelp) {
 }
 
 async function main() {
-  const { HELP_ARTICLES, NO_HELP_SCREENS } = await import(pathToFileURL(join(ROOT, 'deploy/panel/helpArticles.js')).href);
+  // Unreleased articles count too: their screens are built (helpArticles.js ALL_HELP_ARTICLES).
+  const { ALL_HELP_ARTICLES: HELP_ARTICLES, NO_HELP_SCREENS } = await import(pathToFileURL(join(ROOT, 'deploy/panel/helpArticles.js')).href);
   const onDisk = screensOnDisk();
   const problems = coverageProblems(onDisk, HELP_ARTICLES, NO_HELP_SCREENS);
   if (problems.length) {
