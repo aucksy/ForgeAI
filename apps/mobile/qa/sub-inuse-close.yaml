@@ -3,9 +3,10 @@
 #   - runFlow: sub-inuse-close.yaml
 # R-304/R-307 (3 Nov 2026): In use opens BY ITSELF 0.3 s after a rest starts, when the ticked exercise
 # is on a machine, cable, barbell or a dumbbell bench move AND it still has an open working set. It is
-# a full-screen pop-up: a tap anywhere on it only closes it, so the flow's next tap ("Skip rest", the
-# next row, Finish) would land on it and do nothing else. Android Back closes it (its onRequestClose),
-# exactly as the member's own "I'm back". The rest keeps running, as for the member.
+# a full-screen pop-up over the workout, so the flow's next tap ("Skip rest", the next row, Finish)
+# would land on it and do nothing (R-456, 12 Nov 2026: only "I'm back" closes it, never a tap on the
+# screen). Android Back closes it (its onRequestClose), exactly as "I'm back". The rest keeps running.
+# R-457: its spoken label starts with the kit ("Bench in use. ... Back in 90 seconds.").
 # It waits up to 2 s for it (it opens 0.3 s after the tick; a slow cloud phone needs the margin).
 # The UAT part (uat-rel-4-workout.yaml) checks the screen itself; this only gets it out of the way.
 appId: com.mettleup.app
@@ -13,14 +14,14 @@ appId: com.mettleup.app
 # R-357: In use waits for a set's pop-up to go first.
 - runFlow: sub-popup-gone.yaml
 - extendedWaitUntil:
-    visible: 'In use\. .*Tap to close'
+    visible: '.*[Ii]n use\. .*Back in .*'
     timeout: 2000
     optional: true
 - runFlow:
     when:
-      visible: 'In use\. .*Tap to close'
+      visible: '.*[Ii]n use\. .*Back in .*'
     commands:
       - back
       - extendedWaitUntil:
-          notVisible: 'In use\. .*Tap to close'
+          notVisible: '.*[Ii]n use\. .*Back in .*'
           timeout: 5000

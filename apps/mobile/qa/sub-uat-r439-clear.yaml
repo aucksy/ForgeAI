@@ -11,11 +11,11 @@ appId: com.mettleup.app
 - runFlow: sub-popup-gone.yaml
 - runFlow:
     when:
-      visible: 'In use\. .*Tap to close'
+      visible: '.*[Ii]n use\. .*Back in .*'
     commands:
       - back
       - extendedWaitUntil:
-          notVisible: 'In use\. .*Tap to close'
+          notVisible: '.*[Ii]n use\. .*Back in .*'
           timeout: 5000
 - runFlow:
     when:

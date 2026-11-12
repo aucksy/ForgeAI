@@ -2,7 +2,8 @@
  * "Machine in use" (owner backlog, Planned; built 21 Oct 2026): during rest, a tap on the rest clock
  * fills the screen with a big "IN USE · back in 1:32", so others in the gym can read from a few
  * metres that the machine is taken while the member walks around or drinks water. The live timer
- * keeps counting; "I'm back" or the end of the rest closes it. The workout screen keeps the phone
+ * keeps counting; "I'm back" or the end of the rest closes it (R-456: nothing else on the screen does).
+ * R-457: the sign names the kit ("BENCH" / "MACHINE" over "IN USE"). The workout screen keeps the phone
  * awake already (useKeepAwake in session/active).
  *
  * R-70 (owner, 22 Oct 2026: "after my set, I walk and I get away from my equipment and people start
@@ -17,7 +18,7 @@
  * MettleUp logo at the foot. R-346 (owner, 5 Nov 2026): under the lift's name, the watch's two rest
  * lines instead of the kg to beat: "Previous 60 kg × 8" (grey) and "Next 62.5 kg × 8" (accent).
  */
-import { Modal, Pressable, Text, View } from 'react-native';
+import { Modal, Pressable, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { MettleUpLogo } from '@/components/brand/MettleUpLogo';
@@ -25,7 +26,7 @@ import { Icon } from '@/components/ui';
 import { popupBarsFollowLook } from '@/theme/appearance';
 import { color, radius, space, type } from '@/theme/tokens';
 
-import { IN_USE_WORDS, inUseAutoOn, type InUseEquipment } from '../lib/inUse';
+import { IN_USE_WORDS, inUseAutoOn, inUseScreenLabel, type InUseEquipment, type InUseKit } from '../lib/inUse';
 import { useTrackerPrefs } from '../store/trackerPrefsStore';
 import { RecordToast } from './RecordToast';
 
@@ -43,6 +44,7 @@ export function MachineInUse({
   remaining,
   clock,
   machine,
+  kit = null,
   previous = null,
   next = null,
   exercise = null,
@@ -53,6 +55,8 @@ export function MachineInUse({
   clock: string;
   /** The lift whose tick started this rest (RestTimerBar finds it), or null. */
   machine: string | null;
+  /** R-457: the kit that lift uses ("Bench", "Machine"; lib/inUse.ts inUseKit), or null for plain IN USE. */
+  kit?: InUseKit | null;
   /** R-346: the watch's rest lines for the next set of this lift ("Previous 60 kg × 8", "Next 62.5 kg × 8"), or null. */
   previous?: string | null;
   next?: string | null;
@@ -62,14 +66,38 @@ export function MachineInUse({
 }) {
   const insets = useSafeAreaInsets();
   return (
+    // R-456: Android's Back still closes it (onRequestClose: the member's own phone gesture, never a stranger's tap).
     <Modal visible={visible} animationType="fade" onRequestClose={onClose} onShow={popupBarsFollowLook} statusBarTranslucent>
-      <Pressable
-        onPress={onClose}
-        accessibilityRole="button"
-        accessibilityLabel={`In use. ${previous ? `${previous}. ` : ''}${next ? `${next}. ` : ''}Back in ${remaining} seconds. Tap to close`}
-        style={{ flex: 1, backgroundColor: color.bg, alignItems: 'center', justifyContent: 'center', padding: space.xl, paddingTop: insets.top + space.md, gap: space.lg }}
+      {/* R-456 (owner, 12 Nov 2026: "going away if you simply tap anywhere on the screen. That should only go
+          away if someone taps on I am back"; first reported R-345): the screen itself is no longer a button.
+          A tap on it, or on the strip round the tick, does nothing; only "I'm back", the end of the rest and
+          the phone's Back close it. It scrolls when a big text size makes it taller than the phone. */}
+      <ScrollView
+        style={{ flex: 1, backgroundColor: color.bg }}
+        contentContainerStyle={{ flexGrow: 1, alignItems: 'center', justifyContent: 'center', padding: space.xl, paddingTop: insets.top + space.md, gap: space.lg }}
+        bounces={false}
+        overScrollMode="never"
       >
-        <View style={{ borderWidth: 6, borderColor: color.accent, borderRadius: radius.xl, paddingVertical: space.lg, paddingHorizontal: space.xl }}>
+        {/* R-457 (owner, 12 Nov 2026): the sign names the kit, "BENCH" over "IN USE", so people who never saw
+            the app know what is taken. Two lines, not one: on one line "PULL-UP BAR IN USE" shrank IN USE to a
+            third of its size; read from a few metres, IN USE stays as big as before. */}
+        <View
+          accessible
+          accessibilityRole="header"
+          accessibilityLabel={inUseScreenLabel(kit, previous, next, remaining)}
+          testID="in-use-sign"
+          style={{ alignSelf: 'stretch', alignItems: 'center', borderWidth: 6, borderColor: color.accent, borderRadius: radius.xl, paddingVertical: kit ? space.md : space.lg, paddingHorizontal: space.lg }}
+        >
+          {kit ? (
+            <Text
+              numberOfLines={1}
+              adjustsFontSizeToFit
+              maxFontSizeMultiplier={1}
+              style={{ fontFamily: type.display, fontSize: 64, lineHeight: 72, color: color.accent, letterSpacing: 2, textAlign: 'center' }}
+            >
+              {kit.toUpperCase()}
+            </Text>
+          ) : null}
           <Text
             numberOfLines={1}
             adjustsFontSizeToFit
@@ -109,21 +137,37 @@ export function MachineInUse({
             {clock}
           </Text>
         </View>
-        <View style={{ marginTop: space.lg, minHeight: 56, paddingHorizontal: space.xl, borderRadius: radius.pill, borderWidth: 1, borderColor: color.borderStrong, justifyContent: 'center' }}>
-          <Text maxFontSizeMultiplier={TEXT_MAX} style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink }}>{IN_USE_WORDS.close}</Text>
-        </View>
+        {/* R-456: the one close button. A real button with its own name for TalkBack / VoiceOver, wide and tall
+            enough to hit without looking, with a little extra room round it (hitSlop). */}
+        <Pressable
+          onPress={onClose}
+          accessibilityRole="button"
+          accessibilityLabel={IN_USE_WORDS.close}
+          hitSlop={space.sm}
+          style={({ pressed }) => ({
+            marginTop: space.md,
+            minHeight: 56,
+            minWidth: 200,
+            paddingHorizontal: space.xl,
+            borderRadius: radius.pill,
+            borderWidth: 2,
+            borderColor: color.ink,
+            backgroundColor: pressed ? color.surfaceSunken : 'transparent',
+            alignItems: 'center',
+            justifyContent: 'center',
+          })}
+        >
+          <Text maxFontSizeMultiplier={TEXT_MAX} style={{ fontFamily: type.bodySemi, fontSize: type.size.body + 2, color: color.ink }}>{IN_USE_WORDS.close}</Text>
+        </Pressable>
         <View style={{ opacity: 0.85 }}>
           <MettleUpLogo height={22} />
         </View>
-      </Pressable>
+      </ScrollView>
       {/* R-345 (owner, 5 Nov 2026): the tick lives in its own strip at the foot, apart from "I'm back"
-          (a line and a gap between them), no longer inside the screen-wide close button. A tap in the
-          strip around the tick still closes the screen; a tap on the tick never does. Out of the close
-          button, TalkBack can reach it too. */}
+          (a line and a gap between them). R-456 (12 Nov 2026): a tap in the strip round the tick no longer
+          closes the screen either; a tap on the tick only flips the tick. */}
       {exercise ? (
         <View
-          onStartShouldSetResponder={() => true}
-          onResponderRelease={onClose}
           style={{
             backgroundColor: color.bg,
             alignItems: 'center',

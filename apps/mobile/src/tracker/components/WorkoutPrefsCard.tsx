@@ -243,11 +243,12 @@ export function RestPrefsCard() {
       <RestAlertsStatusRow divider />
       {/* R-70 (owner, 22 Oct 2026): "In use" opens by itself when a set's rest starts. R-304 (3 Nov
           2026): the master switch; when on, each exercise decides (machines, cables, barbells and
-          bench moves on at first; change one on its In use screen). */}
+          bench moves on at first; change one on its In use screen). R-457 (12 Nov 2026): the sign names
+          the kit (BENCH IN USE, MACHINE IN USE), so the caption shows it. */}
       <ToggleRow
         icon="clock"
         title={'Show "In use" screen after each set'}
-        caption="A big IN USE screen with the rest clock, so others know you are coming back. On at first for machines, cables, barbells and bench moves. Change one exercise on its In use screen."
+        caption="A big sign with your rest clock, like BENCH IN USE or MACHINE IN USE, so others know you are coming back. On at first for machines, cables, barbells and bench moves. Change one exercise on its In use screen."
         value={inUseAfterSet}
         onChange={setInUseAfterSet}
         divider

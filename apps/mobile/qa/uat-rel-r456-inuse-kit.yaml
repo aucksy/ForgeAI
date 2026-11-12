@@ -1,0 +1,250 @@
+# Part UAT (also alone: only=u456). Two owner requests on the In use screen, 12 Nov 2026:
+#  - R-456: "the banner on the phone after resting that shows in use is actually going away if you simply
+#    tap anywhere on the screen. That should only go away if someone taps on I am back." (first R-345)
+#  - R-457: "if there is an exercise that is bench related, then we should say bench in use. If there is a
+#    machine related exercise, we should say machine in use."
+# From a fresh install with the demo (it starts afresh itself, so it runs anywhere in the part):
+#  1. Incline Dumbbell Press (a dumbbell move on a bench: In use opens by itself) set 1 ticked: the sign
+#     says BENCH over IN USE (spoken "Bench in use. ..."). Negative: taps on the middle, on the sign and on
+#     both ends of the tick strip at the foot leave it open. "I'm back" closes it; the rest keeps running.
+#  2. Opened again from the rest clock, its tick turned off, closed with Android Back (still closes it):
+#     the rest bar line names the kit, "Tap to show Bench in use".
+#  3. Leg Extension (a machine) set 1 ticked, light (no record pop-up), rest 1:00: MACHINE IN USE by itself;
+#     a middle tap keeps it; it stays open until the rest runs out, then it closes by itself.
+# Pictures rel-456-*.png (qa-out/uat-release/).
+appId: com.mettleup.app
+---
+- runFlow: gate-demo.yaml
+- tapOn:
+    text: "^Workout$"
+    index: 0
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Start empty workout$"
+- tapOn: "^Start empty workout$"
+- tapOn:
+    text: "(?i)^allow$"
+    optional: true
+- runFlow: sub-start-blank.yaml
+- extendedWaitUntil:
+    visible: "Log a set to finish|Finish workout|^Add exercise$"
+    timeout: 30000
+# ---------------------------------------------------------------- two exercises: a bench move + a machine
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Add exercise$"
+- tapOn: "^Add exercise$"
+- extendedWaitUntil:
+    visible: "Search exercises"
+    timeout: 20000
+- tapOn: "Search exercises"
+- inputText: " Incline Dumbbell Press"
+- tapOn:
+    text: "Select Incline Dumbbell Press"
+    index: 0
+- tapOn: "Add 1"
+- extendedWaitUntil:
+    visible: "Incline Dumbbell Press set 1 weight, kilograms"
+    timeout: 20000
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Add exercise$"
+- tapOn: "^Add exercise$"
+- extendedWaitUntil:
+    visible: "Search exercises"
+    timeout: 20000
+- tapOn: "Search exercises"
+- inputText: " Leg Extension"
+- tapOn:
+    text: "Select Leg Extension"
+    index: 0
+- tapOn: "Add 1"
+# Rest: 5:00 on the bench move (nothing below races its end), 1:00 on the machine (step 3 waits for it).
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "More for .*Incline Dumbbell Press.*"
+- tapOn:
+    text: "More for .*Incline Dumbbell Press.*"
+    index: 0
+- tapOn: "Rest timer"
+- tapOn: "Rest 5:00"
+- extendedWaitUntil:
+    notVisible: 'For .*Remembered for next time\.'
+    timeout: 10000
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "More for .*Leg Extension.*"
+- tapOn:
+    text: "More for .*Leg Extension.*"
+    index: 0
+- tapOn: "Rest timer"
+- tapOn: "Rest 1:00"
+- extendedWaitUntil:
+    notVisible: 'For .*Remembered for next time\.'
+    timeout: 10000
+# Each needs a working set still open after set 1, or In use stays closed by design (last set).
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Leg Extension set 1 weight, kilograms"
+- tapOn:
+    text: "^Add set$"
+    below:
+      text: "Leg Extension set 1 weight, kilograms"
+- runFlow:
+    file: sub-type.yaml
+    env:
+      FIELD: "Leg Extension set 1 weight, kilograms"
+      VALUE: " 10"
+- runFlow:
+    file: sub-type.yaml
+    env:
+      FIELD: "Leg Extension set 1 reps"
+      VALUE: " 5"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Incline Dumbbell Press set 1 weight, kilograms"
+- tapOn:
+    text: "^Add set$"
+    below:
+      text: "Incline Dumbbell Press set 1 weight, kilograms"
+- runFlow:
+    file: sub-type.yaml
+    env:
+      FIELD: "Incline Dumbbell Press set 1 weight, kilograms"
+      VALUE: " 4"
+- runFlow:
+    file: sub-type.yaml
+    env:
+      FIELD: "Incline Dumbbell Press set 1 reps"
+      VALUE: " 5"
+# ---------------------------------------------------------------- 1. BENCH IN USE; only "I'm back" closes it
+- runFlow:
+    file: sub-uat-tick.yaml
+    env:
+      WHO: ".*Incline Dumbbell Press set 1"
+- tapOn:
+    text: "Not now"
+    optional: true
+- runFlow: sub-popup-gone.yaml
+- extendedWaitUntil:
+    visible: '.*[Ii]n use\. .*Back in .*'
+    timeout: 14000
+- assertVisible: 'Bench in use\. .*Back in \d+ seconds\.'
+- assertNotVisible: '.*Tap to close.*'
+- assertVisible: "^I.m back$"
+- takeScreenshot: rel-456-02-bench-in-use
+# Negative (R-456): the middle of the screen.
+- tapOn:
+    point: "50%,50%"
+    waitToSettleTimeoutMs: 300
+- extendedWaitUntil:
+    notVisible: '.*[Ii]n use\. .*Back in .*'
+    timeout: 2000
+    optional: true
+- assertVisible: 'Bench in use\. .*Back in .*'
+- takeScreenshot: rel-456-03-middle-tap-still-open
+# The sign at the top.
+- tapOn:
+    point: "50%,18%"
+    waitToSettleTimeoutMs: 300
+- extendedWaitUntil:
+    notVisible: '.*[Ii]n use\. .*Back in .*'
+    timeout: 2000
+    optional: true
+- assertVisible: 'Bench in use\. .*Back in .*'
+# Both ends of the tick strip at the foot (it used to close on release). On a narrow phone with big text an
+# end can land on the tick itself: that only flips the tick, and the screen must stay open either way.
+- tapOn:
+    point: "3%,93%"
+    waitToSettleTimeoutMs: 300
+- extendedWaitUntil:
+    notVisible: '.*[Ii]n use\. .*Back in .*'
+    timeout: 2000
+    optional: true
+- assertVisible: 'Bench in use\. .*Back in .*'
+- tapOn:
+    point: "97%,93%"
+    waitToSettleTimeoutMs: 300
+- extendedWaitUntil:
+    notVisible: '.*[Ii]n use\. .*Back in .*'
+    timeout: 2000
+    optional: true
+- assertVisible: 'Bench in use\. .*Back in .*'
+- takeScreenshot: rel-456-04-strip-taps-still-open
+# "I'm back" closes it; the rest goes on.
+- tapOn:
+    text: "^I.m back$"
+    waitToSettleTimeoutMs: 300
+- extendedWaitUntil:
+    notVisible: '.*[Ii]n use\. .*Back in .*'
+    timeout: 5000
+- assertVisible: "Skip rest"
+- takeScreenshot: rel-456-05-im-back-closed-it
+# ---------------------------------------------------------------- 2. the rest bar line names the kit
+- tapOn:
+    text: 'Rest, \d+ seconds left\. Show machine in use'
+    waitToSettleTimeoutMs: 300
+- extendedWaitUntil:
+    visible: 'Bench in use\. .*Back in .*'
+    timeout: 8000
+# Whatever the strip taps above did to the tick, leave it OFF for this exercise.
+- runFlow:
+    when:
+      visible:
+        text: "Show after every set of this exercise"
+        checked: true
+    commands:
+      - tapOn:
+          text: "Show after every set of this exercise"
+          waitToSettleTimeoutMs: 300
+- assertVisible:
+    text: "Show after every set of this exercise"
+    checked: false
+- assertVisible: 'Bench in use\. .*Back in .*'
+- takeScreenshot: rel-456-06-tick-off-still-open
+# Android Back still closes it (the member's own phone gesture).
+- back
+- extendedWaitUntil:
+    notVisible: '.*[Ii]n use\. .*Back in .*'
+    timeout: 5000
+- assertVisible: "^Tap to show Bench in use$"
+- takeScreenshot: rel-456-07-bar-says-bench
+- tapOn: "Skip rest"
+- extendedWaitUntil:
+    notVisible: "Skip rest"
+    timeout: 5000
+# ---------------------------------------------------------------- 3. MACHINE IN USE; the end of the rest closes it
+- runFlow:
+    file: sub-uat-tick.yaml
+    env:
+      WHO: ".*Leg Extension set 1"
+- runFlow: sub-popup-gone.yaml
+- extendedWaitUntil:
+    visible: '.*[Ii]n use\. .*Back in .*'
+    timeout: 14000
+- assertVisible: 'Machine in use\. .*Back in \d+ seconds\.'
+- assertVisible: "Leg Extension"
+- takeScreenshot: rel-456-08-machine-in-use
+- tapOn:
+    point: "50%,50%"
+    waitToSettleTimeoutMs: 300
+- extendedWaitUntil:
+    notVisible: '.*[Ii]n use\. .*Back in .*'
+    timeout: 2000
+    optional: true
+- assertVisible: 'Machine in use\. .*Back in .*'
+# The 1:00 rest runs out: the screen closes by itself and the rest bar goes.
+- extendedWaitUntil:
+    notVisible: '.*[Ii]n use\. .*Back in .*'
+    timeout: 75000
+- extendedWaitUntil:
+    notVisible: "Skip rest"
+    timeout: 10000
+- takeScreenshot: rel-456-09-rest-over-closed-by-itself

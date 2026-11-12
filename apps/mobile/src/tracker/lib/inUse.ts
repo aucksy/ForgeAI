@@ -20,10 +20,21 @@ export const IN_USE_WORDS = {
   autoHint: 'In use opens after each set',
 } as const;
 
-/** R-345: the line under the rest clock: what In use does for this exercise now. Never empty. PURE. */
-export function inUseClockHint(autoOn: boolean): string {
-  return autoOn ? IN_USE_WORDS.autoHint : IN_USE_WORDS.tapHint;
+/**
+ * R-345: the line under the rest clock: what In use does for this exercise now. Never empty.
+ * R-457 (owner, 12 Nov 2026): the tap line names the kit ("Tap to show Bench in use") when that still
+ * fits the line under the clock (at most TAP_HINT_MAX letters, as long as R-345's longest line is today
+ * at the owner's 360 dp / font 1.3); a longer kit ("Dumbbells", "Pull-up bar") keeps "Tap to show In use".
+ * "In use opens after each set" names the feature, so it stays as it is (with a kit it would not fit). PURE.
+ */
+export function inUseClockHint(autoOn: boolean, kit: InUseKit | null = null): string {
+  if (autoOn) return IN_USE_WORDS.autoHint;
+  const named = kit ? `Tap to show ${kit} in use` : null;
+  return named && named.length <= TAP_HINT_MAX ? named : IN_USE_WORDS.tapHint;
 }
+
+/** R-457: the longest kit tap line under the rest clock ("Tap to show Bench in use" = 24). */
+export const TAP_HINT_MAX = 24;
 
 /** The catalogue's equipment kinds (types/models Exercise['equipment']). */
 export type InUseEquipment = 'barbell' | 'dumbbell' | 'machine' | 'cable' | 'bodyweight' | 'other';
@@ -58,6 +69,100 @@ export function inUseDefault(ex: { name: string; key?: string | null; equipment:
     default:
       return has(KIT_WORDS);
   }
+}
+
+/**
+ * R-457 (owner, 12 Nov 2026: "not as clear to people who are not aware of the concept to just say in
+ * use ... if there is an exercise that is bench related, then we should say bench in use. If there is a
+ * machine related exercise, we should say machine in use"): the piece of kit the member is resting on,
+ * in the words people in a gym use for it. The In use screen then reads "BENCH / IN USE". null = no
+ * kit to name (push-ups, planks, bands): the screen keeps plain "IN USE".
+ *  - Machine: every machine, Smith machines too. Cable: every cable move.
+ *  - Bench: a move done lying or sitting on a bench (bench press, incline, decline, seated, preacher,
+ *    hip thrust, skull crusher, pullover, chest-supported, a dumbbell fly or row on a bench, Bulgarian
+ *    split squat, bench dip, decline sit-up).
+ *  - Rack: a barbell taken from a rack (squats, overhead press, push press, rack pull, shrugs, lunges,
+ *    good mornings, calf raises).
+ *  - Barbell / EZ bar / Trap bar: the other barbell moves (curls, rows, deadlifts), named by the bar.
+ *  - Dumbbells: the other dumbbell moves (people take the dumbbells while you rest, R-70).
+ *  - Dip station / Pull-up bar / Kettlebell / Sled: by the name.
+ * Order matters: a Smith machine is a machine; a bench move on a barbell is a bench, not a rack. PURE.
+ */
+export type InUseKit =
+  | 'Bench'
+  | 'Machine'
+  | 'Cable'
+  | 'Rack'
+  | 'Barbell'
+  | 'EZ bar'
+  | 'Trap bar'
+  | 'Dumbbells'
+  | 'Kettlebell'
+  | 'Dip station'
+  | 'Pull-up bar'
+  | 'Sled';
+
+/** A barbell or dumbbell move done lying or sitting on a bench. */
+const ON_BENCH = [
+  ' bench ', ' incline ', ' decline ', ' seated ', ' chest supported ', ' preacher ', ' hip thrust ',
+  ' skull crusher ', ' pullover ', ' jm press ', ' tate press ', ' lying ', ' spider curl ',
+  ' squeeze press ', ' concentration ', ' bulgarian ', ' dumbbell fly ', ' neutral grip dumbbell press ',
+  ' one arm dumbbell row ', ' single arm dumbbell row ', ' dumbbell leg curl ',
+];
+/** A barbell taken from a rack. */
+const FROM_RACK = [' squat ', ' overhead press ', ' push press ', ' rack ', ' shrug ', ' lunge ', ' good morning ', ' calf raise '];
+const DIP = [' dip ', ' dips ', ' captain s chair '];
+const PULL_UP = [' pull up ', ' pullup ', ' chin up ', ' chinup ', ' muscle up ', ' hanging ', ' dead hang ', ' toes to bar '];
+/** Bodyweight moves done on a bench (hands or feet up, a decline bench). */
+const BODY_ON_BENCH = [' bench ', ' incline ', ' decline ', ' hip thrust '];
+
+export function inUseKit(ex: { name: string; key?: string | null; equipment: InUseEquipment | string | null | undefined } | null | undefined): InUseKit | null {
+  if (!ex) return null;
+  const text = `${words(ex.name)}${words(ex.key)}`;
+  const has = (list: readonly string[]) => list.some((w) => text.includes(w));
+  if (has([' smith '])) return 'Machine';
+  switch (ex.equipment) {
+    case 'machine':
+      return 'Machine';
+    case 'cable':
+      return 'Cable';
+    case 'barbell':
+      if (has(ON_BENCH)) return 'Bench';
+      if (has([' trap bar '])) return 'Trap bar';
+      if (has([' landmine '])) return 'Barbell';
+      if (has(FROM_RACK)) return 'Rack';
+      if (has([' ez bar ', ' ezbar '])) return 'EZ bar';
+      return 'Barbell';
+    case 'dumbbell':
+      return has(ON_BENCH) ? 'Bench' : 'Dumbbells';
+    default:
+      if (has(DIP) && !has([' bench '])) return 'Dip station';
+      if (has(PULL_UP)) return 'Pull-up bar';
+      if (has(BODY_ON_BENCH)) return 'Bench';
+      if (has([' rack '])) return 'Rack';
+      if (has([' kettlebell '])) return 'Kettlebell';
+      if (has([' sled '])) return 'Sled';
+      return null;
+  }
+}
+
+/** R-457: the sign's big words: "BENCH IN USE" (the screen draws the kit on its own line above IN USE). PURE. */
+export function inUseTitle(kit: InUseKit | null): string {
+  return kit ? `${kit.toUpperCase()} ${IN_USE_WORDS.title}` : IN_USE_WORDS.title;
+}
+
+/** R-457: the same in a sentence, for TalkBack / VoiceOver and the hints: "Bench in use", or "In use". PURE. */
+export function inUseSpoken(kit: InUseKit | null): string {
+  return kit ? `${kit} in use` : 'In use';
+}
+
+/**
+ * R-456 (owner, 12 Nov 2026: a tap anywhere closed the screen; "That should only go away if someone taps on
+ * I am back"): what TalkBack / VoiceOver read for the screen. It never says "Tap to close" any more:
+ * only the "I'm back" button closes it. PURE.
+ */
+export function inUseScreenLabel(kit: InUseKit | null, previous: string | null, next: string | null, remaining: number): string {
+  return `${inUseSpoken(kit)}. ${previous ? `${previous}. ` : ''}${next ? `${next}. ` : ''}Back in ${remaining} seconds.`;
 }
 
 /**

@@ -4,12 +4,14 @@
 # The journey as a member walks it, on a dumbbell move (In use does not open by itself, so the rest
 # bar says "Tap to show In use") and on a machine (it opens by itself):
 #   1. Lateral Raise set 1 ticked: the rest bar and its hint; the clock opens In use by hand.
-#   2. A tap in the MIDDLE of In use closes it: the rest bar stays, the hint stays, the clock counts.
+#   2. R-456 (owner, 12 Nov 2026): a tap in the MIDDLE of In use does NOT close it any more; "I'm back"
+#      does: the rest bar stays, the hint stays, the clock counts. R-457: Lateral Raise says DUMBBELLS.
 #   3. Opened again, a tap ON the tick ("Show after every set of this exercise"): the screen must stay
 #      open, the tick shows ticked, and the rest bar then says In use now opens after every set.
 #   4. A tap on "I'm back" (the nearest thing to the tick) closes it; the tick turned off again.
 #   5. Leg Extension set 1 ticked (70 kg, a record): R-357 the "New record" pop-up first, then In use opens by itself with the watch's lines (R-346: "Previous ..."
-#      and "Next ...", no kg to beat); a middle tap closes it; the bar says In use opens after each set.
+#      and "Next ...", no kg to beat; R-457: MACHINE IN USE); a middle tap keeps it (R-456), "I'm back"
+#      closes it; the bar says In use opens after each set.
 # R-364 (owner rule, 5 Nov 2026: every type of UAT): also the app sent to the background and back,
 # the notification shade, untick + tick again, a set edited during the rest, a long name on a cable.
 # Pictures rel-345-*.png, rel-357-*.png, rel-359-*.png (qa-out/uat-release/).
@@ -151,32 +153,43 @@ appId: com.mettleup.app
     optional: true
 - runFlow: sub-popup-gone.yaml
 - extendedWaitUntil:
-    visible: 'In use\. .*Tap to close'
+    visible: '.*[Ii]n use\. .*Back in .*'
     timeout: 3000
     optional: true
-- assertNotVisible: 'In use\. .*Tap to close'
+- assertNotVisible: '.*[Ii]n use\. .*Back in .*'
 - assertVisible: "^Tap to show In use$"
 - takeScreenshot: rel-345-01-dumbbell-rest-bar-hint
 - tapOn:
     text: 'Rest, \d+ seconds left\. Show machine in use'
     waitToSettleTimeoutMs: 300
 - extendedWaitUntil:
-    visible: 'In use\. .*Tap to close'
+    visible: '.*[Ii]n use\. .*Back in .*'
     timeout: 8000
 - assertVisible:
     text: "Show after every set of this exercise"
     checked: false
 # R-346: the Lateral Raise's only set is done, so its In use has no "Next" line; never the kg to beat.
 - assertNotVisible: '.*to beat the previous total.*'
+# R-457: Lateral Raise is a dumbbell move off a bench: the sign says DUMBBELLS IN USE.
+- assertVisible: 'Dumbbells in use\. .*Back in .*'
 - takeScreenshot: rel-345-02-in-use-open
-# ---------------------------------------------------------------- 2. a tap in the middle closes it
+# ---------------------------------------------------------------- 2. R-456: a tap in the middle keeps it; "I'm back" closes it
 - tapOn:
     point: "50%,50%"
     waitToSettleTimeoutMs: 300
 - extendedWaitUntil:
-    notVisible: 'In use\. .*Tap to close'
+    notVisible: '.*[Ii]n use\. .*Back in .*'
+    timeout: 2000
+    optional: true
+- assertVisible: '.*[Ii]n use\. .*Back in .*'
+- takeScreenshot: rel-456-01-middle-tap-keeps-it-open
+- tapOn:
+    text: "^I.m back$"
+    waitToSettleTimeoutMs: 300
+- extendedWaitUntil:
+    notVisible: '.*[Ii]n use\. .*Back in .*'
     timeout: 5000
-- takeScreenshot: rel-345-03-after-middle-tap
+- takeScreenshot: rel-345-03-after-im-back
 - assertVisible: "Skip rest"
 - assertVisible: "^Tap to show In use$"
 - copyTextFrom: 'Rest, \d+ seconds left\. Show machine in use'
@@ -200,7 +213,7 @@ appId: com.mettleup.app
     visible: "Skip rest"
     timeout: 20000
 - assertVisible: "^Tap to show In use$"
-- assertNotVisible: 'In use\. .*Tap to close'
+- assertNotVisible: '.*[Ii]n use\. .*Back in .*'
 - takeScreenshot: rel-345-10-back-from-home
 - swipe:
     start: "50%,1%"
@@ -221,34 +234,34 @@ appId: com.mettleup.app
     visible: "Skip rest"
     timeout: 10000
 - assertVisible: "^Tap to show In use$"
-- assertNotVisible: 'In use\. .*Tap to close'
+- assertNotVisible: '.*[Ii]n use\. .*Back in .*'
 - takeScreenshot: rel-345-12-shade-closed
 # ---------------------------------------------------------------- 3. a tap ON the tick
 - tapOn:
     text: 'Rest, \d+ seconds left\. Show machine in use'
     waitToSettleTimeoutMs: 300
 - extendedWaitUntil:
-    visible: 'In use\. .*Tap to close'
+    visible: '.*[Ii]n use\. .*Back in .*'
     timeout: 8000
 - tapOn:
     text: "Show after every set of this exercise"
     waitToSettleTimeoutMs: 300
 - extendedWaitUntil:
-    notVisible: 'In use\. .*Tap to close'
+    notVisible: '.*[Ii]n use\. .*Back in .*'
     timeout: 2500
     optional: true
 - takeScreenshot: rel-345-04-after-tick-tap
 # Observation for the report: did the tap on the tick close the screen?
 - runFlow:
     when:
-      notVisible: 'In use\. .*Tap to close'
+      notVisible: '.*[Ii]n use\. .*Back in .*'
     commands:
       - takeScreenshot: rel-345-04b-OBS-tick-tap-CLOSED-the-screen
       - tapOn:
           text: 'Rest, \d+ seconds left\. Show machine in use'
           waitToSettleTimeoutMs: 300
       - extendedWaitUntil:
-          visible: 'In use\. .*Tap to close'
+          visible: '.*[Ii]n use\. .*Back in .*'
           timeout: 8000
 - assertVisible:
     text: "Show after every set of this exercise"
@@ -259,7 +272,7 @@ appId: com.mettleup.app
     text: "^I'm back$"
     waitToSettleTimeoutMs: 300
 - extendedWaitUntil:
-    notVisible: 'In use\. .*Tap to close'
+    notVisible: '.*[Ii]n use\. .*Back in .*'
     timeout: 5000
 - assertVisible: "Skip rest"
 - takeScreenshot: rel-345-06-bar-after-tick-on
@@ -275,7 +288,7 @@ appId: com.mettleup.app
     text: 'Rest, \d+ seconds left\. Show machine in use'
     waitToSettleTimeoutMs: 300
 - extendedWaitUntil:
-    visible: 'In use\. .*Tap to close'
+    visible: '.*[Ii]n use\. .*Back in .*'
     timeout: 8000
 - tapOn:
     text: "Show after every set of this exercise"
@@ -285,7 +298,7 @@ appId: com.mettleup.app
     checked: false
 - back
 - extendedWaitUntil:
-    notVisible: 'In use\. .*Tap to close'
+    notVisible: '.*[Ii]n use\. .*Back in .*'
     timeout: 5000
 - assertVisible: "^Tap to show In use$"
 - takeScreenshot: rel-345-07-bar-after-tick-off
@@ -306,10 +319,10 @@ appId: com.mettleup.app
     timeout: 8000
 - runFlow: sub-popup-gone.yaml
 - extendedWaitUntil:
-    visible: 'In use\. .*Tap to close'
+    visible: '.*[Ii]n use\. .*Back in .*'
     timeout: 2500
     optional: true
-- assertNotVisible: 'In use\. .*Tap to close'
+- assertNotVisible: '.*[Ii]n use\. .*Back in .*'
 - assertVisible: "^Tap to show In use$"
 - takeScreenshot: rel-345-13-untick-retick-bar
 - tapOn: "Skip rest"
@@ -326,10 +339,10 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: 'New record, Leg Extension\..*'
     timeout: 5000
-- assertNotVisible: 'In use\. .*Tap to close'
+- assertNotVisible: '.*[Ii]n use\. .*Back in .*'
 - takeScreenshot: rel-357-01-record-pop-up-first
 - extendedWaitUntil:
-    visible: 'In use\. .*Tap to close'
+    visible: '.*[Ii]n use\. .*Back in .*'
     timeout: 14000
 - assertNotVisible:
     id: "set-popup"
@@ -338,15 +351,25 @@ appId: com.mettleup.app
     text: "Show after every set of this exercise"
     checked: true
 # R-346 (owner, 5 Nov 2026): the watch's rest lines for this machine's next set, never the kg to beat.
-- assertVisible: 'In use\. (Previous .+\. )?Next .+\. Back in .*'
+# R-457: Leg Extension is a machine: MACHINE IN USE.
+- assertVisible: 'Machine in use\. (Previous .+\. )?Next .+\. Back in .*'
 - assertVisible: '^Next .+ × \d+$'
 - assertNotVisible: '.*to beat the previous total.*'
 - takeScreenshot: rel-345-08-machine-in-use-by-itself
+# R-456: a middle tap keeps it open; "I'm back" closes it.
 - tapOn:
     point: "50%,50%"
     waitToSettleTimeoutMs: 300
 - extendedWaitUntil:
-    notVisible: 'In use\. .*Tap to close'
+    notVisible: '.*[Ii]n use\. .*Back in .*'
+    timeout: 2000
+    optional: true
+- assertVisible: 'Machine in use\. .*Back in .*'
+- tapOn:
+    text: "^I.m back$"
+    waitToSettleTimeoutMs: 300
+- extendedWaitUntil:
+    notVisible: '.*[Ii]n use\. .*Back in .*'
     timeout: 5000
 - assertVisible: "Skip rest"
 - assertVisible: "^In use opens after each set$"
@@ -363,18 +386,18 @@ appId: com.mettleup.app
       VALUE: " 9"
 - assertVisible: "Skip rest"
 - assertVisible: "^In use opens after each set$"
-- assertNotVisible: 'In use\. .*Tap to close'
+- assertNotVisible: '.*[Ii]n use\. .*Back in .*'
 - tapOn:
     text: 'Rest, \d+ seconds left\. Show machine in use'
     waitToSettleTimeoutMs: 300
 - extendedWaitUntil:
-    visible: 'In use\. .*Tap to close'
+    visible: '.*[Ii]n use\. .*Back in .*'
     timeout: 8000
 - assertVisible: '^Next .+ × 9$'
 - takeScreenshot: rel-345-14-next-follows-the-edit
 - back
 - extendedWaitUntil:
-    notVisible: 'In use\. .*Tap to close'
+    notVisible: '.*[Ii]n use\. .*Back in .*'
     timeout: 5000
 - tapOn: "Skip rest"
 # ---------------------------------------------------------------- R-364 edge: a long name on a cable
@@ -418,15 +441,16 @@ appId: com.mettleup.app
       WHO: ".*Single-Arm Overhead Cable Extension set 1"
 - runFlow: sub-popup-gone.yaml
 - extendedWaitUntil:
-    visible: 'In use\. .*Tap to close'
+    visible: '.*[Ii]n use\. .*Back in .*'
     timeout: 8000
 - assertVisible: "Single-Arm Overhead Cable Extension"
+- assertVisible: 'Cable in use\. .*Back in .*'
 - assertVisible:
     text: "Show after every set of this exercise"
     checked: true
 - takeScreenshot: rel-345-15-long-name-in-use
 - back
 - extendedWaitUntil:
-    notVisible: 'In use\. .*Tap to close'
+    notVisible: '.*[Ii]n use\. .*Back in .*'
     timeout: 5000
 - tapOn: "Skip rest"

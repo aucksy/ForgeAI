@@ -2,7 +2,7 @@
 # member sees it:
 #  - R-304/R-307/R-311 "In use": opens by itself after a NON-last set on a barbell lift and on a
 #    machine; never after an exercise's LAST set; a dumbbell move off a bench (Lateral Raise) does not
-#    open it, and its rest clock says "Tap: In use" (R-299) and opens it by hand.
+#    open it, and its rest clock says "Tap to show In use" (R-299) and opens it by hand.
 #  - R-346: the In use screen shows the watch's rest lines, "Previous ..." and "Next ..." (its spoken label).
 #  - R-350 (owner, 5 Nov 2026): no step-back card any more (the stall rule is gone); Pec Deck stays
 #    at 40 kg and Leg Extension at 45 kg, +1 rep on each set.
@@ -18,9 +18,10 @@ appId: com.mettleup.app
     env:
       WHO: ".*Bench Press set 1"
 - extendedWaitUntil:
-    visible: 'In use\. .*Tap to close'
+    visible: '.*[Ii]n use\. .*Back in .*'
     timeout: 14000
-- assertVisible: 'In use\. (Previous .+\. )?Next .+\. Back in .*'
+# R-457 (owner, 12 Nov 2026): the sign names the kit: Bench Press is a bench.
+- assertVisible: 'Bench in use\. (Previous .+\. )?Next .+\. Back in .*'
 - takeScreenshot: rel-30-in-use-bench-set-1
 - runFlow: sub-uat-rest-clear.yaml
 # R-350/R-351 exact numbers: set 1 ticked at 60 kg x 10 = 600 kg of today's 1,560; set 2's goal is 9.
@@ -47,10 +48,10 @@ appId: com.mettleup.app
     timeout: 8000
 - runFlow: sub-popup-gone.yaml
 - extendedWaitUntil:
-    visible: 'In use\. .*Tap to close'
+    visible: '.*[Ii]n use\. .*Back in .*'
     timeout: 3000
     optional: true
-- assertNotVisible: 'In use\. .*Tap to close'
+- assertNotVisible: '.*[Ii]n use\. .*Back in .*'
 - takeScreenshot: rel-31-bench-last-set-no-in-use
 - runFlow: sub-uat-rest-clear.yaml
 # ---------------------------------------------------------------- Pec Deck: no card, then very hard
@@ -86,9 +87,10 @@ appId: com.mettleup.app
     timeout: 10000
 # The RPE tap ticks the set: a machine with sets still open -> In use by itself, with the beat line.
 - extendedWaitUntil:
-    visible: 'In use\. .*Tap to close'
+    visible: '.*[Ii]n use\. .*Back in .*'
     timeout: 14000
-- assertVisible: 'In use\. (Previous .+\. )?Next .+\. Back in .*'
+# R-457: the Pec Deck is a machine.
+- assertVisible: 'Machine in use\. (Previous .+\. )?Next .+\. Back in .*'
 - takeScreenshot: rel-33-in-use-pec-deck-beat-line
 - runFlow: sub-uat-rest-clear.yaml
 - runFlow:
@@ -117,10 +119,10 @@ appId: com.mettleup.app
     timeout: 8000
 - runFlow: sub-popup-gone.yaml
 - extendedWaitUntil:
-    visible: 'In use\. .*Tap to close'
+    visible: '.*[Ii]n use\. .*Back in .*'
     timeout: 3000
     optional: true
-- assertNotVisible: 'In use\. .*Tap to close'
+- assertNotVisible: '.*[Ii]n use\. .*Back in .*'
 - takeScreenshot: rel-35-pec-deck-last-set-no-in-use
 - runFlow: sub-uat-rest-clear.yaml
 # ---------------------------------------------------------------- Leg Extension: stays at 45 kg (R-350)
@@ -169,10 +171,10 @@ appId: com.mettleup.app
     timeout: 8000
 - runFlow: sub-popup-gone.yaml
 - extendedWaitUntil:
-    visible: 'In use\. .*Tap to close'
+    visible: '.*[Ii]n use\. .*Back in .*'
     timeout: 3000
     optional: true
-- assertNotVisible: 'In use\. .*Tap to close'
+- assertNotVisible: '.*[Ii]n use\. .*Back in .*'
 - assertVisible: "^Tap to show In use$"
 - takeScreenshot: rel-38-lateral-raise-tap-in-use
 # The clock opens it by hand.
@@ -180,12 +182,12 @@ appId: com.mettleup.app
     text: 'Rest, \d+ seconds left\. Show machine in use'
     waitToSettleTimeoutMs: 300
 - extendedWaitUntil:
-    visible: 'In use\. .*Tap to close'
+    visible: '.*[Ii]n use\. .*Back in .*'
     timeout: 14000
 - takeScreenshot: rel-39-in-use-by-hand
 - back
 - extendedWaitUntil:
-    notVisible: 'In use\. .*Tap to close'
+    notVisible: '.*[Ii]n use\. .*Back in .*'
     timeout: 5000
 # Let the 0:30 rest run out: the bar goes, no "+0:30 over" row (R-298).
 - extendedWaitUntil:

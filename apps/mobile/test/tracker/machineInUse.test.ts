@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { IN_USE_WORDS, cleanInUseChoices, inUseAutoOn, inUseAutoStep, inUseClockHint, setPopupUp, inUseDefault, inUseHasOpenWorkingSet, inUseSetLines, machineName } from '@/tracker/lib/inUse';
+import { IN_USE_WORDS, TAP_HINT_MAX, cleanInUseChoices, inUseAutoOn, inUseAutoStep, inUseClockHint, inUseKit, inUseScreenLabel, inUseSpoken, inUseTitle, setPopupUp, inUseDefault, inUseHasOpenWorkingSet, inUseSetLines, machineName } from '@/tracker/lib/inUse';
 
 describe('Machine in use (backlog, 21 Oct)', () => {
   it('names the machine, not the set', () => {
@@ -158,5 +158,99 @@ describe('R-357: the set pop-up first, then In use (owner, 5 Nov 2026)', () => {
     expect(inUseAutoStep({ restRunning: false, question: false, popup: false })).toBe('drop');
     expect(inUseAutoStep({ restRunning: false, question: false, popup: true })).toBe('drop');
     expect(inUseAutoStep({ restRunning: true, question: true, popup: false })).toBe('drop');
+  });
+});
+
+describe('R-457: the sign names the kit (owner, 12 Nov 2026: "bench in use", "machine in use")', () => {
+  const kit = (name: string, equipment: string, key?: string) => inUseKit({ name, equipment, key });
+  it('machines (Smith machines too) and cables', () => {
+    expect(kit('Leg Extension', 'machine', 'leg_extension')).toBe('Machine');
+    expect(kit('Pec Deck Fly', 'machine')).toBe('Machine');
+    expect(kit('Preacher Curl', 'machine')).toBe('Machine');
+    expect(kit('Smith Machine Bench Press', 'machine')).toBe('Machine');
+    expect(kit('Smith Squat', 'barbell')).toBe('Machine');
+    expect(kit('Lat Pulldown', 'cable')).toBe('Cable');
+    expect(kit('Flat Bench Cable Fly', 'cable')).toBe('Cable');
+  });
+  it('a bench move on a barbell or dumbbells is a bench', () => {
+    for (const n of ['Barbell Bench Press', 'Close-Grip Bench Press', 'Incline Barbell Press', 'EZ Bar Preacher Curl', 'Barbell Hip Thrust', 'EZ Bar Skull Crusher', 'Seated Barbell Shoulder Press', 'JM Press'])
+      expect(kit(n, 'barbell'), n).toBe('Bench');
+    for (const n of ['Incline Dumbbell Press', 'Dumbbell Bench Press', 'Dumbbell Fly', 'Seated Dumbbell Shoulder Press', 'Chest-Supported Dumbbell Row', 'Dumbbell Preacher Curl', 'One-Arm Dumbbell Row', 'Concentration Curl', 'Bulgarian Split Squat', 'Dumbbell Skull Crusher', 'Single-Arm Lying Dumbbell Extension'])
+      expect(kit(n, 'dumbbell'), n).toBe('Bench');
+    expect(kit('Bench Dip', 'bodyweight')).toBe('Bench');
+    expect(kit('Decline Sit-Up', 'bodyweight')).toBe('Bench');
+  });
+  it('a barbell from a rack is a rack; other barbell moves name the bar', () => {
+    for (const n of ['Barbell Squat', 'Front Squat', 'Overhead Press', 'Push Press', 'Rack Pull', 'Barbell Shrug', 'Barbell Lunge', 'Good Morning'])
+      expect(kit(n, 'barbell'), n).toBe('Rack');
+    expect(kit('Deadlift', 'barbell')).toBe('Barbell');
+    expect(kit('Barbell Row', 'barbell')).toBe('Barbell');
+    expect(kit('Landmine Squat', 'barbell')).toBe('Barbell');
+    expect(kit('EZ Bar Curl', 'barbell', 'ez_bar_curl')).toBe('EZ bar');
+    expect(kit('Trap Bar Deadlift', 'barbell')).toBe('Trap bar');
+    expect(kit('Trap Bar Shrug', 'barbell')).toBe('Trap bar');
+  });
+  it('other dumbbell moves: dumbbells (a rear delt fly is standing, not a bench)', () => {
+    expect(kit('Lateral Raise', 'dumbbell', 'lateral_raise')).toBe('Dumbbells');
+    expect(kit('Hammer Curl', 'dumbbell')).toBe('Dumbbells');
+    expect(kit('Rear Delt Fly', 'dumbbell')).toBe('Dumbbells');
+    expect(kit('Seated Rear Delt Fly', 'dumbbell')).toBe('Bench');
+  });
+  it('bodyweight and other: dip station, pull-up bar, kettlebell, sled; floor moves name nothing', () => {
+    expect(kit('Chest Dip', 'bodyweight')).toBe('Dip station');
+    expect(kit("Captain's Chair Leg Raise", 'bodyweight')).toBe('Dip station');
+    expect(kit('Pull-Up', 'bodyweight', 'pull_up')).toBe('Pull-up bar');
+    expect(kit('Hanging Leg Raise', 'bodyweight')).toBe('Pull-up bar');
+    expect(kit('Weighted Chin-Up', 'other')).toBe('Pull-up bar');
+    expect(kit('Kettlebell Swing', 'other')).toBe('Kettlebell');
+    expect(kit('Sled Push', 'other')).toBe('Sled');
+    expect(kit('Push-Up', 'bodyweight', 'push_up')).toBeNull();
+    expect(kit('Plank', 'bodyweight')).toBeNull();
+    expect(kit('Band Pull-Apart', 'other')).toBeNull();
+    expect(kit('Mystery Move', 'unknown')).toBeNull();
+    expect(inUseKit(null)).toBeNull();
+  });
+  it('every catalogue move on a machine, cable, barbell or dumbbells gets a kit', async () => {
+    const { CATALOG } = await import('@/tracker/catalog/catalogData');
+    for (const e of CATALOG) {
+      const ex = { name: e.name, key: e.key, equipment: e.equipment };
+      if (['machine', 'cable', 'barbell', 'dumbbell'].includes(e.equipment)) expect(inUseKit(ex), e.name).not.toBeNull();
+      // A move In use opens by itself after names its kit: its sign never says plain IN USE.
+      if (inUseDefault(ex)) expect(inUseKit(ex), e.name).not.toBeNull();
+    }
+  });
+  it('the sign, the spoken label and the rest bar line', () => {
+    expect(inUseTitle('Bench')).toBe('BENCH IN USE');
+    expect(inUseTitle('Pull-up bar')).toBe('PULL-UP BAR IN USE');
+    expect(inUseTitle(null)).toBe('IN USE');
+    expect(inUseSpoken('Machine')).toBe('Machine in use');
+    expect(inUseSpoken(null)).toBe('In use');
+    expect(inUseClockHint(false, 'Bench')).toBe('Tap to show Bench in use');
+    expect(inUseClockHint(false, 'Cable')).toBe('Tap to show Cable in use');
+    // Too long for the line under the clock at the owner's text size: the short line stays.
+    expect(inUseClockHint(false, 'Machine')).toBe('Tap to show In use');
+    expect(inUseClockHint(false, 'Dumbbells')).toBe('Tap to show In use');
+    expect(inUseClockHint(true, 'Bench')).toBe('In use opens after each set');
+    for (const k of ['Bench', 'Machine', 'Cable', 'Rack', 'Barbell', 'EZ bar', 'Trap bar', 'Dumbbells', 'Kettlebell', 'Dip station', 'Pull-up bar', 'Sled'] as const)
+      expect(inUseClockHint(false, k).length).toBeLessThanOrEqual(TAP_HINT_MAX);
+  });
+});
+
+describe("R-456: only \"I'm back\" closes In use (owner, 12 Nov 2026; first R-345)", () => {
+  it('the spoken label names the kit and never says "Tap to close"', () => {
+    expect(inUseScreenLabel('Bench', 'Previous 60 kg × 8', 'Next 62.5 kg × 8', 90)).toBe('Bench in use. Previous 60 kg × 8. Next 62.5 kg × 8. Back in 90 seconds.');
+    expect(inUseScreenLabel(null, null, null, 30)).toBe('In use. Back in 30 seconds.');
+    expect(inUseScreenLabel('Machine', null, 'Next 40 kg × 10', 5)).not.toMatch(/tap to close/i);
+  });
+  it("[source-text check] the screen body and the tick strip are not close buttons; \"I'm back\" is", async () => {
+    const { readFileSync } = await import('node:fs');
+    const { resolve } = await import('node:path');
+    const src = readFileSync(resolve(__dirname, '../../src/tracker/components/MachineInUse.tsx'), 'utf8');
+    // onClose is wired to exactly two things: Android Back (the Modal) and the "I'm back" button.
+    expect(src.match(/=\{onClose\}/g)).toHaveLength(2);
+    expect(src).toMatch(/<Modal [^\n]*onRequestClose=\{onClose\}/);
+    expect(src).toMatch(/<Pressable\s+onPress=\{onClose\}\s+accessibilityRole="button"\s+accessibilityLabel=\{IN_USE_WORDS\.close\}/);
+    expect(src).not.toMatch(/onResponderRelease/);
+    expect(src).not.toMatch(/Tap to close/);
   });
 });

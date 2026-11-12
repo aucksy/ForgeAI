@@ -22,7 +22,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Platform, Pressable, Text, View } from 'react-native';
 
 import { MachineInUse, machineName, type InUseExercise } from './MachineInUse';
-import { POPUP_EXIT_MS, inUseAutoOn, inUseAutoStep, inUseClockHint, inUseHasOpenWorkingSet, inUseSetLines, setPopupUp } from '../lib/inUse';
+import { POPUP_EXIT_MS, inUseAutoOn, inUseAutoStep, inUseClockHint, inUseHasOpenWorkingSet, inUseKit, inUseSetLines, setPopupUp } from '../lib/inUse';
 
 import { ConfirmSheet, Icon } from '@/components/ui';
 import { tap } from '@/lib/haptics';
@@ -172,6 +172,8 @@ export function RestTimerBar() {
   const master = useTrackerPrefs((s) => s.inUseAfterSet);
   const chosen = useTrackerPrefs((s) => (exId ? s.inUseByExercise[exId] : undefined));
   const autoInUse = inUseAutoOn(master, chosen, inUseEx ? { name: inUseEx.name, key: inUseEx.id, equipment: inUseEx.equipment } : null);
+  // R-457 (owner, 12 Nov 2026): the kit the sign names ("BENCH" / "MACHINE" over "IN USE"); null = plain IN USE.
+  const kit = inUseKit(inUseEx ? { name: inUseEx.name, key: inUseEx.id, equipment: inUseEx.equipment } : null);
   const remaining = useRestRemaining();
   const checks = useAlertChecks(endsAt);
   // 0.56.1: the "Alarms & reminders" ask now shows on many new phones; "In use" never opens over it.
@@ -292,7 +294,7 @@ export function RestTimerBar() {
             }}
             accessibilityRole="button"
             accessibilityLabel={`Rest, ${remaining} seconds left. Show machine in use`}
-            accessibilityHint={inUseClockHint(autoInUse)}
+            accessibilityHint={inUseClockHint(autoInUse, kit)}
             style={{ flex: 1, minWidth: 0, minHeight: 48, alignItems: 'center', justifyContent: 'center' }}
           >
             <Text
@@ -316,7 +318,7 @@ export function RestTimerBar() {
               minimumFontScale={0.7}
               style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: autoInUse ? color.inkSecondary : color.accent, textAlign: 'center' }}
             >
-              {inUseClockHint(autoInUse)}
+              {inUseClockHint(autoInUse, kit)}
             </Text>
           </Pressable>
           <TimerBtn label="+15" a11y="15 seconds more" onPress={() => addSec(15)} />
@@ -341,7 +343,7 @@ export function RestTimerBar() {
         </Pressable>
       ) : null}
       {ask}
-      <MachineInUse visible={inUse} remaining={remaining} clock={fmtClock(remaining)} machine={machine ?? machineName(nextLabel)} previous={setLines.previous} next={setLines.next} exercise={inUseEx} onClose={() => setInUse(false)} />
+      <MachineInUse visible={inUse} remaining={remaining} clock={fmtClock(remaining)} machine={machine ?? machineName(nextLabel)} kit={kit} previous={setLines.previous} next={setLines.next} exercise={inUseEx} onClose={() => setInUse(false)} />
     </View>
   );
 }

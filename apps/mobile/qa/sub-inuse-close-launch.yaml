@@ -6,14 +6,14 @@ appId: com.mettleup.app
 # R-357: In use waits for a set's pop-up to go first.
 - runFlow: sub-popup-gone.yaml
 - extendedWaitUntil:
-    visible: 'In use\. .*Tap to close'
+    visible: '.*[Ii]n use\. .*Back in .*'
     timeout: 6000
     optional: true
 - runFlow:
     when:
-      visible: 'In use\. .*Tap to close'
+      visible: '.*[Ii]n use\. .*Back in .*'
     commands:
       - back
       - extendedWaitUntil:
-          notVisible: 'In use\. .*Tap to close'
+          notVisible: '.*[Ii]n use\. .*Back in .*'
           timeout: 5000

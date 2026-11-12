@@ -91,7 +91,7 @@ appId: com.mettleup.app
       WHO: ".*Leg Extension set 1"
 # The rest starts; on a machine In use may cover the rest bar at once (run 42006104824).
 - extendedWaitUntil:
-    visible: 'Skip rest|In use\. .*Tap to close'
+    visible: 'Skip rest|.*[Ii]n use\. .*Back in .*'
     timeout: 8000
 - tapOn:
     text: "Not now"
@@ -101,12 +101,12 @@ appId: com.mettleup.app
 # "I'm back", so it never covers sets 2 and 3. Its own lines were right in those runs (Leg Extension,
 # "Previous 55 kg x 11", "Next 40 kg x 10": the NEXT set of the same exercise).
 - extendedWaitUntil:
-    visible: 'In use\. .*Tap to close'
+    visible: '.*[Ii]n use\. .*Back in .*'
     timeout: 20000
     optional: true
 - runFlow:
     when:
-      visible: 'In use\. .*Tap to close'
+      visible: '.*[Ii]n use\. .*Back in .*'
     commands:
       - takeScreenshot: rel-r355-02-in-use-after-set-1
       - tapOn:
@@ -116,7 +116,7 @@ appId: com.mettleup.app
           text: "^I.m back$"
           waitToSettleTimeoutMs: 300
       - extendedWaitUntil:
-          notVisible: 'In use\. .*Tap to close'
+          notVisible: '.*[Ii]n use\. .*Back in .*'
           timeout: 5000
 - scrollUntilVisible:
     element: "Mark .*Leg Extension set 2 complete"
@@ -135,22 +135,23 @@ appId: com.mettleup.app
           env:
             WHO: ".*Leg Extension set 2"
       - extendedWaitUntil:
-          visible: 'Skip rest|All sets done|Finish workout|In use\. .*Tap to close'
+          visible: 'Skip rest|All sets done|Finish workout|.*[Ii]n use\. .*Back in .*'
           timeout: 8000
 # In use opens a moment after the tick (after any record toast, R-357): wait for it, then close it.
 - extendedWaitUntil:
-    visible: 'In use\. .*Tap to close'
+    visible: '.*[Ii]n use\. .*Back in .*'
     timeout: 5000
     optional: true
 - runFlow:
     when:
-      visible: 'In use\. .*Tap to close'
+      visible: '.*[Ii]n use\. .*Back in .*'
     commands:
+      # R-456: only "I'm back" closes In use (a tap on the screen no longer does).
       - tapOn:
-          point: "50%,50%"
+          text: "^I.m back$"
           waitToSettleTimeoutMs: 300
       - extendedWaitUntil:
-          notVisible: 'In use\. .*Tap to close'
+          notVisible: '.*[Ii]n use\. .*Back in .*'
           timeout: 5000
 - scrollUntilVisible:
     element: "Mark .*Leg Extension set 3 complete"
@@ -169,22 +170,23 @@ appId: com.mettleup.app
           env:
             WHO: ".*Leg Extension set 3"
       - extendedWaitUntil:
-          visible: 'Skip rest|All sets done|Finish workout|In use\. .*Tap to close'
+          visible: 'Skip rest|All sets done|Finish workout|.*[Ii]n use\. .*Back in .*'
           timeout: 8000
 # In use opens a moment after the tick (after any record toast, R-357): wait for it, then close it.
 - extendedWaitUntil:
-    visible: 'In use\. .*Tap to close'
+    visible: '.*[Ii]n use\. .*Back in .*'
     timeout: 5000
     optional: true
 - runFlow:
     when:
-      visible: 'In use\. .*Tap to close'
+      visible: '.*[Ii]n use\. .*Back in .*'
     commands:
+      # R-456: only "I'm back" closes In use (a tap on the screen no longer does).
       - tapOn:
-          point: "50%,50%"
+          text: "^I.m back$"
           waitToSettleTimeoutMs: 300
       - extendedWaitUntil:
-          notVisible: 'In use\. .*Tap to close'
+          notVisible: '.*[Ii]n use\. .*Back in .*'
           timeout: 5000
 - scrollUntilVisible:
     element: "Mark .*Leg Extension set 4 complete"
@@ -203,22 +205,23 @@ appId: com.mettleup.app
           env:
             WHO: ".*Leg Extension set 4"
       - extendedWaitUntil:
-          visible: 'Skip rest|All sets done|Finish workout|In use\. .*Tap to close'
+          visible: 'Skip rest|All sets done|Finish workout|.*[Ii]n use\. .*Back in .*'
           timeout: 8000
 # In use opens a moment after the tick (after any record toast, R-357): wait for it, then close it.
 - extendedWaitUntil:
-    visible: 'In use\. .*Tap to close'
+    visible: '.*[Ii]n use\. .*Back in .*'
     timeout: 5000
     optional: true
 - runFlow:
     when:
-      visible: 'In use\. .*Tap to close'
+      visible: '.*[Ii]n use\. .*Back in .*'
     commands:
+      # R-456: only "I'm back" closes In use (a tap on the screen no longer does).
       - tapOn:
-          point: "50%,50%"
+          text: "^I.m back$"
           waitToSettleTimeoutMs: 300
       - extendedWaitUntil:
-          notVisible: 'In use\. .*Tap to close'
+          notVisible: '.*[Ii]n use\. .*Back in .*'
           timeout: 5000
 - scrollUntilVisible:
     element: "Mark .*Leg Extension set 5 complete"
@@ -237,34 +240,36 @@ appId: com.mettleup.app
           env:
             WHO: ".*Leg Extension set 5"
       - extendedWaitUntil:
-          visible: 'Skip rest|All sets done|Finish workout|In use\. .*Tap to close'
+          visible: 'Skip rest|All sets done|Finish workout|.*[Ii]n use\. .*Back in .*'
           timeout: 8000
 # In use opens a moment after the tick (after any record toast, R-357): wait for it, then close it.
 - extendedWaitUntil:
-    visible: 'In use\. .*Tap to close'
+    visible: '.*[Ii]n use\. .*Back in .*'
     timeout: 5000
     optional: true
 - runFlow:
     when:
-      visible: 'In use\. .*Tap to close'
+      visible: '.*[Ii]n use\. .*Back in .*'
     commands:
+      # R-456: only "I'm back" closes In use (a tap on the screen no longer does).
       - tapOn:
-          point: "50%,50%"
+          text: "^I.m back$"
           waitToSettleTimeoutMs: 300
       - extendedWaitUntil:
-          notVisible: 'In use\. .*Tap to close'
+          notVisible: '.*[Ii]n use\. .*Back in .*'
           timeout: 5000
 # In use never opens after an exercise's last set (R-299); closed here if it ever does.
 - runFlow:
     when:
-      visible: 'In use\. .*Tap to close'
+      visible: '.*[Ii]n use\. .*Back in .*'
     commands:
       - takeScreenshot: rel-r355-02-OBS-in-use-after-last-set
+      # R-456: only "I'm back" closes In use (a tap on the screen no longer does).
       - tapOn:
-          point: "50%,50%"
+          text: "^I.m back$"
           waitToSettleTimeoutMs: 300
       - extendedWaitUntil:
-          notVisible: 'In use\. .*Tap to close'
+          notVisible: '.*[Ii]n use\. .*Back in .*'
           timeout: 5000
 - assertVisible: "Skip rest"
 - takeScreenshot: rel-r355-03-rest-after-a-last-set

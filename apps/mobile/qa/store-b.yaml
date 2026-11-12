@@ -28,7 +28,7 @@ appId: com.mettleup.app
 # R-424: the "In use" screen (R-304) now covers the workout after a bench tick. Untick "Show after every
 # set of this exercise" once, so it stays away for the record pop-up shot, then close it.
 - extendedWaitUntil:
-    visible: 'In use\. .*Tap to close'
+    visible: '.*[Ii]n use\. .*Back in .*'
     timeout: 3000
     optional: true
 - tapOn:
