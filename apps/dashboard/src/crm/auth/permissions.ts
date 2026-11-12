@@ -121,6 +121,8 @@ export function canOpen(role: Role, path: string): boolean {
   if (head === 'numbers' && sub === 'owed') return can(role, 'seeTotals');
   // Owner, 30 Oct 2026: "Your growth" is the gym's money and members month by month: the owner's.
   if (head === 'growth') return can(role, 'seeTotals');
+  // F201 (12 Nov 2026): the AI Assistant is the owner's (it spends his credits; the server answers only his key).
+  if (head === 'assistant') return role === 'owner';
   return true;
 }
 

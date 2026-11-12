@@ -160,6 +160,9 @@ test('"Try saying" examples: about 30, every group, each mapped to a real tool a
   assert.equal(new Set(EXAMPLES.map((e) => e.text)).size, EXAMPLES.length);
   for (const g of EXAMPLE_GROUPS) assert.ok(EXAMPLES.filter((e) => e.group === g).length >= 4, g);
   assert.ok(EXAMPLES.filter((e) => DEVANAGARI.test(e.text)).length >= 3, 'a few in Devanagari');
+  // R-471 / 03-design §8: no Diwali or other dated festival in the fixed list; festival ideas come from the panel's calendar.
+  const DATED = /diwali|holi|eid|christmas|navratri|rakhi|new year|दिवाली|होली|ईद/i;
+  assert.deepEqual(EXAMPLES.filter((e) => DATED.test(e.text)).map((e) => e.text), []);
   for (const e of EXAMPLES) {
     assert.ok(EXAMPLE_GROUPS.includes(e.group), e.text);
     const tool = toolByName(e.tool);

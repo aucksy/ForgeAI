@@ -56,7 +56,7 @@ export function voiceProblemWords(p: VoiceProblem): string {
     case 'no_mic':
       return 'No microphone was found. Type instead.';
     case 'too_short':
-      return 'That was too short. Hold the button and speak.';
+      return 'That was too short. Try again and speak a little longer.';
     case 'failed':
     default:
       return 'The recording did not work. Type instead.';

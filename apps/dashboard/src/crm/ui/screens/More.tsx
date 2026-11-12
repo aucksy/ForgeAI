@@ -20,6 +20,7 @@ import { useQuestionCount } from '../QuestionParts';
 import { QUESTION_WORDS } from '../../logic/askQuestions';
 import { MEMBER_MESSAGE_WORDS } from '../../logic/memberMessages';
 import { useMemberMessageCount } from '../MemberMessageParts';
+import { useAssistant } from '../../assistant/useAssistant';
 import { t } from '../../lang/lang';
 
 interface Row {
@@ -49,8 +50,13 @@ export function MoreScreen() {
   const trainerNav = trainerAccess === 'owner' || trainerAccess === 'trainer';
   const questionsOpen = useQuestionCount(trainerNav);
   const talkWaiting = useMemberMessageCount();
+  // F201: the AI Assistant (owner only; hidden until the gym's server answers its credits, 0071).
+  const assistantOn = useAssistant().on;
   // Staff never sees Expenses (permissions.ts); the rest stays, with words that fit what they can do.
   const rows: Row[] = navFor<Row>(role, [
+    ...(assistantOn
+      ? [{ path: '/assistant', group: 'run', label: 'AI Assistant', hint: 'Ask a question or give a task, in Hindi or English', icon: 'sparkle' } as Row]
+      : []),
     { path: '/growth', group: 'run', label: 'Your growth', hint: 'Is the gym growing since MettleUp? Month by month', icon: 'growth' },
     { path: '/plans', group: 'run', label: 'Plans', hint: 'Prices and durations', icon: 'plans' },
     {

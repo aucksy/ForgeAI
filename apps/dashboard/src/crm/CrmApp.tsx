@@ -87,6 +87,9 @@ import { DemoNeedsRealGym, demoNeedsRealGym, useDemo } from './demo/demoMode';
 import { GymPackProvider, useFeatureCheck } from './plan/GymPackProvider';
 import { proFeatureOfPage } from './plan/pack';
 import { ProPage } from './plan/ProNote';
+import { AssistantWatch, useAssistant } from './assistant/useAssistant';
+import { AssistantFab } from './assistant/ui/AssistantFab';
+import { AssistantScreen } from './ui/screens/Assistant';
 
 export function CrmApp() {
   // English | Hinglish (1 Nov 2026): a switch draws the whole panel again in the new words.
@@ -171,6 +174,8 @@ export function Routes({ online }: { online: boolean }) {
   const questionsOpen = useQuestionCount(trainerNav);
   // Owner, 12 Nov 2026: "Message your gym" from members, badged with those waiting (null: hidden, no 0069 yet).
   const talkWaiting = useMemberMessageCount();
+  // F201: the AI Assistant, for the owner of a real online gym, once the server's wallet answers (0071).
+  const assistantOn = useAssistant().on;
 
   // Never set up: no plans, no members, and still the placeholder name.
   // An online gym is always set up: it was named when it was made, and its welcome screen's
@@ -204,6 +209,8 @@ export function Routes({ online }: { online: boolean }) {
     return navFor<NavItem>(role, [
       ...(allBranches ? [{ path: '/branches', label: t('All branches'), icon: 'branches' } as NavItem] : []),
       { path: '/', label: t('Today'), icon: 'today', badge: needsTotal || undefined },
+      // F201: right under Today on a computer (a phone has the floating button and the row under More).
+      ...(assistantOn ? [{ path: '/assistant', label: t('AI Assistant'), icon: 'sparkle' } as NavItem] : []),
       { path: '/members', label: t('Members'), icon: 'members', badge: needsAttention },
       // Badged with orders waiting at the desk — the one number on this bar that
       // changes by itself while the owner watches.
@@ -258,7 +265,7 @@ export function Routes({ online }: { online: boolean }) {
       ...(demo ? [] : [{ path: '/feedback', label: t('Help and feedback'), icon: 'feedback', group: 'setup' } as NavItem]),
     ]);
     // `lang`: the labels are words, so a language switch makes them again.
-  }, [memberViews, snapshot, today, newCount, role, allBranches, demo, lang, trainerNav, questionsOpen, talkWaiting, needsTotal]);
+  }, [memberViews, snapshot, today, newCount, role, allBranches, demo, lang, trainerNav, questionsOpen, talkWaiting, needsTotal, assistantOn]);
   // Step 3 (15 Oct 2026): five on a phone's bottom bar, like GoGym4U and GymBook — Aaj, Members,
   // Hisaab, Hazri and More (Plans, Shop, Settings). Six or seven icons were too small to read.
   const phoneNav = useMemo<NavItem[]>(() => {
@@ -281,6 +288,9 @@ export function Routes({ online }: { online: boolean }) {
       <NewGymReady />
       {/* F103 step 2: keeps entry machines in step with sales, renewals and the nightly sweep; nothing without a machine. */}
       {online && !demo && <EntryMachineJob />}
+      {/* F201: asks the gym's server for the AI credits; the floating button and the side panel (owner only). */}
+      <AssistantWatch />
+      <AssistantFab />
       {canOpen(role, `/${route.segments.join('/')}`) ? <Screen segments={route.segments} role={role} /> : <OwnerOnly />}
     </AppShell>
     </NewDotsProvider>
@@ -303,6 +313,7 @@ function offlinePage(head: string | undefined, id: string | undefined): string |
   if (head === 'member-messages') return 'Member messages';
   if (head === 'trainers') return 'Trainers';
   if (head === 'feedback') return 'Help and feedback';
+  if (head === 'assistant') return 'AI Assistant';
   if (head === 'branches') return 'All branches';
   if (head === 'members' && id === 'import') return 'Importing members';
   if (head === 'members' && id === 'app') return 'Members using the app';
@@ -389,6 +400,9 @@ function Screen({ segments, role }: { segments: string[]; role: Role }) {
     case 'growth':
       // Owner, 30 Oct 2026: is the gym growing since MettleUp? `/growth/print` is the one-page report.
       return id === 'print' ? <GrowthPrintScreen /> : <GrowthScreen />;
+    case 'assistant':
+      // F201: the AI Assistant (owner only; hidden until the gym's server has 0071, then the page goes to Today).
+      return <AssistantScreen />;
     case 'news':
       // R-239: What's new, out of Settings (the sidebar's bottom row, the bell, More on a phone).
       return <WhatsNewScreen />;

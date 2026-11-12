@@ -38,6 +38,9 @@ const ROUTES = [
   '/numbers/renewals/30', '/numbers/owed/30', '/numbers/stopped/90', '/numbers/new/90', '/numbers/busy/30',
   // Owner, 30 Oct 2026: "Your growth" and its one-page report.
   '/growth', '/growth/print',
+  // F201: the AI Assistant. The crawl's demo gym is not an online gym, so the assistant stays hidden and the address
+  // must go back to Today cleanly (assistant-uat.spec.mjs photographs the assistant itself).
+  '/assistant',
 ];
 
 async function waitForServer() {

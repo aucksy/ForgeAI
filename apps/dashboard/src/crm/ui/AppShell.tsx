@@ -86,7 +86,11 @@ export function AppShell({
       <main
         style={{
           minWidth: 0,
-          padding: compact ? `${space.lg}px ${space.lg}px 96px` : `${space.xxl}px ${space.xxl}px 64px`,
+          // F201: room for the AI Assistant's floating button (--assist-fab-space) and, on a computer, its open
+          // side panel (--assist-panel-space), so the last row and the right edge are never under them.
+          padding: compact
+            ? `${space.lg}px ${space.lg}px calc(96px + var(--assist-fab-space, 0px))`
+            : `${space.xxl}px calc(${space.xxl}px + var(--assist-panel-space, 0px)) calc(64px + var(--assist-fab-space, 0px)) ${space.xxl}px`,
           maxWidth: 1180,
         }}
       >

@@ -1116,6 +1116,8 @@ export function ErrorBanner({ children }: { children: ReactNode }) {
 export function Toast({ message }: { message: string }) {
   return (
     <div
+      // F201: the AI Assistant's floating button steps aside while this shows.
+      data-floating="toast"
       role="status"
       aria-live="polite"
       style={{
@@ -1148,6 +1150,8 @@ export function Toast({ message }: { message: string }) {
 export function UndoBar({ message, onUndo, undoLabel }: { message: string; onUndo: () => void; undoLabel?: string }) {
   return (
     <div
+      // F201: the AI Assistant's floating button steps aside while this shows.
+      data-floating="toast"
       role="status"
       aria-live="polite"
       style={{

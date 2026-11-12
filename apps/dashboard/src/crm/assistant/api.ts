@@ -131,30 +131,74 @@ export async function transcribe(
 
 // ------------------------------------------------------------------ credits and history (supabase 0071)
 
+export interface AiWalletRow {
+  /** Epoch ms. */
+  at: number;
+  /** + credits added, - credits used. */
+  delta: number;
+  reason: string;
+  note: string;
+}
+
 export interface AiWallet {
   balance: number;
+  /** This month's free credits still unused (used first; they end with the month). */
   freeLeft: number;
+  /** Free credits a month on this gym's plan: 100 on a paid yearly or lifetime plan, else 0 (04-server-status). */
   monthlyFree: number;
   plan: string;
+  /** 'monthly' | 'yearly' | 'lifetime' | '' (the gym's billing). */
+  billing: string;
+  /** True while the gym is in its free trial. */
+  trial: boolean;
+  /** The India month the free credits are for, "YYYY-MM" ('' when not sent). */
+  month: string;
   /** Credit packs on sale: credits and their price in rupees. */
   packs: { credits: number; inr: number; popular: boolean }[];
-  /** Below this balance the screen says credits are running low. */
+  /** At or below this balance the screen says credits are running low. */
   lowAt: number;
+  /** The latest credit changes, newest first. */
+  recent: AiWalletRow[];
 }
 
 /**
- * The owner's AI credits (owner_ai_wallet). The server adds the free ones first (03-design §3, R-470): 20 once in the
- * trial; 100 a month on a yearly or lifetime plan; none on a monthly plan (packs only). `monthlyFree` is 0 then.
- * Nothing here hard-codes those numbers: the screen shows what the server sends. Null on failure.
+ * The owner's AI credits (owner_ai_wallet, docs/f201-ai-assistant/04-server-status.md). The server adds the free ones
+ * first (03-design §3, R-470): 20 starter credits once; 100 a month on a paid yearly or lifetime plan; none on a
+ * monthly plan or in the trial (packs only). Nothing here hard-codes those numbers: the screen shows what the server
+ * sends. Null when the gym's server has no assistant yet (no 0071: the RPC is missing, or answers without `ok`),
+ * offline, or refused: the whole assistant then stays hidden.
  */
 export async function aiWallet(key: string, rpc: typeof call = call): Promise<AiWallet | null> {
   try {
-    const r = (await rpc<Record<string, unknown>>('owner_ai_wallet', { p_key: key })) ?? {};
-    const n = (v: unknown) => (typeof v === 'number' && Number.isFinite(v) ? v : 0);
-    const packs = Array.isArray(r.packs)
-      ? (r.packs as Record<string, unknown>[]).map((p) => ({ credits: n(p.credits), inr: n(p.inr), popular: p.popular === true }))
+    const r = await rpc<unknown>('owner_ai_wallet', { p_key: key });
+    if (!r || typeof r !== 'object' || Array.isArray(r) || (r as { ok?: unknown }).ok !== true) {
+      console.info('[assistant] the wallet is not on this gym's server yet');
+      return null;
+    }
+    const w = r as Record<string, unknown>;
+    const n = (v: unknown): number => {
+      const x = typeof v === 'number' ? v : typeof v === 'string' && v.trim() ? Number(v) : NaN;
+      return Number.isFinite(x) ? x : 0;
+    };
+    const s = (v: unknown) => (typeof v === 'string' ? v : '');
+    const packs = Array.isArray(w.packs)
+      ? (w.packs as Record<string, unknown>[]).map((p) => ({ credits: n(p.credits), inr: n(p.inr), popular: p.popular === true })).filter((p) => p.credits > 0)
       : [];
-    return { balance: n(r.balance), freeLeft: n(r.free_left), monthlyFree: n(r.monthly_free), plan: typeof r.plan === 'string' ? r.plan : '', packs, lowAt: n(r.low_at) };
+    const recent = Array.isArray(w.recent)
+      ? (w.recent as Record<string, unknown>[]).map((x) => ({ at: typeof x.at === 'number' ? x.at : Date.parse(s(x.at)) || 0, delta: n(x.delta), reason: s(x.reason), note: s(x.note) }))
+      : [];
+    return {
+      balance: n(w.balance),
+      freeLeft: n(w.free_left),
+      monthlyFree: n(w.monthly_free),
+      plan: s(w.plan),
+      billing: s(w.billing),
+      trial: w.trial === true,
+      month: s(w.month),
+      packs,
+      lowAt: n(w.low_at),
+      recent,
+    };
   } catch (e) {
     console.warn('[assistant] wallet could not load', e);
     return null;
@@ -182,7 +226,7 @@ export async function aiTasks(key: string, limit = 30, rpc: typeof call = call):
       if (!id) return [];
       const st = String(r.status ?? '');
       const status: AiTaskRow['status'] = st === 'done' || st === 'cancelled' || st === 'failed' ? st : 'drafted';
-      return [{ id, at: Number(r.at) || 0, request: String(r.request ?? ''), spoken: r.spoken === true, status, credits: Number(r.credits) || 0 }];
+      return [{ id, at: typeof r.at === 'number' ? r.at : Date.parse(String(r.at ?? '')) || 0, request: String(r.request ?? ''), spoken: r.spoken === true, status, credits: Number(r.credits) || 0 }];
     });
   } catch (e) {
     console.warn('[assistant] history could not load', e);

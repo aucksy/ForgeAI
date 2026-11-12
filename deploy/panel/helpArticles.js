@@ -199,6 +199,20 @@ export const ALL_HELP_ARTICLES = [
     screens: ['apps/dashboard/src/crm/ui/screens/BringAFriend.tsx'],
   },
   {
+    id: 'ai-assistant',
+    unreleased: 'F201 AI Assistant: hidden until the gym server has 0071 and the panel worker is deployed (R-471).',
+    who: 'owner',
+    title: 'Ask the AI Assistant, or give it a task',
+    text:
+      'Only the gym owner sees the AI Assistant. Tap "AI Assistant" at the bottom right, or open it from the menu (on a phone: More). ' +
+      'Type and tap the arrow. Or tap the microphone, speak in Hindi or English, and tap "Send to AI Assistant". ' +
+      'Questions, like "Who has not paid?", are free. ' +
+      'A task, like a message, a renewal or a payment, shows as a card. Check it, change it if needed, then tap its button. Nothing is sent or saved before that tap. ' +
+      'Each card costs 1 credit, shown on its button. Tap the credits at the top to see what you have. ' +
+      'It cannot write workout or diet plans yet.',
+    screens: ['apps/dashboard/src/crm/ui/screens/Assistant.tsx'],
+  },
+  {
     id: 'plus-lock-admin',
     unreleased: 'F56 owner switch: hidden until 0070 is live and MettleUp Plus is switched on (R-461).',
     who: 'owner',

@@ -447,14 +447,14 @@ export const EXAMPLE_GROUPS = Object.freeze(['messages', 'members', 'money', 'qu
 
 export const EXAMPLES = Object.freeze([
   // Messages
-  { group: 'messages', text: 'Sab members ko Happy Diwali bhejo, 20% off offer ke saath', tool: 'draft_message', expect: { kind: 'offer' } },
+  { group: 'messages', text: 'Sab members ko 20% off offer bhejo, is Sunday tak', tool: 'draft_message', expect: { kind: 'offer' } },
   { group: 'messages', text: 'Jinka plan is hafte khatam ho raha hai unko renewal reminder bhejo', tool: 'draft_message', expect: { kind: 'reminder' } },
   { group: 'messages', text: 'Kal gym band rahega, sabko bata do', tool: 'draft_message', expect: { kind: 'closed' } },
   { group: 'messages', text: 'Jo 10 din se nahi aaye unko "we miss you" message bhejo', tool: 'draft_message' },
   { group: 'messages', text: 'Aaj jinka birthday hai unko wish karo', tool: 'draft_message' },
   { group: 'messages', text: 'Morning batch ko bolo kal se gym 5:30 baje khulega', tool: 'draft_message', expect: { kind: 'timing' } },
   { group: 'messages', text: 'Send a polite fee reminder to everyone who owes money', tool: 'draft_message' },
-  { group: 'messages', text: 'सभी सदस्यों को होली की शुभकामनाएं भेजो', tool: 'draft_message', expect: { lang: 'hi' } },
+  { group: 'messages', text: 'सभी सदस्यों को बताओ कि रविवार को जिम बंद रहेगा', tool: 'draft_message', expect: { lang: 'hi', kind: 'closed' } },
   // Members
   { group: 'members', text: 'Rahul Sharma ko add karo, 3 mahine Gold, 4500 cash', tool: 'add_member', expect: { method: 'cash' } },
   { group: 'members', text: 'Priya ka plan renew karo 1 mahina, UPI 1500', tool: 'renew', expect: { method: 'upi' } },

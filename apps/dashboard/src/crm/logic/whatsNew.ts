@@ -457,4 +457,16 @@ export const ADMIN_NEWS_PENDING: readonly AdminNewsEntry[] = [
       },
     ],
   },
+  {
+    // F201 R-471, 12 Nov 2026: the AI Assistant. Moves to ADMIN_NEWS only when 0071 is live on the gym server and the
+    // panel worker with /api/assist is deployed; until then the whole assistant is hidden (useAssistant).
+    id: 'pending-ai-assistant',
+    lines: [
+      {
+        text: 'New: the AI Assistant. Ask about your gym in Hindi or English, like who has not paid, for free. It can also draft a message, a renewal or a payment for you. Nothing is sent or saved until you tap the card’s button, and each card shows its price in credits.',
+        go: { label: 'Open the AI Assistant', path: '/assistant' },
+        feature: true,
+      },
+    ],
+  },
 ];

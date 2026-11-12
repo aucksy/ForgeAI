@@ -16,6 +16,7 @@ import { InstallCard } from '../InstallCard';
 import { PhoneLinksCard } from '../PhoneLinksCard';
 import { PlanRequestsCard } from '../PlanRequestsCard';
 import { NeedsYouCard } from '../NeedsYou';
+import { TodayAiCard } from '../../assistant/ui/TodayAiCard';
 import { TrialBanner } from '../TrialBanner';
 import { LapseBanner, useLapseWords } from '../LapseBanner';
 import { RenewReminder, useRenewWords } from '../BillingOnline';
@@ -153,6 +154,9 @@ export function TodayScreen() {
       {/* R-97 (0030): the owner's free trial, in words (nothing locks when it ends). */}
       {/* R-319 item 8a: everything waiting for the desk or the owner, at the top (hidden when nothing waits). */}
       <NeedsYouCard />
+
+      {/* F201: the AI Assistant's box and today's ideas (owner only; hidden until the gym's server has 0071). */}
+      <TodayAiCard />
 
       {/* Billing step 1: when the plan has run out, that line replaces the trial line. */}
       {lapse ? <LapseBanner words={lapse} /> : renew ? <RenewReminder text={renew} /> : <TrialBanner />}
