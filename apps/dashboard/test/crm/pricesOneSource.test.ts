@@ -103,7 +103,7 @@ describe('prices: one list, every place agrees', () => {
   });
 
   it("the server's AI credit packs and free credits (0071) are the same as the one list", () => {
-    const wallet = lastDefinition('owner_ai_wallet');
+    const wallet = lastDefinition('_ai_wallet_json');
     expect(wallet).not.toBe('');
     const packs = [...wallet.matchAll(/jsonb_build_object\('credits', (\d+), 'inr', (\d+)(, 'popular', true)?\)/g)].map((x) => [
       Number(x[1]),
