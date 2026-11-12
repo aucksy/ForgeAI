@@ -61,3 +61,8 @@ Settings, the Hinglish lines, UAT at phone and desktop width.
   welcome credits and 20/60 a month (`_ai_monthly_free`, `_ai_grant`). It must become 20 once in the trial, 0 on
   monthly plans, 100 a month on yearly/lifetime while paid. The fair-use limits (50 a day, 20 in the trial, 10 voice
   minutes) live in the worker (`assist.js`), also not this step.
+
+## Cloud check (CI job `check`)
+- `d7f5217b` (panel logic): run 43255510354, passed (type check, unit tests, promise ratchet, build, panel crawl).
+- `1fa48009` (spec match + this note): run 43256824627, passed.
+- Tests: catalogue 6 node tests; assistant 52 vitest tests in 4 files, plus 1 new audience test.
