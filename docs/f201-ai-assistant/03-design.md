@@ -100,7 +100,7 @@ Real AI cost (Haiku 5.5 at $0.10/M in, $0.50/M out, help.js rates): question ~Rs
 - Low balance (<= 5): a quiet line on the assistant screen. No pop-ups. At 0: tasks still draft; the button says
   "Get credits to send" and opens the packs sheet.
 - Fair use (cost guard, not a sales tool): 50 AI requests a gym a day, 10 voice minutes a day; HQ can raise per gym
-  (owner asked 12 Nov, R-467: free asking still costs us). At the limit: "You have asked a lot today. The AI Helper
+  (owner asked 12 Nov, R-467: free asking still costs us). At the limit: "You have asked a lot today. The AI Assistant
   is back tomorrow morning." Worst case one gym at the limit every day ~Rs 300 a month; a normal gym ~Rs 30-60.
 - Buying: while BILLING_ONLINE_ON is false, "Buy" opens the existing Pay MettleUp path with the pack as the item and
   HQ adds the credits after the payment shows (HQ "Add credits" button). With online billing on (test mode until he
@@ -135,7 +135,7 @@ Real AI cost (Haiku 5.5 at $0.10/M in, $0.50/M out, help.js rates): question ~Rs
   English", mic, send); first visit: "Try saying" examples in groups (Messages, Members, Money, Questions) — tapping
   one fills the box; "Today for you" ideas; then the conversation of request -> cards; History tab.
 - Voice: while listening, a timer and "Up to 30 seconds"; then "What I heard (you can fix it)" with two buttons:
-  "Cancel" and "Send to AI Helper" (owner, 12 Nov 2026, R-466: never "Done, use this").
+  "Cancel" and "Send to AI Assistant" (owner, 12 Nov 2026, R-466: never "Done, use this").
 - Cards: AnswerCard, MessageCard, ChangeCard, AskBackCard, CannotCard, all in kit.tsx style.
 - Credits sheet: balance, this month's free left, packs, history of spends.
 - HQ: per-gym balance + "Add credits" + month usage.

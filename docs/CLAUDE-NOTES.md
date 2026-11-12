@@ -15,9 +15,9 @@ requests + 20 voice minutes a day one gym could cost ~Rs 600 a month. Decided (p
 10 voice minutes a day (worst case ~Rs 300), global cap grows ~$1.5 per paying gym. Spec 03-design.md section 3
 updated; server builder told.
 
-## R-466. F201 voice screen: the confirm button says "Send to AI Helper" — 12 Nov 2026
+## R-466. F201 voice screen: the confirm button says "Send to AI Assistant" — 12 Nov 2026
 He said: on the voice screen (after speaking) the button "Done, use this" is misleading; use "Send to AI Helper" instead.
-Done: design canvas Voice board changed (canvas v10); spec 03-design.md UI section now names it. Open: the rest of the design says "AI Assistant"; asked him whether to rename the whole feature to "AI Helper".
+Done: design canvas Voice board changed (canvas v10); spec 03-design.md UI section now names it. DECIDED (12 Nov): he said "AI assistant is better, everyone knows that". The name stays "AI Assistant" everywhere; the button says "Send to AI Assistant" (canvas v11, wider button).
 
 ## R-465. F201 go: build the AI assistant for gym owners, paid with AI credits (replaces "Pro + AI") — 12 Nov 2026
 He said (verbatim in docs/f201-ai-assistant/00-START-HERE.md): implement F201 "accurately and very thoroughly"; design the agentic AI with all the useful tasks, not just the Diwali message; show new owners a list of common uses; typing plus good voice so he can speak Hindi; the AI drafts, shows it, then sends it in the app. "You're the boss. You make all the right decisions." Same turn: replace every place the AI plan is mentioned with the new offer; asked whether every task costs the same.
