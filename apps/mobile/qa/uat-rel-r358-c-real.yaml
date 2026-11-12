@@ -71,7 +71,7 @@ appId: com.mettleup.app
     env:
       WHO: "Dumbbell Preacher Curl set 1"
 - extendedWaitUntil:
-    visible: 'Skip rest|In use\. .*'
+    visible: 'Skip rest|(.* )?[Ii]n use\. .*'
     timeout: 8000
 - assertNotVisible: "New record.*"
 - takeScreenshot: rel-r358-c-after-restart-no-repeat

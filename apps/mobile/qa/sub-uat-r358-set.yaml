@@ -32,5 +32,5 @@ appId: com.mettleup.app
 # No optional "Keep ..." tap here: waiting ~7 s for a typo question that never comes (10 kg) let the
 # 6 s record pop-up fade before flow c could see it (run 41994613907).
 - extendedWaitUntil:
-    visible: 'Skip rest|In use\. .*'
+    visible: 'Skip rest|(.* )?[Ii]n use\. .*'
     timeout: 8000

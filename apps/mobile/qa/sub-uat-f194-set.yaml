@@ -32,7 +32,7 @@ appId: com.mettleup.app
     text: "Keep [0-9].*"
     optional: true
 - extendedWaitUntil:
-    visible: 'Skip rest|In use\. .*'
+    visible: 'Skip rest|(.* )?[Ii]n use\. .*'
     timeout: 8000
     # The last set of the exercise starts no rest timer, so this wait may miss.
     optional: true
