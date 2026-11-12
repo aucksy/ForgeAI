@@ -77,8 +77,8 @@ test('no key: the message is still saved and the person gets the plain thanks', 
 
 test(`stops asking Claude once ₹${MONTHLY_CAP_INR} is spent this India month`, async () => {
   const e = env();
-  // Enough output tokens to pass the cap: ₹500 / 88 / $0.50 per million = about 11.4 million.
-  e.WEB.sqlite.prepare("INSERT INTO help_usage (month, calls, tokens_in, tokens_out) VALUES ('2026-11', 9000, 0, 12000000)").run();
+  // Enough output tokens to pass the cap: $80 / $0.50 per million = 160 million; 170 million is about $85.
+  e.WEB.sqlite.prepare("INSERT INTO help_usage (month, calls, tokens_in, tokens_out) VALUES ('2026-11', 9000, 0, 170000000)").run();
   const ai = fakeClaude({ answer: 'x', covered: true });
   const j = await (await handleHelp(post('/api/help', { source: 'member', text: 'hi', sender: SENDER }), e, new Date('2026-11-02T10:00:00Z'), { fetchImpl: ai.fetchImpl })).json();
   assert.equal(ai.calls.length, 0);

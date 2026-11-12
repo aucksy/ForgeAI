@@ -78,6 +78,8 @@ Each step goes through the normal test gate and ships in the next batch release 
    on GitHub, with personal details removed". **Recommended: approve both.**
 2. **Paid AI key.** Use a billed key only (free AI tiers may learn from what people type), with a
    cap of ₹500 a month. Real spend at 1-10 gyms is about ₹2-20. **Recommended: yes, Claude Haiku.**
+   **Update (12 Nov 2026):** the owner raised the cap to $80 a month, of the $100 monthly Claude credit
+   ("let's keep it for 80 dollars max ceiling"); deploy/panel/help.js MONTHLY_CAP_USD.
 3. **WhatsApp AI bot.** Now, or at 10 gyms? **Recommended: at 10 gyms.** Until then the admin app
    links to your own WhatsApp for human help, and the AI lives inside the apps.
 

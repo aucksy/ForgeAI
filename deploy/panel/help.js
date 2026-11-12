@@ -8,8 +8,9 @@
 // version. Never a gym or member record, never the gym code, the install id or the phone model.
 // The message is written by members and strangers: it is data in the prompt, never an order.
 //
-// Cost control (owner, #82 A: a paid key, capped at ₹500 a month): help_usage counts tokens per India
-// month (migrations/0008_help_answers.sql); at MONTHLY_CAP_INR no more AI answers that month, the
+// Cost control (owner, 12 Nov 2026: "let's keep it for 80 dollars max ceiling" of the $100 monthly Claude
+// credit; was ₹500 a month, #82 A): help_usage counts tokens per India month
+// (migrations/0008_help_answers.sql); at MONTHLY_CAP_INR (= MONTHLY_CAP_USD in rupees) no more AI answers that month, the
 // message is still saved and the person reads "We reply as soon as we can". Secret: CLAUDE_HELP_KEY
 // (MettleUp's own key, used only here; never logged, echoed or sent to a phone). No key = no answer.
 
@@ -23,7 +24,9 @@ export const HELP_MODEL = 'claude-haiku-5-5';
 export const PRICE_IN_USD = 0.1 / 1e6;
 export const PRICE_OUT_USD = 0.5 / 1e6;
 export const INR_PER_USD = 88;
-export const MONTHLY_CAP_INR = 500;
+/** Owner, 12 Nov 2026: at most $80 a month (of the $100 monthly Claude credit). */
+export const MONTHLY_CAP_USD = 80;
+export const MONTHLY_CAP_INR = MONTHLY_CAP_USD * INR_PER_USD;
 export const TIMEOUT_MS = 15_000;
 export const MAX_ANSWER = 1200;
 
