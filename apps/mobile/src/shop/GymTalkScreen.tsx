@@ -31,18 +31,20 @@ export function GymTalkScreen() {
   return <GymTalk link={link} />;
 }
 
-const small = { fontFamily: type.body, fontSize: type.size.sub, lineHeight: 20, color: color.inkSecondary } as const;
-const said = { fontFamily: type.body, fontSize: type.size.body, lineHeight: 22, color: color.ink } as const;
-const inputStyle = {
-  backgroundColor: color.surfaceSunken,
-  borderWidth: 1,
-  borderColor: color.borderStrong,
-  borderRadius: radius.md,
-  padding: space.md,
-  fontFamily: type.body,
-  fontSize: type.size.body,
-  color: color.ink,
-} as const;
+// Functions, not constants: a gym's colours repaint the tokens in place (test/theme/noModuleColours.test.ts).
+const smallStyle = () => ({ fontFamily: type.body, fontSize: type.size.sub, lineHeight: 20, color: color.inkSecondary }) as const;
+const saidStyle = () => ({ fontFamily: type.body, fontSize: type.size.body, lineHeight: 22, color: color.ink }) as const;
+const inputStyleOf = () =>
+  ({
+    backgroundColor: color.surfaceSunken,
+    borderWidth: 1,
+    borderColor: color.borderStrong,
+    borderRadius: radius.md,
+    padding: space.md,
+    fontFamily: type.body,
+    fontSize: type.size.body,
+    color: color.ink,
+  }) as const;
 
 function GymTalk({ link }: { link: GymLink }) {
   const router = useRouter();
@@ -116,15 +118,15 @@ function GymTalk({ link }: { link: GymLink }) {
     body = (
       <View accessibilityLiveRegion="polite" style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm, paddingVertical: space.lg }}>
         <ActivityIndicator color={color.accent} />
-        <Text style={small}>Loading…</Text>
+        <Text style={smallStyle()}>Loading…</Text>
       </View>
     );
   } else if (load.state === 'missing') {
-    body = <Text style={small}>{TALK_WORDS.notReady}</Text>;
+    body = <Text style={smallStyle()}>{TALK_WORDS.notReady}</Text>;
   } else if (load.state === 'failed') {
     body = (
       <View style={{ gap: space.md }}>
-        <Text style={small}>{TALK_WORDS.failedRead}</Text>
+        <Text style={smallStyle()}>{TALK_WORDS.failedRead}</Text>
         <GhostButton label="Try again" onPress={() => void fetchAll(false)} />
       </View>
     );
@@ -132,8 +134,8 @@ function GymTalk({ link }: { link: GymLink }) {
     const { list } = load;
     body = (
       <View style={{ gap: space.md }}>
-        {talkIsStandIn() ? <Text style={{ ...small, fontFamily: type.bodySemi, color: color.ink }}>{TALK_WORDS.standIn}</Text> : null}
-        <Text style={small}>{TALK_WORDS.intro}</Text>
+        {talkIsStandIn() ? <Text style={{ ...smallStyle(), fontFamily: type.bodySemi, color: color.ink }}>{TALK_WORDS.standIn}</Text> : null}
+        <Text style={smallStyle()}>{TALK_WORDS.intro}</Text>
         <Card style={{ gap: space.md }}>
           <Text accessibilityRole="header" style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink }}>
             {TALK_WORDS.kindLabel}
@@ -143,12 +145,12 @@ function GymTalk({ link }: { link: GymLink }) {
               <Chip key={k} role="radio" label={TALK_WORDS.kind[k]} selected={kind === k} onPress={() => pick(k)} />
             ))}
           </View>
-          <Text style={small}>{TALK_WORDS.kindHint[kind]}</Text>
+          <Text style={smallStyle()}>{TALK_WORDS.kindHint[kind]}</Text>
           {canSendAnonymous(kind) ? (
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.md }}>
               <View style={{ flex: 1 }}>
                 <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink }}>{TALK_WORDS.anonLabel}</Text>
-                <Text style={small}>{TALK_WORDS.anonHint}</Text>
+                <Text style={smallStyle()}>{TALK_WORDS.anonHint}</Text>
               </View>
               <Switch
                 testID="gym-talk-anon"
@@ -171,21 +173,21 @@ function GymTalk({ link }: { link: GymLink }) {
             multiline
             maxLength={TALK_MAX}
             textAlignVertical="top"
-            style={{ ...inputStyle, minHeight: 120 }}
+            style={{ ...inputStyleOf(), minHeight: 120 }}
           />
-          <Text style={{ ...small, color: color.inkMuted, alignSelf: 'flex-end' }}>{TALK_WORDS.counter(text.length)}</Text>
+          <Text style={{ ...smallStyle(), color: color.inkMuted, alignSelf: 'flex-end' }}>{TALK_WORDS.counter(text.length)}</Text>
           <PrimaryButton label={TALK_WORDS.send} icon="send" loading={sending} disabled={!text.trim()} onPress={() => void send()} />
         </Card>
         {note ? (
-          <Text accessibilityLiveRegion="polite" style={{ ...small, fontFamily: type.bodySemi, color: note.ok ? color.goodText : color.criticalText }}>
+          <Text accessibilityLiveRegion="polite" style={{ ...smallStyle(), fontFamily: type.bodySemi, color: note.ok ? color.goodText : color.criticalText }}>
             {note.words}
           </Text>
         ) : null}
-        {!pushOn ? <Text style={{ ...small, color: color.inkMuted }}>{TALK_WORDS.pushNote}</Text> : null}
+        {!pushOn ? <Text style={{ ...smallStyle(), color: color.inkMuted }}>{TALK_WORDS.pushNote}</Text> : null}
         <Text accessibilityRole="header" style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink, marginTop: space.md }}>
           {TALK_WORDS.history}
         </Text>
-        {list.length === 0 ? <Text style={small}>{TALK_WORDS.empty}</Text> : null}
+        {list.length === 0 ? <Text style={smallStyle()}>{TALK_WORDS.empty}</Text> : null}
         {list.map((t) => (
           <ThreadCard key={t.id} t={t} now={now} link={link} onChanged={replaced} />
         ))}
@@ -245,14 +247,14 @@ function ThreadCard({ t, now, link, onChanged }: { t: TalkThread; now: number; l
   return (
     <View testID="gym-talk-thread">
     <Card style={{ gap: space.sm }}>
-      <Text style={{ ...small, color: color.inkMuted }}>
+      <Text style={{ ...smallStyle(), color: color.inkMuted }}>
         {`${TALK_WORDS.kind[t.kind]} · ${askWhen(t.createdAt, now)}${t.anonymous ? ` · ${TALK_WORDS.anonTag}` : ''}`}
       </Text>
       {t.messages.map((m) =>
         m.fromGym ? (
           <View key={m.id} style={{ gap: 4, borderLeftWidth: 3, borderLeftColor: color.accent, paddingLeft: space.md, marginTop: space.xs }}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm, flexWrap: 'wrap' }}>
-              <Text style={{ ...small, fontFamily: type.bodySemi, color: color.ink }}>{`${TALK_WORDS.fromGym(m.who)} · ${askWhen(m.at, now)}`}</Text>
+              <Text style={{ ...smallStyle(), fontFamily: type.bodySemi, color: color.ink }}>{`${TALK_WORDS.fromGym(m.who)} · ${askWhen(m.at, now)}`}</Text>
               {m.at > readUpTo ? (
                 <View style={{ backgroundColor: color.critical, borderRadius: radius.pill, paddingHorizontal: 6, paddingVertical: 1 }}>
                   <Text allowFontScaling={false} style={{ fontFamily: type.bodyBold, fontSize: 11, color: color.onAccent }}>
@@ -261,16 +263,16 @@ function ThreadCard({ t, now, link, onChanged }: { t: TalkThread; now: number; l
                 </View>
               ) : null}
             </View>
-            <Text style={said}>{m.text}</Text>
+            <Text style={saidStyle()}>{m.text}</Text>
           </View>
         ) : (
           <View key={m.id} style={{ gap: 4, marginTop: space.xs }}>
-            <Text style={{ ...small, color: color.inkMuted }}>{`${TALK_WORDS.you} · ${askWhen(m.at, now)}`}</Text>
-            <Text style={said}>{m.text}</Text>
+            <Text style={{ ...smallStyle(), color: color.inkMuted }}>{`${TALK_WORDS.you} · ${askWhen(m.at, now)}`}</Text>
+            <Text style={saidStyle()}>{m.text}</Text>
           </View>
         ),
       )}
-      {status ? <Text style={{ ...small, color: t.done ? color.goodText : color.inkSecondary }}>{status}</Text> : null}
+      {status ? <Text style={{ ...smallStyle(), color: t.done ? color.goodText : color.inkSecondary }}>{status}</Text> : null}
       {open ? (
         <View style={{ gap: space.sm }}>
           <TextInput
@@ -286,7 +288,7 @@ function ThreadCard({ t, now, link, onChanged }: { t: TalkThread; now: number; l
             autoFocus
             maxLength={TALK_MAX}
             textAlignVertical="top"
-            style={{ ...inputStyle, minHeight: 80 }}
+            style={{ ...inputStyleOf(), minHeight: 80 }}
           />
           <PrimaryButton label={TALK_WORDS.sendReply} icon="send" loading={sending} disabled={!reply.trim()} onPress={() => void send()} />
         </View>
@@ -294,7 +296,7 @@ function ThreadCard({ t, now, link, onChanged }: { t: TalkThread; now: number; l
         <GhostButton label={TALK_WORDS.writeBack} onPress={() => setOpen(true)} />
       )}
       {note ? (
-        <Text accessibilityLiveRegion="polite" style={{ ...small, fontFamily: type.bodySemi, color: note.ok ? color.goodText : color.criticalText }}>
+        <Text accessibilityLiveRegion="polite" style={{ ...smallStyle(), fontFamily: type.bodySemi, color: note.ok ? color.goodText : color.criticalText }}>
           {note.words}
         </Text>
       ) : null}
