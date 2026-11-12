@@ -195,6 +195,17 @@ appId: com.mettleup.app
     env:
       FIND: "^₹149 a month$"
 - takeScreenshot: rel-r461-12-gym-locked
+# The gym card says "Renew at <gym>" (renewing happens at the desk: no button), not "Does your gym use MettleUp?".
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "^Renew at QA UAT Gym$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "^Your gym plan gave you every MettleUp feature free\\. Renew it at the desk to get them back\\.$"
+- assertNotVisible: "^Does your gym use MettleUp\\?$"
+- takeScreenshot: rel-r461-12b-renew-card
 - openLink: "mettleup://qa-plan?lock=0&gym=QA%20UAT%20Gym&ends=2026-11-28"
 - runFlow:
     file: sub-see.yaml

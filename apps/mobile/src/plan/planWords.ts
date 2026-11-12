@@ -86,6 +86,18 @@ export function accessLine(a: MemberAccess, today: string): string {
 }
 
 /** The pop-up when a paid feature is tapped on the free part. PURE. */
+/**
+ * The gym card on the MettleUp Plus screen. A member whose gym plan ended (and whose gym locks the extras) sees
+ * "Renew at <gym>": renewing happens at the gym's desk, so it only tells them, with no button (coordinator, 12 Nov
+ * 2026). Everyone else sees "Does your gym use MettleUp?" with "Find my gym". PURE.
+ */
+export function plusGymCard(a: MemberAccess): { title: string; body: string; findGym: boolean } {
+  if (!a.all && a.why === 'free' && a.gymEnded) {
+    return { title: `Renew at ${a.gymEnded.gymName}`, body: 'Your gym plan gave you every MettleUp feature free. Renew it at the desk to get them back.', findGym: false };
+  }
+  return { title: PLUS_WORDS.gymTitle, body: PLUS_WORDS.gymBody, findGym: true };
+}
+
 export function lockedTitle(feature: PaidFeature): string {
   switch (feature) {
     case 'watch':

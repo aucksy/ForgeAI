@@ -133,6 +133,20 @@ describe('the words', () => {
       'Your plan at Iron Temple has ended. Renew there to get every feature free again, or get MettleUp Plus.',
     );
   });
+  it('the gym card: "Renew at <gym>" once the gym plan ended, with no button; otherwise "Find my gym"', () => {
+    expect(W.plusGymCard({ all: false, why: 'free', trialEndedOn: today, gymEnded: { gymName: 'Iron Temple', endedOn: today } })).toEqual({
+      title: 'Renew at Iron Temple',
+      body: 'Your gym plan gave you every MettleUp feature free. Renew it at the desk to get them back.',
+      findGym: false,
+    });
+    for (const a of [
+      { all: false, why: 'free', trialEndedOn: today, gymEnded: null },
+      { all: true, why: 'trial', daysLeft: 3, lastDay: today },
+      { all: true, why: 'bought', option: 'yearly' },
+    ] as const) {
+      expect(W.plusGymCard(a)).toEqual({ title: W.PLUS_WORDS.gymTitle, body: W.PLUS_WORDS.gymBody, findGym: true });
+    }
+  });
   it('the prices on the buttons', () => {
     expect(W.buyLabel('monthly', null)).toBe('₹149 a month');
     expect(W.buyLabel('yearly', null)).toBe('₹999 a year');
@@ -153,6 +167,8 @@ describe('the words', () => {
       W.SUGGESTION_LOCKED_LINE,
       W.STAFF_DOOR_PLUS,
       W.WATCH_LOCKED.text,
+      W.plusGymCard({ all: false, why: 'free', trialEndedOn: null, gymEnded: { gymName: 'X', endedOn: '2026-11-01' } }).title,
+      W.plusGymCard({ all: false, why: 'free', trialEndedOn: null, gymEnded: { gymName: 'X', endedOn: '2026-11-01' } }).body,
     ].join(' ');
     for (const b of BANNED_MEMBER_WORDS) expect(b.re.test(all), b.word).toBe(false);
     expect(all).not.toMatch(/upgrade|premium/i);

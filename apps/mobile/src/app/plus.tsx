@@ -15,7 +15,7 @@ import { Card, GhostButton, PrimaryButton, Screen, askConfirm } from '@/componen
 import { goBack } from '@/lib/goBack';
 import { tell } from '@/lib/tell';
 import { planTodayNow, useMemberAccess } from '@/plan/memberPlanStore';
-import { accessLine, buyLabel, PLUS_WORDS } from '@/plan/planWords';
+import { accessLine, buyLabel, plusGymCard, PLUS_WORDS } from '@/plan/planWords';
 import { buy, playPrices, restore, storeKind } from '@/plan/playBilling';
 import { useGymShop } from '@/shop/gymStore';
 import { color, space, type } from '@/theme/tokens';
@@ -51,6 +51,7 @@ export default function PlusScreen() {
 
   const owned = access.why === 'bought';
   const gymOrStaff = access.why === 'gym' || access.why === 'staff';
+  const gymCard = plusGymCard(access);
 
   const onBuy = async (option: PlusOption): Promise<void> => {
     if (busy) return;
@@ -103,10 +104,10 @@ export default function PlusScreen() {
         </Card>
 
         {!gymOrStaff ? (
-          <Card style={{ gap: space.sm }}>
-            <Text style={{ fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}>{PLUS_WORDS.gymTitle}</Text>
-            <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkSecondary, lineHeight: 20 }}>{PLUS_WORDS.gymBody}</Text>
-            <GhostButton label={PLUS_WORDS.gymButton} onPress={() => router.push(linked ? '/shop' : '/find-gym')} />
+          <Card style={{ gap: space.sm }} testID="plus-gym-card">
+            <Text style={{ fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}>{gymCard.title}</Text>
+            <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkSecondary, lineHeight: 20 }}>{gymCard.body}</Text>
+            {gymCard.findGym ? <GhostButton label={PLUS_WORDS.gymButton} onPress={() => router.push(linked ? '/shop' : '/find-gym')} /> : null}
           </Card>
         ) : null}
 

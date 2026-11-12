@@ -29,6 +29,9 @@
   each, read. Fixes from the rounds: the code card's Next was also spoken "Find my gym" (renamed "Join with this
   code"); the flow tapped the pop-up backdrop that shares the "Close" name; the gym-name hint was cut off at the
   largest text (now "Gym name (optional)"). Help: the 3 F56 articles carry `unreleased` (kept out of the live help).
+  MettleUp Plus screen, gym plan ended (coordinator, 12 Nov 2026): the gym card says "Renew at <gym>" + "Your gym plan
+  gave you every MettleUp feature free. Renew it at the desk to get them back." (no button: renewing is at the desk)
+  instead of "Does your gym use MettleUp?". planWords.plusGymCard; test/plan/memberPlan.test.ts (15); UAT rel-r461-12b.
   NEEDS BEFORE IT WORKS LIVE: the panel deploy (the 'member' WhatsApp check + the 'member-app' lead source); 0070 live
   (his yes); the real WhatsApp check can only be tried on a phone after that deploy.
   What's new draft (only when payments go live): "No gym? MettleUp Plus adds the watch app, older charts, suggested
