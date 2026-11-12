@@ -14,7 +14,7 @@ CI: green on all three, both jobs (check + database): runs 43252372390, 43254291
 2. Web database migration `deploy/panel/migrations/0015_assist_usage.sql`
    (`npx wrangler d1 execute forgeai-web --remote --file migrations/0015_assist_usage.sql`, from deploy/panel).
 3. Deploying the panel worker. Optional secrets: `CLAUDE_ASSIST_KEY` (else `CLAUDE_HELP_KEY` is used),
-   `SARVAM_API_KEY` (else Groq Whisper with `GROQ_API_KEY`), `ASSIST_CAP_USD` (else $15 a month).
+   `SARVAM_API_KEY` (else Groq Whisper with `GROQ_API_KEY`), `ASSIST_TRIAL_CAP_USD` (trial and unpaid gyms only, else $15 a month; R-475).
 
 ### Free credits and fair use (R-467, R-470)
 - 20 starter credits once per gym ('welcome' row), trial or not.

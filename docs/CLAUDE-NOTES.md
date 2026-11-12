@@ -7,6 +7,14 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-475. No money cap for paying gyms; the cap is for trial gyms only — 13 Nov 2026
+He: "This safety cap of about $15 does not make sense to me because if these are paying gyms ... because we are
+earning from them we cannot stop processing their requests ... it should be applicable to try out". Also asked what
+trial gyms get: 20 credits once (R-470) + free questions up to 20 a day.
+Done (deploy/panel/assist.js, NOT deployed): TRIAL_CAP_USD $15 for trial + unpaid gyms together (D1 row
+'<month>:trial', secret ASSIST_TRIAL_CAP_USD replaces ASSIST_CAP_USD); paying gyms: no money cap, only their own daily
+fair use (50 requests, 10 voice minutes). Every call still counted under '<month>' for HQ. 17/17 assist tests pass.
+
 ## R-474. Website: the AI Assistant is a feature, not a price card — 13 Nov 2026
 He (13 Nov, before sleep): "we are not showing the AI assistant and its pricing alongside the plans. It's primarily a
 feature that we have to showcase ... If they use it and if they run out of the credits, that's when they buy it and get

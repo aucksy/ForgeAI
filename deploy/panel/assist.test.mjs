@@ -8,7 +8,7 @@ import {
   LIMIT_WORDS,
   TRIAL_PER_DAY,
   MAX_ACTIONS,
-  MONTHLY_CAP_USD,
+  TRIAL_CAP_USD,
   VOICE_SECONDS_PER_DAY,
   assistPrompt,
   assistSystem,
@@ -20,7 +20,8 @@ import {
   handleAssistVoice,
   looksLikePhone,
   maskText,
-  monthlyCapUsd,
+  trialCapUsd,
+  trialRow,
   readActions,
   scrub,
   unmask,
@@ -194,9 +195,10 @@ test('keys: the assistant key first, else the help answers key; errors never car
   assert.equal(claudeKey({ CLAUDE_HELP_KEY: HELP }), HELP);
   assert.equal(claudeKey({}), '');
   assert.equal(scrub(new Error(`bad ${CLAUDE} ${SARVAM}`), { CLAUDE_ASSIST_KEY: CLAUDE, SARVAM_API_KEY: SARVAM }), 'Error: bad *** ***');
-  assert.equal(monthlyCapUsd({}), MONTHLY_CAP_USD);
-  assert.equal(monthlyCapUsd({ ASSIST_CAP_USD: '40' }), 40);
-  assert.equal(monthlyCapUsd({ ASSIST_CAP_USD: 'lots' }), MONTHLY_CAP_USD);
+  assert.equal(trialCapUsd({}), TRIAL_CAP_USD);
+  assert.equal(trialCapUsd({ ASSIST_TRIAL_CAP_USD: '40' }), 40);
+  assert.equal(trialCapUsd({ ASSIST_TRIAL_CAP_USD: 'lots' }), TRIAL_CAP_USD);
+  assert.equal(trialRow('2026-11'), '2026-11:trial');
   assert.deepEqual(voiceProviders({ SARVAM_API_KEY: SARVAM, GROQ_API_KEY: GROQ }), ['sarvam', 'groq']);
   assert.deepEqual(voiceProviders({ GROQ_API_KEY: GROQ }), ['groq']);
 });
@@ -308,19 +310,28 @@ test(`a gym in its free trial (or unpaid, or before 0071) gets ${TRIAL_PER_DAY} 
   }
 });
 
-test(`the monthly money cap ($${MONTHLY_CAP_USD}, secret ASSIST_CAP_USD) stops calls for every gym till next month`, async () => {
+test(`the money cap ($${TRIAL_CAP_USD}, secret ASSIST_TRIAL_CAP_USD) stops only trial and unpaid gyms; a paying gym is never stopped (R-475)`, async () => {
   const e = env();
-  // $15 at $0.50 per million output tokens = 30 million; 31 million is over it.
-  e.WEB.sqlite.prepare("INSERT INTO assist_usage (month, calls, tokens_in, tokens_out) VALUES ('2026-11', 9, 0, 31000000)").run();
-  const net = fakeNet();
-  const res = await handleAssist(ask({ text: 'Gym ka haal batao', ctx: CTX }), e, { now: NOW, fetchImpl: net.fetchImpl });
+  // $15 at $0.50 per million output tokens = 30 million; 31 million is over it. The all-gyms row is far over it too.
+  e.WEB.sqlite.prepare("INSERT INTO assist_usage (month, calls, tokens_in, tokens_out) VALUES ('2026-11:trial', 9, 0, 31000000)").run();
+  e.WEB.sqlite.prepare("INSERT INTO assist_usage (month, calls, tokens_in, tokens_out) VALUES ('2026-11', 99, 0, 900000000)").run();
+  const trial = fakeNet({ paid: false });
+  const res = await handleAssist(ask({ text: 'Gym ka haal batao', ctx: CTX }), e, { now: NOW, fetchImpl: trial.fetchImpl });
   assert.equal(res.status, 503);
   assert.equal((await res.json()).reason, 'cap');
-  assert.equal(net.to('claude').length, 0);
+  assert.equal(trial.to('claude').length, 0);
   assert.equal(e.WEB.sqlite.prepare("SELECT COUNT(*) AS n FROM ai_usage WHERE kind = 'assist'").get().n, 0); // the ask was not taken
-  // A higher cap, or a new month, lets it through.
-  assert.equal((await handleAssist(ask({ text: 'Gym ka haal batao', ctx: CTX }), { ...e, ASSIST_CAP_USD: '40' }, { now: NOW, fetchImpl: net.fetchImpl })).status, 200);
-  assert.equal((await handleAssist(ask({ text: 'Gym ka haal batao', ctx: CTX }), e, { now: new Date('2026-12-01T06:00:00Z'), fetchImpl: net.fetchImpl })).status, 200);
+  // A paying gym goes through, and its call is counted for all gyms but not in the trial row.
+  const paid = fakeNet({ paid: true });
+  assert.equal((await handleAssist(ask({ text: 'Gym ka haal batao', ctx: CTX }), e, { now: NOW, fetchImpl: paid.fetchImpl })).status, 200);
+  const row = (m) => e.WEB.sqlite.prepare('SELECT calls FROM assist_usage WHERE month = ?').get(m).calls;
+  assert.equal(row('2026-11'), 100);
+  assert.equal(row('2026-11:trial'), 9);
+  // A higher trial cap, or a new month, lets a trial gym through; its call is counted in both rows.
+  assert.equal((await handleAssist(ask({ text: 'Gym ka haal batao', ctx: CTX }), { ...e, ASSIST_TRIAL_CAP_USD: '40' }, { now: NOW, fetchImpl: trial.fetchImpl })).status, 200);
+  assert.equal(row('2026-11:trial'), 10);
+  assert.equal(row('2026-11'), 101);
+  assert.equal((await handleAssist(ask({ text: 'Gym ka haal batao', ctx: CTX }), e, { now: new Date('2026-12-01T06:00:00Z'), fetchImpl: trial.fetchImpl })).status, 200);
 });
 
 test('before D1 migration 0015 is applied the assistant says "not switched on" and calls nobody', async () => {

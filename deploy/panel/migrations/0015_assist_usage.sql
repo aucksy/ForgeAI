@@ -4,8 +4,9 @@
 --   npx wrangler d1 execute forgeai-web --remote --file migrations/0015_assist_usage.sql
 --
 -- F201 (12 Nov 2026): the AI assistant for gym owners (assist.js). assist_usage counts the assistant's Claude calls
--- and tokens per India month, for its own monthly money cap (MONTHLY_CAP_USD in assist.js, $15 unless the secret
--- ASSIST_CAP_USD says otherwise; raise it about $1.5 per paying gym), apart from help answers' $80 (help_usage, 0008).
+-- and tokens per India month: row 'YYYY-MM' = all gyms (for HQ), row 'YYYY-MM:trial' = trial and unpaid gyms, the only
+-- ones with a money cap (TRIAL_CAP_USD in assist.js, $15 unless the secret ASSIST_TRIAL_CAP_USD says otherwise; owner
+-- R-475: a paying gym is never stopped by a money cap), apart from help answers' $80 (help_usage, 0008).
 -- Each gym's daily allowance uses the existing ai_usage table (0003): kind 'assist' (requests) and kind
 -- 'assist-voice' (spoken seconds). Counts only: never the owner's words.
 -- assist_limits: one gym's own fair-use allowance set by MettleUp HQ (R-467, 12 Nov 2026: normal is 50 requests

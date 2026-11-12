@@ -120,9 +120,10 @@ Real AI cost (Haiku 5.5 at $0.10/M in, $0.50/M out, help.js rates): question ~Rs
 - Buying: while BILLING_ONLINE_ON is false, "Buy" opens the existing Pay MettleUp path with the pack as the item and
   HQ adds the credits after the payment shows (HQ "Add credits" button). With online billing on (test mode until he
   says "payments live"), the HQ billing worker sells packs like plans and credits are added by the webhook.
-- Global safety cap: assistant AI spend <= $15 a month to start (D1 counter, like help.js; secret ASSIST_CAP_USD
-  overrides). Raise it by about $1.5 (Rs 130) per paying gym as gyms join, so one busy month never switches the
-  feature off for everyone. Help answers keep their $80.
+- Money cap ONLY for trial and unpaid gyms (owner, 13 Nov, R-475: "because we are earning from them we cannot stop
+  processing their requests"): their AI spend together <= $15 a month (D1 row '<month>:trial'; secret
+  ASSIST_TRIAL_CAP_USD overrides). A PAYING gym has no money cap, only its own daily fair use (50 requests, 10 voice
+  minutes; HQ can change one gym's numbers). Help answers keep their $80.
 
 ## 4. Privacy and safety
 - Sent to the AI: the owner's sentence (phone numbers and emails masked in the browser as [PHONE_1]... and put
@@ -227,8 +228,8 @@ Built 12 Nov 2026 for R-471 (a plan costs 3 credits only because the AI WRITES i
 `deploy/panel/assistPlan.test.mjs`. Not deployed.
 
 **Route.** `POST /api/assist/plan`, header `X-Forge-Key`, gym OWNER only. Same guard as `/api/assist`: the same
-refusals, ONE request of the same daily fair-use count (50 paid / 20 trial), the same monthly money cap
-(`assist_usage`). Body may be up to 80 KB (an ask: 20 KB) so the whole exercise list fits.
+refusals, ONE request of the same daily fair-use count (50 paid / 20 trial), the same money cap for trial
+and unpaid gyms only (`assist_usage`, R-475). Body may be up to 80 KB (an ask: 20 KB) so the whole exercise list fits.
 
 **Body.**
 - `what`: `'workout'` (or left out). `'diet'` -> 400 `{ reason: 'not_yet' }` (see below).
@@ -271,8 +272,8 @@ minutes reads it cheaply).
 **Cost per call** (Haiku 5.5: $0.10 per million tokens in, $0.50 out; Rs 88 a dollar). In: ~700 rules + ~400 tool +
 ~18 a list line x 450 exercises + ~100 request = ~9,300 tokens -> $0.0009. Out: ~35 tokens an exercise + notes =
 ~1,200 (4 days) to ~2,500 (6 days, advanced) -> $0.0006-0.0013. **About Rs 0.13 a plan, at most ~Rs 0.20.** Three
-tries before a Save is still under Rs 0.60 against 3 credits (Rs 9 at the Rs 149 = 50 pack). Counted under
-ASSIST_CAP_USD with everything else.
+tries before a Save is still under Rs 0.60 against 3 credits (Rs 9 at the Rs 149 = 50 pack). Counted with
+everything else (a trial gym's calls also under ASSIST_TRIAL_CAP_USD, R-475).
 
 **What the client must still do** (apps/dashboard/src/crm/assistant; not touched here):
 1. The `plan_writer` card (`what: 'workout'`): drop the "cannot write workout plans yet" text; show goal, level, days

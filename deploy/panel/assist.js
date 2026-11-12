@@ -20,9 +20,10 @@
 //
 // Cost control (03-design §3, owner R-467 and R-470, 12 Nov 2026): ASSIST_PER_DAY requests per paid gym per India day,
 // TRIAL_PER_DAY while it is in its free trial or unpaid (owner_ai_status, supabase 0071) (D1 ai_usage, kind 'assist'), VOICE_MINUTES_PER_DAY spoken minutes per gym (kind 'assist-voice', calls = seconds); MettleUp HQ can
-// set one gym's own allowance (D1 assist_limits, migrations/0015). And a monthly money cap for all gyms together
-// (D1 assist_usage, migrations/0015; MONTHLY_CAP_USD, the secret ASSIST_CAP_USD overrides it: raise it about $1.5
-// per paying gym as gyms join, so one busy month never switches the AI Assistant off for everyone).
+// set one gym's own allowance (D1 assist_limits, migrations/0015). A monthly money cap applies ONLY to gyms in their
+// free trial or unpaid, all of them together (D1 assist_usage row '<month>:trial'; TRIAL_CAP_USD, the secret
+// ASSIST_TRIAL_CAP_USD overrides it). Owner R-475, 13 Nov 2026: a PAYING gym is never stopped by a money cap; it keeps
+// only its own daily allowance. Every call is still counted under '<month>' (all gyms) for HQ.
 // Secrets (never logged, echoed or sent to a browser): CLAUDE_ASSIST_KEY (falls back to CLAUDE_HELP_KEY);
 // SARVAM_API_KEY (optional, speech to text; else GROQ_API_KEY, the one spoken feedback uses).
 
@@ -38,8 +39,8 @@ import { GROQ_MODEL, GROQ_URL, cleanText, takeClip } from './voice.js';
 export const ASSIST_MODEL = 'claude-haiku-5-5';
 export const PRICE_IN_USD = 0.1 / 1e6;
 export const PRICE_OUT_USD = 0.5 / 1e6;
-/** All gyms together, per India month, to start. Secret ASSIST_CAP_USD overrides (a number above 0). */
-export const MONTHLY_CAP_USD = 15;
+/** Trial and unpaid gyms together, per India month (R-475: paying gyms have no money cap). Secret ASSIST_TRIAL_CAP_USD overrides. */
+export const TRIAL_CAP_USD = 15;
 /** Requests (asks and rewrites) per PAID gym per India day, unless HQ set the gym's own (assist_limits). */
 export const ASSIST_PER_DAY = 50;
 /** Requests a day while the gym is in its free trial or has not paid (owner R-470: a trial must not cost more than it can earn). */
@@ -104,10 +105,10 @@ export function costUsd(tokensIn, tokensOut) {
   return tokensIn * PRICE_IN_USD + tokensOut * PRICE_OUT_USD;
 }
 
-/** The monthly cap in dollars: secret ASSIST_CAP_USD when it is a number above 0, else MONTHLY_CAP_USD. PURE. */
-export function monthlyCapUsd(env) {
-  const n = Number(env?.ASSIST_CAP_USD);
-  return Number.isFinite(n) && n > 0 ? n : MONTHLY_CAP_USD;
+/** The trial gyms' monthly cap in dollars: secret ASSIST_TRIAL_CAP_USD when it is a number above 0, else TRIAL_CAP_USD. PURE. */
+export function trialCapUsd(env) {
+  const n = Number(env?.ASSIST_TRIAL_CAP_USD);
+  return Number.isFinite(n) && n > 0 ? n : TRIAL_CAP_USD;
 }
 
 /**
@@ -440,7 +441,12 @@ async function askPlan(env, v, fetchImpl, timeoutMs) {
 
 // ------------------------------------------------------------------ counts (D1)
 
-/** Spent this India month by the assistant, all gyms, in dollars. Throws before migration 0015. */
+/** The assist_usage row that adds up trial and unpaid gyms' calls this India month (R-475). PURE. */
+export function trialRow(month) {
+  return `${month}:trial`;
+}
+
+/** Spent this India month by the assistant, for one assist_usage row, in dollars. Throws before migration 0015. */
 async function spentUsd(db, month) {
   const row = await db.prepare('SELECT tokens_in, tokens_out FROM assist_usage WHERE month = ?').bind(month).first();
   return row ? costUsd(Number(row.tokens_in) || 0, Number(row.tokens_out) || 0) : 0;
@@ -501,7 +507,8 @@ async function guard(request, env, maxBody = MAX_BODY) {
   return { key };
 }
 
-/** The owner check, then the money cap and the gym's daily allowance. -> { refused } | { gymId, day, month, left } */
+/** The owner check, then (trial or unpaid gyms only) the money cap, then the gym's daily allowance.
+ * -> { refused } | { gymId, day, month, paid, left } */
 async function ownerAndAllowance(key, env, now, fetchImpl) {
   const who = await whoIsAsking(key, fetchImpl);
   if (who.unreachable) return { refused: answer(503, { reason: 'unreachable', error: 'The gym server could not be reached.' }) };
@@ -510,17 +517,18 @@ async function ownerAndAllowance(key, env, now, fetchImpl) {
   if (who.demo) return { refused: answer(403, { reason: 'demo', error: 'The AI Assistant is not on in the demo gym.' }) };
   const day = indiaDay(now);
   const month = indiaMonth(now);
+  const paid = await gymPaid(key, fetchImpl);
   try {
-    const spent = await spentUsd(env.WEB, month);
-    if (spent >= monthlyCapUsd(env)) {
-      console.warn('[assist] monthly cap reached', month, spent.toFixed(2));
+    const spent = await spentUsd(env.WEB, trialRow(month)); // also proves migration 0015 is there
+    if (!paid && spent >= trialCapUsd(env)) {
+      console.warn('[assist] trial gyms monthly cap reached', month, spent.toFixed(2));
       return { refused: answer(503, { reason: 'cap', error: 'The AI Assistant is resting till next month. Everything else works as usual.' }) };
     }
   } catch (e) {
     console.error('[assist] assist_usage not readable (migration 0015 not applied?)', scrub(e, env));
     return { refused: answer(503, { reason: 'off', error: OFF }) };
   }
-  const normal = (await gymPaid(key, fetchImpl)) ? ASSIST_PER_DAY : TRIAL_PER_DAY;
+  const normal = paid ? ASSIST_PER_DAY : TRIAL_PER_DAY;
   const cap = (await gymAllowance(env.WEB, who.gymId, normal)).perDay;
   let used = null;
   try {
@@ -530,7 +538,7 @@ async function ownerAndAllowance(key, env, now, fetchImpl) {
     return { refused: answer(503, { reason: 'off', error: OFF }) };
   }
   if (used === null) return { refused: answer(429, { reason: 'limit', error: LIMIT_WORDS }) };
-  return { gymId: who.gymId, day, month, left: Math.max(0, cap - used) };
+  return { gymId: who.gymId, day, month, paid, left: Math.max(0, cap - used) };
 }
 
 async function readJson(request, maxBody = MAX_BODY) {
@@ -546,6 +554,7 @@ async function readJson(request, maxBody = MAX_BODY) {
 async function noteCall(env, g, failed, tokensIn, tokensOut) {
   try {
     await countMonth(env.WEB, g.month, failed, tokensIn, tokensOut);
+    if (!g.paid) await countMonth(env.WEB, trialRow(g.month), failed, tokensIn, tokensOut);
     await countGym(env.WEB, g.gymId, g.day, failed, tokensIn, tokensOut);
   } catch (e) {
     console.error('[assist] could not count the call', scrub(e, env));
