@@ -76,7 +76,17 @@ export default function FindGymScreen() {
     let live = true;
     void (async () => {
       try {
-        const [p, prof] = await Promise.all([getMemberPhone().catch(() => null), getProfile().catch(() => null)]);
+        // Each read on its own: a missing number must not lose the name (and the other way round). Logged, then empty.
+        const [p, prof] = await Promise.all([
+          getMemberPhone().catch((e: unknown) => {
+            console.warn('[find-gym] could not read the saved number; the box starts empty', e);
+            return null;
+          }),
+          getProfile().catch((e: unknown) => {
+            console.warn('[find-gym] could not read the profile name; the box starts empty', e);
+            return null;
+          }),
+        ]);
         if (!live) return;
         if (p) setPhone((now) => now || p);
         const first = firstNameOf(prof?.name);
