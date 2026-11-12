@@ -78,6 +78,7 @@ https://claude.ai/artifact/1ZwD5CZb1LPZCK58DQ6huw)
   suitcase_carry, two_arm_dumbbell_kickback, weighted_crunch. Failed 13 (reasons in qa.json; see Needs review).
 - stomach_vacuum: research only, marked needs-prop (the rig cannot draw the belly in; no fake picture).
 - In the app now: 25 exercises (13 + 12). Release `exercise-stills` holds exactly those 25.
+- UAT part upic green on both profiles (runs 43167002827 default, 43166999620 owner; first try 43163437571 failed on a search-box script bug, fixed). Pictures read: Tate Press Start/End, Alternating Hammer Curl, Wall Sit one Hold picture, Iso-Lateral Chest Press none, Barbell Curl (RepDB) unchanged. CI green (43159906754).
 - Next: only side_plank is left for `--next`; the rest need rig work (open hand) or props. Next prop family per Rules
   (barbell + plates), plus an incline-bench setting for the chest-supported moves.
 
