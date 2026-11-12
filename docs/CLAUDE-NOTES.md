@@ -133,6 +133,11 @@ shards, no shard over ~2 h; (4) run the affected parts in the cloud on both phon
   just any part. Tests in scripts/ci/test_phone_gate.py, test_qa_shards.py, test_flow_tools.py.
 - Expected round time: ~2 h 15 min (build ~20 min + the longest shard), was ~4 h 10 min with the UAT
   chain in one shard; a broken screen most flows pass through is red after ~35 min.
+- The lint also fails on a flow that does not parse (Maestro fails its whole part on it): run 43205679411
+  lost its 73-minute piece 6 to one `\.` in a double-quoted line of the u454 flow (fixed in b52804a4).
+- Cloud proof on dcd47380 (default phone, 43205679411): canary green 12 min, pieces 2 and 3 green
+  (58 / 67 min); f199 passed (its earlier Reps-chart miss was a flake); piece 6 red on that u454 parse
+  error and fail-fast cancelled 1, 4 and 5 within a minute.
 
 ## R-459. Members message their gym; the gym answers in "Member messages" — 12 Nov 2026
 

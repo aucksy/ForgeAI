@@ -72,6 +72,18 @@ class Lint(unittest.TestCase):
         self.assertEqual(L.fix_flow(self.path, L.flow_findings(self.path, WORDS, set(), LOWER, []), ("tapOn",)), 1)
         self.assertIn("      FIND: 'Ask an AI'\n- tapOn: \"Ask an AI\"", self.path.read_text(encoding="utf-8"))
 
+    def test_a_flow_that_does_not_parse_is_named(self):
+        # Run 43205679411: one "\." in a double-quoted line failed a whole 73-minute piece ("Parsing Failed").
+        bad = Path(self.dir.name) / "bad.yaml"
+        bad.write_text('appId: x\n---\n- assertVisible: "^22\\.5 kg$"\n', encoding="utf-8", newline="\n")
+        L.BROKEN.clear()
+        self.assertEqual(L.flow_findings(bad, WORDS, set(), LOWER, []), [])
+        self.assertIn("bad.yaml", L.BROKEN)
+        self.assertTrue(L.BROKEN["bad.yaml"].startswith("line 3: "))
+        L.flow_findings(self.path, WORDS, set(), LOWER, [])
+        self.assertEqual(list(L.BROKEN), ["bad.yaml"])  # a good flow is never named
+        L.BROKEN.clear()
+
     def test_the_helper_never_weakens_a_check(self):
         text = (L.QA / "sub-see.yaml").read_text(encoding="utf-8")
         self.assertTrue(text.rstrip().endswith('- assertVisible: "${FIND}"'))

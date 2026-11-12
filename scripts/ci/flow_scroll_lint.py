@@ -332,13 +332,21 @@ def scroll_target(cmd_name: str, val):
     return None
 
 
+BROKEN: dict[str, str] = {}  # flow -> why it does not parse (filled by flow_findings)
+
+
 def flow_findings(path: Path, words, ids, lower, pinned) -> list[Finding]:
     text = path.read_text(encoding="utf-8")
     lines = text.splitlines()
     out: list[Finding] = []
     try:
         docs = list(yaml.compose_all(text))
-    except yaml.YAMLError:
+    except yaml.YAMLError as e:
+        # A flow Maestro cannot read fails its whole part at once ("Parsing Failed"), after the build and
+        # every part before it: run 43205679411 lost a 73-minute piece to one "\." in a double-quoted line.
+        mark = getattr(e, "problem_mark", None)
+        BROKEN[path.name] = f"line {mark.line + 1}: " if mark else ""
+        BROKEN[path.name] += " ".join(str(e).split())[:160]
         return out
     if len(docs) < 2:
         return out
@@ -507,6 +515,9 @@ def main(argv):
         BASELINE.write_text(json.dumps(dict(sorted(new.items())), indent=1) + "\n", encoding="utf-8")
         print(f"baseline: {sum(new.values())} bare checks in {len(new)} flows")
         return 0
+    for name, why in sorted(BROKEN.items()):
+        errs.append(f"{name} does not parse, so Maestro fails its whole part ({why}). In a double-quoted "
+                    f"line a backslash must be doubled; use single quotes or [.] instead of \\.")
     lower_now = []
     for name, n in sorted(counts.items()):
         allowed = base.get(name, 0)
