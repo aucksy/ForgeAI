@@ -183,7 +183,7 @@ OLD_PARTS="a b c d e f g h h3 p1 p2 i link i2 j j2 j3 k l n p9 r br inv invf p7 
 # R-123: ubk = a fresh install restores a backup FILE from the welcome screen (routines in order,
 # settings, profile), then saves a new one from Settings -> Back up and restore (qa/uat-bk.yaml).
 UAT_PARTS="uh ur un ud ue ubk ub uf ua uv ug uk"
-GATE_PARTS="w dnd longrest anim mk clip uat u355 u344 u358 u366 usel ugym u15 u76 u198 u194 u401 u199 u404 u438 u444 ulook uage u439 u436 u336 u61"
+GATE_PARTS="w dnd longrest anim mk clip uat u355 u344 u358 u366 usel ugym u15 u76 u198 u194 u401 u199 u404 u438 u444 ulook uage u439 u436 u336 u61 upic"
 qa_list() { echo "$1" | tr ',;' '  ' | tr '[:upper:]' '[:lower:]' | xargs; }
 QA_ONLY_LIST=$(qa_list "${QA_ONLY:-}")
 QA_EXTRA_LIST=$(qa_list "${QA_EXTRA:-}")
@@ -1995,6 +1995,7 @@ part_uat() {
   part_u401
   part_u199
   part_u404
+  part_upic
   part_u438
   part_u444
   part_u439
@@ -2114,6 +2115,18 @@ part_u404() {
   local rc=0
   gate_flow u404_seed gate-demo.yaml || { status=1; return 1; }
   uat_flow uatr404 uat-rel-r404-bar-charts.yaml || rc=1
+  [ "$rc" = 0 ] || status=1
+  return $rc
+}
+# Exercise pictures (12 Nov 2026): our own start/end pictures on the exercise page, a hold with one picture, an
+# exercise with none, a RepDB one unchanged. From a fresh install with the demo. Also runs alone with only=upic.
+# Pictures rel-pics-*.png.
+part_upic() {
+  local rc=0
+  gate_flow upic_seed gate-demo.yaml || { status=1; return 1; }
+  uat_flow uatpics uat-rel-pics-own.yaml || rc=1
+  mkdir -p "$OUT/uat-release"
+  { find "$OUT" -path "$OUT/uat-release" -prune -o -name "rel-pics-*.png" -print 2>/dev/null; find "$PWD" -maxdepth 1 -name "rel-pics-*.png" 2>/dev/null; } | while read -r f; do cp "$f" "$OUT/uat-release/" 2>/dev/null; done
   [ "$rc" = 0 ] || status=1
   return $rc
 }
@@ -2387,6 +2400,7 @@ qa_runs u194 && ! qa_runs uat && { log "gate part U194 begins"; part_u194; }
 qa_runs u401 && ! qa_runs uat && { log "gate part U401 begins"; part_u401; }
 qa_runs u199 && ! qa_runs uat && { log "gate part U199 begins"; part_u199; }
 qa_runs u404 && ! qa_runs uat && { log "gate part U404 begins"; part_u404; }
+qa_runs upic && ! qa_runs uat && { log "gate part UPIC begins"; part_upic; }
 qa_runs u438 && ! qa_runs uat && { log "gate part U438 begins"; part_u438; }
 qa_runs u444 && ! qa_runs uat && { log "gate part U444 begins"; part_u444; }
 qa_runs u439 && ! qa_runs uat && { log "gate part U439 begins"; part_u439; }

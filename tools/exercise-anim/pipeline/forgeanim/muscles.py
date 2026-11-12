@@ -204,13 +204,24 @@ def write_masks(body, rig, pos, normals):
     return masks
 
 
-def set_highlight(obj, primary, secondary=(), level=SECONDARY_LEVEL, weights=None):
+def side_mask(xs, side, soft=0.03):
+    """0..1 per vertex: 1 on the athlete's `side` ("L" = +x, "R" = -x), a soft seam `soft` m wide at the midline."""
+    s = 1.0 if side == "L" else -1.0
+    return smooth(xs * s, -soft / 2, soft / 2).astype(np.float32)
+
+
+def set_highlight(obj, primary, secondary=(), level=SECONDARY_LEVEL, weights=None, side=None):
     """Write fa_hl on any mesh that carries m_<key> attributes (body or shorts).
-    weights = {mask: strength} overrides primary/secondary (e.g. {"chest_upper": 1, "chest_lower": 0.45})."""
+    weights = {mask: strength} overrides primary/secondary (e.g. {"chest_upper": 1, "chest_lower": 0.45}).
+    side = "L"/"R" lights only that side of the body (one-arm / one-leg moves), or {mask: "L"/"R"} per muscle
+    (suitcase carry: forearm on the carrying side, obliques on the other). Masks not named stay on both sides."""
     me = obj.data
     n = len(me.vertices)
     hl = np.zeros(n, np.float32)
     buf = np.zeros(n, np.float32)
+    xs = None
+    if side:
+        co = np.zeros(n * 3, np.float32); me.vertices.foreach_get("co", co); xs = co[0::3]
     groups = [([k], w) for k, w in weights.items()] if weights else [(primary, 1.0), (secondary, level)]
     for keys, w in groups:
         for k in keys:
@@ -218,7 +229,8 @@ def set_highlight(obj, primary, secondary=(), level=SECONDARY_LEVEL, weights=Non
             if a is None:
                 raise KeyError("unknown muscle key: " + k)
             a.data.foreach_get("value", buf)
-            hl = np.maximum(hl, buf * w)
+            sd = side.get(k) if isinstance(side, dict) else side
+            hl = np.maximum(hl, buf * w * (side_mask(xs, sd) if sd else 1.0))
     a = me.attributes.get("fa_hl") or me.attributes.new("fa_hl", "FLOAT", "POINT")
     a.data.foreach_set("value", hl)
     me.update()

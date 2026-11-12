@@ -3,6 +3,7 @@
   "name": "Single-Arm Dumbbell Upright Row",
   "primary": ["side_delts"],
   "secondary": ["traps", "biceps"],
+  "highlight_side": "L",
   "scene": {"box": {"size": [0.05, 0.05, 1.6], "loc": [-0.735, -0.246, 0]}},
   "props": {"db_L": {"type": "dumbbell"}},
   "camera": {"yaw": 30, "pitch": 10, "lens": 50, "fill": 0.9, "res": 640, "samples": 20},

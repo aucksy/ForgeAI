@@ -3,6 +3,7 @@
   "name": "Single-Arm Dumbbell Curl",
   "primary": ["biceps"],
   "secondary": ["forearms"],
+  "highlight_side": "L",
   "props": {"db_L": {"type": "dumbbell"}},
   "camera": {"yaw": 50, "pitch": 8, "lens": 50, "fill": 0.9, "res": 640, "samples": 20},
   "timing": {"fps": 30, "keys": [[0, "start"], [1, "end"], [2, "start"]]},

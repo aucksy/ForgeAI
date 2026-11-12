@@ -518,7 +518,7 @@ class Clip:
     def highlight(self):
         prim = self.spec.get("primary", []); sec = self.spec.get("secondary", [])
         w = research_weights(self.spec.get("key")) or self.spec.get("highlight")   # research file wins
-        MU.set_highlight(self.ch["body"], prim, sec, weights=w)
+        MU.set_highlight(self.ch["body"], prim, sec, weights=w, side=self.spec.get("highlight_side"))
         cut = (self.spec.get("skin", {}).get("calm_armpits") or {})
         cut = cut.get("hl_cut", 0.0) if isinstance(cut, dict) else 0.0
         if cut > 0 and getattr(self, "_calm_k", None) is not None:
@@ -526,7 +526,7 @@ class Clip:
             me = self.ch["body"].data; a = me.attributes["fa_hl"]
             hl = np.zeros(len(me.vertices), np.float32); a.data.foreach_get("value", hl)
             a.data.foreach_set("value", (hl * (1.0 - cut * self._calm_k)).astype(np.float32)); me.update()
-        MU.set_highlight(self.ch["shorts"], prim, sec, weights=w)
+        MU.set_highlight(self.ch["shorts"], prim, sec, weights=w, side=self.spec.get("highlight_side"))
 
 
 TIER_GLOW = {"primary": 1.0, "secondary": 0.35, "stabiliser": 0.0, "deep": 0.0}   # research/FORMAT.md

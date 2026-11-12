@@ -10,6 +10,7 @@ import { describe, expect, it } from 'vitest';
 import { REPDB_CREDIT, REPDB_URL, CREDITS } from '@/lib/credits';
 import { catalogEntry } from '@/tracker/catalog/exerciseCatalog';
 import { pictureChoice } from '@/tracker/catalog/pictureChoice';
+import { OWN_PICTURES } from '@/tracker/catalog/ownPictures';
 import { EXERCISE_PICTURES, PICTURE_SOURCE_IDS, picturesFor } from '@/tracker/catalog/pictures';
 import { CLIP_VERSIONS } from '@/tracker/clips/clipManifest';
 
@@ -64,12 +65,13 @@ describe('the RepDB match list', () => {
 
 describe('what the exercise page shows', () => {
   it('an exercise with no match gets no pictures: the page is unchanged', () => {
-    expect(picturesFor('side_plank')).toBeNull();
+    // iso_lateral_chest_press: a machine move with no RepDB match and none of our own pictures yet.
+    expect(picturesFor('iso_lateral_chest_press')).toBeNull();
     expect(picturesFor('no_such_exercise')).toBeNull();
     expect(picturesFor(null)).toBeNull();
     expect(picturesFor(undefined)).toBeNull();
     expect(picturesFor('')).toBeNull();
-    expect(pictureChoice('side_plank')).toBeNull();
+    expect(pictureChoice('iso_lateral_chest_press')).toBeNull();
     expect(pictureChoice(null)).toBeNull();
     // A custom exercise has no library key at all.
     expect(pictureChoice(undefined)).toBeNull();
@@ -116,6 +118,50 @@ describe('what the exercise page shows', () => {
       expect(pictureChoice(key), key).toBeNull();
       expect(pictureChoice(key, { asFallback: true }), key).toBe(picturesFor(key));
     }
+  });
+});
+
+describe('our own pictures (the grey 3D athlete, for exercises RepDB has no picture of)', () => {
+  const OWN = resolve(MOBILE, 'assets/exercise-pictures-own');
+  // Every exercise that passed the picture review (tools/exercise-anim/qa.json). Add keys here when a run adds them.
+  const EXPECTED = [
+    'alternating_dumbbell_curl', 'alternating_hammer_curl', 'dumbbell_step_up', 'farmers_walk', 'high_knees',
+    'hollow_hold', 'incline_dumbbell_skull_crusher', 'knee_plank', 'reverse_hyperextension', 'seated_hammer_curl',
+    'tate_press', 'toe_touch_crunch', 'wall_sit',
+  ];
+  // Holds: one picture, no end picture.
+  const HOLDS = ['hollow_hold', 'knee_plank', 'wall_sit'];
+  const filesOf = (k: string): string[] => (HOLDS.includes(k) ? ['start', 'thumb'] : ['start', 'thumb', 'end']);
+
+  it('lists exactly the reviewed exercises, each a real library exercise without a RepDB picture', () => {
+    expect(Object.keys(OWN_PICTURES).sort()).toEqual([...EXPECTED].sort());
+    for (const key of EXPECTED) {
+      expect(catalogEntry(key)?.key, key).toBe(key);
+      expect(PICTURE_SOURCE_IDS[key], key).toBeUndefined();
+    }
+  });
+
+  it('the folder holds exactly their files, none empty', () => {
+    expect(readdirSync(OWN).sort()).toEqual(EXPECTED.flatMap((k) => filesOf(k).map((f) => `${k}__${f}.webp`)).sort());
+    for (const key of EXPECTED) {
+      for (const f of filesOf(key)) {
+        expect(statSync(resolve(OWN, `${key}__${f}.webp`)).size, `${key} ${f}`).toBeGreaterThan(f === 'thumb' ? 400 : 1000);
+      }
+    }
+  });
+
+  it('the exercise page shows them: start and end, a hold has one picture, a clip still wins', () => {
+    for (const key of EXPECTED) {
+      const p = pictureChoice(key);
+      expect(p, key).toBe(OWN_PICTURES[key]);
+      expect(p?.start, key).toBeDefined();
+      expect(p?.thumb, key).toBeDefined();
+      expect(p?.end === null, key).toBe(HOLDS.includes(key));
+    }
+  });
+
+  it('a RepDB picture is never replaced by ours', () => {
+    for (const key of Object.keys(EXERCISE_PICTURES)) expect(picturesFor(key), key).toBe(EXERCISE_PICTURES[key]);
   });
 });
 

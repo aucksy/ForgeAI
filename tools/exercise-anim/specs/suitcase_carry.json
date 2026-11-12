@@ -3,6 +3,7 @@
   "name": "Suitcase Carry",
   "primary": ["obliques"],
   "secondary": ["forearms", "traps", "abs"],
+  "highlight_side": {"obliques": "R", "forearms": "L", "traps": "L"},
   "props": {"db_L": {"type": "dumbbell"}},
   "camera": {"yaw": 40, "pitch": 10, "lens": 50, "fill": 0.9, "res": 640, "samples": 20},
   "timing": {"fps": 30, "keys": [[0, "start"], [1, "end"], [2, "start"]]},

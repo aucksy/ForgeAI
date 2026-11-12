@@ -1,0 +1,95 @@
+# UAT upic (exercise pictures, 12 Nov 2026): our own start/end pictures (the grey 3D athlete, look A) on the
+# exercise page for exercises RepDB has no picture of. From a fresh install with the demo (part_upic).
+# Happy path: a two-picture exercise (Tate Press: Start + End), a dumbbell curl (Alternating Hammer Curl),
+# a hold (Wall Sit: one "Hold" picture, no End). Negative: an exercise with no picture of either kind
+# (Iso-Lateral Chest Press) shows no picture frame. Regression: a RepDB exercise still shows its own pictures.
+# Pictures rel-pics-*.png (read them: the right athlete, nothing cut off, card colour behind).
+appId: com.mettleup.app
+---
+- launchApp
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 60000
+- runFlow:
+    file: sub-progress-row.yaml
+    env:
+      ROW: "Exercises"
+- extendedWaitUntil:
+    visible: "Search exercises"
+    timeout: 20000
+# The list: the small picture next to the name.
+- tapOn: "Search exercises"
+- inputText: " tate press"
+- hideKeyboard
+- takeScreenshot: rel-pics-01-list-tate
+- tapOn:
+    text: "View Tate Press"
+    index: 0
+- extendedWaitUntil:
+    visible: "Start position of Tate Press"
+    timeout: 20000
+- assertVisible: "End position of Tate Press"
+- assertVisible: "^Start$"
+- assertVisible: "^End$"
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: rel-pics-02-tate
+- back
+- tapOn: "Search exercises"
+- eraseText
+- inputText: " alternating hammer curl"
+- hideKeyboard
+- tapOn:
+    text: "View Alternating Hammer Curl"
+    index: 0
+- extendedWaitUntil:
+    visible: "Start position of Alternating Hammer Curl"
+    timeout: 20000
+- assertVisible: "End position of Alternating Hammer Curl"
+- takeScreenshot: rel-pics-03-hammer
+- back
+# A hold: one picture, labelled Hold, no End.
+- tapOn: "Search exercises"
+- eraseText
+- inputText: " wall sit"
+- hideKeyboard
+- tapOn:
+    text: "View Wall Sit"
+    index: 0
+- extendedWaitUntil:
+    visible: "Hold position of Wall Sit"
+    timeout: 20000
+- assertNotVisible: "End position of Wall Sit"
+- assertNotVisible: "Start position of Wall Sit"
+- takeScreenshot: rel-pics-04-wall-sit
+- back
+# Negative: no picture of either kind, so no picture frame.
+- tapOn: "Search exercises"
+- eraseText
+- inputText: " iso-lateral chest press"
+- hideKeyboard
+- tapOn:
+    text: "View Iso-Lateral Chest Press"
+    index: 0
+- extendedWaitUntil:
+    visible: "^How to$"
+    timeout: 15000
+- assertNotVisible: "Start position of.*"
+- assertNotVisible: "Hold position of.*"
+- takeScreenshot: rel-pics-05-no-picture
+- back
+# Regression: a RepDB exercise keeps its pictures.
+- tapOn: "Search exercises"
+- eraseText
+- inputText: " barbell curl"
+- hideKeyboard
+- tapOn:
+    text: "View Barbell Curl"
+    index: 0
+- extendedWaitUntil:
+    visible: "Start position of Barbell Curl"
+    timeout: 20000
+- takeScreenshot: rel-pics-06-repdb
