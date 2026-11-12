@@ -25,7 +25,8 @@
 -- NEW (tables: RLS on, no policies, no grants; only these functions touch them)
 --   gym_ai_tasks                      every request the owner made: text (<= 600), spoken?, the actions the AI picked,
 --                                     status drafted | done | cancelled | failed, credits, result. Kept 400 days.
---   gym_ai_credit_ledger              every credit in and out (kept: it is money).
+--   gym_ai_credit_ledger              every credit in and out (kept: it is money). A spend's note holds the
+--                                     request's first words, so it is cleared after 400 days, like the request.
 --   owner_ai_wallet(key)              {ok, balance, free_left, monthly_free (100 or 0), plan, billing, trial, month,
 --                                     low_at, packs[], recent[]}. Adds the welcome and this month's free credits first
 --                                     (idempotent).
@@ -238,8 +239,11 @@ begin
   select count(*) into today from public.gym_ai_tasks
    where gym_id = g and created_at >= (date_trunc('day', now() at time zone 'Asia/Kolkata') at time zone 'Asia/Kolkata');
   if today >= 300 then raise exception 'TOO_MANY'; end if;
-  -- Kept 400 days (the owner's history); the credit ledger is kept (money).
+  -- Kept 400 days (the owner's history); the credit ledger is kept (money), but a spend's note (the request's
+  -- first words, which can name a member) is cleared after the same 400 days.
   delete from public.gym_ai_tasks where gym_id = g and created_at < now() - interval '400 days';
+  update public.gym_ai_credit_ledger set note = null
+   where gym_id = g and reason = 'spend' and note is not null and created_at < now() - interval '400 days';
   insert into public.gym_ai_tasks(task_id, gym_id, request, spoken, actions)
     values (p_id, g, req, coalesce(p_spoken, false), acts);
   return jsonb_build_object('ok', true, 'id', p_id, 'status', 'drafted');

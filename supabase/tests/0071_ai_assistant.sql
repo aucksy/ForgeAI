@@ -183,6 +183,14 @@ begin
   checks := checks + 1; fails := fails || pg_temp.t71_is('8hq', public.hq_ai_wallet(hq, ga)->'this_month'->>'tasks_done', '2');
   checks := checks + 1; fails := fails || pg_temp.t71_is('8hqFree', (public.hq_ai_wallet(hq, ga)->>'monthly_free') || '/' || (public.hq_ai_wallet(hq, gc)->>'monthly_free'), '0/100');
 
+  -- 8b. After 400 days a spend's note (the request's first words) is cleared on the next save; the credits row stays.
+  update public.gym_ai_credit_ledger set created_at = now() - interval '401 days' where task_id = t5 and reason = 'spend';
+  perform public.owner_ai_task_save(koc, gen_random_uuid(), 'y', false, acts);
+  checks := checks + 1; fails := fails || pg_temp.t71_is('8bNoteGone',
+    (select coalesce(note, 'null') || '/' || delta::text from public.gym_ai_credit_ledger where task_id = t5 and reason = 'spend'), 'null/-1');
+  checks := checks + 1; fails := fails || pg_temp.t71_is('8bOtherGymKept',
+    (select (count(*) > 0)::text from public.gym_ai_credit_ledger where gym_id = ga and reason = 'spend' and note is not null), 'true');
+
   -- 9. A paused gym spends nothing.
   perform set_config('forgeai.hq', 'on', true);
   update public.gyms set status = 'suspended' where gym_id = gc;
