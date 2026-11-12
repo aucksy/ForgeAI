@@ -211,6 +211,7 @@ const ACTIONS = {
   hq_message_sent: 'Sent a message to every gym',
   hq_message_removed: 'Took back a message to the gyms',
   ai_credits_added: 'Added or took back a gym’s AI credits',
+  assist_limit_set: 'Changed a gym’s AI Assistant daily limit',
 };
 
 export function actionWords(action) {

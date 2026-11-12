@@ -18,6 +18,8 @@ import {
   aiUsageDays,
   addMessage,
   assistUsage,
+  assistLimit,
+  ASSIST_LIMIT_MAX,
   checkMessage,
   cleanReply,
   deleteRequestsInFeedback,
@@ -32,6 +34,7 @@ import {
   removeMessage,
   saveReply,
   setAiLimit,
+  setAssistLimit,
   setFeedbackStatus,
   setLeadStatus,
   webNeeds,
@@ -191,7 +194,9 @@ export async function handleApi(request, env, who, deps = {}) {
       // F201 (0071): the gym's AI credits and this month's assistant use. null before 0071 / on a failure.
       const aiCredits = await creditsPart(db, id);
       const assistMonth = web ? await webPart('assistant use', () => assistUsage(web, id, monthStart(now))) : null;
-      return json(200, { gym, aiDays: days, aiLimit: limits ? (limits[id] ?? NORMAL_AI_LIMIT) : null, normalAiLimit: NORMAL_AI_LIMIT, plansReady: plansReady(gym), aiCredits, assistMonth });
+      // R-467: the gym's AI Assistant allowance a day; null before panel D1 0015.
+      const assistAllowance = web ? await webPart('assistant limit', () => assistLimit(web, id)) : null;
+      return json(200, { gym, aiDays: days, aiLimit: limits ? (limits[id] ?? NORMAL_AI_LIMIT) : null, normalAiLimit: NORMAL_AI_LIMIT, plansReady: plansReady(gym), aiCredits, assistMonth, assistAllowance });
     }
 
     if (route === 'GET /api/system') {
@@ -552,6 +557,23 @@ export async function handleApi(request, env, who, deps = {}) {
         if (e instanceof DbError && e.code === 'NOT_READY') return refuse('AI_NOT_READY', 503);
         throw e;
       }
+    }
+
+    // R-467: one gym's AI Assistant allowance a day (requests, spoken minutes; 0 = off for the gym). Both null = normal.
+    if (route === 'POST /api/gym/assist-limit') {
+      if (!env.WEB) return refuse('NO_WEB_DB', 503);
+      const n = (v, max) => (v === null || v === undefined || v === '' ? null : Number.isInteger(Number(v)) && Number(v) >= 0 && Number(v) <= max ? Number(v) : NaN);
+      const perDay = n(b.perDay, ASSIST_LIMIT_MAX.perDay);
+      const voiceMinutes = n(b.voiceMinutes, ASSIST_LIMIT_MAX.voiceMinutes);
+      if (!isUuid(b.gymId) || Number.isNaN(perDay) || Number.isNaN(voiceMinutes)) return refuse('BAD_REQUEST');
+      await log('assist_limit_set', b.gymId, text(b.reason, 500) || null, { perDay, voiceMinutes });
+      try {
+        await setAssistLimit(env.WEB, b.gymId, perDay, voiceMinutes, now);
+      } catch (e) {
+        console.warn('[hq] assist_limits not writable (panel D1 0015 not applied?)', e instanceof Error ? e.message : 'error');
+        return refuse('AI_NOT_READY', 503);
+      }
+      return json(200, { ok: true, assistAllowance: await assistLimit(env.WEB, b.gymId) });
     }
 
     if (route === 'POST /api/ai/limit') {

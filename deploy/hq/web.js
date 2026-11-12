@@ -315,6 +315,34 @@ export async function assistUsage(db, gymId, fromDay) {
   return out;
 }
 
+/** F201 (R-467): the AI Assistant's normal fair use a gym a day (deploy/panel/assist.js ASSIST_PER_DAY, VOICE_MINUTES_PER_DAY). */
+export const ASSIST_NORMAL = Object.freeze({ perDay: 50, voiceMinutes: 10 });
+export const ASSIST_LIMIT_MAX = Object.freeze({ perDay: 500, voiceMinutes: 120 });
+
+/**
+ * One gym's AI Assistant allowance a day (D1 assist_limits, panel migrations/0015): { perDay, voiceMinutes, own }
+ * (own = HQ set it). Throws before 0015 is applied (the caller shows "not ready").
+ */
+export async function assistLimit(db, gymId) {
+  const row = await db.prepare('SELECT per_day, voice_minutes FROM assist_limits WHERE gym_id = ?').bind(gymId).first();
+  return row ? { perDay: Number(row.per_day), voiceMinutes: Number(row.voice_minutes), own: true } : { ...ASSIST_NORMAL, own: false };
+}
+
+/** Set one gym's AI Assistant allowance; null for both puts it back to normal. */
+export async function setAssistLimit(db, gymId, perDay, voiceMinutes, now) {
+  if (perDay === null && voiceMinutes === null) {
+    await db.prepare('DELETE FROM assist_limits WHERE gym_id = ?').bind(gymId).run();
+    return;
+  }
+  await db
+    .prepare(
+      'INSERT INTO assist_limits (gym_id, per_day, voice_minutes, set_at) VALUES (?, ?, ?, ?) ' +
+        'ON CONFLICT (gym_id) DO UPDATE SET per_day = excluded.per_day, voice_minutes = excluded.voice_minutes, set_at = excluded.set_at',
+    )
+    .bind(gymId, perDay ?? ASSIST_NORMAL.perDay, voiceMinutes ?? ASSIST_NORMAL.voiceMinutes, now.toISOString())
+    .run();
+}
+
 /** Per-gym AI daily limits ({ gymId: perDay }); {} before table ai_limits exists. */
 export async function aiLimits(db) {
   try {

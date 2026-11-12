@@ -5,6 +5,7 @@ import { test } from 'node:test';
 
 import {
   ASSIST_PER_DAY,
+  LIMIT_WORDS,
   MAX_ACTIONS,
   MONTHLY_CAP_USD,
   VOICE_SECONDS_PER_DAY,
@@ -188,8 +189,8 @@ test('keys: the assistant key first, else the help answers key; errors never car
   assert.equal(claudeKey({}), '');
   assert.equal(scrub(new Error(`bad ${CLAUDE} ${SARVAM}`), { CLAUDE_ASSIST_KEY: CLAUDE, SARVAM_API_KEY: SARVAM }), 'Error: bad *** ***');
   assert.equal(monthlyCapUsd({}), MONTHLY_CAP_USD);
-  assert.equal(monthlyCapUsd({ ASSIST_MONTHLY_CAP_USD: '40' }), 40);
-  assert.equal(monthlyCapUsd({ ASSIST_MONTHLY_CAP_USD: 'lots' }), MONTHLY_CAP_USD);
+  assert.equal(monthlyCapUsd({ ASSIST_CAP_USD: '40' }), 40);
+  assert.equal(monthlyCapUsd({ ASSIST_CAP_USD: 'lots' }), MONTHLY_CAP_USD);
   assert.deepEqual(voiceProviders({ SARVAM_API_KEY: SARVAM, GROQ_API_KEY: GROQ }), ['sarvam', 'groq']);
   assert.deepEqual(voiceProviders({ GROQ_API_KEY: GROQ }), ['groq']);
 });
@@ -257,16 +258,27 @@ test('only the owner: desk staff, the demo gym, a bad key and no key are refused
   assert.equal(net.to('claude').length, 0);
 });
 
-test(`fair use: ${ASSIST_PER_DAY} asks a gym a day (var ASSIST_PER_DAY), and they never use up AI column matching`, async () => {
-  const e = env({ ASSIST_PER_DAY: '2' });
+test(`fair use: ${ASSIST_PER_DAY} asks a gym a day (HQ can set the gym's own), never using up AI column matching`, async () => {
+  assert.equal(ASSIST_PER_DAY, 50);
+  assert.equal(VOICE_SECONDS_PER_DAY, 600);
+  assert.equal(LIMIT_WORDS, 'You have asked a lot today. The AI Assistant is back tomorrow morning.');
+  const e = env();
   const net = fakeNet();
   const go = () => handleAssist(ask({ text: 'Aaj kitne log aaye?', ctx: CTX }), e, { now: NOW, fetchImpl: net.fetchImpl });
+  for (let i = 1; i <= ASSIST_PER_DAY; i++) assert.equal((await (await go()).json()).left, ASSIST_PER_DAY - i);
+  const over = await go();
+  assert.equal(over.status, 429);
+  assert.deepEqual(await over.json(), { reason: 'limit', error: LIMIT_WORDS });
+  assert.equal(net.to('claude').length, ASSIST_PER_DAY);
+  // HQ raised this gym to 52: two more today. HQ set 0: off for the gym.
+  e.WEB.sqlite.prepare("INSERT INTO assist_limits (gym_id, per_day, voice_minutes, set_at) VALUES ('gym-a', 52, 10, 'x')").run();
   assert.equal((await (await go()).json()).left, 1);
   assert.equal((await (await go()).json()).left, 0);
-  const third = await go();
-  assert.equal(third.status, 429);
-  assert.equal((await third.json()).reason, 'limit');
-  assert.equal(net.to('claude').length, 2);
+  assert.equal((await go()).status, 429);
+  const off = env();
+  off.WEB.sqlite.prepare("INSERT INTO assist_limits (gym_id, per_day, voice_minutes, set_at) VALUES ('gym-a', 0, 0, 'x')").run();
+  assert.equal((await handleAssist(ask({ text: 'Aaj kitne log aaye?', ctx: CTX }), off, { now: NOW, fetchImpl: net.fetchImpl })).status, 429);
+  assert.equal(off.WEB.sqlite.prepare('SELECT COUNT(*) AS n FROM ai_usage').get().n, 0);
   // The next India day starts fresh.
   assert.equal((await handleAssist(ask({ text: 'Aaj kitne log aaye?', ctx: CTX }), e, { now: new Date('2026-11-12T19:00:00Z'), fetchImpl: net.fetchImpl })).status, 200);
   // A busy assistant day does not count toward the all-gyms column-matching allowance.
@@ -274,7 +286,7 @@ test(`fair use: ${ASSIST_PER_DAY} asks a gym a day (var ASSIST_PER_DAY), and the
   assert.equal(await takeOne(e.WEB, 'gym-a', DAY), 1);
 });
 
-test(`the monthly money cap ($${MONTHLY_CAP_USD}, var ASSIST_MONTHLY_CAP_USD) stops calls for every gym till next month`, async () => {
+test(`the monthly money cap ($${MONTHLY_CAP_USD}, secret ASSIST_CAP_USD) stops calls for every gym till next month`, async () => {
   const e = env();
   // $15 at $0.50 per million output tokens = 30 million; 31 million is over it.
   e.WEB.sqlite.prepare("INSERT INTO assist_usage (month, calls, tokens_in, tokens_out) VALUES ('2026-11', 9, 0, 31000000)").run();
@@ -285,7 +297,7 @@ test(`the monthly money cap ($${MONTHLY_CAP_USD}, var ASSIST_MONTHLY_CAP_USD) st
   assert.equal(net.to('claude').length, 0);
   assert.equal(e.WEB.sqlite.prepare("SELECT COUNT(*) AS n FROM ai_usage WHERE kind = 'assist'").get().n, 0); // the ask was not taken
   // A higher cap, or a new month, lets it through.
-  assert.equal((await handleAssist(ask({ text: 'Gym ka haal batao', ctx: CTX }), { ...e, ASSIST_MONTHLY_CAP_USD: '40' }, { now: NOW, fetchImpl: net.fetchImpl })).status, 200);
+  assert.equal((await handleAssist(ask({ text: 'Gym ka haal batao', ctx: CTX }), { ...e, ASSIST_CAP_USD: '40' }, { now: NOW, fetchImpl: net.fetchImpl })).status, 200);
   assert.equal((await handleAssist(ask({ text: 'Gym ka haal batao', ctx: CTX }), e, { now: new Date('2026-12-01T06:00:00Z'), fetchImpl: net.fetchImpl })).status, 200);
 });
 
@@ -373,7 +385,7 @@ test('voice: Groq Whisper (language hi) when Sarvam has no key or fails; neither
   assert.equal(failed.result.status, 502);
 });
 
-test('voice limits: 30 s, 1 MB, an empty clip, the owner only, 20 spoken minutes a gym a day', async () => {
+test('voice limits: 30 s, 1 MB, an empty clip, the owner only, 10 spoken minutes a gym a day (HQ can raise it)', async () => {
   const e = venv();
   const net = fakeNet();
   const go = (...a) => handleAssistVoice(clip(...a), e, { now: NOW, fetchImpl: net.fetchImpl });
@@ -391,5 +403,10 @@ test('voice limits: 30 s, 1 MB, an empty clip, the owner only, 20 spoken minutes
   assert.equal((await go(10)).status, 200);
   const over = await go(1);
   assert.equal(over.status, 429);
-  assert.equal((await over.json()).reason, 'limit');
+  assert.deepEqual(await over.json(), { reason: 'limit', error: LIMIT_WORDS });
+  // HQ gave this gym 11 minutes: one more minute today.
+  e.WEB.sqlite.prepare("INSERT INTO assist_limits (gym_id, per_day, voice_minutes, set_at) VALUES ('gym-a', 50, 11, 'x')").run();
+  assert.equal((await go(30)).status, 200);
+  assert.equal((await go(30)).status, 200);
+  assert.equal((await go(1)).status, 429);
 });

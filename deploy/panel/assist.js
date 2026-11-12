@@ -1,4 +1,4 @@
-// F201: the MettleUp AI assistant for gym owners (docs/f201-ai-assistant/03-design.md §4, §5, §7).
+// F201: the MettleUp AI Assistant for gym owners (docs/f201-ai-assistant/03-design.md §4, §5, §7).
 // The admin app's /assistant screen POSTs the owner's sentence here; Claude Haiku turns it into 1-3 calls of
 // the fixed tools in assistCatalogue.js. THE AI NEVER RUNS ANYTHING: the admin app answers the 'ask' tools
 // from the gym's own reports and shows a card for the rest that does nothing until the owner taps Send or Save
@@ -14,9 +14,11 @@
 // names and the message language. NEVER the member list, phones, dues or visits. The sentence is data, never
 // an order (system prompt rule + strict tool schemas + our own checks below and in the admin app).
 //
-// Cost control: ASSIST_PER_DAY requests per gym per India day (D1 ai_usage, kind 'assist'), VOICE_SECONDS_PER_DAY
-// spoken seconds per gym (kind 'assist-voice', calls = seconds), and a monthly money cap for all gyms together
-// (D1 assist_usage, migrations/0015; MONTHLY_CAP_USD, var ASSIST_MONTHLY_CAP_USD overrides).
+// Cost control (03-design §3, owner R-467, 12 Nov 2026): ASSIST_PER_DAY requests per gym per India day (D1 ai_usage,
+// kind 'assist'), VOICE_MINUTES_PER_DAY spoken minutes per gym (kind 'assist-voice', calls = seconds); MettleUp HQ can
+// set one gym's own allowance (D1 assist_limits, migrations/0015). And a monthly money cap for all gyms together
+// (D1 assist_usage, migrations/0015; MONTHLY_CAP_USD, the secret ASSIST_CAP_USD overrides it: raise it about $1.5
+// per paying gym as gyms join, so one busy month never switches the AI Assistant off for everyone).
 // Secrets (never logged, echoed or sent to a browser): CLAUDE_ASSIST_KEY (falls back to CLAUDE_HELP_KEY);
 // SARVAM_API_KEY (optional, speech to text; else GROQ_API_KEY, the one spoken feedback uses).
 
@@ -30,12 +32,13 @@ import { GROQ_MODEL, GROQ_URL, cleanText, takeClip } from './voice.js';
 export const ASSIST_MODEL = 'claude-haiku-5-5';
 export const PRICE_IN_USD = 0.1 / 1e6;
 export const PRICE_OUT_USD = 0.5 / 1e6;
-/** All gyms together, per India month. Var ASSIST_MONTHLY_CAP_USD overrides (a number above 0). */
+/** All gyms together, per India month, to start. Secret ASSIST_CAP_USD overrides (a number above 0). */
 export const MONTHLY_CAP_USD = 15;
-/** Requests (asks and rewrites) per gym per India day. Var ASSIST_PER_DAY overrides. */
-export const ASSIST_PER_DAY = 100;
-/** Spoken seconds per gym per India day (20 minutes), and for all gyms together. */
-export const VOICE_SECONDS_PER_DAY = 1200;
+/** Requests (asks and rewrites) per gym per India day, unless HQ set the gym's own (assist_limits). */
+export const ASSIST_PER_DAY = 50;
+/** Spoken minutes per gym per India day (HQ can set the gym's own), and seconds for all gyms together. */
+export const VOICE_MINUTES_PER_DAY = 10;
+export const VOICE_SECONDS_PER_DAY = VOICE_MINUTES_PER_DAY * 60;
 export const VOICE_SECONDS_ALL_PER_DAY = 36_000;
 export const MAX_CLIP_SECONDS = 30;
 export const MAX_CLIP_BYTES = 1_000_000;
@@ -53,7 +56,9 @@ export const SARVAM_MODEL = 'saaras:v3';
 const AUDIO_TYPES = /^audio\/(webm|ogg|mp4|m4a|x-m4a|aac|mpeg|mp3|wav|x-wav|flac|3gpp)$/;
 const GROQ_HINT = 'A gym owner talking about members, plans, fees and messages. Hindi, English or Hinglish. Rupees, PT, dues, renew, UPI, cash, batch.';
 
-const OFF = 'The AI assistant is not switched on yet.';
+const OFF = 'The AI Assistant is not switched on yet.';
+/** What the owner reads at the day's limit (03-design §3). */
+export const LIMIT_WORDS = 'You have asked a lot today. The AI Assistant is back tomorrow morning.';
 
 function answer(status, body) {
   return new Response(JSON.stringify(body), {
@@ -87,16 +92,31 @@ export function costUsd(tokensIn, tokensOut) {
   return tokensIn * PRICE_IN_USD + tokensOut * PRICE_OUT_USD;
 }
 
-/** The monthly cap in dollars: var ASSIST_MONTHLY_CAP_USD when it is a number above 0, else MONTHLY_CAP_USD. PURE. */
+/** The monthly cap in dollars: secret ASSIST_CAP_USD when it is a number above 0, else MONTHLY_CAP_USD. PURE. */
 export function monthlyCapUsd(env) {
-  const n = Number(env?.ASSIST_MONTHLY_CAP_USD);
+  const n = Number(env?.ASSIST_CAP_USD);
   return Number.isFinite(n) && n > 0 ? n : MONTHLY_CAP_USD;
 }
 
-/** Requests per gym per day: var ASSIST_PER_DAY when it is a whole number from 1, else ASSIST_PER_DAY. PURE. */
-export function perDay(env) {
-  const n = Number(env?.ASSIST_PER_DAY);
-  return Number.isInteger(n) && n > 0 ? n : ASSIST_PER_DAY;
+/**
+ * This gym's daily allowance: HQ's own numbers (D1 assist_limits) or the normal ones. 0 = off for this gym.
+ * -> { perDay, voiceSeconds }. Before the table can be read: the normal ones.
+ */
+export async function gymAllowance(db, gymId) {
+  const normal = { perDay: ASSIST_PER_DAY, voiceSeconds: VOICE_SECONDS_PER_DAY };
+  try {
+    const row = await db.prepare('SELECT per_day, voice_minutes FROM assist_limits WHERE gym_id = ?').bind(gymId).first();
+    if (!row) return normal;
+    const p = Number(row.per_day);
+    const v = Number(row.voice_minutes);
+    return {
+      perDay: Number.isInteger(p) && p >= 0 ? p : normal.perDay,
+      voiceSeconds: Number.isInteger(v) && v >= 0 ? v * 60 : normal.voiceSeconds,
+    };
+  } catch (e) {
+    console.warn('[assist] assist_limits not readable, using the normal allowance', e instanceof Error ? e.message : 'error');
+    return normal;
+  }
 }
 
 // ------------------------------------------------------------------ masking
@@ -418,29 +438,29 @@ async function ownerAndAllowance(key, env, now, fetchImpl) {
   const who = await whoIsAsking(key, fetchImpl);
   if (who.unreachable) return { refused: answer(503, { reason: 'unreachable', error: 'The gym server could not be reached.' }) };
   if (who.denied) return { refused: answer(401, { error: 'Sign in first.' }) };
-  if (!who.owner) return { refused: answer(403, { error: 'Only the owner can use the AI assistant.' }) };
-  if (who.demo) return { refused: answer(403, { reason: 'demo', error: 'The AI assistant is not on in the demo gym.' }) };
+  if (!who.owner) return { refused: answer(403, { error: 'Only the owner can use the AI Assistant.' }) };
+  if (who.demo) return { refused: answer(403, { reason: 'demo', error: 'The AI Assistant is not on in the demo gym.' }) };
   const day = indiaDay(now);
   const month = indiaMonth(now);
   try {
     const spent = await spentUsd(env.WEB, month);
     if (spent >= monthlyCapUsd(env)) {
       console.warn('[assist] monthly cap reached', month, spent.toFixed(2));
-      return { refused: answer(503, { reason: 'cap', error: 'The AI assistant is resting till next month. Everything else works as usual.' }) };
+      return { refused: answer(503, { reason: 'cap', error: 'The AI Assistant is resting till next month. Everything else works as usual.' }) };
     }
   } catch (e) {
     console.error('[assist] assist_usage not readable (migration 0015 not applied?)', scrub(e, env));
     return { refused: answer(503, { reason: 'off', error: OFF }) };
   }
-  const cap = perDay(env);
-  let used;
+  const cap = (await gymAllowance(env.WEB, who.gymId)).perDay;
+  let used = null;
   try {
-    used = await takeClip(env.WEB, who.gymId, day, cap, Number.MAX_SAFE_INTEGER, 'assist');
+    if (cap > 0) used = await takeClip(env.WEB, who.gymId, day, cap, Number.MAX_SAFE_INTEGER, 'assist');
   } catch (e) {
     console.error('[assist] usage table not readable', scrub(e, env));
     return { refused: answer(503, { reason: 'off', error: OFF }) };
   }
-  if (used === null) return { refused: answer(429, { reason: 'limit', error: 'You have asked the AI a lot today. Try again tomorrow.' }) };
+  if (used === null) return { refused: answer(429, { reason: 'limit', error: LIMIT_WORDS }) };
   return { gymId: who.gymId, day, month, left: Math.max(0, cap - used) };
 }
 
@@ -594,7 +614,7 @@ async function transcribe(provider, env, audio, fetchImpl, timeoutMs) {
 /**
  * POST /api/assist/voice  (header X-Forge-Key) multipart: `audio` (at most 30 s, 1 MB), `seconds` (its length)
  *   200 { text, provider: 'sarvam' | 'groq' } · 400 bad clip · 401 · 403 · 405 · 413 too long
- *   422 { reason: 'empty' } nothing heard · 429 { reason: 'limit' } (20 spoken minutes a day) · 502 { reason: 'failed' }
+ *   422 { reason: 'empty' } nothing heard · 429 { reason: 'limit' } (10 spoken minutes a day) · 502 { reason: 'failed' }
  *   503 { reason: 'off' | 'unreachable' }. Nothing of the clip is kept; Claude never hears it.
  */
 export async function handleAssistVoice(request, env, { now = new Date(), fetchImpl = fetch, timeoutMs = VOICE_TIMEOUT_MS } = {}) {
@@ -624,16 +644,17 @@ export async function handleAssistVoice(request, env, { now = new Date(), fetchI
   const who = await whoIsAsking(key, fetchImpl);
   if (who.unreachable) return answer(503, { reason: 'unreachable', error: 'The gym server could not be reached.' });
   if (who.denied) return answer(401, { error: 'Sign in first.' });
-  if (!who.owner) return answer(403, { error: 'Only the owner can use the AI assistant.' });
-  if (who.demo) return answer(403, { reason: 'demo', error: 'The AI assistant is not on in the demo gym.' });
+  if (!who.owner) return answer(403, { error: 'Only the owner can use the AI Assistant.' });
+  if (who.demo) return answer(403, { reason: 'demo', error: 'The AI Assistant is not on in the demo gym.' });
   let used;
   try {
-    used = await takeSeconds(env.WEB, who.gymId, indiaDay(now), secs);
+    const allowed = (await gymAllowance(env.WEB, who.gymId)).voiceSeconds;
+    used = allowed > 0 ? await takeSeconds(env.WEB, who.gymId, indiaDay(now), secs, allowed) : null;
   } catch (e) {
     console.error('[assist] usage table not readable', scrub(e, env));
     return answer(503, { reason: 'off', error: 'Speaking is not switched on yet. Type instead.' });
   }
-  if (used === null) return answer(429, { reason: 'limit', error: 'You have spoken a lot today. Type instead, or try tomorrow.' });
+  if (used === null) return answer(429, { reason: 'limit', error: LIMIT_WORDS });
 
   for (const provider of providers) {
     let text;

@@ -47,9 +47,9 @@
   "observability": { "enabled": true },
   // #72 (30 Oct 2026): 21:30 UTC = 03:00 India, every day: delete crash reports older than 90 days (worker.js scheduled).
   // R-206: spoken feedback (voice.js) needs the secret GROQ_API_KEY; optional var GROQ_MODEL swaps the Whisper model.
-  // F201 AI assistant (assist.js): D1 migrations/0015_assist_usage.sql; Claude key CLAUDE_ASSIST_KEY (else CLAUDE_HELP_KEY is
-  // used); optional secret SARVAM_API_KEY (speech to text; else GROQ_API_KEY); optional vars ASSIST_MONTHLY_CAP_USD (15),
-  // ASSIST_PER_DAY (100), SARVAM_MODEL (saaras:v3), SARVAM_LANGUAGE (hi-IN).
+  // F201 AI Assistant (assist.js): D1 migrations/0015_assist_usage.sql; Claude key CLAUDE_ASSIST_KEY (else CLAUDE_HELP_KEY is
+  // used); optional secrets SARVAM_API_KEY (speech to text; else GROQ_API_KEY) and ASSIST_CAP_USD (monthly cap, $15 when
+  // unset); optional vars SARVAM_MODEL (saaras:v3), SARVAM_LANGUAGE (hi-IN). Per-gym allowance: HQ (D1 assist_limits).
   // F79 (R-328): */10 = every 10 minutes, open payment links are checked with the gym's payment company
   // (pay.js scheduledPay). Payments also need: the D1 tables (migrations/0011_payments.sql) and the secret
   // PAYMENTS_MASTER_KEY (32 random bytes, base64; seals each gym's keys). Optional: PAY_LIVE "on" (real

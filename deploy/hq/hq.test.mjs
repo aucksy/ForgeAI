@@ -27,7 +27,7 @@ import {
 import { handleApi } from './api.js';
 import { refusalCode, rpc } from './db.js';
 import { clearReleaseMemo, releases, removeFiles } from './outside.js';
-import { checkMessage, cleanReply, costRupees, deleteRequestsInFeedback, needsReply, indiaDay, nightlyWeb, setAiLimit, aiLimits, aiUsageByGym, setFeedbackStatus, replyListOf, saveReply, listFeedback, MAX_TEAM_REPLIES } from './web.js';
+import { checkMessage, cleanReply, costRupees, deleteRequestsInFeedback, needsReply, indiaDay, nightlyWeb, setAiLimit, aiLimits, aiUsageByGym, ASSIST_NORMAL, setFeedbackStatus, replyListOf, saveReply, listFeedback, MAX_TEAM_REPLIES } from './web.js';
 import worker, { CSP, PUBLIC_FILES, handle, nightly, sameOrigin, secure } from './worker.js';
 
 const enc = new TextEncoder();
@@ -1000,4 +1000,30 @@ test('AI credits: "Add AI credits" goes to hq_ai_grant as asked; bad input never
   const r = await api('POST', '/api/gym/ai-credits', { gymId: GYM, credits: 50, note: 'Pack' }, env(), missing);
   assert.equal(r.status, 503);
   assert.deepEqual(await r.json(), { error: 'AI_NOT_READY' });
+});
+
+test('AI Assistant daily limit (R-467): normal 50 requests and 10 minutes, HQ sets a gym\'s own, logged; same numbers as the panel', { skip: !sqlite && 'no node:sqlite here' }, async () => {
+  const panel = await import('../panel/assist.js');
+  assert.deepEqual(ASSIST_NORMAL, { perDay: panel.ASSIST_PER_DAY, voiceMinutes: panel.VOICE_MINUTES_PER_DAY });
+  const web = d1(['0001_feedback.sql', '0002_leads.sql', '0003_ai_usage.sql', '0004_ai_limits.sql', '0006_hq_messages.sql', '0015_assist_usage.sql']);
+  const net = fakeNet({ db: { hq_gym: { gymId: GYM, name: 'Iron', owners: [], recentHq: [] }, hq_ai_wallet: null, hq_log: null } });
+  const page = async () => (await (await api('GET', `/api/gym?id=${GYM}`, null, env({ WEB: web }), net)).json()).assistAllowance;
+  assert.deepEqual(await page(), { perDay: 50, voiceMinutes: 10, own: false });
+  const r = await api('POST', '/api/gym/assist-limit', { gymId: GYM, perDay: 80, voiceMinutes: '', reason: 'Big gym, asked on call' }, env({ WEB: web }), net);
+  assert.equal(r.status, 200);
+  assert.deepEqual((await r.json()).assistAllowance, { perDay: 80, voiceMinutes: 10, own: true });
+  assert.deepEqual(await page(), { perDay: 80, voiceMinutes: 10, own: true });
+  const logged = JSON.parse(net.rpcCalls('hq_log')[0].init.body);
+  assert.equal(logged.p_action, 'assist_limit_set');
+  assert.deepEqual(logged.p_detail, { perDay: 80, voiceMinutes: null });
+  // Back to normal.
+  await api('POST', '/api/gym/assist-limit', { gymId: GYM, perDay: null, voiceMinutes: null }, env({ WEB: web }), net);
+  assert.deepEqual(await page(), { perDay: 50, voiceMinutes: 10, own: false });
+  // Bad numbers never reach the table; before 0015 the page says not ready.
+  for (const body of [{ gymId: 'x', perDay: 5 }, { gymId: GYM, perDay: 501 }, { gymId: GYM, perDay: -1 }, { gymId: GYM, voiceMinutes: 121 }, { gymId: GYM, perDay: 2.5 }]) {
+    assert.equal((await api('POST', '/api/gym/assist-limit', body, env({ WEB: web }), net)).status, 400, JSON.stringify(body));
+  }
+  const old = d1();
+  assert.equal((await (await api('GET', `/api/gym?id=${GYM}`, null, env({ WEB: old }), net)).json()).assistAllowance, null);
+  assert.equal((await api('POST', '/api/gym/assist-limit', { gymId: GYM, perDay: 60 }, env({ WEB: old }), net)).status, 503);
 });

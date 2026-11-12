@@ -569,21 +569,21 @@ async function gymPage(id, flash = '') {
 }
 
 function creditsCard(g, id, data) {
-  const head = h('h2', {}, 'AI assistant credits');
+  const head = h('h2', {}, 'AI Assistant credits');
   const w = data.aiCredits;
-  if (!w) return h('div', { class: 'card' }, head, note(errorWords('AI_NOT_READY'), 'warn'));
+  if (!w) return h('div', { class: 'card' }, head, note(errorWords('AI_NOT_READY'), 'warn'), assistLimitPart(g, id, data));
   const out = h('div');
   const howMany = h('input', { type: 'number', min: '-5000', max: '5000', step: '1', inputmode: 'numeric', placeholder: '150' });
   const kind = select([['purchase', 'A pack the gym paid for'], ['grant', 'Free credits from MettleUp']], 'purchase');
   const why = h('input', { maxlength: '300', placeholder: 'Note (for example: paid ₹399 by UPI on 12 Nov)' });
   const recent = Array.isArray(w.recent) ? w.recent.slice(0, 10) : [];
-  return h('div', { class: 'card' }, head,
+  return h('div', { class: 'card' }, head, assistLimitPart(g, id, data),
     h('p', {}, `Balance: ${count(w.balance, 'credit')}. Free every month on this plan: ${w.monthly_free}.`),
     h('p', {}, `This month: ${assistMonthWords(w, data.assistMonth)}.`),
     data.assistMonth ? h('p', { class: 'muted' }, `AI cost this month: about ${rupeesExact(data.assistMonth.rupees)}.`) : null,
     recent.length
       ? h('ul', { class: 'plain' }, recent.map((r) => h('li', {}, `${when(new Date(r.at).toISOString())} · ${creditRowWords(r)}`)))
-      : h('p', { class: 'muted' }, 'No credits added or used yet. The owner gets 30 welcome credits and the month’s free ones the first time they open the AI assistant.'),
+      : h('p', { class: 'muted' }, 'No credits added or used yet. The owner gets 30 welcome credits and the month’s free ones the first time they open the AI Assistant.'),
     h('h3', {}, 'Add AI credits'),
     h('div', { class: 'stack' },
       field('Credits', howMany, 'Packs: 50 (₹149), 150 (₹399), 500 (₹999). A minus number takes free credits back.'),
@@ -594,6 +594,30 @@ function creditsCard(g, id, data) {
         await gymPage(id, `Saved: ${g.name} now has ${count(r.balance, 'AI credit')}.`);
       }, { out, sure: () => `${Number(howMany.value) < 0 ? 'Take back' : 'Add'} ${Math.abs(Number(howMany.value) || 0)} AI credits ${Number(howMany.value) < 0 ? 'from' : 'to'} ${g.name}?` }),
       out));
+}
+
+/** R-467: the gym's AI Assistant allowance a day (normal 50 requests, 10 spoken minutes; 0 = off for this gym). */
+function assistLimitPart(g, id, data) {
+  const a = data.assistAllowance;
+  if (!a) return note('The AI Assistant daily limit can be set once its web database update (0015) is applied.', 'warn');
+  const out = h('div');
+  const asks = h('input', { type: 'number', min: '0', max: '500', value: String(a.perDay), inputmode: 'numeric' });
+  const mins = h('input', { type: 'number', min: '0', max: '120', value: String(a.voiceMinutes), inputmode: 'numeric' });
+  const save = (body, words) => action(words, async () => {
+    const r = await api('/api/gym/assist-limit', { gymId: id, ...body() });
+    asks.value = String(r.assistAllowance.perDay);
+    mins.value = String(r.assistAllowance.voiceMinutes);
+    out.replaceChildren(note(`Saved: ${r.assistAllowance.perDay} AI requests and ${r.assistAllowance.voiceMinutes} spoken minutes a day.`, 'good'));
+  }, { out });
+  return h('div', { class: 'stack' },
+    h('h3', {}, 'Daily limit'),
+    h('p', { class: 'muted' }, a.own ? 'Set by MettleUp for this gym.' : 'Normal limit.'),
+    field('AI requests a day', asks, 'Normal: 50. 0 switches the AI Assistant off for this gym.'),
+    field('Spoken minutes a day', mins, 'Normal: 10.'),
+    h('div', { class: 'row' },
+      save(() => ({ perDay: Number(asks.value), voiceMinutes: Number(mins.value) }), 'Save the limit'),
+      save(() => ({ perDay: null, voiceMinutes: null }), 'Back to normal')),
+    out);
 }
 
 const ACCESS_WORDS = { sign_in: 'Signed in', sign_out: 'Signed out', sign_in_failed: 'Wrong code', push: 'Saved changes', pull_all: 'Pulled the whole gym' };
