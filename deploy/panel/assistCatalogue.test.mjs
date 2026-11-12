@@ -135,8 +135,9 @@ test('pages: unique ids and paths, a name and one line each; pagePath fills ids'
 test('every page in the menu (computer and phone More) has a catalogue page with the same name', () => {
   const byPath = new Map(PAGES.map((p) => [p.path, p]));
   const menus = [read('CrmApp.tsx'), read('ui/screens/More.tsx')];
-  // The phone's More list is a menu of menus, not a page to send the owner to.
-  const NOT_PAGES = new Set(['/more']);
+  // The phone's More list is a menu of menus, not a page to send the owner to. /assistant is the assistant itself
+  // (F201 screen step): it never sends the owner to its own page.
+  const NOT_PAGES = new Set(['/more', '/assistant']);
   let seen = 0;
   for (const src of menus) {
     for (const m of src.matchAll(/path: '(\/[^']*)',(?:\s*group: '[a-z]+',)?\s*label: (?:t\()?(['"])(.+?)\2/g)) {
