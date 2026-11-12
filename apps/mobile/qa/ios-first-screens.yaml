@@ -1,6 +1,7 @@
 # iPhone only (R-339, 5 Nov 2026): the first screens of the iPhone simulator build, photographed.
 # Run by .github/workflows/ios.yml (never by the Android QA scripts). Fresh install -> intro ->
 # welcome -> demo data -> each tab -> Settings (where the "Not on iPhone yet" line sits).
+# The welcome screen ("Get stronger every week", "Continue with Google") comes after the intro's Skip.
 # Every step after the launch is optional, so one changed word costs one picture, not the rest.
 #
 # 12 Nov 2026 (run 43166949570): ios-06-profile-tab and ios-07-settings showed the Gym tab. On iPhone the
@@ -20,14 +21,14 @@ appId: com.mettleup.app
     text: "^Skip$"
     optional: true
 - extendedWaitUntil:
-    visible: "Start fresh|Welcome to MettleUp|Step 1 of 3|Your name|Restore from a backup|Load demo data instead"
+    visible: "Continue with Google|Get stronger every week|Start fresh|Welcome to MettleUp|Load demo data instead"
     timeout: 60000
     optional: true
 - runFlow:
     when:
-      visible: "Start fresh|Welcome to MettleUp|Step 1 of 3|Your name|Restore from a backup|Load demo data instead"
+      visible: "Continue with Google|Get stronger every week|Start fresh|Welcome to MettleUp|Load demo data instead"
     commands:
-      - assertVisible: "Start fresh|Welcome to MettleUp|Step 1 of 3|Your name|Restore from a backup|Load demo data instead"
+      - assertVisible: "Continue with Google|Get stronger every week|Start fresh|Welcome to MettleUp|Load demo data instead"
       - takeScreenshot: ios-02-welcome
 - scrollUntilVisible:
     element: "Load demo data instead"
@@ -88,6 +89,7 @@ appId: com.mettleup.app
 - scrollUntilVisible:
     element:
       id: "progress-row-Charts"
+    centerElement: true
     timeout: 15000
     optional: true
 - runFlow:

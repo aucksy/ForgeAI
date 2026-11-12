@@ -106,69 +106,87 @@ jobs:
 
       # 12 Nov 2026: the iPhone launch screen (fixed at build time) must be plain, only the background
       # colour (#F6F4F0 light, #1B1F26 dark), so a branded gym's logo is the first logo a member sees.
-      # The first simctl picture used to be at 8 s, after the launch screen had gone. Now a burst of
-      # pictures starts with `simctl launch`; the earliest one that is neither black nor the home screen
-      # becomes launch-<look>.png (every frame of the burst is kept in shots/launch-burst/).
-      - name: Picture tool (Pillow)
-        run: python3 -m pip install --quiet --break-system-packages pillow || python3 -m pip install --quiet pillow
+      # The first simctl picture used to be at 8 s, after the launch screen had gone. Quick screenshots
+      # do not work either (run 43176584956: one at 0.3 s, then simctl waited ~15 s until the launch was
+      # over). So a screen recording starts BEFORE `simctl launch`; frames are cut from it 10 a second.
+      # Each change of picture is kept in shots/launch-frames/ (<look>-<ms after launch>-<main colour>.png);
+      # the earliest frame after the launch that is neither black, plain white nor the home screen becomes
+      # launch-<look>.png.
+      - name: Picture tools (Pillow, ffmpeg)
+        run: |
+          python3 -m pip install --quiet --break-system-packages pillow imageio-ffmpeg || python3 -m pip install --quiet pillow imageio-ffmpeg
+          python3 -c "import imageio_ffmpeg; print(imageio_ffmpeg.get_ffmpeg_exe())"
 
       - name: Install, open and photograph (simctl)
         run: |
           xcrun simctl install "$UDID" "$APP"
-          ( xcrun simctl spawn "$UDID" log stream --level debug --style compact \
-              --predicate 'process == "MettleUp" OR subsystem == "com.facebook.react.log"' > "$OUT/simulator.log" 2>&1 & echo $! > "$RUNNER_TEMP/log.pid" )
-          mkdir -p "$OUT/shots/launch-burst"
+          ( xcrun simctl spawn "$UDID" log stream --level debug --style compact --predicate 'process == "MettleUp" OR subsystem == "com.facebook.react.log"' > "$OUT/simulator.log" 2>&1 & echo $! > "$RUNNER_TEMP/log.pid" )
+          mkdir -p "$OUT/shots/launch-frames" "$RUNNER_TEMP/frames"
           cat > "$RUNNER_TEMP/pick_launch.py" <<'PY'
-          import sys, glob, os, shutil
+          import sys, glob, os, shutil, subprocess, collections
           from PIL import Image
-          look, burst, out = sys.argv[1], sys.argv[2], sys.argv[3]
-          frames = sorted(glob.glob(os.path.join(burst, f"{look}-*.png")))
-          chosen = None
-          for f in frames:
+          import imageio_ffmpeg
+          look, video, launch_ms, keep, out = sys.argv[1], sys.argv[2], int(sys.argv[3]), sys.argv[4], sys.argv[5]
+          tmp = os.path.join(os.environ["RUNNER_TEMP"], "frames", look)
+          os.makedirs(tmp, exist_ok=True)
+          subprocess.run([imageio_ffmpeg.get_ffmpeg_exe(), "-loglevel", "error", "-i", video, "-vf", "fps=10",
+                          os.path.join(tmp, "%04d.png")], check=True)
+          frames = sorted(glob.glob(os.path.join(tmp, "*.png")))
+          print(f"{look}: {len(frames)} frames, launch at {launch_ms} ms into the recording")
+          chosen, last_key = None, None
+          for i, f in enumerate(frames):
+              t = i * 100 - launch_ms
               im = Image.open(f).convert("RGB")
-              small = im.resize((im.width // 6, im.height // 6))
+              small = im.resize((max(1, im.width // 6), max(1, im.height // 6)))
               px = list(small.getdata())
-              top, n = max(((c, k) for c, k in __import__("collections").Counter(px).items()), key=lambda t: t[1])
+              top, n = collections.Counter(px).most_common(1)[0]
               share = n / len(px)
-              black = sum(top) < 30
               # The middle of the screen (no status bar): anything far from the main colour is a logo or text.
               w, h = small.size
-              mid = small.crop((0, h // 6, w, h * 5 // 6))
-              off = sum(1 for c in mid.getdata() if max(abs(a - b) for a, b in zip(c, top)) > 24) / (mid.width * mid.height)
-              print(f"{os.path.basename(f)}: main colour #{top[0]:02X}{top[1]:02X}{top[2]:02X} on {share:.0%}, "
-                    f"other pixels in the middle {off:.2%}{' (black)' if black else ''}")
-              if chosen is None and not black and share >= 0.6:
-                  chosen = (f, top, off)
+              mid = list(small.crop((0, h // 6, w, h * 5 // 6)).getdata())
+              off = sum(1 for c in mid if max(abs(a - b) for a, b in zip(c, top)) > 24) / len(mid)
+              hexc = "%02X%02X%02X" % top
+              key = (hexc, round(off * 50))
+              if key != last_key:
+                  last_key = key
+                  name = f"{look}-{t:+06d}ms-{hexc}.png"
+                  shutil.copy(f, os.path.join(keep, name))
+                  print(f"  {name}: #{hexc} on {share:.0%}, other pixels in the middle {off:.2%}")
+              blank = sum(top) < 30 or min(top) >= 252  # black, or plain white (video colours drift a little)
+              if chosen is None and t >= 0 and not blank and share >= 0.6:
+                  chosen = (f, t, hexc, off)
           if chosen is None:
-              print(f"::error::no {look} launch picture: every burst frame was black or the home screen")
+              print(f"::error::no {look} launch picture: every frame after the launch was black, white or the home screen")
               sys.exit(0)
-          f, top, off = chosen
+          f, t, hexc, off = chosen
           shutil.copy(f, out)
-          print(f"launch-{look}.png = {os.path.basename(f)}: #{top[0]:02X}{top[1]:02X}{top[2]:02X}, other pixels in the middle {off:.2%}")
+          print(f"launch-{look}.png = {t} ms after launch: #{hexc}, other pixels in the middle {off:.2%}")
           PY
-          # One launch: start it, then photograph as fast as simctl allows for about 3 s.
-          burst() {
-            local look=$1 t0 i=0
+          # One launch, filmed from 1.5 s before it until 25 s after.
+          film() {
+            local look=$1 rec t0 tl
+            rm -f "$RUNNER_TEMP/$look.mp4"
+            xcrun simctl io "$UDID" recordVideo --codec=h264 --force "$RUNNER_TEMP/$look.mp4" > "$RUNNER_TEMP/rec-$look.log" 2>&1 &
+            rec=$!
             t0=$(python3 -c 'import time; print(time.time())')
-            xcrun simctl launch "$UDID" com.mettleup.app &
-            while [ $i -lt 10 ]; do
-              ms=$(python3 -c "import time; print(int((time.time() - $t0) * 1000))")
-              xcrun simctl io "$UDID" screenshot "$OUT/shots/launch-burst/$look-$(printf %02d $i)-${ms}ms.png" >/dev/null 2>&1 || true
-              i=$((i + 1))
-            done
-            wait
-            python3 "$RUNNER_TEMP/pick_launch.py" "$look" "$OUT/shots/launch-burst" "$OUT/shots/launch-$look.png"
+            sleep 1.5
+            tl=$(python3 -c "import time; print(int((time.time() - $t0) * 1000))")
+            xcrun simctl launch "$UDID" com.mettleup.app
+            sleep 25
+            kill -INT $rec; wait $rec || true
+            cat "$RUNNER_TEMP/rec-$look.log"
+            cp "$RUNNER_TEMP/$look.mp4" "$OUT/shots/launch-frames/" || true
+            python3 "$RUNNER_TEMP/pick_launch.py" "$look" "$RUNNER_TEMP/$look.mp4" "$tl" "$OUT/shots/launch-frames" "$OUT/shots/launch-$look.png"
           }
-          # Light first: a launch, then back to the home screen and the dark look for the rest of the job.
+          # Light first; then back to the home screen and the dark look for the rest of the job.
           xcrun simctl ui "$UDID" appearance light || true
-          burst light
-          sleep 5
+          film light
           xcrun simctl terminate "$UDID" com.mettleup.app || true
           xcrun simctl ui "$UDID" appearance dark || true
           sleep 2
-          burst dark
-          last=0
-          for t in 8 20 40; do
+          film dark
+          last=26
+          for t in 30 40; do
             sleep $(( t - last )); last=$t
             xcrun simctl io "$UDID" screenshot "$OUT/shots/simctl-$(printf %02d $t)s.png"
           done
