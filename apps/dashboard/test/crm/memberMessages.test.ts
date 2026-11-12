@@ -141,8 +141,8 @@ describe('the page', () => {
     expect(talkErrorWords(new Error('boom'))).toBeNull();
   });
   it('plain words: no tech words, nothing that sounds like support tickets', () => {
-    const words = [
-      ...Object.values(W).filter((v): v is string => typeof v === 'string'),
+    const words: string[] = [
+      ...(Object.values(W) as unknown[]).filter((v): v is string => typeof v === 'string'),
       ...Object.values(W.filter),
       ...Object.values(W.kind),
       W.gymLine('Ravi'),
