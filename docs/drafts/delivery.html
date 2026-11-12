@@ -1,26 +1,26 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Delivery — MettleUp</title><style>
+<title>Shipping and delivery — MettleUp</title><style>
 :root{color-scheme:light dark;--bg:#fff;--ink:#1b1f27;--muted:#5b6372;--line:#dde1e8;--accent:#c4501a}
 @media (prefers-color-scheme:dark){:root{--bg:#0f1218;--ink:#e9ebf0;--muted:#a0a7b5;--line:#2c313b;--accent:#f08a4b}}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif}
 main{max-width:760px;margin:0 auto;padding:24px 16px 64px}h1{font-size:1.6rem;line-height:1.25}h2{font-size:1.15rem;margin-top:1.6em}
 .t{overflow-x:auto}table{border-collapse:collapse;font-size:.92rem}th,td{border:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
 a{color:var(--accent)}nav{font-size:.9rem;color:var(--muted)}hr{border:0;border-top:1px solid var(--line);margin:40px 0}
-</style></head><body><main><nav><a href="/privacy.html">Privacy notice</a> · <a href="/terms.html">Terms</a> · <a href="/data-agreement.html">Data agreement</a> · <a href="/refund.html">Refunds</a> · <a href="/contact.html">Contact</a> · <a href="/about.html">About</a> · <a href="/delivery.html">Delivery</a></nav>
-<!-- DRAFT: not live. Needs the owner's approval before it moves to apps/dashboard/public. -->
+</style></head><body><main><nav><a href="/privacy.html">Privacy notice</a> · <a href="/terms.html">Terms</a> · <a href="/data-agreement.html">Data agreement</a> · <a href="/refund.html">Refunds</a> · <a href="/contact.html">Contact</a> · <a href="/about.html">About</a> · <a href="/delivery.html">Shipping and delivery</a></nav>
+<!-- DRAFT: not live. Needs the owner's approval before it moves to apps/dashboard/public. Expert check 13 Nov 2026 (T80, R-478). -->
 <p><strong>[DRAFT — not approved yet]</strong></p>
-<h1>How MettleUp is delivered</h1>
-<p>MettleUp is online software. <strong>Nothing is shipped</strong> and there is no delivery charge. You use it in the MettleUp admin app and on <a href="https://app.mettleup.fit">app.mettleup.fit</a>; your members use the free MettleUp app on their phones.</p>
+<h1>MettleUp shipping and delivery</h1>
+<p>MettleUp is online software. <strong>Nothing is shipped</strong> and there is no delivery charge. You use it in the MettleUp admin app and on <a href="https://app.mettleup.fit">app.mettleup.fit</a>. Your members use the free MettleUp app on their phones.</p>
 
 <h2>When you get access</h2>
-<ul><li><strong>Free trial:</strong> starts as soon as you sign up. No payment is needed.</li><li><strong>After you pay by UPI or bank transfer (today):</strong> we turn your plan on in your MettleUp account once we see the payment. The screen shows your plan and the date it runs until.</li><li><strong>After you pay by card or net banking (coming soon):</strong> your plan turns on <strong>at once</strong>, usually within seconds. <!-- PROMISE: needs owner approval --></li><li>If your plan has not turned on after you paid, email <a href="mailto:contact@mettleup.fit">contact@mettleup.fit</a> with your gym name and the payment date. If your gym is signed in, the founder's phone number is inside the app.</li></ul>
+<ul><li><strong>Free trial:</strong> starts as soon as you sign up. No payment is needed.</li><li><strong>After you pay by UPI or bank transfer (today):</strong> you send us the payment reference from the "Pay MettleUp" screen. We check it and turn your plan on. The screen then shows your plan and the date it runs until. <!-- 0060: HQ confirms the payment, then paid_until is set --></li><li><strong>After you pay by card or net banking (coming soon):</strong> your plan turns on <strong>at once</strong>, usually within seconds. <!-- 0063, switched off until online payments go live --></li><li><strong>Founding gym offer:</strong> email us to pay for it. It cannot be paid from the "Pay MettleUp" screen. <!-- 0060 takes monthly or yearly only --></li><li>If your plan has not turned on after you paid, email <a href="mailto:contact@mettleup.fit">contact@mettleup.fit</a> with your gym name and the payment date. More ways to reach us are on the <a href="/contact.html">contact page</a>.</li></ul>
 
 <h2>How you pay</h2>
-<ul><li><strong>Today:</strong> you pay by UPI or bank transfer (NEFT or IMPS) from the "Pay MettleUp" screen in the app.</li><li><strong>Coming soon:</strong> card and net banking, on the payment company's own secure page.</li><li>You get a receipt for every payment. MettleUp is not registered under GST; no GST is charged, so the receipt shows no GST.</li></ul>
+<ul><li><strong>Today:</strong> by UPI or bank transfer (NEFT or IMPS), from the "Pay MettleUp" screen in the admin app (Settings).</li><li><strong>Coming soon:</strong> card and net banking, on the payment company's own secure page.</li><li>Today, the "Pay MettleUp" screen lists each payment you sent and whether we confirmed it. When online payments start, you also get a receipt for every payment. <!-- receipts are 0063, switched off (BILLING_ONLINE_ON false) --></li><li>MettleUp is not registered under GST. No GST is charged.</li></ul>
 
 <h2>How long access lasts</h2>
-<ul><li>Monthly plan: one month from the day it starts. Yearly plan: one year. Founding gym offer: Pro for life, for one branch.</li><li>Before a monthly or yearly plan ends, we remind you 7, 3 and 1 days ahead. If you do not pay, you get 7 extra days with everything on. Then 30 days of basic mode: the desk keeps working for existing members (check-in, fee entry, member list), but you cannot add new members and the Pro extras are off. After that, MettleUp is read-only: you can look and export, and paying switches everything back on. <!-- decided 6 Nov 2026 (R-384) --></li><li>Your data is never deleted because a plan ends. <!-- PROMISE: needs owner approval --></li></ul>
+<ul><li>Monthly plan: one month from the day it starts. Yearly plan: one year. Founding gym offer: Pro for one branch, for as long as MettleUp runs this service.</li><li>When online payments start, we will remind you in the admin app 7, 3 and 1 days before a monthly or yearly plan ends. <!-- RENEW_REMINDER_DAYS, shown only when BILLING_ONLINE_ON is on --></li><li>If you do not pay, we tell you in the admin app first. After that, we may switch off the paid features step by step. See <a href="/refund.html">refunds and cancellation</a>, section 6.</li><li>We never delete your data because a payment is late. If you ask us to, we delete your gym's data within 30 days.</li></ul>
 
 <p>For refunds and cancelling, see <a href="/refund.html">refunds and cancellation</a>.</p>
-<p>Last updated: 6 Nov 2026.</p>
+<p>Last updated: [date of publishing].</p>
 </main></body></html>

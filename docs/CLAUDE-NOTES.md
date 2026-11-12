@@ -7,6 +7,14 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-478. Policy pages: final expert check (T80) — 13 Nov 2026
+Checked the 4 drafts (refund, delivery, contact, about) against the code, the E-Commerce Rules 2020, the 2023 dark-pattern
+guidelines, the DPDP Act and Zoho's terms. Fixed in docs/drafts: removed the "founder's phone inside the app" line (no
+such screen exists); Contact gets address + customer-care phone slots ([TO CONFIRM]), Grievance Officer "Founder" and the
+48-hour / one-month complaint timing; switched-off billing features now say "when online payments start" or "we may";
+deletion matches the Terms (30 days on request); AI credits rules from 0071; "Pro for life" defined. Still needs him:
+a business address and a customer-care phone (and whether the WhatsApp number already in the repo is a business line).
+
 ## R-477. Old AI requests are deleted for EVERY gym, every night — 13 Nov 2026 (away work)
 Found while writing the privacy line: 0071 deleted requests older than 400 days only when that same gym saved a new one,
 so a gym that stopped using the AI Assistant kept them forever and the privacy line would be untrue. Added
