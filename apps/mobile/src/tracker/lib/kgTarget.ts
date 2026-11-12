@@ -499,15 +499,14 @@ export function kgBeaten(g: KgProgress): boolean {
  * leads, alone (the sets after it are on their own rows); the running total follows.
  * R-146's "765 kg reached" is retired (owner, 12 Nov 2026: one finished format for every case). PURE.
  */
-export function kgLiveLine(p: KgPlan, g: KgProgress, total: TotalFmt, weight: WeightFmt, doneTotal: TotalFmt = total): string {
+export function kgLiveLine(p: KgPlan, g: KgProgress, total: TotalFmt, weight: WeightFmt): string {
   // Fresh-eyes review (5 Nov 2026): the box already shows a green tick, so no second "✓" in the words.
   // Owner, 12 Nov 2026: every finished line the same way ("1,420 kg done · Previous: 1,420 kg · same as
   // last time"), never "Today's X reached" / "beaten" (R-146's "reached" is retired).
   // Owner, 12 Nov 2026 (`lineGreen`): every set done and at least last time's total is finished too.
-  // Owner, 12 Nov 2026 (R-454 follow-up): the finished line names totals without "each" ("1,800 kg done ·
-  // Previous: 1,720 kg · +80 kg", never "1,800 kg each done ..."); "each" stays on the per-set weight.
-  if (kgBeaten(g) || lineGreen(p, g)) return doneLine(p, g.done, doneTotal, doneTotal, g.noise ?? 0);
-  // Release review: only the number before "of" ("410 of 765 kg each", never "410 kg of 765 kg each").
+  if (kgBeaten(g) || lineGreen(p, g)) return doneLine(p, g.done, total, total, g.noise ?? 0);
+  // Release review: only the number before "of" ("410 of 765 kg", never "410 kg of 765 kg"). Owner, 12 Nov
+  // 2026 (R-454): the workout card's totals never say "each"; "each" stays on the per-set weight.
   const doneN = total(g.done).trim().split(/\s+/)[0];
   // R-300 (owner, 3 Nov 2026): never "add a set" (extra sets cost recovery and sleep); next time aims again.
   if (g.next.length === 0) return `Done: ${doneN} of ${total(p.total)} · ${total(g.left)} short, fine for today`;

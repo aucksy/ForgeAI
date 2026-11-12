@@ -303,18 +303,12 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
       kgPlanned,
       rowsRef.current.map((r) => ({ weightKg: r.set.weightKg, reps: r.set.reps, done: r.set.done, isWarmup: r.set.isWarmup, setType: r.set.setType, hintKg: r.fill?.weightKg, hintReps: r.fill?.reps, eased: r.eased })),
     );
-    const each = weightIsEach(loadMode) ? ' each' : '';
     return {
+      // Owner, 12 Nov 2026 (R-454): totals never say "each" ("Done: 0 of today's 1,800 kg", "1,800 kg done ·
+      // Previous: 1,720 kg · +80 kg"); "each" stays on the per-set weight (KG EACH, "Suggested: 40 kg each").
       text: kgPlanned.reps
         ? repLiveLine(kgPlanned, g)
-        : kgLiveLine(
-            kgPlanned,
-            g,
-            (kg) => `${fmtInt(Math.round(kgToDisplay(kg, units)))} ${weightUnit(units)}${each}`,
-            (kg) => fmtWeight(kg, units),
-            // Owner, 12 Nov 2026: the green finished line has no "each" on its totals.
-            (kg) => `${fmtInt(Math.round(kgToDisplay(kg, units)))} ${weightUnit(units)}`,
-          ),
+        : kgLiveLine(kgPlanned, g, (kg) => `${fmtInt(Math.round(kgToDisplay(kg, units)))} ${weightUnit(units)}`, (kg) => fmtWeight(kg, units)),
       // Owner, 12 Nov 2026: ONE rule for kilos and reps: green once every working set is ticked and the
       // total is at least last time's (more or the same), `lineGreen`.
       beaten: lineGreen(kgPlanned, g),
@@ -613,6 +607,9 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
                 color: kgLine?.beaten ? color.goodText : color.accentBright,
               }}
               numberOfLines={3}
+              // UAT u454: the phone test reads the line's words by this id (a text search missed the
+              // green line on the owner-sized phone although it was on screen).
+              testID={`target-line-${exercise.name}`}
             >
               {kgLine ? kgLine.text : line}
             </Text>

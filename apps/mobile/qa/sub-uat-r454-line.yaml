@@ -1,0 +1,33 @@
+# Sub-flow (runFlow only): read the Target line of exercise EX by its id ("target-line-<name>",
+# ExerciseLogCard) and compare its words EXACTLY with WANT.
+#   - runFlow:
+#       file: sub-uat-r454-line.yaml
+#       env:
+#         EX: "Incline Dumbbell Press"
+#         WANT: "1,800 kg done · Previous: 1,720 kg · +80 kg"
+# Why not sub-find: on the owner-sized phone (360 dp, font 1.3) a text search for the green line missed
+# it in 3 of 4 runs while the screen dump held exactly those words (runs 43210287083, 43219512924,
+# 43237985357). The id never changes with the words, and the words are then compared as plain text.
+# No `env:` default here (trap 22). Both scrolls are optional: copyTextFrom is the real check.
+appId: com.mettleup.app
+---
+- scrollUntilVisible:
+    element:
+      id: "target-line-${EX}"
+    timeout: 15000
+    optional: true
+- runFlow:
+    when:
+      notVisible:
+        id: "target-line-${EX}"
+    commands:
+      - scrollUntilVisible:
+          element:
+            id: "target-line-${EX}"
+          direction: UP
+          timeout: 20000
+          optional: true
+- copyTextFrom:
+    id: "target-line-${EX}"
+- evalScript: "${console.log('target-line ' + EX + ' reads ' + maestro.copiedText)}"
+- assertTrue: ${maestro.copiedText == WANT}
