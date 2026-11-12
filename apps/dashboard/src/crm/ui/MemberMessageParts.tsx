@@ -13,7 +13,10 @@ import * as api from '../shop/memberMessagesApi';
 let count: number | null = null;
 let countKey: string | null = null;
 const listeners = new Set<() => void>();
-let refreshNow: (() => void) | null = null;
+// Every mounted user of the count (the app menu, the More page) leaves its asker here. One shared slot broke the
+// badge: leaving More cleared it while the menu still showed the count, so a reply never lowered the badge (e2e,
+// 12 Nov 2026).
+const askers = new Set<() => void>();
 
 function subscribe(fn: () => void): () => void {
   listeners.add(fn);
@@ -41,7 +44,8 @@ async function readCount(key: string): Promise<void> {
 
 /** Ask again now (after a reply, "done", or Refresh on the page). */
 export function refreshMemberMessageCount(): void {
-  refreshNow?.();
+  const ask = askers.values().next().value;
+  ask?.();
 }
 
 /** Conversations waiting for a reply; null when Member messages is not there (hide the menu item). */
@@ -52,7 +56,7 @@ export function useMemberMessageCount(): number | null {
   useEffect(() => {
     if (!key || api.memberMessagesMissing()) return;
     const run = (): void => void readCount(key);
-    refreshNow = run;
+    askers.add(run);
     run();
     const timer = window.setInterval(() => {
       if (document.visibilityState === 'visible') run();
@@ -64,7 +68,7 @@ export function useMemberMessageCount(): number | null {
     return () => {
       window.clearInterval(timer);
       document.removeEventListener('visibilitychange', onShow);
-      if (refreshNow === run) refreshNow = null;
+      askers.delete(run);
     };
   }, [key]);
   return key ? n : null;

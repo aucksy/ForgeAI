@@ -43,7 +43,10 @@ const countListeners = new Set<() => void>();
 const emit = (): void => {
   for (const fn of [...countListeners]) fn();
 };
-let refreshNow: (() => void) | null = null;
+// Every mounted user of the count (the app menu, the More page) leaves its asker here. One shared slot broke the
+// badge: leaving More cleared it while the menu still showed the count (found by the Member messages e2e,
+// 12 Nov 2026).
+const askers = new Set<() => void>();
 function subscribeCount(fn: () => void): () => void {
   countListeners.add(fn);
   return () => {
@@ -68,7 +71,8 @@ async function readCount(key: string): Promise<void> {
 
 /** Ask again now (after a reply, or Refresh on the page). */
 export function refreshQuestionCount(): void {
-  refreshNow?.();
+  const ask = askers.values().next().value;
+  ask?.();
 }
 
 /** Waiting questions for the signed-in person; null when Questions is not there for them (hide the menu item). */
@@ -78,7 +82,7 @@ export function useQuestionCount(enabled: boolean): number | null {
   useEffect(() => {
     if (!enabled || !key || questionsApi.questionsMissing()) return;
     const run = (): void => void readCount(key);
-    refreshNow = run;
+    askers.add(run);
     run();
     const timer = window.setInterval(() => {
       if (document.visibilityState === 'visible') run();
@@ -90,7 +94,7 @@ export function useQuestionCount(enabled: boolean): number | null {
     return () => {
       window.clearInterval(timer);
       document.removeEventListener('visibilitychange', onShow);
-      if (refreshNow === run) refreshNow = null;
+      askers.delete(run);
     };
   }, [enabled, key]);
   return enabled ? n : null;
