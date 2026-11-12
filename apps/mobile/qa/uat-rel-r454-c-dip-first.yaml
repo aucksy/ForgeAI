@@ -99,6 +99,6 @@ appId: com.mettleup.app
     file: sub-find.yaml
     env:
       FIND: "^Target First time · find a weight for \\d+–\\d+ reps\\. Tap for why\\.$"
-- assertNotVisible: "^240 kg done.*"
+- assertNotVisible: "^240 kg( each)? done.*"
 - takeScreenshot: rel-r454-n-first-time-after
 - runFlow: sub-uat-r439-finish.yaml
