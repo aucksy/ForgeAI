@@ -274,7 +274,12 @@ appId: com.mettleup.app
 # 'Hear "Rest is over" on time'. The ask with it denied: qa-conditions.yml condition 6 (xc-6-ask-rest).
 - assertNotVisible: 'Hear "Rest is over" on time'
 - assertVisible: "Skip rest"
-- tapOn: "Skip rest"
+- tapOn:
+    text: "Skip rest"
+    # Maestro waits for a still screen BEFORE it taps, then taps where the button was. The rest
+    # countdown never goes still, so it waited ~6 s and the rest could end first: the tap then hit
+    # the next exercise's menu (owner phone, run 43219573265, phase1-a). Tap at once instead.
+    waitToSettleTimeoutMs: 300
 - tapOn:
     text: '.* set 2 weight, kilograms'
     index: 0

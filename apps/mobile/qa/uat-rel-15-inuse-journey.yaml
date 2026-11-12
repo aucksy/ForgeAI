@@ -362,7 +362,12 @@ appId: com.mettleup.app
     env:
       FIND: '^Tap to show In use$'
 - takeScreenshot: rel-345-13-untick-retick-bar
-- tapOn: "Skip rest"
+- tapOn:
+    text: "Skip rest"
+    # Maestro waits for a still screen BEFORE it taps, then taps where the button was. The rest
+    # countdown never goes still, so it waited ~6 s and the rest could end first: the tap then hit
+    # the next exercise's menu (owner phone, run 43219573265, phase1-a). Tap at once instead.
+    waitToSettleTimeoutMs: 300
 - extendedWaitUntil:
     notVisible: "Skip rest"
     timeout: 5000
@@ -445,7 +450,12 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     notVisible: '.*[Ii]n use\. .*Back in .*'
     timeout: 5000
-- tapOn: "Skip rest"
+- tapOn:
+    text: "Skip rest"
+    # Maestro waits for a still screen BEFORE it taps, then taps where the button was. The rest
+    # countdown never goes still, so it waited ~6 s and the rest could end first: the tap then hit
+    # the next exercise's menu (owner phone, run 43219573265, phase1-a). Tap at once instead.
+    waitToSettleTimeoutMs: 300
 # ---------------------------------------------------------------- R-364 edge: a long name on a cable
 # "Single-Arm Overhead Cable Extension" (35 letters, cable: In use opens by itself) at this phone's
 # size: the name, the Next line, the clock and the tick strip all fit.
@@ -502,4 +512,9 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     notVisible: '.*[Ii]n use\. .*Back in .*'
     timeout: 5000
-- tapOn: "Skip rest"
+- tapOn:
+    text: "Skip rest"
+    # Maestro waits for a still screen BEFORE it taps, then taps where the button was. The rest
+    # countdown never goes still, so it waited ~6 s and the rest could end first: the tap then hit
+    # the next exercise's menu (owner phone, run 43219573265, phase1-a). Tap at once instead.
+    waitToSettleTimeoutMs: 300

@@ -33,7 +33,12 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Skip rest"
     timeout: 5000
-- tapOn: "Skip rest"
+- tapOn:
+    text: "Skip rest"
+    # Maestro waits for a still screen BEFORE it taps, then taps where the button was. The rest
+    # countdown never goes still, so it waited ~6 s and the rest could end first: the tap then hit
+    # the next exercise's menu (owner phone, run 43219573265, phase1-a). Tap at once instead.
+    waitToSettleTimeoutMs: 300
 # ---------------------------------------------------------------- set 1 with RPE 8
 - scrollUntilVisible:
     element: 'Add RPE for .*Bench Press set 1'
@@ -62,7 +67,12 @@ appId: com.mettleup.app
     timeout: 5000
 - assertVisible: '.*Bench Press set 1 complete\. Tap to undo'
 - takeScreenshot: w-33-set-1-rpe-ticked
-- tapOn: "Skip rest"
+- tapOn:
+    text: "Skip rest"
+    # Maestro waits for a still screen BEFORE it taps, then taps where the button was. The rest
+    # countdown never goes still, so it waited ~6 s and the rest could end first: the tap then hit
+    # the next exercise's menu (owner phone, run 43219573265, phase1-a). Tap at once instead.
+    waitToSettleTimeoutMs: 300
 # ---------------------------------------------------------------- set 2 as a drop set
 - tapOn:
     text: '.*Bench Press set 2\. Change set type'
@@ -107,7 +117,12 @@ appId: com.mettleup.app
     visible: "Skip rest"
     timeout: 5000
 - takeScreenshot: w-34-drop-set-rest
-- tapOn: "Skip rest"
+- tapOn:
+    text: "Skip rest"
+    # Maestro waits for a still screen BEFORE it taps, then taps where the button was. The rest
+    # countdown never goes still, so it waited ~6 s and the rest could end first: the tap then hit
+    # the next exercise's menu (owner phone, run 43219573265, phase1-a). Tap at once instead.
+    waitToSettleTimeoutMs: 300
 # ---------------------------------------------------------------- set 3: lighter, more reps
 - scrollUntilVisible:
     element: '.*Bench Press set 3 weight, kilograms'
@@ -137,7 +152,12 @@ appId: com.mettleup.app
 - assertNotVisible: "New record.*"
 - assertNotVisible: ".*Most reps.*"
 - takeScreenshot: w-35-lighter-set-no-record
-- tapOn: "Skip rest"
+- tapOn:
+    text: "Skip rest"
+    # Maestro waits for a still screen BEFORE it taps, then taps where the button was. The rest
+    # countdown never goes still, so it waited ~6 s and the rest could end first: the tap then hit
+    # the next exercise's menu (owner phone, run 43219573265, phase1-a). Tap at once instead.
+    waitToSettleTimeoutMs: 300
 # ---------------------------------------------------------------- set 4: heavier than ever
 - scrollUntilVisible:
     element: "Add set"
