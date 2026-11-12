@@ -71,10 +71,12 @@ export function MachineInUse({
       {/* R-456 (owner, 12 Nov 2026: "going away if you simply tap anywhere on the screen. That should only go
           away if someone taps on I am back"; first reported R-345): the screen itself is no longer a button.
           A tap on it, or on the strip round the tick, does nothing; only "I'm back", the end of the rest and
-          the phone's Back close it. It scrolls when a big text size makes it taller than the phone. */}
+          the phone's Back close it. The column scrolls when a big text size makes it taller than the phone;
+          "I'm back" sits in the fixed foot below it, so it is always on screen (UAT run 43187431184: at 360 dp
+          it had slid below the tick strip). */}
       <ScrollView
         style={{ flex: 1, backgroundColor: color.bg }}
-        contentContainerStyle={{ flexGrow: 1, alignItems: 'center', justifyContent: 'center', padding: space.xl, paddingTop: insets.top + space.md, gap: space.lg }}
+        contentContainerStyle={{ flexGrow: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: space.xl, paddingTop: insets.top + space.md, paddingBottom: space.md, gap: space.md }}
         bounces={false}
         overScrollMode="never"
       >
@@ -86,14 +88,14 @@ export function MachineInUse({
           accessibilityRole="header"
           accessibilityLabel={inUseScreenLabel(kit, previous, next, remaining)}
           testID="in-use-sign"
-          style={{ alignSelf: 'stretch', alignItems: 'center', borderWidth: 6, borderColor: color.accent, borderRadius: radius.xl, paddingVertical: kit ? space.md : space.lg, paddingHorizontal: space.lg }}
+          style={{ alignSelf: 'stretch', alignItems: 'center', borderWidth: 6, borderColor: color.accent, borderRadius: radius.xl, paddingVertical: kit ? space.sm : space.lg, paddingHorizontal: space.lg }}
         >
           {kit ? (
             <Text
               numberOfLines={1}
               adjustsFontSizeToFit
               maxFontSizeMultiplier={1}
-              style={{ fontFamily: type.display, fontSize: 64, lineHeight: 72, color: color.accent, letterSpacing: 2, textAlign: 'center' }}
+              style={{ fontFamily: type.display, fontSize: 60, lineHeight: 64, color: color.accent, letterSpacing: 2, textAlign: 'center' }}
             >
               {kit.toUpperCase()}
             </Text>
@@ -102,7 +104,7 @@ export function MachineInUse({
             numberOfLines={1}
             adjustsFontSizeToFit
             maxFontSizeMultiplier={1}
-            style={{ fontFamily: type.display, fontSize: 96, lineHeight: 104, color: color.accent, letterSpacing: 2, textAlign: 'center' }}
+            style={{ fontFamily: type.display, fontSize: 96, lineHeight: kit ? 98 : 104, color: color.accent, letterSpacing: 2, textAlign: 'center' }}
           >
             {IN_USE_WORDS.title}
           </Text>
@@ -132,12 +134,17 @@ export function MachineInUse({
             numberOfLines={1}
             adjustsFontSizeToFit
             maxFontSizeMultiplier={1}
-            style={{ fontFamily: type.monoBold, fontSize: 120, lineHeight: 132, color: color.ink, fontVariant: ['tabular-nums'] }}
+            style={{ fontFamily: type.monoBold, fontSize: 108, lineHeight: 116, color: color.ink, fontVariant: ['tabular-nums'] }}
           >
             {clock}
           </Text>
         </View>
-        {/* R-456: the one close button. A real button with its own name for TalkBack / VoiceOver, wide and tall
+        <View style={{ opacity: 0.85 }}>
+          <MettleUpLogo height={22} />
+        </View>
+      </ScrollView>
+      <View style={{ backgroundColor: color.bg, alignItems: 'center', paddingTop: space.sm, paddingBottom: exercise ? space.md : Math.max(insets.bottom, space.md) + space.md }}>
+        {/* R-456: the one close button, in the foot under the column (never scrolled away). A real button with its own name for TalkBack / VoiceOver, wide and tall
             enough to hit without looking, with a little extra room round it (hitSlop). */}
         <Pressable
           onPress={onClose}
@@ -145,7 +152,6 @@ export function MachineInUse({
           accessibilityLabel={IN_USE_WORDS.close}
           hitSlop={space.sm}
           style={({ pressed }) => ({
-            marginTop: space.md,
             minHeight: 56,
             minWidth: 200,
             paddingHorizontal: space.xl,
@@ -159,10 +165,7 @@ export function MachineInUse({
         >
           <Text maxFontSizeMultiplier={TEXT_MAX} style={{ fontFamily: type.bodySemi, fontSize: type.size.body + 2, color: color.ink }}>{IN_USE_WORDS.close}</Text>
         </Pressable>
-        <View style={{ opacity: 0.85 }}>
-          <MettleUpLogo height={22} />
-        </View>
-      </ScrollView>
+      </View>
       {/* R-345 (owner, 5 Nov 2026): the tick lives in its own strip at the foot, apart from "I'm back"
           (a line and a gap between them). R-456 (12 Nov 2026): a tap in the strip round the tick no longer
           closes the screen either; a tap on the tick only flips the tick. */}
@@ -173,8 +176,8 @@ export function MachineInUse({
             alignItems: 'center',
             borderTopWidth: 1,
             borderTopColor: color.border,
-            paddingTop: space.lg,
-            paddingBottom: Math.max(insets.bottom, space.md) + space.md,
+            paddingTop: space.sm,
+            paddingBottom: Math.max(insets.bottom, space.md) + space.sm,
           }}
         >
           <AutoTick exercise={exercise} />
