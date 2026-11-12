@@ -28,15 +28,15 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: "^Next set: 40 kg × 13 · Done: 0 of today's 1,800 kg$"
+      FIND: "^Next set: 40 kg × 13 · Done: 0 of today's 1,800 kg each$"
 - assertNotVisible: ".*1,760 kg.*"
 - assertNotVisible: "^Next set: 40 kg × 12 · .*"
 - takeScreenshot: rel-r454-b-incline-before
-- tapOn: "^Next set: 40 kg × 13 · Done: 0 of today's 1,800 kg$"
+- tapOn: "^Next set: 40 kg × 13 · Done: 0 of today's 1,800 kg each$"
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: "^Suggested: 40 kg · 13, 12, 11, 9$"
+      FIND: "^Suggested: 40 kg each · 13, 12, 11, 9( · RPE [0-9.]+)?( · Up)?$"
 - takeScreenshot: rel-r454-c-incline-why
 - runFlow:
     file: sub-uat-r454-hint.yaml
@@ -63,7 +63,7 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: "^Next set: 40 kg × 9 · Done: 1,440 of today's 1,800 kg$"
+      FIND: "^Next set: 40 kg × 9 · Done: 1,440 of today's 1,800 kg each$"
 - takeScreenshot: rel-r454-d-incline-set-4-next
 - runFlow:
     file: sub-uat-r454-hint.yaml
@@ -75,7 +75,7 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: '^1,800 kg done · Previous: 1,720 kg · \+80 kg$'
+      FIND: '^1,800 kg each done · Previous: 1,720 kg each · \+80 kg each$'
 - assertNotVisible: "(?i).*(reached|beaten).*"
 - takeScreenshot: rel-r454-e-incline-done
 # ---------------------------------------------------------------- (b) Lateral Raise: set 1 at 20 kg, the rest follow 20 kg
@@ -86,7 +86,7 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: "^Next set: [0-9.]+ kg × [0-9]+ · Done: 0 of today's 1,420 kg$"
+      FIND: "^Next set: 22\.5 kg × 15 · Done: 0 of today's 1,420 kg each$"
 - takeScreenshot: rel-r454-f-lateral-before
 - runFlow:
     file: sub-uat-r439-set.yaml
@@ -98,7 +98,7 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: "^Next set: 20 kg × 17 · Done: 400 of today's 1,420 kg$"
+      FIND: "^Next set: 20 kg × 17 · Done: 400 of today's 1,420 kg each$"
 - assertNotVisible: "^Next set: 20 kg × 15 · .*"
 - assertNotVisible: ".* × 13 · Done: 400 of .*"
 - takeScreenshot: rel-r454-g-lateral-after-set-1
@@ -112,7 +112,7 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: "^Next set: 20 kg × 15 · Done: 740 of today's 1,420 kg$"
+      FIND: "^Next set: 20 kg × 15 · Done: 740 of today's 1,420 kg each$"
 - runFlow:
     file: sub-uat-r454-hint.yaml
     env:
@@ -123,7 +123,7 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: "^Next set: 20 kg × 19 · Done: 1,040 of today's 1,420 kg$"
+      FIND: "^Next set: 20 kg × 19 · Done: 1,040 of today's 1,420 kg each$"
 - runFlow:
     file: sub-uat-r454-hint.yaml
     env:
@@ -135,7 +135,7 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: "^1,420 kg done · Previous: 1,420 kg · same as last time$"
+      FIND: "^1,420 kg each done · Previous: 1,420 kg each · same as last time$"
 - assertNotVisible: "(?i).*(reached|beaten).*"
 - takeScreenshot: rel-r454-h-lateral-same
 # Edit after the tick: 20, 19, 16, 16 is 1,420 kg too (his own day).
@@ -165,6 +165,6 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: "^1,420 kg done · Previous: 1,420 kg · same as last time$"
+      FIND: "^1,420 kg each done · Previous: 1,420 kg each · same as last time$"
 - assertNotVisible: "(?i).*(reached|beaten).*"
 - takeScreenshot: rel-r454-i-lateral-edited-same
