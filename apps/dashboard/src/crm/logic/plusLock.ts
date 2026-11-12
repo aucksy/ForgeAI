@@ -8,7 +8,16 @@
  * GYM_UNLOCK_GRACE_DAYS, GYM_LOCK_AFTER_END_DEFAULT) and the server (supabase/migrations/0070_member_plus_lock.sql).
  */
 
-import { GYM_LOCK_AFTER_END_DEFAULT, GYM_UNLOCK_GRACE_DAYS } from '@forgeai/theme';
+import { GYM_LOCK_AFTER_END_DEFAULT, GYM_UNLOCK_GRACE_DAYS, MEMBER_PLAN_GATE_ON } from '@forgeai/theme';
+
+/**
+ * Is the owner's card shown at all? Only once MettleUp Plus is switched on for members (the one shared switch,
+ * MEMBER_PLAN_GATE_ON, flipped at "payments live"): before that, members have no paid features to lock, so a switch
+ * for them would only confuse the owner (coordinator, 12 Nov 2026, after 0070 went live). PURE.
+ */
+export function plusLockCardShown(planSwitchedOn: boolean = MEMBER_PLAN_GATE_ON): boolean {
+  return planSwitchedOn === true;
+}
 
 export interface PlusLock {
   /** ON = the paid extras lock 7 days after a member's plan ends. */

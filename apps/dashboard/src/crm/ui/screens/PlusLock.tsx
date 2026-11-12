@@ -11,7 +11,7 @@ import { useEffect, useState } from 'react';
 
 import { useAuth } from '../../auth/AuthProvider';
 import { dateISOFromEpoch, formatDay } from '../../logic/dates';
-import { PLUS_LOCK_WORDS, plusLockChangedLine, type PlusLock } from '../../logic/plusLock';
+import { PLUS_LOCK_WORDS, plusLockCardShown, plusLockChangedLine, type PlusLock } from '../../logic/plusLock';
 import * as plusLockApi from '../../shop/plusLockApi';
 import { errorWords } from '../../shop/logic';
 import { Button, Card, CheckField, ErrorBanner, SectionTitle, Toast, color, font, space } from '../kit';
@@ -23,6 +23,8 @@ const dayOf = (ms: number) => formatDay(dateISOFromEpoch(ms));
 
 export function PlusLockCard() {
   const { session } = useAuth();
+  // Hidden, with no server call, until MettleUp Plus is switched on for members (the shared switch).
+  const switchedOn = plusLockCardShown();
   const key = session?.online ? (session.ownerKey ?? null) : null;
   const [saved, setSaved] = useState<PlusLock | null>(null);
   const [on, setOn] = useState(true);
@@ -31,7 +33,7 @@ export function PlusLockCard() {
   const [toast, setToast] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!key || plusLockApi.plusLockServer() === 'no') return;
+    if (!switchedOn || !key || plusLockApi.plusLockServer() === 'no') return;
     let live = true;
     plusLockApi
       .getPlusLock(key)
@@ -44,7 +46,7 @@ export function PlusLockCard() {
     return () => {
       live = false;
     };
-  }, [key]);
+  }, [key, switchedOn]);
 
   useEffect(() => {
     if (!toast) return;
@@ -52,7 +54,7 @@ export function PlusLockCard() {
     return () => window.clearTimeout(t);
   }, [toast]);
 
-  if (!key || !saved) return null;
+  if (!switchedOn || !key || !saved) return null;
   const W = PLUS_LOCK_WORDS;
   const changedLine = plusLockChangedLine(saved, dayOf);
 

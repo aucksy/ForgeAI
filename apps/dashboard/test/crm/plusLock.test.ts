@@ -8,8 +8,8 @@ const callMock = vi.fn();
 vi.mock('../../src/crm/shop/api', () => ({ call: (...a: unknown[]) => callMock(...a) }));
 vi.mock('../../src/lib/demoLock', () => ({ isDemoLocked: () => false }));
 
-import { GYM_LOCK_AFTER_END_DEFAULT, GYM_UNLOCK_GRACE_DAYS } from '@forgeai/theme';
-import { PLUS_LOCK_WORDS, plusLockChangedLine, plusLockFrom } from '../../src/crm/logic/plusLock';
+import { GYM_LOCK_AFTER_END_DEFAULT, GYM_UNLOCK_GRACE_DAYS, MEMBER_PLAN_GATE_ON } from '@forgeai/theme';
+import { PLUS_LOCK_WORDS, plusLockCardShown, plusLockChangedLine, plusLockFrom } from '../../src/crm/logic/plusLock';
 import { getPlusLock, plusLockServer, resetPlusLockServerForTest, savePlusLock } from '../../src/crm/shop/plusLockApi';
 
 beforeEach(() => {
@@ -17,6 +17,14 @@ beforeEach(() => {
   resetPlusLockServerForTest();
 });
 afterEach(() => vi.restoreAllMocks());
+
+describe('the card is hidden until MettleUp Plus is switched on for members', () => {
+  it('follows the one shared switch (off today: hidden, even with 0070 live)', () => {
+    expect(plusLockCardShown()).toBe(MEMBER_PLAN_GATE_ON);
+    expect(plusLockCardShown(false)).toBe(false);
+    expect(plusLockCardShown(true)).toBe(true);
+  });
+});
 
 describe('plusLockFrom', () => {
   it('reads a full answer', () => {
