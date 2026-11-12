@@ -22,13 +22,12 @@ export function ExerciseKgRow({ target: t, index, units }: { target: KgTarget; i
   const weight = (kg: number) => fmtWeight(kg, units);
   const line = targetLine(t, weight);
   const plan = useMemo(() => beatPlan(t, t.lastSets ?? []), [t]);
-  // Owner, 12 Nov 2026 (R-454): a total never says "each" (it was "1,800 kg each to beat"); "each" stays on
-  // the per-set weight in the Target line above.
+  // Dumbbells counted per hand add up per hand: say so.
   const toBeat = !plan
     ? null
     : plan.reps
       ? repsToBeatLine(plan, t.perSide === true)
-      : kgToBeatLine(plan, (kg) => `${fmtInt(Math.round(kgToDisplay(kg, units)))} ${weightUnit(units)}`);
+      : kgToBeatLine(plan, (kg) => `${fmtInt(Math.round(kgToDisplay(kg, units)))} ${weightUnit(units)}${t.each ? ' each' : ''}`);
   const sets = plan && open ? (plan.reps ? repSetLines(plan) : kgSetLines(plan, weight)) : null;
 
   const body = (

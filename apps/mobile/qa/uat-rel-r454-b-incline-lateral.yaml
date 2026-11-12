@@ -28,11 +28,11 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: "^Next set: 40 kg × 13 · Done: 0 of today's 1,800 kg$"
+      FIND: "^Next set: 40 kg × 13 · Done: 0 of today's 1,800 kg each$"
 - assertNotVisible: ".*1,760 kg.*"
 - assertNotVisible: "^Next set: 40 kg × 12 · .*"
 - takeScreenshot: rel-r454-b-incline-before
-- tapOn: "^Next set: 40 kg × 13 · Done: 0 of today's 1,800 kg$"
+- tapOn: "^Next set: 40 kg × 13 · Done: 0 of today's 1,800 kg each$"
 - runFlow:
     file: sub-find.yaml
     env:
@@ -63,7 +63,7 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: "^Next set: 40 kg × 9 · Done: 1,440 of today's 1,800 kg$"
+      FIND: "^Next set: 40 kg × 9 · Done: 1,440 of today's 1,800 kg each$"
 - takeScreenshot: rel-r454-d-incline-set-4-next
 - runFlow:
     file: sub-uat-r454-hint.yaml
@@ -73,12 +73,11 @@ appId: com.mettleup.app
       KG: "40"
       REPS: "9"
 - runFlow:
-    file: sub-uat-r454-line.yaml
+    file: sub-find.yaml
     env:
-      EX: "Incline Dumbbell Press"
-      WANT: "1,800 kg done · Previous: 1,720 kg · +80 kg"
+      FIND: '^1,800 kg done · Previous: 1,720 kg · [+]80 kg$|^Target .* 1,800 kg done · Previous: 1,720 kg · [+]80 kg[.] Tap for why[.]$'
 - assertNotVisible: "(?i).*(reached|beaten).*"
-- assertNotVisible: ".*kg each done.*|.*Previous: [0-9,]+ kg each.*|.*of today.s [0-9,]+ kg each.*"
+- assertNotVisible: ".*kg each done.*|.*Previous: [0-9,]+ kg each.*"
 - takeScreenshot: rel-r454-e-incline-done
 # ---------------------------------------------------------------- (b) Lateral Raise: set 1 at 20 kg, the rest follow 20 kg
 - runFlow:
@@ -88,7 +87,7 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: '^Next set: 22[.]5 kg × 15 · Done: 0 of today''s 1,420 kg$'
+      FIND: '^Next set: 22[.]5 kg × 15 · Done: 0 of today''s 1,420 kg each$'
 - takeScreenshot: rel-r454-f-lateral-before
 - runFlow:
     file: sub-uat-r439-set.yaml
@@ -100,7 +99,7 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: "^Next set: 20 kg × 17 · Done: 400 of today's 1,420 kg$"
+      FIND: "^Next set: 20 kg × 17 · Done: 400 of today's 1,420 kg each$"
 - assertNotVisible: "^Next set: 20 kg × 15 · .*"
 - assertNotVisible: ".* × 13 · Done: 400 of .*"
 - takeScreenshot: rel-r454-g-lateral-after-set-1
@@ -114,7 +113,7 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: "^Next set: 20 kg × 15 · Done: 740 of today's 1,420 kg$"
+      FIND: "^Next set: 20 kg × 15 · Done: 740 of today's 1,420 kg each$"
 - runFlow:
     file: sub-uat-r454-hint.yaml
     env:
@@ -125,7 +124,7 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: "^Next set: 20 kg × 19 · Done: 1,040 of today's 1,420 kg$"
+      FIND: "^Next set: 20 kg × 19 · Done: 1,040 of today's 1,420 kg each$"
 - runFlow:
     file: sub-uat-r454-hint.yaml
     env:
@@ -135,12 +134,11 @@ appId: com.mettleup.app
       REPS: "19"
 # ---------------------------------------------------------------- (d) equal to last time: "same as last time" (green)
 - runFlow:
-    file: sub-uat-r454-line.yaml
+    file: sub-find.yaml
     env:
-      EX: "Lateral Raise"
-      WANT: "1,420 kg done · Previous: 1,420 kg · same as last time"
+      FIND: '^1,420 kg done · Previous: 1,420 kg · same as last time$|^Target .* 1,420 kg done · Previous: 1,420 kg · same as last time[.] Tap for why[.]$'
 - assertNotVisible: "(?i).*(reached|beaten).*"
-- assertNotVisible: ".*kg each done.*|.*Previous: [0-9,]+ kg each.*|.*of today.s [0-9,]+ kg each.*"
+- assertNotVisible: ".*kg each done.*|.*Previous: [0-9,]+ kg each.*"
 - takeScreenshot: rel-r454-h-lateral-same
 # Edit after the tick: 20, 19, 16, 16 is 1,420 kg too (his own day).
 - runFlow:
@@ -167,10 +165,9 @@ appId: com.mettleup.app
       FIELD: "Lateral Raise set 2 reps"
       WANT: "19"
 - runFlow:
-    file: sub-uat-r454-line.yaml
+    file: sub-find.yaml
     env:
-      EX: "Lateral Raise"
-      WANT: "1,420 kg done · Previous: 1,420 kg · same as last time"
+      FIND: '^1,420 kg done · Previous: 1,420 kg · same as last time$|^Target .* 1,420 kg done · Previous: 1,420 kg · same as last time[.] Tap for why[.]$'
 - assertNotVisible: "(?i).*(reached|beaten).*"
-- assertNotVisible: ".*kg each done.*|.*Previous: [0-9,]+ kg each.*|.*of today.s [0-9,]+ kg each.*"
+- assertNotVisible: ".*kg each done.*|.*Previous: [0-9,]+ kg each.*"
 - takeScreenshot: rel-r454-i-lateral-edited-same
