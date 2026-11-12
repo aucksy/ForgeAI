@@ -7,6 +7,11 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-479. Website: no receipt promise while receipts are off — 13 Nov 2026 (away work)
+Found by the T80 policy check: the price note and the FAQ said "get a receipt" for a UPI or bank payment, but the
+receipt screen and HQ billing are off (BILLING_ONLINE_ON false, deploy/hq/billing.js not set up). Both lines now say
+"We confirm the payment and your plan starts." (Hindi too). Not live: goes with the panel deploy batch (his yes).
+
 ## R-478. Policy pages: final expert check (T80) — 13 Nov 2026
 Checked the 4 drafts (refund, delivery, contact, about) against the code, the E-Commerce Rules 2020, the 2023 dark-pattern
 guidelines, the DPDP Act and Zoho's terms. Fixed in docs/drafts: removed the "founder's phone inside the app" line (no
