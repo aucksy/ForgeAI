@@ -1,4 +1,7 @@
--- NOT APPLIED. Needs the owner's yes (a live server change). Re-runnable. Apply after 0061 (it uses 0061's
+-- APPLIED LIVE 12 Nov 2026 (owner, 12 Nov: "Yes to GYM server change"), in the SQL Editor, this exact text from
+-- 0d5ab334 (sha256 197543435807cbbf, checked in the browser). Read-only check after: 2 functions, the column, the table
+-- and the index exist. The live run of supabase/tests/0068 was not done (stopped by a safety check); CI runs it.
+-- Was: NOT APPLIED. Needs the owner's yes (a live server change). Re-runnable. Apply after 0061 (it uses 0061's
 -- _phone_proof and phone_proofs_used) and after 0055 (it uses _checkin_plan_ok as 0055 left it).
 -- Test: supabase/tests/0068_member_find_gym.sql (CI runs it after every migration; pasted into the SQL Editor it
 -- always ends in an error and so changes nothing).
