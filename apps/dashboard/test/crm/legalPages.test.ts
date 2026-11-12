@@ -80,6 +80,25 @@ describe('R-76: the join screen’s legal links open real pages, never the admin
     expect(readFileSync(pub('privacy.html'), 'utf8').replace(/\r\n/g, '\n')).toContain(line);
   });
 
+  // F56 (owner, 12 Nov 2026: "Both yes"): Find my gym and Tell my gym, word for word, in section 4B next to how a
+  // member joins a gym, on the published page too.
+  it('F56: the privacy notice explains Find my gym and Tell my gym, word for word', () => {
+    const lines = [
+      'Find my gym: if you check your mobile number in the app, we look for it on the member lists of gyms that use MettleUp, only to show you your own gym. The number is checked once and is not kept for this.',
+      "Tell my gym: if you type your gym's name and city, we keep only those two, so our team can contact that gym. We never share your number.",
+    ];
+    const body = src('privacy.body.html');
+    const page = readFileSync(pub('privacy.html'), 'utf8').replace(/\r\n/g, '\n');
+    const b = body.indexOf('<h3>B. If you join a gym</h3>');
+    const c = body.indexOf('<h3>C. ');
+    for (const line of lines) {
+      expect(body, line).toContain(line);
+      expect(body.indexOf(line), line).toBeGreaterThan(b);
+      expect(body.indexOf(line), line).toBeLessThan(c);
+      expect(page, line).toContain(line);
+    }
+  });
+
   it('the panel’s offline worker never keeps them as its own page', () => {
     const sw = readFileSync(pub('sw.js'), 'utf8');
     const src = /const SKIP = (\/.+\/);/.exec(sw)?.[1];
