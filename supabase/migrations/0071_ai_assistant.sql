@@ -1,7 +1,7 @@
 -- NOT APPLIED — needs the owner's yes ("No LIVE database change without my yes"). Paste into the Supabase SQL Editor
 -- after 0070. Re-runnable. Test: supabase/tests/0071_ai_assistant.sql (CI runs it after every migration; pasted into
 -- the SQL Editor it always ends in an error and so changes nothing).
--- The admin app works without it: it asks owner_ai_wallet once, gets "no such function", and hides the AI assistant.
+-- The admin app works without it: it asks owner_ai_wallet once, gets "no such function", and hides the AI Assistant.
 --
 -- 0071: F201, the MettleUp AI assistant for gym owners, paid with AI credits (docs/f201-ai-assistant/03-design.md
 -- sections 3, 4, 7; owner 12 Nov 2026: "let people recharge their credits... even the BasicPlan users or the ProPlan
@@ -9,11 +9,14 @@
 --
 -- CREDITS. Asking, voice, rewrites and drafts are free. A credit is spent only when a task is DONE (a message sent, a
 -- member / payment / enquiry / expense saved = 1 credit; a workout or diet plan saved = 3). The balance is ONE number.
---   welcome   30 credits once per gym (the first time the owner opens the assistant).
---   monthly   every India month: Starter 20; Pro, the free trial, founding and legacy 'ai' gyms 60. Added the first
---             time the wallet is read that month. NOT carried over: when the next month's free credits are added,
---             what is left of the last month's free ones goes ('expire' row). Free credits are counted as used first,
---             so "left" = that month's free credits minus that month's spends (never below 0, never above the balance).
+-- Free credits (owner 12 Nov 2026, R-470, 03-design.md section 3):
+--   welcome   20 starter credits once per gym (the first time the owner opens the assistant), trial or not.
+--   monthly   100 every India month ONLY for a paid yearly plan or a founding lifetime gym (_ai_monthly_free:
+--             billing 'yearly' with paid_until > now(), or billing 'lifetime', whose paid_until is null = for ever).
+--             The trial and monthly plans get none (packs only). Added the first time the wallet is read that month.
+--             NOT carried over: when a new month starts, what is left of the last month's free ones goes ('expire'
+--             row), whether or not the gym still gets free credits. Free credits are counted as used first, so
+--             "left" = that month's free credits minus that month's spends (never below 0, never above the balance).
 --   purchase  a pack (Rs 149 = 50, Rs 399 = 150, Rs 999 = 500; never expire), added by HQ after the payment shows.
 --   grant     HQ adds (or takes back) credits by hand, with a note.
 --   spend     a task done (-1 or -3). One spend per task, ever.
@@ -23,8 +26,11 @@
 --   gym_ai_tasks                      every request the owner made: text (<= 600), spoken?, the actions the AI picked,
 --                                     status drafted | done | cancelled | failed, credits, result. Kept 400 days.
 --   gym_ai_credit_ledger              every credit in and out (kept: it is money).
---   owner_ai_wallet(key)              {ok, balance, free_left, monthly_free, plan, month, low_at, packs[], recent[]}.
---                                     Adds the welcome and this month's free credits first (idempotent).
+--   owner_ai_wallet(key)              {ok, balance, free_left, monthly_free (100 or 0), plan, billing, trial, month,
+--                                     low_at, packs[], recent[]}. Adds the welcome and this month's free credits first
+--                                     (idempotent).
+--   owner_ai_status(key)              {ok, paid, trial}: for the panel worker's fair use (a trial or unpaid gym gets 20
+--                                     AI requests a day, a paid one 50). Reads only.
 --   owner_ai_task_save(key, id, request, spoken, actions)
 --                                     {ok, id, status}. Saves (or re-saves) a drafted task. No charge.
 --                                     INVALID, NOT_FOUND (the id is another gym's), ALREADY_DONE, TOO_MANY (300 a day).
@@ -46,10 +52,12 @@
 -- CHANGED: nothing that exists.
 -- Undo: drop function public.owner_ai_wallet(text); drop function public.owner_ai_task_save(text, uuid, text, boolean,
 --   jsonb); drop function public.owner_ai_spend(text, uuid, int, jsonb); drop function public.owner_ai_refund(text, uuid);
---   drop function public.owner_ai_tasks(text, int); drop function public.hq_ai_grant(text, uuid, int, text, text);
+--   drop function public.owner_ai_tasks(text, int); drop function public.owner_ai_status(text);
+--   drop function public.hq_ai_grant(text, uuid, int, text, text);
 --   drop function public.hq_ai_wallet(text, uuid); drop function public._ai_add_free(uuid);
 --   drop function public._ai_wallet_json(uuid); drop function public._ai_balance(uuid);
---   drop function public._ai_month_spent(uuid, text); drop function public._ai_monthly_free(text);
+--   drop function public._ai_month_spent(uuid, text); drop function public._ai_monthly_free(uuid);
+--   drop function public._ai_paid(uuid); drop function public._ai_trial(uuid);
 --   drop function public._ai_month(); drop function public._ai_plan(uuid);
 --   drop table public.gym_ai_credit_ledger; drop table public.gym_ai_tasks;
 
@@ -108,10 +116,27 @@ create or replace function public._ai_plan(p_gym uuid) returns text
   select coalesce((select g.plan from public.gyms g where g.gym_id = p_gym), 'trial')
 $$;
 
--- Free credits a month: Starter 20; everything else (Pro, trial, founding = Pro for life, legacy 'ai') 60.
-create or replace function public._ai_monthly_free(p_plan text) returns int
-  language sql immutable set search_path = public as $$
-  select case when p_plan = 'starter' then 20 else 60 end
+-- Paid now: a lifetime gym (founding), or paid_until still ahead (a monthly or yearly plan).
+create or replace function public._ai_paid(p_gym uuid) returns boolean
+  language sql stable security definer set search_path = public as $$
+  select coalesce((select g.billing = 'lifetime' or coalesce(g.paid_until > now(), false)
+                     from public.gyms g where g.gym_id = p_gym), false)
+$$;
+
+-- In the free trial: the trial has not ended and the gym has not paid.
+create or replace function public._ai_trial(p_gym uuid) returns boolean
+  language sql stable security definer set search_path = public as $$
+  select coalesce((select coalesce(g.trial_ends_at > now(), false) from public.gyms g where g.gym_id = p_gym), false)
+     and not public._ai_paid(p_gym)
+$$;
+
+-- Free credits this month (R-470): 100 for a paid yearly plan or a founding lifetime gym, else 0.
+create or replace function public._ai_monthly_free(p_gym uuid) returns int
+  language sql stable security definer set search_path = public as $$
+  select coalesce((select case when g.billing = 'lifetime' and (g.paid_until is null or g.paid_until > now()) then 100
+                               when g.billing = 'yearly' and g.paid_until > now() then 100
+                               else 0 end
+                     from public.gyms g where g.gym_id = p_gym), 0)
 $$;
 
 create or replace function public._ai_balance(p_gym uuid) returns int
@@ -130,15 +155,16 @@ $$;
 -- last free month. The caller holds the gym row lock (select ... for update), so two tabs cannot both add.
 create or replace function public._ai_add_free(p_gym uuid) returns void
   language plpgsql volatile security definer set search_path = public as $$
-declare cur text := public._ai_month(); lm text; lfree int; unused int;
+declare cur text := public._ai_month(); lm text; lfree int; unused int; mfree int;
 begin
   if not exists (select 1 from public.gym_ai_credit_ledger where gym_id = p_gym and reason = 'welcome') then
     insert into public.gym_ai_credit_ledger(gym_id, delta, reason, note, month)
-      values (p_gym, 30, 'welcome', 'Welcome credits', cur);
+      values (p_gym, 20, 'welcome', 'Starter credits', cur);
   end if;
   if exists (select 1 from public.gym_ai_credit_ledger where gym_id = p_gym and reason = 'monthly' and month = cur) then
     return;
   end if;
+  -- The last free month's leftovers go, even when this month brings none (a yearly plan that ran out).
   select month, delta into lm, lfree from public.gym_ai_credit_ledger
    where gym_id = p_gym and reason = 'monthly' order by month desc limit 1;
   if lm is not null and lm < cur
@@ -149,8 +175,11 @@ begin
         values (p_gym, -unused, 'expire', 'Free credits of ' || lm || ' not used', lm);
     end if;
   end if;
-  insert into public.gym_ai_credit_ledger(gym_id, delta, reason, note, month)
-    values (p_gym, public._ai_monthly_free(public._ai_plan(p_gym)), 'monthly', 'Free credits for ' || cur, cur);
+  mfree := public._ai_monthly_free(p_gym);
+  if mfree > 0 then
+    insert into public.gym_ai_credit_ledger(gym_id, delta, reason, note, month)
+      values (p_gym, mfree, 'monthly', 'Free credits for ' || cur, cur);
+  end if;
 end $$;
 
 -- What the owner's wallet shows (after _ai_add_free).
@@ -163,8 +192,10 @@ begin
   return jsonb_build_object('ok', true,
     'balance', bal,
     'free_left', least(bal, greatest(0, mfree - public._ai_month_spent(p_gym, cur))),
-    'monthly_free', public._ai_monthly_free(public._ai_plan(p_gym)),
+    'monthly_free', public._ai_monthly_free(p_gym),
     'plan', public._ai_plan(p_gym),
+    'billing', (select g.billing from public.gyms g where g.gym_id = p_gym),
+    'trial', public._ai_trial(p_gym),
     'month', cur,
     'low_at', 5,
     'packs', jsonb_build_array(
@@ -272,6 +303,14 @@ begin
     from (select * from public.gym_ai_tasks where gym_id = g order by created_at desc, task_id limit n) t), '[]'::jsonb));
 end $$;
 
+-- Fair use for the panel worker (deploy/panel/assist.js): a trial or unpaid gym gets fewer AI requests a day.
+create or replace function public.owner_ai_status(p_key text)
+  returns jsonb language plpgsql stable security definer set search_path = public as $$
+declare g uuid := public._owner_only_gym(p_key);
+begin
+  return jsonb_build_object('ok', true, 'paid', public._ai_paid(g), 'trial', public._ai_trial(g));
+end $$;
+
 -- ------------------------------------------------------------------ HQ (service key only)
 create or replace function public.hq_ai_wallet(p_actor text, p_gym uuid)
   returns jsonb language plpgsql stable security definer set search_path = public as $$
@@ -282,8 +321,9 @@ begin
   if not exists (select 1 from public.gyms where gym_id = p_gym) then raise exception 'GONE'; end if;
   return jsonb_build_object(
     'balance', public._ai_balance(p_gym),
-    'monthly_free', public._ai_monthly_free(public._ai_plan(p_gym)),
+    'monthly_free', public._ai_monthly_free(p_gym),
     'plan', public._ai_plan(p_gym),
+    'trial', public._ai_trial(p_gym),
     'month', cur,
     'this_month', jsonb_build_object(
       'spent', public._ai_month_spent(p_gym, cur),
@@ -325,7 +365,9 @@ end $$;
 -- ------------------------------------------------------------------ grants
 revoke all on function public._ai_month()                     from public, anon, authenticated;
 revoke all on function public._ai_plan(uuid)                   from public, anon, authenticated;
-revoke all on function public._ai_monthly_free(text)           from public, anon, authenticated;
+revoke all on function public._ai_monthly_free(uuid)           from public, anon, authenticated;
+revoke all on function public._ai_paid(uuid)                   from public, anon, authenticated;
+revoke all on function public._ai_trial(uuid)                  from public, anon, authenticated;
 revoke all on function public._ai_balance(uuid)                from public, anon, authenticated;
 revoke all on function public._ai_month_spent(uuid, text)      from public, anon, authenticated;
 revoke all on function public._ai_add_free(uuid)               from public, anon, authenticated;
@@ -335,11 +377,13 @@ revoke all on function public.owner_ai_task_save(text, uuid, text, boolean, json
 revoke all on function public.owner_ai_spend(text, uuid, int, jsonb)                from public;
 revoke all on function public.owner_ai_refund(text, uuid)                           from public;
 revoke all on function public.owner_ai_tasks(text, int)                             from public;
+revoke all on function public.owner_ai_status(text)                                 from public;
 grant execute on function public.owner_ai_wallet(text)                                 to anon, authenticated;
 grant execute on function public.owner_ai_task_save(text, uuid, text, boolean, jsonb) to anon, authenticated;
 grant execute on function public.owner_ai_spend(text, uuid, int, jsonb)               to anon, authenticated;
 grant execute on function public.owner_ai_refund(text, uuid)                          to anon, authenticated;
 grant execute on function public.owner_ai_tasks(text, int)                            to anon, authenticated;
+grant execute on function public.owner_ai_status(text)                                to anon, authenticated;
 revoke all on function public.hq_ai_wallet(text, uuid)                   from public, anon, authenticated;
 revoke all on function public.hq_ai_grant(text, uuid, int, text, text)   from public, anon, authenticated;
 grant execute on function public.hq_ai_wallet(text, uuid)                to service_role;

@@ -91,7 +91,7 @@ declare
     -- 0070: MettleUp Plus, the gym owner's switch (owner or desk key to read, the OWNER to change; members read their own gym's only).
     'owner_plus_lock','owner_save_plus_lock','member_plus_lock',
     -- 0071: the AI assistant's credits and task history (each checks the key first: the gym OWNER only).
-    'owner_ai_wallet','owner_ai_task_save','owner_ai_spend','owner_ai_refund','owner_ai_tasks',
+    'owner_ai_wallet','owner_ai_task_save','owner_ai_spend','owner_ai_refund','owner_ai_tasks','owner_ai_status',
     -- 0032: the free plan's switch (answers one config row, nothing else).
     'app_limits',
     'owner_add_person','owner_add_stock','owner_app_members','owner_delete_product','owner_go_online',

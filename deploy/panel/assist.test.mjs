@@ -6,6 +6,7 @@ import { test } from 'node:test';
 import {
   ASSIST_PER_DAY,
   LIMIT_WORDS,
+  TRIAL_PER_DAY,
   MAX_ACTIONS,
   MONTHLY_CAP_USD,
   VOICE_SECONDS_PER_DAY,
@@ -58,7 +59,7 @@ const DRAFT = {
  * One fake fetch for every outside service. `claude`: content blocks (or { status }); `sarvam` / `groq`: a
  * transcript (or { status }). Records every call with its parsed body.
  */
-function fakeNet({ claude = [toolUse('draft_message', DRAFT)], stop = 'tool_use', usage = { input_tokens: 6000, output_tokens: 400 }, sarvam = 'Rahul ko add karo', groq = 'राहुल को ऐड करो', staffStatus = 200 } = {}) {
+function fakeNet({ claude = [toolUse('draft_message', DRAFT)], stop = 'tool_use', usage = { input_tokens: 6000, output_tokens: 400 }, sarvam = 'Rahul ko add karo', groq = 'राहुल को ऐड करो', staffStatus = 200, paid = true } = {}) {
   const calls = [];
   const fetchImpl = async (url, init = {}) => {
     const u = String(url);
@@ -70,6 +71,11 @@ function fakeNet({ claude = [toolUse('draft_message', DRAFT)], stop = 'tool_use'
       if (key === BAD) return new Response(JSON.stringify({ message: 'BAD_KEY' }), { status: 400 });
       const person = key === OWNER ? { role: 'owner' } : key === DESK ? { role: 'staff' } : null;
       return Response.json({ gymId: 'gym-a', person, hasPeople: key !== DEMO });
+    }
+    if (u.includes('/rest/v1/rpc/owner_ai_status')) {
+      calls.push({ to: 'status', key: JSON.parse(init.body).p_key });
+      if (paid === 'missing') return new Response(JSON.stringify({ code: 'PGRST202' }), { status: 404 });
+      return Response.json({ ok: true, paid, trial: !paid });
     }
     if (u.startsWith('https://api.anthropic.com')) {
       calls.push({ to: 'claude', body: JSON.parse(init.body), apiKey: headers.get('x-api-key') });
@@ -284,6 +290,22 @@ test(`fair use: ${ASSIST_PER_DAY} asks a gym a day (HQ can set the gym's own), n
   // A busy assistant day does not count toward the all-gyms column-matching allowance.
   e.WEB.sqlite.prepare("INSERT INTO ai_usage (day, gym_id, kind, calls) VALUES (?, 'gym-z', 'assist', 5000)").run(DAY);
   assert.equal(await takeOne(e.WEB, 'gym-a', DAY), 1);
+});
+
+test(`a gym in its free trial (or unpaid, or before 0071) gets ${TRIAL_PER_DAY} asks a day; HQ's own number still wins`, async () => {
+  assert.equal(TRIAL_PER_DAY, 20);
+  for (const paid of [false, 'missing']) {
+    const e = env();
+    const net = fakeNet({ paid });
+    const go = () => logsOf(() => handleAssist(ask({ text: 'Aaj kitne log aaye?', ctx: CTX }), e, { now: NOW, fetchImpl: net.fetchImpl }));
+    const first = await go();
+    assert.equal((await first.result.json()).left, TRIAL_PER_DAY - 1);
+    assert.equal(net.to('status')[0].key, OWNER);
+    for (let i = 2; i <= TRIAL_PER_DAY; i++) assert.equal((await go()).result.status, 200);
+    assert.equal((await go()).result.status, 429);
+    e.WEB.sqlite.prepare("INSERT INTO assist_limits (gym_id, per_day, voice_minutes, set_at) VALUES ('gym-a', 25, 10, 'x')").run();
+    assert.equal((await (await go()).result.json()).left, 4);
+  }
 });
 
 test(`the monthly money cap ($${MONTHLY_CAP_USD}, secret ASSIST_CAP_USD) stops calls for every gym till next month`, async () => {

@@ -14,8 +14,8 @@
 // names and the message language. NEVER the member list, phones, dues or visits. The sentence is data, never
 // an order (system prompt rule + strict tool schemas + our own checks below and in the admin app).
 //
-// Cost control (03-design §3, owner R-467, 12 Nov 2026): ASSIST_PER_DAY requests per gym per India day (D1 ai_usage,
-// kind 'assist'), VOICE_MINUTES_PER_DAY spoken minutes per gym (kind 'assist-voice', calls = seconds); MettleUp HQ can
+// Cost control (03-design §3, owner R-467 and R-470, 12 Nov 2026): ASSIST_PER_DAY requests per paid gym per India day,
+// TRIAL_PER_DAY while it is in its free trial or unpaid (owner_ai_status, supabase 0071) (D1 ai_usage, kind 'assist'), VOICE_MINUTES_PER_DAY spoken minutes per gym (kind 'assist-voice', calls = seconds); MettleUp HQ can
 // set one gym's own allowance (D1 assist_limits, migrations/0015). And a monthly money cap for all gyms together
 // (D1 assist_usage, migrations/0015; MONTHLY_CAP_USD, the secret ASSIST_CAP_USD overrides it: raise it about $1.5
 // per paying gym as gyms join, so one busy month never switches the AI Assistant off for everyone).
@@ -26,6 +26,7 @@ import Anthropic from '@anthropic-ai/sdk';
 
 import { AI_PAGE_IDS, MESSAGE_LANGS, PAGES, TOOL_KIND, toolsForClaude } from './assistCatalogue.js';
 import { indiaDay, whoIsAsking } from './aiMatch.js';
+import { SUPABASE } from './proxy.js';
 import { GROQ_MODEL, GROQ_URL, cleanText, takeClip } from './voice.js';
 
 /** Claude Haiku 5.5: $0.10 in / $0.50 out per million tokens (help.js, aiMatch.js). */
@@ -34,8 +35,12 @@ export const PRICE_IN_USD = 0.1 / 1e6;
 export const PRICE_OUT_USD = 0.5 / 1e6;
 /** All gyms together, per India month, to start. Secret ASSIST_CAP_USD overrides (a number above 0). */
 export const MONTHLY_CAP_USD = 15;
-/** Requests (asks and rewrites) per gym per India day, unless HQ set the gym's own (assist_limits). */
+/** Requests (asks and rewrites) per PAID gym per India day, unless HQ set the gym's own (assist_limits). */
 export const ASSIST_PER_DAY = 50;
+/** Requests a day while the gym is in its free trial or has not paid (owner R-470: a trial must not cost more than it can earn). */
+export const TRIAL_PER_DAY = 20;
+// The public, read-only gym server key (the same one in the panel and aiMatch.js).
+const SB_KEY = 'sb_publishable_-GBJ1u036bdCX2mtff3ghQ_Gx-hZyGo';
 /** Spoken minutes per gym per India day (HQ can set the gym's own), and seconds for all gyms together. */
 export const VOICE_MINUTES_PER_DAY = 10;
 export const VOICE_SECONDS_PER_DAY = VOICE_MINUTES_PER_DAY * 60;
@@ -99,11 +104,34 @@ export function monthlyCapUsd(env) {
 }
 
 /**
- * This gym's daily allowance: HQ's own numbers (D1 assist_limits) or the normal ones. 0 = off for this gym.
- * -> { perDay, voiceSeconds }. Before the table can be read: the normal ones.
+ * Has this gym paid (owner_ai_status, supabase 0071)? -> true | false. Unsure (before 0071, the server down, an odd
+ * answer) = false, so the gym gets the smaller trial allowance; never a refusal.
  */
-export async function gymAllowance(db, gymId) {
-  const normal = { perDay: ASSIST_PER_DAY, voiceSeconds: VOICE_SECONDS_PER_DAY };
+export async function gymPaid(key, fetchImpl = fetch) {
+  try {
+    const res = await fetchImpl(`${SUPABASE}/rest/v1/rpc/owner_ai_status`, {
+      method: 'POST',
+      headers: { apikey: SB_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ p_key: key }),
+      signal: AbortSignal.timeout(8000),
+    });
+    if (!res.ok) {
+      console.warn('[assist] owner_ai_status answered', res.status, '(0071 not applied?); trial allowance');
+      return false;
+    }
+    return (await res.json())?.paid === true;
+  } catch (e) {
+    console.warn('[assist] owner_ai_status not reachable; trial allowance', e instanceof Error ? e.name : 'error');
+    return false;
+  }
+}
+
+/**
+ * This gym's daily allowance: HQ's own numbers (D1 assist_limits) or the normal ones (`perDay`: 50 paid, 20 trial).
+ * 0 = off for this gym. -> { perDay, voiceSeconds }. Before the table can be read: the normal ones.
+ */
+export async function gymAllowance(db, gymId, perDay = ASSIST_PER_DAY) {
+  const normal = { perDay, voiceSeconds: VOICE_SECONDS_PER_DAY };
   try {
     const row = await db.prepare('SELECT per_day, voice_minutes FROM assist_limits WHERE gym_id = ?').bind(gymId).first();
     if (!row) return normal;
@@ -452,7 +480,8 @@ async function ownerAndAllowance(key, env, now, fetchImpl) {
     console.error('[assist] assist_usage not readable (migration 0015 not applied?)', scrub(e, env));
     return { refused: answer(503, { reason: 'off', error: OFF }) };
   }
-  const cap = (await gymAllowance(env.WEB, who.gymId)).perDay;
+  const normal = (await gymPaid(key, fetchImpl)) ? ASSIST_PER_DAY : TRIAL_PER_DAY;
+  const cap = (await gymAllowance(env.WEB, who.gymId, normal)).perDay;
   let used = null;
   try {
     if (cap > 0) used = await takeClip(env.WEB, who.gymId, day, cap, Number.MAX_SAFE_INTEGER, 'assist');

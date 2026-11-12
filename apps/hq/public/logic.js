@@ -220,7 +220,7 @@ export function actionWords(action) {
 
 /** F201 (0071): what each line of a gym's AI credit history means. */
 const CREDIT_REASONS = {
-  welcome: 'Welcome credits',
+  welcome: 'Starter credits',
   monthly: 'Free credits for the month',
   expire: 'Last month’s free credits not used',
   purchase: 'Pack bought',

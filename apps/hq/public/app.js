@@ -583,7 +583,7 @@ function creditsCard(g, id, data) {
     data.assistMonth ? h('p', { class: 'muted' }, `AI cost this month: about ${rupeesExact(data.assistMonth.rupees)}.`) : null,
     recent.length
       ? h('ul', { class: 'plain' }, recent.map((r) => h('li', {}, `${when(new Date(r.at).toISOString())} · ${creditRowWords(r)}`)))
-      : h('p', { class: 'muted' }, 'No credits added or used yet. The owner gets 30 welcome credits and the month’s free ones the first time they open the AI Assistant.'),
+      : h('p', { class: 'muted' }, 'No credits added or used yet. The owner gets 20 starter credits the first time they open the AI Assistant, and 100 free every month while on a paid yearly or lifetime plan.'),
     h('h3', {}, 'Add AI credits'),
     h('div', { class: 'stack' },
       field('Credits', howMany, 'Packs: 50 (₹149), 150 (₹399), 500 (₹999). A minus number takes free credits back.'),
@@ -612,7 +612,7 @@ function assistLimitPart(g, id, data) {
   return h('div', { class: 'stack' },
     h('h3', {}, 'Daily limit'),
     h('p', { class: 'muted' }, a.own ? 'Set by MettleUp for this gym.' : 'Normal limit.'),
-    field('AI requests a day', asks, 'Normal: 50. 0 switches the AI Assistant off for this gym.'),
+    field('AI requests a day', asks, 'Normal: 50 (20 while the gym is in its free trial or has not paid). 0 switches the AI Assistant off for this gym.'),
     field('Spoken minutes a day', mins, 'Normal: 10.'),
     h('div', { class: 'row' },
       save(() => ({ perDay: Number(asks.value), voiceMinutes: Number(mins.value) }), 'Save the limit'),

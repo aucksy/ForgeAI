@@ -315,7 +315,7 @@ export async function assistUsage(db, gymId, fromDay) {
   return out;
 }
 
-/** F201 (R-467): the AI Assistant's normal fair use a gym a day (deploy/panel/assist.js ASSIST_PER_DAY, VOICE_MINUTES_PER_DAY). */
+/** F201 (R-467): the AI Assistant's normal fair use a paid gym a day (deploy/panel/assist.js ASSIST_PER_DAY, VOICE_MINUTES_PER_DAY; a trial gym gets TRIAL_PER_DAY, 20). */
 export const ASSIST_NORMAL = Object.freeze({ perDay: 50, voiceMinutes: 10 });
 export const ASSIST_LIMIT_MAX = Object.freeze({ perDay: 500, voiceMinutes: 120 });
 
