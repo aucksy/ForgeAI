@@ -48,6 +48,9 @@ appId: com.mettleup.app
     timeout: 15000
 - takeScreenshot: rel-f61-04-share-sheet
 - back
+# Back on the page, still scrolled to the button: the title can sit above the top edge on the owner phone
+# (0.77.0 gate round 5, run 43106093184), so the button proves the app is in front again.
 - extendedWaitUntil:
-    visible: "^Ask an AI$"
+    visible: "Share to an AI app"
     timeout: 15000
+- assertNotVisible: "Sharing text"

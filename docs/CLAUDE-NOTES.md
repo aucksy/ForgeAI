@@ -23,6 +23,50 @@ Steps and results (filled in as they happen):
   opened Google's sign-in without the 18+ tick: the same box now sits above it (UAT uage 5b). (3) the watch card
   can point closed testers at a watch build Play does not offer them until a Wear OS closed track exists (R-444):
   a Play Console step, reported. Commit 324e58df.
+- UAT per item (pictures read): watch R-437/R-442/R-444(2) wear-build 42976578417 (API 34 + 35, Always-on OFF
+  suite all PASS); light mode + R-429 splash + R-411/R-412 + R-438/R-440 + R-444 + u198 dots: uat 42976574875;
+  R-439 + R-436: 42978352314 and 43001731991 (on the fresh-eyes fixes); R-445 18+ tick incl. Drive restore:
+  uage 43000816489; update screen pinned buttons + R-438/R-440 + R-401: 43039544941 (owner), 43039550072 (default).
+- Fresh eyes (pictures only): (a) an empty workout opened scrolled to the last card, hiding "We added the
+  exercises ..." -> opens at the top; (b) a reps-only very hard set said "keep the same weight" -> "do not try
+  for more reps" (744bbdde). (c) Gate finding, an APP bug: on the update screen two versions behind, "Update now"
+  was half shown and "Later" below the edge (no sign the page scrolls) -> the buttons stay pinned at the bottom
+  (2ec8112a). Kept as they are (pre-existing or test setup): sideload "download the file" words (R-336), the
+  Profile Today line (F199), the Google button looking active before the tick (same as gym join).
+- Test-script fixes this release, and why they were missed (owner, 11 Nov: rounds failing on out-of-date scripts):
+  1. 21 older flows tapped "Start empty workout" and expected a blank workout; R-436 now brings back the last empty
+     workout (2191408f, sub-start-blank.yaml). Missed: R-436 was proven only by its own new part; nobody grepped the
+     old flows for "Start empty workout", and no whole round ran between 0.76.0 and this release.
+  2. uat-h: the Profile count was centred at the top of the screen and ran out of time (ea7a92c7). Missed: 0.76.0
+     passed it with 1 s to spare; a margin nobody measured.
+  3. uat-rel-12 / uat-rel-13: a status line below the edge on his phone (744bbdde, a6f2f374). Missed: the help box
+     now answers at length (its AI credit is back), and flows asserted without scrolling (trap 7).
+  4. uat-rel-r440 flow y: "Later" off screen two versions behind -> it was an app bug (fixed in the app, item c).
+  5. uat-rel-d7 (new flow, first run): the card title scrolled off; asserts the button instead (a8dd175b).
+  6. Shard 4 hit its 240-min limit inside W: this release's new UAT parts made the "uat" chain ~3 h 25 min
+     (e706cbba: ua..uk to shard 3, limit 330). Missed: nobody summed the shard's minutes after adding parts.
+  7. CI's Playwright install failed three times on a dead Ubuntu mirror (not ours): fallback script b6f4f77d.
+  8. Round 4 owner (43062165154): uatr336 asserted the What's new rows in place; with the buttons pinned (item c)
+     they sit below the fold at font 1.3 -> sub-find (ef48b297, new part u336 to run it alone). Missed: the app fix
+     was proven with u438/u401 only; uat-rel-r336-update shows the same screen and was not in that partial.
+  9. Round 4 default (43062170667): uatf199 tapped "Last 12 weeks" while Back had left Profile scrolled with the
+     range above the top edge -> scroll up first (ef48b297). Missed: an earlier run happened to land at the top.
+  10. Round 5 default (43106098012, shard 3): UK5 failed. The "Log body weight" icon shortcut opened
+      "Start Push Day A?" instead of Measures. App log: the activity was made afresh (NEW_TASK|CLEAR_TASK,
+      WARM, same process), then JS logged '[link] workout/start: confirm'. So the app read the PREVIOUS
+      intent (uk4's replayed Start link), not forgeai://measures. Likely React Native's getInitialURL reads
+      getCurrentActivity() before the new activity takes over, a race. NOT a 0.77.0 change: link handling
+      (_layout.tsx, workout/start.tsx, MainActivity) is untouched since v0.76.0, and the same part passed on
+      e706cbba (round 4) and in every earlier whole run. It is a real but rare app bug (two icon shortcuts in
+      a row): logged for after the release, with a proposed fix of reading the launch link from the new
+      activity's own intent in MainActivity. The shard was rerun as it stands.
+  11. Round 5 owner (43106093184, shard 4): UATF61 failed after the share sheet closed. The flow waited for the
+      page title "Ask an AI", but the page was still scrolled to the button it had centred, with the title above
+      the top edge. The member sees the same page they left (not an app bug). The flow now waits for the button
+      (in the release commit, plus a part u61 to run it alone). Missed: it passed before by where one swipe happened
+      to stop. Since 12 Nov (IST) the 4-week text is a day longer, so the scroll lands differently.
+  From now on (coordinator, 11 Nov): before any whole round, grep every flow for what the release changed, fix in
+  one commit, run the affected parts alone, then the whole round.
 
 ## R-450. Five R-449 review leftovers in the admin panel: staff PIN hint, Hinglish terms tick, "aap … karoge", Import members on Members, dues tiles wording — 11 Nov 2026
 
