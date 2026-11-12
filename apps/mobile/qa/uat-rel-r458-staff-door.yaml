@@ -27,8 +27,8 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: "Your 6-digit PIN or sign-in code"
-- tapOn: "Your 6-digit PIN or sign-in code"
+      FIND: "Your PIN or sign-in code"
+- tapOn: "Your PIN or sign-in code"
 - inputText: "000000"
 - hideKeyboard
 - runFlow:
@@ -47,8 +47,8 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: "Your 6-digit PIN or sign-in code"
-- tapOn: "Your 6-digit PIN or sign-in code"
+      FIND: "Your PIN or sign-in code"
+- tapOn: "Your PIN or sign-in code"
 - inputText: "${PIN}"
 - hideKeyboard
 - runFlow:
@@ -62,13 +62,15 @@ appId: com.mettleup.app
 - assertVisible: "^${GYM}$"
 - takeScreenshot: rel-r458-3-join-screen
 # Not joined: Back returns to the no-gym screen; the card is closed again (nothing typed shows).
+# The Join screen and the no-gym screen share the title "Join your gym", and the no-gym page comes back
+# scrolled down: wait for the gym code to go, then scroll to the card (run 43191909724).
 - back
 - extendedWaitUntil:
-    visible: "^Join your gym$"
+    notVisible: "Gym code ${CODE}"
     timeout: 30000
 - runFlow:
     file: sub-find.yaml
     env:
       FIND: "^Sign in as gym staff$"
-- assertNotVisible: "Your 6-digit PIN or sign-in code"
+- assertNotVisible: "Your PIN or sign-in code"
 - takeScreenshot: rel-r458-4-back

@@ -77,6 +77,9 @@ describe('R-458: the words', () => {
     expect(STAFF_DOOR.body).toMatch(/in its own colours/);
     expect(STAFF_DOOR.kept).toBe('Your PIN is only checked. It is never saved on this phone.');
     expect(STAFF_DOOR.pinHint).toMatch(/MettleUp admin app/);
+    // The boxes' grey hints fit one line on his phone (360 dp, font 1.3): 27 characters were cut (run 43191909724).
+    expect(STAFF_DOOR.pinLabel.length).toBeLessThanOrEqual(24);
+    expect(STAFF_DOOR.phoneLabel.length).toBeLessThanOrEqual(24);
   });
 });
 

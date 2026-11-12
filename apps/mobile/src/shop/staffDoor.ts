@@ -60,7 +60,8 @@ export const STAFF_DOOR = {
   body: 'Owners and front-desk staff can sign in here. The app then opens your gym in its own colours, so you see what your members see.',
   open: 'Sign in as gym staff',
   phoneLabel: 'Your mobile number',
-  pinLabel: 'Your 6-digit PIN or sign-in code',
+  // Short: it is the box's grey hint, one line at 360 dp and font 1.3 (run 43191909724 cut the longer one).
+  pinLabel: 'Your PIN or sign-in code',
   pinHint: 'Use the same mobile number and PIN as on the MettleUp admin app.',
   go: 'Open my gym',
   close: 'Not now',
