@@ -236,6 +236,11 @@ appId: com.mettleup.app
     env:
       FIND: "^Find my gym with my number$"
 - takeScreenshot: rel-r461-16-gym-tab-card
+# The button sits under the card's text: below the screen's edge at 360 dp / font 1.3 (run 43236135630).
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Find my gym$"
 - tapOn: "^Find my gym$"
 # in-view: the number box is the first thing on the page as it opens
 - extendedWaitUntil:
