@@ -104,11 +104,14 @@ export default function PlusScreen() {
         </Card>
 
         {!gymOrStaff ? (
-          <Card style={{ gap: space.sm }} testID="plus-gym-card">
-            <Text style={{ fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}>{gymCard.title}</Text>
-            <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkSecondary, lineHeight: 20 }}>{gymCard.body}</Text>
-            {gymCard.findGym ? <GhostButton label={PLUS_WORDS.gymButton} onPress={() => router.push(linked ? '/shop' : '/find-gym')} /> : null}
-          </Card>
+          // Card (frozen ui kit) takes no testID, so a plain View carries it.
+          <View testID="plus-gym-card">
+            <Card style={{ gap: space.sm }}>
+              <Text style={{ fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}>{gymCard.title}</Text>
+              <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkSecondary, lineHeight: 20 }}>{gymCard.body}</Text>
+              {gymCard.findGym ? <GhostButton label={PLUS_WORDS.gymButton} onPress={() => router.push(linked ? '/shop' : '/find-gym')} /> : null}
+            </Card>
+          </View>
         ) : null}
 
         {!owned && !gymOrStaff ? (
