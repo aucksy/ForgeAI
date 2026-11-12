@@ -73,6 +73,7 @@ screens:
   - {route: "apps/mobile/src/app/photos/index.tsx", scrolls: true}
   - {route: "apps/mobile/src/app/plan/avoid.tsx", scrolls: true}
   - {route: "apps/mobile/src/app/plan/build.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/plus.tsx", scrolls: true}
   - {route: "apps/mobile/src/app/programs/[key].tsx", scrolls: true}
   - {route: "apps/mobile/src/app/programs/index.tsx", scrolls: true}
   - {route: "apps/mobile/src/app/progress/pick-lift.tsx", scrolls: true}

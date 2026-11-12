@@ -29,6 +29,7 @@ import { refreshGymIfDue, refreshGymNow } from '@/shop/gymActions';
 import { checkInCodeFromUrl } from '@/shop/checkIn';
 import { startGymShortcutSync } from '@/shop/gymShortcut';
 import { startNoticeTaskSync } from '@/shop/noticeTaskSync';
+import { startPlanSync } from '@/plan/planSync';
 import { inviteCodeFromUrl, restorePendingLinks, setPendingCheckIn, setPendingInvite, takePendingCheckIn, takePendingInvite } from '@/shop/pendingInvite';
 
 /** The link the app was started with is read once per run: an erase later must not bring it back. */
@@ -64,6 +65,9 @@ startGymShortcutSync();
 // The gym's new notices pop up on the phone: the background check follows the gym link and the
 // "Messages from my gym" switch (shop/noticeTaskSync.ts; the job itself is defined in index.js's import).
 startNoticeTaskSync();
+// F56 MettleUp Plus (R-461): the free month, the gym and staff unlock, and the watch follow the plan
+// (plan/planSync.ts). While the plan is switched off (MEMBER_PLAN_GATE_ON) nothing changes for anyone.
+startPlanSync();
 
 /**
  * Last resort: the root layout ITSELF threw while drawing (each screen has its own

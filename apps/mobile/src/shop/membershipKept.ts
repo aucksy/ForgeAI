@@ -29,6 +29,9 @@ export async function keepMembership(memberId: string, answer: MembershipAnswer)
       ? { ok: true, gymName: answer.gymName, memberName: answer.memberName, day: answer.day, current: answer.current, next: answer.next, lastEndedOn: answer.lastEndedOn, visitsThisMonth: answer.visitsThisMonth, pass: answer.pass ?? null }
       : { error: answer.problem, gymName: answer.gymName };
     await AsyncStorage.setItem(MEMBERSHIP_STORAGE_KEY, JSON.stringify({ memberId, answer: raw, at: Date.now() }));
+    // F56 MettleUp Plus (R-461): a plan or pass on the gym's list gives every feature free.
+    const { noteMembership } = await import('@/plan/memberPlanStore');
+    noteMembership(memberId, answer);
   } catch (e) {
     console.warn('[ForgeErr] membership: keeping the answer', e);
   }

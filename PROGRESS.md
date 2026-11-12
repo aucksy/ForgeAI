@@ -1,6 +1,17 @@
 # ForgeAI progress
 
 ## Waiting for release (R-266: tag only when the owner says "release")
+- F56 METTLEUP PLUS, PART (a) (R-461/R-462, 12 Nov 2026; SHIPS SWITCHED OFF). The free and paid split for members
+  without a gym, with a 30-day free month, built and tested but OFF (MEMBER_PLAN_GATE_ON=false, MEMBER_PAYMENTS_LIVE=
+  false): with it off every member sees exactly what they see today, except routines are no longer limited (the old
+  #43 free-limits switch, never turned on, is retired). Shared code (Android and iPhone): packages/theme/src/
+  memberPlan.ts, apps/mobile/src/plan/*, the /plus screen, the locked pop-ups in charts, own exercises, 1-rep max and
+  plate calculators, suggested weights, the Settings row (shown only while on). Android only: Google Play Billing
+  (modules/forge-billing, test mode) and the watch lock (forge-rest setWatchLock); iPhone lines in PARITY.yaml.
+  Tests: test/plan/memberPlanRules.test.ts (19), test/plan/memberPlan.test.ts (14), test/cloud/limits*.test.ts
+  rewritten. UAT: part u461 (shard 5-uat-b).
+  What's new draft: none while switched off (nothing a member can see changes).
+  Admin What's new (ADMIN_NEWS) draft: none until part (d)'s switch is deployed.
 - UK5 APP-ICON SHORTCUT OPENED THE PAGE BEFORE IT (12 Nov 2026; found by phone test part UK5 in run 43106098012 on ef48b297, an old rare timing bug, not new in 0.77.0). Rarely, long-pressing the app icon and picking a shortcut opened the page of the link used just before it: "Log body weight" showed "Start Push Day A?". Cause: a shortcut makes a new app screen, and React Native told the app the OLD screen's link when it asked too early. Fix (shared code, so Android and the future iPhone app): the app now opens the link this launch really carries (src/app/+native-intent.tsx, src/lib/launchLink.ts; logs "[link] launch link taken from this launch" when the race happens). Tests: test/lib/launchLink.test.ts (fails without the fix); UAT part uk (uat-k5 also checks no "Start ...?" question; the UK script reports when the race was caught).
   What's new draft: none ("Small fixes").
 - R-456 + R-457 IN USE: ONLY "I'M BACK" CLOSES IT; THE SIGN NAMES THE KIT (owner, 12 Nov 2026: "should only go away if someone taps on I am back"; "if there is an exercise that is bench related, then we should say bench in use"). A tap on the screen or the tick strip no longer closes In use (I'm back, Android Back and the end of the rest do); the sign reads BENCH / MACHINE / CABLE / RACK / BARBELL / DUMBBELLS / PULL-UP BAR ... over IN USE; rest bar "Tap to show Bench in use" where it fits; Settings caption. Commits e7c73a7f, a03a9f32, 968722f0. Android + iPhone. UAT part u456 UAT (12 Nov 2026): Device QA u456 first round: owner profile 43187426866 passed but its picture showed "I'm back" half under the tick strip; 360 dp / font 2.0 run 43187431184 FAILED ("I'm back" scrolled off). Fixed in 968722f0 ("I'm back" in a fixed foot). Re-run: owner 43192229084 passed, 360 dp / font 2.0 43192233294 passed; pictures rel-456-02..09 read (BENCH IN USE, middle/sign/strip taps keep it open, "I'm back" closes, tick off + Back closes, "Tap to show Bench in use", MACHINE IN USE, the 1:00 rest ends and closes it). CI 43187415118 green on a03a9f32 (mobile typecheck + tests); CI 43192227385 on 968722f0: mobile green, dashboard typecheck red from another helper's R-459 TalkKind code (not this change).

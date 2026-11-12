@@ -1,0 +1,203 @@
+# Part UAT, F56 MettleUp Plus (owner R-461, 12 Nov 2026): free forever = logging, history, routines, the phone
+# rest timer, backup and the last 3 months of charts; MettleUp Plus = the watch, older charts, suggested weight
+# and reps, the calculators, more than 7 own exercises; a free month (30 days) for everyone; members of a gym on
+# MettleUp, and gym owners and desk staff, get every feature free. Store builds ship with it switched off.
+# The QA build's 'memberPlan' stand-in: mettleup://qa-plan switches it on for this phone, sets the day and the
+# facts (plan/memberPlan.ts qaPlanFrom), and buying uses a stand-in store that takes no money.
+# Types (R-364): negative first (switched off: no Settings row, 12 months of charts open, no pop-up), happy path
+# (day 26 -> "5 days left" pop-up -> the MettleUp Plus screen with the three prices), interruption (app killed and
+# opened: the pop-up does not come back), time (day 31 = ended, once; the 1st of a month; a gym plan's 7 extra
+# days, then the owner's switch ON and OFF), locked feature (12 months of charts -> the pop-up, "Not now" leaves
+# it closed), buying (test store, year plan -> thanks, buttons gone, charts open again), staff, reset.
+# Pictures rel-r461-*.png. Starts from the demo (gate-demo). Runs alone with only=u461.
+appId: com.mettleup.app
+---
+- runFlow: sub-back-to-tabs.yaml
+# ---------------------------------------------------------------- negative: switched off (the store build today)
+- runFlow: sub-settings-open.yaml
+- assertNotVisible: "^MettleUp Plus$"
+- takeScreenshot: rel-r461-00-off-settings
+- runFlow: sub-back-to-tabs.yaml
+- tapOn:
+    text: "^Profile$"
+    index: 0
+- runFlow:
+    file: sub-progress-row.yaml
+    env:
+      ROW: "Charts"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^12 months$"
+- tapOn:
+    text: "^12 months$"
+    index: 0
+- waitForAnimationToEnd:
+    timeout: 3000
+- assertNotVisible: "Charts older than 3 months are part of MettleUp Plus"
+- takeScreenshot: rel-r461-01-off-charts-open
+- runFlow: sub-back-to-tabs.yaml
+# ---------------------------------------------------------------- happy path: day 26 of the free month, on the 1st
+- openLink: "mettleup://qa-plan?gate=1&day=26&today=2026-12-01"
+- extendedWaitUntil:
+    visible: "^Your free month has 5 days left$"
+    timeout: 30000
+# in-view: a pop-up sheet over the page, it does not scroll
+- assertVisible: "^After that, logging, history and routines stay free\\..*"
+# in-view: a pop-up sheet over the page, it does not scroll
+- assertVisible: "^Close$"
+- takeScreenshot: rel-r461-02-five-days-left
+- tapOn: "^See what stays free$"
+- extendedWaitUntil:
+    visible: "^Your free month: every feature is open for 5 more days\\.$"
+    timeout: 20000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "^Free for everyone, always$"
+- takeScreenshot: rel-r461-03-plus-top
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "^Test build: buying here takes no money\\.$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "^₹149 a month$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "^₹999 a year$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "^₹2,499 once, for life$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "^I already paid$"
+- takeScreenshot: rel-r461-04-plus-prices
+# ---------------------------------------------------------------- interruption: killed and opened, shown once
+- stopApp
+- launchApp
+- extendedWaitUntil:
+    visible: "^Workout$"
+    timeout: 60000
+- waitForAnimationToEnd:
+    timeout: 5000
+- assertNotVisible: "^Your free month has 5 days left$"
+- takeScreenshot: rel-r461-05-reopened-no-popup
+# ---------------------------------------------------------------- time: the free month has ended (day 31), once
+- openLink: "mettleup://qa-plan?day=31"
+# in-view: a pop-up sheet over the page, it does not scroll
+- extendedWaitUntil:
+    visible: "^Your free month has ended$"
+    timeout: 30000
+# in-view: a pop-up sheet over the page, it does not scroll
+- assertVisible: "^Your workouts, history and routines stay free, and nothing was deleted\\..*"
+- takeScreenshot: rel-r461-06-month-ended
+- tapOn: "^Close$"
+- extendedWaitUntil:
+    notVisible: "^Your free month has ended$"
+    timeout: 10000
+# ---------------------------------------------------------------- locked: 12 months of charts
+- runFlow: sub-back-to-tabs.yaml
+- tapOn:
+    text: "^Profile$"
+    index: 0
+- runFlow:
+    file: sub-progress-row.yaml
+    env:
+      ROW: "Charts"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^12 months$"
+- tapOn:
+    text: "^12 months$"
+    index: 0
+- extendedWaitUntil:
+    visible: "^Charts older than 3 months are part of MettleUp Plus$"
+    timeout: 15000
+# in-view: a pop-up sheet over the page, it does not scroll
+- assertVisible: "^See MettleUp Plus$"
+- takeScreenshot: rel-r461-07-charts-locked
+- tapOn: "^Not now$"
+- extendedWaitUntil:
+    notVisible: "^Charts older than 3 months are part of MettleUp Plus$"
+    timeout: 10000
+- runFlow: sub-back-to-tabs.yaml
+# ---------------------------------------------------------------- Settings -> MettleUp Plus -> buy (test store)
+- runFlow: sub-settings-open.yaml
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^MettleUp Plus$"
+- takeScreenshot: rel-r461-08-settings-row
+- tapOn: "^MettleUp Plus$"
+- extendedWaitUntil:
+    visible: "^Free for everyone, always$"
+    timeout: 20000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "^Your free month has ended\\. Everything under .Free for everyone. stays free\\.$"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^₹999 a year$"
+- tapOn: "^₹999 a year$"
+# in-view: a pop-up sheet over the page, it does not scroll
+- extendedWaitUntil:
+    visible: "^Buy \\(test, no money\\)$"
+    timeout: 15000
+- takeScreenshot: rel-r461-09-test-buy
+- tapOn: "^Buy \\(test, no money\\)$"
+- extendedWaitUntil:
+    visible: "^Thank you! MettleUp Plus is open\\.$"
+    timeout: 15000
+- tapOn: "^Close$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "^You have MettleUp Plus, paid every year\\. Thank you!$"
+- assertNotVisible: "^₹149 a month$"
+- takeScreenshot: rel-r461-10-bought
+# ---------------------------------------------------------------- the gym unlock: 7 extra days, then the switch
+- openLink: "mettleup://qa-plan?bought=none&gym=QA%20UAT%20Gym&ends=2026-11-28&lock=1&today=2026-12-01"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "^Your plan at QA UAT Gym ended on .+\\. Every feature stays open until .+\\. Renew at QA UAT Gym to keep them free\\.$"
+- takeScreenshot: rel-r461-11-gym-grace
+- openLink: "mettleup://qa-plan?today=2026-12-06"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "^Your plan at QA UAT Gym has ended\\. Renew there to get every feature free again, or get MettleUp Plus\\.$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "^₹149 a month$"
+- takeScreenshot: rel-r461-12-gym-locked
+- openLink: "mettleup://qa-plan?lock=0&gym=QA%20UAT%20Gym&ends=2026-11-28"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "^QA UAT Gym gives you every feature free, because you are a member there\\.$"
+- assertNotVisible: "^₹149 a month$"
+- takeScreenshot: rel-r461-13-gym-switch-off
+# ---------------------------------------------------------------- staff, then reset (switched off again)
+- openLink: "mettleup://qa-plan?gym=&staff=QA%20UAT%20Gym"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "^You work at QA UAT Gym, so every feature is free for you\\.$"
+- takeScreenshot: rel-r461-14-staff
+- openLink: "mettleup://qa-plan?reset=1"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "^Every feature is free\\.$"
+- takeScreenshot: rel-r461-15-reset

@@ -12,6 +12,8 @@ export * from './logoColour';
 export * from './gymHours';
 // T66 (#30 A): which pack a gym is on and what each pack has; hasFeature() behind PLAN_GATE_ON (off).
 export * from './plans';
+// F56 (R-461): MettleUp Plus for members without a gym: free vs paid, the free month, the gym and staff unlock.
+export * from './memberPlan';
 // F137: the ready list of gym machines for "Busy machines" (admin app list, server keys, member app sends).
 export * from './busyMachines';
 // T74 (R-356): the gym's home-screen shortcut icon (logo edge colour, size inside the safe circle).

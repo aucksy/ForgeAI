@@ -13,6 +13,10 @@
  * to one that fits the plan's equipment and sore areas. The routine stays as it is.
  */
 import { useRouter } from 'expo-router';
+
+import { explainLocked } from '@/plan/locked';
+import { canUseNow, useMemberAccess } from '@/plan/memberPlanStore';
+import { SUGGESTION_LOCKED_LINE } from '@/plan/planWords';
 import { Fragment, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Pressable, Text, TextInput, View } from 'react-native';
 import type { TextInput as TextInputType } from 'react-native';
@@ -130,6 +134,8 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
   // Correcting a saved workout: its sets are all ticked, so no swap there (as before).
   // Correcting the past (an edit or a past log): no swap-for-today, no rest timer (HI-08).
   const editing = useActiveWorkout((s) => s.editingSessionId != null || s.pastLog);
+  // F56 (R-461): on the free part of MettleUp Plus there is no suggested weight; one quiet line says where it is.
+  const plusLocked = !useMemberAccess().all;
   const router = useRouter();
   // Phase 4: an easy week stays out of records — no medals on its sets.
   const easyWeek = useActiveWorkout((s) => s.easyWeek);
@@ -700,6 +706,18 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
           </View>
         </View>
       ) : null}
+      {plusLocked && !target && !editing && !compact && exercise.previousSets.length > 0 ? (
+        <Pressable
+          onPress={() => void explainLocked('weightSuggestions', () => router.push('/plus'))}
+          accessibilityRole="button"
+          accessibilityLabel={SUGGESTION_LOCKED_LINE}
+          hitSlop={8}
+          style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: space.sm, minHeight: 32, paddingHorizontal: space.xs, opacity: pressed ? 0.6 : 1 })}
+        >
+          <Icon name="target" size={14} color={color.inkMuted} />
+          <Text style={{ flex: 1, fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkMuted }}>{SUGGESTION_LOCKED_LINE}</Text>
+        </Pressable>
+      ) : null}
       {/* R-65 / R-73: the live kg line now sits in the Target box above (green by `lineGreen`). A plan with
           no Target line to hold it (never today) shows it here. */}
       {kgLine && !(target && line) ? (
@@ -835,7 +853,15 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
             <SheetRow
               label="Plate calculator"
               leading={<Icon name="dumbbell" size={20} color={color.accent} />}
-              onPress={() => openAfterMenu('plates')}
+              onPress={() => {
+                // F56 (R-461): the plate calculator is part of MettleUp Plus.
+                if (!canUseNow('calculators')) {
+                  setSheet(null);
+                  void explainLocked('calculators', () => router.push('/plus'));
+                  return;
+                }
+                openAfterMenu('plates');
+              }}
             />
           ) : null}
           {moves?.up ? (

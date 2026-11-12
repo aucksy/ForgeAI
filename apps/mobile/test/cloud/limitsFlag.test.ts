@@ -1,22 +1,18 @@
 /**
- * The free plan's switch on the phone (tracker #43, src/cloud/limitsFlag.ts) on a REAL database:
- * off at launch whatever the member has; once the server says on, the 5th routine and the 8th own
- * exercise are refused for a member in no gym, never for a gym member; a check never waits on the
- * internet, and offline it keeps the last answer without asking again on every tap.
+ * The free part of MettleUp Plus where it counts (F56, R-461; src/cloud/limitsFlag.ts) on a REAL database:
+ * while the plan is switched off nothing is refused; on the free part the 8th own exercise and charts older
+ * than 3 months are refused; the free month, a gym, staff and a purchase open everything; routines are never
+ * limited any more (tracker #43's routine limit is gone).
  */
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import type { MemberAccess } from '@forgeai/theme';
 import type { OnboardingInput } from '@/onboarding/form';
-import { bootRealApp, type RealDb } from '../helpers/realDb';
+import { bootRealApp } from '../helpers/realDb';
 
 vi.setConfig({ testTimeout: 30_000 });
 
-const h = vi.hoisted(() => ({
-  store: new Map<string, string>(),
-  link: null as null | { gymId: string },
-  answer: { ok: true, data: { on: false, routines: 4, customExercises: 7, chartMonths: 3 } } as unknown,
-  calls: 0,
-}));
+const h = vi.hoisted(() => ({ access: { all: true, why: 'off' } as MemberAccess, store: new Map<string, string>() }));
 
 // AsyncStorage and the file system share one stub module (vitest.config.ts): both shapes here.
 vi.mock('@react-native-async-storage/async-storage', () => ({
@@ -35,19 +31,8 @@ vi.mock('@react-native-async-storage/async-storage', () => ({
     },
   },
 }));
-vi.mock('@/cloud/config', () => ({ isCloudConfigured: () => true, isAccountBuild: () => true, SUPABASE_URL: 'https://x.supabase.co', SUPABASE_PROXY_URL: '', SUPABASE_KEY: 'k', CONSENT_VERSION: 'x' }));
-vi.mock('@/cloud/copyApi', () => ({
-  apiAppLimits: async () => {
-    h.calls++;
-    return h.answer;
-  },
-}));
-vi.mock('@/shop/gymStore', () => ({
-  useGymShop: {
-    getState: () => ({ link: h.link }),
-    persist: { hasHydrated: () => true, onFinishHydration: () => () => undefined },
-  },
-}));
+
+vi.mock('@/plan/memberPlanStore', () => ({ memberAccessNow: () => h.access }));
 vi.mock('expo-constants', () => ({ default: { expoConfig: { extra: {} } } }));
 vi.mock('@react-native-google-signin/google-signin', () => ({ GoogleSignin: {}, isErrorWithCode: () => false, statusCodes: {} }));
 
@@ -63,100 +48,67 @@ const MEMBER: OnboardingInput = {
   targets: { calorieTarget: 2200, proteinTargetG: 110, carbsTargetG: 280, fatTargetG: 70 },
 };
 
-let phoneDb: RealDb;
+const FREE: MemberAccess = { all: false, why: 'free', trialEndedOn: '2026-12-01', gymEnded: null };
 
-async function member(routines: number): Promise<typeof import('@/cloud/limitsFlag')> {
-  phoneDb = await bootRealApp();
+async function member(): Promise<typeof import('@/cloud/limitsFlag')> {
+  await bootRealApp();
   await (await import('@/onboarding/db/dataActions')).completeOnboarding(MEMBER);
-  const { createRoutine } = await import('@/tracker/db/routineRepo');
-  for (let i = 0; i < routines; i++) await createRoutine({ name: `Routine ${i + 1}`, dayType: 'full', folderId: null });
   return import('@/cloud/limitsFlag');
 }
 
-const ON = { ok: true, data: { on: true, routines: 4, customExercises: 7, chartMonths: 3 } };
+async function makeOwn(n: number): Promise<void> {
+  const { createCustomExercise } = await import('@/tracker/db/customExercise');
+  for (let i = 0; i < n; i++) {
+    await createCustomExercise(
+      { name: `My Move ${Math.random().toString(36).slice(2, 8)}`, logType: 'weight_reps', muscles: { primary: ['chest'], secondary: [] }, equipment: 'other', isCompound: false, incrementKg: 2.5, countsBodyweight: false },
+      { uri: null, type: null },
+    );
+  }
+}
 
 beforeEach(() => {
   vi.resetModules();
-  h.store.clear();
-  h.link = null;
-  h.calls = 0;
-  h.answer = { ok: true, data: { on: false, routines: 4, customExercises: 7, chartMonths: 3 } };
+  h.access = { all: true, why: 'off' };
 });
 
-describe('the free plan on the phone', () => {
-  it('OFF at launch: ten routines, nothing refused', async () => {
-    const f = await member(10);
-    expect(await f.reachedLimit('routines')).toBe(false);
-    await f.useFreeLimits.getState().refresh();
-    expect(await f.reachedLimit('routines')).toBe(false);
-    expect(await f.chartAllowed(null)).toBe(true);
-  });
-
-  it('switched on: the 5th routine is refused for a member in no gym, never for a gym member', async () => {
-    h.answer = ON;
-    const f = await member(4);
-    // The first check never waits on the internet: the launch rules, and a read starts behind it.
-    expect(await f.reachedLimit('routines')).toBe(false);
-    await f.useFreeLimits.getState().refresh();
-    expect(await f.reachedLimit('routines')).toBe(true);
-    expect(await f.chartAllowed(3)).toBe(true);
-    expect(await f.chartAllowed(12)).toBe(false);
-    h.link = { gymId: 'g1' };
-    expect(await f.reachedLimit('routines')).toBe(false);
-    expect(await f.chartAllowed(null)).toBe(true);
-  });
-
-  it('three routines: a fourth is still allowed', async () => {
-    h.answer = ON;
-    const f = await member(3);
-    await f.useFreeLimits.getState().refresh();
-    expect(await f.reachedLimit('routines')).toBe(false);
-  });
-
-  it('own exercises count only the ones the member made, never the library', async () => {
-    h.answer = ON;
-    const f = await member(0);
-    await f.useFreeLimits.getState().refresh();
-    const { createCustomExercise } = await import('@/tracker/db/customExercise');
-    for (let i = 0; i < 6; i++) {
-      await createCustomExercise(
-        { name: `My Move ${i}`, logType: 'weight_reps', muscles: { primary: ['chest'], secondary: [] }, equipment: 'other', isCompound: false, incrementKg: 2.5, countsBodyweight: false },
-        { uri: null, type: null },
-      );
-    }
+describe('the free part on the phone', () => {
+  it('switched off: ten own exercises and all-time charts, nothing refused', async () => {
+    const f = await member();
+    await makeOwn(10);
     expect(await f.reachedLimit('customExercises')).toBe(false);
-    await createCustomExercise(
-      { name: 'My Move 7', logType: 'weight_reps', muscles: { primary: ['chest'], secondary: [] }, equipment: 'other', isCompound: false, incrementKg: 2.5, countsBodyweight: false },
-      { uri: null, type: null },
-    );
+    expect(await f.chartAllowed(null)).toBe(true);
+  });
+
+  it('the free part: 7 own exercises fit, the 8th is refused; library rows never count', async () => {
+    h.access = FREE;
+    const f = await member();
+    await makeOwn(6);
+    expect(await f.reachedLimit('customExercises')).toBe(false);
+    await makeOwn(1);
     expect(await f.reachedLimit('customExercises')).toBe(true);
   });
 
-  it('the answer is kept on the phone; offline the last one stays and is not asked again every tap', async () => {
-    h.answer = ON;
-    let f = await member(4);
-    await f.useFreeLimits.getState().refresh();
-    expect(h.store.get(f.LIMITS_STORAGE_KEY)).toContain('"on":true');
-
-    // A restart: the kept answer is used at once.
-    await bootRealApp({ db: phoneDb });
-    f = await import('@/cloud/limitsFlag');
-    expect(await f.reachedLimit('routines')).toBe(true);
-
-    // Offline: the read fails; the kept answer stays, and the next check does not ask again.
-    h.answer = { ok: false, failure: 'offline' };
-    const t = Date.now() + 13 * 3600_000;
-    await f.useFreeLimits.getState().refresh(t);
-    expect(f.useFreeLimits.getState().limits.on).toBe(true);
-    const calls = h.calls;
-    await f.useFreeLimits.getState().current(t + 60_000);
-    expect(h.calls).toBe(calls);
+  it('the free part: charts of 3 months fit; a year and all time do not', async () => {
+    h.access = FREE;
+    const f = await member();
+    expect(await f.chartAllowed(1)).toBe(true);
+    expect(await f.chartAllowed(3)).toBe(true);
+    expect(await f.chartAllowed(12)).toBe(false);
+    expect(await f.chartAllowed(null)).toBe(false);
   });
 
-  it('a server without 0032 (not ready) means off', async () => {
-    h.answer = { ok: false, failure: 'not-ready' };
-    const f = await member(9);
-    await f.useFreeLimits.getState().refresh();
-    expect(await f.reachedLimit('routines')).toBe(false);
+  it('the free month, a gym, staff and a purchase open everything', async () => {
+    const f = await member();
+    await makeOwn(9);
+    for (const a of [
+      { all: true, why: 'trial', daysLeft: 3, lastDay: '2026-12-01' },
+      { all: true, why: 'gym', gymName: 'Iron Temple', endedOn: null, graceEndsOn: null },
+      { all: true, why: 'staff', gymName: 'Iron Temple' },
+      { all: true, why: 'bought', option: 'yearly' },
+    ] as MemberAccess[]) {
+      h.access = a;
+      expect(await f.reachedLimit('customExercises')).toBe(false);
+      expect(await f.chartAllowed(null)).toBe(true);
+    }
   });
 });

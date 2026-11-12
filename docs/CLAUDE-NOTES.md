@@ -7,6 +7,24 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-462. F56 MettleUp Plus, built in four parts (R-461's plan) — 12 Nov 2026
+**Asked (main session, from R-461):** build F56 with the gym unlock: (a) the plan switch, the free/paid split and a
+30-day free month with the unlock hook; (b) the found-gym and owner/staff unlock; (c) "Tell my gym"; (d) the gym
+owner's switch. Prices Rs149/month, Rs999/year, Rs2,499 once (approved). Google Play in TEST MODE only. No live
+database change, no deploy, no release.
+**Part (a), what I built:** the shared rules (packages/theme/src/memberPlan.ts: who gets everything, in order
+switched off > staff > gym (+7 days, then the owner's switch, default ON) > bought > free month > free part); the
+phone's plan store (src/plan/*), the MettleUp Plus screen (/plus, Settings row "MettleUp Plus"), the two one-time
+free-month pop-ups, the locked pop-up for each paid feature (older charts, own exercises past 7, 1-rep max and
+plate calculators, suggested weight and reps in a workout, the watch), Google Play Billing 8.0.0 (modules/
+forge-billing, Android; iPhone = StoreKit later, PARITY member-plus-billing). The old #43 free-limits server switch
+is retired (routines are never limited). Staff sign-in (R-458's door) and "My membership" feed the unlock.
+**Choices:** ships SWITCHED OFF (MEMBER_PLAN_GATE_ON=false): nothing locks for anyone until the Play products exist
+and he says "payments live". The free month starts on the first day the switch is on, so nobody is locked on day 1.
+Erase all data keeps the free month's start (no endless free months). The watch lock is phone-side: old watch
+apps show "Your watch needs MettleUp Plus" without a watch update. QA builds turn it on with mettleup://qa-plan.
+**UAT:** part u461 (qa/uat-rel-r461-plus.yaml). **Play products he must make:** see the final report.
+
 ## R-461. His vision: a found gym membership unlocks every paid feature (phone-number search + F56) — 12 Nov 2026
 He said (12 Nov, after reading the R-458 plan): solo users of the member app will have paid features locked (F56). When
 someone signs in and we detect an active membership at a MettleUp gym, or that they own or staff a MettleUp gym, we tell
@@ -27,6 +45,9 @@ ready WhatsApp message from their own phone, optional gym name + city as a lead,
 he is unsure about locking; he asked whether the GYM OWNER should choose. My view: yes, an owner switch in the admin app;
 never lock the member's own data (history, routines, records), only F56's paid extras, after a 7-day grace. Open: the
 switch's default (A: on, B: off) and his yes to apply 0068 on the live gym server.
+DECIDED (12 Nov, his reply "A"): the owner switch starts ON for every gym (paid extras lock 7 days after the plan
+ends; never the member's own data). 0068 applied live by the main session (owner's yes). STATUS: being built by the
+F56 helper, R-462.
 
 ## R-460. Sturdier phone tests, "flows to check", and a three-step round that fails fast — 12 Nov 2026
 

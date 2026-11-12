@@ -78,7 +78,8 @@ features:
     reason: WatchConnectivity inside forge-rest plus HKHealthStore.startWatchApp; written with the Apple Watch app.
     blocking: false
     covers:
-      functions: [forge-rest.setWatchAccent, forge-rest.openWatch, forge-rest.watchAppState, forge-rest.installOnWatch, forge-rest.watchVersions, forge-rest.updateOnWatch, forge-rest.watchDiag]
+      functions: [forge-rest.setWatchAccent, forge-rest.openWatch, forge-rest.watchAppState, forge-rest.installOnWatch, forge-rest.watchVersions, forge-rest.updateOnWatch, forge-rest.watchDiag,
+                  forge-rest.setWatchLock]
       gradle: [com.google.android.gms:play-services-wearable, androidx.wear:wear-remote-interactions, com.google.guava:listenablefuture]
 
   - id: watch-app
@@ -161,6 +162,16 @@ features:
       functions: [forge-phone.playUpdateCheck, forge-phone.playUpdateStart, forge-phone.playUpdateFinish,
                   forge-phone.onPlayUpdate, forge-phone.installerPackage]
       gradle: [com.google.android.play:app-update]
+
+  - id: member-plus-billing
+    name: MettleUp Plus purchases (Google Play Billing; R-461, F56) [new]
+    android: done
+    ios: todo
+    reason: StoreKit 2 in a forge-billing Swift twin (same prices/buy/owned names, App Store product ids). Until then the iPhone MettleUp Plus screen says the store is not available; the gym unlock, staff unlock and free month work the same on iPhone (shared code).
+    blocking: false
+    covers:
+      functions: [forge-billing.prices, forge-billing.buy, forge-billing.owned]
+      gradle: [com.android.billingclient:billing]
 
   - id: shared-file-import
     name: A Hevy/Strong export shared to the app from the share menu [1a]

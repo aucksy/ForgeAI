@@ -2,6 +2,7 @@ import { Tabs } from 'expo-router';
 
 import { UpdatePrompt } from '@/components/UpdatePrompt';
 import { WatchUpdatePrompt } from '@/components/WatchUpdatePrompt';
+import { PlanNotice } from '@/plan/PlanNotice';
 import { APP_TABS, HIDDEN_TAB_ROUTES } from '@/lib/appTabs';
 import { TrackerTabBar } from '@/tracker/components/TrackerTabBar';
 
@@ -33,6 +34,8 @@ export default function TabsLayout() {
       <UpdatePrompt />
       {/* R-438: "Your watch app has an update" when the watch app is older (tracker/services/watchUpdateCard.ts says when). */}
       <WatchUpdatePrompt />
+      {/* F56 (R-461): the free month's two one-time pop-ups (plan/PlanNotice.tsx says when). */}
+      <PlanNotice />
     </>
   );
 }

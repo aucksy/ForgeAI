@@ -315,7 +315,7 @@ export default function NewExerciseScreen() {
         } else {
           // #43: the free plan's limit (switched off at launch; gym members never meet it).
           if (await reachedLimit('customExercises')) {
-            void explainLimit('customExercises', () => router.push('/settings/gym'));
+            void explainLimit('customExercises', () => router.push('/plus'));
             return;
           }
           const id = await createCustomExercise(input, m);

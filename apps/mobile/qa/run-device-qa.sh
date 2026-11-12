@@ -207,7 +207,7 @@ OLD_PARTS="a b c d e f g h h3 p1 p2 i link i2 j j2 j3 k l n p9 r br inv invf p7 
 # R-123: ubk = a fresh install restores a backup FILE from the welcome screen (routines in order,
 # settings, profile), then saves a new one from Settings -> Back up and restore (qa/uat-bk.yaml).
 UAT_PARTS="uh ur un ud ue ubk ub uf ua uv ug uk"
-GATE_PARTS="w dnd longrest anim mk clip uat uatc u355 u344 u358 u366 usel ugym u15 u76 u198 u194 u401 u199 u404 u438 u444 ulook uage u439 u436 u336 u61 upic u452 u456 u458 u454"
+GATE_PARTS="w dnd longrest anim mk clip uat uatc u355 u344 u358 u366 usel ugym u15 u76 u198 u194 u401 u199 u404 u438 u444 ulook uage u439 u436 u336 u61 upic u452 u456 u458 u454 u461"
 qa_list() { echo "$1" | tr ',;' '  ' | tr '[:upper:]' '[:lower:]' | xargs; }
 QA_ONLY_LIST=$(qa_list "${QA_ONLY:-}")
 QA_EXTRA_LIST=$(qa_list "${QA_EXTRA:-}")
@@ -2001,6 +2001,7 @@ part_uat() {
   part_u454
   part_uage
   part_u458
+  part_u461
   part_ulook
   uat_gather
 }
@@ -2380,6 +2381,20 @@ part_u458() {
   [ $rc = 0 ] || status=1
   return $rc
 }
+# F56 MettleUp Plus (owner R-461, 12 Nov 2026): the free and paid parts, switched on for this phone only through
+# the QA build's 'memberPlan' stand-in (mettleup://qa-plan): switched off first (no row, charts open), the free
+# month's "5 days left" and "has ended" pop-ups (once each, also after the app is killed), the locked charts, a
+# test-store purchase, a gym plan's 7 extra days and the owner's switch, staff, reset. Starts from the demo.
+# Also runs alone with only=u461. Pictures rel-r461-*.png.
+part_u461() {
+  local rc=0
+  gate_flow u461_seed gate-demo.yaml || { status=1; return 1; }
+  uat_flow uatr461 uat-rel-r461-plus.yaml || rc=1
+  mkdir -p "$OUT/uat-release"
+  { find "$OUT" -path "$OUT/uat-release" -prune -o -name "rel-r461-*.png" -print 2>/dev/null; find "$PWD" -maxdepth 1 -name "rel-r461-*.png" 2>/dev/null; } | while read -r f; do cp "$f" "$OUT/uat-release/" 2>/dev/null; done
+  [ "$rc" = 0 ] || status=1
+  return $rc
+}
 # F194 (owner R-352, 5 Nov 2026): Settings -> Plates and bars -> "Machine and cable steps". Flow a: a cable
 # lift at the top of its reps (50 kg x 20 x 3), the new line on its default, saved as a routine. The phone
 # clock then moves one day on (the Target reads only workouts before today) and flow b checks the Target
@@ -2543,6 +2558,7 @@ qa_runs u61 && ! qa_runs uat && { log "gate part U61 begins"; part_u61; }
 qa_runs ulook && ! qa_runs uat && { log "gate part ULOOK begins"; part_ulook; }
 qa_runs uage && ! qa_runs uat && { log "gate part UAGE begins"; part_uage; }
 qa_runs u458 && ! qa_runs uat && { log "gate part U458 begins"; part_u458; }
+qa_runs u461 && ! qa_runs uat && { log "gate part U461 begins"; part_u461; }
 # R-359/R-345 (5 Nov 2026): the In use journey alone (pictures rel-345/357/359), with only=u15.
 qa_runs u15 && ! qa_runs uat && { log "gate part U15 begins"; uat_flow uat15 uat-rel-15-inuse-journey.yaml || status=1; }
 # T76 (owner's full test round, 5 Nov 2026): negative checks found by the round. Flow a: kg history,

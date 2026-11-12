@@ -18,6 +18,7 @@ import { applyStepBack, withoutStepBack, type ProgressionTarget, type StuckChoic
 import { todayISO } from '@/lib/date';
 import type { RepRangeChoice } from '@/tracker/engine/repRanges';
 import { DEFAULT_MACHINE_STEP, isMachineStep, type MachineStep } from '@/tracker/engine/weightLadder';
+import { canUseNow } from '@/plan/memberPlanStore';
 import { getTargetsForCards, type TargetCard } from '@/tracker/services/coachTargets';
 import { gymKey, gymPlatesFor, type GymPlates } from '@/tracker/services/plateMath';
 import { usePlateSetup } from '@/tracker/store/plateSetupStore';
@@ -135,7 +136,9 @@ export async function loadTargets(q: TargetQuery): Promise<void> {
   inflight = sig;
   let map: Map<string, ProgressionTarget>;
   try {
-    map = q.planDayId
+    // F56 (R-461): suggested weight and reps are part of MettleUp Plus; on the free part a workout has none
+    // (each set still shows last time's numbers).
+    map = q.planDayId && canUseNow('weightSuggestions')
       ? await getTargetsForCards(q.planDayId, q.cards, {
           easy: q.easy,
           effort: q.effort,
@@ -166,7 +169,7 @@ export async function preloadTargets(
   exerciseIds: readonly string[],
   opts: { easy: boolean; effort: boolean; previousFrom?: PreviousFrom; jump?: WeightJump; repRange?: RepRangeChoice; gym?: GymPlates | null },
 ): Promise<Map<string, ProgressionTarget>> {
-  if (!planDayId) return new Map();
+  if (!planDayId || !canUseNow('weightSuggestions')) return new Map();
   try {
     return await getTargetsForCards(
       planDayId,

@@ -11,6 +11,8 @@ import { Text, TextInput, View } from 'react-native';
 
 import { Card, GhostButton, PrimaryButton } from '@/components/ui';
 import { InlineError } from '@/components/ui/InlineError';
+import { noteStaff, useMemberAccess } from '@/plan/memberPlanStore';
+import { STAFF_DOOR_PLUS } from '@/plan/planWords';
 import { color, space, type } from '@/theme/tokens';
 
 import { apiStaffGymCode } from './gymApi';
@@ -19,6 +21,7 @@ import { STAFF_DOOR, STAFF_PHONE_ERROR, STAFF_PIN_ERROR, staffDoorProblem, staff
 
 export function StaffDoorCard() {
   const router = useRouter();
+  const plusOn = useMemberAccess().why !== 'off';
   const [open, setOpen] = useState(false);
   const [phone, setPhone] = useState('');
   const [pin, setPin] = useState('');
@@ -45,6 +48,8 @@ export function StaffDoorCard() {
         // The PIN leaves memory at once; the usual "Join <gym>" screen asks before joining.
         setPin('');
         setOpen(false);
+        // F56 MettleUp Plus (R-461): owners and desk staff get every feature free (the gym's name and code only).
+        noteStaff(a.gymName, a.joinCode);
         router.push(`/j/${a.joinCode}`);
         return;
       }
@@ -63,6 +68,8 @@ export function StaffDoorCard() {
         {STAFF_DOOR.title}
       </Text>
       <Text style={{ fontFamily: type.body, fontSize: type.size.sub, lineHeight: 20, color: color.inkSecondary }}>{STAFF_DOOR.body}</Text>
+      {/* F56 (R-461): said only while MettleUp Plus is switched on (else everything is free anyway). */}
+      {plusOn ? <Text style={{ fontFamily: type.body, fontSize: type.size.sub, lineHeight: 20, color: color.inkSecondary }}>{STAFF_DOOR_PLUS}</Text> : null}
       {open ? (
         <View style={{ gap: space.sm }}>
           <TextInput

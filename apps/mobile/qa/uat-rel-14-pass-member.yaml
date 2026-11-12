@@ -53,6 +53,7 @@ appId: com.mettleup.app
     when:
       visible: "^Test build: a stand-in pass.*"
     commands:
+      # in-view: this runs only when the line is already on screen (the when: above)
       - assertVisible: '^Test build: a stand-in pass, because your gym''s server does not have this yet\.$'
 - takeScreenshot: rel-141-pass-card
 # The rest of the Gym tab stays open to a pass member (nothing there needs a plan): Bring a friend is near the end.

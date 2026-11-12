@@ -292,6 +292,13 @@ class ForgeRestModule : Module() {
       true
     }
 
+    // F56 MettleUp Plus (R-461): on the free part the watch shows these words instead of the workout (WearSync.setLock).
+    Function("setWatchLock") { title: String?, text: String? ->
+      val c = ctx ?: return@Function false
+      WearSync.setLock(c, title, text)
+      true
+    }
+
     // 29 Oct 2026: a workout was just STARTED (never a resume): open the watch app (WearSync.openWatch).
     Function("openWatch") { startedAt: Double ->
       val c = ctx ?: return@Function false

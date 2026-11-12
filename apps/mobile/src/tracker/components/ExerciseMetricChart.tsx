@@ -168,7 +168,7 @@ export function ExerciseMetricChart({
               // #43: the free plan shows 3 months of charts (switched off at launch; gym members never meet it).
               void chartAllowed(monthsOfRange(r)).then((ok) => {
                 if (!ok) {
-                  void explainLimit('charts', () => router.push('/settings/gym'));
+                  void explainLimit('charts', () => router.push('/plus'));
                   return;
                 }
                 setInspect(null);

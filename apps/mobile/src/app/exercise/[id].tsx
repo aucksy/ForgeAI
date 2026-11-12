@@ -28,6 +28,7 @@ import { Badge } from '@/components/LookBadge';
 import { InlineError } from '@/components/ui/InlineError';
 import { relativeDay, tinyDateWithYear } from '@/lib/date';
 import { goBack } from '@/lib/goBack';
+import { allowOrExplain } from '@/plan/locked';
 import { navigateOnce } from '@/lib/guardedAction';
 import { liftedWords } from '@/lib/units';
 import { countWord } from '@/lib/words';
@@ -472,7 +473,11 @@ export default function ExerciseScreen() {
                     {/* F63: the 1-rep max and % calculator, starting on this exercise's best recent set */}
                     {shownAs === 'weight_reps' ? (
                       <Pressable
-                        onPress={() => go(() => router.push({ pathname: '/one-rep-max', params: { exerciseId: ex.id } } as unknown as Href))}
+                        onPress={() => {
+                          // F56 (R-461): the calculators are part of MettleUp Plus.
+                          if (!allowOrExplain('calculators', () => router.push('/plus'))) return;
+                          go(() => router.push({ pathname: '/one-rep-max', params: { exerciseId: ex.id } } as unknown as Href));
+                        }}
                         accessibilityRole="link"
                         accessibilityLabel={`Open the 1-rep max and percent calculator for ${ex.name}`} // member-words
                         style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: space.sm, minHeight: 48, opacity: pressed ? 0.6 : 1 })}

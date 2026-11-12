@@ -37,6 +37,8 @@ import { useUnits } from '@/lib/useUnits';
 import { canAddGymShortcut } from '@/shop/gymShortcut';
 import { useGymShop } from '@/shop/gymStore';
 import { useSettings } from '@/store/settingsStore';
+import { planTodayNow, useMemberAccess } from '@/plan/memberPlanStore';
+import { accessLine } from '@/plan/planWords';
 import { useAppearance } from '@/theme/appearance';
 import { LOOK_WORDS } from '@/theme/lookChoice';
 import { color, space, type } from '@/theme/tokens';
@@ -59,6 +61,7 @@ const PARTS = new Set(profileParts(FEATURES));
 
 const ICON: Record<SettingsRowKey, IconName> = {
   profile: 'person',
+  plus: 'trophy',
   units: 'scale',
   // Drawn as a half-filled circle by Dot (no sun or moon in the icon set); this is its fallback.
   look: 'globe',
@@ -186,9 +189,11 @@ export default function SettingsScreen() {
     }, [readState]),
   );
 
+  const plusAccess = useMemberAccess();
   const previous = PREVIOUS_FROM_CHOICES.find((c) => c.value === previousFrom) ?? PREVIOUS_FROM_CHOICES[0];
   const lines: Partial<Record<SettingsRowKey, string | null>> = {
     profile: name,
+    plus: accessLine(plusAccess, planTodayNow()),
     units: unitsLine(units),
     look: LOOK_WORDS[lookChoice],
     weeklyGoal: weeklyGoalLine(weeklyGoal),
@@ -215,6 +220,7 @@ export default function SettingsScreen() {
     watch: watchRowLine(watch) != null,
     // R-339: on iPhone the not-built-yet rows are left out and one plain line says so.
     iphone: onIphone(),
+    plus: plusAccess.why !== 'off',
   });
 
   const open = (href: string): void => {

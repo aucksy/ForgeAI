@@ -93,6 +93,8 @@ interface Native {
   setAccent?(hex: string | null): boolean;
   /** 29 Oct 2026: the gym's colour for the watch app ("#RRGGBB"; null = MettleUp orange). Older native pieces lack it. */
   setWatchAccent?(hex: string | null): boolean;
+  /** F56 (R-461): on the free part, the watch shows these words in place of the workout and gets no rest; null = open. */
+  setWatchLock?(title: string | null, text: string | null): boolean;
   /** 29 Oct 2026: a workout was just started: open the watch app. Older native pieces lack it. */
   openWatch?(startedAt: number): boolean;
   /** F67: "none" | "installed" | "missing" | "unknown" (watchInstall.ts). Older native pieces lack it. */
@@ -242,6 +244,21 @@ export function syncWatchAccent(): void {
     watchAccentSent = hex;
   } catch (e) {
     console.warn('[ForgeErr] the gym colour was not handed to the watch', e);
+  }
+}
+
+/**
+ * F56 MettleUp Plus (R-461): the watch is a paid feature. `lock` = the words the watch shows during a workout on
+ * the free part (no sets, no rest buzz, no opening by itself); null = everything as before. Older native pieces
+ * lack it (nothing changes). Never throws.
+ */
+export function setWatchLock(lock: { title: string; text: string } | null): void {
+  const n = N();
+  if (!n?.setWatchLock) return;
+  try {
+    n.setWatchLock(lock?.title ?? null, lock?.text ?? null);
+  } catch (e) {
+    console.warn('[ForgeErr] the watch lock was not handed over', e);
   }
 }
 

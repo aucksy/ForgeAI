@@ -1,0 +1,22 @@
+plugins {
+  id 'com.android.library'
+  id 'expo-module-gradle-plugin'
+}
+
+group = 'com.forgeai'
+version = '1.0.0'
+
+android {
+  namespace "com.forgeai.billing"
+  defaultConfig {
+    versionCode 1
+    versionName '1.0.0'
+  }
+}
+
+dependencies {
+  // F56 MettleUp Plus (R-461): Google Play Billing. Play requires Billing 8 or later (31 Aug 2026). 8.0.0 is
+  // the newest built with a Kotlin the app can read (8.1+ pull kotlin-stdlib 2.2; Brain lesson
+  // play-needs-target-android-16). Its own manifest adds com.android.vending.BILLING.
+  implementation 'com.android.billingclient:billing:8.0.0'
+}

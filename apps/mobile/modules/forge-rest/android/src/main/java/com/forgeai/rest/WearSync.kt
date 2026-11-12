@@ -132,6 +132,8 @@ object WearSync {
 
   /** A rest started or changed. */
   fun rest(ctx: Context, r: RestCard.Rest) {
+    // F56 (R-461): on the free part the watch gets no rest (no buzz); the phone's own rest timer stays free.
+    if (lock(ctx) != null) return
     val next = if (r.allDone) "All sets done" else r.next.orEmpty()
     val done = restDone(ctx, r)
     put(
@@ -171,6 +173,13 @@ object WearSync {
     lines: WatchLines = WatchLines.NONE,
     saved: Boolean = false,
   ) {
+    // F56 (R-461): on the free part the watch shows "needs MettleUp Plus" in place of the workout: no sets,
+    // no "Complete set", no logging on the watch. The words come from the app (src/plan/planWords.ts).
+    val locked = if (active) lock(ctx) else null
+    if (locked != null) {
+      workoutLocked(ctx, locked.first, locked.second)
+      return
+    }
     // R-166: + the next set's lines (set, last time's numbers, what a tick saves); "" = none.
     val l = if (active) lines else WatchLines.NONE
     // 29 Oct 2026: + the gym's colour ("#RRGGBB", "" = MettleUp orange); an older watch app ignores it.
@@ -218,6 +227,49 @@ object WearSync {
     put(ctx, PATH_WORKOUT, values)
   }
 
+  /** F56: the workout as a locked watch sees it (same item, only the words; an older watch app shows them too). */
+  private fun workoutLocked(ctx: Context, title: String, text: String) {
+    val accent = accent(ctx)
+    val key = listOf<Any>(true, title, text, "", "", "", "", accent, false, "locked")
+    if (key == lastWorkout) {
+      flush(ctx)
+      return
+    }
+    lastWorkout = key
+    Log.i(TAG, "watch next: locked")
+    put(
+      ctx,
+      PATH_WORKOUT,
+      linkedMapOf<String, Any>(
+        "active" to true, "title" to title, "text" to text, "done" to "", "set" to "", "last" to "", "goal" to "",
+        "accent" to accent, "saved" to false, "logFlow" to false, "eOn" to false,
+      ),
+    )
+  }
+
+  // ------------------------------------------------------------------ the free part (F56, R-461)
+  /**
+   * The words the watch shows on the free part of MettleUp Plus ([title], [text]); null / "" = open (as before).
+   * Kept in preferences so the rest card's own calls (app in the background) see it too.
+   */
+  fun setLock(ctx: Context, title: String?, text: String?) {
+    try {
+      ctx.applicationContext.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit()
+        .putString("lockTitle", title.orEmpty()).putString("lockText", text.orEmpty()).apply()
+    } catch (e: Exception) {
+      Log.w(TAG, "watch lock not saved", e)
+    }
+  }
+
+  private fun lock(ctx: Context): Pair<String, String>? = try {
+    val p = ctx.applicationContext.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+    val t = p.getString("lockTitle", "").orEmpty()
+    if (t.isEmpty()) null else Pair(t, p.getString("lockText", "").orEmpty())
+  } catch (e: Exception) {
+    Log.w(TAG, "watch lock not read", e)
+    null
+  }
+
   // ------------------------------------------------------------------ the gym's colour
   /**
    * 29 Oct 2026 ("Watch in the gym's colour"): the gym's accent the app is painted in ("#RRGGBB"),
@@ -253,6 +305,8 @@ object WearSync {
    */
   fun openWatch(ctx: Context, startedAt: Long) {
     if (unavailable()) return
+    // F56 (R-461): on the free part the watch is not opened by itself (it would only show "needs MettleUp Plus").
+    if (lock(ctx) != null) return
     val app = ctx.applicationContext
     val data = startedAt.toString().toByteArray(Charsets.UTF_8)
     try {

@@ -7,6 +7,9 @@
  * count as the body map); the new maths is engine/statistics.ts.
  */
 import { useRouter } from 'expo-router';
+
+import { chartAllowed } from '@/cloud/limitsFlag';
+import { explainLimit, monthsOfRange } from '@/cloud/limitsPrompt';
 import { useMemo, useState } from 'react';
 import { ScrollView, Text, View } from 'react-native';
 
@@ -93,9 +96,22 @@ export default function StatisticsScreen() {
   );
 
   const [range, setRange] = useState<StatRange>('3m');
+  // F56 (R-461): on the free part of MettleUp Plus, charts show the last 3 months.
+  const pickRange = (r: StatRange): void => {
+    void chartAllowed(monthsOfRange(r)).then((ok) => {
+      if (ok) setRange(r);
+      else void explainLimit('charts', () => router.push('/plus'));
+    });
+  };
   const [grouping, setGrouping] = useState<StatGrouping>('week');
   const [picked, setPicked] = useState<StatGroup[]>(STAT_GROUPS.map((g) => g.id));
   const [distRange, setDistRange] = useState<DistRange>('30d');
+  const pickDistRange = (r: DistRange): void => {
+    void chartAllowed(monthsOfRange(r)).then((ok) => {
+      if (ok) setDistRange(r);
+      else void explainLimit('charts', () => router.push('/plus'));
+    });
+  };
 
   const today = top.data?.today ?? todayISO();
   const first = top.data?.first ?? null;
@@ -158,7 +174,7 @@ export default function StatisticsScreen() {
           right={<SegmentedControl compact label="Group by" options={GROUPINGS} value={grouping} onChange={setGrouping} />}
         />
         <Card style={{ gap: space.md }}>
-          <SegmentedControl label="Range" options={STAT_RANGES} value={range} onChange={setRange} />
+          <SegmentedControl label="Range" options={STAT_RANGES} value={range} onChange={pickRange} />
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -216,7 +232,7 @@ export default function StatisticsScreen() {
         {/* 3. Muscle distribution */}
         <StatHeading title="Muscle distribution" sub="Sets this period against the one before" />
         <Card style={{ gap: space.md }}>
-          <SegmentedControl label="Period" options={DIST_RANGES} value={distRange} onChange={setDistRange} />
+          <SegmentedControl label="Period" options={DIST_RANGES} value={distRange} onChange={pickDistRange} />
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: space.md }}>
             <Legend tint={chart.series[0]} text="This period" />
             {comparable ? <Legend tint={color.axis} text="Before" /> : null}

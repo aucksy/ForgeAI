@@ -235,6 +235,9 @@ function deviceSteps(): EraseStep[] {
         // Which gyms were offered the home-screen logo (OWNER-INBOX #11): a fresh start offers again.
         const { SHORTCUT_OFFERED_KEY } = await import('@/shop/gymShortcut');
         await AsyncStorage.removeItem(SHORTCUT_OFFERED_KEY);
+        // F56 MettleUp Plus (R-461): the staff and gym unlock and what Google Play said (the free month's first day stays).
+        const { forgetOnErase } = await import('@/plan/memberPlanStore');
+        forgetOnErase();
         // "My membership"'s kept answer (OWNER-INBOX #6).
         const { MEMBERSHIP_STORAGE_KEY } = await import('@/shop/membership');
         await AsyncStorage.removeItem(MEMBERSHIP_STORAGE_KEY);

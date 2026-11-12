@@ -12,6 +12,7 @@ import type { UnitSystem } from '@/lib/units';
 
 export type SettingsRowKey =
   | 'profile'
+  | 'plus'
   | 'units'
   | 'look'
   | 'coach'
@@ -81,6 +82,8 @@ export interface SettingsContext {
   watch?: boolean;
   /** R-339: the iPhone build (reminders, watch, Health and widgets are not built there yet). */
   iphone?: boolean;
+  /** F56 (R-461): MettleUp Plus is switched on (MEMBER_PLAN_GATE_ON or a QA build's test switch). */
+  plus?: boolean;
 }
 
 /** The groups and rows, in order, for this phone. PURE. */
@@ -88,6 +91,8 @@ export function settingsGroups(ctx: SettingsContext): SettingsGroup[] {
   // R-284: Reminders sit with You (they are about your week), not in a phone group of their own.
   const you: SettingsRow[] = [
     { key: 'profile', title: 'Your profile', href: '/edit-profile' },
+    // F56 (R-461): where the member stands (free month, gym, bought) and what is free or paid.
+    ...(ctx.plus ? [{ key: 'plus' as const, title: 'MettleUp Plus', href: '/plus' }] : []),
     { key: 'units', title: 'Units', href: '/settings/units' },
     // Light mode (owner, 9 Nov 2026): follows the phone unless the member picks Light or Dark.
     { key: 'look', title: 'Light or dark', href: '/settings/look' }, // member-words

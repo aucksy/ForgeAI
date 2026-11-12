@@ -13,6 +13,7 @@ import { Pressable, Text, TextInput, View } from 'react-native';
 
 import { Card, Screen } from '@/components/ui';
 import { goBack } from '@/lib/goBack';
+import { canUseNow } from '@/plan/memberPlanStore';
 import { weightUnitOf } from '@/lib/units';
 import { useUnits } from '@/lib/useUnits';
 import { color, radius, space, type } from '@/theme/tokens';
@@ -27,6 +28,10 @@ const one = (v: string | string[] | undefined): string | undefined => (typeof v 
 
 export default function OneRepMaxScreen() {
   const router = useRouter();
+  // F56 (R-461): the calculators are part of MettleUp Plus; a link straight here on the free part opens that screen.
+  useEffect(() => {
+    if (!canUseNow('calculators')) router.replace('/plus');
+  }, [router]);
   const params = useLocalSearchParams<{ exerciseId?: string | string[]; kg?: string | string[] }>();
   const exerciseId = one(params.exerciseId);
   const startKg = Number(one(params.kg));
