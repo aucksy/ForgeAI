@@ -307,7 +307,14 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
     return {
       text: kgPlanned.reps
         ? repLiveLine(kgPlanned, g)
-        : kgLiveLine(kgPlanned, g, (kg) => `${fmtInt(Math.round(kgToDisplay(kg, units)))} ${weightUnit(units)}${each}`, (kg) => fmtWeight(kg, units)),
+        : kgLiveLine(
+            kgPlanned,
+            g,
+            (kg) => `${fmtInt(Math.round(kgToDisplay(kg, units)))} ${weightUnit(units)}${each}`,
+            (kg) => fmtWeight(kg, units),
+            // Owner, 12 Nov 2026: the green finished line has no "each" on its totals.
+            (kg) => `${fmtInt(Math.round(kgToDisplay(kg, units)))} ${weightUnit(units)}`,
+          ),
       // Owner, 12 Nov 2026: ONE rule for kilos and reps: green once every working set is ticked and the
       // total is at least last time's (more or the same), `lineGreen`.
       beaten: lineGreen(kgPlanned, g),

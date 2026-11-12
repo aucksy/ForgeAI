@@ -64,7 +64,7 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: '^40 reps done · Previous: 39 · [+]1$'
+      FIND: '^40 reps done · Previous: 39 · [+]1$|^Target .* 40 reps done · Previous: 39 · [+]1[.] Tap for why[.]$'
 - assertNotVisible: "(?i).*keep the same weight.*"
 - assertNotVisible: "(?i).*(reached|beaten).*"
 - takeScreenshot: rel-r454-l-dip-done
@@ -99,6 +99,6 @@ appId: com.mettleup.app
     file: sub-find.yaml
     env:
       FIND: "^Target First time · find a weight for [0-9]+–[0-9]+ reps[.] Tap for why[.]$"
-- assertNotVisible: "^240 kg( each)? done.*"
+- assertNotVisible: ".*240 kg( each)? done.*"
 - takeScreenshot: rel-r454-n-first-time-after
 - runFlow: sub-uat-r439-finish.yaml

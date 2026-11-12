@@ -120,3 +120,18 @@ describe('one green rule: reps only (same rule as kilos)', () => {
     }
   });
 });
+
+describe('the finished line names totals without "each" (owner, 12 Nov 2026)', () => {
+  const each = (kg: number) => `${total(kg)} each`;
+  it('dumbbells: "each" while the sets run, none on the green line', () => {
+    expect(kgLiveLine(kg, kgProgress(kg, [open(40, 13), open(40, 12), open(40, 11), open(40, 9)]), each, weight, total)).toBe("Next set: 40 kg × 13 · Done: 0 of today's 1,800 kg each");
+    const all = kgProgress(kg, [done(40, 13), done(40, 12), done(40, 11), done(40, 9)]);
+    expect(kgLiveLine(kg, all, each, weight, total)).toBe('1,800 kg done · Previous: 1,720 kg · +80 kg');
+    const same = kgProgress(kg, [done(40, 13), done(40, 12), done(40, 10), done(40, 8)]);
+    expect(kgLiveLine(kg, same, each, weight, total)).toBe('1,720 kg done · Previous: 1,720 kg · same as last time');
+  });
+  it('without a separate finished wording the line keeps the one it was given', () => {
+    const all = kgProgress(kg, [done(40, 13), done(40, 12), done(40, 11), done(40, 9)]);
+    expect(kgLiveLine(kg, all, total, weight)).toBe('1,800 kg done · Previous: 1,720 kg · +80 kg');
+  });
+});
