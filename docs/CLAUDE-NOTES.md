@@ -7,7 +7,21 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
-## R-463. R-459 goes live: 0069 applied, privacy line added; the panel deploy is STOPPED (F56 would ship) — 12 Nov 2026
+## R-463. R-459 goes live: 0069 applied, privacy line added, admin panel deployed — 12 Nov 2026
+**Deploy (12 Nov, evening):** the stop below was cleared by the coordinator: 06cc670f added `unreleased` to help
+articles, so the 3 F56 articles stay out of the live help (59 of 62 live); the Worker's "member" purpose ships (owner
+chose WhatsApp proof for Find my gym on 12 Nov; no member reaches it before the next app release). Re-checked every
+dashboard / panel / packages change since: only whatsNew.ts + its test. ADMIN_NEWS: the pending line moved into the
+12 Nov entry with the coordinator's words "New: Member messages. When members update their app, they can send you
+questions, feedback and complaints here." (feature dot -> /member-messages; 1391260c). CI 43230013524 failed only on
+whatsNew.test's route check (no hyphen allowed) -> fixed a7d06da1; CI 43232130382 green on a7d06da1 (unit, build,
+crawl, admin journeys). Deploy: dashboard-dist from that run, `npx wrangler deploy` from deploy/panel of a clean
+worktree of a7d06da1 (node_modules junction, unlinked after), forgeai-panel version 1534de18-812b-454c-bf2b-7afbf0bbe541.
+Checked: app.mettleup.fit and forgeai.aakashpahuja.in serve index-D_U0gsfa.js holding the new line (curl); mettleup.fit/
+privacy and app.mettleup.fit/privacy.html carry the approved line word for word (curl); built-in browser opened
+app.mettleup.fit: sign-in page, index-D_U0gsfa.js, no console errors (not signed in).
+**Status:** done, live. Member app part ships with the next release (his "release").
+
 He said (12 Nov 2026, in the main chat): "All yes" to four questions: (1) apply 0069 live, (2) the privacy line,
 (3) keep the admin menu name "Member messages", (4) keep complaints named (only feedback may go without a name).
 Done:
