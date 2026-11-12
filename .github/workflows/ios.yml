@@ -109,9 +109,13 @@ jobs:
       # The first simctl picture used to be at 8 s, after the launch screen had gone. Quick screenshots
       # do not work either (run 43176584956: one at 0.3 s, then simctl waited ~15 s until the launch was
       # over). So a screen recording starts BEFORE `simctl launch`; frames are cut from it 10 a second.
-      # Each change of picture is kept in shots/launch-frames/ (<look>-<ms after launch>-<main colour>.png);
-      # the earliest frame after the launch that is neither black, plain white nor the home screen becomes
-      # launch-<look>.png.
+      # Each change of picture is kept in shots/launch-frames/ (<look>-<n>-<ms>-<main colour>.png; the ms
+      # are rough: the recording only starts writing when the screen first changes).
+      # Run 43182150918: the FIRST launch in a look showed plain white (light) / plain black (dark) for
+      # several seconds: iOS had not yet made its picture of the launch screen for that look. So each look
+      # is opened twice: launch-<look>-first.png is the first launch after install / after the switch,
+      # launch-<look>.png the second (what a member sees on every later start). The picture is the
+      # earliest frame after the launch that is neither black, plain white nor the home screen.
       - name: Picture tools (Pillow, ffmpeg)
         run: |
           python3 -m pip install --quiet --break-system-packages pillow imageio-ffmpeg || python3 -m pip install --quiet pillow imageio-ffmpeg
@@ -156,15 +160,16 @@ jobs:
               if chosen is None and t >= 0 and not blank and share >= 0.6:
                   chosen = (f, t, hexc, off)
           if chosen is None:
-              print(f"::error::no {look} launch picture: every frame after the launch was black, white or the home screen")
+              level = "warning" if look.endswith("-1") else "error"
+              print(f"::{level}::no {look} launch picture: every frame after the launch was black, white or the home screen")
               sys.exit(0)
           f, t, hexc, off = chosen
           shutil.copy(f, out)
-          print(f"launch-{look}.png = {t} ms after launch: #{hexc}, other pixels in the middle {off:.2%}")
+          print(f"{os.path.basename(out)} = {t} ms after launch: #{hexc}, other pixels in the middle {off:.2%}")
           PY
-          # One launch, filmed from 1.5 s before it until 25 s after.
+          # One launch, filmed from 1.5 s before it until 25 s after. film <name> <picture file>
           film() {
-            local look=$1 rec t0 tl
+            local look=$1 pic=$2 rec t0 tl
             rm -f "$RUNNER_TEMP/$look.mp4"
             xcrun simctl io "$UDID" recordVideo --codec=h264 --force "$RUNNER_TEMP/$look.mp4" > "$RUNNER_TEMP/rec-$look.log" 2>&1 &
             rec=$!
@@ -176,17 +181,23 @@ jobs:
             kill -INT $rec; wait $rec || true
             cat "$RUNNER_TEMP/rec-$look.log"
             cp "$RUNNER_TEMP/$look.mp4" "$OUT/shots/launch-frames/" || true
-            python3 "$RUNNER_TEMP/pick_launch.py" "$look" "$RUNNER_TEMP/$look.mp4" "$tl" "$OUT/shots/launch-frames" "$OUT/shots/launch-$look.png"
+            python3 "$RUNNER_TEMP/pick_launch.py" "$look" "$RUNNER_TEMP/$look.mp4" "$tl" "$OUT/shots/launch-frames" "$OUT/shots/$pic"
+            xcrun simctl terminate "$UDID" com.mettleup.app || true
+            sleep 2
           }
           # Light first; then back to the home screen and the dark look for the rest of the job.
           xcrun simctl ui "$UDID" appearance light || true
-          film light
-          xcrun simctl terminate "$UDID" com.mettleup.app || true
+          sleep 2
+          film light-1 launch-light-first.png
+          film light-2 launch-light.png
           xcrun simctl ui "$UDID" appearance dark || true
           sleep 2
-          film dark
-          last=26
-          for t in 30 40; do
+          film dark-1 launch-dark-first.png
+          film dark-2 launch-dark.png
+          # The app runs on from here for the crash check below.
+          xcrun simctl launch "$UDID" com.mettleup.app
+          last=0
+          for t in 8 20 40; do
             sleep $(( t - last )); last=$t
             xcrun simctl io "$UDID" screenshot "$OUT/shots/simctl-$(printf %02d $t)s.png"
           done
