@@ -830,6 +830,7 @@ export const NO_HELP_SCREENS = {
   'apps/mobile/src/app/_layout.tsx': 'The app frame around every screen; nothing to tap.',
   'apps/mobile/src/app/(tabs)/_layout.tsx': 'The bottom tab bar frame; each tab has its own article.',
   'apps/mobile/src/app/+not-found.tsx': 'Shown only for a broken link; it sends the member back into the app.',
+  'apps/mobile/src/app/+native-intent.tsx': 'Not a screen: it picks which page a link or an app-icon shortcut opens.',
   'apps/mobile/src/app/index.tsx': 'Redirect: opens the Workout tab.',
   'apps/mobile/src/app/qa-update.tsx': 'Redirect: a test-build link for the update screen pictures; opens the Workout tab.',
   'apps/mobile/src/app/qa-sleep.tsx': 'Redirect: a test-build link for the sleep line pictures (R-344); goes straight back.',
