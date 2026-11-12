@@ -128,7 +128,7 @@ export function CreditsSheet({ wallet, onClose, plansOn, assistKey }: { wallet: 
             <h3 style={headStyle}>{t('Recently used')}</h3>
             {wallet.recent.slice(0, 8).map((r, i) => (
               <div key={`${r.at}-${i}`} style={{ display: 'flex', justifyContent: 'space-between', gap: 12, padding: '10px 0', borderTop: i === 0 ? 'none' : `1px solid ${color.border}` }}>
-                <span style={{ fontFamily: font.body, fontSize: 14, color: color.ink, minWidth: 0, overflowWrap: 'anywhere' }}>{r.reason === 'spend' && r.task_id && jobs.has(r.task_id) ? say(jobs.get(r.task_id)!) : walletRowWords(r)}</span>
+                <span style={{ fontFamily: font.body, fontSize: 14, color: color.ink, minWidth: 0, overflowWrap: 'anywhere' }}>{r.reason === 'spend' && r.taskId && jobs.has(r.taskId) ? say(jobs.get(r.taskId)!) : walletRowWords(r)}</span>
                 <b style={{ fontFamily: font.body, fontSize: 14, color: r.delta > 0 ? color.goodText : color.ink, fontVariantNumeric: 'tabular-nums', flexShrink: 0 }}>
                   {r.delta > 0 ? `+${r.delta}` : `−${Math.abs(r.delta)}`}
                 </b>

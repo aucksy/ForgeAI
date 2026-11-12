@@ -163,6 +163,8 @@ export interface AiWalletRow {
   delta: number;
   reason: string;
   note: string;
+  /** The task a spend or refund belongs to (null for grants). */
+  taskId: string | null;
 }
 
 export interface AiWallet {
@@ -213,7 +215,7 @@ export async function aiWallet(key: string, rpc: typeof call = call): Promise<Ai
       ? (w.packs as Record<string, unknown>[]).map((p) => ({ credits: n(p.credits), inr: n(p.inr), popular: p.popular === true })).filter((p) => p.credits > 0)
       : [];
     const recent = Array.isArray(w.recent)
-      ? (w.recent as Record<string, unknown>[]).map((x) => ({ at: typeof x.at === 'number' ? x.at : Date.parse(s(x.at)) || 0, delta: n(x.delta), reason: s(x.reason), note: s(x.note) }))
+      ? (w.recent as Record<string, unknown>[]).map((x) => ({ at: typeof x.at === 'number' ? x.at : Date.parse(s(x.at)) || 0, delta: n(x.delta), reason: s(x.reason), note: s(x.note), taskId: x.task_id ? s(x.task_id) : null }))
       : [];
     return {
       balance: n(w.balance),
