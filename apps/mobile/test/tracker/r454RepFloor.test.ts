@@ -288,6 +288,73 @@ describe('owner, 12 Nov 2026: a "very hard" line only when it changes the row', 
   });
 });
 
+// Owner, 12 Nov 2026 (screenshot): Chest Dip, reps only, last time 16, 15, 8; today 17 @8.5, 14 @9.5,
+// set 3 aimed 9, and the card said "Set 2 was very hard, so keep the same weight." on a move with no
+// weight. A hold never names the weight now, shows only when it changed the row, and the top line and
+// the row agree.
+describe('owner, 12 Nov 2026: Chest Dip (reps only) after a very hard set', () => {
+  const dip = ex({ id: 'dip', name: 'Chest Dip', equipment: 'bodyweight', muscleGroup: 'chest' });
+  const LAST = [16, 15, 8];
+  const t = computeProgressionTarget({
+    exercise: dip,
+    target: range(8, 12, 3),
+    history: [sess('2026-11-08', LAST.map((r) => [0, r] as [number, number]))],
+    todayISO: TODAY,
+    logType: 'reps',
+  });
+  const plan = repPlan(t, LAST.map((reps) => ({ weightKg: 0, reps })))!;
+  const f = rowTargetFill(t);
+  const row = (key: string, reps: number | null, rpe: number | null = null) =>
+    ({ key, weightKg: null, reps, rpe, isWarmup: false, done: reps != null }) as DraftSet;
+  const cardOf = (sets: DraftSet[]) =>
+    ({
+      key: 'd1',
+      exerciseId: 'dip',
+      name: 'Chest Dip',
+      muscleGroup: 'chest',
+      equipment: 'bodyweight',
+      logType: 'reps',
+      previousSets: LAST.map((reps) => ({ weightKg: 0, reps })),
+      sets,
+    }) as unknown as DraftExercise;
+  /** The card's own wiring: each row's hint, and "eased" on a row a very hard set eased. */
+  const line = (c: DraftExercise) =>
+    repLiveLine(
+      plan,
+      kgProgress(
+        plan,
+        c.sets.map((s) => {
+          const h = fillForSet(c, s.key, f);
+          const k = nudgeForSet(c, s.key, f)?.kind;
+          return { weightKg: s.weightKg, reps: s.reps, done: s.done, isWarmup: false, hintKg: h?.weightKg, hintReps: h?.reps, eased: k === 'lighter' || k === 'hold' };
+        }),
+      ),
+    );
+
+  it('his screen: 17 @8.5, 14 @9.5 -> set 3 aims 9 (last time 8 + 1), no line, top line says 9 too', () => {
+    expect(t.setGoals).toEqual([16, 15, 9]);
+    const c = cardOf([row('a', 17, 8.5), row('b', 14, 9.5), row('c', null)]);
+    expect(nudgeForSet(c, 'c', f)?.kind).toBe('hold');
+    expect(fillForSet(c, 'c', f)?.reps).toBe(9);
+    // Set 1's extra rep covers set 2's missing one: the hold changed nothing, so no line.
+    expect(nudgeLineShows(c, 'c', f, plan)).toBe(false);
+    expect(line(c)).toMatch(/^Next set: 9 reps\b/);
+  });
+
+  it('behind: 16, then 13 @9.5 -> the hold stops the catch-up reps; the line talks reps, never weight', () => {
+    const c = cardOf([row('a', 16, 8.5), row('b', 13, 9.5), row('c', null)]);
+    const n = nudgeForSet(c, 'c', f)!;
+    expect(n.kind).toBe('hold');
+    expect(fillForSet(c, 'c', f)?.reps).toBe(9);
+    expect(nudgeLineShows(c, 'c', f, plan)).toBe(true);
+    const words = nudgeLine(n, (kg) => `${kg} kg`, 3);
+    expect(words).toBe('Set 2 was very hard, so no extra reps on set 3.');
+    expect(words).not.toMatch(/weight|kg/);
+    // The top line follows the eased row: 9, not 9 + catch-up.
+    expect(line(c)).toMatch(/^Next set: 9 reps\b/);
+  });
+});
+
 describe('R-454: the row-above cap stops at last time (UAT flow r439-b, Goblet Squat)', () => {
   it('20 x 8, 5 last time; set 1 done 20 x 3 -> set 2 hints 5 (was 3), never its goal 6', () => {
     const t = computeProgressionTarget({

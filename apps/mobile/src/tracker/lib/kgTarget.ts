@@ -393,7 +393,8 @@ export function repLiveLine(p: KgPlan, g: KgProgress): string {
   if (repsBeatLast(p, g)) return doneLine(p, repsText(done), done, plain);
   // R-300 (owner, 3 Nov 2026): never "add a set" (extra sets cost recovery and sleep); next time aims again.
   if (g.next.length === 0) return `Done: ${Math.round(g.done)} of ${repsText(p.total)} · ${repsText(g.left)} short, fine for today`;
-  return `Next sets: ${g.next.map((s) => s.reps).join(', ')} reps · Done: ${Math.round(g.done)} of today's ${repsText(p.total)}${g.short ? ' (a little short is fine)' : ''}`;
+  // Owner, 12 Nov 2026 (Chest Dip, one set left): one open set reads "Next set: 9 reps", not "Next sets".
+  return `Next set${g.next.length === 1 ? '' : 's'}: ${g.next.map((s) => s.reps).join(', ')} reps · Done: ${Math.round(g.done)} of today's ${repsText(p.total)}${g.short ? ' (a little short is fine)' : ''}`;
 }
 
 /**
