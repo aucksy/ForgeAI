@@ -642,9 +642,17 @@ function aiLine(r) {
   return `${r.covered === 'no' ? 'The AI could not answer from the help pages and said the team will reply.' : 'Answered by AI from the help pages.'} ${tap}`;
 }
 
+// The English helper (12 Nov 2026): is the Gemini key there, and this month's rough cost. Asked once
+// per Feedback page; null when it could not be read (the button then still tries and shows the reason).
+let englishState = null;
+
 async function feedbackPage(filter = '') {
   loading();
   const d = await api(`/api/feedback${filter ? `?status=${filter}` : ''}`);
+  englishState = d.rows.some((r) => r.covered) ? await api('/api/english').catch((e) => {
+    console.warn('[hq] English helper state not read', e);
+    return null;
+  }) : null;
   const pick = select([['', 'Everything'], ['needs-reply', 'Needs reply'], ...FB_STATUS], filter);
   pick.addEventListener('change', () => {
     location.hash = pick.value ? `feedback/${pick.value}` : 'feedback';
@@ -676,6 +684,7 @@ function feedbackCard(r) {
     r.covered ? h('div', { class: 'stack' },
       field(r.reply ? 'Send a new reply (it replaces the one above)' : 'Reply', box,
         r.can_push ? 'Their phone also gets a pop-up: “The MettleUp team replied”.' : 'No pop-up: they see it the next time they open Help and feedback.'),
+      englishTools(r, box, replyOut),
       action('Send reply', async () => {
         const res = await api('/api/feedback/reply', { id: r.id, reply: box.value });
         replyOut.replaceChildren(note(res.pushed === 'sent' ? 'Sent. Their phone got a pop-up.' : 'Sent. They see it in Help and feedback.', 'good'));
@@ -689,6 +698,43 @@ function feedbackCard(r) {
       void refreshNeeds();
     }, { out })),
     out);
+}
+
+/** This month's English helper cost, in small words. */
+function englishCostWords(month) {
+  if (!month || !month.calls) return 'English helper (Gemini): nothing used this month.';
+  return `English helper (Gemini) this month: about ${rupeesExact(month.rupees)} for ${count(month.calls, 'rewrite')}.`;
+}
+
+/**
+ * Under a reply box: "Rewrite" (Gemini makes the owner's draft clear and polite and puts it back in the box;
+ * nothing is sent) and "Undo" (his own words back). Without the Gemini key: "Add the Gemini key first".
+ */
+function englishTools(r, box, replyOut) {
+  const cost = h('p', { class: 'muted' }, englishState && englishState.keyOn ? englishCostWords(englishState.month) : '');
+  if (englishState && englishState.keyOn === false) {
+    return h('div', { class: 'row wrap' }, h('button', { class: 'button', type: 'button', disabled: true, title: 'The English helper needs its Gemini key on the HQ server.' }, 'Add the Gemini key first'));
+  }
+  let mine = null;
+  const undo = h('button', { class: 'button', type: 'button', hidden: true }, 'Undo');
+  undo.addEventListener('click', () => {
+    if (mine !== null) box.value = mine;
+    mine = null;
+    undo.hidden = true;
+    replyOut.replaceChildren(note('Your own words are back.', 'good'));
+  });
+  const rewrite = action('Rewrite', async () => {
+    if (box.value.trim().length < 2) throw new HqError('DRAFT_EMPTY');
+    const draft = box.value;
+    const res = await api('/api/english/rewrite', { id: r.id, draft });
+    mine = draft;
+    box.value = res.text;
+    undo.hidden = false;
+    if (englishState) englishState.month = res.month;
+    cost.textContent = englishCostWords(res.month);
+    replyOut.replaceChildren(note('Rewritten. Nothing is sent yet: check it, change anything, then tap Send reply. Undo brings your own words back.', 'good'));
+  }, { out: replyOut });
+  return h('div', {}, h('div', { class: 'row wrap' }, rewrite, undo), cost);
 }
 
 // ------------------------------------------------------------------ Needs you (R-319 item 8)

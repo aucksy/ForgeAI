@@ -146,6 +146,13 @@ const ERRORS = {
   CHECKS_NOT_READY: 'Payments to check need the database update 0064 (waiting for your yes).',
   NOT_TO_CHECK: 'That payment does not need checking. The page was refreshed.',
   ALREADY_DONE: 'That payment was already marked. The page was refreshed.',
+  GEMINI_KEY_MISSING: 'Add the Gemini key first.',
+  GEMINI_FREE_TIER: 'This Gemini key is on Google’s free tier. Turn on billing for its project first.',
+  GEMINI_KEY_BAD: 'Google did not accept the Gemini key. Make a new key and add it again.',
+  GEMINI_TIER_UNKNOWN: 'Could not check that the Gemini key is on a paid plan, so nothing was sent. Try again in a minute.',
+  GEMINI_BUSY: 'Gemini is busy right now. Your text is unchanged. Try again in a minute.',
+  GEMINI_FAILED: 'Gemini could not rewrite this one. Your text is unchanged. Try again.',
+  DRAFT_EMPTY: 'Type your reply first, then tap Rewrite.',
   BAD_LINK: 'A button needs both: words for the button, and an admin app page like /plans or an https:// address.',
 };
 
@@ -180,6 +187,7 @@ const ACTIONS = {
   delete_gym_refused: 'A gym delete was refused (nothing deleted)',
   feedback_status: 'Changed a feedback status',
   feedback_reply: 'Replied to a help question',
+  english_rewrite: 'Used the English helper on a reply',
   lead_status: 'Changed a lead status',
   ai_limit_set: 'Changed a gym’s AI limit',
   support_open: 'Opened support access (emergency)',

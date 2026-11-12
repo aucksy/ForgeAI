@@ -16,6 +16,10 @@
 //   FCM_SERVICE_ACCOUNT   the gym's messages and offers popping up on phones (push.js): a JSON key of a
 //                         service account in Firebase project forgeai-d7eea with the role "Firebase
 //                         Cloud Messaging API Admin". Not set: no pop-ups are sent, nothing else changes.
+//   HQ_GEMINI_KEY         the English helper (english.js): Gemini rewrites the owner's reply drafts. A key
+//                         from the owner's own Google project WITH BILLING ON (paid tier: Google does not
+//                         train on it; english.js refuses a free-tier key). Not set: the button says
+//                         "Add the Gemini key first". Var GEMINI_MODEL below picks the model.
 // Variables below: AUTH_MODE "google" (no cost) or "access" (Cloudflare Access in front; then set
 // ACCESS_TEAM = the team name in <team>.cloudflareaccess.com and ACCESS_AUD = the application's
 // audience tag, and the Google secrets are not needed).
@@ -39,7 +43,9 @@
     "AUTH_MODE": "google",
     "ACCESS_TEAM": "",
     "ACCESS_AUD": "",
-    "HQ_GITHUB_REPO": "aucksy/ForgeAI"
+    "HQ_GITHUB_REPO": "aucksy/ForgeAI",
+    // The English helper's model (english.js). A 404 (retired) falls back to gemini-pro-latest, then gemini-flash-latest.
+    "GEMINI_MODEL": "gemini-3.1-pro-preview"
   },
   // The same small Cloudflare database as the gym panel: feedback, leads, AI usage and AI limits
   // (tables: deploy/panel/migrations). HQ reads them and changes statuses and limits.

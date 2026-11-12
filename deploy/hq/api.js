@@ -9,6 +9,7 @@ import { isFresh } from './auth.js';
 import { DbError, rpc } from './db.js';
 import { releases, removeFiles } from './outside.js';
 import { fcmHelpReplyMessage, sendOne } from './push.js';
+import { keyOn as englishKeyOn, monthUse as englishMonth, rewrite as englishRewrite } from './english.js';
 import { newGymsToCheck } from '../../apps/hq/public/logic.js';
 import {
   AI_LIMIT_MAX,
@@ -19,6 +20,7 @@ import {
   checkMessage,
   cleanReply,
   deleteRequestsInFeedback,
+  getHelpQuestion,
   getLead,
   indiaDay,
   listFeedback,
@@ -245,6 +247,13 @@ export async function handleApi(request, env, who, deps = {}) {
       return json(200, await payDb(() => db('hq_payment_details', {})));
     }
 
+    // The English helper's state for the reply boxes (english.js): is the Gemini key there, and this month's
+    // rough cost. Never the key itself. Not written to the audit log: it opens nothing.
+    if (route === 'GET /api/english') {
+      const on = englishKeyOn(env);
+      return json(200, { keyOn: on, month: on ? await englishMonth(env, now) : null });
+    }
+
     if (route === 'GET /api/leads') {
       if (!env.WEB) return refuse('NO_WEB_DB', 503);
       await log('view_leads');
@@ -329,6 +338,26 @@ export async function handleApi(request, env, who, deps = {}) {
       if (!saved) return refuse('GONE');
       const pushed = saved.pushTo ? await sendOne(env, fcmHelpReplyMessage(b.id, saved.pushTo), { fetchImpl, now: now.getTime() }) : 'no-phone';
       return json(200, { ok: true, pushed });
+    }
+
+    // The English helper (owner, 12 Nov 2026): Gemini rewrites the owner's draft reply. The question is
+    // read HERE by its id (the page sends only the id and the draft), so only that one message goes to
+    // Google. The text comes back to the reply box; nothing reaches the person until "Send reply".
+    if (route === 'POST /api/english/rewrite') {
+      if (!englishKeyOn(env)) return refuse('GEMINI_KEY_MISSING');
+      if (!env.WEB) return refuse('NO_WEB_DB', 503);
+      const draft = cleanReply(b.draft);
+      if (!Number.isInteger(b.id) || b.id < 1) return refuse('BAD_REQUEST');
+      if (draft.length < 2) return refuse('DRAFT_EMPTY');
+      const q = await getHelpQuestion(env.WEB, b.id);
+      if (!q) return refuse('GONE');
+      const out = await englishRewrite(env, { ...q, draft }, { fetchImpl, now });
+      if (out.error) return refuse(out.error, out.error === 'GEMINI_BUSY' || out.error === 'GEMINI_TIER_UNKNOWN' ? 503 : 400);
+      // Tokens and rough cost only: never the question, the draft or the answer.
+      await webPart('audit of an English rewrite', () => log('english_rewrite', null, null, {
+        id: b.id, model: out.model, fellBack: out.fellBack, tokensIn: out.tokensIn, tokensOut: out.tokensOut, rupees: Math.round(out.rupees * 100) / 100,
+      }));
+      return json(200, { text: out.text, model: out.model, month: out.month });
     }
 
     if (route === 'POST /api/leads/status') {

@@ -694,6 +694,9 @@ test('the wrangler file: its own name, addresses, cron, the page folder, no secr
   // The nightly clean-up, and every minute the phone pop-ups (push.js, R-153 step 2).
   assert.match(raw, /"crons": \["30 21 \* \* \*", "\* \* \* \* \*", "15 22 \* \* \*"\]/);
   assert.doesNotMatch(raw, /"FCM_SERVICE_ACCOUNT":/);
+  // The English helper (english.js): its model is a plain setting, its key only ever a secret.
+  assert.match(raw, /"GEMINI_MODEL": "gemini-[a-z0-9.-]+"/);
+  assert.doesNotMatch(raw, /"HQ_GEMINI_KEY":|AIza/);
   assert.doesNotMatch(raw, /sb_secret_|GOCSPX-|"SUPABASE_HQ_KEY":/);
 });
 
