@@ -7,6 +7,14 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-467. "Questions, voice, drafts: Free" still costs us? Fair use tightened — 12 Nov 2026
+He asked (Credits screen): are free questions, voice and drafts really free for us, or covered by the credit money?
+My answer: they cost us; the plan fee and pack money cover it. A question ~Rs 0.05, a draft ~Rs 0.1, a voice clip
+~Rs 0.03-0.12. A normal gym ~Rs 30-60 a month (3-6% of Starter Rs 999). The risk was the fair-use limit: at 100
+requests + 20 voice minutes a day one gym could cost ~Rs 600 a month. Decided (pricing was delegated): 50 requests and
+10 voice minutes a day (worst case ~Rs 300), global cap grows ~$1.5 per paying gym. Spec 03-design.md section 3
+updated; server builder told.
+
 ## R-466. F201 voice screen: the confirm button says "Send to AI Helper" — 12 Nov 2026
 He said: on the voice screen (after speaking) the button "Done, use this" is misleading; use "Send to AI Helper" instead.
 Done: design canvas Voice board changed (canvas v10); spec 03-design.md UI section now names it. Open: the rest of the design says "AI Assistant"; asked him whether to rename the whole feature to "AI Helper".

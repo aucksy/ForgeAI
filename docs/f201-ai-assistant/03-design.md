@@ -99,11 +99,15 @@ Real AI cost (Haiku 5.5 at $0.10/M in, $0.50/M out, help.js rates): question ~Rs
   "Most popular"); Rs 999 = 500 credits. Prices exclude GST like the plans (check plans.ts wording).
 - Low balance (<= 5): a quiet line on the assistant screen. No pop-ups. At 0: tasks still draft; the button says
   "Get credits to send" and opens the packs sheet.
-- Fair use (cost guard, not a sales tool): 100 AI requests a gym a day, 20 voice minutes a day; HQ can raise per gym.
+- Fair use (cost guard, not a sales tool): 50 AI requests a gym a day, 10 voice minutes a day; HQ can raise per gym
+  (owner asked 12 Nov, R-467: free asking still costs us). At the limit: "You have asked a lot today. The AI Helper
+  is back tomorrow morning." Worst case one gym at the limit every day ~Rs 300 a month; a normal gym ~Rs 30-60.
 - Buying: while BILLING_ONLINE_ON is false, "Buy" opens the existing Pay MettleUp path with the pack as the item and
   HQ adds the credits after the payment shows (HQ "Add credits" button). With online billing on (test mode until he
   says "payments live"), the HQ billing worker sells packs like plans and credits are added by the webhook.
-- Global safety cap: assistant AI spend <= $15 a month (D1 counter, like help.js); help answers keep their $80.
+- Global safety cap: assistant AI spend <= $15 a month to start (D1 counter, like help.js; secret ASSIST_CAP_USD
+  overrides). Raise it by about $1.5 (Rs 130) per paying gym as gyms join, so one busy month never switches the
+  feature off for everyone. Help answers keep their $80.
 
 ## 4. Privacy and safety
 - Sent to the AI: the owner's sentence (phone numbers and emails masked in the browser as [PHONE_1]... and put
