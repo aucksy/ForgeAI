@@ -20,7 +20,9 @@ describe('the welcome set card (a picture, R-276/R-277)', () => {
     expect(card).toContain('pointerEvents="none"');
   });
   it('shows what the real card shows: the beaten Target line and RPE in the real colours', () => {
-    expect(card).toContain("\"Today's 1,500 kg beaten (1,650 kg done)\"");
+    // Owner, 12 Nov 2026: "1,650 kg done · Previous: 1,450 kg · +200 kg" (last time 4 x 72.5 x 5), never "beaten (".
+    expect(card).toContain("'1,650 kg done · Previous: 1,450 kg · +200 kg'");
+    expect(card).not.toContain('beaten (');
     expect(card).toContain('rpeColor(s.rpe)');
     expect(card).toMatch(/1:30 · Previous: 23 Oct/);
     // 4 sets of 75 kg: 5 + 5 + 6 + 6 reps = 1,650 kg, over the 1,500 kg plan (4 x 75 x 5).

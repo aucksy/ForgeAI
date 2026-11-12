@@ -6,8 +6,9 @@
 #   setting changed mid-workout: set 2 emptied again and set 1's effort changed to RPE 10 -> set 2 hints and
 #     saves 40 (a very hard set never raises the next one above last time);
 #   regression: Goblet Squat (weighted, with a Target): last time 20 x 8, 20 x 5, today set 1 20 x 3 -> set 2
-#     keeps the Target's own rule (its goal, capped at the set just done = 3), never the same-set rule's 2
-#     (5 x 3/8). Unit tests: test/tracker/r439SameSetHint.test.ts.
+#     keeps the Target's own rule (its goal 6, capped at the set just done, 3), never the same-set rule's 2
+#     (5 x 3/8); R-454 (owner, 12 Nov 2026: "Never suggesting less than before") stops that cap at last
+#     time's same set, so it saves 5. Unit tests: test/tracker/r439SameSetHint.test.ts, r454RepFloor.test.ts.
 # The grey hint itself is drawn hidden from the screen reader, so the pictures show it and the TICK proves it
 # (a tick on an empty row saves the hint; the box's own text is read back). Pictures rel-r439-b..h-*.png.
 appId: com.mettleup.app
@@ -115,11 +116,12 @@ appId: com.mettleup.app
     file: sub-find.yaml
     env:
       FIND: "Mark Air Squat set 2 complete"
-# 0.77.0 fresh eyes: a reps-only row has no weight, so the reason line speaks of reps.
+# 0.77.0 fresh eyes: a reps-only row has no weight, so the reason line speaks of reps. Owner, 12 Nov 2026:
+# the line names what the very hard set changed (set 2 hints 40, not 41), never "keep the same weight".
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: '^Set 1 was very hard, so do not try for more reps\.$'
+      FIND: '^Set 1 was very hard, so no extra reps on set 2\.$'
 - assertNotVisible: '.*keep the same weight.*'
 - takeScreenshot: rel-r439-e-rpe-10-hint-40
 - runFlow:
@@ -158,7 +160,8 @@ appId: com.mettleup.app
     file: sub-uat-r439-saved.yaml
     env:
       FIELD: "Goblet Squat set 2 reps"
-      WANT: "3"
+      WANT: "5"
 - assertTrue: ${maestro.copiedText != '2'}
+- assertTrue: ${maestro.copiedText != '3'}
 - takeScreenshot: rel-r439-h-goblet-set-2-target-rule
 - runFlow: sub-uat-r439-finish.yaml

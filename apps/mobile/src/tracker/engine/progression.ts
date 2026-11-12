@@ -102,8 +102,9 @@ export interface ProgressionTarget extends OverloadTarget {
   /**
    * Oct 2026 (owner): the rep goal of each working set, in working-set order — the Target line
    * prints them when they differ ("40 kg · 11, 9, 8") and each set row hints its own
-   * (`targetFill` → `fillForSet`). Same weight: set 1 aims one more than last time's set 1, the
-   * rest last time's same set. Empty when there is no rep goal (first time, a hold, an easy week).
+   * (`targetFill` → `fillForSet`). Same weight: each set aims one more than last time's same set,
+   * capped at the top of the range, and R-454 never under last time's same set (13 stays 13 in
+   * 8-12). Empty when there is no rep goal (first time, a hold, an easy week).
    */
   setGoals: number[];
   /** The weight moved from last time's main weight. null = same weight / first time. */
@@ -495,6 +496,11 @@ function computeAt(input: ProgressionInput, depth: number): ProgressionTarget {
     version: ProgressionTarget['version'] = null,
     /** Each working set's goal; absent = `repGoal` on every set. */
     perSet?: number[],
+    /**
+     * R-454: the top of the range as the Target reports it (`targetRepsMax`), when goals may sit
+     * above it only because last time did more (the floor). Absent = the highest goal or the range.
+     */
+    rangeTop?: number,
   ): ProgressionTarget => {
     // Last time's weight on the ladder is "the same weight", even when it reads cleaner.
     const change = sameWeight(weightKg, same) ? null : weightKg > w + 1e-6 ? 'up' : weightKg < w - 1e-6 ? 'down' : null;
@@ -511,7 +517,7 @@ function computeAt(input: ProgressionInput, depth: number): ProgressionTarget {
       last,
       sameWeightKg: round3(same),
       targetWeightKg: round3(weightKg),
-      targetRepsMax: Math.max(max, repGoal, ...setGoals),
+      targetRepsMax: rangeTop ?? Math.max(max, repGoal, ...setGoals),
       repGoal,
       setGoals,
       change,
@@ -537,6 +543,18 @@ function computeAt(input: ProgressionInput, depth: number): ProgressionTarget {
   //  4. R-300: after a short day each set aims again for the goal it missed.
   // Logged RPE no longer changes the numbers (no effort credit, no big-jump, fast-lane, stall or
   // range-moved rules).
+  //
+  // R-454 (owner, 12 Nov 2026: "Never suggesting less than before."): at the SAME weight as last
+  // time, a set's goal is max(last time's reps on that set, min(top, last time's reps + 1)) — the
+  // cap at the top of the range never takes a set BELOW what it did. Incline Dumbbell Press, 8-12,
+  // 40 kg x 13, 12, 10, 8 aimed 12, 12, 11, 9 (1,760 kg); now 13, 12, 11, 9 (1,800 kg). Bodyweight
+  // reps (B1) take the same floor set for set. Unchanged: the weight still goes up only when every
+  // working set reaches the top (rule 2); weight steps (R2: a different weight), long breaks (R1 /
+  // R1b), the safety step back (R3) and easy weeks keep their own goals; RPE never changes numbers;
+  // a set after a long rest (F73) is still never raised (it keeps its normal-rest reps, uncapped);
+  // a set planned past last time's sets copies the last one, capped as before (no same set to
+  // compare). `targetRepsMax` stays the range's top, so the R-143 lift-up and the RPE nudge still
+  // read the real range.
   const jumpKey: WeightJump = isWeightJump(input.jump) ? input.jump : DEFAULT_JUMP;
   const jumpShare = JUMP_SHARE[jumpKey];
   const nSets = Math.max(1, target.targetSets);
@@ -546,8 +564,10 @@ function computeAt(input: ProgressionInput, depth: number): ProgressionTarget {
     return { held, base: held.map((h, i) => (h ? normalRestReps(sessions, S, w, i) : null)) };
   };
   /**
-   * Rule 1: each set one rep more than the same set did in S, never past `top`. A set planned past
-   * S's sets aims for S's last set as it was; a set after a long rest (F73) gets no extra rep.
+   * Rule 1: each set one rep more than the same set did in S, never past `top` — and R-454 never
+   * under what that same set did (13 in 8-12 stays 13). A set planned past S's sets aims for S's
+   * last set as it was (capped: no same set to compare); a set after a long rest (F73) gets no
+   * extra rep (its normal-rest reps, never cut to `top`).
    */
   const plusOne = (S: Summary, top: number): number[] => {
     const sets = S.mainSets;
@@ -557,9 +577,11 @@ function computeAt(input: ProgressionInput, depth: number): ProgressionTarget {
       const did = sets[k].reps;
       if (rest.held[k]) {
         const b = rest.base[k];
-        return Math.max(1, Math.min(top, b != null && b > 0 ? Math.min(did, b) : did));
+        const held = b != null && b > 0 ? Math.min(did, b) : did;
+        return Math.max(1, i < sets.length ? held : Math.min(top, held));
       }
-      return Math.max(1, Math.min(top, i < sets.length ? did + 1 : did));
+      if (i >= sets.length) return Math.max(1, Math.min(top, did));
+      return Math.max(1, did, Math.min(top, did + 1));
     });
   };
   /**
@@ -577,7 +599,8 @@ function computeAt(input: ProgressionInput, depth: number): ProgressionTarget {
     const did = L.mainSets.map((s) => s.reps);
     // Only a set that missed its goal takes it again; one rep short already aims for it (+1), so the
     // note shows only when a goal really changes.
-    const again = goals.map((g, i) => (i < did.length && i < prev.setGoals.length && did[i] < prev.setGoals[i] ? Math.min(top, Math.max(g, prev.setGoals[i])) : g));
+    // R-454: never under `g` (which may sit above `top` by the floor); the missed goal is capped.
+    const again = goals.map((g, i) => (i < did.length && i < prev.setGoals.length && did[i] < prev.setGoals[i] ? Math.max(g, Math.min(top, prev.setGoals[i])) : g));
     return again.some((g, i) => g !== goals[i]) ? again : null;
   };
   /** "Add 1 rep to each set: 30 kg × 9, 9, 8." (or "... under 10: ..." when a set is held at the top). */
@@ -729,8 +752,9 @@ function computeAt(input: ProgressionInput, depth: number): ProgressionTarget {
   // Rule 1 — same weight, one more rep on each set below the top.
   // Pyramids keep one goal at their heaviest weight (their own rule).
   if (L.ramp) {
-    const goal = Math.min(max, Math.max(min, lowestReps + 1));
-    return out('R5', same, goal, `Last time ${repsList}${atLast}. Same weight, aim for ${goal} at your heaviest weight.`);
+    // R-454: never under what the heaviest set did last time.
+    const goal = Math.max(lowestReps, Math.min(max, Math.max(min, lowestReps + 1)));
+    return out('R5', same, goal, `Last time ${repsList}${atLast}. Same weight, aim for ${goal} at your heaviest weight.`, null, undefined, max);
   }
   // C3-12: the goals come from the newest FULL workout at this weight (a single cut-short set of 4
   // set every goal to 4).
@@ -756,6 +780,8 @@ function computeAt(input: ProgressionInput, depth: number): ProgressionTarget {
     (again ? `${SHORT_NOTE} ${loadText} × ${goals.join(', ')}.` : plusOneWords(G, goals, max, loadText)) + longRestNote(heldRest(G).held),
     null,
     goals,
+    // R-454: a goal above the top (the floor) never moves the range's top.
+    max,
   );
 }
 

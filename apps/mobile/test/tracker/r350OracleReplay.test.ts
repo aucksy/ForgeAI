@@ -5,7 +5,9 @@
  *  - the weight is the same, one real step up (every set reached the top), or one step down (every set
  *    under the bottom twice running); never two steps, never off the lift's grid;
  *  - at the same weight each set's goal is at most last time's reps + 1 (or a repeated missed goal),
- *    never above the top; after a step the goals sit inside the range;
+ *    never above the top unless that set already did more (R-454, owner, 12 Nov 2026: then exactly
+ *    what it did), and never under what that set did last time; after a step the goals sit inside
+ *    the range;
  *  - the kg to beat is never under last time's total, and "beaten/reached" never shows before the
  *    member's total passes last time's (checked set by set as the workout is ticked);
  *  - warm-ups (even typed the wrong way round, as the owner did) never change the suggestion;
@@ -83,7 +85,9 @@ function replay(lift: Lift, seed: number, workouts = 500) {
     if (withWarm.targetWeightKg !== t.targetWeightKg || withWarm.setGoals.join() !== goals.join()) bad('warm-up changed it');
 
     if (goals.length !== sets) bad('goal count');
-    if (goals.some((g) => g > range.max || g < 1)) bad('goal outside 1..top');
+    if (goals.some((g) => g < 1)) bad('goal under 1');
+    // R-454: only the same weight may aim past the top, and only as far as that set did last time.
+    if (Math.abs(t.targetWeightKg - w) > 1e-9 && goals.some((g) => g > range.max)) bad('goal over the top after a step');
     if (Math.abs(t.targetWeightKg / lift.grid - Math.round(t.targetWeightKg / lift.grid)) > 1e-6) bad('off the grid');
     if (t.targetWeightKg > w + 1e-9) {
       ups += 1;
@@ -104,9 +108,12 @@ function replay(lift: Lift, seed: number, workouts = 500) {
       // Known and accepted: the app keeps no record of the old range.
       const rangeChanged = settingsAt(n - 1, lift).range.max !== range.max;
       const pg = prevGoals[0];
-      if (!rangeChanged) goals.forEach((g, i) => {
+      goals.forEach((g, i) => {
         const did = (last[i] ?? last[last.length - 1]).reps;
-        const allowed = Math.min(range.max, Math.max(did + 1, pg?.[i] ?? 0));
+        // R-454 (owner, 12 Nov 2026): never under what the same set did last time at this weight.
+        if (i < last.length && g < last[i].reps) bad(`set ${i + 1} goal under last time's ${last[i].reps}`);
+        if (rangeChanged) return;
+        const allowed = Math.max(i < last.length ? did : 0, Math.min(range.max, Math.max(did + 1, pg?.[i] ?? 0)));
         if (g > allowed) bad(`set ${i + 1} goal over last+1`);
       });
     }

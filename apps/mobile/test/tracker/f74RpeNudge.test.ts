@@ -128,9 +128,11 @@ describe('rpeNudge (pure)', () => {
     expect(nudgeLine({ kind: 'more-reps', weightKg: 60, reps: 11, fromSet: 1 }, kg)).toBe('Set 1 felt easy, so try 1 more rep.');
     expect(nudgeLine({ kind: 'more-weight', weightKg: 62.5, reps: 12, fromSet: 2 }, kg)).toBe('Set 2 felt easy, so try 62.5 kg.');
     expect(nudgeLine({ kind: 'lighter', weightKg: 57.5, reps: 10, fromSet: 1 }, kg)).toBe('Set 1 was very hard, so try 57.5 kg.');
-    expect(nudgeLine({ kind: 'hold', weightKg: 60, reps: 10, fromSet: 1 }, kg)).toBe('Set 1 was very hard, so keep the same weight.');
-    // 0.77.0 fresh eyes: no weight on a reps-only row (Air Squat), so no "same weight".
-    expect(nudgeLine({ kind: 'hold', weightKg: 0, reps: 40, fromSet: 1 }, kg)).toBe('Set 1 was very hard, so do not try for more reps.');
+    // Owner, 12 Nov 2026: a hold keeps the row's numbers, so it names the extra reps it stops (never
+    // "keep the same weight"); weights and reps-only rows alike (r454RepFloor: when it shows at all).
+    expect(nudgeLine({ kind: 'hold', weightKg: 60, reps: 10, fromSet: 1 }, kg, 2)).toBe('Set 1 was very hard, so no extra reps on set 2.');
+    expect(nudgeLine({ kind: 'hold', weightKg: 0, reps: 40, fromSet: 1 }, kg, 2)).toBe('Set 1 was very hard, so no extra reps on set 2.');
+    expect(nudgeLine({ kind: 'hold', weightKg: 60, reps: 10, fromSet: 1 }, kg)).toBe('Set 1 was very hard, so no extra reps on the next set.');
   });
 });
 

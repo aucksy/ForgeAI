@@ -27,15 +27,15 @@ describe('R-146: reached vs beaten', () => {
     expect(kgBeaten(g)).toBe(true);
     expect(kgLiveLine(plan, g, total, weight)).toBe("Today's 1,925 kg reached");
   });
-  it('more than the plan says "beaten" with what was done', () => {
+  it('more than the plan: what was done next to the previous workout (owner, 12 Nov 2026)', () => {
     const g = kgProgress(plan, [row(40, 20), row(45, 14), row(45, 12)]);
-    expect(kgLiveLine(plan, g, total, weight)).toBe("Today's 1,925 kg beaten (1,970 kg done)");
+    expect(kgLiveLine(plan, g, total, weight)).toBe('1,970 kg done · Previous: 1,880 kg · +90 kg');
   });
   it('reps: exactly the plan is "reached", more is "beaten"', () => {
     const reps: KgPlan = { reps: true, sets: [1, 2, 3].map(() => ({ weightKg: 1, reps: 15, asLast: false })), total: 45, last: null, pct: null }; // R-366: with a last time, the words name it (r366RepsLastTime)
     const at = (n: number[]) => kgProgress(reps, n.map((r) => row(1, r)));
     expect(repLiveLine(reps, at([15, 15, 15]))).toBe("Today's 45 reps reached");
-    expect(repLiveLine(reps, at([15, 16, 16]))).toBe("Today's 45 reps beaten (47 done)");
+    expect(repLiveLine(reps, at([15, 16, 16]))).toBe('47 reps done'); // nothing to compare: just what was done
   });
   it('no member word says "volume", "PR" or "session"', () => {
     const lines = [kgLiveLine(plan, kgProgress(plan, [row(40, 20), row(45, 13), row(45, 12)]), total, weight)];

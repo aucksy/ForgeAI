@@ -116,8 +116,17 @@ export function rpeNudge(input: NudgeInput): RpeNudge | null {
   return null;
 }
 
-/** The reason line under the row. `kg` formats a weight as the screen does ("42.5 kg"). PURE. */
-export function nudgeLine(n: RpeNudge, kg: (kg: number) => string): string {
+/**
+ * The reason line under the row. `kg` formats a weight as the screen does ("42.5 kg"); `toSet` is the
+ * working-set number of the row the line sits under. PURE.
+ *
+ * Owner, 12 Nov 2026 (his screen: "Set 3 was very hard, so keep the same weight" over a set 4 that did
+ * not change; "I feel like this may be obsolete now. I don't think this is accurate."): a hold keeps
+ * the row's numbers, so its line now says what it really does, "no extra reps on set 4", and the card
+ * shows it only when the hold changed something (`nudgeLineShows`: it stopped catch-up reps, or the
+ * row would hint more reps without that effort).
+ */
+export function nudgeLine(n: RpeNudge, kg: (kg: number) => string, toSet?: number): string {
   const set = `Set ${n.fromSet}`;
   switch (n.kind) {
     case 'more-reps':
@@ -127,8 +136,8 @@ export function nudgeLine(n: RpeNudge, kg: (kg: number) => string): string {
     case 'lighter':
       return `${set} was very hard, so try ${kg(n.weightKg)}.`;
     case 'hold':
-      // 0.77.0 fresh-eyes review: a reps-only or bodyweight row has no weight to keep (Air Squat said
-      // "keep the same weight" under a reps hint).
-      return n.weightKg > 0 ? `${set} was very hard, so keep the same weight.` : `${set} was very hard, so do not try for more reps.`;
+      // 0.77.0 fresh-eyes review: never "keep the same weight" (a reps-only row has none, and a held
+      // row's weight was never going to change). Owner, 12 Nov 2026: name the extra reps it stops.
+      return `${set} was very hard, so no extra reps on ${toSet != null ? `set ${toSet}` : 'the next set'}.`;
   }
 }

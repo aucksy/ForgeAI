@@ -38,6 +38,7 @@ import type { MachineDetails } from '@/tracker/engine/cardioMachine';
 import { typedWeight, type DistUnit, type LoadMode, type LogType } from '@/tracker/engine/logTypes';
 import { HOLD_STEP_SEC, liftsUp, OFF_MAIN_SHARE, type LiftUp, type TargetFill } from '@/tracker/engine/progression';
 import { sameSetHint } from '@/tracker/lib/sameSetHint';
+import { holdStopsExtra, type KgPlan } from '@/tracker/lib/kgTarget';
 import { isLongRest, restsOfCard, type RestTaken } from '@/tracker/engine/restTaken';
 import { rpeNudge, type RpeNudge } from '@/tracker/engine/rpeNudge';
 import { MUSCLE_LABEL } from '@/tracker/catalog/muscles';
@@ -1352,7 +1353,8 @@ const present = (v: number | null | undefined): number | null => (v != null && N
  * Target's goal for its working-set number (`setReps`: 11, 9, 8) — but never more than the reps
  * done in the nearest working row above at the same weight, so a hint never asks for more than
  * was just done at that weight. The weight still follows rule 1 (a weight typed above carries
- * down).
+ * down). R-454 (owner, 12 Nov 2026): and never less than the row's own set did last time at that
+ * same weight (capped at the row's goal).
  *
  * R-61 (owner, 22 Oct 2026): a warm-up row is last time's warm-up as it was, weight and reps, even
  * when the Target moves the working weight (it used to scale with it: 10 kg for 20 became 7.5 for 15).
@@ -1384,6 +1386,50 @@ type TargetFillLike = SetFill & { setReps?: readonly number[]; fromKg?: number; 
  */
 export function nudgeForSet(ex: DraftExercise, setKey: string, target?: TargetFillLike | null): RpeNudge | null {
   return fillAndNudge(ex, setKey, target).nudge;
+}
+
+/**
+ * Owner, 12 Nov 2026 (his Incline Dumbbell Press: "Set 3 was very hard, so keep the same weight" over a
+ * set 4 that did not change; "I don't think this is accurate."): whether the row's reason line shows.
+ * Every nudge but a hold changes the row's numbers, so its line shows. A hold keeps them, so its line
+ * ("no extra reps on set 4") shows only when the hard set really changed something: without that
+ * effort the row would hint more reps (R-439's same-set hint), or the live line (`plan`) would have
+ * put catch-up reps on it (`holdStopsExtra`). PURE.
+ */
+export function nudgeLineShows(ex: DraftExercise, setKey: string, target: TargetFillLike | null | undefined, plan: KgPlan | null): boolean {
+  const n = nudgeForSet(ex, setKey, target);
+  if (!n) return false;
+  if (n.kind !== 'hold') return true;
+  const at = ex.sets.findIndex((s) => s.key === setKey);
+  const fill = fillForSet(ex, setKey, target);
+  let doneIdx = -1;
+  for (let i = at - 1; i >= 0; i--) {
+    if (ex.sets[i].isWarmup || !ex.sets[i].done) continue;
+    doneIdx = i;
+    break;
+  }
+  if (doneIdx >= 0 && fill) {
+    const plainEx: DraftExercise = { ...ex, sets: ex.sets.map((s, i) => (i === doneIdx ? { ...s, rpe: null } : s)) };
+    const plain = fillForSet(plainEx, setKey, target);
+    if (plain && plain.reps > fill.reps) return true;
+  }
+  if (!plan) return false;
+  const rows = ex.sets.map((s) => {
+    const f = fillForSet(ex, s.key, target);
+    const kind = nudgeForSet(ex, s.key, target)?.kind;
+    return {
+      weightKg: s.weightKg,
+      reps: s.reps,
+      done: s.done,
+      isWarmup: s.isWarmup,
+      setType: s.setType,
+      hintKg: f?.weightKg,
+      hintReps: f?.reps,
+      eased: kind === 'lighter' || kind === 'hold',
+      hold: kind === 'hold',
+    };
+  });
+  return holdStopsExtra(plan, rows, at);
 }
 
 function fillAndNudge(
@@ -1476,8 +1522,8 @@ function sameSetOf(
 function baseFillForSet(
   ex: DraftExercise,
   setKey: string,
-  /** The card's Target fill (`targetFill`), or null off-plan / before it is known. */
-  target?: (SetFill & { setReps?: readonly number[]; fromKg?: number; liftUp?: LiftUp }) | null,
+  /** The card's Target fill (`targetFill` / `rowTargetFill`), or null off-plan / before it is known. */
+  target?: TargetFillLike | null,
 ): SetFill | null {
   const lt: LogType = ex.logType ?? 'weight_reps';
   const idx = ex.sets.findIndex((s) => s.key === setKey);
@@ -1591,11 +1637,24 @@ function baseFillForSet(
   }
   let reps: number | null;
   if (goal != null) {
+    // R-454 (owner, 12 Nov 2026, his Lateral Raise: planned 25 kg x 15, 13, 12, 15 after 20 kg x 20, 17,
+    // 15, 19; he did set 1 at 20 kg, and sets 2-4 followed 20 kg but kept the 25 kg aims 13, 12, 15):
+    // a row at another weight than the Target's aims for THAT weight.
+    const tKg = tgt?.weightKg ?? null;
+    if (lt === 'weight_reps' && tKg != null && tKg > 0 && weightKg != null && weightKg > 0 && Math.abs(weightKg - tKg) > 1e-6) {
+      goal = goalAtWeight(goal, tKg, weightKg, own, tgt?.liftUp?.topReps ?? tgt?.nudge?.repMax ?? null);
+    }
     // Never more than the nearest working row above at the same weight just did.
     const done = above.find(
       (s) => positive(s.reps) != null && (lt === 'reps' || (weightKg != null && s.weightKg != null && Math.abs(s.weightKg - weightKg) < 1e-6)),
     );
     reps = done?.reps != null ? Math.min(goal, done.reps) : goal;
+    // R-454 (owner, 12 Nov 2026: "Never suggesting less than before"): that cap never takes a row
+    // under what its own set did last time at this same weight (set 1 done 11 of 13 leaves set 2 at
+    // last time's 12, never 11). Never past the row's goal.
+    const lastReps = positive(own?.reps);
+    const sameKg = lt === 'reps' || (weightKg != null && own?.weightKg != null && Math.abs(own.weightKg - weightKg) < 1e-6);
+    if (!warmup && !drop && lastReps != null && sameKg && reps < Math.min(goal, lastReps)) reps = Math.min(goal, lastReps);
   } else {
     // R-439: after a tick, a set with a same set last time follows that set (scaled by today's
     // form), never a copy of the row above (66 after 65, 40 last time -> 41, not 66).
@@ -1618,6 +1677,19 @@ function baseFillForSet(
   if (lt === 'reps') return { weightKg: 0, reps };
   if (weightKg == null) return lt === 'weight_reps' ? null : { weightKg: 0, reps };
   return { weightKg, reps };
+}
+
+/**
+ * R-454 (owner, 12 Nov 2026): a working row's rep goal when the row sits at `kg`, not the Target's `targetKg`
+ * (a weight typed above carried down). Last time's same set at that weight: its reps, +1 up to the top of
+ * the range where it was under the top, never fewer (20 kg x 17 in 10-15 -> 17). No history at that weight:
+ * the Target's goal moved by the kilos (25 kg x 13 -> about 14 at 22.5 kg), never fewer than planned. PURE.
+ */
+export function goalAtWeight(goal: number, targetKg: number, kg: number, last: PrevSet | null | undefined, top: number | null): number {
+  if (last && last.reps > 0 && Math.abs(last.weightKg - kg) < 1e-6) {
+    return top != null && top > 0 ? Math.max(last.reps, Math.min(top, last.reps + 1)) : last.reps;
+  }
+  return Math.max(goal, Math.floor((goal * targetKg) / kg + 1e-9));
 }
 
 /**

@@ -35,7 +35,8 @@ export const EXAMPLE_SETS = [
   { kg: 75, reps: 6, rpe: 9, prevRpe: 8 },
 ] as const;
 export const EXAMPLE_PREVIOUS = '72.5 × 5';
-export const EXAMPLE_LINE = "Today's 1,500 kg beaten (1,650 kg done)";
+// Owner, 12 Nov 2026: the finished line names the previous workout (4 x 72.5 x 5 = 1,450 kg), as the real card says it.
+export const EXAMPLE_LINE = '1,650 kg done · Previous: 1,450 kg · +200 kg';
 
 // The columns, as the design (SET / PREVIOUS / KG / REPS / RPE / ✓).
 const W = { set: 22, kg: 50, reps: 42, rpe: 28, tick: 38 } as const;
@@ -113,7 +114,7 @@ export function WelcomeSetCard() {
           </View>
         </View>
 
-        {/* the Target box, beaten (green) */}
+        {/* the Target box, done and green */}
         <View
           style={{
             flexDirection: 'row',

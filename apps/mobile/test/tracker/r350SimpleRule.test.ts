@@ -82,7 +82,7 @@ describe('R-350: the owner T-Bar Row', () => {
     expect(line).toContain('780 of today\'s 1,050 kg');
     expect(line).not.toMatch(/beaten|reached/);
     // Passing 1,050 is "beaten"; exactly 1,050 is "reached".
-    expect(kgLiveLine(p, kgProgress(p, [done(30, 13), done(30, 13), done(30, 10)]), total, weight)).toBe("Today's 1,050 kg beaten (1,080 kg done)");
+    expect(kgLiveLine(p, kgProgress(p, [done(30, 13), done(30, 13), done(30, 10)]), total, weight)).toBe('1,080 kg done · Previous: 1,050 kg · +30 kg');
     expect(kgLiveLine(p, kgProgress(p, [done(30, 13), done(30, 13), done(30, 9)]), total, weight)).toBe("Today's 1,050 kg reached");
   });
 

@@ -50,7 +50,7 @@ describe('T76: the kg to beat after a switch to lb', () => {
   it('positive: a real heavier weight in lb (135 lb) is still "beaten"', () => {
     const p = plan(60, 10);
     const g = kgProgress(p, [done(lb(135), 10), done(lb(135), 10), done(lb(135), 10)]);
-    expect(kgLiveLine(p, g, totalLb, weightLb)).toMatch(/^Today's 3,968 lb beaten \(4,050 lb done\)$/);
+    expect(kgLiveLine(p, g, totalLb, weightLb)).toMatch(/^4,050 lb done · Previous: 3,968 lb · \+8[12] lb$/);
   });
 
   it('positive: a real rep short in lb is still short (one set open, one rep fewer is not hidden)', () => {
@@ -67,7 +67,7 @@ describe('T76: the kg to beat after a switch to lb', () => {
     expect(g.noise).toBeUndefined();
     expect(kgLiveLine(p, g, totalKg, weightKg)).toBe("Today's 1,800 kg reached");
     const more = kgProgress(p, [done(60, 10), done(60, 10), done(60.25, 10)]);
-    expect(kgLiveLine(p, more, totalKg, weightKg)).toBe("Today's 1,800 kg beaten (1,803 kg done)");
+    expect(kgLiveLine(p, more, totalKg, weightKg)).toBe('1,803 kg done · Previous: 1,800 kg · +3 kg');
     const mid = kgProgress(p, [done(60, 10), done(60, 10), open(60, 10)]);
     expect(kgBeaten(mid)).toBe(false);
   });

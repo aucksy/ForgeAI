@@ -516,8 +516,8 @@ export const HELP_ARTICLES = [
     title: 'The kg to beat box on each exercise',
     text:
       'Each exercise has a box above its sets that shows the total kilos to beat (weight times reps, added up over the sets), worked out from last time. ' +
-      'During the workout it shows your next set and how many kilos you have done, for example "Next: 42.5 kg × 7 · 410 of 765 kg". ' +
-      'When you lift exactly the total, it says "reached" and turns green. If you lift more, it says "beaten". ' +
+      'During the workout it shows your next set and how many kilos you have done, for example "Next set: 42.5 kg × 7 · Done: 410 of today\'s 765 kg". ' +
+      'When you lift exactly the total, it says "reached" and turns green. If you lift more, it turns green and shows what you did next to your previous workout, for example "840 kg done · Previous: 720 kg · +120 kg". ' +
       'For body-weight moves like push-ups it counts reps instead of kilos. ' +
       'Tap the box to see the suggested weight and why.',
   },

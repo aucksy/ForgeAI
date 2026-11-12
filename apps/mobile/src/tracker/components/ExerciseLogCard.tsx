@@ -39,7 +39,7 @@ import { earlierCards, liveRecordFlags } from '../services/liveRecords';
 import { effectiveRestSec, fmtRest } from '../services/restRules';
 import { computeWarmups, warmupBarFor } from '../services/warmupMath';
 import { moveKind, supersetChoices } from '../services/workoutOrder';
-import { fillForSet, nudgeForSet, prevForSet, useActiveWorkout } from '../store/activeWorkoutStore';
+import { fillForSet, nudgeForSet, nudgeLineShows, prevForSet, useActiveWorkout } from '../store/activeWorkoutStore';
 import { nudgeLine } from '../engine/rpeNudge';
 import type { DraftExercise } from '../store/activeWorkoutStore';
 import { useRestTimer } from '../store/restTimerStore';
@@ -266,19 +266,20 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
         working += 1;
       }
       let nudge: string | null = null;
-      if (!nudgeShown && !easyWeek) {
-        const n = nudgeForSet(exercise, s.key, fillTarget);
-        if (n) {
-          nudgeShown = true;
-          nudge = nudgeLine(n, (kg) => `${fmtWeight(kg, units)}${weightIsEach(loadMode) ? ' each' : ''}`);
+      const n = nudgeForSet(exercise, s.key, fillTarget);
+      if (!nudgeShown && !easyWeek && n) {
+        nudgeShown = true;
+        // Owner, 12 Nov 2026: a "very hard" hold that changes nothing on this row says nothing.
+        if (nudgeLineShows(exercise, s.key, fillTarget, kgPlanned)) {
+          nudge = nudgeLine(n, (kg) => `${fmtWeight(kg, units)}${weightIsEach(loadMode) ? ' each' : ''}`, s.isWarmup ? undefined : working);
         }
       }
       // R-324: a row eased after a very hard set ("so try 35 kg") takes no extra reps in the live line.
-      const nk = nudgeForSet(exercise, s.key, fillTarget)?.kind;
+      const nk = n?.kind;
       const eased = nk === 'lighter' || nk === 'hold';
       return { set: s, label, spoken, previous, fill: fillForSet(exercise, s.key, fillTarget), record: flags.get(s.key) ?? null, nudge, eased };
     });
-  }, [exercise, fillTarget, earlier, easyWeek, units, loadMode]);
+  }, [exercise, fillTarget, earlier, easyWeek, units, loadMode, kgPlanned]);
 
   // #9: the line starts from what each row hints (never disagreeing with the rows), see kgProgress.
   // Phone runs 39095656699 / 39095657897 (part UR): worked out on every keystroke, the line grew from
@@ -301,7 +302,7 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
       text: kgPlanned.reps
         ? repLiveLine(kgPlanned, g)
         : kgLiveLine(kgPlanned, g, (kg) => `${fmtInt(Math.round(kgToDisplay(kg, units)))} ${weightUnit(units)}${each}`, (kg) => fmtWeight(kg, units)),
-      // R-366: a reps move that beat last time is green too ("Beat last time's 16 reps (17 done)").
+      // R-366: a reps move that beat last time is green too ("17 reps done · Previous: 16 · +1").
       beaten: kgBeaten(g) || repsBeatLast(kgPlanned, g),
     };
     // rows are read through the ref on purpose: only tickKey (ticks, adds, removes) moves the line.

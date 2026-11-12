@@ -43,12 +43,12 @@ describe('R-366: the owner Pull-Up', () => {
     expect(repsToBeatLine(p)).toBe('19 reps to beat · +3 on last time');
   });
 
-  it('his day, 7, 5, 5 = 17: "Beat last time\'s 16 reps (17 done)", green, one tick only', () => {
+  it('his day, 7, 5, 5 = 17: "17 reps done · Previous: 16 · +1" (owner, 12 Nov 2026), green, one tick only', () => {
     const g = kgProgress(p, [done(7), done(5), done(5)]);
     expect(kgBeaten(g)).toBe(false); // today's 19 not all reached ...
     expect(repsBeatLast(p, g)).toBe(true); // ... but last time is beaten: the bar is green
     const line = repLiveLine(p, g);
-    expect(line).toBe("Beat last time's 16 reps (17 done)");
+    expect(line).toBe('17 reps done · Previous: 16 · +1');
     expect(line).not.toMatch(BANNED);
   });
 
@@ -72,8 +72,8 @@ describe('R-366: the owner Pull-Up', () => {
   });
 
   it('all of today\'s 19 or more: the same words, last time named', () => {
-    expect(repLiveLine(p, kgProgress(p, [done(8), done(6), done(5)]))).toBe("Beat last time's 16 reps (19 done)");
-    expect(repLiveLine(p, kgProgress(p, [done(9), done(7), done(5)]))).toBe("Beat last time's 16 reps (21 done)");
+    expect(repLiveLine(p, kgProgress(p, [done(8), done(6), done(5)]))).toBe('19 reps done · Previous: 16 · +3');
+    expect(repLiveLine(p, kgProgress(p, [done(9), done(7), done(5)]))).toBe('21 reps done · Previous: 16 · +5');
   });
 });
 
@@ -87,14 +87,14 @@ describe('R-366: reps to beat never under last time (as R-351 for kg)', () => {
     expect(repsToBeatLine(p)).toBe('33 reps to beat · your previous total');
     const eq = kgProgress(p, [done(12), done(11), done(10)]);
     expect(kgBeaten(eq)).toBe(true);
-    expect(repLiveLine(p, eq)).toBe("Last time's 33 reps reached");
+    expect(repLiveLine(p, eq)).toBe('33 reps done · Previous: 33');
     expect(repLiveLine(p, kgProgress(p, [done(12), done(10), done(8)]))).toBe('Done: 30 of 33 reps · 3 reps short, fine for today');
   });
   it('no last time to compare (first time, or another set count): today\'s words as before', () => {
     const p = repPlan(lower, [])!;
     expect(repLiveLine(p, kgProgress(p, [done(12), done(10), done(8)]))).toBe("Today's 30 reps reached");
     const two = repPlan(lower, last.slice(0, 2))!;
-    expect(repLiveLine(two, kgProgress(two, [done(13), done(12), done(9)]))).toBe("Today's 31 reps beaten (34 done)"); // first 2 sets never under last time's 23 (R-351)
+    expect(repLiveLine(two, kgProgress(two, [done(13), done(12), done(9)]))).toBe('34 reps done · Previous: 23 · +11 · +1 set'); // first 2 sets never under last time's 23 (R-351)
   });
   it('R-358: Counting changed since last time: no reps line at all', () => {
     expect(beatPlan({ ...lower, countingChanged: true }, last)).toBeNull();

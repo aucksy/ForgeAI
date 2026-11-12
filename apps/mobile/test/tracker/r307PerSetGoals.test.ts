@@ -15,7 +15,9 @@ const set = (weightKg: number, reps: number, rpe: number | null = null): ProgSet
 const sess = (dateISO: string, sets: ProgSet[]): ProgSession => ({ dateISO, sets });
 
 describe('R-350: the lateral raise (R-301) under the simple rule', () => {
-  it('19, 16, 15, 14 in 10-15: +1 rep on each set, never past 15; no weight step until every set is at 15', () => {
+  // R-454 (owner, 12 Nov 2026: "Never suggesting less than before."): a set already past the top keeps
+  // what it did (19, 16), the others +1 up to the top (was 15, 15, 15, 15).
+  it('19, 16, 15, 14 in 10-15: +1 rep on each set up to 15, never under last time; no weight step until every set is at 15', () => {
     const t = computeProgressionTarget({
       exercise: { ...base, equipment: 'machine', incrementKg: 5 },
       target: { targetSets: 4, repRangeMin: 10, repRangeMax: 15 },
@@ -26,7 +28,7 @@ describe('R-350: the lateral raise (R-301) under the simple rule', () => {
     });
     expect(t.rule).toBe('R5');
     expect(t.targetWeightKg).toBe(20);
-    expect(t.setGoals).toEqual([15, 15, 15, 15]);
+    expect(t.setGoals).toEqual([19, 16, 15, 15]);
   });
 });
 

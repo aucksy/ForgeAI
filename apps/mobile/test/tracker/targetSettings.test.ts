@@ -352,10 +352,12 @@ describe('ONE source: targetFill → fillForSet', () => {
     expect(fillForSet(card([s1, s2]), s2.key, fill)).toEqual({ weightKg: 52.5, reps: 9 });
   });
 
-  it('a hint never asks for more reps than were just done at that weight', () => {
+  it('a hint never asks for more reps than were just done at that weight (but never under last time)', () => {
     const [s1, s2, s3] = [row({ weightKg: 50, reps: 7, done: true }), row(), row()];
     const c = card([s1, s2, s3]);
-    expect(fillForSet(c, s2.key, fill)).toEqual({ weightKg: 50, reps: 7 });
+    // R-454 (owner, 12 Nov 2026: "Never suggesting less than before"): the cap stops at what the same
+    // set did last time at this weight: set 2 did 8 last time, so 8 (was 7); set 3 did 7, so 7.
+    expect(fillForSet(c, s2.key, fill)).toEqual({ weightKg: 50, reps: 8 });
     expect(fillForSet(c, s3.key, fill)).toEqual({ weightKg: 50, reps: 7 });
     // More than the goal above: the row still aims for its own goal, not the 12.
     const [a1, a2] = [row({ weightKg: 50, reps: 12, done: true }), row()];

@@ -135,10 +135,10 @@ describe('#9 kg to beat: during the workout', () => {
     // The row after it is not eased, so it may still take the extra reps.
     expect(g.next[1].reps).toBe(8 + MAX_EXTRA_REPS);
   });
-  it('beaten: says so with what was done', () => {
+  it('beaten: says what was done next to the previous workout (owner, 12 Nov 2026)', () => {
     const g = kgProgress(p, [row(45, 10, true), row(45, 10, true), row(45, 9, true)]);
     expect(g.left).toBe(0);
-    expect(kgLiveLine(p, g, total, weight)).toBe("Today's 1,125 kg beaten (1,305 kg done)");
+    expect(kgLiveLine(p, g, total, weight)).toBe('1,305 kg done · Previous: 978 kg · +328 kg'); // last time 42.5 x 8, 8, 7 = 977.5
   });
   it('a weight typed on an open row is kept; drop sets done count too', () => {
     const g = kgProgress(p, [row(45, 9, true), row(47.5, null, false), row(null, null, false), row(30, 10, true)]);

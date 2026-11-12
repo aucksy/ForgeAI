@@ -70,7 +70,7 @@ describe('R-60: reps to beat', () => {
       { weightKg: null, reps: 14, done: true, isWarmup: false },
     ]);
     expect(kgBeaten(g2)).toBe(true);
-    expect(repLiveLine(p, g2)).toBe("Beat last time's 42 reps (47 done)"); // R-366
+    expect(repLiveLine(p, g2)).toBe('47 reps done · Previous: 42 · +5'); // R-366
     // A warm-up never counts.
     expect(kgProgress(p, [{ weightKg: null, reps: 20, done: true, isWarmup: true }]).done).toBe(0);
   });
