@@ -1,0 +1,64 @@
+# R-458 (owner, 12 Nov 2026): "if owner is logging in using their phone number, then automatically their gym's
+# colors and branding ... will be unlocked." The Gym tab's no-gym screen: "Do you run a gym on MettleUp?" ->
+# "Sign in as gym staff" -> mobile + PIN (or a one-time sign-in code) -> the gym's own "Join <gym>" screen.
+# run-device-qa.sh part u458 made a FRESH "QA UAT Gym" (qa/uat_gym.py; never FORGE1 / RAMS01) and a one-time
+# sign-in code its owner made for himself (own-code). PHONE, PIN (masked), CODE (the gym's join code) and GYM
+# come from the script (-e); no `env:` default here (trap 22).
+# Negative first: a wrong PIN says "do not match" and opens nothing; the box is emptied. Then the right code
+# opens "Join QA UAT Gym" (it asks before joining; this flow does NOT join), Back returns to the no-gym
+# screen with the card closed. Pictures rel-r458-*.png.
+appId: com.mettleup.app
+---
+- runFlow: sub-gym-none.yaml
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Do you run a gym on MettleUp\\?"
+- assertVisible: "Owners and front-desk staff can sign in here\\..*"
+- takeScreenshot: rel-r458-1-card
+- tapOn: "Sign in as gym staff"
+- extendedWaitUntil:
+    visible: "Your mobile number"
+    timeout: 15000
+- tapOn: "Your mobile number"
+- inputText: "${PHONE}"
+- tapOn: "Your 6-digit PIN or sign-in code"
+- inputText: "000000"
+- hideKeyboard
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Open my gym$"
+- tapOn: "^Open my gym$"
+# ---------------------------------------------------------------- negative: a wrong PIN opens nothing
+- extendedWaitUntil:
+    visible: "This mobile number and PIN do not match\\. .*"
+    timeout: 30000
+- assertNotVisible: "Gym code ${CODE}"
+- assertVisible: "Your PIN is only checked\\. It is never saved on this phone\\."
+- takeScreenshot: rel-r458-2-wrong
+# ---------------------------------------------------------------- happy path: the owner's own code
+- tapOn: "Your 6-digit PIN or sign-in code"
+- inputText: "${PIN}"
+- hideKeyboard
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Open my gym$"
+- tapOn: "^Open my gym$"
+- extendedWaitUntil:
+    visible: "Gym code ${CODE}"
+    timeout: 45000
+- assertVisible: "^${GYM}$"
+- takeScreenshot: rel-r458-3-join-screen
+# Not joined: Back returns to the no-gym screen; the card is closed again (nothing typed shows).
+- back
+- extendedWaitUntil:
+    visible: "^Join your gym$"
+    timeout: 30000
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Sign in as gym staff$"
+- assertNotVisible: "Your 6-digit PIN or sign-in code"
+- takeScreenshot: rel-r458-4-back

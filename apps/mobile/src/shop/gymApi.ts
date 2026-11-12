@@ -29,6 +29,7 @@ import { reportAnswerFromRow, reportRequestsFromRow, type ReportRequest, type Re
 import { trainerHelpFrom, trainerStatusFrom, type TrainerStatus, type TrainerSummary } from './trainerShare';
 import { askChoicesFrom, askQuestionsFrom, askSentFrom, type AskChoices, type AskQuestion } from './askTrainer';
 import { friendInviteFrom, type FriendInvite } from './bringFriend';
+import { staffDoorFromRow, type StaffDoorAnswer } from './staffDoor';
 import type { RecentWorkout } from './trainerRecent';
 import type { GymLink, GymOrder, Product } from './types';
 
@@ -84,6 +85,28 @@ export async function apiJoin(code: string, name: string, joinId?: string): Prom
   if (!r.ok) return r;
   const link = linkFromJoin(r.data);
   return link ? { ok: true, data: link } : { ok: false, error: { kind: 'other' } };
+}
+
+/**
+ * R-458 "Do you run a gym on MettleUp?": the owner's or desk person's own admin sign-in (staff_sign_in, the same
+ * tries and locks as the admin app), only to learn their gym's code. The session the server makes is signed out
+ * at once and its key is never kept, returned or logged. 'OFFLINE' = no answer at all.
+ */
+export async function apiStaffGymCode(phone: string, pin: string): Promise<StaffDoorAnswer | { ok: false; problem: 'OFFLINE' }> {
+  const r = await call('staff_sign_in', { p_phone: phone, p_code: pin, p_device: 'MettleUp member app (opens the gym)' }, READ_MS);
+  if (!r.ok) {
+    console.warn('[gym] staff sign-in for the gym look failed', r.error.kind);
+    return r.error.kind === 'offline' || r.error.kind === 'timeout' ? { ok: false, problem: 'OFFLINE' } : { ok: false, problem: 'OTHER' };
+  }
+  const row = r.data as { sessionKey?: unknown } | null;
+  const key = row && typeof row.sessionKey === 'string' ? row.sessionKey : null;
+  if (key) {
+    // Signed out at once: this phone is not a staff device. Best try; the owner can also end it from the admin app.
+    void call('staff_sign_out', { p_key: key }, READ_MS).then((o) => {
+      if (!o.ok) console.warn('[gym] staff sign-out after the gym look failed', o.error.kind);
+    });
+  }
+  return staffDoorFromRow(r.data);
 }
 
 /** The gym's messages for this member (member_messages, 0008), newest first. */

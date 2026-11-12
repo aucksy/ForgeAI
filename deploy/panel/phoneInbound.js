@@ -2,7 +2,7 @@
 // MettleUp's business number, so nothing is sent by us: Meta blocks every message we send (131042, a tax flag
 // stuck on Meta's side), but messages people send to us are free and still arrive.
 //
-//   POST /api/phone-code/inbound/start  {phone, purpose: 'pin'|'signup', website}
+//   POST /api/phone-code/inbound/start  {phone, purpose: 'pin'|'signup'|'member' (R-458, the member app), website}
 //        -> {ok, id, code, waNumber, waText: "MettleUp code 123456. After you send this, go back to the MettleUp page.", expiresAt}
 //        (R-448: an optional `lang: 'hinglish'` gives the next step in Hinglish)
 //   GET  /api/phone-code/inbound/status?id=<id>
@@ -47,7 +47,21 @@ export const NEXT_STEP = {
   en: 'After you send this, go back to the MettleUp page.',
   hinglish: 'Yeh bhejne ke baad MettleUp page par wapas jao.',
 };
-export const inboundText = (code, lang = 'en') => `${WA_PREFIX} ${code}. ${lang === 'hinglish' ? NEXT_STEP.hinglish : NEXT_STEP.en}`;
+/**
+ * R-458 (12 Nov 2026): purpose 'member' ("Find my gym by my number", supabase 0068) is started from the MettleUp
+ * member APP, not the admin page, so its message and reply say "app". Inbound only: phoneCode.js (codes WE send)
+ * keeps its own PURPOSES, so no paid send can ever go to a member's number from this.
+ */
+// Spelled out, not [...PURPOSES]: phoneCode.js imports this file, so PURPOSES is not set yet when this line runs.
+export const INBOUND_PURPOSES = ['pin', 'signup', 'member'];
+export const NEXT_STEP_APP = {
+  en: 'After you send this, go back to the MettleUp app.',
+  hinglish: 'Yeh bhejne ke baad MettleUp app par wapas jao.',
+};
+export const inboundText = (code, lang = 'en', purpose = 'pin') => {
+  const next = purpose === 'member' ? NEXT_STEP_APP : NEXT_STEP;
+  return `${WA_PREFIX} ${code}. ${lang === 'hinglish' ? next.hinglish : next.en}`;
+};
 
 /** The business number from the var, as digits with the country code ("91XXXXXXXXXX"), or null. PURE. */
 export function inboundNumber(env) {
@@ -156,7 +170,7 @@ async function start(request, env, now) {
   const read = await readJson(request);
   if (read.error) return refused(read.status, { error: 'BAD_REQUEST' }, read.error);
   const body = read.body;
-  const purpose = PURPOSES.includes(body.purpose) ? body.purpose : null;
+  const purpose = INBOUND_PURPOSES.includes(body.purpose) ? body.purpose : null;
   if (!purpose) return refused(400, { error: 'BAD_REQUEST' }, 'unknown purpose');
   const phone = indianMobile(body.phone);
   if (!phone) return refused(400, { error: 'BAD_PHONE' }, 'not an Indian mobile');
@@ -168,7 +182,7 @@ async function start(request, env, now) {
     // A bot: a normal-looking answer whose id is never stored (its status says "expired").
     console.warn('[phone-inbound] dropped: the hidden "website" box was filled (a bot, or a browser autofill)');
     const code = newCode();
-    return answer(200, { ok: true, id: crypto.randomUUID(), code, waNumber, waText: inboundText(code, lang), expiresAt });
+    return answer(200, { ok: true, id: crypto.randomUUID(), code, waNumber, waText: inboundText(code, lang, purpose), expiresAt });
   }
 
   const secret = env.PHONE_CODE_SECRET;
@@ -198,7 +212,7 @@ async function start(request, env, now) {
       .bind(await idKey(secret, id), pk, purpose, ck, now, expiresAt)
       .run();
     console.log(`[phone-inbound] started purpose=${purpose}`);
-    return answer(200, { ok: true, id, code, waNumber, waText: inboundText(code, lang), expiresAt });
+    return answer(200, { ok: true, id, code, waNumber, waText: inboundText(code, lang, purpose), expiresAt });
   } catch (e) {
     console.error('[phone-inbound] D1 could not be used (apply D1 migration 0013)', e instanceof Error ? e.message : e);
     return answer(503, { error: 'NOT_AVAILABLE' });
@@ -268,9 +282,11 @@ export async function inboundMessages(env, body, now = Date.now(), log = console
   const secret = env.PHONE_CODE_SECRET;
   for (const { from, text } of incomingTexts(body)) {
     try {
-      const result = await oneMessage(env, secret, from, text, now, log);
+      const seen = {};
+      const result = await oneMessage(env, secret, from, text, now, log, seen);
       results.push(result);
-      if (REPLY[result]) await replyText(env, from, REPLY[result], log, fetcher);
+      const reply = result === 'verified' && seen.purpose === 'member' ? REPLY.verified_app : REPLY[result];
+      if (reply) await replyText(env, from, reply, log, fetcher);
     } catch (e) {
       log.error(`[phone-inbound] message from=${tail(from)} could not be checked`, e instanceof Error ? e.message : e);
       results.push('none');
@@ -286,6 +302,8 @@ export async function inboundMessages(env, body, now = Date.now(), log = console
  */
 export const REPLY = {
   verified: 'Your phone number is successfully verified for MettleUp. Go back to the MettleUp page to finish.',
+  // R-458: the same words for a check started in the member app (purpose 'member').
+  verified_app: 'Your phone number is successfully verified for MettleUp. Go back to the MettleUp app to finish.',
   no_code: 'We could not find your MettleUp code in this message. Go back to the MettleUp page, tap "Open WhatsApp again" and send the message without changes.',
 };
 
@@ -315,7 +333,7 @@ export async function replyText(env, to, text, log = console, fetcher = fetch) {
   return false;
 }
 
-async function oneMessage(env, secret, from, text, now, log) {
+async function oneMessage(env, secret, from, text, now, log, seen = {}) {
   const sender = indianMobile(from);
   const senderKey = sender ? await phoneKey(secret, sender) : null;
   const code = parseCode(text);
@@ -329,6 +347,7 @@ async function oneMessage(env, secret, from, text, now, log) {
         const done = await env.WEB.prepare(`UPDATE phone_inbound SET state = 'verified', verified_at = ?, sender_box = ? WHERE id_key = ? AND state IN ${LIVE}`).bind(now, box, row.id_key).run();
         if (Number(done?.meta?.changes ?? 0) === 1) {
           log.log(`[phone-inbound] verified purpose=${row.purpose} from=${tail(from)}`);
+          seen.purpose = row.purpose;
           return 'verified';
         }
         return 'none';

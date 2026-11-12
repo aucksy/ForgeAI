@@ -84,6 +84,8 @@ declare
     'owner_billing','owner_receipt',
     -- 0061: sign-in codes by WhatsApp (the account check needs the Worker's HMAC signature; the PIN reset a one-use signed proof).
     'phone_code_has_account','staff_reset_pin_with_proof',
+    -- 0068: find my gym by my proven number (a one-use signed 'member' proof; the link also needs the member key).
+    'member_find_gyms','member_claim_phone',
     -- 0032: the free plan's switch (answers one config row, nothing else).
     'app_limits',
     'owner_add_person','owner_add_stock','owner_app_members','owner_delete_product','owner_go_online',

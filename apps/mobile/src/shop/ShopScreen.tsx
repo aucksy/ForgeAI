@@ -15,6 +15,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, Pressable, RefreshControl, ScrollView, Share, Text, View, useWindowDimensions } from 'react-native';
 
 import { JoinGymCard } from '@/components/settings/JoinGymCard';
+import { StaffDoorCard } from '@/shop/StaffDoorCard';
 import { LinkRow } from '@/components/stats/parts';
 import { Card, Chip, GhostButton, Icon, Screen, type IconName } from '@/components/ui';
 import { InlineError } from '@/components/ui/InlineError';
@@ -101,6 +102,8 @@ function JoinGymDoor() {
           ))}
         </View>
         <RecommendGymCard />
+        {/* R-458: the gym's owner or desk person opens their own gym with their admin sign-in. */}
+        <StaffDoorCard />
         <Text style={{ fontFamily: type.body, fontSize: type.size.sub, lineHeight: 20, color: color.inkMuted }}>
           No gym? Everything else works without one.
         </Text>

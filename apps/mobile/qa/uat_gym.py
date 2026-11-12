@@ -16,6 +16,8 @@ yes to a typed number), the way qa-journeys and qa-conditions make their own gym
         plan named "QA pass stand-in: <company>": the old server lets their check-in through (as 0055
         does), and only a QA build (extra.qaStandIns has passMember) reads it as the pass
         (src/shop/membership.ts withQaPassStandIn). With 0055 live the server's own answer wins.
+  own-code <slot>              R-458: a one-time sign-in code the owner makes for HIMSELF (owner_make_signin_code), for
+                               the member app's "Do you run a gym on MettleUp?". Prints ::add-mask:: and OWNCODE=<6 digits>.
   sign-out <slot>              end the owner session
 
 Security (WP6 rules, unchanged): the gym is made by this run; never FORGE1 / RAMS01; the owner session
@@ -106,6 +108,17 @@ def main(argv):
         return 0
     if cmd == "make-pass":
         print(make_pass(xj.load(slot), argv[2], argv[3]))
+        return 0
+    if cmd == "own-code":
+        st = xj.load(slot)
+        staff = (st.get("person") or {}).get("staffId")
+        made = xj.rpc("owner_make_signin_code", {"p_key": st["key"], "p_staff": staff}) or {}
+        code = str(made.get("code") or "")
+        if len(code) != 6:
+            print("OWN CODE FAILED (no code in the answer)")
+            return 1
+        print(f"::add-mask::{code}")
+        print(f"OWNCODE={code}")
         return 0
     if cmd == "sign-out":
         return xj.main(["sign-out", slot])

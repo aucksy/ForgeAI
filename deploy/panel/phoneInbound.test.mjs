@@ -6,8 +6,8 @@ import assert from 'node:assert/strict';
 import { createHmac } from 'node:crypto';
 import { test } from 'node:test';
 
-import { MAX_WRONG, handlePhoneCode, hmacHex } from './phoneCode.js';
-import { NEXT_STEP, REPLY, deleteOldInbound, inboundMessages, inboundNumber, inboundText, openPhone, parseCode, sealPhone, stateOf } from './phoneInbound.js';
+import { MAX_WRONG, PURPOSES, handlePhoneCode, hmacHex } from './phoneCode.js';
+import { INBOUND_PURPOSES, NEXT_STEP, REPLY, deleteOldInbound, inboundMessages, inboundNumber, inboundText, openPhone, parseCode, sealPhone, stateOf } from './phoneInbound.js';
 import { sqliteD1 } from './sqliteD1.mjs';
 import { handleWhatsAppHook } from './whatsappHook.js';
 
@@ -312,4 +312,27 @@ test('reply: Meta refusing it (131042) or no send key changes nothing; the page 
   const r2 = await startFor(s2, OWNER);
   assert.equal((await inboundMessages(s2.env, hookBody('919000000001', `MettleUp code ${r2.body.code}`), T0 + 1000, silent, async () => { calls++; return new Response('{}'); }))[0], 'verified');
   assert.equal(calls, 0);
+}));
+
+test('R-458: purpose "member" (the member app\'s "Find my gym by my number"): app words, a member proof, the app reply; never a paid send', quiet(async () => {
+  const s = setup({ WHATSAPP_TOKEN: 'fake-token', WHATSAPP_PHONE_NUMBER_ID: '111' });
+  const sent = [];
+  const fake = async (url, init) => {
+    sent.push(JSON.parse(init.body));
+    return new Response(JSON.stringify({ messages: [{ id: 'wamid.r' }] }), { status: 200 });
+  };
+  const r = await startFor(s, OWNER, 'member');
+  assert.equal(r.status, 200);
+  assert.equal(r.body.waText, `MettleUp code ${r.body.code}. After you send this, go back to the MettleUp app.`);
+  assert.equal(inboundText('123456', 'hinglish', 'member'), 'MettleUp code 123456. Yeh bhejne ke baad MettleUp app par wapas jao.');
+  // The admin page's words are unchanged.
+  assert.equal(inboundText('123456'), 'MettleUp code 123456. After you send this, go back to the MettleUp page.');
+  assert.equal((await inboundMessages(s.env, hookBody('919000000001', `MettleUp code ${r.body.code}`), T0 + 1000, silent, fake))[0], 'verified');
+  assert.equal(sent[0].text.body, REPLY.verified_app);
+  assert.match(REPLY.verified_app, /Go back to the MettleUp app to finish\./);
+  const got = await statusOf(s, r.body.id, { now: T0 + 2000 });
+  assert.deepEqual(got.body.proof.split('.').slice(0, 3), ['v1', 'member', OWNER]);
+  // Codes WE send (paid, phoneCode.js) never take 'member': only 'pin' and 'signup'.
+  assert.deepEqual(PURPOSES, ['pin', 'signup']);
+  assert.deepEqual(INBOUND_PURPOSES, [...PURPOSES, 'member']);
 }));

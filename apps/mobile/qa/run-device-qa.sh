@@ -183,7 +183,7 @@ OLD_PARTS="a b c d e f g h h3 p1 p2 i link i2 j j2 j3 k l n p9 r br inv invf p7 
 # R-123: ubk = a fresh install restores a backup FILE from the welcome screen (routines in order,
 # settings, profile), then saves a new one from Settings -> Back up and restore (qa/uat-bk.yaml).
 UAT_PARTS="uh ur un ud ue ubk ub uf ua uv ug uk"
-GATE_PARTS="w dnd longrest anim mk clip uat u355 u344 u358 u366 usel ugym u15 u76 u198 u194 u401 u199 u404 u438 u444 ulook uage u439 u436 u336 u61 upic u452 u456"
+GATE_PARTS="w dnd longrest anim mk clip uat u355 u344 u358 u366 usel ugym u15 u76 u198 u194 u401 u199 u404 u438 u444 ulook uage u439 u436 u336 u61 upic u452 u456 u458"
 qa_list() { echo "$1" | tr ',;' '  ' | tr '[:upper:]' '[:lower:]' | xargs; }
 QA_ONLY_LIST=$(qa_list "${QA_ONLY:-}")
 QA_EXTRA_LIST=$(qa_list "${QA_EXTRA:-}")
@@ -2003,6 +2003,7 @@ part_uat() {
   part_u439
   part_u436
   part_uage
+  part_u458
   part_ulook
   mkdir -p "$OUT/uat-release"
   { find "$OUT" -path "$OUT/uat-release" -prune -o -name "rel-*.png" -print 2>/dev/null; find "$PWD" -maxdepth 1 -name "rel-*.png" 2>/dev/null; } \
@@ -2287,6 +2288,35 @@ part_u436() {
 part_uage() {
   uat_flow uatd7 uat-rel-d7-age-tick.yaml || return 1
 }
+# R-458 (owner, 12 Nov 2026): the gym's owner opens his own gym in the member app with his admin sign-in. A FRESH
+# "QA UAT Gym" (qa/uat_gym.py slot S; never FORGE1 / RAMS01), a one-time sign-in code its owner (98765 00001, the
+# made-up QA owner) makes for himself; flow r458: wrong PIN (nothing opens), then the code opens "Join QA UAT
+# Gym", Back, the card closed. Starts from the demo (gate-demo, no gym). Also runs alone with only=u458.
+# Pictures rel-r458-*.png. The code is masked in the log and never written to the timeline.
+part_u458() {
+  local setup code own rc=0
+  export XJ_STATE_DIR="${XJ_STATE_DIR:-${RUNNER_TEMP:-/tmp}/xj-state}"
+  mkdir -p "$XJ_STATE_DIR"
+  chmod 700 "$XJ_STATE_DIR" 2>/dev/null || true
+  gate_flow u458_seed gate-demo.yaml || { status=1; return 1; }
+  setup=$(python3 "$QA_DIR/uat_gym.py" setup S "$(adb shell date +%Y-%m-%d | tr -d '')" 30 "Sam Staffdoor" 9876500458 2>&1)
+  echo "$setup" | grep '^::add-mask::' || true
+  echo "$setup" | grep -vE '^(CODE=|ENDS=|::add-mask::)' | sed 's/^/[u458 gym] /' | tee -a "$OUT/timeline.txt"
+  code=$(echo "$setup" | sed -n 's/^CODE=//p' | tail -1)
+  own=$(python3 "$QA_DIR/uat_gym.py" own-code S 2>&1)
+  echo "$own" | grep '^::add-mask::' || true
+  own=$(echo "$own" | sed -n 's/^OWNCODE=//p' | tail -1)
+  if [ -z "$code" ] || [ -z "$own" ]; then
+    log "PART U458 FAILED: the test gym or its owner's sign-in code could not be made (uat_gym.py setup / own-code)"
+    python3 "$QA_DIR/uat_gym.py" sign-out S >/dev/null 2>&1 || true
+    status=1
+    return 1
+  fi
+  uat_flow uatr458 uat-rel-r458-staff-door.yaml -e "PHONE=98765 00001" -e "PIN=$own" -e "CODE=$code" -e "GYM=QA UAT Gym" || rc=1
+  python3 "$QA_DIR/uat_gym.py" sign-out S 2>&1 | sed 's/^/[u458 gym] /' | tee -a "$OUT/timeline.txt"
+  [ $rc = 0 ] || status=1
+  return $rc
+}
 # F194 (owner R-352, 5 Nov 2026): Settings -> Plates and bars -> "Machine and cable steps". Flow a: a cable
 # lift at the top of its reps (50 kg x 20 x 3), the new line on its default, saved as a routine. The phone
 # clock then moves one day on (the Target reads only workouts before today) and flow b checks the Target
@@ -2447,6 +2477,7 @@ qa_runs u336 && ! qa_runs uat && { log "gate part U336 begins"; part_u336; }
 qa_runs u61 && ! qa_runs uat && { log "gate part U61 begins"; part_u61; }
 qa_runs ulook && ! qa_runs uat && { log "gate part ULOOK begins"; part_ulook; }
 qa_runs uage && ! qa_runs uat && { log "gate part UAGE begins"; part_uage; }
+qa_runs u458 && ! qa_runs uat && { log "gate part U458 begins"; part_u458; }
 # R-359/R-345 (5 Nov 2026): the In use journey alone (pictures rel-345/357/359), with only=u15.
 qa_runs u15 && ! qa_runs uat && { log "gate part U15 begins"; uat_flow uat15 uat-rel-15-inuse-journey.yaml || status=1; }
 # T76 (owner's full test round, 5 Nov 2026): negative checks found by the round. Flow a: kg history,

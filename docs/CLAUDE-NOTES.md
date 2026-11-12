@@ -7,6 +7,23 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-458. Phone number finds the member's gym; the owner's sign-in opens the gym's look — 12 Nov 2026
+
+He said: "double check we already have that cross system interaction about detecting user's phone number, and if it's in one of the gym's database and the membership is active, then automatically ... give the user the option to enable or unlock all app features because their membership with certain gym is detected, active membership. Similarly, if owner is logging in using their phone number, then automatically their gym's colors and branding and features will be unlocked. ... Research and plan this properly and then implement."
+
+Found: not built as asked. Members link one gym by code / poster / invite link; the check-in number is typed (unproven), the desk confirms it (0048). Nothing in the member app is locked today (F56 Planned, PLAN_GATE_ON false), so "unlock" = join the gym. Owner identity is mobile + PIN (admin app), not Google; the member app could not know an owner. The free proof of a number already exists: "Verify with WhatsApp" (inbound, live since 8 Nov, R-405), checked by the gym server (0061).
+
+Risk told: a cross-gym search by a TYPED number would tell anyone which gym a person uses; only a PROVEN number may search, only for the holder's own first name (a recycled number never shows the old holder's gym).
+
+Plan: docs/plans/phone-membership-detect.md (prices, sources, D1 WhatsApp check free vs SMS ~Rs 40 / Rs 380 a month at 100 / 1,000 + Rs 5,900 DLT once; Firebase $0.07 a text; Truecaller missed call blocked by Play's July 2026 call-log rule; D2 ask before joining).
+
+Built (no money, no live change):
+- Member app, Gym tab with no gym: "Do you run a gym on MettleUp?" -> "Sign in as gym staff" (mobile + PIN or one-time code, live staff_sign_in, signed out at once, nothing kept) -> "Join <gym>". Tests test/shop/staffDoor.test.ts (10); UAT part u458 written, not run yet. Next release after UAT.
+- Server, NOT applied: supabase/migrations/0068_member_find_gym.sql (member_find_gyms(proof, name), member_claim_phone(key, proof), tries table, phone_checked_at, a phone index) + supabase/tests/0068 (34 checks) + security.sql list.
+- Worker, NOT deployed: deploy/panel/phoneInbound.js purpose "member" (inbound only; "go back to the MettleUp app"); phoneInbound.test.mjs 19 pass.
+
+Needs his yes: D1/D2 picks, apply 0068, deploy the panel Worker, the privacy-notice line in the plan. Then the member screen gets built.
+
 ## R-456. In use screen: only "I'm back" closes it, not a tap anywhere — 12 Nov 2026
 
 He said: "the banner on the phone after resting that shows in use is actually going away if you simply tap anywhere on the screen. That should only go away if someone taps on I am back." (He gave this before: R-345, 5 Nov.)
