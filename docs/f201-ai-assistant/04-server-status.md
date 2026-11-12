@@ -1,5 +1,27 @@
 # F201 server status
 
+## 13 Nov 2026: the go-live batch (ONE yes from the owner covers all of it, in this order)
+
+Nothing below is live. Each step needs his yes ("No LIVE database changes without my yes"; deploys too).
+1. Gym server: paste `supabase/migrations/0071_ai_assistant.sql`, then `0072_retired_ai_pack_name.sql`, into the
+   Supabase SQL Editor (his personal Chrome window). If the classifier refuses live SQL, he presses Run.
+2. Web database: from deploy/panel, `npx wrangler d1 execute forgeai-web --remote --file migrations/0015_assist_usage.sql`.
+3. Panel worker deploy (the CI dashboard build artifact, then `npx wrangler deploy` from deploy/panel), with an
+   ADMIN_NEWS line for the AI Assistant. This also puts the website changes live (R-474 AI section, R-476 hero and
+   numbers; the site is served by the panel worker).
+4. HQ worker deploy (deploy/hq): the AI credits card and the nightly purge of AI requests older than 400 days (R-477).
+5. Privacy page: the lines in 06-privacy-line.md (his yes word for word), live with step 3.
+6. Optional secrets: `CLAUDE_ASSIST_KEY` (else `CLAUDE_HELP_KEY`), `SARVAM_API_KEY` (else Groq), `ASSIST_TRIAL_CAP_USD`.
+7. After 1-3: the real-AI test set (about Rs 10 of Claude calls), then a live check in Chrome.
+
+Current numbers (these replace the 12 Nov section below where they differ):
+- Credits: 20 once in the free trial; monthly plans none; paid yearly or founding lifetime: 50 a month on Starter,
+  100 on Pro (R-473). Asking is free; 1 credit per message sent or member/payment saved, 3 per workout plan saved.
+- Money cap: only trial and unpaid gyms, all together, $15 a month (R-475). Paying gyms: no money cap, only 50
+  requests and 10 spoken minutes a day (HQ can change one gym's number).
+- Workout plan writer: POST /api/assist/plan, from the gym's own exercise list (R-471). Diet plans: not yet.
+- Kept 400 days, then deleted for every gym every night; only the credit amounts stay (R-477).
+
 ## 12 Nov 2026: server side built (not live)
 
 Pushed to main:
