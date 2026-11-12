@@ -7,6 +7,32 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-463. R-459 goes live: 0069 applied, privacy line added; the panel deploy is STOPPED (F56 would ship) — 12 Nov 2026
+He said (12 Nov 2026, in the main chat): "All yes" to four questions: (1) apply 0069 live, (2) the privacy line,
+(3) keep the admin menu name "Member messages", (4) keep complaints named (only feedback may go without a name).
+Done:
+- 0069 applied LIVE by the main session in the SQL Editor ("Success. No rows returned"; the exact text from 1ce95b12,
+  sha256 a246392e...); read-only check: both tables, the trigger and the 'gym_reply' kind exist. The file's header now
+  says so (543971bd; header lines only, the SQL body is byte for byte the same).
+- The approved line, word for word, in the privacy notice, section 4B (what goes to your gym), as one more item under
+  the table; "What changed" line updated; Hindi unchanged (the English wins, as R-453). The published page rebuilt
+  (scripts/legal_pages.py --check: same). legalPages.test.ts +1 test pins the line inside 4B and on the page. No other
+  member-facing privacy notice exists: the in-app "What my gym can see" screen is only the sharing switches, and
+  docs/launch/PRIVACY-NOTICE*.md are retired pointers. The privacy page goes live with the next panel deploy.
+- Panel deploy NOT done (stopped on purpose). Since the last deploy (7c319929, 11 Nov, version 2706f670) main also
+  carries F56 work that is not finished or approved to go live and is NOT hidden by a missing server function:
+  the help articles "mettleup-plus" (prices Rs 149 / 999 / 2,499, the free month), "plus-lock-admin" and
+  "find-my-gym-by-number" go straight into the live AI help answers (help.js helpSystem uses every article), so
+  members of today's app could be told about a paid plan that does not exist; and phoneInbound.js purpose "member"
+  (R-458: "deploy the panel Worker" was on his yes list) which F56's Find my gym screen calls. The admin cards
+  themselves are fine (Member messages works now; PlusLockCard hides until 0070).
+  Also shipping, approved or harmless: privacy section 12 (R-453), help cap $80 (R-453), R-452 reply list (works
+  before D1 0014 with one reply each), R-454 / R-452 help article wording (describes the next app release).
+- ADMIN_NEWS_PENDING "Member messages" line stays pending (moves in the deploy commit). Its words say "members can now
+  send"; members need the next app release for the Gym tab row, so reword at the deploy if the app is not out yet.
+Way around (for the next deploy): hide not-live articles from the AI prompt until their feature is on (a flag the
+F56 helper owns), and his yes for the Worker's "member" purpose; then deploy CI's dashboard-dist with the ADMIN_NEWS move.
+
 ## R-462. F56 MettleUp Plus, built in four parts (R-461's plan) — 12 Nov 2026
 **Asked (main session, from R-461):** build F56 with the gym unlock: (a) the plan switch, the free/paid split and a
 30-day free month with the unlock hook; (b) the found-gym and owner/staff unlock; (c) "Tell my gym"; (d) the gym
