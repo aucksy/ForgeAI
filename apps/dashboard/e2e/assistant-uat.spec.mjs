@@ -15,7 +15,8 @@
 //  6b. The AI plan writer (R-471): goal, level and days from the request, "Write the plan" (free, the gym's exercise
 //     list, no member data), the builder opens with the plan for that member, Save = 3 credits. A diet plan: "not
 //     yet", no price.
-//  7. No credits left: the draft still shows; its button says "Get credits to send" and opens the packs. The credits
+//  7. No credits left: the draft still shows; its button says "Ask MettleUp for credits" (no pack prices while buying
+//     is not built) and opens the credits sheet. The credits
 //     sheet shows the plan's monthly free credits from the wallet (R-473), never a typed number.
 //  8. The voice screen: "Listening…", then "What I heard (you can fix it)" and "Send to AI Assistant".
 //  9. A computer: the button bottom right, the 420 px side panel beside the page (the page still works), History.
@@ -132,11 +133,11 @@ function aiAnswer(text) {
   if (/who are my members/i.test(text)) return { actions: [{ tool: 'list_members', input: { group: 'everyone', days: 0, plan: '', batch: '', trainer: '', gender: '' } }], note: '' };
   if (/bijli/i.test(text)) return { actions: [closedMessage, billExpense], note: 'Two things: a message and an expense.' };
   if (/^message everyone/i.test(text)) return { actions: [closedMessage], note: '' };
-  if (/rahul/i.test(text)) return { actions: [{ tool: 'ask_back', input: { question: 'Which message should Rahul get?', options: ['Fee reminder', 'Birthday wishes'] } }], note: '' };
+  if (/^ravi ko/i.test(text)) return { actions: [{ tool: 'ask_back', input: { question: 'Which message should Ravi get?', options: ['Fee reminder', 'Birthday wishes'] } }], note: '' };
   if (/price/i.test(text)) {
     return { actions: [{ tool: 'open_page', input: { page: 'plans', steps: ['Tap the plan', 'Change the price', 'Tap Save'], why: 'Plan prices are changed on the Plans page.' } }], note: '' };
   }
-  if (/call/i.test(text)) return { actions: [{ tool: 'cannot_do', input: { reason: 'I cannot make phone calls. Call Asha from her member page.' } }], note: '' };
+  if (/call/i.test(text)) return { actions: [{ tool: 'cannot_do', input: { reason: 'I cannot make phone calls.' } }], note: '' };
   if (/diet/i.test(text)) return { actions: [{ tool: 'draft_diet_plan', input: { member: 'Asha', goal: 'fat_loss', food: 'veg', notes: '' } }], note: '' };
   if (/workout/i.test(text)) {
     return { actions: [{ tool: 'draft_workout_plan', input: { member: 'Asha', goal: 'fat_loss', days_per_week: 3, level: 'beginner', notes: 'Knee pain, no running' } }], note: '' };
@@ -217,6 +218,9 @@ async function planWriter(page, scope, worker, server, pill, size) {
   await expect(builder.getByLabel('Plan name')).toHaveValue('Fat loss · 4 days · Beginner · Asha Verma');
   await expect(builder).toContainText('A 4-day fat loss plan for a beginner: 16 exercises.');
   await expect(builder).toContainText('Nothing goes to members before you save.');
+  await expect(builder).toContainText('Asha Verma sees it in the MettleUp app after one check-in at the gym.');
+  await expect(builder.getByLabel('Note for Asha Verma (optional)')).toHaveValue('Warm up for 10 minutes first.');
+  await expect(builder.getByRole('button', { name: /Day 1 · Full body · 4 exercises/ })).toBeVisible();
   await expect(builder.getByRole('button', { name: 'Save plan · 3 credits' })).toBeVisible();
   expect(worker.plans).toHaveLength(asked + 1);
   const body = worker.plans.at(-1);
@@ -340,18 +344,18 @@ test('AI Assistant: hidden without 0071; the button, cards, credits, voice, the 
   await expect(message).toContainText('Closed tomorrow, Sunday. Open Monday 6 am.');
   expect(worker.rewrites).toHaveLength(1);
   await message.getByRole('button', { name: 'Send to 1 member · 1 credit' }).tap();
-  await expect(message).toContainText('Sent to 1 in the app. 1 without the app are ready on WhatsApp.');
+  await expect(message).toContainText('Sent to 1 in the app. 1 member without the app is ready on WhatsApp.');
   await expect(message.getByRole('button', { name: '1 without the app: send on WhatsApp' })).toBeVisible();
   expect(server.messages[0]).toMatchObject({ kind: 'closed', title: 'Gym closed tomorrow' });
   await expect(main.getByRole('button', { name: /AI credits\. Open AI credits\./ }).first()).toContainText('82 credits');
 
   // 6. AskBack, where to do it, cannot, a plan.
-  await ask(page, 'Rahul ko message bhejo');
-  await expect(main.getByRole('article', { name: 'A question back' }).last()).toContainText('Which message should Rahul get?');
+  await ask(page, 'Ravi ko message bhejo');
+  await expect(main.getByRole('article', { name: 'A question back' }).last()).toContainText('Which message should Ravi get?');
   await shots(page, '06-askback-card', false, main.getByRole('article', { name: 'A question back' }).last());
   await ask(page, 'Gold plan ka price badlo');
   const where = main.getByRole('article', { name: 'Where to do it' }).last();
-  await expect(where).toContainText('Where: /plans');
+  await expect(where).not.toContainText('Where:');
   await expect(where.getByRole('button', { name: 'Open Plans' })).toBeVisible();
   await shots(page, '07-open-page-card', false, where);
   await ask(page, 'Asha ko call karo');
@@ -381,27 +385,30 @@ test('AI Assistant: hidden without 0071; the button, cards, credits, voice, the 
   await ask(page, 'Message everyone that the gym is closed tomorrow');
   const broke = main.getByRole('article', { name: 'Message to your members' }).last();
   await expect(broke).toContainText('Gym closed tomorrow');
-  await expect(broke.getByRole('button', { name: 'Get credits to send' })).toBeVisible();
+  await expect(broke.getByRole('button', { name: 'Ask MettleUp for credits' })).toBeVisible();
   await shots(page, '13-no-credits-card', false, broke);
-  await broke.getByRole('button', { name: 'Get credits to send' }).tap();
+  await broke.getByRole('button', { name: 'Ask MettleUp for credits' }).tap();
   await expect(credits).toBeVisible();
-  await expect(credits).toContainText('Get more · they never expire');
-  await expect(credits).toContainText('₹399');
-  await expect(credits).toContainText('Popular');
+  await expect(credits).toContainText('Get more credits');
+  // Buying in the panel is not built: no prices it cannot sell.
+  await expect(credits).not.toContainText('₹');
+  await expect(credits.getByRole('button', { name: 'Ask MettleUp for credits' })).toBeVisible();
+  // Each spend says what that task did (one request made a message and an expense).
+  await expect(credits).toContainText('Message: Gym closed tomorrow');
+  await expect(credits).toContainText('Expense ₹3,200');
   await expect(credits).toContainText('Workout plan saved');
   // R-473: the wallet's own number (monthly_free), never one typed into the screen.
   await expect(credits).toContainText('Your plan gets 100 free credits every month.');
   await expect(credits).toContainText('You have no credits left. Questions stay free.');
-  await credits.getByRole('button', { name: 'Popular: 150 credits for ₹399' }).tap();
-  await expect(credits).toContainText('Buying credits here is not ready yet.');
   await shots(page, '14-credits-sheet');
   await credits.getByRole('button', { name: 'Close' }).tap();
   expect(server.log.filter((c) => c.fn === 'owner_ai_spend')).toHaveLength(3);
-  ai.balance = 84;
-  ai.freeLeft = 34;
-  // The credits sheet reads the wallet again: the pill is back to 84 for the pictures that follow.
+  // Back to what the owner really has after 5 credits of tasks (84 - 5), so the later pictures add up.
+  ai.balance = 79;
+  ai.freeLeft = 29;
+  // The credits sheet reads the wallet again: the pill shows 79 for the pictures that follow.
   await pill.tap();
-  await expect(credits).toContainText('84');
+  await expect(credits).toContainText('79');
   await credits.getByRole('button', { name: 'Close' }).tap();
 
   // 8. The voice screen.
@@ -442,6 +449,8 @@ test('AI Assistant: hidden without 0071; the button, cards, credits, voice, the 
   await panel.getByRole('tab', { name: 'History' }).click();
   await expect(panel).toContainText('Bijli', { ignoreCase: true });
   await expect(panel).toContainText('Done · 1 credit');
+  await expect(panel).toContainText('Expense ₹3,200 ·');
+  await expect(panel).toContainText('Message: Gym closed tomorrow ·');
   await shots(page, '19-history');
   await panel.getByRole('tab', { name: 'Ask' }).click();
   await panel.getByRole('button', { name: /AI credits\. Open AI credits\./ }).click();
@@ -520,9 +529,9 @@ test('AI Assistant on a computer: Today, the side panel, every card, the plan wr
   await expect(expense.getByRole('button', { name: 'Save expense · 1 credit' })).toBeVisible();
   await shots(page, '04-message-card', false, message);
   await shots(page, '05-change-card', false, expense);
-  await askIn(page, panel, 'Rahul ko message bhejo');
+  await askIn(page, panel, 'Ravi ko message bhejo');
   const back = panel.getByRole('article', { name: 'A question back' }).last();
-  await expect(back).toContainText('Which message should Rahul get?');
+  await expect(back).toContainText('Which message should Ravi get?');
   await shots(page, '06-askback-card', false, back);
   await askIn(page, panel, 'Gold plan ka price badlo');
   const where = panel.getByRole('article', { name: 'Where to do it' }).last();
@@ -551,14 +560,15 @@ test('AI Assistant on a computer: Today, the side panel, every card, the plan wr
   await credits.getByRole('button', { name: 'Close' }).click();
   await askIn(page, panel, 'Message everyone that the gym is closed tomorrow');
   const broke = panel.getByRole('article', { name: 'Message to your members' }).last();
-  await expect(broke.getByRole('button', { name: 'Get credits to send' })).toBeVisible();
+  await expect(broke.getByRole('button', { name: 'Ask MettleUp for credits' })).toBeVisible();
   await shots(page, '13-no-credits-card', false, broke);
-  await broke.getByRole('button', { name: 'Get credits to send' }).click();
-  await expect(credits).toContainText('Get more · they never expire');
+  await broke.getByRole('button', { name: 'Ask MettleUp for credits' }).click();
+  await expect(credits).toContainText('Get more credits');
+  await expect(credits).not.toContainText('₹');
   await shots(page, '14-credits-sheet');
   await credits.getByRole('button', { name: 'Close' }).click();
-  ai.balance = 84;
-  ai.freeLeft = 34;
+  ai.balance = 81;
+  ai.freeLeft = 31;
 
   // Voice, from the panel.
   await panel.getByRole('button', { name: 'Speak a request' }).click();

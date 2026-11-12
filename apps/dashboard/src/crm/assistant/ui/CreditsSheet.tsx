@@ -2,8 +2,8 @@
  * F201: the AI credits sheet (canvas board "Credits"): the balance, what uses credits, the packs and the latest
  * changes. The numbers come from the server's wallet (owner_ai_wallet), never from the board.
  *
- * Buying a pack in the panel is not built (online billing is off, BILLING_ONLINE_ON): a pack tap says how to ask
- * MettleUp for credits instead, and HQ adds them by hand ("Add AI credits" on the gym's HQ page).
+ * Buying a pack in the panel is not built: the sheet shows no pack prices (review, 13 Nov), only "Ask MettleUp for
+ * credits" (Help and feedback); HQ adds them by hand ("Add AI credits" on the gym's HQ page).
  */
 import { useEffect, useState } from 'react';
 
@@ -11,8 +11,10 @@ import { t } from '../../lang/lang';
 import { navigate } from '../../ui/router';
 import { Button, Sheet, color, font, space } from '../../ui/kit';
 import { refreshAssistantWallet } from '../useAssistant';
-import type { AiWallet, AiWalletRow } from '../api';
-import { quiet } from './parts';
+import { aiTasks, type AiWallet, type AiWalletRow } from '../api';
+import type { Line } from '../catalogue';
+import { jobLine } from '../jobs';
+import { quiet, say } from './parts';
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
@@ -56,11 +58,23 @@ export function monthlyWords(w: Pick<AiWallet, 'monthlyFree' | 'trial' | 'billin
   return w.billing === 'monthly' ? t('Yearly plans get free credits every month.') : null;
 }
 
-export function CreditsSheet({ wallet, onClose, plansOn }: { wallet: AiWallet; onClose: () => void; plansOn: boolean }) {
-  const [asked, setAsked] = useState<number | null>(null);
+export function CreditsSheet({ wallet, onClose, plansOn, assistKey }: { wallet: AiWallet; onClose: () => void; plansOn: boolean; assistKey: string }) {
+  // Review (13 Nov): one request can make two tasks with the same words; each spend shows what that task did.
+  const [jobs, setJobs] = useState<Map<string, Line>>(new Map());
   useEffect(() => {
     void refreshAssistantWallet();
-  }, []);
+    let live = true;
+    void aiTasks(assistKey, 30).then((rows) => {
+      if (!live || !rows) return;
+      setJobs(new Map(rows.flatMap((r) => {
+        const job = jobLine(r.actions);
+        return job ? [[r.id, job] as const] : [];
+      })));
+    });
+    return () => {
+      live = false;
+    };
+  }, [assistKey]);
   const ends = monthEndWords(wallet.month);
   const freeLine =
     wallet.monthlyFree > 0 && wallet.freeLeft > 0 && ends
@@ -94,67 +108,27 @@ export function CreditsSheet({ wallet, onClose, plansOn }: { wallet: AiWallet; o
           {plansOn ? <PriceRow label={t('Workout plan saved')} price={t('{n} credits', { n: 3 })} /> : null}
         </section>
 
-        {wallet.packs.length > 0 ? (
-          <section aria-label={t('Get more · they never expire')} style={{ display: 'grid', gap: space.sm }}>
-            <h3 style={headStyle}>{t('Get more · they never expire')}</h3>
-            <div style={{ display: 'grid', gridTemplateColumns: `repeat(${Math.min(3, wallet.packs.length)}, minmax(0, 1fr))`, gap: space.sm }}>
-              {wallet.packs.map((p) => (
-                <button
-                  key={p.credits}
-                  type="button"
-                  aria-label={`${p.popular ? `${t('Popular')}: ` : ''}${t('{n} credits for {price}', { n: p.credits, price: `₹${p.inr.toLocaleString('en-IN')}` })}`}
-                  aria-pressed={asked === p.credits}
-                  onClick={() => setAsked(p.credits)}
-                  style={{
-                    appearance: 'none',
-                    position: 'relative',
-                    display: 'grid',
-                    justifyItems: 'center',
-                    gap: 2,
-                    padding: '16px 6px 12px',
-                    borderRadius: 14,
-                    border: `1.5px solid ${p.popular || asked === p.credits ? color.accent : color.borderStrong}`,
-                    background: asked === p.credits ? color.accentSoft : 'transparent',
-                    cursor: 'pointer',
-                    minHeight: 92,
-                  }}
-                >
-                  {p.popular ? (
-                    <span style={{ position: 'absolute', top: -10, padding: '2px 8px', borderRadius: 999, background: color.accent, color: '#1F0D05', fontFamily: font.body, fontSize: 11, fontWeight: 800 }}>
-                      {t('Popular')}
-                    </span>
-                  ) : null}
-                  <b style={{ fontFamily: font.display, fontSize: 22, color: color.ink }}>{p.credits}</b>
-                  <span style={{ fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>{t('credits')}</span>
-                  <span style={{ fontFamily: font.body, fontSize: 15, fontWeight: 800, color: color.ink }}>₹{p.inr.toLocaleString('en-IN')}</span>
-                </button>
-              ))}
-            </div>
-            {asked !== null ? (
-              <div role="status" style={{ display: 'grid', gap: space.sm, padding: 12, borderRadius: 12, background: color.surfaceSunken }}>
-                <p style={{ ...quiet, color: color.ink }}>
-                  {t('Buying credits here is not ready yet. Write to MettleUp in Help and feedback and say you want {n} credits. MettleUp adds them to your gym.', { n: asked })}
-                </p>
-                <Button
-                  variant="ghost"
-                  onClick={() => {
-                    onClose();
-                    navigate('/feedback');
-                  }}
-                >
-                  {t('Open {page}', { page: t('Help and feedback') })}
-                </Button>
-              </div>
-            ) : null}
-          </section>
-        ) : null}
+        {/* Review (13 Nov): buying in the panel is not built, so no pack prices it cannot sell. HQ adds credits by hand. */}
+        <section aria-label={t('Get more credits')} style={{ display: 'grid', gap: space.sm }}>
+          <h3 style={headStyle}>{t('Get more credits')}</h3>
+          <p style={{ ...quiet, color: color.ink }}>{t('Write to MettleUp in Help and feedback and say how many credits you want. MettleUp adds them to your gym.')}</p>
+          <Button
+            variant="ghost"
+            onClick={() => {
+              onClose();
+              navigate('/feedback');
+            }}
+          >
+            {t('Ask MettleUp for credits')}
+          </Button>
+        </section>
 
         {wallet.recent.length > 0 ? (
           <section aria-label={t('Recently used')} style={{ display: 'grid' }}>
             <h3 style={headStyle}>{t('Recently used')}</h3>
             {wallet.recent.slice(0, 8).map((r, i) => (
               <div key={`${r.at}-${i}`} style={{ display: 'flex', justifyContent: 'space-between', gap: 12, padding: '10px 0', borderTop: i === 0 ? 'none' : `1px solid ${color.border}` }}>
-                <span style={{ fontFamily: font.body, fontSize: 14, color: color.ink, minWidth: 0, overflowWrap: 'anywhere' }}>{walletRowWords(r)}</span>
+                <span style={{ fontFamily: font.body, fontSize: 14, color: color.ink, minWidth: 0, overflowWrap: 'anywhere' }}>{r.reason === 'spend' && r.task_id && jobs.has(r.task_id) ? say(jobs.get(r.task_id)!) : walletRowWords(r)}</span>
                 <b style={{ fontFamily: font.body, fontSize: 14, color: r.delta > 0 ? color.goodText : color.ink, fontVariantNumeric: 'tabular-nums', flexShrink: 0 }}>
                   {r.delta > 0 ? `+${r.delta}` : `−${Math.abs(r.delta)}`}
                 </b>

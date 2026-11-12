@@ -407,7 +407,7 @@ export const TOOLS = Object.freeze([
     name: 'cannot_do',
     kind: 'talk',
     strict: false,
-    description: 'Only when no tool and no page fits (for example "call this member"). Say so in one short line.',
+    description: 'Only when no tool and no page fits (for example "call this member"). Say so in one short line. Do not send the owner to a page or a member\'s page: the card only offers Help and feedback.',
     input_schema: obj({ reason: str('One short line.') }),
   },
 ]);

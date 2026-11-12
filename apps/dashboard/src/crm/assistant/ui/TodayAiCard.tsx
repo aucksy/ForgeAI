@@ -78,7 +78,7 @@ export function TodayAiCard() {
             <div key={s.id} style={{ display: 'flex', alignItems: 'center', gap: space.md, paddingTop: space.sm, borderTop: `1px solid ${color.border}` }}>
               <p style={{ ...body, flex: 1, minWidth: 0, fontWeight: 600 }}>{say(s.words)}</p>
               <Button variant="ghost" needsInternet onClick={() => open(s.request)}>
-                {t('Make it')}
+                {say(s.action)}
               </Button>
             </div>
           ))}

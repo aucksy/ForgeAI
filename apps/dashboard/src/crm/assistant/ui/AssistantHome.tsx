@@ -14,6 +14,7 @@ import type { MemberView } from '../../types';
 import { aiTasks, type AiTaskRow, type AiWallet } from '../api';
 import { EXAMPLE_GROUPS, EXAMPLES } from '../catalogue';
 import { clearTurns } from '../conversation';
+import { jobLine } from '../jobs';
 import { todaySuggestions } from '../suggestions';
 import { isVoiceSupported } from '../voice';
 import { AssistantLine, CardView, RequestBubble, type CardControls } from './Cards';
@@ -187,7 +188,7 @@ export function AssistantHome({ assistKey, wallet, panel = false }: { assistKey:
               <div key={s.id} style={{ display: 'flex', alignItems: 'center', gap: space.md, padding: '12px 14px', borderRadius: 14, background: color.surface, border: `1px solid ${color.border}` }}>
                 <p style={{ ...body, flex: 1, minWidth: 0, fontWeight: 600 }}>{say(s.words)}</p>
                 <Button variant="ghost" needsInternet disabled={asking} onClick={() => send(s.request)}>
-                  {t('Make it')}
+                  {say(s.action)}
                 </Button>
               </div>
             ))}
@@ -274,7 +275,7 @@ export function AssistantHome({ assistKey, wallet, panel = false }: { assistKey:
         onChange={(e) => setText(e.target.value)}
         onKeyDown={onKey}
         aria-label={t('Ask or give a task')}
-        placeholder={panel ? t('Type or speak, in Hindi or English') : t('Ask or give a task')}
+        placeholder={t('Ask or give a task, in Hindi or English')}
         style={{
           flex: 1,
           minWidth: 0,
@@ -333,7 +334,7 @@ export function AssistantHome({ assistKey, wallet, panel = false }: { assistKey:
         </div>
       ) : null}
 
-      {credits ? <CreditsSheet wallet={wallet} plansOn={WORKOUT_PLANS_ON} onClose={() => setCredits(false)} /> : null}
+      {credits ? <CreditsSheet wallet={wallet} plansOn={WORKOUT_PLANS_ON} assistKey={assistKey} onClose={() => setCredits(false)} /> : null}
       {voice ? (
         <VoiceSheet
           assistKey={assistKey}
@@ -408,7 +409,9 @@ function roundButton(primary: boolean, off = false): CSSProperties {
   };
 }
 
-/** Past tasks from the server (owner_ai_tasks), newest first. A tap puts the request back in the box. */
+const jobOf = (r: AiTaskRow) => jobLine(r.actions);
+
+/** Past tasks from the server (owner_ai_tasks), newest first, each with what it did. A tap puts the request back in the box. */
 function History({ assistKey, onAgain }: { assistKey: string; onAgain: (text: string) => void }) {
   const [rows, setRows] = useState<AiTaskRow[] | null | 'loading'>('loading');
   useEffect(() => {
@@ -434,6 +437,7 @@ function History({ assistKey, onAgain }: { assistKey: string; onAgain: (text: st
           >
             <span style={{ fontFamily: font.body, fontSize: 15, fontWeight: 600, color: color.ink, overflowWrap: 'anywhere' }}>{r.request || t('A task')}</span>
             <span style={{ fontFamily: font.body, fontSize: 13, color: color.inkMuted }}>
+              {jobOf(r) ? `${say(jobOf(r)!)} · ` : ''}
               {historyWhen(r.at)} · {t(STATUS_WORDS[r.status])}
               {r.status === 'done' && r.credits > 0 ? ` · ${r.credits === 1 ? t('1 credit') : t('{n} credits', { n: r.credits })}` : ''}
             </span>

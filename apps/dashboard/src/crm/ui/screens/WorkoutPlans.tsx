@@ -305,6 +305,7 @@ export function WorkoutPlanSheet({
   saveLabel,
   saveInstead,
   onChange,
+  forMember,
 }: {
   initial: WorkoutPlanDraft;
   onClose: () => void;
@@ -314,6 +315,8 @@ export function WorkoutPlanSheet({
   saveLabel?: string;
   saveInstead?: (clean: WorkoutPlanDraft) => Promise<string | null>;
   onChange?: (draft: WorkoutPlanDraft) => void;
+  /** The one member it is for (the AI plan writer): the words name them while the plan goes only to them. */
+  forMember?: { id: string; name: string };
 }) {
   const { saveWorkoutPlan } = useCrm();
   const { session } = useAuth();
@@ -323,6 +326,8 @@ export function WorkoutPlanSheet({
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const isNew = !initial.id;
+  const only =
+    forMember && draft.assign.planIds.length === 0 && draft.assign.memberIds.length === 1 && draft.assign.memberIds[0] === forMember.id ? forMember.name : null;
   const onChangeRef = useRef(onChange);
   onChangeRef.current = onChange;
   useEffect(() => {
@@ -389,7 +394,7 @@ export function WorkoutPlanSheet({
     >
       {error && <ErrorBanner>{error}</ErrorBanner>}
       {intro}
-      <p style={{ margin: 0, fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>{membersSeeIt(online)}</p>
+      <p style={{ margin: 0, fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>{only && online ? `${only} sees it in the MettleUp app after one check-in at the gym.` : membersSeeIt(online)}</p>
       <TextField
         label="Plan name"
         value={draft.name}
@@ -401,7 +406,7 @@ export function WorkoutPlanSheet({
         autoFocus={isNew && !saveInstead}
       />
       <TextField
-        label="Note for members (optional)"
+        label={only ? `Note for ${only} (optional)` : 'Note for members (optional)'}
         value={draft.note ?? ''}
         onChange={(v) => setDraft((d) => ({ ...d, note: v }))}
         placeholder="Warm up for 10 minutes first. Drink water."
@@ -429,7 +434,7 @@ export function WorkoutPlanSheet({
         label="Days of the plan"
         value={String(dayIndex)}
         onChange={(v) => setDay(Number(v))}
-        options={draft.routines.map((r, i) => ({ value: String(i), label: r.name.trim() || `Day ${i + 1}`, count: r.exercises.length }))}
+        options={draft.routines.map((r, i) => ({ value: String(i), label: `${r.name.trim() || `Day ${i + 1}`} · ${r.exercises.length === 1 ? '1 exercise' : `${r.exercises.length} exercises`}` }))}
       />
       {draft.routines.length >= WP_MAX_ROUTINES && <Hint>A plan can have at most {WP_MAX_ROUTINES} days.</Hint>}
 

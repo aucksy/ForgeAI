@@ -213,7 +213,7 @@ export function withDraft(card: Extract<CardModel, { kind: 'draft' }>, draft: Dr
 /** A card's main button: what it does, and its price (R-471: each card shows its own price). */
 export interface ConfirmWords {
   action: Line;
-  /** Null: no price on it ("Get credits to send"). */
+  /** Null: no price on it ("Ask MettleUp for credits": buying in the panel is not built). */
   credits: number | null;
   /** Not enough credits: the button opens the packs instead. */
   needCredits: boolean;
@@ -221,7 +221,7 @@ export interface ConfirmWords {
 
 /** The words on a card's main button. `appCount`: members a message reaches in the app (null = not known). PURE. */
 export function confirmWords(draft: Draft, appCount: number | null, balance: number | null): ConfirmWords {
-  if (balance !== null && balance < draft.credits) return { action: line('Get credits to send'), credits: null, needCredits: true };
+  if (balance !== null && balance < draft.credits) return { action: line('Ask MettleUp for credits'), credits: null, needCredits: true };
   const action =
     draft.tool === 'draft_message'
       ? appCount === null

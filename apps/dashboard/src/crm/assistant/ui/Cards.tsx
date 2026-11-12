@@ -3,7 +3,7 @@
  * send, a Change to save, a question back (AskBack), and "I can't do that" (Cannot, with the page to open).
  *
  * Every message or change card is ONE task with its OWN button and price (R-471). The price is on the button
- * before the tap. With too few credits the draft still shows and the button says "Get credits to send" and opens
+ * before the tap. With too few credits the draft still shows and the button says "Ask MettleUp for credits" and opens
  * the packs. Nothing is sent or saved until the owner taps that card's own button.
  *
  * The workout plan writer (R-471): goal, level and days a week from what the AI heard, and "Write the plan" (free).
@@ -92,7 +92,6 @@ export function CardView({ turnId, card, data, ctl }: { turnId: string; card: Ca
             ) : null}
             {card.path ? (
               <>
-                <p style={quiet}>{t('Where: {path}', { path: card.path })}</p>
                 <Button variant="ghost" onClick={() => ctl.go(card.path!)}>
                   {t('Open {page}', { page: t(card.name) })}
                 </Button>
@@ -107,7 +106,6 @@ export function CardView({ turnId, card, data, ctl }: { turnId: string; card: Ca
         <CardFrame label={t('Something the assistant cannot do')}>
           <div style={{ padding: space.lg, display: 'grid', gap: space.md }}>
             <p style={body}>{card.reason || t('The assistant cannot do this.')}</p>
-            <p style={quiet}>{t('Where: {path}', { path: '/feedback' })}</p>
             <Button variant="ghost" onClick={() => ctl.go('/feedback')}>
               {t('Open {page}', { page: t('Help and feedback') })}
             </Button>
@@ -121,7 +119,6 @@ export function CardView({ turnId, card, data, ctl }: { turnId: string; card: Ca
           <CardHead title={t('Diet plans')} />
           <div style={{ padding: space.lg, display: 'grid', gap: space.md }}>
             <p style={body}>{t('The AI Assistant cannot write diet plans yet. Make one in Diet plans: start from a ready plan and change it for the member.')}</p>
-            <p style={quiet}>{t('Where: {path}', { path: '/diet' })}</p>
             <Button variant="ghost" onClick={() => ctl.go('/diet')}>
               {t('Open {page}', { page: t('Diet plans') })}
             </Button>
@@ -133,7 +130,6 @@ export function CardView({ turnId, card, data, ctl }: { turnId: string; card: Ca
         <CardFrame label={t('A how-to question')}>
           <div style={{ padding: space.lg, display: 'grid', gap: space.md }}>
             <p style={body}>{t('This is a how-to question. Help and feedback answers it, step by step.')}</p>
-            <p style={quiet}>{t('Where: {path}', { path: '/feedback' })}</p>
             <Button variant="ghost" onClick={() => ctl.go('/feedback')}>
               {t('Open {page}', { page: t('Help and feedback') })}
             </Button>
@@ -148,9 +144,9 @@ export function CardView({ turnId, card, data, ctl }: { turnId: string; card: Ca
 /** The plan's price (03-design §3, the catalogue's price for a plan), shown on the card and on Save. */
 const PLAN_CREDITS = 3;
 
-/** The words on the builder's Save: the price, or "Get credits to save" when there are too few. PURE. */
+/** The words on the builder's Save: the price, or "Ask MettleUp for credits" when there are too few. PURE. */
 export function planSaveWords(balance: number | null, credits: number = PLAN_CREDITS): { label: Line; needCredits: boolean } {
-  if (balance !== null && balance < credits) return { label: { text: 'Get credits to save' }, needCredits: true };
+  if (balance !== null && balance < credits) return { label: { text: 'Ask MettleUp for credits' }, needCredits: true };
   return { label: { text: 'Save plan · {credits} credits', vars: { credits } }, needCredits: false };
 }
 
@@ -257,6 +253,7 @@ function PlanWriterView({ turnId, card, data, ctl }: { turnId: string; card: Wor
             </p>
           }
           saveLabel={say(save.label)}
+          forMember={member ? { id: member.id, name: member.fullName } : undefined}
           onClose={() => set({ editing: false })}
           onChange={(plan) => updateCard(turnId, card.id, (c) => (c.kind === 'plan_writer' && c.what === 'workout' && c.status !== 'done' ? { ...c, plan } : c))}
           saveInstead={async (plan) => {

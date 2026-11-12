@@ -13,6 +13,7 @@ import { GROUP_WORDS, STATUS_WORDS, WORKOUT_PLANS_ON, historyWhen } from '../../
 import { KIND_WORDS, pageName } from '../../../src/crm/assistant/ui/Cards';
 import { monthEndWords, monthlyWords, walletRowWords } from '../../../src/crm/assistant/ui/CreditsSheet';
 import { GOAL_WORDS, LEVEL_WORDS } from '../../../src/crm/assistant/planWriter';
+import { jobLine } from '../../../src/crm/assistant/jobs';
 import { hasDevanagari } from '../../../src/crm/assistant/ui/useConversation';
 import { clockWords } from '../../../src/crm/assistant/ui/VoiceSheet';
 import { HINGLISH } from '../../../src/crm/lang/hinglish';
@@ -47,7 +48,6 @@ describe('the assistant speaks Hinglish too', () => {
       ...Object.values(STATUS_WORDS),
       ...Object.values(GOAL_WORDS),
       ...Object.values(LEVEL_WORDS),
-      'Get credits to save',
       'Save plan · {credits} credits',
       'Send the message',
       'Schedule the message',
@@ -55,7 +55,7 @@ describe('the assistant speaks Hinglish too', () => {
       'Schedule for 1 member',
       'Send to {n} members',
       'Schedule for {n} members',
-      'Get credits to send',
+      'Ask MettleUp for credits',
     ];
     expect(dynamic.filter((k) => !(k in HINGLISH))).toEqual([]);
   });
@@ -101,8 +101,8 @@ describe('the button on a card', () => {
     expect(confirmWords(expense, null, 20).action).toEqual({ text: 'Save expense' });
   });
 
-  it('at 0 credits it says "Get credits to send" and no price', () => {
-    expect(confirmWords(msg, 3, 0)).toEqual({ action: { text: 'Get credits to send' }, credits: null, needCredits: true });
+  it('at 0 credits it says "Ask MettleUp for credits" and no price (buying in the panel is not built)', () => {
+    expect(confirmWords(msg, 3, 0)).toEqual({ action: { text: 'Ask MettleUp for credits' }, credits: null, needCredits: true });
     // Balance not known yet: the price shows, the server decides.
     expect(confirmWords(msg, 3, null).needCredits).toBe(false);
   });
@@ -144,6 +144,21 @@ describe('small helpers on the screens', () => {
     expect(historyWhen(Date.parse('2026-11-12T18:29:00Z'))).toBe('12 Nov, 11:59 pm');
     expect(historyWhen(Date.parse('2026-11-12T06:30:00Z'))).toBe('12 Nov, 12:00 pm');
     expect(historyWhen(0)).toBe('');
+  });
+
+  it('History and the credits list say what each task did (one request can make two tasks)', () => {
+    expect(jobLine([{ tool: 'draft_message', input: { title_en: 'Gym closed tomorrow', title_hi: '' } }])).toEqual({ text: 'Message: {title}', vars: { title: 'Gym closed tomorrow' } });
+    expect(jobLine([{ tool: 'add_expense', input: { amount: 3200 } }])).toEqual({ text: 'Expense {amount}', vars: { amount: '₹3,200' } });
+    expect(jobLine([{ tool: 'draft_workout_plan', input: {} }])).toEqual({ text: 'Workout plan' });
+    expect(jobLine([{ tool: 'add_expense', input: { amount: 0 } }])).toEqual({ text: 'Save an expense' });
+    expect(jobLine([])).toBeNull();
+    expect(jobLine(null)).toBeNull();
+  });
+
+  it('the cards show no code-looking paths, and no idea button is a bare "Make it"', () => {
+    const cards = noComments(readFileSync(join(ASSISTANT, 'ui', 'Cards.tsx'), 'utf8'));
+    expect(cards).not.toMatch(/Where: \{path\}/);
+    for (const f of files(join(ASSISTANT, 'ui'))) expect(noComments(readFileSync(f, 'utf8')), f).not.toMatch(/t\('Make it'\)/);
   });
 
   it('a request typed in Hindi letters is answered in Hindi', () => {

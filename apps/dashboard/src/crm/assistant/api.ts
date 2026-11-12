@@ -241,6 +241,8 @@ export interface AiTaskRow {
   spoken: boolean;
   status: 'drafted' | 'done' | 'cancelled' | 'failed';
   credits: number;
+  /** The task's saved actions (what it did; jobs.ts turns them into words). */
+  actions: unknown[];
 }
 
 /** The owner's past tasks (owner_ai_tasks), newest first. Null on failure. */
@@ -254,7 +256,7 @@ export async function aiTasks(key: string, limit = 30, rpc: typeof call = call):
       if (!id) return [];
       const st = String(r.status ?? '');
       const status: AiTaskRow['status'] = st === 'done' || st === 'cancelled' || st === 'failed' ? st : 'drafted';
-      return [{ id, at: typeof r.at === 'number' ? r.at : Date.parse(String(r.at ?? '')) || 0, request: String(r.request ?? ''), spoken: r.spoken === true, status, credits: Number(r.credits) || 0 }];
+      return [{ id, at: typeof r.at === 'number' ? r.at : Date.parse(String(r.at ?? '')) || 0, request: String(r.request ?? ''), spoken: r.spoken === true, status, credits: Number(r.credits) || 0, actions: Array.isArray(r.actions) ? r.actions : [] }];
     });
   } catch (e) {
     console.warn('[assistant] history could not load', e);

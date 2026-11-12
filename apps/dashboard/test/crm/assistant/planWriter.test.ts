@@ -153,9 +153,9 @@ describe('the written plan', () => {
     expect(writtenPlan(tooMany, null)).toBeNull();
   });
 
-  it('the Save button carries the price, or "Get credits to save"', () => {
+  it('the Save button carries the price, or "Ask MettleUp for credits"', () => {
     expect(planSaveWords(20)).toEqual({ label: { text: 'Save plan · {credits} credits', vars: { credits: 3 } }, needCredits: false });
-    expect(planSaveWords(2)).toEqual({ label: { text: 'Get credits to save' }, needCredits: true });
+    expect(planSaveWords(2)).toEqual({ label: { text: 'Ask MettleUp for credits' }, needCredits: true });
     expect(planSaveWords(null).needCredits).toBe(false);
   });
 });
