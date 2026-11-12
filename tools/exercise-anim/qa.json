@@ -110,9 +110,9 @@
   "knee_plank": {
     "rendered": "2026-11-11",
     "run": "43082982264",
-    "qa": "pass",
+    "qa": "fail",
     "tries": 2,
-    "note": "passed on the retry; forearm 1 cm into the floor"
+    "reason": "12 Nov review: no muscle shows red at all (the abs are a sliver hidden under the body from this camera); every other picture lights the worked muscle. Needs a camera from the front-side, low, so the abs show."
   },
   "neutral_grip_dumbbell_press": {
     "rendered": "2026-11-11",

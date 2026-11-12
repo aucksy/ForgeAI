@@ -54,11 +54,6 @@ export const OWN_PICTURES: Readonly<Record<string, ExercisePictures>> = {
     thumb: require('../../../assets/exercise-pictures-own/incline_neutral_grip_dumbbell_press__thumb.webp'),
     end: require('../../../assets/exercise-pictures-own/incline_neutral_grip_dumbbell_press__end.webp'),
   },
-  knee_plank: {
-    start: require('../../../assets/exercise-pictures-own/knee_plank__start.webp'),
-    thumb: require('../../../assets/exercise-pictures-own/knee_plank__thumb.webp'),
-    end: null,
-  },
   reverse_hyperextension: {
     start: require('../../../assets/exercise-pictures-own/reverse_hyperextension__start.webp'),
     thumb: require('../../../assets/exercise-pictures-own/reverse_hyperextension__thumb.webp'),

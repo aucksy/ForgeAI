@@ -60,10 +60,17 @@ https://claude.ai/artifact/1ZwD5CZb1LPZCK58DQ6huw)
 - neutral_grip_dumbbell_press: lying on a FLAT bench the head hangs off the pad and the back arches. Fit the body with
   probe_bench.py (RECIPES.md "Getting a body onto equipment") before the next try. tate_press and
   single_arm_lying_dumbbell_extension passed with rot -90 + spine -1, so copy their root and bones.
+- knee_plank (taken out of the app 12 Nov): no muscle shows red; the abs sit under the body from this camera. Same fix
+  as the other floor holds: camera from the front-side, low, so the abs show. Then the usual three-way review.
 - plank_shoulder_tap, rkc_plank: 5 cm into the floor. 12 Nov finding: it is the TOES, not the hands (feet fixed at ankle
   height 0.165 with the foot tipped 70 deg). Put the body back and set the ankle to 0.218.
 
 ## Run log (newest first)
+
+### 12 Nov 2026 (second review by another helper)
+- A separate fresh-eyes review of the first 25 found knee_plank shows no red muscle at all (confirmed by eye on the
+  app file). Taken out of the app: 24 exercises in the app now. Everything else in the app matched what this review
+  passed or had already been re-rendered with fixes.
 
 ### 12 Nov 2026 (daily job, first run after the look was approved; render run 43161740739)
 - WIRED INTO THE APP: our pictures now show on the exercise page (ownPictures.ts fallback, test, UAT part upic).
