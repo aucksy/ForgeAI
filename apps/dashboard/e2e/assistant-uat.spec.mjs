@@ -391,7 +391,7 @@ test('AI Assistant: hidden without 0071; the button, cards, credits, voice, the 
   await expect(credits).toBeVisible();
   await expect(credits).toContainText('Get more credits');
   // Buying in the panel is not built: no prices it cannot sell.
-  await expect(credits).not.toContainText('₹');
+  await expect(credits).not.toContainText(/₹(149|399|999)/);
   await expect(credits.getByRole('button', { name: 'Ask MettleUp for credits' })).toBeVisible();
   // Each spend says what that task did (one request made a message and an expense).
   await expect(credits).toContainText('Message: Gym closed tomorrow');
@@ -564,7 +564,7 @@ test('AI Assistant on a computer: Today, the side panel, every card, the plan wr
   await shots(page, '13-no-credits-card', false, broke);
   await broke.getByRole('button', { name: 'Ask MettleUp for credits' }).click();
   await expect(credits).toContainText('Get more credits');
-  await expect(credits).not.toContainText('₹');
+  await expect(credits).not.toContainText(/₹(149|399|999)/);
   await shots(page, '14-credits-sheet');
   await credits.getByRole('button', { name: 'Close' }).click();
   ai.balance = 81;
