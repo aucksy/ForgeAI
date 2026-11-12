@@ -85,7 +85,7 @@ features:
     name: The watch app (Wear OS today) [3]
     android: done
     ios: todo
-    reason: React Native cannot run on Apple Watch; a SwiftUI watch app through @bacons/apple-targets, speaking the same protocol.
+    reason: React Native cannot run on Apple Watch; a SwiftUI watch app through @bacons/apple-targets, speaking the same protocol. It must match the Wear OS logging screens, including R-455 (12 Nov 2026) - the Digital Crown changes the reps with nothing tapped (the weight on a weight-only set), each number has a thin outline, the crown's arc shows dim at rest, the first wake turn changes nothing, and the one-time tip "Tap a number, then turn the dial" replaces Previous on an exercise's first set until used 3 times (or shown on 10 exercises).
     blocking: false
     covers:
       paths: [android/wear]

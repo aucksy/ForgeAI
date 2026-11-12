@@ -140,6 +140,58 @@ object LogMath {
     Adjust.NONE -> ""
   }
 
+  /*
+   * R-455 (owner, 12 Nov 2026: "it's not that clearly apparent ... that someone can actually tap the numbers and
+   * change it using the dial ... keep it minimalistic"). The dial now works at once (a turn with nothing tapped
+   * changes the reps, [crownPick]), the pills carry a thin outline and the dial's arc shows dim at rest
+   * (LogScreens), and a one-time tip replaces "Previous" on the first set of each exercise ([showsTip]).
+   */
+
+  /** R-455: the tip goes for good once the member has changed a number (a tap on a pill or the dial) this often. */
+  const val TIP_USES = 3
+
+  /**
+   * R-455: ... or once it has shown on this many exercises: a member who never uses the dial gets "Previous"
+   * back on the first set instead of the tip forever.
+   */
+  const val TIP_EXERCISES = 10
+
+  /**
+   * R-455: a dial turn this soon after the screen woke only wakes it. The dial changes the reps with nothing
+   * tapped now, so the turn that brightens a dim screen must not also change a number.
+   */
+  const val WAKE_TURN_MS = 700L
+
+  /** R-455: is the one-time tip still on ([uses] number changes made, [shown] exercises it showed on)? PURE. */
+  fun tipOn(uses: Int, shown: Int): Boolean = uses < TIP_USES && shown < TIP_EXERCISES
+
+  private val FIRST_SET = Regex("^(Set|Warm-up) +1 +of +[0-9]+")
+
+  /** R-455: "Set 1 of 4" or "Warm-up 1 of 2": the first set the watch shows for an exercise. PURE. */
+  fun firstSet(label: String): Boolean = FIRST_SET.containsMatchIn(label.trim())
+
+  /**
+   * R-455: the tip ("Tap a number, then turn the dial") in place of "Previous ..." on the Next set screen: tip
+   * still [on], the first set of the exercise, a number to change, nothing being changed now (then the dial's own
+   * "Turn the dial · ..." shows), never on the dim screen (nothing can be tapped there). PURE.
+   */
+  fun showsTip(on: Boolean, setLabel: String, e: SetEntry, adjust: Adjust, ambient: Boolean): Boolean =
+    on && !ambient && adjust == Adjust.NONE && (e.wOn || e.rOn) && firstSet(setLabel)
+
+  /** R-455: what a dial turn with nothing tapped changes: the reps (the number that changes most), else the weight. */
+  fun crownPick(e: SetEntry): Adjust = when {
+    e.rOn -> Adjust.REPS
+    e.wOn -> Adjust.WEIGHT
+    else -> Adjust.NONE
+  }
+
+  /** R-455: did this step start changing a number (a pill tapped, or the first dial turn)? Counts toward [TIP_USES]. PURE. */
+  fun isUse(before: LogUi, after: LogUi): Boolean =
+    after.adjust != Adjust.NONE && (after.adjust != before.adjust || after.rowKey != before.rowKey)
+
+  /** R-455: a dial turn [now] within [WAKE_TURN_MS] of the screen waking at [wokeAt] (0 = never) only wakes it. PURE. */
+  fun wakeTurn(wokeAt: Long, now: Long): Boolean = wokeAt > 0L && now - wokeAt in 0L until WAKE_TURN_MS
+
   /** The weight and reps shown now: the member's changes for this row, else what the phone sent. */
   fun weight(ui: LogUi, e: SetEntry, rowKey: String): Double? = if (ui.edited && ui.rowKey == rowKey) ui.weight else e.w
 
@@ -222,14 +274,26 @@ object LogFlow {
     return base.copy(adjust = if (base.adjust == what) Adjust.NONE else what, adjustAt = now)
   }
 
-  /** The member's copy of the row's numbers (taken from the phone's on the first change). */
+  /**
+   * The member's copy of the row's numbers (taken from the phone's on the first change). R-455: a new row starts
+   * with nothing selected (a pill left selected on the row before no longer carries over, so a tap selects).
+   */
   private fun own(ui: LogUi, e: SetEntry, rowKey: String): LogUi =
-    if (ui.edited && ui.rowKey == rowKey) ui else ui.copy(rowKey = rowKey, weight = e.w, reps = e.r, edited = true)
+    if (ui.edited && ui.rowKey == rowKey) ui else ui.copy(rowKey = rowKey, weight = e.w, reps = e.r, edited = true, adjust = Adjust.NONE)
 
-  /** [steps] crown steps on the number being changed; nothing when none is selected. */
+  /**
+   * [steps] crown steps on the number being changed. R-455: with nothing selected the turn selects the reps (the
+   * weight for a weight-only set; [LogMath.crownPick]) and changes it, so the dial works without a tap first.
+   * A timed or distance set (no number on the watch) stays as it is.
+   */
   fun crown(ui: LogUi, e: SetEntry, rowKey: String, steps: Int, now: Long): LogUi {
-    if (steps == 0 || ui.adjust == Adjust.NONE) return ui
+    if (steps == 0) return ui
     var u = own(ui, e, rowKey)
+    if (u.adjust == Adjust.NONE) {
+      val pick = LogMath.crownPick(e)
+      if (pick == Adjust.NONE) return ui
+      u = u.copy(adjust = pick)
+    }
     val dir = if (steps > 0) 1 else -1
     repeat(abs(steps)) {
       u = when (u.adjust) {

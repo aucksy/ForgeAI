@@ -45,6 +45,10 @@ abstract class WatchLogRenderBase(private val size: String) {
     val clear: Boolean = false,
     /** R-368: tagged lines that must show whole (no "…"): a long name shrinks instead of being cut. */
     val whole: List<String> = emptyList(),
+    /** R-455: the one-time "Tap a number, then turn the dial" tip is still on. */
+    val tip: Boolean = false,
+    /** R-455: tagged lines that must NOT be drawn (the tip replaces Previous; the tip is gone after set 1). */
+    val absent: List<String> = emptyList(),
   )
 
   private fun both(name: String, s: Shot) {
@@ -65,12 +69,17 @@ abstract class WatchLogRenderBase(private val size: String) {
           ambient = ambient,
           now = now,
           log = s.ui,
+          dialTip = s.tip,
         )
       }
     }
     checkRoundCapture(file, size, s.ring, s.edgeRing)
     if (s.clear && !ambient) checkClearAboveButton(file)
-    for (tag in s.whole) assertTrue("${file.name}: \"$tag\" was cut off with …", TextFit.cut[tag] == false)
+    // R-455: the dim screen never shows the tip (nothing can be tapped there): Previous stays, the tip is absent.
+    val whole = if (ambient) s.whole - "dialTip" else s.whole
+    val absent = if (ambient) s.absent - "previous" + (if (s.tip) listOf("dialTip") else emptyList()) else s.absent
+    for (tag in whole) assertTrue("${file.name}: \"$tag\" was cut off with …", TextFit.cut[tag] == false)
+    for (tag in absent) assertTrue("${file.name}: \"$tag\" is drawn but must not be", TextFit.cut[tag] == null)
   }
 
   /**
@@ -187,6 +196,28 @@ abstract class WatchLogRenderBase(private val size: String) {
   @Test fun largestTextLongName() = both("L20-largest-text-long-name", Shot(nextSet("Single-Arm Dumbbell Bulgarian Split Squat (Rear Foot Elevated)"), fontScale = 1.3f, clear = true, whole = listOf("exercise")))
 
   @Test fun longNameRest() = both("L21-long-name-rest", Shot(resting("Single-Arm Dumbbell Bulgarian Split Squat (Rear Foot Elevated)"), ring = true))
+
+  // R-455 (owner, 12 Nov 2026: make it clear the numbers can be changed with the dial): the one-time tip in place
+  // of Previous on an exercise's first set, at the normal and the largest text, and with the longest name.
+  // Every Next set capture above also shows the pills' thin outline and the dim dial arc at the right edge.
+  private val firstSet = NextSet("Set 1 of 4", "20 kg × 15", "20 kg × 16")
+
+  @Test fun dialTip() = both("L23-dial-tip", Shot(nextSet(n = firstSet), tip = true, clear = true, whole = listOf("exercise", "dialTip"), absent = listOf("previous")))
+
+  @Test fun largestTextDialTip() = both(
+    "L24-largest-text-dial-tip",
+    Shot(nextSet("Single-Arm Dumbbell Row", n = firstSet), fontScale = 1.3f, tip = true, clear = true, whole = listOf("exercise", "dialTip")),
+  )
+
+  @Test fun largestTextLongNameDialTip() = both(
+    "L25-largest-text-long-name-dial-tip",
+    Shot(nextSet("Single-Arm Dumbbell Bulgarian Split Squat (Rear Foot Elevated)", n = firstSet), fontScale = 1.3f, tip = true, clear = true, whole = listOf("exercise", "dialTip")),
+  )
+
+  // The tip waits while a number is being changed (the dial's own line shows), and is gone after set 1.
+  @Test fun dialTipGivesWayToTheDial() = both("L26-dial-tip-reps-selected", Shot(nextSet(n = firstSet), editing.copy(reps = 16, adjust = Adjust.REPS), tip = true, absent = listOf("dialTip")))
+
+  @Test fun dialTipNotOnSetTwo() = both("L27-dial-tip-set-2", Shot(nextSet(), tip = true, clear = true, absent = listOf("dialTip")))
 
   @Test fun longNameExerciseDone() = both(
     "L22-long-name-exercise-done",

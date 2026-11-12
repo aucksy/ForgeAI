@@ -104,9 +104,95 @@ class WatchLogTest {
     assertEquals(20.0, LogMath.weight(ui, e, "set-3")!!, 1e-9)
   }
 
-  @Test fun crownDoesNothingWithNothingSelected() {
+  // R-455 (owner, 12 Nov 2026): the dial works at once. Was: a turn with nothing selected did nothing.
+  @Test fun crownWithNothingSelectedChangesTheReps() {
     val ui = LogFlow.crown(LogUi(), e, "set-2", 3, 0L)
-    assertEquals(LogUi(), ui)
+    assertEquals(Adjust.REPS, ui.adjust)
+    assertEquals(18, ui.reps)
+    assertEquals(20.0, ui.weight!!, 1e-9)
+    assertEquals(18, LogMath.repsNow(ui, e, "set-2"))
+    // Turning back down goes the other way, one rep a step, never below 1.
+    assertEquals(16, LogFlow.crown(ui, e, "set-2", -2, 10L).reps)
+    assertEquals(1, LogFlow.crown(LogUi(), e.copy(r = 2), "set-2", -5, 0L).reps)
+  }
+
+  @Test fun crownWithNothingSelectedOnAWeightOnlySetChangesTheWeight() {
+    val ui = LogFlow.crown(LogUi(), e.copy(rOn = false, r = null), "set-2", 1, 0L)
+    assertEquals(Adjust.WEIGHT, ui.adjust)
+    assertEquals(22.5, ui.weight!!, 1e-9)
+  }
+
+  @Test fun crownDoesNothingOnATimedSet() {
+    val timed = e.copy(wOn = false, rOn = false, w = null, r = null)
+    assertEquals(LogUi(), LogFlow.crown(LogUi(), timed, "set-2", 3, 0L))
+    assertEquals(Adjust.NONE, LogMath.crownPick(timed))
+  }
+
+  @Test fun crownKeepsATappedWeightSelected() {
+    var ui = LogFlow.tapWeight(LogUi(), e, "set-2", 0L)
+    ui = LogFlow.crown(ui, e, "set-2", -2, 10L)
+    assertEquals(Adjust.WEIGHT, ui.adjust)
+    assertEquals(15.0, ui.weight!!, 1e-9)
+    assertEquals(15, ui.reps)
+  }
+
+  @Test fun aNewRowStartsWithNothingSelected() {
+    // The pill left selected on the row before must not carry over (a tap would have unselected it).
+    val old = LogFlow.tapReps(LogUi(), e, "set-2", 0L)
+    val next = LogFlow.tapReps(old, e, "set-3", 10L)
+    assertEquals(Adjust.REPS, next.adjust)
+    assertEquals("set-3", next.rowKey)
+  }
+
+  @Test fun crownIdlesAfterThreeSecondsLikeATap() {
+    val ui = LogFlow.crown(LogUi(), e, "set-2", 1, 1_000L)
+    assertEquals(Adjust.REPS, LogFlow.idle(ui, 3_999L).adjust)
+    assertEquals(Adjust.NONE, LogFlow.idle(ui, 4_000L).adjust)
+  }
+
+  @Test fun aUseIsATapOrTheFirstTurnNotEachStep() {
+    val tapped = LogFlow.tapWeight(LogUi(), e, "set-2", 0L)
+    assertTrue(LogMath.isUse(LogUi(), tapped))
+    // More turns on the same number: not a new use.
+    assertFalse(LogMath.isUse(tapped, LogFlow.crown(tapped, e, "set-2", 1, 10L)))
+    // A second tap that ends the change: not a use.
+    assertFalse(LogMath.isUse(tapped, LogFlow.tapWeight(tapped, e, "set-2", 20L)))
+    // Moving to the other number: a use.
+    assertTrue(LogMath.isUse(tapped, LogFlow.tapReps(tapped, e, "set-2", 30L)))
+    // The dial with nothing selected: a use.
+    assertTrue(LogMath.isUse(LogUi(), LogFlow.crown(LogUi(), e, "set-2", 1, 0L)))
+  }
+
+  @Test fun theTipRetiresAfterThreeUsesOrTenExercises() {
+    assertTrue(LogMath.tipOn(0, 0))
+    assertTrue(LogMath.tipOn(2, 9))
+    assertFalse(LogMath.tipOn(3, 0))
+    assertFalse(LogMath.tipOn(0, 10))
+  }
+
+  @Test fun theTipShowsOnlyOnTheFirstSetWithANumberAndNothingSelected() {
+    assertTrue(LogMath.firstSet("Set 1 of 4"))
+    assertTrue(LogMath.firstSet("Warm-up 1 of 2"))
+    assertFalse(LogMath.firstSet("Set 2 of 4"))
+    assertFalse(LogMath.firstSet("Set 10 of 12"))
+    assertFalse(LogMath.firstSet("Set 11 of 12"))
+    assertFalse(LogMath.firstSet(""))
+    assertTrue(LogMath.showsTip(true, "Set 1 of 4", e, Adjust.NONE, false))
+    assertFalse(LogMath.showsTip(false, "Set 1 of 4", e, Adjust.NONE, false))
+    assertFalse(LogMath.showsTip(true, "Set 2 of 4", e, Adjust.NONE, false))
+    // While a number is being changed the dial's own line shows instead.
+    assertFalse(LogMath.showsTip(true, "Set 1 of 4", e, Adjust.REPS, false))
+    // Never on the dim screen, never on a timed set (nothing to change).
+    assertFalse(LogMath.showsTip(true, "Set 1 of 4", e, Adjust.NONE, true))
+    assertFalse(LogMath.showsTip(true, "Set 1 of 4", e.copy(wOn = false, rOn = false), Adjust.NONE, false))
+  }
+
+  @Test fun theTurnThatWakesTheScreenChangesNothing() {
+    assertFalse(LogMath.wakeTurn(0L, 5_000L))
+    assertTrue(LogMath.wakeTurn(5_000L, 5_000L))
+    assertTrue(LogMath.wakeTurn(5_000L, 5_699L))
+    assertFalse(LogMath.wakeTurn(5_000L, 5_700L))
+    assertFalse(LogMath.wakeTurn(5_000L, 4_000L))
   }
 
   @Test fun threeSecondsIdleEndsTheCrown() {
@@ -195,7 +281,7 @@ class WatchLogTest {
     assertEquals("1 set done", LogMath.setsDone(1))
     val words = listOf(
       WatchCopy.NOT_SAVED, WatchCopy.TICK_IT_ON_YOUR_PHONE, WatchCopy.HOW_HARD, WatchCopy.EFFORT_SCALE,
-      WatchCopy.TURN_THE_CROWN, WatchCopy.NEXT_EXERCISE, WatchCopy.SAVED, WatchCopy.SKIP,
+      WatchCopy.TURN_THE_CROWN, WatchCopy.NEXT_EXERCISE, WatchCopy.SAVED, WatchCopy.SKIP, WatchCopy.DIAL_TIP,
       LogMath.crownHint(Adjust.WEIGHT, e), LogMath.crownHint(Adjust.REPS, e),
     )
     for (w in words) {

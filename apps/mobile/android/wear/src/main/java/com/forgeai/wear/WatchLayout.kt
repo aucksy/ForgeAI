@@ -225,6 +225,9 @@ object WatchCopy {
   const val HOW_HARD = "How hard was it?"
   const val EFFORT_SCALE = "6 easy · 10 max"
   const val TURN_THE_CROWN = "Turn the dial"
+
+  /** R-455: the one-time tip on the first set of an exercise, in place of "Previous ..." ([LogMath.showsTip]). */
+  const val DIAL_TIP = "Tap a number, then turn the dial"
   const val NEXT_EXERCISE = "Next exercise"
   const val NEXT = "Next"
   const val WARM_UP_CHIP = "W"

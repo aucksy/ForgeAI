@@ -77,6 +77,17 @@ class MainActivity : ComponentActivity() {
   private var logUi by mutableStateOf(LogUi())
 
   /**
+   * R-455: the one-time tip "Tap a number, then turn the dial": how often the member started changing a number
+   * (a pill tapped or the dial turned, [LogMath.isUse]) and on how many exercises the tip showed; kept in prefs.
+   */
+  private var dialUses by mutableIntStateOf(0)
+  private var tipShown by mutableIntStateOf(0)
+  private var tipTitle = ""
+
+  /** R-455: when the screen last woke from dim (uptime ms; 0 = not yet): the waking dial turn changes nothing. */
+  private var wokeAt = 0L
+
+  /**
    * R-442: the app keeps the screen on and dims it itself ([SelfDim]: workout open, Always-on display off,
    * Battery Saver off, MettleUp in front).
    */
@@ -117,6 +128,7 @@ class MainActivity : ComponentActivity() {
 
       override fun onExitAmbient() {
         ambient = false
+        wokeAt = SystemClock.uptimeMillis()
         AmbientDiag.note(this@MainActivity, "ambient-exit")
       }
     },
@@ -153,6 +165,8 @@ class MainActivity : ComponentActivity() {
     // R-353: a rebuild (below, onResume) keeps the set being logged.
     keptLogUi?.let { logUi = it }
     keptLogUi = null
+    dialUses = prefs().getInt(KEY_DIAL_USES, 0)
+    tipShown = prefs().getInt(KEY_TIP_SHOWN, 0)
     AmbientDiag.note(this, "create", if (savedInstanceState != null) "restored" else "")
     // Watch update ready (10 Nov 2026): the phone reads this app's version from the Data Layer.
     WatchVersion.publish(this, "start")
@@ -331,6 +345,16 @@ class MainActivity : ComponentActivity() {
         delay(LogMath.SAVED_MS + 50L)
         now = System.currentTimeMillis()
       }
+      // R-455: the tip counts each exercise whose first set it showed on (after [LogMath.TIP_EXERCISES], "Previous" stays).
+      val tipOn = LogMath.tipOn(dialUses, tipShown)
+      val firstOfExercise = logging && snap.entry != null && LogMath.firstSet(snap.next.set)
+      LaunchedEffect(tipOn, firstOfExercise, snap.title) {
+        if (tipOn && firstOfExercise && snap.title.isNotBlank() && snap.title != tipTitle) {
+          tipTitle = snap.title
+          tipShown += 1
+          prefs().edit().putInt(KEY_TIP_SHOWN, tipShown).apply()
+        }
+      }
       WatchScreen(
         snap,
         bpm,
@@ -351,15 +375,21 @@ class MainActivity : ComponentActivity() {
         onGetPhoneApp = ::openPlayStoreOnPhone,
         log = ui,
         actions = logActions,
+        dialTip = tipOn,
       )
     }
   }
 
   /** Watch logging: what each tap and crown turn on the logging screens does. */
   private val logActions = LogActions(
-    onTapWeight = { onEntry { e, key -> logUi = LogFlow.tapWeight(logUi, e, key, System.currentTimeMillis()) } },
-    onTapReps = { onEntry { e, key -> logUi = LogFlow.tapReps(logUi, e, key, System.currentTimeMillis()) } },
-    onCrown = { steps -> onEntry { e, key -> logUi = LogFlow.crown(logUi, e, key, steps, System.currentTimeMillis()) } },
+    onTapWeight = { onEntry { e, key -> setLog(LogFlow.tapWeight(logUi, e, key, System.currentTimeMillis())) } },
+    onTapReps = { onEntry { e, key -> setLog(LogFlow.tapReps(logUi, e, key, System.currentTimeMillis())) } },
+    onCrown = { steps ->
+      // R-455: the turn that woke the dim screen only wakes it (the dial now changes the reps with nothing tapped).
+      if (!LogMath.wakeTurn(wokeAt, SystemClock.uptimeMillis())) {
+        onEntry { e, key -> setLog(LogFlow.crown(logUi, e, key, steps, System.currentTimeMillis())) }
+      }
+    },
     onDone = ::doneTapped,
     onRpe = { v -> if (logUi.phase == LogPhase.EFFORT) sendSet(v) },
     onSkipEffort = { if (logUi.phase == LogPhase.EFFORT) sendSet(null) },
@@ -378,6 +408,15 @@ class MainActivity : ComponentActivity() {
     onOk = { logUi = LogFlow.dismiss(logUi, System.currentTimeMillis()) },
     onGo = { logUi = LogFlow.go(logUi) },
   )
+
+  /** R-455: the new log state; a pill tapped or the dial's first turn counts toward retiring the tip. */
+  private fun setLog(after: LogUi) {
+    if (dialUses < LogMath.TIP_USES && LogMath.isUse(logUi, after)) {
+      dialUses += 1
+      prefs().edit().putInt(KEY_DIAL_USES, dialUses).apply()
+    }
+    logUi = after
+  }
 
   private fun onEntry(block: (SetEntry, String) -> Unit) {
     val snap = WatchState.snapshot
@@ -612,6 +651,7 @@ class MainActivity : ComponentActivity() {
     input(why)
     if (!selfDim) return
     selfDim = false
+    wokeAt = SystemClock.uptimeMillis()
     setBrightness(WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE)
     AmbientDiag.note(this, "self-dim-exit", why)
   }
@@ -943,6 +983,10 @@ class MainActivity : ComponentActivity() {
     private const val KEY_ASKED_HR = "askedHr"
     private const val KEY_ASKED_NOTIF = "askedNotif"
     private const val KEY_ASKED_EXACT = "askedExact"
+
+    /** R-455: the dial tip's counters ([LogMath.tipOn]). */
+    private const val KEY_DIAL_USES = "dialUses"
+    private const val KEY_TIP_SHOWN = "dialTipShown"
     private const val PHONE_CHECK_MS = 15_000L
     private const val PHONE_RECHECK_MS = 3_000L
 

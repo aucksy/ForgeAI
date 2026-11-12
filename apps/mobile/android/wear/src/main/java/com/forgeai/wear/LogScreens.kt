@@ -106,6 +106,12 @@ private const val HEART_FILL = "M12 21s-8-5.2-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0
 private val WarmFill = Color(0xFF2A1A12)
 private val PillFill = Color(0xFF161616)
 
+/** R-455: the unselected pill's thin outline (low contrast on [PillFill], so the screen stays calm). */
+private val PillLine = Color(0xFF4A4A4A)
+
+/** R-455: the dial's arc at rest: this share of the accent (full while a number is being changed). */
+private const val CROWN_ARC_REST = 0.4f
+
 /** The logging screens: one of [LogScreen] for this moment. */
 @Composable
 internal fun LogScreens(
@@ -119,10 +125,11 @@ internal fun LogScreens(
   ui: LogUi,
   actions: LogActions,
   status: String?,
+  dialTip: Boolean = false,
 ) {
   Box(Modifier.fillMaxSize()) {
     when (screen) {
-      LogScreen.NEXT_SET -> NextSetScreen(snap, card, heart, ambient, px, now, ui, actions)
+      LogScreen.NEXT_SET -> NextSetScreen(snap, card, heart, ambient, px, now, ui, actions, dialTip)
       LogScreen.EFFORT -> EffortScreen(snap, card, heart, ambient, px, now, ui, actions)
       LogScreen.REST -> snap.rest?.let { RestScreen(it, card, heart, ambient, px, now, ui, actions, status) }
       LogScreen.REST_OVER -> RestOverScreen(snap, card, ambient, px, now, status)
@@ -317,6 +324,7 @@ private fun NextSetScreen(
   now: Long,
   ui: LogUi,
   actions: LogActions,
+  dialTip: Boolean,
 ) {
   val ink = logInk(ambient)
   val e = snap.entry ?: return
@@ -384,7 +392,16 @@ private fun NextSetScreen(
         }
         if (card.setLabel.isNotEmpty()) Line(card.setLabel, px, small, FontWeight.SemiBold, ink.grey, lineHeight = if (tight) 1.1f else 1.25f, tabular = true, tag = "setLabel")
       }
-      val sub = if (adjust != Adjust.NONE) LogMath.crownHint(adjust, e) else card.previous.orEmpty()
+      // R-455: the one-time tip takes Previous's line on the first set of an exercise (until used 3 times).
+      val tipHere = LogMath.showsTip(dialTip, card.setLabel, e, adjust, ambient)
+      if (tipHere) {
+        Line(WatchCopy.DIAL_TIP, px, small, FontWeight.SemiBold, ink.ink, lineHeight = if (tight) 1.1f else 1.25f, maxWidth = 360f, tag = "dialTip", minSize = 14f)
+      }
+      val sub = when {
+        adjust != Adjust.NONE -> LogMath.crownHint(adjust, e)
+        tipHere -> ""
+        else -> card.previous.orEmpty()
+      }
       if (sub.isNotEmpty()) {
         Line(sub, px, small, if (adjust != Adjust.NONE) FontWeight.Bold else FontWeight.Medium, if (adjust != Adjust.NONE) ink.acc else ink.grey, lineHeight = if (tight) 1.1f else 1.25f, tabular = true, maxWidth = 360f, tag = "previous")
       }
@@ -414,12 +431,16 @@ private fun NextSetScreen(
     Spacer(Modifier.height(px.dp(10f)))
     RoundButton(px, ambient, LogMath.canLog(snap.row, e, w, r) && !sending, arrow = false, tag = "done", top = null, onClick = actions.onDone)
     }
-    if (adjust != Adjust.NONE) {
-      // The crown's arc at the right edge (design: 6 px, 68 to 112 degrees from 12 o'clock).
-      Canvas(Modifier.fillMaxSize().testTag("crownArc")) {
+    // The crown's arc at the right edge (design: 6 px, 68 to 112 degrees from 12 o'clock), next to the dial.
+    // R-455: shown at rest too, dim ([CROWN_ARC_REST] of the accent), so the dial reads as live; full accent while
+    // a number is being changed. The dim screen draws it only while changing (no extra ink at rest, as before).
+    val hasNumber = e.wOn || e.rOn
+    if (adjust != Adjust.NONE || (hasNumber && !ambient)) {
+      val arc = if (adjust != Adjust.NONE) ink.acc else ink.acc.copy(alpha = CROWN_ARC_REST)
+      Canvas(Modifier.fillMaxSize().testTag(if (adjust != Adjust.NONE) "crownArc" else "crownArcRest")) {
         val (tl, box) = circleBox(219f)
         val sw = (if (ambient) 2f else 6f) * size.minDimension / RingMath.DESIGN_PX
-        drawArc(ink.acc, 68f - 90f, 44f, false, topLeft = tl, size = box, style = Stroke(width = sw, cap = StrokeCap.Round))
+        drawArc(arc, 68f - 90f, 44f, false, topLeft = tl, size = box, style = Stroke(width = sw, cap = StrokeCap.Round))
       }
     }
   }
@@ -442,7 +463,13 @@ private fun NumberPill(px: Px, value: String, unit: String, selected: Boolean, o
     selected -> WarmFill
     else -> PillFill
   }
-  val line = if (selected) ink.acc else Color.Transparent
+  // R-455: a thin low-contrast outline at rest so each number reads as a button; the selected one keeps its 3 px
+  // accent ring. The dim screen keeps no outline (nothing can be tapped there).
+  val line = when {
+    selected -> ink.acc
+    ambient -> Color.Transparent
+    else -> PillLine
+  }
   val numInk = if (other) ink.grey else ink.ink
   val unitInk = if (selected) ink.ink else ink.grey
   val size = if (value.length > 4) 54f else 64f
@@ -451,7 +478,7 @@ private fun NumberPill(px: Px, value: String, unit: String, selected: Boolean, o
       .height(px.dp(86f))
       .clip(shape)
       .background(bg)
-      .border(px.dp(3f), line, shape)
+      .border(px.dp(if (selected) 3f else 1.5f), line, shape)
       .then(if (ambient) Modifier else Modifier.clickable(onClick = onTap))
       .padding(horizontal = px.dp(14f))
       .testTag(tag),

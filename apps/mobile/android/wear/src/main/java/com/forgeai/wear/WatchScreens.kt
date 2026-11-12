@@ -190,6 +190,8 @@ internal fun WatchScreen(
   onGetPhoneApp: () -> Unit = {},
   log: LogUi = LogUi(),
   actions: LogActions = LogActions(),
+  /** R-455: the one-time "Tap a number, then turn the dial" tip is still on ([LogMath.tipOn]). */
+  dialTip: Boolean = false,
 ) {
   val px = rememberPx()
   val pal = remember(ambient, snap.accent) { paletteFor(ambient, snap.accent) }
@@ -217,7 +219,7 @@ internal fun WatchScreen(
     // UAT 1 Nov 2026: the phone named no set ("All sets done", no exercise yet, an older phone app).
     val status = WatchCopy.status(snap)
     if (logScreen != null && logScreen != LogScreen.BETWEEN) {
-      LogScreens(logScreen, snap, card, heart, ambient, px, now, log, actions, status)
+      LogScreens(logScreen, snap, card, heart, ambient, px, now, log, actions, status, dialTip)
       return@Box
     }
     when (kind) {

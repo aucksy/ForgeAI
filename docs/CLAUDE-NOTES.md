@@ -23,6 +23,14 @@ Found: the weight and reps pills look like labels (no outline until selected); a
 
 Plan (my pick, told him): (1) a crown turn with nothing selected picks reps and changes it; (2) thin low-contrast outline on each pill + the crown arc always shown, dim at rest; (3) one-time tip "Tap a number, then turn the dial" in place of Previous on the first set of each exercise until used 3 times. Wear OS only; Apple Watch gets a PARITY line. A helper starts at 2:19 pm; pictures go to him before any release.
 
+**R-455 BUILT (12 Nov 2026, Wear OS only; not released).** Web check first: Google's Wear OS guidance says rotary input should drive every key interaction on a screen and an app may use it as a dial; watch gym apps that use the crown (Working Sets, Steady) let it change the number straight away. So the approved plan stands, plus two small guards. What changed on the watch's Next set screen:
+- The dial works at once: a turn with nothing tapped selects the reps (the weight on a weight-only set) and changes it, with the reps pill lit, the arc and "Turn the dial · 1 rep steps", as after a tap. Tapping a pill works as before. One tick per value (R-360) unchanged. A timed set ignores the dial.
+- Each pill has a thin grey outline (1.5 px, #4A4A4A) so it reads as a button; the selected one keeps its 3 px accent ring. The dial's arc at the right edge now shows at rest at 40 % of the accent, full while changing. Dim (always-on) screen: no outline, no resting arc (as before).
+- One-time tip "Tap a number, then turn the dial" in place of "Previous ..." on the first set of each exercise (Set 1 or Warm-up 1), until the member has started a change 3 times (a pill tap or a first dial turn; watch prefs "dialUses"). My addition: it also retires after it has shown on 10 exercises ("dialTipShown"), so a member who never uses the dial gets Previous back. Never on the dim screen.
+- Guard (my addition): the dial turn that wakes the dimmed screen changes nothing for 0.7 s (the dial now edits with nothing tapped, so the waking turn must not change the reps).
+- Fix found on the way: a pill left selected on the row before no longer carries into the next set (a tap there selects instead of unselecting).
+Code: WatchLog.kt (LogMath.crownPick / showsTip / tipOn / isUse / wakeTurn, LogFlow.crown), LogScreens.kt, WatchScreens.kt, WatchLayout.kt (WatchCopy.DIAL_TIP), MainActivity.kt. Apple Watch: no app; docs/ios/PARITY.yaml watch-app line names R-455.
+
 ## R-454. Rep goals never ask for fewer reps than last time at the same weight — 12 Nov 2026
 
 He said (12 Nov 2026), on his Incline Dumbbell Press (last time 40 kg x 13 @9, 12 @9.5, 10 @9.5, 8 @9.5, range top 12; the app aimed 40 x 12, 12, 11, 9, "Next set: 40 kg x 12 · Done: 0 of today's 1,760 kg"): "Never suggesting less than before." And later the same day: "ensure that we still have the logic of real-time changing the suggestions based on what you have done in a given set".
