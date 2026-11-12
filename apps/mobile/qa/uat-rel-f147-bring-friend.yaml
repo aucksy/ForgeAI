@@ -23,7 +23,10 @@ appId: com.mettleup.app
     file: sub-see.yaml
     env:
       FIND: '^Bring a friend$'
-- assertVisible: '^Send a friend a link to your gym\. They leave their number, and the gym calls them\.$'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Send a friend a link to your gym\. They leave their number, and the gym calls them\.$'
 - takeScreenshot: rel-f147-1-friend-card
 # ---------------------------------------------------------------- without 0056: the QA stand-in, said on screen
 - runFlow:

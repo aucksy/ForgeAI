@@ -67,7 +67,9 @@ GATED = ("assertVisible", "extendedWaitUntil")
 SCROLLS = re.compile(r"\b(ScrollView|FlatList|SectionList|FlashList|KeyboardAwareScrollView)\b")
 # Files whose words are everywhere and say nothing about one page.
 SKIP_DIRS = ("components/ui/", "theme/", "db/", "engine/")
-DEPTH = 2
+# Imports followed from a page: 3 reaches a card's own words file (Gym tab -> ShopScreen -> StaffDoorCard ->
+# staffDoor.ts). At 2 the lint never saw the staff-door privacy line, and u458 failed on it (run 43220408476).
+DEPTH = 3
 
 # ------------------------------------------------------------------ the app side: pages and their words
 

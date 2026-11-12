@@ -14,7 +14,10 @@ appId: com.mettleup.app
     file: sub-find.yaml
     env:
       FIND: "Do you run a gym on MettleUp\\?"
-- assertVisible: "Owners and front-desk staff can sign in here\\..*"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Owners and front-desk staff can sign in here\..*'
 - takeScreenshot: rel-r458-1-card
 - tapOn: "Sign in as gym staff"
 - extendedWaitUntil:
@@ -45,8 +48,17 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "This mobile number and PIN do not match\\. .*"
     timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'This mobile number and PIN do not match\. .*'
 - assertNotVisible: "Gym code ${CODE}"
-- assertVisible: "Your PIN is only checked\\. It is never saved on this phone\\."
+# The privacy line sits under "Not now": below the screen on a phone once the error shows (run 43220408476).
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Your PIN is only checked[.] It is never saved on this phone[.]'
 - takeScreenshot: rel-r458-2-wrong
 # ---------------------------------------------------------------- happy path: the owner's own code
 - runFlow:
