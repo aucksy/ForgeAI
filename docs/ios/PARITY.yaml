@@ -146,7 +146,7 @@ features:
     name: Plain start-up screen inside a branded gym [1a]
     android: done
     ios: n-a
-    reason: The iPhone launch screen is fixed at build time; callers already treat a missing answer as unsupported.
+    reason: The iPhone launch screen is fixed at build time, so it is plain for everyone (background colour only, no logo, light and dark; app.json gives iOS no splash image). The first logo a member sees is the app's own opening (the gym's inside a branded gym). Callers already treat a missing splashPlain answer as unsupported.
     blocking: false
     covers:
       functions: [forge-phone.splashPlain]

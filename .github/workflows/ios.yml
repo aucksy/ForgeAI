@@ -104,12 +104,69 @@ jobs:
           xcrun simctl status_bar "$UDID" override --time "9:41" --batteryState charged --batteryLevel 100 || true
           echo "UDID=$UDID" >> "$GITHUB_ENV"
 
+      # 12 Nov 2026: the iPhone launch screen (fixed at build time) must be plain, only the background
+      # colour (#F6F4F0 light, #1B1F26 dark), so a branded gym's logo is the first logo a member sees.
+      # The first simctl picture used to be at 8 s, after the launch screen had gone. Now a burst of
+      # pictures starts with `simctl launch`; the earliest one that is neither black nor the home screen
+      # becomes launch-<look>.png (every frame of the burst is kept in shots/launch-burst/).
+      - name: Picture tool (Pillow)
+        run: python3 -m pip install --quiet --break-system-packages pillow || python3 -m pip install --quiet pillow
+
       - name: Install, open and photograph (simctl)
         run: |
           xcrun simctl install "$UDID" "$APP"
           ( xcrun simctl spawn "$UDID" log stream --level debug --style compact \
               --predicate 'process == "MettleUp" OR subsystem == "com.facebook.react.log"' > "$OUT/simulator.log" 2>&1 & echo $! > "$RUNNER_TEMP/log.pid" )
-          xcrun simctl launch "$UDID" com.mettleup.app
+          mkdir -p "$OUT/shots/launch-burst"
+          cat > "$RUNNER_TEMP/pick_launch.py" <<'PY'
+          import sys, glob, os, shutil
+          from PIL import Image
+          look, burst, out = sys.argv[1], sys.argv[2], sys.argv[3]
+          frames = sorted(glob.glob(os.path.join(burst, f"{look}-*.png")))
+          chosen = None
+          for f in frames:
+              im = Image.open(f).convert("RGB")
+              small = im.resize((im.width // 6, im.height // 6))
+              px = list(small.getdata())
+              top, n = max(((c, k) for c, k in __import__("collections").Counter(px).items()), key=lambda t: t[1])
+              share = n / len(px)
+              black = sum(top) < 30
+              # The middle of the screen (no status bar): anything far from the main colour is a logo or text.
+              w, h = small.size
+              mid = small.crop((0, h // 6, w, h * 5 // 6))
+              off = sum(1 for c in mid.getdata() if max(abs(a - b) for a, b in zip(c, top)) > 24) / (mid.width * mid.height)
+              print(f"{os.path.basename(f)}: main colour #{top[0]:02X}{top[1]:02X}{top[2]:02X} on {share:.0%}, "
+                    f"other pixels in the middle {off:.2%}{' (black)' if black else ''}")
+              if chosen is None and not black and share >= 0.6:
+                  chosen = (f, top, off)
+          if chosen is None:
+              print(f"::error::no {look} launch picture: every burst frame was black or the home screen")
+              sys.exit(0)
+          f, top, off = chosen
+          shutil.copy(f, out)
+          print(f"launch-{look}.png = {os.path.basename(f)}: #{top[0]:02X}{top[1]:02X}{top[2]:02X}, other pixels in the middle {off:.2%}")
+          PY
+          # One launch: start it, then photograph as fast as simctl allows for about 3 s.
+          burst() {
+            local look=$1 t0 i=0
+            t0=$(python3 -c 'import time; print(time.time())')
+            xcrun simctl launch "$UDID" com.mettleup.app &
+            while [ $i -lt 10 ]; do
+              ms=$(python3 -c "import time; print(int((time.time() - $t0) * 1000))")
+              xcrun simctl io "$UDID" screenshot "$OUT/shots/launch-burst/$look-$(printf %02d $i)-${ms}ms.png" >/dev/null 2>&1 || true
+              i=$((i + 1))
+            done
+            wait
+            python3 "$RUNNER_TEMP/pick_launch.py" "$look" "$OUT/shots/launch-burst" "$OUT/shots/launch-$look.png"
+          }
+          # Light first: a launch, then back to the home screen and the dark look for the rest of the job.
+          xcrun simctl ui "$UDID" appearance light || true
+          burst light
+          sleep 5
+          xcrun simctl terminate "$UDID" com.mettleup.app || true
+          xcrun simctl ui "$UDID" appearance dark || true
+          sleep 2
+          burst dark
           last=0
           for t in 8 20 40; do
             sleep $(( t - last )); last=$t
@@ -166,3 +223,15 @@ jobs:
           path: ${{ env.OUT }}
           retention-days: 7
           if-no-files-found: warn
+
+      # ios-first-screens.yaml takes a picture only when its screen's own words are showing, so a
+      # wrong screen is never saved under a right name; a missing picture is reported here instead.
+      - name: Every picture is there
+        if: always()
+        run: |
+          missing=0
+          for p in launch-light launch-dark ios-01-first-screen ios-02-welcome ios-03-workout-tab ios-04-progress-tab \
+                   ios-05-gym-tab ios-06-profile-tab ios-07-settings ios-08-settings-not-on-iphone; do
+            if [ -f "$OUT/shots/$p.png" ]; then echo "ok      $p"; else echo "::error::missing picture $p"; missing=1; fi
+          done
+          exit $missing
