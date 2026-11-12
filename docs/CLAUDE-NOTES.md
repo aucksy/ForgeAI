@@ -24,6 +24,14 @@ and he says "payments live". The free month starts on the first day the switch i
 Erase all data keeps the free month's start (no endless free months). The watch lock is phone-side: old watch
 apps show "Your watch needs MettleUp Plus" without a watch update. QA builds turn it on with mettleup://qa-plan.
 **UAT:** part u461 (qa/uat-rel-r461-plus.yaml). **Play products he must make:** see the final report.
+**Parts (b) (c) (d), what I built:** (b) Gym tab card "Find my gym with my number" -> /find-gym: the WhatsApp check
+(panel 'member' purpose, NOT deployed yet: until then the screen says "not open yet" and points to the gym code), then
+0068's member_find_gyms; found -> "You are a member of <gym>" + "Join <gym>"; the same proof links the member after
+the join (memory only, 15 min), so every paid feature opens at once. (c) not found -> "Tell my gym" (the member's own
+share sheet; we never send anything) with an optional gym name + city sent as a lead (leads.js source 'member-app',
+never the number) + "Skip". (d) 0070_member_plus_lock.sql (NOT APPLIED) + the admin app card "Free MettleUp Plus for
+your members" in Settings -> Member app (owner edits, desk reads, hidden until 0070); the app reads the switch only
+while the plan switch is on. Words: member-words, Gemini pass (2 lines changed). UAT: part u461 extended.
 
 ## R-461. His vision: a found gym membership unlocks every paid feature (phone-number search + F56) — 12 Nov 2026
 He said (12 Nov, after reading the R-458 plan): solo users of the member app will have paid features locked (F56). When

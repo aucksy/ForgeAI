@@ -30,6 +30,7 @@ import { hasFeature, isBranded } from '@forgeai/theme';
 import { SegmentedTabs } from '@/tracker/components/SegmentedTabs';
 
 import { SHOP_CATEGORIES } from './catalog';
+import { FIND_GYM } from './findGym';
 import { listAgeText } from './gym';
 import { refreshGymNow, refreshOrders, refreshProducts } from './gymActions';
 import { useGymShop } from './gymStore';
@@ -89,6 +90,8 @@ function JoinGymDoor() {
       <View style={{ gap: space.lg, paddingBottom: space.xl }}>
         {notice ? <DemoNote text={notice} /> : null}
         <JoinGymCard scan />
+        {/* R-458 + F56 (R-461): the member proves their number with WhatsApp and the app finds their gym. */}
+        <FindGymCard />
         <View style={{ gap: space.md }}>
           <Text accessibilityRole="header" style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink }}>
             With your gym in the app
@@ -110,6 +113,20 @@ function JoinGymDoor() {
         </Text>
       </View>
     </Screen>
+  );
+}
+
+/** R-458 + F56 (R-461): "Find my gym with my number" (app/find-gym.tsx). */
+function FindGymCard() {
+  const router = useRouter();
+  return (
+    <Card style={{ gap: space.sm }}>
+      <Text accessibilityRole="header" style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink }}>
+        {FIND_GYM.cardTitle}
+      </Text>
+      <Text style={{ fontFamily: type.body, fontSize: type.size.sub, lineHeight: 20, color: color.inkSecondary }}>{FIND_GYM.cardBody}</Text>
+      <GhostButton label={FIND_GYM.cardButton} icon="search" onPress={() => router.push('/find-gym')} />
+    </Card>
   );
 }
 

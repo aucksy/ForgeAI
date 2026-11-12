@@ -201,3 +201,115 @@ appId: com.mettleup.app
     env:
       FIND: "^Every feature is free\\.$"
 - takeScreenshot: rel-r461-15-reset
+# ---------------------------------------------------------------- Find my gym (made-up answers: no WhatsApp here)
+# The QA build answers "Check with WhatsApp" at once with find=none / find=found (said on screen). The real
+# check needs WhatsApp on a real phone: that is the owner's short check after release.
+- openLink: "mettleup://qa-plan?find=none"
+- runFlow: sub-gym-none.yaml
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Find my gym with my number$"
+- takeScreenshot: rel-r461-16-gym-tab-card
+- tapOn: "^Find my gym$"
+# in-view: the number box is the first thing on the page as it opens
+- extendedWaitUntil:
+    visible:
+      id: "find-gym-phone"
+    timeout: 20000
+# Negative: no first name -> it says so, and nothing is checked.
+- tapOn:
+    id: "find-gym-name"
+- eraseText: 40
+- tapOn:
+    id: "find-gym-phone"
+- eraseText: 20
+- inputText: "9876500461"
+- hideKeyboard
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Check with WhatsApp$"
+- tapOn: "^Check with WhatsApp$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "^Type your first name, as your gym has it\\.$"
+- takeScreenshot: rel-r461-17-no-name
+- tapOn:
+    id: "find-gym-name"
+- inputText: "Asha"
+- hideKeyboard
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Check with WhatsApp$"
+- tapOn: "^Check with WhatsApp$"
+# Not found: unlock every feature free if your gym uses MettleUp; Tell my gym or Skip.
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "^We did not find your gym$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "^You can unlock every feature free if your gym uses MettleUp\\..*"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "^Test build: no WhatsApp message\\. This answer is made up\\.$"
+- takeScreenshot: rel-r461-18-not-found
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Tell my gym$"
+- tapOn: "^Tell my gym$"
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: rel-r461-19-share-menu
+- back
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Skip$"
+- tapOn: "^Skip$"
+# Found: "You are a member of QA UAT Gym ... gives you every MettleUp feature free" and "Join QA UAT Gym".
+- openLink: "mettleup://qa-plan?find=found&findGym=QA%20UAT%20Gym&findCode=QAGYM1&findEnds=2026-12-31"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Find my gym$"
+- tapOn: "^Find my gym$"
+# in-view: the number box is the first thing on the page as it opens
+- extendedWaitUntil:
+    visible:
+      id: "find-gym-phone"
+    timeout: 20000
+- tapOn:
+    id: "find-gym-phone"
+- eraseText: 20
+- inputText: "9876500461"
+- tapOn:
+    id: "find-gym-name"
+- eraseText: 40
+- inputText: "Asha"
+- hideKeyboard
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Check with WhatsApp$"
+- tapOn: "^Check with WhatsApp$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "^You are a member of QA UAT Gym$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "^QA UAT Gym gives you every MettleUp feature free while your gym plan is active\\. Join through your gym to get them\\.$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "^Join QA UAT Gym$"
+- takeScreenshot: rel-r461-20-found
+- openLink: "mettleup://qa-plan?find=off"

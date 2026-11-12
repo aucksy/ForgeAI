@@ -12,6 +12,25 @@
   rewritten. UAT: part u461 (shard 5-uat-b).
   What's new draft: none while switched off (nothing a member can see changes).
   Admin What's new (ADMIN_NEWS) draft: none until part (d)'s switch is deployed.
+- F56 METTLEUP PLUS, PARTS (b) (c) (d) (R-461/R-462, 12 Nov 2026; SHIPS SWITCHED OFF WITH PART a). (b) "Find my gym" (Gym tab
+  card "Find my gym with my number" -> /find-gym; "Check with WhatsApp" = the panel's 'member' check, then 0068's
+  member_find_gyms): found -> "You are a member of <gym>" + "Join <gym>" (the join hands the same proof to
+  member_claim_phone, memory only, so the plan unlocks at once); owners and desk staff were already free in part (a).
+  (c) not found -> "We did not find your gym" + "Tell my gym" (the member's own share sheet, a ready message with
+  https://gyms.mettleup.fit/?from=member; optional gym name + city sent as a lead, source 'member-app', never the
+  number; deploy/panel/leads.js) + "Skip". (d) the gym owner's switch: supabase/migrations/0070_member_plus_lock.sql
+  (NOT APPLIED; test supabase/tests/0070_member_plus_lock.sql, 17 checks, + security.sql), admin app Settings -> Member
+  app card "Free MettleUp Plus for your members" (owner edits, desk reads; hidden until 0070), and the app reads it
+  only while the plan switch is on (planSync followGymLock). Shared code, Android and iPhone; no native part.
+  Tests: apps/mobile/test/shop/findGym.test.ts (12), apps/dashboard/test/crm/plusLock.test.ts (7), deploy/panel
+  leads.test.mjs (10). UAT: part u461 extended (Find my gym: not found, Tell my gym, Skip, empty name, found + Join).
+  NEEDS BEFORE IT WORKS LIVE: the panel deploy (the 'member' WhatsApp check + the 'member-app' lead source); 0070 live
+  (his yes); the real WhatsApp check can only be tried on a phone after that deploy.
+  What's new draft (only when payments go live): "No gym? MettleUp Plus adds the watch app, older charts, suggested
+  weights and the calculators. New members get a free month first." + "Train at a gym that uses MettleUp? On the Gym
+  tab, tap \"Find my gym\" to check your number and get every feature free." (member-words)
+  Admin What's new draft: ADMIN_NEWS_PENDING 'pending-plus-lock' (moves to ADMIN_NEWS only when 0070 is live, the
+  panel is deployed and the plan switch is on).
 - UK5 APP-ICON SHORTCUT OPENED THE PAGE BEFORE IT (12 Nov 2026; found by phone test part UK5 in run 43106098012 on ef48b297, an old rare timing bug, not new in 0.77.0). Rarely, long-pressing the app icon and picking a shortcut opened the page of the link used just before it: "Log body weight" showed "Start Push Day A?". Cause: a shortcut makes a new app screen, and React Native told the app the OLD screen's link when it asked too early. Fix (shared code, so Android and the future iPhone app): the app now opens the link this launch really carries (src/app/+native-intent.tsx, src/lib/launchLink.ts; logs "[link] launch link taken from this launch" when the race happens). Tests: test/lib/launchLink.test.ts (fails without the fix); UAT part uk (uat-k5 also checks no "Start ...?" question; the UK script reports when the race was caught). Pushed c3a85ede (+ 1f819d1f help-library line). Cloud: UAT part uk passed on both phones, owner 43200669578 and default 43200673529 (all 5 steps; pictures read: Body page on Body weight, form starts with the body-weight box; the race did not happen in these runs, the unit test covers it); CI 43207291877: mobile typecheck and unit tests green (the run is red only on a dashboard R-448 WhatsApp test, not this change).
   What's new draft: none ("Small fixes").
 - R-456 + R-457 IN USE: ONLY "I'M BACK" CLOSES IT; THE SIGN NAMES THE KIT (owner, 12 Nov 2026: "should only go away if someone taps on I am back"; "if there is an exercise that is bench related, then we should say bench in use"). A tap on the screen or the tick strip no longer closes In use (I'm back, Android Back and the end of the rest do); the sign reads BENCH / MACHINE / CABLE / RACK / BARBELL / DUMBBELLS / PULL-UP BAR ... over IN USE; rest bar "Tap to show Bench in use" where it fits; Settings caption. Commits e7c73a7f, a03a9f32, 968722f0. Android + iPhone. UAT part u456 UAT (12 Nov 2026): Device QA u456 first round: owner profile 43187426866 passed but its picture showed "I'm back" half under the tick strip; 360 dp / font 2.0 run 43187431184 FAILED ("I'm back" scrolled off). Fixed in 968722f0 ("I'm back" in a fixed foot). Re-run: owner 43192229084 passed, 360 dp / font 2.0 43192233294 passed; pictures rel-456-02..09 read (BENCH IN USE, middle/sign/strip taps keep it open, "I'm back" closes, tick off + Back closes, "Tap to show Bench in use", MACHINE IN USE, the 1:00 rest ends and closes it). CI 43187415118 green on a03a9f32 (mobile typecheck + tests); CI 43192227385 on 968722f0: mobile green, dashboard typecheck red from another helper's R-459 TalkKind code (not this change).

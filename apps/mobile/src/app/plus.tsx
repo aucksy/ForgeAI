@@ -17,6 +17,7 @@ import { tell } from '@/lib/tell';
 import { planTodayNow, useMemberAccess } from '@/plan/memberPlanStore';
 import { accessLine, buyLabel, PLUS_WORDS } from '@/plan/planWords';
 import { buy, playPrices, restore, storeKind } from '@/plan/playBilling';
+import { useGymShop } from '@/shop/gymStore';
 import { color, space, type } from '@/theme/tokens';
 
 function Line({ text, on }: { text: string; on: boolean }) {
@@ -35,6 +36,8 @@ export default function PlusScreen() {
   const [prices, setPrices] = useState<Partial<Record<PlusOption, string>>>({});
   const [busy, setBusy] = useState<PlusOption | 'restore' | null>(null);
   const store = storeKind();
+  // No gym yet: "Find my gym" looks the member up by number; with a gym, it opens the Gym tab.
+  const linked = useGymShop((s) => s.link != null);
 
   useEffect(() => {
     let live = true;
@@ -103,7 +106,7 @@ export default function PlusScreen() {
           <Card style={{ gap: space.sm }}>
             <Text style={{ fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}>{PLUS_WORDS.gymTitle}</Text>
             <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkSecondary, lineHeight: 20 }}>{PLUS_WORDS.gymBody}</Text>
-            <GhostButton label={PLUS_WORDS.gymButton} onPress={() => router.push('/shop')} />
+            <GhostButton label={PLUS_WORDS.gymButton} onPress={() => router.push(linked ? '/shop' : '/find-gym')} />
           </Card>
         ) : null}
 

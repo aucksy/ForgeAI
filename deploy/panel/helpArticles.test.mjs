@@ -14,8 +14,10 @@ const BANNED = ['volume', 'PR', 'session'];
 
 const words = (s) => s.trim().split(/\s+/).filter(Boolean).length;
 
-test('12 to 60 articles, each with an id, who, title and text (and optional screens)', () => {
-  assert.ok(HELP_ARTICLES.length >= 12 && HELP_ARTICLES.length <= 60, `${HELP_ARTICLES.length} articles`);
+// R-319: the library grows with the app (every new screen gets an article or a reason). The real limit is the prompt
+// size (MAX_TOTAL_CHARS below); this count is only a sanity bound. Raised 60 -> 80 for F56 (12 Nov 2026, 35,548 chars).
+test('12 to 80 articles, each with an id, who, title and text (and optional screens)', () => {
+  assert.ok(HELP_ARTICLES.length >= 12 && HELP_ARTICLES.length <= 80, `${HELP_ARTICLES.length} articles`);
   const allowed = new Set(['id', 'who', 'title', 'text', 'screens']);
   for (const a of HELP_ARTICLES) {
     for (const k of Object.keys(a)) assert.ok(allowed.has(k), `${a.id}: unknown key ${k}`);

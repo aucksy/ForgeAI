@@ -88,6 +88,8 @@ declare
     'phone_code_has_account','staff_reset_pin_with_proof',
     -- 0068: find my gym by my proven number (a one-use signed 'member' proof; the link also needs the member key).
     'member_find_gyms','member_claim_phone',
+    -- 0070: MettleUp Plus, the gym owner's switch (owner or desk key to read, the OWNER to change; members read their own gym's only).
+    'owner_plus_lock','owner_save_plus_lock','member_plus_lock',
     -- 0032: the free plan's switch (answers one config row, nothing else).
     'app_limits',
     'owner_add_person','owner_add_stock','owner_app_members','owner_delete_product','owner_go_online',

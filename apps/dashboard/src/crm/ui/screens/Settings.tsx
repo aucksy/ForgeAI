@@ -59,6 +59,7 @@ import { cleanUpiId, gymDetailsForm, gymFormKey, upiIdError } from '../../logic/
 import { ClearDeviceCard } from '../offline';
 import { BusyMachinesCard } from './BusyMachines';
 import { BringAFriendCard } from './BringAFriend';
+import { PlusLockCard } from './PlusLock';
 import { EntryMachinesCard } from './EntryMachines';
 import { PayMettleUpCard } from './PayMettleUp';
 import { useNewFeatures } from '../NewDots';
@@ -339,6 +340,9 @@ export function SettingsScreen({ section }: { section?: string }) {
 
       {/* F147: bring a friend (shown only once the gym's server has 0056). */}
       <BringAFriendCard />
+
+      {/* F56: free MettleUp Plus for members, and the lock when a plan ends (shown only once the server has 0070). */}
+      <PlusLockCard />
 
       </>
       )}

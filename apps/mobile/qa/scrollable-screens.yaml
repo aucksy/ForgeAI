@@ -55,6 +55,7 @@ screens:
   - {route: "apps/mobile/src/app/edit-profile.tsx", scrolls: true}
   - {route: "apps/mobile/src/app/exercise/[id].tsx", scrolls: true}
   - {route: "apps/mobile/src/app/exercises.tsx", scrolls: true}
+  - {route: "apps/mobile/src/app/find-gym.tsx", scrolls: true}
   - {route: "apps/mobile/src/app/history.tsx", scrolls: true}
   - {route: "apps/mobile/src/app/import/index.tsx", scrolls: true}
   - {route: "apps/mobile/src/app/import/routines.tsx", scrolls: true}

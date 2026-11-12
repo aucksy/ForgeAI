@@ -11,6 +11,7 @@
 // F184 (R-242, 31 Oct 2026): `source` says where the lead came from. The gym page opened from a
 // member's shared link (gyms.mettleup.fit/?from=member) sends 'member-referral'; anything else is
 // kept as '' (the gym found us by itself). Only known words are kept (migrations/0007_lead_source.sql).
+// F56 (R-461): 'member-app' = "Tell my gym" in the member app: a gym name (and city), no number (HQ calls the gym).
 
 export const PER_DAY = 5;
 export const ALL_PER_DAY = 300;
@@ -18,16 +19,20 @@ const SIZES = ['Under 100', '100-300', '300-600', 'Over 600'];
 // 'ggms' stays accepted for forms sent before 24 Oct 2026; the page now offers 'software' (R-118).
 const TODAY = ['register', 'excel', 'software', 'other', 'ggms'];
 /** Where a lead came from (F184). '' = not said: the gym found the page by itself. */
-export const SOURCES = ['member-referral'];
+export const SOURCES = ['member-referral', 'member-app'];
 
 /** The checked lead, a bot (drop it), or a plain reason. PURE. */
 export function checkLead(body) {
   if (!body || typeof body !== 'object') return { error: 'Send a JSON object.' };
   if (typeof body.website === 'string' && body.website.trim()) return { bot: true };
   const digits = String(body.phone ?? '').replace(/\D/g, '').replace(/^(91|0)(?=\d{10}$)/, '');
-  if (!/^[6-9]\d{9}$/.test(digits)) return { error: 'Type a 10-digit mobile number.' };
   const text = (v, n) => (typeof v === 'string' ? v.replace(/\s+/g, ' ').trim().slice(0, n) : '');
   const gym = text(body.gym, 80);
+  // F56 "Tell my gym" (R-461, 12 Nov 2026): the member app sends only the gym's name and city a member typed,
+  // never the member's own number, so a 'member-app' lead has no number and needs the gym's name instead.
+  const fromApp = body.source === 'member-app';
+  if (fromApp && !digits && !gym) return { error: "Type the gym's name." };
+  if (!(fromApp && !digits) && !/^[6-9]\d{9}$/.test(digits)) return { error: 'Type a 10-digit mobile number.' };
   // gym and city are optional: the page's top form asks only the number (see the top of this file).
   const city = text(body.city, 40);
   return {

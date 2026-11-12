@@ -196,6 +196,17 @@ export const HELP_ARTICLES = [
     screens: ['apps/dashboard/src/crm/ui/screens/BringAFriend.tsx'],
   },
   {
+    id: 'plus-lock-admin',
+    who: 'owner',
+    title: 'Free MettleUp Plus for your members, and when it ends',
+    text:
+      'Your members get every paid feature of the MettleUp app free while their plan is active: the watch app, older charts, suggested weights and the calculators. ' +
+      'To choose what happens when a plan ends: open Settings, then "Member app". Under "Free MettleUp Plus for your members", tick or untick "Lock the paid features when a member’s plan ends" and tap "Save". ' +
+      'Ticked (the start setting): members keep the features for 7 more days, then they lock until the member renews. Unticked: members keep them. ' +
+      'Members never lose their workouts or history. Only the owner can change this; the front desk sees it.',
+    screens: ['apps/dashboard/src/crm/ui/screens/PlusLock.tsx'],
+  },
+  {
     id: 'expenses-and-profit',
     who: 'owner',
     title: 'Note money going out and see profit (Expenses)',
@@ -790,16 +801,27 @@ export const HELP_ARTICLES = [
     screens: ['apps/mobile/src/app/settings/ask-ai.tsx'],
   },
   {
+    id: 'find-my-gym-by-number',
+    who: 'member',
+    title: 'Find your gym with your mobile number',
+    text:
+      'On the Gym tab, tap "Find my gym". Type your mobile number and your first name as your gym has it, then tap "Check with WhatsApp". ' +
+      'Send the WhatsApp message that opens from that number, then come back to the app. It costs nothing. ' +
+      'If a gym that uses MettleUp has you as a member, the app says "You are a member of" your gym. Tap "Join" to join it and get every feature free. ' +
+      'If no gym is found, tap "Tell my gym" to send your gym a ready message about MettleUp, or tap "Skip". ' +
+      'If the check is not open yet, type your gym’s 6-letter code on the Gym tab instead.',
+    screens: ['apps/mobile/src/app/find-gym.tsx'],
+  },
+  {
     id: 'mettleup-plus',
     who: 'member',
     title: 'MettleUp Plus: what is free and what is paid',
     text:
-      'When MettleUp Plus is switched on, Profile, then Settings, shows a "MettleUp Plus" row. Tap it to see where you stand. ' +
-      'Free for everyone, always: logging every workout, your full history, routines, the rest timer on your phone, backup and export, and charts of the last 3 months. ' +
-      'MettleUp Plus adds: MettleUp on your watch, charts older than 3 months, suggested weight and reps, the 1-rep max and plate calculators, and more than 7 exercises of your own. ' +
-      'Everyone gets every feature free for their first month. Members of a gym that uses MettleUp get every feature free, and so do gym owners and desk staff. ' +
-      'Prices: 149 rupees a month, 999 rupees a year, or 2,499 rupees once for life, paid through Google Play. Tap "I already paid" to bring back a purchase on a new phone. ' +
-      'Your workouts and history are never locked or deleted.',
+      'Free for everyone, always: logging workouts, your history, routines, the rest timer, backup and export, and charts of the last 3 months. ' +
+      'MettleUp Plus adds the watch app, older charts, suggested weight and reps, the 1-rep max and plate calculators, and more than 7 exercises of your own. ' +
+      'New members get every feature free for their first month. Members of a gym that uses MettleUp, gym owners and desk staff get every feature free. ' +
+      'Prices: 149 rupees a month, 999 rupees a year, or 2,499 rupees once, through Google Play. On a new phone, open Settings, "MettleUp Plus" and tap "I already paid". ' +
+      'Your workouts and history are never locked.',
     screens: ['apps/mobile/src/app/plus.tsx'],
   },
   // ------------------------------------------------------------------ both apps

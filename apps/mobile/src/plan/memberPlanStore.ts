@@ -122,6 +122,16 @@ export function noteGymLock(memberId: string, lockAfterEnd: boolean | null): voi
   useMemberPlan.getState().setBlob({ gym: { ...g, lockAfterEnd } });
 }
 
+/**
+ * "Find my gym with my number" found this gym's plan for the proven number and the join linked it (0068): keep
+ * the plan's end (null = a pass) for this link at once. Later "My membership" answers keep it up to date.
+ */
+export function noteFoundGym(memberId: string, gymName: string, endsOn: string | null): void {
+  const prev = blob().gym;
+  const lockAfterEnd = prev && prev.memberId === memberId ? prev.lockAfterEnd : null;
+  useMemberPlan.getState().setBlob({ gym: { memberId, gymName: gymName.trim().slice(0, 80) || 'your gym', endsOn, lockAfterEnd } });
+}
+
 /** The phone left the gym (or joined another): the gym unlocks nothing any more. */
 export function forgetGym(): void {
   if (blob().gym) useMemberPlan.getState().setBlob({ gym: null });

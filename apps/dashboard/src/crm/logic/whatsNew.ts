@@ -448,5 +448,16 @@ export const ADMIN_NEWS_PENDING: readonly AdminNewsEntry[] = [
         feature: true,
       },
     ],
+  },  {
+    // F56 R-461, 12 Nov 2026: the MettleUp Plus switch (0070). Moves to ADMIN_NEWS only when 0070 is live, the panel is
+    // deployed AND the app's paid plan is switched on (MEMBER_PLAN_GATE_ON); until then the card is hidden anyway.
+    id: 'pending-plus-lock',
+    lines: [
+      {
+        text: 'Your members now get every paid feature of the MettleUp app free while their plan is active. In Settings, Member app, choose whether those features lock 7 days after a plan ends. Members never lose their workouts.',
+        go: { label: 'Open Settings', path: '/settings/app' },
+        feature: true,
+      },
+    ],
   },
 ];

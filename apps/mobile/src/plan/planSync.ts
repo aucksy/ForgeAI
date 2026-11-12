@@ -15,7 +15,7 @@ import { AppState } from 'react-native';
 import { useGymShop } from '@/shop/gymStore';
 
 import { hasQaPlanStandIn } from './memberPlan';
-import { forgetGym, isQaPlanBuild, memberAccessNow, noteMembership, setQaPlanBuild, startTrialIfDue, useMemberPlan } from './memberPlanStore';
+import { forgetGym, isQaPlanBuild, memberAccessNow, noteGymLock, noteMembership, setQaPlanBuild, startTrialIfDue, useMemberPlan } from './memberPlanStore';
 import { WATCH_LOCKED } from './planWords';
 
 let started = false;
@@ -47,6 +47,22 @@ async function followGym(): Promise<void> {
   }
 }
 
+/**
+ * The gym owner's switch (0070) for the joined gym, once a launch and only while the plan is switched on and the
+ * gym unlock is in use (a switched-off app asks the server nothing new). Unknown = the default (ON).
+ */
+let lockAsked: string | null = null;
+async function followGymLock(): Promise<void> {
+  const link = useGymShop.getState().link;
+  const gym = useMemberPlan.getState().gym;
+  if (!link || !gym || gym.memberId !== link.memberId || memberAccessNow().why === 'off') return;
+  if (lockAsked === link.memberId) return;
+  lockAsked = link.memberId;
+  const { apiPlusLock } = await import('@/shop/gymApi');
+  const lock = await apiPlusLock(link.memberKey);
+  if (lock !== null) noteGymLock(link.memberId, lock);
+}
+
 let lastWatch: string | null = null;
 async function followWatch(): Promise<void> {
   const locked = !memberAccessNow().all;
@@ -73,11 +89,17 @@ export function startPlanSync(): void {
       startTrialIfDue();
       await followGym();
       await followWatch();
+      void followGymLock().catch((e: unknown) => console.warn('[plan] gym switch follow failed', e));
       useGymShop.subscribe((s, prev) => {
-        if (s.link?.memberId !== prev.link?.memberId) void followGym().catch((e: unknown) => console.warn('[plan] gym follow failed', e));
+        if (s.link?.memberId === prev.link?.memberId) return;
+        void followGym()
+          // "Find my gym with my number": a found gym was just joined; the same proof links the gym's list now.
+          .then(async () => (await import('@/shop/findGymApi')).claimIfJoined(s.link))
+          .catch((e: unknown) => console.warn('[plan] gym follow failed', e));
       });
       const follow = (): void => {
         startTrialIfDue();
+        void followGymLock().catch((e: unknown) => console.warn('[plan] gym switch follow failed', e));
         void followWatch().catch((e: unknown) => console.warn('[plan] watch follow failed', e));
       };
       useMemberPlan.subscribe(follow);

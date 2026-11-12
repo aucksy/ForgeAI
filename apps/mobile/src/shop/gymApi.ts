@@ -31,6 +31,7 @@ import { askChoicesFrom, askQuestionsFrom, askSentFrom, type AskChoices, type As
 import { talkSentFrom, talkThreadsFrom, talkUnreadFrom, type TalkKind, type TalkThread } from './gymTalk';
 import { friendInviteFrom, type FriendInvite } from './bringFriend';
 import { staffDoorFromRow, type StaffDoorAnswer } from './staffDoor';
+import { claimAnswerFrom, findAnswerFrom, type ClaimAnswer, type FindAnswer } from './findGym';
 import type { RecentWorkout } from './trainerRecent';
 import type { GymLink, GymOrder, Product } from './types';
 
@@ -634,4 +635,41 @@ export async function apiTalkReply(key: string, threadId: string, text: string):
   if (!r.ok) return askFail(r);
   const t = talkSentFrom(r.data);
   return t ? { ok: true, data: t } : { ok: false, error: { kind: 'other' } };
+}
+
+/**
+ * "Find my gym with my number" (R-458 + F56, 0068): which MettleUp gyms list this PROVEN number with the member's
+ * first name and a plan running today (or a pass). `proof` = the WhatsApp check's proof (purpose 'member').
+ */
+export async function apiFindGyms(proof: string, firstName: string): Promise<FindAnswer | { ok: false; problem: 'OFFLINE' }> {
+  const r = await call('member_find_gyms', { p_proof: proof, p_name: firstName }, READ_MS);
+  if (!r.ok) {
+    console.warn('[gym] find my gym failed', r.error.kind, r.noSuchFunction ? '(no 0068 on this server)' : '');
+    return r.error.kind === 'offline' || r.error.kind === 'timeout' ? { ok: false, problem: 'OFFLINE' } : { ok: false, problem: 'OTHER' };
+  }
+  return findAnswerFrom(r.data);
+}
+
+/** After joining a found gym: the same proof links the gym's list member to this app member (0068). */
+export async function apiClaimPhone(key: string, proof: string): Promise<ClaimAnswer | { ok: false; problem: 'OFFLINE' }> {
+  const r = await call('member_claim_phone', { p_key: key, p_proof: proof }, WRITE_MS);
+  if (!r.ok) {
+    console.warn('[gym] number link after the join failed', r.error.kind);
+    return r.error.kind === 'offline' || r.error.kind === 'timeout' ? { ok: false, problem: 'OFFLINE' } : { ok: false, problem: 'OTHER' };
+  }
+  return claimAnswerFrom(r.data);
+}
+
+/**
+ * F56 MettleUp Plus (0070): the gym owner's switch, "lock the paid extras 7 days after a plan ends". null = not
+ * known (a server without 0070, offline): the app then uses the default (ON, GYM_LOCK_AFTER_END_DEFAULT).
+ */
+export async function apiPlusLock(key: string): Promise<boolean | null> {
+  const r = await call('member_plus_lock', { p_key: key }, READ_MS);
+  if (!r.ok) {
+    if (!r.noSuchFunction) console.warn('[gym] the gym owner switch could not be read', r.error.kind);
+    return null;
+  }
+  const row = r.data as { lockAfterEnd?: unknown } | null;
+  return row && typeof row.lockAfterEnd === 'boolean' ? row.lockAfterEnd : null;
 }

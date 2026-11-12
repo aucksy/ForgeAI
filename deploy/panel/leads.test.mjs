@@ -96,9 +96,18 @@ test('wrong method, not set up, too long', async () => {
   assert.equal((await handleLead(post({ ...good, gym: 'x'.repeat(3000) }), env(fakeD1()))).status, 413);
 });
 
+// F56 "Tell my gym" (R-461, 12 Nov 2026): the member app sends a gym name and city, never the member's number.
+test("source member-app: a gym name without a number is kept; nothing at all is refused; a bad number still is", () => {
+  const v = checkLead({ gym: ' Iron  Temple ', city: 'Pune', source: 'member-app', website: '' }).value;
+  assert.deepEqual(v, { phone: '', gym: 'Iron Temple', city: 'Pune', size: '', today: '', lang: 'en', source: 'member-app' });
+  assert.ok(checkLead({ source: 'member-app' }).error);
+  assert.ok(checkLead({ gym: 'Iron Temple', phone: '12345', source: 'member-app' }).error);
+  assert.ok(checkLead({ gym: 'Iron Temple' }).error); // the landing page's forms still need a number
+});
+
 // F184 (R-242): a demo request from the gym page opened through a member's shared link.
-test('source: only member-referral is kept; anything else is empty', () => {
-  assert.deepEqual(SOURCES, ['member-referral']);
+test('source: only member-referral and member-app are kept; anything else is empty', () => {
+  assert.deepEqual(SOURCES, ['member-referral', 'member-app']);
   assert.equal(checkLead({ ...good, source: 'member-referral' }).value.source, 'member-referral');
   for (const bad of ['', 'Member-Referral', '<script>', 42, null, undefined]) assert.equal(checkLead({ ...good, source: bad }).value.source, '', String(bad));
 });
