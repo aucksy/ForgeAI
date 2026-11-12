@@ -153,6 +153,8 @@ const ERRORS = {
   GEMINI_BUSY: 'Gemini is busy right now. Your text is unchanged. Try again in a minute.',
   GEMINI_FAILED: 'Gemini could not rewrite this one. Your text is unchanged. Try again.',
   DRAFT_EMPTY: 'Type your reply first, then tap Rewrite.',
+  AI_NOT_READY: 'AI credits need the database update 0071 (waiting for your yes).',
+  NOT_ENOUGH: 'The gym does not have that many credits to take back.',
   BAD_LINK: 'A button needs both: words for the button, and an admin app page like /plans or an https:// address.',
 };
 
@@ -208,10 +210,43 @@ const ACTIONS = {
   view_groups: 'Looked at gyms with branches',
   hq_message_sent: 'Sent a message to every gym',
   hq_message_removed: 'Took back a message to the gyms',
+  ai_credits_added: 'Added or took back a gym’s AI credits',
 };
 
 export function actionWords(action) {
   return ACTIONS[action] || action;
+}
+
+/** F201 (0071): what each line of a gym's AI credit history means. */
+const CREDIT_REASONS = {
+  welcome: 'Welcome credits',
+  monthly: 'Free credits for the month',
+  expire: 'Last month’s free credits not used',
+  purchase: 'Pack bought',
+  grant: 'Added by MettleUp',
+  spend: 'Task done',
+  refund: 'Task did not finish (credits back)',
+};
+
+/** One credit history line in plain words: "+150 · Pack bought · Paid Rs 399 by UPI". PURE. */
+export function creditRowWords(r) {
+  const n = Number(r && r.delta) || 0;
+  const what = r && r.reason === 'grant' && n < 0 ? 'Taken back by MettleUp' : (r && (CREDIT_REASONS[r.reason] || r.reason)) || '';
+  const note = r && r.note && !['monthly', 'welcome', 'expire'].includes(r.reason) ? r.note : '';
+  return [n > 0 ? `+${n}` : `${n}`, what, note].filter(Boolean).join(' · ');
+}
+
+/** "12 credits used, 9 tasks done, 40 requests to the AI, 3 min spoken" for the HQ gym page. PURE. */
+export function assistMonthWords(credits, use) {
+  const tm = (credits && credits.this_month) || {};
+  const spent = Number(tm.spent) || 0;
+  const done = Number(tm.tasks_done) || 0;
+  const parts = [`${spent} credit${spent === 1 ? '' : 's'} used`, `${done} task${done === 1 ? '' : 's'} done`];
+  if (use) {
+    parts.push(`${use.asks} request${use.asks === 1 ? '' : 's'} to the AI`);
+    if (use.voiceSeconds) parts.push(`${Math.ceil(use.voiceSeconds / 60)} min spoken`);
+  }
+  return parts.join(', ');
 }
 
 export const REASON_KINDS = [

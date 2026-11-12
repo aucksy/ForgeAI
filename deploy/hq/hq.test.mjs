@@ -944,3 +944,60 @@ test('before panel migration 0009: Feedback still lists, a reply says it needs t
   const needs = await (await api('GET', '/api/needs', null, e, net)).json();
   assert.deepEqual(needs, { leadsNew: 0, feedbackNew: 1, helpNeedsReply: null, gymsNew: 0, paymentsWaiting: null, paymentsToCheck: null });
 });
+
+// ------------------------------------------------------------------ F201 AI assistant credits (0071)
+test('AI credits: the gym page shows the wallet and this month\'s assistant use; before 0071 it says so', { skip: !sqlite && 'no node:sqlite here' }, async () => {
+  const web = d1();
+  web.raw.exec(`INSERT INTO ai_usage (day, gym_id, kind, calls, failed, tokens_in, tokens_out, provider) VALUES
+    ('2026-10-02', '${GYM}', 'columns', 3, 0, 12000, 3000, 'gemini'),
+    ('2026-10-02', '${GYM}', 'assist', 7, 1, 40000, 2000, 'claude'),
+    ('2026-10-03', '${GYM}', 'assist-voice', 95, 0, 0, 0, 'groq')`);
+  const wallet = { balance: 87, monthly_free: 60, plan: 'trial', month: '2026-10', this_month: { spent: 3, tasks_done: 2 }, recent: [] };
+  const net = fakeNet({ db: { hq_gym: { gymId: GYM, name: 'Iron', owners: [], recentHq: [] }, hq_ai_wallet: wallet } });
+  const now = new Date('2026-10-05T10:00:00Z');
+  const j = await (await api('GET', `/api/gym?id=${GYM}`, null, env({ WEB: web }), net, now)).json();
+  assert.deepEqual(j.aiCredits, wallet);
+  assert.deepEqual(JSON.parse(net.rpcCalls('hq_ai_wallet')[0].init.body), { p_actor: OWNER, p_gym: GYM });
+  assert.equal(j.assistMonth.asks, 7);
+  assert.equal(j.assistMonth.voiceSeconds, 95);
+  assert.equal(j.assistMonth.rupees.toFixed(4), costRupees('claude', 40000, 2000).toFixed(4));
+  // The column-matching card counts only its own reads, never the assistant's.
+  assert.equal(j.aiDays.reduce((n, d) => n + d.calls, 0), 3);
+  const list = await (await api('GET', '/api/gyms', null, env({ WEB: web }), fakeNet({ db: { hq_gyms: [{ gymId: GYM, joinCode: 'ABC123', name: 'Iron' }] } }), now)).json();
+  assert.equal(list.gyms[0].aiThisMonth.calls, 3);
+  // Before 0071: no wallet, the rest of the page still works.
+  const before = fakeNet({ db: { hq_gym: { gymId: GYM, name: 'Iron', owners: [], recentHq: [] } }, dbMissing: ['hq_ai_wallet'] });
+  const j2 = await (await api('GET', `/api/gym?id=${GYM}`, null, env(), before)).json();
+  assert.equal(j2.aiCredits, null);
+  assert.equal(j2.gym.name, 'Iron');
+});
+
+test('AI credits: "Add AI credits" goes to hq_ai_grant as asked; bad input never reaches the database', async () => {
+  const net = fakeNet({ db: { hq_ai_grant: { balance: 240 } } });
+  const res = await api('POST', '/api/gym/ai-credits', { gymId: GYM, credits: 150, kind: 'purchase', note: 'Paid Rs 399 by UPI' }, env(), net);
+  assert.equal(res.status, 200);
+  assert.deepEqual(await res.json(), { balance: 240 });
+  assert.deepEqual(JSON.parse(net.rpcCalls('hq_ai_grant')[0].init.body), { p_actor: OWNER, p_gym: GYM, p_credits: 150, p_note: 'Paid Rs 399 by UPI', p_kind: 'purchase' });
+  // No kind = a grant; a minus grant (taking free credits back) is allowed.
+  await api('POST', '/api/gym/ai-credits', { gymId: GYM, credits: -10, note: 'Given twice by mistake' }, env(), net);
+  assert.equal(JSON.parse(net.rpcCalls('hq_ai_grant')[1].init.body).p_kind, 'grant');
+  const bad = fakeNet();
+  for (const body of [
+    { gymId: 'x', credits: 50, note: 'n' },
+    { gymId: GYM, credits: 0, note: 'n' },
+    { gymId: GYM, credits: 1.5, note: 'n' },
+    { gymId: GYM, credits: 5001, note: 'n' },
+    { gymId: GYM, credits: '50', kind: 'gift', note: 'n' },
+    { gymId: GYM, credits: -50, kind: 'purchase', note: 'n' },
+  ]) {
+    assert.equal((await api('POST', '/api/gym/ai-credits', body, env(), bad)).status, 400, JSON.stringify(body));
+  }
+  assert.equal(bad.calls.length, 0);
+  // The database's refusals come back as their words; before 0071, AI_NOT_READY.
+  const refused = fakeNet({ dbFail: { hq_ai_grant: 'NOT_ENOUGH' } });
+  assert.deepEqual(await (await api('POST', '/api/gym/ai-credits', { gymId: GYM, credits: -500, note: 'Take back' }, env(), refused)).json(), { error: 'NOT_ENOUGH' });
+  const missing = fakeNet({ dbMissing: ['hq_ai_grant'] });
+  const r = await api('POST', '/api/gym/ai-credits', { gymId: GYM, credits: 50, note: 'Pack' }, env(), missing);
+  assert.equal(r.status, 503);
+  assert.deepEqual(await r.json(), { error: 'AI_NOT_READY' });
+});

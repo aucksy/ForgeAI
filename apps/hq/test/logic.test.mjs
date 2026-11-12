@@ -6,6 +6,8 @@ import { test } from 'node:test';
 import {
   actionWords,
   ago,
+  assistMonthWords,
+  creditRowWords,
   checkDoneWords,
   checkReasonWords,
   checkWords,
@@ -400,3 +402,14 @@ test('online payments to check (0064): the facts, why, what was done, and the Ne
   assert.equal(errorWords('CHECKS_NOT_READY'), 'Payments to check need the database update 0064 (waiting for your yes).');
 });
 
+
+test('F201 AI credits: history lines and this month in plain words', () => {
+  assert.equal(creditRowWords({ delta: 150, reason: 'purchase', note: 'Paid Rs 399 by UPI' }), '+150 · Pack bought · Paid Rs 399 by UPI');
+  assert.equal(creditRowWords({ delta: -1, reason: 'spend', note: 'Diwali message' }), '-1 · Task done · Diwali message');
+  assert.equal(creditRowWords({ delta: 60, reason: 'monthly', note: 'Free credits for 2026-11' }), '+60 · Free credits for the month');
+  assert.equal(creditRowWords({ delta: -10, reason: 'grant', note: 'Given twice' }), '-10 · Taken back by MettleUp · Given twice');
+  assert.equal(assistMonthWords({ this_month: { spent: 1, tasks_done: 1 } }, null), '1 credit used, 1 task done');
+  assert.equal(assistMonthWords({ this_month: { spent: 12, tasks_done: 9 } }, { asks: 40, voiceSeconds: 95 }), '12 credits used, 9 tasks done, 40 requests to the AI, 2 min spoken');
+  assert.equal(actionWords('ai_credits_added'), 'Added or took back a gym’s AI credits');
+  for (const code of ['AI_NOT_READY', 'NOT_ENOUGH']) assert.notEqual(errorWords(code), errorWords('SOMETHING_ELSE'));
+});

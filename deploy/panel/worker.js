@@ -25,6 +25,8 @@
 //  - /api/billing/checkout  "Pay online" for a MettleUp plan, forwarded to the HQ Worker (billing.js, billing step 3).
 //  - /api/lead      the landing page's "free demo" form (leads.js, launch I3; the page is /home/).
 //  - /api/ai/match-columns  "Ask AI to match the columns" in the member import (aiMatch.js, #47).
+//  - /api/assist, /api/assist/rewrite, /api/assist/voice  the owner's AI assistant (assist.js, F201): a sentence ->
+//               1-3 tool calls for the admin app to show as cards; a message rewrite; a spoken ask -> text.
 //  - /sb/...    the gym server (Supabase) at our own address, so a block of supabase.co cannot stop
 //               the apps (proxy.js, owner R-40, built R-55). After the admin app sends a message or
 //               starts an offer, HQ is told to send the phone pop-ups now (proxy.js pushAfter).
@@ -41,6 +43,7 @@ import { handleLead } from './leads.js';
 import { deleteOldFriendAsks, handleFriend } from './friend.js';
 import { deleteOldVoiceCounts, handleVoice } from './voice.js';
 import { handleMatchColumns } from './aiMatch.js';
+import { handleAssist, handleAssistRewrite, handleAssistVoice } from './assist.js';
 import { handlePay, scheduledPay } from './pay.js';
 import { handleBillingCheckout } from './billing.js';
 import { deleteOldPhoneCodes, handlePhoneCode } from './phoneCode.js';
@@ -106,6 +109,9 @@ export default {
     if (url.pathname === '/api/crash') return handleCrash(request, env);
     if (url.pathname === '/api/hq-news') return handleHqNews(request, env);
     if (url.pathname === '/api/ai/match-columns') return handleMatchColumns(request, env);
+    if (url.pathname === '/api/assist') return handleAssist(request, env);
+    if (url.pathname === '/api/assist/rewrite') return handleAssistRewrite(request, env);
+    if (url.pathname === '/api/assist/voice') return handleAssistVoice(request, env);
     // F79 (R-328): online payments for gyms (pay.js). Off ("not switched on yet") until 0011 is applied.
     if (url.pathname.startsWith('/api/pay/')) return handlePay(request, env, url);
     // Billing step 3: a gym owner buys a MettleUp plan online; forwarded to the HQ Worker (billing.js). Off until HQ is set up.

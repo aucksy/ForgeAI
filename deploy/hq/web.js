@@ -268,7 +268,7 @@ export async function setLeadStatus(db, id, status, note) {
 /** AI use per gym since a day: { gymId: { calls, failed, tokensIn, tokensOut, rupees } }. */
 export async function aiUsageByGym(db, fromDay) {
   const rows = (await db
-    .prepare('SELECT gym_id, provider, SUM(calls) AS calls, SUM(failed) AS failed, SUM(tokens_in) AS tin, SUM(tokens_out) AS tout FROM ai_usage WHERE day >= ? GROUP BY gym_id, provider')
+    .prepare("SELECT gym_id, provider, SUM(calls) AS calls, SUM(failed) AS failed, SUM(tokens_in) AS tin, SUM(tokens_out) AS tout FROM ai_usage WHERE day >= ? AND kind NOT LIKE 'assist%' GROUP BY gym_id, provider")
     .bind(fromDay)
     .all()).results ?? [];
   const out = {};
@@ -286,10 +286,33 @@ export async function aiUsageByGym(db, fromDay) {
 /** One gym's AI use per day since a day, newest first. */
 export async function aiUsageDays(db, gymId, fromDay) {
   const rows = (await db
-    .prepare('SELECT day, provider, SUM(calls) AS calls, SUM(failed) AS failed, SUM(tokens_in) AS tin, SUM(tokens_out) AS tout FROM ai_usage WHERE gym_id = ? AND day >= ? GROUP BY day, provider ORDER BY day DESC')
+    .prepare("SELECT day, provider, SUM(calls) AS calls, SUM(failed) AS failed, SUM(tokens_in) AS tin, SUM(tokens_out) AS tout FROM ai_usage WHERE gym_id = ? AND day >= ? AND kind NOT LIKE 'assist%' GROUP BY day, provider ORDER BY day DESC")
     .bind(gymId, fromDay)
     .all()).results ?? [];
   return rows.map((r) => ({ day: r.day, provider: r.provider, calls: Number(r.calls) || 0, failed: Number(r.failed) || 0, rupees: costRupees(r.provider, r.tin, r.tout) }));
+}
+
+/**
+ * F201: one gym's AI assistant use since a day (deploy/panel/assist.js writes it): requests ('assist' rows, Claude
+ * tokens) and spoken seconds ('assist-voice' rows; calls = seconds). The column-matching numbers above leave these
+ * out. -> { asks, failed, voiceSeconds, rupees }
+ */
+export async function assistUsage(db, gymId, fromDay) {
+  const rows = (await db
+    .prepare("SELECT kind, SUM(calls) AS calls, SUM(failed) AS failed, SUM(tokens_in) AS tin, SUM(tokens_out) AS tout FROM ai_usage WHERE gym_id = ? AND day >= ? AND kind IN ('assist', 'assist-voice') GROUP BY kind")
+    .bind(gymId, fromDay)
+    .all()).results ?? [];
+  const out = { asks: 0, failed: 0, voiceSeconds: 0, rupees: 0 };
+  for (const r of rows) {
+    if (r.kind === 'assist') {
+      out.asks += Number(r.calls) || 0;
+      out.failed += Number(r.failed) || 0;
+      out.rupees += costRupees('claude', r.tin, r.tout);
+    } else {
+      out.voiceSeconds += Number(r.calls) || 0;
+    }
+  }
+  return out;
 }
 
 /** Per-gym AI daily limits ({ gymId: perDay }); {} before table ai_limits exists. */

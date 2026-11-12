@@ -17,6 +17,7 @@ import {
   aiUsageByGym,
   aiUsageDays,
   addMessage,
+  assistUsage,
   checkMessage,
   cleanReply,
   deleteRequestsInFeedback,
@@ -116,6 +117,19 @@ async function groupsPart(db) {
   }
 }
 
+/** F201: the most credits HQ adds (or takes back) in one go (the database allows the same). */
+export const AI_CREDITS_MAX = 5000;
+
+/** F201 (0071): a gym's AI credits for its HQ page; null before 0071 is applied or when it cannot be read. */
+async function creditsPart(db, gymId) {
+  try {
+    return await db('hq_ai_wallet', { p_gym: gymId });
+  } catch (e) {
+    if (!(e instanceof DbError && e.code === 'NOT_READY')) console.error('[hq-api] AI credits not readable', e instanceof Error ? e.message : 'error');
+    return null;
+  }
+}
+
 /** The D1 part of a page; null (and a log line) when Cloudflare's database could not be read. */
 async function webPart(what, fn) {
   try {
@@ -174,7 +188,10 @@ export async function handleApi(request, env, who, deps = {}) {
       const web = env.WEB;
       const days = web ? await webPart('ai days', () => aiUsageDays(web, id, indiaDay(now, 30))) : null;
       const limits = web ? await webPart('ai limits', () => aiLimits(web)) : null;
-      return json(200, { gym, aiDays: days, aiLimit: limits ? (limits[id] ?? NORMAL_AI_LIMIT) : null, normalAiLimit: NORMAL_AI_LIMIT, plansReady: plansReady(gym) });
+      // F201 (0071): the gym's AI credits and this month's assistant use. null before 0071 / on a failure.
+      const aiCredits = await creditsPart(db, id);
+      const assistMonth = web ? await webPart('assistant use', () => assistUsage(web, id, monthStart(now))) : null;
+      return json(200, { gym, aiDays: days, aiLimit: limits ? (limits[id] ?? NORMAL_AI_LIMIT) : null, normalAiLimit: NORMAL_AI_LIMIT, plansReady: plansReady(gym), aiCredits, assistMonth });
     }
 
     if (route === 'GET /api/system') {
@@ -519,6 +536,22 @@ export async function handleApi(request, env, who, deps = {}) {
         await webPart('audit of pictures left', () => log('delete_gym_files_left', null, null, { requestId: b.requestId, left: files.left.length }));
       }
       return json(200, { ...done, filesRemoved: files.removed, filesLeft: files.left });
+    }
+
+    // F201 (0071): "Add AI credits": a pack the gym paid for (kind 'purchase') or credits from MettleUp ('grant';
+    // a minus number takes credits back, never below 0). The note is required and written in the audit log.
+    if (route === 'POST /api/gym/ai-credits') {
+      const credits = Number(b.credits);
+      const kind = b.kind === 'purchase' ? 'purchase' : b.kind === undefined || b.kind === 'grant' ? 'grant' : '';
+      if (!isUuid(b.gymId) || !Number.isInteger(credits) || credits === 0 || Math.abs(credits) > AI_CREDITS_MAX || !kind || (kind === 'purchase' && credits < 0)) {
+        return refuse('BAD_REQUEST');
+      }
+      try {
+        return json(200, await db('hq_ai_grant', { p_gym: b.gymId, p_credits: credits, p_note: text(b.note, 500), p_kind: kind }));
+      } catch (e) {
+        if (e instanceof DbError && e.code === 'NOT_READY') return refuse('AI_NOT_READY', 503);
+        throw e;
+      }
     }
 
     if (route === 'POST /api/ai/limit') {

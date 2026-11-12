@@ -13,6 +13,8 @@ import {
   STATUS_WORDS,
   actionWords,
   ago,
+  assistMonthWords,
+  creditRowWords,
   billingBadge,
   branchOf,
   capWords,
@@ -513,6 +515,9 @@ async function gymPage(id, flash = '') {
       }, { out: aiOut })),
     aiOut);
 
+  // F201 (0071): the AI assistant's credits. HQ adds a pack after the payment shows (or free credits), with a note.
+  const credits = creditsCard(g, id, data);
+
   renderAccess(accessBox, g, id);
 
   show(
@@ -540,6 +545,7 @@ async function gymPage(id, flash = '') {
     accessBox,
     reset,
     signOut,
+    credits,
     ai,
     h('div', { class: 'card' }, h('h2', {}, 'Sign-in history'),
       h('p', { class: 'muted' }, 'Sign-ins, sign-outs, wrong codes and saves in the admin app (kept 7 days; 1 year from 13 May 2027).'),
@@ -560,6 +566,34 @@ async function gymPage(id, flash = '') {
     h('div', { class: 'card' }, h('h2', {}, 'What HQ did here'),
       g.recentHq.length ? h('ul', { class: 'plain' }, g.recentHq.map((a) => h('li', {}, `${when(a.at)} · ${actionWords(a.action)}${a.reason ? ` · ${a.reason}` : ''}`))) : h('p', {}, 'Nothing yet.')),
   );
+}
+
+function creditsCard(g, id, data) {
+  const head = h('h2', {}, 'AI assistant credits');
+  const w = data.aiCredits;
+  if (!w) return h('div', { class: 'card' }, head, note(errorWords('AI_NOT_READY'), 'warn'));
+  const out = h('div');
+  const howMany = h('input', { type: 'number', min: '-5000', max: '5000', step: '1', inputmode: 'numeric', placeholder: '150' });
+  const kind = select([['purchase', 'A pack the gym paid for'], ['grant', 'Free credits from MettleUp']], 'purchase');
+  const why = h('input', { maxlength: '300', placeholder: 'Note (for example: paid ₹399 by UPI on 12 Nov)' });
+  const recent = Array.isArray(w.recent) ? w.recent.slice(0, 10) : [];
+  return h('div', { class: 'card' }, head,
+    h('p', {}, `Balance: ${count(w.balance, 'credit')}. Free every month on this plan: ${w.monthly_free}.`),
+    h('p', {}, `This month: ${assistMonthWords(w, data.assistMonth)}.`),
+    data.assistMonth ? h('p', { class: 'muted' }, `AI cost this month: about ${rupeesExact(data.assistMonth.rupees)}.`) : null,
+    recent.length
+      ? h('ul', { class: 'plain' }, recent.map((r) => h('li', {}, `${when(new Date(r.at).toISOString())} · ${creditRowWords(r)}`)))
+      : h('p', { class: 'muted' }, 'No credits added or used yet. The owner gets 30 welcome credits and the month’s free ones the first time they open the AI assistant.'),
+    h('h3', {}, 'Add AI credits'),
+    h('div', { class: 'stack' },
+      field('Credits', howMany, 'Packs: 50 (₹149), 150 (₹399), 500 (₹999). A minus number takes free credits back.'),
+      field('What it is', kind),
+      field('Note', why, 'Written in the log.'),
+      action('Add AI credits', async () => {
+        const r = await api('/api/gym/ai-credits', { gymId: id, credits: Number(howMany.value), kind: kind.value, note: why.value });
+        await gymPage(id, `Saved: ${g.name} now has ${count(r.balance, 'AI credit')}.`);
+      }, { out, sure: () => `${Number(howMany.value) < 0 ? 'Take back' : 'Add'} ${Math.abs(Number(howMany.value) || 0)} AI credits ${Number(howMany.value) < 0 ? 'from' : 'to'} ${g.name}?` }),
+      out));
 }
 
 const ACCESS_WORDS = { sign_in: 'Signed in', sign_out: 'Signed out', sign_in_failed: 'Wrong code', push: 'Saved changes', pull_all: 'Pulled the whole gym' };
