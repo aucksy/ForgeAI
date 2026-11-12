@@ -118,6 +118,14 @@ R-441's watch screen log switch ships ON: the main session checked his "Yes" (R-
 mettleup.fit/privacy.html already holds the line and the 1-year row. R-445's privacy section 4A (Google sign-in)
 does not mention the new tick yet: NEW wording, not published, proposed to the main session (legal words = his yes).
 
+RELEASED 12 Nov 2026, 15:24 IST: tag v0.77.0 on b5f25a79 (= 933e4bf4 + the r401 script fix; tagged off main, which had
+moved on with R-452 and other work not in this release). Release run 43195542456 green (phone gate, build,
+update-proof, publish). APK: releases/download/v0.77.0/mettleup-v0.77.0.apk. play-upload job 131120448558: phone
+versionCode 77000 committed on internal + alpha; watch 1000077000 on wear:internal only. Play refused the watch
+closed track ("You already have changes in review"): rerun play-upload for v0.77.0 (workflow_dispatch, dry_run off)
+once that review ends. Production (all countries, managed publishing) is the main session's, with the owner's own
+"A"; play_upload.py refuses production by design.
+
 Steps and results (filled in as they happen):
 - What's new 0.77.0 (6 lines, 490 of Play's 500 characters): fresh-reader check (short lines, no Gemini pass).
 - Adversarial review (v0.76.0..main): (1) the 'p' item 'empty' rows were [ref, sets]; 0.76.0's backup "Add"
