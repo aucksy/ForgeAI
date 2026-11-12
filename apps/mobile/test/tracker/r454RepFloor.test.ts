@@ -291,7 +291,7 @@ describe('owner, 12 Nov 2026: a "very hard" line only when it changes the row', 
 describe('R-454: the row-above cap stops at last time (UAT flow r439-b, Goblet Squat)', () => {
   it('20 x 8, 5 last time; set 1 done 20 x 3 -> set 2 hints 5 (was 3), never its goal 6', () => {
     const t = computeProgressionTarget({
-      exercise: ex({ id: 'goblet', name: 'Goblet Squat', muscleGroup: 'legs' }),
+      exercise: ex({ id: 'goblet', name: 'Goblet Squat', muscleGroup: 'quads' }),
       target: range(8, 12, 2),
       history: [sess('2026-11-08', [[20, 8], [20, 5]])],
       todayISO: TODAY,
@@ -301,7 +301,7 @@ describe('R-454: the row-above cap stops at last time (UAT flow r439-b, Goblet S
       key: 'g1',
       exerciseId: 'goblet',
       name: 'Goblet Squat',
-      muscleGroup: 'legs',
+      muscleGroup: 'quads',
       equipment: 'dumbbell',
       previousSets: [{ weightKg: 20, reps: 8 }, { weightKg: 20, reps: 5 }],
       sets: [
