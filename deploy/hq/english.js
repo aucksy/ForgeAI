@@ -16,10 +16,18 @@
 import { HELP_ARTICLES } from '../panel/helpArticles.js';
 import { ENGLISH_SYSTEM } from './englishPrompt.js';
 
-/** Probed with the owner's key on 12 Nov 2026: gemini-2.5-pro is closed to new users; 3.1 Pro answers. */
-export const DEFAULT_MODEL = 'gemini-3.1-pro-preview';
-/** Google's moving names: they follow the newest Pro and Flash, so they outlive a retired model. */
-export const BACKUP_MODELS = ['gemini-pro-latest', 'gemini-flash-latest'];
+/**
+ * Owner, 12 Nov 2026: Pro with the whole help library cost about Rs 2 a rewrite. Now a small model with a
+ * short name list (measured on made-up questions with the owner's key: see the commit message).
+ * Picked from the models the key lists; var GEMINI_MODEL overrides it.
+ */
+export const DEFAULT_MODEL = 'gemini-3.1-flash-lite';
+/** After the default: Google's moving Flash names (they outlive a retired model), then Pro as the last resort. */
+export const BACKUP_MODELS = ['gemini-flash-lite-latest', 'gemini-flash-latest', 'gemini-pro-latest'];
+/** The lowest thinking first; a model that refuses a level (HTTP 400 naming thinking) gets the next, then none. */
+export const THINKING_LEVELS = ['minimal', 'low'];
+/** Low, so the rewrite stays close to the draft's facts (see rewrite()). */
+export const TEMPERATURE = 0.3;
 /** Pro models only: the free tier has no Pro allowance, so a 200 from one proves the project is billed. */
 export const PROBE_MODELS = ['gemini-3.1-pro-preview', 'gemini-pro-latest'];
 export const TIMEOUT_MS = 25_000;
@@ -30,10 +38,28 @@ export const DRAFT_MAX = 1500;
 const PART_MAX = 2000;
 
 /**
- * Rough prices in US dollars per million tokens (Google's paid tier, prompts under 200k tokens):
- * Pro about $2 in / $12 out, Flash about $0.50 / $3. Thinking tokens are billed as output. "About" only.
+ * US dollars per million tokens, paid tier, text prompts under 200k tokens (Google's pricing page,
+ * aistudio.google.com/docs/pricing, read 12 Nov 2026). Thinking tokens are billed as output.
+ * A model not listed is priced by its family (lite / flash / pro). 3.8 Flash doubles on 1 Jan 2027.
  */
-export const PRICES = { pro: { in: 2, out: 12 }, flash: { in: 0.5, out: 3 } };
+export const PRICES = {
+  'gemini-3.1-flash-lite': { in: 0.25, out: 1.5 },
+  'gemini-3.5-flash-lite': { in: 0.3, out: 2.5 },
+  'gemini-2.5-flash-lite': { in: 0.1, out: 0.4 },
+  'gemini-3-flash-preview': { in: 0.5, out: 3 },
+  'gemini-3.6-flash': { in: 0.75, out: 3.75 },
+  'gemini-3.8-flash': { in: 0.75, out: 3.75 },
+  'gemini-3.1-pro-preview': { in: 2, out: 12 },
+  lite: { in: 0.3, out: 2.5 },
+  flash: { in: 0.75, out: 3.75 },
+  pro: { in: 2, out: 12 },
+};
+
+/** The price row for a model: its own, else its family's. PURE. */
+export function priceOf(model) {
+  const m = String(model || '');
+  return PRICES[m] || (/lite/i.test(m) ? PRICES.lite : /flash/i.test(m) ? PRICES.flash : PRICES.pro);
+}
 export const USD_TO_INR = 88;
 
 const GEMINI = 'https://generativelanguage.googleapis.com/v1beta/models';
@@ -44,7 +70,7 @@ export function keyOn(env) {
 
 /** Rupees for one call. PURE. */
 export function costRupees(model, tokensIn, tokensOut) {
-  const p = /flash/i.test(String(model)) ? PRICES.flash : PRICES.pro;
+  const p = priceOf(model);
   return ((Number(tokensIn) || 0) * p.in + (Number(tokensOut) || 0) * p.out) / 1e6 * USD_TO_INR;
 }
 
@@ -59,15 +85,27 @@ export function modelChain(env) {
   return [first, ...BACKUP_MODELS.filter((m) => m !== first)];
 }
 
-/** The help articles for whoever asked: the admin app's for a gym, the member app's for a member. PURE. */
-export function articlesFor(source) {
+/**
+ * The real names for whoever asked (the admin app's for a gym, the member app's for a member), built from
+ * the help articles so it never drifts: their topics, and every quoted screen or button name. Not the
+ * articles themselves: a fraction of the tokens, and no steps for Gemini to copy into a reply. PURE.
+ */
+export function namesFor(source) {
   const want = source === 'admin' ? 'owner' : 'member';
-  return HELP_ARTICLES.filter((a) => a.who === want || a.who === 'both').map((a) => `### ${a.title}\n${a.text}`).join('\n\n');
+  const arts = HELP_ARTICLES.filter((a) => a.who === want || a.who === 'both');
+  const names = new Set();
+  for (const a of arts) {
+    for (const m of String(a.text).matchAll(/"([^"]{2,40})"/g)) {
+      // A worked example ("Next: 42.5 kg x 7") or a placeholder ("Add ... members") is not a name.
+      if (!/\d|\.\.\./.test(m[1])) names.add(m[1].trim());
+    }
+  }
+  return `Topics: ${arts.map((a) => a.title).join('; ')}.\nNames: ${[...names].join(' | ')}`;
 }
 
-/** Gemini's instructions: englishPrompt.js, then the articles. PURE. */
+/** Gemini's instructions: englishPrompt.js, then the name list. PURE. */
 export function systemText(source) {
-  return `${ENGLISH_SYSTEM}\n${articlesFor(source)}`;
+  return `${ENGLISH_SYSTEM}\n${namesFor(source)}`;
 }
 
 /** Text from the person or the team, made safe to put between our tags. PURE. */
@@ -223,19 +261,20 @@ export async function rewrite(env, input, { fetchImpl = fetch, now = new Date(),
   const base = {
     systemInstruction: { parts: [{ text: systemText(input.source) }] },
     contents: [{ role: 'user', parts: [{ text: userText(input) }] }],
-    generationConfig: { maxOutputTokens: 4096, thinkingConfig: { thinkingLevel: 'low' } },
+    // 0.3: measured 12 Nov 2026, Flash-Lite at its default sometimes dropped a small fact ("top right", "save").
+    generationConfig: { maxOutputTokens: 2048, temperature: TEMPERATURE },
   };
   const chain = modelChain(env);
   let busy = false;
   for (const model of chain) {
     let r;
     try {
-      r = await ask(env, model, base, fetchImpl, timeoutMs);
-      // A model that does not take a thinking level: once more without it.
-      if (r.status === 400 && /thinking/i.test(r.text)) {
-        log(`[hq-english] ${model} refused the thinking level, asking without it`);
-        const { thinkingConfig, ...gen } = base.generationConfig;
+      // The lowest thinking level the model takes; a refusal (400 naming thinking) moves to the next, then none.
+      for (const level of [...THINKING_LEVELS, null]) {
+        const gen = level ? { ...base.generationConfig, thinkingConfig: { thinkingLevel: level } } : base.generationConfig;
         r = await ask(env, model, { ...base, generationConfig: gen }, fetchImpl, timeoutMs);
+        if (!(r.status === 400 && /thinking/i.test(r.text))) break;
+        log(`[hq-english] ${model} refused thinking level ${level || 'none'}, trying the next`);
       }
     } catch (e) {
       log(`[hq-english] ${model} did not answer (${e instanceof Error ? e.name : 'error'}), trying the next`);

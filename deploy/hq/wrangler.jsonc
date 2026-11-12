@@ -44,8 +44,9 @@
     "ACCESS_TEAM": "",
     "ACCESS_AUD": "",
     "HQ_GITHUB_REPO": "aucksy/ForgeAI",
-    // The English helper's model (english.js). A 404 (retired) falls back to gemini-pro-latest, then gemini-flash-latest.
-    "GEMINI_MODEL": "gemini-3.1-pro-preview"
+    // The English helper's model (english.js): about 5 paise a rewrite (12 Nov 2026). Google shuts it down on
+    // 7 May 2027; a 404 falls back to gemini-flash-lite-latest, gemini-flash-latest, then gemini-pro-latest.
+    "GEMINI_MODEL": "gemini-3.1-flash-lite"
   },
   // The same small Cloudflare database as the gym panel: feedback, leads, AI usage and AI limits
   // (tables: deploy/panel/migrations). HQ reads them and changes statuses and limits.

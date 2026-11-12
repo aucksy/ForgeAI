@@ -6,10 +6,14 @@ import { test } from 'node:test';
 import { handleApi } from './api.js';
 import {
   BACKUP_MODELS,
+  PRICES,
   DEFAULT_MODEL,
   PROBE_MODELS,
   TIER_KEY,
-  articlesFor,
+  THINKING_LEVELS,
+  namesFor,
+  priceOf,
+  systemText,
   clearEnglishMemo,
   costRupees,
   isFreeTier,
@@ -163,10 +167,13 @@ test('the prompt holds this question, its AI answer and the draft, and nothing o
     const all = allText(c.body);
     assert.ok(!all.includes('OTHER PERSON') && !all.includes('9876500000') && !all.includes('Flat 7'), 'no other member data');
   }
-  // The instructions: englishPrompt.js first, then the member app's articles.
+  // The instructions: englishPrompt.js first, then the member app's name list (not whole articles).
   const system = sent.systemInstruction.parts[0].text;
   assert.ok(system.startsWith(ENGLISH_SYSTEM));
-  assert.ok(system.includes(articlesFor('member')));
+  assert.ok(system.includes(namesFor('member')));
+  // The lowest thinking level is asked for first (cost: thinking is billed as output).
+  assert.equal(sent.generationConfig.thinkingConfig.thinkingLevel, THINKING_LEVELS[0]);
+  assert.equal(sent.generationConfig.temperature, 0.3, 'low, so the draft facts stay');
   // The page cannot slip another message in: only id and draft are read.
   const net2 = fakeNet((model, body) => res(200, answer(isProbe(body) ? 'OK' : 'Done.')));
   await call('POST', '/api/english/rewrite', { id: 1, draft: 'ok', question: ROWS[2].text, aiAnswer: 'Flat 7' }, env(), net2);
@@ -282,6 +289,26 @@ test('refusals before Google: empty draft, unknown message, a bad id', async () 
   assert.equal(net.calls.length, 0);
 });
 
+test('a model that refuses the lowest thinking level is asked again with the next, then with none', async () => {
+  clearEnglishMemo();
+  const warn = console.warn;
+  console.warn = () => {};
+  try {
+    const net = fakeNet((model, body) => {
+      if (isProbe(body)) return res(200, answer('OK'));
+      if (body.generationConfig.thinkingConfig) return res(400, { error: { code: 400, message: 'Thinking level is not supported for this model.' } });
+      return res(200, answer('Done without thinking.'));
+    });
+    const out = await call('POST', '/api/english/rewrite', { id: 1, draft: 'hello there' }, env(), net);
+    assert.equal(out.status, 200);
+    assert.equal(out.body.model, DEFAULT_MODEL, 'the same model, not a backup');
+    const levels = net.calls.filter((c) => !isProbe(c.body)).map((c) => c.body.generationConfig.thinkingConfig?.thinkingLevel ?? 'none');
+    assert.deepEqual(levels, [...THINKING_LEVELS, 'none']);
+  } finally {
+    console.warn = warn;
+  }
+});
+
 test('pure parts: free-tier reading, tags kept out, cost, words', () => {
   assert.equal(isFreeTier(429, JSON.stringify(FREE_429)), true);
   assert.equal(isFreeTier(429, '{"error":{"status":"RESOURCE_EXHAUSTED","message":"Too many requests"}}'), false, 'a paid key that is busy');
@@ -297,11 +324,23 @@ test('pure parts: free-tier reading, tags kept out, cost, words', () => {
   assert.equal(replyText(null), '');
   assert.ok(Math.abs(costRupees('gemini-3.1-pro-preview', 1e6, 0) - 176) < 0.01);
   assert.ok(costRupees('gemini-flash-latest', 1e6, 0) < costRupees('gemini-pro-latest', 1e6, 0));
-  assert.deepEqual(modelChain({ GEMINI_MODEL: 'gemini-pro-latest' }), ['gemini-pro-latest', 'gemini-flash-latest']);
-  // Gym owners get the admin app's articles, members the member app's.
-  assert.notEqual(articlesFor('admin'), articlesFor('member'));
-  assert.ok(articlesFor('admin').includes('Use the Today page'));
-  assert.ok(!articlesFor('member').includes('Use the Today page'));
+  // Real prices (pricing page, 12 Nov 2026); an unknown model is priced by its family.
+  assert.deepEqual(priceOf('gemini-3.1-flash-lite'), { in: 0.25, out: 1.5 });
+  assert.deepEqual(priceOf('gemini-flash-lite-latest'), PRICES.lite);
+  assert.deepEqual(priceOf('gemini-9-flash'), PRICES.flash);
+  assert.deepEqual(priceOf('gemini-pro-latest'), PRICES.pro);
+  // A typical rewrite (measured: about 1,750 tokens in, 100 out) costs a few paise on the default model.
+  assert.ok(costRupees(DEFAULT_MODEL, 1750, 100) < 0.1, 'under 10 paise');
+  assert.match(DEFAULT_MODEL, /flash/);
+  assert.equal(modelChain({}).at(-1), 'gemini-pro-latest', 'Pro only as the last resort');
+  assert.deepEqual(modelChain({ GEMINI_MODEL: 'gemini-flash-latest' }), ['gemini-flash-latest', 'gemini-flash-lite-latest', 'gemini-pro-latest']);
+  // Gym owners get the admin app's names, members the member app's; names only, a fraction of the articles.
+  assert.notEqual(namesFor('admin'), namesFor('member'));
+  assert.ok(namesFor('admin').includes('+ Add member') && namesFor('admin').includes('Use the Today page'));
+  assert.ok(!namesFor('member').includes('Use the Today page'));
+  assert.ok(namesFor('member').includes('Pause my plan'));
+  assert.ok(!/\d/.test(namesFor('member').split('Names:')[1]), 'no worked examples with numbers');
+  assert.ok(systemText('admin').length < 9000 && systemText('member').length < 9000, 'the instructions stay small');
   for (const code of ['GEMINI_KEY_MISSING', 'GEMINI_FREE_TIER', 'GEMINI_KEY_BAD', 'GEMINI_TIER_UNKNOWN', 'GEMINI_BUSY', 'GEMINI_FAILED', 'DRAFT_EMPTY']) {
     assert.notEqual(errorWords(code), errorWords('SOMETHING_ELSE'), `${code} has its own words`);
     assert.ok(!/[A-Z]{2,}_/.test(errorWords(code)), `${code} words show no code`);
