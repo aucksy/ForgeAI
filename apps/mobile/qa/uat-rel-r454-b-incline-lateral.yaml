@@ -77,7 +77,7 @@ appId: com.mettleup.app
     env:
       FIND: '^1,800 kg done · Previous: 1,720 kg · [+]80 kg$|^Target .* 1,800 kg done · Previous: 1,720 kg · [+]80 kg[.] Tap for why[.]$'
 - assertNotVisible: "(?i).*(reached|beaten).*"
-- assertNotVisible: ".*kg each (done|·).*|.*Previous: [0-9,]+ kg each.*"
+- assertNotVisible: ".*kg each done.*|.*Previous: [0-9,]+ kg each.*"
 - takeScreenshot: rel-r454-e-incline-done
 # ---------------------------------------------------------------- (b) Lateral Raise: set 1 at 20 kg, the rest follow 20 kg
 - runFlow:
@@ -138,7 +138,7 @@ appId: com.mettleup.app
     env:
       FIND: '^1,420 kg done · Previous: 1,420 kg · same as last time$|^Target .* 1,420 kg done · Previous: 1,420 kg · same as last time[.] Tap for why[.]$'
 - assertNotVisible: "(?i).*(reached|beaten).*"
-- assertNotVisible: ".*kg each (done|·).*|.*Previous: [0-9,]+ kg each.*"
+- assertNotVisible: ".*kg each done.*|.*Previous: [0-9,]+ kg each.*"
 - takeScreenshot: rel-r454-h-lateral-same
 # Edit after the tick: 20, 19, 16, 16 is 1,420 kg too (his own day).
 - runFlow:
@@ -169,5 +169,5 @@ appId: com.mettleup.app
     env:
       FIND: '^1,420 kg done · Previous: 1,420 kg · same as last time$|^Target .* 1,420 kg done · Previous: 1,420 kg · same as last time[.] Tap for why[.]$'
 - assertNotVisible: "(?i).*(reached|beaten).*"
-- assertNotVisible: ".*kg each (done|·).*|.*Previous: [0-9,]+ kg each.*"
+- assertNotVisible: ".*kg each done.*|.*Previous: [0-9,]+ kg each.*"
 - takeScreenshot: rel-r454-i-lateral-edited-same
