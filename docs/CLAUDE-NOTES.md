@@ -7,6 +7,11 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-465. F201 go: build the AI assistant for gym owners, paid with AI credits (replaces "Pro + AI") — 12 Nov 2026
+He said (verbatim in docs/f201-ai-assistant/00-START-HERE.md): implement F201 "accurately and very thoroughly"; design the agentic AI with all the useful tasks, not just the Diwali message; show new owners a list of common uses; typing plus good voice so he can speak Hindi; the AI drafts, shows it, then sends it in the app. "You're the boss. You make all the right decisions." Same turn: replace every place the AI plan is mentioned with the new offer; asked whether every task costs the same.
+My answer (chat): no. A question ~Rs 0.3, a group message ~Rs 0.5-1, a trainer plan ~Rs 1.5-3, voice +Rs 0.1-0.3. Plan: fixed credits per task type, shown before Send; numbers set after research.
+What I did: resume folder docs/f201-ai-assistant/ (worktree D:\Apps\ForgeAI\wt-f201); a code-map helper and a research helper (use cases, credit pricing, Hindi voice). Limits kept: payments test mode, live migration and privacy wording need his yes.
+
 ## R-464. Privacy notice: Find my gym and Tell my gym lines; panel redeployed — 12 Nov 2026
 He said (12 Nov 2026, in the main chat, via the coordinator): "Both yes" to two lines, word for word:
 "Find my gym: if you check your mobile number in the app, we look for it on the member lists of gyms that use MettleUp,
