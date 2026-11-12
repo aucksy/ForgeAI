@@ -392,11 +392,17 @@ appId: com.mettleup.app
     centerElement: true
     timeout: 10000
 - tapOn: "^Metres$"
+# "Abs" is a chip twice: Main muscle, and Also works (optional) further down. Until a main muscle
+# is picked both show, and a plain tap picked the second (owner phone, run 43205683435: part J saved
+# nothing, "Pick a main muscle"). Centre the Main muscle label, then tap the first Abs below it.
 - scrollUntilVisible:
-    element: "^Abs$"
+    element: "^Main muscle$"
     centerElement: true
     timeout: 10000
-- tapOn: "^Abs$"
+- tapOn:
+    text: "^Abs$"
+    below: "^Main muscle$"
+    index: 0
 - scrollUntilVisible:
     element: "^Other$"
     centerElement: true

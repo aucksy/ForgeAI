@@ -378,11 +378,17 @@ appId: com.mettleup.app
       FIND: '^Time$'
 - tapOn: "^Time$"
 # Owner profile (360 dp, font 1.3): the muscle and gear chips run past the screen's edge.
+# "Abs" is a chip twice: Main muscle, and Also works (optional) further down. Until a main muscle
+# is picked both show, and a plain tap picked the second (owner phone, run 43205683435: part J saved
+# nothing, "Pick a main muscle"). Centre the Main muscle label, then tap the first Abs below it.
 - scrollUntilVisible:
-    element: "^Abs$"
+    element: "^Main muscle$"
     centerElement: true
     timeout: 15000
-- tapOn: "^Abs$"
+- tapOn:
+    text: "^Abs$"
+    below: "^Main muscle$"
+    index: 0
 - scrollUntilVisible:
     element: "^Bodyweight$"
     centerElement: true
