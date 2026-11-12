@@ -7,6 +7,12 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-471. Panel logic done; two calls made under his pricing delegation — 12 Nov 2026
+Panel builder (a22c) finished the assistant logic (CI 43255510354, 43256824627; 59 tests). It found: credits are
+charged per task, not per action; plans were template picks sold at 3 credits; the panel blocked the microphone
+(fixed). Decided: one card = one task = one charge; plans are AI-written for the member (3 credits stay), never a
+template sold as AI. Server free-credit rules (R-470) are with the server builder. Screen step started.
+
 ## R-470. Free credits only for yearly plans; a small taste in the trial — 12 Nov 2026
 He said: no free credits in the trial (costs money); trial users can buy packs. Free credits only when a gym pays
 for a YEARLY plan, not monthly; I decide 50 or 100; show it on the website for yearly. The button is always there.

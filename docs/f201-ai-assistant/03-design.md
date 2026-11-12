@@ -93,6 +93,10 @@ Real AI cost (Haiku 5.5 at $0.10/M in, $0.50/M out, help.js rates): question ~Rs
 - **Asking is free.** Voice is free. Rewrites are free. Errors, questions back and cancelled drafts are free.
 - **A credit is spent only when a task is DONE**: a message sent, a member/payment/enquiry/expense saved = 1 credit.
   A workout or diet plan saved = 3 credits. The cost is printed on the button before he taps it.
+  **R-471 (12 Nov):** a plan costs 3 credits only because the AI WRITES it for that member (goal, level, days a
+  week, the gym's own exercise list); a plan merely picked from a ready-made template is not sold as AI. **One card =
+  one task = one charge:** a request that makes two things (renew Rahul AND message him) shows two cards, each with
+  its own button and price, each saved as its own task, so a refund never undoes the other card.
 - **Free credits (owner, 12 Nov, R-470 — replaces the old 30 welcome + 20/60 a month):**
   - **Trial: 20 starter credits, once per gym** (reason 'welcome'), so an owner can taste it. Real AI cost to us
     about Rs 2-4 a gym. No monthly free credits during the trial.
