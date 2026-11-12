@@ -67,9 +67,25 @@ match, he picks; if none, "Add as new member?"). Money rows are bold. Save uses 
 `saveWorkoutPlan` as a DRAFT for the trainer to check (never sent straight to a member). v1.1 if the plan schema
 makes v1 too big; the catalogue entry exists from day one with "Coming soon" never shown (rule: no lookalike stubs).
 
-### E. Talk back (FREE)
-`ask_back` {question, options[]} when the request is unclear ("Which Rahul? Rahul Sharma / Rahul Verma").
-`cannot_do` {reason} for anything outside the catalogue ("I can't change prices yet. Open Plans to do it.").
+### E. Talk back and show the way (FREE)
+His rule (12 Nov 2026): "a holistic solution". It answers questions from the gym's data, helps with settings,
+and when it cannot do a task itself it shows WHERE to do it, with a button that opens that page.
+- `ask_back` {question, options[]} when the request is unclear ("Which Rahul? Rahul Sharma / Rahul Verma").
+- `open_page` {page, steps[], why} for anything it cannot do itself, and as the follow-up of every how-to answer:
+  "Plan prices change in Plans. Tap the plan, then Edit price." + button "Open Plans". `page` is an id from a fixed
+  PAGE CATALOGUE in our code (every route in CrmApp `Screen()` with its owner-facing name and what you do there, e.g.
+  plans, members, member-add, dues, collections, expenses, messages, member-messages, attendance/visits, enquiries,
+  trainers, workouts, diet, settings sections (gym details, timings, batches, member app, QR check-in, staff, billing,
+  logo/colours), growth, reports, import, help). The AI never invents a path; unknown = the help search.
+- `how_to` answers come from the help articles (existing /api/help), each with its `open_page` button(s).
+- `cannot_do` {reason} only when not even a page fits ("I can't call members for you.").
+
+### F. More questions from the gym's data (read-only, FREE)
+Beyond section A: member counts (active, by plan, by gender, by batch), new joins and leavers in a period, plan list
+with prices, revenue by plan, expenses by category and profit, today's check-ins and who is inside, enquiries by
+status and follow-ups due today, trainers' PT members and sessions, members without the app, birthdays this week,
+one member's full picture (plan, dues, last visit, trainer). Each answer = our own report numbers + "Open <page>".
+If a question needs data we do not have, it says so and offers the nearest report, never a guess.
 
 ## 3. Credits (prices decided by Claude, 12 Nov, under his delegation)
 Real AI cost (Haiku 5.5 at $0.10/M in, $0.50/M out, help.js rates): question ~Rs 0.05, draft ~Rs 0.1, plan
