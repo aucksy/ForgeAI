@@ -166,7 +166,7 @@ describe('R-454 keeps the live line changing with each set (owner, 12 Nov 2026)'
     expect(kgLiveLine(p, g, total, weight)).toBe("Next set: 40 kg × 14 · Done: 360 of today's 1,800 kg");
   });
 
-  it('(b) set 1 done 15: the later aims stay 12, 11, 9 (never dropped), then "beaten" or "reached"', () => {
+  it('(b) set 1 done 15: the later aims stay 12, 11, 9 (never dropped), then the done line', () => {
     const rows = liveRows(card(15));
     const g = kgProgress(p, rows);
     expect(g.done).toBe(600);
@@ -174,7 +174,7 @@ describe('R-454 keeps the live line changing with each set (owner, 12 Nov 2026)'
     expect(kgLiveLine(p, g, total, weight)).toBe("Next set: 40 kg × 12 · Done: 600 of today's 1,800 kg");
     const all = (reps: number[]): KgRow[] => reps.map((r) => ({ weightKg: 40, reps: r, done: true, isWarmup: false }));
     expect(kgLiveLine(p, kgProgress(p, all([15, 12, 11, 9])), total, weight)).toBe('1,880 kg done · Previous: 1,720 kg · +160 kg');
-    expect(kgLiveLine(p, kgProgress(p, all([13, 12, 11, 9])), total, weight)).toBe("Today's 1,800 kg reached");
+    expect(kgLiveLine(p, kgProgress(p, all([13, 12, 11, 9])), total, weight)).toBe('1,800 kg done · Previous: 1,720 kg · +80 kg');
   });
 
   it('(c) whatever set 1 did, no open set hints or aims under last time\'s same set', () => {
@@ -217,6 +217,22 @@ describe('owner, 12 Nov 2026: the finished line says done and Previous', () => {
     const rp = repPlan(t, last)!;
     const g = kgProgress(rp, [16, 15, 15].map((reps) => ({ weightKg: null, reps, done: true, isWarmup: false })));
     expect(repLiveLine(rp, g)).toBe('46 reps done · Previous: 43 · +3');
+  });
+
+  // Owner, 12 Nov 2026: one format for every exercise and every case; "reached" / "beaten" are gone.
+  it('one format: equal is "same as last time", nothing before is "First time", kg and reps alike', () => {
+    const kgFirst = kgPlan(his(), [])!;
+    expect(kgFirst.last).toBeNull();
+    expect(kgLiveLine(kgFirst, kgProgress(kgFirst, all([13, 12, 11, 9])), total, weight)).toBe('1,800 kg done · First time');
+    const t = { action: 'hold' as const, targetWeightKg: 0, targetSets: 3, repGoal: 15, setGoals: [15, 15, 14], topSetOnly: false, logType: 'reps' as const, bodyweightOnly: true };
+    const reps = (r: number[]) => r.map((n) => ({ weightKg: null, reps: n, done: true, isWarmup: false }));
+    const same = repPlan(t, [15, 15, 14].map((n) => ({ weightKg: 0, reps: n })))!;
+    expect(repLiveLine(same, kgProgress(same, reps([15, 15, 14])))).toBe('44 reps done · Previous: 44 · same as last time');
+    const first = repPlan(t, [])!;
+    expect(repLiveLine(first, kgProgress(first, reps([15, 15, 14])))).toBe('44 reps done · First time');
+    for (const l of [kgLiveLine(p, kgProgress(p, all([13, 12, 11, 9])), total, weight), repLiveLine(first, kgProgress(first, reps([16, 15, 14])))]) {
+      expect(l).not.toMatch(/reached|beaten|Today's/);
+    }
   });
 });
 
@@ -428,6 +444,16 @@ describe('R-454: a set done at another weight than planned (his Lateral Raise, 1
     const g = kgProgress(p, rows);
     expect(g.next.map((s) => s.reps)).toEqual([17, 15, 19]);
     expect(kgLiveLine(p, g, total, weight)).toBe("Next set: 20 kg × 17 · Done: 400 of today's 1,420 kg");
+  });
+
+  // Owner, 12 Nov 2026 (screenshot): this card read "Today's 1,420 kg reached" with no previous number
+  // while another exercise read "... done · Previous: ...". One format for every case now.
+  it('his finish, 20 kg x 20, 19, 16, 16 = 1,420 after 1,420: "same as last time", never "reached"', () => {
+    const p = kgPlan(t, lastSets)!;
+    const rows = [20, 19, 16, 16].map((reps): KgRow => ({ weightKg: 20, reps, done: true, isWarmup: false }));
+    const line = kgLiveLine(p, kgProgress(p, rows), total, weight);
+    expect(line).toBe('1,420 kg done · Previous: 1,420 kg · same as last time');
+    expect(line).not.toMatch(/reached|beaten/);
   });
 
   it('no history at the weight done: the planned aim moved by the kilos, never under it (22.5 kg: 13 -> 14)', () => {

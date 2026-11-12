@@ -80,10 +80,10 @@ describe('R-350: the owner T-Bar Row', () => {
     expect(g.left).toBe(270);
     const line = kgLiveLine(p, g, total, weight);
     expect(line).toContain('780 of today\'s 1,050 kg');
-    expect(line).not.toMatch(/beaten|reached/);
-    // Passing 1,050 is "beaten"; exactly 1,050 is "reached".
+    expect(line).not.toMatch(/beaten|reached| done · /);
+    // Owner, 12 Nov 2026: one finished format; exactly last time's 1,050 is "same as last time".
     expect(kgLiveLine(p, kgProgress(p, [done(30, 13), done(30, 13), done(30, 10)]), total, weight)).toBe('1,080 kg done · Previous: 1,050 kg · +30 kg');
-    expect(kgLiveLine(p, kgProgress(p, [done(30, 13), done(30, 13), done(30, 9)]), total, weight)).toBe("Today's 1,050 kg reached");
+    expect(kgLiveLine(p, kgProgress(p, [done(30, 13), done(30, 13), done(30, 9)]), total, weight)).toBe('1,050 kg done · Previous: 1,050 kg · same as last time');
   });
 
   it('RPE never changes the numbers (the same reps without RPE give the same Target)', () => {

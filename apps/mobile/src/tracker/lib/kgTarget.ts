@@ -373,8 +373,8 @@ export function repSetLines(p: KgPlan): string[] {
 
 /**
  * R-60, during the workout: "20 of 45 reps · next 12, 13"; past the plan (owner, 12 Nov 2026)
- * "47 reps done · Previous: 43 · +4" (`doneLine`). R-146: exactly the plan with nothing to compare is
- * "Today's 45 reps reached". PURE.
+ * "47 reps done · Previous: 43 · +4", "45 reps done · Previous: 45 · same as last time" or
+ * "45 reps done · First time" (`doneLine`). PURE.
  */
 export function repLiveLine(p: KgPlan, g: KgProgress): string {
   // Fresh-eyes review (5 Nov 2026): the box already shows a green tick, so no second "✓" in the words.
@@ -382,15 +382,12 @@ export function repLiveLine(p: KgPlan, g: KgProgress): string {
   // word of last time): with last time's same sets to compare, the line names last time's total.
   // Owner, 12 Nov 2026 ("not proper English ... Make it simpler"): "46 reps done · Previous: 43 · +3".
   const done = Math.round(g.done);
-  const last = p.last != null && !p.setDiff ? Math.round(p.last) : null;
   const plain = (n: number): string => `${Math.round(n)}`;
-  if (kgBeaten(g)) {
-    if (last != null && done >= last) return doneLine(p, repsText(done), done, plain);
-    if (done === Math.round(p.total)) return `Today's ${repsText(p.total)} reached`;
-    return doneLine(p, repsText(done), done, plain);
-  }
+  // Owner, 12 Nov 2026 (his Lateral Raise read "Today's 1,420 kg reached" with no previous number, another
+  // exercise the done words): one format for every finished line, never "reached" or "beaten".
+  if (kgBeaten(g)) return doneLine(p, done, plain, repsText);
   // R-366: every set done, under today's goal but past last time: that is still a win, said so.
-  if (repsBeatLast(p, g)) return doneLine(p, repsText(done), done, plain);
+  if (repsBeatLast(p, g)) return doneLine(p, done, plain, repsText);
   // R-300 (owner, 3 Nov 2026): never "add a set" (extra sets cost recovery and sleep); next time aims again.
   if (g.next.length === 0) return `Done: ${Math.round(g.done)} of ${repsText(p.total)} · ${repsText(g.left)} short, fine for today`;
   // Owner, 12 Nov 2026 (Chest Dip, one set left): one open set reads "Next set: 9 reps", not "Next sets".
@@ -401,16 +398,26 @@ export function repLiveLine(p: KgPlan, g: KgProgress): string {
  * Owner, 12 Nov 2026 (his green line "Today's 1,760 kg beaten (1,840 kg done)": "not proper English...
  * once it is done, it should be done today and previous... Make it simpler."): the finished line names
  * what was done, the previous workout's total over the same sets (`last`, as the plan compares) and the
- * difference: "1,840 kg done · Previous: 1,720 kg · +120 kg", "46 reps done · Previous: 43 · +3". A
- * different number of sets than last time adds its note ("+1 set"). Never "last time" here. PURE.
+ * difference: "1,840 kg done · Previous: 1,720 kg · +120 kg", "46 reps done · Previous: 43 · +3". Same
+ * owner, later that day: equal reads "same as last time", no previous workout "First time", and this is
+ * the ONLY finished line (no "reached" / "beaten"). A different number of sets than last time adds its
+ * note ("+1 set"). PURE.
  */
-function doneLine(p: KgPlan, doneText: string, done: number, fmt: TotalFmt): string {
-  const parts = [`${doneText} done`];
-  if (p.last != null) {
+function doneLine(p: KgPlan, done: number, fmt: TotalFmt, doneFmt: TotalFmt = fmt, noise = 0): string {
+  // T76: a total within the unit-switch allowance of the previous one IS the previous one (3,969 lb typed
+  // for 1,800 kg reads "3,968 lb done · Previous: 3,968 lb · same as last time", never +1 lb by a hair).
+  const same = p.last != null && Math.abs(done - p.last) <= noise;
+  const parts = [`${doneFmt(same && p.last != null ? p.last : done)} done`];
+  // Owner, 12 Nov 2026: one format everywhere: "+120 kg", "same as last time" when equal (his Lateral
+  // Raise 1,420 after 1,420), "First time" with no previous workout to compare.
+  if (p.last == null) parts.push('First time');
+  else {
     parts.push(`Previous: ${fmt(p.last)}`);
     const d = done - p.last;
     const shown = fmt(Math.abs(d));
-    if (Math.round(Math.abs(d)) > 0 && /[1-9]/.test(shown)) parts.push(`${d > 0 ? '+' : '-'}${shown}`);
+    // T76: within the unit-switch allowance it is the same total, never "+3 kg" by a hair.
+    if (!same && Math.round(Math.abs(d)) > 0 && /[1-9]/.test(shown)) parts.push(`${d > 0 ? '+' : '-'}${shown}`);
+    else parts.push('same as last time');
   }
   if (p.setDiff) {
     const n = Math.abs(p.setDiff);
@@ -452,8 +459,8 @@ export function kgSetLines(p: KgPlan, weight: WeightFmt): string[] {
 }
 
 /**
- * Every kilo to beat is lifted: the live line turns green (R-65) and says "reached" (exactly the
- * plan, R-146) or "beaten" (more). PURE.
+ * Every kilo to beat is lifted: the live line turns green (R-65) and says what was done against the
+ * previous workout (`doneLine`). PURE.
  */
 export function kgBeaten(g: KgProgress): boolean {
   return g.left <= Math.max(1e-9, g.noise ?? 0);
@@ -464,16 +471,13 @@ export function kgBeaten(g: KgProgress): boolean {
  * 2026) "780 kg done · Previous: 720 kg · +60 kg" (`doneLine`).
  * UAT A-10 / B-09 (30 Oct 2026): "0 of 1,500 kg · next 75 kg × 5, 5, 5, 5" was read twice. The next set
  * leads, alone (the sets after it are on their own rows); the running total follows.
- * R-146 (owner, 27 Oct 2026): done = the plan exactly (as it reads on screen) is "765 kg reached ✓";
- * "beaten" only when more was lifted. PURE.
+ * R-146's "765 kg reached" is retired (owner, 12 Nov 2026: one finished format for every case). PURE.
  */
 export function kgLiveLine(p: KgPlan, g: KgProgress, total: TotalFmt, weight: WeightFmt): string {
   // Fresh-eyes review (5 Nov 2026): the box already shows a green tick, so no second "✓" in the words.
-  if (kgBeaten(g)) {
-    // T76: within the unit-switch allowance it is the same total ("reached"), never "beaten" by a hair.
-    if (total(g.done) === total(p.total) || g.done <= p.total + (g.noise ?? 0)) return `Today's ${total(p.total)} reached`;
-    return doneLine(p, total(g.done), g.done, total);
-  }
+  // Owner, 12 Nov 2026: every finished line the same way ("1,420 kg done · Previous: 1,420 kg · same as
+  // last time"), never "Today's X reached" / "beaten" (R-146's "reached" is retired).
+  if (kgBeaten(g)) return doneLine(p, g.done, total, total, g.noise ?? 0);
   // Release review: only the number before "of" ("410 of 765 kg each", never "410 kg of 765 kg each").
   const doneN = total(g.done).trim().split(/\s+/)[0];
   // R-300 (owner, 3 Nov 2026): never "add a set" (extra sets cost recovery and sleep); next time aims again.

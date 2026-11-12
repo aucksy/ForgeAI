@@ -80,19 +80,19 @@ describe('R-366: the owner Pull-Up', () => {
 describe('R-366: reps to beat never under last time (as R-351 for kg)', () => {
   const lower = { action: 'hold' as const, targetWeightKg: 0, targetSets: 3, repGoal: 12, setGoals: [12, 10, 8], topSetOnly: false, logType: 'reps' as const, bodyweightOnly: false };
   const last = [12, 11, 10].map((reps) => ({ weightKg: 0, reps }));
-  it('a plan of 30 under last time\'s 33 aims at 33, and equal is "reached", not "beat"', () => {
+  it('a plan of 30 under last time\'s 33 aims at 33, and equal is "same as last time" (owner, 12 Nov 2026)', () => {
     const p = repPlan(lower, last)!;
     expect(p.total).toBe(33);
     expect(p.planned).toBe(30);
     expect(repsToBeatLine(p)).toBe('33 reps to beat · your previous total');
     const eq = kgProgress(p, [done(12), done(11), done(10)]);
     expect(kgBeaten(eq)).toBe(true);
-    expect(repLiveLine(p, eq)).toBe('33 reps done · Previous: 33');
+    expect(repLiveLine(p, eq)).toBe('33 reps done · Previous: 33 · same as last time');
     expect(repLiveLine(p, kgProgress(p, [done(12), done(10), done(8)]))).toBe('Done: 30 of 33 reps · 3 reps short, fine for today');
   });
-  it('no last time to compare (first time, or another set count): today\'s words as before', () => {
+  it('no last time to compare (first time, or another set count): "First time", or the set count named', () => {
     const p = repPlan(lower, [])!;
-    expect(repLiveLine(p, kgProgress(p, [done(12), done(10), done(8)]))).toBe("Today's 30 reps reached");
+    expect(repLiveLine(p, kgProgress(p, [done(12), done(10), done(8)]))).toBe('30 reps done · First time');
     const two = repPlan(lower, last.slice(0, 2))!;
     expect(repLiveLine(two, kgProgress(two, [done(13), done(12), done(9)]))).toBe('34 reps done · Previous: 23 · +11 · +1 set'); // first 2 sets never under last time's 23 (R-351)
   });

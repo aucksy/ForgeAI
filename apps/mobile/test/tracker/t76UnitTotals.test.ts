@@ -30,21 +30,22 @@ const done = (kg: number, reps: number): KgRow => ({ weightKg: kg, reps, done: t
 const open = (kg: number, reps: number): KgRow => ({ weightKg: null, reps: null, done: false, isWarmup: false, hintKg: kg, hintReps: reps });
 
 describe('T76: the kg to beat after a switch to lb', () => {
-  it('regression: 132.3 lb x 10 x 3 after 60 kg x 10 x 3 is "reached", never "beaten" by a hair', () => {
+  // Owner, 12 Nov 2026: one finished format; within the unit-switch allowance it is "same as last time".
+  it('regression: 132.3 lb x 10 x 3 after 60 kg x 10 x 3 is "same as last time", never "+1 lb" by a hair', () => {
     const p = plan(60, 10);
     const g = kgProgress(p, [done(lb(132.3), 10), done(lb(132.3), 10), done(lb(132.3), 10)]);
     expect(kgBeaten(g)).toBe(true);
     const line = kgLiveLine(p, g, totalLb, weightLb);
-    expect(line).toBe("Today's 3,968 lb reached");
-    expect(line).not.toMatch(/beaten/);
+    expect(line).toBe('3,968 lb done · Previous: 3,968 lb · same as last time');
+    expect(line).not.toMatch(/beaten|reached|\+/);
   });
 
-  it('regression: 22.0 lb dumbbells for last time\'s 10 kg ones: "reached", never "1 lb short"', () => {
+  it('regression: 22.0 lb dumbbells for last time\'s 10 kg ones: "same as last time", never "1 lb short"', () => {
     const p = plan(10, 10);
     const g = kgProgress(p, [done(lb(22), 10), done(lb(22), 10), done(lb(22), 10)]);
     expect(g.short).toBe(false);
     expect(kgBeaten(g)).toBe(true);
-    expect(kgLiveLine(p, g, totalLb, weightLb)).not.toMatch(/short|beaten/);
+    expect(kgLiveLine(p, g, totalLb, weightLb)).toBe('661 lb done · Previous: 661 lb · same as last time');
   });
 
   it('positive: a real heavier weight in lb (135 lb) is still "beaten"', () => {
@@ -65,7 +66,7 @@ describe('T76: the kg to beat after a switch to lb', () => {
     const p = plan(60, 10);
     const g = kgProgress(p, [done(60, 10), done(60, 10), done(60, 10)]);
     expect(g.noise).toBeUndefined();
-    expect(kgLiveLine(p, g, totalKg, weightKg)).toBe("Today's 1,800 kg reached");
+    expect(kgLiveLine(p, g, totalKg, weightKg)).toBe('1,800 kg done · Previous: 1,800 kg · same as last time');
     const more = kgProgress(p, [done(60, 10), done(60, 10), done(60.25, 10)]);
     expect(kgLiveLine(p, more, totalKg, weightKg)).toBe('1,803 kg done · Previous: 1,800 kg · +3 kg');
     const mid = kgProgress(p, [done(60, 10), done(60, 10), open(60, 10)]);

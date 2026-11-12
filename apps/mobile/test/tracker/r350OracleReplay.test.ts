@@ -8,7 +8,7 @@
  *    never above the top unless that set already did more (R-454, owner, 12 Nov 2026: then exactly
  *    what it did), and never under what that set did last time; after a step the goals sit inside
  *    the range;
- *  - the kg to beat is never under last time's total, and "beaten/reached" never shows before the
+ *  - the kg to beat is never under last time's total, and the finished line ("... done · ...") never shows before the
  *    member's total passes last time's (checked set by set as the workout is ticked);
  *  - warm-ups (even typed the wrong way round, as the owner did) never change the suggestion;
  *  - state changes mid-history: the rep range, Weight jumps, the number of sets.
@@ -138,7 +138,8 @@ function replay(lift: Lift, seed: number, workouts = 500) {
         if (kgBeaten(g) && doneKg + 1e-9 < plan.total) bad(`"beaten" at ${doneKg} of ${plan.total}`);
         if (last.length === sets && kgBeaten(g) && doneKg + 1e-9 < lastTotal) bad(`"beaten" under last time's ${lastTotal}`);
         const line = kgLiveLine(plan, g, (kg) => `${kg} kg`, (kg) => `${kg} kg`);
-        if (/beaten|reached/.test(line ?? '') && doneKg + 1e-9 < plan.total) bad(`line "${line}" too early`);
+        // Owner, 12 Nov 2026: the finished line is now "<done> done · Previous: ..." (no "reached"/"beaten").
+        if (/beaten|reached| done · /.test(line ?? '') && doneKg + 1e-9 < plan.total) bad(`line "${line}" too early`);
       }
     }
     prevGoals.unshift(goals);
@@ -193,7 +194,7 @@ describe('R-364 edge and state-change cases', () => {
     const p = kgPlan(t, [{ weightKg: 30, reps: 13 }, { weightKg: 30, reps: 12 }, { weightKg: 30, reps: 10 }])!;
     const g = kgProgress(p, [row(30, 13), row(30, 13), { weightKg: null, reps: null, done: false, isWarmup: false, hintKg: 30, hintReps: 9 }]);
     expect(kgBeaten(g)).toBe(false);
-    expect(kgLiveLine(p, g, (kg) => `${kg} kg`, (kg) => `${kg} kg`)).not.toMatch(/beaten|reached/);
+    expect(kgLiveLine(p, g, (kg) => `${kg} kg`, (kg) => `${kg} kg`)).not.toMatch(/beaten|reached| done · /);
   });
 
   it('edit after a tick: lowering a done set\'s reps takes "beaten" away again', () => {
