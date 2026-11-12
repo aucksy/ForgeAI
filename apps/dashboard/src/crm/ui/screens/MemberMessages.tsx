@@ -23,7 +23,7 @@ import {
   talkLineHead,
   talkName,
   talkStatusLine,
-  waitingOf,
+  shownOf,
   type TalkFilter,
   type TalkList,
   type TalkThread,
@@ -79,7 +79,8 @@ export function MemberMessagesScreen() {
 
   const stale = (words: string): void => {
     setNote({ id: null, ok: false, words });
-    void fetchList();
+    // The badge in the menu counts the gone message too until it asks again.
+    void fetchList().then(refreshMemberMessageCount);
   };
 
   const replaced = (t: TalkThread): void => {
@@ -145,7 +146,7 @@ export function MemberMessagesScreen() {
                 value={shown}
                 onChange={(v) => setFilter(v as TalkFilter)}
                 options={filters.map((f) => {
-                  const n = waitingOf(load.data.threads, f);
+                  const n = shownOf(load.data.threads, f);
                   return { value: f, label: W.filter[f], count: n > 0 ? n : undefined };
                 })}
               />

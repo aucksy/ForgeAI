@@ -22,6 +22,7 @@ import {
   talkThreadAnswerFrom,
   talkThreadFrom,
   waitingOf,
+  shownOf,
   type TalkThread,
 } from '../../src/crm/logic/memberMessages';
 import * as api from '../../src/crm/shop/memberMessagesApi';
@@ -119,6 +120,10 @@ describe('the page', () => {
     expect(waitingOf(all, 'all')).toBe(2);
     expect(waitingOf(all, 'question')).toBe(1);
     expect(waitingOf(all, 'complaint')).toBe(0);
+    // The type buttons count every card they show, not only the waiting ones (fresh-eyes review, 12 Nov 2026).
+    expect(shownOf(all, 'all')).toBe(4);
+    expect(shownOf(all, 'question')).toBe(2);
+    expect(shownOf(all, 'complaint')).toBe(1);
   });
   it('who wrote each line, with when (India time)', () => {
     expect(talkLineHead(q, q.messages[0], TODAY)).toBe('Asha Verma · Today, 9:30 am');

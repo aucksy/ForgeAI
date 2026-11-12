@@ -169,9 +169,18 @@ export function splitTalk(list: readonly TalkThread[], filter: TalkFilter): { wa
   };
 }
 
-/** How many of a type wait, for the number on its button. PURE. */
+/** How many of a type wait for a reply. PURE. */
 export function waitingOf(list: readonly TalkThread[], filter: TalkFilter): number {
   return list.filter((t) => t.waiting && (filter === 'all' || t.kind === filter)).length;
+}
+
+/**
+ * The number on a type button: every card that button shows (waiting, replied and done), so "All 3" sits over
+ * three cards. A fresh-eyes review (12 Nov 2026) found "All 1" over three cards when it counted only the waiting
+ * ones; the waiting count lives in the "Waiting for a reply (n)" heading and the menu badge. PURE.
+ */
+export function shownOf(list: readonly TalkThread[], filter: TalkFilter): number {
+  return list.filter((t) => filter === 'all' || t.kind === filter).length;
 }
 
 /** The member's name as the page shows it. PURE. */
@@ -239,7 +248,7 @@ export const MEMBER_MESSAGE_WORDS = {
 /** Plain words for a refused reply or "done", or null when it is not one of these. PURE. */
 export function talkErrorWords(e: unknown): string | null {
   const t = e instanceof Error ? e.message : isObj(e) && typeof e.message === 'string' ? e.message : String(e ?? '');
-  if (/\bNOT_FOUND\b/.test(t)) return 'This message is no longer here. The member may have left the gym.';
+  if (/\bNOT_FOUND\b/.test(t)) return 'This message is no longer here, so nothing was sent or changed. The member may have left the gym.';
   if (/\bTHREAD_FULL\b/.test(t)) return MEMBER_MESSAGE_WORDS.full;
   if (/\bINVALID\b/.test(t)) return `Please type a reply (up to ${TALK_REPLY_MAX} letters).`;
   if (/\bSUSPENDED\b/.test(t)) return 'Your gym is paused, so replies cannot be sent now.';

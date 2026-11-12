@@ -75,7 +75,7 @@ export const TALK_WORDS = {
   you: 'You',
   fromGym: (name: string | null): string => (name ? `${name} from your gym` : 'Your gym'),
   anonTag: 'Sent without your name',
-  waiting: 'Sent. Waiting for a reply.',
+  waiting: 'Not seen by your gym yet. Waiting for a reply.',
   seen: 'Seen by your gym. Waiting for a reply.',
   done: 'Your gym marked this as done. Write back if you need more help.',
   newTag: 'New',
