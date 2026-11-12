@@ -7,6 +7,16 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-454. Rep goals never ask for fewer reps than last time at the same weight — 12 Nov 2026
+
+He said (12 Nov 2026), on his Incline Dumbbell Press (last time 40 kg x 13 @9, 12 @9.5, 10 @9.5, 8 @9.5, range top 12; the app aimed 40 x 12, 12, 11, 9, "Next set: 40 kg x 12 · Done: 0 of today's 1,760 kg"): "Never suggesting less than before." And later the same day: "ensure that we still have the logic of real-time changing the suggestions based on what you have done in a given set".
+
+The rule (code: tracker/engine/progression.ts, rule 1 `plusOne`, comment "R-454 (owner, 12 Nov 2026)"): at the SAME weight as last time, a set's rep goal = max(last time's reps on that set, min(top of range, last time's reps + 1)). His case: 13, 12, 11, 9 (1,800 kg, "+5% on last time"). Bodyweight reps (B1, repPlan) take the same floor set for set. Unchanged: the weight goes up only when every working set reaches the top (R2); weight steps (a different weight), long breaks (R1/R1b), the step back (R3), easy weeks keep their own goals; RPE never changes numbers; F73 long-rest sets are still never raised; a set planned past last time's sets copies the last one, capped as before; targetRepsMax stays the range's top (R-143 lift-up and the RPE nudge read the real range).
+
+Live suggestions (his second message): kgProgress is unchanged (behind -> missing reps go to the NEXT open set first, at most 2 above its hint; ahead -> later aims stay). One change in the set-row hint (fillForSet): its "never more than the row above just did" cap now stops at what that set did last time at the same weight (set 1 done 11 of 13 -> set 2 hints 12, never 11). Every screen reads the same goals: Target line, set-row hints, kg / reps to beat, live line, Today screen total (todayGoal), watch (gets the phone's row hints via livePlan). Shared TypeScript: Android and iPhone both; the Wear OS watch shows what the phone sends.
+
+Tests: test/tracker/r454RepFloor.test.ts (his exact case, live line cases a/b/c, top-of-range, below range, weight step, bodyweight reps).
+
 ## R-453. EU/UK privacy lines for the public Play launch, and the help AI capped at $80 a month — 12 Nov 2026
 
 He said (12 Nov 2026): the member app goes public on Google Play in all countries, EU/EEA and UK included; to adding privacy lines for Europe and the UK: "yes add those lines why not". On the help answers' AI cap: "Nah we dont have to stop on 500Rs / We have 100 dollars free credits from Claude every month / So let's keep it for 80 dollars max cieling".
