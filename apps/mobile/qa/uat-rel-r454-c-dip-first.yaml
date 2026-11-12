@@ -1,0 +1,104 @@
+# Part UAT, R-454 flow c: the same workout as flow b, its last two cards.
+# (c) his Chest Dip (reps only), last time 16, 15, 8: set 1 = 17 at RPE 8.5, set 2 = 14 at RPE 9.5. Owner, 12 Nov
+#   2026: the card said "Set 2 was very hard, so keep the same weight." on a move with no weight. Now: no "keep the
+#   same weight" anywhere (negative), no very-hard line at all here (set 1's extra rep covers set 2's missing one),
+#   the top line "Next set: 9 reps · Done: 31 of today's 40 reps" and set 3's row agree (9), and at the end
+#   "40 reps done · Previous: 39 · +1".
+# (e) first time ever (Dumbbell Pullover, added to the routine in flow a, never done): the box keeps its first-time
+#   words "First time · find a weight for 8–12 reps" and gets no total line, because a first time has no kilos to
+#   add up (the member picks the weight). The "<done> kg done · First time" words are reached only when a Target
+#   exists without a previous workout on the card (unit tests r454RepFloor, r454OneGreenRule).
+# Then the workout is finished. Pictures rel-r454-j..n-*.png.
+appId: com.mettleup.app
+---
+# ---------------------------------------------------------------- (c) Chest Dip: 17 @8.5, 14 @9.5
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Chest Dip set 1 reps"
+- takeScreenshot: rel-r454-j-dip-before
+- runFlow:
+    file: sub-type.yaml
+    env:
+      FIELD: "Chest Dip set 1 reps"
+      VALUE: " 17"
+- runFlow:
+    file: sub-uat-r439-rpe.yaml
+    env:
+      BUTTON: "Add RPE for Chest Dip set 1"
+      PICK: 'RPE 8\.5: .*'
+- extendedWaitUntil:
+    visible: 'Chest Dip set 1 complete\. Tap to undo'
+    timeout: 10000
+- runFlow: sub-uat-r439-clear.yaml
+- runFlow:
+    file: sub-type.yaml
+    env:
+      FIELD: "Chest Dip set 2 reps"
+      VALUE: " 14"
+- runFlow:
+    file: sub-uat-r439-rpe.yaml
+    env:
+      BUTTON: "Add RPE for Chest Dip set 2"
+      PICK: 'RPE 9\.5: .*'
+- extendedWaitUntil:
+    visible: 'Chest Dip set 2 complete\. Tap to undo'
+    timeout: 10000
+- runFlow: sub-uat-r439-clear.yaml
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Next set: 9 reps · Done: 31 of today's 40 reps$"
+- assertNotVisible: "(?i).*keep the same weight.*"
+- assertNotVisible: "(?i).*was very hard.*"
+- assertNotVisible: "^Next sets: .*"
+- takeScreenshot: rel-r454-k-dip-after-hard-set
+# The row aims for the same 9 the line names.
+- runFlow:
+    file: sub-uat-r454-hint.yaml
+    env:
+      EX: "Chest Dip"
+      N: "3"
+      KG: "none"
+      REPS: "9"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: '^40 reps done · Previous: 39 · \+1$'
+- assertNotVisible: "(?i).*keep the same weight.*"
+- assertNotVisible: "(?i).*(reached|beaten).*"
+- takeScreenshot: rel-r454-l-dip-done
+# ---------------------------------------------------------------- (e) first time ever: Dumbbell Pullover
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^First time · find a weight for \\d+–\\d+ reps$"
+- takeScreenshot: rel-r454-m-first-time-before
+- runFlow:
+    file: sub-uat-r439-set.yaml
+    env:
+      EX: "Dumbbell Pullover"
+      N: "1"
+      KG: "12"
+      REPS: "10"
+- runFlow:
+    file: sub-uat-r454-row.yaml
+    env:
+      EX: "Dumbbell Pullover"
+      PREV: "1"
+      N: "2"
+- runFlow:
+    file: sub-uat-r439-set.yaml
+    env:
+      EX: "Dumbbell Pullover"
+      N: "2"
+      KG: "12"
+      REPS: "10"
+# Its box is still only the first-time words: no total, no "Previous" made up for a first time.
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Target First time · find a weight for \\d+–\\d+ reps\\. Tap for why\\.$"
+- assertNotVisible: "^240 kg done.*"
+- takeScreenshot: rel-r454-n-first-time-after
+- runFlow: sub-uat-r439-finish.yaml

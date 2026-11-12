@@ -1,0 +1,249 @@
+# Part UAT, R-454 flow a (owner, 12 Nov 2026: "Never suggesting less than before", and the one finished line).
+# From a fresh install with the demo (the part runs gate-demo.yaml first): "Rate how hard each set felt" on (he
+# logs RPE; the Chest Dip case needs it), then "last time", his three exercises exactly as his screenshots had
+# them:
+#   Incline Dumbbell Press 40 kg x 13, 12, 10, 8 (= 1,720 kg; range 8-12),
+#   Lateral Raise 20 kg x 20, 17, 15, 19 (= 1,420 kg; range 10-15, so the plan moves up a weight),
+#   Chest Dip (reps only) 16, 15, 8 (= 39 reps).
+# Saved as a routine from the Profile feed (a card added on the spot gets no Target; a routine's rows do), and
+# Dumbbell Pullover (never done: the first-time case) added to the routine. The part then moves the phone clock
+# one day on and runs flows b and c. Pictures rel-r454-a*.png.
+appId: com.mettleup.app
+---
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 60000
+# ---------------------------------------------------------------- effort on (as the owner has it)
+- runFlow:
+    file: sub-settings-page.yaml
+    env:
+      PAGE: "Rate how hard each set felt"
+- extendedWaitUntil:
+    visible: "Adds a box to each set.*"
+    timeout: 30000
+- runFlow:
+    when:
+      visible:
+        text: "Rate how hard each set felt"
+        checked: false
+    commands:
+      - tapOn:
+          text: "Rate how hard each set felt"
+          checked: false
+- assertVisible:
+    text: "Rate how hard each set felt"
+    checked: true
+- back
+- runFlow: xc-sub-back-to-tabs.yaml
+# ---------------------------------------------------------------- last time
+- runFlow: sub-workout-fresh.yaml
+- tapOn: "Start empty workout"
+- tapOn:
+    text: "(?i)^allow$"
+    optional: true
+- runFlow: sub-start-blank.yaml
+- extendedWaitUntil:
+    visible: "Add exercise"
+    timeout: 30000
+# Incline Dumbbell Press 40 x 13, 12, 10, 8
+- runFlow:
+    file: sub-uat-r439-add.yaml
+    env:
+      SEARCH: "incline dumbbell press"
+      EX: "Incline Dumbbell Press"
+- runFlow:
+    file: sub-uat-r439-set.yaml
+    env:
+      EX: "Incline Dumbbell Press"
+      N: "1"
+      KG: "40"
+      REPS: "13"
+- runFlow:
+    file: sub-uat-r454-row.yaml
+    env:
+      EX: "Incline Dumbbell Press"
+      PREV: "1"
+      N: "2"
+- runFlow:
+    file: sub-uat-r439-set.yaml
+    env:
+      EX: "Incline Dumbbell Press"
+      N: "2"
+      KG: "40"
+      REPS: "12"
+- runFlow:
+    file: sub-uat-r454-row.yaml
+    env:
+      EX: "Incline Dumbbell Press"
+      PREV: "2"
+      N: "3"
+- runFlow:
+    file: sub-uat-r439-set.yaml
+    env:
+      EX: "Incline Dumbbell Press"
+      N: "3"
+      KG: "40"
+      REPS: "10"
+- runFlow:
+    file: sub-uat-r454-row.yaml
+    env:
+      EX: "Incline Dumbbell Press"
+      PREV: "3"
+      N: "4"
+- runFlow:
+    file: sub-uat-r439-set.yaml
+    env:
+      EX: "Incline Dumbbell Press"
+      N: "4"
+      KG: "40"
+      REPS: "8"
+# Lateral Raise 20 x 20, 17, 15, 19
+- runFlow:
+    file: sub-uat-r439-add.yaml
+    env:
+      SEARCH: "lateral raise"
+      EX: "Lateral Raise"
+- runFlow:
+    file: sub-uat-r439-set.yaml
+    env:
+      EX: "Lateral Raise"
+      N: "1"
+      KG: "20"
+      REPS: "20"
+- runFlow:
+    file: sub-uat-r454-row.yaml
+    env:
+      EX: "Lateral Raise"
+      PREV: "1"
+      N: "2"
+- runFlow:
+    file: sub-uat-r439-set.yaml
+    env:
+      EX: "Lateral Raise"
+      N: "2"
+      KG: "20"
+      REPS: "17"
+- runFlow:
+    file: sub-uat-r454-row.yaml
+    env:
+      EX: "Lateral Raise"
+      PREV: "2"
+      N: "3"
+- runFlow:
+    file: sub-uat-r439-set.yaml
+    env:
+      EX: "Lateral Raise"
+      N: "3"
+      KG: "20"
+      REPS: "15"
+- runFlow:
+    file: sub-uat-r454-row.yaml
+    env:
+      EX: "Lateral Raise"
+      PREV: "3"
+      N: "4"
+- runFlow:
+    file: sub-uat-r439-set.yaml
+    env:
+      EX: "Lateral Raise"
+      N: "4"
+      KG: "20"
+      REPS: "19"
+# Chest Dip (reps only) 16, 15, 8
+- runFlow:
+    file: sub-uat-r439-add.yaml
+    env:
+      SEARCH: "chest dip"
+      EX: "Chest Dip"
+- runFlow:
+    file: sub-uat-r439-set.yaml
+    env:
+      EX: "Chest Dip"
+      N: "1"
+      KG: "none"
+      REPS: "16"
+- runFlow:
+    file: sub-uat-r454-row.yaml
+    env:
+      EX: "Chest Dip"
+      PREV: "1"
+      N: "2"
+- runFlow:
+    file: sub-uat-r439-set.yaml
+    env:
+      EX: "Chest Dip"
+      N: "2"
+      KG: "none"
+      REPS: "15"
+- runFlow:
+    file: sub-uat-r454-row.yaml
+    env:
+      EX: "Chest Dip"
+      PREV: "2"
+      N: "3"
+- runFlow:
+    file: sub-uat-r439-set.yaml
+    env:
+      EX: "Chest Dip"
+      N: "3"
+      KG: "none"
+      REPS: "8"
+- takeScreenshot: rel-r454-a-last-time
+- runFlow: sub-uat-r439-finish.yaml
+# ---------------------------------------------------------------- saved as a routine (as R-366's / R-439's flow a)
+- tapOn: "^Profile$"
+- extendedWaitUntil:
+    visible: "Edit profile"
+    timeout: 15000
+- scrollUntilVisible:
+    element: "More for .*"
+    centerElement: true
+    timeout: 30000
+- tapOn:
+    text: "More for .*"
+    index: 0
+- extendedWaitUntil:
+    visible: "Save as routine"
+    timeout: 10000
+- tapOn: "Save as routine"
+- extendedWaitUntil:
+    visible: "Your plan only changes if you pick it."
+    timeout: 10000
+- tapOn:
+    text: "^My routines.*"
+    index: 0
+- extendedWaitUntil:
+    visible: "Saved as a routine"
+    timeout: 15000
+- tapOn: "^Open routine$"
+- extendedWaitUntil:
+    visible: "Edit routine"
+    timeout: 15000
+- assertVisible: "Incline Dumbbell Press"
+# ---------------------------------------------------------------- a never-done exercise in the routine (first time)
+- scrollUntilVisible:
+    element: "^Add exercise$"
+    centerElement: true
+    timeout: 20000
+- tapOn: "^Add exercise$"
+- extendedWaitUntil:
+    visible: "Search exercises"
+    timeout: 20000
+- tapOn: "Search exercises"
+- inputText: " dumbbell pullover"
+- tapOn:
+    text: "Add Dumbbell Pullover"
+    index: 0
+- extendedWaitUntil:
+    visible: "Edit routine"
+    timeout: 15000
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Remove Dumbbell Pullover"
+- takeScreenshot: rel-r454-a2-routine-ranges
+- scrollUntilVisible:
+    element: "^Start routine$"
+    centerElement: true
+    timeout: 20000
+- takeScreenshot: rel-r454-a3-routine-saved

@@ -183,7 +183,7 @@ OLD_PARTS="a b c d e f g h h3 p1 p2 i link i2 j j2 j3 k l n p9 r br inv invf p7 
 # R-123: ubk = a fresh install restores a backup FILE from the welcome screen (routines in order,
 # settings, profile), then saves a new one from Settings -> Back up and restore (qa/uat-bk.yaml).
 UAT_PARTS="uh ur un ud ue ubk ub uf ua uv ug uk"
-GATE_PARTS="w dnd longrest anim mk clip uat u355 u344 u358 u366 usel ugym u15 u76 u198 u194 u401 u199 u404 u438 u444 ulook uage u439 u436 u336 u61 upic u452 u456 u458"
+GATE_PARTS="w dnd longrest anim mk clip uat u355 u344 u358 u366 usel ugym u15 u76 u198 u194 u401 u199 u404 u438 u444 ulook uage u439 u436 u336 u61 upic u452 u456 u458 u454"
 qa_list() { echo "$1" | tr ',;' '  ' | tr '[:upper:]' '[:lower:]' | xargs; }
 QA_ONLY_LIST=$(qa_list "${QA_ONLY:-}")
 QA_EXTRA_LIST=$(qa_list "${QA_EXTRA:-}")
@@ -2004,6 +2004,7 @@ part_uat() {
   part_u444
   part_u439
   part_u436
+  part_u454
   part_uage
   part_u458
   part_ulook
@@ -2235,6 +2236,32 @@ part_u439() {
   adb shell "su 0 date @$((now - 86400))" >/dev/null 2>&1 || true
   adb shell settings put global auto_time 1 >/dev/null 2>&1 || true
   log "UAT R439: phone clock back to $(adb shell date '+%F %T' | tr -d '\r')"
+  [ "$rc" = 0 ] || status=1
+  return $rc
+}
+# R-454 (owner, 12 Nov 2026: "Never suggesting less than before", and one finished line for every case). From
+# a fresh install with the demo: flow a turns effort (RPE) on and logs "last time" exactly as his screenshots:
+# Incline Dumbbell Press 40 x 13, 12, 10, 8; Lateral Raise 20 x 20, 17, 15, 19; Chest Dip 16, 15, 8; saved as a
+# routine, plus Dumbbell Pullover (never done). The phone clock then moves one day on (the Target reads only
+# workouts before today); flow b: Incline aims 13, 12, 11, 9 and "+80 kg", Lateral Raise after set 1 at 20 kg
+# aims 20 x 17, 15, 19, equal -> "same as last time", edited after the tick; flow c: Chest Dip after 17 @8.5,
+# 14 @9.5 (no "keep the same weight", "Next set: 9 reps"), then the first-time card. Also runs alone with
+# only=u454. Pictures rel-r454-*.png.
+part_u454() {
+  local rc=0 now
+  gate_flow u454_seed gate-demo.yaml || { status=1; return 1; }
+  uat_flow uatr454a uat-rel-r454-a-history.yaml || { status=1; return 1; }
+  now=$(adb shell date +%s | tr -d '\r')
+  adb shell settings put global auto_time 0 >/dev/null 2>&1 || true
+  adb shell "su 0 date @$((now + 86400))" >/dev/null 2>&1 || true
+  log "UAT R454 b: phone clock moved to $(adb shell date '+%F %T %z' | tr -d '\r') (one day on)"
+  uat_flow uatr454b uat-rel-r454-b-incline-lateral.yaml || rc=1
+  # Flow c carries on in flow b's open workout: only after flow b passed.
+  if [ "$rc" = 0 ]; then uat_flow uatr454c uat-rel-r454-c-dip-first.yaml || rc=1; fi
+  now=$(adb shell date +%s | tr -d '\r')
+  adb shell "su 0 date @$((now - 86400))" >/dev/null 2>&1 || true
+  adb shell settings put global auto_time 1 >/dev/null 2>&1 || true
+  log "UAT R454: phone clock back to $(adb shell date '+%F %T' | tr -d '\r')"
   [ "$rc" = 0 ] || status=1
   return $rc
 }
@@ -2475,6 +2502,7 @@ qa_runs u438 && ! qa_runs uat && { log "gate part U438 begins"; part_u438; }
 qa_runs u444 && ! qa_runs uat && { log "gate part U444 begins"; part_u444; }
 qa_runs u439 && ! qa_runs uat && { log "gate part U439 begins"; part_u439; }
 qa_runs u436 && ! qa_runs uat && { log "gate part U436 begins"; part_u436; }
+qa_runs u454 && ! qa_runs uat && { log "gate part U454 begins"; part_u454; }
 qa_runs u336 && ! qa_runs uat && { log "gate part U336 begins"; part_u336; }
 qa_runs u61 && ! qa_runs uat && { log "gate part U61 begins"; part_u61; }
 qa_runs ulook && ! qa_runs uat && { log "gate part ULOOK begins"; part_ulook; }

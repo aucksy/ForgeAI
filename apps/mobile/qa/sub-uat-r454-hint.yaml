@@ -1,0 +1,28 @@
+# Sub-flow (called with runFlow; not a part of its own): R-454 UAT. Tick the EMPTY set N of the card EX (a
+# tick on an empty row saves its grey hint, which is hidden from the screen reader), clear what the tick
+# opened, then read the saved reps back from the box: they must be exactly REPS. KG = the saved weight, or
+# "none" on a reps-only move. This is how a flow proves what a row aimed for. No `env:` default (trap 22).
+appId: com.mettleup.app
+---
+- runFlow:
+    file: sub-uat-tick.yaml
+    env:
+      WHO: "${EX} set ${N}"
+- tapOn:
+    text: "Keep [0-9].*"
+    optional: true
+- runFlow: sub-uat-r439-clear.yaml
+- runFlow:
+    file: sub-uat-r439-saved.yaml
+    env:
+      FIELD: "${EX} set ${N} reps"
+      WANT: "${REPS}"
+- runFlow:
+    when:
+      true: ${KG != 'none'}
+    commands:
+      - runFlow:
+          file: sub-uat-r439-saved.yaml
+          env:
+            FIELD: "${EX} set ${N} weight, .*"
+            WANT: "${KG}"

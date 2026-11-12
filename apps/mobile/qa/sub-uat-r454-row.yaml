@@ -1,0 +1,20 @@
+# Sub-flow (called with runFlow; not a part of its own): R-454 UAT. Make sure set N of the card EX exists
+# (a card added on the spot may start with fewer rows than needed: one, or as many as the demo's last time);
+# when it does not, "Add set" under set PREV adds it. No `env:` default here (trap 22).
+appId: com.mettleup.app
+---
+- scrollUntilVisible:
+    element: "${EX} set ${N} reps"
+    centerElement: true
+    timeout: 8000
+    optional: true
+- runFlow:
+    when:
+      notVisible: "${EX} set ${N} reps"
+    commands:
+      - runFlow:
+          file: sub-uat-r439-addset.yaml
+          env:
+            EX: "${EX}"
+            PREV: "${PREV}"
+            N: "${N}"

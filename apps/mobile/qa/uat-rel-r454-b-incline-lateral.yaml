@@ -1,0 +1,170 @@
+# Part UAT, R-454 flow b: the day after flow a (the part moved the phone clock one day on), the routine from
+# flow a started. Exact words from his screenshots (owner, 12 Nov 2026).
+# Types (R-364):
+#   happy path: Incline Dumbbell Press aims 13, 12, 11, 9 (never under last time's 13, 12, 10, 8), "Next set:
+#     40 kg × 13 · Done: 0 of today's 1,800 kg", and at the end "1,800 kg done · Previous: 1,720 kg · +80 kg";
+#   regression: his Lateral Raise: set 1 done at 20 kg x 20 (not the plan's heavier weight) -> sets 2-4 aim
+#     20 kg x 17, 15, 19 (never 13, 12, 15) and the top line says the same number as the row;
+#   equal case: 20, 17, 15, 19 = last time's 1,420 kg -> "1,420 kg done · Previous: 1,420 kg · same as last time";
+#   edit after the tick: sets 2-4 changed to 19, 16, 16 (still 1,420) -> the same line;
+#   negative: never "1,760", never "Next set: 20 kg × 15" after set 1, never "reached" / "beaten".
+# Each row's aim is proven by ticking it EMPTY (the tick saves the grey hint) and reading the box back
+# (sub-uat-r454-hint.yaml). Unit tests: test/tracker/r454RepFloor.test.ts, r454OneGreenRule.test.ts.
+# Pictures rel-r454-b..h-*.png.
+appId: com.mettleup.app
+---
+- scrollUntilVisible:
+    element: "^Start routine$"
+    centerElement: true
+    timeout: 15000
+- tapOn: "^Start routine$"
+- tapOn:
+    text: "(?i)^allow$"
+    optional: true
+- extendedWaitUntil:
+    visible: "More for Incline Dumbbell Press"
+    timeout: 30000
+# ---------------------------------------------------------------- (a) Incline Dumbbell Press: 13, 12, 11, 9
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Next set: 40 kg × 13 · Done: 0 of today's 1,800 kg$"
+- assertNotVisible: ".*1,760 kg.*"
+- assertNotVisible: "^Next set: 40 kg × 12 · .*"
+- takeScreenshot: rel-r454-b-incline-before
+- tapOn: "^Next set: 40 kg × 13 · Done: 0 of today's 1,800 kg$"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Suggested: 40 kg · 13, 12, 11, 9$"
+- takeScreenshot: rel-r454-c-incline-why
+- runFlow:
+    file: sub-uat-r454-hint.yaml
+    env:
+      EX: "Incline Dumbbell Press"
+      N: "1"
+      KG: "40"
+      REPS: "13"
+- runFlow:
+    file: sub-uat-r454-hint.yaml
+    env:
+      EX: "Incline Dumbbell Press"
+      N: "2"
+      KG: "40"
+      REPS: "12"
+- runFlow:
+    file: sub-uat-r454-hint.yaml
+    env:
+      EX: "Incline Dumbbell Press"
+      N: "3"
+      KG: "40"
+      REPS: "11"
+# The top line names the same number the last row aims for.
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Next set: 40 kg × 9 · Done: 1,440 of today's 1,800 kg$"
+- takeScreenshot: rel-r454-d-incline-set-4-next
+- runFlow:
+    file: sub-uat-r454-hint.yaml
+    env:
+      EX: "Incline Dumbbell Press"
+      N: "4"
+      KG: "40"
+      REPS: "9"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: '^1,800 kg done · Previous: 1,720 kg · \+80 kg$'
+- assertNotVisible: "(?i).*(reached|beaten).*"
+- takeScreenshot: rel-r454-e-incline-done
+# ---------------------------------------------------------------- (b) Lateral Raise: set 1 at 20 kg, the rest follow 20 kg
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Lateral Raise set 1 reps"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Next set: [0-9.]+ kg × [0-9]+ · Done: 0 of today's 1,420 kg$"
+- takeScreenshot: rel-r454-f-lateral-before
+- runFlow:
+    file: sub-uat-r439-set.yaml
+    env:
+      EX: "Lateral Raise"
+      N: "1"
+      KG: "20"
+      REPS: "20"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Next set: 20 kg × 17 · Done: 400 of today's 1,420 kg$"
+- assertNotVisible: "^Next set: 20 kg × 15 · .*"
+- assertNotVisible: ".* × 13 · Done: 400 of .*"
+- takeScreenshot: rel-r454-g-lateral-after-set-1
+- runFlow:
+    file: sub-uat-r454-hint.yaml
+    env:
+      EX: "Lateral Raise"
+      N: "2"
+      KG: "20"
+      REPS: "17"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Next set: 20 kg × 15 · Done: 740 of today's 1,420 kg$"
+- runFlow:
+    file: sub-uat-r454-hint.yaml
+    env:
+      EX: "Lateral Raise"
+      N: "3"
+      KG: "20"
+      REPS: "15"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Next set: 20 kg × 19 · Done: 1,040 of today's 1,420 kg$"
+- runFlow:
+    file: sub-uat-r454-hint.yaml
+    env:
+      EX: "Lateral Raise"
+      N: "4"
+      KG: "20"
+      REPS: "19"
+# ---------------------------------------------------------------- (d) equal to last time: "same as last time" (green)
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^1,420 kg done · Previous: 1,420 kg · same as last time$"
+- assertNotVisible: "(?i).*(reached|beaten).*"
+- takeScreenshot: rel-r454-h-lateral-same
+# Edit after the tick: 20, 19, 16, 16 is 1,420 kg too (his own day).
+- runFlow:
+    file: sub-type.yaml
+    env:
+      FIELD: "Lateral Raise set 2 reps"
+      VALUE: " 19"
+- runFlow: sub-uat-r439-clear.yaml
+- runFlow:
+    file: sub-type.yaml
+    env:
+      FIELD: "Lateral Raise set 3 reps"
+      VALUE: " 16"
+- runFlow: sub-uat-r439-clear.yaml
+- runFlow:
+    file: sub-type.yaml
+    env:
+      FIELD: "Lateral Raise set 4 reps"
+      VALUE: " 16"
+- runFlow: sub-uat-r439-clear.yaml
+- runFlow:
+    file: sub-uat-r439-saved.yaml
+    env:
+      FIELD: "Lateral Raise set 2 reps"
+      WANT: "19"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^1,420 kg done · Previous: 1,420 kg · same as last time$"
+- assertNotVisible: "(?i).*(reached|beaten).*"
+- takeScreenshot: rel-r454-i-lateral-edited-same

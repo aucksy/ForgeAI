@@ -13,9 +13,9 @@ import {
   kgLiveLine,
   kgPlan,
   kgProgress,
+  lineGreen,
   repLiveLine,
   repPlan,
-  repsBeatLast,
   repsToBeatLine,
   type KgRow,
 } from '@/tracker/lib/kgTarget';
@@ -46,7 +46,7 @@ describe('R-366: the owner Pull-Up', () => {
   it('his day, 7, 5, 5 = 17: "17 reps done · Previous: 16 · +1" (owner, 12 Nov 2026), green, one tick only', () => {
     const g = kgProgress(p, [done(7), done(5), done(5)]);
     expect(kgBeaten(g)).toBe(false); // today's 19 not all reached ...
-    expect(repsBeatLast(p, g)).toBe(true); // ... but last time is beaten: the bar is green
+    expect(lineGreen(p, g)).toBe(true); // ... but last time is beaten: the bar is green
     const line = repLiveLine(p, g);
     expect(line).toBe('17 reps done · Previous: 16 · +1');
     expect(line).not.toMatch(BANNED);
@@ -55,19 +55,21 @@ describe('R-366: the owner Pull-Up', () => {
   it('before the end it reads like the kg line ("Done: n of today\'s 19 reps")', () => {
     const g = kgProgress(p, [done(7), open(6), open(5)]);
     expect(repLiveLine(p, g)).toMatch(/^Next sets: \d+, \d+ reps · Done: 7 of today's 19 reps/);
-    expect(repsBeatLast(p, g)).toBe(false);
+    expect(lineGreen(p, g)).toBe(false);
   });
 
-  it('negative: equal to last time (16) or under it never says "beat"', () => {
+  it('equal to last time (16) is "same as last time", green; under it is short and plain; never "beat"', () => {
+    // Owner, 12 Nov 2026 (one rule for kilos and reps, `lineGreen`): equal counts as at least last time.
     const eq = kgProgress(p, [done(7), done(5), done(4)]);
-    expect(repsBeatLast(p, eq)).toBe(false);
-    expect(repLiveLine(p, eq)).not.toMatch(/beat/i);
-    expect(repLiveLine(p, eq)).toBe('Done: 16 of 19 reps · 3 reps short, fine for today');
+    expect(lineGreen(p, eq)).toBe(true);
+    expect(repLiveLine(p, eq)).toBe('16 reps done · Previous: 16 · same as last time');
     const under = kgProgress(p, [done(6), done(5), done(4)]);
-    expect(repLiveLine(p, under)).not.toMatch(/beat/i);
-    // A set still open: never "beat" yet, even past last time.
+    expect(lineGreen(p, under)).toBe(false);
+    expect(repLiveLine(p, under)).toBe('Done: 15 of 19 reps · 4 reps short, fine for today');
+    for (const g of [eq, under]) expect(repLiveLine(p, g)).not.toMatch(/beat/i);
+    // A set still open: never green yet, even past last time.
     const early = kgProgress(p, [done(9), done(9), open(5)]);
-    expect(repsBeatLast(p, early)).toBe(false);
+    expect(lineGreen(p, early)).toBe(false);
     expect(repLiveLine(p, early)).not.toMatch(/^Beat/);
   });
 
@@ -109,7 +111,9 @@ describe('R-366: weighted and assisted bodyweight', () => {
     expect(p.total).toBe(190); // 10 x (8 + 6 + 5)
     const g = kgProgress(p, [7, 5, 5].map((reps) => ({ weightKg: 10, reps, done: true, isWarmup: false })));
     expect(kgBeaten(g)).toBe(false);
-    expect(kgLiveLine(p, g, (kg) => `${kg} kg`, (kg) => `${kg} kg`)).toBe('Done: 170 of 190 kg · 20 kg short, fine for today');
+    // Owner, 12 Nov 2026: kilos follow the same rule as reps: every set done and past last time's 160 kg.
+    expect(lineGreen(p, g)).toBe(true);
+    expect(kgLiveLine(p, g, (kg) => `${kg} kg`, (kg) => `${kg} kg`)).toBe('170 kg done · Previous: 160 kg · +10 kg');
   });
   it('assisted pull-up: no kg or reps line (the help changes, so reps are not comparable)', () => {
     const t = computeProgressionTarget({ exercise: pullUp, target: { targetSets: 3, repRangeMin: 5, repRangeMax: 12 }, history: [sess('2026-11-02', [[-20, 7], [-20, 5], [-20, 4]])], todayISO: '2026-11-05', logType: 'assisted' });

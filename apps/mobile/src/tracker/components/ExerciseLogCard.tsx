@@ -53,7 +53,7 @@ import { HoldTimerSheet } from './HoldTimerSheet';
 import { PlateCalcSheet } from './PlateCalcSheet';
 import { RestPickerSheet } from './RestPickerSheet';
 import { cardSourceLine } from '../lib/previousSource';
-import { beatPlan, kgBeaten, kgLiveLine, kgProgress, kgTickKey, repLiveLine, repsBeatLast } from '../lib/kgTarget';
+import { beatPlan, kgLiveLine, kgProgress, kgTickKey, lineGreen, repLiveLine } from '../lib/kgTarget';
 import { afterTick, SetRow, useRowLayout } from './SetRow';
 import { DragGrip } from './DragGrip';
 import { MachineDetailsRow } from './MachineDetailsRow';
@@ -302,8 +302,9 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
       text: kgPlanned.reps
         ? repLiveLine(kgPlanned, g)
         : kgLiveLine(kgPlanned, g, (kg) => `${fmtInt(Math.round(kgToDisplay(kg, units)))} ${weightUnit(units)}${each}`, (kg) => fmtWeight(kg, units)),
-      // R-366: a reps move that beat last time is green too ("17 reps done · Previous: 16 · +1").
-      beaten: kgBeaten(g) || repsBeatLast(kgPlanned, g),
+      // Owner, 12 Nov 2026: ONE rule for kilos and reps: green once every working set is ticked and the
+      // total is at least last time's (more or the same), `lineGreen`.
+      beaten: lineGreen(kgPlanned, g),
     };
     // rows are read through the ref on purpose: only tickKey (ticks, adds, removes) moves the line.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -566,7 +567,8 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
       {/* coach target (Phase C1) — inline prescription, tap for the why. R-73 (owner, 22 Oct 2026: "this
           yellow color target suggestion is static ... if your suggestion is right there in the grayed out
           boxes already, then why do I need that part?"): with kilos (or reps) to beat, the box shows the
-          live line instead — done so far and what the open sets need — and turns green once beaten. The
+          live line instead — done so far and what the open sets need — and turns green once every set is
+          done at last time's total or more (owner, 12 Nov 2026, `lineGreen`). The
           suggestion and its why stay one tap away (ⓘ). */}
       {target && line ? (
         <Pressable
@@ -698,7 +700,7 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
           </View>
         </View>
       ) : null}
-      {/* R-65 / R-73: the live kg line now sits in the Target box above (green once beaten). A plan with
+      {/* R-65 / R-73: the live kg line now sits in the Target box above (green by `lineGreen`). A plan with
           no Target line to hold it (never today) shows it here. */}
       {kgLine && !(target && line) ? (
         <Text numberOfLines={2} style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: kgLine.beaten ? color.goodText : color.inkSecondary, paddingHorizontal: space.xs }}>

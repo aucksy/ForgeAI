@@ -17,7 +17,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { computeProgressionTarget, type ProgSession, type ProgressionTarget, type WeightJump } from '@/tracker/engine/progression';
-import { kgBeaten, kgLiveLine, kgPlan, kgProgress, type KgRow } from '@/tracker/lib/kgTarget';
+import { kgBeaten, kgLiveLine, kgPlan, kgProgress, lineGreen, type KgRow } from '@/tracker/lib/kgTarget';
 import type { Exercise } from '@/types/models';
 
 function rng(seed: number) {
@@ -138,8 +138,15 @@ function replay(lift: Lift, seed: number, workouts = 500) {
         if (kgBeaten(g) && doneKg + 1e-9 < plan.total) bad(`"beaten" at ${doneKg} of ${plan.total}`);
         if (last.length === sets && kgBeaten(g) && doneKg + 1e-9 < lastTotal) bad(`"beaten" under last time's ${lastTotal}`);
         const line = kgLiveLine(plan, g, (kg) => `${kg} kg`, (kg) => `${kg} kg`);
-        // Owner, 12 Nov 2026: the finished line is now "<done> done · Previous: ..." (no "reached"/"beaten").
-        if (/beaten|reached| done · /.test(line ?? '') && doneKg + 1e-9 < plan.total) bad(`line "${line}" too early`);
+        // Owner, 12 Nov 2026: the finished line is now "<done> done · Previous: ..." (no "reached"/"beaten"),
+        // and (one rule for kilos and reps) it also shows once every set is done at last time's total or more.
+        const allDone = k === doneSets.length;
+        const atLast = plan.last != null && doneKg + 0.5 > plan.last;
+        if (/beaten|reached| done · /.test(line ?? '') && doneKg + 1e-9 < plan.total && !(allDone && atLast)) bad(`line "${line}" too early`);
+        // Green only with every set done and never under last time's total (or the plan, with no last time).
+        if (lineGreen(plan, g) && !allDone) bad(`green with ${doneSets.length - k} set(s) open`);
+        if (lineGreen(plan, g) && (plan.last != null ? !atLast : doneKg + 1e-9 < plan.total)) bad(`green at ${doneKg} under last time's ${plan.last}`);
+        if (allDone && !lineGreen(plan, g) && (plan.last != null ? atLast : doneKg + 1e-9 >= plan.total)) bad(`not green at ${doneKg}, every set done`);
       }
     }
     prevGoals.unshift(goals);

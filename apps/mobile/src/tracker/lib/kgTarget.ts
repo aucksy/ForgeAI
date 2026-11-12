@@ -237,6 +237,11 @@ export interface KgProgress {
   short: boolean;
   /** T76: kg the total can be off only from weights typed as the other unit showed them (0 for most). */
   noise?: number;
+  /**
+   * Working sets not ticked yet (warm-ups and drop sets left out). Owner, 12 Nov 2026: the line turns
+   * green only when this is 0 (`lineGreen`). Absent (an older caller) = `next.length`.
+   */
+  open?: number;
 }
 
 /**
@@ -269,6 +274,8 @@ function progressOf(plan: KgPlan, rows: readonly KgRow[]): { progress: KgProgres
   const openAt: number[] = [];
   const noExtra: boolean[] = [];
   let ordinal = 0;
+  /** Owner, 12 Nov 2026: working sets not ticked yet, whatever they hint (`lineGreen`). */
+  let openRows = 0;
   /** T76: ticked sets and the plan's own, for the unit-switch allowance (kilo plans only). */
   const ticked: KgSet[] = [];
   for (const [at, r] of rows.entries()) {
@@ -287,6 +294,7 @@ function progressOf(plan: KgPlan, rows: readonly KgRow[]): { progress: KgProgres
       continue;
     }
     if (drop) continue;
+    openRows += 1;
     const pos = (n: number | null | undefined): number | null => (n != null && Number.isFinite(n) && n > 0 ? n : null);
     const weightKg = plan.reps ? 1 : pos(r.weightKg) ?? pos(r.hintKg) ?? planned?.weightKg ?? 0;
     const reps = pos(r.hintReps) ?? planned?.reps ?? pos(r.reps) ?? 0;
@@ -300,7 +308,7 @@ function progressOf(plan: KgPlan, rows: readonly KgRow[]): { progress: KgProgres
   const noise = plan.reps ? 0 : shownTotalNoise([...ticked, ...plan.sets]);
   const room = Math.max(1e-9, noise);
   if (left <= room || open.length === 0) {
-    return { progress: { done, left, next: [], short: left > room, ...(noise > 0 ? { noise } : {}) }, openAt: [], extra: [] };
+    return { progress: { done, left, next: [], short: left > room, ...(noise > 0 ? { noise } : {}), open: openRows }, openAt: [], extra: [] };
   }
   // R-351: the open sets aim for the planned sets (`planned`, when last time's total is the number
   // to pass), so the line never asks more than the rows show; `left` stays the kg still to pass.
@@ -311,7 +319,7 @@ function progressOf(plan: KgPlan, rows: readonly KgRow[]): { progress: KgProgres
     for (let i = 0; i < next.length && sum() < aim - 1e-9; i++) if (!noExtra[i]) next[i].reps = open[i].reps + extra;
   }
   return {
-    progress: { done, left, next, short: sum() < aim - 1e-9, ...(noise > 0 ? { noise } : {}) },
+    progress: { done, left, next, short: sum() < aim - 1e-9, ...(noise > 0 ? { noise } : {}), open: openRows },
     openAt,
     extra: next.map((s, i) => s.reps - open[i].reps),
   };
@@ -385,9 +393,9 @@ export function repLiveLine(p: KgPlan, g: KgProgress): string {
   const plain = (n: number): string => `${Math.round(n)}`;
   // Owner, 12 Nov 2026 (his Lateral Raise read "Today's 1,420 kg reached" with no previous number, another
   // exercise the done words): one format for every finished line, never "reached" or "beaten".
-  if (kgBeaten(g)) return doneLine(p, done, plain, repsText);
-  // R-366: every set done, under today's goal but past last time: that is still a win, said so.
-  if (repsBeatLast(p, g)) return doneLine(p, done, plain, repsText);
+  // Owner, 12 Nov 2026 ("consistent ... across"): every set done and at least last time's total is the
+  // finished line too (R-366 kept it for reps beating last time; kilos now the same, `lineGreen`).
+  if (kgBeaten(g) || lineGreen(p, g)) return doneLine(p, done, plain, repsText);
   // R-300 (owner, 3 Nov 2026): never "add a set" (extra sets cost recovery and sleep); next time aims again.
   if (g.next.length === 0) return `Done: ${Math.round(g.done)} of ${repsText(p.total)} · ${repsText(g.left)} short, fine for today`;
   // Owner, 12 Nov 2026 (Chest Dip, one set left): one open set reads "Next set: 9 reps", not "Next sets".
@@ -408,6 +416,7 @@ function doneLine(p: KgPlan, done: number, fmt: TotalFmt, doneFmt: TotalFmt = fm
   // for 1,800 kg reads "3,968 lb done · Previous: 3,968 lb · same as last time", never +1 lb by a hair).
   const same = p.last != null && Math.abs(done - p.last) <= noise;
   const parts = [`${doneFmt(same && p.last != null ? p.last : done)} done`];
+  const cmp = vsLast(p, done, noise);
   // Owner, 12 Nov 2026: one format everywhere: "+120 kg", "same as last time" when equal (his Lateral
   // Raise 1,420 after 1,420), "First time" with no previous workout to compare.
   if (p.last == null) parts.push('First time');
@@ -416,7 +425,7 @@ function doneLine(p: KgPlan, done: number, fmt: TotalFmt, doneFmt: TotalFmt = fm
     const d = done - p.last;
     const shown = fmt(Math.abs(d));
     // T76: within the unit-switch allowance it is the same total, never "+3 kg" by a hair.
-    if (!same && Math.round(Math.abs(d)) > 0 && /[1-9]/.test(shown)) parts.push(`${d > 0 ? '+' : '-'}${shown}`);
+    if (cmp !== 'same' && /[1-9]/.test(shown)) parts.push(`${d > 0 ? '+' : '-'}${shown}`);
     else parts.push('same as last time');
   }
   if (p.setDiff) {
@@ -427,12 +436,29 @@ function doneLine(p: KgPlan, done: number, fmt: TotalFmt, doneFmt: TotalFmt = fm
 }
 
 /**
- * R-366: a reps plan, every set done, more reps than last time's same sets: the bar turns green and
- * says "17 reps done · Previous: 16 · +1" (owner, 12 Nov 2026; was "Beat last time's 16 reps (17 done)")
- * even when today's goal (+1 a set) was not all reached. PURE.
+ * What was done against the previous workout's total over the same sets (`KgPlan.last`), as the finished
+ * line prints it: within the kg/lb switch allowance (T76) or under half a unit apart is 'same'. null with
+ * no previous workout to compare. PURE.
  */
-export function repsBeatLast(p: KgPlan, g: KgProgress): boolean {
-  return !!p.reps && p.last != null && !p.setDiff && g.next.length === 0 && Math.round(g.done) > Math.round(p.last);
+function vsLast(p: KgPlan, done: number, noise = 0): 'more' | 'same' | 'less' | null {
+  if (p.last == null) return null;
+  const d = done - p.last;
+  if (Math.abs(d) <= noise || Math.round(Math.abs(d)) === 0) return 'same';
+  return d > 0 ? 'more' : 'less';
+}
+
+/**
+ * Owner, 12 Nov 2026 ("ensure this is reviewed and consistent ... across"): ONE rule for kilos and reps.
+ * The live line is green when every working set is ticked AND the total is at least the previous
+ * workout's over the same sets (more, or the same), even when today's plan was not all reached. Before,
+ * a reps move went green on beating last time (R-366) and a kilo move only on reaching the plan, and an
+ * early plan reached with a set still open went green too. With no previous workout to compare, today's
+ * plan must be reached. Otherwise the line keeps its plain look. PURE.
+ */
+export function lineGreen(p: KgPlan, g: KgProgress): boolean {
+  if ((g.open ?? g.next.length) > 0) return false;
+  const cmp = vsLast(p, p.reps ? Math.round(g.done) : g.done, g.noise ?? 0);
+  return cmp == null ? kgBeaten(g) : cmp !== 'less';
 }
 
 /** "+6% on last time", "same as last time", "lighter than last time", or null. PURE. */
@@ -477,7 +503,8 @@ export function kgLiveLine(p: KgPlan, g: KgProgress, total: TotalFmt, weight: We
   // Fresh-eyes review (5 Nov 2026): the box already shows a green tick, so no second "✓" in the words.
   // Owner, 12 Nov 2026: every finished line the same way ("1,420 kg done · Previous: 1,420 kg · same as
   // last time"), never "Today's X reached" / "beaten" (R-146's "reached" is retired).
-  if (kgBeaten(g)) return doneLine(p, g.done, total, total, g.noise ?? 0);
+  // Owner, 12 Nov 2026 (`lineGreen`): every set done and at least last time's total is finished too.
+  if (kgBeaten(g) || lineGreen(p, g)) return doneLine(p, g.done, total, total, g.noise ?? 0);
   // Release review: only the number before "of" ("410 of 765 kg each", never "410 kg of 765 kg each").
   const doneN = total(g.done).trim().split(/\s+/)[0];
   // R-300 (owner, 3 Nov 2026): never "add a set" (extra sets cost recovery and sleep); next time aims again.
