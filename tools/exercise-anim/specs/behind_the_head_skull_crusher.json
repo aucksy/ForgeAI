@@ -1,0 +1,198 @@
+{
+  "key": "behind_the_head_skull_crusher",
+  "name": "Behind-the-Head Skull Crusher",
+  "primary": [
+    "triceps"
+  ],
+  "secondary": [],
+  "scene": {
+    "bench": {
+      "deg": 0
+    }
+  },
+  "props": {
+    "bar": {
+      "type": "barbell",
+      "shaft": 1.1,
+      "sleeve": 0.2,
+      "plates": [
+        0.16
+      ],
+      "plate_t": 0.035
+    }
+  },
+  "camera": {
+    "yaw": -80,
+    "pitch": 14,
+    "lens": 50,
+    "fill": 0.9,
+    "res": 640,
+    "samples": 20
+  },
+  "timing": {
+    "fps": 30,
+    "keys": [
+      [
+        0,
+        "start"
+      ],
+      [
+        1,
+        "end"
+      ],
+      [
+        2,
+        "start"
+      ]
+    ]
+  },
+  "defaults": {
+    "bones": {
+      "spine05": [
+        -1,
+        0,
+        0
+      ],
+      "spine04": [
+        -1,
+        0,
+        0
+      ],
+      "spine03": [
+        -1,
+        0,
+        0
+      ],
+      "spine02": [
+        -1,
+        0,
+        0
+      ],
+      "neck01": [
+        8,
+        0,
+        0
+      ],
+      "head": [
+        6,
+        0,
+        0
+      ]
+    }
+  },
+  "poses": {
+    "start": {
+      "root": {
+        "loc": [
+          0,
+          0.05,
+          0.55
+        ],
+        "rot": [
+          -90,
+          0,
+          0
+        ]
+      },
+      "feet": {
+        "L": {
+          "at": [
+            0.3,
+            -0.4,
+            0.075
+          ],
+          "rot": [
+            0,
+            0,
+            15
+          ]
+        }
+      },
+      "knees": {
+        "L": [
+          0.55,
+          -1.0,
+          0.9
+        ]
+      },
+      "hands": {
+        "L": {
+          "prop": "bar",
+          "axis": [
+            -1,
+            0,
+            0
+          ],
+          "arm": {
+            "elev": 88,
+            "plane": 92,
+            "elbow": 5,
+            "bend": [
+              0,
+              0,
+              1
+            ],
+            "tilt": 0
+          }
+        }
+      }
+    },
+    "end": {
+      "root": {
+        "loc": [
+          0,
+          0.05,
+          0.55
+        ],
+        "rot": [
+          -90,
+          0,
+          0
+        ]
+      },
+      "feet": {
+        "L": {
+          "at": [
+            0.3,
+            -0.4,
+            0.075
+          ],
+          "rot": [
+            0,
+            0,
+            15
+          ]
+        }
+      },
+      "knees": {
+        "L": [
+          0.55,
+          -1.0,
+          0.9
+        ]
+      },
+      "hands": {
+        "L": {
+          "prop": "bar",
+          "axis": [
+            -1,
+            0,
+            0
+          ],
+          "arm": {
+            "elev": 135,
+            "plane": 92,
+            "elbow": 100,
+            "bend": [
+              0,
+              0,
+              1
+            ],
+            "tilt": 0
+          }
+        }
+      }
+    }
+  },
+  "research": "Flat-bench body from tate_press. Palms down (axis [-1,0,0]), hands ~0.40 m apart. Start: arms straight up over the chest. End: upper arms tilt back toward the head (elev 135 = 45 deg past vertical) and the elbows bend 100 deg: du = (0,0.707,0.707), E = (0.2,0.205,0.205), forearm (0,-0.82,0.57), bar at torso (0.2,-0.07,0.39) = beyond the top of the head, ~3 cm above the pad-face level and just past the pad end."
+}

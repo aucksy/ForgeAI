@@ -1,0 +1,118 @@
+{
+  "key": "barbell_21s",
+  "name": "Barbell 21s",
+  "primary": [
+    "biceps"
+  ],
+  "secondary": [
+    "forearms"
+  ],
+  "props": {
+    "bar": {
+      "type": "barbell",
+      "shaft": 1.1,
+      "sleeve": 0.2,
+      "plates": [
+        0.16
+      ],
+      "plate_t": 0.035
+    }
+  },
+  "camera": {
+    "yaw": -50,
+    "pitch": 8,
+    "lens": 50,
+    "fill": 0.9,
+    "res": 640,
+    "samples": 20
+  },
+  "timing": {
+    "fps": 30,
+    "keys": [
+      [
+        0,
+        "start"
+      ],
+      [
+        1,
+        "end"
+      ],
+      [
+        2,
+        "start"
+      ]
+    ]
+  },
+  "defaults": {
+    "feet": {
+      "L": {
+        "at": [
+          0.13,
+          -0.01,
+          0.074
+        ],
+        "rot": [
+          0,
+          0,
+          6
+        ]
+      }
+    },
+    "knees": {
+      "L": [
+        0.16,
+        -1.0,
+        0.52
+      ]
+    }
+  },
+  "poses": {
+    "start": {
+      "hands": {
+        "L": {
+          "prop": "bar",
+          "axis": [
+            1,
+            0,
+            0
+          ],
+          "arm": {
+            "elev": 12,
+            "plane": 80,
+            "elbow": 8,
+            "bend": [
+              0,
+              1,
+              0
+            ],
+            "tilt": 0
+          }
+        }
+      }
+    },
+    "end": {
+      "hands": {
+        "L": {
+          "prop": "bar",
+          "axis": [
+            1,
+            0,
+            0
+          ],
+          "arm": {
+            "elev": 12,
+            "plane": 80,
+            "elbow": 125,
+            "bend": [
+              0,
+              1,
+              0
+            ],
+            "tilt": 0
+          }
+        }
+      }
+    }
+  },
+  "research": "A still pair cannot show three phases, so it shows the full range (the third set of 7): shoulder-width grip (hand x 0.24, gap ~0.48 m), palms up, arms straight with the bar at the thighs -> bar at the chest, elbows at the sides."
+}

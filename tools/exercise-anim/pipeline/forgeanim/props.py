@@ -135,3 +135,24 @@ def box(size=(0.6, 0.4, 0.3), name="FA_Box"):
     w, d, h = size
     _box(name + "_Body", (w, d, h), loc=(0, 0, h / 2), mat=M["pad"], bevel=0.015, parent=root)
     return root
+
+
+def barbell(name="FA_Barbell", shaft=1.31, sleeve=0.42, plates=(0.225,), plate_t=0.045, shaft_r=0.014):
+    """Straight barbell (13 Nov 2026, exercise pictures). Origin = centre of the bar, bar along local X.
+    Defaults = Olympic bar: 2.2 m long, 28 mm grip shaft 1.31 m between the inner collars, 50 mm sleeves 0.42 m long,
+    one 45 cm plate a side. A fixed curl bar: shaft 1.0, sleeve 0.20, plates (0.15,). The bar is placed by the two
+    hands that hold it (animate.place_bars), so it always runs through both fists."""
+    M = _mats()
+    root = _empty(name)
+    _cyl(name + "_Shaft", shaft_r, shaft + 0.02, verts=32, mat=M["chrome"], parent=root)
+    x = shaft / 2
+    for s in (1, -1):
+        _cyl(name + f"_Collar{s}", 0.040, 0.030, mat=M["chrome"], bevel=0.003, loc=(s * (x + 0.015), 0, 0), parent=root)
+        _cyl(name + f"_Sleeve{s}", 0.025, sleeve, verts=32, mat=M["chrome"], bevel=0.002, loc=(s * (x + 0.03 + sleeve / 2), 0, 0), parent=root)
+        off = x + 0.035
+        for i, r in enumerate(plates):
+            _cyl(name + f"_Plate{s}{i}", r, plate_t, verts=72, mat=M["iron"], bevel=0.008, loc=(s * (off + plate_t / 2), 0, 0), parent=root)
+            _cyl(name + f"_Hub{s}{i}", 0.045, plate_t + 0.006, mat=M["chrome"], bevel=0.002, loc=(s * (off + plate_t / 2), 0, 0), parent=root)
+            off += plate_t + 0.003
+        _cyl(name + f"_Clip{s}", 0.034, 0.025, mat=M["chrome"], bevel=0.003, loc=(s * (off + 0.0125), 0, 0), parent=root)
+    return root

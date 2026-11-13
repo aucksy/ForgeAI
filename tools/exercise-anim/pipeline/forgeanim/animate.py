@@ -62,6 +62,7 @@ class Clip:
         self.G = {}
         self.rest_root = self.rig.data.bones["root"].matrix_local.copy()
         self.rest = {}  # resolved full poses
+        self._fist = {}; self._gax = {}  # grip centre and handle axis per hand (world), for place_bars
 
     # ---------------- scene ----------------
     def build_props(self):
@@ -80,6 +81,10 @@ class Clip:
         for name, p in self.spec.get("props", {}).items():
             if p["type"] == "dumbbell":
                 self.props[name] = P.dumbbell("FA_" + name)
+            elif p["type"] == "barbell":
+                # "bar": {"type": "barbell", "shaft": 1.31, "sleeve": 0.42, "plates": [0.225]} (13 Nov 2026)
+                kw = {k: (tuple(v) if isinstance(v, list) else v) for k, v in p.items() if k in ("shaft", "sleeve", "plates", "plate_t")}
+                self.props[name] = P.barbell("FA_" + name, **kw)
             else:
                 raise ValueError("unknown prop " + p["type"])
         # "skin": {"preserve_volume": true} -> dual-quaternion skinning on the body (recipe option; off by default so
@@ -258,8 +263,29 @@ class Clip:
                 up = frame.to_3x3() @ Vector((0, 0, 1))
                 prop.matrix_world = R.frame_from(c, axis if s == "L" else -axis, up)
             R.place_hand(rig, s, c, axis, self.G[s])
+            self._fist[s] = c.copy()
         R.update()
         self.place_feet_props()
+        self.place_bars(pose, T)
+
+    def place_bars(self, pose, T):
+        """A barbell held by both hands runs through both fist centres (its centre halfway between them), so the bar can
+        never miss a hand. With one hand on it, "prop_offset" places it as for a dumbbell. Prints the check numbers:
+        hand gap and how far each hand's grip axis is off the bar line (0 = the fist is square on the bar)."""
+        for name, p in self.spec.get("props", {}).items():
+            if p["type"] != "barbell" or name not in self.props:
+                continue
+            on = [s for s, h in pose.get("hands", {}).items() if h.get("prop") == name and s in self._fist]
+            if len(on) != 2:
+                continue
+            cl, cr = self._fist["L"], self._fist["R"]
+            x = (cl - cr).normalized()
+            self.props[name].matrix_world = R.frame_from((cl + cr) / 2, x, T.to_3x3() @ Vector((0, 0, 1)))
+            if getattr(self, "_bar_log", 0) < 4:
+                self._bar_log = getattr(self, "_bar_log", 0) + 1
+                offs = {s: round(math.degrees(min(self._gax[s].angle(x), self._gax[s].angle(-x))), 1) for s in on if s in self._gax}
+                print(f"[bar] {name}: hand gap {(cl - cr).length:.3f} m, grip axis off the bar (deg) {offs}")
+        R.update()
 
     def place_feet_props(self):
         """props.<name>.feet = {"fwd": m, "shift": m}: a dumbbell squeezed between the feet (dumbbell leg curl).
@@ -382,6 +408,7 @@ class Clip:
             c = wr - Gw.to_3x3() @ Ginv.translation
             Gw.translation = c
             Wm = Gw @ Ginv
+            self._fist[s] = c.copy(); self._gax[s] = ax_w.copy()
             hand.location = Wm.translation; hand.rotation_quaternion = Wm.to_quaternion()
             if prop is not None:
                 # "prop_offset" (torso frame, m): the weight sits off the fist centre, e.g. a waiter curl holds an
