@@ -57,6 +57,15 @@ def _box(name, size, loc=(0, 0, 0), mat=None, bevel=0.0, segs=4, parent=None, ro
     return _link(ob, parent)
 
 
+def _feet(name, w, d, cy, M, parent):
+    """Drawn look (R-490, look test r2): an open rectangle of floor rails instead of a solid floor plate (the main set's
+    machines stand on tube feet; a flat plate seen from above reads as a different artist)."""
+    t, h = 0.06, 0.05
+    for s in (1, -1):
+        _box(name + f"_Rail{s}", (t, d, h), loc=(s * (w - t) / 2, cy, h / 2), mat=M["frame"], bevel=0.008, parent=parent)
+        _box(name + f"_Cross{s}", (w, t, h), loc=(0, cy + s * (d - t) / 2, h / 2), mat=M["frame"], bevel=0.008, parent=parent)
+
+
 def _empty(name, parent=None, loc=(0, 0, 0)):
     e = bpy.data.objects.new(name, None); e.empty_display_size = 0.05; e.location = loc
     return _link(e, parent)
@@ -105,7 +114,10 @@ def incline_bench(incline_deg=35.0, name="FA_Bench", style="bench", seat_h=0.44,
     hinge = Vector((0, 0.01, seat_h - pad_t / 2))
     rot = Matrix.Rotation(a, 4, "X")
     if style == "machine":
-        _box(name + "_Base", (0.46, 0.62, 0.04), loc=(0, -0.05, 0.02), mat=M["frame"], bevel=0.006, parent=root)
+        if look.DRAWN:
+            _feet(name + "_Base", 0.46, 0.62, -0.05, M, root)
+        else:
+            _box(name + "_Base", (0.46, 0.62, 0.04), loc=(0, -0.05, 0.02), mat=M["frame"], bevel=0.006, parent=root)
         _box(name + "_Post", (0.08, 0.08, seat_h - 0.1), loc=(0, -seat_len / 2, 0.04 + (seat_h - 0.1) / 2), mat=M["frame"], bevel=0.006, parent=root)
         _box(name + "_SeatPlate", (0.18, seat_len * 0.8, 0.02), loc=(0, -seat_len / 2, seat_h - pad_t - 0.012), mat=M["frame"], bevel=0.004, parent=root)
         if back_len > 0:
@@ -192,7 +204,8 @@ def cable_column(name="FA_Cable", pulley_h=1.9, height=2.15, face=(0.0, -1.0), g
     # local -Y = the face direction, so rot_z turns -Y onto (fx, fy)
     rz = math.atan2(fx, -fy)
     root.rotation_euler = (0, 0, rz)
-    _box(name + "_Base", (0.46, 0.34, 0.04), loc=(0, 0.07, 0.02), mat=M["frame"], bevel=0.008, parent=root)
+    if not look.DRAWN:   # the drawn tower stands on its own rails (below)
+        _box(name + "_Base", (0.46, 0.34, 0.04), loc=(0, 0.07, 0.02), mat=M["frame"], bevel=0.008, parent=root)
     _box(name + "_Post", (0.11, 0.11, height), loc=(0, 0, height / 2), mat=M["pad"], bevel=0.01, parent=root)
     _box(name + "_Cap", (0.16, 0.16, 0.04), loc=(0, 0, height + 0.02), mat=M["frame"], bevel=0.006, parent=root)
     # adjustable carriage on the front of the post, with the pulley wheel sticking out toward the athlete
@@ -208,7 +221,7 @@ def cable_column(name="FA_Cable", pulley_h=1.9, height=2.15, face=(0.0, -1.0), g
         st = weight_stack(name + "_Stack", h=height - 0.12, plates=14)
         st.parent = root; st.location = (0, 0.30, 0)
         _box(name + "_Beam", (0.10, 0.42, 0.07), loc=(0, 0.20, height - 0.04), mat=M["frame"], bevel=0.006, parent=root)
-        _box(name + "_Foot", (0.60, 0.80, 0.04), loc=(0, 0.22, 0.02), mat=M["frame"], bevel=0.006, parent=root)
+        _feet(name + "_Foot", 0.60, 0.80, 0.22, M, root)
         for yy in (0.0, 0.30):
             _cyl(name + f"_TopWheel{yy}", 0.05, 0.03, axis="X", mat=M["iron"], bevel=0.004, loc=(0, yy, height - 0.13), parent=root)
         _seg(name + "_StackCable", (0, 0.30, height - 0.18), (0, 0.30, 0.09 + 14 * 0.038 + 0.05), 0.004, M["chrome"], parent=root)

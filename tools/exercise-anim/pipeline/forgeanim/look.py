@@ -66,7 +66,7 @@ TOON = {
     "mat": ("#B0B6C2", "#9096A5"),          # the floor mat under floor work (make_clip.floor_mat)
 }
 LINE = os.environ.get("FA_LINE", "#1E2228")              # outline colour
-LINE_PX = float(os.environ.get("FA_LINE_PX", 2.3))        # outline width in pixels at the 768 px still
+LINE_PX = float(os.environ.get("FA_LINE_PX", 3.0))        # outline width in pixels at the 768 px still
 LIGHT_CAM = (-0.45, 0.55, 0.70)                          # light from the upper left, in front (camera space)
 SHADE_AT = float(os.environ.get("FA_SHADE_AT", 0.0))     # N.L below this = the shade colour
 

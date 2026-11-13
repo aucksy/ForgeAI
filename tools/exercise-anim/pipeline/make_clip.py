@@ -117,8 +117,10 @@ def floor_mat():
         w, l = max(w, 0.62), max(l, 1.75)
     from forgeanim import props as PR
     root = PR._empty("FA_MatRoot")
-    PR._box("FA_Mat", (w, l, 0.012), loc=((x0 + x1) / 2, (y0 + y1) / 2, -0.006), mat=look.toon_material("FA_Mat", *look.TOON["mat"]),
-            bevel=0.0, parent=root)
+    mo = PR._box("FA_Mat", (w, l, 0.012), loc=((x0 + x1) / 2, (y0 + y1) / 2, -0.006), mat=look.toon_material("FA_Mat", *look.TOON["mat"]),
+                 bevel=0.0, parent=root)
+    for p in mo.data.polygons:   # flat faces: smooth normals on a thin slab shade it in stripes
+        p.use_smooth = False
     print(f"[still] floor mat {w:.2f} x {l:.2f} m under the body")
     return root
 
@@ -128,8 +130,8 @@ if look.DRAWN and mode == "stills":
     if _m is not None:
         objs += list(_m.children)
 pitch = cam_spec.get("pitch", 12)
-if look.DRAWN and pitch > 14:   # the main set looks from about chest height: steep recipe cameras are eased (look test r1)
-    pitch = 14 + (pitch - 14) * 0.45
+if look.DRAWN and pitch > 12:   # the main set looks from about chest height: steep recipe cameras are eased (look tests r1-r2)
+    pitch = 12 + (pitch - 12) * 0.35
 center, d = RD.frame_camera(scene, cam, objs, cam_spec.get("yaw", -30), pitch,
                             cam_spec.get("lens", 50), cam_spec.get("fill", 0.86), sample_frames=key_frames,
                             target_offset=cam_spec.get("offset", (0, 0, 0)))

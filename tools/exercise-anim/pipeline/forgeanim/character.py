@@ -325,6 +325,11 @@ def _make_tank(body, rig):
     print(f"[character] tank: {int((keep & inside).sum())} vertices, hem z {hem_z:.3f}, shoulder x {sh[0]:.3f}, neck z {neck[2]:.3f}")
     tank = _shell(body, list(keep), "FA_Tank", look.toon_material("FA_Tank", *look.TOON["tank"]),
                   gap=float(os.environ.get("FA_TANK_GAP", 0.009)), thick=0.003, field=field)
+    # cloth drapes over the muscles: soften the relief so the tank does not shade like bare skin (look test r2)
+    # (Laplacian with the border held, so the neckline, armholes and hem stay where the field cut them)
+    sm = tank.modifiers.new("Drape", "LAPLACIANSMOOTH"); sm.lambda_factor = 0.5; sm.lambda_border = 0.0
+    sm.iterations = int(os.environ.get("FA_TANK_SMOOTH", 4)); sm.use_volume_preserve = True
+    tank.modifiers.move(tank.modifiers.find("Drape"), 1)   # right after the armature, before the gap and thickness
     keep = keep & inside
     deep = _erode(body, list(keep & (z > hem_z + 0.025)), 3)
     vg = body.vertex_groups.new(name="fa_under_tank"); vg.add([i for i, f in enumerate(deep) if f], 1.0, "REPLACE")
@@ -460,6 +465,9 @@ def _drawn_rest(body, rig, shorts, pos):
     else:
         print("[character] MISSING shoes05: run setup_assets.py")
     _mark_face(body, rig, pos)
+    # the main set's man is about 7 heads tall: a slightly bigger head (pose scale, never keyed, so it holds)
+    hs = float(os.environ.get("FA_HEAD", 1.09))
+    rig.pose.bones["head"].scale = (hs, hs, hs)
     body.data.materials.clear(); body.data.materials.append(look.skin_material())
     shorts.data.materials.clear(); shorts.data.materials.append(look.shorts_material())
     sub = body.modifiers.new("Subdiv", "SUBSURF"); sub.levels = 1; sub.render_levels = 2

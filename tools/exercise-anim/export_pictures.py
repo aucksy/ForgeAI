@@ -85,20 +85,26 @@ def compose(rgba, box, look, theme, side=SIZE):
     alpha = np.where(is_shadow, alpha * sh, alpha)
     bg = background(look, theme, side)
     if LOOKS[look].get("ellipse"):
-        bg = floor_ellipse(bg, alpha[..., 0], _rgb(LOOKS[look][theme]["floor"]))
+        bg = floor_ellipse(bg, alpha[..., 0], _rgb(LOOKS[look][theme]["floor"]), col)
     out = bg * (1 - alpha) + col * alpha
     return Image.fromarray((np.clip(out, 0, 1) * 255).astype(np.uint8))
 
 
-def floor_ellipse(bg, alpha, colour):
+def floor_ellipse(bg, alpha, colour, col=None):
     """The main set's floor: a flat lighter ellipse under what touches the floor (feet, bench legs, a lying body).
-    Its width follows the lowest 4 % of the drawing; its height is ~13 % of its width (measured on the main set)."""
+    Its width follows the lowest 4 % of the drawing; its height is ~13 % of its width (measured on the main set).
+    None under floor work on a mat: the main set draws the mat alone there."""
     side = bg.shape[0]
     ys, xs = np.nonzero(alpha > 0.5)
     if len(ys) == 0:
         return bg
     ymax = ys.max()
     band = ys >= ymax - 0.04 * side
+    if col is not None:   # the mat (#B0B6C2 lit / #9096A5 shade) fills the bottom band
+        px = col[ys[band], xs[band]]
+        near = np.minimum(np.linalg.norm(px - _rgb("#B0B6C2"), axis=-1), np.linalg.norm(px - _rgb("#9096A5"), axis=-1)) < 0.06
+        if near.mean() > 0.35:
+            return bg
     bx = xs[band]
     # look test r1: the main set's ellipse is about as wide as the whole drawing (a standing man with dumbbells, a
     # whole machine), not just the feet
