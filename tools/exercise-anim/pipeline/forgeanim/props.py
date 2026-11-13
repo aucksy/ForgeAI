@@ -263,7 +263,7 @@ def cable_line(name="FA_CableLine", r=0.0075):
     root = _empty(name)
     if look.DRAWN:
         r = r * 0.6   # the main set draws the cable as a thin line
-    ob = _cyl(name + "_Wire", r, 1.0, verts=12, axis="Z", mat=M["chrome"], loc=(0, 0, 0.5), parent=root)
+    ob = _cyl(name + "_Wire", r, 1.0, verts=12, axis="Z", mat=M["rubber"] if look.DRAWN else M["chrome"], loc=(0, 0, 0.5), parent=root)   # drawn: a dark line
     return root
 
 

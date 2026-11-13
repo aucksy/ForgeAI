@@ -326,6 +326,45 @@ def set_light(cam):
 
 
 NO_LINES = "FA_NoLines"   # objects in this collection get no outline (the eyeballs: a plain face, like the main set)
+HULL_M = float(os.environ.get("FA_HULL", 0.0065))   # equipment outline width in metres (inverted hull)
+
+
+def hull_material():
+    """The inverted-hull outline: the hull's faces that face the camera (its normals are flipped, so they read as
+    back faces) are the line colour, the rest is transparent."""
+    mat = bpy.data.materials.get("FA_Hull")
+    if mat:
+        return mat
+    mat = bpy.data.materials.new("FA_Hull"); mat.use_nodes = True
+    N = mat.node_tree.nodes; L = mat.node_tree.links; N.clear()
+    out = N.new("ShaderNodeOutputMaterial")
+    geo = N.new("ShaderNodeNewGeometry")
+    em = N.new("ShaderNodeEmission"); em.inputs[0].default_value = srgb(LINE); em.inputs[1].default_value = 1.0
+    tr = N.new("ShaderNodeBsdfTransparent")
+    mx = N.new("ShaderNodeMixShader")
+    L.new(geo.outputs["Backfacing"], mx.inputs[0]); L.new(tr.outputs[0], mx.inputs[1]); L.new(em.outputs[0], mx.inputs[2])
+    L.new(mx.outputs[0], out.inputs["Surface"])
+    return mat
+
+
+def add_outline(ob, width=None):
+    """Drawn look (R-490, look test r3): equipment gets a solid dark outline like the main set's machines. Freestyle
+    drew equipment edges only ~1 px wide and broken, so a flipped shell (inverted hull) draws the silhouette."""
+    if ob.type != "MESH" or ob.data.users > 1 or any(m.name == "FA_Outline" for m in ob.modifiers):
+        return
+    me = ob.data
+    if len(me.polygons) == 0:
+        return
+    mat = hull_material()
+    if mat.name not in [m.name for m in me.materials if m]:
+        if len(me.materials) == 0:
+            me.materials.append(bpy.data.materials.new(ob.name + "_Base"))
+        me.materials.append(mat)
+    idx = [m.name if m else "" for m in me.materials].index(mat.name)
+    sc = max(1e-6, sorted(abs(s) for s in ob.matrix_world.to_scale())[1])   # median: a rod is stretched along one axis only
+    s = ob.modifiers.new("FA_Outline", "SOLIDIFY")
+    s.thickness = (HULL_M if width is None else width) / sc; s.offset = 1.0; s.use_flip_normals = True
+    s.use_rim = False; s.material_offset = idx; s.use_even_offset = True
 
 
 def setup_lines(scene):

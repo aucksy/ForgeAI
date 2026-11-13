@@ -327,8 +327,8 @@ def _make_tank(body, rig):
                   gap=float(os.environ.get("FA_TANK_GAP", 0.009)), thick=0.003, field=field)
     # cloth drapes over the muscles: soften the relief so the tank does not shade like bare skin (look test r2)
     # (Laplacian with the border held, so the neckline, armholes and hem stay where the field cut them)
-    sm = tank.modifiers.new("Drape", "LAPLACIANSMOOTH"); sm.lambda_factor = 0.5; sm.lambda_border = 0.0
-    sm.iterations = int(os.environ.get("FA_TANK_SMOOTH", 4)); sm.use_volume_preserve = True
+    sm = tank.modifiers.new("Drape", "LAPLACIANSMOOTH"); sm.lambda_factor = 1.0; sm.lambda_border = 0.0
+    sm.iterations = int(os.environ.get("FA_TANK_SMOOTH", 12)); sm.use_volume_preserve = True
     tank.modifiers.move(tank.modifiers.find("Drape"), 1)   # right after the armature, before the gap and thickness
     keep = keep & inside
     deep = _erode(body, list(keep & (z > hem_z + 0.025)), 3)
