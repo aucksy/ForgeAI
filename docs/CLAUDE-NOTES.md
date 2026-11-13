@@ -7,6 +7,11 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-486. Which journeys are built once and which twice (Android vs iPhone) — 13 Nov 2026
+He said (13 Nov 2026): "I asked you a question and I forgot to read the answer. This time you can add the answer in the tracker. What user facing journeys will have to be built or fixed or improved separately in both apps?"
+Done: answer written as tracker Q&A #94 (from docs/ios/PARITY.yaml; measured: ~142k shared TS lines, ~7.2k Android-only phone Kotlin, ~7.8k Wear OS Kotlin). In short: screens inside the app once; lock screen, alerts, reminders, watch, widgets, Health, payments, sign-in, updates, share menu, links, back button twice; the watch always twice. The iPhone restart question (A: after Android is public, my pick; B: now) is in #94 and the decision table.
+He also said (mid-turn): "and sweep the tracker to keep it up to date". Done: T92 (muscle tips), T93 (Up next restore fix), T94 (AI one card, deploy pending) added; T91 Play still in review; T71 and F185 point to #94; F193 step 1 marked released in 0.73.0; Impact/Effort filled for the 23 pending items that had none; the stale "AI assistant for the owner" priority row removed (merged into F201).
+
 ## R-485. AI Assistant: one answer for a how-to, not two cards — 13 Nov 2026
 He said (13 Nov 2026, with a screenshot of "gym logo kaise badlu"): "answer can be single here... why giving 2 CTAs?" The AI showed a "This is a how-to question. Help and feedback answers it" card (Open Help and feedback) AND a "Where to do it" card (3 steps, Open Branding).
 Cause: the open_page tool text said "and as the follow-up of a how-to answer", so the AI called how_to and open_page together.

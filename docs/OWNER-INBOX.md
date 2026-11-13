@@ -14,6 +14,7 @@ Page: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT (private to your account
 
 | # | Decision | My pick |
 |---|---|---|
+| 94 | iPhone and Apple Watch apps: restart now, or after Android is public on Play? | A: after Android is public |
 | 78 | Turn on the Starter and Pro split now? | A: not yet, until the first gym pays |
 
 ---
@@ -25,6 +26,29 @@ Done, built and "Not doing" items have no rating. The page sorts by these (Best 
 
 | Item | Impact | Effort |
 |---|---|---|
+| #94 | Medium | High |
+| #92 | High | Low |
+| #89 | Medium | Low |
+| #87 | Medium | Low |
+| #85 | Medium | Low |
+| #83 | Medium | Low |
+| #79 | Medium | Low |
+| #78 | High | Low |
+| Feature: Why did today fall short? (sleep + food + training together) | Medium | High |
+| Feature: iPhone app and Apple Watch app | Medium | High |
+| Feature: Money back for unhappy gyms | Low | Low |
+| Feature: Fast call-back for new enquiries | High | Medium |
+| Feature: Proof that gyms trust us: first customers, video and reviews | High | Medium |
+| Feature: "What if you shut down?": a written promise that the gym never loses its data | Medium | Low |
+| Feature: AI answers members' questions for the gym (top plan) | Medium | Medium |
+| Feature: Big banner at the top of the Play listing | Low | Medium |
+| Task: AI Assistant: one answer for a how-to question, not two cards (R-485) | Medium | Low |
+| Task: Release 0.77.0 to the testing tracks, then the production release for Google's review (R-309) | High | Low |
+| Task: Phone number finds your gym membership; a found gym unlocks every paid feature (R-458, R-461) | High | High |
+| Task: "Message your gym" for members, with a "Member messages" inbox in the admin app (R-458) | High | Medium |
+| Task: Marketing: ads for gym owners with several hooks, pro-quality videos (R-428) | High | Medium |
+| Task: Entry machine connectors: eSSL / ZKTeco (F103, R-378) | Medium | Medium |
+| Task: Split features between Starter and Pro (#30, #78) | Medium | Low |
 | #93 | Medium | Low |
 | Feature: Monthly gym challenge with a ranking | High | Low |
 | Feature: How busy the gym is right now | High | Low |
@@ -108,7 +132,6 @@ Done, built and "Not doing" items have no rating. The page sorts by these (Best 
 | Feature: Webcam photo at the desk | Low | Low |
 | Feature: Body measurements taken by the gym | Low | Low |
 | Feature: Trainer view of member progress | High | Medium |
-| Feature: AI assistant for the owner | Low | High |
 | Feature: Several branches | Low | High |
 | Feature: Member data export by the gym, on request | Medium | Medium |
 | Feature: A member's own history from before joining a gym | Medium | Medium |
@@ -168,7 +191,10 @@ On the page: the "Claude's tasks" tab. Status: Done / Doing / To do / Blocked (w
 
 | Task | Status | Details |
 |---|---|---|
-| T91 Release 0.77.0 to the testing tracks, then the production release for Google's review (R-309) | Doing | Released 12 Nov. Live for testers: phone internal + closed testing (published by me after Google's approval, 12 Nov), watch internal. In Google's review since 12 Nov evening: the production release (0.77.0, all countries) and the watch closed-test copy, together. When Google approves, Play shows them as one publish, so the watch test copy goes out only together with production: production needs your own "publish". 13 Nov: Google rejected it over the watch heart-rate permission; your choice "A": I added the demo video to both heart-rate answers and sent it back the same day. In review again. |
+| T94 AI Assistant: one answer for a how-to question, not two cards (R-485) | Doing | Your note, 13 Nov ("gym logo kaise badlu" showed a Help card AND a Branding card). Fixed: the AI now picks one page card with its steps; the admin app also drops the Help card when a page card is there. Cloud checks running; then I deploy the admin app and ask the live AI the same question. |
+| T93 Up next went back to Week 1 after restoring an older backup (R-484) | Done | Built 13 Nov. A followed plan with no saved start day now starts on the day of your first workout of that plan, so Up next and the week line carry on. Phone tests passed on your phone size and the default phone (runs 43413282962, 43413286078). Waiting for release. What's new draft: "If you restore an older backup, "Up next" now carries on from your last workout instead of starting your plan again at Week 1." |
+| T92 Muscle tips: clear words, shoulders count only shoulder exercises, one swap tip (R-482, R-483) | Done | Built 13 Nov, your picks: shoulders count only direct shoulder work; only the Up next tip suggests a swap. Phone tests passed on both phones (runs 43405436655, 43405439549). Waiting for release. |
+| T91 Release 0.77.0 to the testing tracks, then the production release for Google's review (R-309) | Doing | Released 12 Nov. Live for testers: phone internal + closed testing (published by me after Google's approval, 12 Nov), watch internal. In Google's review since 12 Nov evening: the production release (0.77.0, all countries) and the watch closed-test copy, together. When Google approves, Play shows them as one publish, so the watch test copy goes out only together with production: production needs your own "publish". 13 Nov: Google rejected it over the watch heart-rate permission; your choice "A": I added the demo video to both heart-rate answers and sent it back the same day. In review again (checked 13 Nov evening: still in review, no policy issues found). |
 | T90 iPhone: plain start screen, no logo before the gym's own (R-453 follow-up) | Done | Built 12 Nov. In light and dark the iPhone start screen is plain; the gym's logo is the first logo a member sees. Not proven yet: on the cloud test iPhone the plain screen is white/black, not cream/charcoal; check on your real iPhone. The iPhone picture test now photographs the right screens. |
 | T89 Phone number finds your gym membership; a found gym unlocks every paid feature (R-458, R-461) | Doing | Your vision, decided 12 Nov: a member proves their number with the free WhatsApp check; if they have an active membership at a MettleUp gym, or own or staff one, every paid feature is free. No gym found: "Tell my gym" or Skip. When a membership ends, paid extras lock after 7 days unless the gym owner turns the switch off (it starts on, your "A"); the member's own workouts and routines never lock. Done: the owner sign-in (waits for release); the gym search is live on the gym server (12 Nov, your yes). Being built with the paid plan (F56), payments in test mode. |
 | T88 "Message your gym" for members, with a "Member messages" inbox in the admin app (R-458) | Doing | Your request, 12 Nov. Being built: members send a question, feedback or complaint to their gym from the Gym tab and see replies; the desk answers in the admin app. Needs a new server table: that change comes to you for a yes before it goes live. |
@@ -188,7 +214,7 @@ On the page: the "Claude's tasks" tab. Status: Done / Doing / To do / Blocked (w
 | T74 Round home-screen icon for square gym logos (#90) | Done | Released in 0.73.0 on 6 Nov 2026 (Play internal testing, phone + watch; closed testing follows when Google ends its Health review of the new Sleep permission). Started 5 Nov. The gym's logo sits in the middle of the icon on its own edge colour, so no white corners in a circle. Already added icons update by themselves. Branding page shows a round preview. |
 | T73 Simpler suggested weights (your pick A) and a true "kg to beat" (R-350, R-351) | Done | Released in 0.73.0 on 6 Nov 2026 (Play internal testing, phone + watch; closed testing follows when Google ends its Health review of the new Sleep permission). Started 5 Nov. +1 rep on each set until every set reaches the top of your rep range; then the weight goes up by your Weight jump, with reps that lift about the same kg. The kg to beat is last time's total, so "beaten" only shows when you really pass it. Next version. |
 | T72 Sleep link and protein tips, step 1 of F193 (R-344) | Done | Released in 0.73.0 on 6 Nov 2026 (Play internal testing, phone + watch; closed testing follows when Google ends its Health review of the new Sleep permission). Started 5 Nov. A switch in Settings, then one calm line after a weaker workout when you slept little. Needs your OK on one privacy sentence before release. |
-| T71 iPhone app, step 1: the parity check and the iPhone build in the cloud (R-339) | Done | Done 5 Nov: the iPhone app builds in the cloud and opens on an iPhone simulator; all 4 tabs and Settings checked in pictures. A check now lists the 18 Android-only parts still missing on iPhone and stops any new one slipping through. Next: rest timer, Apple Health, watch link, then the Apple Watch app. |
+| T71 iPhone app, step 1: the parity check and the iPhone build in the cloud (R-339) | Done | Done 5 Nov: the iPhone app builds in the cloud and opens on an iPhone simulator; all 4 tabs and Settings checked in pictures. A check now lists the 18 Android-only parts still missing on iPhone and stops any new one slipping through. Next: rest timer, Apple Health, watch link, then the Apple Watch app. Paused since 5 Nov (R-348); the restart waits for your pick in #94. |
 | T70 Fixes from the fresh-eyes review of the 4-5 Nov work (R-335) | Done | Released in 0.73.0 on 6 Nov 2026 (Play internal testing, phone + watch; closed testing follows when Google ends its Health review of the new Sleep permission). Panel: fixed and LIVE 5 Nov (deploy after CI 41965722969): the UPI problem was only test data, plus one real gap closed (a form could keep the old gym's UPI ID after a demo reset); "Fees due" in full rupees; page names; button labels; pass member page. Checked live in Chrome. App: 18 fixes for the next version; the "In use" line keeps your words with the right number (840 kg). |
 | T69 Update pop-up: full screen once, then an orange line, again on the 7th launch (R-336) | Done | Released in 0.73.0 on 6 Nov 2026 (Play internal testing, phone + watch; closed testing follows when Google ends its Health review of the new Sleep permission). Your pick 5 Nov: design B. Built 5 Nov. UAT of all types passed 5 Nov (runs 41987822659, 41987826057); it also fixed a bug that hid the pop-up from everyone. Then a fresh-eyes review. Ships in the next version after 0.72.0. |
 | T68 Help answers: test 3 real questions when the credit comes (#83, R-278) | Done | 12 Nov 2026, 2:25 pm: 3 test questions sent to the live help box (member in English, member in Hinglish, owner about Excel import). All 3 got a correct AI answer from the help articles, in the person's language, with the real button names. Cost: about 13,000 words-pieces in per answer, about 12 paise an answer (Claude Haiku). This month so far: 21 answers, about Rs 2.6 of the $80 cap. The 3 test messages are marked "[Claude test T68]" in Feedback. |
@@ -389,12 +415,12 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | F51 Remove the background from logos automatically | Not doing | Closed (you, 30 Oct, R-192): no tool of our own. Instead, a tip under the logo upload on Branding tells owners how to remove it free with ChatGPT or Google Gemini. |  |
 | F52 Balance check and focus block | Live | Released in v0.69.0 (3 Nov). Your idea (30 Oct, R-201): the app spots muscles you train little or not at all (and ones you train a lot), and suggests swapping 1-2 exercises in your routines for the best exercise for the weak muscle, with 2 next-best choices. Or you pick a focus yourself (for example more shoulders, less biceps) for about 2 months. Hevy and Fitbod show which muscles you trained but do not suggest swaps; Jefit comes closest. Built 2 Nov; comes in 0.69.0. | Our app already counts sets per muscle (the body map and "Sets per muscle") and can swap exercises when it builds a plan. After at least 4 weeks of workouts, a card says for example "Rear shoulders: 2 sets a week (most muscles get 10)". Tap it: it shows which exercise to replace (one for a muscle you already train a lot) and the best 3 exercises for the weak muscle. The swap lasts 8 weeks, then the app asks: keep it or go back to your old routine (the old one is kept). |
 | F53 Calorie tracking from a food photo (AI) | Idea | Your bigger vision (24 Oct): click a picture of the plate and the app estimates calories; manual logging with Indian foods too. Later. Research of free food data and photo methods: docs/research/R-calorie-tracking.md. | The member takes a photo of the meal; AI names the foods and guesses portions; the member checks and fixes them, then the calories and protein count toward the day. Manual search with Indian dishes and katori/roti portions works without a photo. Builds on the hidden food log. |
-| F193 Why did today fall short? (sleep + food + training together) | Planned | Your long-term vision, 5 Nov (R-342). Step 1 approved 5 Nov (R-344), building now: read last night's sleep from your watch (through Health Connect, it stays on your phone) and short protein tips. The food part (step 2) comes later, built on open food lists: the Indian Nutrient Databank (1,095 foods and 1,014 Indian recipes) and Open Food Facts. | When a workout is weaker than last time, the app checks your sleep (from your watch, through Health Connect) and your protein and calories (from the food log). It then tells you the likely reason in one line, for example "You slept 5 hours. A weaker day is normal. Aim for 7+ tonight." or "Protein was low this week: about 60 g a day of 120 g." |
+| F193 Why did today fall short? (sleep + food + training together) | Planned | Your long-term vision, 5 Nov (R-342). Step 1 approved 5 Nov (R-344) and released in 0.73.0 (6 Nov): read last night's sleep from your watch (through Health Connect, it stays on your phone) and short protein tips. The food part (step 2) comes later, built on open food lists: the Indian Nutrient Databank (1,095 foods and 1,014 Indian recipes) and Open Food Facts. | When a workout is weaker than last time, the app checks your sleep (from your watch, through Health Connect) and your protein and calories (from the food log). It then tells you the likely reason in one line, for example "You slept 5 hours. A weaker day is normal. Aim for 7+ tonight." or "Protein was low this week: about 60 g a day of 120 g." |
 | F54 Hindi screens | Idea | Not built; the member app is in English today. | Settings gets a language choice, English or हिन्दी, and the app starts in the phone's language. Every button and message gets a Hindi version. Exercise names stay in English, because Indian gyms use the English names. |
 | F55 Body weight from Health Connect | Live | Released in v0.67.0. Built 1 Nov 2026 (R-269): "Read my weight" on the Health Connect page. Ships with your next "release". Before it goes out, you fill the Play Health Connect form and approve one privacy line. | With one permission, weigh-ins from a smart scale or another health app appear in Body weight by themselves, marked "From Health Connect". If you also typed a weight that day, your typed one wins. |
 | F56 Paid plan for people without a gym | Planned | Researched 31 Oct (R-242): free forever = unlimited logging, history, routines, the phone rest timer, backup and export, and the last 3 months of charts. Paid = the watch app, older charts, weight suggestions, the calculators and unlimited own exercises. New users get every feature free for 30 days, no card. Prices on the app's website: no (your call). Prices: ₹149 a month, ₹999 a year, ₹2,499 once (your yes, 31 Oct). | On day 1 every feature is open for 30 days; the app keeps the count itself, so no card is asked. Around day 25 a screen shows what stays free and what is paid. After day 30 the free part stays and nothing is deleted. Paying is through Google Play (Google keeps 15%). The pay screen also says "Train at a MettleUp gym? Enter your gym code": a gym member gets everything free. |
 | F184 A website just for the member app, at mettleup.fit | Live | #79. Live 1 Nov 2026: mettleup.fit is the member site, gyms.mettleup.fit the gym site. Your idea, 31 Oct (R-242): mettleup.fit shows only the phone and watch app, with nothing about gym software. The gym website moves to gyms.mettleup.fit; old gym links still work. No prices on it. | mettleup.fit gets a new page about the app: the workout log, charts, rest timer, watch app and a Play Store button. The gym page moves to gyms.mettleup.fit, and mettleup.fit/gyms sends people there. At the bottom: "Want all this free? Recommend MettleUp to your gym", with a link the member can share with the gym owner. Each shared link counts as a lead in HQ. |
-| F185 iPhone app and Apple Watch app | Idea | Weak point vs rivals (market research 6 Nov, R-379). Paused 5 Nov (R-348, your words: "perfect android first"). Step 1 is kept: the iPhone app builds in the cloud and opens. When we restart: the 18 iPhone gaps, then the Apple Watch app, and the Apple developer account (#89). | Way to solve now, cheaply: most members of small Indian gyms use Android, so iPhone members first get a WEB version of the gym part of the app (opens in Safari, "Add to Home Screen"): plan and dues, check-in code, gym messages, trainer plans. No Apple account or fee needed. The full iPhone app and Apple Watch app (Apple developer account about $99 a year, in your name; a cloud Mac to build) come after the Android app is finished, or earlier if a paying gym asks. |
+| F185 iPhone app and Apple Watch app | Idea | Weak point vs rivals (market research 6 Nov, R-379). Paused 5 Nov (R-348, your words: "perfect android first"). 13 Nov: what must be built twice, and when to restart, is in #94. Step 1 is kept: the iPhone app builds in the cloud and opens. When we restart: the 18 iPhone gaps, then the Apple Watch app, and the Apple developer account (#89). | Way to solve now, cheaply: most members of small Indian gyms use Android, so iPhone members first get a WEB version of the gym part of the app (opens in Safari, "Add to Home Screen"): plan and dues, check-in code, gym messages, trainer plans. No Apple account or fee needed. The full iPhone app and Apple Watch app (Apple developer account about $99 a year, in your name; a cloud Mac to build) come after the Android app is finished, or earlier if a paying gym asks. |
 | F57 Strength level for each main lift | Live | Released in v0.69.0 (3 Nov). Shows Beginner, Intermediate or Advanced for squat, bench, deadlift and other main lifts, from #58. Built 2 Nov; comes in 0.69.0. | Each main lift's chart shows a level worked out from your best set and your body weight, with our own formula. Body weight is never shown. Works offline. |
 | F58 Badge shelf | Live | Released in v0.69.0 (3 Nov). Badges for first 100 kg lift, 4 weeks in a row, 50 workouts and more, from #58. Built 2 Nov; comes in 0.69.0. | Profile shows a shelf of badges earned from records and milestones the app already counts. The gym can give a real prize for a badge. |
 | F59 Which muscles are ready today | Not doing | You switched it off on 5 Nov (R-372). It leaves the Workout tab in the next release; the code is kept. Before: Released in v0.72.0. Built 5 Nov, from #58. On the Workout tab, "Ready today" colours each muscle by how rested it is. Phone test passed (run 41914409516). | Colours each muscle on the body drawing from the workouts you logged. Free here; Fitbod charges for it. The words say it is worked out from logged workouts only. |
@@ -551,6 +577,52 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | F188 Big banner at the top of the Play listing | Idea | Parked (owner, 1 Nov: "add it to backlog for now"). Our 1024x500 banner picture is already on the listing; Play shows it at the top only when the listing has a YouTube video. | I make a 30-second video from the real app screens, for free. You watch it first. After your yes, it goes on YouTube as Unlisted (only people with the link see it) and its link goes in the listing, so the banner shows on top. Best done when the app goes public. |
 
 ---
+
+## 94. Android and iPhone: what is built once, and what must be built twice — 13 Nov 2026
+**Chat:** Mettle Up
+**Status:** ANSWERED
+**You asked (13 Nov):** Which member journeys must be built, fixed or improved separately in the Android app and the iPhone app? Which code is shared and which is not, so you know what a change request costs.
+
+**Short answer:** about 9 in 10 lines of the member app are shared. Every screen INSIDE the app is built once and works on both phones. What happens OUTSIDE the app's screens (lock screen, alerts, watch, widgets, Health, payments, sign-in) is built once per phone. The watch app is always separate. Measured 13 Nov: about 142,000 lines shared; about 7,000 Android-only phone lines; about 7,800 Wear OS watch lines.
+
+**Built ONCE (a change here costs the same as today):**
+- The workout: logging sets, the Target, rest bar inside the app, In use, finish screen, records.
+- Routines and plans: Up next, weeks, muscle tips, the plan builder, swaps.
+- History, charts, Progress, Profile, What's new, Settings screens.
+- The gym part: check-in code, plan and dues, gym messages, trainer plans, the shop, Help and feedback.
+- Imports (Hevy and Strong with the file picker) and backup files.
+- All words, colours, light and dark look.
+- Also shared by everyone: the gym server and the admin app (it runs in a web browser).
+
+**Built TWICE (once for Android, once for iPhone):**
+| Member journey | Android today | iPhone needs |
+| --- | --- | --- |
+| Rest countdown on the lock screen, "Rest is over" alert, its sounds, the Done button | Built | Apple's Live Activity |
+| Live workout card with "Complete set" in the pull-down | Built | Same Live Activity |
+| Workout reminders, gym reminders, gym notices, pop-ups for replies | Built | Apple's push messages |
+| Watch app (logging sets, rest, heart rate, the dial) | Wear OS app | A new Apple Watch app, written from zero |
+| Phone-to-watch link (open on watch, install check, gym colour) | Built | Apple's watch link |
+| Health: save workouts, read weight, steps and sleep | Health Connect | Apple Health |
+| Home-screen widgets (Today, Week, Gym) | Built | Apple widgets |
+| Long-press shortcuts on the app icon | Built | Apple Quick Actions |
+| Paying for MettleUp Plus | Google Play Billing | Apple in-app purchase |
+| Sign-in and Google Drive backup | Google | Google, plus "Sign in with Apple" (Apple's rule) |
+| "Update the app" prompt | Play in-app update | A link to the App Store |
+| Opening a Hevy file from another app's Share menu | Built | Apple "Open in" |
+| Check-in and invite links that open the app | Built | Apple's link setup |
+| Back button guards (live workout, plan builder) | Back button | Swipe-back gesture |
+
+**Android only, nothing on iPhone (Apple does not allow it):** the gym logo as a home-screen icon; the gym's own start-up screen; the phone's silent switch reading.
+
+**What this means when you ask for a change:**
+- A change to a screen inside the app: built once. Each phone still gets a short look, because fonts and the keyboard differ a little.
+- A change to alerts, sounds, the lock screen, notifications, widgets, Health, payments or sign-in: built twice.
+- A change to the watch: always built twice (Wear OS and Apple Watch), even today.
+- The list of iPhone gaps is kept in docs/ios/PARITY.yaml. A cloud check stops any new Android-only part from being added without a line there.
+
+**Decide:** When do I restart the iPhone and Apple Watch apps? They are paused since 5 Nov (your words: "perfect android first").
+- A: after the Android app is public on Play; then the 18 iPhone gaps, then the Apple Watch app (recommended)
+- B: now, side by side with Android; every alert, watch or Health change then costs two builds from today
 
 ## 93. One MettleUp login for all services: what moving each one would change — 7 Nov 2026
 **Chat:** Mettle Up
