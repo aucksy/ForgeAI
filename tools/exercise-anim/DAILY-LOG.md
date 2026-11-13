@@ -72,8 +72,34 @@ https://claude.ai/artifact/1ZwD5CZb1LPZCK58DQ6huw)
   ~15-20 cm further toward the head than the torso-frame arm maths says (bar at the collarbone instead of the lower chest;
   bar far past the head). Run measure_press.py in the cloud (add it to the stills checks) and set the angles from its
   numbers before the next try.
+- decline_machine_chest_press, incline_machine_chest_press, iso_lateral_chest_press (13 Nov, 2 tries each): the
+  plate-loaded press levers still pass in front of the face or through the chest/frame. Needs a real converging-lever
+  layout: pivots BEHIND and ABOVE the shoulders, levers outside the shoulders, handles at chest height, plus a back pad
+  on the decline seat. Check every lever against the head/chest with a clearance number in the log before rendering.
+- standing_leg_curl (13 Nov, 2 tries): pose and roller placement read right, but the roller lever is 40 cm at the start
+  and 54 cm at the end. Pin the roller on a fixed-length lever (bisect pivot at the knee axis) and use a camera from
+  behind-left so the hamstrings show.
+- treadmill_run, outdoor_run (13 Nov, 2 tries): the end picture is a two-footed flight with the same arm leading. Make
+  the end the opposite stance (other foot down, other arm forward); on the treadmill also shorten the handrail or move
+  the runner back so it does not end at his knee.
+- walking (13 Nov, 2 tries): the start has both hands together in front of the belly; copy the end picture's arm swing,
+  mirrored.
 
 ## Run log (newest first)
+
+### 13 Nov 2026 (machine and cardio helper; render runs 43449175969, retry 43452963165)
+- New prop family: plain MACHINE geometry built from the recipe (`"machine"` parts: boxes, cylinders, rods, a weight
+  stack; levers whose pivot keeps their length the same at start and end, handles that follow the fists). The log prints
+  each lever length at the key frames. Research (19 files, citations checked by PMID) + recipes for 19 machine/cardio keys.
+- ADDED (12): incline_machine_fly, smith_machine_incline_press, stationary_bike, air_bike, stair_climber (first try);
+  machine_lat_pulldown, iso_lateral_row, iso_lateral_high_row, iso_lateral_low_row, leg_press_calf_raise, elliptical,
+  incline_treadmill_walk (retry: rows and pulldown shot from behind-left so the back shows; calf-raise plate under the
+  balls of the feet; elliptical levers on the front column; treadmill feet on the belt). 45 exercises in the app now.
+- DROPPED (7, at 2 tries -> Needs review): the three plate-loaded chest presses (levers across the face/chest),
+  standing_leg_curl (lever changes length), treadmill_run and outdoor_run (end reads as a hop), walking (start arms).
+- Cannot be shown honestly (picture_status NEEDS + qa.json): swimming (needs water), hiking (needs a trail). Not built,
+  reason in NEEDS: assisted_chin_up, machine_pullover, chest_supported_t_bar_row, smith_machine_deadlift,
+  smith_machine_good_morning, reverse_hack_squat, belt_squat, glute_kickback_machine, rotary_torso_machine.
 
 ### 13 Nov 2026 (daily job; render runs 43370176409, retry 43374536640)
 - `--next` had only side_plank left, so per Rules the next prop family was built: a straight BARBELL

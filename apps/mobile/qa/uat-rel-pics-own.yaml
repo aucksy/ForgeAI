@@ -102,6 +102,26 @@ appId: com.mettleup.app
     timeout: 3000
 - takeScreenshot: rel-pics-03c-cable
 - back
+# A lever machine (13 Nov 2026: the first gym-machine pictures, plain machines of our own): Start + End.
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Clear the search'
+- tapOn: "Clear the search"
+- tapOn: "Search exercises"
+- inputText: " machine lat pulldown"
+- hideKeyboard
+- tapOn:
+    text: "View Machine Lat Pulldown"
+    index: 0
+- extendedWaitUntil:
+    visible: "Start position of Machine Lat Pulldown"
+    timeout: 20000
+- assertVisible: "End position of Machine Lat Pulldown"
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: rel-pics-03d-machine
+- back
 # A hold: one picture, labelled Hold, no End.
 # The search keeps its text after back: clear it with the X (eraseText left letters behind on 12 Nov).
 - runFlow:

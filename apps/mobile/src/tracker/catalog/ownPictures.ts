@@ -39,6 +39,11 @@ export const OWN_PICTURES: Readonly<Record<string, ExercisePictures>> = {
     thumb: require('../../../assets/exercise-pictures-own/dumbbell_step_up__thumb.webp'),
     end: require('../../../assets/exercise-pictures-own/dumbbell_step_up__end.webp'),
   },
+  elliptical: {
+    start: require('../../../assets/exercise-pictures-own/elliptical__start.webp'),
+    thumb: require('../../../assets/exercise-pictures-own/elliptical__thumb.webp'),
+    end: require('../../../assets/exercise-pictures-own/elliptical__end.webp'),
+  },
   farmers_walk: {
     start: require('../../../assets/exercise-pictures-own/farmers_walk__start.webp'),
     thumb: require('../../../assets/exercise-pictures-own/farmers_walk__thumb.webp'),
@@ -79,10 +84,40 @@ export const OWN_PICTURES: Readonly<Record<string, ExercisePictures>> = {
     thumb: require('../../../assets/exercise-pictures-own/incline_neutral_grip_dumbbell_press__thumb.webp'),
     end: require('../../../assets/exercise-pictures-own/incline_neutral_grip_dumbbell_press__end.webp'),
   },
+  incline_treadmill_walk: {
+    start: require('../../../assets/exercise-pictures-own/incline_treadmill_walk__start.webp'),
+    thumb: require('../../../assets/exercise-pictures-own/incline_treadmill_walk__thumb.webp'),
+    end: require('../../../assets/exercise-pictures-own/incline_treadmill_walk__end.webp'),
+  },
+  iso_lateral_high_row: {
+    start: require('../../../assets/exercise-pictures-own/iso_lateral_high_row__start.webp'),
+    thumb: require('../../../assets/exercise-pictures-own/iso_lateral_high_row__thumb.webp'),
+    end: require('../../../assets/exercise-pictures-own/iso_lateral_high_row__end.webp'),
+  },
+  iso_lateral_low_row: {
+    start: require('../../../assets/exercise-pictures-own/iso_lateral_low_row__start.webp'),
+    thumb: require('../../../assets/exercise-pictures-own/iso_lateral_low_row__thumb.webp'),
+    end: require('../../../assets/exercise-pictures-own/iso_lateral_low_row__end.webp'),
+  },
+  iso_lateral_row: {
+    start: require('../../../assets/exercise-pictures-own/iso_lateral_row__start.webp'),
+    thumb: require('../../../assets/exercise-pictures-own/iso_lateral_row__thumb.webp'),
+    end: require('../../../assets/exercise-pictures-own/iso_lateral_row__end.webp'),
+  },
+  leg_press_calf_raise: {
+    start: require('../../../assets/exercise-pictures-own/leg_press_calf_raise__start.webp'),
+    thumb: require('../../../assets/exercise-pictures-own/leg_press_calf_raise__thumb.webp'),
+    end: require('../../../assets/exercise-pictures-own/leg_press_calf_raise__end.webp'),
+  },
   low_to_high_cable_fly: {
     start: require('../../../assets/exercise-pictures-own/low_to_high_cable_fly__start.webp'),
     thumb: require('../../../assets/exercise-pictures-own/low_to_high_cable_fly__thumb.webp'),
     end: require('../../../assets/exercise-pictures-own/low_to_high_cable_fly__end.webp'),
+  },
+  machine_lat_pulldown: {
+    start: require('../../../assets/exercise-pictures-own/machine_lat_pulldown__start.webp'),
+    thumb: require('../../../assets/exercise-pictures-own/machine_lat_pulldown__thumb.webp'),
+    end: require('../../../assets/exercise-pictures-own/machine_lat_pulldown__end.webp'),
   },
   overhead_cable_curl: {
     start: require('../../../assets/exercise-pictures-own/overhead_cable_curl__start.webp'),

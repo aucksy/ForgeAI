@@ -475,5 +475,113 @@
     "qa": "pass",
     "reason": "numbers (fists on handle/grip, cable clear of the skin 4-24 cm, feet on the floor), close-up and fresh reviewer all clean (13 Nov 2026); same note on the palm-up grip",
     "tries": 1
+  },
+  "machine_lat_pulldown": {
+    "rendered": "2026-11-13",
+    "run": "43452963165",
+    "qa": "pass",
+    "reason": "numbers (fists on the lever handles, levers the same length at start and end), close-up from behind and fresh reviewer clean; lats lit (13 Nov 2026). First try crashed before rendering (elbow setting), so this is the first real render",
+    "tries": 1
+  },
+  "iso_lateral_row": {
+    "rendered": "2026-11-13",
+    "run": "43452963165",
+    "qa": "pass",
+    "reason": "retry: camera moved behind-left so the back muscles show; levers constant length, fists on handles, close-up and fresh reviewer clean (13 Nov 2026)",
+    "tries": 2
+  },
+  "iso_lateral_high_row": {
+    "rendered": "2026-11-13",
+    "run": "43452963165",
+    "qa": "pass",
+    "reason": "retry: camera behind-left; levers constant length, fists on handles, thigh pad and seat contact, close-up and fresh reviewer clean (13 Nov 2026)",
+    "tries": 2
+  },
+  "iso_lateral_low_row": {
+    "rendered": "2026-11-13",
+    "run": "43452963165",
+    "qa": "pass",
+    "reason": "retry: camera behind-left; floor-pivot levers constant length, hands pulled back beside the hips, close-up and fresh reviewer clean (13 Nov 2026)",
+    "tries": 2
+  },
+  "leg_press_calf_raise": {
+    "rendered": "2026-11-13",
+    "run": "43452963165",
+    "qa": "pass",
+    "reason": "retry: plate under the balls of the feet, heels hang off, sled on rails, side camera; ankle range ~8 cm at the plate; close-up and fresh reviewer pass (movement is small at thumbnail size, true to the exercise) (13 Nov 2026)",
+    "tries": 2
+  },
+  "elliptical": {
+    "rendered": "2026-11-13",
+    "run": "43452963165",
+    "qa": "pass",
+    "reason": "retry: handle levers pivot on the front column, lever length constant (0.467 m); feet on pedals, hands on handles; close-up and fresh reviewer clean (13 Nov 2026)",
+    "tries": 2
+  },
+  "incline_treadmill_walk": {
+    "rendered": "2026-11-13",
+    "run": "43452963165",
+    "qa": "pass",
+    "reason": "retry: feet raised onto the belt (0 mm gap), slope clear, arms swing opposite; close-up and fresh reviewer clean (13 Nov 2026)",
+    "tries": 2
+  },
+  "decline_machine_chest_press": {
+    "rendered": "2026-11-13",
+    "run": "43452963165",
+    "qa": "fail",
+    "reason": "after the retry the right press lever still crosses in front of his face in the end picture, and the seat has no back pad (13 Nov 2026)",
+    "tries": 2
+  },
+  "incline_machine_chest_press": {
+    "rendered": "2026-11-13",
+    "run": "43452963165",
+    "qa": "fail",
+    "reason": "after the retry a bar sits across his face at the start and the frame crossbar passes through his chest at the end; the handles also change shape between pictures (13 Nov 2026)",
+    "tries": 2
+  },
+  "iso_lateral_chest_press": {
+    "rendered": "2026-11-13",
+    "run": "43452963165",
+    "qa": "fail",
+    "reason": "after the retry the right lever cuts across his chest at the start and across his neck and face at the end; overhead-hung levers do not read as this machine (13 Nov 2026)",
+    "tries": 2
+  },
+  "standing_leg_curl": {
+    "rendered": "2026-11-13",
+    "run": "43452963165",
+    "qa": "fail",
+    "reason": "after the retry the pose reads right, but the roller lever changes length between start and end (40 to 54 cm, a real lever cannot) and the hamstring red barely shows from the side (13 Nov 2026)",
+    "tries": 2
+  },
+  "treadmill_run": {
+    "rendered": "2026-11-13",
+    "run": "43452963165",
+    "qa": "fail",
+    "reason": "after the retry the handrail ends at his front knee, and the end picture reads as a two-footed hop with the same arm leading, not the other half of a stride (13 Nov 2026)",
+    "tries": 2
+  },
+  "outdoor_run": {
+    "rendered": "2026-11-13",
+    "run": "43452963165",
+    "qa": "fail",
+    "reason": "the end picture reads as a two-footed hop with the same arm leading, not the other half of a stride (13 Nov 2026)",
+    "tries": 2
+  },
+  "walking": {
+    "rendered": "2026-11-13",
+    "run": "43452963165",
+    "qa": "fail",
+    "reason": "the start picture holds both hands together in front of the belly instead of an arm swing (13 Nov 2026)",
+    "tries": 2
+  },
+  "swimming": {
+    "qa": "fail",
+    "reason": "cannot be shown honestly: swimming needs water, and drawn water would be invented detail (13 Nov 2026)",
+    "tries": 0
+  },
+  "hiking": {
+    "qa": "fail",
+    "reason": "cannot be shown honestly: hiking needs a real trail; on a flat floor it is the walking picture (13 Nov 2026)",
+    "tries": 0
   }
 }

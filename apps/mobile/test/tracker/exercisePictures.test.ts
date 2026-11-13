@@ -138,6 +138,9 @@ describe('our own pictures (the grey 3D athlete, for exercises RepDB has no pict
     // 13 Nov 2026: the first cable-machine pictures
     'cable_hip_adduction', 'low_to_high_cable_fly', 'overhead_cable_curl', 'reverse_grip_triceps_pushdown',
     'single_arm_high_cable_curl', 'single_arm_reverse_grip_pushdown',
+    // 13 Nov 2026: plate-loaded lever machines, leg press calf raise, elliptical and incline treadmill walk
+    'machine_lat_pulldown', 'iso_lateral_row', 'iso_lateral_high_row', 'iso_lateral_low_row',
+    'leg_press_calf_raise', 'elliptical', 'incline_treadmill_walk',
   ];
   // Holds: one picture, no end picture.
   const HOLDS = ['hollow_hold', 'wall_sit'];
