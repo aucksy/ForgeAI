@@ -2396,23 +2396,25 @@ part_u461() {
   [ "$rc" = 0 ] || status=1
   return $rc
 }
-# R-482 (owner, 13 Nov 2026: "build all 5"): the Up next muscle tips judge the ROUTINES. Four backup files made from
+# R-482 (owner, 13 Nov 2026: "build all 5"): the Up next muscle tips judge the ROUTINES. Five backup files made from
 # the phone's day (qa/tools/make_r482_backups.py) are restored on a fresh install, one per flow: (a) tip 1 "None of
 # your routines trains your calves..." Add, Undo, Add, the routine, a restart; (b) the owner's own case (calf raise in
 # Legs, Up next Pull 2): no tip; (c) "I skip this on purpose", a restart, Settings brings it back; (d) tip 2 "Your
 # routines give your hamstrings 3 sets a week and your quads 12..." Swap, Undo, Swap; (e) a plan first done 10 days
-# ago: no tip; (f) Settings -> Muscle tips off: no tip, on: back. Also runs alone with only=u482. Pictures rel-r482-*.png.
+# ago: no tip; (f) Settings -> Muscle tips off: no tip, on: back; (g) R-483, shoulders count direct work only: bench +
+# incline and one side raise -> "Your routines give your shoulders 3 sets a week and your chest 11..." Swap, Undo, Swap.
+# Also runs alone with only=u482. Pictures rel-r482-*.png.
 part_u482() {
   local rc=0 today f fl
   today=$(adb shell date +%Y-%m-%d | tr -d '\r')
   python3 "$QA_DIR/tools/make_r482_backups.py" "$OUT/r482" --today "$today" > /dev/null || { log "UAT R482 FAILED: the backup files could not be made"; status=1; return 1; }
-  for f in ppl own swap new; do
+  for f in ppl own swap new shoulder; do
     adb shell rm -f "/sdcard/Download/qa-r482-$f.zip" >/dev/null 2>&1 || true
     push_fixture "$OUT/r482/qa-r482-$f.zip" "/sdcard/Download/qa-r482-$f.zip"
   done
   adb shell content call --uri content://media --method scan_volume --arg external_primary >/dev/null 2>&1 || true
-  log "UAT R482: phone date $today; downloads: $(wait_media qa-r482 4 20 downloads) of 4 backup files"
-  for fl in a-add b-own-case c-skip d-swap e-new-plan f-setting-off; do
+  log "UAT R482: phone date $today; downloads: $(wait_media qa-r482 5 20 downloads) of 5 backup files"
+  for fl in a-add b-own-case c-skip d-swap e-new-plan f-setting-off g-shoulder; do
     uat_flow "uatr482${fl%%-*}" "uat-rel-r482-$fl.yaml" || rc=1
   done
   mkdir -p "$OUT/uat-release"

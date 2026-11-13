@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""R-482 phone test fixtures (part u482): four "MettleUp backup" files (src/backup/backupFormat.ts, as
+"""R-482 phone test fixtures (part u482): five "MettleUp backup" files (src/backup/backupFormat.ts, as
 make_backup_zip.py writes one), dated from the PHONE's day, so the muscle tips' "plan in use" rule
 (every routine done once, the first 14+ days ago) holds or fails on purpose whatever day the run is.
 
@@ -13,6 +13,11 @@ make_backup_zip.py writes one), dated from the PHONE's day, so the muscle tips' 
                     Expected: tip 2, "Your routines give your hamstrings 3 sets a week and your quads 12.
                     Swap Leg Extension for Seated Leg Curl in your Legs routine?"
   qa-r482-new.zip   as ppl, but the first workout only 10 days ago (a new plan). Expected: no tip.
+  qa-r482-shoulder.zip  R-483: the test's oneShoulderPlan, a normal Push, Pull, Legs with bench + incline pressing
+                    and ONE shoulder exercise (Lateral Raise 3). Shoulders count direct work only: 3 sets a week,
+                    chest 11. The last workout Legs, so Up next is Push. Expected: tip 2, "Your routines give your
+                    shoulders 3 sets a week and your chest 11. Swap Cable Fly for Dumbbell Shoulder Press in your
+                    Push routine?"
 
 Each workout logs only the routine's first exercise (bench, pulldown or squat), so the member's own
 history never offers a calf or hamstring exercise and the tip picks the library's (Standing Calf Raise,
@@ -44,6 +49,15 @@ LEGS_HEAVY = [("barbell_back_squat", 4, 5, 8), ("leg_press", 4, 8, 12), ("leg_ex
               ("lying_leg_curl", 3, 10, 15), ("standing_calf_raise", 3, 10, 15), ("plank", 3, 30, 60)]
 
 
+# R-483 oneShoulderPlan (test/tracker/muscleTipsRoutines.test.ts): one shoulder exercise, no face pull.
+PUSH_ONE_SHOULDER = [("barbell_bench_press", 4, 6, 10), ("incline_dumbbell_press", 4, 8, 12), ("cable_fly", 3, 10, 15),
+                     ("lateral_raise", 3, 12, 15), ("triceps_pushdown", 3, 10, 15)]
+PULL_NO_FACE = [("lat_pulldown", 4, 8, 12), ("seated_cable_row", 4, 8, 12), ("barbell_row", 3, 6, 10),
+                ("dumbbell_curl", 3, 10, 15)]
+LEGS_PLAIN = [("barbell_back_squat", 4, 5, 8), ("leg_press", 3, 8, 12), ("romanian_deadlift", 3, 8, 10),
+              ("lying_leg_curl", 3, 10, 15), ("standing_calf_raise", 3, 10, 15), ("plank", 3, 30, 60)]
+
+
 def no_calves(rows):
     return [r for r in rows if r[0] != "standing_calf_raise"]
 
@@ -58,10 +72,10 @@ def owners_plan():
     ]
 
 
-def ppl(legs):
+def ppl(legs, push=PUSH, pull=PULL):
     return [
-        routine("r482-push", "push", 0, "Push", PUSH),
-        routine("r482-pull", "pull", 1, "Pull", PULL),
+        routine("r482-push", "push", 0, "Push", push),
+        routine("r482-pull", "pull", 1, "Pull", pull),
         routine("r482-legs", "legs", 2, "Legs", legs),
     ]
 
@@ -124,6 +138,7 @@ def main():
         "qa-r482-own.zip": backup(today, owners_plan(), [(20, "r482-push"), (19, "r482-pull1"), (18, "r482-pull2"), (17, "r482-legs"), (9, "r482-push"), (8, "r482-pull1"), (7, "r482-pull2"), (6, "r482-legs"), (2, "r482-push"), (1, "r482-pull1")]),
         "qa-r482-swap.zip": backup(today, ppl(LEGS_HEAVY), settled),
         "qa-r482-new.zip": backup(today, ppl(no_calves(LEGS_HEAVY)), [(10, "r482-push"), (9, "r482-pull"), (8, "r482-legs"), (2, "r482-push"), (1, "r482-pull")]),
+        "qa-r482-shoulder.zip": backup(today, ppl(LEGS_PLAIN, PUSH_ONE_SHOULDER, PULL_NO_FACE), [(20, "r482-push"), (19, "r482-pull"), (18, "r482-legs"), (9, "r482-push"), (8, "r482-pull"), (7, "r482-legs"), (3, "r482-push"), (2, "r482-pull"), (1, "r482-legs")]),
     }
     for name, b in files.items():
         with zipfile.ZipFile(os.path.join(a.out, name), "w", compression=zipfile.ZIP_STORED) as z:

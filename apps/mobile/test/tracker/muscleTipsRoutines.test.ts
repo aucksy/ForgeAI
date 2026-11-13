@@ -341,6 +341,15 @@ describe('R-483: the shoulders count direct shoulder exercises only', () => {
     expect(pickCandidate(cands, 'push', null, TODAY)?.group).toBe('shoulders');
     expect(pickCandidate(cands, 'legs', null, TODAY)).toBeNull();
     expect(tipCandidates(week, { quiet: new Set(['shoulders']) })).toEqual([]);
+    // After the swap (Dumbbell Shoulder Press in Cable Fly's place, same 3 sets) the week says nothing more.
+    const swapped: PlannedWeek = {
+      ...week,
+      routines: week.routines.map((r) =>
+        r.id === 'push' ? { ...r, exercises: r.exercises.map((x) => (x.name === 'Cable Fly' ? ex('dumbbell_shoulder_press', 3) : x)) } : r,
+      ),
+    };
+    expect(groupSetsAWeek(swapped).get('shoulders')).toBe(6);
+    expect(tipCandidates(swapped)).toEqual([]);
   });
 
   it('two direct shoulder exercises (a side raise and a face pull) say nothing, as before', () => {

@@ -1,0 +1,158 @@
+# Part UAT, R-482 flow g (R-483, owner 13 Nov 2026: "Yes count only shoulder exercises"): the shoulders count DIRECT
+# shoulder work only, so a normal push / pull / legs plan with bench + incline pressing and ONE shoulder exercise
+# gets tip 2 for the shoulders. A fresh install restores qa-r482-shoulder.zip (qa/tools/make_r482_backups.py, the
+# unit tests' oneShoulderPlan): Push = Barbell Bench Press 4, Incline Dumbbell Press 4, Cable Fly 3, Lateral Raise 3,
+# Triceps Pushdown 3; Pull has no face pull. Every routine done, the first 20 days ago, the last Legs: Up next is Push.
+#   1. "Your routines give your shoulders 3 sets a week and your chest 11. Swap Cable Fly for Dumbbell Shoulder Press
+#      in your Push routine?" with Swap, Not now and "Keep as is".
+#   2. Swap -> "Dumbbell Shoulder Press now replaces Cable Fly in your Push routine." with Undo -> Undo: Cable Fly is
+#      back after Incline Dumbbell Press and the tip is back.
+#   3. Swap again, the bar left to go: no tip; See exercises: Dumbbell Shoulder Press where Cable Fly was (after
+#      Incline Dumbbell Press, before Lateral Raise), 3 sets, no Cable Fly.
+# Pictures rel-r482-g*.png.
+appId: com.mettleup.app
+---
+- runFlow:
+    file: sub-uat-r482-restore.yaml
+    env:
+      FILE: 'qa-r482-shoulder\.zip'
+      NEXT: 'Push'
+# ---------------------------------------------------------------- 1. the shoulders swap tip
+- extendedWaitUntil:
+    visible: 'Your routines give your shoulders 3 sets a week and your chest 11\. Swap Cable Fly for Dumbbell Shoulder Press in your Push routine\?'
+    timeout: 20000
+    optional: true
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: 'Your routines give your shoulders 3 sets a week and your chest 11\. Swap Cable Fly for Dumbbell Shoulder Press in your Push routine\?'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Swap$'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Not now.*'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Keep as is.*'
+- assertNotVisible: 'None of your routines.*'
+- assertNotVisible: '(?i).*easy add.*'
+- takeScreenshot: rel-r482-g1-tip-shoulders
+# ---------------------------------------------------------------- 2. Swap, then Undo
+- tapOn:
+    text: "^Swap$"
+    waitToSettleTimeoutMs: 300
+- extendedWaitUntil:
+    visible: 'Dumbbell Shoulder Press now replaces Cable Fly in your Push routine\.'
+    timeout: 6000
+- takeScreenshot: rel-r482-g2-swapped-undo-bar
+# in-view: the Undo bar sits where the tip was (it goes after ~6 s, no time for a scroll)
+- tapOn:
+    text: 'Undo: Dumbbell Shoulder Press now replaces Cable Fly in your Push routine\.|^Undo$'
+    waitToSettleTimeoutMs: 300
+- extendedWaitUntil:
+    visible: 'Your routines give your shoulders 3 sets a week and your chest 11\..*'
+    timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Your routines give your shoulders 3 sets a week and your chest 11\. Swap Cable Fly for Dumbbell Shoulder Press in your Push routine\?'
+- assertNotVisible: 'Dumbbell Shoulder Press now replaces.*'
+- takeScreenshot: rel-r482-g3-undone-tip-back
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: '^See exercises$'
+- tapOn: "^See exercises$"
+- extendedWaitUntil:
+    visible: "Barbell Bench Press"
+    timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Cable Fly'
+- assertVisible:
+    text: 'Cable Fly'
+    below:
+      text: 'Incline Dumbbell Press'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Triceps Pushdown'
+- assertNotVisible: "Dumbbell Shoulder Press"
+- takeScreenshot: rel-r482-g4-push-after-undo
+- back
+# ---------------------------------------------------------------- 3. Swap again and keep it
+- extendedWaitUntil:
+    visible: "^Workout$"
+    timeout: 15000
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: '^Swap$'
+- tapOn:
+    text: "^Swap$"
+    waitToSettleTimeoutMs: 300
+- extendedWaitUntil:
+    visible: 'Dumbbell Shoulder Press now replaces Cable Fly in your Push routine\.'
+    timeout: 6000
+- extendedWaitUntil:
+    notVisible: 'Dumbbell Shoulder Press now replaces Cable Fly in your Push routine\.'
+    timeout: 20000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Up next: Push.*'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^See exercises$'
+- extendedWaitUntil:
+    visible: 'None of your routines.*|Your routines give.*'
+    timeout: 6000
+    optional: true
+- assertNotVisible: 'Your routines give.*'
+- assertNotVisible: 'None of your routines.*'
+- takeScreenshot: rel-r482-g5-swapped-no-tip
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: '^See exercises$'
+- tapOn: "^See exercises$"
+- extendedWaitUntil:
+    visible: "Barbell Bench Press"
+    timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Dumbbell Shoulder Press'
+- assertVisible:
+    text: 'Dumbbell Shoulder Press'
+    below:
+      text: 'Incline Dumbbell Press'
+# in-view: the line right under Dumbbell Shoulder Press, just brought into view by sub-see
+- assertVisible:
+    text: '3 sets.*'
+    below:
+      text: 'Dumbbell Shoulder Press'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Lateral Raise'
+- assertVisible:
+    text: 'Lateral Raise'
+    below:
+      text: 'Dumbbell Shoulder Press'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Triceps Pushdown'
+- assertNotVisible: "Cable Fly"
+- takeScreenshot: rel-r482-g6-push-swapped
+- back
