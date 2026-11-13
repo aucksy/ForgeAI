@@ -207,7 +207,7 @@ OLD_PARTS="a b c d e f g h h3 p1 p2 i link i2 j j2 j3 k l n p9 r br inv invf p7 
 # R-123: ubk = a fresh install restores a backup FILE from the welcome screen (routines in order,
 # settings, profile), then saves a new one from Settings -> Back up and restore (qa/uat-bk.yaml).
 UAT_PARTS="uh ur un ud ue ubk ub uf ua uv ug uk"
-GATE_PARTS="w dnd longrest anim mk clip uat uatc u355 u344 u358 u366 usel ugym u15 u76 u198 u194 u401 u199 u404 u438 u444 ulook uage u439 u436 u336 u61 upic u452 u456 u458 u454 u461"
+GATE_PARTS="w dnd longrest anim mk clip uat uatc u355 u344 u358 u366 usel ugym u15 u76 u198 u194 u401 u199 u404 u438 u444 ulook uage u439 u436 u336 u61 upic u452 u456 u458 u454 u461 u482"
 qa_list() { echo "$1" | tr ',;' '  ' | tr '[:upper:]' '[:lower:]' | xargs; }
 QA_ONLY_LIST=$(qa_list "${QA_ONLY:-}")
 QA_EXTRA_LIST=$(qa_list "${QA_EXTRA:-}")
@@ -2002,6 +2002,7 @@ part_uat() {
   part_uage
   part_u458
   part_u461
+  part_u482
   part_ulook
   uat_gather
 }
@@ -2395,6 +2396,30 @@ part_u461() {
   [ "$rc" = 0 ] || status=1
   return $rc
 }
+# R-482 (owner, 13 Nov 2026: "build all 5"): the Up next muscle tips judge the ROUTINES. Four backup files made from
+# the phone's day (qa/tools/make_r482_backups.py) are restored on a fresh install, one per flow: (a) tip 1 "None of
+# your routines trains your calves..." Add, Undo, Add, the routine, a restart; (b) the owner's own case (calf raise in
+# Legs, Up next Pull 2): no tip; (c) "I skip this on purpose", a restart, Settings brings it back; (d) tip 2 "Your
+# routines give your hamstrings 3 sets a week and your quads 12..." Swap, Undo, Swap; (e) a plan first done 10 days
+# ago: no tip; (f) Settings -> Muscle tips off: no tip, on: back. Also runs alone with only=u482. Pictures rel-r482-*.png.
+part_u482() {
+  local rc=0 today f fl
+  today=$(adb shell date +%Y-%m-%d | tr -d '\r')
+  python3 "$QA_DIR/tools/make_r482_backups.py" "$OUT/r482" --today "$today" > /dev/null || { log "UAT R482 FAILED: the backup files could not be made"; status=1; return 1; }
+  for f in ppl own swap new; do
+    adb shell rm -f "/sdcard/Download/qa-r482-$f.zip" >/dev/null 2>&1 || true
+    push_fixture "$OUT/r482/qa-r482-$f.zip" "/sdcard/Download/qa-r482-$f.zip"
+  done
+  adb shell content call --uri content://media --method scan_volume --arg external_primary >/dev/null 2>&1 || true
+  log "UAT R482: phone date $today; downloads: $(wait_media qa-r482 4 20 downloads) of 4 backup files"
+  for fl in a-add b-own-case c-skip d-swap e-new-plan f-setting-off; do
+    uat_flow "uatr482${fl%%-*}" "uat-rel-r482-$fl.yaml" || rc=1
+  done
+  mkdir -p "$OUT/uat-release"
+  { find "$OUT" -path "$OUT/uat-release" -prune -o -name "rel-r482-*.png" -print 2>/dev/null; find "$PWD" -maxdepth 1 -name "rel-r482-*.png" 2>/dev/null; } | while read -r f; do cp "$f" "$OUT/uat-release/" 2>/dev/null; done
+  [ "$rc" = 0 ] || status=1
+  return $rc
+}
 # F194 (owner R-352, 5 Nov 2026): Settings -> Plates and bars -> "Machine and cable steps". Flow a: a cable
 # lift at the top of its reps (50 kg x 20 x 3), the new line on its default, saved as a routine. The phone
 # clock then moves one day on (the Target reads only workouts before today) and flow b checks the Target
@@ -2559,6 +2584,7 @@ qa_runs ulook && ! qa_runs uat && { log "gate part ULOOK begins"; part_ulook; }
 qa_runs uage && ! qa_runs uat && { log "gate part UAGE begins"; part_uage; }
 qa_runs u458 && ! qa_runs uat && { log "gate part U458 begins"; part_u458; }
 qa_runs u461 && ! qa_runs uat && { log "gate part U461 begins"; part_u461; }
+qa_runs u482 && ! qa_runs uat && { log "gate part U482 begins"; part_u482; }
 # R-359/R-345 (5 Nov 2026): the In use journey alone (pictures rel-345/357/359), with only=u15.
 qa_runs u15 && ! qa_runs uat && { log "gate part U15 begins"; uat_flow uat15 uat-rel-15-inuse-journey.yaml || status=1; }
 # T76 (owner's full test round, 5 Nov 2026): negative checks found by the round. Flow a: kg history,

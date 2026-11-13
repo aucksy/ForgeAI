@@ -1,0 +1,157 @@
+# Part UAT, R-482 flow d: tip 2, the swap, with Undo.
+# A fresh install restores qa-r482-swap.zip (qa/tools/make_r482_backups.py, the unit tests' quadHeavyPlan): Legs =
+# Barbell Squat 4, Leg Press 4, Leg Extension 4, Lying Leg Curl 3, Standing Calf Raise 3, Plank 3, so the routines give
+# the hamstrings 3 sets a week and the quads 12. Every routine done, the first 20 days ago; Up next is Legs.
+#   1. "Your routines give your hamstrings 3 sets a week and your quads 12. Swap Leg Extension for Seated Leg Curl in
+#      your Legs routine?" with Swap, Not now and "Keep as is".
+#   2. Swap -> "Seated Leg Curl now replaces Leg Extension in your Legs routine." with Undo -> Undo: Leg Extension is
+#      back in its place and the tip is back.
+#   3. Swap again, the bar left to go: no tip; See exercises: Seated Leg Curl where Leg Extension was (after Leg
+#      Press, before Lying Leg Curl), 4 sets, no Leg Extension.
+# Pictures rel-r482-d*.png.
+appId: com.mettleup.app
+---
+- runFlow:
+    file: sub-uat-r482-restore.yaml
+    env:
+      FILE: 'qa-r482-swap\.zip'
+      NEXT: 'Legs'
+# ---------------------------------------------------------------- 1. the swap tip
+- extendedWaitUntil:
+    visible: 'Your routines give your hamstrings 3 sets a week and your quads 12\. Swap Leg Extension for Seated Leg Curl in your Legs routine\?'
+    timeout: 20000
+    optional: true
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: 'Your routines give your hamstrings 3 sets a week and your quads 12\. Swap Leg Extension for Seated Leg Curl in your Legs routine\?'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Swap$'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Not now.*'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Keep as is.*'
+- assertNotVisible: 'None of your routines.*'
+- assertNotVisible: '(?i).*easy add.*'
+- takeScreenshot: rel-r482-d1-tip-swap
+# ---------------------------------------------------------------- 2. Swap, then Undo
+- tapOn:
+    text: "^Swap$"
+    waitToSettleTimeoutMs: 300
+- extendedWaitUntil:
+    visible: 'Seated Leg Curl now replaces Leg Extension in your Legs routine\.'
+    timeout: 6000
+- takeScreenshot: rel-r482-d2-swapped-undo-bar
+# in-view: the Undo bar sits where the tip was (it goes after ~6 s, no time for a scroll)
+- tapOn:
+    text: 'Undo: Seated Leg Curl now replaces Leg Extension in your Legs routine\.|^Undo$'
+    waitToSettleTimeoutMs: 300
+- extendedWaitUntil:
+    visible: 'Your routines give your hamstrings 3 sets a week and your quads 12\..*'
+    timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Your routines give your hamstrings 3 sets a week and your quads 12\. Swap Leg Extension for Seated Leg Curl in your Legs routine\?'
+- assertNotVisible: 'Seated Leg Curl now replaces.*'
+- takeScreenshot: rel-r482-d3-undone-tip-back
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: '^See exercises$'
+- tapOn: "^See exercises$"
+- extendedWaitUntil:
+    visible: "Barbell Squat"
+    timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Leg Extension'
+- assertVisible:
+    text: 'Leg Extension'
+    below:
+      text: 'Leg Press'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Plank'
+- assertNotVisible: "Seated Leg Curl"
+- takeScreenshot: rel-r482-d4-legs-after-undo
+- back
+# ---------------------------------------------------------------- 3. Swap again and keep it
+- extendedWaitUntil:
+    visible: "^Workout$"
+    timeout: 15000
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: '^Swap$'
+- tapOn:
+    text: "^Swap$"
+    waitToSettleTimeoutMs: 300
+- extendedWaitUntil:
+    visible: 'Seated Leg Curl now replaces Leg Extension in your Legs routine\.'
+    timeout: 6000
+- extendedWaitUntil:
+    notVisible: 'Seated Leg Curl now replaces Leg Extension in your Legs routine\.'
+    timeout: 20000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Up next: Legs.*'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^See exercises$'
+- extendedWaitUntil:
+    visible: 'None of your routines.*|Your routines give.*'
+    timeout: 6000
+    optional: true
+- assertNotVisible: 'Your routines give.*'
+- assertNotVisible: 'None of your routines.*'
+- takeScreenshot: rel-r482-d5-swapped-no-tip
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: '^See exercises$'
+- tapOn: "^See exercises$"
+- extendedWaitUntil:
+    visible: "Barbell Squat"
+    timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Seated Leg Curl'
+- assertVisible:
+    text: 'Seated Leg Curl'
+    below:
+      text: 'Leg Press'
+# in-view: the line right under Seated Leg Curl, just brought into view by sub-see
+- assertVisible:
+    text: '4 sets.*'
+    below:
+      text: 'Seated Leg Curl'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Lying Leg Curl'
+- assertVisible:
+    text: 'Lying Leg Curl'
+    below:
+      text: 'Seated Leg Curl'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Plank'
+- assertNotVisible: "Leg Extension"
+- takeScreenshot: rel-r482-d6-legs-swapped
+- back

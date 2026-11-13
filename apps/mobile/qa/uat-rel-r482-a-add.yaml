@@ -1,0 +1,173 @@
+# Part UAT, R-482 flow a (owner, 13 Nov 2026: "build all 5"): tip 1, the happy path, with Undo.
+# A fresh install restores qa-r482-ppl.zip (qa/tools/make_r482_backups.py): "QA Tips" = Push, Pull, Legs, no calf
+# exercise in any routine, every routine done, the first 20 days ago, the last two Push and Pull: Up next is Legs.
+#   1. Up next: Legs shows "None of your routines trains your calves. Add 3 sets of Standing Calf Raise to your Legs
+#      routine?" with Add, Not now and "I skip this on purpose"; never the old "Easy add" words.
+#   2. Add -> "Standing Calf Raise added to your Legs routine." with Undo -> Undo: Legs is back to its 5 exercises
+#      (See exercises: no Standing Calf Raise) and the tip is back.
+#   3. Add again, the Undo bar left to go: no tip; See exercises: Standing Calf Raise last, 3 sets, 6 exercises.
+#   4. The app restarted: still Up next: Legs, no tip (the calves are trained now; no swap tip the same week).
+# Pictures rel-r482-a*.png.
+appId: com.mettleup.app
+---
+- runFlow:
+    file: sub-uat-r482-restore.yaml
+    env:
+      FILE: 'qa-r482-ppl\.zip'
+      NEXT: 'Legs'
+# ---------------------------------------------------------------- 1. the tip on Legs
+- extendedWaitUntil:
+    visible: 'None of your routines trains your calves\. Add 3 sets of Standing Calf Raise to your Legs routine\?'
+    timeout: 20000
+    optional: true
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: 'None of your routines trains your calves\. Add 3 sets of Standing Calf Raise to your Legs routine\?'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Add$'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Not now.*'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'I skip this on purpose.*'
+- assertNotVisible: '(?i).*easy add.*'
+- takeScreenshot: rel-r482-a1-tip-calves
+# ---------------------------------------------------------------- 2. Add, then Undo
+- tapOn:
+    text: "^Add$"
+    waitToSettleTimeoutMs: 300
+- extendedWaitUntil:
+    visible: 'Standing Calf Raise added to your Legs routine\.'
+    timeout: 6000
+- takeScreenshot: rel-r482-a2-added-undo-bar
+# in-view: the Undo bar sits where the tip was (it goes after ~6 s, no time for a scroll)
+- tapOn:
+    text: 'Undo: Standing Calf Raise added to your Legs routine\.|^Undo$'
+    waitToSettleTimeoutMs: 300
+- extendedWaitUntil:
+    visible: 'None of your routines trains your calves\. Add 3 sets of Standing Calf Raise to your Legs routine\?'
+    timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'None of your routines trains your calves\. Add 3 sets of Standing Calf Raise to your Legs routine\?'
+- assertNotVisible: 'Standing Calf Raise added to your Legs routine\.'
+- takeScreenshot: rel-r482-a3-undone-tip-back
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: '^See exercises$'
+- tapOn: "^See exercises$"
+- extendedWaitUntil:
+    visible: "Barbell Squat"
+    timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Barbell Squat'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '.*5 exercises.*'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Plank'
+- assertNotVisible: "Standing Calf Raise"
+- takeScreenshot: rel-r482-a4-legs-after-undo
+- back
+# ---------------------------------------------------------------- 3. Add again and keep it
+- extendedWaitUntil:
+    visible: "^Workout$"
+    timeout: 15000
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: '^Add$'
+- tapOn:
+    text: "^Add$"
+    waitToSettleTimeoutMs: 300
+- extendedWaitUntil:
+    visible: 'Standing Calf Raise added to your Legs routine\.'
+    timeout: 6000
+- extendedWaitUntil:
+    notVisible: 'Standing Calf Raise added to your Legs routine\.'
+    timeout: 20000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Up next: Legs.*'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^See exercises$'
+- assertNotVisible: 'None of your routines.*'
+- assertNotVisible: 'Your routines give.*'
+- takeScreenshot: rel-r482-a5-added-no-tip
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: '^See exercises$'
+- tapOn: "^See exercises$"
+- extendedWaitUntil:
+    visible: "Barbell Squat"
+    timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '.*6 exercises.*'
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: 'Standing Calf Raise'
+- assertVisible:
+    text: 'Standing Calf Raise'
+    below:
+      text: 'Plank'
+# in-view: the line right under Standing Calf Raise, just centred by sub-find
+- assertVisible:
+    text: '3 sets.*'
+    below:
+      text: 'Standing Calf Raise'
+- takeScreenshot: rel-r482-a6-legs-with-calf-raise
+- back
+# ---------------------------------------------------------------- 4. after a restart
+- launchApp
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 60000
+- tapOn:
+    text: "^Workout$"
+    index: 0
+- extendedWaitUntil:
+    visible: "^Workout$"
+    timeout: 15000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Up next: Legs.*'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^See exercises$'
+# A tip read after the card: give a wrong one time to appear before saying there is none.
+- extendedWaitUntil:
+    visible: 'None of your routines.*|Your routines give.*'
+    timeout: 8000
+    optional: true
+- assertNotVisible: 'None of your routines.*'
+- assertNotVisible: 'Your routines give.*'
+- assertNotVisible: '(?i).*easy add.*'
+- takeScreenshot: rel-r482-a7-restart-no-tip

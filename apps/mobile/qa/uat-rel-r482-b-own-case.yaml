@@ -1,0 +1,40 @@
+# Part UAT, R-482 flow b: the owner's own case, the negative (13 Nov 2026: Up next on Pull 2 said "Easy add today: 3
+# sets of Standing Calf Raise for your calves" while the calf raise sits in his Legs routine; he skips it).
+# A fresh install restores qa-r482-own.zip: "QA Tips" = Push, Pull 1, Pull 2, Legs (Standing Calf Raise IN Legs),
+# every routine done, the first 20 days ago, the last workout Pull 1: Up next is Pull 2.
+# Up next: Pull 2 shows NO tip: no "None of your routines", no "Your routines give", never "Easy add".
+# Pictures rel-r482-b*.png.
+appId: com.mettleup.app
+---
+- runFlow:
+    file: sub-uat-r482-restore.yaml
+    env:
+      FILE: 'qa-r482-own\.zip'
+      NEXT: 'Pull 2'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^See exercises$'
+# A tip is read after the card: give a wrong one time to appear before saying there is none.
+- extendedWaitUntil:
+    visible: 'None of your routines.*|Your routines give.*|(?i).*easy add.*'
+    timeout: 10000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Up next: Pull 2.*'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^See exercises$'
+- assertNotVisible: 'None of your routines.*'
+- assertNotVisible: 'Your routines give.*'
+- assertNotVisible: '(?i).*easy add.*'
+- takeScreenshot: rel-r482-b1-pull2-no-tip
+# The calf raise really is in his Legs routine (the routine card lists its exercises).
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: '^Legs, .*Standing Calf Raise.*'
+- takeScreenshot: rel-r482-b2-legs-has-calf-raise

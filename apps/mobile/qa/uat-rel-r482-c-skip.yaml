@@ -1,0 +1,101 @@
+# Part UAT, R-482 flow c: "I skip this on purpose" silences the tip, also after a restart, and Settings can bring it back.
+# A fresh install restores qa-r482-ppl.zip (as flow a): Up next: Legs with the calves tip.
+#   1. "I skip this on purpose" -> the tip goes; Legs keeps its 5 exercises (nothing added).
+#   2. The app restarted: Up next: Legs, still no tip.
+#   3. Settings -> More workout choices -> Muscle tips lists "Muscles you asked to skip: your calves" -> Bring back ->
+#      the Workout tab shows the calves tip again (the setting change works mid-history).
+# Pictures rel-r482-c*.png.
+appId: com.mettleup.app
+---
+- runFlow:
+    file: sub-uat-r482-restore.yaml
+    env:
+      FILE: 'qa-r482-ppl\.zip'
+      NEXT: 'Legs'
+- extendedWaitUntil:
+    visible: 'None of your routines trains your calves\. Add 3 sets of Standing Calf Raise to your Legs routine\?'
+    timeout: 20000
+    optional: true
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: 'I skip this on purpose.*'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'None of your routines trains your calves\. Add 3 sets of Standing Calf Raise to your Legs routine\?'
+- takeScreenshot: rel-r482-c1-tip
+- tapOn: 'I skip this on purpose.*'
+- extendedWaitUntil:
+    notVisible: 'None of your routines.*'
+    timeout: 10000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Up next: Legs.*5 exercises.*'
+- assertNotVisible: 'I skip this on purpose.*'
+- assertNotVisible: 'Standing Calf Raise added.*'
+- takeScreenshot: rel-r482-c2-skipped-gone
+# ---------------------------------------------------------------- after a restart
+- launchApp
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 60000
+- tapOn:
+    text: "^Workout$"
+    index: 0
+- extendedWaitUntil:
+    visible: "^Workout$"
+    timeout: 15000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Up next: Legs.*'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^See exercises$'
+- extendedWaitUntil:
+    visible: 'None of your routines.*|Your routines give.*'
+    timeout: 8000
+    optional: true
+- assertNotVisible: 'None of your routines.*'
+- assertNotVisible: 'Your routines give.*'
+- takeScreenshot: rel-r482-c3-restart-still-gone
+# ---------------------------------------------------------------- Settings: bring it back
+- runFlow:
+    file: sub-settings-page.yaml
+    env:
+      PAGE: "Muscle tips"
+- extendedWaitUntil:
+    visible: 'Muscles you asked to skip.*'
+    timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: 'Muscles you asked to skip.*calves.*'
+- takeScreenshot: rel-r482-c4-settings-skipped-calves
+- tapOn: 'Muscles you asked to skip.*calves.*'
+- extendedWaitUntil:
+    notVisible: 'Muscles you asked to skip.*'
+    timeout: 10000
+- runFlow: sub-back-to-tabs.yaml
+- tapOn:
+    text: "^Workout$"
+    index: 0
+- extendedWaitUntil:
+    visible: "^Workout$"
+    timeout: 15000
+- extendedWaitUntil:
+    visible: 'None of your routines trains your calves\. Add 3 sets of Standing Calf Raise to your Legs routine\?'
+    timeout: 20000
+    optional: true
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: 'None of your routines trains your calves\. Add 3 sets of Standing Calf Raise to your Legs routine\?'
+- takeScreenshot: rel-r482-c5-brought-back

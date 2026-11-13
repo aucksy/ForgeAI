@@ -1,0 +1,130 @@
+# Part UAT, R-482 flow f: Settings -> Muscle tips switched off = no tip; on again = the tip is back (a setting change
+# mid-history). A fresh install restores qa-r482-ppl.zip (as flow a): Up next: Legs with the calves tip.
+#   1. The tip shows. Settings -> More workout choices -> Muscle tips: its new caption; switch it off.
+#   2. The Workout tab: Up next: Legs, no tip (also after a restart).
+#   3. Switch it on again: the calves tip is back.
+# Pictures rel-r482-f*.png.
+appId: com.mettleup.app
+---
+- runFlow:
+    file: sub-uat-r482-restore.yaml
+    env:
+      FILE: 'qa-r482-ppl\.zip'
+      NEXT: 'Legs'
+- extendedWaitUntil:
+    visible: 'None of your routines trains your calves\. Add 3 sets of Standing Calf Raise to your Legs routine\?'
+    timeout: 20000
+    optional: true
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: 'None of your routines trains your calves\. Add 3 sets of Standing Calf Raise to your Legs routine\?'
+- takeScreenshot: rel-r482-f1-tip-on
+# ---------------------------------------------------------------- 1. switch it off
+- runFlow:
+    file: sub-settings-page.yaml
+    env:
+      PAGE: "Muscle tips"
+- extendedWaitUntil:
+    visible: '.*Now and then, Up next suggests one change when your routines leave out a muscle group or train one much less than the others.*'
+    timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '.*Now and then, Up next suggests one change when your routines leave out a muscle group or train one much less than the others.*'
+- assertNotVisible: '(?i).*easy add.*'
+- assertNotVisible: '.*last 3 weeks.*'
+- tapOn:
+    text: "Muscle tips"
+    checked: true
+# in-view: the switch just tapped
+- assertVisible:
+    text: "Muscle tips"
+    checked: false
+- takeScreenshot: rel-r482-f2-setting-off
+# ---------------------------------------------------------------- 2. no tip
+- runFlow: sub-back-to-tabs.yaml
+- tapOn:
+    text: "^Workout$"
+    index: 0
+- extendedWaitUntil:
+    visible: "^Workout$"
+    timeout: 15000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Up next: Legs.*'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^See exercises$'
+- extendedWaitUntil:
+    visible: 'None of your routines.*|Your routines give.*'
+    timeout: 8000
+    optional: true
+- assertNotVisible: 'None of your routines.*'
+- assertNotVisible: 'Your routines give.*'
+- takeScreenshot: rel-r482-f3-off-no-tip
+- launchApp
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 60000
+- tapOn:
+    text: "^Workout$"
+    index: 0
+- extendedWaitUntil:
+    visible: "^Workout$"
+    timeout: 15000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Up next: Legs.*'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^See exercises$'
+- extendedWaitUntil:
+    visible: 'None of your routines.*|Your routines give.*'
+    timeout: 8000
+    optional: true
+- assertNotVisible: 'None of your routines.*'
+- assertNotVisible: 'Your routines give.*'
+- takeScreenshot: rel-r482-f4-off-restart-no-tip
+# ---------------------------------------------------------------- 3. on again
+- runFlow:
+    file: sub-settings-page.yaml
+    env:
+      PAGE: "Muscle tips"
+# in-view: the page's only row, at its top
+- extendedWaitUntil:
+    visible:
+      text: "Muscle tips"
+      checked: false
+    timeout: 15000
+- tapOn:
+    text: "Muscle tips"
+    checked: false
+# in-view: the switch just tapped
+- assertVisible:
+    text: "Muscle tips"
+    checked: true
+- runFlow: sub-back-to-tabs.yaml
+- tapOn:
+    text: "^Workout$"
+    index: 0
+- extendedWaitUntil:
+    visible: "^Workout$"
+    timeout: 15000
+- extendedWaitUntil:
+    visible: 'None of your routines trains your calves\. Add 3 sets of Standing Calf Raise to your Legs routine\?'
+    timeout: 20000
+    optional: true
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: 'None of your routines trains your calves\. Add 3 sets of Standing Calf Raise to your Legs routine\?'
+- takeScreenshot: rel-r482-f5-on-tip-back
