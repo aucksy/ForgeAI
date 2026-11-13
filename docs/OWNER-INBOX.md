@@ -434,6 +434,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | F83 Money reports and Excel export | Live | Collections by day, method and staff member, with cancelled receipts shown separately. |
 | F84 Expenses and profit | Live | Record gym expenses and see profit, including shop sales. |
 | F85 Enquiries | Live | Track people who asked about joining until they become members. |
+| F202 Fast call-back for new enquiries | Idea | You said (13 Nov): an idea, maybe AI automated call-backs. Research: a call within 1 hour gives about 7 times more chance of a real talk (HBR 2011); the home page no longer shows this number. | A new enquiry makes the desk app ring with "Call back now" and one tap to call. Later, if you want it: an AI voice call within minutes that asks the person a few questions and books a visit. An AI call costs money per minute and needs the person to agree to be called. |
 | F86 Attendance register | Live | Check members in at the desk, undo a mistap, catch up on missed days. |
 | F87 At-risk members list | Live | A daily list of members who stopped coming, judged against each member's own routine. |
 | F88 Renewals list and WhatsApp messages | Live | Ready-typed WhatsApp messages for fees, endings, birthdays, welcome and receipts, sent with one tap. |
