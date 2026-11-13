@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { canOpen } from '../../src/crm/auth/permissions';
 import {
   ADMIN_NEWS,
+  ADMIN_NEWS_PENDING,
   SEEN_KEY,
   SHOWN_UPDATES,
   currentNews,
@@ -49,6 +50,20 @@ describe('the list itself', () => {
 
   it('every button opens a page the app has, and the owner may open all of them', () => {
     for (const e of ADMIN_NEWS) for (const l of e.lines) if (l.go) expect(canOpen('owner', l.go.path)).toBe(true);
+  });
+
+  // R-480: the lines waiting for a deploy follow the same rules, so they can move to ADMIN_NEWS as they are.
+  it('the waiting lines are ready to move: short, plain, real pages; the AI Assistant says what credits cost', () => {
+    for (const e of ADMIN_NEWS_PENDING) {
+      expect(e.id).toMatch(/^pending-[a-z-]+$/);
+      for (const l of e.lines) {
+        expect(l.text.length).toBeLessThanOrEqual(220);
+        expect(l.text).not.toMatch(/\b(volume|PR|session|sync|FCM|D1|Supabase|RPC)\b/);
+        if (l.go) expect(canOpen('owner', l.go.path)).toBe(true);
+      }
+    }
+    const ai = ADMIN_NEWS_PENDING.find((e) => e.id === 'pending-ai-assistant')!.lines.map((l) => l.text).join(' ');
+    for (const fact of ['question is free', '1 AI credit', 'uses 3', '20 AI credits, once', '50 on Starter, 100 on Pro', 'Monthly plans get none']) expect(ai).toContain(fact);
   });
 });
 

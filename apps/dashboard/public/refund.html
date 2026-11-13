@@ -1,0 +1,44 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Refunds and cancellation — MettleUp</title><style>
+:root{color-scheme:light dark;--bg:#fff;--ink:#1b1f27;--muted:#5b6372;--line:#dde1e8;--accent:#c4501a}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1218;--ink:#e9ebf0;--muted:#a0a7b5;--line:#2c313b;--accent:#f08a4b}}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:760px;margin:0 auto;padding:24px 16px 64px}h1{font-size:1.6rem;line-height:1.25}h2{font-size:1.15rem;margin-top:1.8em}h3{font-size:1rem;margin-top:1.4em}
+.t{overflow-x:auto}table{border-collapse:collapse;font-size:.92rem}th,td{border:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+a{color:var(--accent)}nav{font-size:.9rem;color:var(--muted)}hr{border:0;border-top:1px solid var(--line);margin:40px 0}
+blockquote{border-left:4px solid var(--line);margin:0;padding:4px 14px}
+.sum{border-left:4px solid var(--accent);padding:4px 0 4px 14px}.sum li{margin:4px 0}.muted{color:var(--muted);font-size:.92rem}
+.toc{font-size:.92rem;columns:2;column-gap:24px;padding-left:20px}@media (max-width:520px){.toc{columns:1}}
+</style></head><body><main>
+<nav><a href="/privacy.html">Privacy notice</a> · <a href="/terms.html">Terms</a> · <a href="/data-agreement.html">Data agreement</a> · <a href="/refund.html">Refunds</a> · <a href="/delivery.html">Shipping and delivery</a> · <a href="/contact.html">Contact</a> · <a href="/about.html">About</a> · <a href="/delete-account.html">Delete your account</a></nav>
+<h1>MettleUp refunds and cancellation</h1>
+<p>This page is for gym owners who pay for MettleUp, the gym software. Members of a gym never pay MettleUp: the member app is free. Your membership fees and refunds at your gym are between you and your gym.</p>
+
+<h2>1. The free trial</h2>
+<ul><li>Every new gym gets <strong>3 months free</strong>. No card is needed. You pay nothing during the free months, so there is nothing to refund. <!-- same words as the sign-up screen: "Free for 3 months. No card." --></li></ul>
+
+<h2>2. We never charge you automatically</h2>
+<ul><li>You pay only when you choose to pay. We never take money from your card or bank account on our own. <!-- true today: UPI or bank transfer, sent by the owner (0060); online payments at launch are one payment per period too (BILLING-DESIGN.md). AutoPay is phase 2: this page must change before it ships. --></li><li>When your paid time ends, your plan does not renew by itself. To keep it, you pay again.</li><li>If we add automatic payments later, they stay off unless you switch them on. You can switch them off at any time.</li></ul>
+
+<h2>3. Payments are not refunded</h2>
+<ul><li>Once your paid plan is on, payments are <strong>not refunded</strong>. This is true for monthly plans, yearly plans and the founding gym payment.</li><li>A monthly plan runs to the end of the month you paid for. A yearly plan runs to the end of the year you paid for.</li><li>Please use the 3 free months to try MettleUp before you pay.</li><li>If you paid <strong>twice by mistake</strong>, or paid <strong>more than the price</strong>, we refund the extra amount.</li></ul>
+
+<h2>4. AI credits</h2>
+<ul><li>AI credits you buy are <strong>not refunded</strong> and cannot be changed into cash.</li><li>Credits you buy <strong>never expire</strong>.</li><li>Free credits for a month end on the last day of that month. Unused free credits do not move to the next month.</li><li>If a task fails after its credits are taken, the same credits come back to you automatically. <!-- 0071 owner_ai_refund: the app gives the task's credits back once, within 10 minutes of the spend. --></li></ul>
+
+<h2>5. Cancel any time, no lock-in</h2>
+<ul><li>There is <strong>no lock-in</strong> and no cancellation fee.</li><li>To stop, just do not pay again. Your plan stays on until the paid date ends. You can also tell us by email.</li><li>All your gym's data goes to Excel in one tap (Settings, in the admin app), before or after you stop.</li><li>Changing your plan: today, email us and we set it up for you. When online payments start: a smaller plan starts when your paid time ends, with no money back for the days left; a bigger plan starts at once, and you pay only the difference for the days left. <!-- 0063: upgrade price and scheduled downgrade exist, switched off (BILLING_ONLINE_ON false) --></li></ul>
+
+<h2>6. If you stop paying</h2>
+<ul><li>We tell you in the admin app first. After that, we may switch off the paid features step by step. <!-- same words as the live Terms, part B section 5 --></li><li>When online payments start, it works like this: on your plan's end date you get <strong>7 extra days</strong> with everything on. Then <strong>30 days of basic mode</strong>: the desk keeps working for your existing members (check-in, fee entry, member list), but you cannot add new members and the Pro extras are off. After that, MettleUp is <strong>read-only</strong>: you can look at everything and export it. Pay again to switch everything back on. <!-- decided 6 Nov 2026 (R-384); built in 0062, switched off (PLAN_GATE_ON false) --></li><li>We never delete your data because a payment is late. If you ask us to, we delete your gym's data within 30 days. <!-- the live Terms, part B section 9 --></li></ul>
+
+<h2>7. How a refund is paid</h2>
+<ul><li>Refunds go back to the <strong>same way you paid</strong> (the same UPI, card or bank account).</li><li>The money reaches you <strong>within 5–7 working days (Monday to Saturday) after we approve</strong> the refund. Your bank may take a little longer to show it.</li><li>MettleUp is not registered under GST. No GST is charged, so a refund has no GST in it.</li></ul>
+
+<h2>8. How to cancel, or report a wrong payment</h2>
+<ul><li>Email <a href="mailto:contact@mettleup.fit">contact@mettleup.fit</a>. More ways to reach us are on the <a href="/contact.html">contact page</a>.</li><li>Tell us your gym name, the phone number you signed up with, and the date of the payment (or its reference number).</li></ul>
+
+<p>Founding gyms: "Pro for life" means for as long as MettleUp runs this service.</p>
+<p>Nothing on this page takes away your rights under the Consumer Protection Act 2019 or any other law that cannot be excluded. Indian law applies; courts in Jaipur.</p>
+<p>Last updated: 13 November 2026.</p>
+</main></body></html>

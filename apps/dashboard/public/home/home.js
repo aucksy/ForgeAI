@@ -324,7 +324,7 @@
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
 
-  // The numbers (63%, 7x, 138) count up the first time they are seen.
+  // The numbers (63%, 138) count up the first time they are seen.
   if (!reduce && canWatch) {
     all('.count').forEach(function (el) {
       var to = Number(el.dataset.to);

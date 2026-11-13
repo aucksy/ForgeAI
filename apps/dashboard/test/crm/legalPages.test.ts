@@ -99,12 +99,36 @@ describe('R-76: the join screen’s legal links open real pages, never the admin
     }
   });
 
+  // R-480 (owner, 13 Nov 2026: "privacy and policy wording are approved"): the 4 policy pages payment companies
+  // look for are live, built from docs/legal like the others, with no draft line or blank slot left on them.
+  it('R-480: refunds, shipping and delivery, contact and about are published from their approved source', () => {
+    const pages = ['refund', 'delivery', 'contact', 'about'];
+    for (const p of pages) {
+      const html = readFileSync(pub(`${p}.html`), 'utf8').replace(/\r\n/g, '\n');
+      expect(html, p).toContain(src(`${p}.body.html`).trimEnd());
+      expect(html, p).not.toMatch(/DRAFT|TO CONFIRM|\[date|not approved/i);
+      expect(html, p).not.toMatch(/<script/i);
+      expect(html, p).toContain('<p>Last updated: 13 November 2026.</p>');
+    }
+    // Every legal page's menu reaches all of them.
+    for (const p of ['privacy', 'terms', 'data-agreement', 'delete-account', ...pages]) {
+      const nav = /<nav>(.*?)<\/nav>/.exec(readFileSync(pub(`${p}.html`), 'utf8'))?.[1] ?? '';
+      for (const href of ['/privacy.html', '/terms.html', '/refund.html', '/delivery.html', '/contact.html', '/about.html']) expect(nav, `${p} menu`).toContain(`href="${href}"`);
+    }
+    // Contact: the customer-care phone (his business line) and the Grievance Officer's phone; no address row until he gives one.
+    const contact = readFileSync(pub('contact.html'), 'utf8');
+    expect(contact).toContain('<tr><th>Customer-care phone</th><td><a href="tel:+918690560741">+91 86905 60741</a></td></tr>');
+    expect(contact).toMatch(/Grievance Officer:<\/strong> Aakash Pahuja, Founder\. .*phone <a href="tel:\+918690560741">\+91 86905 60741<\/a>/);
+    expect(contact.replace(/<!--[\s\S]*?-->/g, '')).not.toMatch(/business address/i);
+    expect(readFileSync(pub('about.html'), 'utf8')).not.toMatch(/phone number and address/);
+  });
+
   it('the panel’s offline worker never keeps them as its own page', () => {
     const sw = readFileSync(pub('sw.js'), 'utf8');
     const src = /const SKIP = (\/.+\/);/.exec(sw)?.[1];
     expect(src).toBeDefined();
     const skip = new Function(`return ${src}`)() as RegExp;
-    for (const path of ['/privacy', '/privacy.html', '/terms', '/terms.html', '/data-agreement', '/data-agreement.html', '/join.html', '/home/', '/f/ABCD2345', '/friend.html']) expect(skip.test(path), path).toBe(true);
+    for (const path of ['/privacy', '/privacy.html', '/terms', '/terms.html', '/data-agreement', '/data-agreement.html', '/join.html', '/home/', '/f/ABCD2345', '/friend.html', '/delete-account', '/refund', '/refund.html', '/delivery', '/contact', '/contact.html', '/about']) expect(skip.test(path), path).toBe(true);
     for (const path of ['/', '/members', '/settings']) expect(skip.test(path), path).toBe(false);
   });
 });

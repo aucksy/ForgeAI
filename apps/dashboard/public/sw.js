@@ -12,7 +12,8 @@
 const CACHE = 'forgeai-panel-v1';
 const SHELL = '/';
 // F147: /f/<CODE> and friend.html, a member's "bring a friend" page, are never the panel's page either.
-const SKIP = /^\/(sb|api|j|c|f|app|home)(\/|$)|^\/(join|checkin|friend|privacy|terms|data-agreement)(\.html)?$/;
+// R-480 (13 Nov 2026): the 4 policy pages (refund, delivery, contact, about) and delete-account are site pages too.
+const SKIP = /^\/(sb|api|j|c|f|app|home)(\/|$)|^\/(join|checkin|friend|privacy|terms|data-agreement|delete-account|refund|delivery|contact|about)(\.html)?$/;
 
 self.addEventListener('install', (e) => {
   self.skipWaiting();

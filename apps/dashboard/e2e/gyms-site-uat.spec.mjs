@@ -24,7 +24,7 @@ async function serve(page) {
   await page.route(/^https:\/\/(gyms\.)?mettleup\.fit\//, async (route) => {
     const url = new URL(route.request().url());
     let path = url.pathname === '/' ? 'home/index.html' : url.pathname.slice(1);
-    if (/^(privacy|terms|data-agreement|delete-account)$/.test(path)) path += '.html';
+    if (/^(privacy|terms|data-agreement|delete-account|refund|delivery|contact|about)$/.test(path)) path += '.html';
     let body;
     try {
       body = readFileSync(new URL(path, PUB));
@@ -52,7 +52,8 @@ for (const [name, size] of [['phone', { width: 390, height: 844 }], ['computer',
     await expect(foot).toBeVisible();
     await expect(foot).toContainText('Questions? Write to us: contact@mettleup.fit');
     await expect(foot.getByRole('link', { name: 'contact@mettleup.fit' })).toHaveAttribute('href', 'mailto:contact@mettleup.fit');
-    for (const [label, href] of [['Privacy', '/privacy'], ['Terms', '/terms'], ['Data agreement', '/data-agreement']]) {
+    // R-480: the 4 policy pages payment companies look for sit in the footer too.
+    for (const [label, href] of [['Privacy', '/privacy'], ['Terms', '/terms'], ['Data agreement', '/data-agreement'], ['Refunds', '/refund'], ['Shipping and delivery', '/delivery'], ['Contact', '/contact'], ['About', '/about']]) {
       const link = foot.getByRole('link', { name: label, exact: true });
       await expect(link).toHaveAttribute('href', href);
       const box = await link.boundingBox();
@@ -130,9 +131,14 @@ for (const [name, size] of [['phone', { width: 390, height: 844 }], ['computer',
     // R-476: the hero says what MettleUp is; every number in the stats names a published source.
     await expect(page.locator('.claim')).toContainText('MettleUp is advanced gym software');
     const stats = page.locator('.stats .stat');
-    await expect(stats).toHaveCount(3);
-    for (const i of [0, 1, 2]) {
-      const ref = await stats.nth(i).locator('sup a').getAttribute('href');
+    // R-480: two numbers only (the enquiry call-back "7x" came out), footnotes 1 and 2.
+    await expect(stats).toHaveCount(2);
+    await expect(page.locator('.stats')).not.toContainText('Oldroyd');
+    await expect(page.locator('.stats .src')).toHaveCount(2);
+    for (const i of [0, 1]) {
+      const sup = stats.nth(i).locator('sup a');
+      await expect(sup).toHaveText(String(i + 1));
+      const ref = await sup.getAttribute('href');
       await expect(page.locator(ref)).toContainText(/(19|20)\d\d\./);
     }
     // The price cards: only Starter and Pro (R-474: the AI Assistant is a feature, not a price card).
@@ -181,5 +187,41 @@ test('G2 account-deletion page for Google Play, phone', async ({ page }) => {
   await expect(page.getByRole('link', { name: 'contact@mettleup.fit' }).first()).toHaveAttribute('href', /^mailto:contact@mettleup\.fit/);
   await noSideways(page);
   await page.screenshot({ path: `${DIR}/delete-account-phone.png`, fullPage: true });
+  expect(errors).toEqual([]);
+});
+
+// R-480 (13 Nov 2026, wording approved): the 4 policy pages are live. Each opens from the gym page's footer, carries
+// the full legal menu, shows no draft line or blank slot, and fits a phone.
+test('G4 policy pages (refunds, shipping and delivery, contact, about), phone', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  const errors = await serve(page);
+  for (const [label, path, heading] of [
+    ['Refunds', 'refund', 'MettleUp refunds and cancellation'],
+    ['Shipping and delivery', 'delivery', 'MettleUp shipping and delivery'],
+    ['Contact', 'contact', 'Contact MettleUp'],
+    ['About', 'about', 'About MettleUp'],
+  ]) {
+    await page.goto('https://gyms.mettleup.fit/');
+    // (Opened by its address: on a phone the bottom "Start free" bar can sit over the footer.)
+    const link = page.locator('footer.foot-bar').getByRole('link', { name: label, exact: true });
+    await expect(link).toHaveAttribute('href', `/${path}`);
+    await page.goto(`https://gyms.mettleup.fit/${path}`);
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText(heading);
+    const main = page.locator('main');
+    await expect(main).toContainText('Last updated: 13 November 2026.');
+    await expect(main).not.toContainText(/DRAFT|TO CONFIRM|\[date|not approved/i);
+    const nav = page.locator('nav');
+    for (const item of ['Privacy notice', 'Terms', 'Data agreement', 'Refunds', 'Shipping and delivery', 'Contact', 'About', 'Delete your account']) {
+      await expect(nav.getByRole('link', { name: item, exact: true })).toBeVisible();
+    }
+    if (path === 'contact') {
+      await expect(main.getByRole('row', { name: /Customer-care phone/ })).toContainText('+91 86905 60741');
+      await expect(main.getByRole('link', { name: '+91 86905 60741' }).first()).toHaveAttribute('href', 'tel:+918690560741');
+      await expect(main).toContainText('Grievance Officer: Aakash Pahuja, Founder.');
+      await expect(main).not.toContainText(/business address/i);
+    }
+    await noSideways(page);
+    await page.screenshot({ path: `${DIR}/policy-${path}-phone.png`, fullPage: true });
+  }
   expect(errors).toEqual([]);
 });

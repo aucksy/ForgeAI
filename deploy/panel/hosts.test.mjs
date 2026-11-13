@@ -28,7 +28,7 @@ test('mettleup.fit is the member page (F184); /gyms and the old /home go to gyms
   assert.deepEqual(go('mettleup.fit', '/gyms', '?from=member'), { kind: 'redirect', to: 'https://gyms.mettleup.fit/?from=member', status: 301 });
   assert.deepEqual(go('mettleup.fit', '/home', '?utm=wa'), { kind: 'redirect', to: 'https://gyms.mettleup.fit/?utm=wa', status: 301 });
   // The member page's own files, and the gym page's files and demo form (an old open tab still works).
-  for (const keep of ['/member-site/member.js', '/member-site/shot-workout.webp', '/home/home.js', '/home/tiles.webp', '/api/lead', '/icons/admin-192.png', '/brand/mark.svg', '/.well-known/assetlinks.json', '/privacy', '/terms.html', '/data-agreement.html', '/delete-account', '/favicon.ico']) {
+  for (const keep of ['/member-site/member.js', '/member-site/shot-workout.webp', '/home/home.js', '/home/tiles.webp', '/api/lead', '/icons/admin-192.png', '/brand/mark.svg', '/.well-known/assetlinks.json', '/privacy', '/terms.html', '/data-agreement.html', '/delete-account', '/favicon.ico', '/refund', '/delivery.html', '/contact', '/about.html']) {
     assert.deepEqual(go('mettleup.fit', keep), { kind: 'app' }, keep);
   }
   assert.deepEqual(go('mettleup.fit', '/start'), { kind: 'redirect', to: `${APP_ORIGIN}/start`, status: 301 });
@@ -42,7 +42,7 @@ test('gyms.mettleup.fit is the gym landing page with its files and demo form (F1
   assert.equal(GYMS_HOST, 'gyms.mettleup.fit');
   assert.deepEqual(go('gyms.mettleup.fit', '/'), { kind: 'landing' });
   assert.deepEqual(go('GYMS.METTLEUP.FIT', '/', '?from=member'), { kind: 'landing' });
-  for (const keep of ['/home/home.js', '/home/dues-list.webp', '/api/lead', '/icons/admin-192.png', '/brand/mark.svg', '/favicon.ico', '/privacy', '/terms', '/data-agreement.html', '/delete-account.html', '/.well-known/assetlinks.json']) {
+  for (const keep of ['/home/home.js', '/home/dues-list.webp', '/api/lead', '/icons/admin-192.png', '/brand/mark.svg', '/favicon.ico', '/privacy', '/terms', '/data-agreement.html', '/delete-account.html', '/.well-known/assetlinks.json', '/refund.html', '/delivery', '/contact.html', '/about']) {
     assert.deepEqual(go('gyms.mettleup.fit', keep), { kind: 'app' }, keep);
   }
   assert.equal(go('gyms.mettleup.fit', '/api/lead', '', 'POST').kind, 'app');

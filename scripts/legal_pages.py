@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Build the public legal pages from their one source (R-445, 10 Nov 2026).
 
-  python scripts/legal_pages.py          -> apps/dashboard/public/privacy.html, terms.html, data-agreement.html
+  python scripts/legal_pages.py          -> apps/dashboard/public/privacy.html, terms.html, data-agreement.html,
+                                            refund.html, delivery.html, contact.html, about.html
   python scripts/legal_pages.py --check  -> exit 1 if a published page is not exactly what the source builds
 
 THE SOURCE (the owner approved these words "all as recommended" on 10 Nov 2026, R-443/R-445):
@@ -11,6 +12,11 @@ THE SOURCE (the owner approved these words "all as recommended" on 10 Nov 2026, 
   docs/legal/data-agreement.body.html  the gym data agreement; its "Version YYYY-MM-DD." line must equal
                                     TERMS_VERSION in apps/dashboard/src/crm/auth/terms.ts and the newest
                                     entry of _terms_versions() in supabase/migrations (tests check both)
+  docs/legal/refund.body.html, delivery.body.html, contact.body.html, about.body.html
+                                    the 4 policy pages Razorpay and Cashfree look for (refunds and
+                                    cancellation, shipping and delivery, contact, about). Approved word for
+                                    word on 13 Nov 2026 (R-480; they were docs/drafts/, see
+                                    docs/drafts/POLICY-PAGES.md). No [TO CONFIRM] slot may stay in them.
 Change the words ONLY in those files, then run this script. Never hand-edit the pages in public/:
 apps/dashboard/test/crm/legalPages.test.ts fails when a published page and its source differ.
 (Until 10 Nov 2026 the source was docs/launch/PRIVACY-NOTICE.md, TERMS.md and DATA-AGREEMENT.md; the
@@ -43,7 +49,7 @@ blockquote{{border-left:4px solid var(--line);margin:0;padding:4px 14px}}
 .sum{{border-left:4px solid var(--accent);padding:4px 0 4px 14px}}.sum li{{margin:4px 0}}.muted{{color:var(--muted);font-size:.92rem}}
 .toc{{font-size:.92rem;columns:2;column-gap:24px;padding-left:20px}}@media (max-width:520px){{.toc{{columns:1}}}}
 </style></head><body><main>
-<nav><a href="/privacy.html">Privacy notice</a> · <a href="/terms.html">Terms</a> · <a href="/data-agreement.html">Data agreement</a> · <a href="/delete-account.html">Delete your account</a></nav>
+<nav><a href="/privacy.html">Privacy notice</a> · <a href="/terms.html">Terms</a> · <a href="/data-agreement.html">Data agreement</a> · <a href="/refund.html">Refunds</a> · <a href="/delivery.html">Shipping and delivery</a> · <a href="/contact.html">Contact</a> · <a href="/about.html">About</a> · <a href="/delete-account.html">Delete your account</a></nav>
 {body}</main></body></html>
 """
 
@@ -52,7 +58,7 @@ def read(name):
     with open(os.path.join(SRC, name), encoding="utf-8") as f:
         text = f.read().replace("\r\n", "\n")
     # ([Gym name] in the data agreement's short notice is a blank for the gym to fill: it stays.)
-    if re.search(r"<script|\[(?:OWNER NAME|CONTACT EMAIL)\]|DRAFT", text):
+    if re.search(r"<script|\[(?:OWNER NAME|CONTACT EMAIL|TO CONFIRM|date of publishing)|DRAFT", text):
         raise SystemExit(f"{name}: a script, a blank or a DRAFT mark is left; fix the source first")
     return text.rstrip() + "\n"
 
@@ -65,6 +71,10 @@ def pages():
         "privacy.html": PAGE.format(title="Privacy notice", body=read("privacy.body.html") + "\n<hr>\n" + read("privacy-hi.body.html")),
         "terms.html": PAGE.format(title="Terms of use", body=read("terms.body.html")),
         "data-agreement.html": PAGE.format(title="Data agreement", body=da),
+        "refund.html": PAGE.format(title="Refunds and cancellation", body=read("refund.body.html")),
+        "delivery.html": PAGE.format(title="Shipping and delivery", body=read("delivery.body.html")),
+        "contact.html": PAGE.format(title="Contact us", body=read("contact.body.html")),
+        "about.html": PAGE.format(title="About us", body=read("about.body.html")),
     }
 
 

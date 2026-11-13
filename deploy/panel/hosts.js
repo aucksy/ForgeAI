@@ -40,6 +40,7 @@ const SITE_KEEPS = [
   /^\/(icons|brand)\//,
   /^\/\.well-known\//,
   /^\/(privacy|terms|data-agreement|delete-account)(\.html)?$/, // delete-account: Play's account-deletion page (3 Nov 2026)
+  /^\/(refund|delivery|contact|about)(\.html)?$/, // the 4 policy pages payment companies look for (R-480, 13 Nov 2026)
   /^\/(favicon\.ico|robots\.txt)$/,
 ];
 

@@ -207,7 +207,7 @@ select.field{appearance:none;background-image:linear-gradient(45deg,transparent 
 .stats .wrap{display:grid;gap:28px 14px;grid-template-columns:repeat(3,1fr)}
 .stats .say,.src{grid-column:1/-1}
 @media (max-width:859px){.stats .wrap{grid-template-columns:auto 1fr;gap:22px 16px}.stat{grid-column:1/-1;display:grid;grid-template-columns:subgrid;align-items:center}.stat .n{font-size:clamp(2rem,10vw,3rem)}.stat p{margin-top:0;font-size:14.5px;max-width:none}}
-@media (min-width:860px){.stats .say{grid-column:auto}.stats .wrap{grid-template-columns:1.3fr 1fr 1fr 1fr;align-items:start}}
+@media (min-width:860px){.stats .say{grid-column:auto}.stats .wrap{grid-template-columns:1.3fr 1fr 1fr;align-items:start}}
 .stats .say{font:800 clamp(1.5rem,3vw,2.1rem)/1.12 var(--display);letter-spacing:-.03em}
 :lang(hi) .stats .say{letter-spacing:0;line-height:1.3}
 .stat .n{display:block;font:800 clamp(3rem,7vw,4.4rem)/1 var(--display);letter-spacing:-.05em}
@@ -645,17 +645,16 @@ select.field{appearance:none;background-image:linear-gradient(45deg,transparent 
   </div>
 </section>
 
-<!-- 2. WHY IT MATTERS, in three numbers. R-476 (13 Nov): enquiries and retention. Every number is a published
+<!-- 2. WHY IT MATTERS, in two numbers. R-476 (13 Nov): retention. R-480 (13 Nov): the enquiry call-back number came out
+     (he: "We are not really offering any solution around it"). Every number is a published
      study, never a MettleUp result: our own numbers come only from pilot gyms (mettleup-marketing rule 6, ASCI). -->
 <section class="stats" aria-labelledby="why-h">
   <div class="wrap">
     <h2 id="why-h" class="say rv" data-hi="ज़्यादा एन्क्वायरी जीतें। &lt;span class=&quot;hot&quot;&gt;मेंबर्स को टिकाए रखें।&lt;/span&gt;">Win more enquiries. <span class="hot">Help members stay.</span></h2>
     <div class="stat rv"><span class="n bad"><span class="count" data-to="63">63</span>%</span><p><span data-hi="नए मेंबर्स तीसरे महीने से पहले छोड़ देते हैं।">of new members quit before month 3.</span><sup><a href="#src1">1</a></sup></p></div>
-    <div class="stat rv"><span class="n good"><span class="count" data-to="7">7</span>×</span><p><span data-hi="ज़्यादा मौका कि बात आगे बढ़े, जब आप एन्क्वायरी को 1 घंटे के अंदर वापस कॉल करें। MettleUp हर एन्क्वायरी को एक लिस्ट में रखता है।">more chance of a real talk when you call an enquiry back within 1 hour. MettleUp keeps every enquiry in one list.</span><sup><a href="#src2">2</a></sup></p></div>
-    <div class="stat rv"><span class="n em"><span class="count" data-to="138">138</span></span><p><span data-hi="स्टडीज़: जो लोग अपनी प्रोग्रेस ट्रैक करते हैं, वे अपने लक्ष्य ज़्यादा बार पूरे करते हैं। आपके मेंबर्स ऐप में अपनी प्रोग्रेस देखते हैं।">studies: people who track their progress reach their goals more often. Your members see theirs in the app.</span><sup><a href="#src3">3</a></sup></p></div>
+    <div class="stat rv"><span class="n em"><span class="count" data-to="138">138</span></span><p><span data-hi="स्टडीज़: जो लोग अपनी प्रोग्रेस ट्रैक करते हैं, वे अपने लक्ष्य ज़्यादा बार पूरे करते हैं। आपके मेंबर्स ऐप में अपनी प्रोग्रेस देखते हैं।">studies: people who track their progress reach their goals more often. Your members see theirs in the app.</span><sup><a href="#src2">2</a></sup></p></div>
     <p class="src" id="src1" data-hi="1. एक जिम के 5,240 मेंबर्स: Sperandei et al., J. Sci. Med. Sport, 2016.">1. 5,240 members at one gym: Sperandei et al., J. Sci. Med. Sport, 2016.</p>
-    <p class="src" id="src2" data-hi="2. 2,241 कंपनियों की जाँच: Oldroyd, McElheran और Elkington, Harvard Business Review, 2011।">2. 2,241 companies checked: Oldroyd, McElheran and Elkington, Harvard Business Review, 2011.</p>
-    <p class="src" id="src3" data-hi="3. 138 स्टडीज़, 19,951 लोग: Harkin et al., Psychological Bulletin, 2016।">3. 138 studies, 19,951 people: Harkin et al., Psychological Bulletin, 2016.</p>
+    <p class="src" id="src2" data-hi="2. 138 स्टडीज़, 19,951 लोग: Harkin et al., Psychological Bulletin, 2016।">2. 138 studies, 19,951 people: Harkin et al., Psychological Bulletin, 2016.</p>
   </div>
 </section>
 
@@ -1126,6 +1125,10 @@ select.field{appearance:none;background-image:linear-gradient(45deg,transparent 
     <a href="/privacy" data-hi="प्राइवेसी">Privacy</a>
     <a href="/terms" data-hi="शर्तें">Terms</a>
     <a href="/data-agreement" data-hi="डेटा एग्रीमेंट">Data agreement</a>
+    <a href="/refund" data-hi="रिफ़ंड">Refunds</a>
+    <a href="/delivery" data-hi="डिलीवरी">Shipping and delivery</a>
+    <a href="/contact" data-hi="संपर्क">Contact</a>
+    <a href="/about" data-hi="हमारे बारे में">About</a>
   </div>
   <div class="wrap foot-legal">MettleUp · Jaipur, Rajasthan, India</div>
 </footer>

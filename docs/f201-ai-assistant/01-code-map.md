@@ -43,7 +43,7 @@ Four facts that shape the design:
 Site/code: apps/dashboard/public/home/index.html:937-954; packages/theme/src/plans.ts:12,51,97-101; apps/dashboard/src/crm/logic/payMettleUp.ts:28,41; ui/BillingOnline.tsx:150; logic/billing.ts:169; logic/gymState.ts:20,35; logic/trial.ts:15,51; apps/hq/public/logic.js:285,287; deploy/hq/api.js:71; deploy/hq/billing.js:280.
 Supabase: 0030:19,68,159; 0046:7,16; 0060:20,238,261; 0062:73; 0063:30,37,182,254,403 (keep 'ai' id valid in old migrations; do not edit applied files).
 Tests: apps/dashboard/test/crm/pricesOneSource.test.ts; payMettleUp.test.ts:48; apps/hq/test/logic.test.mjs:171-182,254,303; deploy/hq/billing.test.mjs:265,275; deploy/hq/hq.test.mjs:462,465; apps/mobile/test/theme/plans.test.ts:34; supabase/tests/0063_gym_checkout.sql:59.
-Docs: OWNER-INBOX rows; docs/drafts/about.html:24; docs/drafts/POLICY-PAGES.md:22; docs/launch/WEBSITE-COPY-2026-10-24.md; docs/overhaul/BILLING-DESIGN.md:34; research R-pricing-jaipur.md.
+Docs: OWNER-INBOX rows; docs/legal/about.body.html (was docs/drafts/about.html); docs/drafts/POLICY-PAGES.md:22; docs/launch/WEBSITE-COPY-2026-10-24.md; docs/overhaul/BILLING-DESIGN.md:34; research R-pricing-jaipur.md.
 
 ## Member app
 Gym tab bell -> /shop/inbox (src/shop/InboxScreen.tsx) from member_messages. Push via expo-notifications + FCM; fallback check every ~15 min.

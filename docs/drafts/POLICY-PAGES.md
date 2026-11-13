@@ -1,4 +1,11 @@
-# Policy pages for Razorpay and Cashfree: drafts for your approval (6 Nov 2026, checked 13 Nov 2026)
+# Policy pages for Razorpay and Cashfree (6 Nov 2026, checked 13 Nov 2026, approved and published 13 Nov 2026)
+
+**PUBLISHED 13 Nov 2026 (R-480, he approved the wording).** The 4 pages are no longer drafts: their source is
+`docs/legal/refund.body.html`, `delivery.body.html`, `contact.body.html`, `about.body.html`, built into
+`apps/dashboard/public/` by `scripts/legal_pages.py` (same look and menu as Terms and Privacy; footer links on the gym
+page). Customer-care and Grievance Officer phone: +91 86905 60741 (his business line, approved). The business address
+row is left out until he gives one (an HTML comment in contact.body.html marks where it goes). Live with the next panel
+deploy. Everything below is the history of how the wording was reached.
 
 Razorpay and Cashfree check that the website has these pages before they approve a seller. Terms and
 Privacy already exist. These 4 are drafts in `docs/drafts/` and are NOT live. They look exactly like

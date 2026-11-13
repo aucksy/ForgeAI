@@ -10,9 +10,9 @@ blockquote{border-left:4px solid var(--line);margin:0;padding:4px 14px}
 .sum{border-left:4px solid var(--accent);padding:4px 0 4px 14px}.sum li{margin:4px 0}.muted{color:var(--muted);font-size:.92rem}
 .toc{font-size:.92rem;columns:2;column-gap:24px;padding-left:20px}@media (max-width:520px){.toc{columns:1}}
 </style></head><body><main>
-<nav><a href="/privacy.html">Privacy notice</a> · <a href="/terms.html">Terms</a> · <a href="/data-agreement.html">Data agreement</a> · <a href="/delete-account.html">Delete your account</a></nav>
+<nav><a href="/privacy.html">Privacy notice</a> · <a href="/terms.html">Terms</a> · <a href="/data-agreement.html">Data agreement</a> · <a href="/refund.html">Refunds</a> · <a href="/delivery.html">Shipping and delivery</a> · <a href="/contact.html">Contact</a> · <a href="/about.html">About</a> · <a href="/delete-account.html">Delete your account</a></nav>
 <h1>MettleUp privacy notice</h1>
-<p class="muted">Last updated: 12 Nov 2026. What changed is at the end.</p>
+<p class="muted">Last updated: 13 Nov 2026. What changed is at the end.</p>
 
 <h2>In short</h2>
 <ul class="sum">
@@ -139,6 +139,7 @@ blockquote{border-left:4px solid var(--line);margin:0;padding:4px 14px}
 <li>Payments to MettleUp: the plan, the amount, the date, and the UPI or bank reference number you send.</li>
 <li>The gym's own records (members, plans, payments, check-ins, shop, staff, messages and photos) belong to the gym (section 2). So the desk works without internet, the admin app keeps a copy on each device a staff member signs in on. Signing that device out deletes the copy.</li>
 <li>Importing an old member list: to work out which column is which, Google Gemini (or Anthropic's Claude if Gemini fails) sees the column names, 5 example rows and simple counts. Names, addresses, mobile numbers, emails and ID numbers are hidden before they are sent. Plan names, amounts and dates are not hidden. The AI sends back no member details.</li>
+<li><strong>The AI Assistant (gym owners only):</strong> what the owner types or says goes to Anthropic's Claude AI so it can understand the request and get a message or a change ready. With it go today's date, the gym's name, its plan names, lengths and prices, batch names and trainers' first names. Mobile numbers, email addresses and long card or account numbers in the request are hidden before it is sent. A member's name goes only if the owner says it. The AI gets no member records: the admin app looks those up itself. When the owner asks to change a message's wording, Claude reads that message. When the owner asks it to write a workout plan, Claude gets the goal, level, days a week and session length he picks, his short notes on focus and equipment (including any injury he mentions, with mobile numbers and emails hidden) and the names of the gym's exercises; never the member's name or records. A spoken request goes through our server to Groq, which turns it into text; neither we nor Groq keep the recording. Anthropic does not use any of this to train its AI. We keep each request, what the owner did with it and the credits it used for 400 days, so the owner can see them in the admin app. After 400 days the request and its words are deleted; only the number of credits used stays, for our accounts.</li>
 <li>MettleUp support looks at a gym's records only in a short window. Usually the gym's owner opens it, for 1 hour. In an emergency, such as a fault that stops the desk, we open it for up to 1 hour and write down why. We can only read the records, never change them. Every look is recorded, and the owner can see each one in the admin app.</li>
 </ul>
 
@@ -158,8 +159,8 @@ blockquote{border-left:4px solid var(--line);margin:0;padding:4px 14px}
 <tr><td>Supabase</td><td>Our main database</td><td>Everything we keep on our server</td><td>Mumbai, India</td></tr>
 <tr><td>Cloudflare</td><td>Runs our websites and web server, and passes the apps' requests to the database. Keeps feedback, help questions, crash reports and website forms. Keeps a backup copy of our database each night.</td><td>What passes through, and what it keeps</td><td>Many countries, including India</td></tr>
 <tr><td>Google</td><td>Sign-in with Google. Firebase carries pop-ups to your phone. Google Play delivers the app. Gemini helps with a gym's member-list import. Google Drive is used only to bring back an old Drive backup.</td><td>Your Google email; the pop-up text; the member-list sample with personal details hidden</td><td>Many countries, including the USA</td></tr>
-<tr><td>Anthropic (Claude)</td><td>Writes answers to help questions. Second choice for the member-list import.</td><td>The help message; the member-list sample with personal details hidden</td><td>USA</td></tr>
-<tr><td>Groq</td><td>Turns spoken feedback into text</td><td>The recording, for a moment</td><td>USA</td></tr>
+<tr><td>Anthropic (Claude)</td><td>Writes answers to help questions. Second choice for the member-list import. Understands AI Assistant requests, rewrites message drafts and writes workout plans from the gym's exercise list.</td><td>The help message; the member-list sample with personal details hidden; the owner's request with mobile numbers and emails hidden; the gym's plan, batch and trainer first names; for a workout plan, the goal, level, days and the owner's short notes, and the gym's exercise names</td><td>USA</td></tr>
+<tr><td>Groq</td><td>Turns spoken feedback and spoken AI Assistant requests into text</td><td>The recording, for a moment</td><td>USA</td></tr>
 <tr><td>Meta (WhatsApp)</td><td>Number checks for gym owners and staff</td><td>The message and the number that sent it</td><td>Many countries</td></tr>
 <tr><td>GitHub</td><td>Our private bug list</td><td>Crash error text, with personal details removed</td><td>USA</td></tr>
 <tr><td>Your gym's payment company</td><td>Takes your payment to your gym, only when you pay online</td><td>Your name, mobile number and the amount</td><td>India</td></tr>
@@ -284,7 +285,8 @@ blockquote{border-left:4px solid var(--line);margin:0;padding:4px 14px}
 
 <h2 id="changes">13. Changes to this notice</h2>
 <p>Before a change that affects you, we tell you in the app. The date at the top shows the latest version.</p>
-<p>Last updated: 12 Nov 2026. What changed: section 4B now explains Find my gym and Tell my gym, and how long messages you send to your gym are kept. Earlier the same day: MettleUp is now on Google Play in the EU, the EEA and the UK, so we added section 12 for people who live there. It says who is responsible for your data, the legal reason for each use, how we treat health data, how data sent outside Europe is protected, and how to use your rights. Nothing changed in what we collect or share.</p>
+<p>Last updated: 13 Nov 2026. What changed: added the AI Assistant for gym owners (what goes to Claude and Groq).</p>
+<p>12 Nov 2026: section 4B now explains Find my gym and Tell my gym, and how long messages you send to your gym are kept. Earlier the same day: MettleUp is now on Google Play in the EU, the EEA and the UK, so we added section 12 for people who live there. It says who is responsible for your data, the legal reason for each use, how we treat health data, how data sent outside Europe is protected, and how to use your rights. Nothing changed in what we collect or share.</p>
 <p>10 Nov 2026: we rewrote the whole notice in simpler words, with a summary and a table of what goes to your gym. Newly listed: busy machines, workout reports, pause and renew requests, Bring a friend, paying your gym online, your watch, every company that helps us, gym staff sign-in and our websites. Corrected: help questions are answered by an AI; weigh-ins from Health Connect are in your saved copy when you sign in; pop-ups can carry a trainer's reply; the Settings paths. Changed: crash reports now go to a private bug list on GitHub. Earlier changes: 5 Nov 2026 (sleep), 4 Nov 2026 (trainer summary, Ask a trainer, backups to your MettleUp account), 2 Nov 2026 (help questions), 1 Nov 2026 (Health Connect), 30 Oct 2026 (spoken feedback, crash reports).</p>
 
 <hr>
