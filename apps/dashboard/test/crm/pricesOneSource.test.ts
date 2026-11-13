@@ -85,7 +85,7 @@ describe('prices: one list, every place agrees', () => {
     const as = html.slice(html.indexOf('id="assistant"'), html.indexOf('</section>', html.indexOf('id="assistant"')));
     expect(as).toContain(`${AI_CREDITS.trialFree} AI credits in your free trial`);
     expect(as).toContain(`free credits every month: ${AI_CREDITS.yearlyFreeEachMonth.starter} on Starter, ${AI_CREDITS.yearlyFreeEachMonth.pro} on Pro`);
-    expect(as).toContain('Coming soon');
+    expect(as).not.toMatch(/coming soon/i); // R-480: live from 13 Nov 2026
     // The founding offer: price (in the text and the big number), 25 gyms, the last day.
     const found = section.slice(section.indexOf('class="found'));
     expect(found).toContain(`Pay ${shown(FOUNDING_OFFER.rupees)} once`);

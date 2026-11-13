@@ -68,13 +68,12 @@ describe("nothing shown or sold still names the retired 'ai' pack", () => {
     expect(html).not.toContain('The AI pack is extra');
   });
 
-  it('the AI Assistant section says "Coming soon", has its three examples and no dated festival', () => {
+  it('the AI Assistant section is live (no "Coming soon", R-480), has its three examples and no dated festival', () => {
     const html = text('apps/dashboard/public/home/index.html');
     const at = html.indexOf('<section class="sec" id="assistant"');
     expect(at).toBeGreaterThan(0);
     const section = html.slice(at, html.indexOf('</section>', at));
-    expect(section).toContain('Coming soon');
-    expect(section).toContain('it is not in the app yet');
+    expect(section).not.toMatch(/coming soon|not in the app yet/i);
     for (const said of ['Kisne paise nahi diye?', 'Kal gym band rahega, sabko batao', 'Rahul ka plan 3 mahine renew karo, 4500 cash']) {
       expect(section).toContain(said);
     }
