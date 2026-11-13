@@ -45,6 +45,44 @@ for bx in getattr(clip, "boxes", []):
     objs += list(bx.children)
 objs += clip.cable_meshes()   # cable columns, handles and cables (13 Nov 2026): the whole column stays in the picture
 objs += getattr(clip, "machine_objs", [])
+for sr in getattr(clip, "scene_roots", []):   # props_other: decline bench, back-extension bench, ball (13 Nov 2026)
+    objs += list(sr.children)
+
+
+def contacts(ev_body):
+    """How each prop meets the body (13 Nov 2026): per prop, the deepest body point inside it (negative = cut in,
+    metres) and the nearest body point outside it (the gap). Signed by the nearest face's normal (props are closed)."""
+    from mathutils.bvhtree import BVHTree
+    dg2 = bpy.context.evaluated_depsgraph_get()
+    me_b = ev_body.to_mesh(); mw = ev_body.matrix_world
+    pts = [mw @ me_b.vertices[i].co for i in range(0, len(me_b.vertices), 2)]
+    ev_body.to_mesh_clear()
+    out = {}
+    groups = {}
+    for o in objs[2:]:
+        if o.type != "MESH":
+            continue
+        root = o.parent.name if o.parent else o.name
+        groups.setdefault(root, []).append(o)
+    for root, obs in groups.items():
+        best_in, best_gap = (0.0, None), (9.9, None)
+        for o in obs:
+            ev = o.evaluated_get(dg2); m = ev.to_mesh()
+            bvh = BVHTree.FromPolygons([ev.matrix_world @ v.co for v in m.vertices], [list(p.vertices) for p in m.polygons])
+            ev.to_mesh_clear()
+            for q in pts:
+                hit = bvh.find_nearest(q, 0.25)
+                if hit[0] is None:
+                    continue
+                d = (q - hit[0]).dot(hit[1]); d = d if abs(d) > 1e-9 else hit[3]
+                if d < best_in[0]:
+                    best_in = (d, q)
+                if 0 <= d < best_gap[0]:
+                    best_gap = (d, q)
+        fmt = lambda v: [round(x, 3) for x in v] if v is not None else None
+        out[root] = {"deepest_in": round(best_in[0], 4), "deepest_at": fmt(best_in[1]),
+                     "gap": round(best_gap[0], 4) if best_gap[1] is not None else None, "gap_at": fmt(best_gap[1])}
+    return out
 fps, keys, _ = clip.timeline()
 key_frames = sorted({min(n - 1, int(round(k[0] * fps))) for k in keys})
 center, d = RD.frame_camera(scene, cam, objs, cam_spec.get("yaw", -30), cam_spec.get("pitch", 12),
@@ -103,6 +141,17 @@ if mode == "stills":
                                                            "lowest_body_at": [round(lp.x, 3), round(lp.y, 3), round(lp.z, 3)], "report": rep}
         if cable_gap is not None:
             stills[tag]["cable_clearance"] = cable_gap
+        # 13 Nov 2026: body vs every prop (cut-in depth / gap), the hands' fist centres and the fixtures' own numbers
+        scene.frame_set(f); dg.update()
+        if getattr(clip, "scene_roots", None) or any(p["type"] in A.PO_TYPES for p in spec.get("props", {}).values()):
+            stills[tag]["contacts"] = contacts(ch["body"].evaluated_get(dg))   # props_other recipes only (speed)
+        else:
+            stills[tag]["contacts"] = {}
+        stills[tag]["wrists"] = {s: [round(v, 3) for v in (ch["rig"].matrix_world @ ch["rig"].pose.bones[f"wrist.{s}"].head)] for s in ("L", "R")}
+        stills[tag]["fixtures"] = [m for (fr, _), m in sorted(getattr(clip, "fix_msgs", {}).items()) if fr == f]
+        print(f"[still] {tag} contacts {json.dumps(stills[tag]['contacts'])}")
+        for m in stills[tag]["fixtures"]:
+            print(f"[still] {tag} fixture {m}")
     scene.render.resolution_x = scene.render.resolution_y = 400; scene.cycles.samples = 12
     RD.frame_camera(scene, cam, objs, cam_spec.get("yaw", -30) + 90, 5, 50, 0.9, sample_frames=[f for _, f in order])
     for (pose, f), tag in zip(order, names):

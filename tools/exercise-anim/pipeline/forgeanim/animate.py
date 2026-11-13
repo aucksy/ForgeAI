@@ -22,8 +22,13 @@ from mathutils import Vector, Matrix, Euler, Quaternion
 from . import rig as R
 from . import props as P
 from . import muscles as MU
+from . import props_other as PO
 
 MIRROR = Vector((-1, 1, 1))
+# recipe prop type -> (builder, recipe keys passed through) for props_other.py (13 Nov 2026)
+PO_TYPES = {"hand_bar": (PO.hand_bar, ("length",)), "parallette": (PO.parallette, ("length",)),
+            "post": (PO.post, ("height",)), "plate": (PO.plate, ("r", "t")), "sled": (PO.sled, ("pole_gap", "pole_h")),
+            "kettlebell": (PO.kettlebell, ("bell_r",))}
 
 
 def ease(u, kind="smooth"):
@@ -105,7 +110,25 @@ class Clip:
             self.preacher = P.preacher_bench(**kw)
             self.preacher["root"].location = Vector(pr.get("loc", (0, 0, 0)))
             self.extras = getattr(self, "extras", []) + [self.preacher["root"]]
+        # 13 Nov 2026, "other" props (props_other.py): fixed scene pieces the body lies, sits or leans on
+        self.scene_roots = []
+        if "decline_bench" in sc:
+            b = sc["decline_bench"]
+            self.dbench = PO.decline_bench(b.get("deg", 20.0), b.get("top", 0.80), b.get("length", 1.15), b.get("legs"))
+            self.dbench["root"].location = Vector(b.get("loc", (0, 0, 0)))
+            self.scene_roots.append(self.dbench["root"])
+        if "hyperext" in sc:
+            b = sc["hyperext"]
+            r = PO.hyperext_bench(b.get("deg", 45.0), b["hip_pad"], b["foot"], b["roller"])
+            r.location = Vector(b.get("loc", (0, 0, 0))); self.scene_roots.append(r)
+        for i, bl in enumerate(sc.get("balls", [sc["ball"]] if "ball" in sc else [])):
+            r = PO.ball(f"FA_Ball{i}", bl.get("r", 0.33))
+            r.location = Vector(bl.get("loc", (0, 0, 0))); self.scene_roots.append(r)
         for name, p in self.spec.get("props", {}).items():
+            if p["type"] in PO_TYPES:
+                kw = {k: v for k, v in p.items() if k in PO_TYPES[p["type"]][1]}
+                self.props[name] = PO_TYPES[p["type"]][0]("FA_" + name, **kw)
+                continue
             if p["type"] == "dumbbell":
                 self.props[name] = P.dumbbell("FA_" + name)
             elif p["type"] == "ez_bar":
@@ -324,6 +347,7 @@ class Clip:
         self.place_bars(pose, T)
         self.place_cables(pose, T)
         self.update_machine()
+        self.place_fixtures(pose, T)
 
     def palm_point(self, s):
         """Centre of the palm skin (world): the mean of the wrist and the four knuckle joints, pushed out of the palm
@@ -519,6 +543,89 @@ class Clip:
                 print(f"[cable] {name} ({c['kind']}): {log}")
         R.update()
 
+    @staticmethod
+    def _upright(c, x):
+        """World matrix at c: local X along x laid level, local Z = world up."""
+        x = Vector((x.x, x.y, 0.0)); x = x.normalized() if x.length > 1e-6 else Vector((1, 0, 0))
+        up = Vector((0, 0, 1)); y = up.cross(x)
+        M = Matrix((x, y, up)).transposed().to_4x4(); M.translation = c
+        return M
+
+    def _drop_to_floor(self, root, height):
+        """Stretch a prop's fa_drop parts (props_other) so its legs reach the floor from `height` m, and key them."""
+        f = bpy.context.scene.frame_current
+        for ch in root.children:
+            k = ch.get("fa_drop")
+            if k == "scale":
+                ch.scale = (1, 1, height); ch.keyframe_insert("scale", frame=f)
+            elif k == "floor":
+                ch.location = (0, 0, -height); ch.keyframe_insert("location", frame=f)
+
+    def place_fixtures(self, pose, T):
+        """props_other pieces that follow the hands (13 Nov 2026). Each prints its check numbers once per pose.
+          hand_bar   : both hands on it -> level bar through both fist centres, uprights to the floor.
+          parallette : "hand": "L"/"R" -> handle through that fist along its grip axis (laid level), legs to the floor.
+          post       : "hand": "L"/"R" -> vertical pole through that fist, standing on the floor.
+          sled       : both hands on its poles -> poles through the fists, sled on the floor, heading away from him.
+          plate      : "mode": "rim" -> both fists on the rim (pose "plate": {name: {"normal": torso dir of the face,
+                       "side": torso dir from the hands to the plate centre}}); "mode": "torso" -> held flat on the body
+                       at pose "plate": {name: {"at": torso point, "normal": torso dir}}."""
+        T3 = T.to_3x3()
+        hands = pose.get("hands", {})
+        if not hasattr(self, "fix_msgs"):
+            self.fix_msgs = {}
+        for name, p in self.spec.get("props", {}).items():
+            t = p["type"]
+            if t not in PO_TYPES or name not in self.props:
+                continue
+            ob = self.props[name]
+            on = [s for s, h in hands.items() if h.get("prop") == name and s in self._fist]
+            msg = None
+            if t in ("hand_bar", "sled") and len(on) == 2:
+                cl, cr = self._fist["L"], self._fist["R"]
+                mid = (cl + cr) / 2
+                if t == "hand_bar":
+                    ob.matrix_world = self._upright(mid, cl - cr)
+                    R.update(); self._drop_to_floor(ob, mid.z)
+                    msg = f"bar height {mid.z:.3f}, hand gap {(cl - cr).length:.3f}, fist height diff {cl.z - cr.z:+.3f}"
+                else:
+                    ob.matrix_world = self._upright(Vector((mid.x, mid.y, 0.0)), cl - cr)
+                    msg = f"pole gap wanted {(cl - cr).length:.3f} (sled {p.get('pole_gap', 0.5)}), grips at z {cl.z:.3f}/{cr.z:.3f}"
+            elif t in ("parallette", "post"):
+                s = p.get("hand", on[0] if on else None)
+                if s not in self._fist:
+                    continue
+                c = self._fist[s]
+                if t == "parallette":
+                    ob.matrix_world = self._upright(c, self._gax.get(s, Vector((0, 1, 0))))
+                    R.update(); self._drop_to_floor(ob, c.z)
+                    msg = f"hand {s} grip at {tuple(round(v, 3) for v in c)}, grip axis tilt {math.degrees(math.asin(max(-1, min(1, self._gax.get(s, Vector((0, 1, 0))).z)))):.1f} deg"
+                else:
+                    ob.matrix_world = Matrix.Translation(Vector((c.x, c.y, 0.0)))
+                    msg = f"hand {s} grip at {tuple(round(v, 3) for v in c)}, grip axis off vertical {math.degrees(self._gax.get(s, Vector((0, 0, 1))).angle(Vector((0, 0, 1)))):.1f} deg"
+            elif t == "plate":
+                cfg = (pose.get("plate") or {}).get(name, {})
+                r = p.get("r", 0.225)
+                if p.get("mode", "rim") == "rim" and len(on) == 2:
+                    cl, cr = self._fist["L"], self._fist["R"]
+                    x = (cl - cr).normalized(); half = (cl - cr).length / 2
+                    n = T3 @ Vector(cfg.get("normal", (0, 1, 0))); n = (n - x * n.dot(x)).normalized()
+                    u = n.cross(x).normalized()
+                    if u.dot(T3 @ Vector(cfg.get("side", (0, 0, -1)))) < 0:
+                        u = -u
+                    rr = r - p.get("grip_in", 0.012)           # fist centres sit just inside the rim lip
+                    dist = math.sqrt(max(0.0, rr * rr - half * half))
+                    ob.matrix_world = R.frame_from((cl + cr) / 2 + u * dist, x, n)
+                    msg = f"hand gap {2 * half:.3f} vs grip ring {2 * rr:.3f} ({'OK' if 2 * half <= 2 * rr else 'TOO WIDE: hands off the rim'})"
+                elif p.get("mode") == "torso":
+                    n = T3 @ Vector(cfg.get("normal", (0, 1, 0))); n.normalize()
+                    xa = T3 @ Vector((1, 0, 0)); xa = (xa - n * xa.dot(n)).normalized()
+                    ob.matrix_world = R.frame_from(T @ Vector(cfg.get("at", (0, 0.15, -0.2))), xa, n)
+                    msg = "held on the body at " + str(cfg.get("at"))
+            R.update()
+            if msg:   # per frame; make_clip stills writes the still frames' lines into <key>__stills.json
+                self.fix_msgs[(bpy.context.scene.frame_current, name)] = f"{name} ({t}): {msg}"
+
     def place_bars(self, pose, T):
         """A barbell held by both hands runs through both fist centres (its centre halfway between them), so the bar can
         never miss a hand. With one hand on it, "prop_offset" places it as for a dumbbell. Prints the check numbers:
@@ -708,7 +815,10 @@ class Clip:
                 # "prop_offset" (torso frame, m): the weight sits off the fist centre, e.g. a waiter curl holds an
                 # upright dumbbell under its top plate with the handle between the two fists
                 off = T.to_3x3() @ Vector(h.get("prop_offset", (0, 0, 0)))
-                prop.matrix_world = R.frame_from(c + off, ax_w if s == "L" else -ax_w, T.to_3x3() @ Vector((0, 0, 1)))
+                # "prop_up" (torso frame) / "prop_up_world": which way the prop's local +Y points (a kettlebell's bell
+                # hangs on -Y: below the fist when the arm hangs, on the back of the forearm in the rack / overhead)
+                up = Vector(h["prop_up_world"]) if "prop_up_world" in h else T.to_3x3() @ Vector(h.get("prop_up", (0, 0, 1)))
+                prop.matrix_world = R.frame_from(c + off, ax_w if s == "L" else -ax_w, up)
             R.update()
             return self._wrist_off_rest(s)
 

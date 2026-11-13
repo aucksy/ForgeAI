@@ -43,18 +43,21 @@ QA = os.path.join(HERE, "qa.json")
 
 # Equipment the pipeline can build today (pipeline/forgeanim/props.py): dumbbells, a straight barbell (held by both hands), an adjustable bench (flat to
 # upright), a plain box (step / plyo box / wall block) and the floor. Anything else waits for a new prop.
-READY_EQUIPMENT = {"dumbbell", "bodyweight", "barbell", "machine"}   # barbell: straight bar; machine: own plain geometry (recipe "machine" parts), 13 Nov 2026
+READY_EQUIPMENT = {"dumbbell", "bodyweight", "barbell", "machine", "other"}   # barbell: straight bar; machine: own plain geometry (recipe "machine" parts), 13 Nov 2026
+# "other" (13 Nov 2026): props_other.py builds a decline bench, back-extension bench, stability ball, pull-up / lean bar,
+# parallettes, a post, weight plates, a sled and a kettlebell; the "other" keys it cannot show honestly are in NEEDS.
 # Dumbbell / bodyweight keys that still need a prop the pipeline does not have.
 NEEDS = {
     "weighted_push_up": "weight plate on the back",
     "handstand_push_up": "wall handstand (needs a check that the rig can go upside down)",
-    "weighted_sissy_squat": "weight plate",
-    "bodyweight_triceps_extension": "bar or Smith bar to lean on",
     "single_arm_dumbbell_wrist_curl": "a wrist that bends (the rig keeps the wrist straight)",
-    "decline_dumbbell_skull_crusher": "decline bench", "decline_sit_up": "decline bench", "decline_oblique_crunch": "decline bench",
-    "decline_leg_raise": "decline bench", "weighted_decline_crunch": "decline bench",
-    "hanging_leg_raise": "pull-up bar", "toes_to_bar": "pull-up bar", "dead_hang": "pull-up bar",
-    "l_sit": "parallettes or dip bars",
+    # decline bench, pull-up bar, parallettes, plates: props_other.py (13 Nov 2026)
+    "toes_to_bar": "a whole-body pike while hanging (hips ~160 deg flexed with the spine curled; not yet posed)",
+    "hand_gripper": "a hand that squeezes a spring gripper (the rig's hand shapes are fixed fist / flat / cup)",
+    "jump_rope": "a rope swinging round the body (a still cannot show it honestly)",
+    "battle_ropes": "two heavy ropes in waves from an anchor (rope shape not built)",
+    "outdoor_cycling": "a road bike (not built)",
+    "sled_pull": "a harness or straps from the sled to the hands (not built)",
     "swimming": "cannot be shown honestly: swimming needs water, and drawn water would be invented detail (13 Nov 2026)",
     "hiking": "cannot be shown honestly: hiking needs a real trail; on a flat floor it is the walking picture (13 Nov 2026)",
     # machine keys not built yet (13 Nov 2026): the machine family covers seats, pads, handles, levers and stacks
