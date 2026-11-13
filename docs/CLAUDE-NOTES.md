@@ -7,6 +7,11 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-484. Up next went back to Week 1 after an old backup restore — 13 Nov 2026
+He said (13 Nov 2026, in chat): "Do this task here: Fix Up next resetting after an old backup restore" (found by the R-483 UAT helper).
+Cause: a followed plan with no saved start day (backups and plans from before Phase 4, the demo data, "New routine") got today as its start day the first time the week line was read (planState.getPlanNow). Up next counts only workouts on or after that day (todayPlan floor), so every past workout was dropped: Up next showed the first routine and "Week 1".
+Fix: a missing start day is now taken from the member's history: the day of the first workout done from one of this plan's routines (by the routine it was started from, or, for older workouts with no routine saved, by its name). Only with no such workout is it today. Saved once, as before.
+
 ## R-483. AI Assistant "did not answer" live; shoulders count direct work only; one swap tip — 13 Nov 2026
 He said (13 Nov 2026, afternoon, in chat, with a screenshot):
 - Screenshot: the live AI Assistant (20 credits) answered "How do I change my GYM logo" with "The AI did not answer.

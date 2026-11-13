@@ -1,6 +1,16 @@
 # ForgeAI progress
 
 ## Waiting for release (R-266: tag only when the owner says "release")
+- R-484 UP NEXT KEEPS ITS PLACE AFTER AN OLDER BACKUP (owner, 13 Nov 2026: "Do this task here: Fix Up next resetting
+  after an old backup restore"; found by the R-483 UAT, run 43393393093 showed "Up next: Push, Week 1"). A followed plan
+  with no saved start day (older backups, plans from before Phase 4, the demo data) got TODAY as its start day the first
+  time the week line was read (planState.getPlanNow), and Up next counts only workouts from the start day on, so it
+  restarted at the first routine and Week 1. Now the start day is the first workout of that plan (by routine id, or by
+  name for older workouts), else today; saved once as before. Shared JS (Android and iPhone), no native part, no PARITY
+  change. Tests: planStartHistoryReal (8: 4 pure, 4 real SQLite; the 2 bug cases fail on the old code). UAT: part u484
+  (shard 6-uat-c), flow uat-rel-r484-a-no-start: restore qa-r484-nostart.zip, Up next Pull 2 + "Week 3", again after a
+  restart. What's new draft (member-words): "If you restore an older backup, \"Up next\" now carries on from your last
+  workout instead of starting your plan again at Week 1."
 - R-482 MUSCLE TIPS JUDGE THE ROUTINES; NEW SWAP TIP (owner, 13 Nov 2026: "build all 5"; he saw "Easy add today: 3 sets of
   Standing Calf Raise" on Pull 2 while the calf raise is already in his Legs routine, he just skips it). Commit 6237e4fc.
   Shared JS (Android and iPhone), no native part, no PARITY change. The Up next tip now reads the member's week = the

@@ -53,7 +53,7 @@ SHARDS = [
 UAT_SPLIT = {
     "4-workout": "uatc",                                          # + W ~16 min: ~76 min
     "5-uat-b": "u344 u355 u358 u366 usel u198 u194 upic u456 u458 u461",  # ~77 min + the 12 Nov parts
-    "6-uat-c": "u401 u199 u404 u452 u438 u444 u439 u436 u454 u482 uage ulook",  # ~71 min + the 12 Nov parts
+    "6-uat-c": "u401 u199 u404 u452 u438 u444 u439 u436 u454 u482 u484 uage ulook",  # ~71 min + the 12 Nov parts
 }
 # Every whole run starts a ~10-minute canary next to the shards (fresh install + demo, an empty workout, the
 # What's new card, the Profile chart: the screens most flows pass through). The matrix fails fast, so a red

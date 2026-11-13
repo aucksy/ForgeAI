@@ -94,14 +94,14 @@ def workout(today, days_ago, routine_id, name, day_type):
     return ["w", "r482-%s-%d" % (routine_id, days_ago), [groups, day.isoformat(), start, day_type, "manual", start + 3600_000, name, None, None, routine_id]]
 
 
-def backup(today, routines, done):
-    """done = [(days_ago, routine_id)] oldest first."""
+def backup(today, routines, done, start=True):
+    """done = [(days_ago, routine_id)] oldest first. start=False: no start day saved (an older backup, R-484)."""
     by_id = {r[0]: r for r in routines}
     # The folder's start day = its first workout, as a phone that followed it then saves it (folderRepo
     # followFolder). Without one, the app's first read stamps TODAY (planState.getPlanNow) and Up next
     # ignores every earlier workout: run 43393393093 showed "Up next: Push, Week 1".
     first = (today - dt.timedelta(days=done[0][0])).isoformat()
-    items = [["r", "r482-folder", ["QA Tips", 1, routines, 1, None, json.dumps({"startISO": first})]]]
+    items = [["r", "r482-folder", ["QA Tips", 1, routines, 1, None, json.dumps({"startISO": first} if start else {})]]]
     for days_ago, rid in done:
         r = by_id[rid]
         items.append(workout(today, days_ago, rid, r[3], r[1]))
@@ -139,6 +139,9 @@ def main():
         "qa-r482-swap.zip": backup(today, ppl(LEGS_HEAVY), settled),
         "qa-r482-new.zip": backup(today, ppl(no_calves(LEGS_HEAVY)), [(10, "r482-push"), (9, "r482-pull"), (8, "r482-legs"), (2, "r482-push"), (1, "r482-pull")]),
         "qa-r482-shoulder.zip": backup(today, ppl(LEGS_PLAIN, PUSH_ONE_SHOULDER, PULL_NO_FACE), [(20, "r482-push"), (19, "r482-pull"), (18, "r482-legs"), (9, "r482-push"), (8, "r482-pull"), (7, "r482-legs"), (3, "r482-push"), (2, "r482-pull"), (1, "r482-legs")]),
+        # R-484: the owner's plan from a backup with NO start day saved (before Phase 4): Up next must stay on
+        # Pull 2 and the week line say "Week 3", also after a restart (it used to restart at Push, Week 1).
+        "qa-r484-nostart.zip": backup(today, owners_plan(), [(20, "r482-push"), (19, "r482-pull1"), (18, "r482-pull2"), (17, "r482-legs"), (9, "r482-push"), (8, "r482-pull1"), (7, "r482-pull2"), (6, "r482-legs"), (2, "r482-push"), (1, "r482-pull1")], start=False),
     }
     for name, b in files.items():
         with zipfile.ZipFile(os.path.join(a.out, name), "w", compression=zipfile.ZIP_STORED) as z:

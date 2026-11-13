@@ -3,12 +3,14 @@
  * week. Only the folder the member FOLLOWS has weeks (they count from the day they started
  * following it); a routine started from any other folder is a normal workout.
  */
+import { getDb } from '@/db';
 import { addDays, daysBetween, shortDate, todayISO } from '@/lib/date';
 
 import { folderOfRoutine, followedFolder, setFolderSettings, type Folder, type FolderSettings } from '../db/folderRepo';
 import { EASY_EVERY, isEasyWeek, nextEasyWeek, planWeek, skipEasyWeek, takeEasyNow } from '../plans/easyWeek';
 import { effortRir, lastEasyWeek } from '../plans/effort';
 import { programByKey } from '../plans/programs';
+import { nameKey, workoutNameKey } from '../plans/todayPlan';
 
 export interface PlanNow {
   folderId: string;
@@ -67,15 +69,56 @@ export function planLine(p: PlanNow | null): string | null {
 }
 
 /**
+ * R-484: the start day of a followed plan that has none saved — the day of the member's first
+ * workout from one of its routines (by the routine it was started from, or, for an older
+ * workout with no routine saved, by its name); today when there is none. Today here would
+ * hide every past workout from Up next (its floor) and restart it at the first routine. PURE.
+ */
+export function startFromHistory(
+  sessions: readonly { dateISO: string; routineId: string | null; title: string | null; notes?: string | null }[],
+  routines: readonly { id: string; name: string }[],
+  today: string,
+): string {
+  const ids = new Set(routines.map((r) => r.id));
+  const names = new Set(routines.map((r) => nameKey(r.name)).filter((n) => n !== ''));
+  let first: string | null = null;
+  for (const s of sessions) {
+    if (s.dateISO > today) continue;
+    const mine = s.routineId ? ids.has(s.routineId) : s.routineId === null && names.has(workoutNameKey(s.title, s.notes));
+    if (mine && (first == null || s.dateISO < first)) first = s.dateISO;
+  }
+  return first ?? today;
+}
+
+/** R-484: the start day from the database (see `startFromHistory`). */
+async function startDayFromHistory(folderId: string, today: string): Promise<string> {
+  const db = getDb();
+  const routines = await db.getAllAsync<{ id: string; name: string }>('SELECT id, name FROM plan_days WHERE plan_id = ?', [folderId]);
+  if (routines.length === 0) return today;
+  const rows = await db.getAllAsync<{ date_iso: string; routine_id: string | null; title: string | null; notes: string | null }>(
+    `SELECT date_iso, routine_id, title, notes FROM workout_sessions
+      WHERE date_iso <= ? AND (routine_id IS NULL OR routine_id IN (SELECT id FROM plan_days WHERE plan_id = ?))`,
+    [today, folderId],
+  );
+  return startFromHistory(
+    rows.map((r) => ({ dateISO: r.date_iso, routineId: r.routine_id, title: r.title, notes: r.notes })),
+    routines,
+    today,
+  );
+}
+
+/**
  * The followed plan's week today. A plan followed before Phase 4 (or made by "New routine",
- * or by the demo data) has no start day: its weeks start counting today, saved once, so
- * easy weeks, the week line and the early easy-week offer work on it too.
+ * or by the demo data, or brought back from an older backup) has no start day: it is taken
+ * from the member's first workout of that plan (R-484), else today, and saved once, so easy
+ * weeks, the week line and the early easy-week offer work on it too.
  */
 export async function getPlanNow(today: string = todayISO()): Promise<PlanNow | null> {
   const f = await followedFolder();
   if (!f) return null;
   if (!f.settings.startISO) {
-    const settings = { ...f.settings, startISO: today };
+    const start = await startDayFromHistory(f.id, today).catch(() => today);
+    const settings = { ...f.settings, startISO: start };
     await setFolderSettings(f.id, settings).catch(() => undefined);
     return planNowOf({ ...f, settings }, today);
   }

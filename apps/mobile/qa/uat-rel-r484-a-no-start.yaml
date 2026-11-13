@@ -1,0 +1,52 @@
+# Part UAT, R-484 (13 Nov 2026): an older backup whose followed plan has NO start day saved. Before the fix the app
+# stamped TODAY as the start day the first time the week line was read, so Up next dropped every past workout and
+# restarted at the first routine, "Week 1" (seen in run 43393393093).
+# A fresh install restores qa-r484-nostart.zip (qa/tools/make_r482_backups.py): "QA Tips" = Push, Pull 1, Pull 2,
+# Legs, followed, settings without a start day; every routine done, the first 20 days ago, the last workout Pull 1.
+# Up next must say Pull 2 and the week line "Week 3", also after the app is restarted (the start day is saved by
+# then), and never "Up next: Push" or "Week 1". Pictures rel-r484-*.png.
+appId: com.mettleup.app
+---
+- runFlow:
+    file: sub-uat-r482-restore.yaml
+    env:
+      FILE: 'qa-r484-nostart\.zip'
+      NEXT: 'Pull 2'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '.*Week 3.*'
+- assertNotVisible: 'Up next: Push.*'
+- assertNotVisible: '.*Week 1\b.*'
+- takeScreenshot: rel-r484-a1-pull2-week3
+# ---------------------------------------------------------------- after a restart (the start day is saved now)
+- launchApp
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 60000
+- tapOn:
+    text: "^Workout$"
+    index: 0
+- extendedWaitUntil:
+    visible: "^Workout$"
+    timeout: 15000
+- scrollUntilVisible:
+    element: "Up next: .*"
+    direction: UP
+    centerElement: true
+    timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Up next: Pull 2.*'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '.*Week 3.*'
+- assertNotVisible: 'Up next: Push.*'
+- assertNotVisible: '.*Week 1\b.*'
+- takeScreenshot: rel-r484-a2-restart-still-pull2

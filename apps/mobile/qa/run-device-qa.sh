@@ -207,7 +207,7 @@ OLD_PARTS="a b c d e f g h h3 p1 p2 i link i2 j j2 j3 k l n p9 r br inv invf p7 
 # R-123: ubk = a fresh install restores a backup FILE from the welcome screen (routines in order,
 # settings, profile), then saves a new one from Settings -> Back up and restore (qa/uat-bk.yaml).
 UAT_PARTS="uh ur un ud ue ubk ub uf ua uv ug uk"
-GATE_PARTS="w dnd longrest anim mk clip uat uatc u355 u344 u358 u366 usel ugym u15 u76 u198 u194 u401 u199 u404 u438 u444 ulook uage u439 u436 u336 u61 upic u452 u456 u458 u454 u461 u482"
+GATE_PARTS="w dnd longrest anim mk clip uat uatc u355 u344 u358 u366 usel ugym u15 u76 u198 u194 u401 u199 u404 u438 u444 ulook uage u439 u436 u336 u61 upic u452 u456 u458 u454 u461 u482 u484"
 qa_list() { echo "$1" | tr ',;' '  ' | tr '[:upper:]' '[:lower:]' | xargs; }
 QA_ONLY_LIST=$(qa_list "${QA_ONLY:-}")
 QA_EXTRA_LIST=$(qa_list "${QA_EXTRA:-}")
@@ -2003,6 +2003,7 @@ part_uat() {
   part_u458
   part_u461
   part_u482
+  part_u484
   part_ulook
   uat_gather
 }
@@ -2364,7 +2365,7 @@ part_u458() {
   mkdir -p "$XJ_STATE_DIR"
   chmod 700 "$XJ_STATE_DIR" 2>/dev/null || true
   gate_flow u458_seed gate-demo.yaml || { status=1; return 1; }
-  setup=$(python3 "$QA_DIR/uat_gym.py" setup S "$(adb shell date +%Y-%m-%d | tr -d '')" 30 "Sam Staffdoor" 9876500458 2>&1)
+  setup=$(python3 "$QA_DIR/uat_gym.py" setup S "$(adb shell date +%Y-%m-%d | tr -d '\r')" 30 "Sam Staffdoor" 9876500458 2>&1)
   echo "$setup" | grep '^::add-mask::' || true
   echo "$setup" | grep -vE '^(CODE=|ENDS=|::add-mask::)' | sed 's/^/[u458 gym] /' | tee -a "$OUT/timeline.txt"
   code=$(echo "$setup" | sed -n 's/^CODE=//p' | tail -1)
@@ -2419,6 +2420,24 @@ part_u482() {
   done
   mkdir -p "$OUT/uat-release"
   { find "$OUT" -path "$OUT/uat-release" -prune -o -name "rel-r482-*.png" -print 2>/dev/null; find "$PWD" -maxdepth 1 -name "rel-r482-*.png" 2>/dev/null; } | while read -r f; do cp "$f" "$OUT/uat-release/" 2>/dev/null; done
+  [ "$rc" = 0 ] || status=1
+  return $rc
+}
+# R-484 (13 Nov 2026): an older backup whose followed plan has no start day saved keeps its place in Up next
+# (Pull 2, "Week 3"), also after a restart; it used to restart at the first routine, "Week 1". The backup file
+# comes from the same maker as R-482 (qa/tools/make_r482_backups.py). Also runs alone with only=u484.
+# Pictures rel-r484-*.png.
+part_u484() {
+  local rc=0 today f
+  today=$(adb shell date +%Y-%m-%d | tr -d '\r')
+  python3 "$QA_DIR/tools/make_r482_backups.py" "$OUT/r484" --today "$today" > /dev/null || { log "UAT R484 FAILED: the backup file could not be made"; status=1; return 1; }
+  adb shell rm -f "/sdcard/Download/qa-r484-nostart.zip" >/dev/null 2>&1 || true
+  push_fixture "$OUT/r484/qa-r484-nostart.zip" "/sdcard/Download/qa-r484-nostart.zip"
+  adb shell content call --uri content://media --method scan_volume --arg external_primary >/dev/null 2>&1 || true
+  log "UAT R484: phone date $today; downloads: $(wait_media qa-r484 1 20 downloads) of 1 backup file"
+  uat_flow uatr484a uat-rel-r484-a-no-start.yaml || rc=1
+  mkdir -p "$OUT/uat-release"
+  { find "$OUT" -path "$OUT/uat-release" -prune -o -name "rel-r484-*.png" -print 2>/dev/null; find "$PWD" -maxdepth 1 -name "rel-r484-*.png" 2>/dev/null; } | while read -r f; do cp "$f" "$OUT/uat-release/" 2>/dev/null; done
   [ "$rc" = 0 ] || status=1
   return $rc
 }
@@ -2587,6 +2606,7 @@ qa_runs uage && ! qa_runs uat && { log "gate part UAGE begins"; part_uage; }
 qa_runs u458 && ! qa_runs uat && { log "gate part U458 begins"; part_u458; }
 qa_runs u461 && ! qa_runs uat && { log "gate part U461 begins"; part_u461; }
 qa_runs u482 && ! qa_runs uat && { log "gate part U482 begins"; part_u482; }
+qa_runs u484 && ! qa_runs uat && { log "gate part U484 begins"; part_u484; }
 # R-359/R-345 (5 Nov 2026): the In use journey alone (pictures rel-345/357/359), with only=u15.
 qa_runs u15 && ! qa_runs uat && { log "gate part U15 begins"; uat_flow uat15 uat-rel-15-inuse-journey.yaml || status=1; }
 # T76 (owner's full test round, 5 Nov 2026): negative checks found by the round. Flow a: kg history,
