@@ -4,7 +4,7 @@ The one central record for the MettleUp exercise pictures (start + end stills of
 exercises with no RepDB picture). Used by every chat and by the daily scheduled job
 (`~/.claude/scheduled-tasks/mettleup-daily-exercise-pictures/SKILL.md`).
 
-**Approved look:** A (dark)
+**Approved look:** (none: look A retired 13 Nov 2026, R-489. New pictures must match the main RepDB set: drawn man, orange tank top. Do not export until a new look is filled in here.)
 
 (Owner, 12 Nov 2026: look A approved, and "I will not need to approve them going forward. You can just review them
 yourselves, ensure they are accurate, nothing incorrect and just finalize them yourself." So no owner step: every

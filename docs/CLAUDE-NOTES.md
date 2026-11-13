@@ -7,6 +7,18 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-489. Our exercise pictures must look like the main set — 13 Nov 2026
+He said (13 Nov 2026, ~21:45 IST): "the image that I just opened for you looks nothing like what we have made for most
+of the exercises. So please ensure that the images that are being made are the correct designs."
+Found: the app mixes two styles. 247 exercises show the main set (RepDB, recoloured: a flat drawn man, orange tank
+top, charcoal shorts, white shoes, outlined detailed grey machines, dark floor shadow). Our own ~50 show the grey 3D
+athlete with red muscles and plain white machines (look A, approved 12 Nov, before he saw them side by side).
+Decision (his message): every picture we make matches the main set. Look A is retired. Did: told all 4 picture
+helpers to stop wiring 3D pictures into the app (recipes, poses and research stay: the new look re-renders from them);
+the daily picture job stays paused. Next: one helper builds a "drawn" look in the same Blender pipeline (flat
+cel shading + outlines, same colours, no red muscles, detailed machines), samples beside main-set pictures, then
+re-render all our own pictures. The release (R-487) waits for this; no 3D picture ships.
+
 ## R-488. AI Assistant: "You have asked a lot today" with 20 credits showing — 13 Nov 2026
 He said (13 Nov 2026, evening, with a screenshot: "Send a Chhath Puja greeting to everyone" -> red "You have asked a
 lot today. The AI Assistant is back tomorrow morning." under "20 credits"): "This does not look correct - how are you
