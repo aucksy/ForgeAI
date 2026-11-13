@@ -118,7 +118,7 @@
               0.34,
               0.94
             ],
-            "flex": "level-"
+            "flex": "palm_down"
           },
           "hand": "flat"
         }
@@ -175,7 +175,7 @@
               0.34,
               0.94
             ],
-            "flex": "level-"
+            "flex": "palm_down"
           },
           "hand": "flat"
         }

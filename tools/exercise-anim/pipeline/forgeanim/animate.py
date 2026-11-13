@@ -267,7 +267,9 @@ class Clip:
                 out[k] = {}
                 for s in set(va) | set(vb):
                     ha, hb = va.get(s, vb.get(s)), vb.get(s, va.get(s))
-                    h = dict(ha)
+                    # keys that are not blended (hand shape, prop, frame, ...) come from the NEARER pose (13 Nov 2026:
+                    # always taking them from the first pose drew the burpee's end hands with the start's shape)
+                    h = dict(ha if u < 0.5 else hb)
                     for key in ("at", "axis", "rot"):
                         if key in ha and key in hb:
                             h[key] = lerp(ha[key], hb[key], u)
@@ -275,9 +277,12 @@ class Clip:
                         aa, ab = ha["arm"], hb["arm"]
                         h["arm"] = {k2: (lerp(aa[k2], ab[k2], u) if isinstance(aa.get(k2), list) else aa[k2] + (ab[k2] - aa[k2]) * u)
                                     for k2 in aa if k2 in ab and not isinstance(aa[k2], str)}
-                        for k2 in aa:
-                            if isinstance(aa[k2], str):
-                                h["arm"][k2] = aa[k2]
+                        near = aa if u < 0.5 else ab
+                        for k2 in near:
+                            if isinstance(near[k2], str) or k2 not in h["arm"]:
+                                # strings ("level-", "fore_vertical") and keys only one pose has (e.g. flex) are not
+                                # blended: the nearer pose's value holds (13 Nov 2026: the end pose's flex was dropped)
+                                h["arm"][k2] = near[k2]
                     piv = ha.get("pivot") or hb.get("pivot")
                     if piv and "at" in ha and "at" in hb:
                         # swing around a joint (elbow for curls, shoulder for raises/flies): angle + radius, not a straight chord
@@ -338,8 +343,10 @@ class Clip:
             R.place_hand(rig, s, c, axis, self.G[s])
             self._fist[s] = c.copy(); self._gax[s] = axis.copy()
         if self._shapes:
+            self._hand_shape = {}
             for s in pose.get("hands", {}):
-                R.set_hand(rig, s, pose["hands"][s].get("hand", "fist"))
+                self._hand_shape[s] = pose["hands"][s].get("hand", "fist")
+                R.set_hand(rig, s, self._hand_shape[s])
         R.update()
         if pose.get("rest_on_palms"):
             self.rest_on_palms(pose["rest_on_palms"])
@@ -666,6 +673,10 @@ class Clip:
     def place_landmine(self, name, p, on):
         """The bar runs from the pivot through the fist(s); its far end slides in the pivot tube. Logs how deep."""
         g = sum((self._fist[s] for s in on), Vector()) / len(on)
+        open_hands = all(getattr(self, "_hand_shape", {}).get(s, "fist") != "fist" for s in on)
+        if open_hands:
+            # open hands (cupped under the sleeve, 13 Nov 2026): the sleeve lies ON the palms, not through a fist
+            g = sum((self.palm_point(s) for s in on), Vector()) / len(on) + Vector((0, 0, p.get("sleeve_r", 0.025) + 0.002))
         piv = Vector(p["pivot"])
         dvec = g - piv; dist = dvec.length; dvec.normalize()
         up = Vector((0, 0, 1))
@@ -677,7 +688,8 @@ class Clip:
             line_off = {s: round(((self._fist[s] - piv) - dvec * (self._fist[s] - piv).dot(dvec)).length, 3) for s in on}
             print(f"[landmine] {name}: bar end {dist - self._lm_len:+.3f} m from the hinge along the bar (want +0.02..+0.25, "
                   f"inside the tube), bar {math.degrees(math.asin(max(-1.0, min(1.0, dvec.z)))):.1f} deg above the floor, "
-                  f"grip axis off the bar (deg) {offs}, fist off the bar line (m) {line_off}")
+                  f"grip axis off the bar (deg) {offs}, fist off the bar line (m) {line_off}"
+                  + (f", palms {[[round(c, 3) for c in self.palm_point(s)] for s in on]}" if open_hands else ""))
 
     def place_feet_props(self):
         """props.<name>.feet = {"fwd": m, "shift": m}: a dumbbell squeezed between the feet (dumbbell leg curl).
@@ -801,12 +813,10 @@ class Clip:
             if flex:
                 # wrist bend (13 Nov 2026): turn the whole hand (and what it holds) about the wrist joint, about the axis
                 # across the wrist: + = flexion (palm toward the forearm), - = extension (back of the hand toward it)
-                k, pdir = self._flex_axis(wr, el, c)
+                k, pdir = self._flex_axis(s, c)
                 Gw = Matrix.Translation(wr) @ Matrix.Rotation(flex, 4, k) @ Matrix.Translation(-wr) @ Gw
                 c = Gw.translation.copy()
                 self._palm[s] = (Matrix.Rotation(flex, 3, k) @ pdir).normalized()
-            else:
-                self._palm[s] = self._flex_axis(wr, el, c)[1]
             ax_w = Gw.to_3x3().col[0]
             Wm = Gw @ Ginv
             self._fist[s] = c.copy(); self._gax[s] = ax_w.copy()
@@ -820,6 +830,8 @@ class Clip:
                 up = Vector(h["prop_up_world"]) if "prop_up_world" in h else T.to_3x3() @ Vector(h.get("prop_up", (0, 0, 1)))
                 prop.matrix_world = R.frame_from(c + off, ax_w if s == "L" else -ax_w, up)
             R.update()
+            if not flex:
+                self._palm[s] = self._flex_axis(s, c)[1]   # read after the bones moved
             return self._wrist_off_rest(s)
 
         # straight wrist: turn the hand about the handle by the rest offset (the fist centre sits on the palm side of
@@ -832,7 +844,9 @@ class Clip:
             # "level-" / "level+": bend the wrist back (-) or forward (+) until the hand's length (wrist -> middle
             # knuckle) is level with the floor: a flat palm on the floor (push-up, plank) or palms up under a plate
             place(-self.Gphi[s], tilt)
-            flex = self._level_flex(s, wr, el, flex.endswith("+"))
+            flex = self._level_flex(s, wr, el, flex)
+        elif flex:
+            place(-self.Gphi[s], tilt)   # the flex axis is read from the hand's bones: put them on this frame first
         place(-self.Gphi[s], tilt, math.radians(flex))
         self._flex_used[s] = round(flex, 1)
         # forearm pronation lives in the forearm (radius over ulna), not the wrist joint: hand most of the wrist's
@@ -845,20 +859,32 @@ class Clip:
         pb[f"lowerarm02.{s}"].rotation_quaternion = Quaternion((0, 1, 0), tw * 0.85)
         R.update()
 
-    @staticmethod
-    def _flex_axis(wr, el, c):
-        """Axis across the wrist (k) and the palm side (p, perpendicular to the forearm, toward the fist centre).
-        Turning the forearm direction about k by +angle moves it toward p: flexion."""
-        d = (wr - el).normalized()
-        p = c - wr; p = p - d * p.dot(d)
-        p = p.normalized() if p.length > 1e-6 else Vector((0, 0, 1))
-        return d.cross(p).normalized(), p
+    def _flex_axis(self, s, c):
+        """Axis of wrist flexion (k) and the palm normal (n), from the hand's own bones in the CURRENT pose: n is square
+        to the hand's length (wrist -> middle knuckle) and its knuckle line (pinky -> index), on the side the fist curls
+        to. Turning the hand about k by +angle moves it toward n: flexion. (13 Nov 2026: the first version took the palm
+        side from the fist centre, which sits toward the thumb as well, so a "level" hand came out rolled ~50 deg.)"""
+        rig = self.rig
+        wr = R.world_head(rig, f"wrist.{s}")
+        hd = (R.world_head(rig, f"finger3-1.{s}") - wr).normalized()
+        kn = R.world_head(rig, f"finger2-1.{s}") - R.world_head(rig, f"finger5-1.{s}")
+        n = hd.cross(kn)
+        if n.length < 1e-6:
+            n = Vector((0, 0, 1))
+        n.normalize()
+        if n.dot(c - wr) < 0:
+            n = -n
+        return hd.cross(n).normalized(), n
 
-    def _level_flex(self, s, wr, el, plus):
-        """Degrees of wrist bend that make the hand (wrist -> middle knuckle) level with the floor."""
+    def _level_flex(self, s, wr, el, mode):
+        """Degrees of wrist bend that make the hand (wrist -> middle knuckle) level with the floor. mode: "level-" /
+        "level+" = the nearest extension / flexion that does it; "palm_down" / "palm_up" = the nearest bend (either
+        way) that leaves the palm facing the floor (push-up, plank) or the ceiling (a weight resting on the palms).
+        (13 Nov 2026: a sign alone does not say which way the palm ends up; the waiter curl's start needs flexion and
+        its end extension for the same palms-up hand.)"""
         rig = self.rig
         h0 = R.world_head(rig, f"finger3-1.{s}") - R.world_head(rig, f"wrist.{s}")
-        k, _ = self._flex_axis(wr, el, self._fist[s])
+        k, n0 = self._flex_axis(s, self._fist[s])
         best = None
         prev = None
         for i in range(-300, 301):
@@ -867,11 +893,16 @@ class Clip:
             if prev is not None and (prev[1] <= 0) != (z <= 0):
                 t0, z0 = prev
                 root = t0 + (th - t0) * (z0 / (z0 - z)) if z0 != z else th
-                if (root > 0) == plus and (best is None or abs(root) < abs(best)):
+                if mode in ("palm_up", "palm_down"):
+                    nz = (Matrix.Rotation(root, 3, k) @ n0).z
+                    ok = (nz > 0) == (mode == "palm_up") and abs(root) <= math.radians(100)
+                else:
+                    ok = (root > 0) == mode.endswith("+")
+                if ok and (best is None or abs(root) < abs(best)):
                     best = root
             prev = (th, z)
         if best is None:
-            print(f"[hand] {s}: no wrist bend makes the hand level; kept straight")
+            print(f"[hand] {s}: no wrist bend makes the hand level ({mode}); kept straight")
             return 0.0
         return math.degrees(best)
 
@@ -1250,7 +1281,8 @@ class Clip:
             pose["root"].setdefault("loc", list(self.rest_root.translation))
             pose["root"]["loc"] = list(pose["root"]["loc"])
             tilt = g.get("_tilt")   # [[front parts], [back parts]]: also pitch the body (root rot X) so BOTH touch
-            g = {k: v for k, v in g.items() if k != "_tilt"}
+            pad = g.get("pad")      # bench back pad: slide the body along the pad's face normal until the trunk rests on it
+            g = {k: v for k, v in g.items() if k not in ("_tilt", "pad")}
             body_parts = [k for k in g if k != "feet"]
             for it in range(7):
                 self.apply(copy.deepcopy(pose))
@@ -1259,6 +1291,14 @@ class Clip:
                 print(f"[ground] {name} pass {it}: lows {msg}")
                 if it == 6:
                     break
+                if pad is not None and hasattr(self, "bench"):
+                    gaps = REP.pad_gaps(self.ch["body"], self.rig, self.bench)
+                    if gaps:
+                        b = self.bench; a = b["incline"]
+                        n = (b["root"].matrix_world.to_3x3() @ Vector((0, -math.sin(a), math.cos(a)))).normalized()
+                        dd = min(gaps.values()) - pad
+                        pose["root"]["loc"] = [pose["root"]["loc"][i] - n[i] * dd for i in range(3)]
+                        print(f"[ground] {name}: pad gaps {gaps} -> moved {round(-dd, 4)} along the pad normal")
                 if "feet" in g:
                     for s in R.SIDES:
                         z = REP.low_of(lw, [f"feet.{s}"])

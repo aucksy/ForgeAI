@@ -131,7 +131,7 @@
               1,
               0
             ],
-            "flex": "level-"
+            "flex": "palm_down"
           },
           "hand": "flat"
         }
@@ -228,7 +228,7 @@
               1,
               0
             ],
-            "flex": "level-"
+            "flex": "palm_down"
           },
           "hand": "flat"
         }

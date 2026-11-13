@@ -42,7 +42,16 @@ def _labels(body, rig):
         gi = {g.index: g.name for g in body.vertex_groups if g.name in bones}
         n = len(body.data.vertices)
         code = np.zeros(n, np.int8); side = np.zeros(n, np.int8)   # side 1 = L, -1 = R, 0 = middle
+        # MPFB hides its helper geometry (joint cubes, tights, skirt) with a MASK modifier that keeps only the "body"
+        # group; those hidden vertices hang anywhere (a helper read 15 cm under the floor, 13 Nov 2026): skip them
+        keep = None
+        for m in body.modifiers:
+            if m.type == "MASK" and not m.invert_vertex_group and m.vertex_group in body.vertex_groups:
+                keep = body.vertex_groups[m.vertex_group].index
         for v in body.data.vertices:
+            if keep is not None and not any(g.group == keep and g.weight > 0 for g in v.groups):
+                code[v.index] = -1
+                continue
             best, bw = None, 0.0
             for g in v.groups:
                 nm = gi.get(g.group)
@@ -77,7 +86,8 @@ def lows(body, rig):
     code, side = _labels(body, rig)
     P = posed_positions(body)
     out = {}
-    i = int(np.argmin(P[:, 2])); out["all"] = (float(P[i, 2]), [round(float(c), 3) for c in P[i]])
+    vis = np.where(code >= 0)[0]
+    i = vis[int(np.argmin(P[vis, 2]))]; out["all"] = (float(P[i, 2]), [round(float(c), 3) for c in P[i]])
     for c, name in enumerate(PARTS):
         for s, tag in ((1, "L"), (-1, "R"), (0, "")):
             sel = np.where((code == c) & (side == s))[0]
@@ -111,8 +121,10 @@ def pad_gaps(body, rig, bench, P=None):
     dist = rel @ np.array(tuple(n)); along = rel @ np.array(tuple(d)); lat = rel @ np.array(tuple(x))
     sel = np.isin(code, (0, 7)) & (np.abs(lat) < 0.15)
     out = {}
-    for lo in (-0.1, 0.1, 0.3, 0.5, 0.7, 0.9):
-        m = sel & (along >= lo) & (along < lo + 0.2)
+    top = bench.get("back_len", 0.82) + 0.02   # over the pad only: a head hanging past its end is not a contact
+    # a raised pad: nothing below its hinge counts (the plane's extension runs under the seat)
+    for lo in ((-0.1, 0.1, 0.3, 0.5, 0.7, 0.9) if a < 0.2 else (0.0, 0.2, 0.4, 0.6, 0.8)):
+        m = sel & (along >= lo) & (along < min(lo + 0.2, top))
         if m.any():
             out[f"{lo:+.1f}..{lo + 0.2:+.1f}"] = round(float(dist[m].min()), 3)
     return out
@@ -145,9 +157,14 @@ def preacher_gaps(body, rig, pre, P=None):
     dist = rel @ n; along = rel @ d; lat = rel @ x
     over = (along > -0.02) & (along < pre["pad_len"]) & (np.abs(lat) < pre["pad_w"] / 2)
     out = {}
+    pt = pre.get("pad_t", 0.07)
     for c, name in ((5, "upperarms"), (2, "forearms"), (0, "trunk_head")):
         for sd, tag in ((1, ".L"), (-1, ".R"), (0, "")):
             m = over & (code == c) & (side == sd)
             if m.any():
-                out[name + tag] = round(float(dist[m].min()), 3)
+                if c == 0:
+                    # the trunk sits BEHIND the pad: its gap is to the back face (negative = into the pad)
+                    out[name + tag] = round(float(-(dist[m] + pt).max()), 3)
+                else:
+                    out[name + tag] = round(float(dist[m].min()), 3)
     return out

@@ -123,12 +123,19 @@ if mode == "stills":
             hands = {}
             for s in R.SIDES:
                 wr = R.world_head(rig, f"wrist.{s}"); hd = (R.world_head(rig, f"finger3-1.{s}") - wr).normalized()
-                pm = fists[s] - wr; pm = (pm - hd * pm.dot(hd)).normalized()
+                kn = R.world_head(rig, f"finger2-1.{s}") - R.world_head(rig, f"finger5-1.{s}")
+                pm = hd.cross(kn).normalized()
+                pm = pm if pm.dot(fists[s] - wr) >= 0 else -pm   # palm normal (the side the fist curls to)
                 hands[s] = {"hand_from_level_deg": round(math.degrees(math.asin(max(-1, min(1, hd.z)))), 1), "palm_z": round(pm.z, 2)}
             rep = {"lows": {k: [round(v[0], 4)] + v[1] for k, v in lw.items()}, "hands": hands,
                    "joints": REP.joints(rig, T, fists)}
             hdv = (R.world_tail(rig, "head") - R.world_head(rig, "neck01")).normalized()
             rep["head_tilt_left_deg"] = round(math.degrees(math.asin(max(-1, min(1, hdv.dot(T.to_3x3().col[0]))))), 1)
+            spb = rig.pose.bones   # bones a recipe turns by hand (shrug = clavicle): what they really did
+            rep["bones"] = {b: {"mode": spb[b].rotation_mode, "euler": [round(math.degrees(a), 1) for a in spb[b].rotation_euler],
+                                "parent": spb[b].parent.name if spb[b].parent else None,
+                                "tail": [round(c, 3) for c in rig.matrix_world @ spb[b].tail]}
+                            for b in ("clavicle.L", "shoulder01.L", "upperarm01.L") if b in spb}
             if hasattr(clip, "bench"):
                 rep["pad_gap"] = REP.pad_gaps(ch["body"], rig, clip.bench)
             if hasattr(clip, "preacher"):

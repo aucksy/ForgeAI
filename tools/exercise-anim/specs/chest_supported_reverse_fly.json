@@ -122,7 +122,8 @@
         }
       },
       "ground": {
-        "feet": 0.0
+        "feet": 0.0,
+        "pad": 0.004
       }
     },
     "end": {
@@ -148,9 +149,10 @@
         }
       },
       "ground": {
-        "feet": 0.0
+        "feet": 0.0,
+        "pad": 0.004
       }
     }
   },
-  "research": "13 Nov 2026 (pics-fixes) rebuild: bench 45 deg turned 180 (pad rises toward -Y), athlete faces -Y leaning 45 deg onto it (root rot X 45, the spine along the pad). Pad face line: (0, 0.0165 - 0.707 s, 0.429 + 0.707 s), face normal (0, 0.707, 0.707). Root = pad point at s 0.31 + 0.12 m along the normal = (0,-0.118,0.733): shoulders at s ~0.78 of 0.84, chin just past the top. Feet on the floor behind, wide (ankles x +-0.42, toes out 25 deg) so the thighs clear the 0.30 m seat; 'ground' puts the soles on the floor. Arms: hanging straight down in the world = torso (0,0.707,-0.707) = elev 45 / plane 90; end straight out to the sides = elev 90 / plane 0; both arms mirrored (L only in the recipe). Handle along the body toward the head (torso (0,0.707,0.707)) in both pictures. Stills log prints the chest-to-pad gaps."
+  "research": "13 Nov 2026 (pics-fixes) rebuild: bench 45 deg turned 180 (pad rises toward -Y), athlete faces -Y leaning 45 deg onto it (root rot X 45, the spine along the pad). Pad face line: (0, 0.0165 - 0.707 s, 0.429 + 0.707 s), face normal (0, 0.707, 0.707). Root = pad point at s 0.31 + 0.12 m along the normal = (0,-0.118,0.733): shoulders at s ~0.78 of 0.84, chin just past the top. Feet on the floor behind, wide (ankles x +-0.42, toes out 25 deg) so the thighs clear the 0.30 m seat; 'ground' puts the soles on the floor. Arms: hanging straight down in the world = torso (0,0.707,-0.707) = elev 45 / plane 90; end straight out to the sides = elev 90 / plane 0; both arms mirrored (L only in the recipe). Handle along the body toward the head (torso (0,0.707,0.707)) in both pictures. Stills log prints the chest-to-pad gaps. 13 Nov 2026 (pics-fixes, run 43448896897): the chest was 8-13 cm INSIDE the 45 deg pad; 'ground' now slides the body along the pad's face normal until the chest rests on it (pad 0.004)."
 }

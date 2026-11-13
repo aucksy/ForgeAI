@@ -450,7 +450,7 @@ def preacher_bench(name="FA_Preacher", seat_h=0.60, pad_top=(-0.24, 1.03), pad_d
     _box(name + "_SeatPost", (0.06, 0.06, seat_h - pt - 0.05), loc=(0, 0.02, 0.05 + (seat_h - pt - 0.05) / 2), mat=M["frame"], bevel=0.005, parent=root)
     back = centre - n * (pt / 2 + 0.01)
     _rod(name + "_PadPost", (0, back.y + 0.04, 0.05), back, 0.03, M["frame"], root)
-    return {"root": root, "top": top, "normal": n, "down": d, "pad_len": pad_len, "pad_w": pad_w, "seat_h": seat_h}
+    return {"root": root, "top": top, "normal": n, "down": d, "pad_len": pad_len, "pad_w": pad_w, "seat_h": seat_h, "pad_t": pt}
 
 
 # ---------------- machines (13 Nov 2026, exercise pictures) ----------------

@@ -136,6 +136,10 @@
             "tilt": 0
           }
         }
+      },
+      "ground": {
+        "feet": 0.0,
+        "pad": 0.004
       }
     },
     "end": {
@@ -192,8 +196,12 @@
             "tilt": 0
           }
         }
+      },
+      "ground": {
+        "feet": 0.0,
+        "pad": 0.004
       }
     }
   },
-  "research": "Flat-bench body from the passed tate_press (root rot -90, spine -1 each). Olympic bar. Palms toward the face (supinated, axis [1,0,0]). Start: arms straight up over the shoulders, hand x ~0.24 (gap ~0.48 m, shoulder width). End: bar on the lower chest with the elbows tucked: du = (0.2,-0.70,-0.70) -> elev 46, plane -74, E = (0.28,-0.20,-0.20) torso, forearm vertical -> bar at torso z -0.20 (lower chest), y ~0.12 (on the chest). Elbows ~13 cm below the shoulder plane hang beside the 0.29 m pad. Retry 13 Nov: first render put the bar at the collarbone and the left plate hid the head. End now elev 38 / plane -55 (E = (0.32,-0.15,-0.23)), forearm leaning in (bend [-0.3,1,0], fore_vertical) -> bar at torso (0.23, 0.15, -0.23) = lower chest, hands ~0.47 m apart; camera from the feet, higher (yaw 20, pitch 36) so the head shows above the bar. 13 Nov 2026 (pics-fixes): numbers from run 43374536640 show the end bar centre at z~0.83 (shoulder 0.63, ~8 cm above the chest skin) and, by the arm angles, ~5 cm below the nipple line; seen from the feet at pitch 36 a bar that high projects ~20 cm toward the head (parallax), which read as 'at the collarbone'. Now a true side camera (yaw 90, pitch 25: the near plate projects onto the bench below the chest) and 0.32 m plates; stills log prints joints in the torso frame to confirm."
+  "research": "Flat-bench body from the passed tate_press (root rot -90, spine -1 each). Olympic bar. Palms toward the face (supinated, axis [1,0,0]). Start: arms straight up over the shoulders, hand x ~0.24 (gap ~0.48 m, shoulder width). End: bar on the lower chest with the elbows tucked: du = (0.2,-0.70,-0.70) -> elev 46, plane -74, E = (0.28,-0.20,-0.20) torso, forearm vertical -> bar at torso z -0.20 (lower chest), y ~0.12 (on the chest). Elbows ~13 cm below the shoulder plane hang beside the 0.29 m pad. Retry 13 Nov: first render put the bar at the collarbone and the left plate hid the head. End now elev 38 / plane -55 (E = (0.32,-0.15,-0.23)), forearm leaning in (bend [-0.3,1,0], fore_vertical) -> bar at torso (0.23, 0.15, -0.23) = lower chest, hands ~0.47 m apart; camera from the feet, higher (yaw 20, pitch 36) so the head shows above the bar. 13 Nov 2026 (pics-fixes): numbers from run 43374536640 show the end bar centre at z~0.83 (shoulder 0.63, ~8 cm above the chest skin) and, by the arm angles, ~5 cm below the nipple line; seen from the feet at pitch 36 a bar that high projects ~20 cm toward the head (parallax), which read as 'at the collarbone'. Now a true side camera (yaw 90, pitch 25: the near plate projects onto the bench below the chest) and 0.32 m plates; stills log prints joints in the torso frame to confirm. 13 Nov 2026 (pics-fixes, run 43448896897): the report measured the back 4.5-7 cm ABOVE the flat pad (root z 0.55 copied from older bench recipes); 'ground' now slides the body down onto the pad from the real skin (pad 0.004) and puts the feet on the floor."
 }

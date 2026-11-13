@@ -13,7 +13,7 @@
       "type": "landmine",
       "pivot": [
         0,
-        -2.0,
+        -2.33,
         0.05
       ],
       "grip_from_tip": 0.05
@@ -63,7 +63,7 @@
               -0.8,
               0.24
             ],
-            "flex": "level-",
+            "flex": "palm_up",
             "tilt": 0
           }
         },
@@ -83,7 +83,7 @@
               -0.8,
               0.24
             ],
-            "flex": "level-",
+            "flex": "palm_up",
             "tilt": 0
           }
         }
@@ -140,7 +140,7 @@
               -0.8,
               0.24
             ],
-            "flex": "level-",
+            "flex": "palm_up",
             "tilt": 0
           }
         },
@@ -160,7 +160,7 @@
               -0.8,
               0.24
             ],
-            "flex": "level-",
+            "flex": "palm_up",
             "tilt": 0
           }
         }
@@ -203,5 +203,5 @@
       }
     }
   },
-  "research": "Landmine squat: the bar's loaded end held at the chest in both cupped palms (hand 'cup', palms up, wrists bent back until level). Pivot 2.0 m in front. Bottom: hips down and back, knees out, trunk leaned 25 deg. Stills log prints the bar-end depth in the pivot tube."
+  "research": "Landmine squat: the bar's loaded end held at the chest in both cupped palms (hand 'cup', palms up, wrists bent back until level). Pivot 2.0 m in front. Bottom: hips down and back, knees out, trunk leaned 25 deg. Stills log prints the bar-end depth in the pivot tube. 13 Nov 2026 (pics-fixes, run 43448896897): the bar end stuck 0.30 m out past the hinge, so the pivot moves 0.33 m farther (y -2.33); the sleeve now lies ON the cupped palms (open hands) instead of through a fist centre."
 }

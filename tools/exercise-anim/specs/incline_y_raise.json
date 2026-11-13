@@ -124,7 +124,8 @@
         }
       },
       "ground": {
-        "feet": 0.0
+        "feet": 0.0,
+        "pad": 0.004
       }
     },
     "end": {
@@ -150,9 +151,10 @@
         }
       },
       "ground": {
-        "feet": 0.0
+        "feet": 0.0,
+        "pad": 0.004
       }
     }
   },
-  "research": "13 Nov 2026 (pics-fixes) rebuild on the same 45 deg chest-supported set-up as chest_supported_reverse_fly. End: arms overhead in a Y in line with the trunk, 35 deg out from the head line (elev 145, plane 5), elbows almost straight, thumbs up: the handle axis is the world 'up' made square to the arm, torso (-0.37,-0.88,0.31). Both arms mirrored."
+  "research": "13 Nov 2026 (pics-fixes) rebuild on the same 45 deg chest-supported set-up as chest_supported_reverse_fly. End: arms overhead in a Y in line with the trunk, 35 deg out from the head line (elev 145, plane 5), elbows almost straight, thumbs up: the handle axis is the world 'up' made square to the arm, torso (-0.37,-0.88,0.31). Both arms mirrored. 13 Nov 2026 (pics-fixes, run 43448896897): the chest was 8-13 cm INSIDE the 45 deg pad; 'ground' now slides the body along the pad's face normal until the chest rests on it (pad 0.004)."
 }
