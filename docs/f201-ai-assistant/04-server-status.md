@@ -1,8 +1,14 @@
 # F201 server status
 
+## 13 Nov 2026: LIVE (his yes, R-480)
+Steps 1-5 are done: Supabase 0071 + 0072, D1 0015, HQ deploy b4a8c481, panel deploy 4f65b6b8 (CI 43389907420,
+commit ed2cbe48) with the ADMIN_NEWS 2026-11-13 entry and the privacy AI lines. No optional secrets added
+(CLAUDE_HELP_KEY and GROQ_API_KEY are used). Step 7: the live pages are checked; the real-AI test set waits for an
+owner sign-in in his Chrome (only he types the PIN).
+
 ## 13 Nov 2026: the go-live batch (ONE yes from the owner covers all of it, in this order)
 
-Nothing below is live. Each step needs his yes ("No LIVE database changes without my yes"; deploys too).
+Nothing below was live before 13 Nov. Each step needs his yes ("No LIVE database changes without my yes"; deploys too).
 1. Gym server: paste `supabase/migrations/0071_ai_assistant.sql`, then `0072_retired_ai_pack_name.sql`, into the
    Supabase SQL Editor (his personal Chrome window). If the classifier refuses live SQL, he presses Run.
 2. Web database: from deploy/panel, `npx wrangler d1 execute forgeai-web --remote --file migrations/0015_assist_usage.sql`.

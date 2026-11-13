@@ -61,6 +61,13 @@ Answer given: a watch app update. It is in 0.77.0 (phone and watch), which is in
 Still needs him: a business address for the Contact page (the page goes live without the address row until then).
 What I did: see the lines under this entry as each step lands.
 - d7b2f75f (CI 43358558975 green): home page keeps 63% and 138 (7x and its HBR footnote gone, EN+HI; desktop row = heading + 2); refund, delivery, contact, about live from docs/legal via legal_pages.py (phone +91 86905 60741, no address row yet, footer + every legal menu link them); privacy has the 06 AI lines word for word (13 Nov); ADMIN_NEWS_PENDING AI entry has the credit lines + a policy-pages entry, both to move at the panel deploy. Hindi privacy left as its 10 Nov translation.
+- LIVE 13 Nov 2026: Supabase 0071 + 0072 (verified), D1 0015, HQ deployed (b4a8c481). Panel deployed from CI run
+  43389907420 (ed2cbe48) dashboard-dist, version 4f65b6b8-93e6-43cd-bc79-db3072260c3a: AI Assistant, the new home
+  page (2 numbers, "Help yours stay", no AI "Coming soon"), refund/delivery/contact/about, privacy AI lines. ADMIN_NEWS
+  2026-11-13 carries it. Checked live: all 6 pages 200, footer links, AI section; POST /api/assist answers 401 unsigned.
+  Before the deploy, CI failed twice on tests still expecting "Coming soon" (f18b96fa, ed2cbe48 fixed); ed2cbe48 also
+  stops hidden pages (AI off, Questions) taking one of the 3 new-feature dot slots.
+  Real-AI test not run yet: the panel in his Chrome is signed out and only he can type the PIN.
 
 ## R-479. Website: no receipt promise while receipts are off — 13 Nov 2026 (away work)
 Found by the T80 policy check: the price note and the FAQ said "get a receipt" for a UPI or bank payment, but the
