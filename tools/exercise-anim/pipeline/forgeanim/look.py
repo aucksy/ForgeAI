@@ -58,11 +58,12 @@ TOON = {
     "shoes": ("#FAFAFA", "#CDD3DA"),
     "FA_Iron": ("#8E98A3", "#68727D"),
     "FA_Chrome": ("#C8D0D8", "#9AA5B0"),
-    "FA_Frame": ("#B2BDC8", "#8693A0"),
+    "FA_Frame": ("#A2AEBA", "#7C8894"),   # the main set's machines are mid grey, not pale (look test r1)
     "FA_Pad": ("#98A4B1", "#727E8B"),
     "FA_Rubber": ("#4A5058", "#353A41"),
     "FA_PlateFace": ("#5A626C", "#454C55"),
     "FA_BallMat": ("#8E98A3", "#68727D"),
+    "mat": ("#B0B6C2", "#9096A5"),          # the floor mat under floor work (make_clip.floor_mat)
 }
 LINE = os.environ.get("FA_LINE", "#1E2228")              # outline colour
 LINE_PX = float(os.environ.get("FA_LINE_PX", 2.3))        # outline width in pixels at the 768 px still

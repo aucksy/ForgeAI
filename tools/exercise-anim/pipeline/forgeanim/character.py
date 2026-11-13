@@ -13,19 +13,23 @@ from . import MH
 from . import look
 from . import muscles
 
-MACROS = {"gender": 1.0, "age": 0.42, "muscle": 1.0, "weight": float(os.environ.get("FA_WEIGHT", 0.40)), "proportions": 1.0,
-          "height": float(os.environ.get("FA_HEIGHT", 0.66)),
+# drawn look (R-490, look test r1): the main set's man is broader and heavier, with a bigger head (about 7 heads tall,
+# not the "ideal" 8)
+_D = look.DRAWN
+MACROS = {"gender": 1.0, "age": 0.42, "muscle": 1.0, "weight": float(os.environ.get("FA_WEIGHT", 0.55 if _D else 0.40)),
+          "proportions": float(os.environ.get("FA_PROPORTIONS", 0.5 if _D else 1.0)),
+          "height": float(os.environ.get("FA_HEIGHT", 0.66)),   # same stature: every recipe is tuned to it
           "race": {"asian": 0.25, "caucasian": 0.5, "african": 0.25}}
 
 # extra MPFB targets (all CC0) that push the body toward a defined athletic build
 TARGETS = {
-    "torso/torso-muscle-pectoral-incr": 0.55,
+    "torso/torso-muscle-pectoral-incr": 0.7 if _D else 0.55,
     "torso/torso-muscle-dorsi-incr": 0.6,
     "torso/torso-vshape-incr": float(os.environ.get("FA_VSHAPE", 0.85)),
     "torso/measure-waist-circ-decr": float(os.environ.get("FA_WAIST", 0.45)),
     "stomach/stomach-tone-incr": 0.0,
-    "arms/l-upperarm-muscle-incr": 0.55, "arms/r-upperarm-muscle-incr": 0.55,
-    "arms/l-upperarm-shoulder-muscle-incr": 0.65, "arms/r-upperarm-shoulder-muscle-incr": 0.65,
+    "arms/l-upperarm-muscle-incr": 0.85 if _D else 0.55, "arms/r-upperarm-muscle-incr": 0.85 if _D else 0.55,
+    "arms/l-upperarm-shoulder-muscle-incr": 0.95 if _D else 0.65, "arms/r-upperarm-shoulder-muscle-incr": 0.95 if _D else 0.65,
     "arms/l-lowerarm-muscle-incr": 0.45, "arms/r-lowerarm-muscle-incr": 0.45,
     "arms/l-upperarm-fat-decr": 0.5, "arms/r-upperarm-fat-decr": 0.5,
     "legs/l-upperleg-muscle-incr": 0.55, "legs/r-upperleg-muscle-incr": 0.55,
@@ -92,7 +96,7 @@ def _make_shorts(body, rig):
     me = body.data
     groups = body.vertex_groups
     hip = rig.matrix_world @ rig.data.bones["upperleg01.L"].head_local
-    hem_z = hip.z - float(os.environ.get("FA_HEM", 0.17))
+    hem_z = hip.z - float(os.environ.get("FA_HEM", 0.25 if look.DRAWN else 0.17))   # drawn: just above the knee
     waist_z = hip.z + 0.115
     # evaluated rest shape (with targets) for positions
     pos = rest_positions(body)
@@ -128,6 +132,15 @@ def _make_shorts(body, rig):
     bm.to_mesh(shorts.data); bm.free()
     shorts.data.materials.clear(); shorts.data.materials.append(look.shorts_material())
     disp = shorts.modifiers.new("Gap", "DISPLACE"); disp.strength = float(os.environ.get("FA_SHORTS_GAP", 0.003)); disp.mid_level = 0.0
+    if look.DRAWN:   # loose, boxy legs like the main set's shorts: the shell stands further off the thigh toward the hem
+        fl = shorts.vertex_groups.new(name="fa_flare")
+        for v in shorts.data.vertices:
+            zz = (shorts.matrix_world @ v.co).z
+            w = min(1.0, max(0.0, (hip.z + 0.02 - zz) / max(1e-3, hip.z + 0.02 - hem_z)))
+            if w > 0:
+                fl.add([v.index], w ** 0.8, "REPLACE")
+        fd = shorts.modifiers.new("Flare", "DISPLACE"); fd.strength = float(os.environ.get("FA_SHORTS_FLARE", 0.016))
+        fd.mid_level = 0.0; fd.vertex_group = "fa_flare"
     sol = shorts.modifiers.new("Thick", "SOLIDIFY"); sol.thickness = 0.0035; sol.offset = 1.0; sol.use_rim = True
     sub = shorts.modifiers.new("Subdiv", "SUBSURF"); sub.levels = 1; sub.render_levels = 2
     for p in shorts.data.polygons:
@@ -235,6 +248,25 @@ def _shell(body, keep, name, mat, gap, thick, field=None):
         mw = sh.matrix_world
         _cut_field(bm, lambda co: field(mw @ co))
         bmesh.ops.delete(bm, geom=[v for v in bm.verts if not v.link_faces], context="VERTS")
+        # drop stray islands (a scrap of cloth left on the neck or under an arm): keep pieces with >= 5 % of faces
+        seen, parts = set(), []
+        for f0 in bm.faces:
+            if f0 in seen:
+                continue
+            part, stack = [], [f0]; seen.add(f0)
+            while stack:
+                f1 = stack.pop(); part.append(f1)
+                for e in f1.edges:
+                    for f2 in e.link_faces:
+                        if f2 not in seen:
+                            seen.add(f2); stack.append(f2)
+            parts.append(part)
+        total = max(1, len(bm.faces))
+        small = [f for p in parts if len(p) < 0.05 * total for f in p]
+        if small:
+            print(f"[character] {name}: dropped {len(parts) - sum(1 for p in parts if len(p) >= 0.05 * total)} stray pieces ({len(small)} faces)")
+            bmesh.ops.delete(bm, geom=small, context="FACES")
+            bmesh.ops.delete(bm, geom=[v for v in bm.verts if not v.link_faces], context="VERTS")
     bm.to_mesh(sh.data); bm.free()
     sh.data.materials.clear(); sh.data.materials.append(mat)
     d = sh.modifiers.new("Gap", "DISPLACE"); d.strength = gap; d.mid_level = 0.0
@@ -283,7 +315,8 @@ def _make_tank(body, rig):
         w = 1.0 / (1.0 + math.exp(-(c.y - ny) / 0.02))       # 0 in front of the neck, 1 behind it
         nz = (neck[2] - 0.035) * (1 - w) + (neck[2] + 0.02) * w
         nh = 0.085 * (1 - w) + 0.045 * w
-        f_neck = ((ax / 0.085) ** 2 + ((c.z - nz) / nh) ** 2 - 1.0) * 0.06
+        # a U, not an O: above the hole's centre its sides go straight up, so no orange is left on the neck itself
+        f_neck = ((ax / 0.085) ** 2 + (min(0.0, c.z - nz) / nh) ** 2 - 1.0) * 0.06
         f_top = neck[2] + 0.06 - c.z
         return min(f_hem, f_arm, f_neck, f_top)
 
@@ -413,6 +446,14 @@ def _drawn_rest(body, rig, shorts, pos):
             _cut_field(bm, lambda co: top - (mw @ co).z)
             bmesh.ops.delete(bm, geom=[v for v in bm.verts if not v.link_faces], context="VERTS")
             bm.to_mesh(shoes.data); bm.free()
+        # the sole hangs ~2 cm under the foot the floor is measured from: lift the shoe so the sole sits on z = 0
+        mw = shoes.matrix_world
+        low = min((mw @ v.co).z for v in shoes.data.vertices)
+        if low < 0:
+            up = mw.inverted().to_3x3() @ Vector((0, 0, -low))
+            for v in shoes.data.vertices:
+                v.co += up
+            print(f"[character] shoes: lifted {-low:.4f} so the sole meets the floor")
         feet = [i for i, p in enumerate(pos) if p.z < top - 0.03]
         vg = body.vertex_groups.new(name="fa_in_shoes"); vg.add(feet, 1.0, "REPLACE")
         mk = body.modifiers.new("FA_HideInShoes", "MASK"); mk.vertex_group = "fa_in_shoes"; mk.invert_vertex_group = True

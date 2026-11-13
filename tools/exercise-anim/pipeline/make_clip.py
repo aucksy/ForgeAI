@@ -85,7 +85,52 @@ def contacts(ev_body):
     return out
 fps, keys, _ = clip.timeline()
 key_frames = sorted({min(n - 1, int(round(k[0] * fps))) for k in keys})
-center, d = RD.frame_camera(scene, cam, objs, cam_spec.get("yaw", -30), cam_spec.get("pitch", 12),
+
+
+def floor_mat():
+    """Drawn look (R-490): floor work lies on a thin grey exercise mat, as in the main picture set. Added when the
+    hips come within 0.45 m of the floor in a key pose and nothing (a bench, a box) is under them."""
+    dg3 = bpy.context.evaluated_depsgraph_get()
+    rig = ch["rig"]; low_pts = []; hips_low = False
+    under = [o for o in objs[2:] if o.type == "MESH"]
+    for f in key_frames:
+        bpy.context.scene.frame_set(f); dg3.update()
+        hip = rig.matrix_world @ rig.pose.bones["root"].head
+        if hip.z < 0.45:
+            covered = False
+            for o in under:
+                bb = [o.matrix_world @ Vector(c) for c in o.bound_box]
+                if (min(v.x for v in bb) < hip.x < max(v.x for v in bb) and min(v.y for v in bb) < hip.y < max(v.y for v in bb)
+                        and max(v.z for v in bb) > 0.08):
+                    covered = True
+            hips_low = hips_low or not covered
+        ev = ch["body"].evaluated_get(dg3); me = ev.to_mesh()
+        low_pts += [ev.matrix_world @ v.co for v in me.vertices if (ev.matrix_world @ v.co).z < 0.12]
+        ev.to_mesh_clear()
+    if not hips_low or not low_pts:
+        return None
+    x0 = min(p.x for p in low_pts); x1 = max(p.x for p in low_pts); y0 = min(p.y for p in low_pts); y1 = max(p.y for p in low_pts)
+    w = max(0.62, x1 - x0 + 0.16); l = max(0.62, y1 - y0 + 0.16)
+    if (x1 - x0) > (y1 - y0):
+        w, l = max(w, 1.75), max(l, 0.62)
+    else:
+        w, l = max(w, 0.62), max(l, 1.75)
+    from forgeanim import props as PR
+    root = PR._empty("FA_MatRoot")
+    PR._box("FA_Mat", (w, l, 0.012), loc=((x0 + x1) / 2, (y0 + y1) / 2, -0.006), mat=look.toon_material("FA_Mat", *look.TOON["mat"]),
+            bevel=0.0, parent=root)
+    print(f"[still] floor mat {w:.2f} x {l:.2f} m under the body")
+    return root
+
+
+if look.DRAWN and mode == "stills":
+    _m = floor_mat()
+    if _m is not None:
+        objs += list(_m.children)
+pitch = cam_spec.get("pitch", 12)
+if look.DRAWN and pitch > 14:   # the main set looks from about chest height: steep recipe cameras are eased (look test r1)
+    pitch = 14 + (pitch - 14) * 0.45
+center, d = RD.frame_camera(scene, cam, objs, cam_spec.get("yaw", -30), pitch,
                             cam_spec.get("lens", 50), cam_spec.get("fill", 0.86), sample_frames=key_frames,
                             target_offset=cam_spec.get("offset", (0, 0, 0)))
 look.setup_lights(scene, center, cam_spec.get("yaw", -30) + cam_spec.get("light_yaw", 0))

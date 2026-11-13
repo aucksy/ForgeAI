@@ -100,9 +100,11 @@ def floor_ellipse(bg, alpha, colour):
     ymax = ys.max()
     band = ys >= ymax - 0.04 * side
     bx = xs[band]
-    hw = (bx.max() - bx.min()) / 2 + 0.04 * side
+    # look test r1: the main set's ellipse is about as wide as the whole drawing (a standing man with dumbbells, a
+    # whole machine), not just the feet
+    hw = max((bx.max() - bx.min()) / 2 + 0.04 * side, 0.46 * (xs.max() - xs.min()))
     hh = max(0.022 * side, 0.13 * hw)
-    cx = (bx.max() + bx.min()) / 2
+    cx = 0.5 * (bx.max() + bx.min()) / 2 + 0.5 * (xs.max() + xs.min()) / 2
     cy = ymax - 0.2 * hh
     Y, X = np.mgrid[0:side, 0:side]
     e = np.sqrt(((X - cx) / hw) ** 2 + ((Y - cy) / hh) ** 2)
