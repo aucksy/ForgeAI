@@ -22,6 +22,9 @@ What I did: see the lines under this entry.
   else." Done: moved above "Everything else, in one place" (EN+HI, the e2e checks the order).
 - Also said: the green "+ 50 / + 100 AI credits" lines are there (default view is monthly); "it's all good to go".
 - Business address: answered in chat (needed only before online payments go live).
+- He then said: "For Address, just type Jaipur, Rajasthan, India". Done: Contact page row "Address: Jaipur, Rajasthan,
+  India" (city only; nothing private in the public repo). A payment company may still ask for a full street address
+  before real payments start.
 - Also said: "should be considered keeping the default yearly, Or ... if the default is monthly, then can we add free AI
   credits to the existing ... 2 months free plus free AI credits?" Done (his second option): monthly stays the default;
   the yearly switch now says "Yearly · 2 months free + free AI credits" (HI "2 महीने फ़्री + फ़्री AI क्रेडिट"); on a phone

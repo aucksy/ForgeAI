@@ -232,7 +232,7 @@ test('G4 policy pages (refunds, shipping and delivery, contact, about), phone', 
       await expect(main.getByRole('row', { name: /Customer-care phone/ })).toContainText('+91 86905 60741');
       await expect(main.getByRole('link', { name: '+91 86905 60741' }).first()).toHaveAttribute('href', 'tel:+918690560741');
       await expect(main).toContainText('Grievance Officer: Aakash Pahuja, Founder.');
-      await expect(main).not.toContainText(/business address/i);
+      await expect(main.getByRole('row', { name: /Address/ })).toContainText('Jaipur, Rajasthan, India'); // R-483
     }
     await noSideways(page);
     await page.screenshot({ path: `${DIR}/policy-${path}-phone.png`, fullPage: true });

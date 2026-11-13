@@ -115,11 +115,11 @@ describe('R-76: the join screen’s legal links open real pages, never the admin
       const nav = /<nav>(.*?)<\/nav>/.exec(readFileSync(pub(`${p}.html`), 'utf8'))?.[1] ?? '';
       for (const href of ['/privacy.html', '/terms.html', '/refund.html', '/delivery.html', '/contact.html', '/about.html']) expect(nav, `${p} menu`).toContain(`href="${href}"`);
     }
-    // Contact: the customer-care phone (his business line) and the Grievance Officer's phone; no address row until he gives one.
+    // Contact: the customer-care phone (his business line), the Grievance Officer's phone, and the city as the address (R-483).
     const contact = readFileSync(pub('contact.html'), 'utf8');
     expect(contact).toContain('<tr><th>Customer-care phone</th><td><a href="tel:+918690560741">+91 86905 60741</a></td></tr>');
     expect(contact).toMatch(/Grievance Officer:<\/strong> Aakash Pahuja, Founder\. .*phone <a href="tel:\+918690560741">\+91 86905 60741<\/a>/);
-    expect(contact.replace(/<!--[\s\S]*?-->/g, '')).not.toMatch(/business address/i);
+    expect(contact).toContain('<tr><th>Address</th><td>Jaipur, Rajasthan, India</td></tr>');
     expect(readFileSync(pub('about.html'), 'utf8')).not.toMatch(/phone number and address/);
   });
 
