@@ -7,6 +7,20 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-488. AI Assistant: "You have asked a lot today" with 20 credits showing — 13 Nov 2026
+He said (13 Nov 2026, evening, with a screenshot: "Send a Chhath Puja greeting to everyone" -> red "You have asked a
+lot today. The AI Assistant is back tomorrow morning." under "20 credits"): "This does not look correct - how are you
+making these mistakes?"
+Found (D1 ai_usage, read only): Crispy Curves used all 20 trial asks of 13 Nov; 4 of them were answers that FAILED
+(the strict-tools bug, R-483) and still counted; some were my own live tests on his gym. The rule itself is his
+(R-470: 20 a day in the trial, 50 when paid), but the screen was wrong: "Asking is free" + "20 credits" + a red
+"asked a lot" with no warning and no number.
+Fix: (1) a failed AI answer gives the day's ask back; (2) the limit line says how many questions a day, that credits
+are not touched, and when it comes back, in a calm (not red) style; (3) the ask box locks with that line instead of
+letting him type a request first; (4) "N free questions left today" shows when 5 or fewer are left. My own live tests
+use at most 1 ask, and only when needed. Asked him: return today's asks (a live D1 change), and whether asks past the
+daily number should spend credits instead of stopping (a price call).
+
 ## R-487. Build every missing exercise picture, then release — 13 Nov 2026
 He said (13 Nov 2026, 20:05 IST, in chat): "You can check what exercise images are pending and build them all
 And then release the app with all exercises images"
