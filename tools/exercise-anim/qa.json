@@ -621,52 +621,58 @@
   },
   "bent_over_cable_rear_delt_raise": {
     "rendered": "2026-11-13",
-    "run": "43453523374",
-    "qa": "fail",
-    "reason": "the cable from the hand to the low pulley reads as passing behind/through the thighs in both pictures. Next: camera from the working side and in front (13 Nov, try 1)",
-    "tries": 1
+    "run": "43457778277",
+    "pose_review": "good",
+    "reason": "try 2 (try 1 run 43453523374 failed): numbers clean (cable 2-15 cm from the skin, body on the floor/bench) and my close-up looks right: camera from the front-left: the cable runs from the hand to the pulley clear of the legs. The fresh reviewer was not run.",
+    "tries": 2,
+    "note": "look A (grey athlete) only; not exported: 13 Nov stop, every own picture is re-rendered in the new look from this recipe"
   },
   "cable_concentration_curl": {
     "rendered": "2026-11-13",
-    "run": "43453523374",
-    "qa": "fail",
-    "reason": "the working-side foot sits on the pulley box and the start handle is hidden at that foot. Next: column 0.4 m further out and forward, handle between the feet (13 Nov, try 1)",
-    "tries": 1
+    "run": "43457778277",
+    "pose_review": "good",
+    "reason": "try 2 (try 1 run 43453523374 failed): numbers clean (cable 2-15 cm from the skin, body on the floor/bench) and my close-up looks right: column moved in front of the feet: the cable runs straight up to the hand, foot clear of the box. The fresh reviewer was not run.",
+    "tries": 2,
+    "note": "look A (grey athlete) only; not exported: 13 Nov stop, every own picture is re-rendered in the new look from this recipe"
   },
   "cable_y_raise": {
     "rendered": "2026-11-13",
-    "run": "43453523374",
-    "qa": "fail",
-    "reason": "end: the two crossed cables draw a large X across the face, chest and thighs; start: cables over the thighs. Next: camera from behind (13 Nov, try 1)",
-    "tries": 1
+    "run": "43457778277",
+    "pose_review": "good",
+    "reason": "try 2 (try 1 run 43453523374 failed): numbers clean (cable 2-15 cm from the skin, body on the floor/bench) and my close-up looks right: camera from behind: a clear Y, cables run out to the sides. The fresh reviewer was not run.",
+    "tries": 2,
+    "note": "look A (grey athlete) only; not exported: 13 Nov stop, every own picture is re-rendered in the new look from this recipe"
   },
   "incline_cable_fly": {
     "rendered": "2026-11-13",
-    "run": "43453523374",
-    "qa": "fail",
-    "reason": "end: the near hand finishes at the chin and the near cable lies across the shoulder. Next: end hands over the upper chest, lower camera (13 Nov, try 1)",
-    "tries": 1
+    "run": "43457778277",
+    "pose_review": "good",
+    "reason": "try 2 (try 1 run 43453523374 failed): numbers clean (cable 2-15 cm from the skin, body on the floor/bench) and my close-up looks right: end hands meet over the upper chest; the near post overlaps the legs a little. The fresh reviewer was not run.",
+    "tries": 2,
+    "note": "look A (grey athlete) only; not exported: 13 Nov stop, every own picture is re-rendered in the new look from this recipe"
   },
   "lying_cable_curl": {
     "rendered": "2026-11-13",
-    "run": "43453523374",
+    "run": "43457778277",
     "qa": "fail",
-    "reason": "end: the bar stands upright at the face and the cable lies across the stomach, thighs and knees; start: bar upright between the thighs. Next: legs straight, bar level, camera from the side (13 Nov, try 1)",
-    "tries": 1
+    "reason": "try 2: numbers clean, but the camera from the feet end puts the post in front of the body and hides the legs. Next: camera from the side, a little above (13 Nov, try 2; try 1 run 43453523374)",
+    "tries": 2
   },
   "seated_cable_rear_delt_fly": {
     "rendered": "2026-11-13",
-    "run": "43453523374",
-    "qa": "fail",
-    "reason": "end: both cables cut straight through the shins; start: cables over the feet, hands hard to see. Next: pulleys further forward so the cables cross ahead of the feet (13 Nov, try 1)",
-    "tries": 1
+    "run": "43457778277",
+    "pose_review": "good",
+    "reason": "try 2 (try 1 run 43453523374 failed): numbers clean (cable 2-15 cm from the skin, body on the floor/bench) and my close-up looks right: pulleys 1.6 m forward: the cables cross ahead of the feet. The fresh reviewer was not run.",
+    "tries": 2,
+    "note": "look A (grey athlete) only; not exported: 13 Nov stop, every own picture is re-rendered in the new look from this recipe"
   },
   "single_arm_overhead_cable_extension": {
     "rendered": "2026-11-13",
-    "run": "43453523374",
-    "qa": "fail",
-    "reason": "the pulley sits off to the side, so the end cable crosses the back of the head, the back and the buttock. Next: pulley straight behind (13 Nov, try 1)",
-    "tries": 1
+    "run": "43457778277",
+    "pose_review": "good",
+    "reason": "try 2 (try 1 run 43453523374 failed): numbers clean (cable 2-15 cm from the skin, body on the floor/bench) and my close-up looks right: pulley straight behind, side camera: the cable leaves the back cleanly. The fresh reviewer was not run.",
+    "tries": 2,
+    "note": "look A (grey athlete) only; not exported: 13 Nov stop, every own picture is re-rendered in the new look from this recipe"
   },
   "dead_hang": {
     "rendered": "2026-11-13",

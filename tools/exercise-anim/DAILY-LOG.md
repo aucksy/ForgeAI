@@ -84,8 +84,35 @@ https://claude.ai/artifact/1ZwD5CZb1LPZCK58DQ6huw)
   the runner back so it does not end at his knee.
 - walking (13 Nov, 2 tries): the start has both hands together in front of the belly; copy the end picture's arm swing,
   mirrored.
+- Cable keys at 2 tries (13 Nov, cable helper; the reason and the next fix for each are in qa.json):
+  rope_triceps_pushdown (rope must run down through the fist at lockout), single_arm_cable_curl and cable_shrug and
+  cable_hip_abduction (camera makes the cable read as crossing the body or hides it), cable_front_raise and
+  cable_reverse_curl and rope_cable_curl (put the column straight in front, not beside the foot; rope ends must hang),
+  behind_the_back_cable_curl (elbow must go behind the torso), single_arm_cable_reverse_fly and
+  cross_body_cable_extension (start hand in front at the far shoulder, not by the head), single_arm_cable_fly (side
+  camera), lying_cable_curl (side camera; the post hid the legs).
 
 ## Run log (newest first)
+
+### 13 Nov 2026 (cable helper; render runs 43446766569, 43448776510, 43453523374, 43457778277)
+- New prop family: the CABLE COLUMN (post, pulley box at any height, steel cable from the pulley to the handle; D-handle,
+  rope, straight bar and ankle cuff). The log prints each cable's clearance from the skin at both stills, so a cable
+  through the body is caught by number. `cable` is in READY_EQUIPMENT; preacher curls and the woodchop are in NEEDS.
+- Research + recipes for 33 cable keys. ADDED (12): cable_hip_adduction, low_to_high_cable_fly, overhead_cable_curl,
+  reverse_grip_triceps_pushdown, single_arm_high_cable_curl, single_arm_reverse_grip_pushdown (run 43448776510);
+  cable_pullover, cable_skull_crusher, flat_bench_cable_fly, incline_cable_triceps_extension,
+  lying_rope_triceps_extension, single_arm_cable_hammer_curl (run 43453523374). UAT upic now also opens Overhead Cable
+  Curl (rel-pics-03c-cable); that part was NOT run (stopped, see below).
+- The fresh reviewer's biggest lesson: a cable that is physically clear still FAILS when the camera lays it over a leg,
+  the face or a shin. Put the column straight in front or behind and choose the camera so the cable runs over empty
+  floor; a low clearance number is not enough.
+- STOPPED 13 Nov ~21:45 IST (owner): our grey athlete does not match the RepDB set; every own picture is to be
+  re-rendered in a new matching look from the same recipes. So round 4 (6 keys whose numbers and my close-up look
+  right: bent_over_cable_rear_delt_raise, cable_concentration_curl, cable_y_raise, incline_cable_fly,
+  seated_cable_rear_delt_fly, single_arm_overhead_cable_extension) was NOT exported and had no fresh reviewer: qa.json
+  shows them as rendered. Review them in the new look.
+- Not built: kneeling_cable_pulldown, kneeling_cable_triceps_extension, straight_bar_cable_row (queued; the kneeling
+  pose has no proven body yet).
 
 ### 13 Nov 2026 (machine and cardio helper; render runs 43449175969, retry 43452963165)
 - New prop family: plain MACHINE geometry built from the recipe (`"machine"` parts: boxes, cylinders, rods, a weight
