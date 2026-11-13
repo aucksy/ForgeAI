@@ -342,7 +342,8 @@ def hull_material():
     em = N.new("ShaderNodeEmission"); em.inputs[0].default_value = srgb(LINE); em.inputs[1].default_value = 1.0
     tr = N.new("ShaderNodeBsdfTransparent")
     mx = N.new("ShaderNodeMixShader")
-    L.new(geo.outputs["Backfacing"], mx.inputs[0]); L.new(tr.outputs[0], mx.inputs[1]); L.new(em.outputs[0], mx.inputs[2])
+    # the hull in front of the object reads as back faces: see-through; the far side, facing us, is the line
+    L.new(geo.outputs["Backfacing"], mx.inputs[0]); L.new(em.outputs[0], mx.inputs[1]); L.new(tr.outputs[0], mx.inputs[2])
     L.new(mx.outputs[0], out.inputs["Surface"])
     return mat
 
