@@ -264,7 +264,9 @@ export const TOOLS = Object.freeze([
   {
     name: 'how_to',
     kind: 'ask',
-    description: 'How to do something in the MettleUp admin app or member app (answered from the help articles).',
+    description:
+      'How to do something in the MettleUp admin app or member app, answered from the help articles. Only when ' +
+      'no single admin page answers it; when one page does, use open_page alone. Never together with open_page.',
     input_schema: obj({ question: str('The question in plain English.') }),
   },
   // ------------------------------------------------ B. Message members
@@ -395,8 +397,9 @@ export const TOOLS = Object.freeze([
     name: 'open_page',
     kind: 'talk',
     description:
-      'Show where in the admin app to do something the assistant cannot do itself (change a plan price, ' +
-      'branding, timings, staff), and as the follow-up of a how-to answer. Pick the page from the list.',
+      'Show where in the admin app to do something, with up to 3 steps: a how-to that one page answers (change ' +
+      'the logo, a plan price, timings, staff), or something the assistant cannot do itself. Use it alone, never ' +
+      'together with how_to. Pick the page from the list.',
     input_schema: obj({
       page: oneOf(AI_PAGE_IDS, 'The page to open.'),
       steps: list(str('One short step'), 'Up to 3 short steps on that page, or [].'),

@@ -130,8 +130,17 @@ function startLang(a: Extract<Action, { tool: 'draft_message' }>, d: PlanData): 
   return l === 'hi' || l === 'both' ? l : 'en';
 }
 
-/** The cards for one answer of the AI, in its order. `newId` makes ids (crypto.randomUUID in the panel). PURE. */
+/**
+ * The cards for one answer of the AI, in its order. `newId` makes ids (crypto.randomUUID in the panel). PURE.
+ * R-485: one answer per how-to. When the AI also shows where to do it (open_page, with its steps and button),
+ * the "Help and feedback answers it" card is dropped: the owner saw two buttons for one question.
+ */
 export function cardsFor(actions: readonly Action[], d: PlanData, newId: () => string): CardModel[] {
+  const cards = cardsOf(actions, d, newId);
+  return cards.some((c) => c.kind === 'open_page') ? cards.filter((c) => c.kind !== 'help') : cards;
+}
+
+function cardsOf(actions: readonly Action[], d: PlanData, newId: () => string): CardModel[] {
   const cards: CardModel[] = [];
   for (const action of actions) {
     const id = newId();

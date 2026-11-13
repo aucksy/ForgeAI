@@ -257,6 +257,7 @@ export function assistSystem() {
     '- Placeholders like [PHONE_1] or [EMAIL_1] stand for what the owner typed: copy them exactly where they belong.',
     '- If the request is unclear or misses something needed (who, how much, which plan), call ask_back with one short question and 2 to 4 short answers, in the language the owner used.',
     '- If the assistant cannot do it but a page of the admin app can (changing a plan price, branding, timings, staff, payments setup), call open_page with that page and up to 3 short steps. Use cannot_do only when no tool and no page fits.',
+    '- A how-to question that one page answers ("logo kaise badlu", "plan ka price"): call open_page ALONE with its steps. Call how_to only when no single page answers it. Never call how_to and open_page for the same question.',
     '- Messages to members: title at most 60 letters, body at most 300. Warm, short, plain. Hindi text always in Devanagari (never Hindi in Latin letters). lang = "gym" when the owner did not say a language. Never add a phone number, link, price or date the owner did not give.',
     '- Dates: YYYY-MM-DD and times YYYY-MM-DDTHH:mm, India time, worked out from today in the gym facts ("kal" = tomorrow, "Monday" = the coming Monday).',
     '- Money is rupees. "PT" is personal training. "Dues" or "baaki" is money owed.',

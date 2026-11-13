@@ -7,6 +7,11 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-485. AI Assistant: one answer for a how-to, not two cards — 13 Nov 2026
+He said (13 Nov 2026, with a screenshot of "gym logo kaise badlu"): "answer can be single here... why giving 2 CTAs?" The AI showed a "This is a how-to question. Help and feedback answers it" card (Open Help and feedback) AND a "Where to do it" card (3 steps, Open Branding).
+Cause: the open_page tool text said "and as the follow-up of a how-to answer", so the AI called how_to and open_page together.
+Fix: (1) tool texts: open_page = one page answers it, use it alone; how_to only when no single page answers it, never both; same rule in the AI's instructions; (2) the panel drops the Help card whenever the same answer has a "Where to do it" card, so even a model that calls both shows one answer. No ADMIN_NEWS line: a fix to the AI Assistant that went live today, already announced.
+
 ## R-484. Up next went back to Week 1 after an old backup restore — 13 Nov 2026
 He said (13 Nov 2026, in chat): "Do this task here: Fix Up next resetting after an old backup restore" (found by the R-483 UAT helper).
 Cause: a followed plan with no saved start day (backups and plans from before Phase 4, the demo data, "New routine") got today as its start day the first time the week line was read (planState.getPlanNow). Up next counts only workouts on or after that day (todayPlan floor), so every past workout was dropped: Up next showed the first routine and "Week 1".
