@@ -830,6 +830,12 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   'The AI could not be reached. Check the internet and try again.': 'AI tak nahi pahunch paaye. Internet check karke phir try karo.',
   'The AI took too long. Try again.': 'AI ne bahut der laga di. Phir try karo.',
   'The AI did not answer. Try again, or say it another way.': 'AI ne jawab nahi diya. Phir try karo, ya doosre tareeke se bolo.',
+  // R-488: today's free questions (13 Nov 2026).
+  '1 free question left today.': 'Aaj 1 free sawaal bacha hai.',
+  '{n} free questions left today.': 'Aaj {n} free sawaal bache hain.',
+  "You have used today's {n} free questions. Your credits are safe. Ask again tomorrow.": 'Aaj ke {n} free sawaal ho gaye. Aapke credits safe hain. Kal phir poochhiye.',
+  "You have used today's free questions. Your credits are safe. Ask again tomorrow.": 'Aaj ke free sawaal ho gaye. Aapke credits safe hain. Kal phir poochhiye.',
+  'No more free questions today. Ask again tomorrow.': 'Aaj ke free sawaal khatam. Kal phir poochhiye.',
   'The AI Assistant did not understand. Say it another way.': 'AI Assistant samjha nahi. Doosre tareeke se bolo.',
   '{words} Your credit was given back.': '{words} Aapka credit wapas mil gaya.',
   'That did not work. Check the internet and try again.': 'Yeh nahi hua. Internet check karke phir try karo.',

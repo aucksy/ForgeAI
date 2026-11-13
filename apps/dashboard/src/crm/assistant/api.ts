@@ -5,6 +5,7 @@
  * for the owner, and the error itself is logged (a "try again" with no log cannot be fixed).
  */
 import { call } from '../shop/api';
+import { fullLine } from './allowance';
 import { line, type Action, type Line } from './catalogue';
 import type { AssistContext } from './context';
 import { maskText, unmaskDeep } from './mask';
@@ -34,10 +35,12 @@ const SLOW = 'The AI took too long. Try again.';
 
 /** The owner's line for a refused or failed answer: the server's own words when it sent some. */
 function failOf(status: number, body: unknown, tag: string): AssistFail {
-  const b = (body ?? {}) as { error?: unknown; reason?: unknown };
+  const b = (body ?? {}) as { error?: unknown; reason?: unknown; perDay?: unknown };
   const reason = typeof b.reason === 'string' ? b.reason : status === 0 ? 'offline' : 'failed';
   const said = typeof b.error === 'string' && b.error.trim() ? b.error.trim() : status === 0 ? OFFLINE : 'The AI did not answer. Try again, or say it another way.';
   console.warn(`[assistant] ${tag} answered`, status, reason, said);
+  // R-488: the day's limit says the number, that credits are safe and when it comes back (when the worker sends it).
+  if (reason === 'limit' && typeof b.perDay === 'number') return { ok: false, words: fullLine(b.perDay), reason, status };
   return { ok: false, words: line(said), reason, status };
 }
 

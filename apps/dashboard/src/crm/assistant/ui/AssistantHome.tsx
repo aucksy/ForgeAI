@@ -11,6 +11,7 @@ import { navigate } from '../../ui/router';
 import { SendQueueSheet } from '../../ui/SendQueueSheet';
 import { messageSignature } from '../../logic/sendQueue';
 import type { MemberView } from '../../types';
+import { leftLine, useAllowance } from '../allowance';
 import { aiTasks, type AiTaskRow, type AiWallet } from '../api';
 import { EXAMPLE_GROUPS, EXAMPLES } from '../catalogue';
 import { clearTurns } from '../conversation';
@@ -74,10 +75,14 @@ export function AssistantHome({ assistKey, wallet, panel = false }: { assistKey:
   const canSpeak = useMemo(() => isVoiceSupported(), []);
   const suggestions = useMemo(() => todaySuggestions(data), [data]);
   const asking = turns.some((t) => t.status === 'asking');
+  // R-488: today's free questions. At the limit the box locks with a calm line; at 5 or fewer it says how many.
+  const allowance = useAllowance(data.today);
+  const full = allowance.full;
+  const fewLeft = leftLine(allowance.left);
 
   const send = (words: string, spoken = false): void => {
     const s = words.trim();
-    if (!s || asking) return;
+    if (!s || asking || full) return;
     setText('');
     setTab('ask');
     void convo.ask(s, spoken);
@@ -239,7 +244,7 @@ export function AssistantHome({ assistKey, wallet, panel = false }: { assistKey:
           {turn.cards.map((c) => (
             <CardView key={c.id} turnId={turn.id} card={c} data={data} ctl={ctl} />
           ))}
-          {turn.fail ? <AssistantLine words={turn.fail} tone="fail" /> : null}
+          {turn.fail ? <AssistantLine words={turn.fail} tone={turn.notice ? undefined : 'fail'} /> : null}
         </div>
       ))}
       <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
@@ -274,8 +279,9 @@ export function AssistantHome({ assistKey, wallet, panel = false }: { assistKey:
         maxLength={600}
         onChange={(e) => setText(e.target.value)}
         onKeyDown={onKey}
+        disabled={full}
         aria-label={t('Ask or give a task')}
-        placeholder={t('Ask or give a task, in Hindi or English')}
+        placeholder={full ? t('No more free questions today. Ask again tomorrow.') : t('Ask or give a task, in Hindi or English')}
         style={{
           flex: 1,
           minWidth: 0,
@@ -294,11 +300,11 @@ export function AssistantHome({ assistKey, wallet, panel = false }: { assistKey:
         } as CSSProperties}
       />
       {canSpeak ? (
-        <button type="button" onClick={() => setVoice(true)} disabled={asking} aria-label={t('Speak a request')} style={roundButton(false)}>
+        <button type="button" onClick={() => setVoice(true)} disabled={asking || full} aria-label={t('Speak a request')} style={roundButton(false)}>
           <MicIcon />
         </button>
       ) : null}
-      <button type="submit" disabled={!text.trim() || asking} aria-label={t('Ask the AI Assistant')} style={roundButton(true, !text.trim() || asking)}>
+      <button type="submit" disabled={!text.trim() || asking || full} aria-label={t('Ask the AI Assistant')} style={roundButton(true, !text.trim() || asking || full)}>
         <SendIcon />
       </button>
     </form>
@@ -330,6 +336,11 @@ export function AssistantHome({ assistKey, wallet, panel = false }: { assistKey:
               : { position: 'sticky', bottom: compact ? 'calc(70px + env(safe-area-inset-bottom))' : 16, zIndex: 5 }
           }
         >
+          {fewLeft ? (
+            <p role="status" style={{ ...quiet, margin: `0 0 ${space.sm}px` }}>
+              {t(fewLeft.text, fewLeft.vars)}
+            </p>
+          ) : null}
           {composer}
         </div>
       ) : null}

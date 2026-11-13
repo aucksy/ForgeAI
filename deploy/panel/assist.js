@@ -70,8 +70,11 @@ const AUDIO_TYPES = /^audio\/(webm|ogg|mp4|m4a|x-m4a|aac|mpeg|mp3|wav|x-wav|flac
 const GROQ_HINT = 'A gym owner talking about members, plans, fees and messages. Hindi, English or Hinglish. Rupees, PT, dues, renew, UPI, cash, batch.';
 
 const OFF = 'The AI Assistant is not switched on yet.';
-/** What the owner reads at the day's limit (03-design §3). */
-export const LIMIT_WORDS = 'You have asked a lot today. The AI Assistant is back tomorrow morning.';
+/** What the owner reads at the day's ask limit (owner R-488: say it is a daily number, credits are safe, when it returns).
+ * The admin app writes its own line with the number (`perDay` in the 429 body); this is the fallback. */
+export const LIMIT_WORDS = "You have used today's free questions. Your credits are safe. Ask again tomorrow.";
+/** At the day's spoken-minutes limit. */
+export const VOICE_LIMIT_WORDS = "You have used today's speaking time. Type your request, or speak again tomorrow.";
 
 function answer(status, body) {
   return new Response(JSON.stringify(body), {
@@ -463,13 +466,14 @@ async function countMonth(db, month, failed, tokensIn, tokensOut) {
     .run();
 }
 
+/** Owner R-488: a FAILED answer gives the day's ask back (it still counts as failed, for HQ). */
 async function countGym(db, gymId, day, failed, tokensIn, tokensOut) {
   await db
     .prepare(
-      "UPDATE ai_usage SET failed = failed + ?, tokens_in = tokens_in + ?, tokens_out = tokens_out + ?, provider = 'claude' " +
+      "UPDATE ai_usage SET calls = MAX(0, calls - ?), failed = failed + ?, tokens_in = tokens_in + ?, tokens_out = tokens_out + ?, provider = 'claude' " +
         "WHERE day = ? AND gym_id = ? AND kind = 'assist'",
     )
-    .bind(failed ? 1 : 0, tokensIn, tokensOut, day, gymId)
+    .bind(failed ? 1 : 0, failed ? 1 : 0, tokensIn, tokensOut, day, gymId)
     .run();
 }
 
@@ -538,7 +542,7 @@ async function ownerAndAllowance(key, env, now, fetchImpl) {
     console.error('[assist] usage table not readable', scrub(e, env));
     return { refused: answer(503, { reason: 'off', error: OFF }) };
   }
-  if (used === null) return { refused: answer(429, { reason: 'limit', error: LIMIT_WORDS }) };
+  if (used === null) return { refused: answer(429, { reason: 'limit', error: LIMIT_WORDS, perDay: cap }) };
   return { gymId: who.gymId, day, month, paid, left: Math.max(0, cap - used) };
 }
 
@@ -780,7 +784,7 @@ export async function handleAssistVoice(request, env, { now = new Date(), fetchI
     console.error('[assist] usage table not readable', scrub(e, env));
     return answer(503, { reason: 'off', error: 'Speaking is not switched on yet. Type instead.' });
   }
-  if (used === null) return answer(429, { reason: 'limit', error: LIMIT_WORDS });
+  if (used === null) return answer(429, { reason: 'limit', error: VOICE_LIMIT_WORDS });
 
   for (const provider of providers) {
     let text;

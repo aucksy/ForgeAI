@@ -6,6 +6,7 @@ import { test } from 'node:test';
 import {
   ASSIST_PER_DAY,
   LIMIT_WORDS,
+  VOICE_LIMIT_WORDS,
   TRIAL_PER_DAY,
   MAX_ACTIONS,
   TRIAL_CAP_USD,
@@ -269,14 +270,14 @@ test('only the owner: desk staff, the demo gym, a bad key and no key are refused
 test(`fair use: ${ASSIST_PER_DAY} asks a gym a day (HQ can set the gym's own), never using up AI column matching`, async () => {
   assert.equal(ASSIST_PER_DAY, 50);
   assert.equal(VOICE_SECONDS_PER_DAY, 600);
-  assert.equal(LIMIT_WORDS, 'You have asked a lot today. The AI Assistant is back tomorrow morning.');
+  assert.equal(LIMIT_WORDS, "You have used today's free questions. Your credits are safe. Ask again tomorrow.");
   const e = env();
   const net = fakeNet();
   const go = () => handleAssist(ask({ text: 'Aaj kitne log aaye?', ctx: CTX }), e, { now: NOW, fetchImpl: net.fetchImpl });
   for (let i = 1; i <= ASSIST_PER_DAY; i++) assert.equal((await (await go()).json()).left, ASSIST_PER_DAY - i);
   const over = await go();
   assert.equal(over.status, 429);
-  assert.deepEqual(await over.json(), { reason: 'limit', error: LIMIT_WORDS });
+  assert.deepEqual(await over.json(), { reason: 'limit', error: LIMIT_WORDS, perDay: ASSIST_PER_DAY });
   assert.equal(net.to('claude').length, ASSIST_PER_DAY);
   // HQ raised this gym to 52: two more today. HQ set 0: off for the gym.
   e.WEB.sqlite.prepare("INSERT INTO assist_limits (gym_id, per_day, voice_minutes, set_at) VALUES ('gym-a', 52, 10, 'x')").run();
@@ -292,6 +293,19 @@ test(`fair use: ${ASSIST_PER_DAY} asks a gym a day (HQ can set the gym's own), n
   // A busy assistant day does not count toward the all-gyms column-matching allowance.
   e.WEB.sqlite.prepare("INSERT INTO ai_usage (day, gym_id, kind, calls) VALUES (?, 'gym-z', 'assist', 5000)").run(DAY);
   assert.equal(await takeOne(e.WEB, 'gym-a', DAY), 1);
+});
+
+test('R-488: a failed answer gives the ask back (still counted as failed for HQ); a good one keeps it', async () => {
+  const e = env();
+  const bad = fakeNet({ claude: { status: 400 } });
+  const failed = await handleAssist(ask({ text: 'Aaj kitne log aaye?', ctx: CTX }), e, { now: NOW, fetchImpl: bad.fetchImpl });
+  assert.equal(failed.status, 502);
+  let day = e.WEB.sqlite.prepare("SELECT calls, failed FROM ai_usage WHERE kind = 'assist'").get();
+  assert.deepEqual([day.calls, day.failed], [0, 1]);
+  const good = fakeNet();
+  assert.equal((await (await handleAssist(ask({ text: 'Aaj kitne log aaye?', ctx: CTX }), e, { now: NOW, fetchImpl: good.fetchImpl })).json()).left, ASSIST_PER_DAY - 1);
+  day = e.WEB.sqlite.prepare("SELECT calls, failed FROM ai_usage WHERE kind = 'assist'").get();
+  assert.deepEqual([day.calls, day.failed], [1, 1]);
 });
 
 test(`a gym in its free trial (or unpaid, or before 0071) gets ${TRIAL_PER_DAY} asks a day; HQ's own number still wins`, async () => {
@@ -436,7 +450,7 @@ test('voice limits: 30 s, 1 MB, an empty clip, the owner only, 10 spoken minutes
   assert.equal((await go(10)).status, 200);
   const over = await go(1);
   assert.equal(over.status, 429);
-  assert.deepEqual(await over.json(), { reason: 'limit', error: LIMIT_WORDS });
+  assert.deepEqual(await over.json(), { reason: 'limit', error: VOICE_LIMIT_WORDS });
   // HQ gave this gym 11 minutes: one more minute today.
   e.WEB.sqlite.prepare("INSERT INTO assist_limits (gym_id, per_day, voice_minutes, set_at) VALUES ('gym-a', 50, 11, 'x')").run();
   assert.equal((await go(30)).status, 200);

@@ -122,6 +122,8 @@ export interface Turn {
   note: string;
   /** Why it failed (no internet, the daily limit ...). */
   fail: Line | null;
+  /** R-488: the fail line is a calm notice (the day's free questions are used up), not an error. */
+  notice?: boolean;
 }
 
 /** The language a message card starts in: what the AI chose, or the gym's own. */

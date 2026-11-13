@@ -15,6 +15,7 @@ import { getLang, t } from '../../lang/lang';
 import * as shopApi from '../../shop/api';
 import { saveDiet } from '../../shop/bodyApi';
 import { useCrm } from '../../store';
+import { noteFull, noteLeft } from '../allowance';
 import { askAssistant, rewriteMessage, writePlan as askForPlan, type AssistFail } from '../api';
 import { line } from '../catalogue';
 import { buildAssistContext } from '../context';
@@ -100,9 +101,12 @@ export function useConversation(key: string, data: PlanData, reload: () => Promi
       const r = await askAssistant(key, { text: request, spoken, lang, ctx });
       if (!r.ok) {
         hideIfOff(r);
-        updateTurn(id, (t) => ({ ...t, status: 'failed', fail: r.words }));
+        const full = r.reason === 'limit';
+        if (full) noteFull(data.today);
+        updateTurn(id, (t) => ({ ...t, status: 'failed', fail: r.words, notice: full }));
         return;
       }
+      noteLeft(data.today, r.left);
       const cards = cardsFor(r.actions, data, newId);
       updateTurn(id, (t) => ({
         ...t,
@@ -168,6 +172,8 @@ export function useConversation(key: string, data: PlanData, reload: () => Promi
       if (!msg || msg.rewrites >= 5) return;
       updateCard(turnId, card.id, (c) => (c.kind === 'draft' ? { ...c, status: 'saving', outcome: null } : c));
       const r = await rewriteMessage(key, msg.words, how);
+      if (r.ok) noteLeft(data.today, r.left);
+      else if (r.reason === 'limit') noteFull(data.today);
       if (!r.ok) {
         hideIfOff(r);
         updateCard(turnId, card.id, (c) => (c.kind === 'draft' ? { ...c, status: 'open', outcome: r.words } : c));
@@ -189,6 +195,8 @@ export function useConversation(key: string, data: PlanData, reload: () => Promi
       updateCard(turnId, card.id, (c) => (isWriter(c) ? { ...c, status: 'writing', outcome: null } : c));
       const body = planRequestBody(card.ask, gymExerciseList(data.snapshot.workoutPlans), planLang(data.gymLang));
       const r = await askForPlan(key, body);
+      if (r.ok) noteLeft(data.today, r.left);
+      else if (r.reason === 'limit') noteFull(data.today);
       if (!r.ok) {
         hideIfOff(r);
         updateCard(turnId, card.id, (c) => (isWriter(c) ? { ...c, status: c.plan ? 'written' : 'open', outcome: r.words } : c));
