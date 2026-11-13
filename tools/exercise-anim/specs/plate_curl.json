@@ -67,7 +67,7 @@
   "start": {
    "hands": {
     "L": {
-     "hand": "flat",
+     "hand": "cup",
      "axis": [
       0.0,
       0.804,
@@ -99,7 +99,7 @@
   "end": {
    "hands": {
     "L": {
-     "hand": "flat",
+     "hand": "cup",
      "axis": [
       0.0,
       -0.691,
@@ -129,5 +129,5 @@
    }
   }
  },
- "research": "One weight plate (r 0.225) held by its sides (3 and 9 o'clock) between two open, flat palms facing each other (hand 'flat'; library step 1: 'hold a weight plate by its sides'), plate face forward. Plate placed by place_fixtures palms mode (centre halfway between the palm centres; stills log prints the palm gap vs the plate's 0.45 m). START: arms straight down in front of the thighs (elev 2.5 / plane 35.0 / elbow 35.0). END: elbows kept at the sides, curled until the plate is at the chest (elev 7.5 / plane 30.0 / elbow 130.0; library step 2). Facts: research/plate_curl.json."
+ "research": "One weight plate (r 0.225) held by its sides (3 and 9 o'clock) between two open palms facing each other, fingers curled a little round the rim (hand 'cup'; 13 Nov retry: round 2 flat hands with straight fingers read as not holding the plate; library step 1: 'hold a weight plate by its sides'), plate face forward. Plate placed by place_fixtures palms mode (centre halfway between the palm centres; stills log prints the palm gap vs the plate's 0.45 m). START: arms straight down in front of the thighs (elev 2.5 / plane 35.0 / elbow 35.0). END: elbows kept at the sides, curled until the plate is at the chest (elev 7.5 / plane 30.0 / elbow 130.0; library step 2). Facts: research/plate_curl.json."
 }

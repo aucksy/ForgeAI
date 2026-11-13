@@ -67,7 +67,7 @@
   "start": {
    "hands": {
     "L": {
-     "hand": "flat",
+     "hand": "cup",
      "axis": [
       0.0,
       0.804,
@@ -99,7 +99,7 @@
   "end": {
    "hands": {
     "L": {
-     "hand": "flat",
+     "hand": "cup",
      "axis": [
       0.0,
       -0.302,
@@ -129,5 +129,5 @@
    }
   }
  },
- "research": "Same plate-between-the-palms hold as plate_curl (library step 1: stand tall, plate held by its sides, arms down). END: straight arms raised in front to eye level (elev 90.0 / plane 87.5 / elbow 17.5: fists ~10 cm above the shoulders, elbows soft, library step 2); the plate stays upright with its face forward, at eye level. Facts: research/plate_front_raise.json."
+ "research": "Same plate-between-the-palms hold as plate_curl (hand 'cup', 13 Nov retry) (library step 1: stand tall, plate held by its sides, arms down). END: straight arms raised in front to eye level (elev 90.0 / plane 87.5 / elbow 17.5: fists ~10 cm above the shoulders, elbows soft, library step 2); the plate stays upright with its face forward, at eye level. Facts: research/plate_front_raise.json."
 }
