@@ -76,7 +76,8 @@ test('schemas fit strict tool use: closed objects, nothing optional, no unions, 
   assert.ok(strict <= STRICT_LIMITS.tools, `${strict} strict tools`);
   assert.ok(optional <= STRICT_LIMITS.optional, `${optional} optional properties`);
   assert.ok(unions <= STRICT_LIMITS.unions, `${unions} union properties`);
-  assert.equal(toolsForClaude().find((t) => t.name === 'cannot_do').strict, undefined);
+  // R-483 (13 Nov 2026): no tool is sent strict; all of them together made a grammar Claude refused (400).
+  assert.ok(toolsForClaude().every((t) => !('strict' in t)), 'no strict tools in the ask call');
 });
 
 // ------------------------------------------------------------------ pages

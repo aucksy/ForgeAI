@@ -426,14 +426,14 @@ export function creditsFor(actions) {
   return (actions ?? []).reduce((sum, a) => sum + (TOOL_CREDITS[a?.tool] ?? 0), 0);
 }
 
-/** The tools in the shape the Messages API takes (name, description, input_schema, strict). */
+/**
+ * The tools in the shape the Messages API takes (name, description, input_schema). NOT strict (13 Nov 2026,
+ * R-483): live, Claude refused every request with 400 "The compiled grammar is too large ... reduce the number of
+ * strict tools". The per-count limits above were all met; the grammar SIZE is a limit no offline test can see.
+ * The schemas stay closed and fully required, and our own checks (plan.ts) still validate every field.
+ */
 export function toolsForClaude() {
-  return TOOLS.map((t) => ({
-    name: t.name,
-    description: t.description,
-    input_schema: t.input_schema,
-    ...(t.strict === false ? {} : { strict: true }),
-  }));
+  return TOOLS.map((t) => ({ name: t.name, description: t.description, input_schema: t.input_schema }));
 }
 
 // ---------------------------------------------------------------- "Try saying" examples

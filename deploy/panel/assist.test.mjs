@@ -223,7 +223,7 @@ test('the owner asks: Claude gets masked words and the catalogue, the answer com
   assert.equal(c.body.model, 'claude-haiku-5-5');
   assert.deepEqual(c.body.tool_choice, { type: 'any' });
   assert.equal(c.body.tools.length, TOOLS.length);
-  assert.equal(c.body.tools.filter((t) => t.strict).length, TOOLS.length - 1);
+  assert.equal(c.body.tools.filter((t) => t.strict).length, 0); // R-483: strict tools made a grammar Claude refused
   assert.deepEqual(c.body.system[0].cache_control, { type: 'ephemeral' });
   const sent = JSON.stringify(c.body);
   assert.ok(sent.includes('[PHONE_1]'));
