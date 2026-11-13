@@ -1,0 +1,189 @@
+{
+ "format": "v1-stills",
+ "exercise": {
+  "key": "cable_pullover",
+  "name": "Cable Pullover",
+  "equipment": "cable",
+  "library_primary": [
+   "lats"
+  ],
+  "library_secondary": [
+   "triceps"
+  ],
+  "library_steps": [
+   "Clip a rope to the high cable, step back and lean forward a little.",
+   "Hold the rope up in front of your head with arms nearly straight.",
+   "Pull the rope down in an arc to your thighs, then return slowly."
+  ],
+  "status": "draft",
+  "version": 1,
+  "researched_on": "2026-11-13",
+  "one_line_summary": "Facing a high pulley, leaning ~20 deg forward with a rope held in both hands; nearly straight arms sweep from up in front of the head down in an arc to the thighs. Lats do the work, the triceps (long head) helps.",
+  "evidence_grade": "C"
+ },
+ "setup": [
+  {
+   "item": "pulley",
+   "target": "High (~2 m), athlete about a metre back.",
+   "tolerance": "1.8-2.1 m",
+   "why": "Library step.",
+   "source_ids": [
+    "S2"
+   ],
+   "grade": "C"
+  },
+  {
+   "item": "trunk",
+   "target": "Leaning ~20 deg forward from the hips, back flat.",
+   "tolerance": "10-30",
+   "why": "Library step.",
+   "source_ids": [
+    "S2"
+   ],
+   "grade": "C"
+  },
+  {
+   "item": "arms",
+   "target": "Nearly straight (elbow ~12), fixed.",
+   "tolerance": "under 20",
+   "why": "Library step.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "C"
+  }
+ ],
+ "movement": [
+  {
+   "joint": "shoulder",
+   "measure": "arm raised from hanging, forward",
+   "start": "150 deg (in front of the head)",
+   "end": "18 deg (at the thighs)",
+   "start_num": 150,
+   "end_num": 18,
+   "tolerance": "start 135-160; end 0-25",
+   "source_ids": [
+    "S1",
+    "S2"
+   ],
+   "grade": "B"
+  },
+  {
+   "joint": "elbow",
+   "measure": "bend",
+   "start": "12",
+   "end": "12",
+   "start_num": 12,
+   "end_num": 12,
+   "tolerance": "under 20",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "C"
+  }
+ ],
+ "muscles": [
+  {
+   "muscle": "Lats",
+   "anatomy": "Latissimus dorsi",
+   "mask_key": "lats",
+   "tier": "primary",
+   "glow": 1.0,
+   "emg": "Latissimus activity in the pullover depends on the shoulder angle and where the load pulls from (S1, S2); the cable from above loads shoulder extension through the range the lats work in (S2).",
+   "role": "Pull the arm down and back; library primary.",
+   "surface": "Side of the back under the arm.",
+   "source_ids": [
+    "S1",
+    "S2"
+   ],
+   "grade": "C"
+  },
+  {
+   "muscle": "Triceps",
+   "anatomy": "Triceps brachii, long head",
+   "mask_key": "triceps",
+   "tier": "secondary",
+   "glow": 0.35,
+   "emg": "not measured (two-joint long head extends the shoulder)",
+   "role": "Helps pull the arm down; library secondary.",
+   "surface": "Back of the upper arm.",
+   "source_ids": [],
+   "grade": "D"
+  },
+  {
+   "muscle": "Chest",
+   "anatomy": "Pectoralis major",
+   "mask_key": "none",
+   "tier": "stabiliser",
+   "glow": 0,
+   "emg": "Pectoralis was more active than the lats in the LYING barbell pullover (S1).",
+   "role": "Helps at the top of the arc; not lit (library does not list it).",
+   "surface": "Front of the chest.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  }
+ ],
+ "tempo": null,
+ "mistakes": [
+  {
+   "mistake": "Bending the elbows",
+   "what_it_looks_like": "Turns the pullover into a pushdown.",
+   "why_it_matters": "Arms stay nearly straight.",
+   "source_ids": [
+    "S1"
+   ]
+  },
+  {
+   "mistake": "Rounding the back",
+   "what_it_looks_like": "Spine curls to finish.",
+   "why_it_matters": "Library: lean a little, back flat.",
+   "source_ids": [
+    "S2"
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "S1",
+   "citation": "Marchetti PH, Uchida MC. 2011. Effects of the pullover exercise on the pectoralis major and latissimus dorsi muscles as evaluated by EMG. J Appl Biomech 27(4):380-384.",
+   "url": "https://europepmc.org/article/MED/21975179",
+   "type": "emg",
+   "what_it_gave": "Lying barbell pullover: pectoralis major more active than latissimus dorsi; activity depends on the external force lever arm (where the load pulls from)."
+  },
+  {
+   "id": "S2",
+   "citation": "Teixeira LFM, Gomes WA, da Silva JJ, Magalhaes RA, Marchetti PH. 2022. Differences between pullover and pulldown exercises on maximal isometric force and myoelectric activity in recreationally-trained men. Int J Exerc Sci 15(4):797-807.",
+   "url": "https://europepmc.org/article/MED/35992501",
+   "type": "emg",
+   "what_it_gave": "Pullover vs pulldown at five shoulder angles: latissimus dorsi, pectoralis major and posterior deltoid activity depends on the shoulder angle."
+  }
+ ],
+ "clip_check": [
+  {
+   "check": "Start: straight arms up in front of the head",
+   "target": "elev 135-160",
+   "measured": "",
+   "pass": ""
+  },
+  {
+   "check": "End: hands at the thighs",
+   "target": "elev 0-25",
+   "measured": "",
+   "pass": ""
+  },
+  {
+   "check": "Both fists closed on the rope; rope to the high pulley in front",
+   "target": "yes",
+   "measured": "",
+   "pass": ""
+  },
+  {
+   "check": "Lats strongest red, triceps light",
+   "target": "yes",
+   "measured": "",
+   "pass": ""
+  }
+ ]
+}

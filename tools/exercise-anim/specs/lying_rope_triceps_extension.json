@@ -1,0 +1,208 @@
+{
+ "key": "lying_rope_triceps_extension",
+ "name": "Lying Rope Triceps Extension",
+ "primary": [
+  "triceps"
+ ],
+ "secondary": [],
+ "scene": {
+  "bench": {
+   "deg": 0
+  },
+  "cables": [
+   {
+    "loc": [
+     0,
+     1.65
+    ],
+    "pulley_h": 0.4,
+    "face": [
+     0,
+     -1
+    ]
+   }
+  ]
+ },
+ "props": {
+  "rope": {
+   "type": "cable",
+   "handle": "rope",
+   "column": 0,
+   "rope_len": 0.3
+  }
+ },
+ "camera": {
+  "yaw": 70,
+  "pitch": 18,
+  "lens": 50,
+  "fill": 0.9,
+  "res": 640,
+  "samples": 20
+ },
+ "timing": {
+  "fps": 30,
+  "keys": [
+   [
+    0,
+    "start"
+   ],
+   [
+    1,
+    "end"
+   ],
+   [
+    2,
+    "start"
+   ]
+  ]
+ },
+ "defaults": {
+  "bones": {
+   "spine05": [
+    -1,
+    0,
+    0
+   ],
+   "spine04": [
+    -1,
+    0,
+    0
+   ],
+   "spine03": [
+    -1,
+    0,
+    0
+   ],
+   "spine02": [
+    -1,
+    0,
+    0
+   ],
+   "neck01": [
+    8,
+    0,
+    0
+   ],
+   "head": [
+    6,
+    0,
+    0
+   ]
+  }
+ },
+ "poses": {
+  "start": {
+   "root": {
+    "loc": [
+     0,
+     0.05,
+     0.55
+    ],
+    "rot": [
+     -90,
+     0,
+     0
+    ]
+   },
+   "feet": {
+    "L": {
+     "at": [
+      0.3,
+      -0.4,
+      0.075
+     ],
+     "rot": [
+      0,
+      0,
+      15
+     ]
+    }
+   },
+   "knees": {
+    "L": [
+     0.55,
+     -1.0,
+     0.9
+    ]
+   },
+   "hands": {
+    "L": {
+     "prop": "rope",
+     "axis": [
+      0,
+      -0.94,
+      -0.34
+     ],
+     "arm": {
+      "elev": 100,
+      "plane": 90,
+      "elbow": 100,
+      "bend": [
+       -0.12,
+       0,
+       1
+      ],
+      "tilt": 0
+     }
+    }
+   }
+  },
+  "end": {
+   "root": {
+    "loc": [
+     0,
+     0.05,
+     0.55
+    ],
+    "rot": [
+     -90,
+     0,
+     0
+    ]
+   },
+   "feet": {
+    "L": {
+     "at": [
+      0.3,
+      -0.4,
+      0.075
+     ],
+     "rot": [
+      0,
+      0,
+      15
+     ]
+    }
+   },
+   "knees": {
+    "L": [
+     0.55,
+     -1.0,
+     0.9
+    ]
+   },
+   "hands": {
+    "L": {
+     "prop": "rope",
+     "axis": [
+      0,
+      -0.17,
+      0.98
+     ],
+     "arm": {
+      "elev": 100,
+      "plane": 90,
+      "elbow": 5,
+      "bend": [
+       -0.12,
+       0,
+       1
+      ],
+      "tilt": 0
+     }
+    }
+   }
+  }
+ },
+ "research": "Same body and pulley as cable_skull_crusher with a rope, neutral grip (palms facing each other). Library order: start with the rope behind the head (elbow 100, thumbs pointing back toward the pulley: axis [0,-0.94,-0.34], as in the passed single-arm lying extension end), end with the arms straight up (elbow 5, axis [0,-0.17,0.98]). Upper arms point at the ceiling (elev 100 / plane 90) throughout."
+}

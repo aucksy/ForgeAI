@@ -18,7 +18,7 @@
   "status": "draft",
   "version": 1,
   "researched_on": "2026-11-13",
-  "one_line_summary": "Standing facing a low pulley, a rope held in both fists with a neutral grip; elbows stay by the sides while they bend from ~12 to ~122 deg, the palms turning partly up and the rope ends pulled apart at the top. Biceps does the work, brachioradialis helps.",
+  "one_line_summary": "Standing facing a low pulley, a rope held in both fists with a neutral grip; elbows stay by the sides while they bend from ~12 to ~110 deg, the palms turning partly up and the rope ends pulled apart at the top. Biceps does the work, brachioradialis helps.",
   "evidence_grade": "B"
  },
  "setup": [
@@ -48,10 +48,10 @@
    "joint": "elbow",
    "measure": "bend, 0 = straight",
    "start": "12 deg",
-   "end": "122 deg",
+   "end": "110 deg",
    "start_num": 12,
-   "end_num": 122,
-   "tolerance": "start 5-20; end 110-135",
+   "end_num": 110,
+   "tolerance": "start 5-20; end 105-130",
    "source_ids": [
     "S1",
     "S3"
@@ -180,7 +180,7 @@
   },
   {
    "check": "End: fists at the shoulders, ends apart",
-   "target": "elbow 110-135",
+   "target": "elbow 105-130",
    "measured": "",
    "pass": ""
   },

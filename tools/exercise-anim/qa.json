@@ -314,5 +314,89 @@
     "qa": "fail",
     "reason": "end: the bar hangs ~25 cm past the head and the upper arms cover the face in both tries (elev 135/elbow 100, then 120/105); same flat-bench offset as reverse_grip_bench_press",
     "tries": 2
+  },
+  "rope_triceps_pushdown": {
+    "rendered": "2026-11-13",
+    "run": "43448776510",
+    "qa": "fail",
+    "reason": "end: the rope runs forward out of each fist with its end cap behind the hand against the back of the thigh; at lockout the rope should run down through the fist (thumb side up, end cap below the little finger). Next: end axis index-up (13 Nov, try 2; try 1 run 43446766569)",
+    "tries": 2
+  },
+  "single_arm_cable_curl": {
+    "rendered": "2026-11-13",
+    "run": "43448776510",
+    "qa": "fail",
+    "reason": "pulley sits in front of the working foot but the camera (front-left) puts the post on the far side, so the cable reads as crossing both legs and the stomach to the wrong side. Next: camera from the front-right (13 Nov, try 2; try 1 run 43446766569)",
+    "tries": 2
+  },
+  "cable_shrug": {
+    "rendered": "2026-11-13",
+    "run": "43448776510",
+    "qa": "fail",
+    "reason": "camera behind him hides the cable completely in both pictures; it reads as a loose bar next to a post. Next: camera from the front-side (13 Nov, try 2; try 1 run 43446766569)",
+    "tries": 2
+  },
+  "cable_hip_abduction": {
+    "rendered": "2026-11-13",
+    "run": "43448776510",
+    "qa": "fail",
+    "reason": "camera angle lays the ankle cable over the toes of the standing foot in both pictures (it really passes 5+ cm in front). Next: higher camera (pitch ~22) (13 Nov, try 2; try 1 run 43446766569)",
+    "tries": 2
+  },
+  "cable_front_raise": {
+    "rendered": "2026-11-13",
+    "run": "43448776510",
+    "qa": "fail",
+    "reason": "end: from the front-right camera the cable reads as running across the near thigh and shin (it passes between the legs) (13 Nov, try 1; retry queued)",
+    "tries": 1
+  },
+  "cable_reverse_curl": {
+    "rendered": "2026-11-13",
+    "run": "43448776510",
+    "qa": "fail",
+    "reason": "end: the far bar end reads as running into the post (13 Nov, try 1; retry queued)",
+    "tries": 1
+  },
+  "rope_cable_curl": {
+    "rendered": "2026-11-13",
+    "run": "43448776510",
+    "qa": "fail",
+    "reason": "end: the near rope end cap presses on the collarbone (13 Nov, try 1; retry queued)",
+    "tries": 1
+  },
+  "single_arm_cable_hammer_curl": {
+    "rendered": "2026-11-13",
+    "run": "43448776510",
+    "qa": "fail",
+    "reason": "end: the cable runs 7 mm into the forearm (clearance -0.007 m) (13 Nov, try 1; retry queued)",
+    "tries": 1
+  },
+  "behind_the_back_cable_curl": {
+    "rendered": "2026-11-13",
+    "run": "43448776510",
+    "qa": "fail",
+    "reason": "biceps shows only as a thin strip from the side camera (13 Nov, try 1; retry queued)",
+    "tries": 1
+  },
+  "single_arm_cable_reverse_fly": {
+    "rendered": "2026-11-13",
+    "run": "43448776510",
+    "qa": "fail",
+    "reason": "start: the arm across the chest is hidden behind the body from the back camera (13 Nov, try 1; retry queued)",
+    "tries": 1
+  },
+  "cross_body_cable_extension": {
+    "rendered": "2026-11-13",
+    "run": "43448776510",
+    "qa": "fail",
+    "reason": "start: the forearm and handle are hidden behind the body from the back camera (13 Nov, try 1; retry queued)",
+    "tries": 1
+  },
+  "single_arm_cable_fly": {
+    "rendered": "2026-11-13",
+    "run": "43448776510",
+    "qa": "fail",
+    "reason": "end: the hand stops in front of the left chest instead of crossing the middle; start handle almost touches the pulley (13 Nov, try 1; retry queued)",
+    "tries": 1
   }
 }

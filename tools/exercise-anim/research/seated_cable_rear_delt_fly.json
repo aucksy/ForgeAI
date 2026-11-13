@@ -1,0 +1,159 @@
+{
+ "format": "v1-stills",
+ "exercise": {
+  "key": "seated_cable_rear_delt_fly",
+  "name": "Seated Cable Rear Delt Fly",
+  "equipment": "cable",
+  "library_primary": [
+   "rear_delts"
+  ],
+  "library_secondary": [
+   "upper_back"
+  ],
+  "library_steps": [
+   "Sit on a bench between two low pulleys and lean your chest forward.",
+   "Hold each handle in the opposite hand, cables crossing in front of your legs.",
+   "Raise your arms out to the sides up to shoulder height.",
+   "Lower them slowly back down."
+  ],
+  "status": "draft",
+  "version": 1,
+  "researched_on": "2026-11-13",
+  "one_line_summary": "Seated on a bench end leaning ~45 deg forward over the thighs, each hand holding the handle from the opposite low pulley so the cables cross in front of the legs; the softly bent arms rise from under the chest out to the sides at shoulder height. Rear delts do the work, the middle trapezius/rhomboids help.",
+  "evidence_grade": "B"
+ },
+ "setup": [
+  {
+   "item": "pulleys",
+   "target": "Both low, out to the sides and forward of the feet.",
+   "tolerance": "0-0.3 m",
+   "why": "Library step.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "C"
+  },
+  {
+   "item": "trunk",
+   "target": "Seated, chest leaning ~45 deg forward.",
+   "tolerance": "35-60",
+   "why": "Library step.",
+   "source_ids": [
+    "S2"
+   ],
+   "grade": "C"
+  }
+ ],
+ "movement": [
+  {
+   "joint": "shoulder (horizontal)",
+   "measure": "arm angle out from hanging",
+   "start": "hands under the chest",
+   "end": "out to the sides at shoulder height",
+   "start_num": 0,
+   "end_num": 90,
+   "tolerance": "end 80-95",
+   "source_ids": [
+    "S1",
+    "S2"
+   ],
+   "grade": "B"
+  },
+  {
+   "joint": "elbow",
+   "measure": "bend",
+   "start": "35",
+   "end": "15",
+   "start_num": 35,
+   "end_num": 15,
+   "tolerance": "10-40",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "C"
+  }
+ ],
+ "muscles": [
+  {
+   "muscle": "Rear delt",
+   "anatomy": "Deltoideus, pars spinalis",
+   "mask_key": "rear_delts",
+   "tier": "primary",
+   "glow": 1.0,
+   "emg": "Horizontal abduction (arm moving out and back) gave among the highest posterior deltoid activity (S1).",
+   "role": "Pulls the arm out and back; what the exercise is for.",
+   "surface": "Back of the shoulder.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  },
+  {
+   "muscle": "Upper back",
+   "anatomy": "Middle trapezius, rhomboids",
+   "mask_key": "upper_back",
+   "tier": "secondary",
+   "glow": 0.35,
+   "emg": "Shoulder horizontal extension gave the highest middle-trapezius EMG of 10 exercises (S2).",
+   "role": "Draws the shoulder blades together; library secondary.",
+   "surface": "Between the shoulder blades.",
+   "source_ids": [
+    "S2"
+   ],
+   "grade": "B"
+  }
+ ],
+ "tempo": null,
+ "mistakes": [
+  {
+   "mistake": "Sitting up",
+   "what_it_looks_like": "Trunk rises as the arms lift.",
+   "why_it_matters": "Keeps the work off the rear delts.",
+   "source_ids": [
+    "S1"
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "S1",
+   "citation": "Reinold MM, Wilk KE, Fleisig GS, et al. 2004. Electromyographic analysis of the rotator cuff and deltoid musculature during common shoulder external rotation exercises. J Orthop Sports Phys Ther 34(7):385-394.",
+   "url": "https://europepmc.org/article/MED/15296366",
+   "type": "emg",
+   "what_it_gave": "Prone horizontal abduction (arm moving out and back at shoulder height) gave among the highest posterior deltoid activity of the exercises tested."
+  },
+  {
+   "id": "S2",
+   "citation": "Ekstrom RA, Donatelli RA, Soderberg GL. 2003. Surface electromyographic analysis of exercises for the trapezius and serratus anterior muscles. J Orthop Sports Phys Ther 33(5):247-258.",
+   "url": "https://europepmc.org/article/MED/12774999",
+   "type": "emg",
+   "what_it_gave": "10 exercises, 30 subjects: the shrug gave the highest upper-trapezius EMG; shoulder horizontal extension (arm moving back at shoulder height) the highest middle trapezius; the prone overhead raise in a Y the highest lower trapezius."
+  }
+ ],
+ "clip_check": [
+  {
+   "check": "Start: hands under the chest, cables crossing",
+   "target": "yes",
+   "measured": "",
+   "pass": ""
+  },
+  {
+   "check": "End: arms out at shoulder height",
+   "target": "elev 80-95",
+   "measured": "",
+   "pass": ""
+  },
+  {
+   "check": "Both fists closed on the handles; cables clear of the legs",
+   "target": "clearance > 0",
+   "measured": "",
+   "pass": ""
+  },
+  {
+   "check": "Rear delts strongest red",
+   "target": "yes",
+   "measured": "",
+   "pass": ""
+  }
+ ]
+}

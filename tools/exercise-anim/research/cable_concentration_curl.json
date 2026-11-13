@@ -1,0 +1,165 @@
+{
+ "format": "v1-stills",
+ "exercise": {
+  "key": "cable_concentration_curl",
+  "name": "Cable Concentration Curl",
+  "equipment": "cable",
+  "library_primary": [
+   "biceps"
+  ],
+  "library_secondary": [
+   "forearms"
+  ],
+  "library_steps": [
+   "Sit or kneel by a low pulley with your elbow braced on your thigh.",
+   "Curl the handle up to your shoulder without moving your upper arm.",
+   "Lower slowly, finish your reps, then switch arms."
+  ],
+  "status": "draft",
+  "version": 1,
+  "researched_on": "2026-11-13",
+  "one_line_summary": "Seated on a bench end leaning forward, the back of one upper arm braced on the inside of the thigh; the hand curls a D-handle from a low pulley up toward the shoulder, elbow ~15 to ~125 deg, without moving the upper arm. Biceps does the work; the other hand rests on the knee.",
+  "evidence_grade": "B"
+ },
+ "setup": [
+  {
+   "item": "support",
+   "target": "Back of the upper arm on the inner thigh near the knee.",
+   "tolerance": "-",
+   "why": "Library step; braced upper arm like the preacher position (S1).",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "C"
+  },
+  {
+   "item": "pulley",
+   "target": "Low, in front of the working-side foot.",
+   "tolerance": "0-0.3 m",
+   "why": "Library step.",
+   "source_ids": [
+    "S2"
+   ],
+   "grade": "C"
+  }
+ ],
+ "movement": [
+  {
+   "joint": "elbow",
+   "measure": "bend, 0 = straight",
+   "start": "15 deg",
+   "end": "125 deg",
+   "start_num": 15,
+   "end_num": 125,
+   "tolerance": "start 5-25; end 110-135",
+   "source_ids": [
+    "S1",
+    "S2"
+   ],
+   "grade": "B"
+  },
+  {
+   "joint": "upper arm",
+   "measure": "braced on the thigh",
+   "start": "still",
+   "end": "still",
+   "start_num": 0,
+   "end_num": 0,
+   "tolerance": "change under 10",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "C"
+  }
+ ],
+ "muscles": [
+  {
+   "muscle": "Biceps",
+   "anatomy": "Biceps brachii",
+   "mask_key": "biceps",
+   "tier": "primary",
+   "glow": 1.0,
+   "emg": "Biceps long head at least 50 % of max in every curl position incl. braced (preacher) (S1); main elbow flexor (S2).",
+   "role": "Bends the elbow; what the exercise is for.",
+   "surface": "Front of the upper arm.",
+   "source_ids": [
+    "S1",
+    "S2"
+   ],
+   "grade": "B"
+  },
+  {
+   "muscle": "Brachioradialis (forearm)",
+   "anatomy": "Brachioradialis",
+   "mask_key": "forearms",
+   "tier": "secondary",
+   "glow": 0.35,
+   "emg": "Active in curls (S2).",
+   "role": "Helps bend the elbow; library secondary.",
+   "surface": "Thumb side of the upper forearm.",
+   "source_ids": [
+    "S2"
+   ],
+   "grade": "B"
+  }
+ ],
+ "tempo": null,
+ "mistakes": [
+  {
+   "mistake": "Upper arm lifting off the thigh",
+   "what_it_looks_like": "Elbow leaves the thigh as the hand rises.",
+   "why_it_matters": "The brace is the point of the exercise.",
+   "source_ids": [
+    "S1"
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "S1",
+   "citation": "Oliveira LF, Matta TT, Alves DS, Garcia MA, Vieira TM. 2009. Effect of the shoulder position on the biceps brachii EMG in different dumbbell curls. J Sports Sci Med 8(1):24-29.",
+   "url": "https://europepmc.org/article/MED/24150552",
+   "type": "emg",
+   "what_it_gave": "Standing, incline (shoulder extended) and preacher curls: biceps long head at least 50 % of max RMS in all; shoulder position shifts where in the range the biceps works hardest."
+  },
+  {
+   "id": "S2",
+   "citation": "Marcolin G, Panizzolo FA, Petrone N, et al. 2018. Differences in electromyographic activity of biceps brachii and brachioradialis while performing three variants of curl. PeerJ 6:e5165.",
+   "url": "https://europepmc.org/article/MED/30013836",
+   "type": "emg",
+   "what_it_gave": "Straight bar, EZ bar and dumbbell curls at 65 % 1RM: biceps and brachioradialis both clearly active; elbow range ~117 deg."
+  }
+ ],
+ "clip_check": [
+  {
+   "check": "Upper arm resting on the inner thigh in both pictures",
+   "target": "yes",
+   "measured": "",
+   "pass": ""
+  },
+  {
+   "check": "Start nearly straight, end hand at the shoulder",
+   "target": "15 / 125",
+   "measured": "",
+   "pass": ""
+  },
+  {
+   "check": "Fist closed on the handle; cable to the low pulley",
+   "target": "yes",
+   "measured": "",
+   "pass": ""
+  },
+  {
+   "check": "Free fist on the knee",
+   "target": "yes",
+   "measured": "",
+   "pass": ""
+  },
+  {
+   "check": "Biceps strongest red, working arm only",
+   "target": "highlight_side L",
+   "measured": "",
+   "pass": ""
+  }
+ ]
+}

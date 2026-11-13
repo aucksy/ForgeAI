@@ -43,9 +43,10 @@ QA = os.path.join(HERE, "qa.json")
 
 # Equipment the pipeline can build today (pipeline/forgeanim/props.py): dumbbells, a straight barbell (held by both hands), an adjustable bench (flat to
 # upright), a plain box (step / plyo box / wall block) and the floor. Anything else waits for a new prop.
-READY_EQUIPMENT = {"dumbbell", "bodyweight", "barbell", "machine", "other"}   # barbell: straight bar; machine: own plain geometry (recipe "machine" parts), 13 Nov 2026
+READY_EQUIPMENT = {"dumbbell", "bodyweight", "barbell", "machine", "other", "cable"}   # barbell: straight bar; machine: own plain geometry (recipe "machine" parts), 13 Nov 2026
 # "other" (13 Nov 2026): props_other.py builds a decline bench, back-extension bench, stability ball, pull-up / lean bar,
 # parallettes, a post, weight plates, a sled and a kettlebell; the "other" keys it cannot show honestly are in NEEDS.
+# cable (13 Nov 2026): props.py cable_column + D-handle / straight bar / rope / ankle cuff.
 # Dumbbell / bodyweight keys that still need a prop the pipeline does not have.
 NEEDS = {
     "weighted_push_up": "weight plate on the back",
@@ -75,6 +76,9 @@ NEEDS = {
     "decline_ez_bar_skull_crusher": "EZ bar and decline bench", "barbell_spider_curl": "chest-down incline bench set-up",
     "reverse_preacher_curl": "preacher bench", "reverse_barbell_wrist_curl": "a wrist that bends",
     "behind_the_back_wrist_curl": "a wrist that bends",
+    # cable keys that need more than the cable column (13 Nov 2026)
+    "cable_preacher_curl": "preacher bench", "single_arm_cable_preacher_curl": "preacher bench",
+    "cable_woodchop": "two hands stacked on one handle (the rig has closed fists only; one fist cannot wrap over the other)",
     "stomach_vacuum": "a belly that draws in (the rig has no per-pose belly shape; research/stomach_vacuum.json)",
 }
 

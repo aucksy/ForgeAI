@@ -1,0 +1,168 @@
+{
+ "format": "v1-stills",
+ "exercise": {
+  "key": "incline_cable_triceps_extension",
+  "name": "Incline Cable Triceps Extension",
+  "equipment": "cable",
+  "library_primary": [
+   "triceps"
+  ],
+  "library_secondary": [],
+  "library_steps": [
+   "Set an incline bench with its backrest facing a low pulley.",
+   "Lie back holding a short bar behind your head, elbows pointing up.",
+   "Straighten your arms overhead, then let the bar return slowly behind your head."
+  ],
+  "status": "draft",
+  "version": 1,
+  "researched_on": "2026-11-13",
+  "one_line_summary": "Lying on a 30 deg incline bench with the backrest toward a low pulley, a short bar held behind the head with elbows pointing up; the elbows straighten from ~95 deg to straight while the upper arms stay still. Triceps (long head stretched overhead) does the work.",
+  "evidence_grade": "B"
+ },
+ "setup": [
+  {
+   "item": "bench",
+   "target": "30 deg incline, backrest toward the pulley.",
+   "tolerance": "20-45",
+   "why": "Library step.",
+   "source_ids": [
+    "S2"
+   ],
+   "grade": "C"
+  },
+  {
+   "item": "upper arms",
+   "target": "Up past the head, elbows pointing up.",
+   "tolerance": "elev 110-130",
+   "why": "Overhead arm position as trained in S1.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  }
+ ],
+ "movement": [
+  {
+   "joint": "elbow",
+   "measure": "bend, 0 = straight",
+   "start": "95 deg (bar behind the head)",
+   "end": "5 deg (arms straight)",
+   "start_num": 95,
+   "end_num": 5,
+   "tolerance": "bent 90-135; straight 0-15",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  },
+  {
+   "joint": "shoulder",
+   "measure": "upper arm position",
+   "start": "fixed",
+   "end": "fixed",
+   "start_num": 0,
+   "end_num": 0,
+   "tolerance": "change under 10 deg",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  }
+ ],
+ "muscles": [
+  {
+   "muscle": "Triceps",
+   "anatomy": "Triceps brachii (long, lateral, medial heads)",
+   "mask_key": "triceps",
+   "tier": "primary",
+   "glow": 1.0,
+   "emg": "Cable elbow extensions with the arm overhead grew all three heads, the long head ~1.5x more than with the arm by the side (S1); all heads active in cable extensions (S2).",
+   "role": "Straightens the elbow; what the exercise is for.",
+   "surface": "Back of the upper arm.",
+   "source_ids": [
+    "S1",
+    "S2"
+   ],
+   "grade": "B"
+  },
+  {
+   "muscle": "Forearm grip",
+   "anatomy": "Wrist and finger flexors",
+   "mask_key": "forearms",
+   "tier": "stabiliser",
+   "glow": 0,
+   "emg": "not measured",
+   "role": "Hold the handle.",
+   "surface": "Front of the forearm.",
+   "source_ids": [],
+   "grade": "D"
+  }
+ ],
+ "tempo": null,
+ "mistakes": [
+  {
+   "mistake": "Upper arms move",
+   "what_it_looks_like": "Elbows drift out or forward as the arms straighten.",
+   "why_it_matters": "Turns it into a press/pullover; the elbow should be the only joint moving (S1 protocol).",
+   "source_ids": [
+    "S1"
+   ]
+  },
+  {
+   "mistake": "Partial range",
+   "what_it_looks_like": "Elbows never bend past ~90 deg.",
+   "why_it_matters": "S1 trained the full 90-0 deg range.",
+   "source_ids": [
+    "S1"
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "S1",
+   "citation": "Maeo S, Wu Y, Huang M, et al. 2023. Triceps brachii hypertrophy is substantially greater after elbow extension training performed in the overhead versus neutral arm position. Eur J Sport Sci 23(7):1240-1250.",
+   "url": "https://europepmc.org/article/MED/35819335",
+   "type": "biomechanics",
+   "what_it_gave": "Cable-machine elbow extensions (90-0 deg) with the arm overhead vs by the side (neutral, pushdown-like), 12 weeks: all three triceps heads grew in both; the long head grew ~1.5x more overhead."
+  },
+  {
+   "id": "S2",
+   "citation": "Hussain J, Sundaraj K, Subramaniam ID, Lam CK. 2020. Muscle fatigue in the three heads of triceps brachii during intensity and speed variations of triceps push-down exercise. Front Physiol 11:112.",
+   "url": "https://europepmc.org/article/MED/32153422",
+   "type": "emg",
+   "what_it_gave": "Cable triceps push-down to failure, sEMG of the long, lateral and medial heads: all three heads work and fatigue at comparable rates."
+  }
+ ],
+ "clip_check": [
+  {
+   "check": "Start: bar behind the head",
+   "target": "elbow 85-105",
+   "measured": "",
+   "pass": ""
+  },
+  {
+   "check": "End: arms straight",
+   "target": "elbow 0-15",
+   "measured": "",
+   "pass": ""
+  },
+  {
+   "check": "Upper arms still",
+   "target": "change < 10",
+   "measured": "",
+   "pass": ""
+  },
+  {
+   "check": "Both fists closed on the bar; cable back to the low pulley clear of the head and bench",
+   "target": "clearance > 0",
+   "measured": "",
+   "pass": ""
+  },
+  {
+   "check": "Triceps the only red",
+   "target": "yes",
+   "measured": "",
+   "pass": ""
+  }
+ ]
+}

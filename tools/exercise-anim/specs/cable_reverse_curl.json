@@ -12,7 +12,7 @@
    {
     "loc": [
      0,
-     -0.62
+     -0.75
     ],
     "pulley_h": 0.12,
     "face": [
@@ -31,7 +31,7 @@
   }
  },
  "camera": {
-  "yaw": -50,
+  "yaw": -30,
   "pitch": 8,
   "lens": 50,
   "fill": 0.9,
@@ -180,5 +180,5 @@
    }
   }
  },
- "research": "Standing facing a low pulley, straight bar held palms down (axis [-1,0,0]) about shoulder width, upper arms by the sides (elev 10 / plane 70 so the bar clears the thighs). Elbow 10 -> 118 (bar to the chest)."
+ "research": "Standing facing a low pulley, straight bar held palms down (axis [-1,0,0]) about shoulder width, upper arms by the sides (elev 10 / plane 70 so the bar clears the thighs). Elbow 10 -> 118 (bar to the chest). Column 0.75 m in front so the bar ends stay clear of the post."
 }

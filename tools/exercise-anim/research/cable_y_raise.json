@@ -1,0 +1,189 @@
+{
+ "format": "v1-stills",
+ "exercise": {
+  "key": "cable_y_raise",
+  "name": "Cable Y-Raise",
+  "equipment": "cable",
+  "library_primary": [
+   "side_delts"
+  ],
+  "library_secondary": [
+   "rear_delts",
+   "traps"
+  ],
+  "library_steps": [
+   "Stand between two low pulleys, holding each handle in the opposite hand.",
+   "Raise your arms up and out into a wide Y above your head.",
+   "Lower them slowly back down."
+  ],
+  "status": "draft",
+  "version": 1,
+  "researched_on": "2026-11-13",
+  "one_line_summary": "Standing between two low pulleys, each hand holding the handle from the other side so the cables cross in front of the hips; nearly straight arms rise from in front of the thighs up and out into a wide Y overhead. Side delts do the main work, the rear delts and trapezius help.",
+  "evidence_grade": "B"
+ },
+ "setup": [
+  {
+   "item": "pulleys",
+   "target": "Both low (0.1-0.3 m), a little in front of the body.",
+   "tolerance": "0-0.3 m",
+   "why": "Library step.",
+   "source_ids": [
+    "S3"
+   ],
+   "grade": "C"
+  },
+  {
+   "item": "grip",
+   "target": "Opposite hand to each cable; thumbs up/back at the top.",
+   "tolerance": "-",
+   "why": "Library step.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "C"
+  }
+ ],
+ "movement": [
+  {
+   "joint": "shoulder",
+   "measure": "arm raised from hanging, in the scapular plane (~30 deg forward of the side)",
+   "start": "20 deg (hands at the thighs)",
+   "end": "145 deg (wide Y overhead)",
+   "start_num": 20,
+   "end_num": 145,
+   "tolerance": "end 130-160",
+   "source_ids": [
+    "S1",
+    "S2"
+   ],
+   "grade": "B"
+  },
+  {
+   "joint": "elbow",
+   "measure": "bend",
+   "start": "10",
+   "end": "8",
+   "start_num": 10,
+   "end_num": 8,
+   "tolerance": "under 20",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "C"
+  }
+ ],
+ "muscles": [
+  {
+   "muscle": "Side delt",
+   "anatomy": "Deltoideus, pars acromialis",
+   "mask_key": "side_delts",
+   "tier": "primary",
+   "glow": 1.0,
+   "emg": "Side delt works hardest when the arm is raised out to the side (S3).",
+   "role": "Raises the arm out and up; library primary.",
+   "surface": "Side of the shoulder.",
+   "source_ids": [
+    "S3"
+   ],
+   "grade": "B"
+  },
+  {
+   "muscle": "Rear delt",
+   "anatomy": "Deltoideus, pars spinalis",
+   "mask_key": "rear_delts",
+   "tier": "secondary",
+   "glow": 0.35,
+   "emg": "Active in raises with the arm turned (S3).",
+   "role": "Helps raise the arm; library secondary.",
+   "surface": "Back of the shoulder.",
+   "source_ids": [
+    "S3"
+   ],
+   "grade": "C"
+  },
+  {
+   "muscle": "Trapezius",
+   "anatomy": "Trapezius (upper and lower)",
+   "mask_key": "traps",
+   "tier": "secondary",
+   "glow": 0.35,
+   "emg": "The overhead Y raise is the reference lower-trapezius exercise (S1, S2); upper trapezius also works (S1).",
+   "role": "Rotates the shoulder blade up; library secondary.",
+   "surface": "Neck to mid-back.",
+   "source_ids": [
+    "S1",
+    "S2"
+   ],
+   "grade": "B"
+  }
+ ],
+ "tempo": null,
+ "mistakes": [
+  {
+   "mistake": "Shrugging up",
+   "what_it_looks_like": "Shoulders hike to the ears.",
+   "why_it_matters": "Upper traps take over.",
+   "source_ids": [
+    "S1"
+   ]
+  },
+  {
+   "mistake": "Arms in a narrow I",
+   "what_it_looks_like": "Hands go straight up, not out.",
+   "why_it_matters": "The Y is ~30 deg out from vertical.",
+   "source_ids": [
+    "S2"
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "S1",
+   "citation": "Garcia JF, Herrera C, Maciukiewicz JM, et al. 2023. Variation of muscle recruitment during exercises performed below horizontal arm elevation that target the lower trapezius. J Electromyogr Kinesiol 70:102777.",
+   "url": "https://europepmc.org/article/MED/37159974",
+   "type": "emg",
+   "what_it_gave": "The prone 'Y' (arms raised overhead in a Y) is the gold-standard lower-trapezius exercise; upper trapezius also works."
+  },
+  {
+   "id": "S2",
+   "citation": "Ekstrom RA, Donatelli RA, Soderberg GL. 2003. Surface electromyographic analysis of exercises for the trapezius and serratus anterior muscles. J Orthop Sports Phys Ther 33(5):247-258.",
+   "url": "https://europepmc.org/article/MED/12774999",
+   "type": "emg",
+   "what_it_gave": "10 exercises, 30 subjects: the shrug gave the highest upper-trapezius EMG; shoulder horizontal extension (arm moving back at shoulder height) the highest middle trapezius; the prone overhead raise in a Y the highest lower trapezius."
+  },
+  {
+   "id": "S3",
+   "citation": "Coratella G, Tornatore G, Longo S, Esposito F, Ce E. 2020. An electromyographic analysis of lateral raise variations and frontal raise in competitive bodybuilders. Int J Environ Res Public Health 17(17):6015.",
+   "url": "https://europepmc.org/article/MED/32824894",
+   "type": "emg",
+   "what_it_gave": "Lateral raise variants vs frontal raise: frontal raise mainly works the front delt (with pectoralis major more than any lateral raise); lateral raise with a neutral humerus works the side delt most; internal rotation shifts work to the rear delt and upper trapezius."
+  }
+ ],
+ "clip_check": [
+  {
+   "check": "Start: hands in front of the thighs, cables crossing",
+   "target": "elev ~20",
+   "measured": "",
+   "pass": ""
+  },
+  {
+   "check": "End: arms in a wide Y overhead",
+   "target": "elev 130-160",
+   "measured": "",
+   "pass": ""
+  },
+  {
+   "check": "Both fists closed on the handles; cables cross in front, clear of the body",
+   "target": "clearance > 0",
+   "measured": "",
+   "pass": ""
+  },
+  {
+   "check": "Side delts strongest red, traps and rear delts light",
+   "target": "yes",
+   "measured": "",
+   "pass": ""
+  }
+ ]
+}

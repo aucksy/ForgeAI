@@ -1,0 +1,226 @@
+{
+ "key": "single_arm_overhead_cable_extension",
+ "name": "Single-Arm Overhead Cable Extension",
+ "primary": [
+  "triceps"
+ ],
+ "secondary": [],
+ "scene": {
+  "cables": [
+   {
+    "loc": [
+     0.2,
+     0.75
+    ],
+    "pulley_h": 0.12,
+    "face": [
+     0,
+     -1
+    ]
+   }
+  ]
+ },
+ "props": {
+  "h": {
+   "type": "cable",
+   "handle": "d",
+   "column": 0
+  }
+ },
+ "camera": {
+  "yaw": 125,
+  "pitch": 10,
+  "lens": 50,
+  "fill": 0.9,
+  "res": 640,
+  "samples": 20
+ },
+ "timing": {
+  "fps": 30,
+  "keys": [
+   [
+    0,
+    "start"
+   ],
+   [
+    1,
+    "end"
+   ],
+   [
+    2,
+    "start"
+   ]
+  ]
+ },
+ "defaults": {},
+ "poses": {
+  "start": {
+   "feet": {
+    "L": {
+     "at": [
+      0.13,
+      -0.01,
+      0.074
+     ],
+     "rot": [
+      0,
+      0,
+      6
+     ]
+    },
+    "R": {
+     "at": [
+      -0.13,
+      -0.01,
+      0.074
+     ],
+     "rot": [
+      0,
+      0,
+      -6
+     ]
+    }
+   },
+   "knees": {
+    "L": [
+     0.16,
+     -1.0,
+     0.52
+    ],
+    "R": [
+     -0.16,
+     -1.0,
+     0.52
+    ]
+   },
+   "hands": {
+    "L": {
+     "prop": "h",
+     "axis": [
+      -1,
+      0,
+      0
+     ],
+     "arm": {
+      "elev": 165,
+      "plane": 95,
+      "elbow": 130,
+      "bend": [
+       0,
+       1,
+       0
+      ],
+      "tilt": 0,
+      "bend_world": [
+       -0.3,
+       1,
+       0
+      ]
+     }
+    },
+    "R": {
+     "axis": [
+      -0.111,
+      0.969,
+      0.133
+     ],
+     "arm": {
+      "elev": 55,
+      "plane": -15,
+      "fore_world": [
+       0.63,
+       -0.176,
+       -0.756
+      ],
+      "tilt": 0
+     }
+    }
+   }
+  },
+  "end": {
+   "feet": {
+    "L": {
+     "at": [
+      0.13,
+      -0.01,
+      0.074
+     ],
+     "rot": [
+      0,
+      0,
+      6
+     ]
+    },
+    "R": {
+     "at": [
+      -0.13,
+      -0.01,
+      0.074
+     ],
+     "rot": [
+      0,
+      0,
+      -6
+     ]
+    }
+   },
+   "knees": {
+    "L": [
+     0.16,
+     -1.0,
+     0.52
+    ],
+    "R": [
+     -0.16,
+     -1.0,
+     0.52
+    ]
+   },
+   "hands": {
+    "L": {
+     "prop": "h",
+     "axis": [
+      -1,
+      0,
+      0
+     ],
+     "arm": {
+      "elev": 165,
+      "plane": 95,
+      "elbow": 10,
+      "bend": [
+       0,
+       1,
+       0
+      ],
+      "tilt": 0,
+      "bend_world": [
+       -0.3,
+       1,
+       0
+      ]
+     }
+    },
+    "R": {
+     "axis": [
+      -0.111,
+      0.969,
+      0.133
+     ],
+     "arm": {
+      "elev": 55,
+      "plane": -15,
+      "fore_world": [
+       0.63,
+       -0.176,
+       -0.756
+      ],
+      "tilt": 0
+     }
+    }
+   }
+  }
+ },
+ "research": "Standing with the back to a low pulley (0.12 m, 0.6 m behind). Left upper arm straight up beside the head (elev 165 / plane 95), elbow pointing up. Start: elbow 130, the handle behind the head (forearm folds back, bend_world back and a little in). End: elbow 10, arm straight overhead. The cable runs down behind the back to the pulley. Right fist on the hip. Camera from behind-left so the triceps shows.",
+ "highlight_side": "L"
+}

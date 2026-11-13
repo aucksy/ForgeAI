@@ -1,0 +1,267 @@
+{
+ "key": "bent_over_cable_rear_delt_raise",
+ "name": "Bent-Over Cable Rear Delt Raise",
+ "primary": [
+  "rear_delts"
+ ],
+ "secondary": [
+  "upper_back"
+ ],
+ "scene": {
+  "cables": [
+   {
+    "loc": [
+     -0.75,
+     -0.2
+    ],
+    "pulley_h": 0.12,
+    "face": [
+     1,
+     0
+    ]
+   }
+  ]
+ },
+ "props": {
+  "h": {
+   "type": "cable",
+   "handle": "d",
+   "column": 0
+  }
+ },
+ "camera": {
+  "yaw": 140,
+  "pitch": 25,
+  "lens": 50,
+  "fill": 0.9,
+  "res": 640,
+  "samples": 20
+ },
+ "timing": {
+  "fps": 30,
+  "keys": [
+   [
+    0,
+    "start"
+   ],
+   [
+    1,
+    "end"
+   ],
+   [
+    2,
+    "start"
+   ]
+  ]
+ },
+ "defaults": {
+  "bones": {
+   "spine05": [
+    0,
+    0,
+    0
+   ],
+   "spine04": [
+    0,
+    0,
+    0
+   ],
+   "spine03": [
+    0,
+    0,
+    0
+   ],
+   "spine02": [
+    0,
+    0,
+    0
+   ],
+   "neck01": [
+    -15,
+    0,
+    0
+   ],
+   "head": [
+    -8,
+    0,
+    0
+   ]
+  }
+ },
+ "poses": {
+  "start": {
+   "root": {
+    "loc": [
+     0,
+     0.17,
+     0.93
+    ],
+    "rot": [
+     50,
+     0,
+     0
+    ]
+   },
+   "feet": {
+    "L": {
+     "at": [
+      0.13,
+      -0.01,
+      0.074
+     ],
+     "rot": [
+      0,
+      0,
+      6
+     ]
+    },
+    "R": {
+     "at": [
+      -0.13,
+      -0.01,
+      0.074
+     ],
+     "rot": [
+      0,
+      0,
+      -6
+     ]
+    }
+   },
+   "knees": {
+    "L": [
+     0.16,
+     -1.0,
+     0.6
+    ],
+    "R": [
+     -0.16,
+     -1.0,
+     0.6
+    ]
+   },
+   "hands": {
+    "L": {
+     "prop": "h",
+     "axis": [
+      0,
+      0,
+      1
+     ],
+     "arm": {
+      "elev": 52,
+      "plane": 105,
+      "elbow": 12,
+      "bend": [
+       0,
+       1,
+       0
+      ],
+      "tilt": 0
+     }
+    },
+    "R": {
+     "at": [
+      -0.14,
+      -0.17,
+      0.62
+     ],
+     "axis": [
+      0,
+      0.3,
+      0.95
+     ],
+     "frame": "world"
+    }
+   }
+  },
+  "end": {
+   "root": {
+    "loc": [
+     0,
+     0.17,
+     0.93
+    ],
+    "rot": [
+     50,
+     0,
+     0
+    ]
+   },
+   "feet": {
+    "L": {
+     "at": [
+      0.13,
+      -0.01,
+      0.074
+     ],
+     "rot": [
+      0,
+      0,
+      6
+     ]
+    },
+    "R": {
+     "at": [
+      -0.13,
+      -0.01,
+      0.074
+     ],
+     "rot": [
+      0,
+      0,
+      -6
+     ]
+    }
+   },
+   "knees": {
+    "L": [
+     0.16,
+     -1.0,
+     0.6
+    ],
+    "R": [
+     -0.16,
+     -1.0,
+     0.6
+    ]
+   },
+   "hands": {
+    "L": {
+     "prop": "h",
+     "axis": [
+      0,
+      0,
+      1
+     ],
+     "arm": {
+      "elev": 90,
+      "plane": 0,
+      "elbow": 12,
+      "bend": [
+       0,
+       1,
+       0
+      ],
+      "tilt": 0
+     }
+    },
+    "R": {
+     "at": [
+      -0.14,
+      -0.17,
+      0.62
+     ],
+     "axis": [
+      0,
+      0.3,
+      0.95
+     ],
+     "frame": "world"
+    }
+   }
+  }
+ },
+ "research": "Hip hinge: trunk 50 deg forward with a flat back (root rot X +50, hips 11 cm back, 4 cm down, knees soft), head in line. Low pulley on the right; the LEFT (far) hand holds the D-handle, so the cable runs under the body. Start: left arm hanging under the chest, a little across (elev 52 / plane 105 = straight down in the world for a 50 deg lean). End: arm raised out to the side to shoulder height (elev 90 / plane 0), elbow soft (12). Right fist rests on the right thigh above the knee (IK).",
+ "highlight_side": "L"
+}

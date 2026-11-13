@@ -1,0 +1,208 @@
+{
+ "key": "incline_cable_triceps_extension",
+ "name": "Incline Cable Triceps Extension",
+ "primary": [
+  "triceps"
+ ],
+ "secondary": [],
+ "scene": {
+  "bench": {
+   "deg": 30
+  },
+  "cables": [
+   {
+    "loc": [
+     0,
+     1.75
+    ],
+    "pulley_h": 0.45,
+    "face": [
+     0,
+     -1
+    ]
+   }
+  ]
+ },
+ "props": {
+  "bar": {
+   "type": "cable",
+   "handle": "bar",
+   "column": 0,
+   "length": 0.6
+  }
+ },
+ "camera": {
+  "yaw": -75,
+  "pitch": 14,
+  "lens": 50,
+  "fill": 0.9,
+  "res": 640,
+  "samples": 20
+ },
+ "timing": {
+  "fps": 30,
+  "keys": [
+   [
+    0,
+    "start"
+   ],
+   [
+    1,
+    "end"
+   ],
+   [
+    2,
+    "start"
+   ]
+  ]
+ },
+ "defaults": {
+  "bones": {
+   "spine05": [
+    -7,
+    0,
+    0
+   ],
+   "spine04": [
+    -7,
+    0,
+    0
+   ],
+   "spine03": [
+    -7,
+    0,
+    0
+   ],
+   "spine02": [
+    -6,
+    0,
+    0
+   ],
+   "neck01": [
+    8,
+    0,
+    0
+   ],
+   "head": [
+    6,
+    0,
+    0
+   ]
+  }
+ },
+ "poses": {
+  "start": {
+   "root": {
+    "loc": [
+     0,
+     0.092,
+     0.49
+    ],
+    "rot": [
+     -38,
+     0,
+     0
+    ]
+   },
+   "feet": {
+    "L": {
+     "at": [
+      0.37,
+      -0.4,
+      0.075
+     ],
+     "rot": [
+      0,
+      0,
+      18
+     ]
+    }
+   },
+   "knees": {
+    "L": [
+     0.62,
+     -1.0,
+     0.9
+    ]
+   },
+   "hands": {
+    "L": {
+     "prop": "bar",
+     "axis": [
+      -1,
+      0,
+      0
+     ],
+     "arm": {
+      "elev": 120,
+      "plane": 93,
+      "elbow": 95,
+      "bend": [
+       0,
+       0,
+       1
+      ],
+      "tilt": 0
+     }
+    }
+   }
+  },
+  "end": {
+   "root": {
+    "loc": [
+     0,
+     0.092,
+     0.49
+    ],
+    "rot": [
+     -38,
+     0,
+     0
+    ]
+   },
+   "feet": {
+    "L": {
+     "at": [
+      0.37,
+      -0.4,
+      0.075
+     ],
+     "rot": [
+      0,
+      0,
+      18
+     ]
+    }
+   },
+   "knees": {
+    "L": [
+     0.62,
+     -1.0,
+     0.9
+    ]
+   },
+   "hands": {
+    "L": {
+     "prop": "bar",
+     "axis": [
+      -1,
+      0,
+      0
+     ],
+     "arm": {
+      "elev": 120,
+      "plane": 93,
+      "elbow": 5,
+      "bend": [
+       0,
+       0,
+       1
+      ],
+      "tilt": 0
+     }
+    }
+   }
+  }
+ },
+ "research": "Body copied from incline_barbell_skull_crusher (passed 13 Nov): 30 deg incline bench, backrest toward a low pulley (0.45 m) 1.0 m behind the top of the bench. Short straight bar, overhand. Upper arms point up past the head (elev 120 / plane 93), elbows up, and stay still. Library order: start with the bar behind the head (elbow 95), end with the arms straight (elbow 5)."
+}

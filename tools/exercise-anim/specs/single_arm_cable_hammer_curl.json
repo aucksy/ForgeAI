@@ -11,8 +11,8 @@
   "cables": [
    {
     "loc": [
-     0.68,
-     -0.2
+     0.9,
+     -0.35
     ],
     "pulley_h": 0.12,
     "face": [
@@ -213,6 +213,6 @@
    }
   }
  },
- "research": "Single-arm curl body (elev 7 / plane 56, elbow 13 -> 124) with a neutral grip: thumb forward at the bottom (axis [0,1,0]); the thumb turns up and back with the forearm about the elbow hinge, so at elbow 124 the axis is (0, cos124, sin124) = [0,-0.56,0.83] (thumb on top). Low pulley beside the left foot (side-on). Right fist on the hip. Camera from the front-right so the column stays behind the working arm.",
+ "research": "Single-arm curl body (elev 7 / plane 56, elbow 13 -> 124) with a neutral grip: thumb forward at the bottom (axis [0,1,0]); the thumb turns up and back with the forearm about the elbow hinge, so at elbow 124 the axis is (0, cos124, sin124) = [0,-0.56,0.83] (thumb on top). Low pulley out to the left and a little forward (side-on), far enough out that the cable leaves the forearm at the top. Right fist on the hip. Camera from the front-right so the column stays behind the working arm.",
  "highlight_side": "L"
 }

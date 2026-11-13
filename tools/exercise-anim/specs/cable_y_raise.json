@@ -1,0 +1,238 @@
+{
+ "key": "cable_y_raise",
+ "name": "Cable Y-Raise",
+ "primary": [
+  "side_delts"
+ ],
+ "secondary": [
+  "rear_delts",
+  "traps"
+ ],
+ "scene": {
+  "cables": [
+   {
+    "loc": [
+     1.1,
+     -0.35
+    ],
+    "pulley_h": 0.12,
+    "face": [
+     -1,
+     0
+    ]
+   },
+   {
+    "loc": [
+     -1.1,
+     -0.35
+    ],
+    "pulley_h": 0.12,
+    "face": [
+     1,
+     0
+    ]
+   }
+  ]
+ },
+ "props": {
+  "h_L": {
+   "type": "cable",
+   "handle": "d",
+   "column": 1
+  },
+  "h_R": {
+   "type": "cable",
+   "handle": "d",
+   "column": 0
+  }
+ },
+ "camera": {
+  "yaw": -20,
+  "pitch": 8,
+  "lens": 50,
+  "fill": 0.9,
+  "res": 640,
+  "samples": 20
+ },
+ "timing": {
+  "fps": 30,
+  "keys": [
+   [
+    0,
+    "start"
+   ],
+   [
+    1,
+    "end"
+   ],
+   [
+    2,
+    "start"
+   ]
+  ]
+ },
+ "defaults": {},
+ "poses": {
+  "start": {
+   "feet": {
+    "L": {
+     "at": [
+      0.13,
+      -0.01,
+      0.074
+     ],
+     "rot": [
+      0,
+      0,
+      6
+     ]
+    },
+    "R": {
+     "at": [
+      -0.13,
+      -0.01,
+      0.074
+     ],
+     "rot": [
+      0,
+      0,
+      -6
+     ]
+    }
+   },
+   "knees": {
+    "L": [
+     0.16,
+     -1.0,
+     0.52
+    ],
+    "R": [
+     -0.16,
+     -1.0,
+     0.52
+    ]
+   },
+   "hands": {
+    "L": {
+     "prop": "h_L",
+     "axis": [
+      0,
+      1,
+      0
+     ],
+     "arm": {
+      "elev": 20,
+      "plane": 110,
+      "elbow": 10,
+      "bend": [
+       0,
+       1,
+       0
+      ],
+      "tilt": 0
+     }
+    },
+    "R": {
+     "prop": "h_R",
+     "axis": [
+      0,
+      1,
+      0
+     ],
+     "arm": {
+      "elev": 24,
+      "plane": 110,
+      "elbow": 10,
+      "bend": [
+       0,
+       1,
+       0
+      ],
+      "tilt": 0
+     }
+    }
+   }
+  },
+  "end": {
+   "feet": {
+    "L": {
+     "at": [
+      0.13,
+      -0.01,
+      0.074
+     ],
+     "rot": [
+      0,
+      0,
+      6
+     ]
+    },
+    "R": {
+     "at": [
+      -0.13,
+      -0.01,
+      0.074
+     ],
+     "rot": [
+      0,
+      0,
+      -6
+     ]
+    }
+   },
+   "knees": {
+    "L": [
+     0.16,
+     -1.0,
+     0.52
+    ],
+    "R": [
+     -0.16,
+     -1.0,
+     0.52
+    ]
+   },
+   "hands": {
+    "L": {
+     "prop": "h_L",
+     "axis": [
+      0.15,
+      -0.95,
+      0.25
+     ],
+     "arm": {
+      "elev": 145,
+      "plane": 30,
+      "elbow": 8,
+      "bend": [
+       0,
+       1,
+       0
+      ],
+      "tilt": 0
+     }
+    },
+    "R": {
+     "prop": "h_R",
+     "axis": [
+      -0.15,
+      -0.95,
+      0.25
+     ],
+     "arm": {
+      "elev": 145,
+      "plane": 30,
+      "elbow": 8,
+      "bend": [
+       0,
+       1,
+       0
+      ],
+      "tilt": 0
+     }
+    }
+   }
+  }
+ },
+ "research": "Standing between two low pulleys (0.12 m, 2.2 m apart, a little in front of the body). Each hand holds the handle from the OTHER side (left hand -> right pulley), so the cables cross in front of the hips. Start: arms nearly straight, hands in front of the thighs (elev 20-24 / plane 110; the right hand 4 deg higher so the crossing cables do not meet). End: arms up and out in a wide Y (elev 145 in the scapular plane, plane 30), thumbs pointing up and back."
+}

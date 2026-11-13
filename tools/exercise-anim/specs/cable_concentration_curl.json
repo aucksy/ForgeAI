@@ -1,0 +1,237 @@
+{
+ "key": "cable_concentration_curl",
+ "name": "Cable Concentration Curl",
+ "primary": [
+  "biceps"
+ ],
+ "secondary": [
+  "forearms"
+ ],
+ "scene": {
+  "bench": {
+   "deg": 0
+  },
+  "cables": [
+   {
+    "loc": [
+     0.12,
+     -1.05
+    ],
+    "pulley_h": 0.12,
+    "face": [
+     0,
+     1
+    ]
+   }
+  ]
+ },
+ "props": {
+  "h": {
+   "type": "cable",
+   "handle": "d",
+   "column": 0
+  }
+ },
+ "camera": {
+  "yaw": -40,
+  "pitch": 12,
+  "lens": 50,
+  "fill": 0.9,
+  "res": 640,
+  "samples": 20
+ },
+ "timing": {
+  "fps": 30,
+  "keys": [
+   [
+    0,
+    "start"
+   ],
+   [
+    1,
+    "end"
+   ],
+   [
+    2,
+    "start"
+   ]
+  ]
+ },
+ "defaults": {},
+ "poses": {
+  "start": {
+   "root": {
+    "loc": [
+     0,
+     -0.15,
+     0.48
+    ],
+    "rot": [
+     30,
+     0,
+     0
+    ]
+   },
+   "feet": {
+    "L": {
+     "at": [
+      0.37,
+      -0.6,
+      0.075
+     ],
+     "rot": [
+      0,
+      0,
+      18
+     ]
+    },
+    "R": {
+     "at": [
+      -0.37,
+      -0.6,
+      0.075
+     ],
+     "rot": [
+      0,
+      0,
+      -18
+     ]
+    }
+   },
+   "knees": {
+    "L": [
+     0.62,
+     -1.0,
+     0.9
+    ],
+    "R": [
+     -0.62,
+     -1.0,
+     0.9
+    ]
+   },
+   "hands": {
+    "L": {
+     "prop": "h",
+     "axis": [
+      1,
+      0,
+      0
+     ],
+     "arm": {
+      "elev": 50,
+      "plane": 95,
+      "elbow": 15,
+      "bend": [
+       0,
+       1,
+       0
+      ],
+      "tilt": 0
+     }
+    },
+    "R": {
+     "at": [
+      -0.3,
+      -0.42,
+      0.6
+     ],
+     "axis": [
+      0,
+      0.3,
+      0.95
+     ],
+     "frame": "world"
+    }
+   }
+  },
+  "end": {
+   "root": {
+    "loc": [
+     0,
+     -0.15,
+     0.48
+    ],
+    "rot": [
+     30,
+     0,
+     0
+    ]
+   },
+   "feet": {
+    "L": {
+     "at": [
+      0.37,
+      -0.6,
+      0.075
+     ],
+     "rot": [
+      0,
+      0,
+      18
+     ]
+    },
+    "R": {
+     "at": [
+      -0.37,
+      -0.6,
+      0.075
+     ],
+     "rot": [
+      0,
+      0,
+      -18
+     ]
+    }
+   },
+   "knees": {
+    "L": [
+     0.62,
+     -1.0,
+     0.9
+    ],
+    "R": [
+     -0.62,
+     -1.0,
+     0.9
+    ]
+   },
+   "hands": {
+    "L": {
+     "prop": "h",
+     "axis": [
+      1,
+      0,
+      0
+     ],
+     "arm": {
+      "elev": 50,
+      "plane": 95,
+      "elbow": 125,
+      "bend": [
+       0,
+       1,
+       0
+      ],
+      "tilt": 0
+     }
+    },
+    "R": {
+     "at": [
+      -0.3,
+      -0.42,
+      0.6
+     ],
+     "axis": [
+      0,
+      0.3,
+      0.95
+     ],
+     "frame": "world"
+    }
+   }
+  }
+ },
+ "research": "Seated on the end of a flat bench, feet wide, trunk leaning 30 deg forward. The back of the left upper arm rests on the inside of the left thigh near the knee (elev 50 / plane 95 = hanging straight down in the world for a 30 deg lean). Low pulley in front of the left foot. Start: elbow 15, hand near the floor between the feet. End: elbow 125, hand at the shoulder. Palm up. Right fist rests on the right knee (IK).",
+ "highlight_side": "L"
+}

@@ -1,0 +1,174 @@
+{
+ "format": "v1-stills",
+ "exercise": {
+  "key": "incline_cable_fly",
+  "name": "Incline Cable Fly",
+  "equipment": "cable",
+  "library_primary": [
+   "chest"
+  ],
+  "library_secondary": [
+   "front_delts"
+  ],
+  "library_steps": [
+   "Place an incline bench between low pulleys and grab a handle in each hand.",
+   "Lie back with your arms open wide and elbows slightly bent.",
+   "Bring the handles up and together over your upper chest.",
+   "Lower them slowly back out to the sides."
+  ],
+  "status": "draft",
+  "version": 1,
+  "researched_on": "2026-11-13",
+  "one_line_summary": "Lying on a ~30 deg incline bench between two low pulleys, a handle in each hand; the softly bent arms sweep from wide open up and together over the upper chest. Chest does the work, the front delt helps.",
+  "evidence_grade": "B"
+ },
+ "setup": [
+  {
+   "item": "bench",
+   "target": "Incline ~30 deg.",
+   "tolerance": "20-45",
+   "why": "Library step.",
+   "source_ids": [
+    "S2"
+   ],
+   "grade": "C"
+  },
+  {
+   "item": "arms",
+   "target": "Elbows softly bent (~20 deg), fixed.",
+   "tolerance": "10-30",
+   "why": "Fly form (S1).",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  }
+ ],
+ "movement": [
+  {
+   "joint": "shoulder (horizontal)",
+   "measure": "0 = arms out to the sides, 90 = straight up over the chest",
+   "start": "-5 (open wide)",
+   "end": "82 (hands together)",
+   "start_num": -5,
+   "end_num": 82,
+   "tolerance": "end 75-90",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  },
+  {
+   "joint": "elbow",
+   "measure": "bend",
+   "start": "20",
+   "end": "20",
+   "start_num": 20,
+   "end_num": 20,
+   "tolerance": "10-30, no change",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  }
+ ],
+ "muscles": [
+  {
+   "muscle": "Chest",
+   "anatomy": "Pectoralis major",
+   "mask_key": "chest",
+   "tier": "primary",
+   "glow": 1.0,
+   "emg": "Main mover of the fly (S1); front delt only ~19 % MVIC in the fly (S2).",
+   "role": "Brings the arms together; what the exercise is for.",
+   "surface": "Front of the chest.",
+   "source_ids": [
+    "S1",
+    "S2"
+   ],
+   "grade": "B"
+  },
+  {
+   "muscle": "Front delt",
+   "anatomy": "Deltoideus, pars clavicularis",
+   "mask_key": "front_delts",
+   "tier": "secondary",
+   "glow": 0.35,
+   "emg": "Active in the fly (S1, S2).",
+   "role": "Helps bring the arms forward; library secondary.",
+   "surface": "Front of the shoulder.",
+   "source_ids": [
+    "S1",
+    "S2"
+   ],
+   "grade": "B"
+  },
+  {
+   "muscle": "Biceps",
+   "anatomy": "Biceps brachii",
+   "mask_key": "biceps",
+   "tier": "stabiliser",
+   "glow": 0,
+   "emg": "Works as an antagonist holding the slightly bent elbow in the fly (S1).",
+   "role": "Holds the elbow bend.",
+   "surface": "Front of the upper arm.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  }
+ ],
+ "tempo": null,
+ "mistakes": [
+  {
+   "mistake": "Pressing instead of flying",
+   "what_it_looks_like": "Elbows bend and the hands push up.",
+   "why_it_matters": "Fly form keeps the elbows fixed.",
+   "source_ids": [
+    "S1"
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "S1",
+   "citation": "Solstad TEJ, Andersen V, Shaw M, et al. 2020. A comparison of muscle activation between barbell bench press and dumbbell flyes in resistance-trained males. J Sports Sci Med 19(4):645-651.",
+   "url": "https://europepmc.org/article/MED/33239937",
+   "type": "emg",
+   "what_it_gave": "Dumbbell fly vs bench press, 6RM: pectoralis major the main mover in the fly; front delt active; biceps works as an antagonist holding the slightly bent elbow."
+  },
+  {
+   "id": "S2",
+   "citation": "Campos YAC, Vianna JM, Guimaraes MP, et al. 2020. Different shoulder exercises affect the activation of deltoid portions in resistance-trained individuals. J Hum Kinet 75:5-14.",
+   "url": "https://europepmc.org/article/MED/33312291",
+   "type": "emg",
+   "what_it_gave": "Bench press, dumbbell fly, shoulder press, lateral raise at 60 % 1RM: front delt only ~19 % MVIC in the fly; side delt highest in the lateral raise (30 %)."
+  }
+ ],
+ "clip_check": [
+  {
+   "check": "Start: arms open wide",
+   "target": "plane ~-5",
+   "measured": "",
+   "pass": ""
+  },
+  {
+   "check": "End: hands together over the upper chest",
+   "target": "plane 75-90",
+   "measured": "",
+   "pass": ""
+  },
+  {
+   "check": "Both fists closed on the handles; cables to the low pulleys",
+   "target": "yes",
+   "measured": "",
+   "pass": ""
+  },
+  {
+   "check": "Chest strongest red",
+   "target": "yes",
+   "measured": "",
+   "pass": ""
+  }
+ ]
+}

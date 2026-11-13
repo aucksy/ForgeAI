@@ -1,0 +1,212 @@
+{
+ "key": "lying_cable_curl",
+ "name": "Lying Cable Curl",
+ "primary": [
+  "biceps"
+ ],
+ "secondary": [
+  "forearms"
+ ],
+ "scene": {
+  "cables": [
+   {
+    "loc": [
+     0,
+     -1.5
+    ],
+    "pulley_h": 0.12,
+    "face": [
+     0,
+     1
+    ]
+   }
+  ]
+ },
+ "props": {
+  "bar": {
+   "type": "cable",
+   "handle": "bar",
+   "column": 0,
+   "length": 0.7
+  }
+ },
+ "camera": {
+  "yaw": -80,
+  "pitch": 18,
+  "lens": 50,
+  "fill": 0.9,
+  "res": 640,
+  "samples": 20
+ },
+ "timing": {
+  "fps": 30,
+  "keys": [
+   [
+    0,
+    "start"
+   ],
+   [
+    1,
+    "end"
+   ],
+   [
+    2,
+    "start"
+   ]
+  ]
+ },
+ "defaults": {
+  "bones": {
+   "spine05": [
+    0,
+    0,
+    0
+   ],
+   "spine04": [
+    0,
+    0,
+    0
+   ],
+   "spine03": [
+    0,
+    0,
+    0
+   ],
+   "spine02": [
+    0,
+    0,
+    0
+   ],
+   "spine01": [
+    0,
+    0,
+    0
+   ],
+   "neck01": [
+    6,
+    0,
+    0
+   ],
+   "head": [
+    4,
+    0,
+    0
+   ]
+  }
+ },
+ "poses": {
+  "start": {
+   "root": {
+    "loc": [
+     0,
+     0,
+     0.1
+    ],
+    "rot": [
+     -92,
+     0,
+     0
+    ]
+   },
+   "feet": {
+    "L": {
+     "at": [
+      0.25,
+      -0.62,
+      0.074
+     ],
+     "rot": [
+      0,
+      0,
+      10
+     ]
+    }
+   },
+   "knees": {
+    "L": [
+     0.36,
+     -0.5,
+     1.0
+    ]
+   },
+   "hands": {
+    "L": {
+     "prop": "bar",
+     "axis": [
+      1,
+      0,
+      0
+     ],
+     "arm": {
+      "elev": 8,
+      "plane": 0,
+      "elbow": 25,
+      "bend": [
+       0,
+       1,
+       0
+      ],
+      "tilt": 0
+     }
+    }
+   }
+  },
+  "end": {
+   "root": {
+    "loc": [
+     0,
+     0,
+     0.1
+    ],
+    "rot": [
+     -92,
+     0,
+     0
+    ]
+   },
+   "feet": {
+    "L": {
+     "at": [
+      0.25,
+      -0.62,
+      0.074
+     ],
+     "rot": [
+      0,
+      0,
+      10
+     ]
+    }
+   },
+   "knees": {
+    "L": [
+     0.36,
+     -0.5,
+     1.0
+    ]
+   },
+   "hands": {
+    "L": {
+     "prop": "bar",
+     "axis": [
+      1,
+      0,
+      0
+     ],
+     "arm": {
+      "elev": 8,
+      "plane": 0,
+      "elbow": 125,
+      "bend": [
+       0,
+       1,
+       0
+      ],
+      "tilt": 0
+     }
+    }
+   }
+  }
+ },
+ "research": "Lying on the floor on the back (weighted_crunch body), knees bent and feet flat and wide (0.25 m each side) so the cable runs between the knees and feet to a low pulley 1.35 m past the feet. Straight bar, palms up. Upper arms rest on the floor along the sides (elev 8 / plane 0). Start: elbow 25, bar just above the hips. End: elbow 125, bar at the chest."
+}

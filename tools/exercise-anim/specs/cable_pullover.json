@@ -1,0 +1,208 @@
+{
+ "key": "cable_pullover",
+ "name": "Cable Pullover",
+ "primary": [
+  "lats"
+ ],
+ "secondary": [
+  "triceps"
+ ],
+ "scene": {
+  "cables": [
+   {
+    "loc": [
+     0,
+     -1.15
+    ],
+    "pulley_h": 2.0,
+    "face": [
+     0,
+     1
+    ]
+   }
+  ]
+ },
+ "props": {
+  "rope": {
+   "type": "cable",
+   "handle": "rope",
+   "column": 0,
+   "rope_len": 0.3
+  }
+ },
+ "camera": {
+  "yaw": -70,
+  "pitch": 10,
+  "lens": 50,
+  "fill": 0.9,
+  "res": 640,
+  "samples": 20
+ },
+ "timing": {
+  "fps": 30,
+  "keys": [
+   [
+    0,
+    "start"
+   ],
+   [
+    1,
+    "end"
+   ],
+   [
+    2,
+    "start"
+   ]
+  ]
+ },
+ "defaults": {},
+ "poses": {
+  "start": {
+   "root": {
+    "loc": [
+     0,
+     0.1,
+     0.958
+    ],
+    "rot": [
+     20,
+     0,
+     0
+    ]
+   },
+   "feet": {
+    "L": {
+     "at": [
+      0.13,
+      -0.01,
+      0.074
+     ],
+     "rot": [
+      0,
+      0,
+      6
+     ]
+    },
+    "R": {
+     "at": [
+      -0.13,
+      -0.01,
+      0.074
+     ],
+     "rot": [
+      0,
+      0,
+      -6
+     ]
+    }
+   },
+   "knees": {
+    "L": [
+     0.16,
+     -1.0,
+     0.52
+    ],
+    "R": [
+     -0.16,
+     -1.0,
+     0.52
+    ]
+   },
+   "hands": {
+    "L": {
+     "prop": "rope",
+     "axis": [
+      0,
+      -0.8,
+      0.6
+     ],
+     "arm": {
+      "elev": 150,
+      "plane": 90,
+      "elbow": 12,
+      "bend": [
+       0,
+       0,
+       1
+      ],
+      "tilt": 0
+     }
+    }
+   }
+  },
+  "end": {
+   "root": {
+    "loc": [
+     0,
+     0.1,
+     0.958
+    ],
+    "rot": [
+     20,
+     0,
+     0
+    ]
+   },
+   "feet": {
+    "L": {
+     "at": [
+      0.13,
+      -0.01,
+      0.074
+     ],
+     "rot": [
+      0,
+      0,
+      6
+     ]
+    },
+    "R": {
+     "at": [
+      -0.13,
+      -0.01,
+      0.074
+     ],
+     "rot": [
+      0,
+      0,
+      -6
+     ]
+    }
+   },
+   "knees": {
+    "L": [
+     0.16,
+     -1.0,
+     0.52
+    ],
+    "R": [
+     -0.16,
+     -1.0,
+     0.52
+    ]
+   },
+   "hands": {
+    "L": {
+     "prop": "rope",
+     "axis": [
+      0,
+      0.7,
+      0.7
+     ],
+     "arm": {
+      "elev": 18,
+      "plane": 90,
+      "elbow": 12,
+      "bend": [
+       0,
+       0,
+       1
+      ],
+      "tilt": 0
+     }
+    }
+   }
+  }
+ },
+ "research": "Facing a high pulley (2.0 m) about a metre away, trunk leaning 20 deg forward from the hips (root rot X +20, hips back), feet hip width. Rope, neutral grip, arms nearly straight (elbow 12). Start: arms up in front of the head (elev 150 / plane 90). End: arms swept down in an arc to the front of the thighs (elev 18). Rope strands leave each fist on the thumb side toward the join; the knobs sit past the little finger."
+}

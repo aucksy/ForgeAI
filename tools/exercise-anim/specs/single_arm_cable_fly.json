@@ -11,7 +11,7 @@
   "cables": [
    {
     "loc": [
-     1.25,
+     1.55,
      0.12
     ],
     "pulley_h": 1.3,
@@ -183,7 +183,7 @@
      ],
      "arm": {
       "elev": 82,
-      "plane": 100,
+      "plane": 118,
       "elbow": 20,
       "bend": [
        -0.4,
@@ -213,6 +213,6 @@
    }
   }
  },
- "research": "Left side to a chest-height pulley (1.3 m). Left arm at chest height, elbow softly bent (20): start out to the side a little behind (plane -8), end swept across in front of the chest (plane 100). Thumb up. Right fist on the hip. Camera from the front-right so the chest shows.",
+ "research": "Left side to a chest-height pulley (1.3 m). Left arm at chest height, elbow softly bent (20): start out to the side a little behind (plane -8), end swept across past the middle of the chest (plane 118); column 1.55 m out so the start is not cramped. Thumb up. Right fist on the hip. Camera from the front-right so the chest shows.",
  "highlight_side": "L"
 }
