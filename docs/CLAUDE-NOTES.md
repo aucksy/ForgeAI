@@ -19,6 +19,7 @@ He said (13 Nov 2026, morning, in chat):
 Answer given: a watch app update. It is in 0.77.0 (phone and watch), which is in Google's review.
 Still needs him: a business address for the Contact page (the page goes live without the address row until then).
 What I did: see the lines under this entry as each step lands.
+- d7b2f75f (CI 43358558975 green): home page keeps 63% and 138 (7x and its HBR footnote gone, EN+HI; desktop row = heading + 2); refund, delivery, contact, about live from docs/legal via legal_pages.py (phone +91 86905 60741, no address row yet, footer + every legal menu link them); privacy has the 06 AI lines word for word (13 Nov); ADMIN_NEWS_PENDING AI entry has the credit lines + a policy-pages entry, both to move at the panel deploy. Hindi privacy left as its 10 Nov translation.
 
 ## R-479. Website: no receipt promise while receipts are off — 13 Nov 2026 (away work)
 Found by the T80 policy check: the price note and the FAQ said "get a receipt" for a UPI or bank payment, but the
