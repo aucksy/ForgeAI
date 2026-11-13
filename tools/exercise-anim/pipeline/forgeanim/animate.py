@@ -624,6 +624,15 @@ class Clip:
                     dist = math.sqrt(max(0.0, rr * rr - half * half))
                     ob.matrix_world = R.frame_from((cl + cr) / 2 + u * dist, x, n)
                     msg = f"hand gap {2 * half:.3f} vs grip ring {2 * rr:.3f} ({'OK' if 2 * half <= 2 * rr else 'TOO WIDE: hands off the rim'})"
+                elif p.get("mode") == "palms":
+                    # held by its sides between two open palms ("hand": "flat"): the rim's edge touches both palm centres
+                    pl, pr = self.palm_point("L"), self.palm_point("R")
+                    x = (pl - pr).normalized()
+                    n = T3 @ Vector(cfg.get("normal", (0, 1, 0))); n = (n - x * n.dot(x)).normalized()
+                    ob.matrix_world = R.frame_from((pl + pr) / 2, x, n)
+                    facing = {s: round(self._palm[s].dot(-x if s == "L" else x), 2) for s in ("L", "R") if s in self._palm}
+                    msg = (f"palm gap {(pl - pr).length:.3f} vs plate {2 * r:.3f} (+ = squeeze in, {2 * r - (pl - pr).length:+.3f}), "
+                           f"palms facing the plate {facing} (1 = square on), palm height diff {pl.z - pr.z:+.3f}")
                 elif p.get("mode") == "torso":
                     n = T3 @ Vector(cfg.get("normal", (0, 1, 0))); n.normalize()
                     xa = T3 @ Vector((1, 0, 0)); xa = (xa - n * xa.dot(n)).normalized()

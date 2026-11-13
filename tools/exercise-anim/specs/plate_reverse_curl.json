@@ -1,0 +1,143 @@
+{
+ "key": "plate_reverse_curl",
+ "name": "Plate Reverse Curl",
+ "primary": [
+  "forearms"
+ ],
+ "secondary": [
+  "biceps"
+ ],
+ "props": {
+  "plate": {
+   "type": "plate",
+   "mode": "rim",
+   "r": 0.225,
+   "t": 0.045
+  }
+ },
+ "camera": {
+  "yaw": -40,
+  "pitch": 8,
+  "lens": 50,
+  "fill": 0.9,
+  "res": 640,
+  "samples": 20
+ },
+ "timing": {
+  "fps": 30,
+  "keys": [
+   [
+    0,
+    "start"
+   ],
+   [
+    1,
+    "end"
+   ],
+   [
+    2,
+    "start"
+   ]
+  ]
+ },
+ "defaults": {
+  "feet": {
+   "L": {
+    "at": [
+     0.13,
+     -0.01,
+     0.074
+    ],
+    "rot": [
+     0,
+     0,
+     6
+    ]
+   }
+  },
+  "knees": {
+   "L": [
+    0.16,
+    -1.0,
+    0.52
+   ]
+  }
+ },
+ "poses": {
+  "start": {
+   "hands": {
+    "L": {
+     "prop": "plate",
+     "axis": [
+      -1,
+      0,
+      0
+     ],
+     "arm": {
+      "elev": 12.5,
+      "plane": 140.0,
+      "elbow": 20.0,
+      "bend": [
+       0,
+       1,
+       0
+      ],
+      "tilt": 0
+     }
+    }
+   },
+   "plate": {
+    "plate": {
+     "normal": [
+      0,
+      1,
+      0
+     ],
+     "side": [
+      0,
+      0,
+      -1
+     ]
+    }
+   }
+  },
+  "end": {
+   "hands": {
+    "L": {
+     "prop": "plate",
+     "axis": [
+      -1,
+      0,
+      0
+     ],
+     "arm": {
+      "elev": 15.0,
+      "plane": 120.0,
+      "elbow": 130.0,
+      "bend": [
+       -0.3,
+       1,
+       0.5
+      ],
+      "tilt": 0
+     }
+    }
+   },
+   "plate": {
+    "plate": {
+     "normal": [
+      0,
+      1,
+      0
+     ],
+     "side": [
+      0,
+      0,
+      1
+     ]
+    }
+   }
+  }
+ },
+ "research": "One weight plate (r 0.225) held by the top of its rim in both fists, palms down (axis [-1,0,0]; library step 1), hands ~0.27 m apart (about 10:30 and 1:30 on the rim, plate face forward). START: arms down, elbows soft (elev 12.5 / plane 140.0 / elbow 20.0), fists ~9 cm in front of the hips so the hanging plate clears the thighs. END: elbows at the sides, curled until the forearms point up (elev 15.0 / plane 120.0 / elbow 130.0; library step 2): the plate turns with the wrists and stands above the fists in front of the face (offline ~7 cm clear). Plate placed by place_fixtures rim mode (fists on a ring 1.2 cm inside the outer edge). Facts: research/plate_reverse_curl.json."
+}

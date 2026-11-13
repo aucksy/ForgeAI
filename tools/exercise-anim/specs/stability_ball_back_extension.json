@@ -1,0 +1,232 @@
+{
+ "key": "stability_ball_back_extension",
+ "name": "Stability Ball Back Extension",
+ "primary": [
+  "lower_back"
+ ],
+ "secondary": [
+  "glutes"
+ ],
+ "scene": {
+  "ball": {
+   "r": 0.3,
+   "loc": [
+    0,
+    -0.14,
+    0
+   ]
+  }
+ },
+ "camera": {
+  "yaw": -80,
+  "pitch": 10,
+  "lens": 50,
+  "fill": 0.9,
+  "res": 640,
+  "samples": 20
+ },
+ "timing": {
+  "fps": 30,
+  "keys": [
+   [
+    0,
+    "start"
+   ],
+   [
+    1,
+    "end"
+   ],
+   [
+    2,
+    "start"
+   ]
+  ]
+ },
+ "poses": {
+  "start": {
+   "root": {
+    "loc": [
+     0,
+     -0.02,
+     0.8104
+    ],
+    "rot": [
+     68,
+     0,
+     0
+    ]
+   },
+   "bones": {
+    "spine05": [
+     10,
+     0,
+     0
+    ],
+    "spine04": [
+     10,
+     0,
+     0
+    ],
+    "spine03": [
+     10,
+     0,
+     0
+    ],
+    "spine02": [
+     10,
+     0,
+     0
+    ],
+    "spine01": [
+     10,
+     0,
+     0
+    ],
+    "neck01": [
+     0,
+     0,
+     0
+    ],
+    "head": [
+     0,
+     0,
+     0
+    ]
+   },
+   "hands": {
+    "L": {
+     "axis": [
+      0,
+      1,
+      0
+     ],
+     "arm": {
+      "elev": 122.5,
+      "plane": -25.0,
+      "elbow": 145.0,
+      "bend": [
+       0,
+       0,
+       1
+      ],
+      "tilt": 0
+     }
+    }
+   },
+   "feet": {
+    "L": {
+     "at": [
+      0.22,
+      0.688,
+      0.21
+     ],
+     "rot": [
+      70,
+      0,
+      0
+     ]
+    }
+   },
+   "knees": {
+    "L": [
+     0.266,
+     0.325,
+     -0.539
+    ]
+   }
+  },
+  "end": {
+   "root": {
+    "loc": [
+     0,
+     -0.02,
+     0.839
+    ],
+    "rot": [
+     50,
+     0,
+     0
+    ]
+   },
+   "bones": {
+    "spine05": [
+     0,
+     0,
+     0
+    ],
+    "spine04": [
+     0,
+     0,
+     0
+    ],
+    "spine03": [
+     0,
+     0,
+     0
+    ],
+    "spine02": [
+     0,
+     0,
+     0
+    ],
+    "spine01": [
+     0,
+     0,
+     0
+    ],
+    "neck01": [
+     -3,
+     0,
+     0
+    ],
+    "head": [
+     -3,
+     0,
+     0
+    ]
+   },
+   "hands": {
+    "L": {
+     "axis": [
+      0,
+      1,
+      0
+     ],
+     "arm": {
+      "elev": 122.5,
+      "plane": -25.0,
+      "elbow": 145.0,
+      "bend": [
+       0,
+       0,
+       1
+      ],
+      "tilt": 0
+     }
+    }
+   },
+   "feet": {
+    "L": {
+     "at": [
+      0.22,
+      0.637,
+      0.21
+     ],
+     "rot": [
+      70,
+      0,
+      0
+     ]
+    }
+   },
+   "knees": {
+    "L": [
+     0.266,
+     0.292,
+     -0.514
+    ]
+   }
+  }
+ },
+ "research": "60 cm ball (r 0.30) at the origin. Face down (root rot X ~ +90 = prone, head toward -Y), front of the hips on top of the ball, legs straight and wide back to the toes on the floor (ankles x +-0.22, feet on the toes, rot X 70; library step 1). Hands by the ears, elbows out (arm elev 122.5 / plane -25.0 / elbow 145.0; library step 2). START: chest curled down over the ball: pelvis rot 68 + spine flex 10 x 5 = 50 deg. END: chest lifted until the body is one straight line from heels to head (library step 3): pelvis rot 50 (= the leg slope), spine 0, head in line. Root height solved so the hips just touch the ball in each picture (offline skinned mesh). Facts: research/stability_ball_back_extension.json."
+}

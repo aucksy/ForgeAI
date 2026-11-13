@@ -1,0 +1,213 @@
+{
+ "key": "weighted_back_extension",
+ "name": "Weighted Back Extension",
+ "primary": [
+  "lower_back"
+ ],
+ "secondary": [
+  "glutes",
+  "hamstrings"
+ ],
+ "props": {
+  "plate": {
+   "type": "plate",
+   "mode": "torso",
+   "r": 0.225,
+   "t": 0.045
+  }
+ },
+ "camera": {
+  "yaw": -90,
+  "pitch": 10,
+  "lens": 50,
+  "fill": 0.9,
+  "res": 640,
+  "samples": 20
+ },
+ "timing": {
+  "fps": 30,
+  "keys": [
+   [
+    0,
+    "start"
+   ],
+   [
+    1,
+    "end"
+   ],
+   [
+    2,
+    "start"
+   ]
+  ]
+ },
+ "defaults": {
+  "feet": {
+   "L": {
+    "at": [
+     0.082,
+     0.64,
+     0.31
+    ],
+    "rot": [
+     45.0,
+     -0.0,
+     0.0
+    ]
+   },
+   "R": {
+    "at": [
+     -0.082,
+     0.64,
+     0.31
+    ],
+    "rot": [
+     45.0,
+     -0.0,
+     0.0
+    ]
+   }
+  },
+  "knees": {
+   "L": [
+    0.112,
+    -0.389,
+    -0.075
+   ],
+   "R": [
+    -0.112,
+    -0.389,
+    -0.075
+   ]
+  },
+  "hands": {
+   "L": {
+    "axis": [
+     0,
+     0,
+     1
+    ],
+    "arm": {
+     "elev": 42.5,
+     "plane": 125.0,
+     "elbow": 80.0,
+     "bend": [
+      -1,
+      0.4,
+      0.3
+     ],
+     "tilt": 0
+    }
+   },
+   "R": {
+    "axis": [
+     0,
+     0,
+     1
+    ],
+    "arm": {
+     "elev": 32.5,
+     "plane": 115.0,
+     "elbow": 80.0,
+     "bend": [
+      -1,
+      0.4,
+      0.3
+     ],
+     "tilt": 0
+    }
+   }
+  },
+  "plate": {
+   "plate": {
+    "at": [
+     0,
+     0.175,
+     -0.16
+    ],
+    "normal": [
+     0,
+     1,
+     0
+    ]
+   }
+  }
+ },
+ "poses": {
+  "start": {
+   "root": {
+    "loc": [
+     0.0,
+     -0.025,
+     0.998
+    ],
+    "rot": [
+     120,
+     0,
+     0
+    ]
+   },
+   "bones": {
+    "neck01": [
+     0,
+     0,
+     0
+    ],
+    "head": [
+     0,
+     0,
+     0
+    ]
+   }
+  },
+  "end": {
+   "root": {
+    "loc": [
+     0.0,
+     0.04,
+     0.986
+    ],
+    "rot": [
+     45,
+     0,
+     0
+    ]
+   },
+   "bones": {
+    "neck01": [
+     0,
+     0,
+     0
+    ],
+    "head": [
+     0,
+     0,
+     0
+    ]
+   }
+  }
+ },
+ "scene": {
+  "hyperext": {
+   "deg": 45,
+   "hip_pad": [
+    -0.05,
+    0.759
+   ],
+   "foot": [
+    0.658,
+    0.221
+   ],
+   "roller": [
+    0.619,
+    0.472
+   ],
+   "loc": [
+    0,
+    0,
+    0
+   ]
+  }
+ },
+ "research": "45-degree back-extension bench (props_other.hyperext_bench), built around the body: the hip pad's top edge [-0.05, 0.759] sits on the front of the thighs 10 cm below the hip joints, the ankle roller [0.619, 0.472] behind the lower calves, the foot plate (square to the legs) [0.658, 0.221] under the soles. Legs straight on the 45 deg slope, hips fixed at [0.0, 0.0, 0.95]. A weight plate (r 0.225) held flat against the chest (plate torso mode at [0, 0.175, -0.16]), forearms crossed over it (library step 1). START: trunk lowered toward the floor with a flat back (library step 2): pelvis rot X 120 = trunk 30 deg from straight down, hip flexion 75 deg, spine 0. END: body in one straight line on the 45 deg slope (library step 3): rot X 45, spine 0. Facts: research/weighted_back_extension.json."
+}

@@ -1,0 +1,247 @@
+{
+ "key": "stability_ball_crunch",
+ "name": "Stability Ball Crunch",
+ "primary": [
+  "abs"
+ ],
+ "secondary": [],
+ "scene": {
+  "ball": {
+   "r": 0.3,
+   "loc": [
+    0,
+    0.243,
+    0
+   ]
+  }
+ },
+ "camera": {
+  "yaw": -72,
+  "pitch": 12,
+  "lens": 50,
+  "fill": 0.9,
+  "res": 640,
+  "samples": 20
+ },
+ "timing": {
+  "fps": 30,
+  "keys": [
+   [
+    0,
+    "start"
+   ],
+   [
+    1,
+    "end"
+   ],
+   [
+    2,
+    "start"
+   ]
+  ]
+ },
+ "defaults": {
+  "feet": {
+   "L": {
+    "at": [
+     0.25,
+     -0.507,
+     0.074
+    ],
+    "rot": [
+     0,
+     0,
+     8
+    ]
+   }
+  },
+  "knees": {
+   "L": [
+    0.45,
+    -1.0,
+    0.9
+   ]
+  }
+ },
+ "poses": {
+  "start": {
+   "root": {
+    "loc": [
+     0,
+     0,
+     0.531
+    ],
+    "rot": [
+     -60,
+     0,
+     0
+    ]
+   },
+   "bones": {
+    "spine05": [
+     -6,
+     0,
+     0
+    ],
+    "spine04": [
+     -6,
+     0,
+     0
+    ],
+    "spine03": [
+     -6,
+     0,
+     0
+    ],
+    "spine02": [
+     -6,
+     0,
+     0
+    ],
+    "spine01": [
+     -6,
+     0,
+     0
+    ],
+    "neck01": [
+     0,
+     0,
+     0
+    ],
+    "head": [
+     0,
+     0,
+     0
+    ]
+   },
+   "hands": {
+    "L": {
+     "axis": [
+      0,
+      0,
+      1
+     ],
+     "arm": {
+      "elev": 35,
+      "plane": 165,
+      "elbow": 115,
+      "bend": [
+       -1,
+       0.3,
+       0.6
+      ],
+      "tilt": 0
+     }
+    },
+    "R": {
+     "axis": [
+      0,
+      0,
+      1
+     ],
+     "arm": {
+      "elev": 27.5,
+      "plane": 140,
+      "elbow": 95,
+      "bend": [
+       -1,
+       0.3,
+       0.6
+      ],
+      "tilt": 0
+     }
+    }
+   }
+  },
+  "end": {
+   "root": {
+    "loc": [
+     0,
+     0,
+     0.531
+    ],
+    "rot": [
+     -60,
+     0,
+     0
+    ]
+   },
+   "bones": {
+    "spine05": [
+     2,
+     0,
+     0
+    ],
+    "spine04": [
+     9,
+     0,
+     0
+    ],
+    "spine03": [
+     11,
+     0,
+     0
+    ],
+    "spine02": [
+     11,
+     0,
+     0
+    ],
+    "spine01": [
+     9,
+     0,
+     0
+    ],
+    "neck01": [
+     8,
+     0,
+     0
+    ],
+    "head": [
+     4,
+     0,
+     0
+    ]
+   },
+   "hands": {
+    "L": {
+     "axis": [
+      0,
+      0,
+      1
+     ],
+     "arm": {
+      "elev": 35,
+      "plane": 165,
+      "elbow": 115,
+      "bend": [
+       -1,
+       0.3,
+       0.6
+      ],
+      "tilt": 0
+     }
+    },
+    "R": {
+     "axis": [
+      0,
+      0,
+      1
+     ],
+     "arm": {
+      "elev": 27.5,
+      "plane": 140,
+      "elbow": 95,
+      "bend": [
+       -1,
+       0.3,
+       0.6
+      ],
+      "tilt": 0
+     }
+    }
+   }
+  }
+ },
+ "research": "60 cm stability ball (props_other.ball r 0.30) under the back, centre y 0.243. Face up, pelvis tilted 30 deg (root rot X -60), hips (z ~0.58) just below the top of the ball, feet flat and wide (ankles x +-0.25, y -0.507: knees ~75 deg; library step 1). Arms crossed on the chest as decline_sit_up (library step 2). START: back arched over the ball, spine -6 x 5 = -30 deg (library step 3: lower back over the ball to a stretch); offline: mid/low back on the ball, ~0.8 cm sunk in (a loaded ball gives). END: shoulders curled up, spine flex 2+9+11+11+9 = 42 deg, low back stays on the ball (offline contact at the low back, 0.3 cm). Root fixed (0, 0, 0.531) in both. Facts: research/stability_ball_crunch.json."
+}

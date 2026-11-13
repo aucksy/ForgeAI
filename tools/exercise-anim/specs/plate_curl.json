@@ -1,0 +1,133 @@
+{
+ "key": "plate_curl",
+ "name": "Plate Curl",
+ "primary": [
+  "biceps"
+ ],
+ "secondary": [
+  "forearms"
+ ],
+ "props": {
+  "plate": {
+   "type": "plate",
+   "mode": "palms",
+   "r": 0.225,
+   "t": 0.045
+  }
+ },
+ "camera": {
+  "yaw": -40,
+  "pitch": 8,
+  "lens": 50,
+  "fill": 0.9,
+  "res": 640,
+  "samples": 20
+ },
+ "timing": {
+  "fps": 30,
+  "keys": [
+   [
+    0,
+    "start"
+   ],
+   [
+    1,
+    "end"
+   ],
+   [
+    2,
+    "start"
+   ]
+  ]
+ },
+ "defaults": {
+  "feet": {
+   "L": {
+    "at": [
+     0.13,
+     -0.01,
+     0.074
+    ],
+    "rot": [
+     0,
+     0,
+     6
+    ]
+   }
+  },
+  "knees": {
+   "L": [
+    0.16,
+    -1.0,
+    0.52
+   ]
+  }
+ },
+ "poses": {
+  "start": {
+   "hands": {
+    "L": {
+     "hand": "flat",
+     "axis": [
+      0.0,
+      0.804,
+      0.594
+     ],
+     "arm": {
+      "elev": 2.5,
+      "plane": 35.0,
+      "elbow": 35.0,
+      "bend": [
+       0,
+       1,
+       0
+      ],
+      "tilt": 0
+     }
+    }
+   },
+   "plate": {
+    "plate": {
+     "normal": [
+      0,
+      1,
+      0
+     ]
+    }
+   }
+  },
+  "end": {
+   "hands": {
+    "L": {
+     "hand": "flat",
+     "axis": [
+      0.0,
+      -0.691,
+      0.723
+     ],
+     "arm": {
+      "elev": 7.5,
+      "plane": 30.0,
+      "elbow": 130.0,
+      "bend": [
+       0,
+       1,
+       0.3
+      ],
+      "tilt": 0
+     }
+    }
+   },
+   "plate": {
+    "plate": {
+     "normal": [
+      0,
+      1,
+      0
+     ]
+    }
+   }
+  }
+ },
+ "research": "One weight plate (r 0.225) held by its sides (3 and 9 o'clock) between two open, flat palms facing each other (hand 'flat'; library step 1: 'hold a weight plate by its sides'), plate face forward. Plate placed by place_fixtures palms mode (centre halfway between the palm centres; stills log prints the palm gap vs the plate's 0.45 m). START: arms straight down in front of the thighs (elev 2.5 / plane 35.0 / elbow 35.0). END: elbows kept at the sides, curled until the plate is at the chest (elev 7.5 / plane 30.0 / elbow 130.0; library step 2). Facts: research/plate_curl.json."
+}

@@ -1,0 +1,154 @@
+{
+ "key": "bodyweight_triceps_extension",
+ "name": "Bodyweight Triceps Extension",
+ "primary": [
+  "triceps"
+ ],
+ "secondary": [],
+ "props": {
+  "bar": {
+   "type": "hand_bar",
+   "length": 1.2
+  }
+ },
+ "camera": {
+  "yaw": -80,
+  "pitch": 8,
+  "lens": 50,
+  "fill": 0.9,
+  "res": 640,
+  "samples": 20
+ },
+ "timing": {
+  "fps": 30,
+  "keys": [
+   [
+    0,
+    "start"
+   ],
+   [
+    1,
+    "end"
+   ],
+   [
+    2,
+    "start"
+   ]
+  ]
+ },
+ "poses": {
+  "start": {
+   "root": {
+    "loc": [
+     0.0,
+     -0.6,
+     0.866
+    ],
+    "rot": [
+     45,
+     0,
+     0
+    ]
+   },
+   "feet": {
+    "L": {
+     "at": [
+      0.1,
+      0.0,
+      0.19
+     ],
+     "rot": [
+      45,
+      0,
+      0
+     ]
+    }
+   },
+   "knees": {
+    "L": [
+     0.12,
+     -1.027,
+     -0.197
+    ]
+   },
+   "hands": {
+    "L": {
+     "prop": "bar",
+     "axis": [
+      -1,
+      0,
+      0
+     ],
+     "arm": {
+      "elev": 115.0,
+      "plane": 90,
+      "elbow": 5,
+      "bend": [
+       0,
+       0,
+       1
+      ],
+      "tilt": 0
+     }
+    }
+   }
+  },
+  "end": {
+   "root": {
+    "loc": [
+     0.0,
+     -0.754,
+     0.688
+    ],
+    "rot": [
+     60,
+     0,
+     0
+    ]
+   },
+   "feet": {
+    "L": {
+     "at": [
+      0.1,
+      0.0,
+      0.19
+     ],
+     "rot": [
+      45,
+      0,
+      0
+     ]
+    }
+   },
+   "knees": {
+    "L": [
+     0.12,
+     -0.892,
+     -0.45
+    ]
+   },
+   "hands": {
+    "L": {
+     "prop": "bar",
+     "axis": [
+      -1,
+      0,
+      0
+     ],
+     "arm": {
+      "elev": 102.5,
+      "plane": 90,
+      "elbow": 110,
+      "bend": [
+       0,
+       0,
+       1
+      ],
+      "tilt": 0
+     }
+    }
+   }
+  }
+ },
+ "research": "A fixed bar at waist height (props_other.hand_bar through both fists, ~0.95 m) held overhand, hands shoulder width (library step 1). Body straight from the balls of the feet (ankles at y 0, foot rot X 45) to the head, leaning forward: START 45 deg from vertical, arms straight (elev 115.0 / plane 90 / elbow 5). END: elbows bent 110 deg, the body pivots on the feet to 60 deg so the head goes down under the bar (library step 2): elev 102.5, upper arms keep about the same angle to the trunk (elbows point forward). Facts: research/bodyweight_triceps_extension.json."
+}

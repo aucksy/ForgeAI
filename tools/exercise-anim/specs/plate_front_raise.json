@@ -1,0 +1,133 @@
+{
+ "key": "plate_front_raise",
+ "name": "Plate Front Raise",
+ "primary": [
+  "front_delts"
+ ],
+ "secondary": [
+  "chest"
+ ],
+ "props": {
+  "plate": {
+   "type": "plate",
+   "mode": "palms",
+   "r": 0.225,
+   "t": 0.045
+  }
+ },
+ "camera": {
+  "yaw": -60,
+  "pitch": 8,
+  "lens": 50,
+  "fill": 0.9,
+  "res": 640,
+  "samples": 20
+ },
+ "timing": {
+  "fps": 30,
+  "keys": [
+   [
+    0,
+    "start"
+   ],
+   [
+    1,
+    "end"
+   ],
+   [
+    2,
+    "start"
+   ]
+  ]
+ },
+ "defaults": {
+  "feet": {
+   "L": {
+    "at": [
+     0.13,
+     -0.01,
+     0.074
+    ],
+    "rot": [
+     0,
+     0,
+     6
+    ]
+   }
+  },
+  "knees": {
+   "L": [
+    0.16,
+    -1.0,
+    0.52
+   ]
+  }
+ },
+ "poses": {
+  "start": {
+   "hands": {
+    "L": {
+     "hand": "flat",
+     "axis": [
+      0.0,
+      0.804,
+      0.594
+     ],
+     "arm": {
+      "elev": 2.5,
+      "plane": 35.0,
+      "elbow": 35.0,
+      "bend": [
+       0,
+       1,
+       0
+      ],
+      "tilt": 0
+     }
+    }
+   },
+   "plate": {
+    "plate": {
+     "normal": [
+      0,
+      1,
+      0
+     ]
+    }
+   }
+  },
+  "end": {
+   "hands": {
+    "L": {
+     "hand": "flat",
+     "axis": [
+      0.0,
+      -0.302,
+      0.953
+     ],
+     "arm": {
+      "elev": 90.0,
+      "plane": 87.5,
+      "elbow": 17.5,
+      "bend": [
+       0,
+       0,
+       1
+      ],
+      "tilt": 0
+     }
+    }
+   },
+   "plate": {
+    "plate": {
+     "normal": [
+      0,
+      1,
+      0
+     ]
+    }
+   }
+  }
+ },
+ "research": "Same plate-between-the-palms hold as plate_curl (library step 1: stand tall, plate held by its sides, arms down). END: straight arms raised in front to eye level (elev 90.0 / plane 87.5 / elbow 17.5: fists ~10 cm above the shoulders, elbows soft, library step 2); the plate stays upright with its face forward, at eye level. Facts: research/plate_front_raise.json."
+}

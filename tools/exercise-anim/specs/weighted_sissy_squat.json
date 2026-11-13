@@ -1,0 +1,237 @@
+{
+ "key": "weighted_sissy_squat",
+ "name": "Weighted Sissy Squat",
+ "primary": [
+  "quads"
+ ],
+ "secondary": [],
+ "camera": {
+  "yaw": -82,
+  "pitch": 10,
+  "lens": 50,
+  "fill": 0.9,
+  "res": 640,
+  "samples": 20
+ },
+ "timing": {
+  "fps": 30,
+  "keys": [
+   [
+    0,
+    "start"
+   ],
+   [
+    1,
+    "end"
+   ],
+   [
+    2,
+    "start"
+   ]
+  ]
+ },
+ "defaults": {
+  "feet": {
+   "L": {
+    "at": [
+     0.12,
+     -0.085,
+     0.163
+    ],
+    "rot": [
+     30,
+     0,
+     6
+    ]
+   }
+  }
+ },
+ "poses": {
+  "start": {
+   "root": {
+    "loc": [
+     0,
+     -0.019,
+     1.062
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "knees": {
+    "L": [
+     0.15,
+     -1.0,
+     0.55
+    ]
+   },
+   "hands": {
+    "L": {
+     "axis": [
+      0,
+      0,
+      1
+     ],
+     "arm": {
+      "elev": 52.5,
+      "plane": 95.0,
+      "elbow": 90.0,
+      "bend": [
+       -1,
+       0.3,
+       0.2
+      ],
+      "tilt": 0
+     }
+    },
+    "R": {
+     "prop": "post",
+     "axis": [
+      -0.0,
+      -0.012,
+      1.0
+     ],
+     "arm": {
+      "elev": 67.5,
+      "plane": 5.0,
+      "elbow": 55.0,
+      "bend": [
+       0,
+       1,
+       0
+      ],
+      "tilt": 0
+     }
+    }
+   },
+   "bones": {
+    "neck01": [
+     0,
+     0,
+     0
+    ],
+    "head": [
+     0,
+     0,
+     0
+    ]
+   },
+   "plate": {
+    "plate": {
+     "at": [
+      0,
+      0.168,
+      -0.14
+     ],
+     "normal": [
+      0,
+      1,
+      0
+     ]
+    }
+   }
+  },
+  "end": {
+   "root": {
+    "loc": [
+     0,
+     -0.154,
+     0.682
+    ],
+    "rot": [
+     -40,
+     0,
+     0
+    ]
+   },
+   "knees": {
+    "L": [
+     0.15,
+     -1.2,
+     0.4
+    ]
+   },
+   "hands": {
+    "L": {
+     "axis": [
+      0,
+      0,
+      1
+     ],
+     "arm": {
+      "elev": 52.5,
+      "plane": 95.0,
+      "elbow": 90.0,
+      "bend": [
+       -1,
+       0.3,
+       0.2
+      ],
+      "tilt": 0
+     }
+    },
+    "R": {
+     "prop": "post",
+     "axis": [
+      -0.0,
+      0.634,
+      0.774
+     ],
+     "arm": {
+      "elev": 67.5,
+      "plane": 5.0,
+      "elbow": 55.0,
+      "bend": [
+       0,
+       1,
+       0
+      ],
+      "tilt": 0
+     }
+    }
+   },
+   "bones": {
+    "neck01": [
+     18,
+     0,
+     0
+    ],
+    "head": [
+     12,
+     0,
+     0
+    ]
+   },
+   "plate": {
+    "plate": {
+     "at": [
+      0,
+      0.168,
+      -0.14
+     ],
+     "normal": [
+      0,
+      1,
+      0
+     ]
+    }
+   }
+  }
+ },
+ "research": "Body, feet, knees and lean copied from the approved sissy_squat (12 Nov fix: heels up on the balls of the feet, END knees 103 deg, thighs and trunk one line leaning back 40 deg). Added (library step 1): a 34 cm weight plate (r 0.17) hugged flat to the chest (plate torso mode at [0, 0.168, -0.14]: back face ~0.6 cm off the chest skin offline), the left forearm across its front face with the fist round the right-hand rim (elev 52.5 / plane 95.0 / elbow 90.0), and the right hand holding an upright post at chest height out to the side (elev 67.5 / plane 5.0 / elbow 55.0, thumb up; the post stands through the fist in each picture). Facts: research/weighted_sissy_squat.json.",
+ "props": {
+  "plate": {
+   "type": "plate",
+   "mode": "torso",
+   "r": 0.17,
+   "t": 0.04
+  },
+  "post": {
+   "type": "post",
+   "hand": "R",
+   "height": 2.0
+  }
+ }
+}

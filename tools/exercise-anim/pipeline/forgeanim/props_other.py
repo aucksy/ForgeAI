@@ -63,21 +63,23 @@ def hyperext_bench(deg=45.0, hip_pad=(0.0, 1.0), foot=(0.6, 0.2), roller=(0.5, 0
     """45-degree back-extension (hyperextension) bench from three recipe points (bench-local (y, z) metres; the athlete
     faces -Y, the legs slope down toward +Y behind him):
       hip_pad = top edge of the hip pad, middle of its face (the pad face runs down the leg slope from here and the
-                front of the thighs lie on it),
-      foot    = centre of the foot plate's top surface (the soles stand on it),
+                front of the thighs lie on it; the face looks up and back, square to the leg slope),
+      foot    = centre of the foot plate's top surface (square to the leg slope; the soles stand on it),
       roller  = centre of the ankle roller (behind the lower calves).
     A sloped rail joins them to two floor feet. Returns the root empty."""
     M = _mats()
     root = _empty(name)
     a = math.radians(deg)
     d = Vector((0, math.cos(a), -math.sin(a)))       # down the leg slope (toward the feet: +Y and down)
-    nrm = Vector((0, -math.sin(a), math.cos(a)))     # pad face normal, out toward the thighs (-Y and up)
+    nrm = Vector((0, math.sin(a), math.cos(a)))      # pad face normal, out toward the thighs (up and back, square to d)
     hp = Vector((0, hip_pad[0], hip_pad[1]))
     pad_t, pad_len = 0.08, 0.34
     pad = _box(name + "_HipPad", (0.38, pad_len, pad_t), mat=M["pad"], bevel=0.025, parent=root)
     pad.matrix_basis = Matrix.Translation(hp + d * (pad_len / 2) - nrm * (pad_t / 2)) @ Matrix.Rotation(-a, 4, "X")
     fp = Vector((0, foot[0], foot[1]))
-    _box(name + "_FootPlate", (0.44, 0.32, 0.03), loc=(0, fp.y, fp.z - 0.015), mat=M["frame"], bevel=0.005, parent=root)
+    # foot plate square to the leg slope (its top faces up the legs), so the soles stand flat with a neutral ankle
+    fpl = _box(name + "_FootPlate", (0.44, 0.30, 0.03), mat=M["frame"], bevel=0.005, parent=root)
+    fpl.matrix_basis = Matrix.Translation(fp + d * 0.015) @ Matrix.Rotation(math.radians(90.0 - deg), 4, "X")
     rl = Vector((0, roller[0], roller[1]))
     _cyl(name + "_Roller", 0.055, 0.42, verts=40, mat=M["pad"], bevel=0.01, loc=tuple(rl), parent=root)
     top = hp + d * (pad_len / 2) - nrm * (pad_t + 0.035)    # behind the middle of the hip pad
