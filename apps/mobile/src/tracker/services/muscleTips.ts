@@ -1,37 +1,64 @@
 /**
- * Missing-muscle suggestions (R-58, owner 22 Oct 2026): the one calm tip on the Up next card.
- * Design: docs/overhaul/research/R-muscle-balance.md, section 6. The check is `engine/muscleBalance`.
+ * Muscle tips on the Up next card (R-58, owner 22 Oct 2026; rebuilt for R-482, owner 13 Nov 2026:
+ * "build all 5"). Design: docs/overhaul/research/R-muscle-balance.md; the rules are
+ * `engine/muscleBalance` (pure, tested).
  *
- * Shown only when ALL hold (rules against FOMO, section 5):
+ * R-482: the tip judges the member's ROUTINES (the plan), never the logs. "The member's week" is the
+ * folder of the routine up next: its routines, each run (plan days a week / routines) times a week
+ * (`planDaysPerWeek`; the member's own folder = each routine once a week). A skipped exercise is still
+ * in the plan, so it never makes a tip.
+ *
+ * Two tips, one at a time, tip 1 first:
+ *  1. "None of your routines trains your calves. Add 3 sets of Standing Calf Raise to your Legs
+ *     routine?" [Add] [Not now] · I skip this on purpose — shown on that routine's Up next card.
+ *  2. "Your routines give your shoulders 3 sets a week and your chest 12. Swap Incline Dumbbell Press
+ *     for Dumbbell Shoulder Press in your Push routine?" [Swap] [Not now] · Keep as is — same sets,
+ *     same place, with Undo after.
+ *
+ * Shown only when ALL hold (rules against FOMO, research section 5):
  *  - Settings → Workouts → Muscle tips is on, and this is not an easy week;
- *  - the member has trained for 3 weeks (first workout 21+ days ago) with 4+ strength workouts in
- *    the last 3 weeks — before that the week says too little;
- *  - those 3 weeks leave a group close to zero (`missingGroups`), it is not muted or snoozed;
- *  - today's routine is that group's home (legs on a legs / lower / full day, back on a pull / upper
- *    / full day, …), and the routine does not already list an exercise for it;
- *  - the routine is not a plan from the gym's trainer or a ready program (their design is respected).
- * One group at a time: a NEW group shows at most once a week. Never during a workout, on the finish
- * screen or as a notification (this is only ever read by the Workout tab).
+ *  - the folder is the member's own (never a plan from the gym's trainer or a ready program: their
+ *    design is respected, and nothing is swapped inside them);
+ *  - the plan is really in use (R-482 choice, `planSettled`): every routine finished at least once
+ *    and the first of them 14+ days ago. This replaces R-58's "3 weeks and 4 workouts", which only
+ *    made sense for the logs; a brand-new plan is never judged on day 1;
+ *  - beginners see the big groups only; muted and snoozed groups stay quiet;
+ *  - today's routine is the one the tip changes.
+ * A NEW group shows at most once a week. Never during a workout, on the finish screen or as a
+ * notification (this is only ever read by the Workout tab).
  */
 import { getDb } from '@/db';
 import type { PlanDayFull } from '@/db/repos/planRepo';
 import { getProfile } from '@/db/repos/userRepo';
-import { addDays, daysBetween, todayISO } from '@/lib/date';
-import type { DayType } from '@/types/models';
+import { daysBetween, todayISO } from '@/lib/date';
 
-import type { Muscle } from '../catalog/muscles';
+import { setShares } from '../catalog/muscles';
 import { getExerciseIdsByCatalogKey, getTrackerExercisesByIds } from '../db/exerciseInfo';
-import { folderOfRoutine } from '../db/folderRepo';
-import { addExerciseToRoutine } from '../db/routineRepo';
-import { GROUP_MUSCLES, missingGroups, todayLine, weekFromLogged, type BalanceGroup } from '../engine/muscleBalance';
+import { folderOfRoutine, listFolders } from '../db/folderRepo';
+import { addExerciseToRoutine, removeRoutineExercise, restoreRoutineRow, swapRoutineExerciseKeepingSets, type RoutineRowSnapshot } from '../db/routineRepo';
+import {
+  addLine,
+  chooseSwap,
+  groupSetsAWeek,
+  homeRoutines,
+  missingGroups,
+  musclesOfGroup,
+  planSettled,
+  swapLine,
+  timesPerWeekOf,
+  underTrainedGroups,
+  weekFromRoutines,
+  type BalanceGroup,
+  type CompareGroup,
+  type PlannedRoutine,
+  type PlannedWeek,
+  type SwapChoice,
+} from '../engine/muscleBalance';
 import { muscleTipsLoaded, NEW_TIP_DAYS, quietGroups, useMuscleTips } from '../store/muscleTipsStore';
-import { getPlanNow } from './planState';
-import { getBalanceSets } from './volumeService';
+import { getPlanNow, planDaysPerWeek } from './planState';
 
-/** The muscles of a group ("legs" = quads, hamstrings and glutes). */
-export function musclesOfGroup(group: BalanceGroup): readonly Muscle[] {
-  return group === 'legs' ? [...GROUP_MUSCLES.quads, ...GROUP_MUSCLES.hamstrings, ...GROUP_MUSCLES.glutes] : GROUP_MUSCLES[group];
-}
+// Kept where the screens and tests have always imported them from.
+export { fitsDay, musclesOfGroup } from '../engine/muscleBalance';
 
 /** The library's picks when the member has never done an exercise for the group (first that exists). */
 export const DEFAULT_PICKS: Readonly<Record<BalanceGroup, readonly string[]>> = {
@@ -50,63 +77,81 @@ export const DEFAULT_PICKS: Readonly<Record<BalanceGroup, readonly string[]>> = 
   biceps: ['dumbbell_curl'],
 };
 
-/** Which routine days are a group's home (core and calves fit any training day). PURE. */
-export function fitsDay(group: BalanceGroup, day: DayType): boolean {
-  if (day === 'rest') return false;
-  if (day === 'full') return true;
-  switch (group) {
-    case 'legs':
-    case 'quads':
-    case 'hamstrings':
-    case 'glutes':
-      return day === 'legs' || day === 'lower';
-    case 'back':
-    case 'rear_shoulders':
-    case 'biceps':
-      return day === 'pull' || day === 'upper';
-    case 'chest':
-    case 'side_shoulders':
-    case 'triceps':
-    case 'shoulders':
-      return day === 'push' || day === 'upper';
-    case 'core':
-    case 'calves':
-    default:
-      return true;
-  }
+/** A group the week asks for, and the routine its tip would change. */
+export interface TipCandidate {
+  group: BalanceGroup;
+  routineId: string;
 }
 
 /**
- * The group to show today: the first missing one whose home is this day — but a NEW group only when
- * the last one shown is a week old (or no longer missing). A group put away ("Not now", "I skip this
- * on purpose": in `quiet`) keeps that clock, so the next one never shows the same day. PURE.
+ * The tip to show on today's routine: the group on show keeps its place while the week still asks
+ * for it (on its own routine's day); a NEW group only when the last one shown is a week old. R-482:
+ * that clock holds even when the last group is settled (added, swapped, put away with "Not now", "I
+ * skip this on purpose" or "Keep as is"): judging the routines, "Add" itself settles a group, and the
+ * next tip must not follow the same minute. Then the first candidate whose routine is up next today.
+ * PURE.
  */
-export function groupForDay(
-  missing: readonly BalanceGroup[],
-  day: DayType,
+export function pickCandidate<C extends TipCandidate>(
+  candidates: readonly C[],
+  todayRoutineId: string,
   shown: { group: BalanceGroup; sinceISO: string } | null,
   today: string,
-  quiet: ReadonlySet<BalanceGroup> = new Set(),
-): BalanceGroup | null {
-  const fits = missing.filter((g) => fitsDay(g, day));
-  if (fits.length === 0) return null;
-  if (shown && (missing.includes(shown.group) || quiet.has(shown.group))) {
-    if (fits.includes(shown.group)) return shown.group;
-    if (daysBetween(shown.sinceISO, today) < NEW_TIP_DAYS) return null;
+): C | null {
+  if (candidates.length === 0) return null;
+  if (shown && daysBetween(shown.sinceISO, today) < NEW_TIP_DAYS) {
+    const same = candidates.find((c) => c.group === shown.group);
+    return same && same.routineId === todayRoutineId ? same : null;
   }
-  return fits[0];
+  if (shown) {
+    // A week on: the group on show still keeps its place, on its own routine's day.
+    const same = candidates.find((c) => c.group === shown.group);
+    if (same) return same.routineId === todayRoutineId ? same : null;
+  }
+  return candidates.find((c) => c.routineId === todayRoutineId) ?? null;
 }
 
-export interface MuscleTip {
+/**
+ * The candidates of the week, tip 1 first: when any group has no routine training it, only those
+ * (tip 1 wins); else the big groups far below the rest, each with a swap that keeps every group
+ * trained. PURE.
+ */
+export function tipCandidates(
+  week: PlannedWeek,
+  opts: { beginner?: boolean; quiet?: ReadonlySet<BalanceGroup> } = {},
+): ({ kind: 'add'; group: BalanceGroup; routineId: string } | { kind: 'swap'; group: CompareGroup; routineId: string; swap: SwapChoice })[] {
+  const quiet = opts.quiet ?? new Set<BalanceGroup>();
+  const planned = weekFromRoutines(week);
+  const adds = missingGroups(planned, { beginner: opts.beginner, quiet }).flatMap((group) => {
+    const home = homeRoutines(group, week.routines)[0];
+    return home ? [{ kind: 'add' as const, group, routineId: home.id }] : [];
+  });
+  if (adds.length > 0) return adds;
+  const counts = groupSetsAWeek(week);
+  return underTrainedGroups(counts, planned, quiet).flatMap((u) => {
+    const swap = chooseSwap(u.group, week, counts);
+    return swap ? [{ kind: 'swap' as const, group: u.group, routineId: swap.routineId, swap }] : [];
+  });
+}
+
+interface TipBase {
   group: BalanceGroup;
+  routineId: string;
+  routineName: string;
+  /** The exercise that goes in. */
   exerciseId: string;
   exerciseName: string;
   sets: number;
   line: string;
 }
+export type MuscleTip =
+  | (TipBase & { kind: 'add' })
+  | (TipBase & { kind: 'swap'; group: CompareGroup; outRowId: string; outExerciseId: string; outName: string });
+
+/** What "Add" or "Swap" did, so Undo can put it back. */
+export type MuscleTipDone = { kind: 'add'; rowId: string } | { kind: 'swap'; before: RoutineRowSnapshot };
 
 /** The member's most-done exercise whose MAIN muscle is in the group (all history), else null. */
-async function membersOwnPick(group: BalanceGroup): Promise<{ id: string; name: string } | null> {
+async function membersOwnPick(group: BalanceGroup, exclude: ReadonlySet<string>): Promise<{ id: string; name: string } | null> {
   const rows = await getDb().getAllAsync<{ exercise_id: string; n: number }>(
     `SELECT se.exercise_id, COUNT(*) AS n FROM set_entries se
        JOIN workout_sessions ws ON ws.id = se.session_id
@@ -117,29 +162,39 @@ async function membersOwnPick(group: BalanceGroup): Promise<{ id: string; name: 
   const infos = await getTrackerExercisesByIds(rows.map((r) => r.exercise_id));
   const want = new Set(musclesOfGroup(group));
   for (const r of rows) {
+    if (exclude.has(r.exercise_id)) continue;
     const info = infos.get(r.exercise_id);
     if (info && info.muscles.primary.some((m) => want.has(m))) return { id: info.id, name: info.name };
   }
   return null;
 }
 
-async function libraryPick(group: BalanceGroup): Promise<{ id: string; name: string } | null> {
+async function libraryPick(group: BalanceGroup, exclude: ReadonlySet<string>): Promise<{ id: string; name: string } | null> {
   const keys = DEFAULT_PICKS[group];
   const ids = await getExerciseIdsByCatalogKey([...keys]);
   for (const k of keys) {
     const id = ids.get(k);
-    if (!id) continue;
+    if (!id || exclude.has(id)) continue;
     const info = (await getTrackerExercisesByIds([id])).get(id);
     if (info) return { id, name: info.name };
   }
   return null;
 }
 
+/** The first day each routine was finished (a demo workout never counts). */
+async function firstDoneByRoutine(routineIds: readonly string[]): Promise<Map<string, string | null>> {
+  if (routineIds.length === 0) return new Map();
+  const rows = await getDb().getAllAsync<{ routine_id: string; d: string | null }>(
+    `SELECT routine_id, MIN(date_iso) AS d FROM workout_sessions
+      WHERE source != 'seed' AND routine_id IN (${routineIds.map(() => '?').join(', ')})
+      GROUP BY routine_id`,
+    [...routineIds],
+  );
+  return new Map(rows.map((r) => [r.routine_id, r.d]));
+}
+
 /** The tip for this routine today, or null (most days). Never throws. */
-export async function muscleTipFor(
-  routine: Pick<PlanDayFull, 'id' | 'dayType' | 'exercises'>,
-  today: string = todayISO(),
-): Promise<MuscleTip | null> {
+export async function muscleTipFor(routine: Pick<PlanDayFull, 'id'>, today: string = todayISO()): Promise<MuscleTip | null> {
   try {
     await muscleTipsLoaded();
     const prefs = useMuscleTips.getState();
@@ -151,36 +206,88 @@ export async function muscleTipFor(
       return null;
     });
     if (plan?.easy) return null;
-    const first = await getDb().getFirstAsync<{ d: string | null }>("SELECT MIN(date_iso) AS d FROM workout_sessions WHERE source != 'seed'");
-    if (!first?.d || daysBetween(first.d, today) < 21) return null;
-    const { sets, workouts } = await getBalanceSets(addDays(today, -21), addDays(today, -1));
-    if (workouts < 4) return null;
+    const full = (await listFolders()).find((f) => f.id === folder.id);
+    const used = (full?.routines ?? []).filter((r) => r.dayType !== 'rest' && r.exercises.length > 0);
+    if (!used.some((r) => r.id === routine.id)) return null;
+    if (!planSettled(await firstDoneByRoutine(used.map((r) => r.id)), used.map((r) => r.id), today)) return null;
+
+    const infos = await getTrackerExercisesByIds([...new Set(used.flatMap((r) => r.exercises.map((x) => x.exerciseId)))]);
+    const routines: PlannedRoutine[] = used.map((r) => ({
+      id: r.id,
+      name: r.name,
+      dayType: r.dayType,
+      exercises: r.exercises.flatMap((x) => {
+        const info = infos.get(x.exerciseId);
+        if (!info) return [];
+        return [{ rowId: x.id, exerciseId: x.exerciseId, name: info.name, sets: x.targetSets, shares: setShares(info.muscles), compound: info.isCompound }];
+      }),
+    }));
+    const week: PlannedWeek = { routines, timesPerWeek: timesPerWeekOf(planDaysPerWeek(folder.settings, routines.length), routines.length) };
+
     const profile = await getProfile().catch((e: unknown) => {
       console.warn('[ForgeErr] muscle tip: the profile could not be read', e);
       return null;
     });
     const beginner = profile?.experience === 'beginner';
     const quiet = quietGroups(prefs, today);
-    const missing = missingGroups(weekFromLogged(sets, 3), { beginner, quiet });
-    const group = groupForDay(missing, routine.dayType, prefs.shown, today, quiet);
-    if (!group) return null;
-    // The routine already lists an exercise for it (skipped lately): no tip, it is already planned.
-    const want = new Set(musclesOfGroup(group));
-    const infos = await getTrackerExercisesByIds(routine.exercises.map((x) => x.exerciseId));
-    const listed = routine.exercises.some((x) => infos.get(x.exerciseId)?.muscles.primary.some((m) => want.has(m)) ?? false);
-    if (listed) return null;
-    const pick = (await membersOwnPick(group)) ?? (await libraryPick(group));
+    const chosen = pickCandidate(tipCandidates(week, { beginner, quiet }), routine.id, prefs.shown, today);
+    if (!chosen) return null;
+    const target = routines.find((r) => r.id === chosen.routineId);
+    if (!target) return null;
+    // Never an exercise this routine already lists.
+    const inRoutine = new Set(target.exercises.map((x) => x.exerciseId));
+    const pick = (await membersOwnPick(chosen.group, inRoutine)) ?? (await libraryPick(chosen.group, inRoutine));
     if (!pick) return null;
-    const n = beginner ? 2 : 3;
-    prefs.markShown(group, today);
-    return { group, exerciseId: pick.id, exerciseName: pick.name, sets: n, line: todayLine(group, pick.name, n) };
+    prefs.markShown(chosen.group, today);
+    if (chosen.kind === 'add') {
+      const n = beginner ? 2 : 3;
+      return {
+        kind: 'add',
+        group: chosen.group,
+        routineId: target.id,
+        routineName: target.name,
+        exerciseId: pick.id,
+        exerciseName: pick.name,
+        sets: n,
+        line: addLine(chosen.group, pick.name, n, target.name),
+      };
+    }
+    const s = chosen.swap;
+    return {
+      kind: 'swap',
+      group: chosen.group,
+      routineId: target.id,
+      routineName: target.name,
+      exerciseId: pick.id,
+      exerciseName: pick.name,
+      sets: s.out.sets,
+      outRowId: s.out.rowId,
+      outExerciseId: s.out.exerciseId,
+      outName: s.out.name,
+      line: swapLine(chosen.group, s.toSets, s.from, s.fromSets, s.out.name, pick.name, target.name),
+    };
   } catch (e) {
     console.warn('[ForgeErr] muscle tip could not be worked out', e);
     return null;
   }
 }
 
-/** "Add": the exercise goes into the routine (the member's own routine; never a gym plan). */
-export async function addMuscleTip(routineId: string, tip: MuscleTip): Promise<void> {
-  await addExerciseToRoutine(routineId, tip.exerciseId, { targetSets: tip.sets });
+/**
+ * "Add" (tip 1): the exercise goes at the end of the routine. "Swap" (tip 2): it takes the other
+ * exercise's place with the same sets. Null when the routine changed since the tip was worked out
+ * (nothing is written then). Only ever the member's own routine (never a gym plan or ready program).
+ */
+export async function applyMuscleTip(tip: MuscleTip): Promise<MuscleTipDone | null> {
+  if (tip.kind === 'add') {
+    const rowId = await addExerciseToRoutine(tip.routineId, tip.exerciseId, { targetSets: tip.sets });
+    return { kind: 'add', rowId };
+  }
+  const before = await swapRoutineExerciseKeepingSets(tip.outRowId, tip.outExerciseId, tip.exerciseId);
+  return before ? { kind: 'swap', before } : null;
+}
+
+/** Undo: the routine exactly as it was before "Add" or "Swap". */
+export async function undoMuscleTip(done: MuscleTipDone): Promise<void> {
+  if (done.kind === 'add') await removeRoutineExercise(done.rowId);
+  else await restoreRoutineRow(done.before);
 }

@@ -162,22 +162,23 @@ appId: com.mettleup.app
     element: 'Up next: Push Day.*'
     direction: UP
     timeout: 30000
-# The Up next card's muscle tips ("Easy add today: 3 sets of Plank ...") load a moment after the card
-# and come one muscle at a time: put each away for good, as a member who trains them elsewhere would.
+# The Up next card's muscle tip (R-482: "None of your routines trains your ..." or "Your ... get(s) N sets
+# a week. ... Swap ...") loads a moment after the card, one muscle at a time: put each away for good
+# ("I skip this on purpose" or "Keep as is"), as a member who trains them elsewhere would.
 - repeat:
     times: 5
     commands:
       - extendedWaitUntil:
-          visible: "Easy add today.*"
+          visible: "(None of your routines trains|Your .* sets? a week).*"
           timeout: 6000
           optional: true
       - scrollUntilVisible:
-          element: "I skip this on purpose.*"
+          element: "(I skip this on purpose|Keep as is).*"
           centerElement: true
           timeout: 3000
           optional: true
       - tapOn:
-          text: "I skip this on purpose.*"
+          text: "(I skip this on purpose|Keep as is).*"
           optional: true
 - scrollUntilVisible:
     element: 'Up next: Push Day.*'

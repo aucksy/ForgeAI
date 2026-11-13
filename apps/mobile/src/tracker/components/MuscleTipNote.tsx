@@ -1,7 +1,10 @@
 /**
- * Missing-muscle suggestions (R-58): the one calm line inside the Up next card, e.g. "Easy add today:
- * 3 sets of Face Pull for your rear shoulders." [Add to routine] [Not now] · I skip this on purpose.
- * It says what to add, never what is wrong (no red, no "missing"). The tip itself: services/muscleTips.
+ * Muscle tips (R-58, rebuilt R-482): the one calm line inside the Up next card.
+ *  - Tip 1: "None of your routines trains your calves. Add 3 sets of Standing Calf Raise to your Legs
+ *    routine?" [Add] [Not now] · I skip this on purpose
+ *  - Tip 2: "Your routines give your shoulders 3 sets a week and your chest 12. Swap Incline Dumbbell
+ *    Press for Dumbbell Shoulder Press in your Push routine?" [Swap] [Not now] · Keep as is
+ * It says what to do, never what is wrong (no red, no "missing"). The tip itself: services/muscleTips.
  */
 import { useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
@@ -14,7 +17,7 @@ import type { MuscleTip } from '../services/muscleTips';
 
 export function MuscleTipNote({
   tip,
-  onAdd,
+  onApply,
   onNotNow,
   onSkip,
   lastNotNow = false,
@@ -22,26 +25,31 @@ export function MuscleTipNote({
   tip: MuscleTip;
   /** A second "Not now" puts the group away for good (muscleTipsStore): the label says so. */
   lastNotNow?: boolean;
-  onAdd: () => Promise<void>;
+  /** "Add" (tip 1) or "Swap" (tip 2). */
+  onApply: () => Promise<void>;
   onNotNow: () => void;
+  /** "I skip this on purpose" (tip 1) or "Keep as is" (tip 2): that group stays quiet. */
   onSkip: () => void;
 }) {
-  const [adding, setAdding] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const swap = tip.kind === 'swap';
+  const label = swap ? (busy ? 'Swapping…' : 'Swap') : busy ? 'Adding…' : 'Add';
+  const skipLabel = swap ? 'Keep as is' : 'I skip this on purpose';
   return (
     <View style={{ borderRadius: radius.md, backgroundColor: color.surfaceSunken, borderWidth: 1, borderColor: color.border, padding: space.md, gap: space.sm }}>
       <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: space.sm }}>
-        <Icon name="plus" size={16} color={color.accentBright} />
+        <Icon name={swap ? 'dumbbell' : 'plus'} size={16} color={color.accentBright} />
         <Text style={{ flex: 1, fontFamily: type.bodyMedium, fontSize: type.size.sub, lineHeight: 19, color: color.ink }}>{tip.line}</Text>
       </View>
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: space.sm, alignItems: 'center' }}>
         <GhostButton
-          label={adding ? 'Adding…' : 'Add to routine'}
-          icon="plus"
+          label={label}
+          icon={swap ? 'dumbbell' : 'plus'}
           onPress={() => {
-            if (adding) return;
+            if (busy) return;
             tap();
-            setAdding(true);
-            void onAdd().finally(() => setAdding(false));
+            setBusy(true);
+            void onApply().finally(() => setBusy(false));
           }}
         />
         <Pressable
@@ -62,12 +70,10 @@ export function MuscleTipNote({
           onSkip();
         }}
         accessibilityRole="button"
-        accessibilityLabel="I skip this on purpose. Don't suggest it again"
+        accessibilityLabel={`${skipLabel}. Don't suggest it again`}
         style={{ minHeight: 44, justifyContent: 'center', alignSelf: 'flex-start' }}
       >
-        <Text style={{ fontFamily: type.body, fontSize: type.size.caption, color: color.inkMuted, textDecorationLine: 'underline' }}>
-          I skip this on purpose
-        </Text>
+        <Text style={{ fontFamily: type.body, fontSize: type.size.caption, color: color.inkMuted, textDecorationLine: 'underline' }}>{skipLabel}</Text>
       </Pressable>
     </View>
   );

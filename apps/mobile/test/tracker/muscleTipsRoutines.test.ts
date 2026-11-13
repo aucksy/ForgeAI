@@ -1,0 +1,278 @@
+/**
+ * R-482 (owner, 13 Nov 2026: "build all 5"): the Up next muscle tip judges the member's ROUTINES,
+ * not the logs. His case: Standing Calf Raise sits in his Legs routine (he skips it), and Pull 2's
+ * Up next said "Easy add today: 3 sets of Standing Calf Raise for your calves." It must say nothing.
+ */
+import { describe, expect, it } from 'vitest';
+
+import { CATALOG } from '@/tracker/catalog/exerciseCatalog';
+import { setShares, type Muscle } from '@/tracker/catalog/muscles';
+import {
+  addLine,
+  addedLine,
+  chooseSwap,
+  COMPARE_GROUPS,
+  GAP_MIN_SETS,
+  GAP_RATIO,
+  groupSetsAWeek,
+  homeRoutines,
+  planSettled,
+  routineWords,
+  swapLine,
+  swappedLine,
+  timesPerWeekOf,
+  underTrainedGroups,
+  weekFromRoutines,
+  type PlannedExercise,
+  type PlannedRoutine,
+  type CompareGroup,
+  type PlannedWeek,
+  type WeekSets,
+} from '@/tracker/engine/muscleBalance';
+import { pickCandidate, tipCandidates } from '@/tracker/services/muscleTips';
+import type { DayType } from '@/types/models';
+
+const TODAY = '2026-11-13';
+
+let row = 0;
+/** One routine row from a library exercise: "key:sets". */
+function ex(key: string, sets: number): PlannedExercise {
+  const e = CATALOG.find((c) => c.key === key);
+  if (!e) throw new Error(`no library exercise ${key}`);
+  row += 1;
+  return {
+    rowId: `row${row}`,
+    exerciseId: `ex_${key}`,
+    name: e.name,
+    sets,
+    shares: setShares({ primary: [...e.primary], secondary: [...e.secondary] }),
+    compound: e.compound,
+  };
+}
+function routine(id: string, name: string, dayType: DayType, exercises: PlannedExercise[]): PlannedRoutine {
+  return { id, name, dayType, exercises };
+}
+
+/** The owner's kind of plan: Push, Pull 1, Pull 2, Legs, each once a week. */
+function ownersPlan(withCalfRaise = true): PlannedWeek {
+  return {
+    timesPerWeek: 1,
+    routines: [
+      routine('push', 'Push', 'push', [ex('barbell_bench_press', 3), ex('incline_dumbbell_press', 3), ex('cable_fly', 3), ex('lateral_raise', 3), ex('triceps_pushdown', 3)]),
+      routine('pull1', 'Pull 1', 'pull', [ex('lat_pulldown', 3), ex('seated_cable_row', 3), ex('face_pull', 3), ex('dumbbell_curl', 3)]),
+      routine('pull2', 'Pull 2', 'pull', [ex('barbell_row', 3), ex('lat_pulldown', 3), ex('dumbbell_curl', 3)]),
+      routine('legs', 'Legs', 'legs', [
+        ex('barbell_back_squat', 3),
+        ex('leg_press', 3),
+        ex('romanian_deadlift', 3),
+        ex('lying_leg_curl', 3),
+        ...(withCalfRaise ? [ex('standing_calf_raise', 3)] : []),
+        ex('plank', 3),
+      ]),
+    ],
+  };
+}
+
+describe('R-482: the member\'s week is the routines, not the logs', () => {
+  it('his case: calf raise in Legs (skipped or not), today Pull 2 -> no calves tip, no tip at all', () => {
+    const week = ownersPlan(true);
+    const cands = tipCandidates(week);
+    expect(cands.map((c) => c.group)).not.toContain('calves');
+    expect(cands).toEqual([]);
+    expect(pickCandidate(cands, 'pull2', null, TODAY)).toBeNull();
+    expect(pickCandidate(cands, 'legs', null, TODAY)).toBeNull();
+  });
+
+  it('a group NO routine trains: tip 1, on its home routine only (calves go to Legs, never Pull 2)', () => {
+    const cands = tipCandidates(ownersPlan(false));
+    expect(cands).toEqual([{ kind: 'add', group: 'calves', routineId: 'legs' }]);
+    expect(pickCandidate(cands, 'pull2', null, TODAY)).toBeNull();
+    expect(pickCandidate(cands, 'legs', null, TODAY)?.group).toBe('calves');
+  });
+
+  it('counts planned sets: 1 main, 0.5 helper, times how often each routine runs a week', () => {
+    expect(timesPerWeekOf(null, 4)).toBe(1);
+    expect(timesPerWeekOf(6, 3)).toBe(2);
+    expect(timesPerWeekOf(4, 3)).toBeCloseTo(4 / 3);
+    expect(timesPerWeekOf(3, 0)).toBe(0);
+    const week = ownersPlan(true);
+    const counts = groupSetsAWeek(week);
+    expect(counts.get('chest')).toBe(9);
+    // Back: a row and a pulldown count once each for the group, not once per back muscle.
+    expect(counts.get('back')).toBe(3 + 3 + 1.5 + 3 + 3);
+    expect(counts.get('hamstrings')).toBe(6);
+    expect(counts.get('glutes')).toBe(4.5);
+    const twice = groupSetsAWeek({ ...week, timesPerWeek: 2 });
+    expect(twice.get('chest')).toBe(18);
+    const planned = weekFromRoutines(week);
+    expect(planned.main.get('calves')).toBe(3);
+    expect(planned.counted.get('triceps')).toBe(3 + 1.5 + 1.5);
+  });
+
+  it('beginners see big groups only; a muted group stays quiet', () => {
+    const week = ownersPlan(false);
+    expect(tipCandidates(week, { beginner: true })).toEqual([]);
+    expect(tipCandidates(week, { quiet: new Set(['calves']) })).toEqual([]);
+  });
+
+  it('a plan is judged only once it is in use: every routine done once, the first 14+ days ago', () => {
+    const ids = ['a', 'b', 'c'];
+    expect(planSettled(new Map([['a', '2026-10-01'], ['b', '2026-10-02'], ['c', '2026-10-03']]), ids, TODAY)).toBe(true);
+    // One routine never done yet.
+    expect(planSettled(new Map([['a', '2026-10-01'], ['b', '2026-10-02']]), ids, TODAY)).toBe(false);
+    // Brand-new plan: all three done, but the first only 13 days ago.
+    expect(planSettled(new Map([['a', '2026-10-31'], ['b', '2026-11-01'], ['c', '2026-11-02']]), ids, TODAY)).toBe(false);
+    expect(planSettled(new Map([['a', '2026-10-30'], ['b', '2026-11-01'], ['c', '2026-11-12']]), ids, TODAY)).toBe(true);
+    expect(planSettled(new Map(), [], TODAY)).toBe(false);
+  });
+
+  it('home routine: calves on a legs day first; core in the shortest; no fitting day = any routine', () => {
+    const week = ownersPlan(false);
+    expect(homeRoutines('calves', week.routines)[0].id).toBe('legs');
+    expect(homeRoutines('core', week.routines)[0].id).toBe('pull2');
+    expect(homeRoutines('rear_shoulders', week.routines).map((r) => r.id)).toEqual(['pull2', 'pull1']);
+    const upperOnly = [routine('u1', 'Upper A', 'upper', [ex('barbell_bench_press', 3)]), routine('u2', 'Upper B', 'upper', [ex('lat_pulldown', 3), ex('barbell_row', 3)])];
+    expect(homeRoutines('legs', upperOnly)[0].id).toBe('u1');
+  });
+});
+
+/** Push and pull full, legs with quads and only one leg curl: hamstrings far behind. */
+function quadHeavyPlan(): PlannedWeek {
+  return {
+    timesPerWeek: 1,
+    routines: [
+      routine('push', 'Push', 'push', [ex('barbell_bench_press', 4), ex('incline_dumbbell_press', 4), ex('cable_fly', 4), ex('lateral_raise', 4), ex('triceps_pushdown', 3)]),
+      routine('pull', 'Pull', 'pull', [ex('lat_pulldown', 4), ex('seated_cable_row', 4), ex('barbell_row', 4), ex('face_pull', 3), ex('dumbbell_curl', 3)]),
+      routine('legs', 'Legs', 'legs', [ex('barbell_back_squat', 4), ex('leg_press', 4), ex('leg_extension', 4), ex('lying_leg_curl', 3), ex('standing_calf_raise', 3), ex('plank', 3)]),
+    ],
+  };
+}
+
+describe('R-482 tip 2: a big group trained much less than the others', () => {
+  it('the rule: under a third of the median of the other big groups AND 6+ sets below it', () => {
+    expect(GAP_RATIO).toBeCloseTo(1 / 3);
+    expect(GAP_MIN_SETS).toBe(6);
+    expect(COMPARE_GROUPS).not.toContain('core');
+    const week = quadHeavyPlan();
+    const counts = groupSetsAWeek(week);
+    expect(counts.get('hamstrings')).toBe(3);
+    expect(counts.get('quads')).toBe(12);
+    const under = underTrainedGroups(counts, weekFromRoutines(week));
+    expect(under.map((u) => u.group)).toEqual(['hamstrings']);
+    expect(under[0].others).toBe(12);
+  });
+
+  it('does not fire on a small gap (6 against 10 is taste, not a gap)', () => {
+    const counts = new Map<CompareGroup, number>([['chest', 10], ['back', 10], ['shoulders', 10], ['quads', 10], ['hamstrings', 6], ['glutes', 8]]);
+    const sixMain: WeekSets = { counted: new Map<Muscle, number>([['hamstrings', 6]]), main: new Map<Muscle, number>([['hamstrings', 6]]) };
+    expect(underTrainedGroups(counts, sixMain)).toEqual([]);
+    // A third of the median but under 6 sets behind: still nothing (a light trainer of everything).
+    const light = new Map<CompareGroup, number>([['chest', 6], ['back', 6], ['shoulders', 6], ['quads', 6], ['hamstrings', 1.5], ['glutes', 6]]);
+    expect(underTrainedGroups(light, { counted: new Map<Muscle, number>([['hamstrings', 3]]), main: new Map<Muscle, number>([['hamstrings', 1.5]]) })).toEqual([]);
+  });
+
+  it('the typical push / pull / legs plan says nothing', () => {
+    const week = ownersPlan(true);
+    expect(underTrainedGroups(groupSetsAWeek(week), weekFromRoutines(week))).toEqual([]);
+  });
+
+  it('swap: out goes a single-joint exercise of the routine\'s most-trained group, same sets, same place', () => {
+    const week = quadHeavyPlan();
+    const swap = chooseSwap('hamstrings', week, groupSetsAWeek(week));
+    expect(swap).not.toBeNull();
+    expect(swap!.routineId).toBe('legs');
+    expect(swap!.from).toBe('quads');
+    expect(swap!.out.name).toBe('Leg Extension');
+    expect(swap!.fromSets).toBe(12);
+    expect(swap!.toSets).toBe(3);
+    const cands = tipCandidates(week);
+    expect(cands.map((c) => [c.kind, c.group, c.routineId])).toEqual([['swap', 'hamstrings', 'legs']]);
+    expect(pickCandidate(cands, 'push', null, TODAY)).toBeNull();
+    expect(pickCandidate(cands, 'legs', null, TODAY)?.group).toBe('hamstrings');
+    // "Keep as is" mutes hamstrings: no tip.
+    expect(tipCandidates(week, { quiet: new Set(['hamstrings']) })).toEqual([]);
+  });
+
+  it('never empties a group: the only quads exercise of the routine is never swapped out', () => {
+    const week: PlannedWeek = {
+      timesPerWeek: 1,
+      routines: [
+        routine('push', 'Push', 'push', [ex('barbell_bench_press', 4), ex('incline_dumbbell_press', 4), ex('cable_fly', 4)]),
+        routine('pull', 'Pull', 'pull', [ex('lat_pulldown', 4), ex('seated_cable_row', 4), ex('barbell_row', 4)]),
+        routine('legs', 'Legs', 'legs', [ex('barbell_back_squat', 12), ex('lying_leg_curl', 2)]),
+      ],
+    };
+    const counts = groupSetsAWeek(week);
+    expect(underTrainedGroups(counts, weekFromRoutines(week)).map((u) => u.group)).toContain('hamstrings');
+    expect(chooseSwap('hamstrings', week, counts)).toBeNull();
+    expect(tipCandidates(week).filter((c) => c.group === 'hamstrings')).toEqual([]);
+  });
+
+  it('never makes a new gap the other way: the taken-from group keeps at least as many sets', () => {
+    const week: PlannedWeek = {
+      timesPerWeek: 1,
+      routines: [routine('legs', 'Legs', 'legs', [ex('barbell_back_squat', 3), ex('leg_extension', 3), ex('lying_leg_curl', 1)])],
+    };
+    // quads 6, hamstrings 1: taking 3 quads sets for hamstrings would leave quads 3 under hamstrings 4.
+    expect(chooseSwap('hamstrings', week, groupSetsAWeek(week))).toBeNull();
+  });
+
+  it('tip 1 wins over tip 2 when both apply', () => {
+    const week = quadHeavyPlan();
+    const noCalves = { ...week, routines: week.routines.map((r) => (r.id === 'legs' ? { ...r, exercises: r.exercises.filter((x) => x.name !== 'Standing Calf Raise') } : r)) };
+    expect(tipCandidates(noCalves).map((c) => [c.kind, c.group])).toEqual([['add', 'calves']]);
+  });
+});
+
+describe('R-482: one tip at a time, a new group at most once a week', () => {
+  const cands = [
+    { group: 'calves' as const, routineId: 'legs' },
+    { group: 'rear_shoulders' as const, routineId: 'pull' },
+  ];
+  it('the group on show keeps its place on its own routine\'s day', () => {
+    expect(pickCandidate(cands, 'legs', { group: 'calves', sinceISO: '2026-11-10' }, TODAY)?.group).toBe('calves');
+    expect(pickCandidate(cands, 'pull', { group: 'calves', sinceISO: '2026-11-10' }, TODAY)).toBeNull();
+    // A week on, the shown group still waits for its own routine.
+    expect(pickCandidate(cands, 'pull', { group: 'calves', sinceISO: '2026-11-01' }, TODAY)).toBeNull();
+  });
+  it('a settled group (added, swapped or put away) holds the week: nothing new the same day', () => {
+    expect(pickCandidate(cands, 'pull', { group: 'hamstrings', sinceISO: TODAY }, TODAY)).toBeNull();
+    expect(pickCandidate(cands, 'pull', { group: 'hamstrings', sinceISO: '2026-11-06' }, TODAY)?.group).toBe('rear_shoulders');
+    expect(pickCandidate([], 'pull', null, TODAY)).toBeNull();
+  });
+});
+
+describe('R-482: the words (member-words: the muscle and the routine, plain, buttons named)', () => {
+  it('tip 1', () => {
+    expect(addLine('calves', 'Standing Calf Raise', 3, 'Legs')).toBe(
+      'None of your routines trains your calves. Add 3 sets of Standing Calf Raise to your Legs routine?',
+    );
+    expect(addLine('back', 'Lat Pulldown', 2, 'Upper A')).toBe('None of your routines trains your back. Add 2 sets of Lat Pulldown to your Upper A routine?');
+  });
+  it('tip 2: the two numbers are the planned sets a week of the routines, rounded', () => {
+    expect(swapLine('shoulders', 3, 'chest', 12, 'Incline Dumbbell Press', 'Dumbbell Shoulder Press', 'Push')).toBe(
+      'Your routines give your shoulders 3 sets a week and your chest 12. Swap Incline Dumbbell Press for Dumbbell Shoulder Press in your Push routine?',
+    );
+    expect(swapLine('back', 4.5, 'quads', 11.6, 'Leg Extension', 'Lat Pulldown', 'Full Body')).toBe(
+      'Your routines give your back 5 sets a week and your quads 12. Swap Leg Extension for Lat Pulldown in your Full Body routine?',
+    );
+    expect(swapLine('hamstrings', 1, 'quads', 9, 'Leg Extension', 'Seated Leg Curl', 'Legs')).toContain('your hamstrings 1 set a week');
+  });
+  it('a routine already named "routine" is not doubled', () => {
+    expect(routineWords('Legs')).toBe('your Legs routine');
+    expect(routineWords('Morning Routine')).toBe('your Morning Routine');
+  });
+  it('the confirmations with Undo', () => {
+    expect(addedLine('Standing Calf Raise', 'Legs')).toBe('Standing Calf Raise added to your Legs routine.');
+    expect(swappedLine('Seated Leg Curl', 'Leg Extension', 'Legs')).toBe('Seated Leg Curl now replaces Leg Extension in your Legs routine.');
+  });
+  it('never "Easy add", never a banned or blaming word', () => {
+    const lines = [
+      addLine('calves', 'Standing Calf Raise', 3, 'Legs'),
+      swapLine('shoulders', 3, 'chest', 12, 'Incline Dumbbell Press', 'Dumbbell Shoulder Press', 'Push'),
+      addedLine('Plank', 'Pull 2'),
+      swappedLine('Seated Leg Curl', 'Leg Extension', 'Legs'),
+    ];
+    for (const l of lines) expect(l).not.toMatch(/\b(easy add|volume|PR|session|missing|neglect|imbalance|weak)\b/i);
+  });
+});

@@ -27,7 +27,7 @@ import { BackupMovedCard } from '@/components/BackupMovedCard';
 import { SafekeepNudgeCard } from '@/components/SafekeepNudgeCard';
 import { PlanEndsCard } from '@/shop/PlanEndsCard';
 import { WatchInstallCard } from '@/components/WatchInstallCard';
-import { Card, GhostButton, Screen, askConfirm } from '@/components/ui';
+import { Card, GhostButton, Screen, UndoBar, askConfirm } from '@/components/ui';
 import { todayISO } from '@/lib/date';
 import { runGuarded } from '@/lib/guardedAction';
 import { thud } from '@/lib/haptics';
@@ -54,7 +54,8 @@ import { showsImportOffer, upNextCard, type UpNextAction, type UpNextToday } fro
 import { offerEarlyEasy } from '@/tracker/plans/effort';
 import { stalledLiftsInPlan } from '@/tracker/services/coachTargets';
 import { liveCountsLine } from '@/tracker/services/finishCheck';
-import { addMuscleTip, muscleTipFor, type MuscleTip } from '@/tracker/services/muscleTips';
+import { addedLine, swappedLine } from '@/tracker/engine/muscleBalance';
+import { applyMuscleTip, muscleTipFor, undoMuscleTip, type MuscleTip, type MuscleTipDone } from '@/tracker/services/muscleTips';
 import { getPlanNow, moveEasyWeek, planLine, type PlanNow } from '@/tracker/services/planState';
 import { getTodayPlan } from '@/tracker/services/todayService';
 import { startShownWorkout } from '@/tracker/services/todayStart';
@@ -118,7 +119,9 @@ export default function WorkoutScreen() {
   const [counts, setCounts] = useState<{ total: number; daysThisWeek: number } | null>(null);
   const [starting, setStarting] = useState(false);
   // R-58: the one muscle tip for the routine up next (most days none), and that routine's id.
-  const [tip, setTip] = useState<(MuscleTip & { routineId: string }) | null>(null);
+  const [tip, setTip] = useState<MuscleTip | null>(null);
+  // R-482: after "Add" or "Swap", a short line with Undo (the routine back exactly as it was).
+  const [tipUndo, setTipUndo] = useState<{ done: MuscleTipDone; message: string; key: number } | null>(null);
   const [tick, setTick] = useState(0);
   // SH-29: a wrong forgeai:// link lands here with one calm line.
   const [linkNotice, setLinkNotice] = useState<string | null>(null);
@@ -180,7 +183,7 @@ export default function WorkoutScreen() {
           void getRoutineAnywhere(nextId)
             .then((r) => (r ? muscleTipFor(r, day) : null))
             .then((t) => {
-              if (alive) setTip(t ? { ...t, routineId: nextId } : null);
+              if (alive) setTip(t && t.routineId === nextId ? t : null);
             })
             .catch((e: unknown) => {
               console.warn('[ForgeErr] muscle tip: the routine could not be read', e);
@@ -424,19 +427,29 @@ export default function WorkoutScreen() {
                 {/* An easy week shows even on a day with no routine to do (trained already). */}
                 {extra === 'easyWeek' ? <EasyWeekNote until={plan?.easyUntil} /> : null}
                 {extra === 'easyWeek' ? <GhostButton label="Train normally this week" icon="dumbbell" onPress={() => void onTrainNormally()} /> : null}
-                {/* R-58: one calm tip when 3 weeks left a muscle group close to zero (never in an easy week). */}
+                {/* R-58 / R-482: one calm tip when the member's routines leave a muscle group untrained, or train a
+                    big group far less than the rest (never in an easy week). */}
                 {tip && extra === 'muscleTip' ? (
                   <MuscleTipNote
                     tip={tip}
                     lastNotNow={(useMuscleTips.getState().notNow[tip.group] ?? 0) >= 1}
-                    onAdd={async () => {
+                    onApply={async () => {
                       try {
-                        await addMuscleTip(tip.routineId, tip);
+                        const done = await applyMuscleTip(tip);
                         setTip(null);
+                        if (done) {
+                          setTipUndo({
+                            done,
+                            message: tip.kind === 'swap' ? swappedLine(tip.exerciseName, tip.outName, tip.routineName) : addedLine(tip.exerciseName, tip.routineName),
+                            key: Date.now(),
+                          });
+                        } else {
+                          void tell('Your routine has changed', 'Nothing was swapped. Open the routine to change it yourself.');
+                        }
                         setTick((t) => t + 1);
                       } catch (e) {
-                        console.warn('[ForgeErr] muscle tip: the exercise could not be added', e);
-                        void tell("Couldn't add it", 'Please try again.');
+                        console.warn('[ForgeErr] muscle tip: the routine could not be changed', e);
+                        void tell(tip.kind === 'swap' ? "Couldn't swap it" : "Couldn't add it", 'Please try again.');
                       }
                     }}
                     onNotNow={() => {
@@ -447,6 +460,23 @@ export default function WorkoutScreen() {
                       useMuscleTips.getState().mute(tip.group);
                       setTip(null);
                     }}
+                  />
+                ) : null}
+                {tipUndo ? (
+                  <UndoBar
+                    key={tipUndo.key}
+                    message={tipUndo.message}
+                    onAction={() => {
+                      const { done } = tipUndo;
+                      setTipUndo(null);
+                      undoMuscleTip(done)
+                        .then(() => setTick((t) => t + 1))
+                        .catch((e: unknown) => {
+                          console.warn('[ForgeErr] muscle tip: the change could not be undone', e);
+                          void tell("Couldn't undo it", 'Open the routine to change it back.');
+                        });
+                    }}
+                    onDismiss={() => setTipUndo(null)}
                   />
                 ) : null}
                 {extra === 'easyOffer' ? (

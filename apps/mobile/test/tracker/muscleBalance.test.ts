@@ -5,7 +5,7 @@
 import { describe, expect, it } from 'vitest';
 
 import type { Muscle } from '@/tracker/catalog/muscles';
-import { missingGroups, planLine, todayLine, weekFromLogged, type WeekSets } from '@/tracker/engine/muscleBalance';
+import { missingGroups, planLine, weekFromLogged, type WeekSets } from '@/tracker/engine/muscleBalance';
 
 /** A week from "muscle: main sets" and "muscle: helper sets". */
 function week(main: Partial<Record<Muscle, number>>, helper: Partial<Record<Muscle, number>> = {}): WeekSets {
@@ -79,11 +79,10 @@ describe('R-58: which group is close to zero', () => {
     expect(w.main.get('triceps')).toBeUndefined();
   });
 
-  it('the words say what to add, never what is wrong', () => {
-    expect(planLine('hamstrings', 'Lying Leg Curl', 'Legs day')).toBe('Your week has no hamstring work. Lying Leg Curl on Legs day covers it.');
-    expect(todayLine('rear_shoulders', 'Face Pull', 2)).toBe('Easy add today: 2 sets of Face Pull for your rear shoulders.');
-    for (const l of [planLine('legs', 'Leg Press', 'Upper A'), todayLine('calves', 'Calf Raise', 3)]) {
-      expect(l).not.toMatch(/\b(volume|PR|session|missing|neglect|imbalance|weak)\b/i);
-    }
+  it('the plan list line names the muscle and the routine, never what is wrong (R-482)', () => {
+    expect(planLine('hamstrings', 'Lying Leg Curl', 'Legs')).toBe(
+      'None of your routines trains your hamstrings. Adding Lying Leg Curl to your Legs routine would cover it.',
+    );
+    expect(planLine('legs', 'Leg Press', 'Upper A')).not.toMatch(/\b(volume|PR|session|missing|neglect|imbalance|weak|easy add)\b/i);
   });
 });

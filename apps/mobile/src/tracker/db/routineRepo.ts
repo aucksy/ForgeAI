@@ -328,6 +328,69 @@ export async function replaceRoutineExercise(peId: string, exerciseId: string): 
   await serialize(() => getDb().runAsync('UPDATE plan_exercises SET exercise_id = ? WHERE id = ?', [exerciseId, peId]));
 }
 
+/** R-482: a routine row exactly as it was, so the Up next "Swap" can be undone. */
+export interface RoutineRowSnapshot {
+  id: string;
+  exerciseId: string;
+  targetSets: number;
+  repRangeMin: number;
+  repRangeMax: number;
+  setsJson: string | null;
+  restSec: number | null;
+  note: string | null;
+}
+
+/**
+ * R-482 (Up next muscle tip "Swap"): another exercise takes this row's place with the same number
+ * of sets (their types kept: warm-ups stay warm-ups). The old exercise's own per-set targets, rest
+ * and note go (they belong to it); the new one gets its default rep range. Only when the row still
+ * holds `expectExerciseId` (the routine may have changed since the tip was worked out). Returns the
+ * row as it was (for Undo), or null when nothing was changed.
+ */
+export async function swapRoutineExerciseKeepingSets(peId: string, expectExerciseId: string, exerciseId: string): Promise<RoutineRowSnapshot | null> {
+  const def = (await defaultRangesFor([exerciseId])).get(exerciseId) ?? { repRangeMin: 8, repRangeMax: 12 };
+  return serialize(async () => {
+    const db = getDb();
+    const row = await db.getFirstAsync<{
+      id: string;
+      exercise_id: string;
+      target_sets: number;
+      rep_range_min: number;
+      rep_range_max: number;
+      sets_json: string | null;
+      rest_sec: number | null;
+      note: string | null;
+    }>('SELECT id, exercise_id, target_sets, rep_range_min, rep_range_max, sets_json, rest_sec, note FROM plan_exercises WHERE id = ?', [peId]);
+    if (!row || row.exercise_id !== expectExerciseId) return null;
+    const list = parsePlanSets(row.sets_json);
+    const fresh = list ? list.map((s) => ({ type: s.type })) : null;
+    await db.runAsync(
+      'UPDATE plan_exercises SET exercise_id = ?, rep_range_min = ?, rep_range_max = ?, sets_json = ?, rest_sec = NULL, note = NULL WHERE id = ?',
+      [exerciseId, def.repRangeMin, def.repRangeMax, planSetsJson(fresh), peId],
+    );
+    return {
+      id: row.id,
+      exerciseId: row.exercise_id,
+      targetSets: row.target_sets,
+      repRangeMin: row.rep_range_min,
+      repRangeMax: row.rep_range_max,
+      setsJson: row.sets_json,
+      restSec: row.rest_sec,
+      note: row.note,
+    };
+  });
+}
+
+/** R-482: Undo of a swap — the row back exactly as it was (same place, sets, targets, rest, note). */
+export async function restoreRoutineRow(s: RoutineRowSnapshot): Promise<void> {
+  await serialize(() =>
+    getDb().runAsync(
+      'UPDATE plan_exercises SET exercise_id = ?, target_sets = ?, rep_range_min = ?, rep_range_max = ?, sets_json = ?, rest_sec = ?, note = ? WHERE id = ?',
+      [s.exerciseId, s.targetSets, s.repRangeMin, s.repRangeMax, s.setsJson, s.restSec, s.note, s.id],
+    ),
+  );
+}
+
 /** Remove an exercise from a routine. */
 export async function removeRoutineExercise(peId: string): Promise<void> {
   await serialize(() => getDb().runAsync('DELETE FROM plan_exercises WHERE id = ?', [peId]));

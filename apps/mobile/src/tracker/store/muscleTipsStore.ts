@@ -2,7 +2,7 @@
  * Missing-muscle suggestions (R-58): the member's own choices, saved on the phone (AsyncStorage).
  *  - `on`: Settings → Workouts → Muscle tips (on by default); "Bring back put-away tips" there.
  *  - "Not now" snoozes that group for 4 weeks; a second "Not now" mutes it.
- *  - "I skip this on purpose" mutes it until turned back on in Settings.
+ *  - "I skip this on purpose" (tip 1) and "Keep as is" (tip 2, R-482) mute it until turned back on in Settings.
  *  - `shown`: the group on show and since when — a NEW group shows at most once a week. "Not now" and
  *    "I skip this on purpose" keep it (review fix: clearing it let the next group show the same day).
  * Rules against FOMO: docs/overhaul/research/R-muscle-balance.md section 5.

@@ -472,7 +472,7 @@ export function EffortCard({ showCoachNotes = false }: { showCoachNotes?: boolea
   );
 }
 
-/** Settings → Muscle tips (R-58): one calm tip on Up next when 3 weeks left a muscle group close to zero. */
+/** Settings → Muscle tips (R-58, R-482): one calm tip on Up next when the member's routines leave a muscle group out or train a big one far less. */
 export function MuscleTipsCard() {
   const tipsOn = useMuscleTips((s) => s.on);
   const setTipsOn = useMuscleTips((s) => s.setOn);
@@ -485,7 +485,7 @@ export function MuscleTipsCard() {
       <ToggleRow
         icon="dumbbell"
         title="Muscle tips"
-        caption="Now and then, Up next suggests a few sets for a muscle group your last 3 weeks left out"
+        caption="Now and then, Up next suggests one change when your routines leave out a muscle group or train one much less than the others"
         value={tipsOn}
         onChange={setTipsOn}
       />
