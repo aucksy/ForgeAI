@@ -1,0 +1,184 @@
+{
+ "key": "cable_reverse_curl",
+ "name": "Cable Reverse Curl",
+ "primary": [
+  "forearms"
+ ],
+ "secondary": [
+  "biceps"
+ ],
+ "scene": {
+  "cables": [
+   {
+    "loc": [
+     0,
+     -0.62
+    ],
+    "pulley_h": 0.12,
+    "face": [
+     0,
+     1
+    ]
+   }
+  ]
+ },
+ "props": {
+  "bar": {
+   "type": "cable",
+   "handle": "bar",
+   "column": 0,
+   "length": 0.6
+  }
+ },
+ "camera": {
+  "yaw": -50,
+  "pitch": 8,
+  "lens": 50,
+  "fill": 0.9,
+  "res": 640,
+  "samples": 20
+ },
+ "timing": {
+  "fps": 30,
+  "keys": [
+   [
+    0,
+    "start"
+   ],
+   [
+    1,
+    "end"
+   ],
+   [
+    2,
+    "start"
+   ]
+  ]
+ },
+ "defaults": {},
+ "poses": {
+  "start": {
+   "feet": {
+    "L": {
+     "at": [
+      0.13,
+      -0.01,
+      0.074
+     ],
+     "rot": [
+      0,
+      0,
+      6
+     ]
+    },
+    "R": {
+     "at": [
+      -0.13,
+      -0.01,
+      0.074
+     ],
+     "rot": [
+      0,
+      0,
+      -6
+     ]
+    }
+   },
+   "knees": {
+    "L": [
+     0.16,
+     -1.0,
+     0.52
+    ],
+    "R": [
+     -0.16,
+     -1.0,
+     0.52
+    ]
+   },
+   "hands": {
+    "L": {
+     "prop": "bar",
+     "axis": [
+      -1,
+      0,
+      0
+     ],
+     "arm": {
+      "elev": 10,
+      "plane": 70,
+      "elbow": 10,
+      "bend": [
+       0,
+       1,
+       0
+      ],
+      "tilt": 0
+     }
+    }
+   }
+  },
+  "end": {
+   "feet": {
+    "L": {
+     "at": [
+      0.13,
+      -0.01,
+      0.074
+     ],
+     "rot": [
+      0,
+      0,
+      6
+     ]
+    },
+    "R": {
+     "at": [
+      -0.13,
+      -0.01,
+      0.074
+     ],
+     "rot": [
+      0,
+      0,
+      -6
+     ]
+    }
+   },
+   "knees": {
+    "L": [
+     0.16,
+     -1.0,
+     0.52
+    ],
+    "R": [
+     -0.16,
+     -1.0,
+     0.52
+    ]
+   },
+   "hands": {
+    "L": {
+     "prop": "bar",
+     "axis": [
+      -1,
+      0,
+      0
+     ],
+     "arm": {
+      "elev": 10,
+      "plane": 70,
+      "elbow": 118,
+      "bend": [
+       0,
+       1,
+       0
+      ],
+      "tilt": 0
+     }
+    }
+   }
+  }
+ },
+ "research": "Standing facing a low pulley, straight bar held palms down (axis [-1,0,0]) about shoulder width, upper arms by the sides (elev 10 / plane 70 so the bar clears the thighs). Elbow 10 -> 118 (bar to the chest)."
+}

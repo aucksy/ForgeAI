@@ -1,0 +1,197 @@
+{
+ "format": "v1-stills",
+ "exercise": {
+  "key": "single_arm_cable_hammer_curl",
+  "name": "Single-Arm Cable Hammer Curl",
+  "equipment": "cable",
+  "library_primary": [
+   "biceps"
+  ],
+  "library_secondary": [
+   "forearms"
+  ],
+  "library_steps": [
+   "Stand side-on to a low pulley holding a rope or handle, palm facing in.",
+   "Curl it up to your shoulder with your thumb on top.",
+   "Lower slowly, finish your reps, then switch arms."
+  ],
+  "status": "draft",
+  "version": 1,
+  "researched_on": "2026-11-13",
+  "one_line_summary": "Standing side-on to a low pulley, a D-handle in one hand with the palm facing in (thumb on top); the upper arm stays by the side while the elbow bends from ~13 to ~124 deg. Biceps and brachioradialis share the work; the other hand rests on the hip.",
+  "evidence_grade": "B"
+ },
+ "setup": [
+  {
+   "item": "pulley",
+   "target": "Low pulley beside the working foot (side-on).",
+   "tolerance": "0-0.3 m",
+   "why": "Library step.",
+   "source_ids": [
+    "S2"
+   ],
+   "grade": "C"
+  },
+  {
+   "item": "grip",
+   "target": "Neutral: palm facing the body, thumb up.",
+   "tolerance": "-",
+   "why": "Library step; neutral grip raises the brachioradialis share (S1).",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  }
+ ],
+ "movement": [
+  {
+   "joint": "elbow",
+   "measure": "bend, 0 = straight",
+   "start": "13 deg",
+   "end": "124 deg",
+   "start_num": 13,
+   "end_num": 124,
+   "tolerance": "start 5-20; end 110-135",
+   "source_ids": [
+    "S2"
+   ],
+   "grade": "B"
+  },
+  {
+   "joint": "shoulder",
+   "measure": "upper arm from the torso side line",
+   "start": "7 deg",
+   "end": "7 deg",
+   "start_num": 7,
+   "end_num": 7,
+   "tolerance": "change under 10",
+   "source_ids": [
+    "S2"
+   ],
+   "grade": "B"
+  },
+  {
+   "joint": "forearm roll",
+   "measure": "palm direction",
+   "start": "palm in, thumb forward",
+   "end": "palm in, thumb up/back",
+   "start_num": 0,
+   "end_num": 0,
+   "tolerance": "no turning",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  }
+ ],
+ "muscles": [
+  {
+   "muscle": "Biceps",
+   "anatomy": "Biceps brachii",
+   "mask_key": "biceps",
+   "tier": "primary",
+   "glow": 1.0,
+   "emg": "Main elbow flexor in curls (EMG and hypertrophy, see sources).",
+   "role": "Bends the elbow; what the exercise is for.",
+   "surface": "Front of the upper arm.",
+   "source_ids": [
+    "S1",
+    "S2"
+   ],
+   "grade": "B"
+  },
+  {
+   "muscle": "Brachioradialis (forearm)",
+   "anatomy": "Brachioradialis",
+   "mask_key": "forearms",
+   "tier": "secondary",
+   "glow": 0.35,
+   "emg": "Brachioradialis clearly active in curls; its share rises with the hand turned toward neutral/pronated (S on hand position).",
+   "role": "Helps bend the elbow; library secondary.",
+   "surface": "Thumb side of the upper forearm.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  },
+  {
+   "muscle": "Brachialis",
+   "anatomy": "Brachialis",
+   "mask_key": "none",
+   "tier": "deep",
+   "glow": 0,
+   "emg": "not measured",
+   "role": "Elbow flexor under the biceps.",
+   "surface": "Under the lower biceps.",
+   "source_ids": [],
+   "grade": "D"
+  }
+ ],
+ "tempo": null,
+ "mistakes": [
+  {
+   "mistake": "Palm turning up",
+   "what_it_looks_like": "The hand rolls into a normal curl.",
+   "why_it_matters": "The hammer grip is the point (thumb on top).",
+   "source_ids": [
+    "S1"
+   ]
+  },
+  {
+   "mistake": "Elbow drifts forward",
+   "what_it_looks_like": "Upper arm swings up.",
+   "why_it_matters": "Library step.",
+   "source_ids": [
+    "S2"
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "S1",
+   "citation": "Kleiber T, Kunz L, Disselhorst-Klug C. 2015. Muscular coordination of biceps brachii and brachioradialis in elbow flexion with respect to hand position. Front Physiol 6:215.",
+   "url": "https://europepmc.org/article/MED/26300781",
+   "type": "emg",
+   "what_it_gave": "Elbow flexion with the hand pronated, neutral and supinated: brachioradialis share rises significantly with the hand pronated (palms down); biceps activity unchanged."
+  },
+  {
+   "id": "S2",
+   "citation": "Larsen S, Sandvik Kristiansen B, Osteras Sandberg N, et al. 2026. The effects of shoulder extension angle on elbow flexor hypertrophy in the cable curl exercise. Front Physiol 17:1750722.",
+   "url": "https://europepmc.org/article/MED/41988507",
+   "type": "biomechanics",
+   "what_it_gave": "Unilateral cable curls from a low pulley with the upper arm by the side (neutral) vs held back in shoulder extension: elbow flexors grew ~7-9 % in both; the shoulder angle made no clear difference."
+  }
+ ],
+ "clip_check": [
+  {
+   "check": "Start arm nearly straight, end handle at the shoulder",
+   "target": "13 / 124",
+   "measured": "",
+   "pass": ""
+  },
+  {
+   "check": "Thumb on top in both pictures",
+   "target": "neutral grip",
+   "measured": "",
+   "pass": ""
+  },
+  {
+   "check": "Fist closed on the D-handle; cable to the low pulley at the side",
+   "target": "yes",
+   "measured": "",
+   "pass": ""
+  },
+  {
+   "check": "Free fist on the hip",
+   "target": "yes",
+   "measured": "",
+   "pass": ""
+  },
+  {
+   "check": "Biceps strongest red, forearm light red, working arm only",
+   "target": "highlight_side L",
+   "measured": "",
+   "pass": ""
+  }
+ ]
+}

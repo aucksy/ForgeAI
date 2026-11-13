@@ -1,0 +1,237 @@
+{
+ "key": "low_to_high_cable_fly",
+ "name": "Low-to-High Cable Fly",
+ "primary": [
+  "chest"
+ ],
+ "secondary": [
+  "front_delts"
+ ],
+ "scene": {
+  "cables": [
+   {
+    "loc": [
+     1.25,
+     0.12
+    ],
+    "pulley_h": 0.12,
+    "face": [
+     -1,
+     -0.1
+    ]
+   },
+   {
+    "loc": [
+     -1.25,
+     0.12
+    ],
+    "pulley_h": 0.12,
+    "face": [
+     1,
+     -0.1
+    ]
+   }
+  ]
+ },
+ "props": {
+  "h_L": {
+   "type": "cable",
+   "handle": "d",
+   "column": 0
+  },
+  "h_R": {
+   "type": "cable",
+   "handle": "d",
+   "column": 1
+  }
+ },
+ "camera": {
+  "yaw": -25,
+  "pitch": 8,
+  "lens": 50,
+  "fill": 0.9,
+  "res": 640,
+  "samples": 20
+ },
+ "timing": {
+  "fps": 30,
+  "keys": [
+   [
+    0,
+    "start"
+   ],
+   [
+    1,
+    "end"
+   ],
+   [
+    2,
+    "start"
+   ]
+  ]
+ },
+ "defaults": {},
+ "poses": {
+  "start": {
+   "feet": {
+    "L": {
+     "at": [
+      0.13,
+      -0.01,
+      0.074
+     ],
+     "rot": [
+      0,
+      0,
+      6
+     ]
+    },
+    "R": {
+     "at": [
+      -0.13,
+      -0.01,
+      0.074
+     ],
+     "rot": [
+      0,
+      0,
+      -6
+     ]
+    }
+   },
+   "knees": {
+    "L": [
+     0.16,
+     -1.0,
+     0.52
+    ],
+    "R": [
+     -0.16,
+     -1.0,
+     0.52
+    ]
+   },
+   "hands": {
+    "L": {
+     "prop": "h_L",
+     "axis": [
+      1,
+      0,
+      0.3
+     ],
+     "arm": {
+      "elev": 32,
+      "plane": 5,
+      "elbow": 20,
+      "bend": [
+       0,
+       1,
+       0
+      ],
+      "tilt": 0
+     }
+    },
+    "R": {
+     "prop": "h_R",
+     "axis": [
+      -1,
+      0,
+      0.3
+     ],
+     "arm": {
+      "elev": 32,
+      "plane": 5,
+      "elbow": 20,
+      "bend": [
+       0,
+       1,
+       0
+      ],
+      "tilt": 0
+     }
+    }
+   }
+  },
+  "end": {
+   "feet": {
+    "L": {
+     "at": [
+      0.13,
+      -0.01,
+      0.074
+     ],
+     "rot": [
+      0,
+      0,
+      6
+     ]
+    },
+    "R": {
+     "at": [
+      -0.13,
+      -0.01,
+      0.074
+     ],
+     "rot": [
+      0,
+      0,
+      -6
+     ]
+    }
+   },
+   "knees": {
+    "L": [
+     0.16,
+     -1.0,
+     0.52
+    ],
+    "R": [
+     -0.16,
+     -1.0,
+     0.52
+    ]
+   },
+   "hands": {
+    "L": {
+     "prop": "h_L",
+     "axis": [
+      1,
+      0,
+      0
+     ],
+     "arm": {
+      "elev": 75,
+      "plane": 100,
+      "elbow": 20,
+      "bend": [
+       -0.3,
+       1,
+       0.3
+      ],
+      "tilt": 0
+     }
+    },
+    "R": {
+     "prop": "h_R",
+     "axis": [
+      -1,
+      0,
+      0
+     ],
+     "arm": {
+      "elev": 75,
+      "plane": 100,
+      "elbow": 20,
+      "bend": [
+       -0.3,
+       1,
+       0.3
+      ],
+      "tilt": 0
+     }
+    }
+   }
+  }
+ },
+ "research": "Standing a little in front of two low pulleys (0.12 m, 2.5 m apart). Elbows softly bent (20). Start: arms low and out to the sides (elev 32 / plane 5), palms forward. End: hands together in front of the chest at chest height (elev 75 / plane 100: hand z = 1.44 - 0.55 cos75 = 1.30), palms up."
+}

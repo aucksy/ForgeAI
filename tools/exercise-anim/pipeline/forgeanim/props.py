@@ -166,7 +166,7 @@ def barbell(name="FA_Barbell", shaft=1.31, sleeve=0.42, plates=(0.225,), plate_t
 
 def cable_column(name="FA_Cable", pulley_h=1.9, height=2.15, face=(0.0, -1.0), grab=None):
     """Origin = floor point under the post's centre. `face` (world x, y) = the way the pulley faces (toward the
-    athlete). grab = [z0, z1, side] adds an upright hand grip on the post (side +1 = the post's local +X side), for a
+    athlete). grab = [z0, z1] adds an upright hand grip on the post's front face, for a
     free hand to hold (hip abduction / adduction). Returns dict(root, pulley_local, grab_local) with world offsets
     from the root (before root.location)."""
     M = _mats()
@@ -191,12 +191,13 @@ def cable_column(name="FA_Cable", pulley_h=1.9, height=2.15, face=(0.0, -1.0), g
     pulley = Vector((lx * c - ly * s, lx * s + ly * c, pulley_h))   # world offset from the root (before root.location)
     out = {"root": root, "pulley_local": pulley}
     if grab:
-        z0, z1, sd = grab
-        gx = sd * 0.135
-        _cyl(name + "_Grab", 0.016, z1 - z0, verts=24, axis="Z", mat=M["rubber"], loc=(gx, -0.02, (z0 + z1) / 2), parent=root)
+        # upright grip on the post's FRONT face (the athlete's side), so a support hand never reaches round the post
+        z0, z1 = grab[0], grab[1]
+        gy = -0.115
+        _cyl(name + "_Grab", 0.016, z1 - z0, verts=24, axis="Z", mat=M["rubber"], loc=(0, gy, (z0 + z1) / 2), parent=root)
         for z in (z0 - 0.01, z1 + 0.01):
-            _seg(name + f"_GrabArm{z:.2f}", (sd * 0.055, -0.02, z), (gx, -0.02, z), 0.012, M["chrome"], parent=root)
-        out["grab_local"] = Vector((gx * c + 0.02 * s, gx * s - 0.02 * c, (z0 + z1) / 2))
+            _seg(name + f"_GrabArm{z:.2f}", (0, -0.05, z), (0, gy, z), 0.011, M["chrome"], parent=root)
+        out["grab_local"] = Vector((-gy * s, gy * c, (z0 + z1) / 2))
     return out
 
 

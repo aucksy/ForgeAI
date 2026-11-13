@@ -1,0 +1,192 @@
+{
+ "format": "v1-stills",
+ "exercise": {
+  "key": "single_arm_cable_reverse_fly",
+  "name": "Single-Arm Cable Reverse Fly",
+  "equipment": "cable",
+  "library_primary": [
+   "rear_delts"
+  ],
+  "library_secondary": [
+   "upper_back"
+  ],
+  "library_steps": [
+   "Set a pulley at shoulder height and stand with your side to it.",
+   "Hold the handle with your far hand, arm straight across your chest.",
+   "Pull your arm back and out to the side, then return slowly.",
+   "Finish all reps, then switch arms."
+  ],
+  "status": "draft",
+  "version": 1,
+  "researched_on": "2026-11-13",
+  "one_line_summary": "Standing side-on to a shoulder-height pulley, the far hand holds the D-handle; the nearly straight arm moves at shoulder height from across the chest out to the side. Rear delt does the work; the middle trapezius/rhomboids help.",
+  "evidence_grade": "B"
+ },
+ "setup": [
+  {
+   "item": "pulley",
+   "target": "Shoulder height, on the other side of the body.",
+   "tolerance": "1.3-1.6 m",
+   "why": "Library step.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "C"
+  },
+  {
+   "item": "arm",
+   "target": "Nearly straight, at shoulder height, neutral grip.",
+   "tolerance": "elbow under 20",
+   "why": "Library step.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "C"
+  }
+ ],
+ "movement": [
+  {
+   "joint": "shoulder (horizontal)",
+   "measure": "arm angle in the shoulder-height plane, 0 = out to the side, +90 = forward",
+   "start": "140 (across the chest)",
+   "end": "-8 (out to the side, a little back)",
+   "start_num": 140,
+   "end_num": -8,
+   "tolerance": "end -20..+10",
+   "source_ids": [
+    "S1",
+    "S2"
+   ],
+   "grade": "B"
+  },
+  {
+   "joint": "shoulder (height)",
+   "measure": "elev",
+   "start": "85",
+   "end": "85",
+   "start_num": 85,
+   "end_num": 85,
+   "tolerance": "75-95",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "C"
+  },
+  {
+   "joint": "elbow",
+   "measure": "bend",
+   "start": "12",
+   "end": "12",
+   "start_num": 12,
+   "end_num": 12,
+   "tolerance": "under 20",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "C"
+  }
+ ],
+ "muscles": [
+  {
+   "muscle": "Rear delt",
+   "anatomy": "Deltoideus, pars spinalis",
+   "mask_key": "rear_delts",
+   "tier": "primary",
+   "glow": 1.0,
+   "emg": "Horizontal abduction at shoulder height gave among the highest posterior deltoid activity (S1).",
+   "role": "Pulls the arm back and out; what the exercise is for.",
+   "surface": "Back of the shoulder.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  },
+  {
+   "muscle": "Upper back",
+   "anatomy": "Middle trapezius, rhomboids",
+   "mask_key": "upper_back",
+   "tier": "secondary",
+   "glow": 0.35,
+   "emg": "Horizontal extension gave the highest middle-trapezius EMG of 10 exercises (S2).",
+   "role": "Draws the shoulder blade back; library secondary.",
+   "surface": "Between the shoulder blades.",
+   "source_ids": [
+    "S2"
+   ],
+   "grade": "B"
+  },
+  {
+   "muscle": "Infraspinatus",
+   "anatomy": "Infraspinatus, teres minor",
+   "mask_key": "none",
+   "tier": "deep",
+   "glow": 0,
+   "emg": "High in prone horizontal abduction (S1).",
+   "role": "Turns the arm out.",
+   "surface": "Over the shoulder blade.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  }
+ ],
+ "tempo": null,
+ "mistakes": [
+  {
+   "mistake": "Turning the trunk",
+   "what_it_looks_like": "Chest rotates open with the arm.",
+   "why_it_matters": "The shoulder, not the trunk, should move.",
+   "source_ids": [
+    "S1"
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "S1",
+   "citation": "Reinold MM, Wilk KE, Fleisig GS, et al. 2004. Electromyographic analysis of the rotator cuff and deltoid musculature during common shoulder external rotation exercises. J Orthop Sports Phys Ther 34(7):385-394.",
+   "url": "https://europepmc.org/article/MED/15296366",
+   "type": "emg",
+   "what_it_gave": "Prone horizontal abduction (arm moving out and back at shoulder height) gave among the highest posterior deltoid activity of the exercises tested."
+  },
+  {
+   "id": "S2",
+   "citation": "Ekstrom RA, Donatelli RA, Soderberg GL. 2003. Surface electromyographic analysis of exercises for the trapezius and serratus anterior muscles. J Orthop Sports Phys Ther 33(5):247-258.",
+   "url": "https://europepmc.org/article/MED/12774999",
+   "type": "emg",
+   "what_it_gave": "10 exercises, 30 subjects: the shrug gave the highest upper-trapezius EMG; shoulder horizontal extension (arm moving back at shoulder height) the highest middle trapezius; the prone overhead raise in a Y the highest lower trapezius."
+  }
+ ],
+ "clip_check": [
+  {
+   "check": "Start: arm across the chest at shoulder height",
+   "target": "plane ~140",
+   "measured": "",
+   "pass": ""
+  },
+  {
+   "check": "End: arm out to the side",
+   "target": "plane -20..10",
+   "measured": "",
+   "pass": ""
+  },
+  {
+   "check": "Fist closed on the handle; cable passes in front of the chest, clear of it",
+   "target": "clearance > 0",
+   "measured": "",
+   "pass": ""
+  },
+  {
+   "check": "Free fist on the hip",
+   "target": "yes",
+   "measured": "",
+   "pass": ""
+  },
+  {
+   "check": "Rear delt strongest red, working side only",
+   "target": "highlight_side L",
+   "measured": "",
+   "pass": ""
+  }
+ ]
+}

@@ -1,0 +1,184 @@
+{
+ "key": "rope_cable_curl",
+ "name": "Rope Cable Curl",
+ "primary": [
+  "biceps"
+ ],
+ "secondary": [
+  "forearms"
+ ],
+ "scene": {
+  "cables": [
+   {
+    "loc": [
+     0,
+     -0.62
+    ],
+    "pulley_h": 0.12,
+    "face": [
+     0,
+     1
+    ]
+   }
+  ]
+ },
+ "props": {
+  "rope": {
+   "type": "cable",
+   "handle": "rope",
+   "column": 0,
+   "rope_len": 0.3
+  }
+ },
+ "camera": {
+  "yaw": -60,
+  "pitch": 8,
+  "lens": 50,
+  "fill": 0.9,
+  "res": 640,
+  "samples": 20
+ },
+ "timing": {
+  "fps": 30,
+  "keys": [
+   [
+    0,
+    "start"
+   ],
+   [
+    1,
+    "end"
+   ],
+   [
+    2,
+    "start"
+   ]
+  ]
+ },
+ "defaults": {},
+ "poses": {
+  "start": {
+   "feet": {
+    "L": {
+     "at": [
+      0.13,
+      -0.01,
+      0.074
+     ],
+     "rot": [
+      0,
+      0,
+      6
+     ]
+    },
+    "R": {
+     "at": [
+      -0.13,
+      -0.01,
+      0.074
+     ],
+     "rot": [
+      0,
+      0,
+      -6
+     ]
+    }
+   },
+   "knees": {
+    "L": [
+     0.16,
+     -1.0,
+     0.52
+    ],
+    "R": [
+     -0.16,
+     -1.0,
+     0.52
+    ]
+   },
+   "hands": {
+    "L": {
+     "prop": "rope",
+     "axis": [
+      0,
+      1,
+      0
+     ],
+     "arm": {
+      "elev": 7,
+      "plane": 60,
+      "elbow": 12,
+      "bend": [
+       -0.2,
+       1,
+       0
+      ],
+      "tilt": 0
+     }
+    }
+   }
+  },
+  "end": {
+   "feet": {
+    "L": {
+     "at": [
+      0.13,
+      -0.01,
+      0.074
+     ],
+     "rot": [
+      0,
+      0,
+      6
+     ]
+    },
+    "R": {
+     "at": [
+      -0.13,
+      -0.01,
+      0.074
+     ],
+     "rot": [
+      0,
+      0,
+      -6
+     ]
+    }
+   },
+   "knees": {
+    "L": [
+     0.16,
+     -1.0,
+     0.52
+    ],
+    "R": [
+     -0.16,
+     -1.0,
+     0.52
+    ]
+   },
+   "hands": {
+    "L": {
+     "prop": "rope",
+     "axis": [
+      0.45,
+      -0.5,
+      0.75
+     ],
+     "arm": {
+      "elev": 7,
+      "plane": 60,
+      "elbow": 122,
+      "bend": [
+       0.25,
+       1,
+       0
+      ],
+      "tilt": 0
+     }
+    }
+   }
+  }
+ },
+ "research": "Standing facing a low pulley (0.12 m), rope. Upper arms by the sides (elev 7, plane 60). Start: arms almost straight (elbow 12), neutral grip, thumbs forward (axis [0,1,0]), hands close (bend x -0.2). End: elbow 122, forearms up, palms turned partly up (axis [0.45,-0.5,0.75]) and the ends pulled apart (bend x +0.25). The rope leaves each fist on the side that faces the low pulley; the knob sits on the other side."
+}

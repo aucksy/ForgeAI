@@ -1,0 +1,184 @@
+{
+ "key": "cable_front_raise",
+ "name": "Cable Front Raise",
+ "primary": [
+  "front_delts"
+ ],
+ "secondary": [
+  "chest"
+ ],
+ "scene": {
+  "cables": [
+   {
+    "loc": [
+     0,
+     0.55
+    ],
+    "pulley_h": 0.12,
+    "face": [
+     0,
+     -1
+    ]
+   }
+  ]
+ },
+ "props": {
+  "rope": {
+   "type": "cable",
+   "handle": "rope",
+   "column": 0,
+   "rope_len": 0.3
+  }
+ },
+ "camera": {
+  "yaw": -62,
+  "pitch": 8,
+  "lens": 50,
+  "fill": 0.9,
+  "res": 640,
+  "samples": 20
+ },
+ "timing": {
+  "fps": 30,
+  "keys": [
+   [
+    0,
+    "start"
+   ],
+   [
+    1,
+    "end"
+   ],
+   [
+    2,
+    "start"
+   ]
+  ]
+ },
+ "defaults": {},
+ "poses": {
+  "start": {
+   "feet": {
+    "L": {
+     "at": [
+      0.19,
+      -0.01,
+      0.074
+     ],
+     "rot": [
+      0,
+      0,
+      8
+     ]
+    },
+    "R": {
+     "at": [
+      -0.19,
+      -0.01,
+      0.074
+     ],
+     "rot": [
+      0,
+      0,
+      -8
+     ]
+    }
+   },
+   "knees": {
+    "L": [
+     0.24,
+     -1.0,
+     0.52
+    ],
+    "R": [
+     -0.24,
+     -1.0,
+     0.52
+    ]
+   },
+   "hands": {
+    "L": {
+     "prop": "rope",
+     "axis": [
+      0,
+      1,
+      0
+     ],
+     "arm": {
+      "elev": 18,
+      "plane": 120,
+      "elbow": 8,
+      "bend": [
+       0,
+       1,
+       0
+      ],
+      "tilt": 0
+     }
+    }
+   }
+  },
+  "end": {
+   "feet": {
+    "L": {
+     "at": [
+      0.19,
+      -0.01,
+      0.074
+     ],
+     "rot": [
+      0,
+      0,
+      8
+     ]
+    },
+    "R": {
+     "at": [
+      -0.19,
+      -0.01,
+      0.074
+     ],
+     "rot": [
+      0,
+      0,
+      -8
+     ]
+    }
+   },
+   "knees": {
+    "L": [
+     0.24,
+     -1.0,
+     0.52
+    ],
+    "R": [
+     -0.24,
+     -1.0,
+     0.52
+    ]
+   },
+   "hands": {
+    "L": {
+     "prop": "rope",
+     "axis": [
+      0,
+      0,
+      1
+     ],
+     "arm": {
+      "elev": 88,
+      "plane": 100,
+      "elbow": 8,
+      "bend": [
+       0,
+       1,
+       0
+      ],
+      "tilt": 0
+     }
+    }
+   }
+  }
+ },
+ "research": "Back to a low pulley 0.55 m behind, feet a little wider than hips so the cable runs between the knees. Rope, neutral grip, hands ~0.25 m apart. Start: arms straight (elbow 8), hands in front of the thighs (elev 18 / plane 120). End: arms straight out in front at shoulder height (elev 88 / plane 100), thumbs up (axis [0,0,1])."
+}

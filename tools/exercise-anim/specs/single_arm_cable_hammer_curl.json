@@ -1,0 +1,218 @@
+{
+ "key": "single_arm_cable_hammer_curl",
+ "name": "Single-Arm Cable Hammer Curl",
+ "primary": [
+  "biceps"
+ ],
+ "secondary": [
+  "forearms"
+ ],
+ "scene": {
+  "cables": [
+   {
+    "loc": [
+     0.68,
+     -0.2
+    ],
+    "pulley_h": 0.12,
+    "face": [
+     -1,
+     0
+    ]
+   }
+  ]
+ },
+ "props": {
+  "h": {
+   "type": "cable",
+   "handle": "d",
+   "column": 0
+  }
+ },
+ "camera": {
+  "yaw": -40,
+  "pitch": 8,
+  "lens": 50,
+  "fill": 0.9,
+  "res": 640,
+  "samples": 20
+ },
+ "timing": {
+  "fps": 30,
+  "keys": [
+   [
+    0,
+    "start"
+   ],
+   [
+    1,
+    "end"
+   ],
+   [
+    2,
+    "start"
+   ]
+  ]
+ },
+ "defaults": {},
+ "poses": {
+  "start": {
+   "feet": {
+    "L": {
+     "at": [
+      0.13,
+      -0.01,
+      0.074
+     ],
+     "rot": [
+      0,
+      0,
+      6
+     ]
+    },
+    "R": {
+     "at": [
+      -0.13,
+      -0.01,
+      0.074
+     ],
+     "rot": [
+      0,
+      0,
+      -6
+     ]
+    }
+   },
+   "knees": {
+    "L": [
+     0.16,
+     -1.0,
+     0.52
+    ],
+    "R": [
+     -0.16,
+     -1.0,
+     0.52
+    ]
+   },
+   "hands": {
+    "L": {
+     "prop": "h",
+     "axis": [
+      0,
+      1,
+      0
+     ],
+     "arm": {
+      "elev": 7,
+      "plane": 56,
+      "elbow": 13,
+      "bend": [
+       0,
+       1,
+       0
+      ],
+      "tilt": 0
+     }
+    },
+    "R": {
+     "axis": [
+      -0.111,
+      0.969,
+      0.133
+     ],
+     "arm": {
+      "elev": 55,
+      "plane": -15,
+      "fore_world": [
+       0.63,
+       -0.176,
+       -0.756
+      ],
+      "tilt": 0
+     }
+    }
+   }
+  },
+  "end": {
+   "feet": {
+    "L": {
+     "at": [
+      0.13,
+      -0.01,
+      0.074
+     ],
+     "rot": [
+      0,
+      0,
+      6
+     ]
+    },
+    "R": {
+     "at": [
+      -0.13,
+      -0.01,
+      0.074
+     ],
+     "rot": [
+      0,
+      0,
+      -6
+     ]
+    }
+   },
+   "knees": {
+    "L": [
+     0.16,
+     -1.0,
+     0.52
+    ],
+    "R": [
+     -0.16,
+     -1.0,
+     0.52
+    ]
+   },
+   "hands": {
+    "L": {
+     "prop": "h",
+     "axis": [
+      0,
+      -0.56,
+      0.83
+     ],
+     "arm": {
+      "elev": 7,
+      "plane": 56,
+      "elbow": 124,
+      "bend": [
+       0,
+       1,
+       0
+      ],
+      "tilt": 0
+     }
+    },
+    "R": {
+     "axis": [
+      -0.111,
+      0.969,
+      0.133
+     ],
+     "arm": {
+      "elev": 55,
+      "plane": -15,
+      "fore_world": [
+       0.63,
+       -0.176,
+       -0.756
+      ],
+      "tilt": 0
+     }
+    }
+   }
+  }
+ },
+ "research": "Single-arm curl body (elev 7 / plane 56, elbow 13 -> 124) with a neutral grip: thumb forward at the bottom (axis [0,1,0]); the thumb turns up and back with the forearm about the elbow hinge, so at elbow 124 the axis is (0, cos124, sin124) = [0,-0.56,0.83] (thumb on top). Low pulley beside the left foot (side-on). Right fist on the hip. Camera from the front-right so the column stays behind the working arm.",
+ "highlight_side": "L"
+}

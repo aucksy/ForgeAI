@@ -1,0 +1,234 @@
+{
+ "key": "cable_hip_adduction",
+ "name": "Cable Hip Adduction",
+ "primary": [
+  "adductors"
+ ],
+ "secondary": [],
+ "scene": {
+  "cables": [
+   {
+    "loc": [
+     0.6,
+     -0.25
+    ],
+    "pulley_h": 0.1,
+    "face": [
+     -1,
+     0
+    ],
+    "grab": [
+     0.85,
+     1.35
+    ],
+    "anchor": "L"
+   }
+  ]
+ },
+ "props": {
+  "cuff": {
+   "type": "cable",
+   "handle": "ankle",
+   "column": 0,
+   "foot": "L"
+  }
+ },
+ "camera": {
+  "yaw": -25,
+  "pitch": 10,
+  "lens": 50,
+  "fill": 0.9,
+  "res": 640,
+  "samples": 20
+ },
+ "timing": {
+  "fps": 30,
+  "keys": [
+   [
+    0,
+    "start"
+   ],
+   [
+    1,
+    "end"
+   ],
+   [
+    2,
+    "start"
+   ]
+  ]
+ },
+ "defaults": {},
+ "poses": {
+  "start": {
+   "root": {
+    "loc": [
+     -0.03,
+     0.056,
+     0.966
+    ]
+   },
+   "feet": {
+    "L": {
+     "at": [
+      0.44,
+      -0.04,
+      0.16
+     ],
+     "rot": [
+      0,
+      -22,
+      0
+     ]
+    },
+    "R": {
+     "at": [
+      -0.13,
+      0.02,
+      0.074
+     ],
+     "rot": [
+      0,
+      0,
+      -6
+     ]
+    }
+   },
+   "knees": {
+    "L": [
+     0.4,
+     -1.0,
+     0.6
+    ],
+    "R": [
+     -0.16,
+     -1.0,
+     0.52
+    ]
+   },
+   "hands": {
+    "L": {
+     "axis": [
+      0,
+      0,
+      1
+     ],
+     "arm": {
+      "elev": 50,
+      "plane": 70,
+      "elbow": 15,
+      "bend": [
+       0,
+       1,
+       0
+      ],
+      "tilt": 0
+     }
+    },
+    "R": {
+     "axis": [
+      -0.111,
+      0.969,
+      0.133
+     ],
+     "arm": {
+      "elev": 55,
+      "plane": -15,
+      "fore_world": [
+       0.63,
+       -0.176,
+       -0.756
+      ],
+      "tilt": 0
+     }
+    }
+   }
+  },
+  "end": {
+   "root": {
+    "loc": [
+     -0.03,
+     0.056,
+     0.966
+    ]
+   },
+   "feet": {
+    "L": {
+     "at": [
+      -0.08,
+      -0.17,
+      0.14
+     ],
+     "rot": [
+      0,
+      12,
+      0
+     ]
+    },
+    "R": {
+     "at": [
+      -0.13,
+      0.02,
+      0.074
+     ],
+     "rot": [
+      0,
+      0,
+      -6
+     ]
+    }
+   },
+   "knees": {
+    "L": [
+     0.0,
+     -1.0,
+     0.55
+    ],
+    "R": [
+     -0.16,
+     -1.0,
+     0.52
+    ]
+   },
+   "hands": {
+    "L": {
+     "axis": [
+      0,
+      0,
+      1
+     ],
+     "arm": {
+      "elev": 50,
+      "plane": 70,
+      "elbow": 15,
+      "bend": [
+       0,
+       1,
+       0
+      ],
+      "tilt": 0
+     }
+    },
+    "R": {
+     "axis": [
+      -0.111,
+      0.969,
+      0.133
+     ],
+     "arm": {
+      "elev": 55,
+      "plane": -15,
+      "fore_world": [
+       0.63,
+       -0.176,
+       -0.756
+      ],
+      "tilt": 0
+     }
+    }
+   }
+  }
+ },
+ "research": "Standing on the right leg, left side to a low pulley, cuff on the LEFT (near) ankle, left fist on the column's upright grip (anchor L), right fist on the hip. Start: the cable holds the left leg ~22 deg out to the side (ankle 0.44, 0.16). End: the straight left leg swept across in front of the standing foot (ankle x -0.08, y -0.17, z 0.14; 0.86 m from the hip).",
+ "highlight_side": "L"
+}

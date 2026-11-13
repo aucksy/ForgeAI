@@ -1,0 +1,240 @@
+{
+ "key": "single_arm_reverse_grip_pushdown",
+ "name": "Single-Arm Reverse-Grip Pushdown",
+ "primary": [
+  "triceps"
+ ],
+ "secondary": [],
+ "scene": {
+  "cables": [
+   {
+    "loc": [
+     0.18,
+     -0.72
+    ],
+    "pulley_h": 2.0,
+    "face": [
+     0,
+     1
+    ]
+   }
+  ]
+ },
+ "props": {
+  "h": {
+   "type": "cable",
+   "handle": "d",
+   "column": 0
+  }
+ },
+ "camera": {
+  "yaw": 125,
+  "pitch": 10,
+  "lens": 50,
+  "fill": 0.9,
+  "res": 640,
+  "samples": 20
+ },
+ "timing": {
+  "fps": 30,
+  "keys": [
+   [
+    0,
+    "start"
+   ],
+   [
+    1,
+    "end"
+   ],
+   [
+    2,
+    "start"
+   ]
+  ]
+ },
+ "defaults": {},
+ "poses": {
+  "start": {
+   "root": {
+    "loc": [
+     0,
+     0.075,
+     0.965
+    ],
+    "rot": [
+     8,
+     0,
+     0
+    ]
+   },
+   "feet": {
+    "L": {
+     "at": [
+      0.13,
+      -0.01,
+      0.074
+     ],
+     "rot": [
+      0,
+      0,
+      6
+     ]
+    },
+    "R": {
+     "at": [
+      -0.13,
+      -0.01,
+      0.074
+     ],
+     "rot": [
+      0,
+      0,
+      -6
+     ]
+    }
+   },
+   "knees": {
+    "L": [
+     0.16,
+     -1.0,
+     0.52
+    ],
+    "R": [
+     -0.16,
+     -1.0,
+     0.52
+    ]
+   },
+   "hands": {
+    "L": {
+     "prop": "h",
+     "axis": [
+      1,
+      0,
+      0
+     ],
+     "arm": {
+      "elev": 8,
+      "plane": 70,
+      "elbow": 95,
+      "bend": [
+       0,
+       1,
+       0
+      ],
+      "tilt": 0
+     }
+    },
+    "R": {
+     "axis": [
+      -0.111,
+      0.969,
+      0.133
+     ],
+     "arm": {
+      "elev": 55,
+      "plane": -15,
+      "fore_world": [
+       0.63,
+       -0.176,
+       -0.756
+      ],
+      "tilt": 0
+     }
+    }
+   }
+  },
+  "end": {
+   "root": {
+    "loc": [
+     0,
+     0.075,
+     0.965
+    ],
+    "rot": [
+     8,
+     0,
+     0
+    ]
+   },
+   "feet": {
+    "L": {
+     "at": [
+      0.13,
+      -0.01,
+      0.074
+     ],
+     "rot": [
+      0,
+      0,
+      6
+     ]
+    },
+    "R": {
+     "at": [
+      -0.13,
+      -0.01,
+      0.074
+     ],
+     "rot": [
+      0,
+      0,
+      -6
+     ]
+    }
+   },
+   "knees": {
+    "L": [
+     0.16,
+     -1.0,
+     0.52
+    ],
+    "R": [
+     -0.16,
+     -1.0,
+     0.52
+    ]
+   },
+   "hands": {
+    "L": {
+     "prop": "h",
+     "axis": [
+      1,
+      0,
+      0
+     ],
+     "arm": {
+      "elev": 12,
+      "plane": 75,
+      "elbow": 6,
+      "bend": [
+       0,
+       1,
+       0
+      ],
+      "tilt": 0
+     }
+    },
+    "R": {
+     "axis": [
+      -0.111,
+      0.969,
+      0.133
+     ],
+     "arm": {
+      "elev": 55,
+      "plane": -15,
+      "fore_world": [
+       0.63,
+       -0.176,
+       -0.756
+      ],
+      "tilt": 0
+     }
+    }
+   }
+  }
+ },
+ "research": "One-arm version of reverse_grip_triceps_pushdown: D-handle on a high pulley in front of the left shoulder, palm up, elbow 95 -> 6 with the upper arm by the side; right fist on the hip. Camera from the working (left) side.",
+ "highlight_side": "L"
+}

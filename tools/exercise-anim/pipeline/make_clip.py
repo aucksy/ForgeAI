@@ -69,12 +69,18 @@ if mode == "stills":
         ev = ch["body"].evaluated_get(dg); me = ev.to_mesh()
         # where the lowest point is, not just how low (12 Nov 2026: two plank retries blamed the hands when the toes
         # were 5 cm in the floor): hands sit near the head end, toes at the feet end, so the xyz names the part
-        lp = min((ev.matrix_world @ v.co for v in me.vertices), key=lambda q: q.z); low = lp.z; ev.to_mesh_clear()
+        lp = min((ev.matrix_world @ v.co for v in me.vertices), key=lambda q: q.z); low = lp.z
+        cable_gap = clip.cable_clearance(ev, me) if getattr(clip, "cables", None) else None
+        ev.to_mesh_clear()
         pl = [min((o.matrix_world @ Vector(c)).z for c in o.bound_box) for p in clip.props.values() for o in p.children if o.type == "MESH"]
         print(f"[still] {tag} pose={pose} frame={f} lowest_body_z={low:.4f} at=({lp.x:.3f},{lp.y:.3f},{lp.z:.3f}) lowest_prop_z={(min(pl) if pl else 0):.4f}")
+        if cable_gap is not None:
+            print(f"[still] {tag} cable clearance from the skin (m, negative = through the body): {cable_gap}")
         p = os.path.join(out, f"{key}__{tag}.png"); scene.render.filepath = p
         bpy.ops.render.render(write_still=True); stills[tag] = {"pose": pose, "frame": f, "lowest_body_z": round(low, 4),
                                                            "lowest_body_at": [round(lp.x, 3), round(lp.y, 3), round(lp.z, 3)]}
+        if cable_gap is not None:
+            stills[tag]["cable_clearance"] = cable_gap
     scene.render.resolution_x = scene.render.resolution_y = 400; scene.cycles.samples = 12
     RD.frame_camera(scene, cam, objs, cam_spec.get("yaw", -30) + 90, 5, 50, 0.9, sample_frames=[f for _, f in order])
     for (pose, f), tag in zip(order, names):

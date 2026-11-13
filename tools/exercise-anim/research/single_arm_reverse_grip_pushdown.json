@@ -1,0 +1,160 @@
+{
+ "format": "v1-stills",
+ "exercise": {
+  "key": "single_arm_reverse_grip_pushdown",
+  "name": "Single-Arm Reverse-Grip Pushdown",
+  "equipment": "cable",
+  "library_primary": [
+   "triceps"
+  ],
+  "library_secondary": [],
+  "library_steps": [
+   "Attach a handle to a high pulley and hold it palm up.",
+   "Keep your elbow at your side and push the handle down to your thigh.",
+   "Let it rise slowly, finish your reps, then switch arms."
+  ],
+  "status": "draft",
+  "version": 1,
+  "researched_on": "2026-11-13",
+  "one_line_summary": "Standing facing a high pulley, a D-handle held palm up in one hand; the elbow stays by the side while it straightens from ~95 deg to straight. Triceps does the work; the other hand rests on the hip.",
+  "evidence_grade": "B"
+ },
+ "setup": [
+  {
+   "item": "pulley",
+   "target": "High pulley (~2 m), single D-handle.",
+   "tolerance": "1.8-2.1 m",
+   "why": "Library step; cable elbow extension with the arm by the side (S1).",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  },
+  {
+   "item": "grip",
+   "target": "Palm up (supinated), closed fist.",
+   "tolerance": "-",
+   "why": "Library step.",
+   "source_ids": [
+    "S2"
+   ],
+   "grade": "C"
+  }
+ ],
+ "movement": [
+  {
+   "joint": "elbow",
+   "measure": "bend, 0 = straight",
+   "start": "95 deg",
+   "end": "6 deg",
+   "start_num": 95,
+   "end_num": 6,
+   "tolerance": "start 85-105; end 0-15",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  },
+  {
+   "joint": "shoulder",
+   "measure": "upper arm from the torso side line",
+   "start": "8 deg",
+   "end": "12 deg",
+   "start_num": 8,
+   "end_num": 12,
+   "tolerance": "change under 10",
+   "source_ids": [
+    "S2"
+   ],
+   "grade": "B"
+  }
+ ],
+ "muscles": [
+  {
+   "muscle": "Triceps",
+   "anatomy": "Triceps brachii (long, lateral, medial heads)",
+   "mask_key": "triceps",
+   "tier": "primary",
+   "glow": 1.0,
+   "emg": "All three heads active in the cable push-down (S2); all heads grew after cable elbow extensions (S1).",
+   "role": "Straightens the elbow; what the exercise is for.",
+   "surface": "Back of the upper arm.",
+   "source_ids": [
+    "S1",
+    "S2"
+   ],
+   "grade": "B"
+  },
+  {
+   "muscle": "Forearm grip",
+   "anatomy": "Wrist flexors",
+   "mask_key": "forearms",
+   "tier": "stabiliser",
+   "glow": 0,
+   "emg": "not measured",
+   "role": "Hold the handle.",
+   "surface": "Front of the forearm.",
+   "source_ids": [],
+   "grade": "D"
+  }
+ ],
+ "tempo": null,
+ "mistakes": [
+  {
+   "mistake": "Elbow drifts forward",
+   "what_it_looks_like": "Upper arm swings forward as the hand rises.",
+   "why_it_matters": "Library step.",
+   "source_ids": [
+    "S2"
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "S1",
+   "citation": "Maeo S, Wu Y, Huang M, et al. 2023. Triceps brachii hypertrophy is substantially greater after elbow extension training performed in the overhead versus neutral arm position. Eur J Sport Sci 23(7):1240-1250.",
+   "url": "https://europepmc.org/article/MED/35819335",
+   "type": "biomechanics",
+   "what_it_gave": "Cable-machine elbow extensions (90-0 deg) with the arm overhead vs by the side (neutral, pushdown-like), 12 weeks: all three triceps heads grew in both; the long head grew ~1.5x more overhead."
+  },
+  {
+   "id": "S2",
+   "citation": "Hussain J, Sundaraj K, Subramaniam ID, Lam CK. 2020. Muscle fatigue in the three heads of triceps brachii during intensity and speed variations of triceps push-down exercise. Front Physiol 11:112.",
+   "url": "https://europepmc.org/article/MED/32153422",
+   "type": "emg",
+   "what_it_gave": "Cable triceps push-down to failure, sEMG of the long, lateral and medial heads: all three heads work and fatigue at comparable rates."
+  }
+ ],
+ "clip_check": [
+  {
+   "check": "Start elbow ~95, end straight",
+   "target": "85-105 / 0-15",
+   "measured": "",
+   "pass": ""
+  },
+  {
+   "check": "Upper arm by the side",
+   "target": "elev change < 10",
+   "measured": "",
+   "pass": ""
+  },
+  {
+   "check": "Fist closed on the D-handle, palm up",
+   "target": "yes",
+   "measured": "",
+   "pass": ""
+  },
+  {
+   "check": "Free fist on the hip",
+   "target": "yes",
+   "measured": "",
+   "pass": ""
+  },
+  {
+   "check": "Triceps red on the working arm only",
+   "target": "highlight_side L",
+   "measured": "",
+   "pass": ""
+  }
+ ]
+}

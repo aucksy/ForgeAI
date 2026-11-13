@@ -323,6 +323,38 @@ class Clip:
             out += [ch for ch in o.children if ch.type == "MESH"]
         return out
 
+    def cable_clearance(self, ev, me):
+        """Signed distance (m) from each cable (and rope piece out of the fist) to the body skin, at the current frame:
+        negative = the cable runs through the body. The first 4 cm next to the hand or ankle are skipped (the handle sits
+        in the fist / the cuff sits on the skin). Returns {name: metres}."""
+        from mathutils.bvhtree import BVHTree
+        mw = ev.matrix_world
+        bvh = BVHTree.FromPolygons([mw @ v.co for v in me.vertices], [p.vertices[:] for p in me.polygons])
+        out = {}
+        for name, c in self.cables.items():
+            segs = [c["line"]]
+            if c["kind"] == "rope":
+                segs += [o for o in c["obj"].children if o.name.endswith("2")]
+            best = 9.0
+            for ob in segs:
+                M = ob.matrix_world
+                a = M @ Vector((0, 0, 0)); b = M @ Vector((0, 0, 1)); L = (b - a).length
+                n = max(2, int(L / 0.01))
+                for i in range(n + 1):
+                    p = a + (b - a) * (i / n)
+                    if ob is c["line"] and (p - a).length < 0.04:
+                        continue
+                    if ob is not c["line"] and (p - a).length < 0.04:
+                        continue
+                    hit = bvh.find_nearest(p)
+                    if hit[0] is None:
+                        continue
+                    loc, nor, _, d = hit
+                    sd = d if (p - loc).dot(nor) >= 0 else -d
+                    best = min(best, sd)
+            out[name] = round(best, 3)
+        return out
+
     @staticmethod
     def _stretch(ob, a, b):
         """Put a unit-length (local z 0..1) piece from world point a to world point b."""

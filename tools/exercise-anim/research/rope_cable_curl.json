@@ -1,0 +1,206 @@
+{
+ "format": "v1-stills",
+ "exercise": {
+  "key": "rope_cable_curl",
+  "name": "Rope Cable Curl",
+  "equipment": "cable",
+  "library_primary": [
+   "biceps"
+  ],
+  "library_secondary": [
+   "forearms"
+  ],
+  "library_steps": [
+   "Attach a rope to the low pulley and hold an end in each hand.",
+   "Curl the rope up, turning your palms up and pulling the ends apart.",
+   "Lower slowly until your arms are straight."
+  ],
+  "status": "draft",
+  "version": 1,
+  "researched_on": "2026-11-13",
+  "one_line_summary": "Standing facing a low pulley, a rope held in both fists with a neutral grip; elbows stay by the sides while they bend from ~12 to ~122 deg, the palms turning partly up and the rope ends pulled apart at the top. Biceps does the work, brachioradialis helps.",
+  "evidence_grade": "B"
+ },
+ "setup": [
+  {
+   "item": "pulley",
+   "target": "Low pulley (~0.1 m), rope.",
+   "tolerance": "0-0.3 m",
+   "why": "Library step.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  },
+  {
+   "item": "grip",
+   "target": "Neutral at the bottom (palms in), turning partly up at the top.",
+   "tolerance": "-",
+   "why": "Library step; hand position changes the biceps/brachioradialis share (S2).",
+   "source_ids": [
+    "S2"
+   ],
+   "grade": "B"
+  }
+ ],
+ "movement": [
+  {
+   "joint": "elbow",
+   "measure": "bend, 0 = straight",
+   "start": "12 deg",
+   "end": "122 deg",
+   "start_num": 12,
+   "end_num": 122,
+   "tolerance": "start 5-20; end 110-135",
+   "source_ids": [
+    "S1",
+    "S3"
+   ],
+   "grade": "B"
+  },
+  {
+   "joint": "shoulder",
+   "measure": "upper arm from the torso side line",
+   "start": "7 deg",
+   "end": "7 deg",
+   "start_num": 7,
+   "end_num": 7,
+   "tolerance": "change under 10",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  },
+  {
+   "joint": "hands",
+   "measure": "gap between the fists",
+   "start": "close (~0.3 m)",
+   "end": "wider (rope ends apart)",
+   "start_num": 0.3,
+   "end_num": 0.45,
+   "tolerance": "end wider",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "C"
+  }
+ ],
+ "muscles": [
+  {
+   "muscle": "Biceps",
+   "anatomy": "Biceps brachii",
+   "mask_key": "biceps",
+   "tier": "primary",
+   "glow": 1.0,
+   "emg": "Main elbow flexor in curls (EMG and hypertrophy, see sources).",
+   "role": "Bends the elbow; what the exercise is for.",
+   "surface": "Front of the upper arm.",
+   "source_ids": [
+    "S1",
+    "S3"
+   ],
+   "grade": "B"
+  },
+  {
+   "muscle": "Brachioradialis (forearm)",
+   "anatomy": "Brachioradialis",
+   "mask_key": "forearms",
+   "tier": "secondary",
+   "glow": 0.35,
+   "emg": "Brachioradialis clearly active in curls; its share rises with the hand turned toward neutral/pronated (S on hand position).",
+   "role": "Helps bend the elbow; library secondary.",
+   "surface": "Thumb side of the upper forearm.",
+   "source_ids": [
+    "S1",
+    "S2"
+   ],
+   "grade": "B"
+  },
+  {
+   "muscle": "Brachialis",
+   "anatomy": "Brachialis",
+   "mask_key": "none",
+   "tier": "deep",
+   "glow": 0,
+   "emg": "not measured",
+   "role": "Elbow flexor under the biceps.",
+   "surface": "Under the lower biceps.",
+   "source_ids": [],
+   "grade": "D"
+  }
+ ],
+ "tempo": null,
+ "mistakes": [
+  {
+   "mistake": "Elbows drift forward",
+   "what_it_looks_like": "Upper arms swing up.",
+   "why_it_matters": "Library: elbows by the sides.",
+   "source_ids": [
+    "S3"
+   ]
+  },
+  {
+   "mistake": "Body swing",
+   "what_it_looks_like": "Trunk leans back.",
+   "why_it_matters": "Arms do the work.",
+   "source_ids": [
+    "S3"
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "S1",
+   "citation": "Marcolin G, Panizzolo FA, Petrone N, et al. 2018. Differences in electromyographic activity of biceps brachii and brachioradialis while performing three variants of curl. PeerJ 6:e5165.",
+   "url": "https://europepmc.org/article/MED/30013836",
+   "type": "emg",
+   "what_it_gave": "Straight bar, EZ bar and dumbbell curls at 65 % 1RM: biceps and brachioradialis both clearly active; elbow range ~117 deg."
+  },
+  {
+   "id": "S2",
+   "citation": "Kleiber T, Kunz L, Disselhorst-Klug C. 2015. Muscular coordination of biceps brachii and brachioradialis in elbow flexion with respect to hand position. Front Physiol 6:215.",
+   "url": "https://europepmc.org/article/MED/26300781",
+   "type": "emg",
+   "what_it_gave": "Elbow flexion with the hand pronated, neutral and supinated: brachioradialis share rises significantly with the hand pronated (palms down); biceps activity unchanged."
+  },
+  {
+   "id": "S3",
+   "citation": "Larsen S, Sandvik Kristiansen B, Osteras Sandberg N, et al. 2026. The effects of shoulder extension angle on elbow flexor hypertrophy in the cable curl exercise. Front Physiol 17:1750722.",
+   "url": "https://europepmc.org/article/MED/41988507",
+   "type": "biomechanics",
+   "what_it_gave": "Unilateral cable curls from a low pulley with the upper arm by the side (neutral) vs held back in shoulder extension: elbow flexors grew ~7-9 % in both; the shoulder angle made no clear difference."
+  }
+ ],
+ "clip_check": [
+  {
+   "check": "Start: arms nearly straight, rope in front of the thighs",
+   "target": "elbow 5-20",
+   "measured": "",
+   "pass": ""
+  },
+  {
+   "check": "End: fists at the shoulders, ends apart",
+   "target": "elbow 110-135",
+   "measured": "",
+   "pass": ""
+  },
+  {
+   "check": "Both fists closed on the rope ends; rope to the low pulley",
+   "target": "yes",
+   "measured": "",
+   "pass": ""
+  },
+  {
+   "check": "Upper arms by the sides",
+   "target": "elev change < 10",
+   "measured": "",
+   "pass": ""
+  },
+  {
+   "check": "Biceps strongest red, forearms light red",
+   "target": "yes",
+   "measured": "",
+   "pass": ""
+  }
+ ]
+}

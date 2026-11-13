@@ -1,0 +1,216 @@
+{
+ "key": "cross_body_cable_extension",
+ "name": "Cross-Body Cable Extension",
+ "primary": [
+  "triceps"
+ ],
+ "secondary": [],
+ "scene": {
+  "cables": [
+   {
+    "loc": [
+     -0.95,
+     -0.62
+    ],
+    "pulley_h": 1.45,
+    "face": [
+     1,
+     0.55
+    ]
+   }
+  ]
+ },
+ "props": {
+  "h": {
+   "type": "cable",
+   "handle": "d",
+   "column": 0
+  }
+ },
+ "camera": {
+  "yaw": 150,
+  "pitch": 12,
+  "lens": 50,
+  "fill": 0.9,
+  "res": 640,
+  "samples": 20
+ },
+ "timing": {
+  "fps": 30,
+  "keys": [
+   [
+    0,
+    "start"
+   ],
+   [
+    1,
+    "end"
+   ],
+   [
+    2,
+    "start"
+   ]
+  ]
+ },
+ "defaults": {},
+ "poses": {
+  "start": {
+   "feet": {
+    "L": {
+     "at": [
+      0.13,
+      -0.01,
+      0.074
+     ],
+     "rot": [
+      0,
+      0,
+      6
+     ]
+    },
+    "R": {
+     "at": [
+      -0.13,
+      -0.01,
+      0.074
+     ],
+     "rot": [
+      0,
+      0,
+      -6
+     ]
+    }
+   },
+   "knees": {
+    "L": [
+     0.16,
+     -1.0,
+     0.52
+    ],
+    "R": [
+     -0.16,
+     -1.0,
+     0.52
+    ]
+   },
+   "hands": {
+    "L": {
+     "prop": "h",
+     "axis": [
+      0,
+      0,
+      1
+     ],
+     "arm": {
+      "elev": 80,
+      "plane": 35,
+      "elbow": 125,
+      "bend": [
+       -1,
+       0.35,
+       0
+      ],
+      "tilt": 0
+     }
+    },
+    "R": {
+     "axis": [
+      -0.111,
+      0.969,
+      0.133
+     ],
+     "arm": {
+      "elev": 55,
+      "plane": -15,
+      "fore_world": [
+       0.63,
+       -0.176,
+       -0.756
+      ],
+      "tilt": 0
+     }
+    }
+   }
+  },
+  "end": {
+   "feet": {
+    "L": {
+     "at": [
+      0.13,
+      -0.01,
+      0.074
+     ],
+     "rot": [
+      0,
+      0,
+      6
+     ]
+    },
+    "R": {
+     "at": [
+      -0.13,
+      -0.01,
+      0.074
+     ],
+     "rot": [
+      0,
+      0,
+      -6
+     ]
+    }
+   },
+   "knees": {
+    "L": [
+     0.16,
+     -1.0,
+     0.52
+    ],
+    "R": [
+     -0.16,
+     -1.0,
+     0.52
+    ]
+   },
+   "hands": {
+    "L": {
+     "prop": "h",
+     "axis": [
+      0,
+      0,
+      1
+     ],
+     "arm": {
+      "elev": 80,
+      "plane": 35,
+      "elbow": 10,
+      "bend": [
+       -1,
+       0.35,
+       0
+      ],
+      "tilt": 0
+     }
+    },
+    "R": {
+     "axis": [
+      -0.111,
+      0.969,
+      0.133
+     ],
+     "arm": {
+      "elev": 55,
+      "plane": -15,
+      "fore_world": [
+       0.63,
+       -0.176,
+       -0.756
+      ],
+      "tilt": 0
+     }
+    }
+   }
+  }
+ },
+ "research": "Shoulder-height pulley to the right and forward. Left upper arm fixed at shoulder height, a little forward of the side line (elev 80 / plane 35). Start: elbow 125, forearm folded across toward the right shoulder. End: elbow 10, arm out to the left side. Thumb up. Right fist on the hip.",
+ "highlight_side": "L"
+}

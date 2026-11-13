@@ -1,0 +1,206 @@
+{
+ "key": "reverse_grip_triceps_pushdown",
+ "name": "Reverse-Grip Triceps Pushdown",
+ "primary": [
+  "triceps"
+ ],
+ "secondary": [],
+ "scene": {
+  "cables": [
+   {
+    "loc": [
+     0,
+     -0.72
+    ],
+    "pulley_h": 2.0,
+    "face": [
+     0,
+     1
+    ]
+   }
+  ]
+ },
+ "props": {
+  "bar": {
+   "type": "cable",
+   "handle": "bar",
+   "column": 0,
+   "length": 0.6
+  }
+ },
+ "camera": {
+  "yaw": -125,
+  "pitch": 10,
+  "lens": 50,
+  "fill": 0.9,
+  "res": 640,
+  "samples": 20
+ },
+ "timing": {
+  "fps": 30,
+  "keys": [
+   [
+    0,
+    "start"
+   ],
+   [
+    1,
+    "end"
+   ],
+   [
+    2,
+    "start"
+   ]
+  ]
+ },
+ "defaults": {},
+ "poses": {
+  "start": {
+   "root": {
+    "loc": [
+     0,
+     0.075,
+     0.965
+    ],
+    "rot": [
+     8,
+     0,
+     0
+    ]
+   },
+   "feet": {
+    "L": {
+     "at": [
+      0.13,
+      -0.01,
+      0.074
+     ],
+     "rot": [
+      0,
+      0,
+      6
+     ]
+    },
+    "R": {
+     "at": [
+      -0.13,
+      -0.01,
+      0.074
+     ],
+     "rot": [
+      0,
+      0,
+      -6
+     ]
+    }
+   },
+   "knees": {
+    "L": [
+     0.16,
+     -1.0,
+     0.52
+    ],
+    "R": [
+     -0.16,
+     -1.0,
+     0.52
+    ]
+   },
+   "hands": {
+    "L": {
+     "prop": "bar",
+     "axis": [
+      1,
+      0,
+      0
+     ],
+     "arm": {
+      "elev": 8,
+      "plane": 70,
+      "elbow": 95,
+      "bend": [
+       0,
+       1,
+       0
+      ],
+      "tilt": 0
+     }
+    }
+   }
+  },
+  "end": {
+   "root": {
+    "loc": [
+     0,
+     0.075,
+     0.965
+    ],
+    "rot": [
+     8,
+     0,
+     0
+    ]
+   },
+   "feet": {
+    "L": {
+     "at": [
+      0.13,
+      -0.01,
+      0.074
+     ],
+     "rot": [
+      0,
+      0,
+      6
+     ]
+    },
+    "R": {
+     "at": [
+      -0.13,
+      -0.01,
+      0.074
+     ],
+     "rot": [
+      0,
+      0,
+      -6
+     ]
+    }
+   },
+   "knees": {
+    "L": [
+     0.16,
+     -1.0,
+     0.52
+    ],
+    "R": [
+     -0.16,
+     -1.0,
+     0.52
+    ]
+   },
+   "hands": {
+    "L": {
+     "prop": "bar",
+     "axis": [
+      1,
+      0,
+      0
+     ],
+     "arm": {
+      "elev": 12,
+      "plane": 75,
+      "elbow": 6,
+      "bend": [
+       0,
+       1,
+       0
+      ],
+      "tilt": 0
+     }
+    }
+   }
+  }
+ },
+ "research": "As rope_triceps_pushdown (high pulley 2.0 m, lean 8 deg, elbows by the sides) with a straight bar held palms up (axis [1,0,0]) about shoulder width. Start elbow 95 (bar at the lower chest), end elbow 6 with the upper arm a little forward (elev 12 / plane 75) so the bar stops just in front of the thighs."
+}

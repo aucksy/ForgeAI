@@ -1,0 +1,164 @@
+{
+ "format": "v1-stills",
+ "exercise": {
+  "key": "cable_hip_adduction",
+  "name": "Cable Hip Adduction",
+  "equipment": "cable",
+  "library_primary": [
+   "adductors"
+  ],
+  "library_secondary": [],
+  "library_steps": [
+   "Stand side-on to a low pulley with the cuff on your near ankle.",
+   "Hold the machine and let the cable pull that leg out slightly.",
+   "Sweep the leg inwards and across your body, past your standing foot.",
+   "Return slowly, then switch legs after your set."
+  ],
+  "status": "draft",
+  "version": 1,
+  "researched_on": "2026-11-13",
+  "one_line_summary": "Standing on one leg side-on to a low pulley, a cuff on the near ankle and the near hand on the machine; the straight near leg sweeps from ~22 deg out to the side, inward and across in front of the standing foot. The hip adductors on the inner thigh do the work.",
+  "evidence_grade": "B"
+ },
+ "setup": [
+  {
+   "item": "pulley",
+   "target": "Low pulley (~0.1 m), ankle cuff on the near ankle.",
+   "tolerance": "0-0.2 m",
+   "why": "Library step.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "C"
+  },
+  {
+   "item": "support",
+   "target": "Near hand holds the machine; trunk upright; standing leg straight.",
+   "tolerance": "-",
+   "why": "Library step.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "C"
+  }
+ ],
+ "movement": [
+  {
+   "joint": "hip (working leg)",
+   "measure": "abduction (+) / adduction (-) from straight down",
+   "start": "+22 (out to the side)",
+   "end": "-15 (across in front of the standing foot)",
+   "start_num": 22,
+   "end_num": -15,
+   "tolerance": "end -5..-25",
+   "source_ids": [
+    "S1",
+    "S2"
+   ],
+   "grade": "B"
+  },
+  {
+   "joint": "knee (working leg)",
+   "measure": "bend",
+   "start": "straight",
+   "end": "straight",
+   "start_num": 0,
+   "end_num": 0,
+   "tolerance": "under 15",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "C"
+  }
+ ],
+ "muscles": [
+  {
+   "muscle": "Hip adductors",
+   "anatomy": "Adductor longus, brevis, magnus, gracilis",
+   "mask_key": "adductors",
+   "tier": "primary",
+   "glow": 1.0,
+   "emg": "Adductor longus 14-108 % nEMG across hip adduction exercises (S1); adductor forces modelled per exercise (S2).",
+   "role": "Pull the leg in and across; what the exercise is for.",
+   "surface": "Inner thigh.",
+   "source_ids": [
+    "S1",
+    "S2"
+   ],
+   "grade": "B"
+  },
+  {
+   "muscle": "Abdominals",
+   "anatomy": "Rectus abdominis, external oblique",
+   "mask_key": "abs",
+   "tier": "stabiliser",
+   "glow": 0,
+   "emg": "Low in adduction exercises (S1).",
+   "role": "Hold the pelvis.",
+   "surface": "Front of the trunk.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  }
+ ],
+ "tempo": null,
+ "mistakes": [
+  {
+   "mistake": "Leaning the trunk",
+   "what_it_looks_like": "Trunk tips to swing the leg.",
+   "why_it_matters": "Moves the work off the adductors.",
+   "source_ids": [
+    "S1"
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "S1",
+   "citation": "Serner A, Jakobsen MD, Andersen LL, et al. 2014. EMG evaluation of hip adduction exercises for soccer players: implications for exercise selection in prevention and treatment of groin injuries. Br J Sports Med 48(14):1108-1114.",
+   "url": "https://europepmc.org/article/MED/23511698",
+   "type": "emg",
+   "what_it_gave": "Eight hip adduction exercises incl. standing adduction against resistance: adductor longus 14-108 % nEMG; gluteals and abdominals low."
+  },
+  {
+   "id": "S2",
+   "citation": "Collings TJ, Horsman A, Hams AH, et al. 2026. Hip adductor muscle forces during strength training and rehabilitation exercises. Med Sci Sports Exerc 58:1751-1763.",
+   "url": "https://europepmc.org/article/MED/41931009",
+   "type": "biomechanics",
+   "what_it_gave": "EMG-driven model of the adductor brevis, longus, magnus and gracilis in eight exercises incl. a lying leg lift (hip adduction against gravity)."
+  }
+ ],
+ "clip_check": [
+  {
+   "check": "Start: leg out to the side under cable tension",
+   "target": "~22 deg",
+   "measured": "",
+   "pass": ""
+  },
+  {
+   "check": "End: leg across in front of the standing foot, not through it",
+   "target": "clearance > 0",
+   "measured": "",
+   "pass": ""
+  },
+  {
+   "check": "Cuff on the near ankle; near fist on the grip; far fist on the hip",
+   "target": "grip check under 1 cm",
+   "measured": "",
+   "pass": ""
+  },
+  {
+   "check": "Standing foot flat",
+   "target": "probe_feet",
+   "measured": "",
+   "pass": ""
+  },
+  {
+   "check": "Inner thigh of the working leg strongest red",
+   "target": "highlight_side L",
+   "measured": "",
+   "pass": ""
+  }
+ ]
+}

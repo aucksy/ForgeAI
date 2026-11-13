@@ -1,0 +1,195 @@
+{
+ "format": "v1-stills",
+ "exercise": {
+  "key": "low_to_high_cable_fly",
+  "name": "Low-to-High Cable Fly",
+  "equipment": "cable",
+  "library_primary": [
+   "chest"
+  ],
+  "library_secondary": [
+   "front_delts"
+  ],
+  "library_steps": [
+   "Set both pulleys low and hold a handle in each hand.",
+   "Step forward with your elbows a little bent.",
+   "Sweep the handles up and together at chest height.",
+   "Lower them slowly back down."
+  ],
+  "status": "draft",
+  "version": 1,
+  "researched_on": "2026-11-13",
+  "one_line_summary": "Standing between two low pulleys with a D-handle in each hand; the softly bent arms sweep from low and wide up and together in front of the chest at chest height. Chest (upper fibres) does the work; the front delt helps.",
+  "evidence_grade": "B"
+ },
+ "setup": [
+  {
+   "item": "pulleys",
+   "target": "Both low (~0.1 m), the athlete a little in front of them.",
+   "tolerance": "0-0.3 m",
+   "why": "Library step.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "C"
+  },
+  {
+   "item": "arms",
+   "target": "Elbows softly bent (~20 deg), fixed.",
+   "tolerance": "10-30",
+   "why": "Fly form (S1).",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  }
+ ],
+ "movement": [
+  {
+   "joint": "shoulder",
+   "measure": "upper arm from the side line",
+   "start": "32 deg (low and out)",
+   "end": "75 deg (chest height, in front)",
+   "start_num": 32,
+   "end_num": 75,
+   "tolerance": "end 65-85",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  },
+  {
+   "joint": "shoulder (horizontal)",
+   "measure": "0 = out to the side, +90 = forward",
+   "start": "5",
+   "end": "100 (hands together)",
+   "start_num": 5,
+   "end_num": 100,
+   "tolerance": "end 90-110",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  },
+  {
+   "joint": "elbow",
+   "measure": "bend",
+   "start": "20",
+   "end": "20",
+   "start_num": 20,
+   "end_num": 20,
+   "tolerance": "10-30",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  }
+ ],
+ "muscles": [
+  {
+   "muscle": "Chest",
+   "anatomy": "Pectoralis major",
+   "mask_key": "chest",
+   "tier": "primary",
+   "glow": 1.0,
+   "emg": "Main mover of the fly (S1); front delt only ~19 % MVIC in the fly (S2).",
+   "role": "Brings the arm across the body; what the exercise is for.",
+   "surface": "Front of the chest.",
+   "source_ids": [
+    "S1",
+    "S2"
+   ],
+   "grade": "B"
+  },
+  {
+   "muscle": "Front delt",
+   "anatomy": "Deltoideus, pars clavicularis",
+   "mask_key": "front_delts",
+   "tier": "secondary",
+   "glow": 0.35,
+   "emg": "Active in the fly (S1, S2).",
+   "role": "Helps bring the arm forward; library secondary.",
+   "surface": "Front of the shoulder.",
+   "source_ids": [
+    "S1",
+    "S2"
+   ],
+   "grade": "B"
+  },
+  {
+   "muscle": "Biceps",
+   "anatomy": "Biceps brachii",
+   "mask_key": "biceps",
+   "tier": "stabiliser",
+   "glow": 0,
+   "emg": "Antagonist holding the elbow in the fly (S1).",
+   "role": "Holds the elbow bend.",
+   "surface": "Front of the upper arm.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  }
+ ],
+ "tempo": null,
+ "mistakes": [
+  {
+   "mistake": "Pressing instead of flying",
+   "what_it_looks_like": "Elbows bend and the hands push forward.",
+   "why_it_matters": "Fly form keeps the elbows fixed.",
+   "source_ids": [
+    "S1"
+   ]
+  },
+  {
+   "mistake": "Hands above the head at the end",
+   "what_it_looks_like": "Arms finish overhead.",
+   "why_it_matters": "Library: together at chest height.",
+   "source_ids": [
+    "S1"
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "S1",
+   "citation": "Solstad TEJ, Andersen V, Shaw M, et al. 2020. A comparison of muscle activation between barbell bench press and dumbbell flyes in resistance-trained males. J Sports Sci Med 19(4):645-651.",
+   "url": "https://europepmc.org/article/MED/33239937",
+   "type": "emg",
+   "what_it_gave": "Dumbbell fly vs bench press, 6RM: pectoralis major the main mover in the fly; front delt active; biceps works as an antagonist holding the slightly bent elbow."
+  },
+  {
+   "id": "S2",
+   "citation": "Campos YAC, Vianna JM, Guimaraes MP, et al. 2020. Different shoulder exercises affect the activation of deltoid portions in resistance-trained individuals. J Hum Kinet 75:5-14.",
+   "url": "https://europepmc.org/article/MED/33312291",
+   "type": "emg",
+   "what_it_gave": "Bench press, dumbbell fly, shoulder press, lateral raise at 60 % 1RM: front delt only ~19 % MVIC in the fly; side delt highest in the lateral raise (30 %)."
+  }
+ ],
+ "clip_check": [
+  {
+   "check": "Start: hands low and wide",
+   "target": "elev ~32",
+   "measured": "",
+   "pass": ""
+  },
+  {
+   "check": "End: hands together in front of the chest at chest height",
+   "target": "hand gap < 0.3 m",
+   "measured": "",
+   "pass": ""
+  },
+  {
+   "check": "Both fists closed on the handles; cables to the low pulleys clear of the arms",
+   "target": "clearance > 0",
+   "measured": "",
+   "pass": ""
+  },
+  {
+   "check": "Chest strongest red",
+   "target": "yes",
+   "measured": "",
+   "pass": ""
+  }
+ ]
+}

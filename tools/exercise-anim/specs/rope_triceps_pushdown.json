@@ -25,12 +25,12 @@
    "type": "cable",
    "handle": "rope",
    "column": 0,
-   "rope_len": 0.3
+   "rope_len": 0.36
   }
  },
  "camera": {
-  "yaw": -78,
-  "pitch": 8,
+  "yaw": -125,
+  "pitch": 10,
   "lens": 50,
   "fill": 0.9,
   "res": 640,

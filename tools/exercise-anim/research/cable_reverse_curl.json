@@ -1,0 +1,178 @@
+{
+ "format": "v1-stills",
+ "exercise": {
+  "key": "cable_reverse_curl",
+  "name": "Cable Reverse Curl",
+  "equipment": "cable",
+  "library_primary": [
+   "forearms"
+  ],
+  "library_secondary": [
+   "biceps"
+  ],
+  "library_steps": [
+   "Attach a straight bar to the low pulley and grip it palms down.",
+   "Keep your elbows at your sides and curl the bar to your chest.",
+   "Lower slowly until your arms are straight."
+  ],
+  "status": "draft",
+  "version": 1,
+  "researched_on": "2026-11-13",
+  "one_line_summary": "Standing facing a low pulley, a straight bar held palms down about shoulder width; elbows stay by the sides while they bend from ~10 to ~118 deg. The forearm's brachioradialis does the main work; the biceps helps.",
+  "evidence_grade": "B"
+ },
+ "setup": [
+  {
+   "item": "pulley",
+   "target": "Low pulley, straight bar.",
+   "tolerance": "0-0.3 m",
+   "why": "Library step.",
+   "source_ids": [
+    "S2"
+   ],
+   "grade": "C"
+  },
+  {
+   "item": "grip",
+   "target": "Palms down (pronated), about shoulder width.",
+   "tolerance": "35-50 cm",
+   "why": "Library step; pronation shifts the work to the brachioradialis (S1).",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  }
+ ],
+ "movement": [
+  {
+   "joint": "elbow",
+   "measure": "bend, 0 = straight",
+   "start": "10 deg",
+   "end": "118 deg",
+   "start_num": 10,
+   "end_num": 118,
+   "tolerance": "start 5-20; end 105-130",
+   "source_ids": [
+    "S2"
+   ],
+   "grade": "B"
+  },
+  {
+   "joint": "shoulder",
+   "measure": "upper arm from the torso side line",
+   "start": "10 deg",
+   "end": "10 deg",
+   "start_num": 10,
+   "end_num": 10,
+   "tolerance": "change under 10",
+   "source_ids": [
+    "S2"
+   ],
+   "grade": "B"
+  }
+ ],
+ "muscles": [
+  {
+   "muscle": "Brachioradialis (forearm)",
+   "anatomy": "Brachioradialis",
+   "mask_key": "forearms",
+   "tier": "primary",
+   "glow": 1.0,
+   "emg": "Its share of elbow flexion rises significantly with the hand pronated while the biceps does not change (S1).",
+   "role": "Bends the elbow with the palm down; library primary.",
+   "surface": "Thumb side of the upper forearm.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  },
+  {
+   "muscle": "Biceps",
+   "anatomy": "Biceps brachii",
+   "mask_key": "biceps",
+   "tier": "secondary",
+   "glow": 0.35,
+   "emg": "Active in every hand position (S1, S2).",
+   "role": "Helps bend the elbow; library secondary.",
+   "surface": "Front of the upper arm.",
+   "source_ids": [
+    "S1",
+    "S2"
+   ],
+   "grade": "B"
+  },
+  {
+   "muscle": "Brachialis",
+   "anatomy": "Brachialis",
+   "mask_key": "none",
+   "tier": "deep",
+   "glow": 0,
+   "emg": "not measured",
+   "role": "Elbow flexor under the biceps.",
+   "surface": "Under the lower biceps.",
+   "source_ids": [],
+   "grade": "D"
+  }
+ ],
+ "tempo": null,
+ "mistakes": [
+  {
+   "mistake": "Wrists bending back",
+   "what_it_looks_like": "Knuckles drop toward the floor.",
+   "why_it_matters": "Wrists stay straight.",
+   "source_ids": [
+    "S1"
+   ]
+  },
+  {
+   "mistake": "Elbows drift forward",
+   "what_it_looks_like": "Upper arms swing up.",
+   "why_it_matters": "Library step.",
+   "source_ids": [
+    "S2"
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "S1",
+   "citation": "Kleiber T, Kunz L, Disselhorst-Klug C. 2015. Muscular coordination of biceps brachii and brachioradialis in elbow flexion with respect to hand position. Front Physiol 6:215.",
+   "url": "https://europepmc.org/article/MED/26300781",
+   "type": "emg",
+   "what_it_gave": "Elbow flexion with the hand pronated, neutral and supinated: brachioradialis share rises significantly with the hand pronated (palms down); biceps activity unchanged."
+  },
+  {
+   "id": "S2",
+   "citation": "Marcolin G, Panizzolo FA, Petrone N, et al. 2018. Differences in electromyographic activity of biceps brachii and brachioradialis while performing three variants of curl. PeerJ 6:e5165.",
+   "url": "https://europepmc.org/article/MED/30013836",
+   "type": "emg",
+   "what_it_gave": "Straight bar, EZ bar and dumbbell curls at 65 % 1RM: biceps and brachioradialis both clearly active; elbow range ~117 deg."
+  }
+ ],
+ "clip_check": [
+  {
+   "check": "Palms down, both fists closed on the bar",
+   "target": "grip off bar < 5 deg",
+   "measured": "",
+   "pass": ""
+  },
+  {
+   "check": "Start elbow ~10, end ~118",
+   "target": "5-20 / 105-130",
+   "measured": "",
+   "pass": ""
+  },
+  {
+   "check": "Upper arms by the sides",
+   "target": "elev change < 10",
+   "measured": "",
+   "pass": ""
+  },
+  {
+   "check": "Forearms strongest red, biceps light red",
+   "target": "yes",
+   "measured": "",
+   "pass": ""
+  }
+ ]
+}

@@ -1,0 +1,203 @@
+{
+ "format": "v1-stills",
+ "exercise": {
+  "key": "cable_front_raise",
+  "name": "Cable Front Raise",
+  "equipment": "cable",
+  "library_primary": [
+   "front_delts"
+  ],
+  "library_secondary": [
+   "chest"
+  ],
+  "library_steps": [
+   "Stand facing away from a low pulley with a rope running between your legs.",
+   "Raise your hands straight out in front up to shoulder height.",
+   "Lower them slowly back down."
+  ],
+  "status": "draft",
+  "version": 1,
+  "researched_on": "2026-11-13",
+  "one_line_summary": "Standing with the back to a low pulley, a rope running between the legs and held in both fists; straight arms rise from the thighs to shoulder height in front. Front delt does the work; the upper chest helps.",
+  "evidence_grade": "B"
+ },
+ "setup": [
+  {
+   "item": "pulley",
+   "target": "Low pulley behind; the rope/cable runs between the legs.",
+   "tolerance": "0-0.3 m",
+   "why": "Library step.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "C"
+  },
+  {
+   "item": "arms",
+   "target": "Straight (elbows soft), neutral grip.",
+   "tolerance": "elbow under 15",
+   "why": "Library step.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "C"
+  },
+  {
+   "item": "stance",
+   "target": "Feet a little wider than hips.",
+   "tolerance": "-",
+   "why": "Lets the cable pass between the legs.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "D"
+  }
+ ],
+ "movement": [
+  {
+   "joint": "shoulder",
+   "measure": "arm raised forward from hanging, 0 = down",
+   "start": "18 deg (hands at the thighs)",
+   "end": "88 deg (shoulder height)",
+   "start_num": 18,
+   "end_num": 88,
+   "tolerance": "end 80-95",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  },
+  {
+   "joint": "elbow",
+   "measure": "bend",
+   "start": "8",
+   "end": "8",
+   "start_num": 8,
+   "end_num": 8,
+   "tolerance": "under 15",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "C"
+  },
+  {
+   "joint": "trunk",
+   "measure": "stays upright",
+   "start": "0",
+   "end": "0",
+   "start_num": 0,
+   "end_num": 0,
+   "tolerance": "lean under 5",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "C"
+  }
+ ],
+ "muscles": [
+  {
+   "muscle": "Front delt",
+   "anatomy": "Deltoideus, pars clavicularis",
+   "mask_key": "front_delts",
+   "tier": "primary",
+   "glow": 1.0,
+   "emg": "The frontal raise mainly works the front delt (S1); front delt active in raises (S2).",
+   "role": "Lifts the arm forward; what the exercise is for.",
+   "surface": "Front of the shoulder.",
+   "source_ids": [
+    "S1",
+    "S2"
+   ],
+   "grade": "B"
+  },
+  {
+   "muscle": "Upper chest",
+   "anatomy": "Pectoralis major, clavicular head",
+   "mask_key": "chest_upper",
+   "tier": "secondary",
+   "glow": 0.35,
+   "emg": "Pectoralis major higher in the frontal raise than in any lateral raise (S1).",
+   "role": "Helps lift the arm forward; library secondary.",
+   "surface": "Upper chest below the collarbone.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  },
+  {
+   "muscle": "Side delt",
+   "anatomy": "Deltoideus, pars acromialis",
+   "mask_key": "side_delts",
+   "tier": "stabiliser",
+   "glow": 0,
+   "emg": "Lower than in lateral raises (S1).",
+   "role": "Helps hold the arm.",
+   "surface": "Side of the shoulder.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  }
+ ],
+ "tempo": null,
+ "mistakes": [
+  {
+   "mistake": "Swinging the body",
+   "what_it_looks_like": "Leaning back to heave the rope up.",
+   "why_it_matters": "The shoulders should lift the load.",
+   "source_ids": [
+    "S1"
+   ]
+  },
+  {
+   "mistake": "Raising far above the shoulders",
+   "what_it_looks_like": "Hands go overhead.",
+   "why_it_matters": "Library: up to shoulder height.",
+   "source_ids": [
+    "S1"
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "S1",
+   "citation": "Coratella G, Tornatore G, Longo S, Esposito F, Ce E. 2020. An electromyographic analysis of lateral raise variations and frontal raise in competitive bodybuilders. Int J Environ Res Public Health 17(17):6015.",
+   "url": "https://europepmc.org/article/MED/32824894",
+   "type": "emg",
+   "what_it_gave": "Lateral raise variants vs frontal raise: frontal raise mainly works the front delt (with pectoralis major more than any lateral raise); lateral raise with a neutral humerus works the side delt most; internal rotation shifts work to the rear delt and upper trapezius."
+  },
+  {
+   "id": "S2",
+   "citation": "Campos YAC, Vianna JM, Guimaraes MP, et al. 2020. Different shoulder exercises affect the activation of deltoid portions in resistance-trained individuals. J Hum Kinet 75:5-14.",
+   "url": "https://europepmc.org/article/MED/33312291",
+   "type": "emg",
+   "what_it_gave": "Bench press, dumbbell fly, shoulder press, lateral raise at 60 % 1RM: front delt only ~19 % MVIC in the fly; side delt highest in the lateral raise (30 %)."
+  }
+ ],
+ "clip_check": [
+  {
+   "check": "Start: hands in front of the thighs",
+   "target": "18 deg",
+   "measured": "",
+   "pass": ""
+  },
+  {
+   "check": "End: straight arms at shoulder height",
+   "target": "80-95",
+   "measured": "",
+   "pass": ""
+  },
+  {
+   "check": "Both fists closed on the rope; cable runs back between the legs, clear of them",
+   "target": "clearance > 0",
+   "measured": "",
+   "pass": ""
+  },
+  {
+   "check": "Front delts strongest red, upper chest light",
+   "target": "yes",
+   "measured": "",
+   "pass": ""
+  }
+ ]
+}
