@@ -29,6 +29,11 @@ export const OWN_PICTURES: Readonly<Record<string, ExercisePictures>> = {
     thumb: require('../../../assets/exercise-pictures-own/barbell_21s__thumb.webp'),
     end: require('../../../assets/exercise-pictures-own/barbell_21s__end.webp'),
   },
+  cable_hip_adduction: {
+    start: require('../../../assets/exercise-pictures-own/cable_hip_adduction__start.webp'),
+    thumb: require('../../../assets/exercise-pictures-own/cable_hip_adduction__thumb.webp'),
+    end: require('../../../assets/exercise-pictures-own/cable_hip_adduction__end.webp'),
+  },
   dumbbell_step_up: {
     start: require('../../../assets/exercise-pictures-own/dumbbell_step_up__start.webp'),
     thumb: require('../../../assets/exercise-pictures-own/dumbbell_step_up__thumb.webp'),
@@ -74,6 +79,21 @@ export const OWN_PICTURES: Readonly<Record<string, ExercisePictures>> = {
     thumb: require('../../../assets/exercise-pictures-own/incline_neutral_grip_dumbbell_press__thumb.webp'),
     end: require('../../../assets/exercise-pictures-own/incline_neutral_grip_dumbbell_press__end.webp'),
   },
+  low_to_high_cable_fly: {
+    start: require('../../../assets/exercise-pictures-own/low_to_high_cable_fly__start.webp'),
+    thumb: require('../../../assets/exercise-pictures-own/low_to_high_cable_fly__thumb.webp'),
+    end: require('../../../assets/exercise-pictures-own/low_to_high_cable_fly__end.webp'),
+  },
+  overhead_cable_curl: {
+    start: require('../../../assets/exercise-pictures-own/overhead_cable_curl__start.webp'),
+    thumb: require('../../../assets/exercise-pictures-own/overhead_cable_curl__thumb.webp'),
+    end: require('../../../assets/exercise-pictures-own/overhead_cable_curl__end.webp'),
+  },
+  reverse_grip_triceps_pushdown: {
+    start: require('../../../assets/exercise-pictures-own/reverse_grip_triceps_pushdown__start.webp'),
+    thumb: require('../../../assets/exercise-pictures-own/reverse_grip_triceps_pushdown__thumb.webp'),
+    end: require('../../../assets/exercise-pictures-own/reverse_grip_triceps_pushdown__end.webp'),
+  },
   reverse_hyperextension: {
     start: require('../../../assets/exercise-pictures-own/reverse_hyperextension__start.webp'),
     thumb: require('../../../assets/exercise-pictures-own/reverse_hyperextension__thumb.webp'),
@@ -104,10 +124,20 @@ export const OWN_PICTURES: Readonly<Record<string, ExercisePictures>> = {
     thumb: require('../../../assets/exercise-pictures-own/single_arm_dumbbell_upright_row__thumb.webp'),
     end: require('../../../assets/exercise-pictures-own/single_arm_dumbbell_upright_row__end.webp'),
   },
+  single_arm_high_cable_curl: {
+    start: require('../../../assets/exercise-pictures-own/single_arm_high_cable_curl__start.webp'),
+    thumb: require('../../../assets/exercise-pictures-own/single_arm_high_cable_curl__thumb.webp'),
+    end: require('../../../assets/exercise-pictures-own/single_arm_high_cable_curl__end.webp'),
+  },
   single_arm_lying_dumbbell_extension: {
     start: require('../../../assets/exercise-pictures-own/single_arm_lying_dumbbell_extension__start.webp'),
     thumb: require('../../../assets/exercise-pictures-own/single_arm_lying_dumbbell_extension__thumb.webp'),
     end: require('../../../assets/exercise-pictures-own/single_arm_lying_dumbbell_extension__end.webp'),
+  },
+  single_arm_reverse_grip_pushdown: {
+    start: require('../../../assets/exercise-pictures-own/single_arm_reverse_grip_pushdown__start.webp'),
+    thumb: require('../../../assets/exercise-pictures-own/single_arm_reverse_grip_pushdown__thumb.webp'),
+    end: require('../../../assets/exercise-pictures-own/single_arm_reverse_grip_pushdown__end.webp'),
   },
   single_leg_calf_raise: {
     start: require('../../../assets/exercise-pictures-own/single_leg_calf_raise__start.webp'),

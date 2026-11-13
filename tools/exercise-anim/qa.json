@@ -433,5 +433,47 @@
     "qa": "pass",
     "reason": "numbers ok (feet on the steps, deepest 0.7 cm); close-ups ok; fresh reviewer thought he faced down the stairs: checked, he faces the rising steps (the treadmill pictures are shot from the other side), so it stays",
     "tries": 1
+  },
+  "cable_hip_adduction": {
+    "rendered": "2026-11-13",
+    "run": "43448776510",
+    "qa": "pass",
+    "reason": "numbers (fists on handle/grip, cable clear of the skin 4-24 cm, feet on the floor), close-up and fresh reviewer all clean (13 Nov 2026)",
+    "tries": 1
+  },
+  "low_to_high_cable_fly": {
+    "rendered": "2026-11-13",
+    "run": "43448776510",
+    "qa": "pass",
+    "reason": "numbers (fists on handle/grip, cable clear of the skin 4-24 cm, feet on the floor), close-up and fresh reviewer all clean (13 Nov 2026)",
+    "tries": 1
+  },
+  "overhead_cable_curl": {
+    "rendered": "2026-11-13",
+    "run": "43448776510",
+    "qa": "pass",
+    "reason": "numbers (fists on handle/grip, cable clear of the skin 4-24 cm, feet on the floor), close-up and fresh reviewer all clean (13 Nov 2026)",
+    "tries": 1
+  },
+  "reverse_grip_triceps_pushdown": {
+    "rendered": "2026-11-13",
+    "run": "43448776510",
+    "qa": "pass",
+    "reason": "numbers (fists on handle/grip, cable clear of the skin 4-24 cm, feet on the floor), close-up and fresh reviewer all clean (13 Nov 2026); reviewer note: from behind the palms-up grip is only partly visible, close-up confirms palms up",
+    "tries": 1
+  },
+  "single_arm_high_cable_curl": {
+    "rendered": "2026-11-13",
+    "run": "43448776510",
+    "qa": "pass",
+    "reason": "numbers (fists on handle/grip, cable clear of the skin 4-24 cm, feet on the floor), close-up and fresh reviewer all clean (13 Nov 2026)",
+    "tries": 1
+  },
+  "single_arm_reverse_grip_pushdown": {
+    "rendered": "2026-11-13",
+    "run": "43448776510",
+    "qa": "pass",
+    "reason": "numbers (fists on handle/grip, cable clear of the skin 4-24 cm, feet on the floor), close-up and fresh reviewer all clean (13 Nov 2026); same note on the palm-up grip",
+    "tries": 1
   }
 }
