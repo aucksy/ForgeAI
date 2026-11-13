@@ -50,13 +50,16 @@ export function cleanPath(path: string): string {
 
 /**
  * The features that may carry dots at `now`: lines marked `feature` with a `go` path, live (from their day,
- * for DOT_DAYS days), newest first, at most `max`. Fixes (no `feature`) never count. PURE.
+ * for DOT_DAYS days), newest first, at most `max`. Fixes (no `feature`) never count.
+ * `menuPaths` (13 Nov 2026): this person's full menu. A page they do not have (the AI Assistant switched off,
+ * Questions before 0053) is skipped BEFORE the limit, so it never takes a slot from a page they do have. PURE.
  */
 export function dotFeatures(
   now: number,
   log: readonly AdminNewsEntry[] = ADMIN_NEWS,
   max = MAX_DOTS,
   since?: number | null,
+  menuPaths?: readonly string[] | null,
 ): NewFeature[] {
   const joined = typeof since === 'number' && Number.isFinite(since) && since > 0 ? since : null;
   const out: NewFeature[] = [];
@@ -68,6 +71,7 @@ export function dotFeatures(
     for (const line of entry.lines) {
       if (line.feature !== true || !line.go) continue;
       const path = cleanPath(line.go.path);
+      if (menuPaths && linkFor(menuPaths, path) === null) continue; // not on this person's menu
       out.push({ key: `${entry.id}|${path}`, id: entry.id, path });
       if (out.length >= max) return out;
     }

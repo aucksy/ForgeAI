@@ -139,6 +139,21 @@ describe('which features light', () => {
     expect(ids('2026-12-04T18:29:00Z')).toEqual(['2026-11-06', '2026-11-05']);
   });
 
+  // 13 Nov 2026: the AI Assistant (newest) is hidden when it is switched off. Hidden pages are skipped before
+  // the limit, so they never push out a page this gym has (the Trainers dot vanished early in CI).
+  it('a page not on the menu never takes one of the 3 slots', () => {
+    const log: AdminNewsEntry[] = [
+      { id: '2026-11-13', lines: [{ text: 'AI.', go: { label: 'x', path: '/assistant' }, feature: true }] },
+      { id: '2026-11-09', lines: [{ text: 'Questions.', go: { label: 'x', path: '/questions' }, feature: true }] },
+      ...LOG,
+    ];
+    const now = at('2026-11-14T12:00:00+05:30');
+    expect(dotFeatures(now, log).map((x) => x.path)).toEqual(['/assistant', '/questions', '/settings/branding']);
+    expect(dotFeatures(now, log, MAX_DOTS, null, SIDEBAR).map((x) => x.path)).toEqual(['/settings/branding', '/settings/mettleup', '/members']);
+    expect(dotFeatures(now, log, MAX_DOTS, null, [...SIDEBAR, '/assistant']).map((x) => x.path)).toEqual(['/assistant', '/settings/branding', '/settings/mettleup']);
+    expect(dotFeatures(now, log, MAX_DOTS, null, [])).toEqual([]);
+  });
+
   it('before the entry day (a wrong clock, a test clock) it is not live yet', () => {
     expect(dotFeatures(at('2026-11-05T23:59:00+05:30'), LOG).map((x) => x.id)).toEqual(['2026-11-05', '2026-11-05']);
     expect(dotFeatures(at('2026-10-17T10:00:00+05:30'), LOG)).toEqual([]);

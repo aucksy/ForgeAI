@@ -44,10 +44,10 @@ test('J149 Notifications bell: counts new updates, opens with a short What is ne
   await expect(bell).toBeVisible();
   await bell.tap();
   const list = page.getByRole('dialog', { name: 'Notifications' });
-  await expect(list).toContainText('Version 12 Nov 2026');
+  await expect(list).toContainText('Version 13 Nov 2026');
   const news = list.getByRole('region', { name: CARD });
-  await expect(news).toContainText('Update of 12 Nov 2026');
-  await expect(news).toContainText('The MettleUp privacy notice has a new section'); // 12 Nov 2026, the newest update (EU/UK privacy)
+  await expect(news).toContainText('Update of 13 Nov 2026');
+  await expect(news).toContainText('New: the AI Assistant, in the menu'); // 13 Nov 2026, the newest update (R-480)
   await expect(news).toContainText(/\d+ updates since you last looked/);
   await expect(news.getByText('New', { exact: true })).toBeVisible();
   await expectFitsPhone(page, 'with the notifications list open');

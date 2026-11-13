@@ -28,9 +28,12 @@ export function useNewFeatures(): readonly NewFeature[] {
 export function NewDotsProvider({
   enabled,
   since,
+  menuPaths,
   children,
 }: {
   enabled: boolean;
+  /** The person's full menu: a feature on a page they do not have never takes a dot slot (13 Nov 2026). */
+  menuPaths?: readonly string[];
   /** When the gym was set up (epoch ms): features from before then are not new to it (R-446). */
   since?: number | null;
   children: ReactNode;
@@ -45,7 +48,11 @@ export function NewDotsProvider({
   // Read once per page: the clock only matters to the day.
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const now = useMemo(() => Date.now(), [path]);
-  const lit = useMemo(() => (enabled ? unseen(dotFeatures(now, undefined, undefined, since), seen) : []), [enabled, now, seen, since]);
+  const menuKey = menuPaths ? menuPaths.join('|') : '';
+  const lit = useMemo(
+    () => (enabled ? unseen(dotFeatures(now, undefined, undefined, since, menuKey ? menuKey.split('|') : null), seen) : []),
+    [enabled, now, seen, since, menuKey],
+  );
   const here = featuresAt(lit, path);
   const hereKeys = here.map((f) => f.key).join(',');
 
