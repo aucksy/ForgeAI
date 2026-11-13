@@ -32,6 +32,7 @@ YOUR FOLLOW-UP (13 Nov 2026, ~21:55 IST): "Yes - give those 17 questions back so
 ai_usage for Crispy Curves, 2026-11-13, assist: calls 20 -> 3 (17 left today; read before and after). 0.77.0 has no
 3D pictures (checked the tag), so no member saw them. Saved rule: new-items-match-the-existing-set (hard). Paused all
 picture helpers; asked him: redraw in the orange-tank look (3 samples beside the old ones first) or stop.
+DEPLOYED (13 Nov 2026, 21:47 IST): CI 43457725591 green on f9f9aaf6; panel Worker version 126fdae6, bundle index-w3LEVfDz.js. Live check in his Chrome (no question spent): AI Assistant opens, ask box enabled, no "asked a lot". The limit line itself is proven by tests only (reaching it would cost his questions).
 
 ## R-488. AI Assistant: "You have asked a lot today" with 20 credits showing — 13 Nov 2026
 He said (13 Nov 2026, evening, with a screenshot: "Send a Chhath Puja greeting to everyone" -> red "You have asked a
