@@ -2,6 +2,7 @@
 
 build_character() -> dict(body=, rig=, shorts=, hair=, eyes=, brows=)
 """
+import math
 import os
 import bpy, bmesh
 from mathutils import Vector
@@ -171,12 +172,53 @@ def _flat_attr(body, rig, pos):
     _write_point_attr(body.data, "fa_flat", np.clip(np.maximum(w * 0.85, seam * 0.8), 0, 1).astype("float32"))
 
 
-def _shell(body, keep, name, mat, gap, thick):
+def _in_body(body):
+    """Per vertex: part of the real skin (MakeHuman's "body" group), not the hidden helper geometry (tights, skirt,
+    hair and joint helpers that create_human masks away)."""
+    vg = body.vertex_groups.get("body")
+    if vg is None:
+        return [True] * len(body.data.vertices)
+    out = [False] * len(body.data.vertices)
+    for v in body.data.vertices:
+        for g in v.groups:
+            if g.group == vg.index and g.weight > 0.5:
+                out[v.index] = True
+    return out
+
+
+def _cut_field(bm, f):
+    """Cut the mesh along f(co) = 0 (a smooth edge, not the mesh's own zigzag) and delete where f < 0: every edge
+    that crosses is split at the crossing (weights interpolated), the two new points of each face joined."""
+    newv = set()
+    for e in list(bm.edges):
+        a, b = e.verts
+        fa, fb = f(a.co), f(b.co)
+        if (fa < 0) != (fb < 0) and abs(fa - fb) > 1e-12:
+            t = fa / (fa - fb)
+            if 1e-4 < t < 1 - 1e-4:
+                _, nv = bmesh.utils.edge_split(e, a, t)
+                newv.add(nv)
+            else:
+                newv.add(a if t <= 1e-4 else b)
+    for face in list(bm.faces):
+        vs = [v for v in face.verts if v in newv]
+        if len(vs) == 2 and not any(vs[1] in (e.other_vert(vs[0]),) for e in vs[0].link_edges):
+            try:
+                bmesh.ops.connect_verts(bm, verts=vs)
+            except Exception:
+                pass
+    bmesh.ops.delete(bm, geom=[v for v in bm.verts if v not in newv and f(v.co) < 0], context="VERTS")
+
+
+def _shell(body, keep, name, mat, gap, thick, field=None):
     """A cloth shell grown from the body's own faces (the shorts method): the faces whose vertices are all in `keep`
-    (a per-vertex bool list), pushed out by `gap` along the normal and given `thick`ness. Follows the rig for free."""
+    (a per-vertex bool list) and on the real skin, pushed out by `gap` along the normal and given `thick`ness; then
+    cut along `field` = 0 (a function of the rest position) for clean edges. Follows the rig for free."""
     pos = rest_positions(body)
     me = body.data
-    faces = {f.index for f in me.polygons if all(keep[i] for i in f.vertices)}
+    skin = _in_body(body)
+    faces = {f.index for f in me.polygons if all(keep[i] and skin[i] for i in f.vertices)}
+    print(f"[character] {name}: {len(faces)} faces")
     sh = body.copy(); sh.data = me.copy(); sh.name = name; sh.data.name = name
     bpy.context.scene.collection.objects.link(sh)
     for m in list(sh.modifiers):
@@ -189,6 +231,10 @@ def _shell(body, keep, name, mat, gap, thick):
     bm = bmesh.new(); bm.from_mesh(sh.data)
     bmesh.ops.delete(bm, geom=[f for f in bm.faces if f.index not in faces], context="FACES")
     bmesh.ops.delete(bm, geom=[v for v in bm.verts if not v.link_faces], context="VERTS")
+    if field is not None:
+        mw = sh.matrix_world
+        _cut_field(bm, lambda co: field(mw @ co))
+        bmesh.ops.delete(bm, geom=[v for v in bm.verts if not v.link_faces], context="VERTS")
     bm.to_mesh(sh.data); bm.free()
     sh.data.materials.clear(); sh.data.materials.append(mat)
     d = sh.modifiers.new("Gap", "DISPLACE"); d.strength = gap; d.mid_level = 0.0
@@ -221,23 +267,32 @@ def _make_tank(body, rig):
     hip = LM["hip"]; neck = LM["neck"]; nip_z = LM["nipple"][2]; sh = LM["shoulder"]
     waist_z = hip[2] + 0.115                       # the shorts' waistband (_make_shorts)
     hem_z = waist_z - float(os.environ.get("FA_TANK_HEM", 0.045))
-    torso = (G["torso"] + G["shoulder"] + G["pelvis"] > 0.5) & (G["arm"] < 0.35) & (G["leg"] < 0.3)
-    # armhole: the outer edge of the tank runs from the strap (x ~ shoulder - 9 cm at the top of the shoulder)
-    # down to the side seam under the armpit
+    # faces: the torso, generously (the field below makes every edge); arms and legs only well away from it
+    torso = (G["torso"] + G["shoulder"] + G["pelvis"] > 0.3) & (G["arm"] < 0.9) & (G["leg"] < 0.5)
     z_a = nip_z - 0.035; z_t = neck[2]
-    t = np.clip((z - z_a) / max(1e-3, z_t - z_a), 0, 1)
     x_bot = max(0.15, abs(sh[0]) - 0.01); x_top = float(os.environ.get("FA_STRAP_OUT", 0.135))
-    x_edge = x_bot + (x_top - x_bot) * t ** 0.7
-    arm_ok = (z < z_a) | (x < x_edge)
-    # round neck: deeper in front than at the back
-    front = y < neck[1]
-    nz = np.where(front, neck[2] - 0.035, neck[2] + 0.02)
-    nh = np.where(front, 0.085, 0.045)
-    neck_ok = (x / 0.085) ** 2 + ((z - nz) / nh) ** 2 > 1.0
-    keep = torso & (z > hem_z) & (z < neck[2] + 0.05) & arm_ok & neck_ok
-    print(f"[character] tank: {int(keep.sum())} vertices, hem z {hem_z:.3f}, shoulder x {sh[0]:.3f}, neck z {neck[2]:.3f}")
+    ny = neck[1]
+
+    def field(c):
+        """>= 0 on the tank. Hem (flat), armholes (from the side seam under the armpit up to the strap), a round
+        neck deeper in front than at the back, nothing above the base of the neck."""
+        ax = abs(c.x)
+        f_hem = c.z - hem_z
+        t = min(1.0, max(0.0, (c.z - z_a) / max(1e-3, z_t - z_a)))
+        f_arm = (x_bot + (x_top - x_bot) * t ** 0.7) - ax
+        w = 1.0 / (1.0 + math.exp(-(c.y - ny) / 0.02))       # 0 in front of the neck, 1 behind it
+        nz = (neck[2] - 0.035) * (1 - w) + (neck[2] + 0.02) * w
+        nh = 0.085 * (1 - w) + 0.045 * w
+        f_neck = ((ax / 0.085) ** 2 + ((c.z - nz) / nh) ** 2 - 1.0) * 0.06
+        f_top = neck[2] + 0.06 - c.z
+        return min(f_hem, f_arm, f_neck, f_top)
+
+    keep = torso & (z > hem_z - 0.04) & (z < neck[2] + 0.09)
+    inside = np.array([field(p) > 0 for p in pos])
+    print(f"[character] tank: {int((keep & inside).sum())} vertices, hem z {hem_z:.3f}, shoulder x {sh[0]:.3f}, neck z {neck[2]:.3f}")
     tank = _shell(body, list(keep), "FA_Tank", look.toon_material("FA_Tank", *look.TOON["tank"]),
-                  gap=float(os.environ.get("FA_TANK_GAP", 0.009)), thick=0.003)
+                  gap=float(os.environ.get("FA_TANK_GAP", 0.009)), thick=0.003, field=field)
+    keep = keep & inside
     deep = _erode(body, list(keep & (z > hem_z + 0.025)), 3)
     vg = body.vertex_groups.new(name="fa_under_tank"); vg.add([i for i, f in enumerate(deep) if f], 1.0, "REPLACE")
     m = body.modifiers.new("FA_HideUnderTank", "MASK"); m.vertex_group = "fa_under_tank"; m.invert_vertex_group = True
@@ -277,7 +332,11 @@ def _mark_face(body, rig, pos):
         eye = hd + Vector((0, -0.08, 0.09))
     c = eye + Vector((0, 0, -0.035))
     me = body.data
-    near = [((p - c).x / 0.065) ** 2 + ((p - c).z / 0.085) ** 2 < 1.0 and p.y < c.y + 0.035 for p in pos]
+    d = [((p - c).x / 0.065) ** 2 + ((p - c).z / 0.085) ** 2 for p in pos]
+    near = [d[i] < 1.0 and p.y < c.y + 0.035 for i, p in enumerate(pos)]
+    # fa_face: the face is one flat colour too (no shade patches round the eyes and nose), soft at its edge
+    _write_point_attr(me, "fa_face", [min(1.0, max(0.0, (1.25 - d[i]) / 0.35)) if p.y < c.y + 0.035 else 0.0
+                                      for i, p in enumerate(pos)])
     k = 0
     for f in me.polygons:
         if any(near[i] for i in f.vertices):
@@ -340,7 +399,23 @@ def _drawn_rest(body, rig, shorts, pos):
     shoes = None
     sp = os.path.join(MH, "clothes/shoes05/shoes05.mhclo")
     if os.path.isfile(sp):
+        before = {m.name for m in body.modifiers}
         shoes = _add_asset(body, "clothes/shoes05/shoes05.mhclo", lambda: look.toon_material("FA_Shoes", *look.TOON["shoes"]))
+        # MPFB hides the body up to mid-shin under the shoe (its sock); low trainers instead: trim the shoe at the
+        # ankle and hide only the foot inside it (the main set shows bare ankles over white trainers)
+        for m in [m for m in body.modifiers if m.type == "MASK" and m.name not in before]:
+            print(f"[character] shoes: dropped MPFB mask {m.name} ({m.vertex_group})")
+            body.modifiers.remove(m)
+        top = float(os.environ.get("FA_SHOE_TOP", 0.115))
+        if shoes.data.shape_keys is None:
+            bm = bmesh.new(); bm.from_mesh(shoes.data)
+            mw = shoes.matrix_world
+            _cut_field(bm, lambda co: top - (mw @ co).z)
+            bmesh.ops.delete(bm, geom=[v for v in bm.verts if not v.link_faces], context="VERTS")
+            bm.to_mesh(shoes.data); bm.free()
+        feet = [i for i, p in enumerate(pos) if p.z < top - 0.03]
+        vg = body.vertex_groups.new(name="fa_in_shoes"); vg.add(feet, 1.0, "REPLACE")
+        mk = body.modifiers.new("FA_HideInShoes", "MASK"); mk.vertex_group = "fa_in_shoes"; mk.invert_vertex_group = True
     else:
         print("[character] MISSING shoes05: run setup_assets.py")
     _mark_face(body, rig, pos)

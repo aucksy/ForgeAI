@@ -83,7 +83,7 @@ def skin_material(name="FA_Skin"):
     The highlight comes from the point attribute fa_hl (0..1), written per exercise by muscles.set_highlight().
     """
     if DRAWN:
-        return toon_material(name, *TOON["skin"], over=("fa_scalp", 0.5, TOON["hair"]))
+        return toon_material(name, *TOON["skin"], over=("fa_scalp", 0.5, TOON["hair"]), flat_attr="fa_face")
     mat = bpy.data.materials.get(name)
     if mat:
         return mat
@@ -279,7 +279,7 @@ def toon_group():
     return ng
 
 
-def toon_material(name, lit, shade, over=None):
+def toon_material(name, lit, shade, over=None, flat_attr=None):
     """A drawn-look material. over = (point attribute, threshold, (lit, shade)): where the attribute passes the
     threshold the second pair of colours is used (the hair colour painted on the scalp)."""
     mat = bpy.data.materials.get(name)
@@ -299,6 +299,16 @@ def toon_material(name, lit, shade, over=None):
             L.new(st.outputs[0], mx.inputs["Factor"]); L.new(mx.outputs[2], g.inputs[sock])
     else:
         g.inputs["Lit"].default_value = srgb(lit); g.inputs["Shade"].default_value = srgb(shade)
+    if flat_attr:   # where the attribute is 1 the shade colour becomes the lit colour: one flat tone (the face)
+        fa = N.new("ShaderNodeAttribute"); fa.attribute_name = flat_attr
+        mx = N.new("ShaderNodeMix"); mx.data_type = "RGBA"
+        for i, sock in ((6, "Shade"), (7, "Lit")):
+            lk = [l for l in L if l.to_socket == g.inputs[sock]]
+            if lk:
+                L.new(lk[0].from_socket, mx.inputs[i])
+            else:
+                mx.inputs[i].default_value = g.inputs[sock].default_value
+        L.new(fa.outputs["Fac"], mx.inputs["Factor"]); L.new(mx.outputs[2], g.inputs["Shade"])
     L.new(g.outputs[0], out.inputs["Surface"])
     return mat
 

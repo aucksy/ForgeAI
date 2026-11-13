@@ -115,6 +115,10 @@ if mode == "stills":
         ev.to_mesh_clear()
         pl = [min((o.matrix_world @ Vector(c)).z for c in o.bound_box) for p in clip.props.values() for o in p.children_recursive if o.type == "MESH"]
         print(f"[still] {tag} pose={pose} frame={f} lowest_body_z={low:.4f} at=({lp.x:.3f},{lp.y:.3f},{lp.z:.3f}) lowest_prop_z={(min(pl) if pl else 0):.4f}")
+        if ch.get("shoes") is not None:   # drawn look: the feet are inside the trainers, so the soles are the floor contact
+            evs = ch["shoes"].evaluated_get(dg); ms = evs.to_mesh()
+            sz = sorted((evs.matrix_world @ v.co).z for v in ms.vertices); evs.to_mesh_clear()
+            print(f"[still] {tag} shoes lowest_z={sz[0]:.4f}")
         if cable_gap is not None:
             print(f"[still] {tag} cable clearance from the skin (m, negative = through the body): {cable_gap}")
         # 13 Nov 2026: lowest point per body part, joints in the torso frame, how level each hand is, bench pad gaps
