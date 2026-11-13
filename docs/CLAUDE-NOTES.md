@@ -7,6 +7,19 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-481. Google rejected 0.77.0 over watch heart rate; sent back with a video (his "A") — 13 Nov 2026
+Google (13 Nov 9:13 am): "Update rejected", 2 Health Connect issues, both only about HeartRate
+(android.permission.health.READ_HEART_RATE, the watch app's live heart rate; Wear OS 6 uses it instead of BODY_SENSORS):
+"Excessive Data Access" (could not verify it; "your app may require a companion device. Provide a video link in your
+declaration form") and "Insufficient Information to Verify Health Connect Usage". The permission has been in the watch app
+since 16 Oct (earlier versions were approved).
+I offered: A = keep heart rate, add the video to the declaration, send 0.77.0 again; B = remove heart rate (new build).
+He said "A" (13 Nov). Did: Play Console (simpleapps108), App content > Health apps > Vitals: both the BODY_SENSORS and the
+READ_HEART_RATE text now end with the demo video https://youtu.be/mEhvRw3mKjw (unlisted, 4 Nov, Wear OS emulator,
+Health Services test heart rate) and how to try it on a real watch. Saved, then "Send 4 changes for review" (production
+0.77.0, watch closed testing 0.77.0, resume track, Health apps declaration). Managed publishing stays on: ask him for
+"publish" when Google approves. If Google refuses again: B, or a fresh video that also shows the permission screen.
+
 ## R-480. Morning answers: 2 numbers, phone, AI Assistant live, wording approved — 13 Nov 2026
 He said (13 Nov 2026, morning, in chat):
 - Numbers on the home page: keep only 2. Remove "7x more chance of a real talk when you call an enquiry back within 1 hour":
