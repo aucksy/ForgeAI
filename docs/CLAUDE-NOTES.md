@@ -7,6 +7,19 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-480. Morning answers: 2 numbers, phone, AI Assistant live, wording approved — 13 Nov 2026
+He said (13 Nov 2026, morning, in chat):
+- Numbers on the home page: keep only 2. Remove "7x more chance of a real talk when you call an enquiry back within 1 hour":
+  "We are not really offering any solution around it." Add it as an idea: AI automated callbacks for enquiries.
+- Hero subtext "advanced gym software that gives every member a free app in your gym's name": fine, keep.
+- The WhatsApp number (+91 86905 60741) is his business phone: use it as the customer-care phone.
+- "yes you can put AI assistant live as well" (the F201 go-live batch, docs/f201-ai-assistant/04-server-status.md).
+- "privacy and policy wording are approved as well" (06-privacy-line.md and the 4 policy drafts in docs/drafts).
+- Asked: was the watch dimming fix (R-442) a watch app update or a phone fix?
+Answer given: a watch app update. It is in 0.77.0 (phone and watch), which is in Google's review.
+Still needs him: a business address for the Contact page (the page goes live without the address row until then).
+What I did: see the lines under this entry as each step lands.
+
 ## R-479. Website: no receipt promise while receipts are off — 13 Nov 2026 (away work)
 Found by the T80 policy check: the price note and the FAQ said "get a receipt" for a UPI or bank payment, but the
 receipt screen and HQ billing are off (BILLING_ONLINE_ON false, deploy/hq/billing.js not set up). Both lines now say
