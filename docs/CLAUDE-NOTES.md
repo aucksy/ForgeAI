@@ -18,6 +18,13 @@ He said (13 Nov, screenshot of Up next: Pull 2, "Easy add today: 3 sets of Stand
   he does comparatively more for one that trains the under-trained or untrained muscle.
 Cause (code): muscleTips.muscleTipFor judges 3 logged weeks (skipped = missing) and only checks whether TODAY's routine
 lists the muscle; the calf raise is in another routine, so it suggested adding it again.
+Proposed (5 parts): (1) judge the routines, not the logs: a muscle with an exercise in ANY of the member's routines is
+covered, skipped exercises never make a tip; (2) tip 1, a muscle no routine trains: "None of your routines trains your
+calves. Add Standing Calf Raise to your Legs routine?" [Add] [Not now] [I skip this on purpose]; (3) tip 2, a muscle trained
+much less than the others: "Your shoulders get 3 sets a week. Your chest gets 12. Swap Incline Press for Shoulder Press in
+Push?" [Swap] [Not now] [Keep as is], only swapping out an exercise whose group keeps another exercise in that routine;
+(4) no "Easy add", plain words naming the muscle and the routine; (5) the same limits (one tip, one new a week, never in a
+workout, Settings switch). He said "build all 5" (13 Nov 2026). Next app update; no release without his "release".
 
 ## R-481. Google rejected 0.77.0 over watch heart rate; sent back with a video (his "A") — 13 Nov 2026
 Google (13 Nov 9:13 am): "Update rejected", 2 Health Connect issues, both only about HeartRate
