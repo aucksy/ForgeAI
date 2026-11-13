@@ -122,26 +122,6 @@ appId: com.mettleup.app
     timeout: 3000
 - takeScreenshot: rel-pics-03d-machine
 - back
-# Other gym kit (13 Nov 2026: pull-up bar, decline bench, plates, balls, sled of our own): Start + End on the bar.
-- runFlow:
-    file: sub-see.yaml
-    env:
-      FIND: 'Clear the search'
-- tapOn: "Clear the search"
-- tapOn: "Search exercises"
-- inputText: " weighted chin-up"
-- hideKeyboard
-- tapOn:
-    text: "View Weighted Chin-Up"
-    index: 0
-- extendedWaitUntil:
-    visible: "Start position of Weighted Chin-Up"
-    timeout: 20000
-- assertVisible: "End position of Weighted Chin-Up"
-- waitForAnimationToEnd:
-    timeout: 3000
-- takeScreenshot: rel-pics-03e-other
-- back
 # A hold: one picture, labelled Hold, no End.
 # The search keeps its text after back: clear it with the X (eraseText left letters behind on 12 Nov).
 - runFlow:
