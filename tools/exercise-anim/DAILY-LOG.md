@@ -87,7 +87,10 @@ https://claude.ai/artifact/1ZwD5CZb1LPZCK58DQ6huw)
   "lower the bar behind your head", so it stays. 27 exercises in the app now. Release `exercise-stills` has their PNGs.
 - DROPPED (3, all now at 2 tries -> Needs review): side_plank (main muscle red too faint), reverse_grip_bench_press and
   behind_the_head_skull_crusher (flat-bench arm offset, see Needs review).
-- UAT flow upic now also opens Wide-Grip Barbell Curl (first barbell picture).
+- UAT flow upic now also opens Wide-Grip Barbell Curl (first barbell picture): green on both profiles (runs 43379493880
+  owner, 43379496940 default). Pictures read: Wide-Grip Barbell Curl Start/End (whole athlete and bar, card colour
+  behind), Tate Press, Hammer Curl, Wall Sit, no-picture case and RepDB Barbell Curl unchanged. CI 43379475365: mobile
+  tests green in all 3 time zones; its only red step is the dashboard test from another session's R-480 site change.
 - Next: jm_press, standing/seated_barbell_overhead_extension, barbell_step_up, seated_barbell_calf_raise (`--next`), then
   the cable column prop family.
 
