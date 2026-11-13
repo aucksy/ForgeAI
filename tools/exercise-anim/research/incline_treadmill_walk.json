@@ -1,0 +1,211 @@
+{
+ "format": "v1-stills",
+ "exercise": {
+  "key": "incline_treadmill_walk",
+  "name": "Incline Treadmill Walk",
+  "equipment": "machine",
+  "library_primary": [
+   "cardio"
+  ],
+  "library_secondary": [
+   "glutes",
+   "hamstrings",
+   "calves"
+  ],
+  "library_steps": [
+   "Clip on the safety key and start walking with the belt flat.",
+   "Raise the incline step by step, then hold a steady brisk pace.",
+   "Keep your hands off the rails and lower the incline before stopping."
+  ],
+  "status": "draft",
+  "version": null,
+  "researched_on": "2026-11-13",
+  "one_line_summary": "Brisk walk on a treadmill belt rising ~10 deg, trunk leaning into the hill, hands off the rails. Picture 1: left foot forward flat on the slope, right foot pushing off behind; picture 2: the other way round.",
+  "evidence_grade": "B"
+ },
+ "setup": [
+  {
+   "item": "incline",
+   "target": "Belt at ~10 deg.",
+   "tolerance": "5-15 deg",
+   "why": "See sources.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  },
+  {
+   "item": "posture",
+   "target": "Lean ~8 deg into the slope, hands off the rails.",
+   "tolerance": "visual",
+   "why": "See sources.",
+   "source_ids": [
+    "S2"
+   ],
+   "grade": "B"
+  }
+ ],
+ "movement": [
+  {
+   "joint": "front leg",
+   "measure": "knee bend at heel contact / flat foot",
+   "start": "~30 deg",
+   "end": "(other leg)",
+   "start_num": 30,
+   "end_num": 30,
+   "tolerance": "visual",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  },
+  {
+   "joint": "back leg",
+   "measure": "heel",
+   "start": "heel up on the ball of the foot",
+   "end": "(other leg)",
+   "start_num": 15,
+   "end_num": 15,
+   "tolerance": "10-25 deg",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  },
+  {
+   "joint": "arms",
+   "measure": "swing",
+   "start": "opposite to the legs",
+   "end": "(swapped)",
+   "start_num": 25,
+   "end_num": 25,
+   "tolerance": "visual",
+   "source_ids": [
+    "S3"
+   ],
+   "grade": "B"
+  }
+ ],
+ "muscles": [
+  {
+   "muscle": "Glutes",
+   "anatomy": "Gluteus maximus",
+   "mask_key": "glutes",
+   "tier": "primary",
+   "glow": 1.0,
+   "emg": "Gluteus maximus x3.5 at 9 deg uphill vs level (S1).",
+   "role": "Library primary 'cardio' has no mask; the slope makes the hip extensors the main movers, so glutes are primary here.",
+   "surface": "Buttock.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  },
+  {
+   "muscle": "Hamstrings",
+   "anatomy": "Biceps femoris, semitendinosus, semimembranosus",
+   "mask_key": "hamstrings",
+   "tier": "secondary",
+   "glow": 0.35,
+   "emg": "Biceps femoris x6.4 uphill (S1).",
+   "role": "Library secondary.",
+   "surface": "Back of the thigh.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  },
+  {
+   "muscle": "Calves",
+   "anatomy": "Gastrocnemius, soleus",
+   "mask_key": "calves",
+   "tier": "secondary",
+   "glow": 0.35,
+   "emg": "Medial gastrocnemius x1.75 uphill (S1).",
+   "role": "Library secondary.",
+   "surface": "Back of the lower leg.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  },
+  {
+   "muscle": "Quadriceps",
+   "anatomy": "Vastus medialis",
+   "mask_key": "quads",
+   "tier": "stabiliser",
+   "glow": 0,
+   "emg": "",
+   "role": "x3.7 uphill (S1); kept unlit so the picture shows the hip-driven climb.",
+   "surface": "Front of the thigh.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  }
+ ],
+ "tempo": null,
+ "mistakes": [
+  {
+   "mistake": "Holding the rails",
+   "what_it_looks_like": "Hands on the rails and leaning back.",
+   "why_it_matters": "Cuts the work of the climb (S2).",
+   "source_ids": [
+    "S2"
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "S1",
+   "citation": "Franz JR, Kram R. The effects of grade and speed on leg muscle activations during walking. Gait Posture. 2012;35(1):143-147.",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/21962846/",
+   "type": "emg",
+   "what_it_gave": "Walking uphill at 9 deg: biceps femoris x6.4, gluteus maximus x3.5, vastus medialis x3.7 and medial gastrocnemius x1.75 compared with level walking."
+  },
+  {
+   "id": "S2",
+   "citation": "Lay AN, Hass CJ, Richard Nichols T, Gregor RJ. The effects of sloped surfaces on locomotion: an electromyographic analysis. J Biomech. 2007;40(6):1276-1285.",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/16872616/",
+   "type": "emg",
+   "what_it_gave": "Uphill walking raises hip and knee extensor and plantarflexor activity; trunk leans into the slope."
+  },
+  {
+   "id": "S3",
+   "citation": "Meyns P, Bruijn SM, Duysens J. The how and why of arm swing during human walking. Gait Posture. 2013;38(4):555-562.",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/23489950/",
+   "type": "review",
+   "what_it_gave": "Arms swing opposite to the legs in walking and running."
+  }
+ ],
+ "clip_check": [
+  {
+   "check": "front leg: knee bend at heel contact / flat foot",
+   "target": "~30 deg -> (other leg) (visual)",
+   "measured": "",
+   "pass": "",
+   "tool": "stills log + look"
+  },
+  {
+   "check": "back leg: heel",
+   "target": "heel up on the ball of the foot -> (other leg) (10-25 deg)",
+   "measured": "",
+   "pass": "",
+   "tool": "stills log + look"
+  },
+  {
+   "check": "arms: swing",
+   "target": "opposite to the legs -> (swapped) (visual)",
+   "measured": "",
+   "pass": "",
+   "tool": "stills log + look"
+  },
+  {
+   "check": "Machine parts meet the hands/feet; levers keep their length",
+   "target": "moving rod lengths equal at start and end (+-1 cm)",
+   "measured": "",
+   "pass": "",
+   "tool": "[machine] log"
+  }
+ ]
+}

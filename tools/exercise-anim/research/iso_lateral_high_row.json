@@ -1,0 +1,206 @@
+{
+ "format": "v1-stills",
+ "exercise": {
+  "key": "iso_lateral_high_row",
+  "name": "Iso-Lateral High Row",
+  "equipment": "machine",
+  "library_primary": [
+   "lats"
+  ],
+  "library_secondary": [
+   "upper_back",
+   "biceps",
+   "rear_delts"
+  ],
+  "library_steps": [
+   "Sit with your thighs under the pad and reach up to the high handles.",
+   "Pull the handles down and back toward your chest.",
+   "Let them rise slowly until your arms are straight."
+  ],
+  "status": "draft",
+  "version": null,
+  "researched_on": "2026-11-13",
+  "one_line_summary": "Seated with the thighs under pads, neutral handles high in front. Picture 1: arms reaching up and forward; picture 2: handles pulled down and back to the chest, elbows by the sides.",
+  "evidence_grade": "C"
+ },
+ "setup": [
+  {
+   "item": "thigh pads",
+   "target": "Pads on the thighs.",
+   "tolerance": "visual",
+   "why": "See sources.",
+   "source_ids": [
+    "S2"
+   ],
+   "grade": "C"
+  },
+  {
+   "item": "grip",
+   "target": "Neutral handles.",
+   "tolerance": "visual",
+   "why": "See sources.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "C"
+  }
+ ],
+ "movement": [
+  {
+   "joint": "shoulder",
+   "measure": "upper-arm elevation",
+   "start": "145 deg, up and forward",
+   "end": "50 deg, elbows down and back",
+   "start_num": 145,
+   "end_num": 50,
+   "tolerance": "within 10 deg",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "C"
+  },
+  {
+   "joint": "elbow",
+   "measure": "bend",
+   "start": "5-8 deg (arms long)",
+   "end": "110 deg",
+   "start_num": 5,
+   "end_num": 110,
+   "tolerance": "end within 15 deg",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "C"
+  }
+ ],
+ "muscles": [
+  {
+   "muscle": "Lats",
+   "anatomy": "Latissimus dorsi",
+   "mask_key": "lats",
+   "tier": "primary",
+   "glow": 1.0,
+   "emg": "Downward-and-back pull = shoulder extension/adduction, the latissimus action (S1, S2).",
+   "role": "Library primary.",
+   "surface": "Side and lower back, under the armpit.",
+   "source_ids": [
+    "S1",
+    "S2"
+   ],
+   "grade": "C"
+  },
+  {
+   "muscle": "Upper back",
+   "anatomy": "Middle trapezius, rhomboids",
+   "mask_key": "upper_back",
+   "tier": "secondary",
+   "glow": 0.35,
+   "emg": "Trapezius/rhomboids retract the shoulder blades at the end (S1).",
+   "role": "Library secondary.",
+   "surface": "Between the shoulder blades.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "C"
+  },
+  {
+   "muscle": "Biceps",
+   "anatomy": "Biceps brachii, brachialis",
+   "mask_key": "biceps",
+   "tier": "secondary",
+   "glow": 0.35,
+   "emg": "Elbow flexion (S2).",
+   "role": "Library secondary.",
+   "surface": "Front of the upper arm.",
+   "source_ids": [
+    "S2"
+   ],
+   "grade": "C"
+  },
+  {
+   "muscle": "Rear shoulder",
+   "anatomy": "Posterior deltoid",
+   "mask_key": "rear_delts",
+   "tier": "secondary",
+   "glow": 0.35,
+   "emg": "Shoulder extension (S3).",
+   "role": "Library secondary.",
+   "surface": "Back of the shoulder.",
+   "source_ids": [
+    "S3"
+   ],
+   "grade": "C"
+  },
+  {
+   "muscle": "Abdominals",
+   "anatomy": "Rectus abdominis",
+   "mask_key": "abs",
+   "tier": "stabiliser",
+   "glow": 0,
+   "emg": "",
+   "role": "Keep the trunk still.",
+   "surface": "",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "C"
+  }
+ ],
+ "tempo": null,
+ "mistakes": [
+  {
+   "mistake": "Pulling with a lean back",
+   "what_it_looks_like": "Trunk swings back.",
+   "why_it_matters": "Keep the trunk still, move the arms (S1).",
+   "source_ids": [
+    "S1"
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "S1",
+   "citation": "Lehman GJ, Buchan DD, Lundy A, Myers N, Nalborczyk A. Variations in muscle activation levels during traditional latissimus dorsi weight training exercises: an experimental study. Dyn Med. 2004;3(1):4.",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/15228624/",
+   "type": "emg",
+   "what_it_gave": "Seated row gave the highest middle trapezius/rhomboid activity; wide-grip pulldown and seated row had the best lat-to-biceps ratio."
+  },
+  {
+   "id": "S2",
+   "citation": "Lusk SJ, Hale BD, Russell DM. Grip width and forearm orientation effects on muscle activity during the lat pull-down. J Strength Cond Res. 2010;24(7):1895-1900.",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/20543740/",
+   "type": "emg",
+   "what_it_gave": "Lat pulldown: a pronated grip gave greater latissimus dorsi activity than a supinated grip; grip width mattered less."
+  },
+  {
+   "id": "S3",
+   "citation": "Padovan R, Ce E, Longo S, Tornatore G, Esposito F, Coratella G. High-density surface electromyography excitation of prime movers across scapular positions in the seated row. J Funct Morphol Kinesiol. 2025;11(1):6.",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/41562724/",
+   "type": "emg",
+   "what_it_gave": "Seated row HD-EMG: latissimus, trapezius and posterior deltoid excitation across shoulder-blade positions."
+  }
+ ],
+ "clip_check": [
+  {
+   "check": "shoulder: upper-arm elevation",
+   "target": "145 deg, up and forward -> 50 deg, elbows down and back (within 10 deg)",
+   "measured": "",
+   "pass": "",
+   "tool": "stills log + look"
+  },
+  {
+   "check": "elbow: bend",
+   "target": "5-8 deg (arms long) -> 110 deg (end within 15 deg)",
+   "measured": "",
+   "pass": "",
+   "tool": "stills log + look"
+  },
+  {
+   "check": "Machine parts meet the hands/feet; levers keep their length",
+   "target": "moving rod lengths equal at start and end (+-1 cm)",
+   "measured": "",
+   "pass": "",
+   "tool": "[machine] log"
+  }
+ ]
+}

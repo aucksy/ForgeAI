@@ -1,0 +1,169 @@
+{
+ "format": "v1-stills",
+ "exercise": {
+  "key": "standing_leg_curl",
+  "name": "Standing Leg Curl",
+  "equipment": "machine",
+  "library_primary": [
+   "hamstrings"
+  ],
+  "library_secondary": [
+   "calves"
+  ],
+  "library_steps": [
+   "Stand at the machine with the roller behind one ankle, holding the handles.",
+   "Curl your heel up towards your hip, keeping your thigh still.",
+   "Lower slowly, then switch legs after your set."
+  ],
+  "status": "draft",
+  "version": null,
+  "researched_on": "2026-11-13",
+  "one_line_summary": "Standing on the right leg, front of the left thigh on a pad, roller behind the left ankle, hands on the handles. Picture 1: left leg nearly straight; picture 2: left knee bent ~100 deg, heel toward the buttock, thigh still vertical. Only the working left side is lit.",
+  "evidence_grade": "B"
+ },
+ "setup": [
+  {
+   "item": "pads",
+   "target": "Thigh pad just above the knee, roller on the back of the lower shin; knee lined up with the machine pivot.",
+   "tolerance": "visual",
+   "why": "See sources.",
+   "source_ids": [
+    "S2"
+   ],
+   "grade": "B"
+  },
+  {
+   "item": "standing leg",
+   "target": "Standing leg straight, trunk upright, hands on the handles.",
+   "tolerance": "visual",
+   "why": "See sources.",
+   "source_ids": [
+    "S2"
+   ],
+   "grade": "B"
+  }
+ ],
+ "movement": [
+  {
+   "joint": "working knee",
+   "measure": "bend",
+   "start": "~15 deg",
+   "end": "~100 deg",
+   "start_num": 15,
+   "end_num": 100,
+   "tolerance": "start 5-25, end 85-115",
+   "source_ids": [
+    "S1",
+    "S2"
+   ],
+   "grade": "B"
+  },
+  {
+   "joint": "working hip",
+   "measure": "thigh angle",
+   "start": "vertical",
+   "end": "vertical",
+   "start_num": 0,
+   "end_num": 0,
+   "tolerance": "within 10 deg",
+   "source_ids": [
+    "S2"
+   ],
+   "grade": "B"
+  }
+ ],
+ "muscles": [
+  {
+   "muscle": "Hamstrings",
+   "anatomy": "Biceps femoris, semitendinosus, semimembranosus",
+   "mask_key": "hamstrings",
+   "tier": "primary",
+   "glow": 1.0,
+   "emg": "Leg curls bias semitendinosus and biceps femoris short head (S1).",
+   "role": "Library primary. Working (left) side only.",
+   "surface": "Back of the thigh.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  },
+  {
+   "muscle": "Calves",
+   "anatomy": "Gastrocnemius, soleus",
+   "mask_key": "calves",
+   "tier": "secondary",
+   "glow": 0.35,
+   "emg": "Gastrocnemius crosses the knee and helps flex it (S1).",
+   "role": "Library secondary. Working side only.",
+   "surface": "Back of the lower leg.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  },
+  {
+   "muscle": "Glutes",
+   "anatomy": "Gluteus medius/maximus",
+   "mask_key": "glutes",
+   "tier": "stabiliser",
+   "glow": 0,
+   "emg": "",
+   "role": "Hold the pelvis level on the standing leg.",
+   "surface": "Buttock.",
+   "source_ids": [
+    "S2"
+   ],
+   "grade": "B"
+  }
+ ],
+ "tempo": null,
+ "mistakes": [
+  {
+   "mistake": "Thigh swings back",
+   "what_it_looks_like": "Hip extends to lift the heel.",
+   "why_it_matters": "Keep the thigh on the pad so the knee does the work (S2).",
+   "source_ids": [
+    "S2"
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "S1",
+   "citation": "Bourne MN, Williams MD, Opar DA, et al. Impact of exercise selection on hamstring muscle activation. Br J Sports Med. 2017;51(13):1021-1028.",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/27467123/",
+   "type": "emg",
+   "what_it_gave": "Knee-flexion exercises (leg curls) bias the semitendinosus and biceps femoris short head; hip-extension exercises bias the long head."
+  },
+  {
+   "id": "S2",
+   "citation": "Maeo S, Huang M, Wu Y, et al. Greater hamstrings muscle hypertrophy but similar damage protection after training at long versus short muscle lengths. Med Sci Sports Exerc. 2021;53(4):825-837.",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/33009197/",
+   "type": "rct",
+   "what_it_gave": "Seated vs prone leg curl: hip angle changes hamstring length; both are knee-flexion work for the hamstrings."
+  }
+ ],
+ "clip_check": [
+  {
+   "check": "working knee: bend",
+   "target": "~15 deg -> ~100 deg (start 5-25, end 85-115)",
+   "measured": "",
+   "pass": "",
+   "tool": "stills log + look"
+  },
+  {
+   "check": "working hip: thigh angle",
+   "target": "vertical -> vertical (within 10 deg)",
+   "measured": "",
+   "pass": "",
+   "tool": "stills log + look"
+  },
+  {
+   "check": "Machine parts meet the hands/feet; levers keep their length",
+   "target": "moving rod lengths equal at start and end (+-1 cm)",
+   "measured": "",
+   "pass": "",
+   "tool": "[machine] log"
+  }
+ ]
+}

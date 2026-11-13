@@ -1,0 +1,206 @@
+{
+ "format": "v1-stills",
+ "exercise": {
+  "key": "iso_lateral_low_row",
+  "name": "Iso-Lateral Low Row",
+  "equipment": "machine",
+  "library_primary": [
+   "lats"
+  ],
+  "library_secondary": [
+   "upper_back",
+   "biceps",
+   "rear_delts"
+  ],
+  "library_steps": [
+   "Sit with your chest on the pad and grip the low handles.",
+   "Pull the handles back toward your hips, elbows close.",
+   "Let them go forward slowly until your arms are straight."
+  ],
+  "status": "draft",
+  "version": null,
+  "researched_on": "2026-11-13",
+  "one_line_summary": "Seated with the chest on a pad, neutral handles low in front. Picture 1: arms reaching forward and down; picture 2: elbows pulled back close to the body, hands by the hips.",
+  "evidence_grade": "C"
+ },
+ "setup": [
+  {
+   "item": "chest pad",
+   "target": "Chest against the pad.",
+   "tolerance": "visual",
+   "why": "See sources.",
+   "source_ids": [
+    "S2"
+   ],
+   "grade": "C"
+  },
+  {
+   "item": "grip",
+   "target": "Neutral handles.",
+   "tolerance": "visual",
+   "why": "See sources.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "C"
+  }
+ ],
+ "movement": [
+  {
+   "joint": "shoulder",
+   "measure": "upper-arm elevation",
+   "start": "68 deg, forward and down",
+   "end": "35 deg, elbows back past the hips",
+   "start_num": 68,
+   "end_num": 35,
+   "tolerance": "within 10 deg",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "C"
+  },
+  {
+   "joint": "elbow",
+   "measure": "bend",
+   "start": "5-8 deg (arms long)",
+   "end": "80 deg",
+   "start_num": 5,
+   "end_num": 80,
+   "tolerance": "end within 15 deg",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "C"
+  }
+ ],
+ "muscles": [
+  {
+   "muscle": "Lats",
+   "anatomy": "Latissimus dorsi",
+   "mask_key": "lats",
+   "tier": "primary",
+   "glow": 1.0,
+   "emg": "Low pull back to the hips = shoulder extension with the arms close, a strong latissimus action (S1, S3).",
+   "role": "Library primary.",
+   "surface": "Side and lower back, under the armpit.",
+   "source_ids": [
+    "S1",
+    "S3"
+   ],
+   "grade": "C"
+  },
+  {
+   "muscle": "Upper back",
+   "anatomy": "Middle trapezius, rhomboids",
+   "mask_key": "upper_back",
+   "tier": "secondary",
+   "glow": 0.35,
+   "emg": "Rows: high trapezius/rhomboid activity (S1).",
+   "role": "Library secondary.",
+   "surface": "Between the shoulder blades.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "C"
+  },
+  {
+   "muscle": "Biceps",
+   "anatomy": "Biceps brachii, brachialis",
+   "mask_key": "biceps",
+   "tier": "secondary",
+   "glow": 0.35,
+   "emg": "Elbow flexion (S1).",
+   "role": "Library secondary.",
+   "surface": "Front of the upper arm.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "C"
+  },
+  {
+   "muscle": "Rear shoulder",
+   "anatomy": "Posterior deltoid",
+   "mask_key": "rear_delts",
+   "tier": "secondary",
+   "glow": 0.35,
+   "emg": "Shoulder extension (S3).",
+   "role": "Library secondary.",
+   "surface": "Back of the shoulder.",
+   "source_ids": [
+    "S3"
+   ],
+   "grade": "C"
+  },
+  {
+   "muscle": "Lower back",
+   "anatomy": "Erector spinae",
+   "mask_key": "lower_back",
+   "tier": "stabiliser",
+   "glow": 0,
+   "emg": "",
+   "role": "Low demand with the chest supported (S2).",
+   "surface": "",
+   "source_ids": [
+    "S2"
+   ],
+   "grade": "C"
+  }
+ ],
+ "tempo": null,
+ "mistakes": [
+  {
+   "mistake": "Shrugging",
+   "what_it_looks_like": "Shoulders rise to the ears.",
+   "why_it_matters": "Keep the pull in the back (S1).",
+   "source_ids": [
+    "S1"
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "S1",
+   "citation": "Lehman GJ, Buchan DD, Lundy A, Myers N, Nalborczyk A. Variations in muscle activation levels during traditional latissimus dorsi weight training exercises: an experimental study. Dyn Med. 2004;3(1):4.",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/15228624/",
+   "type": "emg",
+   "what_it_gave": "Seated row gave the highest middle trapezius/rhomboid activity; wide-grip pulldown and seated row had the best lat-to-biceps ratio."
+  },
+  {
+   "id": "S2",
+   "citation": "Fenwick CM, Brown SH, McGill SM. Comparison of different rowing exercises: trunk muscle activation and lumbar spine motion, load, and stiffness. J Strength Cond Res. 2009;23(5):1408-1417.",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/19620925/",
+   "type": "emg",
+   "what_it_gave": "Rowing variants compared: latissimus dorsi, trapezius, erector spinae activity; supported rows reduce lumbar load."
+  },
+  {
+   "id": "S3",
+   "citation": "Padovan R, Ce E, Longo S, Tornatore G, Esposito F, Coratella G. High-density surface electromyography excitation of prime movers across scapular positions in the seated row. J Funct Morphol Kinesiol. 2025;11(1):6.",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/41562724/",
+   "type": "emg",
+   "what_it_gave": "Seated row HD-EMG: latissimus, trapezius and posterior deltoid excitation across shoulder-blade positions."
+  }
+ ],
+ "clip_check": [
+  {
+   "check": "shoulder: upper-arm elevation",
+   "target": "68 deg, forward and down -> 35 deg, elbows back past the hips (within 10 deg)",
+   "measured": "",
+   "pass": "",
+   "tool": "stills log + look"
+  },
+  {
+   "check": "elbow: bend",
+   "target": "5-8 deg (arms long) -> 80 deg (end within 15 deg)",
+   "measured": "",
+   "pass": "",
+   "tool": "stills log + look"
+  },
+  {
+   "check": "Machine parts meet the hands/feet; levers keep their length",
+   "target": "moving rod lengths equal at start and end (+-1 cm)",
+   "measured": "",
+   "pass": "",
+   "tool": "[machine] log"
+  }
+ ]
+}

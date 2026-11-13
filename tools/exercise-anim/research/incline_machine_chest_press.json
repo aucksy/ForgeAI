@@ -1,0 +1,206 @@
+{
+ "format": "v1-stills",
+ "exercise": {
+  "key": "incline_machine_chest_press",
+  "name": "Incline Machine Chest Press",
+  "equipment": "machine",
+  "library_primary": [
+   "chest"
+  ],
+  "library_secondary": [
+   "front_delts",
+   "triceps"
+  ],
+  "library_steps": [
+   "Set the seat so the handles start near your upper chest.",
+   "Press the handles up and forward until your arms are straight.",
+   "Lower them slowly until you feel a chest stretch."
+  ],
+  "status": "draft",
+  "version": null,
+  "researched_on": "2026-11-13",
+  "one_line_summary": "Reclined on a 30 deg machine seat, palms-forward handles at the upper chest. Picture 1: handles just above the upper chest, forearms vertical; picture 2: arms pressed up and forward, nearly straight.",
+  "evidence_grade": "B"
+ },
+ "setup": [
+  {
+   "item": "seat",
+   "target": "Back pad ~30 deg; handles start level with the upper chest.",
+   "tolerance": "25-45 deg",
+   "why": "See sources.",
+   "source_ids": [
+    "S1",
+    "S2"
+   ],
+   "grade": "B"
+  },
+  {
+   "item": "grip",
+   "target": "Pronated (palms forward) handles, closed fists.",
+   "tolerance": "visual",
+   "why": "See sources.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  }
+ ],
+ "movement": [
+  {
+   "joint": "shoulder",
+   "measure": "upper-arm elevation (torso frame)",
+   "start": "45 deg, elbows below the shoulders",
+   "end": "118 deg, arms up over the shoulders",
+   "start_num": 45,
+   "end_num": 118,
+   "tolerance": "start 35-55, end 105-125",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  },
+  {
+   "joint": "forearm",
+   "measure": "direction",
+   "start": "vertical",
+   "end": "vertical",
+   "start_num": 0,
+   "end_num": 0,
+   "tolerance": "within 15 deg",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  }
+ ],
+ "muscles": [
+  {
+   "muscle": "Upper chest",
+   "anatomy": "Pectoralis major, clavicular head",
+   "mask_key": "chest_upper",
+   "tier": "primary",
+   "glow": 1.0,
+   "emg": "Clavicular pectoralis highest at a 30 deg incline (S1); 122-124 % MVIC at 30-45 deg (S2).",
+   "role": "Library primary 'chest'; the incline biases the upper chest, so the upper mask is primary.",
+   "surface": "Upper front of the chest below the collarbone.",
+   "source_ids": [
+    "S1",
+    "S2"
+   ],
+   "grade": "B"
+  },
+  {
+   "muscle": "Lower and middle chest",
+   "anatomy": "Pectoralis major, sternocostal head",
+   "mask_key": "chest_lower",
+   "tier": "secondary",
+   "glow": 0.35,
+   "emg": "Sternal head still works but less as the incline rises (S2).",
+   "role": "Rest of the chest, secondary.",
+   "surface": "Lower front of the chest.",
+   "source_ids": [
+    "S2"
+   ],
+   "grade": "B"
+  },
+  {
+   "muscle": "Front shoulder",
+   "anatomy": "Anterior deltoid",
+   "mask_key": "front_delts",
+   "tier": "secondary",
+   "glow": 0.35,
+   "emg": "Anterior deltoid activity rises with incline (S1).",
+   "role": "Library secondary.",
+   "surface": "Front of the shoulder.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  },
+  {
+   "muscle": "Triceps",
+   "anatomy": "Triceps brachii",
+   "mask_key": "triceps",
+   "tier": "secondary",
+   "glow": 0.35,
+   "emg": "Elbow extension (S1).",
+   "role": "Library secondary.",
+   "surface": "Back of the upper arm.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  },
+  {
+   "muscle": "Abdominals",
+   "anatomy": "Rectus abdominis",
+   "mask_key": "abs",
+   "tier": "stabiliser",
+   "glow": 0,
+   "emg": "",
+   "role": "Keep the trunk still against the back pad.",
+   "surface": "",
+   "source_ids": [
+    "S3"
+   ],
+   "grade": "B"
+  }
+ ],
+ "tempo": null,
+ "mistakes": [
+  {
+   "mistake": "Hips lift off the seat",
+   "what_it_looks_like": "Lower back arches to make it a flat press.",
+   "why_it_matters": "Changes the press angle away from the upper chest (S1).",
+   "source_ids": [
+    "S1"
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "S1",
+   "citation": "Rodriguez-Ridao D, Antequera-Vique JA, Martin-Fuentes I, Muyor JM. Effect of five bench inclinations on the electromyographic activity of the pectoralis major, anterior deltoid, and triceps brachii during the bench press exercise. Int J Environ Res Public Health. 2020;17(19):7339.",
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7579505/",
+   "type": "emg",
+   "what_it_gave": "Bench inclinations 0-60 deg: 30 deg gives the highest clavicular pectoralis activity; anterior deltoid rises with incline."
+  },
+  {
+   "id": "S2",
+   "citation": "Lauver JD, Cayot TE, Scheuermann BW. Influence of bench angle on upper extremity muscular activation during bench press exercise. Eur J Sport Sci. 2016;16(3):309-316.",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/25799093/",
+   "type": "emg",
+   "what_it_gave": "Upper pectoralis 122-124 % MVIC at 30 and 45 deg incline (mid concentric); lower pectoralis ~100 % at -15 deg decline, 72 % at 45 deg."
+  },
+  {
+   "id": "S3",
+   "citation": "Muyor JM, Rodriguez-Ridao D, Oliva-Lozano JM. Effect of grip width and grip orientation on muscle activity during the seated chest press. J Hum Kinet. 2023;87:23-34.",
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10203828/",
+   "type": "emg",
+   "what_it_gave": "Seated machine chest press EMG: clavicular pectoralis ~30 % MVIC with a neutral grip, anterior deltoid ~24 %; grip orientation changes the split between the pec heads."
+  }
+ ],
+ "clip_check": [
+  {
+   "check": "shoulder: upper-arm elevation (torso frame)",
+   "target": "45 deg, elbows below the shoulders -> 118 deg, arms up over the shoulders (start 35-55, end 105-125)",
+   "measured": "",
+   "pass": "",
+   "tool": "stills log + look"
+  },
+  {
+   "check": "forearm: direction",
+   "target": "vertical -> vertical (within 15 deg)",
+   "measured": "",
+   "pass": "",
+   "tool": "stills log + look"
+  },
+  {
+   "check": "Machine parts meet the hands/feet; levers keep their length",
+   "target": "moving rod lengths equal at start and end (+-1 cm)",
+   "measured": "",
+   "pass": "",
+   "tool": "[machine] log"
+  }
+ ]
+}

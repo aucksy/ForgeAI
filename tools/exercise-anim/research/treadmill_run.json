@@ -1,0 +1,201 @@
+{
+ "format": "v1-stills",
+ "exercise": {
+  "key": "treadmill_run",
+  "name": "Treadmill Run",
+  "equipment": "machine",
+  "library_primary": [
+   "cardio"
+  ],
+  "library_secondary": [
+   "quads",
+   "hamstrings",
+   "calves"
+  ],
+  "library_steps": [
+   "Step on, clip the safety key to your clothes and start at a walk.",
+   "Raise the speed to a pace where you can talk in short sentences.",
+   "Slow to a walk for the last few minutes before you stop."
+  ],
+  "status": "draft",
+  "version": null,
+  "researched_on": "2026-11-13",
+  "one_line_summary": "Running on a treadmill belt. Picture 1: right foot pushing off behind, left knee driven forward; picture 2: the other leg. Arms swing opposite, elbows ~90 deg.",
+  "evidence_grade": "B"
+ },
+ "setup": [
+  {
+   "item": "posture",
+   "target": "Trunk ~6 deg forward, head up.",
+   "tolerance": "0-15 deg",
+   "why": "See sources.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  }
+ ],
+ "movement": [
+  {
+   "joint": "stance leg",
+   "measure": "hip / knee at toe-off",
+   "start": "hip ~25 deg behind, knee nearly straight, heel up",
+   "end": "(other leg)",
+   "start_num": 25,
+   "end_num": 25,
+   "tolerance": "15-35",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  },
+  {
+   "joint": "swing leg",
+   "measure": "thigh forward / knee bend",
+   "start": "thigh ~45 deg forward, knee ~90 deg",
+   "end": "(other leg)",
+   "start_num": 45,
+   "end_num": 90,
+   "tolerance": "thigh 35-60, knee 70-110",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  },
+  {
+   "joint": "arms",
+   "measure": "elbow",
+   "start": "~90 deg, opposite to the legs",
+   "end": "(swapped)",
+   "start_num": 90,
+   "end_num": 90,
+   "tolerance": "70-110",
+   "source_ids": [
+    "S3"
+   ],
+   "grade": "B"
+  }
+ ],
+ "muscles": [
+  {
+   "muscle": "Quadriceps",
+   "anatomy": "Vastus lateralis/medialis, rectus femoris",
+   "mask_key": "quads",
+   "tier": "primary",
+   "glow": 1.0,
+   "emg": "Quadriceps absorb each landing (S1).",
+   "role": "Library primary 'cardio' has no mask; front thigh lit (library secondary).",
+   "surface": "Front of the thigh.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  },
+  {
+   "muscle": "Hamstrings",
+   "anatomy": "Biceps femoris, semitendinosus, semimembranosus",
+   "mask_key": "hamstrings",
+   "tier": "secondary",
+   "glow": 0.35,
+   "emg": "Hamstrings active late swing and early stance (S1).",
+   "role": "Library secondary.",
+   "surface": "Back of the thigh.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  },
+  {
+   "muscle": "Calves",
+   "anatomy": "Gastrocnemius, soleus",
+   "mask_key": "calves",
+   "tier": "secondary",
+   "glow": 0.35,
+   "emg": "Calves push off through stance (S1).",
+   "role": "Library secondary.",
+   "surface": "Back of the lower leg.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  },
+  {
+   "muscle": "Glutes",
+   "anatomy": "Gluteus maximus",
+   "mask_key": "glutes",
+   "tier": "stabiliser",
+   "glow": 0,
+   "emg": "",
+   "role": "Hip extension and pelvis control (S1).",
+   "surface": "Buttock.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  }
+ ],
+ "tempo": null,
+ "mistakes": [
+  {
+   "mistake": "Holding the rails",
+   "what_it_looks_like": "Hands on the rails while running.",
+   "why_it_matters": "Changes the stride (S2).",
+   "source_ids": [
+    "S2"
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "S1",
+   "citation": "Novacheck TF. The biomechanics of running. Gait Posture. 1998;7(1):77-95.",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/10200378/",
+   "type": "review",
+   "what_it_gave": "Running kinematics and EMG timing: stance-leg extension at toe-off, swing hip flexion, quadriceps at landing, hamstrings late swing, calves through stance."
+  },
+  {
+   "id": "S2",
+   "citation": "Van Hooren B, Fuller JT, Buckley JD, et al. Is motorized treadmill running biomechanically comparable to overground running? A systematic review and meta-analysis of cross-over studies. Sports Med. 2020;50(4):785-813.",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/31802395/",
+   "type": "review",
+   "what_it_gave": "Treadmill running kinematics and muscle activity are largely comparable to overground running."
+  },
+  {
+   "id": "S3",
+   "citation": "Meyns P, Bruijn SM, Duysens J. The how and why of arm swing during human walking. Gait Posture. 2013;38(4):555-562.",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/23489950/",
+   "type": "review",
+   "what_it_gave": "Arms swing opposite to the legs in walking and running."
+  }
+ ],
+ "clip_check": [
+  {
+   "check": "stance leg: hip / knee at toe-off",
+   "target": "hip ~25 deg behind, knee nearly straight, heel up -> (other leg) (15-35)",
+   "measured": "",
+   "pass": "",
+   "tool": "stills log + look"
+  },
+  {
+   "check": "swing leg: thigh forward / knee bend",
+   "target": "thigh ~45 deg forward, knee ~90 deg -> (other leg) (thigh 35-60, knee 70-110)",
+   "measured": "",
+   "pass": "",
+   "tool": "stills log + look"
+  },
+  {
+   "check": "arms: elbow",
+   "target": "~90 deg, opposite to the legs -> (swapped) (70-110)",
+   "measured": "",
+   "pass": "",
+   "tool": "stills log + look"
+  },
+  {
+   "check": "Machine parts meet the hands/feet; levers keep their length",
+   "target": "moving rod lengths equal at start and end (+-1 cm)",
+   "measured": "",
+   "pass": "",
+   "tool": "[machine] log"
+  }
+ ]
+}

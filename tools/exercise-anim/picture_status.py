@@ -43,7 +43,7 @@ QA = os.path.join(HERE, "qa.json")
 
 # Equipment the pipeline can build today (pipeline/forgeanim/props.py): dumbbells, a straight barbell (held by both hands), an adjustable bench (flat to
 # upright), a plain box (step / plyo box / wall block) and the floor. Anything else waits for a new prop.
-READY_EQUIPMENT = {"dumbbell", "bodyweight", "barbell"}   # barbell: straight bar, 13 Nov 2026
+READY_EQUIPMENT = {"dumbbell", "bodyweight", "barbell", "machine"}   # barbell: straight bar; machine: own plain geometry (recipe "machine" parts), 13 Nov 2026
 # Dumbbell / bodyweight keys that still need a prop the pipeline does not have.
 NEEDS = {
     "weighted_push_up": "weight plate on the back",
@@ -55,8 +55,17 @@ NEEDS = {
     "decline_leg_raise": "decline bench", "weighted_decline_crunch": "decline bench",
     "hanging_leg_raise": "pull-up bar", "toes_to_bar": "pull-up bar", "dead_hang": "pull-up bar",
     "l_sit": "parallettes or dip bars",
-    "swimming": "water", "outdoor_run": "outdoor scene (or a plain running stride)",
-    "hiking": "outdoor scene", "walking": "plain walking stride (possible; low value)",
+    "swimming": "cannot be shown honestly: swimming needs water, and drawn water would be invented detail (13 Nov 2026)",
+    "hiking": "cannot be shown honestly: hiking needs a real trail; on a flat floor it is the walking picture (13 Nov 2026)",
+    # machine keys not built yet (13 Nov 2026): the machine family covers seats, pads, handles, levers and stacks
+    "assisted_chin_up": "assisted pull-up machine (knee platform + counterweight) not built yet",
+    "machine_pullover": "pullover machine (elbow pads on a cam above the shoulder) not built yet",
+    "chest_supported_t_bar_row": "chest-supported T-bar frame not built yet",
+    "smith_machine_deadlift": "Smith frame for a standing lift not built yet",
+    "smith_machine_good_morning": "Smith frame for a standing lift not built yet",
+    "reverse_hack_squat": "hack-squat sled not built yet", "belt_squat": "belt-squat machine and hip belt not built yet",
+    "glute_kickback_machine": "kickback machine (chest pad + foot plate) not built yet",
+    "rotary_torso_machine": "rotary torso machine not built yet",
     # barbell keys that need more than a straight bar (13 Nov 2026)
     "meadows_row": "landmine (one bar end fixed to the floor)", "landmine_squat": "landmine",
     "trap_bar_shrug": "trap (hex) bar", "wide_grip_ez_bar_curl": "EZ (cambered) bar",

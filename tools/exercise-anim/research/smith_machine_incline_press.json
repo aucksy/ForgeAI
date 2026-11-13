@@ -1,0 +1,205 @@
+{
+ "format": "v1-stills",
+ "exercise": {
+  "key": "smith_machine_incline_press",
+  "name": "Smith Machine Incline Press",
+  "equipment": "machine",
+  "library_primary": [
+   "chest"
+  ],
+  "library_secondary": [
+   "front_delts",
+   "triceps"
+  ],
+  "library_steps": [
+   "Set an incline bench so the bar comes down to your upper chest.",
+   "Grip slightly wider than your shoulders and twist the bar off the hooks.",
+   "Lower the bar to your upper chest, then press it back up."
+  ],
+  "status": "draft",
+  "version": null,
+  "researched_on": "2026-11-13",
+  "one_line_summary": "Lying on a 30 deg incline bench under a Smith bar that runs on fixed rails. Picture 1: bar just above the upper chest, forearms vertical; picture 2: bar pressed straight up on the rails, arms nearly straight.",
+  "evidence_grade": "B"
+ },
+ "setup": [
+  {
+   "item": "bench",
+   "target": "30 deg incline, bench placed so the bar meets the upper chest.",
+   "tolerance": "25-45 deg",
+   "why": "See sources.",
+   "source_ids": [
+    "S2"
+   ],
+   "grade": "B"
+  },
+  {
+   "item": "grip",
+   "target": "Pronated, a little wider than the shoulders; bar path fixed by the rails.",
+   "tolerance": "visual",
+   "why": "See sources.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  }
+ ],
+ "movement": [
+  {
+   "joint": "shoulder",
+   "measure": "upper-arm elevation",
+   "start": "45 deg",
+   "end": "106 deg (bar straight above its start)",
+   "start_num": 45,
+   "end_num": 106,
+   "tolerance": "start 35-55, end 95-115",
+   "source_ids": [
+    "S2"
+   ],
+   "grade": "B"
+  },
+  {
+   "joint": "bar path",
+   "measure": "rail tilt",
+   "start": "vertical rails",
+   "end": "vertical rails",
+   "start_num": 0,
+   "end_num": 0,
+   "tolerance": "under 8 deg",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  }
+ ],
+ "muscles": [
+  {
+   "muscle": "Upper chest",
+   "anatomy": "Pectoralis major, clavicular head",
+   "mask_key": "chest_upper",
+   "tier": "primary",
+   "glow": 1.0,
+   "emg": "Upper pec 122-124 % MVIC at 30-45 deg (S3); Smith and free bench give similar pec activity (S1).",
+   "role": "Library primary 'chest'; incline so upper chest primary.",
+   "surface": "Upper front of the chest below the collarbone.",
+   "source_ids": [
+    "S3",
+    "S1"
+   ],
+   "grade": "B"
+  },
+  {
+   "muscle": "Lower and middle chest",
+   "anatomy": "Pectoralis major, sternocostal head",
+   "mask_key": "chest_lower",
+   "tier": "secondary",
+   "glow": 0.35,
+   "emg": "Sternal head works less at incline (S3).",
+   "role": "Secondary.",
+   "surface": "Lower front of the chest.",
+   "source_ids": [
+    "S3"
+   ],
+   "grade": "B"
+  },
+  {
+   "muscle": "Front shoulder",
+   "anatomy": "Anterior deltoid",
+   "mask_key": "front_delts",
+   "tier": "secondary",
+   "glow": 0.35,
+   "emg": "Anterior deltoid similar Smith vs free (S1).",
+   "role": "Library secondary.",
+   "surface": "Front of the shoulder.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  },
+  {
+   "muscle": "Triceps",
+   "anatomy": "Triceps brachii",
+   "mask_key": "triceps",
+   "tier": "secondary",
+   "glow": 0.35,
+   "emg": "Elbow extension (S2).",
+   "role": "Library secondary.",
+   "surface": "Back of the upper arm.",
+   "source_ids": [
+    "S2"
+   ],
+   "grade": "B"
+  },
+  {
+   "muscle": "Side shoulder",
+   "anatomy": "Lateral deltoid",
+   "mask_key": "side_delts",
+   "tier": "stabiliser",
+   "glow": 0,
+   "emg": "",
+   "role": "Less needed on a Smith machine: the rails balance the bar (S1).",
+   "surface": "",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  }
+ ],
+ "tempo": null,
+ "mistakes": [
+  {
+   "mistake": "Bench too far forward or back",
+   "what_it_looks_like": "Bar lands on the neck or the belly.",
+   "why_it_matters": "The rails fix the path, so the bench sets where it lands (S1).",
+   "source_ids": [
+    "S1"
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "S1",
+   "citation": "Schick EE, Coburn JW, Brown LE, et al. A comparison of muscle activation between a Smith machine and free weight bench press. J Strength Cond Res. 2010;24(3):779-784.",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/20093960/",
+   "type": "emg",
+   "what_it_gave": "Smith machine vs free bench: pectoralis and anterior deltoid similar; medial deltoid higher with free weight (the rails steady the bar)."
+  },
+  {
+   "id": "S2",
+   "citation": "Rodriguez-Ridao D, Antequera-Vique JA, Martin-Fuentes I, Muyor JM. Effect of five bench inclinations on the electromyographic activity of the pectoralis major, anterior deltoid, and triceps brachii during the bench press exercise. Int J Environ Res Public Health. 2020;17(19):7339.",
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7579505/",
+   "type": "emg",
+   "what_it_gave": "Bench inclinations 0-60 deg: 30 deg gives the highest clavicular pectoralis activity; anterior deltoid rises with incline."
+  },
+  {
+   "id": "S3",
+   "citation": "Lauver JD, Cayot TE, Scheuermann BW. Influence of bench angle on upper extremity muscular activation during bench press exercise. Eur J Sport Sci. 2016;16(3):309-316.",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/25799093/",
+   "type": "emg",
+   "what_it_gave": "Upper pectoralis 122-124 % MVIC at 30 and 45 deg incline (mid concentric); lower pectoralis ~100 % at -15 deg decline, 72 % at 45 deg."
+  }
+ ],
+ "clip_check": [
+  {
+   "check": "shoulder: upper-arm elevation",
+   "target": "45 deg -> 106 deg (bar straight above its start) (start 35-55, end 95-115)",
+   "measured": "",
+   "pass": "",
+   "tool": "stills log + look"
+  },
+  {
+   "check": "bar path: rail tilt",
+   "target": "vertical rails -> vertical rails (under 8 deg)",
+   "measured": "",
+   "pass": "",
+   "tool": "stills log + look"
+  },
+  {
+   "check": "Machine parts meet the hands/feet; levers keep their length",
+   "target": "moving rod lengths equal at start and end (+-1 cm)",
+   "measured": "",
+   "pass": "",
+   "tool": "[machine] log"
+  }
+ ]
+}

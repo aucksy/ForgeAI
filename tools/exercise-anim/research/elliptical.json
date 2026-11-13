@@ -1,0 +1,162 @@
+{
+ "format": "v1-stills",
+ "exercise": {
+  "key": "elliptical",
+  "name": "Elliptical",
+  "equipment": "machine",
+  "library_primary": [
+   "cardio"
+  ],
+  "library_secondary": [
+   "quads",
+   "glutes"
+  ],
+  "library_steps": [
+   "Step onto the pedals, hold the moving handles and start striding.",
+   "Keep a steady pace where you breathe harder but can still talk.",
+   "Lower the resistance for the last few minutes before you stop."
+  ],
+  "status": "draft",
+  "version": null,
+  "researched_on": "2026-11-13",
+  "one_line_summary": "Standing upright on the two pedals, hands on the moving handles. Picture 1: left foot forward and higher, left handle pulled back; picture 2: the other way round.",
+  "evidence_grade": "B"
+ },
+ "setup": [
+  {
+   "item": "posture",
+   "target": "Upright trunk, whole foot on each pedal.",
+   "tolerance": "lean under 10 deg",
+   "why": "See sources.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  },
+  {
+   "item": "hands",
+   "target": "On the moving handles, arms opposite to the legs.",
+   "tolerance": "visual",
+   "why": "See sources.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  }
+ ],
+ "movement": [
+  {
+   "joint": "front knee",
+   "measure": "bend",
+   "start": "~40 deg",
+   "end": "(other leg)",
+   "start_num": 40,
+   "end_num": 40,
+   "tolerance": "30-60",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  },
+  {
+   "joint": "rear knee",
+   "measure": "bend",
+   "start": "~15 deg",
+   "end": "(other leg)",
+   "start_num": 15,
+   "end_num": 15,
+   "tolerance": "5-25",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  }
+ ],
+ "muscles": [
+  {
+   "muscle": "Quadriceps",
+   "anatomy": "Vastus lateralis/medialis, rectus femoris",
+   "mask_key": "quads",
+   "tier": "primary",
+   "glow": 1.0,
+   "emg": "Elliptical needs more knee bend and higher quadriceps (vastus lateralis) demand than walking (S1).",
+   "role": "Library primary 'cardio' has no mask; front thigh lit (library secondary).",
+   "surface": "Front of the thigh.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  },
+  {
+   "muscle": "Glutes",
+   "anatomy": "Gluteus maximus",
+   "mask_key": "glutes",
+   "tier": "secondary",
+   "glow": 0.35,
+   "emg": "Gluteus active in stance (S1).",
+   "role": "Library secondary.",
+   "surface": "Buttock.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  },
+  {
+   "muscle": "Calves",
+   "anatomy": "Gastrocnemius",
+   "mask_key": "calves",
+   "tier": "stabiliser",
+   "glow": 0,
+   "emg": "",
+   "role": "Steady the ankle on the pedal.",
+   "surface": "Back of the lower leg.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  }
+ ],
+ "tempo": null,
+ "mistakes": [
+  {
+   "mistake": "Leaning on the handles",
+   "what_it_looks_like": "Trunk leans forward onto the arms.",
+   "why_it_matters": "Takes the work off the legs (S1).",
+   "source_ids": [
+    "S1"
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "S1",
+   "citation": "Burnfield JM, Shu Y, Buster T, Taylor A. Similarity of joint kinematics and muscle demands between elliptical training and walking: implications for practice. Phys Ther. 2010;90(2):289-305.",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/20022994/",
+   "type": "emg",
+   "what_it_gave": "Elliptical vs walking: more knee flexion through the cycle and greater quadriceps (vastus lateralis) demand; gluteus and hamstrings similar or higher."
+  }
+ ],
+ "clip_check": [
+  {
+   "check": "front knee: bend",
+   "target": "~40 deg -> (other leg) (30-60)",
+   "measured": "",
+   "pass": "",
+   "tool": "stills log + look"
+  },
+  {
+   "check": "rear knee: bend",
+   "target": "~15 deg -> (other leg) (5-25)",
+   "measured": "",
+   "pass": "",
+   "tool": "stills log + look"
+  },
+  {
+   "check": "Machine parts meet the hands/feet; levers keep their length",
+   "target": "moving rod lengths equal at start and end (+-1 cm)",
+   "measured": "",
+   "pass": "",
+   "tool": "[machine] log"
+  }
+ ]
+}

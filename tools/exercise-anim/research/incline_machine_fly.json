@@ -1,0 +1,190 @@
+{
+ "format": "v1-stills",
+ "exercise": {
+  "key": "incline_machine_fly",
+  "name": "Incline Machine Fly",
+  "equipment": "machine",
+  "library_primary": [
+   "chest"
+  ],
+  "library_secondary": [
+   "front_delts"
+  ],
+  "library_steps": [
+   "Sit back on the incline seat and hold the handles, elbows slightly bent.",
+   "Bring the handles up and together over your upper chest.",
+   "Open your arms slowly until you feel a stretch."
+  ],
+  "status": "draft",
+  "version": null,
+  "researched_on": "2026-11-13",
+  "one_line_summary": "Reclined on a 30 deg seat, vertical handles. Picture 1: arms open level with the shoulders, elbows softly bent; picture 2: arms brought together over the upper chest with the same elbow bend.",
+  "evidence_grade": "C"
+ },
+ "setup": [
+  {
+   "item": "seat",
+   "target": "Back pad ~30 deg; handles level with the shoulders when the arms are open.",
+   "tolerance": "visual",
+   "why": "See sources.",
+   "source_ids": [
+    "S2"
+   ],
+   "grade": "C"
+  },
+  {
+   "item": "elbow",
+   "target": "Soft fixed bend (~20 deg) the whole way.",
+   "tolerance": "10-30 deg",
+   "why": "See sources.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "C"
+  }
+ ],
+ "movement": [
+  {
+   "joint": "shoulder",
+   "measure": "horizontal adduction (plane)",
+   "start": "-10 deg (arms open, a little behind the chest line)",
+   "end": "90 deg (arms together in front)",
+   "start_num": -10,
+   "end_num": 90,
+   "tolerance": "start -20-10, end 80-100",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "C"
+  },
+  {
+   "joint": "elbow",
+   "measure": "bend",
+   "start": "20 deg",
+   "end": "20 deg",
+   "start_num": 20,
+   "end_num": 20,
+   "tolerance": "10-30, unchanged",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "C"
+  }
+ ],
+ "muscles": [
+  {
+   "muscle": "Upper chest",
+   "anatomy": "Pectoralis major, clavicular head",
+   "mask_key": "chest_upper",
+   "tier": "primary",
+   "glow": 1.0,
+   "emg": "Fly = pectoralis with a fixed elbow (S1); 30 deg incline biases the clavicular head (S2, S3).",
+   "role": "Library primary 'chest'; incline so upper chest primary.",
+   "surface": "Upper front of the chest below the collarbone.",
+   "source_ids": [
+    "S1",
+    "S2"
+   ],
+   "grade": "C"
+  },
+  {
+   "muscle": "Lower and middle chest",
+   "anatomy": "Pectoralis major, sternocostal head",
+   "mask_key": "chest_lower",
+   "tier": "secondary",
+   "glow": 0.35,
+   "emg": "Sternal head works in horizontal adduction (S1).",
+   "role": "Secondary.",
+   "surface": "Lower front of the chest.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "C"
+  },
+  {
+   "muscle": "Front shoulder",
+   "anatomy": "Anterior deltoid",
+   "mask_key": "front_delts",
+   "tier": "secondary",
+   "glow": 0.35,
+   "emg": "Anterior deltoid assists horizontal adduction (S1).",
+   "role": "Library secondary.",
+   "surface": "Front of the shoulder.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "C"
+  },
+  {
+   "muscle": "Biceps",
+   "anatomy": "Biceps brachii",
+   "mask_key": "biceps",
+   "tier": "stabiliser",
+   "glow": 0,
+   "emg": "",
+   "role": "Holds the fixed elbow bend.",
+   "surface": "Front of the upper arm.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "C"
+  }
+ ],
+ "tempo": null,
+ "mistakes": [
+  {
+   "mistake": "Bending the elbows to press",
+   "what_it_looks_like": "Elbow bend changes between pictures.",
+   "why_it_matters": "Turns the fly into a press (S1).",
+   "source_ids": [
+    "S1"
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "S1",
+   "citation": "Solstad TE, Andersen V, Shaw M, et al. A comparison of muscle activation between barbell bench press and dumbbell flyes in resistance-trained males. J Sports Sci Med. 2020;19(4):645-651.",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/33239937/",
+   "type": "emg",
+   "what_it_gave": "Bench press activated pectoralis, anterior deltoid and triceps 8-81 % more than the dumbbell fly; in the fly the pec works with a fixed elbow."
+  },
+  {
+   "id": "S2",
+   "citation": "Rodriguez-Ridao D, Antequera-Vique JA, Martin-Fuentes I, Muyor JM. Effect of five bench inclinations on the electromyographic activity of the pectoralis major, anterior deltoid, and triceps brachii during the bench press exercise. Int J Environ Res Public Health. 2020;17(19):7339.",
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7579505/",
+   "type": "emg",
+   "what_it_gave": "Bench inclinations 0-60 deg: 30 deg gives the highest clavicular pectoralis activity; anterior deltoid rises with incline."
+  },
+  {
+   "id": "S3",
+   "citation": "Lauver JD, Cayot TE, Scheuermann BW. Influence of bench angle on upper extremity muscular activation during bench press exercise. Eur J Sport Sci. 2016;16(3):309-316.",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/25799093/",
+   "type": "emg",
+   "what_it_gave": "Upper pectoralis 122-124 % MVIC at 30 and 45 deg incline (mid concentric); lower pectoralis ~100 % at -15 deg decline, 72 % at 45 deg."
+  }
+ ],
+ "clip_check": [
+  {
+   "check": "shoulder: horizontal adduction (plane)",
+   "target": "-10 deg (arms open, a little behind the chest line) -> 90 deg (arms together in front) (start -20-10, end 80-100)",
+   "measured": "",
+   "pass": "",
+   "tool": "stills log + look"
+  },
+  {
+   "check": "elbow: bend",
+   "target": "20 deg -> 20 deg (10-30, unchanged)",
+   "measured": "",
+   "pass": "",
+   "tool": "stills log + look"
+  },
+  {
+   "check": "Machine parts meet the hands/feet; levers keep their length",
+   "target": "moving rod lengths equal at start and end (+-1 cm)",
+   "measured": "",
+   "pass": "",
+   "tool": "[machine] log"
+  }
+ ]
+}

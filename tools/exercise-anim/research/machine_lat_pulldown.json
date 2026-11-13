@@ -1,0 +1,184 @@
+{
+ "format": "v1-stills",
+ "exercise": {
+  "key": "machine_lat_pulldown",
+  "name": "Machine Lat Pulldown",
+  "equipment": "machine",
+  "library_primary": [
+   "lats"
+  ],
+  "library_secondary": [
+   "biceps",
+   "upper_back"
+  ],
+  "library_steps": [
+   "Sit with your thighs under the pads and grip both handles overhead.",
+   "Pull the handles down until your hands reach shoulder height.",
+   "Let them rise slowly until your arms are straight."
+  ],
+  "status": "draft",
+  "version": null,
+  "researched_on": "2026-11-13",
+  "one_line_summary": "Seated with the thighs under pads, palms-forward handles overhead. Picture 1: arms reaching up and a little forward; picture 2: handles pulled down to shoulder height, elbows down and slightly back.",
+  "evidence_grade": "B"
+ },
+ "setup": [
+  {
+   "item": "thigh pads",
+   "target": "Pads snug on the thighs just above the knees.",
+   "tolerance": "visual",
+   "why": "See sources.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  },
+  {
+   "item": "grip",
+   "target": "Pronated handles, a little wider than the shoulders.",
+   "tolerance": "visual",
+   "why": "See sources.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  }
+ ],
+ "movement": [
+  {
+   "joint": "shoulder",
+   "measure": "upper-arm elevation",
+   "start": "160 deg (arms up)",
+   "end": "40 deg (elbows down by the sides)",
+   "start_num": 160,
+   "end_num": 40,
+   "tolerance": "start 150-170, end 30-50",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  },
+  {
+   "joint": "elbow",
+   "measure": "bend",
+   "start": "10 deg",
+   "end": "forearm vertical (~95 deg)",
+   "start_num": 10,
+   "end_num": 95,
+   "tolerance": "end 80-110",
+   "source_ids": [
+    "S2"
+   ],
+   "grade": "B"
+  }
+ ],
+ "muscles": [
+  {
+   "muscle": "Lats",
+   "anatomy": "Latissimus dorsi",
+   "mask_key": "lats",
+   "tier": "primary",
+   "glow": 1.0,
+   "emg": "Pronated pulldown gives high latissimus activity (S1); good lat-to-biceps ratio (S2).",
+   "role": "Library primary.",
+   "surface": "Side and lower back, under the armpit.",
+   "source_ids": [
+    "S1",
+    "S2"
+   ],
+   "grade": "B"
+  },
+  {
+   "muscle": "Biceps",
+   "anatomy": "Biceps brachii, brachialis",
+   "mask_key": "biceps",
+   "tier": "secondary",
+   "glow": 0.35,
+   "emg": "Elbow flexion during the pull (S1).",
+   "role": "Library secondary.",
+   "surface": "Front of the upper arm.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  },
+  {
+   "muscle": "Upper back",
+   "anatomy": "Middle trapezius, rhomboids",
+   "mask_key": "upper_back",
+   "tier": "secondary",
+   "glow": 0.35,
+   "emg": "Trapezius/rhomboids draw the shoulder blades down and in (S2).",
+   "role": "Library secondary.",
+   "surface": "Between the shoulder blades.",
+   "source_ids": [
+    "S2"
+   ],
+   "grade": "B"
+  },
+  {
+   "muscle": "Abdominals",
+   "anatomy": "Rectus abdominis",
+   "mask_key": "abs",
+   "tier": "stabiliser",
+   "glow": 0,
+   "emg": "",
+   "role": "Keep the trunk still.",
+   "surface": "",
+   "source_ids": [
+    "S2"
+   ],
+   "grade": "B"
+  }
+ ],
+ "tempo": null,
+ "mistakes": [
+  {
+   "mistake": "Leaning far back",
+   "what_it_looks_like": "Trunk tipped back past ~20 deg to swing the weight.",
+   "why_it_matters": "Turns it into a row (S2).",
+   "source_ids": [
+    "S2"
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "S1",
+   "citation": "Lusk SJ, Hale BD, Russell DM. Grip width and forearm orientation effects on muscle activity during the lat pull-down. J Strength Cond Res. 2010;24(7):1895-1900.",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/20543740/",
+   "type": "emg",
+   "what_it_gave": "Lat pulldown: a pronated grip gave greater latissimus dorsi activity than a supinated grip; grip width mattered less."
+  },
+  {
+   "id": "S2",
+   "citation": "Lehman GJ, Buchan DD, Lundy A, Myers N, Nalborczyk A. Variations in muscle activation levels during traditional latissimus dorsi weight training exercises: an experimental study. Dyn Med. 2004;3(1):4.",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/15228624/",
+   "type": "emg",
+   "what_it_gave": "Seated row gave the highest middle trapezius/rhomboid activity; wide-grip pulldown and seated row had the best lat-to-biceps ratio."
+  }
+ ],
+ "clip_check": [
+  {
+   "check": "shoulder: upper-arm elevation",
+   "target": "160 deg (arms up) -> 40 deg (elbows down by the sides) (start 150-170, end 30-50)",
+   "measured": "",
+   "pass": "",
+   "tool": "stills log + look"
+  },
+  {
+   "check": "elbow: bend",
+   "target": "10 deg -> forearm vertical (~95 deg) (end 80-110)",
+   "measured": "",
+   "pass": "",
+   "tool": "stills log + look"
+  },
+  {
+   "check": "Machine parts meet the hands/feet; levers keep their length",
+   "target": "moving rod lengths equal at start and end (+-1 cm)",
+   "measured": "",
+   "pass": "",
+   "tool": "[machine] log"
+  }
+ ]
+}

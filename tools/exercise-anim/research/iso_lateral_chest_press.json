@@ -1,0 +1,199 @@
+{
+ "format": "v1-stills",
+ "exercise": {
+  "key": "iso_lateral_chest_press",
+  "name": "Iso-Lateral Chest Press",
+  "equipment": "machine",
+  "library_primary": [
+   "chest"
+  ],
+  "library_secondary": [
+   "triceps",
+   "front_delts"
+  ],
+  "library_steps": [
+   "Load equal plates on each side and set the seat to chest height.",
+   "Press both handles forward until your arms are straight.",
+   "Let them come back slowly until you feel a chest stretch."
+  ],
+  "status": "draft",
+  "version": null,
+  "researched_on": "2026-11-13",
+  "one_line_summary": "Seated upright against the back pad, both hands on neutral (palms-in) handles. Picture 1: handles beside the chest, elbows out and a little behind the body; picture 2: arms pressed straight forward at shoulder height.",
+  "evidence_grade": "B"
+ },
+ "setup": [
+  {
+   "item": "seat",
+   "target": "Seat set so the handles sit at mid-chest; back flat on the pad, feet flat on the floor.",
+   "tolerance": "visual",
+   "why": "See sources.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  },
+  {
+   "item": "grip",
+   "target": "Neutral handles, closed fists.",
+   "tolerance": "visual",
+   "why": "See sources.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  }
+ ],
+ "movement": [
+  {
+   "joint": "shoulder",
+   "measure": "upper-arm elevation / plane",
+   "start": "45 deg out, 20 deg behind the torso",
+   "end": "82 deg, straight forward",
+   "start_num": 45,
+   "end_num": 82,
+   "tolerance": "start 35-55, end 75-90",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  },
+  {
+   "joint": "elbow",
+   "measure": "bend",
+   "start": "100 deg (hands beside the chest)",
+   "end": "8 deg (nearly straight, not locked)",
+   "start_num": 100,
+   "end_num": 8,
+   "tolerance": "start 85-110, end 0-15",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  }
+ ],
+ "muscles": [
+  {
+   "muscle": "Pectoralis major",
+   "anatomy": "Pectoralis major (sternal and clavicular heads)",
+   "mask_key": "chest",
+   "tier": "primary",
+   "glow": 1.0,
+   "emg": "Seated chest press: pectoralis is the prime mover (S1).",
+   "role": "Library primary.",
+   "surface": "Front of the chest.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  },
+  {
+   "muscle": "Triceps",
+   "anatomy": "Triceps brachii",
+   "mask_key": "triceps",
+   "tier": "secondary",
+   "glow": 0.35,
+   "emg": "Elbow extension through the press (S1, S3).",
+   "role": "Library secondary.",
+   "surface": "Back of the upper arm.",
+   "source_ids": [
+    "S1",
+    "S3"
+   ],
+   "grade": "B"
+  },
+  {
+   "muscle": "Front shoulder",
+   "anatomy": "Anterior deltoid",
+   "mask_key": "front_delts",
+   "tier": "secondary",
+   "glow": 0.35,
+   "emg": "Anterior deltoid ~24 % MVIC with a neutral grip (S1).",
+   "role": "Library secondary.",
+   "surface": "Front of the shoulder.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  },
+  {
+   "muscle": "Abdominals",
+   "anatomy": "Rectus abdominis",
+   "mask_key": "abs",
+   "tier": "stabiliser",
+   "glow": 0,
+   "emg": "",
+   "role": "Keep the trunk still against the back pad.",
+   "surface": "",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  }
+ ],
+ "tempo": null,
+ "mistakes": [
+  {
+   "mistake": "Shoulders roll forward off the pad",
+   "what_it_looks_like": "Upper back leaves the pad at lockout.",
+   "why_it_matters": "Keeps the load on the chest and shoulders steady (S1 set-up).",
+   "source_ids": [
+    "S1"
+   ]
+  },
+  {
+   "mistake": "Handles too high",
+   "what_it_looks_like": "Hands at neck height at the start.",
+   "why_it_matters": "Seat height sets the line of push (S1).",
+   "source_ids": [
+    "S1"
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "S1",
+   "citation": "Muyor JM, Rodriguez-Ridao D, Oliva-Lozano JM. Effect of grip width and grip orientation on muscle activity during the seated chest press. J Hum Kinet. 2023;87:23-34.",
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10203828/",
+   "type": "emg",
+   "what_it_gave": "Seated machine chest press EMG: clavicular pectoralis ~30 % MVIC with a neutral grip, anterior deltoid ~24 %; grip orientation changes the split between the pec heads."
+  },
+  {
+   "id": "S2",
+   "citation": "Rodriguez-Ridao D, Antequera-Vique JA, Martin-Fuentes I, Muyor JM. Effect of five bench inclinations on the electromyographic activity of the pectoralis major, anterior deltoid, and triceps brachii during the bench press exercise. Int J Environ Res Public Health. 2020;17(19):7339.",
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7579505/",
+   "type": "emg",
+   "what_it_gave": "Bench inclinations 0-60 deg: 30 deg gives the highest clavicular pectoralis activity; anterior deltoid rises with incline."
+  },
+  {
+   "id": "S3",
+   "citation": "Solstad TE, Andersen V, Shaw M, et al. A comparison of muscle activation between barbell bench press and dumbbell flyes in resistance-trained males. J Sports Sci Med. 2020;19(4):645-651.",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/33239937/",
+   "type": "emg",
+   "what_it_gave": "Bench press activated pectoralis, anterior deltoid and triceps 8-81 % more than the dumbbell fly; in the fly the pec works with a fixed elbow."
+  }
+ ],
+ "clip_check": [
+  {
+   "check": "shoulder: upper-arm elevation / plane",
+   "target": "45 deg out, 20 deg behind the torso -> 82 deg, straight forward (start 35-55, end 75-90)",
+   "measured": "",
+   "pass": "",
+   "tool": "stills log + look"
+  },
+  {
+   "check": "elbow: bend",
+   "target": "100 deg (hands beside the chest) -> 8 deg (nearly straight, not locked) (start 85-110, end 0-15)",
+   "measured": "",
+   "pass": "",
+   "tool": "stills log + look"
+  },
+  {
+   "check": "Machine parts meet the hands/feet; levers keep their length",
+   "target": "moving rod lengths equal at start and end (+-1 cm)",
+   "measured": "",
+   "pass": "",
+   "tool": "[machine] log"
+  }
+ ]
+}

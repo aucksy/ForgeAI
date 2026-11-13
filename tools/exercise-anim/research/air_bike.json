@@ -1,0 +1,221 @@
+{
+ "format": "v1-stills",
+ "exercise": {
+  "key": "air_bike",
+  "name": "Air Bike",
+  "equipment": "machine",
+  "library_primary": [
+   "cardio"
+  ],
+  "library_secondary": [
+   "quads",
+   "glutes",
+   "front_delts"
+  ],
+  "library_steps": [
+   "Set the seat so your knee stays slightly bent at the bottom.",
+   "Pedal and push-pull the handles together at a steady, hard effort.",
+   "Ease off and pedal slowly for a minute before you stop."
+  ],
+  "status": "draft",
+  "version": null,
+  "researched_on": "2026-11-13",
+  "one_line_summary": "Seated on the air bike pedalling and pushing/pulling the moving handles. Picture 1: left pedal top, left arm pushed forward, right arm pulled back; picture 2: the other way round.",
+  "evidence_grade": "C"
+ },
+ "setup": [
+  {
+   "item": "saddle",
+   "target": "Saddle height so the knee is bent ~25-35 deg at the bottom of the stroke.",
+   "tolerance": "25-35 deg",
+   "why": "See sources.",
+   "source_ids": [
+    "S2"
+   ],
+   "grade": "C"
+  },
+  {
+   "item": "trunk",
+   "target": "Leaning forward ~15-20 deg to the bar.",
+   "tolerance": "visual",
+   "why": "See sources.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "C"
+  },
+  {
+   "item": "handles",
+   "target": "Hands on the moving handles, palms in.",
+   "tolerance": "visual",
+   "why": "See sources.",
+   "source_ids": [
+    "S3"
+   ],
+   "grade": "C"
+  }
+ ],
+ "movement": [
+  {
+   "joint": "knee (pedal up)",
+   "measure": "bend",
+   "start": "~100 deg",
+   "end": "(other leg)",
+   "start_num": 100,
+   "end_num": 100,
+   "tolerance": "90-115",
+   "source_ids": [
+    "S2"
+   ],
+   "grade": "C"
+  },
+  {
+   "joint": "knee (pedal down)",
+   "measure": "bend",
+   "start": "~30 deg",
+   "end": "(other leg)",
+   "start_num": 30,
+   "end_num": 30,
+   "tolerance": "25-35",
+   "source_ids": [
+    "S2"
+   ],
+   "grade": "C"
+  },
+  {
+   "joint": "arms",
+   "measure": "push / pull",
+   "start": "forward arm elbow ~22 deg; back arm elbow ~95 deg",
+   "end": "(swapped)",
+   "start_num": 22,
+   "end_num": 95,
+   "tolerance": "visual",
+   "source_ids": [
+    "S3"
+   ],
+   "grade": "C"
+  }
+ ],
+ "muscles": [
+  {
+   "muscle": "Quadriceps",
+   "anatomy": "Vastus lateralis/medialis, rectus femoris",
+   "mask_key": "quads",
+   "tier": "primary",
+   "glow": 1.0,
+   "emg": "Vastii drive the down-stroke (S1).",
+   "role": "Library primary 'cardio' has no mask; front thigh lit (library secondary).",
+   "surface": "Front of the thigh.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "C"
+  },
+  {
+   "muscle": "Glutes",
+   "anatomy": "Gluteus maximus",
+   "mask_key": "glutes",
+   "tier": "secondary",
+   "glow": 0.35,
+   "emg": "Down-stroke (S1).",
+   "role": "Library secondary.",
+   "surface": "Buttock.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "C"
+  },
+  {
+   "muscle": "Front shoulder",
+   "anatomy": "Anterior deltoid",
+   "mask_key": "front_delts",
+   "tier": "secondary",
+   "glow": 0.35,
+   "emg": "Anterior deltoid drives the arm push (S3).",
+   "role": "Library secondary.",
+   "surface": "Front of the shoulder.",
+   "source_ids": [
+    "S3"
+   ],
+   "grade": "C"
+  },
+  {
+   "muscle": "Triceps",
+   "anatomy": "Triceps brachii",
+   "mask_key": "triceps",
+   "tier": "stabiliser",
+   "glow": 0,
+   "emg": "",
+   "role": "Push phase of the arms (S3); not lit to keep the picture simple.",
+   "surface": "Back of the upper arm.",
+   "source_ids": [
+    "S3"
+   ],
+   "grade": "C"
+  }
+ ],
+ "tempo": null,
+ "mistakes": [
+  {
+   "mistake": "Arms only",
+   "what_it_looks_like": "Legs stop while the arms work.",
+   "why_it_matters": "Legs do most of the work (S1).",
+   "source_ids": [
+    "S1"
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "S1",
+   "citation": "Hug F, Dorel S. Electromyographic analysis of pedaling: a review. J Electromyogr Kinesiol. 2009;19(2):182-198.",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/18093842/",
+   "type": "review",
+   "what_it_gave": "Pedalling EMG: vastii and gluteus maximus drive the down-stroke, hamstrings the bottom/back, gastrocnemius transfers force at the ankle."
+  },
+  {
+   "id": "S2",
+   "citation": "Bini R, Hume PA, Croft JL. Effects of bicycle saddle height on knee injury risk and cycling performance. Sports Med. 2011;41(6):463-476.",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/21615188/",
+   "type": "review",
+   "what_it_gave": "Saddle set so the knee is bent ~25-35 deg at the bottom of the pedal stroke."
+  },
+  {
+   "id": "S3",
+   "citation": "Smith PM, Chapman ML, Hazlehurst KE, Goss-Sampson MA. The influence of crank configuration on muscle activity and torque production during arm crank ergometry. J Electromyogr Kinesiol. 2008;18(4):598-605.",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/17337211/",
+   "type": "emg",
+   "what_it_gave": "Arm cranking: anterior deltoid, triceps and biceps activity through the push and pull phases."
+  }
+ ],
+ "clip_check": [
+  {
+   "check": "knee (pedal up): bend",
+   "target": "~100 deg -> (other leg) (90-115)",
+   "measured": "",
+   "pass": "",
+   "tool": "stills log + look"
+  },
+  {
+   "check": "knee (pedal down): bend",
+   "target": "~30 deg -> (other leg) (25-35)",
+   "measured": "",
+   "pass": "",
+   "tool": "stills log + look"
+  },
+  {
+   "check": "arms: push / pull",
+   "target": "forward arm elbow ~22 deg; back arm elbow ~95 deg -> (swapped) (visual)",
+   "measured": "",
+   "pass": "",
+   "tool": "stills log + look"
+  },
+  {
+   "check": "Machine parts meet the hands/feet; levers keep their length",
+   "target": "moving rod lengths equal at start and end (+-1 cm)",
+   "measured": "",
+   "pass": "",
+   "tool": "[machine] log"
+  }
+ ]
+}

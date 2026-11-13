@@ -1,0 +1,154 @@
+{
+ "format": "v1-stills",
+ "exercise": {
+  "key": "leg_press_calf_raise",
+  "name": "Leg Press Calf Raise",
+  "equipment": "machine",
+  "library_primary": [
+   "calves"
+  ],
+  "library_secondary": [],
+  "library_steps": [
+   "Sit in the leg press, toes on the bottom edge of the plate.",
+   "Push the plate up and keep your legs almost straight.",
+   "Point your toes to push the plate further, then let it come back slowly.",
+   "Use a weight you control so your feet never slip off the edge."
+  ],
+  "status": "draft",
+  "version": null,
+  "researched_on": "2026-11-13",
+  "one_line_summary": "Reclined in the leg press, legs nearly straight, balls of the feet on the lower edge of the plate. Picture 1: heels dropped below the toes (calves stretched); picture 2: ankles pushed out, plate pressed away on the toes. Knees stay the same.",
+  "evidence_grade": "B"
+ },
+ "setup": [
+  {
+   "item": "feet",
+   "target": "Balls of the feet on the plate edge, heels off; feet hip-width, toes forward.",
+   "tolerance": "visual",
+   "why": "See sources.",
+   "source_ids": [
+    "S2"
+   ],
+   "grade": "B"
+  },
+  {
+   "item": "knees",
+   "target": "Nearly straight, unchanged between pictures.",
+   "tolerance": "knee 5-20 deg",
+   "why": "See sources.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  }
+ ],
+ "movement": [
+  {
+   "joint": "ankle",
+   "measure": "dorsi / plantar flexion",
+   "start": "~17 deg dorsiflexed",
+   "end": "~27 deg plantarflexed",
+   "start_num": -17,
+   "end_num": 27,
+   "tolerance": "start -25 to -10, end 20-40",
+   "source_ids": [
+    "S2"
+   ],
+   "grade": "B"
+  },
+  {
+   "joint": "knee",
+   "measure": "bend",
+   "start": "~15 deg",
+   "end": "~15 deg",
+   "start_num": 15,
+   "end_num": 15,
+   "tolerance": "5-20, unchanged",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  }
+ ],
+ "muscles": [
+  {
+   "muscle": "Calves",
+   "anatomy": "Gastrocnemius, soleus",
+   "mask_key": "calves",
+   "tier": "primary",
+   "glow": 1.0,
+   "emg": "Knee-straight calf-raise training grows the gastrocnemius more than seated raises (S1); both heads highly active in heel raises (S2).",
+   "role": "Library primary.",
+   "surface": "Back of the lower leg.",
+   "source_ids": [
+    "S1",
+    "S2"
+   ],
+   "grade": "B"
+  },
+  {
+   "muscle": "Quadriceps",
+   "anatomy": "Vastii",
+   "mask_key": "quads",
+   "tier": "stabiliser",
+   "glow": 0,
+   "emg": "",
+   "role": "Hold the knees almost straight against the plate.",
+   "surface": "Front of the thigh.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  }
+ ],
+ "tempo": null,
+ "mistakes": [
+  {
+   "mistake": "Bending the knees",
+   "what_it_looks_like": "Knees bend to push the plate.",
+   "why_it_matters": "Turns it into a leg press; keep knees still (S1).",
+   "source_ids": [
+    "S1"
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "S1",
+   "citation": "Kinoshita M, Maeo S, Kobayashi Y, et al. Triceps surae muscle hypertrophy is greater after standing versus seated calf-raise training. Front Physiol. 2023;14:1272106.",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/38156065/",
+   "type": "rct",
+   "what_it_gave": "Training with the knee extended (standing) grew the gastrocnemius far more than knee-bent (seated) calf raises; the knee-straight position loads the gastrocnemius."
+  },
+  {
+   "id": "S2",
+   "citation": "Riemann BL, Limbaugh GK, Eitner JD, LeFavi RG. Medial and lateral gastrocnemius activation differences during heel-raise exercise with three different foot positions. J Strength Cond Res. 2011;25(3):634-639.",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/20581696/",
+   "type": "emg",
+   "what_it_gave": "Heel raises with feet neutral, in and out: both gastrocnemius heads highly active; foot angle shifts the medial/lateral split."
+  }
+ ],
+ "clip_check": [
+  {
+   "check": "ankle: dorsi / plantar flexion",
+   "target": "~17 deg dorsiflexed -> ~27 deg plantarflexed (start -25 to -10, end 20-40)",
+   "measured": "",
+   "pass": "",
+   "tool": "stills log + look"
+  },
+  {
+   "check": "knee: bend",
+   "target": "~15 deg -> ~15 deg (5-20, unchanged)",
+   "measured": "",
+   "pass": "",
+   "tool": "stills log + look"
+  },
+  {
+   "check": "Machine parts meet the hands/feet; levers keep their length",
+   "target": "moving rod lengths equal at start and end (+-1 cm)",
+   "measured": "",
+   "pass": "",
+   "tool": "[machine] log"
+  }
+ ]
+}
