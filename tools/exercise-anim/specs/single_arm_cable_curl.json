@@ -1,0 +1,218 @@
+{
+ "key": "single_arm_cable_curl",
+ "name": "Single-Arm Cable Curl",
+ "primary": [
+  "biceps"
+ ],
+ "secondary": [
+  "forearms"
+ ],
+ "scene": {
+  "cables": [
+   {
+    "loc": [
+     0.2,
+     -0.62
+    ],
+    "pulley_h": 0.12,
+    "face": [
+     0,
+     1
+    ]
+   }
+  ]
+ },
+ "props": {
+  "h": {
+   "type": "cable",
+   "handle": "d",
+   "column": 0
+  }
+ },
+ "camera": {
+  "yaw": 70,
+  "pitch": 8,
+  "lens": 50,
+  "fill": 0.9,
+  "res": 640,
+  "samples": 20
+ },
+ "timing": {
+  "fps": 30,
+  "keys": [
+   [
+    0,
+    "start"
+   ],
+   [
+    1,
+    "end"
+   ],
+   [
+    2,
+    "start"
+   ]
+  ]
+ },
+ "defaults": {},
+ "poses": {
+  "start": {
+   "feet": {
+    "L": {
+     "at": [
+      0.13,
+      -0.01,
+      0.074
+     ],
+     "rot": [
+      0,
+      0,
+      6
+     ]
+    },
+    "R": {
+     "at": [
+      -0.13,
+      -0.01,
+      0.074
+     ],
+     "rot": [
+      0,
+      0,
+      -6
+     ]
+    }
+   },
+   "knees": {
+    "L": [
+     0.16,
+     -1.0,
+     0.52
+    ],
+    "R": [
+     -0.16,
+     -1.0,
+     0.52
+    ]
+   },
+   "hands": {
+    "L": {
+     "prop": "h",
+     "axis": [
+      1,
+      0,
+      0
+     ],
+     "arm": {
+      "elev": 7,
+      "plane": 56,
+      "elbow": 13,
+      "bend": [
+       0,
+       1,
+       0
+      ],
+      "tilt": 0
+     }
+    },
+    "R": {
+     "axis": [
+      -0.111,
+      0.969,
+      0.133
+     ],
+     "arm": {
+      "elev": 55,
+      "plane": -15,
+      "fore_world": [
+       0.63,
+       -0.176,
+       -0.756
+      ],
+      "tilt": 0
+     }
+    }
+   }
+  },
+  "end": {
+   "feet": {
+    "L": {
+     "at": [
+      0.13,
+      -0.01,
+      0.074
+     ],
+     "rot": [
+      0,
+      0,
+      6
+     ]
+    },
+    "R": {
+     "at": [
+      -0.13,
+      -0.01,
+      0.074
+     ],
+     "rot": [
+      0,
+      0,
+      -6
+     ]
+    }
+   },
+   "knees": {
+    "L": [
+     0.16,
+     -1.0,
+     0.52
+    ],
+    "R": [
+     -0.16,
+     -1.0,
+     0.52
+    ]
+   },
+   "hands": {
+    "L": {
+     "prop": "h",
+     "axis": [
+      1,
+      0,
+      0
+     ],
+     "arm": {
+      "elev": 7,
+      "plane": 56,
+      "elbow": 124,
+      "bend": [
+       0,
+       1,
+       0
+      ],
+      "tilt": 0
+     }
+    },
+    "R": {
+     "axis": [
+      -0.111,
+      0.969,
+      0.133
+     ],
+     "arm": {
+      "elev": 55,
+      "plane": -15,
+      "fore_world": [
+       0.63,
+       -0.176,
+       -0.756
+      ],
+      "tilt": 0
+     }
+    }
+   }
+  }
+ },
+ "research": "Copied from single_arm_dumbbell_curl (passed 12 Nov): left upper arm by the side (elev 7, plane 56), elbow 13 -> 124, palm up (axis [1,0,0]); the free right fist rests on the hip. A D-handle on a low pulley (0.12 m) in front of the left foot; the cable leaves the D's tip toward the pulley.",
+ "highlight_side": "L"
+}

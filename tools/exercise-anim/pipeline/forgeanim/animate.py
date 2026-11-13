@@ -78,6 +78,22 @@ class Clip:
             ob = P.box(tuple(bx.get("size", (0.6, 0.4, 0.3))), name=f"FA_Box{i}")
             ob.location = Vector(bx.get("loc", (0, 0, 0)))
             self.boxes = getattr(self, "boxes", []) + [ob]
+        # "cables": [{"loc": [x, y], "pulley_h": 1.9, "face": [fx, fy], "height": 2.15}] -> cable columns; face = the
+        # way the pulley looks (toward the athlete). Pulley height: high ~1.9-2.0, chest ~1.2, shoulder ~1.45, low ~0.15.
+        self.columns = []; self.cables = {}
+        for i, c in enumerate(sc.get("cables", [])):
+            col = P.cable_column(f"FA_Column{i}", c.get("pulley_h", 1.9), c.get("height", 2.15), tuple(c.get("face", (0, -1))),
+                                 c.get("grab"))
+            x, y = c["loc"][0], c["loc"][1]
+            col["root"].location = Vector((x, y, 0))
+            col["pulley"] = Vector((x, y, 0)) + col["pulley_local"]
+            grab = ""
+            col["anchor"] = c.get("anchor"); col["grab_z"] = c.get("grab", [0, 0])[:2]
+            if "grab_local" in col:
+                col["grab"] = Vector((x, y, 0)) + col["grab_local"]
+                grab = f", hand grip centre at {[round(v, 3) for v in col['grab']]}"
+            self.columns.append(col)
+            print(f"[cable] column {i}: post at ({x:.2f}, {y:.2f}), pulley at {[round(v, 3) for v in col['pulley']]}{grab}")
         for name, p in self.spec.get("props", {}).items():
             if p["type"] == "dumbbell":
                 self.props[name] = P.dumbbell("FA_" + name)
@@ -85,6 +101,10 @@ class Clip:
                 # "bar": {"type": "barbell", "shaft": 1.31, "sleeve": 0.42, "plates": [0.225]} (13 Nov 2026)
                 kw = {k: (tuple(v) if isinstance(v, list) else v) for k, v in p.items() if k in ("shaft", "sleeve", "plates", "plate_t")}
                 self.props[name] = P.barbell("FA_" + name, **kw)
+            elif p["type"] == "cable":
+                # "h": {"type": "cable", "handle": "d"|"bar"|"rope"|"ankle", "column": 0, "length": 0.6, "foot": "L"}
+                # (13 Nov 2026). Kept out of self.props: place_cables moves it from the fists (or the ankle) every frame.
+                self.cables[name] = self.build_cable(name, p)
             else:
                 raise ValueError("unknown prop " + p["type"])
         # "skin": {"preserve_volume": true} -> dual-quaternion skinning on the body (recipe option; off by default so
@@ -263,10 +283,146 @@ class Clip:
                 up = frame.to_3x3() @ Vector((0, 0, 1))
                 prop.matrix_world = R.frame_from(c, axis if s == "L" else -axis, up)
             R.place_hand(rig, s, c, axis, self.G[s])
-            self._fist[s] = c.copy()
+            self._fist[s] = c.copy(); self._gax[s] = axis.copy()
         R.update()
         self.place_feet_props()
         self.place_bars(pose, T)
+        self.place_cables(pose, T)
+
+    def build_cable(self, name, p):
+        kind = p.get("handle", "d")
+        c = {"kind": kind, "column": p.get("column", 0), "foot": p.get("foot", "L"),
+             "line": P.cable_line("FA_" + name + "_Cable"), "rope_len": p.get("rope_len", 0.30)}
+        if kind == "d":
+            c["obj"] = P.d_handle("FA_" + name)
+        elif kind == "bar":
+            c["obj"] = P.cable_bar("FA_" + name, p.get("length", 0.60))
+        elif kind == "rope":
+            c["obj"] = P.rope_parts("FA_" + name)
+        elif kind == "ankle":
+            c["obj"] = P.ankle_cuff("FA_" + name)
+        else:
+            raise ValueError("unknown cable handle " + kind)
+        return c
+
+    def cable_movers(self):
+        """Every object place_cables moves (keyed with location, rotation and scale in bake)."""
+        out = []
+        for c in getattr(self, "cables", {}).values():
+            out += [c["line"], c["obj"]]
+            if c["kind"] == "rope":
+                out += [o for o in c["obj"].children if o.type == "EMPTY"]
+        return out
+
+    def cable_meshes(self):
+        """Every mesh of the cable family (columns, handles, cables) for camera framing."""
+        out = []
+        for col in getattr(self, "columns", []):
+            out += list(col["root"].children)
+        for o in self.cable_movers():
+            out += [ch for ch in o.children if ch.type == "MESH"]
+        return out
+
+    @staticmethod
+    def _stretch(ob, a, b):
+        """Put a unit-length (local z 0..1) piece from world point a to world point b."""
+        d = b - a
+        ob.matrix_world = (Matrix.Translation(a) @ d.to_track_quat("Z", "Y").to_matrix().to_4x4()
+                           @ Matrix.Diagonal((1, 1, max(d.length, 1e-4), 1)))
+
+    def place_cables(self, pose, T):
+        """Cable attachments sit on the fists (or the ankle) and the cable runs from the attachment's clip point to the
+        pulley, so the handle can never miss the hand. Prints the check numbers for the first poses: hand gap, how far
+        each grip axis is off the bar, and the cable's length and angle."""
+        if not getattr(self, "cables", None):
+            return
+        rig = self.rig
+        # "anchor": "R" on a column with a hand grip: on the first pose the whole column slides (x, y) so its grip runs
+        # through that fist's centre, so a support hand is always really holding the machine. The hand must keep the
+        # same pose in every picture.
+        for i, col in enumerate(self.columns):
+            sd = col.get("anchor")
+            if sd and "grab" in col and sd in self._fist:
+                fc = self._fist[sd]
+                if not col.get("anchored"):
+                    off = fc - col["grab"]; off.z = 0
+                    col["root"].location += off; col["pulley"] += off; col["grab"] += off; col["anchored"] = True
+                    print(f"[cable] column {i} moved {[round(v, 3) for v in off]} so its grip runs through the {sd} fist; "
+                          f"post now at {[round(v, 3) for v in col['root'].location]}, pulley {[round(v, 3) for v in col['pulley']]}")
+                gx = (fc - col["grab"]); gx.z = 0
+                z0, z1 = col["grab_z"]
+                if getattr(self, "_grip_log", 0) < 4:
+                    self._grip_log = getattr(self, "_grip_log", 0) + 1
+                    up = Vector((0, 0, 1)); a = self._gax[sd]
+                    print(f"[cable] grip check {sd}: fist off the grip line {gx.length * 100:.1f} cm, fist height {fc.z:.3f} "
+                          f"(grip {z0}-{z1}), fist axis off vertical {math.degrees(min(a.angle(up), a.angle(-up))):.1f} deg")
+        for name, c in self.cables.items():
+            Pp = self.columns[c["column"]]["pulley"]
+            on = [s for s, h in pose.get("hands", {}).items() if h.get("prop") == name and s in self._fist]
+            log = {}
+            if c["kind"] == "d":
+                if len(on) != 1:
+                    continue
+                s = on[0]; fc = self._fist[s]; ax = self._gax[s].normalized()
+                d = Pp - fc; y = d - ax * d.dot(ax)
+                y = y.normalized() if y.length > 1e-6 else (T.to_3x3() @ Vector((0, 0, 1)))
+                c["obj"].matrix_world = R.frame_from(fc, ax, y)
+                clip_pt = fc + y * P.D_TIP
+                log["hand"] = s; log["grip_axis_to_cable_deg"] = round(math.degrees(ax.angle(d)), 1)
+            elif c["kind"] == "bar":
+                if len(on) != 2:
+                    continue
+                cl, cr = self._fist["L"], self._fist["R"]
+                x = (cl - cr).normalized(); mid = (cl + cr) / 2
+                d = Pp - mid; y = (d - x * d.dot(x)).normalized()
+                c["obj"].matrix_world = R.frame_from(mid, x, y)
+                clip_pt = mid + y * P.BAR_EYE
+                log["hand_gap"] = round((cl - cr).length, 3)
+                log["grip_off_bar_deg"] = {s: round(math.degrees(min(self._gax[s].angle(x), self._gax[s].angle(-x))), 1)
+                                           for s in on if s in self._gax}
+            elif c["kind"] == "rope":
+                if len(on) != 2:
+                    continue
+                fist = {s: (self._fist[s], self._gax[s].normalized()) for s in ("L", "R")}
+                mid = (fist["L"][0] + fist["R"][0]) / 2
+                u = (Pp - mid).normalized()
+                kids = {o.name: o for o in c["obj"].children}
+                ex = {}
+                for s, (fc, ax) in fist.items():
+                    sg = 1.0 if ax.dot(u) >= 0 else -1.0     # the index side faces the join; the knob sits past the pinky
+                    a = ax * sg
+                    ex[s] = fc + a * 0.05
+                    self._stretch(kids[f"FA_{name}_Strand{s}"], fc - a * 0.05, ex[s])
+                    kids[f"FA_{name}_Knob{s}"].matrix_world = Matrix.Translation(fc - a * 0.072) @ a.to_track_quat("Z", "Y").to_matrix().to_4x4()
+                    log[f"rope_through_fist_{s}"] = "index side up" if sg > 0 else "FLIPPED (pinky side faces the join)"
+                half = (ex["L"] - ex["R"]).length / 2
+                J = (ex["L"] + ex["R"]) / 2 + u * math.sqrt(max(0.0025, c["rope_len"] ** 2 - half ** 2))
+                for s in ("L", "R"):
+                    self._stretch(kids[f"FA_{name}_Strand{s}2"], ex[s], J)
+                    a = (ex[s] - fist[s][0]).normalized()
+                    log[f"bend_at_fist_{s}_deg"] = round(math.degrees(a.angle(J - ex[s])), 1)
+                kids[f"FA_{name}_Eye"].matrix_world = Matrix.Translation(J + u * 0.02) @ u.to_track_quat("Z", "Y").to_matrix().to_4x4()
+                clip_pt = J + u * 0.045
+                log["hand_gap"] = round((fist["L"][0] - fist["R"][0]).length, 3)
+            elif c["kind"] == "ankle":
+                f = c["foot"]
+                ank = R.world_head(rig, f"foot.{f}"); knee = R.world_head(rig, f"lowerleg01.{f}")
+                sh = (knee - ank).normalized()
+                cc = ank + sh * 0.05
+                d = Pp - cc; yp = (d - sh * d.dot(sh)).normalized()
+                c["obj"].matrix_world = R.frame_from(cc, yp.cross(sh), yp)
+                clip_pt = cc + yp * P.CUFF_RING
+                log["ankle"] = f
+            else:
+                continue
+            self._stretch(c["line"], clip_pt, Pp)
+            if getattr(self, "_cable_log", 0) < 6:
+                self._cable_log = getattr(self, "_cable_log", 0) + 1
+                d = Pp - clip_pt
+                log["cable_len"] = round(d.length, 3)
+                log["cable_deg_from_down"] = round(math.degrees(d.angle(Vector((0, 0, -1)))), 1)
+                print(f"[cable] {name} ({c['kind']}): {log}")
+        R.update()
 
     def place_bars(self, pose, T):
         """A barbell held by both hands runs through both fist centres (its centre halfway between them), so the bar can
@@ -542,6 +698,7 @@ class Clip:
         else:
             girdle_bones = []
         animated = [o for o in self.ctl.values()] + list(self.props.values())
+        movers = self.cable_movers()   # stretched every frame, so their scale is keyed too
         for f in range(n):
             scene.frame_set(f)
             self.apply(self.pose_at(f / fps, keys, cache))
@@ -556,10 +713,12 @@ class Clip:
                 pb[b].keyframe_insert("rotation_quaternion", frame=f)
             for b in girdle_bones:   # the shoulder blade turns about a pivot off its head, so it moves too
                 pb[b].keyframe_insert("location", frame=f)
-            for o in animated:
+            for o in animated + movers:
                 o.keyframe_insert("location", frame=f)
                 o.keyframe_insert("rotation_quaternion" if o.rotation_mode == "QUATERNION" else "rotation_euler", frame=f)
-        for ob in [rig] + animated:
+            for o in movers:
+                o.keyframe_insert("scale", frame=f)
+        for ob in [rig] + animated + movers:
             ad = ob.animation_data
             if ad and ad.action:
                 for fc in _fcurves(ad.action):

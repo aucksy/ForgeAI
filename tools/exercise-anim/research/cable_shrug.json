@@ -1,0 +1,208 @@
+{
+ "format": "v1-stills",
+ "exercise": {
+  "key": "cable_shrug",
+  "name": "Cable Shrug",
+  "equipment": "cable",
+  "library_primary": [
+   "traps"
+  ],
+  "library_secondary": [
+   "forearms"
+  ],
+  "library_steps": [
+   "Clip a straight bar to the low cable and hold it at your thighs.",
+   "Stand tall and lift your shoulders up toward your ears.",
+   "Pause at the top, then lower slowly with straight arms."
+  ],
+  "status": "draft",
+  "version": 1,
+  "researched_on": "2026-11-13",
+  "one_line_summary": "Standing tall close to a low pulley, a straight bar held palms down about shoulder width at the thighs; arms stay straight while the shoulders lift toward the ears. Upper trapezius does the work.",
+  "evidence_grade": "B"
+ },
+ "setup": [
+  {
+   "item": "pulley",
+   "target": "Low pulley, straight bar.",
+   "tolerance": "0-0.3 m",
+   "why": "Library step.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "C"
+  },
+  {
+   "item": "grip",
+   "target": "Palms down (pronated), hands about shoulder width (~45-50 cm apart).",
+   "tolerance": "40-55 cm",
+   "why": "Library step; S1's standard shrug kept the arms at the sides (0 deg abduction).",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  },
+  {
+   "item": "stance",
+   "target": "Standing tall, feet hip-width, arms straight.",
+   "tolerance": "-",
+   "why": "Library step.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "C"
+  }
+ ],
+ "movement": [
+  {
+   "joint": "shoulder girdle",
+   "measure": "elevation of the shoulders (collarbone turn up)",
+   "start": "0 (relaxed)",
+   "end": "~24 deg collarbone turn = shoulders 7-8 cm higher",
+   "start_num": 0,
+   "end_num": 24,
+   "tolerance": "end 15-30",
+   "source_ids": [
+    "S1",
+    "S2"
+   ],
+   "grade": "B"
+  },
+  {
+   "joint": "elbow",
+   "measure": "bend",
+   "start": "5 deg (straight)",
+   "end": "5 deg (straight)",
+   "start_num": 5,
+   "end_num": 5,
+   "tolerance": "under 15 both",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  },
+  {
+   "joint": "upper arm",
+   "measure": "from the side line",
+   "start": "12 deg (hanging, a little forward)",
+   "end": "12 deg",
+   "start_num": 12,
+   "end_num": 12,
+   "tolerance": "change under 5",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  }
+ ],
+ "muscles": [
+  {
+   "muscle": "Upper trapezius",
+   "anatomy": "Trapezius, pars descendens",
+   "mask_key": "traps",
+   "tier": "primary",
+   "glow": 1.0,
+   "emg": "Main muscle of the standard shrug (S1); upper-trapezius activity measured in three shrug variants (S2).",
+   "role": "Lifts the shoulder girdle; what the exercise is for.",
+   "surface": "Top of the shoulders, from the neck to the shoulder tip.",
+   "source_ids": [
+    "S1",
+    "S2"
+   ],
+   "grade": "B"
+  },
+  {
+   "muscle": "Levator scapulae",
+   "anatomy": "Levator scapulae",
+   "mask_key": "none",
+   "tier": "deep",
+   "glow": 0,
+   "emg": "Measured in S2.",
+   "role": "Helps lift the shoulder blade.",
+   "surface": "Under the trapezius at the side of the neck.",
+   "source_ids": [
+    "S2"
+   ],
+   "grade": "B"
+  },
+  {
+   "muscle": "Forearm grip",
+   "anatomy": "Finger flexors",
+   "mask_key": "forearms",
+   "tier": "stabiliser",
+   "glow": 0,
+   "emg": "not measured",
+   "role": "Hold the bar (library secondary; a grip hold, so not lit).",
+   "surface": "Front of the forearm.",
+   "source_ids": [],
+   "grade": "D"
+  }
+ ],
+ "tempo": null,
+ "mistakes": [
+  {
+   "mistake": "Bending the elbows",
+   "what_it_looks_like": "Arms bend to pull the bar up.",
+   "why_it_matters": "Library step: straight arms; the shoulders do the lift.",
+   "source_ids": [
+    "S1"
+   ]
+  },
+  {
+   "mistake": "Rolling the shoulders",
+   "what_it_looks_like": "Shoulders circle forward/back.",
+   "why_it_matters": "A shrug is a straight up-and-down lift.",
+   "source_ids": [
+    "S2"
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "S1",
+   "citation": "Pizzari T, Wickham J, Balster S, Ganderton C, Watson L. 2014. Modifying a shrug exercise can facilitate the upward rotator muscles of the scapula. Clin Biomech 29(2):201-205.",
+   "url": "https://europepmc.org/article/MED/24342452",
+   "type": "emg",
+   "what_it_gave": "Standard shrug (arms at 0 deg) vs shrug at 30 deg abduction: upper trapezius is the main worker in both; levels higher in the modified shrug."
+  },
+  {
+   "id": "S2",
+   "citation": "Lee JH, Cynn HS, Choi WJ, Jeong HJ, Yoon TL. 2016. Various shrug exercises can change scapular kinematics and scapular rotator muscle activities in subjects with scapular downward rotation syndrome. Hum Mov Sci 45:119-129.",
+   "url": "https://europepmc.org/article/MED/26625348",
+   "type": "emg",
+   "what_it_gave": "Three shrug variants: upper trapezius EMG measured with lower trapezius, serratus and levator scapulae; the shrug is an upper-trapezius exercise."
+  }
+ ],
+ "clip_check": [
+  {
+   "check": "Arms straight in both pictures",
+   "target": "elbow < 15",
+   "measured": "",
+   "pass": ""
+  },
+  {
+   "check": "End: shoulders clearly higher than start",
+   "target": "clavicle +15-30 deg",
+   "measured": "",
+   "pass": ""
+  },
+  {
+   "check": "Bar in front of the thighs, both fists closed on it, hands ~shoulder width",
+   "target": "hand gap 0.40-0.55 m",
+   "measured": "",
+   "pass": ""
+  },
+  {
+   "check": "Feet flat on the floor",
+   "target": "probe_feet in range",
+   "measured": "",
+   "pass": ""
+  },
+  {
+   "check": "Upper traps the only red",
+   "target": "yes",
+   "measured": "",
+   "pass": ""
+  }
+ ]
+}

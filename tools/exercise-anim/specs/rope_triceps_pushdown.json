@@ -1,0 +1,206 @@
+{
+ "key": "rope_triceps_pushdown",
+ "name": "Rope Triceps Pushdown",
+ "primary": [
+  "triceps"
+ ],
+ "secondary": [],
+ "scene": {
+  "cables": [
+   {
+    "loc": [
+     0,
+     -0.72
+    ],
+    "pulley_h": 2.0,
+    "face": [
+     0,
+     1
+    ]
+   }
+  ]
+ },
+ "props": {
+  "rope": {
+   "type": "cable",
+   "handle": "rope",
+   "column": 0,
+   "rope_len": 0.3
+  }
+ },
+ "camera": {
+  "yaw": -78,
+  "pitch": 8,
+  "lens": 50,
+  "fill": 0.9,
+  "res": 640,
+  "samples": 20
+ },
+ "timing": {
+  "fps": 30,
+  "keys": [
+   [
+    0,
+    "start"
+   ],
+   [
+    1,
+    "end"
+   ],
+   [
+    2,
+    "start"
+   ]
+  ]
+ },
+ "defaults": {},
+ "poses": {
+  "start": {
+   "root": {
+    "loc": [
+     0,
+     0.075,
+     0.965
+    ],
+    "rot": [
+     8,
+     0,
+     0
+    ]
+   },
+   "feet": {
+    "L": {
+     "at": [
+      0.13,
+      -0.01,
+      0.074
+     ],
+     "rot": [
+      0,
+      0,
+      6
+     ]
+    },
+    "R": {
+     "at": [
+      -0.13,
+      -0.01,
+      0.074
+     ],
+     "rot": [
+      0,
+      0,
+      -6
+     ]
+    }
+   },
+   "knees": {
+    "L": [
+     0.16,
+     -1.0,
+     0.52
+    ],
+    "R": [
+     -0.16,
+     -1.0,
+     0.52
+    ]
+   },
+   "hands": {
+    "L": {
+     "prop": "rope",
+     "axis": [
+      0,
+      0.15,
+      1
+     ],
+     "arm": {
+      "elev": 8,
+      "plane": 70,
+      "elbow": 95,
+      "bend": [
+       -0.15,
+       1,
+       0.1
+      ],
+      "tilt": 0
+     }
+    }
+   }
+  },
+  "end": {
+   "root": {
+    "loc": [
+     0,
+     0.075,
+     0.965
+    ],
+    "rot": [
+     8,
+     0,
+     0
+    ]
+   },
+   "feet": {
+    "L": {
+     "at": [
+      0.13,
+      -0.01,
+      0.074
+     ],
+     "rot": [
+      0,
+      0,
+      6
+     ]
+    },
+    "R": {
+     "at": [
+      -0.13,
+      -0.01,
+      0.074
+     ],
+     "rot": [
+      0,
+      0,
+      -6
+     ]
+    }
+   },
+   "knees": {
+    "L": [
+     0.16,
+     -1.0,
+     0.52
+    ],
+    "R": [
+     -0.16,
+     -1.0,
+     0.52
+    ]
+   },
+   "hands": {
+    "L": {
+     "prop": "rope",
+     "axis": [
+      0.2,
+      1,
+      0
+     ],
+     "arm": {
+      "elev": 10,
+      "plane": 60,
+      "elbow": 6,
+      "bend": [
+       0.3,
+       1,
+       0
+      ],
+      "tilt": 0
+     }
+    }
+   }
+  }
+ },
+ "research": "Standing ~0.5 m from a high pulley (2.0 m), trunk leaning 8 deg forward (root rot X +8), feet hip-width. Upper arms by the sides (elev 8-10, plane 60-70 = elbows a little in front of the side line because of the lean). Start: elbow 95 (hands at the lower chest, forearms just above level), neutral grip with the thumbs up toward the rope's join (axis [0,0.15,1]). End: elbow 6 (straight), hands beside the thighs and pulled apart (bend x +0.3), palms facing back/in (axis [0.2,1,0]). The rope runs through each fist index-side first, knob past the pinky."
+}

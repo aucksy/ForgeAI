@@ -1,0 +1,222 @@
+{
+ "format": "v1-stills",
+ "exercise": {
+  "key": "single_arm_cable_curl",
+  "name": "Single-Arm Cable Curl",
+  "equipment": "cable",
+  "library_primary": [
+   "biceps"
+  ],
+  "library_secondary": [
+   "forearms"
+  ],
+  "library_steps": [
+   "Attach a handle to the low pulley and hold it palm up.",
+   "Keep your elbow by your side and curl the handle to your shoulder.",
+   "Lower slowly, finish your reps, then switch arms."
+  ],
+  "status": "draft",
+  "version": 1,
+  "researched_on": "2026-11-13",
+  "one_line_summary": "Standing facing a low pulley, a D-handle in one hand palm up; the upper arm stays by the side while the elbow bends from ~13 deg to ~124 deg. Biceps does the work, brachioradialis helps; the other hand rests on the hip.",
+  "evidence_grade": "B"
+ },
+ "setup": [
+  {
+   "item": "pulley",
+   "target": "Low pulley (~0.1-0.2 m), single D-handle.",
+   "tolerance": "0-0.3 m",
+   "why": "Library step; S1 trained unilateral cable curls from a low pulley.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  },
+  {
+   "item": "stance",
+   "target": "Standing tall facing the column, feet hip-width.",
+   "tolerance": "lean under 5 deg",
+   "why": "Only the working arm moves.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  },
+  {
+   "item": "grip",
+   "target": "Palm up (supinated), closed fist.",
+   "tolerance": "-",
+   "why": "Library step: hold it palm up.",
+   "source_ids": [
+    "S2"
+   ],
+   "grade": "B"
+  }
+ ],
+ "movement": [
+  {
+   "joint": "elbow",
+   "measure": "bend, 0 = straight",
+   "start": "13 deg (arm almost straight)",
+   "end": "124 deg (handle at the shoulder)",
+   "start_num": 13,
+   "end_num": 124,
+   "tolerance": "start 5-20; end 110-135",
+   "source_ids": [
+    "S1",
+    "S2"
+   ],
+   "grade": "B"
+  },
+  {
+   "joint": "shoulder",
+   "measure": "upper arm from the torso side line",
+   "start": "7 deg (by the side)",
+   "end": "7 deg (still)",
+   "start_num": 7,
+   "end_num": 7,
+   "tolerance": "change under 10 deg",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  },
+  {
+   "joint": "trunk, wrist",
+   "measure": "stay still",
+   "start": "upright",
+   "end": "upright",
+   "start_num": 0,
+   "end_num": 0,
+   "tolerance": "lean under 5 deg",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "C"
+  }
+ ],
+ "muscles": [
+  {
+   "muscle": "Biceps",
+   "anatomy": "Biceps brachii",
+   "mask_key": "biceps",
+   "tier": "primary",
+   "glow": 1.0,
+   "emg": "Elbow flexors grew 7-9 % after 10 weeks of unilateral cable curls (S1); biceps clearly the main flexor in curls (S2, S3).",
+   "role": "Bends the elbow; what the exercise is for.",
+   "surface": "Front of the upper arm.",
+   "source_ids": [
+    "S1",
+    "S2",
+    "S3"
+   ],
+   "grade": "B"
+  },
+  {
+   "muscle": "Brachioradialis (forearm)",
+   "anatomy": "Brachioradialis",
+   "mask_key": "forearms",
+   "tier": "secondary",
+   "glow": 0.35,
+   "emg": "Clearly active in supinated curls, near the biceps level in parts of the rep (S2).",
+   "role": "Helps bend the elbow; library secondary.",
+   "surface": "Thumb side of the upper forearm.",
+   "source_ids": [
+    "S2"
+   ],
+   "grade": "B"
+  },
+  {
+   "muscle": "Brachialis",
+   "anatomy": "Brachialis",
+   "mask_key": "none",
+   "tier": "deep",
+   "glow": 0,
+   "emg": "not measured",
+   "role": "Elbow flexor under the biceps.",
+   "surface": "Under the lower biceps.",
+   "source_ids": [],
+   "grade": "D"
+  }
+ ],
+ "tempo": null,
+ "mistakes": [
+  {
+   "mistake": "Elbow drifts forward",
+   "what_it_looks_like": "The upper arm swings up as the hand rises.",
+   "why_it_matters": "Library step: keep the elbow by your side.",
+   "source_ids": [
+    "S1"
+   ]
+  },
+  {
+   "mistake": "Body swing",
+   "what_it_looks_like": "The trunk leans back to heave the handle.",
+   "why_it_matters": "The arm should do the work.",
+   "source_ids": [
+    "S1"
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "S1",
+   "citation": "Larsen S, Sandvik Kristiansen B, Osteras Sandberg N, et al. 2026. The effects of shoulder extension angle on elbow flexor hypertrophy in the cable curl exercise. Front Physiol 17:1750722.",
+   "url": "https://europepmc.org/article/MED/41988507",
+   "type": "biomechanics",
+   "what_it_gave": "Unilateral cable curls from a low pulley with the upper arm by the side (neutral) vs held back in shoulder extension: elbow flexors grew ~7-9 % in both; the shoulder angle made no clear difference."
+  },
+  {
+   "id": "S2",
+   "citation": "Marcolin G, Panizzolo FA, Petrone N, et al. 2018. Differences in electromyographic activity of biceps brachii and brachioradialis while performing three variants of curl. PeerJ 6:e5165.",
+   "url": "https://europepmc.org/article/MED/30013836",
+   "type": "emg",
+   "what_it_gave": "Straight bar, EZ bar and dumbbell curls at 65 % 1RM: biceps and brachioradialis both clearly active; elbow range ~117 deg."
+  },
+  {
+   "id": "S3",
+   "citation": "Oliveira LF, Matta TT, Alves DS, Garcia MA, Vieira TM. 2009. Effect of the shoulder position on the biceps brachii EMG in different dumbbell curls. J Sports Sci Med 8(1):24-29.",
+   "url": "https://europepmc.org/article/MED/24150552",
+   "type": "emg",
+   "what_it_gave": "Standing, incline (shoulder extended) and preacher curls: biceps long head at least 50 % of max RMS in all; shoulder position shifts where in the range the biceps works hardest."
+  }
+ ],
+ "clip_check": [
+  {
+   "check": "Start: arm nearly straight, handle in front of the thigh",
+   "target": "elbow 5-20",
+   "measured": "",
+   "pass": ""
+  },
+  {
+   "check": "End: handle at the shoulder",
+   "target": "elbow 110-135",
+   "measured": "",
+   "pass": ""
+  },
+  {
+   "check": "Upper arm by the side in both pictures",
+   "target": "elev change < 10",
+   "measured": "",
+   "pass": ""
+  },
+  {
+   "check": "Fist closed on the D-handle; cable from the handle to the low pulley",
+   "target": "yes",
+   "measured": "",
+   "pass": ""
+  },
+  {
+   "check": "Free hand rests on the hip",
+   "target": "fist on the hip",
+   "measured": "",
+   "pass": ""
+  },
+  {
+   "check": "Biceps strongest red, forearm light red, only the working arm",
+   "target": "highlight_side L",
+   "measured": "",
+   "pass": ""
+  }
+ ]
+}

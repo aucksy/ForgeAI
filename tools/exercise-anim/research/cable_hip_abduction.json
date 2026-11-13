@@ -1,0 +1,205 @@
+{
+ "format": "v1-stills",
+ "exercise": {
+  "key": "cable_hip_abduction",
+  "name": "Cable Hip Abduction",
+  "equipment": "cable",
+  "library_primary": [
+   "abductors"
+  ],
+  "library_secondary": [
+   "glutes"
+  ],
+  "library_steps": [
+   "Stand side-on to a low pulley with the cuff on your far ankle.",
+   "Hold the machine for support and lift that leg out to the side.",
+   "Lower slowly, then switch legs after your set."
+  ],
+  "status": "draft",
+  "version": 1,
+  "researched_on": "2026-11-13",
+  "one_line_summary": "Standing on one leg side-on to a low pulley, a cuff on the far ankle and the near hand on the machine; the straight far leg lifts ~35 deg out to the side and returns. Hip abductors (gluteus medius / TFL on the side of the hip) do the work.",
+  "evidence_grade": "B"
+ },
+ "setup": [
+  {
+   "item": "pulley",
+   "target": "Low pulley (~0.1 m), ankle cuff on the far ankle.",
+   "tolerance": "0-0.2 m",
+   "why": "Library step.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "C"
+  },
+  {
+   "item": "support",
+   "target": "Near hand holds the machine; trunk upright; the standing leg straight.",
+   "tolerance": "-",
+   "why": "Library step; S1's standing hip abduction kept the pelvis level.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  }
+ ],
+ "movement": [
+  {
+   "joint": "hip (working leg)",
+   "measure": "abduction, 0 = leg straight down",
+   "start": "~3 deg (leg beside the standing leg)",
+   "end": "~35 deg out to the side",
+   "start_num": 3,
+   "end_num": 35,
+   "tolerance": "end 25-45",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  },
+  {
+   "joint": "knee (working leg)",
+   "measure": "bend",
+   "start": "straight",
+   "end": "straight",
+   "start_num": 0,
+   "end_num": 0,
+   "tolerance": "under 15",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "C"
+  },
+  {
+   "joint": "trunk, standing leg",
+   "measure": "stay still",
+   "start": "upright",
+   "end": "upright",
+   "start_num": 0,
+   "end_num": 0,
+   "tolerance": "lean under 10 deg",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "C"
+  }
+ ],
+ "muscles": [
+  {
+   "muscle": "Hip abductors",
+   "anatomy": "Gluteus medius, tensor fasciae latae",
+   "mask_key": "abductors",
+   "tier": "primary",
+   "glow": 1.0,
+   "emg": "Gluteus medius measured during standing hip abduction (S1); highest in hip abduction moves (S2: side-lying 81 % MVIC).",
+   "role": "Lift the leg out to the side; what the exercise is for.",
+   "surface": "Side of the hip below the pelvis rim.",
+   "source_ids": [
+    "S1",
+    "S2"
+   ],
+   "grade": "B"
+  },
+  {
+   "muscle": "Glutes (gluteus maximus)",
+   "anatomy": "Gluteus maximus, upper fibres",
+   "mask_key": "glutes",
+   "tier": "secondary",
+   "glow": 0.35,
+   "emg": "Gluteus maximus active in abduction moves (S2).",
+   "role": "Helps abduct; library secondary.",
+   "surface": "Back of the hip.",
+   "source_ids": [
+    "S2"
+   ],
+   "grade": "B"
+  },
+  {
+   "muscle": "Standing-side abductors",
+   "anatomy": "Gluteus medius (stance leg)",
+   "mask_key": "none",
+   "tier": "stabiliser",
+   "glow": 0,
+   "emg": "Weight-bearing abduction raises stance-side activity (S1).",
+   "role": "Keeps the pelvis level.",
+   "surface": "Side of the standing hip.",
+   "source_ids": [
+    "S1"
+   ],
+   "grade": "B"
+  }
+ ],
+ "tempo": null,
+ "mistakes": [
+  {
+   "mistake": "Leaning the trunk away",
+   "what_it_looks_like": "Trunk tips toward the standing side to lift the leg higher.",
+   "why_it_matters": "Moves the work off the hip abductors.",
+   "source_ids": [
+    "S1"
+   ]
+  },
+  {
+   "mistake": "Turning the toes up",
+   "what_it_looks_like": "Leg rolls out so the toes point at the ceiling.",
+   "why_it_matters": "Shifts the work to the hip flexors.",
+   "source_ids": [
+    "S2"
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "S1",
+   "citation": "Bolgla LA, Uhl TL. 2005. Electromyographic analysis of hip rehabilitation exercises in a group of healthy subjects. J Orthop Sports Phys Ther 35(8):487-494.",
+   "url": "https://europepmc.org/article/MED/16187509",
+   "type": "emg",
+   "what_it_gave": "Gluteus medius EMG in 6 hip abduction exercises incl. standing hip abduction (non-weight-bearing leg) at 0 and 20 deg hip flexion."
+  },
+  {
+   "id": "S2",
+   "citation": "Distefano LJ, Blackburn JT, Marshall SW, Padua DA. 2009. Gluteal muscle activation during common therapeutic exercises. J Orthop Sports Phys Ther 39(7):532-540.",
+   "url": "https://europepmc.org/article/MED/19574661",
+   "type": "emg",
+   "what_it_gave": "Gluteus medius highest in side-lying hip abduction (81 % MVIC); gluteus maximus lower in abduction moves than in single-leg squats/deadlifts."
+  }
+ ],
+ "clip_check": [
+  {
+   "check": "Start: working foot beside the standing foot",
+   "target": "abduction under 10",
+   "measured": "",
+   "pass": ""
+  },
+  {
+   "check": "End: straight leg out to the side",
+   "target": "abduction 25-45",
+   "measured": "",
+   "pass": ""
+  },
+  {
+   "check": "Cuff on the far ankle, cable to the low pulley, clear of the standing leg",
+   "target": "yes",
+   "measured": "",
+   "pass": ""
+  },
+  {
+   "check": "Near fist on the machine's grip; far fist on the hip",
+   "target": "grip check under 1 cm",
+   "measured": "",
+   "pass": ""
+  },
+  {
+   "check": "Standing foot flat on the floor",
+   "target": "probe_feet in range",
+   "measured": "",
+   "pass": ""
+  },
+  {
+   "check": "Abductors of the working leg strongest red",
+   "target": "highlight_side L",
+   "measured": "",
+   "pass": ""
+  }
+ ]
+}

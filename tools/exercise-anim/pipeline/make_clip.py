@@ -42,6 +42,7 @@ if hasattr(clip, "bench"):
     objs += list(clip.bench["root"].children)
 for bx in getattr(clip, "boxes", []):
     objs += list(bx.children)
+objs += clip.cable_meshes()   # cable columns, handles and cables (13 Nov 2026): the whole column stays in the picture
 fps, keys, _ = clip.timeline()
 key_frames = sorted({min(n - 1, int(round(k[0] * fps))) for k in keys})
 center, d = RD.frame_camera(scene, cam, objs, cam_spec.get("yaw", -30), cam_spec.get("pitch", 12),

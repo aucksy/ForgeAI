@@ -156,3 +156,134 @@ def barbell(name="FA_Barbell", shaft=1.31, sleeve=0.42, plates=(0.225,), plate_t
             off += plate_t + 0.003
         _cyl(name + f"_Clip{s}", 0.034, 0.025, mat=M["chrome"], bevel=0.003, loc=(s * (off + 0.0125), 0, 0), parent=root)
     return root
+
+
+# ---------------- cable column family (13 Nov 2026, exercise pictures) ----------------
+# A cable column = an upright post with a pulley that can sit at any height. The athlete holds an attachment
+# (D-handle, short straight bar, rope or ankle cuff) and a steel cable runs from the attachment to the pulley.
+# animate.Clip.place_cables puts the attachment on the fists (or the ankle) every frame and stretches the cable,
+# so the handle can never miss the hand and the cable always ends at the pulley.
+
+def cable_column(name="FA_Cable", pulley_h=1.9, height=2.15, face=(0.0, -1.0), grab=None):
+    """Origin = floor point under the post's centre. `face` (world x, y) = the way the pulley faces (toward the
+    athlete). grab = [z0, z1, side] adds an upright hand grip on the post (side +1 = the post's local +X side), for a
+    free hand to hold (hip abduction / adduction). Returns dict(root, pulley_local, grab_local) with world offsets
+    from the root (before root.location)."""
+    M = _mats()
+    root = _empty(name)
+    fx, fy = face
+    n = math.hypot(fx, fy) or 1.0
+    fx, fy = fx / n, fy / n
+    # local -Y = the face direction, so rot_z turns -Y onto (fx, fy)
+    rz = math.atan2(fx, -fy)
+    root.rotation_euler = (0, 0, rz)
+    _box(name + "_Base", (0.46, 0.34, 0.04), loc=(0, 0.07, 0.02), mat=M["frame"], bevel=0.008, parent=root)
+    _box(name + "_Post", (0.11, 0.11, height), loc=(0, 0, height / 2), mat=M["pad"], bevel=0.01, parent=root)
+    _box(name + "_Cap", (0.16, 0.16, 0.04), loc=(0, 0, height + 0.02), mat=M["frame"], bevel=0.006, parent=root)
+    # adjustable carriage on the front of the post, with the pulley wheel sticking out toward the athlete
+    _box(name + "_Carriage", (0.15, 0.06, 0.20), loc=(0, -0.08, pulley_h), mat=M["frame"], bevel=0.008, parent=root)
+    _cyl(name + "_Pin", 0.012, 0.11, axis="X", mat=M["chrome"], loc=(0, -0.155, pulley_h), parent=root)
+    _box(name + "_ForkL", (0.012, 0.09, 0.10), loc=(0.035, -0.14, pulley_h), mat=M["frame"], bevel=0.003, parent=root)
+    _box(name + "_ForkR", (0.012, 0.09, 0.10), loc=(-0.035, -0.14, pulley_h), mat=M["frame"], bevel=0.003, parent=root)
+    _cyl(name + "_Wheel", 0.045, 0.025, axis="X", mat=M["iron"], bevel=0.004, loc=(0, -0.155, pulley_h), parent=root)
+    c, s = math.cos(rz), math.sin(rz)
+    lx, ly = 0.0, -0.155
+    pulley = Vector((lx * c - ly * s, lx * s + ly * c, pulley_h))   # world offset from the root (before root.location)
+    out = {"root": root, "pulley_local": pulley}
+    if grab:
+        z0, z1, sd = grab
+        gx = sd * 0.135
+        _cyl(name + "_Grab", 0.016, z1 - z0, verts=24, axis="Z", mat=M["rubber"], loc=(gx, -0.02, (z0 + z1) / 2), parent=root)
+        for z in (z0 - 0.01, z1 + 0.01):
+            _seg(name + f"_GrabArm{z:.2f}", (sd * 0.055, -0.02, z), (gx, -0.02, z), 0.012, M["chrome"], parent=root)
+        out["grab_local"] = Vector((gx * c + 0.02 * s, gx * s - 0.02 * c, (z0 + z1) / 2))
+    return out
+
+
+def _seg(name, a, b, r, mat, parent=None, verts=16):
+    """A thin cylinder from point a to point b (in the parent's space)."""
+    a = Vector(a); b = Vector(b); d = b - a
+    ob = _cyl(name, r, max(d.length, 1e-4), verts=verts, axis="Z", mat=mat, parent=parent)
+    ob.matrix_basis = Matrix.Translation((a + b) / 2) @ d.to_track_quat("Z", "Y").to_matrix().to_4x4()
+    return ob
+
+
+def cable_line(name="FA_CableLine", r=0.0075):
+    """Steel cable: unit-length cylinder from z=0 to z=1 (stretched every frame by place_cables). Light grey so it
+    reads on the dark app card; thicker than real (16 mm) so it still shows at phone size."""
+    M = _mats()
+    root = _empty(name)
+    ob = _cyl(name + "_Wire", r, 1.0, verts=12, axis="Z", mat=M["chrome"], loc=(0, 0, 0.5), parent=root)
+    return root
+
+
+def d_handle(name="FA_DHandle"):
+    """Single D-handle. Origin = grip centre, grip along local X; the D's tip (where the cable clips on) is at
+    local +Y, D_TIP away. The opening is 0.15 m wide so the fist fits inside."""
+    M = _mats()
+    root = _empty(name)
+    _cyl(name + "_Grip", 0.017, 0.125, verts=32, mat=M["rubber"], parent=root)
+    w = 0.078
+    for s in (1, -1):
+        _seg(name + f"_Side{s}a", (s * w, 0, 0), (s * w, 0.045, 0), 0.0065, M["chrome"], parent=root)
+        _seg(name + f"_Side{s}b", (s * w, 0.045, 0), (0, D_TIP - 0.012, 0), 0.0065, M["chrome"], parent=root)
+        _cyl(name + f"_End{s}", 0.011, 0.02, mat=M["chrome"], loc=(s * (w - 0.004), 0, 0), parent=root)
+    _cyl(name + "_Ring", 0.014, 0.012, axis="Z", mat=M["chrome"], loc=(0, D_TIP, 0), parent=root)
+    return root
+
+
+D_TIP = 0.14
+
+
+def cable_bar(name="FA_CableBar", length=0.60):
+    """Short straight cable bar with a swivel in the middle. Origin = bar centre, bar along local X; the swivel
+    eye (where the cable clips on) is at local +Y, BAR_EYE away."""
+    M = _mats()
+    root = _empty(name)
+    _cyl(name + "_Bar", 0.0145, length, verts=32, mat=M["chrome"], parent=root)
+    for s in (1, -1):
+        _cyl(name + f"_Cap{s}", 0.019, 0.025, mat=M["rubber"], bevel=0.003, loc=(s * (length / 2 + 0.01), 0, 0), parent=root)
+    _box(name + "_Swivel", (0.04, 0.05, 0.03), loc=(0, 0.035, 0), mat=M["chrome"], bevel=0.008, parent=root)
+    _cyl(name + "_Eye", 0.012, 0.012, axis="Z", mat=M["chrome"], loc=(0, BAR_EYE, 0), parent=root)
+    return root
+
+
+BAR_EYE = 0.075
+
+
+def rope_parts(name="FA_Rope"):
+    """Triceps rope: two strands, each with a stopper knob, joined at a metal eye. Built as unit pieces that
+    place_cables moves every frame (strand = unit cylinder z 0..1, knob, eye). Returns the root empty."""
+    M = _mats()
+    root = _empty(name)
+    for s in ("L", "R"):
+        for part in ("", "2"):   # "": the piece inside the fist, "2": from the fist to the join
+            st = _empty(name + f"_Strand{s}{part}", parent=root)
+            _cyl(name + f"_Strand{s}{part}_Mesh", 0.0135, 1.0, verts=16, axis="Z", mat=M["rubber"], loc=(0, 0, 0.5), parent=st)
+        kn = _empty(name + f"_Knob{s}", parent=root)
+        _cyl(name + f"_Knob{s}_Mesh", 0.024, 0.045, verts=24, axis="Z", mat=M["rubber"], bevel=0.008, parent=kn)
+    ey = _empty(name + "_Eye", parent=root)
+    _cyl(name + "_Eye_Mesh", 0.02, 0.05, verts=24, axis="Z", mat=M["chrome"], bevel=0.006, parent=ey)
+    return root
+
+
+def ankle_cuff(name="FA_Cuff"):
+    """Ankle cuff: a padded band (axis local Z = along the shin) with a D-ring at local +Y, CUFF_RING away."""
+    M = _mats()
+    root = _empty(name)
+    me = bpy.data.meshes.new(name + "_Band")
+    bm = bmesh.new()
+    bmesh.ops.create_cone(bm, cap_ends=False, segments=40, radius1=0.052, radius2=0.049, depth=0.065)
+    bm.to_mesh(me); bm.free()
+    band = bpy.data.objects.new(name + "_Band", me)
+    sol = band.modifiers.new("Solid", "SOLIDIFY"); sol.thickness = 0.012; sol.offset = 1.0
+    for p in me.polygons:
+        p.use_smooth = True
+    me.materials.append(M["pad"])
+    _link(band, root)
+    _seg(name + "_RingA", (-0.02, 0.062, 0), (0, CUFF_RING, 0), 0.005, M["chrome"], parent=root)
+    _seg(name + "_RingB", (0.02, 0.062, 0), (0, CUFF_RING, 0), 0.005, M["chrome"], parent=root)
+    return root
+
+
+CUFF_RING = 0.09
