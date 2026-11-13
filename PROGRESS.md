@@ -9,7 +9,8 @@
   name for older workouts), else today; saved once as before. Shared JS (Android and iPhone), no native part, no PARITY
   change. Tests: planStartHistoryReal (8: 4 pure, 4 real SQLite; the 2 bug cases fail on the old code). UAT: part u484
   (shard 6-uat-c), flow uat-rel-r484-a-no-start: restore qa-r484-nostart.zip, Up next Pull 2 + "Week 3", again after a
-  restart. What's new draft (member-words): "If you restore an older backup, \"Up next\" now carries on from your last
+  restart: PASSED on both phones at 3461f250 (owner 43413282962, default 43413286078; pictures rel-r484-a1/a2 read:
+  "Up next: Pull 2", "Week 3" before and after the restart). CI 43413257911 green. What's new draft (member-words): "If you restore an older backup, \"Up next\" now carries on from your last
   workout instead of starting your plan again at Week 1."
 - R-482 MUSCLE TIPS JUDGE THE ROUTINES; NEW SWAP TIP (owner, 13 Nov 2026: "build all 5"; he saw "Easy add today: 3 sets of
   Standing Calf Raise" on Pull 2 while the calf raise is already in his Legs routine, he just skips it). Commit 6237e4fc.
