@@ -161,6 +161,9 @@ for (const [name, size] of [['phone', { width: 390, height: 844 }], ['computer',
     await expect(cards).not.toContainText('₹24,990');
     const yearlyLine = cards.locator('.aiy');
     await expect(yearlyLine.first()).toBeHidden();
+    // R-483: the yearly switch names the free AI credits too (monthly stays the default).
+    await expect(page.locator('#bill-m')).toHaveAttribute('aria-pressed', 'true');
+    await expect(page.locator('#bill-y')).toContainText('2 months free + free AI credits');
     await page.locator('#bill-y').click();
     await expect(yearlyLine).toHaveCount(2);
     await expect(yearlyLine.nth(0)).toContainText('+ 50 AI credits every month, free'); // Starter (R-473)
@@ -175,6 +178,7 @@ for (const [name, size] of [['phone', { width: 390, height: 844 }], ['computer',
     // Hindi: the words change; the owner's spoken lines stay as he says them.
     await page.locator('#lang').click();
     await expect(page.locator('#as-h')).toContainText('AI असिस्टेंट');
+    await expect(page.locator('#bill-y')).toContainText('फ़्री AI क्रेडिट');
     // R-480 (13 Nov 2026): the AI Assistant is live, so the Hindi head has no "coming soon" tag either.
     await expect(page.locator('#assistant .as-head')).not.toContainText('जल्द आ रहा है');
     await expect(page.locator('#as-msg .as-t')).toHaveText('Kal gym band rahega, sabko batao');

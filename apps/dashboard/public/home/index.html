@@ -449,6 +449,9 @@ select.field{appearance:none;background-image:linear-gradient(45deg,transparent 
 .bill button{min-height:42px;padding:0 16px;border:0;border-radius:12px;background:transparent;color:var(--ink2);font:800 14.5px var(--text);cursor:pointer;transition:background .25s,color .25s}
 .bill button[aria-pressed=true]{background:var(--ink);color:var(--bg)}
 .bill .save{color:var(--good)}
+/* R-483 (13 Nov 2026, owner): the yearly switch also names the free AI credits. On a phone the extra words go on a
+   second line under "Yearly", so the two buttons still fit side by side. */
+@media (max-width:520px){.bill #bill-y{display:inline-flex;flex-direction:column;justify-content:center;line-height:1.15;padding:6px 14px}.bill #bill-y .sep{display:none}.bill #bill-y .save{font-size:12.5px}}
 .bill button[aria-pressed=true] .save{color:#0E7A3E}
 .cards{display:grid;gap:16px;margin-top:30px;text-align:left}
 @media (min-width:920px){.cards{grid-template-columns:repeat(2,1fr);align-items:stretch;max-width:880px;margin-inline:auto}}
@@ -1001,7 +1004,7 @@ select.field{appearance:none;background-image:linear-gradient(45deg,transparent 
     <p class="lede" data-hi="हर पैक 3 महीने फ़्री से शुरू होता है, जितने भी मेंबर आपके पास हों। नो कार्ड, नो सेटअप फीस।">Every pack starts with 3 months free, for as many members as you have. No card, no setup fee.</p>
     <div class="bill" role="group" aria-label="Pay monthly or yearly" data-hi-label="मंथली या सालाना पे करें">
       <button type="button" id="bill-m" aria-pressed="true" data-hi="मंथली">Monthly</button>
-      <button type="button" id="bill-y" aria-pressed="false"><span data-hi="सालाना">Yearly</span> · <span class="save" data-hi="2 महीने फ़्री">2 months free</span></button>
+      <button type="button" id="bill-y" aria-pressed="false"><span data-hi="सालाना">Yearly</span><span class="sep"> · </span><span class="save" data-hi="2 महीने फ़्री + फ़्री AI क्रेडिट">2 months free + free AI credits</span></button>
     </div>
     <div class="cards" id="cards">
       <div class="card rv">

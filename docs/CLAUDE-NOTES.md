@@ -22,6 +22,10 @@ What I did: see the lines under this entry.
   else." Done: moved above "Everything else, in one place" (EN+HI, the e2e checks the order).
 - Also said: the green "+ 50 / + 100 AI credits" lines are there (default view is monthly); "it's all good to go".
 - Business address: answered in chat (needed only before online payments go live).
+- Also said: "should be considered keeping the default yearly, Or ... if the default is monthly, then can we add free AI
+  credits to the existing ... 2 months free plus free AI credits?" Done (his second option): monthly stays the default;
+  the yearly switch now says "Yearly · 2 months free + free AI credits" (HI "2 महीने फ़्री + फ़्री AI क्रेडिट"); on a phone
+  the extra words sit on a second line. G3 asserts both.
 - Shoulders direct-only + one swap tip: sent to the muscle-tips UAT helper to build first, then test.
 
 ## R-482. Muscle tip "Easy add" is wrong and unclear — 13 Nov 2026
