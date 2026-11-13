@@ -40,7 +40,7 @@ LOOKS = {
     # the square, and the list picture cropped like build-exercise-pictures.py thumb(). Measured on 150 main-set
     # pictures (background 15,19,27; ellipse 27,31,43; content from y 20 to 365 of 384).
     "D": {"name": "Drawn (main set)", "dark": {"bg": "#10131C", "glow": None, "floor": "#1B1F2B"},
-          "light": {"bg": "#10131C", "glow": None, "floor": "#1B1F2B"}, "pad": 0.05, "ellipse": True},
+          "light": {"bg": "#10131C", "glow": None, "floor": "#1B1F2B"}, "pad": 0.05, "ellipse": True, "halo": True},
 }
 
 
@@ -86,8 +86,24 @@ def compose(rgba, box, look, theme, side=SIZE):
     bg = background(look, theme, side)
     if LOOKS[look].get("ellipse"):
         bg = floor_ellipse(bg, alpha[..., 0], _rgb(LOOKS[look][theme]["floor"]), col)
+    if LOOKS[look].get("halo"):
+        bg = edge_halo(bg, alpha[..., 0])
     out = bg * (1 - alpha) + col * alpha
     return Image.fromarray((np.clip(out, 0, 1) * 255).astype(np.uint8))
+
+
+def edge_halo(bg, alpha):
+    """The main set's edge (look test r5): a firm dark contour round the whole drawing, then a faint lighter fringe
+    outside it, like a sticker cut-out. Drawn on the background, under the picture, so nothing inside changes."""
+    side = bg.shape[0]
+    m = Image.fromarray((np.clip(alpha, 0, 1) * 255).astype(np.uint8))
+    r1 = max(3, int(round(side * 0.0045)) | 1)          # ~1.7 px at 384: the dark contour
+    r2 = r1 + 2                                          # + ~1 px: the pale fringe
+    d1 = np.asarray(m.filter(ImageFilter.MaxFilter(r1)).filter(ImageFilter.GaussianBlur(0.5)), float)[..., None] / 255
+    d2 = np.asarray(m.filter(ImageFilter.MaxFilter(r2)).filter(ImageFilter.GaussianBlur(0.7)), float)[..., None] / 255
+    fringe = np.clip(d2 - d1, 0, 1) * 0.55
+    bg = bg * (1 - fringe) + _rgb("#4A5262") * fringe
+    return bg * (1 - d1) + _rgb("#1E2228") * d1
 
 
 def floor_ellipse(bg, alpha, colour, col=None):
@@ -108,7 +124,7 @@ def floor_ellipse(bg, alpha, colour, col=None):
     bx = xs[band]
     # look test r1: the main set's ellipse is about as wide as the whole drawing (a standing man with dumbbells, a
     # whole machine), not just the feet
-    hw = max((bx.max() - bx.min()) / 2 + 0.04 * side, 0.46 * (xs.max() - xs.min()))
+    hw = max((bx.max() - bx.min()) / 2 + 0.04 * side, 0.38 * (xs.max() - xs.min()))   # r5: 0.46 read as too wide
     hh = max(0.022 * side, 0.13 * hw)
     cx = 0.5 * (bx.max() + bx.min()) / 2 + 0.5 * (xs.max() + xs.min()) / 2
     cy = ymax - 0.2 * hh

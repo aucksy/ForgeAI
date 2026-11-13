@@ -344,12 +344,12 @@ def _make_hair(body, rig):
             for g in v.groups:
                 if g.group == vg.index:
                     w[v.index] = g.weight
-    keep = w > 0.45
+    keep = w > float(os.environ.get("FA_HAIR_MIN", 0.6))   # look test r5: 0.45 came down the sides like a bob
     print(f"[character] hair: scalp group {'found' if vg else 'MISSING'}, {int(keep.sum())} vertices")
     if keep.sum() < 50:
         return None
     return _shell(body, list(keep), "FA_HairCap", look.toon_material("FA_HairCap", *look.TOON["hair"]),
-                  gap=float(os.environ.get("FA_HAIR_GAP", 0.009)), thick=0.004)
+                  gap=float(os.environ.get("FA_HAIR_GAP", 0.006)), thick=0.004)
 
 
 def _mark_face(body, rig, pos):

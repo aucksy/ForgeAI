@@ -145,12 +145,6 @@ if mode == "stills":
     # soft floor shadow. The look (background, framing, size) is NOT baked in: export_pictures.py adds it later,
     # so a new look never needs a new render. Plus small side views and floor numbers for QA.
     look.setup_world_and_render(scene, res=cam_spec.get("still_res", 768), samples=cam_spec.get("still_samples", 32), transparent=True)
-    if look.DRAWN:   # diagnostics: every mesh Freestyle sees (look test r3: equipment drew almost no lines)
-        for o in scene.objects:
-            if o.type == "MESH":
-                print(f"[objs] {o.name} render={not o.hide_render} cam={o.visible_camera} polys={len(o.data.polygons)} "
-                      f"dims={tuple(round(v, 2) for v in o.dimensions)} mods={[m.type for m in o.modifiers]} "
-                      f"cols={[c.name for c in o.users_collection]}")
     if look.DRAWN and os.environ.get("FA_HULL_ON", "1") == "1":   # solid dark outlines round equipment (not cables)
         nh = 0
         for o in objs[2:]:

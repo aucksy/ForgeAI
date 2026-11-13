@@ -326,7 +326,7 @@ def set_light(cam):
 
 
 NO_LINES = "FA_NoLines"   # objects in this collection get no outline (the eyeballs: a plain face, like the main set)
-HULL_M = float(os.environ.get("FA_HULL", 0.0065))   # equipment outline width in metres (inverted hull)
+HULL_M = float(os.environ.get("FA_HULL", 0.005))   # equipment outline width in metres (inverted hull)
 
 
 def hull_material():
