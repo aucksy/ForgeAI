@@ -7,6 +7,18 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-482. Muscle tip "Easy add" is wrong and unclear — 13 Nov 2026
+He said (13 Nov, screenshot of Up next: Pull 2, "Easy add today: 3 sets of Standing Calf Raise for your calves.
+[Add to routine] [Not now] I skip this on purpose"):
+- "I don't understand what easy add is as a user."
+- Standing Calf Raise is ALREADY in one of his routines; he just skips it. Suggesting to add it to another routine
+  "doesn't make sense".
+- The intention of R-58 was: find muscles that are in NO routine (not trained at all), and muscles trained much less
+  than others (e.g. he does shoulders once a week even when he does all 3 routines), and suggest SWAPPING an exercise
+  he does comparatively more for one that trains the under-trained or untrained muscle.
+Cause (code): muscleTips.muscleTipFor judges 3 logged weeks (skipped = missing) and only checks whether TODAY's routine
+lists the muscle; the calf raise is in another routine, so it suggested adding it again.
+
 ## R-481. Google rejected 0.77.0 over watch heart rate; sent back with a video (his "A") — 13 Nov 2026
 Google (13 Nov 9:13 am): "Update rejected", 2 Health Connect issues, both only about HeartRate
 (android.permission.health.READ_HEART_RATE, the watch app's live heart rate; Wear OS 6 uses it instead of BODY_SENSORS):
