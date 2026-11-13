@@ -28,7 +28,7 @@ def _cyl(name, r, depth, verts=48, axis="X", mat=None, bevel=0.0, loc=(0, 0, 0),
     for p in me.polygons:
         p.use_smooth = True
     if bevel > 0:
-        b = ob.modifiers.new("Bevel", "BEVEL"); b.width = bevel; b.segments = 3; b.limit_method = "ANGLE"
+        b = ob.modifiers.new("Bevel", "BEVEL"); b.width = bevel; b.segments = 1 if look.DRAWN else 3; b.limit_method = "ANGLE"
         ob.modifiers.new("WN", "WEIGHTED_NORMAL").keep_sharp = True
     if mat:
         me.materials.append(mat)
@@ -49,7 +49,8 @@ def _box(name, size, loc=(0, 0, 0), mat=None, bevel=0.0, segs=4, parent=None, ro
     for p in me.polygons:
         p.use_smooth = True
     if bevel > 0:
-        b = ob.modifiers.new("Bevel", "BEVEL"); b.width = bevel; b.segments = segs; b.limit_method = "NONE"
+        # drawn look: one chamfer step, so every edge is a crease and gets an outline like the main set's machines
+        b = ob.modifiers.new("Bevel", "BEVEL"); b.width = bevel; b.segments = 1 if look.DRAWN else segs; b.limit_method = "NONE"
         ob.modifiers.new("WN", "WEIGHTED_NORMAL").keep_sharp = False
     if mat:
         me.materials.append(mat)
@@ -200,6 +201,17 @@ def cable_column(name="FA_Cable", pulley_h=1.9, height=2.15, face=(0.0, -1.0), g
     _box(name + "_ForkL", (0.012, 0.09, 0.10), loc=(0.035, -0.14, pulley_h), mat=M["frame"], bevel=0.003, parent=root)
     _box(name + "_ForkR", (0.012, 0.09, 0.10), loc=(-0.035, -0.14, pulley_h), mat=M["frame"], bevel=0.003, parent=root)
     _cyl(name + "_Wheel", 0.045, 0.025, axis="X", mat=M["iron"], bevel=0.004, loc=(0, -0.155, pulley_h), parent=root)
+    if look.DRAWN:
+        # R-490: the main set's cable machines are a full tower: a weight stack in its frame behind the post, a top
+        # beam with pulleys and the cable down to the stack. Behind the post (local +Y, away from the athlete), so
+        # the pulley, handle and cable the recipes place are unchanged.
+        st = weight_stack(name + "_Stack", h=height - 0.12, plates=14)
+        st.parent = root; st.location = (0, 0.30, 0)
+        _box(name + "_Beam", (0.10, 0.42, 0.07), loc=(0, 0.20, height - 0.04), mat=M["frame"], bevel=0.006, parent=root)
+        _box(name + "_Foot", (0.60, 0.80, 0.04), loc=(0, 0.22, 0.02), mat=M["frame"], bevel=0.006, parent=root)
+        for yy in (0.0, 0.30):
+            _cyl(name + f"_TopWheel{yy}", 0.05, 0.03, axis="X", mat=M["iron"], bevel=0.004, loc=(0, yy, height - 0.13), parent=root)
+        _seg(name + "_StackCable", (0, 0.30, height - 0.18), (0, 0.30, 0.09 + 14 * 0.038 + 0.05), 0.004, M["chrome"], parent=root)
     c, s = math.cos(rz), math.sin(rz)
     lx, ly = 0.0, -0.155
     pulley = Vector((lx * c - ly * s, lx * s + ly * c, pulley_h))   # world offset from the root (before root.location)
@@ -236,6 +248,8 @@ def cable_line(name="FA_CableLine", r=0.0075):
     reads on the dark app card; thicker than real (16 mm) so it still shows at phone size."""
     M = _mats()
     root = _empty(name)
+    if look.DRAWN:
+        r = r * 0.6   # the main set draws the cable as a thin line
     ob = _cyl(name + "_Wire", r, 1.0, verts=12, axis="Z", mat=M["chrome"], loc=(0, 0, 0.5), parent=root)
     return root
 

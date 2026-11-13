@@ -412,7 +412,7 @@ class Clip:
         """Every mesh of the cable family (columns, handles, cables) for camera framing."""
         out = []
         for col in getattr(self, "columns", []):
-            out += list(col["root"].children)
+            out += [c for c in col["root"].children_recursive if c.type == "MESH"]   # incl. the weight stack (R-490)
         for o in self.cable_movers():
             out += [ch for ch in o.children if ch.type == "MESH"]
         return out

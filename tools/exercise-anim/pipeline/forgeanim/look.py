@@ -28,6 +28,12 @@ if _ov:
     import json as _json
     LOOK.update(_json.loads(_ov))
 
+# The style (R-489/R-490, 13 Nov 2026): "drawn" = the flat drawn look of the main (RepDB) picture set: orange tank top,
+# charcoal shorts, white shoes, dark hair, plain face, flat two-tone colour, thin dark outlines (Freestyle), light
+# grey outlined equipment. "anatomy" = the retired grey 3D athlete with red muscles (look A), kept for old clips.
+STYLE = os.environ.get("FA_STYLE", "drawn")
+DRAWN = STYLE == "drawn"
+
 PALETTE = {
     "skin": os.environ.get("FA_SKIN", "#C6C9CD"),        # cool light grey anatomy
     "groove": os.environ.get("FA_GROOVE", "#43464C"),      # colour the deepest grooves fall to
@@ -39,8 +45,29 @@ PALETTE = {
     "chrome": "#C4C8CE",
     "frame": "#D9DBDF",       # bench / machine frame
     "pad": "#4A4E55",         # bench pad
-    "bg": "#FFFFFF",
+    "bg": "#10131C" if DRAWN else "#FFFFFF",
 }
+
+# Drawn look colours, (lit, shade), measured on the main set (apps/mobile/assets/exercise-pictures, 150 pictures):
+# skin #F0B088, tank #F05C14, shorts #4A5058, hair #45302A, equipment #AEB8C2 / #8494A0, background #10131C.
+TOON = {
+    "skin": ("#F2B28A", "#DE9A72"),
+    "hair": ("#4A3329", "#35241C"),
+    "tank": ("#F25C14", "#D84A0E"),
+    "shorts": ("#4E545C", "#3B4047"),
+    "shoes": ("#FAFAFA", "#CDD3DA"),
+    "FA_Iron": ("#8E98A3", "#68727D"),
+    "FA_Chrome": ("#C8D0D8", "#9AA5B0"),
+    "FA_Frame": ("#B2BDC8", "#8693A0"),
+    "FA_Pad": ("#98A4B1", "#727E8B"),
+    "FA_Rubber": ("#4A5058", "#353A41"),
+    "FA_PlateFace": ("#5A626C", "#454C55"),
+    "FA_BallMat": ("#8E98A3", "#68727D"),
+}
+LINE = os.environ.get("FA_LINE", "#1E2228")              # outline colour
+LINE_PX = float(os.environ.get("FA_LINE_PX", 2.3))        # outline width in pixels at the 768 px still
+LIGHT_CAM = (-0.45, 0.55, 0.70)                          # light from the upper left, in front (camera space)
+SHADE_AT = float(os.environ.get("FA_SHADE_AT", 0.0))     # N.L below this = the shade colour
 
 
 def _img(path, colorspace="Non-Color"):
@@ -55,6 +82,8 @@ def skin_material(name="FA_Skin"):
 
     The highlight comes from the point attribute fa_hl (0..1), written per exercise by muscles.set_highlight().
     """
+    if DRAWN:
+        return toon_material(name, *TOON["skin"], over=("fa_scalp", 0.5, TOON["hair"]))
     mat = bpy.data.materials.get(name)
     if mat:
         return mat
@@ -166,6 +195,9 @@ def skin_material(name="FA_Skin"):
 
 
 def flat_material(name, hexcol, roughness=0.5, metallic=0.0, spec=0.4, coat=0.0):
+    if DRAWN:
+        lit, shade = TOON.get(name, (hexcol, _darker(hexcol)))
+        return toon_material(name, lit, shade)
     mat = bpy.data.materials.get(name)
     if mat:
         return mat
@@ -180,6 +212,8 @@ def flat_material(name, hexcol, roughness=0.5, metallic=0.0, spec=0.4, coat=0.0)
 
 
 def shorts_material(name="FA_Shorts"):
+    if DRAWN:
+        return toon_material(name, *TOON["shorts"])
     mat = bpy.data.materials.get(name)
     if mat:
         return mat
@@ -212,6 +246,104 @@ def textured_alpha_material(name, image_path, hexcol, roughness=0.6):
     return mat
 
 
+def _darker(hexcol, k=0.78):
+    h = hexcol.lstrip("#")
+    return "#" + "".join(f"{int(int(h[i:i + 2], 16) * k):02X}" for i in (0, 2, 4))
+
+
+def toon_group():
+    """FA_Toon: flat colour in two tones (lit / shade by the angle to one light that follows the camera), as
+    emission, so the colours land exactly on the measured hex values. One shared group: set_light() aims it."""
+    ng = bpy.data.node_groups.get("FA_Toon")
+    if ng:
+        return ng
+    ng = bpy.data.node_groups.new("FA_Toon", "ShaderNodeTree")
+    ng.interface.new_socket(name="Lit", in_out="INPUT", socket_type="NodeSocketColor")
+    ng.interface.new_socket(name="Shade", in_out="INPUT", socket_type="NodeSocketColor")
+    ng.interface.new_socket(name="Shader", in_out="OUTPUT", socket_type="NodeSocketShader")
+    N = ng.nodes; L = ng.links
+    gi = N.new("NodeGroupInput"); go = N.new("NodeGroupOutput")
+    geo = N.new("ShaderNodeNewGeometry")
+    lv = N.new("ShaderNodeCombineXYZ"); lv.name = "FA_LIGHT"
+    for i, v in enumerate((0.0, -0.6, 0.8)):
+        lv.inputs[i].default_value = v
+    dot = N.new("ShaderNodeVectorMath"); dot.operation = "DOT_PRODUCT"
+    L.new(geo.outputs["Normal"], dot.inputs[0]); L.new(lv.outputs[0], dot.inputs[1])
+    mr = N.new("ShaderNodeMapRange"); mr.interpolation_type = "SMOOTHSTEP"
+    mr.inputs["From Min"].default_value = SHADE_AT - 0.04; mr.inputs["From Max"].default_value = SHADE_AT + 0.04
+    L.new(dot.outputs["Value"], mr.inputs["Value"])
+    mix = N.new("ShaderNodeMix"); mix.data_type = "RGBA"
+    L.new(mr.outputs[0], mix.inputs["Factor"]); L.new(gi.outputs["Shade"], mix.inputs[6]); L.new(gi.outputs["Lit"], mix.inputs[7])
+    em = N.new("ShaderNodeEmission"); em.inputs["Strength"].default_value = 1.0
+    L.new(mix.outputs[2], em.inputs["Color"]); L.new(em.outputs[0], go.inputs["Shader"])
+    return ng
+
+
+def toon_material(name, lit, shade, over=None):
+    """A drawn-look material. over = (point attribute, threshold, (lit, shade)): where the attribute passes the
+    threshold the second pair of colours is used (the hair colour painted on the scalp)."""
+    mat = bpy.data.materials.get(name)
+    if mat:
+        return mat
+    mat = bpy.data.materials.new(name); mat.use_nodes = True
+    N = mat.node_tree.nodes; L = mat.node_tree.links; N.clear()
+    out = N.new("ShaderNodeOutputMaterial")
+    g = N.new("ShaderNodeGroup"); g.node_tree = toon_group()
+    if over:
+        at = N.new("ShaderNodeAttribute"); at.attribute_name = over[0]
+        st = N.new("ShaderNodeMath"); st.operation = "GREATER_THAN"; st.inputs[1].default_value = over[1]
+        L.new(at.outputs["Fac"], st.inputs[0])
+        for sock, a, b in (("Lit", lit, over[2][0]), ("Shade", shade, over[2][1])):
+            mx = N.new("ShaderNodeMix"); mx.data_type = "RGBA"
+            mx.inputs[6].default_value = srgb(a); mx.inputs[7].default_value = srgb(b)
+            L.new(st.outputs[0], mx.inputs["Factor"]); L.new(mx.outputs[2], g.inputs[sock])
+    else:
+        g.inputs["Lit"].default_value = srgb(lit); g.inputs["Shade"].default_value = srgb(shade)
+    L.new(g.outputs[0], out.inputs["Surface"])
+    return mat
+
+
+def set_light(cam):
+    """Aim the drawn look's light: LIGHT_CAM (camera space) turned into world space."""
+    ng = bpy.data.node_groups.get("FA_Toon")
+    if not ng or cam is None:
+        return
+    v = (cam.matrix_world.to_3x3() @ Vector(LIGHT_CAM)).normalized()
+    lv = ng.nodes["FA_LIGHT"]
+    for i in range(3):
+        lv.inputs[i].default_value = v[i]
+
+
+NO_LINES = "FA_NoLines"   # objects in this collection get no outline (the eyeballs: a plain face, like the main set)
+
+
+def setup_lines(scene):
+    """Thin dark outlines (Freestyle, works in Cycles): outer contour, silhouettes, creases (machine edges) and
+    material edges. Faces marked as the face (character.py) get only the outer contour: a plain face."""
+    import math
+    r = scene.render
+    r.use_freestyle = True; r.line_thickness_mode = "ABSOLUTE"; r.line_thickness = 1.0
+    vl = scene.view_layers[0]; vl.use_freestyle = True
+    fs = vl.freestyle_settings
+    fs.mode = "EDITOR"; fs.crease_angle = math.radians(float(os.environ.get("FA_CREASE", 140)))
+    fs.use_culling = False; fs.use_smoothness = True
+    while len(fs.linesets):
+        fs.linesets.remove(fs.linesets[0])
+    nol = bpy.data.collections.get(NO_LINES)
+    for nm, outer_only in (("FA_Lines", False), ("FA_Outer", True)):
+        ls = fs.linesets.new(nm)
+        ls.select_by_visibility = True; ls.visibility = "VISIBLE"; ls.select_by_edge_types = True
+        ls.select_silhouette = not outer_only; ls.select_border = False; ls.select_crease = not outer_only
+        ls.select_material_boundary = not outer_only; ls.select_contour = not outer_only
+        ls.select_external_contour = True
+        if not outer_only:
+            ls.select_by_face_marks = True; ls.face_mark_negation = "EXCLUSIVE"; ls.face_mark_condition = "ONE"
+        if nol is not None:
+            ls.select_by_collection = True; ls.collection = nol; ls.collection_negation = "EXCLUSIVE"
+        st = ls.linestyle
+        st.color = srgb(LINE)[:3]; st.thickness = LINE_PX; st.thickness_position = "CENTER"; st.alpha = 1.0
+
+
 def setup_world_and_render(scene, res=720, samples=48, transparent=False):
     scene.render.engine = "CYCLES"
     c = scene.cycles
@@ -234,6 +366,11 @@ def setup_world_and_render(scene, res=720, samples=48, transparent=False):
     lp = N.new("ShaderNodeLightPath"); mix = N.new("ShaderNodeMixShader")
     L.new(lp.outputs["Is Camera Ray"], mix.inputs[0]); L.new(env.outputs[0], mix.inputs[1]); L.new(camv.outputs[0], mix.inputs[2])
     L.new(mix.outputs[0], out.inputs[0])
+    if DRAWN:
+        # flat emission colours: a few samples only smooth the edges; no denoiser (it would soften the outlines)
+        c.samples = min(samples, 16); c.use_adaptive_sampling = False; c.use_denoising = False
+        scene.render.filter_size = 1.2
+        setup_lines(scene)
 
 
 def _aim(obj, target):
@@ -248,6 +385,9 @@ def setup_lights(scene, center=(0, 0, 1.0), yaw_deg=-35.0):
     c = Vector(center)
     for o in [o for o in scene.objects if o.name.startswith("FA_Light")]:
         bpy.data.objects.remove(o)
+    if DRAWN:   # emission colours: no lamps, only the toon light that follows the camera
+        set_light(scene.camera)
+        return
     rig = [  # name, offset in camera-relative frame (camera looks along +Y from -Y), energy W, size m
         ("FA_Light_Key", (-2.6, -2.4, 2.6), LOOK["key"], 2.2),
         ("FA_Light_Fill", (2.8, -1.8, 0.9), LOOK["fill"], 3.2),

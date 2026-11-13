@@ -171,6 +171,120 @@ def _flat_attr(body, rig, pos):
     _write_point_attr(body.data, "fa_flat", np.clip(np.maximum(w * 0.85, seam * 0.8), 0, 1).astype("float32"))
 
 
+def _shell(body, keep, name, mat, gap, thick):
+    """A cloth shell grown from the body's own faces (the shorts method): the faces whose vertices are all in `keep`
+    (a per-vertex bool list), pushed out by `gap` along the normal and given `thick`ness. Follows the rig for free."""
+    pos = rest_positions(body)
+    me = body.data
+    faces = {f.index for f in me.polygons if all(keep[i] for i in f.vertices)}
+    sh = body.copy(); sh.data = me.copy(); sh.name = name; sh.data.name = name
+    bpy.context.scene.collection.objects.link(sh)
+    for m in list(sh.modifiers):
+        if m.type != "ARMATURE":
+            sh.modifiers.remove(m)
+    inv = sh.matrix_world.inverted()
+    for v in sh.data.vertices:
+        v.co = inv @ pos[v.index]
+    sh.shape_key_clear()
+    bm = bmesh.new(); bm.from_mesh(sh.data)
+    bmesh.ops.delete(bm, geom=[f for f in bm.faces if f.index not in faces], context="FACES")
+    bmesh.ops.delete(bm, geom=[v for v in bm.verts if not v.link_faces], context="VERTS")
+    bm.to_mesh(sh.data); bm.free()
+    sh.data.materials.clear(); sh.data.materials.append(mat)
+    d = sh.modifiers.new("Gap", "DISPLACE"); d.strength = gap; d.mid_level = 0.0
+    s = sh.modifiers.new("Thick", "SOLIDIFY"); s.thickness = thick; s.offset = 1.0; s.use_rim = True
+    sub = sh.modifiers.new("Subdiv", "SUBSURF"); sub.levels = 1; sub.render_levels = 2
+    for p in sh.data.polygons:
+        p.use_smooth = True
+    return sh
+
+
+def _erode(body, flags, rings):
+    """flags shrunk by `rings` edge steps (the skin well inside a cloth shell, safe to hide)."""
+    nb = [[] for _ in body.data.vertices]
+    for e in body.data.edges:
+        a, b = e.vertices
+        nb[a].append(b); nb[b].append(a)
+    f = list(flags)
+    for _ in range(rings):
+        f = [f[i] and all(f[j] for j in nb[i]) for i in range(len(f))]
+    return f
+
+
+def _make_tank(body, rig):
+    """Orange tank top (drawn look, R-490): the torso from just over the shorts' waistband up to the shoulders, with
+    deep armholes (the whole shoulder cap shows, as in the main picture set), ~5 cm straps and a round neck."""
+    import numpy as np
+    pos = rest_positions(body)
+    P = np.array([tuple(p) for p in pos]); x = np.abs(P[:, 0]); y = P[:, 1]; z = P[:, 2]
+    G = muscles.group_sums(body, rig); LM = muscles.landmarks(rig)
+    hip = LM["hip"]; neck = LM["neck"]; nip_z = LM["nipple"][2]; sh = LM["shoulder"]
+    waist_z = hip[2] + 0.115                       # the shorts' waistband (_make_shorts)
+    hem_z = waist_z - float(os.environ.get("FA_TANK_HEM", 0.045))
+    torso = (G["torso"] + G["shoulder"] + G["pelvis"] > 0.5) & (G["arm"] < 0.35) & (G["leg"] < 0.3)
+    # armhole: the outer edge of the tank runs from the strap (x ~ shoulder - 9 cm at the top of the shoulder)
+    # down to the side seam under the armpit
+    z_a = nip_z - 0.035; z_t = neck[2]
+    t = np.clip((z - z_a) / max(1e-3, z_t - z_a), 0, 1)
+    x_bot = max(0.15, abs(sh[0]) - 0.01); x_top = float(os.environ.get("FA_STRAP_OUT", 0.135))
+    x_edge = x_bot + (x_top - x_bot) * t ** 0.7
+    arm_ok = (z < z_a) | (x < x_edge)
+    # round neck: deeper in front than at the back
+    front = y < neck[1]
+    nz = np.where(front, neck[2] - 0.035, neck[2] + 0.02)
+    nh = np.where(front, 0.085, 0.045)
+    neck_ok = (x / 0.085) ** 2 + ((z - nz) / nh) ** 2 > 1.0
+    keep = torso & (z > hem_z) & (z < neck[2] + 0.05) & arm_ok & neck_ok
+    print(f"[character] tank: {int(keep.sum())} vertices, hem z {hem_z:.3f}, shoulder x {sh[0]:.3f}, neck z {neck[2]:.3f}")
+    tank = _shell(body, list(keep), "FA_Tank", look.toon_material("FA_Tank", *look.TOON["tank"]),
+                  gap=float(os.environ.get("FA_TANK_GAP", 0.009)), thick=0.003)
+    deep = _erode(body, list(keep & (z > hem_z + 0.025)), 3)
+    vg = body.vertex_groups.new(name="fa_under_tank"); vg.add([i for i, f in enumerate(deep) if f], 1.0, "REPLACE")
+    m = body.modifiers.new("FA_HideUnderTank", "MASK"); m.vertex_group = "fa_under_tank"; m.invert_vertex_group = True
+    return tank
+
+
+def _make_hair(body, rig):
+    """Short dark hair as a solid cap (drawn look): a shell over the scalp, so it outlines like a drawing."""
+    import numpy as np
+    vg = body.vertex_groups.get("scalp")
+    n = len(body.data.vertices)
+    w = np.zeros(n)
+    if vg:
+        for v in body.data.vertices:
+            for g in v.groups:
+                if g.group == vg.index:
+                    w[v.index] = g.weight
+    keep = w > 0.45
+    print(f"[character] hair: scalp group {'found' if vg else 'MISSING'}, {int(keep.sum())} vertices")
+    if keep.sum() < 50:
+        return None
+    return _shell(body, list(keep), "FA_HairCap", look.toon_material("FA_HairCap", *look.TOON["hair"]),
+                  gap=float(os.environ.get("FA_HAIR_GAP", 0.009)), thick=0.004)
+
+
+def _mark_face(body, rig, pos):
+    """Freestyle face marks on the face (eyes, nose, mouth): those get no inner lines, so the face stays plain like
+    the main picture set; the head's outer contour still draws."""
+    B = rig.data.bones
+    eye = None
+    for nm in ("eye.L", "eye.R"):
+        if nm in B:
+            p = rig.matrix_world @ B[nm].head_local
+            eye = p if eye is None else (eye + p) / 2
+    if eye is None:
+        hd = rig.matrix_world @ B["head"].head_local
+        eye = hd + Vector((0, -0.08, 0.09))
+    c = eye + Vector((0, 0, -0.035))
+    me = body.data
+    near = [((p - c).x / 0.065) ** 2 + ((p - c).z / 0.085) ** 2 < 1.0 and p.y < c.y + 0.035 for p in pos]
+    k = 0
+    for f in me.polygons:
+        if any(near[i] for i in f.vertices):
+            f.use_freestyle_mark = True; k += 1
+    print(f"[character] face marks: {k} faces around {tuple(round(v, 3) for v in c)}")
+
+
 def _add_asset(body, rel_mhclo, make_mat):
     path = os.path.join(MH, rel_mhclo)
     obj = HumanService.add_mhclo_asset(path, body, asset_type="Clothes", subdiv_levels=0, material_type="MAKESKIN")
@@ -199,6 +313,8 @@ def build_character():
         p.use_smooth = True
 
     shorts = _make_shorts(body, rig)
+    if look.DRAWN:
+        return _drawn_rest(body, rig, shorts, pos)
     hair = _add_asset(body, "hair/short02/short02.mhclo",
                       lambda: look.textured_alpha_material("FA_Hair", os.path.join(MH, "hair/short02/short02_diffuse.png"), look.PALETTE["hair"], 0.7))
     brows = _add_asset(body, "eyebrows/eyebrow001/eyebrow001.mhclo",
@@ -209,3 +325,33 @@ def build_character():
     shorts.data.materials.clear(); shorts.data.materials.append(look.shorts_material())
     sub = body.modifiers.new("Subdiv", "SUBSURF"); sub.levels = 1; sub.render_levels = 2
     return {"body": body, "rig": rig, "shorts": shorts, "hair": hair, "brows": brows, "eyes": eyes}
+
+
+def _drawn_rest(body, rig, shorts, pos):
+    """The drawn look's clothes (R-490): orange tank top, charcoal shorts, white trainers (CC0 MakeHuman shoes05),
+    a solid dark hair cap, a plain face (eyeballs in skin colour fill the sockets, no lines on the face)."""
+    tank = _make_tank(body, rig)
+    hair = _make_hair(body, rig)
+    eyes = _add_asset(body, "eyes/high-poly/high-poly.mhclo", lambda: look.toon_material("FA_EyesSkin", *look.TOON["skin"]))
+    nol = bpy.data.collections.get(look.NO_LINES) or bpy.data.collections.new(look.NO_LINES)
+    if nol.name not in bpy.context.scene.collection.children:
+        bpy.context.scene.collection.children.link(nol)
+    nol.objects.link(eyes)
+    shoes = None
+    sp = os.path.join(MH, "clothes/shoes05/shoes05.mhclo")
+    if os.path.isfile(sp):
+        shoes = _add_asset(body, "clothes/shoes05/shoes05.mhclo", lambda: look.toon_material("FA_Shoes", *look.TOON["shoes"]))
+    else:
+        print("[character] MISSING shoes05: run setup_assets.py")
+    _mark_face(body, rig, pos)
+    body.data.materials.clear(); body.data.materials.append(look.skin_material())
+    shorts.data.materials.clear(); shorts.data.materials.append(look.shorts_material())
+    sub = body.modifiers.new("Subdiv", "SUBSURF"); sub.levels = 1; sub.render_levels = 2
+    if shoes is not None:
+        import numpy as np
+        dg = bpy.context.evaluated_depsgraph_get()
+        ev = shoes.evaluated_get(dg); m = ev.to_mesh()
+        print(f"[character] shoes lowest z {min((ev.matrix_world @ v.co).z for v in m.vertices):.4f}")
+        ev.to_mesh_clear()
+    return {"body": body, "rig": rig, "shorts": shorts, "hair": hair, "brows": None, "eyes": eyes,
+            "tank": tank, "shoes": shoes}

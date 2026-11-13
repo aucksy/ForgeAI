@@ -21,6 +21,7 @@ WANT = [
     ("makehuman_system_assets_cc0.zip", "eyes/materials/brown"),
     ("makehuman_system_assets_cc0.zip", "eyebrows/eyebrow001/"),
     ("makehuman_system_assets_cc0.zip", "eyelashes/eyelashes01/"),
+    ("makehuman_system_assets_cc0.zip", "clothes/shoes05/"),   # white trainers, drawn look (R-490)
     ("skins02_cc0.zip", "skins/mindfront_aksel_skin/"),
     ("skins02_cc0.zip", "packs/skins02.json"),
 ]
@@ -83,7 +84,7 @@ def open_zip(name, url):
 
 
 def main():
-    if os.path.isfile(os.path.join(DEST, "packs", "skins02.json")) and os.path.isdir(os.path.join(DEST, "skins", "mindfront_aksel_skin")):
+    if os.path.isfile(os.path.join(DEST, "packs", "skins02.json")) and os.path.isdir(os.path.join(DEST, "skins", "mindfront_aksel_skin"))             and os.path.isfile(os.path.join(DEST, "clothes", "shoes05", "shoes05.mhclo")):
         print("assets already in", DEST); return
     os.makedirs(DEST, exist_ok=True)
     zips = {n: open_zip(n, u) for n, u in PACKS.items()}

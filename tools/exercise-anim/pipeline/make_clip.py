@@ -95,8 +95,9 @@ if mode == "stills":
     # soft floor shadow. The look (background, framing, size) is NOT baked in: export_pictures.py adds it later,
     # so a new look never needs a new render. Plus small side views and floor numbers for QA.
     look.setup_world_and_render(scene, res=cam_spec.get("still_res", 768), samples=cam_spec.get("still_samples", 32), transparent=True)
-    bpy.ops.mesh.primitive_plane_add(size=40, location=(0, 0, 0))
-    floor = bpy.context.active_object; floor.name = "FA_ShadowFloor"; floor.is_shadow_catcher = True
+    if not look.DRAWN:   # the drawn look has no lamps: export_pictures.py draws its floor ellipse instead
+        bpy.ops.mesh.primitive_plane_add(size=40, location=(0, 0, 0))
+        floor = bpy.context.active_object; floor.name = "FA_ShadowFloor"; floor.is_shadow_catcher = True
     order = []
     for k in keys:
         if k[1] not in [p for p, _ in order]:

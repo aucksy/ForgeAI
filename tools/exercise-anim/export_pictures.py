@@ -35,6 +35,12 @@ LOOKS = {
     # C: a light studio tile (the Hevy / Gymvisual look): the grey body and red muscles read best on light grey.
     "C": {"name": "Studio tile", "dark": {"bg": "#D9DCE1", "glow": "#F4F5F7", "floor": None},
           "light": {"bg": "#D9DCE1", "glow": "#F4F5F7", "floor": None}, "pad": 0.10, "shadow": 0.35},
+    # D (R-490, 13 Nov 2026): the main RepDB set exactly (renders made with FA_STYLE=drawn, the default): flat card
+    # #10131C, a lighter flat floor ellipse #1B1F2B under whatever touches the floor, the drawing filling ~90 % of
+    # the square, and the list picture cropped like build-exercise-pictures.py thumb(). Measured on 150 main-set
+    # pictures (background 15,19,27; ellipse 27,31,43; content from y 20 to 365 of 384).
+    "D": {"name": "Drawn (main set)", "dark": {"bg": "#10131C", "glow": None, "floor": "#1B1F2B"},
+          "light": {"bg": "#10131C", "glow": None, "floor": "#1B1F2B"}, "pad": 0.05, "ellipse": True},
 }
 
 
@@ -77,8 +83,48 @@ def compose(rgba, box, look, theme, side=SIZE):
     sh = LOOKS[look].get("shadow", 0.4)
     is_shadow = (col.max(-1, keepdims=True) < 0.05) & (alpha < 0.9)
     alpha = np.where(is_shadow, alpha * sh, alpha)
-    out = background(look, theme, side) * (1 - alpha) + col * alpha
+    bg = background(look, theme, side)
+    if LOOKS[look].get("ellipse"):
+        bg = floor_ellipse(bg, alpha[..., 0], _rgb(LOOKS[look][theme]["floor"]))
+    out = bg * (1 - alpha) + col * alpha
     return Image.fromarray((np.clip(out, 0, 1) * 255).astype(np.uint8))
+
+
+def floor_ellipse(bg, alpha, colour):
+    """The main set's floor: a flat lighter ellipse under what touches the floor (feet, bench legs, a lying body).
+    Its width follows the lowest 4 % of the drawing; its height is ~13 % of its width (measured on the main set)."""
+    side = bg.shape[0]
+    ys, xs = np.nonzero(alpha > 0.5)
+    if len(ys) == 0:
+        return bg
+    ymax = ys.max()
+    band = ys >= ymax - 0.04 * side
+    bx = xs[band]
+    hw = (bx.max() - bx.min()) / 2 + 0.04 * side
+    hh = max(0.022 * side, 0.13 * hw)
+    cx = (bx.max() + bx.min()) / 2
+    cy = ymax - 0.2 * hh
+    Y, X = np.mgrid[0:side, 0:side]
+    e = np.sqrt(((X - cx) / hw) ** 2 + ((Y - cy) / hh) ** 2)
+    w = np.clip((1 - e) * hh / 1.2 + 0.5, 0, 1)[..., None]
+    return bg * (1 - w) + colour * w
+
+
+def drawn_thumb(im):
+    """The list picture as build-exercise-pictures.py thumb() makes it from a main-set picture: the start picture
+    cropped to what is drawn (1st-99th percentile, x1.08), square."""
+    a = np.asarray(im.convert("RGB"), float) / 255
+    drawn = np.linalg.norm(a - _rgb("#10131C"), axis=-1) > 0.12
+    ys, xs = np.nonzero(drawn)
+    H, W = drawn.shape
+    if len(xs) == 0:
+        return im.resize((THUMB, THUMB), Image.LANCZOS)
+    x0, x1, y0, y1 = np.percentile(xs, 1), np.percentile(xs, 99), np.percentile(ys, 1), np.percentile(ys, 99)
+    side = min(max(x1 - x0, y1 - y0) * 1.08, W, H)
+    cx, cy = (x0 + x1) / 2, (y0 + y1) / 2
+    left = int(round(min(max(cx - side / 2, 0), W - side)))
+    top = int(round(min(max(cy - side / 2, 0), H - side)))
+    return im.crop((left, top, left + int(side), top + int(side))).resize((THUMB, THUMB), Image.LANCZOS)
 
 
 def thumb(rgba, look, theme):
@@ -94,14 +140,18 @@ def export_key(stills, key, out, look, theme, preview=False):
     if "start" not in ims:
         raise SystemExit(f"{key}: no {key}__start.png in {stills}")
     box = union_box([np.asarray(i, float)[..., 3] / 255 for i in ims.values()])
+    if LOOKS[look].get("ellipse"):   # room under the lowest point for the floor ellipse
+        x0, y0, x1, y1 = box
+        box = (x0, y0, x1, y1 + 0.03 * max(x1 - x0, y1 - y0))
     os.makedirs(out, exist_ok=True)
     ext, kw = (".png", {}) if preview else (".webp", {"quality": QUALITY, "method": 6})
     written = []
+    made = {}
     for t, im in ims.items():
         p = os.path.join(out, f"{key}__{t}{ext}")
-        compose(im, box, look, theme).save(p, **kw); written.append(p)
+        made[t] = compose(im, box, look, theme); made[t].save(p, **kw); written.append(p)
     p = os.path.join(out, f"{key}__thumb{ext}")
-    thumb(ims["start"], look, theme).save(p, **kw); written.append(p)
+    (drawn_thumb(made["start"]) if LOOKS[look].get("ellipse") else thumb(ims["start"], look, theme)).save(p, **kw); written.append(p)
     return written
 
 
