@@ -1,10 +1,10 @@
 # Exercise pictures: decisions and run log
 
-The one central record for the MettleUp exercise pictures (start + end stills of the grey 3D athlete for
+The one central record for the MettleUp exercise pictures (start + end stills of the drawn athlete for
 exercises with no RepDB picture). Used by every chat and by the daily scheduled job
 (`~/.claude/scheduled-tasks/mettleup-daily-exercise-pictures/SKILL.md`).
 
-**Approved look:** (none: look A retired 13 Nov 2026, R-489. New pictures must match the main RepDB set: drawn man, orange tank top. Do not export until a new look is filled in here.)
+**Approved look:** D (drawn, main set): the drawn man of the main RepDB set (orange tank top, charcoal shorts, white shoes, thin dark outlines, flat two-tone shading, outlined grey equipment, floor ellipse on the dark card). Renders use FA_STYLE=drawn (the default); export with `--look D --theme dark`. Look A (grey 3D, red muscles) retired 13 Nov 2026, R-489; none of it is left in the app.
 
 (Owner, 12 Nov 2026: look A approved, and "I will not need to approve them going forward. You can just review them
 yourselves, ensure they are accurate, nothing incorrect and just finalize them yourself." So no owner step: every
@@ -43,7 +43,7 @@ https://claude.ai/artifact/1ZwD5CZb1LPZCK58DQ6huw)
 - A free hand must rest on something real (hip, belly, pad, wall, bench). A raised or open floating hand fails.
 - Floor holds seen from straight above (side plank, Copenhagen plank) read as lying down: camera from the front-side,
   low, with the forearm under the shoulder.
-- The fresh reviewer gets ONLY the look-A pairs and the names. Check each claim yourself (it was right on 12 of 15 on
+- The fresh reviewer gets ONLY the look-D pairs (plus side check views) and the research one-liners. Check each claim yourself (it was right on 12 of 15 on
   12 Nov).
 
 ## Needs review (failed QA twice)
@@ -93,6 +93,23 @@ https://claude.ai/artifact/1ZwD5CZb1LPZCK58DQ6huw)
   camera), lying_cable_curl (side camera; the post hid the legs).
 
 ## Run log (newest first)
+
+### 13 Nov 2026 (look D, R-490; renders 43473054345 all keys + fix round 43478713570)
+- New look D: the drawn man of the main set, made in Blender (toon two-tone material, Freestyle body lines, an
+  inverted-hull outline on equipment) plus 2D finishing in export_pictures.py (floor ellipse, dark halo edge). Look
+  test: 5 rounds of six side-by-side sheets (3 main-set pictures + ours) to a fresh reviewer; the last round still
+  spotted ours on 5 of 6, mostly with low or medium confidence, from equipment detail (ours is simpler and chunkier),
+  hair and framing. Halo, ellipse, hair and outline width were fixed after that round; equipment detail is the known
+  remaining difference.
+- Re-made every key that has a recipe (105) in look D; 6 pose reviewers (fresh, high effort) judged each start/end
+  pair against its research file. 81 pass and are in the app (ownPictures.ts, 81 exercises; 5 are holds). 24 fail,
+  reasons in qa.json (look D). Removed from the app because they failed in look D: air_bike, barbell_21s,
+  cable_hip_adduction, cable_skull_crusher, elliptical, high_knees, incline_bench_preacher_curl, iso_lateral_high_row,
+  leg_press_calf_raise, smith_machine_incline_press.
+- Pipeline fixes found by the review: body anchors measure the whole body (the drawn look masks the skin under the
+  tank top, so chest-pad anchors failed); the camera frames the shoes too (feet were cut off); six cameras turned so
+  plates stop covering the face. Overhead barbell extensions and the dead hang tear the tank top at the shoulders
+  (skin pokes through when the arms go overhead): fix the tank shell before retrying them.
 
 ### 13 Nov 2026 (cable helper; render runs 43446766569, 43448776510, 43453523374, 43457778277)
 - New prop family: the CABLE COLUMN (post, pulley box at any height, steel cable from the pulley to the handle; D-handle,

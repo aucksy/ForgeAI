@@ -1,4 +1,5 @@
-# UAT upic (exercise pictures, 12 Nov 2026): our own start/end pictures (the grey 3D athlete, look A) on the
+# UAT upic (exercise pictures, 12 Nov 2026): our own start/end pictures (since 13 Nov, R-490: look D, the drawn
+# man in the orange tank top of the main set; the grey 3D look A is gone) on the
 # exercise page for exercises RepDB has no picture of. From a fresh install with the demo (part_upic).
 # Happy path: a two-picture exercise (Tate Press: Start + End), a dumbbell curl (Alternating Hammer Curl),
 # a hold (Wall Sit: one "Hold" picture, no End). Negative: an exercise with no picture of either kind
@@ -121,6 +122,26 @@ appId: com.mettleup.app
 - waitForAnimationToEnd:
     timeout: 3000
 - takeScreenshot: rel-pics-03d-machine
+- back
+# Look D (13 Nov 2026, R-490): an exercise that only got a picture in the drawn look: Start + End.
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Clear the search'
+- tapOn: "Clear the search"
+- tapOn: "Search exercises"
+- inputText: " weighted chin-up"
+- hideKeyboard
+- tapOn:
+    text: "View Weighted Chin-Up"
+    index: 0
+- extendedWaitUntil:
+    visible: "Start position of Weighted Chin-Up"
+    timeout: 20000
+- assertVisible: "End position of Weighted Chin-Up"
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: rel-pics-03e-drawn
 - back
 # A hold: one picture, labelled Hold, no End.
 # The search keeps its text after back: clear it with the X (eraseText left letters behind on 12 Nov).

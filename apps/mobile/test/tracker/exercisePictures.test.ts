@@ -121,32 +121,35 @@ describe('what the exercise page shows', () => {
   });
 });
 
-describe('our own pictures (the grey 3D athlete, for exercises RepDB has no picture of)', () => {
+describe('our own pictures (the drawn man of the main set, for exercises RepDB has no picture of)', () => {
   const OWN = resolve(MOBILE, 'assets/exercise-pictures-own');
-  // Every exercise that passed the picture review (tools/exercise-anim/qa.json). Add keys here when a run adds them.
+  // Every exercise that passed the picture review (tools/exercise-anim/qa.json), look D (13 Nov 2026, R-490: the
+  // grey 3D look A was retired and every picture re-made as the drawn man in the orange tank top). Add keys here
+  // when a run adds them.
   const EXPECTED = [
-    'alternating_dumbbell_curl', 'alternating_hammer_curl', 'dumbbell_step_up', 'farmers_walk', 'high_knees',
-    'hollow_hold', 'incline_dumbbell_skull_crusher', 'reverse_hyperextension', 'seated_hammer_curl',
-    'tate_press', 'toe_touch_crunch', 'wall_sit',
-    'incline_bench_preacher_curl', 'incline_neutral_grip_dumbbell_press', 'seated_rear_delt_fly', 'single_arm_dumbbell_curl',
-    'single_arm_dumbbell_lateral_raise', 'single_arm_dumbbell_upright_row', 'single_arm_lying_dumbbell_extension',
-    'single_leg_calf_raise', 'sissy_squat', 'suitcase_carry', 'two_arm_dumbbell_kickback', 'weighted_crunch',
-    // 13 Nov 2026: the first barbell pictures
-    'wide_grip_barbell_curl', 'barbell_21s', 'incline_barbell_skull_crusher',
-    // 13 Nov 2026: the first gym machine and cardio pictures (own plain machine geometry)
-    'incline_machine_fly', 'smith_machine_incline_press', 'stationary_bike', 'air_bike', 'stair_climber',
-    // 13 Nov 2026: the first cable-machine pictures
-    'cable_hip_adduction', 'low_to_high_cable_fly', 'overhead_cable_curl', 'reverse_grip_triceps_pushdown',
-    'single_arm_high_cable_curl', 'single_arm_reverse_grip_pushdown',
-    // 13 Nov 2026: plate-loaded lever machines, leg press calf raise, elliptical and incline treadmill walk
-    'machine_lat_pulldown', 'iso_lateral_row', 'iso_lateral_high_row', 'iso_lateral_low_row',
-    'leg_press_calf_raise', 'elliptical', 'incline_treadmill_walk',
-    // 13 Nov 2026: cable round 3
-    'cable_pullover', 'cable_skull_crusher', 'flat_bench_cable_fly', 'incline_cable_triceps_extension',
-    'lying_rope_triceps_extension', 'single_arm_cable_hammer_curl',
+    'alternating_dumbbell_curl', 'alternating_hammer_curl', 'barbell_step_up', 'behind_the_back_cable_curl',
+    'behind_the_back_wrist_curl', 'bent_over_cable_rear_delt_raise', 'bodyweight_triceps_extension',
+    'cable_concentration_curl', 'cable_front_raise', 'cable_hip_abduction', 'cable_pullover', 'cable_reverse_curl',
+    'cable_y_raise', 'cross_body_cable_extension', 'decline_ez_bar_skull_crusher', 'decline_leg_raise',
+    'decline_sit_up', 'dumbbell_step_up', 'farmers_walk', 'flat_bench_cable_fly', 'hanging_leg_raise', 'hollow_hold',
+    'incline_barbell_skull_crusher', 'incline_cable_fly', 'incline_cable_triceps_extension',
+    'incline_dumbbell_skull_crusher', 'incline_machine_fly', 'incline_neutral_grip_dumbbell_press',
+    'incline_treadmill_walk', 'iso_lateral_low_row', 'iso_lateral_row', 'kettlebell_clean_and_press', 'knee_plank',
+    'l_sit', 'landmine_squat', 'low_to_high_cable_fly', 'lying_rope_triceps_extension', 'machine_lat_pulldown',
+    'overhead_cable_curl', 'plate_curl', 'plate_front_raise', 'plate_reverse_curl', 'reverse_barbell_wrist_curl',
+    'reverse_grip_triceps_pushdown', 'reverse_hyperextension', 'rope_cable_curl', 'rope_triceps_pushdown',
+    'seated_barbell_calf_raise', 'seated_cable_rear_delt_fly', 'seated_hammer_curl', 'seated_rear_delt_fly',
+    'side_plank', 'single_arm_cable_curl', 'single_arm_cable_fly', 'single_arm_cable_hammer_curl',
+    'single_arm_cable_reverse_fly', 'single_arm_dumbbell_curl', 'single_arm_dumbbell_lateral_raise',
+    'single_arm_dumbbell_upright_row', 'single_arm_dumbbell_wrist_curl', 'single_arm_high_cable_curl',
+    'single_arm_lying_dumbbell_extension', 'single_arm_reverse_grip_pushdown', 'single_leg_calf_raise', 'sissy_squat',
+    'sled_push', 'stability_ball_back_extension', 'stability_ball_crunch', 'stair_climber', 'stationary_bike',
+    'suitcase_carry', 'tate_press', 'toe_touch_crunch', 'two_arm_dumbbell_kickback', 'wall_sit', 'weighted_chin_up',
+    'weighted_crunch', 'weighted_decline_crunch', 'weighted_sissy_squat', 'wide_grip_barbell_curl',
+    'wide_grip_ez_bar_curl',
   ];
   // Holds: one picture, no end picture.
-  const HOLDS = ['hollow_hold', 'wall_sit'];
+  const HOLDS = ['hollow_hold', 'knee_plank', 'l_sit', 'side_plank', 'wall_sit'];
   const filesOf = (k: string): string[] => (HOLDS.includes(k) ? ['start', 'thumb'] : ['start', 'thumb', 'end']);
 
   it('lists exactly the reviewed exercises, each a real library exercise without a RepDB picture', () => {

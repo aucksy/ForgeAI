@@ -1,15 +1,83 @@
 {
+  "air_bike": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "fail",
+    "tries": 2,
+    "reason": "end foot rests on the frame, not a pedal; arms barely change"
+  },
   "alternating_dumbbell_curl": {
-    "rendered": "2026-11-11",
-    "run": "43079162675",
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "pass",
+    "tries": 2
+  },
+  "alternating_hammer_curl": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "pass",
+    "tries": 2
+  },
+  "barbell_21s": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "fail",
+    "tries": 2,
+    "reason": "end bar under the chin and the elbow over-bent"
+  },
+  "barbell_spider_curl": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "fail",
+    "tries": 1,
+    "reason": "pad sits at the belly, not the armpits; end bar at the chin"
+  },
+  "barbell_step_up": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
     "qa": "pass",
     "tries": 1
   },
-  "alternating_hammer_curl": {
-    "rendered": "2026-11-11",
-    "run": "43079162675",
+  "behind_the_back_cable_curl": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "pass",
+    "tries": 3
+  },
+  "behind_the_back_wrist_curl": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
     "qa": "pass",
     "tries": 1
+  },
+  "behind_the_head_skull_crusher": {
+    "rendered": "2026-11-13",
+    "run": "43374536640",
+    "qa": "fail",
+    "reason": "end: the bar hangs ~25 cm past the head and the upper arms cover the face in both tries (elev 135/elbow 100, then 120/105); same flat-bench offset as reverse_grip_bench_press",
+    "tries": 2
+  },
+  "bent_over_cable_rear_delt_raise": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "pass",
+    "tries": 3
+  },
+  "bodyweight_triceps_extension": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "pass",
+    "tries": 2
   },
   "burpee": {
     "rendered": "2026-11-12",
@@ -17,6 +85,72 @@
     "qa": "fail",
     "reason": "end plank on closed fists (knuckles), not flat hands: the rig has only fists, so a floor hand cannot be shown correctly",
     "tries": 2
+  },
+  "cable_concentration_curl": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "pass",
+    "tries": 3
+  },
+  "cable_front_raise": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "pass",
+    "tries": 3
+  },
+  "cable_hip_abduction": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "pass",
+    "tries": 3
+  },
+  "cable_hip_adduction": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "fail",
+    "tries": 2,
+    "reason": "start has no pull on the cable; end leg stops beside the standing foot"
+  },
+  "cable_pullover": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "pass",
+    "tries": 2
+  },
+  "cable_reverse_curl": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "pass",
+    "tries": 3
+  },
+  "cable_shrug": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "fail",
+    "tries": 3,
+    "reason": "start and end look the same; he is hidden behind the column"
+  },
+  "cable_skull_crusher": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "fail",
+    "tries": 2,
+    "reason": "end upper arms tip far back and the forearms hide the face"
+  },
+  "cable_y_raise": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "pass",
+    "tries": 3
   },
   "chest_supported_reverse_fly": {
     "rendered": "2026-11-12",
@@ -32,6 +166,13 @@
     "reason": "camera looks straight down so it reads as lying flat; support arm straight and angled out with a fist, not a forearm under the shoulder; top hand floats in the air",
     "tries": 2
   },
+  "cross_body_cable_extension": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "pass",
+    "tries": 3
+  },
   "curtsy_lunge": {
     "rendered": "2026-11-12",
     "run": "43161740739",
@@ -39,490 +180,34 @@
     "reason": "end: the back leg steps back to its own side, not behind the front leg (a diagonal reverse lunge, not a curtsy)",
     "tries": 2
   },
-  "dumbbell_leg_curl": {
-    "rendered": "2026-11-12",
-    "run": "43161740739",
-    "qa": "fail",
-    "reason": "hands hang open in the air beside the bench legs instead of holding the bench",
-    "tries": 2
-  },
-  "dumbbell_step_up": {
-    "rendered": "2026-11-11",
-    "run": "43079162675",
-    "qa": "pass",
-    "tries": 1
-  },
-  "farmers_walk": {
-    "rendered": "2026-11-11",
-    "run": "43079162675",
-    "qa": "pass",
-    "tries": 1,
-    "note": "back toe 1 cm into the floor"
-  },
-  "high_knees": {
-    "rendered": "2026-11-11",
-    "run": "43079162675",
-    "qa": "pass",
-    "tries": 1,
-    "note": "standing toe 2 cm into the floor"
-  },
-  "hindu_push_up": {
-    "rendered": "2026-11-12",
-    "run": "43161740739",
-    "qa": "fail",
-    "reason": "hands are closed fists on the floor, not flat palms (the rig has only fists)",
-    "tries": 2
-  },
-  "hollow_hold": {
-    "rendered": "2026-11-11",
-    "run": "43082982264",
-    "qa": "pass",
-    "tries": 2,
-    "note": "passed on the retry (floor height / flat-bench fix)"
-  },
-  "incline_bench_preacher_curl": {
-    "rendered": "2026-11-12",
-    "run": "43161740739",
-    "qa": "pass",
-    "reason": "numbers, close-up and fresh reviewer all clean (12 Nov 2026)",
-    "tries": 2
-  },
-  "incline_dumbbell_skull_crusher": {
-    "rendered": "2026-11-11",
-    "run": "43079162675",
-    "qa": "pass",
-    "tries": 1
-  },
-  "incline_neutral_grip_dumbbell_press": {
-    "rendered": "2026-11-12",
-    "run": "43161740739",
-    "qa": "pass",
-    "reason": "numbers, close-up and fresh reviewer all clean (12 Nov 2026)",
-    "tries": 2
-  },
-  "incline_y_raise": {
-    "rendered": "2026-11-12",
-    "run": "43161740739",
-    "qa": "fail",
-    "reason": "bench is flat, not inclined; end: only the far arm rises into the Y, the near dumbbell hangs to the floor",
-    "tries": 2
-  },
-  "knee_plank": {
-    "rendered": "2026-11-11",
-    "run": "43082982264",
+  "dead_hang": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
     "qa": "fail",
     "tries": 2,
-    "reason": "12 Nov review: no muscle shows red at all (the abs are a sliver hidden under the body from this camera); every other picture lights the worked muscle. Needs a camera from the front-side, low, so the abs show."
+    "reason": "upper arm cuts into the face; torn shoulder outlines"
   },
-  "neutral_grip_dumbbell_press": {
-    "rendered": "2026-11-11",
-    "run": "43082982264",
+  "decline_dumbbell_skull_crusher": {
+    "rendered": "2026-11-13",
+    "run": "43478713570",
+    "look": "D",
     "qa": "fail",
-    "reason": "head hangs off the end of the flat pad and the back arches (flat-bench lying pose needs a probe_bench fit)",
-    "tries": 2
+    "tries": 4,
+    "reason": "end: the near dumbbell and upper arm cover the face"
   },
-  "plank_shoulder_tap": {
-    "rendered": "2026-11-11",
-    "run": "43082982264",
-    "qa": "fail",
-    "reason": "hands sink 5 cm into the floor; moving the body did not help (the hands follow the arm angles)",
-    "tries": 2
-  },
-  "reverse_hyperextension": {
-    "rendered": "2026-11-11",
-    "run": "43079162675",
-    "qa": "pass",
-    "tries": 1,
-    "note": "a plain high block stands in for the reverse-hyper bench"
-  },
-  "rkc_plank": {
-    "rendered": "2026-11-11",
-    "run": "43082982264",
-    "qa": "fail",
-    "reason": "forearms sink 5 cm into the floor; moving the body did not help (arm angles put the forearms below the floor)",
-    "tries": 2
-  },
-  "seated_dumbbell_calf_raise": {
-    "rendered": "2026-11-12",
-    "run": "43161740739",
-    "qa": "fail",
-    "reason": "start foot is flat on the floor beside the block, not on it; the hand hovers over the dumbbell; the far foot stays on the floor",
-    "tries": 2
-  },
-  "seated_hammer_curl": {
-    "rendered": "2026-11-11",
-    "run": "43079162675",
+  "decline_ez_bar_skull_crusher": {
+    "rendered": "2026-11-13",
+    "run": "43478713570",
+    "look": "D",
     "qa": "pass",
     "tries": 1
   },
-  "seated_knee_tuck": {
-    "rendered": "2026-11-12",
-    "run": "43161740739",
-    "qa": "fail",
-    "reason": "body 2.8 cm into the floor (lowest_body_z -0.028) in start and end",
-    "tries": 3
-  },
-  "seated_rear_delt_fly": {
-    "rendered": "2026-11-12",
-    "run": "43161740739",
+  "decline_leg_raise": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
     "qa": "pass",
-    "reason": "numbers, close-up and fresh reviewer all clean (12 Nov 2026)",
-    "tries": 2
-  },
-  "side_plank": {
-    "rendered": "2026-11-13",
-    "run": "43370176409",
-    "qa": "fail",
-    "reason": "13 Nov retry: forearm under the shoulder and top fist on the hip now read right, but the main muscle (floor-side obliques) shows only a small faint red patch from the front camera; head tilts toward the floor-side shoulder",
-    "tries": 2
-  },
-  "single_arm_dumbbell_curl": {
-    "rendered": "2026-11-12",
-    "run": "43161740739",
-    "qa": "pass",
-    "reason": "numbers, close-up and fresh reviewer all clean (12 Nov 2026)",
-    "tries": 2
-  },
-  "single_arm_dumbbell_lateral_raise": {
-    "rendered": "2026-11-12",
-    "run": "43161740739",
-    "qa": "pass",
-    "reason": "numbers, close-up and fresh reviewer all clean (12 Nov 2026)",
-    "tries": 2
-  },
-  "single_arm_dumbbell_upright_row": {
-    "rendered": "2026-11-12",
-    "run": "43161740739",
-    "qa": "pass",
-    "reason": "numbers, close-up and fresh reviewer all clean (12 Nov 2026)",
-    "tries": 2
-  },
-  "single_arm_lying_dumbbell_extension": {
-    "rendered": "2026-11-12",
-    "run": "43161740739",
-    "qa": "pass",
-    "reason": "numbers, close-up and fresh reviewer all clean (12 Nov 2026)",
-    "tries": 3
-  },
-  "single_leg_calf_raise": {
-    "rendered": "2026-11-12",
-    "run": "43161740739",
-    "qa": "pass",
-    "reason": "numbers, close-up and fresh reviewer all clean (12 Nov 2026)",
-    "tries": 2
-  },
-  "sissy_squat": {
-    "rendered": "2026-11-12",
-    "run": "43161740739",
-    "qa": "pass",
-    "reason": "numbers, close-up and fresh reviewer all clean (12 Nov 2026)",
-    "tries": 2
-  },
-  "suitcase_carry": {
-    "rendered": "2026-11-12",
-    "run": "43161740739",
-    "qa": "pass",
-    "reason": "numbers, close-up and fresh reviewer all clean (12 Nov 2026)",
-    "tries": 2
-  },
-  "tate_press": {
-    "rendered": "2026-11-11",
-    "run": "43082982264",
-    "qa": "pass",
-    "tries": 2,
-    "note": "passed on the retry (floor height / flat-bench fix)"
-  },
-  "toe_touch_crunch": {
-    "rendered": "2026-11-11",
-    "run": "43082982264",
-    "qa": "pass",
-    "tries": 2,
-    "note": "passed on the retry (floor height / flat-bench fix)"
-  },
-  "two_arm_dumbbell_kickback": {
-    "rendered": "2026-11-12",
-    "run": "43161740739",
-    "qa": "pass",
-    "reason": "numbers, close-up and fresh reviewer all clean (12 Nov 2026)",
-    "tries": 2
-  },
-  "waiter_curl": {
-    "rendered": "2026-11-12",
-    "run": "43161740739",
-    "qa": "fail",
-    "reason": "both fists wrap the handle instead of palms cupped under the top plate (the rig has only fists)",
-    "tries": 2
-  },
-  "wall_sit": {
-    "rendered": "2026-11-11",
-    "run": "43079162675",
-    "qa": "pass",
-    "tries": 1
-  },
-  "weighted_crunch": {
-    "rendered": "2026-11-12",
-    "run": "43161740739",
-    "qa": "pass",
-    "reason": "numbers, close-up and fresh reviewer all clean (12 Nov 2026)",
-    "tries": 2
-  },
-  "weighted_russian_twist": {
-    "rendered": "2026-11-12",
-    "run": "43161740739",
-    "qa": "fail",
-    "reason": "end: one hand floats open beside the lower plate instead of holding the dumbbell",
-    "tries": 2
-  },
-  "zottman_curl": {
-    "rendered": "2026-11-12",
-    "run": "43161740739",
-    "qa": "fail",
-    "reason": "end: one arm fully curled, the other half-curled with its dumbbell pressing into the stomach",
-    "tries": 2
-  },
-  "wide_grip_barbell_curl": {
-    "rendered": "2026-11-13",
-    "run": "43370176409",
-    "qa": "pass",
-    "reason": "numbers ok (feet on floor, nothing below it, bar square through both fists); close-ups ok; fresh reviewer passed",
-    "tries": 1
-  },
-  "barbell_21s": {
-    "rendered": "2026-11-13",
-    "run": "43370176409",
-    "qa": "pass",
-    "reason": "numbers ok (feet on floor, nothing below it, bar square through both fists); close-ups ok; fresh reviewer passed",
-    "tries": 1
-  },
-  "incline_barbell_skull_crusher": {
-    "rendered": "2026-11-13",
-    "run": "43370176409",
-    "qa": "pass",
-    "reason": "numbers ok (feet on floor, nothing below it, bar square through both fists); close-ups ok; fresh reviewer said the bar goes behind the head like a pullover: checked, the front view shows the upper arms vertical and the library step says lower the bar behind your head, so it stays",
-    "tries": 1
-  },
-  "reverse_grip_bench_press": {
-    "rendered": "2026-11-13",
-    "run": "43374536640",
-    "qa": "fail",
-    "reason": "bar lands at the collarbone, not the lower chest, in both tries (elev 46/plane -74, then 38/-55); on the flat bench the hands land ~15-20 cm further toward the head than the torso-frame maths says. Try 1 also had a plate hiding the head. Measure with measure_press.py in the cloud before the next try",
-    "tries": 2
-  },
-  "behind_the_head_skull_crusher": {
-    "rendered": "2026-11-13",
-    "run": "43374536640",
-    "qa": "fail",
-    "reason": "end: the bar hangs ~25 cm past the head and the upper arms cover the face in both tries (elev 135/elbow 100, then 120/105); same flat-bench offset as reverse_grip_bench_press",
-    "tries": 2
-  },
-  "rope_triceps_pushdown": {
-    "rendered": "2026-11-13",
-    "run": "43448776510",
-    "qa": "fail",
-    "reason": "end: the rope runs forward out of each fist with its end cap behind the hand against the back of the thigh; at lockout the rope should run down through the fist (thumb side up, end cap below the little finger). Next: end axis index-up (13 Nov, try 2; try 1 run 43446766569)",
-    "tries": 2
-  },
-  "single_arm_cable_curl": {
-    "rendered": "2026-11-13",
-    "run": "43448776510",
-    "qa": "fail",
-    "reason": "pulley sits in front of the working foot but the camera (front-left) puts the post on the far side, so the cable reads as crossing both legs and the stomach to the wrong side. Next: camera from the front-right (13 Nov, try 2; try 1 run 43446766569)",
-    "tries": 2
-  },
-  "cable_shrug": {
-    "rendered": "2026-11-13",
-    "run": "43448776510",
-    "qa": "fail",
-    "reason": "camera behind him hides the cable completely in both pictures; it reads as a loose bar next to a post. Next: camera from the front-side (13 Nov, try 2; try 1 run 43446766569)",
-    "tries": 2
-  },
-  "cable_hip_abduction": {
-    "rendered": "2026-11-13",
-    "run": "43448776510",
-    "qa": "fail",
-    "reason": "camera angle lays the ankle cable over the toes of the standing foot in both pictures (it really passes 5+ cm in front). Next: higher camera (pitch ~22) (13 Nov, try 2; try 1 run 43446766569)",
-    "tries": 2
-  },
-  "cable_front_raise": {
-    "rendered": "2026-11-13",
-    "run": "43453523374",
-    "qa": "fail",
-    "reason": "end: the cable still reads as crossing the front of the leg, the rope ends stand up out of the fists like poles and the right arm reaches across the chest; start: rope over the thighs. Next: pulley straight behind between the feet, rope ends hang, both arms straight forward (13 Nov, try 2: no more tries today; needs a fresh look)",
-    "tries": 2
-  },
-  "cable_reverse_curl": {
-    "rendered": "2026-11-13",
-    "run": "43453523374",
-    "qa": "fail",
-    "reason": "pulley beside the foot instead of in front; start: cable over the shin; end: cable on the bar end, which touches the post. Next: column straight in front, cable on the bar middle (13 Nov, try 2: no more tries today; needs a fresh look)",
-    "tries": 2
-  },
-  "rope_cable_curl": {
-    "rendered": "2026-11-13",
-    "run": "43453523374",
-    "qa": "fail",
-    "reason": "the athlete overlaps the post (end: the post hides the left arm), pulley beside the foot, rope over the thigh/shin. Next: column straight in front, 0.6 m away (13 Nov, try 2: no more tries today; needs a fresh look)",
-    "tries": 2
-  },
-  "single_arm_cable_hammer_curl": {
-    "rendered": "2026-11-13",
-    "run": "43453523374",
-    "qa": "pass",
-    "reason": "numbers (hands on the handle/rope/bar, cable clear of the skin, feet/body on the floor or pad), close-up and fresh reviewer all clean (13 Nov 2026); try 1 run 43448776510 had the cable 7 mm into the forearm",
-    "tries": 2
-  },
-  "behind_the_back_cable_curl": {
-    "rendered": "2026-11-13",
-    "run": "43453523374",
-    "qa": "fail",
-    "reason": "the arm never goes behind the body (reads as an ordinary curl), end: half curl with the handle in the belly and the cable across the hip. Next: elbow behind the torso line, pulley further behind, camera from the side (13 Nov, try 2: no more tries today; needs a fresh look)",
-    "tries": 2
-  },
-  "single_arm_cable_reverse_fly": {
-    "rendered": "2026-11-13",
-    "run": "43453523374",
-    "qa": "fail",
-    "reason": "start: the hand sits at the back of the head instead of in front at the opposite shoulder, cable over the head. Next: start hand in front of the chest at the far shoulder, front camera (13 Nov, try 2: no more tries today; needs a fresh look)",
-    "tries": 2
-  },
-  "cross_body_cable_extension": {
-    "rendered": "2026-11-13",
-    "run": "43453523374",
-    "qa": "fail",
-    "reason": "start: the hand sits by the ear instead of at the opposite shoulder, the cable runs into the back of the head. Next: start hand at the far shoulder in front of the chest, front camera (13 Nov, try 2: no more tries today; needs a fresh look)",
-    "tries": 2
-  },
-  "single_arm_cable_fly": {
-    "rendered": "2026-11-13",
-    "run": "43453523374",
-    "qa": "fail",
-    "reason": "end: the arm points straight at the camera, so only a fist on the chest shows. Next: camera from the side of the working arm (13 Nov, try 2: no more tries today; needs a fresh look)",
-    "tries": 2
-  },
-  "incline_machine_fly": {
-    "rendered": "2026-11-13",
-    "run": "43449175969",
-    "qa": "pass",
-    "reason": "numbers ok (feet on floor, body on the pad, lever 0.655 m start and end); close-ups ok: fists on the vertical handles, arms open to together over the upper chest; fresh reviewer passed",
-    "tries": 1
-  },
-  "smith_machine_incline_press": {
-    "rendered": "2026-11-13",
-    "run": "43449175969",
-    "qa": "pass",
-    "reason": "numbers ok (rails 1.2 deg off vertical through the bar's real start and end, body on the pad); close-ups ok: bar through both fists, plates outside the rails; fresh reviewer passed",
-    "tries": 1
-  },
-  "stationary_bike": {
-    "rendered": "2026-11-13",
-    "run": "43449175969",
-    "qa": "pass",
-    "reason": "numbers ok (crank 0.170 m at both key poses, feet on the pedals, sitting on the saddle); close-ups ok: hands on the bar, pedals swap top/bottom; fresh reviewer passed",
-    "tries": 1
-  },
-  "air_bike": {
-    "rendered": "2026-11-13",
-    "run": "43449175969",
-    "qa": "pass",
-    "reason": "numbers ok (crank 0.170 m, handle levers 0.616 m at start and end); close-ups ok: arms push/pull opposite to each other and to the legs; fresh reviewer passed",
-    "tries": 1
-  },
-  "stair_climber": {
-    "rendered": "2026-11-13",
-    "run": "43449175969",
-    "qa": "pass",
-    "reason": "numbers ok (feet on the steps, deepest 0.7 cm); close-ups ok; fresh reviewer thought he faced down the stairs: checked, he faces the rising steps (the treadmill pictures are shot from the other side), so it stays",
-    "tries": 1
-  },
-  "cable_hip_adduction": {
-    "rendered": "2026-11-13",
-    "run": "43448776510",
-    "qa": "pass",
-    "reason": "numbers (fists on handle/grip, cable clear of the skin 4-24 cm, feet on the floor), close-up and fresh reviewer all clean (13 Nov 2026)",
-    "tries": 1
-  },
-  "low_to_high_cable_fly": {
-    "rendered": "2026-11-13",
-    "run": "43448776510",
-    "qa": "pass",
-    "reason": "numbers (fists on handle/grip, cable clear of the skin 4-24 cm, feet on the floor), close-up and fresh reviewer all clean (13 Nov 2026)",
-    "tries": 1
-  },
-  "overhead_cable_curl": {
-    "rendered": "2026-11-13",
-    "run": "43448776510",
-    "qa": "pass",
-    "reason": "numbers (fists on handle/grip, cable clear of the skin 4-24 cm, feet on the floor), close-up and fresh reviewer all clean (13 Nov 2026)",
-    "tries": 1
-  },
-  "reverse_grip_triceps_pushdown": {
-    "rendered": "2026-11-13",
-    "run": "43448776510",
-    "qa": "pass",
-    "reason": "numbers (fists on handle/grip, cable clear of the skin 4-24 cm, feet on the floor), close-up and fresh reviewer all clean (13 Nov 2026); reviewer note: from behind the palms-up grip is only partly visible, close-up confirms palms up",
-    "tries": 1
-  },
-  "single_arm_high_cable_curl": {
-    "rendered": "2026-11-13",
-    "run": "43448776510",
-    "qa": "pass",
-    "reason": "numbers (fists on handle/grip, cable clear of the skin 4-24 cm, feet on the floor), close-up and fresh reviewer all clean (13 Nov 2026)",
-    "tries": 1
-  },
-  "single_arm_reverse_grip_pushdown": {
-    "rendered": "2026-11-13",
-    "run": "43448776510",
-    "qa": "pass",
-    "reason": "numbers (fists on handle/grip, cable clear of the skin 4-24 cm, feet on the floor), close-up and fresh reviewer all clean (13 Nov 2026); same note on the palm-up grip",
-    "tries": 1
-  },
-  "machine_lat_pulldown": {
-    "rendered": "2026-11-13",
-    "run": "43452963165",
-    "qa": "pass",
-    "reason": "numbers (fists on the lever handles, levers the same length at start and end), close-up from behind and fresh reviewer clean; lats lit (13 Nov 2026). First try crashed before rendering (elbow setting), so this is the first real render",
-    "tries": 1
-  },
-  "iso_lateral_row": {
-    "rendered": "2026-11-13",
-    "run": "43452963165",
-    "qa": "pass",
-    "reason": "retry: camera moved behind-left so the back muscles show; levers constant length, fists on handles, close-up and fresh reviewer clean (13 Nov 2026)",
-    "tries": 2
-  },
-  "iso_lateral_high_row": {
-    "rendered": "2026-11-13",
-    "run": "43452963165",
-    "qa": "pass",
-    "reason": "retry: camera behind-left; levers constant length, fists on handles, thigh pad and seat contact, close-up and fresh reviewer clean (13 Nov 2026)",
-    "tries": 2
-  },
-  "iso_lateral_low_row": {
-    "rendered": "2026-11-13",
-    "run": "43452963165",
-    "qa": "pass",
-    "reason": "retry: camera behind-left; floor-pivot levers constant length, hands pulled back beside the hips, close-up and fresh reviewer clean (13 Nov 2026)",
-    "tries": 2
-  },
-  "leg_press_calf_raise": {
-    "rendered": "2026-11-13",
-    "run": "43452963165",
-    "qa": "pass",
-    "reason": "retry: plate under the balls of the feet, heels hang off, sled on rails, side camera; ankle range ~8 cm at the plate; close-up and fresh reviewer pass (movement is small at thumbnail size, true to the exercise) (13 Nov 2026)",
-    "tries": 2
-  },
-  "elliptical": {
-    "rendered": "2026-11-13",
-    "run": "43452963165",
-    "qa": "pass",
-    "reason": "retry: handle levers pivot on the front column, lever length constant (0.467 m); feet on pedals, hands on handles; close-up and fresh reviewer clean (13 Nov 2026)",
-    "tries": 2
-  },
-  "incline_treadmill_walk": {
-    "rendered": "2026-11-13",
-    "run": "43452963165",
-    "qa": "pass",
-    "reason": "retry: feet raised onto the belt (0 mm gap), slope clear, arms swing opposite; close-up and fresh reviewer clean (13 Nov 2026)",
     "tries": 2
   },
   "decline_machine_chest_press": {
@@ -532,11 +217,160 @@
     "reason": "after the retry the right press lever still crosses in front of his face in the end picture, and the seat has no back pad (13 Nov 2026)",
     "tries": 2
   },
+  "decline_oblique_crunch": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "fail",
+    "tries": 4,
+    "reason": "start face hidden; end is a full sit-up, not a twist"
+  },
+  "decline_sit_up": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "pass",
+    "tries": 4
+  },
+  "dumbbell_leg_curl": {
+    "rendered": "2026-11-12",
+    "run": "43161740739",
+    "qa": "fail",
+    "reason": "hands hang open in the air beside the bench legs instead of holding the bench",
+    "tries": 2
+  },
+  "dumbbell_step_up": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "pass",
+    "tries": 2
+  },
+  "elliptical": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "fail",
+    "tries": 3,
+    "reason": "only one moving handle; the free hand holds nothing; legs barely change"
+  },
+  "farmers_walk": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "pass",
+    "tries": 2
+  },
+  "flat_bench_cable_fly": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "pass",
+    "tries": 2
+  },
+  "hanging_leg_raise": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "pass",
+    "tries": 2
+  },
+  "high_knees": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "fail",
+    "tries": 2,
+    "reason": "start and end look the same from this angle"
+  },
+  "hiking": {
+    "qa": "fail",
+    "reason": "cannot be shown honestly: hiking needs a real trail; on a flat floor it is the walking picture (13 Nov 2026)",
+    "tries": 0
+  },
+  "hindu_push_up": {
+    "rendered": "2026-11-12",
+    "run": "43161740739",
+    "qa": "fail",
+    "reason": "hands are closed fists on the floor, not flat palms (the rig has only fists)",
+    "tries": 2
+  },
+  "hollow_hold": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "pass",
+    "tries": 3
+  },
+  "incline_barbell_skull_crusher": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "pass",
+    "tries": 2
+  },
+  "incline_bench_preacher_curl": {
+    "rendered": "2026-11-13",
+    "run": "43478713570",
+    "look": "D",
+    "qa": "fail",
+    "tries": 3,
+    "reason": "end: the dumbbell covers the lower face and the upper arm leaves the pad"
+  },
+  "incline_cable_fly": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "pass",
+    "tries": 3
+  },
+  "incline_cable_triceps_extension": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "pass",
+    "tries": 2
+  },
+  "incline_dumbbell_skull_crusher": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "pass",
+    "tries": 2
+  },
   "incline_machine_chest_press": {
     "rendered": "2026-11-13",
     "run": "43452963165",
     "qa": "fail",
     "reason": "after the retry a bar sits across his face at the start and the frame crossbar passes through his chest at the end; the handles also change shape between pictures (13 Nov 2026)",
+    "tries": 2
+  },
+  "incline_machine_fly": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "pass",
+    "tries": 2
+  },
+  "incline_neutral_grip_dumbbell_press": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "pass",
+    "tries": 3
+  },
+  "incline_treadmill_walk": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "pass",
+    "tries": 3
+  },
+  "incline_y_raise": {
+    "rendered": "2026-11-12",
+    "run": "43161740739",
+    "qa": "fail",
+    "reason": "bench is flat, not inclined; end: only the far arm rises into the Y, the near dumbbell hangs to the floor",
     "tries": 2
   },
   "iso_lateral_chest_press": {
@@ -546,18 +380,114 @@
     "reason": "after the retry the right lever cuts across his chest at the start and across his neck and face at the end; overhead-hung levers do not read as this machine (13 Nov 2026)",
     "tries": 2
   },
-  "standing_leg_curl": {
+  "iso_lateral_high_row": {
     "rendered": "2026-11-13",
-    "run": "43452963165",
+    "run": "43473054345",
+    "look": "D",
     "qa": "fail",
-    "reason": "after the retry the pose reads right, but the roller lever changes length between start and end (40 to 54 cm, a real lever cannot) and the hamstring red barely shows from the side (13 Nov 2026)",
+    "tries": 3,
+    "reason": "end elbows flare out at shoulder height; one handle hidden"
+  },
+  "iso_lateral_low_row": {
+    "rendered": "2026-11-13",
+    "run": "43478713570",
+    "look": "D",
+    "qa": "pass",
+    "tries": 3
+  },
+  "iso_lateral_row": {
+    "rendered": "2026-11-13",
+    "run": "43478713570",
+    "look": "D",
+    "qa": "pass",
+    "tries": 3
+  },
+  "jm_press": {
+    "rendered": "2026-11-13",
+    "run": "43478713570",
+    "look": "D",
+    "qa": "fail",
+    "tries": 1,
+    "reason": "camera from the feet hides the head, so it reads as a close-grip bench press"
+  },
+  "kettlebell_clean_and_press": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "pass",
     "tries": 2
   },
-  "treadmill_run": {
+  "knee_plank": {
     "rendered": "2026-11-13",
-    "run": "43452963165",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "pass",
+    "tries": 3
+  },
+  "l_sit": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "pass",
+    "tries": 2
+  },
+  "landmine_squat": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "pass",
+    "tries": 1
+  },
+  "leg_press_calf_raise": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
     "qa": "fail",
-    "reason": "after the retry the handrail ends at his front knee, and the end picture reads as a two-footed hop with the same arm leading, not the other half of a stride (13 Nov 2026)",
+    "tries": 3,
+    "reason": "foot plate hides the feet, so the calf movement cannot be seen"
+  },
+  "low_to_high_cable_fly": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "pass",
+    "tries": 2
+  },
+  "lying_cable_curl": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "fail",
+    "tries": 3,
+    "reason": "the cable runs through his leg"
+  },
+  "lying_rope_triceps_extension": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "pass",
+    "tries": 2
+  },
+  "machine_lat_pulldown": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "pass",
+    "tries": 2
+  },
+  "meadows_row": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "fail",
+    "tries": 1,
+    "reason": "plate overlaps the thigh; odd pivot at the bar end"
+  },
+  "neutral_grip_dumbbell_press": {
+    "rendered": "2026-11-11",
+    "run": "43082982264",
+    "qa": "fail",
+    "reason": "head hangs off the end of the flat pad and the back arches (flat-bench lying pose needs a probe_bench fit)",
     "tries": 2
   },
   "outdoor_run": {
@@ -567,6 +497,367 @@
     "reason": "the end picture reads as a two-footed hop with the same arm leading, not the other half of a stride (13 Nov 2026)",
     "tries": 2
   },
+  "overhead_cable_curl": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "pass",
+    "tries": 2
+  },
+  "plank_shoulder_tap": {
+    "rendered": "2026-11-11",
+    "run": "43082982264",
+    "qa": "fail",
+    "reason": "hands sink 5 cm into the floor; moving the body did not help (the hands follow the arm angles)",
+    "tries": 2
+  },
+  "plate_curl": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "pass",
+    "tries": 3
+  },
+  "plate_front_raise": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "pass",
+    "tries": 3
+  },
+  "plate_reverse_curl": {
+    "rendered": "2026-11-13",
+    "run": "43478713570",
+    "look": "D",
+    "qa": "pass",
+    "tries": 2
+  },
+  "reverse_barbell_wrist_curl": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "pass",
+    "tries": 1
+  },
+  "reverse_grip_bench_press": {
+    "rendered": "2026-11-13",
+    "run": "43374536640",
+    "qa": "fail",
+    "reason": "bar lands at the collarbone, not the lower chest, in both tries (elev 46/plane -74, then 38/-55); on the flat bench the hands land ~15-20 cm further toward the head than the torso-frame maths says. Try 1 also had a plate hiding the head. Measure with measure_press.py in the cloud before the next try",
+    "tries": 2
+  },
+  "reverse_grip_triceps_pushdown": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "pass",
+    "tries": 2
+  },
+  "reverse_hyperextension": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "pass",
+    "tries": 2
+  },
+  "reverse_preacher_curl": {
+    "rendered": "2026-11-13",
+    "run": "43478713570",
+    "look": "D",
+    "qa": "fail",
+    "tries": 1,
+    "reason": "end: the bar and fists cover the face"
+  },
+  "rkc_plank": {
+    "rendered": "2026-11-11",
+    "run": "43082982264",
+    "qa": "fail",
+    "reason": "forearms sink 5 cm into the floor; moving the body did not help (arm angles put the forearms below the floor)",
+    "tries": 2
+  },
+  "rope_cable_curl": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "pass",
+    "tries": 3
+  },
+  "rope_triceps_pushdown": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "pass",
+    "tries": 3
+  },
+  "seated_barbell_calf_raise": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "pass",
+    "tries": 1
+  },
+  "seated_barbell_overhead_extension": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "fail",
+    "tries": 1,
+    "reason": "skin tears through the tank top at the neck and shoulders"
+  },
+  "seated_cable_rear_delt_fly": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "pass",
+    "tries": 3
+  },
+  "seated_dumbbell_calf_raise": {
+    "rendered": "2026-11-12",
+    "run": "43161740739",
+    "qa": "fail",
+    "reason": "start foot is flat on the floor beside the block, not on it; the hand hovers over the dumbbell; the far foot stays on the floor",
+    "tries": 2
+  },
+  "seated_hammer_curl": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "pass",
+    "tries": 2
+  },
+  "seated_knee_tuck": {
+    "rendered": "2026-11-12",
+    "run": "43161740739",
+    "qa": "fail",
+    "reason": "body 2.8 cm into the floor (lowest_body_z -0.028) in start and end",
+    "tries": 3
+  },
+  "seated_rear_delt_fly": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "pass",
+    "tries": 3
+  },
+  "side_plank": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "pass",
+    "tries": 3
+  },
+  "single_arm_cable_curl": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "pass",
+    "tries": 3
+  },
+  "single_arm_cable_fly": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "pass",
+    "tries": 3
+  },
+  "single_arm_cable_hammer_curl": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "pass",
+    "tries": 3
+  },
+  "single_arm_cable_reverse_fly": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "pass",
+    "tries": 3
+  },
+  "single_arm_dumbbell_curl": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "pass",
+    "tries": 3
+  },
+  "single_arm_dumbbell_lateral_raise": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "pass",
+    "tries": 3
+  },
+  "single_arm_dumbbell_upright_row": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "pass",
+    "tries": 3
+  },
+  "single_arm_dumbbell_wrist_curl": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "pass",
+    "tries": 1
+  },
+  "single_arm_high_cable_curl": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "pass",
+    "tries": 2
+  },
+  "single_arm_lying_dumbbell_extension": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "pass",
+    "tries": 4
+  },
+  "single_arm_overhead_cable_extension": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "fail",
+    "tries": 3,
+    "reason": "elbow points forward not up; cable cuts through the head"
+  },
+  "single_arm_reverse_grip_pushdown": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "pass",
+    "tries": 2
+  },
+  "single_leg_calf_raise": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "pass",
+    "tries": 3
+  },
+  "sissy_squat": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "pass",
+    "tries": 3
+  },
+  "sled_push": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "pass",
+    "tries": 2
+  },
+  "smith_machine_incline_press": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "fail",
+    "tries": 2,
+    "reason": "start bar crosses the chin and throat instead of sitting above the upper chest"
+  },
+  "stability_ball_back_extension": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "pass",
+    "tries": 3
+  },
+  "stability_ball_crunch": {
+    "rendered": "2026-11-13",
+    "run": "43478713570",
+    "look": "D",
+    "qa": "pass",
+    "tries": 3
+  },
+  "stair_climber": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "pass",
+    "tries": 2
+  },
+  "standing_barbell_overhead_extension": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "fail",
+    "tries": 1,
+    "reason": "skin tears through the tank top at the shoulders; end bar beside the head like a javelin"
+  },
+  "standing_leg_curl": {
+    "rendered": "2026-11-13",
+    "run": "43452963165",
+    "qa": "fail",
+    "reason": "after the retry the pose reads right, but the roller lever changes length between start and end (40 to 54 cm, a real lever cannot) and the hamstring red barely shows from the side (13 Nov 2026)",
+    "tries": 2
+  },
+  "stationary_bike": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "pass",
+    "tries": 2
+  },
+  "suitcase_carry": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "pass",
+    "tries": 3
+  },
+  "swimming": {
+    "qa": "fail",
+    "reason": "cannot be shown honestly: swimming needs water, and drawn water would be invented detail (13 Nov 2026)",
+    "tries": 0
+  },
+  "tate_press": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "pass",
+    "tries": 3
+  },
+  "toe_touch_crunch": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "pass",
+    "tries": 3
+  },
+  "trap_bar_shrug": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "fail",
+    "tries": 1,
+    "reason": "start and end look almost the same (shrug too small to see)"
+  },
+  "treadmill_run": {
+    "rendered": "2026-11-13",
+    "run": "43452963165",
+    "qa": "fail",
+    "reason": "after the retry the handrail ends at his front knee, and the end picture reads as a two-footed hop with the same arm leading, not the other half of a stride (13 Nov 2026)",
+    "tries": 2
+  },
+  "two_arm_dumbbell_kickback": {
+    "rendered": "2026-11-13",
+    "run": "43478713570",
+    "look": "D",
+    "qa": "pass",
+    "tries": 3
+  },
+  "waiter_curl": {
+    "rendered": "2026-11-12",
+    "run": "43161740739",
+    "qa": "fail",
+    "reason": "both fists wrap the handle instead of palms cupped under the top plate (the rig has only fists)",
+    "tries": 2
+  },
   "walking": {
     "rendered": "2026-11-13",
     "run": "43452963165",
@@ -574,241 +865,75 @@
     "reason": "the start picture holds both hands together in front of the belly instead of an arm swing (13 Nov 2026)",
     "tries": 2
   },
-  "swimming": {
-    "qa": "fail",
-    "reason": "cannot be shown honestly: swimming needs water, and drawn water would be invented detail (13 Nov 2026)",
-    "tries": 0
-  },
-  "hiking": {
-    "qa": "fail",
-    "reason": "cannot be shown honestly: hiking needs a real trail; on a flat floor it is the walking picture (13 Nov 2026)",
-    "tries": 0
-  },
-  "cable_pullover": {
+  "wall_sit": {
     "rendered": "2026-11-13",
-    "run": "43453523374",
+    "run": "43473054345",
+    "look": "D",
     "qa": "pass",
-    "reason": "numbers (hands on the handle/rope/bar, cable clear of the skin, feet/body on the floor or pad), close-up and fresh reviewer all clean (13 Nov 2026)",
-    "tries": 1
-  },
-  "cable_skull_crusher": {
-    "rendered": "2026-11-13",
-    "run": "43453523374",
-    "qa": "pass",
-    "reason": "numbers (hands on the handle/rope/bar, cable clear of the skin, feet/body on the floor or pad), close-up and fresh reviewer all clean (13 Nov 2026)",
-    "tries": 1
-  },
-  "flat_bench_cable_fly": {
-    "rendered": "2026-11-13",
-    "run": "43453523374",
-    "qa": "pass",
-    "reason": "numbers (hands on the handle/rope/bar, cable clear of the skin, feet/body on the floor or pad), close-up and fresh reviewer all clean (13 Nov 2026)",
-    "tries": 1
-  },
-  "incline_cable_triceps_extension": {
-    "rendered": "2026-11-13",
-    "run": "43453523374",
-    "qa": "pass",
-    "reason": "numbers (hands on the handle/rope/bar, cable clear of the skin, feet/body on the floor or pad), close-up and fresh reviewer all clean (13 Nov 2026)",
-    "tries": 1
-  },
-  "lying_rope_triceps_extension": {
-    "rendered": "2026-11-13",
-    "run": "43453523374",
-    "qa": "pass",
-    "reason": "numbers (hands on the handle/rope/bar, cable clear of the skin, feet/body on the floor or pad), close-up and fresh reviewer all clean (13 Nov 2026)",
-    "tries": 1
-  },
-  "bent_over_cable_rear_delt_raise": {
-    "rendered": "2026-11-13",
-    "run": "43457778277",
-    "pose_review": "good",
-    "reason": "try 2 (try 1 run 43453523374 failed): numbers clean (cable 2-15 cm from the skin, body on the floor/bench) and my close-up looks right: camera from the front-left: the cable runs from the hand to the pulley clear of the legs. The fresh reviewer was not run.",
-    "tries": 2,
-    "note": "look A (grey athlete) only; not exported: 13 Nov stop, every own picture is re-rendered in the new look from this recipe"
-  },
-  "cable_concentration_curl": {
-    "rendered": "2026-11-13",
-    "run": "43457778277",
-    "pose_review": "good",
-    "reason": "try 2 (try 1 run 43453523374 failed): numbers clean (cable 2-15 cm from the skin, body on the floor/bench) and my close-up looks right: column moved in front of the feet: the cable runs straight up to the hand, foot clear of the box. The fresh reviewer was not run.",
-    "tries": 2,
-    "note": "look A (grey athlete) only; not exported: 13 Nov stop, every own picture is re-rendered in the new look from this recipe"
-  },
-  "cable_y_raise": {
-    "rendered": "2026-11-13",
-    "run": "43457778277",
-    "pose_review": "good",
-    "reason": "try 2 (try 1 run 43453523374 failed): numbers clean (cable 2-15 cm from the skin, body on the floor/bench) and my close-up looks right: camera from behind: a clear Y, cables run out to the sides. The fresh reviewer was not run.",
-    "tries": 2,
-    "note": "look A (grey athlete) only; not exported: 13 Nov stop, every own picture is re-rendered in the new look from this recipe"
-  },
-  "incline_cable_fly": {
-    "rendered": "2026-11-13",
-    "run": "43457778277",
-    "pose_review": "good",
-    "reason": "try 2 (try 1 run 43453523374 failed): numbers clean (cable 2-15 cm from the skin, body on the floor/bench) and my close-up looks right: end hands meet over the upper chest; the near post overlaps the legs a little. The fresh reviewer was not run.",
-    "tries": 2,
-    "note": "look A (grey athlete) only; not exported: 13 Nov stop, every own picture is re-rendered in the new look from this recipe"
-  },
-  "lying_cable_curl": {
-    "rendered": "2026-11-13",
-    "run": "43457778277",
-    "qa": "fail",
-    "reason": "try 2: numbers clean, but the camera from the feet end puts the post in front of the body and hides the legs. Next: camera from the side, a little above (13 Nov, try 2; try 1 run 43453523374)",
     "tries": 2
-  },
-  "seated_cable_rear_delt_fly": {
-    "rendered": "2026-11-13",
-    "run": "43457778277",
-    "pose_review": "good",
-    "reason": "try 2 (try 1 run 43453523374 failed): numbers clean (cable 2-15 cm from the skin, body on the floor/bench) and my close-up looks right: pulleys 1.6 m forward: the cables cross ahead of the feet. The fresh reviewer was not run.",
-    "tries": 2,
-    "note": "look A (grey athlete) only; not exported: 13 Nov stop, every own picture is re-rendered in the new look from this recipe"
-  },
-  "single_arm_overhead_cable_extension": {
-    "rendered": "2026-11-13",
-    "run": "43457778277",
-    "pose_review": "good",
-    "reason": "try 2 (try 1 run 43453523374 failed): numbers clean (cable 2-15 cm from the skin, body on the floor/bench) and my close-up looks right: pulley straight behind, side camera: the cable leaves the back cleanly. The fresh reviewer was not run.",
-    "tries": 2,
-    "note": "look A (grey athlete) only; not exported: 13 Nov stop, every own picture is re-rendered in the new look from this recipe"
-  },
-  "dead_hang": {
-    "rendered": "2026-11-13",
-    "run": "43451539540",
-    "pose_review": "good",
-    "tries": 1,
-    "note": "look A (grey athlete) only; not exported: 13 Nov stop, every own picture is re-rendered in the new look from this recipe"
-  },
-  "hanging_leg_raise": {
-    "rendered": "2026-11-13",
-    "run": "43451539540",
-    "pose_review": "good",
-    "tries": 1,
-    "note": "look A (grey athlete) only; not exported: 13 Nov stop, every own picture is re-rendered in the new look from this recipe"
-  },
-  "l_sit": {
-    "rendered": "2026-11-13",
-    "run": "43451539540",
-    "pose_review": "good",
-    "tries": 1,
-    "note": "look A (grey athlete) only; not exported: 13 Nov stop, every own picture is re-rendered in the new look from this recipe"
-  },
-  "weighted_chin_up": {
-    "rendered": "2026-11-13",
-    "run": "43451539540",
-    "pose_review": "good",
-    "tries": 1,
-    "note": "look A (grey athlete) only; not exported: 13 Nov stop, every own picture is re-rendered in the new look from this recipe"
-  },
-  "decline_leg_raise": {
-    "rendered": "2026-11-13",
-    "run": "43451539540",
-    "pose_review": "good",
-    "tries": 1,
-    "note": "look A (grey athlete) only; not exported: 13 Nov stop, every own picture is re-rendered in the new look from this recipe"
-  },
-  "bodyweight_triceps_extension": {
-    "rendered": "2026-11-13",
-    "run": "43453772857",
-    "pose_review": "good",
-    "tries": 1,
-    "note": "look A (grey athlete) only; not exported: 13 Nov stop, every own picture is re-rendered in the new look from this recipe"
-  },
-  "plate_reverse_curl": {
-    "rendered": "2026-11-13",
-    "run": "43453772857",
-    "pose_review": "good",
-    "tries": 1,
-    "note": "look A (grey athlete) only; not exported: 13 Nov stop, every own picture is re-rendered in the new look from this recipe"
-  },
-  "weighted_decline_crunch": {
-    "rendered": "2026-11-13",
-    "run": "43453772857",
-    "pose_review": "good",
-    "tries": 2,
-    "note": "look A (grey athlete) only; not exported: 13 Nov stop, every own picture is re-rendered in the new look from this recipe"
-  },
-  "weighted_sissy_squat": {
-    "rendered": "2026-11-13",
-    "run": "43453772857",
-    "pose_review": "good",
-    "tries": 1,
-    "note": "look A (grey athlete) only; not exported: 13 Nov stop, every own picture is re-rendered in the new look from this recipe"
-  },
-  "decline_sit_up": {
-    "rendered": "2026-11-13",
-    "run": "43457809850",
-    "pose_review": "good",
-    "tries": 3,
-    "note": "look A (grey athlete) only; not exported: 13 Nov stop, every own picture is re-rendered in the new look from this recipe"
-  },
-  "stability_ball_crunch": {
-    "rendered": "2026-11-13",
-    "run": "43457809850",
-    "pose_review": "good",
-    "tries": 2,
-    "note": "look A (grey athlete) only; not exported: 13 Nov stop, every own picture is re-rendered in the new look from this recipe"
-  },
-  "decline_dumbbell_skull_crusher": {
-    "rendered": "2026-11-13",
-    "run": "43458812802",
-    "pose_review": "good",
-    "tries": 3,
-    "note": "look A (grey athlete) only; not exported: 13 Nov stop, every own picture is re-rendered in the new look from this recipe"
-  },
-  "plate_front_raise": {
-    "rendered": "2026-11-13",
-    "run": "43458812802",
-    "pose_review": "good",
-    "tries": 2,
-    "note": "look A (grey athlete) only; not exported: 13 Nov stop, every own picture is re-rendered in the new look from this recipe"
-  },
-  "stability_ball_back_extension": {
-    "rendered": "2026-11-13",
-    "run": "43458812802",
-    "pose_review": "good",
-    "tries": 2,
-    "note": "look A (grey athlete) only; not exported: 13 Nov stop, every own picture is re-rendered in the new look from this recipe"
   },
   "weighted_back_extension": {
     "rendered": "2026-11-13",
-    "run": "43458812802",
-    "pose_review": "good",
-    "tries": 2,
-    "note": "look A (grey athlete) only; not exported: 13 Nov stop, every own picture is re-rendered in the new look from this recipe"
-  },
-  "decline_oblique_crunch": {
-    "rendered": "2026-11-13",
-    "run": "43457809850",
-    "pose_review": "retry",
-    "reason": "the twist does not read: the end looks like a straight sit-up with the obliques lit. Next: more rotation toward the far knee and a camera from the front",
+    "run": "43478713570",
+    "look": "D",
+    "qa": "fail",
     "tries": 3,
-    "note": "look A (grey athlete) only; not exported: 13 Nov stop, every own picture is re-rendered in the new look from this recipe"
+    "reason": "start: no plate at the chest, the clasped hands go into the pad"
   },
-  "plate_curl": {
+  "weighted_chin_up": {
     "rendered": "2026-11-13",
-    "run": "43458812802",
-    "pose_review": "retry",
-    "reason": "the end lifts the plate to chin height so it covers the lower face. Next: stop the curl at chest height",
-    "tries": 2,
-    "note": "look A (grey athlete) only; not exported: 13 Nov stop, every own picture is re-rendered in the new look from this recipe"
+    "run": "43473054345",
+    "look": "D",
+    "qa": "pass",
+    "tries": 2
   },
-  "sled_push": {
+  "weighted_crunch": {
     "rendered": "2026-11-13",
-    "run": "43457809850",
-    "pose_review": "retry",
-    "reason": "fists sat 4 cm inside each pole (hands 0.42 m apart, poles 0.50). Fixed in the recipe (poles 0.42), not re-rendered",
-    "tries": 1,
-    "note": "look A (grey athlete) only; not exported: 13 Nov stop, every own picture is re-rendered in the new look from this recipe"
+    "run": "43473054345",
+    "look": "D",
+    "qa": "pass",
+    "tries": 3
   },
-  "kettlebell_clean_and_press": {
+  "weighted_decline_crunch": {
     "rendered": "2026-11-13",
-    "run": "43457809850",
-    "pose_review": "retry",
-    "reason": "end pose kept the start hinge (no root), so the press was drawn bent over; bell 2 cm into the floor at the start. Both fixed in the recipe, not re-rendered",
-    "tries": 1,
-    "note": "look A (grey athlete) only; not exported: 13 Nov stop, every own picture is re-rendered in the new look from this recipe"
+    "run": "43473054345",
+    "look": "D",
+    "qa": "pass",
+    "tries": 3
+  },
+  "weighted_russian_twist": {
+    "rendered": "2026-11-12",
+    "run": "43161740739",
+    "qa": "fail",
+    "reason": "end: one hand floats open beside the lower plate instead of holding the dumbbell",
+    "tries": 2
+  },
+  "weighted_sissy_squat": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "pass",
+    "tries": 2
+  },
+  "wide_grip_barbell_curl": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "pass",
+    "tries": 2
+  },
+  "wide_grip_ez_bar_curl": {
+    "rendered": "2026-11-13",
+    "run": "43473054345",
+    "look": "D",
+    "qa": "pass",
+    "tries": 1
+  },
+  "zottman_curl": {
+    "rendered": "2026-11-12",
+    "run": "43161740739",
+    "qa": "fail",
+    "reason": "end: one arm fully curled, the other half-curled with its dumbbell pressing into the stomach",
+    "tries": 2
   }
 }
