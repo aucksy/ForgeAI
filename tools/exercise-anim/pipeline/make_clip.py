@@ -135,7 +135,9 @@ if look.DRAWN and pitch > 12:   # the main set looks from about chest height: st
 lens = cam_spec.get("lens", 50)
 if look.DRAWN and mode == "stills":   # the main set is drawn almost flat: a long lens, little perspective (look test r4)
     lens = max(lens, float(os.environ.get("FA_STILL_LENS", 90)))
-center, d = RD.frame_camera(scene, cam, objs, cam_spec.get("yaw", -30), pitch,
+# frame the clothes too: the drawn look masks the feet inside the shoes away, so the body alone ends at the ankle
+frame_objs = objs + [ch[k] for k in ("shoes", "tank", "hair") if ch.get(k) is not None and ch[k].type == "MESH"]
+center, d = RD.frame_camera(scene, cam, frame_objs, cam_spec.get("yaw", -30), pitch,
                             lens, cam_spec.get("fill", 0.86), sample_frames=key_frames,
                             target_offset=cam_spec.get("offset", (0, 0, 0)))
 look.setup_lights(scene, center, cam_spec.get("yaw", -30) + cam_spec.get("light_yaw", 0))

@@ -6,7 +6,7 @@
   "highlight_side": "L",
   "scene": {"bench": {"deg": 60}},
   "props": {"db_L": {"type": "dumbbell"}},
-  "camera": {"yaw": 75, "pitch": 12, "lens": 50, "fill": 0.9, "res": 640, "samples": 20},
+  "camera": {"yaw": 40, "pitch": 12, "lens": 50, "fill": 0.9, "res": 640, "samples": 20},
   "timing": {"fps": 30, "keys": [[0, "start"], [1, "end"], [2, "start"]]},
   "poses": {
     "start": {

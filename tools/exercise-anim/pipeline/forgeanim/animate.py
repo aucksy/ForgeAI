@@ -1030,9 +1030,17 @@ class Clip:
             import numpy as np
             parts = what.split(":")[1:]
             d = parts[0]; sign = -1.0 if d[0] == "-" else 1.0; ax = "xyz".index(d[-1])
+            # the drawn look masks the skin under the tank top and shorts away; measure the whole body (as look A did)
+            bd = self.ch["body"]
+            masks = [m for m in bd.modifiers if m.type == "MASK" and m.name.startswith("FA_Hide") and m.show_viewport]
+            for m in masks:
+                m.show_viewport = False
             dg = bpy.context.evaluated_depsgraph_get(); dg.update()
-            ev = self.ch["body"].evaluated_get(dg); me = ev.to_mesh()
+            ev = bd.evaluated_get(dg); me = ev.to_mesh()
             P_ = np.array([tuple(ev.matrix_world @ v.co) for v in me.vertices]); ev.to_mesh_clear()
+            for m in masks:
+                m.show_viewport = True
+            dg.update()
             keep = np.ones(len(P_), bool)
             for f in parts[1:]:
                 k, rng = f.split("="); c, h = (float(v) for v in rng.split("~"))
