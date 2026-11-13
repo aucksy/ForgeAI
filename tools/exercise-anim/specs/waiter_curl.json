@@ -1,22 +1,211 @@
 {
   "key": "waiter_curl",
   "name": "Waiter Curl",
-  "primary": ["biceps"],
-  "secondary": ["forearms"],
-  "props": {"db_L": {"type": "dumbbell"}},
-  "camera": {"yaw": -50, "pitch": 8, "lens": 50, "fill": 0.9, "res": 640, "samples": 20},
-  "timing": {"fps": 30, "keys": [[0, "start"], [1, "end"], [2, "start"]]},
-  "poses": {
-    "start": {
-      "feet": {"L": {"at": [0.13, -0.01, 0.074], "rot": [0, 0, 6]}, "R": {"at": [-0.13, -0.01, 0.074], "rot": [0, 0, -6]}},
-      "knees": {"L": [0.16, -1.0, 0.52], "R": [-0.16, -1.0, 0.52]},
-      "hands": {"L": {"prop": "db_L", "axis": [0, 0, 1], "arm": {"elev": 8, "plane": 60, "fore_world": [-0.563, -0.429, -0.709], "tilt": 0}, "prop_offset": [-0.045, 0, -0.035]}, "R": {"axis": [0, 0, 1], "arm": {"elev": 8, "plane": 60, "fore_world": [0.563, -0.429, -0.709], "tilt": 0}}}
-    },
-    "end": {
-      "feet": {"L": {"at": [0.13, -0.01, 0.074], "rot": [0, 0, 6]}, "R": {"at": [-0.13, -0.01, 0.074], "rot": [0, 0, -6]}},
-      "knees": {"L": [0.16, -1.0, 0.52], "R": [-0.16, -1.0, 0.52]},
-      "hands": {"L": {"prop": "db_L", "axis": [0, 0, 1], "arm": {"elev": 12, "plane": 70, "fore_world": [-0.586, -0.686, 0.435], "tilt": 0}, "prop_offset": [-0.045, 0, -0.035]}, "R": {"axis": [0, 0, 1], "arm": {"elev": 12, "plane": 70, "fore_world": [0.586, -0.686, 0.435], "tilt": 0}}}
+  "primary": [
+    "biceps"
+  ],
+  "secondary": [
+    "forearms"
+  ],
+  "props": {
+    "db_L": {
+      "type": "dumbbell"
     }
   },
-  "research": "One upright dumbbell (handle vertical, axis +z) on db_L; the right hand sits beside it with no prop, mirror-symmetric arm angles (fore_world is world and not mirrored, so R is written with x flipped). Fists at x = +-0.045 (torso frame). 12 Nov 2026 fix: (1) the pipeline built the dumbbell's frame from its handle axis and the torso's up line; for an upright dumbbell those are the same line, so the frame was rounding noise and the dumbbell rendered tilted/flat (rig.frame_from now falls back to a fixed perpendicular). (2) prop_offset [-0.045, 0, -0.035] moves the dumbbell to the midline, between the two fists, and down so its top plate's inner face (0.082 above the dumbbell centre) sits ~5 mm above the fists' top (fist ~0.09 tall, +-0.045 about the grip centre): both hands sit under the top head, the handle hangs between them. Plates r 0.088 at fist y ~-0.20 clear the thigh front (~-0.08) by 3 cm in the start. START: elev 8 plane 60, forearm world (-0.563,-0.429,-0.709), elbow ~43 deg, fist ~world (0.045,-0.20,0.93). END: elev 12 plane 70, forearm (-0.586,-0.686,0.435), elbow ~110 deg, fist ~(0.045,-0.30,1.32). Known limit: the rig's hands are closed fists, so 'palms cupped under the plate' is drawn as two fists under the plate; the wrist bends back ~60 deg in the start (a real waiter curl does too). Facts: research/waiter_curl.json."
+  "camera": {
+    "yaw": -50,
+    "pitch": 8,
+    "lens": 50,
+    "fill": 0.9,
+    "res": 640,
+    "samples": 20
+  },
+  "timing": {
+    "fps": 30,
+    "keys": [
+      [
+        0,
+        "start"
+      ],
+      [
+        1,
+        "end"
+      ],
+      [
+        2,
+        "start"
+      ]
+    ]
+  },
+  "poses": {
+    "start": {
+      "feet": {
+        "L": {
+          "at": [
+            0.13,
+            -0.01,
+            0.074
+          ],
+          "rot": [
+            0,
+            0,
+            6
+          ]
+        },
+        "R": {
+          "at": [
+            -0.13,
+            -0.01,
+            0.074
+          ],
+          "rot": [
+            0,
+            0,
+            -6
+          ]
+        }
+      },
+      "knees": {
+        "L": [
+          0.16,
+          -1.0,
+          0.52
+        ],
+        "R": [
+          -0.16,
+          -1.0,
+          0.52
+        ]
+      },
+      "hands": {
+        "L": {
+          "axis": [
+            0.606,
+            -0.795,
+            0.0
+          ],
+          "arm": {
+            "elev": 8,
+            "plane": 60,
+            "fore_world": [
+              -0.563,
+              -0.429,
+              -0.709
+            ],
+            "tilt": 0,
+            "flex": "level-"
+          },
+          "hand": "cup"
+        },
+        "R": {
+          "axis": [
+            -0.606,
+            -0.795,
+            0.0
+          ],
+          "arm": {
+            "elev": 8,
+            "plane": 60,
+            "fore_world": [
+              0.563,
+              -0.429,
+              -0.709
+            ],
+            "tilt": 0,
+            "flex": "level-"
+          },
+          "hand": "cup"
+        }
+      },
+      "rest_on_palms": {
+        "prop": "db_L",
+        "drop": 0.082
+      }
+    },
+    "end": {
+      "feet": {
+        "L": {
+          "at": [
+            0.13,
+            -0.01,
+            0.074
+          ],
+          "rot": [
+            0,
+            0,
+            6
+          ]
+        },
+        "R": {
+          "at": [
+            -0.13,
+            -0.01,
+            0.074
+          ],
+          "rot": [
+            0,
+            0,
+            -6
+          ]
+        }
+      },
+      "knees": {
+        "L": [
+          0.16,
+          -1.0,
+          0.52
+        ],
+        "R": [
+          -0.16,
+          -1.0,
+          0.52
+        ]
+      },
+      "hands": {
+        "L": {
+          "axis": [
+            0.76,
+            -0.65,
+            0.0
+          ],
+          "arm": {
+            "elev": 12,
+            "plane": 70,
+            "fore_world": [
+              -0.586,
+              -0.686,
+              0.435
+            ],
+            "tilt": 0,
+            "flex": "level-"
+          },
+          "hand": "cup"
+        },
+        "R": {
+          "axis": [
+            -0.76,
+            -0.65,
+            0.0
+          ],
+          "arm": {
+            "elev": 12,
+            "plane": 70,
+            "fore_world": [
+              0.586,
+              -0.686,
+              0.435
+            ],
+            "tilt": 0,
+            "flex": "level-"
+          },
+          "hand": "cup"
+        }
+      },
+      "rest_on_palms": {
+        "prop": "db_L",
+        "drop": 0.082
+      }
+    }
+  },
+  "research": "One upright dumbbell (handle vertical, axis +z) on db_L; the right hand sits beside it with no prop, mirror-symmetric arm angles (fore_world is world and not mirrored, so R is written with x flipped). Fists at x = +-0.045 (torso frame). 12 Nov 2026 fix: (1) the pipeline built the dumbbell's frame from its handle axis and the torso's up line; for an upright dumbbell those are the same line, so the frame was rounding noise and the dumbbell rendered tilted/flat (rig.frame_from now falls back to a fixed perpendicular). (2) prop_offset [-0.045, 0, -0.035] moves the dumbbell to the midline, between the two fists, and down so its top plate's inner face (0.082 above the dumbbell centre) sits ~5 mm above the fists' top (fist ~0.09 tall, +-0.045 about the grip centre): both hands sit under the top head, the handle hangs between them. Plates r 0.088 at fist y ~-0.20 clear the thigh front (~-0.08) by 3 cm in the start. START: elev 8 plane 60, forearm world (-0.563,-0.429,-0.709), elbow ~43 deg, fist ~world (0.045,-0.20,0.93). END: elev 12 plane 70, forearm (-0.586,-0.686,0.435), elbow ~110 deg, fist ~(0.045,-0.30,1.32). Known limit: the rig's hands are closed fists, so 'palms cupped under the plate' is drawn as two fists under the plate; the wrist bends back ~60 deg in the start (a real waiter curl does too). Facts: research/waiter_curl.json. 13 Nov 2026 (pics-fixes): palms now cupped and facing up under the top plate (hand shape 'cup', wrist bent back until the hand is level, 'flex: level-'), forearms supinated (handle axis = thumb side out, square to the forearm); the dumbbell stands upright between the palms with its top plate's underside resting on them (pose option rest_on_palms, drop 0.082 = plate inner face above the dumbbell centre)."
 }

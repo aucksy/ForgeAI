@@ -108,11 +108,10 @@
       },
       "hands": {
         "L": {
-          "prop": "db_L",
           "axis": [
-            0.475,
-            0.067,
-            0.877
+            0.82,
+            0.55,
+            0.17
           ],
           "arm": {
             "elev": 12.4,
@@ -123,27 +122,15 @@
               0.83,
               0.052
             ],
-            "tilt": 0
-          }
-        },
-        "R": {
-          "axis": [
-            -0.478,
-            0.048,
-            0.877
-          ],
-          "arm": {
-            "elev": 12.0,
-            "plane": 38.9,
-            "elbow": 103.2,
-            "bend": [
-              -0.518,
-              0.855,
-              0.029
-            ],
-            "tilt": 0
-          }
+            "tilt": 0,
+            "flex": "level-"
+          },
+          "hand": "cup"
         }
+      },
+      "rest_on_palms": {
+        "prop": "db_L",
+        "drop": 0.082
       }
     },
     "end": {
@@ -181,11 +168,10 @@
       },
       "hands": {
         "L": {
-          "prop": "db_L",
           "axis": [
-            0.475,
-            0.067,
-            0.877
+            0.82,
+            0.55,
+            0.17
           ],
           "arm": {
             "elev": 12.4,
@@ -196,29 +182,17 @@
               0.83,
               0.052
             ],
-            "tilt": 0
-          }
-        },
-        "R": {
-          "axis": [
-            -0.478,
-            0.048,
-            0.877
-          ],
-          "arm": {
-            "elev": 12.0,
-            "plane": 38.9,
-            "elbow": 103.2,
-            "bend": [
-              -0.518,
-              0.855,
-              0.029
-            ],
-            "tilt": 0
-          }
+            "tilt": 0,
+            "flex": "level-"
+          },
+          "hand": "cup"
         }
+      },
+      "rest_on_palms": {
+        "prop": "db_L",
+        "drop": 0.082
       }
     }
   },
-  "research": "Seated, lean back 40 deg (root rot X -40), root 0.12, feet flat, knees ~90 (unchanged; ankle (0.13,-0.668,0.074)). 12 Nov fix: the dumbbell never showed because its handle axis [0,0,1] was parallel to the torso 'up' the prop frame is built from (zero-size matrix). Now: left hand grips the handle centre at torso (0.07,0.30,-0.18), handle along the trunk turned 29 deg in the chest plane (axis [0.475,0.067,0.877], perpendicular to the forearm); plates clear the chest (~0.21 vs skin ~0.165) and sit ~8 cm above the thighs. Right hand (no prop) at torso (-0.085,0.30,-0.18), beside the lower plate (~8 mm clear). Arms are the SAME in both poses (torso frame): the weight stays in front of the chest and the trunk carries it. Start = shoulders turned 45 deg to HIS LEFT (spine Y +6/+8/+10/+11/+10, neck +5), end = 45 deg to HIS RIGHT (same, negative; the 11 Nov render confirmed negative Y = right). Camera yaw -30 / pitch 30 (front-right, above the knees) so the weight shows on both sides. Sources S1 Oliva-Lozano 2020, S2 ACE V-twist, S3 Calatayud 2019."
+  "research": "Seated, lean back 40 deg (root rot X -40), root 0.12, feet flat, knees ~90 (unchanged; ankle (0.13,-0.668,0.074)). 12 Nov fix: the dumbbell never showed because its handle axis [0,0,1] was parallel to the torso 'up' the prop frame is built from (zero-size matrix). Now: left hand grips the handle centre at torso (0.07,0.30,-0.18), handle along the trunk turned 29 deg in the chest plane (axis [0.475,0.067,0.877], perpendicular to the forearm); plates clear the chest (~0.21 vs skin ~0.165) and sit ~8 cm above the thighs. Right hand (no prop) at torso (-0.085,0.30,-0.18), beside the lower plate (~8 mm clear). Arms are the SAME in both poses (torso frame): the weight stays in front of the chest and the trunk carries it. Start = shoulders turned 45 deg to HIS LEFT (spine Y +6/+8/+10/+11/+10, neck +5), end = 45 deg to HIS RIGHT (same, negative; the 11 Nov render confirmed negative Y = right). Camera yaw -30 / pitch 30 (front-right, above the knees) so the weight shows on both sides. Sources S1 Oliva-Lozano 2020, S2 ACE V-twist, S3 Calatayud 2019. 13 Nov 2026 (pics-fixes): QA: one hand floated beside the lower plate. Now a goblet hold: the dumbbell stands upright in front of the chest with its top head resting in BOTH cupped palms (hand shape 'cup', wrists bent back until the hands are level, rest_on_palms); arms mirror each other (R = mirrored L), forearms supinated (axis = thumb side out, square to the forearm)."
 }

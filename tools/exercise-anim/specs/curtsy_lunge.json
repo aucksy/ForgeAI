@@ -1,25 +1,180 @@
 {
   "key": "curtsy_lunge",
   "name": "Curtsy Lunge",
-  "primary": ["glutes"],
-  "secondary": ["quads", "abductors"],
-  "props": {"db_L": {"type": "dumbbell"}, "db_R": {"type": "dumbbell"}},
-  "camera": {"yaw": -160, "pitch": 15, "lens": 50, "fill": 0.9, "res": 640, "samples": 20},
-  "timing": {"fps": 30, "keys": [[0, "start"], [1, "end"], [2, "start"]]},
+  "primary": [
+    "glutes"
+  ],
+  "secondary": [
+    "quads",
+    "abductors"
+  ],
+  "props": {
+    "db_L": {
+      "type": "dumbbell"
+    },
+    "db_R": {
+      "type": "dumbbell"
+    }
+  },
+  "camera": {
+    "yaw": -172,
+    "pitch": 14,
+    "lens": 50,
+    "fill": 0.9,
+    "res": 640,
+    "samples": 20
+  },
+  "timing": {
+    "fps": 30,
+    "keys": [
+      [
+        0,
+        "start"
+      ],
+      [
+        1,
+        "end"
+      ],
+      [
+        2,
+        "start"
+      ]
+    ]
+  },
   "defaults": {
-    "hands": {"L": {"prop": "db_L", "axis": [0, 1, 0], "arm": {"elev": 10, "plane": 10, "elbow": 10, "bend": [0, 1, 0], "tilt": 0}}}
+    "hands": {
+      "L": {
+        "prop": "db_L",
+        "axis": [
+          0,
+          1,
+          0
+        ],
+        "arm": {
+          "elev": 10,
+          "plane": 10,
+          "elbow": 10,
+          "bend": [
+            0,
+            1,
+            0
+          ],
+          "tilt": 0
+        }
+      }
+    }
   },
   "poses": {
     "start": {
-      "root": {"loc": [0, 0.056, 0.971], "rot": [0, 0, 0]},
-      "feet": {"L": {"at": [0.13, -0.01, 0.074], "rot": [0, 0, 6]}, "R": {"at": [-0.13, -0.01, 0.074], "rot": [0, 0, -6]}},
-      "knees": {"L": [0.16, -1.0, 0.52], "R": [-0.16, -1.0, 0.52]}
+      "root": {
+        "loc": [
+          0,
+          0.056,
+          0.971
+        ],
+        "rot": [
+          0,
+          0,
+          0
+        ]
+      },
+      "feet": {
+        "L": {
+          "at": [
+            0.13,
+            -0.01,
+            0.074
+          ],
+          "rot": [
+            0,
+            0,
+            6
+          ]
+        },
+        "R": {
+          "at": [
+            -0.13,
+            -0.01,
+            0.074
+          ],
+          "rot": [
+            0,
+            0,
+            -6
+          ]
+        }
+      },
+      "knees": {
+        "L": [
+          0.16,
+          -1.0,
+          0.52
+        ],
+        "R": [
+          -0.16,
+          -1.0,
+          0.52
+        ]
+      },
+      "ground": {
+        "feet": 0.0
+      }
     },
     "end": {
-      "root": {"loc": [0, 0.398, 0.631], "rot": [6, 0, 0]},
-      "feet": {"L": {"at": [0.13, -0.01, 0.074], "rot": [0, 0, 6]}, "R": {"at": [0.30, 0.78, 0.165], "rot": [30, 0, 0]}},
-      "knees": {"L": [0.16, -1.0, 0.55], "R": [0.1, -0.6, 0.0]}
+      "root": {
+        "loc": [
+          0,
+          0.398,
+          0.631
+        ],
+        "rot": [
+          6,
+          0,
+          0
+        ]
+      },
+      "feet": {
+        "L": {
+          "at": [
+            0.13,
+            -0.01,
+            0.074
+          ],
+          "rot": [
+            0,
+            0,
+            6
+          ]
+        },
+        "R": {
+          "at": [
+            0.36,
+            0.6,
+            0.15
+          ],
+          "rot": [
+            30,
+            0,
+            0
+          ]
+        }
+      },
+      "knees": {
+        "L": [
+          0.16,
+          -1.0,
+          0.55
+        ],
+        "R": [
+          0.12,
+          -0.6,
+          0.0
+        ]
+      },
+      "ground": {
+        "feet": 0.0
+      }
     }
   },
-  "research": "Front = left leg, right foot steps back and across. Front leg: ankle stays (0.13,-0.01,0.074); shin 10 deg forward -> knee (0.13,-0.09,0.52); front knee 85-95 deg so thigh runs back-up 15 deg -> hip L (0.12,0.35,0.63); pelvis joint = hip centre + (0,0.051,-0.003) = (0,0.398,0.631). Back leg: hip R (-0.11,0.35,0.63) to ankle R (0.10,0.80,0.14) = 0.70 m (<0.90 leg) -> ~77 deg knee bend, IK puts the knee near (0.02,0.36,0.20): joint 0.20 m up, kneecap ~0.15 m off the floor ('nearly touches'). Back foot rot X +30 = heel up on the ball (ball ~0.02 m above floor). Crossed x +0.10 = curtsy. Trunk 6 deg forward, chest up. Arms hang (elev 10, palms in). Sources: Boren 2011 PMC3201064 (transverse lunge 49/48% MVIC glut max/med), Prehab Guys (weight on front leg, knee not caving), Muyor 2020 PMC7112217. Fix 12 Nov (review: the back leg did not visibly cross, read as a reverse lunge; dumbbell against the back knee; back toe 2 cm in the floor): back ankle now (0.30, 0.78, 0.165) = 17 cm PAST the front foot (x 0.13) toward his left, 0.79 m behind it; hip R to ankle 0.75 m -> knee ~(0.14, 0.36, 0.25), bent ~68 deg, knee pole (0.1,-0.6,0); the back thigh passes behind the front leg (thigh centres >= 0.18 m apart) and the back knee is now ~0.5 m from the right dumbbell. Camera yaw -160 / pitch 15 (behind his right side): the back leg runs from the right hip across behind the front foot, an X that reads as a curtsy, and the glutes (primary) face the camera. Facts and checks: research/curtsy_lunge.json."
+  "research": "Front = left leg, right foot steps back and across. Front leg: ankle stays (0.13,-0.01,0.074); shin 10 deg forward -> knee (0.13,-0.09,0.52); front knee 85-95 deg so thigh runs back-up 15 deg -> hip L (0.12,0.35,0.63); pelvis joint = hip centre + (0,0.051,-0.003) = (0,0.398,0.631). Back leg: hip R (-0.11,0.35,0.63) to ankle R (0.10,0.80,0.14) = 0.70 m (<0.90 leg) -> ~77 deg knee bend, IK puts the knee near (0.02,0.36,0.20): joint 0.20 m up, kneecap ~0.15 m off the floor ('nearly touches'). Back foot rot X +30 = heel up on the ball (ball ~0.02 m above floor). Crossed x +0.10 = curtsy. Trunk 6 deg forward, chest up. Arms hang (elev 10, palms in). Sources: Boren 2011 PMC3201064 (transverse lunge 49/48% MVIC glut max/med), Prehab Guys (weight on front leg, knee not caving), Muyor 2020 PMC7112217. Fix 12 Nov (review: the back leg did not visibly cross, read as a reverse lunge; dumbbell against the back knee; back toe 2 cm in the floor): back ankle now (0.30, 0.78, 0.165) = 17 cm PAST the front foot (x 0.13) toward his left, 0.79 m behind it; hip R to ankle 0.75 m -> knee ~(0.14, 0.36, 0.25), bent ~68 deg, knee pole (0.1,-0.6,0); the back thigh passes behind the front leg (thigh centres >= 0.18 m apart) and the back knee is now ~0.5 m from the right dumbbell. Camera yaw -160 / pitch 15 (behind his right side): the back leg runs from the right hip across behind the front foot, an X that reads as a curtsy, and the glutes (primary) face the camera. Facts and checks: research/curtsy_lunge.json. 13 Nov 2026 (pics-fixes): QA: the back leg read as stepping back to its own side. Back ankle now (0.36,0.60) = 23 cm PAST the front foot toward his left and 0.61 m behind it (was 0.79 m behind, so the cross looked small); camera from straight behind (yaw -172, pitch 14) so the legs make a clear X; 'ground' sets both feet on the floor from the real skin."
 }

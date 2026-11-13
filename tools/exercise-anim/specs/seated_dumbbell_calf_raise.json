@@ -1,26 +1,210 @@
 {
   "key": "seated_dumbbell_calf_raise",
   "name": "Seated Dumbbell Calf Raise",
-  "primary": ["calves"],
+  "primary": [
+    "calves"
+  ],
   "secondary": [],
-  "scene": {"bench": {"deg": 85}, "box": {"size": [0.26, 0.16, 0.08], "loc": [0.12, -0.816, 0]}},
-  "props": {"db_L": {"type": "dumbbell"}},
-  "camera": {"yaw": 88, "pitch": 10, "lens": 50, "fill": 0.9, "res": 640, "samples": 20},
-  "timing": {"fps": 30, "keys": [[0, "start"], [1, "end"], [2, "start"]]},
-  "poses": {
-    "start": {
-      "root": {"loc": [0, -0.035, 0.494], "rot": [-6, 0, 0]},
-      "feet": {"L": {"at": [0.12, -0.601, 0.122], "rot": [-15, 0, 0]}, "R": {"at": [-0.22, -0.5, 0.074], "rot": [0, 0, -8]}},
-      "knees": {"L": [0.14, -1.0, 0.9], "R": [-0.24, -1.0, 0.6]},
-      "hands": {"L": {"prop": "db_L", "axis": [-1, 0, 0], "arm": {"elev": 20.6, "plane": 40, "fore_world": [-0.514, -0.826, -0.231], "tilt": 0}}, "R": {"axis": [1, 0, 0], "arm": {"elev": 25, "plane": 40, "elbow": 75, "bend": [0, 1, 0], "tilt": 0}}}
+  "scene": {
+    "bench": {
+      "deg": 85
     },
-    "end": {
-      "root": {"loc": [0, -0.035, 0.494], "rot": [-6, 0, 0]},
-      "feet": {"L": {"at": [0.12, -0.659, 0.231], "rot": [25, 0, 0]}, "R": {"at": [-0.22, -0.5, 0.074], "rot": [0, 0, -8]}},
-      "knees": {"L": [0.14, -1.0, 0.9], "R": [-0.24, -1.0, 0.6]},
-      "hands": {"L": {"prop": "db_L", "axis": [-1, 0, 0], "arm": {"elev": 50.8, "plane": 40, "fore_world": [-0.787, -0.536, -0.306], "tilt": 0}}, "R": {"axis": [1, 0, 0], "arm": {"elev": 25, "plane": 40, "elbow": 75, "bend": [0, 1, 0], "tilt": 0}}}
+    "box": {
+      "size": [
+        0.5,
+        0.16,
+        0.08
+      ],
+      "loc": [
+        0,
+        -0.77,
+        0
+      ]
     }
   },
-  "research": "12 Nov 2026 fix: the old start/end differed by 45 deg of foot pitch on paper, but the rig's toes do not bend, so the real contact is the toe tip, not the ball: the start foot read as flat and the end toes sank 2 cm into the block. Rigid-foot model (toe tip (0,-0.196,-0.074) from the ankle, ball (0,-0.12,-0.074), heel (0,0.05,-0.07), fitted to cloud floor readings). Seated body from dumbbell_shoulder_press (bench 85, root (0,-0.035,0.494) rot -6): hip L (0.11,-0.085,0.502). Block 0.26 x 0.16 x 0.08 centred (0.12,-0.816): top z 0.08, y -0.896..-0.736. START heel low: foot rot X -15, the sole pivots over the block's back edge (ball on the corner y -0.736): ankle (0.12,-0.601,0.122), toe tip z 0.102, heel z 0.042 (4 cm off the floor, below the block top); knee (0.117,-0.538,0.567), 90 deg. END heel high: foot rot +25, toe tip on the block (z 0.081), ball over the edge: ankle (0.12,-0.659,0.231), heel z 0.189 -> heel rises 15 cm; knee (0.116,-0.516,0.657), 91 deg (knee rises 9 cm, as the thigh lifts off the seat at the knee end). Dumbbell across the lower left thigh, handle 0.10 back from the knee and 0.095 above the thigh line (thigh 0.06 + fist 0.035): start (0.12,-0.425,0.647), end (0.12,-0.389,0.712); plates hang either side of the thigh. Left arm plane 40: start elev 20.6, elbow 70, forearm (-0.514,-0.826,-0.231); end elev 50.8, elbow 89, forearm (-0.787,-0.536,-0.306) (start lands within 5 mm). Right foot flat, right hand on the right thigh (unchanged). Camera yaw 88 = true side view. Only the left calf lit (highlight_side L). S1 Kovacs 2024 (knee 90, -15..+30 deg ankle), S2 StrengthLog.",
-  "highlight_side": "L"
+  "props": {
+    "db_L": {
+      "type": "dumbbell"
+    }
+  },
+  "camera": {
+    "yaw": 62,
+    "pitch": 12,
+    "lens": 50,
+    "fill": 0.9,
+    "res": 640,
+    "samples": 20
+  },
+  "timing": {
+    "fps": 30,
+    "keys": [
+      [
+        0,
+        "start"
+      ],
+      [
+        1,
+        "end"
+      ],
+      [
+        2,
+        "start"
+      ]
+    ]
+  },
+  "poses": {
+    "start": {
+      "root": {
+        "loc": [
+          0,
+          -0.035,
+          0.494
+        ],
+        "rot": [
+          -6,
+          0,
+          0
+        ]
+      },
+      "feet": {
+        "L": {
+          "at": [
+            0.12,
+            -0.601,
+            0.122
+          ],
+          "rot": [
+            -15,
+            0,
+            0
+          ]
+        }
+      },
+      "knees": {
+        "L": [
+          0.14,
+          -1.0,
+          0.9
+        ]
+      },
+      "hands": {
+        "L": {
+          "frame": "world",
+          "prop": "db_L",
+          "at": [
+            0.045,
+            -0.438,
+            0.71
+          ],
+          "axis": [
+            -1,
+            0,
+            0
+          ],
+          "prop_offset": [
+            -0.045,
+            0,
+            0
+          ]
+        },
+        "R": {
+          "frame": "world",
+          "at": [
+            -0.045,
+            -0.438,
+            0.71
+          ],
+          "axis": [
+            1,
+            0,
+            0
+          ]
+        }
+      },
+      "elbows": {
+        "L": [
+          0.45,
+          0.2,
+          -0.3
+        ]
+      }
+    },
+    "end": {
+      "root": {
+        "loc": [
+          0,
+          -0.035,
+          0.494
+        ],
+        "rot": [
+          -6,
+          0,
+          0
+        ]
+      },
+      "feet": {
+        "L": {
+          "at": [
+            0.12,
+            -0.659,
+            0.231
+          ],
+          "rot": [
+            25,
+            0,
+            0
+          ]
+        }
+      },
+      "knees": {
+        "L": [
+          0.14,
+          -1.0,
+          0.9
+        ]
+      },
+      "hands": {
+        "L": {
+          "frame": "world",
+          "prop": "db_L",
+          "at": [
+            0.045,
+            -0.416,
+            0.775
+          ],
+          "axis": [
+            -1,
+            0,
+            0
+          ],
+          "prop_offset": [
+            -0.045,
+            0,
+            0
+          ]
+        },
+        "R": {
+          "frame": "world",
+          "at": [
+            -0.045,
+            -0.416,
+            0.775
+          ],
+          "axis": [
+            1,
+            0,
+            0
+          ]
+        }
+      },
+      "elbows": {
+        "L": [
+          0.45,
+          0.2,
+          -0.3
+        ]
+      }
+    }
+  },
+  "research": "12 Nov 2026 fix: the old start/end differed by 45 deg of foot pitch on paper, but the rig's toes do not bend, so the real contact is the toe tip, not the ball: the start foot read as flat and the end toes sank 2 cm into the block. Rigid-foot model (toe tip (0,-0.196,-0.074) from the ankle, ball (0,-0.12,-0.074), heel (0,0.05,-0.07), fitted to cloud floor readings). Seated body from dumbbell_shoulder_press (bench 85, root (0,-0.035,0.494) rot -6): hip L (0.11,-0.085,0.502). Block 0.26 x 0.16 x 0.08 centred (0.12,-0.816): top z 0.08, y -0.896..-0.736. START heel low: foot rot X -15, the sole pivots over the block's back edge (ball on the corner y -0.736): ankle (0.12,-0.601,0.122), toe tip z 0.102, heel z 0.042 (4 cm off the floor, below the block top); knee (0.117,-0.538,0.567), 90 deg. END heel high: foot rot +25, toe tip on the block (z 0.081), ball over the edge: ankle (0.12,-0.659,0.231), heel z 0.189 -> heel rises 15 cm; knee (0.116,-0.516,0.657), 91 deg (knee rises 9 cm, as the thigh lifts off the seat at the knee end). Dumbbell across the lower left thigh, handle 0.10 back from the knee and 0.095 above the thigh line (thigh 0.06 + fist 0.035): start (0.12,-0.425,0.647), end (0.12,-0.389,0.712); plates hang either side of the thigh. Left arm plane 40: start elev 20.6, elbow 70, forearm (-0.514,-0.826,-0.231); end elev 50.8, elbow 89, forearm (-0.787,-0.536,-0.306) (start lands within 5 mm). Right foot flat, right hand on the right thigh (unchanged). Camera yaw 88 = true side view. Only the left calf lit (highlight_side L). S1 Kovacs 2024 (knee 90, -15..+30 deg ankle), S2 StrengthLog. 13 Nov 2026 (pics-fixes): QA: start foot beside the block, the free hand hovered, the far foot stayed on the floor. Now BOTH feet stand on one 0.50 m block moved back to y -0.77 (back edge -0.69, so the ball of each foot is ~3 cm on it in the start and the heel hangs behind it); the legs mirror each other; one dumbbell lies across both lower thighs (plates on the thighs, handle between the knees) and both hands grip its handle overhand (fists +-0.045). Handle centre z: start 0.71 (thigh top ~0.62 + plate radius 0.088), end 0.775 as the knees rise. Both calves lit. Camera 3/4 front-left (yaw 62, pitch 12) so both feet on the block show."
 }

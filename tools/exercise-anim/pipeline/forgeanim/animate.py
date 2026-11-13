@@ -310,17 +310,47 @@ class Clip:
             prop = self.props.get(h.get("prop", ""))
             if prop is not None:
                 up = frame.to_3x3() @ Vector((0, 0, 1))
-                prop.matrix_world = R.frame_from(c, axis if s == "L" else -axis, up)
+                off = frame.to_3x3() @ Vector(h.get("prop_offset", (0, 0, 0)))   # weight off the fist centre (two hands)
+                prop.matrix_world = R.frame_from(c + off, axis if s == "L" else -axis, up)
             R.place_hand(rig, s, c, axis, self.G[s])
             self._fist[s] = c.copy(); self._gax[s] = axis.copy()
         if self._shapes:
             for s in pose.get("hands", {}):
                 R.set_hand(rig, s, pose["hands"][s].get("hand", "fist"))
         R.update()
+        if pose.get("rest_on_palms"):
+            self.rest_on_palms(pose["rest_on_palms"])
         self.place_feet_props()
         self.place_bars(pose, T)
         self.place_cables(pose, T)
         self.update_machine()
+
+    def palm_point(self, s):
+        """Centre of the palm skin (world): the mean of the wrist and the four knuckle joints, pushed out of the palm
+        side by the palm's thickness."""
+        rig = self.rig
+        pts = [R.world_head(rig, f"finger{k}-1.{s}") for k in (2, 3, 4, 5)] + [R.world_head(rig, f"wrist.{s}")]
+        c = sum(pts, Vector()) / len(pts)
+        n = self._palm.get(s)
+        return c + n * 0.016 if n is not None else c
+
+    def rest_on_palms(self, rp):
+        """Pose option "rest_on_palms" (13 Nov 2026): {"prop": "db_L", "drop": 0.082} stands the prop upright (handle
+        along world Z) between both palms, its top plate's underside `drop` m above its centre resting on the palms
+        (waiter curl). The hands' prop links are ignored for this prop."""
+        prop = self.props.get(rp["prop"])
+        if prop is None:
+            return
+        pl, pr = self.palm_point("L"), self.palm_point("R")
+        mid = (pl + pr) / 2
+        top = max(pl.z, pr.z)
+        up = Vector((0, 0, 1))
+        c = Vector((mid.x, mid.y, top - rp.get("drop", 0.082)))
+        prop.matrix_world = R.frame_from(c, up, Vector((0, 1, 0)))
+        R.update()
+        nz = {s: round(self._palm[s].z, 2) for s in ("L", "R") if s in self._palm}
+        print(f"[palms] L {[round(v, 3) for v in pl]} R {[round(v, 3) for v in pr]} gap {round((pl - pr).length, 3)} "
+              f"height diff {round(pl.z - pr.z, 3)} palm normal z {nz}")
 
     def build_cable(self, name, p):
         kind = p.get("handle", "d")
