@@ -91,18 +91,19 @@ for (const [name, size] of [['phone', { width: 390, height: 844 }], ['computer',
   });
 }
 
-// F201 (12 Nov 2026, R-469): the AI Assistant section (coming soon) with its three self-looping demos, and the price
+// F201 (12 Nov 2026, R-469; live 13 Nov, R-480): the AI Assistant section with its three self-looping demos, and the price
 // card that replaced the old third pack. Pictures: gyms-ai-assistant-*.png, gyms-pricing-yearly-*.png.
 for (const [name, size] of [['phone', { width: 390, height: 844 }], ['computer', { width: 1280, height: 900 }]]) {
-  test(`G3 AI Assistant section and price card (coming soon), ${name}`, async ({ page }) => {
+  test(`G3 AI Assistant section and price card, ${name}`, async ({ page }) => {
     await page.setViewportSize(size);
     const errors = await serve(page);
     await page.goto('https://gyms.mettleup.fit/');
 
     const sec = page.locator('#assistant');
     await sec.scrollIntoViewIfNeeded();
-    await expect(sec.locator('.as-head')).toContainText('Coming soon');
-    await expect(sec).toContainText('it is not in the app yet');
+    // R-480: live now, so no "Coming soon" in the section or on the price cards' AI lines.
+    await expect(sec).not.toContainText(/coming soon|not in the app yet/i);
+    await expect(page.locator('.aiy .tag.soon')).toHaveCount(0);
     await expect(sec.locator('.as-cell')).toHaveCount(3);
     await expect(sec).toContainText('Speak in Hindi or English. Asking is free.');
     await expect(sec).not.toContainText(/diwali/i);

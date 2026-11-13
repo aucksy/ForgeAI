@@ -38,6 +38,30 @@ export interface AdminNewsEntry {
 /** Newest first. member-words: Gemini second opinion + facts checked against the commits (28 Oct 2026). */
 export const ADMIN_NEWS: readonly AdminNewsEntry[] = [
   {
+    // R-480 (13 Nov 2026, owner: "yes you can put AI assistant live as well"; wording approved): F201 AI Assistant
+    // live (0071 + 0072 on the gym server, D1 0015, HQ and panel deployed 13 Nov) and the 4 policy pages on the site.
+    id: '2026-11-13',
+    lines: [
+      {
+        text: 'New: the AI Assistant, in the menu. Type or say what you need, in Hindi or English. It gets a message or a change ready for you to check. Nothing is sent or saved until you tap its button.',
+        go: { label: 'Open the AI Assistant', path: '/assistant' },
+        feature: true,
+      },
+      {
+        text: 'Asking the AI Assistant a question is free. Each message it sends, and each member or payment it saves, uses 1 AI credit. Each workout plan it writes and you save uses 3.',
+      },
+      {
+        text: 'Your free trial comes with 20 AI credits, once. Paid yearly plans and founding gyms get free credits every month: 50 on Starter, 100 on Pro. Monthly plans get none.',
+      },
+      {
+        text: 'The MettleUp privacy notice now explains what the AI Assistant sends to Claude and Groq, and how long your requests are kept. Read it at mettleup.fit/privacy.',
+      },
+      {
+        text: 'The MettleUp website now has pages on refunds and cancelling, how you get access after you pay, how to contact us, and about MettleUp. Find them at the bottom of gyms.mettleup.fit.',
+      },
+    ],
+  },
+  {
     // 12 Nov 2026: MettleUp goes public on Google Play in every country; the owner said yes to EU/UK privacy
     // lines ("yes add those lines why not"). Section 12 of docs/legal/privacy.body.html; nothing collected changed.
     id: '2026-11-12',
@@ -454,39 +478,6 @@ export const ADMIN_NEWS_PENDING: readonly AdminNewsEntry[] = [
         text: 'Your members now get every paid feature of the MettleUp app free while their plan is active. In Settings, Member app, choose whether those features lock 7 days after a plan ends. Members never lose their workouts.',
         go: { label: 'Open Settings', path: '/settings/app' },
         feature: true,
-      },
-    ],
-  },
-  {
-    // F201 R-471, 12 Nov 2026: the AI Assistant. Moves to ADMIN_NEWS only when 0071 is live on the gym server and the
-    // panel worker with /api/assist is deployed; until then the whole assistant is hidden (useAssistant).
-    // R-480 (13 Nov 2026, owner: "yes you can put AI assistant live as well"): the credit lines and the privacy
-    // line added; numbers from R-470/R-473 (docs/f201-ai-assistant/04-server-status.md), privacy from 06-privacy-line.md.
-    id: 'pending-ai-assistant',
-    lines: [
-      {
-        text: 'New: the AI Assistant, in the menu. Type or say what you need, in Hindi or English. It gets a message or a change ready for you to check. Nothing is sent or saved until you tap its button.',
-        go: { label: 'Open the AI Assistant', path: '/assistant' },
-        feature: true,
-      },
-      {
-        text: 'Asking the AI Assistant a question is free. Each message it sends, and each member or payment it saves, uses 1 AI credit. Each workout plan it writes and you save uses 3.',
-      },
-      {
-        text: 'Your free trial comes with 20 AI credits, once. Paid yearly plans and founding gyms get free credits every month: 50 on Starter, 100 on Pro. Monthly plans get none.',
-      },
-      {
-        text: 'The MettleUp privacy notice now explains what the AI Assistant sends to Claude and Groq, and how long your requests are kept. Read it at mettleup.fit/privacy.',
-      },
-    ],
-  },
-  {
-    // R-480 (13 Nov 2026, owner approved the wording): the 4 policy pages on the website. They are files of the panel
-    // worker's site, so they go live with the next panel deploy, AI Assistant or not.
-    id: 'pending-policy-pages',
-    lines: [
-      {
-        text: 'The MettleUp website now has pages on refunds and cancelling, how you get access after you pay, how to contact us, and about MettleUp. Find them at the bottom of gyms.mettleup.fit.',
       },
     ],
   },

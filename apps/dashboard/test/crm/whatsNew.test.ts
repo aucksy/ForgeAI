@@ -62,7 +62,8 @@ describe('the list itself', () => {
         if (l.go) expect(canOpen('owner', l.go.path)).toBe(true);
       }
     }
-    const ai = ADMIN_NEWS_PENDING.find((e) => e.id === 'pending-ai-assistant')!.lines.map((l) => l.text).join(' ');
+    // R-480: the AI Assistant went live on 13 Nov 2026, so its lines now sit in ADMIN_NEWS.
+    const ai = ADMIN_NEWS.find((e) => e.id === '2026-11-13')!.lines.map((l) => l.text).join(' ');
     for (const fact of ['question is free', '1 AI credit', 'uses 3', '20 AI credits, once', '50 on Starter, 100 on Pro', 'Monthly plans get none']) expect(ai).toContain(fact);
   });
 });
