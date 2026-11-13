@@ -18,6 +18,11 @@ helpers to stop wiring 3D pictures into the app (recipes, poses and research sta
 the daily picture job stays paused. Next: one helper builds a "drawn" look in the same Blender pipeline (flat
 cel shading + outlines, same colours, no red muscles, detailed machines), samples beside main-set pictures, then
 re-render all our own pictures. The release (R-487) waits for this; no 3D picture ships.
+YOUR FOLLOW-UP (13 Nov 2026, ~21:55 IST): "Yes - give those 17 questions back so I can test" and, on the pictures,
+"How can you make new designs for an existing ongoing effort ... you have wasted so many of my tokens." Did: LIVE D1
+ai_usage for Crispy Curves, 2026-11-13, assist: calls 20 -> 3 (17 left today; read before and after). 0.77.0 has no
+3D pictures (checked the tag), so no member saw them. Saved rule: new-items-match-the-existing-set (hard). Paused all
+picture helpers; asked him: redraw in the orange-tank look (3 samples beside the old ones first) or stop.
 
 ## R-488. AI Assistant: "You have asked a lot today" with 20 credits showing — 13 Nov 2026
 He said (13 Nov 2026, evening, with a screenshot: "Send a Chhath Puja greeting to everyone" -> red "You have asked a
