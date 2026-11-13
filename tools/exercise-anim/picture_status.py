@@ -41,9 +41,9 @@ CLIPS_TS = os.path.join(REPO, "apps", "mobile", "src", "tracker", "clips", "clip
 OWN = os.path.join(REPO, "apps", "mobile", "assets", "exercise-pictures-own")
 QA = os.path.join(HERE, "qa.json")
 
-# Equipment the pipeline can build today (pipeline/forgeanim/props.py): dumbbells, an adjustable bench (flat to
+# Equipment the pipeline can build today (pipeline/forgeanim/props.py): dumbbells, a straight barbell (held by both hands), an adjustable bench (flat to
 # upright), a plain box (step / plyo box / wall block) and the floor. Anything else waits for a new prop.
-READY_EQUIPMENT = {"dumbbell", "bodyweight"}
+READY_EQUIPMENT = {"dumbbell", "bodyweight", "barbell"}   # barbell: straight bar, 13 Nov 2026
 # Dumbbell / bodyweight keys that still need a prop the pipeline does not have.
 NEEDS = {
     "weighted_push_up": "weight plate on the back",
@@ -57,6 +57,12 @@ NEEDS = {
     "l_sit": "parallettes or dip bars",
     "swimming": "water", "outdoor_run": "outdoor scene (or a plain running stride)",
     "hiking": "outdoor scene", "walking": "plain walking stride (possible; low value)",
+    # barbell keys that need more than a straight bar (13 Nov 2026)
+    "meadows_row": "landmine (one bar end fixed to the floor)", "landmine_squat": "landmine",
+    "trap_bar_shrug": "trap (hex) bar", "wide_grip_ez_bar_curl": "EZ (cambered) bar",
+    "decline_ez_bar_skull_crusher": "EZ bar and decline bench", "barbell_spider_curl": "chest-down incline bench set-up",
+    "reverse_preacher_curl": "preacher bench", "reverse_barbell_wrist_curl": "a wrist that bends",
+    "behind_the_back_wrist_curl": "a wrist that bends",
     "stomach_vacuum": "a belly that draws in (the rig has no per-pose belly shape; research/stomach_vacuum.json)",
 }
 

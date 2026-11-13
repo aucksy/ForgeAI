@@ -19,6 +19,11 @@ export const OWN_PICTURES: Readonly<Record<string, ExercisePictures>> = {
     thumb: require('../../../assets/exercise-pictures-own/alternating_hammer_curl__thumb.webp'),
     end: require('../../../assets/exercise-pictures-own/alternating_hammer_curl__end.webp'),
   },
+  barbell_21s: {
+    start: require('../../../assets/exercise-pictures-own/barbell_21s__start.webp'),
+    thumb: require('../../../assets/exercise-pictures-own/barbell_21s__thumb.webp'),
+    end: require('../../../assets/exercise-pictures-own/barbell_21s__end.webp'),
+  },
   dumbbell_step_up: {
     start: require('../../../assets/exercise-pictures-own/dumbbell_step_up__start.webp'),
     thumb: require('../../../assets/exercise-pictures-own/dumbbell_step_up__thumb.webp'),
@@ -38,6 +43,11 @@ export const OWN_PICTURES: Readonly<Record<string, ExercisePictures>> = {
     start: require('../../../assets/exercise-pictures-own/hollow_hold__start.webp'),
     thumb: require('../../../assets/exercise-pictures-own/hollow_hold__thumb.webp'),
     end: null,
+  },
+  incline_barbell_skull_crusher: {
+    start: require('../../../assets/exercise-pictures-own/incline_barbell_skull_crusher__start.webp'),
+    thumb: require('../../../assets/exercise-pictures-own/incline_barbell_skull_crusher__thumb.webp'),
+    end: require('../../../assets/exercise-pictures-own/incline_barbell_skull_crusher__end.webp'),
   },
   incline_bench_preacher_curl: {
     start: require('../../../assets/exercise-pictures-own/incline_bench_preacher_curl__start.webp'),
@@ -128,6 +138,11 @@ export const OWN_PICTURES: Readonly<Record<string, ExercisePictures>> = {
     start: require('../../../assets/exercise-pictures-own/weighted_crunch__start.webp'),
     thumb: require('../../../assets/exercise-pictures-own/weighted_crunch__thumb.webp'),
     end: require('../../../assets/exercise-pictures-own/weighted_crunch__end.webp'),
+  },
+  wide_grip_barbell_curl: {
+    start: require('../../../assets/exercise-pictures-own/wide_grip_barbell_curl__start.webp'),
+    thumb: require('../../../assets/exercise-pictures-own/wide_grip_barbell_curl__thumb.webp'),
+    end: require('../../../assets/exercise-pictures-own/wide_grip_barbell_curl__end.webp'),
   },
 };
 /* eslint-enable @typescript-eslint/no-require-imports */

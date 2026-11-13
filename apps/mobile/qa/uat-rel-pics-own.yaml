@@ -62,6 +62,26 @@ appId: com.mettleup.app
 - assertVisible: "End position of Alternating Hammer Curl"
 - takeScreenshot: rel-pics-03-hammer
 - back
+# A barbell exercise (13 Nov 2026: the first barbell pictures): Start + End, the bar in both hands.
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Clear the search'
+- tapOn: "Clear the search"
+- tapOn: "Search exercises"
+- inputText: " wide-grip barbell curl"
+- hideKeyboard
+- tapOn:
+    text: "View Wide-Grip Barbell Curl"
+    index: 0
+- extendedWaitUntil:
+    visible: "Start position of Wide-Grip Barbell Curl"
+    timeout: 20000
+- assertVisible: "End position of Wide-Grip Barbell Curl"
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: rel-pics-03b-barbell
+- back
 # A hold: one picture, labelled Hold, no End.
 # The search keeps its text after back: clear it with the X (eraseText left letters behind on 12 Nov).
 - runFlow:

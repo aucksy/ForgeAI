@@ -170,11 +170,11 @@
     "tries": 2
   },
   "side_plank": {
-    "rendered": "2026-11-12",
-    "run": "43161740739",
+    "rendered": "2026-11-13",
+    "run": "43370176409",
     "qa": "fail",
-    "reason": "camera looks straight down so it reads as lying flat; support arm straight and angled out with a fist, not a forearm under the shoulder; top hand floats in the air",
-    "tries": 1
+    "reason": "13 Nov retry: forearm under the shoulder and top fist on the hip now read right, but the main muscle (floor-side obliques) shows only a small faint red patch from the front camera; head tilts toward the floor-side shoulder",
+    "tries": 2
   },
   "single_arm_dumbbell_curl": {
     "rendered": "2026-11-12",
@@ -278,6 +278,41 @@
     "run": "43161740739",
     "qa": "fail",
     "reason": "end: one arm fully curled, the other half-curled with its dumbbell pressing into the stomach",
+    "tries": 2
+  },
+  "wide_grip_barbell_curl": {
+    "rendered": "2026-11-13",
+    "run": "43370176409",
+    "qa": "pass",
+    "reason": "numbers ok (feet on floor, nothing below it, bar square through both fists); close-ups ok; fresh reviewer passed",
+    "tries": 1
+  },
+  "barbell_21s": {
+    "rendered": "2026-11-13",
+    "run": "43370176409",
+    "qa": "pass",
+    "reason": "numbers ok (feet on floor, nothing below it, bar square through both fists); close-ups ok; fresh reviewer passed",
+    "tries": 1
+  },
+  "incline_barbell_skull_crusher": {
+    "rendered": "2026-11-13",
+    "run": "43370176409",
+    "qa": "pass",
+    "reason": "numbers ok (feet on floor, nothing below it, bar square through both fists); close-ups ok; fresh reviewer said the bar goes behind the head like a pullover: checked, the front view shows the upper arms vertical and the library step says lower the bar behind your head, so it stays",
+    "tries": 1
+  },
+  "reverse_grip_bench_press": {
+    "rendered": "2026-11-13",
+    "run": "43374536640",
+    "qa": "fail",
+    "reason": "bar lands at the collarbone, not the lower chest, in both tries (elev 46/plane -74, then 38/-55); on the flat bench the hands land ~15-20 cm further toward the head than the torso-frame maths says. Try 1 also had a plate hiding the head. Measure with measure_press.py in the cloud before the next try",
+    "tries": 2
+  },
+  "behind_the_head_skull_crusher": {
+    "rendered": "2026-11-13",
+    "run": "43374536640",
+    "qa": "fail",
+    "reason": "end: the bar hangs ~25 cm past the head and the upper arms cover the face in both tries (elev 135/elbow 100, then 120/105); same flat-bench offset as reverse_grip_bench_press",
     "tries": 2
   }
 }

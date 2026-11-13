@@ -131,6 +131,8 @@ describe('our own pictures (the grey 3D athlete, for exercises RepDB has no pict
     'incline_bench_preacher_curl', 'incline_neutral_grip_dumbbell_press', 'seated_rear_delt_fly', 'single_arm_dumbbell_curl',
     'single_arm_dumbbell_lateral_raise', 'single_arm_dumbbell_upright_row', 'single_arm_lying_dumbbell_extension',
     'single_leg_calf_raise', 'sissy_squat', 'suitcase_carry', 'two_arm_dumbbell_kickback', 'weighted_crunch',
+    // 13 Nov 2026: the first barbell pictures
+    'wide_grip_barbell_curl', 'barbell_21s', 'incline_barbell_skull_crusher',
   ];
   // Holds: one picture, no end picture.
   const HOLDS = ['hollow_hold', 'wall_sit'];

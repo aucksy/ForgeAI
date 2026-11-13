@@ -65,7 +65,31 @@ https://claude.ai/artifact/1ZwD5CZb1LPZCK58DQ6huw)
 - plank_shoulder_tap, rkc_plank: 5 cm into the floor. 12 Nov finding: it is the TOES, not the hands (feet fixed at ankle
   height 0.165 with the foot tipped 70 deg). Put the body back and set the ankle to 0.218.
 
+- side_plank (13 Nov, 2 tries): forearm and top hand now right, but the floor-side obliques show only a small faint red
+  patch from the front camera. Needs a camera that sees the floor-side waist (low, from the front-below or the feet) or
+  a stronger mask there; keep the head in line with the spine.
+- reverse_grip_bench_press, behind_the_head_skull_crusher (13 Nov, 2 tries each): on the FLAT bench the hands land
+  ~15-20 cm further toward the head than the torso-frame arm maths says (bar at the collarbone instead of the lower chest;
+  bar far past the head). Run measure_press.py in the cloud (add it to the stills checks) and set the angles from its
+  numbers before the next try.
+
 ## Run log (newest first)
+
+### 13 Nov 2026 (daily job; render runs 43370176409, retry 43374536640)
+- `--next` had only side_plank left, so per Rules the next prop family was built: a straight BARBELL
+  (`props.barbell`, Olympic or short curl bar) held by both hands. `animate.place_bars` puts the bar through both fist
+  centres, so it can never miss a hand (the log prints the hand gap and that each fist is square on the bar: 0.0 deg on
+  every key). Barbell keys that need more than a straight bar are listed in picture_status.py NEEDS.
+- Research (5 files, peer-reviewed first) + recipes for wide_grip_barbell_curl, barbell_21s, incline_barbell_skull_crusher,
+  reverse_grip_bench_press, behind_the_head_skull_crusher; side_plank retried.
+- ADDED (3): wide_grip_barbell_curl, barbell_21s, incline_barbell_skull_crusher. Fresh reviewer passed the two curls; it
+  called the skull crusher a pullover, but the front view shows the upper arms vertical and the library step says
+  "lower the bar behind your head", so it stays. 27 exercises in the app now. Release `exercise-stills` has their PNGs.
+- DROPPED (3, all now at 2 tries -> Needs review): side_plank (main muscle red too faint), reverse_grip_bench_press and
+  behind_the_head_skull_crusher (flat-bench arm offset, see Needs review).
+- UAT flow upic now also opens Wide-Grip Barbell Curl (first barbell picture).
+- Next: jm_press, standing/seated_barbell_overhead_extension, barbell_step_up, seated_barbell_calf_raise (`--next`), then
+  the cable column prop family.
 
 ### 12 Nov 2026 (second review by another helper)
 - A separate fresh-eyes review of the first 25 found knee_plank shows no red muscle at all (confirmed by eye on the
