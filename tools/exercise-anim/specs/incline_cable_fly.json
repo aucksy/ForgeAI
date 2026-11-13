@@ -49,8 +49,8 @@
   }
  },
  "camera": {
-  "yaw": 35,
-  "pitch": 32,
+  "yaw": 50,
+  "pitch": 30,
   "lens": 50,
   "fill": 0.9,
   "res": 640,
@@ -226,7 +226,7 @@
       1
      ],
      "arm": {
-      "elev": 88,
+      "elev": 76,
       "plane": 82,
       "elbow": 20,
       "bend": [
@@ -245,7 +245,7 @@
       1
      ],
      "arm": {
-      "elev": 88,
+      "elev": 76,
       "plane": 82,
       "elbow": 20,
       "bend": [

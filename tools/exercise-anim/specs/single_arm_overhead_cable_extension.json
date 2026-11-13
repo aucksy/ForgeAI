@@ -10,7 +10,7 @@
    {
     "loc": [
      0.2,
-     0.75
+     1.0
     ],
     "pulley_h": 0.12,
     "face": [
@@ -28,8 +28,8 @@
   }
  },
  "camera": {
-  "yaw": 125,
-  "pitch": 10,
+  "yaw": 80,
+  "pitch": 6,
   "lens": 50,
   "fill": 0.9,
   "res": 640,
@@ -221,6 +221,6 @@
    }
   }
  },
- "research": "Standing with the back to a low pulley (0.12 m, 0.6 m behind). Left upper arm straight up beside the head (elev 165 / plane 95), elbow pointing up. Start: elbow 130, the handle behind the head (forearm folds back, bend_world back and a little in). End: elbow 10, arm straight overhead. The cable runs down behind the back to the pulley. Right fist on the hip. Camera from behind-left so the triceps shows.",
+ "research": "Standing with the back to a low pulley (0.12 m, 0.6 m behind). Left upper arm straight up beside the head (elev 165 / plane 95), elbow pointing up. Start: elbow 130, the handle behind the head (forearm folds back, bend_world back and a little in). End: elbow 10, arm straight overhead. The cable runs down behind the back to the pulley. Right fist on the hip. 13 Nov retry: pulley straight behind (1.0 m) so the cable leaves the back, camera from the working side.",
  "highlight_side": "L"
 }
