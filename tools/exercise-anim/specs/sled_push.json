@@ -11,7 +11,7 @@
  "props": {
   "sled": {
    "type": "sled",
-   "pole_gap": 0.5,
+   "pole_gap": 0.42,
    "pole_h": 1.15
   }
  },
