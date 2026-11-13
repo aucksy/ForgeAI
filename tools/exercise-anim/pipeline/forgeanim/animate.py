@@ -72,7 +72,8 @@ class Clip:
         sc = self.spec.get("scene", {})
         if "bench" in sc:
             b = sc["bench"]
-            self.bench = P.incline_bench(b.get("deg", 35.0))
+            kw = {k: b[k] for k in ("style", "seat_h", "back_len", "seat_len") if k in b}
+            self.bench = P.incline_bench(b.get("deg", 35.0), **kw)
             self.bench["root"].location = Vector(b.get("loc", (0, 0, 0)))
             if b.get("rot_z"):
                 self.bench["root"].rotation_euler = (0, 0, math.radians(b["rot_z"]))
@@ -122,6 +123,9 @@ class Clip:
                 self._lm_tube, base = P.landmine_base("FA_" + name + "Pivot")
                 base.location = Vector(p["pivot"])
                 self.extras = getattr(self, "extras", []) + [self._lm_tube, base]
+            elif p["type"] == "handle":
+                # machine handle that follows the hand (13 Nov 2026); levers to the machine are "machine" parts
+                self.props[name] = P.handle("FA_" + name, p.get("length", 0.13))
             elif p["type"] == "barbell":
                 # "bar": {"type": "barbell", "shaft": 1.31, "sleeve": 0.42, "plates": [0.225]} (13 Nov 2026)
                 kw = {k: (tuple(v) if isinstance(v, list) else v) for k, v in p.items() if k in ("shaft", "sleeve", "plates", "plate_t")}
@@ -316,6 +320,7 @@ class Clip:
         self.place_feet_props()
         self.place_bars(pose, T)
         self.place_cables(pose, T)
+        self.update_machine()
 
     def build_cable(self, name, p):
         kind = p.get("handle", "d")
@@ -800,6 +805,216 @@ class Clip:
                 away = -bperp
             pose.setdefault("elbows", {})[s] = list(E + away.normalized() * 0.45)
 
+    # ---------------- machines (13 Nov 2026, exercise pictures) ----------------
+    # "machine": {"parts": [...]}. Each part is a plain box / cylinder / rod (props.part) or a template ("stack").
+    # Points (P) in a part are one of:
+    #   [x, y, z]                     world
+    #   "fist.L@start"                fist centre of that hand in that pose (from a pre-pass that applies every pose)
+    #   "bone:foot.L@end" / "tail:..." head / tail of a bone in that pose;  "prop:h_L@start" a prop's origin
+    #   "body:-y:z=1.2~0.05:x=0~0.15@start"  the body skin point furthest along -y inside those bands
+    #   {"a": P, "off": [dx, dy, dz]} offset;  {"mid": [P, P]};  {"xyz": [P|num, P|num, P|num]} one axis from each
+    #   {"bisect": [P1, P2], "near": P} the point nearest `near` that is equally far from P1 and P2 (a lever pivot:
+    #                                   the lever is the same length at the start and at the end)
+    #   moving points (the part moves every frame): {"fist": "L"}, {"bone": "foot.L"}, {"tail": "foot.L"},
+    #                                   {"prop": "h_L", "loc": [lx, ly, lz]} (a point in the prop's own frame), + "off"
+    # Part: {"shape": "box"|"cyl", "size": [...], "at": P, "rot": [deg x, y, z]} or {"shape": "rod", "size": [r],
+    #   "a": P, "b": P, "ext": [m past a, m past b]}; "mat": frame|pad|chrome|iron|rubber; "mirror": true adds the
+    #   right-side copy (a static point is mirrored x -> -x, a moving point swaps L/R). {"template": "stack", "at": P,
+    #   "h": 1.5, "rot_z": deg} = a weight stack. Rods print their length and tilt; moving rods print their length at
+    #   every key pose (a lever must keep its length).
+    def _scan_anchors(self, x, out):
+        if isinstance(x, str) and "@" in x:
+            out.add(x)
+        elif isinstance(x, dict):
+            for v in x.values():
+                self._scan_anchors(v, out)
+        elif isinstance(x, list):
+            for v in x:
+                self._scan_anchors(v, out)
+
+    def _eval_anchor(self, a):
+        what, pose = a.rsplit("@", 1)
+        rig = self.rig
+        if what.startswith("fist."):
+            return self._fist[what[5:]].copy()
+        if what.startswith("bone:"):
+            return R.world_head(rig, what[5:]).copy()
+        if what.startswith("tail:"):
+            return R.world_tail(rig, what[5:]).copy()
+        if what.startswith("prop:"):
+            return self.props[what[5:]].matrix_world.translation.copy()
+        if what.startswith("propx:"):          # "propx:h_L:0.09,0,0@start" = a point in the prop's own frame
+            _, nm, loc = what.split(":")
+            return self.props[nm].matrix_world @ Vector([float(v) for v in loc.split(",")])
+        if what.startswith("body:"):
+            import numpy as np
+            parts = what.split(":")[1:]
+            d = parts[0]; sign = -1.0 if d[0] == "-" else 1.0; ax = "xyz".index(d[-1])
+            dg = bpy.context.evaluated_depsgraph_get(); dg.update()
+            ev = self.ch["body"].evaluated_get(dg); me = ev.to_mesh()
+            P_ = np.array([tuple(ev.matrix_world @ v.co) for v in me.vertices]); ev.to_mesh_clear()
+            keep = np.ones(len(P_), bool)
+            for f in parts[1:]:
+                k, rng = f.split("="); c, h = (float(v) for v in rng.split("~"))
+                keep &= np.abs(P_[:, "xyz".index(k)] - c) <= h
+            Q = P_[keep]
+            if not len(Q):
+                raise ValueError("no body point inside " + a)
+            return Vector(tuple(Q[int(np.argmax(sign * Q[:, ax]))]))
+        raise ValueError("unknown anchor " + a)
+
+    def _P(self, P, mirror_side=False):
+        """Static point -> world Vector (a number stays a number, for "xyz")."""
+        if isinstance(P, (int, float)):
+            return P
+        if isinstance(P, str):
+            v = self.anchors[P].copy()
+        elif isinstance(P, list):
+            v = Vector(P)
+        elif "a" in P:
+            v = self._P(P["a"])
+        elif "mid" in P:
+            v = (self._P(P["mid"][0]) + self._P(P["mid"][1])) / 2
+        elif "mirror" in P:
+            v = mirror(self._P(P["mirror"]))
+        elif "xyz" in P:
+            c = [self._P(q) for q in P["xyz"]]
+            v = Vector([q if isinstance(q, (int, float)) else q[i] for i, q in enumerate(c)])
+        elif "bisect" in P:
+            A_, B_ = self._P(P["bisect"][0]), self._P(P["bisect"][1]); nr = self._P(P["near"])
+            nrm = (B_ - A_).normalized(); M_ = (A_ + B_) / 2
+            v = nr - nrm * (nr - M_).dot(nrm)
+        else:
+            raise ValueError(f"bad point {P}")
+        if isinstance(P, dict):
+            v = v + Vector(P.get("off", (0, 0, 0)))
+        return mirror(v) if mirror_side else v
+
+    @staticmethod
+    def _is_dyn(P):
+        return isinstance(P, dict) and (any(k in P for k in ("fist", "bone", "tail", "prop", "along")) or ("a" in P and Clip._is_dyn(P["a"])))
+
+    def _Pd(self, P):
+        """Moving point -> world Vector now."""
+        if "a" in P:
+            return self._Pd(P["a"]) + Vector(P.get("off", (0, 0, 0)))
+        off = Vector(P.get("off", (0, 0, 0)))
+        if "fist" in P:
+            return self._fist[P["fist"]] + off
+        if "bone" in P:
+            return R.world_head(self.rig, P["bone"]) + off
+        if "tail" in P:
+            return R.world_tail(self.rig, P["tail"]) + off
+        if "along" in P:
+            # {"along": [bone A, bone B], "t": 0.85, "hinge": [1, 0, 0], "d": 0.07}: the point t of the way from A's head to
+            # B's head ("tail:<bone>" = its tail), moved d m off the limb toward hinge x limb (the back of a shin for a
+            # knee hinge along +x). For pads that ride on a limb (leg-curl roller, knee pad).
+            ends = [R.world_tail(self.rig, n[5:]) if n.startswith("tail:") else R.world_head(self.rig, n) for n in P["along"]]
+            d = ends[1] - ends[0]
+            side = Vector(P.get("hinge", (1, 0, 0))).cross(d)
+            side = side.normalized() if side.length > 1e-9 else Vector((0, 0, 0))
+            return ends[0] + d * P.get("t", 0.5) + side * P.get("d", 0.0) + off
+        return self.props[P["prop"]].matrix_world @ Vector(P.get("loc", (0, 0, 0))) + off
+
+    @staticmethod
+    def _mirror_dyn(P):
+        P = json.loads(json.dumps(P))
+        if "a" in P:
+            P["a"] = Clip._mirror_dyn(P["a"])
+        if "off" in P:
+            P["off"] = [-P["off"][0], P["off"][1], P["off"][2]]
+        if "fist" in P:
+            P["fist"] = {"L": "R", "R": "L"}[P["fist"]]
+        sw = lambda n: n[:-2] + {".L": ".R", ".R": ".L"}.get(n[-2:], n[-2:])
+        for k in ("bone", "tail"):
+            if k in P:
+                P[k] = sw(P[k])
+        if "along" in P:
+            P["along"] = [sw(n) for n in P["along"]]
+        if "prop" in P:
+            P["prop"] = P["prop"][:-2] + {"_L": "_R", "_R": "_L"}.get(P["prop"][-2:], P["prop"][-2:])
+            if "loc" in P:
+                P["loc"] = [-P["loc"][0], P["loc"][1], -P["loc"][2]]
+        return P
+
+    def _pt(self, P, side):
+        """(is_moving, resolver) for a part point; side "R" = the mirrored copy."""
+        if self._is_dyn(P):
+            Q = self._mirror_dyn(P) if side == "R" else P
+            return True, (lambda: self._Pd(Q))
+        v = self._P(P, mirror_side=(side == "R"))
+        return False, (lambda: v)
+
+    def build_machine(self):
+        cfg = self.spec["machine"]
+        need = set(); self._scan_anchors(cfg, need)
+        self.anchors = {}
+        poses = sorted(set(self.spec["poses"]))
+        for pn in poses:
+            self.apply(self.full_pose(pn)); R.update()
+            for a in need:
+                if a.endswith("@" + pn):
+                    self.anchors[a] = self._eval_anchor(a)
+            fl = self._fist.get("L"); fr = self._fist.get("R")
+            print(f"[machine] pose {pn}: fist L {tuple(round(c, 3) for c in fl) if fl else None} "
+                  f"R {tuple(round(c, 3) for c in fr) if fr else None} root {tuple(round(c, 3) for c in R.world_head(self.rig, 'root'))}")
+        for a in sorted(need):
+            print(f"[machine] anchor {a} = {tuple(round(c, 3) for c in self.anchors[a])}")
+        self.machine_objs = []; self.machine_dyn = []
+        for i, pt in enumerate(cfg.get("parts", [])):
+            for side in (("L", "R") if pt.get("mirror") else ("L",)):
+                self._build_part(f"FA_M{i}{side if pt.get('mirror') else ''}", pt, side)
+        self.update_machine()
+
+    def _build_part(self, name, pt, side):
+        sx = -1.0 if side == "R" else 1.0
+        if pt.get("template") == "stack":
+            ob = P.weight_stack(name, h=pt.get("h", 1.55))
+            ob.location = self._P(pt["at"], mirror_side=(side == "R"))
+            ob.rotation_euler = (0, 0, math.radians(sx * pt.get("rot_z", 0)))
+            self.machine_objs += list(ob.children)
+            return
+        shape = pt["shape"]
+        ob = P.part(name, shape, pt.get("size", [0.03]), pt.get("mat", "frame"), pt.get("bevel"))
+        self.machine_objs.append(ob)
+        rot = pt.get("rot", [0, 0, 0]); rot = [rot[0], sx * rot[1], sx * rot[2]]
+        Rm = Euler([math.radians(r) for r in rot], "XYZ").to_matrix().to_4x4()
+        if shape == "rod":
+            ext = pt.get("ext", (0, 0))
+            da, fa = self._pt(pt["a"], side); db, fb = self._pt(pt["b"], side)
+
+            def place(ob=ob, fa=fa, fb=fb, ext=ext):
+                a, b = fa(), fb(); d = b - a
+                if d.length < 1e-6:
+                    d = Vector((0, 0, 1e-3))
+                u = d.normalized(); a = a - u * ext[0]; b = b + u * ext[1]; d = b - a
+                ob.matrix_world = Matrix.Translation((a + b) / 2) @ u.to_track_quat("Y", "Z").to_matrix().to_4x4() @ Matrix.Diagonal((1, d.length, 1, 1))
+                return d.length, math.degrees(u.angle(Vector((0, 0, 1))))
+            if da or db:
+                self.machine_dyn.append({"ob": ob, "place": place, "name": name, "check": pt.get("check", True)})
+            else:
+                ln, tilt = place()
+                print(f"[machine] rod {name}: length {ln:.3f} m, {tilt:.1f} deg off vertical")
+            return
+        dyn, f = self._pt(pt["at"], side)
+
+        def place(ob=ob, f=f, Rm=Rm):
+            ob.matrix_world = Matrix.Translation(f()) @ Rm
+            return None
+        if dyn:
+            self.machine_dyn.append({"ob": ob, "place": place, "name": name, "check": False})
+        else:
+            place()
+
+    def update_machine(self):
+        for d in getattr(self, "machine_dyn", []):
+            d["last"] = d["place"]()
+
+    def log_machine(self, f):
+        for d in getattr(self, "machine_dyn", []):
+            if d.get("check") and d.get("last"):
+                print(f"[machine] frame {f} moving rod {d['name']}: length {d['last'][0]:.3f} m")
+
     # ---------------- bake ----------------
     def timeline(self):
         t = self.spec["timing"]
@@ -825,7 +1040,10 @@ class Clip:
         fps, keys, n = self.timeline()
         scene.render.fps = fps; scene.frame_start = 0; scene.frame_end = n - 1
         self.foot_rest = {s: self.ctl[f"foot.{s}"].rotation_quaternion.copy() for s in R.SIDES}
+        if self.spec.get("machine"):
+            self.build_machine()
         cache = {}
+        key_frames = {min(n - 1, int(round(k[0] * fps))) for k in keys}
         rig = self.rig; pb = rig.pose.bones
         bone_names = set()
         for p in self.spec["poses"].values():
@@ -839,7 +1057,7 @@ class Clip:
         else:
             girdle_bones = []
         animated = [o for o in self.ctl.values()] + list(self.props.values())
-        movers = self.cable_movers()   # stretched every frame, so their scale is keyed too
+        movers = self.cable_movers() + [d["ob"] for d in getattr(self, "machine_dyn", [])]   # stretched every frame, so their scale is keyed too
         if hasattr(self, "_lm_tube"):
             animated.append(self._lm_tube)   # the landmine tube turns with the bar
         finger_bones = [f"{b}.{s}" for b in R.FINGER_BONES for s in R.SIDES if f"{b}.{s}" in pb] if self._shapes else []
@@ -865,6 +1083,8 @@ class Clip:
                 o.keyframe_insert("rotation_quaternion" if o.rotation_mode == "QUATERNION" else "rotation_euler", frame=f)
             for o in movers:
                 o.keyframe_insert("scale", frame=f)
+            if f in key_frames:
+                self.log_machine(f)
         for ob in [rig] + animated + movers:
             ad = ob.animation_data
             if ad and ad.action:

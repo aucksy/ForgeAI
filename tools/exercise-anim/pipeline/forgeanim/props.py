@@ -90,20 +90,34 @@ def dumbbell(name="FA_Dumbbell", plates=(0.088, 0.074), handle_len=0.14):
     return root
 
 
-def incline_bench(incline_deg=35.0, name="FA_Bench"):
-    """Adjustable bench. Origin on the floor under the seat/back hinge. Returns dict(root, seat_top, back_axis)."""
+def incline_bench(incline_deg=35.0, name="FA_Bench", style="bench", seat_h=0.44, back_len=0.82, seat_len=0.34):
+    """Adjustable bench. Origin on the floor under the seat/back hinge. Returns dict(root, seat_top, back_axis).
+    style "machine" (13 Nov 2026): the same seat and back pad on a centre post and a base plate (a machine seat),
+    without the bench's long floor rail; back_len 0 = a seat with no back pad."""
     M = _mats()
     root = _empty(name)
-    seat_h = 0.44          # top of seat pad
     pad_t = 0.075
     # seat: in front of the hinge (toward -Y), slightly tilted up at the front
-    seat_len = 0.34
     seat = _box(name + "_Seat", (0.30, seat_len, pad_t), loc=(0, -seat_len / 2 - 0.01, seat_h - pad_t / 2), mat=M["pad"], bevel=0.022, parent=root)
     # back pad: hinged at (y=0, z=seat_h), rising toward +Y
     a = math.radians(incline_deg)
-    back_len = 0.82
     hinge = Vector((0, 0.01, seat_h - pad_t / 2))
     rot = Matrix.Rotation(a, 4, "X")
+    if style == "machine":
+        _box(name + "_Base", (0.46, 0.62, 0.04), loc=(0, -0.05, 0.02), mat=M["frame"], bevel=0.006, parent=root)
+        _box(name + "_Post", (0.08, 0.08, seat_h - 0.1), loc=(0, -seat_len / 2, 0.04 + (seat_h - 0.1) / 2), mat=M["frame"], bevel=0.006, parent=root)
+        _box(name + "_SeatPlate", (0.18, seat_len * 0.8, 0.02), loc=(0, -seat_len / 2, seat_h - pad_t - 0.012), mat=M["frame"], bevel=0.004, parent=root)
+        if back_len > 0:
+            back = _box(name + "_Back", (0.29, back_len, pad_t), loc=(0, 0, 0), mat=M["pad"], bevel=0.022, parent=root)
+            back.matrix_basis = Matrix.Translation(hinge) @ rot @ Matrix.Translation((0, back_len / 2 + 0.02, 0))
+            _box(name + "_BackPlate", (0.16, back_len * 0.8, 0.02), mat=M["frame"], bevel=0.004, parent=back, loc=(0, 0, -pad_t / 2 - 0.012))
+            top = hinge + rot @ Vector((0, back_len * 0.7, -pad_t / 2 - 0.03))
+            base = Vector((0, max(0.12, top.y), 0.04))
+            d = top - base
+            sp = _box(name + "_BackPost", (0.07, d.length, 0.07), mat=M["frame"], bevel=0.006, parent=root)
+            sp.matrix_basis = Matrix.Translation((base + top) / 2) @ d.to_track_quat("Y", "Z").to_matrix().to_4x4()
+            _box(name + "_BackFoot", (0.40, 0.08, 0.04), loc=(0, base.y, 0.02), mat=M["frame"], bevel=0.006, parent=root)
+        return {"root": root, "seat_h": seat_h, "hinge": hinge, "incline": a, "back_len": back_len, "pad_t": pad_t}
     back = _box(name + "_Back", (0.29, back_len, pad_t), loc=(0, 0, 0), mat=M["pad"], bevel=0.022, parent=root)
     back.matrix_basis = Matrix.Translation(hinge) @ rot @ Matrix.Translation((0, back_len / 2 + 0.02, 0))
     # frame: main rail, feet, struts, seat post
@@ -437,3 +451,50 @@ def preacher_bench(name="FA_Preacher", seat_h=0.60, pad_top=(-0.24, 1.03), pad_d
     back = centre - n * (pt / 2 + 0.01)
     _rod(name + "_PadPost", (0, back.y + 0.04, 0.05), back, 0.03, M["frame"], root)
     return {"root": root, "top": top, "normal": n, "down": d, "pad_len": pad_len, "pad_w": pad_w, "seat_h": seat_h}
+
+
+# ---------------- machines (13 Nov 2026, exercise pictures) ----------------
+# A machine is built from plain parts (our own geometry): a seat and back pad (incline_bench(style="machine")), handles
+# that follow the hands, levers/rods between two points, pads that follow a bone, and a weight stack. Where each part
+# goes is written in the recipe ("machine" in animate.py), mostly relative to where the body really is.
+
+def handle(name="FA_Handle", length=0.13, r=0.016):
+    """Machine handle: chrome bar with a rubber grip. Origin = grip centre, bar along local X (like a dumbbell handle)."""
+    M = _mats()
+    root = _empty(name)
+    _cyl(name + "_Bar", r, length + 0.06, verts=32, mat=M["chrome"], parent=root)
+    _cyl(name + "_Grip", r + 0.005, length, verts=32, mat=M["rubber"], bevel=0.003, parent=root)
+    for s in (1, -1):
+        _cyl(name + f"_Cap{s}", r + 0.009, 0.012, mat=M["frame"], bevel=0.003, loc=(s * (length / 2 + 0.03), 0, 0), parent=root)
+    return root
+
+
+def part(name, shape, size, mat="frame", bevel=None, parent=None):
+    """One plain part centred on its origin. box: size (x, y, z). cyl: size (radius, length) along local Y.
+    rod: a cylinder of radius size[0] and length 1 along local Y (stretched between two points by scale)."""
+    M = _mats()
+    m = M.get(mat, M["frame"])
+    if shape == "box":
+        return _box(name, tuple(size), mat=m, bevel=0.01 if bevel is None else bevel, parent=parent)
+    if shape == "cyl":
+        return _cyl(name, size[0], size[1], axis="Y", mat=m, bevel=0.004 if bevel is None else bevel, parent=parent)
+    if shape == "rod":
+        return _cyl(name, size[0], 1.0, verts=24, axis="Y", mat=m, parent=parent)
+    raise ValueError("unknown part shape " + shape)
+
+
+def weight_stack(name="FA_Stack", h=1.55, plates=12):
+    """Selectorised weight stack in its frame. Origin = floor point under its centre; plates face +-Y."""
+    M = _mats()
+    root = _empty(name)
+    w, d = 0.36, 0.20
+    _box(name + "_Base", (w + 0.16, d + 0.16, 0.05), loc=(0, 0, 0.025), mat=M["frame"], bevel=0.006, parent=root)
+    for s in (1, -1):
+        _box(name + f"_Post{s}", (0.06, 0.06, h), loc=(s * (w / 2 + 0.05), 0, h / 2), mat=M["frame"], bevel=0.006, parent=root)
+        _cyl(name + f"_Guide{s}", 0.011, h - 0.12, axis="Z", mat=M["chrome"], loc=(s * 0.11, 0, h / 2), parent=root)
+    _box(name + "_Top", (w + 0.16, 0.08, 0.06), loc=(0, 0, h + 0.03), mat=M["frame"], bevel=0.006, parent=root)
+    for i in range(plates):
+        _box(name + f"_Plate{i}", (w - 0.04, d - 0.06, 0.034), loc=(0, 0, 0.09 + i * 0.038), mat=M["iron"], bevel=0.004, parent=root)
+    _box(name + "_TopPlate", (w - 0.08, d - 0.08, 0.05), loc=(0, 0, 0.09 + plates * 0.038 + 0.02), mat=M["chrome"], bevel=0.004, parent=root)
+    _cyl(name + "_Pin", 0.008, d + 0.04, axis="Y", mat=M["chrome"], loc=(0, 0, 0.09 + 5 * 0.038), parent=root)
+    return root
