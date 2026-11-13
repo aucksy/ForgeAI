@@ -44,7 +44,7 @@
   },
   "camera": {
     "yaw": -115,
-    "pitch": 18,
+    "pitch": 40,
     "lens": 50,
     "fill": 0.9,
     "res": 640,
@@ -162,5 +162,5 @@
       }
     }
   },
-  "research": "13 Nov 2026 (pics-fixes), new. Bench, legs hooked under the rollers and lying body from decline_dumbbell_skull_crusher (the decline bench recipe, 20 deg). EZ bar held overhand on the inner (close) bends, so each hand's axis turns 26.6 deg with the camber. START upper arms straight up to the ceiling (elev 70.7 plane 90 in this lying torso), elbows 5. END elbows 105 deg folding toward the head (bend [0,0,1]): the bar comes down just above the forehead, upper arms still. Facts: research/decline_ez_bar_skull_crusher.json."
+  "research": "13 Nov 2026 (pics-fixes), new. Bench, legs hooked under the rollers and lying body from decline_dumbbell_skull_crusher (the decline bench recipe, 20 deg). EZ bar held overhand on the inner (close) bends, so each hand's axis turns 26.6 deg with the camber. START upper arms straight up to the ceiling (elev 70.7 plane 90 in this lying torso), elbows 5. END elbows 105 deg folding toward the head (bend [0,0,1]): the bar comes down just above the forehead, upper arms still. Facts: research/decline_ez_bar_skull_crusher.json. 13 Nov 2026 (pics-fixes, run 43456018974): the near plate hid his head in the bottom picture; the camera looks from higher (pitch 40) so the bar shows above the forehead."
 }

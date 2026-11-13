@@ -19,8 +19,8 @@
     "fill": 0.9,
     "res": 640,
     "samples": 20,
-    "yaw": -100,
-    "pitch": 5
+    "yaw": -140,
+    "pitch": 10
   },
   "timing": {
     "fps": 30,
@@ -118,5 +118,5 @@
       }
     }
   },
-  "research": "13 Nov 2026 (pics-fixes), new. Standing tall, a barbell held behind the body at the back of the thighs, arms straight (elev 12, plane -40 = behind), palms facing back (axis [-1,0,0]). START: wrists open a little (flex -15, the bar low in the fingers); END: wrists curled 50 deg (flex +50) so the bar lifts up and back. Wrist flexors on the palm side of the forearm do the work. Camera from behind his right side. Facts: research/behind_the_back_wrist_curl.json. 13 Nov 2026 (pics-fixes, run 43453136627): the wrist bend was too small to see from behind; the range is now -40 (wrist bent back, bar low in the fingers) to +55 (curled up), seen in profile from his right (yaw -100)."
+  "research": "13 Nov 2026 (pics-fixes), new. Standing tall, a barbell held behind the body at the back of the thighs, arms straight (elev 12, plane -40 = behind), palms facing back (axis [-1,0,0]). START: wrists open a little (flex -15, the bar low in the fingers); END: wrists curled 50 deg (flex +50) so the bar lifts up and back. Wrist flexors on the palm side of the forearm do the work. Camera from behind his right side. Facts: research/behind_the_back_wrist_curl.json. 13 Nov 2026 (pics-fixes, run 43453136627): the wrist bend was too small to see from behind; the range is now -40 (wrist bent back, bar low in the fingers) to +55 (curled up), seen in profile from his right (yaw -100). 13 Nov 2026 (pics-fixes, run 43456018974): in profile the near plate hid both hands; camera back to behind-right (yaw -140) with the bigger wrist range."
 }

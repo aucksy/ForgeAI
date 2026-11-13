@@ -51,7 +51,7 @@
     "fill": 0.9,
     "res": 640,
     "samples": 20,
-    "yaw": -115,
+    "yaw": -45,
     "pitch": 10
   },
   "timing": {
@@ -188,5 +188,5 @@
       ]
     }
   },
-  "research": "13 Nov 2026 (pics-fixes), new. Seated upright on the end of a flat bench (pelvis on the seat top 0.44 by 'ground'), a short barbell (1.1 m shaft, 0.16 plates) held close-grip, palms forward/up (axis [-1,0,0]); collarbone/shoulder-blade girdle and armpit smoothing copied from dumbbell_shoulder_press (arms overhead). START: arms straight overhead, upper arms beside the head and angled in so the hands are ~0.26 m apart (elev 168, plane 150). END: upper arms stay up (elev 160), elbows bent 130 deg folding BACK (bend [0,-1,0]) so the bar drops behind the head to about neck/upper-head level. Facts: research/seated_barbell_overhead_extension.json. 13 Nov 2026 (pics-fixes, run 43453136627): from the front only a sliver of the triceps showed; the camera moves behind his right side (yaw -115) so the back of the upper arm and the bar dropping behind the head both show. The library says a bench WITH back support: now the passed dumbbell_shoulder_press seat (85 deg back, same body and feet) with a short back pad (0.5 m, top at ~0.94 m, mid-back) so the bar can pass behind the head."
+  "research": "13 Nov 2026 (pics-fixes), new. Seated upright on the end of a flat bench (pelvis on the seat top 0.44 by 'ground'), a short barbell (1.1 m shaft, 0.16 plates) held close-grip, palms forward/up (axis [-1,0,0]); collarbone/shoulder-blade girdle and armpit smoothing copied from dumbbell_shoulder_press (arms overhead). START: arms straight overhead, upper arms beside the head and angled in so the hands are ~0.26 m apart (elev 168, plane 150). END: upper arms stay up (elev 160), elbows bent 130 deg folding BACK (bend [0,-1,0]) so the bar drops behind the head to about neck/upper-head level. Facts: research/seated_barbell_overhead_extension.json. 13 Nov 2026 (pics-fixes, run 43453136627): from the front only a sliver of the triceps showed; the camera moves behind his right side (yaw -115) so the back of the upper arm and the bar dropping behind the head both show. The library says a bench WITH back support: now the passed dumbbell_shoulder_press seat (85 deg back, same body and feet) with a short back pad (0.5 m, top at ~0.94 m, mid-back) so the bar can pass behind the head. 13 Nov 2026 (pics-fixes, run 43456018974): with the arms overhead the triceps faces FORWARD, so the behind view showed less red; camera front-right (yaw -45) shows the lit triceps and the bar behind the head."
 }

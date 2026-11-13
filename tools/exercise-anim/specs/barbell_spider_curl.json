@@ -34,8 +34,8 @@
     "fill": 0.9,
     "res": 640,
     "samples": 20,
-    "yaw": -75,
-    "pitch": 12
+    "yaw": -25,
+    "pitch": 10
   },
   "timing": {
     "fps": 30,
@@ -157,5 +157,5 @@
       }
     }
   },
-  "research": "13 Nov 2026 (pics-fixes), new. Bench and lean from the passed chest_supported_reverse_fly (45 deg incline, chest on the pad by 'ground' pad 0.004) but the body slides 0.157 m up the pad so the armpits sit over its top edge and the arms hang straight down IN FRONT of the pad (shoulder ~y -0.57, pad top edge y -0.60); feet move 0.3 m closer so the legs still reach the floor. Barbell, shoulder-width, palms forward/up (axis [1,0,0]). START arms straight down (elev 45 plane 90 = world down for the 45 deg trunk), END elbows 125 deg, forearms folding forward-up (bend [0,1,1] = world forward), upper arms still vertical. Facts: research/barbell_spider_curl.json."
+  "research": "13 Nov 2026 (pics-fixes), new. Bench and lean from the passed chest_supported_reverse_fly (45 deg incline, chest on the pad by 'ground' pad 0.004) but the body slides 0.157 m up the pad so the armpits sit over its top edge and the arms hang straight down IN FRONT of the pad (shoulder ~y -0.57, pad top edge y -0.60); feet move 0.3 m closer so the legs still reach the floor. Barbell, shoulder-width, palms forward/up (axis [1,0,0]). START arms straight down (elev 45 plane 90 = world down for the 45 deg trunk), END elbows 125 deg, forearms folding forward-up (bend [0,1,1] = world forward), upper arms still vertical. Facts: research/barbell_spider_curl.json. 13 Nov 2026 (pics-fixes, run 43456018974): from the side the near plate covered his head in the top picture; camera now in front and to his right (yaw -25)."
 }
