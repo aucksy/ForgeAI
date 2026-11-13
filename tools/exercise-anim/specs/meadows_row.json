@@ -1,0 +1,203 @@
+{
+  "key": "meadows_row",
+  "name": "Meadows Row",
+  "primary": [
+    "upper_back"
+  ],
+  "secondary": [
+    "lats",
+    "rear_delts",
+    "biceps"
+  ],
+  "highlight_side": {
+    "upper_back": "R",
+    "lats": "R",
+    "rear_delts": "R",
+    "biceps": "R"
+  },
+  "props": {
+    "lm": {
+      "type": "landmine",
+      "pivot": [
+        2.03,
+        -0.54,
+        0.05
+      ],
+      "grip_from_tip": 0.05
+    }
+  },
+  "camera": {
+    "lens": 50,
+    "fill": 0.9,
+    "res": 640,
+    "samples": 20,
+    "yaw": -45,
+    "pitch": 15
+  },
+  "timing": {
+    "fps": 30,
+    "keys": [
+      [
+        0,
+        "start"
+      ],
+      [
+        1,
+        "end"
+      ],
+      [
+        2,
+        "start"
+      ]
+    ]
+  },
+  "defaults": {
+    "root": {
+      "loc": [
+        0,
+        0.1,
+        0.88
+      ],
+      "rot": [
+        60,
+        0,
+        0
+      ]
+    },
+    "feet": {
+      "L": {
+        "at": [
+          0.22,
+          -0.32,
+          0.074
+        ],
+        "rot": [
+          0,
+          0,
+          10
+        ]
+      },
+      "R": {
+        "at": [
+          -0.24,
+          0.38,
+          0.074
+        ],
+        "rot": [
+          0,
+          0,
+          -15
+        ]
+      }
+    },
+    "knees": {
+      "L": [
+        0.3,
+        -1.0,
+        0.6
+      ],
+      "R": [
+        -0.3,
+        -1.0,
+        0.5
+      ]
+    }
+  },
+  "poses": {
+    "start": {
+      "hands": {
+        "R": {
+          "prop": "lm",
+          "axis": [
+            1,
+            0,
+            0
+          ],
+          "arm": {
+            "elev": 60,
+            "plane": 90,
+            "elbow": 5,
+            "bend": [
+              0,
+              1,
+              0
+            ],
+            "tilt": 0
+          }
+        },
+        "L": {
+          "frame": "world",
+          "at": [
+            0.24,
+            -0.42,
+            0.62
+          ],
+          "axis": [
+            0,
+            -1,
+            0
+          ],
+          "hand": "relaxed"
+        }
+      },
+      "elbows": {
+        "L": [
+          0.6,
+          -0.2,
+          0.3
+        ]
+      },
+      "ground": {
+        "feet": 0.0
+      }
+    },
+    "end": {
+      "hands": {
+        "R": {
+          "prop": "lm",
+          "axis": [
+            1,
+            0,
+            0
+          ],
+          "arm": {
+            "elev": 30,
+            "plane": -45,
+            "elbow": 95,
+            "bend_world": [
+              0,
+              0,
+              -1
+            ],
+            "tilt": 0
+          }
+        },
+        "L": {
+          "frame": "world",
+          "at": [
+            0.24,
+            -0.42,
+            0.62
+          ],
+          "axis": [
+            0,
+            -1,
+            0
+          ],
+          "hand": "relaxed"
+        }
+      },
+      "elbows": {
+        "L": [
+          0.6,
+          -0.2,
+          0.3
+        ]
+      },
+      "ground": {
+        "feet": 0.0
+      }
+    }
+  },
+  "research": "13 Nov 2026 (pics-fixes), new. Staggered stance side-on to the landmine bar: left (lead) foot forward, right foot back, knees soft, hips hinged so the trunk leans 60 deg forward. The bar runs across in front of him to the hinge on his left (pivot x 2.03); his right hand grips the thick end overhand (axis [1,0,0]). START right arm hanging straight (elev 60 plane 90 = world down). END elbow pulled up and back, flared ~45 deg (elev 30, plane -45), elbow 95 deg with the forearm hanging straight down (bend_world down): the bar end at the hip. Left forearm rests on the lead thigh just above the knee. Working side only lit. Facts: research/meadows_row.json."
+}

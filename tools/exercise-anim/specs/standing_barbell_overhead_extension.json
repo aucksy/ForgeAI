@@ -51,7 +51,7 @@
     "fill": 0.9,
     "res": 640,
     "samples": 20,
-    "yaw": -60,
+    "yaw": -115,
     "pitch": 10
   },
   "timing": {
@@ -148,5 +148,5 @@
       ]
     }
   },
-  "research": "13 Nov 2026 (pics-fixes), new. Standing tall, a short barbell (1.1 m shaft, 0.16 plates) held close-grip, palms forward/up (axis [-1,0,0]); collarbone/shoulder-blade girdle and armpit smoothing copied from dumbbell_shoulder_press (arms overhead). START: arms straight overhead, upper arms beside the head and angled in so the hands are ~0.26 m apart (elev 168, plane 150). END: upper arms stay up (elev 160), elbows bent 130 deg folding BACK (bend [0,-1,0]) so the bar drops behind the head to about neck/upper-head level. Facts: research/standing_barbell_overhead_extension.json."
+  "research": "13 Nov 2026 (pics-fixes), new. Standing tall, a short barbell (1.1 m shaft, 0.16 plates) held close-grip, palms forward/up (axis [-1,0,0]); collarbone/shoulder-blade girdle and armpit smoothing copied from dumbbell_shoulder_press (arms overhead). START: arms straight overhead, upper arms beside the head and angled in so the hands are ~0.26 m apart (elev 168, plane 150). END: upper arms stay up (elev 160), elbows bent 130 deg folding BACK (bend [0,-1,0]) so the bar drops behind the head to about neck/upper-head level. Facts: research/standing_barbell_overhead_extension.json. 13 Nov 2026 (pics-fixes, run 43453136627): from the front only a sliver of the triceps showed; the camera moves behind his right side (yaw -115) so the back of the upper arm and the bar dropping behind the head both show."
 }

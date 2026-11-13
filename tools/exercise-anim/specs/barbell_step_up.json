@@ -36,8 +36,8 @@
     "fill": 0.9,
     "res": 640,
     "samples": 20,
-    "yaw": -80,
-    "pitch": 12
+    "yaw": -35,
+    "pitch": 10
   },
   "timing": {
     "fps": 30,
@@ -206,5 +206,5 @@
       }
     }
   },
-  "research": "13 Nov 2026 (pics-fixes), new. Body, box and legs from the passed dumbbell_step_up (box 0.40 m). The barbell rests on the upper back (high-bar: on the upper trapezius below the neck): hands placed by position in the torso frame, fists 0.30 out from the midline, 0.075 behind and 0.065 above the shoulder joints, palms forward (axis [-1,0,0]), elbows down and back. Facts: research/barbell_step_up.json."
+  "research": "13 Nov 2026 (pics-fixes), new. Body, box and legs from the passed dumbbell_step_up (box 0.40 m). The barbell rests on the upper back (high-bar: on the upper trapezius below the neck): hands placed by position in the torso frame, fists 0.30 out from the midline, 0.075 behind and 0.065 above the shoulder joints, palms forward (axis [-1,0,0]), elbows down and back. Facts: research/barbell_step_up.json. 13 Nov 2026 (pics-fixes, run 43453136627): from the side (yaw -80) the near plate hid the head in the top picture; camera now front-right (yaw -35)."
 }

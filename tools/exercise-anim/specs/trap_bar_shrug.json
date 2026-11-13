@@ -17,8 +17,8 @@
     "fill": 0.9,
     "res": 640,
     "samples": 20,
-    "yaw": -30,
-    "pitch": 10
+    "yaw": -150,
+    "pitch": 15
   },
   "timing": {
     "fps": 30,
@@ -96,7 +96,7 @@
         "clavicle.L": [
           0,
           0,
-          30
+          16
         ]
       },
       "hands": {
@@ -122,5 +122,5 @@
       }
     }
   },
-  "research": "Trap bar handles 0.63 m apart: arms hang straight, 9 deg out from the sides (hands at x +-0.315), neutral grip. End: shoulders shrugged up (collarbone Z +20). 13 Nov 2026 (pics-fixes): first render showed no shrug (shoulder joint at 1.546 in both stills); start now sets the collarbones to 0 explicitly and the end turns them 30 deg; the report logs the collarbone's real turn."
+  "research": "Trap bar handles 0.63 m apart: arms hang straight, 9 deg out from the sides (hands at x +-0.315), neutral grip. End: shoulders shrugged up (collarbone Z +20). 13 Nov 2026 (pics-fixes): first render showed no shrug (shoulder joint at 1.546 in both stills); start now sets the collarbones to 0 explicitly and the end turns them 30 deg; the report logs the collarbone's real turn. 13 Nov 2026 (pics-fixes, run 43452574049): the collarbone turn now works (shoulder joint 1.474 -> 1.580) but 30 deg lifted the shoulders 10.6 cm, up to the ears, and the deltoids bulged like shoulder pads; 16 deg lifts them ~5.5 cm. The camera moves behind his right shoulder (yaw -150) so the lit upper traps show."
 }

@@ -9,8 +9,8 @@
     "front_delts"
   ],
   "camera": {
-    "yaw": -85,
-    "pitch": 15,
+    "yaw": 40,
+    "pitch": 22,
     "lens": 50,
     "fill": 0.9,
     "res": 640,
@@ -198,5 +198,5 @@
       }
     }
   },
-  "research": "High plank on straight arms. Shoulder->hand straight reach ~0.60 (RECIPES), hand centre ~0.03 up -> shoulder z 0.63. Ankles on the toes z 0.165 (foot rot 70). Line rise 0.465 over 1.37 m -> 19.8 deg -> root rot X 70.2; rotated shoulder offset z +0.0875 -> root z 0.543. Shoulders (+-0.22,-0.467,0.63); hip L (0.11,-0.02,0.496); feet a little wider than hips: ankle x 0.17, hip-ankle 0.905 -> dy = sqrt(0.905^2-0.331^2-0.06^2) = 0.840 -> ankle (0.17,0.82,0.165). Support arms: world down in the torso frame = (0,0.941,-0.339) -> elev 70.2, plane 90 (vertical), elbow 4 soft, hand ~0.03 off the floor. End: left hand taps the right shoulder at torso (-0.19,0.09,0.05) (front-top of the right deltoid, coming from the floor side): |S-H| 0.423 -> elbow 91, elbow placed under the chest (torso (0.09,0.24,-0.04)) -> elev 82.4, plane 118.2, bend [-0.87,-0.43,0.26]. Right arm stays on the floor (explicit R, same as start). Pelvis, legs unchanged (hips square). Hands are fists along the forearm (the rig grips), so 'flat palm' shows as a fist on the floor. Sources S1 NASM, S2 Redefining Strength, S3 Youdas 2018. QA 11 Nov: whole body moved by the measured lowest point so it rests on the floor (cloud run 43079162675). 13 Nov 2026 (pics-fixes): flat palms on the floor (flex 'level-'); the tapping hand open (flat) on the right shoulder; 'ground' puts the floor hand(s) and toes on the floor from the real skin."
+  "research": "High plank on straight arms. Shoulder->hand straight reach ~0.60 (RECIPES), hand centre ~0.03 up -> shoulder z 0.63. Ankles on the toes z 0.165 (foot rot 70). Line rise 0.465 over 1.37 m -> 19.8 deg -> root rot X 70.2; rotated shoulder offset z +0.0875 -> root z 0.543. Shoulders (+-0.22,-0.467,0.63); hip L (0.11,-0.02,0.496); feet a little wider than hips: ankle x 0.17, hip-ankle 0.905 -> dy = sqrt(0.905^2-0.331^2-0.06^2) = 0.840 -> ankle (0.17,0.82,0.165). Support arms: world down in the torso frame = (0,0.941,-0.339) -> elev 70.2, plane 90 (vertical), elbow 4 soft, hand ~0.03 off the floor. End: left hand taps the right shoulder at torso (-0.19,0.09,0.05) (front-top of the right deltoid, coming from the floor side): |S-H| 0.423 -> elbow 91, elbow placed under the chest (torso (0.09,0.24,-0.04)) -> elev 82.4, plane 118.2, bend [-0.87,-0.43,0.26]. Right arm stays on the floor (explicit R, same as start). Pelvis, legs unchanged (hips square). Hands are fists along the forearm (the rig grips), so 'flat palm' shows as a fist on the floor. Sources S1 NASM, S2 Redefining Strength, S3 Youdas 2018. QA 11 Nov: whole body moved by the measured lowest point so it rests on the floor (cloud run 43079162675). 13 Nov 2026 (pics-fixes): flat palms on the floor (flex 'level-'); the tapping hand open (flat) on the right shoulder; 'ground' puts the floor hand(s) and toes on the floor from the real skin. 13 Nov 2026 (pics-fixes, run 43452574049): from his right side the tapping (left) hand was hidden behind the chest, so start and end looked the same; the camera now looks from in front and to his left, a little above (yaw 40, pitch 22)."
 }

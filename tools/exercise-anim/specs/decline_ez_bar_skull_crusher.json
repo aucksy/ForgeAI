@@ -1,0 +1,166 @@
+{
+  "key": "decline_ez_bar_skull_crusher",
+  "name": "Decline EZ Bar Skull Crusher",
+  "primary": [
+    "triceps"
+  ],
+  "secondary": [],
+  "scene": {
+    "decline_bench": {
+      "deg": 20,
+      "top": 0.8,
+      "length": 1.15,
+      "loc": [
+        0,
+        0,
+        0
+      ],
+      "legs": {
+        "knee": [
+          -0.05,
+          0.94
+        ],
+        "rollers": [
+          [
+            -0.387,
+            0.964
+          ],
+          [
+            -0.252,
+            0.816
+          ]
+        ]
+      }
+    }
+  },
+  "props": {
+    "bar": {
+      "type": "ez_bar",
+      "plates": [
+        0.2
+      ],
+      "plate_t": 0.035
+    }
+  },
+  "camera": {
+    "yaw": -115,
+    "pitch": 18,
+    "lens": 50,
+    "fill": 0.9,
+    "res": 640,
+    "samples": 20
+  },
+  "timing": {
+    "fps": 30,
+    "keys": [
+      [
+        0,
+        "start"
+      ],
+      [
+        1,
+        "end"
+      ],
+      [
+        2,
+        "start"
+      ]
+    ]
+  },
+  "defaults": {
+    "feet": {
+      "L": {
+        "at": [
+          0.1,
+          -0.4,
+          0.83
+        ],
+        "rot": [
+          -45,
+          0,
+          0
+        ]
+      }
+    },
+    "knees": {
+      "L": [
+        0.13,
+        -0.3,
+        1.6
+      ]
+    },
+    "root": {
+      "loc": [
+        0.0,
+        0.245,
+        0.743
+      ],
+      "rot": [
+        -110,
+        0,
+        0
+      ]
+    },
+    "bones": {
+      "neck01": [
+        -6,
+        0,
+        0
+      ],
+      "head": [
+        -6,
+        0,
+        0
+      ]
+    }
+  },
+  "poses": {
+    "start": {
+      "hands": {
+        "L": {
+          "prop": "bar",
+          "axis": [
+            -0.894,
+            0,
+            0.447
+          ],
+          "arm": {
+            "elev": 70.7,
+            "plane": 90.0,
+            "elbow": 5,
+            "bend": [
+              0,
+              0,
+              1
+            ],
+            "tilt": 0
+          }
+        }
+      }
+    },
+    "end": {
+      "hands": {
+        "L": {
+          "prop": "bar",
+          "axis": [
+            -0.894,
+            -0.43,
+            -0.12
+          ],
+          "arm": {
+            "elev": 70.7,
+            "plane": 90.0,
+            "elbow": 105,
+            "bend": [
+              0,
+              0,
+              1
+            ],
+            "tilt": 0
+          }
+        }
+      }
+    }
+  },
+  "research": "13 Nov 2026 (pics-fixes), new. Bench, legs hooked under the rollers and lying body from decline_dumbbell_skull_crusher (the decline bench recipe, 20 deg). EZ bar held overhand on the inner (close) bends, so each hand's axis turns 26.6 deg with the camber. START upper arms straight up to the ceiling (elev 70.7 plane 90 in this lying torso), elbows 5. END elbows 105 deg folding toward the head (bend [0,0,1]): the bar comes down just above the forehead, upper arms still. Facts: research/decline_ez_bar_skull_crusher.json."
+}
