@@ -11,8 +11,10 @@
   "Your routines give your shoulders 3 sets a week and your chest 12. Swap X for Y in your Push routine?" [Swap]
   [Not now] / Keep as is; the swap never empties a group and keeps the same sets and place; Undo after Add or Swap.
   Guard: every routine done once, the first 14+ days ago (was 3 weeks + 4 workouts). Tests: muscleTipsRoutines (20),
-  muscleTips (7), muscleBalance (8). UAT: NOT YET (no qa-device part covers the Up next tip; needs a u482 part with
-  a settled plan before release). Settings caption reworded.
+  muscleTips (7), muscleBalance (8). UAT: PASSED, part u482 (shard 6-uat-c), 7 flows (a add+Undo, b his Pull 2 case:
+  no tip, c "I skip this on purpose" + restart + Settings bring-back, d swap+Undo, e new plan: no tip, f setting off/on,
+  g R-483 shoulders swap+Undo) green on both phones at cc84effb: owner 43405436655, default 43405439549; pictures
+  rel-r482-*.png read. Settings caption reworded.
   R-483 (owner, 13 Nov 2026, two decisions): (1) the shoulders are counted by DIRECT shoulder exercises only (a
   shoulder muscle is a main muscle: side raises, rear-delt work, overhead presses); bench and incline presses no longer
   add half a shoulder set. Own bar for the shoulders: at most HALF the median of the other big groups AND 3+ sets below

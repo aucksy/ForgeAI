@@ -37,8 +37,13 @@ What I did: see the lines under this entry.
   Dumbbell Shoulder Press in your Push routine?"; side raise + face pull says nothing. Other groups unchanged. Charts
   Balance check: "See a swap", the swap sheet and "Swap for 8 weeks" removed; its line and "Not now" stay; a block
   started before still ends with Keep it / Go back. Tests muscleTipsRoutines +5, balanceCheckNoSwap (new).
+  Commits 5aaf5c53 (CI green), 2462cbc6 + cc84effb (UAT flow g). UAT: u482 flow g green on both phones (see R-482).
 
 ## R-482. Muscle tip "Easy add" is wrong and unclear — 13 Nov 2026
+- UAT (13 Nov): part u482, 7 flows (add+Undo, his Pull 2 case no tip, skip+restart+bring back, swap+Undo, new plan no
+  tip, setting off/on, R-483 shoulders swap) PASSED on both phones: owner 43405436655, default 43405439549 (cc84effb).
+  Found on the way: a backup whose plan has no saved start day restarts Up next at "Week 1" after a restore (the app
+  stamps today as the start); not changed, the test files now carry the start day.
 He said (13 Nov, screenshot of Up next: Pull 2, "Easy add today: 3 sets of Standing Calf Raise for your calves.
 [Add to routine] [Not now] I skip this on purpose"):
 - "I don't understand what easy add is as a user."
