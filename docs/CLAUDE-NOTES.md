@@ -7,6 +7,15 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-490. Make every remaining picture in the orange-tank look, no samples — 13 Nov 2026
+He said (13 Nov 2026, ~22:05 IST): "No, just make the new pictures for the remaining exercise to match the orange tank
+look ones, the same quality and consistency ... I don't want to see the three pictures, just make rest of them and
+just upload them". So: option A without the sample step. A new "drawn" look in our Blender pipeline (flat shading +
+outlines, orange tank top, charcoal shorts, white shoes, dark hair, no red muscles, detailed grey outlined machines,
+the main set's background, floor shadow and framing). Gate is mine, not his: side-by-side sheets with main-set
+pictures and a fresh reviewer who must not be able to pick ours out. Then every own picture is re-rendered in it
+(the grey 3D ones are replaced), wired into the app, UAT, and it rides the R-487 release.
+
 ## R-489. Our exercise pictures must look like the main set — 13 Nov 2026
 He said (13 Nov 2026, ~21:45 IST): "the image that I just opened for you looks nothing like what we have made for most
 of the exercises. So please ensure that the images that are being made are the correct designs."
