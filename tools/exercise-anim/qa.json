@@ -667,5 +667,142 @@
     "qa": "fail",
     "reason": "the pulley sits off to the side, so the end cable crosses the back of the head, the back and the buttock. Next: pulley straight behind (13 Nov, try 1)",
     "tries": 1
+  },
+  "dead_hang": {
+    "rendered": "2026-11-13",
+    "run": "43451539540",
+    "pose_review": "good",
+    "tries": 1,
+    "note": "look A (grey athlete) only; not exported: 13 Nov stop, every own picture is re-rendered in the new look from this recipe"
+  },
+  "hanging_leg_raise": {
+    "rendered": "2026-11-13",
+    "run": "43451539540",
+    "pose_review": "good",
+    "tries": 1,
+    "note": "look A (grey athlete) only; not exported: 13 Nov stop, every own picture is re-rendered in the new look from this recipe"
+  },
+  "l_sit": {
+    "rendered": "2026-11-13",
+    "run": "43451539540",
+    "pose_review": "good",
+    "tries": 1,
+    "note": "look A (grey athlete) only; not exported: 13 Nov stop, every own picture is re-rendered in the new look from this recipe"
+  },
+  "weighted_chin_up": {
+    "rendered": "2026-11-13",
+    "run": "43451539540",
+    "pose_review": "good",
+    "tries": 1,
+    "note": "look A (grey athlete) only; not exported: 13 Nov stop, every own picture is re-rendered in the new look from this recipe"
+  },
+  "decline_leg_raise": {
+    "rendered": "2026-11-13",
+    "run": "43451539540",
+    "pose_review": "good",
+    "tries": 1,
+    "note": "look A (grey athlete) only; not exported: 13 Nov stop, every own picture is re-rendered in the new look from this recipe"
+  },
+  "bodyweight_triceps_extension": {
+    "rendered": "2026-11-13",
+    "run": "43453772857",
+    "pose_review": "good",
+    "tries": 1,
+    "note": "look A (grey athlete) only; not exported: 13 Nov stop, every own picture is re-rendered in the new look from this recipe"
+  },
+  "plate_reverse_curl": {
+    "rendered": "2026-11-13",
+    "run": "43453772857",
+    "pose_review": "good",
+    "tries": 1,
+    "note": "look A (grey athlete) only; not exported: 13 Nov stop, every own picture is re-rendered in the new look from this recipe"
+  },
+  "weighted_decline_crunch": {
+    "rendered": "2026-11-13",
+    "run": "43453772857",
+    "pose_review": "good",
+    "tries": 2,
+    "note": "look A (grey athlete) only; not exported: 13 Nov stop, every own picture is re-rendered in the new look from this recipe"
+  },
+  "weighted_sissy_squat": {
+    "rendered": "2026-11-13",
+    "run": "43453772857",
+    "pose_review": "good",
+    "tries": 1,
+    "note": "look A (grey athlete) only; not exported: 13 Nov stop, every own picture is re-rendered in the new look from this recipe"
+  },
+  "decline_sit_up": {
+    "rendered": "2026-11-13",
+    "run": "43457809850",
+    "pose_review": "good",
+    "tries": 3,
+    "note": "look A (grey athlete) only; not exported: 13 Nov stop, every own picture is re-rendered in the new look from this recipe"
+  },
+  "stability_ball_crunch": {
+    "rendered": "2026-11-13",
+    "run": "43457809850",
+    "pose_review": "good",
+    "tries": 2,
+    "note": "look A (grey athlete) only; not exported: 13 Nov stop, every own picture is re-rendered in the new look from this recipe"
+  },
+  "decline_dumbbell_skull_crusher": {
+    "rendered": "2026-11-13",
+    "run": "43458812802",
+    "pose_review": "good",
+    "tries": 3,
+    "note": "look A (grey athlete) only; not exported: 13 Nov stop, every own picture is re-rendered in the new look from this recipe"
+  },
+  "plate_front_raise": {
+    "rendered": "2026-11-13",
+    "run": "43458812802",
+    "pose_review": "good",
+    "tries": 2,
+    "note": "look A (grey athlete) only; not exported: 13 Nov stop, every own picture is re-rendered in the new look from this recipe"
+  },
+  "stability_ball_back_extension": {
+    "rendered": "2026-11-13",
+    "run": "43458812802",
+    "pose_review": "good",
+    "tries": 2,
+    "note": "look A (grey athlete) only; not exported: 13 Nov stop, every own picture is re-rendered in the new look from this recipe"
+  },
+  "weighted_back_extension": {
+    "rendered": "2026-11-13",
+    "run": "43458812802",
+    "pose_review": "good",
+    "tries": 2,
+    "note": "look A (grey athlete) only; not exported: 13 Nov stop, every own picture is re-rendered in the new look from this recipe"
+  },
+  "decline_oblique_crunch": {
+    "rendered": "2026-11-13",
+    "run": "43457809850",
+    "pose_review": "retry",
+    "reason": "the twist does not read: the end looks like a straight sit-up with the obliques lit. Next: more rotation toward the far knee and a camera from the front",
+    "tries": 3,
+    "note": "look A (grey athlete) only; not exported: 13 Nov stop, every own picture is re-rendered in the new look from this recipe"
+  },
+  "plate_curl": {
+    "rendered": "2026-11-13",
+    "run": "43458812802",
+    "pose_review": "retry",
+    "reason": "the end lifts the plate to chin height so it covers the lower face. Next: stop the curl at chest height",
+    "tries": 2,
+    "note": "look A (grey athlete) only; not exported: 13 Nov stop, every own picture is re-rendered in the new look from this recipe"
+  },
+  "sled_push": {
+    "rendered": "2026-11-13",
+    "run": "43457809850",
+    "pose_review": "retry",
+    "reason": "fists sat 4 cm inside each pole (hands 0.42 m apart, poles 0.50). Fixed in the recipe (poles 0.42), not re-rendered",
+    "tries": 1,
+    "note": "look A (grey athlete) only; not exported: 13 Nov stop, every own picture is re-rendered in the new look from this recipe"
+  },
+  "kettlebell_clean_and_press": {
+    "rendered": "2026-11-13",
+    "run": "43457809850",
+    "pose_review": "retry",
+    "reason": "end pose kept the start hinge (no root), so the press was drawn bent over; bell 2 cm into the floor at the start. Both fixed in the recipe, not re-rendered",
+    "tries": 1,
+    "note": "look A (grey athlete) only; not exported: 13 Nov stop, every own picture is re-rendered in the new look from this recipe"
   }
 }
