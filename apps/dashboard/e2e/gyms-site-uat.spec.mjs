@@ -100,6 +100,14 @@ for (const [name, size] of [['phone', { width: 390, height: 844 }], ['computer',
     await page.goto('https://gyms.mettleup.fit/');
 
     const sec = page.locator('#assistant');
+    // R-483 (13 Nov 2026): the AI Assistant comes right after the watch, BEFORE "Everything else, in one place".
+    expect(await page.evaluate(() => {
+      const ai = document.getElementById('assistant');
+      const rest = document.getElementById('more-h')?.closest('section');
+      const watch = document.getElementById('watch-h')?.closest('section');
+      const after = (a, b) => Boolean(a && b && a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING);
+      return after(watch, ai) && after(ai, rest);
+    })).toBe(true);
     await sec.scrollIntoViewIfNeeded();
     // R-480: live now, so no "Coming soon" in the section or on the price cards' AI lines.
     await expect(sec).not.toContainText(/coming soon|not in the app yet/i);

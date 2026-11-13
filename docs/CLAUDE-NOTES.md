@@ -15,6 +15,14 @@ He said (13 Nov 2026, afternoon, in chat, with a screenshot):
 - Muscle tip shoulders: "Yes count only shoulder exercises" (option A: direct shoulder work only for the shoulder check).
 - Swap advice: "A) keep only the new Up next tip" (the Charts Balance check keeps its numbers, no swap advice).
 What I did: see the lines under this entry.
+- AI bug: Claude refused every ask live (400 "compiled grammar is too large ... reduce the number of strict tools").
+  The cloud tests mock Claude, so only a live call showed it. Fix 6b-strict: tools sent without strict; hotfix panel
+  186707ab. Checked in his Chrome: the logo question now answers with 3 steps + "Open Branding".
+- Also said (mid-turn): "The AI assistant section on the website should come before the section that says everything
+  else." Done: moved above "Everything else, in one place" (EN+HI, the e2e checks the order).
+- Also said: the green "+ 50 / + 100 AI credits" lines are there (default view is monthly); "it's all good to go".
+- Business address: answered in chat (needed only before online payments go live).
+- Shoulders direct-only + one swap tip: sent to the muscle-tips UAT helper to build first, then test.
 
 ## R-482. Muscle tip "Easy add" is wrong and unclear — 13 Nov 2026
 He said (13 Nov, screenshot of Up next: Pull 2, "Easy add today: 3 sets of Standing Calf Raise for your calves.

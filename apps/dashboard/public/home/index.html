@@ -802,7 +802,71 @@ select.field{appearance:none;background-image:linear-gradient(45deg,transparent 
   </div>
 </section>
 
-<!-- 5. EVERYTHING ELSE: six cards, each with a tiny scene that plays while it is on screen -->
+<!-- 5. AI ASSISTANT (F201, R-469): LIVE from 13 Nov 2026 (R-480). Three self-looping demos: what the owner says, then
+     the card the assistant makes. R-483 (13 Nov): it comes BEFORE "Everything else" (the owner: "obvious"). R-474: it is
+     a feature, not a third price card; credit pack prices are shown only in the app, when an owner needs more. -->
+<section class="sec" id="assistant" aria-labelledby="as-h" style="padding-top:0">
+  <div class="wrap">
+    <div class="as-head"><span class="eyebrow" data-hi="AI असिस्टेंट">AI Assistant</span></div>
+    <h2 id="as-h" class="h2" data-hi="बस बोलिए। &lt;span class=&quot;hot&quot;&gt;AI असिस्टेंट सब तैयार कर देगा।&lt;/span&gt;">Just say it. <span class="hot">The AI Assistant gets it ready.</span></h2>
+    <p class="lede" data-hi="जो चाहिए, टाइप कीजिए या बोलिए। AI असिस्टेंट आपके जिम के रिकॉर्ड से जवाब देता है, और मैसेज और रिन्यूअल तैयार कर देता है। जब तक आप “Send” या “Save” टैप नहीं करते, कुछ भी भेजा या सेव नहीं होता।">Type or speak what you need. The AI Assistant answers from your gym’s records and gets messages and renewals ready. Nothing is sent or saved until you tap “Send” or “Save”.</p>
+
+    <div class="bento">
+      <article class="cell as-cell rv" id="as-ask">
+        <div class="hd"><h3 data-hi="अपने जिम के बारे में पूछिए">Ask about your gym</h3></div>
+        <p data-hi="पूछिए किसने पैसे नहीं दिए। आपको लिस्ट और टोटल दिख जाएगा।">Ask who has not paid. You see the list and the total.</p>
+        <div class="mini" aria-hidden="true">
+          <div class="as-said"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg><span class="as-w"><span class="as-ghost">Kisne paise nahi diye?</span><span class="as-t">Kisne paise nahi diye?</span></span></div>
+          <div class="ui as-card in">
+            <div class="uh"><b>14 members owe ₹38,500</b><span class="as-free">Free</span></div>
+            <div class="urow as-row in"><span class="av">P</span><span class="nm"><b>Pooja Jain</b><small>Monthly plan</small></span><span class="as-amt">₹4,500</span></div>
+            <div class="urow as-row in"><span class="av">R</span><span class="nm"><b>Ramesh S.</b><small>3-month plan</small></span><span class="as-amt">₹3,000</span></div>
+            <div class="urow as-row in"><span class="av">A</span><span class="nm"><b>Asha Verma</b><small>Monthly plan</small></span><span class="as-amt">₹2,500</span></div>
+            <div class="as-more as-row in">and 11 more</div>
+            <span class="as-btn"><span class="s1">Remind them politely</span></span>
+          </div>
+        </div>
+      </article>
+
+      <article class="cell as-cell rv" id="as-msg" data-done="1">
+        <div class="hd"><h3 data-hi="अपने मेंबर्स को मैसेज कीजिए">Message your members</h3></div>
+        <p data-hi="बताइए मेंबर्स को क्या कहना है। पहले मैसेज पढ़िए, फिर “Send” टैप कीजिए।">Say what to tell your members. You read the message first, then tap “Send”.</p>
+        <div class="mini" aria-hidden="true">
+          <div class="as-said"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg><span class="as-w"><span class="as-ghost">Kal gym band rahega, sabko batao</span><span class="as-t">Kal gym band rahega, sabko batao</span></span></div>
+          <div class="ui as-card in done">
+            <div class="uh"><b>Message to all members</b><span>212 members</span></div>
+            <div class="as-note as-row in"><b>Gym closed tomorrow</b>The gym is closed tomorrow. We are open as usual the day after. See you then!</div>
+            <span class="as-btn"><span class="s1">Send to 212 members · 1 credit</span><span class="s2">Sent in the app ✓</span></span>
+            <div class="as-made">It is in every member’s app inbox.</div>
+          </div>
+        </div>
+      </article>
+
+      <article class="cell as-cell rv" id="as-renew" data-done="1">
+        <div class="hd"><h3 data-hi="मेंबर का प्लान रिन्यू कीजिए">Renew a member’s plan</h3></div>
+        <p data-hi="बताइए किसका, कितने महीने का और पेमेंट कैसे हुई। चेक कीजिए, “Save” टैप कीजिए, और रसीद बन जाती है।">Say the name, how many months and how they paid. Check it, tap “Save”, and the receipt is made.</p>
+        <div class="mini" aria-hidden="true">
+          <div class="as-said"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg><span class="as-w"><span class="as-ghost">Rahul ka plan 3 mahine renew karo, 4500 cash</span><span class="as-t">Rahul ka plan 3 mahine renew karo, 4500 cash</span></span></div>
+          <div class="ui as-card in done">
+            <div class="uh"><b>Renew a plan</b><span>Ready to save</span></div>
+            <div class="as-kv as-row in"><span>Member</span><b>Rahul Sharma</b></div>
+            <div class="as-kv as-row in"><span>Plan</span><b>3 months</b></div>
+            <div class="as-kv as-row in"><span>Starts</span><b>When his plan ends</b></div>
+            <div class="as-kv as-row in"><span>Paid</span><b>₹4,500 cash</b></div>
+            <span class="as-btn"><span class="s1">Save · 1 credit</span><span class="s2">Saved ✓</span></span>
+            <div class="as-made">Receipt 1042 is made.</div>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <p class="as-say rv"><i><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></i><span data-hi="हिंदी या English में बोलिए। सवाल पूछना फ़्री है।">Speak in Hindi or English. Asking is free.</span></p>
+    <p class="as-credits rv" data-hi="फ़्री में आज़माइए: फ़्री ट्रायल में 20 AI क्रेडिट। सालाना प्लान पर हर महीने फ़्री क्रेडिट मिलते हैं: Starter पर 50, Pro पर 100। क्रेडिट तभी लगता है जब AI असिस्टेंट कुछ भेजता या सेव करता है।">Try it free: 20 AI credits in your free trial. Yearly plans get free credits every month: 50 on Starter, 100 on Pro. A credit is used only when the AI Assistant sends or saves something.</p>
+    <p class="ex" style="text-align:left" data-hi="सैंपल नाम और नंबर।">Example names and numbers.</p>
+  </div>
+</section>
+
+<!-- 5b. EVERYTHING ELSE: six cards, each with a tiny scene that plays while it is on screen -->
 <section class="sec" aria-labelledby="more-h" style="padding-top:0">
   <div class="wrap">
     <span class="eyebrow" data-hi="आपके और आपके डेस्क के लिए">For you and your desk</span>
@@ -912,70 +976,6 @@ select.field{appearance:none;background-image:linear-gradient(45deg,transparent 
       <span data-hi="सारा डेटा Excel में">All your data to Excel</span>
     </p>
     <p class="ex" style="text-align:left" data-hi="सैंपल नाम और नंबर। किसी कार्ड पर टैप करके पॉज़ करें।">Example names and numbers. Tap a card to pause it.</p>
-  </div>
-</section>
-
-<!-- 5b. AI ASSISTANT (F201, R-469): LIVE from 13 Nov 2026 (R-480; "Coming soon" tags removed). Three self-looping demos: what the owner says, then the card the
-     assistant makes. It is not live: the header and the footnote say "Coming soon". R-474 (13 Nov): it is a feature, not a
-     third price card; credit pack prices are shown only in the app, when an owner needs more. -->
-<section class="sec" id="assistant" aria-labelledby="as-h" style="padding-top:0">
-  <div class="wrap">
-    <div class="as-head"><span class="eyebrow" data-hi="AI असिस्टेंट">AI Assistant</span></div>
-    <h2 id="as-h" class="h2" data-hi="बस बोलिए। &lt;span class=&quot;hot&quot;&gt;AI असिस्टेंट सब तैयार कर देगा।&lt;/span&gt;">Just say it. <span class="hot">The AI Assistant gets it ready.</span></h2>
-    <p class="lede" data-hi="जो चाहिए, टाइप कीजिए या बोलिए। AI असिस्टेंट आपके जिम के रिकॉर्ड से जवाब देता है, और मैसेज और रिन्यूअल तैयार कर देता है। जब तक आप “Send” या “Save” टैप नहीं करते, कुछ भी भेजा या सेव नहीं होता।">Type or speak what you need. The AI Assistant answers from your gym’s records and gets messages and renewals ready. Nothing is sent or saved until you tap “Send” or “Save”.</p>
-
-    <div class="bento">
-      <article class="cell as-cell rv" id="as-ask">
-        <div class="hd"><h3 data-hi="अपने जिम के बारे में पूछिए">Ask about your gym</h3></div>
-        <p data-hi="पूछिए किसने पैसे नहीं दिए। आपको लिस्ट और टोटल दिख जाएगा।">Ask who has not paid. You see the list and the total.</p>
-        <div class="mini" aria-hidden="true">
-          <div class="as-said"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg><span class="as-w"><span class="as-ghost">Kisne paise nahi diye?</span><span class="as-t">Kisne paise nahi diye?</span></span></div>
-          <div class="ui as-card in">
-            <div class="uh"><b>14 members owe ₹38,500</b><span class="as-free">Free</span></div>
-            <div class="urow as-row in"><span class="av">P</span><span class="nm"><b>Pooja Jain</b><small>Monthly plan</small></span><span class="as-amt">₹4,500</span></div>
-            <div class="urow as-row in"><span class="av">R</span><span class="nm"><b>Ramesh S.</b><small>3-month plan</small></span><span class="as-amt">₹3,000</span></div>
-            <div class="urow as-row in"><span class="av">A</span><span class="nm"><b>Asha Verma</b><small>Monthly plan</small></span><span class="as-amt">₹2,500</span></div>
-            <div class="as-more as-row in">and 11 more</div>
-            <span class="as-btn"><span class="s1">Remind them politely</span></span>
-          </div>
-        </div>
-      </article>
-
-      <article class="cell as-cell rv" id="as-msg" data-done="1">
-        <div class="hd"><h3 data-hi="अपने मेंबर्स को मैसेज कीजिए">Message your members</h3></div>
-        <p data-hi="बताइए मेंबर्स को क्या कहना है। पहले मैसेज पढ़िए, फिर “Send” टैप कीजिए।">Say what to tell your members. You read the message first, then tap “Send”.</p>
-        <div class="mini" aria-hidden="true">
-          <div class="as-said"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg><span class="as-w"><span class="as-ghost">Kal gym band rahega, sabko batao</span><span class="as-t">Kal gym band rahega, sabko batao</span></span></div>
-          <div class="ui as-card in done">
-            <div class="uh"><b>Message to all members</b><span>212 members</span></div>
-            <div class="as-note as-row in"><b>Gym closed tomorrow</b>The gym is closed tomorrow. We are open as usual the day after. See you then!</div>
-            <span class="as-btn"><span class="s1">Send to 212 members · 1 credit</span><span class="s2">Sent in the app ✓</span></span>
-            <div class="as-made">It is in every member’s app inbox.</div>
-          </div>
-        </div>
-      </article>
-
-      <article class="cell as-cell rv" id="as-renew" data-done="1">
-        <div class="hd"><h3 data-hi="मेंबर का प्लान रिन्यू कीजिए">Renew a member’s plan</h3></div>
-        <p data-hi="बताइए किसका, कितने महीने का और पेमेंट कैसे हुई। चेक कीजिए, “Save” टैप कीजिए, और रसीद बन जाती है।">Say the name, how many months and how they paid. Check it, tap “Save”, and the receipt is made.</p>
-        <div class="mini" aria-hidden="true">
-          <div class="as-said"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg><span class="as-w"><span class="as-ghost">Rahul ka plan 3 mahine renew karo, 4500 cash</span><span class="as-t">Rahul ka plan 3 mahine renew karo, 4500 cash</span></span></div>
-          <div class="ui as-card in done">
-            <div class="uh"><b>Renew a plan</b><span>Ready to save</span></div>
-            <div class="as-kv as-row in"><span>Member</span><b>Rahul Sharma</b></div>
-            <div class="as-kv as-row in"><span>Plan</span><b>3 months</b></div>
-            <div class="as-kv as-row in"><span>Starts</span><b>When his plan ends</b></div>
-            <div class="as-kv as-row in"><span>Paid</span><b>₹4,500 cash</b></div>
-            <span class="as-btn"><span class="s1">Save · 1 credit</span><span class="s2">Saved ✓</span></span>
-            <div class="as-made">Receipt 1042 is made.</div>
-          </div>
-        </div>
-      </article>
-    </div>
-
-    <p class="as-say rv"><i><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></i><span data-hi="हिंदी या English में बोलिए। सवाल पूछना फ़्री है।">Speak in Hindi or English. Asking is free.</span></p>
-    <p class="as-credits rv" data-hi="फ़्री में आज़माइए: फ़्री ट्रायल में 20 AI क्रेडिट। सालाना प्लान पर हर महीने फ़्री क्रेडिट मिलते हैं: Starter पर 50, Pro पर 100। क्रेडिट तभी लगता है जब AI असिस्टेंट कुछ भेजता या सेव करता है।">Try it free: 20 AI credits in your free trial. Yearly plans get free credits every month: 50 on Starter, 100 on Pro. A credit is used only when the AI Assistant sends or saves something.</p>
-    <p class="ex" style="text-align:left" data-hi="सैंपल नाम और नंबर।">Example names and numbers.</p>
   </div>
 </section>
 
