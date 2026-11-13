@@ -1,0 +1,206 @@
+{
+ "key": "weighted_chin_up",
+ "name": "Weighted Chin-Up",
+ "primary": [
+  "lats"
+ ],
+ "secondary": [
+  "biceps",
+  "upper_back"
+ ],
+ "props": {
+  "bar": {
+   "type": "hand_bar",
+   "length": 1.2
+  },
+  "db_F": {
+   "type": "dumbbell",
+   "feet": {
+    "fwd": 0.13,
+    "shift": -0.01
+   }
+  }
+ },
+ "camera": {
+  "yaw": -45,
+  "pitch": 8,
+  "lens": 50,
+  "fill": 0.9,
+  "res": 640,
+  "samples": 20
+ },
+ "timing": {
+  "fps": 30,
+  "keys": [
+   [
+    0,
+    "start"
+   ],
+   [
+    1,
+    "end"
+   ],
+   [
+    2,
+    "start"
+   ]
+  ]
+ },
+ "girdle": {
+  "start": 30,
+  "knee": 15,
+  "ur": 0.4,
+  "ur_max": 50,
+  "ur_pivot": 0.92,
+  "scap_plane": 30,
+  "elev": 0.08,
+  "elev_max": 11,
+  "retract": 0.12,
+  "retract_max": 16
+ },
+ "skin": {
+  "preserve_volume": true,
+  "calm_armpits": {
+   "amount": 0.45,
+   "radius": 0.05,
+   "fade": 0.05,
+   "down": 0.08,
+   "extra": [
+    [
+     -0.02,
+     0.08,
+     -0.08,
+     0.4
+    ]
+   ],
+   "hl_cut": 0.8
+  }
+ },
+ "poses": {
+  "start": {
+   "root": {
+    "loc": [
+     0,
+     0.056,
+     1.23
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "feet": {
+    "L": {
+     "at": [
+      0.058,
+      0.002,
+      0.348
+     ],
+     "rot": [
+      25,
+      0,
+      0
+     ]
+    }
+   },
+   "knees": {
+    "L": [
+     0.112,
+     -0.998,
+     0.783
+    ]
+   },
+   "hands": {
+    "L": {
+     "prop": "bar",
+     "axis": [
+      1,
+      0,
+      0
+     ],
+     "arm": {
+      "elev": 176,
+      "plane": 0,
+      "elbow": 4,
+      "bend": [
+       0,
+       -1,
+       0
+      ],
+      "tilt": 0
+     }
+    }
+   }
+  },
+  "end": {
+   "root": {
+    "loc": [
+     0.0,
+     0.26,
+     1.795
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "feet": {
+    "L": {
+     "at": [
+      0.058,
+      0.206,
+      0.913
+     ],
+     "rot": [
+      25,
+      0,
+      0
+     ]
+    }
+   },
+   "knees": {
+    "L": [
+     0.112,
+     -0.998,
+     0.783
+    ]
+   },
+   "bones": {
+    "neck01": [
+     -4,
+     0,
+     0
+    ],
+    "head": [
+     -4,
+     0,
+     0
+    ]
+   },
+   "hands": {
+    "L": {
+     "prop": "bar",
+     "axis": [
+      1,
+      0,
+      0
+     ],
+     "arm": {
+      "elev": 25,
+      "plane": 30,
+      "elbow": 145,
+      "bend": [
+       0,
+       1,
+       0.5
+      ],
+      "tilt": 0
+     }
+    }
+   }
+  }
+ },
+ "research": "Pull-up bar (hand_bar through both fists). Palms facing him (supinated, axis [1,0,0]), hands about shoulder width (library step 2). A dumbbell squeezed between the feet (library step 1; same 'feet' prop as the approved dumbbell_leg_curl), feet together, legs straight down. START: dead hang, arms straight (elev 176). END: chin over the bar (library step 3): fist (= bar) at torso (0.245, 0.187, 0.05) from the shoulder midpoint (hands 0.49 m apart, start 0.54) = 6 cm under the chin and just in front of it (offline chin underside ~0.11 above the shoulders, ~0.14 forward); upper arms down beside the ribs, elbows down and a little out (elev 25 / plane 30, elbow at torso (0.33,0.06,-0.25)), elbows 145 deg. The whole body is lifted so the bar stays at the same height in both pictures (end root [0.0, 0.26, 1.795]). Head tipped back a little to clear the bar. Facts: research/weighted_chin_up.json."
+}

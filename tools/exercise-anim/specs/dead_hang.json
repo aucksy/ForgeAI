@@ -1,0 +1,126 @@
+{
+ "key": "dead_hang",
+ "name": "Dead Hang",
+ "primary": [
+  "forearms"
+ ],
+ "secondary": [
+  "lats"
+ ],
+ "props": {
+  "bar": {
+   "type": "hand_bar",
+   "length": 1.2
+  }
+ },
+ "camera": {
+  "yaw": -30,
+  "pitch": 6,
+  "lens": 50,
+  "fill": 0.9,
+  "res": 640,
+  "samples": 20
+ },
+ "timing": {
+  "fps": 30,
+  "keys": [
+   [
+    0,
+    "hold"
+   ],
+   [
+    1,
+    "hold"
+   ]
+  ]
+ },
+ "girdle": {
+  "start": 30,
+  "knee": 15,
+  "ur": 0.4,
+  "ur_max": 50,
+  "ur_pivot": 0.92,
+  "scap_plane": 30,
+  "elev": 0.08,
+  "elev_max": 11,
+  "retract": 0.12,
+  "retract_max": 16
+ },
+ "skin": {
+  "preserve_volume": true,
+  "calm_armpits": {
+   "amount": 0.45,
+   "radius": 0.05,
+   "fade": 0.05,
+   "down": 0.08,
+   "extra": [
+    [
+     -0.02,
+     0.08,
+     -0.08,
+     0.4
+    ]
+   ],
+   "hl_cut": 0.8
+  }
+ },
+ "poses": {
+  "hold": {
+   "root": {
+    "loc": [
+     0,
+     0.056,
+     1.23
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "feet": {
+    "L": {
+     "at": [
+      0.077,
+      0.002,
+      0.34
+     ],
+     "rot": [
+      30,
+      0,
+      0
+     ]
+    }
+   },
+   "knees": {
+    "L": [
+     0.112,
+     -0.998,
+     0.783
+    ]
+   },
+   "hands": {
+    "L": {
+     "prop": "bar",
+     "axis": [
+      -1,
+      0,
+      0
+     ],
+     "arm": {
+      "elev": 176,
+      "plane": 0,
+      "elbow": 4,
+      "bend": [
+       0,
+       -1,
+       0
+      ],
+      "tilt": 0
+     }
+    }
+   }
+  }
+ },
+ "research": "Pull-up bar (props_other.hand_bar: placed through both fist centres every frame, uprights stretched to the floor). Overhand grip (palms forward, axis [-1,0,0]), arms straight overhead: elev 176 / plane 0 / elbow 4 -> fists ~0.54 m apart = about shoulder width (library step 1). Shoulder girdle and armpit skin settings copied from the approved dumbbell_shoulder_press (arms overhead lift and turn the shoulder blades up). Body hangs straight and relaxed: root (0,0.056,1.23), legs straight down, feet relaxed (rot X 30), toes ~0.15 m off the floor (library step 2). Camera front-side, low. Facts: research/dead_hang.json."
+}

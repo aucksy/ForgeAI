@@ -1,0 +1,240 @@
+{
+ "key": "decline_sit_up",
+ "name": "Decline Sit-Up",
+ "primary": [
+  "abs"
+ ],
+ "secondary": [],
+ "scene": {
+  "decline_bench": {
+   "deg": 20,
+   "top": 0.8,
+   "length": 1.15,
+   "loc": [
+    0,
+    0,
+    0
+   ],
+   "legs": {
+    "knee": [
+     -0.05,
+     0.94
+    ],
+    "rollers": [
+     [
+      -0.387,
+      0.964
+     ],
+     [
+      -0.252,
+      0.816
+     ]
+    ]
+   }
+  }
+ },
+ "camera": {
+  "yaw": -65,
+  "pitch": 18,
+  "lens": 50,
+  "fill": 0.9,
+  "res": 640,
+  "samples": 20
+ },
+ "timing": {
+  "fps": 30,
+  "keys": [
+   [
+    0,
+    "start"
+   ],
+   [
+    1,
+    "end"
+   ],
+   [
+    2,
+    "start"
+   ]
+  ]
+ },
+ "defaults": {
+  "feet": {
+   "L": {
+    "at": [
+     0.1,
+     -0.4,
+     0.83
+    ],
+    "rot": [
+     -45,
+     0,
+     0
+    ]
+   }
+  },
+  "knees": {
+   "L": [
+    0.13,
+    -0.3,
+    1.6
+   ]
+  }
+ },
+ "poses": {
+  "start": {
+   "root": {
+    "loc": [
+     0.0,
+     0.245,
+     0.743
+    ],
+    "rot": [
+     -110,
+     0,
+     0
+    ]
+   },
+   "bones": {
+    "neck01": [
+     -6,
+     0,
+     0
+    ],
+    "head": [
+     -6,
+     0,
+     0
+    ]
+   },
+   "hands": {
+    "L": {
+     "axis": [
+      0,
+      0,
+      1
+     ],
+     "arm": {
+      "elev": 35,
+      "plane": 165,
+      "elbow": 115,
+      "bend": [
+       -1,
+       0.3,
+       0.6
+      ],
+      "tilt": 0
+     }
+    },
+    "R": {
+     "axis": [
+      0,
+      0,
+      1
+     ],
+     "arm": {
+      "elev": 27.5,
+      "plane": 140,
+      "elbow": 95,
+      "bend": [
+       -1,
+       0.3,
+       0.6
+      ],
+      "tilt": 0
+     }
+    }
+   }
+  },
+  "end": {
+   "root": {
+    "loc": [
+     0.0,
+     0.262,
+     0.79
+    ],
+    "rot": [
+     -10,
+     0,
+     0
+    ]
+   },
+   "bones": {
+    "spine05": [
+     3,
+     0,
+     0
+    ],
+    "spine04": [
+     8,
+     0,
+     0
+    ],
+    "spine03": [
+     10,
+     0,
+     0
+    ],
+    "spine02": [
+     10,
+     0,
+     0
+    ],
+    "spine01": [
+     9,
+     0,
+     0
+    ],
+    "neck01": [
+     10,
+     0,
+     0
+    ],
+    "head": [
+     5,
+     0,
+     0
+    ]
+   },
+   "hands": {
+    "L": {
+     "axis": [
+      0,
+      0,
+      1
+     ],
+     "arm": {
+      "elev": 35,
+      "plane": 165,
+      "elbow": 115,
+      "bend": [
+       -1,
+       0.3,
+       0.6
+      ],
+      "tilt": 0
+     }
+    },
+    "R": {
+     "axis": [
+      0,
+      0,
+      1
+     ],
+     "arm": {
+      "elev": 27.5,
+      "plane": 140,
+      "elbow": 95,
+      "bend": [
+       -1,
+       0.3,
+       0.6
+      ],
+      "tilt": 0
+     }
+    }
+   }
+  }
+ },
+ "research": "Decline bench (props_other.decline_bench: 20 deg pad, top 0.80 m at the high end, head end down toward +Y). Legs hooked: ankles (+-0.10,-0.40,0.83) under the front roller (y -0.387, z 0.964), a second roller behind the calves (-0.252, 0.816), knee roll (-0.05, 0.94) under the bent knees (offline skinned-mesh fit: all ~0 cm). START lying back on the pad: root rot X -110 (= the 20 deg pad), root 0.25 m down the pad + 0.03 m off it (offline: back touching, -0.5..+1 cm); neck -6 / head -6 rest the head on the pad. END sat up (library step 2): pelvis rot X -10 + spine flex 3+8+10+10+9 = 40 deg, root 0.08 m off the pad (buttocks on it); shoulders ~16 deg forward of vertical, ~0.22 m from the knees = chest close to the knees. Arms crossed on the chest in both (left forearm over the right; offline: forearms ~7 cm apart, fists on the chest). Facts: research/decline_sit_up.json."
+}

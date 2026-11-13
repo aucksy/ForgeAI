@@ -1,0 +1,167 @@
+{
+ "key": "hanging_leg_raise",
+ "name": "Hanging Leg Raise",
+ "primary": [
+  "abs"
+ ],
+ "secondary": [
+  "forearms"
+ ],
+ "props": {
+  "bar": {
+   "type": "hand_bar",
+   "length": 1.2
+  }
+ },
+ "camera": {
+  "yaw": -60,
+  "pitch": 8,
+  "lens": 50,
+  "fill": 0.9,
+  "res": 640,
+  "samples": 20
+ },
+ "timing": {
+  "fps": 30,
+  "keys": [
+   [
+    0,
+    "start"
+   ],
+   [
+    1,
+    "end"
+   ],
+   [
+    2,
+    "start"
+   ]
+  ]
+ },
+ "girdle": {
+  "start": 30,
+  "knee": 15,
+  "ur": 0.4,
+  "ur_max": 50,
+  "ur_pivot": 0.92,
+  "scap_plane": 30,
+  "elev": 0.08,
+  "elev_max": 11,
+  "retract": 0.12,
+  "retract_max": 16
+ },
+ "skin": {
+  "preserve_volume": true,
+  "calm_armpits": {
+   "amount": 0.45,
+   "radius": 0.05,
+   "fade": 0.05,
+   "down": 0.08,
+   "extra": [
+    [
+     -0.02,
+     0.08,
+     -0.08,
+     0.4
+    ]
+   ],
+   "hl_cut": 0.8
+  }
+ },
+ "defaults": {
+  "root": {
+   "loc": [
+    0,
+    0.056,
+    1.23
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ]
+  },
+  "hands": {
+   "L": {
+    "prop": "bar",
+    "axis": [
+     -1,
+     0,
+     0
+    ],
+    "arm": {
+     "elev": 176,
+     "plane": 0,
+     "elbow": 4,
+     "bend": [
+      0,
+      -1,
+      0
+     ],
+     "tilt": 0
+    }
+   }
+  }
+ },
+ "poses": {
+  "start": {
+   "feet": {
+    "L": {
+     "at": [
+      0.077,
+      0.002,
+      0.34
+     ],
+     "rot": [
+      30,
+      0,
+      0
+     ]
+    }
+   },
+   "knees": {
+    "L": [
+     0.112,
+     -0.998,
+     0.783
+    ]
+   }
+  },
+  "end": {
+   "feet": {
+    "L": {
+     "at": [
+      0.077,
+      -0.878,
+      1.233
+     ],
+     "rot": [
+      -60.0,
+      -0.0,
+      0.0
+     ]
+    }
+   },
+   "knees": {
+    "L": [
+     0.112,
+     -0.448,
+     2.233
+    ]
+   },
+   "bones": {
+    "spine05": [
+     4,
+     0,
+     0
+    ],
+    "spine04": [
+     3,
+     0,
+     0
+    ]
+   }
+  }
+ },
+ "research": "Same pull-up bar, overhand hang and girdle as dead_hang (library step 1: straight arms, legs together). START: dead hang, legs straight down. END: straight legs raised until level with the hips (library step 2): ankle = hip + 0.88 m straight forward (hip flexion 90 deg), knees straight (pole up), toes pointed 30 deg; a little low-back curl (spine05 4, spine04 3) as the pelvis tilts back at the top. Camera from the front-side so the abs show. Facts: research/hanging_leg_raise.json."
+}

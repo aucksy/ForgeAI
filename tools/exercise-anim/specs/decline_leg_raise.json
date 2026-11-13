@@ -1,0 +1,190 @@
+{
+ "key": "decline_leg_raise",
+ "name": "Decline Leg Raise",
+ "primary": [
+  "abs"
+ ],
+ "secondary": [],
+ "scene": {
+  "decline_bench": {
+   "deg": 20,
+   "top": 0.8,
+   "length": 1.15,
+   "loc": [
+    0,
+    0,
+    0
+   ],
+   "legs": {
+    "knee": [
+     -0.05,
+     0.94
+    ],
+    "rollers": [
+     [
+      -0.387,
+      0.964
+     ],
+     [
+      -0.252,
+      0.816
+     ]
+    ]
+   }
+  }
+ },
+ "camera": {
+  "yaw": 65,
+  "pitch": 18,
+  "lens": 50,
+  "fill": 0.9,
+  "res": 640,
+  "samples": 20
+ },
+ "timing": {
+  "fps": 30,
+  "keys": [
+   [
+    0,
+    "start"
+   ],
+   [
+    1,
+    "end"
+   ],
+   [
+    2,
+    "start"
+   ]
+  ]
+ },
+ "defaults": {
+  "root": {
+   "loc": [
+    0.0,
+    0.818,
+    0.534
+   ],
+   "rot": [
+    -70,
+    0,
+    180
+   ]
+  },
+  "bones": {
+   "neck01": [
+    -10,
+    0,
+    0
+   ],
+   "head": [
+    -10,
+    0,
+    0
+   ]
+  },
+  "hands": {
+   "L": {
+    "axis": [
+     0.0,
+     0.936,
+     0.353
+    ],
+    "arm": {
+     "elev": 142.5,
+     "plane": 85,
+     "elbow": 85,
+     "bend": [
+      0,
+      -1,
+      0.3
+     ],
+     "tilt": 0
+    }
+   }
+  }
+ },
+ "poses": {
+  "start": {
+   "feet": {
+    "L": {
+     "at": [
+      -0.072,
+      1.701,
+      0.433
+     ],
+     "rot": [
+      -80.0,
+      -0.0,
+      180.0
+     ]
+    },
+    "R": {
+     "at": [
+      0.072,
+      1.701,
+      0.433
+     ],
+     "rot": [
+      -80.0,
+      -0.0,
+      180.0
+     ]
+    }
+   },
+   "knees": {
+    "L": [
+     -0.112,
+     1.451,
+     1.492
+    ],
+    "R": [
+     0.112,
+     1.451,
+     1.492
+    ]
+   }
+  },
+  "end": {
+   "feet": {
+    "L": {
+     "at": [
+      -0.072,
+      0.781,
+      1.464
+     ],
+     "rot": [
+      176.6,
+      -0.0,
+      180.0
+     ]
+    },
+    "R": {
+     "at": [
+      0.072,
+      0.781,
+      1.464
+     ],
+     "rot": [
+      176.6,
+      -0.0,
+      180.0
+     ]
+    }
+   },
+   "knees": {
+    "L": [
+     -0.112,
+     -0.191,
+     0.975
+    ],
+    "R": [
+     0.112,
+     -0.191,
+     0.975
+    ]
+   }
+  }
+ },
+ "research": "Same decline bench, lying the other way: head at the HIGH end (library step 1). Root rot [-70,0,180] (face up, head toward -Y up the 20 deg pad), root 0.86 m down the pad + 0.03 m, neck/head -10/-10 so the back of the head rests on the pad (offline: head and pelvis 0-1 cm). Hands hold the bench behind the head (library step 2): fists round the knee-roll side posts (x +-0.25, y -0.05, z ~0.84); arm elev 142.5 / plane 85 / elbow 85 (offline fist on the post within 1 cm), fists thumb-up round the upright post, elbows up. Legs straight and together, toes pointed: START 10 deg above the body line (heels off the pad end), END pointing straight up (library step 3), hip flexion ~100 deg. Facts: research/decline_leg_raise.json."
+}

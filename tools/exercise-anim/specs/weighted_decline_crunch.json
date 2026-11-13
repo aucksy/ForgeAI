@@ -1,0 +1,247 @@
+{
+ "key": "weighted_decline_crunch",
+ "name": "Weighted Decline Crunch",
+ "primary": [
+  "abs"
+ ],
+ "secondary": [],
+ "scene": {
+  "decline_bench": {
+   "deg": 20,
+   "top": 0.8,
+   "length": 1.15,
+   "loc": [
+    0,
+    0,
+    0
+   ],
+   "legs": {
+    "knee": [
+     -0.05,
+     0.94
+    ],
+    "rollers": [
+     [
+      -0.387,
+      0.964
+     ],
+     [
+      -0.252,
+      0.816
+     ]
+    ]
+   }
+  }
+ },
+ "camera": {
+  "yaw": -65,
+  "pitch": 18,
+  "lens": 50,
+  "fill": 0.9,
+  "res": 640,
+  "samples": 20
+ },
+ "timing": {
+  "fps": 30,
+  "keys": [
+   [
+    0,
+    "start"
+   ],
+   [
+    1,
+    "end"
+   ],
+   [
+    2,
+    "start"
+   ]
+  ]
+ },
+ "props": {
+  "db_L": {
+   "type": "dumbbell"
+  }
+ },
+ "defaults": {
+  "feet": {
+   "L": {
+    "at": [
+     0.1,
+     -0.4,
+     0.83
+    ],
+    "rot": [
+     -45,
+     0,
+     0
+    ]
+   }
+  },
+  "knees": {
+   "L": [
+    0.13,
+    -0.3,
+    1.6
+   ]
+  }
+ },
+ "poses": {
+  "start": {
+   "root": {
+    "loc": [
+     0.0,
+     0.245,
+     0.743
+    ],
+    "rot": [
+     -110,
+     0,
+     0
+    ]
+   },
+   "bones": {
+    "neck01": [
+     -6,
+     0,
+     0
+    ],
+    "head": [
+     -6,
+     0,
+     0
+    ]
+   },
+   "hands": {
+    "L": {
+     "prop": "db_L",
+     "axis": [
+      0.5,
+      0.013,
+      0.866
+     ],
+     "arm": {
+      "elev": 6.0,
+      "plane": -25.3,
+      "elbow": 112.3,
+      "bend": [
+       -0.536,
+       0.84,
+       -0.088
+      ],
+      "tilt": 0
+     }
+    },
+    "R": {
+     "axis": [
+      -0.499,
+      -0.003,
+      0.867
+     ],
+     "arm": {
+      "elev": 7.7,
+      "plane": -30.6,
+      "elbow": 113.8,
+      "bend": [
+       -0.499,
+       0.859,
+       -0.117
+      ],
+      "tilt": 0
+     }
+    }
+   }
+  },
+  "end": {
+   "root": {
+    "loc": [
+     0.0,
+     0.247,
+     0.747
+    ],
+    "rot": [
+     -110,
+     0,
+     0
+    ]
+   },
+   "bones": {
+    "spine05": [
+     3,
+     0,
+     0
+    ],
+    "spine04": [
+     8,
+     0,
+     0
+    ],
+    "spine03": [
+     10,
+     0,
+     0
+    ],
+    "spine02": [
+     10,
+     0,
+     0
+    ],
+    "spine01": [
+     9,
+     0,
+     0
+    ],
+    "neck01": [
+     6,
+     0,
+     0
+    ],
+    "head": [
+     4,
+     0,
+     0
+    ]
+   },
+   "hands": {
+    "L": {
+     "prop": "db_L",
+     "axis": [
+      0.5,
+      0.013,
+      0.866
+     ],
+     "arm": {
+      "elev": 6.0,
+      "plane": -25.3,
+      "elbow": 112.3,
+      "bend": [
+       -0.536,
+       0.84,
+       -0.088
+      ],
+      "tilt": 0
+     }
+    },
+    "R": {
+     "axis": [
+      -0.499,
+      -0.003,
+      0.867
+     ],
+     "arm": {
+      "elev": 7.7,
+      "plane": -30.6,
+      "elbow": 113.8,
+      "bend": [
+       -0.499,
+       0.859,
+       -0.117
+      ],
+      "tilt": 0
+     }
+    }
+   }
+  }
+ },
+ "research": "Same bench and legs as decline_sit_up. One dumbbell held flat on the chest exactly as the approved weighted_crunch (same arm angles in the torso frame, so it rides with the chest). START lying back (root rot X -110, 0.03 m off the pad). END crunch (library step 3): the pelvis stays down (rot -110, root 0.035 m), spine flex 3+8+10+10+9 = 40 deg so the shoulder blades leave the pad; low back stays on it. Facts: research/weighted_decline_crunch.json."
+}

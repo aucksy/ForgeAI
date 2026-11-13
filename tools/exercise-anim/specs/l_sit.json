@@ -1,0 +1,132 @@
+{
+ "key": "l_sit",
+ "name": "L-Sit",
+ "primary": [
+  "abs"
+ ],
+ "secondary": [
+  "triceps",
+  "quads"
+ ],
+ "props": {
+  "pL": {
+   "type": "parallette",
+   "hand": "L"
+  },
+  "pR": {
+   "type": "parallette",
+   "hand": "R"
+  }
+ },
+ "camera": {
+  "yaw": -38,
+  "pitch": 6,
+  "lens": 50,
+  "fill": 0.9,
+  "res": 640,
+  "samples": 20
+ },
+ "timing": {
+  "fps": 30,
+  "keys": [
+   [
+    0,
+    "hold"
+   ],
+   [
+    1,
+    "hold"
+   ]
+  ]
+ },
+ "poses": {
+  "hold": {
+   "root": {
+    "loc": [
+     0,
+     0.04,
+     0.47
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "feet": {
+    "L": {
+     "at": [
+      0.077,
+      -0.899,
+      0.473
+     ],
+     "rot": [
+      -55.0,
+      -0.0,
+      0.0
+     ]
+    }
+   },
+   "knees": {
+    "L": [
+     0.112,
+     -0.464,
+     1.473
+    ]
+   },
+   "hands": {
+    "L": {
+     "prop": "pL",
+     "axis": [
+      0,
+      1,
+      0
+     ],
+     "arm": {
+      "elev": 2,
+      "plane": 90,
+      "elbow": 2,
+      "bend": [
+       0,
+       -1,
+       0
+      ],
+      "tilt": 0
+     }
+    },
+    "R": {
+     "prop": "pR",
+     "axis": [
+      0,
+      1,
+      0
+     ],
+     "arm": {
+      "elev": 2,
+      "plane": 90,
+      "elbow": 2,
+      "bend": [
+       0,
+       -1,
+       0
+      ],
+      "tilt": 0
+     }
+    }
+   },
+   "bones": {
+    "spine05": [
+     3,
+     0,
+     0
+    ],
+    "spine04": [
+     2,
+     0,
+     0
+    ]
+   }
+  }
+ },
+ "research": "Two parallettes (props_other.parallette, one under each fist, handles running front-to-back along the grip axis, legs stretched to the floor). Hands beside the hips, arms straight and vertical (elev 2, elbow 2; library step 2), neutral grip (knuckles out, axis forward). Body lifted off the floor: root [0, 0.04, 0.47], hips level with the fists ~0.15 m above them. Straight legs held level with the hips (library step 3): ankle = hip + 0.885 m forward, toes pointed 35 deg, heels ~0.47 m above the floor. Slight low-back round (spine05 3, spine04 2). Low front-side camera so the abs show. Facts: research/l_sit.json."
+}

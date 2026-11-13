@@ -1,0 +1,203 @@
+{
+ "key": "decline_dumbbell_skull_crusher",
+ "name": "Decline Dumbbell Skull Crusher",
+ "primary": [
+  "triceps"
+ ],
+ "secondary": [],
+ "scene": {
+  "decline_bench": {
+   "deg": 20,
+   "top": 0.8,
+   "length": 1.15,
+   "loc": [
+    0,
+    0,
+    0
+   ],
+   "legs": {
+    "knee": [
+     -0.05,
+     0.94
+    ],
+    "rollers": [
+     [
+      -0.387,
+      0.964
+     ],
+     [
+      -0.252,
+      0.816
+     ]
+    ]
+   }
+  }
+ },
+ "camera": {
+  "yaw": -65,
+  "pitch": 18,
+  "lens": 50,
+  "fill": 0.9,
+  "res": 640,
+  "samples": 20
+ },
+ "timing": {
+  "fps": 30,
+  "keys": [
+   [
+    0,
+    "start"
+   ],
+   [
+    1,
+    "end"
+   ],
+   [
+    2,
+    "start"
+   ]
+  ]
+ },
+ "props": {
+  "db_L": {
+   "type": "dumbbell"
+  },
+  "db_R": {
+   "type": "dumbbell"
+  }
+ },
+ "defaults": {
+  "feet": {
+   "L": {
+    "at": [
+     0.1,
+     -0.4,
+     0.83
+    ],
+    "rot": [
+     -45,
+     0,
+     0
+    ]
+   }
+  },
+  "knees": {
+   "L": [
+    0.13,
+    -0.3,
+    1.6
+   ]
+  },
+  "root": {
+   "loc": [
+    0.0,
+    0.245,
+    0.743
+   ],
+   "rot": [
+    -110,
+    0,
+    0
+   ]
+  },
+  "bones": {
+   "neck01": [
+    -6,
+    0,
+    0
+   ],
+   "head": [
+    -6,
+    0,
+    0
+   ]
+  }
+ },
+ "poses": {
+  "start": {
+   "hands": {
+    "L": {
+     "prop": "db_L",
+     "axis": [
+      0.0,
+      0.247,
+      0.969
+     ],
+     "arm": {
+      "elev": 70.7,
+      "plane": 90.0,
+      "elbow": 5,
+      "bend": [
+       0,
+       0,
+       1
+      ],
+      "tilt": 0
+     }
+    },
+    "R": {
+     "prop": "db_R",
+     "axis": [
+      -0.0,
+      0.247,
+      0.969
+     ],
+     "arm": {
+      "elev": 70.7,
+      "plane": 90.0,
+      "elbow": 5,
+      "bend": [
+       0,
+       0,
+       1
+      ],
+      "tilt": 0
+     }
+    }
+   }
+  },
+  "end": {
+   "hands": {
+    "L": {
+     "prop": "db_L",
+     "axis": [
+      -0.0,
+      -1.0,
+      -0.012
+     ],
+     "arm": {
+      "elev": 70.7,
+      "plane": 90.0,
+      "elbow": 110,
+      "bend": [
+       0,
+       0,
+       1
+      ],
+      "tilt": 0
+     }
+    },
+    "R": {
+     "prop": "db_R",
+     "axis": [
+      0.0,
+      -1.0,
+      -0.012
+     ],
+     "arm": {
+      "elev": 70.7,
+      "plane": 90.0,
+      "elbow": 110,
+      "bend": [
+       0,
+       0,
+       1
+      ],
+      "tilt": 0
+     }
+    }
+   }
+  }
+ },
+ "research": "Same bench, legs and lying body as decline_sit_up (its start pose) in both pictures. Upper arms straight up to the ceiling (library step 1): world up in the torso frame of the lying body = elev 70.7 / plane 90.0. START elbows 5 deg (arms straight). END elbows 110 deg folding toward the head (bend [0,0,1]): dumbbells beside the head (library step 2), elbows still pointing up. Neutral grip, handle square to the forearm in the fold plane, as the approved incline_dumbbell_skull_crusher. Facts: research/decline_dumbbell_skull_crusher.json."
+}
