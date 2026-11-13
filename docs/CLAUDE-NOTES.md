@@ -25,6 +25,15 @@ much less than the others: "Your shoulders get 3 sets a week. Your chest gets 12
 Push?" [Swap] [Not now] [Keep as is], only swapping out an exercise whose group keeps another exercise in that routine;
 (4) no "Easy add", plain words naming the muscle and the routine; (5) the same limits (one tip, one new a week, never in a
 workout, Settings switch). He said "build all 5" (13 Nov 2026). Next app update; no release without his "release".
+- Built 6237e4fc (13 Nov): tips judge the routines of the folder up next (skipped = still planned). Tip 1 "None of your
+  routines trains your calves. Add 3 sets of Standing Calf Raise to your Legs routine?" [Add] [Not now] / I skip this on
+  purpose. Tip 2 "Your routines give your shoulders 3 sets a week and your chest 12. Swap X for Y in your Push routine?"
+  [Swap] [Not now] / Keep as is (group under 1/3 of the median of the other big groups AND 6+ sets below; never empties a
+  group; same sets, same place); Undo after Add or Swap. Guard: every routine done once, first 14+ days ago (my choice,
+  replaces 3 weeks + 4 workouts). Gemini pass changed tip 2 to "Your routines give ..." (says the numbers are planned).
+  Tests 20 new + 7 + 8. UAT part still to build before release (no Up next tip part exists). CI run 43388420395:
+  mobile typecheck + all mobile unit tests (3 time zones) green; red only on the 4 dashboard e2e tests (G3 gyms site,
+  F198 new dots, J149 bell) that were already failing on main before this commit (run 43386711001 on f18b96fa).
 
 ## R-481. Google rejected 0.77.0 over watch heart rate; sent back with a video (his "A") — 13 Nov 2026
 Google (13 Nov 9:13 am): "Update rejected", 2 Health Connect issues, both only about HeartRate

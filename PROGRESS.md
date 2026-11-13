@@ -1,6 +1,21 @@
 # ForgeAI progress
 
 ## Waiting for release (R-266: tag only when the owner says "release")
+- R-482 MUSCLE TIPS JUDGE THE ROUTINES; NEW SWAP TIP (owner, 13 Nov 2026: "build all 5"; he saw "Easy add today: 3 sets of
+  Standing Calf Raise" on Pull 2 while the calf raise is already in his Legs routine, he just skips it). Commit 6237e4fc.
+  Shared JS (Android and iPhone), no native part, no PARITY change. The Up next tip now reads the member's week = the
+  routines of the folder up next (each run plan-days/routines times a week), never the logs, so a skipped exercise
+  never makes a tip. Tip 1: "None of your routines trains your calves. Add 3 sets of Standing Calf Raise to your Legs
+  routine?" [Add] [Not now] / I skip this on purpose (home routine: calves on a legs/lower day, core the shortest).
+  Tip 2 (new): a big group under 1/3 of the median of the other big groups AND 6+ counted sets a week below it:
+  "Your routines give your shoulders 3 sets a week and your chest 12. Swap X for Y in your Push routine?" [Swap]
+  [Not now] / Keep as is; the swap never empties a group and keeps the same sets and place; Undo after Add or Swap.
+  Guard: every routine done once, the first 14+ days ago (was 3 weeks + 4 workouts). Tests: muscleTipsRoutines (20),
+  muscleTips (7), muscleBalance (8). UAT: NOT YET (no qa-device part covers the Up next tip; needs a u482 part with
+  a settled plan before release). Settings caption reworded.
+  What's new draft (member-words): "On the Workout tab, muscle tips under \"Up next\" now read your routines, so they
+  never suggest an exercise you already have. If one muscle gets far fewer sets than the others, a tip can swap one
+  exercise for you, and \"Undo\" puts it back."
 - F56 METTLEUP PLUS, PART (a) (R-461/R-462, 12 Nov 2026; SHIPS SWITCHED OFF). The free and paid split for members
   without a gym, with a 30-day free month, built and tested but OFF (MEMBER_PLAN_GATE_ON=false, MEMBER_PAYMENTS_LIVE=
   false): with it off every member sees exactly what they see today, except routines are no longer limited (the old
