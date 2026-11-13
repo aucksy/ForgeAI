@@ -141,6 +141,9 @@ describe('our own pictures (the grey 3D athlete, for exercises RepDB has no pict
     // 13 Nov 2026: plate-loaded lever machines, leg press calf raise, elliptical and incline treadmill walk
     'machine_lat_pulldown', 'iso_lateral_row', 'iso_lateral_high_row', 'iso_lateral_low_row',
     'leg_press_calf_raise', 'elliptical', 'incline_treadmill_walk',
+    // 13 Nov 2026: cable round 3
+    'cable_pullover', 'cable_skull_crusher', 'flat_bench_cable_fly', 'incline_cable_triceps_extension',
+    'lying_rope_triceps_extension', 'single_arm_cable_hammer_curl',
   ];
   // Holds: one picture, no end picture.
   const HOLDS = ['hollow_hold', 'wall_sit'];

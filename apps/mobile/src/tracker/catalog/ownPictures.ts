@@ -34,6 +34,16 @@ export const OWN_PICTURES: Readonly<Record<string, ExercisePictures>> = {
     thumb: require('../../../assets/exercise-pictures-own/cable_hip_adduction__thumb.webp'),
     end: require('../../../assets/exercise-pictures-own/cable_hip_adduction__end.webp'),
   },
+  cable_pullover: {
+    start: require('../../../assets/exercise-pictures-own/cable_pullover__start.webp'),
+    thumb: require('../../../assets/exercise-pictures-own/cable_pullover__thumb.webp'),
+    end: require('../../../assets/exercise-pictures-own/cable_pullover__end.webp'),
+  },
+  cable_skull_crusher: {
+    start: require('../../../assets/exercise-pictures-own/cable_skull_crusher__start.webp'),
+    thumb: require('../../../assets/exercise-pictures-own/cable_skull_crusher__thumb.webp'),
+    end: require('../../../assets/exercise-pictures-own/cable_skull_crusher__end.webp'),
+  },
   dumbbell_step_up: {
     start: require('../../../assets/exercise-pictures-own/dumbbell_step_up__start.webp'),
     thumb: require('../../../assets/exercise-pictures-own/dumbbell_step_up__thumb.webp'),
@@ -48,6 +58,11 @@ export const OWN_PICTURES: Readonly<Record<string, ExercisePictures>> = {
     start: require('../../../assets/exercise-pictures-own/farmers_walk__start.webp'),
     thumb: require('../../../assets/exercise-pictures-own/farmers_walk__thumb.webp'),
     end: require('../../../assets/exercise-pictures-own/farmers_walk__end.webp'),
+  },
+  flat_bench_cable_fly: {
+    start: require('../../../assets/exercise-pictures-own/flat_bench_cable_fly__start.webp'),
+    thumb: require('../../../assets/exercise-pictures-own/flat_bench_cable_fly__thumb.webp'),
+    end: require('../../../assets/exercise-pictures-own/flat_bench_cable_fly__end.webp'),
   },
   high_knees: {
     start: require('../../../assets/exercise-pictures-own/high_knees__start.webp'),
@@ -68,6 +83,11 @@ export const OWN_PICTURES: Readonly<Record<string, ExercisePictures>> = {
     start: require('../../../assets/exercise-pictures-own/incline_bench_preacher_curl__start.webp'),
     thumb: require('../../../assets/exercise-pictures-own/incline_bench_preacher_curl__thumb.webp'),
     end: require('../../../assets/exercise-pictures-own/incline_bench_preacher_curl__end.webp'),
+  },
+  incline_cable_triceps_extension: {
+    start: require('../../../assets/exercise-pictures-own/incline_cable_triceps_extension__start.webp'),
+    thumb: require('../../../assets/exercise-pictures-own/incline_cable_triceps_extension__thumb.webp'),
+    end: require('../../../assets/exercise-pictures-own/incline_cable_triceps_extension__end.webp'),
   },
   incline_dumbbell_skull_crusher: {
     start: require('../../../assets/exercise-pictures-own/incline_dumbbell_skull_crusher__start.webp'),
@@ -114,6 +134,11 @@ export const OWN_PICTURES: Readonly<Record<string, ExercisePictures>> = {
     thumb: require('../../../assets/exercise-pictures-own/low_to_high_cable_fly__thumb.webp'),
     end: require('../../../assets/exercise-pictures-own/low_to_high_cable_fly__end.webp'),
   },
+  lying_rope_triceps_extension: {
+    start: require('../../../assets/exercise-pictures-own/lying_rope_triceps_extension__start.webp'),
+    thumb: require('../../../assets/exercise-pictures-own/lying_rope_triceps_extension__thumb.webp'),
+    end: require('../../../assets/exercise-pictures-own/lying_rope_triceps_extension__end.webp'),
+  },
   machine_lat_pulldown: {
     start: require('../../../assets/exercise-pictures-own/machine_lat_pulldown__start.webp'),
     thumb: require('../../../assets/exercise-pictures-own/machine_lat_pulldown__thumb.webp'),
@@ -143,6 +168,11 @@ export const OWN_PICTURES: Readonly<Record<string, ExercisePictures>> = {
     start: require('../../../assets/exercise-pictures-own/seated_rear_delt_fly__start.webp'),
     thumb: require('../../../assets/exercise-pictures-own/seated_rear_delt_fly__thumb.webp'),
     end: require('../../../assets/exercise-pictures-own/seated_rear_delt_fly__end.webp'),
+  },
+  single_arm_cable_hammer_curl: {
+    start: require('../../../assets/exercise-pictures-own/single_arm_cable_hammer_curl__start.webp'),
+    thumb: require('../../../assets/exercise-pictures-own/single_arm_cable_hammer_curl__thumb.webp'),
+    end: require('../../../assets/exercise-pictures-own/single_arm_cable_hammer_curl__end.webp'),
   },
   single_arm_dumbbell_curl: {
     start: require('../../../assets/exercise-pictures-own/single_arm_dumbbell_curl__start.webp'),

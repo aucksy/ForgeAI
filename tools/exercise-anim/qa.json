@@ -345,59 +345,59 @@
   },
   "cable_front_raise": {
     "rendered": "2026-11-13",
-    "run": "43448776510",
+    "run": "43453523374",
     "qa": "fail",
-    "reason": "end: from the front-right camera the cable reads as running across the near thigh and shin (it passes between the legs) (13 Nov, try 1; retry queued)",
-    "tries": 1
+    "reason": "end: the cable still reads as crossing the front of the leg, the rope ends stand up out of the fists like poles and the right arm reaches across the chest; start: rope over the thighs. Next: pulley straight behind between the feet, rope ends hang, both arms straight forward (13 Nov, try 2: no more tries today; needs a fresh look)",
+    "tries": 2
   },
   "cable_reverse_curl": {
     "rendered": "2026-11-13",
-    "run": "43448776510",
+    "run": "43453523374",
     "qa": "fail",
-    "reason": "end: the far bar end reads as running into the post (13 Nov, try 1; retry queued)",
-    "tries": 1
+    "reason": "pulley beside the foot instead of in front; start: cable over the shin; end: cable on the bar end, which touches the post. Next: column straight in front, cable on the bar middle (13 Nov, try 2: no more tries today; needs a fresh look)",
+    "tries": 2
   },
   "rope_cable_curl": {
     "rendered": "2026-11-13",
-    "run": "43448776510",
+    "run": "43453523374",
     "qa": "fail",
-    "reason": "end: the near rope end cap presses on the collarbone (13 Nov, try 1; retry queued)",
-    "tries": 1
+    "reason": "the athlete overlaps the post (end: the post hides the left arm), pulley beside the foot, rope over the thigh/shin. Next: column straight in front, 0.6 m away (13 Nov, try 2: no more tries today; needs a fresh look)",
+    "tries": 2
   },
   "single_arm_cable_hammer_curl": {
     "rendered": "2026-11-13",
-    "run": "43448776510",
-    "qa": "fail",
-    "reason": "end: the cable runs 7 mm into the forearm (clearance -0.007 m) (13 Nov, try 1; retry queued)",
-    "tries": 1
+    "run": "43453523374",
+    "qa": "pass",
+    "reason": "numbers (hands on the handle/rope/bar, cable clear of the skin, feet/body on the floor or pad), close-up and fresh reviewer all clean (13 Nov 2026); try 1 run 43448776510 had the cable 7 mm into the forearm",
+    "tries": 2
   },
   "behind_the_back_cable_curl": {
     "rendered": "2026-11-13",
-    "run": "43448776510",
+    "run": "43453523374",
     "qa": "fail",
-    "reason": "biceps shows only as a thin strip from the side camera (13 Nov, try 1; retry queued)",
-    "tries": 1
+    "reason": "the arm never goes behind the body (reads as an ordinary curl), end: half curl with the handle in the belly and the cable across the hip. Next: elbow behind the torso line, pulley further behind, camera from the side (13 Nov, try 2: no more tries today; needs a fresh look)",
+    "tries": 2
   },
   "single_arm_cable_reverse_fly": {
     "rendered": "2026-11-13",
-    "run": "43448776510",
+    "run": "43453523374",
     "qa": "fail",
-    "reason": "start: the arm across the chest is hidden behind the body from the back camera (13 Nov, try 1; retry queued)",
-    "tries": 1
+    "reason": "start: the hand sits at the back of the head instead of in front at the opposite shoulder, cable over the head. Next: start hand in front of the chest at the far shoulder, front camera (13 Nov, try 2: no more tries today; needs a fresh look)",
+    "tries": 2
   },
   "cross_body_cable_extension": {
     "rendered": "2026-11-13",
-    "run": "43448776510",
+    "run": "43453523374",
     "qa": "fail",
-    "reason": "start: the forearm and handle are hidden behind the body from the back camera (13 Nov, try 1; retry queued)",
-    "tries": 1
+    "reason": "start: the hand sits by the ear instead of at the opposite shoulder, the cable runs into the back of the head. Next: start hand at the far shoulder in front of the chest, front camera (13 Nov, try 2: no more tries today; needs a fresh look)",
+    "tries": 2
   },
   "single_arm_cable_fly": {
     "rendered": "2026-11-13",
-    "run": "43448776510",
+    "run": "43453523374",
     "qa": "fail",
-    "reason": "end: the hand stops in front of the left chest instead of crossing the middle; start handle almost touches the pulley (13 Nov, try 1; retry queued)",
-    "tries": 1
+    "reason": "end: the arm points straight at the camera, so only a fist on the chest shows. Next: camera from the side of the working arm (13 Nov, try 2: no more tries today; needs a fresh look)",
+    "tries": 2
   },
   "incline_machine_fly": {
     "rendered": "2026-11-13",
@@ -583,5 +583,89 @@
     "qa": "fail",
     "reason": "cannot be shown honestly: hiking needs a real trail; on a flat floor it is the walking picture (13 Nov 2026)",
     "tries": 0
+  },
+  "cable_pullover": {
+    "rendered": "2026-11-13",
+    "run": "43453523374",
+    "qa": "pass",
+    "reason": "numbers (hands on the handle/rope/bar, cable clear of the skin, feet/body on the floor or pad), close-up and fresh reviewer all clean (13 Nov 2026)",
+    "tries": 1
+  },
+  "cable_skull_crusher": {
+    "rendered": "2026-11-13",
+    "run": "43453523374",
+    "qa": "pass",
+    "reason": "numbers (hands on the handle/rope/bar, cable clear of the skin, feet/body on the floor or pad), close-up and fresh reviewer all clean (13 Nov 2026)",
+    "tries": 1
+  },
+  "flat_bench_cable_fly": {
+    "rendered": "2026-11-13",
+    "run": "43453523374",
+    "qa": "pass",
+    "reason": "numbers (hands on the handle/rope/bar, cable clear of the skin, feet/body on the floor or pad), close-up and fresh reviewer all clean (13 Nov 2026)",
+    "tries": 1
+  },
+  "incline_cable_triceps_extension": {
+    "rendered": "2026-11-13",
+    "run": "43453523374",
+    "qa": "pass",
+    "reason": "numbers (hands on the handle/rope/bar, cable clear of the skin, feet/body on the floor or pad), close-up and fresh reviewer all clean (13 Nov 2026)",
+    "tries": 1
+  },
+  "lying_rope_triceps_extension": {
+    "rendered": "2026-11-13",
+    "run": "43453523374",
+    "qa": "pass",
+    "reason": "numbers (hands on the handle/rope/bar, cable clear of the skin, feet/body on the floor or pad), close-up and fresh reviewer all clean (13 Nov 2026)",
+    "tries": 1
+  },
+  "bent_over_cable_rear_delt_raise": {
+    "rendered": "2026-11-13",
+    "run": "43453523374",
+    "qa": "fail",
+    "reason": "the cable from the hand to the low pulley reads as passing behind/through the thighs in both pictures. Next: camera from the working side and in front (13 Nov, try 1)",
+    "tries": 1
+  },
+  "cable_concentration_curl": {
+    "rendered": "2026-11-13",
+    "run": "43453523374",
+    "qa": "fail",
+    "reason": "the working-side foot sits on the pulley box and the start handle is hidden at that foot. Next: column 0.4 m further out and forward, handle between the feet (13 Nov, try 1)",
+    "tries": 1
+  },
+  "cable_y_raise": {
+    "rendered": "2026-11-13",
+    "run": "43453523374",
+    "qa": "fail",
+    "reason": "end: the two crossed cables draw a large X across the face, chest and thighs; start: cables over the thighs. Next: camera from behind (13 Nov, try 1)",
+    "tries": 1
+  },
+  "incline_cable_fly": {
+    "rendered": "2026-11-13",
+    "run": "43453523374",
+    "qa": "fail",
+    "reason": "end: the near hand finishes at the chin and the near cable lies across the shoulder. Next: end hands over the upper chest, lower camera (13 Nov, try 1)",
+    "tries": 1
+  },
+  "lying_cable_curl": {
+    "rendered": "2026-11-13",
+    "run": "43453523374",
+    "qa": "fail",
+    "reason": "end: the bar stands upright at the face and the cable lies across the stomach, thighs and knees; start: bar upright between the thighs. Next: legs straight, bar level, camera from the side (13 Nov, try 1)",
+    "tries": 1
+  },
+  "seated_cable_rear_delt_fly": {
+    "rendered": "2026-11-13",
+    "run": "43453523374",
+    "qa": "fail",
+    "reason": "end: both cables cut straight through the shins; start: cables over the feet, hands hard to see. Next: pulleys further forward so the cables cross ahead of the feet (13 Nov, try 1)",
+    "tries": 1
+  },
+  "single_arm_overhead_cable_extension": {
+    "rendered": "2026-11-13",
+    "run": "43453523374",
+    "qa": "fail",
+    "reason": "the pulley sits off to the side, so the end cable crosses the back of the head, the back and the buttock. Next: pulley straight behind (13 Nov, try 1)",
+    "tries": 1
   }
 }
