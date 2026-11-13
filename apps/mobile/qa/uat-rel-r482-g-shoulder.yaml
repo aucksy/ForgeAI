@@ -136,11 +136,6 @@ appId: com.mettleup.app
     text: 'Dumbbell Shoulder Press'
     below:
       text: 'Incline Dumbbell Press'
-# in-view: the line right under Dumbbell Shoulder Press, just brought into view by sub-see
-- assertVisible:
-    text: '3 sets.*'
-    below:
-      text: 'Dumbbell Shoulder Press'
 - runFlow:
     file: sub-see.yaml
     env:
@@ -155,4 +150,29 @@ appId: com.mettleup.app
       FIND: 'Triceps Pushdown'
 - assertNotVisible: "Cable Fly"
 - takeScreenshot: rel-r482-g6-push-swapped
+- back
+# The routine's own page (its card on the Workout tab) shows the planned sets ("See exercises" shows the
+# workout preview, which has no set count).
+- extendedWaitUntil:
+    visible: "^Workout$"
+    timeout: 15000
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: '^Push, .*'
+- tapOn: '^Push, .*'
+- extendedWaitUntil:
+    visible: 'Dumbbell Shoulder Press'
+    timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: 'Dumbbell Shoulder Press'
+# in-view: the line right under Dumbbell Shoulder Press, just centred by sub-find
+- assertVisible:
+    text: '3 sets.*'
+    below:
+      text: 'Dumbbell Shoulder Press'
+- takeScreenshot: rel-r482-g6b-push-page-3-sets
 - back

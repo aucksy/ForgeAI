@@ -133,12 +133,32 @@ appId: com.mettleup.app
     text: 'Standing Calf Raise'
     below:
       text: 'Plank'
+- takeScreenshot: rel-r482-a6-legs-with-calf-raise
+- back
+# The routine's own page (its card on the Workout tab) shows the planned sets ("See exercises" shows the
+# workout preview, which has no set count).
+- extendedWaitUntil:
+    visible: "^Workout$"
+    timeout: 15000
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: '^Legs, .*'
+- tapOn: '^Legs, .*'
+- extendedWaitUntil:
+    visible: 'Standing Calf Raise'
+    timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: 'Standing Calf Raise'
 # in-view: the line right under Standing Calf Raise, just centred by sub-find
 - assertVisible:
     text: '3 sets.*'
     below:
       text: 'Standing Calf Raise'
-- takeScreenshot: rel-r482-a6-legs-with-calf-raise
+- takeScreenshot: rel-r482-a6b-legs-page-3-sets
 - back
 # ---------------------------------------------------------------- 4. after a restart
 - launchApp
