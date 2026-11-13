@@ -398,5 +398,40 @@
     "qa": "fail",
     "reason": "end: the hand stops in front of the left chest instead of crossing the middle; start handle almost touches the pulley (13 Nov, try 1; retry queued)",
     "tries": 1
+  },
+  "incline_machine_fly": {
+    "rendered": "2026-11-13",
+    "run": "43449175969",
+    "qa": "pass",
+    "reason": "numbers ok (feet on floor, body on the pad, lever 0.655 m start and end); close-ups ok: fists on the vertical handles, arms open to together over the upper chest; fresh reviewer passed",
+    "tries": 1
+  },
+  "smith_machine_incline_press": {
+    "rendered": "2026-11-13",
+    "run": "43449175969",
+    "qa": "pass",
+    "reason": "numbers ok (rails 1.2 deg off vertical through the bar's real start and end, body on the pad); close-ups ok: bar through both fists, plates outside the rails; fresh reviewer passed",
+    "tries": 1
+  },
+  "stationary_bike": {
+    "rendered": "2026-11-13",
+    "run": "43449175969",
+    "qa": "pass",
+    "reason": "numbers ok (crank 0.170 m at both key poses, feet on the pedals, sitting on the saddle); close-ups ok: hands on the bar, pedals swap top/bottom; fresh reviewer passed",
+    "tries": 1
+  },
+  "air_bike": {
+    "rendered": "2026-11-13",
+    "run": "43449175969",
+    "qa": "pass",
+    "reason": "numbers ok (crank 0.170 m, handle levers 0.616 m at start and end); close-ups ok: arms push/pull opposite to each other and to the legs; fresh reviewer passed",
+    "tries": 1
+  },
+  "stair_climber": {
+    "rendered": "2026-11-13",
+    "run": "43449175969",
+    "qa": "pass",
+    "reason": "numbers ok (feet on the steps, deepest 0.7 cm); close-ups ok; fresh reviewer thought he faced down the stairs: checked, he faces the rising steps (the treadmill pictures are shot from the other side), so it stays",
+    "tries": 1
   }
 }

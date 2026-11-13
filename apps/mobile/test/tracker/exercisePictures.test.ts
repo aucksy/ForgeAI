@@ -133,6 +133,8 @@ describe('our own pictures (the grey 3D athlete, for exercises RepDB has no pict
     'single_leg_calf_raise', 'sissy_squat', 'suitcase_carry', 'two_arm_dumbbell_kickback', 'weighted_crunch',
     // 13 Nov 2026: the first barbell pictures
     'wide_grip_barbell_curl', 'barbell_21s', 'incline_barbell_skull_crusher',
+    // 13 Nov 2026: the first gym machine and cardio pictures (own plain machine geometry)
+    'incline_machine_fly', 'smith_machine_incline_press', 'stationary_bike', 'air_bike', 'stair_climber',
   ];
   // Holds: one picture, no end picture.
   const HOLDS = ['hollow_hold', 'wall_sit'];

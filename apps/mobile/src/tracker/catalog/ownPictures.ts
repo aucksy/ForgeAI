@@ -9,6 +9,11 @@ import type { ExercisePictures } from './pictures';
 
 /* eslint-disable @typescript-eslint/no-require-imports */
 export const OWN_PICTURES: Readonly<Record<string, ExercisePictures>> = {
+  air_bike: {
+    start: require('../../../assets/exercise-pictures-own/air_bike__start.webp'),
+    thumb: require('../../../assets/exercise-pictures-own/air_bike__thumb.webp'),
+    end: require('../../../assets/exercise-pictures-own/air_bike__end.webp'),
+  },
   alternating_dumbbell_curl: {
     start: require('../../../assets/exercise-pictures-own/alternating_dumbbell_curl__start.webp'),
     thumb: require('../../../assets/exercise-pictures-own/alternating_dumbbell_curl__thumb.webp'),
@@ -59,6 +64,11 @@ export const OWN_PICTURES: Readonly<Record<string, ExercisePictures>> = {
     thumb: require('../../../assets/exercise-pictures-own/incline_dumbbell_skull_crusher__thumb.webp'),
     end: require('../../../assets/exercise-pictures-own/incline_dumbbell_skull_crusher__end.webp'),
   },
+  incline_machine_fly: {
+    start: require('../../../assets/exercise-pictures-own/incline_machine_fly__start.webp'),
+    thumb: require('../../../assets/exercise-pictures-own/incline_machine_fly__thumb.webp'),
+    end: require('../../../assets/exercise-pictures-own/incline_machine_fly__end.webp'),
+  },
   incline_neutral_grip_dumbbell_press: {
     start: require('../../../assets/exercise-pictures-own/incline_neutral_grip_dumbbell_press__start.webp'),
     thumb: require('../../../assets/exercise-pictures-own/incline_neutral_grip_dumbbell_press__thumb.webp'),
@@ -108,6 +118,21 @@ export const OWN_PICTURES: Readonly<Record<string, ExercisePictures>> = {
     start: require('../../../assets/exercise-pictures-own/sissy_squat__start.webp'),
     thumb: require('../../../assets/exercise-pictures-own/sissy_squat__thumb.webp'),
     end: require('../../../assets/exercise-pictures-own/sissy_squat__end.webp'),
+  },
+  smith_machine_incline_press: {
+    start: require('../../../assets/exercise-pictures-own/smith_machine_incline_press__start.webp'),
+    thumb: require('../../../assets/exercise-pictures-own/smith_machine_incline_press__thumb.webp'),
+    end: require('../../../assets/exercise-pictures-own/smith_machine_incline_press__end.webp'),
+  },
+  stair_climber: {
+    start: require('../../../assets/exercise-pictures-own/stair_climber__start.webp'),
+    thumb: require('../../../assets/exercise-pictures-own/stair_climber__thumb.webp'),
+    end: require('../../../assets/exercise-pictures-own/stair_climber__end.webp'),
+  },
+  stationary_bike: {
+    start: require('../../../assets/exercise-pictures-own/stationary_bike__start.webp'),
+    thumb: require('../../../assets/exercise-pictures-own/stationary_bike__thumb.webp'),
+    end: require('../../../assets/exercise-pictures-own/stationary_bike__end.webp'),
   },
   suitcase_carry: {
     start: require('../../../assets/exercise-pictures-own/suitcase_carry__start.webp'),
