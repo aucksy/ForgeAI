@@ -1,0 +1,197 @@
+{
+  "format": "v1-stills",
+  "exercise": {
+    "key": "weighted_decline_crunch",
+    "name": "Weighted Decline Crunch",
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "library_primary": [
+      "abs"
+    ],
+    "library_secondary": [],
+    "steps": [
+      "Hook your feet under the pads of a decline bench and lie back.",
+      "Hold a plate or dumbbell flat against your chest with both hands.",
+      "Curl your shoulders toward your knees, then lower slowly."
+    ],
+    "status": "draft",
+    "version": null,
+    "researched_on": "2026-11-13",
+    "one_line_summary": "Feet hooked on a 20 deg decline bench, one dumbbell held flat on the chest. Start lying back; end shoulders curled up ~40 deg of spine flexion, low back stays on the pad. Abs are the target.",
+    "evidence_grade": "B"
+  },
+  "setup": [
+    {
+      "item": "decline bench",
+      "target": "Pad tilted 20 deg, high end 0.80 m, the head end lower than the feet.",
+      "tolerance": "15-30 deg",
+      "why": "Library step 1: feet hooked under the pads of a decline bench; the slope makes the trunk lift against more of gravity than on the floor.",
+      "source_ids": [
+        "S4"
+      ],
+      "grade": "C"
+    },
+    {
+      "item": "legs hooked",
+      "target": "Knees bent over the knee roll, ankles under the front roller.",
+      "tolerance": "feet stay under the roller in both pictures",
+      "why": "Library step 1. Hooked feet let the hip flexors pull, which S1 shows as high rectus femoris in the bent-knee sit-up.",
+      "source_ids": [
+        "S1",
+        "S4"
+      ],
+      "grade": "B"
+    },
+    {
+      "item": "load",
+      "target": "One dumbbell flat on the middle of the chest, both hands on it.",
+      "tolerance": "on the sternum",
+      "why": "Library step 2; S2: load on the crunch raises abdominal EMG.",
+      "source_ids": [
+        "S2",
+        "S4"
+      ],
+      "grade": "A"
+    }
+  ],
+  "movement": [
+    {
+      "joint": "spine curl",
+      "measure": "spine01..05 flexion summed",
+      "start": "0 (lying back)",
+      "end": "40 deg, shoulder blades off the pad",
+      "start_num": 0,
+      "end_num": 40,
+      "path": "Upper back rolls up; low back stays down (a crunch).",
+      "tolerance": "25-45",
+      "source_ids": [
+        "S1",
+        "S3"
+      ],
+      "grade": "B"
+    },
+    {
+      "joint": "pelvis",
+      "measure": "root rot X",
+      "start": "-110 (on the pad)",
+      "end": "-110 unchanged",
+      "start_num": -110,
+      "end_num": -110,
+      "path": "Does not move.",
+      "tolerance": "+-5",
+      "source_ids": [
+        "S1"
+      ],
+      "grade": "B"
+    }
+  ],
+  "muscles": [
+    {
+      "muscle": "Abs (rectus abdominis)",
+      "anatomy": "Rectus abdominis",
+      "mask_key": "abs",
+      "tier": "primary",
+      "glow": 1.0,
+      "emg": "Crunch among the highest for RA (S1); RA rises with load, most at 100% 1RM (S2).",
+      "role": "Main mover: curls the rib cage toward the pelvis.",
+      "surface": "The two vertical bands down the front of the belly, lower ribs to the pubic bone.",
+      "source_ids": [
+        "S1",
+        "S2"
+      ],
+      "grade": "A"
+    },
+    {
+      "muscle": "Obliques (external / internal oblique)",
+      "anatomy": "Obliquus externus / internus abdominis",
+      "mask_key": "obliques",
+      "tier": "stabiliser",
+      "glow": 0,
+      "emg": "High in the crunch (S1).",
+      "role": "Helps; not lit.",
+      "surface": "Sides of the waist from the lower ribs to the hip bone.",
+      "source_ids": [
+        "S1"
+      ],
+      "grade": "B"
+    },
+    {
+      "muscle": "Hip flexors (iliopsoas, rectus femoris)",
+      "anatomy": "Iliopsoas, rectus femoris",
+      "mask_key": "none",
+      "tier": "stabiliser",
+      "glow": 0,
+      "emg": "Low in the crunch vs the sit-up (S1).",
+      "role": "Holds the hooked legs; not lit.",
+      "surface": "Front of the hip and the top of the thigh.",
+      "source_ids": [
+        "S1"
+      ],
+      "grade": "B"
+    }
+  ],
+  "tempo": null,
+  "mistakes": [
+    {
+      "mistake": "Sitting all the way up",
+      "what_it_looks_like": "Low back leaves the pad.",
+      "why_it_matters": "Turns it into a sit-up; hip flexors take over (S1).",
+      "source_ids": [
+        "S1"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "S1",
+      "citation": "Escamilla RF, McTaggart MS, Fricklas EJ, et al. 2006. An electromyographic analysis of commercial and common abdominal exercises: implications for rehabilitation and training. J Orthop Sports Phys Ther 36(2):45-57. doi:10.2519/jospt.2006.36.2.45",
+      "url": "https://europepmc.org/article/MED/16494072",
+      "type": "emg",
+      "what_it_gave": "Upper/lower rectus abdominis greatest in the crunch (with Ab Slide, Torso Track); obliques greatest in the crunch and bent-knee sit-up; rectus femoris greatest in the bent-knee sit-up."
+    },
+    {
+      "id": "S2",
+      "citation": "Moraes AC, Pinto RS, Valamatos MJ, et al. 2009. EMG activation of abdominal muscles in the crunch exercise performed with different external loads. Phys Ther Sport 10(2):57-62. doi:10.1016/j.ptsp.2009.01.001",
+      "url": "https://europepmc.org/article/MED/19376473",
+      "type": "emg",
+      "what_it_gave": "Crunch loaded at 20-100% 1RM: abdominal activation rises with load, highest at 100%."
+    },
+    {
+      "id": "S3",
+      "citation": "Oliva-Lozano JM, Muyor JM. 2020. Core muscle activity during physical fitness exercises: a systematic review. Int J Environ Res Public Health 17(12):4306. doi:10.3390/ijerph17124306",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7345922/",
+      "type": "review",
+      "what_it_gave": "Erector spinae highest in back extensions (~63% MVIC on the floor, ~56% on a bench); V-sits ~80% MVIC rectus abdominis; adding a stability ball raises core EMG; sit-ups and curl-ups the classic core exercises."
+    },
+    {
+      "id": "S4",
+      "citation": "MettleUp exercise library entry (steps).",
+      "url": "docs/exercise-library/part_*.json",
+      "type": "coach",
+      "what_it_gave": "The steps the app shows; the pictures must match them."
+    }
+  ],
+  "clip_check": [
+    {
+      "check": "Dumbbell on the chest in the hands in both",
+      "target": "plates touch the chest, do not cut in",
+      "measured": "",
+      "pass": "",
+      "tool": "picture"
+    },
+    {
+      "check": "End: low back on the pad, shoulders up",
+      "target": "visible curl",
+      "measured": "",
+      "pass": "",
+      "tool": "picture"
+    },
+    {
+      "check": "Abs strongest red",
+      "target": "abs only lit",
+      "measured": "",
+      "pass": "",
+      "tool": "picture"
+    }
+  ]
+}

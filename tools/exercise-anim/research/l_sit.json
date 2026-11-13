@@ -1,0 +1,181 @@
+{
+  "format": "v1-stills",
+  "exercise": {
+    "key": "l_sit",
+    "name": "L-Sit",
+    "equipment": "bodyweight",
+    "type": "time",
+    "library_primary": [
+      "abs"
+    ],
+    "library_secondary": [
+      "triceps",
+      "quads"
+    ],
+    "steps": [
+      "Grip parallel bars or press your hands into the floor beside your hips.",
+      "Push down through straight arms to lift your body.",
+      "Raise your straight legs level with your hips and hold."
+    ],
+    "status": "draft",
+    "version": null,
+    "researched_on": "2026-11-13",
+    "one_line_summary": "Hands on two parallettes beside the hips, arms straight and locked, body lifted off the floor, straight legs held level with the hips. One picture (a hold). Abs are the target; triceps press down and the thigh (rectus femoris) holds the legs up.",
+    "evidence_grade": "B"
+  },
+  "setup": [
+    {
+      "item": "support",
+      "target": "Parallettes beside the hips, arms straight and vertical.",
+      "tolerance": "elbows under 10 deg",
+      "why": "Library steps 1-2.",
+      "source_ids": [
+        "S4"
+      ],
+      "grade": "C"
+    },
+    {
+      "item": "legs",
+      "target": "Straight, together, level with the hips.",
+      "tolerance": "legs within 15 deg of horizontal",
+      "why": "Library step 3.",
+      "source_ids": [
+        "S4"
+      ],
+      "grade": "C"
+    }
+  ],
+  "movement": [
+    {
+      "joint": "hip flexion (hold)",
+      "measure": "leg angle to the trunk",
+      "start": "~90 deg",
+      "end": "same (hold)",
+      "start_num": 90,
+      "end_num": 90,
+      "path": "Still.",
+      "tolerance": "80-100",
+      "source_ids": [
+        "S1"
+      ],
+      "grade": "B"
+    }
+  ],
+  "muscles": [
+    {
+      "muscle": "Abs (rectus abdominis)",
+      "anatomy": "Rectus abdominis",
+      "mask_key": "abs",
+      "tier": "primary",
+      "glow": 1.0,
+      "emg": "No L-sit EMG study found; nearest: V-sit ~80% MVIC RA (S3), leg raise works the abs and hip flexors (S1), hanging knee-up high RA (S2).",
+      "role": "Holds the pelvis so the legs can stay up.",
+      "surface": "The two vertical bands down the front of the belly, lower ribs to the pubic bone.",
+      "source_ids": [
+        "S1",
+        "S2",
+        "S3"
+      ],
+      "grade": "B"
+    },
+    {
+      "muscle": "Triceps",
+      "anatomy": "Triceps brachii",
+      "mask_key": "triceps",
+      "tier": "secondary",
+      "glow": 0.35,
+      "emg": "Straight-arm press-down (library secondary).",
+      "role": "Locks the elbows and lifts the body.",
+      "surface": "Back of the upper arm, shoulder to elbow.",
+      "source_ids": [
+        "S4"
+      ],
+      "grade": "C"
+    },
+    {
+      "muscle": "Quads (rectus femoris)",
+      "anatomy": "Rectus femoris, quadriceps",
+      "mask_key": "quads",
+      "tier": "secondary",
+      "glow": 0.35,
+      "emg": "Leg raise raises hip-flexor (rectus femoris) EMG (S1).",
+      "role": "Lifts and holds the straight legs; keeps the knees locked.",
+      "surface": "Front of the thigh, hip to knee.",
+      "source_ids": [
+        "S1"
+      ],
+      "grade": "B"
+    }
+  ],
+  "tempo": null,
+  "mistakes": [
+    {
+      "mistake": "Legs drooping",
+      "what_it_looks_like": "Heels sag toward the floor.",
+      "why_it_matters": "Then it is a tuck hold, not an L-sit.",
+      "source_ids": [
+        "S4"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "S1",
+      "citation": "Kim K, Lee T. 2016. Comparison of muscular activities in the abdomen and lower limbs while performing sit-up and leg-raise. J Phys Ther Sci 28(2):491-494. doi:10.1589/jpts.28.491",
+      "url": "https://europepmc.org/article/MED/27065536",
+      "type": "emg",
+      "what_it_gave": "Sit-up vs leg raise (upper/lower RA, external oblique, rectus femoris, iliopsoas): the eccentric sit-up raised abdominal activity most; the leg raise and eccentric sit-up raised hip-flexor activity."
+    },
+    {
+      "id": "S2",
+      "citation": "Escamilla RF, Babb E, DeWitt R, et al. 2006. Electromyographic analysis of traditional and nontraditional abdominal exercises: implications for rehabilitation and training. Phys Ther 86(5):656-671. doi:10.1093/ptj/86.5.656",
+      "url": "https://europepmc.org/article/MED/16649890",
+      "type": "emg",
+      "what_it_gave": "Hanging knee-up with straps and the reverse crunch inclined 30 deg are among the highest for upper/lower rectus abdominis, obliques and latissimus; rectus femoris high in the inclined reverse crunch and bent-knee sit-up."
+    },
+    {
+      "id": "S3",
+      "citation": "Oliva-Lozano JM, Muyor JM. 2020. Core muscle activity during physical fitness exercises: a systematic review. Int J Environ Res Public Health 17(12):4306. doi:10.3390/ijerph17124306",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7345922/",
+      "type": "review",
+      "what_it_gave": "Erector spinae highest in back extensions (~63% MVIC on the floor, ~56% on a bench); V-sits ~80% MVIC rectus abdominis; adding a stability ball raises core EMG; sit-ups and curl-ups the classic core exercises."
+    },
+    {
+      "id": "S4",
+      "citation": "MettleUp exercise library entry (steps).",
+      "url": "docs/exercise-library/part_*.json",
+      "type": "coach",
+      "what_it_gave": "The steps the app shows; the pictures must match them."
+    }
+  ],
+  "clip_check": [
+    {
+      "check": "Fists on both parallettes",
+      "target": "handle inside each fist",
+      "measured": "",
+      "pass": "",
+      "tool": "picture"
+    },
+    {
+      "check": "Buttocks and heels off the floor",
+      "target": "lowest point > 0.05 m",
+      "measured": "",
+      "pass": "",
+      "tool": "picture"
+    },
+    {
+      "check": "Legs level with the hips",
+      "target": "within 15 deg",
+      "measured": "",
+      "pass": "",
+      "tool": "picture"
+    },
+    {
+      "check": "Abs strongest red; triceps, quads lighter",
+      "target": "abs 1.0",
+      "measured": "",
+      "pass": "",
+      "tool": "picture"
+    }
+  ]
+}

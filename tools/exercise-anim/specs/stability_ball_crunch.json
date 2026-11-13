@@ -158,10 +158,10 @@
     "loc": [
      0,
      0,
-     0.531
+     0.512
     ],
     "rot": [
-     -60,
+     -70,
      0,
      0
     ]
@@ -173,22 +173,22 @@
      0
     ],
     "spine04": [
-     9,
+     6,
      0,
      0
     ],
     "spine03": [
-     11,
+     7,
      0,
      0
     ],
     "spine02": [
-     11,
+     7,
      0,
      0
     ],
     "spine01": [
-     9,
+     6,
      0,
      0
     ],
@@ -243,5 +243,5 @@
    }
   }
  },
- "research": "60 cm stability ball (props_other.ball r 0.30) under the back, centre y 0.243. Face up, pelvis tilted 30 deg (root rot X -60), hips (z ~0.58) just below the top of the ball, feet flat and wide (ankles x +-0.25, y -0.507: knees ~75 deg; library step 1). Arms crossed on the chest as decline_sit_up (library step 2). START: back arched over the ball, spine -6 x 5 = -30 deg (library step 3: lower back over the ball to a stretch); offline: mid/low back on the ball, ~0.8 cm sunk in (a loaded ball gives). END: shoulders curled up, spine flex 2+9+11+11+9 = 42 deg, low back stays on the ball (offline contact at the low back, 0.3 cm). Root fixed (0, 0, 0.531) in both. Facts: research/stability_ball_crunch.json."
+ "research": "60 cm stability ball (props_other.ball r 0.30) under the back, centre y 0.243. Face up, pelvis tilted 30 deg (root rot X -60), hips (z ~0.58) just below the top of the ball, feet flat and wide (ankles x +-0.25, y -0.507: knees ~75 deg; library step 1). Arms crossed on the chest as decline_sit_up (library step 2). START: back arched over the ball, spine -6 x 5 = -30 deg (library step 3: lower back over the ball to a stretch); offline: mid/low back on the ball, ~0.8 cm sunk in (a loaded ball gives). END (13 Nov retry: round 1 sat up too far, trunk ~65 deg, and floated 3 cm off the ball): shoulders curled up, pelvis rot X -70, spine flex 2+6+7+7+6 = 28 deg, so the shoulder-hip line rises ~40 deg; root (0, 0, 0.512) so the low back touches the ball (offline: low back 0 cm, buttocks ~1.5 cm into the loaded ball). START root (0, 0, 0.531). Facts: research/stability_ball_crunch.json."
 }

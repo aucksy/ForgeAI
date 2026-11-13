@@ -1,0 +1,254 @@
+{
+ "key": "sled_push",
+ "name": "Sled Push",
+ "primary": [
+  "quads"
+ ],
+ "secondary": [
+  "glutes",
+  "calves"
+ ],
+ "props": {
+  "sled": {
+   "type": "sled",
+   "pole_gap": 0.5,
+   "pole_h": 1.15
+  }
+ },
+ "camera": {
+  "yaw": -70,
+  "pitch": 8,
+  "lens": 50,
+  "fill": 0.9,
+  "res": 640,
+  "samples": 20
+ },
+ "timing": {
+  "fps": 30,
+  "keys": [
+   [
+    0,
+    "start"
+   ],
+   [
+    1,
+    "end"
+   ],
+   [
+    2,
+    "start"
+   ]
+  ]
+ },
+ "poses": {
+  "start": {
+   "root": {
+    "loc": [
+     0.0,
+     0.04,
+     0.882
+    ],
+    "rot": [
+     45.0,
+     0,
+     0
+    ]
+   },
+   "bones": {
+    "neck01": [
+     -18,
+     0,
+     0
+    ],
+    "head": [
+     -12,
+     0,
+     0
+    ]
+   },
+   "feet": {
+    "L": {
+     "at": [
+      0.12,
+      -0.08,
+      0.16
+     ],
+     "rot": [
+      30.0,
+      0,
+      0
+     ]
+    },
+    "R": {
+     "at": [
+      -0.11,
+      0.64,
+      0.206
+     ],
+     "rot": [
+      55.0,
+      0,
+      0
+     ]
+    }
+   },
+   "knees": {
+    "L": [
+     0.14,
+     -1.0,
+     0.6
+    ],
+    "R": [
+     -0.11,
+     -0.16,
+     -0.294
+    ]
+   },
+   "hands": {
+    "L": {
+     "prop": "sled",
+     "axis": [
+      0,
+      0,
+      1
+     ],
+     "arm": {
+      "elev": 70.0,
+      "plane": 85.0,
+      "elbow": 90.0,
+      "bend": [
+       0,
+       0.5,
+       1
+      ],
+      "tilt": 0
+     }
+    },
+    "R": {
+     "prop": "sled",
+     "axis": [
+      0,
+      0,
+      1
+     ],
+     "arm": {
+      "elev": 70.0,
+      "plane": 85.0,
+      "elbow": 90.0,
+      "bend": [
+       0,
+       0.5,
+       1
+      ],
+      "tilt": 0
+     }
+    }
+   }
+  },
+  "end": {
+   "root": {
+    "loc": [
+     0.0,
+     0.04,
+     0.882
+    ],
+    "rot": [
+     45.0,
+     0,
+     0
+    ]
+   },
+   "bones": {
+    "neck01": [
+     -18,
+     0,
+     0
+    ],
+    "head": [
+     -12,
+     0,
+     0
+    ]
+   },
+   "feet": {
+    "L": {
+     "at": [
+      0.11,
+      0.64,
+      0.206
+     ],
+     "rot": [
+      55.0,
+      0,
+      0
+     ]
+    },
+    "R": {
+     "at": [
+      -0.12,
+      -0.08,
+      0.16
+     ],
+     "rot": [
+      30.0,
+      0,
+      0
+     ]
+    }
+   },
+   "knees": {
+    "L": [
+     0.11,
+     -0.16,
+     -0.294
+    ],
+    "R": [
+     -0.14,
+     -1.0,
+     0.6
+    ]
+   },
+   "hands": {
+    "L": {
+     "prop": "sled",
+     "axis": [
+      0,
+      0,
+      1
+     ],
+     "arm": {
+      "elev": 70.0,
+      "plane": 85.0,
+      "elbow": 90.0,
+      "bend": [
+       0,
+       0.5,
+       1
+      ],
+      "tilt": 0
+     }
+    },
+    "R": {
+     "prop": "sled",
+     "axis": [
+      0,
+      0,
+      1
+     ],
+     "arm": {
+      "elev": 70.0,
+      "plane": 85.0,
+      "elbow": 90.0,
+      "bend": [
+       0,
+       0.5,
+       1
+      ],
+      "tilt": 0
+     }
+    }
+   }
+  }
+ },
+ "research": "Push sled (props_other.sled: two upright poles 0.50 m apart, deck with two plates, skids on the floor), placed so the poles run through both fists. Body leaning in at 45 deg (library step 1: lean in at a low angle): pelvis rot X 45, spine neutral (flat back, step 3), neck/head lifted to look ahead. Arms bent, fists on the poles about 0.42 m in front of and 0.12 m below the shoulders, thumbs up. Legs mid-stride (step 2: short steps on the balls of the feet): the drive leg straight behind in line with the trunk, ball of the foot on the floor (heel up 55 deg); the other knee forward under the body, foot on its ball. START right leg driving, END left leg driving. Facts: research/sled_push.json."
+}

@@ -1,0 +1,218 @@
+{
+  "format": "v1-stills",
+  "exercise": {
+    "key": "decline_sit_up",
+    "name": "Decline Sit-Up",
+    "equipment": "bodyweight",
+    "type": "reps",
+    "library_primary": [
+      "abs"
+    ],
+    "library_secondary": [],
+    "steps": [
+      "Hook your feet under the pads of a decline bench and lie back.",
+      "Cross your arms and sit up until your chest is close to your knees.",
+      "Lower yourself back down slowly and with control."
+    ],
+    "status": "draft",
+    "version": null,
+    "researched_on": "2026-11-13",
+    "one_line_summary": "Feet hooked on a 20 deg decline bench, arms crossed on the chest. Start lying back on the pad; end sat up with the chest close to the knees (trunk about 16 deg past vertical, spine curled ~40 deg). Abs are the target; hip flexors help.",
+    "evidence_grade": "B"
+  },
+  "setup": [
+    {
+      "item": "decline bench",
+      "target": "Pad tilted 20 deg, high end 0.80 m, the head end lower than the feet.",
+      "tolerance": "15-30 deg",
+      "why": "Library step 1: feet hooked under the pads of a decline bench; the slope makes the trunk lift against more of gravity than on the floor.",
+      "source_ids": [
+        "S4"
+      ],
+      "grade": "C"
+    },
+    {
+      "item": "legs hooked",
+      "target": "Knees bent over the knee roll, ankles under the front roller.",
+      "tolerance": "feet stay under the roller in both pictures",
+      "why": "Library step 1. Hooked feet let the hip flexors pull, which S1 shows as high rectus femoris in the bent-knee sit-up.",
+      "source_ids": [
+        "S1",
+        "S4"
+      ],
+      "grade": "B"
+    },
+    {
+      "item": "arms",
+      "target": "Arms crossed on the chest, fists on the chest.",
+      "tolerance": "forearms on the chest, not pulling the head",
+      "why": "Library step 2 (sit-up); crossed arms keep the hands off the neck.",
+      "source_ids": [
+        "S4"
+      ],
+      "grade": "C"
+    }
+  ],
+  "movement": [
+    {
+      "joint": "trunk (pelvis angle to the floor)",
+      "measure": "root rot X; -110 = lying on the 20 deg pad",
+      "start": "lying back on the pad",
+      "end": "sat up, shoulders ~16 deg forward of vertical",
+      "start_num": -110,
+      "end_num": -10,
+      "path": "Rolls up off the pad, upper back first, until the chest is near the knees.",
+      "tolerance": "end -20..0",
+      "source_ids": [
+        "S1",
+        "S2"
+      ],
+      "grade": "B"
+    },
+    {
+      "joint": "spine curl",
+      "measure": "spine01..05 flexion summed",
+      "start": "0",
+      "end": "40 deg",
+      "start_num": 0,
+      "end_num": 40,
+      "path": "Spine rounds as the trunk rises.",
+      "tolerance": "end 25-45",
+      "source_ids": [
+        "S3"
+      ],
+      "grade": "C"
+    },
+    {
+      "joint": "knees / feet",
+      "measure": "knee bend",
+      "start": "bent over the roll, feet hooked",
+      "end": "same",
+      "start_num": 90,
+      "end_num": 90,
+      "path": "Still.",
+      "tolerance": "+-10",
+      "source_ids": [
+        "S4"
+      ],
+      "grade": "C"
+    }
+  ],
+  "muscles": [
+    {
+      "muscle": "Abs (rectus abdominis)",
+      "anatomy": "Rectus abdominis",
+      "mask_key": "abs",
+      "tier": "primary",
+      "glow": 1.0,
+      "emg": "Bent-knee sit-up among the highest exercises for the obliques; crunch highest for RA (S1). Eccentric sit-up raised abdominal EMG most (S2).",
+      "role": "Main mover: curls and lifts the trunk.",
+      "surface": "The two vertical bands down the front of the belly, lower ribs to the pubic bone.",
+      "source_ids": [
+        "S1",
+        "S2"
+      ],
+      "grade": "B"
+    },
+    {
+      "muscle": "Obliques (external / internal oblique)",
+      "anatomy": "Obliquus externus / internus abdominis",
+      "mask_key": "obliques",
+      "tier": "stabiliser",
+      "glow": 0,
+      "emg": "Greatest for the crunch and bent-knee sit-up (S1).",
+      "role": "Helps the curl; not the target, not lit.",
+      "surface": "Sides of the waist from the lower ribs to the hip bone.",
+      "source_ids": [
+        "S1"
+      ],
+      "grade": "B"
+    },
+    {
+      "muscle": "Hip flexors (iliopsoas, rectus femoris)",
+      "anatomy": "Iliopsoas, rectus femoris",
+      "mask_key": "none",
+      "tier": "stabiliser",
+      "glow": 0,
+      "emg": "Rectus femoris highest in the bent-knee sit-up (S1); sit-ups raise hip-flexor EMG (S2).",
+      "role": "Pulls the trunk up from the hips once the curl is done; not lit (the app lists abs only).",
+      "surface": "Front of the hip and the top of the thigh.",
+      "source_ids": [
+        "S1",
+        "S2"
+      ],
+      "grade": "B"
+    }
+  ],
+  "tempo": null,
+  "mistakes": [
+    {
+      "mistake": "Hands pulling the head",
+      "what_it_looks_like": "Fingers laced behind the neck, chin yanked down.",
+      "why_it_matters": "Strains the neck; library step 2 says arms crossed.",
+      "source_ids": [
+        "S4"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "S1",
+      "citation": "Escamilla RF, McTaggart MS, Fricklas EJ, et al. 2006. An electromyographic analysis of commercial and common abdominal exercises: implications for rehabilitation and training. J Orthop Sports Phys Ther 36(2):45-57. doi:10.2519/jospt.2006.36.2.45",
+      "url": "https://europepmc.org/article/MED/16494072",
+      "type": "emg",
+      "what_it_gave": "Upper/lower rectus abdominis greatest in the crunch (with Ab Slide, Torso Track); obliques greatest in the crunch and bent-knee sit-up; rectus femoris greatest in the bent-knee sit-up."
+    },
+    {
+      "id": "S2",
+      "citation": "Kim K, Lee T. 2016. Comparison of muscular activities in the abdomen and lower limbs while performing sit-up and leg-raise. J Phys Ther Sci 28(2):491-494. doi:10.1589/jpts.28.491",
+      "url": "https://europepmc.org/article/MED/27065536",
+      "type": "emg",
+      "what_it_gave": "Sit-up vs leg raise (upper/lower RA, external oblique, rectus femoris, iliopsoas): the eccentric sit-up raised abdominal activity most; the leg raise and eccentric sit-up raised hip-flexor activity."
+    },
+    {
+      "id": "S3",
+      "citation": "Oliva-Lozano JM, Muyor JM. 2020. Core muscle activity during physical fitness exercises: a systematic review. Int J Environ Res Public Health 17(12):4306. doi:10.3390/ijerph17124306",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7345922/",
+      "type": "review",
+      "what_it_gave": "Erector spinae highest in back extensions (~63% MVIC on the floor, ~56% on a bench); V-sits ~80% MVIC rectus abdominis; adding a stability ball raises core EMG; sit-ups and curl-ups the classic core exercises."
+    },
+    {
+      "id": "S4",
+      "citation": "MettleUp exercise library entry (steps).",
+      "url": "docs/exercise-library/part_*.json",
+      "type": "coach",
+      "what_it_gave": "The steps the app shows; the pictures must match them."
+    }
+  ],
+  "clip_check": [
+    {
+      "check": "Start: back and head on the pad",
+      "target": "pad contact -1..+1 cm",
+      "measured": "",
+      "pass": "",
+      "tool": "picture"
+    },
+    {
+      "check": "End: chest close to the knees",
+      "target": "shoulders 0.15-0.30 m from the knees",
+      "measured": "",
+      "pass": "",
+      "tool": "picture"
+    },
+    {
+      "check": "Feet hooked under the roller in both",
+      "target": "ankles under the front roller",
+      "measured": "",
+      "pass": "",
+      "tool": "picture"
+    },
+    {
+      "check": "Abs strongest red in both",
+      "target": "abs only lit",
+      "measured": "",
+      "pass": "",
+      "tool": "picture"
+    }
+  ]
+}

@@ -1,0 +1,172 @@
+{
+  "format": "v1-stills",
+  "exercise": {
+    "key": "dead_hang",
+    "name": "Dead Hang",
+    "equipment": "bodyweight",
+    "type": "time",
+    "library_primary": [
+      "forearms"
+    ],
+    "library_secondary": [
+      "lats"
+    ],
+    "steps": [
+      "Grab a pull-up bar with both hands, shoulder-width apart.",
+      "Lift your feet and hang with straight arms and a relaxed body.",
+      "Hold for the time, then step down carefully."
+    ],
+    "status": "draft",
+    "version": null,
+    "researched_on": "2026-11-13",
+    "one_line_summary": "Hanging from a pull-up bar with straight arms, overhand grip about shoulder width, body straight and relaxed, feet off the floor. One picture (a hold). Grip (forearms) is the target; lats work lightly.",
+    "evidence_grade": "B"
+  },
+  "setup": [
+    {
+      "item": "grip",
+      "target": "Overhand, hands about shoulder width (fists ~0.54 m apart).",
+      "tolerance": "0.45-0.65 m",
+      "why": "Library step 1.",
+      "source_ids": [
+        "S4"
+      ],
+      "grade": "C"
+    },
+    {
+      "item": "arms",
+      "target": "Straight overhead, elbows ~4 deg.",
+      "tolerance": "under 10 deg",
+      "why": "Library step 2: straight arms.",
+      "source_ids": [
+        "S4"
+      ],
+      "grade": "C"
+    }
+  ],
+  "movement": [
+    {
+      "joint": "whole body (hold)",
+      "measure": "body position",
+      "start": "hanging straight, feet ~15 cm off the floor",
+      "end": "same (hold)",
+      "start_num": 0,
+      "end_num": 0,
+      "path": "Still.",
+      "tolerance": "feet 5-30 cm off the floor",
+      "source_ids": [
+        "S4"
+      ],
+      "grade": "C"
+    }
+  ],
+  "muscles": [
+    {
+      "muscle": "Forearms (grip)",
+      "anatomy": "Finger flexors, brachioradialis",
+      "mask_key": "forearms",
+      "tier": "primary",
+      "glow": 1.0,
+      "emg": "Finger flexors and brachioradialis carry the hang to failure (S1).",
+      "role": "Holds the bar; the hang ends when the grip fails.",
+      "surface": "Front and thumb side of the forearm, elbow to wrist.",
+      "source_ids": [
+        "S1"
+      ],
+      "grade": "A"
+    },
+    {
+      "muscle": "Lats",
+      "anatomy": "Latissimus dorsi",
+      "mask_key": "lats",
+      "tier": "secondary",
+      "glow": 0.35,
+      "emg": "Latissimus is the top muscle once the pull starts from this hang (S2, S3).",
+      "role": "Keeps the shoulders from hanging loose.",
+      "surface": "Wide sheet down the side of the back from the armpit to the low back.",
+      "source_ids": [
+        "S2",
+        "S3"
+      ],
+      "grade": "B"
+    },
+    {
+      "muscle": "Biceps / trapezius",
+      "anatomy": "Biceps brachii, trapezius",
+      "mask_key": "none",
+      "tier": "stabiliser",
+      "glow": 0,
+      "emg": "Postural pairs with the brachioradialis in the hang (S1).",
+      "role": "Steady the elbow and shoulder; not lit.",
+      "surface": "Between and over the shoulder blades.",
+      "source_ids": [
+        "S1"
+      ],
+      "grade": "A"
+    }
+  ],
+  "tempo": null,
+  "mistakes": [
+    {
+      "mistake": "Feet on the floor",
+      "what_it_looks_like": "Toes touching the ground.",
+      "why_it_matters": "Not a hang; library step 2 lifts the feet.",
+      "source_ids": [
+        "S4"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "S1",
+      "citation": "Exel J, Kaufmann P, Froschauer O, Baca A, Kainz H, Mochizuki L. 2026. Upper-body neuromechanical coordination strategies during fatiguing sustained dead hangs in climbers. Eur J Sport Sci 26(6):e70197. doi:10.1002/ejsc.70197",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13240036/",
+      "type": "emg",
+      "what_it_gave": "Dead hang held to failure: finger flexors, brachioradialis, biceps and trapezius carry the hang; wrist movement narrows as they fatigue."
+    },
+    {
+      "id": "S2",
+      "citation": "Youdas JW, Amundson CL, Cicero KS, et al. 2010. Surface electromyographic activation patterns and elbow joint motion during a pull-up, chin-up, or perfect-pullup rotational exercise. J Strength Cond Res 24(12):3404-3414. doi:10.1519/JSC.0b013e3181f1598c",
+      "url": "https://europepmc.org/article/MED/21068680",
+      "type": "emg",
+      "what_it_gave": "Chin-up: latissimus 117-130% MVIC, biceps 78-96%, infraspinatus 71-79%, lower trapezius 45-56%; biceps and pectoralis higher in the chin-up than the pull-up; elbow range ~101 deg."
+    },
+    {
+      "id": "S3",
+      "citation": "Snarr RL, Hallmark AV, Casey JC, Esco MR. 2017. Electromyographical comparison of a traditional, suspension device, and towel pull-up. J Hum Kinet 58:5-13. doi:10.1515/hukin-2017-0068",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5548150/",
+      "type": "emg",
+      "what_it_gave": "Pull-up variants at 1.5x bi-acromial grip: latissimus, biceps, posterior deltoid and middle trapezius all well above the hypertrophy threshold; towel grip lowers middle trapezius."
+    },
+    {
+      "id": "S4",
+      "citation": "MettleUp exercise library entry (steps).",
+      "url": "docs/exercise-library/part_*.json",
+      "type": "coach",
+      "what_it_gave": "The steps the app shows; the pictures must match them."
+    }
+  ],
+  "clip_check": [
+    {
+      "check": "Both fists on the bar, bar through the fists",
+      "target": "bar inside both fists",
+      "measured": "",
+      "pass": "",
+      "tool": "picture"
+    },
+    {
+      "check": "Feet off the floor",
+      "target": "lowest point > 0.05 m",
+      "measured": "",
+      "pass": "",
+      "tool": "picture"
+    },
+    {
+      "check": "Forearms strongest red, lats lighter",
+      "target": "forearms 1.0, lats 0.35",
+      "measured": "",
+      "pass": "",
+      "tool": "picture"
+    }
+  ]
+}

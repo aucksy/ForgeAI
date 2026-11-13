@@ -1,0 +1,181 @@
+{
+  "format": "v1-stills",
+  "exercise": {
+    "key": "stability_ball_crunch",
+    "name": "Stability Ball Crunch",
+    "equipment": "other",
+    "type": "reps",
+    "library_primary": [
+      "abs"
+    ],
+    "library_secondary": [],
+    "steps": [
+      "Lie back on a gym ball so it supports your lower back, feet wide.",
+      "Cross your arms on your chest and curl your shoulders up.",
+      "Lower slowly back over the ball until you feel a stretch."
+    ],
+    "status": "draft",
+    "version": null,
+    "researched_on": "2026-11-13",
+    "one_line_summary": "Lying back on a 60 cm stability ball with the ball under the lower back, feet flat and wide, arms crossed on the chest. Start arched back over the ball (spine -30 deg); end shoulders curled up (spine +28 deg, pelvis tipped back 10 deg), lower back stays on the ball. Abs are the target.",
+    "evidence_grade": "A"
+  },
+  "setup": [
+    {
+      "item": "ball position",
+      "target": "Ball under the lower back, hips just below the top of the ball.",
+      "tolerance": "ball under the low back, not the shoulder blades",
+      "why": "S1: with the ball under the lower back, abdominal EMG was about double the shoulder-blade position and above a floor crunch. Library step 1.",
+      "source_ids": [
+        "S1",
+        "S3"
+      ],
+      "grade": "A"
+    },
+    {
+      "item": "feet",
+      "target": "Flat on the floor, wide.",
+      "tolerance": "knees 60-90 deg",
+      "why": "Library step 1.",
+      "source_ids": [
+        "S3"
+      ],
+      "grade": "C"
+    },
+    {
+      "item": "arms",
+      "target": "Arms crossed on the chest, fists on the chest.",
+      "tolerance": "forearms on the chest, not pulling the head",
+      "why": "Library step 2 (sit-up); crossed arms keep the hands off the neck.",
+      "source_ids": [
+        "S3"
+      ],
+      "grade": "C"
+    }
+  ],
+  "movement": [
+    {
+      "joint": "spine curl",
+      "measure": "spine01..05 flexion summed",
+      "start": "-30 deg (arched over the ball)",
+      "end": "+28 deg (shoulders up, shoulder-hip line ~40 deg above level)",
+      "start_num": -30,
+      "end_num": 28,
+      "path": "Arches back to a stretch, then curls up (library step 3).",
+      "tolerance": "start -20..-40, end 20-40",
+      "source_ids": [
+        "S1"
+      ],
+      "grade": "A"
+    },
+    {
+      "joint": "hips",
+      "measure": "root position",
+      "start": "fixed",
+      "end": "fixed",
+      "start_num": 0,
+      "end_num": 0,
+      "path": "Hips do not slide.",
+      "tolerance": "+-2 cm",
+      "source_ids": [
+        "S3"
+      ],
+      "grade": "C"
+    }
+  ],
+  "muscles": [
+    {
+      "muscle": "Abs (rectus abdominis)",
+      "anatomy": "Rectus abdominis",
+      "mask_key": "abs",
+      "tier": "primary",
+      "glow": 1.0,
+      "emg": "Upper and lower RA higher than a floor crunch with the ball under the low back (S1).",
+      "role": "Main mover: curls the rib cage up from the stretch.",
+      "surface": "The two vertical bands down the front of the belly, lower ribs to the pubic bone.",
+      "source_ids": [
+        "S1"
+      ],
+      "grade": "A"
+    },
+    {
+      "muscle": "Obliques (external / internal oblique)",
+      "anatomy": "Obliquus externus / internus abdominis",
+      "mask_key": "obliques",
+      "tier": "stabiliser",
+      "glow": 0,
+      "emg": "External oblique raised with the ball low (S1); balls raise core EMG (S2).",
+      "role": "Keeps the body balanced on the ball; not lit.",
+      "surface": "Sides of the waist from the lower ribs to the hip bone.",
+      "source_ids": [
+        "S1",
+        "S2"
+      ],
+      "grade": "A"
+    }
+  ],
+  "tempo": null,
+  "mistakes": [
+    {
+      "mistake": "Ball under the shoulder blades",
+      "what_it_looks_like": "Ball high up the back.",
+      "why_it_matters": "Halves the abdominal work (S1).",
+      "source_ids": [
+        "S1"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "S1",
+      "citation": "Sternlicht E, Rugg S, Fujii LL, Tomomitsu KF, Seki MM. 2007. Electromyographic comparison of a stability ball crunch with a traditional crunch. J Strength Cond Res 21(2):506-509. doi:10.1519/R-20436.1",
+      "url": "https://europepmc.org/article/MED/17530978",
+      "type": "emg",
+      "what_it_gave": "Ball under the lower back (SB-low): upper/lower rectus abdominis and external oblique higher than a floor crunch, about double the ball-under-shoulder-blades position."
+    },
+    {
+      "id": "S2",
+      "citation": "Oliva-Lozano JM, Muyor JM. 2020. Core muscle activity during physical fitness exercises: a systematic review. Int J Environ Res Public Health 17(12):4306. doi:10.3390/ijerph17124306",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7345922/",
+      "type": "review",
+      "what_it_gave": "Erector spinae highest in back extensions (~63% MVIC on the floor, ~56% on a bench); V-sits ~80% MVIC rectus abdominis; adding a stability ball raises core EMG; sit-ups and curl-ups the classic core exercises."
+    },
+    {
+      "id": "S3",
+      "citation": "MettleUp exercise library entry (steps).",
+      "url": "docs/exercise-library/part_*.json",
+      "type": "coach",
+      "what_it_gave": "The steps the app shows; the pictures must match them."
+    }
+  ],
+  "clip_check": [
+    {
+      "check": "Low back on the ball in both",
+      "target": "contact -1..+1 cm",
+      "measured": "",
+      "pass": "",
+      "tool": "picture"
+    },
+    {
+      "check": "Feet flat on the floor",
+      "target": "soles on the floor",
+      "measured": "",
+      "pass": "",
+      "tool": "picture"
+    },
+    {
+      "check": "Start arched, end curled",
+      "target": "clear difference",
+      "measured": "",
+      "pass": "",
+      "tool": "picture"
+    },
+    {
+      "check": "Abs strongest red",
+      "target": "abs only lit",
+      "measured": "",
+      "pass": "",
+      "tool": "picture"
+    }
+  ]
+}

@@ -1,0 +1,189 @@
+{
+  "format": "v1-stills",
+  "exercise": {
+    "key": "sled_push",
+    "name": "Sled Push",
+    "equipment": "other",
+    "type": "distance",
+    "library_primary": [
+      "quads"
+    ],
+    "library_secondary": [
+      "glutes",
+      "calves",
+      "cardio"
+    ],
+    "steps": [
+      "Grip the sled handles and lean in at a low angle, arms bent.",
+      "Drive with short, powerful steps, pushing through the balls of your feet.",
+      "Keep your back flat and push until you cover the distance."
+    ],
+    "status": "draft",
+    "version": null,
+    "researched_on": "2026-11-13",
+    "one_line_summary": "Hands on the two upright poles of a loaded push sled, arms bent, body leaning in at about 45 deg with a flat back; legs mid-stride, the drive leg straight behind on the ball of the foot, the other knee forward under the body. The two pictures are the two strides. Quads are the target; glutes and calves help.",
+    "evidence_grade": "B"
+  },
+  "setup": [
+    {
+      "item": "lean",
+      "target": "Body leaning in about 45 deg from vertical, back flat, head up.",
+      "tolerance": "35-55 deg",
+      "why": "Library step 1 (lean in at a low angle) and step 3 (back flat).",
+      "source_ids": [
+        "S3"
+      ],
+      "grade": "C"
+    },
+    {
+      "item": "hands",
+      "target": "Both fists on the poles, arms bent, about chest height.",
+      "tolerance": "elbows 60-100 deg",
+      "why": "Library step 1.",
+      "source_ids": [
+        "S3"
+      ],
+      "grade": "C"
+    }
+  ],
+  "movement": [
+    {
+      "joint": "drive leg",
+      "measure": "knee bend of the back leg",
+      "start": "straight (pushing off)",
+      "end": "straight (other leg)",
+      "start_num": 0,
+      "end_num": 0,
+      "path": "Legs swap each stride (library step 2).",
+      "tolerance": "<15",
+      "source_ids": [
+        "S1"
+      ],
+      "grade": "B"
+    },
+    {
+      "joint": "front knee",
+      "measure": "knee bend of the forward leg",
+      "start": "~90 deg, knee ahead of the foot",
+      "end": "same, other leg",
+      "start_num": 90,
+      "end_num": 90,
+      "path": "Short steps on the balls of the feet.",
+      "tolerance": "70-110",
+      "source_ids": [
+        "S1"
+      ],
+      "grade": "B"
+    }
+  ],
+  "muscles": [
+    {
+      "muscle": "Quads",
+      "anatomy": "Vastus lateralis, quadriceps",
+      "mask_key": "quads",
+      "tier": "primary",
+      "glow": 1.0,
+      "emg": "Vastus lateralis rises with sled load (S1).",
+      "role": "Straightens the knee to drive the body forward.",
+      "surface": "Front of the thigh, hip to knee.",
+      "source_ids": [
+        "S1",
+        "S2"
+      ],
+      "grade": "B"
+    },
+    {
+      "muscle": "Glutes",
+      "anatomy": "Gluteus maximus",
+      "mask_key": "glutes",
+      "tier": "secondary",
+      "glow": 0.35,
+      "emg": "Hip drive (library secondary; S2: sled pushes train the sprint drive).",
+      "role": "Extends the hip of the drive leg.",
+      "surface": "The buttocks.",
+      "source_ids": [
+        "S2",
+        "S3"
+      ],
+      "grade": "C"
+    },
+    {
+      "muscle": "Calves",
+      "anatomy": "Gastrocnemius",
+      "mask_key": "calves",
+      "tier": "secondary",
+      "glow": 0.35,
+      "emg": "Gastrocnemius rises with sled load (S1).",
+      "role": "Pushes through the ball of the foot.",
+      "surface": "Back of the lower leg.",
+      "source_ids": [
+        "S1"
+      ],
+      "grade": "B"
+    }
+  ],
+  "tempo": null,
+  "mistakes": [
+    {
+      "mistake": "Upright body",
+      "what_it_looks_like": "Standing tall behind the sled.",
+      "why_it_matters": "Library step 1 says lean in at a low angle.",
+      "source_ids": [
+        "S3"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "S1",
+      "citation": "Martinez-Serrano A, Marin-Cascales E, Spyrou K, Freitas TT, Alcaraz PE. 2021. Electromyography, stiffness and kinematics of resisted sprint training in the specialized SKILLRUN treadmill using different load conditions in rugby players. Sensors 21(22):7482. doi:10.3390/s21227482",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8622140/",
+      "type": "emg",
+      "what_it_gave": "Sled push at 20-90% body mass: heavier loads raised vastus lateralis and gastrocnemius activity (not biceps femoris) and changed joint angles."
+    },
+    {
+      "id": "S2",
+      "citation": "Pino-Mulero V, Soriano MA, Giuliano F, Gonzalez-Garcia J. 2025. Effects of a priming session with heavy sled pushes on neuromuscular performance and perceived recovery in soccer players. Biol Sport 42(1):59-66. doi:10.5114/biolsport.2025.139082",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11694209/",
+      "type": "biomechanics",
+      "what_it_gave": "Heavy sled pushes improved 20 m sprint and jump 24 h later: the push trains the leg drive."
+    },
+    {
+      "id": "S3",
+      "citation": "MettleUp exercise library entry (steps).",
+      "url": "docs/exercise-library/part_*.json",
+      "type": "coach",
+      "what_it_gave": "The steps the app shows; the pictures must match them."
+    }
+  ],
+  "clip_check": [
+    {
+      "check": "Poles through both fists",
+      "target": "pole gap = hand gap",
+      "measured": "",
+      "pass": "",
+      "tool": "picture"
+    },
+    {
+      "check": "Drive foot on its ball, other foot on the floor",
+      "target": "both feet touching",
+      "measured": "",
+      "pass": "",
+      "tool": "picture"
+    },
+    {
+      "check": "Flat back, 35-55 deg lean",
+      "target": "visible",
+      "measured": "",
+      "pass": "",
+      "tool": "picture"
+    },
+    {
+      "check": "Quads strongest red; glutes, calves lighter",
+      "target": "quads 1.0",
+      "measured": "",
+      "pass": "",
+      "tool": "picture"
+    }
+  ]
+}

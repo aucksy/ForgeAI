@@ -1,0 +1,158 @@
+{
+  "format": "v1-stills",
+  "exercise": {
+    "key": "weighted_sissy_squat",
+    "name": "Weighted Sissy Squat",
+    "equipment": "bodyweight",
+    "type": "weighted",
+    "library_primary": [
+      "quads"
+    ],
+    "library_secondary": [],
+    "steps": [
+      "Hug a plate to your chest and hold a post with your free hand.",
+      "Rise onto the balls of your feet and lean back slightly.",
+      "Push your knees forward to lower, keeping knees, hips and shoulders in line.",
+      "Push back up using your thighs."
+    ],
+    "status": "draft",
+    "version": null,
+    "researched_on": "2026-11-13",
+    "one_line_summary": "As the sissy squat: on the balls of the feet, knees pushed forward, knees-hips-shoulders in one line leaning back; a plate hugged to the chest and the free hand on a post. End knees ~103 deg. Quads are the target.",
+    "evidence_grade": "B"
+  },
+  "setup": [
+    {
+      "item": "load and support",
+      "target": "A plate hugged flat on the chest with the left forearm; right hand on an upright post.",
+      "tolerance": "plate on the chest, fist on the post",
+      "why": "Library step 1.",
+      "source_ids": [
+        "S3"
+      ],
+      "grade": "C"
+    },
+    {
+      "item": "feet",
+      "target": "On the balls of the feet, heels up.",
+      "tolerance": "heels off the floor",
+      "why": "Library step 2.",
+      "source_ids": [
+        "S3"
+      ],
+      "grade": "C"
+    }
+  ],
+  "movement": [
+    {
+      "joint": "knee",
+      "measure": "knee bend",
+      "start": "~0 (standing)",
+      "end": "~103 deg",
+      "start_num": 0,
+      "end_num": 103,
+      "path": "Knees travel forward; thighs and trunk stay one line (library step 3).",
+      "tolerance": "end 90-120",
+      "source_ids": [
+        "S1",
+        "S2"
+      ],
+      "grade": "B"
+    },
+    {
+      "joint": "hip",
+      "measure": "hip angle",
+      "start": "straight",
+      "end": "straight (in line)",
+      "start_num": 0,
+      "end_num": 0,
+      "path": "No hip bend.",
+      "tolerance": "<15",
+      "source_ids": [
+        "S3"
+      ],
+      "grade": "C"
+    }
+  ],
+  "muscles": [
+    {
+      "muscle": "Quads",
+      "anatomy": "Quadriceps (vasti, rectus femoris)",
+      "mask_key": "quads",
+      "tier": "primary",
+      "glow": 1.0,
+      "emg": "Quadriceps highest near 90 deg knee bend (S2); knees forward with an upright trunk loads the knee extensors (S1).",
+      "role": "Only mover: lowers and lifts the body.",
+      "surface": "Front of the thigh, hip to knee.",
+      "source_ids": [
+        "S1",
+        "S2"
+      ],
+      "grade": "B"
+    }
+  ],
+  "tempo": null,
+  "mistakes": [
+    {
+      "mistake": "Bending at the hips",
+      "what_it_looks_like": "Buttocks drop back, trunk tips forward.",
+      "why_it_matters": "Breaks the one-line lean; becomes a squat.",
+      "source_ids": [
+        "S3"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "S1",
+      "citation": "Straub RK, Powers CM. 2024. A biomechanical review of the squat exercise: implications for clinical practice. Int J Sports Phys Ther 19(4):490-501. doi:10.26603/001c.94600",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10987311/",
+      "type": "review",
+      "what_it_gave": "Knees travelling forward over the toes and an upright trunk shift the load to the knee extensors (quadriceps)."
+    },
+    {
+      "id": "S2",
+      "citation": "Marchetti PH, Jarbas da Silva J, Schoenfeld BJ, et al. 2016. Muscle activation differs between three different knee joint-angle positions during a maximal isometric back squat exercise. J Sports Med 2016:3846123. doi:10.1155/2016/3846123",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4967668/",
+      "type": "emg",
+      "what_it_gave": "Quadriceps activity highest at a 90 deg knee angle; hamstrings similar across angles."
+    },
+    {
+      "id": "S3",
+      "citation": "MettleUp exercise library entry (steps).",
+      "url": "docs/exercise-library/part_*.json",
+      "type": "coach",
+      "what_it_gave": "The steps the app shows; the pictures must match them."
+    }
+  ],
+  "clip_check": [
+    {
+      "check": "Plate on the chest, not cutting in",
+      "target": "plate face on the chest",
+      "measured": "",
+      "pass": "",
+      "tool": "picture"
+    },
+    {
+      "check": "Right fist round the post in both",
+      "target": "post inside the fist",
+      "measured": "",
+      "pass": "",
+      "tool": "picture"
+    },
+    {
+      "check": "Heels up in both",
+      "target": "heels off the floor",
+      "measured": "",
+      "pass": "",
+      "tool": "picture"
+    },
+    {
+      "check": "Quads strongest red",
+      "target": "quads only lit",
+      "measured": "",
+      "pass": "",
+      "tool": "picture"
+    }
+  ]
+}

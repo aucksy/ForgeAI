@@ -1,0 +1,157 @@
+{
+  "format": "v1-stills",
+  "exercise": {
+    "key": "plate_curl",
+    "name": "Plate Curl",
+    "equipment": "other",
+    "type": "weight_reps",
+    "library_primary": [
+      "biceps"
+    ],
+    "library_secondary": [
+      "forearms"
+    ],
+    "steps": [
+      "Hold a weight plate by its sides, arms straight down in front of you.",
+      "Keep your elbows at your sides and curl the plate up to your chest.",
+      "Lower it slowly back to your thighs."
+    ],
+    "status": "draft",
+    "version": null,
+    "researched_on": "2026-11-13",
+    "one_line_summary": "Standing, a weight plate held by its sides between flat palms, arms down. Elbows stay at the sides and bend to bring the plate up to the chest, then lower. Biceps are the target; forearms help.",
+    "evidence_grade": "B"
+  },
+  "setup": [
+    {
+      "item": "grip",
+      "target": "Plate held by its sides (3 and 9 o'clock) between flat palms facing each other.",
+      "tolerance": "palms on the rim",
+      "why": "Library step 1. S2: neutral hand position keeps biceps working, with more brachioradialis than palms up.",
+      "source_ids": [
+        "S2",
+        "S3"
+      ],
+      "grade": "B"
+    }
+  ],
+  "movement": [
+    {
+      "joint": "elbow",
+      "measure": "elbow bend",
+      "start": "~35 (arms down)",
+      "end": "~130 (plate at the chest)",
+      "start_num": 35,
+      "end_num": 130,
+      "path": "Elbows stay at the sides (library step 2).",
+      "tolerance": "end 110-140",
+      "source_ids": [
+        "S1"
+      ],
+      "grade": "B"
+    },
+    {
+      "joint": "upper arm",
+      "measure": "elevation",
+      "start": "~2.5",
+      "end": "~7.5",
+      "start_num": 2.5,
+      "end_num": 7.5,
+      "path": "Stays by the sides.",
+      "tolerance": "<20",
+      "source_ids": [
+        "S3"
+      ],
+      "grade": "C"
+    }
+  ],
+  "muscles": [
+    {
+      "muscle": "Biceps",
+      "anatomy": "Biceps brachii",
+      "mask_key": "biceps",
+      "tier": "primary",
+      "glow": 1.0,
+      "emg": "Biceps active in every curl variant (S1); level unchanged by hand position (S2).",
+      "role": "Bends the elbow.",
+      "surface": "Front of the upper arm.",
+      "source_ids": [
+        "S1",
+        "S2"
+      ],
+      "grade": "B"
+    },
+    {
+      "muscle": "Forearms",
+      "anatomy": "Brachioradialis",
+      "mask_key": "forearms",
+      "tier": "secondary",
+      "glow": 0.35,
+      "emg": "Brachioradialis works in every curl (S1), more when the palms are not up (S2).",
+      "role": "Helps bend the elbow; squeezes the plate.",
+      "surface": "Front and thumb side of the forearm, elbow to wrist.",
+      "source_ids": [
+        "S1",
+        "S2"
+      ],
+      "grade": "B"
+    }
+  ],
+  "tempo": null,
+  "mistakes": [
+    {
+      "mistake": "Swinging the elbows forward",
+      "what_it_looks_like": "Upper arms rise toward horizontal.",
+      "why_it_matters": "Turns it into a front raise.",
+      "source_ids": [
+        "S3"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "S1",
+      "citation": "Marcolin G, Panizzolo FA, Petrone N, et al. 2018. Differences in electromyographic activity of biceps brachii and brachioradialis while performing three variants of curl. PeerJ 6:e5165. doi:10.7717/peerj.5165",
+      "url": "https://europepmc.org/article/MED/30013836",
+      "type": "emg",
+      "what_it_gave": "Dumbbell, straight-bar and EZ-bar curls at 65% 1RM: biceps and brachioradialis both work; grip shape changes their levels."
+    },
+    {
+      "id": "S2",
+      "citation": "Kleiber T, Kunz L, Disselhorst-Klug C. 2015. Muscular coordination of biceps brachii and brachioradialis in elbow flexion with respect to hand position. Front Physiol 6:215. doi:10.3389/fphys.2015.00215",
+      "url": "https://europepmc.org/article/MED/26300781",
+      "type": "emg",
+      "what_it_gave": "Elbow flexion with pronated, neutral and supinated hands: brachioradialis share rises significantly with the palms down (pronated); biceps level unchanged across hand positions."
+    },
+    {
+      "id": "S3",
+      "citation": "MettleUp exercise library entry (steps).",
+      "url": "docs/exercise-library/part_*.json",
+      "type": "coach",
+      "what_it_gave": "The steps the app shows; the pictures must match them."
+    }
+  ],
+  "clip_check": [
+    {
+      "check": "Both palms on the plate rim",
+      "target": "palm gap = plate width, palms facing it",
+      "measured": "",
+      "pass": "",
+      "tool": "picture"
+    },
+    {
+      "check": "End plate at the chest",
+      "target": "plate in front of the chest, not inside it",
+      "measured": "",
+      "pass": "",
+      "tool": "picture"
+    },
+    {
+      "check": "Biceps strongest red, forearms lighter",
+      "target": "biceps 1.0",
+      "measured": "",
+      "pass": "",
+      "tool": "picture"
+    }
+  ]
+}

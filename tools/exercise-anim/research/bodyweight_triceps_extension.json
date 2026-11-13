@@ -1,0 +1,149 @@
+{
+  "format": "v1-stills",
+  "exercise": {
+    "key": "bodyweight_triceps_extension",
+    "name": "Bodyweight Triceps Extension",
+    "equipment": "bodyweight",
+    "type": "reps",
+    "library_primary": [
+      "triceps"
+    ],
+    "library_secondary": [],
+    "steps": [
+      "Hold a fixed bar at waist height, body straight and leaning forward.",
+      "Bend your elbows to lower your head under the bar.",
+      "Push back up by straightening your arms."
+    ],
+    "status": "draft",
+    "version": null,
+    "researched_on": "2026-11-13",
+    "one_line_summary": "Hands on a fixed bar at waist height, body straight and leaning forward from the balls of the feet. The elbows bend ~110 deg to lower the head under the bar, then straighten. Triceps are the target.",
+    "evidence_grade": "B"
+  },
+  "setup": [
+    {
+      "item": "bar",
+      "target": "Fixed bar at waist height (~0.95 m), overhand, hands shoulder width.",
+      "tolerance": "0.8-1.1 m",
+      "why": "Library step 1.",
+      "source_ids": [
+        "S3"
+      ],
+      "grade": "C"
+    },
+    {
+      "item": "body",
+      "target": "Straight from heels to head, leaning forward 45 deg.",
+      "tolerance": "no hip bend",
+      "why": "Library step 1.",
+      "source_ids": [
+        "S3"
+      ],
+      "grade": "C"
+    }
+  ],
+  "movement": [
+    {
+      "joint": "elbow",
+      "measure": "elbow bend",
+      "start": "5 (arms straight)",
+      "end": "110",
+      "start_num": 5,
+      "end_num": 110,
+      "path": "Head lowers under the bar (library step 2).",
+      "tolerance": "end 90-120",
+      "source_ids": [
+        "S1"
+      ],
+      "grade": "B"
+    },
+    {
+      "joint": "body lean",
+      "measure": "angle from vertical",
+      "start": "45",
+      "end": "60",
+      "start_num": 45,
+      "end_num": 60,
+      "path": "Pivots on the feet as the head goes down.",
+      "tolerance": "+-10",
+      "source_ids": [
+        "S3"
+      ],
+      "grade": "C"
+    }
+  ],
+  "muscles": [
+    {
+      "muscle": "Triceps",
+      "anatomy": "Triceps brachii",
+      "mask_key": "triceps",
+      "tier": "primary",
+      "glow": 1.0,
+      "emg": "Overhead-arm elbow extension stretches the long head (S1); overhead extension 76% and lying extension 62% of the triangle push-up (S2).",
+      "role": "Only mover: straightens the elbows.",
+      "surface": "Back of the upper arm, shoulder to elbow.",
+      "source_ids": [
+        "S1",
+        "S2"
+      ],
+      "grade": "B"
+    }
+  ],
+  "tempo": null,
+  "mistakes": [
+    {
+      "mistake": "Bending at the hips",
+      "what_it_looks_like": "Buttocks stick out.",
+      "why_it_matters": "Takes load off the arms; library step 1 says body straight.",
+      "source_ids": [
+        "S3"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "S1",
+      "citation": "Maeo S, Wu Y, Huang M, et al. 2023. Triceps brachii hypertrophy is substantially greater after elbow extension training performed in the overhead versus neutral arm position. Eur J Sport Sci 23(7):1240-1250. doi:10.1080/17461391.2022.2100279",
+      "url": "https://europepmc.org/article/MED/35819335",
+      "type": "biomechanics",
+      "what_it_gave": "Elbow extension 90-0 deg with the arm overhead stretches the long head and grew the triceps 1.4-1.5x more than with the arm at the side."
+    },
+    {
+      "id": "S2",
+      "citation": "Boehler B, Porcari JP, Kline D, Hendrix CR, Foster C, Anders M. 2011. ACE-sponsored research: best triceps exercises. ACE Certified News, August 2011.",
+      "url": "https://www.acefitness.org/certifiednewsarticle/1562/ace-sponsored-research-best-triceps-exercises",
+      "type": "guideline",
+      "what_it_gave": "Triceps EMG vs the triangle push-up (100%): kickback 87%, dips 87%, overhead extension 76%, lying barbell extension 62%."
+    },
+    {
+      "id": "S3",
+      "citation": "MettleUp exercise library entry (steps).",
+      "url": "docs/exercise-library/part_*.json",
+      "type": "coach",
+      "what_it_gave": "The steps the app shows; the pictures must match them."
+    }
+  ],
+  "clip_check": [
+    {
+      "check": "Bar through both fists",
+      "target": "bar inside the fists",
+      "measured": "",
+      "pass": "",
+      "tool": "picture"
+    },
+    {
+      "check": "Feet on the floor, body straight",
+      "target": "toes on the floor",
+      "measured": "",
+      "pass": "",
+      "tool": "picture"
+    },
+    {
+      "check": "Triceps strongest red",
+      "target": "triceps only lit",
+      "measured": "",
+      "pass": "",
+      "tool": "picture"
+    }
+  ]
+}

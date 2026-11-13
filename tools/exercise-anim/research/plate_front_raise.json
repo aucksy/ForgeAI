@@ -1,0 +1,155 @@
+{
+  "format": "v1-stills",
+  "exercise": {
+    "key": "plate_front_raise",
+    "name": "Plate Front Raise",
+    "equipment": "other",
+    "type": "weight_reps",
+    "library_primary": [
+      "front_delts"
+    ],
+    "library_secondary": [
+      "chest"
+    ],
+    "steps": [
+      "Stand tall holding a weight plate by its sides, arms down.",
+      "Raise the plate straight out in front up to eye level.",
+      "Lower it slowly back down."
+    ],
+    "status": "draft",
+    "version": null,
+    "researched_on": "2026-11-13",
+    "one_line_summary": "Standing, a weight plate held by its sides between flat palms, arms down. Straight arms raise the plate in front up to eye level, then lower. Front delts are the target; upper chest helps.",
+    "evidence_grade": "B"
+  },
+  "setup": [
+    {
+      "item": "grip",
+      "target": "Plate held by its sides between flat palms.",
+      "tolerance": "palms on the rim",
+      "why": "Library step 1.",
+      "source_ids": [
+        "S3"
+      ],
+      "grade": "C"
+    }
+  ],
+  "movement": [
+    {
+      "joint": "shoulder flexion",
+      "measure": "arm elevation in front",
+      "start": "~2.5 (arms down)",
+      "end": "~90 (plate at eye level)",
+      "start_num": 2.5,
+      "end_num": 90,
+      "path": "Straight arms rise in front (library step 2).",
+      "tolerance": "end 80-100",
+      "source_ids": [
+        "S1"
+      ],
+      "grade": "B"
+    },
+    {
+      "joint": "elbow",
+      "measure": "elbow bend",
+      "start": "soft",
+      "end": "~17 (soft)",
+      "start_num": 35,
+      "end_num": 17,
+      "path": "Nearly straight.",
+      "tolerance": "<35",
+      "source_ids": [
+        "S3"
+      ],
+      "grade": "C"
+    }
+  ],
+  "muscles": [
+    {
+      "muscle": "Front delts",
+      "anatomy": "Anterior deltoid",
+      "mask_key": "front_delts",
+      "tier": "primary",
+      "glow": 1.0,
+      "emg": "Frontal raise: anterior deltoid greater than every lateral raise (S1).",
+      "role": "Lifts the arms forward.",
+      "surface": "Front of the shoulder cap.",
+      "source_ids": [
+        "S1",
+        "S2"
+      ],
+      "grade": "B"
+    },
+    {
+      "muscle": "Upper chest",
+      "anatomy": "Pectoralis major (clavicular)",
+      "mask_key": "chest",
+      "tier": "secondary",
+      "glow": 0.35,
+      "emg": "Frontal raise: pectoralis major greater than every lateral raise (S1).",
+      "role": "Helps lift the arms forward.",
+      "surface": "Upper chest under the collarbone.",
+      "source_ids": [
+        "S1"
+      ],
+      "grade": "B"
+    }
+  ],
+  "tempo": null,
+  "mistakes": [
+    {
+      "mistake": "Leaning back",
+      "what_it_looks_like": "Hips forward, trunk tipped back to throw the plate up.",
+      "why_it_matters": "Momentum, low-back strain.",
+      "source_ids": [
+        "S3"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "S1",
+      "citation": "Coratella G, Tornatore G, Longo S, Esposito F, Ce E. 2020. An electromyographic analysis of lateral raise variations and frontal raise in competitive bodybuilders. Int J Environ Res Public Health 17(17):6015. doi:10.3390/ijerph17176015",
+      "url": "https://europepmc.org/article/MED/32824894",
+      "type": "emg",
+      "what_it_gave": "Frontal raise: anterior deltoid and pectoralis major show greater EMG than in every lateral raise variation."
+    },
+    {
+      "id": "S2",
+      "citation": "Campos YAC, Vianna JM, Guimaraes MP, et al. 2020. Different shoulder exercises affect the activation of deltoid portions in resistance-trained individuals. J Hum Kinet 75:5-14. doi:10.2478/hukin-2020-0033",
+      "url": "https://europepmc.org/article/MED/33312291",
+      "type": "emg",
+      "what_it_gave": "Anterior deltoid ~21-33% MVIC across presses and raises at 60% 1RM; shoulder-flexion work loads the front delt most."
+    },
+    {
+      "id": "S3",
+      "citation": "MettleUp exercise library entry (steps).",
+      "url": "docs/exercise-library/part_*.json",
+      "type": "coach",
+      "what_it_gave": "The steps the app shows; the pictures must match them."
+    }
+  ],
+  "clip_check": [
+    {
+      "check": "Both palms on the plate rim",
+      "target": "palm gap = plate width",
+      "measured": "",
+      "pass": "",
+      "tool": "picture"
+    },
+    {
+      "check": "End plate at eye level",
+      "target": "plate centre near eye height",
+      "measured": "",
+      "pass": "",
+      "tool": "picture"
+    },
+    {
+      "check": "Front delts strongest red, chest lighter",
+      "target": "front_delts 1.0",
+      "measured": "",
+      "pass": "",
+      "tool": "picture"
+    }
+  ]
+}

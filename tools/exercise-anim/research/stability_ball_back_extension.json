@@ -1,0 +1,165 @@
+{
+  "format": "v1-stills",
+  "exercise": {
+    "key": "stability_ball_back_extension",
+    "name": "Stability Ball Back Extension",
+    "equipment": "other",
+    "type": "reps",
+    "library_primary": [
+      "lower_back"
+    ],
+    "library_secondary": [
+      "glutes"
+    ],
+    "steps": [
+      "Lie face down with your hips on the ball and toes on the floor.",
+      "Put your hands by your ears and let your chest curl over the ball.",
+      "Lift your chest until your body is straight, then lower slowly."
+    ],
+    "status": "draft",
+    "version": null,
+    "researched_on": "2026-11-13",
+    "one_line_summary": "Face down with the hips on a 60 cm ball, legs straight back to the toes, hands by the ears. Start chest curled down over the ball; end chest lifted until the body is one straight line. Lower back is the target; glutes help.",
+    "evidence_grade": "B"
+  },
+  "setup": [
+    {
+      "item": "body on the ball",
+      "target": "Front of the hips on top of the ball, toes on the floor, legs wide.",
+      "tolerance": "hips on the ball",
+      "why": "Library step 1.",
+      "source_ids": [
+        "S4"
+      ],
+      "grade": "C"
+    },
+    {
+      "item": "hands",
+      "target": "By the ears, elbows out.",
+      "tolerance": "hands near the head",
+      "why": "Library step 2.",
+      "source_ids": [
+        "S4"
+      ],
+      "grade": "C"
+    }
+  ],
+  "movement": [
+    {
+      "joint": "trunk",
+      "measure": "pelvis rot X + spine flex",
+      "start": "curled over the ball (pelvis 68 + spine 50 deg)",
+      "end": "straight line (pelvis 50, spine 0)",
+      "start_num": 118,
+      "end_num": 50,
+      "path": "Chest rises until straight (library step 3).",
+      "tolerance": "end in line with the legs +-10",
+      "source_ids": [
+        "S1"
+      ],
+      "grade": "B"
+    }
+  ],
+  "muscles": [
+    {
+      "muscle": "Lower back",
+      "anatomy": "Erector spinae",
+      "mask_key": "lower_back",
+      "tier": "primary",
+      "glow": 1.0,
+      "emg": "Back extensions give the highest ES (~63% MVIC floor, ~56% bench) (S1); unstable superman most erector activity (S2).",
+      "role": "Main mover: straightens the spine.",
+      "surface": "The two ropes either side of the spine in the low back.",
+      "source_ids": [
+        "S1",
+        "S2"
+      ],
+      "grade": "B"
+    },
+    {
+      "muscle": "Glutes",
+      "anatomy": "Gluteus maximus",
+      "mask_key": "glutes",
+      "tier": "secondary",
+      "glow": 0.35,
+      "emg": "Back extension variants share work with the gluteus maximus (S3).",
+      "role": "Extends the hips.",
+      "surface": "The buttocks.",
+      "source_ids": [
+        "S3"
+      ],
+      "grade": "B"
+    }
+  ],
+  "tempo": null,
+  "mistakes": [
+    {
+      "mistake": "Over-arching",
+      "what_it_looks_like": "Chest thrown past the straight line, head cranked back.",
+      "why_it_matters": "Library step 3 stops at a straight body.",
+      "source_ids": [
+        "S4"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "S1",
+      "citation": "Oliva-Lozano JM, Muyor JM. 2020. Core muscle activity during physical fitness exercises: a systematic review. Int J Environ Res Public Health 17(12):4306. doi:10.3390/ijerph17124306",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7345922/",
+      "type": "review",
+      "what_it_gave": "Erector spinae highest in back extensions (~63% MVIC on the floor, ~56% on a bench); V-sits ~80% MVIC rectus abdominis; adding a stability ball raises core EMG; sit-ups and curl-ups the classic core exercises."
+    },
+    {
+      "id": "S2",
+      "citation": "Atalay ES, Turker D, Soylu C, Sahan TY, Un Yildirim N. 2025. Association between lumbar lordosis, thoracic kyphosis, and muscle activations during different lower back exercises. Medicina (Kaunas) 61(6):986. doi:10.3390/medicina61060986",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12195201/",
+      "type": "emg",
+      "what_it_gave": "Of three lower-back exercises, the unstable superman produced the most thoracolumbar erector activity."
+    },
+    {
+      "id": "S3",
+      "citation": "Yoo WG. 2015. Comparison of the isolated contraction ratios of the hip extensors and erector spinae muscles of the lumbar region and thoracic muscles during different back extension exercises. J Phys Ther Sci 27(2):315-316. doi:10.1589/jpts.27.315",
+      "url": "https://europepmc.org/article/MED/25729158",
+      "type": "emg",
+      "what_it_gave": "Back extension variants share the work between the lumbar and thoracic erector spinae and the gluteus maximus; the variant decides which leads."
+    },
+    {
+      "id": "S4",
+      "citation": "MettleUp exercise library entry (steps).",
+      "url": "docs/exercise-library/part_*.json",
+      "type": "coach",
+      "what_it_gave": "The steps the app shows; the pictures must match them."
+    }
+  ],
+  "clip_check": [
+    {
+      "check": "Hips touching the ball in both",
+      "target": "contact -1..+1 cm",
+      "measured": "",
+      "pass": "",
+      "tool": "picture"
+    },
+    {
+      "check": "Toes on the floor",
+      "target": "toe tips on the floor",
+      "measured": "",
+      "pass": "",
+      "tool": "picture"
+    },
+    {
+      "check": "End: heels to head straight",
+      "target": "within 10 deg",
+      "measured": "",
+      "pass": "",
+      "tool": "picture"
+    },
+    {
+      "check": "Lower back strongest red, glutes lighter",
+      "target": "lower_back 1.0",
+      "measured": "",
+      "pass": "",
+      "tool": "picture"
+    }
+  ]
+}

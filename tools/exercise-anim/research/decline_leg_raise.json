@@ -1,0 +1,173 @@
+{
+  "format": "v1-stills",
+  "exercise": {
+    "key": "decline_leg_raise",
+    "name": "Decline Leg Raise",
+    "equipment": "bodyweight",
+    "type": "reps",
+    "library_primary": [
+      "abs"
+    ],
+    "library_secondary": [],
+    "steps": [
+      "Lie on a decline bench with your head at the high end.",
+      "Hold the bench behind your head and keep your legs straight.",
+      "Raise your legs until they point up, then lower them slowly."
+    ],
+    "status": "draft",
+    "version": null,
+    "researched_on": "2026-11-13",
+    "one_line_summary": "Lying face up on a 20 deg decline bench, head at the high end, hands holding the bench behind the head. Straight legs rise from just above the body line to pointing straight up (hip flexion ~100 deg), then lower. Abs are the target; hip flexors do much of the lift.",
+    "evidence_grade": "B"
+  },
+  "setup": [
+    {
+      "item": "bench",
+      "target": "Decline bench 20 deg; lying head up the slope.",
+      "tolerance": "15-30 deg",
+      "why": "Library step 1. S1: the reverse crunch on a 30 deg incline was among the highest RA exercises.",
+      "source_ids": [
+        "S1",
+        "S3"
+      ],
+      "grade": "B"
+    },
+    {
+      "item": "hands",
+      "target": "Fists hold the bench uprights behind the head, elbows up.",
+      "tolerance": "both fists on the bench",
+      "why": "Library step 2: anchors the upper body.",
+      "source_ids": [
+        "S3"
+      ],
+      "grade": "C"
+    }
+  ],
+  "movement": [
+    {
+      "joint": "hip flexion",
+      "measure": "angle of the straight legs to the trunk",
+      "start": "~10 deg (heels just off the pad end)",
+      "end": "~100 deg (legs point up)",
+      "start_num": 10,
+      "end_num": 100,
+      "path": "Legs rise together, knees straight.",
+      "tolerance": "end 85-110",
+      "source_ids": [
+        "S1",
+        "S2"
+      ],
+      "grade": "B"
+    },
+    {
+      "joint": "knees",
+      "measure": "knee bend",
+      "start": "0-5",
+      "end": "0-5",
+      "start_num": 0,
+      "end_num": 0,
+      "path": "Straight.",
+      "tolerance": "<10",
+      "source_ids": [
+        "S3"
+      ],
+      "grade": "C"
+    }
+  ],
+  "muscles": [
+    {
+      "muscle": "Abs (rectus abdominis)",
+      "anatomy": "Rectus abdominis",
+      "mask_key": "abs",
+      "tier": "primary",
+      "glow": 1.0,
+      "emg": "Inclined reverse crunch among the highest for upper and lower RA (S1); leg raise works the abs (S2).",
+      "role": "Holds the pelvis and curls it up at the top.",
+      "surface": "The two vertical bands down the front of the belly, lower ribs to the pubic bone.",
+      "source_ids": [
+        "S1",
+        "S2"
+      ],
+      "grade": "B"
+    },
+    {
+      "muscle": "Hip flexors (iliopsoas, rectus femoris)",
+      "anatomy": "Iliopsoas, rectus femoris",
+      "mask_key": "none",
+      "tier": "stabiliser",
+      "glow": 0,
+      "emg": "High in the inclined reverse crunch (S1); the leg raise raised hip-flexor EMG (S2).",
+      "role": "Lifts the legs; listed, not lit (the app lists abs only).",
+      "surface": "Front of the hip and the top of the thigh.",
+      "source_ids": [
+        "S1",
+        "S2"
+      ],
+      "grade": "B"
+    }
+  ],
+  "tempo": null,
+  "mistakes": [
+    {
+      "mistake": "Bending the knees",
+      "what_it_looks_like": "Knees fold as the legs rise.",
+      "why_it_matters": "Library step 2 says legs straight; the lever gets shorter.",
+      "source_ids": [
+        "S3"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "S1",
+      "citation": "Escamilla RF, Babb E, DeWitt R, et al. 2006. Electromyographic analysis of traditional and nontraditional abdominal exercises: implications for rehabilitation and training. Phys Ther 86(5):656-671. doi:10.1093/ptj/86.5.656",
+      "url": "https://europepmc.org/article/MED/16649890",
+      "type": "emg",
+      "what_it_gave": "Hanging knee-up with straps and the reverse crunch inclined 30 deg are among the highest for upper/lower rectus abdominis, obliques and latissimus; rectus femoris high in the inclined reverse crunch and bent-knee sit-up."
+    },
+    {
+      "id": "S2",
+      "citation": "Kim K, Lee T. 2016. Comparison of muscular activities in the abdomen and lower limbs while performing sit-up and leg-raise. J Phys Ther Sci 28(2):491-494. doi:10.1589/jpts.28.491",
+      "url": "https://europepmc.org/article/MED/27065536",
+      "type": "emg",
+      "what_it_gave": "Sit-up vs leg raise (upper/lower RA, external oblique, rectus femoris, iliopsoas): the eccentric sit-up raised abdominal activity most; the leg raise and eccentric sit-up raised hip-flexor activity."
+    },
+    {
+      "id": "S3",
+      "citation": "MettleUp exercise library entry (steps).",
+      "url": "docs/exercise-library/part_*.json",
+      "type": "coach",
+      "what_it_gave": "The steps the app shows; the pictures must match them."
+    }
+  ],
+  "clip_check": [
+    {
+      "check": "Head and pelvis on the pad in both",
+      "target": "contact -1..+1 cm",
+      "measured": "",
+      "pass": "",
+      "tool": "picture"
+    },
+    {
+      "check": "Fists on the bench uprights",
+      "target": "within 2 cm",
+      "measured": "",
+      "pass": "",
+      "tool": "picture"
+    },
+    {
+      "check": "End legs vertical, start legs near the body line",
+      "target": "end 85-110 deg, start under 20 deg",
+      "measured": "",
+      "pass": "",
+      "tool": "picture"
+    },
+    {
+      "check": "Abs strongest red",
+      "target": "abs only lit",
+      "measured": "",
+      "pass": "",
+      "tool": "picture"
+    }
+  ]
+}

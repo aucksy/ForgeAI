@@ -49,8 +49,8 @@ READY_EQUIPMENT = {"dumbbell", "bodyweight", "barbell", "machine", "other", "cab
 # cable (13 Nov 2026): props.py cable_column + D-handle / straight bar / rope / ankle cuff.
 # Dumbbell / bodyweight keys that still need a prop the pipeline does not have.
 NEEDS = {
-    "weighted_push_up": "weight plate on the back",
-    "handstand_push_up": "wall handstand (needs a check that the rig can go upside down)",
+    "weighted_push_up": "flat hands on the floor: the push-up / plank family (burpee, hindu_push_up, plank_shoulder_tap) still fails QA on floor hands; the plate on the back is ready (props_other plate, torso mode) (13 Nov 2026)",
+    "handstand_push_up": "wall handstand on flat hands: needs floor hands to pass QA first (see weighted_push_up) and a wall; upside-down not yet checked (13 Nov 2026)",
     "single_arm_dumbbell_wrist_curl": "a wrist that bends (the rig keeps the wrist straight)",
     # decline bench, pull-up bar, parallettes, plates: props_other.py (13 Nov 2026)
     "toes_to_bar": "a whole-body pike while hanging (hips ~160 deg flexed with the spine curled; not yet posed)",

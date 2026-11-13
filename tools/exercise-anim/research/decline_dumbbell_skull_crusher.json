@@ -1,0 +1,183 @@
+{
+  "format": "v1-stills",
+  "exercise": {
+    "key": "decline_dumbbell_skull_crusher",
+    "name": "Decline Dumbbell Skull Crusher",
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "library_primary": [
+      "triceps"
+    ],
+    "library_secondary": [],
+    "steps": [
+      "Lie on a decline bench with a dumbbell in each hand, arms straight up.",
+      "Bend your elbows to lower the dumbbells beside your head.",
+      "Straighten your arms again, keeping your elbows pointing up."
+    ],
+    "status": "draft",
+    "version": null,
+    "researched_on": "2026-11-13",
+    "one_line_summary": "Lying on a 20 deg decline bench, feet hooked, a dumbbell in each hand. Upper arms point straight up and stay still; the elbows bend ~110 deg to lower the dumbbells beside the head, then straighten. Triceps are the target.",
+    "evidence_grade": "B"
+  },
+  "setup": [
+    {
+      "item": "decline bench",
+      "target": "Pad tilted 20 deg, high end 0.80 m, the head end lower than the feet.",
+      "tolerance": "15-30 deg",
+      "why": "Library step 1: feet hooked under the pads of a decline bench; the slope makes the trunk lift against more of gravity than on the floor.",
+      "source_ids": [
+        "S4"
+      ],
+      "grade": "C"
+    },
+    {
+      "item": "legs hooked",
+      "target": "Knees over the knee roll, ankles under the front roller.",
+      "tolerance": "feet stay hooked",
+      "why": "Holds the body on the sloped pad.",
+      "source_ids": [
+        "S4"
+      ],
+      "grade": "C"
+    },
+    {
+      "item": "bench angle",
+      "target": "20 deg decline.",
+      "tolerance": "15-30 deg",
+      "why": "S3: triceps EMG does not change with bench angle, so the decline keeps the same triceps work.",
+      "source_ids": [
+        "S3"
+      ],
+      "grade": "B"
+    },
+    {
+      "item": "arms",
+      "target": "Upper arms straight up to the ceiling, neutral grip.",
+      "tolerance": "upper arm within 10 deg of vertical",
+      "why": "Library step 1; elbows pointing up keeps the work at the elbow.",
+      "source_ids": [
+        "S4"
+      ],
+      "grade": "C"
+    }
+  ],
+  "movement": [
+    {
+      "joint": "elbow",
+      "measure": "elbow bend, 0 = straight",
+      "start": "5 deg (arms straight)",
+      "end": "110 deg (dumbbells beside the head)",
+      "start_num": 5,
+      "end_num": 110,
+      "path": "Only the forearms move.",
+      "tolerance": "end 90-120",
+      "source_ids": [
+        "S2"
+      ],
+      "grade": "B"
+    },
+    {
+      "joint": "upper arm",
+      "measure": "elevation in the torso frame",
+      "start": "70.7 deg (vertical in the world)",
+      "end": "same",
+      "start_num": 70.7,
+      "end_num": 70.7,
+      "path": "Still; elbows keep pointing up (library step 3).",
+      "tolerance": "+-10",
+      "source_ids": [
+        "S4"
+      ],
+      "grade": "C"
+    }
+  ],
+  "muscles": [
+    {
+      "muscle": "Triceps",
+      "anatomy": "Triceps brachii (long, lateral, medial heads)",
+      "mask_key": "triceps",
+      "tier": "primary",
+      "glow": 1.0,
+      "emg": "Lying triceps extension 62% of the triangle push-up (S1); triceps EMG unchanged by bench angle (S3).",
+      "role": "Only mover: straightens the elbow.",
+      "surface": "Back of the upper arm, shoulder to elbow.",
+      "source_ids": [
+        "S1",
+        "S3"
+      ],
+      "grade": "B"
+    }
+  ],
+  "tempo": null,
+  "mistakes": [
+    {
+      "mistake": "Elbows drifting toward the feet",
+      "what_it_looks_like": "Upper arms swing down as the weights lower.",
+      "why_it_matters": "Shoulders take the work (it becomes a pull-over).",
+      "source_ids": [
+        "S4"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "S1",
+      "citation": "Boehler B, Porcari JP, Kline D, Hendrix CR, Foster C, Anders M. 2011. ACE-sponsored research: best triceps exercises. ACE Certified News, August 2011.",
+      "url": "https://www.acefitness.org/certifiednewsarticle/1562/ace-sponsored-research-best-triceps-exercises",
+      "type": "guideline",
+      "what_it_gave": "Triceps EMG vs the triangle push-up (100%): kickback 87%, dips 87%, overhead extension 76%, lying barbell extension 62%."
+    },
+    {
+      "id": "S2",
+      "citation": "Maeo S, Wu Y, Huang M, et al. 2023. Triceps brachii hypertrophy is substantially greater after elbow extension training performed in the overhead versus neutral arm position. Eur J Sport Sci 23(7):1240-1250. doi:10.1080/17461391.2022.2100279",
+      "url": "https://europepmc.org/article/MED/35819335",
+      "type": "biomechanics",
+      "what_it_gave": "Elbow extension 90-0 deg with the arm overhead stretches the long head and grew the triceps 1.4-1.5x more than with the arm at the side."
+    },
+    {
+      "id": "S3",
+      "citation": "Rodriguez-Ridao D, Antequera-Vique JA, Martin-Fuentes I, Muyor JM. 2020. Effect of five bench inclinations on the electromyographic activity of the pectoralis major, anterior deltoid, and triceps brachii during the bench press exercise. Int J Environ Res Public Health 17(19):7339. doi:10.3390/ijerph17197339",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7579505/",
+      "type": "emg",
+      "what_it_gave": "Triceps EMG similar at every bench angle (0-60 deg): tilting the bench does not change the triceps' work."
+    },
+    {
+      "id": "S4",
+      "citation": "MettleUp exercise library entry (steps).",
+      "url": "docs/exercise-library/part_*.json",
+      "type": "coach",
+      "what_it_gave": "The steps the app shows; the pictures must match them."
+    }
+  ],
+  "clip_check": [
+    {
+      "check": "Upper arms vertical in both",
+      "target": "within 10 deg",
+      "measured": "",
+      "pass": "",
+      "tool": "picture"
+    },
+    {
+      "check": "End: dumbbells beside the head, not hitting it",
+      "target": "clear of the head",
+      "measured": "",
+      "pass": "",
+      "tool": "picture"
+    },
+    {
+      "check": "Feet hooked, back on the pad",
+      "target": "pad contact -1..+1 cm",
+      "measured": "",
+      "pass": "",
+      "tool": "picture"
+    },
+    {
+      "check": "Triceps strongest red",
+      "target": "triceps only lit",
+      "measured": "",
+      "pass": "",
+      "tool": "picture"
+    }
+  ]
+}

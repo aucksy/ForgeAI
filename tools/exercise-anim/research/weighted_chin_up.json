@@ -1,0 +1,189 @@
+{
+  "format": "v1-stills",
+  "exercise": {
+    "key": "weighted_chin_up",
+    "name": "Weighted Chin-Up",
+    "equipment": "other",
+    "type": "weighted",
+    "library_primary": [
+      "lats"
+    ],
+    "library_secondary": [
+      "biceps",
+      "upper_back"
+    ],
+    "steps": [
+      "Hang a plate from a dip belt, or hold a dumbbell between your feet.",
+      "Grip the bar palms facing you, hands shoulder-width apart.",
+      "Pull until your chin clears the bar, then lower slowly to straight arms."
+    ],
+    "status": "draft",
+    "version": null,
+    "researched_on": "2026-11-13",
+    "one_line_summary": "Pull-up bar, palms facing him, hands about shoulder width, a dumbbell squeezed between the feet. Start from a dead hang; end with the chin over the bar, elbows down by the ribs (~145 deg bend). Lats are the target; biceps and upper back help.",
+    "evidence_grade": "A"
+  },
+  "setup": [
+    {
+      "item": "grip",
+      "target": "Palms facing him, hands about shoulder width.",
+      "tolerance": "0.45-0.6 m",
+      "why": "Library step 2. S1: the chin-up grip raises biceps and pectoral activity over the pull-up.",
+      "source_ids": [
+        "S1",
+        "S3"
+      ],
+      "grade": "A"
+    },
+    {
+      "item": "load",
+      "target": "A dumbbell squeezed between the feet.",
+      "tolerance": "held by the feet, legs straight",
+      "why": "Library step 1.",
+      "source_ids": [
+        "S3"
+      ],
+      "grade": "C"
+    }
+  ],
+  "movement": [
+    {
+      "joint": "elbow",
+      "measure": "elbow bend",
+      "start": "~4 (straight)",
+      "end": "~145",
+      "start_num": 4,
+      "end_num": 145,
+      "path": "Pulls the body up.",
+      "tolerance": "end 120-150",
+      "source_ids": [
+        "S1"
+      ],
+      "grade": "A"
+    },
+    {
+      "joint": "chin height",
+      "measure": "chin vs bar",
+      "start": "well below",
+      "end": "chin over the bar",
+      "start_num": -0.5,
+      "end_num": 0.06,
+      "path": "Body rises; the bar stays put.",
+      "tolerance": "chin at or above the bar",
+      "source_ids": [
+        "S3"
+      ],
+      "grade": "C"
+    }
+  ],
+  "muscles": [
+    {
+      "muscle": "Lats",
+      "anatomy": "Latissimus dorsi",
+      "mask_key": "lats",
+      "tier": "primary",
+      "glow": 1.0,
+      "emg": "117-130% MVIC in the chin-up (S1).",
+      "role": "Main mover: pulls the upper arms down to the ribs.",
+      "surface": "Wide sheet down the side of the back from the armpit to the low back.",
+      "source_ids": [
+        "S1",
+        "S2"
+      ],
+      "grade": "A"
+    },
+    {
+      "muscle": "Biceps",
+      "anatomy": "Biceps brachii",
+      "mask_key": "biceps",
+      "tier": "secondary",
+      "glow": 0.35,
+      "emg": "78-96% MVIC, higher in the chin-up than the pull-up (S1).",
+      "role": "Bends the elbows.",
+      "surface": "Front of the upper arm.",
+      "source_ids": [
+        "S1"
+      ],
+      "grade": "A"
+    },
+    {
+      "muscle": "Upper back",
+      "anatomy": "Lower / middle trapezius, rhomboids",
+      "mask_key": "upper_back",
+      "tier": "secondary",
+      "glow": 0.35,
+      "emg": "Lower trapezius 45-56% MVIC (S1); middle trapezius well active (S2).",
+      "role": "Pulls the shoulder blades down and back.",
+      "surface": "Between and over the shoulder blades.",
+      "source_ids": [
+        "S1",
+        "S2"
+      ],
+      "grade": "A"
+    }
+  ],
+  "tempo": null,
+  "mistakes": [
+    {
+      "mistake": "Half rep",
+      "what_it_looks_like": "Chin stops below the bar.",
+      "why_it_matters": "Library step 3: chin clears the bar.",
+      "source_ids": [
+        "S3"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "S1",
+      "citation": "Youdas JW, Amundson CL, Cicero KS, et al. 2010. Surface electromyographic activation patterns and elbow joint motion during a pull-up, chin-up, or perfect-pullup rotational exercise. J Strength Cond Res 24(12):3404-3414. doi:10.1519/JSC.0b013e3181f1598c",
+      "url": "https://europepmc.org/article/MED/21068680",
+      "type": "emg",
+      "what_it_gave": "Chin-up: latissimus 117-130% MVIC, biceps 78-96%, infraspinatus 71-79%, lower trapezius 45-56%; biceps and pectoralis higher in the chin-up than the pull-up; elbow range ~101 deg."
+    },
+    {
+      "id": "S2",
+      "citation": "Snarr RL, Hallmark AV, Casey JC, Esco MR. 2017. Electromyographical comparison of a traditional, suspension device, and towel pull-up. J Hum Kinet 58:5-13. doi:10.1515/hukin-2017-0068",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5548150/",
+      "type": "emg",
+      "what_it_gave": "Pull-up variants at 1.5x bi-acromial grip: latissimus, biceps, posterior deltoid and middle trapezius all well above the hypertrophy threshold; towel grip lowers middle trapezius."
+    },
+    {
+      "id": "S3",
+      "citation": "MettleUp exercise library entry (steps).",
+      "url": "docs/exercise-library/part_*.json",
+      "type": "coach",
+      "what_it_gave": "The steps the app shows; the pictures must match them."
+    }
+  ],
+  "clip_check": [
+    {
+      "check": "Bar through both fists in both",
+      "target": "bar inside the fists",
+      "measured": "",
+      "pass": "",
+      "tool": "picture"
+    },
+    {
+      "check": "End: chin over the bar",
+      "target": "chin at/above the bar, head not through it",
+      "measured": "",
+      "pass": "",
+      "tool": "picture"
+    },
+    {
+      "check": "Dumbbell held between the feet",
+      "target": "dumbbell touches both feet",
+      "measured": "",
+      "pass": "",
+      "tool": "picture"
+    },
+    {
+      "check": "Lats strongest red; biceps, upper back lighter",
+      "target": "lats 1.0",
+      "measured": "",
+      "pass": "",
+      "tool": "picture"
+    }
+  ]
+}

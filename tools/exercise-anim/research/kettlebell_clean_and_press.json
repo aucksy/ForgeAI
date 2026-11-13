@@ -1,0 +1,216 @@
+{
+  "format": "v1-stills",
+  "exercise": {
+    "key": "kettlebell_clean_and_press",
+    "name": "Kettlebell Clean and Press",
+    "equipment": "other",
+    "type": "weight_reps",
+    "library_primary": [
+      "front_delts"
+    ],
+    "library_secondary": [
+      "triceps",
+      "glutes",
+      "hamstrings"
+    ],
+    "steps": [
+      "Stand with a kettlebell between your feet and grip it with one hand.",
+      "Snap your hips forward to bring it up to rest on your forearm.",
+      "Press it straight overhead, then lower it to your shoulder and the floor.",
+      "Finish your reps, then switch hands."
+    ],
+    "status": "draft",
+    "version": null,
+    "researched_on": "2026-11-13",
+    "one_line_summary": "One kettlebell, one hand. Start: bell on the floor between wide feet, hips back and down in a hinge (trunk ~65 deg forward, flat back), arm straight to the handle. End: standing tall, arm locked overhead, bell resting on the back of the forearm. Front delts are the target; triceps, glutes and hamstrings help.",
+    "evidence_grade": "B"
+  },
+  "setup": [
+    {
+      "item": "start",
+      "target": "Bell between the feet, feet wide, hinge with a flat back.",
+      "tolerance": "back flat",
+      "why": "Library step 1; kettlebell lifts from the floor use a hip-hinge squat pattern (S3).",
+      "source_ids": [
+        "S3",
+        "S4"
+      ],
+      "grade": "B"
+    }
+  ],
+  "movement": [
+    {
+      "joint": "trunk",
+      "measure": "pelvis lean from vertical",
+      "start": "~65 deg (hinge)",
+      "end": "0 (standing tall)",
+      "start_num": 65,
+      "end_num": 0,
+      "path": "Hips snap forward to clean the bell (library step 2), then stand tall.",
+      "tolerance": "start 50-70",
+      "source_ids": [
+        "S3"
+      ],
+      "grade": "B"
+    },
+    {
+      "joint": "shoulder",
+      "measure": "arm elevation",
+      "start": "~59 deg in the torso frame (arm hanging to the handle)",
+      "end": "~174 deg (locked overhead)",
+      "start_num": 59,
+      "end_num": 174,
+      "path": "Press straight overhead (library step 3).",
+      "tolerance": "end >165",
+      "source_ids": [
+        "S2"
+      ],
+      "grade": "B"
+    },
+    {
+      "joint": "elbow",
+      "measure": "elbow bend",
+      "start": "~17",
+      "end": "~3 (locked)",
+      "start_num": 17,
+      "end_num": 3,
+      "path": "Straight at the top.",
+      "tolerance": "end <10",
+      "source_ids": [
+        "S4"
+      ],
+      "grade": "C"
+    }
+  ],
+  "muscles": [
+    {
+      "muscle": "Front delts",
+      "anatomy": "Anterior deltoid",
+      "mask_key": "front_delts",
+      "tier": "primary",
+      "glow": 1.0,
+      "emg": "Anterior deltoid works in the kettlebell press, a little more than with a dumbbell (S2); measured in the one-arm clean (S1).",
+      "role": "Presses the bell overhead.",
+      "surface": "Front of the shoulder cap.",
+      "source_ids": [
+        "S1",
+        "S2"
+      ],
+      "grade": "B"
+    },
+    {
+      "muscle": "Triceps",
+      "anatomy": "Triceps brachii",
+      "mask_key": "triceps",
+      "tier": "secondary",
+      "glow": 0.35,
+      "emg": "Locks the elbow overhead (library secondary).",
+      "role": "Straightens the elbow.",
+      "surface": "Back of the upper arm, shoulder to elbow.",
+      "source_ids": [
+        "S4"
+      ],
+      "grade": "C"
+    },
+    {
+      "muscle": "Glutes",
+      "anatomy": "Gluteus maximus",
+      "mask_key": "glutes",
+      "tier": "secondary",
+      "glow": 0.35,
+      "emg": "~80% MVC in kettlebell hinge lifts (S3); measured in the clean (S1).",
+      "role": "Snaps the hips forward.",
+      "surface": "The buttocks.",
+      "source_ids": [
+        "S1",
+        "S3"
+      ],
+      "grade": "B"
+    },
+    {
+      "muscle": "Hamstrings",
+      "anatomy": "Biceps femoris",
+      "mask_key": "hamstrings",
+      "tier": "secondary",
+      "glow": 0.35,
+      "emg": "Measured in the one-arm clean (S1).",
+      "role": "Extends the hip with the glutes.",
+      "surface": "Back of the thigh, buttock to knee.",
+      "source_ids": [
+        "S1"
+      ],
+      "grade": "B"
+    }
+  ],
+  "tempo": null,
+  "mistakes": [
+    {
+      "mistake": "Rounded back at the start",
+      "what_it_looks_like": "Spine curled over the bell.",
+      "why_it_matters": "Hinge lifts load the low back (S3); keep it flat.",
+      "source_ids": [
+        "S3"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "S1",
+      "citation": "Lyons BC, Mayo JJ, Tucker WS, Wax B, Hendrix RC. 2017. Electromyographical comparison of muscle activation patterns across three commonly performed kettlebell exercises. J Strength Cond Res 31(9):2363-2370. doi:10.1519/JSC.0000000000001771",
+      "url": "https://europepmc.org/article/MED/28394829",
+      "type": "emg",
+      "what_it_gave": "One-arm kettlebell clean, swing and snatch are total-body lifts (anterior deltoid, gluteus maximus, biceps femoris, erector spinae, vastus lateralis measured)."
+    },
+    {
+      "id": "S2",
+      "citation": "Blazkiewicz M, Hadamus A. 2022. The effect of the weight and type of equipment on shoulder and back muscle activity in surface electromyography during the overhead press. Sensors 22(24):9762. doi:10.3390/s22249762",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9781216/",
+      "type": "emg",
+      "what_it_gave": "Kettlebell vs dumbbell overhead press: anterior/posterior deltoid, trapezius, serratus and erectors all work; kettlebell values always a little higher."
+    },
+    {
+      "id": "S3",
+      "citation": "McGill SM, Marshall LW. 2012. Kettlebell swing, snatch, and bottoms-up carry: back and hip muscle activation, motion, and low back loads. J Strength Cond Res 26(1):16-27. doi:10.1519/JSC.0b013e31823a4063",
+      "url": "https://europepmc.org/article/MED/21997449",
+      "type": "emg",
+      "what_it_gave": "Kettlebell lifts from the floor use a hip-hinge squat pattern: ~80% MVC gluteals and ~50% MVC low-back extensors with a 16 kg bell."
+    },
+    {
+      "id": "S4",
+      "citation": "MettleUp exercise library entry (steps).",
+      "url": "docs/exercise-library/part_*.json",
+      "type": "coach",
+      "what_it_gave": "The steps the app shows; the pictures must match them."
+    }
+  ],
+  "clip_check": [
+    {
+      "check": "Start: fist round the handle, bell on the floor",
+      "target": "bell bottom at the floor",
+      "measured": "",
+      "pass": "",
+      "tool": "picture"
+    },
+    {
+      "check": "End: arm locked overhead, bell behind the forearm, not cutting into it",
+      "target": "bell surface touches the forearm",
+      "measured": "",
+      "pass": "",
+      "tool": "picture"
+    },
+    {
+      "check": "Feet flat in both",
+      "target": "soles on the floor",
+      "measured": "",
+      "pass": "",
+      "tool": "picture"
+    },
+    {
+      "check": "Front delts strongest red",
+      "target": "front_delts 1.0",
+      "measured": "",
+      "pass": "",
+      "tool": "picture"
+    }
+  ]
+}

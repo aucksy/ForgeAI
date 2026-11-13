@@ -1,0 +1,142 @@
+{
+  "format": "v1-stills",
+  "exercise": {
+    "key": "plate_reverse_curl",
+    "name": "Plate Reverse Curl",
+    "equipment": "other",
+    "type": "weight_reps",
+    "library_primary": [
+      "forearms"
+    ],
+    "library_secondary": [
+      "biceps"
+    ],
+    "steps": [
+      "Hold a weight plate by its edges, palms down, arms straight.",
+      "Keep your elbows at your sides and curl the plate up to your chest.",
+      "Lower it slowly to the start."
+    ],
+    "status": "draft",
+    "version": null,
+    "researched_on": "2026-11-13",
+    "one_line_summary": "Standing, a weight plate held by its top rim in both fists, palms down. Elbows stay at the sides and bend until the forearms point up, the plate turning with the wrists, then lower. Forearms (brachioradialis) are the target; biceps help.",
+    "evidence_grade": "B"
+  },
+  "setup": [
+    {
+      "item": "grip",
+      "target": "Fists over the top rim, palms down.",
+      "tolerance": "palms down",
+      "why": "Library step 1. S1: palms down shifts elbow-flexion work onto the brachioradialis.",
+      "source_ids": [
+        "S1",
+        "S3"
+      ],
+      "grade": "A"
+    }
+  ],
+  "movement": [
+    {
+      "joint": "elbow",
+      "measure": "elbow bend",
+      "start": "~20 (arms down)",
+      "end": "~130 (forearms up)",
+      "start_num": 20,
+      "end_num": 130,
+      "path": "Elbows at the sides (library step 2).",
+      "tolerance": "end 110-140",
+      "source_ids": [
+        "S1"
+      ],
+      "grade": "B"
+    }
+  ],
+  "muscles": [
+    {
+      "muscle": "Forearms",
+      "anatomy": "Brachioradialis",
+      "mask_key": "forearms",
+      "tier": "primary",
+      "glow": 1.0,
+      "emg": "Brachioradialis share significantly higher with the palms down (S1).",
+      "role": "Main elbow flexor with the palms down.",
+      "surface": "Front and thumb side of the forearm, elbow to wrist.",
+      "source_ids": [
+        "S1"
+      ],
+      "grade": "A"
+    },
+    {
+      "muscle": "Biceps",
+      "anatomy": "Biceps brachii",
+      "mask_key": "biceps",
+      "tier": "secondary",
+      "glow": 0.35,
+      "emg": "Biceps level unchanged by hand position (S1); active in all curls (S2).",
+      "role": "Helps bend the elbow.",
+      "surface": "Front of the upper arm.",
+      "source_ids": [
+        "S1",
+        "S2"
+      ],
+      "grade": "B"
+    }
+  ],
+  "tempo": null,
+  "mistakes": [
+    {
+      "mistake": "Wrists bending back",
+      "what_it_looks_like": "Knuckles drop toward the floor as it lifts.",
+      "why_it_matters": "Wrist takes the strain; keep the wrists straight.",
+      "source_ids": [
+        "S3"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "S1",
+      "citation": "Kleiber T, Kunz L, Disselhorst-Klug C. 2015. Muscular coordination of biceps brachii and brachioradialis in elbow flexion with respect to hand position. Front Physiol 6:215. doi:10.3389/fphys.2015.00215",
+      "url": "https://europepmc.org/article/MED/26300781",
+      "type": "emg",
+      "what_it_gave": "Elbow flexion with pronated, neutral and supinated hands: brachioradialis share rises significantly with the palms down (pronated); biceps level unchanged across hand positions."
+    },
+    {
+      "id": "S2",
+      "citation": "Marcolin G, Panizzolo FA, Petrone N, et al. 2018. Differences in electromyographic activity of biceps brachii and brachioradialis while performing three variants of curl. PeerJ 6:e5165. doi:10.7717/peerj.5165",
+      "url": "https://europepmc.org/article/MED/30013836",
+      "type": "emg",
+      "what_it_gave": "Dumbbell, straight-bar and EZ-bar curls at 65% 1RM: biceps and brachioradialis both work; grip shape changes their levels."
+    },
+    {
+      "id": "S3",
+      "citation": "MettleUp exercise library entry (steps).",
+      "url": "docs/exercise-library/part_*.json",
+      "type": "coach",
+      "what_it_gave": "The steps the app shows; the pictures must match them."
+    }
+  ],
+  "clip_check": [
+    {
+      "check": "Both fists on the plate rim",
+      "target": "fists on the rim",
+      "measured": "",
+      "pass": "",
+      "tool": "picture"
+    },
+    {
+      "check": "End forearms up, plate in front of the face, not touching",
+      "target": "clear of the face",
+      "measured": "",
+      "pass": "",
+      "tool": "picture"
+    },
+    {
+      "check": "Forearms strongest red, biceps lighter",
+      "target": "forearms 1.0",
+      "measured": "",
+      "pass": "",
+      "tool": "picture"
+    }
+  ]
+}

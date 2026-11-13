@@ -1,0 +1,204 @@
+{
+  "format": "v1-stills",
+  "exercise": {
+    "key": "decline_oblique_crunch",
+    "name": "Decline Oblique Crunch",
+    "equipment": "bodyweight",
+    "type": "reps",
+    "library_primary": [
+      "obliques"
+    ],
+    "library_secondary": [
+      "abs"
+    ],
+    "steps": [
+      "Hook your feet under the pads of a decline bench and lie back.",
+      "Curl up and twist so one shoulder moves toward the opposite knee.",
+      "Lower slowly and switch sides each rep."
+    ],
+    "status": "draft",
+    "version": null,
+    "researched_on": "2026-11-13",
+    "one_line_summary": "Feet hooked on a 20 deg decline bench, arms crossed. Start lying back; end curled half way up with the trunk twisted so the right shoulder comes across toward the left knee. Obliques are the target, abs help.",
+    "evidence_grade": "B"
+  },
+  "setup": [
+    {
+      "item": "decline bench",
+      "target": "Pad tilted 20 deg, high end 0.80 m, the head end lower than the feet.",
+      "tolerance": "15-30 deg",
+      "why": "Library step 1: feet hooked under the pads of a decline bench; the slope makes the trunk lift against more of gravity than on the floor.",
+      "source_ids": [
+        "S3"
+      ],
+      "grade": "C"
+    },
+    {
+      "item": "legs hooked",
+      "target": "Knees bent over the knee roll, ankles under the front roller.",
+      "tolerance": "feet stay under the roller in both pictures",
+      "why": "Library step 1. Hooked feet let the hip flexors pull, which S1 shows as high rectus femoris in the bent-knee sit-up.",
+      "source_ids": [
+        "S1",
+        "S3"
+      ],
+      "grade": "B"
+    },
+    {
+      "item": "arms",
+      "target": "Arms crossed on the chest, fists on the chest.",
+      "tolerance": "forearms on the chest, not pulling the head",
+      "why": "Library step 2 (sit-up); crossed arms keep the hands off the neck.",
+      "source_ids": [
+        "S3"
+      ],
+      "grade": "C"
+    }
+  ],
+  "movement": [
+    {
+      "joint": "trunk (pelvis angle)",
+      "measure": "root rot X",
+      "start": "lying back",
+      "end": "half way up",
+      "start_num": -110,
+      "end_num": -60,
+      "path": "Curls up off the pad.",
+      "tolerance": "end -75..-45",
+      "source_ids": [
+        "S1"
+      ],
+      "grade": "B"
+    },
+    {
+      "joint": "spine twist",
+      "measure": "spine01..04 twist summed",
+      "start": "0",
+      "end": "25 deg, right shoulder forward",
+      "start_num": 0,
+      "end_num": 25,
+      "path": "Twists as it curls (library step 2).",
+      "tolerance": "end 15-35",
+      "source_ids": [
+        "S3"
+      ],
+      "grade": "C"
+    },
+    {
+      "joint": "spine curl",
+      "measure": "spine flexion summed",
+      "start": "0",
+      "end": "30 deg",
+      "start_num": 0,
+      "end_num": 30,
+      "path": "Rounds with the twist.",
+      "tolerance": "20-40",
+      "source_ids": [
+        "S2"
+      ],
+      "grade": "C"
+    }
+  ],
+  "muscles": [
+    {
+      "muscle": "Obliques (external / internal oblique)",
+      "anatomy": "Obliquus externus / internus abdominis",
+      "mask_key": "obliques",
+      "tier": "primary",
+      "glow": 1.0,
+      "emg": "Obliques greatest in the crunch and bent-knee sit-up (S1); twisting adds the rotation they produce.",
+      "role": "Main mover: turns and curls the rib cage toward the opposite hip.",
+      "surface": "Sides of the waist from the lower ribs to the hip bone.",
+      "source_ids": [
+        "S1",
+        "S2"
+      ],
+      "grade": "B"
+    },
+    {
+      "muscle": "Abs (rectus abdominis)",
+      "anatomy": "Rectus abdominis",
+      "mask_key": "abs",
+      "tier": "secondary",
+      "glow": 0.35,
+      "emg": "RA greatest in the crunch (S1).",
+      "role": "Curls the trunk up.",
+      "surface": "The two vertical bands down the front of the belly, lower ribs to the pubic bone.",
+      "source_ids": [
+        "S1"
+      ],
+      "grade": "B"
+    },
+    {
+      "muscle": "Hip flexors (iliopsoas, rectus femoris)",
+      "anatomy": "Iliopsoas, rectus femoris",
+      "mask_key": "none",
+      "tier": "stabiliser",
+      "glow": 0,
+      "emg": "High in the bent-knee sit-up (S1).",
+      "role": "Holds the hooked legs; not lit.",
+      "surface": "Front of the hip and the top of the thigh.",
+      "source_ids": [
+        "S1"
+      ],
+      "grade": "B"
+    }
+  ],
+  "tempo": null,
+  "mistakes": [
+    {
+      "mistake": "Twisting only the arms",
+      "what_it_looks_like": "Elbow swings across while the shoulders stay square.",
+      "why_it_matters": "The obliques do little; the shoulder must cross.",
+      "source_ids": [
+        "S3"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "S1",
+      "citation": "Escamilla RF, McTaggart MS, Fricklas EJ, et al. 2006. An electromyographic analysis of commercial and common abdominal exercises: implications for rehabilitation and training. J Orthop Sports Phys Ther 36(2):45-57. doi:10.2519/jospt.2006.36.2.45",
+      "url": "https://europepmc.org/article/MED/16494072",
+      "type": "emg",
+      "what_it_gave": "Upper/lower rectus abdominis greatest in the crunch (with Ab Slide, Torso Track); obliques greatest in the crunch and bent-knee sit-up; rectus femoris greatest in the bent-knee sit-up."
+    },
+    {
+      "id": "S2",
+      "citation": "Oliva-Lozano JM, Muyor JM. 2020. Core muscle activity during physical fitness exercises: a systematic review. Int J Environ Res Public Health 17(12):4306. doi:10.3390/ijerph17124306",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7345922/",
+      "type": "review",
+      "what_it_gave": "Erector spinae highest in back extensions (~63% MVIC on the floor, ~56% on a bench); V-sits ~80% MVIC rectus abdominis; adding a stability ball raises core EMG; sit-ups and curl-ups the classic core exercises."
+    },
+    {
+      "id": "S3",
+      "citation": "MettleUp exercise library entry (steps).",
+      "url": "docs/exercise-library/part_*.json",
+      "type": "coach",
+      "what_it_gave": "The steps the app shows; the pictures must match them."
+    }
+  ],
+  "clip_check": [
+    {
+      "check": "End: right shoulder clearly across toward the left knee",
+      "target": "visible twist in the picture",
+      "measured": "",
+      "pass": "",
+      "tool": "picture"
+    },
+    {
+      "check": "Feet hooked in both",
+      "target": "ankles under the roller",
+      "measured": "",
+      "pass": "",
+      "tool": "picture"
+    },
+    {
+      "check": "Obliques strongest red, abs lighter",
+      "target": "obliques 1.0, abs 0.35",
+      "measured": "",
+      "pass": "",
+      "tool": "picture"
+    }
+  ]
+}
