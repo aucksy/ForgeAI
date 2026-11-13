@@ -1,0 +1,218 @@
+{
+ "key": "walking",
+ "name": "Walking",
+ "primary": [
+  "quads"
+ ],
+ "secondary": [
+  "calves"
+ ],
+ "camera": {
+  "yaw": -75,
+  "pitch": 8,
+  "lens": 50,
+  "fill": 0.9,
+  "res": 640,
+  "samples": 20
+ },
+ "poses": {
+  "start": {
+   "root": {
+    "loc": [
+     0,
+     0.056,
+     0.951
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "feet": {
+    "L": {
+     "at": [
+      0.12,
+      -0.15,
+      0.074
+     ],
+     "rot": [
+      0,
+      0,
+      4
+     ]
+    },
+    "R": {
+     "at": [
+      -0.12,
+      0.17,
+      0.108
+     ],
+     "rot": [
+      15,
+      0,
+      -4
+     ]
+    }
+   },
+   "knees": {
+    "L": [
+     0.16,
+     -1.0,
+     0.6
+    ],
+    "R": [
+     -0.16,
+     -1.0,
+     0.6
+    ]
+   },
+   "hands": {
+    "L": {
+     "axis": [
+      0.0,
+      0.996,
+      -0.087
+     ],
+     "arm": {
+      "elev": 20,
+      "plane": -90,
+      "elbow": 15,
+      "bend": [
+       0,
+       1,
+       0
+      ],
+      "tilt": 0
+     }
+    },
+    "R": {
+     "axis": [
+      -0.0,
+      0.574,
+      0.819
+     ],
+     "arm": {
+      "elev": 25,
+      "plane": 90,
+      "elbow": 30,
+      "bend": [
+       0,
+       0,
+       1
+      ],
+      "tilt": 0
+     }
+    }
+   }
+  },
+  "end": {
+   "root": {
+    "loc": [
+     0,
+     0.056,
+     0.951
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "feet": {
+    "L": {
+     "at": [
+      0.12,
+      0.17,
+      0.108
+     ],
+     "rot": [
+      15,
+      0,
+      4
+     ]
+    },
+    "R": {
+     "at": [
+      -0.12,
+      -0.15,
+      0.074
+     ],
+     "rot": [
+      0,
+      0,
+      -4
+     ]
+    }
+   },
+   "knees": {
+    "L": [
+     0.16,
+     -1.0,
+     0.6
+    ],
+    "R": [
+     -0.16,
+     -1.0,
+     0.6
+    ]
+   },
+   "hands": {
+    "L": {
+     "axis": [
+      -0.0,
+      0.574,
+      0.819
+     ],
+     "arm": {
+      "elev": 25,
+      "plane": 90,
+      "elbow": 30,
+      "bend": [
+       0,
+       0,
+       1
+      ],
+      "tilt": 0
+     }
+    },
+    "R": {
+     "axis": [
+      0.0,
+      0.996,
+      -0.087
+     ],
+     "arm": {
+      "elev": 20,
+      "plane": -90,
+      "elbow": 15,
+      "bend": [
+       0,
+       1,
+       0
+      ],
+      "tilt": 0
+     }
+    }
+   }
+  }
+ },
+ "research": "Legs copied from the approved farmers_walk (double support: front foot flat 0.155 m ahead of the hip, back foot on its ball 0.165 m behind, heel up 15 deg; root 0.951). Arms swing freely opposite the legs (forward arm elev 25 / plane 90 / elbow 30, back arm 20 / -90 / 15). Plain floor, no scenery. Meyns 2013 (arm swing), Franz & Kram 2012 (level walking EMG).",
+ "timing": {
+  "fps": 30,
+  "keys": [
+   [
+    0,
+    "start"
+   ],
+   [
+    1,
+    "end"
+   ],
+   [
+    2,
+    "start"
+   ]
+  ]
+ }
+}

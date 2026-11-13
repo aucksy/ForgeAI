@@ -1,0 +1,433 @@
+{
+ "key": "stationary_bike",
+ "name": "Stationary Bike",
+ "primary": [
+  "quads"
+ ],
+ "secondary": [
+  "glutes",
+  "hamstrings",
+  "calves"
+ ],
+ "props": {
+  "h_L": {
+   "type": "handle"
+  },
+  "h_R": {
+   "type": "handle"
+  }
+ },
+ "camera": {
+  "yaw": 70,
+  "pitch": 10,
+  "lens": 50,
+  "fill": 0.9,
+  "res": 640,
+  "samples": 20
+ },
+ "defaults": {
+  "root": {
+   "loc": [
+    0,
+    0.06,
+    0.95
+   ],
+   "rot": [
+    20,
+    0,
+    0
+   ]
+  },
+  "knees": {
+   "L": [
+    0.16,
+    -1.2,
+    0.95
+   ]
+  },
+  "hands": {
+   "L": {
+    "axis": [
+     -0.998,
+     0.068,
+     -0.012
+    ],
+    "arm": {
+     "elev": 65,
+     "plane": 86,
+     "elbow": 15,
+     "bend": [
+      0,
+      0,
+      1
+     ],
+     "tilt": 0
+    },
+    "prop": "h_L"
+   }
+  }
+ },
+ "poses": {
+  "start": {
+   "feet": {
+    "L": {
+     "at": [
+      0.12,
+      -0.369,
+      0.492
+     ],
+     "rot": [
+      0,
+      0,
+      4
+     ]
+    },
+    "R": {
+     "at": [
+      -0.12,
+      -0.369,
+      0.152
+     ],
+     "rot": [
+      8,
+      0,
+      -4
+     ]
+    }
+   }
+  },
+  "end": {
+   "feet": {
+    "L": {
+     "at": [
+      0.12,
+      -0.369,
+      0.152
+     ],
+     "rot": [
+      8,
+      0,
+      4
+     ]
+    },
+    "R": {
+     "at": [
+      -0.12,
+      -0.369,
+      0.492
+     ],
+     "rot": [
+      0,
+      0,
+      -4
+     ]
+    }
+   }
+  }
+ },
+ "machine": {
+  "parts": [
+   {
+    "shape": "box",
+    "size": [
+     0.17,
+     0.27,
+     0.06
+    ],
+    "at": {
+     "a": "bone:root@start",
+     "off": [
+      0,
+      0.03,
+      -0.085
+     ]
+    },
+    "mat": "pad",
+    "rot": [
+     0,
+     0,
+     0
+    ],
+    "bevel": 0.025
+   },
+   {
+    "shape": "rod",
+    "size": [
+     0.03
+    ],
+    "a": {
+     "a": {
+      "a": "bone:root@start",
+      "off": [
+       0,
+       0.03,
+       -0.085
+      ]
+     },
+     "off": [
+      0,
+      0.02,
+      -0.03
+     ]
+    },
+    "b": [
+     0,
+     -0.46,
+     0.25
+    ],
+    "mat": "frame"
+   },
+   {
+    "shape": "cyl",
+    "size": [
+     0.06,
+     0.2
+    ],
+    "at": [
+     0,
+     -0.509,
+     0.242
+    ],
+    "mat": "frame",
+    "rot": [
+     0,
+     0,
+     90
+    ]
+   },
+   {
+    "shape": "rod",
+    "size": [
+     0.016
+    ],
+    "a": {
+     "a": [
+      0.09,
+      -0.509,
+      0.242
+     ],
+     "off": [
+      0,
+      0,
+      0
+     ]
+    },
+    "b": {
+     "a": {
+      "bone": "foot.L",
+      "off": [
+       0,
+       -0.14,
+       -0.08
+      ]
+     },
+     "off": [
+      -0.03,
+      0,
+      0
+     ]
+    },
+    "mat": "chrome",
+    "mirror": true
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.1,
+     0.12,
+     0.025
+    ],
+    "at": {
+     "bone": "foot.L",
+     "off": [
+      0,
+      -0.14,
+      -0.08
+     ]
+    },
+    "mat": "rubber",
+    "rot": [
+     0,
+     0,
+     0
+    ],
+    "mirror": true
+   },
+   {
+    "shape": "rod",
+    "size": [
+     0.016
+    ],
+    "a": {
+     "prop": "h_L",
+     "loc": [
+      0.08,
+      0,
+      0
+     ]
+    },
+    "b": {
+     "prop": "h_R",
+     "loc": [
+      0.08,
+      0,
+      0
+     ]
+    },
+    "mat": "chrome",
+    "check": false
+   },
+   {
+    "shape": "rod",
+    "size": [
+     0.03
+    ],
+    "a": {
+     "a": {
+      "mid": [
+       "fist.L@start",
+       "fist.R@start"
+      ]
+     },
+     "off": [
+      0,
+      0.02,
+      -0.02
+     ]
+    },
+    "b": [
+     0,
+     -0.62,
+     0.42
+    ],
+    "mat": "frame"
+   },
+   {
+    "shape": "rod",
+    "size": [
+     0.035
+    ],
+    "a": [
+     0,
+     -0.62,
+     0.42
+    ],
+    "b": [
+     0,
+     -0.509,
+     0.242
+    ],
+    "mat": "frame"
+   },
+   {
+    "shape": "rod",
+    "size": [
+     0.035
+    ],
+    "a": [
+     0,
+     0.1,
+     0.03
+    ],
+    "b": [
+     0,
+     -0.85,
+     0.03
+    ],
+    "mat": "frame"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.5,
+     0.07,
+     0.06
+    ],
+    "at": [
+     0,
+     0.1,
+     0.03
+    ],
+    "mat": "frame",
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.5,
+     0.07,
+     0.06
+    ],
+    "at": [
+     0,
+     -0.85,
+     0.03
+    ],
+    "mat": "frame",
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "shape": "cyl",
+    "size": [
+     0.24,
+     0.05
+    ],
+    "at": [
+     0,
+     -0.8,
+     0.36
+    ],
+    "mat": "iron",
+    "rot": [
+     0,
+     0,
+     90
+    ]
+   },
+   {
+    "shape": "cyl",
+    "size": [
+     0.05,
+     0.09
+    ],
+    "at": [
+     0,
+     -0.8,
+     0.36
+    ],
+    "mat": "chrome",
+    "rot": [
+     0,
+     0,
+     90
+    ]
+   }
+  ]
+ },
+ "research": "Seated on the saddle, trunk 20 deg forward, hands on the bar (elev 65, plane 86, elbow 15). Crank axle 0.663 m below and 0.52 m in front of the hips, crank 0.17 m; pedal under the ball (ankle = pedal + (0, 0.14, 0.08)). Solved so the knee bends ~30 deg at the bottom (Bini 2011: 25-35 deg at bottom dead centre) and ~100 deg at the top. Start: left pedal at the top, right at the bottom; end: swapped (half a turn). Crank arms are drawn from the axle to the actual pedal (length 0.17 printed per key pose). Hug & Dorel 2009 (pedalling EMG).",
+ "timing": {
+  "fps": 30,
+  "keys": [
+   [
+    0,
+    "start"
+   ],
+   [
+    1,
+    "end"
+   ],
+   [
+    2,
+    "start"
+   ]
+  ]
+ }
+}

@@ -1,0 +1,404 @@
+{
+ "key": "stair_climber",
+ "name": "Stair Climber",
+ "primary": [
+  "quads"
+ ],
+ "secondary": [
+  "glutes",
+  "calves"
+ ],
+ "camera": {
+  "yaw": 72,
+  "pitch": 10,
+  "lens": 50,
+  "fill": 0.9,
+  "res": 640,
+  "samples": 20
+ },
+ "defaults": {
+  "root": {
+   "loc": [
+    0,
+    0.031,
+    1.146
+   ],
+   "rot": [
+    5,
+    0,
+    0
+   ]
+  }
+ },
+ "poses": {
+  "start": {
+   "feet": {
+    "L": {
+     "at": [
+      0.12,
+      -0.23,
+      0.474
+     ],
+     "rot": [
+      0,
+      0,
+      4
+     ]
+    },
+    "R": {
+     "at": [
+      -0.12,
+      0.07,
+      0.274
+     ],
+     "rot": [
+      0,
+      0,
+      -4
+     ]
+    }
+   },
+   "knees": {
+    "L": [
+     0.15,
+     -1.2,
+     1.0
+    ],
+    "R": [
+     -0.15,
+     -1.2,
+     0.6
+    ]
+   },
+   "hands": {
+    "L": {
+     "axis": [
+      0.0,
+      0.996,
+      -0.087
+     ],
+     "arm": {
+      "elev": 20,
+      "plane": -90,
+      "elbow": 15,
+      "bend": [
+       0,
+       1,
+       0
+      ],
+      "tilt": 0
+     }
+    },
+    "R": {
+     "axis": [
+      0.0,
+      0.5,
+      0.866
+     ],
+     "arm": {
+      "elev": 25,
+      "plane": 90,
+      "elbow": 35,
+      "bend": [
+       0,
+       0,
+       1
+      ],
+      "tilt": 0
+     }
+    }
+   }
+  },
+  "end": {
+   "feet": {
+    "L": {
+     "at": [
+      0.12,
+      0.07,
+      0.274
+     ],
+     "rot": [
+      0,
+      0,
+      4
+     ]
+    },
+    "R": {
+     "at": [
+      -0.12,
+      -0.23,
+      0.474
+     ],
+     "rot": [
+      0,
+      0,
+      -4
+     ]
+    }
+   },
+   "knees": {
+    "L": [
+     0.15,
+     -1.2,
+     0.6
+    ],
+    "R": [
+     -0.15,
+     -1.2,
+     1.0
+    ]
+   },
+   "hands": {
+    "L": {
+     "axis": [
+      -0.0,
+      0.5,
+      0.866
+     ],
+     "arm": {
+      "elev": 25,
+      "plane": 90,
+      "elbow": 35,
+      "bend": [
+       0,
+       0,
+       1
+      ],
+      "tilt": 0
+     }
+    },
+    "R": {
+     "axis": [
+      -0.0,
+      0.996,
+      -0.087
+     ],
+     "arm": {
+      "elev": 20,
+      "plane": -90,
+      "elbow": 15,
+      "bend": [
+       0,
+       1,
+       0
+      ],
+      "tilt": 0
+     }
+    }
+   }
+  }
+ },
+ "machine": {
+  "parts": [
+   {
+    "shape": "box",
+    "size": [
+     0.62,
+     0.3,
+     0.2
+    ],
+    "at": [
+     0,
+     -0.0,
+     0.1
+    ],
+    "mat": "pad",
+    "rot": [
+     0,
+     0,
+     0
+    ],
+    "bevel": 0.01
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.62,
+     0.3,
+     0.4
+    ],
+    "at": [
+     0,
+     -0.3,
+     0.2
+    ],
+    "mat": "pad",
+    "rot": [
+     0,
+     0,
+     0
+    ],
+    "bevel": 0.01
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.62,
+     0.3,
+     0.6000000000000001
+    ],
+    "at": [
+     0,
+     -0.6,
+     0.30000000000000004
+    ],
+    "mat": "pad",
+    "rot": [
+     0,
+     0,
+     0
+    ],
+    "bevel": 0.01
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.62,
+     0.3,
+     0.8
+    ],
+    "at": [
+     0,
+     -0.8999999999999999,
+     0.4
+    ],
+    "mat": "pad",
+    "rot": [
+     0,
+     0,
+     0
+    ],
+    "bevel": 0.01
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.62,
+     0.3,
+     1.0
+    ],
+    "at": [
+     0,
+     -1.2,
+     0.5
+    ],
+    "mat": "pad",
+    "rot": [
+     0,
+     0,
+     0
+    ],
+    "bevel": 0.01
+   },
+   {
+    "shape": "rod",
+    "size": [
+     0.03
+    ],
+    "a": [
+     0.46,
+     0.35,
+     0.03
+    ],
+    "b": [
+     0.46,
+     0.35,
+     1.0
+    ],
+    "mat": "frame",
+    "mirror": true
+   },
+   {
+    "shape": "rod",
+    "size": [
+     0.025
+    ],
+    "a": [
+     0.46,
+     0.35,
+     1.0
+    ],
+    "b": [
+     0.46,
+     -0.85,
+     1.0
+    ],
+    "mat": "frame",
+    "mirror": true
+   },
+   {
+    "shape": "rod",
+    "size": [
+     0.03
+    ],
+    "a": [
+     0.46,
+     -0.85,
+     1.0
+    ],
+    "b": [
+     0.46,
+     -1.0,
+     1.25
+    ],
+    "mat": "frame",
+    "mirror": true
+   },
+   {
+    "shape": "rod",
+    "size": [
+     0.04
+    ],
+    "a": [
+     0.46,
+     -1.0,
+     0.03
+    ],
+    "b": [
+     0.46,
+     -1.0,
+     1.25
+    ],
+    "mat": "frame",
+    "mirror": true
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.95,
+     0.1,
+     0.24
+    ],
+    "at": [
+     0,
+     -1.02,
+     1.3
+    ],
+    "mat": "frame",
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   }
+  ]
+ },
+ "research": "Revolving stairs: rise 0.20 m, tread 0.30 m, rising away from the camera side. Start: right foot on the lower step (ankle z 0.274, knee ~15 deg), left foot on the next step up (ankle z 0.474, knee ~75 deg), hips over the back half of the upper step, trunk upright (5 deg lean); end: swapped. Whole foot on each step (library), toes 2 cm short of the next riser. Hands off the rails, arms swinging opposite to the legs (forward arm elev 25 / plane 90 / elbow 35, back arm 20 / -90 / 15). Nadeau 2003 (stair climbing kinematics: knee extensors dominate).",
+ "timing": {
+  "fps": 30,
+  "keys": [
+   [
+    0,
+    "start"
+   ],
+   [
+    1,
+    "end"
+   ],
+   [
+    2,
+    "start"
+   ]
+  ]
+ }
+}

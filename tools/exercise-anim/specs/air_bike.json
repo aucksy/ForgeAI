@@ -1,0 +1,494 @@
+{
+ "key": "air_bike",
+ "name": "Air Bike",
+ "primary": [
+  "quads"
+ ],
+ "secondary": [
+  "glutes",
+  "front_delts"
+ ],
+ "props": {
+  "h_L": {
+   "type": "handle"
+  },
+  "h_R": {
+   "type": "handle"
+  }
+ },
+ "camera": {
+  "yaw": 70,
+  "pitch": 10,
+  "lens": 50,
+  "fill": 0.9,
+  "res": 640,
+  "samples": 20
+ },
+ "defaults": {
+  "root": {
+   "loc": [
+    0,
+    0.06,
+    0.95
+   ],
+   "rot": [
+    16,
+    0,
+    0
+   ]
+  },
+  "knees": {
+   "L": [
+    0.16,
+    -1.2,
+    0.95
+   ]
+  }
+ },
+ "poses": {
+  "start": {
+   "feet": {
+    "L": {
+     "at": [
+      0.12,
+      -0.369,
+      0.492
+     ],
+     "rot": [
+      0,
+      0,
+      4
+     ]
+    },
+    "R": {
+     "at": [
+      -0.12,
+      -0.369,
+      0.152
+     ],
+     "rot": [
+      8,
+      0,
+      -4
+     ]
+    }
+   },
+   "hands": {
+    "L": {
+     "axis": [
+      0.0,
+      0.0,
+      1.0
+     ],
+     "arm": {
+      "elev": 68,
+      "plane": 82,
+      "elbow": 22,
+      "bend": [
+       0,
+       0,
+       1
+      ],
+      "tilt": 0
+     },
+     "prop": "h_L"
+    },
+    "R": {
+     "axis": [
+      -0.0,
+      -0.322,
+      0.947
+     ],
+     "arm": {
+      "elev": 35,
+      "plane": 30,
+      "elbow": 95,
+      "bend": [
+       0,
+       1,
+       0
+      ],
+      "tilt": 0
+     },
+     "prop": "h_R"
+    }
+   }
+  },
+  "end": {
+   "feet": {
+    "L": {
+     "at": [
+      0.12,
+      -0.369,
+      0.152
+     ],
+     "rot": [
+      8,
+      0,
+      4
+     ]
+    },
+    "R": {
+     "at": [
+      -0.12,
+      -0.369,
+      0.492
+     ],
+     "rot": [
+      0,
+      0,
+      -4
+     ]
+    }
+   },
+   "hands": {
+    "L": {
+     "axis": [
+      0.0,
+      -0.322,
+      0.947
+     ],
+     "arm": {
+      "elev": 35,
+      "plane": 30,
+      "elbow": 95,
+      "bend": [
+       0,
+       1,
+       0
+      ],
+      "tilt": 0
+     },
+     "prop": "h_L"
+    },
+    "R": {
+     "axis": [
+      -0.0,
+      0.0,
+      1.0
+     ],
+     "arm": {
+      "elev": 68,
+      "plane": 82,
+      "elbow": 22,
+      "bend": [
+       0,
+       0,
+       1
+      ],
+      "tilt": 0
+     },
+     "prop": "h_R"
+    }
+   }
+  }
+ },
+ "machine": {
+  "parts": [
+   {
+    "shape": "box",
+    "size": [
+     0.17,
+     0.27,
+     0.06
+    ],
+    "at": {
+     "a": "bone:root@start",
+     "off": [
+      0,
+      0.03,
+      -0.085
+     ]
+    },
+    "mat": "pad",
+    "rot": [
+     0,
+     0,
+     0
+    ],
+    "bevel": 0.025
+   },
+   {
+    "shape": "rod",
+    "size": [
+     0.03
+    ],
+    "a": {
+     "a": {
+      "a": "bone:root@start",
+      "off": [
+       0,
+       0.03,
+       -0.085
+      ]
+     },
+     "off": [
+      0,
+      0.02,
+      -0.03
+     ]
+    },
+    "b": [
+     0,
+     -0.46,
+     0.25
+    ],
+    "mat": "frame"
+   },
+   {
+    "shape": "cyl",
+    "size": [
+     0.06,
+     0.2
+    ],
+    "at": [
+     0,
+     -0.509,
+     0.242
+    ],
+    "mat": "frame",
+    "rot": [
+     0,
+     0,
+     90
+    ]
+   },
+   {
+    "shape": "rod",
+    "size": [
+     0.016
+    ],
+    "a": {
+     "a": [
+      0.09,
+      -0.509,
+      0.242
+     ],
+     "off": [
+      0,
+      0,
+      0
+     ]
+    },
+    "b": {
+     "a": {
+      "bone": "foot.L",
+      "off": [
+       0,
+       -0.14,
+       -0.08
+      ]
+     },
+     "off": [
+      -0.03,
+      0,
+      0
+     ]
+    },
+    "mat": "chrome",
+    "mirror": true
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.1,
+     0.12,
+     0.025
+    ],
+    "at": {
+     "bone": "foot.L",
+     "off": [
+      0,
+      -0.14,
+      -0.08
+     ]
+    },
+    "mat": "rubber",
+    "rot": [
+     0,
+     0,
+     0
+    ],
+    "mirror": true
+   },
+   {
+    "shape": "rod",
+    "size": [
+     0.035
+    ],
+    "a": [
+     0,
+     -0.62,
+     0.42
+    ],
+    "b": [
+     0,
+     -0.509,
+     0.242
+    ],
+    "mat": "frame"
+   },
+   {
+    "shape": "rod",
+    "size": [
+     0.035
+    ],
+    "a": [
+     0,
+     0.1,
+     0.03
+    ],
+    "b": [
+     0,
+     -0.85,
+     0.03
+    ],
+    "mat": "frame"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.5,
+     0.07,
+     0.06
+    ],
+    "at": [
+     0,
+     0.1,
+     0.03
+    ],
+    "mat": "frame",
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.5,
+     0.07,
+     0.06
+    ],
+    "at": [
+     0,
+     -0.85,
+     0.03
+    ],
+    "mat": "frame",
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "shape": "rod",
+    "size": [
+     0.022
+    ],
+    "a": {
+     "prop": "h_L",
+     "loc": [
+      -0.08,
+      0,
+      0
+     ]
+    },
+    "b": {
+     "bisect": [
+      "propx:h_L:-0.08,0,0@start",
+      "propx:h_L:-0.08,0,0@end"
+     ],
+     "near": [
+      0.3,
+      -0.72,
+      0.42
+     ]
+    },
+    "mat": "frame",
+    "mirror": true
+   },
+   {
+    "shape": "cyl",
+    "size": [
+     0.035,
+     0.08
+    ],
+    "at": {
+     "bisect": [
+      "propx:h_L:-0.08,0,0@start",
+      "propx:h_L:-0.08,0,0@end"
+     ],
+     "near": [
+      0.3,
+      -0.72,
+      0.42
+     ]
+    },
+    "mat": "chrome",
+    "rot": [
+     0,
+     0,
+     90
+    ],
+    "mirror": true
+   },
+   {
+    "shape": "cyl",
+    "size": [
+     0.33,
+     0.14
+    ],
+    "at": [
+     0,
+     -0.86,
+     0.45
+    ],
+    "mat": "frame",
+    "rot": [
+     0,
+     0,
+     90
+    ]
+   },
+   {
+    "shape": "cyl",
+    "size": [
+     0.07,
+     0.18
+    ],
+    "at": [
+     0,
+     -0.86,
+     0.45
+    ],
+    "mat": "chrome",
+    "rot": [
+     0,
+     0,
+     90
+    ]
+   }
+  ]
+ },
+ "research": "Body and legs as the stationary_bike picture (same saddle, crank and knee angles), trunk 16 deg forward. Arms push and pull the moving handles in turn: start = left pedal top, left arm pushed forward (elev 68, plane 82, elbow 22), right arm pulled back (elev 35, plane 30, elbow 95); end = swapped. Vertical (palm-in) handles on levers that pivot low at the front of the frame (equal length start/end), big fan in front. Hug & Dorel 2009 (legs), Smith 2008 (arm cranking: deltoid/triceps/biceps).",
+ "timing": {
+  "fps": 30,
+  "keys": [
+   [
+    0,
+    "start"
+   ],
+   [
+    1,
+    "end"
+   ],
+   [
+    2,
+    "start"
+   ]
+  ]
+ }
+}

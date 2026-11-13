@@ -1,0 +1,345 @@
+{
+ "key": "iso_lateral_chest_press",
+ "name": "Iso-Lateral Chest Press",
+ "primary": [
+  "chest"
+ ],
+ "secondary": [
+  "triceps",
+  "front_delts"
+ ],
+ "scene": {
+  "bench": {
+   "deg": 85,
+   "style": "machine",
+   "back_len": 0.82,
+   "seat_h": 0.44
+  }
+ },
+ "props": {
+  "h_L": {
+   "type": "handle"
+  },
+  "h_R": {
+   "type": "handle"
+  }
+ },
+ "camera": {
+  "yaw": 40,
+  "pitch": 16,
+  "lens": 50,
+  "fill": 0.9,
+  "res": 640,
+  "samples": 20
+ },
+ "defaults": {
+  "root": {
+   "loc": [
+    0,
+    -0.035,
+    0.494
+   ],
+   "rot": [
+    -6,
+    0,
+    0
+   ]
+  },
+  "feet": {
+   "L": {
+    "at": [
+     0.22,
+     -0.58,
+     0.075
+    ],
+    "rot": [
+     0,
+     0,
+     10
+    ]
+   }
+  },
+  "knees": {
+   "L": [
+    0.32,
+    -1.0,
+    0.9
+   ]
+  }
+ },
+ "poses": {
+  "start": {
+   "hands": {
+    "L": {
+     "axis": [
+      -0.0,
+      0.078,
+      0.997
+     ],
+     "arm": {
+      "elev": 45,
+      "plane": -20,
+      "elbow": 100,
+      "bend": [
+       -0.1,
+       1,
+       0.05
+      ],
+      "tilt": 0
+     },
+     "prop": "h_L"
+    }
+   }
+  },
+  "end": {
+   "hands": {
+    "L": {
+     "axis": [
+      -0.0,
+      0.053,
+      0.999
+     ],
+     "arm": {
+      "elev": 82,
+      "plane": 80,
+      "elbow": 8,
+      "bend": [
+       0,
+       1,
+       0
+      ],
+      "tilt": 0
+     },
+     "prop": "h_L"
+    }
+   }
+  }
+ },
+ "machine": {
+  "parts": [
+   {
+    "shape": "rod",
+    "size": [
+     0.026
+    ],
+    "a": {
+     "prop": "h_L",
+     "loc": [
+      0.08,
+      0,
+      0
+     ]
+    },
+    "b": {
+     "bisect": [
+      "propx:h_L:0.08,0,0@start",
+      "propx:h_L:0.08,0,0@end"
+     ],
+     "near": [
+      0.45,
+      0.12,
+      1.55
+     ]
+    },
+    "mat": "frame",
+    "mirror": true
+   },
+   {
+    "shape": "cyl",
+    "size": [
+     0.05,
+     0.1
+    ],
+    "at": {
+     "bisect": [
+      "propx:h_L:0.08,0,0@start",
+      "propx:h_L:0.08,0,0@end"
+     ],
+     "near": [
+      0.45,
+      0.12,
+      1.55
+     ]
+    },
+    "mat": "chrome",
+    "rot": [
+     0,
+     0,
+     90
+    ],
+    "mirror": true
+   },
+   {
+    "shape": "rod",
+    "size": [
+     0.035
+    ],
+    "a": {
+     "xyz": [
+      {
+       "bisect": [
+        "propx:h_L:0.08,0,0@start",
+        "propx:h_L:0.08,0,0@end"
+       ],
+       "near": [
+        0.45,
+        0.12,
+        1.55
+       ]
+      },
+      {
+       "bisect": [
+        "propx:h_L:0.08,0,0@start",
+        "propx:h_L:0.08,0,0@end"
+       ],
+       "near": [
+        0.45,
+        0.12,
+        1.55
+       ]
+      },
+      0.03
+     ]
+    },
+    "b": {
+     "bisect": [
+      "propx:h_L:0.08,0,0@start",
+      "propx:h_L:0.08,0,0@end"
+     ],
+     "near": [
+      0.45,
+      0.12,
+      1.55
+     ]
+    },
+    "mat": "frame",
+    "mirror": true
+   },
+   {
+    "shape": "rod",
+    "size": [
+     0.03
+    ],
+    "a": {
+     "bisect": [
+      "propx:h_L:0.08,0,0@start",
+      "propx:h_L:0.08,0,0@end"
+     ],
+     "near": [
+      0.45,
+      0.12,
+      1.55
+     ]
+    },
+    "b": {
+     "mirror": {
+      "bisect": [
+       "propx:h_L:0.08,0,0@start",
+       "propx:h_L:0.08,0,0@end"
+      ],
+      "near": [
+       0.45,
+       0.12,
+       1.55
+      ]
+     }
+    },
+    "mat": "frame"
+   },
+   {
+    "shape": "rod",
+    "size": [
+     0.03
+    ],
+    "a": {
+     "xyz": [
+      {
+       "a": {
+        "bisect": [
+         "propx:h_L:0.08,0,0@start",
+         "propx:h_L:0.08,0,0@end"
+        ],
+        "near": [
+         0.45,
+         0.12,
+         1.55
+        ]
+       },
+       "off": [
+        0,
+        -0.5,
+        0
+       ]
+      },
+      {
+       "a": {
+        "bisect": [
+         "propx:h_L:0.08,0,0@start",
+         "propx:h_L:0.08,0,0@end"
+        ],
+        "near": [
+         0.45,
+         0.12,
+         1.55
+        ]
+       },
+       "off": [
+        0,
+        -0.5,
+        0
+       ]
+      },
+      0.03
+     ]
+    },
+    "b": {
+     "xyz": [
+      {
+       "bisect": [
+        "propx:h_L:0.08,0,0@start",
+        "propx:h_L:0.08,0,0@end"
+       ],
+       "near": [
+        0.45,
+        0.12,
+        1.55
+       ]
+      },
+      {
+       "bisect": [
+        "propx:h_L:0.08,0,0@start",
+        "propx:h_L:0.08,0,0@end"
+       ],
+       "near": [
+        0.45,
+        0.12,
+        1.55
+       ]
+      },
+      0.03
+     ]
+    },
+    "mat": "frame",
+    "mirror": true
+   }
+  ]
+ },
+ "research": "Seated body copied from the proven seated_hammer_curl (85 deg back, root (0,-0.035,0.494) rot -6), feet narrower on a machine base. Start: elbows ~45 deg out and a little behind the torso (elev 45, plane -20), elbow 100 so the hands sit beside the chest; end: arms nearly straight forward at shoulder height (elev 82, plane 80, elbow 8) and slightly converging. Neutral handles (Muyor 2023: seated chest press, neutral grip). Plate-loaded levers: each handle's top end to a pivot above and behind the shoulder that is equally far from the start and end handle (lever keeps its length).",
+ "timing": {
+  "fps": 30,
+  "keys": [
+   [
+    0,
+    "start"
+   ],
+   [
+    1,
+    "end"
+   ],
+   [
+    2,
+    "start"
+   ]
+  ]
+ }
+}

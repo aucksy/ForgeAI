@@ -1,0 +1,357 @@
+{
+ "key": "incline_treadmill_walk",
+ "name": "Incline Treadmill Walk",
+ "primary": [
+  "glutes"
+ ],
+ "secondary": [
+  "hamstrings",
+  "calves"
+ ],
+ "camera": {
+  "yaw": -75,
+  "pitch": 8,
+  "lens": 50,
+  "fill": 0.9,
+  "res": 640,
+  "samples": 20
+ },
+ "poses": {
+  "start": {
+   "root": {
+    "loc": [
+     0,
+     0.051,
+     1.202
+    ],
+    "rot": [
+     8,
+     0,
+     0
+    ]
+   },
+   "feet": {
+    "L": {
+     "at": [
+      0.12,
+      -0.17,
+      0.355
+     ],
+     "rot": [
+      -10,
+      0,
+      4
+     ]
+    },
+    "R": {
+     "at": [
+      -0.12,
+      0.18,
+      0.328
+     ],
+     "rot": [
+      5,
+      0,
+      -4
+     ]
+    }
+   },
+   "knees": {
+    "L": [
+     0.16,
+     -1.0,
+     0.6
+    ],
+    "R": [
+     -0.16,
+     -1.0,
+     0.6
+    ]
+   },
+   "hands": {
+    "L": {
+     "axis": [
+      0.0,
+      0.996,
+      -0.087
+     ],
+     "arm": {
+      "elev": 20,
+      "plane": -90,
+      "elbow": 15,
+      "bend": [
+       0,
+       1,
+       0
+      ],
+      "tilt": 0
+     }
+    },
+    "R": {
+     "axis": [
+      -0.0,
+      0.574,
+      0.819
+     ],
+     "arm": {
+      "elev": 25,
+      "plane": 90,
+      "elbow": 30,
+      "bend": [
+       0,
+       0,
+       1
+      ],
+      "tilt": 0
+     }
+    }
+   }
+  },
+  "end": {
+   "root": {
+    "loc": [
+     0,
+     0.051,
+     1.202
+    ],
+    "rot": [
+     8,
+     0,
+     0
+    ]
+   },
+   "feet": {
+    "L": {
+     "at": [
+      0.12,
+      0.18,
+      0.328
+     ],
+     "rot": [
+      5,
+      0,
+      4
+     ]
+    },
+    "R": {
+     "at": [
+      -0.12,
+      -0.17,
+      0.355
+     ],
+     "rot": [
+      -10,
+      0,
+      -4
+     ]
+    }
+   },
+   "knees": {
+    "L": [
+     0.16,
+     -1.0,
+     0.6
+    ],
+    "R": [
+     -0.16,
+     -1.0,
+     0.6
+    ]
+   },
+   "hands": {
+    "L": {
+     "axis": [
+      -0.0,
+      0.574,
+      0.819
+     ],
+     "arm": {
+      "elev": 25,
+      "plane": 90,
+      "elbow": 30,
+      "bend": [
+       0,
+       0,
+       1
+      ],
+      "tilt": 0
+     }
+    },
+    "R": {
+     "axis": [
+      0.0,
+      0.996,
+      -0.087
+     ],
+     "arm": {
+      "elev": 20,
+      "plane": -90,
+      "elbow": 15,
+      "bend": [
+       0,
+       1,
+       0
+      ],
+      "tilt": 0
+     }
+    }
+   }
+  }
+ },
+ "machine": {
+  "parts": [
+   {
+    "shape": "box",
+    "size": [
+     0.58,
+     1.62,
+     0.16
+    ],
+    "at": [
+     0,
+     0.0,
+     0.17
+    ],
+    "mat": "frame",
+    "rot": [
+     -10,
+     0,
+     0
+    ],
+    "bevel": 0.02
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.48,
+     1.56,
+     0.012
+    ],
+    "at": [
+     0,
+     0.0,
+     0.255
+    ],
+    "mat": "rubber",
+    "rot": [
+     -10,
+     0,
+     0
+    ],
+    "bevel": 0.004
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.6,
+     0.1,
+     0.12
+    ],
+    "at": [
+     0,
+     0.75,
+     0.06
+    ],
+    "mat": "frame",
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "shape": "rod",
+    "size": [
+     0.035
+    ],
+    "a": [
+     0.37,
+     -0.75,
+     0.36
+    ],
+    "b": [
+     0.37,
+     -0.95,
+     1.4
+    ],
+    "mat": "frame",
+    "mirror": true
+   },
+   {
+    "shape": "rod",
+    "size": [
+     0.022
+    ],
+    "a": [
+     0.37,
+     -0.9,
+     1.12
+    ],
+    "b": [
+     0.37,
+     -0.3,
+     1.04
+    ],
+    "mat": "frame",
+    "mirror": true
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.86,
+     0.12,
+     0.24
+    ],
+    "at": [
+     0,
+     -0.97,
+     1.42
+    ],
+    "mat": "frame",
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.74,
+     0.24,
+     0.3
+    ],
+    "at": [
+     0,
+     -0.85,
+     0.25
+    ],
+    "mat": "frame",
+    "rot": [
+     0,
+     0,
+     0
+    ],
+    "bevel": 0.03
+   }
+  ]
+ },
+ "research": "Belt rising 10 deg toward the front (surface z = 0.25 + 0.176 (-y)). Brisk walk, both feet on the belt: front foot flat on the slope (toes up 10 deg, ankle 0.075 above the belt), back foot on its ball (heel up 15 deg from the belt), step ~0.35 m, front knee ~30 deg, back knee ~12 deg, trunk 8 deg forward into the hill. Hands off the rails (library), arms swinging opposite the legs. Franz & Kram 2012 (9 deg uphill: hip extensors x3-6, MG x1.75), Lay 2006/2007 (slope walking).",
+ "timing": {
+  "fps": 30,
+  "keys": [
+   [
+    0,
+    "start"
+   ],
+   [
+    1,
+    "end"
+   ],
+   [
+    2,
+    "start"
+   ]
+  ]
+ }
+}

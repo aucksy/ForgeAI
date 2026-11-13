@@ -1,0 +1,396 @@
+{
+ "key": "incline_machine_fly",
+ "name": "Incline Machine Fly",
+ "primary": [
+  "chest_upper"
+ ],
+ "secondary": [
+  "chest_lower",
+  "front_delts"
+ ],
+ "scene": {
+  "bench": {
+   "deg": 30,
+   "style": "machine",
+   "back_len": 0.82,
+   "seat_h": 0.44
+  }
+ },
+ "props": {
+  "h_L": {
+   "type": "handle"
+  },
+  "h_R": {
+   "type": "handle"
+  }
+ },
+ "camera": {
+  "yaw": 30,
+  "pitch": 34,
+  "lens": 50,
+  "fill": 0.9,
+  "res": 640,
+  "samples": 20
+ },
+ "defaults": {
+  "root": {
+   "loc": [
+    0,
+    0.092,
+    0.49
+   ],
+   "rot": [
+    -38,
+    0,
+    0
+   ]
+  },
+  "bones": {
+   "spine05": [
+    -7,
+    0,
+    0
+   ],
+   "spine04": [
+    -7,
+    0,
+    0
+   ],
+   "spine03": [
+    -7,
+    0,
+    0
+   ],
+   "spine02": [
+    -6,
+    0,
+    0
+   ],
+   "neck01": [
+    8,
+    0,
+    0
+   ],
+   "head": [
+    6,
+    0,
+    0
+   ]
+  },
+  "feet": {
+   "L": {
+    "at": [
+     0.37,
+     -0.4,
+     0.075
+    ],
+    "rot": [
+     0,
+     0,
+     18
+    ]
+   }
+  },
+  "knees": {
+   "L": [
+    0.62,
+    -1.0,
+    0.9
+   ]
+  }
+ },
+ "poses": {
+  "start": {
+   "hands": {
+    "L": {
+     "axis": [
+      0,
+      0,
+      1
+     ],
+     "arm": {
+      "elev": 85,
+      "plane": -10,
+      "elbow": 20,
+      "bend": [
+       0,
+       1,
+       0
+      ],
+      "tilt": 0
+     },
+     "prop": "h_L"
+    }
+   }
+  },
+  "end": {
+   "hands": {
+    "L": {
+     "axis": [
+      0,
+      0,
+      1
+     ],
+     "arm": {
+      "elev": 95,
+      "plane": 90,
+      "elbow": 20,
+      "bend": [
+       -1,
+       0.3,
+       0
+      ],
+      "tilt": 0
+     },
+     "prop": "h_L"
+    }
+   }
+  }
+ },
+ "machine": {
+  "parts": [
+   {
+    "shape": "rod",
+    "size": [
+     0.026
+    ],
+    "a": {
+     "prop": "h_L",
+     "loc": [
+      0.08,
+      0,
+      0
+     ]
+    },
+    "b": {
+     "bisect": [
+      "propx:h_L:0.08,0,0@start",
+      "propx:h_L:0.08,0,0@end"
+     ],
+     "near": {
+      "a": "bone:upperarm01.L@start",
+      "off": [
+       0.05,
+       0.32,
+       0.3
+      ]
+     }
+    },
+    "mat": "frame",
+    "mirror": true
+   },
+   {
+    "shape": "cyl",
+    "size": [
+     0.05,
+     0.1
+    ],
+    "at": {
+     "bisect": [
+      "propx:h_L:0.08,0,0@start",
+      "propx:h_L:0.08,0,0@end"
+     ],
+     "near": {
+      "a": "bone:upperarm01.L@start",
+      "off": [
+       0.05,
+       0.32,
+       0.3
+      ]
+     }
+    },
+    "mat": "chrome",
+    "rot": [
+     0,
+     0,
+     90
+    ],
+    "mirror": true
+   },
+   {
+    "shape": "rod",
+    "size": [
+     0.03
+    ],
+    "a": {
+     "bisect": [
+      "propx:h_L:0.08,0,0@start",
+      "propx:h_L:0.08,0,0@end"
+     ],
+     "near": {
+      "a": "bone:upperarm01.L@start",
+      "off": [
+       0.05,
+       0.32,
+       0.3
+      ]
+     }
+    },
+    "b": {
+     "mirror": {
+      "bisect": [
+       "propx:h_L:0.08,0,0@start",
+       "propx:h_L:0.08,0,0@end"
+      ],
+      "near": {
+       "a": "bone:upperarm01.L@start",
+       "off": [
+        0.05,
+        0.32,
+        0.3
+       ]
+      }
+     }
+    },
+    "mat": "frame"
+   },
+   {
+    "shape": "rod",
+    "size": [
+     0.035
+    ],
+    "a": {
+     "xyz": [
+      {
+       "a": {
+        "bisect": [
+         "propx:h_L:0.08,0,0@start",
+         "propx:h_L:0.08,0,0@end"
+        ],
+        "near": {
+         "a": "bone:upperarm01.L@start",
+         "off": [
+          0.05,
+          0.32,
+          0.3
+         ]
+        }
+       },
+       "off": [
+        0,
+        0.25,
+        0
+       ]
+      },
+      {
+       "a": {
+        "bisect": [
+         "propx:h_L:0.08,0,0@start",
+         "propx:h_L:0.08,0,0@end"
+        ],
+        "near": {
+         "a": "bone:upperarm01.L@start",
+         "off": [
+          0.05,
+          0.32,
+          0.3
+         ]
+        }
+       },
+       "off": [
+        0,
+        0.25,
+        0
+       ]
+      },
+      0.03
+     ]
+    },
+    "b": {
+     "a": {
+      "bisect": [
+       "propx:h_L:0.08,0,0@start",
+       "propx:h_L:0.08,0,0@end"
+      ],
+      "near": {
+       "a": "bone:upperarm01.L@start",
+       "off": [
+        0.05,
+        0.32,
+        0.3
+       ]
+      }
+     },
+     "off": [
+      0,
+      0.25,
+      0
+     ]
+    },
+    "mat": "frame",
+    "mirror": true
+   },
+   {
+    "shape": "rod",
+    "size": [
+     0.03
+    ],
+    "a": {
+     "a": {
+      "bisect": [
+       "propx:h_L:0.08,0,0@start",
+       "propx:h_L:0.08,0,0@end"
+      ],
+      "near": {
+       "a": "bone:upperarm01.L@start",
+       "off": [
+        0.05,
+        0.32,
+        0.3
+       ]
+      }
+     },
+     "off": [
+      0,
+      0.25,
+      0
+     ]
+    },
+    "b": {
+     "bisect": [
+      "propx:h_L:0.08,0,0@start",
+      "propx:h_L:0.08,0,0@end"
+     ],
+     "near": {
+      "a": "bone:upperarm01.L@start",
+      "off": [
+       0.05,
+       0.32,
+       0.3
+      ]
+     }
+    },
+    "mat": "frame",
+    "mirror": true
+   },
+   {
+    "template": "stack",
+    "at": [
+     0,
+     1.15,
+     0
+    ],
+    "h": 1.6,
+    "rot_z": 0
+   }
+  ]
+ },
+ "research": "Proven 30 deg incline body (incline_dumbbell_press). Start: arms open level with the shoulders (elev 85, plane -10, elbow 20 fixed), handles in line with the chest; end: arms brought up and together over the upper chest (elev 95, plane 90, elbow 20 curving in, hands ~0.2 m apart). Vertical neutral handles along the torso (pec deck style), so the palms face forward then each other. Levers from the handle tops to a pivot above each shoulder (equal length start/end). Solstad 2020 (fly vs press EMG), Rodriguez-Ridao 2020 (30 deg incline favours the clavicular pec).",
+ "timing": {
+  "fps": 30,
+  "keys": [
+   [
+    0,
+    "start"
+   ],
+   [
+    1,
+    "end"
+   ],
+   [
+    2,
+    "start"
+   ]
+  ]
+ }
+}

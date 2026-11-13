@@ -1,0 +1,339 @@
+{
+ "key": "iso_lateral_low_row",
+ "name": "Iso-Lateral Low Row",
+ "primary": [
+  "lats"
+ ],
+ "secondary": [
+  "upper_back",
+  "biceps",
+  "rear_delts"
+ ],
+ "scene": {
+  "bench": {
+   "deg": 85,
+   "style": "machine",
+   "back_len": 0,
+   "seat_h": 0.44
+  }
+ },
+ "props": {
+  "h_L": {
+   "type": "handle"
+  },
+  "h_R": {
+   "type": "handle"
+  }
+ },
+ "camera": {
+  "yaw": -60,
+  "pitch": 14,
+  "lens": 50,
+  "fill": 0.9,
+  "res": 640,
+  "samples": 20
+ },
+ "defaults": {
+  "root": {
+   "loc": [
+    0,
+    -0.035,
+    0.494
+   ],
+   "rot": [
+    -6,
+    0,
+    0
+   ]
+  },
+  "feet": {
+   "L": {
+    "at": [
+     0.22,
+     -0.58,
+     0.075
+    ],
+    "rot": [
+     0,
+     0,
+     10
+    ]
+   }
+  },
+  "knees": {
+   "L": [
+    0.32,
+    -1.0,
+    0.9
+   ]
+  }
+ },
+ "poses": {
+  "start": {
+   "hands": {
+    "L": {
+     "axis": [
+      -0.0,
+      0.299,
+      0.954
+     ],
+     "arm": {
+      "elev": 68,
+      "plane": 82,
+      "elbow": 5,
+      "bend": [
+       0,
+       1,
+       0
+      ],
+      "tilt": 0
+     },
+     "prop": "h_L"
+    }
+   }
+  },
+  "end": {
+   "hands": {
+    "L": {
+     "axis": [
+      -0.0,
+      0.618,
+      0.786
+     ],
+     "arm": {
+      "elev": 35,
+      "plane": -60,
+      "elbow": 80,
+      "bend": [
+       0,
+       1,
+       0
+      ],
+      "tilt": 0
+     },
+     "prop": "h_L"
+    }
+   }
+  }
+ },
+ "machine": {
+  "parts": [
+   {
+    "shape": "rod",
+    "size": [
+     0.026
+    ],
+    "a": {
+     "prop": "h_L",
+     "loc": [
+      -0.08,
+      0,
+      0
+     ]
+    },
+    "b": {
+     "bisect": [
+      "propx:h_L:-0.08,0,0@start",
+      "propx:h_L:-0.08,0,0@end"
+     ],
+     "near": [
+      0.42,
+      -0.8,
+      0.12
+     ]
+    },
+    "mat": "frame",
+    "mirror": true
+   },
+   {
+    "shape": "cyl",
+    "size": [
+     0.05,
+     0.1
+    ],
+    "at": {
+     "bisect": [
+      "propx:h_L:-0.08,0,0@start",
+      "propx:h_L:-0.08,0,0@end"
+     ],
+     "near": [
+      0.42,
+      -0.8,
+      0.12
+     ]
+    },
+    "mat": "chrome",
+    "rot": [
+     0,
+     0,
+     90
+    ],
+    "mirror": true
+   },
+   {
+    "shape": "rod",
+    "size": [
+     0.035
+    ],
+    "a": {
+     "bisect": [
+      "propx:h_L:-0.08,0,0@start",
+      "propx:h_L:-0.08,0,0@end"
+     ],
+     "near": [
+      0.42,
+      -0.8,
+      0.12
+     ]
+    },
+    "b": {
+     "mirror": {
+      "bisect": [
+       "propx:h_L:-0.08,0,0@start",
+       "propx:h_L:-0.08,0,0@end"
+      ],
+      "near": [
+       0.42,
+       -0.8,
+       0.12
+      ]
+     }
+    },
+    "mat": "frame"
+   },
+   {
+    "shape": "rod",
+    "size": [
+     0.04
+    ],
+    "a": {
+     "xyz": [
+      {
+       "bisect": [
+        "propx:h_L:-0.08,0,0@start",
+        "propx:h_L:-0.08,0,0@end"
+       ],
+       "near": [
+        0.42,
+        -0.8,
+        0.12
+       ]
+      },
+      {
+       "bisect": [
+        "propx:h_L:-0.08,0,0@start",
+        "propx:h_L:-0.08,0,0@end"
+       ],
+       "near": [
+        0.42,
+        -0.8,
+        0.12
+       ]
+      },
+      0.03
+     ]
+    },
+    "b": {
+     "bisect": [
+      "propx:h_L:-0.08,0,0@start",
+      "propx:h_L:-0.08,0,0@end"
+     ],
+     "near": [
+      0.42,
+      -0.8,
+      0.12
+     ]
+    },
+    "mat": "frame",
+    "mirror": true
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.3,
+     0.08,
+     0.34
+    ],
+    "at": {
+     "a": "body:-y:z=0.84~0.03:x=0~0.06@start",
+     "off": [
+      0,
+      -0.045,
+      0
+     ]
+    },
+    "mat": "pad",
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "shape": "rod",
+    "size": [
+     0.03
+    ],
+    "a": {
+     "a": "body:-y:z=0.84~0.03:x=0~0.06@start",
+     "off": [
+      0,
+      -0.09,
+      0
+     ]
+    },
+    "b": {
+     "xyz": [
+      0,
+      -0.62,
+      {
+       "a": "body:-y:z=0.84~0.03:x=0~0.06@start"
+      }
+     ]
+    },
+    "mat": "frame"
+   },
+   {
+    "shape": "rod",
+    "size": [
+     0.04
+    ],
+    "a": {
+     "xyz": [
+      0,
+      -0.62,
+      0.03
+     ]
+    },
+    "b": {
+     "xyz": [
+      0,
+      -0.62,
+      {
+       "a": "body:-y:z=0.84~0.03:x=0~0.06@start"
+      }
+     ]
+    },
+    "mat": "frame"
+   }
+  ]
+ },
+ "research": "Seated body (proven), chest pad on the real chest. Start: arms reaching forward and down to low handles (elev 68, plane 82, elbow 5; handles above the knees); end: elbows close to the body pulled back past the hips (elev 35, plane -60, elbow 80), hands by the hips. Neutral handles; levers pivot low in front (equal length start/end). Lehman 2004 (rows), Lusk 2010 (lats).",
+ "timing": {
+  "fps": 30,
+  "keys": [
+   [
+    0,
+    "start"
+   ],
+   [
+    1,
+    "end"
+   ],
+   [
+    2,
+    "start"
+   ]
+  ]
+ }
+}

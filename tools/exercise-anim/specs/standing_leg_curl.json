@@ -1,0 +1,454 @@
+{
+ "key": "standing_leg_curl",
+ "name": "Standing Leg Curl",
+ "primary": [
+  "hamstrings"
+ ],
+ "secondary": [
+  "calves"
+ ],
+ "highlight_side": "L",
+ "props": {
+  "h_L": {
+   "type": "handle"
+  },
+  "h_R": {
+   "type": "handle"
+  }
+ },
+ "camera": {
+  "yaw": 75,
+  "pitch": 8,
+  "lens": 50,
+  "fill": 0.9,
+  "res": 640,
+  "samples": 20
+ },
+ "defaults": {
+  "root": {
+   "loc": [
+    0,
+    0.056,
+    1.026
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ]
+  },
+  "feet": {
+   "R": {
+    "at": [
+     -0.12,
+     -0.01,
+     0.134
+    ],
+    "rot": [
+     0,
+     0,
+     -4
+    ]
+   }
+  },
+  "knees": {
+   "R": [
+    -0.16,
+    -1.0,
+    0.58
+   ]
+  },
+  "hands": {
+   "L": {
+    "axis": [
+     0.0,
+     -0.087,
+     0.996
+    ],
+    "arm": {
+     "elev": 25,
+     "plane": 85,
+     "elbow": 70,
+     "bend": [
+      0,
+      0,
+      1
+     ],
+     "tilt": 0
+    },
+    "prop": "h_L"
+   }
+  }
+ },
+ "poses": {
+  "start": {
+   "feet": {
+    "L": {
+     "at": [
+      0.12,
+      0.03,
+      0.142
+     ],
+     "rot": [
+      10,
+      0,
+      4
+     ]
+    }
+   },
+   "knees": {
+    "L": [
+     0.15,
+     -1.0,
+     0.58
+    ]
+   }
+  },
+  "end": {
+   "feet": {
+    "L": {
+     "at": [
+      0.12,
+      0.443,
+      0.66
+     ],
+     "rot": [
+      100,
+      0,
+      4
+     ]
+    }
+   },
+   "knees": {
+    "L": [
+     0.15,
+     -1.0,
+     0.58
+    ]
+   }
+  }
+ },
+ "machine": {
+  "parts": [
+   {
+    "shape": "cyl",
+    "size": [
+     0.045,
+     0.17
+    ],
+    "at": {
+     "a": {
+      "along": [
+       "lowerleg01.L",
+       "foot.L"
+      ],
+      "t": 0.86,
+      "hinge": [
+       1,
+       0,
+       0
+      ],
+      "d": 0.075
+     },
+     "off": [
+      0,
+      0,
+      0
+     ]
+    },
+    "mat": "pad",
+    "rot": [
+     0,
+     0,
+     90
+    ]
+   },
+   {
+    "shape": "rod",
+    "size": [
+     0.022
+    ],
+    "a": {
+     "a": {
+      "along": [
+       "lowerleg01.L",
+       "foot.L"
+      ],
+      "t": 0.86,
+      "hinge": [
+       1,
+       0,
+       0
+      ],
+      "d": 0.075
+     },
+     "off": [
+      0.1,
+      0,
+      0
+     ]
+    },
+    "b": {
+     "a": "bone:lowerleg01.L@start",
+     "off": [
+      0.13,
+      0,
+      0
+     ]
+    },
+    "mat": "frame"
+   },
+   {
+    "shape": "cyl",
+    "size": [
+     0.045,
+     0.06
+    ],
+    "at": {
+     "a": "bone:lowerleg01.L@start",
+     "off": [
+      0.13,
+      0,
+      0
+     ]
+    },
+    "mat": "chrome",
+    "rot": [
+     0,
+     0,
+     90
+    ]
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.15,
+     0.06,
+     0.13
+    ],
+    "at": {
+     "a": "bone:lowerleg01.L@start",
+     "off": [
+      0,
+      -0.1,
+      0.11
+     ]
+    },
+    "mat": "pad",
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.4,
+     0.42,
+     0.06
+    ],
+    "at": [
+     -0.05,
+     0.0,
+     0.03
+    ],
+    "mat": "pad",
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "shape": "rod",
+    "size": [
+     0.03
+    ],
+    "a": {
+     "a": "bone:lowerleg01.L@start",
+     "off": [
+      0.13,
+      0,
+      0
+     ]
+    },
+    "b": {
+     "xyz": [
+      0.13,
+      -0.5,
+      {
+       "a": "bone:lowerleg01.L@start"
+      }
+     ]
+    },
+    "mat": "frame"
+   },
+   {
+    "shape": "rod",
+    "size": [
+     0.025
+    ],
+    "a": {
+     "a": "bone:lowerleg01.L@start",
+     "off": [
+      0,
+      -0.15,
+      0.11
+     ]
+    },
+    "b": {
+     "xyz": [
+      0,
+      -0.5,
+      {
+       "a": {
+        "a": "bone:lowerleg01.L@start",
+        "off": [
+         0,
+         0,
+         0.11
+        ]
+       }
+      }
+     ]
+    },
+    "mat": "frame"
+   },
+   {
+    "shape": "rod",
+    "size": [
+     0.02
+    ],
+    "a": {
+     "prop": "h_L",
+     "loc": [
+      -0.08,
+      0,
+      0
+     ]
+    },
+    "b": {
+     "xyz": [
+      0.13,
+      -0.5,
+      {
+       "a": {
+        "a": "fist.L@start",
+        "off": [
+         0,
+         0,
+         -0.14
+        ]
+       }
+      }
+     ]
+    },
+    "mat": "frame",
+    "mirror": true
+   },
+   {
+    "shape": "rod",
+    "size": [
+     0.04
+    ],
+    "a": {
+     "xyz": [
+      0.13,
+      -0.5,
+      0.03
+     ]
+    },
+    "b": {
+     "xyz": [
+      0.13,
+      -0.5,
+      1.2
+     ]
+    },
+    "mat": "frame",
+    "mirror": true
+   },
+   {
+    "shape": "rod",
+    "size": [
+     0.04
+    ],
+    "a": {
+     "xyz": [
+      0.13,
+      -0.5,
+      1.2
+     ]
+    },
+    "b": {
+     "xyz": [
+      -0.13,
+      -0.5,
+      1.2
+     ]
+    },
+    "mat": "frame"
+   },
+   {
+    "shape": "rod",
+    "size": [
+     0.04
+    ],
+    "a": {
+     "xyz": [
+      0.13,
+      -0.5,
+      0.03
+     ]
+    },
+    "b": {
+     "xyz": [
+      0.13,
+      0.2,
+      0.03
+     ]
+    },
+    "mat": "frame",
+    "mirror": true
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.3,
+     0.1,
+     0.5
+    ],
+    "at": [
+     0,
+     -0.5,
+     0.6
+    ],
+    "mat": "frame",
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   }
+  ]
+ },
+ "research": "Standing on the right leg, left leg works; trunk upright, hands on fixed handles in front (elev 25, plane 85, elbow 70). Thigh stays vertical (knee joint fixed): start leg straight-ish (ankle 0.89 m below the hip, knee ~14 deg), roller behind the lower shin; end knee ~100 deg (shin past horizontal: ankle = knee + 0.45 (0, sin100, -cos100)), foot relaxed (rot X +100 keeps it square to the shin). The roller rides the back of the shin (t 0.86 knee->ankle) on a lever whose pivot sits beside the knee joint, so the lever keeps its length. Only the left (working) side is lit. Bourne 2017 (leg curl EMG), Maeo 2021 (hip angle and hamstring length).",
+ "timing": {
+  "fps": 30,
+  "keys": [
+   [
+    0,
+    "start"
+   ],
+   [
+    1,
+    "end"
+   ],
+   [
+    2,
+    "start"
+   ]
+  ]
+ }
+}

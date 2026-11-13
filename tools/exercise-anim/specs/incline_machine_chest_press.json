@@ -1,0 +1,388 @@
+{
+ "key": "incline_machine_chest_press",
+ "name": "Incline Machine Chest Press",
+ "primary": [
+  "chest_upper"
+ ],
+ "secondary": [
+  "chest_lower",
+  "front_delts",
+  "triceps"
+ ],
+ "scene": {
+  "bench": {
+   "deg": 30,
+   "style": "machine",
+   "back_len": 0.82,
+   "seat_h": 0.44
+  }
+ },
+ "props": {
+  "h_L": {
+   "type": "handle"
+  },
+  "h_R": {
+   "type": "handle"
+  }
+ },
+ "camera": {
+  "yaw": 35,
+  "pitch": 30,
+  "lens": 50,
+  "fill": 0.9,
+  "res": 640,
+  "samples": 20
+ },
+ "defaults": {
+  "root": {
+   "loc": [
+    0,
+    0.092,
+    0.49
+   ],
+   "rot": [
+    -38,
+    0,
+    0
+   ]
+  },
+  "bones": {
+   "spine05": [
+    -7,
+    0,
+    0
+   ],
+   "spine04": [
+    -7,
+    0,
+    0
+   ],
+   "spine03": [
+    -7,
+    0,
+    0
+   ],
+   "spine02": [
+    -6,
+    0,
+    0
+   ],
+   "neck01": [
+    8,
+    0,
+    0
+   ],
+   "head": [
+    6,
+    0,
+    0
+   ]
+  },
+  "feet": {
+   "L": {
+    "at": [
+     0.37,
+     -0.4,
+     0.075
+    ],
+    "rot": [
+     0,
+     0,
+     18
+    ]
+   }
+  },
+  "knees": {
+   "L": [
+    0.62,
+    -1.0,
+    0.9
+   ]
+  }
+ },
+ "poses": {
+  "start": {
+   "hands": {
+    "L": {
+     "axis": [
+      -1,
+      0,
+      0
+     ],
+     "arm": {
+      "elev": 45,
+      "plane": -30,
+      "elbow": "fore_vertical",
+      "bend_world": [
+       0,
+       0,
+       1
+      ],
+      "tilt": -14
+     },
+     "prop": "h_L"
+    }
+   }
+  },
+  "end": {
+   "hands": {
+    "L": {
+     "axis": [
+      -1,
+      0,
+      0
+     ],
+     "arm": {
+      "elev": 118,
+      "plane": 88,
+      "elbow": "fore_vertical",
+      "bend_world": [
+       0,
+       0,
+       1
+      ],
+      "tilt": -14
+     },
+     "prop": "h_L"
+    }
+   }
+  }
+ },
+ "machine": {
+  "parts": [
+   {
+    "shape": "rod",
+    "size": [
+     0.026
+    ],
+    "a": {
+     "prop": "h_L",
+     "loc": [
+      -0.08,
+      0,
+      0
+     ]
+    },
+    "b": {
+     "bisect": [
+      "propx:h_L:-0.08,0,0@start",
+      "propx:h_L:-0.08,0,0@end"
+     ],
+     "near": [
+      0.42,
+      0.62,
+      1.5
+     ]
+    },
+    "mat": "frame",
+    "mirror": true
+   },
+   {
+    "shape": "cyl",
+    "size": [
+     0.05,
+     0.1
+    ],
+    "at": {
+     "bisect": [
+      "propx:h_L:-0.08,0,0@start",
+      "propx:h_L:-0.08,0,0@end"
+     ],
+     "near": [
+      0.42,
+      0.62,
+      1.5
+     ]
+    },
+    "mat": "chrome",
+    "rot": [
+     0,
+     0,
+     90
+    ],
+    "mirror": true
+   },
+   {
+    "shape": "rod",
+    "size": [
+     0.035
+    ],
+    "a": {
+     "xyz": [
+      {
+       "bisect": [
+        "propx:h_L:-0.08,0,0@start",
+        "propx:h_L:-0.08,0,0@end"
+       ],
+       "near": [
+        0.42,
+        0.62,
+        1.5
+       ]
+      },
+      {
+       "bisect": [
+        "propx:h_L:-0.08,0,0@start",
+        "propx:h_L:-0.08,0,0@end"
+       ],
+       "near": [
+        0.42,
+        0.62,
+        1.5
+       ]
+      },
+      0.03
+     ]
+    },
+    "b": {
+     "bisect": [
+      "propx:h_L:-0.08,0,0@start",
+      "propx:h_L:-0.08,0,0@end"
+     ],
+     "near": [
+      0.42,
+      0.62,
+      1.5
+     ]
+    },
+    "mat": "frame",
+    "mirror": true
+   },
+   {
+    "shape": "rod",
+    "size": [
+     0.03
+    ],
+    "a": {
+     "bisect": [
+      "propx:h_L:-0.08,0,0@start",
+      "propx:h_L:-0.08,0,0@end"
+     ],
+     "near": [
+      0.42,
+      0.62,
+      1.5
+     ]
+    },
+    "b": {
+     "mirror": {
+      "bisect": [
+       "propx:h_L:-0.08,0,0@start",
+       "propx:h_L:-0.08,0,0@end"
+      ],
+      "near": [
+       0.42,
+       0.62,
+       1.5
+      ]
+     }
+    },
+    "mat": "frame"
+   },
+   {
+    "shape": "rod",
+    "size": [
+     0.03
+    ],
+    "a": {
+     "xyz": [
+      {
+       "a": {
+        "bisect": [
+         "propx:h_L:-0.08,0,0@start",
+         "propx:h_L:-0.08,0,0@end"
+        ],
+        "near": [
+         0.42,
+         0.62,
+         1.5
+        ]
+       },
+       "off": [
+        0,
+        -0.4,
+        0
+       ]
+      },
+      {
+       "a": {
+        "bisect": [
+         "propx:h_L:-0.08,0,0@start",
+         "propx:h_L:-0.08,0,0@end"
+        ],
+        "near": [
+         0.42,
+         0.62,
+         1.5
+        ]
+       },
+       "off": [
+        0,
+        -0.4,
+        0
+       ]
+      },
+      0.03
+     ]
+    },
+    "b": {
+     "xyz": [
+      {
+       "bisect": [
+        "propx:h_L:-0.08,0,0@start",
+        "propx:h_L:-0.08,0,0@end"
+       ],
+       "near": [
+        0.42,
+        0.62,
+        1.5
+       ]
+      },
+      {
+       "bisect": [
+        "propx:h_L:-0.08,0,0@start",
+        "propx:h_L:-0.08,0,0@end"
+       ],
+       "near": [
+        0.42,
+        0.62,
+        1.5
+       ]
+      },
+      0.03
+     ]
+    },
+    "mat": "frame",
+    "mirror": true
+   },
+   {
+    "template": "stack",
+    "at": [
+     0,
+     1.05,
+     0
+    ],
+    "h": 1.55,
+    "rot_z": 0
+   }
+  ]
+ },
+ "research": "Body, 30 deg seat back, feet, spine and both arm poses copied from the owner-approved incline_dumbbell_press (start 55/-30 there; 45/-30 here as the proven incline neutral-grip press so the handle starts at the upper chest), pronated handles [-1,0,0] tilt -14 (measure_wrist value of that clip). Levers from each handle's outer end to a pivot above and behind the head (equal length start/end), weight stack behind the seat.",
+ "timing": {
+  "fps": 30,
+  "keys": [
+   [
+    0,
+    "start"
+   ],
+   [
+    1,
+    "end"
+   ],
+   [
+    2,
+    "start"
+   ]
+  ]
+ }
+}

@@ -1,0 +1,528 @@
+{
+ "key": "elliptical",
+ "name": "Elliptical",
+ "primary": [
+  "quads"
+ ],
+ "secondary": [
+  "glutes"
+ ],
+ "props": {
+  "h_L": {
+   "type": "handle"
+  },
+  "h_R": {
+   "type": "handle"
+  }
+ },
+ "camera": {
+  "yaw": 70,
+  "pitch": 10,
+  "lens": 50,
+  "fill": 0.9,
+  "res": 640,
+  "samples": 20
+ },
+ "defaults": {
+  "root": {
+   "loc": [
+    0,
+    0.051,
+    1.127
+   ],
+   "rot": [
+    4,
+    0,
+    0
+   ]
+  }
+ },
+ "poses": {
+  "start": {
+   "feet": {
+    "L": {
+     "at": [
+      0.12,
+      -0.28,
+      0.334
+     ],
+     "rot": [
+      0,
+      0,
+      4
+     ]
+    },
+    "R": {
+     "at": [
+      -0.12,
+      0.25,
+      0.274
+     ],
+     "rot": [
+      0,
+      0,
+      -4
+     ]
+    }
+   },
+   "knees": {
+    "L": [
+     0.15,
+     -1.2,
+     0.8
+    ],
+    "R": [
+     -0.15,
+     -1.2,
+     0.6
+    ]
+   },
+   "hands": {
+    "L": {
+     "axis": [
+      0.0,
+      -0.151,
+      0.989
+     ],
+     "arm": {
+      "elev": 30,
+      "plane": 20,
+      "elbow": 90,
+      "bend": [
+       0,
+       1,
+       0
+      ],
+      "tilt": 0
+     },
+     "prop": "h_L"
+    },
+    "R": {
+     "axis": [
+      0.0,
+      0.09,
+      0.996
+     ],
+     "arm": {
+      "elev": 55,
+      "plane": 75,
+      "elbow": 30,
+      "bend": [
+       0,
+       0,
+       1
+      ],
+      "tilt": 0
+     },
+     "prop": "h_R"
+    }
+   }
+  },
+  "end": {
+   "feet": {
+    "L": {
+     "at": [
+      0.12,
+      0.25,
+      0.274
+     ],
+     "rot": [
+      0,
+      0,
+      4
+     ]
+    },
+    "R": {
+     "at": [
+      -0.12,
+      -0.28,
+      0.334
+     ],
+     "rot": [
+      0,
+      0,
+      -4
+     ]
+    }
+   },
+   "knees": {
+    "L": [
+     0.15,
+     -1.2,
+     0.6
+    ],
+    "R": [
+     -0.15,
+     -1.2,
+     0.8
+    ]
+   },
+   "hands": {
+    "L": {
+     "axis": [
+      -0.0,
+      0.09,
+      0.996
+     ],
+     "arm": {
+      "elev": 55,
+      "plane": 75,
+      "elbow": 30,
+      "bend": [
+       0,
+       0,
+       1
+      ],
+      "tilt": 0
+     },
+     "prop": "h_L"
+    },
+    "R": {
+     "axis": [
+      -0.0,
+      -0.151,
+      0.989
+     ],
+     "arm": {
+      "elev": 30,
+      "plane": 20,
+      "elbow": 90,
+      "bend": [
+       0,
+       1,
+       0
+      ],
+      "tilt": 0
+     },
+     "prop": "h_R"
+    }
+   }
+  }
+ },
+ "machine": {
+  "parts": [
+   {
+    "shape": "box",
+    "size": [
+     0.15,
+     0.36,
+     0.04
+    ],
+    "at": {
+     "bone": "foot.L",
+     "off": [
+      0,
+      -0.05,
+      -0.094
+     ]
+    },
+    "mat": "rubber",
+    "rot": [
+     0,
+     0,
+     0
+    ],
+    "mirror": true
+   },
+   {
+    "shape": "rod",
+    "size": [
+     0.022
+    ],
+    "a": {
+     "a": {
+      "bone": "foot.L",
+      "off": [
+       0,
+       -0.05,
+       -0.094
+      ]
+     },
+     "off": [
+      0,
+      0.19,
+      0
+     ]
+    },
+    "b": {
+     "bisect": [
+      {
+       "a": "bone:foot.L@start",
+       "off": [
+        0,
+        0.14,
+        -0.094
+       ]
+      },
+      {
+       "a": "bone:foot.L@end",
+       "off": [
+        0,
+        0.14,
+        -0.094
+       ]
+      }
+     ],
+     "near": [
+      0.14,
+      0.78,
+      0.32
+     ]
+    },
+    "mat": "frame",
+    "mirror": true
+   },
+   {
+    "shape": "cyl",
+    "size": [
+     0.05,
+     0.08
+    ],
+    "at": {
+     "bisect": [
+      {
+       "a": "bone:foot.L@start",
+       "off": [
+        0,
+        0.14,
+        -0.094
+       ]
+      },
+      {
+       "a": "bone:foot.L@end",
+       "off": [
+        0,
+        0.14,
+        -0.094
+       ]
+      }
+     ],
+     "near": [
+      0.14,
+      0.78,
+      0.32
+     ]
+    },
+    "mat": "chrome",
+    "rot": [
+     0,
+     0,
+     90
+    ],
+    "mirror": true
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.2,
+     0.44,
+     0.5
+    ],
+    "at": [
+     0,
+     0.8,
+     0.32
+    ],
+    "mat": "frame",
+    "rot": [
+     0,
+     0,
+     0
+    ],
+    "bevel": 0.05
+   },
+   {
+    "shape": "rod",
+    "size": [
+     0.022
+    ],
+    "a": {
+     "prop": "h_L",
+     "loc": [
+      -0.08,
+      0,
+      0
+     ]
+    },
+    "b": {
+     "bisect": [
+      "propx:h_L:-0.08,0,0@start",
+      "propx:h_L:-0.08,0,0@end"
+     ],
+     "near": [
+      0.26,
+      -0.7,
+      0.75
+     ]
+    },
+    "mat": "frame",
+    "mirror": true
+   },
+   {
+    "shape": "cyl",
+    "size": [
+     0.04,
+     0.08
+    ],
+    "at": {
+     "bisect": [
+      "propx:h_L:-0.08,0,0@start",
+      "propx:h_L:-0.08,0,0@end"
+     ],
+     "near": [
+      0.26,
+      -0.7,
+      0.75
+     ]
+    },
+    "mat": "chrome",
+    "rot": [
+     0,
+     0,
+     90
+    ],
+    "mirror": true
+   },
+   {
+    "shape": "rod",
+    "size": [
+     0.03
+    ],
+    "a": {
+     "bisect": [
+      "propx:h_L:-0.08,0,0@start",
+      "propx:h_L:-0.08,0,0@end"
+     ],
+     "near": [
+      0.26,
+      -0.7,
+      0.75
+     ]
+    },
+    "b": {
+     "mirror": {
+      "bisect": [
+       "propx:h_L:-0.08,0,0@start",
+       "propx:h_L:-0.08,0,0@end"
+      ],
+      "near": [
+       0.26,
+       -0.7,
+       0.75
+      ]
+     }
+    },
+    "mat": "frame"
+   },
+   {
+    "shape": "rod",
+    "size": [
+     0.045
+    ],
+    "a": [
+     0,
+     -0.72,
+     0.03
+    ],
+    "b": [
+     0,
+     -0.7,
+     1.35
+    ],
+    "mat": "frame"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.36,
+     0.08,
+     0.22
+    ],
+    "at": [
+     0,
+     -0.7,
+     1.38
+    ],
+    "mat": "pad",
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "shape": "rod",
+    "size": [
+     0.045
+    ],
+    "a": [
+     0,
+     -0.72,
+     0.03
+    ],
+    "b": [
+     0,
+     0.85,
+     0.03
+    ],
+    "mat": "frame"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.55,
+     0.08,
+     0.06
+    ],
+    "at": [
+     0,
+     -0.72,
+     0.03
+    ],
+    "mat": "frame",
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.55,
+     0.08,
+     0.06
+    ],
+    "at": [
+     0,
+     0.85,
+     0.03
+    ],
+    "mat": "frame",
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   }
+  ]
+ },
+ "research": "Standing upright (4 deg lean) on two pedals 0.24 m apart side to side; hips 1.13 m up. Start: left pedal forward and higher (pad top 0.26 m, knee ~40 deg), right pedal back and lower (0.20 m, knee ~15 deg); end swapped. Feet flat on the pads. Opposite arm/leg: with the left foot forward the left handle is pulled back (elev 30, plane 20, elbow 90) and the right pushed forward (elev 55, plane 75, elbow 30). Pedal arms run back to a rear crank point equally far from each pad's front and back positions; handle levers pivot on the front column (equal length). Burnfield 2010 (elliptical vs walking kinematics and EMG).",
+ "timing": {
+  "fps": 30,
+  "keys": [
+   [
+    0,
+    "start"
+   ],
+   [
+    1,
+    "end"
+   ],
+   [
+    2,
+    "start"
+   ]
+  ]
+ }
+}

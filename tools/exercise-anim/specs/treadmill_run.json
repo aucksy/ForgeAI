@@ -1,0 +1,338 @@
+{
+ "key": "treadmill_run",
+ "name": "Treadmill Run",
+ "primary": [
+  "quads"
+ ],
+ "secondary": [
+  "hamstrings",
+  "calves"
+ ],
+ "camera": {
+  "yaw": -75,
+  "pitch": 8,
+  "lens": 50,
+  "fill": 0.9,
+  "res": 640,
+  "samples": 20
+ },
+ "poses": {
+  "start": {
+   "root": {
+    "loc": [
+     0,
+     0.051,
+     1.164
+    ],
+    "rot": [
+     6,
+     0,
+     0
+    ]
+   },
+   "feet": {
+    "L": {
+     "at": [
+      0.11,
+      0.0,
+      0.531
+     ],
+     "rot": [
+      45,
+      0,
+      4
+     ]
+    },
+    "R": {
+     "at": [
+      -0.11,
+      0.376,
+      0.36
+     ],
+     "rot": [
+      40,
+      0,
+      -4
+     ]
+    }
+   },
+   "knees": {
+    "L": [
+     0.14,
+     -1.2,
+     1.21
+    ],
+    "R": [
+     -0.16,
+     -1.0,
+     0.71
+    ]
+   },
+   "hands": {
+    "L": {
+     "axis": [
+      0,
+      0.574,
+      0.819
+     ],
+     "arm": {
+      "elev": 35,
+      "plane": -90,
+      "elbow": 90,
+      "bend": [
+       0,
+       1,
+       0
+      ],
+      "tilt": 0
+     }
+    },
+    "R": {
+     "axis": [
+      0,
+      -0.766,
+      0.643
+     ],
+     "arm": {
+      "elev": 45,
+      "plane": 90,
+      "elbow": 90,
+      "bend": [
+       0,
+       0,
+       1
+      ],
+      "tilt": 0
+     }
+    }
+   }
+  },
+  "end": {
+   "root": {
+    "loc": [
+     0,
+     0.051,
+     1.164
+    ],
+    "rot": [
+     6,
+     0,
+     0
+    ]
+   },
+   "feet": {
+    "L": {
+     "at": [
+      0.11,
+      0.376,
+      0.36
+     ],
+     "rot": [
+      40,
+      0,
+      4
+     ]
+    },
+    "R": {
+     "at": [
+      -0.11,
+      0.0,
+      0.531
+     ],
+     "rot": [
+      45,
+      0,
+      -4
+     ]
+    }
+   },
+   "knees": {
+    "L": [
+     0.16,
+     -1.0,
+     0.71
+    ],
+    "R": [
+     -0.14,
+     -1.2,
+     1.21
+    ]
+   },
+   "hands": {
+    "L": {
+     "axis": [
+      0,
+      -0.766,
+      0.643
+     ],
+     "arm": {
+      "elev": 45,
+      "plane": 90,
+      "elbow": 90,
+      "bend": [
+       0,
+       0,
+       1
+      ],
+      "tilt": 0
+     }
+    },
+    "R": {
+     "axis": [
+      0,
+      0.574,
+      0.819
+     ],
+     "arm": {
+      "elev": 35,
+      "plane": -90,
+      "elbow": 90,
+      "bend": [
+       0,
+       1,
+       0
+      ],
+      "tilt": 0
+     }
+    }
+   }
+  }
+ },
+ "machine": {
+  "parts": [
+   {
+    "shape": "box",
+    "size": [
+     0.58,
+     1.62,
+     0.16
+    ],
+    "at": [
+     0,
+     -0.05,
+     0.12
+    ],
+    "mat": "frame",
+    "rot": [
+     0,
+     0,
+     0
+    ],
+    "bevel": 0.02
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.48,
+     1.56,
+     0.012
+    ],
+    "at": [
+     0,
+     -0.05,
+     0.205
+    ],
+    "mat": "rubber",
+    "rot": [
+     0,
+     0,
+     0
+    ],
+    "bevel": 0.004
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.74,
+     0.26,
+     0.2
+    ],
+    "at": [
+     0,
+     -0.92,
+     0.17
+    ],
+    "mat": "frame",
+    "rot": [
+     0,
+     0,
+     0
+    ],
+    "bevel": 0.03
+   },
+   {
+    "shape": "rod",
+    "size": [
+     0.035
+    ],
+    "a": [
+     0.37,
+     -0.88,
+     0.2
+    ],
+    "b": [
+     0.37,
+     -1.0,
+     1.28
+    ],
+    "mat": "frame",
+    "mirror": true
+   },
+   {
+    "shape": "rod",
+    "size": [
+     0.022
+    ],
+    "a": [
+     0.37,
+     -0.93,
+     1.0
+    ],
+    "b": [
+     0.37,
+     -0.35,
+     1.0
+    ],
+    "mat": "frame",
+    "mirror": true
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.86,
+     0.12,
+     0.24
+    ],
+    "at": [
+     0,
+     -1.02,
+     1.3
+    ],
+    "mat": "frame",
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   }
+  ]
+ },
+ "research": "Running stride drawn at toe-off: the stance leg nearly straight about 25 deg behind the hip and up on the ball of the foot (heel up 40 deg: ankle 0.36 m above the belt (belt top 0.21 m)), the swing leg's thigh 45 deg forward with the knee bent ~90 deg, trunk 6 deg forward. Arms opposite the legs, elbows ~90 deg (forward arm elev 45 / plane 90, back arm 35 / -90). Picture 2 is the other leg. Novacheck 1998 (running kinematics, EMG timing), Van Hooren 2020 (treadmill running ~ overground).",
+ "timing": {
+  "fps": 30,
+  "keys": [
+   [
+    0,
+    "start"
+   ],
+   [
+    1,
+    "end"
+   ],
+   [
+    2,
+    "start"
+   ]
+  ]
+ }
+}

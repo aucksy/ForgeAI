@@ -1,0 +1,350 @@
+{
+ "key": "machine_lat_pulldown",
+ "name": "Machine Lat Pulldown",
+ "primary": [
+  "lats"
+ ],
+ "secondary": [
+  "biceps",
+  "upper_back"
+ ],
+ "scene": {
+  "bench": {
+   "deg": 85,
+   "style": "machine",
+   "back_len": 0,
+   "seat_h": 0.44
+  }
+ },
+ "props": {
+  "h_L": {
+   "type": "handle"
+  },
+  "h_R": {
+   "type": "handle"
+  }
+ },
+ "girdle": {
+  "start": 30,
+  "knee": 15,
+  "ur": 0.4,
+  "ur_max": 50,
+  "ur_pivot": 0.92,
+  "scap_plane": 30,
+  "elev": 0.08,
+  "elev_max": 11,
+  "retract": 0.12,
+  "retract_max": 16
+ },
+ "skin": {
+  "preserve_volume": true,
+  "calm_armpits": {
+   "amount": 0.45,
+   "radius": 0.05,
+   "fade": 0.05,
+   "down": 0.08,
+   "extra": [
+    [
+     -0.02,
+     0.08,
+     -0.08,
+     0.4
+    ]
+   ],
+   "hl_cut": 0.8
+  }
+ },
+ "camera": {
+  "yaw": -40,
+  "pitch": 12,
+  "lens": 50,
+  "fill": 0.9,
+  "res": 640,
+  "samples": 20
+ },
+ "defaults": {
+  "root": {
+   "loc": [
+    0,
+    -0.035,
+    0.494
+   ],
+   "rot": [
+    -6,
+    0,
+    0
+   ]
+  },
+  "feet": {
+   "L": {
+    "at": [
+     0.22,
+     -0.58,
+     0.075
+    ],
+    "rot": [
+     0,
+     0,
+     10
+    ]
+   }
+  },
+  "knees": {
+   "L": [
+    0.32,
+    -1.0,
+    0.9
+   ]
+  }
+ },
+ "poses": {
+  "start": {
+   "hands": {
+    "L": {
+     "axis": [
+      -1,
+      0,
+      0
+     ],
+     "arm": {
+      "elev": 160,
+      "plane": 40,
+      "elbow": 10,
+      "bend": [
+       0,
+       0,
+       1
+      ],
+      "tilt": 0
+     },
+     "prop": "h_L"
+    }
+   }
+  },
+  "end": {
+   "hands": {
+    "L": {
+     "axis": [
+      -1,
+      0,
+      0
+     ],
+     "arm": {
+      "elev": 40,
+      "plane": -20,
+      "elbow": "fore_vertical",
+      "bend_world": [
+       0,
+       0,
+       1
+      ],
+      "tilt": 0
+     },
+     "prop": "h_L"
+    }
+   }
+  }
+ },
+ "machine": {
+  "parts": [
+   {
+    "shape": "rod",
+    "size": [
+     0.026
+    ],
+    "a": {
+     "prop": "h_L",
+     "loc": [
+      -0.08,
+      0,
+      0
+     ]
+    },
+    "b": {
+     "bisect": [
+      "propx:h_L:-0.08,0,0@start",
+      "propx:h_L:-0.08,0,0@end"
+     ],
+     "near": [
+      0.42,
+      -0.55,
+      1.95
+     ]
+    },
+    "mat": "frame",
+    "mirror": true
+   },
+   {
+    "shape": "cyl",
+    "size": [
+     0.05,
+     0.1
+    ],
+    "at": {
+     "bisect": [
+      "propx:h_L:-0.08,0,0@start",
+      "propx:h_L:-0.08,0,0@end"
+     ],
+     "near": [
+      0.42,
+      -0.55,
+      1.95
+     ]
+    },
+    "mat": "chrome",
+    "rot": [
+     0,
+     0,
+     90
+    ],
+    "mirror": true
+   },
+   {
+    "shape": "rod",
+    "size": [
+     0.04
+    ],
+    "a": {
+     "a": {
+      "bisect": [
+       "propx:h_L:-0.08,0,0@start",
+       "propx:h_L:-0.08,0,0@end"
+      ],
+      "near": [
+       0.42,
+       -0.55,
+       1.95
+      ]
+     },
+     "off": [
+      0,
+      -0.05,
+      0
+     ]
+    },
+    "b": {
+     "xyz": [
+      {
+       "bisect": [
+        "propx:h_L:-0.08,0,0@start",
+        "propx:h_L:-0.08,0,0@end"
+       ],
+       "near": [
+        0.42,
+        -0.55,
+        1.95
+       ]
+      },
+      -0.7,
+      0.03
+     ]
+    },
+    "mat": "frame",
+    "mirror": true
+   },
+   {
+    "shape": "rod",
+    "size": [
+     0.035
+    ],
+    "a": {
+     "bisect": [
+      "propx:h_L:-0.08,0,0@start",
+      "propx:h_L:-0.08,0,0@end"
+     ],
+     "near": [
+      0.42,
+      -0.55,
+      1.95
+     ]
+    },
+    "b": {
+     "mirror": {
+      "bisect": [
+       "propx:h_L:-0.08,0,0@start",
+       "propx:h_L:-0.08,0,0@end"
+      ],
+      "near": [
+       0.42,
+       -0.55,
+       1.95
+      ]
+     }
+    },
+    "mat": "frame"
+   },
+   {
+    "shape": "cyl",
+    "size": [
+     0.05,
+     0.18
+    ],
+    "at": {
+     "a": "bone:lowerleg01.L@start",
+     "off": [
+      0,
+      0.09,
+      0.12
+     ]
+    },
+    "mat": "pad",
+    "rot": [
+     0,
+     0,
+     90
+    ],
+    "mirror": true
+   },
+   {
+    "shape": "rod",
+    "size": [
+     0.02
+    ],
+    "a": {
+     "a": "bone:lowerleg01.L@start",
+     "off": [
+      0,
+      0.09,
+      0.12
+     ]
+    },
+    "b": {
+     "xyz": [
+      0.3,
+      -0.7,
+      {
+       "a": {
+        "a": "bone:lowerleg01.L@start",
+        "off": [
+         0,
+         0.09,
+         0.12
+        ]
+       }
+      }
+     ]
+    },
+    "mat": "frame",
+    "mirror": true
+   }
+  ]
+ },
+ "research": "Seated body (proven seated_hammer_curl, 6 deg lean back), seat with no back pad, roller pads over the thighs just above the knees. Start: arms up and a little forward and out (elev 160, plane 40, elbow 10), palms forward; end: hands at shoulder height, forearms vertical, elbows down and a little back (elev 40, plane -20). Shoulder girdle rhythm and armpit skin settings copied from the approved dumbbell_shoulder_press. Levers from each handle's outer end to a pivot high in front (equal length start/end). Lusk 2010 (pronated wide grip), Lehman 2004 (lat pulldown EMG).",
+ "timing": {
+  "fps": 30,
+  "keys": [
+   [
+    0,
+    "start"
+   ],
+   [
+    1,
+    "end"
+   ],
+   [
+    2,
+    "start"
+   ]
+  ]
+ }
+}
