@@ -12,7 +12,7 @@ import sys, os, json, math, time
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import bpy
 from mathutils import Vector
-from forgeanim import character, look, rig as R, animate as A, render as RD, OUT
+from forgeanim import character, look, rig as R, animate as A, render as RD, report as REP, OUT
 
 args = sys.argv[sys.argv.index("--") + 1:]
 spec_path = args[0]
@@ -37,7 +37,8 @@ cam_spec = spec.get("camera", {})
 res = cam_spec.get("res", 640)
 look.setup_world_and_render(scene, res=res if mode == "full" else 400, samples=cam_spec.get("samples", 40) if mode == "full" else 14)
 cam = bpy.data.objects.new("FA_Cam", bpy.data.cameras.new("FA_Cam")); scene.collection.objects.link(cam); scene.camera = cam
-objs = [ch["body"], ch["shorts"]] + [c for p in clip.props.values() for c in p.children]
+objs = [ch["body"], ch["shorts"]] + [c for p in clip.props.values() for c in p.children_recursive if c.type == "MESH"]
+objs += [c for e in getattr(clip, "extras", []) for c in e.children_recursive if c.type == "MESH"]
 if hasattr(clip, "bench"):
     objs += list(clip.bench["root"].children)
 for bx in getattr(clip, "boxes", []):
@@ -72,13 +73,33 @@ if mode == "stills":
         lp = min((ev.matrix_world @ v.co for v in me.vertices), key=lambda q: q.z); low = lp.z
         cable_gap = clip.cable_clearance(ev, me) if getattr(clip, "cables", None) else None
         ev.to_mesh_clear()
-        pl = [min((o.matrix_world @ Vector(c)).z for c in o.bound_box) for p in clip.props.values() for o in p.children if o.type == "MESH"]
+        pl = [min((o.matrix_world @ Vector(c)).z for c in o.bound_box) for p in clip.props.values() for o in p.children_recursive if o.type == "MESH"]
         print(f"[still] {tag} pose={pose} frame={f} lowest_body_z={low:.4f} at=({lp.x:.3f},{lp.y:.3f},{lp.z:.3f}) lowest_prop_z={(min(pl) if pl else 0):.4f}")
         if cable_gap is not None:
             print(f"[still] {tag} cable clearance from the skin (m, negative = through the body): {cable_gap}")
+        # 13 Nov 2026: lowest point per body part, joints in the torso frame, how level each hand is, bench pad gaps
+        try:
+            rig = ch["rig"]; lw = REP.lows(ch["body"], rig); T = A.torso_frame(rig)
+            fists = {s: (rig.matrix_world @ rig.pose.bones[f"wrist.{s}"].matrix @ clip.G[s]).translation for s in R.SIDES}
+            hands = {}
+            for s in R.SIDES:
+                wr = R.world_head(rig, f"wrist.{s}"); hd = (R.world_head(rig, f"finger3-1.{s}") - wr).normalized()
+                pm = fists[s] - wr; pm = (pm - hd * pm.dot(hd)).normalized()
+                hands[s] = {"hand_from_level_deg": round(math.degrees(math.asin(max(-1, min(1, hd.z)))), 1), "palm_z": round(pm.z, 2)}
+            rep = {"lows": {k: [round(v[0], 4)] + v[1] for k, v in lw.items()}, "hands": hands,
+                   "joints": REP.joints(rig, T, fists)}
+            hdv = (R.world_tail(rig, "head") - R.world_head(rig, "neck01")).normalized()
+            rep["head_tilt_left_deg"] = round(math.degrees(math.asin(max(-1, min(1, hdv.dot(T.to_3x3().col[0]))))), 1)
+            if hasattr(clip, "bench"):
+                rep["pad_gap"] = REP.pad_gaps(ch["body"], rig, clip.bench)
+            if hasattr(clip, "preacher"):
+                rep["preacher_gap"] = REP.preacher_gaps(ch["body"], rig, clip.preacher)
+            print(f"[report] {tag} " + json.dumps(rep))
+        except Exception as ex:   # a report bug must never cost the pictures
+            rep = {"error": repr(ex)}; print(f"[report] {tag} failed: {ex!r}")
         p = os.path.join(out, f"{key}__{tag}.png"); scene.render.filepath = p
         bpy.ops.render.render(write_still=True); stills[tag] = {"pose": pose, "frame": f, "lowest_body_z": round(low, 4),
-                                                           "lowest_body_at": [round(lp.x, 3), round(lp.y, 3), round(lp.z, 3)]}
+                                                           "lowest_body_at": [round(lp.x, 3), round(lp.y, 3), round(lp.z, 3)], "report": rep}
         if cable_gap is not None:
             stills[tag]["cable_clearance"] = cable_gap
     scene.render.resolution_x = scene.render.resolution_y = 400; scene.cycles.samples = 12

@@ -9,7 +9,7 @@
   ],
   "scene": {
     "bench": {
-      "deg": 30,
+      "deg": 45,
       "loc": [
         0,
         0,
@@ -27,8 +27,8 @@
     }
   },
   "camera": {
-    "yaw": -50,
-    "pitch": 35,
+    "yaw": 125,
+    "pitch": 28,
     "lens": 50,
     "fill": 0.9,
     "res": 640,
@@ -55,11 +55,11 @@
     "root": {
       "loc": [
         0,
-        -0.166,
-        0.732
+        -0.118,
+        0.733
       ],
       "rot": [
-        60,
+        45,
         0,
         0
       ]
@@ -67,22 +67,34 @@
     "feet": {
       "L": {
         "at": [
-          0.1,
-          0.666,
-          0.4685
+          0.42,
+          0.4,
+          0.075
         ],
         "rot": [
-          120,
           0,
-          0
+          0,
+          25
         ]
       }
     },
     "knees": {
       "L": [
-        0.1,
-        0.22,
-        -0.3
+        0.9,
+        0.2,
+        0.6
+      ]
+    },
+    "bones": {
+      "neck01": [
+        -10,
+        0,
+        0
+      ],
+      "head": [
+        -8,
+        0,
+        0
       ]
     }
   },
@@ -93,21 +105,24 @@
           "prop": "db_L",
           "axis": [
             0,
-            0.5,
-            0.866
+            0.707,
+            0.707
           ],
           "arm": {
-            "elev": 60,
-            "plane": 88,
+            "elev": 45,
+            "plane": 90,
             "elbow": 12,
             "bend": [
-              0,
-              0,
-              1
+              -0.5,
+              0.6,
+              -0.6
             ],
             "tilt": 0
           }
         }
+      },
+      "ground": {
+        "feet": 0.0
       }
     },
     "end": {
@@ -116,23 +131,26 @@
           "prop": "db_L",
           "axis": [
             0,
-            0.5,
-            0.866
+            0.707,
+            0.707
           ],
           "arm": {
             "elev": 90,
-            "plane": 5,
-            "elbow": 15,
+            "plane": 0,
+            "elbow": 12,
             "bend": [
-              0,
-              1,
-              0
+              -0.5,
+              0.6,
+              -0.6
             ],
             "tilt": 0
           }
         }
+      },
+      "ground": {
+        "feet": 0.0
       }
     }
   },
-  "research": "Bench 30 deg, rot_z 180 so the back pad rises toward -Y (he faces -Y and leans onto it; seat is behind him toward +Y). Pad top surface P(s) = (0, -0.01-0.866s+0.019, 0.4025+0.5s+0.032), normal n=(0,0.5,0.866). Root rot X +60: spine runs (0,-0.866,0.5) = along the pad, chest faces -n. Pelvis joint at s=0.30 plus 0.17 m along n (chest front ~0.17-0.19 m ahead of the pelvis joint): (0,-0.251,0.585)+(0,0.085,0.147) = (0,-0.166,0.732); shoulders reach s~0.77 of 0.84, chin past the top (ACE). Measure with probe_bench (pose names differ, so it may need 'bottom') and slide root along n to a -0.02..+0.02 chest gap.. LEGS (12 Nov fix; old straddle splayed the knees to the floor): knees on the seat, the bench's other common set-up (Sweat: 'knees resting on the seat or feet planted on either side'). FK check with the 30 deg pad and the seat boxes: a feet-on-floor stance under the hips cannot clear the pad without the thighs splaying 40+ deg, so kneel. Hip (+-0.11,-0.194,0.689) -> knee (0.105,0.218,0.49) on the seat (thigh 0.457, 25 deg knee bend, thigh clears the pad by 3.4 cm) -> ankle (0.10,0.666,0.4685): shin lies on the seat top (0..-5 mm), feet hang past the seat end, toes down-back (rot X 120). Knee pole straight below (world). Lowest body point is now the toes (~0.25-0.3 m), on purpose. Camera yaw -50 / pitch 35 (front-right, high): arms spread across the picture instead of pointing at the lens, and the back faces the camera."
+  "research": "13 Nov 2026 (pics-fixes) rebuild: bench 45 deg turned 180 (pad rises toward -Y), athlete faces -Y leaning 45 deg onto it (root rot X 45, the spine along the pad). Pad face line: (0, 0.0165 - 0.707 s, 0.429 + 0.707 s), face normal (0, 0.707, 0.707). Root = pad point at s 0.31 + 0.12 m along the normal = (0,-0.118,0.733): shoulders at s ~0.78 of 0.84, chin just past the top. Feet on the floor behind, wide (ankles x +-0.42, toes out 25 deg) so the thighs clear the 0.30 m seat; 'ground' puts the soles on the floor. Arms: hanging straight down in the world = torso (0,0.707,-0.707) = elev 45 / plane 90; end straight out to the sides = elev 90 / plane 0; both arms mirrored (L only in the recipe). Handle along the body toward the head (torso (0,0.707,0.707)) in both pictures. Stills log prints the chest-to-pad gaps."
 }

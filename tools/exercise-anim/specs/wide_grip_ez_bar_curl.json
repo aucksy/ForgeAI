@@ -1,0 +1,116 @@
+{
+  "key": "wide_grip_ez_bar_curl",
+  "name": "Wide-Grip EZ Bar Curl",
+  "primary": [
+    "biceps"
+  ],
+  "secondary": [
+    "forearms"
+  ],
+  "props": {
+    "bar": {
+      "type": "ez_bar",
+      "plates": [
+        0.2
+      ],
+      "plate_t": 0.035
+    }
+  },
+  "camera": {
+    "lens": 50,
+    "fill": 0.9,
+    "res": 640,
+    "samples": 20,
+    "yaw": -35,
+    "pitch": 8
+  },
+  "timing": {
+    "fps": 30,
+    "keys": [
+      [
+        0,
+        "start"
+      ],
+      [
+        1,
+        "end"
+      ],
+      [
+        2,
+        "start"
+      ]
+    ]
+  },
+  "defaults": {
+    "feet": {
+      "L": {
+        "at": [
+          0.13,
+          -0.01,
+          0.074
+        ],
+        "rot": [
+          0,
+          0,
+          6
+        ]
+      }
+    },
+    "knees": {
+      "L": [
+        0.16,
+        -1.0,
+        0.52
+      ]
+    }
+  },
+  "poses": {
+    "start": {
+      "hands": {
+        "L": {
+          "prop": "bar",
+          "axis": [
+            0.894,
+            0.447,
+            0
+          ],
+          "arm": {
+            "elev": 12,
+            "plane": 100,
+            "elbow": 8,
+            "bend": [
+              0.15,
+              1,
+              0
+            ],
+            "tilt": 0
+          }
+        }
+      }
+    },
+    "end": {
+      "hands": {
+        "L": {
+          "prop": "bar",
+          "axis": [
+            0.894,
+            -0.256,
+            0.367
+          ],
+          "arm": {
+            "elev": 15,
+            "plane": 100,
+            "elbow": 125,
+            "bend": [
+              0.15,
+              1,
+              0
+            ],
+            "tilt": 0
+          }
+        }
+      }
+    }
+  },
+  "research": "EZ bar, wide grip = the outer angled grips (x +-0.21, hand gap 0.42), semi-supinated: the supinated axis turned 26.6 deg about the forearm toward neutral. Arms hang a little inward (elev 12, plane 100) so the fists sit 0.42 apart."
+}

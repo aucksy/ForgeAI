@@ -22,7 +22,7 @@
     }
   },
   "camera": {
-    "yaw": -70,
+    "yaw": 80,
     "pitch": 18,
     "lens": 50,
     "fill": 0.9,
@@ -194,5 +194,5 @@
       }
     }
   },
-  "research": "Flat bench (deg 0): pad top 0.44 m from y -0.35 to 0.85; head toward +Y. Body copied from the proven incline press: root rot = -(pad 0 + 90 face-up + 8) = -98, spine -7/-7/-7/-6. Root z 0.55 = pad 0.44 + ~0.11 pelvis-joint-to-sacrum depth (estimate; tune with probe_bench, want back gap -0.02..+0.02). Hip then ~(0.11, 0.06, 0.60); ankle (0.30,-0.40,0.075): hip-ankle 0.72 m -> knee ~107 deg with 0.45/0.45 legs; x 0.30 clears the bench foot rail (half-width 0.24). Start: elbows tucked elev 40, plane -25 (incline press uses 55/-30; library says elbows close), forearm vertical. End: elev 85 plane 88, near-straight, dumbbells over lower-mid chest. Neutral axis [0,0,1] = thumbs toward head, square to a vertical forearm when lying flat. S1 Muyor 2023 (neutral grip), S2 Rodriguez-Ridao 2020 (flat bench, ~45 deg abduction, back on bench). QA 11 Nov: body arched off the end of the flat pad (rot -98 + 27 deg spine arch); now lies flat (rot -90, spine -1 each)."
+  "research": "Flat bench (deg 0): pad top 0.44 m from y -0.35 to 0.85; head toward +Y. Body copied from the proven incline press: root rot = -(pad 0 + 90 face-up + 8) = -98, spine -7/-7/-7/-6. Root z 0.55 = pad 0.44 + ~0.11 pelvis-joint-to-sacrum depth (estimate; tune with probe_bench, want back gap -0.02..+0.02). Hip then ~(0.11, 0.06, 0.60); ankle (0.30,-0.40,0.075): hip-ankle 0.72 m -> knee ~107 deg with 0.45/0.45 legs; x 0.30 clears the bench foot rail (half-width 0.24). Start: elbows tucked elev 40, plane -25 (incline press uses 55/-30; library says elbows close), forearm vertical. End: elev 85 plane 88, near-straight, dumbbells over lower-mid chest. Neutral axis [0,0,1] = thumbs toward head, square to a vertical forearm when lying flat. S1 Muyor 2023 (neutral grip), S2 Rodriguez-Ridao 2020 (flat bench, ~45 deg abduction, back on bench). QA 11 Nov: body arched off the end of the flat pad (rot -98 + 27 deg spine arch); now lies flat (rot -90, spine -1 each). 13 Nov 2026 (pics-fixes): re-render on the current pipeline (the 11 Nov fail was before the root-turn fix) with the flat-bench body of the passed tate_press; side camera (yaw 80); stills log reports the back-to-pad gaps."
 }

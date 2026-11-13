@@ -1,23 +1,156 @@
 {
   "key": "burpee",
   "name": "Burpee",
-  "primary": ["cardio"],
-  "secondary": ["quads", "chest"],
-  "camera": {"yaw": -82, "pitch": 12, "lens": 50, "fill": 0.9, "res": 640, "samples": 20},
-  "timing": {"fps": 30, "keys": [[0, "start"], [1, "end"], [2, "start"]]},
+  "primary": [
+    "cardio"
+  ],
+  "secondary": [
+    "quads",
+    "chest"
+  ],
+  "camera": {
+    "yaw": -82,
+    "pitch": 12,
+    "lens": 50,
+    "fill": 0.9,
+    "res": 640,
+    "samples": 20
+  },
+  "timing": {
+    "fps": 30,
+    "keys": [
+      [
+        0,
+        "start"
+      ],
+      [
+        1,
+        "end"
+      ],
+      [
+        2,
+        "start"
+      ]
+    ]
+  },
   "poses": {
     "start": {
-      "root": {"loc": [0, 0.056, 0.971], "rot": [0, 0, 0]},
-      "feet": {"L": {"at": [0.13, -0.01, 0.074], "rot": [0, 0, 6]}},
-      "knees": {"L": [0.16, -1.0, 0.52]},
-      "hands": {"L": {"axis": [0, 1, 0], "arm": {"elev": 8, "plane": 10, "elbow": 10, "bend": [0, 1, 0], "tilt": 0}}}
+      "root": {
+        "loc": [
+          0,
+          0.056,
+          0.971
+        ],
+        "rot": [
+          0,
+          0,
+          0
+        ]
+      },
+      "feet": {
+        "L": {
+          "at": [
+            0.13,
+            -0.01,
+            0.074
+          ],
+          "rot": [
+            0,
+            0,
+            6
+          ]
+        }
+      },
+      "knees": {
+        "L": [
+          0.16,
+          -1.0,
+          0.52
+        ]
+      },
+      "hands": {
+        "L": {
+          "axis": [
+            0,
+            1,
+            0
+          ],
+          "arm": {
+            "elev": 8,
+            "plane": 10,
+            "elbow": 10,
+            "bend": [
+              0,
+              1,
+              0
+            ],
+            "tilt": 0
+          },
+          "hand": "relaxed"
+        }
+      }
     },
     "end": {
-      "root": {"loc": [0, 0, 0.5844], "rot": [69.1, 0, 0]},
-      "feet": {"L": {"at": [0.12, 0.815, 0.218], "rot": [70, 0, 0]}},
-      "knees": {"L": [0.13, 0.45, -0.5]},
-      "hands": {"L": {"axis": [-1, 0, 0], "arm": {"elev": 68.3, "plane": 90, "elbow": 5, "bend": [0, 0.34, 0.94], "tilt": 0}}}
+      "root": {
+        "loc": [
+          0,
+          0,
+          0.5844
+        ],
+        "rot": [
+          69.1,
+          0,
+          0
+        ]
+      },
+      "feet": {
+        "L": {
+          "at": [
+            0.12,
+            0.815,
+            0.218
+          ],
+          "rot": [
+            70,
+            0,
+            0
+          ]
+        }
+      },
+      "knees": {
+        "L": [
+          0.13,
+          0.45,
+          -0.5
+        ]
+      },
+      "hands": {
+        "L": {
+          "axis": [
+            -1,
+            0,
+            0
+          ],
+          "arm": {
+            "elev": 68.3,
+            "plane": 90,
+            "elbow": 5,
+            "bend": [
+              0,
+              0.34,
+              0.94
+            ],
+            "tilt": 0,
+            "flex": "level-"
+          },
+          "hand": "flat"
+        }
+      },
+      "ground": {
+        "feet": 0.0,
+        "hands": 0.0
+      }
     }
   },
-  "research": "12 Nov 2026 fix of run 43079162675 (QA: 'end: hands float in front of the body'). Cause 1 (pipeline, fixed in animate.py the same day): the root turn was keyed on the unused quaternion channel (MPFB bones are XYZ euler), so every frame kept the LAST baked lean: the end picture showed the plank's low hips with a standing trunk and the arms stuck out forward. Cause 2 (recipe): toes and hands sat too low. Calibrated from cloud numbers: foot rot X 70 puts the lowest toe point 0.2158 below the ankle (rkc_plank and plank_shoulder_tap both measured -0.0508 at ankle z 0.165), so ankle z 0.218; a knuckle fist on the floor reaches ~0.08 below its grip centre with the arm vertical (plank_shoulder_tap run 43082982264: grip centre 0.081, fists touching), so grip centre z 0.082. Solved with the FK twin of animate.py (arm reach shoulder->grip 0.60 at elbow 5, hip-ankle 0.895 = straight legs on the body line): root rot X 69.1 (body 21 deg above the floor), root z 0.5844 -> shoulders (+-0.22,-0.465,0.681), hips (+-0.11,-0.021,0.538), grip (+-0.22,-0.494,0.082) just ahead of the shoulder (fists under the shoulders), ankle (0.12,0.815,0.218) = hip-ankle 0.895. Arms vertical in the world = elev 68.3, plane 90 in the torso frame; elbow 5 soft, fold toward the head (bend [0,0.34,0.94]). Fists (knuckle plank, press grip axis [-1,0,0]): the rig's hand is a grip, so flat palms are not possible - stated, not hidden. Knee pole below = kneecaps down. Start = standing rest (passed: lowest -0.001). Expected lowest body point at the end: ~0.000 (toes +0.002, fists ~0.00). Facts and checks: research/burpee.json. Sources S1 NASM, S2 Yamashita 2023."
+  "research": "12 Nov 2026 fix of run 43079162675 (QA: 'end: hands float in front of the body'). Cause 1 (pipeline, fixed in animate.py the same day): the root turn was keyed on the unused quaternion channel (MPFB bones are XYZ euler), so every frame kept the LAST baked lean: the end picture showed the plank's low hips with a standing trunk and the arms stuck out forward. Cause 2 (recipe): toes and hands sat too low. Calibrated from cloud numbers: foot rot X 70 puts the lowest toe point 0.2158 below the ankle (rkc_plank and plank_shoulder_tap both measured -0.0508 at ankle z 0.165), so ankle z 0.218; a knuckle fist on the floor reaches ~0.08 below its grip centre with the arm vertical (plank_shoulder_tap run 43082982264: grip centre 0.081, fists touching), so grip centre z 0.082. Solved with the FK twin of animate.py (arm reach shoulder->grip 0.60 at elbow 5, hip-ankle 0.895 = straight legs on the body line): root rot X 69.1 (body 21 deg above the floor), root z 0.5844 -> shoulders (+-0.22,-0.465,0.681), hips (+-0.11,-0.021,0.538), grip (+-0.22,-0.494,0.082) just ahead of the shoulder (fists under the shoulders), ankle (0.12,0.815,0.218) = hip-ankle 0.895. Arms vertical in the world = elev 68.3, plane 90 in the torso frame; elbow 5 soft, fold toward the head (bend [0,0.34,0.94]). Fists (knuckle plank, press grip axis [-1,0,0]): the rig's hand is a grip, so flat palms are not possible - stated, not hidden. Knee pole below = kneecaps down. Start = standing rest (passed: lowest -0.001). Expected lowest body point at the end: ~0.000 (toes +0.002, fists ~0.00). Facts and checks: research/burpee.json. Sources S1 NASM, S2 Yamashita 2023. 13 Nov 2026 (pics-fixes): the rig now has an open hand: plank hands are FLAT palms (hand 'flat', wrist bent back until the hand is level, arm.flex 'level-'); 'ground' puts both palms and both toe tips on the floor from the real skin (report lows in the stills log). Start hands relaxed (open) at the sides."
 }

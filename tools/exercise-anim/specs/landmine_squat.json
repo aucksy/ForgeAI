@@ -1,0 +1,207 @@
+{
+  "key": "landmine_squat",
+  "name": "Landmine Squat",
+  "primary": [
+    "quads"
+  ],
+  "secondary": [
+    "glutes",
+    "adductors"
+  ],
+  "props": {
+    "lm": {
+      "type": "landmine",
+      "pivot": [
+        0,
+        -2.0,
+        0.05
+      ],
+      "grip_from_tip": 0.05
+    }
+  },
+  "camera": {
+    "lens": 50,
+    "fill": 0.9,
+    "res": 640,
+    "samples": 20,
+    "yaw": -60,
+    "pitch": 10
+  },
+  "timing": {
+    "fps": 30,
+    "keys": [
+      [
+        0,
+        "start"
+      ],
+      [
+        1,
+        "end"
+      ],
+      [
+        2,
+        "start"
+      ]
+    ]
+  },
+  "poses": {
+    "start": {
+      "hands": {
+        "L": {
+          "prop": "lm",
+          "hand": "cup",
+          "axis": [
+            0.82,
+            0.57,
+            0
+          ],
+          "arm": {
+            "elev": 12.8,
+            "plane": -63,
+            "fore_world": [
+              -0.55,
+              -0.8,
+              0.24
+            ],
+            "flex": "level-",
+            "tilt": 0
+          }
+        },
+        "R": {
+          "prop": "lm",
+          "hand": "cup",
+          "axis": [
+            -0.82,
+            0.57,
+            0
+          ],
+          "arm": {
+            "elev": 12.8,
+            "plane": -63,
+            "fore_world": [
+              0.55,
+              -0.8,
+              0.24
+            ],
+            "flex": "level-",
+            "tilt": 0
+          }
+        }
+      },
+      "root": {
+        "loc": [
+          0,
+          0.056,
+          0.971
+        ],
+        "rot": [
+          0,
+          0,
+          0
+        ]
+      },
+      "feet": {
+        "L": {
+          "at": [
+            0.2,
+            -0.01,
+            0.074
+          ],
+          "rot": [
+            0,
+            0,
+            15
+          ]
+        }
+      },
+      "knees": {
+        "L": [
+          0.3,
+          -1.0,
+          0.52
+        ]
+      }
+    },
+    "end": {
+      "hands": {
+        "L": {
+          "prop": "lm",
+          "hand": "cup",
+          "axis": [
+            0.82,
+            0.57,
+            0
+          ],
+          "arm": {
+            "elev": 12.8,
+            "plane": -63,
+            "fore_world": [
+              -0.55,
+              -0.8,
+              0.24
+            ],
+            "flex": "level-",
+            "tilt": 0
+          }
+        },
+        "R": {
+          "prop": "lm",
+          "hand": "cup",
+          "axis": [
+            -0.82,
+            0.57,
+            0
+          ],
+          "arm": {
+            "elev": 12.8,
+            "plane": -63,
+            "fore_world": [
+              0.55,
+              -0.8,
+              0.24
+            ],
+            "flex": "level-",
+            "tilt": 0
+          }
+        }
+      },
+      "root": {
+        "loc": [
+          0,
+          0.15,
+          0.58
+        ],
+        "rot": [
+          25,
+          0,
+          0
+        ]
+      },
+      "feet": {
+        "L": {
+          "at": [
+            0.2,
+            -0.01,
+            0.074
+          ],
+          "rot": [
+            0,
+            0,
+            15
+          ]
+        }
+      },
+      "knees": {
+        "L": [
+          0.45,
+          -1.2,
+          0.5
+        ]
+      },
+      "ground": {
+        "feet": 0.0
+      }
+    }
+  },
+  "research": "Landmine squat: the bar's loaded end held at the chest in both cupped palms (hand 'cup', palms up, wrists bent back until level). Pivot 2.0 m in front. Bottom: hips down and back, knees out, trunk leaned 25 deg. Stills log prints the bar-end depth in the pivot tube."
+}

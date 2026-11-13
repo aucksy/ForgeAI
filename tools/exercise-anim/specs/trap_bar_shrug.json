@@ -1,0 +1,119 @@
+{
+  "key": "trap_bar_shrug",
+  "name": "Trap Bar Shrug",
+  "primary": [
+    "traps"
+  ],
+  "secondary": [
+    "forearms"
+  ],
+  "props": {
+    "bar": {
+      "type": "trap_bar"
+    }
+  },
+  "camera": {
+    "lens": 50,
+    "fill": 0.9,
+    "res": 640,
+    "samples": 20,
+    "yaw": -30,
+    "pitch": 10
+  },
+  "timing": {
+    "fps": 30,
+    "keys": [
+      [
+        0,
+        "start"
+      ],
+      [
+        1,
+        "end"
+      ],
+      [
+        2,
+        "start"
+      ]
+    ]
+  },
+  "defaults": {
+    "feet": {
+      "L": {
+        "at": [
+          0.15,
+          -0.01,
+          0.074
+        ],
+        "rot": [
+          0,
+          0,
+          6
+        ]
+      }
+    },
+    "knees": {
+      "L": [
+        0.16,
+        -1.0,
+        0.52
+      ]
+    }
+  },
+  "poses": {
+    "start": {
+      "hands": {
+        "L": {
+          "prop": "bar",
+          "axis": [
+            0,
+            1,
+            0
+          ],
+          "arm": {
+            "elev": 9,
+            "plane": 0,
+            "elbow": 3,
+            "bend": [
+              0,
+              1,
+              0
+            ],
+            "tilt": 0
+          }
+        }
+      }
+    },
+    "end": {
+      "bones": {
+        "clavicle.L": [
+          0,
+          0,
+          20
+        ]
+      },
+      "hands": {
+        "L": {
+          "prop": "bar",
+          "axis": [
+            0,
+            1,
+            0
+          ],
+          "arm": {
+            "elev": 9,
+            "plane": 0,
+            "elbow": 3,
+            "bend": [
+              0,
+              1,
+              0
+            ],
+            "tilt": 0
+          }
+        }
+      }
+    }
+  },
+  "research": "Trap bar handles 0.63 m apart: arms hang straight, 9 deg out from the sides (hands at x +-0.315), neutral grip. End: shoulders shrugged up (collarbone Z +20)."
+}

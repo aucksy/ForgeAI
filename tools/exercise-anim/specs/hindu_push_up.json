@@ -1,26 +1,243 @@
 {
   "key": "hindu_push_up",
   "name": "Hindu Push-Up",
-  "primary": ["chest"],
-  "secondary": ["front_delts", "triceps"],
-  "skin": {"preserve_volume": true, "calm_armpits": {"amount": 0.45, "radius": 0.05, "fade": 0.05, "down": 0.08, "hl_cut": 0.8}},
-  "camera": {"yaw": -85, "pitch": 12, "lens": 50, "fill": 0.9, "res": 640, "samples": 20},
-  "timing": {"fps": 30, "keys": [[0, "start"], [1, "end"], [2, "start"]]},
-  "poses": {
-    "start": {
-      "root": {"loc": [0, 0.285, 0.928], "rot": [134.6, 0, 0]},
-      "bones": {"spine05": [0, 0, 0], "spine04": [0, 0, 0], "spine03": [0, 0, 0], "spine02": [0, 0, 0], "spine01": [0, 0, 0], "neck01": [0, 0, 0], "head": [0, 0, 0]},
-      "feet": {"L": {"at": [0.2, 0.873, 0.193], "rot": [45, 0, 0]}},
-      "knees": {"L": [0.16, 0.25, 0.15]},
-      "hands": {"L": {"axis": [-1, 0, 0], "arm": {"elev": 177, "plane": 90, "elbow": 2, "bend": [0, 1, 0]}}}
-    },
-    "end": {
-      "root": {"loc": [0, -0.059, 0.383], "rot": [66, 0, 0]},
-      "bones": {"spine05": [-10, 0, 0], "spine04": [-9, 0, 0], "spine03": [-8, 0, 0], "spine02": [-7, 0, 0], "spine01": [-6, 0, 0], "neck01": [-8, 0, 0], "head": [-8, 0, 0]},
-      "feet": {"L": {"at": [0.2, 0.8, 0.218], "rot": [70, 0, 0]}},
-      "knees": {"L": [0.16, 0.4, -0.5]},
-      "hands": {"L": {"axis": [-1, 0, 0], "arm": {"elev": 35.7, "plane": 90, "elbow": 2, "bend": [0, 1, 0]}}}
+  "primary": [
+    "chest"
+  ],
+  "secondary": [
+    "front_delts",
+    "triceps"
+  ],
+  "skin": {
+    "preserve_volume": true,
+    "calm_armpits": {
+      "amount": 0.45,
+      "radius": 0.05,
+      "fade": 0.05,
+      "down": 0.08,
+      "hl_cut": 0.8
     }
   },
-  "research": "12 Nov 2026 fix of run 43079162675 (QA: 'end pose sinks 25 cm into the floor'). Cause 1 (pipeline, fixed in animate.py the same day): the root turn was keyed on the unused quaternion channel (MPFB bones are XYZ euler), so the end picture kept the START lean (134.6, the V) at the end's low root height: a V pushed 25 cm into the floor. Cause 2 (recipe): the start V had the fists 6 cm in the floor (lowest -0.062 with the grip centre at 0.036; toes at foot rot 45 only reach 0.19 below the ankle, so the fists were the low point) and the end arm angle came from a torso-chord guess. Re-solved with the FK twin of animate.py (root + spine bones about X at their heads, torso frame = shoulders + spine05->neck01 chord, arm reach 0.60). START (V): root rot X 134.6 unchanged, arms elev 177 / plane 90 in line with the back, elbow 2; root raised 0.064 to (0,0.285,0.928) so the grip centre sits at (0.22,-0.398,0.100) (a fist on a 45-deg arm reaches ~0.098 below its grip centre: measured -0.062 at 0.036); hips (0.11,0.319,0.890), hip angle 80 deg. Feet on the balls, heels toward the floor: foot rot X 45 (toe 0.189-0.191 below the ankle) -> ankle (0.20,0.873,0.193), hip-ankle 0.895. END (arched, up-dog): pelvis rot X 66, spine05..01 -10/-9/-8/-7/-6 (= -40 arch), neck01/head -8/-8 = looking ahead. Arms vertical in the world = elev 35.7, plane 90, elbow 2; root placed so the grip lands on the SAME spot as the start but at the vertical-arm height (0.22,-0.398,0.082) -> root (0,-0.059,0.383), shoulders (+-0.22,-0.387,0.682) right over the hands, chest chord 54 deg up, hip joint (0.11,-0.082,0.338): the front of the pelvis ~0.25 m off the floor, hips low but not down. Pelvis 66 (not lower) keeps the hip extension at 17 deg (a real hip goes ~15-20); more arch (-40 vs -34) brings the hips down instead. On the toes: foot rot X 70 (measured toe depth 0.2158) -> ankle (0.20,0.800,0.218), hip-ankle 0.895; the toe tip moves only 1.6 cm between the pictures (feet stay planted, ankles roll). Expected lowest body point: start ~+0.002 (fists, toes +0.002), end ~0.000 (fists, toes +0.002). skin options copied from the approved overhead shoulder press for the V. Sources S1 Wikipedia (Hindu push-up), S2 Intziegianni 2026, S3 Marcolin 2015 (push-up EMG)."
+  "camera": {
+    "yaw": -85,
+    "pitch": 12,
+    "lens": 50,
+    "fill": 0.9,
+    "res": 640,
+    "samples": 20
+  },
+  "timing": {
+    "fps": 30,
+    "keys": [
+      [
+        0,
+        "start"
+      ],
+      [
+        1,
+        "end"
+      ],
+      [
+        2,
+        "start"
+      ]
+    ]
+  },
+  "poses": {
+    "start": {
+      "root": {
+        "loc": [
+          0,
+          0.285,
+          0.928
+        ],
+        "rot": [
+          134.6,
+          0,
+          0
+        ]
+      },
+      "bones": {
+        "spine05": [
+          0,
+          0,
+          0
+        ],
+        "spine04": [
+          0,
+          0,
+          0
+        ],
+        "spine03": [
+          0,
+          0,
+          0
+        ],
+        "spine02": [
+          0,
+          0,
+          0
+        ],
+        "spine01": [
+          0,
+          0,
+          0
+        ],
+        "neck01": [
+          0,
+          0,
+          0
+        ],
+        "head": [
+          0,
+          0,
+          0
+        ]
+      },
+      "feet": {
+        "L": {
+          "at": [
+            0.2,
+            0.873,
+            0.193
+          ],
+          "rot": [
+            45,
+            0,
+            0
+          ]
+        }
+      },
+      "knees": {
+        "L": [
+          0.16,
+          0.25,
+          0.15
+        ]
+      },
+      "hands": {
+        "L": {
+          "axis": [
+            -1,
+            0,
+            0
+          ],
+          "arm": {
+            "elev": 177,
+            "plane": 90,
+            "elbow": 2,
+            "bend": [
+              0,
+              1,
+              0
+            ],
+            "flex": "level-"
+          },
+          "hand": "flat"
+        }
+      },
+      "ground": {
+        "feet": 0.0,
+        "hands": 0.0
+      }
+    },
+    "end": {
+      "root": {
+        "loc": [
+          0,
+          -0.059,
+          0.383
+        ],
+        "rot": [
+          66,
+          0,
+          0
+        ]
+      },
+      "bones": {
+        "spine05": [
+          -10,
+          0,
+          0
+        ],
+        "spine04": [
+          -9,
+          0,
+          0
+        ],
+        "spine03": [
+          -8,
+          0,
+          0
+        ],
+        "spine02": [
+          -7,
+          0,
+          0
+        ],
+        "spine01": [
+          -6,
+          0,
+          0
+        ],
+        "neck01": [
+          -8,
+          0,
+          0
+        ],
+        "head": [
+          -8,
+          0,
+          0
+        ]
+      },
+      "feet": {
+        "L": {
+          "at": [
+            0.2,
+            0.8,
+            0.218
+          ],
+          "rot": [
+            70,
+            0,
+            0
+          ]
+        }
+      },
+      "knees": {
+        "L": [
+          0.16,
+          0.4,
+          -0.5
+        ]
+      },
+      "hands": {
+        "L": {
+          "axis": [
+            -1,
+            0,
+            0
+          ],
+          "arm": {
+            "elev": 35.7,
+            "plane": 90,
+            "elbow": 2,
+            "bend": [
+              0,
+              1,
+              0
+            ],
+            "flex": "level-"
+          },
+          "hand": "flat"
+        }
+      },
+      "ground": {
+        "feet": 0.0,
+        "hands": 0.0
+      }
+    }
+  },
+  "research": "12 Nov 2026 fix of run 43079162675 (QA: 'end pose sinks 25 cm into the floor'). Cause 1 (pipeline, fixed in animate.py the same day): the root turn was keyed on the unused quaternion channel (MPFB bones are XYZ euler), so the end picture kept the START lean (134.6, the V) at the end's low root height: a V pushed 25 cm into the floor. Cause 2 (recipe): the start V had the fists 6 cm in the floor (lowest -0.062 with the grip centre at 0.036; toes at foot rot 45 only reach 0.19 below the ankle, so the fists were the low point) and the end arm angle came from a torso-chord guess. Re-solved with the FK twin of animate.py (root + spine bones about X at their heads, torso frame = shoulders + spine05->neck01 chord, arm reach 0.60). START (V): root rot X 134.6 unchanged, arms elev 177 / plane 90 in line with the back, elbow 2; root raised 0.064 to (0,0.285,0.928) so the grip centre sits at (0.22,-0.398,0.100) (a fist on a 45-deg arm reaches ~0.098 below its grip centre: measured -0.062 at 0.036); hips (0.11,0.319,0.890), hip angle 80 deg. Feet on the balls, heels toward the floor: foot rot X 45 (toe 0.189-0.191 below the ankle) -> ankle (0.20,0.873,0.193), hip-ankle 0.895. END (arched, up-dog): pelvis rot X 66, spine05..01 -10/-9/-8/-7/-6 (= -40 arch), neck01/head -8/-8 = looking ahead. Arms vertical in the world = elev 35.7, plane 90, elbow 2; root placed so the grip lands on the SAME spot as the start but at the vertical-arm height (0.22,-0.398,0.082) -> root (0,-0.059,0.383), shoulders (+-0.22,-0.387,0.682) right over the hands, chest chord 54 deg up, hip joint (0.11,-0.082,0.338): the front of the pelvis ~0.25 m off the floor, hips low but not down. Pelvis 66 (not lower) keeps the hip extension at 17 deg (a real hip goes ~15-20); more arch (-40 vs -34) brings the hips down instead. On the toes: foot rot X 70 (measured toe depth 0.2158) -> ankle (0.20,0.800,0.218), hip-ankle 0.895; the toe tip moves only 1.6 cm between the pictures (feet stay planted, ankles roll). Expected lowest body point: start ~+0.002 (fists, toes +0.002), end ~0.000 (fists, toes +0.002). skin options copied from the approved overhead shoulder press for the V. Sources S1 Wikipedia (Hindu push-up), S2 Intziegianni 2026, S3 Marcolin 2015 (push-up EMG). 13 Nov 2026 (pics-fixes): flat palms (hand 'flat', flex 'level-'), hands and toes put on the floor by 'ground'."
 }

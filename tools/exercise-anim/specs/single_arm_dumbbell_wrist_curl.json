@@ -1,0 +1,164 @@
+{
+  "key": "single_arm_dumbbell_wrist_curl",
+  "name": "Single-Arm Dumbbell Wrist Curl",
+  "primary": [
+    "forearms"
+  ],
+  "secondary": [],
+  "scene": {
+    "bench": {
+      "deg": 0
+    }
+  },
+  "props": {
+    "db_L": {
+      "type": "dumbbell"
+    }
+  },
+  "camera": {
+    "lens": 50,
+    "fill": 0.9,
+    "res": 640,
+    "samples": 20,
+    "yaw": -60,
+    "pitch": 15
+  },
+  "timing": {
+    "fps": 30,
+    "keys": [
+      [
+        0,
+        "start"
+      ],
+      [
+        1,
+        "end"
+      ],
+      [
+        2,
+        "start"
+      ]
+    ]
+  },
+  "defaults": {
+    "root": {
+      "loc": [
+        0,
+        -0.15,
+        0.53
+      ],
+      "rot": [
+        40,
+        0,
+        0
+      ]
+    },
+    "feet": {
+      "L": {
+        "at": [
+          0.2,
+          -0.62,
+          0.075
+        ],
+        "rot": [
+          0,
+          0,
+          8
+        ]
+      }
+    },
+    "knees": {
+      "L": [
+        0.25,
+        -1.2,
+        0.6
+      ]
+    }
+  },
+  "poses": {
+    "start": {
+      "hands": {
+        "L": {
+          "prop": "db_L",
+          "axis": [
+            1,
+            0,
+            0
+          ],
+          "arm": {
+            "elev": 23,
+            "plane": 134,
+            "fore_world": [
+              0.02,
+              -1,
+              -0.03
+            ],
+            "flex": -55,
+            "tilt": 0
+          }
+        },
+        "R": {
+          "hand": "relaxed",
+          "axis": [
+            -1,
+            0,
+            0
+          ],
+          "arm": {
+            "elev": 23,
+            "plane": 134,
+            "fore_world": [
+              -0.02,
+              -1,
+              -0.03
+            ],
+            "tilt": 0
+          }
+        }
+      }
+    },
+    "end": {
+      "hands": {
+        "L": {
+          "prop": "db_L",
+          "axis": [
+            1,
+            0,
+            0
+          ],
+          "arm": {
+            "elev": 23,
+            "plane": 134,
+            "fore_world": [
+              0.02,
+              -1,
+              -0.03
+            ],
+            "flex": 45,
+            "tilt": 0
+          }
+        },
+        "R": {
+          "hand": "relaxed",
+          "axis": [
+            -1,
+            0,
+            0
+          ],
+          "arm": {
+            "elev": 23,
+            "plane": 134,
+            "fore_world": [
+              -0.02,
+              -1,
+              -0.03
+            ],
+            "tilt": 0
+          }
+        }
+      }
+    }
+  },
+  "highlight_side": "L",
+  "research": "Seated at the end of a flat bench, trunk leaned 40 deg, the left forearm lying along the left thigh, palm up, wrist past the knee. Start: wrist bent back 55 deg (dumbbell lowered), end: wrist curled up 45 deg (arm.flex). Right forearm rests on the right thigh, hand open."
+}

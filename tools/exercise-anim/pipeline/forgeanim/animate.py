@@ -63,6 +63,9 @@ class Clip:
         self.rest_root = self.rig.data.bones["root"].matrix_local.copy()
         self.rest = {}  # resolved full poses
         self._fist = {}; self._gax = {}  # grip centre and handle axis per hand (world), for place_bars
+        self._palm = {}; self._flex_used = {}  # palm-side direction (world) and wrist bend (deg) per hand, for the report
+        # hand shapes (fist / flat / cup / relaxed) are keyed per frame only when a recipe uses them
+        self._shapes = any("hand" in h for p in spec.get("poses", {}).values() for h in p.get("hands", {}).values())
 
     # ---------------- scene ----------------
     def build_props(self):
@@ -94,9 +97,31 @@ class Clip:
                 grab = f", hand grip centre at {[round(v, 3) for v in col['grab']]}"
             self.columns.append(col)
             print(f"[cable] column {i}: post at ({x:.2f}, {y:.2f}), pulley at {[round(v, 3) for v in col['pulley']]}{grab}")
+        if "preacher" in sc:
+            # "preacher": {"seat_h": 0.6, "pad_top": [y, z], "pad_deg": 45, "loc": [x, y, 0]} (13 Nov 2026)
+            pr = sc["preacher"]
+            kw = {k: (tuple(v) if isinstance(v, list) else v) for k, v in pr.items() if k in ("seat_h", "pad_top", "pad_deg", "pad_len", "pad_w")}
+            self.preacher = P.preacher_bench(**kw)
+            self.preacher["root"].location = Vector(pr.get("loc", (0, 0, 0)))
+            self.extras = getattr(self, "extras", []) + [self.preacher["root"]]
         for name, p in self.spec.get("props", {}).items():
             if p["type"] == "dumbbell":
                 self.props[name] = P.dumbbell("FA_" + name)
+            elif p["type"] == "ez_bar":
+                # "bar": {"type": "ez_bar", "plates": [0.2]}: hands on the angled grips (props.EZ_GRIPS) (13 Nov 2026)
+                kw = {k: (tuple(v) if isinstance(v, list) else v) for k, v in p.items() if k in ("plates", "plate_t", "sleeve")}
+                self.props[name] = P.ez_bar("FA_" + name, **kw)
+            elif p["type"] == "trap_bar":
+                kw = {k: (tuple(v) if isinstance(v, list) else v) for k, v in p.items() if k in ("handle_gap", "plates", "plate_t")}
+                self.props[name] = P.trap_bar("FA_" + name, **kw)
+            elif p["type"] == "landmine":
+                # "lm": {"type": "landmine", "pivot": [x, y, z], "grip_from_tip": 0.1}: one bar end in a floor pivot, the
+                # hand(s) on the loaded end; the bar runs from the pivot through the fist(s) every frame
+                kw = {k: (tuple(v) if isinstance(v, list) else v) for k, v in p.items() if k in ("grip_from_tip", "plates", "plate_t")}
+                self.props[name], self._lm_len = P.landmine_bar("FA_" + name, **kw)
+                self._lm_tube, base = P.landmine_base("FA_" + name + "Pivot")
+                base.location = Vector(p["pivot"])
+                self.extras = getattr(self, "extras", []) + [self._lm_tube, base]
             elif p["type"] == "barbell":
                 # "bar": {"type": "barbell", "shaft": 1.31, "sleeve": 0.42, "plates": [0.225]} (13 Nov 2026)
                 kw = {k: (tuple(v) if isinstance(v, list) else v) for k, v in p.items() if k in ("shaft", "sleeve", "plates", "plate_t")}
@@ -284,6 +309,9 @@ class Clip:
                 prop.matrix_world = R.frame_from(c, axis if s == "L" else -axis, up)
             R.place_hand(rig, s, c, axis, self.G[s])
             self._fist[s] = c.copy(); self._gax[s] = axis.copy()
+        if self._shapes:
+            for s in pose.get("hands", {}):
+                R.set_hand(rig, s, pose["hands"][s].get("hand", "fist"))
         R.update()
         self.place_feet_props()
         self.place_bars(pose, T)
@@ -461,19 +489,53 @@ class Clip:
         never miss a hand. With one hand on it, "prop_offset" places it as for a dumbbell. Prints the check numbers:
         hand gap and how far each hand's grip axis is off the bar line (0 = the fist is square on the bar)."""
         for name, p in self.spec.get("props", {}).items():
-            if p["type"] != "barbell" or name not in self.props:
+            if p["type"] not in ("barbell", "ez_bar", "trap_bar", "landmine") or name not in self.props:
                 continue
             on = [s for s, h in pose.get("hands", {}).items() if h.get("prop") == name and s in self._fist]
+            if p["type"] == "landmine":
+                if on:
+                    self.place_landmine(name, p, on)
+                continue
             if len(on) != 2:
                 continue
             cl, cr = self._fist["L"], self._fist["R"]
             x = (cl - cr).normalized()
-            self.props[name].matrix_world = R.frame_from((cl + cr) / 2, x, T.to_3x3() @ Vector((0, 0, 1)))
+            hint = T.to_3x3() @ Vector((0, 0, 1))
+            seg = None
+            if p["type"] in ("ez_bar", "trap_bar") and "L" in self._gax and "R" in self._gax:
+                # the grips are not along the bar line: the bar's own Y comes from the two hands' handle axes
+                yl = self._gax["L"] - x * self._gax["L"].dot(x); yr = self._gax["R"] - x * self._gax["R"].dot(x)
+                if (yl + yr).length > 1e-3:
+                    hint = yl + yr
+            self.props[name].matrix_world = R.frame_from((cl + cr) / 2, x, hint)
+            M3 = self.props[name].matrix_world.to_3x3()
+            if p["type"] == "ez_bar":
+                a = math.radians(P.EZ_GRIP_DEG)
+                seg = {"L": (M3 @ Vector((math.cos(a), math.sin(a), 0))).normalized(), "R": (M3 @ Vector((-math.cos(a), math.sin(a), 0))).normalized()}
+            elif p["type"] == "trap_bar":
+                seg = {"L": (M3 @ Vector((0, 1, 0))).normalized(), "R": (M3 @ Vector((0, 1, 0))).normalized()}
             if getattr(self, "_bar_log", 0) < 4:
                 self._bar_log = getattr(self, "_bar_log", 0) + 1
-                offs = {s: round(math.degrees(min(self._gax[s].angle(x), self._gax[s].angle(-x))), 1) for s in on if s in self._gax}
-                print(f"[bar] {name}: hand gap {(cl - cr).length:.3f} m, grip axis off the bar (deg) {offs}")
+                line = seg or {"L": x, "R": x}
+                offs = {s: round(math.degrees(min(self._gax[s].angle(line[s]), self._gax[s].angle(-line[s]))), 1) for s in on if s in self._gax}
+                print(f"[bar] {name} ({p['type']}): hand gap {(cl - cr).length:.3f} m, grip axis off the handle (deg) {offs}")
         R.update()
+
+    def place_landmine(self, name, p, on):
+        """The bar runs from the pivot through the fist(s); its far end slides in the pivot tube. Logs how deep."""
+        g = sum((self._fist[s] for s in on), Vector()) / len(on)
+        piv = Vector(p["pivot"])
+        dvec = g - piv; dist = dvec.length; dvec.normalize()
+        up = Vector((0, 0, 1))
+        self.props[name].matrix_world = R.frame_from(g, dvec, up)
+        self._lm_tube.matrix_world = R.frame_from(piv, dvec, up)
+        if getattr(self, "_lm_log", 0) < 4:
+            self._lm_log = getattr(self, "_lm_log", 0) + 1
+            offs = {s: round(math.degrees(min(self._gax[s].angle(dvec), self._gax[s].angle(-dvec))), 1) for s in on if s in self._gax}
+            line_off = {s: round(((self._fist[s] - piv) - dvec * (self._fist[s] - piv).dot(dvec)).length, 3) for s in on}
+            print(f"[landmine] {name}: bar end {dist - self._lm_len:+.3f} m from the hinge along the bar (want +0.02..+0.25, "
+                  f"inside the tube), bar {math.degrees(math.asin(max(-1.0, min(1.0, dvec.z)))):.1f} deg above the floor, "
+                  f"grip axis off the bar (deg) {offs}, fist off the bar line (m) {line_off}")
 
     def place_feet_props(self):
         """props.<name>.feet = {"fwd": m, "shift": m}: a dumbbell squeezed between the feet (dumbbell leg curl).
@@ -589,12 +651,21 @@ class Clip:
         Ginv = self.G[s].inverted()
         hand = self.ctl[f"hand.{s}"]; prop = self.props.get(h.get("prop", ""))
 
-        def place(theta, tilt=0.0):
+        def place(theta, tilt=0.0, flex=0.0):
             # tilt: the handle slants up to ~17 deg off square to the forearm, as it does in a real fist
             Gw = G0 @ Matrix.Rotation(tilt, 4, "Z") @ Matrix.Rotation(theta, 4, "X")   # then turn about the handle
-            ax_w = Gw.to_3x3().col[0]
             c = wr - Gw.to_3x3() @ Ginv.translation
             Gw.translation = c
+            if flex:
+                # wrist bend (13 Nov 2026): turn the whole hand (and what it holds) about the wrist joint, about the axis
+                # across the wrist: + = flexion (palm toward the forearm), - = extension (back of the hand toward it)
+                k, pdir = self._flex_axis(wr, el, c)
+                Gw = Matrix.Translation(wr) @ Matrix.Rotation(flex, 4, k) @ Matrix.Translation(-wr) @ Gw
+                c = Gw.translation.copy()
+                self._palm[s] = (Matrix.Rotation(flex, 3, k) @ pdir).normalized()
+            else:
+                self._palm[s] = self._flex_axis(wr, el, c)[1]
+            ax_w = Gw.to_3x3().col[0]
             Wm = Gw @ Ginv
             self._fist[s] = c.copy(); self._gax[s] = ax_w.copy()
             hand.location = Wm.translation; hand.rotation_quaternion = Wm.to_quaternion()
@@ -610,7 +681,15 @@ class Clip:
         # the forearm line; aiming at it cocked the incline wrist ~20 deg). arm.tilt (deg, interpolated) slants the
         # handle off square to the forearm as a real fist does; pick it with the wrist check, never per frame
         # (a per-frame search made the dumbbell pop between two answers).
-        place(-self.Gphi[s], math.radians(h.get("arm", {}).get("tilt", 0.0)))
+        tilt = math.radians(h.get("arm", {}).get("tilt", 0.0))
+        flex = h.get("arm", {}).get("flex", 0.0)
+        if isinstance(flex, str):
+            # "level-" / "level+": bend the wrist back (-) or forward (+) until the hand's length (wrist -> middle
+            # knuckle) is level with the floor: a flat palm on the floor (push-up, plank) or palms up under a plate
+            place(-self.Gphi[s], tilt)
+            flex = self._level_flex(s, wr, el, flex.endswith("+"))
+        place(-self.Gphi[s], tilt, math.radians(flex))
+        self._flex_used[s] = round(flex, 1)
         # forearm pronation lives in the forearm (radius over ulna), not the wrist joint: hand most of the wrist's
         # spin to the forearm twist bone so the skin twists along the forearm instead of snapping at the wrist
         w = pb[f"wrist.{s}"]
@@ -620,6 +699,36 @@ class Clip:
         tw = (tw + math.pi) % (2 * math.pi) - math.pi
         pb[f"lowerarm02.{s}"].rotation_quaternion = Quaternion((0, 1, 0), tw * 0.85)
         R.update()
+
+    @staticmethod
+    def _flex_axis(wr, el, c):
+        """Axis across the wrist (k) and the palm side (p, perpendicular to the forearm, toward the fist centre).
+        Turning the forearm direction about k by +angle moves it toward p: flexion."""
+        d = (wr - el).normalized()
+        p = c - wr; p = p - d * p.dot(d)
+        p = p.normalized() if p.length > 1e-6 else Vector((0, 0, 1))
+        return d.cross(p).normalized(), p
+
+    def _level_flex(self, s, wr, el, plus):
+        """Degrees of wrist bend that make the hand (wrist -> middle knuckle) level with the floor."""
+        rig = self.rig
+        h0 = R.world_head(rig, f"finger3-1.{s}") - R.world_head(rig, f"wrist.{s}")
+        k, _ = self._flex_axis(wr, el, self._fist[s])
+        best = None
+        prev = None
+        for i in range(-300, 301):
+            th = math.radians(i * 0.5)
+            z = (Matrix.Rotation(th, 3, k) @ h0).z
+            if prev is not None and (prev[1] <= 0) != (z <= 0):
+                t0, z0 = prev
+                root = t0 + (th - t0) * (z0 / (z0 - z)) if z0 != z else th
+                if (root > 0) == plus and (best is None or abs(root) < abs(best)):
+                    best = root
+            prev = (th, z)
+        if best is None:
+            print(f"[hand] {s}: no wrist bend makes the hand level; kept straight")
+            return 0.0
+        return math.degrees(best)
 
     def _wrist_off_rest(self, s):
         """Angle (rad) between the forearm line seen from the hand now and with the wrist at rest: 0 = neutral wrist."""
@@ -731,6 +840,10 @@ class Clip:
             girdle_bones = []
         animated = [o for o in self.ctl.values()] + list(self.props.values())
         movers = self.cable_movers()   # stretched every frame, so their scale is keyed too
+        if hasattr(self, "_lm_tube"):
+            animated.append(self._lm_tube)   # the landmine tube turns with the bar
+        finger_bones = [f"{b}.{s}" for b in R.FINGER_BONES for s in R.SIDES if f"{b}.{s}" in pb] if self._shapes else []
+        self.ground_poses(cache)
         for f in range(n):
             scene.frame_set(f)
             self.apply(self.pose_at(f / fps, keys, cache))
@@ -743,6 +856,8 @@ class Clip:
                     pb[b].keyframe_insert("rotation_euler", frame=f)
             for b in fk_bones:
                 pb[b].keyframe_insert("rotation_quaternion", frame=f)
+            for b in finger_bones:
+                pb[b].keyframe_insert("rotation_euler", frame=f)
             for b in girdle_bones:   # the shoulder blade turns about a pivot off its head, so it moves too
                 pb[b].keyframe_insert("location", frame=f)
             for o in animated + movers:
@@ -757,6 +872,65 @@ class Clip:
                     for k in fc.keyframe_points:
                         k.interpolation = "LINEAR"
         return n
+
+    def ground_poses(self, cache):
+        """Pose option "ground" (13 Nov 2026): {"feet": 0, "hands": 0} etc. puts the named parts on the floor (or at the
+        given height) using the real skin, not a guess. "feet" moves each foot target on its own (toes / soles land at
+        that height). Any other part (hands, forearms, shins, upperarms, thighs, pelvis, trunk_head, all; ".L"/".R" for
+        one side) moves the whole body (root, foot targets, knee poles) by the lowest of those parts. Three passes."""
+        import copy
+        from . import report as REP
+        for name, P in self.spec["poses"].items():
+            g = P.get("ground")
+            if not g:
+                continue
+            pose = cache.setdefault(name, self.full_pose(name))
+            if "root" not in pose:
+                pose["root"] = {"loc": list(self.rest_root.translation), "rot": [0, 0, 0]}
+            pose["root"].setdefault("loc", list(self.rest_root.translation))
+            pose["root"]["loc"] = list(pose["root"]["loc"])
+            tilt = g.get("_tilt")   # [[front parts], [back parts]]: also pitch the body (root rot X) so BOTH touch
+            g = {k: v for k, v in g.items() if k != "_tilt"}
+            body_parts = [k for k in g if k != "feet"]
+            for it in range(7):
+                self.apply(copy.deepcopy(pose))
+                lw = REP.lows(self.ch["body"], self.rig)
+                msg = {k: round(v[0], 4) for k, v in lw.items() if k.split(".")[0] in [b.split(".")[0] for b in g] or k == "all"}
+                print(f"[ground] {name} pass {it}: lows {msg}")
+                if it == 6:
+                    break
+                if "feet" in g:
+                    for s in R.SIDES:
+                        z = REP.low_of(lw, [f"feet.{s}"])
+                        f = pose.get("feet", {}).get(s)
+                        if z is not None and f and "at" in f:
+                            f["at"] = [f["at"][0], f["at"][1], f["at"][2] - (z - g["feet"])]
+                if tilt:
+                    # two contacts along the body (e.g. forearms and knees): turn about the root (world X) so both
+                    # reach the floor; z' ~ z + d * (y - y_root) for a small turn d
+                    def low_pt(parts):
+                        c = [v for k, v in lw.items() if k != "all" and (k in parts or k.split(".")[0] in parts)]
+                        return min(c, key=lambda v: v[0]) if c else None
+                    f, b = low_pt(tilt[0]), low_pt(tilt[1])
+                    if f and b and abs(f[1][1] - b[1][1]) > 0.2:
+                        dlt = -(f[0] - b[0]) / (f[1][1] - b[1][1])
+                        pose["root"]["rot"] = list(pose["root"].get("rot", [0, 0, 0]))
+                        pose["root"]["rot"][0] += math.degrees(dlt)
+                        yr = pose["root"]["loc"][1]
+                        pose["root"]["loc"][2] -= f[0] + dlt * (f[1][1] - yr)
+                        print(f"[ground] {name}: tilt {math.degrees(dlt):+.2f} deg")
+                        continue
+                if body_parts:
+                    dz = REP.low_of(lw, body_parts) - min(g[k] for k in body_parts)
+                    pose["root"]["loc"][2] -= dz
+                    if "feet" not in g:
+                        for f in pose.get("feet", {}).values():
+                            if "at" in f:
+                                f["at"] = [f["at"][0], f["at"][1], f["at"][2] - dz]
+                        for s in list(pose.get("knees", {})):
+                            kp = pose["knees"][s]; pose["knees"][s] = [kp[0], kp[1], kp[2] - dz]
+            print(f"[ground] {name}: root loc {[round(c, 4) for c in pose['root']['loc']]}, feet "
+                  f"{ {s: [round(c, 4) for c in f['at']] for s, f in pose.get('feet', {}).items() if 'at' in f} }")
 
     def highlight(self):
         prim = self.spec.get("primary", []); sec = self.spec.get("secondary", [])

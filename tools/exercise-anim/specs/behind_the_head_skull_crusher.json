@@ -18,12 +18,12 @@
       "plates": [
         0.16
       ],
-      "plate_t": 0.035
+      "plate_t": 0.04
     }
   },
   "camera": {
-    "yaw": -60,
-    "pitch": 28,
+    "yaw": 90,
+    "pitch": 20,
     "lens": 50,
     "fill": 0.9,
     "res": 640,
@@ -180,9 +180,9 @@
             0
           ],
           "arm": {
-            "elev": 120,
+            "elev": 105,
             "plane": 92,
-            "elbow": 105,
+            "elbow": 110,
             "bend": [
               0,
               0,
@@ -194,5 +194,5 @@
       }
     }
   },
-  "research": "Flat-bench body from tate_press. Palms down (axis [-1,0,0]), hands ~0.40 m apart. Start: arms straight up over the chest. End: upper arms tilt back toward the head (elev 135 = 45 deg past vertical) and the elbows bend 100 deg: du = (0,0.707,0.707), E = (0.2,0.205,0.205), forearm (0,-0.82,0.57), bar at torso (0.2,-0.07,0.39) = beyond the top of the head, ~3 cm above the pad-face level and just past the pad end. Retry 13 Nov: first render tilted the arms 45 deg back and the bar hung ~25 cm past the head with the arms over the face. End now elev 120 (30 deg past vertical, research 120-150), elbow 105: bar at torso (0.19, 0.02, 0.38) = ~6 cm past the top of the head, level with the face; camera higher (pitch 28) so the face shows between the arms."
+  "research": "Flat-bench body from tate_press. Palms down (axis [-1,0,0]), hands ~0.40 m apart. Start: arms straight up over the chest. End: upper arms tilt back toward the head (elev 135 = 45 deg past vertical) and the elbows bend 100 deg: du = (0,0.707,0.707), E = (0.2,0.205,0.205), forearm (0,-0.82,0.57), bar at torso (0.2,-0.07,0.39) = beyond the top of the head, ~3 cm above the pad-face level and just past the pad end. Retry 13 Nov: first render tilted the arms 45 deg back and the bar hung ~25 cm past the head with the arms over the face. End now elev 120 (30 deg past vertical, research 120-150), elbow 105: bar at torso (0.19, 0.02, 0.38) = ~6 cm past the top of the head, level with the face; camera higher (pitch 28) so the face shows between the arms. 13 Nov 2026 (pics-fixes): end elev 105 / elbow 110: du=(-0.03,0.97,0.26), forearm (0.02,-0.57,0.82) -> bar at torso (0.2, 0.07, 0.35) = level with the forehead, ~5 cm past the top of the head. True side camera (yaw 90); the stills log prints the fist position in the torso frame to check."
 }

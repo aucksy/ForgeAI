@@ -1,0 +1,140 @@
+{
+  "key": "reverse_preacher_curl",
+  "name": "Reverse Preacher Curl",
+  "primary": [
+    "forearms"
+  ],
+  "secondary": [
+    "biceps"
+  ],
+  "scene": {
+    "preacher": {
+      "seat_h": 0.6,
+      "pad_top": [
+        -0.31,
+        0.93
+      ],
+      "pad_deg": 45
+    }
+  },
+  "props": {
+    "bar": {
+      "type": "barbell",
+      "shaft": 1.1,
+      "sleeve": 0.2,
+      "plates": [
+        0.16
+      ],
+      "plate_t": 0.035
+    }
+  },
+  "camera": {
+    "lens": 50,
+    "fill": 0.9,
+    "res": 640,
+    "samples": 20,
+    "yaw": -70,
+    "pitch": 10
+  },
+  "timing": {
+    "fps": 30,
+    "keys": [
+      [
+        0,
+        "start"
+      ],
+      [
+        1,
+        "end"
+      ],
+      [
+        2,
+        "start"
+      ]
+    ]
+  },
+  "defaults": {
+    "root": {
+      "loc": [
+        0,
+        0.05,
+        0.69
+      ],
+      "rot": [
+        30,
+        0,
+        0
+      ]
+    },
+    "feet": {
+      "L": {
+        "at": [
+          0.2,
+          -0.5,
+          0.075
+        ],
+        "rot": [
+          0,
+          0,
+          10
+        ]
+      }
+    },
+    "knees": {
+      "L": [
+        0.3,
+        -1.0,
+        0.6
+      ]
+    }
+  },
+  "poses": {
+    "start": {
+      "hands": {
+        "L": {
+          "prop": "bar",
+          "axis": [
+            -1,
+            0,
+            0
+          ],
+          "arm": {
+            "elev": 75,
+            "plane": 90,
+            "elbow": 15,
+            "bend_world": [
+              0,
+              0,
+              1
+            ],
+            "tilt": 0
+          }
+        }
+      }
+    },
+    "end": {
+      "hands": {
+        "L": {
+          "prop": "bar",
+          "axis": [
+            -1,
+            0,
+            0
+          ],
+          "arm": {
+            "elev": 75,
+            "plane": 90,
+            "elbow": 110,
+            "bend_world": [
+              0,
+              0,
+              1
+            ],
+            "tilt": 0
+          }
+        }
+      }
+    }
+  },
+  "research": "Preacher bench (pad 45 deg, top edge at the chest just under the armpits). Seated, trunk leaned 30 deg onto the pad: upper arms along the pad (world (0,-0.707,-0.707)) = torso elev 75 / plane 90. Palms down (axis [-1,0,0]). Start elbows 15, end 110 (forearms 65 deg above level). Stills log prints the upper-arm and trunk gaps to the pad."
+}

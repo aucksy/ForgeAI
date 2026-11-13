@@ -112,6 +112,31 @@ GRIP = {"finger2": (42, 62, 40), "finger3": (46, 66, 40), "finger4": (50, 68, 40
         "finger1": (8, 28, 22)}
 
 
+# Hand shapes per pose (13 Nov 2026): "fist" grips a handle (GRIP), "flat" = open hand with straight fingers (a palm
+# on the floor in a push-up or plank), "cup" = palm up with the fingers curled a little (a plate resting in the palms,
+# waiter curl), "relaxed" = a loose open hand (resting on a hip or thigh).
+HAND_SHAPES = {
+    "fist": GRIP,
+    "flat": {"finger2": (2, 2, 1), "finger3": (2, 2, 1), "finger4": (2, 2, 1), "finger5": (2, 2, 1), "finger1": (0, 4, 4)},
+    "cup": {"finger2": (18, 22, 12), "finger3": (20, 24, 12), "finger4": (22, 26, 12), "finger5": (24, 28, 12),
+            "finger1": (2, 10, 10)},
+    "relaxed": {"finger2": (14, 24, 14), "finger3": (16, 26, 14), "finger4": (18, 28, 14), "finger5": (20, 30, 14),
+                "finger1": (4, 12, 10)},
+}
+FINGER_BONES = [f"{f}-{j}" for f in GRIP for j in (1, 2, 3)]
+
+
+def set_hand(rig, side, shape="fist"):
+    angs_by_finger = HAND_SHAPES[shape]
+    for f, angs in angs_by_finger.items():
+        for j, a in enumerate(angs, start=1):
+            pb = rig.pose.bones.get(f"{f}-{j}.{side}")
+            if pb is None:
+                continue
+            pb.rotation_mode = "XYZ"
+            pb.rotation_euler = (math.radians(a), 0, 0)
+
+
 def set_grip(rig, amount=1.0, sign=1.0):
     for s in SIDES:
         for f, angs in GRIP.items():
