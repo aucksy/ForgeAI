@@ -23,15 +23,15 @@
   ]
  },
  "props": {
-  "rope": {
+  "bar": {
    "type": "cable",
-   "handle": "rope",
+   "handle": "bar",
    "column": 0,
-   "rope_len": 0.3
+   "length": 0.6
   }
  },
  "camera": {
-  "yaw": -25,
+  "yaw": 60,
   "pitch": 10,
   "lens": 50,
   "fill": 0.9,
@@ -98,15 +98,15 @@
    },
    "hands": {
     "L": {
-     "prop": "rope",
+     "prop": "bar",
      "axis": [
+      -1,
       0,
-      1,
       0
      ],
      "arm": {
-      "elev": 18,
-      "plane": 120,
+      "elev": 15,
+      "plane": 95,
       "elbow": 8,
       "bend": [
        0,
@@ -159,15 +159,15 @@
    },
    "hands": {
     "L": {
-     "prop": "rope",
+     "prop": "bar",
      "axis": [
+      -1,
       0,
-      0,
-      1
+      0
      ],
      "arm": {
       "elev": 88,
-      "plane": 100,
+      "plane": 95,
       "elbow": 8,
       "bend": [
        0,
@@ -180,5 +180,5 @@
    }
   }
  },
- "research": "Back to a low pulley 0.55 m behind, feet a little wider than hips so the cable runs between the knees. Rope, neutral grip, hands ~0.25 m apart. Start: arms straight (elbow 8), hands in front of the thighs (elev 18 / plane 120). End: arms straight out in front at shoulder height (elev 88 / plane 100), thumbs up (axis [0,0,1])."
+ "research": "Back to a low pulley 0.55 m behind, feet a little wider than hips so the cable runs between the knees. Rope, neutral grip, hands ~0.25 m apart. Start: arms straight (elbow 8), hands in front of the thighs (elev 18 / plane 120). End: arms straight out in front at shoulder height (elev 88 / plane 100), thumbs up (axis [0,0,1]). 13 Nov (R-490): straight bar instead of the rope (the rope ends stood up out of the fists), overhand, hands shoulder-width; side camera so the cable runs back between the legs."
 }

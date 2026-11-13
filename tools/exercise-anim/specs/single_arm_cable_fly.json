@@ -30,8 +30,8 @@
   }
  },
  "camera": {
-  "yaw": -30,
-  "pitch": 10,
+  "yaw": 15,
+  "pitch": 38,
   "lens": 50,
   "fill": 0.9,
   "res": 640,

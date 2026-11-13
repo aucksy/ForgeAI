@@ -30,7 +30,7 @@
   }
  },
  "camera": {
-  "yaw": 45,
+  "yaw": 90,
   "pitch": 8,
   "lens": 50,
   "fill": 0.9,
@@ -104,9 +104,9 @@
       0
      ],
      "arm": {
-      "elev": 22,
+      "elev": 35,
       "plane": -80,
-      "elbow": 15,
+      "elbow": 10,
       "bend": [
        0,
        1,
@@ -182,9 +182,9 @@
       0
      ],
      "arm": {
-      "elev": 22,
+      "elev": 35,
       "plane": -80,
-      "elbow": 115,
+      "elbow": 100,
       "bend": [
        0,
        1,
