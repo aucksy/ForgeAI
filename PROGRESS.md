@@ -13,9 +13,19 @@
   Guard: every routine done once, the first 14+ days ago (was 3 weeks + 4 workouts). Tests: muscleTipsRoutines (20),
   muscleTips (7), muscleBalance (8). UAT: NOT YET (no qa-device part covers the Up next tip; needs a u482 part with
   a settled plan before release). Settings caption reworded.
+  R-483 (owner, 13 Nov 2026, two decisions): (1) the shoulders are counted by DIRECT shoulder exercises only (a
+  shoulder muscle is a main muscle: side raises, rear-delt work, overhead presses); bench and incline presses no longer
+  add half a shoulder set. Own bar for the shoulders: at most HALF the median of the other big groups AND 3+ sets below
+  it (other groups unchanged: under a third AND 6+ below). A push/pull/legs plan with bench + incline and one 3-set
+  side raise now gets "Your routines give your shoulders 3 sets a week and your chest 11. Swap Cable Fly for Dumbbell
+  Shoulder Press in your Push routine?"; a side raise plus a face pull (6 sets) still says nothing. (2) Swap advice in
+  one place: the Charts page "Balance check" (F52) keeps its line and "Not now" but no longer offers "See a swap", the
+  swap sheet or "Swap for 8 weeks" (a block started before still ends with Keep it / Go back). Tests:
+  muscleTipsRoutines (+5), balanceCheckNoSwap (5, new).
   What's new draft (member-words): "On the Workout tab, muscle tips under \"Up next\" now read your routines, so they
   never suggest an exercise you already have. If one muscle gets far fewer sets than the others, a tip can swap one
-  exercise for you, and \"Undo\" puts it back."
+  exercise for you, and \"Undo\" puts it back." + "The Balance check on the Charts tab still shows a muscle that
+  gets fewer sets. Ideas to swap an exercise now appear only under \"Up next\" on the Workout tab."
 - F56 METTLEUP PLUS, PART (a) (R-461/R-462, 12 Nov 2026; SHIPS SWITCHED OFF). The free and paid split for members
   without a gym, with a 30-day free month, built and tested but OFF (MEMBER_PLAN_GATE_ON=false, MEMBER_PAYMENTS_LIVE=
   false): with it off every member sees exactly what they see today, except routines are no longer limited (the old

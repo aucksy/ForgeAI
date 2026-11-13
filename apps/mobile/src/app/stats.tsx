@@ -161,7 +161,7 @@ export default function StatisticsScreen() {
         <StatHeading title="Last 7 days" sub={workoutsWord(d.week)} />
         <BodyMapSection sets={d.weekMuscles} index={0} onOpenExercise={openExercise} />
         {/* F52 balance check: a muscle trained much less than the rest, and an 8-week swap. */}
-        <BalanceCard stamp={d} onOpenExercise={openExercise} />
+        <BalanceCard stamp={d} />
 
         {/* 2. Sets per muscle group */}
         {/* 12 Oct 2026 design pass: Week · Month is a small switch on the title row, the range a

@@ -30,6 +30,13 @@ What I did: see the lines under this entry.
   the yearly switch now says "Yearly · 2 months free + free AI credits" (HI "2 महीने फ़्री + फ़्री AI क्रेडिट"); on a phone
   the extra words sit on a second line. G3 asserts both.
 - Shoulders direct-only + one swap tip: sent to the muscle-tips UAT helper to build first, then test.
+- Built (muscle-tips helper): shoulders now count only exercises whose MAIN muscle is a shoulder muscle (side raise,
+  rear-delt work, overhead press); bench/incline add none. The shoulders get their own bar (at most half the other big
+  groups' median AND 3+ sets below), because direct work is a smaller share than the presses were: bench + incline +
+  one 3-set side raise -> "Your routines give your shoulders 3 sets a week and your chest 11. Swap Cable Fly for
+  Dumbbell Shoulder Press in your Push routine?"; side raise + face pull says nothing. Other groups unchanged. Charts
+  Balance check: "See a swap", the swap sheet and "Swap for 8 weeks" removed; its line and "Not now" stay; a block
+  started before still ends with Keep it / Go back. Tests muscleTipsRoutines +5, balanceCheckNoSwap (new).
 
 ## R-482. Muscle tip "Easy add" is wrong and unclear — 13 Nov 2026
 He said (13 Nov, screenshot of Up next: Pull 2, "Easy add today: 3 sets of Standing Calf Raise for your calves.

@@ -255,14 +255,34 @@ export type CompareGroup = (typeof COMPARE_GROUPS)[number];
 export const GAP_RATIO = 1 / 3;
 /** ...AND at least this many counted sets a week below it. */
 export const GAP_MIN_SETS = 6;
+/**
+ * R-483 (owner, 13 Nov 2026: "Yes count only shoulder exercises"): the shoulders are counted by their
+ * DIRECT exercises only (a shoulder muscle is a main muscle: side raises, rear-delt work, an overhead
+ * press). A bench or incline press no longer adds half a shoulder set; before, every press did, and a
+ * plan with one lateral raise read as 12 shoulder sets a week. Direct work is a smaller share of any
+ * plan than the presses were, so the shoulders have their own bar: AT MOST half the median of the
+ * other big groups AND at least 3 sets a week below it (one 3-set lateral raise in a plan whose other
+ * groups get 6+ is a tip; a side raise plus a rear-delt exercise is not).
+ */
+export const SHOULDER_GAP_RATIO = 1 / 2;
+export const SHOULDER_GAP_MIN_SETS = 3;
 
-/** Counted sets a week per compared group (1 main, 0.5 helper, each set once per group). PURE. */
+/**
+ * How much one set of an exercise counts for a compared group: the group's best share (1 main, 0.5
+ * helper), except the shoulders, where only a main (direct) shoulder exercise counts (R-483). PURE.
+ */
+export function compareShare(group: CompareGroup, shares: ReadonlyMap<Muscle, number>): number {
+  const s = groupShare(group, shares);
+  return group === 'shoulders' ? (s >= 1 ? 1 : 0) : s;
+}
+
+/** Counted sets a week per compared group (1 main, 0.5 helper, each set once per group; shoulders direct only). PURE. */
 export function groupSetsAWeek(week: PlannedWeek): Map<CompareGroup, number> {
   const out = new Map<CompareGroup, number>(COMPARE_GROUPS.map((g) => [g, 0]));
   for (const r of week.routines) {
     for (const x of r.exercises) {
       const n = Math.max(0, x.sets) * week.timesPerWeek;
-      for (const g of COMPARE_GROUPS) out.set(g, (out.get(g) ?? 0) + groupShare(g, x.shares) * n);
+      for (const g of COMPARE_GROUPS) out.set(g, (out.get(g) ?? 0) + compareShare(g, x.shares) * n);
     }
   }
   return out;
@@ -297,7 +317,11 @@ export function underTrainedGroups(
     if (quiet.has(g) || groupMissing(g, week)) continue;
     const sets = counts.get(g) ?? 0;
     const others = median(COMPARE_GROUPS.filter((o) => o !== g).map((o) => counts.get(o) ?? 0));
-    if (sets < others * GAP_RATIO - 1e-9 && others - sets >= GAP_MIN_SETS - 1e-9) out.push({ group: g, sets, others });
+    const far =
+      g === 'shoulders'
+        ? sets <= others * SHOULDER_GAP_RATIO + 1e-9 && others - sets >= SHOULDER_GAP_MIN_SETS - 1e-9
+        : sets < others * GAP_RATIO - 1e-9 && others - sets >= GAP_MIN_SETS - 1e-9;
+    if (far) out.push({ group: g, sets, others });
   }
   return out.sort((a, b) => b.others - b.sets - (a.others - a.sets));
 }

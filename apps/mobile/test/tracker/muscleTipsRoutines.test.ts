@@ -18,6 +18,8 @@ import {
   homeRoutines,
   planSettled,
   routineWords,
+  SHOULDER_GAP_MIN_SETS,
+  SHOULDER_GAP_RATIO,
   swapLine,
   swappedLine,
   timesPerWeekOf,
@@ -274,5 +276,83 @@ describe('R-482: the words (member-words: the muscle and the routine, plain, but
       swappedLine('Seated Leg Curl', 'Leg Extension', 'Legs'),
     ];
     for (const l of lines) expect(l).not.toMatch(/\b(easy add|volume|PR|session|missing|neglect|imbalance|weak)\b/i);
+  });
+});
+
+/**
+ * R-483 (owner, 13 Nov 2026: "Yes count only shoulder exercises"): a normal push / pull / legs plan
+ * with bench and incline pressing and ONE shoulder exercise a week. Before R-483 every press added half
+ * a shoulder set, so this plan read as 12 shoulder sets and never got a tip.
+ */
+function oneShoulderPlan(): PlannedWeek {
+  return {
+    timesPerWeek: 1,
+    routines: [
+      routine('push', 'Push', 'push', [ex('barbell_bench_press', 4), ex('incline_dumbbell_press', 4), ex('cable_fly', 3), ex('lateral_raise', 3), ex('triceps_pushdown', 3)]),
+      routine('pull', 'Pull', 'pull', [ex('lat_pulldown', 4), ex('seated_cable_row', 4), ex('barbell_row', 3), ex('dumbbell_curl', 3)]),
+      routine('legs', 'Legs', 'legs', [ex('barbell_back_squat', 4), ex('leg_press', 3), ex('romanian_deadlift', 3), ex('lying_leg_curl', 3), ex('standing_calf_raise', 3), ex('plank', 3)]),
+    ],
+  };
+}
+
+describe('R-483: the shoulders count direct shoulder exercises only', () => {
+  it('a bench or incline press adds no shoulder set; a side raise or an overhead press adds a whole one', () => {
+    const one = (key: string) => groupSetsAWeek({ timesPerWeek: 1, routines: [routine('r', 'R', 'push', [ex(key, 3)])] }).get('shoulders');
+    expect(one('barbell_bench_press')).toBe(0);
+    expect(one('incline_dumbbell_press')).toBe(0);
+    expect(one('lateral_raise')).toBe(3);
+    expect(one('dumbbell_shoulder_press')).toBe(3);
+    // Other groups count as before: a bench press still gives the chest its sets and the triceps half.
+    const bench = groupSetsAWeek({ timesPerWeek: 1, routines: [routine('r', 'R', 'push', [ex('barbell_bench_press', 4)])] });
+    expect(bench.get('chest')).toBe(4);
+  });
+
+  it('the shoulders have their own bar: at most half the median of the others AND 3+ sets below it', () => {
+    expect(SHOULDER_GAP_RATIO).toBeCloseTo(1 / 2);
+    expect(SHOULDER_GAP_MIN_SETS).toBe(3);
+    const at = (shoulders: number, others: number) =>
+      underTrainedGroups(
+        new Map<CompareGroup, number>([['chest', others], ['back', others], ['shoulders', shoulders], ['quads', others], ['hamstrings', others], ['glutes', others]]),
+        { counted: new Map<Muscle, number>([['side_delts', shoulders]]), main: new Map<Muscle, number>([['side_delts', shoulders]]) },
+      ).map((u) => u.group);
+    expect(at(3, 6)).toEqual(['shoulders']);
+    expect(at(3, 7)).toEqual(['shoulders']);
+    expect(at(4, 7)).toEqual([]);
+    // A light trainer of everything: half the median, but under 3 sets behind -> nothing.
+    expect(at(2, 4)).toEqual([]);
+  });
+
+  it('the goal: bench + incline pressing and one shoulder exercise a week -> tip 2 for the shoulders on Push', () => {
+    const week = oneShoulderPlan();
+    const counts = groupSetsAWeek(week);
+    expect(counts.get('shoulders')).toBe(3);
+    const under = underTrainedGroups(counts, weekFromRoutines(week));
+    expect(under.map((u) => u.group)).toEqual(['shoulders']);
+    const cands = tipCandidates(week);
+    expect(cands.map((c) => [c.kind, c.group, c.routineId])).toEqual([['swap', 'shoulders', 'push']]);
+    const c = cands[0];
+    if (c.kind !== 'swap') throw new Error('not a swap');
+    expect(c.swap.out.name).toBe('Cable Fly');
+    expect([c.swap.from, c.swap.fromSets, c.swap.toSets]).toEqual(['chest', 11, 3]);
+    // The words on Up next (the app's first library pick for the shoulders is Dumbbell Shoulder Press).
+    expect(swapLine('shoulders', c.swap.toSets, c.swap.from, c.swap.fromSets, c.swap.out.name, 'Dumbbell Shoulder Press', 'Push')).toBe(
+      'Your routines give your shoulders 3 sets a week and your chest 11. Swap Cable Fly for Dumbbell Shoulder Press in your Push routine?',
+    );
+    expect(pickCandidate(cands, 'push', null, TODAY)?.group).toBe('shoulders');
+    expect(pickCandidate(cands, 'legs', null, TODAY)).toBeNull();
+    expect(tipCandidates(week, { quiet: new Set(['shoulders']) })).toEqual([]);
+  });
+
+  it('two direct shoulder exercises (a side raise and a face pull) say nothing, as before', () => {
+    const week = ownersPlan(true);
+    expect(groupSetsAWeek(week).get('shoulders')).toBe(6);
+    expect(tipCandidates(week)).toEqual([]);
+  });
+
+  it('the hamstrings case is unchanged (its plan has a side raise and a face pull: shoulders 7)', () => {
+    const week = quadHeavyPlan();
+    const counts = groupSetsAWeek(week);
+    expect(counts.get('shoulders')).toBe(7);
+    expect(underTrainedGroups(counts, weekFromRoutines(week)).map((u) => u.group)).toEqual(['hamstrings']);
   });
 });

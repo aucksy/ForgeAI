@@ -3,49 +3,42 @@
  * are `engine/balanceBlock` (pure, tested). Saved state: one `meta` row (`balance_check`, carried
  * by backups so a restored phone can still go back to the old routine).
  *
- * Routines considered for a swap: the member's own (not a plan from the gym's trainer, not a ready
- * program — their design is respected, as the muscle tips do).
+ * R-483 (owner, 13 Nov 2026: "A) keep only the new Up next tip"): swap advice lives in ONE place, the
+ * muscle tip on the Workout tab's Up next card (services/muscleTips). This card keeps its numbers (a
+ * muscle trained much less than the rest, from the last 4 weeks) and "Not now", and no longer offers a
+ * swap. A focus block a member started before keeps running to its end ("Keep it" / "Go back").
  */
 import { getDb, getMeta, setMeta } from '@/db';
 import { enqueueWrite } from '@/db/writeQueue';
 import { addDays, daysBetween, todayISO } from '@/lib/date';
 
 import type { Muscle } from '../catalog/muscles';
-import { getTrackerExercisesByIds } from '../db/exerciseInfo';
-import { exerciseIdsForKeys, listFolders } from '../db/folderRepo';
 import { addExerciseToRoutine, getRoutine, reorderRoutineExercises, replaceRoutineExercise } from '../db/routineRepo';
 import {
   AFTER_BLOCK_DAYS,
   BALANCE_WEEKS,
   BLOCK_DAYS,
-  bestFor,
   blockDue,
   blockWeek,
   enoughHistory,
   parseBalanceState,
-  pickSwapOut,
   quietMuscles,
   restoreOrder,
   SNOOZE_DAYS,
-  typicalSets,
   weakSpot,
   weeklyFromShares,
   withSnooze,
   type BalanceBlock,
   type BalanceState,
-  type BestPick,
-  type RoutineIn,
-  type SwapOut,
   type WeakSpot,
 } from '../engine/balanceBlock';
-import { swapContextFor } from './plansService';
 import { getBalanceSets } from './volumeService';
 
 export const BALANCE_KEY = 'balance_check';
 
 export type BalanceCard =
   | { kind: 'none' }
-  | { kind: 'weak'; spot: WeakSpot; swap: SwapOut | null; best: BestPick[] }
+  | { kind: 'weak'; spot: WeakSpot }
   | { kind: 'running'; block: BalanceBlock; week: number; now: number | null }
   | { kind: 'due'; block: BalanceBlock; now: number | null };
 
@@ -64,33 +57,6 @@ async function setsSince(block: BalanceBlock, today: string): Promise<number | n
   const weeks = Math.min(days, BLOCK_DAYS) / 7;
   const { sets } = await getBalanceSets(block.startISO, addDays(block.startISO, Math.min(days, BLOCK_DAYS) - 1));
   return weeklyFromShares(sets, weeks).get(block.muscle) ?? 0;
-}
-
-/** The member's own routines with each row's muscles, for `pickSwapOut`. */
-async function ownRoutines(): Promise<RoutineIn[]> {
-  const folders = (await listFolders()).filter((f) => !f.settings.fromGym && !f.settings.program);
-  const ids = [...new Set(folders.flatMap((f) => f.routines.flatMap((r) => r.exercises.map((x) => x.exerciseId))))];
-  const infos = await getTrackerExercisesByIds(ids);
-  return folders.flatMap((f) =>
-    f.routines.map((r) => ({
-      id: r.id,
-      name: r.name,
-      dayType: r.dayType,
-      following: f.following,
-      rows: r.exercises.map((x) => {
-        const info = infos.get(x.exerciseId);
-        return {
-          peId: x.id,
-          exerciseId: x.exerciseId,
-          name: info?.name ?? x.exercise.name,
-          primary: info?.muscles.primary ?? [],
-          secondary: info?.muscles.secondary ?? [],
-          compound: info?.isCompound ?? x.exercise.isCompound,
-          catalogKey: info?.catalogKey ?? null,
-        };
-      }),
-    })),
-  );
 }
 
 /** What the card shows today. Never throws (a failure reads as "nothing to show", logged). */
@@ -118,48 +84,11 @@ export async function getBalanceCard(today: string = todayISO()): Promise<Balanc
     const weekly = weeklyFromShares(sets);
     const spot = weakSpot(weekly, quietMuscles(state, today));
     if (!spot) return { kind: 'none' };
-
-    const routines = await ownRoutines();
-    const swap = pickSwapOut(routines, weekly, typicalSets(weekly), spot.muscle);
-    const ctx = await swapContextFor(swap?.routineId ?? null);
-    const exclude = swap ? (routines.find((r) => r.id === swap.routineId)?.rows ?? []).flatMap((x) => (x.catalogKey ? [x.catalogKey] : [])) : [];
-    const best = bestFor(spot.muscle, ctx.level, ctx, exclude);
-    if (best.length === 0) return { kind: 'none' };
-    return { kind: 'weak', spot, swap, best };
+    return { kind: 'weak', spot };
   } catch (e) {
     console.warn('[ForgeErr] balance check could not be worked out', e);
     return { kind: 'none' };
   }
-}
-
-/** "Swap for 8 weeks": the pick takes the old exercise's place (same sets and reps). */
-export async function startBlock(spot: WeakSpot, swap: SwapOut, pick: BestPick, today: string = todayISO()): Promise<void> {
-  const routine = await getRoutine(swap.routineId);
-  const row = routine?.exercises.find((x) => x.id === swap.peId);
-  if (!routine || !row || row.exerciseId !== swap.exerciseId) throw new Error('the routine changed');
-  const newId = (await exerciseIdsForKeys([pick.key])).get(pick.key);
-  if (!newId) throw new Error('not in the library');
-  const block: BalanceBlock = {
-    muscle: spot.muscle,
-    routineId: routine.id,
-    routineName: routine.name,
-    peId: row.id,
-    oldExerciseId: row.exerciseId,
-    oldName: swap.name,
-    oldIndex: Math.max(0, routine.exercises.findIndex((x) => x.id === row.id)),
-    oldSets: row.targetSets,
-    oldRepMin: row.repRangeMin,
-    oldRepMax: row.repRangeMax,
-    oldList: routine.exercises.map((x) => x.exerciseId),
-    newExerciseId: newId,
-    newName: pick.name,
-    startISO: today,
-    endISO: addDays(today, BLOCK_DAYS),
-    before: spot.sets,
-  };
-  await replaceRoutineExercise(row.id, newId);
-  const state = await readState();
-  await writeState({ ...state, block });
 }
 
 /** "Keep it": the swap stays for good. */
