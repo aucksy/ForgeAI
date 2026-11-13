@@ -132,8 +132,11 @@ if look.DRAWN and mode == "stills":
 pitch = cam_spec.get("pitch", 12)
 if look.DRAWN and pitch > 12:   # the main set looks from about chest height: steep recipe cameras are eased (look tests r1-r2)
     pitch = 12 + (pitch - 12) * 0.35
+lens = cam_spec.get("lens", 50)
+if look.DRAWN and mode == "stills":   # the main set is drawn almost flat: a long lens, little perspective (look test r4)
+    lens = max(lens, float(os.environ.get("FA_STILL_LENS", 90)))
 center, d = RD.frame_camera(scene, cam, objs, cam_spec.get("yaw", -30), pitch,
-                            cam_spec.get("lens", 50), cam_spec.get("fill", 0.86), sample_frames=key_frames,
+                            lens, cam_spec.get("fill", 0.86), sample_frames=key_frames,
                             target_offset=cam_spec.get("offset", (0, 0, 0)))
 look.setup_lights(scene, center, cam_spec.get("yaw", -30) + cam_spec.get("light_yaw", 0))
 
