@@ -7,6 +7,15 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-483. AI Assistant "did not answer" live; shoulders count direct work only; one swap tip — 13 Nov 2026
+He said (13 Nov 2026, afternoon, in chat, with a screenshot):
+- Screenshot: the live AI Assistant (20 credits) answered "How do I change my GYM logo" with "The AI did not answer.
+  Try again, or say it another way." -> a live bug; find and fix.
+- "Why do we have to put business address?"
+- Muscle tip shoulders: "Yes count only shoulder exercises" (option A: direct shoulder work only for the shoulder check).
+- Swap advice: "A) keep only the new Up next tip" (the Charts Balance check keeps its numbers, no swap advice).
+What I did: see the lines under this entry.
+
 ## R-482. Muscle tip "Easy add" is wrong and unclear — 13 Nov 2026
 He said (13 Nov, screenshot of Up next: Pull 2, "Easy add today: 3 sets of Standing Calf Raise for your calves.
 [Add to routine] [Not now] I skip this on purpose"):
