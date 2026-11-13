@@ -1,0 +1,59 @@
+{
+  "format": "v1-stills",
+  "exercise": {
+    "key": "wide_grip_barbell_curl",
+    "name": "Wide-Grip Barbell Curl",
+    "equipment": "barbell",
+    "library_primary": ["biceps"],
+    "library_secondary": ["forearms"],
+    "library_steps": [
+      "Hold the bar palms up with your hands wider than your shoulders.",
+      "Keep your elbows at your sides and curl the bar to your chest.",
+      "Lower it slowly until your arms are straight."
+    ],
+    "status": "draft",
+    "version": 1,
+    "researched_on": "2026-11-13",
+    "one_line_summary": "Standing, straight bar held palms up with hands about 1.5x shoulder width (~60-65 cm apart); elbows stay by the sides while they bend from ~10 deg (bar against the thighs) to ~120 deg (bar at the chest). Biceps does the work; brachioradialis helps.",
+    "evidence_grade": "B"
+  },
+  "setup": [
+    {"item": "stance", "target": "Standing tall, feet hip-width, knees soft, trunk still.", "tolerance": "trunk lean 0-5 deg", "why": "ACE: keep the chest still so only the arms move.", "source_ids": ["S3"], "grade": "C"},
+    {"item": "grip width", "target": "Hands about 1.5x shoulder width: ~60-65 cm between hand centres on a 2.2 m Olympic bar (a normal curl is ~shoulder width, ~45 cm).", "tolerance": "1.3-1.7x shoulder width (55-70 cm)", "why": "Library: hands wider than the shoulders. The standard straight-bar curl in S2 already sits slightly wider than the shoulders; the wide version goes clearly outside that.", "source_ids": ["S2", "S3", "S4"], "grade": "C"},
+    {"item": "grip", "target": "Palms up (supinated), thumbs wrapped, wrists straight.", "tolerance": "wrist bend under 10 deg", "why": "Library step; the supinated hand is what loads the biceps most.", "source_ids": ["S1", "S3"], "grade": "B"},
+    {"item": "start position", "target": "Arms hanging, bar resting against the front of the thighs.", "tolerance": "bar 0-3 cm off the thighs", "why": "S2 stopped each rep where the bar touched the thighs.", "source_ids": ["S2"], "grade": "B"}
+  ],
+  "movement": [
+    {"joint": "elbow", "measure": "bend, 0 = straight", "start": "10 deg (bar against the thighs)", "end": "120 deg (bar at the chest)", "start_num": 10, "end_num": 120, "tolerance": "start 5-20; end 110-130", "source_ids": ["S1", "S2"], "grade": "B"},
+    {"joint": "shoulder (elev)", "measure": "upper arm from the torso side line, 0 = hanging", "start": "15 deg (upper arms a little out because the hands are wide)", "end": "15 deg (still)", "start_num": 15, "end_num": 15, "tolerance": "10-25; change under 10 deg", "source_ids": ["S2", "S3"], "grade": "B"},
+    {"joint": "shoulder (plane)", "measure": "0 = out to the side, +90 = straight forward", "start": "30 deg (elbows by the sides, slightly out)", "end": "30 deg (still; elbows do not drift forward)", "start_num": 30, "end_num": 30, "tolerance": "15-50", "source_ids": ["S2"], "grade": "C"},
+    {"joint": "forearm roll", "measure": "palm direction", "start": "palms forward/up", "end": "palms up, facing the chest", "start_num": 0, "end_num": 0, "tolerance": "no turning on the bar", "source_ids": ["S1"], "grade": "B"},
+    {"joint": "trunk, hips, knees, wrists", "measure": "stay still", "start": "upright", "end": "upright", "start_num": 0, "end_num": 0, "tolerance": "lean under 5 deg; wrist bend under 10 deg", "source_ids": ["S3"], "grade": "C"}
+  ],
+  "muscles": [
+    {"muscle": "Biceps", "anatomy": "Biceps brachii", "mask_key": "biceps", "tier": "primary", "glow": 1.0, "emg": "Straight-bar curl at 65 % 1RM: biceps equal to the EZ bar and above the dumbbell curl in the lowering phase (S1). Straight bar +1.8 % biceps nRMS over EZ bar with arms at the sides (S2). No study varied grip width.", "role": "Bends the elbow; what the exercise is for.", "surface": "Front of the upper arm.", "source_ids": ["S1", "S2"], "grade": "B"},
+    {"muscle": "Brachioradialis (forearm)", "anatomy": "Brachioradialis", "mask_key": "forearms", "tier": "secondary", "glow": 0.35, "emg": "Straight-bar curl drew more brachioradialis than the dumbbell curl in the lifting phase (S1); brachioradialis at or above biceps in the lowering phase of a supinated barbell curl (S5).", "role": "Helps bend the elbow; library secondary and backed by two EMG studies.", "surface": "Thumb side of the upper forearm.", "source_ids": ["S1", "S5"], "grade": "B"},
+    {"muscle": "Brachialis", "anatomy": "Brachialis", "mask_key": "none", "tier": "deep", "glow": 0, "emg": "not measured", "role": "Elbow flexor under the biceps.", "surface": "Under the lower biceps.", "source_ids": [], "grade": "D"},
+    {"muscle": "Front delt", "anatomy": "Deltoideus, pars clavicularis", "mask_key": "front_delts", "tier": "stabiliser", "glow": 0, "emg": "Active in the straight-bar curl; rises when the elbows drift forward (S2).", "role": "Holds the upper arm by the side.", "surface": "Front of the shoulder.", "source_ids": ["S2"], "grade": "B"}
+  ],
+  "tempo": null,
+  "mistakes": [
+    {"mistake": "Elbows drift forward", "what_it_looks_like": "Upper arms swing up in front of the body as the bar rises.", "why_it_matters": "Library cue is elbows at the sides; ~30 deg of arm flexion changes biceps and front-delt loading (S2).", "source_ids": ["S2"]},
+    {"mistake": "Body swing", "what_it_looks_like": "Torso leans back to heave the bar up.", "why_it_matters": "ACE: keep the chest still so the arms do the work.", "source_ids": ["S3"]}
+  ],
+  "sources": [
+    {"id": "S1", "citation": "Marcolin G, Panizzolo FA, Petrone N, et al. 2018. Differences in electromyographic activity of biceps brachii and brachioradialis while performing three variants of curl. PeerJ 6:e5165.", "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC6047503/fullTextXML", "type": "emg", "what_it_gave": "Straight bar, EZ bar and dumbbell curl at 65 % 1RM; straight-bar elbow range 117 +- 11 deg; straight bar = EZ for biceps and brachioradialis, both above dumbbells in parts of the rep. Grip width not tested."},
+    {"id": "S2", "citation": "Coratella G, Tornatore G, Longo S, Esposito F, Ce E. 2023. Bilateral biceps curl shows distinct biceps brachii and anterior deltoid excitation comparing straight vs. EZ barbell coupled with arms flexion/no-flexion. J Funct Morphol Kinesiol 8(1):13.", "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9944112/fullTextXML", "type": "emg", "what_it_gave": "Straight bar held supinated with hands wider than the shoulders, arms close to the trunk, rep stopped when the bar touched the thighs; ~30 deg arm flexion raised biceps +17.7 % and front delt; straight bar slightly above EZ for biceps."},
+    {"id": "S3", "citation": "American Council on Exercise. Exercise Library: Bicep Curl (barbell).", "url": "https://www.acefitness.org/resources/everyone/exercise-library/70/bicep-curl/", "type": "guideline", "what_it_gave": "Palms up, about shoulder-width, elbows close to the body, lift toward the shoulders, chest still, lower slowly."},
+    {"id": "S4", "citation": "Jefit. Barbell Bicep Curl (Wide Grip) exercise page.", "url": "https://www.jefit.com/exercises/275/barbell-bicep-curl-wide-grip", "type": "coach", "what_it_gave": "Underhand grip as wide as is comfortable; curl until the forearms meet the chest; return to straight arms against the thighs."},
+    {"id": "S5", "citation": "Uysal A, Karaduman B, Soslu R, et al. 2026. Effects of grip variation on biceps brachii and brachioradialis electromyographic activity during concentric and eccentric phases of the barbell curl exercise. BMC Sports Sci Med Rehabil 18:461.", "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=%22Effects%20of%20grip%20variation%20on%20biceps%20brachii%20and%20brachioradialis%22&resultType=core&format=json", "type": "emg", "what_it_gave": "Barbell curl, 12 trained men: brachioradialis activation above biceps in the lowering phase with supinated grips; similar in the lifting phase. Grip width not tested."}
+  ],
+  "clip_check": [
+    {"check": "Hands on the bar 55-70 cm apart (wider than the shoulders), palms up", "target": "~1.5x shoulder width", "measured": "", "pass": ""},
+    {"check": "Start: arms straight, bar touching or just off the thighs", "target": "elbow 10", "measured": "", "pass": ""},
+    {"check": "End: bar at the chest, not inside the chest", "target": "elbow 120, clear > 0.01 m", "measured": "", "pass": ""},
+    {"check": "Upper arms unchanged between pictures (elbows by the sides)", "target": "elev 15, plane 30; change < 10 deg", "measured": "", "pass": ""},
+    {"check": "Feet flat on the floor, trunk upright", "target": "probe_feet in range; lean < 5 deg", "measured": "", "pass": ""},
+    {"check": "Biceps strongest red in both pictures; forearms light red", "target": "yes", "measured": "", "pass": ""}
+  ]
+}

@@ -22,8 +22,8 @@
     }
   },
   "camera": {
-    "yaw": -80,
-    "pitch": 14,
+    "yaw": -60,
+    "pitch": 28,
     "lens": 50,
     "fill": 0.9,
     "res": 640,
@@ -180,9 +180,9 @@
             0
           ],
           "arm": {
-            "elev": 135,
+            "elev": 120,
             "plane": 92,
-            "elbow": 100,
+            "elbow": 105,
             "bend": [
               0,
               0,
@@ -194,5 +194,5 @@
       }
     }
   },
-  "research": "Flat-bench body from tate_press. Palms down (axis [-1,0,0]), hands ~0.40 m apart. Start: arms straight up over the chest. End: upper arms tilt back toward the head (elev 135 = 45 deg past vertical) and the elbows bend 100 deg: du = (0,0.707,0.707), E = (0.2,0.205,0.205), forearm (0,-0.82,0.57), bar at torso (0.2,-0.07,0.39) = beyond the top of the head, ~3 cm above the pad-face level and just past the pad end."
+  "research": "Flat-bench body from tate_press. Palms down (axis [-1,0,0]), hands ~0.40 m apart. Start: arms straight up over the chest. End: upper arms tilt back toward the head (elev 135 = 45 deg past vertical) and the elbows bend 100 deg: du = (0,0.707,0.707), E = (0.2,0.205,0.205), forearm (0,-0.82,0.57), bar at torso (0.2,-0.07,0.39) = beyond the top of the head, ~3 cm above the pad-face level and just past the pad end. Retry 13 Nov: first render tilted the arms 45 deg back and the bar hung ~25 cm past the head with the arms over the face. End now elev 120 (30 deg past vertical, research 120-150), elbow 105: bar at torso (0.19, 0.02, 0.38) = ~6 cm past the top of the head, level with the face; camera higher (pitch 28) so the face shows between the arms."
 }

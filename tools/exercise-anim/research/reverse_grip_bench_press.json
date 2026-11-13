@@ -1,0 +1,59 @@
+{
+  "format": "v1-stills",
+  "exercise": {
+    "key": "reverse_grip_bench_press",
+    "name": "Reverse-Grip Bench Press",
+    "equipment": "barbell",
+    "library_primary": ["triceps", "chest"],
+    "library_secondary": ["front_delts"],
+    "library_steps": [
+      "Lie on a flat bench and grip the bar palms facing you, shoulder-width.",
+      "Lower the bar slowly to your lower chest, elbows tucked in.",
+      "Press it back up; use a spotter, as this grip can slip."
+    ],
+    "status": "draft",
+    "version": 1,
+    "researched_on": "2026-11-13",
+    "one_line_summary": "Flat bench, straight bar held palms toward the face (supinated), hands about shoulder width (~45-50 cm, 1.0-1.2x); start arms straight with the bar over the lower chest; lower to touch the lower chest (sternum / bottom of the breastbone) with elbows tucked ~30-35 deg from the body; press back up. Triceps and chest (upper chest favoured by the grip) share the work; front delt helps.",
+    "evidence_grade": "B"
+  },
+  "setup": [
+    {"item": "bench", "target": "Flat, 0 deg.", "tolerance": "0 deg", "why": "Library step; S1 and S2 tested the flat bench.", "source_ids": ["S1", "S2"], "grade": "A"},
+    {"item": "body on bench", "target": "Head, upper back and hips on the pad, feet flat on the floor.", "tolerance": "back gap -0.02..+0.02 m", "why": "Standard bench setup.", "source_ids": ["S3"], "grade": "C"},
+    {"item": "grip", "target": "Palms toward the face (supinated), thumbs wrapped round the bar, wrists stacked over the forearms.", "tolerance": "wrist bend under 15 deg", "why": "Defines the exercise; S2 used a closed thumb grip for both grips. The library warns the grip can slip.", "source_ids": ["S2"], "grade": "A"},
+    {"item": "grip width", "target": "About shoulder width: ~45-50 cm between hand centres (1.0-1.2x shoulder / biacromial width).", "tolerance": "40-60 cm", "why": "Library: shoulder-width. S1 and S2 tested 100 % biacromial (close) supinated; S3 says a little wider than the shoulders is fine.", "source_ids": ["S1", "S2", "S3"], "grade": "A"}
+  ],
+  "movement": [
+    {"joint": "elbow", "measure": "bend, 0 = straight", "start": "5 deg (arms straight)", "end": "95 deg (bar on the lower chest, forearms near vertical)", "start_num": 5, "end_num": 95, "tolerance": "start 0-15; end 85-110", "source_ids": ["S2", "S3"], "grade": "C"},
+    {"joint": "shoulder (elev)", "measure": "upper arm from the torso side line, 0 = by the side (the elbow tuck)", "start": "80 deg (arms vertical, bar over the lower chest)", "end": "35 deg (elbows tucked)", "start_num": 80, "end_num": 35, "tolerance": "start 75-90; end 28-45", "source_ids": ["S2"], "grade": "A"},
+    {"joint": "shoulder (plane)", "measure": "0 = out to the side, +90 = straight up from the chest, negative = below the torso line", "start": "88 deg", "end": "-25 deg (elbows a little below the bench line)", "start_num": 88, "end_num": -25, "tolerance": "start 80-95; end -35..-10", "source_ids": ["S2"], "grade": "C"},
+    {"joint": "bar position", "measure": "over which body part", "start": "over the lower chest, arms vertical", "end": "touching the lower chest at the bottom of the breastbone (between nipple line and xiphoid)", "start_num": 0, "end_num": 0, "tolerance": "touch point within 5 cm of the xiphoid toward the head; no bounce", "source_ids": ["S3"], "grade": "C"},
+    {"joint": "trunk, hips, legs", "measure": "stay still", "start": "flat on the bench, feet on floor", "end": "same", "start_num": 0, "end_num": 0, "tolerance": "no hip lift", "source_ids": ["S3"], "grade": "C"}
+  ],
+  "muscles": [
+    {"muscle": "Triceps", "anatomy": "Triceps brachii", "mask_key": "triceps", "tier": "primary", "glow": 1.0, "emg": "Bench press: triceps and pectoralis similar and both above the front delt (S4). Supinated grip gave somewhat LESS long-head triceps than a close pronated grip (S2); grip narrowing raised lateral-head triceps regardless of supination (S1).", "role": "Straightens the elbows; library primary (joint-top with chest).", "surface": "Back of the upper arm.", "source_ids": ["S1", "S2", "S4"], "grade": "A"},
+    {"muscle": "Chest (upper chest favoured)", "anatomy": "Pectoralis major, clavicular and sternocostal parts", "mask_key": "chest", "tier": "primary", "glow": 1.0, "emg": "Supinated grip raised clavicular pectoralis over pronated on a flat bench (S1, isometric). In full reps the supinated flat grip did not beat wide pronated for the clavicular head and lowered the sternocostal head (S2).", "role": "Brings the arms forward and up; library primary. Upper chest gain is study-dependent, so the whole chest mask is lit.", "surface": "Front of the chest from collarbone to lower breastbone.", "source_ids": ["S1", "S2", "S4"], "grade": "A"},
+    {"muscle": "Front delt", "anatomy": "Deltoideus, pars clavicularis", "mask_key": "front_delts", "tier": "secondary", "glow": 0.35, "emg": "Significantly below triceps and chest in the bench press, but a named mover (S4); listed as worked in the reverse-grip press (S3).", "role": "Helps raise the upper arm; library secondary, two sources.", "surface": "Front of the shoulder.", "source_ids": ["S3", "S4"], "grade": "B"},
+    {"muscle": "Biceps", "anatomy": "Biceps brachii", "mask_key": "biceps", "tier": "stabiliser", "glow": 0, "emg": "Higher with the supinated grip than pronated (S1).", "role": "Steadies the elbow; not a mover, not in the library, so not lit.", "surface": "Front of the upper arm.", "source_ids": ["S1"], "grade": "A"},
+    {"muscle": "Forearm flexors (grip)", "anatomy": "Forearm flexor group", "mask_key": "forearms", "tier": "stabiliser", "glow": 0, "emg": "not measured", "role": "Grip only.", "surface": "Inside of the forearm.", "source_ids": [], "grade": "D"}
+  ],
+  "tempo": null,
+  "mistakes": [
+    {"mistake": "Elbows flared", "what_it_looks_like": "Upper arms near 70-90 deg out from the body at the bottom.", "why_it_matters": "Library cue is elbows tucked; S2 measured ~34 deg at the close grip versus ~68 deg at the wide grip.", "source_ids": ["S2"]},
+    {"mistake": "Bar to the upper chest or neck", "what_it_looks_like": "Bar comes down near the collarbones.", "why_it_matters": "Library and S3 put the bar on the lower chest / bottom of the breastbone.", "source_ids": ["S3"]},
+    {"mistake": "Thumbless grip", "what_it_looks_like": "Thumbs on the same side of the bar as the fingers.", "why_it_matters": "The library warns this grip can slip; S2 used a closed thumb grip.", "source_ids": ["S2"]}
+  ],
+  "sources": [
+    {"id": "S1", "citation": "Lehman GJ. 2005. The influence of grip width and forearm pronation/supination on upper-body myoelectric activity during the flat bench press. J Strength Cond Res 19(3):587-591.", "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID:16095407%20AND%20SRC:MED&resultType=core&format=json", "type": "emg", "what_it_gave": "12 men, isometric holds, 5 grips: supinated grip raised biceps and clavicular pectoralis; narrower grip raised triceps."},
+    {"id": "S2", "citation": "Arseneault K, Roy X, Sercia P. 2021. The effect of 12 variations of the bench press exercise on the EMG activity of three heads of the pectoralis major. Int J Strength Cond 1(1). doi 10.47206/ijsc.v1i1.39.", "url": "https://journal.iusca.org/index.php/Journal/article/download/39/124/5319", "type": "emg", "what_it_gave": "13 trained men, full reps at 12RM, 100 % / 200 % biacromial grips, pronated and supinated, closed thumb grip; shoulder abduction 33.6 +- 2.1 deg (close) vs 67.9 +- 3.3 deg (wide); close pronated beat supinated for triceps long head; supinated 1RM ~17 % lower."},
+    {"id": "S3", "citation": "Read T (CPT); medically reviewed by Bubnis D (MS, NASM-CPT). 2021. Reverse grip bench press. Healthline.", "url": "https://www.healthline.com/health/fitness/reverse-grip-bench-press", "type": "coach", "what_it_gave": "Palms facing you, a little wider than the shoulders; lower until the bar is at about the sternum and xiphoid; no bouncing; muscles: upper chest, biceps, triceps, front delt."},
+    {"id": "S4", "citation": "Stastny P, Golas A, Blazek D, et al. 2017. A systematic review of surface electromyography analyses of the bench press movement task. PLoS One 12(2):e0171632.", "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=%22systematic%20review%20of%20surface%20electromyography%20analyses%20of%20the%20bench%20press%22&resultType=core&format=json", "type": "review", "what_it_gave": "14 studies: triceps and pectoralis major similar and both significantly above the front delt in the bench press."}
+  ],
+  "clip_check": [
+    {"check": "Hands 40-60 cm apart, palms toward the face, thumbs round the bar", "target": "yes", "measured": "", "pass": ""},
+    {"check": "Start: arms straight and vertical, bar over the lower chest", "target": "elbow 5, elev 80, plane 88", "measured": "", "pass": ""},
+    {"check": "End: bar touching the lower chest (not inside it), elbows tucked", "target": "elbow 95, elev 35, plane -25; bar clear 0-0.01 m", "measured": "", "pass": ""},
+    {"check": "Back on pad, feet on floor", "target": "probe_bench / probe_feet in range", "measured": "", "pass": ""},
+    {"check": "Triceps and chest strongest red in both pictures; front delt light red", "target": "yes", "measured": "", "pass": ""}
+  ]
+}

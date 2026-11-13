@@ -1,0 +1,60 @@
+{
+  "format": "v1-stills",
+  "exercise": {
+    "key": "barbell_21s",
+    "name": "Barbell 21s",
+    "equipment": "barbell",
+    "library_primary": ["biceps"],
+    "library_secondary": ["forearms"],
+    "library_steps": [
+      "Do 7 half curls from your thighs up to elbow height.",
+      "Do 7 half curls from elbow height up to your chest.",
+      "Finish with 7 full curls, then log the set as 21 reps."
+    ],
+    "status": "draft",
+    "version": 1,
+    "researched_on": "2026-11-13",
+    "one_line_summary": "Standing barbell curl, palms up, hands about shoulder width (~45 cm). Two pictures cannot show the three 7-rep zones (thighs to 90 deg, 90 deg to chest, full), so the pair shows the FULL range: arms straight with the bar on the thighs, then the bar at the chest (~120 deg). Biceps does the work; brachioradialis helps.",
+    "evidence_grade": "B"
+  },
+  "setup": [
+    {"item": "stance", "target": "Standing tall, feet hip-width, knees soft, trunk still.", "tolerance": "trunk lean 0-5 deg", "why": "ACE: chest still, only the arms move.", "source_ids": ["S3"], "grade": "C"},
+    {"item": "grip width", "target": "About shoulder width: ~45 cm between hand centres (1.0-1.1x shoulder width).", "tolerance": "40-55 cm", "why": "ACE barbell curl is shoulder-width; the straight-bar curl in S2 sits slightly wider than the shoulders.", "source_ids": ["S2", "S3"], "grade": "C"},
+    {"item": "grip", "target": "Palms up (supinated), wrists straight.", "tolerance": "wrist bend under 10 deg", "why": "Standard curl grip.", "source_ids": ["S3", "S4"], "grade": "C"},
+    {"item": "which phase the pictures show", "target": "The full curl (reps 15-21). Mid point of the set (elbow ~90 deg, forearms level) is the turn point between the two half ranges and is NOT drawn.", "tolerance": "n/a", "why": "A still pair can show only one range; the full range contains both halves.", "source_ids": ["S4", "S5"], "grade": "D"}
+  ],
+  "movement": [
+    {"joint": "elbow", "measure": "bend, 0 = straight", "start": "10 deg (bar against the thighs)", "end": "120 deg (bar at the chest)", "start_num": 10, "end_num": 120, "tolerance": "start 5-20; end 110-130", "source_ids": ["S1", "S4", "S5"], "grade": "B"},
+    {"joint": "elbow (zone boundary, not drawn)", "measure": "where the two half ranges meet", "start": "90 deg (forearms level, bar at elbow / navel height)", "end": "90 deg", "start_num": 90, "end_num": 90, "tolerance": "80-100", "source_ids": ["S4", "S5"], "grade": "D"},
+    {"joint": "shoulder (elev)", "measure": "upper arm from the torso side line, 0 = hanging", "start": "8 deg (by the sides)", "end": "8 deg (still)", "start_num": 8, "end_num": 8, "tolerance": "0-15; change under 10 deg", "source_ids": ["S2", "S5"], "grade": "B"},
+    {"joint": "shoulder (plane)", "measure": "0 = out to the side, +90 = straight forward", "start": "56 deg (elbows by the sides)", "end": "56 deg (still)", "start_num": 56, "end_num": 56, "tolerance": "40-70", "source_ids": ["S2"], "grade": "C"},
+    {"joint": "trunk, hips, knees, wrists", "measure": "stay still", "start": "upright", "end": "upright", "start_num": 0, "end_num": 0, "tolerance": "lean under 5 deg; wrist bend under 10 deg", "source_ids": ["S3"], "grade": "C"}
+  ],
+  "muscles": [
+    {"muscle": "Biceps", "anatomy": "Biceps brachii", "mask_key": "biceps", "tier": "primary", "glow": 1.0, "emg": "Straight-bar curl at 65 % 1RM: biceps equal to the EZ bar, above dumbbells in the lowering phase (S1). No EMG on the 21s method itself.", "role": "Bends the elbow through all three zones; what the exercise is for.", "surface": "Front of the upper arm.", "source_ids": ["S1", "S2"], "grade": "B"},
+    {"muscle": "Brachioradialis (forearm)", "anatomy": "Brachioradialis", "mask_key": "forearms", "tier": "secondary", "glow": 0.35, "emg": "Straight-bar curl drew more brachioradialis than the dumbbell curl when lifting (S1); at or above biceps when lowering a supinated barbell curl (S6).", "role": "Helps bend the elbow; library secondary and backed by two EMG studies.", "surface": "Thumb side of the upper forearm.", "source_ids": ["S1", "S6"], "grade": "B"},
+    {"muscle": "Brachialis", "anatomy": "Brachialis", "mask_key": "none", "tier": "deep", "glow": 0, "emg": "not measured", "role": "Elbow flexor under the biceps.", "surface": "Under the lower biceps.", "source_ids": [], "grade": "D"},
+    {"muscle": "Front delt", "anatomy": "Deltoideus, pars clavicularis", "mask_key": "front_delts", "tier": "stabiliser", "glow": 0, "emg": "Active in the straight-bar curl (S2).", "role": "Holds the upper arm by the side.", "surface": "Front of the shoulder.", "source_ids": ["S2"], "grade": "B"}
+  ],
+  "tempo": null,
+  "mistakes": [
+    {"mistake": "Elbows drift forward", "what_it_looks_like": "Upper arms swing forward in the top-half reps.", "why_it_matters": "Coaching sources keep the elbows fixed by the sides; arm flexion shifts load to the front delt (S2).", "source_ids": ["S2", "S5"]},
+    {"mistake": "Body swing", "what_it_looks_like": "Torso leans back as fatigue builds late in the set.", "why_it_matters": "ACE: chest still, arms do the work.", "source_ids": ["S3"]}
+  ],
+  "sources": [
+    {"id": "S1", "citation": "Marcolin G, Panizzolo FA, Petrone N, et al. 2018. Differences in electromyographic activity of biceps brachii and brachioradialis while performing three variants of curl. PeerJ 6:e5165.", "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC6047503/fullTextXML", "type": "emg", "what_it_gave": "Straight-bar curl elbow range 117 +- 11 deg; straight bar = EZ for biceps and brachioradialis."},
+    {"id": "S2", "citation": "Coratella G, Tornatore G, Longo S, Esposito F, Ce E. 2023. Bilateral biceps curl shows distinct biceps brachii and anterior deltoid excitation comparing straight vs. EZ barbell coupled with arms flexion/no-flexion. J Funct Morphol Kinesiol 8(1):13.", "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9944112/fullTextXML", "type": "emg", "what_it_gave": "Straight bar, supinated, hands just wider than the shoulders, arms by the trunk, rep ends at the thighs; arm flexion raised biceps and front delt."},
+    {"id": "S3", "citation": "American Council on Exercise. Exercise Library: Bicep Curl (barbell).", "url": "https://www.acefitness.org/resources/everyone/exercise-library/70/bicep-curl/", "type": "guideline", "what_it_gave": "Palms up, shoulder-width, elbows close to the body, chest still."},
+    {"id": "S4", "citation": "Nobbe J (MA, CSCS). 21s Workout. Garage Gym Reviews.", "url": "https://www.garagegymreviews.com/21s-workout", "type": "coach", "what_it_gave": "7 bottom-half reps stopping at a 90 deg elbow, 7 top-half reps from 90 deg up, 7 full-range reps; underhand grip."},
+    {"id": "S5", "citation": "Sweat. 21s Bicep Curls exercise page.", "url": "https://www.sweat.com/exercises/21s-bicep-curls", "type": "coach", "what_it_gave": "Bottom halves: straight arms to belly-button height; top halves: belly-button height to the chest; then 7 full reps; elbows tucked by the sides throughout."},
+    {"id": "S6", "citation": "Uysal A, Karaduman B, Soslu R, et al. 2026. Effects of grip variation on biceps brachii and brachioradialis electromyographic activity during concentric and eccentric phases of the barbell curl exercise. BMC Sports Sci Med Rehabil 18:461.", "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=%22Effects%20of%20grip%20variation%20on%20biceps%20brachii%20and%20brachioradialis%22&resultType=core&format=json", "type": "emg", "what_it_gave": "Brachioradialis at or above biceps in the lowering phase of supinated barbell curls."}
+  ],
+  "clip_check": [
+    {"check": "Start: arms straight, bar touching or just off the thighs (full-range start, not the 90 deg mid point)", "target": "elbow 10", "measured": "", "pass": ""},
+    {"check": "End: bar at the chest (full-range top), not inside the chest", "target": "elbow 120, clear > 0.01 m", "measured": "", "pass": ""},
+    {"check": "Hands ~shoulder width, palms up, on the bar", "target": "40-55 cm", "measured": "", "pass": ""},
+    {"check": "Upper arms unchanged between pictures", "target": "elev 8, plane 56; change < 10 deg", "measured": "", "pass": ""},
+    {"check": "Feet flat on the floor, trunk upright", "target": "probe_feet in range; lean < 5 deg", "measured": "", "pass": ""},
+    {"check": "Biceps strongest red in both pictures; forearms light red", "target": "yes", "measured": "", "pass": ""}
+  ]
+}

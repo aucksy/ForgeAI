@@ -1,0 +1,59 @@
+{
+  "format": "v1-stills",
+  "exercise": {
+    "key": "behind_the_head_skull_crusher",
+    "name": "Behind-the-Head Skull Crusher",
+    "equipment": "barbell",
+    "library_primary": ["triceps"],
+    "library_secondary": [],
+    "library_steps": [
+      "Lie on a flat bench holding a bar or EZ bar above your chest.",
+      "Let your upper arms tilt back and lower the bar behind your head.",
+      "Straighten your arms to bring the bar back over your chest."
+    ],
+    "status": "draft",
+    "version": 1,
+    "researched_on": "2026-11-13",
+    "one_line_summary": "Flat bench, head at the bench end, straight bar held palms toward the feet about shoulder width (~40 cm); start arms straight and vertical over the chest; the upper arms tilt back ~45 deg (to 135 deg from the torso) while the elbows bend to ~110 deg, so the bar ends ~5-15 cm past the top of the head at about bench height. Triceps (long head stretched) does the work.",
+    "evidence_grade": "C"
+  },
+  "setup": [
+    {"item": "bench", "target": "Flat, 0 deg; head at the end of the bench so the bar can pass behind it.", "tolerance": "crown within 0-5 cm of the bench end", "why": "Library: flat bench. StrengthLog: head near the edge. Outlift lowers the bar to the bench behind the head.", "source_ids": ["S3", "S4"], "grade": "C"},
+    {"item": "body on bench", "target": "Head, upper back and hips on the pad, feet flat.", "tolerance": "back gap -0.02..+0.02 m", "why": "Stable base.", "source_ids": ["S5"], "grade": "C"},
+    {"item": "grip", "target": "Palms toward the feet (pronated), thumbs wrapped, wrists straight; hands ~40 cm apart (about shoulder width).", "tolerance": "hands 30-50 cm apart", "why": "StrengthLog: shoulder-width grip; ACE: elbows shoulder-width, neutral wrists.", "source_ids": ["S3", "S5"], "grade": "C"},
+    {"item": "start position", "target": "Arms straight and vertical, bar over the chest (nipple line).", "tolerance": "bar within 5 cm of the nipple line", "why": "Library step 1 and step 3; Outlift starts each rep over the chest.", "source_ids": ["S4"], "grade": "C"}
+  ],
+  "movement": [
+    {"joint": "elbow", "measure": "bend, 0 = straight", "start": "5 deg", "end": "110 deg", "start_num": 5, "end_num": 110, "tolerance": "end 95-125", "source_ids": ["S3", "S4"], "grade": "D"},
+    {"joint": "shoulder (elev)", "measure": "upper arm from the torso side line (tilts back, unlike a normal skull crusher)", "start": "90 deg (arm vertical over the chest)", "end": "135 deg (upper arm ~45 deg back past vertical, elbows pointing up and over the face)", "start_num": 90, "end_num": 135, "tolerance": "end 120-150; never flat beside the head (that is a pullover)", "source_ids": ["S3", "S4"], "grade": "D"},
+    {"joint": "shoulder (plane)", "measure": "0 = out to the side, +90 = straight up from the chest", "start": "88 deg", "end": "88 deg (elbows stay shoulder width, no flare)", "start_num": 88, "end_num": 88, "tolerance": "80-95", "source_ids": ["S3", "S5"], "grade": "C"},
+    {"joint": "bar position", "measure": "where the bar is", "start": "over the chest", "end": "~5-15 cm past the crown, at about bench-top height, clear of head and bench", "start_num": 0, "end_num": 0, "tolerance": "clear of head and bench > 0.02 m", "source_ids": ["S3", "S4"], "grade": "D"},
+    {"joint": "trunk, legs, wrists", "measure": "stay still", "start": "flat on the pad, wrists straight", "end": "same", "start_num": 0, "end_num": 0, "tolerance": "no rib flare or back arch; wrist bend under 10 deg", "source_ids": ["S5"], "grade": "C"}
+  ],
+  "muscles": [
+    {"muscle": "Triceps brachii (long head stretched)", "anatomy": "Triceps brachii, caput longum, laterale, mediale", "mask_key": "triceps", "tier": "primary", "glow": 1.0, "emg": "Lying barbell extension 62 % of the triangle push-up (long head 70 %) (S1). Overhead-arm training grew the long head +28.5 % vs +19.6 % neutral (S2). Lowering behind the head raises the arm relative to the torso and stretches the long head (S3, S4).", "role": "Straightens the elbow; the arm tilt only adds stretch.", "surface": "Back of the upper arm.", "source_ids": ["S1", "S2", "S3", "S4"], "grade": "B"},
+    {"muscle": "Lats / teres major (control the tilted-back arm)", "anatomy": "Latissimus dorsi, teres major", "mask_key": "lats", "tier": "stabiliser", "glow": 0, "emg": "not measured", "role": "Pull the upper arm back to vertical; too much of this turns it into a pullover (S4).", "surface": "Side of the back.", "source_ids": ["S4"], "grade": "D"},
+    {"muscle": "Front delt / chest holding the arm", "anatomy": "Deltoideus anterior, pectoralis major", "mask_key": "front_delts", "tier": "stabiliser", "glow": 0, "emg": "not measured", "role": "Steady the shoulder.", "surface": "Front of the shoulder.", "source_ids": [], "grade": "D"},
+    {"muscle": "Forearm flexors (grip)", "anatomy": "Forearm flexor group", "mask_key": "forearms", "tier": "stabiliser", "glow": 0, "emg": "not measured", "role": "Grip only; library does not list forearms.", "surface": "Inside of the forearm.", "source_ids": [], "grade": "D"}
+  ],
+  "tempo": null,
+  "mistakes": [
+    {"mistake": "Becomes a pullover", "what_it_looks_like": "Upper arms drop flat beside the head with little elbow bend.", "why_it_matters": "Outlift: too much shoulder movement turns it into a pullover; the triceps stop doing the work.", "source_ids": ["S4"]},
+    {"mistake": "Elbows flare", "what_it_looks_like": "Elbows wider than the hands at the bottom.", "why_it_matters": "StrengthLog: keep the distance between the elbows constant.", "source_ids": ["S3"]}
+  ],
+  "sources": [
+    {"id": "S1", "citation": "Boehler B, Porcari JP, Kline D, Hendrix CR, Foster C, Anders M. 2011. ACE-sponsored research: best triceps exercises. ACE Certified News, Aug 2011.", "url": "https://www.acefitness.org/certifiednewsarticle/1562/ace-sponsored-research-best-triceps-exercises", "type": "emg", "what_it_gave": "Lying barbell triceps extension 62 % of triangle push-up (long head 70 %)."},
+    {"id": "S2", "citation": "Maeo S, Wu Y, Huang M, et al. 2023. Triceps brachii hypertrophy is substantially greater after elbow extension training performed in the overhead versus neutral arm position. Eur J Sport Sci 23(7):1240-1250.", "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID:35819335%20AND%20SRC:MED&resultType=core&format=json", "type": "training", "what_it_gave": "Overhead arm: long head 1.5x the growth of the neutral arm."},
+    {"id": "S3", "citation": "StrengthLog. How to do barbell lying triceps extension.", "url": "https://www.strengthlog.com/barbell-lying-triceps-extension", "type": "coach", "what_it_gave": "Head near the bench edge, shoulder-width grip, bar lowered behind the head (not to the forehead), arms rise relative to the torso to stretch the long head, keep elbow distance constant."},
+    {"id": "S4", "citation": "Duquette S, Walker-Ng M. 2024. How to do skull crushers. Outlift.", "url": "https://outlift.com/skull-crushers/", "type": "coach", "what_it_gave": "Start over the chest, angle the arms backwards, lower to the bench behind the head; elbows moving back adds triceps stretch; too much shoulder movement becomes a pullover."},
+    {"id": "S5", "citation": "American Council on Exercise. Exercise Library: Lying Barbell Triceps Extensions.", "url": "https://www.acefitness.org/resources/everyone/exercise-library/36/lying-barbell-triceps-extensions", "type": "guideline", "what_it_gave": "Pronated closed grip, elbows shoulder-width, neutral wrists, feet flat; bar may go slightly behind the head."}
+  ],
+  "clip_check": [
+    {"check": "Start: arms straight and vertical, bar over the chest", "target": "elbow 5, elev 90, plane 88", "measured": "", "pass": ""},
+    {"check": "End: upper arms tilted back, elbows bent", "target": "elev 135 (120-150), elbow 110", "measured": "", "pass": ""},
+    {"check": "End bar 5-15 cm past the crown, not inside head or bench", "target": "clear > 0.02 m", "measured": "", "pass": ""},
+    {"check": "Hands 30-50 cm apart, palms toward the feet, on the bar", "target": "yes", "measured": "", "pass": ""},
+    {"check": "Back on pad, feet on floor, head at the bench end", "target": "probe_bench / probe_feet in range", "measured": "", "pass": ""},
+    {"check": "Triceps strongest red in both pictures", "target": "yes", "measured": "", "pass": ""}
+  ]
+}
