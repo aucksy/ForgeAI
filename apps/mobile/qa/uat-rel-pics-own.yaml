@@ -82,6 +82,26 @@ appId: com.mettleup.app
     timeout: 3000
 - takeScreenshot: rel-pics-03b-barbell
 - back
+# A cable-machine exercise (13 Nov 2026: the first cable pictures): Start + End, both handles on the cables.
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Clear the search'
+- tapOn: "Clear the search"
+- tapOn: "Search exercises"
+- inputText: " overhead cable curl"
+- hideKeyboard
+- tapOn:
+    text: "View Overhead Cable Curl"
+    index: 0
+- extendedWaitUntil:
+    visible: "Start position of Overhead Cable Curl"
+    timeout: 20000
+- assertVisible: "End position of Overhead Cable Curl"
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: rel-pics-03c-cable
+- back
 # A hold: one picture, labelled Hold, no End.
 # The search keeps its text after back: clear it with the X (eraseText left letters behind on 12 Nov).
 - runFlow:
