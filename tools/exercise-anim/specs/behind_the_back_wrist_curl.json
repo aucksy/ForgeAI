@@ -1,0 +1,122 @@
+{
+  "key": "behind_the_back_wrist_curl",
+  "name": "Behind-the-Back Wrist Curl",
+  "primary": [
+    "forearms"
+  ],
+  "secondary": [],
+  "props": {
+    "bar": {
+      "type": "barbell",
+      "plates": [
+        0.2
+      ],
+      "plate_t": 0.04
+    }
+  },
+  "camera": {
+    "lens": 50,
+    "fill": 0.9,
+    "res": 640,
+    "samples": 20,
+    "yaw": -140,
+    "pitch": 10
+  },
+  "timing": {
+    "fps": 30,
+    "keys": [
+      [
+        0,
+        "start"
+      ],
+      [
+        1,
+        "end"
+      ],
+      [
+        2,
+        "start"
+      ]
+    ]
+  },
+  "defaults": {
+    "feet": {
+      "L": {
+        "at": [
+          0.13,
+          -0.01,
+          0.074
+        ],
+        "rot": [
+          0,
+          0,
+          6
+        ]
+      }
+    },
+    "knees": {
+      "L": [
+        0.16,
+        -1.0,
+        0.52
+      ]
+    }
+  },
+  "poses": {
+    "start": {
+      "hands": {
+        "L": {
+          "prop": "bar",
+          "axis": [
+            -1,
+            0,
+            0
+          ],
+          "arm": {
+            "elev": 12,
+            "plane": -40,
+            "elbow": 4,
+            "bend": [
+              0,
+              1,
+              0
+            ],
+            "flex": -15,
+            "tilt": 0
+          }
+        }
+      },
+      "ground": {
+        "feet": 0.0
+      }
+    },
+    "end": {
+      "hands": {
+        "L": {
+          "prop": "bar",
+          "axis": [
+            -1,
+            0,
+            0
+          ],
+          "arm": {
+            "elev": 12,
+            "plane": -40,
+            "elbow": 4,
+            "bend": [
+              0,
+              1,
+              0
+            ],
+            "flex": 50,
+            "tilt": 0
+          }
+        }
+      },
+      "ground": {
+        "feet": 0.0
+      }
+    }
+  },
+  "research": "13 Nov 2026 (pics-fixes), new. Standing tall, a barbell held behind the body at the back of the thighs, arms straight (elev 12, plane -40 = behind), palms facing back (axis [-1,0,0]). START: wrists open a little (flex -15, the bar low in the fingers); END: wrists curled 50 deg (flex +50) so the bar lifts up and back. Wrist flexors on the palm side of the forearm do the work. Camera from behind his right side. Facts: research/behind_the_back_wrist_curl.json."
+}

@@ -1,0 +1,178 @@
+{
+  "key": "seated_barbell_calf_raise",
+  "name": "Seated Barbell Calf Raise",
+  "primary": [
+    "calves"
+  ],
+  "secondary": [],
+  "scene": {
+    "bench": {
+      "deg": 85
+    },
+    "box": {
+      "size": [
+        0.5,
+        0.16,
+        0.08
+      ],
+      "loc": [
+        0,
+        -0.77,
+        0
+      ]
+    }
+  },
+  "props": {
+    "bar": {
+      "type": "barbell",
+      "plates": [
+        0.16
+      ],
+      "plate_t": 0.04
+    }
+  },
+  "camera": {
+    "yaw": 62,
+    "pitch": 12,
+    "lens": 50,
+    "fill": 0.9,
+    "res": 640,
+    "samples": 20
+  },
+  "timing": {
+    "fps": 30,
+    "keys": [
+      [
+        0,
+        "start"
+      ],
+      [
+        1,
+        "end"
+      ],
+      [
+        2,
+        "start"
+      ]
+    ]
+  },
+  "poses": {
+    "start": {
+      "root": {
+        "loc": [
+          0,
+          -0.035,
+          0.494
+        ],
+        "rot": [
+          -6,
+          0,
+          0
+        ]
+      },
+      "feet": {
+        "L": {
+          "at": [
+            0.12,
+            -0.601,
+            0.122
+          ],
+          "rot": [
+            -15,
+            0,
+            0
+          ]
+        }
+      },
+      "knees": {
+        "L": [
+          0.14,
+          -1.0,
+          0.9
+        ]
+      },
+      "hands": {
+        "L": {
+          "frame": "world",
+          "prop": "bar",
+          "at": [
+            0.25,
+            -0.438,
+            0.645
+          ],
+          "axis": [
+            -1,
+            0,
+            0
+          ]
+        }
+      },
+      "elbows": {
+        "L": [
+          0.5,
+          0.2,
+          -0.3
+        ]
+      }
+    },
+    "end": {
+      "root": {
+        "loc": [
+          0,
+          -0.035,
+          0.494
+        ],
+        "rot": [
+          -6,
+          0,
+          0
+        ]
+      },
+      "feet": {
+        "L": {
+          "at": [
+            0.12,
+            -0.659,
+            0.231
+          ],
+          "rot": [
+            25,
+            0,
+            0
+          ]
+        }
+      },
+      "knees": {
+        "L": [
+          0.14,
+          -1.0,
+          0.9
+        ]
+      },
+      "hands": {
+        "L": {
+          "frame": "world",
+          "prop": "bar",
+          "at": [
+            0.25,
+            -0.416,
+            0.71
+          ],
+          "axis": [
+            -1,
+            0,
+            0
+          ]
+        }
+      },
+      "elbows": {
+        "L": [
+          0.5,
+          0.2,
+          -0.3
+        ]
+      }
+    }
+  },
+  "research": "13 Nov 2026 (pics-fixes), new. Seat, block and feet from seated_dumbbell_calf_raise (both feet on one block, heels drop in the start and rise in the end). A barbell lies across both lower thighs ~0.10 m behind the knees (bar centre z = thigh top + bar radius: start 0.645, end 0.71 as the knees rise); both hands hold it overhand just outside the thighs (fists x +-0.25). Facts: research/seated_barbell_calf_raise.json."
+}

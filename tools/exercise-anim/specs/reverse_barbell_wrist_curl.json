@@ -1,0 +1,171 @@
+{
+  "key": "reverse_barbell_wrist_curl",
+  "name": "Reverse Barbell Wrist Curl",
+  "primary": [
+    "forearms"
+  ],
+  "secondary": [],
+  "scene": {
+    "bench": {
+      "deg": 0
+    }
+  },
+  "props": {
+    "bar": {
+      "type": "barbell",
+      "shaft": 1.1,
+      "sleeve": 0.2,
+      "plates": [
+        0.16
+      ],
+      "plate_t": 0.035
+    }
+  },
+  "camera": {
+    "lens": 50,
+    "fill": 0.9,
+    "res": 640,
+    "samples": 20,
+    "yaw": -55,
+    "pitch": 15
+  },
+  "timing": {
+    "fps": 30,
+    "keys": [
+      [
+        0,
+        "start"
+      ],
+      [
+        1,
+        "end"
+      ],
+      [
+        2,
+        "start"
+      ]
+    ]
+  },
+  "defaults": {
+    "root": {
+      "loc": [
+        0,
+        -0.15,
+        0.53
+      ],
+      "rot": [
+        40,
+        0,
+        0
+      ]
+    },
+    "feet": {
+      "L": {
+        "at": [
+          0.2,
+          -0.62,
+          0.075
+        ],
+        "rot": [
+          0,
+          0,
+          8
+        ]
+      }
+    },
+    "knees": {
+      "L": [
+        0.25,
+        -1.2,
+        0.6
+      ]
+    }
+  },
+  "poses": {
+    "start": {
+      "hands": {
+        "L": {
+          "prop": "bar",
+          "axis": [
+            -1,
+            0,
+            0
+          ],
+          "arm": {
+            "elev": 23,
+            "plane": 134,
+            "fore_world": [
+              0.02,
+              -1,
+              -0.03
+            ],
+            "flex": 45,
+            "tilt": 0
+          }
+        },
+        "R": {
+          "prop": "bar",
+          "axis": [
+            1,
+            0,
+            0
+          ],
+          "arm": {
+            "elev": 23,
+            "plane": 134,
+            "fore_world": [
+              -0.02,
+              -1,
+              -0.03
+            ],
+            "flex": 45,
+            "tilt": 0
+          }
+        }
+      }
+    },
+    "end": {
+      "hands": {
+        "L": {
+          "prop": "bar",
+          "axis": [
+            -1,
+            0,
+            0
+          ],
+          "arm": {
+            "elev": 23,
+            "plane": 134,
+            "fore_world": [
+              0.02,
+              -1,
+              -0.03
+            ],
+            "flex": -40,
+            "tilt": 0
+          }
+        },
+        "R": {
+          "prop": "bar",
+          "axis": [
+            1,
+            0,
+            0
+          ],
+          "arm": {
+            "elev": 23,
+            "plane": 134,
+            "fore_world": [
+              -0.02,
+              -1,
+              -0.03
+            ],
+            "flex": -40,
+            "tilt": 0
+          }
+        }
+      }
+    }
+  },
+  "research": "13 Nov 2026 (pics-fixes), new. Seated at the end of a flat bench leaning 40 deg (body from single_arm_dumbbell_wrist_curl), BOTH forearms along the thighs, wrists just past the knees, a short barbell held palms DOWN (axis [-1,0,0]). START: wrists bent down 45 deg (flex +45, the bar lowered); END: wrists bent back 40 deg (flex -40, knuckles up). Wrist extensors on the back of the forearm do the work. Facts: research/reverse_barbell_wrist_curl.json."
+}

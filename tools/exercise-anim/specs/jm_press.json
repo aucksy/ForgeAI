@@ -1,0 +1,207 @@
+{
+  "key": "jm_press",
+  "name": "JM Press",
+  "primary": [
+    "triceps"
+  ],
+  "secondary": [
+    "chest",
+    "front_delts"
+  ],
+  "scene": {
+    "bench": {
+      "deg": 0
+    }
+  },
+  "props": {
+    "bar": {
+      "type": "barbell",
+      "plates": [
+        0.16
+      ],
+      "plate_t": 0.04
+    }
+  },
+  "camera": {
+    "lens": 50,
+    "fill": 0.9,
+    "res": 640,
+    "samples": 20,
+    "yaw": 70,
+    "pitch": 25
+  },
+  "timing": {
+    "fps": 30,
+    "keys": [
+      [
+        0,
+        "start"
+      ],
+      [
+        1,
+        "end"
+      ],
+      [
+        2,
+        "start"
+      ]
+    ]
+  },
+  "defaults": {
+    "bones": {
+      "spine05": [
+        -1,
+        0,
+        0
+      ],
+      "spine04": [
+        -1,
+        0,
+        0
+      ],
+      "spine03": [
+        -1,
+        0,
+        0
+      ],
+      "spine02": [
+        -1,
+        0,
+        0
+      ],
+      "neck01": [
+        8,
+        0,
+        0
+      ],
+      "head": [
+        6,
+        0,
+        0
+      ]
+    }
+  },
+  "poses": {
+    "start": {
+      "root": {
+        "loc": [
+          0,
+          0.05,
+          0.55
+        ],
+        "rot": [
+          -90,
+          0,
+          0
+        ]
+      },
+      "feet": {
+        "L": {
+          "at": [
+            0.3,
+            -0.4,
+            0.075
+          ],
+          "rot": [
+            0,
+            0,
+            15
+          ]
+        }
+      },
+      "knees": {
+        "L": [
+          0.55,
+          -1.0,
+          0.9
+        ]
+      },
+      "hands": {
+        "L": {
+          "prop": "bar",
+          "axis": [
+            -1,
+            0,
+            0
+          ],
+          "arm": {
+            "elev": 88,
+            "plane": 94,
+            "elbow": 3,
+            "bend": [
+              0,
+              0,
+              1
+            ],
+            "tilt": 0
+          }
+        }
+      },
+      "ground": {
+        "feet": 0.0,
+        "pad": 0.004
+      }
+    },
+    "end": {
+      "root": {
+        "loc": [
+          0,
+          0.05,
+          0.55
+        ],
+        "rot": [
+          -90,
+          0,
+          0
+        ]
+      },
+      "feet": {
+        "L": {
+          "at": [
+            0.3,
+            -0.4,
+            0.075
+          ],
+          "rot": [
+            0,
+            0,
+            15
+          ]
+        }
+      },
+      "knees": {
+        "L": [
+          0.55,
+          -1.0,
+          0.9
+        ]
+      },
+      "hands": {
+        "L": {
+          "prop": "bar",
+          "axis": [
+            -1,
+            0,
+            0
+          ],
+          "arm": {
+            "elev": 45,
+            "plane": 95,
+            "elbow": 132,
+            "bend": [
+              0,
+              0,
+              1
+            ],
+            "tilt": 0
+          }
+        }
+      },
+      "ground": {
+        "feet": 0.0,
+        "pad": 0.004
+      }
+    }
+  },
+  "research": "13 Nov 2026 (pics-fixes), new. Flat bench body, feet and pad contact from reverse_grip_bench_press (ground pad 0.004, feet 0). Close grip, palms down (axis [-1,0,0]). START: arms straight over the shoulders (elev 88, plane 94, elbow 3). END (bottom of the JM press, a skull-crusher / close-grip-press hybrid): upper arms 45 deg from the trunk toward the feet (elev 45, plane 95), elbows bent ~130 deg folding toward the head, so the forearms stand near vertical and the bar sits a few cm above the throat / upper chest. Facts: research/jm_press.json."
+}

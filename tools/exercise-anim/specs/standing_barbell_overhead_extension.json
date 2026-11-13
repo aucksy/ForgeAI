@@ -1,0 +1,152 @@
+{
+  "key": "standing_barbell_overhead_extension",
+  "name": "Standing Barbell Overhead Extension",
+  "primary": [
+    "triceps"
+  ],
+  "secondary": [],
+  "girdle": {
+    "start": 30,
+    "knee": 15,
+    "ur": 0.4,
+    "ur_max": 50,
+    "ur_pivot": 0.92,
+    "scap_plane": 30,
+    "elev": 0.08,
+    "elev_max": 11,
+    "retract": 0.12,
+    "retract_max": 16
+  },
+  "skin": {
+    "preserve_volume": true,
+    "calm_armpits": {
+      "amount": 0.45,
+      "radius": 0.05,
+      "fade": 0.05,
+      "down": 0.08,
+      "extra": [
+        [
+          -0.02,
+          0.08,
+          -0.08,
+          0.4
+        ]
+      ],
+      "hl_cut": 0.8
+    }
+  },
+  "props": {
+    "bar": {
+      "type": "barbell",
+      "shaft": 1.1,
+      "sleeve": 0.2,
+      "plates": [
+        0.16
+      ],
+      "plate_t": 0.035
+    }
+  },
+  "camera": {
+    "lens": 50,
+    "fill": 0.9,
+    "res": 640,
+    "samples": 20,
+    "yaw": -60,
+    "pitch": 10
+  },
+  "timing": {
+    "fps": 30,
+    "keys": [
+      [
+        0,
+        "start"
+      ],
+      [
+        1,
+        "end"
+      ],
+      [
+        2,
+        "start"
+      ]
+    ]
+  },
+  "poses": {
+    "start": {
+      "hands": {
+        "L": {
+          "prop": "bar",
+          "axis": [
+            -1,
+            0,
+            0
+          ],
+          "arm": {
+            "elev": 168,
+            "plane": 150,
+            "elbow": 4,
+            "bend": [
+              0,
+              -1,
+              0
+            ],
+            "tilt": 0
+          }
+        }
+      },
+      "ground": {
+        "feet": 0.0
+      }
+    },
+    "end": {
+      "hands": {
+        "L": {
+          "prop": "bar",
+          "axis": [
+            -1,
+            0,
+            0
+          ],
+          "arm": {
+            "elev": 160,
+            "plane": 150,
+            "elbow": 130,
+            "bend": [
+              0,
+              -1,
+              0
+            ],
+            "tilt": 0
+          }
+        }
+      },
+      "ground": {
+        "feet": 0.0
+      }
+    }
+  },
+  "defaults": {
+    "feet": {
+      "L": {
+        "at": [
+          0.13,
+          -0.01,
+          0.074
+        ],
+        "rot": [
+          0,
+          0,
+          6
+        ]
+      }
+    },
+    "knees": {
+      "L": [
+        0.16,
+        -1.0,
+        0.52
+      ]
+    }
+  },
+  "research": "13 Nov 2026 (pics-fixes), new. Standing tall, a short barbell (1.1 m shaft, 0.16 plates) held close-grip, palms forward/up (axis [-1,0,0]); collarbone/shoulder-blade girdle and armpit smoothing copied from dumbbell_shoulder_press (arms overhead). START: arms straight overhead, upper arms beside the head and angled in so the hands are ~0.26 m apart (elev 168, plane 150). END: upper arms stay up (elev 160), elbows bent 130 deg folding BACK (bend [0,-1,0]) so the bar drops behind the head to about neck/upper-head level. Facts: research/standing_barbell_overhead_extension.json."
+}

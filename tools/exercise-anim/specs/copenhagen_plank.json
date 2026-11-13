@@ -1,26 +1,173 @@
 {
   "key": "copenhagen_plank",
   "name": "Copenhagen Plank",
-  "primary": ["adductors"],
-  "secondary": ["obliques", "abs"],
-  "highlight_side": {"obliques": "R"},
-  "scene": {"bench": {"deg": 0, "loc": [0.73, -0.94, 0], "rot_z": 90}},
-  "camera": {"yaw": -110, "pitch": 20, "lens": 50, "fill": 0.9, "res": 640, "samples": 20},
-  "timing": {"fps": 30, "keys": [[0, "hold"], [1, "hold"]]},
+  "primary": [
+    "adductors"
+  ],
+  "secondary": [
+    "obliques",
+    "abs"
+  ],
+  "highlight_side": {
+    "obliques": "R"
+  },
+  "scene": {
+    "bench": {
+      "deg": 0,
+      "loc": [
+        0.73,
+        -0.94,
+        0
+      ],
+      "rot_z": 90
+    }
+  },
+  "camera": {
+    "lens": 50,
+    "fill": 0.9,
+    "res": 640,
+    "samples": 20,
+    "yaw": -78,
+    "pitch": 4
+  },
+  "timing": {
+    "fps": 30,
+    "keys": [
+      [
+        0,
+        "hold"
+      ],
+      [
+        1,
+        "hold"
+      ]
+    ]
+  },
   "poses": {
     "hold": {
-      "root": {"loc": [0, 0, 0.511], "rot": [0, -86, -90]},
-      "bones": {"spine05": [0, 0, 0], "spine04": [0, 0, 0], "spine03": [0, 0, 0], "spine02": [0, 0, 0], "neck01": [0, 0, 0]},
-      "feet": {
-        "L": {"at": [-0.051, -0.894, 0.494], "rot": [0, -86, -90]},
-        "R": {"at": [-0.051, -0.880, 0.285], "rot": [0, -86, -90]}
+      "root": {
+        "loc": [
+          0,
+          0,
+          0.511
+        ],
+        "rot": [
+          0,
+          -86,
+          -90
+        ]
       },
-      "knees": {"L": [-0.6, -0.45, 0.62], "R": [-0.6, -0.45, 0.40]},
+      "bones": {
+        "spine05": [
+          0,
+          0,
+          0
+        ],
+        "spine04": [
+          0,
+          0,
+          0
+        ],
+        "spine03": [
+          0,
+          0,
+          0
+        ],
+        "spine02": [
+          0,
+          0,
+          0
+        ],
+        "neck01": [
+          0,
+          0,
+          0
+        ],
+        "head": [
+          0,
+          0,
+          0
+        ]
+      },
+      "feet": {
+        "L": {
+          "at": [
+            -0.051,
+            -0.894,
+            0.494
+          ],
+          "rot": [
+            0,
+            -86,
+            -90
+          ]
+        },
+        "R": {
+          "at": [
+            -0.051,
+            -0.88,
+            0.285
+          ],
+          "rot": [
+            0,
+            -86,
+            -90
+          ]
+        }
+      },
+      "knees": {
+        "L": [
+          -0.6,
+          -0.45,
+          0.62
+        ],
+        "R": [
+          -0.6,
+          -0.45,
+          0.4
+        ]
+      },
       "hands": {
-        "R": {"axis": [1, 0, 0], "arm": {"elev": 86, "plane": 0, "elbow": 90, "bend": [0, 1, 0]}},
-        "L": {"axis": [0, 1, 0], "arm": {"elev": 15, "plane": 0, "elbow": 20, "bend": [0, 1, 0]}}
+        "R": {
+          "axis": [
+            1,
+            0,
+            0
+          ],
+          "arm": {
+            "elev": 86,
+            "plane": 0,
+            "elbow": 90,
+            "bend": [
+              0,
+              1,
+              0.35
+            ]
+          }
+        },
+        "L": {
+          "axis": [
+            0,
+            1,
+            0
+          ],
+          "arm": {
+            "elev": 5,
+            "plane": 165,
+            "elbow": 12,
+            "bend": [
+              0,
+              1,
+              0
+            ]
+          }
+        }
+      },
+      "ground": {
+        "forearms.R": 0.0,
+        "hands.R": 0.0
       }
     }
   },
-  "research": "12 Nov 2026 fix of run 43079162675 (QA: 'athlete tiny in the frame; held on the hand, not the forearm'). (1) Tiny: the flat bench lay ALONG the body (rot_z 180), adding ~1.3 m to the frame width. Now it lies ACROSS the body behind him (rot_z 90: its length runs along +X, away from the camera) with the top ankle 0.07 m from the far end of the back pad: bench local y 0.78 under the ankle -> loc x = -0.05 + 0.78 = 0.73; pad width along world Y centred at y -0.94 (pad y -1.09..-0.79, top ankle 0.10 inside the edge). The bottom leg passes under the pad (underside z 0.365) between the rear foot bar (local y 0.72, z <= 0.08) and the back strut (local y 0.46-0.55): clear. The seat and posts sit behind his back (x 0.7-1.2). Frame width is now the athlete (~2 m) instead of ~3.3 m. (2) 'On the hand': the forearm WAS on the floor (support elbow 90, forearm toward the chest side, -X), but camera yaw -90 looked straight down its length, so only the fist showed. Camera now yaw -110 / pitch 20 (chest side, a little from the head end, above): the forearm shows ~half its length lying on the floor. (3) Floor: the cloud lowest body point was -0.0087 (support forearm/fist) with the elbow joint at 0.046 -> body raised 0.009 (root z 0.502 -> 0.511, shoulder R z 0.324, elbow joint 0.055). Top ankle: the foot lying on its inner side reaches 0.052 below the ankle joint (MPFB base mesh scaled to this athlete) -> ankle z 0.494 rests it on the pad top 0.44 (was 0.485 = 0.7 cm into the pad). Ankle y moved in so hip-ankle stays 0.898-0.900 (straight, under the 0.906 reach): top (-0.051,-0.894,0.494), bottom (-0.051,-0.880,0.285). Unchanged: root rot (0,-86,-90) = on the right side, head +Y, chest -X, head end 4 deg higher; support arm R elev 86 plane 0 (upper arm vertical) elbow 90; top arm along the flank; knee poles to the chest side; explicit R feet/knees. Muscles (research file): adductors primary on both legs (top leg holds the body up, bottom leg is held up off the floor by its own adductors), obliques secondary on the floor side only (highlight_side R: weight-bearing side, Youdas 2014 side-bridge EMG), abs secondary. Sources S1 Serner 2014, S2 Marusic 2026, S3 Hinnekens 2024, S4 Garage Strength, S5 Youdas 2014."
+  "research": "12 Nov 2026 fix of run 43079162675 (QA: 'athlete tiny in the frame; held on the hand, not the forearm'). (1) Tiny: the flat bench lay ALONG the body (rot_z 180), adding ~1.3 m to the frame width. Now it lies ACROSS the body behind him (rot_z 90: its length runs along +X, away from the camera) with the top ankle 0.07 m from the far end of the back pad: bench local y 0.78 under the ankle -> loc x = -0.05 + 0.78 = 0.73; pad width along world Y centred at y -0.94 (pad y -1.09..-0.79, top ankle 0.10 inside the edge). The bottom leg passes under the pad (underside z 0.365) between the rear foot bar (local y 0.72, z <= 0.08) and the back strut (local y 0.46-0.55): clear. The seat and posts sit behind his back (x 0.7-1.2). Frame width is now the athlete (~2 m) instead of ~3.3 m. (2) 'On the hand': the forearm WAS on the floor (support elbow 90, forearm toward the chest side, -X), but camera yaw -90 looked straight down its length, so only the fist showed. Camera now yaw -110 / pitch 20 (chest side, a little from the head end, above): the forearm shows ~half its length lying on the floor. (3) Floor: the cloud lowest body point was -0.0087 (support forearm/fist) with the elbow joint at 0.046 -> body raised 0.009 (root z 0.502 -> 0.511, shoulder R z 0.324, elbow joint 0.055). Top ankle: the foot lying on its inner side reaches 0.052 below the ankle joint (MPFB base mesh scaled to this athlete) -> ankle z 0.494 rests it on the pad top 0.44 (was 0.485 = 0.7 cm into the pad). Ankle y moved in so hip-ankle stays 0.898-0.900 (straight, under the 0.906 reach): top (-0.051,-0.894,0.494), bottom (-0.051,-0.880,0.285). Unchanged: root rot (0,-86,-90) = on the right side, head +Y, chest -X, head end 4 deg higher; support arm R elev 86 plane 0 (upper arm vertical) elbow 90; top arm along the flank; knee poles to the chest side; explicit R feet/knees. Muscles (research file): adductors primary on both legs (top leg holds the body up, bottom leg is held up off the floor by its own adductors), obliques secondary on the floor side only (highlight_side R: weight-bearing side, Youdas 2014 side-bridge EMG), abs secondary. Sources S1 Serner 2014, S2 Marusic 2026, S3 Hinnekens 2024, S4 Garage Strength, S5 Youdas 2014. 13 Nov 2026 (pics-fixes): QA said the camera looked straight down, the support arm read as a straight arm on a fist and the top hand floated. Arms now as the passed side_plank render (run 43448896897): support upper arm vertical under the shoulder (elev 86 = body tilt), elbow 90 with the forearm flat on the floor pointing forward and a little toward the head (bend [0,1,0.35]); top arm along the body with the fist resting on the top hip (elev 5, plane 165, elbow 12). 'ground' lays the support forearm and fist on the floor from the real skin. Camera low in front (yaw -78, pitch 4), as the side plank."
 }

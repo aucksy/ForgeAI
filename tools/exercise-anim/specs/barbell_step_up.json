@@ -1,0 +1,210 @@
+{
+  "key": "barbell_step_up",
+  "name": "Barbell Step-Up",
+  "primary": [
+    "quads"
+  ],
+  "secondary": [
+    "glutes",
+    "hamstrings"
+  ],
+  "scene": {
+    "box": {
+      "size": [
+        0.7,
+        0.45,
+        0.4
+      ],
+      "loc": [
+        0,
+        -0.56,
+        0
+      ]
+    }
+  },
+  "props": {
+    "bar": {
+      "type": "barbell",
+      "plates": [
+        0.225
+      ],
+      "plate_t": 0.045
+    }
+  },
+  "camera": {
+    "lens": 50,
+    "fill": 0.9,
+    "res": 640,
+    "samples": 20,
+    "yaw": -80,
+    "pitch": 12
+  },
+  "timing": {
+    "fps": 30,
+    "keys": [
+      [
+        0,
+        "start"
+      ],
+      [
+        1,
+        "end"
+      ],
+      [
+        2,
+        "start"
+      ]
+    ]
+  },
+  "poses": {
+    "start": {
+      "root": {
+        "loc": [
+          0,
+          0.051,
+          0.965
+        ],
+        "rot": [
+          8,
+          0,
+          0
+        ]
+      },
+      "feet": {
+        "L": {
+          "at": [
+            0.13,
+            -0.45,
+            0.474
+          ],
+          "rot": [
+            0,
+            0,
+            4
+          ]
+        },
+        "R": {
+          "at": [
+            -0.13,
+            0.02,
+            0.074
+          ],
+          "rot": [
+            0,
+            0,
+            -6
+          ]
+        }
+      },
+      "knees": {
+        "L": [
+          0.16,
+          -1.3,
+          0.95
+        ],
+        "R": [
+          -0.16,
+          -1.0,
+          0.52
+        ]
+      },
+      "hands": {
+        "L": {
+          "prop": "bar",
+          "at": [
+            0.3,
+            -0.075,
+            0.065
+          ],
+          "axis": [
+            -1,
+            0,
+            0
+          ]
+        }
+      },
+      "elbows": {
+        "L": [
+          0.45,
+          -0.35,
+          -0.55
+        ]
+      }
+    },
+    "end": {
+      "root": {
+        "loc": [
+          0,
+          -0.384,
+          1.372
+        ],
+        "rot": [
+          0,
+          0,
+          0
+        ]
+      },
+      "feet": {
+        "L": {
+          "at": [
+            0.13,
+            -0.45,
+            0.474
+          ],
+          "rot": [
+            0,
+            0,
+            4
+          ]
+        },
+        "R": {
+          "at": [
+            -0.13,
+            -0.45,
+            0.474
+          ],
+          "rot": [
+            0,
+            0,
+            -4
+          ]
+        }
+      },
+      "knees": {
+        "L": [
+          0.16,
+          -1.4,
+          0.92
+        ],
+        "R": [
+          -0.16,
+          -1.4,
+          0.92
+        ]
+      },
+      "hands": {
+        "L": {
+          "prop": "bar",
+          "at": [
+            0.3,
+            -0.075,
+            0.065
+          ],
+          "axis": [
+            -1,
+            0,
+            0
+          ]
+        }
+      },
+      "elbows": {
+        "L": [
+          0.45,
+          -0.35,
+          -0.55
+        ]
+      }
+    }
+  },
+  "research": "13 Nov 2026 (pics-fixes), new. Body, box and legs from the passed dumbbell_step_up (box 0.40 m). The barbell rests on the upper back (high-bar: on the upper trapezius below the neck): hands placed by position in the torso frame, fists 0.30 out from the midline, 0.075 behind and 0.065 above the shoulder joints, palms forward (axis [-1,0,0]), elbows down and back. Facts: research/barbell_step_up.json."
+}
