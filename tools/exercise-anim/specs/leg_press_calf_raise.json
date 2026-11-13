@@ -22,8 +22,8 @@
   }
  },
  "camera": {
-  "yaw": 70,
-  "pitch": 14,
+  "yaw": 85,
+  "pitch": 10,
   "lens": 50,
   "fill": 0.9,
   "res": 640,
@@ -170,8 +170,8 @@
      },
      "off": [
       -0.12,
-      -0.0247485,
-      0.0247485
+      0.117,
+      0.166
      ]
     },
     "mat": "frame",
@@ -189,17 +189,17 @@
     "a": {
      "a": "tail:foot.L@start",
      "off": [
-      0.34,
-      0.45426,
-      -0.45426
+      0.1,
+      0.177,
+      -0.389
      ]
     },
     "b": {
      "a": "tail:foot.L@start",
      "off": [
-      0.34,
-      -0.21748499999999996,
-      0.21748499999999996
+      0.1,
+      -0.46,
+      0.248
      ]
     },
     "mat": "chrome",
@@ -212,44 +212,30 @@
     ],
     "a": {
      "a": {
-      "a": {
-       "along": [
-        "foot.L",
-        "tail:foot.L"
-       ],
-       "t": 1.0
-      },
-      "off": [
-       -0.12,
-       -0.0247485,
-       0.0247485
-      ]
+      "along": [
+       "foot.L",
+       "tail:foot.L"
+      ],
+      "t": 1.0
      },
      "off": [
-      0.31,
-      0.03,
-      -0.03
+      0.1,
+      -0.007,
+      0.078
      ]
     },
     "b": {
      "a": {
-      "a": {
-       "along": [
-        "foot.L",
-        "tail:foot.L"
-       ],
-       "t": 1.0
-      },
-      "off": [
-       -0.12,
-       -0.0247485,
-       0.0247485
-      ]
+      "along": [
+       "foot.L",
+       "tail:foot.L"
+      ],
+      "t": 1.0
      },
      "off": [
-      0.35,
-      0.03,
-      -0.03
+      0.1,
+      -0.177,
+      -0.035
      ]
     },
     "mat": "frame",
@@ -263,24 +249,20 @@
     "a": {
      "xyz": [
       {
-       "a": {
-        "a": "tail:foot.L@start",
-        "off": [
-         0.34,
-         0,
-         0
-        ]
-       }
+       "a": "tail:foot.L@start",
+       "off": [
+        0.1,
+        0.177,
+        -0.389
+       ]
       },
       {
-       "a": {
-        "a": "tail:foot.L@start",
-        "off": [
-         0,
-         0.45426,
-         0
-        ]
-       }
+       "a": "tail:foot.L@start",
+       "off": [
+        0.1,
+        0.177,
+        -0.389
+       ]
       },
       0.03
      ]
@@ -288,9 +270,9 @@
     "b": {
      "a": "tail:foot.L@start",
      "off": [
-      0.34,
-      0.45426,
-      -0.45426
+      0.1,
+      0.177,
+      -0.389
      ]
     },
     "mat": "frame",
@@ -303,34 +285,31 @@
     ],
     "a": {
      "xyz": [
-      0.34,
-      -0.2,
+      {
+       "a": "tail:foot.L@start",
+       "off": [
+        0.1,
+        -0.46,
+        0.248
+       ]
+      },
+      {
+       "a": "tail:foot.L@start",
+       "off": [
+        0.1,
+        -0.46,
+        0.248
+       ]
+      },
       0.03
      ]
     },
     "b": {
-     "xyz": [
-      {
-       "a": {
-        "a": "tail:foot.L@start",
-        "off": [
-         0.34,
-         0,
-         0
-        ]
-       }
-      },
-      {
-       "a": {
-        "a": "tail:foot.L@start",
-        "off": [
-         0,
-         0.45426,
-         0
-        ]
-       }
-      },
-      0.03
+     "a": "tail:foot.L@start",
+     "off": [
+      0.1,
+      -0.46,
+      0.248
      ]
     },
     "mat": "frame",
@@ -365,7 +344,7 @@
    }
   ]
  },
- "research": "Proven 30 deg reclined body (incline_dumbbell_press) as the leg-press seat; hip ~(0.11, 0.05, 0.52). Legs point up and forward at 45 deg, nearly straight (ankle 0.88 m from the hip: knee ~15 deg) in BOTH pictures: only the ankles move (Kinoshita 2023: knee-extended calf raise works the gastrocnemius). Shin dir (0,-0.71,0.71) -> neutral foot rot X -135; start dorsiflexed ~17 deg (rot -152, heels below the plate edge), end plantarflexed ~27 deg (rot -108, pushing the plate out). The plate follows the ball of the left foot (its tail) and stays square to the rails; rails run along the leg direction. Hands hold the seat handles. Riemann 2011 (heel-raise EMG, neutral feet).",
+ "research": "Proven 30 deg reclined body (incline_dumbbell_press) as the leg-press seat; hip ~(0.11, 0.05, 0.52). Legs point up and forward at 45 deg, nearly straight (ankle 0.88 m from the hip: knee ~15 deg) in BOTH pictures: only the ankles move (Kinoshita 2023: knee-extended calf raise works the gastrocnemius). Shin dir (0,-0.71,0.71) -> neutral foot rot X -135; start dorsiflexed ~17 deg (rot -152, heels below the plate edge), end plantarflexed ~27 deg (rot -108, pushing the plate out). The plate follows the ball of the left foot (its tail), its lower edge 3 cm below the ball so the heels hang off; the sled rides on rails under it, along the leg direction. Side camera so the ankle movement shows. Hands hold the seat handles. Riemann 2011 (heel-raise EMG, neutral feet).",
  "timing": {
   "fps": 30,
   "keys": [

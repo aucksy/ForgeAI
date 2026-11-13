@@ -55,8 +55,8 @@
   }
  },
  "camera": {
-  "yaw": -40,
-  "pitch": 12,
+  "yaw": 140,
+  "pitch": 14,
   "lens": 50,
   "fill": 0.9,
   "res": 640,
@@ -132,8 +132,8 @@
      "arm": {
       "elev": 40,
       "plane": -20,
-      "elbow": "fore_vertical",
-      "bend_world": [
+      "elbow": 140,
+      "bend": [
        0,
        0,
        1
@@ -329,7 +329,7 @@
    }
   ]
  },
- "research": "Seated body (proven seated_hammer_curl, 6 deg lean back), seat with no back pad, roller pads over the thighs just above the knees. Start: arms up and a little forward and out (elev 160, plane 40, elbow 10), palms forward; end: hands at shoulder height, forearms vertical, elbows down and a little back (elev 40, plane -20). Shoulder girdle rhythm and armpit skin settings copied from the approved dumbbell_shoulder_press. Levers from each handle's outer end to a pivot high in front (equal length start/end). Lusk 2010 (pronated wide grip), Lehman 2004 (lat pulldown EMG).",
+ "research": "Seated body (proven seated_hammer_curl, 6 deg lean back), seat with no back pad, roller pads over the thighs just above the knees. Start: arms up and a little forward and out (elev 160, plane 40, elbow 10), palms forward; end: hands at shoulder height, forearms vertical, elbows down and a little back (elev 40, plane -20, elbow 140 = forearm vertical; a number, because the pose blend cannot mix a number with 'fore_vertical'). Shoulder girdle rhythm and armpit skin settings copied from the approved dumbbell_shoulder_press. Levers from each handle's outer end to a pivot high in front (equal length start/end). Lusk 2010 (pronated wide grip), Lehman 2004 (lat pulldown EMG).",
  "timing": {
   "fps": 30,
   "keys": [
