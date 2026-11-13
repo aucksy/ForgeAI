@@ -1,0 +1,123 @@
+{
+ "format": "v1-stills",
+ "exercise": {
+  "key": "seated_barbell_calf_raise",
+  "name": "Seated Barbell Calf Raise",
+  "equipment": "barbell",
+  "library_primary": [
+   "calves"
+  ],
+  "library_secondary": [],
+  "library_steps": [
+   "Sit on a bench and set the front of both feet on a block.",
+   "Rest a padded barbell across your lower thighs and hold it steady.",
+   "Raise your heels as high as you can, then lower slowly for a stretch."
+  ],
+  "status": "draft",
+  "version": 1,
+  "researched_on": "2026-11-13",
+  "one_line_summary": "Seated on a bench, the balls of both feet on a block, a bar across the lower thighs; the heels drop, then rise as high as they go. Soleus (calves) does the work.",
+  "evidence_grade": "A"
+ },
+ "setup": [
+  {
+   "item": "seat",
+   "target": "Seated, knees bent ~90 deg, forefoot on a ~8 cm block.",
+   "tolerance": "knee 80-100",
+   "why": "Library step 1; KINO seated condition at knee 90 deg.",
+   "source_ids": [
+    "KINO"
+   ],
+   "grade": "A"
+  },
+  {
+   "item": "bar",
+   "target": "Across both lower thighs near the knees, held by both hands.",
+   "tolerance": "on the thighs",
+   "why": "Library step 2.",
+   "source_ids": [
+    "KINO"
+   ],
+   "grade": "C"
+  }
+ ],
+ "movement": [
+  {
+   "joint": "ankle",
+   "measure": "heel raise, 0 = foot level",
+   "start": "~-15 deg (heel dropped)",
+   "end": "~+25 deg",
+   "start_num": -15,
+   "end_num": 25,
+   "tolerance": "range over 30",
+   "source_ids": [
+    "KINO"
+   ],
+   "grade": "B"
+  }
+ ],
+ "muscles": [
+  {
+   "muscle": "Calves",
+   "anatomy": "Soleus, gastrocnemius",
+   "mask_key": "calves",
+   "tier": "primary",
+   "glow": 1.0,
+   "emg": "Seated calf raises grew the soleus (+2.9 %) but hardly the gastrocnemius (KINO).",
+   "role": "Raises the heels.",
+   "surface": "Back of the lower leg.",
+   "source_ids": [
+    "KINO",
+    "CALF"
+   ],
+   "grade": "A"
+  }
+ ],
+ "tempo": null,
+ "mistakes": [
+  {
+   "mistake": "Bouncing at the bottom",
+   "what_it_looks_like": "Heels bounce off the stretch.",
+   "why_it_matters": "Skips the loaded stretch.",
+   "source_ids": [
+    "KINO"
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "KINO",
+   "citation": "Kinoshita M, Maeo S, Kobayashi Y, et al. 2023. Triceps surae muscle hypertrophy is greater after standing versus seated calf-raise training. Front Physiol 14:1272106.",
+   "url": "https://europepmc.org/article/MED/38156065",
+   "type": "biomechanics",
+   "what_it_gave": "Seated (knee 90 deg) vs standing calf raises, 12 weeks: in the seated leg the soleus grew (+2.9 %) but the gastrocnemius barely did (+0.6-1.7 %): seated calf raises work the soleus."
+  },
+  {
+   "id": "CALF",
+   "citation": "Binstead JT, Varacallo MA. 2026. Anatomy, Bony Pelvis and Lower Limb: Calf. StatPearls (NCBI Bookshelf).",
+   "url": "https://europepmc.org/article/MED/29083629",
+   "type": "textbook",
+   "what_it_gave": "The calf (posterior lower leg) holds the muscles that plantarflex the ankle (raise the heel)."
+  }
+ ],
+ "clip_check": [
+  {
+   "check": "Forefoot on the block, heels down then up",
+   "target": "range > 30",
+   "measured": "visual (run 43453136627)",
+   "pass": "yes"
+  },
+  {
+   "check": "Bar on the thighs, both hands on it",
+   "target": "hand gap ~0.5",
+   "measured": "0.500 m",
+   "pass": "yes"
+  },
+  {
+   "check": "Calves strongest red",
+   "target": "primary calves",
+   "measured": "yes",
+   "pass": "yes"
+  }
+ ]
+}

@@ -1,0 +1,121 @@
+{
+ "format": "v1-stills",
+ "exercise": {
+  "key": "single_arm_dumbbell_wrist_curl",
+  "name": "Single-Arm Dumbbell Wrist Curl",
+  "equipment": "dumbbell",
+  "library_primary": [
+   "forearms"
+  ],
+  "library_secondary": [],
+  "library_steps": [
+   "Rest one forearm on a bench, palm up, hand over the edge.",
+   "Lower the dumbbell by bending your wrist, then curl it up.",
+   "Finish your reps, then switch arms."
+  ],
+  "status": "draft",
+  "version": 1,
+  "researched_on": "2026-11-13",
+  "one_line_summary": "Seated, one forearm along the thigh palm up with the hand past the knee; the wrist bends down, then curls the dumbbell up. Wrist flexors on the palm side of the forearm do the work.",
+  "evidence_grade": "C"
+ },
+ "setup": [
+  {
+   "item": "forearm",
+   "target": "Forearm resting on the thigh, palm up, wrist just past the knee.",
+   "tolerance": "wrist past the knee",
+   "why": "Library step 1.",
+   "source_ids": [
+    "TY14"
+   ],
+   "grade": "C"
+  }
+ ],
+ "movement": [
+  {
+   "joint": "wrist",
+   "measure": "bend, + = toward the palm",
+   "start": "~-40 deg",
+   "end": "~+45 deg",
+   "start_num": -40,
+   "end_num": 45,
+   "tolerance": "range over 60",
+   "source_ids": [
+    "TY14"
+   ],
+   "grade": "C"
+  }
+ ],
+ "muscles": [
+  {
+   "muscle": "Wrist flexors (forearm)",
+   "anatomy": "Flexor carpi radialis, flexor carpi ulnaris",
+   "mask_key": "forearms",
+   "tier": "primary",
+   "glow": 1.0,
+   "emg": "Not measured in this exercise; loaded wrist flexion trains the flexor group (TY14).",
+   "role": "Bend the wrist palm-ward.",
+   "surface": "Palm side of the forearm.",
+   "source_ids": [
+    "TY14",
+    "FCU"
+   ],
+   "grade": "C"
+  },
+  {
+   "muscle": "Finger flexors",
+   "anatomy": "Flexor digitorum superficialis and profundus",
+   "mask_key": "none",
+   "tier": "stabiliser",
+   "glow": 0,
+   "emg": "not measured",
+   "role": "Hold the weight.",
+   "surface": "Palm side of the forearm.",
+   "source_ids": [
+    "FCU"
+   ],
+   "grade": "C"
+  }
+ ],
+ "tempo": null,
+ "mistakes": [
+  {
+   "mistake": "Forearms lift",
+   "what_it_looks_like": "The elbows or forearms move as the wrist works.",
+   "why_it_matters": "The wrist muscles must do the lift alone.",
+   "source_ids": [
+    "TY14"
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "TY14",
+   "citation": "Tyler TF, Nicholas SJ, Schmitt BM, Mullaney M, Hogan DE. 2014. Clinical outcomes of the addition of eccentrics for rehabilitation of previously failed treatments of golfers elbow. Int J Sports Phys Ther.",
+   "url": "https://europepmc.org/article/MED/24944855",
+   "type": "guideline",
+   "what_it_gave": "Isolated loaded wrist-flexion exercise used to strengthen the wrist flexors (palm side of the forearm)."
+  },
+  {
+   "id": "FCU",
+   "citation": "Lung BE, Siwiec RM. 2024. Anatomy, Shoulder and Upper Limb, Forearm Flexor Carpi Ulnaris Muscle. StatPearls (NCBI Bookshelf).",
+   "url": "https://europepmc.org/article/MED/30252307",
+   "type": "textbook",
+   "what_it_gave": "Flexor carpi ulnaris: superficial palm-side forearm muscle, the most powerful wrist flexor."
+  }
+ ],
+ "clip_check": [
+  {
+   "check": "Wrist lowered, then curled",
+   "target": "range > 60",
+   "measured": "visual (run 43452574049)",
+   "pass": "yes"
+  },
+  {
+   "check": "Forearms strongest red, working arm",
+   "target": "primary forearms",
+   "measured": "yes",
+   "pass": "yes"
+  }
+ ]
+}

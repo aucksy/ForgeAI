@@ -1,0 +1,143 @@
+{
+  "format": "v1-stills",
+  "exercise": {
+    "key": "decline_ez_bar_skull_crusher",
+    "name": "Decline EZ Bar Skull Crusher",
+    "equipment": "barbell",
+    "library_primary": [
+      "triceps"
+    ],
+    "library_secondary": [],
+    "library_steps": [
+      "Lie on a decline bench with your feet hooked, EZ bar above your chest.",
+      "Bend your elbows to lower the bar towards your forehead.",
+      "Straighten your arms again, keeping your upper arms still."
+    ],
+    "status": "draft",
+    "version": 1,
+    "researched_on": "2026-11-13",
+    "one_line_summary": "Lying on a decline bench with the feet hooked, an EZ bar held overhand on the inner bends straight above the chest; the elbows bend ~105 deg and the bar lowers toward the forehead while the upper arms stay still. Triceps does the work.",
+    "evidence_grade": "B"
+  },
+  "setup": [
+    {
+      "item": "bench",
+      "target": "Decline bench (~20 deg), legs hooked under the rollers.",
+      "tolerance": "15-30 deg",
+      "why": "Library step 1.",
+      "source_ids": [
+        "TRI"
+      ],
+      "grade": "C"
+    },
+    {
+      "item": "grip",
+      "target": "EZ bar, inner (close) bends, overhand.",
+      "tolerance": "close bends",
+      "why": "Library step 1; EZ bar as in MARC.",
+      "source_ids": [
+        "MARC"
+      ],
+      "grade": "C"
+    }
+  ],
+  "movement": [
+    {
+      "joint": "elbow",
+      "measure": "bend, 0 = straight",
+      "start": "~5 deg",
+      "end": "~105 deg",
+      "start_num": 5,
+      "end_num": 105,
+      "tolerance": "end 90-120",
+      "source_ids": [
+        "MAEO"
+      ],
+      "grade": "C"
+    },
+    {
+      "joint": "upper arm",
+      "measure": "pointing at the ceiling",
+      "start": "vertical",
+      "end": "vertical",
+      "start_num": 0,
+      "end_num": 0,
+      "tolerance": "change under 10",
+      "source_ids": [
+        "MAEO"
+      ],
+      "grade": "C"
+    }
+  ],
+  "muscles": [
+    {
+      "muscle": "Triceps",
+      "anatomy": "Triceps brachii (long, lateral, medial heads)",
+      "mask_key": "triceps",
+      "tier": "primary",
+      "glow": 1.0,
+      "emg": "Elbow extensor; overhead elbow extension grew the long head 1.5x more than at the side (MAEO).",
+      "role": "Straightens the elbow.",
+      "surface": "Back of the upper arm.",
+      "source_ids": [
+        "MAEO",
+        "TRI"
+      ],
+      "grade": "B"
+    }
+  ],
+  "tempo": null,
+  "mistakes": [
+    {
+      "mistake": "Upper arms swing",
+      "what_it_looks_like": "Elbows drift toward the head or the feet.",
+      "why_it_matters": "Turns it into a pullover or a press.",
+      "source_ids": [
+        "MAEO"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "MAEO",
+      "citation": "Maeo S, Wu Y, Huang M, et al. 2023. Triceps brachii hypertrophy is substantially greater after elbow extension training performed in the overhead versus neutral arm position. Eur J Sport Sci.",
+      "url": "https://europepmc.org/article/MED/35819335",
+      "type": "biomechanics",
+      "what_it_gave": "12 weeks of elbow extensions (90-0 deg) overhead vs arm at the side: overhead grew the long head 1.5x more (+28.5 % vs +19.6 %) and the whole triceps 1.4x more."
+    },
+    {
+      "id": "TRI",
+      "citation": "Tiwana MS, Sinkler MA, Bordoni B. 2023. Anatomy, Shoulder and Upper Limb, Triceps Muscle. StatPearls (NCBI Bookshelf).",
+      "url": "https://europepmc.org/article/MED/30725681",
+      "type": "textbook",
+      "what_it_gave": "Triceps brachii: three heads on the back of the upper arm, extends the elbow; the long head starts on the shoulder blade."
+    },
+    {
+      "id": "MARC",
+      "citation": "Marcolin G, Panizzolo FA, Petrone N, et al. 2018. Differences in electromyographic activity of biceps brachii and brachioradialis while performing three variants of curl. PeerJ 6:e5165.",
+      "url": "https://europepmc.org/article/MED/30013836",
+      "type": "emg",
+      "what_it_gave": "Dumbbell, straight-bar and EZ-bar curls at 65 % 1RM: the EZ bar gave higher biceps and brachioradialis EMG than the dumbbell curl; straight vs EZ bar differed little."
+    }
+  ],
+  "clip_check": [
+    {
+      "check": "Legs hooked, back on the pad",
+      "target": "visual",
+      "measured": "shins under the rollers, back on the pad (bench contact <= 0.9 cm), run 43457606677",
+      "pass": "yes"
+    },
+    {
+      "check": "Bar above the forehead at the end",
+      "target": "visual",
+      "measured": "bar 0.58-0.85 m above the floor at the forehead, run 43457606677",
+      "pass": "yes"
+    },
+    {
+      "check": "Triceps strongest red",
+      "target": "primary triceps",
+      "measured": "triceps red, run 43457606677",
+      "pass": "yes (near plate partly covers the hands: camera at re-render)"
+    }
+  ]
+}

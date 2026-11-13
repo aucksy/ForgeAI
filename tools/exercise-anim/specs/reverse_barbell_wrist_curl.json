@@ -167,5 +167,5 @@
       }
     }
   },
-  "research": "13 Nov 2026 (pics-fixes), new. Seated at the end of a flat bench leaning 40 deg (body from single_arm_dumbbell_wrist_curl), BOTH forearms along the thighs, wrists just past the knees, a short barbell held palms DOWN (axis [-1,0,0]). START: wrists bent down 45 deg (flex +45, the bar lowered); END: wrists bent back 40 deg (flex -40, knuckles up). Wrist extensors on the back of the forearm do the work. Facts: research/reverse_barbell_wrist_curl.json."
+  "research": "13 Nov 2026 (pics-fixes), new. Seated at the end of a flat bench leaning 40 deg (body from single_arm_dumbbell_wrist_curl), BOTH forearms along the thighs, wrists just past the knees, a short barbell held palms DOWN (axis [-1,0,0]). START: wrists bent down 45 deg (flex +45, the bar lowered); END: wrists bent back 40 deg (flex -40, knuckles up). Wrist extensors on the back of the forearm do the work. Facts: research/reverse_barbell_wrist_curl.json. 13 Nov 2026 fresh review (look A, 384 px), NOT yet applied because renders were paused for the new look: borderline FAIL - the bar moves ~15 px and the near plate covers the hands in the end. Widen the wrist range (about +60 start / -50 end), use smaller plates and a camera off the bar line (about yaw -35, pitch 25)."
 }

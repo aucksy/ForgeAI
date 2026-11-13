@@ -1,0 +1,172 @@
+{
+ "format": "v1-stills",
+ "exercise": {
+  "key": "reverse_preacher_curl",
+  "name": "Reverse Preacher Curl",
+  "equipment": "barbell",
+  "library_primary": [
+   "forearms"
+  ],
+  "library_secondary": [
+   "biceps"
+  ],
+  "library_steps": [
+   "Sit at the preacher bench and grip an EZ bar or bar palms down.",
+   "Keep your arms on the pad and curl the bar up.",
+   "Lower slowly until your arms are nearly straight."
+  ],
+  "status": "draft",
+  "version": 1,
+  "researched_on": "2026-11-13",
+  "one_line_summary": "Seated at a preacher bench, upper arms flat on the sloped pad, a bar held palms down; the elbows bend from nearly straight to ~120 deg. Brachioradialis (forearm) does the most, biceps helps.",
+  "evidence_grade": "B"
+ },
+ "setup": [
+  {
+   "item": "pad",
+   "target": "Upper arms along the sloped pad, armpits over its top edge.",
+   "tolerance": "arms on the pad",
+   "why": "Library step 2; OLIV fixed the upper arm on a preacher pad.",
+   "source_ids": [
+    "OLIV"
+   ],
+   "grade": "B"
+  },
+  {
+   "item": "grip",
+   "target": "Overhand (palms down), about shoulder width.",
+   "tolerance": "pronated",
+   "why": "Library step 1; a pronated hand shifts work to the brachioradialis (KLEI).",
+   "source_ids": [
+    "KLEI"
+   ],
+   "grade": "B"
+  }
+ ],
+ "movement": [
+  {
+   "joint": "elbow",
+   "measure": "bend, 0 = straight",
+   "start": "~20 deg",
+   "end": "~120 deg",
+   "start_num": 20,
+   "end_num": 120,
+   "tolerance": "start 5-30; end 105-135",
+   "source_ids": [
+    "OLIV"
+   ],
+   "grade": "B"
+  },
+  {
+   "joint": "upper arm",
+   "measure": "on the pad",
+   "start": "on the pad",
+   "end": "on the pad",
+   "start_num": 0,
+   "end_num": 0,
+   "tolerance": "gap under 3 cm",
+   "source_ids": [
+    "OLIV"
+   ],
+   "grade": "B"
+  }
+ ],
+ "muscles": [
+  {
+   "muscle": "Brachioradialis (forearm)",
+   "anatomy": "Brachioradialis",
+   "mask_key": "forearms",
+   "tier": "primary",
+   "glow": 1.0,
+   "emg": "Brachioradialis contribution clearly higher with the hand pronated than supinated (KLEI).",
+   "role": "Helps bend the elbow, most with the palm turned down.",
+   "surface": "Thumb side of the upper forearm.",
+   "source_ids": [
+    "KLEI",
+    "BRR"
+   ],
+   "grade": "B"
+  },
+  {
+   "muscle": "Biceps",
+   "anatomy": "Biceps brachii",
+   "mask_key": "biceps",
+   "tier": "secondary",
+   "glow": 0.35,
+   "emg": "Main elbow flexor in curls; above 50 % of max RMS in standing and preacher curls.",
+   "role": "Bends the elbow.",
+   "surface": "Front of the upper arm.",
+   "source_ids": [
+    "KLEI",
+    "OLIV"
+   ],
+   "grade": "B"
+  },
+  {
+   "muscle": "Brachialis",
+   "anatomy": "Brachialis",
+   "mask_key": "none",
+   "tier": "deep",
+   "glow": 0,
+   "emg": "not measured",
+   "role": "Elbow flexor under the biceps.",
+   "surface": "Under the lower biceps.",
+   "source_ids": [],
+   "grade": "D"
+  }
+ ],
+ "tempo": null,
+ "mistakes": [
+  {
+   "mistake": "Arms lift off the pad",
+   "what_it_looks_like": "Elbows rise off the pad as the bar comes up.",
+   "why_it_matters": "Loses the fixed-arm set-up that defines the preacher curl.",
+   "source_ids": [
+    "OLIV"
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "KLEI",
+   "citation": "Kleiber T, Kunz L, Disselhorst-Klug C. 2015. Muscular coordination of biceps brachii and brachioradialis in elbow flexion with respect to hand position. Front Physiol 6:215.",
+   "url": "https://europepmc.org/article/MED/26300781",
+   "type": "emg",
+   "what_it_gave": "Elbow flexion with pronated, neutral and supinated hands: the brachioradialis share rose clearly with the hand pronated (palm down) while biceps activity did not change significantly."
+  },
+  {
+   "id": "OLIV",
+   "citation": "Oliveira LF, Matta TT, Alves DS, Garcia MA, Vieira TM. 2009. Effect of the shoulder position on the biceps brachii EMG in different dumbbell curls. J Sports Sci Med 8(1):24-29.",
+   "url": "https://europepmc.org/article/MED/24150552",
+   "type": "emg",
+   "what_it_gave": "Standing, incline and preacher curls: biceps long head above 50 % of max RMS in all; with the upper arm fixed in front (preacher) the biceps worked hardest only over a short early range."
+  },
+  {
+   "id": "BRR",
+   "citation": "Lung BE, Ekblad J, Bisogno M. 2024. Anatomy, Shoulder and Upper Limb, Forearm Brachioradialis Muscle. StatPearls (NCBI Bookshelf).",
+   "url": "https://europepmc.org/article/MED/30252366",
+   "type": "textbook",
+   "what_it_gave": "Brachioradialis: forearm muscle on the thumb side that flexes the elbow and does not cross the wrist."
+  }
+ ],
+ "clip_check": [
+  {
+   "check": "Upper arms on the pad face",
+   "target": "gap < 0.03 m",
+   "measured": "0.017 m in both pictures (run 43452574049)",
+   "pass": "yes"
+  },
+  {
+   "check": "Palms down on the bar",
+   "target": "palm normal z < 0",
+   "measured": "-0.8 / -0.5",
+   "pass": "yes"
+  },
+  {
+   "check": "Forearms strongest red",
+   "target": "primary forearms",
+   "measured": "yes",
+   "pass": "yes"
+  }
+ ]
+}

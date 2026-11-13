@@ -1,0 +1,182 @@
+{
+ "format": "v1-stills",
+ "exercise": {
+  "key": "jm_press",
+  "name": "JM Press",
+  "equipment": "barbell",
+  "library_primary": [
+   "triceps"
+  ],
+  "library_secondary": [
+   "chest",
+   "front_delts"
+  ],
+  "library_steps": [
+   "Lie on a flat bench, bar over your chest, hands just inside shoulder-width.",
+   "Bend your elbows and let the bar travel down towards your chin.",
+   "Press it back up along the same path, elbows tucked in."
+  ],
+  "status": "draft",
+  "version": 1,
+  "researched_on": "2026-11-13",
+  "one_line_summary": "Lying on a flat bench, a bar held close-grip; from straight arms the elbows bend ~130 deg and travel toward the feet so the bar comes down over the throat. Triceps does the most, chest and front delts help.",
+  "evidence_grade": "B"
+ },
+ "setup": [
+  {
+   "item": "grip",
+   "target": "Close: hands just inside shoulder width, palms down.",
+   "tolerance": "0.30-0.40 m",
+   "why": "Library step 1; LEHM and SAET21: a narrower grip raises triceps activity.",
+   "source_ids": [
+    "LEHM",
+    "SAET21"
+   ],
+   "grade": "B"
+  },
+  {
+   "item": "bench",
+   "target": "Flat bench, back and head on the pad, feet on the floor.",
+   "tolerance": "on the pad",
+   "why": "Library step 1.",
+   "source_ids": [
+    "SAET21"
+   ],
+   "grade": "C"
+  }
+ ],
+ "movement": [
+  {
+   "joint": "elbow",
+   "measure": "bend, 0 = straight",
+   "start": "~3 deg",
+   "end": "~130 deg",
+   "start_num": 3,
+   "end_num": 130,
+   "tolerance": "end 110-140",
+   "source_ids": [
+    "LEHM"
+   ],
+   "grade": "C"
+  },
+  {
+   "joint": "upper arm",
+   "measure": "angle from the trunk toward the feet",
+   "start": "~88 deg",
+   "end": "~45 deg",
+   "start_num": 88,
+   "end_num": 45,
+   "tolerance": "end 30-60",
+   "source_ids": [
+    "LEHM"
+   ],
+   "grade": "D"
+  }
+ ],
+ "muscles": [
+  {
+   "muscle": "Triceps",
+   "anatomy": "Triceps brachii (long, lateral, medial heads)",
+   "mask_key": "triceps",
+   "tier": "primary",
+   "glow": 1.0,
+   "emg": "Elbow extensor; overhead elbow extension grew the long head 1.5x more than at the side (MAEO).",
+   "role": "Straightens the elbow.",
+   "surface": "Back of the upper arm.",
+   "source_ids": [
+    "LEHM",
+    "SAET21"
+   ],
+   "grade": "B"
+  },
+  {
+   "muscle": "Chest",
+   "anatomy": "Pectoralis major",
+   "mask_key": "chest",
+   "tier": "secondary",
+   "glow": 0.35,
+   "emg": "Active in all bench-press grips; less with a narrow grip (LEHM).",
+   "role": "Helps press the bar.",
+   "surface": "Front of the chest.",
+   "source_ids": [
+    "LEHM",
+    "SAET21"
+   ],
+   "grade": "B"
+  },
+  {
+   "muscle": "Front delts",
+   "anatomy": "Anterior deltoid",
+   "mask_key": "front_delts",
+   "tier": "secondary",
+   "glow": 0.35,
+   "emg": "Active in bench press at every grip width (SAET21).",
+   "role": "Helps press the bar.",
+   "surface": "Front of the shoulder.",
+   "source_ids": [
+    "SAET21"
+   ],
+   "grade": "B"
+  }
+ ],
+ "tempo": null,
+ "mistakes": [
+  {
+   "mistake": "Elbows flare out",
+   "what_it_looks_like": "Upper arms swing out to the sides.",
+   "why_it_matters": "Turns it into a wide press with less triceps.",
+   "source_ids": [
+    "LEHM"
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "LEHM",
+   "citation": "Lehman GJ. 2005. The influence of grip width and forearm pronation/supination on upper-body myoelectric activity during the flat bench press. J Strength Cond Res.",
+   "url": "https://europepmc.org/article/MED/16095407",
+   "type": "emg",
+   "what_it_gave": "Bench press holds: narrowing the grip raised triceps activity; a supinated (reverse) grip raised biceps and clavicular pectoralis activity."
+  },
+  {
+   "id": "SAET21",
+   "citation": "Saeterbakken AH, Stien N, Pedersen H, et al. 2021. The effect of grip width on muscle strength and electromyographic activity in bench press among novice- and resistance-trained men. Int J Environ Res Public Health 18(12):6444.",
+   "url": "https://europepmc.org/article/MED/34198674",
+   "type": "emg",
+   "what_it_gave": "6-RM bench press: wide grip gave lower triceps activity than medium and narrow; anterior deltoid active at all widths; narrow grip used lower loads."
+  },
+  {
+   "id": "TRI",
+   "citation": "Tiwana MS, Sinkler MA, Bordoni B. 2023. Anatomy, Shoulder and Upper Limb, Triceps Muscle. StatPearls (NCBI Bookshelf).",
+   "url": "https://europepmc.org/article/MED/30725681",
+   "type": "textbook",
+   "what_it_gave": "Triceps brachii: three heads on the back of the upper arm, extends the elbow; the long head starts on the shoulder blade."
+  }
+ ],
+ "clip_check": [
+  {
+   "check": "Back on the flat pad",
+   "target": "pad gap 0.004",
+   "measured": "0.004 m (run 43453136627)",
+   "pass": "yes"
+  },
+  {
+   "check": "Close grip",
+   "target": "hand gap 0.30-0.40",
+   "measured": "0.324 m",
+   "pass": "yes"
+  },
+  {
+   "check": "Bar over the throat at the bottom",
+   "target": "visual",
+   "measured": "yes",
+   "pass": "yes"
+  },
+  {
+   "check": "Triceps strongest red",
+   "target": "primary triceps",
+   "measured": "yes",
+   "pass": "yes"
+  }
+ ]
+}

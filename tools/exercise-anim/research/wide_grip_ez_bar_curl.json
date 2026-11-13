@@ -1,0 +1,163 @@
+{
+ "format": "v1-stills",
+ "exercise": {
+  "key": "wide_grip_ez_bar_curl",
+  "name": "Wide-Grip EZ Bar Curl",
+  "equipment": "barbell",
+  "library_primary": [
+   "biceps"
+  ],
+  "library_secondary": [
+   "forearms"
+  ],
+  "library_steps": [
+   "Hold the EZ bar on the outer bends, palms up, arms straight.",
+   "Keep your elbows at your sides and curl the bar to your chest.",
+   "Lower slowly until your arms are fully straight."
+  ],
+  "status": "draft",
+  "version": 1,
+  "researched_on": "2026-11-13",
+  "one_line_summary": "Standing, an EZ bar held palms up on the outer bends; elbows by the sides bend from ~8 to ~125 deg. Biceps does the work, brachioradialis helps.",
+  "evidence_grade": "A"
+ },
+ "setup": [
+  {
+   "item": "grip",
+   "target": "EZ bar, hands on the outer (wide) bends, palms up and turned in a little by the camber.",
+   "tolerance": "outer bends",
+   "why": "Library step 1; MARC tested the EZ-bar curl.",
+   "source_ids": [
+    "MARC"
+   ],
+   "grade": "A"
+  }
+ ],
+ "movement": [
+  {
+   "joint": "elbow",
+   "measure": "bend, 0 = straight",
+   "start": "8 deg",
+   "end": "125 deg",
+   "start_num": 8,
+   "end_num": 125,
+   "tolerance": "start 0-20; end 110-135",
+   "source_ids": [
+    "MARC"
+   ],
+   "grade": "A"
+  },
+  {
+   "joint": "upper arm",
+   "measure": "angle from the trunk",
+   "start": "~12 deg",
+   "end": "~15 deg",
+   "start_num": 12,
+   "end_num": 15,
+   "tolerance": "change under 15",
+   "source_ids": [
+    "MARC",
+    "OLIV"
+   ],
+   "grade": "B"
+  }
+ ],
+ "muscles": [
+  {
+   "muscle": "Biceps",
+   "anatomy": "Biceps brachii",
+   "mask_key": "biceps",
+   "tier": "primary",
+   "glow": 1.0,
+   "emg": "Main elbow flexor in curls; above 50 % of max RMS in standing and preacher curls.",
+   "role": "Bends the elbow.",
+   "surface": "Front of the upper arm.",
+   "source_ids": [
+    "MARC",
+    "OLIV"
+   ],
+   "grade": "A"
+  },
+  {
+   "muscle": "Brachioradialis (forearm)",
+   "anatomy": "Brachioradialis",
+   "mask_key": "forearms",
+   "tier": "secondary",
+   "glow": 0.35,
+   "emg": "The EZ bar raised brachioradialis EMG over the dumbbell curl (MARC); higher than biceps when lowering (UYS).",
+   "role": "Helps bend the elbow, most with the palm turned down.",
+   "surface": "Thumb side of the upper forearm.",
+   "source_ids": [
+    "MARC",
+    "UYS"
+   ],
+   "grade": "A"
+  },
+  {
+   "muscle": "Brachialis",
+   "anatomy": "Brachialis",
+   "mask_key": "none",
+   "tier": "deep",
+   "glow": 0,
+   "emg": "not measured",
+   "role": "Elbow flexor under the biceps.",
+   "surface": "Under the lower biceps.",
+   "source_ids": [],
+   "grade": "D"
+  }
+ ],
+ "tempo": null,
+ "mistakes": [
+  {
+   "mistake": "Elbows drift forward",
+   "what_it_looks_like": "Upper arms swing up with the bar.",
+   "why_it_matters": "Front delts take over.",
+   "source_ids": [
+    "MARC"
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "MARC",
+   "citation": "Marcolin G, Panizzolo FA, Petrone N, et al. 2018. Differences in electromyographic activity of biceps brachii and brachioradialis while performing three variants of curl. PeerJ 6:e5165.",
+   "url": "https://europepmc.org/article/MED/30013836",
+   "type": "emg",
+   "what_it_gave": "Dumbbell, straight-bar and EZ-bar curls at 65 % 1RM: the EZ bar gave higher biceps and brachioradialis EMG than the dumbbell curl; straight vs EZ bar differed little."
+  },
+  {
+   "id": "OLIV",
+   "citation": "Oliveira LF, Matta TT, Alves DS, Garcia MA, Vieira TM. 2009. Effect of the shoulder position on the biceps brachii EMG in different dumbbell curls. J Sports Sci Med 8(1):24-29.",
+   "url": "https://europepmc.org/article/MED/24150552",
+   "type": "emg",
+   "what_it_gave": "Standing, incline and preacher curls: biceps long head above 50 % of max RMS in all; with the upper arm fixed in front (preacher) the biceps worked hardest only over a short early range."
+  },
+  {
+   "id": "UYS",
+   "citation": "Uysal A, Karaduman B, Soslu R, et al. 2026. Effects of grip variation on biceps brachii and brachioradialis electromyographic activity during concentric and eccentric phases of the barbell curl exercise. BMC Sports Sci Med Rehabil.",
+   "url": "https://europepmc.org/article/MED/42426831",
+   "type": "emg",
+   "what_it_gave": "Barbell curls with supinated, semi-supinated and neutral grip bars: biceps and brachioradialis both highly active; brachioradialis above biceps in the lowering phase."
+  }
+ ],
+ "clip_check": [
+  {
+   "check": "Arms straight at the start, ~125 at the end",
+   "target": "8 / 125",
+   "measured": "run 43452574049: straight, then bar at the chest",
+   "pass": "yes"
+  },
+  {
+   "check": "Both fists on the outer bends",
+   "target": "grip axis off the handle < 10",
+   "measured": "0 deg",
+   "pass": "yes"
+  },
+  {
+   "check": "Biceps strongest red in both pictures",
+   "target": "primary biceps",
+   "measured": "yes",
+   "pass": "yes"
+  }
+ ]
+}

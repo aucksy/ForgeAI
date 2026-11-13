@@ -1,0 +1,172 @@
+{
+  "format": "v1-stills",
+  "exercise": {
+    "key": "trap_bar_shrug",
+    "name": "Trap Bar Shrug",
+    "equipment": "barbell",
+    "library_primary": [
+      "traps"
+    ],
+    "library_secondary": [
+      "forearms"
+    ],
+    "library_steps": [
+      "Stand inside the trap bar and lift it like a deadlift.",
+      "With arms straight, lift your shoulders up toward your ears.",
+      "Pause at the top, then lower slowly."
+    ],
+    "status": "draft",
+    "version": 1,
+    "researched_on": "2026-11-13",
+    "one_line_summary": "Standing inside a trap bar, arms straight at the sides on the neutral handles; the shoulders lift ~5 cm toward the ears. Upper trapezius does the work.",
+    "evidence_grade": "B"
+  },
+  "setup": [
+    {
+      "item": "bar",
+      "target": "Hexagonal bar around the lifter, handles at the sides, palms facing in.",
+      "tolerance": "neutral handles",
+      "why": "Library step 1; SWIN: the lifter stands inside the hexagonal bar.",
+      "source_ids": [
+        "SWIN"
+      ],
+      "grade": "B"
+    }
+  ],
+  "movement": [
+    {
+      "joint": "shoulder blade",
+      "measure": "lift of the shoulder joint, cm",
+      "start": "0",
+      "end": "~5.5",
+      "start_num": 0,
+      "end_num": 5.5,
+      "tolerance": "end 3-8",
+      "source_ids": [
+        "PIZ",
+        "LEE16"
+      ],
+      "grade": "B"
+    },
+    {
+      "joint": "elbow",
+      "measure": "bend, 0 = straight",
+      "start": "~3 deg",
+      "end": "~3 deg",
+      "start_num": 3,
+      "end_num": 3,
+      "tolerance": "under 10",
+      "source_ids": [
+        "PIZ"
+      ],
+      "grade": "B"
+    }
+  ],
+  "muscles": [
+    {
+      "muscle": "Upper trapezius",
+      "anatomy": "Trapezius, descending part",
+      "mask_key": "traps",
+      "tier": "primary",
+      "glow": 1.0,
+      "emg": "Main working muscle of the standard shrug, reported as % MVIC (PIZ, LEE16).",
+      "role": "Lifts the shoulder blades.",
+      "surface": "Top of the shoulders and the back of the neck.",
+      "source_ids": [
+        "PIZ",
+        "LEE16",
+        "TRAP"
+      ],
+      "grade": "B"
+    },
+    {
+      "muscle": "Brachioradialis (forearm)",
+      "anatomy": "Brachioradialis",
+      "mask_key": "forearms",
+      "tier": "secondary",
+      "glow": 0.35,
+      "emg": "Grip holds the bar; library secondary.",
+      "role": "Helps bend the elbow, most with the palm turned down.",
+      "surface": "Thumb side of the upper forearm.",
+      "source_ids": [
+        "SWIN"
+      ],
+      "grade": "D"
+    },
+    {
+      "muscle": "Levator scapulae",
+      "anatomy": "Levator scapulae",
+      "mask_key": "none",
+      "tier": "deep",
+      "glow": 0,
+      "emg": "Active in shrugs (LEE16).",
+      "role": "Helps lift the shoulder blade.",
+      "surface": "Under the upper trapezius.",
+      "source_ids": [
+        "LEE16"
+      ],
+      "grade": "B"
+    }
+  ],
+  "tempo": null,
+  "mistakes": [
+    {
+      "mistake": "Rolling the shoulders",
+      "what_it_looks_like": "Shoulders circle forward or back.",
+      "why_it_matters": "Adds no work for the trapezius.",
+      "source_ids": [
+        "PIZ"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "SWIN",
+      "citation": "Swinton PA, Stewart A, Agouris I, Keogh JW, Lloyd R. 2011. A biomechanical analysis of straight and hexagonal barbell deadlifts using submaximal loads. J Strength Cond Res.",
+      "url": "https://europepmc.org/article/MED/21659894",
+      "type": "biomechanics",
+      "what_it_gave": "The hexagonal (trap) bar lets the lifter stand inside its frame; heavier loads than a straight bar (265 vs 245 kg 1RM)."
+    },
+    {
+      "id": "PIZ",
+      "citation": "Pizzari T, Wickham J, Balster S, Ganderton C, Watson L. 2014. Modifying a shrug exercise can facilitate the upward rotator muscles of the scapula. Clin Biomech.",
+      "url": "https://europepmc.org/article/MED/24342452",
+      "type": "emg",
+      "what_it_gave": "Standard shrug (arms by the sides) vs upward-rotation shrug: upper trapezius is the main working muscle of the shrug; EMG as % MVIC for upper, middle and lower trapezius and serratus anterior."
+    },
+    {
+      "id": "LEE16",
+      "citation": "Lee JH, Cynn HS, Choi WJ, Jeong HJ, Yoon TL. 2016. Various shrug exercises can change scapular kinematics and scapular rotator muscle activities in subjects with scapular downward rotation syndrome. Hum Mov Sci.",
+      "url": "https://europepmc.org/article/MED/26625348",
+      "type": "emg",
+      "what_it_gave": "Three shrug styles: upper trapezius and levator scapulae lift the shoulder blade; the shrug style changes their ratio."
+    },
+    {
+      "id": "TRAP",
+      "citation": "Ourieff J, Scheckel B, Agarwal A. 2023. Anatomy, Back, Trapezius. StatPearls (NCBI Bookshelf).",
+      "url": "https://europepmc.org/article/MED/30085536",
+      "type": "textbook",
+      "what_it_gave": "Upper trapezius fibres elevate and upwardly rotate the shoulder blade; a superficial muscle from the skull to the lower thoracic spine."
+    }
+  ],
+  "clip_check": [
+    {
+      "check": "Shoulders lifted in the end",
+      "target": "3-8 cm",
+      "measured": "shoulder joint 1.474 -> 1.532 m (5.8 cm), run 43456018974",
+      "pass": "numbers yes; fresh review 13 Nov: too small to SEE at 384 px, raise the shrug at the re-render"
+    },
+    {
+      "check": "Hands on both handles",
+      "target": "grip axis off < 10",
+      "measured": "0 deg",
+      "pass": "yes"
+    },
+    {
+      "check": "Traps strongest red",
+      "target": "primary traps",
+      "measured": "traps red on the upper back, run 43456018974",
+      "pass": "yes"
+    }
+  ]
+}

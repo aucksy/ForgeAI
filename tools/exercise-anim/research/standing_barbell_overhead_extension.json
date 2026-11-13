@@ -1,0 +1,136 @@
+{
+  "format": "v1-stills",
+  "exercise": {
+    "key": "standing_barbell_overhead_extension",
+    "name": "Standing Barbell Overhead Extension",
+    "equipment": "barbell",
+    "library_primary": [
+      "triceps"
+    ],
+    "library_secondary": [],
+    "library_steps": [
+      "Stand tall holding a bar or EZ bar straight overhead, hands close.",
+      "Keep your elbows by your head and lower the bar behind it.",
+      "Straighten your arms to lift it back overhead."
+    ],
+    "status": "draft",
+    "version": 1,
+    "researched_on": "2026-11-13",
+    "one_line_summary": "Standing tall, a bar held close-grip overhead; the upper arms stay up by the head while the elbows bend ~130 deg and the bar drops behind the head. Triceps does the work, the long head on a stretch.",
+    "evidence_grade": "B"
+  },
+  "setup": [
+    {
+      "item": "position",
+      "target": "Standing tall, feet hip-width.",
+      "tolerance": "upright",
+      "why": "Library step 1.",
+      "source_ids": [
+        "MAEO"
+      ],
+      "grade": "C"
+    },
+    {
+      "item": "grip",
+      "target": "Close, palms facing forward and up.",
+      "tolerance": "0.15-0.30 m",
+      "why": "Library step 1.",
+      "source_ids": [
+        "MAEO"
+      ],
+      "grade": "C"
+    }
+  ],
+  "movement": [
+    {
+      "joint": "elbow",
+      "measure": "bend, 0 = straight",
+      "start": "~4 deg",
+      "end": "~130 deg",
+      "start_num": 4,
+      "end_num": 130,
+      "tolerance": "end 100-140",
+      "source_ids": [
+        "MAEO"
+      ],
+      "grade": "B"
+    },
+    {
+      "joint": "upper arm",
+      "measure": "raise from hanging",
+      "start": "~168 deg",
+      "end": "~160 deg",
+      "start_num": 168,
+      "end_num": 160,
+      "tolerance": "change under 15",
+      "source_ids": [
+        "MAEO"
+      ],
+      "grade": "B"
+    }
+  ],
+  "muscles": [
+    {
+      "muscle": "Triceps",
+      "anatomy": "Triceps brachii (long, lateral, medial heads)",
+      "mask_key": "triceps",
+      "tier": "primary",
+      "glow": 1.0,
+      "emg": "Elbow extensor; overhead elbow extension grew the long head 1.5x more than at the side (MAEO).",
+      "role": "Straightens the elbow.",
+      "surface": "Back of the upper arm.",
+      "source_ids": [
+        "MAEO",
+        "TRI"
+      ],
+      "grade": "B"
+    }
+  ],
+  "tempo": null,
+  "mistakes": [
+    {
+      "mistake": "Elbows flare wide",
+      "what_it_looks_like": "Upper arms open out to the sides.",
+      "why_it_matters": "Less long-head stretch and shoulder strain.",
+      "source_ids": [
+        "MAEO"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "MAEO",
+      "citation": "Maeo S, Wu Y, Huang M, et al. 2023. Triceps brachii hypertrophy is substantially greater after elbow extension training performed in the overhead versus neutral arm position. Eur J Sport Sci.",
+      "url": "https://europepmc.org/article/MED/35819335",
+      "type": "biomechanics",
+      "what_it_gave": "12 weeks of elbow extensions (90-0 deg) overhead vs arm at the side: overhead grew the long head 1.5x more (+28.5 % vs +19.6 %) and the whole triceps 1.4x more."
+    },
+    {
+      "id": "TRI",
+      "citation": "Tiwana MS, Sinkler MA, Bordoni B. 2023. Anatomy, Shoulder and Upper Limb, Triceps Muscle. StatPearls (NCBI Bookshelf).",
+      "url": "https://europepmc.org/article/MED/30725681",
+      "type": "textbook",
+      "what_it_gave": "Triceps brachii: three heads on the back of the upper arm, extends the elbow; the long head starts on the shoulder blade."
+    }
+  ],
+  "clip_check": [
+    {
+      "check": "Arms straight overhead at the start",
+      "target": "elbow < 10",
+      "measured": "elbow 4 deg, hands z 2.05, run 43457606677",
+      "pass": "yes"
+    },
+    {
+      "check": "Bar behind the head at the end",
+      "target": "visual",
+      "measured": "hands 1.59 m, behind the head, run 43457606677",
+      "pass": "yes"
+    },
+    {
+      "check": "Triceps strongest red and visible",
+      "target": "primary triceps",
+      "measured": "triceps red, camera front-right, run 43457606677",
+      "pass": "yes"
+    }
+  ]
+}

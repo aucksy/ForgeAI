@@ -1,0 +1,164 @@
+{
+  "format": "v1-stills",
+  "exercise": {
+    "key": "barbell_spider_curl",
+    "name": "Barbell Spider Curl",
+    "equipment": "barbell",
+    "library_primary": [
+      "biceps"
+    ],
+    "library_secondary": [
+      "forearms"
+    ],
+    "library_steps": [
+      "Rest your chest on the steep side of a preacher or incline bench.",
+      "Let the bar hang with straight arms, palms up.",
+      "Curl the bar up without moving your elbows, then lower it slowly."
+    ],
+    "status": "draft",
+    "version": 1,
+    "researched_on": "2026-11-13",
+    "one_line_summary": "Chest on a 45 deg incline pad with the armpits over its top edge, a bar hanging in straight arms palms forward; the elbows bend ~125 deg while the upper arms stay vertical. Biceps does the work.",
+    "evidence_grade": "B"
+  },
+  "setup": [
+    {
+      "item": "bench",
+      "target": "Incline ~45 deg, chest on the pad, arms hanging in front of its top edge.",
+      "tolerance": "35-60 deg",
+      "why": "Library step 1.",
+      "source_ids": [
+        "OLIV"
+      ],
+      "grade": "C"
+    },
+    {
+      "item": "grip",
+      "target": "Shoulder width, palms forward and up.",
+      "tolerance": "supinated",
+      "why": "Library step 2.",
+      "source_ids": [
+        "MARC"
+      ],
+      "grade": "C"
+    }
+  ],
+  "movement": [
+    {
+      "joint": "elbow",
+      "measure": "bend, 0 = straight",
+      "start": "~5 deg",
+      "end": "~125 deg",
+      "start_num": 5,
+      "end_num": 125,
+      "tolerance": "end 110-135",
+      "source_ids": [
+        "OLIV"
+      ],
+      "grade": "B"
+    },
+    {
+      "joint": "upper arm",
+      "measure": "hanging straight down",
+      "start": "vertical",
+      "end": "vertical",
+      "start_num": 0,
+      "end_num": 0,
+      "tolerance": "change under 10",
+      "source_ids": [
+        "OLIV"
+      ],
+      "grade": "B"
+    }
+  ],
+  "muscles": [
+    {
+      "muscle": "Biceps",
+      "anatomy": "Biceps brachii",
+      "mask_key": "biceps",
+      "tier": "primary",
+      "glow": 1.0,
+      "emg": "Main elbow flexor in curls; above 50 % of max RMS in standing and preacher curls.",
+      "role": "Bends the elbow.",
+      "surface": "Front of the upper arm.",
+      "source_ids": [
+        "OLIV",
+        "MARC"
+      ],
+      "grade": "B"
+    },
+    {
+      "muscle": "Brachioradialis (forearm)",
+      "anatomy": "Brachioradialis",
+      "mask_key": "forearms",
+      "tier": "secondary",
+      "glow": 0.35,
+      "emg": "Active in barbell curls (MARC); library secondary.",
+      "role": "Helps bend the elbow, most with the palm turned down.",
+      "surface": "Thumb side of the upper forearm.",
+      "source_ids": [
+        "MARC"
+      ],
+      "grade": "B"
+    },
+    {
+      "muscle": "Brachialis",
+      "anatomy": "Brachialis",
+      "mask_key": "none",
+      "tier": "deep",
+      "glow": 0,
+      "emg": "not measured",
+      "role": "Elbow flexor under the biceps.",
+      "surface": "Under the lower biceps.",
+      "source_ids": [],
+      "grade": "D"
+    }
+  ],
+  "tempo": null,
+  "mistakes": [
+    {
+      "mistake": "Elbows swing forward",
+      "what_it_looks_like": "Upper arms leave vertical as the bar rises.",
+      "why_it_matters": "Loses the fixed-arm set-up.",
+      "source_ids": [
+        "OLIV"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "OLIV",
+      "citation": "Oliveira LF, Matta TT, Alves DS, Garcia MA, Vieira TM. 2009. Effect of the shoulder position on the biceps brachii EMG in different dumbbell curls. J Sports Sci Med 8(1):24-29.",
+      "url": "https://europepmc.org/article/MED/24150552",
+      "type": "emg",
+      "what_it_gave": "Standing, incline and preacher curls: biceps long head above 50 % of max RMS in all; with the upper arm fixed in front (preacher) the biceps worked hardest only over a short early range."
+    },
+    {
+      "id": "MARC",
+      "citation": "Marcolin G, Panizzolo FA, Petrone N, et al. 2018. Differences in electromyographic activity of biceps brachii and brachioradialis while performing three variants of curl. PeerJ 6:e5165.",
+      "url": "https://europepmc.org/article/MED/30013836",
+      "type": "emg",
+      "what_it_gave": "Dumbbell, straight-bar and EZ-bar curls at 65 % 1RM: the EZ bar gave higher biceps and brachioradialis EMG than the dumbbell curl; straight vs EZ bar differed little."
+    }
+  ],
+  "clip_check": [
+    {
+      "check": "Chest on the pad",
+      "target": "pad gap 0.004",
+      "measured": "pad gaps 0.004-0.09 m (chest on the pad top, belly clear of the slope), run 43457606677",
+      "pass": "yes"
+    },
+    {
+      "check": "Arms hang clear in front of the pad",
+      "target": "visual",
+      "measured": "arms vertical in front of the pad, run 43457606677",
+      "pass": "yes"
+    },
+    {
+      "check": "Biceps strongest red",
+      "target": "primary biceps",
+      "measured": "biceps red, run 43457606677",
+      "pass": "yes"
+    }
+  ]
+}

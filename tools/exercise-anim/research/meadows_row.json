@@ -1,0 +1,196 @@
+{
+  "format": "v1-stills",
+  "exercise": {
+    "key": "meadows_row",
+    "name": "Meadows Row",
+    "equipment": "barbell",
+    "library_primary": [
+      "upper_back"
+    ],
+    "library_secondary": [
+      "lats",
+      "rear_delts",
+      "biceps"
+    ],
+    "library_steps": [
+      "Stand side-on to the end of a landmine bar, back flat.",
+      "Grip the end of the bar overhand, other forearm resting on your knee.",
+      "Pull the bar up toward your hip, then lower it slowly.",
+      "Finish your reps, then switch sides."
+    ],
+    "status": "draft",
+    "version": 1,
+    "researched_on": "2026-11-13",
+    "one_line_summary": "Staggered stance side-on to a landmine bar, hips hinged; one hand grips the thick end overhand and rows it to the hip with the elbow flared, the other forearm on the lead knee. Upper back does the most; lats, rear delts and biceps help.",
+    "evidence_grade": "B"
+  },
+  "setup": [
+    {
+      "item": "stance",
+      "target": "Side-on to the bar end, lead foot forward, trunk ~60 deg forward, free forearm on the lead knee.",
+      "tolerance": "trunk 45-70",
+      "why": "Library steps 1-2.",
+      "source_ids": [
+        "FEN"
+      ],
+      "grade": "C"
+    },
+    {
+      "item": "grip",
+      "target": "Overhand on the thick sleeve end.",
+      "tolerance": "overhand",
+      "why": "Library step 2.",
+      "source_ids": [
+        "FEN"
+      ],
+      "grade": "D"
+    }
+  ],
+  "movement": [
+    {
+      "joint": "elbow",
+      "measure": "bend, 0 = straight",
+      "start": "~5 deg",
+      "end": "~95 deg",
+      "start_num": 5,
+      "end_num": 95,
+      "tolerance": "end 80-110",
+      "source_ids": [
+        "FEN"
+      ],
+      "grade": "C"
+    },
+    {
+      "joint": "upper arm",
+      "measure": "elbow pulled up and back, flared",
+      "start": "hanging",
+      "end": "behind the trunk, ~45 deg out",
+      "start_num": 0,
+      "end_num": 45,
+      "tolerance": "flare 20-60",
+      "source_ids": [
+        "FEN"
+      ],
+      "grade": "D"
+    }
+  ],
+  "muscles": [
+    {
+      "muscle": "Upper back",
+      "anatomy": "Trapezius (middle), rhomboids",
+      "mask_key": "upper_back",
+      "tier": "primary",
+      "glow": 1.0,
+      "emg": "Bent-over rows: large upper-back activation (FEN).",
+      "role": "Pulls the shoulder blade back.",
+      "surface": "Between the shoulder blades.",
+      "source_ids": [
+        "FEN"
+      ],
+      "grade": "B"
+    },
+    {
+      "muscle": "Lats",
+      "anatomy": "Latissimus dorsi",
+      "mask_key": "lats",
+      "tier": "secondary",
+      "glow": 0.35,
+      "emg": "High in rows (FEN).",
+      "role": "Pulls the arm down and back.",
+      "surface": "Side of the back.",
+      "source_ids": [
+        "FEN"
+      ],
+      "grade": "B"
+    },
+    {
+      "muscle": "Rear delts",
+      "anatomy": "Posterior deltoid",
+      "mask_key": "rear_delts",
+      "tier": "secondary",
+      "glow": 0.35,
+      "emg": "Library secondary; the flared elbow pulls the arm back.",
+      "role": "Pulls the arm back.",
+      "surface": "Back of the shoulder.",
+      "source_ids": [
+        "FEN"
+      ],
+      "grade": "C"
+    },
+    {
+      "muscle": "Biceps",
+      "anatomy": "Biceps brachii",
+      "mask_key": "biceps",
+      "tier": "secondary",
+      "glow": 0.35,
+      "emg": "Library secondary; elbow flexor in rows.",
+      "role": "Bends the elbow.",
+      "surface": "Front of the upper arm.",
+      "source_ids": [
+        "FEN"
+      ],
+      "grade": "C"
+    },
+    {
+      "muscle": "Obliques",
+      "anatomy": "External oblique",
+      "mask_key": "none",
+      "tier": "stabiliser",
+      "glow": 0,
+      "emg": "One-arm rows raise oblique activity (SAET15).",
+      "role": "Stops the trunk twisting.",
+      "surface": "Side of the waist.",
+      "source_ids": [
+        "SAET15"
+      ],
+      "grade": "B"
+    }
+  ],
+  "tempo": null,
+  "mistakes": [
+    {
+      "mistake": "Twisting the trunk",
+      "what_it_looks_like": "The chest opens to the side as the bar rises.",
+      "why_it_matters": "Momentum instead of the back muscles.",
+      "source_ids": [
+        "SAET15"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "FEN",
+      "citation": "Fenwick CM, Brown SH, McGill SM. 2009. Comparison of different rowing exercises: trunk muscle activation and lumbar spine motion, load, and stiffness. J Strength Cond Res.",
+      "url": "https://europepmc.org/article/MED/19620925",
+      "type": "emg",
+      "what_it_gave": "Standing bent-over row: large activation across the back from the upper to the lower back; the one-arm row also challenges the trunk against twisting."
+    },
+    {
+      "id": "SAET15",
+      "citation": "Saeterbakken A, Andersen V, Brudeseth A, Lund H, Fimland MS. 2015. The effect of performing bi- and unilateral row exercises on core muscle activation. Int J Sports Med.",
+      "url": "https://europepmc.org/article/MED/26134664",
+      "type": "emg",
+      "what_it_gave": "Free-weight bent-over rows one-arm vs two-arm: one-arm rows raised external oblique activity; the back extensors stay active."
+    }
+  ],
+  "clip_check": [
+    {
+      "check": "Bar end in the pivot tube",
+      "target": "+0.02..+0.25",
+      "measured": "+0.057 m, run 43457606677",
+      "pass": "yes"
+    },
+    {
+      "check": "Working arm straight, then the elbow at the hip",
+      "target": "5 / 95",
+      "measured": "start straight, end fist z 0.62 by the hip, run 43457606677",
+      "pass": "yes"
+    },
+    {
+      "check": "Upper back strongest red, working side",
+      "target": "primary upper_back",
+      "measured": "upper back red on the right side, run 43457606677",
+      "pass": "yes"
+    }
+  ]
+}

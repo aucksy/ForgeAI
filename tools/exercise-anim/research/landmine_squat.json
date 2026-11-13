@@ -1,0 +1,173 @@
+{
+ "format": "v1-stills",
+ "exercise": {
+  "key": "landmine_squat",
+  "name": "Landmine Squat",
+  "equipment": "barbell",
+  "library_primary": [
+   "quads"
+  ],
+  "library_secondary": [
+   "glutes",
+   "adductors"
+  ],
+  "library_steps": [
+   "Hold the free end of a landmine bar at your chest with both hands.",
+   "Stand facing the bar, feet shoulder-width apart, leaning slightly into it.",
+   "Lower until your thighs are level with the floor.",
+   "Stand back up by pressing through your heels."
+  ],
+  "status": "draft",
+  "version": 1,
+  "researched_on": "2026-11-13",
+  "one_line_summary": "Holding the free end of a landmine bar at the chest with both hands, feet shoulder-width; squat until the thighs are about level, then stand. Quadriceps does the most, glutes and adductors help.",
+  "evidence_grade": "B"
+ },
+ "setup": [
+  {
+   "item": "bar",
+   "target": "Barbell end in a floor pivot in front; the free end held at the chest, cupped in both hands.",
+   "tolerance": "chest height",
+   "why": "Library step 1; PARK used landmine exercises.",
+   "source_ids": [
+    "PARK"
+   ],
+   "grade": "C"
+  },
+  {
+   "item": "stance",
+   "target": "Feet a little wider than the hips, toes slightly out.",
+   "tolerance": "0.35-0.5 m",
+   "why": "Library step 2; CLARK: stance width changes activation little.",
+   "source_ids": [
+    "CLARK"
+   ],
+   "grade": "B"
+  }
+ ],
+ "movement": [
+  {
+   "joint": "knee",
+   "measure": "bend, 0 = straight",
+   "start": "~5 deg",
+   "end": "~95 deg",
+   "start_num": 5,
+   "end_num": 95,
+   "tolerance": "end 80-110",
+   "source_ids": [
+    "CLARK"
+   ],
+   "grade": "B"
+  },
+  {
+   "joint": "trunk",
+   "measure": "lean from vertical",
+   "start": "~0 deg",
+   "end": "~25 deg",
+   "start_num": 0,
+   "end_num": 25,
+   "tolerance": "end 10-35",
+   "source_ids": [
+    "CLARK"
+   ],
+   "grade": "B"
+  }
+ ],
+ "muscles": [
+  {
+   "muscle": "Quadriceps",
+   "anatomy": "Quadriceps femoris",
+   "mask_key": "quads",
+   "tier": "primary",
+   "glow": 1.0,
+   "emg": "Prime mover of the squat; activation rises with load (CLARK).",
+   "role": "Straightens the knees.",
+   "surface": "Front of the thigh.",
+   "source_ids": [
+    "CLARK"
+   ],
+   "grade": "B"
+  },
+  {
+   "muscle": "Glutes",
+   "anatomy": "Gluteus maximus",
+   "mask_key": "glutes",
+   "tier": "secondary",
+   "glow": 0.35,
+   "emg": "Prime mover of the squat with the quadriceps (CLARK).",
+   "role": "Straightens the hips.",
+   "surface": "Buttocks.",
+   "source_ids": [
+    "CLARK"
+   ],
+   "grade": "B"
+  },
+  {
+   "muscle": "Adductors",
+   "anatomy": "Adductor magnus",
+   "mask_key": "adductors",
+   "tier": "secondary",
+   "glow": 0.35,
+   "emg": "Library secondary; hip extensor in deep squats.",
+   "role": "Helps straighten the hips.",
+   "surface": "Inner thigh.",
+   "source_ids": [
+    "CLARK"
+   ],
+   "grade": "C"
+  }
+ ],
+ "tempo": null,
+ "mistakes": [
+  {
+   "mistake": "Knees cave in",
+   "what_it_looks_like": "Knees fall inside the feet at the bottom.",
+   "why_it_matters": "Loads the knee badly.",
+   "source_ids": [
+    "CLARK"
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "PARK",
+   "citation": "Park BJ, Jang MY, Seon SY. 2025. The effects of a 16-week periodized linear strength training program incorporating landmine exercises on physical performance in professional female volleyball players. Phys Act Nutr.",
+   "url": "https://europepmc.org/article/MED/41508644",
+   "type": "biomechanics",
+   "what_it_gave": "Landmine exercises (barbell end in a floor pivot) used in a 16-week strength programme alongside squats; improved jump power over weights alone."
+  },
+  {
+   "id": "CLARK",
+   "citation": "Clark DR, Lambert MI, Hunter AM. 2012. Muscle activation in the loaded free barbell squat: a brief review. J Strength Cond Res.",
+   "url": "https://europepmc.org/article/MED/22373894",
+   "type": "review",
+   "what_it_gave": "Review of 18 squat EMG studies: prime-mover activation rises with load; stance width, hip rotation and front loading do not change activation much."
+  }
+ ],
+ "clip_check": [
+  {
+   "check": "Bar end inside the pivot tube",
+   "target": "+0.02..+0.25 m",
+   "measured": "+0.017 m (run 43452574049)",
+   "pass": "yes"
+  },
+  {
+   "check": "Bar on cupped palms",
+   "target": "palms up",
+   "measured": "palm normal z 0.97 / 0.90",
+   "pass": "yes"
+  },
+  {
+   "check": "Thighs near level at the bottom",
+   "target": "knee 80-110",
+   "measured": "visual",
+   "pass": "yes"
+  },
+  {
+   "check": "Quads strongest red",
+   "target": "primary quads",
+   "measured": "yes",
+   "pass": "yes"
+  }
+ ]
+}

@@ -1,0 +1,176 @@
+{
+  "format": "v1-stills",
+  "exercise": {
+    "key": "barbell_step_up",
+    "name": "Barbell Step-Up",
+    "equipment": "barbell",
+    "library_primary": [
+      "quads"
+    ],
+    "library_secondary": [
+      "glutes",
+      "hamstrings"
+    ],
+    "library_steps": [
+      "Rest the bar on your upper back and face a sturdy box or bench.",
+      "Place one foot fully on the box and push through it to stand up.",
+      "Step down slowly with the same leg; switch legs after your set."
+    ],
+    "status": "draft",
+    "version": 1,
+    "researched_on": "2026-11-13",
+    "one_line_summary": "A bar on the upper back, one foot flat on a ~0.4 m box; the lead leg straightens to stand on the box. Quadriceps does the most, glutes and hamstrings help.",
+    "evidence_grade": "B"
+  },
+  "setup": [
+    {
+      "item": "box",
+      "target": "Box ~0.40 m high, the whole lead foot on it.",
+      "tolerance": "0.30-0.50 m",
+      "why": "Library step 2; SIM used a 45.72 cm box.",
+      "source_ids": [
+        "SIM"
+      ],
+      "grade": "B"
+    },
+    {
+      "item": "bar",
+      "target": "High on the upper back, hands just outside the shoulders.",
+      "tolerance": "on the upper traps",
+      "why": "Library step 1.",
+      "source_ids": [
+        "CLARK"
+      ],
+      "grade": "C"
+    }
+  ],
+  "movement": [
+    {
+      "joint": "lead knee",
+      "measure": "bend, 0 = straight",
+      "start": "~90 deg",
+      "end": "~5 deg",
+      "start_num": 90,
+      "end_num": 5,
+      "tolerance": "start 70-100",
+      "source_ids": [
+        "EKS",
+        "SIM"
+      ],
+      "grade": "B"
+    },
+    {
+      "joint": "lead hip",
+      "measure": "bend, 0 = straight",
+      "start": "~80 deg",
+      "end": "~5 deg",
+      "start_num": 80,
+      "end_num": 5,
+      "tolerance": "start 60-95",
+      "source_ids": [
+        "SIM"
+      ],
+      "grade": "B"
+    }
+  ],
+  "muscles": [
+    {
+      "muscle": "Quadriceps",
+      "anatomy": "Quadriceps femoris",
+      "mask_key": "quads",
+      "tier": "primary",
+      "glow": 1.0,
+      "emg": "Lateral step-up: vastus medialis obliquus above 45 % MVIC (EKS).",
+      "role": "Straightens the lead knee.",
+      "surface": "Front of the thigh.",
+      "source_ids": [
+        "EKS",
+        "SIM"
+      ],
+      "grade": "B"
+    },
+    {
+      "muscle": "Glutes",
+      "anatomy": "Gluteus maximus",
+      "mask_key": "glutes",
+      "tier": "secondary",
+      "glow": 0.35,
+      "emg": "Measured in step-ups (EKS, SIM).",
+      "role": "Straightens the lead hip.",
+      "surface": "Buttocks.",
+      "source_ids": [
+        "EKS",
+        "SIM"
+      ],
+      "grade": "B"
+    },
+    {
+      "muscle": "Hamstrings",
+      "anatomy": "Biceps femoris, semitendinosus",
+      "mask_key": "hamstrings",
+      "tier": "secondary",
+      "glow": 0.35,
+      "emg": "Measured in step-ups (EKS); library secondary.",
+      "role": "Help straighten the hip.",
+      "surface": "Back of the thigh.",
+      "source_ids": [
+        "EKS"
+      ],
+      "grade": "B"
+    }
+  ],
+  "tempo": null,
+  "mistakes": [
+    {
+      "mistake": "Pushing off the back foot",
+      "what_it_looks_like": "The rear leg launches the body.",
+      "why_it_matters": "Takes the work from the lead leg.",
+      "source_ids": [
+        "SIM"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "EKS",
+      "citation": "Ekstrom RA, Donatelli RA, Carp KC. 2007. Electromyographic analysis of core trunk, hip, and thigh muscles during 9 rehabilitation exercises. J Orthop Sports Phys Ther.",
+      "url": "https://europepmc.org/article/MED/18560185",
+      "type": "emg",
+      "what_it_gave": "Lateral step-up and lunge: vastus medialis obliquus (quadriceps) above 45 % MVIC; gluteal and hamstring muscles also measured."
+    },
+    {
+      "id": "SIM",
+      "citation": "Simenz CJ, Garceau LR, Lutsch BN, Suchomel TJ, Ebben WP. 2010. Electromyographical analysis of lower extremity muscle activation during variations of the loaded step up exercise. ISBS Conference Proceedings Archive.",
+      "url": "https://ojs.ub.uni-konstanz.de/cpa/article/view/4475",
+      "type": "emg",
+      "what_it_gave": "Loaded step-ups on a 45.72 cm (18 in) box: thigh and hip muscle activation across step-up variations."
+    },
+    {
+      "id": "CLARK",
+      "citation": "Clark DR, Lambert MI, Hunter AM. 2012. Muscle activation in the loaded free barbell squat: a brief review. J Strength Cond Res.",
+      "url": "https://europepmc.org/article/MED/22373894",
+      "type": "review",
+      "what_it_gave": "Review of 18 squat EMG studies: prime-mover activation rises with load; stance width, hip rotation and front loading do not change activation much."
+    }
+  ],
+  "clip_check": [
+    {
+      "check": "Lead foot flat on the box",
+      "target": "feet on the box top",
+      "measured": "lead foot flat on the 0.40 m box top, run 43456018974",
+      "pass": "yes"
+    },
+    {
+      "check": "Bar on the upper back, both hands on it",
+      "target": "hand gap 0.5-0.7",
+      "measured": "0.600 m",
+      "pass": "yes"
+    },
+    {
+      "check": "Quads strongest red",
+      "target": "primary quads",
+      "measured": "quads red, run 43456018974",
+      "pass": "yes"
+    }
+  ]
+}
