@@ -83,7 +83,11 @@ def workout(today, days_ago, routine_id, name, day_type):
 def backup(today, routines, done):
     """done = [(days_ago, routine_id)] oldest first."""
     by_id = {r[0]: r for r in routines}
-    items = [["r", "r482-folder", ["QA Tips", 1, routines, 1]]]
+    # The folder's start day = its first workout, as a phone that followed it then saves it (folderRepo
+    # followFolder). Without one, the app's first read stamps TODAY (planState.getPlanNow) and Up next
+    # ignores every earlier workout: run 43393393093 showed "Up next: Push, Week 1".
+    first = (today - dt.timedelta(days=done[0][0])).isoformat()
+    items = [["r", "r482-folder", ["QA Tips", 1, routines, 1, None, json.dumps({"startISO": first})]]]
     for days_ago, rid in done:
         r = by_id[rid]
         items.append(workout(today, days_ago, rid, r[3], r[1]))
