@@ -58,8 +58,8 @@ describe('the RepDB match list', () => {
     expect(files).toEqual(keys.flatMap((k) => filesOf(k).map((f) => `${k}__${f}.webp`)).sort());
   });
 
-  it('a dropped exercise is not matched', () => {
-    for (const key of Object.keys(match.dropped)) expect(picturesFor(key), key).toBeNull();
+  it('a dropped exercise is not matched (our own picture may fill the gap; a RepDB one never does)', () => {
+    for (const key of Object.keys(match.dropped)) expect(picturesFor(key), key).toBe(OWN_PICTURES[key] ?? null);
   });
 });
 
