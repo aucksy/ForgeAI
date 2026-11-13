@@ -7,6 +7,20 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-487. Build every missing exercise picture, then release — 13 Nov 2026
+He said (13 Nov 2026, 20:05 IST, in chat): "You can check what exercise images are pending and build them all
+And then release the app with all exercises images"
+Checked (picture_status.py): 402 exercises; 247 show RepDB pictures, 27 show ours, 128 have none: 36 need a cable
+column, 26 a machine, 14 other kit (ball, dip bars, back-extension bench...), ~13 special bars or benches (EZ, trap,
+landmine, preacher, decline, incline), 19 failed QA twice (fists only, flat-bench arm offset, floor holds), 5 barbell
+queued, a few that need water or an outdoor scene.
+Plan: 4 helpers at once, each in its own git worktree, one kit family each (cable; machines + cardio; other kit +
+bodyweight props; rig/bench fixes + QA-fails + barbell variants). Renders only in the cloud. Daily picture job paused
+while they run (no collisions). Same three-way review as the daily job; a picture with any known miss stays out.
+Release: this message is his "release" for ONE version, once the pictures are in. It also carries everything else
+waiting (R-482/483/484 and the rest of PROGRESS "Waiting for release"). Hold the release until Google approves 0.77.0
+(a new upload while production is in review can slow that review).
+
 ## R-486. Which journeys are built once and which twice (Android vs iPhone) — 13 Nov 2026
 He said (13 Nov 2026): "I asked you a question and I forgot to read the answer. This time you can add the answer in the tracker. What user facing journeys will have to be built or fixed or improved separately in both apps?"
 Done: answer written as tracker Q&A #94 (from docs/ios/PARITY.yaml; measured: ~142k shared TS lines, ~7.2k Android-only phone Kotlin, ~7.8k Wear OS Kotlin). In short: screens inside the app once; lock screen, alerts, reminders, watch, widgets, Health, payments, sign-in, updates, share menu, links, back button twice; the watch always twice. The iPhone restart question (A: after Android is public, my pick; B: now) is in #94 and the decision table.
