@@ -2219,7 +2219,8 @@ part_u452() {
 #  b. app open in front, no workout;  c. app open DURING a workout (no sound over a workout: the quiet channel).
 # Gate (notif.py gym-pop): the record is on the right channel, importance 4 (HIGH, the only one that pops up),
 # NOT in the "silent" group (expo's setSilent, which Android never pops up: c before R-501), no only-alert-once,
-# and a/k/b made a sound while c did not. System UI's heads-up lines are printed (not gated); a picture
+# and a/k/b made a sound while c did not; AND System UI logged "HeadsUpManager: show notification" for that tag
+# (a real pop-up). Any of these missing FAILS the part (until 14 Nov a NOT POSTED only logged); a picture
 # rel-r501-*.png is taken 1.5 s after each push. Also runs alone with only=u501.
 u501_push() {  # $1 = tag, $2 = the message line
   local f="$OUT/u501-$1.sh"
@@ -2235,9 +2236,20 @@ u501_check() {  # $1 = moment letter, $2 = tag, $3 = channel, $4 = sound|quiet
   adb exec-out screencap -p > "$OUT/uat-release/rel-r501-$1.png" 2>/dev/null || true
   sleep 4
   gate_dump "notif-u501-$1.txt"
-  adb shell dumpsys activity service com.android.systemui 2>/dev/null | tr -d '\r' | grep -i -E "heads.?up|HUN" | grep -i "mettleup" | head -6 > "$OUT/u501-$1-systemui.txt" || true
-  python3 "$QA_DIR/notif.py" gym-pop "$OUT/notif-u501-$1.txt" "$2" "$3" "$4" 2>&1 | tee -a "$OUT/timeline.txt" || rc=1
+  # Only THIS tag's heads-up lines (System UI keeps the earlier ones too: "head" alone printed moment a's 4 times).
+  adb shell dumpsys activity service com.android.systemui 2>/dev/null | tr -d '\r' | grep -i -E "heads.?up|HUN" | grep -F "|com.mettleup.app|" | grep -F "|$2|" | head -8 > "$OUT/u501-$1-systemui.txt" || true
+  # The check's own answer decides, not tee's: a "NOT POSTED" passed the part in run 43564951323.
+  python3 "$QA_DIR/notif.py" gym-pop "$OUT/notif-u501-$1.txt" "$2" "$3" "$4" > "$OUT/u501-$1-pop.txt" 2>&1 || rc=1
+  tee -a "$OUT/timeline.txt" < "$OUT/u501-$1-pop.txt"
   sed 's/^/[u501 system ui] /' "$OUT/u501-$1-systemui.txt" | tee -a "$OUT/timeline.txt"
+  # A pop-up = System UI really showed it on screen: HeadsUpManager "show notification" for this tag.
+  if grep -q -F "HeadsUpManager: show notification" "$OUT/u501-$1-systemui.txt"; then
+    log "GYM POP $2: heads-up shown on screen: ok"
+  else
+    log "GYM POP $2: NO HEADS-UP (System UI never showed it on screen): FAILED"
+    rc=1
+  fi
+  [ "$rc" = 0 ] || log "GYM POP $2 (moment $1): FAILED"
   return $rc
 }
 part_u501() {

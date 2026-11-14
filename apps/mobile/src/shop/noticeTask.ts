@@ -21,7 +21,8 @@ TaskManager.defineTask(NOTICE_TASK, async () => {
 
 /**
  * R-153 step 2: the push task. The notification library runs it for every push that arrives (app
- * open, in the background or closed); Android has already shown the pop-up from the push itself.
+ * open, in the background or closed); the library shows the pop-up from the push itself, or, with the
+ * app open in front, the app does (workoutAlerts.ts listener, gymPopup.frontPushPost).
  * It only keeps the books (noticeAlertsRun.onPushArrived). Registered by pushToken.ts.
  */
 export const PUSH_TASK = 'mettleup-gym-push';

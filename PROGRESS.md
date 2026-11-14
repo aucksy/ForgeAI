@@ -70,6 +70,18 @@
   killed, open, and open during a workout; notif.py gym-pop gates channel, importance 4, not silenced, sound / no
   sound. NOT run on a phone yet. What's new draft (member-words): "Messages from your gym now pop up on your screen
   while a workout is open too, without a sound."
+  FOLLOW-UP (14 Nov 2026, cloud run 43564951323): with the app OPEN IN FRONT a gym push posted NOTHING at all (moments
+  b and c "NOT POSTED"; a and k fine), and the part still passed (the check's failure went into a pipe through tee).
+  Cause: every gym push is data-only; expo-notifications 56 posts one itself only when the app is not in front, and
+  with the app in front its handler module drops data-only pushes without asking the app (NotificationsHandler
+  "isDataOnly -> return"), so the quiet repost above never ran either. Fix: workoutAlerts.ts listens for received
+  notifications; gymPopup.frontPushPost picks what to post for a data-only push with words (same id = push tag, words,
+  tap): no workout -> its own channel gym-messages (pops up with sound), a workout -> gym-messages-quiet (pops up, no
+  sound, no buzz); noticeAlertsRun.postPushInFront skips one this phone should not show (same test as onPushArrived).
+  The listener only hears pushes with the app in front, so background/killed are unchanged and never doubled. QA:
+  u501_check now fails the part on NOT POSTED / wrong channel / sound AND when System UI has no "HeadsUpManager: show
+  notification" line for that tag (heads-up lines now filtered to the tag). Tests: r501FrontPush (new, 13).
+  What's new draft: "Messages from your gym now pop up even while the app is open."
 - R-498/R-499 GREEN FINISHED LINE SHOUTS FIRST (owner, 14 Nov 2026: "previous set volume beaten ... more celebratory",
   then the short shout with "Previous", then never the word "Today"). The Target box on an exercise card, green when
   every set is done at or above the previous workout: line 1 bold 17 px (type.size.h3, bodyBold) "Previous set volume

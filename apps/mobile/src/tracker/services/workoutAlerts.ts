@@ -14,7 +14,7 @@
  */
 import { AppState, Platform } from 'react-native';
 
-import { gymPopupPlan } from '@/shop/gymPopup';
+import { frontPushPost, gymPopupPlan } from '@/shop/gymPopup';
 import { color } from '@/theme/tokens';
 
 import { liveWorkout } from '../phone/liveWorkout';
@@ -92,6 +92,20 @@ export function setupWorkoutAlerts(): Promise<void> {
           };
         },
       });
+      // R-501 follow-up: a gym push (data-only) that arrives with the app open in front is never posted by
+      // the library and never reaches the handler above; the app posts it itself (gymPopup.frontPushPost).
+      // This listener only hears pushes while the app is in front, so a push in the background is not doubled.
+      try {
+        n.addNotificationReceivedListener((notification) => {
+          const post = frontPushPost(notification.request, liveWorkout() != null);
+          if (!post) return;
+          void import('@/shop/noticeAlertsRun')
+            .then((m) => m.postPushInFront(post))
+            .catch((e: unknown) => console.warn('[ForgeErr] gym push: showing it with the app open', e));
+        });
+      } catch (e) {
+        console.warn('[ForgeErr] gym push: listening with the app open', e);
+      }
       // 15 Oct 2026: with the native rest card, "Rest is over" is posted natively on its own channel
       // with the app's rest sound (RestCard.kt); this old JS channel ("rest-timer", the phone's
       // default tone) is then not made at all, so it cannot come back after the card deletes it.

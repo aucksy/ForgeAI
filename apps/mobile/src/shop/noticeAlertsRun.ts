@@ -18,19 +18,28 @@ import { color } from '@/theme/tokens';
 import { usePhonePrefs } from '@/tracker/phone/phonePrefs';
 
 import { refreshInbox } from './gymActions';
-import { GYM_QUIET_CHANNEL, GYM_QUIET_CHANNEL_DESCRIPTION, GYM_QUIET_CHANNEL_NAME, gymPopupsNote, quietCopyData } from './gymPopup';
+import {
+  type FrontPushPost,
+  GYM_MESSAGES_CHANNEL,
+  GYM_QUIET_CHANNEL,
+  GYM_QUIET_CHANNEL_DESCRIPTION,
+  GYM_QUIET_CHANNEL_NAME,
+  gymPopupsNote,
+  quietCopyData,
+} from './gymPopup';
 import { useGymShop } from './gymStore';
 import type { InboxMessage } from './inbox';
 import { inboxFor, useGymInbox } from './inboxStore';
 import { ALERTED_CAP, alertedFromSaved, NOTICE_ROUTE, planNoticeAlerts } from './noticeAlerts';
 import { NOTICE_CHANNEL_DESCRIPTION, NOTICE_CHANNEL_NAME, noticePopups, type NoticePopup } from './noticeAlertWords';
+import { pushFromData } from './pushPlan';
 import type { GymLink } from './types';
 
 type NotificationsModule = typeof import('expo-notifications');
 
 /** { memberId, ids }: the notices this phone has alerted for the member it is linked as. */
 export const GYM_NOTICE_ALERTS_KEY = 'forgeai-gym-notice-alerts';
-export const GYM_NOTICE_CHANNEL = 'gym-messages';
+export const GYM_NOTICE_CHANNEL = GYM_MESSAGES_CHANNEL;
 
 let mod: NotificationsModule | null | undefined;
 function N(): NotificationsModule | null {
@@ -161,6 +170,34 @@ export async function repostGymMessageQuietly(request: {
     });
   } catch (e) {
     console.warn('[ForgeErr] gym notices: the quiet pop-up during a workout', e);
+  }
+}
+
+/**
+ * R-501 follow-up: a gym push arrived with the app open in front, where the library posts nothing for a
+ * data-only push (gymPopup.frontPushPost says why and what). Post it here, unless it is one this phone
+ * should not show (the same test onPushArrived uses to take one away in the background: left the gym,
+ * another gym, the switch off). Never throws.
+ */
+export async function postPushInFront(post: FrontPushPost): Promise<void> {
+  const n = N();
+  if (!n) return;
+  try {
+    const p = pushFromData(post.data);
+    if (p) {
+      await storesReady();
+      const link = useGymShop.getState().link;
+      const wanted = !!link && (!p.gymId || p.gymId === link.gymId) && usePhonePrefs.getState().gymMessagesOn;
+      if (!wanted) return;
+    }
+    await ensureNoticeChannel();
+    await n.scheduleNotificationAsync({
+      identifier: post.identifier,
+      content: { title: post.title, body: post.body, data: post.data, color: color.accent },
+      trigger: { channelId: post.channelId },
+    });
+  } catch (e) {
+    console.warn('[ForgeErr] gym push: showing it with the app open', e);
   }
 }
 
