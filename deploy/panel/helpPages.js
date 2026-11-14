@@ -59,7 +59,11 @@ export function matchPages(text, source, articles = HELP_ARTICLES, max = 2) {
   return scored.filter((x) => x.score * 2 >= best).slice(0, max).map((x) => x.a);
 }
 
-/** Why the AI was not asked, in the words of the person reading. PURE. */
+/**
+ * Why the AI was not asked, in the words of the person reading. PURE.
+ * Members never read about credits, limits the owner set, or switches (R-531): 'no_credits', 'gym_limit', 'off' (the
+ * owner switched members' AI answers off) and 'month_limit' (this month's limit the owner set) all read "not on".
+ */
 export function whyLine(reason, source, who, perDay = 0) {
   if (source !== 'admin') {
     if (reason === 'day_limit') return `You have used today's ${perDay || 10} AI answers. AI answers come back tomorrow.`;

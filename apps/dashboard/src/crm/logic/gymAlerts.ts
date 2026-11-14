@@ -29,7 +29,9 @@ export type GymAlertKind =
   // F209 (supabase 0078): the gym's AI credits are down to 10 or fewer (once per top-up), for the owner.
   | 'ai_credits_low'
   // F207 (supabase 0080): a visitor asked a question on the gym's web page; it is an Enquiry.
-  | 'page_question';
+  | 'page_question'
+  // R-531 (supabase 0082): members used this month's AI answers (the owner's limit), once a month, for the owner.
+  | 'ai_members_limit';
 
 export const GYM_ALERT_KINDS: readonly GymAlertKind[] = [
   'trainer_question',
@@ -46,6 +48,7 @@ export const GYM_ALERT_KINDS: readonly GymAlertKind[] = [
   'online_join',
   'ai_credits_low',
   'page_question',
+  'ai_members_limit',
 ];
 
 export interface GymAlert {

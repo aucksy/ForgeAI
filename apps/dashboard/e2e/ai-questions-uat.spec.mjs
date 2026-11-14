@@ -12,6 +12,11 @@
 //  4. Help and feedback (owner): the question goes with the sign-in key; the help pages' answer and "Open AI Assistant".
 //  5. Help and feedback (the front desk, on a second phone): the help pages' answer, "Ask your gym owner".
 //  6. The owner's "credits low" alert on Today.
+//
+// R-531 (decision #98 = B, supabase 0082), the last two tests: the owner's and staff's own questions are free again;
+// the credits sheet says so, and "AI answers for members" has the owner's switch, the monthly limit (in credits) and
+// what members used this month; saving them, a wrong number, a failed save; the once-a-month alert on Today. Phone
+// (390 x 844) and computer (1280 x 900).
 import { mkdirSync } from 'node:fs';
 
 import { expect, test } from '@playwright/test';
@@ -45,11 +50,13 @@ async function shots(page, name, fullPage = false) {
   await colours(page, 'dark');
 }
 
-const AI_FNS = ['owner_ai_wallet', 'owner_ai_task_save', 'owner_ai_spend', 'owner_ai_refund', 'owner_ai_tasks', 'owner_ai_status', 'owner_ai_questions', 'owner_alerts'];
+const AI_FNS = ['owner_ai_wallet', 'owner_ai_task_save', 'owner_ai_spend', 'owner_ai_refund', 'owner_ai_tasks', 'owner_ai_status', 'owner_ai_questions', 'owner_alerts', 'owner_save_ai_member_rules'];
 
 /** 0071 (on) and 0078 (`ai.questions` false: PGRST202, like the live server today) on the pretend server. */
 function installAi(server) {
-  const ai = { questions: false, balance: 8, alerts: [] };
+  // b: the server has 0082 (R-531): the members' switch and limit come with the questions. failSave: the next save fails.
+  const ai = { questions: false, b: false, balance: 8, alerts: [], members: { on: true, credits: 20 }, failSave: false, saves: [] };
+  const memberNumbers = () => ({ members_on: ai.members.on, month_credits: ai.members.credits, month_max: 500, per_credit: 10, month_answers: 36, month_used: 4 });
   const base = server.answer.bind(server);
   server.answer = (fn, args) => {
     if (!AI_FNS.includes(fn)) return base(fn, args);
@@ -60,6 +67,7 @@ function installAi(server) {
       return { ok: true, alerts: ai.alerts };
     }
     if (fn === 'owner_ai_questions' && !ai.questions) throw new NoSuchFunction(`Could not find the function public.${fn} in the schema cache`);
+    if (fn === 'owner_save_ai_member_rules' && !ai.b) throw new NoSuchFunction(`Could not find the function public.${fn} in the schema cache`);
     const p = server.anyone(args.p_key);
     if (p.role !== 'owner') throw new Refusal('OWNER_ONLY');
     switch (fn) {
@@ -76,7 +84,18 @@ function installAi(server) {
             : [{ at: T0 - 86_400_000, delta: 10, reason: 'purchase', note: '', task_id: null }],
         };
       case 'owner_ai_questions':
+        if (ai.b) return { ok: true, month: '2026-10', member_day: 10, visitor_day: 3, low_at: 10, owner: 3, staff: 1, members: 36, visitors: 0, credits: 4, slots: 4, ...memberNumbers() };
         return { ok: true, month: '2026-10', per_credit: 20, member_day: 10, visitor_day: 3, low_at: 10, owner: 3, staff: 1, members: 36, visitors: 0, credits: 2, slots: 20 };
+      case 'owner_save_ai_member_rules': {
+        ai.saves.push({ on: args.p_members_on, credits: args.p_month_credits });
+        if (ai.failSave) {
+          ai.failSave = false;
+          throw new Error('offline');
+        }
+        if (typeof args.p_members_on !== 'boolean' || !Number.isInteger(args.p_month_credits) || args.p_month_credits < 0 || args.p_month_credits > 500) throw new Refusal('INVALID');
+        ai.members = { on: args.p_members_on, credits: args.p_month_credits };
+        return { ok: true, ...memberNumbers() };
+      }
       case 'owner_ai_tasks':
         return { ok: true, tasks: [] };
       case 'owner_ai_status':
@@ -242,4 +261,133 @@ test('AI questions on the credits: the computer', async ({ page }) => {
   await page.getByRole('button', { name: 'Send', exact: true }).click();
   await expect(main.getByRole('status').filter({ hasText: 'This help page may answer your question' })).toBeVisible();
   await shots(page, '06-help-owner', true);
+});
+
+// ------------------------------------------------------------------ R-531 (decision #98 = B, supabase 0082)
+
+/** The members' section of the credits sheet, scrolled into view. */
+async function membersSection(credits) {
+  const section = credits.getByRole('region', { name: 'AI answers for members' });
+  await section.scrollIntoViewIfNeeded();
+  return section;
+}
+
+test('R-531 phone: owner and staff ask free; members\' AI answers: the switch, the monthly limit, a wrong number, a failed save, the alert', async ({ page }) => {
+  test.setTimeout(180_000);
+  const server = await openApp(page);
+  const ai = installAi(server);
+  ai.questions = true;
+  ai.b = true;
+  await installWorker(page, { noCredit: false });
+  await startOnlineGym(page);
+  const main = page.getByRole('main');
+  const credits = page.getByRole('dialog', { name: 'AI credits' });
+
+  // The AI Assistant: asking is free again (the 0078-only line is gone).
+  await go(page, '/assistant');
+  await expect(page.getByRole('heading', { level: 1, name: 'AI Assistant' })).toBeVisible();
+  await expect(main).toContainText('Asking is free. A task uses credits only when you send or save it.');
+  await expect(main).not.toContainText('AI questions use 1 credit');
+  await main.getByRole('button', { name: /AI credits\. Open AI credits\./ }).first().tap();
+
+  // What uses credits: your and your staff's questions free; members' answers 10 for 1 credit.
+  const uses = credits.getByRole('region', { name: 'What uses credits' });
+  await expect(uses).toContainText('AI questions from you and your staff');
+  await expect(uses).toContainText('AI answers for members');
+  await expect(uses).toContainText('10 for 1 credit');
+  await expect(uses).not.toContainText('AI questions and drafts');
+  await shots(page, 'b1-credits-sheet');
+
+  // AI answers for members: on, 20 credits = up to 200 answers, used this month.
+  const section = await membersSection(credits);
+  const box = section.getByRole('checkbox', { name: 'Members can get AI answers' });
+  const limit = section.getByLabel('Monthly limit, in credits');
+  await expect(box).toBeChecked();
+  await expect(limit).toHaveValue('20');
+  await expect(section).toContainText('Each member can ask the AI 10 questions a day.');
+  await expect(section).toContainText('This gives members up to 200 AI answers a month. After that, they get help pages until the month ends.');
+  await expect(section.getByTestId('members-ai-used')).toHaveText('Used this month: 36 answers (4 credits).');
+  await expect(section.getByRole('button', { name: 'Save changes' })).toHaveCount(0);
+  // Members never read credits: this is the owner's sheet only, and "who asked" no longer repeats the credits line.
+  await expect(credits.getByRole('region', { name: 'AI questions this month' })).not.toContainText('These questions used');
+  await expectFitsPhone(page, 'on the credits sheet with the members section');
+  await shots(page, 'b2-members-section');
+
+  // A wrong number: the plain error, no Save.
+  await limit.fill('600');
+  await expect(section).toContainText('Type a number from 0 to 500.');
+  await expect(section.getByRole('button', { name: 'Save changes' })).toBeDisabled();
+  await shots(page, 'b3-members-wrong-number');
+
+  // A new limit: the hint follows the number; Save; the server has it.
+  await limit.fill('5');
+  await expect(section).toContainText('This gives members up to 50 AI answers a month.');
+  await section.getByRole('button', { name: 'Save changes' }).tap();
+  await expect(section.getByRole('status')).toHaveText('Saved.');
+  expect(ai.saves.at(-1)).toEqual({ on: true, credits: 5 });
+  await expect(section.getByRole('button', { name: 'Save changes' })).toHaveCount(0);
+
+  // The switch off: members get help pages; the save fails once (offline), then works.
+  await box.uncheck();
+  await expect(section).toContainText('Members get help pages instead of AI answers.');
+  ai.failSave = true;
+  await section.getByRole('button', { name: 'Save changes' }).tap();
+  await expect(section.getByRole('status')).toHaveText('Not saved. Check your internet and try again.');
+  await shots(page, 'b4-members-off-not-saved');
+  await section.getByRole('button', { name: 'Save changes' }).tap();
+  await expect(section.getByRole('status')).toHaveText('Saved.');
+  expect(ai.saves.at(-1)).toEqual({ on: false, credits: 5 });
+  await shots(page, 'b5-members-off-saved');
+
+  // A limit of 0: the hint says so.
+  await limit.fill('0');
+  await expect(section).toContainText('With 0, members get help pages instead of AI answers.');
+  await credits.getByRole('button', { name: 'Close' }).tap();
+
+  // Opened again: what the server saved.
+  await main.getByRole('button', { name: /AI credits\. Open AI credits\./ }).first().tap();
+  const again = await membersSection(credits);
+  await expect(again.getByRole('checkbox', { name: 'Members can get AI answers' })).not.toBeChecked();
+  await expect(again.getByLabel('Monthly limit, in credits')).toHaveValue('5');
+  await credits.getByRole('button', { name: 'Close' }).tap();
+
+  // The once-a-month alert on Today, and its tap opens AI Assistant.
+  const pageNow = await page.evaluate(() => Date.now());
+  ai.alerts = [
+    { id: 'm1', kind: 'ai_members_limit', line: "Members have used this month's AI answers. Until 1 Nov, they get help pages instead. To give them more, open AI Assistant and tap your credits at the top.", route: '/assistant', urgent: false, at: pageNow - 2 * 60_000 },
+  ];
+  await go(page, '/');
+  await page.reload();
+  const latest = main.getByTestId('latest-alerts');
+  await expect(latest).toContainText("Members have used this month's AI answers.", { timeout: 15_000 });
+  await latest.scrollIntoViewIfNeeded();
+  await shots(page, 'b6-today-members-limit');
+  await latest.getByRole('button').filter({ hasText: "this month's AI answers" }).tap();
+  await expect(page.getByRole('heading', { level: 1, name: 'AI Assistant' })).toBeVisible();
+});
+
+test('R-531 computer: the credits sheet with the members section', async ({ page }) => {
+  test.setTimeout(120_000);
+  await page.setViewportSize({ width: 1280, height: 900 });
+  const server = await openApp(page);
+  const ai = installAi(server);
+  ai.questions = true;
+  ai.b = true;
+  await installWorker(page, { noCredit: false });
+  await startOnlineGym(page);
+  await go(page, '/assistant');
+  const main = page.getByRole('main');
+  await expect(main).toContainText('Asking is free.');
+  await main.getByRole('button', { name: /AI credits\. Open AI credits\./ }).first().click();
+  const credits = page.getByRole('dialog', { name: 'AI credits' });
+  await expect(credits.getByRole('region', { name: 'What uses credits' })).toContainText('AI questions from you and your staff');
+  await shots(page, 'b1-credits-sheet');
+  const section = await membersSection(credits);
+  await expect(section.getByTestId('members-ai-used')).toHaveText('Used this month: 36 answers (4 credits).');
+  await shots(page, 'b2-members-section');
+  await section.getByLabel('Monthly limit, in credits').fill('50');
+  await section.getByRole('button', { name: 'Save changes' }).click();
+  await expect(section.getByRole('status')).toHaveText('Saved.');
+  expect(ai.saves.at(-1)).toEqual({ on: true, credits: 50 });
+  await shots(page, 'b5-members-saved');
 });

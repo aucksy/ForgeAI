@@ -8,14 +8,18 @@
  * F209 (owner 14 Nov 2026): once the gym's server counts AI questions on the credits (wallet.questions, supabase 0078),
  * the sheet says what questions cost and shows who asked the AI this month (you, staff, members, gym page visitors).
  * Before that it is exactly as it was.
+ *
+ * R-531 (decision #98 = B, supabase 0082): the owner's and staff's own AI questions are free; members' AI answers use
+ * the credits (10 answers = 1 credit). "AI answers for members" holds the owner's switch, the monthly limit in credits
+ * and what members used this month. Members never see any of this (their app says only "not on").
  */
 import { useEffect, useState } from 'react';
 
 import { t } from '../../lang/lang';
 import { navigate } from '../../ui/router';
-import { Button, Sheet, color, font, space } from '../../ui/kit';
+import { Button, CheckField, Sheet, TextField, color, font, space } from '../../ui/kit';
 import { refreshAssistantWallet } from '../useAssistant';
-import { aiTasks, type AiQuestions, type AiWallet, type AiWalletRow } from '../api';
+import { aiTasks, saveMemberAi, type AiQuestions, type AiWallet, type AiWalletRow, type MemberAi } from '../api';
 import type { Line } from '../catalogue';
 import { jobLine } from '../jobs';
 import { quiet, say } from './parts';
@@ -51,8 +55,10 @@ export function walletRowWords(r: AiWalletRow): string {
     case 'spend':
       return r.note.trim() || t('A task');
     case 'questions': {
-      // F209: one credit for the next block of AI questions (the server's note: "20 AI questions").
+      // F209: one credit for the next block of AI questions (the server's note: "20 AI questions"). R-531 (0082): only
+      // members' answers take credits ("10 AI answers for members").
       const m = /^(\d+)/.exec(r.note.trim());
+      if (m && /for members/i.test(r.note)) return t('{n} AI answers for members', { n: Number(m[1]) });
       return m ? t('{n} AI questions', { n: Number(m[1]) }) : t('AI questions');
     }
     default:
@@ -79,6 +85,27 @@ export function askedRows(q: AiQuestions): { label: string; n: number }[] {
   ];
   if (q.visitors > 0) rows.push({ label: t('Gym page visitors'), n: q.visitors });
   return rows;
+}
+
+/** R-531: what the monthly limit gives members, under the box. PURE. */
+export function limitHint(credits: number, perCredit: number): string {
+  if (credits <= 0) return t('With 0, members get help pages instead of AI answers.');
+  return t('This gives members up to {n} AI answers a month. After that, they get help pages until the month ends.', { n: credits * perCredit });
+}
+
+/** R-531: "Used this month: 36 answers (4 credits)." PURE. */
+export function usedWords(m: Pick<MemberAi, 'monthAnswers' | 'monthUsed'>): string {
+  const answers = m.monthAnswers === 1 ? t('1 answer') : t('{n} answers', { n: m.monthAnswers });
+  const credits = m.monthUsed === 1 ? t('1 credit') : t('{n} credits', { n: m.monthUsed });
+  return t('Used this month: {answers} ({credits}).', { answers, credits });
+}
+
+/** R-531: the limit typed in the box -> a whole number 0..max, or null when it is not one. PURE. */
+export function limitOf(text: string, max: number): number | null {
+  const v = text.trim();
+  if (!/^\d{1,4}$/.test(v)) return null;
+  const n = Number(v);
+  return n <= max ? n : null;
 }
 
 /** The line about free credits each month, from the wallet (R-473): the plan's own number, or how to get some. */
@@ -130,7 +157,13 @@ export function CreditsSheet({ wallet, onClose, plansOn, assistKey }: { wallet: 
 
         <section aria-label={t('What uses credits')} style={{ display: 'grid', gap: 4 }}>
           <h3 style={headStyle}>{t('What uses credits')}</h3>
-          {q ? (
+          {q?.memberAi ? (
+            <>
+              <PriceRow label={t('AI questions from you and your staff')} price={t('Free')} />
+              <PriceRow label={t('AI answers for members')} price={t('{n} for 1 credit', { n: q.memberAi.perCredit })} />
+              <PriceRow label={t('Speaking instead of typing')} price={t('Free')} />
+            </>
+          ) : q ? (
             <>
               <PriceRow label={t('AI questions and drafts')} price={t('{n} for 1 credit', { n: q.perCredit })} />
               <PriceRow label={t('Speaking instead of typing')} price={t('Free')} />
@@ -142,16 +175,21 @@ export function CreditsSheet({ wallet, onClose, plansOn, assistKey }: { wallet: 
           {plansOn ? <PriceRow label={t('Workout plan saved')} price={t('{n} credits', { n: 3 })} /> : null}
         </section>
 
+        {q?.memberAi ? <MemberAiSection start={q.memberAi} memberDay={q.memberDay} assistKey={assistKey} /> : null}
+
         {q ? (
           <section aria-label={t('AI questions this month')} style={{ display: 'grid', gap: 4 }}>
             <h3 style={headStyle}>{t('AI questions this month')}</h3>
             {askedRows(q).map((r) => (
               <PriceRow key={r.label} label={r.label} price={String(r.n)} />
             ))}
-            <p style={{ ...quiet, color: color.inkSecondary, marginTop: 4 }}>
-              {q.credits === 1 ? t('These questions used 1 credit.') : t('These questions used {n} credits.', { n: q.credits })}{' '}
-              {t('Each member can ask the AI {n} questions a day.', { n: q.memberDay })}
-            </p>
+            {/* R-531: with 0082 the members' section says what their answers used; this line was about everyone's. */}
+            {q.memberAi ? null : (
+              <p style={{ ...quiet, color: color.inkSecondary, marginTop: 4 }}>
+                {q.credits === 1 ? t('These questions used 1 credit.') : t('These questions used {n} credits.', { n: q.credits })}{' '}
+                {t('Each member can ask the AI {n} questions a day.', { n: q.memberDay })}
+              </p>
+            )}
           </section>
         ) : null}
 
@@ -185,6 +223,79 @@ export function CreditsSheet({ wallet, onClose, plansOn, assistKey }: { wallet: 
         ) : null}
       </div>
     </Sheet>
+  );
+}
+
+/**
+ * R-531: "AI answers for members": the owner's switch, the monthly limit in credits and what members used this month.
+ * One "Save changes" for both; the server's numbers come back and the wallet is asked again.
+ */
+function MemberAiSection({ start, memberDay, assistKey }: { start: MemberAi; memberDay: number; assistKey: string }) {
+  const [on, setOn] = useState(start.on);
+  const [text, setText] = useState(String(start.monthCredits));
+  const [saved, setSaved] = useState(start);
+  const [busy, setBusy] = useState(false);
+  const [note, setNote] = useState<'saved' | 'failed' | null>(null);
+  const limit = limitOf(text, saved.monthMax);
+  const changed = on !== saved.on || limit !== saved.monthCredits;
+  const save = async () => {
+    if (limit === null || busy) return;
+    setBusy(true);
+    setNote(null);
+    const got = await saveMemberAi(assistKey, on, limit);
+    setBusy(false);
+    if (!got) {
+      setNote('failed');
+      return;
+    }
+    setSaved(got);
+    setOn(got.on);
+    setText(String(got.monthCredits));
+    setNote('saved');
+    void refreshAssistantWallet();
+  };
+  return (
+    <section aria-label={t('AI answers for members')} style={{ display: 'grid', gap: 4 }}>
+      <h3 style={headStyle}>{t('AI answers for members')}</h3>
+      <CheckField
+        checked={on}
+        onChange={(v) => {
+          setOn(v);
+          setNote(null);
+        }}
+        hint={on ? t('Each member can ask the AI {n} questions a day.', { n: memberDay }) : t('Members get help pages instead of AI answers.')}
+      >
+        {t('Members can get AI answers')}
+      </CheckField>
+      <TextField
+        label={t('Monthly limit, in credits')}
+        value={text}
+        inputMode="numeric"
+        onChange={(v) => {
+          setText(v);
+          setNote(null);
+        }}
+        error={limit === null ? t('Type a number from 0 to {n}.', { n: saved.monthMax }) : null}
+        hint={limit === null ? undefined : limitHint(limit, saved.perCredit)}
+      />
+      <p data-testid="members-ai-used" style={{ ...quiet, color: color.ink, marginTop: space.sm }}>
+        {usedWords(saved)}
+      </p>
+      {changed || note ? (
+        <div style={{ display: 'flex', alignItems: 'center', gap: space.md, flexWrap: 'wrap', marginTop: space.sm }}>
+          {changed ? (
+            <Button needsInternet disabled={limit === null || busy} onClick={() => void save()}>
+              {t('Save changes')}
+            </Button>
+          ) : null}
+          {note ? (
+            <span role="status" style={{ ...quiet, color: note === 'saved' ? color.goodText : color.critical }}>
+              {note === 'saved' ? t('Saved.') : t('Not saved. Check your internet and try again.')}
+            </span>
+          ) : null}
+        </div>
+      ) : null}
+    </section>
   );
 }
 

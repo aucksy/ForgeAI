@@ -3,6 +3,8 @@
 --   "RESULT PASS (n checks)"  - everything worked; the error only undoes the test rows;
 --   "RESULT FAIL: ..."         - the checks that failed (label:what came back).
 -- Fake numbers only (90000 78xxx); the secret here is a test value.
+-- R-531 (0082): the numbers here are the rules after 0082 (10 answers = 1 credit; the owner's and staff questions are free,
+-- so sections 10 and 11 spend through a member). 0082's own test covers the switch and the monthly limit.
 
 create or replace function pg_temp.t78_run(q text) returns text
   language plpgsql as $$
@@ -46,6 +48,7 @@ declare
   koc text := 't78-owner-c-session-01'; kod text := 't78-owner-d-session-01';
   km1 text := 't78-member-key-000001'; km2 text := 't78-member-key-000002'; kleft text := 't78-member-key-left01';
   kmb text := 't78-member-key-gym-b1'; kmp text := 't78-member-key-paused';
+  kmc text := 't78-member-key-gym-c1'; kmd text := 't78-member-key-gym-d1';
   at bigint := extract(epoch from now())::bigint;
   r jsonb; q uuid; fails text := ''; checks int := 0; i int; n int;
 begin
@@ -71,7 +74,8 @@ begin
     (s_oc, public._hash_key(koc)), (s_od, public._hash_key(kod));
   insert into public.gym_owner_keys(gym_id, key_hash) values (ga, public._hash_key(kok));
   insert into public.gym_members(gym_id, name, key_hash) values (ga, 'Asha', public._hash_key(km1)), (ga, 'Neha', public._hash_key(km2)),
-    (gb, 'Ravi', public._hash_key(kmb)), (gp, 'Paused Member', public._hash_key(kmp));
+    (gb, 'Ravi', public._hash_key(kmb)), (gp, 'Paused Member', public._hash_key(kmp)),
+    (gc, 'Chetan', public._hash_key(kmc)), (gd, 'Divya', public._hash_key(kmd));
   insert into public.gym_members(gym_id, name, key_hash, left_at) values (ga, 'Gone', public._hash_key(kleft), now());
   -- gb: its starter credits all used (a task). gc: 11 left.
   insert into public.gym_ai_credit_ledger(gym_id, delta, reason, note, month) values
@@ -88,11 +92,11 @@ begin
   checks := checks + 1; fails := fails || pg_temp.t78_is('1left', pg_temp.t78_run(format('select pg_temp.t78_take(%L, %L)', kleft, 'member')), 'BAD_KEY');
   checks := checks + 1; fails := fails || pg_temp.t78_is('1app', pg_temp.t78_run(format('select pg_temp.t78_take(%L, %L)', km1, 'phone')), 'INVALID');
 
-  -- 2. The first question takes 1 credit for a block of 20 (the welcome credits come first, 0071).
+  -- 2. The first question takes 1 credit for a block of 10 (the welcome credits come first, 0071).
   r := pg_temp.t78_take(km1, 'member');
   checks := checks + 1; fails := fails || pg_temp.t78_is('2first', (r->>'ok') || '/' || (r->>'who') || '/' || (r->>'balance') || '/' || (r->>'left_today'), 'true/member/19/9');
-  checks := checks + 1; fails := fails || pg_temp.t78_is('2ledger', (select string_agg(reason || ':' || delta || ':' || note, ',') from public.gym_ai_credit_ledger where gym_id = ga and reason = 'questions'), 'questions:-1:20 AI questions');
-  checks := checks + 1; fails := fails || pg_temp.t78_is('2slots', (select slots from public.gym_ai_question_slots where gym_id = ga)::text, '19');
+  checks := checks + 1; fails := fails || pg_temp.t78_is('2ledger', (select string_agg(reason || ':' || delta || ':' || note, ',') from public.gym_ai_credit_ledger where gym_id = ga and reason = 'questions'), 'questions:-1:10 AI answers for members');
+  checks := checks + 1; fails := fails || pg_temp.t78_is('2slots', (select slots from public.gym_ai_question_slots where gym_id = ga)::text, '9');
 
   -- 3. A member: 10 a day, then the day's limit (nothing taken).
   for i in 1..9 loop r := pg_temp.t78_take(km1, 'member'); end loop;
@@ -101,9 +105,9 @@ begin
   checks := checks + 1; fails := fails || pg_temp.t78_is('3limit', (r->>'ok') || '/' || (r->>'reason') || '/' || (r->>'per_day'), 'false/day_limit/10');
   checks := checks + 1; fails := fails || pg_temp.t78_is('3count', (select count(*) from public.gym_ai_questions where gym_id = ga)::text, '10');
 
-  -- 4. Twenty questions use one credit; the 21st opens the next block.
+  -- 4. Twenty members' answers use two credits; the desk's question is free (0082).
   for i in 1..10 loop r := pg_temp.t78_take(km2, 'member'); end loop;
-  checks := checks + 1; fails := fails || pg_temp.t78_is('4twenty', (r->>'balance') || '/' || (select slots from public.gym_ai_question_slots where gym_id = ga), '19/0');
+  checks := checks + 1; fails := fails || pg_temp.t78_is('4twenty', (r->>'balance') || '/' || (select slots from public.gym_ai_question_slots where gym_id = ga), '18/0');
   r := pg_temp.t78_take(kd, 'admin');
   checks := checks + 1; fails := fails || pg_temp.t78_is('4next', (r->>'ok') || '/' || (r->>'who') || '/' || (r->>'balance') || '/' || (r->>'left_today'), 'true/staff/18/59');
   checks := checks + 1; fails := fails || pg_temp.t78_is('4rows', (select count(*) from public.gym_ai_credit_ledger where gym_id = ga and reason = 'questions')::text, '2');
@@ -133,7 +137,7 @@ begin
 
   -- 8. Where credits went (the owner only): owner 3 (a 4th was given back), staff 1, members 20, visitors 0, 2 credits.
   r := public.owner_ai_questions(kop);
-  checks := checks + 1; fails := fails || pg_temp.t78_is('8counts', concat_ws('/', r->>'owner', r->>'staff', r->>'members', r->>'visitors', r->>'credits', r->>'per_credit', r->>'member_day', r->>'visitor_day', r->>'low_at'), '3/1/20/0/2/20/10/3/10');
+  checks := checks + 1; fails := fails || pg_temp.t78_is('8counts', concat_ws('/', r->>'owner', r->>'staff', r->>'members', r->>'visitors', r->>'credits', r->>'per_credit', r->>'member_day', r->>'visitor_day', r->>'low_at'), '3/1/20/0/2/10/10/3/10');
   checks := checks + 1; fails := fails || pg_temp.t78_is('8desk', pg_temp.t78_run(format('select public.owner_ai_questions(%L)', kd)), 'OWNER_ONLY');
 
   -- 9. Visitors of the gym page: 3 a day each, 30 a day for the gym; a bad code or visitor is refused.
@@ -150,17 +154,17 @@ begin
   checks := checks + 1; fails := fails || pg_temp.t78_is('9bad', pg_temp.t78_run('select pg_temp.t78_visit(''T78GYA'', ''a b'')'), 'INVALID');
   checks := checks + 1; fails := fails || pg_temp.t78_is('9visitors', public.owner_ai_questions(kop)->>'visitors', '30');
 
-  -- 10. This month's free credits are used for questions first (a paid yearly Pro: 100 a month).
-  r := pg_temp.t78_take(kod, 'admin');
+  -- 10. This month's free credits are used for members' answers first (a paid yearly Pro: 100 a month).
+  r := pg_temp.t78_take(kmd, 'member');
   checks := checks + 1; fails := fails || pg_temp.t78_is('10free', (public.owner_ai_wallet(kod)->>'free_left') || '/' || (public.owner_ai_wallet(kod)->>'balance') || '/' || public._ai_month_spent(gd, public._ai_month()), '99/119/1');
 
-  -- 11. "Credits low": ONE alert for the owner when a spend takes the balance from 11 to 10; none again at 9.
-  r := pg_temp.t78_take(koc, 'admin');
+  -- 11. "Credits low": ONE alert for the owner when a member's answer takes the balance from 11 to 10; none again at 9.
+  r := pg_temp.t78_take(kmc, 'member');
   checks := checks + 1; fails := fails || pg_temp.t78_is('11balance', r->>'balance', '10');
   checks := checks + 1; fails := fails || pg_temp.t78_is('11alert', (select string_agg(kind || '|' || audience || '|' || urgent || '|' || route || '|' || line, ',') from public.gym_alerts where gym_id = gc),
     'ai_credits_low|owner|false|/assistant|Your gym has 10 AI credits left. To get more, open AI Assistant and tap your credits at the top, so members keep getting AI answers.');
   update public.gym_ai_question_slots set slots = 0 where gym_id = gc;
-  r := pg_temp.t78_take(koc, 'admin');
+  r := pg_temp.t78_take(kmc, 'member');
   checks := checks + 1; fails := fails || pg_temp.t78_is('11once', r->>'balance' || '/' || (select count(*) from public.gym_alerts where gym_id = gc), '9/1');
   -- Credits added, then low again: one more alert.
   insert into public.gym_ai_credit_ledger(gym_id, delta, reason, note, month) values (gc, 50, 'purchase', 'test pack', public._ai_month());

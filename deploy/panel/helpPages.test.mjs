@@ -51,7 +51,13 @@ test('whyLine: members never read about credits; the owner and staff each read t
   assert.match(whyLine('no_credits', 'admin', 'owner'), /open AI Assistant and tap your credits at the top\.$/);
   assert.match(whyLine('no_credits', 'admin', 'staff'), /Ask your gym owner to get more AI credits\.$/);
   assert.match(whyLine('paused', 'admin', 'owner'), /^AI answers are paused for your gym\./);
-  for (const r of ['no_credits', 'day_limit', 'gym_limit', 'paused']) assert.doesNotMatch(whyLine(r, 'member', 'member'), /credit/i);
+  for (const r of ['no_credits', 'day_limit', 'gym_limit', 'paused', 'off', 'month_limit']) assert.doesNotMatch(whyLine(r, 'member', 'member'), /credit/i);
+  // R-531: the owner's switch off, or this month's limit the owner set: members read only "not on", never why.
+  for (const r of ['off', 'month_limit']) {
+    assert.equal(whyLine(r, 'member', 'member'), 'AI answers are not on at your gym right now.');
+    assert.equal(whyLine(r, 'member', 'visitor'), 'AI answers are not on at your gym right now.');
+    assert.doesNotMatch(whyLine(r, 'member', 'member'), /limit|owner|switch|month/i);
+  }
 });
 
 test('keyOf and takeResult read keys and gym server answers safely', () => {
@@ -62,6 +68,9 @@ test('keyOf and takeResult read keys and gym server answers safely', () => {
   assert.deepEqual(takeResult(200, { ok: true, id: 'q1', who: 'member' }), { state: 'ok', id: 'q1', who: 'member' });
   assert.deepEqual(takeResult(200, { ok: false, reason: 'day_limit', who: 'visitor', per_day: 3 }), { state: 'none', reason: 'day_limit', who: 'visitor', perDay: 3 });
   assert.equal(takeResult(200, { ok: false, reason: 'weird' }).state, 'skip');
+  // R-531: the owner's switch and monthly limit are answers from the help pages too, not a skip.
+  assert.deepEqual(takeResult(200, { ok: false, reason: 'off', who: 'member', per_day: 10 }), { state: 'none', reason: 'off', who: 'member', perDay: 10 });
+  assert.deepEqual(takeResult(200, { ok: false, reason: 'month_limit', who: 'member', per_day: 10 }), { state: 'none', reason: 'month_limit', who: 'member', perDay: 10 });
   assert.deepEqual(takeResult(404, null, ''), { state: 'skip', why: 'no 0078' });
   assert.equal(takeResult(400, null, '{"message":"BAD_KEY"}').why, 'unknown key');
   assert.match(takeResult(400, null, '{"message":"BAD_SIG"}').why, /signature/);

@@ -6,13 +6,13 @@
 import { afterEach, describe, expect, it } from 'vitest';
 
 import { fullLine, isDayLimit, leftLine, resetAllowance, setQuestionsCounted } from '../../../src/crm/assistant/allowance';
-import { aiQuestions, type AiQuestions } from '../../../src/crm/assistant/api';
-import { askedRows, lowWords, walletRowWords } from '../../../src/crm/assistant/ui/CreditsSheet';
+import { aiQuestions, memberAiFrom, saveMemberAi, type AiQuestions } from '../../../src/crm/assistant/api';
+import { askedRows, limitHint, limitOf, lowWords, usedWords, walletRowWords } from '../../../src/crm/assistant/ui/CreditsSheet';
 import type { AiWalletRow } from '../../../src/crm/assistant/api';
 import { feedbackAnswer, sendFeedback } from '../../../src/crm/logic/feedback';
 import { gymAlertsFrom } from '../../../src/crm/logic/gymAlerts';
 
-const Q: AiQuestions = { month: '2026-11', perCredit: 20, memberDay: 10, visitorDay: 3, lowAt: 10, owner: 3, staff: 1, members: 20, visitors: 0, credits: 2 };
+const Q: AiQuestions = { month: '2026-11', perCredit: 20, memberDay: 10, visitorDay: 3, lowAt: 10, owner: 3, staff: 1, members: 20, visitors: 0, credits: 2, memberAi: null };
 
 const rpcOf = (answer: unknown) => (async () => answer) as unknown as Parameters<typeof aiQuestions>[1];
 
@@ -59,6 +59,63 @@ describe('the credits sheet', () => {
     const row = (note: string): AiWalletRow => ({ at: 0, delta: -1, reason: 'questions', note, taskId: null });
     expect(walletRowWords(row('20 AI questions'))).toBe('20 AI questions');
     expect(walletRowWords(row(''))).toBe('AI questions');
+    // R-531 (0082): only members' answers take credits now.
+    expect(walletRowWords(row('10 AI answers for members'))).toBe('10 AI answers for members');
+  });
+});
+
+describe("R-531: members' AI answers (supabase 0082)", () => {
+  const SERVER = { members_on: true, month_credits: 20, month_max: 500, per_credit: 10, month_answers: 36, month_used: 4 };
+  const M = { on: true, monthCredits: 20, monthMax: 500, perCredit: 10, monthAnswers: 36, monthUsed: 4 };
+
+  it("reads the owner's switch and limit with the month's questions; none before 0082", async () => {
+    const got = await aiQuestions('k', rpcOf({ ok: true, month: '2026-11', member_day: 10, visitor_day: 3, low_at: 10, owner: 3, staff: 1, members: 20, visitors: 0, credits: 4, ...SERVER }));
+    expect(got?.memberAi).toEqual(M);
+    expect(got?.perCredit).toBe(10);
+    expect(memberAiFrom({ ok: true })).toBeNull();
+    expect(memberAiFrom({ ...SERVER, members_on: 'yes' })).toBeNull();
+    expect(memberAiFrom({ ...SERVER, members_on: false, month_credits: 900 })).toMatchObject({ on: false, monthCredits: 500 });
+  });
+
+  it('saves the switch and the limit; a refusal or no 0082 is "not saved"', async () => {
+    const sent: unknown[] = [];
+    const ok = (async (name: string, args: unknown) => {
+      sent.push([name, args]);
+      return { ok: true, ...SERVER, members_on: false, month_credits: 5 };
+    }) as unknown as Parameters<typeof saveMemberAi>[3];
+    expect(await saveMemberAi('owner-key', false, 5, ok)).toEqual({ ...M, on: false, monthCredits: 5 });
+    expect(sent).toEqual([['owner_save_ai_member_rules', { p_key: 'owner-key', p_members_on: false, p_month_credits: 5 }]]);
+    const refused = (async () => {
+      throw { message: 'OWNER_ONLY' };
+    }) as unknown as Parameters<typeof saveMemberAi>[3];
+    expect(await saveMemberAi('desk-key', true, 5, refused)).toBeNull();
+    expect(await saveMemberAi('k', true, 5, (async () => ({ ok: true })) as unknown as Parameters<typeof saveMemberAi>[3])).toBeNull();
+  });
+
+  it('the words under the limit and the month so far', () => {
+    expect(limitHint(20, 10)).toBe('This gives members up to 200 AI answers a month. After that, they get help pages until the month ends.');
+    expect(limitHint(0, 10)).toBe('With 0, members get help pages instead of AI answers.');
+    expect(usedWords({ monthAnswers: 36, monthUsed: 4 })).toBe('Used this month: 36 answers (4 credits).');
+    expect(usedWords({ monthAnswers: 1, monthUsed: 1 })).toBe('Used this month: 1 answer (1 credit).');
+  });
+
+  it('the limit box takes a whole number from 0 to the most allowed', () => {
+    expect(limitOf('20', 500)).toBe(20);
+    expect(limitOf(' 0 ', 500)).toBe(0);
+    expect(limitOf('500', 500)).toBe(500);
+    expect(limitOf('501', 500)).toBeNull();
+    expect(limitOf('-1', 500)).toBeNull();
+    expect(limitOf('2.5', 500)).toBeNull();
+    expect(limitOf('', 500)).toBeNull();
+    expect(limitOf('ten', 500)).toBeNull();
+  });
+
+  it('the "members used this month\'s AI answers" alert is a gym alert the owner sees', () => {
+    const list = gymAlertsFrom({
+      ok: true,
+      alerts: [{ id: 'm1', kind: 'ai_members_limit', line: "Members have used this month's AI answers.", route: '/assistant', urgent: false, at: 1 }],
+    });
+    expect(list?.map((a) => [a.kind, a.route])).toEqual([['ai_members_limit', '/assistant']]);
   });
 });
 

@@ -214,7 +214,9 @@ export function AssistantHome({ assistKey, wallet, panel = false }: { assistKey:
         </button>
       </section>
       <p style={quiet}>
-        {wallet.questions
+        {/* R-531 (decision #98 = B, supabase 0082): the owner's own questions are free again; only a server with 0078
+            and without 0082 still counts them. */}
+        {wallet.questions && !wallet.questions.memberAi
           ? t('Every {n} AI questions use 1 credit. A task uses credits when you send or save it.', { n: wallet.questions.perCredit })
           : t('Asking is free. A task uses credits only when you send or save it.')}
       </p>

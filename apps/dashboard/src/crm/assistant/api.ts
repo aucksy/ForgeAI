@@ -221,6 +221,63 @@ export interface AiQuestions {
   visitors: number;
   /** Credits these questions used this month. */
   credits: number;
+  /**
+   * R-531 (decision #98 = B, supabase 0082): the owner's switch and monthly limit for members' AI answers, and what
+   * members used this month. Null on a server without 0082: the sheet then reads as before.
+   */
+  memberAi: MemberAi | null;
+}
+
+/** R-531: members' AI answers (owner_ai_member_rules / owner_save_ai_member_rules, supabase 0082). */
+export interface MemberAi {
+  /** "Members can get AI answers" (the owner's switch; on until the owner turns it off). */
+  on: boolean;
+  /** The monthly limit for members' and page visitors' AI answers, in credits (20 until the owner changes it). */
+  monthCredits: number;
+  /** The most the owner can set (500). */
+  monthMax: number;
+  /** Members' answers for 1 credit (10). */
+  perCredit: number;
+  /** Members' and visitors' AI answers this India month, and the credits they used. */
+  monthAnswers: number;
+  monthUsed: number;
+}
+
+const count = (v: unknown): number => {
+  const x = typeof v === 'number' ? v : typeof v === 'string' && v.trim() ? Number(v) : NaN;
+  return Number.isFinite(x) && x >= 0 ? x : 0;
+};
+
+/** The server's members' numbers, or null when it has none (no 0082). PURE. */
+export function memberAiFrom(w: Record<string, unknown>): MemberAi | null {
+  if (typeof w.members_on !== 'boolean') return null;
+  const max = count(w.month_max) || 500;
+  return {
+    on: w.members_on,
+    monthCredits: Math.min(count(w.month_credits), max),
+    monthMax: max,
+    perCredit: count(w.per_credit) || 10,
+    monthAnswers: count(w.month_answers),
+    monthUsed: count(w.month_used),
+  };
+}
+
+/**
+ * R-531: save the owner's switch and monthly limit. -> the server's numbers after the save, or null (offline, refused,
+ * or a server without 0082); the sheet then says it was not saved.
+ */
+export async function saveMemberAi(key: string, on: boolean, monthCredits: number, rpc: typeof call = call): Promise<MemberAi | null> {
+  try {
+    const r = await rpc<unknown>('owner_save_ai_member_rules', { p_key: key, p_members_on: on, p_month_credits: monthCredits });
+    if (!r || typeof r !== 'object' || Array.isArray(r) || (r as { ok?: unknown }).ok !== true) {
+      console.warn('[assistant] members AI answers not saved: odd answer');
+      return null;
+    }
+    return memberAiFrom(r as Record<string, unknown>);
+  } catch (e) {
+    console.warn('[assistant] members AI answers not saved', e instanceof Error ? e.message : e);
+    return null;
+  }
 }
 
 /**
@@ -232,10 +289,7 @@ export async function aiQuestions(key: string, rpc: typeof call = call): Promise
     const r = await rpc<unknown>('owner_ai_questions', { p_key: key });
     if (!r || typeof r !== 'object' || Array.isArray(r) || (r as { ok?: unknown }).ok !== true) return null;
     const w = r as Record<string, unknown>;
-    const n = (v: unknown): number => {
-      const x = typeof v === 'number' ? v : typeof v === 'string' && v.trim() ? Number(v) : NaN;
-      return Number.isFinite(x) && x >= 0 ? x : 0;
-    };
+    const n = count;
     const perCredit = n(w.per_credit);
     if (perCredit <= 0) return null;
     return {
@@ -249,6 +303,7 @@ export async function aiQuestions(key: string, rpc: typeof call = call): Promise
       members: n(w.members),
       visitors: n(w.visitors),
       credits: n(w.credits),
+      memberAi: memberAiFrom(w),
     };
   } catch (e) {
     // Before 0078 is live the call is refused (the function is missing): expected, so only a quiet note.

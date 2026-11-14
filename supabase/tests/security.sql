@@ -90,6 +90,8 @@ declare
     'self_join_pay_gym',
     -- 0078: AI questions on the gym's credits (take: the Worker's HMAC signature over the key, then the member, owner or staff key; give back: a question id only the Worker holds, once, within 10 minutes; the counts: the OWNER key only).
     'ai_question_take','ai_visitor_question_take','ai_question_back','owner_ai_questions',
+    -- 0082: the members' AI answers switch and monthly limit (each checks the key first: the gym OWNER only; a desk key gets OWNER_ONLY).
+    'owner_ai_member_rules','owner_save_ai_member_rules',
     -- 0080: the gym's web page. The editor: owner_gym_page checks an owner or desk key, owner_save_gym_page the OWNER
     -- key only (a desk key gets OWNER_ONLY). The public page: each checks the slug itself and answers only for a published
     -- page (terms ticked, not hidden by HQ, gym not paused); the question form has daily limits (40 per gym, 3 per

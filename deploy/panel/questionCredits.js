@@ -1,5 +1,7 @@
-// F209 (owner 14 Nov 2026, R-519 point 4): every AI question is paid from the gym's own AI credits, 20 questions =
-// 1 credit (the number lives in the gym server, supabase/migrations/0078_ai_questions.sql _ai_q_rules()).
+// F209 (owner 14 Nov 2026, R-519 point 4): AI questions are counted on the gym's own AI credits (the numbers live in the
+// gym server, supabase/migrations/0078_ai_questions.sql and 0082_ai_members.sql, _ai_q_rules()). Decision #98 = B (R-531):
+// the owner's and staff's own questions are free (a fair daily limit only); members' and page visitors' answers use the
+// credits, 10 answers = 1 credit, under the owner's switch ('off') and monthly limit ('month_limit').
 // help.js (members' and the admin app's help box) and assist.js (the owner's AI Assistant) ask here BEFORE they call
 // Claude: takeQuestion -> 'ok' (ask the AI; give the question back with giveBack if the AI fails), 'none' (no credit or a
 // daily limit: answer from the help pages, no AI call), or 'skip' (not counted: answer as before F209).
@@ -18,7 +20,7 @@ import { SUPABASE } from './proxy.js';
 // The public, read-only gym server key (the same one in the panel, aiMatch.js and assist.js).
 const SB_KEY = 'sb_publishable_-GBJ1u036bdCX2mtff3ghQ_Gx-hZyGo';
 export const TAKE_TIMEOUT_MS = 6000;
-export const NONE_REASONS = ['no_credits', 'day_limit', 'gym_limit', 'paused'];
+export const NONE_REASONS = ['no_credits', 'day_limit', 'gym_limit', 'paused', 'off', 'month_limit'];
 
 /** A key as the apps send it (16-300 letters, no spaces), or ''. PURE. */
 export function keyOf(v) {
