@@ -1,4 +1,5 @@
--- NOT LIVE - needs the owner's yes ("No LIVE database changes without my yes"). He said yes on 14 Nov 2026 (R-541);
+-- APPLIED LIVE 14 Nov 2026 (R-541 yes; SQL Editor from 474d95a6; live tests 0085 PASS 38, 0056 PASS 46, 0075 PASS 28
+-- with its pre-0086 test, as 0086 is not live yet). WAS: NOT LIVE - needs the owner's yes ("No LIVE database changes without my yes"). He said yes on 14 Nov 2026 (R-541);
 -- the main chat applies it after CI is green (SQL Editor, then the test below on live). Re-runnable. Apply after 0075
 -- (gym alerts) and 0056 (Bring a friend), both live. Works with or without 0077 / 0080 / 0083.
 -- Test: supabase/tests/0085_friend_known_number.sql (CI runs it after every migration; pasted into the SQL Editor it
