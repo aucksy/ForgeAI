@@ -7,6 +7,12 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-559 (15 Nov 2026, night) Admin panel and HQ Worker deployed LIVE (R-556 "release everything")
+- Panel: forgeai-panel version d74ad3c5 = commit 30f79a79 (CI run 43631460479 green), dashboard-dist from that run. Fresh-eyes review (R-335) said DEPLOY OK: no money, database, privacy or switch blocker; every RPC it calls is in a migration applied live (0082 gym page photos is not live, used only behind GYM_PAGES). Live vars before deploy were all in wrangler.jsonc, so none lost.
+- Checked live: /api/switches = gymPages false, joinPay false, aiCharge true; /api/self-join/pay-info answers online false; /app goes to Google Play; the new admin app code ("Joined online", "Make member", "Set your gym timings") is served.
+- HQ: forgeai-hq version bf1722b3 = 30f79a79 (adds cceaecb3: reply title "Your gym replied", stale busy flag cleared after 90 s, "Member questions" words). Checked: the minute cron runs on bf1722b3 with outcome ok; /push/web-key answers 200.
+- Still off: join payments (JOIN_PAY), gym web pages (GYM_PAGES), live payments (PAY_LIVE). F210 free trial (R-558) is on main only; its 0088 needs his yes.
+
 ## R-558 (15 Nov 2026) F210 Free trial when joining online: built, hidden until the owner says yes to database change 0088
 - Asked (R-521, R-524, #97, 14 Nov): the owner switches a free trial on or off for online sign-ups and picks its length; a visitor picks "Try free for N days" on the join link; the gym sees it on Today and makes them a member. Trial fee = his pick B (taken off the plan if they join).
 - Built (on main, NOT live): supabase/migrations/0088_join_trial.sql ("NOT LIVE - needs the owner's yes") + supabase/tests/0088_join_trial.sql. The setting is `joinTrialDays` (1, 3 or 7; absent = off) on the gym's details record, like F147's friend days. self_join_preview gains a `trial` key; self_join_send takes plan "_trial" (TRIAL_OFF, TRIAL_USED: one free trial per mobile number per gym, ever). The enquiry's block has planId '' so an older admin app keeps it off Today.
