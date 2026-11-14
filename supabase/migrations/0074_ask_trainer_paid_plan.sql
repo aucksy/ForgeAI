@@ -1,4 +1,4 @@
--- NOT APPLIED YET. The owner said yes (R-511, 14 Nov 2026: "yes."); the coordinator applies it live after CI is green.
+-- APPLIED LIVE 14 Nov 2026 (R-511: owner said "yes."; SQL Editor, live tests 0074 PASS 21, 0053 PASS 68).
 -- Paste into the Supabase SQL Editor. Needs only 0053's member_ask_trainer and 0055's member_membership (both live);
 -- it does not depend on 0073. Re-runnable (create or replace only, no table, no row changed). Test:
 -- supabase/tests/0074_ask_trainer_paid_plan.sql (CI runs it after every migration; pasted into the SQL Editor it
