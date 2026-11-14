@@ -155,6 +155,28 @@ Run through the member-words skill before going live. Bilingual board headers (F
 - Footer link: "Own a gym? Get a free page like this" (to gyms.mettleup.fit).
 - The page terms for owners (new section in Terms): what may go on a page, MettleUp may hide a page that breaks it.
 
+## 10. AI chats on the page land in Enquiries (R-538, 14 Nov 2026)
+The owner: every visitor question, answered by the AI or not, must reach Enquiries. Decided design:
+1. **One enquiry per visitor chat, not per message.** The page keeps a random visitor id in the browser; the chat's
+   questions and the AI's answers are added to the same Enquiry ("Chat on your web page"). The owner opens it and reads
+   the whole chat, newest last.
+2. **A status the owner can scan:** "AI answered" / "Needs you: the AI could not answer" / "Wants a call" / "Asked to
+   join". The list sorts "Needs you" and "Wants a call" first.
+3. **Alerts only when the owner must act:** the AI could not answer, the visitor left a number, or asked to join or for
+   a trial. A chat the AI answered fully, with no number left, is saved but sends no alert (no noise).
+4. **The AI asks for a name and number** once the visitor shows interest ("Want the gym to call you?"). A number turns
+   the chat into a lead (same as a join-form enquiry; Call and WhatsApp buttons). The visitor has no app, so the owner
+   replies by call or WhatsApp, never inside the page.
+5. **The AI never makes things up:** it answers only from the gym's page data (plans, prices, timings, address,
+   facilities, offers). Anything else = "I will ask the gym" -> status "Needs you", the visitor may leave a number.
+6. **Cost and limits:** visitor answers use the gym's credits at 10 answers = 1 credit (decision #98 = B), 3 questions
+   per visitor a day and 30 per gym a day (0078). Over a limit or no credits: the question is saved as "Needs you" and
+   the visitor sees "The gym will reply. Leave your number to get a call."
+7. **Privacy:** a line under the chat box: "Your chat is saved and seen by <gym>." (public words: needs his yes). Chats
+   kept 90 days, then deleted; a visitor number is kept like any enquiry.
+8. **When:** built together with the page's AI helper (held since #97), after the page is public on join.mettleup.fit
+   and has real visitors. The non-AI "Ask the gym" box already makes an Enquiry today (0080, 'page_question' alert).
+
 ## 9. Research behind the choices (14 Nov 2026)
 
 - **Others:** a free one-page site exists at some foreign gym software companies (own sub-address, custom domain

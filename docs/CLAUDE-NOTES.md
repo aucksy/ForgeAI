@@ -7,6 +7,14 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-538. Gym page AI chats must land in Enquiries, answered or not; "decide the best implementation" — 14 Nov 2026
+He said (14 Nov 2026): "since we are giving the gyms their own webpages and for potential leads to talk to AI assistant
+but then we also have the inquiries section which means that if they do send a question and if the AI has responded or it
+has not been able to respond all of that gets logged in the inquiries section So you can think through it and decide the
+best implementation for the whole thing"
+Decided: docs/gym-page/PLAN.md section 10. Built together with the page's AI helper (held since #97), after the page is
+public. Public chat-saving words need his yes.
+
 ## R-537. Training progress: LINE graphs like the member sees, at least the last 1 year — 14 Nov 2026
 He said (14 Nov 2026): "the graph that the admin user will see is a line graph, similar that the user sees. That clearly
 tells us if something is progressing or not. And it should be at least last one year since they joined the app."
