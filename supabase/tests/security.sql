@@ -86,6 +86,8 @@ declare
     'owner_save_web_push','owner_clear_web_push','owner_web_push_on','owner_alert_settings','owner_save_alert_settings',
     -- 0077: Join online (the public page: a gym code for the preview; the request also needs a one-use signed 'join' proof, and writes only into that gym's enquiries).
     'self_join_preview','self_join_send',
+    -- 0078: AI questions on the gym's credits (take: the Worker's HMAC signature over the key, then the member, owner or staff key; give back: a question id only the Worker holds, once, within 10 minutes; the counts: the OWNER key only).
+    'ai_question_take','ai_visitor_question_take','ai_question_back','owner_ai_questions',
     -- 0060: Pay MettleUp (each checks the key first: the gym OWNER only; a desk key gets OWNER_ONLY).
     'owner_pay_mettleup','owner_report_mettleup_payment',
     -- 0063: online buying (each checks the key first: the gym OWNER only; read only, the owner's own gym and receipts).

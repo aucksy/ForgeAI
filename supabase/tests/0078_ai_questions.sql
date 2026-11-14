@@ -170,7 +170,7 @@ begin
   checks := checks + 1; fails := fails || pg_temp.t78_is('11owner', (select count(*) from jsonb_array_elements(public.owner_alerts(koc)->'alerts') x where x->>'kind' = 'ai_credits_low')::text, '2');
 
   -- 12. The ledger: 'questions' is a spend only; older reasons still work.
-  checks := checks + 1; fails := fails || pg_temp.t78_is('12plus', pg_temp.t78_run(format('insert into public.gym_ai_credit_ledger(gym_id, delta, reason, month) values (%L, 1, %L, %L)', ga, 'questions', public._ai_month())) like '%gym_ai_credit_ledger_sign%', 'true');
+  checks := checks + 1; fails := fails || pg_temp.t78_is('12plus', (pg_temp.t78_run(format('insert into public.gym_ai_credit_ledger(gym_id, delta, reason, month) values (%L, 1, %L, %L)', ga, 'questions', public._ai_month())) like '%gym_ai_credit_ledger_sign%')::text, 'true');
   checks := checks + 1; fails := fails || pg_temp.t78_is('12old', pg_temp.t78_run(format('insert into public.gym_ai_credit_ledger(gym_id, delta, reason, note, month) values (%L, 5, %L, %L, %L)', ga, 'grant', 'test', public._ai_month())), 'ok');
   checks := checks + 1; fails := fails || pg_temp.t78_is('12oldkind', pg_temp.t78_run(format('select public._alert(%L, %L, %L, %L, %L, true, %L, %L)', ga, 'shop_order', 't78-o', 'order:t78-o', 'all', 'New shop order.', '/shop')), 'ok');
 
