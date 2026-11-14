@@ -7,6 +7,12 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-529. YES to the gym page database change (live) — 14 Nov 2026
+He said (14 Nov 2026): "Yes, go ahead with the gym page database change". Covers docs/gym-page/gym_page.draft.sql turned
+into supabase/migrations/0080_gym_page.sql (3 tables, 6 functions, the 'page_question' alert kind), applied LIVE after
+its test passes in CI. Photos: our own Supabase storage, served at join.mettleup.fit/p/... (no Cloudflare R2, no card).
+It does NOT cover: connecting join.mettleup.fit, switching the page on, or the public page words (those need his yes).
+
 ## R-528. Join page and gym web page: pay online (same as the member app), owner switches per place — 14 Nov 2026
 He said (14 Nov 2026): "It says that share your details pay at the desk. Why are we doing pay at the desk if the gym will
 have an option to get payments via QR code or via your UPAID or they may be able to just link their the app, raise their
