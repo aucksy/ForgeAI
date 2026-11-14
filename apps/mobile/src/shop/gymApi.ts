@@ -590,6 +590,17 @@ export async function apiTrainerShare2(key: string, summary: TrainerSummary, rec
   return data?.ok === true ? { ok: true, data: true } : { ok: false, error: { kind: 'other' } };
 }
 
+/**
+ * R-537: the weekly summary plus up to 12 months of workouts (member_trainer_share3, 0084, NOT LIVE until the owner's
+ * yes). `missing`: 0084 is not on the server: send 3 months with apiTrainerShare2.
+ */
+export async function apiTrainerShare3(key: string, summary: TrainerSummary, recent: readonly RecentWorkout[]): Promise<TrainerCall<true>> {
+  const r = await call('member_trainer_share3', { p_key: key, p_summary: summary, p_recent: recent }, WRITE_MS);
+  if (!r.ok) return r.noSuchFunction ? { ok: false, missing: true } : { ok: false, error: r.error };
+  const data = (Array.isArray(r.data) ? r.data[0] : r.data) as { ok?: unknown } | null;
+  return data?.ok === true ? { ok: true, data: true } : { ok: false, error: { kind: 'other' } };
+}
+
 // ------------------------------------------------------------------ bring a friend (0056, F147)
 
 /**

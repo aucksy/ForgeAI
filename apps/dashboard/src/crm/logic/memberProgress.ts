@@ -43,10 +43,13 @@ const num = (v: unknown): number | null => {
 };
 const DAY = /^\d{4}-\d{2}-\d{2}$/;
 
+/** Workouts read, at most: 0053's 30, or a year from a newer app (0084 keeps at most 400). */
+export const RECENT_MAX = 400;
+
 /** The recent workouts as the server keeps them; anything unreadable is left out. Newest first. PURE. */
 export function recentWorkoutsFrom(v: unknown): RecentWorkout[] {
   const out: RecentWorkout[] = [];
-  for (const w of Array.isArray(v) ? v.slice(0, 30) : []) {
+  for (const w of Array.isArray(v) ? v.slice(0, RECENT_MAX) : []) {
     if (!isObj(w) || typeof w.d !== 'string' || !DAY.test(w.d)) continue;
     const x: RecentExercise[] = [];
     for (const e of Array.isArray(w.x) ? w.x.slice(0, 20) : []) {

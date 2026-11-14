@@ -10,6 +10,10 @@
  *    Settings switch, the join-screen line and the help button are not shown. Exactly as before.
  *  - R-319 (0053): with the server's member_trainer_share2 the phone also sends its recent workouts
  *    (trainerRecent.ts); without it, only the weekly summary, exactly as before. "Ask a trainer" lives here too.
+ *  - R-537 (0084, NOT LIVE until the owner's yes): with the server's member_trainer_share3 the recent workouts
+ *    cover up to 12 months. Without it (PGRST202, remembered for this run) the same list, cut to 3 months, goes the
+ *    0053 way. The phone reads its year once per share either way. Held OFF (trainerRecent.ts SHARE_A_YEAR) until
+ *    the owner approves the member's new sharing words: today the phone sends 3 months exactly as before.
  */
 import { getDb } from '@/db';
 import { addDays, todayISO } from '@/lib/date';
@@ -24,13 +28,14 @@ import {
   apiTrainerHelp,
   apiTrainerShare,
   apiTrainerShare2,
+  apiTrainerShare3,
   apiTrainerStatus,
   apiTrainerStop,
   type TrainerCall,
 } from './gymApi';
 import { useGymShop } from './gymStore';
 import { createMateSharer, type MateOutcome, type MateSendResult, type MateTrigger } from './mateShare';
-import { recentFrom, trainerRecentFrom, type RecentWorkout } from './trainerRecent';
+import { ONE_YEAR, SHARE_A_YEAR, THREE_MONTHS, recentFrom, threeMonthsOf, trainerRecentFrom, type RecentWorkout } from './trainerRecent';
 import { TRAINER_RECORD_DAYS, trainerFrom, trainerSummaryFrom, type TrainerStatus, type TrainerSummary } from './trainerShare';
 import type { GymLink } from './types';
 
@@ -76,11 +81,13 @@ async function buildSummary(): Promise<TrainerSummary> {
 }
 
 /**
- * R-319 item 11: the recent workouts (trainerRecent.ts) of the last 92 days, warm-ups left out, in the order done.
- * Only built while the server has 0053 (member_trainer_share2); otherwise nothing more leaves the phone.
+ * R-319 item 11: the recent workouts (trainerRecent.ts), warm-ups left out, in the order done: the last 12 months
+ * while the server may have 0084 (member_trainer_share3), else the last 92 days. Only built while the server has
+ * 0053 (member_trainer_share2); otherwise nothing more leaves the phone.
  */
 async function buildRecent(): Promise<RecentWorkout[]> {
   const today = todayISO();
+  const limits = SHARE_A_YEAR && !v3Missing ? ONE_YEAR : THREE_MONTHS;
   const rows = await getDb().getAllAsync<{ sid: string; date_iso: string; started_at: number; exercise_id: string; name: string; weight_kg: number; reps: number }>(
     `SELECT ws.id AS sid, ws.date_iso, ws.started_at, se.exercise_id, e.name, se.weight_kg, se.reps
        FROM workout_sessions ws
@@ -88,7 +95,7 @@ async function buildRecent(): Promise<RecentWorkout[]> {
        JOIN exercises e ON e.id = se.exercise_id
       WHERE ws.date_iso >= ? AND ws.date_iso <= ?
       ORDER BY ws.date_iso DESC, ws.started_at DESC, se.rowid`,
-    [recentFrom(today), today],
+    [recentFrom(today, limits), today],
   );
   const { getWorkoutNames } = await import('@/tracker/db/workoutNames');
   const names = await getWorkoutNames(rows.map((r) => r.sid));
@@ -96,17 +103,26 @@ async function buildRecent(): Promise<RecentWorkout[]> {
     rows.map((r) => ({ workoutId: r.sid, dateISO: r.date_iso, startedAt: r.started_at, exerciseId: r.exercise_id, name: r.name, weightKg: r.weight_kg, reps: r.reps })),
     names,
     today,
+    limits,
   );
 }
 
 /** 0053 not on the server: the summary goes the 0050 way, with no recent workouts. Remembered for this run. */
 let v2Missing = false;
+/** 0084 not on the server: 3 months the 0053 way. Remembered for this run. */
+let v3Missing = false;
 
 type TrainerShare = { summary: TrainerSummary; recent: RecentWorkout[] | null };
 
 async function sendShare(key: string, s: TrainerShare): Promise<MateSendResult> {
+  if (SHARE_A_YEAR && !v3Missing && !v2Missing && s.recent) {
+    const r3 = await apiTrainerShare3(key, s.summary, s.recent);
+    if (!(!r3.ok && 'missing' in r3)) return asSend(r3);
+    v3Missing = true;
+    console.log('[trainer] the gym server has no 12-month progress yet (0084 not live); sending 3 months');
+  }
   if (!v2Missing && s.recent) {
-    const r = await apiTrainerShare2(key, s.summary, s.recent);
+    const r = await apiTrainerShare2(key, s.summary, threeMonthsOf(s.recent, todayISO()));
     if (!(!r.ok && 'missing' in r)) return asSend(r);
     v2Missing = true;
     console.log('[trainer] the gym server has no recent-workouts view yet (0053 not live); sending the weekly summary only');

@@ -72,6 +72,8 @@ declare
     -- 0053: "Ask a trainer" and the gym's Progress (members check their member key and act on their own questions and summary only; the gym: owner or a ticked trainer, each seeing only what is theirs).
     'member_ask_choices','member_ask_trainer','member_questions','member_withdraw_question',
     'owner_questions','owner_question_count','owner_answer_question','member_trainer_share2','owner_member_progress',
+    -- 0084: Training progress over 12 months (the member key; sends or replaces only that member's own workouts, like 0053's share2).
+    'member_trainer_share3',
     -- 0056: Bring a friend (a member key; the public invite page checks an invite code and writes only into that gym's enquiries; the gym its owner or desk key).
     'member_friend_invite','friend_invite_preview','friend_invite_send','owner_friend_summary',
     -- 0059: entry machines (each checks the owner or desk key first; adding and removing a machine: the owner only).

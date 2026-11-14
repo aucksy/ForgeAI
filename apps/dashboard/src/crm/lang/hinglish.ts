@@ -1160,4 +1160,53 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   '{name} added. Now make a sign-in code for them.': '{name} jud gaye. Ab unke liye sign-in code banao.',
   '{name} added with front desk access, but not marked as a trainer yet. Tick Trainer on their row.':
     '{name} front desk access ke saath jud gaye, par abhi trainer nahi bane. Unki line mein Trainer par tick karo.',
+  // R-535 / R-537 (14 Nov 2026): Training progress as lines over everything the member shares. Words: owner checks at UAT.
+  'Getting stronger': 'Strength badh rahi hai',
+  Steady: 'Ek jaisa',
+  Dropping: 'Kam ho rahi hai',
+  'Not enough data yet': 'Abhi kaafi data nahi',
+  'Workouts per week, last 12 weeks': 'Har hafte ke workouts, pichhle 12 hafte',
+  '1 workout in 12 weeks': '12 hafton mein 1 workout',
+  '{n} workouts in 12 weeks': '12 hafton mein {n} workouts',
+  '{name}: strength score {before} → {now} kg': '{name}: strength score {before} → {now} kg',
+  '{name}: most reps {before} → {now}': '{name}: sabse zyada reps {before} → {now}',
+  'See full progress': 'Poori progress dekho',
+  'See full progress of {name}': '{name} ki poori progress dekho',
+  'This member is not on your gym’s list yet, so their full progress cannot open.':
+    'Yeh member abhi aapke gym ki list mein nahi hai, isliye inki poori progress nahi khulti.',
+  'Back to Training progress': 'Wapas Training progress par',
+  'Could not read this member’s progress. Check the internet and try again.':
+    'Is member ki progress nahi padh paaye. Internet check karke dobara try karo.',
+  'Only the owner and this member’s own trainer can see this.': 'Ise sirf owner aur is member ke apne trainer dekh sakte hain.',
+  'Open member page': 'Member ka page kholo',
+  'Shared from the member’s app: {n} workouts, {from} to {to}.': 'Member ke app se share hua: {n} workouts, {from} se {to} tak.',
+  'The app shares at most 30 workouts, so older ones are not here.':
+    'App zyada se zyada 30 workouts share karta hai, isliye purane workouts yahan nahi hain.',
+  Overall: 'Kul milakar',
+  'Overall is “Getting stronger” when more of their main exercises go up than down, and “Dropping” when more go down.':
+    'Kul milakar “Strength badh rahi hai” tab, jab unki zyada main exercises upar jaati hain, aur “Kam ho rahi hai” tab, jab zyada neeche jaati hain.',
+  'Workouts per week': 'Har hafte ke workouts',
+  'No workouts in this time.': 'Is samay mein koi workout nahi.',
+  'This week': 'Is hafte',
+  'Week of {day}': '{day} wala hafta',
+  'Strength score, main exercises': 'Strength score, main exercises',
+  'Strength score is the estimated 1-rep max of the day’s heaviest set, in kg. It uses the same maths as the member’s app. So you can fairly compare a heavy set of 5 reps with a lighter set of 10 reps.':
+    'Strength score us din ke sabse bhaari set ka andaazit 1-rep max hai, kg mein. Yeh member ke app jaisa hi nikala jaata hai. Isliye 5 reps ka bhaari set aur 10 reps ka halka set barabari se compare hote hain.',
+  'Each tag compares the member’s best strength score from the last 6 weeks with the 6 weeks before. It says “Getting stronger” when it is 3% or more higher. It says “Dropping” when it is 3% or more lower. It says “Steady” for anything in between. It says “Not enough data yet” when there are fewer than 3 workouts in those 12 weeks, or none in one half.':
+    'Har tag member ke pichhle 6 hafton ke sabse achhe strength score ko usse pehle ke 6 hafton se milata hai. 3% ya zyada upar ho to “Strength badh rahi hai” dikhta hai. 3% ya zyada neeche ho to “Kam ho rahi hai” dikhta hai. Beech mein ho to “Ek jaisa” dikhta hai. Un 12 hafton mein 3 se kam workouts hon, ya ek hisse mein koi workout na mile, to “Abhi kaafi data nahi” dikhta hai.',
+  'The member’s app is an older version. The lines show here after they update the MettleUp app.':
+    'Member ka app purana version hai. MettleUp app update karne ke baad lines yahan dikhengi.',
+  'All workouts': 'Saare workouts',
+  'Strength score (kg)': 'Strength score (kg)',
+  'Most reps in one set (no weight)': 'Ek set mein sabse zyada reps (bina weight)',
+  '{before} before, {now} in the last 6 weeks': 'Pehle {before}, pichhle 6 hafton mein {now}',
+  'Only 1 workout with it so far.': 'Abhi tak iske saath sirf 1 workout.',
+  'Best: {set} on {day}': 'Sabse achha: {set}, {day} ko',
+  '{n} reps': '{n} reps',
+  '1 workout': '1 workout',
+  '{n} workouts': '{n} workouts',
+  '1 exercise': '1 exercise',
+  '{n} exercises': '{n} exercises',
+  'Show fewer': 'Kam dikhao',
+  'Show all {n} workouts': 'Saare {n} workouts dikhao',
 };

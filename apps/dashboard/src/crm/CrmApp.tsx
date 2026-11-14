@@ -418,7 +418,8 @@ function Screen({ segments, role }: { segments: string[]; role: Role }) {
       return <DietPlansScreen />;
     case 'trainer':
       // F109: the server decides who may read it (owner, ticked trainer); the page says so to anyone else.
-      return <MyMembersScreen />;
+      // R-535: `/trainer/<list member id>` is one member's full progress.
+      return <MyMembersScreen key={id ?? 'list'} memberId={id ?? null} />;
     case 'trainers':
       // F105: trainer pages and the week of personal-training bookings (NOT LIVE until 0065; the page says so).
       return <TrainersScreen key={id ?? 'all'} trainerId={id} />;
