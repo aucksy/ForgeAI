@@ -30,8 +30,11 @@ import { bigLogoBox, GYM_LOGO_CLOSE_LABEL, GYM_LOGO_TAP_LABEL, gymHeaderLogoWidt
 
 /** Same as GYM_HEADER_LOGO (gymHeader.ts); written out so the touch-size check can read it. */
 const LOGO = 56;
-/** The full-size view is dark in both looks: a logo is made to stand out on it. */
-const BACKDROP = 'rgba(6, 7, 10, 0.96)';
+/**
+ * The full-size view is dark in both looks: a logo is made to stand out on it. Solid: at 96% the page
+ * behind still read through the logo on the phone (run 43573994207, picture rel-r517-03).
+ */
+const BACKDROP = '#06070A';
 const ON_BACKDROP = '#FFFFFF';
 
 export function GymHeaderMark({ tagline }: { tagline: string }) {

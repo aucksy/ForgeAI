@@ -89,7 +89,8 @@ describe('R-517: tapping the logo shows it full size', () => {
   it('a full-screen dark view: Back, the X and a tap anywhere close it', () => {
     expect(header).toMatch(/<Modal visible=\{visible\} transparent animationType="fade" onRequestClose=\{onClose\}/);
     expect(header).toMatch(/backgroundColor: BACKDROP/);
-    expect(header).toMatch(/const BACKDROP = 'rgba\(6, 7, 10, 0\.9\d\)';/);
+    // Solid: a see-through backdrop let the page behind read through the logo (run 43573994207).
+    expect(header).toMatch(/const BACKDROP = '#06070A';/);
     expect(header).toMatch(/accessible=\{false\}\s+onPress=\{onClose\}/);
     expect(header).toMatch(/<IconButton icon="close" onPress=\{onClose\} accessibilityLabel=\{GYM_LOGO_CLOSE_LABEL\} \/>/);
     expect(GYM_LOGO_CLOSE_LABEL).toBe('Close the logo');
