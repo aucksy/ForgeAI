@@ -611,6 +611,16 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 2. All plans, or Pro only? My pick: the page on all plans, the AI helper paid from AI credits.
 3. The address: mettleup.fit/<gym-name> (my pick, free) or the gym's own domain (costs the gym about Rs 800 a year)?
 
+**YOUR QUESTION (14 Nov):** if each gym gets a page inside our domain, on Cloudflare: scalability, risks, money, and what else to keep in mind?
+
+**My answer (prices checked 14 Nov 2026):**
+- **Scale:** Cloudflare is not the problem. Each page is a fixed template plus the gym's facts, kept in Cloudflare's cache, so most visits never touch our database. Example: 1,000 gyms × 1,000 visits a month = about 33,000 visits a day.
+- **The real limits are our FREE plans.** The Cloudflare free plan stops ALL our servers (admin app, member app, pages) for the rest of the day after 100,000 requests. The Supabase free plan pauses after 7 quiet days, and then the join form fails. Before gym pages go live: Cloudflare Workers Paid (about Rs 450 a month, 10 million requests) and Supabase Pro (about Rs 2,100 a month, #27).
+- **Money:** pages and photos cost almost nothing. Photos go on Cloudflare R2 (10 GB free, which is about 3,000 gyms' photos; no download fees). The AI helper is the only real cost: about Rs 0.1-0.5 a question. Example: 1,000 gyms × 100 questions a month = about Rs 10,000-50,000 a month. So it must come from the gym's AI credits, with a daily cap. A gym's own web address: 100 are free on Cloudflare, then about Rs 9 a month each.
+- **Risks:** (1) A gym posts false claims, copied photos or bad content under OUR name: owners agree the content is theirs, we can take a page down, and visitors have a "Report" link. (2) If Google marks one gym's page as spam, our whole domain can suffer, including the app's links. So keep the pages under one separate folder of the site and check new pages. (3) Wrong prices: the AI answers only from facts the owner typed, and the page says "price confirmed at the desk". (4) Bots: a bot check (Cloudflare Turnstile, free), limits per phone, and caps on AI questions. (5) Leads' phone numbers: a consent line, and delete on request (India's DPDP law, from May 2027). (6) Old pages with old prices: a page goes offline when the gym leaves MettleUp. (7) Name clashes: the address is name + city, and we can change it.
+- **Other things:** every page carries "Powered by MettleUp", which is free marketing to other gym owners. Gyms already have a free Google listing, so our page must do what Google cannot: join, pay and ask. Make it fast on a slow phone, in English and Hindi, with a good picture when shared on WhatsApp. The owner sees visits and joins.
+- **My view:** worth doing, after self sign-up. A free page for every gym (it brings gyms in), the AI helper on credits, and the gym's own web address on Pro. Move to the 2 paid server plans first.
+
 ## 96. Do testers still get updates, and should we open a public beta? — 14 Nov 2026
 **Chat:** Mettle Up
 **Status:** ANSWERED
