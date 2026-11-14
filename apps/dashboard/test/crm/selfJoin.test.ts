@@ -11,6 +11,7 @@ import { GYM_ALERT_KINDS, gymAlertsFrom } from '../../src/crm/logic/gymAlerts';
 import { memberPrefill, selfJoinOf, sellPlanFor, sellStartFor, waitingOnlineJoins } from '../../src/crm/logic/selfJoin';
 import { inviteLink, joinOnlineLink, joinOnlineMessage } from '../../src/crm/shop/invite';
 import { JOIN_ONLINE_POSTER } from '../../src/crm/shop/InviteScreen';
+import { selfJoinOpen } from '../../src/crm/shop/selfJoinReady';
 import type { Enquiry, Plan } from '../../src/crm/types';
 
 const TODAY = '2026-11-14';
@@ -119,6 +120,21 @@ describe('the join link and message', () => {
   it('the poster says no app is needed', () => {
     expect(JOIN_ONLINE_POSTER.lead).toBe('Become a member on your phone');
     expect(JOIN_ONLINE_POSTER.codeLine('RAMS01')).toBe('No app needed. Ask at the desk if you need help.');
+  });
+});
+
+describe('the ways in stay hidden until the page works', () => {
+  it('only an open gym with a plan, as the server answers it (0077)', () => {
+    expect(selfJoinOpen({ gymName: 'Shakti Gym', closed: false, plans: [{ id: 'p' }] })).toBe(true);
+    expect(selfJoinOpen({ gymName: 'Shakti Gym', closed: false, plans: [] })).toBe(false);
+    expect(selfJoinOpen({ gymName: 'Shakti Gym', closed: true })).toBe(false);
+    expect(selfJoinOpen(null)).toBe(false);
+    expect(selfJoinOpen('x')).toBe(false);
+  });
+  it('the invite page starts with the card hidden and asks the server', () => {
+    const invite = readFileSync(new URL('../../public/join.html', import.meta.url), 'utf8');
+    expect(invite).toContain('<div class="card hide" id="become-card">');
+    expect(invite).toContain("'self_join_preview'");
   });
 });
 

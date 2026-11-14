@@ -11,6 +11,7 @@ import { Button, Card, ErrorBanner, SectionTitle, color, font, radius, space } f
 import { useCan } from '../auth/AuthProvider';
 import { useShop } from './ShopProvider';
 import { inviteMessage, joinOnlineMessage, whatsAppHref } from './invite';
+import { useSelfJoinReady } from './selfJoinReady';
 import { navigate } from '../ui/router';
 import { t } from '../lang/lang';
 
@@ -50,6 +51,8 @@ export function JoinCodeCard({
   title?: string;
 }) {
   const { cloud, connectShop, online } = useShop();
+  // R-513: the "Join on your phone" share, only once the gym server has the page (0077).
+  const joinOnline = useSelfJoinReady(cloud?.joinCode);
   const [copied, setCopied] = useState<'yes' | 'no' | null>(null);
   const codeRef = useRef<HTMLSpanElement>(null);
   const [busy, setBusy] = useState(false);
@@ -172,7 +175,9 @@ export function JoinCodeCard({
           {t('Invite & QR poster')}
         </Button>
       </div>
-      {/* R-513 Join online: for people who are not members yet, on any phone, no app needed. */}
+      {/* R-513 Join online: for people who are not members yet, on any phone, no app needed. Shown once the gym server
+          has the page (0077) and the gym is open with a plan. */}
+      {joinOnline && (
       <div style={{ marginTop: space.lg, paddingTop: space.md, borderTop: `1px solid ${color.border}` }}>
         <div style={{ fontFamily: font.body, fontSize: 14, fontWeight: 700, color: color.ink }}>{t('Join on your phone')}</div>
         <div style={{ marginTop: 4, fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
@@ -184,6 +189,7 @@ export function JoinCodeCard({
           </Button>
         </div>
       </div>
+      )}
       {!online && (
         <div style={{ marginTop: space.sm, fontFamily: font.body, fontSize: 12, color: color.warning }}>
           {t('No internet right now. The code still works. New orders show up when the internet is back.')}

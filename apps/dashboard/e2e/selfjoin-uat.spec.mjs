@@ -50,10 +50,16 @@ const SENT_OK = [201, { ok: true, gymName: 'Shakti Gym', planName: 'Monthly', st
  * app.mettleup.fit/m/<code> (and /j/<code>) the way the Worker serves them. `checks`: the WhatsApp check's status
  * answers in order (the last one repeats; a test may push more); `sends`: /api/self-join's answers in order.
  */
-async function servePage(page, gym, { checks = ['waiting', 'waiting', 'verified'], sends = [SENT_OK] } = {}) {
+async function servePage(page, gym, { checks = ['waiting', 'waiting', 'verified'], sends = [SENT_OK], has0077 = true } = {}) {
   const sent = [];
   const started = [];
   let polls = 0;
+  // The invite page /j/ asks the gym server itself whether "Become a member" works (0077 applied, gym open).
+  await page.route('https://hdxzqbdiokjklnypfisq.supabase.co/rest/v1/rpc/self_join_preview', (r) =>
+    has0077
+      ? r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(gym) })
+      : r.fulfill({ status: 404, contentType: 'application/json', body: JSON.stringify({ code: 'PGRST202', message: 'Could not find the function' }) }),
+  );
   await page.route('https://fonts.googleapis.com/**', (r) => r.fulfill({ status: 200, contentType: 'text/css', body: '' }));
   await page.route(/^https:\/\/app\.mettleup\.fit\//, async (route) => {
     const url = new URL(route.request().url());
@@ -300,12 +306,29 @@ test('R-513 page, phone and computer: a paused gym, and a wrong code', async ({ 
 });
 
 test('R-513 invite page /j/: "Become a member" opens the join page', async ({ page }) => {
-  await servePage(page, { gymName: 'Shakti Gym', joinCode: 'QA0002', brand: {} });
+  await servePage(page, GYM);
   await page.goto('https://app.mettleup.fit/j/QA0002');
+  await expect(page.locator('#become-card')).toBeVisible();
   await expect(page.locator('#become')).toHaveAttribute('href', '/m/QA0002');
   await expect(page.locator('#become-card')).toContainText('Not a member yet?');
   await page.locator('#become-card').scrollIntoViewIfNeeded();
   await shot(page, 'selfjoin-invite-page-become-member-phone');
+});
+
+test('R-513 invite page /j/: no "Become a member" before 0077 is live, or for a paused gym', async ({ page }) => {
+  await servePage(page, GYM, { has0077: false });
+  await page.goto('https://app.mettleup.fit/j/QA0002');
+  await expect(page.locator('#title')).toHaveText('Shakti Gym');
+  await page.waitForTimeout(800);
+  await expect(page.locator('#become-card')).toBeHidden();
+  await shot(page, 'selfjoin-invite-page-before-0077-phone');
+
+  const paused = await page.context().newPage();
+  await servePage(paused, { ...GYM, closed: true, plans: undefined });
+  await paused.goto('https://app.mettleup.fit/j/QA0002');
+  await expect(paused.locator('#title')).toHaveText('Shakti Gym');
+  await paused.waitForTimeout(800);
+  await expect(paused.locator('#become-card')).toBeHidden();
 });
 
 // ---------------------------------------------------------------- the gym's side

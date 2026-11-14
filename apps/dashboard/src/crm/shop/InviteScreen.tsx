@@ -19,6 +19,7 @@ import * as api from './api';
 import { JoinCodeCard, copyText } from './JoinCode';
 import { useShop } from './ShopProvider';
 import { inviteLink, inviteMessage, joinOnlineLink, joinOnlineMessage, whatsAppHref } from './invite';
+import { useSelfJoinReady } from './selfJoinReady';
 import { Button, Card, PageHeader, SectionTitle, Toast, color, font, radius, space, useIsCompact } from '../ui/kit';
 import { navigate } from '../ui/router';
 import { t } from '../lang/lang';
@@ -83,6 +84,7 @@ function InviteBody({ ownerKey, gymName, joinCode }: { ownerKey: string; gymName
   const message = inviteMessage(gymName, joinCode);
   // R-513 Join online: the "Become a member" page for people who are not members yet.
   const joinLink = joinOnlineLink(joinCode);
+  const joinOnline = useSelfJoinReady(joinCode);
   const [toast, setToast] = useState<string | null>(null);
   const [brand, setBrand] = useState<GymBrand | null>(null);
 
@@ -196,7 +198,9 @@ function InviteBody({ ownerKey, gymName, joinCode }: { ownerKey: string; gymName
 
       {/* R-513 Join online: new people fill the gym's "Become a member" page on their own phone (any phone, no app).
           The request lands on Today ("Joined online"); they pay at the desk. Its poster is a picture to print, so the
-          page's one print sheet stays the invite poster. */}
+          page's one print sheet stays the invite poster. Shown once the gym server has the page (0077) and the gym is
+          open with a plan. */}
+      {joinOnline && (
       <Card>
         <SectionTitle>{t('Join on your phone')}</SectionTitle>
         <div
@@ -245,6 +249,7 @@ function InviteBody({ ownerKey, gymName, joinCode }: { ownerKey: string; gymName
           </Button>
         </div>
       </Card>
+      )}
 
       {/* Always on the page (hidden on screen): phone Chrome draws its print preview after the
           button's tap has returned, so a sheet added only for the print could already be gone. */}

@@ -72,8 +72,9 @@
       <p class="note" style="margin:0">Open this link on an Android phone, or ask the front desk.<small>Abhi MettleUp sirf Android phone par hai. Yeh link Android phone par kholiye.</small></p>
     </div>
 
-    <!-- R-513: not a member yet? The gym's "Become a member" page (join-online.html), on any phone, no app needed. -->
-    <div class="card" id="become-card">
+    <!-- R-513: not a member yet? The gym's "Become a member" page (join-online.html), on any phone, no app needed.
+         Hidden until the gym server answers self_join_preview (supabase 0077) for this gym, open and with a plan. -->
+    <div class="card hide" id="become-card">
       <h2>Not a member yet?<br><small style="color:var(--ink2);font-weight:600">Abhi member nahi hain?</small></h2>
       <p class="note" style="margin:0 0 12px">Pick a plan and send your details to the gym from this phone. You pay at the gym desk.<small>Plan chuniye aur apni details isi phone se gym ko bhejiye. Paise gym ke counter par dene hain.</small></p>
       <a class="btn ghost" id="become" href="#">Become a member<small>Member baniye</small></a>
@@ -118,6 +119,14 @@
     return (L + 0.05) / 0.05 > 1.05 / (L + 0.05) ? '#111111' : '#FFFFFF';
   }
 
+  // R-513: show "Become a member" only when that page works for this gym (0077 applied, gym open, a plan to pick).
+  function becomeIfOpen(c) {
+    fetch(API.replace(/gym_preview$/, 'self_join_preview'), { method: 'POST', headers: { apikey: KEY, 'Content-Type': 'application/json' }, body: JSON.stringify({ p_code: c }) })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (g) { if (g && g.gymName && g.closed === false && g.plans && g.plans.length) $('become-card').classList.remove('hide'); })
+      .catch(function () { /* quiet: no answer = the card stays hidden; the app invite above still works */ });
+  }
+
   function render(gym) {
     if (!gym) { show('found', false); show('none', true); $('title').textContent = 'Gym not found'; $('sub').textContent = ''; return; }
     document.title = 'Join ' + gym.gymName + ' on MettleUp';
@@ -125,6 +134,7 @@
     $('sub').textContent = 'invites you to the MettleUp app';
     $('code').textContent = gym.joinCode;
     $('become').href = '/m/' + gym.joinCode;
+    becomeIfOpen(gym.joinCode);
     $('initial').textContent = (gym.gymName.trim().charAt(0) || 'M').toUpperCase();
     var b = gym.brand || {};
     if (hexOk(b.accent)) {
