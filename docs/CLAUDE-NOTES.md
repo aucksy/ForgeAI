@@ -7,6 +7,10 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-499. Profile goal line is wrong (+1,840 kg) and "Today" must go everywhere — 14 Nov 2026
+He sent a Profile picture (Kg lifted chip): "Today: Pull 2. 3,780 kg to lift today. 1,840 kg more than last time (1,940 kg). Not counted: 2 exercises...". He said: we fixed the logic behind the next total and next suggested weights; analyse and fix this too, because it suggests 1,840 kg more than last time. And: "remove the word today from everywhere. I've always told you it should always be previous and next... if I am not going to do this exercise today but tomorrow, then the word today doesn't make sense. It has to be next." Check everything around it and improve the experience.
+Plan: a helper finds why the goal (src/tracker/lib/todayGoal.ts, Up next targets) is ~2x the previous total (like-for-like compare, sets, dumbbells, uncounted exercises), fixes it with tests from his case, and replaces every member "today"/"last time" about workouts with Next/Previous. Green line second row becomes "Done 1,650 kg · Previous 1,450 kg" (not "Today"). Brain rule previous-and-next-never-last-and-today updated (3rd time).
+
 ## R-498. Green finished line: short shout with "Previous" — 14 Nov 2026
 He said: "I'm good with the short shout" but replace "last" with "previous", because the card header already says "Previous: <date>".
 FINAL wording (owner exception for the banned word "volume" on this line only): weight = "Previous set volume beaten! +<n> kg" / "Today <x> kg · Previous <y> kg"; reps-only = "Previous reps beaten! +<n>" / "Today <x> reps · Previous <y> reps"; equal = "Previous set volume matched" (reps: "Previous reps matched") / "Today <x> kg · Previous <x> kg"; first time unchanged. Line 1 bold 17 px, line 2 smaller. Mocks P1/P1-reps/P1-equal sent. Building it for the next release (helper), with tests + UAT flow updates.
