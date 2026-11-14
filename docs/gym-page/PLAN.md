@@ -1,7 +1,8 @@
 # F207 Gym page: every gym's own free web page (R-519, R-521)
 
 14 Nov 2026. Plan, design and the hidden first build. Research on the AI helper: [AI-RESEARCH.md](AI-RESEARCH.md).
-Draft database change (not applied, not a migration): [gym_page.draft.sql](gym_page.draft.sql).
+Database change: `supabase/migrations/0080_gym_page.sql` (test `supabase/tests/0080_gym_page.sql`, green in CI).
+The owner said yes to applying it live (R-529); it is WAITING to be applied live by the main session.
 
 ## 1. The plan in ten lines
 
@@ -106,12 +107,15 @@ gym alerts, brand colour and logo, plan records.
 Not built (needs the database part or the owner's yes): the photo upload endpoint and R2 bucket, the owner setup
 step, the Settings editor, the Enquiries label, the HQ reported-pages list, a sitemap.
 
-## 6. Live changes needing the owner's yes (none done)
+## 6. Live changes needing the owner's yes
 
-1. **Database:** apply `gym_page.draft.sql` as the next migration (tables gym_pages, gym_page_reports, gym_page_asks;
-   functions owner_gym_page, owner_save_gym_page, gym_page_public, gym_page_ask_send, gym_page_report_send,
-   hq_hide_gym_page; gym_alerts kind 'page_question').
-2. **Cloudflare:** an R2 bucket `gym-page-photos` bound to the panel Worker (free up to 10 GB).
+1. **Database (owner said yes, R-529; waiting for the main session to apply it live):** migration
+   `0080_gym_page.sql` (tables gym_pages, gym_page_reports, gym_page_asks; functions owner_gym_page,
+   owner_save_gym_page, gym_page_public, gym_page_ask_send, gym_page_report_send, hq_hide_gym_page(actor, slug,
+   hidden, note); gym_alerts kind 'page_question'). The admin app must add 'page_question' to its alert kinds
+   (gymAlerts.ts) or those alerts are not shown.
+2. **Photos (R-529):** our own Supabase storage, served by the Worker at join.mettleup.fit/p/<gym_id>/<id>.webp
+   (0080 accepts only that address). No Cloudflare R2.
 3. **Cloudflare:** add `join.mettleup.fit` to the panel Worker's routes (custom domain), and set `GYM_PAGES` to "live".
 4. **Words:** the public words in section 8.
 

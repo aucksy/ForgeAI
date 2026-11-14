@@ -88,6 +88,11 @@ declare
     'self_join_preview','self_join_send',
     -- 0078: AI questions on the gym's credits (take: the Worker's HMAC signature over the key, then the member, owner or staff key; give back: a question id only the Worker holds, once, within 10 minutes; the counts: the OWNER key only).
     'ai_question_take','ai_visitor_question_take','ai_question_back','owner_ai_questions',
+    -- 0080: the gym's web page. The editor: owner_gym_page checks an owner or desk key, owner_save_gym_page the OWNER
+    -- key only (a desk key gets OWNER_ONLY). The public page: each checks the slug itself and answers only for a published
+    -- page (terms ticked, not hidden by HQ, gym not paused); the question form has daily limits (40 per gym, 3 per
+    -- number), the report form 50 per page; nothing returns a member, staff, money or the phone unless show_phone.
+    'owner_gym_page','owner_save_gym_page','gym_page_public','gym_page_ask_send','gym_page_report_send',
     -- 0079: a person's job name on Staff & sign-in (checks the key first: the gym OWNER only; a desk key gets OWNER_ONLY).
     'owner_set_person_job',
     -- 0060: Pay MettleUp (each checks the key first: the gym OWNER only; a desk key gets OWNER_ONLY).

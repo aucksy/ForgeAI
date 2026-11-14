@@ -8,7 +8,7 @@
 //
 // HIDDEN TWICE. (1) The Worker answers this host only when the var GYM_PAGES is "live" (wrangler.jsonc); unset, every
 // address here is the plain "not here" page. (2) join.mettleup.fit is not in wrangler.jsonc's routes, so no request
-// reaches this code yet. The gym server's functions (docs/gym-page/0078_gym_page.draft.sql) are not live either; until
+// reaches this code yet. The gym server's functions (supabase/migrations/0080_gym_page.sql) are not live either; until
 // they are, a page answers "not here" and the forms answer NOT_READY. docs/gym-page/PLAN.md has the switch-on steps.
 //
 // The forms use the friend page's guards (friend.js, selfJoin.js): a hidden "website" box, a size limit, a daily limit
