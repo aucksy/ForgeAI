@@ -186,11 +186,14 @@ function SwitchesCard({
   const [busy, setBusy] = useState(false);
   const [problem, setProblem] = useState<string | null>(null);
   const blocked = switchesBlocked({ live, hasAccount, canManage });
-  const appOn = hasAccount && (sw?.ready ? sw.app : false);
-  const webOn = hasAccount && (sw?.ready ? sw.web : false);
+  // The tick moves at once; it goes back if the save fails.
+  const [pending, setPending] = useState<{ app?: boolean; web?: boolean }>({});
+  const appOn = hasAccount && (pending.app ?? (sw?.ready ? sw.app : false));
+  const webOn = hasAccount && (pending.web ?? (sw?.ready ? sw.web : false));
 
   const save = async (patch: { app?: boolean; web?: boolean }) => {
     if (!deskKey || blocked) return;
+    setPending(patch);
     setBusy(true);
     setProblem(null);
     try {
@@ -199,6 +202,7 @@ function SwitchesCard({
       console.warn('[pay] switches not saved', e instanceof Error ? e.message : e);
       setProblem(t('Could not save. Check your internet and try again.'));
     } finally {
+      setPending({});
       setBusy(false);
     }
   };
