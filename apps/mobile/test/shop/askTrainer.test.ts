@@ -192,7 +192,6 @@ describe('member words', () => {
       ASK_WORDS.askedTo(null),
       ASK_WORDS.popup('Rohit', 'Three sets.'),
       ASK_WORDS.rowSpoken(2),
-      TRAINER_WORDS.shareCaptionRecent,
     ];
     for (const l of lines) {
       expect(l, l).not.toMatch(BANNED);
@@ -201,8 +200,10 @@ describe('member words', () => {
     expect(ASK_MAX).toBe(500);
   });
   it('the switch caption names everything the gym sees and what it never sees', () => {
-    expect(TRAINER_WORDS.shareCaptionRecent).toMatch(/30 workouts/);
-    expect(TRAINER_WORDS.shareCaptionRecent).toMatch(/Never your body weight, photos or notes/);
+    // R-551: the owner approved these words exactly (14 Nov 2026); longer than the 230-character line rule on purpose.
+    expect(TRAINER_WORDS.shareCaptionRecent).not.toMatch(BANNED);
+    expect(TRAINER_WORDS.shareCaptionRecent).toMatch(/since you joined, up to the last 12 months/);
+    expect(TRAINER_WORDS.shareCaptionRecent).toMatch(/They never see your body weight, photos or notes/);
   });
 });
 

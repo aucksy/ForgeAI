@@ -1189,6 +1189,7 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   '{name} added with front desk access, but not marked as a trainer yet. Tick Trainer on their row.':
     '{name} front desk access ke saath jud gaye, par abhi trainer nahi bane. Unki line mein Trainer par tick karo.',
   // R-535 / R-537 (14 Nov 2026): Training progress as lines over everything the member shares. Words: owner checks at UAT.
+  'How is this worked out?': 'Yeh kaise nikala jaata hai?',
   'Getting stronger': 'Strength badh rahi hai',
   Steady: 'Ek jaisa',
   Dropping: 'Kam ho rahi hai',
@@ -1208,8 +1209,8 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   'Only the owner and this member’s own trainer can see this.': 'Ise sirf owner aur is member ke apne trainer dekh sakte hain.',
   'Open member page': 'Member ka page kholo',
   'Shared from the member’s app: {n} workouts, {from} to {to}.': 'Member ke app se share hua: {n} workouts, {from} se {to} tak.',
-  'The app shares at most 30 workouts, so older ones are not here.':
-    'App zyada se zyada 30 workouts share karta hai, isliye purane workouts yahan nahi hain.',
+  'An older MettleUp app shares at most 30 workouts, so older ones may not be here.':
+    'Purana MettleUp app zyada se zyada 30 workouts share karta hai, isliye purane workouts shayad yahan nahi hain.',
   Overall: 'Kul milakar',
   'Overall is “Getting stronger” when more of their main exercises go up than down, and “Dropping” when more go down.':
     'Kul milakar “Strength badh rahi hai” tab, jab unki zyada main exercises upar jaati hain, aur “Kam ho rahi hai” tab, jab zyada neeche jaati hain.',

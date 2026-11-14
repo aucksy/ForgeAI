@@ -10,10 +10,11 @@
  *    Settings switch, the join-screen line and the help button are not shown. Exactly as before.
  *  - R-319 (0053): with the server's member_trainer_share2 the phone also sends its recent workouts
  *    (trainerRecent.ts); without it, only the weekly summary, exactly as before. "Ask a trainer" lives here too.
- *  - R-537 (0084, NOT LIVE until the owner's yes): with the server's member_trainer_share3 the recent workouts
- *    cover up to 12 months. Without it (PGRST202, remembered for this run) the same list, cut to 3 months, goes the
- *    0053 way. The phone reads its year once per share either way. Held OFF (trainerRecent.ts SHARE_A_YEAR) until
- *    the owner approves the member's new sharing words: today the phone sends 3 months exactly as before.
+ *  - R-537 / R-551 (0084 live 14 Nov 2026; the owner approved the words): with the server's member_trainer_share3
+ *    the recent workouts cover up to 12 months. Without it (PGRST202, remembered for this run) the same list, cut
+ *    to 3 months, goes the 0053 way. The phone reads its year once per share either way.
+ *  - R-551 "since joining": nothing from before the day this member joined THIS gym leaves the phone, in the
+ *    recent workouts or the weekly summary (sharingSince: the join day this phone kept, else its first share day).
  */
 import { getDb } from '@/db';
 import { addDays, todayISO } from '@/lib/date';
@@ -35,7 +36,7 @@ import {
 } from './gymApi';
 import { useGymShop } from './gymStore';
 import { createMateSharer, type MateOutcome, type MateSendResult, type MateTrigger } from './mateShare';
-import { ONE_YEAR, SHARE_A_YEAR, THREE_MONTHS, recentFrom, threeMonthsOf, trainerRecentFrom, type RecentWorkout } from './trainerRecent';
+import { ONE_YEAR, SHARE_A_YEAR, THREE_MONTHS, recentFrom, sharingSinceDay, threeMonthsOf, trainerRecentFrom, type RecentWorkout } from './trainerRecent';
 import { TRAINER_RECORD_DAYS, trainerFrom, trainerSummaryFrom, type TrainerStatus, type TrainerSummary } from './trainerShare';
 import type { GymLink } from './types';
 
@@ -51,10 +52,25 @@ const asSend = (r: TrainerCall<true>): MateSendResult => {
   return 'failed';
 };
 
-/** This phone's working sets of the last 12 weeks, and each exercise's heaviest weight from before the last 30 days. */
-async function buildSummary(): Promise<TrainerSummary> {
+/**
+ * R-551: the first day this phone may share with its gym: the day it joined this gym in the app, else (a phone that
+ * joined before R-86 kept no day) the first day it shared, kept. No link: today.
+ */
+async function sharingSince(today: string): Promise<string> {
+  const memberId = useGymShop.getState().link?.memberId;
+  if (!memberId) return today;
+  const { appJoinedOn, shareFirstSeenOn } = await import('./gymReminders');
+  const joined = await appJoinedOn(memberId);
+  return sharingSinceDay(joined, joined ? today : await shareFirstSeenOn(memberId, today), today);
+}
+
+/**
+ * This phone's working sets of the last 12 weeks (never before `since`, R-551), and each exercise's heaviest
+ * weight from before the last 30 days (only to tell a new best; never sent).
+ */
+async function buildSummary(since: string): Promise<TrainerSummary> {
   const today = todayISO();
-  const from = trainerFrom(today);
+  const from = since > trainerFrom(today) ? since : trainerFrom(today);
   const recordFrom = addDays(today, -(TRAINER_RECORD_DAYS - 1));
   const db = getDb();
   const rows = await db.getAllAsync<{ sid: string; date_iso: string; exercise_id: string; name: string; weight_kg: number; reps: number }>(
@@ -85,7 +101,7 @@ async function buildSummary(): Promise<TrainerSummary> {
  * while the server may have 0084 (member_trainer_share3), else the last 92 days. Only built while the server has
  * 0053 (member_trainer_share2); otherwise nothing more leaves the phone.
  */
-async function buildRecent(): Promise<RecentWorkout[]> {
+async function buildRecent(since: string): Promise<RecentWorkout[]> {
   const today = todayISO();
   const limits = SHARE_A_YEAR && !v3Missing ? ONE_YEAR : THREE_MONTHS;
   const rows = await getDb().getAllAsync<{ sid: string; date_iso: string; started_at: number; exercise_id: string; name: string; weight_kg: number; reps: number }>(
@@ -95,7 +111,7 @@ async function buildRecent(): Promise<RecentWorkout[]> {
        JOIN exercises e ON e.id = se.exercise_id
       WHERE ws.date_iso >= ? AND ws.date_iso <= ?
       ORDER BY ws.date_iso DESC, ws.started_at DESC, se.rowid`,
-    [recentFrom(today, limits), today],
+    [recentFrom(today, limits, since), today],
   );
   const { getWorkoutNames } = await import('@/tracker/db/workoutNames');
   const names = await getWorkoutNames(rows.map((r) => r.sid));
@@ -104,6 +120,7 @@ async function buildRecent(): Promise<RecentWorkout[]> {
     names,
     today,
     limits,
+    since,
   );
 }
 
@@ -155,9 +172,10 @@ const sharer = createMateSharer<TrainerShare>({
   pending: () => usePhonePrefs.getState().trainerSharePending,
   clearPending: () => usePhonePrefs.getState().setTrainerSharePending(false),
   build: async () => {
-    const summary = await buildSummary();
+    const since = await sharingSince(todayISO());
+    const summary = await buildSummary(since);
     // A failed read of the recent workouts never stops the weekly summary.
-    const recent = v2Missing ? null : await buildRecent().catch((e: unknown) => {
+    const recent = v2Missing ? null : await buildRecent(since).catch((e: unknown) => {
       console.warn('[trainer] reading the recent workouts failed', e);
       return null;
     });

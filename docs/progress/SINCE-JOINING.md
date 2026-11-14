@@ -1,4 +1,4 @@
-# Training progress over 12 months (R-535, R-537)
+# Training progress over 12 months (R-535, R-537, R-551)
 
 Owner, 14 Nov 2026: one week of data says nothing. The gym must see lines that show whether a member is
 progressing, over "at least last one year since they joined the app".
@@ -9,11 +9,11 @@ progressing, over "at least last one year since they joined the app".
 |---|---|
 | Admin panel: lines, tags, every workout (Step 1) | Built. Reads whatever the phone shares. Today that is 3 months (at most 30 workouts). |
 | Admin panel reads 12 months when it is there | Built (reads up to 400 workouts). |
-| Server: take 12 months (`supabase/migrations/0084_progress_year.sql`) | Built, tested in CI. **NOT LIVE: needs the owner's yes.** |
-| Phone: send 12 months (`apps/mobile/src/shop/trainerRecent.ts`, `trainerSync.ts`) | Built, **switched off** (`SHARE_A_YEAR = false`) until the owner approves the member words below. |
-| Member words for the sharing switch | **Draft below. Needs the owner's yes.** Not in the app yet. |
+| Server: take 12 months (`supabase/migrations/0084_progress_year.sql`) | **Live** (owner's yes, 14 Nov 2026; R-551). |
+| Phone: send 12 months, only since joining this gym (`apps/mobile/src/shop/trainerRecent.ts`, `trainerSync.ts`) | **On** (`SHARE_A_YEAR = true`), with the approved words. Reaches members with the next app release. |
+| Member words for the sharing switch | **Approved by the owner, 14 Nov 2026** (below), in the app. |
 
-Today nothing changes for members: the phone sends exactly what it sent before.
+Owner's answers, 14 Nov 2026: "since joining" / "Yes to the 12-month words" / "yes to the 12-month database change".
 
 ## What the gym sees (Step 1, panel only)
 
@@ -73,30 +73,37 @@ than it needs. Revisit only if trainers ask to see each set.
 
 ### Release
 
-1. The owner says yes to the member words below (and to 0084 going live).
-2. Apply 0084 on the live server (its CI test passes: `supabase/tests/0084_progress_year.sql`).
-3. Phone: set `SHARE_A_YEAR = true` and replace the Settings caption with the approved words, in one change.
+1. Done 14 Nov 2026: the owner said yes to the member words and to 0084.
+2. Done 14 Nov 2026: 0084 applied on the live server.
+3. Done (R-551): `SHARE_A_YEAR = true`, the approved caption, and "since joining" (below), in one change.
 4. Next app release (version bump, only after he says "release"). Until members update, the panel keeps showing
    3 months for them, and says so ("Shared from the member's app: ... to ...").
 5. The panel needs no new release for this: it already reads 12 months.
 
-## Draft member words (NEED THE OWNER'S YES)
+## Member words (approved by the owner, 14 Nov 2026, exactly as written)
 
 Shown in the MettleUp app: Settings, under the switch "Share my workouts with my trainers" (the switch's name stays).
-They replace today's caption: "Your gym and your trainer see your kg lifted each week, your best lifts, and up to
-30 workouts from the last 3 months with each exercise's best set. Never your body weight, photos or notes. Off:
-the gym deletes it at once."
 
-> Your phone sends your gym your workouts from the last 12 months: the day, the workout's name, and for each
-> exercise your heaviest set and how many sets you did. Your gym and your trainer see it as charts, to see if you
-> are getting stronger. They never see your body weight, photos or notes. The gym deletes it at once if you switch
-> this off or leave the gym.
-
-(Checked with the member-words rules and a Gemini second opinion, 14 Nov 2026; Gemini's shorter sentences kept.)
+> Your phone sends your gym your workouts since you joined, up to the last 12 months. For each workout, it sends the
+> day, the workout's name, and, for each exercise, your heaviest set and how many sets you did. Your gym and your
+> trainers see this as charts, to check that you are getting stronger. They never see your body weight, photos or
+> notes. If you switch this off or leave the gym, the gym deletes it at once.
 
 Join screen line (unchanged, already approved): "Your gym and your trainer see your workouts, so they can help you
 progress."
 
-One decision for the owner: "12 months in the app" includes workouts from before the member joined this gym (for
-example at an earlier gym). He asked for "since they joined the app". The words above say "the last 12 months" so
-the member knows. If he prefers "since you joined this gym", the phone can start from the join day instead.
+## Since joining (R-551)
+
+The owner chose "since joining": the phone sends only workouts on or after the day the member joined THIS gym, never
+an earlier gym's, and never more than the last 12 months. The weekly summary follows the same day.
+
+Which day the phone uses:
+
+1. The day this phone joined the gym in the app. The app has kept it for every join since R-86 (23 Oct 2026), per
+   member (`gymReminders.ts` noteAppJoin).
+2. A phone that joined before 23 Oct 2026 kept no day, and the server does not tell the phone its join date. Then the
+   first day this version shares is kept and used: nothing older than that day is sent. The gym sees those members'
+   lines grow from that day on (their 3 months already shared is replaced by the next share).
+
+Not used: the gym's own "joined on" date from its member list (0029). It can be years old and is typed by the desk;
+the link day is the safe one.

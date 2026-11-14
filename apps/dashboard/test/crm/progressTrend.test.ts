@@ -210,7 +210,8 @@ describe('the range shown', () => {
     const year = Array.from({ length: 200 }, (_, i) => ({ d: addDays(TODAY, -i), n: 'A', x: [{ n: 'Squat', w: 80, r: 5, s: 3 }] }));
     const read = recentWorkoutsFrom(year);
     expect(read).toHaveLength(200);
-    expect(sharedRange(read, TODAY)!.capped).toBe(false);
+    // R-551: the range line reads the whole span ("200 workouts, <first day> to <last day>").
+    expect(sharedRange(read, TODAY)).toEqual({ n: 200, from: addDays(TODAY, -199), to: TODAY, capped: false });
   });
 });
 

@@ -13,13 +13,14 @@
 //  - Neha Iyer: not on the gym's list: her card cannot open.
 //
 //  1. List: every card has the 12-week line and "N workouts in 12 weeks"; tags as above; no "This week:" line.
-//  2. Arjun's full progress: range line, Overall tag and its rule, workouts per week line, bench press "Getting
-//     stronger", squat "Steady", the tag rule in words; All workouts lists all 26 (10, then Show all).
+//  2. Arjun's full progress: range line, Overall tag, workouts per week line, bench press "Getting stronger", squat
+//     "Steady"; R-551: "How is this worked out?" is closed at first and opens to the score, the tag rule and the
+//     Overall rule; All workouts lists all 26 (10, then Show all).
 //  3. Negative / edge: Rahul "Not enough data yet"; Kabir's older app; Neha's card has no button; a broken read shows
 //     the try-again words; the list asks for each member's workouts only once.
 //  4. Member page: the same lines on Arjun's own page.
 //  5. Computer width: list and Arjun's full progress.
-//  6. Hinglish: the tag and the rule.
+//  6. Hinglish: the tag, and the rule behind "Yeh kaise nikala jaata hai?".
 import { mkdirSync } from 'node:fs';
 
 import { expect, test } from '@playwright/test';
@@ -191,7 +192,6 @@ test('R-535: Training progress shows lines and a tag per member, and the full pr
   await expect(page.getByRole('heading', { name: 'Arjun Mehta', level: 1 })).toBeVisible();
   await expect(main.getByTestId('progress-range')).toHaveText(/^Shared from the member’s app: 26 workouts, \d+ \w+ 2026 to \d+ \w+ 2026\.$/);
   await expect(main.getByTestId('progress-overall')).toContainText('Getting stronger');
-  await expect(main.getByTestId('progress-overall')).toContainText('Overall is “Getting stronger” when more of their main exercises go up than down');
   await expect(main.getByRole('img', { name: /^Workouts per week: / })).toBeVisible();
   const bench = main.getByTestId('exercise-line').filter({ hasText: 'Bench press' });
   const squat = main.getByTestId('exercise-line').filter({ hasText: 'Squat' });
@@ -202,13 +202,24 @@ test('R-535: Training progress shows lines and a tag per member, and the full pr
   await expect(squat).toContainText('Steady');
   await expect(pull).toContainText('Most reps in one set (no weight)');
   await expect(bench.getByRole('img')).toBeVisible();
-  await expect(main.getByTestId('progress-rule')).toContainText('3% or more higher');
-  await expect(main).toContainText('Strength score is the estimated 1-rep max of the day’s heaviest set');
-  for (const bad of ['volume', 'Volume', ' PR ', 'session']) await expect(main).not.toContainText(bad);
+  // R-551: how it is worked out is folded behind one line, closed until tapped.
+  const how = main.getByTestId('progress-how');
+  await expect(how).toBeVisible();
+  await expect(how).not.toHaveAttribute('open', /.*/);
+  await expect(main.getByTestId('progress-rule')).toBeHidden();
   // Opened from the list: read once, kept.
   expect(fake.reads.filter((x) => x === arjunId).length).toBe(before);
   await expectFitsPhone(page, 'on full progress');
   await shot(page, 'progress-2-detail-phone');
+  await how.getByText('How is this worked out?').tap();
+  await expect(how).toHaveAttribute('open', /.*/);
+  await expect(main.getByTestId('progress-rule')).toContainText('3% or more higher');
+  await expect(how).toContainText('Strength score is the estimated 1-rep max of the day’s heaviest set');
+  await expect(how).toContainText('Overall is “Getting stronger” when more of their main exercises go up than down');
+  for (const bad of ['volume', 'Volume', ' PR ', 'session']) await expect(main).not.toContainText(bad);
+  await expectFitsPhone(page, 'on full progress, how it is worked out open');
+  await how.scrollIntoViewIfNeeded();
+  await shot(page, 'progress-2b-how-open-phone', false);
   const all = main.getByTestId('all-workouts');
   await all.scrollIntoViewIfNeeded();
   await expect(all.locator('details')).toHaveCount(10);
@@ -256,6 +267,8 @@ test('R-535: Training progress shows lines and a tag per member, and the full pr
   await page.evaluate(() => localStorage.setItem('forgeai.lang.v1', 'hinglish'));
   await page.reload();
   await expect(main.getByTestId('progress-overall')).toContainText('Strength badh rahi hai', { timeout: 15_000 });
+  await expect(main.getByTestId('progress-rule')).toBeHidden();
+  await main.getByTestId('progress-how').getByText('Yeh kaise nikala jaata hai?').tap();
   await expect(main.getByTestId('progress-rule')).toContainText('Har tag member ke pichhle 6 hafton');
   await expectFitsPhone(page, 'on full progress, Hinglish');
   await shot(page, 'progress-8-detail-hinglish-phone');

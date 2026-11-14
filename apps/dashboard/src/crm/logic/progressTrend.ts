@@ -213,7 +213,10 @@ export interface SharedRange {
   n: number;
   from: DateISO;
   to: DateISO;
-  /** True when the app's 30-workout limit probably cut older workouts off. */
+  /**
+   * True when an older app's 30-workout limit probably cut older workouts off. R-551: an updated app shares up to
+   * 400 workouts since joining, so 30 in under 85 days may also be all there is: the words say "may".
+   */
   capped: boolean;
 }
 

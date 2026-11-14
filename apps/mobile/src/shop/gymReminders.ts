@@ -19,6 +19,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
 
+import { toISO } from '@/lib/date';
 import { usePhonePrefs } from '@/tracker/phone/phonePrefs';
 import { color } from '@/theme/tokens';
 
@@ -44,10 +45,12 @@ type NotificationsModule = typeof import('expo-notifications');
 export const GYM_REMINDERS_KEY = 'forgeai-gym-reminders';
 export const GYM_REMINDERS_SENT_KEY = 'forgeai-gym-reminders-sent';
 export const GYM_REMINDERS_STAMP_KEY = 'forgeai-gym-reminders-stamp';
-/** When this phone joined the gym in the app ({ memberId, at }), for the welcome. */
+/** When this phone joined the gym in the app ({ memberId, at }), for the welcome, and (R-551) where trainer sharing starts. */
 export const GYM_REMINDERS_JOINED_KEY = 'forgeai-gym-reminders-joined';
+/** R-551: a phone that joined before R-86 kept no join day: the first day it shared with trainers ({ memberId, day }). */
+export const GYM_SHARE_SINCE_KEY = 'forgeai-gym-share-since';
 /** Every key above: Leave the gym and Erase all data remove them all. */
-export const GYM_REMINDER_STORAGE_KEYS = [GYM_REMINDERS_KEY, GYM_REMINDERS_SENT_KEY, GYM_REMINDERS_STAMP_KEY, GYM_REMINDERS_JOINED_KEY] as const;
+export const GYM_REMINDER_STORAGE_KEYS = [GYM_REMINDERS_KEY, GYM_REMINDERS_SENT_KEY, GYM_REMINDERS_STAMP_KEY, GYM_REMINDERS_JOINED_KEY, GYM_SHARE_SINCE_KEY] as const;
 
 export const GYM_CHANNEL = 'gym-reminders';
 
@@ -200,6 +203,26 @@ async function readAppJoinedAt(memberId: string): Promise<number | null> {
   if (!v || typeof v !== 'object') return null;
   const o = v as { memberId?: unknown; at?: unknown };
   return o.memberId === memberId && typeof o.at === 'number' ? o.at : null;
+}
+
+/** R-551: the local day this phone joined this gym in the app (noteAppJoin); null when none was kept. */
+export async function appJoinedOn(memberId: string): Promise<string | null> {
+  const at = await readAppJoinedAt(memberId);
+  return at == null ? null : toISO(new Date(at));
+}
+
+/**
+ * R-551: for a phone with no join day kept: the first day it shared with this gym's trainers, kept per member
+ * (`today` the first time). Nothing older than it is ever sent.
+ */
+export async function shareFirstSeenOn(memberId: string, today: string): Promise<string> {
+  const v = await readJson(GYM_SHARE_SINCE_KEY);
+  if (v && typeof v === 'object') {
+    const o = v as { memberId?: unknown; day?: unknown };
+    if (o.memberId === memberId && typeof o.day === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(o.day)) return o.day;
+  }
+  await writeJson(GYM_SHARE_SINCE_KEY, { memberId, day: today });
+  return today;
 }
 
 /** What is set, as a string: changed words, times or colour mean set them again. PURE. */

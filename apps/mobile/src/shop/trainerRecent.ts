@@ -12,6 +12,10 @@
  * covers up to 12 months: at most 400 workouts from the last 366 days, kept under 280000 characters (the server
  * refuses over 300000). Without 0084 the phone cuts that year back to 3 months (`threeMonthsOf`) and sends it the
  * 0053 way. What each workout carries does not change.
+ *
+ * R-551 (owner, 14 Nov 2026: "since joining"; 0084 live; the 12-month words approved): only workouts on or after
+ * the day this member joined THIS gym (`since`, trainerSync.ts sharingSince) ever leave the phone, never an earlier
+ * gym's. The year's cap still holds: the first day sent is the later of the two.
  */
 import { addDays } from '@/lib/date';
 
@@ -22,12 +26,11 @@ export const RECENT_EXERCISES = 20;
 export const RECENT_CHARS = 36000;
 
 /**
- * R-537: OFF until the owner approves the member's new sharing words (draft: docs/progress/SINCE-JOINING.md). The
- * Settings caption (trainerShare.ts TRAINER_WORDS.shareCaptionRecent) still tells the member "the last 3 months", so
- * this phone must not send more than that. Turn it on in the same change as the approved words (a test holds the
- * two together). Off: exactly 0053's 3 months, and member_trainer_share3 is never called.
+ * R-537 / R-551: ON since the owner approved the member's sharing words (14 Nov 2026), in the same change as the
+ * Settings caption (trainerShare.ts TRAINER_WORDS.shareCaptionRecent: "since you joined, up to the last 12 months";
+ * a test holds the two together). Off would mean exactly 0053's 3 months, and member_trainer_share3 never called.
  */
-export const SHARE_A_YEAR: boolean = false;
+export const SHARE_A_YEAR: boolean = true;
 
 /** 0084: a year of workouts (the server takes at most 400, 366 days, 300000 characters). */
 export const YEAR_DAYS = 366;
@@ -76,35 +79,51 @@ const cut = (s: string, max: number): string => Array.from(String(s ?? '').repla
 const kg1 = (w: number): number => Math.round(Math.min(1000, Math.max(0, finite(w))) * 10) / 10;
 const reps = (r: number): number => Math.min(1000, Math.max(0, Math.floor(finite(r))));
 
-/** The first day sent. PURE. */
-export function recentFrom(today: string, limits: RecentLimits = THREE_MONTHS): string {
-  return addDays(today, -(limits.days - 1));
+/**
+ * The first day sent: `limits.days` back, and never before `since` (R-551: the day the member joined this gym;
+ * null = no limit). PURE.
+ */
+export function recentFrom(today: string, limits: RecentLimits = THREE_MONTHS, since: string | null = null): string {
+  const back = addDays(today, -(limits.days - 1));
+  return since && ISO_DAY.test(since) && since > back ? since : back;
 }
 
-/** Newest first: the workouts inside `limits`, the oldest dropped first to stay under its characters. PURE. */
-export function cutToLimits(list: readonly RecentWorkout[], today: string, limits: RecentLimits): RecentWorkout[] {
-  const from = recentFrom(today, limits);
+/** Newest first: the workouts inside `limits` (and on or after `since`), the oldest dropped first to stay under its characters. PURE. */
+export function cutToLimits(list: readonly RecentWorkout[], today: string, limits: RecentLimits, since: string | null = null): RecentWorkout[] {
+  const from = recentFrom(today, limits, since);
   const out = list.filter((w) => w.d >= from && w.d <= today).slice(0, limits.workouts);
   while (out.length > 0 && JSON.stringify(out).length > limits.chars) out.pop();
   return out;
 }
 
+/**
+ * R-551: the first day this phone may share with this gym. `joinedOn`: the day this phone joined the gym in the
+ * app (kept since R-86, 23 Oct 2026). A phone that joined before that has no record: then `firstSeenOn`, the first
+ * day this version shared (kept), so nothing older than that ever goes. Never after today. PURE.
+ */
+export function sharingSinceDay(joinedOn: string | null, firstSeenOn: string, today: string): string {
+  const d = joinedOn && ISO_DAY.test(joinedOn) ? joinedOn : ISO_DAY.test(firstSeenOn) ? firstSeenOn : today;
+  return d > today ? today : d;
+}
+
 /** A year's list cut back to what a server without 0084 takes (3 months, 30 workouts). PURE. */
-export function threeMonthsOf(year: readonly RecentWorkout[], today: string): RecentWorkout[] {
-  return cutToLimits(year, today, THREE_MONTHS);
+export function threeMonthsOf(year: readonly RecentWorkout[], today: string, since: string | null = null): RecentWorkout[] {
+  return cutToLimits(year, today, THREE_MONTHS, since);
 }
 
 /**
  * The recent workouts. `rows`: working sets from `recentFrom(today, limits)` to today, in the order they were done.
- * `names`: each workout's name as the app shows it. `limits`: 3 months (0053, the default) or a year (0084). PURE.
+ * `names`: each workout's name as the app shows it. `limits`: 3 months (0053, the default) or a year (0084).
+ * `since`: the day the member joined this gym (R-551); a workout before it is never in the list. PURE.
  */
 export function trainerRecentFrom(
   rows: readonly RecentSetRow[],
   names: ReadonlyMap<string, string>,
   today: string,
   limits: RecentLimits = THREE_MONTHS,
+  since: string | null = null,
 ): RecentWorkout[] {
-  const from = recentFrom(today, limits);
+  const from = recentFrom(today, limits, since);
   type W = { d: string; at: number; ex: Map<string, { n: string; w: number; r: number; s: number }> };
   const byWorkout = new Map<string, W>();
   for (const row of rows) {
@@ -133,5 +152,5 @@ export function trainerRecentFrom(
     .slice(0, limits.workouts)
     .map(([id, wk]) => ({ d: wk.d, n: cut(names.get(id) ?? '', 60) || 'Workout', x: [...wk.ex.values()].slice(0, RECENT_EXERCISES) }));
   // Never over the server's cap: the oldest go first.
-  return cutToLimits(list, today, limits);
+  return cutToLimits(list, today, limits, since);
 }

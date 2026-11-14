@@ -591,8 +591,8 @@ export async function apiTrainerShare2(key: string, summary: TrainerSummary, rec
 }
 
 /**
- * R-537: the weekly summary plus up to 12 months of workouts (member_trainer_share3, 0084, NOT LIVE until the owner's
- * yes). `missing`: 0084 is not on the server: send 3 months with apiTrainerShare2.
+ * R-537 / R-551: the weekly summary plus up to 12 months of workouts since joining (member_trainer_share3, 0084,
+ * live 14 Nov 2026). `missing`: 0084 is not on the server: send 3 months with apiTrainerShare2.
  */
 export async function apiTrainerShare3(key: string, summary: TrainerSummary, recent: readonly RecentWorkout[]): Promise<TrainerCall<true>> {
   const r = await call('member_trainer_share3', { p_key: key, p_summary: summary, p_recent: recent }, WRITE_MS);

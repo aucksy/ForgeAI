@@ -260,7 +260,7 @@ export function ProgressDetail({ p, today, onMemberPage }: { p: MemberProgress; 
       {range ? (
         <p style={small} data-testid="progress-range">
           {t('Shared from the member’s app: {n} workouts, {from} to {to}.', { n: range.n, from: formatDay(range.from), to: formatDay(range.to) })}
-          {range.capped ? ` ${t('The app shares at most 30 workouts, so older ones are not here.')}` : ''}
+          {range.capped ? ` ${t('An older MettleUp app shares at most 30 workouts, so older ones may not be here.')}` : ''}
         </p>
       ) : null}
       {upsell ? (
@@ -273,9 +273,6 @@ export function ProgressDetail({ p, today, onMemberPage }: { p: MemberProgress; 
         <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: space.sm, marginTop: space.sm }} data-testid="progress-overall">
           <strong style={{ fontFamily: font.body, fontSize: 16, color: color.ink }}>{t('Overall')}</strong>
           <TrendPill trend={overall} />
-          <p style={{ ...small, flexBasis: '100%' }}>
-            {t('Overall is “Getting stronger” when more of their main exercises go up than down, and “Dropping” when more go down.')}
-          </p>
         </div>
       ) : null}
 
@@ -295,12 +292,7 @@ export function ProgressDetail({ p, today, onMemberPage }: { p: MemberProgress; 
       )}
 
       <p style={label}>{t('Strength score, main exercises')}</p>
-      <p style={small}>
-        {t('Strength score is the estimated 1-rep max of the day’s heaviest set, in kg. It uses the same maths as the member’s app. So you can fairly compare a heavy set of 5 reps with a lighter set of 10 reps.')}
-      </p>
-      <p style={small} data-testid="progress-rule">
-        {t('Each tag compares the member’s best strength score from the last 6 weeks with the 6 weeks before. It says “Getting stronger” when it is 3% or more higher. It says “Dropping” when it is 3% or more lower. It says “Steady” for anything in between. It says “Not enough data yet” when there are fewer than 3 workouts in those 12 weeks, or none in one half.')}
-      </p>
+      <HowWorkedOut />
       {!p.hasRecent ? (
         <>
           <p style={{ ...small, marginTop: space.sm }}>{t('The member’s app is an older version. The lines show here after they update the MettleUp app.')}</p>
@@ -338,6 +330,31 @@ export function ProgressDetail({ p, today, onMemberPage }: { p: MemberProgress; 
         {onMemberPage ? 'Body weight, photos and notes are never shared. For every workout, use “Full workout history” below.' : 'Body weight, photos and notes are never shared.'}
       </p>
     </div>
+  );
+}
+
+/**
+ * R-551 (owner, 14 Nov 2026: the rule text before the charts felt crammed): how the score and the tags are worked
+ * out, folded behind one line, closed until tapped.
+ */
+function HowWorkedOut() {
+  return (
+    <details data-testid="progress-how" style={{ minWidth: 0 }}>
+      <summary style={{ cursor: 'pointer', fontFamily: font.body, fontSize: 14, color: color.ink, textDecoration: 'underline', textUnderlineOffset: 3, padding: `${space.xs}px 0` }}>
+        {t('How is this worked out?')}
+      </summary>
+      <div style={{ display: 'grid', gap: space.xs, marginTop: space.xs }}>
+        <p style={small}>
+          {t('Strength score is the estimated 1-rep max of the day’s heaviest set, in kg. It uses the same maths as the member’s app. So you can fairly compare a heavy set of 5 reps with a lighter set of 10 reps.')}
+        </p>
+        <p style={small} data-testid="progress-rule">
+          {t('Each tag compares the member’s best strength score from the last 6 weeks with the 6 weeks before. It says “Getting stronger” when it is 3% or more higher. It says “Dropping” when it is 3% or more lower. It says “Steady” for anything in between. It says “Not enough data yet” when there are fewer than 3 workouts in those 12 weeks, or none in one half.')}
+        </p>
+        <p style={small}>
+          {t('Overall is “Getting stronger” when more of their main exercises go up than down, and “Dropping” when more go down.')}
+        </p>
+      </div>
+    </details>
   );
 }
 

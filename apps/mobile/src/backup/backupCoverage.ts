@@ -96,6 +96,7 @@ export const STORAGE_LEFT_OUT: Readonly<Record<string, string>> = {
   'forgeai-gym-reminders-sent': 'gym reminders bookkeeping',
   'forgeai-gym-reminders-stamp': 'gym reminders bookkeeping',
   'forgeai-gym-reminders-joined': 'gym reminders bookkeeping',
+  'forgeai-gym-share-since': 'R-551: the first day trainer sharing may cover on this phone (from the gym link)',
   'forgeai-gym-notice-alerts': 'which gym notices already popped up on this phone (bookkeeping)',
   'forgeai-gym-push-token': "this phone's push address, saved with the gym (each phone gets its own)",
   'forgeai-gym-leave-pending': 'gym leave in progress',

@@ -92,10 +92,12 @@ describe('a year of workouts (0084)', () => {
 });
 
 describe('what the member is told', () => {
-  // R-537: the phone never sends more than the Settings caption says. The year waits for the owner's yes to the
-  // new words (docs/progress/SINCE-JOINING.md); then both change together.
-  it('a year is sent only once the caption says 12 months', () => {
-    if (SHARE_A_YEAR) expect(TRAINER_WORDS.shareCaptionRecent).toMatch(/12 months/);
-    else expect(TRAINER_WORDS.shareCaptionRecent).toMatch(/last 3 months/);
+  // R-537 / R-551: the phone never sends more than the Settings caption says. The owner approved these words
+  // exactly (14 Nov 2026), and with them the year is switched on.
+  it('a year is sent, and the caption says so in the approved words', () => {
+    expect(SHARE_A_YEAR).toBe(true);
+    expect(TRAINER_WORDS.shareCaptionRecent).toBe(
+      "Your phone sends your gym your workouts since you joined, up to the last 12 months. For each workout, it sends the day, the workout's name, and, for each exercise, your heaviest set and how many sets you did. Your gym and your trainers see this as charts, to check that you are getting stronger. They never see your body weight, photos or notes. If you switch this off or leave the gym, the gym deletes it at once.",
+    );
   });
 });
