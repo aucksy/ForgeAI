@@ -1,0 +1,35 @@
+# Part u517, flow a (R-517, owner 14 Nov 2026: "let the logo of the gym and the name of the gym be bigger, and
+# the logo can be tappable"). A gym WITHOUT a logo: run-device-qa.sh made a fresh "QA UAT Gym" (uat_gym.py setup L,
+# no colours, no logo). The member joins it; the Gym tab's title is the gym's own name with "Your gym" (or "Pay at
+# the desk") under it, as before, and there is no logo to tap. Picture rel-r517-01-no-logo-header.
+# CODE and GYM are passed by run-device-qa.sh (-e); no `env:` default here (trap 22).
+appId: com.mettleup.app
+---
+- launchApp
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 90000
+- runFlow:
+    file: sub-join-gym.yaml
+    env:
+      CODE: "${CODE}"
+      NAME: "Lata"
+      GYM: "${GYM}"
+- tapOn:
+    text: "^Gym$"
+    index: 0
+# in-view: the page title; the Gym tab just opened at its top
+- extendedWaitUntil:
+    visible: "^${GYM}$"
+    timeout: 30000
+# in-view: the line right under the page title
+- extendedWaitUntil:
+    visible: "^(Your gym|Pay at the desk)$"
+    timeout: 15000
+# Negative: a gym with no logo has no logo button and no full-size view.
+- assertNotVisible: "Gym logo, tap to see it bigger"
+- assertNotVisible: "Close the logo"
+- takeScreenshot: rel-r517-01-no-logo-header

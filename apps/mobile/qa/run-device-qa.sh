@@ -207,7 +207,7 @@ OLD_PARTS="a b c d e f g h h3 p1 p2 i link i2 j j2 j3 k l n p9 r br inv invf p7 
 # R-123: ubk = a fresh install restores a backup FILE from the welcome screen (routines in order,
 # settings, profile), then saves a new one from Settings -> Back up and restore (qa/uat-bk.yaml).
 UAT_PARTS="uh ur un ud ue ubk ub uf ua uv ug uk"
-GATE_PARTS="w dnd longrest anim mk clip uat uatc u355 u344 u358 u366 usel ugym u15 u76 u198 u194 u401 u199 u404 u438 u444 ulook uage u439 u436 u336 u61 upic u452 u501 u456 u458 u454 u461 u482 u484 utour"
+GATE_PARTS="w dnd longrest anim mk clip uat uatc u355 u344 u358 u366 usel ugym u15 u76 u198 u194 u401 u199 u404 u438 u444 ulook uage u439 u436 u336 u61 upic u452 u501 u456 u458 u454 u461 u482 u484 u517 utour"
 qa_list() { echo "$1" | tr ',;' '  ' | tr '[:upper:]' '[:lower:]' | xargs; }
 QA_ONLY_LIST=$(qa_list "${QA_ONLY:-}")
 QA_EXTRA_LIST=$(qa_list "${QA_EXTRA:-}")
@@ -2026,6 +2026,7 @@ part_uat() {
   part_u461
   part_u482
   part_u484
+  part_u517
   part_ulook
   uat_gather
 }
@@ -2488,6 +2489,49 @@ part_u458() {
   [ $rc = 0 ] || status=1
   return $rc
 }
+# R-517 (owner, 14 Nov 2026: "let the logo of the gym and the name of the gym be bigger, and the logo can be
+# tappable"): the Gym tab's header. A FRESH "QA UAT Gym" (slot L; never FORGE1 / RAMS01) with no logo: (a) joined,
+# its name is the page title, no logo to tap; then its owner gives it a 2:1 logo (uat_logo.py logo L): (b) the big
+# logo and name, a tap opens the logo full size, closed by the X, by Back and by a tap on the dark area; (c) the
+# same at the largest text size (font 2.0, put back after). Starts from the demo. Also runs alone with only=u517.
+# Pictures rel-r517-*.png.
+part_u517() {
+  local setup code out font rc=0
+  export XJ_STATE_DIR="${XJ_STATE_DIR:-${RUNNER_TEMP:-/tmp}/xj-state}"
+  mkdir -p "$XJ_STATE_DIR"
+  chmod 700 "$XJ_STATE_DIR" 2>/dev/null || true
+  gate_flow u517_seed gate-demo.yaml || { status=1; return 1; }
+  setup=$(python3 "$QA_DIR/uat_gym.py" setup L "$(adb shell date +%Y-%m-%d | tr -d '')" 30 "Lata Logo" 9876500517 2>&1)
+  echo "$setup" | grep '^::add-mask::' || true
+  echo "$setup" | grep -vE '^(CODE=|ENDS=|::add-mask::)' | sed 's/^/[u517 gym] /' | tee -a "$OUT/timeline.txt"
+  code=$(echo "$setup" | sed -n 's/^CODE=//p' | tail -1)
+  if [ -z "$code" ]; then
+    log "PART U517 FAILED: the test gym could not be made (uat_gym.py setup)"
+    status=1
+    return 1
+  fi
+  if uat_flow uatr517a uat-rel-r517-a-no-logo.yaml -e "CODE=$code" -e "GYM=QA UAT Gym"; then
+    out=$(python3 "$QA_DIR/uat_logo.py" logo L 2>&1)
+    echo "$out" | sed 's/^/[u517 logo] /' | tee -a "$OUT/timeline.txt"
+    if echo "$out" | grep -q '^LOGO='; then
+      uat_flow uatr517b uat-rel-r517-b-logo.yaml -e "GYM=QA UAT Gym" || rc=1
+      font=$(adb shell settings get system font_scale | tr -d '')
+      adb shell settings put system font_scale 2.0 >/dev/null 2>&1 || true
+      log "UAT R517 c: font scale $(adb shell settings get system font_scale | tr -d '') (was ${font:-1.0})"
+      uat_flow uatr517c uat-rel-r517-c-big-text.yaml -e "GYM=QA UAT Gym" || rc=1
+      adb shell settings put system font_scale "${font:-1.0}" >/dev/null 2>&1 || true
+      log "UAT R517: font scale back to $(adb shell settings get system font_scale | tr -d '')"
+    else
+      log "PART U517 FAILED: the test gym's logo could not be set (uat_logo.py logo L)"
+      rc=1
+    fi
+  else
+    rc=1
+  fi
+  python3 "$QA_DIR/uat_gym.py" sign-out L 2>&1 | sed 's/^/[u517 gym] /' | tee -a "$OUT/timeline.txt"
+  [ "$rc" = 0 ] || status=1
+  return $rc
+}
 # F56 MettleUp Plus (owner R-461, 12 Nov 2026): the free and paid parts, switched on for this phone only through
 # the QA build's 'memberPlan' stand-in (mettleup://qa-plan): switched off first (no row, charts open), the free
 # month's "5 days left" and "has ended" pop-ups (once each, also after the app is killed), the locked charts, a
@@ -2713,6 +2757,7 @@ qa_runs u458 && ! qa_runs uat && { log "gate part U458 begins"; part_u458; }
 qa_runs u461 && ! qa_runs uat && { log "gate part U461 begins"; part_u461; }
 qa_runs u482 && ! qa_runs uat && { log "gate part U482 begins"; part_u482; }
 qa_runs u484 && ! qa_runs uat && { log "gate part U484 begins"; part_u484; }
+qa_runs u517 && ! qa_runs uat && { log "gate part U517 begins"; part_u517; }
 # Picture tour (owner, 14 Nov 2026): every first-launch screen of a fresh install, photographed in order (intro,
 # welcome, Join my gym, Bring workouts, Google without the 18+ tick, the 3 setup questions). Not a test; only=utour.
 qa_runs utour && { log "gate part UTOUR begins"; uat_flow utour tour-first-run.yaml || status=1; }

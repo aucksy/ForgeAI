@@ -1,6 +1,21 @@
 # ForgeAI progress
 
 ## Waiting for release (R-266: tag only when the owner says "release")
+- R-517 GYM TAB: BIGGER GYM LOGO AND NAME; TAP THE LOGO TO SEE IT FULL SIZE (owner, 14 Nov 2026, with a picture of
+  the Gym tab: "let the logo of the gym and the name of the gym be bigger, and the logo can be tappable so people can
+  tap on it and see the enlarged logo"). Gym tab only (Workout and Profile keep the small 28 dp mark). New header
+  src/shop/GymHeaderMark.tsx (sizes and words in src/shop/gymHeader.ts, PURE): logo 56 dp high (was 28) in its own
+  shape (D14: shown whole, square up to 2:1 wide, rounded corners, thin border, never shrinks); the gym's name 22 sp
+  in the heading font (Sora bold + the gym's italic choice), main ink colour, up to 2 lines; "Your gym" / "Pay at the
+  desk" small under the name. A tap on the logo ("Gym logo, tap to see it bigger") opens a full-screen dark view:
+  the logo as large as fits in its own shape (24 dp sides, at most 60% of the height), the gym's name under it, an X
+  ("Close the logo"); Back and a tap anywhere close it too. A gym with only colours, or a logo that fails to load:
+  the dot and the name, nothing to tap. An unbranded gym is unchanged (its name is the page title). TalkBack still
+  says "Your gym: <name>". Tests: test/shop/r517GymHeader.test.ts (12). Phone: qa-device part u517 (in the "uat"
+  chain, shard 5-uat-b; alone with only=u517): flows uat-rel-r517-a-no-logo / -b-logo / -c-big-text (font 2.0),
+  pictures rel-r517-01..06.
+  What's new draft (feature, go /shop): "Your gym's logo and name are bigger on the Gym tab. Tap the logo to see it
+  full size." (member-words: owner's brief wording, short lines)
 - R-506/R-510 PHASE 3, ADMIN-APP ALERTS WITH THE APP CLOSED + WHEN THE REST COME (same yes as phase 1).
   supabase/migrations/0076_panel_web_push.sql (NOT APPLIED; apply after 0075): gym_web_push (one browser per sign-in
   key: owner key, or a staff sign-in from gym_sessions; RLS on, no grants; push company hosts allowlisted: FCM,

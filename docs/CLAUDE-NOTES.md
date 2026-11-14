@@ -16,6 +16,16 @@ Done: tracker #97 (Q&A, status IDEA, my first view + 3 questions) and feature ro
 (asked him to confirm). Do NOT build until he decides. Also added rows F204 (self sign-up), F205 (pop-ups both ways),
 F206 (Ask a trainer paid-only).
 
+## R-517. Gym tab: bigger gym logo and name, and tap the logo to see it full size — 14 Nov 2026
+He sent a picture of the Gym tab (big "Gym" title, a small ~28 px round logo with "Crispy Curves" in small grey,
+then "Your gym") and said: "On this gym section in the app, let the logo of the gym and the name of the gym be
+bigger, and the logo can be tappable so people can tap on it and see the enlarged logo."
+Done (Gym tab only; Workout and Profile keep the small mark): logo 56 dp in its own shape (kept D14: a logo is shown
+whole, never cut into a circle; rounded corners and a thin border), the name 22 sp bold in the gym's heading style,
+2 lines at most, "Your gym" small under it. Tap the logo: full-screen dark view, logo as large as fits, the name
+under it, X / Back / tap anywhere closes. No logo: the dot and the name, nothing to tap. Phone part u517 (pictures
+with a logo, full size, no logo, largest text). Waits for release; What's new line in PROGRESS.
+
 ## R-516. Next-set box as 2 lines: Previous / Done / to go, then Extra — 14 Nov 2026 (MOCK ONLY, waiting for "build it")
 Owner (picture, Dumbbell Curl, box "Next set: 20 kg × 12 · Done: 720 of today's 840 kg"): "2 lines. First line, previous
 total set volume, then we show how much kg, and then XX kg done today to beat. Second line is excess kg done of total

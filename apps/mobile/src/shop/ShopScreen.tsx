@@ -22,7 +22,6 @@ import { Card, Chip, GhostButton, Icon, Screen, type IconName } from '@/componen
 import { InlineError } from '@/components/ui/InlineError';
 import { CHIP_TOUCH_SLOP } from '@/components/ui/Chip';
 import { PressScale } from '@/components/ui/PressScale';
-import { GymBrandMark } from '@/components/GymBrandMark';
 import { BrandCorner } from '@/components/brand/BrandCorner';
 import { dismissHint, hintDue, HINT_TEXT } from '@/lib/layoutHints';
 import { useGymTheme } from '@/theme/gymTheme';
@@ -40,6 +39,7 @@ import { readGymDiets, syncGymDiets, syncGymMeasures } from '@/tracker/services/
 import { useGymSectionRequest } from './gymSectionRequest';
 import { useRenewRequest } from './renewRequest';
 import { GYM_SECTION_LABELS, gymSectionShown, gymSections, gymShopOn, type GymSection } from './gymTab';
+import { GymHeaderMark } from './GymHeaderMark';
 import { GymHoursRow } from './GymHoursRow';
 import { GymBusyCard } from './GymBusyCard';
 import { AskTrainerRow } from './AskTrainerRow';
@@ -280,10 +280,10 @@ function GymShop({ link }: { link: GymLink }) {
           <RefreshControl refreshing={pulling} onRefresh={() => void refresh(true)} colors={[color.accent]} tintColor={color.accent} progressBackgroundColor={color.surfaceRaised} />
         }
       >
+        {/* R-517 (owner, 14 Nov 2026): the gym's logo and name, bigger; the logo opens full size. */}
         {branded ? (
-          <View style={{ gap: space.xs, marginBottom: space.md }}>
-            <GymBrandMark />
-            <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkSecondary }}>{tagline}</Text>
+          <View style={{ marginBottom: space.md }}>
+            <GymHeaderMark tagline={tagline} />
           </View>
         ) : null}
         {!hasList && loading ? (

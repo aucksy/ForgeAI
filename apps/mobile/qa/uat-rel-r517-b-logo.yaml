@@ -1,0 +1,105 @@
+# Part u517, flow b (R-517): the same gym after its owner gave it a logo (run-device-qa.sh: uat_logo.py logo L, a
+# 2:1 gold ring and white bar, as the admin app's Branding page saves one). As the member "Lata":
+#  1. the app picks the logo up (a launch saves the new look; the next launch shows it, as flow F146);
+#  2. the Gym tab: "Gym" over the big logo and the gym's name, "Your gym" small under the name
+#     (picture rel-r517-02-header-logo);
+#  3. a tap on the logo ("Gym logo, tap to see it bigger") opens it full size on a dark screen with the gym's
+#     name under it (rel-r517-03-logo-full-size); the X closes it;
+#  4. it opens again and the phone's Back closes it; it opens again and a tap on the dark area closes it.
+# GYM is passed by run-device-qa.sh (-e); no `env:` default here (trap 22).
+appId: com.mettleup.app
+---
+# ---------------------------------------------------------------- 1. the logo reaches the app
+- stopApp
+- launchApp
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: "^Workout$"
+    timeout: 60000
+- waitForAnimationToEnd:
+    timeout: 8000
+- stopApp
+- launchApp
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: "Your gym: ${GYM}"
+    timeout: 30000
+    optional: true
+- runFlow:
+    when:
+      notVisible: "Your gym: ${GYM}"
+    commands:
+      - stopApp
+      - launchApp
+      - tapOn:
+          text: "Wait"
+          optional: true
+      - extendedWaitUntil:
+          visible: "Your gym: ${GYM}"
+          timeout: 45000
+# The gym's opening and the home-screen icon offer may come with the new logo: wait them out ("Not now").
+- runFlow: sub-after-join.yaml
+# ---------------------------------------------------------------- 2. the Gym tab's header
+- tapOn:
+    text: "^Gym$"
+    index: 0
+# in-view: the Gym tab just opened at its top, where the header is
+- extendedWaitUntil:
+    visible: "Gym logo, tap to see it bigger"
+    timeout: 30000
+# in-view: the name sits next to the logo just seen
+- assertVisible: "Your gym: ${GYM}"
+# in-view: the line under the name
+- assertVisible: "^(Your gym|Pay at the desk)$"
+- assertNotVisible: "Close the logo"
+- takeScreenshot: rel-r517-02-header-logo
+# ---------------------------------------------------------------- 3. full size, closed with the X
+- tapOn: "Gym logo, tap to see it bigger"
+# in-view: the full-size view covers the screen; it never scrolls
+- extendedWaitUntil:
+    visible: "Close the logo"
+    timeout: 10000
+# in-view: inside the full-size view
+- assertVisible: "${GYM} logo, full size"
+# in-view: the gym's name under the full-size logo
+- assertVisible: "^${GYM}$"
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: rel-r517-03-logo-full-size
+- tapOn: "Close the logo"
+- extendedWaitUntil:
+    notVisible: "Close the logo"
+    timeout: 10000
+# in-view: the view closed over the header just seen
+- assertVisible: "Gym logo, tap to see it bigger"
+# ---------------------------------------------------------------- 4. closed with Back, then with a tap outside
+- tapOn: "Gym logo, tap to see it bigger"
+# in-view: the full-size view covers the screen; it never scrolls
+- extendedWaitUntil:
+    visible: "Close the logo"
+    timeout: 10000
+- back
+- extendedWaitUntil:
+    notVisible: "Close the logo"
+    timeout: 10000
+# Back closed only the view: the Gym tab is still there.
+# in-view: the view closed over the header just seen
+- assertVisible: "Gym logo, tap to see it bigger"
+- tapOn: "Gym logo, tap to see it bigger"
+# in-view: the full-size view covers the screen; it never scrolls
+- extendedWaitUntil:
+    visible: "Close the logo"
+    timeout: 10000
+# The dark area under the gym's name.
+- tapOn:
+    point: "50%,92%"
+- extendedWaitUntil:
+    notVisible: "Close the logo"
+    timeout: 10000
+# in-view: the view closed over the header just seen
+- assertVisible: "Gym logo, tap to see it bigger"
+- takeScreenshot: rel-r517-04-closed

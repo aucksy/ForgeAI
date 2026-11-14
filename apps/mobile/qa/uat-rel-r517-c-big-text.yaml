@@ -1,0 +1,38 @@
+# Part u517, flow c (R-517): the largest text size (run-device-qa.sh sets font scale 2.0 before this flow and
+# puts it back after). The Gym tab's logo stays whole next to the gym's name (the name wraps, the logo never
+# shrinks), and the full-size view still fits (pictures rel-r517-05-big-text-header, rel-r517-06-big-text-full-size).
+# GYM is passed by run-device-qa.sh (-e); no `env:` default here (trap 22).
+appId: com.mettleup.app
+---
+- stopApp
+- launchApp
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: "Your gym: ${GYM}"
+    timeout: 60000
+- tapOn:
+    text: "^Gym$"
+    index: 0
+# in-view: the Gym tab just opened at its top, where the header is
+- extendedWaitUntil:
+    visible: "Gym logo, tap to see it bigger"
+    timeout: 30000
+# in-view: the name sits next to the logo just seen
+- assertVisible: "Your gym: ${GYM}"
+- takeScreenshot: rel-r517-05-big-text-header
+- tapOn: "Gym logo, tap to see it bigger"
+# in-view: the full-size view covers the screen; it never scrolls
+- extendedWaitUntil:
+    visible: "Close the logo"
+    timeout: 10000
+# in-view: inside the full-size view
+- assertVisible: "${GYM} logo, full size"
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: rel-r517-06-big-text-full-size
+- tapOn: "Close the logo"
+- extendedWaitUntil:
+    notVisible: "Close the logo"
+    timeout: 10000
