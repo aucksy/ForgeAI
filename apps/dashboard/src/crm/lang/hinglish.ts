@@ -38,6 +38,10 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   Challenges: 'Challenges',
   Branding: 'Logo aur rang',
   'Gym timings': 'Gym ka time',
+  // F207: the gym's own free web page (menu row).
+  'Your web page': 'Aapka web page',
+  'Your gym’s free page: fees, timings and photos': 'Aapke gym ka free page: fees, timings aur photos',
+  'The gym’s free web page': 'Gym ka free web page',
   // R-526 (14 Nov 2026): the menu's group headings and Set up your gym. Words: owner checks at UAT.
   'Set up your gym': 'Apna gym set up karo',
   Training: 'Training',
@@ -278,7 +282,7 @@ export const HINGLISH: Readonly<Record<string, string>> = {
     'Members ko unki app mein dikhta hai ki gym kab khula hai, aur aapke web page par bhi dikhta hai.',
   'Set the price of each plan and the joining fee. Your web page shows them too.':
     'Har plan ka daam aur joining fee set karo. Aapke web page par bhi yeh dikhte hain.',
-  // R-523: hidden until the gym web page is live (getStarted.ts webPage).
+  // R-523: shown once the gym's server has the web page part (getStarted.ts webPage).
   'Make your free gym web page': 'Apna free gym web page banao',
   'People who may join can see your fees, timings and photos, and send you a question.':
     'Join karne wale log aapki fees, timings aur photos dekh sakte hain, aur aapko sawaal bhej sakte hain.',

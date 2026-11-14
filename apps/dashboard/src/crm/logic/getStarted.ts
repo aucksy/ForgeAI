@@ -24,10 +24,11 @@ export interface Step {
 }
 
 /**
- * R-523 (owner, 14 Nov 2026): "Make your free gym web page" (F207). HIDDEN until the gym page is live: pass
- * `webPage` only once the gym server has the page (docs/gym-page/PLAN.md) and the set-up screen exists; until then
- * the step is not in the list at all (never a step that opens nothing or can never tick). It ticks itself when the
- * page is published. Its hint must not mention the AI helper for visitors until that helper is live (F208).
+ * R-523 (owner, 14 Nov 2026): "Make your free gym web page" (F207). Shown once the gym server has the web page part
+ * (0080, live 14 Nov) and the gym is online: GetStartedCard passes `webPage` from gympage/pageState.ts, and the step
+ * opens Settings -> Your web page (ui/screens/WebPage.tsx). Without it the step is not in the list at all (never a step
+ * that opens nothing or can never tick). It ticks itself when the page is published. Its hint must not mention the AI
+ * helper for visitors until that helper is live (F208).
  */
 export interface WebPageState {
   published: boolean;

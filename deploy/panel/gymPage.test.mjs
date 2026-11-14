@@ -21,7 +21,7 @@ import {
   timingRows,
   whatsappShare,
 } from './gymPage.js';
-import { ASK_PER_DAY, checkAsk, checkReport, handleGymPageHost, mobileOf, notHerePage, sendAnswer } from './gymPageServe.js';
+import { ASK_PER_DAY, checkAsk, checkReport, handleGymPageHost, isWebp, mobileOf, notHerePage, photoObjectPath, sendAnswer } from './gymPageServe.js';
 import { routeFor } from './hosts.js';
 import { sqliteD1 } from './sqliteD1.mjs';
 
@@ -269,4 +269,47 @@ test('the question form: sent once checked; NOT_READY before the gym server has 
   const over = await handleGymPageHost(ask(), env, ctx, url, rpc);
   assert.equal(over.status, 429);
   assert.deepEqual(await over.json(), { error: 'LIMIT' });
+}));
+
+// 0082 (R-529): a page's photo comes from our own Supabase storage, read with the public app key; the gym server's read
+// rule decides, and anything it refuses is a plain 404.
+test('photos: /p/<gym>/<id>.webp is read from the private bucket; any refusal or odd file is a plain 404', quiet(async () => {
+  const gym = '0f0e0d0c-0b0a-4908-8706-050403020100';
+  const id = 'a'.repeat(32);
+  assert.equal(photoObjectPath(`/p/${gym}/${id}.webp`), `${gym}/${id}.webp`);
+  for (const bad of [`/p/${gym}/${id}.jpg`, `/p/${gym}/../${id}.webp`, `/p/abc/${id}.webp`, `/p/${gym}/${'a'.repeat(31)}.webp`, `/p/${gym}/${id}.webp/x`]) {
+    assert.equal(photoObjectPath(bad), null, bad);
+  }
+  const webp = new Uint8Array([...'RIFF'].map((c) => c.charCodeAt(0)).concat([1, 0, 0, 0], [...'WEBP'].map((c) => c.charCodeAt(0)), [0, 0, 0, 0]));
+  assert.equal(isWebp(webp), true);
+  assert.equal(isWebp(new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0, 0, 0, 0, 0, 0, 0, 0, 0])), false);
+
+  const env = { GYM_PAGES: 'live' };
+  const asked = [];
+  const answer = { status: 200, body: webp };
+  const fetchImpl = async (u, init) => (asked.push({ u, key: init.headers.apikey }), new Response(answer.body, { status: answer.status }));
+  const { rpc } = rpcOf({ status: 200, data: null });
+  const url = new URL(`https://join.mettleup.fit/p/${gym}/${id}.webp`);
+  const r = await handleGymPageHost(get(url.pathname), env, ctx, url, rpc, { appKey: 'pub-key', fetchImpl, cache: null });
+  assert.equal(r.status, 200);
+  assert.equal(r.headers.get('Content-Type'), 'image/webp');
+  assert.match(r.headers.get('Cache-Control'), /max-age=3600/);
+  assert.equal(r.headers.get('X-Content-Type-Options'), 'nosniff');
+  assert.deepEqual(asked[0], { u: `https://hdxzqbdiokjklnypfisq.supabase.co/storage/v1/object/authenticated/gym-page-photos/${gym}/${id}.webp`, key: 'pub-key' });
+
+  // Not on the page row, taken down by HQ, or gone: storage says 400 -> 404. Not WebP: 404. Down: 503.
+  answer.status = 400;
+  answer.body = '{"error":"not_found"}';
+  assert.equal((await handleGymPageHost(get(url.pathname), env, ctx, url, rpc, { appKey: 'pub-key', fetchImpl, cache: null })).status, 404);
+  answer.status = 200;
+  answer.body = '<html>';
+  assert.equal((await handleGymPageHost(get(url.pathname), env, ctx, url, rpc, { appKey: 'pub-key', fetchImpl, cache: null })).status, 404);
+  answer.status = 502;
+  assert.equal((await handleGymPageHost(get(url.pathname), env, ctx, url, rpc, { appKey: 'pub-key', fetchImpl, cache: null })).status, 503);
+  // Another shape under /p/ never reaches storage; switched off, nothing does.
+  const n = asked.length;
+  const odd = new URL(`https://join.mettleup.fit/p/${gym}/x.webp`);
+  assert.equal((await handleGymPageHost(get(odd.pathname), env, ctx, odd, rpc, { appKey: 'pub-key', fetchImpl, cache: null })).status, 404);
+  assert.equal((await handleGymPageHost(get(url.pathname), OFF, ctx, url, rpc, { appKey: 'pub-key', fetchImpl, cache: null })).status, 404);
+  assert.equal(asked.length, n);
 }));

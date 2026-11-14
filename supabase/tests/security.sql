@@ -95,6 +95,9 @@ declare
     -- page (terms ticked, not hidden by HQ, gym not paused); the question form has daily limits (40 per gym, 3 per
     -- number), the report form 50 per page; nothing returns a member, staff, money or the phone unless show_phone.
     'owner_gym_page','owner_save_gym_page','gym_page_public','gym_page_ask_send','gym_page_report_send',
+    -- 0082: the page's photos. A slot: the OWNER key only (12 open, 60 a day). The two storage checks are called by the
+    -- storage rules AS the uploader or reader (anon), like _photo_ticket_ok; each answers only yes or no for one file name.
+    'owner_gym_page_photo_slot','_gym_page_photo_upload_ok','_gym_page_photo_read_ok',
     -- 0079: a person's job name on Staff & sign-in (checks the key first: the gym OWNER only; a desk key gets OWNER_ONLY).
     'owner_set_person_job',
     -- 0060: Pay MettleUp (each checks the key first: the gym OWNER only; a desk key gets OWNER_ONLY).

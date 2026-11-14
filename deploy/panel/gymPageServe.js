@@ -248,6 +248,85 @@ export function handleReport(request, env, rpc, now = new Date()) {
   });
 }
 
+// ------------------------------------------------------------------ the page's photos (0082)
+
+const SUPABASE = 'https://hdxzqbdiokjklnypfisq.supabase.co';
+/** How long a photo is kept at the edge and in the browser. Short, so MettleUp HQ taking a page down also takes its photos. */
+const PHOTO_SECONDS = 3600;
+/** The bucket's own limit is 1 MB; anything bigger is not one of ours. */
+const PHOTO_MAX_BYTES = 1048576;
+
+/**
+ * /p/<gym_id>/<photo_id>.webp -> the file's place in the private bucket gym-page-photos, "<gym_id>/<photo_id>.webp";
+ * null for any other address. Only the shape the admin app uploads (0082: a gym's uuid, a 32-letter id). PURE.
+ */
+export function photoObjectPath(pathname) {
+  const m = /^\/p\/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})\/([0-9a-f]{32})\.webp$/.exec(String(pathname ?? ''));
+  return m ? `${m[1]}/${m[2]}.webp` : null;
+}
+
+/** Is this a WebP file ("RIFF....WEBP")? PURE. */
+export function isWebp(bytes) {
+  const b = bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes ?? []);
+  const at = (i, s) => [...s].every((c, j) => b[i + j] === c.charCodeAt(0));
+  return b.length > 12 && at(0, 'RIFF') && at(8, 'WEBP');
+}
+
+function noPhoto(status = 404) {
+  return new Response(null, { status, headers: { 'Cache-Control': 'public, max-age=60', 'X-Content-Type-Options': 'nosniff' } });
+}
+
+/**
+ * One photo: read from the private bucket with the public app key. The gym server's read rule (0082
+ * _gym_page_photo_read_ok) answers only for a photo on that gym's page row, not taken down by HQ, gym not paused; any
+ * other answer is a plain 404. Kept PHOTO_SECONDS at the edge. `fetchImpl` and `cache` are for tests.
+ */
+export async function servePhoto(request, ctx, objectPath, { key, fetchImpl = fetch, cache = globalThis.caches?.default } = {}) {
+  if (request.method !== 'GET' && request.method !== 'HEAD') return noPhoto(405);
+  if (!key) {
+    console.error('[gym-page] photo: no app key passed in (worker.js)');
+    return noPhoto(503);
+  }
+  const cacheKey = new Request(`https://cache.forgeai/gym-page-photo/${objectPath}`);
+  if (cache) {
+    try {
+      const hit = await cache.match(cacheKey);
+      if (hit) return request.method === 'HEAD' ? new Response(null, { headers: hit.headers }) : hit;
+    } catch (e) {
+      console.warn('[gym-page] photo: edge cache read failed', e instanceof Error ? e.message : e);
+    }
+  }
+  let r;
+  try {
+    r = await fetchImpl(`${SUPABASE}/storage/v1/object/authenticated/gym-page-photos/${objectPath}`, { headers: { apikey: key } });
+  } catch (e) {
+    console.error('[gym-page] photo: the gym server could not be reached', e);
+    return noPhoto(503);
+  }
+  // Storage answers 400 "Object not found" for a file that is missing OR one the read rule does not allow.
+  if (r.status >= 400 && r.status < 500) return noPhoto(404);
+  if (!r.ok) {
+    console.error('[gym-page] photo: the gym server refused', r.status);
+    return noPhoto(503);
+  }
+  const body = new Uint8Array(await r.arrayBuffer());
+  if (body.length > PHOTO_MAX_BYTES || !isWebp(body)) {
+    console.error('[gym-page] photo: not a WebP file under 1 MB', objectPath, body.length);
+    return noPhoto(404);
+  }
+  const out = new Response(body, {
+    headers: {
+      'Content-Type': 'image/webp',
+      'Cache-Control': `public, max-age=${PHOTO_SECONDS}`,
+      'X-Content-Type-Options': 'nosniff',
+      'Content-Security-Policy': "default-src 'none'",
+      'Cross-Origin-Resource-Policy': 'cross-origin',
+    },
+  });
+  if (cache && ctx) ctx.waitUntil(cache.put(cacheKey, out.clone()).catch(() => {}));
+  return request.method === 'HEAD' ? new Response(null, { headers: out.headers }) : out;
+}
+
 // ------------------------------------------------------------------ the host
 
 /**
@@ -263,6 +342,11 @@ export async function handleGymPageHost(request, env, ctx, url, rpc, opts = {}) 
   }
   if (path === '/' || path === '') return new Response(null, { status: 302, headers: { Location: 'https://gyms.mettleup.fit/', 'Cache-Control': 'max-age=3600' } });
   if (path.startsWith('/gym-page/')) return env.ASSETS.fetch(request);
+  // 0082: a page's photo, from our own Supabase storage (R-529). `opts.appKey`: the public app key (worker.js).
+  if (path.startsWith('/p/')) {
+    const object = photoObjectPath(path);
+    return object ? servePhoto(request, ctx, object, { key: opts.appKey, fetchImpl: opts.fetchImpl, cache: opts.cache }) : noPhoto(404);
+  }
   if (path === '/api/gym-page/ask') return handleAsk(request, env, rpc);
   if (path === '/api/gym-page/report') return handleReport(request, env, rpc);
   if (request.method !== 'GET' && request.method !== 'HEAD') return notHere(405);

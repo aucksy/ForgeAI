@@ -79,7 +79,7 @@ export default {
     if (where.kind === 'redirect') return new Response(null, { status: where.status, headers: { Location: where.to, 'Cache-Control': 'max-age=3600' } });
     // F207: join.mettleup.fit/<gym> is a gym's own page (gymPageServe.js). Off unless GYM_PAGES is "live"; the host is
     // not in wrangler.jsonc's routes yet either (docs/gym-page/PLAN.md).
-    if (where.kind === 'gympage') return handleGymPageHost(request, env, ctx, url, rpc, { payOnline: (code) => offerForCode(env, rpc, code) });
+    if (where.kind === 'gympage') return handleGymPageHost(request, env, ctx, url, rpc, { payOnline: (code) => offerForCode(env, rpc, code), appKey: KEY });
     // F184: mettleup.fit "/" is the member page (/member-site/), gyms.mettleup.fit "/" the gym page (/home/).
     // LANDING "off" hides both (the old kill switch).
     if (where.kind === 'landing' || where.kind === 'members') {

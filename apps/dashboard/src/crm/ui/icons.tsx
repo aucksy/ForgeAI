@@ -6,9 +6,17 @@
  * tick was a hairline next to a solid Money block.
  */
 
-export type IconName = 'today' | 'members' | 'shop' | 'visits' | 'money' | 'plans' | 'settings' | 'more' | 'workouts' | 'messages' | 'branches' | 'brand' | 'clock' | 'trophy' | 'growth' | 'diet' | 'enquiries' | 'key' | 'invite' | 'news' | 'feedback' | 'bell' | 'trainer' | 'sparkle' | 'setup';
+export type IconName = 'today' | 'members' | 'shop' | 'visits' | 'money' | 'plans' | 'settings' | 'more' | 'workouts' | 'messages' | 'branches' | 'brand' | 'clock' | 'trophy' | 'growth' | 'diet' | 'enquiries' | 'key' | 'invite' | 'news' | 'feedback' | 'bell' | 'trainer' | 'sparkle' | 'setup' | 'globe';
 
 const PATHS: Record<IconName, React.ReactNode> = {
+  // F207 (14 Nov 2026): Your web page: a globe.
+  globe: (
+    <>
+      <circle cx="12" cy="12" r="8.5" />
+      <path d="M3.5 12h17" />
+      <path d="M12 3.5c2.4 2.4 3.6 5.2 3.6 8.5s-1.2 6.1-3.6 8.5c-2.4-2.4-3.6-5.2-3.6-8.5s1.2-6.1 3.6-8.5Z" />
+    </>
+  ),
   // R-526 (14 Nov 2026): Set up your gym: a short checklist, two ticked, one to do.
   setup: (
     <>

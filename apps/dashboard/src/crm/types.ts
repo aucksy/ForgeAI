@@ -342,6 +342,11 @@ export interface Enquiry extends GymScoped {
    * logic/selfJoin.ts `selfJoinOf`.
    */
   selfJoin?: EnquirySelfJoin | null;
+  /**
+   * F207: set by the gym server when the person asked a question on the gym's web page (supabase 0080
+   * gym_page_ask_send). The newest question only. Read it through gympage/logic.ts `pageAskOf`.
+   */
+  pageAsk?: EnquiryPageAsk | null;
   createdAt: number;
   updatedAt: number;
 }
@@ -370,6 +375,15 @@ export interface EnquirySelfJoin {
   /** When each box was ticked (ms), and which wording they saw (a date). */
   consents: { adultAt: number; healthAt: number; wording: string };
   /** When the request came in (ms). */
+  at: number;
+}
+
+/** F207: a question from the gym's web page (join.mettleup.fit/<gym>), as the gym server keeps it. */
+export interface EnquiryPageAsk {
+  v: 1;
+  name: string;
+  question: string;
+  /** When the question came in (ms). */
   at: number;
 }
 

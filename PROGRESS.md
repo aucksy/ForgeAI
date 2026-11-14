@@ -1,6 +1,18 @@
 # ForgeAI progress
 
 ## Waiting for release (R-266: tag only when the owner says "release")
+- R-529 ADMIN PANEL: "YOUR WEB PAGE" EDITOR (F207). Your gym -> Your web page (and More on a phone, and the Set up
+  your gym step "Make your free gym web page", which ticks itself once published). Shows only when the gym's server
+  answers owner_gym_page (0080, live). The owner edits: address (suggested from name + area, live preview, locked once
+  published: "To change your address, write to MettleUp"), area, city, About (500, no web addresses), facility ticks
+  (fixed list, up to 8), up to 6 photos with captions (shrunk to WebP in the browser, camera data removed), Google Maps
+  link, phone + WhatsApp, "Let Google list my page", publish switch, the terms tick (needed once). Fees, timings,
+  brand and address shown as "from your other screens" with links. "See your page" draws the real page in the panel.
+  HQ take-down banner with HQ's note. The desk reads only. Enquiries: "Asked on your web page" + the question.
+  Photos need supabase 0082_gym_page_photos.sql (NOT APPLIED; private bucket + slots); until then adding a photo says
+  it is not switched on yet. The screen says pages are not open to visitors yet (join.mettleup.fit not connected;
+  GYM_PAGE_PUBLIC false). No What's new line until the page can be public. Tests: test/crm/gymPageEditor.test.ts,
+  e2e/webpage-uat.spec.mjs (pictures webpage-*.png), deploy/panel/gymPage.test.mjs (photo route).
 - R-528 MEMBER APP: THE OWNER'S "TAKE PAYMENTS IN THE MEMBER APP" SWITCH. When the gym owner turns it off (admin panel,
   Settings -> Payments; server part NOT live: panel D1 0016 + supabase 0081 need his yes), My membership still shows
   what the member owes, with "Pay this at the gym desk." and no QR, UPI app or online button (src/shop/memberPay.ts

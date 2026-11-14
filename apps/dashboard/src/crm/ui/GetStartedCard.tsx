@@ -8,6 +8,8 @@
 import { useCallback, useEffect, useState } from 'react';
 
 import { useCan } from '../auth/AuthProvider';
+import { pageLive } from '../gympage/logic';
+import { useWebPage } from '../gympage/pageState';
 import { getStartedSteps, nextStepAfter, stepForPath, type Step, type StepKey } from '../logic/getStarted';
 import { progressShare, type SetupProgress } from '../logic/navGroups';
 import { t } from '../lang/lang';
@@ -120,7 +122,10 @@ export function useGetStarted(): GetStartedState {
     },
     [gymId],
   );
-  const steps = getStartedSteps(snapshot, new Set(saved.ticked));
+  // F207 (R-523): "Make your free gym web page" once the gym's server has the web page part; it ticks itself when the
+  // page is published (and not taken down by MettleUp).
+  const web = useWebPage();
+  const steps = getStartedSteps(snapshot, new Set(saved.ticked), web ? { published: pageLive(web.page) } : null);
   const done = steps.filter((x) => x.done).length;
   const allDone = done === steps.length;
   return { steps, saved, owner, allDone, progress: { done, total: steps.length }, pending: owner && !allDone && !saved.hidden, update };

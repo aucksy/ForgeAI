@@ -91,6 +91,8 @@ import { ProPage } from './plan/ProNote';
 import { AssistantWatch, useAssistant } from './assistant/useAssistant';
 import { AssistantFab } from './assistant/ui/AssistantFab';
 import { AssistantScreen } from './ui/screens/Assistant';
+import { WebPageScreen } from './ui/screens/WebPage';
+import { useWebPage } from './gympage/pageState';
 
 export function CrmApp() {
   // English | Hinglish (1 Nov 2026): a switch draws the whole panel again in the new words.
@@ -177,6 +179,8 @@ export function Routes({ online }: { online: boolean }) {
   const talkWaiting = useMemberMessageCount();
   // F201: the AI Assistant, for the owner of a real online gym, once the server's wallet answers (0071).
   const assistantOn = useAssistant().on;
+  // F207: "Your web page", once the gym's server has the web page part (0080) and the gym is online (pageState.ts).
+  const webPageOn = Boolean(useWebPage());
   // R-526: Set up your gym, for the owner: its place in the menu and its ring (ui/GetStartedCard.tsx). The ring's
   // numbers while steps are left and the row is at the top; undefined when every step is done or it was moved down.
   const getStarted = useGetStarted();
@@ -286,6 +290,8 @@ export function Routes({ online }: { online: boolean }) {
       { path: '/settings/branding', label: t('Branding'), icon: 'brand', group: 'gym' },
       // R-124 (25 Oct 2026): when the gym is open, for members to see. The owner edits; the desk reads.
       { path: '/settings/timings', label: t('Gym timings'), icon: 'clock', group: 'gym' },
+      // F207 (R-519): the gym's own free web page. The owner edits; the desk sees the address (ui/screens/WebPage.tsx).
+      ...(webPageOn ? [{ path: '/settings/web-page', label: t('Your web page'), icon: 'globe', group: 'gym' } as NavItem] : []),
       { path: '/settings', label: t('Settings'), icon: 'settings', group: 'gym' },
       // Launch H7 (21 Oct 2026): write to MettleUp (problems, ideas). Owner and Staff. Not in the demo
       // gym, which sends nothing to anyone.
@@ -293,7 +299,7 @@ export function Routes({ online }: { online: boolean }) {
       ...(setupProgress ? [] : [setup]),
     ]);
     // `lang`: the labels are words, so a language switch makes them again.
-  }, [memberViews, snapshot, today, newCount, role, allBranches, demo, lang, trainerNav, questionsOpen, talkWaiting, needsTotal, assistantOn, setupProgress]);
+  }, [memberViews, snapshot, today, newCount, role, allBranches, demo, lang, trainerNav, questionsOpen, talkWaiting, needsTotal, assistantOn, setupProgress, webPageOn]);
   // Step 3 (15 Oct 2026): five on a phone's bottom bar, like GoGym4U and GymBook — Aaj, Members,
   // Hisaab, Hazri and More (Plans, Shop, Settings). Six or seven icons were too small to read.
   const phoneNav = useMemo<NavItem[]>(() => {
@@ -350,6 +356,7 @@ function offlinePage(head: string | undefined, id: string | undefined): string |
   if (head === 'settings' && id === 'people') return 'Staff & sign-in';
   if (head === 'settings' && id === 'branding') return 'Branding';
   if (head === 'settings' && id === 'timings') return 'Gym timings';
+  if (head === 'settings' && id === 'web-page') return 'Your web page';
   if (head === 'settings' && id === 'machines') return 'Busy machines';
   if (head === 'settings' && id === 'entry') return 'Entry machines';
   if (head === 'settings' && id === 'mettleup') return 'Paying MettleUp';
@@ -452,6 +459,8 @@ function Screen({ segments, role }: { segments: string[]; role: Role }) {
       if (id === 'branding') return <BrandingScreen />;
       // R-124: Settings -> Gym timings (when the gym is open, shown in the member app).
       if (id === 'timings') return <GymTimingsScreen />;
+      // F207 (R-519): Settings -> Your web page (join.mettleup.fit/<gym>).
+      if (id === 'web-page') return <WebPageScreen />;
       // F79 (R-328): Settings -> Payments (UPI QR and the gym's own payment company).
       if (id === 'payments') return <PaymentsScreen />;
       // F137: Settings -> Member app -> Busy machines (hidden until the gym's server has 0049).

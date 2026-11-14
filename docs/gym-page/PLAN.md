@@ -20,7 +20,8 @@ The owner said yes to applying it live (R-529); it is WAITING to be applied live
    presses Publish and agrees the content is the gym's own.
 8. Safety: fixed facility list (no free claims), no links in text, photos only uploaded through us, a Report link on
    every page, MettleUp HQ can take any page down, daily limits on both forms.
-9. Photos live in Cloudflare R2 (10 GB free, no download charges), shrunk in the browser to under ~400 KB each.
+9. Photos live in our own Supabase storage, in a private bucket (R-529, migration 0082), shrunk in the browser to
+   WebP (at most 1600 px and 1 MB, camera data removed) and served by the Worker at join.mettleup.fit/p/<gym>/<id>.webp.
 10. No AI helper on the page now. The owner's AI switch (on by default) is stored now and shown when the helper exists.
 
 ## 2. Pictures (Example gym, never a real gym)
@@ -52,22 +53,24 @@ JavaScript; the one small script adds the shutter roll-up, the bottom bar on pho
 - One tick: "These fees, photos and words are my gym's own, and I am responsible for them." Then **Publish** or
   **Later**. Skippable; never blocks finishing setup.
 
-**C. Settings -> Your web page** (not built). The same fields, plus: Published on/off, "Let Google show my page"
+**C. Settings -> Your web page** (BUILT 14 Nov, R-529; shows only when the gym's server answers owner_gym_page, so
+hidden until 0080 is live). Under "Your gym" in the menu, More on a phone, and from Set up your gym. The address is
+locked once the page was published ("To change your address, write to MettleUp", screen only). "See your page"
+draws the real page in the panel. Code: apps/dashboard/src/crm/gympage/, ui/screens/WebPage.tsx. Planned: The same fields, plus: Published on/off, "Let Google show my page"
 (off by default), the page link with Copy and Share on WhatsApp, "See my page", a "Taken down by MettleUp" banner with
 HQ's note when hidden, and later the AI helper switch (section 7). Owners only can save; staff can see the link.
 
-**C2. Get started on Today** (R-523, R-525). Built: a "Set your gym timings" step (live now; ticks itself when the
+**C2. Get started on Today** (R-523, R-525, step switched on by R-529). Built: a "Set your gym timings" step (live now; ticks itself when the
 Gym timings screen sees real saved timings), placed just before the web page step. Built but hidden: step "Make your free gym web page", hint "People who may join
 can see your fees, timings and photos, and send you a question." Opens Settings -> Your web page, ticks itself when
-the page is published. It appears only when the admin app passes the page's state (getStarted.ts `webPage`), which it
-does not yet: there is no set-up screen and no live database part, so a visible step would open nothing and never
-tick. The hint names the AI helper only once that helper is live (a test checks it does not now).
+the page is published. It appears only when the gym's server answers owner_gym_page (getStarted.ts `webPage`, passed by
+GetStartedCard since R-529), so it stays hidden until 0080 is live. The hint names the AI helper only once that helper is live (a test checks it does not now).
 
-**D. Enquiries** (small change, not built): a question from the page shows as "Asked on your web page" with the
+**D. Enquiries** (BUILT 14 Nov, R-529): a question from the page shows as "Asked on your web page" with the
 question, like Joined online rows do. Until the admin app learns it, the enquiry's "interest" line carries the
 question, so older admin apps still show it.
 
-**E. MettleUp HQ** (not built): a "Reported pages" list (page, reason, count) with "Hide page" and a note to the owner.
+**E. MettleUp HQ** (not built; for later, nothing new in R-529): a "Reported pages" list (page, reason, count) with "Hide page" and a note to the owner.
 
 ## 4. Data
 
@@ -84,7 +87,7 @@ What the page shows, and where it comes from:
 | Slug, about, highlights, photos, maps link, lat/lng, show phone, WhatsApp, published, Google, terms tick, HQ hide, AI helper switch | **gym_pages** | new table |
 | Questions | crm_records kind enquiry (+ `pageAsk` block) and gym_page_asks (limits only) | new block + table |
 | Reports | **gym_page_reports** | new table |
-| Photos | R2 bucket `gym-page-photos`, served at join.mettleup.fit/p/<gym>/<id>.webp | new |
+| Photos | private Supabase bucket `gym-page-photos` + gym_page_photo_slots (0082), served at join.mettleup.fit/p/<gym>/<id>.webp | new |
 
 Never on the page: members, payments, staff, the owner's personal number (only the gym's number, only if switched on).
 
@@ -104,8 +107,10 @@ Built on 14 Nov 2026, all behind two locks (the host is not routed, and `GYM_PAG
 Reused: gymHours.ts (open now, week), the friend/self-join form guards and D1 limit table, Join online, Enquiries,
 gym alerts, brand colour and logo, plan records.
 
-Not built (needs the database part or the owner's yes): the photo upload endpoint and R2 bucket, the owner setup
-step, the Settings editor, the Enquiries label, the HQ reported-pages list, a sitemap.
+Built 14 Nov (R-529): the Settings editor with photo upload (0082 private bucket; the Worker serves /p/... with the
+key it already has), the Set up your gym step, the Enquiries label. Not built: a separate new-gym onboarding
+screen (B: the Set up your gym step opens the editor instead), the HQ reported-pages list, a sitemap, clearing
+unused photo files (a photo removed from the page stops showing at once; its file stays in the bucket).
 
 ## 6. Live changes needing the owner's yes
 
@@ -114,12 +119,16 @@ step, the Settings editor, the Enquiries label, the HQ reported-pages list, a si
    owner_save_gym_page, gym_page_public, gym_page_ask_send, gym_page_report_send, hq_hide_gym_page(actor, slug,
    hidden, note); gym_alerts kind 'page_question'). The admin app must add 'page_question' to its alert kinds
    (gymAlerts.ts) or those alerts are not shown.
-2. **Photos (R-529):** our own Supabase storage, served by the Worker at join.mettleup.fit/p/<gym_id>/<id>.webp
-   (0080 accepts only that address). No Cloudflare R2.
+2. **Photos (R-529):** migration `0082_gym_page_photos.sql` (NOT APPLIED): private bucket gym-page-photos (1 MB,
+   WebP only), gym_page_photo_slots, owner_gym_page_photo_slot(key). A file may be put only into a slot the owner
+   just took (15 minutes, 12 open, 60 a day) and read only while it is on a published-or-draft page row that HQ has
+   not hidden. The Worker serves it at join.mettleup.fit/p/<gym_id>/<id>.webp. No Cloudflare R2.
 3. **Cloudflare:** add `join.mettleup.fit` to the panel Worker's routes (custom domain), and set `GYM_PAGES` to "live".
 4. **Words:** the public words in section 8.
 
-Switching it on, in order: 1, 2, build the editor and upload, deploy the admin panel, test with the test gym, then 3.
+Switching it on, in order: 1, 2 (editor and upload are built), deploy the admin panel and the Worker, test with the
+test gym, then 3, then set `GYM_PAGE_PUBLIC` in apps/dashboard/src/crm/gympage/logic.ts to true (the editor stops
+saying pages are not open yet) and add a What's new line.
 
 ## 7. Owner switches added on 14 Nov (R-521)
 
@@ -192,7 +201,8 @@ The owner: every visitor question, answered by the AI or not, must reach Enquiri
 - **Maps:** Google Maps URLs need no key (search: /maps/search/?api=1&query=, directions: /maps/dir/?api=1&destination=);
   the owner may paste their own Maps share link (only Google's own addresses are accepted).
 - **Photos:** R2 free 10 GB, free downloads; Supabase free has 1 GB and 5 GB of downloads a month, which 6 photos per
-  view would use up at about 2,800 page views a month across all gyms. R2 wins.
+  view would use up at about 2,800 page views a month across all gyms. R2 looked cheaper, but the owner chose our own
+  Supabase storage (R-529); the Worker's edge cache (1 hour per photo) keeps downloads from Supabase low.
 - **Abuse controls:** report link, owner on/off, HQ hide, noindex until opted in, photos only through our upload (size
   and type checked, re-encoded to WebP), fixed facility list, no links in text, daily limits per address, per gym and
   per phone number.

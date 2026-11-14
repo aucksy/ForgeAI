@@ -37,6 +37,7 @@ import {
 } from '../../logic/enquiries';
 import { alreadyRewarded, friendReward, referralOf, type FriendReward } from '../../logic/referrals';
 import { memberPrefill, selfJoinOf, sellPlanFor, sellStartFor } from '../../logic/selfJoin';
+import { PAGE_ASK_PREFIX, pageAskOf } from '../../gympage/logic';
 import { formatINR } from '../../logic/money';
 import type { CrmSnapshot } from '../../data/adapter';
 import { DIAL_CODES, findDuplicatePhone, formatPhone, normalizePhone, phoneDigits } from '../../logic/members';
@@ -367,6 +368,8 @@ function EnquiryRow({
 }) {
   const bucket = enquiryBucket(e, today);
   const referral = referralOf(e);
+  // F207: a question asked on the gym's web page (the server also put it on the interest line, for older apps).
+  const pageAsk = pageAskOf(e);
   const open = e.status === 'open';
   const followTone =
     bucket === 'overdue' ? color.criticalText : bucket === 'today' ? color.warning : color.inkSecondary;
@@ -390,7 +393,7 @@ function EnquiryRow({
             {formatPhone(e.phone)}
           </div>
           {/* R-513: the server's "Joined online: ..." note is the older app's copy of the line below. */}
-          {e.interest && !(selfJoinLine(e) && e.interest.startsWith('Joined online:')) && (
+          {e.interest && !(selfJoinLine(e) && e.interest.startsWith('Joined online:')) && !(pageAsk && e.interest.startsWith(PAGE_ASK_PREFIX)) && (
             <div style={{ fontFamily: font.body, fontSize: 13, color: color.ink, marginTop: 4, overflowWrap: 'anywhere' }}>
               {e.interest}
             </div>
@@ -398,6 +401,14 @@ function EnquiryRow({
           {selfJoinLine(e) && (
             <div style={{ fontFamily: font.body, fontSize: 13, fontWeight: 600, color: color.accentBright, marginTop: 4, overflowWrap: 'anywhere' }}>
               {selfJoinLine(e)}
+            </div>
+          )}
+          {pageAsk && (
+            <div style={{ marginTop: 4, minWidth: 0 }}>
+              <div style={{ fontFamily: font.body, fontSize: 13, fontWeight: 600, color: color.accentBright }}>Asked on your web page</div>
+              <div style={{ fontFamily: font.body, fontSize: 13, color: color.ink, marginTop: 2, overflowWrap: 'anywhere', whiteSpace: 'pre-line' }}>
+                {`“${pageAsk.question}”`}
+              </div>
             </div>
           )}
           {/* F147: a friend a member invited from the app. Only the member's name, never their number. */}

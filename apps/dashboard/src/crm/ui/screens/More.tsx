@@ -27,6 +27,7 @@ import { useBranches } from '../../branches/context';
 import { t } from '../../lang/lang';
 import { navSections, type NavGroupId, type SetupProgress } from '../../logic/navGroups';
 import { ProgressRing, progressWords, useGetStarted } from '../GetStartedCard';
+import { useWebPage } from '../../gympage/pageState';
 
 interface Row {
   path: string;
@@ -56,6 +57,8 @@ export function MoreScreen() {
   const { multi, canOpenOthers } = useBranches();
   // R-526: Set up your gym, on top with its ring while steps are left; under Your gym once done or moved down.
   const getStarted = useGetStarted();
+  // F207: the gym's web page, once its server has the web page part (0080).
+  const webPageOn = Boolean(useWebPage());
   const setupRow: Row = {
     path: '/setup',
     label: 'Set up your gym',
@@ -114,6 +117,9 @@ export function MoreScreen() {
 
     { path: '/settings/branding', group: 'gym', label: 'Branding', hint: 'Your logo and colours in the member app', icon: 'brand' },
     { path: '/settings/timings', group: 'gym', label: 'Gym timings', hint: owner ? 'When you are open, for members to see' : 'When the gym is open', icon: 'clock' },
+    ...(webPageOn
+      ? [{ path: '/settings/web-page', group: 'gym', label: 'Your web page', hint: owner ? 'Your gym’s free page: fees, timings and photos' : 'The gym’s free web page', icon: 'globe' } as Row]
+      : []),
     {
       path: '/settings/people', group: 'gym',
       label: 'Staff & sign-in',
