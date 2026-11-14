@@ -7,6 +7,12 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-548 (14 Nov 2026) 0086 member-question words APPLIED LIVE; one "Message your gym" proposal
+- Owner: "yes to Member questions database change". Applied 0086 at cceaecb3 in the SQL Editor: Success. Live tests: 0086 PASS (7), 0075 PASS (28).
+- Owner: "there shouldn't be two separate messaging options ... one that is message your gym and then the person can select whether they want to send it to the gym owner or ... one of the trainers".
+- Fact: "Message your gym" (R-459, a93da8a2) is NOT in v0.77.0, so he cannot see it yet; only "Ask about your workout" is released.
+- Proposed: one row "Message your gym"; first choice "The gym" or "My trainer" (trainer only when the member has one); both old servers stay; no database change. Waiting for his yes before building.
+
 ## R-547 (14 Nov 2026) Payment companies = A (Razorpay + Cashfree); Razorpay test keys added
 - Owner: "Razorpay Test Mode keys are done / Lets go with A but lets test Razorpay for now". A = gyms see only Razorpay and Cashfree; PayU and PhonePe hidden (code kept so an existing connection still works). Real test-mode check against Razorpay only; Cashfree later.
 - GitHub secrets RAZORPAY_TEST_KEY_ID and RAZORPAY_TEST_KEY_SECRET confirmed present (added 14 Nov ~20:40 IST). The payment helper builds the hide + a CI check that creates, reads and cancels a real test link.

@@ -1,4 +1,4 @@
--- NOT LIVE — needs the owner's yes ("No LIVE database changes without my yes"). Re-runnable. Apply after 0075 (gym
+-- APPLIED LIVE 14 Nov 2026 (owner: "yes to Member questions database change"); tests 0086 PASS 7, 0075 PASS 28. Re-runnable. Apply after 0075 (gym
 -- alerts). Changes words only: no table, no new function, nothing members or anon can call.
 -- Test: supabase/tests/0086_member_questions_words.sql (CI runs it after every migration; pasted into the SQL Editor it
 -- always ends in an error and so changes nothing). 0075's test was updated for the new line.
