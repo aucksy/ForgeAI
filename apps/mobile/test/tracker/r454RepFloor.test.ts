@@ -228,7 +228,7 @@ describe('owner, 12 Nov 2026: the finished line says done and Previous', () => {
     const t = { action: 'hold' as const, targetWeightKg: 0, targetSets: 3, repGoal: 15, setGoals: [15, 15, 14], topSetOnly: false, logType: 'reps' as const, bodyweightOnly: true };
     const reps = (r: number[]) => r.map((n) => ({ weightKg: null, reps: n, done: true, isWarmup: false }));
     const same = repPlan(t, [15, 15, 14].map((n) => ({ weightKg: 0, reps: n })))!;
-    expect(repLiveLine(same, kgProgress(same, reps([15, 15, 14])))).toBe('You matched your previous reps\nDone 44 reps · Previous 44 reps');
+    expect(repLiveLine(same, kgProgress(same, reps([15, 15, 14])))).toBe('Previous reps matched\nDone 44 reps · Previous 44 reps');
     const first = repPlan(t, [])!;
     expect(repLiveLine(first, kgProgress(first, reps([15, 15, 14])))).toBe('44 reps done · First time');
     for (const l of [kgLiveLine(p, kgProgress(p, all([13, 12, 11, 9])), total, weight), repLiveLine(first, kgProgress(first, reps([16, 15, 14])))]) {
@@ -436,7 +436,7 @@ describe('R-454: a set done at another weight than planned (his Lateral Raise, 1
     const p = kgPlan(t, lastSets)!;
     const rows = [20, 19, 16, 16].map((reps): KgRow => ({ weightKg: 20, reps, done: true, isWarmup: false }));
     const line = kgLiveLine(p, kgProgress(p, rows), total, weight);
-    expect(line).toBe('You matched your previous total\nDone 1,420 kg · Previous 1,420 kg');
+    expect(line).toBe('Previous set volume matched\nDone 1,420 kg · Previous 1,420 kg');
     expect(line).not.toMatch(/reached|beaten/);
   });
 

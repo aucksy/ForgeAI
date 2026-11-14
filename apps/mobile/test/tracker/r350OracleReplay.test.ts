@@ -139,7 +139,7 @@ function replay(lift: Lift, seed: number, workouts = 500) {
         if (last.length === sets && kgBeaten(g) && doneKg + 1e-9 < lastTotal) bad(`"beaten" under last time's ${lastTotal}`);
         const line = kgLiveLine(plan, g, (kg) => `${kg} kg`, (kg) => `${kg} kg`);
         // Owner, 12 Nov 2026: the finished line is "<done> done · Previous: ..." (no "reached"); R-498 (14 Nov):
-        // green with a previous workout it is "Previous set volume beaten! ..." / "You matched your previous total" instead,
+        // green with a previous workout it is "Previous set volume beaten! ..." / "... matched" instead,
         // and (one rule for kilos and reps) it also shows once every set is done at last time's total or more.
         const allDone = k === doneSets.length;
         const atLast = plan.last != null && doneKg + 0.5 > plan.last;

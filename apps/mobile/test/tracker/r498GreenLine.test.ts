@@ -4,8 +4,8 @@
  * the shout, big and bold; line 2 names both totals, small:
  *   kilos, beaten   "Previous set volume beaten! +200 kg" / "Done 1,650 kg · Previous 1,450 kg"
  *   reps, beaten    "Previous reps beaten! +3"            / "Done 46 reps · Previous 43 reps"
- *   equal           "You matched your previous total"         / "Done 1,450 kg · Previous 1,450 kg"
- *                   ("You matched your previous reps" on a reps-only move)
+ *   equal           "Previous set volume matched"         / "Done 1,450 kg · Previous 1,450 kg"
+ *                   ("Previous reps matched" on a reps-only move)
  * First time ("1,650 kg done · First time") and every line that is not green are unchanged. "+200 kg"
  * never splits over two lines (a no-break space). "volume" is his exception to the banned member words
  * for this line only (test/lib/memberWords.test.ts).
@@ -61,15 +61,15 @@ describe('R-498: kilos, beaten', () => {
 });
 
 describe('R-498: equal', () => {
-  it('exactly last time\'s 1,450 kg: green, "You matched your previous total"', () => {
+  it('exactly last time\'s 1,450 kg: green, "Previous set volume matched"', () => {
     const g = kgProgress(bench, [done(72.5, 5), done(72.5, 5), done(72.5, 5), done(72.5, 5)]);
     expect(lineGreen(bench, g)).toBe(true);
-    expect(kgLiveLine(bench, g, total, weight)).toBe('You matched your previous total\nDone 1,450 kg · Previous 1,450 kg');
+    expect(kgLiveLine(bench, g, total, weight)).toBe('Previous set volume matched\nDone 1,450 kg · Previous 1,450 kg');
   });
-  it('reps-only, exactly last time\'s 43: "You matched your previous reps"', () => {
+  it('reps-only, exactly last time\'s 43: "Previous reps matched"', () => {
     const g = kgProgress(dips, [r(15), r(15), r(13)]);
     expect(lineGreen(dips, g)).toBe(true);
-    expect(repLiveLine(dips, g)).toBe('You matched your previous reps\nDone 43 reps · Previous 43 reps');
+    expect(repLiveLine(dips, g)).toBe('Previous reps matched\nDone 43 reps · Previous 43 reps');
   });
 });
 

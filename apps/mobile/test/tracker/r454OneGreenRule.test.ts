@@ -42,7 +42,7 @@ describe('one green rule: kilos', () => {
   it('every set done, exactly last time\'s total: green, "same as last time"', () => {
     const g = kgProgress(kg, [done(40, 13), done(40, 12), done(40, 10), done(40, 8)]);
     expect(lineGreen(kg, g)).toBe(true);
-    expect(kgLiveLine(kg, g, total, weight)).toBe('You matched your previous total\nDone 1,720 kg · Previous 1,720 kg');
+    expect(kgLiveLine(kg, g, total, weight)).toBe('Previous set volume matched\nDone 1,720 kg · Previous 1,720 kg');
   });
   it('every set done, under last time: not green, the short line', () => {
     const g = kgProgress(kg, [done(40, 12), done(40, 12), done(40, 10), done(40, 8)]);
@@ -99,7 +99,7 @@ describe('one green rule: reps only (same rule as kilos)', () => {
     const g = kgProgress(reps, [r(16), r(15), r(8)]);
     expect(kgBeaten(g)).toBe(false);
     expect(lineGreen(reps, g)).toBe(true);
-    expect(repLiveLine(reps, g)).toBe('You matched your previous reps\nDone 39 reps · Previous 39 reps');
+    expect(repLiveLine(reps, g)).toBe('Previous reps matched\nDone 39 reps · Previous 39 reps');
   });
   it('every set done, under last time: not green, the short line', () => {
     const g = kgProgress(reps, [r(16), r(14), r(8)]);
@@ -136,7 +136,7 @@ describe('totals never say "each" (owner, 12 Nov 2026)', () => {
     const all = kgProgress(kg, [done(40, 13), done(40, 12), done(40, 11), done(40, 9)]);
     expect(kgLiveLine(kg, all, total, weight)).toBe('Previous set volume beaten! +80\u00a0kg\nDone 1,800 kg · Previous 1,720 kg');
     const same = kgProgress(kg, [done(40, 13), done(40, 12), done(40, 10), done(40, 8)]);
-    expect(kgLiveLine(kg, same, total, weight)).toBe('You matched your previous total\nDone 1,720 kg · Previous 1,720 kg');
+    expect(kgLiveLine(kg, same, total, weight)).toBe('Previous set volume matched\nDone 1,720 kg · Previous 1,720 kg');
   });
   it('the workout card and the Today kg-to-beat row add no "each" to a total', () => {
     const live = card.slice(card.indexOf('kgLiveLine(kgPlanned'), card.indexOf('beaten: lineGreen'));
