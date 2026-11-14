@@ -7,6 +7,11 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-536. YES to the "Ready-made plans" terms words and to the job title database change (0079) — 14 Nov 2026
+He said (14 Nov 2026): "Yes to both Ready-made plans and job title database change"
+Done: terms part B gets section 10 "Ready-made plans" word for word as shown to him (later sections renumbered, "Last
+updated 14 Nov 2026"). Live on the site with the next panel deploy. 0079 applied live via the SQL Editor (see its header).
+
 ## R-535. Training progress must show the trend: 3 months or since joining, line graphs, full workout data — 14 Nov 2026
 He said (14 Nov 2026): "this whole section that we are showing to the admin user or the trainer ... I do not know what
 value this information is giving them because it's just one week's data and it's not showing them the line graph whether
