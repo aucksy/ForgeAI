@@ -163,7 +163,7 @@
     <section class="card hide" id="step2">
       <h2 tabindex="-1"><span class="kicker" data-t="step2of3">Step 2 of 3</span><span data-t="yourPlan">Your plan</span></h2>
       <fieldset>
-        <legend data-t="pickPlan">Pick a plan</legend>
+        <legend data-t="pickPlan" id="plans-legend">Pick a plan</legend>
         <div class="opts" id="plans"></div>
         <p class="err hide" id="plan-err" role="alert"></p>
       </fieldset>
@@ -343,7 +343,7 @@
       trialName: 'Try free for {n} days', trialName1: 'Try free for 1 day', free: 'Free',
       trialHow: 'No payment. Visit the gym for {n} days, then pick a plan at the desk if you want to join.',
       trialHow1: 'No payment. Visit the gym for 1 day, then pick a plan at the desk if you want to join.',
-      orPlan: 'or pick a plan',
+      orPlan: 'or pick a plan', pickOne: 'Pick one',
       trialStart: 'Trial starts on', trialToPay: 'To pay now', trialDays: 'Your free trial: {from} to {to}.',
       sTrial: 'Free trial', sTrialLen: '{n} days', sTrialLen1: '1 day', sUntil: 'Visits until', sNothing: 'Nothing',
       trialPayNote: 'A free trial costs nothing. Nothing is paid on this page.',
@@ -429,7 +429,7 @@
       trialName: '{n} दिन मुफ़्त आज़माएँ', trialName1: '1 दिन मुफ़्त आज़माएँ', free: 'मुफ़्त',
       trialHow: 'कोई पैसा नहीं। {n} दिन जिम आएँ, फिर जॉइन करना हो तो काउंटर पर प्लान चुनें।',
       trialHow1: 'कोई पैसा नहीं। 1 दिन जिम आएँ, फिर जॉइन करना हो तो काउंटर पर प्लान चुनें।',
-      orPlan: 'या कोई प्लान चुनें',
+      orPlan: 'या कोई प्लान चुनें', pickOne: 'एक चुनें',
       trialStart: 'ट्रायल शुरू होने की तारीख', trialToPay: 'अभी देने हैं', trialDays: 'आपका फ़्री ट्रायल: {from} से {to} तक।',
       sTrial: 'फ़्री ट्रायल', sTrialLen: '{n} दिन', sTrialLen1: '1 दिन', sUntil: 'कब तक आ सकते हैं', sNothing: 'कुछ नहीं',
       trialPayNote: 'फ़्री ट्रायल का कोई पैसा नहीं लगता। इस पेज पर कोई पैसा नहीं लिया जाता।',
@@ -474,7 +474,7 @@
   // ---------------------------------------------------------------- state (kept for a reload in the middle)
   var gym = null;
   var KEEP = 'mettleup.join.' + (code || '');
-  var S = { step: 1, name: '', phone: '', gender: '', plan: '', start: '', wa: null, waState: '', proof: '', proofPhone: '', proofExp: 0, done: null, pay: '', payTapped: false };
+  var S = { step: 1, name: '', phone: '', gender: '', plan: '', start: '', wa: null, waState: '', proof: '', proofPhone: '', proofExp: 0, done: null, pay: '', payTapped: false, trialUsed: false };
   // R-528: can this gym be paid on this page? null = no (or not known yet): everything says "at the desk", as before.
   var offer = null;
   try { var kept = JSON.parse(sessionStorage.getItem(KEEP) || 'null'); if (kept && typeof kept === 'object') for (var k in S) if (k in kept) S[k] = kept[k]; } catch (e) { /* quiet: nothing kept, start fresh */ }
@@ -500,7 +500,7 @@
   }
   // F210: the gym's free trial, when the owner switched it on (0088's preview); picked = S.plan '_trial'.
   var TRIAL = '_trial';
-  function trialDays() { var d = gym && gym.trial && Number(gym.trial.days); return d === 1 || d === 3 || d === 7 ? d : 0; }
+  function trialDays() { var d = gym && gym.trial && Number(gym.trial.days); return !S.trialUsed && (d === 1 || d === 3 || d === 7) ? d : 0; }
   function onTrial() { return S.plan === TRIAL && trialDays() > 0; }
   function picked() { return onTrial() || !!selectedPlan(); }
   function plusDays(iso, n) {
@@ -632,6 +632,8 @@
     var list = (gym && gym.plans) || [];
     box.innerHTML = '';
     var td = trialDays();
+    // F210: with a free trial above the plans, the heading asks for one of the two (the trial or a plan).
+    var lg = $('plans-legend'); lg.setAttribute('data-t', td && list.length ? 'pickOne' : 'pickPlan'); lg.textContent = t(lg.getAttribute('data-t'));
     if (td) {
       var tl = document.createElement('label');
       tl.className = 'plan trial';
@@ -788,7 +790,8 @@
   $('name').addEventListener('input', function () { S.name = $('name').value; save(); });
   $('phone').addEventListener('input', function () {
     S.phone = $('phone').value; save();
-    if (S.proof && S.proofPhone !== digitsOf(S.phone)) { S.proof = ''; S.proofPhone = ''; save(); }
+    // F210: "already had a trial" belongs to the number; a different number may try.
+    if (S.proof && S.proofPhone !== digitsOf(S.phone)) { S.proof = ''; S.proofPhone = ''; S.trialUsed = false; save(); }
     if (S.wa && S.wa.phone !== digitsOf(S.phone)) { stopPolling(); S.wa = null; S.waState = ''; save(); }
     drawVerify();
   });
@@ -937,7 +940,7 @@
         if (e === 'BAD_DATE') { goStep(2); say('start-err', 'BAD_DATE', { last: dayWords(gym.lastDay) }); return; }
         if (e === 'NO_CONSENT') { say('send-err', 'NO_ADULT'); return; }
         // F210: one free trial per number per gym; or the owner switched trials off a moment ago.
-        if (e === 'TRIAL_USED') { S.plan = ''; save(); drawPlans(); drawPayWords(); goStep(2); say('plan-err', 'TRIAL_USED'); return; }
+        if (e === 'TRIAL_USED') { S.plan = ''; S.trialUsed = true; save(); drawPlans(); drawPayWords(); goStep(2); say('plan-err', 'TRIAL_USED'); return; }
         if (e === 'TRIAL_OFF') { reloadPlans().then(function () { if (gym) gym.trial = null; S.plan = ''; save(); drawPlans(); drawPayWords(); goStep(2); say('plan-err', 'TRIAL_OFF'); }); return; }
         say('send-err', e === 'TOO_MANY' || e === 'NOT_READY' ? e : 'TRY_AGAIN');
       })

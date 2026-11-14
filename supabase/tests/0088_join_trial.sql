@@ -2,7 +2,7 @@
 -- can also be pasted into the live SQL Editor. It ALWAYS ends in an error, so it changes nothing:
 --   "RESULT PASS (n checks)"  - everything worked; the error only undoes the test rows;
 --   "RESULT FAIL: ..."         - the checks that failed (label:what came back).
--- Fake numbers only (90000 88xxx); the secret here is a test value.
+-- Fake numbers only (90000 88xxx); the secret here is a test value. Proof nonces must be 32 hex characters.
 
 create or replace function pg_temp.t88_is(p_label text, p_got text, p_want text) returns text
   language sql as $$
@@ -116,40 +116,40 @@ begin
   checks := checks + 1; fails := fails || pg_temp.t88_is('4otherends', r->'trial'->>'endsOn', to_char(today + 6, 'YYYY-MM-DD'));
 
   -- 5. An open enquiry with this number is linked (its own words stay); a member cannot take a trial.
-  r := public.self_join_send('T88AAA', 'Neha Singh', pg_temp.t88_proof(neha, repeat('g', 32)), 'female', '_trial', d_today, true, true, 'hi');
+  r := public.self_join_send('T88AAA', 'Neha Singh', pg_temp.t88_proof(neha, repeat('1', 32)), 'female', '_trial', d_today, true, true, 'hi');
   checks := checks + 1; fails := fails || pg_temp.t88_is('5linked', r->>'linked', 'true');
   checks := checks + 1; fails := fails || pg_temp.t88_is('5linkedid', r->>'enquiryId', 't88-enq');
   select data into e from public.crm_records where gym_id = ga and kind = 'enquiry' and id = 't88-enq';
   checks := checks + 1; fails := fails || pg_temp.t88_is('5interest', e->>'interest', 'Evening batch');
   checks := checks + 1; fails := fails || pg_temp.t88_is('5trial', e->'selfJoin'->'trial'->>'endsOn', to_char(today + 2, 'YYYY-MM-DD'));
   checks := checks + 1; fails := fails || pg_temp.t88_is('5lang', e->'selfJoin'->>'lang', 'hi');
-  r := public.self_join_send('T88AAA', 'Asha Rao', pg_temp.t88_proof(asha, repeat('h', 32)), null, '_trial', d_today, true, true, 'en');
+  r := public.self_join_send('T88AAA', 'Asha Rao', pg_temp.t88_proof(asha, repeat('2', 32)), null, '_trial', d_today, true, true, 'en');
   checks := checks + 1; fails := fails || pg_temp.t88_is('5member', r->>'error', 'MEMBER');
 
   -- 6. The same checks as a plan: the start day, the two boxes, the proof, a bot.
   checks := checks + 1; fails := fails || pg_temp.t88_is('6past',
-    public.self_join_send('T88AAA', 'Omar Khan', pg_temp.t88_proof(omar, repeat('i', 32)), null, '_trial', d_past, true, true, 'en')->>'error', 'BAD_DATE');
+    public.self_join_send('T88AAA', 'Omar Khan', pg_temp.t88_proof(omar, repeat('3', 32)), null, '_trial', d_past, true, true, 'en')->>'error', 'BAD_DATE');
   checks := checks + 1; fails := fails || pg_temp.t88_is('6late',
-    public.self_join_send('T88AAA', 'Omar Khan', pg_temp.t88_proof(omar, repeat('j', 32)), null, '_trial', d_late, true, true, 'en')->>'error', 'BAD_DATE');
+    public.self_join_send('T88AAA', 'Omar Khan', pg_temp.t88_proof(omar, repeat('4', 32)), null, '_trial', d_late, true, true, 'en')->>'error', 'BAD_DATE');
   checks := checks + 1; fails := fails || pg_temp.t88_is('6consent',
-    public.self_join_send('T88AAA', 'Omar Khan', pg_temp.t88_proof(omar, repeat('k', 32)), null, '_trial', d_today, true, false, 'en')->>'error', 'NO_CONSENT');
+    public.self_join_send('T88AAA', 'Omar Khan', pg_temp.t88_proof(omar, repeat('5', 32)), null, '_trial', d_today, true, false, 'en')->>'error', 'NO_CONSENT');
   checks := checks + 1; fails := fails || pg_temp.t88_is('6proof',
     public.self_join_send('T88AAA', 'Omar Khan', 'v1.join.' || omar || '.1999999999.' || repeat('l', 32) || '.' || repeat('0', 64), null, '_trial', d_today, true, true, 'en')->>'error', 'BAD_PROOF');
-  r := public.self_join_send('T88AAA', 'Bot', pg_temp.t88_proof(omar, repeat('m', 32)), null, '_trial', d_today, true, true, 'en', 'http://x');
+  r := public.self_join_send('T88AAA', 'Bot', pg_temp.t88_proof(omar, repeat('6', 32)), null, '_trial', d_today, true, true, 'en', 'http://x');
   checks := checks + 1; fails := fails || pg_temp.t88_is('6bot', (r ? 'trial')::text, 'false');
   checks := checks + 1; fails := fails || pg_temp.t88_is('6nothingkept', (select count(*) from public.gym_self_joins where phone = omar)::text, '0');
   -- A 1-day trial ends the day it starts.
   update public.crm_records set data = data || '{"joinTrialDays":1}' where gym_id = ga and kind = 'gym';
-  r := public.self_join_send('T88AAA', 'Omar Khan', pg_temp.t88_proof(omar, repeat('n', 32)), null, '_trial', d_soon, true, true, 'en');
+  r := public.self_join_send('T88AAA', 'Omar Khan', pg_temp.t88_proof(omar, repeat('7', 32)), null, '_trial', d_soon, true, true, 'en');
   checks := checks + 1; fails := fails || pg_temp.t88_is('6oneday', r->'trial'->>'endsOn', d_soon);
   checks := checks + 1; fails := fails || pg_temp.t88_is('6onedayline', ((select data->>'interest' from public.crm_records where gym_id = ga and kind = 'enquiry' and id = r->>'enquiryId') like 'Free trial online: 1 day, %')::text, 'true');
   -- Switched off again: the next trial is refused at once.
   update public.crm_records set data = data - 'joinTrialDays' where gym_id = ga and kind = 'gym';
   checks := checks + 1; fails := fails || pg_temp.t88_is('6offagain',
-    public.self_join_send('T88AAA', 'Zoya Ali', pg_temp.t88_proof('9000088005', repeat('o', 32)), null, '_trial', d_today, true, true, 'en')->>'error', 'TRIAL_OFF');
+    public.self_join_send('T88AAA', 'Zoya Ali', pg_temp.t88_proof('9000088005', repeat('8', 32)), null, '_trial', d_today, true, true, 'en')->>'error', 'TRIAL_OFF');
   -- '_trial' is never a plan: with trials off a plan send of an unknown id is still BAD_PLAN.
   checks := checks + 1; fails := fails || pg_temp.t88_is('6badplan',
-    public.self_join_send('T88AAA', 'Zoya Ali', pg_temp.t88_proof('9000088005', repeat('p', 32)), null, 'no-such-plan', d_today, true, true, 'en')->>'error', 'BAD_PLAN');
+    public.self_join_send('T88AAA', 'Zoya Ali', pg_temp.t88_proof('9000088005', repeat('9', 32)), null, 'no-such-plan', d_today, true, true, 'en')->>'error', 'BAD_PLAN');
 
   -- 7. Grants: the public calls stay as they were; the setting reader is private; the table stays closed.
   checks := checks + 1; fails := fails || pg_temp.t88_is('7anon',

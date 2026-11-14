@@ -75,7 +75,7 @@ async function openSettingsApp(page) {
 }
 
 const trialCard = (page) => page.getByTestId('join-trial-card');
-const lengthChip = (page, name) => page.getByRole('group', { name: 'Free trial length' }).getByRole('button', { name, exact: true });
+const lengthChip = (page, name, group = 'Free trial length') => page.getByRole('group', { name: group }).getByRole('button', { name, exact: true });
 
 test.describe('the gym side', () => {
   test.use({ viewport: SIZES.phone });
@@ -128,8 +128,8 @@ test.describe('the gym side', () => {
     await page.reload();
     await openSettingsApp(page);
     await expect(card).toContainText('Naye logon ke liye free trial', { timeout: 15_000 });
-    await expect(lengthChip(page, 'Band')).toBeVisible();
-    await expect(lengthChip(page, '3 din')).toHaveAttribute('aria-pressed', 'true');
+    await expect(lengthChip(page, 'Band', 'Free trial kitne din ka')).toBeVisible();
+    await expect(lengthChip(page, '3 din', 'Free trial kitne din ka')).toHaveAttribute('aria-pressed', 'true');
     await card.scrollIntoViewIfNeeded();
     await expectFitsPhone(page, 'in Settings, Hinglish');
     await shot(page, 'phone-jointrial-2b-settings-hinglish', false);
@@ -215,10 +215,11 @@ test.describe('the gym side', () => {
   });
 
   test('F210 computer dark: the setting and the Today card', async ({ page }) => {
-    await page.setViewportSize(SIZES.computer);
+    // Set up at phone size (the shared helpers tap the phone's bottom bar), then the computer goes on by address.
     const server = await openApp(page);
     await startOnlineGym(page);
     await addPlan(page, { name: 'Monthly', price: '1500', joining: '500', months: '1' });
+    await page.setViewportSize(SIZES.computer);
     await previewFromServer(page, server, '0088');
     await page.evaluate(() => localStorage.setItem('forgeai.theme.v1', 'dark'));
     await page.reload();
@@ -348,6 +349,7 @@ for (const [size, scheme, lang] of [
     await expect(trial).toContainText(hi ? 'मुफ़्त' : 'Free');
     await expect(trial).toContainText(hi ? 'कोई पैसा नहीं।' : 'No payment. Visit the gym for 3 days, then pick a plan at the desk if you want to join.');
     await expect(page.locator('#plans .or')).toHaveText(hi ? 'या कोई प्लान चुनें' : 'or pick a plan');
+    await expect(page.locator('#plans-legend')).toHaveText(hi ? 'एक चुनें' : 'Pick one');
     await expect(page.locator('#plans label')).toHaveCount(2);
     await page.locator('input[name=plan][value=_trial]').check();
     await expect(page.locator('#start-label')).toHaveText(hi ? 'ट्रायल शुरू होने की तारीख' : 'Trial starts on');
@@ -408,7 +410,9 @@ test('F210 page, phone: this number already had a trial here; it picks a plan in
   await page.locator('#send').click();
   await expect(page.locator('#step2')).toBeVisible();
   await expect(page.locator('#plan-err')).toHaveText('This number has already had a free trial at this gym. Please pick a plan instead.');
-  await expect(page.locator('input[name=plan][value=_trial]')).not.toBeChecked();
+  // The trial is no longer offered to this person; the plans are.
+  await expect(page.locator('label.plan.trial')).toHaveCount(0);
+  await expect(page.locator('#sub')).toHaveText('Join in 3 short steps. You pay at the gym desk.');
   await shot(page, 'jointrial-page-uat-trial-used-phone');
   await page.locator('#lang').click();
   await expect(page.locator('#plan-err')).toHaveText('इस नंबर से इस जिम में पहले ही फ़्री ट्रायल लिया जा चुका है। कृपया कोई प्लान चुनें।');
@@ -437,6 +441,7 @@ test('F210 page, phone: trials off (or a server without 0088) = no trial anywher
     await expect(p.locator('#plans label')).toHaveCount(1);
     await expect(p.locator('label.plan.trial')).toHaveCount(0);
     await expect(p.locator('#plans .or')).toHaveCount(0);
+    await expect(p.locator('#plans-legend')).toHaveText('Pick a plan');
     await expect(p.locator('#plans')).not.toContainText(/free|trial/i);
     await shot(p, `jointrial-page-uat-no-trial-${name}-phone`);
     await p.close();

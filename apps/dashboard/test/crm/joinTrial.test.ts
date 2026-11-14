@@ -142,7 +142,7 @@ describe('the public page', () => {
   const page = readFileSync(new URL('../../public/join-online.html', import.meta.url), 'utf8');
   it('offers the trial only from the server’s answer, as plan "_trial", never with a price', () => {
     expect(page).toContain("var TRIAL = '_trial';");
-    expect(page).toContain('function trialDays() { var d = gym && gym.trial && Number(gym.trial.days); return d === 1 || d === 3 || d === 7 ? d : 0; }');
+    expect(page).toContain('function trialDays() { var d = gym && gym.trial && Number(gym.trial.days); return !S.trialUsed && (d === 1 || d === 3 || d === 7) ? d : 0; }');
     const send = /fetch\('\/api\/self-join'[\s\S]*?body: JSON\.stringify\(([^\n]+)\)/.exec(page)?.[1] ?? '';
     expect(send).toContain('plan: S.plan');
     expect(send).not.toMatch(/price|total|fee|trial/i);
