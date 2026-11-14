@@ -56,7 +56,10 @@ begin
   checks := checks + 1; fails := fails || pg_temp.t79_is('3othergym', pg_temp.t79_run(format('select public.owner_set_person_job(%L, %L, %L)', kop, s_other, 'Boss')), 'GONE');
   checks := checks + 1; fails := fails || pg_temp.t79_is('3owner', pg_temp.t79_run(format('select public.owner_set_person_job(%L, %L, %L)', kop, s_owner, 'Boss')), 'NOT_STAFF');
   checks := checks + 1; fails := fails || pg_temp.t79_is('3long', pg_temp.t79_run(format('select public.owner_set_person_job(%L, %L, %L)', kop, s_clean, repeat('a', 41))), 'TOO_LONG');
-  checks := checks + 1; fails := fails || pg_temp.t79_is('3cntrl', pg_temp.t79_run(format('select public.owner_set_person_job(%L, %L, %L)', kop, s_clean, 'Bad' || chr(10) || 'name')), 'INVALID');
+  -- A line break or tab is only white space: tidied into one space, like the app does ("Head cleaner" again).
+  checks := checks + 1; fails := fails || pg_temp.t79_is('3newline', public.owner_set_person_job(kop, s_clean, 'Head' || chr(10) || chr(9) || 'cleaner')->>'job', 'Head cleaner');
+  -- Any other control character is refused.
+  checks := checks + 1; fails := fails || pg_temp.t79_is('3cntrl', pg_temp.t79_run(format('select public.owner_set_person_job(%L, %L, %L)', kop, s_clean, 'Bad' || chr(7) || 'name')), 'INVALID');
   checks := checks + 1; fails := fails || pg_temp.t79_is('3kept', (select job_title from public.gym_staff where staff_id = s_clean), 'Head cleaner');
   -- The column refuses an empty or over-long name written any other way.
   checks := checks + 1;
