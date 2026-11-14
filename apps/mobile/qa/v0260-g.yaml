@@ -546,15 +546,21 @@ appId: com.mettleup.app
 - assertNotVisible: "New record.*"
 - takeScreenshot: 101-easy-no-record
 - runFlow: sub-inuse-close.yaml
+# Skip the 30 s rest FIRST, while it still has time left. Run 43644981186 waited ~10 s for the
+# optional "Keep 300?" below, the rest ran out as "Skip rest" was tapped, and the tap fell
+# through to Overhead Press set 1's tick (a new rest and its In-use screen hid the next step).
+- tapOn:
+    text: "Skip rest"
+    optional: true
+- extendedWaitUntil:
+    notVisible: "Skip rest"
+    timeout: 35000
 # D7: 300 kg may be 2.5x or more this lift's best, so the row may ask "… Keep it?" (already
 # saved; it never refuses). It is on purpose: Keep.
 - tapOn:
     text: 'Keep 300.*'
     optional: true
     waitToSettleTimeoutMs: 300
-- tapOn:
-    text: "Skip rest"
-    optional: true
 # Swap for today: the plan's second lift, nothing ticked on it yet (the demo's Overhead Press
 # is linked to the library by its name). Its routine stays as it is.
 - scrollUntilVisible:
