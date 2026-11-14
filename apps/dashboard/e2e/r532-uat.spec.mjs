@@ -12,7 +12,8 @@ import { addMember, expectFitsPhone, open, openApp, openMember, sheet, startOnli
 const DIR = 'e2e/.results/uat';
 mkdirSync(DIR, { recursive: true });
 
-const COMPUTER = { viewport: { width: 1280, height: 900 }, isMobile: false, hasTouch: false };
+// Touch stays on (as in r526): the shared set-up taps. A computer still gets mouse clicks below.
+const COMPUTER = { viewport: { width: 1280, height: 900 }, isMobile: false };
 const ASHA = { name: 'Asha Verma', phone: '98290 11111' };
 const VEG = ['Fat loss veg · 1,600 kcal', 'Muscle gain veg · 2,600 kcal', 'Maintenance veg · 2,200 kcal'];
 const NON_VEG = ['Fat loss non-veg · 1,600 kcal', 'Muscle gain non-veg · 2,600 kcal', 'Maintenance non-veg · 2,200 kcal'];
