@@ -60,6 +60,7 @@ appId: com.mettleup.app
 - tapOn:
     text: "Watch how to do Tate Press"
     index: 0
+# in-view: the demo sheet opens on top of the screen; it never needs a scroll.
 - extendedWaitUntil:
     visible: "Moving demo of the exercise"
     timeout: 15000
