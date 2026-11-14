@@ -24,6 +24,7 @@ import { handleApi, json } from './api.js';
 import { rpc } from './db.js';
 import { nightlyWeb } from './web.js';
 import { handlePushKick, runPush } from './push.js';
+import { feedFeeRequests } from './payFeed.js';
 import { backupStatus, runBackup } from './backup.js';
 import { handleBilling, runBillingDaily, runBillingReconcile } from './billing.js';
 
@@ -241,6 +242,19 @@ export default {
     if (job === 'nightly') ctx.waitUntil(runBackup(env).then(() => nightly(env)).finally(() => runBillingDaily(env)));
     // The payment company's paid links that no webhook brought (billing.js; off until set up, never throws).
     else if (job === 'billing') ctx.waitUntil(runBillingReconcile(env));
-    else ctx.waitUntil(runPush(env));
+    else ctx.waitUntil(everyMinute(env));
   },
 };
+
+/**
+ * The every-minute run. R-507 (supabase 0073): first the desk's new fee requests become member notes
+ * (payFeed.js, at most 2 outside calls), so the phone pop-ups below send them in the same run. Never throws.
+ */
+export async function everyMinute(env, deps = {}) {
+  try {
+    await feedFeeRequests(env, deps);
+  } catch (e) {
+    console.error('[hq-cron] fee request feed failed', e instanceof Error ? e.message : 'error');
+  }
+  return runPush(env, deps);
+}

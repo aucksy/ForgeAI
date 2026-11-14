@@ -1,6 +1,21 @@
 # ForgeAI progress
 
 ## Waiting for release (R-266: tag only when the owner says "release")
+- R-507/R-510 PHASE 1, GYM -> MEMBER POP-UPS (owner, 14 Nov 2026: "yes to A (my pick): Build both directions together,
+  with the live database change"). Server only: works for every app version already installed once it is LIVE; no
+  app release needed. supabase/migrations/0073_member_push_more.sql (NOT APPLIED; his LIVE yes is R-510) adds five
+  kinds to 0054's member notes and fills them by triggers: a new workout plan or changed routines (crm_records kind
+  'workout_plan', tap opens /workout), a new or changed diet plan (/shop/diet), body measurements saved by the gym
+  (/measures), a new challenge (every member with pop-ups on, /shop), and the desk's online fee request (D1
+  pay_requests: the HQ Worker's every-minute run reads the last 15 minutes, deploy/hq/payFeed.js, and hands them to
+  hq_fee_request_notes; /shop). Who: the list entries a plan names or whose membership plan it names (as
+  member_gym_plans reads it), each reaching the app member the app would link (same number, same first name, number
+  not shared), only members with a push address. Once per event (tags); never an amount or a body number. Sent by
+  the unchanged 0054 sender (hq_push_direct_next + push.js fcmNoteMessage); the app's existing tap handler opens the
+  route (listenForAlertTaps). Tests: supabase/tests/0073_member_push_more.sql (25 checks), deploy/hq/payFeed.test.mjs
+  (6). LIVE (owner): SQL Editor 0073; deploy the HQ Worker (deploy/hq: npx wrangler deploy).
+  What's new draft (member-words): "When your gym sends you a new workout plan, a diet plan, your body measurements,
+  a new challenge or a fee to pay, your phone now shows a notification. Tap it to open the right screen."
 - R-501 GYM MESSAGE POP-UP DURING A WORKOUT (owner, 14 Nov 2026: his gym's Chhath Puja message reached the
   notification list but did not pop up). Found: with the app open during a workout the handler answered "banner, no
   sound"; expo-notifications 56 then posts it with setSilent(true) (androidx "silent" group, GROUP_ALERT_SUMMARY) and
