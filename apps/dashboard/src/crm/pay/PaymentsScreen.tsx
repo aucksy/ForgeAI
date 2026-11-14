@@ -165,7 +165,7 @@ export function switchesBlocked(o: { live: DeskPay | null; hasAccount: boolean; 
 }
 
 /**
- * R-528 (14 Nov 2026): "Take payments in the member app" and "Take payments on your web page and join link". Both on
+ * R-528 (14 Nov 2026): "Take payments in the member app" and "Take payments when people join online". Both on
  * once a payment account is set up; with none, both off and greyed with the reason. Off in the app only hides the
  * Pay now button: the member still sees what they owe.
  */
@@ -223,9 +223,9 @@ function SwitchesCard({
         checked={webOn}
         disabled={busy || blocked !== null}
         onChange={(v) => void save({ web: v })}
-        hint={t('People who join on your web page can pay for their plan there. When off, they send their details and pay at the desk.')}
+        hint={t('People who join online with your join link can pay for their plan there. When off, they send their details and pay at the desk.')}
       >
-        {t('Take payments on your web page and join link')}
+        {t('Take payments when people join online')}
       </CheckField>
       {blocked ? (
         <p role="status" style={{ ...muted, fontWeight: 700 }}>

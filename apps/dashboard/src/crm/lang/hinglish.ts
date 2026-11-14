@@ -657,9 +657,9 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   'Take payments in the member app': 'Member app mein payment lo',
   'Members see a Pay now button for what they owe. When off, they still see what they owe and pay at the desk.':
     'Members ko baaki paison ke liye Pay now button dikhta hai. Band hone par bhi unhe baaki paise dikhte hain, aur woh desk par pay karte hain.',
-  'Take payments on your web page and join link': 'Apne web page aur join link par payment lo',
-  'People who join on your web page can pay for their plan there. When off, they send their details and pay at the desk.':
-    'Jo log aapke web page par join karte hain, woh wahin plan ke paise de sakte hain. Band hone par woh apni details bhejte hain aur desk par pay karte hain.',
+  'Take payments when people join online': 'Online join karne walon se payment lo',
+  'People who join online with your join link can pay for their plan there. When off, they send their details and pay at the desk.':
+    'Jo log aapke join link se online join karte hain, woh wahin plan ke paise de sakte hain. Band hone par woh apni details bhejte hain aur desk par pay karte hain.',
   'Add your UPI ID or connect a payment company first.': 'Pehle apni UPI ID daalo ya payment company connect karo.',
   'These switches are not switched on yet. Until then members pay in the app as now, and people who join online pay at the desk.':
     'Yeh switch abhi chalu nahi hue hain. Tab tak members app mein abhi jaise pay karte hain, aur online join karne waale desk par pay karte hain.',

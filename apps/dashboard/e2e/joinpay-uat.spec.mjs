@@ -575,7 +575,7 @@ test.describe('the gym side', () => {
       window.location.hash = p;
     }, path);
     const app = main.getByRole('checkbox', { name: /^Take payments in the member app/ });
-    const web = main.getByRole('checkbox', { name: /^Take payments on your web page and join link/ });
+    const web = main.getByRole('checkbox', { name: /^Take payments when people join online/ });
 
     // No payment account (no UPI ID, nothing connected): both off and greyed, with the reason.
     const off = await payServer(page, { connected: false });

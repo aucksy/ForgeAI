@@ -15,7 +15,7 @@
 // Offered only when ALL hold (else the page says "Pay at the desk", as before):
 //   D1 0011 and 0016 applied; the panel Worker can sign (PHONE_CODE_SECRET) and the gym server has 0081
 //   (self_join_pay_gym); the gym is open to online sign-ups; it has a payment company connected or a UPI ID; and the
-//   owner's "Take payments on your web page and join link" is on (paySwitches.js).
+//   owner's "Take payments when people join online" is on (paySwitches.js).
 // Test mode: a company link is test (sandbox) until PAY_LIVE is "on" (pay.js payMode); the page says so.
 //
 // Endpoints (no key: the page has none; a request id pr_<20 hex> is known only to the page that made it):

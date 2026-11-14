@@ -47,7 +47,7 @@ export interface PaySwitches {
   ready: boolean;
   /** "Take payments in the member app". */
   app: boolean;
-  /** "Take payments on your web page and join link". */
+  /** "Take payments when people join online". */
   web: boolean;
 }
 

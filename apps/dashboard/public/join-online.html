@@ -18,7 +18,7 @@
   purpose 'join', deploy/panel/phoneInbound.js), your plan (prices from the gym server, never typed here), agree and
   send. The form posts to /api/self-join (deploy/panel/selfJoin.js); the gym server re-reads the price itself and
   writes the request into that gym's Enquiries ("Joined online" on Today). Payment: at the desk, or (R-528, 14 Nov
-  2026) online when the gym has a payment account and its owner's "Take payments on your web page and join link" is
+  2026) online when the gym has a payment account and its owner's "Take payments when people join online" is
   on (/api/self-join/pay-info says so). Online, the details are sent FIRST, then the page shows the payment: a link
   to the gym's own payment company, or its UPI ID. A payment that fails or is left half way keeps the request as
   "Not paid"; the desk makes nobody a member without a tap.

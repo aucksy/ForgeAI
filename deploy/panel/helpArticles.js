@@ -228,8 +228,8 @@ export const ALL_HELP_ARTICLES = [
     who: 'owner',
     title: 'Let new people pay online when they join',
     text:
-      'Open Settings, then Payments. With your UPI ID added or a payment company connected, two switches show: "Take payments in the member app" and "Take payments on your web page and join link". Both start on. ' +
-      'People who join on your web page or join link can then pay for their plan there, straight to your account. ' +
+      'Open Settings, then Payments. With your UPI ID added or a payment company connected, two switches show: "Take payments in the member app" and "Take payments when people join online". Both start on. ' +
+      'People who join online with your join link can then pay for their plan there, straight to your account. ' +
       'On Today, "Joined online" says "Paid online". Approve makes the member, plan and receipt in one tap. ' +
       'A payment straight to your UPI ID says "Check your bank before approving". ' +
       'A failed or unfinished payment says "Not paid": they pay at the desk and you tap "Make member". ' +

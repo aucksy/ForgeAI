@@ -1,6 +1,6 @@
 // R-528 (14 Nov 2026): the gym owner's two payment switches, kept in D1 (migrations/0016_pay_switches.sql):
 //   "Take payments in the member app"               app_on (pay.js: /api/pay/mine, member-check, shop)
-//   "Take payments on your web page and join link"  web_on (joinPay.js: the join page and the gym's web page)
+//   "Take payments when people join online"  web_on (joinPay.js: the join page and the gym's web page)
 // Both are ON when the gym has no row (the default once its payment account is set up). Before 0016 is applied the
 // switches read as ON for the member app (so nothing changes there) and the web page offers no online pay at all
 // (joinPay.js checks switchesReady first). Also here: "I have paid" for a plain UPI payment (table pay_said).
