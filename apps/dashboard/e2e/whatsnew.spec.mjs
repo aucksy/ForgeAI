@@ -24,7 +24,8 @@ test('J148 What is new: never a card on Today, every update on the What is new p
   await expect(page.getByRole('heading', { name: "What's new", level: 1 })).toBeVisible();
   await expect(page.getByText('28 Oct 2026', { exact: true })).toBeVisible();
   await expect(page.getByText('24 Oct 2026', { exact: true })).toBeVisible();
-  await page.getByRole('button', { name: 'Open Gym timings ›' }).tap();
+  // R-555: two updates now open Gym timings (31 Oct's new page, 14 Nov's new setup step); tap the 31 Oct one.
+  await page.getByRole('listitem').filter({ hasText: 'New "Gym timings" page' }).getByRole('button', { name: 'Open Gym timings ›' }).tap();
   await expect(page).toHaveURL(/#\/settings\/timings$/);
 
   // R-239: not under Settings any more.
