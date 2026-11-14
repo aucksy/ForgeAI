@@ -185,16 +185,71 @@ class WearTracks(unittest.TestCase):
         self.assertEqual(pu.wear_version_code_for("0.60.0"), 1_000_060_000)
 
     def test_workflow_uploads_the_watch_bundle_to_the_phones_testing_tracks(self):
-        # R-444: the watch goes to the same tracks as the phone (internal + closed), never open testing or production.
+        # R-444: the watch goes to the same tracks as the phone (internal + closed), never production.
+        # R-494b (from 0.78.0): both also go to open testing (phone "beta", watch "wear:beta").
         with open(os.path.join(ROOT, ".github", "workflows", "play-upload.yml"), encoding="utf-8") as f:
             wf = f.read()
         self.assertIn('--pattern "mettleup-$TAG-wear.aab"', wf)
         self.assertIn("--wear", wf)
-        self.assertIn("--tracks wear:internal,wear:closed)", wf)
-        self.assertIn("--tracks internal,alpha)", wf)
+        self.assertIn("--tracks wear:internal,wear:closed,wear:beta)", wf)
+        self.assertIn("--tracks internal,alpha,beta)", wf)
         self.assertNotIn("wear:qa", wf)
         self.assertNotIn("wear:production", wf)
-        self.assertNotIn("--tracks wear:beta", wf)
+        self.assertNotIn("production)", wf)
+
+
+class OpenTestingTrack(unittest.TestCase):
+    """R-494b (owner, 14 Nov 2026): every version also goes to open testing, never production; an open-track
+    problem never stops internal or closed testing."""
+
+    def test_names(self):
+        self.assertEqual(pu.OPEN, "beta")
+        self.assertEqual(pu.WEAR_OPEN, "wear:beta")
+        self.assertIn(pu.WEAR_OPEN, pu.WEAR_BUILTIN)
+        self.assertFalse(pu.is_production(pu.OPEN))
+        self.assertFalse(pu.is_production(pu.WEAR_OPEN))
+
+    def test_each_run_accepts_its_own_open_track_only(self):
+        self.assertEqual(pu.check_tracks(["internal", "alpha", "beta"], wear=False), ["internal", "alpha", "beta"])
+        self.assertEqual(pu.check_tracks(["wear:internal", "wear:closed", "wear:beta"], wear=True),
+                         ["wear:internal", "wear:closed", "wear:beta"])
+        with self.assertRaises(ValueError):
+            pu.check_tracks(["internal", "wear:beta"], wear=False)
+        with self.assertRaises(ValueError):
+            pu.check_tracks(["wear:internal", "beta"], wear=True)
+
+    def test_the_open_track_is_not_taken_for_the_watch_closed_track(self):
+        tracks, closed, _ = pu.resolve_tracks(["wear:internal", "wear:closed", "wear:beta"],
+                                              ["wear:internal", "wear:beta", "wear:alpha"])
+        self.assertEqual(tracks, ["wear:internal", "wear:alpha", "wear:beta"])
+        self.assertNotIn("wear:beta", closed)
+
+    def test_a_refused_edit_drops_open_testing_first_then_closed(self):
+        closed = {pu.CLOSED}
+        first = pu.retry_without(["internal", "alpha", "beta"], ["internal", "alpha", "beta"], closed)
+        self.assertEqual(first, ["internal", "alpha"])
+        self.assertEqual(pu.retry_without(first, first, closed), ["internal"])
+        self.assertIsNone(pu.retry_without(["internal"], ["internal"], closed))
+
+    def test_watch_retry_keeps_internal(self):
+        closed = {pu.CLOSED, "wear:alpha"}
+        tracks = ["wear:internal", "wear:alpha", "wear:beta"]
+        first = pu.retry_without(tracks, tracks, closed)
+        self.assertEqual(first, ["wear:internal", "wear:alpha"])
+        self.assertEqual(pu.retry_without(first, first, closed), ["wear:internal"])
+
+    def test_a_retry_naming_the_real_closed_track_keeps_it_optional(self):
+        tracks, closed, _ = pu.resolve_tracks(["wear:internal", "wear:alpha"], ["wear:internal", "wear:alpha"])
+        self.assertEqual(tracks, ["wear:internal", "wear:alpha"])
+        self.assertIn("wear:alpha", closed)
+        self.assertEqual(pu.retry_without(tracks, tracks, closed), ["wear:internal"])
+
+    def test_defaults_include_open_testing_and_never_production(self):
+        with open(os.path.join(ROOT, "scripts", "ci", "play_upload.py"), encoding="utf-8") as f:
+            src = f.read()
+        self.assertIn('default_tracks = f"{WEAR_INTERNAL},{WEAR_CLOSED},{WEAR_OPEN}" if a.wear else '
+                      'f"{INTERNAL},{CLOSED},{OPEN}"', src)
+        self.assertNotIn("PRODUCTION}", src.split("default_tracks =")[1].split("\n")[0])
 
 
 class WearClosedTrack(unittest.TestCase):
@@ -241,7 +296,7 @@ class WearClosedTrack(unittest.TestCase):
     def test_the_watch_run_defaults_to_both(self):
         with open(os.path.join(ROOT, "scripts", "ci", "play_upload.py"), encoding="utf-8") as f:
             src = f.read()
-        self.assertIn('default_tracks = f"{WEAR_INTERNAL},{WEAR_CLOSED}" if a.wear', src)
+        self.assertIn('default_tracks = f"{WEAR_INTERNAL},{WEAR_CLOSED},', src)
 
 
 class ReviewRefusals(unittest.TestCase):

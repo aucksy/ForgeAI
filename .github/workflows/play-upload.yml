@@ -109,10 +109,12 @@ jobs:
           workload_identity_provider: ${{ vars.PLAY_WIF_PROVIDER }}
           service_account: ${{ vars.PLAY_SERVICE_ACCOUNT }}
 
-      - name: Upload to Play (internal + closed testing)
+      # R-494b (owner, 14 Nov 2026, "start a public beta on Play: A = now"; from 0.78.0): also OPEN testing
+      # ("beta"), and production by hand about 3 days later. Not set up on Play yet = a warning, the rest goes out.
+      - name: Upload to Play (internal + closed + open testing)
         run: |
           set -euo pipefail
-          ARGS=(--tag "$TAG" --aab "$RUNNER_TEMP/aab/mettleup-$TAG.aab" --whats-new "$RUNNER_TEMP/whatsNew.ts" --tracks internal,alpha)
+          ARGS=(--tag "$TAG" --aab "$RUNNER_TEMP/aab/mettleup-$TAG.aab" --whats-new "$RUNNER_TEMP/whatsNew.ts" --tracks internal,alpha,beta)
           if [ "$DRY_RUN" = true ]; then ARGS+=(--dry-run); fi
           python scripts/ci/play_upload.py "${ARGS[@]}"
 
@@ -128,8 +130,10 @@ jobs:
       # closed), so a member on the phone's closed test gets the watch build too and the phone's "Your watch
       # app has an update" card has something to point at. "wear:closed" is resolved by play_upload.py to the
       # Wear OS closed track Play lists ("wear:alpha", else the only custom one); none on Play = a warning
-      # annotation and wear:internal still goes out. Never production, never open testing (wear:beta).
-      - name: Upload the watch app to Play (Wear OS internal + closed testing)
+      # annotation and wear:internal still goes out. Never production.
+      # R-494b (from 0.78.0): also the Wear OS OPEN testing track "wear:beta", like the phone's "beta"; a problem
+      # there is a warning and the other watch tracks still go out.
+      - name: Upload the watch app to Play (Wear OS internal + closed + open testing)
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -143,6 +147,6 @@ jobs:
           fi
           gh release download "$TAG" --repo "$GITHUB_REPOSITORY" --pattern "mettleup-$TAG-wear.aab" --dir "$RUNNER_TEMP/wear-aab"
           ls -la "$RUNNER_TEMP/wear-aab"
-          ARGS=(--wear --tag "$TAG" --aab "$RUNNER_TEMP/wear-aab/$WEAR_AAB" --whats-new "$RUNNER_TEMP/whatsNew.ts" --tracks wear:internal,wear:closed)
+          ARGS=(--wear --tag "$TAG" --aab "$RUNNER_TEMP/wear-aab/$WEAR_AAB" --whats-new "$RUNNER_TEMP/whatsNew.ts" --tracks wear:internal,wear:closed,wear:beta)
           if [ "$DRY_RUN" = true ]; then ARGS+=(--dry-run); fi
           python scripts/ci/play_upload.py "${ARGS[@]}" || { echo "::error title=Watch app not on Play::The watch bundle did not reach Play's Wear OS internal track wear:internal. The phone's tracks are already done and unaffected. See the log above."; exit 1; }

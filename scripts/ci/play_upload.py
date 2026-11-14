@@ -34,6 +34,12 @@ closed track named like the phone's ("wear:alpha") or, failing that, the only cu
 (the case on 10 Nov 2026: Play Console showed no Wear OS closed track) or several unnamed ones: a
 warning, and wear:internal still goes out. Like the phone's closed track, a problem there never stops
 internal.
+
+R-494b (owner, 14 Nov 2026: "start a public beta on Play: A = now"; applied from 0.78.0): every version also
+goes to OPEN testing, the phone's "beta" track and the watch's Wear OS open track "wear:beta", and reaches
+production by hand about 3 days later (never from here). Open testing is set up by hand in Play Console
+(countries, feedback address). Until it is, or when Play refuses it, the open track is skipped with a
+warning and every other track still goes out: an open-track problem never stops internal or closed testing.
 """
 import argparse
 import os
@@ -48,6 +54,9 @@ NOTES_LIMIT = 500
 FALLBACK_NOTES = "Small fixes and improvements."
 INTERNAL = "internal"
 CLOSED = "alpha"
+# R-494b: the open testing (public beta) tracks, the phone's and the watch's.
+OPEN = "beta"
+WEAR_OPEN = "wear:beta"
 PRODUCTION = "production"
 WEAR_PREFIX = "wear:"
 WEAR_INTERNAL = "wear:internal"
@@ -110,6 +119,18 @@ def is_wear_closed(name):
     return name.startswith(WEAR_PREFIX) and name not in WEAR_NOT_CLOSED and name != WEAR_CLOSED
 
 
+def retry_without(tracks, changed, closed):
+    """After Play refused an edit: the tracks to try again with, or None when there is nothing optional left
+    to drop. The open tracks go first (R-494b: open testing may not be set up yet), then the closed ones;
+    internal testing always stays. PURE."""
+    opened = {OPEN, WEAR_OPEN} & set(changed)
+    drop = opened or (set(closed) & set(changed))
+    if not drop:
+        return None
+    rest = [t for t in tracks if t not in drop]
+    return rest or None
+
+
 def resolve_tracks(tracks, listed):
     """(tracks to set, closed-track names, warning or None): 'wear:closed' becomes Play's real Wear OS
     closed track, or is dropped with a warning. Order kept, no repeats. PURE."""
@@ -124,6 +145,9 @@ def resolve_tracks(tracks, listed):
                 continue
             closed.add(real)
             t = real
+        elif is_wear_closed(t):
+            # Named directly (a retry after Play refused the edit): still a closed track, so still optional.
+            closed.add(t)
         if t not in out:
             out.append(t)
     return out, closed, note
@@ -275,6 +299,10 @@ def upload_and_assign(api, aab, version, code, notes, tracks, language, dry_run)
             if name == CLOSED:
                 warn(msg + " Skipping the closed test.")
                 continue
+            if name == OPEN:
+                warn(msg + " Skipping open testing (R-494b): set it up in Play Console (Test and release > "
+                     "Open testing: countries and feedback address), then run this again for the same tag.")
+                continue
             fail(msg)
         action, why = track_decision(track, code)
         log(why)
@@ -290,6 +318,10 @@ def upload_and_assign(api, aab, version, code, notes, tracks, language, dry_run)
                 warn(f"Could not set the closed track '{name}' (in review or blocked?): {http_error_text(e)}. "
                      "Internal testing still goes out.")
                 continue
+            if name in (OPEN, WEAR_OPEN):
+                warn(f"Could not set the open testing track '{name}' (not set up in Play Console yet?): "
+                     f"{http_error_text(e)}. The other tracks still go out.")
+                continue
             raise
 
     if not changed:
@@ -303,9 +335,9 @@ def upload_and_assign(api, aab, version, code, notes, tracks, language, dry_run)
     try:
         return finish_edit(api, edit_id, dry_run, what), changed
     except HttpError as e:
-        if closed & set(changed):
-            warn(f"Play refused the edit with the closed track in it: {http_error_text(e)}")
-            return "retry-without-closed", changed
+        if retry_without(tracks, changed, closed) is not None:
+            warn(f"Play refused the edit with an open or closed testing track in it: {http_error_text(e)}")
+            return "retry", (changed, closed)
         raise
 
 
@@ -314,7 +346,8 @@ def main():
     ap.add_argument("--tag", required=True, help="the release tag, e.g. v0.57.0")
     ap.add_argument("--aab", required=True, help="the release's mettleup-<tag>.aab")
     ap.add_argument("--whats-new", default="apps/mobile/src/lib/whatsNew.ts")
-    ap.add_argument("--tracks", default=None, help=f"default {INTERNAL},{CLOSED}; with --wear {WEAR_INTERNAL},{WEAR_CLOSED}")
+    ap.add_argument("--tracks", default=None,
+                    help=f"default {INTERNAL},{CLOSED},{OPEN}; with --wear {WEAR_INTERNAL},{WEAR_CLOSED},{WEAR_OPEN}")
     ap.add_argument("--wear", action="store_true", help="the WATCH app's bundle (Wear OS tracks, the watch's versionCode)")
     ap.add_argument("--language", default="en-US")
     ap.add_argument("--dry-run", action="store_true", help="validate the edit, never commit it")
@@ -333,7 +366,7 @@ def main():
     if not notes:
         warn(f"No What's new lines for {version}; using '{FALLBACK_NOTES}'.")
         notes = FALLBACK_NOTES
-    default_tracks = f"{WEAR_INTERNAL},{WEAR_CLOSED}" if a.wear else f"{INTERNAL},{CLOSED}"
+    default_tracks = f"{WEAR_INTERNAL},{WEAR_CLOSED},{WEAR_OPEN}" if a.wear else f"{INTERNAL},{CLOSED},{OPEN}"
     try:
         tracks = check_tracks([t.strip() for t in (a.tracks or default_tracks).split(",") if t.strip()], a.wear)
     except ValueError as e:
@@ -344,10 +377,16 @@ def main():
 
     api = service()
     result, changed = upload_and_assign(api, a.aab, version, code, notes, tracks, a.language, a.dry_run)
-    if result == "retry-without-closed":
-        rest = [t for t in tracks if t not in (CLOSED, WEAR_CLOSED) and not is_wear_closed(t)]
-        log(f"Trying again with {rest} only.")
-        result, changed = upload_and_assign(api, a.aab, version, code, notes, rest, a.language, a.dry_run)
+    while result == "retry":
+        tried, closed = changed
+        # The refused edit named Play's real Wear OS closed track; drop by that name, or by its stand-in.
+        names = [t for t in tracks if t != WEAR_CLOSED] + sorted(set(closed) - {CLOSED} - set(tracks))
+        rest = retry_without(names, tried, closed)
+        if rest is None:
+            fail("Play refused the edit and nothing optional is left to drop.")
+        tracks = rest
+        log(f"Trying again with {tracks} only.")
+        result, changed = upload_and_assign(api, a.aab, version, code, notes, tracks, a.language, a.dry_run)
     log(f"RESULT: {result}; tracks changed: {changed or 'none'}")
 
 
