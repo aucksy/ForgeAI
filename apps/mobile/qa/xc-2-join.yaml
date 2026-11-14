@@ -13,6 +13,21 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Profile$"
     timeout: 90000
+# 0.78.0 round (15 Nov 2026): this phone was just updated (C1), so the Workout tab opens with the "New in this
+# version" card, which pushes "Up next" below the edge where the join's last check (sub-after-join.yaml) looks.
+# The member reads it and taps "Got it" first; the card does not come back.
+- runFlow:
+    when:
+      visible: "New in this version.*"
+    commands:
+      - runFlow:
+          file: xc-sub-find.yaml
+          env:
+            FIND: "^Got it$"
+      - tapOn: "^Got it$"
+      - extendedWaitUntil:
+          notVisible: "New in this version.*"
+          timeout: 10000
 - runFlow:
     file: sub-join-gym.yaml
     env:

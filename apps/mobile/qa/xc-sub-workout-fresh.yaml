@@ -12,7 +12,18 @@ appId: com.mettleup.app
     element: "Start empty workout|Resume workout"
     direction: UP
     centerElement: true
-    timeout: 30000
+    timeout: 15000
+    optional: true
+# 0.78.0 round (15 Nov 2026), as sub-workout-fresh.yaml since 4 Nov: cards above "Up next" (the "New in this
+# version" card after an update) can push the button below the edge.
+- runFlow:
+    when:
+      notVisible: "Start empty workout|Resume workout"
+    commands:
+      - scrollUntilVisible:
+          element: "Start empty workout|Resume workout"
+          centerElement: true
+          timeout: 20000
 - runFlow:
     when:
       visible: "Resume workout"
@@ -27,9 +38,9 @@ appId: com.mettleup.app
           timeout: 10000
       # The sheet's own button (the link behind it says "Discard workout").
       - tapOn: "^Discard$"
-- scrollUntilVisible:
-    element: "Start empty workout"
-    direction: UP
-    centerElement: true
-    timeout: 30000
+- runFlow:
+    file: xc-sub-find.yaml
+    env:
+      FIND: "Start empty workout"
+# in-view: the tab hides this button while a workout is open; it never shows next to "Start empty workout"
 - assertNotVisible: "Resume workout"

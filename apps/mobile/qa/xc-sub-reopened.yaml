@@ -21,7 +21,18 @@ appId: com.mettleup.app
           element: "Resume workout"
           direction: UP
           centerElement: true
-          timeout: 30000
+          timeout: 15000
+          optional: true
+      # 0.78.0 round (15 Nov 2026): after the update the "New in this version" card sits above and pushes the
+      # button below the edge (as sub-workout-fresh.yaml since 4 Nov): the member scrolls down to it.
+      - runFlow:
+          when:
+            notVisible: "Resume workout"
+          commands:
+            - scrollUntilVisible:
+                element: "Resume workout"
+                centerElement: true
+                timeout: 20000
       - tapOn: "Resume workout"
 - extendedWaitUntil:
     visible: "Finish workout|Log a set to finish"

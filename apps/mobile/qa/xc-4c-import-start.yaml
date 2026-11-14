@@ -14,11 +14,14 @@ appId: com.mettleup.app
     file: xc-sub-settings-page.yaml
     env:
       PAGE: "Bring in from Hevy or Strong"
-- runFlow:
-    file: xc-sub-find.yaml
-    env:
-      FIND: "Import from Hevy"
-- tapOn: "Import from Hevy"
+# R-319 (4 Nov 2026, as uat-d-hevy-replace.yaml): the page asks which app first; Hevy's row opens the Hevy import.
+# in-view: the first row of the page, which opens at its top
+- extendedWaitUntil:
+    visible:
+      id: "import-from-hevy"
+    timeout: 15000
+- tapOn:
+    id: "import-from-hevy"
 - extendedWaitUntil:
     visible: "Choose Hevy file"
     timeout: 15000
