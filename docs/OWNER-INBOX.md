@@ -14,8 +14,6 @@ Page: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT (private to your account
 
 | # | Decision | My pick |
 |---|---|---|
-| 96 | Open beta on Play ("Join the beta" on the store page): now or later? | B: later, at about 100 members |
-| 95 | Sign in with your phone number: how do we check the number is really yours? | A: one WhatsApp message, free |
 | 94 | iPhone and Apple Watch apps: restart now, or after Android is public on Play? | A: after Android is public |
 | 78 | Turn on the Starter and Pro split now? | A: not yet, until the first gym pays |
 
@@ -42,6 +40,7 @@ Done, built and "Not doing" items have no rating. The page sorts by these (Best 
 | Feature: Why did today fall short? (sleep + food + training together) | Medium | High |
 | Feature: iPhone app and Apple Watch app | Medium | High |
 | Feature: Money back for unhappy gyms | Low | Low |
+| Feature: Sign in with your phone number; the app finds your gym and role | High | Medium |
 | Feature: Fast call-back for new enquiries | High | Medium |
 | Feature: Proof that gyms trust us: first customers, video and reviews | High | Medium |
 | Feature: "What if you shut down?": a written promise that the gym never loses its data | Medium | Low |
@@ -503,6 +502,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | Feature | Status | Details | How it will work |
 |---|---|---|---|
 | F115 Check-in QR that changes every minute | Idea | The poster's QR never changes, so a photo of it could check a member in from home (R-152). | A small screen at the desk (an old phone or tablet) shows a check-in QR that changes every minute, so only someone standing there can scan it. Or the app checks that the phone is near the gym when scanning. |
+| F203 Sign in with your phone number; the app finds your gym and role | Planned | #95. Your request, 14 Nov (R-493). Replaces the "Do you run a gym on MettleUp?" card. Proof: one WhatsApp message (your pick A). | The first screen gets one big button "Continue with your phone number". The member sends one ready WhatsApp message to prove the number. The app finds the number in the gym lists (member, trainer, desk staff or owner), says for example "We found you: trainer at Iron Gym", and opens in the gym's colours and logo. Not found: the app works as today; Google stays, smaller, for backups. |
 | F116 Join a gym by code or invite link | Live | Members join with the gym's code, a WhatsApp invite link or the QR poster. |
 | F117 Join from the welcome screen | Live | "Have a gym code? Join your gym" on the very first screen. |
 | F118 Gym's colours and logo in the app | Live | After joining, the app takes on the gym's colours and shows its logo at start-up. |
@@ -586,20 +586,18 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 
 ## 96. Do testers still get updates, and should we open a public beta? — 14 Nov 2026
 **Chat:** Mettle Up
-**Status:** WAITING FOR YOUR DECISION
+**Status:** ANSWERED
 **You asked (14 Nov):** Now that the app is live, do the internal testers still get updates? Can we turn on beta sign-up, so people who join get new versions before everyone else?
 
 **Short answer:** Yes, testers keep getting updates, and they get each new version first. Google Play gives every phone the newest version it is allowed to have. Each new version goes to the tester tracks first (internal testers within minutes, no Google review), and to everyone later. When the same version reaches everyone, nothing changes for testers. A tester who leaves the test gets the normal version.
 
 **Public beta:** Play can add a "Join the beta" button on the store page. Anyone can join and gets each version a few days early. Each version then also needs Google's review for the beta, and everyone else gets it a few days later. Today about 12 phones use the app, so a beta would have almost nobody in it.
 
-**Decide:** When do we open a public beta?
-- A: now, from the next version: every version goes to the beta first, everyone else about 3 days later
-- B: later, when about 100 people use the app (recommended)
+**DECIDED (14 Nov 2026):** A, now. From the next version, every version goes to the public beta first and to everyone else about 3 days later. I set up the beta on Play with the next release.
 
 ## 95. Sign in with your phone number, and the app knows who you are — 14 Nov 2026
 **Chat:** Mettle Up
-**Status:** WAITING FOR YOUR DECISION
+**Status:** ANSWERED
 **You asked (14 Nov):** No "Do you run a gym on MettleUp?" card. A simple sign-in with the phone number. The app finds the number in the gym lists (member, trainer, desk staff or owner) and says, for example, "We found you: trainer at Iron Gym."
 
 **What I did:** the "Do you run a gym on MettleUp?" card was on the Gym tab, not on the first screen. I am taking it out of the next version.
@@ -610,9 +608,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 
 **Plan:** the first screen gets one big button "Continue with your phone number". The app checks the number, finds the gym and the role, and opens the app in the gym's colours and logo. Not found: the app works as today. Google stays, smaller, for backups. It needs your yes on 2 live server changes and one privacy line before it goes live.
 
-**Decide:** How do we check that the number is theirs?
-- A: one WhatsApp message: WhatsApp opens with a ready message and they tap Send. Free. It already works in the admin app since 8 Nov (recommended)
-- B: an SMS code. Everyone knows it. About Rs 40 a month per 100 users, about Rs 5,900 once to register as an SMS sender, and some weeks of paperwork
+**DECIDED (14 Nov 2026):** A, one WhatsApp message (free). I build it for the version after the pictures release. Before it goes live I ask your yes on the 2 server changes and the privacy line.
 
 ## 94. Android and iPhone: what is built once, and what must be built twice — 13 Nov 2026
 **Chat:** Mettle Up

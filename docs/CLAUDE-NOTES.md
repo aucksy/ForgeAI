@@ -7,6 +7,10 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-497. Green finished line: his wording — 14 Nov 2026
+He said: use the sentence "You beat last time's set volume by <n> kg" FIRST (smaller font is fine), second line "Today <x> · Last time <y>". Then: "We can also do the short shout thing, last set volume beaten, plus this".
+Done: mocks H1 (sentence, 15 px bold, 2 lines) and H3 ("Last set volume beaten! +200 kg", 17 px) + reps-only and equal cases; sent. "volume" is on the banned member-word list (R-454 era); he chose it on purpose, so this line is an owner exception: build it only after he picks H1 or H3, then update the member-words/banned-word test to allow it on this one line. Reps-only: "You beat last time's total reps by 3". Equal: "You matched last time's set volume".
+
 ## R-496. The green finished line should say "beaten" and celebrate — 14 Nov 2026
 He said: "I'm also kind of not happy with the green color achievement line ... 1650kg done and then it says previous.
 I want ... previous set volume beaten ... I want to use the word beaten so it's ... more encouraging and more
