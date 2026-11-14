@@ -548,7 +548,7 @@ export const ALL_HELP_ARTICLES = [
     text:
       'Each exercise has a box above its sets that shows the total kilos to beat (weight times reps, added up over the sets), worked out from last time. ' +
       'During the workout it shows your next set and how many kilos you have done, for example "Next set: 42.5 kg × 7 · Done: 410 of today\'s 765 kg". ' +
-      'When you finish every set and match or beat your previous workout, it turns green and shows both totals, for example "840 kg done · Previous: 720 kg · +120 kg" (or "same as last time"). ' +
+      'When you finish every set and beat or match your previous workout, it turns green and says so first, with how much more you did (for example "+120 kg"), and both totals under it: "Done 840 kg · Previous 720 kg". ' +
       'For body-weight moves like push-ups it counts reps instead of kilos. ' +
       'Tap the box to see the suggested weight and why.',
   },

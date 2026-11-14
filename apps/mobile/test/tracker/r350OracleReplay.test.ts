@@ -138,11 +138,12 @@ function replay(lift: Lift, seed: number, workouts = 500) {
         if (kgBeaten(g) && doneKg + 1e-9 < plan.total) bad(`"beaten" at ${doneKg} of ${plan.total}`);
         if (last.length === sets && kgBeaten(g) && doneKg + 1e-9 < lastTotal) bad(`"beaten" under last time's ${lastTotal}`);
         const line = kgLiveLine(plan, g, (kg) => `${kg} kg`, (kg) => `${kg} kg`);
-        // Owner, 12 Nov 2026: the finished line is now "<done> done · Previous: ..." (no "reached"/"beaten"),
+        // Owner, 12 Nov 2026: the finished line is "<done> done · Previous: ..." (no "reached"); R-498 (14 Nov):
+        // green with a previous workout it is "Previous set volume beaten! ..." / "... matched" instead,
         // and (one rule for kilos and reps) it also shows once every set is done at last time's total or more.
         const allDone = k === doneSets.length;
         const atLast = plan.last != null && doneKg + 0.5 > plan.last;
-        if (/beaten|reached| done · /.test(line ?? '') && doneKg + 1e-9 < plan.total && !(allDone && atLast)) bad(`line "${line}" too early`);
+        if (/beaten|matched|reached| done · /.test(line ?? '') && doneKg + 1e-9 < plan.total && !(allDone && atLast)) bad(`line "${line}" too early`);
         // Green only with every set done and never under last time's total (or the plan, with no last time).
         if (lineGreen(plan, g) && !allDone) bad(`green with ${doneSets.length - k} set(s) open`);
         if (lineGreen(plan, g) && (plan.last != null ? !atLast : doneKg + 1e-9 < plan.total)) bad(`green at ${doneKg} under last time's ${plan.last}`);
@@ -201,7 +202,7 @@ describe('R-364 edge and state-change cases', () => {
     const p = kgPlan(t, [{ weightKg: 30, reps: 13 }, { weightKg: 30, reps: 12 }, { weightKg: 30, reps: 10 }])!;
     const g = kgProgress(p, [row(30, 13), row(30, 13), { weightKg: null, reps: null, done: false, isWarmup: false, hintKg: 30, hintReps: 9 }]);
     expect(kgBeaten(g)).toBe(false);
-    expect(kgLiveLine(p, g, (kg) => `${kg} kg`, (kg) => `${kg} kg`)).not.toMatch(/beaten|reached| done · /);
+    expect(kgLiveLine(p, g, (kg) => `${kg} kg`, (kg) => `${kg} kg`)).not.toMatch(/beaten|matched|reached| done · /);
   });
 
   it('edit after a tick: lowering a done set\'s reps takes "beaten" away again', () => {

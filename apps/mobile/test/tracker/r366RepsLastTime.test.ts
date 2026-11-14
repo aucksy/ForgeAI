@@ -48,7 +48,7 @@ describe('R-366: the owner Pull-Up', () => {
     expect(kgBeaten(g)).toBe(false); // today's 19 not all reached ...
     expect(lineGreen(p, g)).toBe(true); // ... but last time is beaten: the bar is green
     const line = repLiveLine(p, g);
-    expect(line).toBe('17 reps done · Previous: 16 · +1');
+    expect(line).toBe('Previous reps beaten! +1\nDone 17 reps · Previous 16 reps');
     expect(line).not.toMatch(BANNED);
   });
 
@@ -62,7 +62,7 @@ describe('R-366: the owner Pull-Up', () => {
     // Owner, 12 Nov 2026 (one rule for kilos and reps, `lineGreen`): equal counts as at least last time.
     const eq = kgProgress(p, [done(7), done(5), done(4)]);
     expect(lineGreen(p, eq)).toBe(true);
-    expect(repLiveLine(p, eq)).toBe('16 reps done · Previous: 16 · same as last time');
+    expect(repLiveLine(p, eq)).toBe('Previous reps matched\nDone 16 reps · Previous 16 reps');
     const under = kgProgress(p, [done(6), done(5), done(4)]);
     expect(lineGreen(p, under)).toBe(false);
     expect(repLiveLine(p, under)).toBe('Done: 15 of 19 reps · 4 reps short, fine for today');
@@ -74,8 +74,8 @@ describe('R-366: the owner Pull-Up', () => {
   });
 
   it('all of today\'s 19 or more: the same words, last time named', () => {
-    expect(repLiveLine(p, kgProgress(p, [done(8), done(6), done(5)]))).toBe('19 reps done · Previous: 16 · +3');
-    expect(repLiveLine(p, kgProgress(p, [done(9), done(7), done(5)]))).toBe('21 reps done · Previous: 16 · +5');
+    expect(repLiveLine(p, kgProgress(p, [done(8), done(6), done(5)]))).toBe('Previous reps beaten! +3\nDone 19 reps · Previous 16 reps');
+    expect(repLiveLine(p, kgProgress(p, [done(9), done(7), done(5)]))).toBe('Previous reps beaten! +5\nDone 21 reps · Previous 16 reps');
   });
 });
 
@@ -89,14 +89,14 @@ describe('R-366: reps to beat never under last time (as R-351 for kg)', () => {
     expect(repsToBeatLine(p)).toBe('33 reps to beat · your previous total');
     const eq = kgProgress(p, [done(12), done(11), done(10)]);
     expect(kgBeaten(eq)).toBe(true);
-    expect(repLiveLine(p, eq)).toBe('33 reps done · Previous: 33 · same as last time');
+    expect(repLiveLine(p, eq)).toBe('Previous reps matched\nDone 33 reps · Previous 33 reps');
     expect(repLiveLine(p, kgProgress(p, [done(12), done(10), done(8)]))).toBe('Done: 30 of 33 reps · 3 reps short, fine for today');
   });
   it('no last time to compare (first time, or another set count): "First time", or the set count named', () => {
     const p = repPlan(lower, [])!;
     expect(repLiveLine(p, kgProgress(p, [done(12), done(10), done(8)]))).toBe('30 reps done · First time');
     const two = repPlan(lower, last.slice(0, 2))!;
-    expect(repLiveLine(two, kgProgress(two, [done(13), done(12), done(9)]))).toBe('34 reps done · Previous: 23 · +11 · +1 set'); // first 2 sets never under last time's 23 (R-351)
+    expect(repLiveLine(two, kgProgress(two, [done(13), done(12), done(9)]))).toBe('Previous reps beaten! +11\nDone 34 reps · Previous 23 reps · +1 set'); // first 2 sets never under last time's 23 (R-351)
   });
   it('R-358: Counting changed since last time: no reps line at all', () => {
     expect(beatPlan({ ...lower, countingChanged: true }, last)).toBeNull();
@@ -113,7 +113,7 @@ describe('R-366: weighted and assisted bodyweight', () => {
     expect(kgBeaten(g)).toBe(false);
     // Owner, 12 Nov 2026: kilos follow the same rule as reps: every set done and past last time's 160 kg.
     expect(lineGreen(p, g)).toBe(true);
-    expect(kgLiveLine(p, g, (kg) => `${kg} kg`, (kg) => `${kg} kg`)).toBe('170 kg done · Previous: 160 kg · +10 kg');
+    expect(kgLiveLine(p, g, (kg) => `${kg} kg`, (kg) => `${kg} kg`)).toBe('Previous set volume beaten! +10\u00a0kg\nDone 170 kg · Previous 160 kg');
   });
   it('assisted pull-up: no kg or reps line (the help changes, so reps are not comparable)', () => {
     const t = computeProgressionTarget({ exercise: pullUp, target: { targetSets: 3, repRangeMin: 5, repRangeMax: 12 }, history: [sess('2026-11-02', [[-20, 7], [-20, 5], [-20, 4]])], todayISO: '2026-11-05', logType: 'assisted' });

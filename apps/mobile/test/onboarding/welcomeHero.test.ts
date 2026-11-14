@@ -20,8 +20,12 @@ describe('the welcome set card (a picture, R-276/R-277)', () => {
     expect(card).toContain('pointerEvents="none"');
   });
   it('shows what the real card shows: the beaten Target line and RPE in the real colours', () => {
-    // Owner, 12 Nov 2026: "1,650 kg done · Previous: 1,450 kg · +200 kg" (last time 4 x 72.5 x 5), never "beaten (".
-    expect(card).toContain("'1,650 kg done · Previous: 1,450 kg · +200 kg'");
+    // R-498 (owner, 14 Nov 2026): the real card's green line, "Previous set volume beaten! +200 kg" over
+    // "Done 1,650 kg · Previous 1,450 kg" (last time 4 x 72.5 x 5), never the old "1,650 kg done · Previous: ...".
+    expect(card).toContain("EXAMPLE_HEAD = 'Previous set volume beaten!'");
+    expect(card).toContain("EXAMPLE_GAIN = '+200 kg'");
+    expect(card).toContain("EXAMPLE_SUB = 'Done 1,650 kg · Previous 1,450 kg'");
+    expect(card).not.toContain('kg done · Previous:');
     expect(card).not.toContain('beaten (');
     expect(card).toContain('rpeColor(s.rpe)');
     expect(card).toMatch(/1:30 · Previous: 23 Oct/);

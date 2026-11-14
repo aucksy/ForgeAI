@@ -26,6 +26,8 @@ const DONE_ROW = 'rgba(12, 163, 12, 0.12)';
 /** SetRow's check mark on the green tick. */
 const ON_GOOD = '#05140A';
 const CAP = 1.2;
+/** ExerciseLogCard's line 2 of the green line: the same green slightly faded; read at render. */
+const faded = (hex: string): string => (/^#[0-9a-f]{6}$/i.test(hex) ? `${hex}D9` : hex);
 
 /** Exported for the test: the sets in the picture. */
 export const EXAMPLE_SETS = [
@@ -35,8 +37,13 @@ export const EXAMPLE_SETS = [
   { kg: 75, reps: 6, rpe: 9, prevRpe: 8 },
 ] as const;
 export const EXAMPLE_PREVIOUS = '72.5 × 5';
-// Owner, 12 Nov 2026: the finished line names the previous workout (4 x 72.5 x 5 = 1,450 kg), as the real card says it.
-export const EXAMPLE_LINE = '1,650 kg done · Previous: 1,450 kg · +200 kg';
+// R-498 (owner, 14 Nov 2026): the green line as the real card draws it (kgTarget `greenLines`): the shout first,
+// big and bold, then both totals (last time 4 x 72.5 x 5 = 1,450 kg). "volume" is his exception for this line only.
+export const EXAMPLE_HEAD = 'Previous set volume beaten!';
+export const EXAMPLE_GAIN = '+200 kg';
+export const EXAMPLE_SUB = 'Done 1,650 kg · Previous 1,450 kg';
+/** A no-break space: "+200 kg" never splits over two lines. */
+const NBSP = String.fromCharCode(160);
 
 // The columns, as the design (SET / PREVIOUS / KG / REPS / RPE / ✓).
 const W = { set: 22, kg: 50, reps: 42, rpe: 28, tick: 38 } as const;
@@ -130,7 +137,11 @@ export function WelcomeSetCard() {
         >
           <Icon name="check" size={14} color={color.goodText} />
           <Text maxFontSizeMultiplier={CAP} style={{ flex: 1, fontFamily: type.bodySemi, fontSize: 14, color: color.goodText }}>
-            {EXAMPLE_LINE}
+            <Text style={{ fontFamily: type.bodyBold, fontSize: type.size.h3 }}>
+              {EXAMPLE_HEAD} {EXAMPLE_GAIN.replace(' ', NBSP)}
+            </Text>
+            {String.fromCharCode(10)}
+            <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: faded(color.goodText) }}>{EXAMPLE_SUB}</Text>
           </Text>
           <Glyph name="info" size={16} color={color.inkMuted} />
         </View>

@@ -1,6 +1,20 @@
 # ForgeAI progress
 
 ## Waiting for release (R-266: tag only when the owner says "release")
+- R-498/R-499 GREEN FINISHED LINE SHOUTS FIRST (owner, 14 Nov 2026: "previous set volume beaten ... more celebratory",
+  then the short shout with "Previous", then never the word "Today"). The Target box on an exercise card, green when
+  every set is done at or above the previous workout: line 1 bold 17 px (type.size.h3, bodyBold) "Previous set volume
+  beaten! +200 kg" (reps-only: "Previous reps beaten! +3"; equal: "Previous set volume matched" / "Previous reps
+  matched"), line 2 small, same green slightly faded, "Done 1,650 kg · Previous 1,450 kg" (reps: "Done 46 reps ·
+  Previous 43 reps"; a different set count adds "+1 set"). "+200 kg" holds a no-break space. First time and every
+  not-green line unchanged; the (i) unchanged. The welcome picture copies it; the kg-to-beat help article (panel,
+  live with the next panel deploy) reworded. "volume" is his exception for exactly these two strings
+  (memberWords.test OWNER_EXCEPTIONS). Shared JS (Android and iPhone), no native part, no PARITY change, the watch
+  never shows this line. Tests: r498GreenLine (new, 12) + 11 updated files. UAT: flows uat-rel-r454-b, uat-rel-r454-c,
+  uat-rel-r366-b-today (now read by the line id), uat-rel-4-workout (negative) and sub-uat-r454-line assert the new
+  words; NOT run on a phone yet (needs the qa-device uat parts u454/u366 at the release round). What's new draft
+  (member-words): "When you beat your previous workout on an exercise, the green line now says so first:
+  \"Previous set volume beaten! +200 kg\", with both totals under it."
 - RELEASE STEP, PUBLIC BETA (owner #96 "A = now", 14 Nov 2026): from the next release every version goes to Play open testing first and to production about 3 days later. At that release: set up the open-testing track in Play Console (countries, feedback email) and make play-upload send the AAB to it; the watch follows the phone tracks.
 - R-492 MUSCLE TIPS: ADD ON THE SWAP TIP, "SMART SUGGESTION" AND AN (i) WHY (owner, 14 Nov 2026: "Some people might
   just want to add one exercise and not swap anything ... a letter I symbol which we can tap and find out why ... the

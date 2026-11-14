@@ -138,7 +138,7 @@ describe('#9 kg to beat: during the workout', () => {
   it('beaten: says what was done next to the previous workout (owner, 12 Nov 2026)', () => {
     const g = kgProgress(p, [row(45, 10, true), row(45, 10, true), row(45, 9, true)]);
     expect(g.left).toBe(0);
-    expect(kgLiveLine(p, g, total, weight)).toBe('1,305 kg done · Previous: 978 kg · +328 kg'); // last time 42.5 x 8, 8, 7 = 977.5
+    expect(kgLiveLine(p, g, total, weight)).toBe('Previous set volume beaten! +328\u00a0kg\nDone 1,305 kg · Previous 978 kg'); // last time 42.5 x 8, 8, 7 = 977.5
   });
   it('a weight typed on an open row is kept; drop sets done count too', () => {
     const g = kgProgress(p, [row(45, 9, true), row(47.5, null, false), row(null, null, false), row(30, 10, true)]);

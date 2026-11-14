@@ -2,12 +2,15 @@
 # flow a started. Exact words from his screenshots (owner, 12 Nov 2026).
 # Types (R-364):
 #   happy path: Incline Dumbbell Press aims 13, 12, 11, 9 (never under last time's 13, 12, 10, 8), "Next set:
-#     40 kg × 13 · Done: 0 of today's 1,800 kg", and at the end "1,800 kg done · Previous: 1,720 kg · +80 kg";
+#     40 kg × 13 · Done: 0 of today's 1,800 kg", and at the end (R-498, owner 14 Nov 2026) "Previous set volume
+#     beaten! +80 kg" over "Done 1,800 kg · Previous 1,720 kg";
 #   regression: his Lateral Raise: set 1 done at 20 kg x 20 (not the plan's heavier weight) -> sets 2-4 aim
 #     20 kg x 17, 15, 19 (never 13, 12, 15) and the top line says the same number as the row;
-#   equal case: 20, 17, 15, 19 = last time's 1,420 kg -> "1,420 kg done · Previous: 1,420 kg · same as last time";
+#   equal case: 20, 17, 15, 19 = last time's 1,420 kg -> "Previous set volume matched" over
+#     "Done 1,420 kg · Previous 1,420 kg";
 #   edit after the tick: sets 2-4 changed to 19, 16, 16 (still 1,420) -> the same line;
-#   negative: never "1,760", never "Next set: 20 kg × 15" after set 1, never "reached" / "beaten".
+#   negative: never "1,760", never "Next set: 20 kg × 15" after set 1, never "reached", "beaten (" or the
+#     old 12 Nov words ("... done · Previous: ...").
 # Each row's aim is proven by ticking it EMPTY (the tick saves the grey hint) and reading the box back
 # (sub-uat-r454-hint.yaml). Unit tests: test/tracker/r454RepFloor.test.ts, r454OneGreenRule.test.ts.
 # Pictures rel-r454-b..h-*.png.
@@ -76,8 +79,8 @@ appId: com.mettleup.app
     file: sub-uat-r454-line.yaml
     env:
       EX: "Incline Dumbbell Press"
-      WANT: "1,800 kg done · Previous: 1,720 kg · +80 kg"
-- assertNotVisible: "(?i).*(reached|beaten).*"
+      WANT: "Previous set volume beaten! +80 kg / Done 1,800 kg · Previous 1,720 kg"
+- assertNotVisible: "(?is).*(reached|beaten \\(|done · Previous:).*"
 - assertNotVisible: ".*kg each done.*|.*Previous: [0-9,]+ kg each.*|.*of today.s [0-9,]+ kg each.*"
 - takeScreenshot: rel-r454-e-incline-done
 # ---------------------------------------------------------------- (b) Lateral Raise: set 1 at 20 kg, the rest follow 20 kg
@@ -133,13 +136,13 @@ appId: com.mettleup.app
       N: "4"
       KG: "20"
       REPS: "19"
-# ---------------------------------------------------------------- (d) equal to last time: "same as last time" (green)
+# ---------------------------------------------------------------- (d) equal to last time: "Previous set volume matched" (green)
 - runFlow:
     file: sub-uat-r454-line.yaml
     env:
       EX: "Lateral Raise"
-      WANT: "1,420 kg done · Previous: 1,420 kg · same as last time"
-- assertNotVisible: "(?i).*(reached|beaten).*"
+      WANT: "Previous set volume matched / Done 1,420 kg · Previous 1,420 kg"
+- assertNotVisible: "(?is).*(reached|beaten \\(|done · Previous:).*"
 - assertNotVisible: ".*kg each done.*|.*Previous: [0-9,]+ kg each.*|.*of today.s [0-9,]+ kg each.*"
 - takeScreenshot: rel-r454-h-lateral-same
 # Edit after the tick: 20, 19, 16, 16 is 1,420 kg too (his own day).
@@ -170,7 +173,7 @@ appId: com.mettleup.app
     file: sub-uat-r454-line.yaml
     env:
       EX: "Lateral Raise"
-      WANT: "1,420 kg done · Previous: 1,420 kg · same as last time"
-- assertNotVisible: "(?i).*(reached|beaten).*"
+      WANT: "Previous set volume matched / Done 1,420 kg · Previous 1,420 kg"
+- assertNotVisible: "(?is).*(reached|beaten \\(|done · Previous:).*"
 - assertNotVisible: ".*kg each done.*|.*Previous: [0-9,]+ kg each.*|.*of today.s [0-9,]+ kg each.*"
 - takeScreenshot: rel-r454-i-lateral-edited-same

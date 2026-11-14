@@ -57,7 +57,7 @@ import { HoldTimerSheet } from './HoldTimerSheet';
 import { PlateCalcSheet } from './PlateCalcSheet';
 import { RestPickerSheet } from './RestPickerSheet';
 import { cardSourceLine } from '../lib/previousSource';
-import { beatPlan, kgLiveLine, kgProgress, kgTickKey, lineGreen, repLiveLine } from '../lib/kgTarget';
+import { beatPlan, GREEN_LINE_BREAK, kgLiveLine, kgProgress, kgTickKey, lineGreen, repLiveLine } from '../lib/kgTarget';
 import { afterTick, SetRow, useRowLayout } from './SetRow';
 import { DragGrip } from './DragGrip';
 import { MachineDetailsRow } from './MachineDetailsRow';
@@ -75,6 +75,8 @@ import { SheetRow, TrackerSheet } from './TrackerSheet';
 const cap = (s: string): string => (s.length === 0 ? s : s.charAt(0).toUpperCase() + s.slice(1));
 /** R-65: the beaten kg line's soft green, as the "good" Badge's. */
 const GOOD_SOFT = 'rgba(61, 203, 108, 0.14)';
+/** R-498: line 2 of the green line, the same green slightly faded ("#0D7232" -> "#0D7232D9"); read at render. */
+const faded = (hex: string): string => (/^#[0-9a-f]{6}$/i.test(hex) ? `${hex}D9` : hex);
 
 // A word only when the weight changes — same words as the chat card.
 const BADGE_TONE: Record<NonNullable<ReturnType<typeof targetBadge>>, BadgeProps['tone']> = {
@@ -316,6 +318,10 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
     // rows are read through the ref on purpose: only tickKey (ticks, adds, removes) moves the line.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [kgPlanned, tickKey, easedKey, units, loadMode]);
+  // R-498: a green line with a previous workout comes as two lines (kgTarget `greenLines`); the rest is one.
+  const greenSplit = kgLine?.beaten ? kgLine.text.split(GREEN_LINE_BREAK) : [];
+  const greenHead = greenSplit.length === 2 ? greenSplit[0] : null;
+  const greenSub = greenSplit.length === 2 ? greenSplit[1] : null;
 
   // 13 Oct 2026: the rows' widths for this phone and text size; RPE shows at every width.
   const rowLayout = useRowLayout(logType);
@@ -581,7 +587,7 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
         <Pressable
           onPress={() => setShowWhy((v) => !v)}
           accessibilityRole="button"
-          accessibilityLabel={kgLine ? `Target ${line}. ${kgLine.text}. Tap for why.` : `Target ${line}. Tap for why.`}
+          accessibilityLabel={kgLine ? `Target ${line}. ${kgLine.text.split(GREEN_LINE_BREAK).join('. ')}. Tap for why.` : `Target ${line}. Tap for why.`}
           style={{
             gap: 4,
             borderRadius: radius.sm,
@@ -606,12 +612,25 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
                 fontSize: type.size.sub,
                 color: kgLine?.beaten ? color.goodText : color.accentBright,
               }}
-              numberOfLines={3}
+              numberOfLines={greenHead != null ? 5 : 3}
               // UAT u454: the phone test reads the line's words by this id (a text search missed the
-              // green line on the owner-sized phone although it was on screen).
+              // green line on the owner-sized phone although it was on screen). R-498: the green line's two
+              // lines are spans of this one text, so the id still reads both, joined by a line break.
               testID={`target-line-${exercise.name}`}
             >
-              {kgLine ? kgLine.text : line}
+              {greenHead != null ? (
+                <>
+                  {/* R-498 (owner, 14 Nov 2026): the shout first, big and bold ("Previous set volume beaten!
+                      +200 kg"), then both totals, small and a little faded ("Done 1,650 kg · Previous 1,450 kg"). */}
+                  <Text style={{ fontFamily: type.bodyBold, fontSize: type.size.h3 }}>{greenHead}</Text>
+                  {GREEN_LINE_BREAK}
+                  <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: faded(color.goodText) }}>{greenSub}</Text>
+                </>
+              ) : kgLine ? (
+                kgLine.text
+              ) : (
+                line
+              )}
             </Text>
             {!kgLine && targetBadge(target) ? (
               <Badge label={targetBadge(target)!} tone={BADGE_TONE[targetBadge(target)!]} />

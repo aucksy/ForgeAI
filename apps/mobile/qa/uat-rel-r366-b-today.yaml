@@ -1,5 +1,6 @@
 # Part UAT, R-366 flow b: today's Pull-Up 7, 5, 5 after yesterday's 7, 5, 4 (flow a). Expect
-# "17 reps done · Previous: 16 · +1" (owner, 12 Nov 2026; was "Beat last time's 16 reps (17 done)").
+# "Previous reps beaten! +1" over "Done 17 reps · Previous 16 reps" (R-498, owner 14 Nov 2026; was
+# "17 reps done · Previous: 16 · +1", and before that "Beat last time's 16 reps (17 done)").
 # Pictures rel-r366-b..d-*.png.
 appId: com.mettleup.app
 ---
@@ -37,7 +38,7 @@ appId: com.mettleup.app
     file: sub-find.yaml
     env:
       FIND: "^Next sets?: .* · Done: 12 of today's \\d+ reps.*"
-- assertNotVisible: "^\\d+ reps done .*Previous.*"
+- assertNotVisible: "(?s).*(\\d+ reps done .*Previous|Previous reps (beaten|matched)).*"
 - takeScreenshot: rel-r366-c-two-sets-not-yet
 - runFlow:
     file: sub-uat-r366-set.yaml
@@ -46,12 +47,14 @@ appId: com.mettleup.app
       REPS: "5"
 # The last set starts no rest timer, so no rest to clear here.
 # Happy path: the exact words, the previous workout named (owner, 12 Nov 2026: never "last time" here).
+# R-498: two lines in one text, read by the line's id (sub-uat-r454-line: a text search can miss it).
 - runFlow:
-    file: sub-find.yaml
+    file: sub-uat-r454-line.yaml
     env:
-      FIND: "^17 reps done · Previous: 16 · \\+1$"
+      EX: "Pull[- ][Uu]p"
+      WANT: "Previous reps beaten! +1 / Done 17 reps · Previous 16 reps"
 - assertNotVisible: ".*17 reps reached.*"
-- assertNotVisible: "(?i).*beat last time.*"
+- assertNotVisible: "(?is).*(beat last time|reps done · Previous:).*"
 - assertNotVisible: ".*reached ✓.*"
 - takeScreenshot: rel-r366-d-beat-last-time
 - runFlow: sub-uat-r358-finish.yaml

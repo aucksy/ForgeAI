@@ -117,7 +117,7 @@ describe('R-65: the kg line knows when it is beaten', () => {
   it('beaten once nothing is left', () => {
     const done = { done: 140, left: 0, next: [], short: false };
     expect(kgBeaten(done)).toBe(true);
-    expect(kgLiveLine(plan, done, kg, kg)).toBe('140 kg done · Previous: 120 kg · +20 kg');
+    expect(kgLiveLine(plan, done, kg, kg)).toBe('Previous set volume beaten! +20\u00a0kg\nDone 140 kg · Previous 120 kg');
     expect(kgBeaten({ done: 90, left: 45, next: [{ weightKg: 15, reps: 9 }], short: false })).toBe(false);
   });
 });

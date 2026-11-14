@@ -1,6 +1,7 @@
 # Part UAT, R-366 (owner, 5 Nov 2026). Pull-Up, reps only: last time 7, 5, 4 = 16 reps, today 7, 5, 5
 # = 17. The green bar said "17 reps reached" with no word of last time. Now it says
-# "17 reps done · Previous: 16 · +1" (owner, 12 Nov 2026; one tick: the box's icon; no "✓" in the words).
+# "Previous reps beaten! +1" over "Done 17 reps · Previous 16 reps" (R-498, owner 14 Nov 2026; one tick: the
+# box's icon; no "✓" in the words).
 # Types (R-364): happy path (the exact words), negative (no "Beat" with a set to go, none at 16 = last
 # time: unit test r366RepsLastTime), regression (the old "17 reps reached" never comes back).
 # Flow a: a fresh install with the demo, then yesterday's workout, Pull-Up 7, 5, 4. The part then moves the

@@ -3,7 +3,7 @@
 #   2026: the card said "Set 2 was very hard, so keep the same weight." on a move with no weight. Now: no "keep the
 #   same weight" anywhere (negative), no very-hard line at all here (set 1's extra rep covers set 2's missing one),
 #   the top line "Next set: 9 reps · Done: 31 of today's 40 reps" and set 3's row agree (9), and at the end
-#   "40 reps done · Previous: 39 · +1".
+#   (R-498, owner 14 Nov 2026) "Previous reps beaten! +1" over "Done 40 reps · Previous 39 reps".
 # (e) first time ever (Dumbbell Pullover, added to the routine in flow a, never done): the box keeps its first-time
 #   words "First time · find a weight for 8–12 reps" and gets no total line, because a first time has no kilos to
 #   add up (the member picks the weight). The "<done> kg done · First time" words are reached only when a Target
@@ -65,9 +65,9 @@ appId: com.mettleup.app
     file: sub-uat-r454-line.yaml
     env:
       EX: "Dips"
-      WANT: "40 reps done · Previous: 39 · +1"
+      WANT: "Previous reps beaten! +1 / Done 40 reps · Previous 39 reps"
 - assertNotVisible: "(?i).*keep the same weight.*"
-- assertNotVisible: "(?i).*(reached|beaten).*"
+- assertNotVisible: "(?is).*(reached|beaten \\(|done · Previous:).*"
 - takeScreenshot: rel-r454-l-dip-done
 # ---------------------------------------------------------------- (e) first time ever: Dumbbell Pullover
 - runFlow:

@@ -92,6 +92,21 @@ export function activeAllow(features: Pick<Features, 'coach'>): typeof ALLOW {
   return ALLOW.filter((a) => !(a.untilCoach && features.coach));
 }
 
+/**
+ * R-498 (owner, 14 Nov 2026): his own exception to the banned word "volume", for the green finished line
+ * on an exercise card ONLY ("Previous set volume beaten! +200 kg" / "Previous set volume matched") and its
+ * copy in the welcome picture. Exactly these strings, in exactly these files; "volume" anywhere else fails.
+ */
+const OWNER_EXCEPTIONS: readonly { file: string; text: string; word: string }[] = [
+  { file: 'src/tracker/lib/kgTarget.ts', text: 'Previous set volume beaten!', word: 'volume' },
+  { file: 'src/tracker/lib/kgTarget.ts', text: 'Previous set volume matched', word: 'volume' },
+  { file: 'src/onboarding/components/WelcomeSetCard.tsx', text: 'Previous set volume beaten!', word: 'volume' },
+];
+
+function excepted(v: VisibleText, word: string): boolean {
+  return OWNER_EXCEPTIONS.some((e) => e.word === word && e.file === v.file && e.text === v.text);
+}
+
 function allowed(v: VisibleText): boolean {
   return activeAllow(FEATURES).some((a) => v.file.startsWith(a.path));
 }
@@ -129,10 +144,21 @@ describe('one word per idea — the guard', () => {
 
   for (const { word, re } of BANNED) {
     it(`no screen, sheet, notification or picture says "${word}"`, () => {
-      const hits = texts.filter((t) => !allowed(t) && re.test(t.text)).map((t) => `${t.file}:${t.line} ${t.text.slice(0, 120)}`);
+      const hits = texts.filter((t) => !allowed(t) && !excepted(t, word) && re.test(t.text)).map((t) => `${t.file}:${t.line} ${t.text.slice(0, 120)}`);
       expect(hits).toEqual([]);
     });
   }
+
+  it('R-498: the owner exception for "volume" is exactly the green line words, each still in use', () => {
+    // Every exception is a real string in its file (a stale one is removed, never left to cover something else).
+    for (const e of OWNER_EXCEPTIONS) expect(texts.some((t) => t.file === e.file && t.text === e.text), `${e.file}: ${e.text}`).toBe(true);
+    // Only "volume", only these two sentences: any other text in those files, or "volume" anywhere else, still fails.
+    expect(new Set(OWNER_EXCEPTIONS.map((e) => e.word))).toEqual(new Set(['volume']));
+    expect(new Set(OWNER_EXCEPTIONS.map((e) => e.text))).toEqual(new Set(['Previous set volume beaten!', 'Previous set volume matched']));
+    expect(excepted({ file: 'src/tracker/lib/kgTarget.ts', line: 1, text: 'Total volume' }, 'volume')).toBe(false);
+    expect(excepted({ file: 'src/app/today.tsx', line: 1, text: 'Previous set volume beaten!' }, 'volume')).toBe(false);
+    expect(excepted({ file: 'src/tracker/lib/kgTarget.ts', line: 1, text: 'Previous set volume beaten!' }, 'session')).toBe(false);
+  });
 
   it('the reader sees words, not code (a probe file)', () => {
     const dir = mkdtempSync(join(tmpdir(), 'member-words-'));

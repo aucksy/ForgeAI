@@ -36,7 +36,7 @@ describe('T76: the kg to beat after a switch to lb', () => {
     const g = kgProgress(p, [done(lb(132.3), 10), done(lb(132.3), 10), done(lb(132.3), 10)]);
     expect(kgBeaten(g)).toBe(true);
     const line = kgLiveLine(p, g, totalLb, weightLb);
-    expect(line).toBe('3,968 lb done · Previous: 3,968 lb · same as last time');
+    expect(line).toBe('Previous set volume matched\nDone 3,968 lb · Previous 3,968 lb');
     expect(line).not.toMatch(/beaten|reached|\+/);
   });
 
@@ -45,13 +45,14 @@ describe('T76: the kg to beat after a switch to lb', () => {
     const g = kgProgress(p, [done(lb(22), 10), done(lb(22), 10), done(lb(22), 10)]);
     expect(g.short).toBe(false);
     expect(kgBeaten(g)).toBe(true);
-    expect(kgLiveLine(p, g, totalLb, weightLb)).toBe('661 lb done · Previous: 661 lb · same as last time');
+    expect(kgLiveLine(p, g, totalLb, weightLb)).toBe('Previous set volume matched\nDone 661 lb · Previous 661 lb');
   });
 
   it('positive: a real heavier weight in lb (135 lb) is still "beaten"', () => {
     const p = plan(60, 10);
     const g = kgProgress(p, [done(lb(135), 10), done(lb(135), 10), done(lb(135), 10)]);
-    expect(kgLiveLine(p, g, totalLb, weightLb)).toMatch(/^4,050 lb done · Previous: 3,968 lb · \+8[12] lb$/);
+    // R-498: the green line's shout, then both totals; "+82 lb" never splits (a no-break space).
+    expect(kgLiveLine(p, g, totalLb, weightLb)).toMatch(/^Previous set volume beaten! \+8[12]\u00a0lb\nDone 4,050 lb · Previous 3,968 lb$/);
   });
 
   it('positive: a real rep short in lb is still short (one set open, one rep fewer is not hidden)', () => {
@@ -66,9 +67,9 @@ describe('T76: the kg to beat after a switch to lb', () => {
     const p = plan(60, 10);
     const g = kgProgress(p, [done(60, 10), done(60, 10), done(60, 10)]);
     expect(g.noise).toBeUndefined();
-    expect(kgLiveLine(p, g, totalKg, weightKg)).toBe('1,800 kg done · Previous: 1,800 kg · same as last time');
+    expect(kgLiveLine(p, g, totalKg, weightKg)).toBe('Previous set volume matched\nDone 1,800 kg · Previous 1,800 kg');
     const more = kgProgress(p, [done(60, 10), done(60, 10), done(60.25, 10)]);
-    expect(kgLiveLine(p, more, totalKg, weightKg)).toBe('1,803 kg done · Previous: 1,800 kg · +3 kg');
+    expect(kgLiveLine(p, more, totalKg, weightKg)).toBe('Previous set volume beaten! +3\u00a0kg\nDone 1,803 kg · Previous 1,800 kg');
     const mid = kgProgress(p, [done(60, 10), done(60, 10), open(60, 10)]);
     expect(kgBeaten(mid)).toBe(false);
   });

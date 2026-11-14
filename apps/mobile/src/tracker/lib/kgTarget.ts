@@ -335,6 +335,7 @@ export function kgTickKey(rows: readonly KgRow[]): string {
 }
 
 // ------------------------------------------------------------------ words (never "volume", "PR", "session")
+// (one owner exception, R-498: the green line's "Previous set volume beaten!" / "... matched", `greenLines`)
 
 /** "1,765 kg": a total in whole units of the member's choice. */
 export type TotalFmt = (kg: number) => string;
@@ -395,7 +396,8 @@ export function repLiveLine(p: KgPlan, g: KgProgress): string {
   // exercise the done words): one format for every finished line, never "reached" or "beaten".
   // Owner, 12 Nov 2026 ("consistent ... across"): every set done and at least last time's total is the
   // finished line too (R-366 kept it for reps beating last time; kilos now the same, `lineGreen`).
-  if (kgBeaten(g) || lineGreen(p, g)) return doneLine(p, done, plain, repsText);
+  // R-498 (owner, 14 Nov 2026): green, it shouts first ("Previous reps beaten! +3"), totals under it.
+  if (kgBeaten(g) || lineGreen(p, g)) return doneLine(p, done, plain, repsText, 0, lineGreen(p, g));
   // R-300 (owner, 3 Nov 2026): never "add a set" (extra sets cost recovery and sleep); next time aims again.
   if (g.next.length === 0) return `Done: ${Math.round(g.done)} of ${repsText(p.total)} · ${repsText(g.left)} short, fine for today`;
   // Owner, 12 Nov 2026 (Chest Dip, one set left): one open set reads "Next set: 9 reps", not "Next sets".
@@ -411,10 +413,11 @@ export function repLiveLine(p: KgPlan, g: KgProgress): string {
  * the ONLY finished line (no "reached" / "beaten"). A different number of sets than last time adds its
  * note ("+1 set"). PURE.
  */
-function doneLine(p: KgPlan, done: number, fmt: TotalFmt, doneFmt: TotalFmt = fmt, noise = 0): string {
+function doneLine(p: KgPlan, done: number, fmt: TotalFmt, doneFmt: TotalFmt = fmt, noise = 0, green = false): string {
   // T76: a total within the unit-switch allowance of the previous one IS the previous one (3,969 lb typed
   // for 1,800 kg reads "3,968 lb done · Previous: 3,968 lb · same as last time", never +1 lb by a hair).
   const same = p.last != null && Math.abs(done - p.last) <= noise;
+  if (green && p.last != null) return greenLines(p, same ? p.last : done, fmt, doneFmt, vsLast(p, done, noise));
   const parts = [`${doneFmt(same && p.last != null ? p.last : done)} done`];
   const cmp = vsLast(p, done, noise);
   // Owner, 12 Nov 2026: one format everywhere: "+120 kg", "same as last time" when equal (his Lateral
@@ -433,6 +436,43 @@ function doneLine(p: KgPlan, done: number, fmt: TotalFmt, doneFmt: TotalFmt = fm
     parts.push(p.setDiff > 0 ? `+${n} ${n === 1 ? 'set' : 'sets'}` : `${n} ${n === 1 ? 'set' : 'sets'} fewer`);
   }
   return parts.join(' · ');
+}
+
+/** R-498: the green line's two lines are joined by this; the card draws the first big and bold, the second small. */
+export const GREEN_LINE_BREAK = String.fromCharCode(10);
+/** A no-break space: "+200 kg" never splits over two lines. */
+const NBSP = String.fromCharCode(160);
+// R-498 (owner, 14 Nov 2026): his exception to the banned word "volume", for THIS line only
+// (test/lib/memberWords.test.ts allows exactly these two strings in this file, nothing else).
+const KG_BEATEN = 'Previous set volume beaten!';
+const KG_MATCHED = 'Previous set volume matched';
+const REPS_BEATEN = 'Previous reps beaten!';
+const REPS_MATCHED = 'Previous reps matched';
+
+/**
+ * R-496/R-497/R-498 (owner, 14 Nov 2026: "previous set volume beaten ... more encouraging and more
+ * celebratory", then "I'm good with the short shout", with "Previous" because the card header already says
+ * "Previous: <date>"): the GREEN finished line, when there is a previous workout to compare. Line 1 shouts,
+ * line 2 names both totals:
+ *   "Previous set volume beaten! +200 kg" / "Done 1,650 kg · Previous 1,450 kg"
+ *   "Previous reps beaten! +3" / "Done 46 reps · Previous 43 reps"
+ *   "Previous set volume matched" / "Done 1,450 kg · Previous 1,450 kg" (reps: "Previous reps matched")
+ * A different number of sets than last time keeps its note on line 2 ("+1 set"). First time and every
+ * line that is not green keep `doneLine`'s one-line words. Joined by GREEN_LINE_BREAK. PURE.
+ */
+function greenLines(p: KgPlan, today: number, fmt: TotalFmt, totalFmt: TotalFmt, cmp: 'more' | 'same' | 'less' | null): string {
+  const last = p.last ?? today;
+  const d = today - last;
+  const shown = fmt(Math.abs(d));
+  // T76: within the unit-switch allowance it is the same total, never "+3 kg" by a hair (as `doneLine`).
+  const beaten = cmp === 'more' && d > 0 && /[1-9]/.test(shown);
+  const head = beaten ? `${p.reps ? REPS_BEATEN : KG_BEATEN} +${shown.replace(/ /g, NBSP)}` : p.reps ? REPS_MATCHED : KG_MATCHED;
+  const sub = [`Done ${totalFmt(today)}`, `Previous ${totalFmt(last)}`];
+  if (p.setDiff) {
+    const n = Math.abs(p.setDiff);
+    sub.push(p.setDiff > 0 ? `+${n} ${n === 1 ? 'set' : 'sets'}` : `${n} ${n === 1 ? 'set' : 'sets'} fewer`);
+  }
+  return `${head}${GREEN_LINE_BREAK}${sub.join(' · ')}`;
 }
 
 /**
@@ -504,7 +544,8 @@ export function kgLiveLine(p: KgPlan, g: KgProgress, total: TotalFmt, weight: We
   // Owner, 12 Nov 2026: every finished line the same way ("1,420 kg done · Previous: 1,420 kg · same as
   // last time"), never "Today's X reached" / "beaten" (R-146's "reached" is retired).
   // Owner, 12 Nov 2026 (`lineGreen`): every set done and at least last time's total is finished too.
-  if (kgBeaten(g) || lineGreen(p, g)) return doneLine(p, g.done, total, total, g.noise ?? 0);
+  // R-498 (owner, 14 Nov 2026): green, it shouts first ("Previous set volume beaten! +200 kg"), totals under it.
+  if (kgBeaten(g) || lineGreen(p, g)) return doneLine(p, g.done, total, total, g.noise ?? 0, lineGreen(p, g));
   // Release review: only the number before "of" ("410 of 765 kg", never "410 kg of 765 kg"). Owner, 12 Nov
   // 2026 (R-454): the workout card's totals never say "each"; "each" stays on the per-set weight.
   const doneN = total(g.done).trim().split(/\s+/)[0];
