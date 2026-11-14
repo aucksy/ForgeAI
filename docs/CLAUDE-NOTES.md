@@ -7,6 +7,9 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-508. Desk check: A — 14 Nov 2026
+He said: "yes - go with A". So: the check-in desk confirmation (0048) is removed in the SAME version that adds WhatsApp proof (F203); until then the check-in screen says it waits for the desk, shows the typed number, checks again by itself and checks in when the desk says yes (R-503 item 1, queued). His yes to approve his own pending number: when I opened Today the "Numbers to confirm" card was already gone (approved already), so nothing to click.
+
 ## R-507. Gym -> member: a new workout plan or diet plan sent no notification — 14 Nov 2026
 He said: he sent a new diet plan and a new workout plan from the admin app; the member got no notification, they just showed up in the app. "The same concept goes if there's a communication coming from the gym to the user, there has to be a notification around it."
 Adds to R-506's audit: the other direction. Every gym -> member event gets a push (the existing gym-messages push path, deploy/hq/push.js + the app channel): new or changed workout plan, new diet plan, plan approved / renewed / paused, check-in number confirmed, shop order ready, challenge result, trainer reply (exists), gym message and offer (exist). Each push opens the right screen. Same queued helper as R-506; the table shows both directions.
