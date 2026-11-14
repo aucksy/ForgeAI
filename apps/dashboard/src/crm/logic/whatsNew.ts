@@ -42,6 +42,19 @@ export const ADMIN_NEWS: readonly AdminNewsEntry[] = [
     // Panel code only (the logo is the one saved in Branding). id = the deploy day: change it if the deploy is later.
     id: '2026-11-14',
     lines: [
+      // R-506/R-510 (moved from ADMIN_NEWS_PENDING at the deploy): 0075 + 0076 live, VAPID key set, HQ 558464b7.
+      {
+        text: 'New on Today: "Latest from your members". It shows when a member asks a question, sends a message or a complaint, orders from the shop, pays online or joins your gym. Tap a line to open it.',
+      },
+      {
+        text: 'Needs you on Today now also counts member questions and member messages waiting for your reply. With alerts on, you hear a sound and see a notice when a new one comes in.',
+      },
+      {
+        // R-506 phase 3 (0076): Web Push. Moves with the lines above, once 0076 and the VAPID key are live too.
+        text: 'New: alerts on your phone or computer even when the admin app is closed. Complaints, check-in numbers and shop orders come at once. Turn them on, and pick when the rest come, in Settings.',
+        go: { label: 'Open Settings', path: '/settings' },
+        feature: true,
+      },
       {
         text: 'Your gym’s logo now shows at the top of the admin app, next to your gym’s name. Your staff see it too. To add or change it, open Branding.',
         go: { label: 'Open Branding', path: '/settings/branding' },
@@ -490,25 +503,6 @@ function notifyNewsSeen(): void {
  * the deploy day) in the same commit as the admin-panel deploy (R-333). Never shown before the change is live.
  */
 export const ADMIN_NEWS_PENDING: readonly AdminNewsEntry[] = [
-  {
-    // R-506/R-510, 14 Nov 2026: the gym's alerts (0075, 0076). Moves to ADMIN_NEWS when 0075 and 0076 are live, the
-    // HQ Worker has its VAPID_PRIVATE_JWK secret and is deployed, and the admin panel is deployed.
-    id: 'pending-member-alerts',
-    lines: [
-      {
-        text: 'New on Today: "Latest from your members". It shows when a member asks a question, sends a message or a complaint, orders from the shop, pays online or joins your gym. Tap a line to open it.',
-      },
-      {
-        text: 'Needs you on Today now also counts member questions and member messages waiting for your reply. With alerts on, you hear a sound and see a notice when a new one comes in.',
-      },
-      {
-        // R-506 phase 3 (0076): Web Push. Moves with the lines above, once 0076 and the VAPID key are live too.
-        text: 'New: alerts on your phone or computer even when the admin app is closed. Complaints, check-in numbers and shop orders come at once. Turn them on, and pick when the rest come, in Settings.',
-        go: { label: 'Open Settings', path: '/settings' },
-        feature: true,
-      },
-    ],
-  },
   {
     // F56 R-461, 12 Nov 2026: the MettleUp Plus switch (0070). Moves to ADMIN_NEWS only when 0070 is live, the panel is
     // deployed AND the app's paid plan is switched on (MEMBER_PLAN_GATE_ON); until then the card is hidden anyway.
