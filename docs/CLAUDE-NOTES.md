@@ -7,6 +7,10 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-503. QR check-in looks stuck while the desk has not confirmed the number — 14 Nov 2026
+He said (picture of "Gym check-in" / "Check in at Crispy Curves" / the First check-in DESK_CHECK text): first scan asked for his phone number, he typed it, then the page is stuck; every Check in tap comes back to the same screen.
+Found: working as built (0048 R-287): the server keeps a request and answers DESK_CHECK until the desk says yes. His panel Today shows "Needs you: 1 check-in number to confirm" with his own request and "Yes, it's theirs". Not clicked: a LIVE data change needs his yes. Product gaps (to build, queued while 6 helpers run): (1) member screen: say it is waiting for the desk, show the number typed, check again by itself every few seconds and check in the moment the desk says yes, and after a tap say "Not confirmed yet" instead of repeating the same screen; (2) panel: a request pops up on the desk screen (sound + banner on any page), not only on Today; (3) the gym's own owner/staff number (gym_staff) should not need a desk check (ties to F203 phone sign-in).
+
 ## R-502. Desk camera photo flipped after Take photo — 14 Nov 2026
 He said: in the admin panel, a photo with the connected webcam shows a preview, but after taking it the photo is flipped; keep it exactly as the preview. Cause: DeskCameraSheet mirrors the live video (scaleX(-1)) but shrinkVideoFrame saved it unmirrored on purpose (F107). Fix: shrinkVideoFrame(video, mirror) passes the preview's mirror into shrinkToSquare, so the saved photo = the preview; a back camera (not mirrored) is unchanged. ADMIN_NEWS line added to the 14 Nov entry. Brain rule photo-matches-the-preview saved. Ships with the next panel deploy.
 
