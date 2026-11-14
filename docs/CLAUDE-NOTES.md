@@ -7,6 +7,13 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-537. Training progress: LINE graphs like the member sees, at least the last 1 year — 14 Nov 2026
+He said (14 Nov 2026): "the graph that the admin user will see is a line graph, similar that the user sees. That clearly
+tells us if something is progressing or not. And it should be at least last one year since they joined the app."
+Sent to the Training progress helper: line charts matching the member app's; Step 1 ships from the 92 days already
+shared; Step 2 (12 months) is built but not live: phone change (needs a release), migration (needs his yes), member
+sharing words (drafted for his yes).
+
 ## R-536. YES to the "Ready-made plans" terms words and to the job title database change (0079) — 14 Nov 2026
 He said (14 Nov 2026): "Yes to both Ready-made plans and job title database change"
 Done: terms part B gets section 10 "Ready-made plans" word for word as shown to him (later sections renumbered, "Last
