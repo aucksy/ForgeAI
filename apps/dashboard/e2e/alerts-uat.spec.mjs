@@ -379,7 +379,6 @@ test('Alerts with the admin app closed: the offer on Today, the device switch, w
 // trainers" on More.
 test('Latest from your members on a computer, light theme; payments and joins; the desk who trains', async ({ page, browser }) => {
   await page.setViewportSize({ width: 1280, height: 900 });
-  await page.emulateMedia({ colorScheme: 'light' });
   const server = await openApp(page);
   const alerts = installAlerts(server);
   const qs = installQuestions(server);
@@ -411,6 +410,9 @@ test('Latest from your members on a computer, light theme; payments and joins; t
   await expect(lines.nth(1)).toContainText('20 min ago');
   await expect(lines.nth(2)).toContainText('Vikram joined your gym in the MettleUp app.');
   await expect(lines.nth(3)).toContainText('Open Questions for trainers to reply.');
+  // The admin app keeps its own Dark / Light choice (dark to start), whatever the computer's setting says.
+  await page.getByRole('radio', { name: 'Light' }).first().click();
+  await expect(page.getByRole('radio', { name: 'Light' }).first()).toBeChecked();
   await card.scrollIntoViewIfNeeded();
   await shot(page, 'computer-alerts-latest-light', false);
 
