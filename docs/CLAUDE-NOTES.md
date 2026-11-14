@@ -7,6 +7,10 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-513. Self sign-up: a new member fills the form and pays on their own phone — 14 Nov 2026
+He said: "a high value idea for the gym owners, a system wherein the potential lead or the user can actually fill out their own form on their own phone, and they can make the payment there as well, and all of the data automatically gets uploaded to the gym owner segment panel. So there is no need for a receptionist to do it all manually. Figure out a way to implement this in the best possible way, think through it accurately and properly, build it, test it thoroughly, and let's launch it."
+Plan: research first (how gym software does online joining in India and abroad; what exists in our code: enquiries, gym code, QR poster, plans, pay.js / online fee payment, receipts, member list). Then a short design with my view, then build. Payments stay in TEST mode until he says "payments live". LIVE tables, and privacy/consent wording on the form, need his yes.
+
 ## R-512. Remove the "set was very hard, do not try for more" hints under the sets — 14 Nov 2026
 He sent a picture of Chin-Up in a workout: under the sets, "Set 2 was very hard, so do not try for more reps." He said: "These suggestions that we are giving about, do not lift more weight or more reps because the previous set was very tough, remove this functionality completely. Just check the code properly, what all we are suggesting. I'm talking about this message at the bottom of all the sets."
 My call (told him): remove every hint line under the sets that reacts to how hard a set felt (RPE / "very hard"), for weight and for reps, plus the logic behind it, so a hard set no longer holds the next set back. The next-set numbers then follow the normal rules (R-454: aims never under previous). List every other under-set hint to him. The same picture still showed "Done: 22 of today's 33 reps": already being fixed (R-499 kgTarget words).
