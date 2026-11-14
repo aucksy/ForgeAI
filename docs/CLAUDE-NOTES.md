@@ -7,6 +7,20 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-521. YES to 0077 live + consent words; page AI on/off; trial on sign-up — 14 Nov 2026
+He said (14 Nov 2026): "Cloudfair is signed in" / "Yes, you can enable the self-signup database change, online database."
+/ "Yes, you can also enable the new member ticks before joining." (the two consent sentences EN+HI, as drafted) / "Also, let
+the gym owner enable or disable the AI assistant on their webpage and it should be on by default. and let them also enable
+or disable a trial for the registration. So the users may be able to just sign up for a 3 day, 7 day trial, the admin user
+can change that value and also an option for gym owner or admin user to enable a payment even for the trial which means the
+user can do trial for x number of days but the payment is still required and if they do not want to continue the payment
+will be refunded. I am just thinking out loud you can tell me if this is a good idea."
+Plan: apply 0077 LIVE (his yes above) with its live test; consent words approved as drafted. Make the Cloudflare analytics
+token (he signed in). Page AI on/off, default on: a setting for when the page AI (F208) is built. Free trial on sign-up
+(owner sets on/off and days): build. "Pay first, refund if they stop": my view against (refund fees, manual refunds,
+looks like a subscription trap under India's 2023 dark-pattern rules); offered a paid trial (small fee, counted toward the
+plan if they join) instead; waits for his pick.
+
 ## R-520. Research: an AI sales helper on the gym page + what else AI credits should do — 14 Nov 2026
 He said: "let this AI assistant be trained on lead conversion so we can actually sell our plans with this big USP. I
 don't think anyone else is doing it. So, anyone comes to their page, there can be an AI assistant talking to them,
