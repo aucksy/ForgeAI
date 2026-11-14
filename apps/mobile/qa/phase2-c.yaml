@@ -23,14 +23,16 @@ appId: com.mettleup.app
     timeout: 20000
 - takeScreenshot: 20-library
 - tapOn: "Search exercises"
-- inputText: " front raise"
+- inputText: " zottman"
 - hideKeyboard
 - takeScreenshot: 21-library-search
 # The small picture opens the moving demo; the row itself opens the exercise page.
 # R-170: Lateral Raise now plays its approved clip instead of the credited drawings (part CLIP), so
 # the drawings' sheet is checked on an exercise with no clip and none planned (not in QUEUE.md).
+# R-491 (14 Nov 2026, one look everywhere): an exercise with a picture (Dumbbell Front Raise has one) shows it
+# with no drawing credit, so the credited drawing is checked on Zottman Curl, one of the 26 still drawn only.
 - tapOn:
-    text: "Show how to do Dumbbell Front Raise"
+    text: "Show how to do Zottman Curl"
     index: 0
     waitToSettleTimeoutMs: 500
 - extendedWaitUntil:
