@@ -543,12 +543,9 @@ class MainActivity : ComponentActivity() {
     if (AmbientDiag.Heal.blackout(screenOn, ambient, ambientWorked, open, isFinishing || isChangingConfigurations, saverOn = cause == "battery-saver")) {
       blackoutSeen = true
     }
-    AmbientDiag.note(
-      this,
-      "stop",
-      "ambient=${if (ambient) 1 else 0} workout=${if (open) 1 else 0} blackout=${if (blackoutSeen) 1 else 0} " +
-        (if (cause.isNotEmpty()) "cause=$cause " else "") + AmbientDiag.state(this),
-    )
+    // R-556: held= says whether the app was keeping the screen on itself at this moment (written before the
+    // let-go below).
+    AmbientDiag.note(this, "stop", AmbientDiag.stopDetail(ambient, open, blackoutSeen, selfDimOn, cause) + AmbientDiag.state(this))
     AmbientDiag.push(this)
     // R-442: a black screen where it should have dimmed, on a watch whose Always-on setting cannot be read:
     // from the next wake of this workout the app dims itself.
@@ -569,27 +566,26 @@ class MainActivity : ComponentActivity() {
 
   /** Turns the app's own dimming on or off to match the workout, the screen and the watch's settings. */
   private fun refreshSelfDim(why: String) {
-    val mode = SelfDim.wanted(
-      workoutOpen = WatchState.workoutOpen(this),
-      onScreen = onScreen,
-      aodOn = SelfDim.aodOn(this),
-      saverOn = SelfDim.saverOn(this),
-      blackedOut = blackedWorkout >= 0 && blackedWorkout == AmbientDiag.workoutCount,
-    )
+    val open = WatchState.workoutOpen(this)
+    val aod = SelfDim.aodOn(this)
+    val saver = SelfDim.saverOn(this)
+    val blacked = blackedWorkout >= 0 && blackedWorkout == AmbientDiag.workoutCount
+    // Read from the saved state, not the snapshot: on opening, the snapshot is still the old one, and a
+    // paused workout was held for half a second (cloud watch check D-paused, run 42803353941).
+    val pausedNow = WatchCopy.paused(WatchState.setLine(this))
+    val mode = SelfDim.wanted(workoutOpen = open, onScreen = onScreen, aodOn = aod, saverOn = saver, blackedOut = blacked)
     // Battery guard: held only while someone uses the watch and the workout is not paused on the phone.
     val rel = if (mode) {
-      SelfDim.releaseWhy(
-        now = System.currentTimeMillis(),
-        inputAt = inputAt,
-        // Read from the saved state, not the snapshot: on opening, the snapshot is still the old one, and a
-        // paused workout was held for half a second (cloud watch check D-paused, run 42803353941).
-        paused = WatchCopy.paused(WatchState.setLine(this)),
-        idleMs = idleReleaseMs(),
-      )
+      SelfDim.releaseWhy(now = System.currentTimeMillis(), inputAt = inputAt, paused = pausedNow, idleMs = idleReleaseMs())
     } else {
       null
     }
     val want = mode && rel == null
+    // R-556: every wake says whether the screen is held and every input that decided it. Before, the early
+    // return below wrote nothing when nothing changed, so a diary of wakes could not say why nothing was held.
+    if (why == "resume") {
+      AmbientDiag.note(this, "self-dim-why", "$why " + SelfDim.inputs(want, open, onScreen, aod, saver, blacked, pausedNow, rel == "idle"))
+    }
     // A new reason to let go is written in the diary even when the screen was not held (a workout that came
     // up already paused shows "self-dim-off paused", so a black screen there is explained).
     val newlyReleased = rel != null && rel != released

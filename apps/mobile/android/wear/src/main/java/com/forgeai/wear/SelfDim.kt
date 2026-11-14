@@ -79,6 +79,33 @@ object SelfDim {
   fun wanted(workoutOpen: Boolean, onScreen: Boolean, aodOn: Boolean?, saverOn: Boolean?, blackedOut: Boolean): Boolean =
     workoutOpen && onScreen && saverOn != true && (aodOn == false || (aodOn == null && blackedOut))
 
+  /**
+   * R-556 (14 Nov 2026, owner: "Watch screen is turning off. Log switch was enabled"): his diary had about 20
+   * wakes and not one line saying whether the app held the screen, because [MainActivity]'s check wrote nothing
+   * when nothing changed. Now every wake writes this ("self-dim-why resume ..."): [hold] the result, then each
+   * input of [wanted] and [releaseWhy] (front = MettleUp in front, blacked = a black screen already this
+   * workout, paused = the phone's workout timer paused, quiet = no input for the idle wait). "?" = unreadable.
+   * Keys match the phone's watchDiag.ts KEYS (anything else is dropped there). PURE.
+   */
+  fun inputs(
+    hold: Boolean,
+    workoutOpen: Boolean,
+    onScreen: Boolean,
+    aodOn: Boolean?,
+    saverOn: Boolean?,
+    blackedOut: Boolean,
+    paused: Boolean,
+    quiet: Boolean,
+  ): String =
+    "hold=${yn(hold)} workout=${yn(workoutOpen)} front=${yn(onScreen)} aod=${yn(aodOn)} saver=${yn(saverOn)} " +
+      "blacked=${yn(blackedOut)} paused=${yn(paused)} quiet=${yn(quiet)}"
+
+  private fun yn(v: Boolean?): String = when (v) {
+    true -> "1"
+    false -> "0"
+    null -> "?"
+  }
+
   /** Battery guard: no tap, crown turn, button or wrist raise for this long and the screen is let go. */
   const val IDLE_RELEASE_MS = 12 * 60_000L
 

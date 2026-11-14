@@ -204,6 +204,14 @@ if [ "$K" = "1" ] && [ "$ON" -ge 1 ]; then
 else
   result D-keep FAIL "KEEP_SCREEN_ON=$K, self-dim-on lines=$ON ($(diag | tail -3 | tr '\n' ' '))"
 fi
+# R-556 (14 Nov 2026): every wake writes the app's check with each input (his diary had ~20 wakes and no line
+# saying whether the screen was held). This wake: held, workout open, in front, Always-on off, Battery Saver off.
+WHY="$(count 'self-dim-why resume hold=1 workout=1 front=1 aod=0 saver=0 blacked=0 paused=0 quiet=0')"
+if [ "$WHY" -ge 1 ]; then
+  result D-why PASS "the wake wrote why it holds the screen (self-dim-why resume hold=1 workout=1 front=1 aod=0 saver=0 ...)"
+else
+  result D-why FAIL "no self-dim-why hold=1 line for the wake ($(diag | grep -E 'self-dim-why' | tail -2 | tr '\n' ' '))"
+fi
 
 # ---- D-timeout: the watch's 15 s timeout passes: dimmed, not black ----
 log "D-timeout"
@@ -543,6 +551,15 @@ if [ "$G" = "1" ] && [ "$KP" = "0" ] && [ "$ONP" = "$BON" ] && [ "$WP" != "Awake
 else
   result D-paused FAIL "paused workout: self-dim-off paused=$G, keep=$KP, self-dim-on $BON -> $ONP, after 20 s power=$WP black=$DP"
 fi
+# R-556: the paused wake names why it was not held (hold=0 ... paused=1); the black screen after it is a stop
+# line with held=0 and cause=always-on-off (the shape the phone counts as "Off instead of dim").
+WHYP="$(count 'self-dim-why resume hold=0 workout=1 front=1 aod=0 saver=0 blacked=0 paused=1')"
+if [ "$WHYP" -ge 1 ]; then
+  result D-paused-why PASS "the paused wake wrote why the screen was not held (hold=0 ... paused=1)"
+else
+  result D-paused-why FAIL "no self-dim-why hold=0 paused=1 line ($(diag | grep -E 'self-dim-why' | tail -2 | tr '\n' ' '))"
+fi
+result D-paused-stop INFO "stop lines while paused: $(diag | grep -E ' stop ' | tail -2 | sed -E 's/^.* stop //' | tr '\n' '|')"
 # Resumed on the phone (its next message drops "Paused · "; the emulator has no phone, so the app is reopened
 # on that state): held again. The live switch (LaunchedEffect on the paused line) is covered by SelfDimTest.
 B="$(count 'self-dim-on (resume|state)')"

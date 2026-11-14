@@ -74,4 +74,22 @@ class AmbientDiagTest {
     assertEquals("11-05 10:00:00.000 stop screen=0", l.line("11-05 10:00:00.000", "stop", "screen=0"))
     assertEquals("11-05 10:00:00.000 focus", l.line("11-05 10:00:00.000", "focus"))
   }
+
+  /**
+   * R-556 (14 Nov 2026): the owner's black screens came from a watch app older than 0.77.0. 0.77.0 and later write
+   * cause=always-on-off on every black stop in an open workout with Always-on off (and now held=); his diary's
+   * stops ("stop amb0 wo1 bo0 sc0 bs0 id0 aod0/- th0", as the phone sent them) carry neither: 0.76.0's line.
+   */
+  @Test
+  fun ownersBlackStopsHaveTheLineOfAWatchAppOlderThan077() {
+    val now = AmbientDiag.stopDetail(ambient = false, workoutOpen = true, blackout = false, held = false, cause = AmbientDiag.watchCause(saverOn = false, aodGlobal = "0"))
+    assertEquals("ambient=0 workout=1 blackout=0 held=0 cause=always-on-off ", now)
+    val his = "ambient=0 workout=1 blackout=0 screen=0 saver=0 idle=0 aod=0/- theatre=0"
+    assertFalse(his.contains("cause="))
+    assertFalse(his.contains("held="))
+    // Held by the app and still black: the watch switched the screen off itself (held=1), named apart.
+    assertEquals("ambient=0 workout=1 blackout=0 held=1 cause=always-on-off ", AmbientDiag.stopDetail(false, true, false, true, "always-on-off"))
+    // Nothing to name: no cause word at all.
+    assertEquals("ambient=1 workout=0 blackout=0 held=0 ", AmbientDiag.stopDetail(true, false, false, false, ""))
+  }
 }

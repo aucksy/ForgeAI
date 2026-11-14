@@ -191,4 +191,43 @@ class SelfDimTest {
     assertEquals(listOf(SelfDim.Wrist.Move.LOWERED), feed(w, 0.5f, 0L, 60_000L))
     assertEquals(listOf(SelfDim.Wrist.Move.RAISED), feed(w, 8.5f, 60_100L, 61_500L))
   }
+
+  /**
+   * R-556 (14 Nov 2026, owner: "Watch screen is turning off. Log switch was enabled"): his watch's inputs at every
+   * wake in that diary (Always-on "aod0/-", Battery Saver off, a workout open, MettleUp just woken in front).
+   * 0.77.0's check holds the screen for exactly these inputs, and the wake now writes that it did and why.
+   */
+  @Test
+  fun ownersFourteenNovemberWakeIsHeldAndTheDiarySaysSo() {
+    val aod = SelfDim.aodOn("0", null)
+    assertEquals(false, aod)
+    val mode = SelfDim.wanted(workoutOpen = true, onScreen = true, aodOn = aod, saverOn = false, blackedOut = false)
+    assertTrue(mode)
+    // Just woken: the idle wait starts at the wake, so nothing lets it go.
+    assertNull(SelfDim.releaseWhy(now = 5_000L, inputAt = 5_000L, paused = false))
+    assertEquals(
+      "hold=1 workout=1 front=1 aod=0 saver=0 blacked=0 paused=0 quiet=0",
+      SelfDim.inputs(hold = true, workoutOpen = true, onScreen = true, aodOn = aod, saverOn = false, blackedOut = false, paused = false, quiet = false),
+    )
+  }
+
+  /** R-556: a wake that is NOT held names the input that stopped it (before, such a wake wrote nothing). */
+  @Test
+  fun aWakeThatIsNotHeldNamesWhatStoppedIt() {
+    // Paused on the phone.
+    assertEquals(
+      "hold=0 workout=1 front=1 aod=0 saver=0 blacked=0 paused=1 quiet=0",
+      SelfDim.inputs(hold = false, workoutOpen = true, onScreen = true, aodOn = false, saverOn = false, blackedOut = false, paused = true, quiet = false),
+    )
+    // The watch would not say its Always-on setting or Battery Saver.
+    assertEquals(
+      "hold=0 workout=1 front=1 aod=? saver=? blacked=0 paused=0 quiet=0",
+      SelfDim.inputs(hold = false, workoutOpen = true, onScreen = true, aodOn = null, saverOn = null, blackedOut = false, paused = false, quiet = false),
+    )
+    // No workout open (the phone went quiet for 4 h, or no workout).
+    assertEquals(
+      "hold=0 workout=0 front=1 aod=0 saver=0 blacked=0 paused=0 quiet=0",
+      SelfDim.inputs(hold = false, workoutOpen = false, onScreen = true, aodOn = false, saverOn = false, blackedOut = false, paused = false, quiet = false),
+    )
+  }
 }

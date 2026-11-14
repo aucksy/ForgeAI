@@ -9,7 +9,7 @@ import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 import { FEEDBACK_MAX } from '@/lib/feedback';
-import { compactLine, parseWatchDiag, sendWatchLog, WATCH_LOG_SCREEN, WATCH_LOG_WORDS, watchLogAvailable, watchLogText } from '@/lib/watchDiag';
+import { compactLine, parseWatchDiag, sendWatchLog, watchAppVersions, WATCH_LOG_SCREEN, WATCH_LOG_WORDS, watchLogAvailable, watchLogText } from '@/lib/watchDiag';
 
 // Lines exactly as android/wear AmbientDiag.kt writes them (Lines.line + state()).
 const STATE_ON = 'screen=1 saver=0 idle=0 aod=1/1 theatre=0';
@@ -86,12 +86,90 @@ describe("the app's own dim lines (R-442, Always-on OFF; R-444)", () => {
     const text = watchLogText([{ at: 1, log: R442 }]);
     const lines = text.split('\n');
     expect(lines[1]).toBe(
-      '13 lines on the watch. Off instead of dim: 0 (saver 0, aod-off 0). Dimmed by the watch (Always-on on): 0. Dimmed by the app (Always-on off): 2; screen held 3, let go 3 (idle 1, paused 1). Rebuild: 0. Last: bs0 aod0/0.',
+      '13 lines on the watch. Off instead of dim: 0 (saver 0, aod-off 0, while held 0, old watch app 0). Dimmed by the watch (Always-on on): 0. Dimmed by the app (Always-on off): 2; screen held 3, let go 3 (idle 1, paused 1). Rebuild: 0. Last: bs0 aod0/0.',
     );
     expect(lines[2]).toContain('ADIM/aundim the app dims');
     expect(text).toContain('06:28:20 aundim touch');
     expect(text).toContain('06:40:30 letgo idle');
     expect(text.length).toBeLessThanOrEqual(FEEDBACK_MAX);
+  });
+});
+
+// R-556 (14 Nov 2026, owner: "Watch screen is turning off. Log switch was enabled"): his diary, as his watch
+// wrote it (12:27-12:48, Always-on off "aod=0/-", Battery Saver off, a workout open). Its stop lines have no
+// cause= and no held=: the line of a watch app older than 0.77.0 (0.77.0 writes cause=always-on-off on each).
+const HIS_STATE_ON = 'screen=1 saver=0 idle=0 aod=0/- theatre=0';
+const HIS_BLACK = 'ambient=0 workout=1 blackout=0 screen=0 saver=0 idle=0 aod=0/- theatre=0';
+const HIS = [
+  ['12:27:54', `resume ${HIS_STATE_ON}`],
+  ['12:27:56', `stop ${HIS_BLACK}`],
+  ['12:28:00', `resume ${HIS_STATE_ON}`],
+  ['12:28:01', `stop ${HIS_BLACK}`],
+  ['12:28:23', `resume ${HIS_STATE_ON}`],
+  ['12:28:33', `stop ${HIS_BLACK}`],
+  ['12:35:03', `resume ${HIS_STATE_ON}`],
+  ['12:35:09', `stop ${HIS_BLACK}`],
+  ['12:37:20', `resume ${HIS_STATE_ON}`],
+  ['12:37:25', 'stop ambient=0 workout=1 blackout=0 screen=1 saver=0 idle=0 aod=0/- theatre=0'],
+]
+  .map(([t, ev]) => `11-14 ${t}.000 ${ev}`)
+  .join('\n');
+
+describe("R-556: the owner's 14 Nov black screens are counted, and the log names the watch app", () => {
+  it('every black stop in an open workout counts as "Off instead of dim" (it said 0 before)', () => {
+    const lines = watchLogText([{ at: 1, log: HIS }]).split('\n');
+    // 4 black stops (screen off, not dimmed, workout open); the 12:37:25 stop had the screen on (he left the app).
+    expect(lines[1]).toContain('Off instead of dim: 4 (saver 0, aod-off 0, while held 0, old watch app 4).');
+    expect(lines[1]).toContain('screen held 0, let go 0');
+  });
+
+  it('a 0.77.0-or-later black stop counts too, with its cause, and a held one apart', () => {
+    const now = [
+      '11-15 10:00:00.000 stop ambient=0 workout=1 blackout=0 held=0 cause=always-on-off screen=0 saver=0 idle=0 aod=0/- theatre=0',
+      '11-15 10:01:00.000 stop ambient=0 workout=1 blackout=0 held=1 cause=always-on-off screen=0 saver=0 idle=0 aod=0/- theatre=0',
+      '11-15 10:02:00.000 stop ambient=0 workout=0 blackout=0 held=0 screen=0 saver=0 idle=0 aod=0/- theatre=0',
+      '11-15 10:03:00.000 stop ambient=1 workout=1 blackout=0 held=0 screen=0 saver=0 idle=0 aod=1/1 theatre=0',
+    ].join('\n');
+    const lines = watchLogText([{ at: 1, log: now }]).split('\n');
+    expect(lines[1]).toContain('Off instead of dim: 2 (saver 0, aod-off 2, while held 1, old watch app 0).');
+    expect(compactLine(now.split('\n')[1])?.text).toBe('10:01:00 stop amb0 wo1 bo0 hd1 cause=aod-off sc0 bs0 id0 aod0/- th0');
+  });
+
+  it("each wake's check line goes out with every input, nothing else", () => {
+    expect(compactLine('11-15 10:00:00.000 self-dim-why resume hold=1 workout=1 front=1 aod=0 saver=0 blacked=0 paused=0 quiet=0')?.text).toBe(
+      '10:00:00 why resume hd1 wo1 fr1 aod0 bs0 bk0 pa0 qt0',
+    );
+    expect(compactLine('11-15 10:00:00.000 self-dim-why resume hold=0 workout=1 front=1 aod=? saver=? blacked=0 paused=1 quiet=0 name=Aakash')?.text).toBe(
+      '10:00:00 why resume hd0 wo1 fr1 aod? bs? bk0 pa1 qt0',
+    );
+  });
+
+  it('the head names the watch app version the phone read (a watch app before 0.77.0 says none)', () => {
+    expect(watchAppVersions('{"ok":true,"nodes":[{"nodeId":"a","hasApp":true,"versionName":null,"versionCode":null}]}')).toBe('older than 0.77.0');
+    expect(watchAppVersions('{"ok":true,"nodes":[{"nodeId":"a","hasApp":true,"versionName":"0.78.0","versionCode":1000078000},{"nodeId":"b","hasApp":false}]}')).toBe('0.78.0');
+    expect(watchAppVersions('{"ok":true,"nodes":[{"nodeId":"a","hasApp":true,"versionName":"Aakash 1"}]}')).toBe('unknown');
+    expect(watchAppVersions('{"ok":false,"nodes":[]}')).toBe('');
+    expect(watchAppVersions(null)).toBe('');
+    expect(watchAppVersions('junk')).toBe('');
+    const head = watchLogText([{ at: Date.UTC(2026, 10, 14, 7, 18), log: HIS }], undefined, 'older than 0.77.0').split('\n')[0];
+    expect(head).toBe('Watch screen log (R-441), written 11-14 07:18 UTC. Watch app: older than 0.77.0.');
+  });
+
+  it('sendWatchLog puts the version in the log it sends', async () => {
+    const sent: string[] = [];
+    await sendWatchLog('0.78.0', {
+      read: async () => JSON.stringify({ ok: true, watches: [{ at: 1, log: HIS }] }),
+      versions: async () => '{"ok":true,"nodes":[{"nodeId":"a","hasApp":true,"versionName":null}]}',
+      sender: async () => '',
+      device: () => '',
+      post: async (json) => {
+        sent.push(json);
+        return { status: 201 };
+      },
+    });
+    const text = (JSON.parse(sent[0]) as { text: string }).text;
+    expect(text.split('\n')[0]).toContain('Watch app: older than 0.77.0.');
+    expect(text).toContain('Off instead of dim: 4');
   });
 });
 
@@ -101,7 +179,7 @@ describe('the log that goes to the feedback box', () => {
     const lines = text.split('\n');
     expect(lines[0]).toBe('Watch screen log (R-441), written 11-10 15:30 UTC.');
     expect(lines[1]).toBe(
-      '9 lines on the watch. Off instead of dim: 0 (saver 3, aod-off 0). Dimmed by the watch (Always-on on): 3. Dimmed by the app (Always-on off): 0; screen held 0, let go 0 (idle 0, paused 0). Rebuild: 0. Last: bs1 aod1/1.',
+      '9 lines on the watch. Off instead of dim: 3 (saver 3, aod-off 0, while held 0, old watch app 0). Dimmed by the watch (Always-on on): 3. Dimmed by the app (Always-on off): 0; screen held 0, let go 0 (idle 0, paused 0). Rebuild: 0. Last: bs1 aod1/1.',
     );
     expect(lines[2]).toMatch(/^Key: /);
     expect(lines[3]).toBe('[11-10]');

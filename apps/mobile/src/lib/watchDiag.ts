@@ -18,7 +18,7 @@
 import { Platform } from 'react-native';
 
 import { deviceLine, FEEDBACK_MAX, FEEDBACK_URLS, postToBox, senderId } from '@/lib/feedback';
-import { nativeWatchDiag } from '@/tracker/services/restCard';
+import { nativeWatchDiag, nativeWatchVersions } from '@/tracker/services/restCard';
 
 export const WATCH_LOG_SCREEN = 'watch-diary';
 
@@ -71,10 +71,12 @@ const EVENTS: Record<string, string> = {
   'self-dim-off': 'letgo',
   'self-dim-enter': 'ADIM',
   'self-dim-exit': 'aundim',
+  // R-556: the app's check on every wake: whether it holds the screen, and each input that decided it.
+  'self-dim-why': 'why',
 };
 
 /** R-444: the app's own dim lines (self-dim-*), whose first word says why (MainActivity: refreshSelfDim, dimNow, brighten, input). */
-const SELF_DIM = new Set(['hold', 'letgo', 'ADIM', 'aundim']);
+const SELF_DIM = new Set(['hold', 'letgo', 'ADIM', 'aundim', 'why']);
 
 /** The only "why" words a self-dim line may carry: what happened, never anything the member typed. */
 const SELF_DIM_WHY = new Set(['stop', 'state', 'check', 'resume', 'setting', 'idle', 'paused', 'touch', 'crown', 'key', 'wrist-up', 'wrist-down', 'timeout']);
@@ -93,6 +95,13 @@ const KEYS: Record<string, string> = {
   workout: 'wo',
   blackout: 'bo',
   cause: 'cause',
+  // R-556: the wake check (self-dim-why) and the stop line's held=.
+  hold: 'hd',
+  held: 'hd',
+  front: 'fr',
+  blacked: 'bk',
+  paused: 'pa',
+  quiet: 'qt',
 };
 
 const CAUSES: Record<string, string> = { 'battery-saver': 'saver', 'always-on-off': 'aod-off' };
@@ -131,6 +140,31 @@ export function compactLine(line: string): { day: string; event: string; text: s
   return { day: m[1], event, text: [m[2], event, ...parts].join(' ') };
 }
 
+/**
+ * R-556: the MettleUp watch app's version on each connected watch, from the native answer of
+ * WearSync.watchVersions (the phone reads /forge/watch-version; a watch app older than 0.77.0 writes no
+ * version). "" when Wear OS could not say or no watch has the app. PURE.
+ */
+export function watchAppVersions(raw: string | null): string {
+  if (!raw) return '';
+  try {
+    const o = JSON.parse(raw) as { ok?: unknown; nodes?: unknown };
+    if (o.ok !== true || !Array.isArray(o.nodes)) return '';
+    const seen = (o.nodes as unknown[])
+      .map((n) => (typeof n === 'object' && n !== null ? (n as { hasApp?: unknown; versionName?: unknown }) : {}))
+      .filter((n) => n.hasApp === true)
+      .map((n) => {
+        const v = typeof n.versionName === 'string' ? n.versionName.trim() : '';
+        if (v === '') return 'older than 0.77.0';
+        return /^\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(v) ? v : 'unknown';
+      });
+    return [...new Set(seen)].join(', ');
+  } catch (e) {
+    console.warn('[watch-log] the watch app versions were not JSON', e);
+    return '';
+  }
+}
+
 /** "11-10 21:04 UTC" for the watch's own clock in ms; "" when unknown. PURE. */
 function when(at: number): string {
   if (!(at > 0)) return '';
@@ -144,7 +178,7 @@ function when(at: number): string {
  * Battery Saver and always-on values, a legend), then the newest lines that fit in [max] letters, by day.
  * Minor lines (focus, pause) go first when it is too long. PURE.
  */
-export function watchLogText(items: WatchDiagItem[], max: number = FEEDBACK_MAX): string {
+export function watchLogText(items: WatchDiagItem[], max: number = FEEDBACK_MAX, watchApp: string = ''): string {
   const w = items[0];
   if (!w) return '';
   const lines = w.log
@@ -152,9 +186,18 @@ export function watchLogText(items: WatchDiagItem[], max: number = FEEDBACK_MAX)
     .map(compactLine)
     .filter((l): l is NonNullable<ReturnType<typeof compactLine>> => l != null);
   const stops = lines.filter((l) => l.event === 'stop');
-  const black = stops.filter((l) => / bo1( |$)/.test(l.text)).length;
-  const saver = stops.filter((l) => l.text.includes('cause=saver')).length;
-  const aodOff = stops.filter((l) => l.text.includes('cause=aod-off')).length;
+  // R-556 (14 Nov 2026): a black screen is any stop with the screen off, not dimmed, a workout open. It counted
+  // only bo1 before (the rebuild's own flag, set only after the watch's dim state once worked), so with
+  // Always-on off every black screen read "Off instead of dim: 0".
+  const blackStops = stops.filter((l) => / amb0( |$)/.test(l.text) && / wo1( |$)/.test(l.text) && / sc0( |$)/.test(l.text));
+  const black = blackStops.length;
+  const saver = blackStops.filter((l) => l.text.includes('cause=saver')).length;
+  const aodOff = blackStops.filter((l) => l.text.includes('cause=aod-off')).length;
+  // Held by the app and still black: the watch turned the screen off over the app's keep-on.
+  const heldBlack = blackStops.filter((l) => / hd1( |$)/.test(l.text)).length;
+  // Since 0.77.0 a black stop with Always-on off always names cause=aod-off (or saver) and carries hd: one
+  // without either comes from a watch app older than 0.77.0, which has no way to dim with Always-on off.
+  const oldApp = blackStops.filter((l) => / aod0\//.test(l.text) && !l.text.includes('cause=') && !/ hd[01?]( |$)/.test(l.text)).length;
   const dims = lines.filter((l) => l.event === 'DIM').length;
   // R-444: with Always-on OFF the watch never dims (Dim stays 0); the app's own dim is counted apart.
   const selfDims = lines.filter((l) => l.event === 'ADIM').length;
@@ -167,9 +210,9 @@ export function watchLogText(items: WatchDiagItem[], max: number = FEEDBACK_MAX)
   const bs = lastState ? (/ (bs[01?])/.exec(lastState.text)?.[1] ?? '') : '';
   const aod = lastState ? (/ (aod[0-9?/-]+)/.exec(lastState.text)?.[1] ?? '') : '';
   const head = [
-    `Watch screen log (R-441), written ${when(w.at) || 'at an unknown time'}${items.length > 1 ? `, newest of ${items.length} watches` : ''}.`,
-    `${lines.length} lines on the watch. Off instead of dim: ${black} (saver ${saver}, aod-off ${aodOff}). Dimmed by the watch (Always-on on): ${dims}. Dimmed by the app (Always-on off): ${selfDims}; screen held ${holds}, let go ${letGo.length} (idle ${idle}, paused ${paused}). Rebuild: ${rebuilds}. Last: ${[bs, aod].filter(Boolean).join(' ') || '-'}.`,
-    'Key: sc screen on, bs Battery Saver, id idle, aod always-on global/secure, th theatre, amb dimmed, wo workout open, bo off instead of dim; DIM/undim the watch dims, ADIM/aundim the app dims, hold/letgo the app keeps the screen on or lets go (and why). Times are the watch clock.',
+    `Watch screen log (R-441), written ${when(w.at) || 'at an unknown time'}${items.length > 1 ? `, newest of ${items.length} watches` : ''}.${watchApp ? ` Watch app: ${watchApp}.` : ''}`,
+    `${lines.length} lines on the watch. Off instead of dim: ${black} (saver ${saver}, aod-off ${aodOff}, while held ${heldBlack}, old watch app ${oldApp}). Dimmed by the watch (Always-on on): ${dims}. Dimmed by the app (Always-on off): ${selfDims}; screen held ${holds}, let go ${letGo.length} (idle ${idle}, paused ${paused}). Rebuild: ${rebuilds}. Last: ${[bs, aod].filter(Boolean).join(' ') || '-'}.`,
+    'Key: sc screen on, bs Battery Saver, id idle, aod always-on global/secure, th theatre, amb dimmed, wo workout open, bo rebuild armed, hd the app holds the screen; DIM/undim the watch dims, ADIM/aundim the app dims, hold/letgo the app keeps the screen on or lets go (and why); why the check on each wake (fr app in front, bk black before, pa paused, qt unused 12 min). Times are the watch clock.',
   ].join('\n');
 
   const budget = max - head.length - 1;
@@ -213,6 +256,8 @@ export interface WatchLogDeps {
   post?: (json: string) => Promise<{ status: number }>;
   sender?: () => Promise<string>;
   device?: () => string;
+  /** R-556: the native watch versions answer (WearSync.watchVersions), for the log's "Watch app:". */
+  versions?: () => Promise<string | null>;
 }
 
 /** "Pixel 7 (Google), Android 14", as Send feedback says it; '' when the phone cannot say. */
@@ -234,7 +279,14 @@ export async function sendWatchLog(app: string, deps: WatchLogDeps = {}): Promis
   const post = deps.post ?? ((json: string) => postToBox(json, undefined, FEEDBACK_URLS));
   const sender = deps.sender ?? senderId;
   try {
-    const text = watchLogText(parseWatchDiag(await read()).watches);
+    const versions = deps.versions ?? nativeWatchVersions;
+    let watchApp = '';
+    try {
+      watchApp = watchAppVersions(await versions());
+    } catch (e) {
+      console.warn('[watch-log] the watch app version could not be read; the log goes without it', e);
+    }
+    const text = watchLogText(parseWatchDiag(await read()).watches, FEEDBACK_MAX, watchApp);
     if (!text) {
       console.warn('[watch-log] no watch screen log on this phone; nothing sent');
       return 'none';
