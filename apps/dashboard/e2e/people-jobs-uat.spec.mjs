@@ -241,8 +241,11 @@ test('R-522: a hidden admin panel asks the server nothing; back in view it asks 
   };
   await startOnlineGym(page);
   await expect(page.getByRole('heading', { name: 'Today', exact: true })).toBeVisible();
-  await wait(page, 2 * 60_000);
-  expect(server.calls.filter((c) => c === 'owner_alerts').length, 'in view: the alerts list once a minute').toBeGreaterThanOrEqual(2);
+  const alertsAsked = () => server.calls.filter((c) => c === 'owner_alerts').length;
+  await expect.poll(alertsAsked, { message: 'in view: the alerts list at once' }).toBeGreaterThanOrEqual(1);
+  // A jump of the pretend clock fires a due timer once; the answer then comes back over the (real-time) network.
+  await wait(page, 61_000);
+  await expect.poll(alertsAsked, { message: 'in view: the alerts list again a minute later' }).toBeGreaterThanOrEqual(2);
 
   const setHidden = (hidden) =>
     page.evaluate((h) => {
