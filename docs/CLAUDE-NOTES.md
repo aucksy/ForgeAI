@@ -7,6 +7,15 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-540. Demo gym: enough data to show every feature, and the money/time story, for in-person demos — 14 Nov 2026
+He said (14 Nov 2026): "ensure that the demo gym has enough data so all the functionalities can be shown in all its
+glory. So if I do go to a gym to give them a demo, I can show them how everything works and possibly with the kind of
+data that does show them there is a potential of increased revenue or convenience or things like that."
+Plan: a helper audits every screen in the demo gym (apps/dashboard/src/crm/data/demo.ts), fills each empty one with
+believable "Example gym" data (shows it is an example), and makes the story visible: dues recovered, renewals
+collected, enquiries turned into members, time saved. No invented claims outside the demo; every demo screen is
+clearly the Example gym. Queued behind the helper limit (6).
+
 ## R-539. Bring a friend test: admin splash flashed, nothing reached the panel; new things must show at once — 14 Nov 2026
 He said (14 Nov 2026): "I clicked on it It opened the form but very briefly it also showed a splash screen or something
 that showed admin like the brand logo with admin. That was weird. And then I submitted the form but I don't see anything
