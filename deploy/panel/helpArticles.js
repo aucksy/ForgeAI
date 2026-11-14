@@ -424,6 +424,18 @@ export const ALL_HELP_ARTICLES = [
     screens: ['apps/dashboard/src/crm/ui/screens/GymTimings.tsx', 'apps/dashboard/src/crm/ui/screens/BusyMachines.tsx'],
   },
   {
+    id: 'gym-web-page',
+    unreleased: 'F207 gym web page: join.mettleup.fit is not connected yet and photos need supabase 0082; release with the page.',
+    who: 'owner',
+    title: 'Make your free gym web page',
+    text:
+      'Your gym gets its own free page at join.mettleup.fit, for people who may join. Open "Your web page" (on a phone, under More). ' +
+      'Check the page address, then add your area, a few lines about your gym, what your gym has, up to 6 photos and your Google Maps link. Fees, timings, logo and address come from their own screens. ' +
+      'Tap "See your page" to look at it. To publish, tick "Show my page to visitors" and the box saying the fees, photos and words are your own, then tap "Save and publish". ' +
+      'Once published, the address stays the same. Questions from the page show in Enquiries. Only the owner can change the page.',
+    screens: ['apps/dashboard/src/crm/ui/screens/WebPage.tsx'],
+  },
+  {
     id: 'branding-logo-colours',
     who: 'owner',
     title: 'Put your logo and colours in the member app (Branding)',

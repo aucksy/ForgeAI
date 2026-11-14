@@ -29,8 +29,9 @@ async function decode(file: Blob): Promise<Drawable> {
     try {
       const bmp = await createImageBitmap(file, { imageOrientation: 'from-image' });
       return { source: bmp, width: bmp.width, height: bmp.height, close: () => bmp.close() };
-    } catch {
+    } catch (e) {
       // Older browsers reject the option, or the format: fall through to <img>.
+      console.warn('[web page] createImageBitmap could not read the photo; trying <img>', e);
     }
   }
   const url = URL.createObjectURL(file);
@@ -40,7 +41,8 @@ async function decode(file: Blob): Promise<Drawable> {
     img.src = url;
     await img.decode();
     return { source: img, width: img.naturalWidth, height: img.naturalHeight };
-  } catch {
+  } catch (e) {
+    console.warn('[web page] the photo could not be decoded', e);
     throw new PagePhotoError('This photo can’t be read here (iPhone HEIC photos often can’t). Save it as JPEG and try again.');
   } finally {
     window.setTimeout(() => URL.revokeObjectURL(url), 0);
