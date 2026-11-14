@@ -132,7 +132,7 @@ export const PAGES = Object.freeze([
   { id: 'trainers', path: '/trainers', name: 'Trainers', does: "Trainers' hours and personal-training bookings." },
   { id: 'trainer-page', path: '/trainers/:id', name: 'Trainer', does: "One trainer's page and bookings." },
   { id: 'training-progress', path: '/trainer', name: 'Training progress', does: "Members' workout progress, and their trainer." },
-  { id: 'questions', path: '/questions', name: 'Questions', does: 'Members\' "Ask a trainer" questions.' },
+  { id: 'questions', path: '/questions', name: 'Questions for trainers', does: 'Members\' "Ask a trainer" questions.' },
   { id: 'workouts', path: '/workouts', name: 'Workout plans', does: 'Make and send workout routines to members.' },
   { id: 'diet', path: '/diet', name: 'Diet plans', does: 'Make and send diet plans to members.' },
   { id: 'challenges', path: '/challenges', name: 'Challenges', does: 'A monthly goal for members, and the leaderboard.' },
