@@ -112,7 +112,7 @@ describe('R-498: not green is unchanged', () => {
   it('every set done but under last time: not green, the short line', () => {
     const g = kgProgress(bench, [done(70, 5), done(70, 5), done(70, 5), done(70, 5)]);
     expect(lineGreen(bench, g)).toBe(false);
-    expect(kgLiveLine(bench, g, total, weight)).toBe('Done: 1,400 of 1,500 kg · 100 kg short, fine for this workout');
+    expect(kgLiveLine(bench, g, total, weight)).toBe('Done: 1,400 of 1,500 kg · 100 kg less, fine for this workout');
   });
 });
 

@@ -124,7 +124,7 @@ describe('#9 kg to beat: during the workout', () => {
     const g = kgProgress(p, [row(45, 2, true), row(45, 2, true), row(null, null, false)]);
     expect(g.next).toEqual([{ weightKg: 45, reps: 8 + MAX_EXTRA_REPS }]);
     expect(g.short).toBe(true);
-    expect(kgLiveLine(p, g, total, weight)).toMatch(/\(a little short is fine\)$/);
+    expect(kgLiveLine(p, g, total, weight)).toMatch(/\(a little less is fine\)$/);
   });
   it('R-324: after a very hard set, the eased row gets no extra reps (the line matches the box)', () => {
     // UAT rel-34: set 1 very hard, the next row hints 35 kg × 10; the line said "× 12" over a box of 10.
@@ -148,7 +148,7 @@ describe('#9 kg to beat: during the workout', () => {
   it('all ticked and still short: no plan, says how much', () => {
     const g = kgProgress(p, [row(45, 5, true), row(45, 5, true), row(45, 5, true)]);
     expect(g.next).toEqual([]);
-    expect(kgLiveLine(p, g, total, weight)).toBe('Done: 675 of 1,125 kg · 450 kg short, fine for this workout');
+    expect(kgLiveLine(p, g, total, weight)).toBe('Done: 675 of 1,125 kg · 450 kg less, fine for this workout');
   });
   it('starts from what each row hints, and stays within 2 reps of it', () => {
     // Set 1 done at 7: the rows hint 7, 7 (fillForSet caps at the row above) — never 8 + 2.

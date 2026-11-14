@@ -65,7 +65,7 @@ describe('R-366: the owner Pull-Up', () => {
     expect(repLiveLine(p, eq)).toBe('Previous reps matched\nDone 16 reps · Previous 16 reps');
     const under = kgProgress(p, [done(6), done(5), done(4)]);
     expect(lineGreen(p, under)).toBe(false);
-    expect(repLiveLine(p, under)).toBe('Done: 15 of 19 reps · 4 reps short, fine for this workout');
+    expect(repLiveLine(p, under)).toBe('Done: 15 of 19 reps · 4 reps less, fine for this workout');
     for (const g of [eq, under]) expect(repLiveLine(p, g)).not.toMatch(/beat/i);
     // A set still open: never green yet, even past last time.
     const early = kgProgress(p, [done(9), done(9), open(5)]);
@@ -90,7 +90,7 @@ describe('R-366: reps to beat never under last time (as R-351 for kg)', () => {
     const eq = kgProgress(p, [done(12), done(11), done(10)]);
     expect(kgBeaten(eq)).toBe(true);
     expect(repLiveLine(p, eq)).toBe('Previous reps matched\nDone 33 reps · Previous 33 reps');
-    expect(repLiveLine(p, kgProgress(p, [done(12), done(10), done(8)]))).toBe('Done: 30 of 33 reps · 3 reps short, fine for this workout');
+    expect(repLiveLine(p, kgProgress(p, [done(12), done(10), done(8)]))).toBe('Done: 30 of 33 reps · 3 reps less, fine for this workout');
   });
   it('no last time to compare (first time, or another set count): "First time", or the set count named', () => {
     const p = repPlan(lower, [])!;

@@ -399,9 +399,9 @@ export function repLiveLine(p: KgPlan, g: KgProgress): string {
   // R-498 (owner, 14 Nov 2026): green, it shouts first ("Previous reps beaten! +3"), totals under it.
   if (kgBeaten(g) || lineGreen(p, g)) return doneLine(p, done, plain, repsText, 0, lineGreen(p, g));
   // R-300 (owner, 3 Nov 2026): never "add a set" (extra sets cost recovery and sleep); next time aims again.
-  if (g.next.length === 0) return `Done: ${Math.round(g.done)} of ${repsText(p.total)} · ${repsText(g.left)} short, fine for this workout`;
+  if (g.next.length === 0) return `Done: ${Math.round(g.done)} of ${repsText(p.total)} · ${repsText(g.left)} less, fine for this workout`;
   // Owner, 12 Nov 2026 (Chest Dip, one set left): one open set reads "Next set: 9 reps", not "Next sets".
-  return `Next set${g.next.length === 1 ? '' : 's'}: ${g.next.map((s) => s.reps).join(', ')} reps · Done: ${Math.round(g.done)} of ${repsText(p.total)}${g.short ? ' (a little short is fine)' : ''}`;
+  return `Next set${g.next.length === 1 ? '' : 's'}: ${g.next.map((s) => s.reps).join(', ')} reps · Done: ${Math.round(g.done)} of ${repsText(p.total)}${g.short ? ' (a little less is fine)' : ''}`;
 }
 
 /**
@@ -561,10 +561,10 @@ export function kgLiveLine(p: KgPlan, g: KgProgress, total: TotalFmt, weight: We
   // 2026 (R-454): the workout card's totals never say "each"; "each" stays on the per-set weight.
   const doneN = total(g.done).trim().split(/\s+/)[0];
   // R-300 (owner, 3 Nov 2026): never "add a set" (extra sets cost recovery and sleep); next time aims again.
-  if (g.next.length === 0) return `Done: ${doneN} of ${total(p.total)} · ${total(g.left)} short, fine for this workout`;
+  if (g.next.length === 0) return `Done: ${doneN} of ${total(p.total)} · ${total(g.left)} less, fine for this workout`;
   // Fresh-eyes review (5 Nov 2026): "Next: 60 kg × 10 · 0 of 1,560 kg" read as a puzzle; the total
   // now says how much of it is done. R-499 (owner, 14 Nov 2026: "always previous and next"): never
   // "today's" ("Done: 0 of 1,800 kg"), never "last time" ("+5% on previous", "fine for this workout").
   const plan = `${weight(g.next[0].weightKg)} × ${g.next[0].reps}`;
-  return `Next set: ${plan} · Done: ${doneN} of ${total(p.total)}${g.short ? ' (a little short is fine)' : ''}`;
+  return `Next set: ${plan} · Done: ${doneN} of ${total(p.total)}${g.short ? ' (a little less is fine)' : ''}`;
 }

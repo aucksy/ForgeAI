@@ -47,7 +47,7 @@ describe('one green rule: kilos', () => {
   it('every set done, under last time: not green, the short line', () => {
     const g = kgProgress(kg, [done(40, 12), done(40, 12), done(40, 10), done(40, 8)]);
     expect(lineGreen(kg, g)).toBe(false);
-    expect(kgLiveLine(kg, g, total, weight)).toBe('Done: 1,680 of 1,800 kg · 120 kg short, fine for this workout');
+    expect(kgLiveLine(kg, g, total, weight)).toBe('Done: 1,680 of 1,800 kg · 120 kg less, fine for this workout');
   });
   it('the plan reached with a set still open: not green yet; green once the last set is ticked', () => {
     const early = kgProgress(kg, [done(40, 20), done(40, 15), done(40, 11), open(40, 9)]); // 1,840 with set 4 open
@@ -72,7 +72,7 @@ describe('one green rule: kilos', () => {
     expect(kgLiveLine(first, met, total, weight)).toBe('1,800 kg done · First time');
     const missed = kgProgress(first, [done(40, 13), done(40, 12), done(40, 10), done(40, 8)]);
     expect(lineGreen(first, missed)).toBe(false);
-    expect(kgLiveLine(first, missed, total, weight)).toBe('Done: 1,720 of 1,800 kg · 80 kg short, fine for this workout');
+    expect(kgLiveLine(first, missed, total, weight)).toBe('Done: 1,720 of 1,800 kg · 80 kg less, fine for this workout');
   });
   it('T76: typed in lb as shown, a hair off last time\'s total, is the same total, green', () => {
     // 60 kg x 10 x 3 last time = 1,800 kg; 132.3 lb typed = 60.0103 kg -> 1,800.3 kg.
@@ -104,7 +104,7 @@ describe('one green rule: reps only (same rule as kilos)', () => {
   it('every set done, under last time: not green, the short line', () => {
     const g = kgProgress(reps, [r(16), r(14), r(8)]);
     expect(lineGreen(reps, g)).toBe(false);
-    expect(repLiveLine(reps, g)).toBe('Done: 38 of 40 reps · 2 reps short, fine for this workout');
+    expect(repLiveLine(reps, g)).toBe('Done: 38 of 40 reps · 2 reps less, fine for this workout');
   });
   it('a set still open: never green, even past last time already', () => {
     const g = kgProgress(reps, [r(25), r(20), ro(9)]);

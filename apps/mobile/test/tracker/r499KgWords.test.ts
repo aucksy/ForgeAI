@@ -56,7 +56,7 @@ describe('R-499: the kg to beat says previous, never today or last time', () => 
   });
   it('all ticked, short and under the previous: "fine for this workout"', () => {
     const g = kgProgress(p, [row(40, 14, true), row(40, 14, true), row(40, 13, true)]);
-    expect(kgLiveLine(p, g, total, weight)).toBe('Done: 1,640 of 1,800 kg · 160 kg short, fine for this workout');
+    expect(kgLiveLine(p, g, total, weight)).toBe('Done: 1,640 of 1,800 kg · 160 kg less, fine for this workout');
   });
   it('the % words and the rep words', () => {
     expect(pctWords(0)).toBe('same as previous');
