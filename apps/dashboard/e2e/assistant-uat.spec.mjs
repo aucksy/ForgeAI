@@ -729,6 +729,8 @@ test('AI Assistant R-501: Both on an English greeting writes the Hindi first; a 
 test('AI Assistant R-514: a closure message names its day; with no day it asks; it sends now unless he said when', async ({ page }) => {
   test.setTimeout(150_000);
   const server = await openApp(page);
+  // A send time needs owner_send_message's p_send_at (0025, live since the offers page).
+  server.offerServer = true;
   const ai = installAi(server);
   await installWorker(page);
   await startOnlineGym(page);
