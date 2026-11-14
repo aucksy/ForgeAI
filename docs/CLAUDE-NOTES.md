@@ -7,6 +7,10 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-510. Notifications both directions: his yes to A + LIVE change — 14 Nov 2026
+He said (14 Nov 2026, chat): "yes to A (my pick): Build both directions together, with the live database change."
+So: build R-506/R-507 per the R-509 audit, both directions together. His LIVE yes covers ONLY the notification pieces: the push-address table, the gym-alerts table, the digest-settings table and the triggers that fill alerts / send member pushes for new workout plan, diet plan, measurements, challenge, fee request. Instant: complaint (owner), check-in number, shop order, referral, plan request ending in <=3 days. Digest (default daily 11:00 am IST; Settings: Instantly / Daily at time / Weekly on day at time): trainer questions, questions/feedback, plan requests, paid online, report sent, joins. Panel gets real web push (works with the tab closed, also phone browser). Builder helper writes code + migrations; I apply the LIVE migration, set the Worker secret and deploy.
+
 ## R-509. Cross-app notification audit (for R-506/R-507) — 14 Nov 2026
 Read-only audit done; shown to him before any build. Findings:
 - Member -> panel: the panel has NO real web push (only in-tab Notification while the tab is open). Trainer questions and "Message your gym" never ring at all (only a menu count refreshed every 3 min while visible; Needs you never fed questions, TODO 0053). Plan requests, check-in numbers (0048), shop orders ring only while the tab is open. Paid online, requested workout report (0045), member joined with code, referred friend (0056): no alert.
