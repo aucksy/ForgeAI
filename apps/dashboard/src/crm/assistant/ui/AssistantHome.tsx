@@ -75,7 +75,7 @@ export function AssistantHome({ assistKey, wallet, panel = false }: { assistKey:
   const canSpeak = useMemo(() => isVoiceSupported(), []);
   const suggestions = useMemo(() => todaySuggestions(data), [data]);
   const asking = turns.some((t) => t.status === 'asking');
-  // R-488: today's free questions. At the limit the box locks with a calm line; at 5 or fewer it says how many.
+  // R-488: today's questions (free until F209 counts them on the credits). At the limit the box locks with a calm line; at 5 or fewer it says how many.
   const allowance = useAllowance(data.today);
   const full = allowance.full;
   const fewLeft = leftLine(allowance.left);
@@ -213,7 +213,11 @@ export function AssistantHome({ assistKey, wallet, panel = false }: { assistKey:
           {t('See all {n} things it can do', { n: SHOWN_EXAMPLES.length })}
         </button>
       </section>
-      <p style={quiet}>{t('Asking is free. A task uses credits only when you send or save it.')}</p>
+      <p style={quiet}>
+        {wallet.questions
+          ? t('Every {n} AI questions use 1 credit. A task uses credits when you send or save it.', { n: wallet.questions.perCredit })
+          : t('Asking is free. A task uses credits only when you send or save it.')}
+      </p>
     </>
   );
 

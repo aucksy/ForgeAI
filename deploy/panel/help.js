@@ -13,16 +13,33 @@
 // (migrations/0008_help_answers.sql); at MONTHLY_CAP_INR (= MONTHLY_CAP_USD in rupees) no more AI answers that month, the
 // message is still saved and the person reads "We reply as soon as we can". Secret: CLAUDE_HELP_KEY
 // (MettleUp's own key, used only here; never logged, echoed or sent to a phone). No key = no answer.
+//
+// F209 (owner 14 Nov 2026, R-519): a question from a gym (the member app sends the member's key, the admin app its
+// sign-in key in X-Forge-Key) is paid from that gym's AI credits, 20 questions = 1 credit (questionCredits.js,
+// supabase 0078). No credit left, or the person's daily AI questions used: the matching help pages, no AI call
+// (helpPages.js). A failed AI answer gives the question back. No key, or the gym server without 0078: as before.
+//
+// Prompt caching (F209): the rules and every help article are ONE prefix, the same bytes for every question from every
+// gym and both apps (nothing per request goes before the breakpoint), cached for 1 hour (CACHE_TTL): the questions of
+// all gyms together keep it warm. A cache read costs a tenth of the input price, so a question costs about 2 paise
+// instead of about 14 (the first in an hour about 23). The cost below counts writes and reads at their real prices.
 
 import Anthropic from '@anthropic-ai/sdk';
 
 import { answer, takeMessage } from './feedback.js';
 import { HELP_ARTICLES } from './helpArticles.js';
+import { pagesAnswer, whyLine } from './helpPages.js';
+import { giveBack, keyOf, takeQuestion } from './questionCredits.js';
 
 /** Claude Haiku 5.5: $0.10 in / $0.50 out per million tokens (aiMatch.js, owner R-82). */
 export const HELP_MODEL = 'claude-haiku-5-5';
 export const PRICE_IN_USD = 0.1 / 1e6;
 export const PRICE_OUT_USD = 0.5 / 1e6;
+/** Prompt caching (claude-api skill, shared/prompt-caching.md): a 1-hour write costs 2x the input price (a 5-minute one
+ * 1.25x), a read 0.1x. The help prefix is shared by every gym, so 1 hour keeps it warm between questions. */
+export const CACHE_TTL = '1h';
+export const CACHE_WRITE_X = { '5m': 1.25, '1h': 2 };
+export const CACHE_READ_X = 0.1;
 export const INR_PER_USD = 88;
 /** Owner, 12 Nov 2026: at most $80 a month (of the $100 monthly Claude credit). */
 export const MONTHLY_CAP_USD = 80;
@@ -73,9 +90,27 @@ export function indiaMonth(now) {
   return new Date(now.getTime() + 5.5 * 60 * 60 * 1000).toISOString().slice(0, 7);
 }
 
-/** Rupees spent for these token counts. PURE. */
+/** Rupees spent for these token counts (`tokensIn` already at the full input price, see pricedIn). PURE. */
 export function costInr(tokensIn, tokensOut) {
   return (tokensIn * PRICE_IN_USD + tokensOut * PRICE_OUT_USD) * INR_PER_USD;
+}
+
+/**
+ * The input tokens of one answer, counted at the full input price: uncached + cache writes (2x for 1 hour, 1.25x for
+ * 5 minutes) + cache reads (0.1x), rounded up. help_usage.tokens_in keeps this number, so the monthly cap counts
+ * money, not tokens. PURE.
+ */
+export function pricedIn(usage) {
+  const u = usage ?? {};
+  const plain = Number(u.input_tokens) || 0;
+  const read = Number(u.cache_read_input_tokens) || 0;
+  const write = Number(u.cache_creation_input_tokens) || 0;
+  const w1h = Number(u.cache_creation?.ephemeral_1h_input_tokens);
+  const w5m = Number(u.cache_creation?.ephemeral_5m_input_tokens);
+  // Without the split, every write is taken as a 1-hour write (the dearer one: the cap errs on the safe side).
+  const split = Number.isFinite(w1h) || Number.isFinite(w5m);
+  const writes = split ? (w1h || 0) * CACHE_WRITE_X['1h'] + (w5m || 0) * CACHE_WRITE_X['5m'] : write * CACHE_WRITE_X['1h'];
+  return Math.ceil(plain + writes + read * CACHE_READ_X);
 }
 
 /** Claude's answer, checked. -> { text, covered } | null. PURE. */
@@ -96,13 +131,16 @@ async function askClaude(env, v, fetchImpl, timeoutMs) {
   const msg = await client.messages.create({
     model: HELP_MODEL,
     max_tokens: 1500,
-    system: [{ type: 'text', text: helpSystem(), cache_control: { type: 'ephemeral' } }],
+    // The whole prefix (rules + articles) is cached; only the question (the user turn) changes.
+    system: [{ type: 'text', text: helpSystem(), cache_control: { type: 'ephemeral', ttl: CACHE_TTL } }],
     messages: [{ role: 'user', content: helpPrompt(v) }],
     output_config: { effort: 'low', format: { type: 'json_schema', schema: ANSWER_SCHEMA } },
   });
   const u = msg.usage ?? {};
-  const tokensIn = (Number(u.input_tokens) || 0) + (Number(u.cache_creation_input_tokens) || 0) + (Number(u.cache_read_input_tokens) || 0);
+  const tokensIn = pricedIn(u);
   const tokensOut = Number(u.output_tokens) || 0;
+  // Counts only (never the words): the Worker's log shows whether the cache is read.
+  console.log(`[help] usage in=${Number(u.input_tokens) || 0} write=${Number(u.cache_creation_input_tokens) || 0} read=${Number(u.cache_read_input_tokens) || 0} out=${tokensOut}`);
   if (msg.stop_reason !== 'end_turn') return { reply: null, tokensIn, tokensOut, why: `stop_reason ${msg.stop_reason}` };
   const text = msg.content.filter((b) => b.type === 'text').map((b) => b.text).join('');
   return { reply: readAnswer(text), tokensIn, tokensOut, why: 'answer is not the JSON asked for' };
@@ -187,19 +225,31 @@ export function coveredWord(reply) {
   return reply.covered ? 'yes' : 'no';
 }
 
-/** The reply secret and push address from the raw body (takeMessage keeps only the feedback fields). */
+/** The reply secret, push address and member key from the raw body (takeMessage keeps only the feedback fields). */
 async function extras(request) {
   try {
     const body = JSON.parse((await request.clone().text()).slice(0, 20_000));
-    return { key: replyKeyOf(body?.replyKey), pushTo: pushToOf(body?.pushTo) };
+    return { key: replyKeyOf(body?.replyKey), pushTo: pushToOf(body?.pushTo), memberKey: keyOf(body?.memberKey) };
   } catch {
-    return { key: '', pushTo: '' }; // quiet: takeMessage answers a bad body itself
+    return { key: '', pushTo: '', memberKey: '' }; // quiet: takeMessage answers a bad body itself
   }
+}
+
+/**
+ * F209: the gym's AI credits for this question. The member app sends the member's key in the body; the admin app its
+ * sign-in key in X-Forge-Key. Neither: not counted ('skip', as before F209).
+ */
+async function creditsFor(request, v, extra, env, now, opts) {
+  const fetchImpl = opts.creditsFetch ?? fetch;
+  if (v.source === 'member' && extra.memberKey) return takeQuestion(env, 'member', extra.memberKey, { now, fetchImpl });
+  const admin = keyOf(request.headers.get('X-Forge-Key'));
+  if (v.source === 'admin' && admin) return takeQuestion(env, 'admin', admin, { now, fetchImpl });
+  return { state: 'skip', why: 'no key' };
 }
 
 /** POST /api/help -> 201 { ok: true, id, answer, covered } | the same refusals as /api/feedback. */
 export async function handleHelp(request, env, now = new Date(), opts = {}) {
-  const extra = request.method === 'POST' ? await extras(request) : { key: '', pushTo: '' };
+  const extra = request.method === 'POST' ? await extras(request) : { key: '', pushTo: '', memberKey: '' };
   const taken = await takeMessage(request, env, now);
   if (taken.refused) return taken.refused;
   // The secret first: a phone that gives up waiting for the AI can still find the answer later.
@@ -212,10 +262,24 @@ export async function handleHelp(request, env, now = new Date(), opts = {}) {
       console.warn('[help] reply secret not saved (migration 0009 not applied?)', e instanceof Error ? e.message : e);
     }
   }
-  const reply = await answerFor(env, taken.value, now, opts);
+  // F209: the gym pays for the AI answer, or the help pages answer (no AI call) when it cannot.
+  const credits = await creditsFor(request, taken.value, extra, env, now, opts);
+  let reply = null;
+  let pages = null;
+  if (credits.state === 'none') {
+    pages = pagesAnswer(taken.value.text, taken.value.source, whyLine(credits.reason, taken.value.source, credits.who, credits.perDay));
+  } else {
+    reply = await answerFor(env, taken.value, now, opts);
+    if (!reply && credits.state === 'ok') {
+      await giveBack(credits.id, { fetchImpl: opts.creditsFetch ?? fetch });
+      // A counted question the AI did not answer: the help pages too, when one matches.
+      const p = pagesAnswer(taken.value.text, taken.value.source, '');
+      if (p.pages) pages = { text: p.text.trim(), pages: p.pages };
+    }
+  }
   if (taken.id) {
     try {
-      await env.WEB.prepare('UPDATE feedback SET answer = ?, covered = ? WHERE id = ?').bind(reply?.text ?? '', coveredWord(reply), taken.id).run();
+      await env.WEB.prepare('UPDATE feedback SET answer = ?, covered = ? WHERE id = ?').bind(reply?.text ?? pages?.text ?? '', coveredWord(reply), taken.id).run();
     } catch (e) {
       // Before migration 0009: no `covered` column. The answer alone, as before.
       console.warn('[help] covered not saved (migration 0009 not applied?)', e instanceof Error ? e.message : e);
@@ -228,7 +292,15 @@ export async function handleHelp(request, env, now = new Date(), opts = {}) {
       }
     }
   }
-  return answer(201, { ok: true, id: taken.id, answer: reply?.text ?? NO_ANSWER, covered: reply?.covered ?? false, ai: !!reply });
+  return answer(201, {
+    ok: true,
+    id: taken.id,
+    answer: reply?.text ?? pages?.text ?? NO_ANSWER,
+    covered: reply?.covered ?? false,
+    ai: !!reply,
+    // F209: why the AI was not asked (the admin app then offers a way to get credits); absent when it was asked.
+    ...(credits.state === 'none' ? { credits: credits.reason } : {}),
+  });
 }
 
 export const MAX_REPLY_KEYS = 50;

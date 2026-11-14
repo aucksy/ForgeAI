@@ -190,7 +190,7 @@ async function pushAddress(): Promise<string> {
 
 export async function sendFeedback(
   text: string,
-  extra: { app?: string; gym?: string; screen?: string; input?: 'voice' | 'typed' },
+  extra: { app?: string; gym?: string; screen?: string; input?: 'voice' | 'typed'; memberKey?: string },
 ): Promise<FeedbackResult> {
   const clean = text.trim();
   if (!clean) return { ok: false, words: FEEDBACK_WORDS.empty };
@@ -225,7 +225,7 @@ async function popupsLine(): Promise<string> {
 
 async function sendToBoxes(
   clean: string,
-  extra: { app?: string; gym?: string; screen?: string; input?: 'voice' | 'typed' },
+  extra: { app?: string; gym?: string; screen?: string; input?: 'voice' | 'typed'; memberKey?: string },
   replyKey: string,
   pushTo: string,
 ): Promise<FeedbackResult & { covered?: boolean }> {
@@ -244,6 +244,9 @@ async function sendToBoxes(
     // R-319 item 10: this question's secret and the phone's push address (older boxes ignore both).
     ...(replyKey ? { replyKey } : {}),
     ...(replyKey ? { pushTo } : {}),
+    // F209 (owner 14 Nov 2026): the member's gym key, so the gym's AI credits pay for the AI answer (20 questions =
+    // 1 credit). The help box sends it only to the gym server, never to the AI and never saved. No gym: not sent.
+    ...(extra.memberKey ? { memberKey: extra.memberKey } : {}),
   };
   try {
     // The help box waits for Claude's answer (up to 15 s on the server), so it gets longer (sendToHelp).

@@ -15,7 +15,8 @@ import { useEffect, useSyncExternalStore } from 'react';
 
 import { useAuth, useRole } from '../auth/AuthProvider';
 import { useDemo } from '../demo/demoMode';
-import { aiWallet, type AiWallet } from './api';
+import { setQuestionsCounted } from './allowance';
+import { aiQuestions, aiWallet, type AiWallet } from './api';
 
 interface State {
   key: string | null;
@@ -49,7 +50,11 @@ export async function refreshAssistantWallet(key: string | null = state.key): Pr
   if (!key) return;
   if (asking) return asking;
   asking = (async () => {
-    const w = await aiWallet(key);
+    // F209: this month's AI questions too (supabase 0078); null until the gym's server counts them.
+    const [w0, q] = await Promise.all([aiWallet(key), aiQuestions(key)]);
+    const keep = state.key === key ? (state.wallet?.questions ?? null) : null;
+    const w = w0 ? { ...w0, questions: q ?? keep } : null;
+    if (w) setQuestionsCounted(w.questions !== null);
     // Offline or a hiccup on a panel that already had it: keep what was shown (the next tick asks again).
     if (w || state.key !== key || state.wallet === null) set({ key, wallet: w, off: state.key === key ? state.off : false, asked: true });
   })().finally(() => {

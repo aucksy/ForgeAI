@@ -250,6 +250,8 @@ function FeedbackSheet({ screen, onClose }: { screen: string | null; onClose: ()
   const [sending, setSending] = useState(false);
   const [note, setNote] = useState<{ ok: boolean; words: string; reply?: HelpReplyData } | null>(null);
   const gym = useGymShop((s) => s.link?.joinCode ?? '');
+  // F209: the gym's AI credits pay for the answer (a member with no gym sends none).
+  const memberKey = useGymShop((s) => s.link?.memberKey ?? '');
   const busy = useRef(false);
   // R-441: "Add my watch's screen log" (only with a MettleUp watch log on this phone), looked up when it opens.
   const watchLog = useWatchLog(screen != null);
@@ -292,7 +294,7 @@ function FeedbackSheet({ screen, onClose }: { screen: string | null; onClose: ()
     setSending(true);
     setNote(null);
     setLogNote(null);
-    const r = await sendFeedback(text, { app: Constants.expoConfig?.version, gym, screen, input });
+    const r = await sendFeedback(text, { app: Constants.expoConfig?.version, gym, screen, input, memberKey });
     // R-441: the watch screen log goes as its own message, after the member's own was taken.
     const log = r.ok && watchLog.on ? await sendWatchLog(Constants.expoConfig?.version ?? '') : 'none';
     busy.current = false;

@@ -12,6 +12,20 @@ import { line, type Line } from './catalogue';
 /** Show "N free questions left today" from this many down. */
 export const LOW_LEFT = 5;
 
+/**
+ * F209 (owner 14 Nov 2026): once the gym's server counts AI questions on the credits (supabase 0078, 20 questions =
+ * 1 credit), questions are no longer free, so these lines stop saying "free". useAssistant sets it from the server.
+ */
+let counted = false;
+export function setQuestionsCounted(on: boolean): void {
+  counted = on;
+}
+
+/** The worker's reasons for "no more questions today": the gym's daily allowance, or (F209) the person's own. */
+export function isDayLimit(reason: string): boolean {
+  return reason === 'limit' || reason === 'q_limit';
+}
+
 type State = { day: string; left: number | null; full: boolean };
 let state: State = { day: '', left: null, full: false };
 const subs = new Set<() => void>();
@@ -51,11 +65,17 @@ export function useAllowance(today: string): { left: number | null; full: boolea
 /** The quiet line above the ask box, or null when there are more than LOW_LEFT left (or none). */
 export function leftLine(left: number | null): Line | null {
   if (left === null || left <= 0 || left > LOW_LEFT) return null;
+  if (counted) return left === 1 ? line('1 AI question left today.') : line('{n} AI questions left today.', { n: left });
   return left === 1 ? line('1 free question left today.') : line('{n} free questions left today.', { n: left });
 }
 
 /** The line at the limit. `perDay` comes from the worker's 429 body. */
 export function fullLine(perDay: number | null): Line {
+  if (counted) {
+    return perDay && perDay > 0
+      ? line("You have used today's {n} AI questions. Your credits are safe. Ask again tomorrow.", { n: perDay })
+      : line("You have used today's AI questions. Your credits are safe. Ask again tomorrow.");
+  }
   return perDay && perDay > 0
     ? line("You have used today's {n} free questions. Your credits are safe. Ask again tomorrow.", { n: perDay })
     : line("You have used today's free questions. Your credits are safe. Ask again tomorrow.");
@@ -63,5 +83,6 @@ export function fullLine(perDay: number | null): Line {
 
 /** For tests. */
 export function resetAllowance(): void {
+  counted = false;
   set({ day: '', left: null, full: false });
 }

@@ -2,6 +2,8 @@
  * More → Send feedback (launch H7): write to MettleUp; the words are in logic/feedback.ts.
  * R-449: the owner's "MettleUp access" card (let MettleUp support look, and every look) lives here, under
  * the questions, where an owner goes when support needs to see his records (it was under Settings → Sign-in & data).
+ * F209: a question sent here is paid from the gym's AI credits (the sign-in key goes with it). With no credit left the
+ * answer comes from the help pages; the owner then gets a button to the AI Assistant, where the credits are.
  */
 
 import { useEffect, useRef, useState } from 'react';
@@ -20,6 +22,7 @@ import { anyWaiting, HELP_HISTORY_WORDS as H, questionShows, type HelpQuestion }
 import { useAuth, useCan } from '../../auth/AuthProvider';
 import { ForgeAccessCard } from '../ForgeAccessCard';
 import { Button, Card, PageHeader, TextField, color, font, space } from '../kit';
+import { navigate } from '../router';
 
 const POLL_MS = 5_000;
 
@@ -29,7 +32,10 @@ export function FeedbackScreen() {
   const [note, setNote] = useState<{ ok: boolean; words: string; reply?: HelpReply } | null>(null);
   const [rated, setRated] = useState<'yes' | 'no' | null>(null);
   // MettleUp access: owners of an online gym only (the server refuses anyone else), as on Settings before.
-  const online = useAuth().session?.online === true;
+  const session = useAuth().session;
+  const online = session?.online === true;
+  // F209: the gym's AI credits pay for the answer. Never the demo gym's (made-up data, no credits).
+  const forgeKey = online && !session?.demo ? (session?.ownerKey ?? '') : '';
   const owner = useCan()('eraseOrDemo');
 
   // R-319 item 10: "Your questions", kept in this browser, with late answers and the team's replies.
@@ -40,7 +46,7 @@ export function FeedbackScreen() {
     setSending(true);
     setNote(null);
     setRated(null);
-    const pending = sendFeedback(text, 'more/feedback');
+    const pending = sendFeedback(text, 'more/feedback', fetch, undefined, forgeKey);
     setHistory(readHistory());
     const r = await pending;
     setHistory(readHistory());
@@ -67,7 +73,19 @@ export function FeedbackScreen() {
           }}
           multiline
         />
-        {note?.reply?.ai ? (
+        {note?.reply?.credits ? (
+          // F209: the AI was not asked (no credit left, or today's AI questions used): the help pages' answer.
+          <div role="status" style={{ marginTop: space.md, padding: space.md, borderRadius: 12, border: `1px solid ${color.border}`, background: color.surfaceSunken }}>
+            <p style={{ margin: 0, fontFamily: font.body, fontSize: 15, lineHeight: 1.5, color: color.ink, whiteSpace: 'pre-wrap' }}>{note.reply.text}</p>
+            {note.reply.credits === 'no_credits' && owner ? (
+              <div style={{ marginTop: space.sm }}>
+                <Button variant="ghost" onClick={() => navigate('/assistant')}>
+                  {FEEDBACK_WORDS.getCredits}
+                </Button>
+              </div>
+            ) : null}
+          </div>
+        ) : note?.reply?.ai ? (
           <div role="status" style={{ marginTop: space.md, padding: space.md, borderRadius: 12, border: `1px solid ${color.border}`, background: color.surfaceSunken }}>
             <p style={{ margin: 0, fontFamily: font.body, fontSize: 15, lineHeight: 1.5, color: color.ink, whiteSpace: 'pre-wrap' }}>{note.reply.text}</p>
             <p style={{ margin: `${space.sm}px 0 0`, fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>{FEEDBACK_WORDS.aiNote}</p>

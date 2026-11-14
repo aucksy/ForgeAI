@@ -1,0 +1,114 @@
+/**
+ * F209 (owner 14 Nov 2026): every AI question is paid from the gym's AI credits, 20 questions = 1 credit (supabase 0078).
+ * The admin app: this month's questions by who asked, the credits sheet's words, the ask box's daily line, the Help
+ * page sending its sign-in key, and the "credits low" alert. Before 0078 is live everything reads as it did.
+ */
+import { afterEach, describe, expect, it } from 'vitest';
+
+import { fullLine, isDayLimit, leftLine, resetAllowance, setQuestionsCounted } from '../../../src/crm/assistant/allowance';
+import { aiQuestions, type AiQuestions } from '../../../src/crm/assistant/api';
+import { askedRows, lowWords, walletRowWords } from '../../../src/crm/assistant/ui/CreditsSheet';
+import type { AiWalletRow } from '../../../src/crm/assistant/api';
+import { feedbackAnswer, sendFeedback } from '../../../src/crm/logic/feedback';
+import { gymAlertsFrom } from '../../../src/crm/logic/gymAlerts';
+
+const Q: AiQuestions = { month: '2026-11', perCredit: 20, memberDay: 10, visitorDay: 3, lowAt: 10, owner: 3, staff: 1, members: 20, visitors: 0, credits: 2 };
+
+const rpcOf = (answer: unknown) => (async () => answer) as unknown as Parameters<typeof aiQuestions>[1];
+
+afterEach(() => resetAllowance());
+
+describe("this month's AI questions (owner_ai_questions)", () => {
+  it('reads the server answer', async () => {
+    const got = await aiQuestions('k', rpcOf({ ok: true, month: '2026-11', per_credit: 20, member_day: 10, visitor_day: 3, low_at: 10, owner: 3, staff: 1, members: 20, visitors: 0, credits: 2 }));
+    expect(got).toEqual(Q);
+  });
+
+  it('is null (nothing new shows) before 0078 is live, offline, or with an odd answer', async () => {
+    expect(await aiQuestions('k', rpcOf(null))).toBeNull();
+    expect(await aiQuestions('k', rpcOf({ ok: false }))).toBeNull();
+    // A wallet-like answer without the rules is not the questions.
+    expect(await aiQuestions('k', rpcOf({ ok: true, balance: 5 }))).toBeNull();
+    const missing = (async () => {
+      throw { code: 'PGRST202', message: 'Could not find the function' };
+    }) as unknown as Parameters<typeof aiQuestions>[1];
+    expect(await aiQuestions('k', missing)).toBeNull();
+  });
+});
+
+describe('the credits sheet', () => {
+  it('the low line: before 0078 questions stay free; after, members get help pages', () => {
+    expect(lowWords({ balance: 20, lowAt: 10, questions: Q })).toBeNull();
+    expect(lowWords({ balance: 3, lowAt: 5 })).toBe('Your credits are running low. Questions stay free.');
+    expect(lowWords({ balance: 0, lowAt: 5, questions: null })).toBe('You have no credits left. Questions stay free.');
+    // The wallet warns from 5; with questions counted, from the alert's 10.
+    expect(lowWords({ balance: 8, lowAt: 5, questions: Q })).toBe('Your credits are running low. When they run out, members get help pages instead of AI answers.');
+    expect(lowWords({ balance: 0, lowAt: 10, questions: Q })).toBe('You have no credits left. Members now get help pages instead of AI answers.');
+  });
+
+  it('who asked: you, staff, members; gym page visitors once there are some', () => {
+    expect(askedRows(Q)).toEqual([
+      { label: 'You', n: 3 },
+      { label: 'Your staff', n: 1 },
+      { label: 'Members', n: 20 },
+    ]);
+    expect(askedRows({ ...Q, visitors: 4 }).at(-1)).toEqual({ label: 'Gym page visitors', n: 4 });
+  });
+
+  it('a block of questions in the credit history', () => {
+    const row = (note: string): AiWalletRow => ({ at: 0, delta: -1, reason: 'questions', note, taskId: null });
+    expect(walletRowWords(row('20 AI questions'))).toBe('20 AI questions');
+    expect(walletRowWords(row(''))).toBe('AI questions');
+  });
+});
+
+describe("the ask box's daily line", () => {
+  it('says "free" only while questions are not counted', () => {
+    expect(leftLine(3)?.text).toBe('{n} free questions left today.');
+    expect(fullLine(50).text).toBe("You have used today's {n} free questions. Your credits are safe. Ask again tomorrow.");
+    setQuestionsCounted(true);
+    expect(leftLine(1)?.text).toBe('1 AI question left today.');
+    expect(leftLine(3)?.text).toBe('{n} AI questions left today.');
+    expect(fullLine(60).text).toBe("You have used today's {n} AI questions. Your credits are safe. Ask again tomorrow.");
+    expect(fullLine(null).text).toBe("You have used today's AI questions. Your credits are safe. Ask again tomorrow.");
+  });
+
+  it("the gym's allowance and the person's own both lock the box", () => {
+    expect(isDayLimit('limit')).toBe(true);
+    expect(isDayLimit('q_limit')).toBe(true);
+    expect(isDayLimit('no_credits')).toBe(false);
+  });
+});
+
+describe('the Help page', () => {
+  it("sends the sign-in key only when given, so the gym's credits pay for the answer", async () => {
+    const seen: (string | null)[] = [];
+    const f = (async (_url: string, init: RequestInit) => {
+      seen.push(new Headers(init.headers).get('X-Forge-Key'));
+      return new Response(JSON.stringify({ ok: true }), { status: 201 });
+    }) as unknown as typeof fetch;
+    const store = { getItem: () => null, setItem: () => undefined };
+    await sendFeedback('how do I add a member', 'more/feedback', f, store, 'session-key-1234567890');
+    await sendFeedback('delete my gym data', 'more/data', f, store);
+    expect(seen).toEqual(['session-key-1234567890', null]);
+  });
+
+  it('reads why the AI was not asked; an answer without it is as before', () => {
+    expect(feedbackAnswer(201, { id: 3, answer: 'From the help pages.', ai: false, credits: 'no_credits' })).toEqual({
+      ok: true,
+      reply: { id: 3, text: 'From the help pages.', ai: false, credits: 'no_credits' },
+    });
+    expect(feedbackAnswer(201, { id: 3, answer: 'AI words.', ai: true })).toEqual({ ok: true, reply: { id: 3, text: 'AI words.', ai: true } });
+    expect(feedbackAnswer(201, { id: 3, answer: 'x', ai: false, credits: '<b>' })).toEqual({ ok: true, reply: { id: 3, text: 'x', ai: false } });
+  });
+});
+
+describe('the "credits low" alert', () => {
+  it('is a gym alert the owner sees', () => {
+    const list = gymAlertsFrom({
+      ok: true,
+      alerts: [{ id: 'c1', kind: 'ai_credits_low', line: 'Your gym has 10 AI credits left.', route: '/assistant', urgent: false, at: 1 }],
+    });
+    expect(list?.map((a) => [a.kind, a.route])).toEqual([['ai_credits_low', '/assistant']]);
+  });
+});

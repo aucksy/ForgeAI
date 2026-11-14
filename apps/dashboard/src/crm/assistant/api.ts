@@ -5,7 +5,7 @@
  * for the owner, and the error itself is logged (a "try again" with no log cannot be fixed).
  */
 import { call } from '../shop/api';
-import { fullLine } from './allowance';
+import { fullLine, isDayLimit } from './allowance';
 import { line, type Action, type Line } from './catalogue';
 import type { AssistContext } from './context';
 import { maskText, unmaskDeep } from './mask';
@@ -32,6 +32,9 @@ export type VoiceAnswer = { ok: true; text: string } | AssistFail;
 
 const OFFLINE = 'The AI could not be reached. Check the internet and try again.';
 const SLOW = 'The AI took too long. Try again.';
+/** F209: the same words as the panel worker's (deploy/panel/assist.js), here so Hinglish can translate them. */
+export const NO_CREDIT_WORDS = 'Your gym has no AI credits left. Tap your credits at the top to get more.';
+export const PAUSED_WORDS = 'AI answers are paused for your gym. Write to MettleUp from Help to turn them back on.';
 
 /** The owner's line for a refused or failed answer: the server's own words when it sent some. */
 function failOf(status: number, body: unknown, tag: string): AssistFail {
@@ -40,7 +43,10 @@ function failOf(status: number, body: unknown, tag: string): AssistFail {
   const said = typeof b.error === 'string' && b.error.trim() ? b.error.trim() : status === 0 ? OFFLINE : 'The AI did not answer. Try again, or say it another way.';
   console.warn(`[assistant] ${tag} answered`, status, reason, said);
   // R-488: the day's limit says the number, that credits are safe and when it comes back (when the worker sends it).
-  if (reason === 'limit' && typeof b.perDay === 'number') return { ok: false, words: fullLine(b.perDay), reason, status };
+  if (isDayLimit(reason) && typeof b.perDay === 'number') return { ok: false, words: fullLine(b.perDay), reason, status };
+  // F209: no AI credit for the question, or the gym's AI paused by MettleUp: the screen's own words (translated).
+  if (reason === 'no_credits' && status === 402) return { ok: false, words: line(NO_CREDIT_WORDS), reason, status };
+  if (reason === 'paused') return { ok: false, words: line(PAUSED_WORDS), reason, status };
   return { ok: false, words: line(said), reason, status };
 }
 
@@ -192,6 +198,63 @@ export interface AiWallet {
   lowAt: number;
   /** The latest credit changes, newest first. */
   recent: AiWalletRow[];
+  /**
+   * F209: who asked the AI this month, when the gym's server counts questions on the credits (supabase 0078).
+   * Absent or null before that: the screens then keep today's words ("Questions stay free").
+   */
+  questions?: AiQuestions | null;
+}
+
+/** F209: this month's AI questions by who asked, and the rules the server uses (owner_ai_questions, 0078). */
+export interface AiQuestions {
+  month: string;
+  /** Questions per credit (20). */
+  perCredit: number;
+  /** AI questions a day for each member, and for each gym page visitor. */
+  memberDay: number;
+  visitorDay: number;
+  /** The owner's "credits low" alert comes at this balance or below (10); the sheet warns from here too. */
+  lowAt: number;
+  owner: number;
+  staff: number;
+  members: number;
+  visitors: number;
+  /** Credits these questions used this month. */
+  credits: number;
+}
+
+/**
+ * F209: this month's AI questions (owner_ai_questions, supabase 0078). Null when the gym's server does not count them
+ * yet (no 0078), offline, or refused: nothing about counted questions shows then.
+ */
+export async function aiQuestions(key: string, rpc: typeof call = call): Promise<AiQuestions | null> {
+  try {
+    const r = await rpc<unknown>('owner_ai_questions', { p_key: key });
+    if (!r || typeof r !== 'object' || Array.isArray(r) || (r as { ok?: unknown }).ok !== true) return null;
+    const w = r as Record<string, unknown>;
+    const n = (v: unknown): number => {
+      const x = typeof v === 'number' ? v : typeof v === 'string' && v.trim() ? Number(v) : NaN;
+      return Number.isFinite(x) && x >= 0 ? x : 0;
+    };
+    const perCredit = n(w.per_credit);
+    if (perCredit <= 0) return null;
+    return {
+      month: typeof w.month === 'string' ? w.month : '',
+      perCredit,
+      memberDay: n(w.member_day),
+      visitorDay: n(w.visitor_day),
+      lowAt: n(w.low_at),
+      owner: n(w.owner),
+      staff: n(w.staff),
+      members: n(w.members),
+      visitors: n(w.visitors),
+      credits: n(w.credits),
+    };
+  } catch (e) {
+    // Before 0078 is live the call is refused (the function is missing): expected, so only a quiet note.
+    console.info('[assistant] AI questions are not counted on this gym’s server yet', e instanceof Error ? e.message : '');
+    return null;
+  }
 }
 
 /**

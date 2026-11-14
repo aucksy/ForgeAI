@@ -2,7 +2,10 @@
 // The admin app's /assistant screen POSTs the owner's sentence here; Claude Haiku turns it into 1-3 calls of
 // the fixed tools in assistCatalogue.js. THE AI NEVER RUNS ANYTHING: the admin app answers the 'ask' tools
 // from the gym's own reports and shows a card for the rest that does nothing until the owner taps Send or Save
-// (then credits are spent through the gym server's owner_ai_spend, supabase migration 0071). Asking is free.
+// (then credits are spent through the gym server's owner_ai_spend, supabase migration 0071).
+// F209 (owner 14 Nov 2026, R-519): every request here (ask, rewrite, plan) is also one AI question paid from the gym's
+// credits, 20 questions = 1 credit (questionCredits.js, supabase 0078), taken after the owner check and given back when
+// the AI does not answer. Until 0078 is live (or without PHONE_CODE_SECRET) questions are not counted, as before.
 //
 //  POST /api/assist          { text, spoken, lang, ctx }   -> 200 { actions: [{ tool, input }], note, left, masked }
 //  POST /api/assist/rewrite  { title_en, body_en, title_hi, body_hi, how } -> 200 { title_en, body_en, title_hi, body_hi, left }
@@ -33,6 +36,7 @@ import { AI_PAGE_IDS, MESSAGE_LANGS, PAGES, TOOL_KIND, toolsForClaude } from './
 import { MAX_PLAN_BODY, PLAN_TOOL, checkPlanAsk, cleanPlan, exerciseListText, planPrompt, planSystem } from './assistPlan.js';
 import { indiaDay, whoIsAsking } from './aiMatch.js';
 import { SUPABASE } from './proxy.js';
+import { giveBack, takeQuestion } from './questionCredits.js';
 import { GROQ_MODEL, GROQ_URL, cleanText, takeClip } from './voice.js';
 
 /** Claude Haiku 5.5: $0.10 in / $0.50 out per million tokens (help.js, aiMatch.js). */
@@ -74,6 +78,10 @@ const OFF = 'The AI Assistant is not switched on yet.';
  * The admin app writes its own line with the number (`perDay` in the 429 body); this is the fallback. */
 export const LIMIT_WORDS = "You have used today's free questions. Your credits are safe. Ask again tomorrow.";
 /** At the day's spoken-minutes limit. */
+/** F209: words for a question the gym's credits cannot pay for (assist is the owner's own screen). */
+export const NO_CREDIT_WORDS = 'Your gym has no AI credits left. Tap your credits at the top to get more.';
+export const PAUSED_WORDS = 'AI answers are paused for your gym. Write to MettleUp from Help to turn them back on.';
+export const Q_LIMIT_WORDS = "You have used today's AI questions. Your credits are safe. Ask again tomorrow.";
 export const VOICE_LIMIT_WORDS = "You have used today's speaking time. Type your request, or speak again tomorrow.";
 
 function answer(status, body) {
@@ -516,8 +524,18 @@ async function guard(request, env, maxBody = MAX_BODY) {
   return { key };
 }
 
-/** The owner check, then (trial or unpaid gyms only) the money cap, then the gym's daily allowance.
- * -> { refused } | { gymId, day, month, paid, left } */
+/** F209: the question's credit, as a refusal when the gym cannot pay. -> { refused } | { questionId } */
+async function questionCredit(key, env, now, fetchImpl) {
+  const q = await takeQuestion(env, 'admin', key, { now, fetchImpl });
+  if (q.state === 'ok') return { questionId: q.id };
+  if (q.state !== 'none') return { questionId: '' }; // not counted (before 0078 is live): as before
+  if (q.reason === 'no_credits') return { refused: answer(402, { reason: 'no_credits', error: NO_CREDIT_WORDS }) };
+  if (q.reason === 'paused') return { refused: answer(503, { reason: 'paused', error: PAUSED_WORDS }) };
+  return { refused: answer(429, { reason: 'q_limit', error: Q_LIMIT_WORDS, perDay: q.perDay }) };
+}
+
+/** The owner check, then (trial or unpaid gyms only) the money cap, then the question's credit (F209), then the gym's
+ * daily allowance. -> { refused } | { gymId, day, month, paid, left, questionId } */
 async function ownerAndAllowance(key, env, now, fetchImpl) {
   const who = await whoIsAsking(key, fetchImpl);
   if (who.unreachable) return { refused: answer(503, { reason: 'unreachable', error: 'The gym server could not be reached.' }) };
@@ -537,6 +555,8 @@ async function ownerAndAllowance(key, env, now, fetchImpl) {
     console.error('[assist] assist_usage not readable (migration 0015 not applied?)', scrub(e, env));
     return { refused: answer(503, { reason: 'off', error: OFF }) };
   }
+  const credit = await questionCredit(key, env, now, fetchImpl);
+  if (credit.refused) return credit;
   const normal = paid ? ASSIST_PER_DAY : TRIAL_PER_DAY;
   const cap = (await gymAllowance(env.WEB, who.gymId, normal)).perDay;
   let used = null;
@@ -544,10 +564,14 @@ async function ownerAndAllowance(key, env, now, fetchImpl) {
     if (cap > 0) used = await takeClip(env.WEB, who.gymId, day, cap, Number.MAX_SAFE_INTEGER, 'assist');
   } catch (e) {
     console.error('[assist] usage table not readable', scrub(e, env));
+    await giveBack(credit.questionId, { fetchImpl });
     return { refused: answer(503, { reason: 'off', error: OFF }) };
   }
-  if (used === null) return { refused: answer(429, { reason: 'limit', error: LIMIT_WORDS, perDay: cap }) };
-  return { gymId: who.gymId, day, month, paid, left: Math.max(0, cap - used) };
+  if (used === null) {
+    await giveBack(credit.questionId, { fetchImpl }); // the AI is not asked, so the question does not count
+    return { refused: answer(429, { reason: 'limit', error: LIMIT_WORDS, perDay: cap }) };
+  }
+  return { gymId: who.gymId, day, month, paid, left: Math.max(0, cap - used), questionId: credit.questionId };
 }
 
 async function readJson(request, maxBody = MAX_BODY) {
@@ -560,7 +584,9 @@ async function readJson(request, maxBody = MAX_BODY) {
   }
 }
 
-async function noteCall(env, g, failed, tokensIn, tokensOut) {
+async function noteCall(env, g, failed, tokensIn, tokensOut, fetchImpl = fetch) {
+  // F209: an AI that did not answer does not use up a question.
+  if (failed) await giveBack(g.questionId, { fetchImpl });
   try {
     await countMonth(env.WEB, g.month, failed, tokensIn, tokensOut);
     if (!g.paid) await countMonth(env.WEB, trialRow(g.month), failed, tokensIn, tokensOut);
@@ -577,7 +603,8 @@ async function noteCall(env, g, failed, tokensIn, tokensOut) {
  * months, days, price }], batches: [], trainers: [], messageLang } }
  *   200 { actions: [{ tool, input }] (1-3, tools of assistCatalogue.js), note, left (asks left today), masked }
  *   400 bad body · 401 not signed in · 403 not the owner / demo · 405 not POST · 413 too long
- *   429 { reason: 'limit' } · 502 { reason: 'failed' } · 503 { reason: 'off' | 'unreachable' | 'cap' }
+ *   402 { reason: 'no_credits' } (F209) · 429 { reason: 'limit' | 'q_limit' } · 502 { reason: 'failed' }
+ *   503 { reason: 'off' | 'unreachable' | 'cap' | 'paused' }
  */
 export async function handleAssist(request, env, { now = new Date(), fetchImpl = fetch, timeoutMs = TIMEOUT_MS } = {}) {
   const g0 = await guard(request, env);
@@ -598,7 +625,7 @@ export async function handleAssist(request, env, { now = new Date(), fetchImpl =
     console.error('[assist] Claude call failed', scrub(e, env));
     res = { out: null, tokensIn: 0, tokensOut: 0, why: 'call failed' };
   }
-  await noteCall(env, g, !res.out, res.tokensIn, res.tokensOut);
+  await noteCall(env, g, !res.out, res.tokensIn, res.tokensOut, fetchImpl);
   if (!res.out) {
     console.error('[assist] no usable answer:', res.why);
     return answer(502, { reason: 'failed', error: 'The AI did not answer. Try again, or say it another way.' });
@@ -648,7 +675,7 @@ export async function handleAssistRewrite(request, env, { now = new Date(), fetc
     console.error('[assist] rewrite call failed', scrub(e, env));
     res = { out: null, tokensIn: 0, tokensOut: 0, why: 'call failed' };
   }
-  await noteCall(env, g, !res.out, res.tokensIn, res.tokensOut);
+  await noteCall(env, g, !res.out, res.tokensIn, res.tokensOut, fetchImpl);
   if (!res.out) {
     console.error('[assist] no usable rewrite:', res.why);
     return answer(502, { reason: 'failed', error: 'The AI did not answer. Try again, or change it yourself.' });
@@ -686,7 +713,7 @@ export async function handleAssistPlan(request, env, { now = new Date(), fetchIm
     res = { out: null, tokensIn: 0, tokensOut: 0, why: 'call failed' };
   }
   const ok = Boolean(res.out?.plan);
-  await noteCall(env, g, !ok, res.tokensIn, res.tokensOut);
+  await noteCall(env, g, !ok, res.tokensIn, res.tokensOut, fetchImpl);
   if (res.out?.refused) {
     // Counts only, never the owner's words.
     console.error(`[assist] plan not usable: dropped=${res.out.dropped ?? 0} list=${checked.value.exercises.length}`);

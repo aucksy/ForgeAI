@@ -2,7 +2,7 @@
  * R-506/R-510 (owner, 14 Nov 2026): the gym's alerts, one list of everything a member did that the gym should hear
  * about (supabase/migrations/0075_gym_alerts.sql owner_alerts): a trainer question, a message, feedback or a
  * complaint, a plan request, a check-in number, a shop order, an online payment, a report sent, a member who joined,
- * a friend who asked about joining, someone who asked to join online (R-513, 0077). The server writes each line (the member's first name, what happened, where to
+ * a friend who asked about joining, someone who asked to join online (R-513, 0077), the gym's AI credits running low (F209, 0078). The server writes each line (the member's first name, what happened, where to
  * go) and shows each person only what they may see. The admin app rings for a new one while it is open (Needs you)
  * and lists the latest on Today. PURE: the polling lives in ui/NeedsYou.tsx.
  */
@@ -25,7 +25,9 @@ export type GymAlertKind =
   | 'member_joined'
   | 'friend_referred'
   // R-513 (supabase 0077): someone filled the gym's "Become a member" page. Urgent: sent at once.
-  | 'online_join';
+  | 'online_join'
+  // F209 (supabase 0078): the gym's AI credits are down to 10 or fewer (once per top-up), for the owner.
+  | 'ai_credits_low';
 
 export const GYM_ALERT_KINDS: readonly GymAlertKind[] = [
   'trainer_question',
@@ -40,6 +42,7 @@ export const GYM_ALERT_KINDS: readonly GymAlertKind[] = [
   'member_joined',
   'friend_referred',
   'online_join',
+  'ai_credits_low',
 ];
 
 export interface GymAlert {

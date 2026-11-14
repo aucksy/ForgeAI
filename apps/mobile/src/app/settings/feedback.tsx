@@ -28,6 +28,8 @@ export default function FeedbackPage() {
   const [input, setInput] = useState<'voice' | 'typed'>('typed');
   const [note, setNote] = useState<{ ok: boolean; words: string } | null>(null);
   const gym = useGymShop((s) => s.link?.joinCode ?? '');
+  // F209: the gym's AI credits pay for the answer (a member with no gym sends none).
+  const memberKey = useGymShop((s) => s.link?.memberKey ?? '');
   // A ref, not the state: two taps in the same frame both see `sending` still false (review, 21 Oct).
   const busy = useRef(false);
   // R-149: the floating feedback button on every screen is switched here (on by default, owner 4 Nov 2026).
@@ -43,7 +45,7 @@ export default function FeedbackPage() {
     busy.current = true;
     setSending(true);
     setNote(null);
-    const r = await sendFeedback(text, { app: Constants.expoConfig?.version, gym, screen: 'settings/feedback', input });
+    const r = await sendFeedback(text, { app: Constants.expoConfig?.version, gym, screen: 'settings/feedback', input, memberKey });
     // R-441: the watch screen log goes as its own message, after the member's own was taken.
     const log = r.ok && watchLog.on ? await sendWatchLog(Constants.expoConfig?.version ?? '') : 'none';
     busy.current = false;

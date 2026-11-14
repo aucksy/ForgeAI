@@ -15,7 +15,7 @@ import { getLang, t } from '../../lang/lang';
 import * as shopApi from '../../shop/api';
 import { saveDiet } from '../../shop/bodyApi';
 import { useCrm } from '../../store';
-import { noteFull, noteLeft } from '../allowance';
+import { isDayLimit, noteFull, noteLeft } from '../allowance';
 import { askAssistant, rewriteMessage, writePlan as askForPlan, type AssistFail, type MessageWords } from '../api';
 import { line } from '../catalogue';
 import { buildAssistContext } from '../context';
@@ -102,7 +102,9 @@ export function useConversation(key: string, data: PlanData, reload: () => Promi
       const r = await askAssistant(key, { text: request, spoken, lang, ctx });
       if (!r.ok) {
         hideIfOff(r);
-        const full = r.reason === 'limit';
+        const full = isDayLimit(r.reason);
+        // F209: no credit left for the question: the credits sheet opens, with the way to get more.
+        if (r.reason === 'no_credits') openCredits();
         if (full) noteFull(data.today);
         updateTurn(id, (t) => ({ ...t, status: 'failed', fail: r.words, notice: full }));
         return;
@@ -123,7 +125,7 @@ export function useConversation(key: string, data: PlanData, reload: () => Promi
         }
       }
     },
-    [key, data, deps],
+    [key, data, deps, openCredits],
   );
 
   const confirm = useCallback(
@@ -177,12 +179,12 @@ export function useConversation(key: string, data: PlanData, reload: () => Promi
       );
       const r = await rewriteMessage(key, want?.words ?? msg.words, how);
       if (r.ok) noteLeft(data.today, r.left);
-      else if (r.reason === 'limit') noteFull(data.today);
+      else if (isDayLimit(r.reason)) noteFull(data.today);
       if (!r.ok) {
         hideIfOff(r);
         // The chip never moved: it stays on the language the preview shows. "Today's free questions are used up" says
         // itself; anything else says the Hindi was not written.
-        const missed = want && r.reason !== 'limit' ? want.lang : undefined;
+        const missed = want && !isDayLimit(r.reason) ? want.lang : undefined;
         const outcome = missed ? line(LANG_WORDS.failed) : r.words;
         updateCard(turnId, card.id, (c) =>
           c.kind === 'draft' ? { ...c, status: 'open', outcome, message: c.message ? { ...c.message, writing: undefined, missed } : c.message } : c,
@@ -204,7 +206,7 @@ export function useConversation(key: string, data: PlanData, reload: () => Promi
       const body = planRequestBody(card.ask, gymExerciseList(data.snapshot.workoutPlans), planLang(data.gymLang));
       const r = await askForPlan(key, body);
       if (r.ok) noteLeft(data.today, r.left);
-      else if (r.reason === 'limit') noteFull(data.today);
+      else if (isDayLimit(r.reason)) noteFull(data.today);
       if (!r.ok) {
         hideIfOff(r);
         updateCard(turnId, card.id, (c) => (isWriter(c) ? { ...c, status: c.plan ? 'written' : 'open', outcome: r.words } : c));

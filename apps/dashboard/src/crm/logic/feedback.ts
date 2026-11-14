@@ -2,6 +2,10 @@
  * More → Send feedback (launch plan H7, inbox #39): the owner or the desk writes to MettleUp. The
  * message goes to the same site's /api/feedback (Cloudflare's feedback box, deploy/panel/feedback.js),
  * never to the gym's records. With it: the browser and the page. No name, no mobile number.
+ *
+ * F209 (owner 14 Nov 2026): the Help page also sends this device's sign-in key (header X-Forge-Key), so the gym pays
+ * for the AI answer from its AI credits (20 questions = 1 credit). With no credit left the box answers from the help
+ * pages instead (`credits` says why). Other senders (a delete request) send no key and are never counted.
  */
 
 import {
@@ -26,20 +30,26 @@ export const FEEDBACK_WORDS = {
   thanksYes: 'Great! Glad it helped.',
   thanksNo: 'Got it. We reply as soon as we can.',
   aiNote: 'Answer written by AI from our help pages.',
+  // F209: the owner's way to more AI credits when an answer came from the help pages for want of credits.
+  getCredits: 'Open AI Assistant',
   empty: 'Write something first.',
   offline: "Couldn't send. Check your internet and try again. Your message is still here.",
 } as const;
 
-/** T22 (R-277): the help box's answer. `id` is the saved message, `ai` false = the plain thanks. */
-export type HelpReply = { id: number | null; text: string; ai: boolean };
+/**
+ * T22 (R-277): the help box's answer. `id` is the saved message, `ai` false = the plain thanks. F209: `credits` is why
+ * the AI was not asked ('no_credits', 'day_limit', 'paused'): the text is then from the help pages.
+ */
+export type HelpReply = { id: number | null; text: string; ai: boolean; credits?: string };
 export type FeedbackResult = { ok: true; reply?: HelpReply } | { ok: false; words: string };
 
 /** What the box's answer means for the person. PURE. */
 export function feedbackAnswer(status: number, body: unknown): FeedbackResult {
   if (status === 201) {
-    const b = body && typeof body === 'object' ? (body as { id?: unknown; answer?: unknown; ai?: unknown }) : null;
+    const b = body && typeof body === 'object' ? (body as { id?: unknown; answer?: unknown; ai?: unknown; credits?: unknown }) : null;
     if (b && typeof b.answer === 'string' && b.answer.trim()) {
-      return { ok: true, reply: { id: typeof b.id === 'number' && b.id > 0 ? b.id : null, text: b.answer.trim(), ai: b.ai === true } };
+      const credits = typeof b.credits === 'string' && /^[a-z_]{1,20}$/.test(b.credits) ? b.credits : undefined;
+      return { ok: true, reply: { id: typeof b.id === 'number' && b.id > 0 ? b.id : null, text: b.answer.trim(), ai: b.ai === true, ...(credits ? { credits } : {}) } };
     }
     return { ok: true };
   }
@@ -152,13 +162,20 @@ export function markHistorySeen(store: Store = browserStore()): HelpQuestion[] {
   return next;
 }
 
-export async function sendFeedback(text: string, screen: string, fetcher: typeof fetch = fetch, store: Store = browserStore()): Promise<FeedbackResult> {
+export async function sendFeedback(
+  text: string,
+  screen: string,
+  fetcher: typeof fetch = fetch,
+  store: Store = browserStore(),
+  /** F209: this device's sign-in key, so the gym's AI credits pay for the answer ('' = not counted). */
+  forgeKey = '',
+): Promise<FeedbackResult> {
   const clean = text.trim();
   if (!clean) return { ok: false, words: FEEDBACK_WORDS.empty };
   // R-319 item 10: kept in "Your questions" at once, waiting for its answer.
   const replyKey = newHelpKey();
   if (replyKey) saveHistory(addQuestion(readHistory(store), replyKey, clean.slice(0, FEEDBACK_MAX), Date.now()), store);
-  const result = await sendToBox(clean, screen, fetcher, replyKey, store);
+  const result = await sendToBox(clean, screen, fetcher, replyKey, store, forgeKey);
   if (replyKey) {
     saveHistory(
       settleQuestion(
@@ -179,6 +196,7 @@ async function sendToBox(
   fetcher: typeof fetch,
   replyKey: string,
   store: Store,
+  forgeKey = '',
 ): Promise<FeedbackResult & { covered?: boolean }> {
   const body = {
     source: 'admin',
@@ -192,7 +210,9 @@ async function sendToBox(
   };
   try {
     // T22: the help box saves the message and answers it; until the server has it (404), the plain box.
-    const init = { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) };
+    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+    if (forgeKey) headers['X-Forge-Key'] = forgeKey;
+    const init = { method: 'POST', headers, body: JSON.stringify(body) };
     let res = await fetcher('/api/help', init);
     if (res.status === 404) res = await fetcher('/api/feedback', init);
     const answer: unknown = await res.json().catch((e: unknown) => {
