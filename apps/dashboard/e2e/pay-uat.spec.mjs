@@ -34,7 +34,7 @@ const FIELDS = {
     { name: 'appId', label: 'App ID', secret: false, placeholder: '' },
     { name: 'secretKey', label: 'Secret Key', secret: true, placeholder: '' },
   ],
-  // The real server offers all four (deploy/panel/payProviders.js PROVIDER_ORDER): the pictures show all four.
+  // R-547: this pretend server sends all four with no connection; the screen must show only Razorpay and Cashfree.
   payu: [
     { name: 'key', label: 'Merchant key', secret: false, placeholder: '' },
     { name: 'salt', label: 'Salt', secret: true, placeholder: '' },
@@ -162,6 +162,11 @@ for (const size of ['phone', 'computer']) {
       await expect(main.getByText('Test mode', { exact: true }).first()).toBeVisible({ timeout: 15_000 });
       await expect(main).toContainText('Test mode: no real money moves. Use your test keys.');
       await expect(main).toContainText('MettleUp takes no fee.');
+      // R-547 (owner's decision A): a gym picks only Razorpay or Cashfree.
+      await expect(main.getByRole('button', { name: 'Paste keys' })).toHaveCount(2);
+      await expect(main.getByText('Cashfree', { exact: true })).toBeVisible();
+      await expect(main.getByText('PayU', { exact: true })).toHaveCount(0);
+      await expect(main.getByText('PhonePe', { exact: true })).toHaveCount(0);
       const rzp = main.locator('div').filter({ has: page.getByText('Razorpay', { exact: true }) }).filter({ has: page.getByRole('button', { name: 'Paste keys' }) }).last();
       await rzp.getByRole('button', { name: 'Paste keys' }).tap();
       await page.getByLabel('Key Id').fill('rzp_test_FAKE00000003456');

@@ -644,8 +644,8 @@ export const HINGLISH: Readonly<Record<string, string>> = {
     'Paisa seedha aapko aata hai. Jab aapke UPI app ya sound box mein dikhe, tab Save payment dabao.',
   'Add UPI ID': 'UPI ID daalo',
   'Payment company': 'Payment company',
-  'Connect your own Razorpay, Cashfree, PayU or PhonePe account. Members then pay by UPI, card or net banking from a link or QR, and the receipt is made by itself.':
-    'Apna Razorpay, Cashfree, PayU ya PhonePe account jodo. Phir members link ya QR se UPI, card ya net banking se pay karte hain, aur receipt apne aap ban jaati hai.',
+  'Connect your own Razorpay or Cashfree account. Members then pay by UPI, card or net banking from a link or QR, and the receipt is made by itself.':
+    'Apna Razorpay ya Cashfree account jodo. Phir members link ya QR se UPI, card ya net banking se pay karte hain, aur receipt apne aap ban jaati hai.',
   'MettleUp takes no fee. Your payment company’s own charges apply.': 'MettleUp koi fee nahi leta. Aapki payment company ke apne charges lagte hain.',
   'Test mode': 'Test mode',
   'Test mode: no real money moves. Use your test keys.': 'Test mode: asli paisa nahi jaata. Apni test keys lagao.',

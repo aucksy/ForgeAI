@@ -5,7 +5,7 @@
 
 import { t } from '../lang/lang';
 import { formatINR, type Paise } from '../logic/money';
-import type { PayConnection, PayRequest, ProviderId } from './payApi';
+import type { PayConnection, PayProvider, PayRequest, ProviderId } from './payApi';
 
 /** Where the owner finds their keys in each company's own dashboard (opens in a new tab). */
 export const KEYS_HELP: Record<ProviderId, { where: string; url: string }> = {
@@ -14,6 +14,17 @@ export const KEYS_HELP: Record<ProviderId, { where: string; url: string }> = {
   payu: { where: 'In PayU, open Settings, then Key and Salt.', url: 'https://dashboard.payu.in/' },
   phonepe: { where: 'In PhonePe Business, open Developer settings, then API keys.', url: 'https://business.phonepe.com/' },
 };
+
+/** R-547 (owner's decision A, 14 Nov 2026): the only companies a gym can pick or connect. */
+export const OFFERED_PROVIDERS: readonly ProviderId[] = ['razorpay', 'cashfree'];
+
+/**
+ * The company cards Settings -> Payments shows: Razorpay and Cashfree, plus PayU or PhonePe ONLY when this gym is
+ * already on it (so it keeps working and can still be disconnected). The server sends the same list. PURE.
+ */
+export function shownProviders(list: readonly PayProvider[]): PayProvider[] {
+  return list.filter((p) => OFFERED_PROVIDERS.includes(p.id) || Boolean(p.connection && p.connection.offReason !== 'disconnected'));
+}
 
 /** The UPI note a payer sees for a receipt ("Receipt 2026-27-0042"); UPI apps drop a "/". PURE. */
 export function upiReceiptNote(receiptNo: string | null | undefined): string {

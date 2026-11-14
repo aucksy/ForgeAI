@@ -247,3 +247,23 @@ jobs:
           node-version: 22
       - name: Backup restore drill
         run: bash scripts/backup/ci_drill.sh
+
+  # R-547 (owner, 14 Nov 2026): our real Razorpay code against Razorpay's real TEST API (a Rs 1 link: made, read,
+  # cancelled, read; a wrong key is "bad keys"). Push to main and by hand only; refuses anything but an rzp_test_ key;
+  # no keys (a fork, a pull request) = it says so and passes. Never prints a key. Cashfree is not checked here yet.
+  razorpay-test-mode:
+    if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Razorpay test mode, real API
+        env:
+          RAZORPAY_TEST_KEY_ID: ${{ secrets.RAZORPAY_TEST_KEY_ID }}
+          RAZORPAY_TEST_KEY_SECRET: ${{ secrets.RAZORPAY_TEST_KEY_SECRET }}
+        run: node deploy/panel/razorpayTestMode.check.mjs

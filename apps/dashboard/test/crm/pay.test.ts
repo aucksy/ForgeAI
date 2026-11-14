@@ -10,7 +10,7 @@ import { paidDay, stuckWhy } from '../../src/crm/pay/PaidOnline';
 import { qrPath } from '../../src/crm/pay/PayQr';
 import { offWords, oauthBackWords } from '../../src/crm/pay/PaymentsScreen';
 import { tenDigits, type PayConnection, type PayRequest } from '../../src/crm/pay/payApi';
-import { connectProblem, connectionLine, onlineReference, payCaption, receiptMethod, requestLine, upiReceiptNote } from '../../src/crm/pay/payWords';
+import { OFFERED_PROVIDERS, connectProblem, connectionLine, onlineReference, payCaption, receiptMethod, requestLine, shownProviders, upiReceiptNote } from '../../src/crm/pay/payWords';
 import { activeProvider } from '../../src/crm/pay/useDeskPay';
 
 const req = (o: Partial<PayRequest> = {}): PayRequest => ({
@@ -141,6 +141,19 @@ describe('Settings -> Payments words', () => {
     expect(activeProvider({ on: true, connectOn: true, testMode: true, canManage: true, providers })?.id).toBe('cashfree');
     expect(activeProvider({ on: true, connectOn: false, testMode: true, canManage: true, providers })).toBeNull();
     expect(activeProvider({ on: false, why: 'NOT_READY' })).toBeNull();
+  });
+
+  it('R-547: the picker offers exactly Razorpay and Cashfree; a gym already on PayU or PhonePe still sees it', () => {
+    const card = (id: 'razorpay' | 'cashfree' | 'payu' | 'phonepe', name: string, connection: PayConnection | null = null) => ({ id, name, fields: [], oauth: false, connection });
+    const all = [card('razorpay', 'Razorpay'), card('cashfree', 'Cashfree'), card('payu', 'PayU'), card('phonepe', 'PhonePe')];
+    expect(OFFERED_PROVIDERS).toEqual(['razorpay', 'cashfree']);
+    expect(shownProviders(all).map((p) => p.id)).toEqual(['razorpay', 'cashfree']);
+    // Already connected (on, or switched off by the company or by bad keys): still shown, so it works and can be disconnected.
+    const onPayU = [all[0], all[1], card('payu', 'PayU', conn({ provider: 'payu' })), card('phonepe', 'PhonePe', conn({ provider: 'phonepe', on: false, offReason: 'bad_keys' }))];
+    expect(shownProviders(onPayU).map((p) => p.id)).toEqual(['razorpay', 'cashfree', 'payu', 'phonepe']);
+    // Once the gym disconnects it, it is gone.
+    const gone = [all[0], all[1], card('payu', 'PayU', conn({ provider: 'payu', on: false, offReason: 'disconnected' }))];
+    expect(shownProviders(gone).map((p) => p.id)).toEqual(['razorpay', 'cashfree']);
   });
 });
 

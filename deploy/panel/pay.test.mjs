@@ -102,7 +102,7 @@ test('tables missing: every call says NOT_READY; master key missing: connecting 
   assert.equal(desk.on, true);
   assert.equal(desk.connectOn, false);
   assert.equal(desk.testMode, true);
-  assert.deepEqual(desk.providers.map((p) => p.id), ['razorpay', 'cashfree', 'payu', 'phonepe']);
+  assert.deepEqual(desk.providers.map((p) => p.id), ['razorpay', 'cashfree'], 'R-547: only Razorpay and Cashfree are offered');
   assert.ok(desk.providers.every((p) => p.oauth === false));
   assert.deepEqual((await connectRazorpay(e, n)).body, { on: false, why: 'NO_MASTER_KEY' });
   assert.equal((await call(e, '/api/pay/desk', { key: 'wrong-key-0123456789' }, n)).status, 401);

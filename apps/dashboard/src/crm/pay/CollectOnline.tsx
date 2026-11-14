@@ -7,7 +7,7 @@
  *     or sound box and taps the sheet's own "Save payment" (the sheet switches "Paid by" to UPI).
  *     Owner research: scanning works for every UPI ID; tapping a upi:// link with an amount is often
  *     refused for a personal UPI ID. So: QR first, the UPI ID to copy as the fallback.
- *  2. Payment link (when the gym connected Razorpay, Cashfree, PayU or PhonePe in Settings -> Payments):
+ *  2. Payment link (when the gym connected Razorpay or Cashfree (or an older PayU or PhonePe) in Settings -> Payments):
  *     a QR of the company's payment page (UPI, cards, net banking), a link to copy or send on WhatsApp,
  *     and "Waiting for the payment…". While the sheet is open it asks every 4 seconds; when the company
  *     says paid, the receipt is saved by itself (onPaid) with the company's payment id. If the sheet is

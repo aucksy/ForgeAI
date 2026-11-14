@@ -2,7 +2,7 @@
  * F79 online payments (R-328, 4 Nov 2026): Settings -> Payments (/settings/payments).
  *
  *  - UPI QR: uses the gym's UPI ID from Settings -> Gym details. Works today, with no server part.
- *  - Payment companies (Razorpay, Cashfree, PayU, PhonePe): the owner pastes the keys from the
+ *  - Payment companies (Razorpay, Cashfree; R-547: PayU and PhonePe only for a gym already on them): the owner pastes the keys from the
  *    company's own dashboard; MettleUp tests them with one read-only call, keeps them sealed, and from
  *    then on answers only "Connected with the key ending 3456". A key is shown only while it is typed.
  *    "Connect Razorpay" / "Connect Cashfree" (sign in on the company's site, no keys) appears only when
@@ -22,7 +22,7 @@ import { useCrm } from '../store';
 import { Button, Card, CheckField, ErrorBanner, PageHeader, Pill, Row, SectionTitle, TextField, Toast, color, font, space } from '../ui/kit';
 import { navigate } from '../ui/router';
 import { PayRefused, connectKeys, disconnect, oauthStart, saveSwitches, type DeskPay, type PayProvider } from './payApi';
-import { KEYS_HELP, connectProblem, connectionLine } from './payWords';
+import { KEYS_HELP, connectProblem, connectionLine, shownProviders } from './payWords';
 import { setDeskPay, useDeskPay } from './useDeskPay';
 
 /** What the screen says when the server part is not on. PURE. UAT 5 Nov 2026: with the next step. */
@@ -110,7 +110,7 @@ export function PaymentsScreen() {
           {live?.connectOn && live.testMode && <Pill tone="warn">{t('Test mode')}</Pill>}
         </Row>
         <p style={para}>
-          {t('Connect your own Razorpay, Cashfree, PayU or PhonePe account. Members then pay by UPI, card or net banking from a link or QR, and the receipt is made by itself.')}
+          {t('Connect your own Razorpay or Cashfree account. Members then pay by UPI, card or net banking from a link or QR, and the receipt is made by itself.')}
         </p>
         <p style={muted}>{t('MettleUp takes no fee. Your payment company’s own charges apply.')}</p>
         {live?.connectOn && live.testMode && (
@@ -125,7 +125,7 @@ export function PaymentsScreen() {
       </Card>
 
       {live?.connectOn &&
-        live.providers.map((p) => (
+        shownProviders(live.providers).map((p) => (
           <ProviderCard
             key={p.id}
             provider={p}

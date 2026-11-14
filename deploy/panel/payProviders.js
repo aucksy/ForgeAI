@@ -500,5 +500,8 @@ export const phonepe = {
 
 export const PROVIDERS = { razorpay, cashfree, payu, phonepe };
 
-/** The companies shown on screen, in this order. */
+/** Every company the server still knows, in screen order (a gym already on PayU or PhonePe keeps working). */
 export const PROVIDER_ORDER = ['razorpay', 'cashfree', 'payu', 'phonepe'];
+
+/** R-547 (owner's decision A, 14 Nov 2026): the only companies a gym can pick or connect from now on. */
+export const OFFERED = ['razorpay', 'cashfree'];

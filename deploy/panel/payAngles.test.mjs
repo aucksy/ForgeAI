@@ -969,3 +969,46 @@ test('W-45 a gym on pasted Razorpay keys has no webhook secret: its webhooks are
   const today = await desk(e, n, '/api/pay/joins', { key: DESK_KEY }, T0 + 200000);
   assert.equal(today.body.joins[0].status, 'paid');
 }));
+
+// ================================================================== R-547: owner's decision A (14 Nov 2026)
+
+test('W-46 gyms pick only Razorpay or Cashfree; a gym already on PayU or PhonePe still sees it, can re-key and disconnect it; once gone it cannot come back', quiet(async () => {
+  const e = env();
+  const n = company();
+  const ids = async () => (await desk(e, n, '/api/pay/desk', { key: OWNER_KEY })).body.providers.map((p) => p.id);
+  assert.deepEqual(await ids(), ['razorpay', 'cashfree'], 'a new gym is offered exactly Razorpay and Cashfree');
+  for (const provider of ['payu', 'phonepe']) {
+    const r = await desk(e, n, '/api/pay/connect', { key: OWNER_KEY, provider, fields: { key: 'PayUKey123', salt: 'PayUSaltValue99' } });
+    assert.deepEqual([r.status, r.body.error], [400, 'UNKNOWN_PROVIDER'], `${provider} cannot be newly connected`);
+  }
+  assert.equal((await e.WEB.prepare('SELECT COUNT(*) AS n FROM pay_connections').first()).n, 0);
+  // A gym that was already on PayU: still shown, on.
+  await connectPayU(e);
+  const before = (await desk(e, n, '/api/pay/desk', { key: OWNER_KEY })).body.providers;
+  assert.deepEqual(before.map((p) => p.id), ['razorpay', 'cashfree', 'payu']);
+  assert.equal(before.find((p) => p.id === 'payu').connection.on, true);
+  // ...and switched off by bad keys: still shown, so the owner can paste new ones (the refusal is only for new gyms).
+  await e.WEB.prepare("UPDATE pay_connections SET status = 'off', off_reason = 'bad_keys' WHERE provider = 'payu'").run();
+  assert.deepEqual(await ids(), ['razorpay', 'cashfree', 'payu']);
+  const rekey = await desk(e, n, '/api/pay/connect', { key: OWNER_KEY, provider: 'payu', fields: { key: '', salt: '' } });
+  assert.notEqual(rekey.body.error, 'UNKNOWN_PROVIDER', 'a gym already on PayU may paste its keys again');
+  // It can still be disconnected; then it is gone and cannot be connected again.
+  await e.WEB.prepare("UPDATE pay_connections SET status = 'on', off_reason = '' WHERE provider = 'payu'").run();
+  const off = await desk(e, n, '/api/pay/disconnect', { key: OWNER_KEY, provider: 'payu' });
+  assert.deepEqual([off.status, off.body.connection.on, off.body.connection.offReason], [200, false, 'disconnected']);
+  assert.deepEqual(await ids(), ['razorpay', 'cashfree']);
+  assert.equal((await desk(e, n, '/api/pay/connect', { key: OWNER_KEY, provider: 'payu', fields: { key: 'PayUKey123', salt: 'PayUSaltValue99' } })).body.error, 'UNKNOWN_PROVIDER');
+  // Razorpay stays connectable (it reaches the key check, not the R-547 refusal).
+  const rzp = await desk(e, n, '/api/pay/connect', { key: OWNER_KEY, provider: 'razorpay', fields: { keyId: 'rzp_live_AbCdEf123456', keySecret: 'x' } });
+  assert.equal(rzp.body.error, 'CHECK');
+}));
+
+test('W-47 a gym already on PayU keeps working: its join payment link is still made with PayU', quiet(async () => {
+  const e = env();
+  await connectPayU(e);
+  const n = company();
+  const a = await join(e, gymServer(), n);
+  assert.equal(a.body.pay.how, 'link');
+  assert.equal((await rows(e))[0].provider, 'payu');
+  assert.equal((n.co.payuMade || []).length, 1, 'PayU made the invoice page');
+}));

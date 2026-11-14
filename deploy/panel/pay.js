@@ -20,7 +20,7 @@
 
 import { answer } from './feedback.js';
 import { hasMasterKey, hmac256, lastFour, randomId, sameText, seal, toHex, unseal } from './payCrypto.js';
-import { PROVIDERS, PROVIDER_ORDER, PayError, requestIdOf } from './payProviders.js';
+import { OFFERED, PROVIDERS, PROVIDER_ORDER, PayError, requestIdOf } from './payProviders.js';
 import { saidAt, saveSwitches, switchesOf, switchesReady } from './paySwitches.js';
 
 const SUPABASE = 'https://hdxzqbdiokjklnypfisq.supabase.co';
@@ -161,6 +161,15 @@ export function connectionView(row) {
     offReason: row.off_reason || '',
     connectedAt: row.connected_at,
   };
+}
+
+/**
+ * R-547 (owner's decision A, 14 Nov 2026): gyms pick only Razorpay or Cashfree. PayU and PhonePe are still shown,
+ * and can still be re-keyed and disconnected, ONLY for a gym that already has that connection (on, or switched off
+ * by the company or by bad keys). Once the gym disconnects it, it is gone from the screen. PURE.
+ */
+export function offeredTo(provider, row) {
+  return OFFERED.includes(provider) || Boolean(row && row.provider === provider && row.off_reason !== 'disconnected');
 }
 
 /** What a screen may see of a request. PURE. */
@@ -515,7 +524,7 @@ async function deskState(env, db, b, f, now) {
     testMode: payMode(env) === 'test',
     canManage: who.role === 'owner',
     switches: { ready, ...(await switchesOf(db, who.gymId)) },
-    providers: PROVIDER_ORDER.map((id) => ({
+    providers: PROVIDER_ORDER.filter((id) => offeredTo(id, rows.find((r) => r.provider === id))).map((id) => ({
       id,
       name: PROVIDERS[id].name,
       fields: PROVIDERS[id].fields.map((x) => ({ name: x.name, label: x.label, secret: x.secret, placeholder: x.placeholder || '' })),
@@ -531,6 +540,9 @@ async function connect(env, db, b, f, now) {
   if (who.role !== 'owner') return no(403, 'OWNER_ONLY');
   const adapter = PROVIDERS[str(b.provider)];
   if (!adapter) return no(400, 'UNKNOWN_PROVIDER');
+  const prev = await connOf(db, who.gymId, adapter.id);
+  // R-547: no new PayU or PhonePe connection; a gym already on one can paste its keys again.
+  if (!offeredTo(adapter.id, prev)) return no(400, 'UNKNOWN_PROVIDER');
   if (!hasMasterKey(env)) return ok({ on: false, why: 'NO_MASTER_KEY' });
   const mode = payMode(env);
   const fields = {};
@@ -539,7 +551,6 @@ async function connect(env, db, b, f, now) {
   if (wrong) return no(400, 'CHECK', { words: wrong });
   const tried = await adapter.test(fields, mode, f);
   if (!tried.ok) return no(400, 'BAD_KEYS', { detail: tried.detail || '' });
-  const prev = await connOf(db, who.gymId, adapter.id);
   const hookId = prev ? prev.hook : randomId(18);
   const sealed = await seal(env, fields);
   await db

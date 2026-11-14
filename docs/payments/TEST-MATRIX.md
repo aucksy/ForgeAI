@@ -1,9 +1,9 @@
 # Gym payments: the money flow and the test matrix
 
-Payment sweep R-542, 14 Nov 2026. Review round 2 fixes, same day (rows 44 to 56, bugs R2-1 to R2-6). Scope: every path where money moves for a gym.
+Payment sweep R-542, 14 Nov 2026. Review round 2 fixes, same day (rows 44 to 56, bugs R2-1 to R2-6). Owner's decision A and the first real Razorpay test-mode run, same day (rows 57 to 59). Scope: every path where money moves for a gym.
 
 - **New (not deployed yet):** paying online when joining, from the join link or the gym web page.
-- **Existing:** F79 member payments, which use the gym's own Razorpay, Cashfree, PayU or PhonePe account, or its plain UPI ID. This covers links, webhooks, receipts and the shop.
+- **Existing:** F79 member payments, which use the gym's own Razorpay or Cashfree account (PayU and PhonePe only for a gym already on them, R-547), or its plain UPI ID. This covers links, webhooks, receipts and the shop.
 
 Payments stay in **test mode** until the Worker has `PAY_LIVE=on`. Nothing in this sweep turns that on.
 
@@ -134,6 +134,9 @@ There is no refund call. The gym refunds in its own company dashboard, then void
 | 54 | One payment named two ways by the check and the webhook | One payment; the real id is kept; no false "the gym should refund it". Two real ids are still said as a second payment. | W-43; W-15 | **FAIL (R2-6)** | PASS |
 | 55 | Payment request ids in server logs | Never (anyone holding one can tap "I have paid"). | W-44 | **FAIL (R2-6)** | PASS |
 | 56 | Webhooks of gyms on pasted Razorpay keys, and of PhonePe gyms | Always refused: no webhook secret is collected for them. The payment is still found by the page, Today, the check before Approve and the 10-minute check. | W-45 | PASS (written down, not a bug) | PASS |
+| 57 | Which payment companies a gym can pick (owner's decision A, 14 Nov 2026) | Exactly Razorpay and Cashfree, on the screen and in the server's list. PayU and PhonePe cannot be newly connected (refused even if asked directly). | W-46; pay.test.mjs "tables missing..."; dashboard pay.test.ts "R-547: the picker offers exactly Razorpay and Cashfree..."; e2e "F79 phone/computer: Settings -> Payments..." | **FAIL**, all four were offered | PASS |
+| 58 | A gym already on PayU or PhonePe | Still shown and still working (links made, checked, watched); can paste new keys after "bad keys"; can disconnect. Once disconnected it is gone and cannot be connected again. | W-46; W-47; W-33 | PASS (kept working) | PASS |
+| 59 | Our real Razorpay code against Razorpay's real test API | A Rs 1 link is made, Razorpay says "created" and we read it as open, not paid; cancelled, Razorpay says "cancelled" and we read it as cancelled, not paid, and stop asking; the 10-minute check agrees each time; a second cancel and an unknown link are refusals, not crashes; a wrong secret is "bad keys" and switches that connection off. Test keys only (refuses anything but rzp_test_). | ci.yml job "razorpay-test-mode" (deploy/panel/razorpayTestMode.check.mjs), push to main and by hand | new | see section 5 |
 
 "Now" means the result in CI on the sweep's commit.
 
@@ -174,10 +177,9 @@ Each fix comes with a test that failed before it.
 - **The 10-minute check asks at most 40 links a run, for all gyms together**, open links first, then links we closed. Today asks up to 10 of its own gym's unpaid join payments each time it loads, so a gym's desk does not wait for that queue.
 - **Disconnect asks and cancels at most 25 open links** with the company. Any beyond that are closed here and then watched by the 10-minute check, like every closed link. For a "Connect Razorpay/Cashfree" gym, disconnect revokes our access at once, so its old links can no longer be asked about.
 - **Refunds.** Before Approve, a full refund at Razorpay or Cashfree stops the receipt. A part refund counts as paid (the desk sorts the rest). A chargeback or dispute is not seen, and neither is a PayU or PhonePe refund. The member-fee receipts sweep does not check for refunds. Refunds are done by the gym at its company, and then the receipt is voided by hand (row 33).
-- **A real test-mode run against the companies' sandboxes is not possible yet.** CI has no Razorpay or Cashfree test keys. Every company call in these tests is a faithful fake of the documented API: paths, signatures, paise or rupees, and statuses.
+- **Only Razorpay is checked against the real company (row 59), and only in test mode.** A real test payment (someone paying the link) is not made: Razorpay's test checkout needs a person. So "paid", refunds and webhooks are still proven only against faithful fakes of the documented API (paths, signatures, paise or rupees, statuses). Cashfree is not checked against its sandbox yet; for that the owner would add `CASHFREE_TEST_APP_ID` and `CASHFREE_TEST_SECRET_KEY` as GitHub secrets.
+- **PayU and PhonePe (R-547).** No new gym can pick them. Their server code stays, only so a gym already on one keeps working. They are not checked against the real companies.
 
-To run against the real sandboxes, the owner must create test keys and add them as GitHub secrets:
-- Razorpay test mode: `RAZORPAY_TEST_KEY_ID`, `RAZORPAY_TEST_KEY_SECRET`
-- Cashfree sandbox: `CASHFREE_TEST_APP_ID`, `CASHFREE_TEST_SECRET_KEY`
+## 5. Real Razorpay test-mode run (row 59)
 
-A workflow can then make, check and cancel a real test link.
+Filled in from the first cloud run after it finishes.
