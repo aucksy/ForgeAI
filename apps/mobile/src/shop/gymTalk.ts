@@ -7,7 +7,8 @@
  *  - the QA builds' pretend gym (createPretendTalk), used ONLY while the server has no 0069 and the build carries
  *    the 'gymTalk' stand-in, so the cloud phone test can see every screen before the owner says yes.
  * A member writes a Question, Feedback or a Complaint; feedback may go without their name. The gym replies in the
- * same thread, the member may write back. Complaints are read by the gym owner only (the server's rule).
+ * same thread, the member may write back. Who reads what (the server's rule): questions the owner, front desk and
+ * trainers; feedback the owner and front desk only (R-552, 0087); complaints the owner only.
  * gymTalkSync.ts talks to the server.
  * R-549 (14 Nov 2026): the same page also asks a trainer (0053); the one row and page's rules are gymMessages.ts (the
  * Question hint's "For workout help, pick "A trainer" above." is gymMessages.questionHint).
@@ -54,14 +55,23 @@ export const TALK_WORDS = {
   rowReplied: (n: number): string => (n === 1 ? 'Your gym replied. Tap to read it.' : `Your gym replied to ${n} messages. Tap to read them.`),
   rowSpoken: (n: number): string => (n === 1 ? '1 new reply' : `${n} new replies`),
   title: 'Message your gym',
-  intro: "Questions and feedback go to your gym's owner, front desk and trainers. Any reply shows on this page.",
+  intro: 'Send your gym a question, feedback or a complaint. Any reply shows on this page.',
   kindLabel: 'What is it about?',
   kind: { question: 'Question', feedback: 'Feedback', complaint: 'Complaint' } as Record<TalkKind, string>,
   kindHint: {
     question: 'Ask about timings, fees, classes and more.',
     feedback: 'Share an idea, or tell them what you like.',
-    complaint: 'Tell them what went wrong. Only the gym owner reads complaints.',
+    complaint: 'Tell them what went wrong.',
   } as Record<TalkKind, string>,
+  /**
+   * Who at the gym reads it, under the type (talkReaders names the gym). The server's rule: 0069, and R-552 (0087,
+   * owner 14 Nov 2026: "Feedback goes to you and the front desk only"; feedback is for the gym, so never MettleUp).
+   */
+  readers: {
+    question: (gym: string): string => `The owner, front desk and trainers at ${gym} read your question.`,
+    feedback: (gym: string): string => `Only the owner and front desk at ${gym} read your feedback. Your trainers do not see it.`,
+    complaint: (gym: string): string => `Only the owner of ${gym} reads your complaint. The front desk and trainers do not see it.`,
+  } as Record<TalkKind, (gym: string) => string>,
   placeholder: {
     question: 'For example: Is the gym open on Diwali?',
     feedback: 'For example: Please add a second squat rack.',
@@ -105,6 +115,12 @@ const first = (raw: unknown): unknown => (Array.isArray(raw) ? raw[0] : raw);
 
 export function isTalkKind(v: unknown): v is TalkKind {
   return typeof v === 'string' && (TALK_KINDS as readonly string[]).includes(v);
+}
+
+/** Who at the gym reads a message of this type, with the gym's name ("your gym" when it has none). PURE. */
+export function talkReaders(kind: TalkKind, gymName: string | null | undefined): string {
+  const gym = (gymName ?? '').replace(/\s+/g, ' ').trim().slice(0, 60) || 'your gym';
+  return TALK_WORDS.readers[kind](gym);
 }
 
 /** Only feedback may go without the name. PURE. */

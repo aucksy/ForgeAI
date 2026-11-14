@@ -230,9 +230,10 @@ describe('member words', () => {
     expect(questionHint('feedback', true)).toBe(TALK_WORDS.kindHint.feedback);
     expect(questionHint('complaint', true)).toBe(TALK_WORDS.kindHint.complaint);
   });
-  it('the gym side says who reads it (the 0069 rule), and complaints stay the owner’s', () => {
-    expect(MSG_WORDS.sideHint.gym).toBe("Questions and feedback go to your gym's owner, front desk and trainers.");
-    expect(TALK_WORDS.kindHint.complaint).toMatch(/Only the gym owner reads complaints/);
+  it('R-552: the gym side no longer says trainers read feedback; who reads each type is said under the type', () => {
+    expect(MSG_WORDS.sideHint.gym).toBe('Send your gym a question, feedback or a complaint.');
+    expect(MSG_WORDS.sideHint.gym).not.toMatch(/trainer/i);
+    expect(TALK_WORDS.intro).not.toMatch(/trainer/i);
   });
   it('the chips read the way the hint names them', () => {
     expect(MSG_WORDS.side.trainer).toBe('A trainer');

@@ -63,11 +63,12 @@ appId: com.mettleup.app
           file: sub-see.yaml
           env:
             FIND: '^The gym$'
-      # "The gym" is picked first (the row opens it): its line says who reads questions and feedback.
+      # "The gym" is picked first (the row opens it): its line says what it takes (who reads each type is said under
+      # the type, R-552).
       - runFlow:
           file: sub-see.yaml
           env:
-            FIND: '^Questions and feedback go to your gym''s owner, front desk and trainers\.$'
+            FIND: '^Send your gym a question, feedback or a complaint\.$'
       - runFlow:
           file: sub-see.yaml
           env:

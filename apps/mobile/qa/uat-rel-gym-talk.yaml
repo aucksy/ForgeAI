@@ -40,7 +40,7 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-see.yaml
     env:
-      FIND: '^(Write to your gym, or ask a trainer about your workout\. Every reply shows on this page\.|Questions and feedback go to your gym''s owner, front desk and trainers\. Any reply shows on this page\.)$'
+      FIND: '^(Write to your gym, or ask a trainer about your workout\. Every reply shows on this page\.|Send your gym a question, feedback or a complaint\. Any reply shows on this page\.)$'
 - runFlow:
     file: sub-see.yaml
     env:

@@ -93,6 +93,11 @@ describe('reading the server', () => {
     expect(talkListFrom({ ok: false })).toBeNull();
     expect(talkListFrom({ ok: true, role: 'owner' })).toBeNull();
     expect(talkListFrom({ ok: true, role: 'boss', threads: [] })!.role).toBe('owner');
+    // R-552 (0087): a trainer's answer says feedback: false; a server without 0087 says nothing (feedback shown).
+    expect(list.seesFeedback).toBe(true);
+    expect(talkListFrom({ ok: true, role: 'staff', feedback: false, threads: [] })!.seesFeedback).toBe(false);
+    expect(talkListFrom({ ok: true, role: 'staff', feedback: true, threads: [] })!.seesFeedback).toBe(true);
+    expect(talkListFrom({ ok: true, role: 'owner', feedback: false, threads: [] })!.seesFeedback).toBe(true);
     expect(talkCountFrom({ ok: true, waiting: 3 })).toBe(3);
     expect(talkCountFrom({ ok: true, waiting: -1 })).toBe(0);
     expect(talkCountFrom({ ok: true })).toBeNull();
@@ -111,6 +116,15 @@ describe('the page', () => {
   it('the desk gets no Complaints button', () => {
     expect(talkFilters('owner')).toEqual(['all', 'question', 'feedback', 'complaint']);
     expect(talkFilters('staff')).toEqual(['all', 'question', 'feedback']);
+  });
+  it('R-552: a trainer gets no Feedback button either, and an old Feedback link opens All', () => {
+    expect(talkFilters('staff', false)).toEqual(['all', 'question']);
+    expect(talkFilters('owner', false)).toEqual(['all', 'question', 'feedback', 'complaint']);
+    expect(talkFilterFrom('feedback', 'staff', false)).toBe('all');
+    expect(talkFilterFrom('question', 'staff', false)).toBe('question');
+    expect(W.trainerNote).toBe(
+      'Feedback goes to the owner and front desk, and complaints go to the owner only, so they are not shown here.',
+    );
   });
   it('waiting (longest wait first), replied, done; and by type', () => {
     const s = splitTalk(all, 'all');

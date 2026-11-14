@@ -3,8 +3,9 @@
  * the Gym tab of their app (questions, feedback, complaints), with a reply box, "Mark as done" and "Open again".
  * Type buttons on top; then Waiting for a reply (the longest wait first), Replied, Done.
  *
- * Who sees what is the server's rule (0069): the owner sees everything; the front desk and trainers see questions
- * and feedback, never complaints. Feedback sent without the member's name comes with no name, phone or member id.
+ * Who sees what is the server's rule (0069, 0087): the owner sees everything; the front desk sees questions and
+ * feedback; a trainer sees questions only (R-552: no Feedback button and a note saying why). Never complaints but
+ * the owner. Feedback sent without the member's name comes with no name, phone or member id.
  * The reply shows in the member's app with a notification on their phone (push kind 'gym_reply'). Hidden until
  * the gym's server has 0069 (the menu item is not there; an old link says "not switched on"). Words:
  * logic/memberMessages.ts.
@@ -13,6 +14,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { useAuth } from '../../auth/AuthProvider';
+import { t } from '../../lang/lang';
 import {
   MEMBER_MESSAGE_WORDS as W,
   TALK_REPLY_MAX,
@@ -86,7 +88,8 @@ export function MemberMessagesScreen({ startWith }: { startWith?: string } = {})
   }, [waitingNow, fetchList]);
 
   const role = load.state === 'ready' ? load.data.role : 'owner';
-  const filters = talkFilters(role);
+  const seesFeedback = load.state === 'ready' ? load.data.seesFeedback : true;
+  const filters = talkFilters(role, seesFeedback);
   const shown = filters.includes(filter) ? filter : 'all';
   const parts = useMemo(() => (load.state === 'ready' ? splitTalk(load.data.threads, shown) : null), [load, shown]);
 
@@ -146,7 +149,7 @@ export function MemberMessagesScreen({ startWith }: { startWith?: string } = {})
         <p style={quiet}>Loading…</p>
       ) : (
         <div style={{ display: 'grid', gap: space.lg }}>
-          {role === 'staff' ? <p style={quiet}>{W.staffNote}</p> : null}
+          {role === 'staff' ? <p style={quiet}>{seesFeedback ? W.staffNote : t(W.trainerNote)}</p> : null}
           {note && note.id === null ? <ErrorBanner>{note.words}</ErrorBanner> : null}
           {load.data.threads.length === 0 ? (
             <Card>

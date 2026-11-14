@@ -15,6 +15,7 @@ import {
   createPretendTalk,
   hasTalkStandIn,
   talkErrorWords,
+  talkReaders,
   talkRowSub,
   talkSentFrom,
   talkStatus,
@@ -171,14 +172,29 @@ describe('member words', () => {
       TALK_WORDS.counter(120),
       TALK_WORDS.fromGym('Ravi'),
       TALK_WORDS.fromGym(null),
+      ...(['question', 'feedback', 'complaint'] as const).flatMap((k) => [talkReaders(k, 'Iron Paradise Fitness'), talkReaders(k, null)]),
     ];
     for (const l of lines) {
       expect(l, l).not.toMatch(BANNED);
       expect(l.length, l).toBeLessThanOrEqual(120);
     }
   });
-  it('the complaint hint says who reads it (the server rule: the owner only)', () => {
-    expect(TALK_WORDS.kindHint.complaint).toMatch(/Only the gym owner reads complaints/);
+  it('R-552: each type says who at the gym reads it, naming the gym (the server rule, 0069 + 0087)', () => {
+    expect(talkReaders('question', 'Iron Paradise')).toBe('The owner, front desk and trainers at Iron Paradise read your question.');
+    expect(talkReaders('feedback', 'Iron Paradise')).toBe(
+      'Only the owner and front desk at Iron Paradise read your feedback. Your trainers do not see it.',
+    );
+    expect(talkReaders('complaint', 'Iron Paradise')).toBe(
+      'Only the owner of Iron Paradise reads your complaint. The front desk and trainers do not see it.',
+    );
+    // No gym name: "your gym"; spaces tidied.
+    expect(talkReaders('feedback', '  ')).toBe('Only the owner and front desk at your gym read your feedback. Your trainers do not see it.');
+    expect(talkReaders('question', ' Iron   Paradise ')).toBe('The owner, front desk and trainers at Iron Paradise read your question.');
+    // Feedback is for the gym: the app's makers are never named; full sentences.
+    for (const k of ['question', 'feedback', 'complaint'] as const) {
+      expect(talkReaders(k, 'Iron Paradise')).not.toMatch(/MettleUp|ForgeAI/i);
+      expect(talkReaders(k, 'Iron Paradise')).toMatch(/\.$/);
+    }
     expect(TALK_WORDS.anonHint).toMatch(/will not see who sent it/);
   });
 });

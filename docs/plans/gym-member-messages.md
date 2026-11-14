@@ -20,8 +20,9 @@ feedback" button goes to the MettleUp team, not to the gym.
 - Admin app: a new page "Member messages" in the menu, with a count of messages waiting for a reply. Filter by
   Question / Feedback / Complaint and Waiting / Done. Reply, and "Mark as done" (a member's new message opens it
   again).
-- Who sees what: the owner sees everything. The front desk and trainers see Questions and Feedback, NOT
-  Complaints: a complaint is often about a staff member, so it goes to the owner only (my pick; easy to change).
+- Who sees what: the owner sees everything. The front desk sees Questions and Feedback; trainers see Questions only
+  (R-552, owner 14 Nov 2026: "Feedback goes to you and the front desk only", migration 0087). Complaints go to the
+  owner only: a complaint is often about a staff member.
   Feedback sent without a name shows as "A member (name hidden)" to everyone at the gym, including the owner.
 - Safe until switched on: everything waits for one new database update (migration 0069). Until the owner says yes
   and it is applied, the row, the page and the menu item simply do not show. Nothing broken, nothing half-shown.

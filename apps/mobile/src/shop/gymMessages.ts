@@ -31,9 +31,8 @@ export const MSG_WORDS = {
   toLabel: 'Who is it for?',
   side: { gym: 'The gym', trainer: 'A trainer' } as Record<MessageSide, string>,
   sideHint: {
-    // The server's rule (0069): the owner, the front desk and trainers read questions and feedback; complaints only
-    // the owner (said under "Complaint").
-    gym: "Questions and feedback go to your gym's owner, front desk and trainers.",
+    // Who reads each type is said under the type (TALK_WORDS.readers; R-552: feedback the owner and front desk only).
+    gym: 'Send your gym a question, feedback or a complaint.',
     trainer: 'Ask one question at a time about your workout.',
   } as Record<MessageSide, string>,
   /** Added after the Question hint when "A trainer" is open too. */

@@ -23,7 +23,12 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-see.yaml
     env:
-      FIND: '^Tell them what went wrong\. Only the gym owner reads complaints\.$'
+      FIND: '^Tell them what went wrong\.$'
+# R-552: who reads it, naming the gym.
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Only the owner of .+ reads your complaint\. The front desk and trainers do not see it\.$'
 - assertNotVisible: "^Send without my name$"
 - takeScreenshot: rel-gt-02-complaint-picked
 - runFlow:
@@ -31,6 +36,11 @@ appId: com.mettleup.app
     env:
       FIND: '^Feedback$'
 - tapOn: "^Feedback$"
+# R-552: feedback is for the gym, read by its owner and front desk only.
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Only the owner and front desk at .+ read your feedback\. Your trainers do not see it\.$'
 - runFlow:
     file: sub-see.yaml
     env:

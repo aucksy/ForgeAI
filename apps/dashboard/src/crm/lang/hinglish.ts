@@ -1257,4 +1257,7 @@ export const HINGLISH: Readonly<Record<string, string>> = {
     'Unke app mein bhej diya. Is baar phone par notification nahi aayega: aapka gym aaj 2 messages bhej chuka hai.',
   'This member is not on the MettleUp app any more.': 'Yeh member ab MettleUp app par nahi hai.',
   'Only the gym owner can send these from here for now.': 'Abhi yahan se sirf gym owner yeh bhej sakte hain.',
+  // R-552 (owner, 14 Nov 2026): a trainer's Member messages page has no feedback and no complaints.
+  'Feedback goes to the owner and front desk, and complaints go to the owner only, so they are not shown here.':
+    'Feedback sirf owner aur front desk ko jata hai, aur complaints sirf owner ko, isliye yeh yahan nahi dikhte.',
 };

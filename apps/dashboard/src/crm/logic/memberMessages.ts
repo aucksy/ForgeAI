@@ -7,8 +7,9 @@
  * PURE: the server's answers read defensively, the type filter, which conversations wait, the names shown, and
  * every word the owner or the desk reads on the page.
  *
- * Who sees what is the server's rule (_talk_visible): the owner sees every message; the front desk and trainers
- * see questions and feedback, never complaints. Feedback sent "without my name" reaches the gym with no name,
+ * Who sees what is the server's rule (_talk_visible): the owner sees every message; the front desk sees questions
+ * and feedback; a trainer sees questions only (R-552, owner 14 Nov 2026: "Feedback goes to you and the front desk
+ * only", 0087); nobody but the owner sees complaints. Feedback sent "without my name" reaches the gym with no name,
  * phone or member id at all (the server leaves them out), so this file has nothing to hide itself.
  */
 
@@ -57,6 +58,8 @@ export interface TalkThread {
 
 export interface TalkList {
   role: 'owner' | 'staff';
+  /** This person sees feedback (0087's 'feedback'; false for a trainer). A server without 0087: true, as before. */
+  seesFeedback: boolean;
   waiting: number;
   threads: TalkThread[];
 }
@@ -128,6 +131,8 @@ export function talkListFrom(raw: unknown): TalkList | null {
   const waiting = num(r.waiting);
   return {
     role: r.role === 'staff' ? 'staff' : 'owner',
+    // Only a staff answer can hide feedback: the owner always sees it, whatever a server says.
+    seesFeedback: r.role !== 'staff' || r.feedback !== false,
     waiting: waiting != null ? Math.max(0, Math.floor(waiting)) : threads.filter((t) => t.waiting).length,
     threads,
   };
@@ -151,9 +156,13 @@ export function talkThreadAnswerFrom(raw: unknown): TalkThread | null {
 
 export type TalkFilter = 'all' | TalkKind;
 
-/** The type buttons on top: the front desk never gets complaints, so no Complaints button for them. PURE. */
-export function talkFilters(role: 'owner' | 'staff'): TalkFilter[] {
-  return role === 'owner' ? ['all', 'question', 'feedback', 'complaint'] : ['all', 'question', 'feedback'];
+/**
+ * The type buttons on top: the front desk never gets complaints, so no Complaints button for them; a trainer never
+ * gets feedback either (R-552), so no Feedback button for them. PURE.
+ */
+export function talkFilters(role: 'owner' | 'staff', seesFeedback = true): TalkFilter[] {
+  if (role === 'owner') return ['all', 'question', 'feedback', 'complaint'];
+  return seesFeedback ? ['all', 'question', 'feedback'] : ['all', 'question'];
 }
 
 /**
@@ -194,9 +203,9 @@ export function talkChipLabel(list: readonly TalkThread[], filter: TalkFilter): 
 }
 
 /** A type from the address (`/member-messages/complaint`), or 'all'. PURE. */
-export function talkFilterFrom(seg: string | undefined, role: 'owner' | 'staff'): TalkFilter {
+export function talkFilterFrom(seg: string | undefined, role: 'owner' | 'staff', seesFeedback = true): TalkFilter {
   const f = seg as TalkFilter;
-  return seg && talkFilters(role).includes(f) ? f : 'all';
+  return seg && talkFilters(role, seesFeedback).includes(f) ? f : 'all';
 }
 
 /** The member's name as the page shows it. PURE. */
@@ -225,6 +234,8 @@ export const MEMBER_MESSAGE_WORDS = {
   navHint: 'Questions, feedback and complaints from members',
   intro: 'Members write to you from "Message your gym" on the Gym tab of their app. Your reply shows in their app, and on their phone if notifications are on.',
   staffNote: 'Complaints go to the owner only, so they are not shown here.',
+  /** A trainer's note (R-552): no feedback and no complaints on their page. */
+  trainerNote: 'Feedback goes to the owner and front desk, and complaints go to the owner only, so they are not shown here.',
   keptNote: 'Messages are deleted 180 days after the last one in a conversation, or as soon as the member leaves the gym.',
   filterLabel: 'Show',
   waitingCount: (n: number): string => `${n} waiting`,

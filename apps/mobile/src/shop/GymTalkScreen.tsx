@@ -5,8 +5,9 @@
  *  - "Who is it for?": "The gym" or "A trainer". "A trainer" shows only to a member who may ask today (R-505: a
  *    running paid plan, askShown 'open'). One side open: no choice, that side shows. The address picks the first side:
  *    /shop/message "The gym", /shop/ask "A trainer" (a trainer reply's notification, Settings).
- *  - The gym (0069): Question / Feedback / Complaint, up to 1000 letters; feedback may go without the name; the
- *    gym's owner, front desk and trainers read questions and feedback, only the owner reads complaints.
+ *  - The gym (0069): Question / Feedback / Complaint, up to 1000 letters; feedback may go without the name. Under
+ *    the type, one line names the gym and who reads it (talkReaders): questions the owner, front desk and trainers;
+ *    feedback the owner and front desk only (R-552, 0087); complaints the owner only.
  *  - A trainer (0053): one question at a time, 500 letters, to the member's own trainer, another trainer, or "Any
  *    trainer or the owner" (every trainer and the owner; owner decision 4 Nov 2026). The gym owner is no longer a
  *    person in that list (the owner is "The gym" now). A waiting question can be taken back.
@@ -28,7 +29,7 @@ import { ASK_MAX, ASK_WORDS, askShown, askWhen, closedLine, defaultPick, openQue
 import { readAskAccess } from './askAccessRead';
 import { saveAskSeen } from './askReplySync';
 import { MSG_WORDS, kindsFor, mergeMessages, messageSides, messagesIntro, questionHint, sendTarget, startSide, trainerChips, type MessageSide } from './gymMessages';
-import { TALK_MAX, TALK_WORDS, canSendAnonymous, talkStatus, type TalkKind, type TalkThread } from './gymTalk';
+import { TALK_MAX, TALK_WORDS, canSendAnonymous, talkReaders, talkStatus, type TalkKind, type TalkThread } from './gymTalk';
 import { readTalkThreads, replyTalk, sendTalk, talkIsStandIn, talkKnownMissing } from './gymTalkSync';
 import { useGymShop } from './gymStore';
 import { useGymHydrated } from './shopSource';
@@ -245,6 +246,10 @@ function GymMessages({ link, start }: { link: GymLink; start: MessageSide }) {
                     same fetch as the list, so once this shows, "A trainer" is decided (a pass member: no mention). */}
                 <Text testID="talk-kind-hint-ready" style={smallStyle()}>
                   {questionHint(kind, sides.includes('trainer'))}
+                </Text>
+                {/* R-552: who at the gym reads this type, naming the gym (feedback: the owner and front desk only). */}
+                <Text testID={`talk-readers-${kind}`} style={{ ...smallStyle(), fontFamily: type.bodySemi, color: color.ink }}>
+                  {talkReaders(kind, link.gymName)}
                 </Text>
                 {canSendAnonymous(kind) ? (
                   <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.md }}>
