@@ -621,6 +621,13 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 - **Other things:** every page carries "Powered by MettleUp", which is free marketing to other gym owners. Gyms already have a free Google listing, so our page must do what Google cannot: join, pay and ask. Make it fast on a slow phone, in English and Hindi, with a good picture when shared on WhatsApp. The owner sees visits and joins.
 - **My view:** worth doing, after self sign-up. A free page for every gym (it brings gyms in), the AI helper on credits, and the gym's own web address on Pro. Move to the 2 paid server plans first.
 
+**YOUR FOLLOW-UP (14 Nov):** (1) pay Cloudflare only when visits near the limit, with an alert before we reach the Cloudflare and Supabase limits; (2) how can a gym have its own crispycurves.com if the page is on our domain? (3) how do gym pages sit in "one separate part of the site"?
+
+**My answers:**
+- **(1) Yes, with one correction.** 33,000 visits a day was an example, not the limit. The free limit is 100,000 requests a day for ALL our servers together, and the admin app, the member app and our timers already use part of it. When it is reached, everything stops until the next day, so the alert must come early (at 60% and 80%). Proposed alert: once a day our HQ server reads Cloudflare's request count and Supabase's database size, data use and active users, and tells you in HQ and by email. It needs 2 read-only keys (one in Cloudflare, one in Supabase), which I make in your browser after your yes.
+- **(2) The gym's own address is optional, like Shopify or Wix shops.** The gym buys crispycurves.com itself (about Rs 800 a year) and adds one setting at its domain seller that points it to us. Cloudflare then shows OUR gym page at THEIR address, with the padlock. We still make and host the page. Every gym also keeps the free address on our domain.
+- **(3) "Separate part" = its own sub-address.** Example: join.mettleup.fit/crispy-curves-jaipur, apart from mettleup.fit (member site), gyms.mettleup.fit (gym owners' site) and app.mettleup.fit (admin app). Google lets us watch and, if needed, hide that part alone; a problem on a gym page never touches the admin app; and admin logins are never shared with gym pages. It gives good, not total, protection: full protection needs a different domain name (about Rs 800 a year).
+
 ## 96. Do testers still get updates, and should we open a public beta? — 14 Nov 2026
 **Chat:** Mettle Up
 **Status:** ANSWERED
