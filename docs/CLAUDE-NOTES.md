@@ -7,6 +7,15 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-518. Idea: a web page for each gym, with sign-up and an AI helper — 14 Nov 2026
+He said: "we also have to plan and build an AI assistant for the member registration. For now let's just put it in the ideas.
+... whether we are going to give each member a profile under our brand domain so they will have a webpage of their own so
+people will be able to just come there and know about the gym and kind of register right there and ask questions to AI
+assistant. I need to think about it. ... document that in the Q&A and Idea section."
+Done: tracker #97 (Q&A, status IDEA, my first view + 3 questions) and feature row F207 (Idea). Read as one page per GYM
+(asked him to confirm). Do NOT build until he decides. Also added rows F204 (self sign-up), F205 (pop-ups both ways),
+F206 (Ask a trainer paid-only).
+
 ## R-516. Next-set box as 2 lines: Previous / Done / to go, then Extra — 14 Nov 2026 (MOCK ONLY, waiting for "build it")
 Owner (picture, Dumbbell Curl, box "Next set: 20 kg × 12 · Done: 720 of today's 840 kg"): "2 lines. First line, previous
 total set volume, then we show how much kg, and then XX kg done today to beat. Second line is excess kg done of total
@@ -18,6 +27,11 @@ CORRECTED by him (the first ask was mis-transcribed): line 1 "Previous set volum
 this exercise); line 2 "Target: 720 kg done of 880 kg" (he said "today's target"; "Today" is banned for workouts, so the
 label is "Target:"). "volume" is his own word here (same owner exception as R-498). Single mock sent (r516b-mock.png).
 Still waiting for his "build it".
+FINAL (his "build it", 14 Nov): "I'm happy with this, it should just be today's target ... the first line can be previous
+set volume and today's target and then we show a progress bar with how much kg done and how much remaining. and whatever we
+have after everything is done." So: line 1 "Previous set volume: 840 kg · Today's target: 880 kg" (OWNER EXCEPTION: "Today's"
+allowed on this one line, like "volume" in R-498); line 2 a progress bar with "720 kg done · 160 kg to go"; once all sets are
+done, the existing green finished box (R-498 wording) shows as today. Given to the words helper to build.
 
 ## R-510b. Notifications both ways are LIVE on the server — 14 Nov 2026
 0073, 0075, 0076 applied in the SQL Editor (live tests PASS 25 / 28 / 38; 0054 PASS 23 and 0069 PASS 56 re-run).
