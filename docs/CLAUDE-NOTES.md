@@ -7,6 +7,18 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-526. Move Get started out of Today into its own "Set up your gym" page; regroup the side menu — 14 Nov 2026
+He said (14 Nov 2026): "this getting started section is coming under the today section. I feel like we gotta split that.
+The today thing should just be for, you know, what its purpose is, today's numbers and everything. This should be a
+separate section with something like set up your gym or something like that. And then let there be a different looking
+dot or something that indicates that steps are pending. It just encourages the user to complete the steps or something
+like that. While you are at it, just also reassess the different options now we have on the left hand side bar and see
+if you can better reorganize them so they are not intimidating and easier to integrate and group properly"
+Plan (my pick, building now; he can change it before the panel deploy): own page "Set up your gym" near the top of the
+menu with a progress mark ("3 of 8") that looks unlike the red to-do counts and the new-feature dots; when all steps are
+done it moves to the bottom of the menu without the mark. Side menu in 5 labelled groups (Members, Money, Training,
+Reach members, Your gym) instead of ~25 loose items; the phone "More" page uses the same groups.
+
 ## R-525. Get started list: add "Set your gym timings" (plans step already exists) — 14 Nov 2026
 He said (14 Nov 2026): "And this getting started steps should also have the steps for adding the gym plans and gym timings
 because we will need that for the web page anyway so that's kind of interconnected."
