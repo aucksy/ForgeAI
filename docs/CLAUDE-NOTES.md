@@ -7,6 +7,16 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-535. Training progress must show the trend: 3 months or since joining, line graphs, full workout data — 14 Nov 2026
+He said (14 Nov 2026): "this whole section that we are showing to the admin user or the trainer ... I do not know what
+value this information is giving them because it's just one week's data and it's not showing them the line graph whether
+someone is progressing or not progressing. We should at least give them the last three months of data or since when they
+joined the membership so that they can actually see where it is going. They should be able to see the complete workout
+data. Is something stopping us from doing that? They should be able to analyze the whole thing."
+Found: the phone already shares up to 30 workouts from the last 92 days (best set per exercise, 0053); the screen shows
+only this week. Step 1 (panel only): trend charts from those 92 days. Step 2 (needs an app release, a database change
+and new member sharing words, all with his yes): since joining, every set.
+
 ## R-534. Training progress: "Well done" / "How's it going?" go as in-app messages, not WhatsApp — 14 Nov 2026
 He said (14 Nov 2026), with a picture of Training progress showing "WhatsApp: Well done" and "WhatsApp: How's it
 going?": "Why give WhatsApp option here... should be BAU in app notification"
