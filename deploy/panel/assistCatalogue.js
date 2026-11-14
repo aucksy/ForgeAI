@@ -101,6 +101,7 @@ const METHOD = oneOf(PAY_METHODS, 'How it was paid. "none" when not said.');
  */
 export const PAGES = Object.freeze([
   { id: 'today', path: '/', name: 'Today', does: 'What needs doing now: dues, plans ending, birthdays, requests.' },
+  { id: 'setup', path: '/setup', name: 'Set up your gym', does: 'The steps to get your gym ready: plans, members, staff and trainers, the app.' },
   { id: 'members', path: '/members', name: 'Members', does: 'Every member: search, filter, add a member.' },
   { id: 'member-add', path: '/members/new', name: '+ Add member', does: 'Add a new member and sell their plan.' },
   { id: 'member-profile', path: '/members/:id', name: 'Member card', does: "One member's plan, payments, visits, renew, extend." },
