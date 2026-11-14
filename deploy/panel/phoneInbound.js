@@ -2,7 +2,7 @@
 // MettleUp's business number, so nothing is sent by us: Meta blocks every message we send (131042, a tax flag
 // stuck on Meta's side), but messages people send to us are free and still arrive.
 //
-//   POST /api/phone-code/inbound/start  {phone, purpose: 'pin'|'signup'|'member' (R-458, the member app), website}
+//   POST /api/phone-code/inbound/start  {phone, purpose: 'pin'|'signup'|'member' (R-458, the member app)|'join' (R-513), website}
 //        -> {ok, id, code, waNumber, waText: "MettleUp code 123456. After you send this, go back to the MettleUp page.", expiresAt}
 //        (R-448: an optional `lang: 'hinglish'` gives the next step in Hinglish)
 //   GET  /api/phone-code/inbound/status?id=<id>
@@ -53,7 +53,9 @@ export const NEXT_STEP = {
  * keeps its own PURPOSES, so no paid send can ever go to a member's number from this.
  */
 // Spelled out, not [...PURPOSES]: phoneCode.js imports this file, so PURPOSES is not set yet when this line runs.
-export const INBOUND_PURPOSES = ['pin', 'signup', 'member'];
+// R-513 (14 Nov 2026): purpose 'join' is the public "Become a member" page (app.mettleup.fit/m/<CODE>, selfJoin.js,
+// supabase 0077). A web page, so its message and reply say "page" like 'pin' and 'signup'.
+export const INBOUND_PURPOSES = ['pin', 'signup', 'member', 'join'];
 export const NEXT_STEP_APP = {
   en: 'After you send this, go back to the MettleUp app.',
   hinglish: 'Yeh bhejne ke baad MettleUp app par wapas jao.',

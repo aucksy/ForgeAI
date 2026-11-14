@@ -18,7 +18,7 @@ import type { GymBrand } from '@forgeai/theme';
 import * as api from './api';
 import { JoinCodeCard, copyText } from './JoinCode';
 import { useShop } from './ShopProvider';
-import { inviteLink, inviteMessage, whatsAppHref } from './invite';
+import { inviteLink, inviteMessage, joinOnlineLink, joinOnlineMessage, whatsAppHref } from './invite';
 import { Button, Card, PageHeader, SectionTitle, Toast, color, font, radius, space, useIsCompact } from '../ui/kit';
 import { navigate } from '../ui/router';
 import { t } from '../lang/lang';
@@ -81,6 +81,8 @@ function InviteBody({ ownerKey, gymName, joinCode }: { ownerKey: string; gymName
   const compact = useIsCompact();
   const link = inviteLink(joinCode);
   const message = inviteMessage(gymName, joinCode);
+  // R-513 Join online: the "Become a member" page for people who are not members yet.
+  const joinLink = joinOnlineLink(joinCode);
   const [toast, setToast] = useState<string | null>(null);
   const [brand, setBrand] = useState<GymBrand | null>(null);
 
@@ -192,6 +194,58 @@ function InviteBody({ ownerKey, gymName, joinCode }: { ownerKey: string; gymName
         </p>
       </Card>
 
+      {/* R-513 Join online: new people fill the gym's "Become a member" page on their own phone (any phone, no app).
+          The request lands on Today ("Joined online"); they pay at the desk. Its poster is a picture to print, so the
+          page's one print sheet stays the invite poster. */}
+      <Card>
+        <SectionTitle>{t('Join on your phone')}</SectionTitle>
+        <div
+          style={{
+            fontFamily: font.mono,
+            fontSize: 15,
+            color: color.ink,
+            background: color.surfaceSunken,
+            border: `1px dashed ${color.borderStrong}`,
+            borderRadius: radius.md,
+            padding: '10px 12px',
+            wordBreak: 'break-all',
+            userSelect: 'all',
+          }}
+        >
+          {joinLink}
+        </div>
+        <p style={{ margin: `${space.sm}px 0 0`, fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>
+          {t('New people open this link on their own phone. They pick a plan, check their number on WhatsApp and send it to you. They pay at the desk, and you make them a member on Today.')}
+        </p>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: space.sm, marginTop: space.lg }}>
+          <Button onClick={() => window.open(whatsAppHref(joinOnlineMessage(gymName, joinCode)), '_blank', 'noopener')}>{t('Send join link on WhatsApp')}</Button>
+          <Button
+            variant="ghost"
+            onClick={async () =>
+              say((await copyText(joinLink)) ? t('Link copied.') : t('This browser blocked copying. Select the text and copy it.'))
+            }
+          >
+            {t('Copy join link')}
+          </Button>
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'center', marginTop: space.lg }}>
+          <div style={{ width: '100%', maxWidth: 360 }}>
+            <Poster words={JOIN_ONLINE_POSTER} gymName={gymName} joinCode={joinCode} link={joinLink} brand={brand} />
+          </div>
+        </div>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: space.sm, marginTop: space.lg }}>
+          <Button
+            variant="ghost"
+            onClick={async () => {
+              const ok = await downloadPoster(JOIN_ONLINE_POSTER, gymName, joinCode, joinLink, brand);
+              say(ok ? t('Poster saved as a picture.') : t('Could not make the picture. Try again.'));
+            }}
+          >
+            {t('Download join poster')}
+          </Button>
+        </div>
+      </Card>
+
       {/* Always on the page (hidden on screen): phone Chrome draws its print preview after the
           button's tap has returned, so a sheet added only for the print could already be gone. */}
       {createPortal(<PrintSheet sheetId="invite-print" words={POSTER} gymName={gymName} joinCode={joinCode} link={link} brand={brand} />, document.body)}
@@ -217,6 +271,14 @@ export const POSTER: PosterWords = {
   steps: ['Scan with your phone camera', 'Get the MettleUp app', 'Tap Join'],
   codeLine: (code: string) => `Or type gym code ${code} in the app's Shop tab`,
   file: 'invite-poster',
+};
+
+/** R-513: the "Become a member" poster (its QR opens join-online.html). */
+export const JOIN_ONLINE_POSTER: PosterWords = {
+  lead: 'Become a member on your phone',
+  steps: ['Scan with your phone camera', 'Pick a plan and send it', 'Pay at the desk'],
+  codeLine: () => 'No app needed. Ask at the desk if you need help.',
+  file: 'join-online-poster',
 };
 
 /** The poster as it looks on screen and on paper: white, black text, the gym's logo on top. */

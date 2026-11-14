@@ -1,0 +1,719 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Become a member of your gym</title>
+<meta name="description" content="Pick a plan and send your details to the gym. Pay at the gym desk.">
+<meta property="og:title" content="Become a member of your gym">
+<meta property="og:description" content="Pick a plan and send your details to the gym. Pay at the gym desk.">
+<meta property="og:type" content="website">
+<meta name="color-scheme" content="light dark">
+<meta name="robots" content="noindex">
+<!--
+  R-513 Join online, phase 1 (14 Nov 2026): https://app.mettleup.fit/m/<GYM CODE>, the gym's "Become a member" page,
+  opened from the desk poster, a WhatsApp share, or "Become a member" on /j/<CODE>. Served by the panel's Worker
+  (deploy/panel/worker.js), which fills in the gym and its plans with prices (window.__GYM__, from self_join_preview,
+  supabase 0077) and the WhatsApp preview. Three steps: about you (the number checked with "Verify with WhatsApp",
+  purpose 'join', deploy/panel/phoneInbound.js), your plan (prices from the gym server, never typed here), agree and
+  send. The form posts to /api/self-join (deploy/panel/selfJoin.js); the gym server re-reads the price itself and
+  writes the request into that gym's Enquiries ("Joined online" on Today). Payment: at the desk only (phase 1).
+  English or Hindi: the same switch and saved choice as the member site (mettleup.site.lang). A reload in the middle
+  keeps the steps done so far (sessionStorage, this tab only). Light or dark follows the phone.
+-->
+<style>
+  :root { --bg:#F6F7F9; --surface:#FFFFFF; --field:#FFFFFF; --ink:#12141B; --ink2:#454B59; --muted:#5C6373; --accent:#C2410C; --on-accent:#FFFFFF; --line:#D5D9E1; --bad:#B3261E; --good:#1B7F3B; --soft:#EEF0F4; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#07080C; --surface:#12141B; --field:#0C0E14; --ink:#F4F5F8; --ink2:#B9BFCC; --muted:#9AA1B2; --accent:#F0570F; --on-accent:#1F0D05; --line:#2C303C; --bad:#FF8A80; --good:#7BD88F; --soft:#1A1D26; }
+  }
+  * { box-sizing:border-box; }
+  html,body { margin:0; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans Devanagari",sans-serif; }
+  main { max-width:480px; margin:0 auto; padding:16px 16px 40px; }
+  .bar { display:flex; justify-content:flex-end; }
+  .pill { min-height:44px; padding:0 16px; border-radius:12px; border:1px solid var(--line); background:var(--surface); color:var(--ink); font:inherit; font-size:15px; font-weight:700; cursor:pointer; }
+  .logo { width:80px; height:80px; border-radius:20px; background:var(--surface); border:1px solid var(--line); display:flex; align-items:center; justify-content:center; overflow:hidden; margin:4px auto 12px; }
+  .logo img { max-width:68px; max-height:68px; object-fit:contain; }
+  .logo span { font-size:36px; font-weight:800; color:var(--accent); }
+  h1 { font-size:26px; line-height:1.2; text-align:center; margin:0 0 6px; text-wrap:balance; overflow-wrap:anywhere; }
+  .sub { color:var(--ink2); font-size:16px; line-height:1.45; text-align:center; margin:0 0 4px; }
+  .steps { display:flex; gap:6px; margin:18px 0 4px; }
+  .steps i { flex:1; height:6px; border-radius:3px; background:var(--line); }
+  .steps i.on { background:var(--accent); }
+  .card { background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:16px; margin-top:12px; }
+  .card h2 { font-size:19px; line-height:1.3; margin:0 0 14px; overflow-wrap:anywhere; }
+  .card h2:focus { outline:none; }
+  .kicker { display:block; font-size:13px; font-weight:700; color:var(--muted); margin-bottom:2px; }
+  .field { margin-bottom:16px; }
+  label, legend { font-size:15px; font-weight:700; line-height:1.35; }
+  input[type=text], input[type=tel], input[type=date] { display:block; width:100%; margin-top:6px; min-height:52px; padding:12px 14px; font:inherit; font-size:17px; color:var(--ink); background:var(--field); border:1px solid var(--line); border-radius:12px; }
+  input:focus-visible, .opts label:focus-within, .tick:focus-within, .btn:focus-visible, .pill:focus-visible, .link:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+  .phone { display:flex; gap:8px; align-items:stretch; margin-top:6px; }
+  .phone span { display:flex; align-items:center; padding:0 12px; border:1px solid var(--line); border-radius:12px; color:var(--ink2); font-size:17px; background:var(--soft); }
+  .phone input { margin-top:0; }
+  fieldset { border:0; margin:0 0 16px; padding:0; min-width:0; }
+  .opts { display:grid; gap:8px; margin-top:8px; }
+  .opts.three { grid-template-columns:repeat(3, minmax(0,1fr)); }
+  .opts label { position:relative; display:flex; flex-direction:column; justify-content:center; min-height:52px; padding:10px 14px; border:1px solid var(--line); border-radius:12px; background:var(--field); font-size:16px; cursor:pointer; overflow-wrap:anywhere; }
+  .opts input { position:absolute; opacity:0; inset:0; margin:0; cursor:pointer; }
+  .opts label:has(input:checked) { border-color:var(--accent); box-shadow:inset 0 0 0 1px var(--accent); }
+  .plan { display:grid; grid-template-columns:1fr auto; gap:2px 12px; align-items:baseline; }
+  .plan b { font-size:17px; }
+  .plan .price { font-size:17px; font-weight:800; text-align:right; }
+  .plan .len, .plan .fee { color:var(--ink2); font-size:14px; font-weight:500; }
+  .plan .fee { text-align:right; }
+  .help { color:var(--muted); font-size:14px; line-height:1.45; margin:6px 0 0; }
+  .err { color:var(--bad); font-size:15px; font-weight:600; line-height:1.4; margin:8px 0 0; }
+  .ok { color:var(--good); font-weight:700; }
+  .total { display:flex; justify-content:space-between; align-items:baseline; gap:12px; padding:14px; border-radius:12px; background:var(--soft); margin-top:4px; }
+  .total b { font-size:22px; }
+  .total span { font-size:15px; font-weight:700; }
+  .wa { border:1px dashed var(--line); border-radius:12px; padding:14px; margin-top:12px; }
+  .wa p { margin:0 0 10px; line-height:1.45; font-size:15px; }
+  .wa .code { font-family:ui-monospace,Menlo,Consolas,monospace; font-weight:800; }
+  .wait { display:flex; align-items:center; gap:10px; color:var(--ink2); font-size:15px; margin-top:10px; }
+  .dot { width:10px; height:10px; border-radius:50%; background:var(--accent); animation:blink 1.2s infinite; flex:none; }
+  @keyframes blink { 50% { opacity:.25; } }
+  @media (prefers-reduced-motion: reduce) { .dot { animation:none; } }
+  .checked { display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; padding:12px 14px; border-radius:12px; background:var(--soft); margin-top:10px; }
+  dl { margin:0 0 16px; display:grid; grid-template-columns:auto 1fr; gap:8px 14px; font-size:16px; }
+  dt { color:var(--muted); font-weight:600; }
+  dd { margin:0; font-weight:700; overflow-wrap:anywhere; }
+  .tick { display:flex; gap:12px; align-items:flex-start; padding:14px; border:1px solid var(--line); border-radius:12px; background:var(--field); margin-bottom:10px; font-size:16px; font-weight:600; line-height:1.4; cursor:pointer; }
+  .tick input { width:24px; height:24px; margin:0; flex:none; accent-color:var(--accent); }
+  .btn { display:flex; align-items:center; justify-content:center; width:100%; min-height:56px; border:0; border-radius:14px; background:var(--accent); color:var(--on-accent); font:inherit; font-size:18px; font-weight:800; text-decoration:none; padding:10px 16px; cursor:pointer; text-align:center; }
+  .btn.ghost { background:transparent; color:var(--ink); border:1px solid var(--line); }
+  .btn[disabled] { opacity:.6; cursor:wait; }
+  .row { display:grid; grid-template-columns:1fr 2fr; gap:10px; margin-top:18px; }
+  .link { background:none; border:0; padding:6px 0; color:var(--accent); font:inherit; font-size:15px; font-weight:700; text-decoration:underline; cursor:pointer; }
+  .note { color:var(--muted); font-size:14px; line-height:1.45; margin:12px 0 0; }
+  .note a { color:inherit; }
+  .done h2 { color:var(--good); }
+  .done p { font-size:16px; line-height:1.5; margin:0 0 10px; }
+  .trap { position:absolute; left:-10000px; width:1px; height:1px; overflow:hidden; }
+  .hide { display:none !important; }
+  @media (min-width:720px) { main { padding-top:40px; } }
+</style>
+</head>
+<body>
+<main>
+  <div class="bar"><button class="pill" type="button" id="lang" lang="hi">हिंदी</button></div>
+  <div class="logo" id="logo" aria-hidden="true"><span id="initial">M</span></div>
+  <h1 id="title">Become a member</h1>
+  <p class="sub" id="sub" data-t="lead">Join in 3 short steps. You pay at the gym desk.</p>
+
+  <form id="form" novalidate class="hide">
+    <div class="steps" aria-hidden="true"><i id="bar1"></i><i id="bar2"></i><i id="bar3"></i></div>
+
+    <!-- Step 1: about you -->
+    <section class="card" id="step1">
+      <h2 tabindex="-1"><span class="kicker" data-t="step1of3">Step 1 of 3</span><span data-t="aboutYou">About you</span></h2>
+      <div class="field">
+        <label for="name" data-t="fullName">Full name</label>
+        <input id="name" type="text" autocomplete="name" maxlength="80">
+        <p class="err hide" id="name-err" role="alert"></p>
+      </div>
+      <div class="field">
+        <label for="phone" data-t="mobile">Mobile number</label>
+        <div class="phone"><span>+91</span><input id="phone" type="tel" inputmode="tel" autocomplete="tel-national" maxlength="16" placeholder="98765 43210"></div>
+        <div id="verify-box">
+          <p class="help" data-t="verifyWhy">We check that this number is yours. You send one WhatsApp message to MettleUp. It is free.</p>
+          <div class="gap" style="height:10px"></div>
+          <button class="btn ghost" type="button" id="verify" data-t="verify">Verify with WhatsApp</button>
+        </div>
+        <div class="wa hide" id="wa">
+          <p data-t="waHow">Tap the button below. WhatsApp opens with the message ready. Tap Send, then come back to this page.</p>
+          <a class="btn" id="wa-open" href="#" target="_blank" rel="noopener" data-t="waOpen">Open WhatsApp</a>
+          <p class="help" id="wa-manual"></p>
+          <p class="help" data-t="waComputer">On a computer? Send the message from WhatsApp on the phone with this number.</p>
+          <div class="wait" id="wa-wait"><span class="dot"></span><span data-t="waWaiting">Waiting for your WhatsApp message…</span></div>
+        </div>
+        <div class="checked hide" id="checked">
+          <span class="ok" id="checked-line"></span>
+          <button class="link" type="button" id="change" data-t="change">Change number</button>
+        </div>
+        <p class="err hide" id="phone-err" role="alert"></p>
+      </div>
+      <fieldset>
+        <legend data-t="gender">Gender (you can skip this)</legend>
+        <div class="opts three">
+          <label><input type="radio" name="gender" value="male"><span data-t="male">Male</span></label>
+          <label><input type="radio" name="gender" value="female"><span data-t="female">Female</span></label>
+          <label><input type="radio" name="gender" value="other"><span data-t="other">Other</span></label>
+        </div>
+      </fieldset>
+      <button class="btn" type="button" id="next1" data-t="next">Next</button>
+    </section>
+
+    <!-- Step 2: your plan -->
+    <section class="card hide" id="step2">
+      <h2 tabindex="-1"><span class="kicker" data-t="step2of3">Step 2 of 3</span><span data-t="yourPlan">Your plan</span></h2>
+      <fieldset>
+        <legend data-t="pickPlan">Pick a plan</legend>
+        <div class="opts" id="plans"></div>
+        <p class="err hide" id="plan-err" role="alert"></p>
+      </fieldset>
+      <div class="field">
+        <label for="start" data-t="startDate">Start date</label>
+        <input id="start" type="date">
+        <p class="help" id="start-help"></p>
+        <p class="err hide" id="start-err" role="alert"></p>
+      </div>
+      <div class="total" id="total-box">
+        <span data-t="toPay">To pay at the gym desk</span>
+        <b id="total">—</b>
+      </div>
+      <p class="help" id="total-parts"></p>
+      <div class="row">
+        <button class="btn ghost" type="button" id="back2" data-t="back">Back</button>
+        <button class="btn" type="button" id="next2" data-t="next">Next</button>
+      </div>
+    </section>
+
+    <!-- Step 3: agree and send -->
+    <section class="card hide" id="step3">
+      <h2 tabindex="-1"><span class="kicker" data-t="step3of3">Step 3 of 3</span><span data-t="agreeSend">Agree and send</span></h2>
+      <dl id="summary"></dl>
+      <fieldset>
+        <legend data-t="howPay">How you pay</legend>
+        <div class="opts">
+          <label><input type="radio" name="pay" value="desk" checked><span data-t="payDesk">Pay at the desk</span></label>
+        </div>
+        <p class="help" data-t="payNote">You pay when you come to the gym. Nothing is paid on this page.</p>
+      </fieldset>
+      <label class="tick"><input type="checkbox" id="adult"><span data-t="consentAdult">I am 18 or older and agree to the gym's terms and privacy notice.</span></label>
+      <p class="help" style="margin:-4px 0 12px" data-t="under18">Under 18? Please join at the gym desk with a parent or guardian.</p>
+      <label class="tick"><input type="checkbox" id="health"><span data-t="consentHealth">I have no medical condition that stops me exercising, or I will tell the trainer.</span></label>
+      <!-- A bot fills every box; a person never sees this one. -->
+      <div class="trap" aria-hidden="true"><label for="website">Website</label><input id="website" type="text" tabindex="-1" autocomplete="off"></div>
+      <p class="err hide" id="send-err" role="alert"></p>
+      <div class="row">
+        <button class="btn ghost" type="button" id="back3" data-t="back">Back</button>
+        <button class="btn" type="submit" id="send" data-t="send">Send to the gym</button>
+      </div>
+      <p class="note"><span id="privacy"></span> <a href="/privacy" target="_blank" rel="noopener" data-t="privacyLink">How MettleUp keeps your details safe</a></p>
+    </section>
+  </form>
+
+  <section class="card done hide" id="done" role="status" tabindex="-1">
+    <h2 id="done-title"></h2>
+    <p id="done-plan"></p>
+    <p id="done-pay"></p>
+    <p class="note" data-t="doneClose">You can close this page now.</p>
+  </section>
+
+  <section class="card hide" id="member" role="alert">
+    <h2 data-t="memberTitle">This number is already a member here. Renew instead?</h2>
+    <p class="note" style="margin-top:0" data-t="memberHow">Renew at the gym desk, or in the MettleUp app: Gym → "My gym" → "Renew my plan".</p>
+    <p class="note" data-t="memberOther">Is this someone else's number? Use your own mobile number.</p>
+    <div style="height:12px"></div>
+    <button class="btn ghost" type="button" id="other-number" data-t="otherNumber">Use another number</button>
+  </section>
+
+  <section class="card hide" id="closed">
+    <h2 id="closed-title"></h2>
+    <p class="note" style="margin:0" data-t="joinAtDesk">Please join at the gym desk.</p>
+  </section>
+
+  <section class="card hide" id="none">
+    <h2 data-t="noneTitle">This gym link does not work</h2>
+    <p class="note" style="margin:0" data-t="noneHow">Ask the gym for a new link.</p>
+  </section>
+
+  <section class="card hide" id="offline">
+    <h2 data-t="offlineTitle">Could not reach the gym</h2>
+    <p class="note" style="margin:0" data-t="offlineHow">Check your internet and open the link again.</p>
+  </section>
+</main>
+<script>
+(function () {
+  var KEY = 'sb_publishable_-GBJ1u036bdCX2mtff3ghQ_Gx-hZyGo';
+  var API = 'https://hdxzqbdiokjklnypfisq.supabase.co/rest/v1/rpc/self_join_preview';
+  var m = /^\/m\/([A-Za-z0-9]{6})\/?$/.exec(location.pathname);
+  var code = m ? m[1].toUpperCase() : null;
+  var root = document.documentElement;
+  var $ = function (id) { return document.getElementById(id); };
+  var show = function (id, on) { $(id).classList.toggle('hide', !on); };
+  var all = function (sel) { return Array.prototype.slice.call(document.querySelectorAll(sel)); };
+
+  // ---------------------------------------------------------------- words: English, then Hindi
+  var WORDS = {
+    en: {
+      lead: 'Join in 3 short steps. You pay at the gym desk.',
+      step1of3: 'Step 1 of 3', step2of3: 'Step 2 of 3', step3of3: 'Step 3 of 3',
+      aboutYou: 'About you', yourPlan: 'Your plan', agreeSend: 'Agree and send',
+      fullName: 'Full name', mobile: 'Mobile number',
+      verifyWhy: 'We check that this number is yours. You send one WhatsApp message to MettleUp. It is free.',
+      verify: 'Verify with WhatsApp',
+      waHow: 'Tap the button below. WhatsApp opens with the message ready. Tap Send, then come back to this page.',
+      waOpen: 'Open WhatsApp', waOpenAgain: 'Open WhatsApp again',
+      waManual: 'Or send "{text}" to {num} on WhatsApp.',
+      waComputer: 'On a computer? Send the message from WhatsApp on the phone with this number.',
+      waWaiting: 'Waiting for your WhatsApp message…',
+      checkedLine: 'Number checked: {phone}', change: 'Change number',
+      wrong_number: 'That message came from a different WhatsApp number. Send it from the WhatsApp on {phone}.',
+      no_code: 'We got your message, but the code was missing. Tap "Open WhatsApp again" and send the message without changes.',
+      expired: 'Time ran out. Tap "Verify with WhatsApp" again.',
+      too_many: 'Too many messages came from other numbers. Tap "Verify with WhatsApp" again.',
+      TOO_SOON: 'Please wait a minute, then try again.',
+      V_TOO_MANY: 'Too many tries for this number today. Please try again tomorrow.',
+      V_OFF: 'We cannot check numbers right now. Please try again later, or join at the gym desk.',
+      gender: 'Gender (you can skip this)', male: 'Male', female: 'Female', other: 'Other',
+      next: 'Next', back: 'Back',
+      BAD_NAME: 'Type your full name.', BAD_PHONE: 'Type a 10-digit mobile number.',
+      NEED_CHECK: 'Check your number with WhatsApp first.',
+      pickPlan: 'Pick a plan', months1: '1 month', monthsN: '{n} months', days1: '1 day', daysN: '{n} days',
+      feeLine: '+ {fee} joining fee',
+      startDate: 'Start date', startHelp: 'From today up to {last}.',
+      toPay: 'To pay at the gym desk', parts: 'Plan {p} + joining fee {f}',
+      NO_PLANS: 'This gym has no plans you can pick online yet. Please join at the gym desk.',
+      PICK_PLAN: 'Pick a plan.', BAD_DATE: 'Pick a start date from today up to {last}.',
+      sName: 'Name', sMobile: 'Mobile', sPlan: 'Plan', sStarts: 'Starts on', sTotal: 'To pay at the desk',
+      howPay: 'How you pay', payDesk: 'Pay at the desk',
+      payNote: 'You pay when you come to the gym. Nothing is paid on this page.',
+      consentAdult: 'I am 18 or older and agree to the gym’s terms and privacy notice.',
+      consentHealth: 'I have no medical condition that stops me exercising, or I will tell the trainer.',
+      under18: 'Under 18? Please join at the gym desk with a parent or guardian.',
+      NO_ADULT: 'To join online, you must be 18 or older. If you are under 18, please join at the gym desk with a parent or guardian.',
+      NO_HEALTH: 'Tick the second box to send. If you have a health problem, please talk to the gym first.',
+      privacy: 'Only {gym} sees your details.', privacyLink: 'How MettleUp keeps your details safe',
+      send: 'Send to the gym',
+      doneTitle: 'Sent to {gym}', donePlan: 'Your plan: {plan}, starting {date}.',
+      donePay: 'Pay {total} at the gym desk on your first visit. The gym then makes you a member.',
+      doneClose: 'You can close this page now.',
+      memberTitle: 'This number is already a member here. Renew instead?',
+      memberHow: 'Renew at the gym desk, or in the MettleUp app: Gym → "My gym" → "Renew my plan".',
+      memberOther: 'Is this someone else’s number? Use your own mobile number.',
+      otherNumber: 'Use another number',
+      closedTitle: '{gym} is not taking sign-ups online right now', joinAtDesk: 'Please join at the gym desk.',
+      noneTitle: 'This gym link does not work', noneHow: 'Ask the gym for a new link.',
+      offlineTitle: 'Could not reach the gym', offlineHow: 'Check your internet and open the link again.',
+      TOO_MANY: 'Too many sign-ups were sent today. Please try again tomorrow, or join at the gym desk.',
+      NOT_READY: 'Online sign-up is not ready yet. Please join at the gym desk.',
+      TRY_AGAIN: 'Could not send. Check your internet and try again.',
+      PROOF_AGAIN: 'Please check your number with WhatsApp again.',
+      PLAN_CHANGED: 'The gym changed its plans. Please pick a plan again.',
+      pageTitle: 'Become a member of {gym}'
+    },
+    hi: {
+      lead: '3 छोटे स्टेप में मेंबर बनें। पैसे जिम के काउंटर पर देने हैं।',
+      step1of3: 'स्टेप 1 / 3', step2of3: 'स्टेप 2 / 3', step3of3: 'स्टेप 3 / 3',
+      aboutYou: 'आपके बारे में', yourPlan: 'आपका प्लान', agreeSend: 'सहमति दें और भेजें',
+      fullName: 'पूरा नाम', mobile: 'मोबाइल नंबर',
+      verifyWhy: 'हम जाँचते हैं कि यह नंबर आपका ही है। आप MettleUp को एक WhatsApp मैसेज भेजेंगे। इसका कोई पैसा नहीं लगता।',
+      verify: 'WhatsApp से वेरिफ़ाई करें',
+      waHow: 'नीचे बटन दबाएँ। WhatsApp में मैसेज तैयार मिलेगा। Send दबाएँ, फिर इस पेज पर वापस आएँ।',
+      waOpen: 'WhatsApp खोलें', waOpenAgain: 'WhatsApp फिर से खोलें',
+      waManual: 'या WhatsApp पर {num} को "{text}" भेजें।',
+      waComputer: 'कंप्यूटर पर हैं? इस नंबर वाले फ़ोन के WhatsApp से मैसेज भेजें।',
+      waWaiting: 'आपके WhatsApp मैसेज का इंतज़ार है…',
+      checkedLine: 'नंबर वेरिफ़ाई हो गया: {phone}', change: 'नंबर बदलें',
+      wrong_number: 'यह मैसेज किसी दूसरे WhatsApp नंबर से आया। इसे {phone} वाले WhatsApp से भेजें।',
+      no_code: 'आपका मैसेज मिला, पर उसमें कोड नहीं था। "WhatsApp फिर से खोलें" दबाएँ और मैसेज बिना बदले भेजें।',
+      expired: 'समय खत्म हो गया। "WhatsApp से वेरिफ़ाई करें" फिर से दबाएँ।',
+      too_many: 'दूसरे नंबरों से बहुत मैसेज आए। "WhatsApp से वेरिफ़ाई करें" फिर से दबाएँ।',
+      TOO_SOON: 'एक मिनट रुककर फिर कोशिश करें।',
+      V_TOO_MANY: 'आज इस नंबर से बहुत बार कोशिश हो चुकी है। कल फिर कोशिश करें।',
+      V_OFF: 'अभी नंबर की जाँच नहीं हो पा रही है। थोड़ी देर बाद कोशिश करें, या जिम के काउंटर पर जॉइन करें।',
+      gender: 'लिंग (चाहें तो छोड़ दें)', male: 'पुरुष', female: 'महिला', other: 'अन्य',
+      next: 'आगे', back: 'पीछे',
+      BAD_NAME: 'अपना पूरा नाम लिखें।', BAD_PHONE: '10 अंकों का मोबाइल नंबर लिखें।',
+      NEED_CHECK: 'पहले WhatsApp से अपना नंबर वेरिफ़ाई करें।',
+      pickPlan: 'प्लान चुनें', months1: '1 महीना', monthsN: '{n} महीने', days1: '1 दिन', daysN: '{n} दिन',
+      feeLine: '+ {fee} जॉइनिंग फ़ीस',
+      startDate: 'शुरू होने की तारीख', startHelp: 'आज से {last} तक।',
+      toPay: 'जिम के काउंटर पर देने हैं', parts: 'प्लान {p} + जॉइनिंग फ़ीस {f}',
+      NO_PLANS: 'इस जिम का कोई प्लान अभी ऑनलाइन नहीं चुना जा सकता। कृपया जिम के काउंटर पर जॉइन करें।',
+      PICK_PLAN: 'एक प्लान चुनें।', BAD_DATE: 'आज से {last} तक की कोई तारीख चुनें।',
+      sName: 'नाम', sMobile: 'मोबाइल', sPlan: 'प्लान', sStarts: 'शुरुआत', sTotal: 'काउंटर पर देने हैं',
+      howPay: 'पैसे कैसे देंगे', payDesk: 'काउंटर पर पैसे दें',
+      payNote: 'आप जिम आने पर पैसे देंगे। इस पेज पर कोई पैसा नहीं लिया जाता।',
+      consentAdult: 'मेरी उम्र 18 साल या उससे ज़्यादा है। मुझे जिम की शर्तें और प्राइवेसी नोटिस मंज़ूर हैं।',
+      consentHealth: 'मुझे ऐसी कोई बीमारी नहीं है जिससे मैं कसरत न कर सकूँ। अगर है, तो मैं ट्रेनर को ज़रूर बताऊँगा/बताऊँगी।',
+      under18: '18 साल से कम उम्र है? कृपया माता-पिता या अभिभावक के साथ जिम के काउंटर पर जॉइन करें।',
+      NO_ADULT: 'ऑनलाइन जॉइन करने के लिए उम्र 18 साल या उससे ज़्यादा होनी चाहिए। 18 से कम है, तो माता-पिता या अभिभावक के साथ जिम के काउंटर पर जॉइन करें।',
+      NO_HEALTH: 'भेजने के लिए दूसरा बॉक्स टिक करें। अगर तबीयत की कोई परेशानी है, तो पहले जिम से बात करें।',
+      privacy: 'आपकी जानकारी सिर्फ़ {gym} देखेगा।', privacyLink: 'MettleUp आपकी जानकारी कैसे सुरक्षित रखता है',
+      send: 'जिम को भेजें',
+      doneTitle: '{gym} को भेज दिया', donePlan: 'आपका प्लान: {plan}, {date} से।',
+      donePay: 'पहली बार आने पर जिम के काउंटर पर {total} दें। फिर जिम आपको मेंबर बना देगा।',
+      doneClose: 'अब आप यह पेज बंद कर सकते हैं।',
+      memberTitle: 'यह नंबर पहले से यहाँ का मेंबर है। प्लान रिन्यू करना है?',
+      memberHow: 'जिम के काउंटर पर रिन्यू करें, या MettleUp ऐप में: Gym → "My gym" → "Renew my plan"।',
+      memberOther: 'क्या यह किसी और का नंबर है? अपना मोबाइल नंबर डालें।',
+      otherNumber: 'दूसरा नंबर डालें',
+      closedTitle: '{gym} अभी ऑनलाइन जॉइनिंग नहीं ले रहा है', joinAtDesk: 'कृपया जिम के काउंटर पर जॉइन करें।',
+      noneTitle: 'यह जिम लिंक काम नहीं कर रहा', noneHow: 'जिम से नया लिंक माँगें।',
+      offlineTitle: 'जिम से कनेक्ट नहीं हो पाया', offlineHow: 'इंटरनेट चेक करें और लिंक फिर से खोलें।',
+      TOO_MANY: 'आज बहुत सारे फ़ॉर्म भेजे जा चुके हैं। कल फिर कोशिश करें, या जिम के काउंटर पर जॉइन करें।',
+      NOT_READY: 'ऑनलाइन जॉइनिंग अभी तैयार नहीं है। कृपया जिम के काउंटर पर जॉइन करें।',
+      TRY_AGAIN: 'भेजा नहीं जा सका। इंटरनेट चेक करके फिर कोशिश करें।',
+      PROOF_AGAIN: 'कृपया WhatsApp से अपना नंबर फिर से वेरिफ़ाई करें।',
+      PLAN_CHANGED: 'जिम ने अपने प्लान बदले हैं। कृपया फिर से प्लान चुनें।',
+      pageTitle: '{gym} के मेंबर बनें'
+    }
+  };
+  var LANG = 'mettleup.site.lang';
+  var lang = 'en';
+  try { if (localStorage.getItem(LANG) === 'hi') lang = 'hi'; } catch (e) { /* quiet: private window, English */ }
+  function t(key, vars) {
+    var s = (WORDS[lang] && WORDS[lang][key]) || WORDS.en[key] || key;
+    return s.replace(/\{(\w+)\}/g, function (_, k) { return vars && vars[k] != null ? String(vars[k]) : ''; });
+  }
+
+  // ---------------------------------------------------------------- formats
+  var MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  var MON_HI = ['जनवरी', 'फ़रवरी', 'मार्च', 'अप्रैल', 'मई', 'जून', 'जुलाई', 'अगस्त', 'सितंबर', 'अक्टूबर', 'नवंबर', 'दिसंबर'];
+  function dayWords(iso) {
+    var p = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || '');
+    if (!p) return '';
+    var mo = Number(p[2]) - 1;
+    return Number(p[3]) + ' ' + (lang === 'hi' ? MON_HI[mo] : MON[mo]) + ' ' + p[1];
+  }
+  function rupees(paise) {
+    var n = Number(paise) || 0;
+    var whole = Math.floor(n / 100), part = n % 100;
+    return '₹' + whole.toLocaleString('en-IN') + (part ? '.' + String(part).padStart(2, '0') : '');
+  }
+  function lengthWords(p) {
+    var n = Number(p.durationCount) || 0;
+    if (p.durationUnit === 'day') return n === 1 ? t('days1') : t('daysN', { n: n });
+    return n === 1 ? t('months1') : t('monthsN', { n: n });
+  }
+  function digitsOf(v) { return String(v || '').replace(/\D/g, '').replace(/^(91|0)(?=\d{10}$)/, ''); }
+  function phoneWords(d) { return '+91 ' + d.slice(0, 5) + ' ' + d.slice(5); }
+  function waNumberWords(n) { var d = String(n || ''); return d.length === 12 && d.indexOf('91') === 0 ? '+91 ' + d.slice(2, 7) + ' ' + d.slice(7) : '+' + d; }
+
+  // ---------------------------------------------------------------- state (kept for a reload in the middle)
+  var gym = null;
+  var KEEP = 'mettleup.join.' + (code || '');
+  var S = { step: 1, name: '', phone: '', gender: '', plan: '', start: '', wa: null, waState: '', proof: '', proofPhone: '', proofExp: 0, done: null };
+  try { var kept = JSON.parse(sessionStorage.getItem(KEEP) || 'null'); if (kept && typeof kept === 'object') for (var k in S) if (k in kept) S[k] = kept[k]; } catch (e) { /* quiet: nothing kept, start fresh */ }
+  function save() { try { sessionStorage.setItem(KEEP, JSON.stringify(S)); } catch (e) { /* quiet: private window, a reload starts again */ } }
+
+  function say(id, key, vars) { var el = $(id); el.textContent = t(key, vars); el.dataset.key = key; el.dataset.vars = JSON.stringify(vars || {}); show(id, true); }
+  function unsay(id) { show(id, false); delete $(id).dataset.key; }
+  function clearErrors() { ['name-err', 'phone-err', 'plan-err', 'start-err', 'send-err'].forEach(unsay); }
+
+  // ---------------------------------------------------------------- drawing
+  function hexOk(h) { return typeof h === 'string' && /^#[0-9A-Fa-f]{6}$/.test(h); }
+  function onColour(h) {
+    var n = parseInt(h.slice(1), 16), r = n >> 16 & 255, g = n >> 8 & 255, b = n & 255;
+    var lin = function (c) { c /= 255; return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); };
+    var L = 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b);
+    return (L + 0.05) / 0.05 > 1.05 / (L + 0.05) ? '#111111' : '#FFFFFF';
+  }
+  function proofOk() { return !!S.proof && S.proofPhone === digitsOf($('phone').value) && S.proofExp > Date.now() + 30000; }
+  function selectedPlan() {
+    var list = (gym && gym.plans) || [];
+    for (var i = 0; i < list.length; i++) if (list[i].id === S.plan) return list[i];
+    return null;
+  }
+
+  function drawWords() {
+    root.lang = lang;
+    $('lang').textContent = lang === 'hi' ? 'English' : 'हिंदी';
+    $('lang').lang = lang === 'hi' ? 'en' : 'hi';
+    all('[data-t]').forEach(function (n) { n.textContent = t(n.getAttribute('data-t')); });
+    // Errors already on screen follow the language too.
+    all('.err').forEach(function (n) { if (n.dataset.key) n.textContent = t(n.dataset.key, JSON.parse(n.dataset.vars || '{}')); });
+    if (gym) {
+      document.title = t('pageTitle', { gym: gym.gymName });
+      $('privacy').textContent = t('privacy', { gym: gym.gymName });
+      $('closed-title').textContent = t('closedTitle', { gym: gym.gymName });
+    }
+    drawVerify();
+    drawPlans();
+    drawSummary();
+    drawDone();
+  }
+
+  function drawVerify() {
+    var d = digitsOf($('phone').value);
+    var ok = proofOk();
+    show('checked', ok);
+    show('verify-box', !ok);
+    if (ok) $('checked-line').textContent = t('checkedLine', { phone: phoneWords(d) });
+    var waiting = !ok && S.wa && S.wa.expiresAt > Date.now() && (S.waState === 'waiting' || S.waState === 'wrong_number' || S.waState === 'no_code');
+    show('wa', !!waiting);
+    if (waiting) {
+      $('wa-open').href = 'https://wa.me/' + S.wa.waNumber + '?text=' + encodeURIComponent(S.wa.waText);
+      $('wa-open').textContent = t(S.waState === 'waiting' ? 'waOpen' : 'waOpenAgain');
+      $('wa-manual').textContent = t('waManual', { text: 'MettleUp code ' + S.wa.code, num: waNumberWords(S.wa.waNumber) });
+    }
+  }
+
+  function drawPlans() {
+    var box = $('plans');
+    var list = (gym && gym.plans) || [];
+    box.innerHTML = '';
+    list.forEach(function (p) {
+      var l = document.createElement('label');
+      l.className = 'plan';
+      var i = document.createElement('input');
+      i.type = 'radio'; i.name = 'plan'; i.value = p.id; i.checked = p.id === S.plan;
+      i.addEventListener('change', function () { S.plan = p.id; save(); unsay('plan-err'); drawTotal(); });
+      var b = document.createElement('b'); b.textContent = p.name;
+      var price = document.createElement('span'); price.className = 'price'; price.textContent = rupees(p.priceP);
+      var len = document.createElement('span'); len.className = 'len'; len.textContent = lengthWords(p);
+      var fee = document.createElement('span'); fee.className = 'fee'; fee.textContent = Number(p.joiningFeeP) > 0 ? t('feeLine', { fee: rupees(p.joiningFeeP) }) : '';
+      l.appendChild(i); l.appendChild(b); l.appendChild(price); l.appendChild(len); l.appendChild(fee);
+      box.appendChild(l);
+    });
+    if (!list.length) say('plan-err', 'NO_PLANS');
+    if (gym && gym.lastDay) $('start-help').textContent = t('startHelp', { last: dayWords(gym.lastDay) });
+    drawTotal();
+  }
+
+  function drawTotal() {
+    var p = selectedPlan();
+    $('total').textContent = p ? rupees(p.totalP) : '—';
+    $('total-parts').textContent = p && Number(p.joiningFeeP) > 0 ? t('parts', { p: rupees(p.priceP), f: rupees(p.joiningFeeP) }) : '';
+  }
+
+  function drawSummary() {
+    var p = selectedPlan();
+    var dl = $('summary');
+    dl.innerHTML = '';
+    var rows = [['sName', S.name], ['sMobile', S.proofPhone ? phoneWords(S.proofPhone) : ''], ['sPlan', p ? p.name + ' (' + lengthWords(p) + ')' : ''], ['sStarts', dayWords(S.start)], ['sTotal', p ? rupees(p.totalP) : '']];
+    rows.forEach(function (r) {
+      var dt = document.createElement('dt'); dt.textContent = t(r[0]);
+      var dd = document.createElement('dd'); dd.textContent = r[1];
+      dl.appendChild(dt); dl.appendChild(dd);
+    });
+  }
+
+  function drawDone() {
+    var d = S.done;
+    if (!d || !gym) return;
+    $('done-title').textContent = t('doneTitle', { gym: d.gymName || gym.gymName });
+    $('done-plan').textContent = t('donePlan', { plan: d.planName || '', date: dayWords(d.startsOn) });
+    $('done-pay').textContent = t('donePay', { total: rupees(d.totalP) });
+  }
+
+  function goStep(n, focus) {
+    S.step = n; save();
+    [1, 2, 3].forEach(function (i) { show('step' + i, i === n); $('bar' + i).classList.toggle('on', i <= n); });
+    if (n === 3) drawSummary();
+    if (focus !== false) { var h = $('step' + n).querySelector('h2'); if (h) h.focus(); window.scrollTo(0, 0); }
+  }
+
+  function only(id) {
+    ['form', 'done', 'member', 'closed', 'none', 'offline'].forEach(function (x) { show(x, x === id); });
+    $('sub').classList.toggle('hide', id !== 'form');
+  }
+
+  // ---------------------------------------------------------------- the gym
+  function render(g) {
+    gym = g && g.gymName ? g : null;
+    if (!gym) { $('title').textContent = t('noneTitle'); only('none'); drawWords(); return; }
+    $('title').textContent = gym.gymName;
+    $('initial').textContent = (gym.gymName.trim().charAt(0) || 'M').toUpperCase();
+    var b = gym.brand || {};
+    if (hexOk(b.accent)) { root.style.setProperty('--accent', b.accent); root.style.setProperty('--on-accent', onColour(b.accent)); }
+    if (hexOk(b.bg)) $('logo').style.background = b.bg;
+    if (typeof b.logoUrl === 'string' && /^https:\/\/hdxzqbdiokjklnypfisq\.supabase\.co\//.test(b.logoUrl)) {
+      var img = new Image();
+      img.alt = '';
+      img.onload = function () { $('logo').innerHTML = ''; $('logo').appendChild(img); };
+      img.src = b.logoUrl;
+    }
+    if (gym.closed) { only('closed'); drawWords(); return; }
+    // The start day: kept if still allowed, else today (the gym server's today, India time).
+    $('start').min = gym.today || '';
+    $('start').max = gym.lastDay || '';
+    if (!S.start || (gym.today && S.start < gym.today) || (gym.lastDay && S.start > gym.lastDay)) S.start = gym.today || '';
+    $('start').value = S.start;
+    if (S.plan && !selectedPlan()) S.plan = '';
+    $('name').value = S.name;
+    $('phone').value = S.phone;
+    all('input[name=gender]').forEach(function (i) { i.checked = i.value === S.gender; });
+    if (S.done) { only('done'); drawWords(); return; }
+    only('form');
+    drawWords();
+    var step = S.step;
+    if (step >= 2 && !proofOk()) step = 1;
+    if (step === 3 && !selectedPlan()) step = 2;
+    goStep(step, false);
+    if (!proofOk() && S.wa && S.wa.expiresAt > Date.now()) startPolling();
+  }
+
+  // ---------------------------------------------------------------- step 1: name, number, WhatsApp check
+  $('name').addEventListener('input', function () { S.name = $('name').value; save(); });
+  $('phone').addEventListener('input', function () {
+    S.phone = $('phone').value; save();
+    if (S.proof && S.proofPhone !== digitsOf(S.phone)) { S.proof = ''; S.proofPhone = ''; save(); }
+    if (S.wa && S.wa.phone !== digitsOf(S.phone)) { stopPolling(); S.wa = null; S.waState = ''; save(); }
+    drawVerify();
+  });
+  all('input[name=gender]').forEach(function (i) { i.addEventListener('change', function () { S.gender = i.value; save(); }); });
+  $('change').addEventListener('click', function () {
+    S.proof = ''; S.proofPhone = ''; S.wa = null; S.waState = ''; save();
+    drawVerify(); $('phone').focus(); $('phone').select();
+  });
+
+  var timer = null;
+  function stopPolling() { if (timer) { clearInterval(timer); timer = null; } }
+  function startPolling() { stopPolling(); timer = setInterval(check, 2500); check(); }
+  function check() {
+    if (!S.wa) { stopPolling(); return; }
+    if (S.wa.expiresAt <= Date.now()) { stopPolling(); S.waState = 'expired'; save(); drawVerify(); say('phone-err', 'expired'); return; }
+    fetch('/api/phone-code/inbound/status?id=' + encodeURIComponent(S.wa.id), { cache: 'no-store' })
+      .then(function (r) { return r.json(); })
+      .then(function (a) {
+        if (!S.wa) return;
+        var st = a && a.state;
+        if (st === 'verified' && a.proof) {
+          stopPolling();
+          S.proof = a.proof; S.proofPhone = S.wa.phone; S.proofExp = Number(a.expiresAt) || Date.now() + 14 * 60000;
+          S.wa = null; S.waState = ''; save();
+          unsay('phone-err'); drawVerify();
+          return;
+        }
+        if (st === 'expired' || st === 'too_many' || st === 'verified') {
+          // 'verified' without a proof: it was handed to another tab already, so this one starts again.
+          stopPolling(); S.wa = null; S.waState = ''; save(); drawVerify();
+          say('phone-err', st === 'too_many' ? 'too_many' : 'expired');
+          return;
+        }
+        var shown = st === 'wrong_number' ? 'wrong_number' : a && a.hint === 'no_code' ? 'no_code' : 'waiting';
+        if (shown !== S.waState) { S.waState = shown; save(); drawVerify(); }
+        if (shown === 'waiting') unsay('phone-err'); else say('phone-err', shown, { phone: phoneWords(S.wa.phone) });
+      })
+      .catch(function () { /* quiet: the next tick asks again; a phone coming back from WhatsApp is often offline for a moment */ });
+  }
+  // Coming back from WhatsApp: ask at once, not at the next tick.
+  document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible' && timer) check(); });
+
+  $('verify').addEventListener('click', function () {
+    clearErrors();
+    var d = digitsOf($('phone').value);
+    if (!/^[6-9]\d{9}$/.test(d)) { say('phone-err', 'BAD_PHONE'); $('phone').focus(); return; }
+    var btn = $('verify');
+    btn.disabled = true;
+    fetch('/api/phone-code/inbound/start', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone: d, purpose: 'join', lang: lang === 'hi' ? 'hinglish' : 'en', website: $('website').value })
+    })
+      .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return { status: r.status, body: j }; }); })
+      .then(function (a) {
+        var b = a.body || {};
+        if (a.status === 200 && b.ok && b.id) {
+          S.wa = { id: b.id, code: b.code, waNumber: b.waNumber, waText: b.waText, expiresAt: Number(b.expiresAt) || Date.now() + 600000, phone: d };
+          S.waState = 'waiting'; save();
+          drawVerify();
+          startPolling();
+          $('wa-open').focus();
+          return;
+        }
+        var e = b.error;
+        if (e === 'BAD_PHONE') say('phone-err', 'BAD_PHONE');
+        else if (e === 'TOO_SOON') say('phone-err', 'TOO_SOON');
+        else if (e === 'TOO_MANY') say('phone-err', 'V_TOO_MANY');
+        else if (e === 'NOT_AVAILABLE' || a.status === 503 || a.status === 404) say('phone-err', 'V_OFF');
+        else say('phone-err', 'TRY_AGAIN');
+      })
+      .catch(function () { say('phone-err', 'TRY_AGAIN'); })
+      .then(function () { btn.disabled = false; });
+  });
+
+  function nameOk() { var n = $('name').value.replace(/\s+/g, ' ').trim(); return n.length >= 2 && /[^\s\d.,'-]/.test(n); }
+  $('next1').addEventListener('click', function () {
+    clearErrors();
+    var bad = false;
+    if (!nameOk()) { say('name-err', 'BAD_NAME'); bad = true; }
+    if (!/^[6-9]\d{9}$/.test(digitsOf($('phone').value))) { say('phone-err', 'BAD_PHONE'); bad = true; }
+    else if (!proofOk()) { say('phone-err', 'NEED_CHECK'); bad = true; }
+    if (bad) { (!nameOk() ? $('name') : $('phone')).focus(); return; }
+    S.name = $('name').value.replace(/\s+/g, ' ').trim(); save();
+    goStep(2);
+  });
+
+  // ---------------------------------------------------------------- step 2: plan and start day
+  $('start').addEventListener('change', function () { S.start = $('start').value; save(); unsay('start-err'); });
+  $('back2').addEventListener('click', function () { clearErrors(); goStep(1); });
+  $('next2').addEventListener('click', function () {
+    clearErrors();
+    var bad = false;
+    if (!selectedPlan()) { say('plan-err', (gym.plans || []).length ? 'PICK_PLAN' : 'NO_PLANS'); bad = true; }
+    S.start = $('start').value;
+    if (!S.start || S.start < gym.today || S.start > gym.lastDay) { say('start-err', 'BAD_DATE', { last: dayWords(gym.lastDay) }); bad = true; }
+    save();
+    if (!bad) goStep(3);
+  });
+
+  // ---------------------------------------------------------------- step 3: agree and send
+  $('back3').addEventListener('click', function () { clearErrors(); goStep(2); });
+  $('adult').addEventListener('change', function () { if ($('adult').checked) unsay('send-err'); });
+  $('health').addEventListener('change', function () { if ($('health').checked) unsay('send-err'); });
+
+  function reloadPlans() {
+    return fetch(API, { method: 'POST', headers: { apikey: KEY, 'Content-Type': 'application/json' }, body: JSON.stringify({ p_code: code }) })
+      .then(function (r) { if (!r.ok) throw new Error(String(r.status)); return r.json(); })
+      .then(function (g) { if (g && g.gymName && !g.closed) { gym = g; if (!selectedPlan()) S.plan = ''; save(); drawPlans(); } })
+      .catch(function () { /* quiet: the plans on screen stay; sending again asks the server again */ });
+  }
+
+  $('form').addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    clearErrors();
+    if (!$('adult').checked) { say('send-err', 'NO_ADULT'); $('adult').focus(); return; }
+    if (!$('health').checked) { say('send-err', 'NO_HEALTH'); $('health').focus(); return; }
+    if (!proofOk()) { S.proof = ''; save(); goStep(1); drawVerify(); say('phone-err', 'PROOF_AGAIN'); return; }
+    var btn = $('send');
+    btn.disabled = true;
+    fetch('/api/self-join', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code: code, name: S.name, proof: S.proof, gender: S.gender || null, plan: S.plan, start: S.start, adult: true, health: true, lang: lang, website: $('website').value })
+    })
+      .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return { status: r.status, body: j }; }); })
+      .then(function (a) {
+        var b = a.body || {};
+        if (a.status === 201 && b.ok) {
+          var p = selectedPlan();
+          S.done = { gymName: b.gymName || gym.gymName, planName: b.planName || (p && p.name) || '', startsOn: b.startsOn || S.start, totalP: b.totalP != null ? b.totalP : p ? p.totalP : 0 };
+          S.proof = ''; S.wa = null; save();
+          only('done'); drawDone(); $('done').focus(); window.scrollTo(0, 0);
+          return;
+        }
+        var e = b.error;
+        if (e === 'MEMBER') { S.proof = ''; save(); only('member'); return; }
+        if (e === 'CLOSED') { only('closed'); return; }
+        if (e === 'NO_GYM') { $('title').textContent = t('noneTitle'); only('none'); return; }
+        if (e === 'BAD_PROOF') { S.proof = ''; save(); goStep(1); drawVerify(); say('phone-err', 'PROOF_AGAIN'); return; }
+        if (e === 'BAD_NAME') { goStep(1); say('name-err', 'BAD_NAME'); return; }
+        if (e === 'BAD_PLAN') { reloadPlans().then(function () { goStep(2); say('plan-err', 'PLAN_CHANGED'); }); return; }
+        if (e === 'BAD_DATE') { goStep(2); say('start-err', 'BAD_DATE', { last: dayWords(gym.lastDay) }); return; }
+        if (e === 'NO_CONSENT') { say('send-err', 'NO_ADULT'); return; }
+        say('send-err', e === 'TOO_MANY' || e === 'NOT_READY' ? e : 'TRY_AGAIN');
+      })
+      .catch(function () { say('send-err', 'TRY_AGAIN'); })
+      .then(function () { btn.disabled = false; });
+  });
+
+  // "Already a member" with someone else's number: back to step 1 with the number cleared.
+  $('other-number').addEventListener('click', function () {
+    S.phone = ''; S.proof = ''; S.proofPhone = ''; S.wa = null; S.waState = ''; save();
+    $('phone').value = '';
+    only('form'); goStep(1); drawVerify(); $('phone').focus();
+  });
+
+  $('lang').addEventListener('click', function () {
+    lang = lang === 'hi' ? 'en' : 'hi';
+    try { localStorage.setItem(LANG, lang); } catch (e) { /* quiet: private window, the choice just isn't kept */ }
+    drawWords();
+    if (!gym) $('title').textContent = t('noneTitle');
+  });
+
+  drawWords();
+  if (!code) { render(null); return; }
+  if (window.__GYM__ !== undefined) { render(window.__GYM__); return; }
+  fetch(API, { method: 'POST', headers: { apikey: KEY, 'Content-Type': 'application/json' }, body: JSON.stringify({ p_code: code }) })
+    .then(function (r) { if (!r.ok) throw new Error(String(r.status)); return r.json(); })
+    .then(function (g) { render(g); })
+    .catch(function () { $('title').textContent = t('offlineTitle'); only('offline'); });
+})();
+</script>
+</body>
+</html>

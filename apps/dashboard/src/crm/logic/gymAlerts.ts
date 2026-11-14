@@ -2,7 +2,7 @@
  * R-506/R-510 (owner, 14 Nov 2026): the gym's alerts, one list of everything a member did that the gym should hear
  * about (supabase/migrations/0075_gym_alerts.sql owner_alerts): a trainer question, a message, feedback or a
  * complaint, a plan request, a check-in number, a shop order, an online payment, a report sent, a member who joined,
- * a friend who asked about joining. The server writes each line (the member's first name, what happened, where to
+ * a friend who asked about joining, someone who asked to join online (R-513, 0077). The server writes each line (the member's first name, what happened, where to
  * go) and shows each person only what they may see. The admin app rings for a new one while it is open (Needs you)
  * and lists the latest on Today. PURE: the polling lives in ui/NeedsYou.tsx.
  */
@@ -18,7 +18,9 @@ export type GymAlertKind =
   | 'paid_online'
   | 'report_sent'
   | 'member_joined'
-  | 'friend_referred';
+  | 'friend_referred'
+  // R-513 (supabase 0077): someone filled the gym's "Become a member" page. Urgent: sent at once.
+  | 'online_join';
 
 export const GYM_ALERT_KINDS: readonly GymAlertKind[] = [
   'trainer_question',
@@ -32,6 +34,7 @@ export const GYM_ALERT_KINDS: readonly GymAlertKind[] = [
   'report_sent',
   'member_joined',
   'friend_referred',
+  'online_join',
 ];
 
 export interface GymAlert {

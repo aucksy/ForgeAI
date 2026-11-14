@@ -44,6 +44,26 @@ export function inviteMessage(gymName: string, joinCode: string, memberName?: st
 }
 
 /**
+ * R-513 Join online: the gym's "Become a member" page (public/join-online.html). Not /j/: the MettleUp app claims
+ * /j/ and /c/ on a phone, and this page is for people with no app. PURE.
+ */
+export function joinOnlineLink(joinCode: string): string {
+  return `${INVITE_ORIGIN}/m/${encodeURIComponent(joinCode.trim().toUpperCase())}`;
+}
+
+/** R-513: the WhatsApp message with the "Become a member" link, for people who are not members yet. PURE. */
+export function joinOnlineMessage(gymName: string, joinCode: string): string {
+  const gym = gymName.trim() || 'our gym';
+  return [
+    'Hi!',
+    `Become a member of ${gym} from your phone. Pick a plan and send your details. You pay at the gym desk.`,
+    '',
+    'Tap to join:',
+    joinOnlineLink(joinCode),
+  ].join('\n');
+}
+
+/**
  * A wa.me link that opens WhatsApp with the message typed in: to one member's number, or with no
  * number (WhatsApp then asks who to send it to — a person, a group or the gym's broadcast list).
  * A number that is not a full international one (+ and country code) is left out rather than sent

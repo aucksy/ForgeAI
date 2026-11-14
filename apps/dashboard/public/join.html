@@ -72,6 +72,13 @@
       <p class="note" style="margin:0">Open this link on an Android phone, or ask the front desk.<small>Abhi MettleUp sirf Android phone par hai. Yeh link Android phone par kholiye.</small></p>
     </div>
 
+    <!-- R-513: not a member yet? The gym's "Become a member" page (join-online.html), on any phone, no app needed. -->
+    <div class="card" id="become-card">
+      <h2>Not a member yet?<br><small style="color:var(--ink2);font-weight:600">Abhi member nahi hain?</small></h2>
+      <p class="note" style="margin:0 0 12px">Pick a plan and send your details to the gym from this phone. You pay at the gym desk.<small>Plan chuniye aur apni details isi phone se gym ko bhejiye. Paise gym ke counter par dene hain.</small></p>
+      <a class="btn ghost" id="become" href="#">Become a member<small>Member baniye</small></a>
+    </div>
+
     <div class="card">
       <h2>Or type your gym’s code in the app<br><small style="color:var(--ink2);font-weight:600">Ya app ke Shop tab mein yeh code daalein</small></h2>
       <div class="code" id="code">——————</div>
@@ -117,6 +124,7 @@
     $('title').textContent = gym.gymName;
     $('sub').textContent = 'invites you to the MettleUp app';
     $('code').textContent = gym.joinCode;
+    $('become').href = '/m/' + gym.joinCode;
     $('initial').textContent = (gym.gymName.trim().charAt(0) || 'M').toUpperCase();
     var b = gym.brand || {};
     if (hexOk(b.accent)) {

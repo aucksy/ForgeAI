@@ -8,7 +8,7 @@
  * The bucket and message rules live in logic/enquiries.ts (pure, tested).
  */
 
-import { useCallback, useEffect, useMemo, useState, type CSSProperties, type ReactNode } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 
 import { useCan } from '../../auth/AuthProvider';
 import { useCrm } from '../../store';
@@ -36,10 +36,14 @@ import {
   type EnquiryFormDraft,
 } from '../../logic/enquiries';
 import { alreadyRewarded, friendReward, referralOf, type FriendReward } from '../../logic/referrals';
+import { memberPrefill, selfJoinOf, sellPlanFor, sellStartFor } from '../../logic/selfJoin';
+import { formatINR } from '../../logic/money';
+import type { CrmSnapshot } from '../../data/adapter';
 import { DIAL_CODES, findDuplicatePhone, formatPhone, normalizePhone, phoneDigits } from '../../logic/members';
 import { whatsAppHref } from '../../shop/invite';
 import type { Enquiry, Member } from '../../types';
 import { MemberFormSheet } from '../forms/MemberFormSheet';
+import { SellMembershipSheet } from '../forms/SellMembershipSheet';
 import {
   Button,
   Card,
@@ -135,15 +139,7 @@ export function EnquiriesScreen({ startAdding }: { startAdding?: boolean } = {})
    * the friend), then the enquiry remembers it so the offer never shows again. A second tap after a lost
    * save finds the note already on the plan and only marks the enquiry.
    */
-  const giveReward = async (e: Enquiry) => {
-    const r = friendReward(e, snapshot, today);
-    const ref = referralOf(e);
-    if (r.kind !== 'ready' || !ref) return;
-    if (!alreadyRewarded(snapshot.memberships, r.member.id, e.name)) {
-      await extendMembership(r.membership.id, r.days, r.reason);
-    }
-    await updateEnquiry(e.id, { referral: { ...ref, rewardGiven: { days: r.days, membershipId: r.membership.id, on: today } } });
-  };
+  const giveReward = (e: Enquiry) => giveFriendReward(e, snapshot, today, extendMembership, updateEnquiry);
 
   /** After "Add as member": a referred friend opens the thank-you first, when there is one to give. */
   const joined = (e: Enquiry, member: Member) => {
@@ -248,6 +244,75 @@ export function EnquiriesScreen({ startAdding }: { startAdding?: boolean } = {})
   );
 }
 
+/** F147: the owner's one tap (see giveReward above). Shared with Today's "Joined online" (R-513). */
+async function giveFriendReward(
+  e: Enquiry,
+  snapshot: CrmSnapshot,
+  today: string,
+  extendMembership: (membershipId: string, days: number, reason: string) => Promise<unknown>,
+  updateEnquiry: (id: string, patch: { referral: NonNullable<Enquiry['referral']> }) => Promise<unknown>,
+): Promise<void> {
+  const r = friendReward(e, snapshot, today);
+  const ref = referralOf(e);
+  if (r.kind !== 'ready' || !ref) return;
+  if (!alreadyRewarded(snapshot.memberships, r.member.id, e.name)) {
+    await extendMembership(r.membership.id, r.days, r.reason);
+  }
+  await updateEnquiry(e.id, { referral: { ...ref, rewardGiven: { days: r.days, membershipId: r.membership.id, on: today } } });
+}
+
+/**
+ * R-513: "Make member" on Today's "Joined online" card. The same steps as "Add as member" on this screen: the
+ * filled-in Add member form, then Sell membership on the plan they picked (nothing collected: they pay at the
+ * desk), the F147 thank-you when a member invited them, then the new member's page.
+ */
+export function MakeMemberFlow({ enquiry, onClose, onError }: { enquiry: Enquiry; onClose: () => void; onError: (message: string) => void }) {
+  const { snapshot, today, updateEnquiry, extendMembership } = useCrm();
+  const canReward = useCan()('freeze');
+  const [thankFor, setThankFor] = useState<string | null>(null);
+  const thanking = useRef(false);
+  const fresh = (snapshot.enquiries ?? []).find((x) => x.id === enquiry.id) ?? enquiry;
+
+  if (thankFor) {
+    return (
+      <ThankSheet
+        reward={friendReward(fresh, snapshot, today)}
+        friendName={fresh.name}
+        afterJoin
+        onGive={() => giveFriendReward(fresh, snapshot, today, extendMembership, updateEnquiry)}
+        onClose={() => {
+          onClose();
+          navigate(`/members/${thankFor}`);
+        }}
+      />
+    );
+  }
+  return (
+    <ConvertFlow
+      enquiry={enquiry}
+      members={snapshot.members}
+      onClose={() => {
+        if (!thanking.current) onClose();
+      }}
+      onError={onError}
+      onJoined={(member) => {
+        const ready = friendReward({ ...enquiry, status: 'joined', memberId: member.id }, snapshot, today).kind === 'ready';
+        if (referralOf(enquiry) && ready && canReward) {
+          thanking.current = true;
+          setThankFor(member.id);
+        } else navigate(`/members/${member.id}`);
+      }}
+    />
+  );
+}
+
+/** R-513: the row's line for a "Become a member" request. */
+function selfJoinLine(e: Enquiry): string | null {
+  const j = selfJoinOf(e);
+  if (!j) return null;
+  return `Asked to join online: ${j.planName}, from ${formatDay(j.startsOn)}, ${formatINR(j.totalP)}. ${j.paid ? 'Paid.' : 'Not paid yet.'}`;
+}
+
 function EmptyEnquiries({ filter, total, action }: { filter: EnquiryFilter; total: number; action: ReactNode }) {
   if (total === 0) {
     return (
@@ -324,9 +389,15 @@ function EnquiryRow({
           <div style={{ fontFamily: font.mono, fontSize: 13, color: color.inkSecondary, marginTop: 2 }}>
             {formatPhone(e.phone)}
           </div>
-          {e.interest && (
+          {/* R-513: the server's "Joined online: ..." note is the older app's copy of the line below. */}
+          {e.interest && !(selfJoinLine(e) && e.interest.startsWith('Joined online:')) && (
             <div style={{ fontFamily: font.body, fontSize: 13, color: color.ink, marginTop: 4, overflowWrap: 'anywhere' }}>
               {e.interest}
+            </div>
+          )}
+          {selfJoinLine(e) && (
+            <div style={{ fontFamily: font.body, fontSize: 13, fontWeight: 600, color: color.accentBright, marginTop: 4, overflowWrap: 'anywhere' }}>
+              {selfJoinLine(e)}
             </div>
           )}
           {/* F147: a friend a member invited from the app. Only the member's name, never their number. */}
@@ -702,16 +773,25 @@ function ConvertFlow({
   /** Opens the member's page, or first the F147 thank-you for a friend a member invited. */
   onJoined: (member: Member) => void;
 }) {
-  const { updateEnquiry, setMemberArchived } = useCrm();
+  const { snapshot, today, memberViews, updateEnquiry, setMemberArchived } = useCrm();
   // Frozen when the flow opens: bringing an archived member back must not swap this sheet for the
   // "Already a member" one half-way through.
   const [existing] = useState(() => findDuplicatePhone(members, enquiry.phone));
   const [busy, setBusy] = useState(false);
   const [restoreError, setRestoreError] = useState<string | null>(null);
+  // R-513: a "Become a member" request goes on to Sell membership, opened on the plan and day they picked.
+  const [sellPlan] = useState(() => sellPlanFor(selfJoinOf(enquiry), snapshot.plans));
+  const [selling, setSelling] = useState<Member | null>(null);
+  const added = useRef(false);
 
-  const link = async (member: Member) => {
+  /** 'selling': the flow stays open for Sell membership; 'done': the caller closes it. */
+  const link = async (member: Member): Promise<'selling' | 'done'> => {
     try {
       await updateEnquiry(enquiry.id, { status: 'joined', memberId: member.id });
+      if (sellPlan) {
+        setSelling(member);
+        return 'selling';
+      }
       onJoined(member);
     } catch (e) {
       onError(
@@ -719,8 +799,27 @@ function ConvertFlow({
           ? e.message
           : 'The member was saved, but the enquiry was not closed.',
       );
+      if (added.current) onClose();
     }
+    return 'done';
   };
+
+  if (selling) {
+    // The new member's view arrives with the next draw after saving.
+    const view = memberViews.find((v) => v.member.id === selling.id);
+    if (!view) return null;
+    return (
+      <SellMembershipSheet
+        view={view}
+        initialPlanId={sellPlan}
+        initialStartsOn={sellStartFor(selfJoinOf(enquiry), today)}
+        onClose={() => {
+          onJoined(selling);
+          onClose();
+        }}
+      />
+    );
+  }
 
   if (existing?.archived) {
     // The number belongs to someone who was archived: the Add form would refuse it, and the
@@ -747,9 +846,9 @@ function ConvertFlow({
                   setBusy(false);
                   return;
                 }
-                await link({ ...existing, archived: false });
+                const next = await link({ ...existing, archived: false });
                 setBusy(false);
-                onClose();
+                if (next === 'done') onClose();
               }}
             >
               Bring back and mark joined
@@ -779,9 +878,9 @@ function ConvertFlow({
               disabled={busy}
               onClick={async () => {
                 setBusy(true);
-                await link(existing);
+                const next = await link(existing);
                 setBusy(false);
-                onClose();
+                if (next === 'done') onClose();
               }}
             >
               Mark joined and open
@@ -798,9 +897,15 @@ function ConvertFlow({
 
   return (
     <MemberFormSheet
-      initial={{ fullName: enquiry.name, phone: enquiry.phone }}
-      onClose={onClose}
-      onSaved={(member) => void link(member)}
+      initial={memberPrefill(enquiry)}
+      onClose={() => {
+        // Saved with a plan to sell next: the flow stays open (link above opens Sell membership).
+        if (!added.current || !sellPlan) onClose();
+      }}
+      onSaved={(member) => {
+        added.current = true;
+        void link(member);
+      }}
     />
   );
 }

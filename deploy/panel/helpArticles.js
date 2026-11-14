@@ -199,6 +199,16 @@ export const ALL_HELP_ARTICLES = [
     screens: ['apps/dashboard/src/crm/ui/screens/BringAFriend.tsx'],
   },
   {
+    id: 'join-online-admin',
+    unreleased: 'R-513 Join online: needs supabase 0077 applied and the panel worker deployed.',
+    who: 'owner',
+    title: 'New people join on their own phone ("Join on your phone")',
+    text:
+      'New people can ask to become members from their own phone, with no app. Open Settings, then "Invite members", and under "Join on your phone" tap "Send join link on WhatsApp" or download the join poster. ' +
+      'They type their name, check their number with one WhatsApp message, pick one of your plans and a start day. They pay at the desk, not online. ' +
+      'The request shows on Today under "Joined online". When they come in, tap "Make member": the Add member form opens filled in, then Sell membership on their plan. Type what they paid and save.',
+  },
+  {
     id: 'ai-assistant',
     unreleased: 'F201 AI Assistant: hidden until the gym server has 0071 and the panel worker is deployed (R-471).',
     who: 'owner',

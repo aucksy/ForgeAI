@@ -10,7 +10,7 @@ import { useRef, useState } from 'react';
 import { Button, Card, ErrorBanner, SectionTitle, color, font, radius, space } from '../ui/kit';
 import { useCan } from '../auth/AuthProvider';
 import { useShop } from './ShopProvider';
-import { inviteMessage, whatsAppHref } from './invite';
+import { inviteMessage, joinOnlineMessage, whatsAppHref } from './invite';
 import { navigate } from '../ui/router';
 import { t } from '../lang/lang';
 
@@ -171,6 +171,18 @@ export function JoinCodeCard({
         <Button variant="ghost" onClick={() => navigate('/settings/invite')}>
           {t('Invite & QR poster')}
         </Button>
+      </div>
+      {/* R-513 Join online: for people who are not members yet, on any phone, no app needed. */}
+      <div style={{ marginTop: space.lg, paddingTop: space.md, borderTop: `1px solid ${color.border}` }}>
+        <div style={{ fontFamily: font.body, fontSize: 14, fontWeight: 700, color: color.ink }}>{t('Join on your phone')}</div>
+        <div style={{ marginTop: 4, fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
+          {t('New people pick a plan on their own phone and send it to you. They pay at the desk.')}
+        </div>
+        <div style={{ marginTop: space.sm }}>
+          <Button variant="ghost" onClick={() => window.open(whatsAppHref(joinOnlineMessage(cloud.name, cloud.joinCode)), '_blank', 'noopener')}>
+            {t('Send join link on WhatsApp')}
+          </Button>
+        </div>
       </div>
       {!online && (
         <div style={{ marginTop: space.sm, fontFamily: font.body, fontSize: 12, color: color.warning }}>

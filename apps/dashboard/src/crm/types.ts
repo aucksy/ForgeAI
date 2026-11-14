@@ -336,8 +336,41 @@ export interface Enquiry extends GymScoped {
    * 0056). Absent on every enquiry the desk typed. Read it through logic/referrals.ts `referralOf`.
    */
   referral?: EnquiryReferral | null;
+  /**
+   * R-513 Join online: set by the gym server when the person filled the gym's "Become a member" page
+   * (app.mettleup.fit/m/<code>, supabase 0077). Absent on every enquiry the desk typed. Read it through
+   * logic/selfJoin.ts `selfJoinOf`.
+   */
+  selfJoin?: EnquirySelfJoin | null;
   createdAt: number;
   updatedAt: number;
+}
+
+/**
+ * R-513: what the person picked on the "Become a member" page. The prices are the gym's own, read by the
+ * gym server when the request came in (paise). Nothing is paid online yet (phase 1): `pay` is 'desk'.
+ */
+export interface EnquirySelfJoin {
+  v: 1;
+  name: string;
+  gender: Gender | null;
+  planId: string;
+  planName: string;
+  durationUnit: 'day' | 'month';
+  durationCount: number;
+  priceP: number;
+  joiningFeeP: number;
+  totalP: number;
+  startsOn: DateISO;
+  pay: 'desk';
+  paid: boolean;
+  /** The number was checked with "Verify with WhatsApp" (always true from the page). */
+  phoneChecked: boolean;
+  lang: 'en' | 'hi';
+  /** When each box was ticked (ms), and which wording they saw (a date). */
+  consents: { adultAt: number; healthAt: number; wording: string };
+  /** When the request came in (ms). */
+  at: number;
 }
 
 /** F147: who brought this friend in, and the owner's thank-you once given. */

@@ -334,5 +334,21 @@ test('R-458: purpose "member" (the member app\'s "Find my gym by my number"): ap
   assert.deepEqual(got.body.proof.split('.').slice(0, 3), ['v1', 'member', OWNER]);
   // Codes WE send (paid, phoneCode.js) never take 'member': only 'pin' and 'signup'.
   assert.deepEqual(PURPOSES, ['pin', 'signup']);
-  assert.deepEqual(INBOUND_PURPOSES, [...PURPOSES, 'member']);
+  assert.deepEqual(INBOUND_PURPOSES, [...PURPOSES, 'member', 'join']);
+}));
+test('R-513: purpose "join" (the public "Become a member" page): page words, a join proof, the page reply', quiet(async () => {
+  const s = setup({ WHATSAPP_TOKEN: 'fake-token', WHATSAPP_PHONE_NUMBER_ID: '111' });
+  const sent = [];
+  const fake = async (url, init) => {
+    sent.push(JSON.parse(init.body));
+    return new Response(JSON.stringify({ messages: [{ id: 'wamid.j' }] }), { status: 200 });
+  };
+  const r = await startFor(s, OWNER, 'join');
+  assert.equal(r.status, 200);
+  assert.equal(r.body.waText, `MettleUp code ${r.body.code}. After you send this, go back to the MettleUp page.`);
+  assert.equal((await inboundMessages(s.env, hookBody('919000000001', `MettleUp code ${r.body.code}`), T0 + 1000, silent, fake))[0], 'verified');
+  assert.equal(sent[0].text.body, REPLY.verified);
+  const got = await statusOf(s, r.body.id, { now: T0 + 2000 });
+  // The proof the gym server's self_join_send (supabase 0077) checks: purpose "join", the typed number.
+  assert.deepEqual(got.body.proof.split('.').slice(0, 3), ['v1', 'join', OWNER]);
 }));

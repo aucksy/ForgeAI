@@ -29,6 +29,22 @@
   deploy/hq/wrangler.jsonc`; deploy forgeai-hq (deploy/hq); deploy the panel Worker (deploy/panel, ships the admin
   app); then move ADMIN_NEWS_PENDING 'pending-member-alerts' into ADMIN_NEWS. Member app What's new line is the
   phase 1 entry's. Not added: a qa-device part for member pop-ups (the device QA's server has no 0073 until LIVE).
+- R-513 PHASE 1, JOIN ONLINE ("Become a member" on the person's own phone, pay at the desk). supabase/migrations/
+  0077_self_join.sql (NOT APPLIED; apply after 0075 and 0076): self_join_preview(code) gives the gym's name and its
+  active non-PT plans with prices from the server (null for a wrong code, closed for a paused or suspended gym);
+  self_join_send checks the WhatsApp proof (0061, purpose "join"), the plan, a start day from today to 30 days ahead
+  and both ticked boxes, refuses a number that is already a member (MEMBER), joins an open enquiry with that number
+  (referral kept) or writes a new one, with a selfJoin block (plan, price, fee, total, start, "desk", not paid,
+  consents with wording "2026-11-14"), bumps the gym's version and rings an urgent "online_join" alert. Limits:
+  30 a day per gym and 3 a day per number (table gym_self_joins), plus 10 a day per network address in the Worker
+  (D1 friend_asks, as the friend page).
+  deploy/panel: /m/<CODE> serves public/join-online.html with the gym written in (5-minute cache), /api/self-join
+  (selfJoin.js), "join" added to the WhatsApp inbound purposes. Admin app: Today "Joined online" card (plan, start,
+  total, "Not paid yet") and "Make member" -> Add member filled in -> Sell membership on their plan and day; the
+  Enquiries row says the same; the invite page /j/ has "Become a member"; Invite members and the Join code screen
+  get "Join on your phone" with a WhatsApp share and a join poster. Consent words are a DRAFT for the owner.
+  LIVE: apply 0077 in the SQL Editor, deploy the panel Worker; at release remove the help article's unreleased line
+  (join-online-admin). Phase 2: Pay now online.
 - R-506/R-510 PHASE 2, MEMBER -> GYM ALERTS LIST (same yes as phase 1). supabase/migrations/0075_gym_alerts.sql (NOT
   APPLIED; apply after 0073): one locked table gym_alerts (RLS on, no grants) filled by triggers, one row per event
   (unique tag), each with the server's own plain line and the panel page it opens: a trainer question

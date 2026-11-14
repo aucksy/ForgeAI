@@ -504,6 +504,24 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   'Print poster': 'Poster print karo',
   'Poster saved as a picture.': 'Poster photo ki tarah save ho gaya.',
   'Could not make the picture. Try Print poster.': 'Photo nahi ban paayi. Poster print karke dekho.',
+  // R-513 Join online: the "Become a member" link and poster, and Today's "Joined online".
+  'Join on your phone': 'Apne phone se join',
+  'New people pick a plan on their own phone and send it to you. They pay at the desk.':
+    'Naye log apne phone par plan chunte hain aur aapko bhejte hain. Paise woh desk par dete hain.',
+  'New people open this link on their own phone. They pick a plan, check their number on WhatsApp and send it to you. They pay at the desk, and you make them a member on Today.':
+    'Naye log yeh link apne phone par kholte hain. Woh plan chunte hain, WhatsApp par apna number check karte hain aur aapko bhejte hain. Paise woh desk par dete hain, aur aap Today par unhe member banate hain.',
+  'Send join link on WhatsApp': 'Join link WhatsApp par bhejo',
+  'Copy join link': 'Join link copy karo',
+  'Download join poster': 'Join poster download karo',
+  'Could not make the picture. Try again.': 'Photo nahi ban paayi. Phir try karo.',
+  'Joined online': 'Online join kiya',
+  'They filled your "Become a member" page. Make them a member when they come in and pay.':
+    'Inhone aapka "Become a member" page bhara hai. Jab yeh aakar pay karein, tab inhe member banao.',
+  '{plan} · starts {date}': '{plan} · {date} se shuru',
+  '{total} paid': '{total} pay ho gaya',
+  '{total} to pay at the desk · Not paid yet': 'Desk par {total} dene hain · Abhi pay nahi kiya',
+  'Make {name} a member': '{name} ko member banao',
+  'Make member': 'Member banao',
   'Download picture': 'Photo download karo',
   'Print it on A4 and stick it at the desk. On a phone, Print → “Save as PDF” also works. Use the picture for a print shop.':
     'Ise A4 par print karke desk par chipkao. Phone par Print → “Save as PDF” bhi chalta hai. Print shop ke liye photo use karo.',

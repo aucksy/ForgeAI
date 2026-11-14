@@ -13,6 +13,10 @@
 //               gym and the member's first name (friend_invite_preview, supabase 0056). Never opens an app.
 //  - /api/friend  that page's form (friend.js): checked, limited, then friend_invite_send writes the
 //               enquiry into that gym's own records.
+//  - /m/<CODE>  R-513 Join online: the gym's "Become a member" page (join-online.html), filled in the same way with
+//               the gym's plans and prices (self_join_preview, supabase 0077). Never opens an app (the app claims
+//               /j/ and /c/ only). Its form posts to /api/self-join (selfJoin.js): checked, limited, then
+//               self_join_send writes the request into that gym's Enquiries ("Joined online" on Today).
 //  - /api/feedback  "Send feedback" from both apps (feedback.js, launch H7).
 //  - /api/help, /api/help/rate  "Help and feedback": the message saved as above, then a Claude answer (help.js, T22).
 //  - /api/feedback/voice  a spoken feedback clip -> text, via Groq Whisper (voice.js, R-206). Clip not kept.
@@ -43,6 +47,7 @@ import { handleHelp, handleHelpRate, handleHelpReplies } from './help.js';
 import { handleHqNews } from './hqNews.js';
 import { handleLead } from './leads.js';
 import { deleteOldFriendAsks, handleFriend } from './friend.js';
+import { handleSelfJoin } from './selfJoin.js';
 import { deleteOldVoiceCounts, handleVoice } from './voice.js';
 import { handleMatchColumns } from './aiMatch.js';
 import { handleAssist, handleAssistPlan, handleAssistRewrite, handleAssistVoice } from './assist.js';
@@ -96,6 +101,11 @@ export default {
     if (friend) return joinPage(request, env, ctx, url, friend[1].toUpperCase(), FRIEND);
     if (url.pathname.startsWith('/f/')) return joinPage(request, env, ctx, url, null, FRIEND);
     if (url.pathname === '/api/friend') return handleFriend(request, env, rpc);
+    // R-513: "Become a member" on the person's own phone (the gym code, 6 letters, as /j/).
+    const selfJoin = /^\/m\/([A-Za-z0-9]{6})\/?$/.exec(url.pathname);
+    if (selfJoin) return joinPage(request, env, ctx, url, selfJoin[1].toUpperCase(), SELFJOIN);
+    if (url.pathname.startsWith('/m/')) return joinPage(request, env, ctx, url, null, SELFJOIN);
+    if (url.pathname === '/api/self-join') return handleSelfJoin(request, env, rpc);
     // R-411: the update screen's What's new lines, from our own server (GitHub's India download edge failed).
     if (url.pathname === '/app/whats-new.json') return handleWhatsNew(request, ctx);
     if (url.pathname === '/app' || url.pathname === '/app/') return latestApk(ctx);
@@ -241,6 +251,13 @@ const FRIEND = {
   fn: 'friend_invite_preview',
   title: (g) => (g.inviter ? `${g.inviter} invites you to ${g.gymName}` : `You are invited to ${g.gymName}`),
   desc: (g) => `Leave your name and number, and ${g.gymName} will call you about joining.`,
+};
+/** R-513: "Become a member" on the person's own phone. The page shows the gym's own plans and prices (read here). */
+const SELFJOIN = {
+  asset: '/join-online',
+  fn: 'self_join_preview',
+  title: (g) => `Become a member of ${g.gymName}`,
+  desc: (g) => (g.closed ? `${g.gymName} is not taking sign-ups online right now.` : `Pick a plan and send your details to ${g.gymName}. Pay at the gym desk.`),
 };
 const CHECKIN = {
   asset: '/checkin',

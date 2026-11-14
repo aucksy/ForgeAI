@@ -28,6 +28,11 @@
   ! Content-Security-Policy
 /friend.html
   ! Content-Security-Policy
+# R-513: a gym's "Become a member" page, filled in the same way (the gym's plans and prices).
+/join-online
+  ! Content-Security-Policy
+/join-online.html
+  ! Content-Security-Policy
 
 # The page itself is always re-checked, so an open tab never keeps a page that points at
 # script files a newer deploy has replaced (that showed a blank screen once).

@@ -16,6 +16,7 @@ import { InstallCard } from '../InstallCard';
 import { PhoneLinksCard } from '../PhoneLinksCard';
 import { PlanRequestsCard } from '../PlanRequestsCard';
 import { AlertsOfferCard } from '../AlertsCards';
+import { JoinedOnlineCard } from '../JoinedOnlineCard';
 import { LatestAlertsCard, NeedsYouCard } from '../NeedsYou';
 import { TodayAiCard } from '../../assistant/ui/TodayAiCard';
 import { TrialBanner } from '../TrialBanner';
@@ -191,6 +192,12 @@ export function TodayScreen() {
           desk). Hidden until the gym server has 0044, and when there is nothing to show. */}
       <div id="needs-plan-requests">
         <PlanRequestsCard />
+      </div>
+
+      {/* R-513: people who filled the gym's "Become a member" page, one tap to make them a member (owner and
+          desk). Hidden when nobody is waiting. */}
+      <div id="needs-online-joins">
+        <JoinedOnlineCard />
       </div>
 
       {/* 0048 (R-287): numbers members typed at the poster check-in, waiting for the desk's yes (owner

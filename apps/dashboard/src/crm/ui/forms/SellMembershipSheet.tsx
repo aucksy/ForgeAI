@@ -33,12 +33,15 @@ import { isPtPlan, ptPlanLine } from '../../logic/pt';
 export function SellMembershipSheet({
   view,
   initialPlanId,
+  initialStartsOn,
   onClose,
   onSold,
 }: {
   view: MemberView;
   /** Open on this plan (Renew PT); the first plan when it is not on sale. */
   initialPlanId?: string;
+  /** R-513: open on this start day (the one picked on the "Become a member" page); the usual day otherwise. */
+  initialStartsOn?: string;
   onClose: () => void;
   /** Handed the sale, including the receipt when money was taken at the counter. */
   onSold?: (result: SellMembershipResult) => void;
@@ -76,7 +79,9 @@ export function SellMembershipSheet({
     [memberships, plan, today, snapshot.payments],
   );
 
-  const [startsOnOverride, setStartsOnOverride] = useState<string | null>(null);
+  const [startsOnOverride, setStartsOnOverride] = useState<string | null>(
+    initialStartsOn && isValidDateISO(initialStartsOn) && initialStartsOn >= today ? initialStartsOn : null,
+  );
   const startsOn = startsOnOverride ?? defaults?.startsOn ?? today;
 
   const [priceText, setPriceText] = useState('');

@@ -17,7 +17,7 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import { useCrm } from '../../store';
-import type { Member } from '../../types';
+import type { Gender, Member } from '../../types';
 import {
   DIAL_CODES,
   emptyMemberForm,
@@ -62,8 +62,9 @@ export function MemberFormSheet({
   onSaved,
 }: {
   editing?: Member;
-  /** A new member's name and E.164 mobile, filled in already (an enquiry being converted). */
-  initial?: { fullName?: string; phone?: string };
+  /** A new member's name and E.164 mobile, filled in already (an enquiry being converted; R-513: and the gender
+   *  they gave on the "Become a member" page). */
+  initial?: { fullName?: string; phone?: string; gender?: Gender };
   onClose: () => void;
   onSaved?: (member: Member) => void;
 }) {
@@ -78,6 +79,7 @@ export function MemberFormSheet({
     return {
       ...blank,
       fullName: initial.fullName ?? '',
+      gender: initial.gender ?? blank.gender,
       dialCode: phone?.dialCode ?? blank.dialCode,
       phone: phone?.national ?? '',
     };
