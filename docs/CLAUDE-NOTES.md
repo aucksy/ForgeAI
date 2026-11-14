@@ -7,6 +7,17 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-520. Research: an AI sales helper on the gym page + what else AI credits should do — 14 Nov 2026
+He said: "let this AI assistant be trained on lead conversion so we can actually sell our plans with this big USP. I
+don't think anyone else is doing it. So, anyone comes to their page, there can be an AI assistant talking to them,
+trying to convert them, giving them some offers if they try to leave the page ... you can research and plan it ...
+while ... they're paying for the credits, let there be as much value as they can get out of it ... research and see
+what else they should be able to use the AI for so that there is some kind of value to them in terms of revenue,
+retention, or time saving and other things".
+Plan: research + plan only (no build; the page AI stays on hold per R-519). Check the "nobody else does it" claim
+(Mindbody, Glofox, PushPress and others may already sell AI lead chat). Offers only from what the owner set; no fake
+countdowns or false urgency (Indian dark-pattern rules, 2023). Answer goes into tracker #97.
+
 ## R-519. Gym page DECIDED (free, on our domain, in onboarding); usage alert minimal; all AI on credits — 14 Nov 2026
 He said (1) usage alert: "once a day ... seems excessive, especially given we do not have any members whatsoever ...
 just keep it to minimum. Yes, you can build the alert right now." (2) Gym page: a gym's own domain is NOT part of the
