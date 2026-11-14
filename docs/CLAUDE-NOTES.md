@@ -7,6 +7,10 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-504. Drop the desk check? (his view) — 14 Nov 2026
+He said: the member had no idea the request went to the admin panel; and "do we now need it? We are doing WhatsApp verification. We are checking whether the number is already in the database of the gym as an active member... it's unnecessary."
+My answer: right once WhatsApp proof (F203, #95 A) is live, because it proves the phone owns the number; the roster match alone does not (anyone with the poster can type a member's number: the 0048 security fix). F203 is Planned, not built. Proposed: A (my pick) replace the desk check with WhatsApp proof in the F203 version, and until then the member screen says it waits for the desk and checks in by itself; B remove it now (the hole reopens until F203). Waiting for his pick. Approving his own pending request still needs his yes.
+
 ## R-503. QR check-in looks stuck while the desk has not confirmed the number — 14 Nov 2026
 He said (picture of "Gym check-in" / "Check in at Crispy Curves" / the First check-in DESK_CHECK text): first scan asked for his phone number, he typed it, then the page is stuck; every Check in tap comes back to the same screen.
 Found: working as built (0048 R-287): the server keeps a request and answers DESK_CHECK until the desk says yes. His panel Today shows "Needs you: 1 check-in number to confirm" with his own request and "Yes, it's theirs". Not clicked: a LIVE data change needs his yes. Product gaps (to build, queued while 6 helpers run): (1) member screen: say it is waiting for the desk, show the number typed, check again by itself every few seconds and check in the moment the desk says yes, and after a tap say "Not confirmed yet" instead of repeating the same screen; (2) panel: a request pops up on the desk screen (sound + banner on any page), not only on Today; (3) the gym's own owner/staff number (gym_staff) should not need a desk check (ties to F203 phone sign-in).
