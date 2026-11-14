@@ -615,7 +615,7 @@ function PreviewSheet({ ownerKey, draft, thumbs, onClose }: { ownerKey: string; 
   const [problem, setProblem] = useState<string | null>(null);
   useEffect(() => {
     let alive = true;
-    (async () => {
+    void (async () => {
       let hours: GymHours | null = null;
       let brand: { accent?: string | null; logoUrl?: string | null } | null = null;
       try {
