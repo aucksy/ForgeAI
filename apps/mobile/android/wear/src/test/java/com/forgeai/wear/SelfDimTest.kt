@@ -193,7 +193,7 @@ class SelfDimTest {
   }
 
   /**
-   * R-556 (14 Nov 2026, owner: "Watch screen is turning off. Log switch was enabled"): his watch's inputs at every
+   * R-557 (14 Nov 2026, owner: "Watch screen is turning off. Log switch was enabled"): his watch's inputs at every
    * wake in that diary (Always-on "aod0/-", Battery Saver off, a workout open, MettleUp just woken in front).
    * 0.77.0's check holds the screen for exactly these inputs, and the wake now writes that it did and why.
    */
@@ -211,7 +211,7 @@ class SelfDimTest {
     )
   }
 
-  /** R-556: a wake that is NOT held names the input that stopped it (before, such a wake wrote nothing). */
+  /** R-557: a wake that is NOT held names the input that stopped it (before, such a wake wrote nothing). */
   @Test
   fun aWakeThatIsNotHeldNamesWhatStoppedIt() {
     // Paused on the phone.

@@ -76,7 +76,7 @@ class AmbientDiagTest {
   }
 
   /**
-   * R-556 (14 Nov 2026): the owner's black screens came from a watch app older than 0.77.0. 0.77.0 and later write
+   * R-557 (14 Nov 2026): the owner's black screens came from a watch app older than 0.77.0. 0.77.0 and later write
    * cause=always-on-off on every black stop in an open workout with Always-on off (and now held=); his diary's
    * stops ("stop amb0 wo1 bo0 sc0 bs0 id0 aod0/- th0", as the phone sent them) carry neither: 0.76.0's line.
    */

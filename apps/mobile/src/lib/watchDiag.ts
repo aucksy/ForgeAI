@@ -71,7 +71,7 @@ const EVENTS: Record<string, string> = {
   'self-dim-off': 'letgo',
   'self-dim-enter': 'ADIM',
   'self-dim-exit': 'aundim',
-  // R-556: the app's check on every wake: whether it holds the screen, and each input that decided it.
+  // R-557: the app's check on every wake: whether it holds the screen, and each input that decided it.
   'self-dim-why': 'why',
 };
 
@@ -95,7 +95,7 @@ const KEYS: Record<string, string> = {
   workout: 'wo',
   blackout: 'bo',
   cause: 'cause',
-  // R-556: the wake check (self-dim-why) and the stop line's held=.
+  // R-557: the wake check (self-dim-why) and the stop line's held=.
   hold: 'hd',
   held: 'hd',
   front: 'fr',
@@ -141,7 +141,7 @@ export function compactLine(line: string): { day: string; event: string; text: s
 }
 
 /**
- * R-556: the MettleUp watch app's version on each connected watch, from the native answer of
+ * R-557: the MettleUp watch app's version on each connected watch, from the native answer of
  * WearSync.watchVersions (the phone reads /forge/watch-version; a watch app older than 0.77.0 writes no
  * version). "" when Wear OS could not say or no watch has the app. PURE.
  */
@@ -186,7 +186,7 @@ export function watchLogText(items: WatchDiagItem[], max: number = FEEDBACK_MAX,
     .map(compactLine)
     .filter((l): l is NonNullable<ReturnType<typeof compactLine>> => l != null);
   const stops = lines.filter((l) => l.event === 'stop');
-  // R-556 (14 Nov 2026): a black screen is any stop with the screen off, not dimmed, a workout open. It counted
+  // R-557 (14 Nov 2026): a black screen is any stop with the screen off, not dimmed, a workout open. It counted
   // only bo1 before (the rebuild's own flag, set only after the watch's dim state once worked), so with
   // Always-on off every black screen read "Off instead of dim: 0".
   const blackStops = stops.filter((l) => / amb0( |$)/.test(l.text) && / wo1( |$)/.test(l.text) && / sc0( |$)/.test(l.text));
@@ -256,7 +256,7 @@ export interface WatchLogDeps {
   post?: (json: string) => Promise<{ status: number }>;
   sender?: () => Promise<string>;
   device?: () => string;
-  /** R-556: the native watch versions answer (WearSync.watchVersions), for the log's "Watch app:". */
+  /** R-557: the native watch versions answer (WearSync.watchVersions), for the log's "Watch app:". */
   versions?: () => Promise<string | null>;
 }
 

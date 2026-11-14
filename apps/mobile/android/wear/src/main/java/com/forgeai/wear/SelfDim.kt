@@ -80,7 +80,7 @@ object SelfDim {
     workoutOpen && onScreen && saverOn != true && (aodOn == false || (aodOn == null && blackedOut))
 
   /**
-   * R-556 (14 Nov 2026, owner: "Watch screen is turning off. Log switch was enabled"): his diary had about 20
+   * R-557 (14 Nov 2026, owner: "Watch screen is turning off. Log switch was enabled"): his diary had about 20
    * wakes and not one line saying whether the app held the screen, because [MainActivity]'s check wrote nothing
    * when nothing changed. Now every wake writes this ("self-dim-why resume ..."): [hold] the result, then each
    * input of [wanted] and [releaseWhy] (front = MettleUp in front, blacked = a black screen already this

@@ -95,7 +95,7 @@ describe("the app's own dim lines (R-442, Always-on OFF; R-444)", () => {
   });
 });
 
-// R-556 (14 Nov 2026, owner: "Watch screen is turning off. Log switch was enabled"): his diary, as his watch
+// R-557 (14 Nov 2026, owner: "Watch screen is turning off. Log switch was enabled"): his diary, as his watch
 // wrote it (12:27-12:48, Always-on off "aod=0/-", Battery Saver off, a workout open). Its stop lines have no
 // cause= and no held=: the line of a watch app older than 0.77.0 (0.77.0 writes cause=always-on-off on each).
 const HIS_STATE_ON = 'screen=1 saver=0 idle=0 aod=0/- theatre=0';
@@ -115,7 +115,7 @@ const HIS = [
   .map(([t, ev]) => `11-14 ${t}.000 ${ev}`)
   .join('\n');
 
-describe("R-556: the owner's 14 Nov black screens are counted, and the log names the watch app", () => {
+describe("R-557: the owner's 14 Nov black screens are counted, and the log names the watch app", () => {
   it('every black stop in an open workout counts as "Off instead of dim" (it said 0 before)', () => {
     const lines = watchLogText([{ at: 1, log: HIS }]).split('\n');
     // 4 black stops (screen off, not dimmed, workout open); the 12:37:25 stop had the screen on (he left the app).

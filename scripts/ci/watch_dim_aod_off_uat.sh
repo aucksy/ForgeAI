@@ -204,7 +204,7 @@ if [ "$K" = "1" ] && [ "$ON" -ge 1 ]; then
 else
   result D-keep FAIL "KEEP_SCREEN_ON=$K, self-dim-on lines=$ON ($(diag | tail -3 | tr '\n' ' '))"
 fi
-# R-556 (14 Nov 2026): every wake writes the app's check with each input (his diary had ~20 wakes and no line
+# R-557 (14 Nov 2026): every wake writes the app's check with each input (his diary had ~20 wakes and no line
 # saying whether the screen was held). This wake: held, workout open, in front, Always-on off, Battery Saver off.
 WHY="$(count 'self-dim-why resume hold=1 workout=1 front=1 aod=0 saver=0 blacked=0 paused=0 quiet=0')"
 if [ "$WHY" -ge 1 ]; then
@@ -551,7 +551,7 @@ if [ "$G" = "1" ] && [ "$KP" = "0" ] && [ "$ONP" = "$BON" ] && [ "$WP" != "Awake
 else
   result D-paused FAIL "paused workout: self-dim-off paused=$G, keep=$KP, self-dim-on $BON -> $ONP, after 20 s power=$WP black=$DP"
 fi
-# R-556: the paused wake names why it was not held (hold=0 ... paused=1); the black screen after it is a stop
+# R-557: the paused wake names why it was not held (hold=0 ... paused=1); the black screen after it is a stop
 # line with held=0 and cause=always-on-off (the shape the phone counts as "Off instead of dim").
 WHYP="$(count 'self-dim-why resume hold=0 workout=1 front=1 aod=0 saver=0 blacked=0 paused=1')"
 if [ "$WHYP" -ge 1 ]; then

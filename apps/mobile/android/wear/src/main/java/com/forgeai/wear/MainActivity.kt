@@ -543,7 +543,7 @@ class MainActivity : ComponentActivity() {
     if (AmbientDiag.Heal.blackout(screenOn, ambient, ambientWorked, open, isFinishing || isChangingConfigurations, saverOn = cause == "battery-saver")) {
       blackoutSeen = true
     }
-    // R-556: held= says whether the app was keeping the screen on itself at this moment (written before the
+    // R-557: held= says whether the app was keeping the screen on itself at this moment (written before the
     // let-go below).
     AmbientDiag.note(this, "stop", AmbientDiag.stopDetail(ambient, open, blackoutSeen, selfDimOn, cause) + AmbientDiag.state(this))
     AmbientDiag.push(this)
@@ -581,7 +581,7 @@ class MainActivity : ComponentActivity() {
       null
     }
     val want = mode && rel == null
-    // R-556: every wake says whether the screen is held and every input that decided it. Before, the early
+    // R-557: every wake says whether the screen is held and every input that decided it. Before, the early
     // return below wrote nothing when nothing changed, so a diary of wakes could not say why nothing was held.
     if (why == "resume") {
       AmbientDiag.note(this, "self-dim-why", "$why " + SelfDim.inputs(want, open, onScreen, aod, saver, blacked, pausedNow, rel == "idle"))

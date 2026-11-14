@@ -103,7 +103,7 @@ object AmbientDiag {
   }
 
   /**
-   * The stop line's start (the watch's state follows it). [held]: R-556, the app was keeping the screen on
+   * The stop line's start (the watch's state follows it). [held]: R-557, the app was keeping the screen on
    * itself ([SelfDim], Always-on off) when it stopped, so "held=1" on a black screen means the watch turned the
    * screen off although the app asked to keep it on. [cause]: [watchCause], "" = none. Since 0.77.0 a black stop
    * in an open workout with Always-on off always carries cause=always-on-off: a stop line without it (and
