@@ -7,6 +7,26 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-533. "Ask a trainer": wrong name, and no alert or dot when the gym replies — 14 Nov 2026
+He said (14 Nov 2026): "in the gym section of the app there is an option for ask a trainer. First of all ask a trainer
+may not be accurate because you do let the user ask the gym owner or the trainer. Secondly, when I responded back from
+the admin panel, there was no notification. Again, we talked about it, I think you're building notification both ways.
+There was no notification and there was no dot or something in that section saying that there's something to be
+checked."
+To do: a name that covers owner and trainers; find why his real reply sent no phone alert (prove the cause, fix it);
+a dot on the Gym tab and on the row while a reply is unread.
+
+## R-532. Ready-made diet plans: veg AND non-veg for every goal, scientifically checked; terms for gyms — 14 Nov 2026
+He said (14 Nov 2026): "the sample diet plans that you've added, they're not samples, they're kind of pre-built diet
+plans. You probably did not consider vegetarian, non-vegetarian, so you'll have to build both options there, veg and
+non-veg. and ensure that they are not harmful or they are scientifically accurate. Let this be part of the terms and
+conditions for the gym owner as well The suggested diet plans and workout plans is just a template that they can use But
+we do not own any risks around it or something like that You can decide the language there and they will be
+responsible for their gym members using those plans They are free to edit, delete or add new"
+To do: call them ready-made plans; each goal in veg and non-veg; every calorie and protein number worked out from Indian
+food tables (IFCT 2017) and checked by a test; safe limits. Terms: a new gym section, words shown to him first (legal
+words need his yes).
+
 ## R-531. Decision #98 = B: owner and staff ask free, members and visitors 10 answers = 1 credit — 14 Nov 2026
 He said (14 Nov 2026): "I pick B"
 B means: the owner's and staff's own AI questions are free (fair daily limit stays: 60 each); members' and page visitors'
