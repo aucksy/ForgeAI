@@ -246,6 +246,8 @@ test.describe('Android Chrome', () => {
     // The Today banner on Android: the same button, and "Not now".
     await bottomBar(page).getByRole('link', { name: /^Today/ }).tap();
     await expect(page.getByRole('heading', { name: 'Today', exact: true })).toBeVisible();
+    // Fresh eyes (14 Nov 2026): one set-up card on Today at a time; the banner comes after Get started.
+    await hideGetStarted(page);
     const banner = installCard(page);
     await expect(banner).toBeVisible();
     await banner.scrollIntoViewIfNeeded();

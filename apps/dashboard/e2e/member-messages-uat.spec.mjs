@@ -82,9 +82,15 @@ test('Member messages: not ready, the list, types, reply, done, the desk, a gone
   await expect(row).toContainText('3');
   // Fresh eyes (14 Nov 2026): the full-page picture drew the bottom bar over this row (a fixed bar in a stitched
   // picture). On the real screen, scrolled to it, the row sits whole above the bar; the picture is the screen itself.
-  await row.scrollIntoViewIfNeeded();
-  const rowBox = await row.boundingBox();
+  // The page also scrolls far enough that its very last row clears the bar.
   const barBox = await page.getByRole('navigation', { name: 'Main' }).boundingBox();
+  await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+  await page.waitForTimeout(300);
+  const lastBox = await main.getByRole('link').last().boundingBox();
+  expect(lastBox.y + lastBox.height, 'scrolled to the end, the last row on More ends above the bottom bar').toBeLessThanOrEqual(barBox.y + 1);
+  await row.evaluate((el) => el.scrollIntoView({ block: 'center' }));
+  await page.waitForTimeout(300);
+  const rowBox = await row.boundingBox();
   expect(rowBox.y + rowBox.height, 'the Member messages row ends above the bottom bar').toBeLessThanOrEqual(barBox.y + 1);
   await shot(page, 'phone-member-messages-2-more-row', false);
   await row.tap();
