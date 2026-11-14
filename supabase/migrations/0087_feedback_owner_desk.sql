@@ -1,4 +1,4 @@
--- NOT LIVE — needs the owner's yes ("No LIVE database changes without my yes"). The main session applies it in the
+-- APPLIED LIVE 14 Nov 2026 (owner: "yes to the Feedback database change"); live tests 0087 PASS 30, 0069 PASS 56, 0075 PASS 28.
 -- SQL Editor after CI is green.
 --
 -- 0087: R-552. Owner, 14 Nov 2026 (verbatim): "A (my pick): Feedback goes to you and the front desk only".
