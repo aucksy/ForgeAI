@@ -333,7 +333,7 @@ export const ALL_HELP_ARTICLES = [
     text:
       'Members can ask their trainer or the owner a workout question from the MettleUp app ("Ask about your workout" on the Gym tab; "Ask a trainer" in older versions). ' +
       'Only the person the member picked sees it; "Any trainer or the owner" questions go to every trainer and the owner. ' +
-      '1. Open "Member questions" (on a phone, under More). A number on it shows how many questions wait for a reply. ' +
+      '1. Open "Member questions" (on a phone, under More). Its number shows how many wait. ' +
       '2. "Waiting for your reply" lists them, the longest wait first. ' +
       '3. Type in "Your reply" and tap "Send reply". ' +
       'The reply shows in the member\'s app, with a notification if they allowed messages from the gym. ' +
