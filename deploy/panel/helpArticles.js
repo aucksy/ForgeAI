@@ -25,6 +25,18 @@ export const ALL_HELP_ARTICLES = [
     screens: ['apps/dashboard/src/crm/ui/screens/Today.tsx'],
   },
   {
+    // R-526 (14 Nov 2026): the first steps of a new gym, out of Today into their own page.
+    id: 'set-up-your-gym',
+    who: 'owner',
+    title: 'Set up a new gym (Set up your gym)',
+    text:
+      'In the admin app, "Set up your gym" lists the first steps for a new gym, like adding your plans, members, logo, staff and gym timings. ' +
+      'Tap a step to open the page where you do it. Some steps tick themselves; for the others, tap "Mark done". ' +
+      'While steps are left, it sits right under Today in the menu with a small green ring that fills as you finish (on a phone, the ring is on More). ' +
+      'To move it down the menu, tap "Move this page to the bottom of the menu". When every step is done, it moves to "Your gym" at the bottom.',
+    screens: ['apps/dashboard/src/crm/ui/screens/SetupGym.tsx'],
+  },
+  {
     id: 'needs-you-alerts',
     who: 'owner',
     title: 'See what is waiting for you (Needs you)',

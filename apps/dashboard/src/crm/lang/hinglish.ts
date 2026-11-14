@@ -248,7 +248,7 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   'This browser blocked copying. Select the text and copy it.': 'Is browser ne copy rok diya. Text select karke copy karo.',
 
   // ── Get started (R-526: the Set up your gym page) ───────────────────────
-  'Finish these and your gym is ready for members.': 'Yeh kaam poore karo, phir aapka gym members ke liye taiyaar hai.',
+  'Finish these steps and your gym is ready for members.': 'Yeh kaam poore karo, phir aapka gym members ke liye taiyaar hai.',
   'All done. Your gym is ready for members.': 'Sab ho gaya. Aapka gym members ke liye taiyaar hai.',
   '{done} of {total} steps done': '{total} mein se {done} kaam ho gaye',
   '{done} of {total}': '{total} mein se {done}',

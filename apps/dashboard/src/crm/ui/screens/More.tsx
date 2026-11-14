@@ -52,7 +52,6 @@ export function MoreScreen() {
   const talkWaiting = useMemberMessageCount();
   // F201: the AI Assistant (owner only; hidden until the gym's server answers its credits, 0071).
   const assistantOn = useAssistant().on;
-  // Staff never sees Expenses (permissions.ts); the rest stays, with words that fit what they can do.
   // #41: "All branches", as in the side menu (an owner with 2 or more branches).
   const { multi, canOpenOthers } = useBranches();
   // R-526: Set up your gym, on top with its ring while steps are left; under Your gym once done or moved down.
@@ -60,7 +59,7 @@ export function MoreScreen() {
   const setupRow: Row = {
     path: '/setup',
     label: 'Set up your gym',
-    hint: 'Finish these and your gym is ready for members.',
+    hint: 'Finish these steps and your gym is ready for members.',
     icon: 'setup',
     ...(getStarted.pending ? { progress: getStarted.progress } : { group: 'gym' as const }),
   };

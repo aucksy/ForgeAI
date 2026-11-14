@@ -17,7 +17,7 @@ test('J32 Set up your gym: ticks itself, takes a hand tick, moves down the menu 
 
   await open(page, 'Set up your gym');
   await expect(page.getByRole('heading', { name: 'Set up your gym', level: 1 })).toBeVisible();
-  await expect(page.getByText('Finish these and your gym is ready for members.')).toBeVisible();
+  await expect(page.getByText('Finish these steps and your gym is ready for members.')).toBeVisible();
   await expect(doneLine(page, 0)).toBeVisible();
   await addPlan(page, { name: 'Monthly', price: '1500' });
   await open(page, 'Set up your gym');

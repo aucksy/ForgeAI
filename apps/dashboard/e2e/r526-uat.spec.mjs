@@ -80,7 +80,7 @@ test.describe('R526 on a computer', () => {
     // The page itself.
     await setupLink.click();
     await expect(page.getByRole('heading', { name: 'Set up your gym', level: 1 })).toBeVisible();
-    await expect(main.getByText('Finish these and your gym is ready for members.')).toBeVisible();
+    await expect(main.getByText('Finish these steps and your gym is ready for members.')).toBeVisible();
     await expect(main.getByRole('button', { name: 'Add your plans. Open' })).toBeVisible();
     await expect(menu.locator('[aria-current="page"]')).toContainText('Set up your gym');
     await shot(page, 'computer-setup', { fullPage: true });

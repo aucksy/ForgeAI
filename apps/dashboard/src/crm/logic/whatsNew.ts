@@ -49,7 +49,7 @@ export const ADMIN_NEWS: readonly AdminNewsEntry[] = [
       },
       {
         // R-526 (owner, 14 Nov 2026): the side menu (and the phone's More) in five groups; Get started out of Today.
-        text: 'The menu is now in groups: Members, Money, Training, Reach members and Your gym. Your first steps moved from Today to their own page, Set up your gym. Its green ring in the menu shows how many are done.',
+        text: 'In the menu, pages now sit under five headings: Members, Money, Training, Reach members and Your gym. Your first steps moved from Today to a new page, "Set up your gym". A green ring shows how many are done.',
         go: { label: 'Open Set up your gym', path: '/setup' },
       },
       // R-506/R-510 (moved from ADMIN_NEWS_PENDING at the deploy): 0075 + 0076 live, VAPID key set, HQ 558464b7.

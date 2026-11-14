@@ -10,7 +10,7 @@ import { PageHeader } from '../kit';
 export function SetupGymScreen() {
   return (
     <>
-      <PageHeader title={t('Set up your gym')} subtitle={t('Finish these and your gym is ready for members.')} />
+      <PageHeader title={t('Set up your gym')} subtitle={t('Finish these steps and your gym is ready for members.')} />
       <GetStartedList />
     </>
   );
