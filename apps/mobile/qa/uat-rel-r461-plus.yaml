@@ -229,7 +229,20 @@ appId: com.mettleup.app
 # ---------------------------------------------------------------- Find my gym (made-up answers: no WhatsApp here)
 # The QA build answers "Check with WhatsApp" at once with find=none / find=found (said on screen). The real
 # check needs WhatsApp on a real phone: that is the owner's short check after release.
-- openLink: "mettleup://qa-plan?find=none"
+# 0.78.0 review: the card is part of MettleUp Plus and shows only while the plan switch is on, so the test switch
+# goes on here (day 5 of the free month: no pop-up) and back off at the end of this flow.
+# NEGATIVE first, with the switch off (as shipped): no "Find my gym" card on the Gym tab.
+- runFlow: sub-gym-none.yaml
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^With your gym in the app$"
+# in-view: the card sat right above this heading, under the join card
+- assertNotVisible: "^Find my gym with my number$"
+# in-view: the same place (the card's button)
+- assertNotVisible: "^Find my gym$"
+- takeScreenshot: rel-r461-15b-gym-tab-no-card-when-off
+- openLink: "mettleup://qa-plan?gate=1&day=5&find=none"
 - runFlow: sub-gym-none.yaml
 - runFlow:
     file: sub-find.yaml
@@ -342,4 +355,4 @@ appId: com.mettleup.app
     env:
       FIND: "^Join QA UAT Gym$"
 - takeScreenshot: rel-r461-20-found
-- openLink: "mettleup://qa-plan?find=off"
+- openLink: "mettleup://qa-plan?find=off&reset=1"

@@ -11,6 +11,8 @@
  * share menu, a ready message with the link) or "Skip".
  * member-words skill, 12 Nov 2026 (brief + Gemini pass). Shared code: Android and iPhone alike.
  */
+import type { MemberAccess } from '@forgeai/theme';
+
 import { RECOMMEND_LINK } from './recommendGym';
 
 // ------------------------------------------------------------------ the WhatsApp check (the panel Worker)
@@ -144,6 +146,16 @@ export function mobile10(raw: string): string | null {
 /** The first word of the member's name (the gym's list is matched on it), or ''. PURE. */
 export function firstNameOf(name: string | null | undefined): string {
   return String(name ?? '').trim().split(/\s+/)[0]?.slice(0, 40) ?? '';
+}
+
+/**
+ * The Gym tab's "Find my gym with my number" card (no gym joined) is part of MettleUp Plus (F56 b, R-461): it shows
+ * only while the plan switch is on (a QA build's test switch counts). Off (MEMBER_PLAN_GATE_ON false, today): every
+ * feature is already free for everyone, so "Members of a MettleUp gym get every feature free" and "unlock every
+ * feature" would promise what no member lacks (0.78.0 release review). PURE.
+ */
+export function findGymCardShown(a: MemberAccess): boolean {
+  return a.why !== 'off';
 }
 
 // ------------------------------------------------------------------ the words

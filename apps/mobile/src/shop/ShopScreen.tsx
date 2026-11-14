@@ -30,7 +30,8 @@ import { hasFeature, isBranded } from '@forgeai/theme';
 import { SegmentedTabs } from '@/tracker/components/SegmentedTabs';
 
 import { SHOP_CATEGORIES } from './catalog';
-import { FIND_GYM } from './findGym';
+import { FIND_GYM, findGymCardShown } from './findGym';
+import { useMemberAccess } from '@/plan/memberPlanStore';
 import { listAgeText } from './gym';
 import { refreshGymNow, refreshOrders, refreshProducts } from './gymActions';
 import { useGymShop } from './gymStore';
@@ -86,13 +87,16 @@ const WHAT_YOU_GET: readonly { icon: IconName; text: string }[] = [
 function JoinGymDoor() {
   // Why this phone is in no gym, when the gym let it go (gymActions.ts → unlink(UNLINKED_TEXT)).
   const notice = useGymShop((s) => s.notice);
+  const access = useMemberAccess();
   return (
     <Screen title="Gym" right={<BrandCorner />}>
       <View style={{ gap: space.lg, paddingBottom: space.xl }}>
         {notice ? <DemoNote text={notice} /> : null}
         <JoinGymCard scan />
-        {/* R-458 + F56 (R-461): the member proves their number with WhatsApp and the app finds their gym. */}
-        <FindGymCard />
+        {/* R-458 + F56 (R-461): the member proves their number with WhatsApp and the app finds their gym. Part of
+            MettleUp Plus, so it shows only while the plan switch is on (0.78.0 review: with nothing locked, "unlock
+            every feature free" promised what no member lacks). */}
+        {findGymCardShown(access) ? <FindGymCard /> : null}
         <View style={{ gap: space.md }}>
           <Text accessibilityRole="header" style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink }}>
             With your gym in the app

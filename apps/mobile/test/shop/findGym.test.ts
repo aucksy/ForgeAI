@@ -6,6 +6,8 @@
  */
 import { describe, expect, it } from 'vitest';
 
+import { MEMBER_PLAN_GATE_ON, memberAccess } from '@forgeai/theme';
+
 import { BANNED_MEMBER_WORDS } from '@/lib/words';
 import {
   checkProblemFrom,
@@ -15,6 +17,7 @@ import {
   claimAnswerFrom,
   FIND_GYM,
   findAnswerFrom,
+  findGymCardShown,
   findProblemWords,
   firstNameOf,
   leadFrom,
@@ -123,5 +126,17 @@ describe('found, not found, Tell my gym', () => {
       ...(['BAD_PHONE', 'TOO_SOON', 'TOO_MANY', 'NOT_AVAILABLE', 'OFFLINE', 'TRY_AGAIN'] as const).map(checkProblemWords),
     ].join(' ');
     for (const b of BANNED_MEMBER_WORDS) expect(b.re.test(all), b.word).toBe(false);
+  });
+});
+
+describe('0.78.0 review: the Gym tab card shows only with MettleUp Plus switched on', () => {
+  const facts = { today: '2026-11-15', trialStartedOn: null, bought: null, staff: null, gym: null };
+  it('switched off (the shipped build): no card, since nothing is locked for anyone', () => {
+    expect(MEMBER_PLAN_GATE_ON).toBe(false);
+    expect(findGymCardShown(memberAccess({ ...facts, gateOn: MEMBER_PLAN_GATE_ON }))).toBe(false);
+  });
+  it("switched on (or the QA builds' test switch): the card shows, in the free month and after it", () => {
+    expect(findGymCardShown(memberAccess({ ...facts, gateOn: true, trialStartedOn: '2026-11-10' }))).toBe(true);
+    expect(findGymCardShown(memberAccess({ ...facts, gateOn: true, trialStartedOn: '2026-01-01' }))).toBe(true);
   });
 });
