@@ -16,6 +16,7 @@ import { ActivityIndicator, Pressable, RefreshControl, ScrollView, Share, Text, 
 
 import { JoinGymCard } from '@/components/settings/JoinGymCard';
 import { StaffDoorCard } from '@/shop/StaffDoorCard';
+import { STAFF_DOOR_ON } from '@/shop/staffDoor';
 import { LinkRow } from '@/components/stats/parts';
 import { Card, Chip, GhostButton, Icon, Screen, type IconName } from '@/components/ui';
 import { InlineError } from '@/components/ui/InlineError';
@@ -106,8 +107,9 @@ function JoinGymDoor() {
           ))}
         </View>
         <RecommendGymCard />
-        {/* R-458: the gym's owner or desk person opens their own gym with their admin sign-in. */}
-        <StaffDoorCard />
+        {/* R-458: the gym's owner or desk person opens their own gym with their admin sign-in. Hidden (R-493, owner
+            14 Nov 2026): a phone-number sign-in will replace it. */}
+        {STAFF_DOOR_ON ? <StaffDoorCard /> : null}
         <Text style={{ fontFamily: type.body, fontSize: type.size.sub, lineHeight: 20, color: color.inkMuted }}>
           No gym? Everything else works without one.
         </Text>

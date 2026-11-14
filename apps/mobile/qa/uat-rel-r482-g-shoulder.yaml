@@ -3,12 +3,13 @@
 # gets tip 2 for the shoulders. A fresh install restores qa-r482-shoulder.zip (qa/tools/make_r482_backups.py, the
 # unit tests' oneShoulderPlan): Push = Barbell Bench Press 4, Incline Dumbbell Press 4, Cable Fly 3, Lateral Raise 3,
 # Triceps Pushdown 3; Pull has no face pull. Every routine done, the first 20 days ago, the last Legs: Up next is Push.
-#   1. "Your routines give your shoulders 3 sets a week and your chest 11. Swap Cable Fly for Dumbbell Shoulder Press
-#      in your Push routine?" with Swap, Not now and "Keep as is".
+#   1. "Your routines give your shoulders 3 sets a week and your chest 11. Add 3 sets of Dumbbell Shoulder Press to
+#      your Push routine, or swap Cable Fly for it?" with Add, Swap, Not now and "Keep as is".
 #   2. Swap -> "Dumbbell Shoulder Press now replaces Cable Fly in your Push routine." with Undo -> Undo: Cable Fly is
 #      back after Incline Dumbbell Press and the tip is back.
-#   3. Swap again, the bar left to go: no tip; See exercises: Dumbbell Shoulder Press where Cable Fly was (after
-#      Incline Dumbbell Press, before Lateral Raise), 3 sets, no Cable Fly.
+#   3. R-492 (owner, 14 Nov 2026: "Some people might just want to add one exercise and not swap anything"): Add, the
+#      bar left to go: no tip; See exercises: Cable Fly still in its place, Dumbbell Shoulder Press last (after Triceps
+#      Pushdown); its routine page: 3 sets. (Swap kept is flow d.)
 # Pictures rel-r482-g*.png.
 appId: com.mettleup.app
 ---
@@ -19,13 +20,17 @@ appId: com.mettleup.app
       NEXT: 'Push'
 # ---------------------------------------------------------------- 1. the shoulders swap tip
 - extendedWaitUntil:
-    visible: 'Your routines give your shoulders 3 sets a week and your chest 11\. Swap Cable Fly for Dumbbell Shoulder Press in your Push routine\?'
+    visible: 'Your routines give your shoulders 3 sets a week and your chest 11\. Add 3 sets of Dumbbell Shoulder Press to your Push routine, or swap Cable Fly for it\?'
     timeout: 20000
     optional: true
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: 'Your routines give your shoulders 3 sets a week and your chest 11\. Swap Cable Fly for Dumbbell Shoulder Press in your Push routine\?'
+      FIND: 'Your routines give your shoulders 3 sets a week and your chest 11\. Add 3 sets of Dumbbell Shoulder Press to your Push routine, or swap Cable Fly for it\?'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Add$'
 - runFlow:
     file: sub-see.yaml
     env:
@@ -60,7 +65,7 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-see.yaml
     env:
-      FIND: 'Your routines give your shoulders 3 sets a week and your chest 11\. Swap Cable Fly for Dumbbell Shoulder Press in your Push routine\?'
+      FIND: 'Your routines give your shoulders 3 sets a week and your chest 11\. Add 3 sets of Dumbbell Shoulder Press to your Push routine, or swap Cable Fly for it\?'
 - assertNotVisible: 'Dumbbell Shoulder Press now replaces.*'
 - takeScreenshot: rel-r482-g3-undone-tip-back
 - runFlow:
@@ -87,22 +92,23 @@ appId: com.mettleup.app
 - assertNotVisible: "Dumbbell Shoulder Press"
 - takeScreenshot: rel-r482-g4-push-after-undo
 - back
-# ---------------------------------------------------------------- 3. Swap again and keep it
+# ---------------------------------------------------------------- 3. R-492: Add and keep it (nothing swapped out)
 - extendedWaitUntil:
     visible: "^Workout$"
     timeout: 15000
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: '^Swap$'
+      FIND: '^Add$'
 - tapOn:
-    text: "^Swap$"
+    text: "^Add$"
     waitToSettleTimeoutMs: 300
 - extendedWaitUntil:
-    visible: 'Dumbbell Shoulder Press now replaces Cable Fly in your Push routine\.'
+    visible: 'Dumbbell Shoulder Press added to your Push routine\.'
     timeout: 6000
+- takeScreenshot: rel-r482-g5a-added-undo-bar
 - extendedWaitUntil:
-    notVisible: 'Dumbbell Shoulder Press now replaces Cable Fly in your Push routine\.'
+    notVisible: 'Dumbbell Shoulder Press added to your Push routine\.'
     timeout: 20000
 - runFlow:
     file: sub-see.yaml
@@ -118,7 +124,7 @@ appId: com.mettleup.app
     optional: true
 - assertNotVisible: 'Your routines give.*'
 - assertNotVisible: 'None of your routines.*'
-- takeScreenshot: rel-r482-g5-swapped-no-tip
+- takeScreenshot: rel-r482-g5-added-no-tip
 - runFlow:
     file: sub-find.yaml
     env:
@@ -128,6 +134,15 @@ appId: com.mettleup.app
     visible: "Barbell Bench Press"
     timeout: 15000
     optional: true
+# Add takes nothing out: Cable Fly keeps its place, Dumbbell Shoulder Press comes last (after Triceps Pushdown).
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Cable Fly'
+- assertVisible:
+    text: 'Cable Fly'
+    below:
+      text: 'Incline Dumbbell Press'
 - runFlow:
     file: sub-see.yaml
     env:
@@ -135,21 +150,8 @@ appId: com.mettleup.app
 - assertVisible:
     text: 'Dumbbell Shoulder Press'
     below:
-      text: 'Incline Dumbbell Press'
-- runFlow:
-    file: sub-see.yaml
-    env:
-      FIND: 'Lateral Raise'
-- assertVisible:
-    text: 'Lateral Raise'
-    below:
-      text: 'Dumbbell Shoulder Press'
-- runFlow:
-    file: sub-see.yaml
-    env:
-      FIND: 'Triceps Pushdown'
-- assertNotVisible: "Cable Fly"
-- takeScreenshot: rel-r482-g6-push-swapped
+      text: 'Triceps Pushdown'
+- takeScreenshot: rel-r482-g6-push-added
 - back
 # The routine's own page (its card on the Workout tab) shows the planned sets ("See exercises" shows the
 # workout preview, which has no set count).
@@ -169,7 +171,7 @@ appId: com.mettleup.app
     file: sub-find.yaml
     env:
       FIND: 'Dumbbell Shoulder Press'
-# in-view: the line right under Dumbbell Shoulder Press, just centred by sub-find
+# in-view: the line right under Dumbbell Shoulder Press, just centred by sub-find (Add gives it 3 sets)
 - assertVisible:
     text: '3 sets.*'
     below:

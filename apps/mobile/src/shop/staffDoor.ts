@@ -53,6 +53,13 @@ export function staffDoorFromRow(raw: unknown): StaffDoorAnswer {
   return { ok: true, joinCode: code, gymName: typeof raw.name === 'string' ? raw.name.trim() : '' };
 }
 
+/**
+ * R-493 (owner, 14 Nov 2026: "I did not want this. I want a simple sign-in page which is connected to their phone
+ * number"): the Gym tab no longer shows "Do you run a gym on MettleUp?". The code stays (a phone-number sign-in that
+ * recognises staff, trainers and owners will replace it); flip to true only on his word.
+ */
+export const STAFF_DOOR_ON = false;
+
 // ------------------------------------------------------------------ words (member-words rules, R-98)
 
 export const STAFF_DOOR = {

@@ -3,7 +3,7 @@
  * not the logs. His case: Standing Calf Raise sits in his Legs routine (he skips it), and Pull 2's
  * Up next said "Easy add today: 3 sets of Standing Calf Raise for your calves." It must say nothing.
  */
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { CATALOG } from '@/tracker/catalog/exerciseCatalog';
 import { setShares, type Muscle } from '@/tracker/catalog/muscles';
@@ -22,17 +22,31 @@ import {
   SHOULDER_GAP_RATIO,
   swapLine,
   swappedLine,
+  TIP_LABEL,
   timesPerWeekOf,
+  timesWords,
+  tipWhy,
   underTrainedGroups,
   weekFromRoutines,
+  whyRows,
+  WHY_TITLE,
   type PlannedExercise,
   type PlannedRoutine,
   type CompareGroup,
   type PlannedWeek,
   type WeekSets,
 } from '@/tracker/engine/muscleBalance';
-import { pickCandidate, tipCandidates } from '@/tracker/services/muscleTips';
+import { addExerciseToRoutine, swapRoutineExerciseKeepingSets } from '@/tracker/db/routineRepo';
+import { applyMuscleTip, pickCandidate, tipCandidates, type MuscleTip } from '@/tracker/services/muscleTips';
 import type { DayType } from '@/types/models';
+
+// R-492: Add and Swap are checked without a database (the routine writes are stand-ins here).
+vi.mock('@/tracker/db/routineRepo', () => ({
+  addExerciseToRoutine: vi.fn(async () => 'newRow'),
+  removeRoutineExercise: vi.fn(async () => undefined),
+  restoreRoutineRow: vi.fn(async () => undefined),
+  swapRoutineExerciseKeepingSets: vi.fn(async () => ({ rowId: 'out', exerciseId: 'ex_out' })),
+}));
 
 const TODAY = '2026-11-13';
 
@@ -251,12 +265,12 @@ describe('R-482: the words (member-words: the muscle and the routine, plain, but
     );
     expect(addLine('back', 'Lat Pulldown', 2, 'Upper A')).toBe('None of your routines trains your back. Add 2 sets of Lat Pulldown to your Upper A routine?');
   });
-  it('tip 2: the two numbers are the planned sets a week of the routines, rounded', () => {
+  it('tip 2: the two numbers are the planned sets a week of the routines, rounded; Add first, then Swap (R-492)', () => {
     expect(swapLine('shoulders', 3, 'chest', 12, 'Incline Dumbbell Press', 'Dumbbell Shoulder Press', 'Push')).toBe(
-      'Your routines give your shoulders 3 sets a week and your chest 12. Swap Incline Dumbbell Press for Dumbbell Shoulder Press in your Push routine?',
+      'Your routines give your shoulders 3 sets a week and your chest 12. Add 3 sets of Dumbbell Shoulder Press to your Push routine, or swap Incline Dumbbell Press for it?',
     );
-    expect(swapLine('back', 4.5, 'quads', 11.6, 'Leg Extension', 'Lat Pulldown', 'Full Body')).toBe(
-      'Your routines give your back 5 sets a week and your quads 12. Swap Leg Extension for Lat Pulldown in your Full Body routine?',
+    expect(swapLine('back', 4.5, 'quads', 11.6, 'Leg Extension', 'Lat Pulldown', 'Full Body', 2)).toBe(
+      'Your routines give your back 5 sets a week and your quads 12. Add 2 sets of Lat Pulldown to your Full Body routine, or swap Leg Extension for it?',
     );
     expect(swapLine('hamstrings', 1, 'quads', 9, 'Leg Extension', 'Seated Leg Curl', 'Legs')).toContain('your hamstrings 1 set a week');
   });
@@ -336,7 +350,7 @@ describe('R-483: the shoulders count direct shoulder exercises only', () => {
     expect([c.swap.from, c.swap.fromSets, c.swap.toSets]).toEqual(['chest', 11, 3]);
     // The words on Up next (the app's first library pick for the shoulders is Dumbbell Shoulder Press).
     expect(swapLine('shoulders', c.swap.toSets, c.swap.from, c.swap.fromSets, c.swap.out.name, 'Dumbbell Shoulder Press', 'Push')).toBe(
-      'Your routines give your shoulders 3 sets a week and your chest 11. Swap Cable Fly for Dumbbell Shoulder Press in your Push routine?',
+      'Your routines give your shoulders 3 sets a week and your chest 11. Add 3 sets of Dumbbell Shoulder Press to your Push routine, or swap Cable Fly for it?',
     );
     expect(pickCandidate(cands, 'push', null, TODAY)?.group).toBe('shoulders');
     expect(pickCandidate(cands, 'legs', null, TODAY)).toBeNull();
@@ -363,5 +377,148 @@ describe('R-483: the shoulders count direct shoulder exercises only', () => {
     const counts = groupSetsAWeek(week);
     expect(counts.get('shoulders')).toBe(7);
     expect(underTrainedGroups(counts, weekFromRoutines(week)).map((u) => u.group)).toEqual(['hamstrings']);
+  });
+});
+
+/**
+ * R-492 (owner, 14 Nov 2026): "Some people might just want to add one exercise and not swap anything ... a letter I
+ * symbol which we can tap and find out why we are giving this suggestion and then the word smart suggestion".
+ */
+function swapTip(): MuscleTip {
+  return {
+    kind: 'swap',
+    group: 'hamstrings',
+    routineId: 'legs',
+    routineName: 'Legs',
+    exerciseId: 'ex_seated_leg_curl',
+    exerciseName: 'Seated Leg Curl',
+    sets: 4,
+    addSets: 3,
+    outRowId: 'rowLegExt',
+    outExerciseId: 'ex_leg_extension',
+    outName: 'Leg Extension',
+    line: '',
+    why: tipWhy({ kind: 'swap', group: 'hamstrings', routineNames: ['Legs'], timesPerWeek: 1, rows: [], exerciseName: 'Seated Leg Curl', routineName: 'Legs', addSets: 3, outName: 'Leg Extension' }),
+  };
+}
+
+describe('R-492: tip 2 also offers Add (nothing swapped out)', () => {
+  it('Add on tip 2 adds the exercise with 3 sets to that routine and swaps nothing; Undo removes that row', async () => {
+    vi.mocked(addExerciseToRoutine).mockClear();
+    vi.mocked(swapRoutineExerciseKeepingSets).mockClear();
+    const done = await applyMuscleTip(swapTip(), 'add');
+    expect(addExerciseToRoutine).toHaveBeenCalledWith('legs', 'ex_seated_leg_curl', { targetSets: 3 });
+    expect(swapRoutineExerciseKeepingSets).not.toHaveBeenCalled();
+    expect(done).toEqual({ kind: 'add', rowId: 'newRow' });
+  });
+  it('Swap on tip 2 is unchanged: same place, same sets (the row it replaces keeps its 4)', async () => {
+    vi.mocked(addExerciseToRoutine).mockClear();
+    const done = await applyMuscleTip(swapTip(), 'swap');
+    expect(swapRoutineExerciseKeepingSets).toHaveBeenCalledWith('rowLegExt', 'ex_leg_extension', 'ex_seated_leg_curl');
+    expect(addExerciseToRoutine).not.toHaveBeenCalled();
+    expect(done?.kind).toBe('swap');
+    // With no choice given, a swap tip still swaps (the old call).
+    expect((await applyMuscleTip(swapTip()))?.kind).toBe('swap');
+  });
+  it('tip 1 only ever adds, whatever is asked', async () => {
+    vi.mocked(swapRoutineExerciseKeepingSets).mockClear();
+    const add: MuscleTip = { ...swapTip(), kind: 'add', group: 'calves' } as MuscleTip;
+    expect((await applyMuscleTip(add, 'swap'))?.kind).toBe('add');
+    expect(swapRoutineExerciseKeepingSets).not.toHaveBeenCalled();
+  });
+});
+
+describe('R-492: "Smart suggestion" and the (i) "Why we suggest this"', () => {
+  it('the label and the sheet title', () => {
+    expect(TIP_LABEL).toBe('Smart suggestion');
+    expect(WHY_TITLE).toBe('Why we suggest this');
+  });
+
+  it('how often each routine is done, in words', () => {
+    expect(timesWords(1)).toBe('once a week');
+    expect(timesWords(2)).toBe('twice a week');
+    expect(timesWords(3)).toBe('3 times a week');
+    expect(timesWords(4 / 3)).toBe('about 1.3 times a week');
+  });
+
+  it('the table: the 6 big groups with their real sets a week, most first; tip 1 adds its own group', () => {
+    const week = quadHeavyPlan();
+    const rows = whyRows('hamstrings', week);
+    expect(rows.map((r) => r.group).sort()).toEqual([...COMPARE_GROUPS].sort());
+    expect(rows.find((r) => r.group === 'quads')?.sets).toBe(12);
+    expect(rows.find((r) => r.group === 'hamstrings')?.sets).toBe(3);
+    for (let i = 1; i < rows.length; i++) expect(rows[i - 1].sets).toBeGreaterThanOrEqual(rows[i].sets);
+    const noCalves = whyRows('calves', ownersPlan(false), 'add');
+    expect(noCalves).toHaveLength(7);
+    expect(noCalves[noCalves.length - 1]).toEqual({ group: 'calves', sets: 0 });
+    // "legs" is quads + hamstrings + glutes, already in the table: no extra row.
+    expect(whyRows('legs', ownersPlan(false), 'add')).toHaveLength(6);
+    // Counted the usual way (helpers half), the calves get 2 sets from exercises where they only help.
+    expect(whyRows('calves', ownersPlan(false)).find((r) => r.group === 'calves')?.sets).toBeGreaterThan(0);
+  });
+
+  it('tip 2 (the hamstrings case): the routines counted, the numbers, why, and that nothing changes until Add or Swap', () => {
+    const week = quadHeavyPlan();
+    const counts = groupSetsAWeek(week);
+    const under = underTrainedGroups(counts, weekFromRoutines(week))[0];
+    const w = tipWhy({
+      kind: 'swap',
+      group: 'hamstrings',
+      routineNames: week.routines.map((r) => r.name),
+      timesPerWeek: week.timesPerWeek,
+      rows: whyRows('hamstrings', week),
+      others: under.others,
+      exerciseName: 'Seated Leg Curl',
+      routineName: 'Legs',
+      addSets: 3,
+      outName: 'Leg Extension',
+    });
+    expect(w.title).toBe('Why we suggest this');
+    expect(w.counted).toBe(`We added up the sets planned in your ${week.routines.length} routines: ${week.routines.map((r) => r.name).slice(0, -1).join(', ')} and ${week.routines[week.routines.length - 1].name}. Each one is done once a week.`);
+    expect(w.heading).toBe('Sets a week for each muscle');
+    expect(w.rows.find((r) => r.label === 'Quads')).toEqual({ label: 'Quads', sets: '12 sets', tip: false });
+    expect(w.rows.find((r) => r.label === 'Hamstrings')).toEqual({ label: 'Hamstrings', sets: '3 sets', tip: true });
+    expect(w.rows.filter((r) => r.tip)).toHaveLength(1);
+    expect(w.rule).toBe('A set counts 1 for the muscle it mainly works and half for a muscle that helps. For shoulders, only shoulder exercises count.');
+    expect(w.reason).toBe(
+      'Your hamstrings get 3 sets a week. Your other big muscles get around 12. Muscles grow and get stronger with the work they get, so closer numbers keep your body even.',
+    );
+    expect(w.change).toBe(
+      'Nothing changes unless you tap Add or Swap. Add puts 3 sets of Seated Leg Curl at the end of your Legs routine. Swap puts Seated Leg Curl in place of Leg Extension, with the same sets. You can undo either one right after.',
+    );
+    expect(w.off).toBe('You can turn these suggestions off in Settings → "Muscle tips".');
+  });
+
+  it('tip 1 (no calf exercise): no Swap words; one routine reads as one', () => {
+    const week = ownersPlan(false);
+    const w = tipWhy({
+      kind: 'add',
+      group: 'calves',
+      routineNames: ['Push', 'Pull 1', 'Pull 2', 'Legs'],
+      timesPerWeek: 1,
+      rows: whyRows('calves', week, 'add'),
+      exerciseName: 'Standing Calf Raise',
+      routineName: 'Legs',
+      addSets: 3,
+    });
+    expect(w.counted).toBe('We added up the sets planned in your 4 routines: Push, Pull 1, Pull 2 and Legs. Each one is done once a week.');
+    expect(w.rows[w.rows.length - 1]).toEqual({ label: 'Calves', sets: '0 sets', tip: true });
+    expect(w.reason).toBe('None of your exercises mainly works your calves. A few sets a week give them direct work of their own.');
+    expect(w.change).toBe('Nothing changes unless you tap Add. Add puts 3 sets of Standing Calf Raise at the end of your Legs routine. You can undo it right after.');
+    expect(w.change).not.toMatch(/Swap/);
+    const one = tipWhy({ ...{ kind: 'add' as const, group: 'core' as const, rows: [], exerciseName: 'Plank', routineName: 'Full Body', addSets: 2 }, routineNames: ['Full Body'], timesPerWeek: 3 });
+    expect(one.counted).toBe('We added up the sets planned in your Full Body routine. It is done 3 times a week.');
+  });
+
+  it('never a banned, scary or blaming word in any line of the sheet', () => {
+    const week = quadHeavyPlan();
+    const all = [
+      tipWhy({ kind: 'swap', group: 'hamstrings', routineNames: ['Push', 'Pull', 'Legs'], timesPerWeek: 1, rows: whyRows('hamstrings', week), others: 12, exerciseName: 'Seated Leg Curl', routineName: 'Legs', addSets: 3, outName: 'Leg Extension' }),
+      tipWhy({ kind: 'add', group: 'calves', routineNames: ['Legs'], timesPerWeek: 2, rows: whyRows('calves', week), exerciseName: 'Standing Calf Raise', routineName: 'Legs', addSets: 3 }),
+    ];
+    for (const w of all) {
+      const text = [w.title, w.counted, w.heading, w.rule, w.reason, w.change, w.off, ...w.rows.map((r) => `${r.label} ${r.sets}`)].join(' ');
+      expect(text).not.toMatch(/\b(easy add|volume|PR|session|missing|neglect|imbalance|weak|injur\w*|fail\w*|should)\b/i);
+    }
   });
 });

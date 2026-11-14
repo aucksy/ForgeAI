@@ -1,6 +1,8 @@
 # Part UAT, R-482 flow e: a new plan is never judged (negative). A fresh install restores qa-r482-new.zip: the same
 # routines as flow a (no calf exercise anywhere), every routine done, but the first only 10 days ago (the rule asks
 # for 14+): Up next is Legs and it shows NO tip.
+# R-493 (owner, 14 Nov 2026: "I did not want this"): then the Gym tab (no gym on this phone) shows no "Do you run a
+# gym on MettleUp?" card and no "Sign in as gym staff" (sub-gym-none.yaml checks it on every such visit).
 # Pictures rel-r482-e*.png.
 appId: com.mettleup.app
 ---
@@ -29,3 +31,13 @@ appId: com.mettleup.app
 - assertNotVisible: 'Your routines give.*'
 - assertNotVisible: '(?i).*easy add.*'
 - takeScreenshot: rel-r482-e1-new-plan-no-tip
+# ---------------------------------------------------------------- R-493: the Gym tab without the staff card
+- runFlow:
+    file: sub-gym-none.yaml
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "No gym\\? Everything else works without one\\."
+- assertNotVisible: "Do you run a gym on MettleUp.*"
+- assertNotVisible: "Sign in as gym staff.*"
+- takeScreenshot: rel-r482-e2-gym-tab-no-staff-card

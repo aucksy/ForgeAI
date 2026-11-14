@@ -2,10 +2,14 @@
 # A fresh install restores qa-r482-swap.zip (qa/tools/make_r482_backups.py, the unit tests' quadHeavyPlan): Legs =
 # Barbell Squat 4, Leg Press 4, Leg Extension 4, Lying Leg Curl 3, Standing Calf Raise 3, Plank 3, so the routines give
 # the hamstrings 3 sets a week and the quads 12. Every routine done, the first 20 days ago; Up next is Legs.
-#   1. "Your routines give your hamstrings 3 sets a week and your quads 12. Swap Leg Extension for Seated Leg Curl in
-#      your Legs routine?" with Swap, Not now and "Keep as is".
+#   1. "Your routines give your hamstrings 3 sets a week and your quads 12. Add 3 sets of Seated Leg Curl to your Legs
+#      routine, or swap Leg Extension for it?" with Add, Swap, Not now and "Keep as is" (R-492: Add next to Swap).
+#   1b. R-492: "Smart suggestion" on top; its (i) opens "Why we suggest this": Push, Pull and Legs counted,
+#      "Hamstrings: 3 sets a week", "Quads: 12 sets a week", why, Add and Swap explained; Back closes it.
 #   2. Swap -> "Seated Leg Curl now replaces Leg Extension in your Legs routine." with Undo -> Undo: Leg Extension is
 #      back in its place and the tip is back.
+#   2b. R-492: Add (nothing swapped out) -> "Seated Leg Curl added to your Legs routine." with Undo -> Undo: the tip
+#      is back.
 #   3. Swap again, the bar left to go: no tip; See exercises: Seated Leg Curl where Leg Extension was (after Leg
 #      Press, before Lying Leg Curl), 4 sets, no Leg Extension.
 # Pictures rel-r482-d*.png.
@@ -18,13 +22,17 @@ appId: com.mettleup.app
       NEXT: 'Legs'
 # ---------------------------------------------------------------- 1. the swap tip
 - extendedWaitUntil:
-    visible: 'Your routines give your hamstrings 3 sets a week and your quads 12\. Swap Leg Extension for Seated Leg Curl in your Legs routine\?'
+    visible: 'Your routines give your hamstrings 3 sets a week and your quads 12\. Add 3 sets of Seated Leg Curl to your Legs routine, or swap Leg Extension for it\?'
     timeout: 20000
     optional: true
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: 'Your routines give your hamstrings 3 sets a week and your quads 12\. Swap Leg Extension for Seated Leg Curl in your Legs routine\?'
+      FIND: 'Your routines give your hamstrings 3 sets a week and your quads 12\. Add 3 sets of Seated Leg Curl to your Legs routine, or swap Leg Extension for it\?'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Add$'
 - runFlow:
     file: sub-see.yaml
     env:
@@ -36,10 +44,56 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-see.yaml
     env:
+      FIND: 'Smart suggestion.*'
+- runFlow:
+    file: sub-see.yaml
+    env:
       FIND: 'Keep as is.*'
 - assertNotVisible: 'None of your routines.*'
 - assertNotVisible: '(?i).*easy add.*'
 - takeScreenshot: rel-r482-d1-tip-swap
+# ---------------------------------------------------------------- R-492: "Smart suggestion" and its (i)
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Smart suggestion.*'
+- tapOn:
+    text: 'Smart suggestion.*'
+    waitToSettleTimeoutMs: 300
+# in-view: the sheet's title, pinned at its top, just opened
+- extendedWaitUntil:
+    visible: '^Why we suggest this$'
+    timeout: 6000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'We added up the sets planned in your 3 routines: Push, Pull and Legs\. Each one is done once a week\.'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Hamstrings: 3 sets a week'
+- takeScreenshot: rel-r482-d1b-why-hamstrings
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Your hamstrings get 3 sets a week\. Your other big muscles get around 12\. Muscles grow and get stronger with the work they get, so closer numbers keep your body even\.'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Nothing changes unless you tap Add or Swap\. Add puts 3 sets of Seated Leg Curl at the end of your Legs routine\. Swap puts Seated Leg Curl in place of Leg Extension, with the same sets\. You can undo either one right after\.'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'You can turn these suggestions off in Settings.*Muscle tips.*'
+- takeScreenshot: rel-r482-d1c-why-hamstrings-end
+- back
+- extendedWaitUntil:
+    notVisible: '^Why we suggest this$'
+    timeout: 6000
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: '^Swap$'
 # ---------------------------------------------------------------- 2. Swap, then Undo
 - tapOn:
     text: "^Swap$"
@@ -59,7 +113,7 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-see.yaml
     env:
-      FIND: 'Your routines give your hamstrings 3 sets a week and your quads 12\. Swap Leg Extension for Seated Leg Curl in your Legs routine\?'
+      FIND: 'Your routines give your hamstrings 3 sets a week and your quads 12\. Add 3 sets of Seated Leg Curl to your Legs routine, or swap Leg Extension for it\?'
 - assertNotVisible: 'Seated Leg Curl now replaces.*'
 - takeScreenshot: rel-r482-d3-undone-tip-back
 - runFlow:
@@ -86,6 +140,35 @@ appId: com.mettleup.app
 - assertNotVisible: "Seated Leg Curl"
 - takeScreenshot: rel-r482-d4-legs-after-undo
 - back
+# ---------------------------------------------------------------- 2b. R-492: Add on tip 2 (nothing out), then Undo
+- extendedWaitUntil:
+    visible: "^Workout$"
+    timeout: 15000
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: '^Add$'
+- tapOn:
+    text: "^Add$"
+    waitToSettleTimeoutMs: 300
+- extendedWaitUntil:
+    visible: 'Seated Leg Curl added to your Legs routine\.'
+    timeout: 6000
+- takeScreenshot: rel-r482-d4b-added-undo-bar
+# in-view: the Undo bar sits where the tip was (it goes after ~6 s, no time for a scroll)
+- tapOn:
+    text: 'Undo: Seated Leg Curl added to your Legs routine\.|^Undo$'
+    waitToSettleTimeoutMs: 300
+- extendedWaitUntil:
+    visible: 'Your routines give your hamstrings 3 sets a week and your quads 12\..*'
+    timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Your routines give your hamstrings 3 sets a week and your quads 12\. Add 3 sets of Seated Leg Curl to your Legs routine, or swap Leg Extension for it\?'
+- assertNotVisible: 'Seated Leg Curl added.*'
+- takeScreenshot: rel-r482-d4c-add-undone-tip-back
 # ---------------------------------------------------------------- 3. Swap again and keep it
 - extendedWaitUntil:
     visible: "^Workout$"

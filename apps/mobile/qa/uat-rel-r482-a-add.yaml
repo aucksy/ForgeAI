@@ -2,7 +2,9 @@
 # A fresh install restores qa-r482-ppl.zip (qa/tools/make_r482_backups.py): "QA Tips" = Push, Pull, Legs, no calf
 # exercise in any routine, every routine done, the first 20 days ago, the last two Push and Pull: Up next is Legs.
 #   1. Up next: Legs shows "None of your routines trains your calves. Add 3 sets of Standing Calf Raise to your Legs
-#      routine?" with Add, Not now and "I skip this on purpose"; never the old "Easy add" words.
+#      routine?" with Add, Not now and "I skip this on purpose"; never the old "Easy add" words; no Swap on tip 1.
+#   1b. R-492: "Smart suggestion" on top; its (i) opens "Why we suggest this": the 3 routines counted, "Calves: 0 sets
+#      a week", why, "Nothing changes unless you tap Add ...", where to turn tips off; Back closes it.
 #   2. Add -> "Standing Calf Raise added to your Legs routine." with Undo -> Undo: Legs is back to its 5 exercises
 #      (See exercises: no Standing Calf Raise) and the tip is back.
 #   3. Add again, the Undo bar left to go: no tip; See exercises: Standing Calf Raise last, 3 sets, 6 exercises.
@@ -37,7 +39,50 @@ appId: com.mettleup.app
     env:
       FIND: 'I skip this on purpose.*'
 - assertNotVisible: '(?i).*easy add.*'
+- assertNotVisible: '^Swap$'
 - takeScreenshot: rel-r482-a1-tip-calves
+# ---------------------------------------------------------------- R-492: "Smart suggestion" and its (i)
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Smart suggestion.*'
+- tapOn:
+    text: 'Smart suggestion.*'
+    waitToSettleTimeoutMs: 300
+# in-view: the sheet's title, pinned at its top, just opened
+- extendedWaitUntil:
+    visible: '^Why we suggest this$'
+    timeout: 6000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'We added up the sets planned in your 3 routines: Push, Pull and Legs\. Each one is done once a week\.'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Calves: 0 sets a week'
+- takeScreenshot: rel-r482-a1b-why-calves
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'None of your exercises mainly works your calves\. A few sets a week give them direct work of their own\.'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Nothing changes unless you tap Add\. Add puts 3 sets of Standing Calf Raise at the end of your Legs routine\. You can undo it right after\.'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'You can turn these suggestions off in Settings.*Muscle tips.*'
+- takeScreenshot: rel-r482-a1c-why-calves-end
+- back
+- extendedWaitUntil:
+    notVisible: '^Why we suggest this$'
+    timeout: 6000
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: 'None of your routines trains your calves\. Add 3 sets of Standing Calf Raise to your Legs routine\?'
 # ---------------------------------------------------------------- 2. Add, then Undo
 - tapOn:
     text: "^Add$"

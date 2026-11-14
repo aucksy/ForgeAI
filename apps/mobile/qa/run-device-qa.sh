@@ -2000,7 +2000,7 @@ part_uat() {
   part_u436
   part_u454
   part_uage
-  part_u458
+  # part_u458: out of the chain while the staff card is hidden (R-493, owner 14 Nov 2026: "I did not want this").
   part_u461
   part_u482
   part_u484
@@ -2359,8 +2359,15 @@ part_uage() {
 # made-up QA owner) makes for himself; flow r458: wrong PIN (nothing opens), then the code opens "Join QA UAT
 # Gym", Back, the card closed. Starts from the demo (gate-demo, no gym). Also runs alone with only=u458.
 # Pictures rel-r458-*.png. The code is masked in the log and never written to the timeline.
+# R-493 (owner, 14 Nov 2026): the card is hidden (src/shop/staffDoor.ts STAFF_DOOR_ON = false) and the part is out of
+# the "uat" chain; while the switch is off, `only=u458` (or an affected-flows run) skips it instead of failing. The
+# Gym tab's no-card check lives in sub-gym-none.yaml (every no-gym Gym tab visit) and u482 flow e.
 part_u458() {
   local setup code own rc=0
+  if ! grep -q '^export const STAFF_DOOR_ON = true' "$QA_DIR/../src/shop/staffDoor.ts" 2>/dev/null; then
+    log "UAT U458 SKIPPED: the staff card is hidden (STAFF_DOOR_ON is false, owner R-493, 14 Nov 2026)"
+    return 0
+  fi
   export XJ_STATE_DIR="${XJ_STATE_DIR:-${RUNNER_TEMP:-/tmp}/xj-state}"
   mkdir -p "$XJ_STATE_DIR"
   chmod 700 "$XJ_STATE_DIR" 2>/dev/null || true

@@ -16,8 +16,8 @@ make_backup_zip.py writes one), dated from the PHONE's day, so the muscle tips' 
   qa-r482-shoulder.zip  R-483: the test's oneShoulderPlan, a normal Push, Pull, Legs with bench + incline pressing
                     and ONE shoulder exercise (Lateral Raise 3). Shoulders count direct work only: 3 sets a week,
                     chest 11. The last workout Legs, so Up next is Push. Expected: tip 2, "Your routines give your
-                    shoulders 3 sets a week and your chest 11. Swap Cable Fly for Dumbbell Shoulder Press in your
-                    Push routine?"
+                    shoulders 3 sets a week and your chest 11. Add 3 sets of Dumbbell Shoulder Press to your Push
+                    routine, or swap Cable Fly for it?" (R-492 words)
 
 Each workout logs only the routine's first exercise (bench, pulldown or squat), so the member's own
 history never offers a calf or hamstring exercise and the tip picks the library's (Standing Calf Raise,

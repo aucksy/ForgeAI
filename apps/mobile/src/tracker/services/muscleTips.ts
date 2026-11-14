@@ -11,9 +11,12 @@
  * Two tips, one at a time, tip 1 first:
  *  1. "None of your routines trains your calves. Add 3 sets of Standing Calf Raise to your Legs
  *     routine?" [Add] [Not now] · I skip this on purpose — shown on that routine's Up next card.
- *  2. "Your routines give your shoulders 3 sets a week and your chest 12. Swap Incline Dumbbell Press
- *     for Dumbbell Shoulder Press in your Push routine?" [Swap] [Not now] · Keep as is — same sets,
- *     same place, with Undo after.
+ *  2. "Your routines give your shoulders 3 sets a week and your chest 12. Add 3 sets of Dumbbell
+ *     Shoulder Press to your Push routine, or swap Incline Dumbbell Press for it?" [Add] [Swap] [Not now]
+ *     · Keep as is. Swap = same sets, same place; Add (R-492, owner 14 Nov 2026) = 3 sets at the end,
+ *     nothing taken out. Undo after either.
+ * R-492: every tip is labelled "Smart suggestion" and carries an (i) whose sheet says why, with the
+ * real numbers (`why`, engine `tipWhy`).
  *
  * Shown only when ALL hold (rules against FOMO, research section 5):
  *  - Settings → Workouts → Muscle tips is on, and this is not an easy week;
@@ -46,13 +49,16 @@ import {
   planSettled,
   swapLine,
   timesPerWeekOf,
+  tipWhy,
   underTrainedGroups,
   weekFromRoutines,
+  whyRows,
   type BalanceGroup,
   type CompareGroup,
   type PlannedRoutine,
   type PlannedWeek,
   type SwapChoice,
+  type TipWhyWords,
 } from '../engine/muscleBalance';
 import { muscleTipsLoaded, NEW_TIP_DAYS, quietGroups, useMuscleTips } from '../store/muscleTipsStore';
 import { getPlanNow, planDaysPerWeek } from './planState';
@@ -118,7 +124,7 @@ export function pickCandidate<C extends TipCandidate>(
 export function tipCandidates(
   week: PlannedWeek,
   opts: { beginner?: boolean; quiet?: ReadonlySet<BalanceGroup> } = {},
-): ({ kind: 'add'; group: BalanceGroup; routineId: string } | { kind: 'swap'; group: CompareGroup; routineId: string; swap: SwapChoice })[] {
+): ({ kind: 'add'; group: BalanceGroup; routineId: string } | { kind: 'swap'; group: CompareGroup; routineId: string; swap: SwapChoice; others: number })[] {
   const quiet = opts.quiet ?? new Set<BalanceGroup>();
   const planned = weekFromRoutines(week);
   const adds = missingGroups(planned, { beginner: opts.beginner, quiet }).flatMap((group) => {
@@ -129,7 +135,7 @@ export function tipCandidates(
   const counts = groupSetsAWeek(week);
   return underTrainedGroups(counts, planned, quiet).flatMap((u) => {
     const swap = chooseSwap(u.group, week, counts);
-    return swap ? [{ kind: 'swap' as const, group: u.group, routineId: swap.routineId, swap }] : [];
+    return swap ? [{ kind: 'swap' as const, group: u.group, routineId: swap.routineId, swap, others: u.others }] : [];
   });
 }
 
@@ -140,12 +146,20 @@ interface TipBase {
   /** The exercise that goes in. */
   exerciseId: string;
   exerciseName: string;
+  /** Swap: the sets of the row it replaces (kept). Add: the sets it is added with. */
   sets: number;
+  /** The sets "Add" gives the exercise (tip 1 = `sets`; tip 2's Add, R-492). */
+  addSets: number;
   line: string;
+  /** R-492: every line of the (i) "Why we suggest this" sheet, with the real numbers. */
+  why: TipWhyWords;
 }
 export type MuscleTip =
   | (TipBase & { kind: 'add' })
   | (TipBase & { kind: 'swap'; group: CompareGroup; outRowId: string; outExerciseId: string; outName: string });
+
+/** What the member pressed: tip 1 only ever adds; tip 2 adds or swaps (R-492). */
+export type MuscleTipAction = 'add' | 'swap';
 
 /** What "Add" or "Swap" did, so Undo can put it back. */
 export type MuscleTipDone = { kind: 'add'; rowId: string } | { kind: 'swap'; before: RoutineRowSnapshot };
@@ -239,8 +253,17 @@ export async function muscleTipFor(routine: Pick<PlanDayFull, 'id'>, today: stri
     const pick = (await membersOwnPick(chosen.group, inRoutine)) ?? (await libraryPick(chosen.group, inRoutine));
     if (!pick) return null;
     prefs.markShown(chosen.group, today);
+    const n = beginner ? 2 : 3;
+    const whyBase = {
+      group: chosen.group,
+      routineNames: routines.map((r) => r.name),
+      timesPerWeek: week.timesPerWeek,
+      rows: whyRows(chosen.group, week, chosen.kind),
+      exerciseName: pick.name,
+      routineName: target.name,
+      addSets: n,
+    };
     if (chosen.kind === 'add') {
-      const n = beginner ? 2 : 3;
       return {
         kind: 'add',
         group: chosen.group,
@@ -249,7 +272,9 @@ export async function muscleTipFor(routine: Pick<PlanDayFull, 'id'>, today: stri
         exerciseId: pick.id,
         exerciseName: pick.name,
         sets: n,
+        addSets: n,
         line: addLine(chosen.group, pick.name, n, target.name),
+        why: tipWhy({ ...whyBase, kind: 'add' }),
       };
     }
     const s = chosen.swap;
@@ -261,10 +286,12 @@ export async function muscleTipFor(routine: Pick<PlanDayFull, 'id'>, today: stri
       exerciseId: pick.id,
       exerciseName: pick.name,
       sets: s.out.sets,
+      addSets: n,
       outRowId: s.out.rowId,
       outExerciseId: s.out.exerciseId,
       outName: s.out.name,
-      line: swapLine(chosen.group, s.toSets, s.from, s.fromSets, s.out.name, pick.name, target.name),
+      line: swapLine(chosen.group, s.toSets, s.from, s.fromSets, s.out.name, pick.name, target.name, n),
+      why: tipWhy({ ...whyBase, kind: 'swap', others: chosen.others, outName: s.out.name }),
     };
   } catch (e) {
     console.warn('[ForgeErr] muscle tip could not be worked out', e);
@@ -273,13 +300,14 @@ export async function muscleTipFor(routine: Pick<PlanDayFull, 'id'>, today: stri
 }
 
 /**
- * "Add" (tip 1): the exercise goes at the end of the routine. "Swap" (tip 2): it takes the other
- * exercise's place with the same sets. Null when the routine changed since the tip was worked out
- * (nothing is written then). Only ever the member's own routine (never a gym plan or ready program).
+ * "Add" (tip 1, and tip 2 since R-492): the exercise goes at the end of the routine with `addSets`
+ * sets, nothing taken out. "Swap" (tip 2): it takes the other exercise's place with the same sets.
+ * Null when the routine changed since the tip was worked out (nothing is written then). Only ever the
+ * member's own routine (never a gym plan or ready program).
  */
-export async function applyMuscleTip(tip: MuscleTip): Promise<MuscleTipDone | null> {
-  if (tip.kind === 'add') {
-    const rowId = await addExerciseToRoutine(tip.routineId, tip.exerciseId, { targetSets: tip.sets });
+export async function applyMuscleTip(tip: MuscleTip, how: MuscleTipAction = tip.kind): Promise<MuscleTipDone | null> {
+  if (tip.kind === 'add' || how === 'add') {
+    const rowId = await addExerciseToRoutine(tip.routineId, tip.exerciseId, { targetSets: tip.addSets });
     return { kind: 'add', rowId };
   }
   const before = await swapRoutineExerciseKeepingSets(tip.outRowId, tip.outExerciseId, tip.exerciseId);

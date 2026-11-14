@@ -19,6 +19,10 @@ appId: com.mettleup.app
     file: sub-find.yaml
     env:
       FIND: "No gym\\? Everything else works without one\\."
+# R-493 (owner, 14 Nov 2026: "I did not want this"): the "Do you run a gym on MettleUp?" card (R-458) is hidden. It
+# sat right above the line just centred, so it would be in view here (negative check on every no-gym Gym tab visit).
+- assertNotVisible: "Do you run a gym on MettleUp.*"
+- assertNotVisible: "Sign in as gym staff.*"
 - scrollUntilVisible:
     element: "^Join your gym$"
     direction: UP

@@ -471,18 +471,160 @@ export function addLine(group: BalanceGroup, exercise: string, sets: number, rou
 }
 
 /**
- * Tip 2 on Up next: "Your routines give your shoulders 3 sets a week and your chest 12. Swap Incline
- * Dumbbell Press for Dumbbell Shoulder Press in your Push routine?" The numbers are the planned
- * counted sets a week, rounded to whole sets ("Your routines give" says they are the plan, not the
- * logged workouts; Gemini's second opinion asked for "planned"). PURE.
+ * Tip 2 on Up next: "Your routines give your shoulders 3 sets a week and your chest 12. Add 3 sets of
+ * Dumbbell Shoulder Press to your Push routine, or swap Incline Dumbbell Press for it?" The numbers are
+ * the planned counted sets a week, rounded to whole sets ("Your routines give" says they are the plan,
+ * not the logged workouts; Gemini's second opinion asked for "planned"). R-492 (owner, 14 Nov 2026:
+ * "Some people might just want to add one exercise and not swap anything"): Add comes first, in the
+ * words and on the buttons ([Add] [Swap]), because it takes nothing away. PURE.
  */
-export function swapLine(under: CompareGroup, underSets: number, from: CompareGroup, fromSets: number, outName: string, inName: string, routine: string): string {
+export function swapLine(
+  under: CompareGroup,
+  underSets: number,
+  from: CompareGroup,
+  fromSets: number,
+  outName: string,
+  inName: string,
+  routine: string,
+  addSets = 3,
+): string {
   const u = Math.round(underSets);
   const f = Math.round(fromSets);
   return (
     `Your routines give your ${GROUP_WORDS[under].your} ${setsWord(u)} a week and your ${GROUP_WORDS[from].your} ${f}. ` +
-    `Swap ${outName} for ${inName} in ${routineWords(routine)}?`
+    `Add ${setsWord(addSets)} of ${inName} to ${routineWords(routine)}, or swap ${outName} for it?`
   );
+}
+
+// ---------------------------------------------------------------- R-492: "Smart suggestion" and its (i)
+
+/** The small label on top of every muscle tip (owner, 14 Nov 2026: "so that they immediately know what they are looking at"). */
+export const TIP_LABEL = 'Smart suggestion';
+/** The title of the sheet the tip's (i) opens. */
+export const WHY_TITLE = 'Why we suggest this';
+
+/** One row of the why sheet's table: a muscle group and its planned sets a week. */
+export interface WhyRow {
+  group: BalanceGroup;
+  sets: number;
+}
+
+/**
+ * The why sheet's table: the 6 compared big groups (the numbers tip 2 judges, shoulders direct work
+ * only), plus tip 1's group when it is not one of them (calves, core, ...), counted the same way (each
+ * set once for the group, 1 main, 0.5 helper). Tip 1 (`add`): its own group counts only the sets
+ * where it is the MAIN muscle (0 by the tip's own rule): a calf row reading "2 sets" from squats
+ * that only help would contradict "None of your routines trains your calves". Most sets first. PURE.
+ */
+export function whyRows(group: BalanceGroup, week: PlannedWeek, kind: 'add' | 'swap' = 'swap'): WhyRow[] {
+  const counts = groupSetsAWeek(week);
+  const setsOf = (g: Exclude<BalanceGroup, 'legs'>, mainOnly: boolean): number => {
+    let sets = 0;
+    for (const r of week.routines) {
+      for (const x of r.exercises) {
+        const share = groupShare(g, x.shares);
+        sets += (mainOnly ? (share >= 1 ? 1 : 0) : share) * Math.max(0, x.sets) * week.timesPerWeek;
+      }
+    }
+    return sets;
+  };
+  const rows: WhyRow[] = COMPARE_GROUPS.map((g) => ({
+    group: g,
+    sets: kind === 'add' && rowIsTip(g, group) ? setsOf(g, true) : counts.get(g) ?? 0,
+  }));
+  if (group !== 'legs' && !(COMPARE_GROUPS as readonly string[]).includes(group)) rows.push({ group, sets: setsOf(group, kind === 'add') });
+  return rows.map((r, i) => ({ r, i })).sort((a, b) => b.r.sets - a.r.sets || a.i - b.i).map((x) => x.r);
+}
+
+/** Is this row the tip's own group ("legs" marks quads, hamstrings and glutes)? PURE. */
+function rowIsTip(row: BalanceGroup, tip: BalanceGroup): boolean {
+  return row === tip || (tip === 'legs' && (row === 'quads' || row === 'hamstrings' || row === 'glutes'));
+}
+
+/** "Push", "Push and Pull", "Push, Pull and Legs". */
+function nameList(names: readonly string[]): string {
+  const n = names.map((x) => x.trim() || 'Workout');
+  if (n.length <= 1) return n[0] ?? '';
+  return `${n.slice(0, -1).join(', ')} and ${n[n.length - 1]}`;
+}
+
+/** "once a week", "twice a week", "3 times a week", "about 1.3 times a week". PURE. */
+export function timesWords(timesPerWeek: number): string {
+  const t = Math.max(0, timesPerWeek);
+  const whole = Math.round(t);
+  if (Math.abs(t - whole) < 0.05) return whole === 1 ? 'once a week' : whole === 2 ? 'twice a week' : `${whole} times a week`;
+  return `about ${t.toFixed(1)} times a week`;
+}
+
+export interface TipWhyInput {
+  kind: 'add' | 'swap';
+  group: BalanceGroup;
+  /** The routines counted (the folder of the routine up next), in their order. */
+  routineNames: readonly string[];
+  timesPerWeek: number;
+  rows: readonly WhyRow[];
+  /** Tip 2: the middle value (median) of the other compared groups' sets a week. */
+  others?: number;
+  /** The exercise the tip adds or swaps in, the routine it goes into, the sets Add gives it. */
+  exerciseName: string;
+  routineName: string;
+  addSets: number;
+  /** Tip 2: the exercise Swap takes out. */
+  outName?: string;
+}
+
+/** Every line of the why sheet (member-words + Gemini pass, 14 Nov 2026). */
+export interface TipWhyWords {
+  title: string;
+  counted: string;
+  heading: string;
+  rows: { label: string; sets: string; tip: boolean }[];
+  rule: string;
+  reason: string;
+  change: string;
+  off: string;
+}
+
+const cap = (s: string): string => s.charAt(0).toUpperCase() + s.slice(1);
+
+/**
+ * The (i) sheet (R-492, owner 14 Nov 2026: "tap and find out why we are giving this suggestion"):
+ * what was counted (the routines and how often), the real numbers a week per muscle, how a set
+ * counts, why the gap matters (calm: no fear, no blame, no promise), and that nothing changes until
+ * Add or Swap (with Undo after), and where to turn the tips off. PURE.
+ */
+export function tipWhy(w: TipWhyInput): TipWhyWords {
+  const n = w.routineNames.length;
+  const counted =
+    n === 1
+      ? `We added up the sets planned in your ${nameList(w.routineNames)} routine. It is done ${timesWords(w.timesPerWeek)}.`
+      : `We added up the sets planned in your ${n} routines: ${nameList(w.routineNames)}. Each one is done ${timesWords(w.timesPerWeek)}.`;
+  const g = GROUP_WORDS[w.group].your;
+  const tipSets = w.rows.filter((r) => rowIsTip(r.group, w.group)).reduce((a, r) => a + r.sets, 0);
+  const reason =
+    w.kind === 'add'
+      ? `None of your exercises mainly works your ${g}. A few sets a week give them direct work of their own.`
+      : `Your ${g} get ${setsWord(Math.round(tipSets))} a week. Your other big muscles get around ${Math.round(w.others ?? 0)}. ` +
+        'Muscles grow and get stronger with the work they get, so closer numbers keep your body even.';
+  const where = routineWords(w.routineName);
+  const change =
+    w.kind === 'add'
+      ? `Nothing changes unless you tap Add. Add puts ${setsWord(w.addSets)} of ${w.exerciseName} at the end of ${where}. You can undo it right after.`
+      : `Nothing changes unless you tap Add or Swap. Add puts ${setsWord(w.addSets)} of ${w.exerciseName} at the end of ${where}. ` +
+        `Swap puts ${w.exerciseName} in place of ${w.outName ?? 'another exercise'}, with the same sets. You can undo either one right after.`;
+  return {
+    title: WHY_TITLE,
+    counted,
+    heading: 'Sets a week for each muscle',
+    rows: w.rows.map((r) => {
+      const s = Math.round(r.sets);
+      return { label: cap(GROUP_WORDS[r.group].your), sets: setsWord(s), tip: rowIsTip(r.group, w.group) };
+    }),
+    rule: 'A set counts 1 for the muscle it mainly works and half for a muscle that helps. For shoulders, only shoulder exercises count.',
+    reason,
+    change,
+    off: 'You can turn these suggestions off in Settings → "Muscle tips".',
+  };
 }
 
 /** Routine list line (same words as tip 1, said as a fact): "None of your routines trains your hamstrings. Adding Lying Leg Curl to your Legs routine would cover it." PURE. */

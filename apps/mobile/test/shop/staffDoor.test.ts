@@ -8,7 +8,7 @@ import { join } from 'node:path';
 
 import { describe, expect, it } from 'vitest';
 
-import { STAFF_DOOR, STAFF_PHONE_ERROR, lockTime, staffDoorFromRow, staffDoorProblem, staffMobile, staffPin } from '@/shop/staffDoor';
+import { STAFF_DOOR, STAFF_DOOR_ON, STAFF_PHONE_ERROR, lockTime, staffDoorFromRow, staffDoorProblem, staffMobile, staffPin } from '@/shop/staffDoor';
 
 const read = (p: string) => readFileSync(join(__dirname, '..', '..', p), 'utf8');
 
@@ -89,6 +89,12 @@ describe('R-458: wiring', () => {
     const door = shop.slice(shop.indexOf('function JoinGymDoor'), shop.indexOf('function RecommendGymCard'));
     expect(door).toMatch(/<RecommendGymCard \/>[\s\S]*<StaffDoorCard \/>/);
     expect(shop.match(/<StaffDoorCard/g)?.length).toBe(1);
+  });
+  it('R-493 (owner, 14 Nov 2026: "I did not want this"): hidden behind its switch, which is off; the code stays', () => {
+    expect(STAFF_DOOR_ON).toBe(false);
+    const shop = read('src/shop/ShopScreen.tsx');
+    expect(shop).toMatch(/\{STAFF_DOOR_ON \? <StaffDoorCard \/> : null\}/);
+    expect(shop).not.toMatch(/^\s*<StaffDoorCard \/>\s*$/m);
   });
   it('the session is signed out at once and its key never kept, returned or logged', () => {
     const api = read('src/shop/gymApi.ts');

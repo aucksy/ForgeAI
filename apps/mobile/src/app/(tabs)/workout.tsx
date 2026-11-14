@@ -433,14 +433,18 @@ export default function WorkoutScreen() {
                   <MuscleTipNote
                     tip={tip}
                     lastNotNow={(useMuscleTips.getState().notNow[tip.group] ?? 0) >= 1}
-                    onApply={async () => {
+                    onApply={async (how) => {
                       try {
-                        const done = await applyMuscleTip(tip);
+                        // R-492: tip 2 offers Add (nothing taken out) next to Swap; Undo works for both.
+                        const done = await applyMuscleTip(tip, how);
                         setTip(null);
                         if (done) {
                           setTipUndo({
                             done,
-                            message: tip.kind === 'swap' ? swappedLine(tip.exerciseName, tip.outName, tip.routineName) : addedLine(tip.exerciseName, tip.routineName),
+                            message:
+                              done.kind === 'swap' && tip.kind === 'swap'
+                                ? swappedLine(tip.exerciseName, tip.outName, tip.routineName)
+                                : addedLine(tip.exerciseName, tip.routineName),
                             key: Date.now(),
                           });
                         } else {
@@ -449,7 +453,7 @@ export default function WorkoutScreen() {
                         setTick((t) => t + 1);
                       } catch (e) {
                         console.warn('[ForgeErr] muscle tip: the routine could not be changed', e);
-                        void tell(tip.kind === 'swap' ? "Couldn't swap it" : "Couldn't add it", 'Please try again.');
+                        void tell(how === 'swap' ? "Couldn't swap it" : "Couldn't add it", 'Please try again.');
                       }
                     }}
                     onNotNow={() => {
