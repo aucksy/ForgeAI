@@ -26,6 +26,10 @@ Done, built and "Not doing" items have no rating. The page sorts by these (Best 
 
 | Item | Impact | Effort |
 |---|---|---|
+| Feature: Members join the gym from their own phone (self sign-up) | High | High |
+| Feature: Pop-ups both ways: gym news on members' phones, member actions on the admin app | High | Medium |
+| Feature: A web page for each gym, with sign-up and an AI helper | High | High |
+| #97 | High | High |
 | Task: Every missing exercise picture, then one release (R-487) | High | High |
 | #96 | Low | Low |
 | #95 | High | Medium |
@@ -543,6 +547,10 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | F152 "Stronger than X% of your gym" | Idea | Parked (owner, 24 Oct: server space): compare your best lifts with your own gym, opt-in, from #58. | Needs every member's best lifts on our server. Waits for the paid server plan. |
 | F153 Follow gym mates (a feed of your gym) | Idea | Parked (owner, 24 Oct: server space and moderation), from #58. | See gym mates' workouts, with likes. Needs workouts on our server, a privacy choice and reports. Waits for the paid server plan. |
 | F154 Compare with a friend | Idea | Parked (owner, 24 Oct), from #58. | Pick a gym mate and compare the same lifts side by side. Comes after the feed. |
+| F204 Members join the gym from their own phone (self sign-up) | Planned | Your idea, 14 Nov (R-513): a new member fills the form and pays on their own phone, and it all lands in the admin panel, so the desk types nothing. Being built. Money: your pick A (14 Nov): it goes straight into the gym's own payment account. Before it goes live it needs your yes on the database change and on the consent words (English and Hindi), the gym's payment account set up (KYC), and your "payments live". | The gym shares a link or a QR poster. The person types name, phone, age and plan, ticks the consent box, and pays by UPI or card into the gym's own account. A gym with no payment account set up shows "Pay at the desk". The request appears in the admin panel with the payment and receipt already made; the desk only taps Approve. Spam is blocked with limits per phone and a bot check. |
+| F205 Pop-ups both ways: gym news on members' phones, member actions on the admin app | Next release | Your request, 14 Nov (R-506, R-507). Members' side LIVE 14 Nov (server only, no app update): a pop-up when the gym sends a workout plan or a diet plan, saves body measurements, starts a challenge or asks for a fee. Admin side: built; it goes live with the next admin panel update. | The admin app gets a "Latest from your members" card on Today, and alerts on the phone or computer even when the admin app is closed: complaints, check-ins, shop orders, referred friends and urgent plan requests come at once; the rest come as one summary at the time the owner picks (instantly, once a day, or once a week). |
+| F206 Ask a trainer: members with a paid plan only | Live | Your request, 14 Nov (R-505). Live 14 Nov (server check 0074; live test passed). | A member with a paid plan sees "Ask a trainer" on the Gym tab. A pass member (for example FITPASS) does not see it, and the server also refuses their question. |
+| F207 A web page for each gym, with sign-up and an AI helper | Idea | Your idea, 14 Nov (R-518): you want to think about it first (#97). | Each gym gets its own page under our domain (for example mettleup.fit/crispy-curves): logo, photos, timings, plans and prices, trainers and the map. A visitor can join right there (F204) and ask questions to an AI helper that answers only from the facts the owner entered; anything else goes to the desk as a lead. |
 
 ### Platform and quality
 | Feature | Status | Details | How it will work |
@@ -583,6 +591,25 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | F188 Big banner at the top of the Play listing | Idea | Parked (owner, 1 Nov: "add it to backlog for now"). Our 1024x500 banner picture is already on the listing; Play shows it at the top only when the listing has a YouTube video. | I make a 30-second video from the real app screens, for free. You watch it first. After your yes, it goes on YouTube as Unlisted (only people with the link see it) and its link goes in the listing, so the banner shows on top. Best done when the app goes public. |
 
 ---
+
+## 97. A web page for each gym, with sign-up and an AI helper: to think about — 14 Nov 2026
+**Chat:** Mettle Up
+**Status:** IDEA
+**You said (14 Nov):** plan an AI assistant for member registration. Maybe each gym gets its own page under our brand's domain, where people learn about the gym, register right there, and ask an AI assistant questions. You want to think about it first; put it in the ideas.
+
+**What I understood:** one page per GYM (you said "member"; tell me if you meant a page for each member). Feature row: F207.
+
+**My first view (to think about later, nothing built):**
+- It is a good next step after self sign-up (F204). Self sign-up already makes a small join page for each gym; this grows it into the gym's full shop window.
+- Why it helps the owner: the gym gets a real web page with no web designer, shows up in Google searches for "gym near me", and gets enquiries at night when the desk is closed.
+- The AI must answer only from facts the owner typed (timings, plans, prices, trainers, rules). It never invents an offer or a price. A question it cannot answer becomes an enquiry for the desk, with the person's phone number.
+- Cost: about Rs 0.1-0.5 a question. It can come from the gym's AI credits (F201), with a daily cap so a bot cannot burn them.
+- Risks: wrong answers about money (so only owner-entered facts), spam (same limits as the friend page), and privacy (a consent line before any phone number is saved).
+
+**Questions for you when you are ready:**
+1. One page per gym (my read), or one per member?
+2. All plans, or Pro only? My pick: the page on all plans, the AI helper paid from AI credits.
+3. The address: mettleup.fit/<gym-name> (my pick, free) or the gym's own domain (costs the gym about Rs 800 a year)?
 
 ## 96. Do testers still get updates, and should we open a public beta? — 14 Nov 2026
 **Chat:** Mettle Up
