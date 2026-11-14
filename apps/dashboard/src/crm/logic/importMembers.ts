@@ -249,7 +249,7 @@ const PAID_YES = new Set(['yes', 'y', 'paid', 'done', 'ok', 'haan', 'ha', 'han',
 const PAID_NO = new Set(['no', 'n', 'unpaid', 'not paid', 'pending', 'nahi', 'nahin', 'na', 'baki', 'baaki', '✗', '✘', '✕', '❌', '×', 'x', 'नहीं', 'बाकी']);
 
 /**
- * #36 review (24 Oct 2026): GGMS-style exports have "Amount, Paid, Balance". When a "Paid" column
+ * #36 review (24 Oct 2026): Exports from other gym software often have "Amount, Paid, Balance". When a "Paid" column
  * sits beside "Amount" / "Fees", what is IN it decides what it is (the names alone imported a
  * Yes/No "Paid" column as "everyone owes the full fee", and a "Paid" column of Excel dates as
  * ₹46,296 paid):

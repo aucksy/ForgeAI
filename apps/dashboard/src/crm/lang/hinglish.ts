@@ -250,8 +250,8 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   'Add your plans': 'Apne plans daalo',
   'Set the price of each plan and the joining fee.': 'Har plan ka daam aur joining fee set karo.',
   'Bring in your members': 'Apne members jodo',
-  'Add them one by one, or bring in an Excel list, like one saved from your old gym software (GGMS or another).':
-    'Ek ek karke jodo, ya Excel list laao, jaise purane gym software (GGMS ya koi aur) se save ki hui.',
+  'Add them one by one, or bring in an Excel list, like one saved from your old gym software.':
+    'Ek ek karke jodo, ya Excel list laao, jaise purane gym software se save ki hui.',
   'Add your logo and colours': 'Apna logo aur rang daalo',
   'Members see your logo and colours in their app.': 'Members ko unki app mein aapka logo aur rang dikhta hai.',
   'Add your desk staff': 'Desk staff jodo',
