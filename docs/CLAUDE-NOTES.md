@@ -7,6 +7,17 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-558 (15 Nov 2026) F210 Free trial when joining online: built, hidden until the owner says yes to database change 0088
+- Asked (R-521, R-524, #97, 14 Nov): the owner switches a free trial on or off for online sign-ups and picks its length; a visitor picks "Try free for N days" on the join link; the gym sees it on Today and makes them a member. Trial fee = his pick B (taken off the plan if they join).
+- Built (on main, NOT live): supabase/migrations/0088_join_trial.sql ("NOT LIVE - needs the owner's yes") + supabase/tests/0088_join_trial.sql. The setting is `joinTrialDays` (1, 3 or 7; absent = off) on the gym's details record, like F147's friend days. self_join_preview gains a `trial` key; self_join_send takes plan "_trial" (TRIAL_OFF, TRIAL_USED: one free trial per mobile number per gym, ever). The enquiry's block has planId '' so an older admin app keeps it off Today.
+- Owner: Settings -> Member app -> "Free trial for new people": Off / 1 day / 3 days / 7 days (default Off). Shown ONLY when the gym server answers the `trial` key (0088 applied) for an open "Become a member" page.
+- Visitor (join-online.html, English + Hindi): "Try free for 3 days" above the plans, Rs 0 with the trial dates, no "How you pay", "Start my free trial", done page with the dates and "tell the gym desk your name". Nothing about trials shows unless the server sent a trial.
+- Desk: Today's "Joined online" row: "Free trial, 3 days · 17 Oct to 19 Oct 2026" and "Let them in until 19 Oct 2026 · Nothing paid" (or "Trial ended on ... · Not a member yet"). No Approve. "Make member" -> Add member -> Sell membership (gym's first plan, today). Enquiries row: "Free trial online: ...". Hinglish for every new admin line.
+- Check-in NOT changed: a trial person is not a member, so the desk is told the last day ("let them in until"). Worker: '_trial' passes through, TRIAL_OFF/TRIAL_USED = 409, a trial is never sent to online payment; WhatsApp preview line says "Try <gym> free for N days, or pick a plan".
+- Next steps (not built): the trial FEE (pick B) waits for JOIN_PAY (deploy/panel/joinPay.js joinCharge already takes a trial); a trial line on the gym web page; help article + What's new once 0088 is live; member app nothing.
+- Needs his yes: applying 0088 live; the public page's trial words and the alert line; the WhatsApp preview line.
+- Tests: deploy/panel/selfJoin.test.mjs + switches.test.mjs, apps/dashboard/test/crm/joinTrial.test.ts, e2e/jointrial-uat.spec.mjs (owner on 3 days, visitor trial, Today, make member, off = nothing, no 0088 = nothing).
+
 ## R-557 (15 Nov 2026) Watch screen black during a workout: his watch was running a watch app older than 0.77.0; the log now says why on every wake and counts the black screens
 - Owner, verbatim (14 Nov 2026, during a real workout, phone app 0.77.0, watch log switch on): "Watch screen is turning off. Log switch was enabled". Standing rule R-442: with Always-on display OFF the workout screen must dim, never go black; never ask members to change a watch setting.
 - His log (12:27-12:48 watch clock): Always-on off (aod0/-), Battery Saver off, a workout open (wo1), about 20 wakes each followed 1-10 s later by a black screen, not one line saying whether the app held the screen, and "Off instead of dim: 0".
