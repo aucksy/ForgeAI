@@ -16,10 +16,10 @@ import * as shopApi from '../../shop/api';
 import { saveDiet } from '../../shop/bodyApi';
 import { useCrm } from '../../store';
 import { noteFull, noteLeft } from '../allowance';
-import { askAssistant, rewriteMessage, writePlan as askForPlan, type AssistFail } from '../api';
+import { askAssistant, rewriteMessage, writePlan as askForPlan, type AssistFail, type MessageWords } from '../api';
 import { line } from '../catalogue';
 import { buildAssistContext } from '../context';
-import { addTurn, cardsFor, updateCard, updateTurn, useTurns, withMessage, type CardModel, type Turn, type WorkoutWriterCard } from '../conversation';
+import { LANG_WORDS, MAX_REWRITES, addTurn, afterRewrite, cardsFor, updateCard, updateTurn, useTurns, withMessage, type CardModel, type Turn, type WorkoutWriterCard } from '../conversation';
 import { executeTask, saveTask, type ExecuteDeps } from '../execute';
 import { aiPlanDraft, type PlanData } from '../plan';
 import { gymExerciseList, planLang, planRequestBody, writtenPlan } from '../planWriter';
@@ -47,7 +47,8 @@ export interface Conversation {
   turns: Turn[];
   ask: (text: string, spoken: boolean) => Promise<void>;
   confirm: (turnId: string, card: DraftCard) => Promise<void>;
-  rewrite: (turnId: string, card: DraftCard, how: string) => Promise<void>;
+  /** `want`: Hindi or Both was tapped on a message with no Hindi words (R-501): the AI writes them from `words`. */
+  rewrite: (turnId: string, card: DraftCard, how: string, want?: { lang: 'hi' | 'both'; words: MessageWords }) => Promise<void>;
   /** The AI writes the plan (free); it opens in the builder. */
   writePlan: (turnId: string, card: WorkoutWriterCard) => Promise<void>;
   /** Save the plan as he left it in the builder: 3 credits, given back if the save fails. Null = saved; else why not. */
@@ -167,24 +168,30 @@ export function useConversation(key: string, data: PlanData, reload: () => Promi
   );
 
   const rewrite = useCallback(
-    async (turnId: string, card: DraftCard, how: string) => {
+    async (turnId: string, card: DraftCard, how: string, want?: { lang: 'hi' | 'both'; words: MessageWords }) => {
       const msg = card.message;
-      if (!msg || msg.rewrites >= 5) return;
-      updateCard(turnId, card.id, (c) => (c.kind === 'draft' ? { ...c, status: 'saving', outcome: null } : c));
-      const r = await rewriteMessage(key, msg.words, how);
+      if (!msg || msg.rewrites >= MAX_REWRITES || card.status === 'saving') return;
+      // R-501: while the Hindi is written, the card's Send waits (status 'saving') and says what it is doing.
+      updateCard(turnId, card.id, (c) =>
+        c.kind === 'draft' ? { ...c, status: 'saving', outcome: null, message: c.message ? { ...c.message, writing: want?.lang } : c.message } : c,
+      );
+      const r = await rewriteMessage(key, want?.words ?? msg.words, how);
       if (r.ok) noteLeft(data.today, r.left);
       else if (r.reason === 'limit') noteFull(data.today);
       if (!r.ok) {
         hideIfOff(r);
-        updateCard(turnId, card.id, (c) => (c.kind === 'draft' ? { ...c, status: 'open', outcome: r.words } : c));
+        // The chip never moved: it stays on the language the preview shows. "Today's free questions are used up" says
+        // itself; anything else says the Hindi was not written.
+        const outcome = want && r.reason !== 'limit' ? line(LANG_WORDS.failed) : r.words;
+        updateCard(turnId, card.id, (c) =>
+          c.kind === 'draft' ? { ...c, status: 'open', outcome, message: c.message ? { ...c.message, writing: undefined } : c.message } : c,
+        );
         return;
       }
       const words = { title_en: r.title_en, body_en: r.body_en, title_hi: r.title_hi, body_hi: r.body_hi };
-      // "Add Hindi": the card shows both languages once the Hindi words are there.
-      const lang = msg.lang === 'en' && words.body_hi.trim() && how.includes('Hindi') ? 'both' : msg.lang;
-      updateCard(turnId, card.id, (c) =>
-        c.kind === 'draft' ? { ...withMessage(c, { words, lang, edited: false, rewrites: msg.rewrites + 1 }, data), status: 'open', outcome: null } : c,
-      );
+      // "Add Hindi": the card shows both languages once the Hindi words are there. Hindi or Both: that language.
+      const { next, outcome } = afterRewrite(msg, words, how, want?.lang);
+      updateCard(turnId, card.id, (c) => (c.kind === 'draft' ? { ...withMessage(c, next, data), status: 'open', outcome } : c));
     },
     [key, data],
   );

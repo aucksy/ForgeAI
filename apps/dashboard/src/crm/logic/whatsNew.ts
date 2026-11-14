@@ -48,6 +48,10 @@ export const ADMIN_NEWS: readonly AdminNewsEntry[] = [
       },
       // R-502: the desk camera photo keeps the preview's mirror flip (it was saved flipped back).
       { text: 'A member photo taken with the camera now looks exactly like the camera preview. It no longer flips after you tap "Take photo".' },
+      {
+        // R-501 (owner, 14 Nov 2026): "Both" on an AI greeting kept English and it went out in English only.
+        text: 'In the AI Assistant, tapping Hindi or Both on a message now writes the Hindi words first, so you see them before you send. Before, the message could still go out in English only.',
+      },
     ],
   },
   {

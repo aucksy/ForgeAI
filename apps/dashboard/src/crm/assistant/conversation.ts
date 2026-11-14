@@ -31,8 +31,50 @@ export interface MessageState {
   lang: 'en' | 'hi' | 'both';
   /** He changed the words by hand: a language switch asks before throwing them away. */
   edited: boolean;
-  /** Rewrites asked for this card (5 at most, 03-design §2 B). */
+  /** Rewrites asked for this card (MAX_REWRITES at most, 03-design §2 B). */
   rewrites: number;
+  /** R-501: the AI is writing the Hindi words for this language (Hindi or Both); the chip moves when they come. */
+  writing?: 'hi' | 'both';
+}
+
+/** Rewrites one message card may ask for (03-design §2 B). */
+export const MAX_REWRITES = 5;
+
+/** What the rewrite is asked when Hindi or Both needs Hindi words (the same as the "Add Hindi" chip). */
+export const ADD_HINDI_HOW = 'Add the same message in Hindi';
+
+/**
+ * R-501 (owner, 14 Nov 2026): he picked "Both" on an AI-written greeting; the words stayed English and it went out in
+ * English only. A card's language is what its preview really shows: Hindi or Both with no Hindi words is English.
+ * PURE.
+ */
+export function shownLang(lang: MessageState['lang'], words: MessageWords): MessageState['lang'] {
+  return lang !== 'en' && !words.body_hi.trim() ? 'en' : lang;
+}
+
+/** What tapping a language chip on a message card does. */
+export type LangPick =
+  /** The words are there: the card shows that language now (as before). */
+  | { kind: 'switch'; next: MessageState }
+  /** No Hindi words yet: the AI writes them first (a rewrite, free like a question); the chip moves when they come. */
+  | { kind: 'write'; lang: 'hi' | 'both'; how: string; words: MessageWords }
+  /** No Hindi words, and this card's rewrites are used up: nothing changes; the card says why. */
+  | { kind: 'cap' }
+  /** A rewrite or a send is already running: wait for it. */
+  | { kind: 'busy' };
+
+/**
+ * Tapping English, Hindi or Both. `shown`: the title and body on the card now (his own edits, when he made any, so
+ * the Hindi is written from the words he sees). PURE.
+ */
+export function pickLang(card: Extract<CardModel, { kind: 'draft' }>, lang: MessageState['lang'], shown: { title: string; body: string }): LangPick | null {
+  const msg = card.message;
+  if (!msg) return null;
+  if (card.status === 'saving') return { kind: 'busy' };
+  if (lang === 'en' || msg.words.body_hi.trim()) return { kind: 'switch', next: { ...msg, lang, edited: false, writing: undefined } };
+  if (msg.rewrites >= MAX_REWRITES) return { kind: 'cap' };
+  const words = msg.edited ? { title_en: shown.title, body_en: shown.body, title_hi: '', body_hi: '' } : msg.words;
+  return { kind: 'write', lang, how: ADD_HINDI_HOW, words };
 }
 
 export type CardModel =
@@ -129,7 +171,8 @@ export interface Turn {
 /** The language a message card starts in: what the AI chose, or the gym's own. */
 function startLang(a: Extract<Action, { tool: 'draft_message' }>, d: PlanData): 'en' | 'hi' | 'both' {
   const l = a.input.lang === 'gym' ? d.gymLang : a.input.lang;
-  return l === 'hi' || l === 'both' ? l : 'en';
+  // R-501: a gym that sends in Both, and an AI message with no Hindi: the chip says English, as the preview does.
+  return shownLang(l === 'hi' || l === 'both' ? l : 'en', a.input);
 }
 
 /**
@@ -212,8 +255,38 @@ export function chooseOnCard(card: CardModel, chosenId: string, d: PlanData): Ca
 /** A message card in another language, or with new words: the draft's title and body made again. PURE. */
 export function withMessage(card: Extract<CardModel, { kind: 'draft' }>, next: MessageState, d: PlanData): Extract<CardModel, { kind: 'draft' }> {
   if (card.action.tool !== 'draft_message' || card.result.kind !== 'draft' || card.result.draft.tool !== 'draft_message') return card;
-  const { title, body } = messageWords({ ...card.action.input, ...next.words, lang: next.lang }, d.gymLang);
-  return { ...card, message: next, result: { kind: 'draft', draft: { ...card.result.draft, title, body } } };
+  // R-501: never Hindi or Both on the chip while the words are English only.
+  const shown = { ...next, lang: shownLang(next.lang, next.words) };
+  const { title, body } = messageWords({ ...card.action.input, ...shown.words, lang: shown.lang }, d.gymLang);
+  return { ...card, message: shown, result: { kind: 'draft', draft: { ...card.result.draft, title, body } } };
+}
+
+/** R-501: the words under the language chips on a message card with no Hindi words (null: nothing to say). */
+export const LANG_WORDS = {
+  free: 'To send it in Hindi, tap Hindi or Both. The AI writes the Hindi words first, for free.',
+  writing: 'Writing the Hindi words…',
+  failed: 'The Hindi words were not written, so the message is still in English. Try again.',
+  cap: 'This message was changed 5 times, so Hindi cannot be added here. Ask the AI Assistant again for the message in Hindi.',
+} as const;
+
+/** The note under the language chips: why Hindi or Both does what it does. PURE. */
+export function langNote(card: Extract<CardModel, { kind: 'draft' }>): string | null {
+  const msg = card.message;
+  if (!msg) return null;
+  if (msg.writing && card.status === 'saving') return LANG_WORDS.writing;
+  if (msg.words.body_hi.trim()) return null;
+  return msg.rewrites >= MAX_REWRITES ? LANG_WORDS.cap : LANG_WORDS.free;
+}
+
+/**
+ * The card after a rewrite came back. `want`: the language he tapped (Hindi or Both) when the rewrite was for it.
+ * The chip moves only when the Hindi words really came; otherwise it stays on English and the card says so. PURE.
+ */
+export function afterRewrite(msg: MessageState, words: MessageWords, how: string, want?: 'hi' | 'both'): { next: MessageState; outcome: Line | null } {
+  const hindi = Boolean(words.body_hi.trim());
+  const lang = want ? (hindi ? want : msg.lang) : msg.lang === 'en' && hindi && how.includes('Hindi') ? 'both' : msg.lang;
+  const next: MessageState = { words, lang: shownLang(lang, words), edited: false, rewrites: msg.rewrites + 1, writing: undefined };
+  return { next, outcome: want && !hindi ? line(LANG_WORDS.failed) : null };
 }
 
 /** A draft changed by hand on its card. PURE. */

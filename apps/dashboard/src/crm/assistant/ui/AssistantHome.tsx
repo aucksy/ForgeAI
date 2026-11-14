@@ -116,7 +116,7 @@ export function AssistantHome({ assistKey, wallet, panel = false }: { assistKey:
       navigate(path);
     },
     confirm: (turnId, card) => void convo.confirm(turnId, card),
-    rewrite: (turnId, card, how) => void convo.rewrite(turnId, card, how),
+    rewrite: (turnId, card, how, want) => void convo.rewrite(turnId, card, how, want),
     openCredits: () => setCredits(true),
     openQueue: (people, words) => setQueue({ people, text: words }),
     writePlan: (turnId, card) => void convo.writePlan(turnId, card),

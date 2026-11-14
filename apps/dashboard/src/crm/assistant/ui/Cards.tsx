@@ -23,7 +23,8 @@ import type { ExpenseCategory, MemberView, PaymentMethod, Plan } from '../../typ
 import { Button, SelectField, TextField, color, font, radius, space } from '../../ui/kit';
 import type { AnswerRow, FollowUp } from '../answer';
 import { PAGES, type Line } from '../catalogue';
-import { CARD_TITLE, chooseOnCard, confirmWords, updateCard, withDraft, withMessage, type CardModel, type MessageState } from '../conversation';
+import { CARD_TITLE, MAX_REWRITES, chooseOnCard, confirmWords, langNote, pickLang, updateCard, withDraft, withMessage, type CardModel, type MessageState } from '../conversation';
+import type { MessageWords } from '../api';
 import { checkDraft, messageReach, type Draft, type MessageDraftA, type PlanData } from '../plan';
 import { GOAL_WORDS, LEVEL_WORDS, PLAN_DAYS, PLAN_FOCUS_MAX, PLAN_GOALS, PLAN_LEVELS, exerciseCount, type PlanGoal, type PlanLevel } from '../planWriter';
 import type { WorkoutWriterCard } from '../conversation';
@@ -42,8 +43,8 @@ export interface CardControls {
   go: (path: string) => void;
   /** Send or save this card (its own task). */
   confirm: (turnId: string, card: DraftCard) => void;
-  /** Ask the AI to change a message's words. */
-  rewrite: (turnId: string, card: DraftCard, how: string) => void;
+  /** Ask the AI to change a message's words. R-501 `want`: Hindi or Both tapped on a message with no Hindi words; the AI writes them from `words`. */
+  rewrite: (turnId: string, card: DraftCard, how: string, want?: { lang: 'hi' | 'both'; words: MessageWords }) => void;
   openCredits: () => void;
   /** The WhatsApp one-by-one list for members without the app. */
   openQueue: (people: readonly MemberView[], text: string) => void;
@@ -565,6 +566,13 @@ function MessageView({ turnId, card, dr, data, ctl }: { turnId: string; card: Dr
   // In the app: everyone = every app member of the gym (the server sends to all of them); a group = its app members.
   const inApp = reach && data.appMembers ? (reach.everyone ? data.appMembers.length : (reach.appIds?.length ?? 0)) : null;
   const setMsg = (next: MessageState) => updateCard(turnId, card.id, (c) => (c.kind === 'draft' ? withMessage(c, next, data) : c));
+  // R-501: Hindi or Both needs Hindi words. Without them the AI writes them first (free); the chip moves when they come.
+  const pick = (l: MessageState['lang']) => {
+    const p = pickLang(card, l, { title: dr.title, body: dr.body });
+    if (p?.kind === 'switch') setMsg(p.next);
+    else if (p?.kind === 'write') ctl.rewrite(turnId, card, p.how, { lang: p.lang, words: p.words });
+  };
+  const note = langNote(card);
   const setWords = (title: string, bodyText: string) =>
     updateCard(turnId, card.id, (c) => (c.kind === 'draft' && c.result.kind === 'draft' && c.result.draft.tool === 'draft_message'
       ? { ...withDraft(c, { ...c.result.draft, title, body: bodyText }), message: c.message ? { ...c.message, edited: true } : null }
@@ -593,12 +601,18 @@ function MessageView({ turnId, card, dr, data, ctl }: { turnId: string; card: Dr
           <Row label={t('Language')}>
             <span role="group" aria-label={t('Language')} style={{ display: 'inline-flex', gap: 4, padding: 3, borderRadius: 10, background: color.surfaceSunken }}>
               {(['en', 'hi', 'both'] as const).map((l) => (
-                <LangChip key={l} on={msg.lang === l} onClick={() => setMsg({ ...msg, lang: l, edited: false })}>
+                <LangChip key={l} on={msg.lang === l} onClick={() => pick(l)}>
                   {l === 'en' ? t('English') : l === 'hi' ? t('Hindi') : t('Both')}
                 </LangChip>
               ))}
             </span>
           </Row>
+        ) : null}
+        {/* R-501: Hindi or Both on a message with no Hindi words writes them first; this says so, and when it works. */}
+        {note ? (
+          <div role={msg?.writing ? 'status' : undefined} style={{ ...quiet, margin: '8px 0 2px' }}>
+            {t(note)}
+          </div>
         ) : null}
         <WhenRow turnId={turnId} card={card} dr={dr} />
       </dl>
@@ -622,7 +636,7 @@ function MessageView({ turnId, card, dr, data, ctl }: { turnId: string; card: Dr
         <Chip round pressed={editing} onClick={() => setEditing((e) => !e)}>
           {editing ? t('Done editing') : t('Edit the words')}
         </Chip>
-        {msg && msg.rewrites < 5 ? (
+        {msg && msg.rewrites < MAX_REWRITES ? (
           <>
             <Chip round onClick={() => ctl.rewrite(turnId, card, 'Make it shorter')}>
               {t('Shorter')}
@@ -651,7 +665,8 @@ function MessageView({ turnId, card, dr, data, ctl }: { turnId: string; card: Dr
           <ConfirmButton turnId={turnId} card={card} dr={dr} data={data} ctl={ctl} appCount={inApp} />
         )}
         {reach && reach.whatsapp.length > 0 ? (
-          <Button variant="ghost" full wrap onClick={() => ctl.openQueue(reach.whatsapp, text)}>
+          // R-501: WhatsApp waits too while the Hindi is written, so it never goes out in the old words.
+          <Button variant="ghost" full wrap disabled={card.status === 'saving'} onClick={() => ctl.openQueue(reach.whatsapp, text)}>
             {t('{n} without the app: send on WhatsApp', { n: reach.whatsapp.length })}
           </Button>
         ) : null}

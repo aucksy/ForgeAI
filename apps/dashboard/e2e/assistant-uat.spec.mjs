@@ -126,6 +126,15 @@ const closedMessage = {
     title_hi: '', body_hi: '', send_at: '', offer: '',
   },
 };
+// R-501: the greeting the owner asked for, written by the AI in English only (no Hindi words), and its Hindi.
+const chhathGreeting = {
+  tool: 'draft_message',
+  input: {
+    audience: everyone, kind: 'announcement', lang: 'en', title_en: 'Happy Chhath Puja', body_en: 'Happy Chhath Puja to you and your family. The gym is open as usual.',
+    title_hi: '', body_hi: '', send_at: '', offer: '',
+  },
+};
+const CHHATH_HI = { title_hi: 'छठ पूजा की शुभकामनाएं', body_hi: 'आपको और आपके परिवार को छठ पूजा की शुभकामनाएं। जिम रोज़ की तरह खुला है।' };
 const billExpense = { tool: 'add_expense', input: { amount: 3200, category: 'electricity', date: '', method: 'cash', note: 'Electricity bill' } };
 
 /** What the pretend AI answers for each sentence (the real one is deploy/panel/assist.js). */
@@ -133,6 +142,7 @@ function aiAnswer(text) {
   if (/who are my members/i.test(text)) return { actions: [{ tool: 'list_members', input: { group: 'everyone', days: 0, plan: '', batch: '', trainer: '', gender: '' } }], note: '' };
   if (/bijli/i.test(text)) return { actions: [closedMessage, billExpense], note: 'Two things: a message and an expense.' };
   if (/^message everyone/i.test(text)) return { actions: [closedMessage], note: '' };
+  if (/chhath/i.test(text)) return { actions: [chhathGreeting], note: '' };
   if (/^ravi ko/i.test(text)) return { actions: [{ tool: 'ask_back', input: { question: 'Which message should Ravi get?', options: ['Fee reminder', 'Birthday wishes'] } }], note: '' };
   if (/price/i.test(text)) {
     return { actions: [{ tool: 'open_page', input: { page: 'plans', steps: ['Tap the plan', 'Change the price', 'Tap Save'], why: 'Plan prices are changed on the Plans page.' } }], note: '' };
@@ -147,7 +157,7 @@ function aiAnswer(text) {
 
 /** The panel worker's assistant routes, answered on this page. `worker.off`: 503 {reason:'off'}. */
 async function installWorker(page) {
-  const worker = { asked: [], rewrites: [], plans: [], voice: 0, off: false };
+  const worker = { asked: [], rewrites: [], plans: [], voice: 0, off: false, rewriteFails: false };
   await page.route('**/api/assist', async (route) => {
     const body = route.request().postDataJSON();
     worker.asked.push(body);
@@ -158,6 +168,11 @@ async function installWorker(page) {
   await page.route('**/api/assist/rewrite', async (route) => {
     const body = route.request().postDataJSON();
     worker.rewrites.push(body);
+    // R-501: "Add the same message in Hindi" keeps the English and adds the Hindi; `rewriteFails` = the AI is down.
+    if (worker.rewriteFails) return route.fulfill({ status: 502, contentType: 'application/json', body: JSON.stringify({ error: 'The AI did not answer. Try again, or say it another way.' }) });
+    if (/Hindi/.test(String(body.how))) {
+      return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ title_en: body.title_en, body_en: body.body_en, ...CHHATH_HI, left: 39 }) });
+    }
     return route.fulfill({
       status: 200,
       contentType: 'application/json',
@@ -582,4 +597,67 @@ test('AI Assistant on a computer: Today, the side panel, every card, the plan wr
   await voice.getByRole('button', { name: 'Send to AI Assistant' }).click();
   await expect(voice).toHaveCount(0);
   expect(worker.voice).toBe(1);
+});
+
+// R-501 (owner, 14 Nov 2026): he asked for a Chhath Puja greeting; the AI wrote English; he picked "Both"; the words did
+// not change and it went out in English only. Now Hindi or Both writes the Hindi words first (free, the "Add Hindi"
+// rewrite), the chip moves only when they are there, the preview shows them before Send, and a failure says so.
+test('AI Assistant R-501: Both on an English greeting writes the Hindi first; a failure keeps English and says so', async ({ page }) => {
+  test.setTimeout(150_000);
+  const server = await openApp(page);
+  const ai = installAi(server);
+  const worker = await installWorker(page);
+  await startOnlineGym(page);
+  await addMember(page, { name: 'Asha Verma', phone: '98290 11111' });
+  server.appMembers = [{ member_id: 'app-1', name: 'Asha Verma', phone: '+919829011111', joined_at: '2026-10-01T10:00:00Z', last_seen: '2026-10-16T10:00:00Z', orders: 0, spent_p: 0 }];
+  ai.on = true;
+  await go(page, '/');
+  await page.reload();
+  await expect(page.getByRole('heading', { name: 'Today', exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Open the AI Assistant' }).tap();
+  await expect(page.getByRole('heading', { level: 1, name: 'AI Assistant' })).toBeVisible();
+  const main = page.getByRole('main');
+
+  await ask(page, 'Chhath Puja ki badhai likho');
+  const card = main.getByRole('article', { name: 'Message to your members' }).last();
+  await expect(card).toContainText('Happy Chhath Puja to you and your family.');
+  const langs = card.getByRole('group', { name: 'Language' });
+  const chip = (name) => langs.getByRole('button', { name, exact: true });
+  await expect(chip('English')).toHaveAttribute('aria-pressed', 'true');
+  await expect(card).toContainText('To send it in Hindi, tap Hindi or Both. The AI writes the Hindi words first, for free.');
+
+  // Negative: the AI is down. The chip stays on English, the words stay English, and the card says so.
+  worker.rewriteFails = true;
+  await chip('Both').tap();
+  await expect(card).toContainText('The Hindi words were not written, so the message is still in English. Try again.');
+  await expect(chip('English')).toHaveAttribute('aria-pressed', 'true');
+  await expect(chip('Both')).toHaveAttribute('aria-pressed', 'false');
+  await expect(card).not.toContainText(CHHATH_HI.body_hi);
+  await shots(page, '17-both-failed', false, card);
+
+  // Happy path: Both again. The Hindi is written with the "Add Hindi" rewrite, then shown under the English.
+  worker.rewriteFails = false;
+  await chip('Both').tap();
+  await expect(card).toContainText(CHHATH_HI.body_hi);
+  await expect(chip('Both')).toHaveAttribute('aria-pressed', 'true');
+  await expect(card).toContainText('Happy Chhath Puja to you and your family.');
+  expect(worker.rewrites.at(-1).how).toBe('Add the same message in Hindi');
+  expect(worker.rewrites.at(-1).body_en).toBe('Happy Chhath Puja to you and your family. The gym is open as usual.');
+  await expectFitsPhone(page, 'with the Hindi written');
+  await shots(page, '18-both-written', false, card);
+
+  // Hindi alone: the words are there now, so it switches at once (no new rewrite).
+  const rewrites = worker.rewrites.length;
+  await chip('Hindi').tap();
+  await expect(chip('Hindi')).toHaveAttribute('aria-pressed', 'true');
+  await expect(card).not.toContainText('Happy Chhath Puja to you and your family.');
+  expect(worker.rewrites).toHaveLength(rewrites);
+  await chip('Both').tap();
+  await expect(chip('Both')).toHaveAttribute('aria-pressed', 'true');
+
+  // Send: what the members get is what the card showed, English and Hindi.
+  await card.getByRole('button', { name: 'Send to 1 member · 1 credit' }).tap();
+  await expect(card).toContainText('Sent to 1 in the app.');
+  expect(server.messages[0].body).toContain('Happy Chhath Puja to you and your family.');
+  expect(server.messages[0].body).toContain(CHHATH_HI.body_hi);
 });
