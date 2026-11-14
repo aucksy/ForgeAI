@@ -54,7 +54,7 @@ appId: com.mettleup.app
     visible: 'Dumbbell Shoulder Press now replaces Cable Fly in your Push routine\.'
     timeout: 6000
 - takeScreenshot: rel-r482-g2-swapped-undo-bar
-# in-view: the Undo bar sits where the tip was (it goes after ~6 s, no time for a scroll)
+# in-view: the Undo bar floats at the bottom of the screen (it goes after ~6 s, no time for a scroll)
 - tapOn:
     text: 'Undo: Dumbbell Shoulder Press now replaces Cable Fly in your Push routine\.|^Undo$'
     waitToSettleTimeoutMs: 300

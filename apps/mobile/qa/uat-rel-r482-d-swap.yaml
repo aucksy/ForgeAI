@@ -102,7 +102,7 @@ appId: com.mettleup.app
     visible: 'Seated Leg Curl now replaces Leg Extension in your Legs routine\.'
     timeout: 6000
 - takeScreenshot: rel-r482-d2-swapped-undo-bar
-# in-view: the Undo bar sits where the tip was (it goes after ~6 s, no time for a scroll)
+# in-view: the Undo bar floats at the bottom of the screen (it goes after ~6 s, no time for a scroll)
 - tapOn:
     text: 'Undo: Seated Leg Curl now replaces Leg Extension in your Legs routine\.|^Undo$'
     waitToSettleTimeoutMs: 300
@@ -144,25 +144,36 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Workout$"
     timeout: 15000
-# The page at its top first, as in step 2: the Undo bar takes the tip's place, and with the page scrolled to centre
-# Add (sub-find) the shorter bar landed above the screen on his phone size (run 43559673961), so Undo was missed.
-- scrollUntilVisible:
-    element: 'Up next: Legs.*'
-    direction: UP
-    timeout: 20000
-    optional: true
+# Scrolled DOWN first, as a member does (phone run 43564289562, his large-text profile): the Undo bar used to take
+# the tip's place inside the page and land above the screen, so Undo was missed. It now floats at the bottom of the
+# screen, above the tab bar, whatever the scroll. Add centred (sub-find), then the page pushed up a fifth of the
+# screen more (a slow swipe, no fling), so the tip's top is off or near the top edge.
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: '^Add$'
+- swipe:
+    start: 50%, 70%
+    end: 50%, 50%
+    duration: 1000
+- waitForAnimationToEnd:
+    timeout: 2000
 - runFlow:
     file: sub-see.yaml
     env:
       FIND: '^Add$'
+- takeScreenshot: rel-r482-d4a-scrolled-before-add
 - tapOn:
     text: "^Add$"
     waitToSettleTimeoutMs: 300
+# in-view: the Undo bar floats at the bottom of the screen, never in the scrolled page (no scroll on purpose)
 - extendedWaitUntil:
     visible: 'Seated Leg Curl added to your Legs routine\.'
     timeout: 6000
+# in-view: the bar's Undo button, on screen with no scroll (the bug: it was above the screen)
+- assertVisible: 'Undo: Seated Leg Curl added to your Legs routine\.|^Undo$'
 - takeScreenshot: rel-r482-d4b-added-undo-bar
-# in-view: the Undo bar sits where the tip was (it goes after ~6 s, no time for a scroll)
+# in-view: the Undo bar floats at the bottom of the screen (it goes after ~6 s, no time for a scroll)
 - tapOn:
     text: 'Undo: Seated Leg Curl added to your Legs routine\.|^Undo$'
     waitToSettleTimeoutMs: 300

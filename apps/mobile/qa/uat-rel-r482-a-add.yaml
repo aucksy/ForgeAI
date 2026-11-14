@@ -84,14 +84,34 @@ appId: com.mettleup.app
     env:
       FIND: 'None of your routines trains your calves\. Add 3 sets of Standing Calf Raise to your Legs routine\?'
 # ---------------------------------------------------------------- 2. Add, then Undo
+# Scrolled DOWN first, as a member does (phone run 43564289562): the Undo bar floats at the bottom of the screen,
+# above the tab bar, so it is on screen whatever the scroll. Add centred, then the page pushed up a fifth more.
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: '^Add$'
+- swipe:
+    start: 50%, 70%
+    end: 50%, 50%
+    duration: 1000
+- waitForAnimationToEnd:
+    timeout: 2000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Add$'
+- takeScreenshot: rel-r482-a2a-scrolled-before-add
 - tapOn:
     text: "^Add$"
     waitToSettleTimeoutMs: 300
+# in-view: the Undo bar floats at the bottom of the screen, never in the scrolled page (no scroll on purpose)
 - extendedWaitUntil:
     visible: 'Standing Calf Raise added to your Legs routine\.'
     timeout: 6000
+# in-view: the bar's Undo button, on screen with no scroll (the bug: it was above the screen)
+- assertVisible: 'Undo: Standing Calf Raise added to your Legs routine\.|^Undo$'
 - takeScreenshot: rel-r482-a2-added-undo-bar
-# in-view: the Undo bar sits where the tip was (it goes after ~6 s, no time for a scroll)
+# in-view: the Undo bar floats at the bottom of the screen (it goes after ~6 s, no time for a scroll)
 - tapOn:
     text: 'Undo: Standing Calf Raise added to your Legs routine\.|^Undo$'
     waitToSettleTimeoutMs: 300

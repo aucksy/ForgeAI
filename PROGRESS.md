@@ -237,6 +237,12 @@
   uat-rel-f199-profile-progress now assert the new words (menu, captions, "Range: Last 3 months. Change", "Show 3-month
   total"); qa-device round still to run. What's new draft (member-words): "On your Profile, the chart's shortest choice
   is now \"Last 3 months\" instead of \"Last 12 weeks\", the same 3 months as each exercise's chart."
+- R-492 FIX, THE UNDO LINE AFTER ADD OR SWAP STAYS ON SCREEN (phone run 43564289562, owner large-text profile: a
+  member who scrolled down before tapping Add never saw "Seated Leg Curl added to your Legs routine." with Undo; it
+  sat where the tip was, above the screen). The line with Undo now floats at the bottom of the Workout tab, just above
+  the tab bar, for about 6 s, whatever the scroll; same words, same Undo. Shared JS, no native part, no frozen file.
+  Tests: muscleTipUndoBar (Undo after Add on tip 1, Add and Swap on tip 2; the bar is outside the scrolling page).
+  UAT u482 flows a and d now scroll down before Add and check Undo is on screen and brings the tip back.
 - R-492 MUSCLE TIPS: ADD ON THE SWAP TIP, "SMART SUGGESTION" AND AN (i) WHY (owner, 14 Nov 2026: "Some people might
   just want to add one exercise and not swap anything ... a letter I symbol which we can tap and find out why ... the
   word smart suggestion"). Shared JS (Android and iPhone), no native part, no PARITY change. Tip 2 now reads "Your

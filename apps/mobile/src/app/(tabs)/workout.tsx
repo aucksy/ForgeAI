@@ -54,8 +54,8 @@ import { showsImportOffer, upNextCard, type UpNextAction, type UpNextToday } fro
 import { offerEarlyEasy } from '@/tracker/plans/effort';
 import { stalledLiftsInPlan } from '@/tracker/services/coachTargets';
 import { liveCountsLine } from '@/tracker/services/finishCheck';
-import { addedLine, swappedLine } from '@/tracker/engine/muscleBalance';
 import { applyMuscleTip, muscleTipFor, undoMuscleTip, type MuscleTip, type MuscleTipDone } from '@/tracker/services/muscleTips';
+import { tipUndoLine } from '@/tracker/services/muscleTipUndo';
 import { getPlanNow, moveEasyWeek, planLine, type PlanNow } from '@/tracker/services/planState';
 import { getTodayPlan } from '@/tracker/services/todayService';
 import { startShownWorkout } from '@/tracker/services/todayStart';
@@ -380,146 +380,146 @@ export default function WorkoutScreen() {
   };
 
   return (
-    <Screen title="Workout" right={<BrandCorner />}>
-      <View style={{ gap: space.lg }}>
-        {/* R-336: while a newer version exists, the slim orange line sits above everything (no close
-            button; it goes when the app is up to date). It replaced the old update card. */}
-        <UpdateLine />
-        {/* Gym branding: the member's gym, small, under the title (branded gyms only). */}
-        <GymBrandMark />
-        {/* Release A, A12: ONE notice at a time above Up next (lib/workoutNotices.ts): the answer to
-            a link just tapped, then What's new, the backup reminder. */}
-        {/* SH-29: a wrong forgeai:// link lands here with one calm line. */}
-        {notice === 'link' && linkNotice ? (
-          <Pressable
-            onPress={() => setLinkNotice(null)}
-            accessibilityRole="button"
-            accessibilityLabel={`${linkNotice} Dismiss`}
-            accessibilityLiveRegion="polite"
-          >
-            <Card>
-              <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkSecondary }}>{linkNotice}</Text>
-            </Card>
-          </Pressable>
-        ) : null}
-        {/* Once per new version: what changed, in plain words (lib/whatsNew.ts). */}
-        <WhatsNewCard hidden={notice !== 'whatsNew'} onWant={want('whatsNew')} onDone={noticeClosed} />
-        {/* F67: after the first finished workout, a watch without MettleUp: "Install on watch", once. */}
-        <WatchInstallCard
-          hidden={notice !== 'watch'}
-          onWant={want('watch')}
-          onDone={noticeClosed}
-          hasWorkouts={counts ? counts.total > 0 : null}
-          demo={demo}
-        />
-        {/* Launch audit 3 Nov 2026: a gym member's plan ends within a week, no renewal on record. */}
-        <PlanEndsCard hidden={notice !== 'planEnds'} onWant={want('planEnds')} />
-        {/* R-320: a phone with Google Drive linked is told once that backups now go to the MettleUp account. */}
-        <BackupMovedCard hidden={notice !== 'backup'} onWant={want('backup')} onDone={noticeClosed} />
+    <View style={{ flex: 1 }}>
+      <Screen title="Workout" right={<BrandCorner />}>
+        <View style={{ gap: space.lg }}>
+          {/* R-336: while a newer version exists, the slim orange line sits above everything (no close
+              button; it goes when the app is up to date). It replaced the old update card. */}
+          <UpdateLine />
+          {/* Gym branding: the member's gym, small, under the title (branded gyms only). */}
+          <GymBrandMark />
+          {/* Release A, A12: ONE notice at a time above Up next (lib/workoutNotices.ts): the answer to
+              a link just tapped, then What's new, the backup reminder. */}
+          {/* SH-29: a wrong forgeai:// link lands here with one calm line. */}
+          {notice === 'link' && linkNotice ? (
+            <Pressable
+              onPress={() => setLinkNotice(null)}
+              accessibilityRole="button"
+              accessibilityLabel={`${linkNotice} Dismiss`}
+              accessibilityLiveRegion="polite"
+            >
+              <Card>
+                <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkSecondary }}>{linkNotice}</Text>
+              </Card>
+            </Pressable>
+          ) : null}
+          {/* Once per new version: what changed, in plain words (lib/whatsNew.ts). */}
+          <WhatsNewCard hidden={notice !== 'whatsNew'} onWant={want('whatsNew')} onDone={noticeClosed} />
+          {/* F67: after the first finished workout, a watch without MettleUp: "Install on watch", once. */}
+          <WatchInstallCard
+            hidden={notice !== 'watch'}
+            onWant={want('watch')}
+            onDone={noticeClosed}
+            hasWorkouts={counts ? counts.total > 0 : null}
+            demo={demo}
+          />
+          {/* Launch audit 3 Nov 2026: a gym member's plan ends within a week, no renewal on record. */}
+          <PlanEndsCard hidden={notice !== 'planEnds'} onWant={want('planEnds')} />
+          {/* R-320: a phone with Google Drive linked is told once that backups now go to the MettleUp account. */}
+          <BackupMovedCard hidden={notice !== 'backup'} onWant={want('backup')} onDone={noticeClosed} />
 
-        {card.kind !== 'none' ? (
-          <UpNextCard card={card} onAction={onAction} starting={starting}>
-            {onRoutine || card.kind === 'emptyPlan' ? (
-              <>
-                {week && !easyNow ? (
-                  <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.inkMuted }}>{week}</Text>
-                ) : null}
-                {/* An easy week shows even on a day with no routine to do (trained already). */}
-                {extra === 'easyWeek' ? <EasyWeekNote until={plan?.easyUntil} /> : null}
-                {extra === 'easyWeek' ? <GhostButton label="Train normally this week" icon="dumbbell" onPress={() => void onTrainNormally()} /> : null}
-                {/* R-58 / R-482: one calm tip when the member's routines leave a muscle group untrained, or train a
-                    big group far less than the rest (never in an easy week). */}
-                {tip && extra === 'muscleTip' ? (
-                  <MuscleTipNote
-                    tip={tip}
-                    lastNotNow={(useMuscleTips.getState().notNow[tip.group] ?? 0) >= 1}
-                    onApply={async (how) => {
-                      try {
-                        // R-492: tip 2 offers Add (nothing taken out) next to Swap; Undo works for both.
-                        const done = await applyMuscleTip(tip, how);
-                        setTip(null);
-                        if (done) {
-                          setTipUndo({
-                            done,
-                            message:
-                              done.kind === 'swap' && tip.kind === 'swap'
-                                ? swappedLine(tip.exerciseName, tip.outName, tip.routineName)
-                                : addedLine(tip.exerciseName, tip.routineName),
-                            key: Date.now(),
-                          });
-                        } else {
-                          void tell('Your routine has changed', 'Nothing was swapped. Open the routine to change it yourself.');
+          {card.kind !== 'none' ? (
+            <UpNextCard card={card} onAction={onAction} starting={starting}>
+              {onRoutine || card.kind === 'emptyPlan' ? (
+                <>
+                  {week && !easyNow ? (
+                    <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.inkMuted }}>{week}</Text>
+                  ) : null}
+                  {/* An easy week shows even on a day with no routine to do (trained already). */}
+                  {extra === 'easyWeek' ? <EasyWeekNote until={plan?.easyUntil} /> : null}
+                  {extra === 'easyWeek' ? <GhostButton label="Train normally this week" icon="dumbbell" onPress={() => void onTrainNormally()} /> : null}
+                  {/* R-58 / R-482: one calm tip when the member's routines leave a muscle group untrained, or train a
+                      big group far less than the rest (never in an easy week). */}
+                  {tip && extra === 'muscleTip' ? (
+                    <MuscleTipNote
+                      tip={tip}
+                      lastNotNow={(useMuscleTips.getState().notNow[tip.group] ?? 0) >= 1}
+                      onApply={async (how) => {
+                        try {
+                          // R-492: tip 2 offers Add (nothing taken out) next to Swap; Undo works for both.
+                          const done = await applyMuscleTip(tip, how);
+                          setTip(null);
+                          if (done) {
+                            setTipUndo({ done, message: tipUndoLine(tip, done), key: Date.now() });
+                          } else {
+                            void tell('Your routine has changed', 'Nothing was swapped. Open the routine to change it yourself.');
+                          }
+                          setTick((t) => t + 1);
+                        } catch (e) {
+                          console.warn('[ForgeErr] muscle tip: the routine could not be changed', e);
+                          void tell(how === 'swap' ? "Couldn't swap it" : "Couldn't add it", 'Please try again.');
                         }
-                        setTick((t) => t + 1);
-                      } catch (e) {
-                        console.warn('[ForgeErr] muscle tip: the routine could not be changed', e);
-                        void tell(how === 'swap' ? "Couldn't swap it" : "Couldn't add it", 'Please try again.');
-                      }
-                    }}
-                    onNotNow={() => {
-                      useMuscleTips.getState().snooze(tip.group, todayISO());
-                      setTip(null);
-                    }}
-                    onSkip={() => {
-                      useMuscleTips.getState().mute(tip.group);
-                      setTip(null);
-                    }}
-                  />
-                ) : null}
-                {tipUndo ? (
-                  <UndoBar
-                    key={tipUndo.key}
-                    message={tipUndo.message}
-                    onAction={() => {
-                      const { done } = tipUndo;
-                      setTipUndo(null);
-                      undoMuscleTip(done)
-                        .then(() => setTick((t) => t + 1))
-                        .catch((e: unknown) => {
-                          console.warn('[ForgeErr] muscle tip: the change could not be undone', e);
-                          void tell("Couldn't undo it", 'Open the routine to change it back.');
-                        });
-                    }}
-                    onDismiss={() => setTipUndo(null)}
-                  />
-                ) : null}
-                {extra === 'easyOffer' ? (
-                  <View style={{ gap: space.sm }}>
-                    <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkSecondary }}>
-                      {`${countWord(stalled, 'lift')} stuck at the same numbers. An easy week now often gets them moving again.`}
-                    </Text>
-                    <GhostButton label="Take an easy week now" icon="heart" onPress={() => void onEasyNow()} />
-                  </View>
-                ) : null}
-              </>
-            ) : null}
-          </UpNextCard>
-        ) : null}
-        {/* Packet B: the one destructive style — a red link that asks first. */}
-        {card.discard ? <DangerLink label={card.discard.label} onPress={onDiscard} /> : null}
+                      }}
+                      onNotNow={() => {
+                        useMuscleTips.getState().snooze(tip.group, todayISO());
+                        setTip(null);
+                      }}
+                      onSkip={() => {
+                        useMuscleTips.getState().mute(tip.group);
+                        setTip(null);
+                      }}
+                    />
+                  ) : null}
+                  {extra === 'easyOffer' ? (
+                    <View style={{ gap: space.sm }}>
+                      <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkSecondary }}>
+                        {`${countWord(stalled, 'lift')} stuck at the same numbers. An easy week now often gets them moving again.`}
+                      </Text>
+                      <GhostButton label="Take an easy week now" icon="heart" onPress={() => void onEasyNow()} />
+                    </View>
+                  ) : null}
+                </>
+              ) : null}
+            </UpNextCard>
+          ) : null}
+          {/* Packet B: the one destructive style — a red link that asks first. */}
+          {card.discard ? <DangerLink label={card.discard.label} onPress={onDiscard} /> : null}
 
-        {/* Launch audit 3 Nov 2026: no account and no backup, from the 3rd workout: "only on this phone".
-            Owner, 4 Nov 2026: below "Up next", so the next workout comes first. */}
-        <SafekeepNudgeCard hidden={notice !== 'safekeep'} onWant={want('safekeep')} onDone={noticeClosed} />
+          {/* Launch audit 3 Nov 2026: no account and no backup, from the 3rd workout: "only on this phone".
+              Owner, 4 Nov 2026: below "Up next", so the next workout comes first. */}
+          <SafekeepNudgeCard hidden={notice !== 'safekeep'} onWant={want('safekeep')} onDone={noticeClosed} />
 
-        {/* F151: the workout the member's gym set for everyone today (nothing without one, or while a workout is open). */}
-        <GymWodCard hidden={active} startGuard={startGuard} refreshKey={tick} />
+          {/* F151: the workout the member's gym set for everyone today (nothing without one, or while a workout is open). */}
+          <GymWodCard hidden={active} startGuard={startGuard} refreshKey={tick} />
 
-        {/* F59 "Muscles ready today" + F60 Quick workout: switched off (owner, 5 Nov 2026, R-372). The code stays
-            (tracker/components/ReadyCard.tsx, app/ready.tsx, app/quick.tsx) but nothing opens it. */}
+          {/* F59 "Muscles ready today" + F60 Quick workout: switched off (owner, 5 Nov 2026, R-372). The code stays
+              (tracker/components/ReadyCard.tsx, app/ready.tsx, app/quick.tsx) but nothing opens it. */}
 
-        {importOffer ? <SwitcherCard onPick={openImport} /> : null}
+          {importOffer ? <SwitcherCard onPick={openImport} /> : null}
 
-        <WorkoutRoutines
-          up={{ folderId: upFolderId, nextId: today?.status === 'next' || today?.status === 'doneToday' ? today.nextId : null }}
-          active={active}
-          plan={following ? plan : null}
-          refreshKey={tick}
-          startGuard={startGuard}
-          onStartEmpty={() => void onStartEmpty()}
-          onChanged={() => setTick((t) => t + 1)}
-        />
-      </View>
-    </Screen>
+          <WorkoutRoutines
+            up={{ folderId: upFolderId, nextId: today?.status === 'next' || today?.status === 'doneToday' ? today.nextId : null }}
+            active={active}
+            plan={following ? plan : null}
+            refreshKey={tick}
+            startGuard={startGuard}
+            onStartEmpty={() => void onStartEmpty()}
+            onChanged={() => setTick((t) => t + 1)}
+          />
+        </View>
+      </Screen>
+      {/* R-482 / R-492: after Add or Swap on a muscle tip, the line with Undo floats at the bottom of the screen,
+          just above the tab bar, for about 6 s (UndoBar's clock; a finger on it holds it). It used to sit where the
+          tip was, inside the page, so a member who had scrolled down never saw it (phone run 43564289562). */}
+      {tipUndo ? (
+        <View pointerEvents="box-none" style={{ position: 'absolute', left: space.screenX, right: space.screenX, bottom: space.md }}>
+          <UndoBar
+            key={tipUndo.key}
+            message={tipUndo.message}
+            onAction={() => {
+              const { done } = tipUndo;
+              setTipUndo(null);
+              undoMuscleTip(done)
+                .then(() => setTick((t) => t + 1))
+                .catch((e: unknown) => {
+                  console.warn('[ForgeErr] muscle tip: the change could not be undone', e);
+                  void tell("Couldn't undo it", 'Open the routine to change it back.');
+                });
+            }}
+            onDismiss={() => setTipUndo(null)}
+          />
+        </View>
+      ) : null}
+    </View>
   );
 }
