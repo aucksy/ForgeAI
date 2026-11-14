@@ -7,6 +7,20 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-496. The green finished line should say "beaten" and celebrate — 14 Nov 2026
+He said: "I'm also kind of not happy with the green color achievement line ... 1650kg done and then it says previous.
+I want ... previous set volume beaten ... I want to use the word beaten so it's ... more encouraging and more
+celebratory. Can you give me some options ... build the screenshots for me to see if it's just too much?"
+Note: on 12 Nov (R-454) he rejected "Today's 1,760 kg beaten (1,840 kg done)" as not proper English, so the new words
+must read as plain sentences; "volume" is a banned member word. Shown 8 mock pictures (scratchpad greenline/make.py):
+today, A "Last time beaten! +200 kg" / "1,650 kg today · 1,450 kg last time", B "You beat last time by 200 kg",
+C trophy "Beaten! 1,650 kg today", D one line; A on reps, equal ("Last time matched"), first time. My pick A. Waits for his pick.
+
+## R-494b/R-493b. His picks (14 Nov 2026, chat): "A = one WhatsApp message (free, my pick)" and "start a public beta on
+Play: A = now". Beta: from the next release every version goes to open testing first, production ~3 days later
+(play-upload must add the open-testing track; set up the track in Play Console at that release). Phone sign-in: F203
+Planned for the version after the pictures release; LIVE server parts (0068, panel) and the privacy line still need his yes.
+
 ## R-495. Show the gym's own logo in the admin panel — 14 Nov 2026
 He said: "when a gym owner adds their logo in the branding panel, we should also start showing that logo somewhere on
 the admin panel." My view: yes. Doing: the logo top-left in the panel's header next to the gym name (initials when no

@@ -1,6 +1,7 @@
 # ForgeAI progress
 
 ## Waiting for release (R-266: tag only when the owner says "release")
+- RELEASE STEP, PUBLIC BETA (owner #96 "A = now", 14 Nov 2026): from the next release every version goes to Play open testing first and to production about 3 days later. At that release: set up the open-testing track in Play Console (countries, feedback email) and make play-upload send the AAB to it; the watch follows the phone tracks.
 - R-484 UP NEXT KEEPS ITS PLACE AFTER AN OLDER BACKUP (owner, 13 Nov 2026: "Do this task here: Fix Up next resetting
   after an old backup restore"; found by the R-483 UAT, run 43393393093 showed "Up next: Push, Week 1"). A followed plan
   with no saved start day (older backups, plans from before Phase 4, the demo data) got TODAY as its start day the first
