@@ -7,6 +7,31 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-527. HANDOFF before his weekly limit (14 Nov 2026) — where every piece of work stands
+He said (14 Nov 2026): "My weekly limit is about to be hit ... Just want to ensure that you can save everything that's
+going on before it happens".
+All finished work is pushed to main. The next session resumes from this list. Helpers that stop mid-way leave their
+working copies on disk (scratchpad wt-* folders, path in `git worktree list`); pushed commits are safe, unpushed edits
+there must be checked by hand (`git -C <wt> status`) before deleting any of them.
+In flight when the limit hit (each pushes straight to main; check main's log, then CI on ci.yml):
+1. wt-panelfix — admin panel review fixes + 2 red e2e (whatsnew, newdots). Pushed be87a7e5; CI was running.
+2. wt-credits — F209 AI credits (20 questions = 1 credit; 0078 migration NOT live; needs his yes before live).
+3. wt-gympage — F207 free gym page + F208 page AI (on by default) + Get started steps "Set your gym timings" (615245fb)
+   and "Make your free gym web page" (only mention AI if live). Plan doc follows R-524/R-525.
+4. wt-people — R-522 Trainer / Other in add-person pop-up + panel stops polling when hidden (2b41abd9, 820c42e3);
+   0079 job-name migration NOT live (needs his yes); also R-523 rename "Add your staff and trainers".
+5. wt-setup — R-526 "Set up your gym" own page with a progress ring + side menu in groups (Members, Money, Training,
+   Reach members, Your gym); just started.
+Then: one fresh-eyes review of all panel changes (R-335), `get_dist.ps1 -Sha <green sha>`, `npx wrangler deploy` from
+deploy/panel, ADMIN_NEWS line, check in the browser, test a real admin web-push alert. That makes self sign-up (0077,
+live) visible to gyms.
+Waiting for release (member app, his 13 Nov 20:05 IST "release" covers ONE version): R-517 bigger gym logo (phone runs
+43573994207/43576307935 PASS), R-482 muscle-tip Undo (PASS x3), R-515/R-516 Today/last-time words (phone run result
+not yet read), exercise pictures. Before tagging: full UAT + fresh-eyes review + quote his message.
+Open decisions: none waiting. Cloudflare: weekly usage alert live (Mon 03:00 IST); biggest use was an admin panel left
+open (~4,600/day) — fixed by item 4 once deployed.
+Tracker: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT (v421).
+
 ## R-526. Move Get started out of Today into its own "Set up your gym" page; regroup the side menu — 14 Nov 2026
 He said (14 Nov 2026): "this getting started section is coming under the today section. I feel like we gotta split that.
 The today thing should just be for, you know, what its purpose is, today's numbers and everything. This should be a
