@@ -6,8 +6,8 @@
  * offers "Upload a photo" (a picture file) instead; that button is there in every state.
  *
  * The saved photo is the centre square of the frame, shrunk to about 400 px and under ~60 KB in the
- * browser (deskPhotoImage.ts). The live picture of a front camera is mirrored, like a mirror; the
- * saved photo is not. The camera is switched off the moment a photo is taken, and when the sheet
+ * browser (deskPhotoImage.ts). The live picture of a front camera is mirrored, like a mirror, and
+ * the saved photo is mirrored the same way (R-502, owner 14 Nov 2026: the photo must look exactly like the preview). The camera is switched off the moment a photo is taken, and when the sheet
  * closes.
  */
 
@@ -155,7 +155,7 @@ export function DeskCameraSheet({
     if (!v || !v.videoWidth) return;
     setError(null);
     try {
-      const blob = await shrinkVideoFrame(v);
+      const blob = await shrinkVideoFrame(v, mirror);
       stopCamera();
       setStage({ kind: 'shot', blob, url: URL.createObjectURL(blob), from: 'camera' });
     } catch (e) {

@@ -46,6 +46,8 @@ export const ADMIN_NEWS: readonly AdminNewsEntry[] = [
         text: 'Your gym’s logo now shows at the top of the admin app, next to your gym’s name. Your staff see it too. To add or change it, open Branding.',
         go: { label: 'Open Branding', path: '/settings/branding' },
       },
+      // R-502: the desk camera photo keeps the preview's mirror flip (it was saved flipped back).
+      { text: 'A member photo taken with the camera now looks exactly like the camera preview. It no longer flips after you tap "Take photo".' },
     ],
   },
   {

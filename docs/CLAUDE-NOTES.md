@@ -7,6 +7,9 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-502. Desk camera photo flipped after Take photo — 14 Nov 2026
+He said: in the admin panel, a photo with the connected webcam shows a preview, but after taking it the photo is flipped; keep it exactly as the preview. Cause: DeskCameraSheet mirrors the live video (scaleX(-1)) but shrinkVideoFrame saved it unmirrored on purpose (F107). Fix: shrinkVideoFrame(video, mirror) passes the preview's mirror into shrinkToSquare, so the saved photo = the preview; a back camera (not mirrored) is unchanged. ADMIN_NEWS line added to the 14 Nov entry. Brain rule photo-matches-the-preview saved. Ships with the next panel deploy.
+
 ## R-501. Admin AI greeting ignored "Both"; gym message did not pop up on his phone — 14 Nov 2026
 He said: in the admin panel AI assistant he tapped the suggested "write a Chhath Puja greeting"; it wrote English; he picked language "Both"; the words did not change, but the message went out (English only). And: the member-app notification for it did not pop up on screen; it only went into the notification list (icon in the status bar). "I don't know if it's something we can change or it's like the phone settings only."
 Found so far: (1) Cards.tsx language chips call withMessage -> messageWords(next.words, lang); an AI-written message has no Hindi words, so Both/Hindi silently keep English. (2) The channel 'gym-messages' was always HIGH (since 0.58.1), the server push (deploy/hq/push.js) is data-only with android priority HIGH, and the app's handler returns shouldShowBanner for kind 'gym-message'. So the code path claims a pop-up; the cause is still unknown. Brain rule never-blame-his-device-settings: find our cause; never answer "change a phone setting".

@@ -22,8 +22,8 @@ function encode(canvas: HTMLCanvasElement, quality: number): Promise<Blob | null
 
 /**
  * Draw the centre square of `pic`, then try SHRINK_STEPS until the JPEG is small enough.
- * `mirror` flips it left-right (never used for the saved photo of a camera: a front camera's
- * preview is mirrored, the photo itself must not be).
+ * `mirror` flips it left-right. R-502 (owner, 14 Nov 2026): a mirrored camera preview gives a mirrored
+ * photo, so the saved photo looks exactly like the preview the desk saw (it was flipped back before).
  */
 export async function shrinkToSquare(pic: Drawable, mirror = false): Promise<Blob> {
   const { sx, sy, side } = centreSquare(pic.width, pic.height);
@@ -55,9 +55,9 @@ export async function shrinkToSquare(pic: Drawable, mirror = false): Promise<Blo
   return last;
 }
 
-/** The current frame of a playing camera, as the saved photo (never mirrored). */
-export function shrinkVideoFrame(video: HTMLVideoElement): Promise<Blob> {
-  return shrinkToSquare({ source: video, width: video.videoWidth, height: video.videoHeight });
+/** The current frame of a playing camera, as the saved photo; `mirror` = the preview is mirrored (R-502). */
+export function shrinkVideoFrame(video: HTMLVideoElement, mirror = false): Promise<Blob> {
+  return shrinkToSquare({ source: video, width: video.videoWidth, height: video.videoHeight }, mirror);
 }
 
 async function decodeFile(file: Blob): Promise<Drawable> {
