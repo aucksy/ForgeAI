@@ -31,7 +31,7 @@ create table if not exists public.gym_web_push (
   staff_id   uuid references public.gym_staff(staff_id) on delete cascade,
   key_hash   bytea not null,
   -- Only the big browsers' push companies (Chrome, Edge, Firefox, Safari): nothing else is ever called.
-  endpoint   text not null unique check (endpoint ~ '^https://(fcm\.googleapis\.com|updates\.push\.services\.mozilla\.com|web\.push\.apple\.com|[a-z0-9-]+\.notify\.windows\.com)/[!-~]{8,700}$'),
+  endpoint   text not null unique check (length(endpoint) <= 800 and endpoint ~ '^https://(fcm\.googleapis\.com|updates\.push\.services\.mozilla\.com|web\.push\.apple\.com|[a-z0-9-]+\.notify\.windows\.com)/[!-~]{8,}$'),
   p256dh     text not null check (p256dh ~ '^[A-Za-z0-9_-]{80,100}$'),
   auth       text not null check (auth ~ '^[A-Za-z0-9_-]{16,32}$'),
   created_at timestamptz not null default now(),
@@ -57,7 +57,8 @@ revoke all on public.gym_alert_settings from public, anon, authenticated;
 -- ------------------------------------------------------------------ helpers (no grants)
 create or replace function public._web_push_endpoint_ok(p text) returns boolean
   language sql immutable set search_path = public as $$
-  select coalesce(p, '') ~ '^https://(fcm\.googleapis\.com|updates\.push\.services\.mozilla\.com|web\.push\.apple\.com|[a-z0-9-]+\.notify\.windows\.com)/[!-~]{8,700}$'
+  select length(coalesce(p, '')) <= 800
+     and coalesce(p, '') ~ '^https://(fcm\.googleapis\.com|updates\.push\.services\.mozilla\.com|web\.push\.apple\.com|[a-z0-9-]+\.notify\.windows\.com)/[!-~]{8,}$'
 $$;
 
 -- Is the sign-in that saved this browser still live? (An owner key not retired; a session not ended, its person not

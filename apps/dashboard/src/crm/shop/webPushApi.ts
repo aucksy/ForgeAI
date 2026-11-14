@@ -108,7 +108,10 @@ export async function turnOnPush(key: string): Promise<TurnOn> {
   const reg = await registration();
   if (!reg) return 'unsupported';
   const res = await fetch('/api/push/web-key', { headers: { Accept: 'application/json' } });
-  const body = (await res.json().catch(() => null)) as { key?: unknown } | null;
+  const body = (await res.json().catch((e: unknown) => {
+    console.warn('[web push] the key answer was not readable', e);
+    return null;
+  })) as { key?: unknown } | null;
   if (!res.ok || typeof body?.key !== 'string') return 'not-ready';
   let sub = await reg.pushManager.getSubscription();
   if (!sub) sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: keyBytes(body.key) as BufferSource });
