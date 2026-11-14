@@ -120,7 +120,7 @@ test('online payments of the last minutes become gym alerts; the desk taps and o
   addPaid(db, { id: 'pr_ffffffff03', provider: '' });
   addPaid(db, { id: 'pr_ffffffff04', at: NOW - FEED_WINDOW_MS - 60_000 });
   addRequest(db, { id: 'pr_ffffffff05' });
-  const { fetchImpl, calls } = server(() => ({ ok: true, alerts: 2 }), 'hq_gym_alerts_paid');
+  const { fetchImpl, calls } = server(() => ({ ok: true, alerts: 2 }), 'hq_paid_alerts');
   const env = { WEB: db, SUPABASE_URL: 'https://db.test', SUPABASE_HQ_KEY: 'hq-key' };
   assert.deepEqual(await feedPaidOnline(env, { fetchImpl, now: NOW }), { paid: 2, alerts: 2 });
   assert.deepEqual(calls, [
@@ -139,9 +139,9 @@ test('online payments: a server without 0075 is quiet, a failure is tried again'
   const db = sqliteD1();
   addPaid(db, { id: 'pr_gggggggg01' });
   const env = { WEB: db, SUPABASE_URL: 'https://db.test', SUPABASE_HQ_KEY: 'hq-key' };
-  const notReady = server(() => ({ status: 404, body: { code: 'PGRST202', message: 'no function' } }), 'hq_gym_alerts_paid');
+  const notReady = server(() => ({ status: 404, body: { code: 'PGRST202', message: 'no function' } }), 'hq_paid_alerts');
   assert.deepEqual(await feedPaidOnline(env, { fetchImpl: notReady.fetchImpl, now: NOW }), { skipped: 'not-ready' });
-  const up = server(() => ({ ok: true, alerts: 1 }), 'hq_gym_alerts_paid');
+  const up = server(() => ({ ok: true, alerts: 1 }), 'hq_paid_alerts');
   assert.deepEqual(await feedPaidOnline(env, { fetchImpl: up.fetchImpl, now: NOW + 60_000 }), { paid: 1, alerts: 1 });
   assert.deepEqual(await feedPaidOnline({ WEB: db }), { skipped: 'off' });
 });

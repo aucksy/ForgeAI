@@ -98,14 +98,14 @@ begin
   checks := checks + 1; fails := fails || pg_temp.t75_is('5nophone', (select count(*) from public.gym_alerts where gym_id = gid and line ~ '[0-9]{10}')::text, '0');
 
   -- 6. Paid online, from the HQ Worker: once per request; a bad id or another gym's made-up id skipped.
-  r := public.hq_gym_alerts_paid(jsonb_build_array(
+  r := public.hq_paid_alerts(jsonb_build_array(
     jsonb_build_object('id', 'pr_t75aaaaaaaa', 'gymId', gid, 'kind', 'fee', 'rosterId', 't75-r-bina', 'label', 'Monthly plan'),
     jsonb_build_object('id', 'nope', 'gymId', gid),
     jsonb_build_object('id', 'pr_t75bbbbbbbb', 'gymId', gen_random_uuid())));
-  perform public.hq_gym_alerts_paid(jsonb_build_array(jsonb_build_object('id', 'pr_t75aaaaaaaa', 'gymId', gid, 'rosterId', 't75-r-bina', 'label', 'Monthly plan')));
+  perform public.hq_paid_alerts(jsonb_build_array(jsonb_build_object('id', 'pr_t75aaaaaaaa', 'gymId', gid, 'rosterId', 't75-r-bina', 'label', 'Monthly plan')));
   checks := checks + 1; fails := fails || pg_temp.t75_is('6paid', (select string_agg(line || ' ' || route, ',') from public.gym_alerts where kind = 'paid_online'),
     'Bina paid online for Monthly plan. See it on Money. /money');
-  checks := checks + 1; fails := fails || pg_temp.t75_is('6invalid', pg_temp.t75_run('select public.hq_gym_alerts_paid(''{}''::jsonb)'), 'INVALID');
+  checks := checks + 1; fails := fails || pg_temp.t75_is('6invalid', pg_temp.t75_run('select public.hq_paid_alerts(''{}''::jsonb)'), 'INVALID');
 
   -- 7. Who sees what. The owner key: everything except the question asked to the trainer (0053's rule).
   checks := checks + 1; fails := fails || pg_temp.t75_is('7count', (select count(*) from public.gym_alerts where gym_id = gid)::text, '15');
@@ -133,15 +133,15 @@ begin
 
   -- 9. Who may call what.
   checks := checks + 1;
-  if has_function_privilege('anon', 'public.hq_gym_alerts_paid(jsonb)', 'execute')
-     or not has_function_privilege('service_role', 'public.hq_gym_alerts_paid(jsonb)', 'execute')
+  if has_function_privilege('anon', 'public.hq_paid_alerts(jsonb)', 'execute')
+     or not has_function_privilege('service_role', 'public.hq_paid_alerts(jsonb)', 'execute')
      or not has_function_privilege('anon', 'public.owner_alerts(text, bigint)', 'execute')
      or has_function_privilege('anon', 'public._alert(uuid, text, text, text, text, boolean, text, text)', 'execute')
      or has_function_privilege('anon', 'public._alert_talk_line()', 'execute')
      or has_table_privilege('anon', 'public.gym_alerts', 'select')
      or has_table_privilege('authenticated', 'public.gym_alerts', 'insert') then fails := fails || ' 9'; end if;
   perform set_config('request.jwt.claims', '{"role":"anon"}', true);
-  checks := checks + 1; fails := fails || pg_temp.t75_is('9guard', pg_temp.t75_run('select public.hq_gym_alerts_paid(''[]''::jsonb)'), 'HQ_ONLY');
+  checks := checks + 1; fails := fails || pg_temp.t75_is('9guard', pg_temp.t75_run('select public.hq_paid_alerts(''[]''::jsonb)'), 'HQ_ONLY');
   perform set_config('request.jwt.claims', '', true);
 
   if fails = '' then raise exception 'RESULT PASS (% checks)', checks;

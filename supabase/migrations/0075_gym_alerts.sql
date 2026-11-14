@@ -26,7 +26,7 @@
 -- Test: supabase/tests/0075_gym_alerts.sql (CI runs it after every migration; pasted into the SQL Editor it always
 -- ends in an error and so changes nothing).
 -- Undo: drop the nine triggers below and their functions, _alert, _alert_viewer, _alert_visible, _alert_first_name,
--- _alert_json, owner_alerts, hq_gym_alerts_paid and the table gym_alerts. The admin app hides what needs it.
+-- _alert_json, owner_alerts, hq_paid_alerts and the table gym_alerts. The admin app hides what needs it.
 --
 -- WHO SEES WHAT. 'all': the owner, the front desk and trainers (as each list already shows them). 'owner': the
 -- owner (an owner key, or a person whose role is 'owner') only: complaints, as 0069 keeps them. 'question': exactly
@@ -300,7 +300,7 @@ create trigger gym_friend_referrals_alert after insert on public.gym_friend_refe
 -- The HQ Worker hands what members paid online in the last few minutes (Cloudflare D1 pay_requests, status 'paid'
 -- by the payment company, receipt not made yet): [{id, gymId, kind: 'fee'|'shop', rosterId, appMember, label}],
 -- at most 100. One alert per request (the tag), so handing it again changes nothing. -> {ok, alerts}
-create or replace function public.hq_gym_alerts_paid(p_items jsonb)
+create or replace function public.hq_paid_alerts(p_items jsonb)
   returns jsonb language plpgsql security definer set search_path = public as $$
 declare it jsonb; g uuid; app uuid; lbl text; who text; n int := 0;
 begin
@@ -360,8 +360,8 @@ revoke all on function public._alert_shop_order() from public, anon, authenticat
 revoke all on function public._alert_report_sent() from public, anon, authenticated;
 revoke all on function public._alert_member_joined() from public, anon, authenticated;
 revoke all on function public._alert_friend_referred() from public, anon, authenticated;
-revoke all on function public.hq_gym_alerts_paid(jsonb) from public, anon, authenticated;
-grant execute on function public.hq_gym_alerts_paid(jsonb) to service_role;
+revoke all on function public.hq_paid_alerts(jsonb) from public, anon, authenticated;
+grant execute on function public.hq_paid_alerts(jsonb) to service_role;
 revoke all on function public.owner_alerts(text, bigint) from public;
 grant execute on function public.owner_alerts(text, bigint) to anon, authenticated;
 

@@ -8,7 +8,7 @@
   feedback or complaint and member replies (gym_talk_messages; complaints for the owner only), a pause or renew
   request (urgent when the current plan ends in 3 days or less), a check-in number to confirm, a shop order, a
   requested report sent, a member who joined with the code, a referred friend; and paid online (D1 pay_requests with a
-  provider, handed every minute by the HQ Worker, deploy/hq/payFeed.js feedPaidOnline -> hq_gym_alerts_paid, tag
+  provider, handed every minute by the HQ Worker, deploy/hq/payFeed.js feedPaidOnline -> hq_paid_alerts, tag
   paid:<id>). Rows older than 30 days are cleared. owner_alerts(key) answers the last 3 days the key may see (newest
   first, 50). Admin app: Needs you now also counts member questions (0053 owner_question_count) and member messages
   waiting (0069 owner_talk_count), fixing the old TODO(0053), and with 0075 a new alert rings once with its own words

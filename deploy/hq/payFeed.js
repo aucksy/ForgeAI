@@ -10,7 +10,7 @@
 // warned once).
 //
 // R-506 (same day): what members paid ONLINE (the payment company said paid: status 'paid' with a provider) goes
-// the same way to the gym's alerts (supabase 0075 hq_gym_alerts_paid, tag 'paid:<id>'): "Asha paid online for
+// the same way to the gym's alerts (supabase 0075 hq_paid_alerts, tag 'paid:<id>'): "Asha paid online for
 // Monthly plan. See it on Money." on the admin app. The desk's own "Paid" taps (no provider) are not news to the gym.
 
 import { rpc } from './db.js';
@@ -86,7 +86,7 @@ export async function feedFeeRequests(env, { fetchImpl = fetch, now = Date.now()
   }
 }
 
-/** The items for hq_gym_alerts_paid from D1 rows. PURE. */
+/** The items for hq_paid_alerts from D1 rows. PURE. */
 export function paidItems(rows) {
   const out = [];
   for (const r of Array.isArray(rows) ? rows : []) {
@@ -133,14 +133,14 @@ export async function feedPaidOnline(env, { fetchImpl = fetch, now = Date.now() 
   const items = paidItems(rows).filter((it) => !handedPaid.has(it.id));
   if (!items.length) return { paid: 0, alerts: 0 };
   try {
-    const r = await rpc(env, 'hq_gym_alerts_paid', { p_items: items }, { fetchImpl });
+    const r = await rpc(env, 'hq_paid_alerts', { p_items: items }, { fetchImpl });
     for (const it of items) handedPaid.set(it.id, now);
     const alerts = Number(r && r.alerts) || 0;
     console.log('[pay-feed] online payments handed', items.length, 'alerts', alerts);
     return { paid: items.length, alerts };
   } catch (e) {
     if (e && e.code === 'NOT_READY') {
-      if (!warnedPaidNotReady) console.warn('[pay-feed] the gym server has no hq_gym_alerts_paid yet (migration 0075 not applied)');
+      if (!warnedPaidNotReady) console.warn('[pay-feed] the gym server has no hq_paid_alerts yet (migration 0075 not applied)');
       warnedPaidNotReady = true;
       return { skipped: 'not-ready' };
     }
