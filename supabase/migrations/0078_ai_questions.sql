@@ -300,9 +300,9 @@ begin
      where gym_id = new.gym_id and delta > 0 and reason in ('welcome', 'monthly', 'purchase', 'grant', 'refund');
     perform public._alert(new.gym_id, 'ai_credits_low', new.gym_id::text, 'ai_low:' || new.gym_id || ':' || coalesce(epoch, 0),
       'owner', false,
-      case when after <= 0 then 'Your gym has no AI credits left. Members now get help pages instead of AI answers. Get more in AI Assistant, Credits.'
-           when after = 1 then 'Your gym has 1 AI credit left. Get more in AI Assistant, Credits, so members keep getting AI answers.'
-           else format('Your gym has %s AI credits left. Get more in AI Assistant, Credits, so members keep getting AI answers.', after) end,
+      case when after <= 0 then 'Your gym has no AI credits left. Members now get help pages instead of AI answers. To get more, open AI Assistant and tap your credits at the top.'
+           when after = 1 then 'Your gym has 1 AI credit left. To get more, open AI Assistant and tap your credits at the top, so members keep getting AI answers.'
+           else format('Your gym has %s AI credits left. To get more, open AI Assistant and tap your credits at the top, so members keep getting AI answers.', after) end,
       '/assistant');
   end if;
   return null;

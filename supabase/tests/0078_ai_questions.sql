@@ -156,7 +156,7 @@ begin
   r := pg_temp.t78_take(koc, 'admin');
   checks := checks + 1; fails := fails || pg_temp.t78_is('11balance', r->>'balance', '10');
   checks := checks + 1; fails := fails || pg_temp.t78_is('11alert', (select string_agg(kind || '|' || audience || '|' || urgent || '|' || route || '|' || line, ',') from public.gym_alerts where gym_id = gc),
-    'ai_credits_low|owner|false|/assistant|Your gym has 10 AI credits left. Get more in AI Assistant, Credits, so members keep getting AI answers.');
+    'ai_credits_low|owner|false|/assistant|Your gym has 10 AI credits left. To get more, open AI Assistant and tap your credits at the top, so members keep getting AI answers.');
   update public.gym_ai_question_slots set slots = 0 where gym_id = gc;
   r := pg_temp.t78_take(koc, 'admin');
   checks := checks + 1; fails := fails || pg_temp.t78_is('11once', r->>'balance' || '/' || (select count(*) from public.gym_alerts where gym_id = gc), '9/1');
@@ -165,7 +165,7 @@ begin
   insert into public.gym_ai_credit_ledger(gym_id, delta, reason, note, month) values (gc, -59, 'grant', 'test: all used', public._ai_month());
   checks := checks + 1; fails := fails || pg_temp.t78_is('11again', (select count(*) from public.gym_alerts where gym_id = gc)::text, '2');
   checks := checks + 1; fails := fails || pg_temp.t78_is('11zero', (select count(*) from public.gym_alerts where gym_id = gc
-    and line = 'Your gym has no AI credits left. Members now get help pages instead of AI answers. Get more in AI Assistant, Credits.')::text, '1');
+    and line = 'Your gym has no AI credits left. Members now get help pages instead of AI answers. To get more, open AI Assistant and tap your credits at the top.')::text, '1');
   -- The owner sees it in owner_alerts; the desk does not.
   checks := checks + 1; fails := fails || pg_temp.t78_is('11owner', (select count(*) from jsonb_array_elements(public.owner_alerts(koc)->'alerts') x where x->>'kind' = 'ai_credits_low')::text, '2');
 

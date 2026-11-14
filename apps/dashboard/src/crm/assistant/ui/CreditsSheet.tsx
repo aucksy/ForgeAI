@@ -149,7 +149,7 @@ export function CreditsSheet({ wallet, onClose, plansOn, assistKey }: { wallet: 
               <PriceRow key={r.label} label={r.label} price={String(r.n)} />
             ))}
             <p style={{ ...quiet, color: color.inkSecondary, marginTop: 4 }}>
-              {q.credits === 1 ? t('They used 1 credit.') : t('They used {n} credits.', { n: q.credits })}{' '}
+              {q.credits === 1 ? t('These questions used 1 credit.') : t('These questions used {n} credits.', { n: q.credits })}{' '}
               {t('Each member can ask the AI {n} questions a day.', { n: q.memberDay })}
             </p>
           </section>

@@ -156,7 +156,7 @@ test('AI questions on the credits: as before until 0078, then the price, who ask
   await expect(asked).toContainText('Your staff');
   await expect(asked).toContainText('Members36');
   await expect(asked).not.toContainText('Gym page visitors');
-  await expect(asked).toContainText('They used 2 credits. Each member can ask the AI 10 questions a day.');
+  await expect(asked).toContainText('These questions used 2 credits. Each member can ask the AI 10 questions a day.');
   await expect(credits.getByRole('region', { name: 'Recently used' })).toContainText('20 AI questions');
   await shots(page, '02-credits-sheet');
   await asked.scrollIntoViewIfNeeded();
@@ -192,7 +192,7 @@ test('AI questions on the credits: as before until 0078, then the price, who ask
   // 6. The "credits low" alert (0075's list; written by 0078 when a spend takes the balance to 10 or below).
   const pageNow = await page.evaluate(() => Date.now());
   ai.alerts = [
-    { id: 'c1', kind: 'ai_credits_low', line: 'Your gym has 8 AI credits left. Get more in AI Assistant, Credits, so members keep getting AI answers.', route: '/assistant', urgent: false, at: pageNow - 2 * 60_000 },
+    { id: 'c1', kind: 'ai_credits_low', line: 'Your gym has 8 AI credits left. To get more, open AI Assistant and tap your credits at the top, so members keep getting AI answers.', route: '/assistant', urgent: false, at: pageNow - 2 * 60_000 },
   ];
   await go(page, '/');
   await page.reload();
@@ -234,7 +234,7 @@ test('AI questions on the credits: the computer', async ({ page }) => {
   await expect(main).toContainText('Every 20 AI questions use 1 credit.');
   await main.getByRole('button', { name: /AI credits\. Open AI credits\./ }).first().click();
   const credits = page.getByRole('dialog', { name: 'AI credits' });
-  await expect(credits.getByRole('region', { name: 'AI questions this month' })).toContainText('They used 2 credits.');
+  await expect(credits.getByRole('region', { name: 'AI questions this month' })).toContainText('These questions used 2 credits.');
   await shots(page, '02-credits-sheet');
   await credits.getByRole('button', { name: 'Close' }).click();
   await go(page, '/feedback');
