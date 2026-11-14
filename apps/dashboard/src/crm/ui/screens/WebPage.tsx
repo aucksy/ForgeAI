@@ -142,14 +142,14 @@ function StatusCard({ saved, children }: { saved: SavedPage | null; children?: R
           {`MettleUp has taken your page down, so visitors cannot see it.${saved.hqNote ? ` MettleUp’s note: “${saved.hqNote}”` : ''} Fix what the note says, then write to MettleUp from Help and feedback to put it back.`}
         </ErrorBanner>
       )}
-      <div style={{ display: 'flex', alignItems: 'center', gap: space.sm, flexWrap: 'wrap' }}>
-        <span aria-hidden style={{ width: 10, height: 10, borderRadius: 5, flexShrink: 0, background: saved?.hiddenByHq ? color.critical : live ? color.good : color.borderStrong }} />
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: space.sm }}>
+        <span aria-hidden style={{ width: 10, height: 10, borderRadius: 5, flexShrink: 0, marginTop: 6, background: saved?.hiddenByHq ? color.critical : live ? color.good : color.borderStrong }} />
         <strong style={{ fontFamily: font.body, fontSize: 15, color: color.ink }}>{line}</strong>
       </div>
       {saved && (
         <p style={{ ...quiet, marginTop: space.xs, fontFamily: font.mono, fontSize: 13, overflowWrap: 'anywhere' }}>{pageAddress(saved.slug)}</p>
       )}
-      {!GYM_PAGE_PUBLIC && (
+      {!GYM_PAGE_PUBLIC && !live && !saved?.hiddenByHq && (
         <p style={{ ...small, marginTop: space.sm }}>
           Gym web pages are not open to visitors yet. Get yours ready now: when MettleUp opens them, your page goes live at this address with what you saved
           here.
@@ -285,7 +285,6 @@ function PageEditor({ ownerKey, saved, onSaved }: { ownerKey: string; saved: Sav
         </div>
       </StatusCard>
 
-      {banner && <ErrorBanner>{banner}</ErrorBanner>}
 
       <Card style={{ marginBottom: space.lg }}>
         <SectionTitle>Your page address</SectionTitle>
@@ -463,7 +462,12 @@ function PageEditor({ ownerKey, saved, onSaved }: { ownerKey: string; saved: Sav
             {errors.terms && <p style={{ ...small, color: color.criticalText, margin: `2px 0 0 ${20 + space.sm}px` }}>{errors.terms}</p>}
           </div>
         )}
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: space.sm, alignItems: 'center', marginTop: space.lg }}>
+        {banner && (
+          <div style={{ marginTop: space.lg }}>
+            <ErrorBanner>{banner}</ErrorBanner>
+          </div>
+        )}
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: space.sm, alignItems: 'center', marginTop: banner ? 0 : space.lg }}>
           <Button needsInternet onClick={save} disabled={saving || uploading > 0 || !changed}>
             {saving ? 'Saving…' : publishWords}
           </Button>
@@ -479,14 +483,16 @@ function PageEditor({ ownerKey, saved, onSaved }: { ownerKey: string; saved: Sav
 
 function FromRow({ what, from, to, open }: { what: string; from: string; to: string; open: string }) {
   return (
-    <li style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: space.md, padding: `${space.sm}px 0`, borderTop: `1px solid ${color.border}`, flexWrap: 'wrap' }}>
-      <div style={{ minWidth: 0, flex: '1 1 180px' }}>
+    <li style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: space.md, padding: `${space.sm}px 0`, borderTop: `1px solid ${color.border}` }}>
+      <div style={{ minWidth: 0, flex: '1 1 auto' }}>
         <div style={{ fontFamily: font.body, fontSize: 14, fontWeight: 700, color: color.ink }}>{what}</div>
         <div style={{ ...small, overflowWrap: 'anywhere' }}>{from}</div>
       </div>
-      <Button variant="quiet" onClick={() => navigate(to)}>
-        {open}
-      </Button>
+      <div style={{ flexShrink: 0 }}>
+        <Button variant="quiet" ariaLabel={open} onClick={() => navigate(to)}>
+          Open
+        </Button>
+      </div>
     </li>
   );
 }
@@ -571,7 +577,7 @@ function ShareButtons({ slug, gymName, onCopied }: { slug: string; gymName: stri
   );
 }
 
-const pairGrid: CSSProperties = { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 200px), 1fr))', columnGap: space.md };
+const pairGrid: CSSProperties = { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 200px), 1fr))', columnGap: space.md };
 
 // ---------------------------------------------------------------- photos shown in the editor
 
