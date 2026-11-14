@@ -4,7 +4,7 @@
 # 1 MARCH 2027 by run-device-qa.sh; the history is a real-sized Hevy export (~500 workouts over 3
 # years, tools/make_big_hevy.py) ending on Saturday 27 Feb. Here: the welcome with "From Hevy",
 # the import, "Bring my routines in" → follow them, "Track RPE" on, then the Profile page's numbers
-# on a Monday that is also the 1st of a month (the day "Last 12 weeks" read 0 for the owner).
+# on a Monday that is also the 1st of a month (the day "Last 3 months" read 0 for the owner).
 appId: com.mettleup.app
 ---
 - launchApp:
@@ -259,7 +259,7 @@ appId: com.mettleup.app
 - back
 - back
 # ---------------------------------------------------------------- Profile on a Monday the 1st
-# Monday 1 March 2027, history to Saturday: the last 12 weeks hold ~40 workouts, so the 12-week
+# Monday 1 March 2027, history to Saturday: the last 3 months hold ~40 workouts, so the 3-month
 # total can never be 0, and "All time" (3 years) must be bigger than the last 12 months.
 - tapOn:
     text: "^Profile$"
@@ -284,28 +284,28 @@ appId: com.mettleup.app
     index: 0
 # The caption sits above the bars: after the chip the page can be scrolled past it.
 # The UP swipe starts mid-screen; at 360 dp / font 1.3 that can be ON the chart, which reads the touch as
-# picking a week ("Kg lifted in 18-24 Jan", run 42126016591). Then "Show 12-week total" brings it back.
+# picking a week ("Kg lifted in 18-24 Jan", run 42126016591). Then "Show 3-month total" brings it back.
 - scrollUntilVisible:
-    element: '(Kg|Lb) lifted in the last 12 weeks · .*'
+    element: '(Kg|Lb) lifted in the last 3 months · .*'
     direction: UP
     timeout: 15000
     optional: true
 - runFlow:
     when:
-      visible: "Show 12-week total"
+      visible: "Show 3-month total"
     commands:
       - runFlow:
           file: sub-see.yaml
           env:
-            FIND: 'Show 12-week total'
-      - tapOn: "Show 12-week total"
+            FIND: 'Show 3-month total'
+      - tapOn: "Show 3-month total"
 - scrollUntilVisible:
-    element: '(Kg|Lb) lifted in the last 12 weeks · .*'
+    element: '(Kg|Lb) lifted in the last 3 months · .*'
     direction: UP
     timeout: 15000
-- assertNotVisible: '(Kg|Lb) lifted in the last 12 weeks · 0 .*'
-- takeScreenshot: w-07-chart-12-weeks
-- tapOn: "Range: Last 12 weeks. Change"
+- assertNotVisible: '(Kg|Lb) lifted in the last 3 months · 0 .*'
+- takeScreenshot: w-07-chart-3-months
+- tapOn: "Range: Last 3 months. Change"
 - extendedWaitUntil:
     visible: "^Show$"
     timeout: 10000
@@ -336,11 +336,11 @@ appId: com.mettleup.app
     visible: "^Show$"
     timeout: 10000
 - tapOn:
-    text: "^Last 12 weeks$"
+    text: "^Last 3 months$"
     below:
       text: "^Show$"
 - extendedWaitUntil:
-    visible: "Range: Last 12 weeks. Change"
+    visible: "Range: Last 3 months. Change"
     timeout: 15000
 - runFlow:
     file: sub-progress-row.yaml

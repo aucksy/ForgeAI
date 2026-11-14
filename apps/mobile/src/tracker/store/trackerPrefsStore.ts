@@ -80,7 +80,7 @@ export interface TrackerPrefsState {
    */
   weeklyGoal: number | null;
   /**
-   * Redesign R2: the Profile chart's chip and range — Kg lifted over the last 12 weeks the first
+   * Redesign R2: the Profile chart's chip and range — Kg lifted over the last 3 months the first
    * time, then the member's last choice.
    */
   chartMetric: ChartMetric;

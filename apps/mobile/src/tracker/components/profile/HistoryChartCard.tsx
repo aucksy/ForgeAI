@@ -1,8 +1,8 @@
 /**
  * Redesign R2 — the Profile's history chart, laid out like Hevy's (PLAN §3 item 4):
  *
- *   41,230 kg                                Last 12 weeks ⌄
- *   Kg lifted in the last 12 weeks · 27 workouts
+ *   41,230 kg                                Last 3 months ⌄
+ *   Kg lifted in the last 3 months · 27 workouts
  *   200k kg ┤ ╱╲__╱ …
  *   [Duration] [Kg lifted] [Reps]
  *
@@ -11,7 +11,7 @@
  * `DateLineChart` as the exercise chart, so every dated chart looks and taps alike. Tap a point →
  * it stays picked; the big number and the caption show that week or month, and "See these
  * workouts" opens the workout history for exactly that period ("/history?from=…&to=…"). "Show
- * 12-week total" (or the same point again) goes back to the total. A week with no workout is a
+ * 3-month total" (or the same point again) goes back to the total. A week with no workout is a
  * point on zero, so a gap in training shows as a dip.
  *
  * 13 Oct 2026 audit of v0.37.0: "No workouts yet" only for a member with NO workouts (a range with
@@ -91,7 +91,7 @@ export function HistoryChartCard({
   const [width, setWidth] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
   const [rangeOpen, setRangeOpen] = useState(false);
-  // "Show 12-week total" clears the line's picked point too (the pick lives in the chart).
+  // "Show 3-month total" clears the line's picked point too (the pick lives in the chart).
   const [clears, setClears] = useState(0);
   // A new range, chip or set of points (a reread, a new week) starts from the total again: a tap
   // is a position, and in new points that position can be another week.

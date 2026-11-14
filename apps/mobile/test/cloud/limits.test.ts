@@ -5,6 +5,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { monthsOfRange } from '@/cloud/limits';
+import { CHART_RANGES } from '@/tracker/engine/historyChart';
 
 describe('monthsOfRange', () => {
   it('every chart range in the app', () => {
@@ -15,5 +16,13 @@ describe('monthsOfRange', () => {
     expect(monthsOfRange('year')).toBe(12);
     expect(monthsOfRange('all')).toBeNull();
     expect(monthsOfRange('anything else')).toBeNull();
+  });
+
+  it('R-500: the first Profile chart range says 3 months and counts as 3 months, like the exercise charts', () => {
+    expect(CHART_RANGES.map((r) => [r.label, monthsOfRange(r.id)])).toEqual([
+      ['Last 3 months', 3],
+      ['Last 12 months', 12],
+      ['All time', null],
+    ]);
   });
 });

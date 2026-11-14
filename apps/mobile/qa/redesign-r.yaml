@@ -5,7 +5,7 @@
 #     Routines with New folder, New routine and Find a plan; the followed folder "Jaipur (6)" open,
 #     tagged Following, its "Next" routine; a routine's ⋯ and a folder's ⋯; Find a plan.
 #  2. Profile (R2): header (Edit profile, share, Settings), stats, the history chart in each chip
-#     (Duration · Kg/Lb lifted · Reps) and each range (Last 12 weeks · Last 12 months · All time), a bar
+#     (Duration · Kg/Lb lifted · Reps) and each range (Last 3 months · Last 12 months · All time), a bar
 #     tapped; Progress → Charts, Exercises and Body, and Profile's Calendar (+ its Year
 #     view); a feed card and its ⋯; a workout page and its ⋯; an exercise page's 3 tabs.
 #  3. Settings (Release A: 6 headed groups) and 4 pages (Units, Rest timer and sounds, How the app
@@ -18,7 +18,7 @@
 #     open: the question says "You have 1 open order (₹…). Leaving cancels it.", and a third join
 #     sees the shaker's stock back where it was. Leave is in Settings → Your gym (A4).
 # Saves no workout (part M reads its count afresh). The chart's chip and range are put back to
-# Kg/Lb lifted and Last 12 weeks. Both gym orders placed are cancelled (their stock goes back) and
+# Kg/Lb lifted and Last 3 months. Both gym orders placed are cancelled (their stock goes back) and
 # the phone leaves the gym, so the app ends in no gym (the Gym tab offers "Join your gym").
 appId: com.mettleup.app
 ---
@@ -237,7 +237,7 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: "Range: Last 12 weeks. Change"
+      FIND: "Range: Last 3 months. Change"
 # The chart's chips: Duration · Kg lifted (Lb lifted after part I's units) · Reps.
 # Owner profile (run 38892561249): the caption over the bars and the range button sit above
 # the screen after a chip tap, so each is looked for UP (not centred: the chips stay in view).
@@ -250,7 +250,7 @@ appId: com.mettleup.app
     text: "^Duration$"
     index: 0
 - scrollUntilVisible:
-    element: "Duration, last 12 weeks.*"
+    element: "Duration, last 3 months.*"
     direction: UP
     timeout: 15000
 - takeScreenshot: r-07-chart-duration
@@ -258,7 +258,7 @@ appId: com.mettleup.app
     text: "^Reps$"
     index: 0
 - scrollUntilVisible:
-    element: "Reps, last 12 weeks.*"
+    element: "Reps, last 3 months.*"
     direction: UP
     timeout: 15000
 - takeScreenshot: r-07b-chart-reps
@@ -266,7 +266,7 @@ appId: com.mettleup.app
     text: '^(Kg|Lb) lifted$'
     index: 0
 - scrollUntilVisible:
-    element: '(Kg|Lb) lifted, last 12 weeks.*'
+    element: '(Kg|Lb) lifted, last 3 months.*'
     direction: UP
     timeout: 15000
 - takeScreenshot: r-07c-chart-lifted
@@ -279,24 +279,24 @@ appId: com.mettleup.app
     text: '.*: [1-9][\d,]* (kg|lb)'
     index: 0
 - takeScreenshot: r-08-chart-bar-tapped
-# The way back to the range's total (the big number is the 12-week total until a bar is tapped).
+# The way back to the range's total (the big number is the 3-month total until a bar is tapped).
 - runFlow:
     file: sub-see.yaml
     env:
-      FIND: 'Show 12-week total'
-- tapOn: "Show 12-week total"
+      FIND: 'Show 3-month total'
+- tapOn: "Show 3-month total"
 - scrollUntilVisible:
-    element: "(Kg|Lb) lifted in the last 12 weeks · .*"
+    element: "(Kg|Lb) lifted in the last 3 months · .*"
     direction: UP
     timeout: 15000
-# The ranges: Last 12 weeks · Last 12 months · All time (the "Show" sheet).
+# The ranges: Last 3 months · Last 12 months · All time (the "Show" sheet).
 # Owner profile: the caption and range button sit above the bars; bring it back, centred.
 - scrollUntilVisible:
-    element: "Range: Last 12 weeks. Change"
+    element: "Range: Last 3 months. Change"
     direction: UP
     centerElement: true
     timeout: 20000
-- tapOn: "Range: Last 12 weeks. Change"
+- tapOn: "Range: Last 3 months. Change"
 - extendedWaitUntil:
     visible: "^Show$"
     timeout: 10000
@@ -349,11 +349,11 @@ appId: com.mettleup.app
     visible: "^Show$"
     timeout: 10000
 - tapOn:
-    text: "^Last 12 weeks$"
+    text: "^Last 3 months$"
     below:
       text: "^Show$"
 - scrollUntilVisible:
-    element: "Range: Last 12 weeks. Change"
+    element: "Range: Last 3 months. Change"
     direction: UP
     timeout: 15000
 # ---------------------------------------------------------------- the 4 tiles

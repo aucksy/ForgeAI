@@ -10,7 +10,7 @@
 #  5. the chips: Duration keeps the Today line and a tappable chart; Reps keeps the chart tappable and has no
 #     Today line (negative);
 #  6. the old link mettleup://progress lands on Profile (never a blank screen), also after a restart.
-# The chart's range and chip are saved choices: the flow puts them back (Last 12 weeks, Kg lifted).
+# The chart's range and chip are saved choices: the flow puts them back (Last 3 months, Kg lifted).
 # Pictures rel-f199-*.png.
 appId: com.mettleup.app
 ---
@@ -169,8 +169,8 @@ appId: com.mettleup.app
       - runFlow:
           file: sub-see.yaml
           env:
-            FIND: 'Show 12-week total'
-      - tapOn: "Show 12-week total"
+            FIND: 'Show 3-month total'
+      - tapOn: "Show 3-month total"
 - tapOn:
     id: "date-line-chart"
 - extendedWaitUntil:
@@ -182,7 +182,7 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-see.yaml
     env:
-      FIND: 'Show 12-week total'
+      FIND: 'Show 3-month total'
 - takeScreenshot: rel-f199-10-week-picked
 - tapOn:
     id: "chart-open-workout"
@@ -210,12 +210,12 @@ appId: com.mettleup.app
     timeout: 15000
 # ---------------------------------------------------------------- 4. Last 12 months: a month opens its workouts
 # 0.77.0 gate (round 4, run 43062170667): Back from the week's workouts can leave the page scrolled with the
-# range ("Last 12 weeks") above the screen's top edge: bring it into view first.
+# range ("Last 3 months") above the screen's top edge: bring it into view first.
 - scrollUntilVisible:
-    element: "^Last 12 weeks$"
+    element: "^Last 3 months$"
     direction: UP
     timeout: 20000
-- tapOn: "^Last 12 weeks$"
+- tapOn: "^Last 3 months$"
 - extendedWaitUntil:
     visible: "^Last 12 months$"
     timeout: 10000
@@ -264,28 +264,28 @@ appId: com.mettleup.app
     visible:
       id: "date-line-chart"
     timeout: 15000
-# Back to Last 12 weeks (a saved choice). The range can sit above the screen after Back (see section 4).
+# Back to Last 3 months (a saved choice). The range can sit above the screen after Back (see section 4).
 - scrollUntilVisible:
     element: "^Last 12 months$"
     direction: UP
     timeout: 20000
 - tapOn: "^Last 12 months$"
 - extendedWaitUntil:
-    visible: "^Last 12 weeks$"
+    visible: "^Last 3 months$"
     timeout: 10000
 - runFlow:
     file: sub-see.yaml
     env:
-      FIND: '^Last 12 weeks$'
-- tapOn: "^Last 12 weeks$"
+      FIND: '^Last 3 months$'
+- tapOn: "^Last 3 months$"
 - extendedWaitUntil:
-    visible: "Tap a point to see one week|Show 12-week total"
+    visible: "Tap a point to see one week|Show 3-month total"
     timeout: 20000
     optional: true
 - runFlow:
     file: sub-see.yaml
     env:
-      FIND: 'Tap a point to see one week|Show 12-week total'
+      FIND: 'Tap a point to see one week|Show 3-month total'
 # ---------------------------------------------------------------- 5. the chips keep the chart tappable
 - scrollUntilVisible:
     element: "^Duration$"

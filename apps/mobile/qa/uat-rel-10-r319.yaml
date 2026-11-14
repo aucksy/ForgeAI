@@ -43,7 +43,7 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-see.yaml
     env:
-      FIND: 'Show 12-week total'
+      FIND: 'Show 3-month total'
 - takeScreenshot: rel-71-chart-point-picked
 - runFlow:
     file: sub-see.yaml
@@ -65,13 +65,13 @@ appId: com.mettleup.app
 - takeScreenshot: rel-72-workouts-of-that-week
 - back
 - extendedWaitUntil:
-    visible: "Show 12-week total"
+    visible: "Show 3-month total"
     timeout: 10000
 - runFlow:
     file: sub-see.yaml
     env:
-      FIND: 'Show 12-week total'
-- tapOn: "Show 12-week total"
+      FIND: 'Show 3-month total'
+- tapOn: "Show 3-month total"
 - runFlow:
     file: sub-find.yaml
     env:

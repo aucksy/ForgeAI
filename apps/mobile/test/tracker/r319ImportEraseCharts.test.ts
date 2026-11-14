@@ -16,7 +16,7 @@ const read = (f: string): string => readFileSync(join(__dirname, '..', '..', 'sr
 const BANNED = /\b(volume|PR|session)\b/i;
 
 describe('item 7: a chart point opens the workouts of its week, month or day', () => {
-  it('a week of the 12-week chart becomes its first and last day', () => {
+  it('a week of the 3-month chart becomes its first and last day', () => {
     const bars = chartBars([{ dateISO: '2026-10-14', durationSec: 3600, volumeKg: 5000, reps: 100 }], 'weeks', '2026-11-04');
     const week = bars.find((b) => b.workouts > 0);
     expect(week).toBeDefined();

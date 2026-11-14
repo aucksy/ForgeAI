@@ -3,7 +3,9 @@
  * period, tap a bar / tap again, the axis, and the words. The equality with the app's existing
  * totals is proven on real SQL in test/db/historyChartReal.test.ts.
  */
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+
+import { threeMonthsFrom, todayISO, weekStartISO } from '@/lib/date';
 
 import {
   barValue,
@@ -13,6 +15,7 @@ import {
   chartHintText,
   chartBars,
   chartBuckets,
+  chartCardBody,
   chartMetricLabel,
   chartCaptionText,
   chartPeriodText,
@@ -28,6 +31,7 @@ import {
   tapBar,
   type ChartSession,
 } from '@/tracker/engine/historyChart';
+import { rangeStart } from '@/tracker/services/exerciseChart';
 import { feedCardFacts, feedDate, feedMonthLine, feedRows, recordsPerWorkout } from '@/tracker/services/feedCard';
 import { cleanBio, cleanLink, linkLabel } from '@/tracker/db/profileExtras';
 
@@ -35,11 +39,11 @@ const TODAY = '2026-10-11'; // a Sunday
 const s = (dateISO: string, volumeKg = 1000, durationSec = 3600, reps = 50): ChartSession => ({ dateISO, volumeKg, durationSec, reps });
 
 describe('the bars (Hevy’s rule)', () => {
-  it('Last 12 weeks: 12 Monday weeks, the last one this week', () => {
+  it('Last 3 months (R-500): Monday weeks from the week holding today minus 90 days, the last one this week', () => {
     const b = chartBuckets('weeks', TODAY, '2020-01-01');
-    expect(b).toHaveLength(12);
-    expect(b[11]).toMatchObject({ kind: 'week', start: '2026-10-05', end: '2026-10-11' });
-    expect(b[0].start).toBe('2026-07-20');
+    expect(b).toHaveLength(13); // a Sunday: today minus 90 days is a Monday
+    expect(b[12]).toMatchObject({ kind: 'week', start: '2026-10-05', end: '2026-10-11' });
+    expect(b[0].start).toBe('2026-07-13');
   });
 
   it('Last 12 months: the 12 months ending today, the first bar cut to the span (C2-1, 16 Oct 2026)', () => {
@@ -58,13 +62,13 @@ describe('the bars (Hevy’s rule)', () => {
     expect(b).toHaveLength(54);
     expect(chartBuckets('all', TODAY, null)).toEqual([]);
     expect(chartSpan('all', TODAY, null)).toBeNull();
-    expect(chartSpan('weeks', TODAY, null)).toEqual({ from: '2026-07-20', to: '2026-10-11' });
+    expect(chartSpan('weeks', TODAY, null)).toEqual({ from: '2026-07-13', to: '2026-10-11' });
   });
 
   it('fills each bar with its workouts’ totals; outside the range is left out', () => {
     const bars = chartBars([s('2026-10-05'), s('2026-10-11', 500, 1800, 20), s('2026-09-30'), s('2026-01-01')], 'weeks', TODAY);
-    expect(bars[11]).toMatchObject({ workouts: 2, volumeKg: 1500, durationSec: 5400, reps: 70 });
-    expect(bars[10]).toMatchObject({ workouts: 1, volumeKg: 1000 });
+    expect(bars[12]).toMatchObject({ workouts: 2, volumeKg: 1500, durationSec: 5400, reps: 70 });
+    expect(bars[11]).toMatchObject({ workouts: 1, volumeKg: 1000 });
     expect(bars.reduce((n, b) => n + b.workouts, 0)).toBe(3);
     const months = chartBars([s('2026-10-01'), s('2026-10-31'), s('2026-09-15')], 'year', TODAY);
     expect(barValue(months[12], 'volume')).toBe(2000);
@@ -81,7 +85,7 @@ describe('the bars (Hevy’s rule)', () => {
 describe('the big number, its period, and tapping a bar', () => {
   it('shows the latest bar; a tapped bar; the same bar again → back to the latest', () => {
     const bars = chartBars([], 'weeks', TODAY);
-    expect(shownBar(bars, null)).toBe(11);
+    expect(shownBar(bars, null)).toBe(12);
     const sel = tapBar(null, 3);
     expect(shownBar(bars, sel)).toBe(3);
     expect(tapBar(sel, 3)).toBeNull();
@@ -91,14 +95,14 @@ describe('the big number, its period, and tapping a bar', () => {
 
   it('periods read like the app’s dates: a week with the year when it isn’t this year, a month always with its year', () => {
     const w = chartBuckets('weeks', TODAY, null);
-    expect(chartPeriodText(w[11], TODAY)).toBe('5–11 Oct');
+    expect(chartPeriodText(w[12], TODAY)).toBe('5–11 Oct');
     expect(chartPeriodText({ ...w[0], start: '2026-09-28', end: '2026-10-04' }, TODAY)).toBe('28 Sep–4 Oct');
     const m = chartBuckets('year', TODAY, null);
     expect(chartPeriodText(m[12], TODAY)).toBe('Oct 2026');
     expect(chartPeriodText(m[1], TODAY)).toBe('Nov 2025');
     expect(chartPeriodText(m[0], TODAY)).toBe('12–31 Oct 2025'); // C2-1: the part inside the span
     expect(chartXText(m[1])).toBe("Nov '25");
-    expect(chartXText(w[11])).toBe('5 Oct');
+    expect(chartXText(w[12])).toBe('5 Oct');
   });
 
   it('values: "9,201 kg" / lb, "6h 20m", "1,240 reps"', () => {
@@ -133,9 +137,9 @@ describe('the big number, its period, and tapping a bar', () => {
     expect(chartMetricLabel('volume', 'imperial')).toBe('Lb lifted');
     const bars = chartBars([s('2026-10-06', 9201), s('2026-08-04', 12480)], 'weeks', TODAY);
     expect(chartSummary(bars, 'volume', 'weeks', 'metric', TODAY)).toBe(
-      'Kg lifted, last 12 weeks. Total 21,681 kg. Highest 12,480 kg, 3–9 Aug.',
+      'Kg lifted, last 3 months. Total 21,681 kg. Highest 12,480 kg, 3–9 Aug.',
     );
-    expect(chartSummary(chartBars([], 'weeks', TODAY), 'reps', 'weeks', 'metric', TODAY)).toBe('Reps, last 12 weeks. No workouts yet.');
+    expect(chartSummary(chartBars([], 'weeks', TODAY), 'reps', 'weeks', 'metric', TODAY)).toBe('Reps, last 3 months. No workouts yet.');
   });
 });
 
@@ -217,7 +221,7 @@ describe('chart caption (owner, 12 Oct 2026: "1,67,252 kg Jan 2023" read as a to
   });
 });
 
-describe('the big number is the range’s total (owner, 12 Oct 2026: "All time" showed only Oct; Last 12 weeks read 0 on a Monday)', () => {
+describe('the big number is the range’s total (owner, 12 Oct 2026: "All time" showed only Oct; the weekly range read 0 on a Monday)', () => {
   const MONDAY = '2026-10-12'; // a new week with no workout yet
   it('adds up every bar of the range, not the latest one', () => {
     const bars = chartBars([s('2026-10-06', 9201, 3600, 40), s('2026-08-04', 12480, 1800, 60)], 'weeks', MONDAY);
@@ -225,7 +229,7 @@ describe('the big number is the range’s total (owner, 12 Oct 2026: "All time" 
     const t = rangeTotals(bars);
     // R-132: sets ride along (these sessions were read before sets were counted: 0).
     expect(t).toEqual({ workouts: 2, volumeKg: 21681, durationSec: 5400, reps: 100, sets: 0 });
-    expect(chartTotalCaptionText(bars, 'weeks', 'volume', 'metric')).toBe('Kg lifted in the last 12 weeks · 2 workouts');
+    expect(chartTotalCaptionText(bars, 'weeks', 'volume', 'metric')).toBe('Kg lifted in the last 3 months · 2 workouts');
   });
 
   it('All time counts from the first workout’s month and says so', () => {
@@ -239,10 +243,111 @@ describe('the big number is the range’s total (owner, 12 Oct 2026: "All time" 
 
   it('a tapped bar has a way back that names the range; the range names say their length', () => {
     expect(chartBackText('all')).toBe('Show all-time total');
-    expect(chartBackText('weeks')).toBe('Show 12-week total');
+    expect(chartBackText('weeks')).toBe('Show 3-month total');
     expect(chartBackText('year')).toBe('Show 12-month total');
     expect(chartHintText('weeks')).toBe('Tap a point to see one week');
     expect(chartHintText('all')).toBe('Tap a point to see one month');
-    expect(CHART_RANGES.map((r) => r.label)).toEqual(['Last 12 weeks', 'Last 12 months', 'All time']);
+    expect(CHART_RANGES.map((r) => r.label)).toEqual(['Last 3 months', 'Last 12 months', 'All time']);
   });
 });
+
+describe('R-500 (owner, 14 Nov 2026): "Last 3 months" means the exercise charts’ 3 months', () => {
+  afterEach(() => {
+    vi.useRealTimers();
+    vi.unstubAllEnvs();
+  });
+
+  const weeks = (today: string) => chartBuckets('weeks', today, null);
+  const sameStartAsExerciseCharts = (today: string) => {
+    const b = weeks(today);
+    const from = rangeStart('3m', today)!;
+    expect(from).toBe(threeMonthsFrom(today));
+    expect(b[0].start).toBe(weekStartISO(from)); // the first point is the Monday of that day's week
+    expect(b[0].start <= from && from <= b[0].end).toBe(true);
+    expect(b[b.length - 1].start).toBe(weekStartISO(today)); // the last point is this week
+    b.forEach((w, i) => {
+      expect(w.end).toBe(addDaysIso(w.start, 6));
+      if (i > 0) expect(w.start).toBe(addDaysIso(b[i - 1].start, 7));
+    });
+    return b;
+  };
+
+  it('a mid-week today (Wed 14 Oct): 14 weeks from Mon 13 Jul (today minus 90 days is Thu 16 Jul)', () => {
+    const b = sameStartAsExerciseCharts('2026-10-14');
+    expect(b).toHaveLength(14);
+    expect(b[0]).toMatchObject({ start: '2026-07-13', end: '2026-07-19' });
+    expect(b[13]).toMatchObject({ start: '2026-10-12', end: '2026-10-18' });
+  });
+
+  it('a Monday today (12 Oct): this week is its own point, starting today; 14 weeks', () => {
+    const b = sameStartAsExerciseCharts('2026-10-12');
+    expect(b).toHaveLength(14);
+    expect(b[0].start).toBe('2026-07-13'); // the week holding Tue 14 Jul
+    expect(b[13].start).toBe('2026-10-12');
+    expect(chartPeriodText(b[13], '2026-10-12')).toBe('12–18 Oct');
+  });
+
+  it('a Sunday today: 13 weeks (today minus 90 days is a Monday)', () => {
+    expect(sameStartAsExerciseCharts('2026-10-11')).toHaveLength(13);
+    expect(sameStartAsExerciseCharts('2026-11-01')[0].start).toBe('2026-08-03');
+  });
+
+  it('the 1st of a month (Tue 1 Dec): starts Mon 31 Aug, the week holding Wed 2 Sep', () => {
+    const b = sameStartAsExerciseCharts('2026-12-01');
+    expect(b).toHaveLength(14);
+    expect(b[0]).toMatchObject({ start: '2026-08-31', end: '2026-09-06' });
+    expect(b[13]).toMatchObject({ start: '2026-11-30', end: '2026-12-06' });
+  });
+
+  it('month ends and February: 31 May and 29 May, in a leap year and not, never break', () => {
+    // 90 days before 31 May is 2 Mar (no "31 Feb" to clamp); 29 May 2026 reaches back to 28 Feb.
+    expect(sameStartAsExerciseCharts('2026-05-31')[0].start).toBe('2026-03-02');
+    expect(sameStartAsExerciseCharts('2026-05-29')[0].start).toBe('2026-02-23');
+    expect(sameStartAsExerciseCharts('2028-05-31')[0].start).toBe('2028-02-28');
+    expect(sameStartAsExerciseCharts('2028-05-30')[0].start).toBe('2028-02-28');
+    expect(rangeStart('3m', '2028-05-30')).toBe('2028-03-01');
+    // A year's turn: 90 days before 15 Jan 2027 is 17 Oct 2026, a Saturday.
+    expect(sameStartAsExerciseCharts('2027-01-15')[0].start).toBe('2026-10-12');
+  });
+
+  it('a member with less than 3 months of history: every week is drawn, the early ones on zero', () => {
+    const TODAY_ = '2026-10-14';
+    const bars = chartBars([s('2026-09-21', 4000), s('2026-10-13', 5000)], 'weeks', TODAY_);
+    expect(bars).toHaveLength(14);
+    expect(bars.slice(0, 10).every((b) => b.workouts === 0)).toBe(true);
+    expect(bars[10]).toMatchObject({ start: '2026-09-21', workouts: 1, volumeKg: 4000 });
+    expect(bars[13]).toMatchObject({ workouts: 1, volumeKg: 5000 });
+    expect(chartCardBody(bars, 2)).toBe('bars');
+    expect(chartTotalCaptionText(bars, 'weeks', 'volume', 'metric')).toBe('Kg lifted in the last 3 months · 2 workouts');
+    expect(chartTotalCaptionText(bars, 'weeks', 'duration', 'metric')).toBe('Time trained in the last 3 months · 2 workouts');
+    expect(chartTotalCaptionText(bars, 'weeks', 'reps', 'imperial')).toBe('Reps in the last 3 months · 2 workouts');
+    expect(chartTotalCaptionText(bars, 'weeks', 'volume', 'imperial')).toBe('Lb lifted in the last 3 months · 2 workouts');
+    // A tapped week still reads as its week; the way back names the range.
+    expect(chartCaptionText(bars[10], 'volume', 'metric', TODAY_)).toBe('Kg lifted in 21–27 Sep · 1 workout');
+    expect(chartBackText('weeks')).toBe('Show 3-month total');
+    expect(chartHintText('weeks')).toBe('Tap a point to see one week');
+    // A workout just before the first week is outside the range and its total.
+    expect(rangeTotals(chartBars([s('2026-07-12'), s('2026-07-13')], 'weeks', TODAY_)).workouts).toBe(1);
+  });
+
+  it('India, near midnight: the week turns with the phone’s own day', () => {
+    vi.stubEnv('TZ', 'Asia/Kolkata');
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(Date.UTC(2026, 9, 11, 18, 15))); // 23:45 IST on Sun 11 Oct (still 11 Oct in UTC too)
+    expect(todayISO()).toBe('2026-10-11');
+    let b = weeks(todayISO());
+    expect(b).toHaveLength(13);
+    expect(b[12].start).toBe('2026-10-05');
+    vi.setSystemTime(new Date(Date.UTC(2026, 9, 11, 18, 45))); // 00:15 IST on Mon 12 Oct (11 Oct in UTC)
+    expect(todayISO()).toBe('2026-10-12');
+    b = weeks(todayISO());
+    expect(b).toHaveLength(14);
+    expect(b[0].start).toBe('2026-07-13');
+    expect(b[13].start).toBe('2026-10-12');
+  });
+});
+
+function addDaysIso(iso: string, n: number): string {
+  const d = new Date(Date.UTC(Number(iso.slice(0, 4)), Number(iso.slice(5, 7)) - 1, Number(iso.slice(8, 10)) + n));
+  return d.toISOString().slice(0, 10);
+}

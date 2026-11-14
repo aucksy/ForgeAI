@@ -13,7 +13,7 @@ export function monthsOfRange(range: string): number | null {
     case '30d':
       return 1;
     case '3m':
-    case 'weeks': // the Profile's "Last 12 weeks"
+    case 'weeks': // the Profile's "Last 3 months" (R-500; drawn in weeks, the id kept)
       return 3;
     case '1y':
     case 'year':

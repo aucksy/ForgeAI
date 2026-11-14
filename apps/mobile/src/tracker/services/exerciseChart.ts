@@ -16,7 +16,7 @@
  * page's history arrives with it already applied (`historyWithVolume`), and the best set comes
  * from `bestSetSeriesFor`, the same as before. Easy-week workouts stay out, as on every chart.
  */
-import { addDays, twelveMonthsFrom } from '@/lib/date';
+import { threeMonthsFrom, twelveMonthsFrom } from '@/lib/date';
 import { estimatedOneRepMax } from '@/lib/e1rm';
 import { fmtCompact, fmtInt, kgToDisplay, trimNum, weightUnit } from '@/lib/format';
 import { liftedWords } from '@/lib/units';
@@ -362,7 +362,7 @@ export function workoutForPoint(
 
 /** The first day a range shows (null = all time). PURE. */
 export function rangeStart(range: ChartRange, today: string): string | null {
-  if (range === '3m') return addDays(today, -90);
+  if (range === '3m') return threeMonthsFrom(today); // R-500: the Profile chart's "Last 3 months" starts here too
   if (range === '1y') return twelveMonthsFrom(today); // C2-1/C2-8: the 12 months ending today
   return null;
 }

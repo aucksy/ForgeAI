@@ -157,7 +157,7 @@ const weeksWithNothing = (): ChartBar[] => chartBars([], 'weeks', '2026-10-13', 
 describe('B2: "No workouts yet" only for a member with no workouts at all', () => {
   it('a member with history and an empty range sees the empty bars and the normal caption', () => {
     const bars = weeksWithNothing();
-    expect(bars).toHaveLength(12);
+    expect(bars).toHaveLength(14); // R-500: Last 3 months on a Tuesday
     expect(chartCardBody(bars, 480)).toBe('bars');
     // Header still loading: draw what was read (the bars are true for the range).
     expect(chartCardBody(bars, null)).toBe('bars');

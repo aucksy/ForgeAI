@@ -1,7 +1,7 @@
 # Part W4 — the "real workout" journey, step 4 of 4. The shade is open after the superset's rest
 # ran out. Back into the workout → Finish: a ROUTINE workout asks no name (it takes "Push A") →
 # summary → Keep original → then what the member reads afterwards, each number against its label:
-#   - Profile: the chart's 12-week total (today's workout in it), a tapped bar STAYS shown after the
+#   - Profile: the chart's 3-month total (today's workout in it), a tapped bar STAYS shown after the
 #     finger lifts (and after a wait), the way back to the total;
 #   - the workout's own page: More → Rename workout (only a routine-less finish asks a name);
 #   - the bench's exercise page: one tap on the chart keeps that point (it used to vanish on
@@ -91,7 +91,7 @@ appId: com.mettleup.app
     index: 0
 # The caption sits above the bars: after the chip the page can be scrolled past it.
 - scrollUntilVisible:
-    element: '(Kg|Lb) lifted in the last 12 weeks · .*'
+    element: '(Kg|Lb) lifted in the last 3 months · .*'
     direction: UP
     timeout: 15000
 - takeScreenshot: w-44-chart-after-workout
@@ -100,27 +100,27 @@ appId: com.mettleup.app
     text: '.*: [1-9][\d,]* (kg|lb)'
     index: 0
 - extendedWaitUntil:
-    visible: "Show 12-week total"
+    visible: "Show 3-month total"
     timeout: 5000
 - takeScreenshot: w-45-bar-tapped
 # One tap, it stays (owner, 13 Oct 2026): still shown seconds later, with no finger on it.
 - extendedWaitUntil:
-    notVisible: "Show 12-week total"
+    notVisible: "Show 3-month total"
     timeout: 4000
     optional: true
 - runFlow:
     file: sub-see.yaml
     env:
-      FIND: 'Show 12-week total'
+      FIND: 'Show 3-month total'
 - takeScreenshot: w-46-bar-still-shown
 - runFlow:
     file: sub-see.yaml
     env:
-      FIND: 'Show 12-week total'
-- tapOn: "Show 12-week total"
+      FIND: 'Show 3-month total'
+- tapOn: "Show 3-month total"
 # The caption sits above the bars: after the chip the page can be scrolled past it.
 - scrollUntilVisible:
-    element: '(Kg|Lb) lifted in the last 12 weeks · .*'
+    element: '(Kg|Lb) lifted in the last 3 months · .*'
     direction: UP
     timeout: 15000
 # ---------------------------------------------------------------- the workout's page: Rename

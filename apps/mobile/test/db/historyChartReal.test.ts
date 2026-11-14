@@ -21,11 +21,12 @@ beforeEach(async () => {
 });
 
 describe('the chart is the one volume rule, the same numbers as everywhere else', () => {
-  it('Last 12 weeks: each bar equals the weekly kg lifted', async () => {
+  it('Last 3 months: each weekly bar equals the weekly kg lifted', async () => {
     const { getHistoryChart } = await import('@/tracker/services/profileService');
     const { getWeeklyVolumeKg } = await import('@/tracker/services/volumeService');
     const bars = await getHistoryChart('weeks');
-    const weekly = await getWeeklyVolumeKg(12);
+    expect([13, 14]).toContain(bars.length); // R-500: the weeks of the last 3 months
+    const weekly = await getWeeklyVolumeKg(bars.length);
     expect(bars.map((b) => b.start)).toEqual(weekly.map((w) => w.dateISO));
     bars.forEach((b, i) => expect(b.volumeKg).toBeCloseTo(weekly[i].volumeKg, 6));
     expect(bars.reduce((n, b) => n + b.volumeKg, 0)).toBeGreaterThan(1000);

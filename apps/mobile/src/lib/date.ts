@@ -39,6 +39,15 @@ export function twelveMonthsFrom(today: string): string {
   return addDays(yearAgo, 1);
 }
 
+/**
+ * R-500 (owner, 14 Nov 2026): the first day of "3 months" — `today` minus 90 days, as the exercise
+ * charts have always drawn it (Hevy's 3 months). The Profile chart's "Last 3 months" starts its first
+ * weekly point on the Monday of the week holding this day, so every chart's 3 months is the same.
+ */
+export function threeMonthsFrom(today: string): string {
+  return addDays(today, -90);
+}
+
 /** Monday of the week containing `iso` (weeks start Monday). */
 export function weekStartISO(iso: string): string {
   const d = fromISO(iso);

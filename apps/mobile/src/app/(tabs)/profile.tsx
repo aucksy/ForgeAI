@@ -4,7 +4,7 @@
  *     gear (Settings) top right;
  *  2. photo (or the first letter), full name, and Workouts · Weeks in a row · Records;
  *  3. bio and link, when set;
- *  4. the history chart — the range's total, Last 12 weeks / Last 12 months / All time, tap a point,
+ *  4. the history chart — the range's total, Last 3 months / Last 12 months / All time, tap a point,
  *     then its box opens that week's or month's workouts (one workout: that workout), Duration ·
  *     Kg lifted · Reps (Kg lifted the first time, then the last choice);
  *  5. F199 (owner R-403, 8 Nov 2026: the Progress tab moved in here): under the chart, the Today line

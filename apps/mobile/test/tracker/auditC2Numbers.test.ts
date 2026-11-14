@@ -52,9 +52,9 @@ describe('C2-1: "Last 12 months" is the 12 months ending today, on Profile and S
   });
 });
 
-describe('C2-2 (kept, owner rule): "Last 12 weeks" = 12 full Monday weeks ending this week', () => {
-  it('on Monday 12 Oct it spans 27 Jul to Sun 18 Oct, 84 days', () => {
-    expect(chartSpan('weeks', '2026-10-12', null)).toEqual({ from: '2026-07-27', to: '2026-10-18' });
+describe('C2-2 (kept, owner rule) + R-500: "Last 3 months" = full Monday weeks ending this week', () => {
+  it('on Monday 12 Oct it spans Mon 13 Jul (the week holding 14 Jul, today minus 90 days) to Sun 18 Oct', () => {
+    expect(chartSpan('weeks', '2026-10-12', null)).toEqual({ from: '2026-07-13', to: '2026-10-18' });
   });
 });
 

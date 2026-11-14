@@ -16,6 +16,21 @@
   (member-words): "When you beat your previous workout on an exercise, the green line now says so first:
   \"Previous set volume beaten! +200 kg\", with both totals under it."
 - RELEASE STEP, PUBLIC BETA (owner #96 "A = now", 14 Nov 2026): from the next release every version goes to Play open testing first and to production about 3 days later. At that release: set up the open-testing track in Play Console (countries, feedback email) and make play-upload send the AAB to it; the watch follows the phone tracks.
+- R-500 PROFILE CHART: "LAST 3 MONTHS" INSTEAD OF "LAST 12 WEEKS" (owner, 14 Nov 2026: "I want to change the 12 weeks to 3
+  months. It should be last 3 months or last 12 months or all time."). Shared JS (Android and iPhone), no native part,
+  no PARITY change. The first range of the Profile chart is now "Last 3 months": weekly points (Monday weeks, the last
+  one this week) from the Monday of the week holding today minus 90 days, the exercise charts' own 3-month start (one
+  helper, lib/date threeMonthsFrom, now used by both), so 14 points (13 on a Sunday) instead of 12. Captions "Kg lifted
+  in the last 3 months · N workouts" (Time trained / Reps the same), "Show 3-month total", screen reader "Kg lifted,
+  last 3 months. ...". Tap a point, its box and "See these workouts" unchanged; still the first-time range. The stored
+  id stays 'weeks', so a member's saved choice carries over with no migration; monthsOfRange('weeks') was already 3.
+  Last 12 months and All time unchanged. Tests: historyChart (+7: mid-week, Monday, Sunday, 1st of the month, 31/29 May
+  and February in leap and plain years, less than 3 months of history, Asia/Kolkata either side of midnight),
+  auditC2Numbers, audit13OctV037, r319ImportEraseCharts, historyChartReal (each weekly point = the weekly kg lifted, real
+  SQLite), limits. UAT: flows real-workout-w1, real-workout-w4, redesign-r, uat-rel-10-r319,
+  uat-rel-f199-profile-progress now assert the new words (menu, captions, "Range: Last 3 months. Change", "Show 3-month
+  total"); qa-device round still to run. What's new draft (member-words): "On your Profile, the chart's shortest choice
+  is now \"Last 3 months\" instead of \"Last 12 weeks\", the same 3 months as each exercise's chart."
 - R-492 MUSCLE TIPS: ADD ON THE SWAP TIP, "SMART SUGGESTION" AND AN (i) WHY (owner, 14 Nov 2026: "Some people might
   just want to add one exercise and not swap anything ... a letter I symbol which we can tap and find out why ... the
   word smart suggestion"). Shared JS (Android and iPhone), no native part, no PARITY change. Tip 2 now reads "Your

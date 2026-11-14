@@ -1,8 +1,10 @@
 /**
  * Redesign R2 — the Profile's history chart, as Hevy draws it (PLAN §3 item 4). PURE.
  *
- *  - Range "Last 12 weeks" = 12 full weekly bars (weeks start Monday, the app's week), the last
- *    one this week (owner rule, 16 Oct 2026); "Last 12 months" = the 12 months ending today
+ *  - Range "Last 3 months" (R-500, owner 14 Nov 2026; was "Last 12 weeks") = full weekly points
+ *    (weeks start Monday, the app's week), the last one this week (owner rule, 16 Oct 2026), the
+ *    first one the Monday of the week holding today minus 90 days — the exercise charts' "3 months"
+ *    start (`threeMonthsFrom`), so 13 or 14 weeks; "Last 12 months" = the 12 months ending today
  *    (rolling, as Statistics), in monthly bars, the first one cut to the span; "All time" = one bar per
  *    month from the first workout's month to this month (Hevy's rule).
  *  - Chips: Duration · Kg lifted · Reps. Kg lifted is the ONE volume rule (`engine/volume.ts`,
@@ -15,7 +17,7 @@
  *    or "Show … total", goes back to the total. It used to show the latest bar, so "All time"
  *    read as this month and "Last 12 weeks" read 0 on a Monday (owner, 12 Oct 2026).
  */
-import { addDays, twelveMonthsFrom, weekStartISO } from '@/lib/date';
+import { addDays, threeMonthsFrom, twelveMonthsFrom, weekStartISO } from '@/lib/date';
 import { fmtCompact, fmtInt, fmtTotalTime, trimNum } from '@/lib/format';
 import { fmtVol, kgToShown, weightUnitOf, type UnitSystem } from '@/lib/units';
 
@@ -23,15 +25,19 @@ import { TAP_MAX_MS } from '../lib/chartTime';
 
 /** R-132: 'sets' (working sets) is a Progress tab mode; Profile's chips stay Duration · Kg lifted · Reps. */
 export type ChartMetric = 'duration' | 'volume' | 'reps' | 'sets';
+/**
+ * R-500: the id 'weeks' stays for "Last 3 months" (it is still drawn in weeks), so a member's saved
+ * choice (trackerPrefsStore.chartRange) carries over with no migration.
+ */
 export type ChartRange = 'weeks' | 'year' | 'all';
 
 export const CHART_RANGES: readonly { id: ChartRange; label: string }[] = [
-  { id: 'weeks', label: 'Last 12 weeks' },
+  { id: 'weeks', label: 'Last 3 months' },
   { id: 'year', label: 'Last 12 months' },
   { id: 'all', label: 'All time' },
 ];
 
-/** The first time: Kg lifted over the last 12 weeks (the owner checks it every time). */
+/** The first time: Kg lifted over the last 3 months (the owner checks it every time). */
 export const DEFAULT_METRIC: ChartMetric = 'volume';
 export const DEFAULT_RANGE: ChartRange = 'weeks';
 
@@ -65,8 +71,6 @@ export interface ChartBar {
   sets: number;
 }
 
-const WEEKS = 12;
-
 function monthStart(iso: string): string {
   return `${iso.slice(0, 7)}-01`;
 }
@@ -85,11 +89,12 @@ function monthEnd(ym01: string): string {
 export function chartBuckets(range: ChartRange, today: string, first: string | null): ChartBar[] {
   const bar = (kind: ChartBar['kind'], start: string, end: string): ChartBar => ({ kind, start, end, workouts: 0, durationSec: 0, volumeKg: 0, reps: 0, sets: 0 });
   if (range === 'weeks') {
+    // R-500: "Last 3 months" — whole Monday weeks from the week holding today minus 90 days (the
+    // exercise charts' 3 months) to this week: 14 weeks, or 13 when today is a Sunday.
     const last = weekStartISO(today);
-    return Array.from({ length: WEEKS }, (_, i) => {
-      const start = addDays(last, -7 * (WEEKS - 1 - i));
-      return bar('week', start, addDays(start, 6));
-    });
+    const out: ChartBar[] = [];
+    for (let start = weekStartISO(threeMonthsFrom(today)); start <= last; start = addDays(start, 7)) out.push(bar('week', start, addDays(start, 6)));
+    return out;
   }
   const thisMonth = monthStart(today);
   if (range === 'year') {
@@ -171,7 +176,7 @@ export function tapBar(selected: number | null, tapped: number, heldMs = 0): num
 /**
  * 13 Oct 2026 audit (B2) — what the card draws under its numbers once bars are read: 'none' (the
  * "No workouts yet" line) ONLY for a member with no workouts at all, else 'bars' — a range with no
- * workout in it draws its empty bars with the normal caption ("Kg lifted in the last 12 weeks · 0
+ * workout in it draws its empty bars with the normal caption ("Kg lifted in the last 3 months · 0
  * workouts"), never "No workouts yet" to a member with a long history. `workoutsEver`: the
  * member's workout count (Profile's header), null while it is unknown. PURE.
  */
@@ -296,15 +301,15 @@ const what = (metric: ChartMetric, units: UnitSystem): string =>
   metric === 'volume' ? `${weightUnitOf(units) === 'lb' ? 'Lb' : 'Kg'} lifted` : metric === 'duration' ? 'Time trained' : metric === 'sets' ? 'Sets' : 'Reps';
 const workoutsText = (n: number): string => `${fmtInt(n)} ${n === 1 ? 'workout' : 'workouts'}`;
 
-/** The range in words: "the last 12 weeks", "the last 12 months", "Jan 2023" (All time). PURE. */
+/** The range in words: "the last 3 months", "the last 12 months", "Jan 2023" (All time). PURE. */
 export function chartRangeWords(range: ChartRange, bars: readonly ChartBar[]): string {
-  if (range === 'weeks') return 'the last 12 weeks';
+  if (range === 'weeks') return 'the last 3 months';
   if (range === 'year') return 'the last 12 months';
   return bars.length > 0 ? `${mon(bars[0].start)} ${bars[0].start.slice(0, 4)}` : 'your first workout';
 }
 
 /**
- * The line under the range's total: "Kg lifted in the last 12 weeks · 27 workouts", "Kg lifted
+ * The line under the range's total: "Kg lifted in the last 3 months · 27 workouts", "Kg lifted
  * since Jan 2023 · 509 workouts". PURE.
  */
 export function chartTotalCaptionText(bars: readonly ChartBar[], range: ChartRange, metric: ChartMetric, units: UnitSystem): string {
@@ -312,9 +317,9 @@ export function chartTotalCaptionText(bars: readonly ChartBar[], range: ChartRan
   return `${what(metric, units)} ${when} · ${workoutsText(rangeTotals(bars).workouts)}`;
 }
 
-/** The way back from a tapped bar: "Show all-time total", "Show 12-week total". PURE. */
+/** The way back from a tapped bar: "Show all-time total", "Show 3-month total". PURE. */
 export function chartBackText(range: ChartRange): string {
-  return range === 'weeks' ? 'Show 12-week total' : range === 'year' ? 'Show 12-month total' : 'Show all-time total';
+  return range === 'weeks' ? 'Show 3-month total' : range === 'year' ? 'Show 12-month total' : 'Show all-time total';
 }
 
 /** Before a tap, the same line says what a tap does: "Tap a point to see one week" (R-319: a line now). PURE. */
