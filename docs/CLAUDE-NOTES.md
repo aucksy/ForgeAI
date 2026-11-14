@@ -148,6 +148,9 @@ R-458 card is on the Gym tab). Doing now: hide the R-458 card (StaffDoorCard) be
 designed, waits for his pick of the proof (A WhatsApp message to us, free / B SMS code, paid) and his yes on the LIVE
 server parts (0068 + panel) and privacy words. Staff and owners have mobiles (gym_staff); trainers are staff
 (gym_trainers.staff_id); members have the gym's phone on file.
+DONE 14 Nov (card hidden): commit f5b5a150. STAFF_DOOR_ON = false hides StaffDoorCard on the Gym tab (code kept); part u458
+left the uat chain (it skips itself while the switch is off); sub-gym-none + r482 flow e assert the card is gone. Phone
+run u482: owner 43568717042 PASSED, default 43564292031 PASSED (picture rel-r482-e2-gym-tab-no-staff-card).
 
 ## R-492. Muscle tips: also offer Add on the swap tip; an (i) "why" and the words "Smart suggestion" — 14 Nov 2026
 He said: "are we only giving option to swap or we are also giving option to add. Some people might just want to add one
@@ -155,6 +158,10 @@ exercise and not swap anything ... a letter I symbol which we can tap and find o
 then the word smart suggestion should be mentioned so that they immediately know what they are looking at". (No earlier
 note of the (i) or "Smart suggestion"; built now as asked.) Doing: tip 2 gets Add next to Swap; every muscle tip shows
 "Smart suggestion" on top and an (i) that explains why in plain words. Rides the next release.
+DONE 14 Nov: commits f5b5a150 + 87a480d3 + d614cbef (flows d and g tap Add with the page at its top). CI 43559623641
+green; unit file muscleTipsRoutines 34/34. Phone run u482: owner 43568717042 PASSED, default 43564292031 PASSED;
+pictures read (tip 2 Add+Swap, the why sheet with sets per muscle, Add then Undo). Found: when the page is scrolled
+down and Add/Swap is tapped on large text, the Undo bar can sit above the screen (same as R-482 tip 1).
 
 ## R-491. One look everywhere: list pictures and the demo use the orange-tank pictures — 14 Nov 2026
 He said (14 Nov 2026): "Yes I pick A" (my question: 176 exercises showed the old grey Everkinetic line drawings in
