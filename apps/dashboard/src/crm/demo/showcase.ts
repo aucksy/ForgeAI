@@ -40,11 +40,11 @@ import type {
 
 /** The made-up people who work at the demo gym (Staff & sign-in, trainers, "collected by"). */
 export const DEMO_STAFF = {
-  owner: { staffId: 'demo-owner', name: 'Vikram Rathore', phone: '9000000001', role: 'owner' as const, job: null },
-  desk: { staffId: 'demo-desk', name: 'Sunita Joshi', phone: '9000000002', role: 'staff' as const, job: null },
-  trainerA: { staffId: 'demo-trainer-a', name: 'Arjun Rawat', phone: '9000000003', role: 'staff' as const, job: null },
-  trainerB: { staffId: 'demo-trainer-b', name: 'Kavita Shekhawat', phone: '9000000004', role: 'staff' as const, job: null },
-  manager: { staffId: 'demo-manager', name: 'Manoj Saini', phone: '9000000005', role: 'staff' as const, job: 'Manager' },
+  owner: { staffId: 'demo-owner', name: 'Vikram Rathore', phone: '9829045617', role: 'owner' as const, job: null },
+  desk: { staffId: 'demo-desk', name: 'Sunita Joshi', phone: '9772318840', role: 'staff' as const, job: null },
+  trainerA: { staffId: 'demo-trainer-a', name: 'Arjun Rawat', phone: '9460127735', role: 'staff' as const, job: null },
+  trainerB: { staffId: 'demo-trainer-b', name: 'Kavita Shekhawat', phone: '9887504192', role: 'staff' as const, job: null },
+  manager: { staffId: 'demo-manager', name: 'Manoj Saini', phone: '9314462058', role: 'staff' as const, job: 'Manager' },
 };
 
 export type DemoStaff = (typeof DEMO_STAFF)[keyof typeof DEMO_STAFF];
@@ -111,6 +111,41 @@ export function buildShowcase(today: DateISO): DemoShowcase {
   for (const m of snap.members) {
     views.set(m.id, buildMemberView(m, snap.memberships.filter((x) => x.memberId === m.id), snap.payments.filter((p) => p.memberId === m.id), snap.visits.filter((v) => v.memberId === m.id), today));
   }
+  const viewOf = (m: Member) =>
+    buildMemberView(m, snap.memberships.filter((x) => x.memberId === m.id), snap.payments.filter((p) => p.memberId === m.id), snap.visits.filter((v) => v.memberId === m.id), today);
+
+  // ---------------------------------------------------------------- renewals due this week
+  // The sample gym has almost nobody whose plan ends in the next 7 days, and that is the list a desk works from
+  // ("Ending this week", the renewal reminders). Eight members whose plan ends in 8-30 days are moved earlier, all
+  // their plans and fees by the same number of days (their visits stay), so their plans end today to 7 days out.
+  // Two of them renew early below, which leaves about six on the list.
+  const laterThisMonth = snap.members
+    .filter((m) => !m.archived)
+    .filter((m) => {
+      const d = views.get(m.id)?.daysRemaining;
+      return d !== null && d !== undefined && d >= 8 && d <= 30;
+    })
+    .sort((a, b) => a.id.localeCompare(b.id))
+    .slice(0, 8);
+  for (const [i, m] of laterThisMonth.entries()) {
+    const shift = i - views.get(m.id)!.daysRemaining!; // ends i days from today
+    for (const ms of snap.memberships) {
+      if (ms.memberId !== m.id) continue;
+      ms.startsOn = addDays(ms.startsOn, shift);
+      ms.endsOn = addDays(ms.endsOn, shift);
+    }
+    for (const p of snap.payments) {
+      if (p.memberId !== m.id) continue;
+      p.paidOn = addDays(p.paidOn, shift);
+      p.createdAt += shift * 86_400_000;
+    }
+    m.joinedOn = addDays(m.joinedOn, shift);
+    views.set(m.id, viewOf(m));
+  }
+  // A birthday today (the "Birthdays today" tile and the birthday wish reminder).
+  const birthdayMember = snap.members.find((m) => !m.archived && views.get(m.id)?.state === 'active' && !laterThisMonth.includes(m));
+  if (birthdayMember) birthdayMember.dateOfBirth = `${Number(today.slice(0, 4)) - 28}${today.slice(4)}` as DateISO;
+
   const live = snap.members.filter((m) => !m.archived);
   const covered = live.filter((m) => {
     const v = views.get(m.id);

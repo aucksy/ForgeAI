@@ -16,6 +16,7 @@ import { Routes } from '../CrmApp';
 import { LocalCrmData, memoryStore } from '../data/local';
 import { todayISO } from '../logic/dates';
 import { ShopProvider } from '../shop/ShopProvider';
+import { NeedsYouProvider } from '../ui/NeedsYou';
 import { CrmProvider } from '../store';
 import { useLang } from '../lang/lang';
 import { serveDemo } from '../../lib/demoServerSlot';
@@ -48,7 +49,10 @@ export function DemoApp({ hasOwnGym }: DemoInfo) {
         <BranchProvider>
           <CrmProvider data={data}>
             <ShopProvider>
-              <Routes online={false} />
+              {/* Today's "Plan requests" card and the question and message counts read the pretend server here, as in a real gym. */}
+              <NeedsYouProvider>
+                <Routes online={false} />
+              </NeedsYouProvider>
             </ShopProvider>
           </CrmProvider>
         </BranchProvider>

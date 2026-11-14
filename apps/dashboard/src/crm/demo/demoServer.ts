@@ -173,7 +173,7 @@ export function makeDemoServer(showcase: DemoShowcase, today: DateISO, now: () =
     });
   };
   thread('complaint', app[10], [[false, 'The AC on the cardio side has not been working since Monday evening. It gets very hot after 7 pm.', at(day(0), 8, 40)]]);
-  thread('question', app[12], [[false, 'Will the gym be open on Sunday for Guru Nanak Jayanti?', at(day(1), 20, 5)]]);
+  thread('question', app[12], [[false, 'Is the gym open on Sunday evening? I can only come after 5.', at(day(1), 20, 5)]]);
   thread('feedback', app[14], [[false, 'Kavita ma’am’s ladies batch is very good. Thank you!', at(day(5), 12, 30)], [true, 'Thank you! We will tell her.', at(day(5), 13, 10)]], true);
   thread('feedback', undefined, [[false, 'Please keep the changing room cleaner in the evening.', at(day(3), 21, 15)]], false, true);
   thread('question', app[16], [[false, 'Can I freeze my plan for 10 days? I am going home for a wedding.', at(day(6), 9, 0)], [true, 'Yes. Send it from the app under My plan > Pause, and we will approve it.', at(day(6), 10, 20)]], true);
@@ -186,8 +186,8 @@ export function makeDemoServer(showcase: DemoShowcase, today: DateISO, now: () =
   };
   message('event', 'New Zumba batch from Monday', 'Zumba with Kavita ma’am, Monday, Wednesday and Friday at 7 pm. Free for all members. Book your spot at the desk.', 1, 11, 0.71);
   message('offer', 'Bring a friend, get 7 free days', 'Every friend who joins gives you 7 days free on your plan. Share your invite from the app.', 6, 10, 0.84);
-  message('closed', 'Gym closed on Diwali', 'The gym is closed on Diwali day. Happy Diwali to you and your family!', 18, 9, 0.93);
-  message('timing', 'Sunday timings', 'From this Sunday the gym opens 6 am to 11 am only.', 26, 18, 0.88);
+  message('closed', 'Gym closed this Sunday afternoon', 'The gym is closed this Sunday from 12 noon for a deep clean of the floor and machines. Morning hours are as usual.', 18, 9, 0.93);
+  message('timing', 'Sunday timings', 'From this Sunday the gym opens 6 am to 12 noon only.', 26, 18, 0.88);
   message('announcement', 'New dumbbell rack', 'New dumbbells from 2.5 kg to 30 kg are here. Please put them back after use.', 34, 12, 0.79);
   sent.sort((a, b) => (String(a.createdAt) < String(b.createdAt) ? 1 : -1));
   let reminders: Row = reminderPayload({ ...defaultReminderSettings() });
@@ -197,7 +197,7 @@ export function makeDemoServer(showcase: DemoShowcase, today: DateISO, now: () =
   let remindersAt = ist(at(day(40), 11, 30));
   const offer = {
     id: 'offer-demo-1',
-    title: 'Train 12 days in November, get 3 free days',
+    title: 'Train 12 days in 30 days, get 3 free days',
     workouts: 12,
     windowDays: 30,
     rewardDays: 3,
@@ -391,13 +391,13 @@ export function makeDemoServer(showcase: DemoShowcase, today: DateISO, now: () =
   let timings: Row = {
     hours: {
       week: {
-        mon: { kind: 'hours', ranges: [range('05:00', '11:00'), range('16:00', '22:00')] },
-        tue: { kind: 'hours', ranges: [range('05:00', '11:00'), range('16:00', '22:00')] },
-        wed: { kind: 'hours', ranges: [range('05:00', '11:00'), range('16:00', '22:00')] },
-        thu: { kind: 'hours', ranges: [range('05:00', '11:00'), range('16:00', '22:00')] },
-        fri: { kind: 'hours', ranges: [range('05:00', '11:00'), range('16:00', '22:00')] },
-        sat: { kind: 'hours', ranges: [range('05:00', '11:00'), range('16:00', '22:00')] },
-        sun: { kind: 'hours', ranges: [range('06:00', '11:00')] },
+        mon: { kind: 'hours', ranges: [range('05:30', '22:30')] },
+        tue: { kind: 'hours', ranges: [range('05:30', '22:30')] },
+        wed: { kind: 'hours', ranges: [range('05:30', '22:30')] },
+        thu: { kind: 'hours', ranges: [range('05:30', '22:30')] },
+        fri: { kind: 'hours', ranges: [range('05:30', '22:30')] },
+        sat: { kind: 'hours', ranges: [range('05:30', '22:30')] },
+        sun: { kind: 'hours', ranges: [range('06:00', '12:00')] },
       },
       special: [],
       note: 'Ladies batch 11 am to 12 noon, Monday to Saturday.',

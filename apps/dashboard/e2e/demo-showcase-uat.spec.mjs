@@ -89,8 +89,13 @@ test.describe('the sales demo, as the owner', () => {
     // One member's training: the strongest story's chart and the member's own page (plans, payments, progress).
     await go(page, '/trainer');
     const main = page.getByRole('main');
-    await expect(main.getByText('Getting stronger').first()).toBeVisible({ timeout: 15_000 });
-    await expect(main.getByText('Dropping').first()).toBeVisible();
+    // Each card loads its trend tag only once it comes near the screen, so bring every card into view first.
+    const rows = main.getByTestId('progress-row');
+    await expect(rows.first()).toBeVisible({ timeout: 15_000 });
+    for (let i = 0, n = await rows.count(); i < n; i++) await rows.nth(i).scrollIntoViewIfNeeded();
+    await expect(rows.getByText('Getting stronger', { exact: true }).first()).toBeVisible({ timeout: 15_000 });
+    await expect(rows.getByText('Dropping', { exact: true }).first()).toBeVisible({ timeout: 15_000 });
+    await page.evaluate(() => window.scrollTo(0, 0));
     await main.locator('a[href^="#/trainer/"]').first().click();
     await expect(main.getByRole('heading').first()).toBeVisible();
     await shot(page, 'r540-phone-23-one-members-progress');
