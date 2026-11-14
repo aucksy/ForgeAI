@@ -7,6 +7,12 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-546 (14 Nov 2026) DEPLOYED a website-only hotfix on top of the live version
+- Owner: "Get the app button is still directly downloading the github apk What's crazy is that you're telling me you have changed it and tested it ... the English is also not corrected. I do not think we have pushed the actual changes." He was right: R-545 was on main only; my reply said "now goes to Google Play" before any deploy. Lesson: say "on main, NOT live" in the first line until a deploy is checked live.
+- Fix: worktree at the live commit f9f9aaf6 + the live dist (wt-site, 13 Nov) + only the R-545 changes (worker /app -> Play, /app/apk -> APK; member site, join, check-in words; 9 watch pictures). hosts.test 12/12. Fresh-eyes review: SHIP. Panel Worker version 5eb8b376.
+- Checked live: app.mettleup.fit/app 302 -> play.google.com/store/apps/details?id=com.mettleup.app; mettleup.fit/app 301 -> app.mettleup.fit/app; /app/apk -> GitHub APK; member page has "Gym owners can also use MettleUp", no "Google Play is coming soon"; watch-next-set.webp matches main; clicking "Get the app, free" in a browser opens the Play page.
+- The full panel deploy from main (AI credits B, friend fixes, join-pay held, etc.) is still pending green CI + review.
+
 ## R-545 (14 Nov 2026) Get the app = Google Play; recommend-block wording
 - Owner: "can you change the link for Get the App button? ... the website for the end users of the app ... currently linked with GitHub, but now our app is in production, so we can share the actual link now."
 - Done: app.mettleup.fit/app now 302s to play.google.com/store/apps/details?id=com.mettleup.app (posters, member site, join and check-in pages all use /app). The APK moved to /app/apk. Steps on the three pages now say Google Play, not "open the downloaded file". Goes live with the next panel deploy.
