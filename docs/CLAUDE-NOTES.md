@@ -14,6 +14,10 @@ excess kg ... the higher of the last one. Just build something, a screenshot, an
 Mock sent (scratchpad r516-mock.png): line 1 "Previous 840 kg · Done 720 kg · 120 kg to go" (green "✓ Beaten" once past);
 line 2 "Extra: 0 of 40 kg" + bar, where 40 = Next goal (880, R-515 keeps set 1 at 18) − previous (840). Work sets only.
 "Next set: …" line dropped (the row shows it). NOT built: waiting for his "build it" or changes.
+CORRECTED by him (the first ask was mis-transcribed): line 1 "Previous set volume: 840 kg" (the previous time's total for
+this exercise); line 2 "Target: 720 kg done of 880 kg" (he said "today's target"; "Today" is banned for workouts, so the
+label is "Target:"). "volume" is his own word here (same owner exception as R-498). Single mock sent (r516b-mock.png).
+Still waiting for his "build it".
 
 ## R-510b. Notifications both ways are LIVE on the server — 14 Nov 2026
 0073, 0075, 0076 applied in the SQL Editor (live tests PASS 25 / 28 / 38; 0054 PASS 23 and 0069 PASS 56 re-run).
