@@ -61,6 +61,7 @@ async function recordNotices(page) {
 }
 
 const notes = (page) => page.evaluate(() => window.__notes);
+const pageNow = (page) => page.evaluate(() => Date.now());
 
 test.use({ viewport: { width: 375, height: 812 } });
 
@@ -77,12 +78,14 @@ test('Gym alerts: not ready, the latest on Today, a new one rings once, a tap op
   await expect(main.getByRole('heading', { name: 'Latest from your members' })).toHaveCount(0);
   expect(await notes(page)).toEqual([]);
 
-  // 2. With 0075: what is already there is listed, newest first, and rings for nothing.
+  // 2. With 0075: what is already there is listed, newest first, and rings for nothing. Times are set from the
+  //    page's own clock (it runs on from NOW, and the minute above already passed).
   alerts.on = true;
+  const t1 = await pageNow(page);
   alerts.list.push(
-    { id: 'a1', kind: 'trainer_question', line: 'Asha asked a trainer a question. Open Questions to reply.', route: '/questions', urgent: false, at: T0 - 5 * MIN },
-    { id: 'a2', kind: 'shop_order', line: 'New shop order 12 from Neha. Get it ready on Shop.', route: '/shop', urgent: true, at: T0 - 3 * 60 * MIN },
-    { id: 'a0', kind: 'member_joined', line: 'Vikram joined your gym in the MettleUp app. See them in Members using the app.', route: '/members/app', urgent: false, at: T0 - 30 * 60 * MIN },
+    { id: 'a1', kind: 'trainer_question', line: 'Asha asked a trainer a question. Open Questions to reply.', route: '/questions', urgent: false, at: t1 - 5 * MIN },
+    { id: 'a2', kind: 'shop_order', line: 'New shop order 12 from Neha. Get it ready on Shop.', route: '/shop', urgent: true, at: t1 - 3 * 60 * MIN },
+    { id: 'a0', kind: 'member_joined', line: 'Vikram joined your gym in the MettleUp app. See them in Members using the app.', route: '/members/app', urgent: false, at: t1 - 30 * 60 * MIN },
   );
   await page.reload();
   const card = main.getByTestId('latest-alerts');
@@ -100,8 +103,9 @@ test('Gym alerts: not ready, the latest on Today, a new one rings once, a tap op
   await shot(page, 'phone-alerts-1-latest');
 
   // 3. A complaint comes in: one notice, the server's line, its own tag; the card puts it first.
+  const t2 = await pageNow(page);
   alerts.list.push({
-    id: 'a3', kind: 'member_complaint', line: 'Ravi sent your gym a complaint. Open Member messages to read it.', route: '/member-messages', urgent: true, at: T0 + 30_000,
+    id: 'a3', kind: 'member_complaint', line: 'Ravi sent your gym a complaint. Open Member messages to read it.', route: '/member-messages', urgent: true, at: t2,
   });
   await wait(page, 61_000);
   await expect.poll(() => notes(page)).toEqual([
