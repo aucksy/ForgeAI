@@ -7,6 +7,15 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-541. YES to the Bring a friend database change and to connecting join.mettleup.fit (invite/join links only) — 14 Nov 2026
+He said (14 Nov 2026): "yes" to two things" - answering: (1) a database change so a friend whose number is already known
+still reaches the owner as "Invited again by <member>"; (2) connecting join.mettleup.fit only for invite and join links,
+with no gym page going public.
+Order: the helper builds (R-539 job) -> CI green -> apply the migration live + its live test -> deploy the panel with
+hosts.js serving only /f/ and /j/ on join.mettleup.fit -> add the custom domain in Cloudflare -> set JOIN_HOST and
+redeploy -> check a real invite link opens with no admin splash. Gym page switch stays OFF; its public words still need
+his yes.
+
 ## R-540. Demo gym: enough data to show every feature, and the money/time story, for in-person demos — 14 Nov 2026
 He said (14 Nov 2026): "ensure that the demo gym has enough data so all the functionalities can be shown in all its
 glory. So if I do go to a gym to give them a demo, I can show them how everything works and possibly with the kind of
