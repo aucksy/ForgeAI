@@ -93,13 +93,15 @@ const set = (weightKg: number, reps: number, longRest = false): ProgSet => ({ we
 const range = { targetSets: 3, repRangeMin: 8, repRangeMax: 12 };
 
 describe('the Target never grows from a long-rest set', () => {
-  it('the owner case: 4:30 of rest on a 1:30 plan gave set 2 extra reps; next time aims for the normal-rest number', () => {
+  it('the owner case: 4:30 of rest on a 1:30 plan gave set 2 extra reps; next time set 2 is not raised', () => {
     const before: ProgSession = { dateISO: '2026-10-13', sets: [set(60, 10), set(60, 8), set(60, 7)] };
     const after: ProgSession = { dateISO: '2026-10-20', sets: [set(60, 10), set(60, 10, true), set(60, 8)] };
     const t = computeProgressionTarget({ exercise: bench, target: range, history: [after, before], todayISO: '2026-10-27' });
     expect(t.targetWeightKg).toBe(60);
-    // Set 2 aims for 8 (what it did at the normal rest), not 10 or 11; sets 1 and 3 +1 (R-350).
-    expect(t.setGoals).toEqual([11, 8, 9]);
+    // Set 2 is not raised to 11. R-515 (owner, 14 Nov 2026: never fewer reps than the PREVIOUS column at
+    // the same weight): nor cut back to the 8 it did at a normal rest — it keeps 10. Sets 1 and 3 +1.
+    expect(t.setGoals).toEqual([11, 10, 9]);
+    expect(t.reason).toContain('Add 1 rep to sets 1 and 3: 11, 9. Keep set 2 at 10.');
     expect(t.reason).toContain('Set 2 came after a long rest, so its goal is not raised.');
   });
 

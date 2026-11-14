@@ -134,6 +134,17 @@
   Phone test runner: `only` naming a part of the A..R chain that leans on earlier parts now brings them in (only=r runs
   a ... p9 first). Run 43562670140 (only=r,u199) failed because part R started from the demo with no part L, so no
   "Jaipur (6)" folder; no app change caused it. test_flow_tools checks the runner's lists match flows_to_check.py.
+- R-515: THE TARGET'S WORDS SAY WHAT EACH SET DOES (owner, 14 Nov 2026, Dumbbell Curl 20 kg x 18, 13, 11: the
+  box said "15, 14, 12" and "Add 1 rep to each set under 15" - "suggesting something else"). His phone runs 0.77.0,
+  before R-454's floor; on main set 1 already keeps 18. Now the same-weight line is set by set (engine/progression
+  goalWords): "Same weight, 20 kg. Keep set 1 at 18. Add 1 rep to sets 2 and 3: 14, 12."; every set +1 keeps
+  "Add 1 rep to each set: ..."; R-300 says which sets "fell short in the previous workout, so aim again for ...";
+  a set the previous lacked "Set 4 is new: 8.". A set after a long rest (F73) keeps what it did (it was cut back to
+  its normal-rest reps, under the PREVIOUS column). The live line's total is the sets shown added up (his curl:
+  "Next set: 20 kg × 18 · Done: 0 of 880 kg"); when the plan is under the previous workout's total (R-351, after
+  a weight step) it says "Done: 0 of 1,050 kg, the previous total" (his old 840 was that case). Test r515GoalWords
+  (19: his curl, and a sweep that reads every hint kind's words back into numbers). Updated: r307, r350SimpleRule,
+  r454RepFloor, f73LongRest, r366; UAT uat-rel-r454-b (Lateral Raise "1,420 kg, the previous total").
 - R-512: NO MORE "SET 2 WAS VERY HARD, SO ..." LINES UNDER THE SETS, AND THE LOGIC IS GONE (owner, 14 Nov 2026:
   "remove this functionality completely"). How hard a set felt (RPE) no longer moves the rows after it: the hint for
   the next set follows the normal rules (R-454, never under previous). Removed: tracker/engine/rpeNudge.ts and its test

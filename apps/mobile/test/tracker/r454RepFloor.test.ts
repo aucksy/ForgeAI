@@ -116,7 +116,7 @@ describe('R-454: his Incline Dumbbell Press, 40 kg x 13, 12, 10, 8 in 8-12', () 
     expect(t.setGoals).toEqual([13, 12, 11, 9]);
     expect(t.repGoal).toBe(13);
     expect(targetLine(t)).toBe('40 kg · 13, 12, 11, 9');
-    expect(t.reason).toBe('Add 1 rep to each set under 12: 40 kg × 13, 12, 11, 9.');
+    expect(t.reason).toBe('Same weight, 40 kg. Keep sets 1 and 2 at 13, 12. Add 1 rep to sets 3 and 4: 11, 9.');
     // The range's top stays 12 (the R-143 lift-up and the RPE nudge read the real range).
     expect(t.targetRepsMax).toBe(12);
   });
@@ -427,7 +427,7 @@ describe('R-454: a set done at another weight than planned (his Lateral Raise, 1
     });
     const g = kgProgress(p, rows);
     expect(g.next.map((s) => s.reps)).toEqual([17, 15, 19]);
-    expect(kgLiveLine(p, g, total, weight)).toBe("Next set: 20 kg × 17 · Done: 400 of 1,420 kg");
+    expect(kgLiveLine(p, g, total, weight)).toBe("Next set: 20 kg × 17 · Done: 400 of 1,420 kg, the previous total");
   });
 
   // Owner, 12 Nov 2026 (screenshot): this card read "Today's 1,420 kg reached" with no previous number

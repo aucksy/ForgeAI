@@ -5,7 +5,8 @@
 #     40 kg × 13 · Done: 0 of 1,800 kg", and at the end (R-498, owner 14 Nov 2026) "Previous set volume
 #     beaten! +80 kg" over "Done 1,800 kg · Previous 1,720 kg";
 #   regression: his Lateral Raise: set 1 done at 20 kg x 20 (not the plan's heavier weight) -> sets 2-4 aim
-#     20 kg x 17, 15, 19 (never 13, 12, 15) and the top line says the same number as the row;
+#     20 kg x 17, 15, 19 (never 13, 12, 15) and the top line says the same number as the row; its total is
+#     the previous workout's 1,420 kg (the plan adds up to less), so it says "1,420 kg, the previous total" (R-515);
 #   equal case: 20, 17, 15, 19 = last time's 1,420 kg -> "Previous set volume matched" over
 #     "Done 1,420 kg · Previous 1,420 kg";
 #   edit after the tick: sets 2-4 changed to 19, 16, 16 (still 1,420) -> the same line;
@@ -91,7 +92,7 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: '^Next set: 22[.]5 kg × 15 · Done: 0 of 1,420 kg$'
+      FIND: '^Next set: 22[.]5 kg × 15 · Done: 0 of 1,420 kg, the previous total$'
 - takeScreenshot: rel-r454-f-lateral-before
 - runFlow:
     file: sub-uat-r439-set.yaml
@@ -103,7 +104,7 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: "^Next set: 20 kg × 17 · Done: 400 of 1,420 kg$"
+      FIND: "^Next set: 20 kg × 17 · Done: 400 of 1,420 kg, the previous total$"
 - assertNotVisible: "^Next set: 20 kg × 15 · .*"
 - assertNotVisible: ".* × 13 · Done: 400 of .*"
 - takeScreenshot: rel-r454-g-lateral-after-set-1
@@ -117,7 +118,7 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: "^Next set: 20 kg × 15 · Done: 740 of 1,420 kg$"
+      FIND: "^Next set: 20 kg × 15 · Done: 740 of 1,420 kg, the previous total$"
 - runFlow:
     file: sub-uat-r454-hint.yaml
     env:
@@ -128,7 +129,7 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: "^Next set: 20 kg × 19 · Done: 1,040 of 1,420 kg$"
+      FIND: "^Next set: 20 kg × 19 · Done: 1,040 of 1,420 kg, the previous total$"
 - runFlow:
     file: sub-uat-r454-hint.yaml
     env:

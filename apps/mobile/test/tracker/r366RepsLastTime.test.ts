@@ -90,7 +90,7 @@ describe('R-366: reps to beat never under last time (as R-351 for kg)', () => {
     const eq = kgProgress(p, [done(12), done(11), done(10)]);
     expect(kgBeaten(eq)).toBe(true);
     expect(repLiveLine(p, eq)).toBe('Previous reps matched\nDone 33 reps · Previous 33 reps');
-    expect(repLiveLine(p, kgProgress(p, [done(12), done(10), done(8)]))).toBe('Done: 30 of 33 reps · 3 reps less, fine for this workout');
+    expect(repLiveLine(p, kgProgress(p, [done(12), done(10), done(8)]))).toBe('Done: 30 of 33 reps, the previous total · 3 reps less, fine for this workout');
   });
   it('no last time to compare (first time, or another set count): "First time", or the set count named', () => {
     const p = repPlan(lower, [])!;
@@ -123,6 +123,6 @@ describe('R-366: weighted and assisted bodyweight', () => {
     const t = computeProgressionTarget({ exercise: { ...pullUp, id: 'tbar', equipment: 'machine' }, target: { targetSets: 3, repRangeMin: 6, repRangeMax: 10 }, history: [sess('2026-11-02', [[30, 13], [30, 12], [30, 10]])], todayISO: '2026-11-05' });
     const p = kgPlan(t, [13, 12, 10].map((reps) => ({ weightKg: 30, reps })))!;
     const g = kgProgress(p, [{ weightKg: 30, reps: 13, done: true, isWarmup: false }, { weightKg: 30, reps: 13, done: true, isWarmup: false }, { weightKg: null, reps: null, done: false, isWarmup: false, hintKg: 30, hintReps: 9 }]);
-    expect(kgLiveLine(p, g, (kg) => `${kg.toLocaleString('en-US')} kg`, (kg) => `${kg} kg`)).toBe("Next set: 30 kg × 9 · Done: 780 of 1,050 kg");
+    expect(kgLiveLine(p, g, (kg) => `${kg.toLocaleString('en-US')} kg`, (kg) => `${kg} kg`)).toBe("Next set: 30 kg × 9 · Done: 780 of 1,050 kg, the previous total");
   });
 });

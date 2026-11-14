@@ -42,7 +42,8 @@ describe('R-300: after a short day, the missed goals again (nothing on top)', ()
     expect(run([s('2026-10-13', [10, 10, 10])]).setGoals).toEqual([11, 11, 11]);
     const t = run([s('2026-10-20', [10, 10, 9]), s('2026-10-13', [10, 10, 10])]);
     expect(t.setGoals).toEqual([11, 11, 11]);
-    expect(t.reason).toBe('The previous workout fell a little short, so aim for the same goals again: 60 kg × 11, 11, 11.');
+    // R-515: set by set (sets 1 and 2 get their usual +1; set 3 aims again for the 11 it missed).
+    expect(t.reason).toBe('Same weight, 60 kg. Add 1 rep to sets 1 and 2: 11, 11. Set 3 fell short in the previous workout, so aim again for 11.');
     expect(t.reason).not.toMatch(/last time[^.]*short/i);
   });
 

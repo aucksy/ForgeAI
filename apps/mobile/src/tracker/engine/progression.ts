@@ -567,7 +567,8 @@ function computeAt(input: ProgressionInput, depth: number): ProgressionTarget {
    * Rule 1: each set one rep more than the same set did in S, never past `top` — and R-454 never
    * under what that same set did (13 in 8-12 stays 13). A set planned past S's sets aims for S's
    * last set as it was (capped: no same set to compare); a set after a long rest (F73) gets no
-   * extra rep (its normal-rest reps, never cut to `top`).
+   * extra rep. R-515 (owner, 14 Nov 2026): nor fewer — it keeps what it did (before, it fell back to
+   * its normal-rest reps, under what the PREVIOUS column showed).
    */
   const plusOne = (S: Summary, top: number): number[] => {
     const sets = S.mainSets;
@@ -576,9 +577,9 @@ function computeAt(input: ProgressionInput, depth: number): ProgressionTarget {
       const k = Math.min(i, sets.length - 1);
       const did = sets[k].reps;
       if (rest.held[k]) {
+        if (i < sets.length) return Math.max(1, did);
         const b = rest.base[k];
-        const held = b != null && b > 0 ? Math.min(did, b) : did;
-        return Math.max(1, i < sets.length ? held : Math.min(top, held));
+        return Math.max(1, Math.min(top, b != null && b > 0 ? Math.min(did, b) : did));
       }
       if (i >= sets.length) return Math.max(1, Math.min(top, did));
       return Math.max(1, did, Math.min(top, did + 1));
@@ -603,11 +604,14 @@ function computeAt(input: ProgressionInput, depth: number): ProgressionTarget {
     const again = goals.map((g, i) => (i < did.length && i < prev.setGoals.length && did[i] < prev.setGoals[i] ? Math.max(g, Math.min(top, prev.setGoals[i])) : g));
     return again.some((g, i) => g !== goals[i]) ? again : null;
   };
-  /** "Add 1 rep to each set: 30 kg × 9, 9, 8." (or "... under 10: ..." when a set is held at the top). */
-  const plusOneWords = (S: Summary, goals: readonly number[], top: number, loadText: string | null): string => {
-    const all = goals.every((g, i) => i >= S.mainSets.length || g > S.mainSets[i].reps);
-    const head = all ? 'Add 1 rep to each set' : `Add 1 rep to each set under ${top}`;
-    return `${head}: ${loadText ? `${loadText} × ` : ''}${goals.join(', ')}.`;
+  /**
+   * R-515: the same-weight line, set by set (`goalWords`): "Add 1 rep to each set: 30 kg × 9, 9, 8." when
+   * every set gets one more, else e.g. "Same weight, 20 kg. Keep set 1 at 18. Add 1 rep to sets 2 and 3:
+   * 14, 12." `plain`: the goals before R-300's missed goals (a set that differs aims again).
+   */
+  const plusOneWords = (S: Summary, goals: readonly number[], loadText: string | null, plain?: readonly number[]): string => {
+    const lead = bodyweightOnly ? '' : assisted ? (same < 0 ? `Same help, ${targetKgText(-same)}. ` : '') : `Same weight, ${targetKgText(same)}. `;
+    return goalWords(S.mainSets.map((x) => x.reps), goals, { lead, loadText, plain });
   };
 
   // R1 / R1b — coming back after a break. Review (R-61): from the newest day anywhere, when known.
@@ -689,7 +693,7 @@ function computeAt(input: ProgressionInput, depth: number): ProgressionTarget {
         goals,
       );
     }
-    return out('B1', 0, Math.max(...goals), plusOneWords(L, goals, cap, null) + longRestNote(heldRest(L).held), null, goals);
+    return out('B1', 0, Math.max(...goals), plusOneWords(L, goals, null) + longRestNote(heldRest(L).held), null, goals);
   }
 
   // Rule 2 — every working set reached the top: the next weight (assisted: one step less help).
@@ -777,7 +781,7 @@ function computeAt(input: ProgressionInput, depth: number): ProgressionTarget {
     stalled ? 'R4' : 'R5',
     same,
     Math.max(...goals),
-    (again ? `${SHORT_NOTE} ${loadText} × ${goals.join(', ')}.` : plusOneWords(G, goals, max, loadText)) + longRestNote(heldRest(G).held),
+    plusOneWords(G, goals, loadText, plus) + longRestNote(heldRest(G).held),
     null,
     goals,
     // R-454: a goal above the top (the floor) never moves the range's top.
@@ -785,8 +789,62 @@ function computeAt(input: ProgressionInput, depth: number): ProgressionTarget {
   );
 }
 
-/** R-300 (owner, 3 Nov 2026): the one line after a short day. Member words: never "last time" in new words. */
-const SHORT_NOTE = 'The previous workout fell a little short, so aim for the same goals again:';
+/** "set 2", "sets 2 and 3", "sets 1, 2 and 4". */
+function setsText(n: readonly number[]): string {
+  if (n.length === 1) return `set ${n[0]}`;
+  return `sets ${n.slice(0, -1).join(', ')} and ${n[n.length - 1]}`;
+}
+const capital = (x: string): string => x.charAt(0).toUpperCase() + x.slice(1);
+
+/**
+ * R-515 (owner, 14 Nov 2026, Dumbbell Curl 20 kg x 18, 13, 11: the line said "Add 1 rep to each set under
+ * 15: 20 kg × 15, 14, 12" — "is suggesting in plain English that add one more rep to each set, but
+ * suggesting something else"): the same-weight line names exactly what each set aims for against the same
+ * set of the previous workout (`did`), in set order:
+ *   every set one more           "Add 1 rep to each set: 20 kg × 19, 14, 12."  (the short line)
+ *   otherwise, grouped           "Same weight, 20 kg. Keep set 1 at 18. Add 1 rep to sets 2 and 3: 14, 12."
+ *   R-300, a missed goal again   "Sets 2 and 3 fell short in the previous workout, so aim again for 10, 9."
+ *   a set the previous lacked    "Set 4 is new: 8."
+ * `plain`: the goals before R-300 (a set whose goal differs aims again). Every number in the words is a
+ * goal of that set, and "Add" / "Keep" are true of it (test r515GoalWords). PURE.
+ */
+export function goalWords(
+  did: readonly number[],
+  goals: readonly number[],
+  o: { lead?: string; loadText?: string | null; plain?: readonly number[] } = {},
+): string {
+  type Kind = 'keep' | 'again' | 'new' | 'lower' | `add${number}`;
+  const kindOf = (g: number, i: number): Kind => {
+    if (i >= did.length) return 'new';
+    if (o.plain && o.plain[i] != null && o.plain[i] !== g && g > did[i]) return 'again';
+    if (g === did[i]) return 'keep';
+    if (g < did[i]) return 'lower';
+    return `add${g - did[i]}`;
+  };
+  const kinds = goals.map(kindOf);
+  if (goals.length > 0 && kinds.every((k) => k === 'add1')) {
+    return `Add 1 rep to each set: ${o.loadText ? `${o.loadText} × ` : ''}${goals.join(', ')}.`;
+  }
+  const groups: { kind: Kind; sets: number[]; goals: number[] }[] = [];
+  kinds.forEach((k, i) => {
+    const g = groups.find((x) => x.kind === k);
+    if (g) {
+      g.sets.push(i + 1);
+      g.goals.push(goals[i]);
+    } else groups.push({ kind: k, sets: [i + 1], goals: [goals[i]] });
+  });
+  const sentences = groups.map(({ kind, sets, goals: v }) => {
+    const which = setsText(sets);
+    const vals = v.join(', ');
+    if (kind === 'keep') return `Keep ${which} at ${vals}.`;
+    if (kind === 'again') return `${capital(which)} fell short in the previous workout, so aim again for ${vals}.`;
+    if (kind === 'new') return `${capital(which)} ${sets.length === 1 ? 'is' : 'are'} new: ${vals}.`;
+    if (kind === 'lower') return `${capital(which)}: ${vals}.`;
+    const n = Number(kind.slice(3));
+    return `Add ${n} ${n === 1 ? 'rep' : 'reps'} to ${which}: ${vals}.`;
+  });
+  return `${o.lead ?? ''}${sentences.join(' ')}`;
+}
 
 /** F73: main set `i` was done after a long rest (never the first main set: fresh anyway). PURE. */
 export function heldAt(sets: readonly ProgSet[], i: number): boolean {

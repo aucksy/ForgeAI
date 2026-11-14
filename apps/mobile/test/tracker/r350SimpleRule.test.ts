@@ -70,7 +70,8 @@ describe('R-350: the owner T-Bar Row', () => {
     expect(kgToBeatLine(p, total)).toBe('1,050 kg to beat · your previous total');
     // Before a set: the next set asks what the row shows (10), never extra reps past the top.
     const g0 = kgProgress(p, [open(32.5, 10), open(32.5, 10), open(32.5, 9)]);
-    expect(kgLiveLine(p, g0, total, weight)).toBe("Next set: 32.5 kg × 10 · Done: 0 of 1,050 kg");
+    // R-515: 1,050 is not the sets shown added up (942.5), so the line says what it is.
+    expect(kgLiveLine(p, g0, total, weight)).toBe("Next set: 32.5 kg × 10 · Done: 0 of 1,050 kg, the previous total");
   });
 
   it('R-351: his screen, 30 x 13 twice done and one set left, is not "beaten"', () => {
@@ -110,7 +111,8 @@ describe('R-350: under the top -> same weight, +1 rep on each set', () => {
   it('a set already at the top stays there; the rest +1', () => {
     const t = run(ex(), range(6, 10), [sess('2026-11-02', [[30, 10], [30, 9], [30, 8]])]);
     expect(t.setGoals).toEqual([10, 10, 9]);
-    expect(t.reason).toBe('Add 1 rep to each set under 10: 30 kg × 10, 10, 9.');
+    // R-515: the words say which set keeps its reps and which get one more.
+    expect(t.reason).toBe('Same weight, 30 kg. Keep set 1 at 10. Add 1 rep to sets 2 and 3: 10, 9.');
   });
 
   it('four flat workouts keep the weight and +1 (no stall rule, no step-back offer)', () => {
@@ -144,7 +146,8 @@ describe('R-300 kept: after a short day the missed goal again', () => {
     const t = run(ex(), range(8, 12), h);
     expect(t.rule).toBe('R5');
     expect(t.setGoals).toEqual([11, 10, 9]);
-    expect(t.reason).toBe('The previous workout fell a little short, so aim for the same goals again: 50 kg × 11, 10, 9.');
+    // R-515: set 1 got its usual +1 (11, not the same goal again), so the words say each set apart.
+    expect(t.reason).toBe('Same weight, 50 kg. Add 1 rep to set 1: 11. Sets 2 and 3 fell short in the previous workout, so aim again for 10, 9.');
   });
 
   it('a missed goal after a weight step is asked again at that weight', () => {
