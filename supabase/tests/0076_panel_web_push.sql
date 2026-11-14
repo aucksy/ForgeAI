@@ -124,8 +124,10 @@ begin
   -- 8. 'instant' gym: everything at once (the feedback, and the joined member who waited).
   update public.gym_alert_settings set mode = 'instant' where gym_id = gid;
   perform public._alert(gid, 'member_feedback', 'fb0', 't76:fb0', 'all', false, 'Bina sent your gym feedback. Open Member messages to read it.', '/member-messages');
-  checks := checks + 1; fails := fails || pg_temp.t76_is('8instant', jsonb_array_length(public.hq_panel_push_instant(40)->'sends')::text || ' '
-    || (select sent_how from public.gym_alerts where tag = 't76:j1'), '6 instant');
+  -- (Its own statement first: a select in the same statement as the call still sees the rows from before it.)
+  r := public.hq_panel_push_instant(40);
+  checks := checks + 1; fails := fails || pg_temp.t76_is('8instant', jsonb_array_length(r->'sends')::text || ' '
+    || coalesce((select sent_how from public.gym_alerts where tag = 't76:j1'), 'waiting'), '6 instant');
   -- ...and no summary for it.
   checks := checks + 1; fails := fails || pg_temp.t76_is('8nogyms', (select count(*) from jsonb_array_elements(public.hq_panel_digest_gyms()->'gyms') g where g->>'gymId' = gid::text)::text, '0');
   checks := checks + 1; fails := fails || pg_temp.t76_is('8noclaim', public.hq_panel_digest_claim(gid, (extract(epoch from now()) * 1000)::bigint - 60000)->>'claimed', 'false');
