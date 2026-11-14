@@ -261,7 +261,8 @@ export async function readAskQuestions(link: GymLink): Promise<AskQuestion[] | n
   }
 }
 
-export type AskSend = { ok: true; question: AskQuestion } | { ok: false; words: string };
+/** `code` 'NO_PLAN' (R-505): the gym has no running plan for this member, so the page locks. */
+export type AskSend = { ok: true; question: AskQuestion } | { ok: false; words: string; code?: 'NO_PLAN' };
 
 /** Send one question. `staffId` null = any trainer. Never throws. */
 export async function sendAskQuestion(link: GymLink, staffId: string | null, text: string): Promise<AskSend> {
@@ -269,6 +270,12 @@ export async function sendAskQuestion(link: GymLink, staffId: string | null, tex
     const r = await apiAskTrainer(link.memberKey, staffId, text);
     if (r.ok) return { ok: true, question: r.data };
     if ('missing' in r) return { ok: false, words: askErrorWords(undefined) };
+    // R-505 (0074): no running paid plan at the gym (a pass member, no plan, or a plan that ended). Logged on its own
+    // line, so a member who says "it would not send" can be told why from the log.
+    if (r.message === 'NO_PLAN') {
+      console.warn('[ask] refused NO_PLAN: the gym has no running plan for this member (R-505)', r.error.kind);
+      return { ok: false, words: askErrorWords(r.message), code: 'NO_PLAN' };
+    }
     if (r.error.kind !== 'offline' && r.error.kind !== 'timeout') console.warn('[ask] the question was not accepted', r.error.kind, r.message ?? '');
     return { ok: false, words: askErrorWords(r.message) };
   } catch (e) {

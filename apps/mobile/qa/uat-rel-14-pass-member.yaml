@@ -65,3 +65,20 @@ appId: com.mettleup.app
 - takeScreenshot: rel-142-pass-gym-tab-below
 # 5 Nov 2026: a pass member has no plan, so the card never offers "free days to your plan".
 - assertNotVisible: '.*free days? to your plan.*'
+# R-505 (owner, 14 Nov 2026): "Ask a trainer" is only for members on a running paid gym plan, so a pass member
+# (FITPASS) sees NO "Ask a trainer" row. NEGATIVE: from the "Check in" row (the Ask row sits right under it for a
+# paying member, uat-rel-12) scroll the whole tab down; the row must never come on screen.
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Check in$"
+- scrollUntilVisible:
+    element:
+      text: "^Ask a trainer$"
+    direction: DOWN
+    timeout: 15000
+    optional: true
+- assertNotVisible: "^Ask a trainer$"
+- assertNotVisible: ".*Send a question to a trainer.*"
+- assertNotVisible: ".*Ask a trainer is for members with a running plan.*"
+- takeScreenshot: rel-143-pass-no-ask-trainer

@@ -69,15 +69,18 @@ export default function GymSeesPage() {
   // R-319 (0053): with "Ask a trainer" and recent workouts live, the caption says what trainers now see, and
   // the help button opens "Ask a trainer" instead of the old one-tap request.
   const [askLive, setAskLive] = useState(false);
+  // R-505: "Ask a trainer" only for a member on a running paid plan (or one whose plan ended: old replies).
+  const [askShown, setAskShown] = useState(false);
   useEffect(() => {
     let alive = true;
     if (link)
-      void import('@/shop/trainerSync')
-        .then(async (m) => {
-          const [s, choices] = await Promise.all([m.readTrainerStatus(link), m.readAskChoices(link)]);
+      void Promise.all([import('@/shop/trainerSync'), import('@/shop/askAccessRead')])
+        .then(async ([m, a]) => {
+          const [s, choices, access] = await Promise.all([m.readTrainerStatus(link), m.readAskChoices(link), a.readAskAccess(link)]);
           if (!alive) return;
           setTrainer(s);
           setAskLive(choices !== null);
+          setAskShown(access != null && access.kind !== 'hidden');
         })
         .catch((e: unknown) => console.warn('[trainer] could not read the status', e));
     return () => {
@@ -172,7 +175,7 @@ export default function GymSeesPage() {
           </GlassCard>
           {trainersShared && trainer.trainer ? <Text style={body}>{TRAINER_WORDS.yourTrainer(trainer.trainer)}</Text> : null}
           {askLive ? (
-            <GhostButton label={ASK_WORDS.rowTitle} icon="chat" onPress={() => router.push('/shop/ask')} />
+            askShown ? <GhostButton label={ASK_WORDS.rowTitle} icon="chat" onPress={() => router.push('/shop/ask')} /> : null
           ) : trainersShared ? (
             <GhostButton label={TRAINER_WORDS.helpButton} icon="chat" onPress={askHelp} />
           ) : null}

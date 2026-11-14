@@ -7,7 +7,10 @@
  * Not a live chat: one question at a time, one reply, kept as a short history. The reply pops up on the phone
  * through the gym's push pipeline (deploy/hq/push.js, kind 'trainer_reply') when "Messages from my gym" is on.
  * trainerSync.ts talks to the server.
+ * R-505 (owner, 14 Nov 2026): only for members on a running paid gym plan (askAccess below; the server refuses the
+ * others with NO_PLAN, supabase/migrations/0074_ask_trainer_paid_plan.sql).
  */
+import type { MembershipAnswer } from './membership';
 
 /** Longest question (the server's limit). */
 export const ASK_MAX = 500;
@@ -77,6 +80,10 @@ export const ASK_WORDS = {
   errTooMany: 'You have asked 3 questions today. Please ask again tomorrow.',
   errTrainer: 'That trainer is not at your gym any more. Please pick another one.',
   errEmpty: 'Please type your question first.',
+  // R-505: a pass member, a member with no plan, or a plan that ended.
+  locked: 'Ask a trainer is for members with a running plan.',
+  renew: 'Renew my plan',
+  errNoPlan: 'Ask a trainer is for members with a running plan. Your question was not sent.',
 } as const;
 
 const isObj = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null && !Array.isArray(v);
@@ -149,7 +156,31 @@ export function askErrorWords(message: string | undefined): string {
   if (m === 'TOO_MANY') return ASK_WORDS.errTooMany;
   if (m === 'NOT_TRAINER') return ASK_WORDS.errTrainer;
   if (m === 'INVALID') return ASK_WORDS.errEmpty;
+  if (m === 'NO_PLAN') return ASK_WORDS.errNoPlan;
   return ASK_WORDS.failedOffline;
+}
+
+/**
+ * R-505: who may ask a trainer, from the gym's own list ("My membership", member_membership: the same answer the
+ * server checks before it takes a question).
+ *  - open: a plan that covers today (the gym's today, India; a plan ending today still counts);
+ *  - locked: the plan ended; the Gym tab row stays, locked, so old questions and replies stay readable.
+ *    `renew`: offer "Renew my plan" (not when a renewal is already on record and only starts later);
+ *  - hidden: a pass member (FITPASS, cultpass...: they pay the pass company, not the gym), a member with no plan
+ *    on the gym's list, or a number the gym's list cannot match: no row at all.
+ * `today` (YYYY-MM-DD, India) defaults to the server's own day in the answer. PURE.
+ */
+export type AskAccess = { kind: 'open' } | { kind: 'locked'; renew: boolean } | { kind: 'hidden' };
+
+export function askAccess(a: MembershipAnswer | null | undefined, today?: string): AskAccess {
+  if (!a || !a.ok || a.pass) return { kind: 'hidden' };
+  const day = today ?? a.day;
+  const cur = a.current;
+  if (cur && cur.startsOn <= day && cur.endsOn >= day) return { kind: 'open' };
+  // A kept answer read on a later day: its "current" plan may have ended since.
+  const endedOn = cur && cur.endsOn < day ? cur.endsOn : a.lastEndedOn;
+  if (endedOn) return { kind: 'locked', renew: !a.next };
+  return { kind: 'hidden' };
 }
 
 /** The open question, if any (newest first list). PURE. */

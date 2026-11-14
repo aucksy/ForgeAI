@@ -38,6 +38,7 @@ import { useGymShop } from './gymStore';
 import { dietRowWords, type GymDietPlan } from './gymBody';
 import { readGymDiets, syncGymDiets, syncGymMeasures } from '@/tracker/services/gymBodySync';
 import { useGymSectionRequest } from './gymSectionRequest';
+import { useRenewRequest } from './renewRequest';
 import { GYM_SECTION_LABELS, gymSectionShown, gymSections, gymShopOn, type GymSection } from './gymTab';
 import { GymHoursRow } from './GymHoursRow';
 import { GymBusyCard } from './GymBusyCard';
@@ -174,6 +175,12 @@ function GymShop({ link }: { link: GymLink }) {
     const want = useGymSectionRequest.getState().want;
     if (want) setPicked(want);
   }, [asked]);
+  // R-505: "Renew my plan" under a locked "Ask a trainer": back to the top, where "My membership" is.
+  const scrollRef = useRef<ScrollView>(null);
+  const renewAsked = useRenewRequest((s) => s.at);
+  useEffect(() => {
+    if (renewAsked != null) scrollRef.current?.scrollTo({ y: 0, animated: true });
+  }, [renewAsked]);
   const [loading, setLoading] = useState(false);
   const [pulling, setPulling] = useState(false);
   // R-163: each pull to refresh asks the busy card again at once.
@@ -265,6 +272,7 @@ function GymShop({ link }: { link: GymLink }) {
       }
     >
       <ScrollView
+        ref={scrollRef}
         style={{ flex: 1 }}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingHorizontal: space.screenX, paddingBottom: space.xxl }}

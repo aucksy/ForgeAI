@@ -16,6 +16,29 @@
   (6). LIVE (owner): SQL Editor 0073; deploy the HQ Worker (deploy/hq: npx wrangler deploy).
   What's new draft (member-words): "When your gym sends you a new workout plan, a diet plan, your body measurements,
   a new challenge or a fee to pay, your phone now shows a notification. Tap it to open the right screen."
+- R-505 "ASK A TRAINER" ONLY ON A RUNNING PAID GYM PLAN (owner, 14 Nov 2026: "Unless someone is on a paid plan with the
+  gym, they shouldn't be able to send questions to a trainer."). Who may ask = the gym's own "My membership" answer
+  (member_membership), the same one the server checks: shop/askTrainer.ts askAccess (PURE) read by shop/askAccessRead.ts.
+  A plan covering the gym's today (India; ending today still counts) = open, as before. A pass member (FITPASS,
+  cultpass..., even with an old plan still running), no plan on the list, a plan that only starts later, or a number
+  the list cannot match = NO row on the Gym tab and no "Ask a trainer" button in Settings -> What my gym can see. A plan
+  that ENDED = the row stays, locked: "Ask a trainer is for members with a running plan." with "Renew my plan" under it
+  (not when a renewal is already on record); the row still opens the page, which shows that line instead of the
+  question box and keeps every old question and reply readable (an open one can still be taken back). "Renew my plan"
+  goes where renewing already goes: Gym tab -> My gym, scrolled to the top, and the "My membership" card's own "Renew
+  my plan" plan list opens (shop/renewRequest.ts -> ShopScreen scroll + PlanRequestPanel, once, dropped after 15 s);
+  when the gym offers no plan in the app the card's "Renew at the desk to keep training." is what shows. Server: NEW
+  supabase/migrations/0074_ask_trainer_paid_plan.sql (member_ask_trainer refuses NO_PLAN first, via _tq_plan_ok =
+  member_membership ok + a current plan + no pass; functions only, no data change, re-runnable). NOT APPLIED LIVE:
+  owner said yes (R-511); the coordinator applies it. An old app shows its "Could not send" line; this app shows
+  "Ask a trainer is for members with a running plan. Your question was not sent.", locks the page and logs "[ask]
+  refused NO_PLAN". Admin panel unchanged. Tests: r505AskPlan (new, 11), askTrainer (unchanged, green), SQL
+  supabase/tests/0074 (new) + 0053 test (Asha and Bilal now have running plans). UAT: qa-device part ugym (only=ugym):
+  uat-rel-12 = happy path (Uma on a running plan, row open, never locked), uat-rel-14 = negative (Uma as a FITPASS pass
+  member: no "Ask a trainer" row anywhere on the Gym tab, picture rel-143). NOT covered on a phone: the locked
+  ended-plan row and its Renew (unit-tested only). What's new draft (member-words): "\"Ask a trainer\" on the Gym tab is
+  now for members with a running plan at the gym. If your plan has ended, you can still read your old questions and
+  replies, and \"Renew my plan\" takes you to renewing."
 - R-501 GYM MESSAGE POP-UP DURING A WORKOUT (owner, 14 Nov 2026: his gym's Chhath Puja message reached the
   notification list but did not pop up). Found: with the app open during a workout the handler answered "banner, no
   sound"; expo-notifications 56 then posts it with setSilent(true) (androidx "silent" group, GROUP_ALERT_SUMMARY) and

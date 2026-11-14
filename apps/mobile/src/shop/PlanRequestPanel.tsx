@@ -5,7 +5,7 @@
  * when the member's identity has a problem (the card already explains that). Words: planRequest.ts.
  */
 import { useFocusEffect } from 'expo-router';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 
 import { GhostButton, Icon, PrimaryButton, Sheet, SheetRow } from '@/components/ui';
@@ -27,6 +27,7 @@ import {
   tapPauseDay,
   type PlanRequestsAnswer,
 } from './planRequest';
+import { takeRenewRequest, useRenewRequest } from './renewRequest';
 import type { GymLink } from './types';
 
 const WEEKDAYS = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
@@ -63,6 +64,17 @@ export function PlanRequestPanel({ link, hasCurrentPlan }: { link: GymLink; hasC
       };
     }, [load]),
   );
+
+  // R-505: "Renew my plan" under a locked "Ask a trainer" opens this card's own plan list (once, when it can).
+  const renewAsked = useRenewRequest((s) => s.at);
+  useEffect(() => {
+    if (renewAsked == null || !answer || !answer.ok) return;
+    if (takeRenewRequest() && planRequestButtons(answer, hasCurrentPlan).renew) {
+      setPlanId(null);
+      setProblem(null);
+      setOpen('renew');
+    }
+  }, [renewAsked, answer, hasCurrentPlan]);
 
   if (!answer || !answer.ok) return null;
   const today = answer.day;

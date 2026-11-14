@@ -6,6 +6,10 @@
  * up on the phone when "Messages from my gym" is on (deploy/hq/push.js, kind 'trainer_reply'; a tap opens this
  * page). Server: supabase/migrations/0053_ask_trainer_and_progress.sql; without it the page says it is not
  * ready and the Gym tab hides the row. Words: askTrainer.ts ASK_WORDS.
+ * R-505 (owner, 14 Nov 2026): asking is only for members on a running paid gym plan (askTrainer.ts askAccess).
+ * Anyone else who reaches this page (a plan that ended, a pass member, a reply's pop-up) reads their old
+ * questions and replies, and in place of the question box: "Ask a trainer is for members with a running plan."
+ * (with "Renew my plan" when their plan ended). A NO_PLAN from the server (0074) locks the page the same way.
  */
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Redirect, useFocusEffect, useRouter } from 'expo-router';
@@ -16,8 +20,10 @@ import { Card, Chip, GhostButton, PrimaryButton, Screen } from '@/components/ui'
 import { color, radius, space, type } from '@/theme/tokens';
 import { usePhonePrefs } from '@/tracker/phone/phonePrefs';
 
-import { ASK_MAX, ASK_WORDS, askWhen, closedLine, defaultPick, openQuestion, type AskChoices, type AskQuestion } from './askTrainer';
+import { ASK_MAX, ASK_WORDS, askWhen, closedLine, defaultPick, openQuestion, type AskAccess, type AskChoices, type AskQuestion } from './askTrainer';
+import { readAskAccess } from './askAccessRead';
 import { useGymShop } from './gymStore';
+import { requestRenew } from './renewRequest';
 import { useGymHydrated } from './shopSource';
 import { askServerKnownMissing, readAskChoices, readAskQuestions, sendAskQuestion, withdrawAskQuestion } from './trainerSync';
 import type { GymLink } from './types';
@@ -61,12 +67,17 @@ function AskTrainer({ link }: { link: GymLink }) {
   const [note, setNote] = useState<{ ok: boolean; words: string } | null>(null);
   const [sending, setSending] = useState(false);
   const busy = useRef(false);
+  // R-505: null = not known (the server still checks every question).
+  const [access, setAccess] = useState<AskAccess | null>(null);
+  // The server said NO_PLAN on this visit: stays locked until the page is opened again.
+  const [refused, setRefused] = useState(false);
 
   const fetchAll = useCallback(
     async (byPull: boolean) => {
       if (byPull) setPulling(true);
-      const [choices, list] = await Promise.all([readAskChoices(link), readAskQuestions(link)]);
+      const [choices, list, a] = await Promise.all([readAskChoices(link), readAskQuestions(link), readAskAccess(link)]);
       setPulling(false);
+      if (a) setAccess(a);
       if (!choices || !list) {
         setLoad((old) => (askServerKnownMissing() ? { state: 'missing' } : old.state === 'ready' ? old : { state: 'failed' }));
         if (!askServerKnownMissing() && byPull) setNote({ ok: false, words: ASK_WORDS.failedRead });
@@ -106,6 +117,11 @@ function AskTrainer({ link }: { link: GymLink }) {
       setNote({ ok: true, words: ASK_WORDS.sent });
       setLoad({ ...load, list: [r.question, ...load.list.filter((q) => q.id !== r.question.id)] });
     } else {
+      // R-505: NO_PLAN (logged by sendAskQuestion): the box goes, the typed words with it.
+      if (r.code === 'NO_PLAN') {
+        setRefused(true);
+        setText('');
+      }
       setNote({ ok: false, words: r.words });
     }
     void fetchAll(false);
@@ -145,10 +161,21 @@ function AskTrainer({ link }: { link: GymLink }) {
     const { choices, list } = load;
     const open = openQuestion(list);
     const noTrainers = !choices.trainers.some((t) => !t.owner);
+    // R-505: may this member ask now? Not known: the box shows (the server still checks).
+    const locked = refused || (access != null && access.kind !== 'open');
+    const offerRenew = access?.kind === 'locked' && access.renew;
+    const renew = (): void => {
+      requestRenew();
+      if (router.canGoBack()) router.back();
+      else router.replace('/shop');
+    };
     body = (
       <View style={{ gap: space.md }}>
-        <Text style={small}>{ASK_WORDS.intro}</Text>
-        {open ? (
+        {/* After a NO_PLAN the note below says it, with "Your question was not sent." */}
+        {refused ? null : <Text style={small}>{locked ? ASK_WORDS.locked : ASK_WORDS.intro}</Text>}
+        {locked && !open ? (
+          offerRenew ? <GhostButton label={ASK_WORDS.renew} onPress={renew} /> : null
+        ) : open ? (
           <Card style={{ gap: space.sm }}>
             <Text style={{ ...small, color: color.inkMuted }}>{`${ASK_WORDS.askedTo(open.trainer)} · ${askWhen(open.askedAt, now)}`}</Text>
             <Text style={{ fontFamily: type.body, fontSize: type.size.body, lineHeight: 22, color: color.ink }}>{open.question}</Text>
@@ -206,7 +233,7 @@ function AskTrainer({ link }: { link: GymLink }) {
             {note.words}
           </Text>
         ) : null}
-        {!pushOn ? <Text style={{ ...small, color: color.inkMuted }}>{ASK_WORDS.pushNote}</Text> : null}
+        {!pushOn && (!locked || open) ? <Text style={{ ...small, color: color.inkMuted }}>{ASK_WORDS.pushNote}</Text> : null}
         <Text accessibilityRole="header" style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink, marginTop: space.md }}>
           {ASK_WORDS.history}
         </Text>

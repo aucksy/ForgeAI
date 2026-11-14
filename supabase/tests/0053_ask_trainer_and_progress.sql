@@ -60,7 +60,12 @@ begin
   insert into public.gym_owner_keys(gym_id, key_hash) values (ga, public._hash_key(kok));
   insert into public.crm_records(gym_id, kind, id, data, version) values
     (ga, 'member', 'm-asha', '{"fullName":"Asha Verma","phone":"+919829053001"}', 1),
-    (ga, 'member', 'm-bilal', '{"fullName":"Bilal Khan","phone":"+919829053002"}', 1);
+    (ga, 'member', 'm-bilal', '{"fullName":"Bilal Khan","phone":"+919829053002"}', 1),
+    -- 0074 (R-505): only a member on a running paid plan may ask, so both have one.
+    (ga, 'membership', 'p-asha', jsonb_build_object('memberId', 'm-asha', 'planName', 'Monthly',
+      'startsOn', to_char(td - 30, 'YYYY-MM-DD'), 'endsOn', to_char(td + 30, 'YYYY-MM-DD')), 1),
+    (ga, 'membership', 'p-bilal', jsonb_build_object('memberId', 'm-bilal', 'planName', 'Monthly',
+      'startsOn', to_char(td - 30, 'YYYY-MM-DD'), 'endsOn', to_char(td + 30, 'YYYY-MM-DD')), 1);
   insert into public.gym_members(gym_id, name, checkin_phone, key_hash) values (ga, 'Asha', '+919829053001', public._hash_key(ka)) returning member_id into ma;
   insert into public.gym_members(gym_id, name, checkin_phone, key_hash) values
     (ga, 'Bilal', '+919829053002', public._hash_key(kb)),
