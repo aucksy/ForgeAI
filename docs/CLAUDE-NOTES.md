@@ -247,6 +247,10 @@ DONE 14 Nov: commits f5b5a150 + 87a480d3 + d614cbef (flows d and g tap Add with 
 green; unit file muscleTipsRoutines 34/34. Phone run u482: owner 43568717042 PASSED, default 43564292031 PASSED;
 pictures read (tip 2 Add+Swap, the why sheet with sets per muscle, Add then Undo). Found: when the page is scrolled
 down and Add/Swap is tapped on large text, the Undo bar can sit above the screen (same as R-482 tip 1).
+DONE 14 Nov (that finding): the line with Undo now floats at the bottom of the Workout tab above the tab bar, outside
+the scrolling page (no frozen file). Commit 396502c1; CI 43574011948 green. u482 flows a and d scroll down, then Add,
+Undo on screen, tip back: owner 43574030490, default 43574032297, owner + font 2.0 43574033896 all PASSED; read a2,
+a3, d4a-d4c on each.
 
 ## R-491. One look everywhere: list pictures and the demo use the orange-tank pictures — 14 Nov 2026
 He said (14 Nov 2026): "Yes I pick A" (my question: 176 exercises showed the old grey Everkinetic line drawings in
