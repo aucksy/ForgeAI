@@ -7,7 +7,7 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
-## R-550 (14 Nov 2026) 12-month training history: since joining; words and 0084 approved; 0084 APPLIED LIVE
+## R-551 (14 Nov 2026) 12-month training history: since joining; words and 0084 approved; 0084 APPLIED LIVE
 - Owner, verbatim: "since joining" / "Yes to the 12-month words" / "yes to the 12-month database change".
 - A gym sees only workouts SINCE THE MEMBER JOINED THIS GYM, up to the last 12 months (never an earlier gym's).
 - Approved caption under "Share my workouts with my trainers" (member app Settings): "Your phone sends your gym your workouts since you joined, up to the last 12 months. For each workout, it sends the day, the workout's name, and, for each exercise, your heaviest set and how many sets you did. Your gym and your trainers see this as charts, to check that you are getting stronger. They never see your body weight, photos or notes. If you switch this off or leave the gym, the gym deletes it at once."
