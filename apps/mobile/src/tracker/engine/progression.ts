@@ -505,8 +505,8 @@ function computeAt(input: ProgressionInput, depth: number): ProgressionTarget {
     // Last time's weight on the ladder is "the same weight", even when it reads cleaner.
     const change = sameWeight(weightKg, same) ? null : weightKg > w + 1e-6 ? 'up' : weightKg < w - 1e-6 ? 'down' : null;
     const setGoals = perSet && perSet.length > 0 ? perSet : Array.from({ length: Math.max(1, target.targetSets) }, () => repGoal);
-    // F74: one step of the member's own ladder above and below the Target weight, for the live
-    // "this set felt easy / very hard" suggestion on the sets after it (engine/rpeNudge).
+    // F74: one step of the member's own ladder above and below the Target weight. R-512 (14 Nov 2026):
+    // the live "felt easy / very hard" suggestion that used these is gone; the data stays for goalAtWeight.
     const steps =
       logType === 'weight_reps' && !assisted && !bodyweightOnly && weightKg > 0
         ? { stepUpKg: round3(upTo1(weightKg)), stepDownKg: lighterOf(weightKg) }
@@ -1063,9 +1063,9 @@ export interface TargetFill {
   /** R-143: where a lighter last-time set that reached the top of the range moves (`liftUpOf`). */
   liftUp?: LiftUp;
   /**
-   * F74: what the live "felt easy / very hard" suggestion needs (engine/rpeNudge): the effort
-   * planned (this plan week's RPE, else none = the app's default), the top of the rep range, and
-   * one weight step up / down from the Target weight. Absent when not known.
+   * F74: the effort planned (this plan week's RPE, else none = the app's default), the top of the rep
+   * range, and one weight step up / down from the Target weight. Absent when not known. R-512 (14 Nov
+   * 2026): the "felt easy / very hard" suggestion that read it is gone; goalAtWeight still reads repMax.
    */
   nudge?: { effortRpe?: number; repMax?: number; stepUpKg?: number; stepDownKg?: number | null };
 }

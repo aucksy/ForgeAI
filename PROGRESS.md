@@ -134,6 +134,16 @@
   Phone test runner: `only` naming a part of the A..R chain that leans on earlier parts now brings them in (only=r runs
   a ... p9 first). Run 43562670140 (only=r,u199) failed because part R started from the demo with no part L, so no
   "Jaipur (6)" folder; no app change caused it. test_flow_tools checks the runner's lists match flows_to_check.py.
+- R-512: NO MORE "SET 2 WAS VERY HARD, SO ..." LINES UNDER THE SETS, AND THE LOGIC IS GONE (owner, 14 Nov 2026:
+  "remove this functionality completely"). How hard a set felt (RPE) no longer moves the rows after it: the hint for
+  the next set follows the normal rules (R-454, never under previous). Removed: tracker/engine/rpeNudge.ts and its test
+  f74RpeNudge, the store's nudgeForSet / nudgeLineShows / fillAndNudge, the card's reason line, the "eased" row in
+  kgTarget (it stopped catch-up reps after a very hard set), and sameSetHint's hard-set hold (RPE 9.5+ no longer keeps
+  set 2 at set 1's reps). Kept: sameSetHint's silent +1 rep after an easy matched set (no line). Tests updated:
+  kgTarget, r439SameSetHint (RPE 10 now hints 41), r454RepFloor. UAT: uat-rel-4-workout (Pec Deck RPE 10, NEGATIVE: no
+  "was very hard" / "felt easy" line, never 38 kg; rel-34) and uat-rel-r439-b (RPE 10: no line, set 2 hints and saves
+  41; rel-r439-e/f).
+  Same day: the kg-to-beat box says "(a little less is fine)" and "N kg less, fine for this workout", never "short".
 - R-505 FOLLOW-UP: "MESSAGE YOUR GYM" MENTIONS ASK A TRAINER ONLY TO MEMBERS WHO CAN ASK (14 Nov 2026). The Question
   hint is "Ask about timings, fees, classes and more."; "For workout help, use Ask a trainer." is added only when the
   Gym tab row's own check says open (askTrainer.ts askShown, now shared by AskTrainerRow and GymTalkScreen). A pass

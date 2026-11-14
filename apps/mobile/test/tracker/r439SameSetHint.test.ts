@@ -121,9 +121,9 @@ describe('R-439 his Air Squat screen', () => {
     expect(fillForSet(c, 's2', null)?.reps).toBe(40);
   });
 
-  it('a hard set 1 (RPE 9, 9.5 or 10) never raises set 2 above last time', () => {
+  it('R-512: a hard set 1 (RPE 9, 9.5 or 10) no longer holds set 2 back: it hints like any set (41)', () => {
     for (const rpe of [9, 9.5, 10]) {
-      expect(fillForSet(squatCard(hisScreen(rpe)), 's2', null)?.reps).toBe(40);
+      expect(fillForSet(squatCard(hisScreen(rpe)), 's2', null)?.reps).toBe(41);
     }
   });
 

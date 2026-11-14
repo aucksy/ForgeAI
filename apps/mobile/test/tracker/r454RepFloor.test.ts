@@ -47,9 +47,8 @@ vi.mock('react-native', () => {
 });
 
 import { computeProgressionTarget, rowTargetFill, targetFill, targetLine, type ProgSession } from '@/tracker/engine/progression';
-import { nudgeLine } from '@/tracker/engine/rpeNudge';
 import { kgLiveLine, kgPlan, kgProgress, kgToBeatLine, MAX_EXTRA_REPS, repLiveLine, repPlan, repsToBeatLine, type KgRow } from '@/tracker/lib/kgTarget';
-import { fillForSet, goalAtWeight, nudgeForSet, nudgeLineShows, type DraftExercise, type DraftSet } from '@/tracker/store/activeWorkoutStore';
+import { fillForSet, goalAtWeight, type DraftExercise, type DraftSet } from '@/tracker/store/activeWorkoutStore';
 import type { Exercise } from '@/types/models';
 
 const TODAY = '2026-11-12';
@@ -238,10 +237,11 @@ describe('owner, 12 Nov 2026: the finished line says done and Previous', () => {
   });
 });
 
-describe('owner, 12 Nov 2026: a "very hard" line only when it changes the row', () => {
+// R-512 (owner, 14 Nov 2026: "remove this functionality completely"): how hard a set felt no longer moves
+// the rows after it, and no "Set 2 was very hard, so ..." line is shown (it was the F74 / 12 Nov hold rule).
+// His same screens: the rows hint what the normal rules give (never under last time, R-454).
+describe('R-512: a very hard set no longer holds the next sets back', () => {
   const fill = rowTargetFill(his());
-  const plan = kgPlan(his(), HIS_LAST)!;
-  const kg = (x: number) => `${x} kg`;
   const set = (key: string, reps: number | null, rpe: number | null = null): DraftSet => ({
     key,
     weightKg: reps != null ? 40 : null,
@@ -252,26 +252,21 @@ describe('owner, 12 Nov 2026: a "very hard" line only when it changes the row', 
   });
   const cardOf = (sets: DraftSet[]): DraftExercise => ({ ...card(null), sets }) as DraftExercise;
 
-  it('his screen: 14 @9.5, 12 @9.5, 11 @10, set 4 hints 9: no line (nothing changed, he is ahead)', () => {
-    const c = cardOf([set('a', 14, 9.5), set('b', 12, 9.5), set('c', 11, 10), set('d', null)]);
-    expect(nudgeForSet(c, 'd', fill)?.kind).toBe('hold');
-    expect(fillForSet(c, 'd', fill)).toEqual({ weightKg: 40, reps: 9 });
-    expect(nudgeLineShows(c, 'd', fill, plan)).toBe(false);
+  it('his screen: 14 @9.5, 12 @9.5, 11 @10: set 4 hints the same as with no effort logged', () => {
+    const hard = cardOf([set('a', 14, 9.5), set('b', 12, 9.5), set('c', 11, 10), set('d', null)]);
+    const plain = cardOf([set('a', 14), set('b', 12), set('c', 11), set('d', null)]);
+    expect(fillForSet(hard, 'd', fill)).toEqual(fillForSet(plain, 'd', fill));
+    expect(fillForSet(hard, 'd', fill)).toEqual({ weightKg: 40, reps: 9 });
   });
 
-  it('behind the plan: the hold stops the catch-up reps, so the line shows with the new words', () => {
-    // 13 @9, then 11 @9.5 against a goal of 12: set 3 would take a catch-up rep; the hold stops it.
-    const c = cardOf([set('a', 13, 9), set('b', 11, 9.5), set('c', null), set('d', null)]);
-    const n = nudgeForSet(c, 'c', fill)!;
-    expect(n.kind).toBe('hold');
-    expect(fillForSet(c, 'c', fill)).toEqual({ weightKg: 40, reps: 11 }); // never under last time's 10
-    expect(nudgeLineShows(c, 'c', fill, plan)).toBe(true);
-    expect(nudgeLine(n, kg, 3)).toBe('Set 2 was very hard, so no extra reps on set 3.');
-    // Without a plan to catch up on, the same hold changes nothing: no line.
-    expect(nudgeLineShows(c, 'c', fill, null)).toBe(false);
+  it('behind the plan: set 3 hints as without the effort, never under last time', () => {
+    const hard = cardOf([set('a', 13, 9), set('b', 11, 9.5), set('c', null), set('d', null)]);
+    const plain = cardOf([set('a', 13), set('b', 11), set('c', null), set('d', null)]);
+    expect(fillForSet(hard, 'c', fill)).toEqual(fillForSet(plain, 'c', fill));
+    expect(fillForSet(hard, 'c', fill)).toEqual({ weightKg: 40, reps: 11 }); // never under last time's 10
   });
 
-  it('reps only: a very hard set that stops catch-up reps says so; a hold never hints under last time', () => {
+  it('reps only: an RPE 10 set 1 changes nothing on set 2 (9, as last time)', () => {
     const pull = ex({ id: 'pullup', name: 'Pull-Up', equipment: 'bodyweight', muscleGroup: 'back' });
     const LAST = [10, 9, 8];
     const t = computeProgressionTarget({
@@ -281,36 +276,30 @@ describe('owner, 12 Nov 2026: a "very hard" line only when it changes the row', 
       todayISO: TODAY,
       logType: 'reps',
     });
-    expect(t.setGoals).toEqual([11, 10, 9]);
-    const rp = repPlan(t, LAST.map((reps) => ({ weightKg: 0, reps })))!;
-    const c = {
-      key: 'p1',
-      exerciseId: 'pullup',
-      name: 'Pull-Up',
-      muscleGroup: 'back',
-      equipment: 'bodyweight',
-      logType: 'reps',
-      previousSets: LAST.map((reps) => ({ weightKg: 0, reps })),
-      sets: [
-        { key: 'a', weightKg: null, reps: 8, rpe: 10, isWarmup: false, done: true },
-        { key: 'b', weightKg: null, reps: null, isWarmup: false, done: false },
-        { key: 'c', weightKg: null, reps: null, isWarmup: false, done: false },
-      ],
-    } as unknown as DraftExercise;
+    const c = (rpe: number | null) =>
+      ({
+        key: 'p1',
+        exerciseId: 'pullup',
+        name: 'Pull-Up',
+        muscleGroup: 'back',
+        equipment: 'bodyweight',
+        logType: 'reps',
+        previousSets: LAST.map((reps) => ({ weightKg: 0, reps })),
+        sets: [
+          { key: 'a', weightKg: null, reps: 8, rpe, isWarmup: false, done: true },
+          { key: 'b', weightKg: null, reps: null, isWarmup: false, done: false },
+          { key: 'c', weightKg: null, reps: null, isWarmup: false, done: false },
+        ],
+      }) as unknown as DraftExercise;
     const f = rowTargetFill(t);
-    const n = nudgeForSet(c, 'b', f)!;
-    expect(n.kind).toBe('hold');
-    expect(fillForSet(c, 'b', f)?.reps).toBe(9); // set 2 did 9 last time: never 8
-    expect(nudgeLineShows(c, 'b', f, rp)).toBe(true);
-    expect(nudgeLine(n, kg, 2)).toBe('Set 1 was very hard, so no extra reps on set 2.');
+    expect(fillForSet(c(10), 'b', f)).toEqual(fillForSet(c(null), 'b', f));
+    expect(fillForSet(c(10), 'b', f)?.reps).toBe(9);
   });
 });
 
-// Owner, 12 Nov 2026 (screenshot): Chest Dip, reps only, last time 16, 15, 8; today 17 @8.5, 14 @9.5,
-// set 3 aimed 9, and the card said "Set 2 was very hard, so keep the same weight." on a move with no
-// weight. A hold never names the weight now, shows only when it changed the row, and the top line and
-// the row agree.
-describe('owner, 12 Nov 2026: Chest Dip (reps only) after a very hard set', () => {
+// Owner, 12 Nov 2026 (screenshot): Chest Dip, reps only, last time 16, 15, 8; today 17 @8.5, 14 @9.5.
+// R-512: the effort no longer changes set 3, and the top line may ask catch-up reps again.
+describe('R-512: Chest Dip (reps only) after a very hard set', () => {
   const dip = ex({ id: 'dip', name: 'Chest Dip', equipment: 'bodyweight', muscleGroup: 'chest' });
   const LAST = [16, 15, 8];
   const t = computeProgressionTarget({
@@ -335,7 +324,7 @@ describe('owner, 12 Nov 2026: Chest Dip (reps only) after a very hard set', () =
       previousSets: LAST.map((reps) => ({ weightKg: 0, reps })),
       sets,
     }) as unknown as DraftExercise;
-  /** The card's own wiring: each row's hint, and "eased" on a row a very hard set eased. */
+  /** The card's own wiring: each row's hint. */
   const line = (c: DraftExercise) =>
     repLiveLine(
       plan,
@@ -343,33 +332,26 @@ describe('owner, 12 Nov 2026: Chest Dip (reps only) after a very hard set', () =
         plan,
         c.sets.map((s) => {
           const h = fillForSet(c, s.key, f);
-          const k = nudgeForSet(c, s.key, f)?.kind;
-          return { weightKg: s.weightKg, reps: s.reps, done: s.done, isWarmup: false, hintKg: h?.weightKg, hintReps: h?.reps, eased: k === 'lighter' || k === 'hold' };
+          return { weightKg: s.weightKg, reps: s.reps, done: s.done, isWarmup: false, hintKg: h?.weightKg, hintReps: h?.reps };
         }),
       ),
     );
 
-  it('his screen: 17 @8.5, 14 @9.5 -> set 3 aims 9 (last time 8 + 1), no line, top line says 9 too', () => {
+  it('his screen: 17 @8.5, 14 @9.5 -> set 3 aims 9 (last time 8 + 1), the top line says 9 too', () => {
     expect(t.setGoals).toEqual([16, 15, 9]);
     const c = cardOf([row('a', 17, 8.5), row('b', 14, 9.5), row('c', null)]);
-    expect(nudgeForSet(c, 'c', f)?.kind).toBe('hold');
     expect(fillForSet(c, 'c', f)?.reps).toBe(9);
-    // Set 1's extra rep covers set 2's missing one: the hold changed nothing, so no line.
-    expect(nudgeLineShows(c, 'c', f, plan)).toBe(false);
     expect(line(c)).toMatch(/^Next set: 9 reps\b/);
   });
 
-  it('behind: 16, then 13 @9.5 -> the hold stops the catch-up reps; the line talks reps, never weight', () => {
-    const c = cardOf([row('a', 16, 8.5), row('b', 13, 9.5), row('c', null)]);
-    const n = nudgeForSet(c, 'c', f)!;
-    expect(n.kind).toBe('hold');
-    expect(fillForSet(c, 'c', f)?.reps).toBe(9);
-    expect(nudgeLineShows(c, 'c', f, plan)).toBe(true);
-    const words = nudgeLine(n, (kg) => `${kg} kg`, 3);
-    expect(words).toBe('Set 2 was very hard, so no extra reps on set 3.');
-    expect(words).not.toMatch(/weight|kg/);
-    // The top line follows the eased row: 9, not 9 + catch-up.
-    expect(line(c)).toMatch(/^Next set: 9 reps\b/);
+  it('behind: 16, then 13 @9.5 -> set 3 hints 9 as without the effort; the top line asks the catch-up reps', () => {
+    const hard = cardOf([row('a', 16, 8.5), row('b', 13, 9.5), row('c', null)]);
+    const plain = cardOf([row('a', 16), row('b', 13), row('c', null)]);
+    expect(fillForSet(hard, 'c', f)?.reps).toBe(9);
+    expect(line(hard)).toBe(line(plain));
+    const m = /^Next set: (\d+) reps\b/.exec(line(hard));
+    expect(Number(m?.[1])).toBeGreaterThan(9);
+    expect(line(hard)).not.toMatch(/very hard|felt easy/);
   });
 });
 

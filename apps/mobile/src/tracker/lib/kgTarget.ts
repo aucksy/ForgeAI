@@ -220,12 +220,6 @@ export interface KgRow {
   /** What the row hints now (fillForSet: carries a weight typed above, caps reps at the row above). */
   hintKg?: number | null;
   hintReps?: number | null;
-  /**
-   * The row's hint was eased because the set above was very hard ("so try 35 kg" / "keep the same
-   * weight"). R-324 (owner UAT, 4 Nov 2026): the line then asks for exactly the hint, never extra reps:
-   * "Next: 35 kg × 12" over a box showing 10 contradicted the advice right under it.
-   */
-  eased?: boolean;
 }
 
 export interface KgProgress {
@@ -255,30 +249,16 @@ export function kgProgress(plan: KgPlan, rows: readonly KgRow[]): KgProgress {
   return progressOf(plan, rows).progress;
 }
 
-/**
- * Owner, 12 Nov 2026 (his Incline Dumbbell Press: "Set 3 was very hard, so keep the same weight" over
- * a row that did not change): a "very hard" hold only matters on the live line when it stops extra
- * catch-up reps. True when row `at` (an index into `rows`) would get extra reps if the rows marked
- * `hold` were not eased. PURE.
- */
-export function holdStopsExtra(plan: KgPlan, rows: readonly (KgRow & { hold?: boolean })[], at: number): boolean {
-  const { openAt, extra } = progressOf(plan, rows.map((r) => (r.hold ? { ...r, eased: false } : r)));
-  const k = openAt.indexOf(at);
-  return k >= 0 && extra[k] > 0;
-}
-
-/** kgProgress, plus which row each open set is (`openAt`) and the extra reps it got. PURE. */
-function progressOf(plan: KgPlan, rows: readonly KgRow[]): { progress: KgProgress; openAt: number[]; extra: number[] } {
+/** kgProgress's work (R-512: how hard a set felt no longer stops catch-up reps on the next rows). PURE. */
+function progressOf(plan: KgPlan, rows: readonly KgRow[]): { progress: KgProgress } {
   let done = 0;
   const open: KgSet[] = [];
-  const openAt: number[] = [];
-  const noExtra: boolean[] = [];
   let ordinal = 0;
   /** Owner, 12 Nov 2026: working sets not ticked yet, whatever they hint (`lineGreen`). */
   let openRows = 0;
   /** T76: ticked sets and the plan's own, for the unit-switch allowance (kilo plans only). */
   const ticked: KgSet[] = [];
-  for (const [at, r] of rows.entries()) {
+  for (const r of rows) {
     if (r.isWarmup) continue;
     const drop = r.setType === 'drop';
     const planned = drop ? undefined : plan.sets[ordinal];
@@ -300,15 +280,13 @@ function progressOf(plan: KgPlan, rows: readonly KgRow[]): { progress: KgProgres
     const reps = pos(r.hintReps) ?? planned?.reps ?? pos(r.reps) ?? 0;
     if (weightKg > 0 && reps > 0) {
       open.push({ weightKg, reps });
-      openAt.push(at);
-      noExtra.push(r.eased === true);
     }
   }
   const left = Math.max(0, plan.total - done);
   const noise = plan.reps ? 0 : shownTotalNoise([...ticked, ...plan.sets]);
   const room = Math.max(1e-9, noise);
   if (left <= room || open.length === 0) {
-    return { progress: { done, left, next: [], short: left > room, ...(noise > 0 ? { noise } : {}), open: openRows }, openAt: [], extra: [] };
+    return { progress: { done, left, next: [], short: left > room, ...(noise > 0 ? { noise } : {}), open: openRows } };
   }
   // R-351: the open sets aim for the planned sets (`planned`, when last time's total is the number
   // to pass), so the line never asks more than the rows show; `left` stays the kg still to pass.
@@ -316,13 +294,9 @@ function progressOf(plan: KgPlan, rows: readonly KgRow[]): { progress: KgProgres
   const next = open.map((s) => ({ ...s }));
   const sum = () => next.reduce((a, s) => a + s.weightKg * s.reps, 0);
   for (let extra = 1; extra <= MAX_EXTRA_REPS && sum() < aim - 1e-9; extra++) {
-    for (let i = 0; i < next.length && sum() < aim - 1e-9; i++) if (!noExtra[i]) next[i].reps = open[i].reps + extra;
+    for (let i = 0; i < next.length && sum() < aim - 1e-9; i++) next[i].reps = open[i].reps + extra;
   }
-  return {
-    progress: { done, left, next, short: sum() < aim - 1e-9, ...(noise > 0 ? { noise } : {}), open: openRows },
-    openAt,
-    extra: next.map((s, i) => s.reps - open[i].reps),
-  };
+  return { progress: { done, left, next, short: sum() < aim - 1e-9, ...(noise > 0 ? { noise } : {}), open: openRows } };
 }
 
 /**

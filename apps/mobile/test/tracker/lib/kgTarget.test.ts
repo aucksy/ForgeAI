@@ -126,14 +126,11 @@ describe('#9 kg to beat: during the workout', () => {
     expect(g.short).toBe(true);
     expect(kgLiveLine(p, g, total, weight)).toMatch(/\(a little less is fine\)$/);
   });
-  it('R-324: after a very hard set, the eased row gets no extra reps (the line matches the box)', () => {
-    // UAT rel-34: set 1 very hard, the next row hints 35 kg × 10; the line said "× 12" over a box of 10.
-    const eased: KgRow = { ...row(null, null, false), hintKg: 35, hintReps: 10, eased: true };
-    const g = kgProgress(p, [row(45, 2, true), eased, row(null, null, false)]);
-    expect(g.next[0]).toEqual({ weightKg: 35, reps: 10 });
-    expect(kgLiveLine(p, g, total, weight).startsWith('Next set: 35 kg × 10 · ')).toBe(true);
-    // The row after it is not eased, so it may still take the extra reps.
-    expect(g.next[1].reps).toBe(8 + MAX_EXTRA_REPS);
+  it('R-512: how hard a set felt no longer stops catch-up reps (no "eased" row any more)', () => {
+    // Before (R-324), a row "eased" after a very hard set took no extra reps. That rule is gone with the hint.
+    const hinted: KgRow = { ...row(null, null, false), hintKg: 45, hintReps: 8 };
+    const g = kgProgress(p, [row(45, 2, true), hinted, row(null, null, false)]);
+    expect(g.next.every((s) => s.reps === 8 + MAX_EXTRA_REPS)).toBe(true);
   });
   it('beaten: says what was done next to the previous workout (owner, 12 Nov 2026)', () => {
     const g = kgProgress(p, [row(45, 10, true), row(45, 10, true), row(45, 9, true)]);

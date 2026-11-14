@@ -38,9 +38,7 @@ import type { MachineDetails } from '@/tracker/engine/cardioMachine';
 import { typedWeight, type DistUnit, type LoadMode, type LogType } from '@/tracker/engine/logTypes';
 import { HOLD_STEP_SEC, liftsUp, OFF_MAIN_SHARE, type LiftUp, type TargetFill } from '@/tracker/engine/progression';
 import { sameSetHint } from '@/tracker/lib/sameSetHint';
-import { holdStopsExtra, type KgPlan } from '@/tracker/lib/kgTarget';
-import { isLongRest, restsOfCard, type RestTaken } from '@/tracker/engine/restTaken';
-import { rpeNudge, type RpeNudge } from '@/tracker/engine/rpeNudge';
+import type { RestTaken } from '@/tracker/engine/restTaken';
 import { MUSCLE_LABEL } from '@/tracker/catalog/muscles';
 import {
   getCarriedNote,
@@ -1362,131 +1360,23 @@ const present = (v: number | null | undefined): number | null => (v != null && N
  * R-439 (owner, 10 Nov 2026): with no Target goal for the row (a bodyweight move past its rep cap,
  * a pyramid, a timed hold), rule 1 no longer copies the row above once a set is ticked: a row with
  * a same set last time hints that set, scaled by today's ticked sets against last time (at most one
- * step more; never above last time after an RPE 9+ set; never above the set just done). See
+ * step more; never above the set just done; R-512: a hard set no longer holds it at last time). See
  * `lib/sameSetHint`.
  *
- * F74 (R-144): after a set ticked with its effort, the blank rows after it may carry a suggestion
- * from it (one more rep, one weight step, or lighter: `nudgeForSet`). It is a hint like any
- * other: a number the member typed is never changed.
+ * R-512 (owner, 14 Nov 2026: "remove this functionality completely"): how hard a set felt (its RPE) no
+ * longer moves the rows after it. The F74 suggestion ("Set 2 was very hard, so do not try for more reps",
+ * "Set 1 felt easy, so try 1 more rep") and its reason line are gone; the hint follows the rules above.
  */
 export function fillForSet(
   ex: DraftExercise,
   setKey: string,
   target?: TargetFillLike | null,
 ): SetFill | null {
-  return fillAndNudge(ex, setKey, target).fill;
+  return baseFillForSet(ex, setKey, target);
 }
 
 /** What `fillForSet` takes as the card's Target fill. */
 type TargetFillLike = SetFill & { setReps?: readonly number[]; fromKg?: number; liftUp?: LiftUp; nudge?: TargetFill['nudge'] };
-
-/**
- * F74: the "felt easy / very hard" suggestion for a row, or null. Shown as one reason line under
- * the row (the hint itself already carries the numbers). PURE.
- */
-export function nudgeForSet(ex: DraftExercise, setKey: string, target?: TargetFillLike | null): RpeNudge | null {
-  return fillAndNudge(ex, setKey, target).nudge;
-}
-
-/**
- * Owner, 12 Nov 2026 (his Incline Dumbbell Press: "Set 3 was very hard, so keep the same weight" over a
- * set 4 that did not change; "I don't think this is accurate."): whether the row's reason line shows.
- * Every nudge but a hold changes the row's numbers, so its line shows. A hold keeps them, so its line
- * ("no extra reps on set 4") shows only when the hard set really changed something: without that
- * effort the row would hint more reps (R-439's same-set hint), or the live line (`plan`) would have
- * put catch-up reps on it (`holdStopsExtra`). PURE.
- */
-export function nudgeLineShows(ex: DraftExercise, setKey: string, target: TargetFillLike | null | undefined, plan: KgPlan | null): boolean {
-  const n = nudgeForSet(ex, setKey, target);
-  if (!n) return false;
-  if (n.kind !== 'hold') return true;
-  const at = ex.sets.findIndex((s) => s.key === setKey);
-  const fill = fillForSet(ex, setKey, target);
-  let doneIdx = -1;
-  for (let i = at - 1; i >= 0; i--) {
-    if (ex.sets[i].isWarmup || !ex.sets[i].done) continue;
-    doneIdx = i;
-    break;
-  }
-  if (doneIdx >= 0 && fill) {
-    const plainEx: DraftExercise = { ...ex, sets: ex.sets.map((s, i) => (i === doneIdx ? { ...s, rpe: null } : s)) };
-    const plain = fillForSet(plainEx, setKey, target);
-    if (plain && plain.reps > fill.reps) return true;
-  }
-  if (!plan) return false;
-  const rows = ex.sets.map((s) => {
-    const f = fillForSet(ex, s.key, target);
-    const kind = nudgeForSet(ex, s.key, target)?.kind;
-    return {
-      weightKg: s.weightKg,
-      reps: s.reps,
-      done: s.done,
-      isWarmup: s.isWarmup,
-      setType: s.setType,
-      hintKg: f?.weightKg,
-      hintReps: f?.reps,
-      eased: kind === 'lighter' || kind === 'hold',
-      hold: kind === 'hold',
-    };
-  });
-  return holdStopsExtra(plan, rows, at);
-}
-
-function fillAndNudge(
-  ex: DraftExercise,
-  setKey: string,
-  target?: TargetFillLike | null,
-): { fill: SetFill | null; nudge: RpeNudge | null } {
-  const fill = baseFillForSet(ex, setKey, target);
-  if (!fill) return { fill, nudge: null };
-  const lt: LogType = ex.logType ?? 'weight_reps';
-  if (lt !== 'weight_reps' && lt !== 'reps') return { fill, nudge: null };
-  const idx = ex.sets.findIndex((s) => s.key === setKey);
-  const row = ex.sets[idx];
-  // Only a blank working row still to do: never a typed number, a warm-up or a drop set.
-  if (!row || row.done || row.isWarmup || row.setType === 'drop' || row.weightKg != null || row.reps != null) {
-    return { fill, nudge: null };
-  }
-  // The nearest ticked working row above; it must be a plain set with its effort logged.
-  let doneIdx = -1;
-  for (let i = idx - 1; i >= 0; i--) {
-    const s = ex.sets[i];
-    if (s.isWarmup || !s.done) continue;
-    doneIdx = i;
-    break;
-  }
-  const done = doneIdx >= 0 ? ex.sets[doneIdx] : null;
-  if (!done || (done.setType ?? 'normal') !== 'normal' || done.reps == null || done.rpe == null) return { fill, nudge: null };
-  if (lt === 'weight_reps' && done.weightKg == null) return { fill, nudge: null };
-  const before = ex.sets.slice(0, doneIdx);
-  const setNo = before.filter((s) => !s.isWarmup).length + 1;
-  // The reps planned for the done set: the Target's goal for its working-set number, else the routine's.
-  const n = before.filter((s) => !s.isWarmup && s.setType !== 'drop').length;
-  const list = target?.setReps;
-  const goalOf = target ? (list && list.length > 0 ? list[Math.min(n, list.length - 1)] : target.reps) : done.plan?.reps;
-  const doneGoal = goalOf != null && goalOf > 0 ? goalOf : null;
-  // F73: a set after a long rest felt easier than the next one will.
-  const planSec = effectiveRestSec(ex, useRestTimer.getState().defaultSec);
-  const longRest = (() => {
-    const r = restsOfCard(ex.sets, planSec, { superset: ex.supersetGroup != null })[doneIdx];
-    return r != null && isLongRest(r.sec, r.planSec);
-  })();
-  const plainCounting = (ex.loadMode ?? 'one') === 'one';
-  const nudge = rpeNudge({
-    logType: lt,
-    done: { weightKg: lt === 'reps' ? 0 : (done.weightKg as number), reps: done.reps, rpe: done.rpe, setNo, longRest },
-    doneGoal,
-    base: { weightKg: lt === 'reps' ? 0 : fill.weightKg, reps: fill.reps },
-    targetRpe: target?.nudge?.effortRpe ?? null,
-    repMax: target?.nudge?.repMax ?? null,
-    stepUpKg: target?.nudge?.stepUpKg ?? null,
-    stepDownKg: target?.nudge?.stepDownKg ?? null,
-    bestE1rm: plainCounting && lt === 'weight_reps' ? ex.bests?.e1rm ?? null : null,
-  });
-  if (!nudge) return { fill, nudge: null };
-  if (nudge.kind === 'hold') return { fill, nudge };
-  return { fill: { weightKg: lt === 'reps' ? 0 : nudge.weightKg, reps: nudge.reps }, nudge };
-}
 
 /**
  * R-439: the same-set hint for the working row at `idx` (`sameSetHint`), or null = keep the old rule.

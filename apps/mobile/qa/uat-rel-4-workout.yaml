@@ -7,7 +7,8 @@
 #  - R-350 (owner, 5 Nov 2026): no step-back card any more (the stall rule is gone); Pec Deck stays
 #    at 40 kg and Leg Extension at 45 kg, +1 rep on each set.
 #  - R-310 (owner: "suggesting 38 kg ... this machine only has 5 kg increments"): Pec Deck set 1 at
-#    40 kg x 7, RPE 10 (goal 11): the next set says "Set 1 was very hard, so try 35 kg." Never 38.
+#    40 kg x 7, RPE 10 (goal 11): never 38. R-512 (owner, 14 Nov 2026): how hard a set felt no longer moves
+#    the next set, so no "Set 1 was very hard, so ..." line: the next set follows the normal rules (negative).
 #  - R-298: a rest that runs out leaves no red "+0:30 over" row: the bar goes.
 #  - R-300: a short set gives no "add a set" line.
 appId: com.mettleup.app
@@ -94,18 +95,18 @@ appId: com.mettleup.app
 - assertVisible: 'Machine in use\. (Previous .+\. )?Next .+\. Back in .*'
 - takeScreenshot: rel-33-in-use-pec-deck-beat-line
 - runFlow: sub-uat-rest-clear.yaml
+# R-512: the next set follows the normal rules (whatever they give), with no effort line under the rows.
 - runFlow:
-    file: sub-find.yaml
+    file: sub-see.yaml
     env:
-      FIND: '^Set 1 was very hard, so try 35 kg\.$'
+      FIND: '^Next set: [0-9.]+ kg × [0-9]+ · .*'
+- assertNotVisible: '(?i).*was very hard.*'
+- assertNotVisible: '(?i).*felt easy.*'
+- assertNotVisible: '(?i).*do not try for more.*'
 - assertNotVisible: '.*\b38 kg.*'
 - assertNotVisible: '^38$'
 - assertNotVisible: '(?i).*add a set.*'
-# R-324 (4 Nov 2026): the live line asks for what the box shows after a very hard set, never extra reps.
-# R-350: goals are now 11, 10, 9 (+1 a set), so the eased row asks 10 or 11 at 35 kg, never 12+.
-- assertVisible: '^Next set: 35 kg × 1[01] · .*'
-- assertNotVisible: '.*35 kg × 1[2-9].*'
-- takeScreenshot: rel-34-pec-deck-very-hard-35-not-38
+- takeScreenshot: rel-34-pec-deck-very-hard-no-effort-line
 - runFlow:
     file: sub-uat-tick.yaml
     env:

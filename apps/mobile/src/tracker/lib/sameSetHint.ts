@@ -13,13 +13,12 @@
  *     step the app's progression uses (R-350: +1 rep a set);
  *   - one step more only when today matched or beat last time and the set just done felt
  *     manageable (RPE 8 or easier, "about 2 left");
- *   - a hard set just done (RPE 9 or more) never pushes the next set above last time's same set;
+ *   - R-512 (owner, 14 Nov 2026): a hard set just done (RPE 9 or more) no longer holds the next set at last
+ *     time's same set (that rule, and its "was very hard" line elsewhere, are gone);
  *   - never more than the set just done at that weight, and never under 1.
  * With no same set last time, or nothing ticked yet, the caller keeps its old rule.
  */
 
-/** The effort at or above which the set just done never raises the next one (1 rep or less left). */
-export const HARD_RPE = 9;
 /** The effort at or under which, with today on or above last time, one step is added (app default plan). */
 export const EASY_ENOUGH_RPE = 8;
 
@@ -49,7 +48,6 @@ export function sameSetHint(input: SameSetHintInput): number | null {
   const rated = rpe != null && Number.isFinite(rpe) && rpe >= 6 && rpe <= 10;
   if (ratio >= 1 && rated && (rpe as number) <= EASY_ENOUGH_RPE) v = Math.max(v, own + step);
   v = Math.min(v, own + step);
-  if (rated && (rpe as number) >= HARD_RPE) v = Math.min(v, own);
   const done = input.justDone?.value;
   if (done != null && done > 0) v = Math.min(v, done);
   return Math.max(1, v);

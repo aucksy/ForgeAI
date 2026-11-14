@@ -3,8 +3,9 @@
 # Types (R-364):
 #   happy path: set 2's grey hint is 41 (40 x 66/65), and a tick on the empty row saves exactly 41, never 66;
 #   negative: an extra set 3 (no same set last time) keeps the old rule, the number done in the row above;
-#   setting changed mid-workout: set 2 emptied again and set 1's effort changed to RPE 10 -> set 2 hints and
-#     saves 40 (a very hard set never raises the next one above last time);
+#   setting changed mid-workout: set 2 emptied again and set 1's effort changed to RPE 10 -> set 2 still hints
+#     and saves 41 (R-512, owner 14 Nov 2026: how hard a set felt no longer holds the next one back; no
+#     "Set 1 was very hard, so ..." line);
 #   regression: Goblet Squat (weighted, with a Target): last time 20 x 8, 20 x 5, today set 1 20 x 3 -> set 2
 #     keeps the Target's own rule (its goal 6, capped at the set just done, 3), never the same-set rule's 2
 #     (5 x 3/8); R-454 (owner, 12 Nov 2026: "Never suggesting less than before") stops that cap at last
@@ -116,14 +117,11 @@ appId: com.mettleup.app
     file: sub-find.yaml
     env:
       FIND: "Mark Air Squat set 2 complete"
-# 0.77.0 fresh eyes: a reps-only row has no weight, so the reason line speaks of reps. Owner, 12 Nov 2026:
-# the line names what the very hard set changed (set 2 hints 40, not 41), never "keep the same weight".
-- runFlow:
-    file: sub-find.yaml
-    env:
-      FIND: '^Set 1 was very hard, so no extra reps on set 2\.$'
+# R-512 (NEGATIVE): no effort line under the rows any more, whatever set 1's effort.
+- assertNotVisible: '(?i).*was very hard.*'
+- assertNotVisible: '(?i).*no extra reps.*'
 - assertNotVisible: '.*keep the same weight.*'
-- takeScreenshot: rel-r439-e-rpe-10-hint-40
+- takeScreenshot: rel-r439-e-rpe-10-hint-41
 - runFlow:
     file: sub-uat-tick.yaml
     env:
@@ -133,8 +131,8 @@ appId: com.mettleup.app
     file: sub-uat-r439-saved.yaml
     env:
       FIELD: "Air Squat set 2 reps"
-      WANT: "40"
-- takeScreenshot: rel-r439-f-rpe-10-saved-40
+      WANT: "41"
+- takeScreenshot: rel-r439-f-rpe-10-saved-41
 # ---------------------------------------------------------------- regression: a weighted lift with a Target keeps its rule
 - runFlow:
     file: sub-find.yaml

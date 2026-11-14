@@ -43,8 +43,7 @@ import { earlierCards, liveRecordFlags } from '../services/liveRecords';
 import { effectiveRestSec, fmtRest } from '../services/restRules';
 import { computeWarmups, warmupBarFor } from '../services/warmupMath';
 import { moveKind, supersetChoices } from '../services/workoutOrder';
-import { fillForSet, nudgeForSet, nudgeLineShows, prevForSet, useActiveWorkout } from '../store/activeWorkoutStore';
-import { nudgeLine } from '../engine/rpeNudge';
+import { fillForSet, prevForSet, useActiveWorkout } from '../store/activeWorkoutStore';
 import type { DraftExercise } from '../store/activeWorkoutStore';
 import { useRestTimer } from '../store/restTimerStore';
 import { useTrackerPrefs } from '../store/trackerPrefsStore';
@@ -254,8 +253,6 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
     const flags = easyWeek ? new Map<string, never>() : liveRecordFlags(exercise, earlier);
     let working = 0;
     let warm = 0;
-    // F74: the "felt easy / very hard" reason line goes under the FIRST row it applies to only.
-    let nudgeShown = false;
     return exercise.sets.map((s) => {
       // PREVIOUS is prevForSet() itself, so display + auto-fill agree: a working row by
       // WORKING-set ordinal (previousSets excludes warm-ups), a warm-up row by warm-up order
@@ -273,21 +270,11 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
         spoken = `${s.setType === 'drop' ? 'drop set' : 'set'} ${label}`;
         working += 1;
       }
-      let nudge: string | null = null;
-      const n = nudgeForSet(exercise, s.key, fillTarget);
-      if (!nudgeShown && !easyWeek && n) {
-        nudgeShown = true;
-        // Owner, 12 Nov 2026: a "very hard" hold that changes nothing on this row says nothing.
-        if (nudgeLineShows(exercise, s.key, fillTarget, kgPlanned)) {
-          nudge = nudgeLine(n, (kg) => `${fmtWeight(kg, units)}${weightIsEach(loadMode) ? ' each' : ''}`, s.isWarmup ? undefined : working);
-        }
-      }
-      // R-324: a row eased after a very hard set ("so try 35 kg") takes no extra reps in the live line.
-      const nk = n?.kind;
-      const eased = nk === 'lighter' || nk === 'hold';
-      return { set: s, label, spoken, previous, fill: fillForSet(exercise, s.key, fillTarget), record: flags.get(s.key) ?? null, nudge, eased };
+      // R-512 (owner, 14 Nov 2026): no "Set 2 was very hard, so ..." / "felt easy, so ..." line under the rows,
+      // and how hard a set felt no longer moves the rows after it (fillForSet).
+      return { set: s, label, spoken, previous, fill: fillForSet(exercise, s.key, fillTarget), record: flags.get(s.key) ?? null };
     });
-  }, [exercise, fillTarget, earlier, easyWeek, units, loadMode, kgPlanned]);
+  }, [exercise, fillTarget, earlier, easyWeek]);
 
   // #9: the line starts from what each row hints (never disagreeing with the rows), see kgProgress.
   // Phone runs 39095656699 / 39095657897 (part UR): worked out on every keystroke, the line grew from
@@ -297,16 +284,14 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
   const rowsRef = useRef(rows);
   rowsRef.current = rows;
   const tickKey = kgTickKey(rows.map((r) => ({ weightKg: r.set.weightKg, reps: r.set.reps, done: r.set.done, isWarmup: r.set.isWarmup, setType: r.set.setType })));
-  // R-324: an effort picked after the tick ("very hard") eases the next row, so the line follows it too.
-  const easedKey = rows.map((r) => (r.eased ? 'e' : '-')).join('');
   const kgLine = useMemo(() => {
     if (!kgPlanned) return null;
     const g = kgProgress(
       kgPlanned,
-      rowsRef.current.map((r) => ({ weightKg: r.set.weightKg, reps: r.set.reps, done: r.set.done, isWarmup: r.set.isWarmup, setType: r.set.setType, hintKg: r.fill?.weightKg, hintReps: r.fill?.reps, eased: r.eased })),
+      rowsRef.current.map((r) => ({ weightKg: r.set.weightKg, reps: r.set.reps, done: r.set.done, isWarmup: r.set.isWarmup, setType: r.set.setType, hintKg: r.fill?.weightKg, hintReps: r.fill?.reps })),
     );
     return {
-      // Owner, 12 Nov 2026 (R-454): totals never say "each" ("Done: 0 of today's 1,800 kg", "1,800 kg done ·
+      // Owner, 12 Nov 2026 (R-454): totals never say "each" ("Done: 0 of 1,800 kg", "1,800 kg done ·
       // Previous: 1,720 kg · +80 kg"); "each" stays on the per-set weight (KG EACH, "Suggested: 40 kg each").
       text: kgPlanned.reps
         ? repLiveLine(kgPlanned, g)
@@ -317,7 +302,7 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
     };
     // rows are read through the ref on purpose: only tickKey (ticks, adds, removes) moves the line.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [kgPlanned, tickKey, easedKey, units, loadMode]);
+  }, [kgPlanned, tickKey, units, loadMode]);
   // R-498: a green line with a previous workout comes as two lines (kgTarget `greenLines`); the rest is one.
   const greenSplit = kgLine?.beaten ? kgLine.text.split(GREEN_LINE_BREAK) : [];
   const greenHead = greenSplit.length === 2 ? greenSplit[0] : null;
@@ -807,21 +792,6 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
               spoken={r.spoken}
               insetLeft={rowLayout.padX + rowLayout.setW + rowLayout.gap}
             />
-          ) : null}
-          {/* F74: why this row's hint moved ("Set 1 felt easy, so try 1 more rep."). */}
-          {r.nudge ? (
-            <Text
-              style={{
-                fontFamily: type.bodyMedium,
-                fontSize: type.size.sub,
-                color: color.inkSecondary,
-                paddingLeft: rowLayout.padX + rowLayout.setW + rowLayout.gap,
-                paddingRight: rowLayout.padX,
-                paddingBottom: space.xs,
-              }}
-            >
-              {r.nudge}
-            </Text>
           ) : null}
           </Fragment>
         ))}
