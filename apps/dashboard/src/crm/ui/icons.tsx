@@ -6,9 +6,20 @@
  * tick was a hairline next to a solid Money block.
  */
 
-export type IconName = 'today' | 'members' | 'shop' | 'visits' | 'money' | 'plans' | 'settings' | 'more' | 'workouts' | 'messages' | 'branches' | 'brand' | 'clock' | 'trophy' | 'growth' | 'diet' | 'enquiries' | 'key' | 'invite' | 'news' | 'feedback' | 'bell' | 'trainer' | 'sparkle';
+export type IconName = 'today' | 'members' | 'shop' | 'visits' | 'money' | 'plans' | 'settings' | 'more' | 'workouts' | 'messages' | 'branches' | 'brand' | 'clock' | 'trophy' | 'growth' | 'diet' | 'enquiries' | 'key' | 'invite' | 'news' | 'feedback' | 'bell' | 'trainer' | 'sparkle' | 'setup';
 
 const PATHS: Record<IconName, React.ReactNode> = {
+  // R-526 (14 Nov 2026): Set up your gym: a short checklist, two ticked, one to do.
+  setup: (
+    <>
+      <path d="m4 6.5 1.5 1.5 3-3" />
+      <path d="M11.5 6.5H20" />
+      <path d="m4 12.5 1.5 1.5 3-3" />
+      <path d="M11.5 12.5H20" />
+      <rect x="4" y="16.5" width="4" height="4" rx="1" />
+      <path d="M11.5 18.5H20" />
+    </>
+  ),
   // F201 (12 Nov 2026): the AI Assistant's four-point sparkle.
   sparkle: <path d="M11 3c.6 4.4 2.6 6.4 7 7-4.4.6-6.4 2.6-7 7-.6-4.4-2.6-6.4-7-7 4.4-.6 6.4-2.6 7-7zM19 15c.3 1.6 1 2.3 2.5 2.5-1.5.2-2.2.9-2.5 2.5-.3-1.6-1-2.3-2.5-2.5 1.5-.2 2.2-.9 2.5-2.5z" />,
   // #41: two buildings side by side: "every branch".

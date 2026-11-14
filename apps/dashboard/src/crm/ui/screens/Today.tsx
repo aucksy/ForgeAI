@@ -10,7 +10,6 @@
 import { collectedOn, gymHasRecords, tileCounts } from '../../logic/homeTiles';
 import { t } from '../../lang/lang';
 import { dueCount } from '../../logic/enquiries';
-import { GetStartedCard } from '../GetStartedCard';
 import { QuickActions } from '../QuickActions';
 import { InstallCard } from '../InstallCard';
 import { PhoneLinksCard } from '../PhoneLinksCard';
@@ -135,8 +134,8 @@ export function TodayScreen() {
   // two completely different messages.
   const registerUsed = useMemo(() => isRegisterInUse(snapshot.visits, today), [snapshot.visits, today]);
 
-  // Owner, 1 Nov 2026: a brand-new gym sees Get started, not a wall of zeros. The tiles and lists
-  // come back by themselves with the first member, sale, payment, visit or enquiry.
+  // Owner, 1 Nov 2026: a brand-new gym is not shown a wall of zeros (its first steps are on Set up your gym, R-526).
+  // The tiles and lists come back by themselves with the first member, sale, payment, visit or enquiry.
   const hasRecords = gymHasRecords(snapshot);
 
   // Launch audit 3 Nov 2026: on a phone, once a member has joined in the app (the last Get started
@@ -146,7 +145,7 @@ export function TodayScreen() {
   const setupAtBottom = compact && hasRecords && appInUse;
 
   return (
-    // Fresh eyes (14 Nov 2026): Get started, the alerts offer and the install banner take turns (one at a time).
+    // Fresh eyes (14 Nov 2026): the alerts offer and the install banner take turns (one at a time).
     <SetupSlotProvider>
       <PageHeader
         // The gym's name is already in the sidebar (and the phone's top bar); a
@@ -178,8 +177,7 @@ export function TodayScreen() {
       {/* Backlog (21 Oct): big buttons for the desk's common jobs, chosen and ordered by the owner. */}
       <QuickActions />
 
-      {/* Launch I5: a new gym's first five steps (owner only; gone when done or hidden). */}
-      <GetStartedCard />
+      {/* R-526 (owner, 14 Nov 2026): the first steps of a new gym moved to their own page, Set up your gym. */}
 
       {/* Phones only, until installed or closed: "Phone par app lagao". */}
       <InstallCard variant="banner" />

@@ -178,10 +178,13 @@ for (const { name, size } of [...DESKTOPS, { name: '1920x1080', size: { width: 1
       const scrolls = await rows.evaluate((el) => el.scrollHeight > el.clientHeight + 1);
       const more = foot.getByRole('button', { name: 'More below' });
       await shot(page, `computer-${name}-menu-top`);
-      if (name === '1366x609') {
-        // A real laptop window (768-px screen minus the browser bar and the taskbar): too short for 18 rows even
+      // R-526 (14 Nov 2026): the menu now has five small group headings and "Set up your gym" (while steps are left), so
+      // on a laptop-height window it may scroll. A tall window still shows it all; a short one says "More below".
+      if (name === '1366x609') expect(scrolls, `the menu scrolls at ${name}`).toBe(true);
+      if (name === '1920x1080') expect(scrolls, `every row fits at ${name}`).toBe(false);
+      if (scrolls) {
+        // A real laptop window (768-px screen minus the browser bar and the taskbar): too short for every row even
         // with the shorter rows, so "More below" says so; each tap scrolls the menu on, and it goes at the end.
-        expect(scrolls, `the menu scrolls at ${name}`).toBe(true);
         await expect(more).toBeVisible();
         for (let i = 0; i < 6 && (await more.count()); i++) {
           await more.click();
@@ -191,8 +194,7 @@ for (const { name, size } of [...DESKTOPS, { name: '1920x1080', size: { width: 1
         await expect(menu.getByRole('link', { name: 'Help and feedback' })).toBeInViewport({ ratio: 1 });
         await shot(page, `computer-${name}-menu-after-more-below`);
       } else {
-        // 1366x768, 1280x720 and 1920x1080: the whole menu fits; nothing to scroll and no "More below".
-        expect(scrolls, `every row fits at ${name}`).toBe(false);
+        // The whole menu fits: nothing to scroll and no "More below".
         await expect(more).toHaveCount(0);
       }
       // Dark | Light now sits beside the bell, not in the menu.

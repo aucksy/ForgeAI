@@ -8,7 +8,7 @@
  * app. Neither is a squashed version of the other.
  */
 
-import { Fragment, useEffect, useRef, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 
 import { BranchSwitch } from '../branches/BranchSwitch';
 import { GymLogo } from '../brand/GymLogo';
@@ -18,6 +18,8 @@ import { NewsBell, NewsSidebarLink } from './WhatsNew';
 import { NewDot, color, font, radius, space, useIsCompact, useMediaQuery } from './kit';
 import { useNewFeatures } from './NewDots';
 import { barLit, linkLit, reachable } from '../logic/newDots';
+import { menuStore, navSections, progressShort, readClosed, saveClosed, sectionBadge, type NavGroupId, type SetupProgress } from '../logic/navGroups';
+import { ProgressRing, progressWords } from './GetStartedCard';
 import { Link, useRoute } from './router';
 import { t } from '../lang/lang';
 import { SteelLockup } from '../../components/SteelLockup';
@@ -28,8 +30,10 @@ export interface NavItem {
   icon: IconName;
   /** Number shown as an attention badge (dues, expiries) — hidden at 0. */
   badge?: number;
-  /** UAT A-19 (30 Oct 2026): rows marked 'setup' sit under a small "Set up and help" heading in the sidebar. */
-  group?: 'setup';
+  /** R-526: the menu group the row sits in (logic/navGroups.ts); none = the top rows, under no heading. */
+  group?: NavGroupId;
+  /** R-526: Set up your gym's steps done, while some are left: a small green ring, not a number badge. */
+  progress?: SetupProgress;
 }
 
 /** Height of the demo gym's banner (demo/demoMode.tsx), set as a page variable by the shell; 0 in the real app. */
@@ -123,6 +127,22 @@ function Sidebar({ gymName, nav, activePath }: { gymName: string; nav: NavItem[]
   const shorter = useMediaQuery('(max-height: 740px)');
   const rowHeight = shorter ? 28 : short ? 30 : 36;
   const list = useRef<HTMLDivElement>(null);
+  // R-526: the five groups; a tap on a heading folds or opens it, kept in this browser (logic/navGroups.ts).
+  const sections = useMemo(() => navSections(nav), [nav]);
+  const store = useMemo(() => menuStore(), []);
+  const [closed, setClosed] = useState<ReadonlySet<NavGroupId>>(() => readClosed(store));
+  const toggle = useCallback(
+    (id: NavGroupId) => {
+      setClosed((prev) => {
+        const next = new Set(prev);
+        if (next.has(id)) next.delete(id);
+        else next.add(id);
+        saveClosed(store, next);
+        return next;
+      });
+    },
+    [store],
+  );
   const [scroll, setScroll] = useState({ overflows: false, moreBelow: false, moreAbove: false });
   useEffect(() => {
     const el = list.current;
@@ -145,7 +165,7 @@ function Sidebar({ gymName, nav, activePath }: { gymName: string; nav: NavItem[]
       window.removeEventListener('resize', check);
       seen?.disconnect();
     };
-  }, [nav.length, rowHeight]);
+  }, [nav.length, rowHeight, closed]);
   useEffect(() => {
     list.current?.querySelector('[aria-current="page"]')?.scrollIntoView({ block: 'nearest' });
   }, [activePath]);
@@ -207,25 +227,31 @@ function Sidebar({ gymName, nav, activePath }: { gymName: string; nav: NavItem[]
           paddingBottom: scroll.overflows ? 28 + space.xs : space.xs,
         }}
       >
-        {nav.map((item, i) => (
-          <Fragment key={item.path}>
-            {item.group === 'setup' && nav[i - 1]?.group !== 'setup' ? (
-              <div
-                style={{
-                  margin: short ? `${space.sm}px ${space.md}px 2px` : `${space.md}px ${space.md}px ${space.xs}px`,
-                  fontFamily: font.body,
-                  fontSize: 11,
-                  fontWeight: 700,
-                  letterSpacing: 0.6,
-                  color: color.inkMuted,
-                }}
-              >
-                {t('Set up and help').toUpperCase()}
+        {sections.map((sec) => {
+          if (!sec.group) {
+            return (
+              <div key="top" style={{ display: 'flex', flexDirection: 'column', gap: short ? 0 : 2 }}>
+                {sec.items.map((item) => (
+                  <SidebarLink key={item.path} item={item} active={item.path === activePath} dot={linkLit(lit, paths, item.path)} height={rowHeight} />
+                ))}
               </div>
-            ) : null}
-            <SidebarLink item={item} active={item.path === activePath} dot={linkLit(lit, paths, item.path)} height={rowHeight} />
-          </Fragment>
-        ))}
+            );
+          }
+          const id = sec.group;
+          const folded = closed.has(id);
+          // A folded group still shows the page that is open, so the lit row never disappears.
+          const shown = folded ? sec.items.filter((i) => i.path === activePath) : sec.items;
+          const count = folded ? sectionBadge(sec.items) : 0;
+          const dot = folded && sec.items.some((i) => linkLit(lit, paths, i.path));
+          return (
+            <div key={id} role="group" aria-labelledby={`menu-group-${id}`} style={{ display: 'flex', flexDirection: 'column', gap: short ? 0 : 2 }}>
+              <GroupHeading id={id} title={t(sec.title ?? '')} folded={folded} count={count} dot={dot} short={short} onToggle={() => toggle(id)} />
+              {shown.map((item) => (
+                <SidebarLink key={item.path} item={item} active={item.path === activePath} dot={linkLit(lit, paths, item.path)} height={rowHeight} />
+              ))}
+            </div>
+          );
+        })}
       </div>
       </div>
 
@@ -268,6 +294,80 @@ function Sidebar({ gymName, nav, activePath }: { gymName: string; nav: NavItem[]
         </div>
       </div>
     </nav>
+  );
+}
+
+/**
+ * R-526: a group's small grey heading, which folds the group or opens it again. Folded, it shows the sum of its rows'
+ * numbers (and the new-feature dot of a row inside), so nothing waiting is hidden by folding.
+ */
+function GroupHeading({
+  id,
+  title,
+  folded,
+  count,
+  dot,
+  short,
+  onToggle,
+}: {
+  id: NavGroupId;
+  title: string;
+  folded: boolean;
+  count: number;
+  dot: boolean;
+  short: boolean;
+  onToggle: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      id={`menu-group-${id}`}
+      className="menu-group"
+      aria-expanded={!folded}
+      onClick={onToggle}
+      style={{
+        appearance: 'none',
+        display: 'flex',
+        alignItems: 'center',
+        gap: 6,
+        width: '100%',
+        minHeight: short ? 20 : 24,
+        margin: short ? `${space.sm}px 0 0` : `${space.md}px 0 2px`,
+        padding: `0 ${space.md}px`,
+        border: 'none',
+        borderRadius: radius.sm,
+        background: 'transparent',
+        cursor: 'pointer',
+        fontFamily: font.body,
+        fontSize: 11,
+        fontWeight: 700,
+        letterSpacing: 0.6,
+        // CSS capitals, so a screen reader says the word ("Members"), not the letters.
+        textTransform: 'uppercase',
+        color: color.inkMuted,
+        textAlign: 'left',
+      }}
+    >
+      <span style={{ flex: 1, minWidth: 0, display: 'flex', alignItems: 'center', gap: 6 }}>
+        {title}
+        {dot ? <NewDot /> : null}
+      </span>
+      {count > 0 ? <Badge count={count} /> : null}
+      <svg
+        width="14"
+        height="14"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden
+        style={{ flexShrink: 0, transform: folded ? 'rotate(-90deg)' : 'none', transition: 'transform 160ms cubic-bezier(0.16, 1, 0.3, 1)' }}
+      >
+        <path d="m6 9 6 6 6-6" />
+      </svg>
+    </button>
   );
 }
 
@@ -318,6 +418,7 @@ function SidebarLink({ item, active, dot, height }: { item: NavItem; active: boo
           {dot ? <NewDot /> : null}
         </span>
         {item.badge ? <Badge count={item.badge} /> : null}
+        {item.progress ? <SetupMark progress={item.progress} /> : null}
       </span>
     </Link>
   );
@@ -414,14 +515,25 @@ function BottomNav({ nav, menuPaths, activePath }: { nav: NavItem[]; menuPaths: 
                   <Badge count={item.badge} />
                 </span>
               ) : null}
-              {barLit(lit, paths, item.path) ? (
+              {item.progress ? (
+                // R-526: Set up your gym's ring on More: top left when a number badge is on the right, else top right.
+                <span
+                  data-setup-mark=""
+                  style={{ position: 'absolute', top: 4, lineHeight: 0, ...(item.badge ? { left: '50%', marginLeft: -24 } : { right: '50%', marginRight: -22 }) }}
+                >
+                  <ProgressRing progress={item.progress} size={14} />
+                  <span style={visuallyHidden}>{progressWords(item.progress)}</span>
+                </span>
+              ) : null}
+              {/* With a badge and the ring both on More, the new-feature dot waits: the ring already says "look here". */}
+              {barLit(lit, paths, item.path) && !(item.progress && item.badge) ? (
                 // Top right of the icon; top left when a number badge sits on the right.
                 <span
                   style={{
                     position: 'absolute',
                     top: 6,
                     lineHeight: 0,
-                    ...(item.badge ? { left: '50%', marginLeft: -18 } : { right: '50%', marginRight: -16 }),
+                    ...(item.badge || item.progress ? { left: '50%', marginLeft: -18 } : { right: '50%', marginRight: -16 }),
                   }}
                 >
                   <NewDot />
@@ -434,6 +546,31 @@ function BottomNav({ nav, menuPaths, activePath }: { nav: NavItem[]; menuPaths: 
     </nav>
   );
 }
+
+/** R-526: the set-up mark in a menu row: the ring and "3/8", with the whole words for a screen reader. */
+function SetupMark({ progress }: { progress: SetupProgress }) {
+  return (
+    <span data-setup-mark="" style={{ display: 'inline-flex', alignItems: 'center', gap: 5, flexShrink: 0 }}>
+      <ProgressRing progress={progress} size={15} />
+      <span aria-hidden style={{ fontFamily: font.body, fontSize: 12, fontWeight: 700, color: color.inkSecondary, fontVariantNumeric: 'tabular-nums' }}>
+        {progressShort(progress)}
+      </span>
+      <span style={visuallyHidden}>{progressWords(progress)}</span>
+    </span>
+  );
+}
+
+const visuallyHidden = {
+  position: 'absolute',
+  width: 1,
+  height: 1,
+  padding: 0,
+  margin: -1,
+  overflow: 'hidden',
+  clip: 'rect(0 0 0 0)',
+  whiteSpace: 'nowrap',
+  border: 0,
+} as const;
 
 function Badge({ count }: { count: number }) {
   return (

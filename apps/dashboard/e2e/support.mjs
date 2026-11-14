@@ -1520,17 +1520,6 @@ export async function browserOnlyGym(page) {
 
 // ---------------------------------------------------------------- fresh eyes (14 Nov 2026): shared stand-ins
 
-/**
- * Today shows one set-up card at a time, Get started first (src/crm/logic/setupCards.ts). A test that looks at the
- * next card (the alerts offer, the install banner) hides the Get started list first, the way the owner would.
- */
-export async function hideGetStarted(page) {
-  const hide = page.getByRole('main').getByRole('button', { name: 'Hide this list' });
-  await expect(hide).toBeVisible({ timeout: 15_000 });
-  await hide.click();
-  await expect(hide).toHaveCount(0);
-}
-
 /** The 0069 "Member messages" calls. */
 export const TALK_FNS = ['owner_talk_count', 'owner_talk_list', 'owner_talk_reply', 'owner_talk_done'];
 

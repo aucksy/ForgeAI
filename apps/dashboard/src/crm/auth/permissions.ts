@@ -123,6 +123,8 @@ export function canOpen(role: Role, path: string): boolean {
   if (head === 'growth') return can(role, 'seeTotals');
   // F201 (12 Nov 2026): the AI Assistant is the owner's (it spends his credits; the server answers only his key).
   if (head === 'assistant') return role === 'owner';
+  // R-526 (14 Nov 2026): Set up your gym (plans, branding, staff, the poster ...) is the owner's list of jobs.
+  if (head === 'setup' || head === 'get-started') return can(role, 'eraseOrDemo');
   return true;
 }
 

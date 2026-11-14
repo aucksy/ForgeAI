@@ -70,7 +70,8 @@ import { ChallengesScreen } from './ui/screens/Challenges';
 import { FeedbackScreen } from './ui/screens/Feedback';
 import { MessagesScreen } from './ui/screens/Messages';
 import { Welcome } from './ui/Welcome';
-import { NextStepBar } from './ui/GetStartedCard';
+import { NextStepBar, useGetStarted } from './ui/GetStartedCard';
+import { SetupGymScreen } from './ui/screens/SetupGym';
 import { NewGymReady } from './ui/NewGymReady';
 import { t, useLang } from './lang/lang';
 import { WhatsNewScreen } from './ui/WhatsNew';
@@ -176,6 +177,12 @@ export function Routes({ online }: { online: boolean }) {
   const talkWaiting = useMemberMessageCount();
   // F201: the AI Assistant, for the owner of a real online gym, once the server's wallet answers (0071).
   const assistantOn = useAssistant().on;
+  // R-526: Set up your gym, for the owner: its place in the menu and its ring (ui/GetStartedCard.tsx). The ring's
+  // numbers while steps are left and the row is at the top; undefined when every step is done or it was moved down.
+  const getStarted = useGetStarted();
+  const { done: setupDone, total: setupTotal } = getStarted.progress;
+  const setupPending = getStarted.pending;
+  const setupProgress = useMemo(() => (setupPending ? { done: setupDone, total: setupTotal } : undefined), [setupPending, setupDone, setupTotal]);
 
   // Never set up: no plans, no members, and still the placeholder name.
   // An online gym is always set up: it was named when it was made, and its welcome screen's
@@ -205,67 +212,88 @@ export function Routes({ online }: { online: boolean }) {
     // Counted in PEOPLE like the two badges beside it, and like the list it opens.
     const atRisk = atRiskList(snapshot.members, snapshot.memberships, snapshot.visits, today).length;
     const enquiriesDue = dueCount(snapshot.enquiries, today);
+    // R-526 (owner, 14 Nov 2026): Set up your gym. Right under Today with its ring while steps are left; at the bottom
+    // (Your gym) with no ring once every step is done or the owner moved it down. The owner's (permissions.ts).
+    const setup: NavItem = setupProgress
+      ? { path: '/setup', label: t('Set up your gym'), icon: 'setup', progress: setupProgress }
+      : { path: '/setup', label: t('Set up your gym'), icon: 'setup', group: 'gym' };
+    // R-526: the top rows (no heading), then five small groups (logic/navGroups.ts). Every row and every role, flag
+    // and server condition is as before; only the order and the headings changed.
     // A Staff person never sees a page they cannot open (permissions.ts): no Expenses.
     return navFor<NavItem>(role, [
-      ...(allBranches ? [{ path: '/branches', label: t('All branches'), icon: 'branches' } as NavItem] : []),
       { path: '/', label: t('Today'), icon: 'today', badge: needsTotal || undefined },
+      ...(setupProgress ? [setup] : []),
       // F201: right under Today on a computer (a phone has the floating button and the row under More).
       ...(assistantOn ? [{ path: '/assistant', label: t('AI Assistant'), icon: 'sparkle' } as NavItem] : []),
-      { path: '/members', label: t('Members'), icon: 'members', badge: needsAttention },
-      // Badged with orders waiting at the desk — the one number on this bar that
-      // changes by itself while the owner watches.
-      { path: '/shop', label: t('Shop'), icon: 'shop', badge: newCount },
-      // 22 Oct 2026: notices, offers and wishes to members, moved out of Shop (owner only).
-      { path: '/messages', label: t('Messages & offers'), icon: 'messages' },
-      // Fresh eyes (R-447): the link and QR poster were under More on a phone but missing from a computer's menu.
-      { path: '/settings/invite', label: t('Invite members'), icon: 'invite' },
-      // #49 step 2: the front desk sees only the workout offer (to give earned rewards). The owner
-      // reaches it inside Messages & offers.
-      ...(role === 'staff' ? [{ path: '/messages/offer', label: t('Workout offer'), icon: 'messages' } as NavItem] : []),
+      // #41: an owner with 2 or more branches gets "All branches" (totals and lists across branches).
+      ...(allBranches ? [{ path: '/branches', label: t('All branches'), icon: 'branches' } as NavItem] : []),
+
+      // -- Members --
+      { path: '/members', label: t('Members'), icon: 'members', badge: needsAttention, group: 'members' },
       // "Visits" rather than "Attendance": six items across a 375px phone leave
       // about 54px of text, and the longer word does not fit. The screen itself is
       // still titled Attendance, which is the word an owner comparing products
       // looks for — a short tab label under a fuller page title is the ordinary
       // pattern on both mobile platforms.
-      { path: '/attendance', label: t('Visits'), icon: 'visits', badge: atRisk },
-      { path: '/money', label: t('Money'), icon: 'money', badge: overdue },
-      // Owner, 30 Oct 2026: month by month since the gym started on MettleUp (owner only: money totals).
-      { path: '/growth', label: t('Your growth'), icon: 'growth' },
-      { path: '/plans', label: t('Plans'), icon: 'plans' },
-      // Step 5 (15 Oct 2026): people who asked about joining, and money going out.
-      { path: '/enquiries', label: t('Enquiries'), icon: 'enquiries', badge: enquiriesDue || undefined },
-      { path: '/expenses', label: t('Expenses'), icon: 'money' },
-      // F105 (7 Nov 2026): trainer pages and personal-training bookings, with the other run-the-gym pages.
-      { path: '/trainers', label: t('Trainers'), icon: 'trainer' },
-      // 18 Oct 2026: routines the gym or a trainer sends to members' MettleUp app (owner and Staff).
-      { path: '/workouts', label: t('Workout plans'), icon: 'workouts' },
-      // R-120 (24 Oct 2026): what to eat, from the trainer (owner and Staff; on the gym's server, 0035).
-      { path: '/diet', label: t('Diet plans'), icon: 'diet' },
-      // F109 (#46): members' workout progress, for trainers and the owner (hidden until 0050, and for the plain desk).
-      ...(trainerNav ? [{ path: '/trainer', label: t('Training progress'), icon: 'growth' } as NavItem] : []),
-      // R-319 item 1 (4 Nov 2026): members' "Ask a trainer" questions, badged with the ones waiting (hidden until 0053).
-      ...(trainerNav && questionsOpen !== null
-        ? [{ path: '/questions', label: t('Questions for trainers'), icon: 'feedback', badge: questionsOpen || undefined } as NavItem]
-        : []),
+      { path: '/attendance', label: t('Visits'), icon: 'visits', badge: atRisk, group: 'members' },
+      // Step 5 (15 Oct 2026): people who asked about joining.
+      { path: '/enquiries', label: t('Enquiries'), icon: 'enquiries', badge: enquiriesDue || undefined, group: 'members' },
       // Owner, 12 Nov 2026: questions, feedback and complaints members send the gym from the app (owner and staff;
       // the server keeps complaints for the owner). Hidden until the gym's server has 0069.
       ...(talkWaiting !== null
-        ? [{ path: '/member-messages', label: t('Member messages'), icon: 'feedback', badge: talkWaiting || undefined } as NavItem]
+        ? [{ path: '/member-messages', label: t('Member messages'), icon: 'feedback', badge: talkWaiting || undefined, group: 'members' } as NavItem]
+        : []),
+      // Fresh eyes (R-447): the link and QR poster were under More on a phone but missing from a computer's menu.
+      { path: '/settings/invite', label: t('Invite members'), icon: 'invite', group: 'members' },
+
+      // -- Money --
+      { path: '/money', label: t('Money'), icon: 'money', badge: overdue, group: 'money' },
+      { path: '/plans', label: t('Plans'), icon: 'plans', group: 'money' },
+      // Badged with orders waiting at the desk — the one number on this bar that
+      // changes by itself while the owner watches.
+      { path: '/shop', label: t('Shop'), icon: 'shop', badge: newCount, group: 'money' },
+      // Step 5 (15 Oct 2026): money going out.
+      { path: '/expenses', label: t('Expenses'), icon: 'money', group: 'money' },
+      // Owner, 30 Oct 2026: month by month since the gym started on MettleUp (owner only: money totals).
+      { path: '/growth', label: t('Your growth'), icon: 'growth', group: 'money' },
+
+      // -- Training --
+      // F105 (7 Nov 2026): trainer pages and personal-training bookings.
+      { path: '/trainers', label: t('Trainers'), icon: 'trainer', group: 'training' },
+      // 18 Oct 2026: routines the gym or a trainer sends to members' MettleUp app (owner and Staff).
+      { path: '/workouts', label: t('Workout plans'), icon: 'workouts', group: 'training' },
+      // R-120 (24 Oct 2026): what to eat, from the trainer (owner and Staff; on the gym's server, 0035).
+      { path: '/diet', label: t('Diet plans'), icon: 'diet', group: 'training' },
+      // F109 (#46): members' workout progress, for trainers and the owner (hidden until 0050, and for the plain desk).
+      ...(trainerNav ? [{ path: '/trainer', label: t('Training progress'), icon: 'growth', group: 'training' } as NavItem] : []),
+      // R-319 item 1 (4 Nov 2026): members' "Ask a trainer" questions, badged with the ones waiting (hidden until 0053).
+      ...(trainerNav && questionsOpen !== null
+        ? [{ path: '/questions', label: t('Questions for trainers'), icon: 'feedback', badge: questionsOpen || undefined, group: 'training' } as NavItem]
         : []),
       // R-133 (26 Oct 2026): a monthly challenge and the leaderboard. The owner changes; the desk reads.
-      { path: '/challenges', label: t('Challenges'), icon: 'trophy' },
+      { path: '/challenges', label: t('Challenges'), icon: 'trophy', group: 'training' },
+
+      // -- Reach members --
+      // 22 Oct 2026: notices, offers and wishes to members, moved out of Shop (owner only).
+      { path: '/messages', label: t('Messages & offers'), icon: 'messages', group: 'reach' },
+      // #49 step 2: the front desk sees only the workout offer (to give earned rewards). The owner
+      // reaches it inside Messages & offers.
+      ...(role === 'staff' ? [{ path: '/messages/offer', label: t('Workout offer'), icon: 'messages', group: 'reach' } as NavItem] : []),
+
+      // -- Your gym --
       // R-119 (owner, 24 Oct 2026): the gym's logo and colours, one tap from the menu instead of
       // Settings -> Open branding. The owner's (permissions.ts canOpen hides it from the front desk).
-      { path: '/settings/branding', label: t('Branding'), icon: 'brand', group: 'setup' },
+      { path: '/settings/branding', label: t('Branding'), icon: 'brand', group: 'gym' },
       // R-124 (25 Oct 2026): when the gym is open, for members to see. The owner edits; the desk reads.
-      { path: '/settings/timings', label: t('Gym timings'), icon: 'clock', group: 'setup' },
-      { path: '/settings', label: t('Settings'), icon: 'settings', group: 'setup' },
+      { path: '/settings/timings', label: t('Gym timings'), icon: 'clock', group: 'gym' },
+      { path: '/settings', label: t('Settings'), icon: 'settings', group: 'gym' },
       // Launch H7 (21 Oct 2026): write to MettleUp (problems, ideas). Owner and Staff. Not in the demo
       // gym, which sends nothing to anyone.
-      ...(demo ? [] : [{ path: '/feedback', label: t('Help and feedback'), icon: 'feedback', group: 'setup' } as NavItem]),
+      ...(demo ? [] : [{ path: '/feedback', label: t('Help and feedback'), icon: 'feedback', group: 'gym' } as NavItem]),
+      ...(setupProgress ? [] : [setup]),
     ]);
     // `lang`: the labels are words, so a language switch makes them again.
-  }, [memberViews, snapshot, today, newCount, role, allBranches, demo, lang, trainerNav, questionsOpen, talkWaiting, needsTotal, assistantOn]);
+  }, [memberViews, snapshot, today, newCount, role, allBranches, demo, lang, trainerNav, questionsOpen, talkWaiting, needsTotal, assistantOn, setupProgress]);
   // Step 3 (15 Oct 2026): five on a phone's bottom bar, like GoGym4U and GymBook — Aaj, Members,
   // Hisaab, Hazri and More (Plans, Shop, Settings). Six or seven icons were too small to read.
   const phoneNav = useMemo<NavItem[]>(() => {
@@ -273,7 +301,9 @@ export function Routes({ online }: { online: boolean }) {
     const kept = ['/', '/members', '/money', '/attendance'].map(by).filter((n): n is NavItem => Boolean(n));
     const rest = nav.filter((n) => !kept.includes(n));
     const restBadge = rest.reduce((sum, n) => sum + (n.badge ?? 0), 0);
-    return [...kept, { path: '/more', label: t('More'), icon: 'more', badge: restBadge || undefined }];
+    // R-526: the set-up ring shows on More too, while its row is in there with steps left.
+    const restProgress = rest.find((n) => n.progress)?.progress;
+    return [...kept, { path: '/more', label: t('More'), icon: 'more', badge: restBadge || undefined, progress: restProgress }];
   }, [nav]);
 
 
@@ -405,6 +435,12 @@ function Screen({ segments, role }: { segments: string[]; role: Role }) {
     case 'assistant':
       // F201: the AI Assistant (owner only; hidden until the gym's server has 0071, then the page goes to Today).
       return <AssistantScreen />;
+    case 'setup':
+      // R-526 (owner, 14 Nov 2026): Set up your gym, the first steps, out of Today (owner only, permissions.ts).
+      return <SetupGymScreen />;
+    case 'get-started':
+      // R-526: an old or typed "get-started" address lands on the same page.
+      return <Redirect to="/setup" />;
     case 'news':
       // R-239: What's new, out of Settings (the sidebar's bottom row, the bell, More on a phone).
       return <WhatsNewScreen />;

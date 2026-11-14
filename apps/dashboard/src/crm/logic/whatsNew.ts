@@ -47,6 +47,11 @@ export const ADMIN_NEWS: readonly AdminNewsEntry[] = [
         text: 'Your gym’s logo now shows at the top of the admin app, next to your gym’s name. Your staff see it too. To add or change it, open Branding.',
         go: { label: 'Open Branding', path: '/settings/branding' },
       },
+      {
+        // R-526 (owner, 14 Nov 2026): the side menu (and the phone's More) in five groups; Get started out of Today.
+        text: 'The menu is now in groups: Members, Money, Training, Reach members and Your gym. Your first steps moved from Today to their own page, Set up your gym. Its green ring in the menu shows how many are done.',
+        go: { label: 'Open Set up your gym', path: '/setup' },
+      },
       // R-506/R-510 (moved from ADMIN_NEWS_PENDING at the deploy): 0075 + 0076 live, VAPID key set, HQ 558464b7.
       {
         text: 'New on Today: "Latest from your members". It shows when a member asks a question, sends a message or a complaint, orders from the shop, pays online or joins your gym. Tap a line to open it.',
@@ -69,7 +74,8 @@ export const ADMIN_NEWS: readonly AdminNewsEntry[] = [
         text: 'Member messages now opens on the right type when you tap a line on Today, and each type button says how many wait for a reply, like "Complaints · 1 waiting".',
       },
       {
-        text: 'Today now shows one setup card at a time (Get started first, then alerts, then putting the admin app on your phone), so the page is shorter.',
+        // R-526: Get started has its own page now (the line above), so it is no longer named here.
+        text: 'Today now shows one setup card at a time (first alerts, then putting the admin app on your phone), so the page is shorter.',
       },
       {
         text: 'In the AI Assistant, a day you pick now also shows in words, like "Sun, 18 Oct". When a message is ready, its Send button comes fully into view.',

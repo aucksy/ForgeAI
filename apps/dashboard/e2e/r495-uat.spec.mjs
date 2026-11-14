@@ -13,7 +13,7 @@ import { mkdirSync } from 'node:fs';
 
 import { expect, test } from '@playwright/test';
 
-import { DESK, OWNER, addDeskPerson, expectFitsPhone, hideGetStarted, openApp, secondPhone, signIn, startOnlineGym } from './support.mjs';
+import { DESK, OWNER, addDeskPerson, expectFitsPhone, openApp, secondPhone, signIn, startOnlineGym } from './support.mjs';
 
 const DIR = 'e2e/.results/uat';
 mkdirSync(DIR, { recursive: true });
@@ -191,10 +191,8 @@ test('R495-a the owner saves a logo: it shows top-left at once on a phone and a 
   await page.goto('./#/');
   await expect(page.getByRole('heading', { name: 'Today', exact: true })).toBeVisible();
   await expectNeatLogo(page, 'phone, Today');
-  // Fresh eyes (14 Nov 2026): the first card on a phone said "Install the admin app on this computer". And one set-up
-  // card at a time: the install banner waits behind Get started, then comes once it is hidden.
-  await expect(page.getByRole('heading', { name: 'Put the admin app on your phone', exact: true })).toHaveCount(0);
-  await hideGetStarted(page);
+  // Fresh eyes (14 Nov 2026): the first card on a phone said "Install the admin app on this computer". R-526: Get started
+  // has its own page now, so the install banner shows on Today at once.
   await expect(page.getByRole('heading', { name: 'Put the admin app on your phone', exact: true })).toBeVisible();
   await expect(page.getByText(/this computer/)).toHaveCount(0);
   await shot(page, 'phone-today');

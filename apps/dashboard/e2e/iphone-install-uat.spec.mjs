@@ -12,7 +12,7 @@ import { mkdirSync } from 'node:fs';
 
 import { expect, test } from '@playwright/test';
 
-import { bottomBar, expectFitsPhone, hideGetStarted, openApp, openSettings, startOnlineGym } from './support.mjs';
+import { bottomBar, expectFitsPhone, openApp, openSettings, startOnlineGym } from './support.mjs';
 
 const DIR = 'e2e/.results/uat';
 mkdirSync(DIR, { recursive: true });
@@ -127,9 +127,8 @@ test.describe('iPhone Safari', () => {
   test('R446-b the Today banner: "Show me how" opens the steps; "Not now" stays; then it closes for good', async ({ page }) => {
     await openApp(page);
     await startOnlineGym(page);
-    // Fresh eyes (14 Nov 2026): one set-up card on Today at a time; the banner comes after Get started.
-    await expect(page.getByRole('heading', { name: PHONE_TITLE, exact: true })).toHaveCount(0);
-    await hideGetStarted(page);
+    // R-526: Get started has its own page now; one set-up card on Today at a time (the alerts offer, when there is one,
+    // goes first; this pretend server has no alerts, so the banner is first).
     const card = installCard(page);
     await card.scrollIntoViewIfNeeded();
     await expect(card).toContainText(PHONE_LINE);

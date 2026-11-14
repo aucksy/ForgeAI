@@ -28,7 +28,6 @@ import {
   WEB_PUSH_FNS,
   addDeskPerson,
   expectFitsPhone,
-  hideGetStarted,
   installQuestions,
   installTalk,
   openApp,
@@ -304,9 +303,7 @@ test('Alerts with the admin app closed: the offer on Today, the device switch, w
   push.on = true;
   await startOnlineGym(page);
   const main = page.getByRole('main');
-  // Fresh eyes (14 Nov 2026): one set-up card at a time; the alerts offer comes after the Get started list.
-  await expect(main.getByTestId('alerts-offer')).toHaveCount(0);
-  await hideGetStarted(page);
+  // R-526: Get started has its own page (Set up your gym), so the alerts offer is the first set-up card on Today.
 
   // 6. The offer, once.
   const offer = main.getByTestId('alerts-offer');

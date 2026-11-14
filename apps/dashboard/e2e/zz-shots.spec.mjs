@@ -13,8 +13,6 @@ test.skip(!process.env.SHOTS, 'landing-page pictures only on request (SHOTS=1)')
 test('landing page pictures', async ({ page }) => {
   await openApp(page);
   await startDemo(page);
-  const hide = page.getByRole('button', { name: 'Hide this list' });
-  if (await hide.isVisible()) await hide.tap();
   const shot = async (name) => {
     await page.waitForTimeout(400);
     await page.screenshot({ path: `public/home/${name}.png` });

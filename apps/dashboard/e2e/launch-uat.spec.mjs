@@ -45,11 +45,6 @@ async function catchOpen(page) {
   });
 }
 
-async function hideGetStarted(page) {
-  const hide = page.getByRole('button', { name: 'Hide this list' });
-  if (await hide.isVisible()) await hide.tap();
-}
-
 /** y of a section heading on Today. */
 async function topOf(page, name) {
   const box = await page.getByRole('heading', { name, exact: true }).boundingBox();
@@ -71,7 +66,6 @@ for (const size of ['phone', 'computer']) {
       await shot(page, `${size}-0-welcome`);
 
       await startDemo(page);
-      await hideGetStarted(page);
       const talk = await topOf(page, 'Talk to these members');
       const money = await topOf(page, 'Money to collect');
       const habit = await topOf(page, 'Losing the habit');

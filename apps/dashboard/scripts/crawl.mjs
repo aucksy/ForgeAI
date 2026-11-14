@@ -41,6 +41,8 @@ const ROUTES = [
   // F201: the AI Assistant. The crawl's demo gym is not an online gym, so the assistant stays hidden and the address
   // must go back to Today cleanly (assistant-uat.spec.mjs photographs the assistant itself).
   '/assistant',
+  // R-526: Set up your gym (the first steps, out of Today).
+  '/setup',
 ];
 
 async function waitForServer() {

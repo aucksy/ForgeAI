@@ -3,6 +3,8 @@
  * rows with their own badges — Plans, Shop, Messages & offers (the owner's), Branding (the owner's), Settings, and the two
  * Settings pages owners look for most (Staff & sign-in, Invite members). On a computer the sidebar
  * shows them all instead.
+ * R-526 (owner, 14 Nov 2026): the same groups and headings as the computer's side menu (logic/navGroups.ts), and Set
+ * up your gym on top with its ring while steps are left.
  */
 
 import { useRole } from '../../auth/AuthProvider';
@@ -21,7 +23,10 @@ import { QUESTION_WORDS } from '../../logic/askQuestions';
 import { MEMBER_MESSAGE_WORDS } from '../../logic/memberMessages';
 import { useMemberMessageCount } from '../MemberMessageParts';
 import { useAssistant } from '../../assistant/useAssistant';
+import { useBranches } from '../../branches/context';
 import { t } from '../../lang/lang';
+import { navSections, type NavGroupId, type SetupProgress } from '../../logic/navGroups';
+import { ProgressRing, progressWords, useGetStarted } from '../GetStartedCard';
 
 interface Row {
   path: string;
@@ -29,16 +34,11 @@ interface Row {
   hint: string;
   icon: IconName;
   badge?: number;
-  /** UAT B-15 (30 Oct 2026): the 16 rows sit under three headings. */
-  group: Group;
+  /** UAT B-15 (30 Oct 2026): the rows sit under headings; R-526: the side menu's groups (none = the top rows). */
+  group?: NavGroupId;
+  /** R-526: Set up your gym's steps done, while some are left. */
+  progress?: SetupProgress;
 }
-
-type Group = 'run' | 'talk' | 'setup';
-const GROUPS: { id: Group; title: string }[] = [
-  { id: 'run', title: 'Run the gym' },
-  { id: 'talk', title: 'Talk to members' },
-  { id: 'setup', title: 'Set up and help' },
-];
 
 export function MoreScreen() {
   const { newCount } = useShop();
@@ -53,63 +53,85 @@ export function MoreScreen() {
   // F201: the AI Assistant (owner only; hidden until the gym's server answers its credits, 0071).
   const assistantOn = useAssistant().on;
   // Staff never sees Expenses (permissions.ts); the rest stays, with words that fit what they can do.
+  // #41: "All branches", as in the side menu (an owner with 2 or more branches).
+  const { multi, canOpenOthers } = useBranches();
+  // R-526: Set up your gym, on top with its ring while steps are left; under Your gym once done or moved down.
+  const getStarted = useGetStarted();
+  const setupRow: Row = {
+    path: '/setup',
+    label: 'Set up your gym',
+    hint: 'Finish these and your gym is ready for members.',
+    icon: 'setup',
+    ...(getStarted.pending ? { progress: getStarted.progress } : { group: 'gym' as const }),
+  };
+  // Staff never sees Expenses (permissions.ts); the rest stays, with words that fit what they can do.
+  // R-526: in the side menu's order. Members, Visits and Money are on the bottom bar, so not here.
   const rows: Row[] = navFor<Row>(role, [
+    ...(getStarted.pending ? [setupRow] : []),
     ...(assistantOn
-      ? [{ path: '/assistant', group: 'run', label: 'AI Assistant', hint: 'Ask a question or give a task, in Hindi or English', icon: 'sparkle' } as Row]
+      ? [{ path: '/assistant', label: 'AI Assistant', hint: 'Ask a question or give a task, in Hindi or English', icon: 'sparkle' } as Row]
       : []),
-    { path: '/growth', group: 'run', label: 'Your growth', hint: 'Is the gym growing since MettleUp? Month by month', icon: 'growth' },
-    { path: '/plans', group: 'run', label: 'Plans', hint: 'Prices and durations', icon: 'plans' },
+    ...(multi && canOpenOthers ? [{ path: '/branches', label: 'All branches', hint: 'Totals and lists from every branch', icon: 'branches' } as Row] : []),
+
     {
-      path: '/enquiries', group: 'run',
+      path: '/enquiries', group: 'members',
       label: 'Enquiries',
       hint: 'People who asked about joining',
       icon: 'enquiries',
       badge: enquiriesDue,
     },
-    { path: '/expenses', group: 'run', label: 'Expenses', hint: 'Money going out, and profit', icon: 'money' },
-    // F105: trainers' hours and bookings are running the gym day to day, so here, not under "Talk to members".
-    { path: '/trainers', group: 'run', label: 'Trainers', hint: 'Their hours, and personal-training bookings', icon: 'trainer' },
-    { path: '/workouts', group: 'talk', label: 'Workout plans', hint: 'Send members their routines', icon: 'workouts' },
-    { path: '/diet', group: 'talk', label: 'Diet plans', hint: 'Send members what to eat', icon: 'diet' },
+    // Owner, 12 Nov 2026: members' "Message your gym" (owner and staff; complaints the owner's). Hidden until 0069.
+    ...(talkWaiting !== null
+      ? [{ path: '/member-messages', group: 'members', label: 'Member messages', hint: MEMBER_MESSAGE_WORDS.navHint, icon: 'feedback', badge: talkWaiting } as Row]
+      : []),
+    {
+      path: '/settings/invite', group: 'members',
+      label: 'Invite members',
+      hint: 'Link and QR poster',
+      icon: 'invite',
+    },
+
+    { path: '/plans', group: 'money', label: 'Plans', hint: 'Prices and durations', icon: 'plans' },
+    { path: '/shop', group: 'money', label: 'Shop', hint: 'Orders from the app', icon: 'shop', badge: newCount },
+    { path: '/expenses', group: 'money', label: 'Expenses', hint: 'Money going out, and profit', icon: 'money' },
+    { path: '/growth', group: 'money', label: 'Your growth', hint: 'Is the gym growing since MettleUp? Month by month', icon: 'growth' },
+
+    { path: '/trainers', group: 'training', label: 'Trainers', hint: 'Their hours, and personal-training bookings', icon: 'trainer' },
+    { path: '/workouts', group: 'training', label: 'Workout plans', hint: 'Send members their routines', icon: 'workouts' },
+    { path: '/diet', group: 'training', label: 'Diet plans', hint: 'Send members what to eat', icon: 'diet' },
     // F109 (#46): hidden until the gym's server has the trainer view (0050), and for the desk without the Trainer tick.
     ...(trainerNav
-      ? [{ path: '/trainer', group: 'talk', label: 'Training progress', hint: owner ? 'Members’ workout progress, and their trainer' : 'Your members’ workout progress', icon: 'growth' } as Row]
+      ? [{ path: '/trainer', group: 'training', label: 'Training progress', hint: owner ? 'Members’ workout progress, and their trainer' : 'Your members’ workout progress', icon: 'growth' } as Row]
       : []),
     // R-319 item 1: members' "Ask a trainer" questions for this person; hidden until 0053 (count null).
     ...(trainerNav && questionsOpen !== null
-      ? [{ path: '/questions', group: 'talk', label: 'Questions for trainers', hint: QUESTION_WORDS.navHint, icon: 'feedback', badge: questionsOpen } as Row]
+      ? [{ path: '/questions', group: 'training', label: 'Questions for trainers', hint: QUESTION_WORDS.navHint, icon: 'feedback', badge: questionsOpen } as Row]
       : []),
-    // Owner, 12 Nov 2026: members' "Message your gym" (owner and staff; complaints the owner's). Hidden until 0069.
-    ...(talkWaiting !== null
-      ? [{ path: '/member-messages', group: 'talk', label: 'Member messages', hint: MEMBER_MESSAGE_WORDS.navHint, icon: 'feedback', badge: talkWaiting } as Row]
-      : []),
-    { path: '/shop', group: 'run', label: 'Shop', hint: 'Orders from the app', icon: 'shop', badge: newCount },
-    { path: '/messages', group: 'talk', label: 'Messages & offers', hint: 'Messages, offers and wishes to members', icon: 'messages' },
-    { path: '/settings/branding', group: 'setup', label: 'Branding', hint: 'Your logo and colours in the member app', icon: 'brand' },
-    { path: '/settings/timings', group: 'setup', label: 'Gym timings', hint: owner ? 'When you are open, for members to see' : 'When the gym is open', icon: 'clock' },
-    { path: '/challenges', group: 'talk', label: 'Challenges', hint: owner ? 'A monthly goal for members, and the leaderboard' : 'Who has reached the goal', icon: 'trophy' },
+    { path: '/challenges', group: 'training', label: 'Challenges', hint: owner ? 'A monthly goal for members, and the leaderboard' : 'Who has reached the goal', icon: 'trophy' },
+
+    { path: '/messages', group: 'reach', label: 'Messages & offers', hint: 'Messages, offers and wishes to members', icon: 'messages' },
+    // #49 step 2: the desk's workout offer list, as in the side menu (the owner reaches it in Messages & offers).
+    ...(role === 'staff' ? [{ path: '/messages/offer', group: 'reach', label: 'Workout offer', hint: 'Give members the rewards they earned', icon: 'messages' } as Row] : []),
+
+    { path: '/settings/branding', group: 'gym', label: 'Branding', hint: 'Your logo and colours in the member app', icon: 'brand' },
+    { path: '/settings/timings', group: 'gym', label: 'Gym timings', hint: owner ? 'When you are open, for members to see' : 'When the gym is open', icon: 'clock' },
     {
-      path: '/settings/people', group: 'setup',
+      path: '/settings/people', group: 'gym',
       label: 'Staff & sign-in',
       hint: owner ? 'Who can open this admin app, and your PIN' : 'Your PIN, and signing out',
       icon: 'key',
     },
     {
-      path: '/settings/invite', group: 'talk',
-      label: 'Invite members',
-      hint: 'Link and QR poster',
-      icon: 'invite',
-    },
-    {
-      path: '/settings', group: 'setup',
+      path: '/settings', group: 'gym',
       label: 'Settings',
       hint: owner ? 'Gym details, screen colours, app' : 'Screen colours, app, sign-in',
       icon: 'settings',
     },
     // R-148: what changed in the admin app (R-239: its own page, /news).
-    { path: '/news', group: 'setup', label: "What's new", hint: 'Changes to this admin app', icon: 'news' },
+    { path: '/news', group: 'gym', label: "What's new", hint: 'Changes to this admin app', icon: 'news' },
     // Launch H7 (21 Oct 2026).
-    { path: '/feedback', group: 'setup', label: 'Help and feedback', hint: 'Ask a question, or tell MettleUp a problem or an idea', icon: 'feedback' },
+    { path: '/feedback', group: 'gym', label: 'Help and feedback', hint: 'Ask a question, or tell MettleUp a problem or an idea', icon: 'feedback' },
+    ...(getStarted.pending ? [] : [setupRow]),
   ]);
   // F198: a dot on the row that leads to a new feature (Settings for Pay MettleUp, Branding for its icon preview).
   const lit = useNewFeatures();
@@ -117,11 +139,12 @@ export function MoreScreen() {
   return (
     <>
       <PageHeader title={t('More')} />
-      {GROUPS.map((g) => {
-        const inGroup = rows.filter((r) => r.group === g.id);
-        if (inGroup.length === 0) return null;
+      {navSections(rows).map((g) => {
+        const inGroup = g.items;
+        const title = g.title ? t(g.title) : null;
         return (
-      <section key={g.id} aria-label={t(g.title)} style={{ marginBottom: space.lg }}>
+      <section key={g.group ?? 'top'} aria-label={title ?? t('More')} style={{ marginBottom: space.lg }}>
+      {title ? (
       <h2
         style={{
           margin: `0 0 ${space.sm}px`,
@@ -133,8 +156,9 @@ export function MoreScreen() {
           color: color.inkMuted,
         }}
       >
-        {t(g.title)}
+        {title}
       </h2>
+      ) : null}
       <Card>
         <div style={{ display: 'grid' }}>
           {inGroup.map((r, i) => (
@@ -188,6 +212,16 @@ export function MoreScreen() {
                     }}
                   >
                     {r.badge}
+                  </span>
+                ) : null}
+                {r.progress ? (
+                  // R-526: the set-up ring and "3 of 8", unlike the orange number badges.
+                  <span data-setup-mark="" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+                    <ProgressRing progress={r.progress} size={18} />
+                    <span style={{ fontFamily: font.body, fontSize: 13, fontWeight: 700, color: color.inkSecondary, whiteSpace: 'nowrap' }}>
+                      {t('{done} of {total}', { done: r.progress.done, total: r.progress.total })}
+                    </span>
+                    <span style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0 0 0 0)' }}>{progressWords(r.progress)}</span>
                   </span>
                 ) : null}
                 <span aria-hidden style={{ color: color.inkMuted, fontSize: 20 }}>
