@@ -202,7 +202,9 @@ function Sidebar({ gymName, nav, activePath }: { gymName: string; nav: NavItem[]
           display: 'flex',
           flexDirection: 'column',
           gap: short ? 0 : 2,
-          paddingBottom: space.xs,
+          // Fresh eyes (14 Nov 2026): the last row (Settings) sat half under the fade by "More below". While the menu is
+          // longer than the window, the rows end with the fade's height of room, so the last one scrolls fully clear.
+          paddingBottom: scroll.overflows ? 28 + space.xs : space.xs,
         }}
       >
         {nav.map((item, i) => (

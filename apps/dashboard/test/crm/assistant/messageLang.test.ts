@@ -75,7 +75,17 @@ describe('Hindi or Both on a message the AI wrote in English', () => {
     expect(after.message!.rewrites).toBe(1);
     expect(draftOf(after).body).toContain('Wishing you and your family');
     expect(draftOf(after).body).toContain(HINDI.body_hi);
+    // Fresh eyes (14 Nov 2026): the title carries the Hindi too, as Messages & offers' templates do.
+    expect(draftOf(after).title).toBe(`Happy Chhath Puja / ${HINDI.title_hi}`);
     expect(langNote(after)).toBeNull();
+  });
+
+  it('a Both title that would pass 60 letters stays English (the Hindi is in the message)', () => {
+    const long = 'Happy Chhath Puja from everyone at the gym, see you';
+    const card = cardOf(greeting({ title_en: long, ...HINDI }));
+    const p = pickLang(card, 'both', shown(card));
+    if (p?.kind !== 'switch') throw new Error('expected a switch');
+    expect(draftOf(withMessage(card, p.next, planData())).title).toBe(long);
   });
 
   it('Hindi: the Hindi words only, once they are written', () => {
@@ -95,6 +105,16 @@ describe('Hindi or Both on a message the AI wrote in English', () => {
     expect(next.lang).toBe('en');
     expect(outcome?.text).toBe(LANG_WORDS.failed);
     expect(draftOf(withMessage(card, next, planData())).body).not.toMatch(/[ऀ-ॿ]/);
+    // Fresh eyes (14 Nov 2026): the card remembers what he asked for, so "Try Hindi again" asks for Both once more,
+    // and the line says plainly that Send now goes in English only.
+    expect(next.missed).toBe('both');
+    expect(LANG_WORDS.failed).toContain('English only');
+    const again = pickLang({ ...card, message: next }, next.missed!, shown(card));
+    expect(again).toMatchObject({ kind: 'write', lang: 'both', how: ADD_HINDI_HOW });
+    // Once the Hindi comes (or any language is picked), the reminder is gone.
+    expect(afterRewrite(next, { ...EN, ...HINDI }, ADD_HINDI_HOW, 'both').next.missed).toBeUndefined();
+    const en = pickLang({ ...card, message: next }, 'en', shown(card));
+    expect(en?.kind === 'switch' ? en.next.missed : 'x').toBeUndefined();
   });
 
   it('his own edits are what the Hindi is written from', () => {

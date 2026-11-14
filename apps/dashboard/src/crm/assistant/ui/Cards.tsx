@@ -10,7 +10,7 @@
  * The written plan opens in the Workout plans builder; its Save carries the 3-credit price. Diet plans are not
  * written yet: that card says so plainly and never mentions credits.
  */
-import { useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 
 import { t } from '../../lang/lang';
 import { addDays, formatDayShort, isValidDateISO } from '../../logic/dates';
@@ -576,6 +576,19 @@ function MessageView({ turnId, card, dr, data, ctl }: { turnId: string; card: Dr
   const note = langNote(card);
   // R-501 fresh look: the failure line sat below the buttons, under the ask box on a phone; it shows where he tapped.
   const hindiFailed = card.status === 'open' && card.outcome?.text === LANG_WORDS.failed;
+  // Fresh eyes (14 Nov 2026): the line said "Try again" with no button to press. The button sits under the line and
+  // asks for the same language again (the "Add Hindi" rewrite). With no rewrites left, the card says why instead.
+  const canRetry = hindiFailed && Boolean(msg) && (msg?.rewrites ?? MAX_REWRITES) < MAX_REWRITES;
+  // Fresh eyes (14 Nov 2026): on a phone, Send sat under the ask box after the words changed. When a rewrite comes
+  // back (Hindi written, Shorter...), the card brings Send up into view, clear of the ask box (scroll-margin below).
+  const sendRow = useRef<HTMLDivElement>(null);
+  const rewrites = msg?.rewrites ?? 0;
+  const seenRewrites = useRef(rewrites);
+  useEffect(() => {
+    if (rewrites === seenRewrites.current) return;
+    seenRewrites.current = rewrites;
+    if (card.status === 'open') sendRow.current?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }, [rewrites, card.status]);
   const setWords = (title: string, bodyText: string) =>
     updateCard(turnId, card.id, (c) => (c.kind === 'draft' && c.result.kind === 'draft' && c.result.draft.tool === 'draft_message'
       ? { ...withDraft(c, { ...c.result.draft, title, body: bodyText }), message: c.message ? { ...c.message, edited: true } : null }
@@ -612,9 +625,18 @@ function MessageView({ turnId, card, dr, data, ctl }: { turnId: string; card: Dr
           </Row>
         ) : null}
         {/* R-501: Hindi or Both on a message with no Hindi words writes them first; this says so, and when it works. */}
-        {hindiFailed ? (
+        {canRetry && msg?.missed ? (
+          <div style={{ display: 'grid', gap: 8, justifyItems: 'start', margin: '8px 0 2px' }}>
+            <div role="alert" style={{ ...quiet, color: color.criticalText, fontWeight: 700 }}>
+              {t(LANG_WORDS.failed)}
+            </div>
+            <Button variant="ghost" needsInternet onClick={() => pick(msg.missed ?? 'both')}>
+              {t(LANG_WORDS.retry)}
+            </Button>
+          </div>
+        ) : hindiFailed ? (
           <div role="alert" style={{ ...quiet, margin: '8px 0 2px', color: color.criticalText, fontWeight: 700 }}>
-            {t(LANG_WORDS.failed)}
+            {t(msg && msg.rewrites >= MAX_REWRITES ? LANG_WORDS.cap : LANG_WORDS.failed)}
           </div>
         ) : note ? (
           <div role={msg?.writing ? 'status' : undefined} style={{ ...quiet, margin: '8px 0 2px' }}>
@@ -656,7 +678,8 @@ function MessageView({ turnId, card, dr, data, ctl }: { turnId: string; card: Dr
             <Chip round onClick={() => ctl.rewrite(turnId, card, dr.kind === 'closed' || dr.kind === 'timing' || dr.kind === 'reminder' ? 'Make it more polite' : 'Make it more festive and warm')}>
               {dr.kind === 'closed' || dr.kind === 'timing' || dr.kind === 'reminder' ? t('More polite') : t('More festive')}
             </Chip>
-            {msg.lang === 'en' ? (
+            {/* The failure line above has its own "Try Hindi again"; one Hindi button at a time. */}
+            {msg.lang === 'en' && !canRetry ? (
               <Chip round onClick={() => ctl.rewrite(turnId, card, 'Add the same message in Hindi')}>
                 {t('Add Hindi')}
               </Chip>
@@ -666,11 +689,14 @@ function MessageView({ turnId, card, dr, data, ctl }: { turnId: string; card: Dr
       </div>
       <div style={{ padding: `14px ${space.lg}px ${space.lg}px`, display: 'grid', gap: 10 }}>
         <Checks dr={dr} data={data} card={card} />
-        {inApp === 0 ? (
-          <p style={{ ...quiet, color: color.ink }}>{t('None of these members has the MettleUp app yet, so the message cannot go in the app. Send it on WhatsApp below.')}</p>
-        ) : (
-          <ConfirmButton turnId={turnId} card={card} dr={dr} data={data} ctl={ctl} appCount={inApp} />
-        )}
+        {/* --assist-ask-space: the ask box's height on the phone page (AssistantHome), so Send stops above it. */}
+        <div ref={sendRow} style={{ scrollMarginBottom: 'calc(var(--assist-ask-space, 0px) + 12px)', scrollMarginTop: 96 }}>
+          {inApp === 0 ? (
+            <p style={{ ...quiet, color: color.ink }}>{t('None of these members has the MettleUp app yet, so the message cannot go in the app. Send it on WhatsApp below.')}</p>
+          ) : (
+            <ConfirmButton turnId={turnId} card={card} dr={dr} data={data} ctl={ctl} appCount={inApp} />
+          )}
+        </div>
         {reach && reach.whatsapp.length > 0 ? (
           // R-501: WhatsApp waits too while the Hindi is written, so it never goes out in the old words.
           <Button variant="ghost" full wrap disabled={card.status === 'saving'} onClick={() => ctl.openQueue(reach.whatsapp, text)}>

@@ -71,6 +71,20 @@ export function AssistantHome({ assistKey, wallet, panel = false }: { assistKey:
   const { turns } = convo;
   const box = useRef<HTMLTextAreaElement>(null);
   const lastTurn = useRef<HTMLDivElement>(null);
+  // Fresh eyes (14 Nov 2026): on a phone the card's Send sat under the ask box. The ask box's height goes to the cards
+  // as --assist-ask-space, so a card can bring its Send up clear of the box (Cards.tsx, scroll-margin-bottom).
+  const askBox = useRef<HTMLDivElement>(null);
+  const [askHeight, setAskHeight] = useState(0);
+  useEffect(() => {
+    const el = askBox.current;
+    if (!el || panel) return undefined;
+    const measure = () => setAskHeight(Math.ceil(el.getBoundingClientRect().height));
+    measure();
+    const seen = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(measure);
+    seen?.observe(el);
+    return () => seen?.disconnect();
+    // The box is there only on the Ask tab.
+  }, [panel, tab]);
   const opener = useOpener();
   const canSpeak = useMemo(() => isVoiceSupported(), []);
   const suggestions = useMemo(() => todaySuggestions(data), [data]);
@@ -318,7 +332,16 @@ export function AssistantHome({ assistKey, wallet, panel = false }: { assistKey:
       style={
         panel
           ? { display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0 }
-          : { display: 'flex', flexDirection: 'column', gap: space.lg, maxWidth: 720, margin: '0 auto', width: '100%' }
+          : ({
+              display: 'flex',
+              flexDirection: 'column',
+              gap: space.lg,
+              maxWidth: 720,
+              margin: '0 auto',
+              width: '100%',
+              // The ask box sticks this far up from the bottom: its own height plus the bottom bar (phone) or 16 px.
+              '--assist-ask-space': compact ? `calc(${askHeight}px + 70px + env(safe-area-inset-bottom))` : `${askHeight + 16}px`,
+            } as CSSProperties)
       }
     >
       <div style={panel ? { padding: `${space.lg}px ${space.lg}px ${space.md}px`, display: 'grid', gap: space.md, borderBottom: `1px solid ${color.border}` } : { display: 'grid', gap: space.md }}>
@@ -330,6 +353,7 @@ export function AssistantHome({ assistKey, wallet, panel = false }: { assistKey:
       </div>
       {tab === 'ask' ? (
         <div
+          ref={askBox}
           style={
             panel
               ? { padding: space.md, borderTop: `1px solid ${color.border}` }

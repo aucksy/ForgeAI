@@ -173,7 +173,7 @@ export function useConversation(key: string, data: PlanData, reload: () => Promi
       if (!msg || msg.rewrites >= MAX_REWRITES || card.status === 'saving') return;
       // R-501: while the Hindi is written, the card's Send waits (status 'saving') and says what it is doing.
       updateCard(turnId, card.id, (c) =>
-        c.kind === 'draft' ? { ...c, status: 'saving', outcome: null, message: c.message ? { ...c.message, writing: want?.lang } : c.message } : c,
+        c.kind === 'draft' ? { ...c, status: 'saving', outcome: null, message: c.message ? { ...c.message, writing: want?.lang, missed: undefined } : c.message } : c,
       );
       const r = await rewriteMessage(key, want?.words ?? msg.words, how);
       if (r.ok) noteLeft(data.today, r.left);
@@ -182,9 +182,10 @@ export function useConversation(key: string, data: PlanData, reload: () => Promi
         hideIfOff(r);
         // The chip never moved: it stays on the language the preview shows. "Today's free questions are used up" says
         // itself; anything else says the Hindi was not written.
-        const outcome = want && r.reason !== 'limit' ? line(LANG_WORDS.failed) : r.words;
+        const missed = want && r.reason !== 'limit' ? want.lang : undefined;
+        const outcome = missed ? line(LANG_WORDS.failed) : r.words;
         updateCard(turnId, card.id, (c) =>
-          c.kind === 'draft' ? { ...c, status: 'open', outcome, message: c.message ? { ...c.message, writing: undefined } : c.message } : c,
+          c.kind === 'draft' ? { ...c, status: 'open', outcome, message: c.message ? { ...c.message, writing: undefined, missed } : c.message } : c,
         );
         return;
       }

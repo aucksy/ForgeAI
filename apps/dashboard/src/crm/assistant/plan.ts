@@ -8,6 +8,7 @@ import { endDateForPlan } from '../logic/membership';
 import { addDays, diffDays, isValidDateISO, type DateISO } from '../logic/dates';
 import { emptyEnquiryForm, validateEnquiry, type EnquiryFormDraft } from '../logic/enquiries';
 import { emptyMemberForm, findDuplicatePhone, validateMember, type MemberFormDraft } from '../logic/members';
+import { bothTitle } from '../logic/messageTemplates';
 import type { MessageLang as GymMessageLang } from '../logic/messageWords';
 import { formatINR, rupeesToPaise, type Paise } from '../logic/money';
 import { owedListOn } from '../logic/ownerNumbers';
@@ -197,13 +198,21 @@ function phoneParts(raw: string): { dialCode: string; phone: string } {
   return { dialCode: '+91', phone: t.replace(/\D/g, '') };
 }
 
-/** The words for one language choice. "both": English title, the two bodies one under the other. */
+/**
+ * The words for one language choice. "both": the two bodies one under the other, and the title "English / हिन्दी" when
+ * the Hindi title is there and both fit in 60 letters (else the English), as Messages & offers' templates do.
+ */
 export function messageWords(input: ToolInputs['draft_message'], gymLang: GymMessageLang): { title: string; body: string } {
   const lang = input.lang === 'gym' ? gymLang : input.lang;
   const en = { title: input.title_en.trim(), body: input.body_en.trim() };
   const hi = { title: input.title_hi.trim() || en.title, body: input.body_hi.trim() || en.body };
   if (lang === 'hi') return hi;
-  if (lang === 'both' && input.body_hi.trim()) return { title: en.title || hi.title, body: `${en.body}\n\n${hi.body}` };
+  if (lang === 'both' && input.body_hi.trim()) {
+    // Fresh eyes (14 Nov 2026): with Both, the title stayed English only while the message was in both languages.
+    const hiTitle = input.title_hi.trim();
+    const title = en.title && hiTitle && hiTitle !== en.title ? bothTitle(en.title, hiTitle, MESSAGE_TITLE_MAX) : en.title || hi.title;
+    return { title, body: `${en.body}\n\n${hi.body}` };
+  }
   return { title: en.title || hi.title, body: en.body || hi.body };
 }
 

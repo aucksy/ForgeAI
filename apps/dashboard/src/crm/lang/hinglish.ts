@@ -740,7 +740,9 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   // R-501 (14 Nov 2026): Hindi or Both on a message the AI wrote in English. Words: owner checks at UAT.
   'To send it in Hindi, tap Hindi or Both. The AI writes the Hindi words first, for free.': 'Hindi mein bhejne ke liye Hindi ya Dono dabao. AI pehle Hindi mein likhega, free mein.',
   'Writing the Hindi words…': 'Hindi mein likh rahe hain…',
-  'The Hindi words were not written, so the message is still in English. Try again.': 'Hindi mein nahi likha gaya, isliye message abhi English mein hai. Phir se try karo.',
+  // Fresh eyes (14 Nov 2026): the failure line says what Send does now, and "Try Hindi again" sits under it.
+  'The Hindi words could not be written. The message will go in English only, unless you try again.': 'Hindi mein nahi likh paaye. Message sirf English mein jayega, jab tak aap phir se try nahi karte.',
+  'Try Hindi again': 'Hindi phir se try karo',
   'This message was changed 5 times, so Hindi cannot be added here. Ask the AI Assistant again for the message in Hindi.': 'Yeh message 5 baar badla ja chuka hai, isliye yahan Hindi nahi jud sakti. AI Assistant se phir se Hindi mein message maango.',
   'None of these members has the MettleUp app yet, so the message cannot go in the app. Send it on WhatsApp below.': 'In members mein se kisi ke paas abhi MettleUp app nahi hai, isliye message app mein nahi jayega. Neeche WhatsApp par bhejo.',
   When: 'Kab',

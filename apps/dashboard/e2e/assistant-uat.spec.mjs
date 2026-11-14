@@ -460,6 +460,11 @@ test('AI Assistant: hidden without 0071; the button, cards, credits, voice, the 
   // The page behind still works: its search box takes typing while the panel is open.
   await page.getByRole('main').getByPlaceholder('Search name or mobile number').fill('Asha');
   await expect(page.getByRole('main')).toContainText('Asha Verma');
+  // Fresh eyes (14 Nov 2026): with the panel open the number broke over 3 lines ("+91 / 98290 / 11111"). One line now.
+  const number = page.getByRole('main').getByText('+91 98290 11111', { exact: true });
+  await expect(number).toBeVisible();
+  const lineHeight = await number.evaluate((el) => parseFloat(getComputedStyle(el).lineHeight) || parseFloat(getComputedStyle(el).fontSize) * 1.5);
+  expect((await number.boundingBox()).height, 'the phone number stays on one line').toBeLessThanOrEqual(lineHeight + 1);
   await shots(page, '18-side-panel');
   await panel.getByRole('tab', { name: 'History' }).click();
   await expect(panel).toContainText('Bijli', { ignoreCase: true });
@@ -627,24 +632,70 @@ test('AI Assistant R-501: Both on an English greeting writes the Hindi first; a 
   await expect(card).toContainText('To send it in Hindi, tap Hindi or Both. The AI writes the Hindi words first, for free.');
 
   // Negative: the AI is down. The chip stays on English, the words stay English, and the card says so.
+  // Fresh eyes (14 Nov 2026): the line said "Try again" with no button. It now says Send goes in English only, and
+  // "Try Hindi again" sits right under it (the small "Add Hindi" chip goes, so there is one Hindi button).
   worker.rewriteFails = true;
   await chip('Both').tap();
-  await expect(card).toContainText('The Hindi words were not written, so the message is still in English. Try again.');
+  const failLine = card.getByRole('alert').filter({ hasText: 'The Hindi words could not be written.' });
+  await expect(failLine).toHaveText('The Hindi words could not be written. The message will go in English only, unless you try again.');
+  const retry = card.getByRole('button', { name: 'Try Hindi again', exact: true });
+  await expect(retry).toBeVisible();
+  // The button is right under the line, above "When".
+  const lineBox = await failLine.boundingBox();
+  const retryBox = await retry.boundingBox();
+  expect(retryBox.y, 'Try Hindi again sits under the red line').toBeGreaterThanOrEqual(lineBox.y + lineBox.height - 1);
+  expect(retryBox.y - (lineBox.y + lineBox.height), 'and close to it').toBeLessThan(24);
+  expect(retryBox.height, 'a button big enough to tap').toBeGreaterThanOrEqual(40);
+  await expect(card.getByRole('button', { name: 'Add Hindi', exact: true })).toHaveCount(0);
   await expect(chip('English')).toHaveAttribute('aria-pressed', 'true');
   await expect(chip('Both')).toHaveAttribute('aria-pressed', 'false');
   await expect(card).not.toContainText(CHHATH_HI.body_hi);
+  await expectFitsPhone(page, 'with the Hindi failure line and its button');
   await shots(page, '17-both-failed', false, card);
 
-  // Happy path: Both again. The Hindi is written with the "Add Hindi" rewrite, then shown under the English.
+  // Happy path: "Try Hindi again". The Hindi is written with the "Add Hindi" rewrite, for Both (what he asked for),
+  // then shown under the English; the failure line and its button go.
   worker.rewriteFails = false;
-  await chip('Both').tap();
+  await retry.tap();
   await expect(card).toContainText(CHHATH_HI.body_hi);
   await expect(chip('Both')).toHaveAttribute('aria-pressed', 'true');
   await expect(card).toContainText('Happy Chhath Puja to you and your family.');
+  await expect(retry).toHaveCount(0);
+  await expect(failLine).toHaveCount(0);
   expect(worker.rewrites.at(-1).how).toBe('Add the same message in Hindi');
   expect(worker.rewrites.at(-1).body_en).toBe('Happy Chhath Puja to you and your family. The gym is open as usual.');
+  // Fresh eyes (14 Nov 2026): the title carries the Hindi too ("English / हिन्दी", as the Messages templates do).
+  const bothTitle = `Happy Chhath Puja / ${CHHATH_HI.title_hi}`;
+  await expect(card.getByText(bothTitle, { exact: true })).toBeVisible();
   await expectFitsPhone(page, 'with the Hindi written');
+
+  // Fresh eyes (14 Nov 2026): Send sat under the "Ask or give a task" box. When the words come back, the card brings
+  // Send up, fully above the box. (No scrolling by the test: this is where the screen left it.)
+  const send = card.getByRole('button', { name: 'Send to 1 member · 1 credit' });
+  const askForm = page.locator('form').filter({ has: page.getByLabel('Ask or give a task', { exact: true }) });
+  const clearOfAskBox = async () => {
+    const s = await send.boundingBox();
+    const a = await askForm.boundingBox();
+    return s && a ? Math.round(a.y - (s.y + s.height)) : -999;
+  };
+  await expect.poll(clearOfAskBox, { message: 'Send is fully above the ask box after the Hindi came', timeout: 5_000 }).toBeGreaterThanOrEqual(4);
+  expect((await send.boundingBox()).y, 'and below the top bar').toBeGreaterThan(60);
+  await shots(page, '18b-send-clear');
   await shots(page, '18-both-written', false, card);
+
+  // The page always has room for Send above the box: scrolled to the very end on a 390 px and a 360 px phone.
+  for (const width of [390, 360]) {
+    await page.setViewportSize({ width, height: 740 });
+    await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+    await page.waitForTimeout(300);
+    await expect.poll(clearOfAskBox, { message: `${width} px: Send scrolls fully above the ask box` }).toBeGreaterThanOrEqual(4);
+    const cancel = await card.getByRole('button', { name: 'Cancel', exact: true }).boundingBox();
+    const box = await askForm.boundingBox();
+    expect(cancel.y + cancel.height, `${width} px: even the card's last button clears the ask box at the end`).toBeLessThanOrEqual(box.y);
+    await expectFitsPhone(page, `${width} px, scrolled to the end`);
+    await shots(page, `18c-end-${width}`);
+  }
+  await page.setViewportSize({ width: 390, height: 844 });
 
   // Hindi alone: the words are there now, so it switches at once (no new rewrite).
   const rewrites = worker.rewrites.length;
@@ -660,4 +711,5 @@ test('AI Assistant R-501: Both on an English greeting writes the Hindi first; a 
   await expect(card).toContainText('Sent to 1 in the app.');
   expect(server.messages[0].body).toContain('Happy Chhath Puja to you and your family.');
   expect(server.messages[0].body).toContain(CHHATH_HI.body_hi);
+  expect(server.messages[0].title).toBe(bothTitle);
 });

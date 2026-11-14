@@ -26,22 +26,27 @@ async function shot(page, name, clip) {
   await page.screenshot({ path: `${DIR}/r495-${name}.png`, ...(clip ? { clip } : {}) });
 }
 
-/** A logo drawn in this browser, as PNG bytes. `wide`: 360x120 (a long word mark); else a 256 px square badge. */
-async function logoPng(page, wide) {
+/**
+ * A logo drawn in this browser, as PNG bytes. `wide` (or true): 360x120, an orange "SHAKTI" word mark; 'blue': 300x150,
+ * a blue "IRON" word mark (fresh eyes, 14 Nov 2026: the "changed" picture showed the same orange logo as test a, so the
+ * change could not be seen); else (false) a 256 px square gold badge.
+ */
+async function logoPng(page, kind) {
+  const k = kind === true ? 'wide' : kind === false ? 'badge' : kind;
   const b64 = await page.evaluate((w) => {
     const c = document.createElement('canvas');
-    c.width = w ? 360 : 256;
-    c.height = w ? 120 : 256;
+    c.width = w === 'wide' ? 360 : w === 'blue' ? 300 : 256;
+    c.height = w === 'wide' ? 120 : w === 'blue' ? 150 : 256;
     const g = c.getContext('2d');
-    if (w) {
-      // An orange bar with "SHAKTI" in white: a word mark three times as wide as it is tall, on a clear background.
-      g.fillStyle = '#FF7A1A';
-      g.fillRect(0, 10, 360, 100);
+    if (w === 'wide' || w === 'blue') {
+      // A bar with a white word: a word mark wider than it is tall, on a clear background.
+      g.fillStyle = w === 'wide' ? '#FF7A1A' : '#1E5BFF';
+      g.fillRect(0, 10, c.width, c.height - 20);
       g.fillStyle = '#FFFFFF';
-      g.font = 'bold 64px sans-serif';
+      g.font = `bold ${w === 'wide' ? 64 : 80}px sans-serif`;
       g.textAlign = 'center';
       g.textBaseline = 'middle';
-      g.fillText('SHAKTI', 180, 62);
+      g.fillText(w === 'wide' ? 'SHAKTI' : 'IRON', c.width / 2, c.height / 2 + 2);
     } else {
       // A gold disc with a dark "S".
       g.fillStyle = '#F7D411';
@@ -55,7 +60,7 @@ async function logoPng(page, wide) {
       g.fillText('S', 128, 138);
     }
     return c.toDataURL('image/png').split(',')[1];
-  }, wide);
+  }, k);
   return Buffer.from(b64, 'base64');
 }
 
@@ -120,6 +125,32 @@ async function expectNeatLogo(page, where) {
   }
 }
 
+/** The gym name's size in the header (fresh eyes, 14 Nov 2026: it must not jump between logo and no logo). */
+async function nameSize(page) {
+  const name = head(page).getByText(OWNER.gym, { exact: true }).first();
+  await expect(name).toBeVisible();
+  return name.evaluate((el) => ({ font: getComputedStyle(el).fontSize, weight: getComputedStyle(el).fontWeight, height: Math.round(el.getBoundingClientRect().height) }));
+}
+
+/** The header logo as drawn: its file's size and the colour at the left of its middle row (to tell two logos apart). */
+async function drawnLogo(page) {
+  return head(page)
+    .getByTestId('header-logo')
+    .locator('img')
+    .evaluate(async (el) => {
+      // The picture's size is read off the drawn <img>; its colour from the same address (the img itself is from
+      // another origin, so a canvas could not read it).
+      const bmp = await createImageBitmap(await (await fetch(el.currentSrc || el.src)).blob());
+      const c = document.createElement('canvas');
+      c.width = bmp.width;
+      c.height = bmp.height;
+      const g = c.getContext('2d');
+      g.drawImage(bmp, 0, 0);
+      const [r, , b] = g.getImageData(4, Math.floor(bmp.height / 2), 1, 1).data;
+      return { width: el.naturalWidth, height: el.naturalHeight, blue: b > 200 && r < 80 };
+    });
+}
+
 /** The drawn picture keeps its shape: its painted area is as wide for its height as the file is. */
 async function expectNotStretched(page, where) {
   const ratio = await head(page)
@@ -144,6 +175,7 @@ test('R495-a the owner saves a logo: it shows top-left at once on a phone and a 
   await expect(bar).toContainText(OWNER.gym);
   await expect(bar.getByTestId('header-logo')).toHaveCount(0);
   const barHeight = (await bar.boundingBox()).height;
+  const plainName = await nameSize(page);
   await shot(page, 'phone-no-logo', { x: 0, y: 0, width: 390, height: 140 });
 
   // Happy path: Save in Branding -> the top bar shows the logo straight away, no reload.
@@ -152,12 +184,16 @@ test('R495-a the owner saves a logo: it shows top-left at once on a phone and a 
   await expectNotStretched(page, 'phone, a wide logo');
   expect((await bar.boundingBox()).height, 'the top bar did not grow').toBeLessThanOrEqual(barHeight + 1);
   await expectFitsPhone(page, 'with the logo in the top bar');
+  expect(await nameSize(page), 'phone: the gym name keeps its size beside the logo').toEqual(plainName);
   await shot(page, 'phone-header', { x: 0, y: 0, width: 390, height: 140 });
 
   // Every page: Today, Members.
   await page.goto('./#/');
   await expect(page.getByRole('heading', { name: 'Today', exact: true })).toBeVisible();
   await expectNeatLogo(page, 'phone, Today');
+  // Fresh eyes (14 Nov 2026): the first card on a phone said "Install the admin app on this computer".
+  await expect(page.getByRole('heading', { name: 'Put the admin app on your phone', exact: true })).toBeVisible();
+  await expect(page.getByText(/this computer/)).toHaveCount(0);
   await shot(page, 'phone-today');
   await page.goto('./#/members');
   await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
@@ -185,6 +221,26 @@ test('R495-a the owner saves a logo: it shows top-left at once on a phone and a 
   await expectNeatLogo(page, 'computer, dark');
   await shot(page, 'computer-header', { x: 0, y: 0, width: 520, height: 160 });
   await shot(page, 'computer');
+  // The install card on a computer still says "this computer" (only the phone's word changed).
+  await page.goto('./#/settings');
+  await expect(page.getByRole('heading', { name: 'Install the admin app on this computer', exact: true })).toBeVisible();
+
+  // Fresh eyes (14 Nov 2026): "More below" sat over the menu's last row (Settings). Scrolled to the end, the last
+  // row is whole, clear of the fade, and "More below" has gone.
+  // A short window (a laptop with a bookmarks bar and the taskbar), so the menu is longer than the window.
+  await page.setViewportSize({ width: 1366, height: 600 });
+  const nav = page.getByRole('navigation', { name: 'Main' });
+  const rows = nav.locator('[data-sidebar-rows]');
+  await page.goto('./#/');
+  await expect(page.getByRole('heading', { name: 'Today', exact: true })).toBeVisible();
+  await expect(nav.getByRole('button', { name: 'More below' })).toBeVisible();
+  await shot(page, 'computer-menu-top', { x: 0, y: 0, width: 260, height: 600 });
+  await rows.evaluate((el) => el.scrollTo(0, el.scrollHeight));
+  await expect(nav.getByRole('button', { name: 'More below' })).toHaveCount(0);
+  const list = await rows.boundingBox();
+  const last = await rows.locator('a').last().boundingBox();
+  expect(last.y + last.height, 'the last menu row ends inside the menu box, above where the fade was').toBeLessThanOrEqual(list.y + list.height - 20);
+  await shot(page, 'computer-menu-end', { x: 0, y: 0, width: 260, height: 600 });
 });
 
 test('R495-b a new logo replaces the old one at once; a removed logo leaves the name alone; the desk sees the logo too', async ({ page, browser }) => {
@@ -196,13 +252,16 @@ test('R495-b a new logo replaces the old one at once; a removed logo leaves the 
   await saveLogo(page, logos.next, 'badge.png');
   await expectNeatLogo(page, 'phone, the first logo');
   const first = await page.getByRole('banner').getByTestId('header-logo').locator('img').getAttribute('src');
+  expect(await drawnLogo(page)).toMatchObject({ width: 256, height: 256, blue: false });
+  await shot(page, 'phone-header-first', { x: 0, y: 0, width: 390, height: 140 });
 
-  // Edit: another logo, saved -> the top bar shows the new one, no reload.
-  logos.next = await logoPng(page, true);
-  await saveLogo(page, logos.next, 'word-mark.png');
+  // Edit: a clearly different logo (blue "IRON"), saved -> the top bar shows the new picture, no reload.
+  logos.next = await logoPng(page, 'blue');
+  await saveLogo(page, logos.next, 'iron-blue.png');
   const img = page.getByRole('banner').getByTestId('header-logo').locator('img');
   await expect.poll(() => img.getAttribute('src')).not.toBe(first);
   await expectNeatLogo(page, 'phone, the changed logo');
+  await expect.poll(() => drawnLogo(page), { message: 'the top bar draws the new blue logo, not the old badge' }).toMatchObject({ width: 300, height: 150, blue: true });
   await shot(page, 'phone-header-changed', { x: 0, y: 0, width: 390, height: 140 });
 
   // Another role: the desk, on its own phone, gets the same logo.
@@ -225,4 +284,18 @@ test('R495-b a new logo replaces the old one at once; a removed logo leaves the 
   await expect(page.getByRole('heading', { name: 'Branding', exact: true })).toBeVisible({ timeout: 15_000 });
   await expect(page.getByRole('banner').getByTestId('header-logo')).toHaveCount(0);
   await shot(page, 'phone-header-removed', { x: 0, y: 0, width: 390, height: 140 });
+
+  // Fresh eyes (14 Nov 2026): the name keeps one size on a computer too, logo or not (15 px, as on the phone).
+  await page.setViewportSize(COMPUTER);
+  await page.goto('./#/');
+  await expect(page.getByRole('heading', { name: 'Today', exact: true })).toBeVisible();
+  const noLogo = await nameSize(page);
+  expect(noLogo.font).toBe('15px');
+  await shot(page, 'computer-header-no-logo', { x: 0, y: 0, width: 520, height: 160 });
+  logos.next = await logoPng(page, 'blue');
+  await saveLogo(page, logos.next, 'iron-blue-2.png');
+  await page.goto('./#/');
+  await expectNeatLogo(page, 'computer, the logo back');
+  expect(await nameSize(page), 'computer: the gym name keeps its size beside the logo').toEqual(noLogo);
+  await shot(page, 'computer-header-logo-back', { x: 0, y: 0, width: 520, height: 160 });
 });

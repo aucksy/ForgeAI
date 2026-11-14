@@ -83,13 +83,22 @@ export function setInstallOffer(on: boolean, doc: ManifestDoc | null = typeof do
 
 export type Platform = 'android' | 'iphone' | 'computer';
 
-/** Which install steps to show. PURE. */
-export function platformOf(userAgent: string, touchPoints = 0): Platform {
+/** The widest screen (CSS pixels, its narrow side) still counted as a phone when it has a touch screen. */
+export const PHONE_SCREEN_MAX = 600;
+
+/**
+ * Which install steps to show. `screenWidth`: the device's screen in CSS pixels (not the window). PURE.
+ * Fresh eyes (14 Nov 2026): a phone told "Install the admin app on this computer". Chrome's "Desktop site" on an
+ * Android phone sends a computer's name; a touch screen that is phone-sized is a phone all the same. A touch laptop
+ * has a wide screen, so it stays a computer.
+ */
+export function platformOf(userAgent: string, touchPoints = 0, screenWidth = 0): Platform {
   const ua = userAgent.toLowerCase();
   if (/iphone|ipad|ipod/.test(ua)) return 'iphone';
   // iPadOS 13+ says it is a Mac; a Mac has no touch screen.
   if (ua.includes('macintosh') && touchPoints > 1) return 'iphone';
   if (ua.includes('android')) return 'android';
+  if (touchPoints > 0 && screenWidth > 0 && screenWidth <= PHONE_SCREEN_MAX) return 'android';
   return 'computer';
 }
 
@@ -158,6 +167,7 @@ export function useInstall(): InstallState {
     platform: platformOf(
       typeof navigator !== 'undefined' ? navigator.userAgent : '',
       typeof navigator !== 'undefined' ? navigator.maxTouchPoints : 0,
+      typeof screen !== 'undefined' ? Math.min(screen.width, screen.height) : 0,
     ),
     prompt: async () => {
       const e = deferred;

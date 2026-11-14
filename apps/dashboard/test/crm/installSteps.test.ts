@@ -25,6 +25,16 @@ describe('install steps', () => {
     expect(s[0]).toContain('Share icon');
     expect(s.join(' ')).not.toContain('•••');
   });
+  it('fresh eyes (14 Nov 2026): a phone-sized touch screen that says it is a computer is a phone; a touch laptop is a computer', () => {
+    const DESKTOP = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0 Safari/537.36';
+    // Chrome's "Desktop site" on an Android phone: a computer's name, a touch screen 412 px wide.
+    expect(platformOf(DESKTOP, 5, 412)).toBe('android');
+    expect(platformOf(DESKTOP, 1, 360)).toBe('android');
+    // A touch laptop, a computer without touch, and a caller that does not know the screen.
+    expect(platformOf(DESKTOP, 10, 1280)).toBe('computer');
+    expect(platformOf(DESKTOP, 0, 390)).toBe('computer');
+    expect(platformOf(DESKTOP, 5)).toBe('computer');
+  });
   it('Android and computer keep their own steps', () => {
     expect(installSteps('android', 'android').join(' ')).toContain('Install app');
     expect(installSteps('computer', '').join(' ')).toContain('install icon');

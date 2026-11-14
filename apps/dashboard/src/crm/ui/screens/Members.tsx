@@ -363,7 +363,8 @@ function MemberRow({ view, today }: { view: MemberView; today: string }) {
             <Link to={`/members/${member.id}`}>
               <div style={{ fontSize: 14, fontWeight: 600, color: color.ink }}>{member.fullName}</div>
             </Link>
-            <div style={{ fontSize: 12, color: color.inkMuted, fontFamily: font.mono }}>
+            {/* Fresh eyes (14 Nov 2026): with the AI side panel open the number broke over 3 lines; it stays whole. */}
+            <div style={{ fontSize: 12, color: color.inkMuted, fontFamily: font.mono, whiteSpace: 'nowrap' }}>
               {formatPhone(member.phone)}
             </div>
             {memberBatch(member) && <BatchLine name={memberBatch(member) as string} />}
@@ -416,7 +417,7 @@ function MemberCard({ view, today }: { view: MemberView; today: string }) {
               </span>
               <Pill tone={stateTone(view.state)}>{t(STATE_LABEL[view.state])}</Pill>
             </Row>
-            <div style={{ fontFamily: font.mono, fontSize: 12, color: color.inkMuted, marginTop: 2 }}>
+            <div style={{ fontFamily: font.mono, fontSize: 12, color: color.inkMuted, marginTop: 2, whiteSpace: 'nowrap' }}>
               {formatPhone(member.phone)}
             </div>
             {memberBatch(member) && <BatchLine name={memberBatch(member) as string} />}
