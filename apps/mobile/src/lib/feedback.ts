@@ -212,11 +212,10 @@ export async function sendFeedback(
 
 /**
  * R-501: how Android set up this phone's gym message channel ("gym pop-ups: importance 4"), so a member's
- * message shows whether that phone can pop gym messages up. Android only; '' when unknown. Loaded only
+ * message shows whether that phone can pop gym messages up. '' when unknown (an iPhone has no channel). Loaded only
  * here, since the notices file brings the gym's stores with it.
  */
 async function popupsLine(): Promise<string> {
-  if (Platform.OS !== 'android') return '';
   try {
     return await (await import('@/shop/noticeAlertsRun')).gymPopupsLine();
   } catch {
