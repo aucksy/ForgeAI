@@ -46,6 +46,7 @@ test.use({ viewport: { width: 375, height: 812 } });
 
 test('Training progress: "Well done" and "How\'s it going?" go in the app, never WhatsApp', async ({ page, browser }) => {
   const server = await openApp(page);
+  server.offerServer = true; // 0025: a message to chosen members (p_to), as the live server has
   const qs = installQuestions(server);
   qs.on = true;
   qs.members = [member('app-asha', 'Asha Verma', summary(3, '2026-10-16')), member('app-chand', 'Chand Mehta', summary(0, '2026-10-08'))];
