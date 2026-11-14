@@ -7,6 +7,11 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-553 (14 Nov 2026) DECISION: Cloudflare stays on the FREE Workers plan until the first online payment; sharing words +1 sentence
+- Owner, verbatim: "The day I receive my first payment via Razorpay Where this paid Cloudflare plan may get into a situation that now it's needed, then we will buy it But unless I have received any money online, I don't want to buy it So let's record this decision, so later if you come back to it, we know".
+- So: the panel Worker stays on Workers Free (50 D1 queries and 50 outside calls per invocation). All payment code must fit that (payments round 4 helper). Raise Workers Paid ($5/month) with him only AFTER the first real online payment has arrived AND the 10-minute backup check is falling behind. Never buy it before; never ask before that.
+- Owner: "yes to the extra sentence". The 12-month sharing caption now also says: "It also sends a weekly total of the weight you lifted and your new best lifts." (after "...how many sets you did.").
+
 ## R-551 (14 Nov 2026) 12-month training history: since joining; words and 0084 approved; 0084 APPLIED LIVE
 - Owner, verbatim: "since joining" / "Yes to the 12-month words" / "yes to the 12-month database change".
 - A gym sees only workouts SINCE THE MEMBER JOINED THIS GYM, up to the last 12 months (never an earlier gym's).

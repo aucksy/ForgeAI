@@ -30,7 +30,7 @@ export const TRAINER_WORDS = {
   // words: owner approved 14 Nov 2026 (R-551), exactly as written; shown once the gym's server has 0053. The phone sends
   // a year (trainerRecent.ts SHARE_A_YEAR) and never before the day the member joined this gym (trainerSync.ts).
   shareCaptionRecent:
-    "Your phone sends your gym your workouts since you joined, up to the last 12 months. For each workout, it sends the day, the workout's name, and, for each exercise, your heaviest set and how many sets you did. Your gym and your trainers see this as charts, to check that you are getting stronger. They never see your body weight, photos or notes. If you switch this off or leave the gym, the gym deletes it at once.",
+    "Your phone sends your gym your workouts since you joined, up to the last 12 months. For each workout, it sends the day, the workout's name, and, for each exercise, your heaviest set and how many sets you did. It also sends a weekly total of the weight you lifted and your new best lifts. Your gym and your trainers see this as charts, to check that you are getting stronger. They never see your body weight, photos or notes. If you switch this off or leave the gym, the gym deletes it at once.",
   // words: owner approved 3 Nov 2026 (#86)
   yourTrainer: (name: string): string => `Your trainer: ${name}`,
   // words: owner approved 3 Nov 2026 (#86)
