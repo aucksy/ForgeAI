@@ -7,6 +7,17 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-528. Join page and gym web page: pay online (same as the member app), owner switches per place — 14 Nov 2026
+He said (14 Nov 2026): "It says that share your details pay at the desk. Why are we doing pay at the desk if the gym will
+have an option to get payments via QR code or via your UPAID or they may be able to just link their the app, raise their
+pay account, things like that. We have something like that built already, right? The gym owners will be able to accept
+payments on the member app, so similarly they can accept it on the registration page, right? It's just that the admin
+user can enable or disable the payments on both the app or the web page."
+Answer: yes. F79 online payments (gym's own Razorpay/Cashfree account or UPI) is built, test mode only. Reuse it on the
+self sign-up / web page join form: "Pay now (UPI or card)" when the gym has online payments set up and its switch is on;
+"Pay at the desk" only as the fallback. Two owner switches: pay in the member app, pay on the web page / join link.
+Real money only after a gym's payment account (KYC) and his "payments live".
+
 ## R-527. HANDOFF before his weekly limit (14 Nov 2026) — where every piece of work stands
 He said (14 Nov 2026): "My weekly limit is about to be hit ... Just want to ensure that you can save everything that's
 going on before it happens".
