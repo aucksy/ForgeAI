@@ -9,7 +9,7 @@
  * Both hidden until the gym's server has 0053, for the desk without the Trainer tick, and in the demo gym.
  */
 
-import { useEffect, useState, useSyncExternalStore } from 'react';
+import { useEffect, useSyncExternalStore } from 'react';
 
 import { useAuth } from '../auth/AuthProvider';
 import * as questionsApi from '../shop/questionsApi';

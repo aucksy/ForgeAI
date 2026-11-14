@@ -98,6 +98,9 @@ export function useMemberProgress(key: string | null, memberId: string | null, e
   useEffect(() => {
     if (!key || !memberId || !enabled || questionsApi.questionsMissing()) return;
     let live = true;
+    // Another member (the same card reused): never show the last one's lines while this one is read.
+    const have = kept.get(`${key}|${memberId}`);
+    setState({ p: have && have !== 'missing' ? have : null, failed: false });
     readProgress(key, memberId)
       .then((r) => {
         if (live) setState({ p: r === 'missing' ? null : r, failed: false });
