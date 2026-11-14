@@ -17,6 +17,8 @@
 //               the gym's plans and prices (self_join_preview, supabase 0077). Never opens an app (the app claims
 //               /j/ and /c/ only). Its form posts to /api/self-join (selfJoin.js): checked, limited, then
 //               self_join_send writes the request into that gym's Enquiries ("Joined online" on Today).
+//  - join.mettleup.fit/<gym>  F207: every gym's own free page and its "Ask the gym" and "Report" forms (gymPageServe.js).
+//               HIDDEN until GYM_PAGES is "live" and the host is routed (docs/gym-page/PLAN.md).
 //  - /api/feedback  "Send feedback" from both apps (feedback.js, launch H7).
 //  - /api/help, /api/help/rate  "Help and feedback": the message saved as above, then a Claude answer (help.js, T22).
 //  - /api/feedback/voice  a spoken feedback clip -> text, via Groq Whisper (voice.js, R-206). Clip not kept.
@@ -48,6 +50,7 @@ import { handleHqNews } from './hqNews.js';
 import { handleLead } from './leads.js';
 import { deleteOldFriendAsks, handleFriend } from './friend.js';
 import { handleSelfJoin } from './selfJoin.js';
+import { handleGymPageHost } from './gymPageServe.js';
 import { deleteOldVoiceCounts, handleVoice } from './voice.js';
 import { handleMatchColumns } from './aiMatch.js';
 import { handleAssist, handleAssistPlan, handleAssistRewrite, handleAssistVoice } from './assist.js';
@@ -73,6 +76,9 @@ export default {
     // MettleUp (R-105): which address shows what (hosts.js). Redirects first, then the landing page.
     const where = routeFor(url.hostname, url.pathname, url.search, request.method, { moveOld: env.MOVE !== 'off' });
     if (where.kind === 'redirect') return new Response(null, { status: where.status, headers: { Location: where.to, 'Cache-Control': 'max-age=3600' } });
+    // F207: join.mettleup.fit/<gym> is a gym's own page (gymPageServe.js). Off unless GYM_PAGES is "live"; the host is
+    // not in wrangler.jsonc's routes yet either (docs/gym-page/PLAN.md).
+    if (where.kind === 'gympage') return handleGymPageHost(request, env, ctx, url, rpc);
     // F184: mettleup.fit "/" is the member page (/member-site/), gyms.mettleup.fit "/" the gym page (/home/).
     // LANDING "off" hides both (the old kill switch).
     if (where.kind === 'landing' || where.kind === 'members') {

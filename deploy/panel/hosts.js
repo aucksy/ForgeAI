@@ -20,12 +20,16 @@
 //                                /sb, printed posters carry /j and /c, old apps call /api. Only /home
 //                                moves (to gyms.mettleup.fit). The admin app itself moves in the browser,
 //                                and only once nothing is waiting to be sent (src/crm/move).
+//   join.mettleup.fit            F207 (R-519): every gym's own free page, join.mettleup.fit/<gym-slug>, and its forms
+//                                (gymPageServe.js). HIDDEN: not in wrangler.jsonc's routes, and off unless GYM_PAGES is "live".
 //   anything else (workers.dev, a laptop's `wrangler dev`)   behaves like the old address.
 
 export const OLD_HOST = 'forgeai.aakashpahuja.in';
 export const APP_HOST = 'app.mettleup.fit';
 export const SITE_HOST = 'mettleup.fit';
 export const GYMS_HOST = 'gyms.mettleup.fit';
+/** F207: gym pages. A host of its own (not app.mettleup.fit, where the admin app keeps its sign-in). */
+export const GYM_PAGE_HOST = 'join.mettleup.fit';
 export const APP_ORIGIN = `https://${APP_HOST}`;
 export const SITE_ORIGIN = `https://${SITE_HOST}`;
 export const GYMS_ORIGIN = `https://${GYMS_HOST}`;
@@ -51,7 +55,8 @@ function move(to, method) {
 
 /**
  * What to do with one request, by host and path. PURE.
- * Returns { kind: 'redirect', to, status } | { kind: 'landing' } | { kind: 'members' } | { kind: 'app' }.
+ * Returns { kind: 'redirect', to, status } | { kind: 'landing' } | { kind: 'members' } | { kind: 'gympage' } | { kind: 'app' }.
+ *  - 'gympage': join.mettleup.fit, every path (gymPageServe.js decides; F207).
  *  - 'landing': serve the gym-owner landing page (the /home/ file) at this path.
  *  - 'members': serve the member page (the /member-site/ file) at this path (F184).
  *  - 'app': carry on as the admin app's Worker always did (static files, /j, /c, /sb, /api ...).
@@ -64,6 +69,7 @@ export function routeFor(host, pathname, search = '', method = 'GET', { moveOld 
   const homePage = pathname === '/home' || pathname === '/home/' || pathname === '/home/index.html';
   const gymsPage = pathname === '/gyms' || pathname === '/gyms/' || pathname === '/gyms/index.html';
   if (REDIRECT_HOSTS.includes(h)) return move(`${SITE_ORIGIN}${rest}`, method);
+  if (h === GYM_PAGE_HOST) return { kind: 'gympage' };
   if (h === SITE_HOST) {
     if (pathname === '/') return { kind: 'members' };
     if (homePage || gymsPage) return move(`${GYMS_ORIGIN}/${search}`, method);
