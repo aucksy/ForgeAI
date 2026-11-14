@@ -55,7 +55,8 @@ JavaScript; the one small script adds the shutter roll-up, the bottom bar on pho
 (off by default), the page link with Copy and Share on WhatsApp, "See my page", a "Taken down by MettleUp" banner with
 HQ's note when hidden, and later the AI helper switch (section 7). Owners only can save; staff can see the link.
 
-**C2. Get started on Today** (R-523, built, hidden): step "Make your free gym web page", hint "People who may join
+**C2. Get started on Today** (R-523, R-525). Built: a "Set your gym timings" step (live now; ticks itself when the
+Gym timings screen sees real saved timings), placed just before the web page step. Built but hidden: step "Make your free gym web page", hint "People who may join
 can see your fees, timings and photos, and send you a question." Opens Settings -> Your web page, ticks itself when
 the page is published. It appears only when the admin app passes the page's state (getStarted.ts `webPage`), which it
 does not yet: there is no set-up screen and no live database part, so a visible step would open nothing and never
@@ -127,8 +128,9 @@ The editor shows it only once the AI helper (F208) exists. Until then it does no
 - Visitor flow: when on, the Fees board gets one line, "Free <N>-day trial. Ask at the desk." and Join online offers
   "Start with a <N>-day trial" as a choice next to the plans; the request lands in Enquiries marked "Trial, <N> days".
   When the trial ends, the gym's Today screen asks the desk to call them.
-- **Not decided:** a "pay first, refund if they stop" trial. Do not build it until the owner decides (it touches
-  money and refunds).
+- **Decided 14 Nov (R-524):** a trial is free or a small fee (e.g. Rs 199) that is taken off the plan if the person
+  joins. There is **no** "pay first, refund if they stop" trial. Payments stay in test mode until the owner says
+  "payments live".
 
 ## 8. Public words (draft, **needs owner yes**)
 
