@@ -1,5 +1,4 @@
--- NOT APPLIED LIVE. The owner's yes for the LIVE change is R-510 (14 Nov 2026: "yes to A (my pick): Build both
--- directions together, with the live database change"); he applies it himself in the SQL Editor, after 0075.
+-- APPLIED LIVE 14 Nov 2026 (R-510: owner said "yes to A ... with the live database change"; SQL Editor, live test 0076 PASS 38). VAPID key set, forgeai-hq deployed 558464b7.
 --
 -- 0076: the gym's alerts (0075) reach the staff's browsers with the admin app CLOSED, on a computer or a phone
 -- (R-506 phase 3, Web Push). Two locked tables and the calls around them:

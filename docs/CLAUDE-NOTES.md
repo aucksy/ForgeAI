@@ -7,6 +7,20 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-516. Next-set box as 2 lines: Previous / Done / to go, then Extra — 14 Nov 2026 (MOCK ONLY, waiting for "build it")
+Owner (picture, Dumbbell Curl, box "Next set: 20 kg × 12 · Done: 720 of today's 840 kg"): "2 lines. First line, previous
+total set volume, then we show how much kg, and then XX kg done today to beat. Second line is excess kg done of total
+excess kg ... the higher of the last one. Just build something, a screenshot, and show me."
+Mock sent (scratchpad r516-mock.png): line 1 "Previous 840 kg · Done 720 kg · 120 kg to go" (green "✓ Beaten" once past);
+line 2 "Extra: 0 of 40 kg" + bar, where 40 = Next goal (880, R-515 keeps set 1 at 18) − previous (840). Work sets only.
+"Next set: …" line dropped (the row shows it). NOT built: waiting for his "build it" or changes.
+
+## R-510b. Notifications both ways are LIVE on the server — 14 Nov 2026
+0073, 0075, 0076 applied in the SQL Editor (live tests PASS 25 / 28 / 38; 0054 PASS 23 and 0069 PASS 56 re-run).
+VAPID_PRIVATE_JWK set (public key matches https://hq.mettleup.fit/push/web-key), forgeai-hq deployed 558464b7, cron ok.
+Members now get pop-ups for plans, diet, measurements, challenges, fee requests (server only). Admin app alerts need the
+panel deploy (forgeai-panel) + ADMIN_NEWS 'pending-member-alerts' moved into ADMIN_NEWS: waiting for the panel fixes to go green.
+
 ## R-515. Next-set hint says "Add 1 rep to each set" but set 1 goes DOWN (18 -> 15) — 14 Nov 2026
 Owner (picture, Dumbbell Curl, previous 20 kg x 18, 13, 11; hint "Suggested: 20 kg · 15, 14, 12 · RPE 9 /
 Add 1 rep to each set under 15: 20 kg × 15, 14, 12"): "is suggesting in plain English that add one more rep to

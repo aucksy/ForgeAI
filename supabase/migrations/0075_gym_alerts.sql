@@ -1,5 +1,4 @@
--- NOT APPLIED LIVE. The owner's yes for the LIVE change is R-510 (14 Nov 2026: "yes to A (my pick): Build both
--- directions together, with the live database change"); he applies it himself in the SQL Editor, after 0073 and 0074.
+-- APPLIED LIVE 14 Nov 2026 (R-510: owner said "yes to A ... with the live database change"; SQL Editor, live test 0075 PASS 28).
 --
 -- 0075: one list of everything a member does that the gym should hear about (R-506, R-509 direction A). Owner,
 -- 14 Nov 2026: he sent a question to a trainer and the admin panel showed no notification. "Wherever there is this
