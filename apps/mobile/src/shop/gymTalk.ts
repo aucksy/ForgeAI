@@ -56,10 +56,12 @@ export const TALK_WORDS = {
   kindLabel: 'What is it about?',
   kind: { question: 'Question', feedback: 'Feedback', complaint: 'Complaint' } as Record<TalkKind, string>,
   kindHint: {
-    question: 'Ask about timings, fees, classes and more. For workout help, use Ask a trainer.',
+    question: 'Ask about timings, fees, classes and more.',
     feedback: 'Share an idea, or tell them what you like.',
     complaint: 'Tell them what went wrong. Only the gym owner reads complaints.',
   } as Record<TalkKind, string>,
+  /** R-505: added after the question hint ONLY for a member who may ask a trainer now (`talkHint`). */
+  askHint: 'For workout help, use Ask a trainer.',
   placeholder: {
     question: 'For example: Is the gym open on Diwali?',
     feedback: 'For example: Please add a second squat rack.',
@@ -103,6 +105,17 @@ const first = (raw: unknown): unknown => (Array.isArray(raw) ? raw[0] : raw);
 
 export function isTalkKind(v: unknown): v is TalkKind {
   return typeof v === 'string' && (TALK_KINDS as readonly string[]).includes(v);
+}
+
+/**
+ * The line under "What is it about?". R-505 (14 Nov 2026): "For workout help, use Ask a trainer." is added to the
+ * question hint only when this member can ask a trainer now (askTrainer.ts askShown(...)?.kind === 'open', the
+ * Gym tab row's own check). A pass member (FITPASS, cultpass), a member with no plan or whose plan ended, or a
+ * check not answered yet: no mention of it. PURE.
+ */
+export function talkHint(kind: TalkKind, canAsk: boolean): string {
+  const base = TALK_WORDS.kindHint[kind];
+  return kind === 'question' && canAsk ? `${base} ${TALK_WORDS.askHint}` : base;
 }
 
 /** Only feedback may go without the name. PURE. */

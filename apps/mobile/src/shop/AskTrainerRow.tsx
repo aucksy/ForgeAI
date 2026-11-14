@@ -15,7 +15,7 @@ import { LinkRow } from '@/components/stats/parts';
 import { GhostButton, Icon } from '@/components/ui';
 import { color, space } from '@/theme/tokens';
 
-import { ASK_WORDS, askRowSub } from './askTrainer';
+import { ASK_WORDS, askRowSub, askShown } from './askTrainer';
 import { readAskSeen } from './AskTrainerScreen';
 import { requestRenew } from './renewRequest';
 import type { GymLink } from './types';
@@ -31,9 +31,10 @@ export function AskTrainerRow({ link, refreshKey }: { link: GymLink; refreshKey:
       void Promise.all([import('./trainerSync'), import('./askAccessRead')])
         .then(async ([m, a]): Promise<RowState | null> => {
           const [choices, access] = await Promise.all([m.readAskChoices(link), a.readAskAccess(link)]);
-          // Not known (offline) or not for this member (a pass, no plan): no row.
-          if (!choices || !access || access.kind === 'hidden') return null;
-          if (access.kind === 'locked') return { sub: ASK_WORDS.locked, locked: true, renew: access.renew };
+          // Not known (offline) or not for this member (a pass, no plan): no row (askShown, shared with "Message your gym").
+          const shown = askShown(!!choices, access);
+          if (!shown) return null;
+          if (shown.kind === 'locked') return { sub: ASK_WORDS.locked, locked: true, renew: shown.renew };
           const [list, seen] = await Promise.all([m.readAskQuestions(link), readAskSeen(link.memberId)]);
           return { sub: askRowSub(list, seen), locked: false, renew: false };
         })

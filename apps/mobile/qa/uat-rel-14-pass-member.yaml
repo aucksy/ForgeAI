@@ -82,3 +82,25 @@ appId: com.mettleup.app
 - assertNotVisible: ".*Send a question to a trainer.*"
 - assertNotVisible: ".*Ask a trainer is for members with a running plan.*"
 - takeScreenshot: rel-143-pass-no-ask-trainer
+# R-505 follow-up: "Message your gym" tells only members who can ask to use Ask a trainer. NEGATIVE: the pass
+# member's Question hint stops after its first sentence, once the page has checked ("talk-kind-hint-ready").
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Message your gym$"
+- tapOn: "^Message your gym$"
+# in-view: the page just opened at its top; the hint sits under the Question chip
+- extendedWaitUntil:
+    visible:
+      id: "talk-kind-hint-ready"
+    timeout: 30000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Ask about timings, fees, classes and more\.$'
+- assertNotVisible: ".*use Ask a trainer.*"
+- takeScreenshot: rel-144-pass-message-no-ask-hint
+- back
+- extendedWaitUntil:
+    visible: "${GYM}"
+    timeout: 30000

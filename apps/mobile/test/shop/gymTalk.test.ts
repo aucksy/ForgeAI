@@ -3,6 +3,9 @@
  * server's answers, the status line, the Gym tab row, the refusals in member words, the QA builds' pretend gym,
  * and the member-words rules.
  */
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+
 import { describe, expect, it } from 'vitest';
 
 import {
@@ -15,6 +18,7 @@ import {
   createPretendTalk,
   hasTalkStandIn,
   talkErrorWords,
+  talkHint,
   talkRowSub,
   talkSentFrom,
   talkStatus,
@@ -180,5 +184,25 @@ describe('member words', () => {
   it('the complaint hint says who reads it (the server rule: the owner only)', () => {
     expect(TALK_WORDS.kindHint.complaint).toMatch(/Only the gym owner reads complaints/);
     expect(TALK_WORDS.anonHint).toMatch(/will not see who sent it/);
+  });
+});
+
+describe('R-505: "For workout help, use Ask a trainer." only for a member who can ask', () => {
+  it('a member who can ask a trainer now reads it under Question', () => {
+    expect(talkHint('question', true)).toBe('Ask about timings, fees, classes and more. For workout help, use Ask a trainer.');
+  });
+  it('a pass member, no plan, a plan that ended or a check not answered yet: no mention of it', () => {
+    expect(talkHint('question', false)).toBe('Ask about timings, fees, classes and more.');
+    for (const k of ['question', 'feedback', 'complaint'] as const) expect(talkHint(k, false)).not.toMatch(/trainer/i);
+  });
+  it('feedback and complaint never mention it, even for a member who can ask', () => {
+    expect(talkHint('feedback', true)).toBe(TALK_WORDS.kindHint.feedback);
+    expect(talkHint('complaint', true)).toBe(TALK_WORDS.kindHint.complaint);
+  });
+  it('the page shows the hint through talkHint and the Gym tab row check (askShown)', () => {
+    const src = readFileSync(join(__dirname, '..', '..', 'src', 'shop', 'GymTalkScreen.tsx'), 'utf8');
+    expect(src).toMatch(/talkHint\(kind, canAsk === true\)/);
+    expect(src).toMatch(/askShown\(!!choices, access\)\?\.kind === 'open'/);
+    expect(src).not.toMatch(/TALK_WORDS\.kindHint\[kind\]/);
   });
 });

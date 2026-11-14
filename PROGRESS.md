@@ -122,6 +122,13 @@
   Phone test runner: `only` naming a part of the A..R chain that leans on earlier parts now brings them in (only=r runs
   a ... p9 first). Run 43562670140 (only=r,u199) failed because part R started from the demo with no part L, so no
   "Jaipur (6)" folder; no app change caused it. test_flow_tools checks the runner's lists match flows_to_check.py.
+- R-505 FOLLOW-UP: "MESSAGE YOUR GYM" MENTIONS ASK A TRAINER ONLY TO MEMBERS WHO CAN ASK (14 Nov 2026). The Question
+  hint is "Ask about timings, fees, classes and more."; "For workout help, use Ask a trainer." is added only when the
+  Gym tab row's own check says open (askTrainer.ts askShown, now shared by AskTrainerRow and GymTalkScreen). A pass
+  member, no plan, a plan that ended, or the check not answered yet: no mention. Tests: gymTalk (+4), r505AskPlan (+1).
+  UAT: uat-rel-gym-talk (Uma, running plan) waits for "talk-kind-hint-ready" and reads the full line; uat-rel-14 (pass
+  member, NEGATIVE) opens Message your gym and asserts no "use Ask a trainer" (rel-144). NOT run on a phone yet
+  (qa-device uat part, flows 12 / gt / 14).
 - RELEASE STEP, PUBLIC BETA (owner #96 "A = now", 14 Nov 2026): from the next release every version goes to Play open testing first and to production about 3 days later. At that release: set up the open-testing track in Play Console (countries, feedback email) and make play-upload send the AAB to it; the watch follows the phone tracks.
 - R-500 PROFILE CHART: "LAST 3 MONTHS" INSTEAD OF "LAST 12 WEEKS" (owner, 14 Nov 2026: "I want to change the 12 weeks to 3
   months. It should be last 3 months or last 12 months or all time."). Shared JS (Android and iPhone), no native part,

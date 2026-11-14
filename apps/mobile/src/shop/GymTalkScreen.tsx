@@ -14,8 +14,8 @@ import { Card, Chip, GhostButton, PrimaryButton, Screen } from '@/components/ui'
 import { color, radius, space, type } from '@/theme/tokens';
 import { usePhonePrefs } from '@/tracker/phone/phonePrefs';
 
-import { askWhen } from './askTrainer';
-import { TALK_KINDS, TALK_MAX, TALK_WORDS, canSendAnonymous, talkStatus, type TalkKind, type TalkThread } from './gymTalk';
+import { askShown, askWhen } from './askTrainer';
+import { TALK_KINDS, TALK_MAX, TALK_WORDS, canSendAnonymous, talkHint, talkStatus, type TalkKind, type TalkThread } from './gymTalk';
 import { readTalkThreads, replyTalk, sendTalk, talkIsStandIn, talkKnownMissing } from './gymTalkSync';
 import { useGymShop } from './gymStore';
 import { useGymHydrated } from './shopSource';
@@ -57,6 +57,25 @@ function GymTalk({ link }: { link: GymLink }) {
   const [note, setNote] = useState<{ ok: boolean; words: string } | null>(null);
   const [sending, setSending] = useState(false);
   const busy = useRef(false);
+  // R-505: may this member ask a trainer now? The Gym tab row's own check (askShown); null = not answered yet.
+  const [canAsk, setCanAsk] = useState<boolean | null>(null);
+  useFocusEffect(
+    useCallback(() => {
+      let live = true;
+      void Promise.all([import('./trainerSync'), import('./askAccessRead')])
+        .then(([m, a]) => Promise.all([m.readAskChoices(link), a.readAskAccess(link)]))
+        .then(([choices, access]) => {
+          if (live) setCanAsk(askShown(!!choices, access)?.kind === 'open');
+        })
+        .catch((e: unknown) => {
+          console.warn('[talk] could not tell whether Ask a trainer is open', e);
+          if (live) setCanAsk(false);
+        });
+      return () => {
+        live = false;
+      };
+    }, [link]),
+  );
 
   const fetchAll = useCallback(
     async (byPull: boolean) => {
@@ -145,7 +164,10 @@ function GymTalk({ link }: { link: GymLink }) {
               <Chip key={k} role="radio" label={TALK_WORDS.kind[k]} selected={kind === k} onPress={() => pick(k)} />
             ))}
           </View>
-          <Text style={smallStyle()}>{TALK_WORDS.kindHint[kind]}</Text>
+          {/* testID: the phone test waits for "-ready" before it checks that a pass member sees no Ask a trainer. */}
+          <Text testID={canAsk == null ? 'talk-kind-hint' : 'talk-kind-hint-ready'} style={smallStyle()}>
+            {talkHint(kind, canAsk === true)}
+          </Text>
           {canSendAnonymous(kind) ? (
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.md }}>
               <View style={{ flex: 1 }}>

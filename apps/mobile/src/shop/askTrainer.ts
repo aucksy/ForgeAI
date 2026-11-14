@@ -183,6 +183,16 @@ export function askAccess(a: MembershipAnswer | null | undefined, today?: string
   return { kind: 'hidden' };
 }
 
+/**
+ * The one check for "Ask a trainer" on the Gym tab row and on "Message your gym" (R-505): the server has the
+ * feature (`choicesKnown`: its choices were read) and the member's access is known and not hidden. null = no
+ * row, no mention of it. 'open' = the member may ask now; 'locked' = the row stays, locked. PURE.
+ */
+export function askShown(choicesKnown: boolean, access: AskAccess | null | undefined): Exclude<AskAccess, { kind: 'hidden' }> | null {
+  if (!choicesKnown || !access || access.kind === 'hidden') return null;
+  return access;
+}
+
 /** The open question, if any (newest first list). PURE. */
 export function openQuestion(list: readonly AskQuestion[]): AskQuestion | null {
   return list.find((q) => q.open) ?? null;

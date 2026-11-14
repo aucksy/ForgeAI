@@ -16,7 +16,7 @@ vi.mock('@/shop/gymApi', () => api);
 vi.mock('@/db', () => ({ getDb: vi.fn() }));
 vi.mock('expo-constants', () => ({ default: { expoConfig: { extra: {} } } }));
 
-import { ASK_WORDS, askAccess, askErrorWords } from '@/shop/askTrainer';
+import { ASK_WORDS, askAccess, askErrorWords, askShown } from '@/shop/askTrainer';
 import { readAskAccess } from '@/shop/askAccessRead';
 import { indiaDayHour } from '@/shop/gymBusy';
 import { useGymSectionRequest } from '@/shop/gymSectionRequest';
@@ -119,5 +119,15 @@ describe('"Renew my plan" goes where renewing already goes', () => {
     requestRenew(1_000);
     expect(takeRenewRequest(1_000 + RENEW_REQUEST_MS + 1)).toBe(false);
     expect(useRenewRequest.getState().at).toBeNull();
+  });
+});
+
+describe('askShown: the one check for the Gym tab row and "Message your gym"', () => {
+  it('open only with the feature on the server and a running plan; locked keeps its renew; hidden and unknown are null', () => {
+    expect(askShown(true, { kind: 'open' })).toEqual({ kind: 'open' });
+    expect(askShown(true, { kind: 'locked', renew: true })).toEqual({ kind: 'locked', renew: true });
+    expect(askShown(true, { kind: 'hidden' })).toBeNull();
+    expect(askShown(true, null)).toBeNull();
+    expect(askShown(false, { kind: 'open' })).toBeNull();
   });
 });
