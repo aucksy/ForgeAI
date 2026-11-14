@@ -716,6 +716,7 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   'Working…': 'Kaam chal raha hai…',
   'Message to your members': 'Aapke members ko message',
   'Who gets it': 'Kisko jayega',
+  'Everyone · 1 member': 'Sabko · 1 member',
   'Everyone · {n} members': 'Sabko · {n} members',
   'The app list could not load.': 'App wali list nahi khul payi.',
   '1 has the app': '1 ke paas app hai',

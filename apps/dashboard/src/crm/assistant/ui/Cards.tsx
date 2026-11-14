@@ -589,7 +589,7 @@ function MessageView({ turnId, card, dr, data, ctl }: { turnId: string; card: Dr
         <Row label={t('Who gets it')}>
           {reach ? (
             <>
-              <b>{reach.everyone ? t('Everyone · {n} members', { n: reach.group.length }) : reach.group.length === 1 ? t('1 member') : t('{n} members', { n: reach.group.length })}</b>
+              <b>{reach.everyone ? (reach.group.length === 1 ? t('Everyone · 1 member') : t('Everyone · {n} members', { n: reach.group.length })) : reach.group.length === 1 ? t('1 member') : t('{n} members', { n: reach.group.length })}</b>
               <br />
               <span style={{ color: color.inkSecondary }}>{inApp === null ? t('The app list could not load.') : inApp === 1 ? t('1 has the app') : t('{n} have the app', { n: inApp })}</span>
             </>
