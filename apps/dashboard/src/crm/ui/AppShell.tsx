@@ -11,6 +11,7 @@
 import { Fragment, useEffect, useRef, useState, type ReactNode } from 'react';
 
 import { BranchSwitch } from '../branches/BranchSwitch';
+import { GymLogo } from '../brand/GymLogo';
 import { Icon, type IconName } from './icons';
 import { ThemeToggle } from './ThemeToggle';
 import { NewsBell, NewsSidebarLink } from './WhatsNew';
@@ -169,8 +170,14 @@ function Sidebar({ gymName, nav, activePath }: { gymName: string; nav: NavItem[]
       }}
     >
       <div style={{ padding: `0 ${space.md}px ${short ? space.md : space.lg}px`, flexShrink: 0 }}>
-        {/* #41: an owner with 2 or more branches picks the branch here; everyone else sees the name. */}
-        <BranchSwitch gymName={gymName} />
+        {/* #41: an owner with 2 or more branches picks the branch here; everyone else sees the name.
+            R-495: the gym's own logo (Branding) sits just before it; no logo, just the name as before. */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: space.sm, minWidth: 0 }}>
+          <GymLogo gymName={gymName} />
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <BranchSwitch gymName={gymName} />
+          </div>
+        </div>
         {/* R-259: "Powered by" + the steel-plate name, small (in the splash's shine, R-425), so it stays quiet under the gym's name. */}
         <div
           style={{ display: 'flex', alignItems: 'center', gap: 6, fontFamily: font.body, fontSize: 11, color: color.inkMuted, letterSpacing: 0.4 }}
@@ -330,8 +337,12 @@ function CompactHeader({ gymName }: { gymName: string }) {
         gap: space.md,
       }}
     >
-      <BranchSwitch gymName={gymName} compact />
-      <div style={{ display: 'flex', alignItems: 'center', gap: space.sm }}>
+      {/* R-495: the gym's own logo before its name (nothing when it has none). */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: space.sm, minWidth: 0, flex: 1 }}>
+        <GymLogo gymName={gymName} size={26} />
+        <BranchSwitch gymName={gymName} compact />
+      </div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: space.sm, flexShrink: 0 }}>
         <NewsBell />
         <ThemeToggle compact />
       </div>

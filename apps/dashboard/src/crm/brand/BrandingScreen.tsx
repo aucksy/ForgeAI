@@ -24,6 +24,7 @@ import { Button, Card, ErrorBanner, PageHeader, SectionTitle, Sheet, Toast, colo
 import { navigate } from '../ui/router';
 import { CLEAR_ARGS, LOGO_WORDS, brandErrorWords, logoSuggestionLines, draftChanged, draftFromBrand, hexError, previewPalette, saveArgs, shortcutColoursOf, type BrandDraft } from './brandLogic';
 import { LogoError, readLogoColours, readSavedLogoColours, uploadGymLogo } from './logoUpload';
+import { gymLogos } from './GymLogo';
 import { PhonePreview } from './PhonePreview';
 import { ShortcutPreview } from './ShortcutPreview';
 
@@ -49,7 +50,7 @@ export function BrandingScreen() {
         }
       />
       {cloud ? (
-        <BrandingForm ownerKey={cloud.ownerKey} gymName={cloud.name} />
+        <BrandingForm ownerKey={cloud.ownerKey} cloudGymId={cloud.gymId} gymName={cloud.name} />
       ) : (
         <JoinCodeCard title="Turn on the member app first" />
       )}
@@ -59,7 +60,7 @@ export function BrandingScreen() {
 
 type Load = { state: 'loading' } | { state: 'error'; message: string } | { state: 'ready'; saved: GymBrand | null };
 
-function BrandingForm({ ownerKey, gymName }: { ownerKey: string; gymName: string }) {
+function BrandingForm({ ownerKey, cloudGymId, gymName }: { ownerKey: string; cloudGymId: string; gymName: string }) {
   const { handleError } = useShop();
   const gymId = useCrm().snapshot.gym.gymId;
   const compact = useIsCompact();
@@ -93,12 +94,14 @@ function BrandingForm({ ownerKey, gymName }: { ownerKey: string; gymName: string
       const g = await api.ownerGym(ownerKey);
       const saved = g.brand ?? null;
       if (saved) tickGetStarted(gymIdRef.current, 'brand');
+      // R-495: the header's logo follows what the server says.
+      gymLogos.set(cloudGymId, saved);
       setDraft(draftFromBrand(saved));
       setLoad({ state: 'ready', saved });
     } catch (e) {
       setLoad({ state: 'error', message: handleErrorRef.current(e) });
     }
-  }, [ownerKey]);
+  }, [ownerKey, cloudGymId]);
 
   useEffect(() => {
     void fetchBrand();
@@ -142,6 +145,8 @@ function BrandingForm({ ownerKey, gymName }: { ownerKey: string; gymName: string
     try {
       const next = await api.setBrand(ownerKey, saveArgs(draft));
       setLoad({ state: 'ready', saved: next });
+      // R-495: the new logo shows in the header at once (no reload).
+      gymLogos.set(cloudGymId, next);
       setDraft(draftFromBrand(next));
       tickGetStarted(gymId, 'brand');
       flash(savedWords());
@@ -159,6 +164,7 @@ function BrandingForm({ ownerKey, gymName }: { ownerKey: string; gymName: string
     try {
       await api.setBrand(ownerKey, CLEAR_ARGS);
       setLoad({ state: 'ready', saved: null });
+      gymLogos.set(cloudGymId, null);
       setDraft(draftFromBrand(null));
       flash('Back to MettleUp’s look.');
     } catch (e) {

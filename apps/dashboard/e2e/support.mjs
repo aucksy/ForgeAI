@@ -109,6 +109,8 @@ export class FakeServer {
     this.gym = { gymId: 'g-online', name: '', joinCode: 'QA0002', createdAt: NOW.toISOString() };
     /** The shop's gym (demo_start_gym: the demo, or a shop turned on), with its sample products. */
     this.shopGym = { ...DEMO_GYM };
+    /** R-495: the gym's look (owner_set_brand, 0005), as owner_gym answers it; null = none. */
+    this.brand = null;
     this.products = [];
     /** phone -> { staffId, name, phone, role, code, lastSeenAt } */
     this.people = new Map();
@@ -496,8 +498,16 @@ export class FakeServer {
         return { ...this.shopGym, ownerKey };
       }
       case 'owner_gym':
-        if (this.sessions.has(args.p_key)) return { gymId: this.gym.gymId, name: this.gym.name, joinCode: this.gym.joinCode, brand: null };
-        return { ...this.shopGym, brand: null };
+        if (this.sessions.has(args.p_key)) return { gymId: this.gym.gymId, name: this.gym.name, joinCode: this.gym.joinCode, brand: this.brand };
+        return { ...this.shopGym, brand: this.brand };
+      case 'owner_set_brand': {
+        // 0005: all nulls and 'normal' clear the look.
+        const none = args.p_accent == null && args.p_bg == null && args.p_logo_url == null && (args.p_heading ?? 'normal') === 'normal';
+        this.brand = none
+          ? null
+          : { accent: args.p_accent ?? null, bg: args.p_bg ?? null, logoUrl: args.p_logo_url ?? null, heading: args.p_heading ?? 'normal', updatedAt: NOW.toISOString() };
+        return { brand: this.brand };
+      }
       case 'owner_rename_gym':
         this.shopGym.name = String(args.p_name);
         return this.shopGym;

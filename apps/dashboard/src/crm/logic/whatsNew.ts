@@ -38,6 +38,17 @@ export interface AdminNewsEntry {
 /** Newest first. member-words: Gemini second opinion + facts checked against the commits (28 Oct 2026). */
 export const ADMIN_NEWS: readonly AdminNewsEntry[] = [
   {
+    // R-495 (owner, 14 Nov 2026): the gym's own logo top-left in the admin app, for the owner, the desk and trainers.
+    // Panel code only (the logo is the one saved in Branding). id = the deploy day: change it if the deploy is later.
+    id: '2026-11-14',
+    lines: [
+      {
+        text: 'Your gym’s logo now shows at the top of the admin app, next to your gym’s name. Your staff see it too. To add or change it, open Branding.',
+        go: { label: 'Open Branding', path: '/settings/branding' },
+      },
+    ],
+  },
+  {
     // R-480 (13 Nov 2026, owner: "yes you can put AI assistant live as well"; wording approved): F201 AI Assistant
     // live (0071 + 0072 on the gym server, D1 0015, HQ and panel deployed 13 Nov) and the 4 policy pages on the site.
     id: '2026-11-13',
