@@ -1,4 +1,5 @@
--- NOT APPLIED LIVE. Needs the owner's yes (a live database change, R-513). Re-runnable. Apply after 0075 (it adds a
+-- APPLIED LIVE 14 Nov 2026 (R-521: owner said "Yes, you can enable the self-signup database change, online database."; SQL
+-- Editor, live test 0077 PASS 69; re-ran 0075 PASS 28). Re-runnable. Apply after 0075 (it adds a
 -- kind to 0075's gym_alerts and writes an alert there) and after 0061 (it checks 0061's signed number proofs).
 -- Test: supabase/tests/0077_self_join.sql (CI runs it after every migration; pasted into the SQL Editor it always ends
 -- in an error and so changes nothing).
