@@ -7,6 +7,18 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-522. Add-person pop-up: add "Trainer" and "Other (type it)"; plus the 13,806 Cloudflare question — 14 Nov 2026
+He said (14 Nov 2026): "when the gym owner or the admin user is trying to add a new person either a staff or a trainer so
+when the pop-up comes where you add the name and the number uh there's a drop down list which only has two options really
+the gym owner or the staff there is no option for trainer so please add that and maybe also add an option to choose and
+then you can use other and they can just type it."
+Plan: the drop-down offers Owner / Staff (front desk) / Trainer / Other (type the job). Access stays two levels inside
+(owner or staff); Trainer also marks the person as a trainer (trainer view); Other keeps the typed job title. A new
+database column needs his yes before it goes live.
+Also asked (14 Nov): why 13,806 Cloudflare requests in a day. Measured (last 24 h, app.mettleup.fit): ~4,600 from an admin
+panel left open on his Windows Chrome (not my tab group) asking every minute all night; ~1,100 from my cloud tests
+(US phone runs, test browsers); ~570 his phone app; HQ timer ~1,440/day. Fix: the panel stops asking while hidden.
+
 ## R-521. YES to 0077 live + consent words; page AI on/off; trial on sign-up — 14 Nov 2026
 He said (14 Nov 2026): "Cloudfair is signed in" / "Yes, you can enable the self-signup database change, online database."
 / "Yes, you can also enable the new member ticks before joining." (the two consent sentences EN+HI, as drafted) / "Also, let
