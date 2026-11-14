@@ -199,7 +199,7 @@ test('Member messages: not ready, the list, types, reply, done, the desk, a gone
 // Fresh eyes (14 Nov 2026): two pages were both called "Questions" (members' questions to a trainer, and the Questions
 // type inside Member messages), and neither was in the computer's menu picture (that gym had no 0050/0053/0069). With
 // all three on the server, the menu has both, each with its own clear name, and each opens its own page.
-test('the computer menu: "Questions for trainers" and "Member messages", each opens its page', async ({ page }) => {
+test('the computer menu: "Member questions" and "Member messages", each opens its page', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 900 });
   const server = await openApp(page);
   const talk = installTalk(server);
@@ -213,7 +213,7 @@ test('the computer menu: "Questions for trainers" and "Member messages", each op
   qs.list.push({ id: 'q9', name: 'Asha Verma', question: 'Is the 6 am batch full tomorrow?', askedAt: T0 - 2 * 3600_000 });
   await startOnlineGym(page);
   const nav = page.getByRole('navigation', { name: 'Main' });
-  const questions = nav.getByRole('link', { name: /^Questions for trainers/ });
+  const questions = nav.getByRole('link', { name: /^Member questions/ });
   const messages = nav.getByRole('link', { name: /^Member messages/ });
   await expect(questions).toBeVisible({ timeout: 15_000 });
   await expect(messages).toBeVisible();
@@ -226,7 +226,7 @@ test('the computer menu: "Questions for trainers" and "Member messages", each op
   await nav.screenshot({ path: `${DIR}/computer-menu-questions-and-messages.png` });
 
   await questions.click();
-  await expect(page.getByRole('heading', { name: 'Questions for trainers', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Member questions', exact: true })).toBeVisible();
   await expect(page.getByRole('main')).toContainText('Is the 6 am batch full tomorrow?');
   await messages.click();
   await expect(page.getByRole('heading', { name: 'Member messages', exact: true })).toBeVisible();

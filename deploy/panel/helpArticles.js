@@ -329,15 +329,15 @@ export const ALL_HELP_ARTICLES = [
   {
     id: 'answer-member-questions',
     who: 'owner',
-    title: 'Answer members\' questions (Questions)',
+    title: 'Answer members\' workout questions (Member questions)',
     text:
-      'Members can ask a trainer a question from the MettleUp app ("Ask a trainer" on the Gym tab). ' +
-      'Only the person the member picked sees it; "Any trainer" questions go to every trainer and the owner. ' +
-      '1. Open "Questions" (on a phone, under More). A number on it shows how many questions wait for a reply. ' +
+      'Members can ask their trainer or the owner a workout question from the MettleUp app ("Ask about your workout" on the Gym tab; "Ask a trainer" in older versions). ' +
+      'Only the person the member picked sees it; "Any trainer or the owner" questions go to every trainer and the owner. ' +
+      '1. Open "Member questions" (on a phone, under More). A number on it shows how many questions wait for a reply. ' +
       '2. "Waiting for your reply" lists them, the longest wait first. ' +
       '3. Type in "Your reply" and tap "Send reply". ' +
       'The reply shows in the member\'s app, with a notification if they allowed messages from the gym. ' +
-      'Only trainers (ticked in Staff & sign-in) and the owner can open Questions.',
+      'Only trainers (ticked in Staff & sign-in) and the owner can open Member questions.',
     screens: ['apps/dashboard/src/crm/ui/screens/Questions.tsx'],
   },
   {
@@ -560,10 +560,10 @@ export const ALL_HELP_ARTICLES = [
   {
     id: 'ask-a-trainer',
     who: 'member',
-    title: 'Ask a trainer at your gym',
+    title: 'Ask your trainer or gym owner about your workout',
     text:
-      'If your gym has it: open the Gym tab and tap "Ask a trainer". ' +
-      '1. Under "Who should answer?" pick a trainer. Your own trainer is picked first. "Any trainer" sends it to every trainer and the gym owner. ' +
+      'If your gym has it: open the Gym tab and tap "Ask about your workout" (called "Ask a trainer" in older versions of the app). ' +
+      '1. Under "Who should answer?" pick a trainer or the owner. Your own trainer is picked first. "Any trainer or the owner" sends it to every trainer and the gym owner. ' +
       '2. Type your question (up to 500 letters) and tap "Send question". ' +
       '3. The reply shows on the same page. Switch on "Messages from my gym" in Settings, then Reminders, to get a notification when they reply. ' +
       'You can have one question waiting at a time. To ask something else first, tap "Take back my question". Only the person you pick sees your question.',

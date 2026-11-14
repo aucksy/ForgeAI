@@ -1,6 +1,6 @@
 /**
  * F109 "Training progress": the server's answers read defensively, the one line per member, who comes first, the two
- * WhatsApp messages, the refusal words, and everything staying hidden until the server has 0050.
+ * ready messages (R-534: sent in the app), the refusal words, and everything staying hidden until the server has 0050.
  */
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
@@ -9,6 +9,9 @@ vi.mock('../../src/crm/shop/api', () => ({ call: (...a: unknown[]) => callMock(.
 vi.mock('../../src/lib/demoLock', () => ({ isDemoLocked: () => false }));
 
 import {
+  CHEER_WORDS,
+  cheerMessage,
+  cheerTitle,
   howIsItGoingMessage,
   memberLine,
   setText,
@@ -150,6 +153,25 @@ describe('WhatsApp messages', () => {
     for (const t of [wellDoneMessage(best, TODAY, null), howIsItGoingMessage(quiet, TODAY, null), wellDoneMessage(member('E', { summary: summary({ weeks: [] }) }), TODAY, null)]) {
       expect(t).not.toMatch(BANNED);
     }
+  });
+});
+
+describe('R-534: the two messages go in the app (never WhatsApp)', () => {
+  it('the title is what the phone pop-up shows: who sends it (a trainer), then what', () => {
+    expect(cheerTitle('well-done', null)).toBe('Well done!');
+    expect(cheerTitle('how-going', null)).toBe('How’s it going?');
+    expect(cheerTitle('well-done', 'Rohit Singh')).toBe('Rohit: Well done!');
+    expect(cheerTitle('well-done', 'A'.repeat(80)).length).toBeLessThanOrEqual(60);
+  });
+  it('the body is the same ready words, within the server limit', () => {
+    const quiet = member('Chand', { summary: summary({ last: '2026-10-26' }) });
+    expect(cheerMessage('how-going', quiet, TODAY, null)).toEqual({ title: 'How’s it going?', body: howIsItGoingMessage(quiet, TODAY, null) });
+    expect(cheerMessage('well-done', member('Bilal Khan'), TODAY, 'Rohit')).toEqual({ title: 'Rohit: Well done!', body: wellDoneMessage(member('Bilal Khan'), TODAY, 'Rohit') });
+    expect(cheerMessage('well-done', member('B'.repeat(400)), TODAY, null).body.length).toBeLessThanOrEqual(300);
+  });
+  it('the words never say WhatsApp, and say where it goes', () => {
+    for (const w of Object.values(CHEER_WORDS)) expect(w).not.toMatch(/whatsapp/i);
+    expect(CHEER_WORDS.hint).toBe('Goes to their MettleUp app, with a notification on their phone.');
   });
 });
 

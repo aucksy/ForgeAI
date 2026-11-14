@@ -272,7 +272,7 @@ export function Routes({ online }: { online: boolean }) {
       ...(trainerNav ? [{ path: '/trainer', label: t('Training progress'), icon: 'growth', group: 'training' } as NavItem] : []),
       // R-319 item 1 (4 Nov 2026): members' "Ask a trainer" questions, badged with the ones waiting (hidden until 0053).
       ...(trainerNav && questionsOpen !== null
-        ? [{ path: '/questions', label: t('Questions for trainers'), icon: 'feedback', badge: questionsOpen || undefined, group: 'training' } as NavItem]
+        ? [{ path: '/questions', label: t('Member questions'), icon: 'feedback', badge: questionsOpen || undefined, group: 'training' } as NavItem]
         : []),
       // R-133 (26 Oct 2026): a monthly challenge and the leaderboard. The owner changes; the desk reads.
       { path: '/challenges', label: t('Challenges'), icon: 'trophy', group: 'training' },
@@ -345,7 +345,7 @@ function offlinePage(head: string | undefined, id: string | undefined): string |
   if (head === 'workouts') return 'Workout plans';
   if (head === 'diet') return 'Diet plans';
   if (head === 'challenges') return 'Challenges';
-  if (head === 'questions') return 'Questions for trainers';
+  if (head === 'questions') return 'Member questions';
   if (head === 'member-messages') return 'Member messages';
   if (head === 'trainers') return 'Trainers';
   if (head === 'feedback') return 'Help and feedback';

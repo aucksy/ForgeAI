@@ -31,7 +31,7 @@ import { useGymShop } from './gymStore';
 import type { InboxMessage } from './inbox';
 import { inboxFor, useGymInbox } from './inboxStore';
 import { ALERTED_CAP, alertedFromSaved, NOTICE_ROUTE, planNoticeAlerts } from './noticeAlerts';
-import { NOTICE_CHANNEL_DESCRIPTION, NOTICE_CHANNEL_NAME, noticePopups, type NoticePopup } from './noticeAlertWords';
+import { NOTICE_CHANNEL_DESCRIPTION, NOTICE_CHANNEL_NAME, noticeLine, noticePopups, type NoticePopup } from './noticeAlertWords';
 import { pushFromData } from './pushPlan';
 import type { GymLink } from './types';
 
@@ -269,6 +269,39 @@ async function onDemoData(): Promise<boolean> {
   }
 }
 
+/** The member app's "Ask about your workout" page (deploy/hq/push.js ASK_ROUTE): a reply's tap opens it. */
+export const ASK_REPLY_ROUTE = '/shop/ask';
+
+/**
+ * R-533: the replies the push missed, popped up once (askReplySync.checkReplyAlerts decides and remembers), with the
+ * push's own id, words and tap (deploy/hq/push.js fcmMessage), so a late push only replaces it. Never throws.
+ */
+async function popReplies(link: GymLink, inFront: boolean): Promise<void> {
+  try {
+    const { checkReplyAlerts } = await import('./askReplySync');
+    const notify = await checkReplyAlerts(link, inFront);
+    const n = N();
+    if (!n || notify.length === 0) return;
+    if (!(await n.getPermissionsAsync()).granted) return;
+    await ensureNoticeChannel();
+    const { ASK_WORDS } = await import('./askTrainer');
+    for (const q of notify) {
+      await n.scheduleNotificationAsync({
+        identifier: `trainer-reply-${q.id}`,
+        content: {
+          title: link.gymName.trim() || 'Your gym',
+          body: noticeLine(ASK_WORDS.popup(q.answeredBy, q.answer ?? '')),
+          data: { kind: 'gym-message', route: ASK_REPLY_ROUTE, push: 'reply', noticeId: q.id, gymId: link.gymId },
+          color: color.accent,
+        },
+        trigger: { channelId: GYM_NOTICE_CHANNEL },
+      });
+    }
+  } catch (e) {
+    console.warn('[ForgeErr] gym notices: popping up a reply', e);
+  }
+}
+
 /**
  * The background job's work: ask the gym, keep the inbox, pop up what is new. true = done (also
  * when there was nothing to do), false = the gym could not be reached (the system tries again).
@@ -285,6 +318,8 @@ export async function runNoticeCheck(): Promise<boolean> {
     const now = useGymShop.getState().link;
     if (!now || now.memberKey !== link.memberKey) return true;
     await take(now, inboxFor(useGymInbox.getState(), now.memberId), appInFront());
+    // R-533: a reply in "Ask about your workout" the push missed pops up here (it had no second way before).
+    await popReplies(now, appInFront());
     return true;
   } catch (e) {
     console.warn('[ForgeErr] gym notices: the check', e);
@@ -313,6 +348,13 @@ export async function onPushArrived(raw: unknown): Promise<void> {
     const wanted = !!link && (!p.gymId || p.gymId === link.gymId) && usePhonePrefs.getState().gymMessagesOn;
     if (!link || !wanted) {
       await N()?.dismissNotificationAsync(p.tag).catch(() => undefined);
+      return;
+    }
+    if (p.push === 'reply') {
+      // R-533: remembered, so the 15-minute check never pops it up again; the red count on the Gym tab at once.
+      const m = await import('./askReplySync');
+      await m.rememberReplyAlerted(link.memberId, p.noticeId);
+      await m.refreshAskUnread(link, { force: true });
       return;
     }
     if (p.push !== 'message') return;

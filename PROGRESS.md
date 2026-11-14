@@ -1,6 +1,18 @@
 # ForgeAI progress
 
 ## Waiting for release (R-266: tag only when the owner says "release")
+- R-533 MEMBER APP: "ASK A TRAINER" IS NOW "ASK ABOUT YOUR WORKOUT", WITH A PHONE ALERT AND A RED COUNT FOR REPLIES.
+  Gym tab row and page words (src/shop/askTrainer.ts ASK_WORDS): the trainer or the gym owner replies. A reply's push
+  sets a red count on the Gym tab and on the row at once (askReplySync.ts, askReplyStore.ts); opening the page clears
+  it. The 15-minute background check pops up a reply the push missed, once, with the push's own id (noticeAlertsRun
+  popReplies); before, a reply had no second way. A reply the gym itself signed reads "Your gym replied". Tests:
+  test/shop/askReplyAlerts.test.ts, askTrainer.test.ts. Phone: part uat flows uat-rel-12b-ask-open + 12c-ask-reply
+  (qa/uat_gym.py answer; pictures rel-124..127). Server/panel side (deploy, not release): panel "Member questions",
+  proxy kicks the push on owner_answer_question, HQ push.js stale-run guard and "Your gym" words, panelPush.js alert
+  words; supabase 0086 NOT LIVE.
+  What's new draft (feature, go /shop): "On the Gym tab, "Ask a trainer" is now called "Ask about your workout". Your
+  trainer or the gym owner replies there." / "When your gym replies to your question, you get a notification on your
+  phone. A red number on the Gym tab stays until you open the reply."
 - R-529 ADMIN PANEL: "YOUR WEB PAGE" EDITOR (F207). Your gym -> Your web page (and More on a phone, and the Set up
   your gym step "Make your free gym web page", which ticks itself once published). Shows only when the gym's server
   answers owner_gym_page (0080, live). The owner edits: address (suggested from name + area, live preview, locked once

@@ -71,11 +71,22 @@ export function sendsFrom(answer) {
   );
 }
 
+/**
+ * R-533 (owner, 14 Nov 2026): members ask the owner too, and the admin app's page is "Member questions". The gym's
+ * server said "Asha asked a trainer a question. Open Questions to reply." until 0086 (NOT LIVE); this gives old and new
+ * lines the same words, as the admin app does (apps/dashboard/src/crm/logic/gymAlerts.ts questionAlertWords). PURE.
+ */
+export function alertWords(line) {
+  return String(line)
+    .replace(/\basked a trainer a question\b/g, 'asked a workout question')
+    .replace(/\bOpen Questions( for trainers)?(?= to reply\b)/g, 'Open Member questions');
+}
+
 /** What the service worker gets (apps/dashboard/public/sw.js): words, the page to open, the notice's tag. PURE. */
 export function pushMessage(s) {
   return {
     title: String(s.title || 'MettleUp: news from your members').slice(0, 80),
-    body: String(s.body).slice(0, 240),
+    body: alertWords(s.body).slice(0, 240),
     route: /^\/[A-Za-z0-9/_-]{0,100}$/.test(String(s.route || '')) ? s.route : '/',
     tag: String(s.tag || 'mettleup-alert').slice(0, 80),
   };

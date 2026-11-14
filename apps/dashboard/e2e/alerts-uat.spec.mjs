@@ -8,7 +8,7 @@
 //  2. With 0075: the card lists the last 24 hours, newest first, and opening the page rings for nothing.
 //  3. A new complaint comes in: within a minute the page rings once with the server's own line, and the card shows it.
 //  4. An alert older than 24 hours stays off the card.
-//  5. A tap on a line opens its page (Questions for trainers: the question, one button; a complaint: Complaints).
+//  5. A tap on a line opens its page (Member questions: the question, one button; a complaint: Complaints).
 // Fresh eyes (14 Nov 2026): the pretend server now also answers the trainer questions (0050/0053), Member messages
 // (0069) and the shop's orders, so every line on the card agrees with the counts and pages it points to.
 // Second journey (0076, alerts with the admin app closed; the browser's push parts are stand-ins: a headless browser
@@ -148,13 +148,13 @@ test('Gym alerts: not ready, the latest on Today, a new one rings once, a tap op
   await expect(main.getByRole('heading', { name: 'Latest from your members' })).toBeVisible({ timeout: 15_000 });
   const lines = card.getByRole('button');
   await expect(lines).toHaveCount(2);
-  await expect(lines.nth(0)).toContainText('Asha asked a trainer a question. Open Questions for trainers to reply.');
+  await expect(lines.nth(0)).toContainText('Asha asked a workout question. Open Member questions to reply.');
   await expect(lines.nth(0)).toContainText('5 min ago');
   await expect(lines.nth(1)).toContainText('New shop order #12 from Neha. Get it ready on Shop.');
   await expect(lines.nth(1)).toContainText('3 h ago');
   // The same order on "Shop today", and the question in "Needs you".
   await expect(main.getByText('new order', { exact: true })).toBeVisible();
-  await expect(main).toContainText('1 question for trainers to answer');
+  await expect(main).toContainText('1 member question to answer');
   // 4. Older than a day: not on the card.
   await expect(card).not.toContainText('Vikram');
   expect(await notes(page), 'opening the page rings for nothing').toEqual([]);
@@ -191,16 +191,16 @@ test('Gym alerts: not ready, the latest on Today, a new one rings once, a tap op
   await wait(page, 61_000);
   expect(await notes(page)).toHaveLength(1);
 
-  // 5. A tap opens its page: Questions for trainers, with Asha's question and one way to load it again (fresh eyes:
+  // 5. A tap opens its page: Member questions, with Asha's question and one way to load it again (fresh eyes:
   //    the picture showed "Something went wrong" with both Refresh and Try again; the pretend server had no 0053).
-  await lines.filter({ hasText: 'Asha asked a trainer a question.' }).click();
+  await lines.filter({ hasText: 'Asha asked a workout question.' }).click();
   await expect.poll(() => page.evaluate(() => window.location.hash)).toBe('#/questions');
-  await expect(page.getByRole('heading', { name: 'Questions for trainers', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Member questions', exact: true })).toBeVisible();
   await expect(main).toContainText('Is the 6 am batch full tomorrow?');
   await expect(main).not.toContainText('Something went wrong');
   await expect(main.getByRole('button', { name: 'Try again' })).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'Refresh' })).toHaveCount(1);
-  await expectFitsPhone(page, 'on Questions for trainers from Today');
+  await expectFitsPhone(page, 'on Member questions from Today');
   await shot(page, 'phone-alerts-3-opened-questions');
   // Negative: when the page cannot be read, the error card has the only button (no Refresh above it).
   qs.broken = true;
@@ -409,7 +409,7 @@ test('Latest from your members on a computer, light theme; payments and joins; t
   await expect(lines.nth(1)).toContainText('Asha paid online for Monthly. See it on Money.');
   await expect(lines.nth(1)).toContainText('20 min ago');
   await expect(lines.nth(2)).toContainText('Vikram joined your gym in the MettleUp app.');
-  await expect(lines.nth(3)).toContainText('Open Questions for trainers to reply.');
+  await expect(lines.nth(3)).toContainText('Open Member questions to reply.');
   // The admin app keeps its own Dark / Light choice (dark to start), whatever the computer's setting says.
   await page.getByRole('radio', { name: 'Light' }).first().click();
   await expect(page.getByRole('radio', { name: 'Light' }).first()).toBeChecked();
@@ -436,18 +436,18 @@ test('Latest from your members on a computer, light theme; payments and joins; t
   await expect(deskCard.getByRole('button')).toHaveCount(3, { timeout: 15_000 });
   await expect(deskCard).not.toContainText('complaint');
   await expect(deskCard).toContainText('Asha paid online for Monthly.');
-  await expect(deskCard).toContainText('Open Questions for trainers to reply.');
+  await expect(deskCard).toContainText('Open Member questions to reply.');
   await expectFitsPhone(desk, 'on the trainer’s Today');
   await shot(desk, 'phone-alerts-7-trainer-today');
   await desk.evaluate(() => {
     window.location.hash = '/more';
   });
-  const row = deskMain.getByRole('link', { name: /^Questions for trainers/ });
+  const row = deskMain.getByRole('link', { name: /^Member questions/ });
   await expect(row).toBeVisible({ timeout: 15_000 });
   await row.scrollIntoViewIfNeeded();
   await shot(desk, 'phone-alerts-8-trainer-more', false);
   await row.click();
-  await expect(desk.getByRole('heading', { name: 'Questions for trainers', exact: true })).toBeVisible();
+  await expect(desk.getByRole('heading', { name: 'Member questions', exact: true })).toBeVisible();
   await expect(deskMain).toContainText('Is the 6 am batch full tomorrow?');
   await shot(desk, 'phone-alerts-9-trainer-questions');
   await desk.context().close();

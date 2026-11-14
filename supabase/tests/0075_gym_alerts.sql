@@ -56,7 +56,7 @@ begin
   insert into public.trainer_questions(gym_id, member_id, roster_id, staff_id, question) values (gid, ma, 't75-r-asha', strain, 'How many sets?') returning question_id into q1;
   insert into public.trainer_questions(gym_id, member_id, roster_id, question) values (gid, mb, 't75-r-bina', 'Knee hurts') returning question_id into q2;
   checks := checks + 1; fails := fails || pg_temp.t75_is('2line', (select line || ' ' || route || ' ' || audience || ' ' || urgent from public.gym_alerts where tag = 'question:' || q1),
-    'Asha asked a trainer a question. Open Questions to reply. /questions question false');
+    'Asha asked a workout question. Open Member questions to reply. /questions question false');
 
   -- 3. Message your gym: a question, a member's reply in it, anonymous feedback, a complaint (owner only, instant).
   insert into public.gym_talk_threads(gym_id, member_id, roster_id, kind) values (gid, ma, 't75-r-asha', 'question') returning thread_id into th;

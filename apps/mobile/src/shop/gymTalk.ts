@@ -61,7 +61,8 @@ export const TALK_WORDS = {
     complaint: 'Tell them what went wrong. Only the gym owner reads complaints.',
   } as Record<TalkKind, string>,
   /** R-505: added after the question hint ONLY for a member who may ask a trainer now (`talkHint`). */
-  askHint: 'For workout help, use Ask a trainer.',
+  // R-533: the other row's new name (askTrainer.ts ASK_WORDS.rowTitle), in quotes so it reads as a place.
+  askHint: 'For workout help, use "Ask about your workout".',
   placeholder: {
     question: 'For example: Is the gym open on Diwali?',
     feedback: 'For example: Please add a second squat rack.',

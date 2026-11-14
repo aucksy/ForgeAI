@@ -224,7 +224,7 @@ export function weekBars(s: TrainerSummary, today: DateISO): number[] {
   return out;
 }
 
-// ---------------------------------------------------------------- WhatsApp
+// ---------------------------------------------------------------- the two ready messages
 
 /** "Well done": names the new best when there is one. Sent to the member. PURE. */
 export function wellDoneMessage(m: Pick<TrainerMember, 'name' | 'summary'>, today: DateISO, from: string | null): string {
@@ -249,6 +249,42 @@ export function howIsItGoingMessage(m: Pick<TrainerMember, 'name' | 'summary'>, 
   if (quiet != null && quiet >= QUIET_DAYS) return `Hi ${hi}, how's it going? Haven't seen a workout from you for ${quiet} days. Can I help with your plan?${sign}`;
   // words: owner approves before live (#46)
   return `Hi ${hi}, how's it going? Anything I can help you with?${sign}`;
+}
+
+// ---------------------------------------------------------------- sent in the app (R-534)
+
+/**
+ * R-534 (owner, 14 Nov 2026, about "WhatsApp: Well done" / "WhatsApp: How's it going?" on Training progress): "Why
+ * give WhatsApp option here... should be BAU in app notification". Every member on this page has the app (they share
+ * their workouts from it), so both now go as a gym message to that one member (owner_send_message with p_to, 0025):
+ * it lands in their app's gym messages and pops up on their phone (the push pipeline, deploy/hq/push.js).
+ * owner_send_message is the owner's (0018 _owner_only_gym), so a trainer reads `cheerOwnerOnly` instead of buttons.
+ */
+export type CheerKind = 'well-done' | 'how-going';
+
+export const CHEER_WORDS = {
+  wellDone: 'Send: Well done',
+  howGoing: 'Send: How’s it going?',
+  sending: 'Sending…',
+  hint: 'Goes to their MettleUp app, with a notification on their phone.',
+  sent: 'Sent. It is in their app now.',
+  // 0042: from the gym's 3rd message of an India day, members get it in the app with no phone pop-up.
+  sentQuiet: 'Sent to their app. No phone notification this time: your gym already sent 2 messages today.',
+  noApp: 'This member is not on the MettleUp app any more.',
+  ownerOnly: 'Only the gym owner can send these from here for now.',
+} as const;
+
+/** The message's title (the line the phone pop-up shows; at most 60 letters): who it is from when a trainer sends. PURE. */
+export function cheerTitle(kind: CheerKind, from: string | null): string {
+  const what = kind === 'well-done' ? 'Well done!' : 'How’s it going?';
+  const who = greetingName(from ?? '');
+  return (who ? `${who}: ${what}` : what).slice(0, 60);
+}
+
+/** The whole message for one member (title + body, owner_send_message's limits: 60 and 300 letters). PURE. */
+export function cheerMessage(kind: CheerKind, m: Pick<TrainerMember, 'name' | 'summary'>, today: DateISO, from: string | null): { title: string; body: string } {
+  const body = kind === 'well-done' ? wellDoneMessage(m, today, from) : howIsItGoingMessage(m, today, from);
+  return { title: cheerTitle(kind, from), body: body.slice(0, 300) };
 }
 
 /** Plain words for a refused call, or null when it is not one of these. PURE. */

@@ -1979,6 +1979,18 @@ part_uat_gym() {  # $1 = the phone's today (YYYY-MM-DD)
     uat_flow uat8 uat-rel-8-gym-plan.yaml -e "GYM=QA UAT Gym" -e "ENDS=$ends" || rc=1
     # R-319 item 1: "Ask a trainer" (hidden until 0053 is live; the flow checks either way).
     uat_flow uat12 uat-rel-12-ask-trainer.yaml -e "GYM=QA UAT Gym" || rc=1
+    # R-533: the gym answers a question Uma leaves open (as the admin app's Member questions page does), and the Gym
+    # tab row shows a red count until she opens the reply. 12c only runs when there was a question to answer.
+    uat_flow uat12b uat-rel-12b-ask-open.yaml -e "GYM=QA UAT Gym" || rc=1
+    answered=$(python3 "$QA_DIR/uat_gym.py" answer U "QA reply: one rest day is fine, two if your legs still ache." 2>&1)
+    echo "$answered" | sed 's/^/[uat gym] /' | tee -a "$OUT/timeline.txt"
+    if echo "$answered" | grep -q '^ANSWERED=1'; then
+      uat_flow uat12c uat-rel-12c-ask-reply.yaml -e "GYM=QA UAT Gym" || rc=1
+    elif ! echo "$answered" | grep -q '^NO_OPEN_QUESTION'; then
+      log "PART UAT12C FAILED: the gym could not answer the question (uat_gym.py answer)"
+      status=1
+      rc=1
+    fi
     # Owner, 12 Nov 2026: "Message your gym" (a QA-build pretend gym until 0069 is live; the flow checks either way).
     uat_flow uatgt uat-rel-gym-talk.yaml -e "GYM=QA UAT Gym" || rc=1
     # F147: "Bring a friend" on the Gym tab (a QA-build stand-in until 0056 is live; the flow checks either way).

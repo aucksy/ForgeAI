@@ -189,7 +189,7 @@ describe('member words', () => {
 
 describe('R-505: "For workout help, use Ask a trainer." only for a member who can ask', () => {
   it('a member who can ask a trainer now reads it under Question', () => {
-    expect(talkHint('question', true)).toBe('Ask about timings, fees, classes and more. For workout help, use Ask a trainer.');
+    expect(talkHint('question', true)).toBe('Ask about timings, fees, classes and more. For workout help, use "Ask about your workout".');
   });
   it('a pass member, no plan, a plan that ended or a check not answered yet: no mention of it', () => {
     expect(talkHint('question', false)).toBe('Ask about timings, fees, classes and more.');

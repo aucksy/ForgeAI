@@ -10,8 +10,9 @@
  * Anyone else who reaches this page (a plan that ended, a pass member, a reply's pop-up) reads their old
  * questions and replies, and in place of the question box: "Ask a trainer is for members with a running plan."
  * (with "Renew my plan" when their plan ended). A NO_PLAN from the server (0074) locks the page the same way.
+ * R-533 (owner, 14 Nov 2026): the member reads "Ask about your workout" (askTrainer.ts ASK_WORDS). Opening this page
+ * marks every reply read, so the red count on the Gym tab and the row goes (askReplySync.saveAskSeen).
  */
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Redirect, useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useRef, useState, type ReactNode } from 'react';
 import { ActivityIndicator, RefreshControl, ScrollView, Text, TextInput, View } from 'react-native';
@@ -22,30 +23,16 @@ import { usePhonePrefs } from '@/tracker/phone/phonePrefs';
 
 import { ASK_MAX, ASK_WORDS, askWhen, closedLine, defaultPick, openQuestion, type AskAccess, type AskChoices, type AskQuestion } from './askTrainer';
 import { readAskAccess } from './askAccessRead';
+import { saveAskSeen } from './askReplySync';
 import { useGymShop } from './gymStore';
 import { requestRenew } from './renewRequest';
 import { useGymHydrated } from './shopSource';
 import { askServerKnownMissing, readAskChoices, readAskQuestions, sendAskQuestion, withdrawAskQuestion } from './trainerSync';
 import type { GymLink } from './types';
 
-const SEEN_KEY = 'forgeai.askTrainer.seenReplies';
-
-/** The newest reply time (ms) this phone has shown, per member; 0 when none. Never throws. */
-export async function readAskSeen(memberId: string): Promise<number> {
-  try {
-    const raw = await AsyncStorage.getItem(SEEN_KEY);
-    const o = raw ? (JSON.parse(raw) as { memberId?: unknown; at?: unknown }) : null;
-    return o && o.memberId === memberId && typeof o.at === 'number' ? o.at : 0;
-  } catch {
-    return 0;
-  }
-}
-
-async function saveAskSeen(memberId: string, list: readonly AskQuestion[]): Promise<void> {
-  const at = Math.max(0, ...list.map((q) => q.answeredAt ?? 0));
-  if (at <= 0) return;
-  await AsyncStorage.setItem(SEEN_KEY, JSON.stringify({ memberId, at })).catch((e: unknown) => console.warn('[ask] could not save what was seen', e));
-}
+// R-533: what this phone has shown, and the red count it clears, live in askReplySync.ts (the row and the 15-minute
+// check read it too). Kept exported from here for older imports.
+export { readAskSeen } from './askReplySync';
 
 type Load = { state: 'loading' } | { state: 'missing' } | { state: 'failed' } | { state: 'ready'; choices: AskChoices; list: AskQuestion[] };
 

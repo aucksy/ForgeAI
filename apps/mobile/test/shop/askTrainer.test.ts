@@ -13,10 +13,15 @@ import {
   askQuestionsFrom,
   askRowSub,
   askSentFrom,
+  askUnreadCount,
   askWhen,
   closedLine,
   defaultPick,
   openQuestion,
+  planReplyAlerts,
+  REPLY_ALERTED_CAP,
+  replyAlertedFrom,
+  type AskQuestion,
 } from '@/shop/askTrainer';
 import { RECENT_CHARS, recentFrom, trainerRecentFrom, type RecentSetRow } from '@/shop/trainerRecent';
 import { TRAINER_WORDS } from '@/shop/trainerShare';
@@ -60,6 +65,13 @@ describe('the questions', () => {
     expect(askQuestionsFrom({ ok: true, questions: [{ id: 'x', question: 'q', askedAt: 1, answer: 'a', open: true }] })![0].open).toBe(false);
     expect(askQuestionsFrom({ ok: false })).toBeNull();
   });
+  it('R-533: a reply the gym itself signed reads "Your gym replied", never "Your replied"', () => {
+    const one = (answeredBy: string) => askQuestionsFrom({ ok: true, questions: [{ id: 'g', question: 'q', askedAt: 1, answer: 'a', answeredBy, answeredAt: 2 }] })![0];
+    expect(one('Your').answeredBy).toBeNull();
+    expect(one('Your gym').answeredBy).toBeNull();
+    expect(one('Rohit').answeredBy).toBe('Rohit');
+    expect(ASK_WORDS.replied(one('Your').answeredBy)).toBe('Your gym replied');
+  });
   it('the sent question', () => {
     expect(askSentFrom({ ok: true, question: { id: 'n', question: 'Hi', askedAt: 9, open: true } })?.open).toBe(true);
     expect(askSentFrom({ ok: true })).toBeNull();
@@ -93,6 +105,81 @@ describe('the questions', () => {
   });
 });
 
+// R-533 (owner, 14 Nov 2026): "when I responded back from the admin panel, there was no notification... and there was
+// no dot or something in that section".
+describe('R-533: the red count and the missed-push pop-up', () => {
+  const q = (id: string, answeredAt: number | null, extra: Partial<AskQuestion> = {}): AskQuestion => ({
+    id,
+    question: 'How many sets?',
+    trainer: null,
+    askedAt: 1000,
+    answer: answeredAt ? 'Three.' : null,
+    answeredBy: answeredAt ? 'Rohit' : null,
+    answeredAt,
+    withdrawn: false,
+    open: !answeredAt,
+    ...extra,
+  });
+  const list = [q('c', null), q('b', 5000), q('a', 3000)];
+
+  it('counts replies newer than the newest one the page showed', () => {
+    expect(askUnreadCount(list, 0)).toBe(2);
+    expect(askUnreadCount(list, 3000)).toBe(1);
+    expect(askUnreadCount(list, 5000)).toBe(0);
+    expect(askUnreadCount(null, 0)).toBe(0);
+    expect(askUnreadCount([], 0)).toBe(0);
+    // A taken-back question with no reply never counts.
+    expect(askUnreadCount([q('w', null, { withdrawn: true, open: false })], 0)).toBe(0);
+  });
+
+  it('the first look on a phone remembers every reply and pops up none (no flood after the update)', () => {
+    expect(planReplyAlerts({ list, alerted: null, seenUpTo: 0, inFront: false })).toEqual({ alerted: ['b', 'a'], notify: [] });
+  });
+
+  it('a reply the push missed pops up once; one the push brought, or one already opened, never', () => {
+    const later = [q('d', 9000), ...list];
+    const one = planReplyAlerts({ list: later, alerted: ['b', 'a'], seenUpTo: 5000, inFront: false });
+    expect(one.notify.map((x) => x.id)).toEqual(['d']);
+    expect(one.alerted).toEqual(['b', 'a', 'd']);
+    // The next check: nothing again.
+    expect(planReplyAlerts({ list: later, alerted: one.alerted, seenUpTo: 5000, inFront: false }).notify).toEqual([]);
+    // Heard as a push already.
+    expect(planReplyAlerts({ list: later, alerted: ['b', 'a', 'd'], seenUpTo: 0, inFront: false }).notify).toEqual([]);
+    // Opened on the page already (older than what the page showed): remembered, not popped up.
+    const opened = planReplyAlerts({ list: later, alerted: ['b', 'a'], seenUpTo: 9000, inFront: false });
+    expect(opened).toEqual({ alerted: ['b', 'a', 'd'], notify: [] });
+  });
+
+  it('with the app in front there is no pop-up (the red count says it), and it is not popped up later', () => {
+    const later = [q('d', 9000), ...list];
+    const front = planReplyAlerts({ list: later, alerted: ['b', 'a'], seenUpTo: 5000, inFront: true });
+    expect(front).toEqual({ alerted: ['b', 'a', 'd'], notify: [] });
+  });
+
+  it('keeps at most the newest 50 ids', () => {
+    const many = Array.from({ length: 60 }, (_, i) => `id-${i}`);
+    const plan = planReplyAlerts({ list: [q('new', 9000)], alerted: many, seenUpTo: 0, inFront: false });
+    expect(plan.alerted).toHaveLength(REPLY_ALERTED_CAP);
+    expect(plan.alerted[REPLY_ALERTED_CAP - 1]).toBe('new');
+    expect(plan.notify.map((x) => x.id)).toEqual(['new']);
+  });
+
+  it('reads the saved ids for this member only', () => {
+    expect(replyAlertedFrom({ memberId: 'm1', ids: ['a', 2, 'b'] }, 'm1')).toEqual(['a', 'b']);
+    expect(replyAlertedFrom({ memberId: 'm2', ids: ['a'] }, 'm1')).toBeNull();
+    expect(replyAlertedFrom(null, 'm1')).toBeNull();
+    expect(replyAlertedFrom(['a'], 'm1')).toBeNull();
+    expect(replyAlertedFrom({ memberId: 'm1', ids: 'a' }, 'm1')).toBeNull();
+  });
+
+  it('the pop-up and the row say who replied, in plain words', () => {
+    expect(ASK_WORDS.popup('Rohit', 'Three.')).toBe('Rohit replied: Three.');
+    expect(ASK_WORDS.popup(null, 'Three.')).toBe('Your gym replied: Three.');
+    expect(ASK_WORDS.rowSpoken(1)).toBe('1 new reply');
+    expect(ASK_WORDS.rowSpoken(3)).toBe('3 new replies');
+  });
+});
+
 describe('member words', () => {
   const BANNED = /\b(volume|sessions?|PRs?|sync(ing|ed)?|chat)\b/i;
   it('plain words, none of the banned ones, short', () => {
@@ -104,6 +191,8 @@ describe('member words', () => {
       ASK_WORDS.replied('Rohit'),
       ASK_WORDS.replied(null),
       ASK_WORDS.askedTo(null),
+      ASK_WORDS.popup('Rohit', 'Three sets.'),
+      ASK_WORDS.rowSpoken(2),
       TRAINER_WORDS.shareCaptionRecent,
     ];
     for (const l of lines) {

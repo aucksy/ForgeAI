@@ -70,7 +70,9 @@ export async function handleProxy(request, url, fetchImpl = fetch) {
  * succeeds, the HQ Worker (service binding HQ_PUSH, deploy/hq/push.js) is told to send the pop-ups now
  * instead of at its next minute. PURE.
  */
-export const PUSH_RPCS = ['owner_send_message', 'owner_save_offer'];
+// R-533: 'owner_answer_question' too, so a reply from the gym reaches the member's phone at once (it waited for HQ's
+// next minute before).
+export const PUSH_RPCS = ['owner_send_message', 'owner_save_offer', 'owner_answer_question'];
 export function wantsPush(request, url, status) {
   if (request.method !== 'POST' || status < 200 || status >= 300) return false;
   const m = /^\/sb\/rest\/v1\/rpc\/([a-z_]+)\/?$/.exec(url.pathname);

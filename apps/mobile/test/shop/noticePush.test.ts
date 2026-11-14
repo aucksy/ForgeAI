@@ -28,7 +28,11 @@ vi.mock('@/shop/gymActions', async () => {
 });
 vi.mock('@/db', () => ({ initDb: async () => undefined }));
 vi.mock('@/onboarding/db/dataActions', () => ({ isDemoData: async () => gym.demo }));
-vi.mock('@/shop/gymApi', () => ({ apiMessages: async () => (gym.apiFail ? { ok: false, error: 'offline' } : { ok: true, data: gym.server }) }));
+vi.mock('@/shop/gymApi', () => ({
+  apiMessages: async () => (gym.apiFail ? { ok: false, error: 'offline' } : { ok: true, data: gym.server }),
+  // R-533: no questions here (askReplyAlerts.test.ts has the replies).
+  apiAskQuestions: async () => ({ ok: true, data: [] }),
+}));
 
 import { useGymShop } from '@/shop/gymStore';
 import { useGymInbox } from '@/shop/inboxStore';

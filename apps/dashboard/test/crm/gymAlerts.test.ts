@@ -1,7 +1,7 @@
 /** R-506: the gym's alerts list (logic/gymAlerts.ts, from 0075 owner_alerts). */
 import { describe, expect, it } from 'vitest';
 
-import { ALERT_WORDS, alertAge, alertHref, alertNotice, alertShown, alertsFor, freshAlerts, gymAlertsFrom, latestAlerts, type GymAlert } from '../../src/crm/logic/gymAlerts';
+import { ALERT_WORDS, questionAlertWords, alertAge, alertHref, alertNotice, alertShown, alertsFor, freshAlerts, gymAlertsFrom, latestAlerts, type GymAlert } from '../../src/crm/logic/gymAlerts';
 
 const NOW = Date.UTC(2026, 10, 14, 6, 0, 0);
 const MIN = 60_000;
@@ -46,7 +46,7 @@ describe('gym alerts', () => {
     expect(alertNotice([])).toBeNull();
     // Fresh eyes (14 Nov 2026): a complaint opens Member messages on its own Complaints filter.
     expect(alertNotice([list[0]])).toEqual({ title: ALERT_WORDS.noticeTitle, body: list[0].line, route: '/member-messages/complaint' });
-    expect(alertNotice([list[1]])?.body).toBe('Asha asked a trainer a question. Open Questions for trainers to reply.');
+    expect(alertNotice([list[1]])?.body).toBe('Asha asked a workout question. Open Member questions to reply.');
     expect(alertNotice(list)).toEqual({ title: ALERT_WORDS.noticeTitle, body: '3 new updates from your members. Open Today to see them.', route: '/' });
   });
 
@@ -71,10 +71,17 @@ describe('gym alerts', () => {
   });
 
   it('fresh eyes: a trainer question names the page as the menu does', () => {
-    expect(alertShown(list[1])).toEqual({ line: 'Asha asked a trainer a question. Open Questions for trainers to reply.', route: '/questions', done: false });
+    expect(alertShown(list[1])).toEqual({ line: 'Asha asked a workout question. Open Member questions to reply.', route: '/questions', done: false });
     // Already the new words: left alone (no "for trainers for trainers").
-    const again = { ...list[1], line: 'Asha asked a trainer a question. Open Questions for trainers to reply.' };
+    const again = { ...list[1], line: 'Asha asked a workout question. Open Member questions to reply.' };
     expect(alertShown(again).line).toBe(again.line);
+  });
+
+  it('R-533: the live server trainer words, the old panel words and the new server words all read the same', () => {
+    const want = 'Asha asked a workout question. Open Member questions to reply.';
+    expect(questionAlertWords('Asha asked a trainer a question. Open Questions to reply.')).toBe(want);
+    expect(questionAlertWords('Asha asked a trainer a question. Open Questions for trainers to reply.')).toBe(want);
+    expect(questionAlertWords(want)).toBe(want);
   });
 
   it('fresh eyes: a shop line reads the same orders as Shop today', () => {

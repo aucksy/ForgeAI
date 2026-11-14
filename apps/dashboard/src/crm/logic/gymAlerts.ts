@@ -12,6 +12,17 @@ import { QUESTION_WORDS } from './askQuestions';
 /** The trainer questions page, as the menu names it. */
 const QUESTIONS_PAGE = QUESTION_WORDS.title;
 
+/**
+ * R-533 (owner, 14 Nov 2026): a member's workout question, in the words the admin app uses. The live server (0075)
+ * writes "Asha asked a trainer a question. Open Questions to reply." (the member may have asked the owner, and the
+ * page is "Member questions"); 0086 writes the new words itself once live; both read the same here. PURE.
+ */
+export function questionAlertWords(line: string): string {
+  return line
+    .replace(/\basked a trainer a question\b/g, 'asked a workout question')
+    .replace(/\bOpen Questions( for trainers)?(?= to reply\b)/g, `Open ${QUESTIONS_PAGE}`);
+}
+
 export type GymAlertKind =
   | 'trainer_question'
   | 'member_question'
@@ -137,8 +148,8 @@ const SHOP_LINE = /^New shop order (\d+) from (.+?)\. Get it ready on Shop\.$/;
 /**
  * How Today and the in-tab notice show an alert. The server's words (0075) stay the source; three things are put right
  * here (fresh eyes, 14 Nov 2026):
- *  - the trainer questions page is "Questions for trainers" now (Member messages has its own Questions), so "Open
- *    Questions" says that name;
+ *  - the trainer questions page is "Member questions" now (R-533: the owner answers them too; Member messages has its
+ *    own Questions type), so a question's line says what happened and that name (questionAlertWords);
  *  - a shop order says "#12", and once the desk has moved it on (`orders`: the shop's own list, the one "Shop today"
  *    counts) the line says ready, collected or cancelled instead of "Get it ready", so the two never disagree;
  *  - a member message opens Member messages on its own type (Complaints, Feedback, Questions).
@@ -148,7 +159,7 @@ export function alertShown(a: GymAlert, orders: readonly AlertOrder[] = []): { l
   let line = a.line;
   let route = a.route;
   let done = false;
-  if (a.kind === 'trainer_question') line = line.replace(/\bOpen Questions\b(?! for trainers)/g, `Open ${QUESTIONS_PAGE}`);
+  if (a.kind === 'trainer_question') line = questionAlertWords(line);
   if (a.kind === 'shop_order') {
     const m = SHOP_LINE.exec(line);
     if (m) {

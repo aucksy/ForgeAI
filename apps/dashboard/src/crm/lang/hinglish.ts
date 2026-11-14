@@ -32,7 +32,8 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   Trainers: 'Trainers',
   // R-319 item 1 (4 Nov 2026): words: owner checks at UAT.
   // Fresh eyes (14 Nov 2026): the page was "Questions" (one word, also a type inside Member messages).
-  'Questions for trainers': 'Trainers ke liye sawaal',
+  // R-533 (14 Nov 2026): then "Questions for trainers"; the owner answers them too, so "Member questions".
+  'Member questions': 'Members ke sawaal',
   // Owner, 12 Nov 2026 (0069): words: owner checks at UAT.
   'Member messages': 'Members ke messages',
   Challenges: 'Challenges',
@@ -1218,4 +1219,14 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   'Refreshing…': 'Refresh ho raha hai…',
   'Could not refresh. Check the internet and try again.': 'Refresh nahi hua. Internet check karke phir try karo.',
   'Invited again by {by}, best time to train: {time}': '{by} ne phir se bulaya, train karne ka sahi time: {time}',
+  // R-534 (owner, 14 Nov 2026): Training progress sends "Well done" / "How's it going?" in the app, not on WhatsApp.
+  'Send: Well done': 'Bhejo: Well done',
+  'Send: How’s it going?': 'Bhejo: How’s it going?',
+  'Sending…': 'Bhej rahe hain…',
+  'Goes to their MettleUp app, with a notification on their phone.': 'Unke MettleUp app mein jayega, phone par notification ke saath.',
+  'Sent. It is in their app now.': 'Bhej diya. Ab yeh unke app mein hai.',
+  'Sent to their app. No phone notification this time: your gym already sent 2 messages today.':
+    'Unke app mein bhej diya. Is baar phone par notification nahi aayega: aapka gym aaj 2 messages bhej chuka hai.',
+  'This member is not on the MettleUp app any more.': 'Yeh member ab MettleUp app par nahi hai.',
+  'Only the gym owner can send these from here for now.': 'Abhi yahan se sirf gym owner yeh bhej sakte hain.',
 };

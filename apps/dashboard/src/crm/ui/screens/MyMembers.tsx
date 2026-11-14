@@ -1,7 +1,10 @@
 /**
  * F109 "Training progress" (/trainer; OWNER-INBOX #46, DECIDED 24 Oct 2026). Who to talk to today and what to say: one
  * plain line per member ("New best: Leg press 120 kg × 10", "No workout for 9 days", "Asked for help today"), and two
- * ready WhatsApp messages ("Well done", "How's it going?").
+ * ready messages ("Well done", "How's it going?").
+ * R-534 (owner, 14 Nov 2026): "Why give WhatsApp option here... should be BAU in app notification". The two buttons
+ * now send a gym message to that one member's app, with a phone notification (owner_send_message, p_to = the app
+ * member), and say "Sent" under them. No WhatsApp on this page any more. Words: logic/trainerView.ts CHEER_WORDS.
  *
  * R-535 / R-537 (owner, 14 Nov 2026: one week says nothing; show whether they are progressing, as lines): each card
  * shows a 12-week line of workouts a week and one tag ("Getting stronger", "Steady", "Dropping", "Not enough data
@@ -15,27 +18,29 @@
  * Rules and words: logic/trainerView.ts.
  */
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { useAuth } from '../../auth/AuthProvider';
 import { t } from '../../lang/lang';
 import { progressTag } from '../../logic/progressTrend';
 import {
-  howIsItGoingMessage,
+  CHEER_WORDS,
+  cheerMessage,
   memberLine,
   sortMembers,
   trainerErrorWords,
   weekBars,
-  wellDoneMessage,
+  type CheerKind,
   type TrainerMember,
   type TrainerMembers,
 } from '../../logic/trainerView';
-import { whatsAppHref } from '../../shop/invite';
+import * as api from '../../shop/api';
 import { errorWords } from '../../shop/logic';
+import { messageErrorWords } from '../../shop/messages';
 import * as questionsApi from '../../shop/questionsApi';
 import * as trainerApi from '../../shop/trainerApi';
 import { useCrm } from '../../store';
-import { Button, Card, EmptyState, ErrorBanner, PageHeader, Pill, Row, color, font, radius, space } from '../kit';
+import { Button, Card, EmptyState, ErrorBanner, PageHeader, Pill, Row, color, font, space } from '../kit';
 import { ProgressDetail, Sparkline, TrendPill, forgetProgress, useMemberProgress, useSeen } from '../ProgressView';
 import { navigate } from '../router';
 
@@ -141,7 +146,34 @@ export function MyMembersScreen({ memberId = null }: { memberId?: string | null 
   );
 }
 
+type Cheer = { state: 'idle' } | { state: 'sending'; kind: CheerKind } | { state: 'sent'; quiet: boolean } | { state: 'error'; message: string };
+
+/** The words for a send that did not go. PURE. */
+function cheerErrorWords(e: unknown): string {
+  const text = e instanceof Error ? e.message : String((e as { message?: unknown })?.message ?? e ?? '');
+  if (/NO_ONE/.test(text)) return t(CHEER_WORDS.noApp);
+  if (/OWNER_ONLY/.test(text)) return t(CHEER_WORDS.ownerOnly);
+  return messageErrorWords(e);
+}
+
 function MemberRow({ m, today, owner, from, ownerKey }: { m: TrainerMember; today: string; owner: boolean; from: string | null; ownerKey: string | null }) {
+  const [cheer, setCheer] = useState<Cheer>({ state: 'idle' });
+  const busy = useRef(false);
+  const send = async (kind: CheerKind): Promise<void> => {
+    if (busy.current || !ownerKey) return;
+    busy.current = true;
+    setCheer({ state: 'sending', kind });
+    try {
+      const msg = cheerMessage(kind, m, today, from);
+      const sent = await api.sendMessage(ownerKey, { kind: 'announcement', title: msg.title, body: msg.body }, { to: [m.appId] });
+      setCheer({ state: 'sent', quiet: sent.quiet === true });
+    } catch (e) {
+      console.warn('[ForgeErr] training progress: sending', e);
+      setCheer({ state: 'error', message: cheerErrorWords(e) });
+    } finally {
+      busy.current = false;
+    }
+  };
   const line = memberLine(m, today);
   const tone = line.kind === 'help' || line.kind === 'quiet' ? 'warn' : line.kind === 'best' ? 'good' : 'muted';
   const bars = weekBars(m.summary, today);
@@ -199,16 +231,34 @@ function MemberRow({ m, today, owner, from, ownerKey }: { m: TrainerMember; toda
         )}
       </div>
       <div style={{ marginTop: space.md }}>
-        <Row gap={space.sm}>
-          <a href={whatsAppHref(wellDoneMessage(m, today, from), m.phone)} target="_blank" rel="noopener noreferrer" style={linkButton}>
-            WhatsApp: Well done
-          </a>
-          <a href={whatsAppHref(howIsItGoingMessage(m, today, from), m.phone)} target="_blank" rel="noopener noreferrer" style={linkButton}>
-            WhatsApp: How’s it going?
-          </a>
-        </Row>
+        {owner ? (
+          <>
+            <Row gap={space.sm}>
+              {(['well-done', 'how-going'] as const).map((kind) => (
+                <Button
+                  key={kind}
+                  variant="ghost"
+                  disabled={cheer.state === 'sending' || !ownerKey}
+                  onClick={() => void send(kind)}
+                >
+                  {cheer.state === 'sending' && cheer.kind === kind
+                    ? t(CHEER_WORDS.sending)
+                    : t(kind === 'well-done' ? CHEER_WORDS.wellDone : CHEER_WORDS.howGoing)}
+                </Button>
+              ))}
+            </Row>
+            <p role="status" aria-live="polite" style={{ ...small, marginTop: space.sm, color: cheer.state === 'sent' ? color.goodText : cheer.state === 'error' ? color.criticalText : color.inkMuted }}>
+              {cheer.state === 'sent'
+                ? t(cheer.quiet ? CHEER_WORDS.sentQuiet : CHEER_WORDS.sent)
+                : cheer.state === 'error'
+                  ? cheer.message
+                  : t(CHEER_WORDS.hint)}
+            </p>
+          </>
+        ) : (
+          <p style={small}>{t(CHEER_WORDS.ownerOnly)}</p>
+        )}
       </div>
-      {!m.phone && <p style={{ ...small, marginTop: space.sm }}>No mobile number on the gym’s list: WhatsApp will ask who to send it to.</p>}
     </Card>
     </div>
   );
@@ -255,17 +305,3 @@ function MemberProgressPage({ ownerKey, memberId, member, today, owner }: { owne
     </>
   );
 }
-
-const linkButton = {
-  display: 'inline-flex',
-  alignItems: 'center',
-  minHeight: 40,
-  padding: `0 ${space.md}px`,
-  border: `1px solid ${color.borderStrong}`,
-  borderRadius: radius.pill,
-  fontFamily: font.body,
-  fontSize: 14,
-  fontWeight: 600,
-  color: color.ink,
-  textDecoration: 'none',
-} as const;

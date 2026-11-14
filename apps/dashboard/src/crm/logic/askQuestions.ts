@@ -116,28 +116,29 @@ export function splitQuestions(list: readonly GymQuestion[]): { waiting: GymQues
 
 /** Every word on the Questions page. New (R-319, 4 Nov 2026): the owner checks them at UAT. */
 export const QUESTION_WORDS = {
-  // Fresh eyes (14 Nov 2026): "Questions" was also a type inside Member messages. This page holds what members ask
-  // a trainer ("Ask a trainer" in their app), so it says so everywhere: menu, page, Today, notices.
-  title: 'Questions for trainers',
-  navHint: 'What members ask a trainer in the app',
+  // Fresh eyes (14 Nov 2026): "Questions" was also a type inside Member messages, so it became "Questions for trainers".
+  // R-533 (owner, 14 Nov 2026): the owner answers these too, so the page is "Member questions" everywhere (menu, page,
+  // Today, notices), and members find it as "Ask about your workout" in their app.
+  title: 'Member questions',
+  navHint: 'Workout questions members send from the app',
   intro: 'Members ask from the MettleUp app. Your reply shows in their app, with a notification on their phone.',
   waiting: 'Waiting for your reply',
   noneWaiting: 'No questions are waiting.',
   done: 'Answered and closed',
-  noneYet: 'No questions yet. Members find "Ask a trainer" on the Gym tab of their app.',
+  noneYet: 'No questions yet. Members find "Ask about your workout" on the Gym tab of their app.',
   replyLabel: 'Your reply',
   replyHint: 'Short and clear. The member cannot reply back; they can ask a new question.',
   send: 'Send reply',
   sending: 'Sending…',
   sent: 'Reply sent.',
-  anyTrainer: 'To any trainer',
+  anyTrainer: 'To any trainer or the owner',
   toYou: 'To you',
   to: (name: string): string => `To ${name}`,
   formerTrainer: (name: string): string => `To ${name} (no longer a trainer)`,
   takenBack: 'The member took this question back.',
   noReply: 'Closed with no reply after 14 days.',
   repliedBy: (name: string | null): string => (name ? `${name} replied` : 'Replied'),
-  notReady: 'Questions for trainers are not switched on for your gym yet.',
+  notReady: 'Member questions are not switched on for your gym yet.',
   notAllowed: 'Only trainers and the owner can see questions. Ask the owner to tick you as a trainer.',
   loadFailed: 'Could not load the questions. Check the internet and try again.',
   tryAgain: 'Try again',

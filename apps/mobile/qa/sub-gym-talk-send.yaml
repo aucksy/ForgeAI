@@ -13,7 +13,7 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-see.yaml
     env:
-      FIND: '^Ask about timings, fees, classes and more\. For workout help, use Ask a trainer\.$'
+      FIND: '^Ask about timings, fees, classes and more\. For workout help, use "Ask about your workout"\.$'
 - assertNotVisible: "^Send without my name$"
 - runFlow:
     file: sub-see.yaml

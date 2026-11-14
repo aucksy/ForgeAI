@@ -4,7 +4,7 @@
 import assert from 'node:assert/strict';
 import { beforeEach, test } from 'node:test';
 
-import { IST_MS, digestDue, digestSlot, panelPushKey, pushMessage, resetPanelPush, runPanelPush } from './panelPush.js';
+import { IST_MS, alertWords, digestDue, digestSlot, panelPushKey, pushMessage, resetPanelPush, runPanelPush } from './panelPush.js';
 import { b64u, readVapidKey, webPushPublicKey } from './webpush.js';
 import worker, { everyMinute } from './worker.js';
 
@@ -52,6 +52,14 @@ test('due only when something waits from before the time, and that time had no s
 test('the service worker gets words, a safe page and a tag', () => {
   assert.deepEqual(pushMessage({ title: 'T', body: 'B', route: '/shop', tag: 'mettleup-alert-1' }), { title: 'T', body: 'B', route: '/shop', tag: 'mettleup-alert-1' });
   assert.equal(pushMessage({ body: 'B', route: 'https://evil.example' }).route, '/');
+});
+
+test('R-533: a question alert says "workout question" and "Member questions", old line or new', () => {
+  const want = 'Asha asked a workout question. Open Member questions to reply.';
+  assert.equal(pushMessage({ body: 'Asha asked a trainer a question. Open Questions to reply.' }).body, want);
+  assert.equal(alertWords('Asha asked a trainer a question. Open Questions for trainers to reply.'), want);
+  assert.equal(alertWords(want), want);
+  assert.equal(alertWords('Asha sent your gym a question. Open Member messages to reply.'), 'Asha sent your gym a question. Open Member messages to reply.');
 });
 
 // ---------------------------------------------------------------- a run, against a stand-in gym server

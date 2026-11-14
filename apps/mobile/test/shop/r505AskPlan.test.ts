@@ -99,8 +99,8 @@ describe('the server says NO_PLAN', () => {
     expect(await sendAskQuestion(link, null, 'Hi')).toEqual({ ok: false, words: ASK_WORDS.failedOffline });
   });
   it('the words are plain and say what happened', () => {
-    expect(ASK_WORDS.locked).toBe('Ask a trainer is for members with a running plan.');
-    expect(ASK_WORDS.errNoPlan).toBe('Ask a trainer is for members with a running plan. Your question was not sent.');
+    expect(ASK_WORDS.locked).toBe('"Ask about your workout" is for members with a running plan.');
+    expect(ASK_WORDS.errNoPlan).toBe('"Ask about your workout" is for members with a running plan. Your question was not sent.');
     expect(ASK_WORDS.renew).toBe('Renew my plan');
     for (const l of [ASK_WORDS.locked, ASK_WORDS.errNoPlan, ASK_WORDS.renew]) expect(l).not.toMatch(/\b(volume|sessions?|PRs?|pass)\b/i);
   });

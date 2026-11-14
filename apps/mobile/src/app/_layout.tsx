@@ -141,7 +141,11 @@ export default function RootLayout() {
     // with no workout open (below). Joined phones only; quiet on failure.
     void refreshGymNow().catch(() => undefined);
     // "Message your gym" (0069): the gym's unread replies badge the Gym tab (one small read; hidden without 0069).
-    const talkCount = (): void => void import('@/shop/gymTalkSync').then((m) => m.refreshTalkForPhone()).catch(() => undefined);
+    // R-533: and so do the gym's replies in "Ask about your workout" not opened yet (at most every 5 minutes).
+    const talkCount = (): void => {
+      void import('@/shop/gymTalkSync').then((m) => m.refreshTalkForPhone()).catch(() => undefined);
+      void import('@/shop/askReplySync').then((m) => m.refreshAskForPhone()).catch(() => undefined);
+    };
     talkCount();
     // Back to the foreground: a look that is waiting is shown now (under the gym's logo) unless a
     // workout is open, and the gym is asked again at most about once an hour.

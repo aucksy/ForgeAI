@@ -107,7 +107,7 @@ export function MoreScreen() {
       : []),
     // R-319 item 1: members' "Ask a trainer" questions for this person; hidden until 0053 (count null).
     ...(trainerNav && questionsOpen !== null
-      ? [{ path: '/questions', group: 'training', label: 'Questions for trainers', hint: QUESTION_WORDS.navHint, icon: 'feedback', badge: questionsOpen } as Row]
+      ? [{ path: '/questions', group: 'training', label: 'Member questions', hint: QUESTION_WORDS.navHint, icon: 'feedback', badge: questionsOpen } as Row]
       : []),
     { path: '/challenges', group: 'training', label: 'Challenges', hint: owner ? 'A monthly goal for members, and the leaderboard' : 'Who has reached the goal', icon: 'trophy' },
 

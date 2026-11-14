@@ -18,6 +18,10 @@ yes to a typed number), the way qa-journeys and qa-conditions make their own gym
         (src/shop/membership.ts withQaPassStandIn). With 0055 live the server's own answer wins.
   own-code <slot>              R-458: a one-time sign-in code the owner makes for HIMSELF (owner_make_signin_code), for
                                the member app's "Do you run a gym on MettleUp?". Prints ::add-mask:: and OWNCODE=<6 digits>.
+  answer <slot> <text>         R-533: the gym (the owner's session) answers the newest open question in "Ask about your
+                               workout" (owner_questions -> owner_answer_question, as the admin app's Member questions
+                               page does). Prints ANSWERED=1, or NO_OPEN_QUESTION when none waits (0053 not live, or
+                               the phone sent none).
   sign-out <slot>              end the owner session
 
 Security (WP6 rules, unchanged): the gym is made by this run; never FORGE1 / RAMS01; the owner session
@@ -119,6 +123,19 @@ def main(argv):
             return 1
         print(f"::add-mask::{code}")
         print(f"OWNCODE={code}")
+        return 0
+    if cmd == "answer":
+        st = xj.load(slot)
+        got = xj.rpc("owner_questions", {"p_key": st["key"]}) or {}
+        waiting = [q for q in (got.get("questions") or []) if q.get("open")]
+        if not waiting:
+            print("NO_OPEN_QUESTION")
+            return 0
+        done = xj.rpc("owner_answer_question", {"p_key": st["key"], "p_id": waiting[0]["id"], "p_answer": argv[2]}) or {}
+        if done.get("ok") is not True:
+            print(f"ANSWER FAILED: {str(done)[:160]}")
+            return 1
+        print("ANSWERED=1")
         return 0
     if cmd == "sign-out":
         return xj.main(["sign-out", slot])

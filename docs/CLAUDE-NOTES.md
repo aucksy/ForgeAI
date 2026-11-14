@@ -85,6 +85,9 @@ He said (14 Nov 2026), with a picture of Training progress showing "WhatsApp: We
 going?": "Why give WhatsApp option here... should be BAU in app notification"
 To do: these buttons send an in-app message (phone alert + the member's gym messages), not WhatsApp. Every member on
 Training progress has the app (they share workouts from it).
+Done (panel, needs a deploy): "Send: Well done" / "Send: How's it going?" call owner_send_message to that one member
+(kind announcement), then "Sent" on the card; the 3rd message of the day says it went without a phone alert (0042).
+Owner only: a trainer sees one line instead (owner_send_message is OWNER_ONLY; trainers need a server change).
 
 ## R-533. "Ask a trainer": wrong name, and no alert or dot when the gym replies — 14 Nov 2026
 He said (14 Nov 2026): "in the gym section of the app there is an option for ask a trainer. First of all ask a trainer
@@ -94,6 +97,12 @@ There was no notification and there was no dot or something in that section sayi
 checked."
 To do: a name that covers owner and trainers; find why his real reply sent no phone alert (prove the cause, fix it);
 a dot on the Gym tab and on the row while a reply is unread.
+Done: member row "Ask about your workout" (not "Ask your gym": next to "Message your gym" it reads the same); panel
+page "Member questions". Cause found in code: 0.77.0 shows nothing for a gym push while the app is open (fixed on main
+5c6d2ae6), and a reply had no second way (the 15-minute check only popped up gym messages). Now: the 15-minute check
+pops up a missed reply once; a red count on the Gym tab and the row until opened; the panel proxy sends the reply's
+push at once; the HQ push run can no longer stay "busy" after a hung run. supabase 0086 (NOT LIVE): new alert words,
+"Your gym" kept whole. Live push rows for his reply not read yet (queries in the R-533 report).
 
 ## R-532. Ready-made diet plans: veg AND non-veg for every goal, scientifically checked; terms for gyms — 14 Nov 2026
 He said (14 Nov 2026): "the sample diet plans that you've added, they're not samples, they're kind of pre-built diet

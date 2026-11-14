@@ -31,7 +31,7 @@ export const CHANNEL_ID = 'gym-messages';
 /** Same as the app's noticeAlerts.ts NOTICE_ROUTE / the gym tab (the offer card is at its top). */
 export const INBOX_ROUTE = '/shop/inbox';
 export const OFFER_ROUTE = '/shop';
-/** The member app's "Ask a trainer" page (src/app/shop/ask.tsx), where the reply shows. */
+/** The member app's "Ask about your workout" page (src/app/shop/ask.tsx; "Ask a trainer" until R-533), where the reply shows. */
 export const ASK_ROUTE = '/shop/ask';
 /** The longest line a pop-up shows (the app's noticeAlertWords NOTICE_BODY_MAX). */
 export const LINE_MAX = 120;
@@ -88,7 +88,10 @@ export function fcmMessage(page, token) {
   const id = String(page.refId);
   const tag = isReply ? `trainer-reply-${id}` : isOffer ? `gym-offer-${id}` : `gym-notice-${id}`;
   const route = isReply ? ASK_ROUTE : isOffer ? OFFER_ROUTE : INBOX_ROUTE;
-  const who = String(page.title || '').trim() || 'Your trainer';
+  // R-533: the owner replies too. The gym's server sends the first word of who replied, so a reply the gym itself
+  // signed ("Your gym") arrives as "Your"; and "Your trainer" when there is no name.
+  const named = String(page.title || '').trim();
+  const who = !named || named === 'Your' || named === 'Your trainer' ? 'Your gym' : named;
   const message = isReply ? line(`${who} replied: ${page.body || ''}`) : isOffer ? line(`New offer: ${page.title}`) : line(page.title);
   const push = isReply ? 'reply' : isOffer ? 'offer' : 'message';
   const body = { kind: 'gym-message', route, push, noticeId: id, gymId: String(page.gymId || '') };
@@ -282,22 +285,28 @@ export function resetPushWarnings() {
   warned.clear();
 }
 
-let running = false;
+// When the run started (0 = none). R-533: a run that never finished (a call that hung until the Worker was stopped
+// mid-run) could hold this for as long as the Worker stayed warm, so every later minute said "busy" and no phone
+// alert went. A run older than RUN_STALE_MS is treated as gone.
+let runningSince = 0;
+export const RUN_STALE_MS = 90_000;
 
 /**
  * Send what is due. Never throws. -> { skipped?: why } or { jobs, sent, dead, failed, left }.
  * `left`: true when the run stopped at its call budget with more perhaps to send.
  */
 export async function runPush(env, { fetchImpl = fetch, now = () => Date.now(), spent = 0 } = {}) {
-  if (running) return { skipped: 'busy' };
-  running = true;
+  const started = now();
+  if (runningSince && started - runningSince < RUN_STALE_MS) return { skipped: 'busy' };
+  if (runningSince) console.warn('[push] the last run never finished; starting again');
+  runningSince = started;
   try {
     return await runOnce(env, fetchImpl, now, spent);
   } catch (e) {
     console.error('[push] run failed', e instanceof Error ? e.message : 'error');
     return { skipped: 'error' };
   } finally {
-    running = false;
+    if (runningSince === started) runningSince = 0;
   }
 }
 

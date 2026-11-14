@@ -1,0 +1,65 @@
+# Part UAT, flow 12b (gym, after flow 12): R-533 (owner, 14 Nov 2026) "when I responded back from the admin panel,
+# there was no notification... and there was no dot". Uma sends one question and leaves it open; run-device-qa.sh then
+# answers it as the gym (qa/uat_gym.py answer), and flow 12c checks the red count on the row, opens the reply, and
+# checks the count is gone. Skipped (the row is absent) until the gym's server has 0053 (live since 9 Nov 2026).
+appId: com.mettleup.app
+---
+- tapOn:
+    text: "^Gym$"
+- extendedWaitUntil:
+    visible: "${GYM}"
+    timeout: 30000
+- scrollUntilVisible:
+    element:
+      text: "^Ask about your workout$"
+    direction: DOWN
+    timeout: 15000
+    optional: true
+- runFlow:
+    when:
+      visible: "^Ask about your workout$"
+    commands:
+      - runFlow:
+          file: sub-find.yaml
+          env:
+            FIND: '^Ask about your workout$'
+      - tapOn: "^Ask about your workout$"
+      - extendedWaitUntil:
+          visible: '^Who should answer\?$'
+          timeout: 30000
+          optional: true
+      - runFlow:
+          file: sub-see.yaml
+          env:
+            FIND: '^Who should answer\?$'
+      - runFlow:
+          file: sub-find.yaml
+          env:
+            FIND: '^Any trainer or the owner$'
+      - tapOn: "^Any trainer or the owner$"
+      - runFlow:
+          file: sub-find.yaml
+          env:
+            FIND: 'For example: How can I squat deeper without pain in my knees\?'
+      - tapOn: 'For example: How can I squat deeper without pain in my knees\?'
+      - inputText: "QA check: is one rest day enough?"
+      - hideKeyboard
+      - runFlow:
+          file: sub-find.yaml
+          env:
+            FIND: '^Send question$'
+      - tapOn: "^Send question$"
+      - extendedWaitUntil:
+          visible: 'Waiting for a reply\. You can ask a new question once this one is answered\.'
+          timeout: 30000
+          optional: true
+      - runFlow:
+          file: sub-see.yaml
+          env:
+            FIND: 'Waiting for a reply\. You can ask a new question once this one is answered\.'
+      - runFlow:
+          file: sub-see.yaml
+          env:
+            FIND: 'QA check: is one rest day enough\?'
+      - takeScreenshot: rel-124-ask-open-for-reply
+      - back

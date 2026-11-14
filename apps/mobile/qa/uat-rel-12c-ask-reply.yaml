@@ -1,0 +1,49 @@
+# Part UAT, flow 12c (gym): R-533 (owner, 14 Nov 2026) "there was no dot or something in that section saying that
+# there's something to be checked". Runs only when qa/uat_gym.py answer replied, as the gym, to the question flow 12b
+# left open (run-device-qa.sh), so every check here is strict:
+#  - the Gym tab row says the gym replied and carries a red count (picture rel-125: the count on the row's icon and
+#    on the Gym tab);
+#  - the reply reads on the page (rel-126);
+#  - back on the Gym tab the count and the "replied" line are gone (rel-127).
+appId: com.mettleup.app
+---
+# A fresh read of the row: another tab first, then Gym (the row asks the server each time the tab opens).
+- tapOn:
+    text: "^Workout$"
+- tapOn:
+    text: "^Gym.*"
+- extendedWaitUntil:
+    visible: "${GYM}"
+    timeout: 30000
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: '.*(1 new reply|Your gym replied to your question\. Tap to read it\.).*'
+- takeScreenshot: rel-125-ask-reply-red-count
+- tapOn: '.*(1 new reply|Your gym replied to your question\. Tap to read it\.).*'
+- extendedWaitUntil:
+    visible: 'QA reply: one rest day is fine, two if your legs still ache\.'
+    timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'QA reply: one rest day is fine, two if your legs still ache\.'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'QA check: is one rest day enough\?'
+- takeScreenshot: rel-126-ask-reply-read
+- back
+- extendedWaitUntil:
+    visible: "${GYM}"
+    timeout: 30000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Ask about your workout$'
+# in-view: the row was just brought into view; its count and "replied" line must be gone, not elsewhere.
+- assertNotVisible: ".*1 new reply.*"
+# in-view: the same row, just brought into view.
+- assertNotVisible: '^Your gym replied to your question\. Tap to read it\.$'
+- takeScreenshot: rel-127-ask-reply-count-gone

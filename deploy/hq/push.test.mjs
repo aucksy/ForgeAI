@@ -124,7 +124,7 @@ test('a message is data-only, on the gym channel, under the tag the phone check 
   assert.equal(JSON.parse(o.data.body).route, '/shop');
 });
 
-test("a trainer's reply (0053) opens the Ask a trainer page and says who replied", () => {
+test("a reply from the gym (0053) opens the Ask about your workout page and says who replied", () => {
   const page = { ...PAGE, kind: 'trainer_reply', title: 'Rohit', body: 'Keep your chest up.\nAnd push your knees out.', msgKind: 'trainer_reply' };
   const m = fcmMessage(page, 'tok-1').message;
   assert.equal(m.data.title, 'Iron Den');
@@ -133,7 +133,9 @@ test("a trainer's reply (0053) opens the Ask a trainer page and says who replied
   assert.equal(m.data.channelId, CHANNEL_ID);
   assert.deepEqual(JSON.parse(m.data.body), { kind: 'gym-message', route: '/shop/ask', push: 'reply', noticeId: PAGE.refId, gymId: 'g1' });
   for (const v of Object.values(m.data)) assert.equal(typeof v, 'string');
-  assert.equal(fcmMessage({ ...page, title: '' }, 't').message.data.message, 'Your trainer replied: Keep your chest up.');
+  assert.equal(fcmMessage({ ...page, title: '' }, 't').message.data.message, 'Your gym replied: Keep your chest up.');
+  assert.equal(fcmMessage({ ...page, title: 'Your' }, 't').message.data.message, 'Your gym replied: Keep your chest up.');
+  assert.equal(fcmMessage({ ...page, title: 'Your trainer' }, 't').message.data.message, 'Your gym replied: Keep your chest up.');
 });
 
 test('line keeps the first line and cuts a long one', () => {
@@ -358,4 +360,22 @@ test('the nightly cron still runs the clean-up; the minute one sends pop-ups', (
   assert.equal(cronJob(NIGHTLY_CRON), 'nightly');
   assert.equal(cronJob('* * * * *'), 'push');
   assert.equal(cronJob(BILLING_CRON), 'billing');
+});
+
+test('R-533: a run that never finished does not stop every later minute', async () => {
+  const t0 = Date.now() - 200_000;
+  const hang = () => new Promise(() => undefined); // Google never answers
+  void runPush(ENV, { fetchImpl: hang, now: () => t0 });
+  assert.deepEqual(await runPush({ ...ENV, FCM_SERVICE_ACCOUNT: '' }, { now: () => t0 + 1_000 }), { skipped: 'busy' });
+  const warn = console.warn;
+  const lines = [];
+  console.warn = (...a) => lines.push(a.join(' '));
+  try {
+    // 90 seconds later the hung run counts as gone: this one runs (and stops on the missing secret).
+    assert.deepEqual(await runPush({ ...ENV, FCM_SERVICE_ACCOUNT: '' }), { skipped: 'no-secret' });
+    assert.deepEqual(await runPush({ ...ENV, FCM_SERVICE_ACCOUNT: '' }), { skipped: 'no-secret' });
+  } finally {
+    console.warn = warn;
+  }
+  assert.ok(lines.some((l) => l.includes('the last run never finished')));
 });

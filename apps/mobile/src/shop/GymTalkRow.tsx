@@ -17,12 +17,15 @@ import type { GymLink } from './types';
 
 export const TALK_DOT = 18;
 
-/** The red count (never more than "9+"). Drawn by the row and nowhere else; the Gym tab adds it to its own badge. */
-export function TalkCount({ count }: { count: number }) {
+/**
+ * The red count (never more than "9+"). Drawn by the row and nowhere else; the Gym tab adds it to its own badge.
+ * R-533: "Ask about your workout" draws the same one (its own testID).
+ */
+export function TalkCount({ count, testID = 'gym-talk-unread' }: { count: number; testID?: string }) {
   if (count <= 0) return null;
   return (
     <View
-      testID="gym-talk-unread"
+      testID={testID}
       pointerEvents="none"
       style={{
         position: 'absolute',

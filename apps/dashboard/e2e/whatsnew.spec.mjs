@@ -112,7 +112,7 @@ test('J149b the 14 Nov 2026 entry on What is new: every line, logo first, pictur
   // The logo line first, the alerts lines after it.
   await expect(entry.locator('li').first()).toContainText('Your gym’s logo now shows at the top of the admin app');
   await expect(entry).toContainText('Latest from your members');
-  await expect(entry).toContainText('Questions for trainers');
+  await expect(entry).toContainText('Member questions');
   await expectFitsPhone(page, 'on What is new');
   await entry.screenshot({ path: 'e2e/.results/uat/whatsnew-2026-11-14-phone.png' });
   await page.setViewportSize({ width: 1280, height: 900 });

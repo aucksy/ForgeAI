@@ -29,6 +29,8 @@ vi.mock('@/shop/gymActions', async () => {
 });
 vi.mock('@/db', () => ({ initDb: async () => undefined }));
 vi.mock('@/onboarding/db/dataActions', () => ({ isDemoData: async () => gym.demo }));
+// R-533: the replies' part of the check has its own test (askReplyAlerts.test.ts); here it finds none.
+vi.mock('@/shop/askReplySync', () => ({ checkReplyAlerts: async () => [], rememberReplyAlerted: async () => undefined, refreshAskUnread: async () => undefined }));
 
 import { useGymShop } from '@/shop/gymStore';
 import { useGymInbox } from '@/shop/inboxStore';

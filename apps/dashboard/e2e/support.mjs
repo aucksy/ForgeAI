@@ -1585,16 +1585,16 @@ export function installTalk(server) {
   return talk;
 }
 
-/** The trainer view (0050) and "Questions for trainers" (0053) calls. */
+/** The trainer view (0050) and "Member questions" (0053) calls. */
 export const QUESTION_FNS = ['owner_trainer_members', 'owner_questions', 'owner_question_count', 'owner_answer_question'];
 
 /**
  * 0050 + 0053 on the pretend server: the owner and the people in `qs.trainers` (by name) may see the trainer pages and
  * every question; anyone else gets TRAINER_ONLY. `qs.on` false: PGRST202. `qs.broken` true: owner_questions answers
- * something that is not an answer (the page's error card).
+ * something that is not an answer (the page's error card). `qs.members`: Training progress's members (R-534).
  */
 export function installQuestions(server) {
-  const qs = { on: false, broken: false, trainers: new Set(), list: [] };
+  const qs = { on: false, broken: false, trainers: new Set(), list: [], members: [] };
   const base = server.answer.bind(server);
   const view = (q) => ({
     id: q.id,
@@ -1620,7 +1620,7 @@ export function installQuestions(server) {
     const role = p.role === 'owner' ? 'owner' : qs.trainers.has(p.name) ? 'trainer' : null;
     if (!role) throw new Refusal('TRAINER_ONLY');
     const open = qs.list.filter((q) => !q.answer).length;
-    if (fn === 'owner_trainer_members') return { ok: true, role, members: [] };
+    if (fn === 'owner_trainer_members') return { ok: true, role, members: qs.members };
     if (fn === 'owner_question_count') return { ok: true, open };
     if (fn === 'owner_questions') return qs.broken ? [] : { ok: true, role, open, questions: qs.list.map(view) };
     const q = qs.list.find((x) => x.id === args.p_id);

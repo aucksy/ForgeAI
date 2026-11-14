@@ -69,6 +69,8 @@ test('pushAfter tells HQ only after a successful send or offer, and never change
   const at = (path, method = 'POST') => [new Request(`https://app.mettleup.fit${path}`, { method, body: method === 'POST' ? '{}' : undefined }), new URL(`https://app.mettleup.fit${path}`)];
   assert.equal(wantsPush(...at('/sb/rest/v1/rpc/owner_send_message'), 200), true);
   assert.equal(wantsPush(...at('/sb/rest/v1/rpc/owner_save_offer'), 200), true);
+  assert.equal(wantsPush(...at('/sb/rest/v1/rpc/owner_answer_question'), 200), true); // R-533: a reply goes at once
+  assert.equal(wantsPush(...at('/sb/rest/v1/rpc/owner_answer_question'), 400), false);
   assert.equal(wantsPush(...at('/sb/rest/v1/rpc/owner_send_message'), 400), false);
   assert.equal(wantsPush(...at('/sb/rest/v1/rpc/member_messages'), 200), false);
   assert.equal(wantsPush(...at('/sb/rest/v1/rpc/owner_send_message', 'GET'), 200), false);

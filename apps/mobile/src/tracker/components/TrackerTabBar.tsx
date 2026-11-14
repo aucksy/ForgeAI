@@ -23,6 +23,7 @@ import { color, motion, radius, shadow, space, type } from '@/theme/tokens';
 import { HIDDEN_TAB_ROUTES, isShownTab, tabTitle } from '@/lib/appTabs';
 import { useLitSpots } from '@/lib/newDotsStore';
 import { useGymShop } from '@/shop/gymStore';
+import { askUnreadFor, useAskReplies } from '@/shop/askReplyStore';
 import { talkUnreadFor, useGymTalk } from '@/shop/gymTalkStore';
 import { unreadCount } from '@/shop/inbox';
 import { inboxFor, useGymInbox } from '@/shop/inboxStore';
@@ -256,7 +257,9 @@ export function TrackerTabBar({ state, descriptors, navigation }: TabBarProps) {
   // Gym messages: unread messages from the member's gym badge the Gym tab.
   const memberId = useGymShop((s) => s.link?.memberId ?? null);
   // "Message your gym" (0069): the gym's replies the member has not read add to the same badge.
-  const unread = useGymInbox((s) => unreadCount(inboxFor(s, memberId))) + useGymTalk((s) => talkUnreadFor(s, memberId));
+  // R-533: and so do replies in "Ask about your workout" the member has not opened yet.
+  const unread =
+    useGymInbox((s) => unreadCount(inboxFor(s, memberId))) + useGymTalk((s) => talkUnreadFor(s, memberId)) + useAskReplies((s) => askUnreadFor(s, memberId));
   // F198: the tabs on the way to a new feature carry a small dot.
   const dots = useLitSpots();
   // R-78: each tab's place in the bar (its left edge and width), for the sliding highlight.
