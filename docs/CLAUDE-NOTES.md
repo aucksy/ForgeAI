@@ -7,6 +7,11 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-545 (14 Nov 2026) Get the app = Google Play; recommend-block wording
+- Owner: "can you change the link for Get the App button? ... the website for the end users of the app ... currently linked with GitHub, but now our app is in production, so we can share the actual link now."
+- Done: app.mettleup.fit/app now 302s to play.google.com/store/apps/details?id=com.mettleup.app (posters, member site, join and check-in pages all use /app). The APK moved to /app/apk. Steps on the three pages now say Google Play, not "open the downloaded file". Goes live with the next panel deploy.
+- Owner: "the text there says MettleUp is also THE software gym ... Should it be THE or ... A software gym owners use ... How can you be bad at writing English?" Fixed to "Gym owners can also use MettleUp to run their gym." (Hindi too). "The software" claimed every gym owner uses it; "a software" is wrong English (software takes no "a").
+
 ## R-544 (14 Nov 2026) AI credits B database change applied live; payment company question
 - Owner: "yes to AI credits database change". Applied 0083_ai_members.sql live (SQL Editor from 3db4fee9); live tests 0083 PASS 40, 0078 PASS 47.
 - Still to do: panel deploy (after green CI + fresh-eyes review), then set AI_CREDITS_CHARGE="on". Charging stays off until then.

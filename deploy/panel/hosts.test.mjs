@@ -151,6 +151,20 @@ test('Worker: app.mettleup.fit/sb reaches the gym server with the stamp, exactly
   }
 });
 
+test('Worker: "Get the app" (/app) goes to the Google Play page (owner, 14 Nov 2026)', async () => {
+  const { env } = fakeEnv();
+  for (const p of ['/app', '/app/']) {
+    const res = await worker.fetch(new Request(`https://app.mettleup.fit${p}`), env, ctx);
+    assert.equal(res.status, 302, p);
+    assert.equal(res.headers.get('Location'), 'https://play.google.com/store/apps/details?id=com.mettleup.app', p);
+  }
+  // The member page's buttons and the join and check-in pages all link here, never to GitHub.
+  for (const f of ['apps/dashboard/public/member-site/index.html', 'apps/dashboard/public/join.html', 'apps/dashboard/public/checkin.html']) {
+    const html = readFileSync(new URL(`../../${f}`, import.meta.url), 'utf8');
+    assert.ok(!/github\.com|coming soon\.<\/p>|downloaded file/i.test(html.replace(/iPhone[^<]*coming soon/gi, '')), f);
+  }
+});
+
 test('Worker: member page at mettleup.fit, gym page at gyms.mettleup.fit, redirects, /api/moved and the hand-over host', async () => {
   let { env, seen } = fakeEnv();
   const members = await worker.fetch(new Request('https://mettleup.fit/'), env, ctx);

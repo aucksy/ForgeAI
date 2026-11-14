@@ -43,8 +43,9 @@
 //  - /sb/...    the gym server (Supabase) at our own address, so a block of supabase.co cannot stop
 //               the apps (proxy.js, owner R-40, built R-55). After the admin app sends a message or
 //               starts an offer, HQ is told to send the phone pop-ups now (proxy.js pushAfter).
-//  - /app       the newest MettleUp APK (whatever the latest GitHub release is), so the page, the
-//               poster and old messages never point at an old version.
+//  - /app       the MettleUp app on Google Play (owner, 14 Nov 2026: the app is in production, so "Get the app"
+//               goes to Play). Posters, pages and old messages all use /app, so this one line moves them all.
+//  - /app/apk   the newest MettleUp APK (whatever the latest GitHub release is), for a phone without Google Play.
 // Android's link check (/.well-known/assetlinks.json) is a plain static file.
 
 import { deleteOldCrashes, handleCrash } from './crash.js';
@@ -123,7 +124,8 @@ export default {
     if (url.pathname.startsWith('/api/self-join/')) return handleJoinPay(request, env, url, rpc);
     // R-411: the update screen's What's new lines, from our own server (GitHub's India download edge failed).
     if (url.pathname === '/app/whats-new.json') return handleWhatsNew(request, ctx);
-    if (url.pathname === '/app' || url.pathname === '/app/') return latestApk(ctx);
+    if (url.pathname === '/app' || url.pathname === '/app/') return playStore();
+    if (url.pathname === '/app/apk') return latestApk(ctx);
     const bundle = /^\/dl\/(v[0-9]+\.[0-9]+\.[0-9]+)\.aab$/.exec(url.pathname);
     if (bundle) return playBundle(request, bundle[1], `mettleup-${bundle[1]}.aab`, 'application/octet-stream');
     const storeArt = /^\/dl\/(v[0-9]+\.[0-9]+\.[0-9]+)\/(store-[a-z0-9-]+\.png)$/.exec(url.pathname);
@@ -336,6 +338,13 @@ async function playBundle(request, tag, file, type) {
   const headers = { ...cors, 'Content-Type': type, 'Cache-Control': 'no-store' };
   if (r.headers.get('Content-Length')) headers['Content-Length'] = r.headers.get('Content-Length');
   return new Response(r.body, { headers });
+}
+
+const PLAY_URL = 'https://play.google.com/store/apps/details?id=com.mettleup.app';
+
+/** 302 to the app's Google Play page (on an Android phone it opens the Play Store app). */
+function playStore() {
+  return new Response(null, { status: 302, headers: { Location: PLAY_URL, 'Cache-Control': 'no-store' } });
 }
 
 /** 302 to the newest release's APK; the tag is looked up at most every 10 minutes. */
