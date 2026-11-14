@@ -59,6 +59,8 @@ import { shopTabFor, shopTabs } from '../auth/permissions';
 import { ProductSheet } from './ProductSheet';
 import { usePoll, useShop } from './ShopProvider';
 import { CollectOnline } from '../pay/CollectOnline';
+import { justPaidOnline } from '../pay/payWords';
+import { useBeforeDeskMoney } from '../pay/useDeskPay';
 
 export function ShopScreen({ section }: { section?: string }) {
   const { cloud, newCount } = useShop();
@@ -192,12 +194,23 @@ function OrderCard({ order, now, onCancel }: { order: Order; now: number; onCanc
   const { setOrderStatus, flash } = useShop();
   const [busy, setBusy] = useState<OrderAction | null>(null);
   const [error, setError] = useState<string | null>(null);
+  // Review round 3 (R-550): closes this order's open online payment links before the desk takes the money.
+  const beforeDeskMoney = useBeforeDeskMoney();
 
   const act = async (a: OrderAction) => {
     if (a === 'cancel') return onCancel();
     setBusy(a);
     setError(null);
     try {
+      if (a === 'collected') {
+        // A link for this order could still be paid after the desk takes cash. The server closes every open link
+        // first; if the member paid one a moment ago, the desk is told not to take the money (the order stays open).
+        const paidOnline = await beforeDeskMoney('shop', order.orderId);
+        if (paidOnline) {
+          setError(justPaidOnline('shop', order.memberName, paidOnline));
+          return;
+        }
+      }
       await setOrderStatus(order.orderId, ACTION_TARGET[a]);
       flash(
         a === 'ready'

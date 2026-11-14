@@ -100,19 +100,26 @@ function company(co = {}) {
       if (co.down) return json({ error: { description: 'server error' } }, 503);
       // Which keys asked (test or live): Razorpay's test and live are two separate worlds.
       const auth = String((init.headers || {}).Authorization || '');
-      const keyMode = /rzp_live_/.test(Buffer.from(auth.replace(/^Basic /, ''), 'base64').toString()) ? 'live' : 'test';
+      const keyId = Buffer.from(auth.replace(/^Basic /, ''), 'base64').toString().split(':')[0];
+      const keyMode = /rzp_live_/.test(keyId) ? 'live' : 'test';
+      // Review round 3: with co.accounts on, each Razorpay account sees only its own links (co.accountOf maps a Key ID
+      // to its account; two Key IDs of one account = keys made again for the same account).
+      const acct = (co.accountOf || {})[keyId] || keyId;
+      const notMine = (link) => co.accounts && link && link.acct && link.acct !== acct;
       if (/\/payment_links\?count=1$/.test(u)) return json({ items: [] });
       if (/\/payment_links$/.test(u) && method === 'POST') {
         const id = `plink_${co.made.length + 1}`;
         const body = JSON.parse(init.body);
-        co.made.push({ id, mode: keyMode, ...body });
-        co.links[id] = { id, status: 'created', amount: body.amount, payments: [], mode: keyMode };
+        co.made.push({ id, mode: keyMode, keyId, ...body });
+        co.links[id] = { id, status: 'created', amount: body.amount, payments: [], mode: keyMode, acct };
         return json({ id, short_url: `https://rzp.io/i/${id}`, status: 'created' });
       }
       const cancel = /\/payment_links\/(plink_\d+)\/cancel$/.exec(u);
       if (cancel && method === 'POST') {
         if (co.cancelDown) return json({ error: { description: 'gateway timeout' } }, 504);
+        if (notMine(co.links[cancel[1]])) return json({ error: { code: 'BAD_REQUEST_ERROR', description: 'The id provided does not exist' } }, 400);
         co.cancelled.push(cancel[1]);
+        co.cancelledWith = (co.cancelledWith || []).concat(keyId);
         if (co.links[cancel[1]]) co.links[cancel[1]].status = 'cancelled';
         return json({ id: cancel[1], status: 'cancelled' });
       }
@@ -121,7 +128,14 @@ function company(co = {}) {
         co.asked = (co.asked || []).concat(one[1]);
         const link = co.links[one[1]];
         if (link && link.mode && link.mode !== keyMode) return json({ error: { code: 'BAD_REQUEST_ERROR', description: 'The api key provided is invalid' } }, 401);
+        if (notMine(link)) return json({ error: { code: 'BAD_REQUEST_ERROR', description: 'The id provided does not exist' } }, 400);
         return link ? json(link) : json({ error: { description: 'not found' } }, 400);
+      }
+      // GET /v1/payments/:id: the payment itself (co.payments[id]), with its refund fields.
+      const payment = /\/payments\/(pay_[A-Za-z0-9_]+)$/.exec(u);
+      if (payment) {
+        const p = (co.payments || {})[payment[1]];
+        return p ? json(p) : json({ error: { description: 'The id provided does not exist' } }, 400);
       }
     }
     // PayU: create_invoice makes an invoice page; verify_payment reads co.payu[txnid]. PayU cannot cancel an invoice.
@@ -914,6 +928,8 @@ test('W-42 Cashfree: a full refund (done or under way) is "refunded"; a part ref
   assert.equal((await cashfree.status(creds, 'test', 'L1', cf([{ refund_status: 'PENDING', refund_amount: 2000 }]))).state, 'refunded');
   const part = await cashfree.status(creds, 'test', 'L1', cf([{ refund_status: 'SUCCESS', refund_amount: 500 }]));
   assert.deepEqual([part.state, part.paymentId, part.amountP], ['paid', 'cfp_1', 200000]);
+  // Review round 3 (R-550): the part refund is reported, so the check before Approve refuses it (recheckPaid).
+  assert.equal(part.refundedP, 50000);
   assert.equal((await cashfree.status(creds, 'test', 'L1', cf([{ refund_status: 'CANCELLED', refund_amount: 2000 }]))).state, 'paid');
   const noPay = await cashfree.status(creds, 'test', 'L1', cf([], []));
   assert.equal(noPay.paymentId, '', 'never the order id in its place (the webhook would name it differently)');
@@ -1011,4 +1027,339 @@ test('W-47 a gym already on PayU keeps working: its join payment link is still m
   assert.equal(a.body.pay.how, 'link');
   assert.equal((await rows(e))[0].provider, 'payu');
   assert.equal((n.co.payuMade || []).length, 1, 'PayU made the invoice page');
+}));
+
+// ================================================================== review round 3 (R-550, 14 Nov 2026)
+
+const DAY = 86400000;
+const iso = (ms) => new Date(ms).toISOString();
+
+/** A request row put straight into D1 (many links at once, for the run-size and turn tests). */
+async function addRow(e, o) {
+  await e.WEB.prepare(
+    `INSERT INTO pay_requests (id, gym_id, kind, member_id, ref, amount_p, provider, mode, link_id, link_url, status, checked_at, created_at, expires_at)
+     VALUES (?, 'gym-1', ?, 'm-1', ?, ?, ?, 'test', ?, ?, ?, ?, ?, ?)`,
+  )
+    .bind(o.id, o.kind || 'fee', o.ref || `ms-${o.id}`, o.amountP || 200000, o.provider || 'razorpay', o.linkId, `https://pay.example/${o.linkId}`, o.status || 'open', o.checkedAt ?? '', o.createdAt || iso(T0), o.expiresAt || iso(T0 + 7 * DAY))
+    .run();
+  return o.id;
+}
+const rid = (n) => `pr_${String(n).padStart(20, '0')}`;
+const rowOf = async (e, id) => e.WEB.prepare('SELECT * FROM pay_requests WHERE id = ?').bind(id).first();
+const lastLink = (n) => n.co.made[n.co.made.length - 1].id;
+let enquiryN = 0;
+const nextEnquiry = () => `join-${String((enquiryN += 1)).padStart(32, 'e')}`;
+
+/** Cashfree's test API, faked over `n.f` (which keeps answering the gym server): each App ID sees only its own links. */
+function withCashfree(n, cf = {}) {
+  cf.links = cf.links || {};
+  cf.cancelled = cf.cancelled || [];
+  cf.calls = 0;
+  const f = async (url, init = {}) => {
+    const u = String(url);
+    if (!/cashfree\.com/.test(u)) return n.f(url, init);
+    cf.calls += 1;
+    const app = (init.headers || {})['x-client-id'];
+    const method = init.method || 'GET';
+    let m;
+    if (/\/pg\/links$/.test(u) && method === 'POST') {
+      const b = JSON.parse(init.body);
+      cf.links[b.link_id] = { app, status: 'ACTIVE', amount: b.link_amount };
+      return json({ link_id: b.link_id, link_url: `https://payments-test.cashfree.com/links/${b.link_id}` });
+    }
+    if ((m = /\/pg\/links\/([^/]+)\/cancel$/.exec(u))) {
+      const l = cf.links[m[1]];
+      if (!l || l.app !== app) return json({ message: 'link does not exist' }, 404);
+      l.status = 'CANCELLED';
+      cf.cancelled.push(m[1]);
+      return json({ link_id: m[1], link_status: 'CANCELLED' });
+    }
+    if ((m = /\/pg\/links\/([^/]+)\/orders/.exec(u))) return json([{ order_id: `o_${m[1]}`, order_status: 'PAID' }]);
+    if ((m = /\/pg\/orders\/o_([^/]+)\/payments$/.exec(u))) {
+      return json([{ cf_payment_id: `cfp_${m[1].slice(-6)}`, payment_status: 'SUCCESS', payment_amount: (cf.links[m[1]] || {}).amount || 2000, payment_group: 'upi' }]);
+    }
+    if (/\/refunds$/.test(u)) return json([]);
+    if ((m = /\/pg\/links\/([^/?]+)$/.exec(u))) {
+      const l = cf.links[m[1]];
+      if (!l || l.app !== app) return json({ message: 'link does not exist' }, 404);
+      return json({ link_id: m[1], link_status: l.status, link_amount: l.amount, link_amount_paid: l.status === 'PAID' ? l.amount : 0 });
+    }
+    return json({ message: 'no route' }, 599);
+  };
+  return { ...n, f, cf };
+}
+
+async function connectCashfree(e, appId = 'CFAPP_A_12345678', secretKey = 'cfsk_ma_test_secret_A_0001', hookId = 'hook-cf-0123456789ab') {
+  await e.WEB.prepare(
+    `INSERT INTO pay_connections (gym_id, provider, mode, via, creds, hint, account, hook, status, off_reason, connected_at, updated_at)
+     VALUES ('gym-1', 'cashfree', 'test', 'keys', ?, '5678', '', ?, 'on', '', '2026-11-14T00:00:00Z', '2026-11-14T00:00:00Z')`,
+  )
+    .bind(await seal(e, { appId, secretKey }), hookId)
+    .run();
+}
+
+test('W-48 "seen" and "paid" are one write: when the paid write fails, the next report of the same payment still pays the request; one the old code left half done is healed', quiet(async () => {
+  const e = env();
+  await connectRazorpay(e);
+  const n = company();
+  const a = await join(e, gymServer(), n);
+  const real = e.WEB.prepare;
+  let fail = true;
+  e.WEB.prepare = (sql) =>
+    fail && /SET status = 'paid', payment_id/.test(sql)
+      ? { bind: () => ({ run: async () => { fail = false; throw new Error('D1 down'); } }) }
+      : real(sql);
+  await assert.rejects(markPaid(e.WEB, { provider: 'razorpay', requestId: a.body.pay.id, paymentId: 'pay_1', amountP: 200000, method: 'upi' }));
+  e.WEB.prepare = real;
+  // The webhook sends it again, or the 10-minute check finds it: paid now, not skipped as "already seen".
+  assert.equal(await markPaid(e.WEB, { provider: 'razorpay', requestId: a.body.pay.id, paymentId: 'pay_1', amountP: 200000, method: 'upi' }), 'paid');
+  const r = await rowOf(e, a.body.pay.id);
+  assert.deepEqual([r.status, r.payment_id, r.paid_p], ['paid', 'pay_1', 200000]);
+  assert.equal((await e.WEB.prepare('SELECT COUNT(*) AS n FROM pay_events').first()).n, 1);
+  // A payment the old code left seen but unpaid (two writes, the second lost) is finished by the next report.
+  const b = await join(e, gymServer({ sent: { ...SENT, enquiryId: nextEnquiry() } }), n);
+  await e.WEB.prepare('INSERT INTO pay_events (provider, payment_id, request_id, at) VALUES (?, ?, ?, ?)').bind('razorpay', 'pay_half', b.body.pay.id, iso(T0)).run();
+  assert.equal(await markPaid(e.WEB, { provider: 'razorpay', requestId: b.body.pay.id, paymentId: 'pay_half', amountP: 200000 }), 'paid');
+  assert.equal((await rowOf(e, b.body.pay.id)).status, 'paid');
+  // A payment id already seen for ANOTHER request never pays this one.
+  const c = await join(e, gymServer({ sent: { ...SENT, enquiryId: nextEnquiry() } }), n);
+  assert.equal(await markPaid(e.WEB, { provider: 'razorpay', requestId: c.body.pay.id, paymentId: 'pay_1', amountP: 200000 }), 'duplicate');
+  assert.equal((await rowOf(e, c.body.pay.id)).status, 'open');
+}));
+
+/** A join on day 0 when the gym had only a UPI ID; Razorpay connected later; the same join sent again on day 5 makes its link. */
+async function lateLink() {
+  const e = env();
+  await setUpi(e);
+  const n = company();
+  const a = await join(e, gymServer(), n);
+  assert.equal(a.body.pay.how, 'upi');
+  await connectRazorpay(e);
+  const b = await join(e, gymServer(), n, FORM, T0 + 5 * DAY);
+  assert.equal(b.body.pay.id, a.body.pay.id, 'the same request, now with a link');
+  assert.equal(b.body.pay.how, 'link');
+  // Razorpay's link lasts 7 days from when it was made (day 5). Pinned here: the fake company runs on the real clock.
+  await e.WEB.prepare('UPDATE pay_requests SET expires_at = ? WHERE id = ?').bind(iso(T0 + 12 * DAY), a.body.pay.id).run();
+  n.co.links.plink_1 = rzpPaid('plink_1', 'pay_day9', 200000);
+  return { e, n, id: a.body.pay.id };
+}
+
+test("W-49 a request made on day 0 whose link was made on day 5 and paid on day 9 is still found: watched until the link's own expiry plus a day", quiet(async () => {
+  const cron = await lateLink();
+  await scheduledPay(cron.e, { f: cron.n.f, now: T0 + 9 * DAY });
+  assert.equal((await rowOf(cron.e, cron.id)).status, 'paid', 'the 10-minute check');
+  const today = await lateLink();
+  const t = await desk(today.e, today.n, '/api/pay/joins', { key: DESK_KEY }, T0 + 9 * DAY);
+  assert.equal(t.body.joins.find((j) => j.id === today.id).status, 'paid', "Today's Joined online");
+  // A link WE closed is watched as long; the window ends a day after the link's own expiry.
+  const row = { provider: 'razorpay', link_id: 'plink_1', status: 'cancelled', checked_at: '', created_at: iso(T0), expires_at: iso(T0 + 12 * DAY) };
+  assert.equal(stillWatched(row, T0 + 9 * DAY), true);
+  assert.equal(stillWatched(row, T0 + 12 * DAY + 3600000), true);
+  assert.equal(stillWatched(row, T0 + 13 * DAY + 60000), false);
+}));
+
+test('W-50 the 10-minute check takes turns: with more open links than one run can ask, a link we closed that is still payable still gets its turn', quiet(async () => {
+  const e = env();
+  await connectRazorpay(e);
+  const n = company();
+  for (let i = 1; i <= 45; i += 1) {
+    n.co.links[`plink_${100 + i}`] = { id: `plink_${100 + i}`, status: 'created', amount: 200000, payments: [], mode: 'test' };
+    await addRow(e, { id: rid(i), linkId: `plink_${100 + i}` });
+  }
+  // Closed by us an hour ago (its cancel failed at Razorpay) and then paid there.
+  n.co.links.plink_999 = rzpPaid('plink_999', 'pay_closed', 200000);
+  await addRow(e, { id: rid(999), linkId: 'plink_999', status: 'cancelled', checkedAt: iso(T0 - 3600000) });
+  for (let run = 1; run <= 3; run += 1) {
+    const before = n.calls.length;
+    await scheduledPay(e, { f: n.f, now: T0 + run * 10 * 60000 });
+    assert.ok(n.calls.length - before <= 40, `run ${run} made ${n.calls.length - before} outside calls`);
+  }
+  const r = await rowOf(e, rid(999));
+  assert.deepEqual([r.status, r.late, r.payment_id], ['paid', 1, 'pay_closed']);
+}));
+
+test("W-51 one run never passes Cloudflare's 50 outside calls: the 10-minute check and Today stay within 40 (a paid Cashfree link costs 4 asks); the rest are asked next time", quiet(async () => {
+  const e = env();
+  await connectCashfree(e);
+  const n = withCashfree(company());
+  for (let i = 1; i <= 40; i += 1) {
+    n.cf.links[rid(i)] = { app: 'CFAPP_A_12345678', status: 'PAID', amount: 2000 };
+    await addRow(e, { id: rid(i), provider: 'cashfree', linkId: rid(i) });
+  }
+  n.cf.calls = 0;
+  await scheduledPay(e, { f: n.f, now: T0 + 10 * 60000 });
+  assert.ok(n.cf.calls <= 40, `one run made ${n.cf.calls} calls`);
+  for (let run = 2; run <= 8; run += 1) await scheduledPay(e, { f: n.f, now: T0 + run * 10 * 60000 });
+  const left = (await e.WEB.prepare("SELECT COUNT(*) AS n FROM pay_requests WHERE status <> 'paid'").first()).n;
+  assert.equal(left, 0, 'every link was asked in the end');
+  // Today's "Joined online": ten paid Cashfree join links, one look.
+  const t = env();
+  await connectCashfree(t);
+  const m = withCashfree(company());
+  for (let i = 1; i <= 10; i += 1) {
+    m.cf.links[rid(i)] = { app: 'CFAPP_A_12345678', status: 'PAID', amount: 2000 };
+    await addRow(t, { id: rid(i), kind: 'join', ref: `join-${i}`, provider: 'cashfree', linkId: rid(i) });
+  }
+  const before = m.calls.length;
+  m.cf.calls = 0;
+  await desk(t, m, '/api/pay/joins', { key: DESK_KEY }, T0 + 60000);
+  const made = m.cf.calls + (m.calls.length - before);
+  assert.ok(made <= 40, `Today made ${made} outside calls`);
+}));
+
+test('W-52 disconnect with more open links than one run can ask: within 40 calls; every one is still cancelled at the company (the rest by the 10-minute check)', quiet(async () => {
+  const e = env();
+  await connectRazorpay(e);
+  const n = company();
+  for (let i = 1; i <= 30; i += 1) {
+    n.co.links[`plink_${100 + i}`] = { id: `plink_${100 + i}`, status: 'created', amount: 200000, payments: [], mode: 'test' };
+    await addRow(e, { id: rid(i), linkId: `plink_${100 + i}` });
+  }
+  const before = n.calls.length;
+  await desk(e, n, '/api/pay/disconnect', { key: OWNER_KEY, provider: 'razorpay' }, T0 + 60000);
+  assert.ok(n.calls.length - before <= 40, `disconnect made ${n.calls.length - before} outside calls`);
+  for (let run = 1; run <= 6; run += 1) await scheduledPay(e, { f: n.f, now: T0 + run * 40 * 60000 });
+  assert.equal(new Set(n.co.cancelled).size, 30, 'every link cancelled at Razorpay, not only here');
+  assert.equal((await e.WEB.prepare('SELECT creds FROM pay_connections').first()).creds, '', 'all settled: the kept keys are wiped');
+}));
+
+test('W-53 new keys of a DIFFERENT account: the old links are settled with the old keys (asked, cancelled there); one still payable is found with the old keys; new links use the new keys', quiet(async () => {
+  const e = env();
+  await connectRazorpay(e);
+  const n = company({ accounts: true });
+  const a = await join(e, gymServer(), n);
+  const b = await join(e, gymServer({ sent: { ...SENT, enquiryId: nextEnquiry() } }), n);
+  n.co.cancelDown = true; // Razorpay does not answer the cancels this time
+  const NEW = 'rzp_test_OtherAcct99999';
+  const c = await desk(e, n, '/api/pay/connect', { key: OWNER_KEY, provider: 'razorpay', fields: { keyId: NEW, keySecret: 'AnotherSecretValue12345' } }, T0 + 120000);
+  assert.equal(c.body.connection.on, true);
+  assert.equal((await rowOf(e, a.body.pay.id)).status, 'cancelled', 'old links are closed here');
+  n.co.cancelDown = false;
+  // The member pays the OLD link from a message they still had.
+  n.co.links.plink_1 = { ...rzpPaid('plink_1', 'pay_old_account', 200000), acct: RZP_ID };
+  await scheduledPay(e, { f: n.f, now: T0 + 45 * 60000 });
+  const ra = await rowOf(e, a.body.pay.id);
+  assert.deepEqual([ra.status, ra.late, ra.payment_id], ['paid', 1, 'pay_old_account'], "found with the old account's keys");
+  assert.deepEqual([n.co.cancelled, n.co.cancelledWith], [['plink_2'], [RZP_ID]], 'the other old link is cancelled at Razorpay, with the old keys');
+  assert.equal((await rowOf(e, b.body.pay.id)).status, 'cancelled');
+  // A new join gets a link made with the new account's keys; the new connection was never switched off.
+  await join(e, gymServer({ sent: { ...SENT, enquiryId: nextEnquiry() } }), n, FORM, T0 + 50 * 60000);
+  assert.equal(n.co.made[2].keyId, NEW);
+  assert.equal((await e.WEB.prepare('SELECT status FROM pay_connections').first()).status, 'on');
+}));
+
+test("W-54 the SAME account's keys pasted again (or new keys made for it): nothing is closed; the open link still works", quiet(async () => {
+  const e = env();
+  await connectRazorpay(e);
+  const n = company({ accounts: true, accountOf: { [RZP_ID]: 'acc_A', rzp_test_RemadeKeyOfA01: 'acc_A' } });
+  const a = await join(e, gymServer(), n);
+  await desk(e, n, '/api/pay/connect', { key: OWNER_KEY, provider: 'razorpay', fields: { keyId: RZP_ID, keySecret: 'ANewSecretForTheSameKey1' } });
+  await desk(e, n, '/api/pay/connect', { key: OWNER_KEY, provider: 'razorpay', fields: { keyId: 'rzp_test_RemadeKeyOfA01', keySecret: 'ANewSecretForTheSameKey2' } }, T0 + 130000);
+  assert.deepEqual(n.co.cancelled, []);
+  assert.equal((await rowOf(e, a.body.pay.id)).status, 'open');
+  n.co.links.plink_1 = { ...rzpPaid('plink_1', 'pay_same', 200000), acct: 'acc_A' };
+  const p = await page(e, gymServer(), n, '/api/self-join/pay-check', { id: a.body.pay.id }, T0 + 200000);
+  assert.equal(p.body.pay.status, 'paid');
+}));
+
+test('W-55 Cashfree, keys of another account: the old link is cancelled with the old keys, and a webhook signed with the OLD secret key for it is still accepted', quiet(async () => {
+  const e = env();
+  await connectCashfree(e);
+  const n = withCashfree(company());
+  const a = await join(e, gymServer(), n);
+  assert.equal(a.body.pay.how, 'link');
+  assert.ok(n.cf.links[a.body.pay.id], 'a Cashfree link was made');
+  const c = await desk(e, n, '/api/pay/connect', { key: OWNER_KEY, provider: 'cashfree', fields: { appId: 'CFAPP_B_87654321', secretKey: 'cfsk_ma_test_secret_B_0002' } }, T0 + 120000);
+  assert.equal(c.body.connection.on, true);
+  assert.deepEqual(n.cf.cancelled, [a.body.pay.id], 'cancelled at Cashfree with the old keys');
+  const ev = cashfreeSigned('cfsk_ma_test_secret_A_0001', {
+    type: 'PAYMENT_LINK_EVENT',
+    data: { link_id: a.body.pay.id, link_status: 'PAID', link_amount: 2000, link_amount_paid: 2000, order: { transaction_id: 'cft_1', transaction_status: 'SUCCESS' } },
+  });
+  assert.equal(await hook(e, n, '/api/pay/hook/cashfree/hook-cf-0123456789ab', ev.raw, ev.headers), 200);
+  assert.equal((await rowOf(e, a.body.pay.id)).status, 'paid', 'a payment that landed just before the cancel is kept');
+}));
+
+test('W-56 the desk takes the money another way, or changes the amount: the old company link is closed (here and at the company); one paid a moment ago stands and the desk is told', quiet(async () => {
+  const e = env();
+  await connectRazorpay(e);
+  const n = company();
+  const ask = (ref, amountP, now) => desk(e, n, '/api/pay/request', { key: DESK_KEY, kind: 'fee', memberId: 'm-1', ref, amountP, label: 'Monthly', note: 'R-1', phone: PHONE }, now);
+  const one = await ask('ms-1', 150000);
+  // The amount changes: the old link is cancelled at Razorpay; one new link.
+  const two = await ask('ms-1', 120000, T0 + 180000);
+  assert.notEqual(two.body.request.id, one.body.request.id);
+  assert.deepEqual(n.co.cancelled, ['plink_1']);
+  assert.equal((await rowOf(e, one.body.request.id)).status, 'cancelled');
+  // The desk takes cash for those dues: the open link is closed first (the same check as Make member).
+  const s = await desk(e, n, '/api/pay/settle', { key: DESK_KEY, kind: 'fee', ref: 'ms-1' }, T0 + 240000);
+  assert.deepEqual([s.status, s.body.paidOnline, s.body.closed], [200, null, 1]);
+  assert.deepEqual(n.co.cancelled, ['plink_1', 'plink_2']);
+  // Paid online a moment ago: nothing is closed, and the desk is told (it must not take the money again).
+  const three = await ask('ms-1', 120000, T0 + 300000);
+  n.co.links[lastLink(n)] = rzpPaid(lastLink(n), 'pay_now', 120000);
+  const s2 = await desk(e, n, '/api/pay/settle', { key: DESK_KEY, kind: 'fee', ref: 'ms-1' }, T0 + 301000);
+  assert.deepEqual([s2.body.paidOnline && s2.body.paidOnline.id, s2.body.paidOnline && s2.body.paidOnline.status], [three.body.request.id, 'paid']);
+  assert.deepEqual(n.co.cancelled, ['plink_1', 'plink_2']);
+  // The amount changes again but the open link was just paid: that payment stands, no new link.
+  const four = await ask('ms-2', 90000, T0 + 400000);
+  n.co.links[lastLink(n)] = rzpPaid(lastLink(n), 'pay_four', 90000);
+  const made = n.co.made.length;
+  const five = await ask('ms-2', 80000, T0 + 410000);
+  assert.deepEqual([five.body.request.id, five.body.request.status, n.co.made.length], [four.body.request.id, 'paid', made]);
+  // "Recorded" as cash on a request that still has a company link: asked first; open = cancelled there, then paid by the desk.
+  const six = await ask('ms-3', 70000, T0 + 500000);
+  const linkSix = lastLink(n);
+  const rec = await desk(e, n, '/api/pay/recorded', { key: DESK_KEY, id: six.body.request.id, method: 'cash', amountP: 70000, receiptNo: 'R-9' }, T0 + 510000);
+  assert.deepEqual([rec.body.request.status, rec.body.request.method], ['paid', 'cash']);
+  assert.ok(n.co.cancelled.includes(linkSix));
+  // ...and when it was paid online a moment ago, that payment stands (never overwritten as cash).
+  const seven = await ask('ms-4', 60000, T0 + 600000);
+  n.co.links[lastLink(n)] = rzpPaid(lastLink(n), 'pay_seven', 60000);
+  const rec2 = await desk(e, n, '/api/pay/recorded', { key: DESK_KEY, id: seven.body.request.id, method: 'cash', amountP: 60000, receiptNo: 'R-10' }, T0 + 610000);
+  assert.deepEqual([rec2.body.paidOnline, rec2.body.request.status, rec2.body.request.paymentId, rec2.body.request.recorded], [true, 'paid', 'pay_seven', false]);
+  // A shop order the desk hands over for cash: the member's own link for it is closed too.
+  await desk(e, n, '/api/pay/shop', { memberKey: MEMBER_KEY, orderId: 'o-1', phone: PHONE }, T0 + 700000);
+  const linkShop = lastLink(n);
+  const s3 = await desk(e, n, '/api/pay/settle', { key: DESK_KEY, kind: 'shop', ref: 'o-1' }, T0 + 710000);
+  assert.equal(s3.body.closed, 1);
+  assert.ok(n.co.cancelled.includes(linkShop));
+}));
+
+test("W-57 only the owner saves the gym's UPI ID on the server: a staff key's UPI ID is ignored (the desk state still answers)", quiet(async () => {
+  const e = env();
+  const n = company();
+  const staff = await desk(e, n, '/api/pay/desk', { key: DESK_KEY, upiId: 'someone.else@okaxis', payee: 'Not the gym' });
+  assert.equal(staff.status, 200);
+  assert.equal(staff.body.canManage, false);
+  assert.equal(await e.WEB.prepare('SELECT upi FROM pay_gyms').first(), null, 'a staff key saved nothing');
+  await desk(e, n, '/api/pay/desk', { key: OWNER_KEY, upiId: 'shaktigym@okhdfc', payee: 'Shakti Gym' });
+  assert.equal((await e.WEB.prepare('SELECT upi FROM pay_gyms').first()).upi, 'shaktigym@okhdfc');
+  await desk(e, n, '/api/pay/desk', { key: DESK_KEY, upiId: 'someone.else@okaxis' });
+  assert.equal((await e.WEB.prepare('SELECT upi FROM pay_gyms').first()).upi, 'shaktigym@okhdfc', "the owner's UPI ID stays");
+}));
+
+test('W-58 Razorpay refunds are read from the payment itself (amount_refunded, refund_status): any refund is not a payment to Approve', quiet(async () => {
+  const e = env();
+  await connectRazorpay(e);
+  const n = company();
+  n.co.payments = {};
+  /** A join paid at Razorpay; `payment` = what GET /v1/payments/:id says (null: it cannot be read). -> Approve's "refunded". */
+  const approveSays = async (payment, after = null) => {
+    const a = await join(e, gymServer({ sent: { ...SENT, enquiryId: nextEnquiry() } }), n);
+    const link = lastLink(n);
+    // The link's own answer keeps saying "captured": it carries no refund fields.
+    n.co.links[link] = rzpPaid(link, `pay_${link}`, 200000);
+    if (payment) n.co.payments[`pay_${link}`] = payment;
+    await page(e, gymServer(), n, '/api/self-join/pay-check', { id: a.body.pay.id });
+    if (after) n.co.payments[`pay_${link}`] = after;
+    const said = (await desk(e, n, '/api/pay/check', { key: DESK_KEY, id: a.body.pay.id, beforeApprove: true })).body.refunded;
+    return { said, status: (await rowOf(e, a.body.pay.id)).status };
+  };
+  const clean = { status: 'captured', amount: 200000, amount_refunded: 0, refund_status: null };
+  assert.deepEqual(await approveSays(clean), { said: false, status: 'paid' }, 'no refund');
+  assert.deepEqual(await approveSays(clean, { status: 'refunded', amount: 200000, amount_refunded: 200000, refund_status: 'full' }), { said: true, status: 'paid' }, 'refunded in full after it was seen paid');
+  assert.deepEqual(await approveSays({ status: 'captured', amount: 200000, amount_refunded: 50000, refund_status: 'partial' }), { said: true, status: 'paid' }, 'refunded in part: the money that stayed is paid, Approve refuses');
+  assert.deepEqual(await approveSays({ status: 'refunded', amount: 200000, amount_refunded: 200000, refund_status: 'full' }), { said: false, status: 'open' }, 'refunded before it was ever seen paid: never paid');
+  assert.deepEqual(await approveSays(null), { said: false, status: 'paid' }, 'the payment cannot be read: the link answer stands, as before');
 }));

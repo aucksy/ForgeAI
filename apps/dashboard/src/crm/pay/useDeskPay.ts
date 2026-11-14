@@ -4,12 +4,13 @@
  * A gym that is not online (browser only), the demo gym and an older server all read { on: false }.
  */
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
-import { useAuth } from '../auth/AuthProvider';
+import { useAuth, useRole } from '../auth/AuthProvider';
+import { isRealMoney } from '../logic/joinPay';
 import { useShop } from '../shop/ShopProvider';
 import { useCrm } from '../store';
-import { deskPay, type DeskPay, type PayProvider } from './payApi';
+import { deskPay, settleForDesk, type DeskPay, type PayProvider, type PayRequest } from './payApi';
 
 const FRESH_MS = 60_000;
 
@@ -23,7 +24,7 @@ export function setDeskPay(key: string, value: DeskPay): void {
   for (const f of [...listeners]) f(value);
 }
 
-async function load(key: string, gym: { upiId: string | null; name: string }, force: boolean): Promise<DeskPay> {
+async function load(key: string, gym: { upiId: string | null; name: string; owner: boolean }, force: boolean): Promise<DeskPay> {
   if (!force && cached && cached.key === key && Date.now() - cached.at < FRESH_MS) return cached.value;
   if (inFlight) return inFlight;
   inFlight = deskPay(key, gym).finally(() => {
@@ -49,6 +50,8 @@ export function useDeskPay(force = false): { state: DeskPay | null; key: string 
   const [tick, setTick] = useState(0);
   const upi = gym.upiId ?? null;
   const name = gym.name;
+  // Review round 3 (R-550): only the owner's app hands the server the gym's UPI ID.
+  const owner = useRole() === 'owner';
 
   useEffect(() => {
     if (!key) {
@@ -58,12 +61,36 @@ export function useDeskPay(force = false): { state: DeskPay | null; key: string 
     let live = true;
     const hear = (v: DeskPay) => live && setState(v);
     listeners.add(hear);
-    void load(key, { upiId: upi, name }, force || tick > 0).then(hear, (e) => console.warn('[pay] state not read', e));
+    void load(key, { upiId: upi, name, owner }, force || tick > 0).then(hear, (e) => console.warn('[pay] state not read', e));
     return () => {
       live = false;
       listeners.delete(hear);
     };
-  }, [key, upi, name, force, tick]);
+  }, [key, upi, name, owner, force, tick]);
 
   return { state, key, reload: () => setTick((n) => n + 1) };
+}
+
+/**
+ * Review round 3 (R-550): call it just before the desk saves money taken another way (cash, or UPI to the gym's own
+ * QR) for a due or a shop order. The server closes the open online payments for it, here and at the company. -> a REAL
+ * payment made online a moment ago (the desk must not take the money again), else null. It never stops the desk: no
+ * internet, an older server, a test payment or online payments not on all give null, and the desk saves as before.
+ */
+export function useBeforeDeskMoney(): (kind: 'fee' | 'shop', ref: string | null | undefined) => Promise<PayRequest | null> {
+  const { state, key } = useDeskPay();
+  const on = state?.on === true;
+  return useCallback(
+    async (kind: 'fee' | 'shop', ref: string | null | undefined) => {
+      if (!key || !on || !ref) return null;
+      try {
+        const paid = await settleForDesk(key, kind, ref);
+        return paid && isRealMoney(paid) ? paid : null;
+      } catch (e) {
+        console.warn('[pay] open online payments were not closed before a desk payment', e instanceof Error ? e.message : e);
+        return null;
+      }
+    },
+    [key, on],
+  );
 }

@@ -79,6 +79,19 @@ export function receiptMethod(r: PayRequest): 'upi' | 'card' | 'bank' | 'other' 
   return r.method ?? 'upi';
 }
 
+/**
+ * Review round 3 (R-550): the desk tried to save money taken another way (cash, or UPI to the gym's QR), but the
+ * member had just paid the same due or shop order online. Nothing was saved, so the gym does not take the money twice.
+ * PURE.
+ */
+export function justPaidOnline(kind: 'fee' | 'shop', name: string, r: PayRequest): string {
+  const amount = formatINR(r.paidP || r.amountP);
+  const who = name.trim() || t('This member');
+  return kind === 'shop'
+    ? t('{name} has just paid {amount} online for this order, so do not take money for it. Tap "Collected (paid)" again to hand it over.', { name: who, amount })
+    : t('{name} has just paid {amount} online, so this payment was not saved. The receipt for their online payment is made by itself in a few minutes.', { name: who, amount });
+}
+
 /** "Pay ₹1,500 to Iron Temple" for the QR's caption. PURE. */
 export function payCaption(amountP: Paise, payee: string): string {
   return t('Pay {amount} to {payee}', { amount: formatINR(amountP), payee: payee || t('the gym') });

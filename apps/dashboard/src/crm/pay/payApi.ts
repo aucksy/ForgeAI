@@ -132,10 +132,15 @@ export async function payCall<T>(path: string, body: Record<string, unknown>, fe
   return json as T;
 }
 
-/** Settings -> Payments and the money sheets. Also hands the server the gym's UPI ID (for members' shop QR). */
-export async function deskPay(key: string, gym: { upiId: string | null; name: string }): Promise<DeskPay> {
+/**
+ * Settings -> Payments and the money sheets. The OWNER's app also hands the server the gym's UPI ID (for members' shop
+ * QR and the join page). Review round 3 (R-550): a staff login sends none (`owner: false`); the server ignores a staff
+ * key's UPI ID anyway, so nobody at the desk can point members' payments at another UPI ID.
+ */
+export async function deskPay(key: string, gym: { upiId: string | null; name: string; owner?: boolean }): Promise<DeskPay> {
   try {
-    const r = await payCall<Omit<Extract<DeskPay, { on: true }>, 'on'>>('desk', { key, upiId: gym.upiId ?? '', payee: gym.name });
+    const body = gym.owner === false ? { key } : { key, upiId: gym.upiId ?? '', payee: gym.name };
+    const r = await payCall<Omit<Extract<DeskPay, { on: true }>, 'on'>>('desk', body);
     return { on: true, ...r };
   } catch (e) {
     if (e instanceof PayRefused) {
@@ -194,6 +199,17 @@ export async function checkRequest(key: string, id: string): Promise<PayRequest>
 export async function checkBeforeApprove(key: string, id: string): Promise<{ request: PayRequest | null; refunded: boolean }> {
   const r = await payCall<{ request?: PayRequest; refunded?: boolean }>('check', { key, id, beforeApprove: true });
   return { request: r.request ?? null, refunded: r.refunded === true };
+}
+
+/**
+ * Review round 3 (R-550): the desk is about to take money for a due (kind 'fee', ref = the membership id) or a shop
+ * order (kind 'shop', ref = the order id) another way: cash, or UPI to the gym's own QR. The server asks the company
+ * about every open online payment for it and closes them, there and here, so the member cannot pay an old link too.
+ * -> a payment made online a moment ago (the desk must not take the money again), or null.
+ */
+export async function settleForDesk(key: string, kind: 'fee' | 'shop', ref: string): Promise<PayRequest | null> {
+  const r = await payCall<{ paidOnline?: PayRequest | null }>('settle', { key, kind, ref });
+  return r.paidOnline ?? null;
 }
 
 /** Cancel a payment: the server asks the company first (a payment already made is kept) and cancels it there too. */

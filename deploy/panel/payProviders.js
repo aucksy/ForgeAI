@@ -8,8 +8,9 @@
 //   hint(fields)                           the last 4 characters shown on screen afterwards
 //   test(creds, mode, f)                   { ok: true } | { error: 'BAD_KEYS' | 'UNREACHABLE' | ... }
 //   createLink(creds, mode, req, f)        { linkId, url, expiresAt }
-//   status(creds, mode, linkId, f)         { state: 'open'|'paid'|'expired'|'cancelled'|'refunded', failed?, paymentId?, amountP?, method? }
-//                                          ('refunded': Razorpay and Cashfree only; paymentId only the payment's OWN id)
+//   status(creds, mode, linkId, f)         { state: 'open'|'paid'|'expired'|'cancelled'|'refunded', failed?, paymentId?, amountP?, method?, refundedP? }
+//                                          ('refunded': refunded in full; refundedP > 0: paid, refunded in part. Razorpay and
+//                                          Cashfree only; paymentId only the payment's OWN id)
 //   verifyHook(secret, raw, headers)       true when the company signed this body
 //   readHook(json)                         { kind: 'paid'|'failed'|'revoked'|'other', linkId?, ref?, paymentId?, amountP?, method?, account? }
 //   cancel?(creds, mode, linkId, f)        close a link so it cannot be paid (Razorpay, Cashfree; PayU has none and
@@ -146,7 +147,28 @@ export const razorpay = {
     // even though the link itself still says "paid". A part refund stays "captured" (paid; the desk sorts the rest).
     if (!ok && pays.some((p) => p && p.status === 'refunded')) return { state: 'refunded' };
     if (b.status === 'paid' || ok) {
-      return { state: 'paid', paymentId: str(ok ? ok.payment_id : ''), amountP: ok ? Number(ok.amount) : Number(b.amount_paid), method: methodOf(ok && ok.method) };
+      // Review round 3 (R-550): the link's answer lists its payments without any refund fields
+      // (https://razorpay.com/docs/api/payments/payment-links/fetch-id-standard/), so its "refunded" status was never
+      // proven. The payment itself says it: GET /v1/payments/:id gives status (refunded once fully refunded),
+      // amount_refunded (paise) and refund_status (null, partial or full) (https://razorpay.com/docs/api/payments/fetch-with-id/).
+      // Refunded in full = 'refunded' (never paid); in part = paid, with refundedP so Approve refuses it. When the
+      // payment cannot be read, the link's own answer stands (paid), as before.
+      let refundedP = 0;
+      if (ok && ok.payment_id) {
+        try {
+          const p = await send(f, `${RZP}/payments/${encodeURIComponent(ok.payment_id)}`, { headers: { Authorization: rzpAuth(creds) } });
+          if (p.status === 200 && p.body) {
+            const took = Number(p.body.amount) || Number(ok.amount) || 0;
+            refundedP = Math.max(0, Math.round(Number(p.body.amount_refunded) || 0));
+            const rs = str(p.body.refund_status).toLowerCase();
+            if (str(p.body.status) === 'refunded' || rs === 'full' || (took > 0 && refundedP >= took)) return { state: 'refunded' };
+            if (rs === 'partial' && refundedP === 0) refundedP = 1; // a part refund whose amount is not shown yet
+          }
+        } catch {
+          // Not readable just now: the link's answer stands.
+        }
+      }
+      return { state: 'paid', paymentId: str(ok ? ok.payment_id : ''), amountP: ok ? Number(ok.amount) : Number(b.amount_paid), method: methodOf(ok && ok.method), refundedP };
     }
     const failed = pays.some((p) => p && p.status === 'failed');
     if (b.status === 'expired') return { state: 'expired', failed };
@@ -255,6 +277,7 @@ export const cashfree = {
       const orders = Array.isArray(o.body) ? o.body : [];
       const order = orders.find((x) => str(x && x.order_status).toUpperCase() === 'PAID') || orders[0];
       let pay = null;
+      let back = 0;
       if (order && order.order_id) {
         const p = await send(f, `${host}/orders/${encodeURIComponent(order.order_id)}/payments`, { headers: cfHeaders(creds) });
         const list = Array.isArray(p.body) ? p.body : [];
@@ -262,7 +285,7 @@ export const cashfree = {
         // Review round 2 (R-542): money refunded in full (a refund done or under way) is not paid any more.
         const rf = await send(f, `${host}/orders/${encodeURIComponent(order.order_id)}/refunds`, { headers: cfHeaders(creds) });
         const refunds = Array.isArray(rf.body) ? rf.body : [];
-        const back = refunds
+        back = refunds
           .filter((x) => ['SUCCESS', 'PENDING', 'ONHOLD'].includes(str(x && x.refund_status).toUpperCase()))
           .reduce((s, x) => s + paise(x.refund_amount), 0);
         const took = paise(pay ? pay.payment_amount : r.body.link_amount_paid);
@@ -275,6 +298,8 @@ export const cashfree = {
         paymentId: str(pay ? pay.cf_payment_id : ''),
         amountP: paise(pay ? pay.payment_amount : r.body.link_amount_paid),
         method: methodOf(pay && pay.payment_group),
+        // Review round 3: a part refund (done or under way) stays paid, but Approve refuses it (pay.js recheckPaid).
+        refundedP: back,
       };
     }
     if (st === 'EXPIRED') return { state: 'expired' };

@@ -758,6 +758,12 @@ export const HINGLISH: Readonly<Record<string, string>> = {
     'Yeh online payment refund ho gaya, isliye kuch save nahi hua. Unse poochho ki woh kaise pay karenge.',
   'Got it': 'Theek hai',
   'Test mode: no real money came in, so no receipt was saved.': 'Test mode: asli paise nahi aaye, isliye receipt save nahi hui.',
+  // Payment review round 3 (R-550): the desk takes cash or QR for something the member has just paid online.
+  'This member': 'Yeh member',
+  '{name} has just paid {amount} online, so this payment was not saved. The receipt for their online payment is made by itself in a few minutes.':
+    '{name} ne abhi {amount} online pay kiya hai, isliye yeh payment save nahi hua. Online payment ki receipt kuch minute mein apne aap ban jayegi.',
+  '{name} has just paid {amount} online for this order, so do not take money for it. Tap "Collected (paid)" again to hand it over.':
+    '{name} ne is order ke liye abhi {amount} online pay kiya hai, isliye iske paise mat lo. Saman dene ke liye "Collected (paid)" phir se dabao.',
   // ── F201 AI Assistant (12 Nov 2026, R-471): words the owner approves before it goes live ──
   'AI Assistant': 'AI Assistant',
   'Open the AI Assistant': 'AI Assistant kholo',

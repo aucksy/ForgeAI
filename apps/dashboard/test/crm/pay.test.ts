@@ -3,14 +3,14 @@
  * signatures, idempotent mark-paid, late and failed payments, revoked connections) is tested in
  * deploy/panel/pay.test.mjs.
  */
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { upiPayLink, validUpiId } from '../../src/crm/logic/upiPay';
 import { paidDay, stuckWhy } from '../../src/crm/pay/PaidOnline';
 import { qrPath } from '../../src/crm/pay/PayQr';
 import { offWords, oauthBackWords } from '../../src/crm/pay/PaymentsScreen';
-import { tenDigits, type PayConnection, type PayRequest } from '../../src/crm/pay/payApi';
-import { OFFERED_PROVIDERS, connectProblem, connectionLine, onlineReference, payCaption, receiptMethod, requestLine, shownProviders, upiReceiptNote } from '../../src/crm/pay/payWords';
+import { deskPay, settleForDesk, tenDigits, type PayConnection, type PayRequest } from '../../src/crm/pay/payApi';
+import { OFFERED_PROVIDERS, connectProblem, connectionLine, justPaidOnline, onlineReference, payCaption, receiptMethod, requestLine, shownProviders, upiReceiptNote } from '../../src/crm/pay/payWords';
 import { activeProvider } from '../../src/crm/pay/useDeskPay';
 
 const req = (o: Partial<PayRequest> = {}): PayRequest => ({
@@ -199,5 +199,51 @@ describe('payments that came in with no sheet open', () => {
     expect(paidDay('2026-11-09T10:00:00.000Z', '2026-11-06')).toBe('2026-11-06');
     expect(paidDay(null, '2026-11-06')).toBe('2026-11-06');
     expect(paidDay('nonsense', '2026-11-06')).toBe('2026-11-06');
+  });
+});
+
+// Review round 3 (R-550, matrix rows 71-72).
+describe('desk money and the gym UPI ID', () => {
+  const sent: { url: string; body: Record<string, unknown> }[] = [];
+  const answerWith = (json: unknown) => {
+    sent.length = 0;
+    vi.stubGlobal('window', { setTimeout, clearTimeout });
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async (url: string, init: { body: string }) => {
+        sent.push({ url, body: JSON.parse(init.body) as Record<string, unknown> });
+        return new Response(JSON.stringify(json), { status: 200, headers: { 'Content-Type': 'application/json' } });
+      }),
+    );
+  };
+  afterEach(() => vi.unstubAllGlobals());
+
+  it('R3-6 a staff login never sends the gym UPI ID; the owner still does', async () => {
+    answerWith({ connectOn: false, testMode: true, canManage: false, providers: [] });
+    await deskPay('k1', { upiId: 'someone@okaxis', name: 'Iron Temple', owner: false });
+    expect(sent[0].url).toBe('/api/pay/desk');
+    expect(sent[0].body).toEqual({ key: 'k1' });
+    await deskPay('k1', { upiId: 'irontemple@okhdfc', name: 'Iron Temple', owner: true });
+    expect(sent[1].body).toEqual({ key: 'k1', upiId: 'irontemple@okhdfc', payee: 'Iron Temple' });
+  });
+
+  it('R3-5 before the desk takes cash, the open links for that due are closed, and a payment just made comes back', async () => {
+    answerWith({ paidOnline: req({ status: 'paid', paidP: 150000, testMode: false }), closed: 0 });
+    const paid = await settleForDesk('k1', 'fee', 'ms1');
+    expect(sent[0]).toEqual({ url: '/api/pay/settle', body: { key: 'k1', kind: 'fee', ref: 'ms1' } });
+    expect(paid?.status).toBe('paid');
+    answerWith({ paidOnline: null, closed: 2 });
+    expect(await settleForDesk('k1', 'shop', 'o1')).toBeNull();
+  });
+
+  it('R3-5 the desk is told plainly why the cash was not saved', () => {
+    const r = req({ status: 'paid', paidP: 150000 });
+    expect(justPaidOnline('fee', 'Ravi Kumar', r)).toBe(
+      'Ravi Kumar has just paid ₹1,500 online, so this payment was not saved. The receipt for their online payment is made by itself in a few minutes.',
+    );
+    expect(justPaidOnline('shop', 'Ravi Kumar', r)).toBe(
+      'Ravi Kumar has just paid ₹1,500 online for this order, so do not take money for it. Tap "Collected (paid)" again to hand it over.',
+    );
+    expect(justPaidOnline('fee', ' ', r).startsWith('This member has just paid')).toBe(true);
   });
 });

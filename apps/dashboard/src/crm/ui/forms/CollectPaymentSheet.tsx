@@ -26,7 +26,8 @@ import { Button, ErrorBanner, Grid, Row, SelectField, Sheet, TextField, color, f
 import { nextReceiptNo } from '../../logic/receipts';
 import { CollectOnline } from '../../pay/CollectOnline';
 import type { PayRequest } from '../../pay/payApi';
-import { onlineReference, receiptMethod, upiReceiptNote } from '../../pay/payWords';
+import { justPaidOnline, onlineReference, receiptMethod, upiReceiptNote } from '../../pay/payWords';
+import { useBeforeDeskMoney } from '../../pay/useDeskPay';
 
 export function CollectPaymentSheet({
   view,
@@ -45,6 +46,8 @@ export function CollectPaymentSheet({
   // C7-12: the receipt says who took the money (the server stamps the same from the session).
   const taker = takerOf(useAuth().session);
   const role = useRole();
+  // Review round 3 (R-550): closes this due's open online payment links before the desk takes the money another way.
+  const beforeDeskMoney = useBeforeDeskMoney();
 
   const owing = useMemo(() => {
     const payments = snapshot.payments.filter((p) => p.memberId === view.member.id);
@@ -119,6 +122,13 @@ export function CollectPaymentSheet({
     setSaving(true);
     setError(null);
     try {
+      // Review round 3 (R-550): a link for this due could still be paid after the desk takes cash. The server closes
+      // every open link for it first; if the member paid one a moment ago, nothing is saved (no double payment).
+      const paidOnline = await beforeDeskMoney('fee', selected.membership.id);
+      if (paidOnline) {
+        setError(justPaidOnline('fee', view.member.fullName, paidOnline));
+        return;
+      }
       const payment = await recordPayment({
         memberId: view.member.id,
         membershipId: selected.membership.id,

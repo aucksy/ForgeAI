@@ -22,5 +22,21 @@ export function sqliteD1({ skip = [] } = {}) {
       return { success: true, meta: { changes: Number(r.changes), last_row_id: Number(r.lastInsertRowid) } };
     },
   });
-  return { sqlite: db, prepare: (sql) => statement(sql) };
+  const d1 = { sqlite: db, prepare: (sql) => statement(sql) };
+  // D1's batch (review round 3, R-550): the statements run in order inside ONE transaction; when one fails, none of
+  // them is kept (https://developers.cloudflare.com/d1/worker-api/d1-database/#batch). The statements go through
+  // d1.prepare, so a test that swaps prepare to make one fail sees the whole batch undone, as it would live.
+  d1.batch = async (statements) => {
+    db.exec('BEGIN');
+    try {
+      const out = [];
+      for (const s of statements) out.push(await s.run());
+      db.exec('COMMIT');
+      return out;
+    } catch (e) {
+      db.exec('ROLLBACK');
+      throw e;
+    }
+  };
+  return d1;
 }
