@@ -70,6 +70,27 @@ export interface WhatsNewEntry {
 /** Newest first. */
 export const WHATS_NEW_LOG: readonly WhatsNewEntry[] = [
   {
+    // Owner's release, 15 Nov 2026 night IST ("... complete all the testing, make decisions whenever required and release
+    // everything", R-556): everything since 0.77.0. member-words + Gemini 3.1 Pro pass (its rewrites dropped facts, so
+    // only "kilos you lifted" was taken); with Play's "• " each line, 485 of 500 characters. Left out to fit (fewer,
+    // clearer lines): the bigger gym logo (R-517), "Last 3 months" on the Profile chart (R-500), muscle tips' (i)
+    // (R-482/R-492), BENCH IN USE (R-456/R-457), the Next / Previous words (R-499), Up next after an old backup (R-484).
+    version: '0.78.0',
+    date: '15 Nov',
+    lines: [
+      {
+        text: 'On the Gym tab, tap "Message your gym" to ask a question, give feedback or make a complaint.',
+        go: { label: 'Open the Gym tab', href: '/shop', section: 'gym' },
+        feature: true,
+      },
+      { text: 'Messages from your gym now pop up even while the app is open.' },
+      { text: 'In a workout, a bar under each exercise shows the kilos you lifted and the kilos still to go.' },
+      { text: 'Suggested reps never drop below what each set did in your previous workout at the same weight.' },
+      { text: '81 exercises now have new pictures that show how to do each move.' },
+      { text: 'On your watch, turn the dial to change your reps straight away.' },
+    ],
+  },
+  {
     // Owner's release, 11 Nov 2026 ~12:28 IST ("Release"): light mode + R-429, R-411, R-412, R-436..R-442, R-444, R-445.
     // member-words: short lines, so no Gemini pass; a fresh-reader helper checked them (empty workout, watch "stays on,
     // dimmed", "same set last time", the 18+ tick reworded). Left out to fit Play's 500 characters: R-412's What's new
