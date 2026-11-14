@@ -93,6 +93,7 @@ import { AssistantFab } from './assistant/ui/AssistantFab';
 import { AssistantScreen } from './ui/screens/Assistant';
 import { WebPageScreen } from './ui/screens/WebPage';
 import { useWebPage } from './gympage/pageState';
+import { usePagesOpenState } from './gympage/pagesOpen';
 
 export function CrmApp() {
   // English | Hinglish (1 Nov 2026): a switch draws the whole panel again in the new words.
@@ -368,6 +369,8 @@ function Screen({ segments, role }: { segments: string[]; role: Role }) {
   const [head, id] = segments;
   const { offline } = useOffline();
   const proOn = useFeatureCheck();
+  // F207: gym web pages open to visitors (the Worker's GYM_PAGES switch); undefined until it has answered.
+  const pagesOpen = usePagesOpenState();
   // R-119: the demo gym shows a plain card in place of any page that only works in a real gym.
   const demoPage = useDemo() ? demoNeedsRealGym(head, id) : null;
   if (demoPage) return <DemoNeedsRealGym page={demoPage} />;
@@ -460,8 +463,9 @@ function Screen({ segments, role }: { segments: string[]; role: Role }) {
       if (id === 'branding') return <BrandingScreen />;
       // R-124: Settings -> Gym timings (when the gym is open, shown in the member app).
       if (id === 'timings') return <GymTimingsScreen />;
-      // F207 (R-519): Settings -> Your web page (join.mettleup.fit/<gym>).
-      if (id === 'web-page') return <WebPageScreen />;
+      // F207 (R-519): Settings -> Your web page (join.mettleup.fit/<gym>). Only while gym web pages are open to visitors
+      // (gympage/pagesOpen.ts); a typed address waits for the answer, then goes to Settings while they are not.
+      if (id === 'web-page') return pagesOpen ? <WebPageScreen /> : pagesOpen === false ? <Redirect to="/settings" /> : null;
       // F79 (R-328): Settings -> Payments (UPI QR and the gym's own payment company).
       if (id === 'payments') return <PaymentsScreen />;
       // F137: Settings -> Member app -> Busy machines (hidden until the gym's server has 0049).

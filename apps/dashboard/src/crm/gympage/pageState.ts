@@ -2,7 +2,8 @@
  * F207: what the panel knows about this gym's web page, shared by the menu row ("Your web page"), Set up your gym's step
  * "Make your free gym web page" (ticks itself once the page is published) and the editor (which tells it after a save).
  * Asked once per sign-in key (owner_gym_page); a server without the web page part, the demo gym and a gym kept only in
- * this browser have none: then neither the row nor the step shows.
+ * this browser have none: then neither the row nor the step shows. Nor while gym web pages are not open to visitors
+ * (pagesOpen.ts, the Worker's GYM_PAGES switch): then nothing is asked and nothing shows, until the switch turns on.
  */
 import { useEffect, useSyncExternalStore } from 'react';
 
@@ -10,6 +11,7 @@ import { useAuth } from '../auth/AuthProvider';
 import { useDemo } from '../demo/demoMode';
 import { isNoSuchFunction } from '../logic/workoutOffer';
 import { getPage } from './api';
+import { usePagesOpen } from './pagesOpen';
 import type { PageAnswer } from './logic';
 
 type Known = { key: string; answer: PageAnswer | null };
@@ -49,13 +51,14 @@ function subscribe(f: () => void) {
 }
 
 /**
- * This sign-in's page: undefined while not known yet, null when the gym has no web page part (or no internet key),
- * else the answer (page null = not made yet).
+ * This sign-in's page: undefined while not known yet, null when the gym has no web page part (or no internet key, or
+ * gym web pages are not open), else the answer (page null = not made yet).
  */
 export function useWebPage(): PageAnswer | null | undefined {
   const { session } = useAuth();
   const demo = useDemo() !== null;
-  const key = !demo && session?.online ? session.ownerKey : null;
+  const open = usePagesOpen();
+  const key = open && !demo && session?.online ? session.ownerKey : null;
   const snap = useSyncExternalStore(subscribe, () => known);
   useEffect(() => {
     if (key && known?.key !== key) void ask(key);

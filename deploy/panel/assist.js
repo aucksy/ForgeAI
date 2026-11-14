@@ -32,7 +32,7 @@
 
 import Anthropic from '@anthropic-ai/sdk';
 
-import { AI_PAGE_IDS, MESSAGE_LANGS, PAGES, TOOL_KIND, toolsForClaude } from './assistCatalogue.js';
+import { MESSAGE_LANGS, PAGES, TOOL_KIND, aiPageIdsFor, toolsForClaude } from './assistCatalogue.js';
 import { MAX_PLAN_BODY, PLAN_TOOL, checkPlanAsk, cleanPlan, exerciseListText, planPrompt, planSystem } from './assistPlan.js';
 import { indiaDay, whoIsAsking } from './aiMatch.js';
 import { SUPABASE } from './proxy.js';
@@ -253,9 +253,13 @@ export function checkAsk(body, now = new Date()) {
 
 // ------------------------------------------------------------------ the prompt
 
-/** The fixed part of the prompt (cached by Claude together with the tools): the rules and the pages. PURE. */
-export function assistSystem() {
-  const pages = PAGES.filter((p) => AI_PAGE_IDS.includes(p.id))
+/**
+ * The fixed part of the prompt (cached by Claude together with the tools): the rules and the pages switched on for this
+ * Worker (`env`: a page with `onlyWhen` waits for its switch, switches.js; none given = all off). PURE.
+ */
+export function assistSystem(env) {
+  const ids = aiPageIdsFor(env);
+  const pages = PAGES.filter((p) => ids.includes(p.id))
     .map((p) => `- ${p.id}: ${p.name}. ${p.does}`)
     .join('\n');
   return [
@@ -305,8 +309,8 @@ export function assistPrompt(v) {
 
 const cutAll = (list, max, len) => (Array.isArray(list) ? list.map((s) => short(s, len)).filter(Boolean).slice(0, max) : []);
 
-/** One tool call, checked and trimmed; null when it must be dropped. PURE. */
-export function cleanAction(name, input) {
+/** One tool call, checked and trimmed; null when it must be dropped (an open_page to a page switched off too). PURE. */
+export function cleanAction(name, input, env) {
   if (!Object.hasOwn(TOOL_KIND, name) || !input || typeof input !== 'object' || Array.isArray(input)) return null;
   const i = { ...input };
   if (name === 'draft_message') {
@@ -318,7 +322,7 @@ export function cleanAction(name, input) {
     i.day = /^\d{4}-\d{2}-\d{2}$/.test(day) ? day : '';
   }
   if (name === 'open_page') {
-    if (!AI_PAGE_IDS.includes(i.page)) return null;
+    if (!aiPageIdsFor(env).includes(i.page)) return null;
     i.steps = cutAll(i.steps, 3, 120);
     i.why = short(i.why, 160);
   }
@@ -332,12 +336,12 @@ export function cleanAction(name, input) {
 }
 
 /** Claude's content blocks -> { actions: [{ tool, input }], note }. PURE. */
-export function readActions(content) {
+export function readActions(content, env) {
   const blocks = Array.isArray(content) ? content : [];
   const actions = [];
   for (const b of blocks) {
     if (b?.type !== 'tool_use' || actions.length >= MAX_ACTIONS) continue;
-    const a = cleanAction(b.name, b.input);
+    const a = cleanAction(b.name, b.input, env);
     if (a) actions.push(a);
   }
   const note = blocks
@@ -367,8 +371,8 @@ async function askClaude(env, v, fetchImpl, timeoutMs) {
   const msg = await claudeClient(env, fetchImpl, timeoutMs).messages.create({
     model: ASSIST_MODEL,
     max_tokens: 2000,
-    system: [{ type: 'text', text: assistSystem(), cache_control: { type: 'ephemeral' } }],
-    tools: toolsForClaude(),
+    system: [{ type: 'text', text: assistSystem(env), cache_control: { type: 'ephemeral' } }],
+    tools: toolsForClaude(env),
     // Haiku 5.5 takes a forced choice (it then calls a tool straight away, without thinking first): a tool call
     // every time, the fastest and cheapest answer.
     tool_choice: { type: 'any' },
@@ -377,7 +381,7 @@ async function askClaude(env, v, fetchImpl, timeoutMs) {
   });
   const t = tokensOf(msg);
   if (msg.stop_reason !== 'tool_use' && msg.stop_reason !== 'end_turn') return { ...t, out: null, why: `stop_reason ${msg.stop_reason}` };
-  const out = readActions(msg.content);
+  const out = readActions(msg.content, env);
   return { ...t, out: out.actions.length ? out : null, why: 'no usable tool call' };
 }
 

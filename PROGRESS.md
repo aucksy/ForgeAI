@@ -22,9 +22,12 @@
   brand and address shown as "from your other screens" with links. "See your page" draws the real page in the panel.
   HQ take-down banner with HQ's note. The desk reads only. Enquiries: "Asked on your web page" + the question.
   Photos need supabase 0082_gym_page_photos.sql (NOT APPLIED; private bucket + slots); until then adding a photo says
-  it is not switched on yet. The screen says pages are not open to visitors yet (join.mettleup.fit not connected;
-  GYM_PAGE_PUBLIC false). No What's new line until the page can be public. Tests: test/crm/gymPageEditor.test.ts,
-  e2e/webpage-uat.spec.mjs (pictures webpage-*.png), deploy/panel/gymPage.test.mjs (photo route).
+  it is not switched on yet. ALL OF IT IS HIDDEN until the Worker switch GYM_PAGES is "live" (the same switch that
+  opens the pages to visitors; owner's rule "show a feature only when it is on"): the menu row and screen, the Set up
+  step, the enquiry label, the assistant's page and the help article all appear together, with no reload (GET
+  /api/switches, deploy/panel/switches.js + gympage/pagesOpen.ts). No What's new line until then. Tests:
+  test/crm/gymPageEditor.test.ts, test/crm/gymPagesOpen.test.ts, deploy/panel/switches.test.mjs,
+  e2e/webpage-uat.spec.mjs (WEBPAGE-0 off/on; pictures webpage-*.png), deploy/panel/gymPage.test.mjs (photo route).
 - R-528 MEMBER APP: THE OWNER'S "TAKE PAYMENTS IN THE MEMBER APP" SWITCH. When the gym owner turns it off (admin panel,
   Settings -> Payments; server part NOT live: panel D1 0016 + supabase 0081 need his yes), My membership still shows
   what the member owes, with "Pay this at the gym desk." and no QR, UPI app or online button (src/shop/memberPay.ts

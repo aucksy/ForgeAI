@@ -141,7 +141,8 @@ export const PAGES = Object.freeze([
   { id: 'shop-products', path: '/shop/products', name: 'Products', does: 'What the shop sells, and prices.', owner: true },
   { id: 'branding', path: '/settings/branding', name: 'Branding', does: 'Your logo and colours in the member app.', owner: true },
   { id: 'timings', path: '/settings/timings', name: 'Gym timings', does: 'When the gym is open, for members to see.' },
-  { id: 'web-page', path: '/settings/web-page', name: 'Your web page', does: "The gym's free web page: address, about, photos, publish." },
+  // F207: only while gym web pages are open to visitors (switches.js; `onlyWhen` names the Worker switch).
+  { id: 'web-page', path: '/settings/web-page', name: 'Your web page', does: "The gym's free web page: address, about, photos, publish.", onlyWhen: 'GYM_PAGES' },
   { id: 'settings', path: '/settings', name: 'Settings', does: 'Gym details: name, address, phone, GST, screen colours.' },
   { id: 'settings-app', path: '/settings/app', name: 'Member app', does: 'The member app: join code, look, features.' },
   { id: 'settings-data', path: '/settings/data', name: 'Sign-in & data', does: "Your gym's records: download, sign-in, start over." },
@@ -162,6 +163,19 @@ export const AI_PAGE_IDS = Object.freeze(PAGES.filter((p) => !p.path.includes(':
 /** The page with this id, or undefined. */
 export function pageById(id) {
   return PAGES.find((p) => p.id === id);
+}
+
+/**
+ * Is this page there for this Worker? A page with `onlyWhen` waits for that switch to be "live" (switches.js, the
+ * owner's rule "show a feature only when it is on"). No env: every switch is off. PURE.
+ */
+export function pageShown(page, env) {
+  return Boolean(page) && (!page.onlyWhen || (Boolean(env) && env[page.onlyWhen] === 'live'));
+}
+
+/** The pages the AI may name now: AI_PAGE_IDS without the ones whose switch is off. PURE. */
+export function aiPageIdsFor(env) {
+  return AI_PAGE_IDS.filter((id) => pageShown(pageById(id), env));
 }
 
 /** A page's path with its `:id` filled (a member or trainer id); null when it needs one and none is given. */
@@ -444,8 +458,17 @@ export function creditsFor(actions) {
  * strict tools". The per-count limits above were all met; the grammar SIZE is a limit no offline test can see.
  * The schemas stay closed and fully required, and our own checks (plan.ts) still validate every field.
  */
-export function toolsForClaude() {
-  return TOOLS.map((t) => ({ name: t.name, description: t.description, input_schema: t.input_schema }));
+export function toolsForClaude(env) {
+  // open_page's list holds only the pages switched on for this Worker (pageShown).
+  const pages = aiPageIdsFor(env);
+  return TOOLS.map((t) => ({
+    name: t.name,
+    description: t.description,
+    input_schema:
+      t.name === 'open_page'
+        ? { ...t.input_schema, properties: { ...t.input_schema.properties, page: { ...t.input_schema.properties.page, enum: [...pages] } } }
+        : t.input_schema,
+  }));
 }
 
 // ---------------------------------------------------------------- "Try saying" examples

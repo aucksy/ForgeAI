@@ -40,6 +40,7 @@ import { t } from '../../lang/lang';
 import { UpdatedLine } from '../UpdatedLine';
 import { memberPrefill, selfJoinOf, sellPlanFor, sellStartFor } from '../../logic/selfJoin';
 import { PAGE_ASK_PREFIX, pageAskOf } from '../../gympage/logic';
+import { usePagesOpen } from '../../gympage/pagesOpen';
 import { formatINR } from '../../logic/money';
 import type { CrmSnapshot } from '../../data/adapter';
 import { DIAL_CODES, findDuplicatePhone, formatPhone, normalizePhone, phoneDigits } from '../../logic/members';
@@ -378,8 +379,10 @@ function EnquiryRow({
   // R-539 (0085): a member invited this person again (their number was already an open enquiry).
   const again = invitedAgainOf(e);
   const againWords = again ? invitedAgainWords(again) : null;
-  // F207: a question asked on the gym's web page (the server also put it on the interest line, for older apps).
-  const pageAsk = pageAskOf(e);
+  // F207: a question asked on the gym's web page (the server also put it on the interest line, for older apps). Shown
+  // only while gym web pages are open to visitors (pagesOpen.ts); the interest line's copy of it never shows.
+  const asked = pageAskOf(e);
+  const pageAsk = usePagesOpen() ? asked : null;
   const open = e.status === 'open';
   const followTone =
     bucket === 'overdue' ? color.criticalText : bucket === 'today' ? color.warning : color.inkSecondary;
@@ -403,7 +406,7 @@ function EnquiryRow({
             {formatPhone(e.phone)}
           </div>
           {/* R-513: the server's "Joined online: ..." note is the older app's copy of the line below. */}
-          {e.interest && !(selfJoinLine(e) && e.interest.startsWith('Joined online:')) && !(pageAsk && e.interest.startsWith(PAGE_ASK_PREFIX)) && (
+          {e.interest && !(selfJoinLine(e) && e.interest.startsWith('Joined online:')) && !(asked && e.interest.startsWith(PAGE_ASK_PREFIX)) && (
             <div style={{ fontFamily: font.body, fontSize: 13, color: color.ink, marginTop: 4, overflowWrap: 'anywhere' }}>
               {e.interest}
             </div>

@@ -58,6 +58,7 @@ import { deleteOldFriendAsks, handleFriend } from './friend.js';
 import { handleSelfJoin } from './selfJoin.js';
 import { handleJoinPay, offerForCode } from './joinPay.js';
 import { handleGymPageHost } from './gymPageServe.js';
+import { switchesAnswer } from './switches.js';
 import { deleteOldVoiceCounts, handleVoice } from './voice.js';
 import { handleMatchColumns } from './aiMatch.js';
 import { handleAssist, handleAssistPlan, handleAssistRewrite, handleAssistVoice } from './assist.js';
@@ -155,6 +156,8 @@ export default {
     if (url.pathname === '/api/whatsapp/hook') return handleWhatsAppHook(request, env, url);
     // R-539: where the friend invite and "Become a member" links point (join.mettleup.fit once JOIN_HOST is set).
     if (url.pathname === '/api/links') return linksAnswer(env);
+    // F207: which built features are switched on, for the admin app to show (switches.js; GYM_PAGES today).
+    if (url.pathname === '/api/switches') return switchesAnswer(env);
     if (url.pathname === '/api/lead') return env.LANDING === 'live' ? handleLead(request, env) : new Response('Not found', { status: 404 });
     // Launch I2: the landing page goes public only when the owner says yes (wrangler.jsonc vars.LANDING).
     if (url.pathname === '/home' || url.pathname.startsWith('/home/') || url.pathname === '/member-site' || url.pathname.startsWith('/member-site/')) {

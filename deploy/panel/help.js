@@ -27,7 +27,7 @@
 import Anthropic from '@anthropic-ai/sdk';
 
 import { answer, takeMessage } from './feedback.js';
-import { HELP_ARTICLES } from './helpArticles.js';
+import { HELP_ARTICLES, helpArticlesFor } from './helpArticles.js';
 import { pagesAnswer, whyLine } from './helpPages.js';
 import { giveBack, keyOf, takeQuestion } from './questionCredits.js';
 
@@ -132,7 +132,8 @@ async function askClaude(env, v, fetchImpl, timeoutMs) {
     model: HELP_MODEL,
     max_tokens: 1500,
     // The whole prefix (rules + articles) is cached; only the question (the user turn) changes.
-    system: [{ type: 'text', text: helpSystem(), cache_control: { type: 'ephemeral', ttl: CACHE_TTL } }],
+    // F207: the articles switched on for this Worker (helpArticlesFor; an `onlyWhen` article waits for its switch).
+    system: [{ type: 'text', text: helpSystem(helpArticlesFor(env)), cache_control: { type: 'ephemeral', ttl: CACHE_TTL } }],
     messages: [{ role: 'user', content: helpPrompt(v) }],
     output_config: { effort: 'low', format: { type: 'json_schema', schema: ANSWER_SCHEMA } },
   });
@@ -267,13 +268,13 @@ export async function handleHelp(request, env, now = new Date(), opts = {}) {
   let reply = null;
   let pages = null;
   if (credits.state === 'none') {
-    pages = pagesAnswer(taken.value.text, taken.value.source, whyLine(credits.reason, taken.value.source, credits.who, credits.perDay));
+    pages = pagesAnswer(taken.value.text, taken.value.source, whyLine(credits.reason, taken.value.source, credits.who, credits.perDay), helpArticlesFor(env));
   } else {
     reply = await answerFor(env, taken.value, now, opts);
     if (!reply && credits.state === 'ok') {
       await giveBack(credits.id, { fetchImpl: opts.creditsFetch ?? fetch });
       // A counted question the AI did not answer: the help pages too, when one matches.
-      const p = pagesAnswer(taken.value.text, taken.value.source, '');
+      const p = pagesAnswer(taken.value.text, taken.value.source, '', helpArticlesFor(env));
       if (p.pages) pages = { text: p.text.trim(), pages: p.pages };
     }
   }

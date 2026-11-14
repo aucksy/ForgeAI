@@ -9,6 +9,8 @@
 // NOT RELEASED YET: an article with `unreleased: '<why>'` explains a screen that is built but switched off. It counts
 // for the screen check (ALL_HELP_ARTICLES) but stays out of the live help (HELP_ARTICLES: the AI help answers and
 // the help library) until its feature is switched on at release; then delete its `unreleased` line in that release.
+// SWITCHED: an article with `onlyWhen: '<Worker switch>'` (switches.js) is in the live help only while that switch is
+// "live" (helpArticlesFor(env)), so it appears with its feature, with no release. HELP_ARTICLES leaves it out.
 
 export const ALL_HELP_ARTICLES = [
   // ------------------------------------------------------------------ gym owners and front desk
@@ -425,7 +427,8 @@ export const ALL_HELP_ARTICLES = [
   },
   {
     id: 'gym-web-page',
-    unreleased: 'F207 gym web page: join.mettleup.fit is not connected yet and photos need supabase 0082; release with the page.',
+    // F207: in the live help only while gym web pages are open to visitors (GYM_PAGES, switches.js).
+    onlyWhen: 'GYM_PAGES',
     who: 'owner',
     title: 'Make your free gym web page',
     text:
@@ -925,8 +928,16 @@ export const ALL_HELP_ARTICLES = [
  * screen goes into an article's `screens` first; it lands here only when there is truly nothing a
  * member or a gym could ask about it.
  */
-/** The live help: every article except the ones marked `unreleased`. The AI help and the help library read only this. */
-export const HELP_ARTICLES = ALL_HELP_ARTICLES.filter((a) => !a.unreleased);
+/**
+ * The live help with every switch off: every article except the ones marked `unreleased` or `onlyWhen`. The AI help
+ * and the help library read helpArticlesFor(env), which adds the switched articles whose switch is on.
+ */
+export const HELP_ARTICLES = ALL_HELP_ARTICLES.filter((a) => !a.unreleased && !a.onlyWhen);
+
+/** The live help for this Worker: HELP_ARTICLES plus each `onlyWhen` article whose switch is "live". PURE. */
+export function helpArticlesFor(env) {
+  return ALL_HELP_ARTICLES.filter((a) => !a.unreleased && (!a.onlyWhen || (Boolean(env) && env[a.onlyWhen] === 'live')));
+}
 
 export const NO_HELP_SCREENS = {
   'apps/dashboard/src/crm/ui/screens/MettleUpReceipt.tsx': 'Not live yet (billing step 3: one MettleUp receipt, opened from Pay MettleUp; server 0063 is not applied). Its help goes in the Pay MettleUp article when that goes live.',

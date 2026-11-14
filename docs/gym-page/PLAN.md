@@ -126,9 +126,18 @@ unused photo files (a photo removed from the page stops showing at once; its fil
 3. **Cloudflare:** add `join.mettleup.fit` to the panel Worker's routes (custom domain), and set `GYM_PAGES` to "live".
 4. **Words:** the public words in section 8.
 
-Switching it on, in order: 1, 2 (editor and upload are built), deploy the admin panel and the Worker, test with the
-test gym, then 3, then set `GYM_PAGE_PUBLIC` in apps/dashboard/src/crm/gympage/logic.ts to true (the editor stops
-saying pages are not open yet) and add a What's new line.
+Switching it on, in order: 1, 2 (editor and upload are built), deploy the admin panel and the Worker, then 3, and add
+a What's new line in the same go.
+
+**One switch shows everything (coordinator, 14 Nov 2026, the owner's rule "show a feature only when it is on").**
+`GYM_PAGES` = "live" opens join.mettleup.fit/<gym> AND shows, in the admin app, the "Your web page" menu row and
+screen, Set up your gym's step "Make your free gym web page" and "Asked on your web page" on an enquiry, and adds the
+assistant's "Your web page" page and the help article "Make your free gym web page". While it is off none of them
+shows (a typed /settings/web-page goes to Settings, and the panel does not even ask owner_gym_page). The Worker says it
+at GET /api/switches (deploy/panel/switches.js); the admin app asks on opening, on coming back to the front and every
+5 minutes (apps/dashboard/src/crm/gympage/pagesOpen.ts), so it all appears together with no reload. Proof:
+deploy/panel/switches.test.mjs and e2e/webpage-uat.spec.mjs WEBPAGE-0. Because owners only see the editor once pages
+are open, the first gyms' pages are empty at switch-on: test with the test gym by setting the switch, then tell owners.
 
 ## 7. Owner switches added on 14 Nov (R-521)
 

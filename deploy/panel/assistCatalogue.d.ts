@@ -151,6 +151,8 @@ export interface PageDef {
   name: string;
   does: string;
   owner?: true;
+  /** Shown only while this Worker switch is "live" (switches.js). */
+  onlyWhen?: string;
 }
 
 export type ExampleGroup = 'messages' | 'members' | 'money' | 'questions' | 'settings';
@@ -174,12 +176,14 @@ export const PAGES: readonly PageDef[];
 export const PAGE_IDS: readonly string[];
 export const AI_PAGE_IDS: readonly string[];
 export function pageById(id: string): PageDef | undefined;
+export function pageShown(page: PageDef | undefined, env?: Record<string, unknown> | null): boolean;
+export function aiPageIdsFor(env?: Record<string, unknown> | null): string[];
 export function pagePath(id: string, param?: string): string | null;
 export const TOOLS: readonly ToolDef[];
 export const TOOL_KIND: Readonly<Record<ToolName, ToolKind>>;
 export const TOOL_CREDITS: Readonly<Record<ToolName, number>>;
 export function toolByName(name: string): ToolDef | undefined;
 export function creditsFor(actions: readonly { tool: string }[] | null | undefined): number;
-export function toolsForClaude(): { name: ToolName; description: string; input_schema: Record<string, unknown>; strict?: true }[];
+export function toolsForClaude(env?: Record<string, unknown> | null):{ name: ToolName; description: string; input_schema: Record<string, unknown>; strict?: true }[];
 export const EXAMPLE_GROUPS: readonly ExampleGroup[];
 export const EXAMPLES: readonly Example[];

@@ -19,12 +19,14 @@ const words = (s) => s.trim().split(/\s+/).filter(Boolean).length;
 // size (MAX_TOTAL_CHARS below); this count is only a sanity bound. Raised 60 -> 80 for F56 (12 Nov 2026, 35,548 chars).
 test('12 to 80 articles, each with an id, who, title and text (and optional screens)', () => {
   assert.ok(ALL_HELP_ARTICLES.length >= 12 && ALL_HELP_ARTICLES.length <= 80, `${ALL_HELP_ARTICLES.length} articles`);
-  const allowed = new Set(['id', 'who', 'title', 'text', 'screens', 'unreleased']);
+  const allowed = new Set(['id', 'who', 'title', 'text', 'screens', 'unreleased', 'onlyWhen']);
   for (const a of ALL_HELP_ARTICLES) {
     for (const k of Object.keys(a)) assert.ok(allowed.has(k), `${a.id}: unknown key ${k}`);
     for (const k of ['id', 'who', 'title', 'text']) assert.ok(k in a, `${a.id}: missing ${k}`);
     for (const k of ['id', 'title', 'text']) assert.ok(typeof a[k] === 'string' && a[k].trim().length > 0, `${a.id}: ${k}`);
     if ('unreleased' in a) assert.ok(typeof a.unreleased === 'string' && a.unreleased.trim().length >= 5 && !a.unreleased.includes('\n'), `${a.id}: unreleased needs a one-line reason`);
+    // F207: a switched article names a Worker switch (switches.js), in capitals.
+    if ('onlyWhen' in a) assert.ok(typeof a.onlyWhen === 'string' && /^[A-Z][A-Z_]+$/.test(a.onlyWhen) && !('unreleased' in a), `${a.id}: onlyWhen names one switch`);
     if ('screens' in a) {
       assert.ok(Array.isArray(a.screens), `${a.id}: screens is not a list`);
       for (const p of a.screens) assert.ok(typeof p === 'string' && /^apps\/[^\\]+\.tsx$/.test(p), `${a.id}: bad screen path ${p}`);
@@ -42,7 +44,8 @@ test('an unreleased article stays out of the live help and the AI help prompt; t
     assert.ok(!HELP_ARTICLES.includes(a), `${a.id} is in the live help`);
     assert.ok(!prompt.includes(a.title), `${a.id} is in the AI help prompt`);
   }
-  assert.deepEqual(HELP_ARTICLES, ALL_HELP_ARTICLES.filter((a) => !a.unreleased));
+  // A switched article (onlyWhen) is out of this all-switches-off list too: switches.test.mjs checks it with the switch.
+  assert.deepEqual(HELP_ARTICLES, ALL_HELP_ARTICLES.filter((a) => !a.unreleased && !a.onlyWhen));
   for (const a of HELP_ARTICLES) assert.ok(prompt.includes(a.title), `${a.id} is missing from the AI help prompt`);
 });
 

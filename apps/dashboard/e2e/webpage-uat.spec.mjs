@@ -4,11 +4,16 @@
 // The pretend server answers 0080 (owner_gym_page, owner_save_gym_page) and 0082 (owner_gym_page_photo_slot) the way
 // the migrations do, and the private photo bucket's upload and download. Neither is live yet: the real server answers
 // "no such function", and then the screen and its menu row stay away (the other journeys show that).
+//
+// The owner's hard rule "show a feature only when it is on" (coordinator, 14 Nov 2026): every web page part of the
+// admin app waits for the Worker's GYM_PAGES switch, read from GET /api/switches (gympage/pagesOpen.ts). The other
+// journeys get no answer there, so the parts stay hidden for them. WEBPAGE-0 proves each part hidden while it is off
+// and shown, all together and with no reload, once it is on; WEBPAGE-1 to 3 run with it on.
 import { mkdirSync } from 'node:fs';
 
 import { expect, test } from '@playwright/test';
 
-import { DESK, NOW, TODAY, addDeskPerson, addPlan, expectFitsPhone, open, openApp, secondPhone, sheet, signIn, startOnlineGym, toast } from './support.mjs';
+import { DESK, NOW, TODAY, addDeskPerson, addPlan, bottomBar, expectFitsPhone, open, openApp, secondPhone, sheet, signIn, startOnlineGym, toast } from './support.mjs';
 
 const DIR = 'e2e/.results/uat';
 mkdirSync(DIR, { recursive: true });
@@ -54,6 +59,41 @@ function installWebPage(server, { page = null } = {}) {
     return { ok: true, page: state.page };
   };
   return state;
+}
+
+/**
+ * The Worker's GYM_PAGES switch as GET /api/switches says it. Call before openApp (the panel asks when it opens), then
+ * `follow(server)` so a second phone gets the same answer. `sw.on` can change while the panel is open.
+ */
+async function pagesSwitch(page, on) {
+  const sw = { on, asked: 0 };
+  const add = (context) =>
+    context.route('**/api/switches', (route) => {
+      sw.asked += 1;
+      return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ gymPages: sw.on }) });
+    });
+  await add(page.context());
+  sw.follow = (server) => {
+    const attach = server.attach.bind(server);
+    server.attach = async (context) => {
+      await attach(context);
+      await add(context);
+    };
+  };
+  return sw;
+}
+
+/** An enquiry asked on the web page, as 0080's gym_page_ask_send keeps it. */
+function pageQuestion(server) {
+  server.version += 1;
+  const id = 'page-0001';
+  const d = {
+    id, gymId: server.gym.gymId, name: 'Pooja Meena', phone: '+919829077777', interest: 'Asked on your web page: Is there a ladies batch in the evening?',
+    followUpOn: TODAY, status: 'open', memberId: null, source: null,
+    pageAsk: { v: 1, name: 'Pooja Meena', question: 'Is there a ladies batch in the evening?', at: NOW.getTime() },
+    createdAt: NOW.getTime(), updatedAt: NOW.getTime(),
+  };
+  server.records.set(`enquiry:${id}`, { k: 'enquiry', id, x: false, ver: server.version, d });
 }
 
 /** The private photo bucket: uploads are kept; a download gives the photo back. */
@@ -108,7 +148,65 @@ async function openWebPage(page) {
   await expect(page.getByRole('heading', { name: 'Your web page', level: 1 })).toBeVisible();
 }
 
+test('WEBPAGE-0 every web page part is hidden while gym web pages are off, and all show once they are on, with no reload', async ({ page }) => {
+  const sw = await pagesSwitch(page, false);
+  const server = await openApp(page);
+  installWebPage(server);
+  await startOnlineGym(page);
+  pageQuestion(server);
+  await page.reload();
+  await expect(page.getByRole('heading', { name: 'Today', exact: true })).toBeVisible({ timeout: 15_000 });
+  expect(sw.asked).toBeGreaterThan(0);
+  const main = page.getByRole('main');
+
+  // OFF. More: no "Your web page" row (Gym timings is there, so the group is drawn).
+  await bottomBar(page).getByRole('link', { name: /^More/ }).tap();
+  await expect(main.getByRole('link', { name: /^Gym timings/ })).toBeVisible();
+  await expect(main.getByRole('link', { name: /^Your web page/ })).toHaveCount(0);
+  await shot(page, 'off-more');
+  // Set up your gym: no web page step.
+  await page.goto('./#/setup');
+  await expect(main.getByText('Add your plans', { exact: false }).first()).toBeVisible();
+  await expect(main.getByText('Make your free gym web page')).toHaveCount(0);
+  await shot(page, 'off-setup');
+  // Enquiries: the person is there, but no "Asked on your web page" (nor the server's copy of it for older apps).
+  await page.goto('./#/enquiries');
+  await expect(main.getByText('Pooja Meena').first()).toBeVisible({ timeout: 15_000 });
+  await expect(main.getByText(/Asked on your web page/)).toHaveCount(0);
+  await shot(page, 'off-enquiry');
+  // A typed address goes to Settings; the gym's page was never asked for.
+  await page.goto('./#/settings/web-page');
+  await expect(page).toHaveURL(/#\/settings$/);
+  expect(server.calls).not.toContain('owner_gym_page');
+
+  // ON: the Worker says so; the panel hears it when it comes back to the front. No reload.
+  sw.on = true;
+  await page.evaluate(() => window.dispatchEvent(new Event('focus')));
+  await page.goto('./#/enquiries');
+  await expect(main.getByText('Asked on your web page', { exact: true })).toBeVisible({ timeout: 10_000 });
+  await expect(main.getByText('“Is there a ladies batch in the evening?”')).toBeVisible();
+  await shot(page, 'on-enquiry');
+  await page.goto('./#/setup');
+  await expect(main.getByText('Make your free gym web page')).toBeVisible({ timeout: 10_000 });
+  await shot(page, 'on-setup');
+  await bottomBar(page).getByRole('link', { name: /^More/ }).tap();
+  await expect(main.getByRole('link', { name: /^Your web page/ })).toBeVisible({ timeout: 10_000 });
+  await shot(page, 'on-more');
+  await main.getByRole('link', { name: /^Your web page/ }).tap();
+  await expect(page.getByRole('heading', { name: 'Your web page', level: 1 })).toBeVisible();
+  await expect(main.getByText('Not made yet. Fill in the parts below, then publish.')).toBeVisible();
+
+  // OFF again (MettleUp closes pages): everything goes away together, again with no reload.
+  sw.on = false;
+  await page.evaluate(() => window.dispatchEvent(new Event('focus')));
+  await expect(page).toHaveURL(/#\/settings$/, { timeout: 10_000 });
+  await bottomBar(page).getByRole('link', { name: /^More/ }).tap();
+  await expect(main.getByRole('link', { name: /^Gym timings/ })).toBeVisible();
+  await expect(main.getByRole('link', { name: /^Your web page/ })).toHaveCount(0);
+});
+
 test('WEBPAGE-1 owner on a phone: empty, every error, refused without the tick, photos, published and locked', async ({ page }) => {
+  await pagesSwitch(page, true);
   const server = await openApp(page);
   const web = installWebPage(server);
   await startOnlineGym(page);
@@ -129,7 +227,8 @@ test('WEBPAGE-1 owner on a phone: empty, every error, refused without the tick, 
   await openWebPage(page);
   const main = editor(page);
   await expect(main.getByText('Not made yet. Fill in the parts below, then publish.')).toBeVisible();
-  await expect(main.getByText('Gym web pages are not open to visitors yet.', { exact: false })).toBeVisible();
+  // Shown only while pages are open, so it never says "not open yet".
+  await expect(main.getByText(/not open to visitors yet/)).toHaveCount(0);
   const slug = main.getByLabel('Page address');
   await expect(slug).toHaveValue(/^shakti-gym/);
   await expect(main.getByText(/Your page: join\.mettleup\.fit\/shakti-gym/)).toBeVisible();
@@ -219,7 +318,7 @@ test('WEBPAGE-1 owner on a phone: empty, every error, refused without the tick, 
   const sent = web.saves.at(-1);
   expect(sent).toMatchObject({ slug: 'shakti-gym-sector-12', published: true, termsAgreed: true, showPhone: true, whatsapp: true, area: 'Sector 12', city: 'Jaipur' });
   expect(sent.photos.map((p) => p.alt)).toEqual(['Cardio corner', 'The weights floor']);
-  await expect(main.getByText(/^Published\. It opens to visitors when MettleUp switches gym web pages on\.$/)).toBeVisible();
+  await expect(main.getByText(/^Published\. People can open your page\.$/)).toBeVisible();
   await expect(main.getByLabel('Page address')).toHaveCount(0);
   await expect(main.getByText(/To change your address, write to MettleUp from/)).toBeVisible();
   await expect(main.getByRole('link', { name: 'Help and feedback' })).toHaveAttribute('href', '#/feedback');
@@ -240,7 +339,9 @@ test('WEBPAGE-1 owner on a phone: empty, every error, refused without the tick, 
 });
 
 test('WEBPAGE-2 owner on a computer, the front desk reading it, and a page MettleUp took down', async ({ browser, page }) => {
+  const sw = await pagesSwitch(page, true);
   const server = await openApp(page);
+  sw.follow(server);
   const web = installWebPage(server, {
     page: {
       slug: 'shakti-gym-sector-12', published: true, indexable: true, hiddenByHq: true, hqNote: 'The fees on your page do not match the fees at the desk.',
@@ -284,18 +385,11 @@ test('WEBPAGE-2 owner on a computer, the front desk reading it, and a page Mettl
 });
 
 test('WEBPAGE-3 a question asked on the web page shows in Enquiries', async ({ page }) => {
+  await pagesSwitch(page, true);
   const server = await openApp(page);
   installWebPage(server);
   await startOnlineGym(page);
-  server.version += 1;
-  const id = 'page-0001';
-  const d = {
-    id, gymId: server.gym.gymId, name: 'Pooja Meena', phone: '+919829077777', interest: 'Asked on your web page: Is there a ladies batch in the evening?',
-    followUpOn: TODAY, status: 'open', memberId: null, source: null,
-    pageAsk: { v: 1, name: 'Pooja Meena', question: 'Is there a ladies batch in the evening?', at: NOW.getTime() },
-    createdAt: NOW.getTime(), updatedAt: NOW.getTime(),
-  };
-  server.records.set(`enquiry:${id}`, { k: 'enquiry', id, x: false, ver: server.version, d });
+  pageQuestion(server);
   await page.reload();
   await open(page, 'Enquiries');
   const main = page.getByRole('main');

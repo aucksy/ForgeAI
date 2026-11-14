@@ -180,6 +180,10 @@ address locked once published, "See your page" preview, HQ take-down note, Set u
 "Asked on your web page". Photos: supabase 0082_gym_page_photos.sql (private bucket + one-use slots) is NOT APPLIED and
 needs his yes; the Worker serves /p/<gym>/<id>.webp. No What's new line (pages not open to visitors yet). HQ "Reported
 pages" list: later. Help article added but hidden (unreleased) until the page is public.
+Change (coordinator, 14 Nov, owner's rule "show a feature only when it is on"): EVERY admin-app part of it (menu row
+and screen, Set up step, "Asked on your web page", the assistant's page, the help article) stays hidden until the
+Worker var GYM_PAGES is "live", the same switch that opens the pages; then all appear together with no reload (GET
+/api/switches, deploy/panel/switches.js, gympage/pagesOpen.ts). So owners cannot prepare a page before switch-on.
 
 ## R-528. Join page and gym web page: pay online (same as the member app), owner switches per place — 14 Nov 2026
 He said (14 Nov 2026): "It says that share your details pay at the desk. Why are we doing pay at the desk if the gym will

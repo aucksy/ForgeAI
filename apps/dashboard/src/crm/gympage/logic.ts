@@ -15,13 +15,6 @@ import type { Enquiry, EnquiryPageAsk } from '../types';
 
 export { HIGHLIGHTS, LIMITS, PAGE_HOST, gymSlug };
 
-/**
- * Is the page host open to visitors? FALSE until join.mettleup.fit is connected to the Worker and GYM_PAGES is "live"
- * (docs/gym-page/PLAN.md "Switching it on", needs the owner's yes). While false the editor says plainly that visitors
- * cannot see the page yet, and "See your page" is a preview drawn here, not a link.
- */
-export const GYM_PAGE_PUBLIC = false;
-
 export type HighlightKey = keyof typeof HIGHLIGHTS & string;
 export const HIGHLIGHT_KEYS = Object.keys(HIGHLIGHTS) as HighlightKey[];
 

@@ -7,7 +7,10 @@
  * captions, the Google Maps link, show phone, WhatsApp, "let Google list my page", the publish switch and, the first
  * time it is published, the owner's tick on the page terms. Fees, timings, name, logo, colours and address come from
  * their own screens; this screen says where and links there. "See your page" draws the real page (deploy/panel
- * gymPage.js) right here, so it works before the page host is open to visitors (logic.ts GYM_PAGE_PUBLIC).
+ * gymPage.js) right here, from what is on this screen, before it is saved.
+ *
+ * Shown only while gym web pages are open to visitors (gympage/pagesOpen.ts, the Worker's GYM_PAGES switch): the menu
+ * row, the route and Set up your gym's step all wait for it, so this screen never has to say "not open yet".
  *
  * The owner edits; the front desk sees the address and whether it is published (the server lets only the owner save).
  * Saved on the gym's server (0080), photos in our own storage (0082), so it needs the gym online and the internet.
@@ -19,7 +22,6 @@ import type { GymHours } from '@forgeai/theme';
 import { useAuth } from '../../auth/AuthProvider';
 import { getPage, photoFile, savePage } from '../../gympage/api';
 import {
-  GYM_PAGE_PUBLIC,
   HIGHLIGHTS,
   HIGHLIGHT_KEYS,
   LIMITS,
@@ -123,7 +125,7 @@ export function WebPageScreen() {
 
 // ---------------------------------------------------------------- shared parts
 
-/** "Visitors cannot open it yet" (before go-live), "taken down by MettleUp", or where it lives. */
+/** Published, saved only, "taken down by MettleUp", and where it lives. */
 function StatusCard({ saved, children }: { saved: SavedPage | null; children?: ReactNode }) {
   const live = pageLive(saved);
   const line = !saved
@@ -131,9 +133,7 @@ function StatusCard({ saved, children }: { saved: SavedPage | null; children?: R
     : saved.hiddenByHq
       ? 'Taken down by MettleUp.'
       : live
-        ? GYM_PAGE_PUBLIC
-          ? 'Published. People can open your page.'
-          : 'Published. It opens to visitors when MettleUp switches gym web pages on.'
+        ? 'Published. People can open your page.'
         : 'Saved, not published. Visitors cannot see it.';
   return (
     <Card style={{ marginBottom: space.lg }}>
@@ -148,12 +148,6 @@ function StatusCard({ saved, children }: { saved: SavedPage | null; children?: R
       </div>
       {saved && (
         <p style={{ ...quiet, marginTop: space.xs, fontFamily: font.mono, fontSize: 13, overflowWrap: 'anywhere' }}>{pageAddress(saved.slug)}</p>
-      )}
-      {!GYM_PAGE_PUBLIC && !live && !saved?.hiddenByHq && (
-        <p style={{ ...small, marginTop: space.sm }}>
-          Gym web pages are not open to visitors yet. Get yours ready now: when MettleUp opens them, your page goes live at this address with what you saved
-          here.
-        </p>
       )}
       {children}
     </Card>
@@ -281,7 +275,7 @@ function PageEditor({ ownerKey, saved, onSaved }: { ownerKey: string; saved: Sav
           <Button variant="ghost" onClick={() => setPreview(true)}>
             See your page
           </Button>
-          {GYM_PAGE_PUBLIC && pageLive(saved) && saved && <ShareButtons slug={saved.slug} gymName={gym.name} onCopied={() => flash('Link copied.')} />}
+          {pageLive(saved) && saved && <ShareButtons slug={saved.slug} gymName={gym.name} onCopied={() => flash('Link copied.')} />}
         </div>
       </StatusCard>
 
@@ -447,7 +441,7 @@ function PageEditor({ ownerKey, saved, onSaved }: { ownerKey: string; saved: Sav
         <CheckField
           checked={draft.published}
           onChange={(v) => set({ published: v })}
-          hint={GYM_PAGE_PUBLIC ? 'Untick to take your page down at any time.' : 'Visitors see it once MettleUp opens gym web pages. Untick to take it down at any time.'}
+          hint="Untick to take your page down at any time."
         >
           Show my page to visitors
         </CheckField>
