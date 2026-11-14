@@ -311,8 +311,8 @@ const FIELDS = [
 ];
 
 /** A pretend /api/pay (deploy/panel/pay.js in test mode) with the owner's switches and the join payments. */
-async function payServer(page, { connected = true, switches = { ready: true, app: true, web: true }, joins = [] } = {}) {
-  const state = { switches, joins, sent: [], recorded: [] };
+async function payServer(page, { connected = true, switches = { ready: true, app: true, web: true }, joins = [], paid = [] } = {}) {
+  const state = { switches, joins, paid, sent: [], recorded: [] };
   await page.route('**/api/pay/**', async (route) => {
     const path = new URL(route.request().url()).pathname.replace('/api/pay/', '');
     const body = route.request().postDataJSON() ?? {};
@@ -342,7 +342,7 @@ async function payServer(page, { connected = true, switches = { ready: true, app
       if (row) Object.assign(row, { recorded: true, receiptNo: body.receiptNo, status: 'paid' });
       return json({ request: row });
     }
-    if (path === 'paid') return json({ paid: [], shopPaid: [] });
+    if (path === 'paid') return json({ paid: state.paid.filter((r) => !r.recorded), shopPaid: [] });
     return json({ on: false, why: 'NOT_READY' });
   });
   return state;
@@ -365,8 +365,9 @@ test.describe('the gym side', () => {
     await addPlan(page, { name: 'Monthly', price: '1500', joining: '500', months: '1' });
     const eid = 'join-0a1b2c3d4e5f60718293a4b5c6d7e8f9';
     personSendsTheForm(server, { id: eid, name: 'Neha Singh', phone: '+919000077005' });
+    // A LIVE payment (real money): only a live payment ever becomes a receipt (payment sweep R-542).
     const pay = await payServer(page, {
-      joins: [joinRow({ id: 'pr_aaaaaaaaaaaaaaaaaaaa', ref: eid, status: 'paid', paidP: 200000, method: 'upi', paymentId: 'pay_TEST777', paidAt: '2026-10-17T04:30:00.000Z' })],
+      joins: [joinRow({ id: 'pr_aaaaaaaaaaaaaaaaaaaa', ref: eid, status: 'paid', paidP: 200000, method: 'upi', paymentId: 'pay_TEST777', paidAt: '2026-10-17T04:30:00.000Z', testMode: false })],
     });
     await page.evaluate(() => {
       window.location.hash = '/';
@@ -374,7 +375,8 @@ test.describe('the gym side', () => {
     await page.reload();
     const card = page.locator('#needs-online-joins');
     await expect(card).toContainText('Neha Singh', { timeout: 15_000 });
-    await expect(card).toContainText('₹2,000 paid online (test mode, no real money)', { timeout: 15_000 });
+    await expect(card).toContainText('₹2,000 paid online', { timeout: 15_000 });
+    await expect(card).not.toContainText('test mode');
     await expect(card).toContainText('Approve makes them a member, with their plan and receipt.');
     await expect(card.getByRole('button', { name: 'Make Neha Singh a member' })).toHaveCount(0);
     await card.scrollIntoViewIfNeeded();
@@ -439,13 +441,71 @@ test.describe('the gym side', () => {
     await page.evaluate(() => localStorage.setItem('forgeai.lang.v1', 'en'));
     await page.reload();
 
+    // Payment sweep (R-542, matrix D-02): "I have paid" is only their word. Approve asks first; "Cancel" saves nothing.
+    const asked = [];
+    const answer = (yes) => (d) => {
+      asked.push(d.message());
+      void (yes ? d.accept() : d.dismiss());
+    };
+    page.once('dialog', answer(false));
+    await card.getByRole('button', { name: 'Approve Kavya Rao' }).tap({ timeout: 15_000 });
+    await expect.poll(() => asked.length, { timeout: 15_000 }).toBe(1);
+    expect(asked[0]).toBe('Can you see ₹2,000 from Kavya Rao in your bank or UPI app? Approve saves it as paid.');
+    await page.waitForTimeout(500);
+    expect(pay.recorded).toHaveLength(0);
+    expect([...server.records.values()].some((r) => r.k === 'member' && !r.x && r.d.fullName === 'Kavya Rao')).toBe(false);
+    await expect(card).toContainText('Kavya Rao');
+
     // Approve after checking the bank: the receipt is the UPI payment, and the server is told it was paid by UPI.
+    page.once('dialog', answer(true));
     await card.getByRole('button', { name: 'Approve Kavya Rao' }).tap({ timeout: 15_000 });
     await expect(page.getByRole('heading', { name: 'Kavya Rao', exact: true })).toBeVisible({ timeout: 15_000 });
     expect(pay.recorded[0]).toMatchObject({ id: 'pr_bbbbbbbbbbbbbbbbbbbb', method: 'upi', amountP: 200000 });
     // The failed one was never made a member.
     expect([...server.records.values()].some((r) => r.k === 'member' && !r.x && r.d.fullName === 'Arjun Mehta')).toBe(false);
     expect(server.records.get(`enquiry:${failedId}`)?.d?.status).toBe('open');
+  });
+
+  // Payment sweep (R-542, matrix D-01 and D-05). A test card (or the test page's "Success" button) is not money, and a
+  // join payment nobody approved must never sit unseen.
+  test('R-542 phone: a TEST-mode payment approved -> member and plan, nothing saved as paid; a paid join nobody approved is shown', async ({ page }) => {
+    const server = await openApp(page);
+    await startOnlineGym(page);
+    await addPlan(page, { name: 'Monthly', price: '1500', joining: '500', months: '1' });
+    const eid = 'join-3a1b2c3d4e5f60718293a4b5c6d7e8f9';
+    personSendsTheForm(server, { id: eid, name: 'Rohan Das', phone: '+919000077008', gender: 'male' });
+    const pay = await payServer(page, {
+      joins: [joinRow({ id: 'pr_dddddddddddddddddddd', ref: eid, status: 'paid', paidP: 200000, method: 'card', paymentId: 'pay_TESTCARD', paidAt: '2026-10-17T04:30:00.000Z' })],
+      paid: [
+        joinRow({ id: 'pr_eeeeeeeeeeeeeeeeeeee', ref: 'join-9999999999999999999999999999999f', status: 'paid', paidP: 150000, method: 'upi', paymentId: 'pay_LIVE1', paidAt: '2026-10-17T04:30:00.000Z', testMode: false }),
+      ],
+    });
+    await page.evaluate(() => {
+      window.location.hash = '/';
+    });
+    await page.reload();
+    const card = page.locator('#needs-online-joins');
+    await expect(card).toContainText('₹2,000 paid in test mode · No real money came in · Collect it at the desk', { timeout: 15_000 });
+    await expect(card).toContainText('Approve makes them a member with their plan. Nothing is saved as paid.');
+    // The payment nobody approved (its request was closed another way): the gym holds ₹1,500 with no receipt.
+    const stuck = page.locator('div').filter({ hasText: 'Paid online, receipt not made' }).filter({ hasText: 'I saved it' }).last();
+    await expect(stuck).toContainText('A member paid ₹1,500 online', { timeout: 15_000 });
+    await expect(stuck).toContainText('They paid on your join page, but were not approved with Approve. Save this payment on their member page.');
+    await expect(stuck).toContainText('Razorpay pay_LIVE1');
+    await card.scrollIntoViewIfNeeded();
+    await expectFitsPhone(page, 'on Today with a test-mode join payment');
+    await shot(page, 'phone-joinpay-panel-4-test-mode-and-unapproved');
+
+    await card.getByRole('button', { name: 'Approve Rohan Das' }).tap();
+    await expect(page.getByRole('heading', { name: 'Rohan Das', exact: true })).toBeVisible({ timeout: 15_000 });
+    const memberId = rosterIdOf(server, 'Rohan Das');
+    const sold = [...server.records.values()].filter((r) => r.k === 'membership' && !r.x && r.d.memberId === memberId);
+    expect(sold).toHaveLength(1);
+    const paidRows = [...server.records.values()].filter((r) => r.k === 'payment' && !r.x && r.d.memberId === memberId);
+    expect(paidRows, 'a test payment never becomes a receipt').toHaveLength(0);
+    expect(pay.recorded).toHaveLength(1);
+    expect(pay.recorded[0]).toMatchObject({ id: 'pr_dddddddddddddddddddd', receiptNo: '' });
+    await shot(page, 'phone-joinpay-panel-5-test-mode-approved-nothing-paid');
   });
 
   test('R-528 phone: Settings -> Payments, the two switches on, off, and greyed with no payment account', async ({ page }) => {

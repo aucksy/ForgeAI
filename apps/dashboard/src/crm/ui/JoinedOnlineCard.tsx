@@ -15,7 +15,7 @@ import { useAuth } from '../auth/AuthProvider';
 import { takerOf } from '../auth/permissions';
 import { t } from '../lang/lang';
 import { formatDay } from '../logic/dates';
-import { approveSale, canApprove, joinPayFor, type JoinPayState } from '../logic/joinPay';
+import { approveQuestion, approveSale, canApprove, isRealMoney, joinPayFor, type JoinPayState } from '../logic/joinPay';
 import { emptyMemberForm, findDuplicatePhone, formatPhone, splitE164, validateMember } from '../logic/members';
 import { formatINR } from '../logic/money';
 import { waitingOnlineJoins, type OnlineJoin } from '../logic/selfJoin';
@@ -30,16 +30,28 @@ import { MakeMemberFlow } from './screens/Enquiries';
 
 const EVERY_MS = 2 * 60_000;
 
-/** The row's money line. */
-function payLine(total: number, s: JoinPayState): { text: string; tone: 'good' | 'warn' } {
+/**
+ * The row's money line. Payment sweep (R-542): a paid row says what was REALLY paid (the server's paid amount), never
+ * the plan's total in its place; a test-mode payment says plainly that no money came in.
+ */
+export function payLine(total: number, s: JoinPayState): { text: string; tone: 'good' | 'warn' } {
   const amount = formatINR(total);
   if (s.kind === 'paid') {
-    return { text: s.pay.testMode ? t('{total} paid online (test mode, no real money)', { total: amount }) : t('{total} paid online', { total: amount }), tone: 'good' };
+    const paid = formatINR(s.pay.paidP || s.pay.amountP);
+    if (!isRealMoney(s.pay)) return { text: t('{total} paid in test mode · No real money came in · Collect it at the desk', { total: paid }), tone: 'warn' };
+    if ((s.pay.paidP || s.pay.amountP) !== total) return { text: t('{paid} paid online, but the plan is {total} · Check before approving', { paid, total: amount }), tone: 'warn' };
+    return { text: t('{total} paid online', { total: paid }), tone: 'good' };
   }
   if (s.kind === 'said') return { text: t('{total} paid by UPI, they say · Check your bank before approving', { total: amount }), tone: 'warn' };
   if (s.kind === 'failed') return { text: t('{total} · The online payment did not go through · Not paid', { total: amount }), tone: 'warn' };
   if (s.kind === 'started') return { text: t('{total} · Started paying online, did not finish · Not paid', { total: amount }), tone: 'warn' };
   return { text: t('{total} to pay at the desk · Not paid yet', { total: amount }), tone: 'warn' };
+}
+
+/** The question Approve asks first (approveQuestion). */
+export function approveWords(ask: NonNullable<ReturnType<typeof approveQuestion>>, name: string): string {
+  if (ask.kind === 'bank') return t('Can you see {amount} from {name} in your bank or UPI app? Approve saves it as paid.', { amount: formatINR(ask.askedP), name });
+  return t('{name} paid {paid}, but the plan is {total}. Approve saves {paid} as paid; the rest stays due.', { name, paid: formatINR(ask.paidP), total: formatINR(ask.askedP) });
 }
 
 export function JoinedOnlineCard() {
@@ -72,6 +84,9 @@ export function JoinedOnlineCard() {
 
   const approve = async ({ enquiry, join }: OnlineJoin, s: JoinPayState) => {
     if (!key || !canApprove(s)) return;
+    // Payment sweep (R-542): a UPI payment nobody confirmed, or a payment that is not the plan's amount, is asked first.
+    const ask = approveQuestion(s);
+    if (ask && !window.confirm(approveWords(ask, enquiry.name))) return;
     setBusy(enquiry.id);
     setError(null);
     try {
@@ -115,7 +130,9 @@ export function JoinedOnlineCard() {
                       {line.text}
                     </div>
                     {s.kind === 'paid' ? (
-                      <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>{t('Approve makes them a member, with their plan and receipt.')}</div>
+                      <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
+                        {isRealMoney(s.pay) ? t('Approve makes them a member, with their plan and receipt.') : t('Approve makes them a member with their plan. Nothing is saved as paid.')}
+                      </div>
                     ) : null}
                   </div>
                   {one ? (

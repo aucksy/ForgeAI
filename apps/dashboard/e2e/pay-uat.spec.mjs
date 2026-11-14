@@ -47,7 +47,7 @@ const FIELDS = {
 };
 
 /** A pretend /api/pay that answers like deploy/panel/pay.js in test mode. */
-async function payServer(page) {
+async function payServer(page, { live = false } = {}) {
   const state = { connected: null, request: null, paid: false, recorded: null, sent: [] };
   const conn = () =>
     state.connected
@@ -98,7 +98,8 @@ async function payServer(page) {
         payee: body.payee,
         provider: 'razorpay',
         providerName: 'Razorpay',
-        testMode: true,
+        // Payment sweep (R-542): a LIVE request (the computer run) becomes a receipt; a test one (the phone run) never.
+        testMode: !live,
         url: 'https://rzp.io/i/mettleuptest',
         failed: false,
         late: false,
@@ -154,7 +155,8 @@ for (const size of ['phone', 'computer']) {
       await shot(page, `${size}-pay-1-settings-off`);
 
       // 2. Server on, test mode: connect Razorpay by pasting keys.
-      const pay = await payServer(page);
+      const live = size === 'computer';
+      const pay = await payServer(page, { live });
       await page.reload();
       await expect(page.getByRole('heading', { name: 'Payments', exact: true })).toBeVisible();
       await expect(main.getByText('Test mode', { exact: true }).first()).toBeVisible({ timeout: 15_000 });
@@ -190,11 +192,13 @@ for (const size of ['phone', 'computer']) {
       await expectFitsPhone(page, 'in Collect payment with the UPI QR');
       await shot(page, `${size}-pay-4-upi-qr`, false);
 
-      // 4. A payment link (test mode); the company says paid; the receipt is saved by itself.
+      // 4. A payment link; the company says paid. Live (computer run): the receipt is saved by itself. Test mode (phone
+      // run): no receipt, ever (payment sweep R-542, matrix D-04: anyone can "pay" a test link with a test card).
       await c.getByRole('button', { name: 'Hide QR' }).tap();
       await c.getByRole('button', { name: 'Make a payment link' }).tap();
       await expect(c.getByRole('img', { name: 'QR code of the payment link for ₹1,000' })).toBeVisible();
-      await expect(c).toContainText('Test mode: no real money moves.');
+      if (live) await expect(c).not.toContainText('Test mode: no real money moves.');
+      else await expect(c).toContainText('Test mode: no real money moves.');
       await expect(c.getByRole('status').filter({ hasText: 'Waiting for the payment…' })).toBeVisible();
       const asked = pay.sent.find((s) => s.path === 'request')?.body;
       expect(asked?.amountP).toBe(100000);
@@ -204,14 +208,24 @@ for (const size of ['phone', 'computer']) {
 
       pay.paid = true;
       await page.clock.runFor(5000);
-      await expect(c).toBeHidden({ timeout: 15_000 });
-      await expect.poll(() => pay.recorded, { timeout: 15_000 }).toBeTruthy();
-      const saved = [...server.records.values()].filter((r) => r.k === 'payment' && !r.x).map((r) => r.d);
-      const online = saved.find((p) => p.reference === 'Razorpay pay_TEST123');
-      expect(online?.amountP).toBe(100000);
-      expect(online?.method).toBe('upi');
-      expect(online?.note).toBe('Paid online (test mode)');
-      await shot(page, `${size}-pay-6-receipt-saved`);
+      if (live) {
+        await expect(c).toBeHidden({ timeout: 15_000 });
+        await expect.poll(() => pay.recorded, { timeout: 15_000 }).toBeTruthy();
+        const saved = [...server.records.values()].filter((r) => r.k === 'payment' && !r.x).map((r) => r.d);
+        const online = saved.find((p) => p.reference === 'Razorpay pay_TEST123');
+        expect(online?.amountP).toBe(100000);
+        expect(online?.method).toBe('upi');
+        expect(online?.note).toBe('Paid online');
+        await shot(page, `${size}-pay-6-receipt-saved`);
+      } else {
+        await expect(c.getByRole('status')).toContainText('Test mode: no real money came in, so no receipt was saved.', { timeout: 15_000 });
+        // The server is told it is dealt with (so the receipts sweep never offers it), with no receipt number.
+        await expect.poll(() => pay.recorded, { timeout: 15_000 }).toBe('saved');
+        const saved = [...server.records.values()].filter((r) => r.k === 'payment' && !r.x).map((r) => r.d);
+        expect(saved.find((p) => p.reference === 'Razorpay pay_TEST123'), 'a test payment is never a receipt').toBeUndefined();
+        expect(saved.filter((p) => p.amountP === 100000)).toHaveLength(0);
+        await shot(page, `${size}-pay-6-test-payment-no-receipt`);
+      }
     });
   });
 }

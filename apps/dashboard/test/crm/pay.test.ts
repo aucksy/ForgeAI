@@ -165,10 +165,17 @@ describe('payments that came in with no sheet open', () => {
   const memberships = [{ id: 'ms1', memberId: 'm1', priceP: 150000, joiningFeeP: 0 }];
 
   it('becomes a receipt by itself only when the plan is there and the amount is not more than due', () => {
-    expect(stuckWhy(req({ status: 'paid', paidP: 150000 }), memberships, () => 150000)).toBeNull();
-    expect(stuckWhy(req({ status: 'paid', paidP: 150000 }), memberships, () => 50000)).toBe('MORE_THAN_DUE');
-    expect(stuckWhy(req({ status: 'paid', paidP: 150000, ref: 'gone' }), memberships, () => 150000)).toBe('NO_MEMBERSHIP');
-    expect(stuckWhy(req({ status: 'paid', paidP: 150000, memberId: 'm2' }), memberships, () => 150000)).toBe('NO_MEMBERSHIP');
+    const live = { testMode: false };
+    expect(stuckWhy(req({ status: 'paid', paidP: 150000, ...live }), memberships, () => 150000)).toBeNull();
+    expect(stuckWhy(req({ status: 'paid', paidP: 150000, ...live }), memberships, () => 50000)).toBe('MORE_THAN_DUE');
+    expect(stuckWhy(req({ status: 'paid', paidP: 150000, ref: 'gone', ...live }), memberships, () => 150000)).toBe('NO_MEMBERSHIP');
+    expect(stuckWhy(req({ status: 'paid', paidP: 150000, memberId: 'm2', ...live }), memberships, () => 150000)).toBe('NO_MEMBERSHIP');
+  });
+
+  // Payment sweep (R-542, matrix D-04): anyone can "pay" a test link with a test card, so a test payment is never a
+  // receipt, even when everything else fits.
+  it('D-04 a TEST-mode payment never becomes a receipt by itself', () => {
+    expect(stuckWhy(req({ status: 'paid', paidP: 150000, testMode: true }), memberships, () => 150000)).toBe('TEST_MODE');
   });
 
   it('the receipt is dated the day it was paid in India, never in the future', () => {

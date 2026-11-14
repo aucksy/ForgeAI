@@ -7,7 +7,8 @@ import { readFileSync } from 'node:fs';
 
 import { describe, expect, it } from 'vitest';
 
-import { approveSale, canApprove, joinPaidDay, joinPayFor } from '../../src/crm/logic/joinPay';
+import { approveQuestion, approveSale, canApprove, isRealMoney, joinLeftover, joinPaidDay, joinPayFor } from '../../src/crm/logic/joinPay';
+import { approveWords, payLine } from '../../src/crm/ui/JoinedOnlineCard';
 import type { JoinPay } from '../../src/crm/pay/payApi';
 import type { EnquirySelfJoin, Plan } from '../../src/crm/types';
 
@@ -98,14 +99,14 @@ describe('where the payment stands', () => {
 
 describe('the sale Approve makes', () => {
   it('their plan, start day and prices; what was paid collected now; the company’s id; one receipt per payment', () => {
-    const p = pay({ status: 'paid', paidP: 200000, method: 'upi', paymentId: 'pay_TEST777', paidAt: '2026-11-14T04:30:00.000Z' });
+    const p = pay({ status: 'paid', paidP: 200000, method: 'upi', paymentId: 'pay_TEST777', paidAt: '2026-11-14T04:30:00.000Z', testMode: false });
     expect(approveSale({ memberId: 'm1', join: JOIN, pay: p, plans, today: TODAY, taker })).toEqual({
       memberId: 'm1',
       planId: 'plan-month',
       startsOn: '2026-11-20',
       priceP: 150000,
       joiningFeeP: 50000,
-      notes: 'Joined online, paid online (test mode)',
+      notes: 'Joined online, paid online',
       collectNowP: 200000,
       method: 'upi',
       reference: 'Razorpay pay_TEST777',
@@ -120,8 +121,15 @@ describe('the sale Approve makes', () => {
     expect(s).toMatchObject({ collectNowP: 200000, method: 'upi', reference: null, notes: 'Joined online, paid online' });
   });
   it('F210 hook: a smaller payment (a trial fee) is taken off the plan; the rest stays due. Never more than due', () => {
-    expect(approveSale({ memberId: 'm1', join: JOIN, pay: pay({ status: 'paid', paidP: 9900 }), plans, today: TODAY, taker })?.collectNowP).toBe(9900);
-    expect(approveSale({ memberId: 'm1', join: JOIN, pay: pay({ status: 'paid', paidP: 999999 }), plans, today: TODAY, taker })?.collectNowP).toBe(200000);
+    expect(approveSale({ memberId: 'm1', join: JOIN, pay: pay({ status: 'paid', paidP: 9900, testMode: false }), plans, today: TODAY, taker })?.collectNowP).toBe(9900);
+    expect(approveSale({ memberId: 'm1', join: JOIN, pay: pay({ status: 'paid', paidP: 999999, testMode: false }), plans, today: TODAY, taker })?.collectNowP).toBe(200000);
+  });
+  // Payment sweep (R-542). Matrix D-01: a test card or the test page's "Success" button is not money.
+  it('D-01 a TEST-mode payment: Approve makes the member and plan, collects nothing, and says so', () => {
+    const s = approveSale({ memberId: 'm1', join: JOIN, pay: pay({ status: 'paid', paidP: 200000, paymentId: 'pay_T' }), plans, today: TODAY, taker });
+    expect(s).toMatchObject({ planId: 'plan-month', collectNowP: 0, notes: 'Joined online, paid in test mode (no real money, nothing collected)', requestId: 'pay-pr_aaaaaaaaaaaaaaaaaaaa' });
+    expect(isRealMoney(pay())).toBe(false);
+    expect(isRealMoney(pay({ testMode: false }))).toBe(true);
   });
   it('the plan is no longer sold: no sale (the desk uses Make member)', () => {
     expect(approveSale({ memberId: 'm1', join: JOIN, pay: pay({ status: 'paid' }), plans: [{ ...plans[0], active: false }], today: TODAY, taker })).toBeNull();
@@ -135,6 +143,52 @@ describe('the sale Approve makes', () => {
     expect(joinPaidDay('2026-11-20T10:00:00.000Z', TODAY)).toBe(TODAY);
     expect(joinPaidDay(null, TODAY)).toBe(TODAY);
     expect(joinPaidDay('nonsense', TODAY)).toBe(TODAY);
+  });
+});
+
+describe('payment sweep (R-542): what the desk is asked, told and shown', () => {
+  it('D-02 Approve asks first for a UPI payment nobody confirmed, and for a paid amount that is not the plan', () => {
+    expect(approveQuestion(joinPayFor(EID, [pay({ provider: null, providerName: null, testMode: false, said: true })]))).toEqual({ kind: 'bank', paidP: 200000, askedP: 200000 });
+    expect(approveQuestion(joinPayFor(EID, [pay({ status: 'paid', paidP: 150000, testMode: false })]))).toEqual({ kind: 'amount', paidP: 150000, askedP: 200000 });
+    expect(approveQuestion(joinPayFor(EID, [pay({ status: 'paid', paidP: 200000, testMode: false })]))).toBeNull();
+    expect(approveQuestion({ kind: 'desk' })).toBeNull();
+    expect(approveWords({ kind: 'bank', paidP: 200000, askedP: 200000 }, 'Kavya Rao')).toBe('Can you see ₹2,000 from Kavya Rao in your bank or UPI app? Approve saves it as paid.');
+    expect(approveWords({ kind: 'amount', paidP: 150000, askedP: 200000 }, 'Neha')).toBe('Neha paid ₹1,500, but the plan is ₹2,000. Approve saves ₹1,500 as paid; the rest stays due.');
+  });
+  it('D-03 the row says what was REALLY paid; a test payment says no money came in', () => {
+    expect(payLine(200000, joinPayFor(EID, [pay({ status: 'paid', paidP: 200000, testMode: false })]))).toEqual({ text: '₹2,000 paid online', tone: 'good' });
+    expect(payLine(200000, joinPayFor(EID, [pay({ status: 'paid', paidP: 150000, testMode: false })]))).toEqual({ text: '₹1,500 paid online, but the plan is ₹2,000 · Check before approving', tone: 'warn' });
+    expect(payLine(200000, joinPayFor(EID, [pay({ status: 'paid', paidP: 200000 })]))).toEqual({ text: '₹2,000 paid in test mode · No real money came in · Collect it at the desk', tone: 'warn' });
+  });
+  it('D-05 a paid join payment nobody approved is shown to the desk; one already saved is only told to the server', () => {
+    const waiting = new Set([EID]);
+    const paid = pay({ status: 'paid', paidP: 200000, testMode: false });
+    expect(joinLeftover(paid, waiting, [])).toEqual({ kind: 'waiting' });
+    expect(joinLeftover(paid, new Set(), [])).toEqual({ kind: 'stuck', why: 'JOIN_NOT_APPROVED' });
+    expect(joinLeftover(pay({ status: 'paid' }), new Set(), [])).toEqual({ kind: 'stuck', why: 'TEST_MODE' });
+    expect(joinLeftover(paid, new Set(), [{ requestId: 'pay-pr_aaaaaaaaaaaaaaaaaaaa', receiptNo: '2026-27/0009' }])).toEqual({ kind: 'saved', receiptNo: '2026-27/0009' });
+    expect(joinLeftover(paid, waiting, [{ requestId: 'pay-pr_aaaaaaaaaaaaaaaaaaaa', receiptNo: '2026-27/0009' }])).toEqual({ kind: 'saved', receiptNo: '2026-27/0009' });
+    expect(joinLeftover(paid, new Set(), [{ requestId: 'pay-pr_other', receiptNo: 'x' }, { requestId: null, receiptNo: 'y' }])).toEqual({ kind: 'stuck', why: 'JOIN_NOT_APPROVED' });
+  });
+  it('D-06 a second payment on one request (two paid rows): the first is Approved, the other is never hidden', () => {
+    const first = pay({ id: 'pr_aaaaaaaaaaaaaaaaaaaa', status: 'paid', paidP: 200000, testMode: false });
+    const second = pay({ id: 'pr_bbbbbbbbbbbbbbbbbbbb', status: 'paid', paidP: 200000, testMode: false });
+    const s = joinPayFor(EID, [first, second]);
+    expect(s.kind === 'paid' && s.pay.id).toBe('pr_aaaaaaaaaaaaaaaaaaaa');
+    // After Approve the request is no longer waiting: the receipt exists for the first, the second is shown.
+    const saved = [{ requestId: 'pay-pr_aaaaaaaaaaaaaaaaaaaa', receiptNo: 'R1' }];
+    expect(joinLeftover(first, new Set(), saved).kind).toBe('saved');
+    expect(joinLeftover(second, new Set(), saved)).toEqual({ kind: 'stuck', why: 'JOIN_NOT_APPROVED' });
+  });
+  it('D-07 the page, the desk and the receipt carry one amount: the server paise, formatted the same way', () => {
+    const page = readFileSync(new URL('../../public/join-online.html', import.meta.url), 'utf8');
+    // The page formats paise itself (no rounding: whole rupees with en-IN grouping, paise only when there are some).
+    expect(page).toContain("return '₹' + whole.toLocaleString('en-IN') + (part ? '.' + String(part).padStart(2, '0') : '');");
+    // English and Hindi lines use the same {total}, made by the same rupees() for both languages.
+    expect(page).toMatch(/payNow: 'Pay \{total\} now'/);
+    expect(page).toMatch(/payNow: 'अभी \{total\} दें'/);
+    expect(page).toMatch(/payLink\(p\)|upiLink\(p\)/);
+    expect(page).toContain("'am=' + (Math.round(Number(p.amountP) || 0) / 100).toFixed(2)");
   });
 });
 

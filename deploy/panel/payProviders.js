@@ -11,6 +11,8 @@
 //   status(creds, mode, linkId, f)         { state: 'open'|'paid'|'expired'|'cancelled', failed?, paymentId?, amountP?, method? }
 //   verifyHook(secret, raw, headers)       true when the company signed this body
 //   readHook(json)                         { kind: 'paid'|'failed'|'revoked'|'other', linkId?, ref?, paymentId?, amountP?, method?, account? }
+//   cancel?(creds, mode, linkId, f)        close a link so it cannot be paid (Razorpay, Cashfree; PayU has none and
+//                                          PhonePe's page dies within the hour by itself)
 //
 // `mode` is 'test' (sandbox, no real money) or 'live'. `f` is fetch (tests pass a fake). `req` is
 // { id, amountP, description, note, name, phone, notifyUrl }. Amounts here are paise; Cashfree and PayU
@@ -136,7 +138,9 @@ export const razorpay = {
     if (r.status !== 200) throw new PayError('STATUS_REFUSED', companyWords(r.body));
     const b = r.body;
     const pays = Array.isArray(b.payments) ? b.payments : [];
-    const ok = pays.find((p) => p && (p.status === 'captured' || p.status === 'authorized'));
+    // Payment sweep (R-542): only CAPTURED money is paid. An "authorized" payment can still be dropped and refunded by
+    // the bank, so it is not paid until Razorpay captures it (the link's own status becomes 'paid' then).
+    const ok = pays.find((p) => p && p.status === 'captured');
     if (b.status === 'paid' || ok) {
       return { state: 'paid', paymentId: str(ok ? ok.payment_id : ''), amountP: ok ? Number(ok.amount) : Number(b.amount_paid), method: methodOf(ok && ok.method) };
     }
@@ -144,6 +148,11 @@ export const razorpay = {
     if (b.status === 'expired') return { state: 'expired', failed };
     if (b.status === 'cancelled') return { state: 'cancelled', failed };
     return { state: 'open', failed };
+  },
+  /** Close a link so it can no longer be paid (POST /payment_links/:id/cancel). */
+  async cancel(creds, _mode, linkId, f = fetch) {
+    const r = await send(f, `${RZP}/payment_links/${encodeURIComponent(linkId)}/cancel`, { method: 'POST', headers: { Authorization: rzpAuth(creds), 'Content-Type': 'application/json' }, body: '{}' });
+    if (r.status !== 200) throw new PayError('CANCEL_REFUSED', companyWords(r.body));
   },
   /** X-Razorpay-Signature = hex HMAC-SHA256(raw body, webhook secret). */
   async verifyHook(secret, raw, headers) {
@@ -257,6 +266,11 @@ export const cashfree = {
     if (st === 'EXPIRED') return { state: 'expired' };
     if (st === 'CANCELLED') return { state: 'cancelled' };
     return { state: 'open' };
+  },
+  /** Close a link so it can no longer be paid (POST /links/:id/cancel). */
+  async cancel(creds, mode, linkId, f = fetch) {
+    const r = await send(f, `${cfHost(mode)}/links/${encodeURIComponent(linkId)}/cancel`, { method: 'POST', headers: cfHeaders(creds), body: '{}' });
+    if (r.status !== 200) throw new PayError('CANCEL_REFUSED', companyWords(r.body));
   },
   /** x-webhook-signature = base64(HMAC-SHA256(x-webhook-timestamp + raw body, secret key)). */
   async verifyHook(secret, raw, headers) {

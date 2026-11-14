@@ -273,6 +273,36 @@ export async function checkWithCompany(env, db, row, { f = fetch, force = false,
   return requestOf(db, row.id);
 }
 
+/**
+ * Payment sweep (R-542): close an open request so nobody can pay it any more: the company link is cancelled first
+ * (best effort; Razorpay and Cashfree can, PayU cannot, PhonePe's page dies within the hour), then the row. A payment
+ * that still lands on it later is kept as late (markPaid), never lost. `conn` = its connection, still with its keys.
+ */
+export async function closeRequest(env, db, row, conn, f) {
+  const adapter = PROVIDERS[row.provider];
+  if (adapter && adapter.cancel && row.link_id && conn && conn.creds && hasMasterKey(env)) {
+    try {
+      await adapter.cancel(await credsOf(env, db, conn, f), row.mode || conn.mode, row.link_id, f);
+    } catch (e) {
+      console.warn('[pay] the company did not cancel a link; it is closed here', row.provider, e instanceof PayError ? e.code : 'error');
+    }
+  }
+  await db.prepare("UPDATE pay_requests SET status = 'cancelled' WHERE id = ? AND status = 'open'").bind(row.id).run();
+}
+
+/**
+ * The gym's connections that may make links NOW, first company first. Payment sweep (R-542): only a connection in the
+ * Worker's own mode, so once "payments live" a test-mode connection (made before) never shows a real member a test
+ * link anyone could "pay" with a test card. Checking old links still uses any connection (checkWithCompany).
+ */
+export async function linkConnections(env, db, gymId) {
+  if (!hasMasterKey(env)) return [];
+  const mode = payMode(env);
+  return (((await db.prepare("SELECT * FROM pay_connections WHERE gym_id = ? AND status = 'on'").bind(gymId).all()).results || []))
+    .filter((c) => c.mode === mode)
+    .sort((x, y) => PROVIDER_ORDER.indexOf(x.provider) - PROVIDER_ORDER.indexOf(y.provider));
+}
+
 /** Make the company link for a request row (also a fresh one when PhonePe's hour ran out). */
 export async function makeLink(env, db, row, conn, extra, f, origin) {
   const adapter = PROVIDERS[conn.provider];
@@ -451,6 +481,23 @@ async function disconnect(env, db, b, f, now) {
   const provider = str(b.provider);
   if (!PROVIDERS[provider]) return no(400, 'UNKNOWN_PROVIDER');
   const conn = await connOf(db, who.gymId, provider);
+  // Payment sweep (R-542): before the keys go, every open link of this company is asked once more (a payment made a
+  // moment ago is kept), and the rest are closed at the company and here, so nobody pays a link we can no longer see.
+  if (conn && conn.status === 'on' && conn.creds && hasMasterKey(env)) {
+    const open =
+      (
+        await db
+          .prepare("SELECT * FROM pay_requests WHERE gym_id = ? AND provider = ? AND status = 'open' AND link_id <> '' ORDER BY created_at DESC LIMIT 25")
+          .bind(who.gymId, provider)
+          .all()
+      ).results || [];
+    for (const row of open) {
+      const fresh = await checkWithCompany(env, db, row, { f, now, force: true });
+      if (fresh && fresh.status === 'open') await closeRequest(env, db, fresh, conn, f);
+    }
+  }
+  // Any older open ones past those 25: closed here (their link can no longer be checked once the keys are wiped).
+  await db.prepare("UPDATE pay_requests SET status = 'cancelled' WHERE gym_id = ? AND provider = ? AND status = 'open'").bind(who.gymId, provider).run();
   if (conn && conn.via === 'oauth' && hasMasterKey(env)) {
     try {
       await revokeOauth(env, provider, await unseal(env, conn.creds), conn, f);
@@ -492,9 +539,7 @@ async function createRequest(env, db, b, f, now, origin) {
   }
   // A company link, when the gym has one connected (and the master key is set).
   if (b.online !== false && !row.link_url && hasMasterKey(env)) {
-    const conns = ((await db.prepare("SELECT * FROM pay_connections WHERE gym_id = ? AND status = 'on'").bind(who.gymId).all()).results || []).sort(
-      (x, y) => PROVIDER_ORDER.indexOf(x.provider) - PROVIDER_ORDER.indexOf(y.provider),
-    );
+    const conns = await linkConnections(env, db, who.gymId);
     const conn = conns.find((c) => !b.provider || c.provider === b.provider);
     if (conn) {
       try {
@@ -543,12 +588,13 @@ async function paidList(env, db, b, f, now) {
         .bind(who.gymId)
         .all()
     ).results || [];
-  // Shop orders paid online in the last 3 days, so the Shop page can say "Paid online".
+  // Shop orders paid online in the last 3 days, so the Shop page can say "Paid online". Payment sweep (R-542): never a
+  // TEST-mode company payment (anyone can "pay" a test link; the desk must not hand over the goods for it).
   const since = nowIso(now - 3 * 86400000);
   const shop =
     (
       await db
-        .prepare("SELECT ref, paid_p, provider FROM pay_requests WHERE gym_id = ? AND kind = 'shop' AND status = 'paid' AND paid_at >= ?")
+        .prepare("SELECT ref, paid_p, provider FROM pay_requests WHERE gym_id = ? AND kind = 'shop' AND status = 'paid' AND paid_at >= ? AND NOT (provider <> '' AND mode <> 'live')")
         .bind(who.gymId, since)
         .all()
     ).results || [];
@@ -740,9 +786,7 @@ async function shopRequest(env, db, b, f, now, origin) {
     row = await requestOf(db, id);
   }
   if (row.status === 'open' && !row.link_url && hasMasterKey(env)) {
-    const conns = ((await db.prepare("SELECT * FROM pay_connections WHERE gym_id = ? AND status = 'on'").bind(who.gymId).all()).results || []).sort(
-      (x, y) => PROVIDER_ORDER.indexOf(x.provider) - PROVIDER_ORDER.indexOf(y.provider),
-    );
+    const conns = await linkConnections(env, db, who.gymId);
     if (conns[0]) {
       try {
         await makeLink(env, db, row, conns[0], { name: who.name, phone: b.phone }, f, origin);
@@ -801,9 +845,16 @@ async function handleHook(request, env, provider, hookId, f, now) {
   if (!ref) return ok({ ok: true });
   let row = await requestOf(db, requestIdOf(ref));
   if (!row && ev.linkId) row = await db.prepare('SELECT * FROM pay_requests WHERE provider = ? AND link_id = ?').bind(provider, ev.linkId).first();
-  // Only a request of the gym this webhook belongs to.
-  const gymOk = row && (conn ? row.gym_id === conn.gym_id : true);
-  if (!gymOk) return ok({ ok: true });
+  // Only a request of the gym this webhook belongs to. A gym's own hook address names its connection; the partner
+  // webhook (no address, "Connect Razorpay") names the gym's account at the company, which must be THIS request's gym
+  // (payment sweep R-542: before, any signed partner event could name any gym's request id).
+  let owner = conn;
+  if (!owner && row && ev.account) owner = await db.prepare("SELECT * FROM pay_connections WHERE provider = ? AND account = ? AND via = 'oauth'").bind(provider, ev.account).first();
+  const gymOk = row && owner && row.gym_id === owner.gym_id;
+  if (!gymOk) {
+    if (row) console.warn('[pay] webhook for a request of another gym ignored', provider);
+    return ok({ ok: true });
+  }
   if (ev.kind === 'paid') await markPaid(db, { provider, requestId: row.id, paymentId: ev.paymentId, amountP: ev.amountP, method: ev.method, at: now });
   else if (ev.kind === 'failed') await db.prepare("UPDATE pay_requests SET failed_at = ? WHERE id = ? AND status = 'open'").bind(nowIso(now), row.id).run();
   else if (ev.kind === 'expired' || ev.kind === 'cancelled') await db.prepare("UPDATE pay_requests SET status = ? WHERE id = ? AND status = 'open'").bind(ev.kind, row.id).run();

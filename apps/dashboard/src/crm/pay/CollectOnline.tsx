@@ -14,13 +14,15 @@
  *     closed first, the receipt is made the next time the admin app checks (PaidOnline.tsx).
  *  3. "Send to their app" (server on, no company connected): a UPI-only request the member sees on My
  *     membership in the MettleUp app. The desk still taps Save payment when the money shows.
- * Test mode: every company link says "Test mode: no real money moves." until MettleUp switches live on.
+ * Test mode: every company link says "Test mode: no real money moves." until MettleUp switches live on, and a test
+ * payment never becomes a receipt (payment sweep R-542: anyone can "pay" a test link with a test card).
  */
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { useCan } from '../auth/AuthProvider';
 import { t } from '../lang/lang';
+import { isRealMoney } from '../logic/joinPay';
 import { formatINR, type Paise } from '../logic/money';
 import { upiPayLink, validUpiId } from '../logic/upiPay';
 import { useCrm } from '../store';
@@ -86,6 +88,12 @@ export function CollectOnline(p: CollectOnlineProps) {
       try {
         const { token } = await claimReceipt(key, r.id);
         if (!token) return; // another desk is making this receipt
+        // Payment sweep (R-542): a test-mode payment is never a receipt (anyone can "pay" a test link); the server is
+        // told it is dealt with, so the receipts sweep does not offer it again.
+        if (!isRealMoney(r)) {
+          await markRecorded(key, r.id, { token, receiptNo: '' });
+          return;
+        }
         const receiptNo = await p.onPaid(r);
         await markRecorded(key, r.id, { token, receiptNo: receiptNo ?? '' });
       } catch (e) {
@@ -271,7 +279,11 @@ export function CollectOnline(p: CollectOnlineProps) {
             style={{ fontFamily: font.body, fontSize: 14, fontWeight: 600, color: req.status === 'paid' ? color.goodText : req.failed ? color.warning : color.ink }}
           >
             {requestLine(req)}
-            {req.status === 'paid' && req.recorded ? ` ${t('Receipt saved.')}` : ''}
+            {req.status === 'paid' && !isRealMoney(req)
+              ? ` ${t('Test mode: no real money came in, so no receipt was saved.')}`
+              : req.status === 'paid' && req.recorded
+                ? ` ${t('Receipt saved.')}`
+                : ''}
           </div>
           {req.status === 'open' && (
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: space.sm, justifyContent: 'center' }}>

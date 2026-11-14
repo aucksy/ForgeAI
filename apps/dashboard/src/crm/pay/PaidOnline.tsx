@@ -18,6 +18,8 @@ import { useAuth } from '../auth/AuthProvider';
 import { takerOf } from '../auth/permissions';
 import { t } from '../lang/lang';
 import { dateISOFromEpoch } from '../logic/dates';
+import { isRealMoney, joinLeftover } from '../logic/joinPay';
+import { waitingOnlineJoins } from '../logic/selfJoin';
 import { startVisiblePoll } from '../logic/visiblePoll';
 import { unpaidForMembership } from '../logic/membership';
 import { formatINR } from '../logic/money';
@@ -31,7 +33,7 @@ import { useDeskPay } from './useDeskPay';
 // R-522: was every 2 minutes, also with the tab hidden (720 calls a day per open panel).
 const EVERY_MS = 5 * 60_000;
 
-export type StuckWhy = 'NO_MEMBERSHIP' | 'MORE_THAN_DUE';
+export type StuckWhy = 'NO_MEMBERSHIP' | 'MORE_THAN_DUE' | 'TEST_MODE' | 'JOIN_NOT_APPROVED';
 
 /** Can this paid request become a receipt by itself? PURE. */
 export function stuckWhy(
@@ -39,6 +41,8 @@ export function stuckWhy(
   memberships: readonly { id: string; memberId: string; priceP: number; joiningFeeP: number }[],
   unpaid: (membershipId: string) => number,
 ): StuckWhy | null {
+  // Payment sweep (R-542): a test-mode payment is never a receipt (anyone can "pay" a test link).
+  if (!isRealMoney(r)) return 'TEST_MODE';
   const m = memberships.find((x) => x.id === r.ref && x.memberId === r.memberId);
   if (!m) return 'NO_MEMBERSHIP';
   if ((r.paidP || r.amountP) > unpaid(m.id)) return 'MORE_THAN_DUE';
@@ -73,7 +77,18 @@ export function PaidOnlineCard() {
         return m ? unpaidForMembership(m, snap.payments) : 0;
       };
       const left: { r: PayRequest; why: StuckWhy }[] = [];
+      const waiting = new Set(waitingOnlineJoins(snap.enquiries).map((j) => j.enquiry.id));
       for (const r of paid) {
+        // Payment sweep (R-542): a join payment nobody approved must not sit unseen: the gym holds that money.
+        if (r.kind === 'join') {
+          const leftover = joinLeftover(r, waiting, snap.payments);
+          if (leftover.kind === 'stuck') left.push({ r, why: leftover.why });
+          else if (leftover.kind === 'saved') {
+            const { token } = await claimReceipt(key, r.id);
+            if (token) await markRecorded(key, r.id, { token, receiptNo: leftover.receiptNo });
+          }
+          continue;
+        }
         if (r.kind !== 'fee' || !r.memberId) continue;
         const why = stuckWhy(r, snap.memberships, unpaid);
         if (why) {
@@ -122,7 +137,8 @@ export function PaidOnlineCard() {
   };
 
   if (!on || stuck.length === 0) return null;
-  const nameOf = (id: string | null) => snapshot.members.find((m) => m.id === id)?.fullName ?? t('A member');
+  const nameOf = (r: PayRequest) =>
+    (r.kind === 'join' ? snapshot.enquiries.find((e) => e.id === r.ref)?.name : snapshot.members.find((m) => m.id === r.memberId)?.fullName) ?? t('A member');
 
   return (
     <Card style={{ marginBottom: space.lg }}>
@@ -133,12 +149,18 @@ export function PaidOnlineCard() {
       {stuck.map(({ r, why }) => (
         <div key={r.id} style={{ marginTop: space.md, paddingTop: space.md, borderTop: `1px solid ${color.border}` }}>
           <div style={{ fontFamily: font.body, fontSize: 14, fontWeight: 700, color: color.ink }}>
-            {t('{name} paid {amount} online', { name: nameOf(r.memberId), amount: formatINR(r.paidP || r.amountP) })}
+            {why === 'TEST_MODE'
+              ? t('{name} paid {amount} in test mode', { name: nameOf(r), amount: formatINR(r.paidP || r.amountP) })
+              : t('{name} paid {amount} online', { name: nameOf(r), amount: formatINR(r.paidP || r.amountP) })}
           </div>
           <div style={{ fontFamily: font.body, fontSize: 13, color: color.inkMuted }}>
-            {why === 'NO_MEMBERSHIP'
-              ? t('The plan this was for is no longer there.')
-              : t('It is more than what is due on that plan now.')}{' '}
+            {why === 'TEST_MODE'
+              ? t('Test mode: no real money came in, so no receipt was made. Collect the fee at the desk.')
+              : why === 'JOIN_NOT_APPROVED'
+                ? t('They paid on your join page, but were not approved with Approve. Save this payment on their member page.')
+                : why === 'NO_MEMBERSHIP'
+                  ? t('The plan this was for is no longer there.')
+                  : t('It is more than what is due on that plan now.')}{' '}
             {onlineReference(r)}
           </div>
           <Row gap={space.sm} align="center">
@@ -148,7 +170,7 @@ export function PaidOnlineCard() {
               </Button>
             )}
             <Button variant="quiet" onClick={() => savedByHand(r)}>
-              {t('I saved it')}
+              {why === 'TEST_MODE' ? t('Got it') : t('I saved it')}
             </Button>
           </Row>
         </div>

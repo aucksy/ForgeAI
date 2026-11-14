@@ -566,7 +566,14 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   'Make member': 'Member banao',
   // R-528: paid on the join page.
   '{total} paid online': '{total} online pay ho gaya',
-  '{total} paid online (test mode, no real money)': '{total} online pay ho gaya (test mode, asli paise nahi)',
+  // Payment sweep (R-542): a test payment is never money; a paid amount that is not the plan's is asked first.
+  '{total} paid in test mode · No real money came in · Collect it at the desk': '{total} test mode mein pay hua · Asli paise nahi aaye · Desk par lo',
+  '{paid} paid online, but the plan is {total} · Check before approving': '{paid} online pay hua, par plan {total} ka hai · Approve se pehle check karo',
+  'Approve makes them a member with their plan. Nothing is saved as paid.': 'Approve karne par yeh plan ke saath member ban jaate hain. Kuch bhi paid save nahi hota.',
+  'Can you see {amount} from {name} in your bank or UPI app? Approve saves it as paid.':
+    'Kya aapke bank ya UPI app mein {name} ke {amount} dikh rahe hain? Approve karne par yeh paid save hoga.',
+  '{name} paid {paid}, but the plan is {total}. Approve saves {paid} as paid; the rest stays due.':
+    '{name} ne {paid} pay kiya, par plan {total} ka hai. Approve karne par {paid} paid save hoga; baaki due rahega.',
   '{total} paid by UPI, they say · Check your bank before approving': 'Inke hisaab se {total} UPI se pay kiya · Approve se pehle apna bank check karo',
   '{total} · The online payment did not go through · Not paid': '{total} · Online payment nahi hua · Pay nahi kiya',
   '{total} · Started paying online, did not finish · Not paid': '{total} · Online pay shuru kiya, poora nahi kiya · Pay nahi kiya',
@@ -737,6 +744,13 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   'It is more than what is due on that plan now.': 'Yeh us plan par abhi baaki amount se zyada hai.',
   'Open member': 'Member kholo',
   'I saved it': 'Maine save kar diya',
+  // Payment sweep (R-542): test payments, and join payments nobody approved.
+  '{name} paid {amount} in test mode': '{name} ne test mode mein {amount} pay kiya',
+  'Test mode: no real money came in, so no receipt was made. Collect the fee at the desk.': 'Test mode: asli paise nahi aaye, isliye receipt nahi bani. Fees desk par lo.',
+  'They paid on your join page, but were not approved with Approve. Save this payment on their member page.':
+    'Inhone aapke join page par pay kiya, par Approve se approve nahi hue. Yeh payment unke member page par save karo.',
+  'Got it': 'Theek hai',
+  'Test mode: no real money came in, so no receipt was saved.': 'Test mode: asli paise nahi aaye, isliye receipt save nahi hui.',
   // ── F201 AI Assistant (12 Nov 2026, R-471): words the owner approves before it goes live ──
   'AI Assistant': 'AI Assistant',
   'Open the AI Assistant': 'AI Assistant kholo',

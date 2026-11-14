@@ -27,8 +27,8 @@
 
 import { answer } from './feedback.js';
 import { hasMasterKey } from './payCrypto.js';
-import { PROVIDERS, PROVIDER_ORDER, PayError } from './payProviders.js';
-import { checkWithCompany, cleanUpi, makeLink, newRequestId, remake, tablesReady, turnOff } from './pay.js';
+import { PROVIDERS, PayError } from './payProviders.js';
+import { checkWithCompany, cleanUpi, closeRequest, linkConnections, makeLink, newRequestId, remake, tablesReady, turnOff } from './pay.js';
 import { hmacHex } from './phoneCode.js';
 import { markSaid, saidAt, switchesOf, switchesReady } from './paySwitches.js';
 
@@ -116,11 +116,8 @@ export async function gymIdFor(env, rpc, code, now = new Date()) {
 
 /** The gym's first connected company (when its keys can be opened) and its UPI ID. */
 async function waysOf(env, db, gymId) {
-  const conns = hasMasterKey(env)
-    ? ((await db.prepare("SELECT * FROM pay_connections WHERE gym_id = ? AND status = 'on'").bind(gymId).all()).results || []).sort(
-        (x, y) => PROVIDER_ORDER.indexOf(x.provider) - PROVIDER_ORDER.indexOf(y.provider),
-      )
-    : [];
+  // Payment sweep (R-542): only a connection in the Worker's own mode (never a test link once payments are live).
+  const conns = await linkConnections(env, db, gymId);
   const gym = await db.prepare('SELECT upi, payee FROM pay_gyms WHERE gym_id = ?').bind(gymId).first();
   return { conn: conns[0] || null, upi: gym ? cleanUpi(gym.upi) : '', payee: gym ? str(gym.payee) : '' };
 }
@@ -172,6 +169,24 @@ export async function attachJoinPay(env, rpc, kept, { f = fetch, now = new Date(
       .bind(gymId, enquiryId)
       .first();
     if (paid) return { pay: joinView(paid, await saidAt(db, paid.id)) };
+    // Payment sweep (R-542): an older open payment for this request at ANOTHER amount (the plan's price changed, or they
+    // picked another plan and sent again) is asked once more and, unless it was just paid, closed (its company link
+    // too) before a new one is made: never two open payments, so never two payments, for one request. One the person
+    // said they paid by UPI stays for the desk to check.
+    const older =
+      (
+        await db
+          .prepare("SELECT * FROM pay_requests WHERE gym_id = ? AND kind = 'join' AND ref = ? AND amount_p <> ? AND status = 'open' ORDER BY created_at DESC LIMIT 5")
+          .bind(gymId, enquiryId, charge.amountP)
+          .all()
+      ).results || [];
+    for (const o of older) {
+      const fresh = await checkWithCompany(env, db, o, { f, now: now.getTime(), force: true });
+      if (fresh && fresh.status === 'paid') return { pay: joinView(fresh, await saidAt(db, fresh.id)) };
+      if (!fresh || fresh.status !== 'open' || (await saidAt(db, fresh.id))) continue;
+      const conn = fresh.provider ? await db.prepare('SELECT * FROM pay_connections WHERE gym_id = ? AND provider = ?').bind(gymId, fresh.provider).first() : null;
+      await closeRequest(env, db, fresh, conn, f);
+    }
     // The same request and amount still open: the same payment (and link).
     let row = await db
       .prepare("SELECT * FROM pay_requests WHERE gym_id = ? AND kind = 'join' AND ref = ? AND amount_p = ? AND status = 'open' ORDER BY created_at DESC LIMIT 1")
