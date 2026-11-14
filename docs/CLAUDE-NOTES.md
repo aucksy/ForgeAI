@@ -131,6 +131,11 @@ He said (14 Nov 2026): "Yes, go ahead with the gym page database change". Covers
 into supabase/migrations/0080_gym_page.sql (3 tables, 6 functions, the 'page_question' alert kind), applied LIVE after
 its test passes in CI. Photos: our own Supabase storage, served at join.mettleup.fit/p/... (no Cloudflare R2, no card).
 It does NOT cover: connecting join.mettleup.fit, switching the page on, or the public page words (those need his yes).
+Done (helper, 14 Nov): the owner's side is built and on main: Your gym -> "Your web page" editor (staff read only),
+address locked once published, "See your page" preview, HQ take-down note, Set up your gym step switched on, Enquiries
+"Asked on your web page". Photos: supabase 0082_gym_page_photos.sql (private bucket + one-use slots) is NOT APPLIED and
+needs his yes; the Worker serves /p/<gym>/<id>.webp. No What's new line (pages not open to visitors yet). HQ "Reported
+pages" list: later. Help article added but hidden (unreleased) until the page is public.
 
 ## R-528. Join page and gym web page: pay online (same as the member app), owner switches per place — 14 Nov 2026
 He said (14 Nov 2026): "It says that share your details pay at the desk. Why are we doing pay at the desk if the gym will

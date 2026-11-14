@@ -141,6 +141,7 @@ export const PAGES = Object.freeze([
   { id: 'shop-products', path: '/shop/products', name: 'Products', does: 'What the shop sells, and prices.', owner: true },
   { id: 'branding', path: '/settings/branding', name: 'Branding', does: 'Your logo and colours in the member app.', owner: true },
   { id: 'timings', path: '/settings/timings', name: 'Gym timings', does: 'When the gym is open, for members to see.' },
+  { id: 'web-page', path: '/settings/web-page', name: 'Your web page', does: "The gym's free web page: address, about, photos, publish." },
   { id: 'settings', path: '/settings', name: 'Settings', does: 'Gym details: name, address, phone, GST, screen colours.' },
   { id: 'settings-app', path: '/settings/app', name: 'Member app', does: 'The member app: join code, look, features.' },
   { id: 'settings-data', path: '/settings/data', name: 'Sign-in & data', does: "Your gym's records: download, sign-in, start over." },
