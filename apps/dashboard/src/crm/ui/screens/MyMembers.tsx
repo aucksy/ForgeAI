@@ -151,8 +151,8 @@ type Cheer = { state: 'idle' } | { state: 'sending'; kind: CheerKind } | { state
 /** The words for a send that did not go. PURE. */
 function cheerErrorWords(e: unknown): string {
   const text = e instanceof Error ? e.message : String((e as { message?: unknown })?.message ?? e ?? '');
-  if (/NO_ONE/.test(text)) return t(CHEER_WORDS.noApp);
-  if (/OWNER_ONLY/.test(text)) return t(CHEER_WORDS.ownerOnly);
+  if (/\bNO_ONE\b/.test(text)) return t(CHEER_WORDS.noApp);
+  if (/\bOWNER_ONLY\b/.test(text)) return t(CHEER_WORDS.ownerOnly);
   return messageErrorWords(e);
 }
 
