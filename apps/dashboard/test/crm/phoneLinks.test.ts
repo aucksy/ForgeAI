@@ -141,7 +141,12 @@ describe('the card', () => {
     // R-522: the rows come from "Needs you" (read there once a minute, only while the tab is in view): no poll of its own.
     expect(card).toContain('useNeedsYou()');
     expect(card).not.toContain('usePoll(');
-    expect(src('../../src/crm/ui/NeedsYou.tsx')).toContain('startVisiblePoll(look, NEEDS_POLL_MS)');
+    // R-539: the poll runs the normal look (not the full Refresh read), only while the tab is in view, once a minute.
+    const needs = src('../../src/crm/ui/NeedsYou.tsx');
+    expect(needs).toMatch(/startVisiblePoll\(async \(\) => \{\s*await look\(\);\s*\}, NEEDS_POLL_MS\)/);
+    expect(needs.match(/startVisiblePoll\(/g)).toHaveLength(1);
+    expect(needs).not.toMatch(/setInterval\(/);
+    expect(src('../../src/crm/logic/needsPoll.ts')).toContain('export const NEEDS_POLL_MS = 60_000;');
     // Owner and desk alike: no role check.
     expect(card).not.toMatch(/useRole|canEdit|role ===/);
   });
