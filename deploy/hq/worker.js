@@ -24,7 +24,7 @@ import { handleApi, json } from './api.js';
 import { rpc } from './db.js';
 import { nightlyWeb } from './web.js';
 import { handlePushKick, runPush } from './push.js';
-import { feedFeeRequests } from './payFeed.js';
+import { feedCalls, feedFeeRequests, feedPaidOnline } from './payFeed.js';
 import { backupStatus, runBackup } from './backup.js';
 import { handleBilling, runBillingDaily, runBillingReconcile } from './billing.js';
 
@@ -248,13 +248,22 @@ export default {
 
 /**
  * The every-minute run. R-507 (supabase 0073): first the desk's new fee requests become member notes
- * (payFeed.js, at most 2 outside calls), so the phone pop-ups below send them in the same run. Never throws.
+ * (payFeed.js), so the phone pop-ups below send them in the same run. R-506 (0075): then what members paid online
+ * becomes a gym alert. Each feed uses at most one server call, taken off the pop-ups' call budget. Never throws.
  */
 export async function everyMinute(env, deps = {}) {
-  try {
-    await feedFeeRequests(env, deps);
-  } catch (e) {
-    console.error('[hq-cron] fee request feed failed', e instanceof Error ? e.message : 'error');
+  const feedDeps = { fetchImpl: deps.fetchImpl, now: deps.now ? deps.now() : Date.now() };
+  if (!feedDeps.fetchImpl) delete feedDeps.fetchImpl;
+  let spent = 0;
+  for (const [name, feed] of [
+    ['fee request', feedFeeRequests],
+    ['online payment', feedPaidOnline],
+  ]) {
+    try {
+      spent += feedCalls(await feed(env, feedDeps));
+    } catch (e) {
+      console.error(`[hq-cron] ${name} feed failed`, e instanceof Error ? e.message : 'error');
+    }
   }
-  return runPush(env, deps);
+  return runPush(env, { ...deps, spent });
 }

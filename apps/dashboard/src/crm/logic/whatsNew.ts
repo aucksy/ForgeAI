@@ -487,6 +487,19 @@ function notifyNewsSeen(): void {
  */
 export const ADMIN_NEWS_PENDING: readonly AdminNewsEntry[] = [
   {
+    // R-506/R-510, 14 Nov 2026: the gym's alerts (0075). Moves to ADMIN_NEWS when 0075 is live, the HQ Worker and the
+    // admin panel are deployed.
+    id: 'pending-member-alerts',
+    lines: [
+      {
+        text: 'New on Today: "Latest from your members". It shows when a member asks a question, sends a message or a complaint, orders from the shop, pays online or joins your gym. Tap a line to open it.',
+      },
+      {
+        text: 'Needs you on Today now also counts member questions and member messages waiting for your reply. With alerts on, you hear a sound and see a notice when a new one comes in.',
+      },
+    ],
+  },
+  {
     // F56 R-461, 12 Nov 2026: the MettleUp Plus switch (0070). Moves to ADMIN_NEWS only when 0070 is live, the panel is
     // deployed AND the app's paid plan is switched on (MEMBER_PLAN_GATE_ON); until then the card is hidden anyway.
     id: 'pending-plus-lock',

@@ -1,7 +1,7 @@
 /** R-319 item 8a: "Needs you" on the gym admin panel (logic/needsYou.ts). */
 import { describe, expect, it } from 'vitest';
 
-import { arrivalLine, itemKeys, needsItems, needsLines, newArrivals, NEEDS_WORDS, titleWithCount } from '../../src/crm/logic/needsYou';
+import { arrivalLine, countIds, itemKeys, needsItems, needsLines, newArrivals, NEEDS_WORDS, titleWithCount } from '../../src/crm/logic/needsYou';
 
 describe('Needs you', () => {
   const items = needsItems({ planRequests: ['p1', 'p2'], phoneLinks: ['l1'], shopOrders: ['o1'] });
@@ -14,8 +14,20 @@ describe('Needs you', () => {
       { kind: 'shop-order', count: 1, text: '1 new shop order to get ready', to: '/shop' },
     ]);
     expect(needsLines([])).toEqual([]);
-    // TODO(0053) hook: member questions count once fed in.
-    expect(needsLines(needsItems({ planRequests: [], phoneLinks: [], shopOrders: [], questions: ['q'] }))[0].to).toBe('/questions');
+    // R-506: the questions (0053) and member messages (0069) waiting for a reply show and ring too.
+    const talk = needsItems({ planRequests: [], phoneLinks: [], shopOrders: [], questions: countIds('q', 2), messages: countIds('m', 1) });
+    expect(needsLines(talk)).toEqual([
+      { kind: 'trainer-question', count: 2, text: '2 member questions to answer', to: '/questions' },
+      { kind: 'member-message', count: 1, text: '1 member message to reply to', to: '/member-messages' },
+    ]);
+    // A count that goes up is a new item, so it rings once.
+    const more = needsItems({ planRequests: [], phoneLinks: [], shopOrders: [], questions: countIds('q', 2), messages: countIds('m', 2) });
+    expect(newArrivals(itemKeys(talk), more)).toEqual([{ kind: 'member-message', id: 'm:2' }]);
+    expect(arrivalLine([{ kind: 'member-message', id: 'm:2' }])).toBe('A member sent your gym a message. Open Member messages to reply.');
+    expect(arrivalLine([{ kind: 'trainer-question', id: 'q:1' }])).toBe('A member asked a trainer a question. Open Questions to reply.');
+    expect(countIds('q', 0)).toEqual([]);
+    expect(countIds('q', Number.NaN)).toEqual([]);
+    expect(countIds('q', 9999)).toHaveLength(500);
   });
 
   it('the tab title carries the count', () => {

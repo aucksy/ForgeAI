@@ -1,6 +1,23 @@
 # ForgeAI progress
 
 ## Waiting for release (R-266: tag only when the owner says "release")
+- R-506/R-510 PHASE 2, MEMBER -> GYM ALERTS LIST (same yes as phase 1). supabase/migrations/0075_gym_alerts.sql (NOT
+  APPLIED; apply after 0073): one locked table gym_alerts (RLS on, no grants) filled by triggers, one row per event
+  (unique tag), each with the server's own plain line and the panel page it opens: a trainer question
+  (trainer_questions; only the owner or a trainer who may see it, as 0053 _tq_visible), a Message-your-gym question,
+  feedback or complaint and member replies (gym_talk_messages; complaints for the owner only), a pause or renew
+  request (urgent when the current plan ends in 3 days or less), a check-in number to confirm, a shop order, a
+  requested report sent, a member who joined with the code, a referred friend; and paid online (D1 pay_requests with a
+  provider, handed every minute by the HQ Worker, deploy/hq/payFeed.js feedPaidOnline -> hq_gym_alerts_paid, tag
+  paid:<id>). Rows older than 30 days are cleared. owner_alerts(key) answers the last 3 days the key may see (newest
+  first, 50). Admin app: Needs you now also counts member questions (0053 owner_question_count) and member messages
+  waiting (0069 owner_talk_count), fixing the old TODO(0053), and with 0075 a new alert rings once with its own words
+  and its tap opens its page (browser notice tag mettleup-alert-<id>); Today shows "Latest from your members" (last
+  24 hours, 5). Without 0075 everything works as before (PGRST202 remembered). The feeds' server calls now come off
+  the phone pop-ups' call budget (push.js runPush spent). Tests: supabase/tests/0075_gym_alerts.sql (28),
+  payFeed.test.mjs (10), test/crm/gymAlerts.test.ts (7), needsYou.test.ts, e2e/alerts-uat.spec.mjs (phone UAT,
+  pictures phone-alerts-*). LIVE (owner): SQL Editor 0075 (after 0073); deploy the HQ Worker (deploy/hq); deploy the
+  admin panel. Admin news waits in ADMIN_NEWS_PENDING 'pending-member-alerts'.
 - R-507/R-510 PHASE 1, GYM -> MEMBER POP-UPS (owner, 14 Nov 2026: "yes to A (my pick): Build both directions together,
   with the live database change"). Server only: works for every app version already installed once it is LIVE; no
   app release needed. supabase/migrations/0073_member_push_more.sql (NOT APPLIED; his LIVE yes is R-510) adds five

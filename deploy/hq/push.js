@@ -288,11 +288,11 @@ let running = false;
  * Send what is due. Never throws. -> { skipped?: why } or { jobs, sent, dead, failed, left }.
  * `left`: true when the run stopped at its call budget with more perhaps to send.
  */
-export async function runPush(env, { fetchImpl = fetch, now = () => Date.now() } = {}) {
+export async function runPush(env, { fetchImpl = fetch, now = () => Date.now(), spent = 0 } = {}) {
   if (running) return { skipped: 'busy' };
   running = true;
   try {
-    return await runOnce(env, fetchImpl, now);
+    return await runOnce(env, fetchImpl, now, spent);
   } catch (e) {
     console.error('[push] run failed', e instanceof Error ? e.message : 'error');
     return { skipped: 'error' };
@@ -301,7 +301,7 @@ export async function runPush(env, { fetchImpl = fetch, now = () => Date.now() }
   }
 }
 
-async function runOnce(env, fetchImpl, now) {
+async function runOnce(env, fetchImpl, now, spent = 0) {
   if (!env.FCM_SERVICE_ACCOUNT) {
     warnOnce('secret', '[push] FCM_SERVICE_ACCOUNT is not set: no phone pop-ups are sent (the app still checks every ~15 minutes)');
     return { skipped: 'no-secret' };
@@ -315,7 +315,8 @@ async function runOnce(env, fetchImpl, now) {
     warnOnce('db', '[push] SUPABASE_URL or SUPABASE_HQ_KEY is not set');
     return { skipped: 'no-db' };
   }
-  let budget = Math.max(3, Math.min(Number(env.PUSH_SUBREQUESTS) || 45, 990));
+  // `spent`: outside calls this run made before the pop-ups (worker.js everyMinute's feeds).
+  let budget = Math.max(3, Math.min(Number(env.PUSH_SUBREQUESTS) || 45, 990) - (Number(spent) || 0));
   // The access token FIRST: with a refused key nothing is claimed (so nothing is lost).
   let token;
   try {

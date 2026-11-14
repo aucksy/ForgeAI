@@ -465,6 +465,10 @@ export class FakeServer {
     if (!this.reminderServer && REMINDER_FNS.includes(fn)) {
       throw new NoSuchFunction(`Could not find the function public.${fn} in the schema cache`);
     }
+    // R-506: a server before 0075 (the live server today) has no alerts list; alerts-uat.spec.mjs answers it itself.
+    if (fn === 'owner_alerts') {
+      throw new NoSuchFunction(`Could not find the function public.${fn} in the schema cache`);
+    }
     if (BRANCH_FNS.includes(fn) || (!this.termsServer && TERMS_FNS.includes(fn))) {
       throw new NoSuchFunction(`Could not find the function public.${fn} in the schema cache`);
     }

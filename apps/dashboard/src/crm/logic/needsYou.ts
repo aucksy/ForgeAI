@@ -7,11 +7,11 @@
  */
 
 /**
- * What can wait. 'trainer-question' is the hook for members' "Ask a trainer" questions (0053, built by
- * another change): TODO(0053) feed its waiting ids into `NeedsInput.questions` once that list is read
- * here. Until then the Questions menu item carries its own badge.
+ * What can wait. R-506 (14 Nov 2026): 'trainer-question' (members' "Ask a trainer" questions waiting for a reply,
+ * 0053 owner_question_count) and 'member-message' ("Message your gym" conversations waiting for a reply, 0069
+ * owner_talk_count) are read by ui/NeedsYou.tsx too, so they show here and ring (they never did: TODO 0053).
  */
-export type NeedsKind = 'plan-request' | 'phone-link' | 'shop-order' | 'trainer-question';
+export type NeedsKind = 'plan-request' | 'phone-link' | 'shop-order' | 'trainer-question' | 'member-message';
 
 export interface NeedsItem {
   kind: NeedsKind;
@@ -23,6 +23,7 @@ export interface NeedsInput {
   phoneLinks: readonly string[];
   shopOrders: readonly string[];
   questions?: readonly string[];
+  messages?: readonly string[];
 }
 
 export interface NeedsLine {
@@ -53,7 +54,17 @@ export function needsItems(input: NeedsInput): NeedsItem[] {
     ...input.phoneLinks.map((id) => ({ kind: 'phone-link' as const, id })),
     ...input.shopOrders.map((id) => ({ kind: 'shop-order' as const, id })),
     ...(input.questions ?? []).map((id) => ({ kind: 'trainer-question' as const, id })),
+    ...(input.messages ?? []).map((id) => ({ kind: 'member-message' as const, id })),
   ];
+}
+
+/**
+ * Ids for a count the server gives without a list ("3 questions waiting"): 'q:1'..'q:3'. A count that goes up
+ * has a new id, so it rings once. PURE.
+ */
+export function countIds(prefix: string, n: number): string[] {
+  const k = Number.isFinite(n) ? Math.max(0, Math.min(Math.floor(n), 500)) : 0;
+  return Array.from({ length: k }, (_, i) => `${prefix}:${i + 1}`);
 }
 
 /** The lines at the top of Today, only the kinds that have something. PURE. */
@@ -68,6 +79,8 @@ export function needsLines(items: readonly NeedsItem[]): NeedsLine[] {
   if (shop) lines.push({ kind: 'shop-order', count: shop, text: `${plural(shop, 'new shop order', 'new shop orders')} to get ready`, to: '/shop' });
   const q = count('trainer-question');
   if (q) lines.push({ kind: 'trainer-question', count: q, text: `${plural(q, 'member question', 'member questions')} to answer`, to: '/questions' });
+  const m = count('member-message');
+  if (m) lines.push({ kind: 'member-message', count: m, text: `${plural(m, 'member message', 'member messages')} to reply to`, to: '/member-messages' });
   return lines;
 }
 
@@ -100,5 +113,6 @@ export function arrivalLine(items: readonly NeedsItem[]): string {
   if (k === 'plan-request') return 'A member asked to pause or renew their plan.';
   if (k === 'phone-link') return 'A member typed their number at the check-in poster. Confirm it on Today.';
   if (k === 'shop-order') return 'A new shop order came in.';
-  return 'A member asked a question.';
+  if (k === 'member-message') return 'A member sent your gym a message. Open Member messages to reply.';
+  return 'A member asked a trainer a question. Open Questions to reply.';
 }

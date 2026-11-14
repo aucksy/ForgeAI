@@ -15,7 +15,7 @@ import { QuickActions } from '../QuickActions';
 import { InstallCard } from '../InstallCard';
 import { PhoneLinksCard } from '../PhoneLinksCard';
 import { PlanRequestsCard } from '../PlanRequestsCard';
-import { NeedsYouCard } from '../NeedsYou';
+import { LatestAlertsCard, NeedsYouCard } from '../NeedsYou';
 import { TodayAiCard } from '../../assistant/ui/TodayAiCard';
 import { TrialBanner } from '../TrialBanner';
 import { LapseBanner, useLapseWords } from '../LapseBanner';
@@ -154,6 +154,8 @@ export function TodayScreen() {
       {/* R-97 (0030): the owner's free trial, in words (nothing locks when it ends). */}
       {/* R-319 item 8a: everything waiting for the desk or the owner, at the top (hidden when nothing waits). */}
       <NeedsYouCard />
+      {/* R-506 (0075): the latest from members, the last 24 hours (hidden when none or before 0075). */}
+      <LatestAlertsCard />
 
       {/* F201: the AI Assistant's box and today's ideas (owner only; hidden until the gym's server has 0071). */}
       <TodayAiCard />

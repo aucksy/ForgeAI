@@ -8,6 +8,10 @@
 // the gym's own list id and the plan's label.
 // Off, quietly: no D1 binding (WEB), no server key, D1 0011 not there, or 0073 not on the gym server (NOT_READY,
 // warned once).
+//
+// R-506 (same day): what members paid ONLINE (the payment company said paid: status 'paid' with a provider) goes
+// the same way to the gym's alerts (supabase 0075 hq_gym_alerts_paid, tag 'paid:<id>'): "Asha paid online for
+// Monthly plan. See it on Money." on the admin app. The desk's own "Paid" taps (no provider) are not news to the gym.
 
 import { rpc } from './db.js';
 
@@ -16,12 +20,16 @@ export const FEED_WINDOW_MS = 15 * 60 * 1000;
 const MAX_ITEMS = 100;
 /** Ids handed already by this copy of the Worker (saves a call; the server's tag is the real guard). */
 const handed = new Map();
+const handedPaid = new Map();
 let warnedNotReady = false;
+let warnedPaidNotReady = false;
 
 /** Tests only. */
 export function resetPayFeed() {
   handed.clear();
+  handedPaid.clear();
   warnedNotReady = false;
+  warnedPaidNotReady = false;
 }
 
 /** The items for hq_fee_request_notes from D1 rows. PURE. */
@@ -76,4 +84,74 @@ export async function feedFeeRequests(env, { fetchImpl = fetch, now = Date.now()
     console.error('[pay-feed] could not hand the fee requests', e instanceof Error ? e.message : 'error');
     return { skipped: 'error' };
   }
+}
+
+/** The items for hq_gym_alerts_paid from D1 rows. PURE. */
+export function paidItems(rows) {
+  const out = [];
+  for (const r of Array.isArray(rows) ? rows : []) {
+    const id = String((r && r.id) || '');
+    const gymId = String((r && r.gym_id) || '');
+    const kind = String((r && r.kind) || '');
+    if (!/^pr_[A-Za-z0-9_-]{4,60}$/.test(id) || !/^[0-9a-f-]{36}$/i.test(gymId) || !['fee', 'shop'].includes(kind)) continue;
+    const rosterId = String((r && r.member_id) || '').slice(0, 64);
+    const appMember = String((r && r.app_member) || '');
+    out.push({
+      id,
+      gymId,
+      kind,
+      rosterId,
+      appMember: /^[0-9a-f-]{36}$/i.test(appMember) ? appMember : '',
+      label: String((r && r.label) || '').slice(0, 120),
+    });
+  }
+  return out;
+}
+
+/**
+ * Hand what members paid online in the last FEED_WINDOW_MS to the gym's alerts. Never throws. At most 2 outside
+ * calls (one D1 read, one server call). -> { skipped } | { paid, alerts }
+ */
+export async function feedPaidOnline(env, { fetchImpl = fetch, now = Date.now() } = {}) {
+  if (!env || !env.WEB || !env.SUPABASE_URL || !env.SUPABASE_HQ_KEY) return { skipped: 'off' };
+  let rows;
+  try {
+    const since = new Date(now - FEED_WINDOW_MS).toISOString();
+    const res = await env.WEB.prepare(
+      `SELECT id, gym_id, kind, member_id, app_member, label FROM pay_requests
+        WHERE status = 'paid' AND provider <> '' AND paid_at >= ?
+        ORDER BY paid_at LIMIT ${MAX_ITEMS}`,
+    )
+      .bind(since)
+      .all();
+    rows = (res && res.results) || [];
+  } catch (e) {
+    console.warn('[pay-feed] could not read the online payments', e instanceof Error ? e.message : 'error');
+    return { skipped: 'd1' };
+  }
+  for (const [id, at] of handedPaid) if (at < now - FEED_WINDOW_MS) handedPaid.delete(id);
+  const items = paidItems(rows).filter((it) => !handedPaid.has(it.id));
+  if (!items.length) return { paid: 0, alerts: 0 };
+  try {
+    const r = await rpc(env, 'hq_gym_alerts_paid', { p_items: items }, { fetchImpl });
+    for (const it of items) handedPaid.set(it.id, now);
+    const alerts = Number(r && r.alerts) || 0;
+    console.log('[pay-feed] online payments handed', items.length, 'alerts', alerts);
+    return { paid: items.length, alerts };
+  } catch (e) {
+    if (e && e.code === 'NOT_READY') {
+      if (!warnedPaidNotReady) console.warn('[pay-feed] the gym server has no hq_gym_alerts_paid yet (migration 0075 not applied)');
+      warnedPaidNotReady = true;
+      return { skipped: 'not-ready' };
+    }
+    console.error('[pay-feed] could not hand the online payments', e instanceof Error ? e.message : 'error');
+    return { skipped: 'error' };
+  }
+}
+
+/** Server calls a feed result used (D1 reads are not outside calls). PURE. */
+export function feedCalls(result) {
+  if (!result) return 0;
+  if (result.skipped === 'error' || result.skipped === 'not-ready') return 1;
+  return Number(result.fees || result.paid) > 0 ? 1 : 0;
 }
