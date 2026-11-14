@@ -19,7 +19,7 @@ import { isLightLook } from '@/theme/brandTokens';
 import { color, radius, space, type } from '@/theme/tokens';
 
 import { catalogEntry } from '../catalog/exerciseCatalog';
-import { mediaFor } from '../catalog/media';
+import { demoFrames } from '../catalog/pictureChoice';
 import { hasClip } from '../clips/clipManifest';
 import { getTrackerExercise } from '../db/exerciseInfo';
 import { DrawingCredit } from './DrawingCredit';
@@ -27,7 +27,19 @@ import { ExerciseClip } from './ExerciseClip';
 import type { ThumbMedia } from './ExerciseThumb';
 
 /** Two-frame loop: hold the start, fade to the end, hold, fade back. */
-export function FrameLoop({ frames, height }: { frames: readonly [ImageSourcePropType, ImageSourcePropType]; height: number }) {
+/**
+ * Two frames that fade into each other. `drawing`: the old white line drawings (tinted in ink on the light look);
+ * R-491: the orange-tank pictures are full colour and never tinted. A hold has no second frame: one still picture.
+ */
+export function FrameLoop({
+  frames,
+  height,
+  drawing = true,
+}: {
+  frames: readonly [ImageSourcePropType, ImageSourcePropType | null];
+  height: number;
+  drawing?: boolean;
+}) {
   const end = useRef(new Animated.Value(0)).current;
   useEffect(() => {
     const fade = (to: number) =>
@@ -39,7 +51,7 @@ export function FrameLoop({ frames, height }: { frames: readonly [ImageSourcePro
     return () => loop.stop();
   }, [end]);
   const box = { position: 'absolute' as const, left: 0, right: 0, top: 0, height };
-  const ink = isLightLook() ? color.inkSecondary : undefined;
+  const ink = drawing && isLightLook() ? color.inkSecondary : undefined;
   return (
     <View
       style={{
@@ -55,9 +67,11 @@ export function FrameLoop({ frames, height }: { frames: readonly [ImageSourcePro
     >
       {/* Light mode: the white line drawings are drawn in ink on the light look. */}
       <Image source={frames[0]} style={box} contentFit="contain" tintColor={ink} />
-      <Animated.View style={[box, { opacity: end }]}>
-        <Image source={frames[1]} style={{ width: '100%', height }} contentFit="contain" tintColor={ink} />
-      </Animated.View>
+      {frames[1] ? (
+        <Animated.View style={[box, { opacity: end }]}>
+          <Image source={frames[1]} style={{ width: '100%', height }} contentFit="contain" tintColor={ink} />
+        </Animated.View>
+      ) : null}
     </View>
   );
 }
@@ -121,7 +135,10 @@ export function ExerciseDemoSheet({
   }, [visible, exerciseId, passed, passedUri, passedType]);
 
   const entry = catalogEntry(catalogKey);
-  const bundled = mediaFor(catalogKey);
+  // R-491: the orange-tank start and end pictures first; the old line drawing only where there are none.
+  const shown = demoFrames(catalogKey);
+  const bundled = shown?.drawing ? shown : null;
+  const pics = shown && !shown.drawing ? shown : null;
   const steps = showSteps ? entry?.steps ?? [] : [];
   const height = 210;
 
@@ -141,7 +158,9 @@ export function ExerciseDemoSheet({
         name={name}
         height={height}
         fallback={
-          bundled ? (
+          pics ? (
+            <FrameLoop frames={pics.frames} height={height} drawing={false} />
+          ) : bundled ? (
             <View style={{ gap: space.md }}>
               <FrameLoop frames={bundled.frames} height={height} />
               <DrawingCredit beforeOpen={onClose} />
@@ -150,6 +169,7 @@ export function ExerciseDemoSheet({
         }
       />
     );
+  else if (pics) picture = <FrameLoop frames={pics.frames} height={height} drawing={false} />;
   else if (bundled) picture = <FrameLoop frames={bundled.frames} height={height} />;
   const showCredit = !own?.uri && bundled != null && !hasClip(catalogKey);
 

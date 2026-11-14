@@ -14,8 +14,7 @@ import { isLightLook } from '@/theme/brandTokens';
 import { color } from '@/theme/tokens';
 
 import { catalogEntry } from '../catalog/exerciseCatalog';
-import { mediaFor } from '../catalog/media';
-import { picturesFor } from '../catalog/pictures';
+import { thumbChoice } from '../catalog/pictureChoice';
 import { Glyph } from './TrackerGlyph';
 
 export interface ThumbMedia {
@@ -25,7 +24,7 @@ export interface ThumbMedia {
 
 /** Does this exercise have anything to show when its picture is tapped? */
 export function hasDemo(catalogKey: string | null | undefined, custom?: ThumbMedia | null): boolean {
-  return Boolean(custom?.uri) || mediaFor(catalogKey) != null || (catalogEntry(catalogKey)?.steps.length ?? 0) > 0;
+  return Boolean(custom?.uri) || thumbChoice(catalogKey) != null || (catalogEntry(catalogKey)?.steps.length ?? 0) > 0;
 }
 
 export function ExerciseThumb({
@@ -45,10 +44,12 @@ export function ExerciseThumb({
 }) {
   // UAT A-09 (30 Oct 2026): rows with no clip thumbnail showed a plain dumbbell next to rows with a
   // drawing. Use the exercise's start picture when it has one, so the list has one look.
-  const bundled = mediaFor(catalogKey);
   // R-280: the close-up crop of that picture, in the app's colours (the whole start picture shrank
-  // a person and a machine to a speck at 38 dp).
-  const still = bundled ? null : picturesFor(catalogKey)?.thumb ?? null;
+  // a person and a machine to a speck at 38 dp). R-491: the orange-tank close-up wins over the old
+  // line drawing, so the list has one look; the drawing only where there is no picture.
+  const choice = thumbChoice(catalogKey);
+  const bundled = choice?.drawing ? choice : null;
+  const still = choice && !choice.drawing ? choice.source : null;
   const tappable = onPress != null && hasDemo(catalogKey, media);
   const r = Math.round(size * 0.28);
   // The member's photo can be gone (replaced mid-workout, or a restore on another phone):
@@ -88,7 +89,7 @@ export function ExerciseThumb({
     // so it fills the square.
     body = (
       <Image
-        source={bundled ? bundled.thumb : still}
+        source={bundled ? bundled.source : still}
         style={{
           width: size,
           height: size,

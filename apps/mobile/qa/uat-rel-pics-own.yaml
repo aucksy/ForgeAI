@@ -44,6 +44,28 @@ appId: com.mettleup.app
 - waitForAnimationToEnd:
     timeout: 3000
 - takeScreenshot: rel-pics-02-tate
+# R-491 (14 Nov 2026, one look everywhere): the How to card's small picture is the orange-tank close-up (not the
+# old grey line drawing), no drawing credit, and the moving demo loops the orange-tank start and end pictures.
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^How to$'
+- tapOn: "^How to$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'How to do it'
+- assertNotVisible: "Drawing: Everkinetic.*"
+- takeScreenshot: rel-pics-02b-tate-howto
+- tapOn:
+    text: "Watch how to do Tate Press"
+    index: 0
+- extendedWaitUntil:
+    visible: "Moving demo of the exercise"
+    timeout: 15000
+- assertNotVisible: "Drawing: Everkinetic.*"
+- takeScreenshot: rel-pics-02c-tate-demo
+- back
 - back
 # The search keeps its text after back: clear it with the X (eraseText left letters behind on 12 Nov).
 - runFlow:

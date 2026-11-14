@@ -36,8 +36,8 @@ import { useSettings } from '@/store/settingsStore';
 import { popupBarsFollowLook } from '@/theme/appearance';
 import { color, motion, radius, space, type } from '@/theme/tokens';
 import { catalogEntry } from '@/tracker/catalog/exerciseCatalog';
-import { mediaFor } from '@/tracker/catalog/media';
 import { MUSCLE_LABEL } from '@/tracker/catalog/muscles';
+import { thumbChoice } from '@/tracker/catalog/pictureChoice';
 import { DrawingCredit } from '@/tracker/components/DrawingCredit';
 import { ExerciseClip } from '@/tracker/components/ExerciseClip';
 import { ExerciseDemoSheet } from '@/tracker/components/ExerciseDemoSheet';
@@ -223,7 +223,8 @@ export default function ExerciseScreen() {
   const recordCtx = ex ? { logType: ex.logType, loadMode: ex.loadMode, distUnit: ex.distUnit } : null;
   const openSession = (sid: string) => go(() => router.push(`/session/${sid}`));
   const media = ex ? { uri: ex.mediaUri, type: ex.mediaType } : null;
-  const hasPicture = Boolean(ex?.mediaUri) || mediaFor(ex?.catalogKey) != null;
+  // R-491: the orange-tank pictures count too (the demo loops them); before, those exercises said "No picture yet".
+  const hasPicture = Boolean(ex?.mediaUri) || thumbChoice(ex?.catalogKey) != null;
   // F20: when an exercise's moving clip cannot be had, its start and end pictures stand in.
   const clipStandIn = ex ? <ExercisePictures catalogKey={ex.catalogKey} name={ex.name} asFallback marginBottom={space.lg} /> : null;
   // EX-09: only a video or the library's two-drawing loop moves; the member's photo is still.
@@ -559,7 +560,7 @@ export default function ExerciseScreen() {
                       </View>
                     </View>
                     {/* Phase 0 (EX-05): the library drawing is credited where it is shown */}
-                    {!ex.mediaUri && mediaFor(ex.catalogKey) != null ? <DrawingCredit /> : null}
+                    {!ex.mediaUri && thumbChoice(ex.catalogKey)?.drawing ? <DrawingCredit /> : null}
                     {(entry?.steps ?? []).map((st, i) => (
                       <View key={i} style={{ flexDirection: 'row', gap: space.sm }}>
                         <Text style={{ width: 16, fontFamily: type.monoBold, fontSize: type.size.sub, color: color.accent }}>{i + 1}</Text>

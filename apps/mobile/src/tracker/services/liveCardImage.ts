@@ -6,14 +6,15 @@
  */
 import { Image } from 'react-native';
 
-import { mediaFor } from '../catalog/media';
+import { thumbChoice } from '../catalog/pictureChoice';
 import type { DraftExercise } from '../store/activeWorkoutStore';
 
 export function liveCardImage(ex: Pick<DraftExercise, 'catalogKey' | 'mediaUri' | 'mediaType'> | null | undefined): string | null {
   if (!ex) return null;
   try {
     if (ex.mediaUri && ex.mediaType !== 'video') return ex.mediaUri;
-    const thumb = mediaFor(ex.catalogKey)?.thumb;
+    // R-491: the orange-tank close-up first, the old line drawing only where there is no picture.
+    const thumb = thumbChoice(ex.catalogKey)?.source;
     if (thumb == null) return null;
     const uri = Image.resolveAssetSource(thumb)?.uri;
     return typeof uri === 'string' && uri ? uri : null;
