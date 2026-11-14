@@ -2381,7 +2381,7 @@ part_u439() {
 # routine, plus Dumbbell Pullover (never done). The phone clock then moves one day on (the Target reads only
 # workouts before today); flow b: Incline aims 13, 12, 11, 9 and "+80 kg", Lateral Raise after set 1 at 20 kg
 # aims 20 x 17, 15, 19, equal -> "same as last time", edited after the tick; flow c: Chest Dip after 17 @8.5,
-# 14 @9.5 (no "keep the same weight", "Next set: 9 reps"), then the first-time card. Also runs alone with
+# 14 @9.5 (no "keep the same weight", "31 reps done · 9 to go"), then the first-time card. Also runs alone with
 # only=u454. Pictures rel-r454-*.png.
 part_u454() {
   local rc=0 now
