@@ -28,7 +28,9 @@ Done, built and "Not doing" items have no rating. The page sorts by these (Best 
 |---|---|---|
 | Feature: Members join the gym from their own phone (self sign-up) | High | High |
 | Feature: Pop-ups both ways: gym news on members' phones, member actions on the admin app | High | Medium |
-| Feature: A web page for each gym, with sign-up and an AI helper | High | High |
+| Feature: A free web page for each gym, set up during onboarding | High | High |
+| Feature: All AI questions paid from the gym's AI credits (about 20 questions = 1 credit) | Medium | Medium |
+| Feature: AI sales helper on the gym page | High | High |
 | #97 | High | High |
 | Task: Every missing exercise picture, then one release (R-487) | High | High |
 | #96 | Low | Low |
@@ -550,7 +552,9 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | F204 Members join the gym from their own phone (self sign-up) | Planned | Your idea, 14 Nov (R-513): a new member fills the form and pays on their own phone, and it all lands in the admin panel, so the desk types nothing. Being built. Money: your pick A (14 Nov): it goes straight into the gym's own payment account. Before it goes live it needs your yes on the database change and on the consent words (English and Hindi), the gym's payment account set up (KYC), and your "payments live". | The gym shares a link or a QR poster. The person types name, phone, age and plan, ticks the consent box, and pays by UPI or card into the gym's own account. A gym with no payment account set up shows "Pay at the desk". The request appears in the admin panel with the payment and receipt already made; the desk only taps Approve. Spam is blocked with limits per phone and a bot check. |
 | F205 Pop-ups both ways: gym news on members' phones, member actions on the admin app | Next release | Your request, 14 Nov (R-506, R-507). Members' side LIVE 14 Nov (server only, no app update): a pop-up when the gym sends a workout plan or a diet plan, saves body measurements, starts a challenge or asks for a fee. Admin side: built; it goes live with the next admin panel update. | The admin app gets a "Latest from your members" card on Today, and alerts on the phone or computer even when the admin app is closed: complaints, check-ins, shop orders, referred friends and urgent plan requests come at once; the rest come as one summary at the time the owner picks (instantly, once a day, or once a week). |
 | F206 Ask a trainer: members with a paid plan only | Live | Your request, 14 Nov (R-505). Live 14 Nov (server check 0074; live test passed). | A member with a paid plan sees "Ask a trainer" on the Gym tab. A pass member (for example FITPASS) does not see it, and the server also refuses their question. |
-| F207 A web page for each gym, with sign-up and an AI helper | Idea | Your idea, 14 Nov (R-518): you want to think about it first (#97). | Each gym gets its own page under our domain (for example mettleup.fit/crispy-curves): logo, photos, timings, plans and prices, trainers and the map. A visitor can join right there (F204) and ask questions to an AI helper that answers only from the facts the owner entered; anything else goes to the desk as a lead. |
+| F207 A free web page for each gym, set up during onboarding | Planned | You decided (14 Nov, R-519, #97): free for every gym, only on our own domain, with controls and disclaimers; the owner fills it in while setting up the gym. A gym's own domain is not part of the software. Being planned and built now. | Each gym gets a ready-made, good-looking page on our domain. The owner only adds timings, a short "about", a few photos; plans and prices come from the system. Visitors can join from the page (F204) or send a question, which lands in the admin panel under Enquiries. The gym can share the link on WhatsApp and Google Maps. |
+| F208 AI sales helper on the gym page | Idea | Your idea, 14 Nov (R-520, #97): an AI on the gym page that talks to visitors, tries to turn them into members, and gives an offer when they try to leave. On hold until the research is done. | The AI answers only from the gym's own facts and offers only what the owner set. Each chat uses the gym's AI credits. Research is running: who already does this, the cost per chat, and the Indian rules on pressure selling. |
+| F209 All AI questions paid from the gym's AI credits (about 20 questions = 1 credit) | Planned | You decided (14 Nov, R-519, #97): questions from members in the app, from the owner and staff in the admin app, and later from visitors on the gym page all use the gym's credits. | About 20 questions use 1 credit. Each person has a daily limit, so nobody can empty the gym's credits. When credits run out, members still see the matching help pages (no AI), never an error, and the owner gets a "credits low" alert. Before this goes live, a cheaper way of sending the AI the same help pages each time cuts our cost, so 20 questions stay well below the price of 1 credit. |
 
 ### Platform and quality
 | Feature | Status | Details | How it will work |
@@ -592,9 +596,9 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 
 ---
 
-## 97. A web page for each gym, with sign-up and an AI helper: to think about — 14 Nov 2026
+## 97. A free web page for each gym (decided), and an AI sales helper (research) — 14 Nov 2026
 **Chat:** Mettle Up
-**Status:** IDEA
+**Status:** DECIDED: gym page being built (F207); AI sales helper being researched (F208)
 **You said (14 Nov):** plan an AI assistant for member registration. Maybe each gym gets its own page under our brand's domain, where people learn about the gym, register right there, and ask an AI assistant questions. You want to think about it first; put it in the ideas.
 
 **What I understood:** one page per GYM (you said "member"; tell me if you meant a page for each member). Feature row: F207.
@@ -627,6 +631,14 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 - **(1) Yes, with one correction.** 33,000 visits a day was an example, not the limit. The free limit is 100,000 requests a day for ALL our servers together, and the admin app, the member app and our timers already use part of it. When it is reached, everything stops until the next day, so the alert must come early (at 60% and 80%). Proposed alert: once a day our HQ server reads Cloudflare's request count and Supabase's database size, data use and active users, and tells you in HQ and by email. It needs 2 read-only keys (one in Cloudflare, one in Supabase), which I make in your browser after your yes.
 - **(2) The gym's own address is optional, like Shopify or Wix shops.** The gym buys crispycurves.com itself (about Rs 800 a year) and adds one setting at its domain seller that points it to us. Cloudflare then shows OUR gym page at THEIR address, with the padlock. We still make and host the page. Every gym also keeps the free address on our domain.
 - **(3) "Separate part" = its own sub-address.** Example: join.mettleup.fit/crispy-curves-jaipur, apart from mettleup.fit (member site), gyms.mettleup.fit (gym owners' site) and app.mettleup.fit (admin app). Google lets us watch and, if needed, hide that part alone; a problem on a gym page never touches the admin app; and admin logins are never shared with gym pages. It gives good, not total, protection: full protection needs a different domain name (about Rs 800 a year).
+
+**YOUR REPLY (14 Nov):** (1) A daily check is too much; we have no members yet. Keep it to the minimum, and build the alert now. (2) No gym-owned domains in the software (a website for a gym can be a separate service you sell). The page stays on our domain, free, with controls and disclaimers. A ready-made design: the owner gives plans, timings and a few photos. Part of onboarding. A join form. Visitors' questions go to the admin panel. Hold the AI helper on the page. (3) All AI questions (members, admin, page visitors) come from the gym's credits, about 20 questions = 1 credit. (4) Later: an AI on the page that sells, with an offer when a visitor tries to leave; and research what else the AI can do for the gym (money, keeping members, saving time).
+
+**My answer (14 Nov):**
+- **(1) Alert:** once a WEEK, silent unless a limit passed 60% or 80%. Cloudflare only: Supabase already emails you when a free limit is passed, then gives a grace period before anything stops. Being built now.
+- **(2) Gym page:** being planned and built now (F207), hidden until it is ready. I bring you pictures first, then the wording and the one database change for your yes.
+- **(3) Credits:** yes (F209), with 3 guards. (a) Before it goes live, the AI gets the same help pages in a cheaper, reusable way. Today one answer costs us about 12 paise, so 20 answers (Rs 2.4) cost about what 1 credit sells for (Rs 2-3). (b) A daily limit for each person, so one member or a bot cannot empty the gym's credits. (c) When credits run out, members still see the matching help pages (no AI), never an error.
+- **(4) AI sales helper:** research is running (F208): who already does it (some big gym software may already sell an AI chat for leads, so I check before we call it unique), the cost per chat, the Indian rules on pressure selling (no fake countdowns or false urgency), and a ranked list of other AI uses for gyms.
 
 ## 96. Do testers still get updates, and should we open a public beta? — 14 Nov 2026
 **Chat:** Mettle Up
