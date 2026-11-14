@@ -53,6 +53,9 @@ export const BRANCH_FNS = [
 /** #38 (0033): the terms calls, answered only when `termsServer` is on. */
 const TERMS_FNS = ['owner_terms', 'owner_accept_terms'];
 
+/** R-506 (0076): alerts with the admin app closed. */
+export const WEB_PUSH_FNS = ['owner_save_web_push', 'owner_clear_web_push', 'owner_web_push_on', 'owner_alert_settings', 'owner_save_alert_settings'];
+
 /** R-117 (0034): the PIN calls, answered only when `pinServer` is on. */
 const PIN_FNS = ['staff_set_pin', 'staff_pin_status'];
 
@@ -465,8 +468,9 @@ export class FakeServer {
     if (!this.reminderServer && REMINDER_FNS.includes(fn)) {
       throw new NoSuchFunction(`Could not find the function public.${fn} in the schema cache`);
     }
-    // R-506: a server before 0075 (the live server today) has no alerts list; alerts-uat.spec.mjs answers it itself.
-    if (fn === 'owner_alerts') {
+    // R-506: a server before 0075 / 0076 (the live server today) has no alerts list and no alerts with the app closed;
+    // alerts-uat.spec.mjs answers them itself.
+    if (fn === 'owner_alerts' || WEB_PUSH_FNS.includes(fn)) {
       throw new NoSuchFunction(`Could not find the function public.${fn} in the schema cache`);
     }
     if (BRANCH_FNS.includes(fn) || (!this.termsServer && TERMS_FNS.includes(fn))) {

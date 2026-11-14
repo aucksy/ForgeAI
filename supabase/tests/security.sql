@@ -82,6 +82,8 @@ declare
     'member_talk_unread','member_talk_list','member_talk_send','member_talk_reply','owner_talk_count','owner_talk_list','owner_talk_reply','owner_talk_done',
     -- 0075: the gym's alerts list (checks the key first: owner, desk or trainer; each sees only what they may, complaints for the owner only).
     'owner_alerts',
+    -- 0076: alerts with the admin app closed (each checks the key first; a browser is saved for that sign-in only; the OWNER changes when the rest come).
+    'owner_save_web_push','owner_clear_web_push','owner_web_push_on','owner_alert_settings','owner_save_alert_settings',
     -- 0060: Pay MettleUp (each checks the key first: the gym OWNER only; a desk key gets OWNER_ONLY).
     'owner_pay_mettleup','owner_report_mettleup_payment',
     -- 0063: online buying (each checks the key first: the gym OWNER only; read only, the owner's own gym and receipts).

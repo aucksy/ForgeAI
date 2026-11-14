@@ -29,6 +29,7 @@ import {
   type NeedsItem,
 } from '../logic/needsYou';
 import { getAlerts } from '../shop/alertsApi';
+import { turnOnPush } from '../shop/webPushApi';
 import { getTalkCount } from '../shop/memberMessagesApi';
 import { listPhoneLinks, phoneLinkServer } from '../shop/phoneLinkApi';
 import { listPlanRequests, planRequestServer } from '../shop/planRequestApi';
@@ -237,6 +238,8 @@ function alertState(): AlertState {
 /** The list at the top of Today. Hidden when nothing waits. */
 export function NeedsYouCard() {
   const { items } = useNeedsYou();
+  const { session } = useAuth();
+  const key = session?.online ? (session.ownerKey ?? null) : null;
   const [alerts, setAlerts] = useState<AlertState>(alertState);
   const lines = needsLines(items);
   if (lines.length === 0) return null;
@@ -253,7 +256,11 @@ export function NeedsYouCard() {
     try {
       const answer = await Notification.requestPermission();
       setAlerts(answer as AlertState);
-      if (answer === 'granted') chime();
+      if (answer === 'granted') {
+        chime();
+        // R-506 (0076): the same yes also brings alerts with the admin app closed (quietly nothing before 0076).
+        if (key) void turnOnPush(key).catch((e: unknown) => console.warn('[needs] alerts with the app closed not turned on', e));
+      }
     } catch (e) {
       console.warn('[needs] alerts permission not asked', e);
       setAlerts(alertState());

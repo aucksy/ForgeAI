@@ -16,6 +16,12 @@
 //   FCM_SERVICE_ACCOUNT   the gym's messages and offers popping up on phones (push.js): a JSON key of a
 //                         service account in Firebase project forgeai-d7eea with the role "Firebase
 //                         Cloud Messaging API Admin". Not set: no pop-ups are sent, nothing else changes.
+//   VAPID_PRIVATE_JWK     R-506 (supabase 0076): the gym admin app's alerts in staff's browsers with the app
+//                         closed (panelPush.js, Web Push). A P-256 key made ONCE, never printed: from the repo root
+//                         `node scripts/vapid-keygen.mjs | npx wrangler secret put VAPID_PRIVATE_JWK --config
+//                         deploy/hq/wrangler.jsonc`. Never change it: every browser's alerts are tied to it. Not set:
+//                         the admin app still rings while it is open. Optional vars VAPID_SUBJECT (default
+//                         https://mettleup.fit) and PANEL_PUSH_SUBREQUESTS (default 12 of the run's 50 calls).
 //   HQ_GEMINI_KEY         the English helper (english.js): Gemini rewrites the owner's reply drafts. A key
 //                         from the owner's own Google project WITH BILLING ON (paid tier: Google does not
 //                         train on it; english.js refuses a free-tier key). Not set: the button says

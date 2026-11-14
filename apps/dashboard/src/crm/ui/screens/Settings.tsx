@@ -62,6 +62,7 @@ import { BringAFriendCard } from './BringAFriend';
 import { PlusLockCard } from './PlusLock';
 import { EntryMachinesCard } from './EntryMachines';
 import { PayMettleUpCard } from './PayMettleUp';
+import { AlertsSettingsCard } from '../AlertsCards';
 import { useNewFeatures } from '../NewDots';
 import { settingsRowLit, settingsTabLit } from '../../logic/newDots';
 
@@ -260,6 +261,9 @@ export function SettingsScreen({ section }: { section?: string }) {
       {/* R-449: the admin app on this phone or computer (was under Sign-in & data). Under the gym details, so it
           never pushes them down (fresh eyes); phones also get the slim card on Today. */}
       <InstallCard />
+
+      {/* R-506 (0076): alerts on this device with the admin app closed, and when the rest come (hidden before 0076). */}
+      <AlertsSettingsCard />
 
       {/* F79 (R-328): members pay online: the UPI QR and the gym's own payment company. */}
       <Card style={{ marginBottom: space.lg }}>
@@ -573,6 +577,8 @@ function StaffSettings() {
       </Card>
       <SignInCard />
       <InstallCard />
+      {/* R-506 (0076): the desk turns alerts on for their own device too. */}
+      <AlertsSettingsCard />
     </>
   );
 }

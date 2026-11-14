@@ -9,11 +9,16 @@
 //  3. A new complaint comes in: within a minute the page rings once with the server's own line, and the card shows it.
 //  4. An alert older than 24 hours stays off the card.
 //  5. A tap on a line opens its page (Questions).
+// Second journey (0076, alerts with the admin app closed; the browser's push parts are stand-ins: a headless browser
+// has no push company):
+//  6. Today offers "Get alerts on this device" once; "Turn on alerts" asks the browser, saves this device, says so.
+//  7. Settings: the device is on; the owner picks "Once a week", Sunday, 8:00 pm, and saves it; then turns it off.
+//  8. The desk on a second phone: their own device switch, and the owner's choice in words (no way to change it).
 import { mkdirSync } from 'node:fs';
 
 import { expect, test } from '@playwright/test';
 
-import { NOW, NoSuchFunction, expectFitsPhone, openApp, startOnlineGym, wait } from './support.mjs';
+import { DESK, NOW, NoSuchFunction, Refusal, WEB_PUSH_FNS, addDeskPerson, expectFitsPhone, openApp, secondPhone, signIn, startOnlineGym, wait } from './support.mjs';
 
 const DIR = 'e2e/.results/uat';
 mkdirSync(DIR, { recursive: true });
@@ -122,4 +127,144 @@ test('Gym alerts: not ready, the latest on Today, a new one rings once, a tap op
   await lines.filter({ hasText: 'Asha asked a trainer a question.' }).click();
   await expect.poll(() => page.evaluate(() => window.location.hash)).toBe('#/questions');
   await shot(page, 'phone-alerts-3-opened-questions');
+});
+
+/** 0076 on the pretend server, by its rules: a device per sign-in key; the OWNER changes when the rest come. */
+function installWebPush(server) {
+  const push = { on: false, settings: { mode: 'daily', minute: 660, weekday: 1 }, devices: new Map() };
+  const base = server.answer.bind(server);
+  server.answer = (fn, args) => {
+    if (!WEB_PUSH_FNS.includes(fn)) return base(fn, args);
+    server.calls.push(fn);
+    server.log.push({ fn, args });
+    if (!push.on) throw new NoSuchFunction(`Could not find the function public.${fn} in the schema cache`);
+    const p = server.anyone(args.p_key);
+    const owner = p.role === 'owner';
+    if (fn === 'owner_alert_settings') return { ok: true, ...push.settings, canEdit: owner };
+    if (fn === 'owner_save_alert_settings') {
+      if (!owner) throw new Refusal('OWNER_ONLY');
+      push.settings = { mode: args.p_mode, minute: args.p_minute, weekday: args.p_weekday };
+      return { ok: true, ...push.settings, canEdit: true };
+    }
+    if (fn === 'owner_save_web_push') {
+      push.devices.set(args.p_endpoint, args.p_key);
+      return { ok: true, on: true };
+    }
+    if (fn === 'owner_clear_web_push') {
+      push.devices.delete(args.p_endpoint);
+      return { ok: true, on: false, removed: 1 };
+    }
+    return { ok: true, on: push.devices.get(args.p_endpoint) === args.p_key };
+  };
+  return push;
+}
+
+/** A browser that can get pushes: the permission (kept across reloads), the page's service worker and its push parts. */
+async function pushBrowser(page, endpoint) {
+  await page.route('**/api/push/web-key', (route) =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ key: 'B'.repeat(86) + 'A' }) }),
+  );
+  await page.addInitScript((end) => {
+    const perm = () => localStorage.getItem('e2e.notifyPermission') || 'default';
+    class FakeNotification {
+      static get permission() {
+        return perm();
+      }
+      static requestPermission() {
+        localStorage.setItem('e2e.notifyPermission', 'granted');
+        window.__asked = (window.__asked || 0) + 1;
+        return Promise.resolve('granted');
+      }
+      close() {}
+    }
+    window.Notification = FakeNotification;
+    if (!('PushManager' in window)) window.PushManager = function PushManager() {};
+    const sub = {
+      endpoint: end,
+      toJSON: () => ({ endpoint: end, keys: { p256dh: 'B'.repeat(87), auth: 'A'.repeat(22) } }),
+      unsubscribe: async () => {
+        localStorage.removeItem('e2e.subscribed');
+        return true;
+      },
+    };
+    const pushManager = {
+      getSubscription: async () => (localStorage.getItem('e2e.subscribed') ? sub : null),
+      subscribe: async (opts) => {
+        window.__subscribedWithKey = opts.applicationServerKey.length;
+        localStorage.setItem('e2e.subscribed', '1');
+        return sub;
+      },
+    };
+    const reg = { pushManager };
+    Object.defineProperty(navigator, 'serviceWorker', {
+      configurable: true,
+      value: { getRegistration: async () => reg, ready: Promise.resolve(reg), register: async () => reg, addEventListener() {}, controller: null },
+    });
+  }, endpoint);
+}
+
+test('Alerts with the admin app closed: the offer on Today, the device switch, when the rest come, the desk', async ({ page, browser }) => {
+  await pushBrowser(page, 'https://fcm.googleapis.com/fcm/send/e2e-owner-phone');
+  const server = await openApp(page);
+  const push = installWebPush(server);
+  push.on = true;
+  await startOnlineGym(page);
+  const main = page.getByRole('main');
+
+  // 6. The offer, once.
+  const offer = main.getByTestId('alerts-offer');
+  await expect(offer).toContainText('Get alerts on this device', { timeout: 15_000 });
+  await expect(offer).toContainText('even when the admin app is closed');
+  expect(await page.evaluate(() => window.__asked ?? 0), 'the browser is never asked before the tap').toBe(0);
+  await expectFitsPhone(page, 'on Today with the alerts offer');
+  await shot(page, 'phone-alerts-4-offer');
+  await offer.getByRole('button', { name: 'Turn on alerts' }).click();
+  await expect(offer).toContainText('Alerts are on for this device.');
+  expect(await page.evaluate(() => window.__subscribedWithKey)).toBe(65);
+  const saved = server.log.filter((c) => c.fn === 'owner_save_web_push');
+  expect(saved).toHaveLength(1);
+  expect(saved[0].args).toMatchObject({ p_endpoint: 'https://fcm.googleapis.com/fcm/send/e2e-owner-phone', p_p256dh: 'B'.repeat(87), p_auth: 'A'.repeat(22) });
+  await offer.getByRole('button', { name: 'OK' }).click();
+  await expect(main.getByTestId('alerts-offer')).toHaveCount(0);
+  await page.reload();
+  await expect(page.getByRole('heading', { name: 'Today', exact: true })).toBeVisible({ timeout: 15_000 });
+  await page.waitForTimeout(500);
+  await expect(main.getByTestId('alerts-offer'), 'never offered again').toHaveCount(0);
+
+  // 7. Settings: on for this device; the owner's choice.
+  await page.evaluate(() => {
+    window.location.hash = '/settings';
+  });
+  const card = main.getByTestId('alerts-device');
+  await expect(card).toContainText('Alerts are on for this device.', { timeout: 15_000 });
+  const when = main.getByTestId('alerts-when');
+  await expect(when).toContainText('Daily at 11:00 am');
+  await when.getByRole('button', { name: 'Once a week' }).click();
+  await when.getByLabel('Day').selectOption({ label: 'Sunday' });
+  await when.getByLabel('Time').selectOption({ label: '8:00 pm' });
+  await expect(when).toContainText('Weekly on Sunday at 8:00 pm');
+  await when.getByRole('button', { name: 'Save' }).click();
+  await expect(when).toContainText('Saved.');
+  expect(push.settings).toEqual({ mode: 'weekly', minute: 1200, weekday: 0 });
+  await card.scrollIntoViewIfNeeded();
+  await expectFitsPhone(page, 'on Settings with the alerts card');
+  await shot(page, 'phone-alerts-5-settings', false);
+  await card.getByRole('button', { name: 'Turn off on this device' }).click();
+  await expect(card).toContainText('Alerts are off for this device.');
+  expect(push.devices.size).toBe(0);
+
+  // 8. The desk: their own switch; the owner's choice in words only.
+  await addDeskPerson(page);
+  const desk = await secondPhone(browser, server);
+  await signIn(desk, DESK.phone);
+  await desk.evaluate(() => {
+    window.location.hash = '/settings';
+  });
+  const deskMain = desk.getByRole('main');
+  await expect(deskMain.getByTestId('alerts-when-readonly')).toContainText(
+    'Your gym gets everything else together, every Sunday at 8:00 pm. Only the owner can change when they come.',
+    { timeout: 15_000 },
+  );
+  await expect(deskMain.getByTestId('alerts-when')).toHaveCount(0);
+  await shot(desk, 'phone-alerts-6-desk-settings');
 });

@@ -25,6 +25,7 @@ import { rpc } from './db.js';
 import { nightlyWeb } from './web.js';
 import { handlePushKick, runPush } from './push.js';
 import { feedCalls, feedFeeRequests, feedPaidOnline } from './payFeed.js';
+import { panelPushKey, runPanelPush } from './panelPush.js';
 import { backupStatus, runBackup } from './backup.js';
 import { handleBilling, runBillingDaily, runBillingReconcile } from './billing.js';
 
@@ -228,6 +229,9 @@ export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
     if (url.pathname === '/push/run') return secure(handlePushKick(request, env, ctx));
+    // R-506 (0076): the public key browsers subscribe with, for the gym admin app (forwarded by the panel Worker,
+    // /api/push/web-key). Public by nature; no sign-in. 503 until the VAPID_PRIVATE_JWK secret is set.
+    if (url.pathname === '/push/web-key' && request.method === 'GET') return secure(webKey(env));
     // The nightly backup's health, no sign-in: only whether it is fresh and when (backup.js). The watch reads it.
     if (url.pathname === '/backup/status' && request.method === 'GET') return secure(await backupStatus(env));
     // Billing step 3 (billing.js, OFF until its settings exist): the owner's online purchase (forwarded by the
@@ -246,10 +250,20 @@ export default {
   },
 };
 
+export function webKey(env) {
+  const key = panelPushKey(env);
+  return new Response(JSON.stringify(key ? { key } : { error: 'NOT_SET_UP' }), {
+    status: key ? 200 : 503,
+    headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': key ? 'public, max-age=3600' : 'no-store' },
+  });
+}
+
 /**
  * The every-minute run. R-507 (supabase 0073): first the desk's new fee requests become member notes
  * (payFeed.js), so the phone pop-ups below send them in the same run. R-506 (0075): then what members paid online
- * becomes a gym alert. Each feed uses at most one server call, taken off the pop-ups' call budget. Never throws.
+ * becomes a gym alert. Each feed uses at most one server call, taken off the pop-ups' call budget. R-506 (0076):
+ * then the gym's alerts go to the staff's browsers (panelPush.js, at most PANEL_PUSH_SUBREQUESTS calls, also taken
+ * off the pop-ups' budget). Never throws.
  */
 export async function everyMinute(env, deps = {}) {
   const feedDeps = { fetchImpl: deps.fetchImpl, now: deps.now ? deps.now() : Date.now() };
@@ -264,6 +278,12 @@ export async function everyMinute(env, deps = {}) {
     } catch (e) {
       console.error(`[hq-cron] ${name} feed failed`, e instanceof Error ? e.message : 'error');
     }
+  }
+  try {
+    const panel = await runPanelPush(env, feedDeps);
+    spent += Number(panel && panel.calls) || 0;
+  } catch (e) {
+    console.error('[hq-cron] admin app alerts failed', e instanceof Error ? e.message : 'error');
   }
   return runPush(env, { ...deps, spent });
 }

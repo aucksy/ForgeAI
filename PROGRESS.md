@@ -1,6 +1,34 @@
 # ForgeAI progress
 
 ## Waiting for release (R-266: tag only when the owner says "release")
+- R-506/R-510 PHASE 3, ADMIN-APP ALERTS WITH THE APP CLOSED + WHEN THE REST COME (same yes as phase 1).
+  supabase/migrations/0076_panel_web_push.sql (NOT APPLIED; apply after 0075): gym_web_push (one browser per sign-in
+  key: owner key, or a staff sign-in from gym_sessions; RLS on, no grants; push company hosts allowlisted: FCM,
+  Mozilla, Apple, Windows; 30 per gym) and gym_alert_settings (mode instant|daily|weekly, minute of the day IST,
+  weekday 0=Sunday; default daily 11:00 am). Owner-key functions: owner_save_web_push, owner_clear_web_push,
+  owner_web_push_on, owner_alert_settings, owner_save_alert_settings (owner only). HQ only (service_role):
+  hq_panel_push_instant (urgent alerts at once: complaint (owner only), check-in number, shop order, referred friend,
+  a pause/renew request when the plan ends in 3 days or less; everything at once when the gym picked Instantly;
+  sent_at marked in the same statement, skip locked, so never twice; older than 6 h = late, not sent),
+  hq_panel_digest_gyms, hq_panel_digest_claim (atomic last_digest_at claim per slot: a second run gets claimed=false;
+  one alert = its own words and page; more = "N new updates from your members" opening Today), hq_panel_drop_push
+  (gone browsers). Each browser only gets what its sign-in may see (0075 _alert_visible); a signed-out sign-in's
+  browsers are dropped. HQ Worker: deploy/hq/webpush.js (RFC 8291 aes128gcm + RFC 8292 VAPID, checked byte for byte
+  against the RFC example), deploy/hq/panelPush.js (every minute after the feeds: instant first, then each gym whose
+  daily/weekly slot has come, IST; calls counted into the shared budget, PANEL_PUSH_SUBREQUESTS default 12),
+  GET /push/web-key (public key only). Panel Worker: /api/push/web-key via the HQ_PUSH binding (deploy/panel/webKey.js).
+  Admin app: public/sw.js shows the push and a tap opens its page (same tag as the in-page notice, so never two);
+  Today offers "Get alerts on this device" once (the browser asks only after the tap); Settings card "Alerts from your
+  members": this device on/off, and the owner picks Instantly / Once a day at a time / Once a week on a day at a time;
+  the desk and trainers see the choice read only. iPhone: needs the Home Screen app first (says so). Hidden until 0076
+  is on the server (PGRST202 remembered) and in the demo gym. Key: scripts/vapid-keygen.mjs writes a new P-256 key
+  straight into the secret (never shown). Tests: supabase/tests/0076_panel_web_push.sql (13 sections),
+  webpush.test.mjs (5), panelPush.test.mjs (9), webKey.test.mjs (3), test/crm/webPush.test.ts (7, incl. sw.js),
+  e2e/alerts-uat.spec.mjs journey 2 (offer, settings, desk; pictures phone-alerts-4..6). LIVE (owner), in order:
+  SQL Editor 0073, 0075, 0076; `node scripts/vapid-keygen.mjs | npx wrangler secret put VAPID_PRIVATE_JWK --config
+  deploy/hq/wrangler.jsonc`; deploy forgeai-hq (deploy/hq); deploy the panel Worker (deploy/panel, ships the admin
+  app); then move ADMIN_NEWS_PENDING 'pending-member-alerts' into ADMIN_NEWS. Member app What's new line is the
+  phase 1 entry's. Not added: a qa-device part for member pop-ups (the device QA's server has no 0073 until LIVE).
 - R-506/R-510 PHASE 2, MEMBER -> GYM ALERTS LIST (same yes as phase 1). supabase/migrations/0075_gym_alerts.sql (NOT
   APPLIED; apply after 0073): one locked table gym_alerts (RLS on, no grants) filled by triggers, one row per event
   (unique tag), each with the server's own plain line and the panel page it opens: a trainer question

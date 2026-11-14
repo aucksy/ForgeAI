@@ -100,3 +100,54 @@ async function file(req) {
     throw err;
   }
 }
+
+// R-506 phase 3 (supabase 0076): the gym's alerts with the admin app CLOSED (Web Push from the HQ Worker,
+// deploy/hq/panelPush.js). A message is { title, body, route, tag }. The tag is the same one the open page's own notice
+// uses (ui/NeedsYou.tsx), so one alert never shows twice. A tap opens that page of the admin app (an open tab is reused).
+const ROUTE = /^\/[A-Za-z0-9/_-]{0,100}$/;
+
+/** A push's words and page, checked (pure; also read by test/crm/webPush.test.ts). */
+function pushNotice(m) {
+  const o = m && typeof m === 'object' ? m : {};
+  return {
+    title: typeof o.title === 'string' && o.title.trim() ? o.title.slice(0, 80) : 'MettleUp: news from your members',
+    body: typeof o.body === 'string' && o.body.trim() ? o.body.slice(0, 240) : 'Open the admin app to see what is new.',
+    route: typeof o.route === 'string' && ROUTE.test(o.route) ? o.route : '/',
+    tag: typeof o.tag === 'string' && o.tag ? o.tag.slice(0, 80) : 'mettleup-alert',
+  };
+}
+
+self.addEventListener('push', (e) => {
+  let m = null;
+  try {
+    m = e.data ? e.data.json() : null;
+  } catch (err) {
+    console.warn('[sw] a push that is not JSON', err);
+  }
+  const n = pushNotice(m);
+  e.waitUntil(
+    self.registration.showNotification(n.title, { body: n.body, tag: n.tag, icon: '/icons/admin-192.png', badge: '/icons/admin-192.png', data: { route: n.route } }),
+  );
+});
+
+self.addEventListener('notificationclick', (e) => {
+  e.notification.close();
+  const route = pushNotice({ route: e.notification.data && e.notification.data.route }).route;
+  const url = new URL(`/#${route}`, self.location.origin).href;
+  e.waitUntil(
+    (async () => {
+      const open = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+      for (const c of open) {
+        if (new URL(c.url).origin !== self.location.origin) continue;
+        await c.focus();
+        try {
+          await c.navigate(url);
+        } catch (err) {
+          console.warn('[sw] could not open the page in the open tab', err);
+        }
+        return;
+      }
+      await self.clients.openWindow(url);
+    })(),
+  );
+});

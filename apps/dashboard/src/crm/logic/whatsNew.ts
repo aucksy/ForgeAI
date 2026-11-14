@@ -491,8 +491,8 @@ function notifyNewsSeen(): void {
  */
 export const ADMIN_NEWS_PENDING: readonly AdminNewsEntry[] = [
   {
-    // R-506/R-510, 14 Nov 2026: the gym's alerts (0075). Moves to ADMIN_NEWS when 0075 is live, the HQ Worker and the
-    // admin panel are deployed.
+    // R-506/R-510, 14 Nov 2026: the gym's alerts (0075, 0076). Moves to ADMIN_NEWS when 0075 and 0076 are live, the
+    // HQ Worker has its VAPID_PRIVATE_JWK secret and is deployed, and the admin panel is deployed.
     id: 'pending-member-alerts',
     lines: [
       {
@@ -500,6 +500,12 @@ export const ADMIN_NEWS_PENDING: readonly AdminNewsEntry[] = [
       },
       {
         text: 'Needs you on Today now also counts member questions and member messages waiting for your reply. With alerts on, you hear a sound and see a notice when a new one comes in.',
+      },
+      {
+        // R-506 phase 3 (0076): Web Push. Moves with the lines above, once 0076 and the VAPID key are live too.
+        text: 'New: alerts on your phone or computer even when the admin app is closed. Complaints, check-in numbers and shop orders come at once. Turn them on, and pick when the rest come, in Settings.',
+        go: { label: 'Open Settings', path: '/settings' },
+        feature: true,
       },
     ],
   },

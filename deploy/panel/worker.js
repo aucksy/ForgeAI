@@ -23,6 +23,7 @@
 // Every day at 03:00 India time (Cron Trigger, wrangler.jsonc) crash reports older than 90 days are
 // deleted (#72, the privacy notice says so).
 //  - /api/billing/checkout  "Pay online" for a MettleUp plan, forwarded to the HQ Worker (billing.js, billing step 3).
+//  - /api/push/web-key     the public key for the admin app's alerts with the app closed (webKey.js, R-506).
 //  - /api/lead      the landing page's "free demo" form (leads.js, launch I3; the page is /home/).
 //  - /api/ai/match-columns  "Ask AI to match the columns" in the member import (aiMatch.js, #47).
 //  - /api/assist, /api/assist/rewrite, /api/assist/voice, /api/assist/plan  the owner's AI assistant (assist.js, F201): a sentence ->
@@ -47,6 +48,7 @@ import { handleMatchColumns } from './aiMatch.js';
 import { handleAssist, handleAssistPlan, handleAssistRewrite, handleAssistVoice } from './assist.js';
 import { handlePay, scheduledPay } from './pay.js';
 import { handleBillingCheckout } from './billing.js';
+import { handleWebKey } from './webKey.js';
 import { deleteOldPhoneCodes, handlePhoneCode } from './phoneCode.js';
 import { deleteOldInbound } from './phoneInbound.js';
 import { handleWhatsAppHook } from './whatsappHook.js';
@@ -118,6 +120,8 @@ export default {
     if (url.pathname.startsWith('/api/pay/')) return handlePay(request, env, url);
     // Billing step 3: a gym owner buys a MettleUp plan online; forwarded to the HQ Worker (billing.js). Off until HQ is set up.
     if (url.pathname === '/api/billing/checkout') return handleBillingCheckout(request, env);
+    // R-506 (0076): the PUBLIC key the admin app's browsers subscribe to alerts with, from the HQ Worker (webKey.js).
+    if (url.pathname === '/api/push/web-key') return handleWebKey(request, env);
     // F187 (R-383): sign-in codes by WhatsApp (phoneCode.js). Off ("available: false") until the token is in place.
     if (url.pathname.startsWith('/api/phone-code/')) return handlePhoneCode(request, env, url, rpc, { ctx });
     // R-392: Meta's news about each WhatsApp message (delivered / failed + why). Logs only (whatsappHook.js).
