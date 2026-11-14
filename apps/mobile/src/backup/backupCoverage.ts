@@ -76,6 +76,7 @@ export const STORAGE_LEFT_OUT: Readonly<Record<string, string>> = {
   'mettleup.newDotsSeen.v1': 'which new-feature dots this phone has cleared (F198; a new phone shows them again, still inside their 30 days)',
   'mettleup-look': 'light or dark, a choice about this phone (a new phone starts on "Same as phone")',
   'forgeai.askTrainer.seenReplies': 'which trainer replies this phone has already shown (R-319; the replies live with the gym)',
+  'forgeai.askTrainer.alertedReplies': 'which gym replies this phone already popped up (R-533; the replies live with the gym)',
   'forgeai-free-limits': 'gym server flag (tracker #43, retired by F56; may linger on old phones)',
   'mettleup-member-plan': "MettleUp Plus on this phone (F56, R-461): the free month's first day, the gym and staff unlock (proved again on a new phone) and what Google Play said (asked again; \"I already paid\")",
   'forgeai-shop': 'gym shop cart',
