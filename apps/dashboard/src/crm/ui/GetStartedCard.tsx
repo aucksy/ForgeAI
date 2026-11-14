@@ -137,7 +137,8 @@ export function ProgressRing({ progress, size = 16 }: { progress: SetupProgress;
   const share = progressShare(progress);
   return (
     <svg data-setup-ring="" width={size} height={size} viewBox={`0 0 ${size} ${size}`} aria-hidden style={{ flexShrink: 0, display: 'block' }}>
-      <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={color.borderStrong} strokeWidth={stroke} />
+      {/* UAT (14 Nov 2026): a grey track all but vanished on the dark menu at 0 done; a faint green one reads as "to do". */}
+      <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={color.good} strokeOpacity={0.32} strokeWidth={stroke} />
       {share > 0 ? (
         <circle
           cx={size / 2}

@@ -202,7 +202,9 @@ for (const { name, size } of [...DESKTOPS, { name: '1920x1080', size: { width: 1
       await expect(page.getByRole('main').getByRole('radiogroup', { name: 'Screen colours' })).toBeVisible();
 
       const names = await expectEveryRowClickable(page, `at ${name}`);
-      // Scrolled to the end: no "More below", and "Help and feedback" sits whole above What's new.
+      // Scrolled to the end: no "More below", and "Help and feedback" sits whole above What's new. (Bringing the last
+      // row into view centres it, which can stop short of the end now the menu has group headings.)
+      await rows.evaluate((el) => el.scrollTo({ top: el.scrollHeight }));
       await expect(more).toHaveCount(0);
       await shot(page, `computer-${name}-menu-end`);
       console.log(`[r447] ${name}: ${names.length} rows: ${names.join(', ')}`);

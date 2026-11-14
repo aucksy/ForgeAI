@@ -95,7 +95,8 @@ test.describe('R526 on a computer', () => {
     await menuShot(page, 'computer-menu-pending');
 
     // Folding Members shows the sum of its rows' numbers on the heading.
-    const membersHead = menu.getByRole('button', { name: 'Members', exact: true });
+    // Folded, the heading's name carries its number too ("Members 5"), as a row's does.
+    const membersHead = menu.getByRole('button', { name: /^Members\b/ });
     const rowBadges = await menu.getByRole('group', { name: 'Members' }).getByRole('link').evaluateAll((links) =>
       links.map((a) => Number((a.textContent ?? '').match(/(\d+)\+?$/)?.[1] ?? 0)),
     );

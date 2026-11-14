@@ -125,7 +125,8 @@ function Sidebar({ gymName, nav, activePath }: { gymName: string; nav: NavItem[]
   // too short even so, "More below" says so and scrolls the menu on.
   const short = useMediaQuery('(max-height: 820px)');
   const shorter = useMediaQuery('(max-height: 740px)');
-  const rowHeight = shorter ? 28 : short ? 30 : 36;
+  // R-526: 34 (not 36) on a tall window, so the five group headings still let a 1080-px-high window show every row.
+  const rowHeight = shorter ? 28 : short ? 30 : 34;
   const list = useRef<HTMLDivElement>(null);
   // R-526: the five groups; a tap on a heading folds or opens it, kept in this browser (logic/navGroups.ts).
   const sections = useMemo(() => navSections(nav), [nav]);
@@ -331,8 +332,8 @@ function GroupHeading({
         alignItems: 'center',
         gap: 6,
         width: '100%',
-        minHeight: short ? 20 : 24,
-        margin: short ? `${space.sm}px 0 0` : `${space.md}px 0 2px`,
+        minHeight: short ? 18 : 20,
+        margin: short ? '6px 0 0' : `${space.sm}px 0 0`,
         padding: `0 ${space.md}px`,
         border: 'none',
         borderRadius: radius.sm,
@@ -522,7 +523,8 @@ function BottomNav({ nav, menuPaths, activePath }: { nav: NavItem[]; menuPaths: 
                   style={{ position: 'absolute', top: 4, lineHeight: 0, ...(item.badge ? { left: '50%', marginLeft: -24 } : { right: '50%', marginRight: -22 }) }}
                 >
                   <ProgressRing progress={item.progress} size={14} />
-                  <span style={visuallyHidden}>{progressWords(item.progress)}</span>
+                  {/* Named, so a screen reader says "More, 1, Set up your gym: 3 of 8 steps done", never "More 13 of 8". */}
+                  <span style={visuallyHidden}>{`${t('Set up your gym')}: ${progressWords(item.progress)}`}</span>
                 </span>
               ) : null}
               {/* With a badge and the ring both on More, the new-feature dot waits: the ring already says "look here". */}
@@ -550,8 +552,9 @@ function BottomNav({ nav, menuPaths, activePath }: { nav: NavItem[]; menuPaths: 
 /** R-526: the set-up mark in a menu row: the ring and "3/8", with the whole words for a screen reader. */
 function SetupMark({ progress }: { progress: SetupProgress }) {
   return (
-    <span data-setup-mark="" style={{ display: 'inline-flex', alignItems: 'center', gap: 5, flexShrink: 0 }}>
-      <ProgressRing progress={progress} size={15} />
+    // A smaller gap before the mark than between the other parts, so "Set up your gym" stays on one line in English.
+    <span data-setup-mark="" style={{ display: 'inline-flex', alignItems: 'center', gap: 4, flexShrink: 0, marginLeft: -6 }}>
+      <ProgressRing progress={progress} size={14} />
       <span aria-hidden style={{ fontFamily: font.body, fontSize: 12, fontWeight: 700, color: color.inkSecondary, fontVariantNumeric: 'tabular-nums' }}>
         {progressShort(progress)}
       </span>

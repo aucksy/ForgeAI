@@ -187,7 +187,8 @@ test('Member messages: not ready, the list, types, reply, done, the desk, a gone
   await expect(main.getByText('This message is no longer here, so nothing was sent or changed. The member may have left the gym.')).toBeVisible();
   await expect(cards.filter({ hasText: 'Ravi Kumar' })).toHaveCount(0);
   // The menu badge drops with it (it read 2 here before the fix: only the anonymous feedback waits).
-  await expect(page.getByRole('link', { name: /^More\s*\d*$/ })).toHaveText(/^More\s*1$/);
+  // R-526: an owner's More may also carry the Set up your gym ring, whose words follow the number.
+  await expect(page.getByRole('link', { name: /^More\b/ })).toHaveText(/^More\s*1(?!\d)/);
   await expectFitsPhone(page, 'after a gone message');
   await shot(page, 'phone-member-messages-8-gone');
   // And Today's "Needs you" with it.
