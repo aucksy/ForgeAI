@@ -87,12 +87,12 @@ async function openPlan(page, device, title, n, { kcal, protein, food, line }) {
   await notes.scrollIntoViewIfNeeded();
   await shot(page, `${device}-${n}-${food}-notes`);
   console.log(`[r532] ${title}: ${(await notes.inputValue()).length} letters of notes`);
-  // Typing another line makes the box taller straight away, so the new line is not hidden either.
+  // Typing more lines makes the box taller straight away, so the new lines are not hidden either. Four lines, because
+  // the first meal has 2 short lines and one more still fits inside the box's 80 px least height.
   const box = b.getByLabel('Food, one per line').first();
   const before = await box.evaluate((e) => e.clientHeight);
-  await box.press('End');
   await box.evaluate((e) => e.setSelectionRange(e.value.length, e.value.length));
-  await box.pressSequentially('\n1 cup green tea, no sugar');
+  await box.pressSequentially(['1 cup green tea, no sugar', '1 apple (150 g)', '10 g roasted chana', '1 glass water'].map((l) => '\n' + l).join(''));
   await expect.poll(() => box.evaluate((e) => e.clientHeight)).toBeGreaterThan(before);
   expect(await box.evaluate((e) => e.scrollHeight <= e.clientHeight + 1)).toBe(true);
   await press(b.getByRole('button', { name: 'Cancel' }), device);
