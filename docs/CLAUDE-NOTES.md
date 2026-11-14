@@ -10,7 +10,7 @@ Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept her
 ## R-511. LIVE yes for the Ask-a-trainer lock (R-505) — 14 Nov 2026
 I asked: "Say yes if I can add the Ask a trainer lock to the live database." He said (14 Nov 2026, chat): "yes."
 Covers ONLY the R-505 migration (member ask function refuses NO_PLAN for pass / no-plan / ended-plan members). I apply it live after the helper's CI is green, then test it like a member.
-
+
 APPLIED LIVE 14 Nov 2026 ~06:26 UTC: 0074_ask_trainer_paid_plan.sql from GitHub raw at a130962e (4,487 bytes, matched) in the Supabase SQL Editor: "Success. No rows returned". Before: 23 gyms (all trial), 5 active members, 1 trainer question ever. Live tests: 0074 RESULT PASS (21 checks), 0053 RESULT PASS (68 checks), both rolled back. After: member_ask_trainer has NO_PLAN; _tq_plan_ok not executable by anon/authenticated; members 5, questions 1 (gyms 24: a CI run created a trial gym at 06:27, not the tests). Phone test ugym run 43566476748.
 ## R-510. Notifications both directions: his yes to A + LIVE change — 14 Nov 2026
 He said (14 Nov 2026, chat): "yes to A (my pick): Build both directions together, with the live database change."
