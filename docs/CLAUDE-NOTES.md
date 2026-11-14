@@ -7,6 +7,13 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-509. Cross-app notification audit (for R-506/R-507) — 14 Nov 2026
+Read-only audit done; shown to him before any build. Findings:
+- Member -> panel: the panel has NO real web push (only in-tab Notification while the tab is open). Trainer questions and "Message your gym" never ring at all (only a menu count refreshed every 3 min while visible; Needs you never fed questions, TODO 0053). Plan requests, check-in numbers (0048), shop orders ring only while the tab is open. Paid online, requested workout report (0045), member joined with code, referred friend (0056): no alert.
+- Panel -> member: gym message, trainer reply, gym reply, plan decision/report asked/order status, team reply already push (Android only; iPhone pushes still off). NO push for: new workout plan (0024), new diet plan (0035), measurements (0035), new challenge (0037), fee request (pay.js), PT session booked (0065, not even shown). Gym messages from the 3rd of the day get no pop-up (0042 rule) - passed to the pop-up helper as a lead for R-501.
+- Proposed: instant = complaint (owner), check-in number, shop order, referral, plan request if plan ends in <=3 days; digest = trainer questions, questions/feedback, plan requests, paid online, report sent, joins. Default digest 11:00 am IST (after the morning rush, desk time); settings Instantly / Daily at time / Weekly on day at time.
+- Build needs: panel service worker web push + permission ask, push-address table, gym-alerts table filled by triggers, digest settings, every-minute timer sends digests, member push triggers on plans/diet/measurements/challenges. Tables + triggers = LIVE change, needs his yes.
+
 ## R-508. Desk check: A — 14 Nov 2026
 He said: "yes - go with A". So: the check-in desk confirmation (0048) is removed in the SAME version that adds WhatsApp proof (F203); until then the check-in screen says it waits for the desk, shows the typed number, checks again by itself and checks in when the desk says yes (R-503 item 1, queued). His yes to approve his own pending number: when I opened Today the "Numbers to confirm" card was already gone (approved already), so nothing to click.
 
