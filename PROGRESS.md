@@ -193,6 +193,17 @@
   Phone test runner: `only` naming a part of the A..R chain that leans on earlier parts now brings them in (only=r runs
   a ... p9 first). Run 43562670140 (only=r,u199) failed because part R started from the demo with no part L, so no
   "Jaipur (6)" folder; no app change caused it. test_flow_tools checks the runner's lists match flows_to_check.py.
+- R-516: THE LIVE BOX IS TWO LINES AND A BAR (owner, 14 Nov 2026, "build it"). While a working set is open the
+  exercise card's Target box reads "Previous set volume: 840 kg · Today's target: 880 kg" (his words: "volume" and
+  "Today's" are his exception on this line only, memberWords allows exactly "Previous set volume:"), then a thin
+  orange bar on a darker track with "720 kg done · 160 kg to go"; past the target with a set still open
+  "+40 kg over target" and a full bar. No "Next set: ..." words (the set row shows them). Previous = every working
+  set of the previous workout added up; Today's target = this workout's goals added up. Every set ticked: the green
+  R-498 box exactly as before (or "... less, fine for this workout"). Reps-only moves the same in reps ("Previous
+  reps: 39 · Today's target: 40" / "31 reps done · 9 to go"). Line 1 wraps at a large text size, never cut.
+  lib/kgTarget liveBox + KgPlan.previous; ExerciseLogCard draws it. Test r516LiveBox (10: start, mid, over, on
+  target, done, reps, weight step, first time). UAT flows: uat-rel-3, uat-rel-4, uat-rel-r366-b, uat-rel-r454-b
+  (new over-target picture rel-r454-d2), uat-rel-r454-c.
 - R-515: THE TARGET'S WORDS SAY WHAT EACH SET DOES (owner, 14 Nov 2026, Dumbbell Curl 20 kg x 18, 13, 11: the
   box said "15, 14, 12" and "Add 1 rep to each set under 15" - "suggesting something else"). His phone runs 0.77.0,
   before R-454's floor; on main set 1 already keeps 18. Now the same-weight line is set by set (engine/progression

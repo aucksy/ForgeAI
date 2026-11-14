@@ -27,8 +27,8 @@ appId: com.mettleup.app
     env:
       FIND: '^Target 60 kg · .*Tap for why\.$'
 # R-351: the kg to beat is 60 x (10 + 9 + 7) = 1,560 kg, over last time's 60 x 24 = 1,440 kg. With the
-# workout open the label carries the live line (run 41988716247 read it).
-- assertVisible: "^Target 60 kg · 10, 9, 7( · RPE \\d+)?\\. Next set: 60 kg × 10 · Done: 0 of 1,560 kg\\. Tap for why\\.$"
+# workout open the label carries the live box (R-516: "Previous set volume ... Today's target ..." and "0 kg done").
+- assertVisible: "^Target 60 kg · 10, 9, 7( · RPE \\d+)?\\. Previous set volume: 1,440.kg · Today's target: 1,560.kg\\. 0.kg done · 1,560.kg to go\\. Tap for why\\.$"
 - takeScreenshot: rel-20-bench-goals-standard
 # Launch audit 3 Nov 2026 (#7): the line above the sets says where PREVIOUS comes from as "Previous:
 # <day> · <workout>", never "Last:" (owner rule: "Previous", never "Last", where the sets are).
@@ -89,8 +89,8 @@ appId: com.mettleup.app
     env:
       FIND: '^Target 60 kg · .*Tap for why\.$'
 # R-351: the kg to beat is 60 x (10 + 9 + 7) = 1,560 kg, over last time's 60 x 24 = 1,440 kg. With the
-# workout open the label carries the live line (run 41988716247 read it).
-- assertVisible: "^Target 60 kg · 10, 9, 7( · RPE \\d+)?\\. Next set: 60 kg × 10 · Done: 0 of 1,560 kg\\. Tap for why\\.$"
+# workout open the label carries the live box (R-516: "Previous set volume ... Today's target ..." and "0 kg done").
+- assertVisible: "^Target 60 kg · 10, 9, 7( · RPE \\d+)?\\. Previous set volume: 1,440.kg · Today's target: 1,560.kg\\. 0.kg done · 1,560.kg to go\\. Tap for why\\.$"
 - takeScreenshot: rel-22-bench-goals-large
 # ---------------------------------------------------------------- R-350: no step-back cards, +1 a set
 - runFlow:

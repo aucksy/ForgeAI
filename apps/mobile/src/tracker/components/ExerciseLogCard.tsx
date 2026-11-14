@@ -56,7 +56,7 @@ import { HoldTimerSheet } from './HoldTimerSheet';
 import { PlateCalcSheet } from './PlateCalcSheet';
 import { RestPickerSheet } from './RestPickerSheet';
 import { cardSourceLine } from '../lib/previousSource';
-import { beatPlan, GREEN_LINE_BREAK, kgLiveLine, kgProgress, kgTickKey, lineGreen, repLiveLine } from '../lib/kgTarget';
+import { beatPlan, GREEN_LINE_BREAK, kgLiveLine, kgProgress, kgTickKey, lineGreen, liveBox, liveBoxShows, repLiveLine, type LiveBox } from '../lib/kgTarget';
 import { afterTick, SetRow, useRowLayout } from './SetRow';
 import { DragGrip } from './DragGrip';
 import { MachineDetailsRow } from './MachineDetailsRow';
@@ -290,12 +290,20 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
       kgPlanned,
       rowsRef.current.map((r) => ({ weightKg: r.set.weightKg, reps: r.set.reps, done: r.set.done, isWarmup: r.set.isWarmup, setType: r.set.setType, hintKg: r.fill?.weightKg, hintReps: r.fill?.reps })),
     );
+    const totalFmt = (kg: number) => `${fmtInt(Math.round(kgToDisplay(kg, units)))} ${weightUnit(units)}`;
+    // R-516 (owner, 14 Nov 2026, "build it"): while a working set is open, the box is "Previous set volume:
+    // 840 kg · Today's target: 880 kg" over a bar with "720 kg done · 160 kg to go" (no "Next set" words: the
+    // row shows them). Every set ticked: the finished line below (green R-498 words), as before.
+    const box: LiveBox | null = liveBoxShows(g) ? liveBox(kgPlanned, g, totalFmt) : null;
     return {
+      box,
       // Owner, 12 Nov 2026 (R-454): totals never say "each" ("Done: 0 of 1,800 kg", "1,800 kg done ·
       // Previous: 1,720 kg · +80 kg"); "each" stays on the per-set weight (KG EACH, "Suggested: 40 kg each").
-      text: kgPlanned.reps
-        ? repLiveLine(kgPlanned, g)
-        : kgLiveLine(kgPlanned, g, (kg) => `${fmtInt(Math.round(kgToDisplay(kg, units)))} ${weightUnit(units)}`, (kg) => fmtWeight(kg, units)),
+      text: box
+        ? `${box.head}${GREEN_LINE_BREAK}${box.done}`
+        : kgPlanned.reps
+          ? repLiveLine(kgPlanned, g)
+          : kgLiveLine(kgPlanned, g, totalFmt, (kg) => fmtWeight(kg, units)),
       // Owner, 12 Nov 2026: ONE rule for kilos and reps: green once every working set is ticked and the
       // total is at least last time's (more or the same), `lineGreen`.
       beaten: lineGreen(kgPlanned, g),
@@ -597,13 +605,16 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
                 fontSize: type.size.sub,
                 color: kgLine?.beaten ? color.goodText : color.accentBright,
               }}
-              numberOfLines={greenHead != null ? 5 : 3}
+              // R-516: line 1 may wrap at 360 dp and a large text size; never cut.
+              numberOfLines={kgLine?.box ? undefined : greenHead != null ? 5 : 3}
               // UAT u454: the phone test reads the line's words by this id (a text search missed the
               // green line on the owner-sized phone although it was on screen). R-498: the green line's two
               // lines are spans of this one text, so the id still reads both, joined by a line break.
               testID={`target-line-${exercise.name}`}
             >
-              {greenHead != null ? (
+              {kgLine?.box ? (
+                kgLine.box.head
+              ) : greenHead != null ? (
                 <>
                   {/* R-498 (owner, 14 Nov 2026): the shout first, big and bold ("Previous set volume beaten!
                       +200 kg"), then both totals, small and a little faded ("Done 1,650 kg · Previous 1,450 kg"). */}
@@ -622,6 +633,28 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
             ) : null}
             <Glyph name="info" size={16} color={showWhy ? color.accent : color.inkMuted} />
           </View>
+          {/* R-516: the progress bar (orange on a darker track, thin, rounded) and what is done / to go. Full once
+              the target is passed ("+40 kg over target"). The words wrap at a large text size, never cut. */}
+          {kgLine?.box ? (
+            <View style={{ gap: 4 }}>
+              <View
+                accessibilityElementsHidden
+                importantForAccessibility="no-hide-descendants"
+                style={{ height: 6, borderRadius: radius.pill, backgroundColor: color.borderStrong, overflow: 'hidden' }}
+              >
+                <View
+                  testID={`target-bar-${exercise.name}`}
+                  style={{ width: `${Math.round(kgLine.box.share * 1000) / 10}%`, height: 6, borderRadius: radius.pill, backgroundColor: color.accentBright }}
+                />
+              </View>
+              <Text
+                testID={`target-progress-${exercise.name}`}
+                style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkSecondary }}
+              >
+                {kgLine.box.done}
+              </Text>
+            </View>
+          ) : null}
           {/* R-73: the suggestion itself, one tap away. */}
           {showWhy && kgLine ? (
             <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkSecondary }}>

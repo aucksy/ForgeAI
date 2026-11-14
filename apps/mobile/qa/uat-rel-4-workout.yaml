@@ -25,12 +25,16 @@ appId: com.mettleup.app
 - assertVisible: 'Bench in use\. (Previous .+\. )?Next .+\. Back in .*'
 - takeScreenshot: rel-30-in-use-bench-set-1
 - runFlow: sub-uat-rest-clear.yaml
-# R-350/R-351 exact numbers: set 1 ticked at 60 kg x 10 = 600 kg of 1,560; set 2's goal is 9.
+# R-350/R-351 exact numbers: set 1 ticked at 60 kg x 10 = 600 kg of 1,560; set 2's goal is 9 (its row).
+# R-516: the box reads "Previous set volume: 1,440 kg · Today's target: 1,560 kg" over "600 kg done · 960 kg to go".
 # Negative: never "beaten" or "reached" with two sets to go.
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: "^Next set: 60 kg × 9 · Done: 600 of 1,560 kg$"
+      FIND: "^600.kg done · 960.kg to go$"
+# in-view: the same Target box as the line found just above.
+- assertVisible: "^Previous set volume: 1,440.kg · Today's target: 1,560.kg$"
+- assertNotVisible: "^Next set: .*"
 # Owner, 12 Nov 2026: past the plan the line reads "<done> kg done · Previous: <kg> · +<kg>"; green (every set
 # done, R-498) "Previous set volume beaten! ..." / "... matched". None of them with two sets to go.
 - assertNotVisible: "(?s).*(Today's 1,560 kg reached|kg done · Previous|Previous set volume (beaten|matched)).*"
@@ -99,7 +103,7 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-see.yaml
     env:
-      FIND: '^Next set: [0-9.]+ kg × [0-9]+ · .*'
+      FIND: '^[0-9,]+.kg done · [0-9,]+.kg to go$'
 - assertNotVisible: '(?i).*was very hard.*'
 - assertNotVisible: '(?i).*felt easy.*'
 - assertNotVisible: '(?i).*do not try for more.*'

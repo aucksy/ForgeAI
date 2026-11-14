@@ -100,6 +100,8 @@ export function activeAllow(features: Pick<Features, 'coach'>): typeof ALLOW {
 const OWNER_EXCEPTIONS: readonly { file: string; text: string; word: string }[] = [
   { file: 'src/tracker/lib/kgTarget.ts', text: 'Previous set volume beaten!', word: 'volume' },
   { file: 'src/tracker/lib/kgTarget.ts', text: 'Previous set volume matched', word: 'volume' },
+  // R-516 (owner, 14 Nov 2026, "build it"): the live box's first line, "Previous set volume: 840 kg · Today's target: 880 kg".
+  { file: 'src/tracker/lib/kgTarget.ts', text: 'Previous set volume:', word: 'volume' },
   { file: 'src/onboarding/components/WelcomeSetCard.tsx', text: 'Previous set volume beaten!', word: 'volume' },
 ];
 
@@ -152,9 +154,9 @@ describe('one word per idea — the guard', () => {
   it('R-498: the owner exception for "volume" is exactly the green line words, each still in use', () => {
     // Every exception is a real string in its file (a stale one is removed, never left to cover something else).
     for (const e of OWNER_EXCEPTIONS) expect(texts.some((t) => t.file === e.file && t.text === e.text), `${e.file}: ${e.text}`).toBe(true);
-    // Only "volume", only these two sentences: any other text in those files, or "volume" anywhere else, still fails.
+    // Only "volume", only these owner sentences (R-498 and R-516): any other text in those files, or "volume" anywhere else, still fails.
     expect(new Set(OWNER_EXCEPTIONS.map((e) => e.word))).toEqual(new Set(['volume']));
-    expect(new Set(OWNER_EXCEPTIONS.map((e) => e.text))).toEqual(new Set(['Previous set volume beaten!', 'Previous set volume matched']));
+    expect(new Set(OWNER_EXCEPTIONS.map((e) => e.text))).toEqual(new Set(['Previous set volume beaten!', 'Previous set volume matched', 'Previous set volume:']));
     expect(excepted({ file: 'src/tracker/lib/kgTarget.ts', line: 1, text: 'Total volume' }, 'volume')).toBe(false);
     expect(excepted({ file: 'src/app/today.tsx', line: 1, text: 'Previous set volume beaten!' }, 'volume')).toBe(false);
     expect(excepted({ file: 'src/tracker/lib/kgTarget.ts', line: 1, text: 'Previous set volume beaten!' }, 'session')).toBe(false);

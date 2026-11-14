@@ -68,6 +68,11 @@ export interface KgPlan {
   /** R-351: `total` is last time's total (the plan alone is under it). */
   atLast?: true;
   /**
+   * R-516: every working set of the previous workout added up (kg, or reps on a rep plan), whatever the
+   * set count; absent with no previous workout. The live box's "Previous set volume: 840 kg".
+   */
+  previous?: number;
+  /**
    * Last time's sets that this plan is compared with, added up, or null with nothing to compare.
    * R-138 (28 Oct 2026): with a different number of sets than last time, the first sets both have
    * (`compared` of them), set for set.
@@ -163,7 +168,8 @@ export function kgPlan(t: TargetIn, lastSets: readonly KgSet[]): KgPlan | null {
   // R-351 (owner, 5 Nov 2026): the kg to beat is never under last time's total. After a weight step
   // the plan (32.5 kg x 10, 10, 9 = 942.5) can be under it (30 x 13, 12, 10 = 1,050): the number to
   // pass is then last time's, and "beaten" means more than that.
-  return atLeastLast(sets, total, cmp);
+  const previous = last.reduce((a, s) => a + s.weightKg * s.reps, 0);
+  return { ...atLeastLast(sets, total, cmp), ...(previous > 0 ? { previous } : {}) };
 }
 
 /** R-351: a plan whose total is under last time's (over the same sets) aims at last time's. PURE. */
@@ -199,7 +205,8 @@ export function repPlan(t: TargetIn, lastSets: readonly KgSet[]): KgPlan | null 
   // A difference never against a different number of sets (2 of 3 done last time is not "+20");
   // R-138: set for set over the sets both have, the extra sets named apart.
   // R-366: as the kg (R-351), the reps to beat are never under last time's.
-  return { reps: true, ...atLeastLast(sets, total, compare(sets.map((s) => s.reps), last.map((s) => s.reps), total)) };
+  const previous = last.reduce((a, s) => a + s.reps, 0);
+  return { reps: true, ...atLeastLast(sets, total, compare(sets.map((s) => s.reps), last.map((s) => s.reps), total)), ...(previous > 0 ? { previous } : {}) };
 }
 
 /** The kilos to beat, else (R-60) the reps to beat; null when the exercise gets neither. PURE. */
@@ -550,4 +557,57 @@ export function kgLiveLine(p: KgPlan, g: KgProgress, total: TotalFmt, weight: We
   // "today's" ("Done: 0 of 1,800 kg"), never "last time" ("+5% on previous", "fine for this workout").
   const plan = `${weight(g.next[0].weightKg)} × ${g.next[0].reps}`;
   return `Next set: ${plan} · Done: ${doneN} of ${totalWords(p, total(p.total))}${g.short ? ' (a little less is fine)' : ''}`;
+}
+
+// R-516 (owner, 14 Nov 2026, "build it"): his own words for the live box's first line. OWNER EXCEPTION, like
+// R-498: "volume" and "Today's" on THIS line only (test/lib/memberWords.test.ts allows exactly these strings).
+const PREVIOUS_VOLUME = 'Previous set volume:';
+const PREVIOUS_REPS = 'Previous reps:';
+const TODAYS_TARGET = "Today's target:";
+
+/** R-516: the live box while a working set is still open (`liveBox`). */
+export interface LiveBox {
+  /** Line 1: "Previous set volume: 840 kg · Today's target: 880 kg" (no previous: "Today's target: 880 kg"). */
+  head: string;
+  /** Under the bar: "720 kg done · 160 kg to go", or past the target "920 kg done · +40 kg over target". */
+  done: string;
+  /** How much of the bar is filled, 0..1 (full once the target is passed). */
+  share: number;
+  over: boolean;
+}
+
+/**
+ * R-516 (owner, 14 Nov 2026: "the first line can be previous set volume and today's target and then we show a
+ * progress bar with how much kg done and how much remaining. and whatever we have after everything is done"):
+ * the orange box while a working set is open. Previous = the previous workout's working sets added up;
+ * Today's target = this workout's goals added up (the numbers the rows show, `planned` when R-351 lifted
+ * `total` to the previous total); done = the ticked sets. No "Next set" words: the set row shows that. Once
+ * every working set is ticked the card shows `kgLiveLine` / `repLiveLine` (the green R-498 box). Numbers keep
+ * their units on one line (`keepUnitsTogether`). PURE.
+ */
+export function liveBox(p: KgPlan, g: KgProgress, total: TotalFmt): LiveBox {
+  const reps = p.reps === true;
+  const fmt: TotalFmt = reps ? (n) => repsText(n) : total;
+  /** The "to go" / "over" amount: kilos keep their unit; reps are a bare number ("14 to go"). */
+  const amount: TotalFmt = reps ? (n) => `${Math.round(n)}` : total;
+  const target = p.planned ?? p.total;
+  const noise = reps ? 0 : g.noise ?? 0;
+  const head = [
+    ...(p.previous != null ? [`${reps ? PREVIOUS_REPS : PREVIOUS_VOLUME} ${reps ? `${Math.round(p.previous)}` : total(p.previous)}`] : []),
+    `${TODAYS_TARGET} ${reps ? `${Math.round(target)}` : total(target)}`,
+  ].join(' · ');
+  const diff = g.done - target;
+  const shownOver = amount(Math.abs(diff));
+  const over = diff > Math.max(1e-9, noise) && /[1-9]/.test(shownOver);
+  const left = Math.max(0, -diff);
+  const done = over
+    ? `${fmt(g.done)} done · +${shownOver} over target`
+    : `${fmt(g.done)} done · ${amount(left <= noise ? 0 : left)} to go`;
+  const share = over || target <= 0 ? (over ? 1 : 0) : Math.max(0, Math.min(1, g.done / target));
+  return { head: keepUnitsTogether(head), done: keepUnitsTogether(done), share, over };
+}
+
+/** R-516: a working set is still open, so the card shows the live box (`liveBox`), else the finished line. PURE. */
+export function liveBoxShows(g: KgProgress): boolean {
+  return (g.open ?? g.next.length) > 0;
 }
