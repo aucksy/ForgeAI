@@ -671,7 +671,30 @@ export function needsLines(d) {
     ['payments', d && d.paymentsWaiting, (n) => `${count(n, 'payment')} to confirm`, '#payments'],
     ['checks', d && d.paymentsToCheck, (n) => `${count(n, 'online payment')} to check (paid, but not added to a plan)`, '#payments'],
   ];
-  return lines.filter(([, n]) => Number(n) > 0).map(([key, n, words, href]) => ({ key, n: Number(n), words: words(Number(n)), href }));
+  const out = lines.filter(([, n]) => Number(n) > 0).map(([key, n, words, href]) => ({ key, n: Number(n), words: words(Number(n)), href }));
+  const u = usageLine(d && d.usageAlert);
+  return u ? [...out, u] : out;
+}
+
+/**
+ * R-519: the week's Cloudflare free-limit alert as a Needs you line (or null). The free plan stops every Worker for
+ * the rest of a UTC day past 100,000 requests (00:00 UTC = 05:30 India time). PURE.
+ */
+export function usageLine(a) {
+  if (!a || !(Number(a.level) > 0)) return null;
+  const n = (v) => Math.round(Number(v) || 0).toLocaleString('en-IN');
+  const day = /^\d{4}-\d{2}-\d{2}$/.test(String(a.day || ''))
+    ? new Date(`${a.day}T00:00:00Z`).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', timeZone: 'UTC' })
+    : 'one day';
+  const over = Number(a.requests) >= Number(a.limit || 100000);
+  return {
+    key: 'usage',
+    n: 1,
+    words: `Cloudflare free limit: on ${day} our apps used ${n(a.requests)} of the ${n(a.limit || 100000)} requests allowed a day (${Math.round(Number(a.pct) || 0)}%). `
+      + (over ? 'Past the limit they stopped until 05:30 India time.' : 'Past the limit they stop until 05:30 India time.')
+      + ' The paid plan ($5 a month) lifts it.',
+    href: '#system',
+  };
 }
 
 /**
@@ -681,7 +704,7 @@ export function needsLines(d) {
  */
 export function needsTotal(d) {
   if (!d) return 0;
-  return [d.helpNeedsReply, d.leadsNew, d.gymsNew, d.paymentsWaiting, d.paymentsToCheck].reduce((a, n) => a + (Number(n) || 0), 0);
+  return [d.helpNeedsReply, d.leadsNew, d.gymsNew, d.paymentsWaiting, d.paymentsToCheck, usageLine(d.usageAlert) ? 1 : 0].reduce((a, n) => a + (Number(n) || 0), 0);
 }
 
 /** "(3) MettleUp HQ" - the number first in the browser tab, nothing when 0. PURE. */
@@ -694,7 +717,9 @@ export function titleWithCount(base, n) {
 /** Which counts went UP since the last look (for the sound and the pop-up). First look: none. PURE. */
 export function needsRose(before, now) {
   if (!before || !now) return [];
-  return needsLines(now).filter((l) => l.n > (Number(before[{ help: 'helpNeedsReply', leads: 'leadsNew', gyms: 'gymsNew', feedback: 'feedbackNew', payments: 'paymentsWaiting', checks: 'paymentsToCheck' }[l.key]]) || 0));
+  const was = (key) => (key === 'usage' ? (usageLine(before.usageAlert) ? 1 : 0)
+    : Number(before[{ help: 'helpNeedsReply', leads: 'leadsNew', gyms: 'gymsNew', feedback: 'feedbackNew', payments: 'paymentsWaiting', checks: 'paymentsToCheck' }[key]]) || 0);
+  return needsLines(now).filter((l) => l.n > was(l.key));
 }
 
 // ------------------------------------------------------------------ Payments to MettleUp (T79, 0060)

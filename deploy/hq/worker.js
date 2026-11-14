@@ -13,6 +13,7 @@
 //   everything else                             the static page (apps/hq/public), signed in only
 // A Cron Trigger runs the nightly backup (backup.js) and then the clean-up at 03:00 India time (scheduled() below).
 // /backup/status (no sign-in) says only whether last night's backup worked; the watch workflow reads it.
+// Mondays, in the same 03:00 trigger: the weekly Cloudflare free-limit check (usage.js, R-519).
 // /billing/* (billing.js, billing step 3): online buying of MettleUp plans and the payment webhook; off until set up.
 // Phone pop-ups for the gym's messages and offers (push.js, R-153 step 2): a second Cron Trigger every
 // minute, and POST /push/run (no sign-in: it only sends what is already due, at most once every 3 s).
@@ -28,6 +29,7 @@ import { feedCalls, feedFeeRequests, feedPaidOnline } from './payFeed.js';
 import { panelPushKey, runPanelPush } from './panelPush.js';
 import { backupStatus, runBackup } from './backup.js';
 import { handleBilling, runBillingDaily, runBillingReconcile } from './billing.js';
+import { runUsageWeekly } from './usage.js';
 
 export const CSP = [
   "default-src 'self'",
@@ -243,7 +245,8 @@ export default {
     // The backup first (backup.js; it never throws), so the copy still holds what the clean-up removes.
     // Then billing (billing.js; off until set up, never throws): due downgrades and plan-end reminders.
     const job = cronJob(event.cron);
-    if (job === 'nightly') ctx.waitUntil(runBackup(env).then(() => nightly(env)).finally(() => runBillingDaily(env)));
+    // Last, on Mondays only (usage.js, R-519; never throws): the weekly Cloudflare free-limit check.
+    if (job === 'nightly') ctx.waitUntil(runBackup(env).then(() => nightly(env)).finally(() => runBillingDaily(env)).finally(() => runUsageWeekly(env)));
     // The payment company's paid links that no webhook brought (billing.js; off until set up, never throws).
     else if (job === 'billing') ctx.waitUntil(runBillingReconcile(env));
     else ctx.waitUntil(everyMinute(env));

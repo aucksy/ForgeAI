@@ -680,6 +680,12 @@ async function systemPage() {
         ? h('p', { class: 'muted' }, 'Download counts are not available right now. GitHub limits how often HQ can ask; they come back by themselves.')
         : h('div', { class: 'table-wrap' }, h('table', { class: 'stack-table' }, h('thead', {}, h('tr', {}, h('th', {}, 'Version'), h('th', {}, 'Released'), h('th', {}, 'App downloads'))),
             h('tbody', {}, d.releases.map((r) => h('tr', {}, h('td', {}, r.tag), h('td', { 'data-label': 'Released' }, when(r.publishedAt)), h('td', { class: 'num', 'data-label': 'App downloads' }, `${r.apkDownloads}`))))))),
+    // R-519: the weekly Cloudflare free-limit check (Mondays, 03:00 India time; deploy/hq/usage.js).
+    h('div', { class: 'card' }, h('h2', {}, 'Cloudflare free limit'),
+      d.usage && d.usage.day
+        ? h('p', {}, `Busiest day of the week before ${d.usage.week}: ${Number(d.usage.requests).toLocaleString('en-IN')} of the ${Number(d.usage.limit || 100000).toLocaleString('en-IN')} requests allowed a day (${d.usage.pct}%), on ${d.usage.day}.`)
+        : null,
+      h('p', { class: 'muted' }, 'Checked every Monday. Needs you shows a line only when a day passes 60%. Past 100,000 requests in a day, all our apps stop until 05:30 India time.')),
     h('div', { class: 'card' }, h('h2', {}, 'Errors and outages'),
       h('p', { class: 'muted' }, 'Not connected yet. App errors and site outages will show here.')),
     h('div', { class: 'card' }, h('h2', {}, 'Which app version members use'),

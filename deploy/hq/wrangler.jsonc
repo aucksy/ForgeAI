@@ -26,6 +26,10 @@
 //                         from the owner's own Google project WITH BILLING ON (paid tier: Google does not
 //                         train on it; english.js refuses a free-tier key). Not set: the button says
 //                         "Add the Gemini key first". Var GEMINI_MODEL below picks the model.
+//   CF_ANALYTICS_TOKEN    R-519: the weekly Cloudflare free-limit check (usage.js; Mondays in the 21:30 trigger). A
+//                         Cloudflare API token (My Profile -> API Tokens -> Custom token) with ONLY
+//                         Account -> Account Analytics -> Read, for the account in var CF_ACCOUNT_ID. Read-only.
+//                         Not set: the check logs one line and does nothing.
 // Variables below: AUTH_MODE "google" (no cost) or "access" (Cloudflare Access in front; then set
 // ACCESS_TEAM = the team name in <team>.cloudflareaccess.com and ACCESS_AUD = the application's
 // audience tag, and the Google secrets are not needed).
@@ -52,7 +56,9 @@
     "HQ_GITHUB_REPO": "aucksy/ForgeAI",
     // The English helper's model (english.js): about 5 paise a rewrite (12 Nov 2026). Google shuts it down on
     // 7 May 2027; a 404 falls back to gemini-flash-lite-latest, gemini-flash-latest, then gemini-pro-latest.
-    "GEMINI_MODEL": "gemini-3.1-flash-lite"
+    "GEMINI_MODEL": "gemini-3.1-flash-lite",
+    // R-519: the Cloudflare account whose Workers the weekly free-limit check counts (usage.js).
+    "CF_ACCOUNT_ID": "1dc428a67de48b96bf13fb430da7a9e8"
   },
   // The same small Cloudflare database as the gym panel: feedback, leads, AI usage and AI limits
   // (tables: deploy/panel/migrations). HQ reads them and changes statuses and limits.
@@ -60,7 +66,7 @@
     { "binding": "WEB", "database_name": "forgeai-web", "database_id": "2c036974-ccdc-4a3c-adf8-47a2e243839d", "migrations_dir": "../panel/migrations" }
   ],
   // The nightly clean-up, 03:00 India time (21:30 UTC): access log and old logs (hq_nightly_cleanup)
-  // and Cloudflare's database (old feedback, leads without a deal, AI usage).
+  // and Cloudflare's database (old feedback, leads without a deal, AI usage). Mondays also the free-limit check.
   // Every minute: the gym's messages and offers that are due go to members' phones (push.js, R-153 step 2).
   // Needs the secret FCM_SERVICE_ACCOUNT (a Firebase service-account JSON key, role "Firebase Cloud
   // Messaging API Admin") and migration 0038; without either it stops at once and sends nothing.

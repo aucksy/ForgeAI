@@ -11,6 +11,7 @@ import { releases, removeFiles } from './outside.js';
 import { fcmHelpReplyMessage, sendOne } from './push.js';
 import { keyOn as englishKeyOn, monthUse as englishMonth, rewrite as englishRewrite } from './english.js';
 import { newGymsToCheck } from '../../apps/hq/public/logic.js';
+import { lastCheck as usageLastCheck, usageAlert } from './usage.js';
 import {
   AI_LIMIT_MAX,
   aiLimits,
@@ -204,7 +205,9 @@ export async function handleApi(request, env, who, deps = {}) {
       const sys = await db('hq_system', {});
       const web = env.WEB ? await webPart('totals', () => webTotals(env.WEB, now)) : null;
       const rel = await releases(env, { fetchImpl, nowMs: now.getTime() });
-      return json(200, { system: sys, web, releases: rel });
+      // R-519: the last weekly Cloudflare free-limit check (usage.js), or null before the first one.
+      const usage = await usageLastCheck(env);
+      return json(200, { system: sys, web, releases: rel, usage });
     }
 
     if (route === 'GET /api/feedback') {
@@ -250,6 +253,9 @@ export async function handleApi(request, env, who, deps = {}) {
         gymsNew,
         paymentsWaiting,
         paymentsToCheck,
+        // R-519: the week's Cloudflare free-limit alert (usage.js): { level, pct, requests, day, limit }; left out
+        // of the answer when there is none.
+        usageAlert: (await usageAlert(env, now)) || undefined,
       });
     }
 
