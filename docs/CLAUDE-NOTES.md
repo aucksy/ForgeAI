@@ -11,6 +11,7 @@ Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept her
 He sent a picture of Chin-Up in a workout: under the sets, "Set 2 was very hard, so do not try for more reps." He said: "These suggestions that we are giving about, do not lift more weight or more reps because the previous set was very tough, remove this functionality completely. Just check the code properly, what all we are suggesting. I'm talking about this message at the bottom of all the sets."
 My call (told him): remove every hint line under the sets that reacts to how hard a set felt (RPE / "very hard"), for weight and for reps, plus the logic behind it, so a hard set no longer holds the next set back. The next-set numbers then follow the normal rules (R-454: aims never under previous). List every other under-set hint to him. The same picture still showed "Done: 22 of today's 33 reps": already being fixed (R-499 kgTarget words).
 
+Follow-up (14 Nov 2026): he said "this phrase in the upper section that says a little short is fine, that should not be short. Mention a little less is fine." So the kg-to-beat box says "(a little less is fine)". Given to the words helper with R-512.
 ## R-511. LIVE yes for the Ask-a-trainer lock (R-505) — 14 Nov 2026
 I asked: "Say yes if I can add the Ask a trainer lock to the live database." He said (14 Nov 2026, chat): "yes."
 Covers ONLY the R-505 migration (member ask function refuses NO_PLAN for pass / no-plan / ended-plan members). I apply it live after the helper's CI is green, then test it like a member.
