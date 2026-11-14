@@ -7,6 +7,25 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-519. Gym page DECIDED (free, on our domain, in onboarding); usage alert minimal; all AI on credits — 14 Nov 2026
+He said (1) usage alert: "once a day ... seems excessive, especially given we do not have any members whatsoever ...
+just keep it to minimum. Yes, you can build the alert right now." (2) Gym page: a gym's own domain is NOT part of the
+software (he may sell gym websites as a separate service). The gym page is "just part of our own domain with the
+necessary controls and disclaimers in place and this will be free". A predefined design: the owner gives only plans,
+timings and some photos; "make it nice so they like it"; part of onboarding when they set up a new gym; "plan that
+thoroughly and finalize the best implementation ... we can go ahead with this". Uses: Google Maps, share the link;
+a registration form. (3) AI helper on the page: ON HOLD. Instead the visitor sends a question that the owner gets in
+the admin panel. (4) AI cost: all AI queries (member in the app, the admin panel, leads on the page) come from the
+gym's own credits, "something like 20 queries is equal to 1 credit ... we are not giving them unlimited queries and we
+are also not stopping them ... I think we should do that."
+Plan: (1) weekly, silent unless a limit passes 60%/80%; Cloudflare only (Supabase already emails the billing address
+when a free quota is passed, then gives a grace period); one read-only Cloudflare analytics token (his yes given).
+(2) helper: research, plan, design pictures, build behind a switch; enquiries go to F85 Enquiries; registration =
+self sign-up (F204); live DB change and public/legal wording wait for his yes. F207 -> Planned. (3) F207's AI part
+stays Idea. (4) My view: yes, with prompt caching first (else 20 questions cost about what a credit sells for), a
+daily limit per person, and when credits run out members still get the matching help pages (no AI), never an error.
+Queued for the next free helper.
+
 ## R-518. Idea: a web page for each gym, with sign-up and an AI helper — 14 Nov 2026
 He said: "we also have to plan and build an AI assistant for the member registration. For now let's just put it in the ideas.
 ... whether we are going to give each member a profile under our brand domain so they will have a webpage of their own so
