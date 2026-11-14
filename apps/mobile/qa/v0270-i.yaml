@@ -254,15 +254,15 @@ appId: com.mettleup.app
 - tapOn:
     text: "View Outdoor Run"
     index: 0
-# The exercise page opens on Summary, which leads with "Last time · Best".
+# The exercise page opens on Summary, which leads with "Previous · Best" (R-499, 14 Nov 2026: was "Last time").
 - extendedWaitUntil:
-    visible: "Last time.*"
+    visible: "Previous · .*"
     timeout: 15000
     optional: true
 - runFlow:
     file: sub-see.yaml
     env:
-      FIND: 'Last time.*'
+      FIND: 'Previous · .*'
 - scrollUntilVisible:
     element: '.*/mi.*'
     centerElement: true
