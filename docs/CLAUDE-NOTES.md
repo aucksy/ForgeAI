@@ -7,6 +7,18 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-530. YES to the AI credits database change (0078 live); "20 questions = 1 credit" was me thinking out loud — 14 Nov 2026
+He said (14 Nov 2026): "So, I said 20 AI questions could be equal to 1 and you actually built it. How many times do I have
+to tell you that you have to act as a mentor, as a product partner and decide the right thing? When I'm just thinking out
+loud, you cannot just take that as an instruction to actually build it. So, this 20 AI questions equal to 1 credit, does
+that make sense for a long term math? I just want to make sure that this information, every 20 questions is one credit,
+is only for the gym owner. The users of the member app or the people on the website may asking to the AI assistant are
+not going to know that, right? "yes" to the AI credits database change"
+Done: 0078 applied live (tests 0078 PASS 47, 0080 PASS 127, 0077 PASS 69). The charging starts only with the next panel
+deploy. Members/visitors never see credits (member words: "You have used today's 10 AI answers..." / "AI answers are not
+on at your gym right now."). Open: the long-term maths and the pricing model (decision #98) BEFORE the panel deploy turns
+charging on. The three public lines are NOT approved.
+
 ## R-529. YES to the gym page database change (live) — 14 Nov 2026
 He said (14 Nov 2026): "Yes, go ahead with the gym page database change". Covers docs/gym-page/gym_page.draft.sql turned
 into supabase/migrations/0080_gym_page.sql (3 tables, 6 functions, the 'page_question' alert kind), applied LIVE after

@@ -1,4 +1,6 @@
--- NOT APPLIED LIVE. Needs the owner's yes (a live database change). Re-runnable. Apply after 0071 (AI credits), 0075
+-- APPLIED LIVE 14 Nov 2026 (R-530: owner said "yes to the AI credits database change"; SQL Editor from 759df0cf;
+-- live tests 0078 PASS 47, 0080 PASS 127, 0077 PASS 69). The Worker uses it only after the next panel deploy.
+-- Needs the owner's yes (a live database change). Re-runnable. Apply after 0071 (AI credits), 0075
 -- (gym alerts) and 0061 (the Worker's signing secret). Works with or without 0077 (both add a kind to gym_alerts; each keeps the other's).
 -- Test: supabase/tests/0078_ai_questions.sql (CI runs it after every migration; pasted into the SQL Editor it always ends
 -- in an error and so changes nothing).
