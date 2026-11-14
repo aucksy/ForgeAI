@@ -40,7 +40,8 @@ export async function readAskSeen(memberId: string): Promise<number> {
     const raw = await AsyncStorage.getItem(ASK_SEEN_KEY);
     const o = raw ? (JSON.parse(raw) as { memberId?: unknown; at?: unknown }) : null;
     return o && o.memberId === memberId && typeof o.at === 'number' ? o.at : 0;
-  } catch {
+  } catch (e) {
+    console.warn('[ask] could not read what was seen', e);
     return 0;
   }
 }
@@ -136,7 +137,8 @@ async function readAlerted(memberId: string): Promise<string[] | null> {
   try {
     const raw = await AsyncStorage.getItem(ASK_ALERTED_KEY);
     return replyAlertedFrom(raw ? (JSON.parse(raw) as unknown) : null, memberId);
-  } catch {
+  } catch (e) {
+    console.warn('[ask] could not read the replies popped up', e);
     return null;
   }
 }

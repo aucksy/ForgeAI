@@ -144,7 +144,9 @@ export default function RootLayout() {
     // R-533: and so do the gym's replies in "Ask about your workout" not opened yet (at most every 5 minutes).
     const talkCount = (): void => {
       void import('@/shop/gymTalkSync').then((m) => m.refreshTalkForPhone()).catch(() => undefined);
-      void import('@/shop/askReplySync').then((m) => m.refreshAskForPhone()).catch(() => undefined);
+      void import('@/shop/askReplySync')
+        .then((m) => m.refreshAskForPhone())
+        .catch((e: unknown) => console.warn('[ask] could not load the reply count', e));
     };
     talkCount();
     // Back to the foreground: a look that is waiting is shown now (under the gym's logo) unless a
