@@ -199,7 +199,7 @@ describe('C1-5: a record pop-up plays once', () => {
     useWorkoutUi.getState().setScreenOpen(false);
     expect(useWorkoutUi.getState().record).toBeNull();
     useWorkoutUi.getState().setScreenOpen(true);
-    useWorkoutUi.getState().showLastTime('Bench Press', '+2.5 kg on last time');
+    useWorkoutUi.getState().showLastTime('Bench Press', '+2.5 kg on previous');
     useWorkoutUi.getState().setScreenOpen(false);
     expect(useWorkoutUi.getState().lastTime).toBeNull();
   });

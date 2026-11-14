@@ -232,6 +232,27 @@ for p in $QA_ONLY_LIST; do
     *) log "UNKNOWN PART '$p' in only (known: $OLD_PARTS $UAT_PARTS $GATE_PARTS)"; status=1 ;;
   esac
 done
+# 14 Nov 2026 (run 43562670140, only=r,u199): part R alone started from the demo, so part L's "Jaipur (6)"
+# folder was never there and R failed in 47 s at its first Jaipur check. A part of the A..R chain that
+# leans on the parts before it (forgeai-qa-lessons trap 27; the same lists as scripts/ci/flows_to_check.py
+# CHAIN / ALONE, checked by scripts/ci/test_flow_tools.py) now brings them in: only=r runs A..R, then r.
+QA_CHAIN="a b c d e f g h h3 p1 p2 i link i2 j j2 j3 k l n p9 r"
+QA_ALONE="a c d e f g p1 p2"
+if [ -n "$QA_ONLY_LIST" ]; then
+  qa_need=""
+  for p in $QA_ONLY_LIST; do
+    case " $QA_ALONE " in *" $p "*) continue ;; esac
+    case " $QA_CHAIN " in *" $p "*) ;; *) continue ;; esac
+    for c in $QA_CHAIN; do
+      [ "$c" = "$p" ] && break
+      case " $QA_ONLY_LIST $qa_need " in *" $c "*) ;; *) qa_need="$qa_need $c" ;; esac
+    done
+  done
+  if [ -n "$qa_need" ]; then
+    log "only: the parts named lean on the parts before them, so these run first too:$qa_need"
+    QA_ONLY_LIST=$(qa_list "$QA_ONLY_LIST $qa_need")
+  fi
+fi
 for p in $QA_EXTRA_LIST; do
   case " $GATE_PARTS " in
     *" $p "*) ;;

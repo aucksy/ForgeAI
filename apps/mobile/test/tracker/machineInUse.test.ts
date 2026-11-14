@@ -151,7 +151,7 @@ describe('R-357: the set pop-up first, then In use (owner, 5 Nov 2026)', () => {
     expect(inUseAutoStep({ restRunning: true, question: false, popup: setPopupUp(ui) })).toBe('open');
   });
   it('the quieter "+2.5 kg on last time" line holds it too', () => {
-    expect(setPopupUp({ record: null, lastTime: { id: 2, exercise: 'Leg Extension', text: '+2.5 kg on last time' } })).toBe(true);
+    expect(setPopupUp({ record: null, lastTime: { id: 2, exercise: 'Leg Extension', text: '+2.5 kg on previous' } })).toBe(true);
     expect(setPopupUp({ record: null, lastTime: null })).toBe(false);
   });
   it('never opens after the rest ended or over a question the tick asked', () => {

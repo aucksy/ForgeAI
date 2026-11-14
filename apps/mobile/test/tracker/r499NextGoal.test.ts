@@ -17,6 +17,8 @@ import { bodyweightOn, setVolumeKg, type BodyweightPoint, type VolumeRule } from
 import { goalParts, goalText, goalTitle, plannedSets, todayGoalFrom, todayLineWords, type GoalTarget, type KgOf, type TodayGoal } from '@/tracker/lib/todayGoal';
 
 const TODAY = '2026-11-14';
+/** A no-break space: a number and its unit never split over two lines. */
+const NB = String.fromCharCode(160);
 
 const RULES: Record<string, VolumeRule> = {
   chin: { logType: 'reps', loadMode: 'one', bwShare: 1 },
@@ -139,7 +141,7 @@ describe('R-499 his report: +1,840 kg on 1,940 kg', () => {
     expect(g.setDiff).toBe(0);
     expect((g.volumeKg - (g.last?.volumeKg ?? 0)) / (g.last?.volumeKg ?? 1)).toBeLessThan(0.1);
     expect(words(g)).toBe(
-      'Next: Pull 2. 3,780 kg to lift. 330 kg more than previous (3,450 kg). Not counted: 2 exercises that are new to you or use a different weight each set.',
+      `Next: Pull 2. 3,780${NB}kg to lift. 330${NB}kg more than previous (3,450${NB}kg). Not counted: 2 exercises that are new to you or use a different weight each set.`,
     );
   });
 
@@ -282,8 +284,8 @@ describe('R-499 words: Next and Previous, never "today" or "last time"', () => {
   const prev = { volumeKg: 1940, sets: 12, durationSec: 3120, dateISO: '2026-11-10' };
   const g: TodayGoal = { routineName: 'Pull 2', volumeKg: 1990, sets: 12, uncounted: 0, easy: false, setDiff: 0, last: prev };
   it('the Profile line reads as he asked', () => {
-    expect(words(g)).toBe('Next: Pull 2. 1,990 kg to lift. 50 kg more than previous (1,940 kg).');
-    expect(todayLineWords(goalText(g, 'duration', 'metric'), 'duration')).toBe('It took 52 min the previous time.');
+    expect(words(g)).toBe(`Next: Pull 2. 1,990${NB}kg to lift. 50${NB}kg more than previous (1,940${NB}kg).`);
+    expect(todayLineWords(goalText(g, 'duration', 'metric'), 'duration')).toBe(`It took 52${NB}min the previous time.`);
   });
   it('no line in any case says today or last time', () => {
     const cases: TodayGoal[] = [
@@ -301,5 +303,26 @@ describe('R-499 words: Next and Previous, never "today" or "last time"', () => {
       .join(' ');
     expect(all).not.toMatch(/\btoday\b|last time/i);
     expect(all).not.toMatch(/\b(volume|session|PR)\b/i);
+  });
+});
+
+describe('R-499 follow-up: a number never splits from its unit (his phone: "(7,910" / "kg).")', () => {
+  const prev = { volumeKg: 7910, sets: 20, durationSec: 4500, dateISO: '2026-11-10' };
+  const g: TodayGoal = { routineName: 'Legs 1', volumeKg: 8520, sets: 20, uncounted: 0, easy: false, setDiff: 0, last: prev };
+  it('his line: every number and its unit held by a no-break space', () => {
+    expect(words(g)).toBe(`Next: Legs 1. 8,520${NB}kg to lift. 610${NB}kg more than previous (7,910${NB}kg).`);
+    expect(words(g)).not.toMatch(/\d +(kg|lb|min)\b/);
+  });
+  it('every mode and unit: no plain space between a number and its unit; other words still wrap', () => {
+    const cases: TodayGoal[] = [g, { ...g, volumeKg: 7910 }, { ...g, volumeKg: 7000 }, { ...g, setDiff: 2 }, { ...g, last: null }];
+    for (const c of cases) {
+      for (const u of ['metric', 'imperial'] as const) {
+        for (const m of ['volume', 'sets', 'duration'] as const) {
+          const l = todayLineWords(goalText(c, m, u), m);
+          expect(l).not.toMatch(/\d +(kg|lbs?|min|h|s|sets?|reps?)\b/);
+          expect(l).toContain(' ');
+        }
+      }
+    }
   });
 });

@@ -2,7 +2,7 @@
 # (c) his Chest Dip (reps only), last time 16, 15, 8: set 1 = 17 at RPE 8.5, set 2 = 14 at RPE 9.5. Owner, 12 Nov
 #   2026: the card said "Set 2 was very hard, so keep the same weight." on a move with no weight. Now: no "keep the
 #   same weight" anywhere (negative), no very-hard line at all here (set 1's extra rep covers set 2's missing one),
-#   the top line "Next set: 9 reps · Done: 31 of today's 40 reps" and set 3's row agree (9), and at the end
+#   the top line "Next set: 9 reps · Done: 31 of 40 reps" and set 3's row agree (9), and at the end
 #   (R-498, owner 14 Nov 2026) "Previous reps beaten! +1" over "Done 40 reps · Previous 39 reps".
 # (e) first time ever (Dumbbell Pullover, added to the routine in flow a, never done): the box keeps its first-time
 #   words "First time · find a weight for 8–12 reps" and gets no total line, because a first time has no kilos to
@@ -48,7 +48,7 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: "^Next set: 9 reps · Done: 31 of today's 40 reps$"
+      FIND: "^Next set: 9 reps · Done: 31 of 40 reps$"
 - assertNotVisible: "(?i).*keep the same weight.*"
 - assertNotVisible: "(?i).*was very hard.*"
 - assertNotVisible: "^Next sets: .*"

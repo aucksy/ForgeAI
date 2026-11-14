@@ -40,7 +40,7 @@ describe('R-366: the owner Pull-Up', () => {
     expect(t.setGoals).toEqual([8, 6, 5]);
     expect(p.total).toBe(19);
     expect(p.last).toBe(16);
-    expect(repsToBeatLine(p)).toBe('19 reps to beat · +3 on last time');
+    expect(repsToBeatLine(p)).toBe('19 reps to beat · +3 on previous');
   });
 
   it('his day, 7, 5, 5 = 17: "17 reps done · Previous: 16 · +1" (owner, 12 Nov 2026), green, one tick only', () => {
@@ -54,7 +54,7 @@ describe('R-366: the owner Pull-Up', () => {
 
   it('before the end it reads like the kg line ("Done: n of today\'s 19 reps")', () => {
     const g = kgProgress(p, [done(7), open(6), open(5)]);
-    expect(repLiveLine(p, g)).toMatch(/^Next sets: \d+, \d+ reps · Done: 7 of today's 19 reps/);
+    expect(repLiveLine(p, g)).toMatch(/^Next sets: \d+, \d+ reps · Done: 7 of 19 reps/);
     expect(lineGreen(p, g)).toBe(false);
   });
 
@@ -65,7 +65,7 @@ describe('R-366: the owner Pull-Up', () => {
     expect(repLiveLine(p, eq)).toBe('Previous reps matched\nDone 16 reps · Previous 16 reps');
     const under = kgProgress(p, [done(6), done(5), done(4)]);
     expect(lineGreen(p, under)).toBe(false);
-    expect(repLiveLine(p, under)).toBe('Done: 15 of 19 reps · 4 reps short, fine for today');
+    expect(repLiveLine(p, under)).toBe('Done: 15 of 19 reps · 4 reps short, fine for this workout');
     for (const g of [eq, under]) expect(repLiveLine(p, g)).not.toMatch(/beat/i);
     // A set still open: never green yet, even past last time.
     const early = kgProgress(p, [done(9), done(9), open(5)]);
@@ -90,7 +90,7 @@ describe('R-366: reps to beat never under last time (as R-351 for kg)', () => {
     const eq = kgProgress(p, [done(12), done(11), done(10)]);
     expect(kgBeaten(eq)).toBe(true);
     expect(repLiveLine(p, eq)).toBe('Previous reps matched\nDone 33 reps · Previous 33 reps');
-    expect(repLiveLine(p, kgProgress(p, [done(12), done(10), done(8)]))).toBe('Done: 30 of 33 reps · 3 reps short, fine for today');
+    expect(repLiveLine(p, kgProgress(p, [done(12), done(10), done(8)]))).toBe('Done: 30 of 33 reps · 3 reps short, fine for this workout');
   });
   it('no last time to compare (first time, or another set count): "First time", or the set count named', () => {
     const p = repPlan(lower, [])!;
@@ -123,6 +123,6 @@ describe('R-366: weighted and assisted bodyweight', () => {
     const t = computeProgressionTarget({ exercise: { ...pullUp, id: 'tbar', equipment: 'machine' }, target: { targetSets: 3, repRangeMin: 6, repRangeMax: 10 }, history: [sess('2026-11-02', [[30, 13], [30, 12], [30, 10]])], todayISO: '2026-11-05' });
     const p = kgPlan(t, [13, 12, 10].map((reps) => ({ weightKg: 30, reps })))!;
     const g = kgProgress(p, [{ weightKg: 30, reps: 13, done: true, isWarmup: false }, { weightKg: 30, reps: 13, done: true, isWarmup: false }, { weightKg: null, reps: null, done: false, isWarmup: false, hintKg: 30, hintReps: 9 }]);
-    expect(kgLiveLine(p, g, (kg) => `${kg.toLocaleString('en-US')} kg`, (kg) => `${kg} kg`)).toBe("Next set: 30 kg × 9 · Done: 780 of today's 1,050 kg");
+    expect(kgLiveLine(p, g, (kg) => `${kg.toLocaleString('en-US')} kg`, (kg) => `${kg} kg`)).toBe("Next set: 30 kg × 9 · Done: 780 of 1,050 kg");
   });
 });

@@ -27,7 +27,7 @@ import { fmtVol, type UnitSystem } from '@/lib/units';
 import type { ChartMetric } from '../engine/historyChart';
 import { isBodyweightFamily } from '../engine/logTypes';
 import type { ProgressionTarget } from '../engine/progression';
-import { kgPlan, type KgSet } from './kgTarget';
+import { keepUnitsTogether, kgPlan, type KgSet } from './kgTarget';
 
 export type ProgressMode = Extract<ChartMetric, 'volume' | 'sets' | 'duration'>;
 export const PROGRESS_MODES: readonly ProgressMode[] = ['volume', 'sets', 'duration'];
@@ -277,10 +277,12 @@ export function goalText(g: TodayGoal, mode: ProgressMode, units: UnitSystem): G
 /**
  * F199: the words of the Next line under the Profile chart (after "Next: Push A."). Kilos: the goal,
  * then the previous time ("12,300 kg to lift. 300 kg more than previous (12,000 kg)."); time: "It took
- * 52 min the previous time."; nothing to show yet: why. PURE.
+ * 52 min the previous time."; nothing to show yet: why. A number and its unit never split over two lines
+ * (no-break space, `keepUnitsTogether`). PURE.
  */
 export function todayLineWords(t: Pick<GoalText, 'big' | 'label' | 'line'>, mode: ProgressMode): string {
   if (t.big === '—') return t.line;
-  if (mode === 'duration') return `It took ${t.big} the previous time.`;
-  return `${t.big} ${t.label}. ${t.line}`;
+  // R-499 follow-up (owner's phone, 14 Nov 2026: "(7,910" / "kg)." on two lines): every number keeps its unit.
+  if (mode === 'duration') return keepUnitsTogether(`It took ${t.big} the previous time.`);
+  return keepUnitsTogether(`${t.big} ${t.label}. ${t.line}`);
 }

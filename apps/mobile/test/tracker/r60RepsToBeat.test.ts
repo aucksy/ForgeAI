@@ -28,9 +28,9 @@ describe('R-60: reps to beat', () => {
     expect(p.reps).toBe(true);
     expect(p.total).toBe(45);
     expect(p.last).toBe(42);
-    expect(repsToBeatLine(p)).toBe('45 reps to beat · +3 on last time');
+    expect(repsToBeatLine(p)).toBe('45 reps to beat · +3 on previous');
     expect(repSetLines(p)).toEqual(['Set 1 · 16 reps', 'Set 2 · 15 reps', 'Set 3 · 14 reps']);
-    expect(repsToBeatLine(p, true)).toBe('45 reps to beat per side · +3 on last time');
+    expect(repsToBeatLine(p, true)).toBe('45 reps to beat per side · +3 on previous');
   });
 
   it('a bodyweight lift logged at 0 kg gets reps; a loaded lift keeps its kilos', () => {
@@ -49,7 +49,7 @@ describe('R-60: reps to beat', () => {
     // R-138: another set count compares set for set (the first 2 planned vs 15, 15) and names the extra set.
     const two = repPlan(pushUps, last.slice(0, 2))!;
     expect(two.last).toBe(30);
-    expect(repsToBeatLine(two)).toBe('45 reps to beat · +1 set · first 2 sets +1 on last time');
+    expect(repsToBeatLine(two)).toBe('45 reps to beat · +1 set · first 2 sets +1 on previous');
     expect(repPlan(pushUps, [])!.last).toBeNull();
     expect(repsToBeatLine(repPlan(pushUps, [])!)).toBe('45 reps to beat');
     // R-366: never under last time's 48 (as R-351 for kg).
@@ -63,7 +63,7 @@ describe('R-60: reps to beat', () => {
     const open = { weightKg: null, reps: null, done: false, isWarmup: false };
     const g1 = kgProgress(p, [{ weightKg: null, reps: 17, done: true, isWarmup: false }, { ...open, hintReps: 15 }, { ...open, hintReps: 14 }]);
     expect(g1.done).toBe(17);
-    expect(repLiveLine(p, g1)).toBe("Next sets: 15, 14 reps · Done: 17 of today's 45 reps");
+    expect(repLiveLine(p, g1)).toBe("Next sets: 15, 14 reps · Done: 17 of 45 reps");
     const g2 = kgProgress(p, [
       { weightKg: null, reps: 17, done: true, isWarmup: false },
       { weightKg: null, reps: 16, done: true, isWarmup: false },
@@ -93,6 +93,6 @@ describe('R-60 review: a bodyweight Target never asks for fewer reps in all than
     });
     expect(t.setGoals).toEqual([13, 11, 10]);
     const p = repPlan(t, [12, 10, 9].map((reps) => ({ weightKg: 0, reps })))!;
-    expect(repsToBeatLine(p)).toBe('34 reps to beat · +3 on last time');
+    expect(repsToBeatLine(p)).toBe('34 reps to beat · +3 on previous');
   });
 });

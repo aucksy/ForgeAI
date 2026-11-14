@@ -112,6 +112,18 @@ class Matching(unittest.TestCase):
         got = F.pick_parts({"x.yaml": [], "y.yaml": [], "z.yaml": []}, pmap)
         self.assertEqual(set(got), set(F.CHAIN[: F.CHAIN.index("j") + 1]) | {"u401"})
 
+    def test_the_runner_brings_in_the_same_chain(self):
+        # Run 43562670140 (only=r,u199): part R alone had no Jaipur folder. run-device-qa.sh now adds the
+        # chain parts a named part leans on, from its own copy of these two lists: they must stay the same.
+        import re
+        text = (F.QA / "run-device-qa.sh").read_text(encoding="utf-8")
+        chain = re.search(r'^QA_CHAIN="([^"]*)"', text, re.M)
+        alone = re.search(r'^QA_ALONE="([^"]*)"', text, re.M)
+        self.assertIsNotNone(chain)
+        self.assertIsNotNone(alone)
+        self.assertEqual(chain.group(1).split(), F.CHAIN)
+        self.assertEqual(set(alone.group(1).split()), F.ALONE)
+
     def test_a_changed_sub_flow_reaches_every_flow_that_runs_it(self):
         reached = F.flows_reached(["apps/mobile/qa/sub-see.yaml", "apps/mobile/qa/scrollable-screens.yaml"])
         self.assertEqual(reached.get("sub-see.yaml"), "changed itself")

@@ -109,6 +109,19 @@
   them, so the extra kilos it shows are a real step up, for example \"50 kg more than previous\"."
   "Workout words now say \"Next\" and \"Previous\" instead of \"Today\" and \"Last time\", so they still make sense
   when you train on another day."
+- R-499 TAIL: THE KG TO BEAT SAYS "PREVIOUS" TOO; NUMBERS KEEP THEIR UNITS (14 Nov 2026). lib/kgTarget.ts (the exercise
+  card's Target box, before and during the workout): "Done: 0 of today's 1,800 kg" -> "Done: 0 of 1,800 kg"; "fine for
+  today" -> "fine for this workout"; "+5% on last time" / "+3 on last time" -> "on previous"; "same as last time",
+  "lighter than last time", "fewer than last time" -> "... previous"; a set planned as before "(as previous)". The green
+  finished line (R-498) unchanged. New shared `keepUnitsTogether` (no-break space between a number and kg / lb / min /
+  h / s / reps / sets): the green line's "+200 kg" now uses it, and the Profile "Next" line (todayLineWords) too, after
+  his phone wrapped "610 kg more than previous (7,910" / "kg).". Tests: r499KgWords (new, 7), r499NextGoal (+2, his
+  7,910 case, metric and imperial, every mode), 13 updated files. UAT flows updated to the new words: uat-rel-3-goals,
+  uat-rel-4-workout, uat-rel-r366-b-today, uat-rel-r454-b-incline-lateral, uat-rel-r454-c-dip-first. Not changed: the
+  website's decorative "+15% on last time" float (apps/dashboard/public/home, a separate deploy).
+  Phone test runner: `only` naming a part of the A..R chain that leans on earlier parts now brings them in (only=r runs
+  a ... p9 first). Run 43562670140 (only=r,u199) failed because part R started from the demo with no part L, so no
+  "Jaipur (6)" folder; no app change caused it. test_flow_tools checks the runner's lists match flows_to_check.py.
 - RELEASE STEP, PUBLIC BETA (owner #96 "A = now", 14 Nov 2026): from the next release every version goes to Play open testing first and to production about 3 days later. At that release: set up the open-testing track in Play Console (countries, feedback email) and make play-upload send the AAB to it; the watch follows the phone tracks.
 - R-500 PROFILE CHART: "LAST 3 MONTHS" INSTEAD OF "LAST 12 WEEKS" (owner, 14 Nov 2026: "I want to change the 12 weeks to 3
   months. It should be last 3 months or last 12 months or all time."). Shared JS (Android and iPhone), no native part,

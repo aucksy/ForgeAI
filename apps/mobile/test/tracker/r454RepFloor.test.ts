@@ -138,9 +138,9 @@ describe('R-454: his Incline Dumbbell Press, 40 kg x 13, 12, 10, 8 in 8-12', () 
     expect(liveRows(card(null)).map((r) => r.hintReps)).toEqual([13, 12, 11, 9]);
     const p = kgPlan(his(), HIS_LAST)!;
     expect(p.total).toBe(1800);
-    expect(kgToBeatLine(p, total)).toBe('1,800 kg to beat · +5% on last time');
+    expect(kgToBeatLine(p, total)).toBe('1,800 kg to beat · +5% on previous');
     const g = kgProgress(p, liveRows(card(null)));
-    expect(kgLiveLine(p, g, total, weight)).toBe("Next set: 40 kg × 13 · Done: 0 of today's 1,800 kg");
+    expect(kgLiveLine(p, g, total, weight)).toBe("Next set: 40 kg × 13 · Done: 0 of 1,800 kg");
   });
 });
 
@@ -154,7 +154,7 @@ describe('R-454 keeps the live line changing with each set (owner, 12 Nov 2026)'
     const g = kgProgress(p, rows);
     expect(g.done).toBe(440);
     expect(g.next.map((s) => s.reps)).toEqual([13, 12, 9]);
-    expect(kgLiveLine(p, g, total, weight)).toBe("Next set: 40 kg × 13 · Done: 440 of today's 1,800 kg");
+    expect(kgLiveLine(p, g, total, weight)).toBe("Next set: 40 kg × 13 · Done: 440 of 1,800 kg");
   });
 
   it('(a) set 1 done 9: still never more than 2 extra reps a set', () => {
@@ -163,7 +163,7 @@ describe('R-454 keeps the live line changing with each set (owner, 12 Nov 2026)'
     const g = kgProgress(p, rows);
     expect(g.next.map((s) => s.reps)).toEqual([14, 12, 10]);
     g.next.forEach((s, i) => expect(s.reps).toBeLessThanOrEqual((rows[i + 1].hintReps as number) + MAX_EXTRA_REPS));
-    expect(kgLiveLine(p, g, total, weight)).toBe("Next set: 40 kg × 14 · Done: 360 of today's 1,800 kg");
+    expect(kgLiveLine(p, g, total, weight)).toBe("Next set: 40 kg × 14 · Done: 360 of 1,800 kg");
   });
 
   it('(b) set 1 done 15: the later aims stay 12, 11, 9 (never dropped), then the done line', () => {
@@ -171,7 +171,7 @@ describe('R-454 keeps the live line changing with each set (owner, 12 Nov 2026)'
     const g = kgProgress(p, rows);
     expect(g.done).toBe(600);
     expect(g.next.map((s) => s.reps)).toEqual([12, 11, 9]);
-    expect(kgLiveLine(p, g, total, weight)).toBe("Next set: 40 kg × 12 · Done: 600 of today's 1,800 kg");
+    expect(kgLiveLine(p, g, total, weight)).toBe("Next set: 40 kg × 12 · Done: 600 of 1,800 kg");
     const all = (reps: number[]): KgRow[] => reps.map((r) => ({ weightKg: 40, reps: r, done: true, isWarmup: false }));
     expect(kgLiveLine(p, kgProgress(p, all([15, 12, 11, 9])), total, weight)).toBe('Previous set volume beaten! +160\u00a0kg\nDone 1,880 kg · Previous 1,720 kg');
     expect(kgLiveLine(p, kgProgress(p, all([13, 12, 11, 9])), total, weight)).toBe('Previous set volume beaten! +80\u00a0kg\nDone 1,800 kg · Previous 1,720 kg');
@@ -200,7 +200,7 @@ describe('owner, 12 Nov 2026: the finished line says done and Previous', () => {
 
   it('the line while sets are open is unchanged', () => {
     const g = kgProgress(p, [...all([14, 12, 11]), { weightKg: null, reps: null, done: false, isWarmup: false, hintKg: 40, hintReps: 9 }]);
-    expect(kgLiveLine(p, g, total, weight)).toBe("Next set: 40 kg × 9 · Done: 1,480 of today's 1,800 kg");
+    expect(kgLiveLine(p, g, total, weight)).toBe("Next set: 40 kg × 9 · Done: 1,480 of 1,800 kg");
   });
 
   it('reps only: "Previous reps beaten! +3" / "Done 46 reps · Previous 43 reps" (R-498)', () => {
@@ -445,7 +445,7 @@ describe('R-454: a set done at another weight than planned (his Lateral Raise, 1
     });
     const g = kgProgress(p, rows);
     expect(g.next.map((s) => s.reps)).toEqual([17, 15, 19]);
-    expect(kgLiveLine(p, g, total, weight)).toBe("Next set: 20 kg × 17 · Done: 400 of today's 1,420 kg");
+    expect(kgLiveLine(p, g, total, weight)).toBe("Next set: 20 kg × 17 · Done: 400 of 1,420 kg");
   });
 
   // Owner, 12 Nov 2026 (screenshot): this card read "Today's 1,420 kg reached" with no previous number
@@ -528,9 +528,9 @@ describe('R-454: bodyweight reps take the same floor', () => {
     expect(t.setGoals).toEqual([17, 13, 10]);
   });
 
-  it('the reps to beat add up the same goals: 40, +2 on last time', () => {
+  it('the reps to beat add up the same goals: 40, +2 on previous', () => {
     const p = repPlan(t, LAST.map((reps) => ({ weightKg: 0, reps })))!;
     expect(p.total).toBe(40);
-    expect(repsToBeatLine(p)).toBe('40 reps to beat · +2 on last time');
+    expect(repsToBeatLine(p)).toBe('40 reps to beat · +2 on previous');
   });
 });

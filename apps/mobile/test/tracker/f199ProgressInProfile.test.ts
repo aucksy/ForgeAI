@@ -40,6 +40,7 @@ import { todayLineWords, todayModeFor } from '@/tracker/lib/todayGoal';
 import { getWorkoutIdsBetween } from '@/tracker/services/historyFeed';
 
 const SRC = join(__dirname, '..', '..', 'src');
+const NB = String.fromCharCode(160);
 const APP = join(SRC, 'app');
 const read = (...p: string[]) => readFileSync(join(SRC, ...p), 'utf8');
 
@@ -187,9 +188,9 @@ describe('F199 the Today line follows the chip', () => {
   });
   it('the words of the line', () => {
     expect(todayLineWords({ big: '12,300 kg', label: 'to lift', line: '300 kg more than previous (12,000 kg).' }, 'volume')).toBe(
-      '12,300 kg to lift. 300 kg more than previous (12,000 kg).',
+      `12,300${NB}kg to lift. 300${NB}kg more than previous (12,000${NB}kg).`,
     );
-    expect(todayLineWords({ big: '52 min', label: 'took the previous time', line: 'x' }, 'duration')).toBe('It took 52 min the previous time.');
+    expect(todayLineWords({ big: '52 min', label: 'took the previous time', line: 'x' }, 'duration')).toBe(`It took 52${NB}min the previous time.`);
     expect(todayLineWords({ big: '—', label: 'to lift', line: 'Finish this workout once to see your goal here.' }, 'volume')).toBe(
       'Finish this workout once to see your goal here.',
     );

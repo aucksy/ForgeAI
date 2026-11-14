@@ -70,7 +70,7 @@ describe('R-350: the owner T-Bar Row', () => {
     expect(kgToBeatLine(p, total)).toBe('1,050 kg to beat · your previous total');
     // Before a set: the next set asks what the row shows (10), never extra reps past the top.
     const g0 = kgProgress(p, [open(32.5, 10), open(32.5, 10), open(32.5, 9)]);
-    expect(kgLiveLine(p, g0, total, weight)).toBe("Next set: 32.5 kg × 10 · Done: 0 of today's 1,050 kg");
+    expect(kgLiveLine(p, g0, total, weight)).toBe("Next set: 32.5 kg × 10 · Done: 0 of 1,050 kg");
   });
 
   it('R-351: his screen, 30 x 13 twice done and one set left, is not "beaten"', () => {
@@ -79,7 +79,7 @@ describe('R-350: the owner T-Bar Row', () => {
     expect(kgBeaten(g)).toBe(false);
     expect(g.left).toBe(270);
     const line = kgLiveLine(p, g, total, weight);
-    expect(line).toContain('780 of today\'s 1,050 kg');
+    expect(line).toContain('780 of 1,050 kg');
     expect(line).not.toMatch(/beaten|matched|reached| done · /);
     // Owner, 12 Nov 2026: one finished format; R-498 (14 Nov): exactly last time's 1,050 is "Previous set volume matched".
     expect(kgLiveLine(p, kgProgress(p, [done(30, 13), done(30, 13), done(30, 10)]), total, weight)).toBe('Previous set volume beaten! +30\u00a0kg\nDone 1,080 kg · Previous 1,050 kg');

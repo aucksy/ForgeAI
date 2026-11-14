@@ -342,21 +342,21 @@ export type TotalFmt = (kg: number) => string;
 /** "42.5 kg": one set's weight. */
 export type WeightFmt = (kg: number) => string;
 
-/** R-60: "+3 on last time", "same as last time", "fewer than last time", or null. PURE. */
+/** R-60 (R-499 words: never "last time" / "today"): "+3 on previous", "same as previous", "fewer than previous", or null. PURE. */
 export function repDiffWords(p: KgPlan): string | null {
   if (p.last == null) return null;
   // R-366: aiming at last time's own total reads as such ("16 reps to beat · your previous total").
   if (p.atLast && !p.setDiff) return 'your previous total';
   const d = Math.round((p.comparedTotal ?? p.total) - p.last);
-  if (d === 0) return 'same as last time';
-  return d < 0 ? 'fewer than last time' : `+${d} on last time`;
+  if (d === 0) return 'same as previous';
+  return d < 0 ? 'fewer than previous' : `+${d} on previous`;
 }
 
 /** "45 reps" / "1 rep". */
 const repsText = (n: number): string => `${Math.round(n)} ${Math.round(n) === 1 ? 'rep' : 'reps'}`;
 
 /**
- * R-138: with a different number of sets than last time, "+1 set · first 3 sets +6% on last time"
+ * R-138: with a different number of sets than last time, "+1 set · first 3 sets +6% on previous"
  * ("1 set fewer · these 3 sets ..."): the extra sets apart, the rest set for set. null = the same
  * number of sets (or nothing to compare). PURE.
  */
@@ -368,7 +368,7 @@ function setCountWords(p: KgPlan, diff: string | null): string | null {
   return `${p.setDiff > 0 ? `+${sets}` : `${sets} fewer`} · ${which} ${diff}`;
 }
 
-/** R-60, before the workout: "45 reps to beat · +3 on last time" (" per side" when counted per side). PURE. */
+/** R-60, before the workout: "45 reps to beat · +3 on previous" (" per side" when counted per side). PURE. */
 export function repsToBeatLine(p: KgPlan, perSide = false): string {
   const raw = repDiffWords(p);
   const diff = setCountWords(p, raw) ?? raw;
@@ -382,7 +382,7 @@ export function repSetLines(p: KgPlan): string[] {
 
 /**
  * R-60, during the workout: "20 of 45 reps · next 12, 13"; past the plan (owner, 12 Nov 2026)
- * "47 reps done · Previous: 43 · +4", "45 reps done · Previous: 45 · same as last time" or
+ * "47 reps done · Previous: 43 · +4", "45 reps done · Previous: 45 · same as previous" or
  * "45 reps done · First time" (`doneLine`). PURE.
  */
 export function repLiveLine(p: KgPlan, g: KgProgress): string {
@@ -399,9 +399,9 @@ export function repLiveLine(p: KgPlan, g: KgProgress): string {
   // R-498 (owner, 14 Nov 2026): green, it shouts first ("Previous reps beaten! +3"), totals under it.
   if (kgBeaten(g) || lineGreen(p, g)) return doneLine(p, done, plain, repsText, 0, lineGreen(p, g));
   // R-300 (owner, 3 Nov 2026): never "add a set" (extra sets cost recovery and sleep); next time aims again.
-  if (g.next.length === 0) return `Done: ${Math.round(g.done)} of ${repsText(p.total)} · ${repsText(g.left)} short, fine for today`;
+  if (g.next.length === 0) return `Done: ${Math.round(g.done)} of ${repsText(p.total)} · ${repsText(g.left)} short, fine for this workout`;
   // Owner, 12 Nov 2026 (Chest Dip, one set left): one open set reads "Next set: 9 reps", not "Next sets".
-  return `Next set${g.next.length === 1 ? '' : 's'}: ${g.next.map((s) => s.reps).join(', ')} reps · Done: ${Math.round(g.done)} of today's ${repsText(p.total)}${g.short ? ' (a little short is fine)' : ''}`;
+  return `Next set${g.next.length === 1 ? '' : 's'}: ${g.next.map((s) => s.reps).join(', ')} reps · Done: ${Math.round(g.done)} of ${repsText(p.total)}${g.short ? ' (a little short is fine)' : ''}`;
 }
 
 /**
@@ -429,7 +429,7 @@ function doneLine(p: KgPlan, done: number, fmt: TotalFmt, doneFmt: TotalFmt = fm
     const shown = fmt(Math.abs(d));
     // T76: within the unit-switch allowance it is the same total, never "+3 kg" by a hair.
     if (cmp !== 'same' && /[1-9]/.test(shown)) parts.push(`${d > 0 ? '+' : '-'}${shown}`);
-    else parts.push('same as last time');
+    else parts.push('same as previous');
   }
   if (p.setDiff) {
     const n = Math.abs(p.setDiff);
@@ -442,6 +442,17 @@ function doneLine(p: KgPlan, done: number, fmt: TotalFmt, doneFmt: TotalFmt = fm
 export const GREEN_LINE_BREAK = String.fromCharCode(10);
 /** A no-break space: "+200 kg" never splits over two lines. */
 const NBSP = String.fromCharCode(160);
+/** A number, its space(s), then a unit (kg, lb, min, h, s, reps, sets) as a whole word. */
+const NUMBER_UNIT = /(\d) +(?=(?:kg|lbs?|min|h|sec|s|reps?|sets?)(?![A-Za-z]))/g;
+
+/**
+ * Every number keeps its unit on the same line: the space between them becomes a no-break space
+ * ("+200 kg" on the green line; R-499 follow-up, owner's phone 14 Nov 2026: the Profile Next line wrapped
+ * "610 kg more than previous (7,910" / "kg)."). Words only: other spaces still wrap. PURE.
+ */
+export function keepUnitsTogether(s: string): string {
+  return s.replace(NUMBER_UNIT, `$1${NBSP}`);
+}
 // R-498 (owner, 14 Nov 2026): his exception to the banned word "volume", for THIS line only
 // (test/lib/memberWords.test.ts allows exactly these two strings in this file, nothing else).
 const KG_BEATEN = 'Previous set volume beaten!';
@@ -466,7 +477,7 @@ function greenLines(p: KgPlan, today: number, fmt: TotalFmt, totalFmt: TotalFmt,
   const shown = fmt(Math.abs(d));
   // T76: within the unit-switch allowance it is the same total, never "+3 kg" by a hair (as `doneLine`).
   const beaten = cmp === 'more' && d > 0 && /[1-9]/.test(shown);
-  const head = beaten ? `${p.reps ? REPS_BEATEN : KG_BEATEN} +${shown.replace(/ /g, NBSP)}` : p.reps ? REPS_MATCHED : KG_MATCHED;
+  const head = beaten ? `${p.reps ? REPS_BEATEN : KG_BEATEN} +${keepUnitsTogether(shown)}` : p.reps ? REPS_MATCHED : KG_MATCHED;
   const sub = [`Done ${totalFmt(today)}`, `Previous ${totalFmt(last)}`];
   if (p.setDiff) {
     const n = Math.abs(p.setDiff);
@@ -501,16 +512,16 @@ export function lineGreen(p: KgPlan, g: KgProgress): boolean {
   return cmp == null ? kgBeaten(g) : cmp !== 'less';
 }
 
-/** "+6% on last time", "same as last time", "lighter than last time", or null. PURE. */
+/** "+6% on previous", "same as previous", "lighter than previous", or null (R-499: never "last time"). PURE. */
 export function pctWords(pct: number | null): string | null {
   if (pct == null || !Number.isFinite(pct)) return null;
-  if (Math.abs(pct) < 0.005) return 'same as last time';
-  if (pct < 0) return 'lighter than last time';
-  return `+${Math.max(1, Math.round(pct * 100))}% on last time`;
+  if (Math.abs(pct) < 0.005) return 'same as previous';
+  if (pct < 0) return 'lighter than previous';
+  return `+${Math.max(1, Math.round(pct * 100))}% on previous`;
 }
 
 /**
- * Before the workout: "765 kg to beat · +6% on last time"; R-351, when the plan alone is under last
+ * Before the workout: "765 kg to beat · +6% on previous"; R-351, when the plan alone is under last
  * time's total: "1,050 kg to beat · your previous total". PURE.
  */
 export function kgToBeatLine(p: KgPlan, total: TotalFmt): string {
@@ -519,9 +530,9 @@ export function kgToBeatLine(p: KgPlan, total: TotalFmt): string {
   return `${total(p.total)} to beat${pct ? ` · ${pct}` : ''}`;
 }
 
-/** The opened row: "Set 1 · 42.5 kg × 7" (a set planned as last time says so). PURE. */
+/** The opened row: "Set 1 · 42.5 kg × 7" (a set planned as last time says "(as previous)"). PURE. */
 export function kgSetLines(p: KgPlan, weight: WeightFmt): string[] {
-  return p.sets.map((s, i) => `Set ${i + 1} · ${weight(s.weightKg)} × ${s.reps}${s.asLast ? ' (as last time)' : ''}`);
+  return p.sets.map((s, i) => `Set ${i + 1} · ${weight(s.weightKg)} × ${s.reps}${s.asLast ? ' (as previous)' : ''}`);
 }
 
 /**
@@ -533,7 +544,7 @@ export function kgBeaten(g: KgProgress): boolean {
 }
 
 /**
- * During the workout: "Next set: 42.5 kg × 7 · Done: 410 of today's 765 kg"; past the plan (owner, 12 Nov
+ * During the workout: "Next set: 42.5 kg × 7 · Done: 410 of 765 kg" (R-499: no "today's"); past the plan (owner, 12 Nov
  * 2026) "780 kg done · Previous: 720 kg · +60 kg" (`doneLine`).
  * UAT A-10 / B-09 (30 Oct 2026): "0 of 1,500 kg · next 75 kg × 5, 5, 5, 5" was read twice. The next set
  * leads, alone (the sets after it are on their own rows); the running total follows.
@@ -550,9 +561,10 @@ export function kgLiveLine(p: KgPlan, g: KgProgress, total: TotalFmt, weight: We
   // 2026 (R-454): the workout card's totals never say "each"; "each" stays on the per-set weight.
   const doneN = total(g.done).trim().split(/\s+/)[0];
   // R-300 (owner, 3 Nov 2026): never "add a set" (extra sets cost recovery and sleep); next time aims again.
-  if (g.next.length === 0) return `Done: ${doneN} of ${total(p.total)} · ${total(g.left)} short, fine for today`;
+  if (g.next.length === 0) return `Done: ${doneN} of ${total(p.total)} · ${total(g.left)} short, fine for this workout`;
   // Fresh-eyes review (5 Nov 2026): "Next: 60 kg × 10 · 0 of 1,560 kg" read as a puzzle; the total
-  // now says it is today's and how much of it is done.
+  // now says how much of it is done. R-499 (owner, 14 Nov 2026: "always previous and next"): never
+  // "today's" ("Done: 0 of 1,800 kg"), never "last time" ("+5% on previous", "fine for this workout").
   const plan = `${weight(g.next[0].weightKg)} × ${g.next[0].reps}`;
-  return `Next set: ${plan} · Done: ${doneN} of today's ${total(p.total)}${g.short ? ' (a little short is fine)' : ''}`;
+  return `Next set: ${plan} · Done: ${doneN} of ${total(p.total)}${g.short ? ' (a little short is fine)' : ''}`;
 }

@@ -22,7 +22,7 @@ const weight = (kg: number) => `${kg} kg`;
 const row = (weightKg: number | null, reps: number | null, done: boolean, isWarmup = false): KgRow => ({ weightKg, reps, done, isWarmup });
 
 describe('#9 kg to beat: the plan', () => {
-  it('adds up each set at the Target weight and its own rep goal; % on last time', () => {
+  it('adds up each set at the Target weight and its own rep goal; % on previous', () => {
     const p = kgPlan(base, last3)!;
     expect(p.sets).toEqual([
       { weightKg: 45, reps: 9, asLast: false },
@@ -32,7 +32,7 @@ describe('#9 kg to beat: the plan', () => {
     expect(p.total).toBe(45 * 25);
     expect(p.last).toBe(42.5 * 23);
     expect(p.pct).toBeCloseTo(1125 / 977.5 - 1, 6);
-    expect(kgToBeatLine(p, total)).toBe('1,125 kg to beat · +15% on last time');
+    expect(kgToBeatLine(p, total)).toBe('1,125 kg to beat · +15% on previous');
   });
   it('no per-set goals: every set at the rep goal', () => {
     expect(kgPlan({ ...base, setGoals: [] }, last3)!.sets.map((s) => s.reps)).toEqual([8, 8, 8]);
@@ -41,7 +41,7 @@ describe('#9 kg to beat: the plan', () => {
     const p = kgPlan(base, [{ weightKg: 42.5, reps: 8 }, { weightKg: 42.5, reps: 8 }, { weightKg: 30, reps: 12 }])!;
     expect(p.sets.at(-1)).toEqual({ weightKg: 30, reps: 12, asLast: true });
     expect(p.sets.slice(0, 2).every((s) => s.weightKg === 45)).toBe(true);
-    expect(kgSetLines(p, weight)).toEqual(['Set 1 · 45 kg × 9', 'Set 2 · 45 kg × 8', 'Set 3 · 30 kg × 12 (as last time)']);
+    expect(kgSetLines(p, weight)).toEqual(['Set 1 · 45 kg × 9', 'Set 2 · 45 kg × 8', 'Set 3 · 30 kg × 12 (as previous)']);
   });
   it('no kg to beat where the Target is something else', () => {
     expect(kgPlan({ ...base, action: 'start' }, [])).toBeNull();
@@ -74,26 +74,26 @@ describe('#9 kg to beat: the plan', () => {
     // 2 sets last time, 3 planned: the first 2 (45 x 9, 8 = 765) against last time's 2 (680).
     const more = kgPlan(base, last3.slice(0, 2))!;
     expect([more.setDiff, more.compared, more.comparedTotal, more.last]).toEqual([1, 2, 765, 680]);
-    expect(kgToBeatLine(more, total)).toBe('1,125 kg to beat · +1 set · first 2 sets +13% on last time');
+    expect(kgToBeatLine(more, total)).toBe('1,125 kg to beat · +1 set · first 2 sets +13% on previous');
     // 4 sets last time, 3 planned: these 3 (1,125) against last time's first 3 (977.5).
     const fewer = kgPlan(base, [...last3, { weightKg: 42.5, reps: 6 }])!;
-    expect(kgToBeatLine(fewer, total)).toBe('1,125 kg to beat · 1 set fewer · these 3 sets +15% on last time');
+    expect(kgToBeatLine(fewer, total)).toBe('1,125 kg to beat · 1 set fewer · these 3 sets +15% on previous');
     // The same number: as before.
     expect(kgPlan(base, last3)!.setDiff).toBeUndefined();
-    expect(kgToBeatLine(kgPlan(base, last3)!, total)).toBe('1,125 kg to beat · +15% on last time');
+    expect(kgToBeatLine(kgPlan(base, last3)!, total)).toBe('1,125 kg to beat · +15% on previous');
   });
   it('R-138: his case - an extra 4th set never hides a lower aim on the first 3', () => {
     // 20 Oct: 40 x 12, 11, 9 (3 sets); the plan 40 x 13, 10, 8, 8 (4 sets): the first 3 aim 31 reps vs 32.
     const t = { ...base, targetWeightKg: 40, targetSets: 4, setGoals: [13, 10, 8, 8], repGoal: 13 };
     const p = kgPlan(t, [{ weightKg: 40, reps: 12 }, { weightKg: 40, reps: 11 }, { weightKg: 40, reps: 9 }])!;
     // R-351: never under last time's total: the first 3 sets must pass 1,280 (+40 kg), so 1,600 in all.
-    expect(kgToBeatLine(p, total)).toBe('1,600 kg to beat · +1 set · first 3 sets same as last time');
+    expect(kgToBeatLine(p, total)).toBe('1,600 kg to beat · +1 set · first 3 sets same as previous');
   });
   it('the % words', () => {
-    expect(pctWords(0.002)).toBe('same as last time');
-    expect(pctWords(-0.05)).toBe('lighter than last time');
-    expect(pctWords(0.004)).toBe('same as last time');
-    expect(pctWords(0.006)).toBe('+1% on last time');
+    expect(pctWords(0.002)).toBe('same as previous');
+    expect(pctWords(-0.05)).toBe('lighter than previous');
+    expect(pctWords(0.004)).toBe('same as previous');
+    expect(pctWords(0.006)).toBe('+1% on previous');
     expect(pctWords(null)).toBeNull();
   });
 });
@@ -106,12 +106,12 @@ describe('#9 kg to beat: during the workout', () => {
     expect(g.left).toBe(720);
     expect(g.next).toEqual([{ weightKg: 45, reps: 8 }, { weightKg: 45, reps: 8 }]);
     expect(g.short).toBe(false);
-    expect(kgLiveLine(p, g, total, weight)).toBe("Next set: 45 kg × 8 · Done: 405 of today's 1,125 kg"); // UAT A-10
+    expect(kgLiveLine(p, g, total, weight)).toBe("Next set: 45 kg × 8 · Done: 405 of 1,125 kg"); // UAT A-10
   });
   it('release review: dumbbells ("each") keep the number before "of"', () => {
     const g = kgProgress(p, [row(45, 9, true), row(null, null, false), row(null, null, false)]);
     const each = (kg: number) => `${total(kg)} each`;
-    expect(kgLiveLine(p, g, each, weight)).toBe("Next set: 45 kg × 8 · Done: 405 of today's 1,125 kg each");
+    expect(kgLiveLine(p, g, each, weight)).toBe("Next set: 45 kg × 8 · Done: 405 of 1,125 kg each");
   });
   it('a short set: the open sets catch up, at most 2 reps above plan each', () => {
     const g = kgProgress(p, [row(45, 6, true), row(null, null, false), row(null, null, false)]);
@@ -148,7 +148,7 @@ describe('#9 kg to beat: during the workout', () => {
   it('all ticked and still short: no plan, says how much', () => {
     const g = kgProgress(p, [row(45, 5, true), row(45, 5, true), row(45, 5, true)]);
     expect(g.next).toEqual([]);
-    expect(kgLiveLine(p, g, total, weight)).toBe('Done: 675 of 1,125 kg · 450 kg short, fine for today');
+    expect(kgLiveLine(p, g, total, weight)).toBe('Done: 675 of 1,125 kg · 450 kg short, fine for this workout');
   });
   it('starts from what each row hints, and stays within 2 reps of it', () => {
     // Set 1 done at 7: the rows hint 7, 7 (fillForSet caps at the row above) — never 8 + 2.

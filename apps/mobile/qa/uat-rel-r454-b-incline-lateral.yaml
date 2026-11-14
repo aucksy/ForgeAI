@@ -2,7 +2,7 @@
 # flow a started. Exact words from his screenshots (owner, 12 Nov 2026).
 # Types (R-364):
 #   happy path: Incline Dumbbell Press aims 13, 12, 11, 9 (never under last time's 13, 12, 10, 8), "Next set:
-#     40 kg × 13 · Done: 0 of today's 1,800 kg", and at the end (R-498, owner 14 Nov 2026) "Previous set volume
+#     40 kg × 13 · Done: 0 of 1,800 kg", and at the end (R-498, owner 14 Nov 2026) "Previous set volume
 #     beaten! +80 kg" over "Done 1,800 kg · Previous 1,720 kg";
 #   regression: his Lateral Raise: set 1 done at 20 kg x 20 (not the plan's heavier weight) -> sets 2-4 aim
 #     20 kg x 17, 15, 19 (never 13, 12, 15) and the top line says the same number as the row;
@@ -31,11 +31,11 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: "^Next set: 40 kg × 13 · Done: 0 of today's 1,800 kg$"
+      FIND: "^Next set: 40 kg × 13 · Done: 0 of 1,800 kg$"
 - assertNotVisible: ".*1,760 kg.*"
 - assertNotVisible: "^Next set: 40 kg × 12 · .*"
 - takeScreenshot: rel-r454-b-incline-before
-- tapOn: "^Next set: 40 kg × 13 · Done: 0 of today's 1,800 kg$"
+- tapOn: "^Next set: 40 kg × 13 · Done: 0 of 1,800 kg$"
 - runFlow:
     file: sub-find.yaml
     env:
@@ -66,7 +66,7 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: "^Next set: 40 kg × 9 · Done: 1,440 of today's 1,800 kg$"
+      FIND: "^Next set: 40 kg × 9 · Done: 1,440 of 1,800 kg$"
 - takeScreenshot: rel-r454-d-incline-set-4-next
 - runFlow:
     file: sub-uat-r454-hint.yaml
@@ -81,7 +81,7 @@ appId: com.mettleup.app
       EX: "Incline Dumbbell Press"
       WANT: "Previous set volume beaten! +80 kg / Done 1,800 kg · Previous 1,720 kg"
 - assertNotVisible: "(?is).*(reached|beaten \\(|done · Previous:).*"
-- assertNotVisible: ".*kg each done.*|.*Previous: [0-9,]+ kg each.*|.*of today.s [0-9,]+ kg each.*"
+- assertNotVisible: ".*kg each done.*|.*Previous: [0-9,]+ kg each.*|.*of (today.s )?[0-9,]+ kg each.*"
 - takeScreenshot: rel-r454-e-incline-done
 # ---------------------------------------------------------------- (b) Lateral Raise: set 1 at 20 kg, the rest follow 20 kg
 - runFlow:
@@ -91,7 +91,7 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: '^Next set: 22[.]5 kg × 15 · Done: 0 of today''s 1,420 kg$'
+      FIND: '^Next set: 22[.]5 kg × 15 · Done: 0 of 1,420 kg$'
 - takeScreenshot: rel-r454-f-lateral-before
 - runFlow:
     file: sub-uat-r439-set.yaml
@@ -103,7 +103,7 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: "^Next set: 20 kg × 17 · Done: 400 of today's 1,420 kg$"
+      FIND: "^Next set: 20 kg × 17 · Done: 400 of 1,420 kg$"
 - assertNotVisible: "^Next set: 20 kg × 15 · .*"
 - assertNotVisible: ".* × 13 · Done: 400 of .*"
 - takeScreenshot: rel-r454-g-lateral-after-set-1
@@ -117,7 +117,7 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: "^Next set: 20 kg × 15 · Done: 740 of today's 1,420 kg$"
+      FIND: "^Next set: 20 kg × 15 · Done: 740 of 1,420 kg$"
 - runFlow:
     file: sub-uat-r454-hint.yaml
     env:
@@ -128,7 +128,7 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: "^Next set: 20 kg × 19 · Done: 1,040 of today's 1,420 kg$"
+      FIND: "^Next set: 20 kg × 19 · Done: 1,040 of 1,420 kg$"
 - runFlow:
     file: sub-uat-r454-hint.yaml
     env:
@@ -143,7 +143,7 @@ appId: com.mettleup.app
       EX: "Lateral Raise"
       WANT: "Previous set volume matched / Done 1,420 kg · Previous 1,420 kg"
 - assertNotVisible: "(?is).*(reached|beaten \\(|done · Previous:).*"
-- assertNotVisible: ".*kg each done.*|.*Previous: [0-9,]+ kg each.*|.*of today.s [0-9,]+ kg each.*"
+- assertNotVisible: ".*kg each done.*|.*Previous: [0-9,]+ kg each.*|.*of (today.s )?[0-9,]+ kg each.*"
 - takeScreenshot: rel-r454-h-lateral-same
 # Edit after the tick: 20, 19, 16, 16 is 1,420 kg too (his own day).
 - runFlow:
@@ -175,5 +175,5 @@ appId: com.mettleup.app
       EX: "Lateral Raise"
       WANT: "Previous set volume matched / Done 1,420 kg · Previous 1,420 kg"
 - assertNotVisible: "(?is).*(reached|beaten \\(|done · Previous:).*"
-- assertNotVisible: ".*kg each done.*|.*Previous: [0-9,]+ kg each.*|.*of today.s [0-9,]+ kg each.*"
+- assertNotVisible: ".*kg each done.*|.*Previous: [0-9,]+ kg each.*|.*of (today.s )?[0-9,]+ kg each.*"
 - takeScreenshot: rel-r454-i-lateral-edited-same

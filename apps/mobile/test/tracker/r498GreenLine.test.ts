@@ -97,8 +97,8 @@ describe('R-498: not green is unchanged', () => {
   it('sets still open: the "Next set" line', () => {
     const g = kgProgress(bench, [done(75, 5), done(75, 5), open(75, 5), open(75, 5)]);
     expect(lineGreen(bench, g)).toBe(false);
-    expect(kgLiveLine(bench, g, total, weight)).toBe("Next set: 75 kg × 5 · Done: 750 of today's 1,500 kg");
-    expect(repLiveLine(dips, kgProgress(dips, [r(15), ro(15), ro(14)]))).toBe("Next sets: 15, 14 reps · Done: 15 of today's 44 reps");
+    expect(kgLiveLine(bench, g, total, weight)).toBe("Next set: 75 kg × 5 · Done: 750 of 1,500 kg");
+    expect(repLiveLine(dips, kgProgress(dips, [r(15), ro(15), ro(14)]))).toBe("Next sets: 15, 14 reps · Done: 15 of 44 reps");
   });
   it('the plan reached with a set still open: not green, the old one-line words', () => {
     const g = kgProgress(bench, [done(75, 8), done(75, 7), done(75, 6), open(75, 5)]);
@@ -112,7 +112,7 @@ describe('R-498: not green is unchanged', () => {
   it('every set done but under last time: not green, the short line', () => {
     const g = kgProgress(bench, [done(70, 5), done(70, 5), done(70, 5), done(70, 5)]);
     expect(lineGreen(bench, g)).toBe(false);
-    expect(kgLiveLine(bench, g, total, weight)).toBe('Done: 1,400 of 1,500 kg · 100 kg short, fine for today');
+    expect(kgLiveLine(bench, g, total, weight)).toBe('Done: 1,400 of 1,500 kg · 100 kg short, fine for this workout');
   });
 });
 

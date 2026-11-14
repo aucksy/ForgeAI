@@ -74,9 +74,9 @@ describe('R-300 / R-304: the live line', () => {
   it('all sets done and short: no "add a set", just how much and that it is fine', () => {
     const g = kgProgress(plan, [row(9, true), row(9, true), row(9, true)]);
     const line = kgLiveLine(plan, g, total, weight);
-    expect(line).toBe('Done: 1,080 of 1,200 kg · 120 kg short, fine for today');
+    expect(line).toBe('Done: 1,080 of 1,200 kg · 120 kg short, fine for this workout');
     expect(line).not.toMatch(/add a set/);
     const reps = { ...plan, reps: true as const, sets: plan.sets.map((x) => ({ ...x, weightKg: 1 })), total: 30 };
-    expect(repLiveLine(reps, kgProgress(reps, [row(9, true), row(9, true), row(9, true)]))).toBe('Done: 27 of 30 reps · 3 reps short, fine for today');
+    expect(repLiveLine(reps, kgProgress(reps, [row(9, true), row(9, true), row(9, true)]))).toBe('Done: 27 of 30 reps · 3 reps short, fine for this workout');
   });
 });
