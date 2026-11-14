@@ -2,7 +2,7 @@
  * R-146 (owner, 27 Oct 2026): "1,925 kg beaten ✓ (1,925 kg done)" read wrong when done = the plan
  * exactly. Owner, 12 Nov 2026: "reached" is retired; every finished line is one format. R-498 (owner, 14 Nov
  * 2026): green with a previous workout, "Previous set volume beaten! +<diff>" / "Done <done> · Previous <prev>"
- * ("Previous set volume matched" when equal); "First time" with nothing to compare keeps "<done> done · First time".
+ * ("You matched your previous total" when equal); "First time" with nothing to compare keeps "<done> done · First time".
  */
 import { describe, expect, it } from 'vitest';
 
@@ -43,6 +43,6 @@ describe('R-146: exactly the plan, then more (one finished format, owner 12 Nov 
     const lines = [kgLiveLine(plan, kgProgress(plan, [row(40, 20), row(45, 13), row(45, 12)]), total, weight)];
     for (const l of lines) expect(l).not.toMatch(/\bPR\b|session|reached/i);
     // R-498 (owner, 14 Nov 2026): "Previous set volume beaten!" is his own wording for this line only.
-    for (const l of lines) expect(l.replace(/^Previous set volume (beaten!|matched)/, '')).not.toMatch(/volume|beaten/i);
+    for (const l of lines) expect(l.replace(/^(Previous set volume beaten!|You matched your previous total)/, '')).not.toMatch(/volume|beaten/i);
   });
 });

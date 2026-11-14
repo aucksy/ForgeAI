@@ -38,7 +38,7 @@ appId: com.mettleup.app
     file: sub-find.yaml
     env:
       FIND: "^Next sets?: .* · Done: 12 of \\d+ reps.*"
-- assertNotVisible: "(?s).*(\\d+ reps done .*Previous|Previous reps (beaten|matched)).*"
+- assertNotVisible: "(?s).*(\\d+ reps done .*Previous|Previous reps beaten|You matched your previous reps).*"
 - takeScreenshot: rel-r366-c-two-sets-not-yet
 - runFlow:
     file: sub-uat-r366-set.yaml

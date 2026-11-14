@@ -32,8 +32,8 @@ appId: com.mettleup.app
     env:
       FIND: "^Next set: 60 kg × 9 · Done: 600 of 1,560 kg$"
 # Owner, 12 Nov 2026: past the plan the line reads "<done> kg done · Previous: <kg> · +<kg>"; green (every set
-# done, R-498) "Previous set volume beaten! ..." / "... matched". None of them with two sets to go.
-- assertNotVisible: "(?s).*(Today's 1,560 kg reached|kg done · Previous|Previous set volume (beaten|matched)).*"
+# done, R-498) "Previous set volume beaten! ..." / "You matched your previous total". None of them with two sets to go.
+- assertNotVisible: "(?s).*(Today's 1,560 kg reached|kg done · Previous|Previous set volume beaten|You matched your previous).*"
 - takeScreenshot: rel-30b-bench-live-line-600-of-1560
 - runFlow:
     file: sub-uat-tick.yaml

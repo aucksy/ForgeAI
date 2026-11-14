@@ -178,6 +178,10 @@
   Phone test runner: `only` naming a part of the A..R chain that leans on earlier parts now brings them in (only=r runs
   a ... p9 first). Run 43562670140 (only=r,u199) failed because part R started from the demo with no part L, so no
   "Jaipur (6)" folder; no app change caused it. test_flow_tools checks the runner's lists match flows_to_check.py.
+- R-498 FOLLOW-UP: THE GREEN "MATCHED" LINE SAYS NO "VOLUME" (14 Nov 2026; seen in run 43561671733, rel-r454-g).
+  "Previous set volume matched" -> "You matched your previous total"; reps "Previous reps matched" -> "You matched your
+  previous reps". The owner's own "Previous set volume beaten!" shout stays (his R-498 exception, now its only use).
+  memberWords allows only that string. Tests and UAT flows (uat-rel-r454-b, uat-rel-4, uat-rel-r366-b) updated.
 - R-515: THE TARGET'S WORDS SAY WHAT EACH SET DOES (owner, 14 Nov 2026, Dumbbell Curl 20 kg x 18, 13, 11: the
   box said "15, 14, 12" and "Add 1 rep to each set under 15" - "suggesting something else"). His phone runs 0.77.0,
   before R-454's floor; on main set 1 already keeps 18. Now the same-weight line is set by set (engine/progression

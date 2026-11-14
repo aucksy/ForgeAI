@@ -7,7 +7,7 @@
 #   regression: his Lateral Raise: set 1 done at 20 kg x 20 (not the plan's heavier weight) -> sets 2-4 aim
 #     20 kg x 17, 15, 19 (never 13, 12, 15) and the top line says the same number as the row; its total is
 #     the previous workout's 1,420 kg (the plan adds up to less), so it says "1,420 kg, the previous total" (R-515);
-#   equal case: 20, 17, 15, 19 = last time's 1,420 kg -> "Previous set volume matched" over
+#   equal case: 20, 17, 15, 19 = last time's 1,420 kg -> "You matched your previous total" over
 #     "Done 1,420 kg · Previous 1,420 kg";
 #   edit after the tick: sets 2-4 changed to 19, 16, 16 (still 1,420) -> the same line;
 #   negative: never "1,760", never "Next set: 20 kg × 15" after set 1, never "reached", "beaten (" or the
@@ -137,12 +137,12 @@ appId: com.mettleup.app
       N: "4"
       KG: "20"
       REPS: "19"
-# ---------------------------------------------------------------- (d) equal to last time: "Previous set volume matched" (green)
+# ---------------------------------------------------------------- (d) equal to last time: "You matched your previous total" (green)
 - runFlow:
     file: sub-uat-r454-line.yaml
     env:
       EX: "Lateral Raise"
-      WANT: "Previous set volume matched / Done 1,420 kg · Previous 1,420 kg"
+      WANT: "You matched your previous total / Done 1,420 kg · Previous 1,420 kg"
 - assertNotVisible: "(?is).*(reached|beaten \\(|done · Previous:).*"
 - assertNotVisible: ".*kg each done.*|.*Previous: [0-9,]+ kg each.*|.*of (today.s )?[0-9,]+ kg each.*"
 - takeScreenshot: rel-r454-h-lateral-same
@@ -174,7 +174,7 @@ appId: com.mettleup.app
     file: sub-uat-r454-line.yaml
     env:
       EX: "Lateral Raise"
-      WANT: "Previous set volume matched / Done 1,420 kg · Previous 1,420 kg"
+      WANT: "You matched your previous total / Done 1,420 kg · Previous 1,420 kg"
 - assertNotVisible: "(?is).*(reached|beaten \\(|done · Previous:).*"
 - assertNotVisible: ".*kg each done.*|.*Previous: [0-9,]+ kg each.*|.*of (today.s )?[0-9,]+ kg each.*"
 - takeScreenshot: rel-r454-i-lateral-edited-same

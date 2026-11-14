@@ -309,7 +309,7 @@ export function kgTickKey(rows: readonly KgRow[]): string {
 }
 
 // ------------------------------------------------------------------ words (never "volume", "PR", "session")
-// (one owner exception, R-498: the green line's "Previous set volume beaten!" / "... matched", `greenLines`)
+// (one owner exception, R-498: the green line's "Previous set volume beaten!", `greenLines`)
 
 /** "1,765 kg": a total in whole units of the member's choice. */
 export type TotalFmt = (kg: number) => string;
@@ -437,11 +437,12 @@ export function keepUnitsTogether(s: string): string {
   return s.replace(NUMBER_UNIT, `$1${NBSP}`);
 }
 // R-498 (owner, 14 Nov 2026): his exception to the banned word "volume", for THIS line only
-// (test/lib/memberWords.test.ts allows exactly these two strings in this file, nothing else).
+// (test/lib/memberWords.test.ts allows exactly this string in this file, nothing else). Equal is plain words
+// (coordinator, 14 Nov 2026: "volume" is banned; the owner's exception covers the "beaten!" shout only).
 const KG_BEATEN = 'Previous set volume beaten!';
-const KG_MATCHED = 'Previous set volume matched';
+const KG_MATCHED = 'You matched your previous total';
 const REPS_BEATEN = 'Previous reps beaten!';
-const REPS_MATCHED = 'Previous reps matched';
+const REPS_MATCHED = 'You matched your previous reps';
 
 /**
  * R-496/R-497/R-498 (owner, 14 Nov 2026: "previous set volume beaten ... more encouraging and more
@@ -450,7 +451,7 @@ const REPS_MATCHED = 'Previous reps matched';
  * line 2 names both totals:
  *   "Previous set volume beaten! +200 kg" / "Done 1,650 kg · Previous 1,450 kg"
  *   "Previous reps beaten! +3" / "Done 46 reps · Previous 43 reps"
- *   "Previous set volume matched" / "Done 1,450 kg · Previous 1,450 kg" (reps: "Previous reps matched")
+ *   "You matched your previous total" / "Done 1,450 kg · Previous 1,450 kg" (reps: "You matched your previous reps")
  * A different number of sets than last time keeps its note on line 2 ("+1 set"). First time and every
  * line that is not green keep `doneLine`'s one-line words. Joined by GREEN_LINE_BREAK. PURE.
  */

@@ -62,7 +62,7 @@ describe('R-366: the owner Pull-Up', () => {
     // Owner, 12 Nov 2026 (one rule for kilos and reps, `lineGreen`): equal counts as at least last time.
     const eq = kgProgress(p, [done(7), done(5), done(4)]);
     expect(lineGreen(p, eq)).toBe(true);
-    expect(repLiveLine(p, eq)).toBe('Previous reps matched\nDone 16 reps · Previous 16 reps');
+    expect(repLiveLine(p, eq)).toBe('You matched your previous reps\nDone 16 reps · Previous 16 reps');
     const under = kgProgress(p, [done(6), done(5), done(4)]);
     expect(lineGreen(p, under)).toBe(false);
     expect(repLiveLine(p, under)).toBe('Done: 15 of 19 reps · 4 reps less, fine for this workout');
@@ -89,7 +89,7 @@ describe('R-366: reps to beat never under last time (as R-351 for kg)', () => {
     expect(repsToBeatLine(p)).toBe('33 reps to beat · your previous total');
     const eq = kgProgress(p, [done(12), done(11), done(10)]);
     expect(kgBeaten(eq)).toBe(true);
-    expect(repLiveLine(p, eq)).toBe('Previous reps matched\nDone 33 reps · Previous 33 reps');
+    expect(repLiveLine(p, eq)).toBe('You matched your previous reps\nDone 33 reps · Previous 33 reps');
     expect(repLiveLine(p, kgProgress(p, [done(12), done(10), done(8)]))).toBe('Done: 30 of 33 reps, the previous total · 3 reps less, fine for this workout');
   });
   it('no last time to compare (first time, or another set count): "First time", or the set count named', () => {
