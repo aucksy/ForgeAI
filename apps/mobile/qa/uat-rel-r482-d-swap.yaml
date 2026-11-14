@@ -144,8 +144,15 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Workout$"
     timeout: 15000
+# The page at its top first, as in step 2: the Undo bar takes the tip's place, and with the page scrolled to centre
+# Add (sub-find) the shorter bar landed above the screen on his phone size (run 43559673961), so Undo was missed.
+- scrollUntilVisible:
+    element: 'Up next: Legs.*'
+    direction: UP
+    timeout: 20000
+    optional: true
 - runFlow:
-    file: sub-find.yaml
+    file: sub-see.yaml
     env:
       FIND: '^Add$'
 - tapOn:
