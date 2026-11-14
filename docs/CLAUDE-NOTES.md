@@ -7,6 +7,10 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-498. Green finished line: short shout with "Previous" — 14 Nov 2026
+He said: "I'm good with the short shout" but replace "last" with "previous", because the card header already says "Previous: <date>".
+FINAL wording (owner exception for the banned word "volume" on this line only): weight = "Previous set volume beaten! +<n> kg" / "Today <x> kg · Previous <y> kg"; reps-only = "Previous reps beaten! +<n>" / "Today <x> reps · Previous <y> reps"; equal = "Previous set volume matched" (reps: "Previous reps matched") / "Today <x> kg · Previous <x> kg"; first time unchanged. Line 1 bold 17 px, line 2 smaller. Mocks P1/P1-reps/P1-equal sent. Building it for the next release (helper), with tests + UAT flow updates.
+
 ## R-497. Green finished line: his wording — 14 Nov 2026
 He said: use the sentence "You beat last time's set volume by <n> kg" FIRST (smaller font is fine), second line "Today <x> · Last time <y>". Then: "We can also do the short shout thing, last set volume beaten, plus this".
 Done: mocks H1 (sentence, 15 px bold, 2 lines) and H3 ("Last set volume beaten! +200 kg", 17 px) + reps-only and equal cases; sent. "volume" is on the banned member-word list (R-454 era); he chose it on purpose, so this line is an owner exception: build it only after he picks H1 or H3, then update the member-words/banned-word test to allow it on this one line. Reps-only: "You beat last time's total reps by 3". Equal: "You matched last time's set volume".
