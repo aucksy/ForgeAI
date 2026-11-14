@@ -1979,6 +1979,8 @@ part_uat_gym() {  # $1 = the phone's today (YYYY-MM-DD)
     uat_flow uat8 uat-rel-8-gym-plan.yaml -e "GYM=QA UAT Gym" -e "ENDS=$ends" || rc=1
     # R-319 item 1: "Ask a trainer" (hidden until 0053 is live; the flow checks either way).
     uat_flow uat12 uat-rel-12-ask-trainer.yaml -e "GYM=QA UAT Gym" || rc=1
+    # R-551 (0.78.0 round): Settings -> What my gym can see, the approved 12-month sharing caption (no flow opened it before).
+    uat_flow uatr551 uat-rel-r551-gym-sees.yaml || rc=1
     # R-533: the gym answers a question Uma leaves open (as the admin app's Member questions page does), and the Gym
     # tab row shows a red count until she opens the reply. 12c only runs when there was a question to answer.
     uat_flow uat12b uat-rel-12b-ask-open.yaml -e "GYM=QA UAT Gym" || rc=1

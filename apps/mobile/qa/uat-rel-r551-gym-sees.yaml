@@ -1,0 +1,31 @@
+# Part UAT, gym chain (after flow 12): R-551 (owner, 14 Nov 2026, words approved "exactly as written", server 0084
+# live). Settings -> Your gym -> "What my gym can see" had no phone flow at all before the 0.78.0 release round.
+# The phone is Uma, a member of the fresh "QA UAT Gym" on a running paid plan (uat_gym.py setup), so the gym's
+# server has the trainer view (0050) and "Ask a trainer" (0053):
+#  - HAPPY PATH: the "Share my workouts with my trainers" switch is there, ON by default, and its caption is the
+#    approved 12-month text, from its first words to its last (picture rel-r551-01).
+#  - NEGATIVE: the old weekly-summary caption is gone.
+#  - R-505 / R-549: a member on a running plan still gets the "Ask about your workout" button here.
+appId: com.mettleup.app
+---
+- openLink: "forgeai://settings/gym-sees"
+- extendedWaitUntil:
+    visible: "^What my gym can see$"
+    timeout: 30000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Share my workouts with my trainers$'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Your phone sends your gym your workouts since you joined, up to the last 12 months\. For each workout, it sends the day, .*It also sends a weekly total of the weight you lifted and your new best lifts\. .*They never see your body weight, photos or notes\. If you switch this off or leave the gym, the gym deletes it at once\.$'
+- takeScreenshot: rel-r551-01-gym-sees-caption
+# in-view: the same switch row; the old caption was its only other text
+- assertNotVisible: '^Your gym and your trainer see a weekly summary.*'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Ask about your workout$'
+- takeScreenshot: rel-r551-02-gym-sees-ask
+- back
