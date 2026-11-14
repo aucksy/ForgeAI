@@ -83,7 +83,8 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: '^2,000.kg done · \+200.kg over target$'
+      FIND: '^2,000.kg done · [+]200.kg over target$'
+# ([+], not a backslash: a value passed to a sub-flow loses its backslashes, so it would read as spaces.)
 - assertNotVisible: "(?is).*(beaten|matched).*"
 - takeScreenshot: rel-r454-d2-incline-over-target
 # Back to 11: the box follows the edit.
