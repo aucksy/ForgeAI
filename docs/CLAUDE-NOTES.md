@@ -14,6 +14,10 @@ exists). Doing: ExerciseThumb prefers the orange-tank close-up over the line dra
 demo sheet loops the start and end pictures instead of the line drawing; the live workout notification's big picture
 uses the same close-up; the line-drawing credit shows only where a line drawing is still shown. Exercises with no
 orange-tank picture keep the line drawing (better than nothing). Tests + upic UAT; rides the next release.
+DONE 14 Nov: commits 81f166ee + fd8b5762 (scroll-lint mark). UAT part upic PASSED on both phones (default
+43553089577, owner 43553091883); pictures read: rel-pics-01-list-tate (list close-up = orange tank),
+rel-pics-02b-tate-howto (start/end + "How to do it" picture, no Everkinetic credit), rel-pics-02c-tate-demo (demo
+sheet loops the orange-tank pictures). Added to the PROGRESS waiting list.
 
 ## R-490. Make every remaining picture in the orange-tank look, no samples — 13 Nov 2026
 He said (13 Nov 2026, ~22:05 IST): "No, just make the new pictures for the remaining exercise to match the orange tank
@@ -155,6 +159,9 @@ workout, Settings switch). He said "build all 5" (13 Nov 2026). Next app update;
   F198 new dots, J149 bell) that were already failing on main before this commit (run 43386711001 on f18b96fa).
 
 ## R-481. Google rejected 0.77.0 over watch heart rate; sent back with a video (his "A") — 13 Nov 2026
+PUBLISHED 14 Nov 2026 (his "publish"): Google approved; I pressed "Publish 4 changes" in Play Console (simpleapps108).
+Production shows "Active, Latest release: 77000 (0.77.0), 178 countries / regions". The watch closed-test copy went
+out in the same publish. Play banner seen: "Declare your trader status by February 1, 2027" (needs his business details).
 Google (13 Nov 9:13 am): "Update rejected", 2 Health Connect issues, both only about HeartRate
 (android.permission.health.READ_HEART_RATE, the watch app's live heart rate; Wear OS 6 uses it instead of BODY_SENSORS):
 "Excessive Data Access" (could not verify it; "your app may require a companion device. Provide a video link in your
