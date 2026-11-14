@@ -18,6 +18,7 @@ import { color } from '@/theme/tokens';
 import { usePhonePrefs } from '@/tracker/phone/phonePrefs';
 
 import { refreshInbox } from './gymActions';
+import { GYM_QUIET_CHANNEL, GYM_QUIET_CHANNEL_DESCRIPTION, GYM_QUIET_CHANNEL_NAME, gymPopupsNote, quietCopyData } from './gymPopup';
 import { useGymShop } from './gymStore';
 import type { InboxMessage } from './inbox';
 import { inboxFor, useGymInbox } from './inboxStore';
@@ -124,6 +125,57 @@ export async function ensureNoticeChannel(): Promise<void> {
     importance: n.AndroidImportance.HIGH,
     showBadge: false,
   });
+  // R-501: the same messages while a workout is open, popped up with no sound and no buzz (gymPopup.ts).
+  await n.setNotificationChannelAsync(GYM_QUIET_CHANNEL, {
+    name: GYM_QUIET_CHANNEL_NAME,
+    description: GYM_QUIET_CHANNEL_DESCRIPTION,
+    importance: n.AndroidImportance.HIGH,
+    sound: null,
+    enableVibrate: false,
+    showBadge: false,
+  });
+}
+
+/**
+ * R-501: a gym message arrived with the app in front while a workout is open. The library was told to
+ * show nothing (a "no sound" answer would have posted it silently, which never pops up); post it again
+ * under the same id, words and tap on the quiet channel, so it pops up without a sound. Never throws.
+ */
+export async function repostGymMessageQuietly(request: {
+  identifier: string;
+  content: { title?: string | null; body?: string | null; data?: unknown };
+}): Promise<void> {
+  const n = N();
+  if (!n) return;
+  try {
+    await ensureNoticeChannel();
+    await n.scheduleNotificationAsync({
+      identifier: request.identifier,
+      content: {
+        title: request.content.title ?? '',
+        body: request.content.body ?? '',
+        data: quietCopyData(request.content.data),
+        color: color.accent,
+      },
+      trigger: { channelId: GYM_QUIET_CHANNEL },
+    });
+  } catch (e) {
+    console.warn('[ForgeErr] gym notices: the quiet pop-up during a workout', e);
+  }
+}
+
+/** R-501: this phone's gym message channel, as Android set it up (the feedback box's device line). Never throws. */
+export async function gymPopupsLine(): Promise<string> {
+  const n = N();
+  if (!n) return '';
+  try {
+    const allowed = (await n.getPermissionsAsync()).granted;
+    const ch = await n.getNotificationChannelAsync(GYM_NOTICE_CHANNEL);
+    return gymPopupsNote(allowed, ch ? ch.importance : null);
+  } catch (e) {
+    console.warn('[ForgeErr] gym notices: reading the channel', e);
+    return '';
+  }
 }
 
 async function showPopups(popups: readonly NoticePopup[]): Promise<void> {

@@ -51,6 +51,11 @@ Usage: notif.py <check> <dump-file> [args]
                           <channel>, with <category> (alarm / reminder); "sound" = Android's
                           own record of what last made a sound (mSoundNotificationKey) is THIS
                           alert, "silent" = it is not (Do Not Disturb held it back)
+  gym-pop <tag> <channel> <sound|quiet>
+                          R-501: the gym message posted under <tag> can pop up (heads-up): on <channel>,
+                          importance 4, NOT in expo's "silent" group (setSilent: System UI never pops it
+                          up), no only-alert-once; "sound" = it made a sound (mSoundNotificationKey),
+                          "quiet" = it did not (a message during a workout)
   watch                   "Rest is over" reaches a paired watch (not local-only) as an alarm
                           (category=alarm); the live workout card stays on the phone (local-only)
 
@@ -440,8 +445,50 @@ def main():
         left = [x for x in cards if title(x).startswith("Rest ")]
         print(f"[qa] REST IS OVER with the app open: posted on channel {ch.group(1) if ch else '?'}; rest cards left: {len(left)}; other notes on the card's channel: {[title(x) for x in cards if x not in left]}")
         return 0 if not left and ch and ch.group(1) == OVER_OPEN_CHANNEL else 1
+    if check == "gym-pop":
+        return gym_pop(open(path, encoding="utf-8", errors="replace").read(), recs, sys.argv[3], sys.argv[4], sys.argv[5])
     print("unknown check " + check)
     return 2
+
+
+def channel_line(full, channel):
+    """The channel's own line in the dump's channel list ("NotificationChannel{mId='gym-messages', ...}")."""
+    m = re.search(r"NotificationChannel\{mId='%s'.*" % re.escape(channel), full)
+    return m.group(0) if m else ""
+
+
+def gym_pop(full, recs, tag, want_ch, want_sound):
+    """R-501: a gym message (posted under `tag`) can pop up: on want_ch, importance 4 (HIGH), not silenced by
+    the "silent" group (expo's setSilent -> GROUP_ALERT_SUMMARY, which System UI never pops up), no
+    only-alert-once; and it made a sound (want_sound "sound") or did not ("quiet", over a workout)."""
+    mine = [b for b in recs if re.search(r"\btag=%s\b" % re.escape(tag), header(b))]
+    if not mine:
+        print(f"[qa] GYM POP {tag}: NOT POSTED (no notification with this tag; want channel {want_ch})")
+        return 1
+    b = mine[0]
+    head = header(b)
+    ch = channel_of(b)
+    imp = re.search(r"\bimportance=(\d)", head)
+    importance = int(imp.group(1)) if imp else -1
+    silent_group = "g:silent" in b or re.search(r"\bgroupKey=silent\b", b) is not None
+    f = flags_of(head)
+    if f < 0:
+        f = flags_of(b)
+    once = f >= 0 and bool(f & 0x8)
+    key = key_of(b)
+    sm = re.search(r"mSoundNotificationKey=(\S*)", full)
+    made_sound = bool(key) and sm is not None and sm.group(1) == key
+    chl = channel_line(full, want_ch)
+    ch_imp = re.search(r"mImportance=(\d)", chl)
+    ch_sound = re.search(r"mSound=([^,]*)", chl)
+    ok_sound = made_sound if want_sound == "sound" else not made_sound
+    ok = ch == want_ch and importance == 4 and not silent_group and not once and ok_sound
+    print(f"[qa] GYM POP {tag}: channel={ch} (want {want_ch}) importance={importance} (want 4) "
+          f"silent group={'YES (never pops up)' if silent_group else 'no'} only-alert-once={'YES' if once else 'no'} "
+          f"made a sound={'yes' if made_sound else 'no'} (want {'yes' if want_sound == 'sound' else 'no'}) "
+          f"channel list: importance={ch_imp.group(1) if ch_imp else '?'} sound={ch_sound.group(1) if ch_sound else '?'} "
+          f"title={title(b)!r} text={text_of(b)!r}: {'ok' if ok else 'FAILED'}")
+    return 0 if ok else 1
 
 
 if __name__ == "__main__":

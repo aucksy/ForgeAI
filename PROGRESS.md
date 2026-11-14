@@ -1,6 +1,20 @@
 # ForgeAI progress
 
 ## Waiting for release (R-266: tag only when the owner says "release")
+- R-501 GYM MESSAGE POP-UP DURING A WORKOUT (owner, 14 Nov 2026: his gym's Chhath Puja message reached the
+  notification list but did not pop up). Found: with the app open during a workout the handler answered "banner, no
+  sound"; expo-notifications 56 then posts it with setSilent(true) (androidx "silent" group, GROUP_ALERT_SUMMARY) and
+  Android's System UI never pops that up, so it only went into the list. Now the library shows nothing and the app
+  posts the same message (same id, words, tap) on a new HIGH channel "Messages from your gym during a workout" with no
+  sound and no buzz, so it pops up quietly (shop/gymPopup.ts, noticeAlertsRun.repostGymMessageQuietly, 6 lines in
+  workoutAlerts.ts). With the app closed or in the background nothing changed (it already pops up on a stock phone).
+  Also: every Help and feedback message's device line now ends "gym pop-ups: importance N" (how Android set up the
+  gym channel on that phone), so the owner's next message shows whether his OPPO (CPH2873, Android 17) lowered it.
+  No server change, nothing to deploy. Tests: r501GymPopup (new, 12), noticeAlertsRun updated. UAT part u501 (new,
+  shard 6-uat-c; also only=u501): a real Firebase-shaped push delivered to the app with the app in the background,
+  killed, open, and open during a workout; notif.py gym-pop gates channel, importance 4, not silenced, sound / no
+  sound. NOT run on a phone yet. What's new draft (member-words): "Messages from your gym now pop up on your screen
+  while a workout is open too, without a sound."
 - R-498/R-499 GREEN FINISHED LINE SHOUTS FIRST (owner, 14 Nov 2026: "previous set volume beaten ... more celebratory",
   then the short shout with "Previous", then never the word "Today"). The Target box on an exercise card, green when
   every set is done at or above the previous workout: line 1 bold 17 px (type.size.h3, bodyBold) "Previous set volume

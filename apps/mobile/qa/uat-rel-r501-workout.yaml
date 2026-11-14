@@ -1,0 +1,30 @@
+# Part UAT R-501 (run-device-qa.sh part_u501, moment c; also alone: only=u501). Owner, 14 Nov 2026: his gym's
+# message reached the notification list but did not pop up. Moment c is a gym message that arrives while a
+# workout is open with the app in front: it must pop up WITHOUT a sound (the rule: no sound over a workout).
+# This flow only opens the workout (the app as part_u501 left it, the demo loaded; an empty workout, Start
+# blank) and leaves it open; the script then delivers the push and reads Android's record (notif.py gym-pop).
+# Picture rel-r501-c0-workout-open.png.
+appId: com.mettleup.app
+---
+- launchApp
+- tapOn:
+    text: "^Workout$"
+    index: 0
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Start empty workout$"
+- tapOn: "^Start empty workout$"
+- tapOn:
+    text: "(?i)^allow$"
+    optional: true
+- runFlow: sub-start-blank.yaml
+- extendedWaitUntil:
+    visible: "Log a set to finish|Finish workout|^Add exercise$"
+    timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Log a set to finish|Finish workout|^Add exercise$'
+- takeScreenshot: rel-r501-c0-workout-open

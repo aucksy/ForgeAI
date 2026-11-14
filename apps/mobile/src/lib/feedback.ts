@@ -210,6 +210,20 @@ export async function sendFeedback(
   return result;
 }
 
+/**
+ * R-501: how Android set up this phone's gym message channel ("gym pop-ups: importance 4"), so a member's
+ * message shows whether that phone can pop gym messages up. Android only; '' when unknown. Loaded only
+ * here, since the notices file brings the gym's stores with it.
+ */
+async function popupsLine(): Promise<string> {
+  if (Platform.OS !== 'android') return '';
+  try {
+    return await (await import('@/shop/noticeAlertsRun')).gymPopupsLine();
+  } catch {
+    return '';
+  }
+}
+
 async function sendToBoxes(
   clean: string,
   extra: { app?: string; gym?: string; screen?: string; input?: 'voice' | 'typed' },
@@ -220,7 +234,9 @@ async function sendToBoxes(
     source: 'member',
     text: clean.slice(0, FEEDBACK_MAX),
     app: extra.app ?? '',
-    device: deviceLine(Platform.constants as { Model?: unknown; Brand?: unknown; Release?: unknown }, Platform.OS),
+    device: [deviceLine(Platform.constants as { Model?: unknown; Brand?: unknown; Release?: unknown }, Platform.OS), await popupsLine()]
+      .filter(Boolean)
+      .join(', '),
     screen: extra.screen ?? 'settings',
     gym: extra.gym ?? '',
     // R-149: how it was written (the floating button's "Speak", or typed). An older box ignores it.

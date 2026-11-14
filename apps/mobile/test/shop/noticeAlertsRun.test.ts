@@ -85,7 +85,11 @@ describe('the background check', () => {
     expect(shown).toEqual([
       { id: 'gym-notice-c', title: "RAM'S FITNESS", body: 'Gym closed on Diwali', channelId: GYM_NOTICE_CHANNEL, data: { kind: 'gym-message', route: '/shop/inbox' } },
     ]);
-    expect(channels).toEqual([{ id: 'gym-messages', name: 'Messages from your gym', importance: 4 }]);
+    // R-501: with the quiet copy's channel (a message while a workout is open pops up without a sound).
+    expect(channels).toEqual([
+      { id: 'gym-messages', name: 'Messages from your gym', importance: 4 },
+      { id: 'gym-messages-quiet', name: 'Messages from your gym during a workout', importance: 4 },
+    ]);
     // The inbox store has it too, so the bell is right when the app opens.
     expect(useGymInbox.getState().messages.map((m) => m.id)).toContain('c');
   });

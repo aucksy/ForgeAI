@@ -207,7 +207,7 @@ OLD_PARTS="a b c d e f g h h3 p1 p2 i link i2 j j2 j3 k l n p9 r br inv invf p7 
 # R-123: ubk = a fresh install restores a backup FILE from the welcome screen (routines in order,
 # settings, profile), then saves a new one from Settings -> Back up and restore (qa/uat-bk.yaml).
 UAT_PARTS="uh ur un ud ue ubk ub uf ua uv ug uk"
-GATE_PARTS="w dnd longrest anim mk clip uat uatc u355 u344 u358 u366 usel ugym u15 u76 u198 u194 u401 u199 u404 u438 u444 ulook uage u439 u436 u336 u61 upic u452 u456 u458 u454 u461 u482 u484 utour"
+GATE_PARTS="w dnd longrest anim mk clip uat uatc u355 u344 u358 u366 usel ugym u15 u76 u198 u194 u401 u199 u404 u438 u444 ulook uage u439 u436 u336 u61 upic u452 u501 u456 u458 u454 u461 u482 u484 utour"
 qa_list() { echo "$1" | tr ',;' '  ' | tr '[:upper:]' '[:lower:]' | xargs; }
 QA_ONLY_LIST=$(qa_list "${QA_ONLY:-}")
 QA_EXTRA_LIST=$(qa_list "${QA_EXTRA:-}")
@@ -1993,6 +1993,7 @@ part_uat() {
   part_u404
   part_upic
   part_u452
+  part_u501
   part_u456
   part_u438
   part_u444
@@ -2186,6 +2187,70 @@ part_u452() {
   mkdir -p "$OUT/uat-release"
   { find "$OUT" -path "$OUT/uat-release" -prune -o -name "rel-r452-*.png" -print 2>/dev/null; find "$PWD" -maxdepth 1 -name "rel-r452-*.png" 2>/dev/null; } | while read -r f; do cp "$f" "$OUT/uat-release/" 2>/dev/null; done
   [ "$rc" = 0 ] || status=1
+  return $rc
+}
+# R-501 (owner, 14 Nov 2026): his gym's Chhath Puja message reached the notification list but did not pop up.
+# A made-up gym push is delivered the way Firebase delivers one: a data-only message broadcast, as root, to the
+# app's Firebase receiver, so it runs the real path (FirebaseMessagingService -> expo-notifications builder ->
+# Android), with the same keys deploy/hq/push.js sends. The gym channels are made first, as on a member's phone
+# that joined a gym (mettleup://qa-push?ready=1, QA stand-in 'gymPush'). Moments (each its own tag):
+#  a. app in the background (Home), the usual case;  k. app process killed (not force-stopped): Firebase starts it;
+#  b. app open in front, no workout;  c. app open DURING a workout (no sound over a workout: the quiet channel).
+# Gate (notif.py gym-pop): the record is on the right channel, importance 4 (HIGH, the only one that pops up),
+# NOT in the "silent" group (expo's setSilent, which Android never pops up: c before R-501), no only-alert-once,
+# and a/k/b made a sound while c did not. System UI's heads-up lines are printed (not gated); a picture
+# rel-r501-*.png is taken 1.5 s after each push. Also runs alone with only=u501.
+u501_push() {  # $1 = tag, $2 = the message line
+  local f="$OUT/u501-$1.sh"
+  cat > "$f" <<EOF
+am broadcast --include-stopped-packages -n com.mettleup.app/com.google.firebase.iid.FirebaseInstanceIdReceiver -a com.google.android.c2dm.intent.RECEIVE --es google.message_id 'qa-$1-$(date +%s)' --es google.delivered_priority high --es google.original_priority high --es from qa --es title 'QA Gym' --es message '$2' --es channelId gym-messages --es tag '$1' --es push message --es noticeId '$1' --es gymId '' --es body '{"kind":"gym-message","route":"/shop/inbox","push":"message","noticeId":"$1","gymId":""}'
+EOF
+  adb push "$f" /data/local/tmp/u501.sh > /dev/null 2>&1
+  adb shell su 0 sh /data/local/tmp/u501.sh 2>&1 | tr -d '\r' | tee -a "$OUT/u501-broadcasts.txt" | sed 's/^/[u501 broadcast] /' | head -4
+}
+u501_check() {  # $1 = moment letter, $2 = tag, $3 = channel, $4 = sound|quiet
+  local rc=0
+  sleep 1.5
+  adb exec-out screencap -p > "$OUT/uat-release/rel-r501-$1.png" 2>/dev/null || true
+  sleep 4
+  gate_dump "notif-u501-$1.txt"
+  adb shell dumpsys activity service com.android.systemui 2>/dev/null | tr -d '\r' | grep -i -E "heads.?up|HUN" | grep -i "mettleup" | head -6 > "$OUT/u501-$1-systemui.txt" || true
+  python3 "$QA_DIR/notif.py" gym-pop "$OUT/notif-u501-$1.txt" "$2" "$3" "$4" 2>&1 | tee -a "$OUT/timeline.txt" || rc=1
+  sed 's/^/[u501 system ui] /' "$OUT/u501-$1-systemui.txt" | tee -a "$OUT/timeline.txt"
+  return $rc
+}
+part_u501() {
+  local rc=0
+  mkdir -p "$OUT/uat-release"
+  gate_flow u501_seed gate-demo.yaml || { status=1; return 1; }
+  adb shell am start -W -a android.intent.action.VIEW -d "mettleup://qa-push?ready=1" com.mettleup.app > "$OUT/u501-ready.txt" 2>&1 || true
+  sleep 5
+  log "UAT R501 a: the app in the background, a gym push arrives"
+  adb shell input keyevent KEYCODE_HOME
+  sleep 2
+  gate_wake
+  u501_push gym-notice-qa501a "QA R501 a: Happy Chhath Puja from your gym"
+  u501_check a gym-notice-qa501a gym-messages sound || rc=1
+  log "UAT R501 k: the app process killed, a gym push arrives"
+  adb shell am kill com.mettleup.app > /dev/null 2>&1 || true
+  sleep 3
+  u501_push gym-notice-qa501k "QA R501 k: the gym is closed on Sunday"
+  u501_check k gym-notice-qa501k gym-messages sound || rc=1
+  log "UAT R501 b: the app open in front, no workout, a gym push arrives"
+  adb shell monkey -p com.mettleup.app -c android.intent.category.LAUNCHER 1 > /dev/null 2>&1 || true
+  sleep 6
+  u501_push gym-notice-qa501b "QA R501 b: new timings from Monday"
+  u501_check b gym-notice-qa501b gym-messages sound || rc=1
+  log "UAT R501 c: the app open during a workout, a gym push arrives (no sound over a workout)"
+  if uat_flow uatr501 uat-rel-r501-workout.yaml; then
+    u501_push gym-notice-qa501c "QA R501 c: an offer on protein this week"
+    u501_check c gym-notice-qa501c gym-messages-quiet quiet || rc=1
+  else
+    rc=1
+  fi
+  { find "$OUT" -path "$OUT/uat-release" -prune -o -name "rel-r501-*.png" -print 2>/dev/null; find "$PWD" -maxdepth 1 -name "rel-r501-*.png" 2>/dev/null; } | while read -r f; do cp "$f" "$OUT/uat-release/" 2>/dev/null; done
+  [ "$rc" = 0 ] || status=1
+  [ "$rc" = 0 ] || log "PART U501 FAILED (notif-u501-*.txt, rel-r501-*.png, u501-broadcasts.txt)"
   return $rc
 }
 # R-456 + R-457 (owner, 12 Nov 2026): the In use screen closes only on "I'm back" (taps on its middle, its sign
@@ -2600,6 +2665,7 @@ qa_runs u199 && ! qa_runs uat && { log "gate part U199 begins"; part_u199; }
 qa_runs u404 && ! qa_runs uat && { log "gate part U404 begins"; part_u404; }
 qa_runs upic && ! qa_runs uat && { log "gate part UPIC begins"; part_upic; }
 qa_runs u452 && ! qa_runs uat && { log "gate part U452 begins"; part_u452; }
+qa_runs u501 && ! qa_runs uat && { log "gate part U501 begins"; part_u501; }
 qa_runs u456 && ! qa_runs uat && { log "gate part U456 begins"; part_u456; }
 qa_runs u438 && ! qa_runs uat && { log "gate part U438 begins"; part_u438; }
 qa_runs u444 && ! qa_runs uat && { log "gate part U444 begins"; part_u444; }
