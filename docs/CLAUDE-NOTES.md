@@ -7,6 +7,13 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-560 (15 Nov 2026, night) Release 0.78.0 (phone + watch): the R-556 release, gates in progress
+- Owner's approval, verbatim (R-556, 15 Nov 2026, night IST): "So I'm going to sleep. Are you expecting any decisions from me which you cannot take? If not then you can complete all the testing, make decisions whenever required and release everything." One release = this one version.
+- Covers everything on main since 0.77.0 (933e4bf4) up to and including the watch black-screen work (R-557: 283d7db0, 420c4ace). What's new: 6 lines (c34c2440), 485 of 500 Play characters.
+- Found and fixed in the round: (1) the app crashed when a gym push reached a phone whose app was closed or still starting (qa-journeys 43630726782 J3; R8 renamed expo's background loader; old since R-153, 28 Oct; fixed ff9d0998, keep rule + test); (2) the "Find my gym with my number" card showed to every member with no gym although MettleUp Plus ships off, promising "every feature free" (gated on the switch, d078cbd8); (3) test scripts: part C drawing credit on Zottman Curl (R-491 gave Front Raise a picture, 105093e1), the 12-month sharing caption had no phone flow (uat-rel-r551, 930415e5 + a92dc886).
+- The watch: his watch ran watch app 0.76.0 or older (R-557); the dim fix first shipped in watch 0.77.0. The 0.78.0 watch app must reach his watch: the watch build goes to wear:internal and wear:closed with the phone, and to production with the phone.
+- Version 0.78.0 set in app.json in this commit; gate runs, tag and Play results are added below when done.
+
 ## R-559 (15 Nov 2026, night) Admin panel and HQ Worker deployed LIVE (R-556 "release everything")
 - Panel: forgeai-panel version d74ad3c5 = commit 30f79a79 (CI run 43631460479 green), dashboard-dist from that run. Fresh-eyes review (R-335) said DEPLOY OK: no money, database, privacy or switch blocker; every RPC it calls is in a migration applied live (0082 gym page photos is not live, used only behind GYM_PAGES). Live vars before deploy were all in wrangler.jsonc, so none lost.
 - Checked live: /api/switches = gymPages false, joinPay false, aiCharge true; /api/self-join/pay-info answers online false; /app goes to Google Play; the new admin app code ("Joined online", "Make member", "Set your gym timings") is served.
