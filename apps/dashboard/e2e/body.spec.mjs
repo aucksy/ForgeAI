@@ -1,7 +1,7 @@
 // R-120 (24 Oct 2026): measurements taken by the trainer, and diet plans from the trainer, on a
 // server that has 0035 (the pretend server's `bodyServer`). The owner measures a member at the desk
 // (two days, change vs last time, a same-day refusal, a fix, a delete), writes a diet plan from a
-// sample, sends it to the member and withdraws it. A server before 0035 says so in one line. On a
+// ready-made plan (R-532), sends it to the member and withdraws it. A server before 0035 says so in one line. On a
 // 360px phone.
 import { expect, test } from '@playwright/test';
 
@@ -93,7 +93,7 @@ test('J60 body measurements: the trainer measures a member at the desk, sees the
   await expectFitsPhone(page, 'after the measurements');
 });
 
-test('J61 diet plans: the trainer copies a sample, sends it to a member, sees it on their page and withdraws it', async ({ page }) => {
+test('J61 diet plans: the trainer starts from a ready-made plan, sends it to a member, sees it on their page and withdraws it', async ({ page }) => {
   const server = await openApp(page);
   server.bodyServer = true;
   await startOnlineGym(page);
@@ -114,9 +114,10 @@ test('J61 diet plans: the trainer copies a sample, sends it to a member, sees it
   await s.getByRole('button', { name: 'Cancel' }).tap();
   await expect(s).toBeHidden();
 
-  // ---- From the sample, sent to Asha.
+  // ---- From the ready-made plan (Veg group), sent to Asha.
   await page.getByRole('button', { name: '+ New plan' }).first().tap();
-  await sheet(page, 'New diet plan').getByRole('button', { name: /^Fat loss veg · 1,600 kcal/ }).tap();
+  await expect(sheet(page, 'New diet plan').getByRole('region', { name: 'Non-veg', exact: true })).toContainText('Fat loss non-veg · 1,600 kcal');
+  await sheet(page, 'New diet plan').getByRole('region', { name: 'Veg', exact: true }).getByRole('button', { name: /^Fat loss veg · 1,600 kcal/ }).tap();
   s = sheet(page, 'New diet plan');
   await expect(s.getByLabel('Plan name')).toHaveValue('Fat loss veg · 1,600 kcal');
   await expect(s.getByLabel('Calories a day (optional)')).toHaveValue('1600');
@@ -128,12 +129,16 @@ test('J61 diet plans: the trainer copies a sample, sends it to a member, sees it
   await expect(s).toBeHidden();
   await expect(toast(page)).toContainText('“Fat loss veg · 1,600 kcal” saved and sent.');
   await expect(main).toContainText('Sent to 1 member');
-  await expect(main).toContainText('6 meals · 1,600 kcal · 90 g protein');
+  await expect(main).toContainText('6 meals · 1,600 kcal · 85 g protein');
 
   const memberId = server.rows('member').find((m) => m.fullName === ASHA.name)?.id;
   expect(server.diets).toHaveLength(1);
-  expect(server.diets[0]).toMatchObject({ title: 'Fat loss veg · 1,600 kcal', kcal: 1600, proteinG: 90, assign: { memberIds: [memberId], planIds: [] } });
-  expect(server.diets[0].meals[1]).toEqual({ name: 'Breakfast', time: '8:30 am', items: ['2 moong dal chilla with mint chutney', '1 cup low-fat curd'] });
+  expect(server.diets[0]).toMatchObject({ title: 'Fat loss veg · 1,600 kcal', kcal: 1600, proteinG: 85, assign: { memberIds: [memberId], planIds: [] } });
+  expect(server.diets[0].meals[1]).toEqual({
+    name: 'Breakfast',
+    time: '8:30 am',
+    items: ['2 moong dal chilla: 50 g dry moong dal, 1 tsp oil', 'Mint chutney: 20 g mint and coriander, no sugar', '1 bowl curd (150 g)'],
+  });
 
   // ---- On her page: she gets it; "Send a diet plan" says it is already sent.
   await openMember(page, ASHA.name);

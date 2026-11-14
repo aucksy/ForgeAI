@@ -2,8 +2,9 @@
  * Diet plans from the trainer (R-120, 24 Oct 2026).
  *
  * The list of plans (withdrawn ones folded away), the builder (title, goal, calories and protein a
- * day if wanted, meals with a time and one food per line, notes, who gets it), a starter set of plain
- * samples for Indian gyms to copy, and Member detail's card and "Send a diet plan". Sent like workout
+ * day if wanted, meals with a time and one food per line, notes, who gets it), six ready-made plans
+ * for Indian gyms to start from (R-532: fat loss, muscle gain and maintenance, each in a Veg and a
+ * Non-veg group), and Member detail's card and "Send a diet plan". Sent like workout
  * plans: to members by name and/or to everyone on a membership plan who has it today. Saved on the
  * gym's server (0035), so it needs the gym online and the internet. The member reads it in the MettleUp
  * app (Gym → Diet plan). Owner and Staff (trainers) alike (permission `editWorkoutPlans`). Nothing is
@@ -13,6 +14,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 
 import { useAuth } from '../../auth/AuthProvider';
+import { t } from '../../lang/lang';
 import { dateISOFromEpoch, formatDay } from '../../logic/dates';
 import {
   copyOfDiet,
@@ -32,6 +34,7 @@ import {
   splitDiets,
   STARTER_DIETS,
   type DietDraft,
+  type DietFood,
   type DietMealDraft,
   type DietPlan,
 } from '../../logic/dietPlans';
@@ -179,7 +182,7 @@ export function DietPlansScreen() {
             {open.length === 0 ? (
               <EmptyState
                 title="No diet plans yet"
-                body="Start from a sample, like “Fat loss veg · 1,600 kcal”, change what you like, and send it to members or to everyone on a membership plan."
+                body={t('Start from a ready-made plan, like “Fat loss veg · 1,600 kcal”, change what you like, and send it to members or to everyone on a membership plan.')}
                 action={newButton}
               />
             ) : (
@@ -336,12 +339,26 @@ function DietRow({ plan, first, actions }: { plan: DietPlan; first: boolean; act
 
 // ---------------------------------------------------------------- starting
 
-function StarterList({ memberIds, onPick }: { memberIds: readonly string[]; onPick: (d: DietDraft) => void }) {
+/** One food group of the ready-made plans ("Veg" or "Non-veg"), with what it means. */
+function StarterGroup({ food, title, sub, memberIds, onPick }: { food: DietFood; title: string; sub: string; memberIds: readonly string[]; onPick: (d: DietDraft) => void }) {
   return (
-    <div style={{ display: 'grid', gap: space.sm }}>
-      {STARTER_DIETS.map((s) => (
+    <section aria-label={title} style={{ display: 'grid', gap: space.sm }}>
+      <div>
+        <h3 style={{ margin: 0, fontFamily: font.display, fontSize: 15, fontWeight: 600, color: color.ink }}>{title}</h3>
+        <p style={{ ...quiet, fontSize: 13 }}>{sub}</p>
+      </div>
+      {STARTER_DIETS.filter((s) => s.food === food).map((s) => (
         <ChoiceRow key={s.key} title={s.title} sub={`${s.goal} · ${s.proteinG} g protein`} body={s.summary} onClick={() => onPick(draftFromStarter(s, memberIds))} />
       ))}
+    </section>
+  );
+}
+
+function StarterList({ memberIds, onPick }: { memberIds: readonly string[]; onPick: (d: DietDraft) => void }) {
+  return (
+    <div style={{ display: 'grid', gap: space.lg }}>
+      <StarterGroup food="veg" title={t('Veg')} sub={t('No eggs, meat or fish')} memberIds={memberIds} onPick={onPick} />
+      <StarterGroup food="non-veg" title={t('Non-veg')} sub={t('With eggs, chicken or fish')} memberIds={memberIds} onPick={onPick} />
       <ChoiceRow title="Start empty" sub="Write every meal yourself" onClick={() => onPick(emptyDietDraft(memberIds))} />
     </div>
   );
@@ -358,7 +375,10 @@ function StartDietSheet({ memberIds = [], onPick, onClose }: { memberIds?: reado
         </Button>
       }
     >
-      <p style={{ ...quiet, fontSize: 13, marginBottom: space.md }}>Start from a sample and change anything you like, or start empty. The samples are everyday Indian food, not medical advice.</p>
+      <p style={{ ...quiet, fontSize: 13, marginBottom: space.md }}>
+        {t('Start from a ready-made plan and change anything you like, or start empty.')}{' '}
+        {t('Each ready-made plan is for an adult of about 60 to 70 kg who trains 3 to 5 days a week. It uses everyday Indian food and is not medical advice.')}
+      </p>
       <StarterList memberIds={memberIds} onPick={onPick} />
     </Sheet>
   );
@@ -480,7 +500,7 @@ const pairGrid = { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minm
 
 /**
  * Member detail → Diet plan: the plans this member gets (by name, or through their membership plan),
- * and "Send a diet plan" (a saved plan in one tap, a sample, or a new one with them ticked).
+ * and "Send a diet plan" (a saved plan in one tap, a ready-made plan, or a new one with them ticked).
  */
 export function MemberDietCard({ memberId, memberName }: { memberId: string; memberName: string }) {
   const { snapshot, today } = useCrm();
@@ -610,8 +630,8 @@ export function MemberDietCard({ memberId, memberName }: { memberId: string; mem
           <SectionTitle>{choices.length > 0 ? 'Or make one for them' : 'Make one for them'}</SectionTitle>
           <div style={{ display: 'grid', gap: space.sm }}>
             <ChoiceRow
-              title="Start from a sample"
-              sub="Fat loss, muscle gain or keep your weight"
+              title={t('Start from a ready-made plan')}
+              sub={t('Veg or non-veg, for fat loss, muscle gain or keeping your weight')}
               onClick={() => {
                 setSending(false);
                 setStarting(true);

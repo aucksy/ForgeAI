@@ -515,6 +515,20 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   'Personal training with a set number of sessions. Sold on top of their gym plan.':
     'Tay sessions wali personal training. Yeh gym plan ke upar alag se bikti hai.',
 
+  // ── Diet plans: the ready-made plans (R-532, 14 Nov 2026) ───────────────
+  'Start from a ready-made plan': 'Ready-made plan se shuru karo',
+  'Veg or non-veg, for fat loss, muscle gain or keeping your weight': 'Veg ya non-veg, fat loss, muscle gain ya weight bana ke rakhne ke liye',
+  'Start from a ready-made plan and change anything you like, or start empty.':
+    'Ready-made plan se shuru karke jo chahein badlo, ya khaali plan se shuru karo.',
+  'Each ready-made plan is for an adult of about 60 to 70 kg who trains 3 to 5 days a week. It uses everyday Indian food and is not medical advice.':
+    'Har ready-made plan lagbhag 60 se 70 kg ke aise adult ke liye hai jo hafte mein 3 se 5 din training karte hain. Ismein roz ka Indian khana hai, aur yeh doctor ki salah nahi hai.',
+  'Start from a ready-made plan, like “Fat loss veg · 1,600 kcal”, change what you like, and send it to members or to everyone on a membership plan.':
+    'Ek ready-made plan se shuru karo, jaise “Fat loss veg · 1,600 kcal”, jo chahein badlo, aur members ko ya kisi membership plan ke sabhi members ko bhejo.',
+  Veg: 'Veg',
+  'Non-veg': 'Non-veg',
+  'No eggs, meat or fish': 'Anda, meat ya fish nahi',
+  'With eggs, chicken or fish': 'Anda, chicken ya fish ke saath',
+
   // ── Invite ─────────────────────────────────────────────────────────────
   'Send your gym’s link on WhatsApp, or put a QR poster at the front desk.': 'Apne gym ka link WhatsApp par bhejo, ya front desk par QR poster lagao.',
   'Back to Settings': 'Settings par wapas',
