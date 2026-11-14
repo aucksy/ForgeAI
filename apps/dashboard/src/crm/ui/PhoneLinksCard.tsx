@@ -7,7 +7,7 @@
  * Rules and words: logic/phoneLinks.ts.
  */
 
-import { useCallback, useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { useAuth } from '../auth/AuthProvider';
 import {
@@ -18,30 +18,21 @@ import {
   PHONE_LINK_WORDS as W,
   type PhoneLinkRow,
 } from '../logic/phoneLinks';
-import { decidePhoneLink, listPhoneLinks, phoneLinkServer } from '../shop/phoneLinkApi';
-import { usePoll } from '../shop/ShopProvider';
+import { decidePhoneLink } from '../shop/phoneLinkApi';
 import { useNeedsYou } from './NeedsYou';
 import { Button, Card, ErrorBanner, Row, SectionTitle, color, font, space } from './kit';
 
 export function PhoneLinksCard() {
   const { session } = useAuth();
   const key = session?.online ? (session.ownerKey ?? null) : null;
-  const [rows, setRows] = useState<PhoneLinkRow[] | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
   const [problem, setProblem] = useState<{ id: string; text: string } | null>(null);
   // R-319 item 8a: Today's "Needs you" count drops at once after an answer.
+  // R-522: the list itself comes from Needs you too (one read a minute for the whole panel, never with the tab
+  // hidden), so this card no longer asks the server on its own timer.
   const needs = useNeedsYou();
-
-  const load = useCallback(async () => {
-    if (!key) return;
-    try {
-      const r = await listPhoneLinks(key);
-      setRows(r === 'missing' ? null : pendingLinks(r));
-    } catch (e) {
-      console.warn('[ForgeErr] numbers to confirm: reading the list', e);
-    }
-  }, [key]);
-  usePoll(load, 60_000, key !== null && phoneLinkServer() !== 'no');
+  const { linkRows } = needs;
+  const rows = useMemo<PhoneLinkRow[] | null>(() => (linkRows ? pendingLinks(linkRows) : null), [linkRows]);
 
   if (!key || !rows || rows.length === 0) return null;
 
@@ -54,8 +45,7 @@ export function PhoneLinksCard() {
       console.warn('[ForgeErr] numbers to confirm: answering', e);
       setProblem({ id: r.id, text: linkErrorWords(e) });
     } finally {
-      await load();
-      await needs.refresh();
+      await needs.refresh(['links']);
       setBusy(null);
     }
   };

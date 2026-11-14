@@ -40,7 +40,7 @@ test('J11 front desk: what staff cannot see or do', async ({ page }) => {
   const add = sheet(page, 'Add a person');
   await add.getByLabel('Name').fill('Sunita Verma');
   await add.getByLabel('Mobile number').fill('98290 54321');
-  await expect(add.getByLabel('What can they do?')).toHaveValue('staff');
+  await expect(add.getByLabel('What is their job?')).toHaveValue('staff');
   await add.getByRole('button', { name: 'Add', exact: true }).tap();
   const sunita = page.getByRole('main').locator('div').filter({ hasText: 'Sunita Verma' }).filter({ has: page.getByRole('button', { name: 'Make sign-in code' }) }).last();
   await sunita.getByRole('button', { name: 'Make sign-in code' }).tap();

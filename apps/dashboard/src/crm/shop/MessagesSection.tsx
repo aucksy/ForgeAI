@@ -151,7 +151,7 @@ export function MessagesSection({ startWith }: { startWith?: string }) {
     }
   }, [key, handleError, gate]);
 
-  usePoll(load, 30_000, key !== null);
+  usePoll(load, 2 * 60_000, key !== null); // R-522: was 30 s; in view only
 
   // ------------------------------------------------ the message
   const template = templateById(templateId);

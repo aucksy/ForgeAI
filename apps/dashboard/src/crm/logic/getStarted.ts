@@ -50,7 +50,7 @@ export function getStartedSteps(
     { key: 'members', title: 'Bring in your members', hint: 'Add them one by one, or bring in an Excel list, like one saved from your old gym software.', path: '/members', done: active.length > 0, manual: false },
     // R-190 (owner, 30 Oct 2026): before the app link, so members first see the gym's own look.
     { key: 'brand', title: 'Add your logo and colours', hint: 'Members see your logo and colours in their app.', path: '/settings/branding', done: ticked.has('brand'), manual: true },
-    { key: 'staff', title: 'Add your desk staff', hint: 'They sign in with their own mobile number and a code.', path: '/settings/people', done: ticked.has('staff'), manual: true },
+    { key: 'staff', title: 'Add your staff and trainers', hint: 'They sign in with their own mobile number and a code. A trainer sees only their own members.', path: '/settings/people', done: ticked.has('staff'), manual: true },
     // R-525 (owner, 14 Nov 2026): the gym page needs plans AND timings, so timings sit just before it. Ticks itself when
     // the Gym timings screen reads or saves the gym's real timings (it cannot be ticked by hand).
     { key: 'timings', title: 'Set your gym timings', hint: timingsHint, path: '/settings/timings', done: ticked.has('timings'), manual: false },

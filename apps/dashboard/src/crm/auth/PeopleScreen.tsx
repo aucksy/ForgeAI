@@ -12,7 +12,7 @@
  * PIN"). The owner's list says who has one; "Sign out everywhere" also clears that person's PIN.
  */
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { copyText } from '../shop/JoinCode';
 import { useCrm } from '../store';
@@ -36,6 +36,22 @@ import {
 import { navigate } from '../ui/router';
 import { tickGetStarted } from '../ui/GetStartedCard';
 import { TrainerTick, useTrainerSetup } from '../ui/TrainerParts';
+import { t } from '../lang/lang';
+import {
+  JOB_CHOICES,
+  JOB_MAX,
+  JOB_WORDS,
+  cleanJob,
+  jobHint,
+  jobOf,
+  jobsToSend,
+  keepLocalJob,
+  personPill,
+  readLocalJobs,
+  roleFor,
+  type JobChoice,
+} from '../logic/staffJobs';
+import * as trainerApi from '../shop/trainerApi';
 import * as authApi from './api';
 import { useAuth } from './AuthProvider';
 import { staffRightsWords } from './permissions';
@@ -51,10 +67,20 @@ import {
   normalizeMobile,
   whatsAppToMobile,
   type MadeCode,
+  type Person,
   type PersonRow,
   type PinStatus,
   type Role,
 } from './signin';
+
+/** This browser's storage, or null when it is blocked (a private window): jobs then live only in the page. */
+function browserStore(): Storage | null {
+  try {
+    return typeof localStorage !== 'undefined' ? localStorage : null;
+  } catch {
+    return null;
+  }
+}
 
 function clock(ms: number): string {
   return new Date(ms).toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit' });
@@ -132,6 +158,48 @@ export function PeopleScreen() {
     void load();
   }, [load]);
 
+  // R-522: the jobs typed under "Other" that wait on this browser until the gym's server has 0079.
+  const gymId = snapshot.gym.gymId;
+  const [localJobs, setLocalJobs] = useState<Record<string, string>>(() => readLocalJobs(browserStore(), gymId));
+  useEffect(() => setLocalJobs(readLocalJobs(browserStore(), gymId)), [gymId]);
+
+  /** Save a typed job on the server; before 0079 (or when it cannot be sent now) keep it on this browser. */
+  const saveJob = useCallback(
+    async (staffId: string, job: string) => {
+      let saved = false;
+      try {
+        saved = (await authApi.setPersonJob(key, staffId, job)) === 'saved';
+      } catch (e) {
+        console.warn('[ForgeErr] staff job: saving; kept on this browser to send later', e);
+      }
+      setLocalJobs(keepLocalJob(browserStore(), gymId, staffId, saved ? null : job));
+    },
+    [key, gymId],
+  );
+
+  // Once the server has 0079 (its list carries `job`), send what waited here, then forget it. One try per list
+  // read: a failure waits for the next time the list is read (never a loop).
+  const triedFor = useRef<PersonRow[] | null>(null);
+  useEffect(() => {
+    if (!people || triedFor.current === people) return;
+    const { send, forget } = jobsToSend(people, localJobs);
+    if (send.length === 0 && forget.length === 0) return;
+    triedFor.current = people;
+    void (async () => {
+      let next = localJobs;
+      for (const id of forget) next = keepLocalJob(browserStore(), gymId, id, null);
+      for (const s of send) {
+        try {
+          if ((await authApi.setPersonJob(key, s.staffId, s.job)) === 'saved') next = keepLocalJob(browserStore(), gymId, s.staffId, null);
+        } catch (e) {
+          console.warn('[ForgeErr] staff job: sending a job kept on this browser', e);
+        }
+      }
+      setLocalJobs(next);
+      if (send.length > 0) await load();
+    })();
+  }, [people, localJobs, key, gymId, load]);
+
   const loadPin = useCallback(async () => {
     if (!key || !me) return;
     try {
@@ -194,7 +262,7 @@ export function PeopleScreen() {
       <PageHeader
         title="Staff & sign-in"
         subtitle="Who can open this gym, on which phone"
-        actions={isOwner ? <Button onClick={() => setSheet({ kind: 'add' })}>Add a person</Button> : undefined}
+        actions={isOwner ? <Button onClick={() => setSheet({ kind: 'add' })}>{t('Add a person')}</Button> : undefined}
       />
 
       <Card style={{ marginBottom: space.lg }}>
@@ -254,7 +322,13 @@ export function PeopleScreen() {
           )}
           {people === null && !loadError && <p style={{ ...bodyText, marginTop: space.lg }}>Loading…</p>}
           <div style={{ display: 'grid', gap: space.md, marginTop: space.lg }}>
-            {(people ?? []).map((p) => (
+            {(people ?? []).map((p) => {
+              // R-522: Owner, the typed job, Trainer (ticked), or Staff. Access is only ever owner or staff.
+              const pill = personPill(
+                { role: p.role, job: jobOf(p, localJobs) },
+                trainers.setup?.people.some((x) => x.id === p.staffId && x.trainer) === true,
+              );
+              return (
               <div
                 key={p.staffId}
                 style={{
@@ -266,8 +340,8 @@ export function PeopleScreen() {
               >
                 <Row gap={space.sm}>
                   <strong style={{ fontFamily: font.body, fontSize: 16, color: color.ink }}>{p.name}</strong>
-                  <Pill tone={p.role === 'owner' ? 'accent' : 'muted'}>{p.role === 'owner' ? 'Owner' : 'Staff'}</Pill>
-                  {p.me && <Pill tone="good">You</Pill>}
+                  <Pill tone={pill.kind === 'owner' ? 'accent' : 'muted'}>{pill.kind === 'job' ? pill.text : t(pill.text)}</Pill>
+                  {p.me && <Pill tone="good">{t('You')}</Pill>}
                 </Row>
                 <p style={{ ...bodyText, marginTop: 4 }}>
                   +91 {formatMobile(p.phone)} · {seenWords(p)}
@@ -295,7 +369,8 @@ export function PeopleScreen() {
                   </Row>
                 </div>
               </div>
-            ))}
+              );
+            })}
           </div>
           <p style={{ ...bodyText, marginTop: space.lg, fontSize: 13, color: color.inkMuted }}>
             {staffRightsWords(multiBranch)}
@@ -306,10 +381,21 @@ export function PeopleScreen() {
       {sheet?.kind === 'add' && (
         <AddPersonSheet
           onClose={closeSheet}
-          onAdded={async (name) => {
+          onAdded={async (person, choice, job) => {
             setSheet(null);
-            setToast(`${name} added. Now make a sign-in code for them.`);
-            // UAT 1 Nov 2026: Today's "Get started" step "Add your desk staff" ticks itself.
+            let note = t(JOB_WORDS.added, { name: person.name });
+            // R-522: Trainer = the front desk's access + the Trainer tick, the same call as the tick on their row.
+            if (choice === 'trainer') {
+              const problem = await trainers.save((k) => trainerApi.setTrainer(k, person.staffId, true));
+              if (problem) {
+                console.warn('[ForgeErr] add person: not marked as a trainer', problem);
+                note = t(JOB_WORDS.notTrainer, { name: person.name });
+              }
+            }
+            // Other = the front desk's access + the typed job on their row.
+            if (choice === 'other' && job) await saveJob(person.staffId, job);
+            setToast(note);
+            // UAT 1 Nov 2026: Today's "Get started" step "Add your staff and trainers" ticks itself.
             tickGetStarted(snapshot.gym.gymId, 'staff');
             await load();
           }}
@@ -413,59 +499,85 @@ function AddPersonSheet({
   fail,
 }: {
   onClose: () => void;
-  onAdded: (name: string) => Promise<void>;
-  add: (name: string, phone: string, role: Role) => Promise<unknown>;
+  onAdded: (person: Person, choice: JobChoice, job: string | null) => Promise<void>;
+  add: (name: string, phone: string, role: Role) => Promise<Person>;
   fail: (e: unknown) => string;
 }) {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
-  const [role, setRole] = useState<Role>('staff');
+  // R-522: Owner, Staff (front desk), Trainer or Other (type the job). Only Owner gives owner powers.
+  const [choice, setChoice] = useState<JobChoice>('staff');
+  const [jobText, setJobText] = useState('');
   const { multi } = useBranches();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [jobError, setJobError] = useState<string | null>(null);
 
   const save = async () => {
     const ten = normalizeMobile(phone);
-    if (!name.trim()) return setError('Type their name.');
-    if (!ten) return setError('Type a 10-digit mobile number, like 98290 12345.');
+    if (!name.trim()) return setError(t('Type their name.'));
+    if (!ten) return setError(t('Type a 10-digit mobile number, like 98290 12345.'));
+    const job = choice === 'other' ? cleanJob(jobText) : null;
+    if (choice === 'other' && !job) {
+      setError(null);
+      return setJobError(t(JOB_WORDS.otherMissing));
+    }
     setBusy(true);
     setError(null);
+    setJobError(null);
     try {
-      await add(name, ten, role);
-      await onAdded(name.trim());
+      const person = await add(name, ten, roleFor(choice));
+      await onAdded({ ...person, name: person.name || name.trim() }, choice, job);
     } catch (e) {
       setError(fail(e));
       setBusy(false);
     }
   };
 
+  const label = (c: JobChoice): string => t(JOB_WORDS[c]);
   return (
     <Sheet
-      title="Add a person"
+      title={t('Add a person')}
       onClose={onClose}
       footer={
         <>
           <Button variant="ghost" onClick={onClose}>
-            Cancel
+            {t('Cancel')}
           </Button>
           <Button disabled={busy} onClick={() => void save()}>
-            {busy ? 'Adding…' : 'Add'}
+            {busy ? t('Adding…') : t('Add')}
           </Button>
         </>
       }
     >
       {error && <ErrorBanner>{error}</ErrorBanner>}
-      <TextField label="Name" value={name} onChange={setName} placeholder="Suresh" autoFocus />
-      <TextField label="Mobile number" prefix="+91" inputMode="tel" value={phone} onChange={setPhone} placeholder="98290 12345" />
+      <TextField label={t('Name')} value={name} onChange={setName} placeholder="Suresh" autoFocus />
+      <TextField label={t('Mobile number')} prefix="+91" inputMode="tel" value={phone} onChange={setPhone} placeholder="98290 12345" />
       <SelectField
-        label="What can they do?"
-        value={role}
-        onChange={(v) => setRole(v === 'owner' ? 'owner' : 'staff')}
-        options={[
-          { value: 'staff', label: multi ? 'Staff (front desk of this branch): add members, collect fees, check in' : 'Staff (front desk): add members, collect fees, check in' },
-          { value: 'owner', label: multi ? 'Owner: everything, in every branch, including money totals' : 'Owner: everything, including money totals' },
-        ]}
+        label={t(JOB_WORDS.label)}
+        value={choice}
+        onChange={(v) => {
+          setChoice(JOB_CHOICES.includes(v as JobChoice) ? (v as JobChoice) : 'staff');
+          setJobError(null);
+        }}
+        options={JOB_CHOICES.map((c) => ({ value: c, label: label(c) }))}
       />
+      <p data-testid="job-hint" style={{ ...bodyText, marginTop: space.xs, fontSize: 13, color: color.inkMuted }}>
+        {t(jobHint(choice, multi))}
+      </p>
+      {choice === 'other' && (
+        <TextField
+          label={t(JOB_WORDS.otherLabel)}
+          value={jobText}
+          onChange={(v) => {
+            setJobText(v.slice(0, JOB_MAX));
+            setJobError(null);
+          }}
+          placeholder="Manager"
+          error={jobError}
+          autoFocus
+        />
+      )}
     </Sheet>
   );
 }

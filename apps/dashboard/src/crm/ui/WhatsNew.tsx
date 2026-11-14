@@ -22,6 +22,7 @@ import { canOpen } from '../auth/permissions';
 import type { Role } from '../auth/signin';
 import { useDemo } from '../demo/demoMode';
 import { HQ_POLL_MS, fetchHqNews, markHqSeen, readHqUnread, type HqMessage } from '../logic/hqNews';
+import { startVisiblePoll } from '../logic/visiblePoll';
 import {
   ADMIN_NEWS,
   NEWS_SEEN_EVENT,
@@ -59,23 +60,23 @@ function useHqNews(demo: boolean): { messages: HqMessage[]; unread: HqMessage[];
   useEffect(() => {
     if (demo) return undefined;
     let live = true;
+    let sig = '';
     const load = async () => {
       const list = await fetchHqNews();
       if (!live) return;
+      // Only a real change redraws (a poll that redraws everything jumps the page).
+      const next = JSON.stringify(list);
+      if (next === sig) return;
+      sig = next;
       setMessages(list);
       setUnread(readHqUnread(list, browserStore()));
     };
-    void load();
-    const timer = window.setInterval(() => void load(), HQ_POLL_MS);
     // R-245: a desk that comes back to the tab sees a new message without waiting for the timer.
-    const back = () => {
-      if (document.visibilityState === 'visible') void load();
-    };
-    document.addEventListener('visibilitychange', back);
+    // R-522: and nothing is asked while the tab is hidden (logic/visiblePoll.ts).
+    const stop = startVisiblePoll(load, HQ_POLL_MS);
     return () => {
       live = false;
-      window.clearInterval(timer);
-      document.removeEventListener('visibilitychange', back);
+      stop();
     };
   }, [demo]);
   const seen = () => {

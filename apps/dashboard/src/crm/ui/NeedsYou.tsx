@@ -1,7 +1,8 @@
 /**
  * R-319 item 8a: "Needs you" on the gym admin panel. The provider reads what waits (members' plan
- * requests, check-in numbers to confirm, new shop orders) every minute, also while the tab is in the
- * background, so a new one can ring. It sets the tab title's count and gives Today's menu item its
+ * requests, check-in numbers to confirm, new shop orders) every minute while the tab is in view, so a new one can
+ * ring (R-522: never while the tab is hidden; web push, 0076, brings those alerts then; logic/needsPoll.ts says
+ * which lists each look reads). It sets the tab title's count and gives Today's menu item its
  * badge. The card at the top of Today lists them, each line opening its place. The sound and the
  * browser notice need one tap on "Turn on alerts" (the browser's permission is never asked on load).
  * Rules and words: logic/needsYou.ts.
@@ -15,8 +16,11 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 
 import { useAuth, useRole } from '../auth/AuthProvider';
-import { ALERT_WORDS, alertAge, alertNotice, alertShown, alertsFor, freshAlerts, latestAlerts, type GymAlert } from '../logic/gymAlerts';
-import { pendingLinks } from '../logic/phoneLinks';
+import { ALERT_WORDS, alertAge, alertNotice, alertShown, alertsFor, freshAlerts, latestAlerts, type GymAlert, type GymAlertKind } from '../logic/gymAlerts';
+import { LIST_PARTS, NEEDS_POLL_MS, partsToRead, type NeedsPart } from '../logic/needsPoll';
+import { pendingLinks, type PhoneLinkRow } from '../logic/phoneLinks';
+import type { PlanRequestRow } from '../logic/planRequests';
+import { startVisiblePoll } from '../logic/visiblePoll';
 import {
   arrivalLine,
   countIds,
@@ -40,7 +44,6 @@ import { publishQuestionCount, questionCountFor, subscribeQuestionCountChange } 
 import { navigate } from './router';
 import { Button, Card, color, font, space } from './kit';
 
-const POLL_MS = 60_000;
 const BASE_TITLE = 'MettleUp for Gyms';
 
 interface NeedsValue {
@@ -48,11 +51,15 @@ interface NeedsValue {
   total: number;
   /** The gym's alerts of the last 3 days, newest first (empty until the server has 0075). */
   alerts: GymAlert[];
-  refresh: () => Promise<void>;
+  /** R-522: the plan requests and the check-in numbers as last read (null: not read yet, or not on this server). */
+  planRows: PlanRequestRow[] | null;
+  linkRows: PhoneLinkRow[] | null;
+  /** Read again now: the lists named, or all of them. */
+  refresh: (parts?: readonly NeedsPart[]) => Promise<void>;
 }
 
 const NeedsContext = createContext<NeedsValue | null>(null);
-const EMPTY: NeedsValue = { items: [], total: 0, alerts: [], refresh: async () => undefined };
+const EMPTY: NeedsValue = { items: [], total: 0, alerts: [], planRows: null, linkRows: null, refresh: async () => undefined };
 
 /** The waiting items; nothing outside the provider (the demo gym). */
 export function useNeedsYou(): NeedsValue {
@@ -117,56 +124,81 @@ export function NeedsYouProvider({ children }: { children: ReactNode }) {
   const { session } = useAuth();
   const key = session?.online ? (session.ownerKey ?? null) : null;
   const role = useRole();
-  const { orders } = useShop();
-  const [plan, setPlan] = useState<string[]>([]);
-  const [links, setLinks] = useState<string[]>([]);
+  const { orders, refreshOrders } = useShop();
+  const ordersRef = useRef(refreshOrders);
+  ordersRef.current = refreshOrders;
+  // The rows themselves (R-522: Today's two cards draw from these, so the lists are read once, here).
+  const [planRows, setPlanRows] = useState<PlanRequestRow[] | null>(null);
+  const [linkRows, setLinkRows] = useState<PhoneLinkRow[] | null>(null);
   const [questions, setQuestions] = useState(0);
   const [messages, setMessages] = useState(0);
   // null: not read yet, or the server has no 0075 (then the lists ring instead).
   const [alerts, setAlerts] = useState<GymAlert[] | null>(null);
+  // "Only a real change redraws" (a poll that redraws everything jumps the page): one signature per block.
+  const sigs = useRef<Record<string, string>>({});
+  const changed = (block: string, value: unknown): boolean => {
+    const s = JSON.stringify(value);
+    if (sigs.current[block] === s) return false;
+    sigs.current[block] = s;
+    return true;
+  };
+  const changedRef = useRef(changed);
+  changedRef.current = changed;
 
-  const refresh = useCallback(async () => {
-    if (!key) return;
-    // Fresh eyes (14 Nov 2026): the alerts first, then the counts, so a line on Today is never newer than its count.
-    try {
-      const r = await getAlerts(key);
-      setAlerts(r === 'missing' ? null : r);
-    } catch (e) {
-      console.warn('[ForgeErr] needs you: alerts', e);
-    }
-    if (planRequestServer() !== 'no') {
-      try {
-        const r = await listPlanRequests(key);
-        setPlan(r === 'missing' ? [] : r.filter((x) => x.status === 'pending').map((x) => x.id));
-      } catch (e) {
-        console.warn('[ForgeErr] needs you: plan requests', e);
+  /** Read the lists named (all of them when none are named). */
+  const readParts = useCallback(
+    async (parts: readonly NeedsPart[]) => {
+      if (!key) return;
+      const same = changedRef.current;
+      if (parts.includes('plan') && planRequestServer() !== 'no') {
+        try {
+          const r = await listPlanRequests(key);
+          const rows = r === 'missing' ? null : r;
+          if (same('plan', rows)) setPlanRows(rows);
+        } catch (e) {
+          console.warn('[ForgeErr] needs you: plan requests', e);
+        }
       }
-    }
-    if (phoneLinkServer() !== 'no') {
-      try {
-        const r = await listPhoneLinks(key);
-        setLinks(r === 'missing' ? [] : pendingLinks(r).map((x) => x.id));
-      } catch (e) {
-        console.warn('[ForgeErr] needs you: check-in numbers', e);
+      if (parts.includes('links') && phoneLinkServer() !== 'no') {
+        try {
+          const r = await listPhoneLinks(key);
+          const rows = r === 'missing' ? null : r;
+          if (same('links', rows)) setLinkRows(rows);
+        } catch (e) {
+          console.warn('[ForgeErr] needs you: check-in numbers', e);
+        }
       }
-    }
-    // One count with the menu badges (fresh eyes, 14 Nov 2026): what is read here goes to the menu at once, and a
-    // reply on Member messages or Questions for trainers (which asks the menu's count again) comes back here below.
-    try {
-      const n = await getQuestionCount(key);
-      setQuestions(typeof n === 'number' ? n : 0);
-      publishQuestionCount(key, typeof n === 'number' ? n : null);
-    } catch (e) {
-      console.warn('[ForgeErr] needs you: questions', e);
-    }
-    try {
-      const n = await getTalkCount(key);
-      setMessages(typeof n === 'number' ? n : 0);
-      publishMemberMessageCount(key, typeof n === 'number' ? n : null);
-    } catch (e) {
-      console.warn('[ForgeErr] needs you: member messages', e);
-    }
-  }, [key]);
+      // One count with the menu badges (fresh eyes, 14 Nov 2026): what is read here goes to the menu at once, and a
+      // reply on Member messages or Questions for trainers (which asks the menu's count again) comes back here below.
+      if (parts.includes('questions')) {
+        try {
+          const n = await getQuestionCount(key);
+          setQuestions(typeof n === 'number' ? n : 0);
+          publishQuestionCount(key, typeof n === 'number' ? n : null);
+        } catch (e) {
+          console.warn('[ForgeErr] needs you: questions', e);
+        }
+      }
+      if (parts.includes('messages')) {
+        try {
+          const n = await getTalkCount(key);
+          setMessages(typeof n === 'number' ? n : 0);
+          publishMemberMessageCount(key, typeof n === 'number' ? n : null);
+        } catch (e) {
+          console.warn('[ForgeErr] needs you: member messages', e);
+        }
+      }
+      if (parts.includes('orders')) await ordersRef.current();
+    },
+    [key],
+  );
+
+  const refresh = useCallback(
+    async (parts?: readonly NeedsPart[]) => {
+      await readParts(parts && parts.length ? parts : LIST_PARTS);
+    },
+    [readParts],
+  );
 
   // A reply lowers the shared count; Needs you (Today's list and badge, the tab title) follows at once.
   useEffect(
@@ -186,13 +218,42 @@ export function NeedsYouProvider({ children }: { children: ReactNode }) {
     [key],
   );
 
-  // Every minute, also in a background tab: the point is to ring for what comes in meanwhile.
+  // R-522: one look a minute, ONLY while the tab is in view (logic/visiblePoll.ts), and once at once when it comes
+  // back. A hidden tab asks nothing: what comes in meanwhile reaches the staff by web push (0076), tab hidden or closed.
+  // The alerts are read first (fresh eyes, 14 Nov 2026), so a line on Today is never newer than its count.
+  const lastFull = useRef(-Infinity);
+  const knownAlerts = useRef<Set<string> | null>(null);
   useEffect(() => {
+    lastFull.current = -Infinity;
+    knownAlerts.current = null;
+    sigs.current = {};
     if (!key) return;
-    void refresh();
-    const t = window.setInterval(() => void refresh(), POLL_MS);
-    return () => window.clearInterval(t);
-  }, [key, refresh]);
+    const look = async () => {
+      let alertsOn = false;
+      let fresh: GymAlertKind[] = [];
+      try {
+        const r = await getAlerts(key);
+        if (r !== 'missing') {
+          alertsOn = true;
+          const before = knownAlerts.current;
+          if (before) fresh = r.filter((a) => !before.has(a.id)).map((a) => a.kind);
+          knownAlerts.current = new Set(r.map((a) => a.id));
+        }
+        const next = r === 'missing' ? null : r;
+        if (changedRef.current('alerts', next)) setAlerts(next);
+      } catch (e) {
+        console.warn('[ForgeErr] needs you: alerts', e);
+      }
+      const now = Date.now();
+      const { parts, full } = partsToRead({ alertsOn, sinceFullMs: now - lastFull.current, fresh });
+      if (full) lastFull.current = now;
+      if (parts.length) await readParts(parts);
+    };
+    return startVisiblePoll(look, NEEDS_POLL_MS);
+  }, [key, readParts]);
+
+  const plan = useMemo(() => (planRows ?? []).filter((x) => x.status === 'pending').map((x) => x.id), [planRows]);
+  const links = useMemo(() => pendingLinks(linkRows ?? []).map((x) => x.id), [linkRows]);
 
   const shopIds = useMemo(() => orders.filter((o) => o.status === 'ordered').map((o) => o.orderId), [orders]);
   const items = useMemo(
@@ -253,7 +314,10 @@ export function NeedsYouProvider({ children }: { children: ReactNode }) {
     };
   }, [total]);
 
-  const value = useMemo<NeedsValue>(() => ({ items, total, alerts: mine ?? [], refresh }), [items, total, mine, refresh]);
+  const value = useMemo<NeedsValue>(
+    () => ({ items, total, alerts: mine ?? [], planRows, linkRows, refresh }),
+    [items, total, mine, planRows, linkRows, refresh],
+  );
   return <NeedsContext.Provider value={value}>{children}</NeedsContext.Provider>;
 }
 

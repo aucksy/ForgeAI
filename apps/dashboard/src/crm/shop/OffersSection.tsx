@@ -101,7 +101,7 @@ export function OffersSection() {
     }
   }, [key]);
 
-  usePoll(load, 30_000, key !== null);
+  usePoll(load, 2 * 60_000, key !== null); // R-522: was 30 s; in view only
 
   const names = useMemo(() => new Map(snapshot.members.map((m) => [m.id, m.fullName])), [snapshot.members]);
 

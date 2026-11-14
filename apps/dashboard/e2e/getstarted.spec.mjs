@@ -10,7 +10,7 @@ test('J32 Get started: ticks itself, takes a hand tick, hides for good', async (
   await addPlan(page, { name: 'Monthly', price: '1500' });
   await open(page, 'Today');
   await expect(page.getByText('1 of 7 done')).toBeVisible();
-  await page.getByRole('button', { name: 'Mark “Add your desk staff” as done' }).tap();
+  await page.getByRole('button', { name: 'Mark “Add your staff and trainers” as done' }).tap();
   await expect(page.getByText('2 of 7 done')).toBeVisible();
   await expect(page.getByRole('button', { name: 'Add your plans (done). Open' })).toBeVisible();
   await page.getByRole('button', { name: 'Bring in your members. Open' }).tap();

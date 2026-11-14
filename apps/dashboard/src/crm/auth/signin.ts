@@ -48,6 +48,11 @@ export interface PersonRow extends Person {
   hasPin: boolean | null;
   /** 0034: epoch ms their PIN stays locked after 5 wrong tries, or null. */
   pinLockedUntil: number | null;
+  /**
+   * R-522 (0079): the job typed for a front-desk person ("Manager"), or null; undefined on a server before 0079
+   * (the panel then shows the one kept on this browser, logic/staffJobs.ts).
+   */
+  job?: string | null;
 }
 
 /** 0034: this device's own PIN, as staff_pin_status tells it (never the PIN itself). */
@@ -226,6 +231,7 @@ export function peopleFromRows(raw: unknown): PersonRow[] {
       codeUntil: epoch(r.codeUntil),
       hasPin: typeof r.hasPin === 'boolean' ? r.hasPin : null,
       pinLockedUntil: epoch(r.pinLockedUntil),
+      ...('job' in r ? { job: typeof r.job === 'string' && r.job.trim() ? r.job.trim() : null } : {}),
     });
   }
   return out;

@@ -36,7 +36,7 @@ export function AppMembersSection() {
     }
   }, [key, handleError]);
 
-  usePoll(load, 15_000, key !== null);
+  usePoll(load, 60_000, key !== null); // R-522: was 15 s; in view only
 
   if (!cloud) return <JoinCodeCard />;
 

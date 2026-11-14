@@ -133,6 +133,21 @@ export async function addPerson(key: string, name: string, phone: string, role: 
   return p;
 }
 
+/**
+ * R-522 (0079): name a front-desk person's job ("Manager"), or clear it with null. 'missing' on a server before
+ * 0079 (the panel then keeps the job on this browser and sends it later); any other failure is thrown.
+ */
+export async function setPersonJob(key: string, staffId: string, job: string | null): Promise<'saved' | 'missing'> {
+  try {
+    await call<unknown>('owner_set_person_job', { p_key: key, p_staff: staffId, p_job: job });
+    return 'saved';
+  } catch (e) {
+    if (!isMissingFunction(e)) throw e;
+    console.info('[staff jobs] this gym server has no job names yet (0079 not applied); kept on this browser');
+    return 'missing';
+  }
+}
+
 export async function removePerson(key: string, staffId: string): Promise<void> {
   await call<null>('owner_remove_person', { p_key: key, p_staff: staffId });
 }

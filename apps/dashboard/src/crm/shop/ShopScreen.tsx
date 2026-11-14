@@ -407,7 +407,7 @@ function ProductsSection() {
   }, [key, handleError, gate]);
 
   // Members buying changes stock, so the list keeps itself fresh while it is open.
-  usePoll(load, 15_000, key !== null && editing === null);
+  usePoll(load, 60_000, key !== null && editing === null); // R-522: was 15 s; in view only
 
   /** Re-read the list (the truth), THEN say what went wrong — a reload clears the banner. */
   const showAfterReload = async (message: string) => {

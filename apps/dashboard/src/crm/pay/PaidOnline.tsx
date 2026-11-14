@@ -1,6 +1,7 @@
 /**
  * F79 online payments (R-328): payments that came in online while no sheet was open (the member paid
- * the link later, from home). On Today, every 2 minutes while the admin app is open, the desk asks the
+ * the link later, from home). On Today, every 5 minutes while the admin app is in view (R-522: never with the tab
+ * hidden; at once when it comes back), the desk asks the
  * server for paid links with no receipt yet and makes each receipt by itself: same receipt numbers and
  * rules as the desk's own (recordPayment), the company's payment id as the reference, "Paid online" as
  * the note. One desk at a time makes a receipt (claimReceipt is a 5-minute lease), and the same
@@ -17,6 +18,7 @@ import { useAuth } from '../auth/AuthProvider';
 import { takerOf } from '../auth/permissions';
 import { t } from '../lang/lang';
 import { dateISOFromEpoch } from '../logic/dates';
+import { startVisiblePoll } from '../logic/visiblePoll';
 import { unpaidForMembership } from '../logic/membership';
 import { formatINR } from '../logic/money';
 import { useCrm } from '../store';
@@ -26,7 +28,8 @@ import { claimReceipt, markRecorded, paidOnline, type PayRequest } from './payAp
 import { onlineReference, receiptMethod } from './payWords';
 import { useDeskPay } from './useDeskPay';
 
-const EVERY_MS = 120_000;
+// R-522: was every 2 minutes, also with the tab hidden (720 calls a day per open panel).
+const EVERY_MS = 5 * 60_000;
 
 export type StuckWhy = 'NO_MEMBERSHIP' | 'MORE_THAN_DUE';
 
@@ -104,9 +107,7 @@ export function PaidOnlineCard() {
 
   useEffect(() => {
     if (!on || !key) return;
-    void sweep();
-    const id = window.setInterval(() => void sweep(), EVERY_MS);
-    return () => window.clearInterval(id);
+    return startVisiblePoll(sweep, EVERY_MS);
   }, [on, key, sweep]);
 
   const savedByHand = async (r: PayRequest) => {

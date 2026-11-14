@@ -255,8 +255,10 @@ export const HINGLISH: Readonly<Record<string, string>> = {
     'Ek ek karke jodo, ya Excel list laao, jaise purane gym software se save ki hui.',
   'Add your logo and colours': 'Apna logo aur rang daalo',
   'Members see your logo and colours in their app.': 'Members ko unki app mein aapka logo aur rang dikhta hai.',
-  'Add your desk staff': 'Desk staff jodo',
-  'They sign in with their own mobile number and a code.': 'Woh apne mobile number aur ek code se sign in karte hain.',
+  // R-523 (owner, 14 Nov 2026): staff and trainers.
+  'Add your staff and trainers': 'Staff aur trainers jodo',
+  'They sign in with their own mobile number and a code. A trainer sees only their own members.':
+    'Woh apne mobile number aur ek code se sign in karte hain. Trainer sirf apne members dekhte hain.',
   'Print the check-in poster': 'Check-in poster print karo',
   'Members scan it at the desk to check themselves in.': 'Members desk par ise scan karke khud check-in karte hain.',
   'Send members the app link': 'Members ko app ka link bhejo',
@@ -1067,4 +1069,28 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   'Workout plan saved': 'Workout plan save kiya',
   'Your plan gets {n} free credits every month.': 'Aapke plan mein har mahine {n} free credits milte hain.',
   'Yearly plans get free credits every month.': 'Saal wale plans mein har mahine free credits milte hain.',
+  // R-522 (owner, 14 Nov 2026): Staff & sign-in -> Add a person: Owner, Staff, Trainer or Other (logic/staffJobs.ts).
+  'Add a person': 'Kisi ko jodo',
+  Add: 'Jodo',
+  'Type their name.': 'Unka naam likho.',
+  'What is their job?': 'Inka kaam kya hai?',
+  Owner: 'Owner',
+  'Staff (front desk)': 'Staff (front desk)',
+  Staff: 'Staff',
+  You: 'Aap',
+  'Type the job (for example Manager, Cleaner)': 'Kaam likho (jaise Manager, Cleaner)',
+  'Type their job, like Manager or Cleaner.': 'Unka kaam likho, jaise Manager ya Cleaner.',
+  'Can do everything, including money totals.': 'Sab kuch kar sakte hain, paison ka total bhi dekhte hain.',
+  'Can do everything in every branch, including money totals.': 'Har branch mein sab kuch kar sakte hain, paison ka total bhi dekhte hain.',
+  'Adds members, collects fees and checks members in. Never sees money totals.':
+    'Members jodte hain, fees lete hain aur check-in karte hain. Paison ka total nahi dekhte.',
+  'Works only at this branch: adds members, collects fees and checks members in. Never sees money totals.':
+    'Sirf is branch mein kaam: members jodte hain, fees lete hain aur check-in karte hain. Paison ka total nahi dekhte.',
+  'Same access as the front desk, plus the workout progress of the members you give them.':
+    'Front desk jaisa hi access, aur aap jo members denge unki workout progress bhi dekhte hain.',
+  'Same access as the front desk. The job only shows next to their name.':
+    'Front desk jaisa hi access. Kaam sirf unke naam ke aage dikhta hai.',
+  '{name} added. Now make a sign-in code for them.': '{name} jud gaye. Ab unke liye sign-in code banao.',
+  '{name} added with front desk access, but not marked as a trainer yet. Tick Trainer on their row.':
+    '{name} front desk access ke saath jud gaye, par abhi trainer nahi bane. Unki line mein Trainer par tick karo.',
 };

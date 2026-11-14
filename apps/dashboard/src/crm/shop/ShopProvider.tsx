@@ -34,9 +34,12 @@ import {
   type Order,
   type OrderStatus,
 } from './logic';
+import { startVisiblePoll } from '../logic/visiblePoll';
 
 export const DEMO_GYM_NAME = 'Iron Temple Fitness';
-const ORDER_POLL_MS = 5_000;
+// R-522: was every 5 s (~720 calls an hour while the panel was in view). A minute is enough: a NEW order also
+// shows as an alert (0075), which makes Needs you read the orders again at once.
+const ORDER_POLL_MS = 60_000;
 
 interface ShopContextValue {
   /** The cloud gym, or null when this browser has none (a local-only gym). */
@@ -80,37 +83,16 @@ export function useShop(): ShopContextValue {
 }
 
 /**
- * Run `fn` now, then every `ms` while the page is visible, and again whenever the
- * window regains focus. Nothing runs while `enabled` is false.
+ * Run `fn` now, then every `ms` while the page is visible, and again when the tab comes back into view or the
+ * window regains focus (R-522: nothing at all while the tab is hidden; logic/visiblePoll.ts). Nothing runs while
+ * `enabled` is false.
  */
 export function usePoll(fn: () => void | Promise<void>, ms: number, enabled: boolean): void {
   const ref = useRef(fn);
   ref.current = fn;
   useEffect(() => {
     if (!enabled) return;
-    let timer: number | undefined;
-    const tick = () => void ref.current();
-    const start = () => {
-      window.clearInterval(timer);
-      timer = window.setInterval(() => {
-        if (document.visibilityState === 'visible') tick();
-      }, ms);
-    };
-    const onVisible = () => {
-      if (document.visibilityState === 'visible') {
-        tick();
-        start();
-      }
-    };
-    tick();
-    start();
-    window.addEventListener('focus', tick);
-    document.addEventListener('visibilitychange', onVisible);
-    return () => {
-      window.clearInterval(timer);
-      window.removeEventListener('focus', tick);
-      document.removeEventListener('visibilitychange', onVisible);
-    };
+    return startVisiblePoll(() => ref.current(), ms);
   }, [ms, enabled]);
 }
 

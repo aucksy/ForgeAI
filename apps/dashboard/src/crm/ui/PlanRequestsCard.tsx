@@ -6,7 +6,7 @@
  * nothing to show. Rules and words: logic/planRequests.ts.
  */
 
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { useAuth, useRole } from '../auth/AuthProvider';
 import { takerOf } from '../auth/permissions';
@@ -21,8 +21,7 @@ import {
   sortRequests,
   type PlanRequestRow,
 } from '../logic/planRequests';
-import { decidePlanRequest, listPlanRequests, planRequestServer } from '../shop/planRequestApi';
-import { usePoll } from '../shop/ShopProvider';
+import { decidePlanRequest } from '../shop/planRequestApi';
 import { useNeedsYou } from './NeedsYou';
 import { useCrm } from '../store';
 import { Button, Card, ErrorBanner, Row, SectionTitle, color, font, space } from './kit';
@@ -33,22 +32,15 @@ export function PlanRequestsCard() {
   const role = useRole();
   const taker = takerOf(session);
   const { snapshot, today, extendMembership, sellMembership } = useCrm();
-  const [rows, setRows] = useState<PlanRequestRow[] | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
   const [problem, setProblem] = useState<{ id: string; text: string } | null>(null);
   // R-319 item 8a: Today's "Needs you" count drops at once after an answer.
+  // R-522: the list itself comes from Needs you too (one read a minute for the whole panel, never with the tab
+  // hidden), so this card no longer asks the server on its own timer.
   const needs = useNeedsYou();
-
-  const load = useCallback(async () => {
-    if (!key) return;
-    try {
-      const r = await listPlanRequests(key);
-      setRows(r === 'missing' ? null : sortRequests(r));
-    } catch (e) {
-      console.warn('[ForgeErr] plan requests: reading the list', e);
-    }
-  }, [key]);
-  usePoll(load, 60_000, key !== null && planRequestServer() !== 'no');
+  const { planRows, refresh } = needs;
+  const rows = useMemo(() => (planRows ? sortRequests(planRows) : null), [planRows]);
+  const load = useCallback(() => refresh(['plan']), [refresh]);
 
   if (!key || !rows || rows.length === 0) return null;
 
@@ -76,7 +68,6 @@ export function PlanRequestsCard() {
       setProblem({ id: r.id, text: approveErrorWords(e) });
       await load();
     } finally {
-      void needs.refresh();
       setBusy(null);
     }
   };
@@ -92,7 +83,6 @@ export function PlanRequestsCard() {
       setProblem({ id: r.id, text: decideErrorWords(e) });
       await load();
     } finally {
-      void needs.refresh();
       setBusy(null);
     }
   };
