@@ -7,6 +7,14 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-491. One look everywhere: list pictures and the demo use the orange-tank pictures — 14 Nov 2026
+He said (14 Nov 2026): "Yes I pick A" (my question: 176 exercises showed the old grey Everkinetic line drawings in
+the exercise LIST, 120 of them although they have orange-tank pictures; A = show the orange-tank picture wherever one
+exists). Doing: ExerciseThumb prefers the orange-tank close-up over the line drawing; the "Tap to watch the movement"
+demo sheet loops the start and end pictures instead of the line drawing; the live workout notification's big picture
+uses the same close-up; the line-drawing credit shows only where a line drawing is still shown. Exercises with no
+orange-tank picture keep the line drawing (better than nothing). Tests + upic UAT; rides the next release.
+
 ## R-490. Make every remaining picture in the orange-tank look, no samples — 13 Nov 2026
 He said (13 Nov 2026, ~22:05 IST): "No, just make the new pictures for the remaining exercise to match the orange tank
 look ones, the same quality and consistency ... I don't want to see the three pictures, just make rest of them and
