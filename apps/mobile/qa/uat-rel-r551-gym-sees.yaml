@@ -9,6 +9,7 @@
 appId: com.mettleup.app
 ---
 - openLink: "forgeai://settings/gym-sees"
+# in-view: the page title, as the page opens at its top
 - extendedWaitUntil:
     visible: "^What my gym can see$"
     timeout: 30000
