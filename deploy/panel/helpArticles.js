@@ -735,7 +735,7 @@ export const ALL_HELP_ARTICLES = [
     text:
       'Open Profile, tap Settings, and look under "Phone and watch". ' +
       '"Your watch": tap "Install on watch", and switch on "Open MettleUp on my watch" so it opens when you start a workout. ' +
-      '"Widgets": tap "Add Next workout" or "Add This week". Next workout starts your next workout and shows what to beat from the previous time. ' +
+      '"Widgets": tap "Add Next workout" or "Add This week". Next workout starts it and shows what to beat from the previous time. ' +
       'Gym members can tap "Add Gym right now": how busy your gym is, and when that was checked. Tap it to check in. ' +
       '"Health apps": connect Health Connect to send your workouts, and to read your weight or steps. ' +
       '"Sleep and workouts" tells you, after a lighter workout, if you slept under 6 hours. ' +
