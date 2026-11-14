@@ -14,7 +14,6 @@ Page: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT (private to your account
 
 | # | Decision | My pick |
 |---|---|---|
-| 98 | AI questions: who pays from the gym's AI credits? | B: owner and staff free, members 10 answers = 1 credit |
 | 94 | iPhone and Apple Watch apps: restart now, or after Android is public on Play? | A: after Android is public |
 | 78 | Turn on the Starter and Pro split now? | A: not yet, until the first gym pays |
 
@@ -30,8 +29,7 @@ Done, built and "Not doing" items have no rating. The page sorts by these (Best 
 | Feature: Members join the gym from their own phone (self sign-up) | High | High |
 | Feature: Pop-ups both ways: gym news on members' phones, member actions on the admin app | High | Medium |
 | Feature: A free web page for each gym, set up during onboarding | High | High |
-| Feature: All AI questions paid from the gym's AI credits (about 20 questions = 1 credit) | Medium | Medium |
-| #98 | High | Low |
+| Feature: Members' and visitors' AI answers paid from the gym's AI credits (10 answers = 1 credit) | Medium | Medium |
 | Feature: AI sales helper on the gym page | High | High |
 | Feature: Free trial when joining online | High | Medium |
 | Feature: Trainer and other jobs when adding a person | High | Low |
@@ -560,7 +558,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | F208 AI sales helper on the gym page | Idea | Your idea, 14 Nov (R-520, #97): an AI on the gym page that talks to visitors, tries to turn them into members, and gives an offer when they try to leave. On hold until the research is done. You added (14 Nov): the owner can switch it on or off; on by default. | The AI answers only from the gym's own facts and offers only what the owner set. Each chat uses the gym's AI credits. Research is running: who already does this, the cost per chat, and the Indian rules on pressure selling. |
 | F210 Free trial when joining online | Planned | You asked (14 Nov, R-521, #97): the owner switches a trial on or off for online sign-ups and sets its length (for example 3 or 7 days). Built after the gym page. | A visitor picks "Try free for 7 days" on the gym's page or join link. The gym sees the trial in Today and can turn the person into a member when it ends. The owner can also ask a small trial fee instead of free (your pick B, 14 Nov); the fee is taken off the plan if the person joins. |
 | F211 Trainer and other jobs when adding a person | Building | You asked (14 Nov, R-522): the "add a person" pop-up only offers Owner or Staff. Now it also offers Trainer, and Other where the owner types the job. | A trainer gets the trainer view but never owner powers. The job shows next to each person's name. If a database change is needed, it waits for your yes. |
-| F209 All AI questions paid from the gym's AI credits (about 20 questions = 1 credit) | Planned | You decided (14 Nov, R-519, #97): questions from members in the app, from the owner and staff in the admin app, and later from visitors on the gym page all use the gym's credits. | About 20 questions use 1 credit. Each person has a daily limit, so nobody can empty the gym's credits. When credits run out, members still see the matching help pages (no AI), never an error, and the owner gets a "credits low" alert. Before this goes live, a cheaper way of sending the AI the same help pages each time cuts our cost, so 20 questions stay well below the price of 1 credit. |
+| F209 Members' and visitors' AI answers paid from the gym's AI credits (10 answers = 1 credit) | Building | You decided (14 Nov, #98 = B): the owner's and staff's own questions are free; members' and page visitors' AI answers use the gym's credits, with an owner switch and a monthly limit. | 10 answers use 1 credit (20 only after we measure a lower cost). Each person has a daily limit, so nobody can empty the gym's credits. When credits run out, members still see the matching help pages (no AI), never an error, and the owner gets a "credits low" alert. Before this goes live, a cheaper way of sending the AI the same help pages each time cuts our cost, so 20 questions stay well below the price of 1 credit. |
 
 ### Platform and quality
 | Feature | Status | Details | How it will work |
@@ -604,7 +602,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 
 ## 98. AI questions: who pays from the gym's AI credits? — 14 Nov 2026
 **Chat:** Mettle Up
-**Status:** WAITING FOR YOU
+**Status:** DECIDED
 **You asked (14 Nov):** Does "20 AI questions = 1 credit" make sense long term? Members and website visitors must never see credit details.
 
 **Members and visitors:** they never see credits. A member sees only "You have used today's 10 AI answers. AI answers come back tomorrow." or "AI answers are not on at your gym right now." Only the owner and staff see credits.
@@ -615,6 +613,8 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 **B (my pick):** The owner's and staff's own questions are free (a fair daily limit). Members' and visitors' AI answers use credits at 10 answers = 1 credit, so we never lose money. We move to 20 = 1 only after we measure the cost below ₹0.05 an answer. The owner gets a switch for members' AI answers and a monthly limit, so there is no surprise bill. The website line "Asking is free" stays true.
 
 **Now:** the credits database change is live (tests 47 of 47). Charging is OFF: the Worker charges nobody until it has the switch AI_CREDITS_CHARGE = "on" (commit 2c0ab1fb). I turn it on only after your pick is built.
+
+**DECIDED (14 Nov 2026): B.** Owner and staff ask free; members' and visitors' AI answers use 1 credit per 10 answers; an owner switch and a monthly limit for members' AI answers. Building now. Its database change needs your yes before it goes live.
 
 ## 97. A free web page for each gym (decided), and an AI sales helper (research) — 14 Nov 2026
 **Chat:** Mettle Up

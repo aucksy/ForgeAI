@@ -7,6 +7,14 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-531. Decision #98 = B: owner and staff ask free, members and visitors 10 answers = 1 credit — 14 Nov 2026
+He said (14 Nov 2026): "I pick B"
+B means: the owner's and staff's own AI questions are free (fair daily limit stays: 60 each); members' and page visitors'
+AI answers use credits at 10 answers = 1 credit; move to 20 = 1 only after the real cost is measured below Rs 0.05 an
+answer; an owner switch for members' AI answers plus a monthly credit limit for them, so no surprise bill. Members and
+visitors never see credit words. "Asking is free" stays true for owners. Charging stays OFF (AI_CREDITS_CHARGE unset)
+until B is built, its database change is applied live WITH HIS YES, and the panel is deployed.
+
 ## R-530. YES to the AI credits database change (0078 live); "20 questions = 1 credit" was me thinking out loud — 14 Nov 2026
 He said (14 Nov 2026): "So, I said 20 AI questions could be equal to 1 and you actually built it. How many times do I have
 to tell you that you have to act as a mentor, as a product partner and decide the right thing? When I'm just thinking out
