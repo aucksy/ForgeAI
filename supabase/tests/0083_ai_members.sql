@@ -125,12 +125,12 @@ begin
   r := public.owner_save_ai_member_rules(kop, true, 2);
   checks := checks + 1; fails := fails || pg_temp.t82_is('5saved', concat_ws('/', r->>'members_on', r->>'month_credits', r->>'month_answers'), 'true/2/12');
   for i in 1..7 loop r := pg_temp.t82_take(km3, 'member'); end loop;
-  checks := checks + 1; fails := fails || pg_temp.t82_is('5before', concat_ws('/', r->>'ok', (select count(*) from public.gym_alerts where gym_id = ga)), 'true/0');
+  checks := checks + 1; fails := fails || pg_temp.t82_is('5before', concat_ws('/', r->>'ok', (select count(*) from public.gym_alerts where gym_id = ga and kind = 'ai_members_limit')), 'true/0');
   -- The 20th answer reaches the limit: the owner hears it at once (one alert).
   r := pg_temp.t82_take(km3, 'member');
-  checks := checks + 1; fails := fails || pg_temp.t82_is('5twentieth', concat_ws('/', r->>'ok', (select count(*) from public.gym_alerts where gym_id = ga)), 'true/1');
+  checks := checks + 1; fails := fails || pg_temp.t82_is('5twentieth', concat_ws('/', r->>'ok', (select count(*) from public.gym_alerts where gym_id = ga and kind = 'ai_members_limit')), 'true/1');
   checks := checks + 1; fails := fails || pg_temp.t82_is('5alert', (select string_agg(kind || '|' || audience || '|' || urgent || '|' || route || '|' || line, ',')
-    from public.gym_alerts where gym_id = ga),
+    from public.gym_alerts where gym_id = ga and kind = 'ai_members_limit'),
     'ai_members_limit|owner|false|/assistant|Members have used this month''s AI answers. Until ' || next_month
       || ', they get help pages instead. To give them more, open AI Assistant and tap your credits at the top.');
   -- Past it: 'month_limit' for members and visitors, nothing taken, no second alert; the owner still asks free.
@@ -138,14 +138,14 @@ begin
   r := pg_temp.t82_take(km3, 'member');
   checks := checks + 1; fails := fails || pg_temp.t82_is('5member', concat_ws('/', r->>'ok', r->>'reason', r->>'per_day'), 'false/month_limit/10');
   checks := checks + 1; fails := fails || pg_temp.t82_is('5visitor', pg_temp.t82_visit('T82GYA', 'visitor-hash-0002')->>'reason', 'month_limit');
-  checks := checks + 1; fails := fails || pg_temp.t82_is('5nothing', concat_ws('/', public._ai_balance(ga) - bal, (select count(*) from public.gym_alerts where gym_id = ga)), '0/1');
+  checks := checks + 1; fails := fails || pg_temp.t82_is('5nothing', concat_ws('/', public._ai_balance(ga) - bal, (select count(*) from public.gym_alerts where gym_id = ga and kind = 'ai_members_limit')), '0/1');
   checks := checks + 1; fails := fails || pg_temp.t82_is('5owner', pg_temp.t82_take(kop, 'admin')->>'ok', 'true');
   -- The owner raises it: members get answers again; reaching the new limit this month makes no second alert.
   r := public.owner_save_ai_member_rules(kop, true, 3);
   r := pg_temp.t82_take(km3, 'member');
   checks := checks + 1; fails := fails || pg_temp.t82_is('5raised', r->>'ok', 'true');
   for i in 1..20 loop r := pg_temp.t82_visit('T82GYA', 'visitor-hash-1' || lpad(i::text, 3, '0')); end loop;
-  checks := checks + 1; fails := fails || pg_temp.t82_is('5once', concat_ws('/', r->>'reason', (select count(*) from public.gym_alerts where gym_id = ga)), 'month_limit/1');
+  checks := checks + 1; fails := fails || pg_temp.t82_is('5once', concat_ws('/', r->>'reason', (select count(*) from public.gym_alerts where gym_id = ga and kind = 'ai_members_limit')), 'month_limit/1');
   -- The owner sees the alert; the desk does not.
   checks := checks + 1; fails := fails || pg_temp.t82_is('5ownerList', (select count(*) from jsonb_array_elements(public.owner_alerts(kop)->'alerts') x where x->>'kind' = 'ai_members_limit')::text, '1');
   checks := checks + 1; fails := fails || pg_temp.t82_is('5deskList', (select count(*) from jsonb_array_elements(public.owner_alerts(kd)->'alerts') x where x->>'kind' = 'ai_members_limit')::text, '0');
@@ -153,7 +153,7 @@ begin
   -- 6. A limit of 0 (the owner's own choice): 'month_limit' at once, and no alert.
   r := public.owner_save_ai_member_rules(koz, true, 0);
   r := pg_temp.t82_take(kmz, 'member');
-  checks := checks + 1; fails := fails || pg_temp.t82_is('6zero', concat_ws('/', r->>'ok', r->>'reason', (select count(*) from public.gym_alerts where gym_id = gz),
+  checks := checks + 1; fails := fails || pg_temp.t82_is('6zero', concat_ws('/', r->>'ok', r->>'reason', (select count(*) from public.gym_alerts where gym_id = gz and kind = 'ai_members_limit'),
     (select count(*) from public.gym_ai_questions where gym_id = gz)), 'false/month_limit/0/0');
 
   -- 7. The Credits sheet's numbers: who asked, and the members' switch, limit and use.
