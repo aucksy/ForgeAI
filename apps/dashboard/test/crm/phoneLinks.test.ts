@@ -136,9 +136,12 @@ describe('the card', () => {
 
   it('shows pending ones only, hides itself when there are none, and is read again with Today', () => {
     const card = src('../../src/crm/ui/PhoneLinksCard.tsx');
-    expect(card).toContain('pendingLinks(r)');
+    expect(card).toContain('pendingLinks(linkRows)');
     expect(card).toContain("if (!key || !rows || rows.length === 0) return null;");
-    expect(card).toContain("usePoll(load, 60_000, key !== null && phoneLinkServer() !== 'no')");
+    // R-522: the rows come from "Needs you" (read there once a minute, only while the tab is in view): no poll of its own.
+    expect(card).toContain('useNeedsYou()');
+    expect(card).not.toContain('usePoll(');
+    expect(src('../../src/crm/ui/NeedsYou.tsx')).toContain('startVisiblePoll(look, NEEDS_POLL_MS)');
     // Owner and desk alike: no role check.
     expect(card).not.toMatch(/useRole|canEdit|role ===/);
   });
