@@ -201,7 +201,8 @@ test('a company link for the gym server price; sent twice = the same payment; th
   let list = (await desk(e, n, '/api/pay/joins', { key: DESK_KEY })).body.joins;
   assert.deepEqual(list.map((j) => [j.ref, j.status, j.said]), [[SENT.enquiryId, 'open', false]]);
   state.link = { id: 'plink_1', status: 'paid', payments: [{ payment_id: 'pay_JOIN1', status: 'captured', amount: 200000, method: 'upi' }] };
-  const paid = await jp(e, gs, n, '/api/self-join/pay-check', { id: a.body.pay.id });
+  // (After the desk's look at 06:02, which now also asks the company: review round 2, R-542.)
+  const paid = await jp(e, gs, n, '/api/self-join/pay-check', { id: a.body.pay.id }, Date.parse('2026-11-14T06:03:00Z'));
   assert.equal(paid.body.pay.status, 'paid');
   assert.equal(paid.body.pay.url, null);
   assert.equal(paid.body.pay.paymentId, undefined, 'the page never sees the payment id');

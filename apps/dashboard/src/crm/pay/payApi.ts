@@ -186,6 +186,17 @@ export async function checkRequest(key: string, id: string): Promise<PayRequest>
   return (await payCall<{ request: PayRequest }>('check', { key, id })).request;
 }
 
+/**
+ * Review round 2 (R-542): asked again just before Approve. The server asks the company right then: an open payment
+ * paid a second ago comes back paid, and a paid one refunded since says `refunded` (nothing may be saved as paid).
+ * An older server answers no `refunded`: read as not refunded (Approve goes on as before).
+ */
+export async function checkBeforeApprove(key: string, id: string): Promise<{ request: PayRequest | null; refunded: boolean }> {
+  const r = await payCall<{ request?: PayRequest; refunded?: boolean }>('check', { key, id, beforeApprove: true });
+  return { request: r.request ?? null, refunded: r.refunded === true };
+}
+
+/** Cancel a payment: the server asks the company first (a payment already made is kept) and cancels it there too. */
 export async function cancelRequest(key: string, id: string): Promise<PayRequest> {
   return (await payCall<{ request: PayRequest }>('cancel', { key, id })).request;
 }

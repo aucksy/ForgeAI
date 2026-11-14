@@ -8,7 +8,8 @@
 //   hint(fields)                           the last 4 characters shown on screen afterwards
 //   test(creds, mode, f)                   { ok: true } | { error: 'BAD_KEYS' | 'UNREACHABLE' | ... }
 //   createLink(creds, mode, req, f)        { linkId, url, expiresAt }
-//   status(creds, mode, linkId, f)         { state: 'open'|'paid'|'expired'|'cancelled', failed?, paymentId?, amountP?, method? }
+//   status(creds, mode, linkId, f)         { state: 'open'|'paid'|'expired'|'cancelled'|'refunded', failed?, paymentId?, amountP?, method? }
+//                                          ('refunded': Razorpay and Cashfree only; paymentId only the payment's OWN id)
 //   verifyHook(secret, raw, headers)       true when the company signed this body
 //   readHook(json)                         { kind: 'paid'|'failed'|'revoked'|'other', linkId?, ref?, paymentId?, amountP?, method?, account? }
 //   cancel?(creds, mode, linkId, f)        close a link so it cannot be paid (Razorpay, Cashfree; PayU has none and
@@ -141,6 +142,9 @@ export const razorpay = {
     // Payment sweep (R-542): only CAPTURED money is paid. An "authorized" payment can still be dropped and refunded by
     // the bank, so it is not paid until Razorpay captures it (the link's own status becomes 'paid' then).
     const ok = pays.find((p) => p && p.status === 'captured');
+    // Review round 2 (R-542): fully refunded money (Razorpay sets the payment's status to "refunded") is not paid,
+    // even though the link itself still says "paid". A part refund stays "captured" (paid; the desk sorts the rest).
+    if (!ok && pays.some((p) => p && p.status === 'refunded')) return { state: 'refunded' };
     if (b.status === 'paid' || ok) {
       return { state: 'paid', paymentId: str(ok ? ok.payment_id : ''), amountP: ok ? Number(ok.amount) : Number(b.amount_paid), method: methodOf(ok && ok.method) };
     }
@@ -255,10 +259,20 @@ export const cashfree = {
         const p = await send(f, `${host}/orders/${encodeURIComponent(order.order_id)}/payments`, { headers: cfHeaders(creds) });
         const list = Array.isArray(p.body) ? p.body : [];
         pay = list.find((x) => str(x && x.payment_status).toUpperCase() === 'SUCCESS') || null;
+        // Review round 2 (R-542): money refunded in full (a refund done or under way) is not paid any more.
+        const rf = await send(f, `${host}/orders/${encodeURIComponent(order.order_id)}/refunds`, { headers: cfHeaders(creds) });
+        const refunds = Array.isArray(rf.body) ? rf.body : [];
+        const back = refunds
+          .filter((x) => ['SUCCESS', 'PENDING', 'ONHOLD'].includes(str(x && x.refund_status).toUpperCase()))
+          .reduce((s, x) => s + paise(x.refund_amount), 0);
+        const took = paise(pay ? pay.payment_amount : r.body.link_amount_paid);
+        if (back > 0 && back >= took) return { state: 'refunded' };
       }
       return {
         state: 'paid',
-        paymentId: str(pay ? pay.cf_payment_id : order ? order.order_id : ''),
+        // Only the payment's own id (cf_payment_id, the one the webhook carries as transaction_id). Without it: none,
+        // so pay.js uses the same link-level id as the webhook would, never two ids for one payment.
+        paymentId: str(pay ? pay.cf_payment_id : ''),
         amountP: paise(pay ? pay.payment_amount : r.body.link_amount_paid),
         method: methodOf(pay && pay.payment_group),
       };
@@ -286,7 +300,7 @@ export const cashfree = {
       const st = str(d.link_status).toUpperCase();
       const order = d.order || {};
       if (st === 'PAID' || str(order.transaction_status).toUpperCase() === 'SUCCESS') {
-        return { kind: 'paid', linkId: str(d.link_id), ref: str(d.link_id), paymentId: str(order.transaction_id || d.cf_link_id), amountP: paise(d.link_amount_paid || d.link_amount), method: 'upi' };
+        return { kind: 'paid', linkId: str(d.link_id), ref: str(d.link_id), paymentId: str(order.transaction_id), amountP: paise(d.link_amount_paid || d.link_amount), method: 'upi' };
       }
       if (st === 'EXPIRED' || st === 'CANCELLED') return { kind: st === 'EXPIRED' ? 'expired' : 'cancelled', linkId: str(d.link_id), ref: str(d.link_id) };
       return { kind: 'other' };

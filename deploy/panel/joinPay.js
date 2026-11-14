@@ -28,7 +28,7 @@
 import { answer } from './feedback.js';
 import { hasMasterKey } from './payCrypto.js';
 import { PROVIDERS, PayError } from './payProviders.js';
-import { checkWithCompany, cleanUpi, closeRequest, linkConnections, makeLink, newRequestId, remake, tablesReady, turnOff } from './pay.js';
+import { checkWithCompany, cleanUpi, closeRequest, linkConnections, makeLink, newRequestId, payMode, remake, retireOtherMode, tablesReady, turnOff } from './pay.js';
 import { hmacHex } from './phoneCode.js';
 import { markSaid, saidAt, switchesOf, switchesReady } from './paySwitches.js';
 
@@ -187,11 +187,17 @@ export async function attachJoinPay(env, rpc, kept, { f = fetch, now = new Date(
       const conn = fresh.provider ? await db.prepare('SELECT * FROM pay_connections WHERE gym_id = ? AND provider = ?').bind(gymId, fresh.provider).first() : null;
       await closeRequest(env, db, fresh, conn, f);
     }
-    // The same request and amount still open: the same payment (and link).
+    // The same request and amount still open: the same payment (and link). Review round 2 (R-542): never one made in
+    // the other mode (a test link from before payments went live): it is asked once, then closed, and a new one made.
     let row = await db
       .prepare("SELECT * FROM pay_requests WHERE gym_id = ? AND kind = 'join' AND ref = ? AND amount_p = ? AND status = 'open' ORDER BY created_at DESC LIMIT 1")
       .bind(gymId, enquiryId, charge.amountP)
       .first();
+    if (row && row.provider && row.mode && row.mode !== payMode(env)) {
+      const paidOld = await retireOtherMode(env, db, row, payMode(env), f, now.getTime());
+      if (paidOld) return { pay: joinView(paidOld, await saidAt(db, paidOld.id)) };
+      row = null;
+    }
     if (!row) {
       const id = newRequestId();
       const payee = str(kept.gymName || ways.payee).slice(0, 60);

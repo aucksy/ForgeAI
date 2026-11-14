@@ -1,6 +1,6 @@
 # Gym payments: the money flow and the test matrix
 
-Payment sweep R-542, 14 Nov 2026. Scope: every path where money moves for a gym.
+Payment sweep R-542, 14 Nov 2026. Review round 2 fixes, same day (rows 44 to 56, bugs R2-1 to R2-6). Scope: every path where money moves for a gym.
 
 - **New (not deployed yet):** paying online when joining, from the join link or the gym web page.
 - **Existing:** F79 member payments, which use the gym's own Razorpay, Cashfree, PayU or PhonePe account, or its plain UPI ID. This covers links, webhooks, receipts and the shop.
@@ -42,17 +42,20 @@ How to read the matrix: every row is one angle, what must happen, and the test t
      - PhonePe: sha256 of `username:password`.
 
      The webhook URL holds a per-connection id, so a gym's hook can only touch that gym's requests. A partner webhook ("Connect Razorpay") has no such id, so the account in the event must be the connection of the **same gym** as the request.
-   - **Check.** The Worker asks the company's own status API when the page or the desk asks, and every 10 minutes by itself. Only a Razorpay payment that is **captured** counts; "authorized" alone does not.
-7. **Paid is recorded once.** `markPaid` writes a `pay_events` row keyed by (company, payment id). A second webhook, a webhook plus a check, or a second payment on the same request never pays twice. The amount recorded (`paidP`) is what the company says was paid, never the asked amount.
+   - **Check.** The Worker asks the company's own status API when the page or the desk asks, when Today's "Joined online" loads (up to 10 of that gym's unpaid join payments per look), and every 10 minutes by itself (40 asks a run, open links first). Only a Razorpay payment that is **captured** counts; "authorized" alone does not. Each link is asked with keys of its **own** mode (test or live), never the other.
+   - **Links we closed stay watched.** When we close a link (a price change, the desk's cancel, Make member, a disconnect), the company may still take money on it: PayU cannot cancel a link, PhonePe's page lives up to an hour, and a cancel can fail on a network error. So every closed link with a company link id is still asked about, every 30 minutes, for 8 days, until the company itself says it is closed. A payment found on it is recorded as paid late. After a disconnect, pasted keys are kept sealed and switched off (they never make a link) only while such a link needs watching, then wiped.
+7. **Paid is recorded once.** `markPaid` writes a `pay_events` row keyed by (company, payment id). A second webhook, a webhook plus a check, or a second payment on the same request never pays twice. The amount recorded (`paidP`) is what the company says was paid, never the asked amount. When one side knows only that the link was paid (a `<link>:paid` id) and the other names the payment, that is the same payment: the real id is kept and nothing is logged as "refund it".
 8. **UPI "I have paid".** With a plain UPI ID nobody can verify the payment, so the tap only marks the request `said`. It is never paid. The desk must look in its bank or UPI app.
 9. **The desk approves.** On Today, the "Joined online" row shows what was really paid. Pressing Approve:
    - asks first, with the amount, for a UPI payment nobody has confirmed, or when the paid amount is not the plan;
+   - asks the company once more, right then: a payment refunded since is not saved ("This online payment was refunded, so nothing was saved");
    - takes a 5-minute claim, so two desks cannot both record it;
    - makes the member and the plan, and saves a receipt with `requestId = pay-<request id>` (the store saves one receipt per requestId, so pressing twice gives one receipt);
    - tells the Worker it was recorded.
 
    **A test-mode payment never becomes a receipt.** The member and the plan are made and the fee stays due.
-10. **The safety net.** The receipts sweep ("Paid online, receipt not made") shows the desk any real paid join that nobody approved, and any second paid row, so no money is silently lost.
+   **Make member** (for someone who has not paid online) first closes their open online payment: the Worker asks the company, keeps a payment made a moment ago ("has just paid online. Tap Approve instead"), and cancels the link at the company too.
+10. **The safety net.** The receipts sweep ("Paid online, receipt not made") shows the desk any real paid join that nobody approved, and any second paid row, so no money is silently lost. For a join made a member without Approve it says they may have paid twice: check, and refund one if so.
 
 ### Member fees and the shop (existing, F79)
 
@@ -63,7 +66,7 @@ The receipts sweep makes a receipt by itself only when:
 - the amount is not more than what is due, and
 - the payment is real (not test mode).
 
-The shop's "Paid online" marker also ignores test payments.
+The shop's "Paid online" marker also ignores test payments. When a shop order's total changes, or the desk cancels a link, the old link is asked once (a payment is kept) and cancelled at the company too, not only here. A link made in the other mode (a test link from before payments went live) is never handed out again: it is asked once and closed.
 
 ### Refunds
 
@@ -77,7 +80,7 @@ There is no refund call. The gym refunds in its own company dashboard, then void
 |---|---|---|---|---|---|
 | 1 | Paid | Paid once. The page, the desk and the company show the same amount. | W-01; pay.test.mjs "a request makes a Razorpay link..."; joinPay.test.mjs "a company link for the gym server price..."; e2e "R-528 page: online on (test mode)..." | PASS | PASS |
 | 2 | Failed | The failure is shown. The request stays open and payable and is never paid. | W-02; pay.test.mjs "failed try keeps the link open..."; joinPay.test.mjs "a failed or abandoned payment..."; e2e "R-528 page: a payment that fails..." | PASS | PASS |
-| 3 | Cancelled at the company | Closed and not paid. A payment that still arrives later is recorded as late. | W-03/W-04; pay.test.mjs "...a payment after a cancel is still recorded (late)" | PASS | PASS |
+| 3 | Cancelled at the company | Closed and not paid. A payment that still arrives later is recorded as late. | W-03/W-04 (these call markPaid directly); the path that really reaches it for a closed link: W-33, W-34, W-35 (rows 44 to 46); pay.test.mjs "...a payment after a cancel is still recorded (late)" | PASS | PASS |
 | 4 | Timed out / link expired | Same as cancelled. "Expired" after "paid" never unpays it. | W-03/W-04, W-09 | PASS | PASS |
 | 5 | Razorpay "authorized", not captured | **Not paid** until the money is captured. | W-05 | **FAIL (B1)** | PASS |
 | 6 | Page closed half way and reopened | The same request and link come back. Nothing new is made. | W-06 | PASS | PASS |
@@ -89,14 +92,14 @@ There is no refund call. The gym refunds in its own company dashboard, then void
 | 12 | Webhook for another gym (per-gym hook) | Cannot pay another gym's request. | W-12 | PASS | PASS |
 | 13 | Partner webhook for another gym's account | Never pays a request of a different gym. | W-13 | **FAIL (B2)** | PASS |
 | 14 | Webhook for a different amount | The amount really paid is kept. The desk sees both amounts and is asked before Approve. | W-14; D-02; D-03 | PASS on the Worker; **the desk FAILED (B5)** | PASS |
-| 15 | Webhook with no id, not JSON, or an unknown request | Answered 200. Nothing changes. | W-15 | PASS | PASS |
+| 15 | Webhook not JSON, or for an unknown request; a signed "paid" with no payment id | Answered 200 and nothing changes. A signed "paid" with no payment id (round 2) is paid once under the link's id, the same id the check uses, so the two never look like two payments. | W-15 | PASS | PASS |
 | 16 | Amount tampered in the browser | Every amount the page sends is ignored, on Send, on the check and on "I have paid". | W-16; selfJoin.test.mjs (the amount only from the server's `totalP`) | PASS | PASS |
 | 17 | Plan price changed between the form and the payment | The old link is closed, here and at the company, before a new one is made. | W-17 | **FAIL (B3)** | PASS |
 | 18 | Price changed, but the old link was already paid | No new payment. The paid one stands. | W-18 | **FAIL (B3)** | PASS |
 | 19 | Rounding (paise / rupees) | Cashfree is in rupees both ways, Razorpay in paise. Odd paise survive. The page, the UPI `am=` and the desk use one format. | W-19; D-07; uatMoney.test.ts "three instalments of an odd total settle it to the paisa" | PASS | PASS |
 | 20 | GST-free totals | No GST or other charge is added. The link amount is exactly plan price plus joining fee. | W-20; SQL 0077 "1total/3total" (= price + fee); SQL 0081 "2total" | PASS | PASS |
 | 21 | Switch turned off mid-flow | New joins pay at the desk. A payment already started is still learnt. | W-21; joinPay.test.mjs "pay-info: online only with ... the switch on"; e2e "Settings -> Payments, the two switches" | PASS | PASS |
-| 22 | Payment account removed mid-flow | Open links are checked first, and any paid one is kept. The rest are closed at the company and here. | W-22; pay.test.mjs "disconnect wipes the sealed keys..." | **FAIL (B4)** | PASS |
+| 22 | Payment account removed mid-flow | Open links are checked first, and any paid one is kept. The rest are closed at the company and here. Pasted keys are kept sealed and off only while a closed link still needs watching (row 46), then wiped. | W-22; W-35; pay.test.mjs "disconnect wipes the sealed keys..." | **FAIL (B4)** | PASS |
 | 23 | Gym server down | On Send: "try again", and nothing is kept. When finding the gym fails: the request is kept and the person pays at the desk. | W-23 | PASS | PASS |
 | 24 | Payment company down | No link and no UPI means pay at the desk (the request is kept). A check while it is down changes nothing. | W-24 | PASS | PASS |
 | 25 | Our database (D1) failing | The request is kept, and the page says pay at the desk. | W-25 | PASS | PASS |
@@ -113,11 +116,24 @@ There is no refund call. The gym refunds in its own company dashboard, then void
 | 36 | Nothing marked paid without a verified company event | The page, a guessed id, a fee id and a shop id all fail. | W-30 | PASS | PASS |
 | 37 | Owner and member see the same amount | The page, the link, the desk and the receipt all carry the server paise. | W-01; D-07; e2e "R-528 phone: 'Paid online' on Today..." (₹2,000 on both sides) | PASS | PASS |
 | 38 | The Hindi (Hinglish) page shows the same amounts | ₹ and every number are kept in the Hinglish words. | D-07 (English and Hindi Pay now); the Hinglish dictionary test (keeps ₹ and numbers) | PASS | PASS |
-| 39 | Logs hold no card, phone or secret | No card, phone, name, UPI ID, key, secret, proof or amount in any log line. | W-31; pay.test.mjs "connect: ... never answered back" | PASS | PASS |
+| 39 | Logs hold no card, phone or secret | No card, phone, name, UPI ID, key, secret, proof or amount in any log line. No payment request id either (row 55). | W-31; W-44; pay.test.mjs "connect: ... never answered back" | PASS | PASS |
 | 40 | Keys stored safely | Sealed with AES-GCM. The plain text never shows. A wrong key or a changed byte fails. | pay.test.mjs "seal and unseal: round trip..." | PASS | PASS |
 | 41 | Server part not ready | Every call says NOT_READY. The page is the desk page. | pay.test.mjs "tables missing..."; e2e "R-528 page: before the server part is live..." | PASS | PASS |
 | 42 | Gym server signature for the gym id | Only a fresh (at most 5 minutes old) Worker signature for this code works. A paused gym is CLOSED. | SQL 0081 "1nosig/1badsig/1othercode/1old/1paused" | PASS | PASS |
 | 43 | A bot fills the hidden box | Answered as sent, but no enquiry id, so no payment is ever made. | SQL 0081 "2bot" | PASS | PASS |
+| 44 | PayU gym, price changed: we close the old invoice here (PayU cannot cancel it), they pay it from the old tab, no webhook | Still watched: the 10-minute check finds it, paid late, and Today shows "Paid online", so the desk does not charge again. | W-33 | **FAIL (R2-1)** | PASS |
+| 45 | Razorpay cancel fails on a network error (price change) | The link may still be payable there, so it stays watched; a payment on it is found. | W-34 | **FAIL (R2-1)** | PASS |
+| 46 | Disconnect while a link is payable and its cancel fails | Pasted keys kept sealed and off (never making a link) only until it is settled; the payment is found; then the keys are wiped. | W-35; W-22 | **FAIL (R2-1)** | PASS |
+| 47 | Which links stay watched | Open ones; ones we closed, for 8 days; never once the company says closed, once paid, or with no company link. | W-36 | **FAIL (R2-1)**, nothing watched them | PASS |
+| 48 | Paid at home a minute ago, walks in, the desk is about to take cash | Today asks the company itself when it loads and shows "Paid online", not up to 10 minutes later. | W-37; W-45 | **FAIL (R2-2)** | PASS |
+| 49 | Make member while the online link is still open | The link is closed at the company first. Paid a moment ago: "{name} has just paid online. Tap Approve instead." and no form opens. | W-38; D-08; e2e "R-542 round 2 phone: Make member closes the open online payment first..." | **FAIL (R2-2)** | PASS |
+| 50 | "Paid online, receipt not made" for a join made a member without Approve | Says they may have paid twice: check, and refund one if so; only otherwise save it. | e2e "R-542 phone: ... a paid join nobody approved is shown" | **FAIL (R2-2)**, it nudged a second receipt | PASS |
+| 51 | Shop order total changed; the desk cancels a link | The old link is cancelled at the company too. One already paid stands, and no new link is made. | W-39; W-38 | **FAIL (R2-4)** | PASS |
+| 52 | A test link after payments go live | Never reused (fee, shop, join); never asked with live keys; can never switch live payments off as "bad keys". | W-40 | **FAIL (R2-3)** | PASS |
+| 53 | Refunded (in full) before Approve | Approve asks the company once more: refunded, so nothing is saved, no member, no receipt. An open one paid a second ago is found then too. | W-41 (Razorpay); W-42 (Cashfree: full refund done or under way = refunded; part or cancelled refund = paid); e2e "R-542 round 2 phone..." | **FAIL (R2-5)** | PASS |
+| 54 | One payment named two ways by the check and the webhook | One payment; the real id is kept; no false "the gym should refund it". Two real ids are still said as a second payment. | W-43; W-15 | **FAIL (R2-6)** | PASS |
+| 55 | Payment request ids in server logs | Never (anyone holding one can tap "I have paid"). | W-44 | **FAIL (R2-6)** | PASS |
+| 56 | Webhooks of gyms on pasted Razorpay keys, and of PhonePe gyms | Always refused: no webhook secret is collected for them. The payment is still found by the page, Today, the check before Approve and the 10-minute check. | W-45 | PASS (written down, not a bug) | PASS |
 
 "Now" means the result in CI on the sweep's commit.
 
@@ -138,15 +154,26 @@ Each fix comes with a test that failed before it.
   - This is a policy choice and can be undone: one function, `isRealMoney`, plus the Shop's SQL line.
 - **B11. Once live, a test connection could still make links for real members.** Now only a connection in the Worker's own mode makes links. (W-26)
 
+### Review round 2 (14 Nov 2026)
+
+- **R2-1. A payment on a link we had closed was never seen.** The status check and the 10-minute check only looked at open links. So on a PayU gym (PayU cannot cancel), after a Razorpay cancel that failed, on PhonePe's hour-long page, or after a disconnect (keys wiped), money paid on the old link never showed, and the desk could charge again. Now closed links with a company link id are still asked about every 30 minutes for 8 days, until the company says they are closed, and after a disconnect the pasted keys are kept sealed and off only for that. (W-33 to W-36, W-22)
+- **R2-2. Today said "Not paid" for up to 10 minutes after the money came, and Make member left the online link open for 7 days.** Someone could pay at home, walk in, and be charged cash too. Now Today asks the company itself when it loads; Make member closes the open link first (at the company too) and stops with "has just paid online. Tap Approve instead." if it was paid; the "receipt not made" card says they may have paid twice and to check and refund. (W-37, W-38, D-08, e2e)
+- **R2-3. A test link could be reused after going live, and was asked with the live keys.** A "bad keys" answer to that would have switched the gym's live payments off. Now only a link of the current mode is reused (fee, shop, join), others are closed, and each link is asked only with keys of its own mode. (W-40)
+- **R2-4. A shop order's changed total and the desk's cancel closed the link only on our side.** Now both use the same close step as the join flow: ask first, then cancel at the company. (W-39, W-38)
+- **R2-5. A refund before Approve still became a receipt.** Now Approve asks the company once more; Razorpay and Cashfree full refunds stop it. (W-41, W-42, e2e)
+- **R2-6. One payment could be logged as "a second payment, refund it", and payment request ids were in the logs.** Now a link-level id and the payment's own id count as one payment, and no log line holds a request id. (W-43, W-44, W-15)
+
 ---
 
 ## 4. Known limits (tested where possible, written down where not)
 
 - **A second payment on a fee request** is only logged on the Worker. For join requests, the desk sees the second paid row (D-06). For fees, nothing on screen shows it yet.
 - **Cashfree partner webhooks without a hook id are ignored.** None are used, because every Cashfree link carries the gym's own `notify_url`.
-- **PayU has no "cancel link".** An old PayU link stays payable until it runs out. A payment on it is still learnt and recorded as late. PhonePe links run out within an hour.
-- **Disconnect checks at most 25 open links** with the company. Any beyond that are only closed here.
-- **No refund webhook.** Refunds are done by the gym at its company, and then the receipt is voided by hand (row 33).
+- **PayU has no "cancel link".** When we close a PayU link (a price change, the desk's cancel, Make member, a disconnect), PayU still takes money on it until it runs out after 7 days. We keep asking PayU about it every 30 minutes for 8 days, so a payment on it is found and recorded as paid late (row 44). Until that ask, the old tab can still be paid; the person then shows as paid twice and the gym refunds one. PhonePe's page runs out within an hour and is watched the same way.
+- **Webhooks of gyms on pasted Razorpay keys, and of PhonePe gyms, are always refused.** We never ask those gyms for a webhook secret, so a signature cannot be checked. Their payments are found by asking the company instead: the page, Today, the check before Approve, and the 10-minute check (row 56). Cashfree and "Connect Razorpay" webhooks work.
+- **The 10-minute check asks at most 40 links a run, for all gyms together**, open links first, then links we closed. Today asks up to 10 of its own gym's unpaid join payments each time it loads, so a gym's desk does not wait for that queue.
+- **Disconnect asks and cancels at most 25 open links** with the company. Any beyond that are closed here and then watched by the 10-minute check, like every closed link. For a "Connect Razorpay/Cashfree" gym, disconnect revokes our access at once, so its old links can no longer be asked about.
+- **Refunds.** Before Approve, a full refund at Razorpay or Cashfree stops the receipt. A part refund counts as paid (the desk sorts the rest). A chargeback or dispute is not seen, and neither is a PayU or PhonePe refund. The member-fee receipts sweep does not check for refunds. Refunds are done by the gym at its company, and then the receipt is voided by hand (row 33).
 - **A real test-mode run against the companies' sandboxes is not possible yet.** CI has no Razorpay or Cashfree test keys. Every company call in these tests is a faithful fake of the documented API: paths, signatures, paise or rupees, and statuses.
 
 To run against the real sandboxes, the owner must create test keys and add them as GitHub secrets:

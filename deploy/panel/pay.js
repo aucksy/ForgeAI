@@ -33,6 +33,12 @@ const CHECK_EVERY_MS = 5000;
 const CLAIM_MS = 5 * 60000;
 const CRON_EVERY_MS = 4 * 60000;
 const CRON_DAYS = 8;
+// Review round 2 (R-542): links WE closed are asked less often than open ones (every 30 minutes, for 8 days), and not
+// at all once the company says they are closed (checked_at = 'done', which sorts after every date).
+const CLOSED_EVERY_MS = 30 * 60000;
+const CHECK_DONE = 'done';
+// Today's "Joined online" asks the company about at most this many of the gym's unpaid join payments per look.
+const TODAY_CHECKS = 10;
 const MAX_AMOUNT_P = 10_00_000_00; // ₹10 lakh: a typing mistake, not a gym fee
 const UPI_ID = /^[a-z0-9._-]{2,256}@[a-z][a-z0-9.-]{1,63}$/;
 
@@ -214,12 +220,24 @@ export async function markPaid(db, { provider, requestId, paymentId, amountP, me
     .bind(pid, Math.round(Number(amountP)) || Number(row.amount_p), str(method) || 'upi', nowIso(at), row.id)
     .run();
   if (!r.meta || r.meta.changes === 0) {
-    console.warn('[pay] a second payment on request', row.id, 'from', provider, '- the gym should refund it');
+    // Review round 2 (R-542): the check and the webhook can name ONE payment two ways, when one of them only knows the
+    // link was paid (a "<link>:paid" id). That is the same payment, never "a second one to refund"; the real id is kept.
+    const prev = await requestOf(db, row.id);
+    const before = str(prev && prev.payment_id);
+    if (isLinkLevelId(pid) || isLinkLevelId(before)) {
+      if (isLinkLevelId(before) && !isLinkLevelId(pid)) await db.prepare('UPDATE pay_requests SET payment_id = ? WHERE id = ?').bind(pid, row.id).run();
+      return 'duplicate';
+    }
+    // Never the request id in a log: anyone holding one can tap "I have paid" on the join page.
+    console.warn('[pay] a second payment id on one paid request', provider, '- check it in the company dashboard and refund it if it is real');
     return 'second';
   }
-  console.log('[pay] paid', row.id, provider, row.mode);
+  console.log('[pay] paid', provider, row.mode);
   return 'paid';
 }
+
+/** "<link id>:paid": the link is paid, but the answer did not carry the payment's own id. PURE. */
+export const isLinkLevelId = (id) => str(id).endsWith(':paid');
 
 /** A connection the company no longer accepts (revoked, keys changed): off, and Settings says why. */
 export async function turnOff(db, gymId, provider, reason, now) {
@@ -245,21 +263,38 @@ async function credsOf(env, db, conn, f) {
   return next;
 }
 
+/**
+ * Can this request still turn out paid at the company? An open link, and (review round 2, R-542) also one WE closed
+ * (a price change, a desk cancel, Make member, a disconnect) that the company may still take money on: PayU cannot
+ * cancel a link, PhonePe's page lives up to an hour, a cancel can fail on a network error. So every closed link with a
+ * company link id stays watched for 8 days, until the company itself says it is closed ("done"). PURE.
+ */
+export function stillWatched(row, now = Date.now()) {
+  if (!row || !row.provider || !row.link_id || row.status === 'paid') return false;
+  if (row.status === 'open') return true;
+  return row.checked_at !== CHECK_DONE && now - Date.parse(row.created_at) < CRON_DAYS * 86400000;
+}
+
+/** A connection whose keys may still ASK about old links: on, or disconnected with its keys kept for that (below). */
+const canAsk = (conn) => Boolean(conn && conn.creds && (conn.status === 'on' || conn.off_reason === 'disconnected'));
+
 /** Ask the company about one request (throttled), and act on the answer. Returns the fresh row. */
 export async function checkWithCompany(env, db, row, { f = fetch, force = false, now = Date.now() } = {}) {
-  if (!row || !row.provider || !row.link_id) return row;
-  if (row.status !== 'open' && !(row.status === 'expired' && now - Date.parse(row.expires_at || row.created_at) < 86400000)) return row;
+  if (!stillWatched(row, now)) return row;
   if (!force && row.checked_at && now - Date.parse(row.checked_at) < CHECK_EVERY_MS) return row;
   if (!hasMasterKey(env)) return row;
   const conn = await connOf(db, row.gym_id, row.provider);
-  if (!conn || conn.status !== 'on') return row;
+  if (!canAsk(conn)) return row;
+  // Review round 2 (R-542): each link in its OWN mode. Live keys cannot see a test link (and the other way round), so
+  // asking would only fail, and must never switch a gym's live payments off as "bad keys".
+  if (row.mode && conn.mode !== row.mode) return row;
   await db.prepare('UPDATE pay_requests SET checked_at = ? WHERE id = ?').bind(nowIso(now), row.id).run();
   const adapter = PROVIDERS[row.provider];
   let st;
   try {
-    st = await adapter.status(await credsOf(env, db, conn, f), conn.mode, row.link_id, f);
+    st = await adapter.status(await credsOf(env, db, conn, f), row.mode || conn.mode, row.link_id, f);
   } catch (e) {
-    if (e instanceof PayError && e.code === 'BAD_KEYS') await turnOff(db, row.gym_id, row.provider, 'bad_keys', now);
+    if (e instanceof PayError && e.code === 'BAD_KEYS' && conn.status === 'on') await turnOff(db, row.gym_id, row.provider, 'bad_keys', now);
     else console.warn('[pay] status check failed', row.provider, e instanceof PayError ? e.code : 'error');
     return requestOf(db, row.id);
   }
@@ -267,6 +302,10 @@ export async function checkWithCompany(env, db, row, { f = fetch, force = false,
     await markPaid(db, { provider: row.provider, requestId: row.id, paymentId: st.paymentId || `${row.link_id}:paid`, amountP: st.amountP, method: st.method, at: now });
   } else if (st.state === 'expired' || st.state === 'cancelled') {
     await db.prepare("UPDATE pay_requests SET status = ?, failed_at = CASE WHEN ? THEN ? ELSE failed_at END WHERE id = ? AND status = 'open'").bind(st.state, st.failed ? 1 : 0, nowIso(now), row.id).run();
+    // The company itself says nobody can pay it any more: no more asking.
+    await db.prepare("UPDATE pay_requests SET checked_at = ? WHERE id = ? AND status <> 'paid'").bind(CHECK_DONE, row.id).run();
+  } else if (st.state === 'refunded') {
+    // Money that came and went back (refunded before we ever saw it paid): never paid.
   } else if (st.failed) {
     await db.prepare('UPDATE pay_requests SET failed_at = ? WHERE id = ?').bind(nowIso(now), row.id).run();
   }
@@ -280,7 +319,8 @@ export async function checkWithCompany(env, db, row, { f = fetch, force = false,
  */
 export async function closeRequest(env, db, row, conn, f) {
   const adapter = PROVIDERS[row.provider];
-  if (adapter && adapter.cancel && row.link_id && conn && conn.creds && hasMasterKey(env)) {
+  // Only with keys of the link's own mode (review round 2): live keys cannot cancel a test link.
+  if (adapter && adapter.cancel && row.link_id && conn && conn.creds && (!row.mode || row.mode === conn.mode) && hasMasterKey(env)) {
     try {
       await adapter.cancel(await credsOf(env, db, conn, f), row.mode || conn.mode, row.link_id, f);
     } catch (e) {
@@ -288,6 +328,46 @@ export async function closeRequest(env, db, row, conn, f) {
     }
   }
   await db.prepare("UPDATE pay_requests SET status = 'cancelled' WHERE id = ? AND status = 'open'").bind(row.id).run();
+}
+
+/** The connection row (with its sealed keys) of a request, or null for a plain UPI one. */
+export async function connOfRow(db, row) {
+  return row && row.provider ? (await db.prepare('SELECT * FROM pay_connections WHERE gym_id = ? AND provider = ?').bind(row.gym_id, row.provider).first()) || null : null;
+}
+
+/**
+ * Review round 2 (R-542): an open request made in the OTHER mode (a test link from before payments went live, or the
+ * other way round) is never reused: it is asked once (a payment is kept) and closed. -> the fresh row when it turned
+ * out paid, else null. `mode` = payMode(env).
+ */
+export async function retireOtherMode(env, db, row, mode, f, now) {
+  if (!row || !row.provider || !row.mode || row.mode === mode || row.status !== 'open') return null;
+  const fresh = await checkWithCompany(env, db, row, { f, now, force: true });
+  if (fresh && fresh.status === 'paid') return fresh;
+  if (fresh && fresh.status === 'open') await closeRequest(env, db, fresh, await connOfRow(db, fresh), f);
+  return null;
+}
+
+/**
+ * Review round 2 (R-542): just before the desk Approves, is a PAID payment still paid? A refund (or a payment the
+ * bank reversed) before Approve must not become a receipt. -> 'paid' | 'refunded' | 'unknown' (cannot ask: then the
+ * desk goes on as before). Only the company's own answer says 'refunded'.
+ */
+export async function recheckPaid(env, db, row, f) {
+  if (!row || row.status !== 'paid' || !row.provider || !row.link_id || !hasMasterKey(env)) return 'unknown';
+  const conn = await connOfRow(db, row);
+  if (!canAsk(conn) || (row.mode && conn.mode !== row.mode)) return 'unknown';
+  try {
+    const st = await PROVIDERS[row.provider].status(await credsOf(env, db, conn, f), row.mode || conn.mode, row.link_id, f);
+    if (st.state === 'refunded') {
+      console.warn('[pay] a paid payment was refunded before Approve', row.provider);
+      return 'refunded';
+    }
+    return st.state === 'paid' ? 'paid' : 'unknown';
+  } catch (e) {
+    console.warn('[pay] the check before Approve failed', row.provider, e instanceof PayError ? e.code : 'error');
+    return 'unknown';
+  }
 }
 
 /**
@@ -324,7 +404,7 @@ export async function makeLink(env, db, row, conn, extra, f, origin) {
     f,
   );
   await db
-    .prepare("UPDATE pay_requests SET provider = ?, mode = ?, link_id = ?, link_url = ?, expires_at = ?, link_n = ?, status = 'open' WHERE id = ?")
+    .prepare("UPDATE pay_requests SET provider = ?, mode = ?, link_id = ?, link_url = ?, expires_at = ?, link_n = ?, status = 'open', checked_at = '' WHERE id = ?")
     .bind(conn.provider, conn.mode, link.linkId, link.url, link.expiresAt, n, row.id)
     .run();
 }
@@ -496,7 +576,7 @@ async function disconnect(env, db, b, f, now) {
       if (fresh && fresh.status === 'open') await closeRequest(env, db, fresh, conn, f);
     }
   }
-  // Any older open ones past those 25: closed here (their link can no longer be checked once the keys are wiped).
+  // Any older open ones past those 25: closed here.
   await db.prepare("UPDATE pay_requests SET status = 'cancelled' WHERE gym_id = ? AND provider = ? AND status = 'open'").bind(who.gymId, provider).run();
   if (conn && conn.via === 'oauth' && hasMasterKey(env)) {
     try {
@@ -505,9 +585,43 @@ async function disconnect(env, db, b, f, now) {
       console.warn('[pay] the company did not confirm the disconnect; ours is off anyway', provider);
     }
   }
-  // The sealed keys are wiped, not just switched off.
-  await db.prepare("UPDATE pay_connections SET status = 'off', off_reason = 'disconnected', creds = '', updated_at = ? WHERE gym_id = ? AND provider = ?").bind(nowIso(now), who.gymId, provider).run();
+  // Review round 2 (R-542): pasted keys are kept, sealed and switched off (they never make a link again), ONLY while a
+  // closed link of the last 8 days may still be paid at the company (PayU cannot cancel one; a cancel can fail): the
+  // 10-minute check keeps asking about those, then wipes the keys (wipeSpentKeys). Nothing left to watch, or a
+  // "Connect" sign-in we just revoked: wiped now.
+  const keep = conn && conn.via === 'keys' && conn.creds && (await needsKeys(db, who.gymId, provider, conn.mode, now));
+  await db
+    .prepare("UPDATE pay_connections SET status = 'off', off_reason = 'disconnected', creds = CASE WHEN ? THEN creds ELSE '' END, updated_at = ? WHERE gym_id = ? AND provider = ?")
+    .bind(keep ? 1 : 0, nowIso(now), who.gymId, provider)
+    .run();
+  if (keep) console.log('[pay] disconnected; keys kept only to watch closed links', provider);
   return ok({ connection: connectionView(await connOf(db, who.gymId, provider)) });
+}
+
+/** Does a closed link of this gym and company (in that mode) still need its keys to be watched? */
+async function needsKeys(db, gymId, provider, mode, now) {
+  const r = await db
+    .prepare(
+      `SELECT 1 AS x FROM pay_requests WHERE gym_id = ? AND provider = ? AND mode = ? AND status IN ('open', 'cancelled', 'expired')
+         AND link_id <> '' AND checked_at <> ? AND created_at >= ? LIMIT 1`,
+    )
+    .bind(gymId, provider, mode, CHECK_DONE, nowIso(now - CRON_DAYS * 86400000))
+    .first();
+  return Boolean(r);
+}
+
+/** The 10-minute check: keys kept after a disconnect are wiped once no closed link needs them. -> how many wiped. */
+export async function wipeSpentKeys(db, now = Date.now()) {
+  const r = await db
+    .prepare(
+      `UPDATE pay_connections SET creds = '', updated_at = ? WHERE status = 'off' AND off_reason = 'disconnected' AND creds <> ''
+         AND NOT EXISTS (SELECT 1 FROM pay_requests r WHERE r.gym_id = pay_connections.gym_id AND r.provider = pay_connections.provider
+           AND r.mode = pay_connections.mode AND r.status IN ('open', 'cancelled', 'expired') AND r.link_id <> '' AND r.checked_at <> ?
+           AND r.created_at >= ?)`,
+    )
+    .bind(nowIso(now), CHECK_DONE, nowIso(now - CRON_DAYS * 86400000))
+    .run();
+  return (r.meta && r.meta.changes) || 0;
 }
 
 /** A "please pay" for a member's dues (the desk) - with a company link when one is connected. */
@@ -520,11 +634,13 @@ async function createRequest(env, db, b, f, now, origin) {
   const memberId = str(b.memberId).slice(0, 80);
   if (!ref || (kind === 'fee' && !memberId)) return no(400, 'BAD_REQUEST');
   const upi = cleanUpi(b.upiId);
-  // The same dues and amount already asked for: the same request (and link), never a second one.
-  const same = await db
+  // The same dues and amount already asked for: the same request (and link), never a second one. Review round 2
+  // (R-542): never one made in the other mode (a test link from before payments went live): that one is closed.
+  let same = await db
     .prepare("SELECT * FROM pay_requests WHERE gym_id = ? AND kind = ? AND ref = ? AND amount_p = ? AND status = 'open' ORDER BY created_at DESC LIMIT 1")
     .bind(who.gymId, kind, ref, amountP)
     .first();
+  if (same && same.provider && same.mode && same.mode !== payMode(env)) same = await retireOtherMode(env, db, same, payMode(env), f, now);
   let row = same;
   if (!row) {
     const id = newRequestId();
@@ -566,15 +682,22 @@ async function deskRow(env, db, b, f) {
 async function deskCheck(env, db, b, f, now) {
   const { row } = await deskRow(env, db, b, f);
   if (!row) return no(404, 'NOT_FOUND');
+  // Review round 2 (R-542): just before Approve the company is asked again, not throttled: an open payment paid a
+  // moment ago is found, and a paid one refunded since is said ("refunded": the desk saves nothing as paid).
+  if (b.beforeApprove === true) {
+    if (row.status === 'paid') return ok({ request: requestView(row), refunded: (await recheckPaid(env, db, row, f)) === 'refunded' });
+    return ok({ request: requestView(await checkWithCompany(env, db, row, { f, now, force: true })), refunded: false });
+  }
   return ok({ request: requestView(await checkWithCompany(env, db, row, { f, now })) });
 }
 
 async function cancelRequest(env, db, b, f, now) {
   const { row } = await deskRow(env, db, b, f);
   if (!row) return no(404, 'NOT_FOUND');
-  // A payment that already happened is never hidden by a cancel: check first.
+  // A payment that already happened is never hidden by a cancel: check first. Review round 2 (R-542): then the link is
+  // cancelled at the company too (closeRequest), not only here, so nobody can still pay it from an old message.
   const fresh = await checkWithCompany(env, db, row, { f, now, force: true });
-  if (fresh.status === 'open') await db.prepare("UPDATE pay_requests SET status = 'cancelled' WHERE id = ? AND status = 'open'").bind(row.id).run();
+  if (fresh.status === 'open') await closeRequest(env, db, fresh, await connOfRow(db, fresh), f);
   return ok({ request: requestView(await requestOf(db, row.id)) });
 }
 
@@ -656,6 +779,22 @@ async function setSwitches(env, db, b, f, now) {
  */
 async function joinList(env, db, b, f, now) {
   const who = await deskWho(env, b.key, f);
+  // Review round 2 (R-542): Today asks the company itself about this gym's unpaid join payments (open ones first, then
+  // links we closed), so money paid a minute ago shows "Paid online" before the desk takes cash, instead of waiting
+  // for the 10-minute check (which shares 40 asks a run with every gym). Each is asked at most every 5 seconds.
+  if (hasMasterKey(env)) {
+    const unpaid =
+      (
+        await db
+          .prepare(
+            `SELECT * FROM pay_requests WHERE gym_id = ? AND kind = 'join' AND provider <> '' AND link_id <> '' AND status <> 'paid'
+               AND checked_at <> ? AND created_at >= ? ORDER BY CASE WHEN status = 'open' THEN 0 ELSE 1 END, created_at DESC LIMIT ?`,
+          )
+          .bind(who.gymId, CHECK_DONE, nowIso(now - CRON_DAYS * 86400000), TODAY_CHECKS)
+          .all()
+      ).results || [];
+    for (const r of unpaid) await checkWithCompany(env, db, r, { f, now });
+  }
   const rows =
     (
       await db
@@ -770,9 +909,16 @@ async function shopRequest(env, db, b, f, now, origin) {
     .prepare("SELECT * FROM pay_requests WHERE gym_id = ? AND kind = 'shop' AND ref = ? AND status IN ('open', 'paid') ORDER BY created_at DESC LIMIT 1")
     .bind(who.gymId, orderId)
     .first();
+  // Review round 2 (R-542): a link of the other mode (test before live) is never reused.
+  if (row && row.status === 'open' && row.provider && row.mode && row.mode !== payMode(env)) row = await retireOtherMode(env, db, row, payMode(env), f, now);
   if (row && row.status === 'open' && Number(row.amount_p) !== amountP) {
-    await db.prepare("UPDATE pay_requests SET status = 'cancelled' WHERE id = ?").bind(row.id).run();
-    row = null;
+    // The order's total changed: the old link is asked once (a payment is kept) and cancelled at the company too.
+    const fresh = await checkWithCompany(env, db, row, { f, now, force: true });
+    if (fresh && fresh.status === 'paid') row = fresh;
+    else {
+      if (fresh && fresh.status === 'open') await closeRequest(env, db, fresh, await connOfRow(db, fresh), f);
+      row = null;
+    }
   }
   if (!row) {
     const id = newRequestId();
@@ -855,7 +1001,9 @@ async function handleHook(request, env, provider, hookId, f, now) {
     if (row) console.warn('[pay] webhook for a request of another gym ignored', provider);
     return ok({ ok: true });
   }
-  if (ev.kind === 'paid') await markPaid(db, { provider, requestId: row.id, paymentId: ev.paymentId, amountP: ev.amountP, method: ev.method, at: now });
+  // A webhook that names the link but not the payment's own id: the same link-level id the check uses, so the two
+  // never look like two payments (review round 2).
+  if (ev.kind === 'paid') await markPaid(db, { provider, requestId: row.id, paymentId: ev.paymentId || (row.link_id ? `${row.link_id}:paid` : ''), amountP: ev.amountP, method: ev.method, at: now });
   else if (ev.kind === 'failed') await db.prepare("UPDATE pay_requests SET failed_at = ? WHERE id = ? AND status = 'open'").bind(nowIso(now), row.id).run();
   else if (ev.kind === 'expired' || ev.kind === 'cancelled') await db.prepare("UPDATE pay_requests SET status = ? WHERE id = ? AND status = 'open'").bind(ev.kind, row.id).run();
   return ok({ ok: true });
@@ -863,7 +1011,11 @@ async function handleHook(request, env, provider, hookId, f, now) {
 
 // ------------------------------------------------------------------------------------ scheduled check
 
-/** Every 10 minutes: links still open (made in the last 8 days, not asked for 4 minutes) are checked. */
+/**
+ * Every 10 minutes: links made in the last 8 days are checked: open ones not asked for 4 minutes first, then (review
+ * round 2, R-542) links WE closed that the company has not said are closed, not asked for 30 minutes. Then keys kept
+ * after a disconnect that nothing needs any more are wiped.
+ */
 export async function scheduledPay(env, { f = fetch, now = Date.now() } = {}) {
   const db = env && env.WEB;
   if (!(await tablesReady(db)) || !hasMasterKey(env)) return 0;
@@ -871,10 +1023,12 @@ export async function scheduledPay(env, { f = fetch, now = Date.now() } = {}) {
     (
       await db
         .prepare(
-          `SELECT * FROM pay_requests WHERE status = 'open' AND provider <> '' AND link_id <> ''
-             AND created_at >= ? AND (checked_at = '' OR checked_at < ?) ORDER BY checked_at LIMIT 40`,
+          `SELECT * FROM pay_requests WHERE provider <> '' AND link_id <> '' AND created_at >= ?
+             AND ((status = 'open' AND (checked_at = '' OR checked_at < ?))
+               OR (status IN ('cancelled', 'expired') AND checked_at <> ? AND (checked_at = '' OR checked_at < ?)))
+           ORDER BY CASE WHEN status = 'open' THEN 0 ELSE 1 END, checked_at LIMIT 40`,
         )
-        .bind(nowIso(now - CRON_DAYS * 86400000), nowIso(now - CRON_EVERY_MS))
+        .bind(nowIso(now - CRON_DAYS * 86400000), nowIso(now - CRON_EVERY_MS), CHECK_DONE, nowIso(now - CLOSED_EVERY_MS))
         .all()
     ).results || [];
   let paid = 0;
@@ -882,6 +1036,7 @@ export async function scheduledPay(env, { f = fetch, now = Date.now() } = {}) {
     const fresh = await checkWithCompany(env, db, row, { f, now, force: true });
     if (fresh && fresh.status === 'paid') paid += 1;
   }
+  await wipeSpentKeys(db, now);
   return paid;
 }
 

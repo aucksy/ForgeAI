@@ -747,8 +747,13 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   // Payment sweep (R-542): test payments, and join payments nobody approved.
   '{name} paid {amount} in test mode': '{name} ne test mode mein {amount} pay kiya',
   'Test mode: no real money came in, so no receipt was made. Collect the fee at the desk.': 'Test mode: asli paise nahi aaye, isliye receipt nahi bani. Fees desk par lo.',
-  'They paid on your join page, but were not approved with Approve. Save this payment on their member page.':
-    'Inhone aapke join page par pay kiya, par Approve se approve nahi hue. Yeh payment unke member page par save karo.',
+  'They paid on your join page, but were made a member without Approve. They may have paid twice: check, and refund one if so. If not, save this payment on their member page.':
+    'Inhone aapke join page par pay kiya, par Approve ke bina member bane. Ho sakta hai do baar pay kiya ho: check karo, aur aisa ho to ek refund karo. Nahi to yeh payment unke member page par save karo.',
+  // Payment sweep, review round 2 (R-542): Make member closes the open payment; Approve asks the company once more.
+  '{name} has just paid online. Tap Approve instead.': '{name} ne abhi online pay kiya hai. Iski jagah Approve dabao.',
+  'Could not check their online payment. Check your internet and try again.': 'Inka online payment check nahi hua. Internet check karo aur phir try karo.',
+  'This online payment was refunded, so nothing was saved. Ask them how they will pay.':
+    'Yeh online payment refund ho gaya, isliye kuch save nahi hua. Unse poochho ki woh kaise pay karenge.',
   'Got it': 'Theek hai',
   'Test mode: no real money came in, so no receipt was saved.': 'Test mode: asli paise nahi aaye, isliye receipt save nahi hui.',
   // ── F201 AI Assistant (12 Nov 2026, R-471): words the owner approves before it goes live ──

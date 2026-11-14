@@ -157,7 +157,7 @@ export function PaidOnlineCard() {
             {why === 'TEST_MODE'
               ? t('Test mode: no real money came in, so no receipt was made. Collect the fee at the desk.')
               : why === 'JOIN_NOT_APPROVED'
-                ? t('They paid on your join page, but were not approved with Approve. Save this payment on their member page.')
+                ? t('They paid on your join page, but were made a member without Approve. They may have paid twice: check, and refund one if so. If not, save this payment on their member page.')
                 : why === 'NO_MEMBERSHIP'
                   ? t('The plan this was for is no longer there.')
                   : t('It is more than what is due on that plan now.')}{' '}

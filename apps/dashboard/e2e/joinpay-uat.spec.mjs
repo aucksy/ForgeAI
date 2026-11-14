@@ -311,8 +311,10 @@ const FIELDS = [
 ];
 
 /** A pretend /api/pay (deploy/panel/pay.js in test mode) with the owner's switches and the join payments. */
-async function payServer(page, { connected = true, switches = { ready: true, app: true, web: true }, joins = [], paid = [] } = {}) {
-  const state = { switches, joins, paid, sent: [], recorded: [] };
+async function payServer(page, { connected = true, switches = { ready: true, app: true, web: true }, joins = [], paid = [], paidOnCancel = [], refunded = [] } = {}) {
+  // paidOnCancel: ids the company finds paid when the desk closes them (Make member); refunded: ids it says were
+  // refunded when asked just before Approve (review round 2, R-542).
+  const state = { switches, joins, paid, sent: [], recorded: [], cancelled: [] };
   await page.route('**/api/pay/**', async (route) => {
     const path = new URL(route.request().url()).pathname.replace('/api/pay/', '');
     const body = route.request().postDataJSON() ?? {};
@@ -336,6 +338,12 @@ async function payServer(page, { connected = true, switches = { ready: true, app
     }
     if (path === 'joins') return json({ joins: state.joins });
     const row = state.joins.find((j) => j.id === body.id);
+    if (path === 'check') return json(body.beforeApprove ? { request: row, refunded: refunded.includes(body.id) } : { request: row });
+    if (path === 'cancel') {
+      state.cancelled.push(body.id);
+      if (row && row.status === 'open') Object.assign(row, paidOnCancel.includes(body.id) ? { status: 'paid', paidP: row.amountP, method: 'upi', paymentId: 'pay_JUSTNOW' } : { status: 'cancelled' });
+      return json({ request: row });
+    }
     if (path === 'claim') return json({ token: 'lease-join', request: row });
     if (path === 'recorded') {
       state.recorded.push(body);
@@ -490,7 +498,7 @@ test.describe('the gym side', () => {
     // The payment nobody approved (its request was closed another way): the gym holds ₹1,500 with no receipt.
     const stuck = page.locator('div').filter({ hasText: 'Paid online, receipt not made' }).filter({ hasText: 'I saved it' }).last();
     await expect(stuck).toContainText('A member paid ₹1,500 online', { timeout: 15_000 });
-    await expect(stuck).toContainText('They paid on your join page, but were not approved with Approve. Save this payment on their member page.');
+    await expect(stuck).toContainText('They paid on your join page, but were made a member without Approve. They may have paid twice: check, and refund one if so. If not, save this payment on their member page.');
     await expect(stuck).toContainText('Razorpay pay_LIVE1');
     await card.scrollIntoViewIfNeeded();
     await expectFitsPhone(page, 'on Today with a test-mode join payment');
@@ -506,6 +514,57 @@ test.describe('the gym side', () => {
     expect(pay.recorded).toHaveLength(1);
     expect(pay.recorded[0]).toMatchObject({ id: 'pr_dddddddddddddddddddd', receiptNo: '' });
     await shot(page, 'phone-joinpay-panel-5-test-mode-approved-nothing-paid');
+  });
+
+  test('R-542 round 2 phone: Make member closes the open online payment first; one paid a moment ago says Approve; one refunded is never saved', async ({ page }) => {
+    const server = await openApp(page);
+    await startOnlineGym(page);
+    await addPlan(page, { name: 'Monthly', price: '1500', joining: '500', months: '1' });
+    const e1 = 'join-4a1b2c3d4e5f60718293a4b5c6d7e8f9'; // Sameer: started paying online, then pays at the desk
+    const e2 = 'join-5a1b2c3d4e5f60718293a4b5c6d7e8f9'; // Pooja: paid online a moment ago; Today has not seen it yet
+    const e3 = 'join-6a1b2c3d4e5f60718293a4b5c6d7e8f9'; // Imran: paid, then refunded before Approve
+    personSendsTheForm(server, { id: e1, name: 'Sameer Khan', phone: '+919000077011' });
+    personSendsTheForm(server, { id: e2, name: 'Pooja Iyer', phone: '+919000077012' });
+    personSendsTheForm(server, { id: e3, name: 'Imran Ali', phone: '+919000077013' });
+    const pay = await payServer(page, {
+      joins: [
+        joinRow({ id: 'pr_ffffffffffffffffff01', ref: e1, testMode: false }),
+        joinRow({ id: 'pr_ffffffffffffffffff02', ref: e2, testMode: false }),
+        joinRow({ id: 'pr_ffffffffffffffffff03', ref: e3, status: 'paid', paidP: 200000, method: 'upi', paymentId: 'pay_REFUNDED', paidAt: '2026-10-17T04:30:00.000Z', testMode: false }),
+      ],
+      paidOnCancel: ['pr_ffffffffffffffffff02'],
+      refunded: ['pr_ffffffffffffffffff03'],
+    });
+    await page.evaluate(() => {
+      window.location.hash = '/';
+    });
+    await page.reload();
+    const card = page.locator('#needs-online-joins');
+    await expect(card).toContainText('Imran Ali', { timeout: 15_000 });
+
+    // Pooja: Make member closes her open payment first; the company says she has just paid -> Approve, no form.
+    await card.getByRole('button', { name: 'Make Pooja Iyer a member' }).tap({ timeout: 15_000 });
+    await expect(card).toContainText('Pooja Iyer has just paid online. Tap Approve instead.', { timeout: 15_000 });
+    expect(pay.cancelled).toEqual(['pr_ffffffffffffffffff02']);
+    await expect(card.getByRole('button', { name: 'Approve Pooja Iyer' })).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByLabel('Full name')).toHaveCount(0);
+    await card.scrollIntoViewIfNeeded();
+    await expectFitsPhone(page, 'on Today after a payment found while making a member');
+    await shot(page, 'phone-joinpay-panel-6-paid-while-making-member');
+
+    // Imran: Approve asks the company once more; refunded -> nothing saved, no member, no receipt.
+    await card.getByRole('button', { name: 'Approve Imran Ali' }).tap();
+    await expect(card).toContainText('This online payment was refunded, so nothing was saved. Ask them how they will pay.', { timeout: 15_000 });
+    expect(pay.sent.some((s) => s.path === 'check' && s.body.beforeApprove === true && s.body.id === 'pr_ffffffffffffffffff03')).toBe(true);
+    expect(pay.recorded).toHaveLength(0);
+    expect(pay.sent.some((s) => s.path === 'claim')).toBe(false);
+    expect([...server.records.values()].filter((r) => r.k === 'member' && !r.x && r.d.fullName === 'Imran Ali')).toHaveLength(0);
+    await shot(page, 'phone-joinpay-panel-7-refunded-before-approve');
+
+    // Sameer: his open payment is closed (at the company too), then the usual Add member form opens.
+    await card.getByRole('button', { name: 'Make Sameer Khan a member' }).tap();
+    await expect(page.getByLabel('Full name')).toHaveValue('Sameer Khan', { timeout: 15_000 });
+    expect(pay.cancelled).toEqual(['pr_ffffffffffffffffff02', 'pr_ffffffffffffffffff01']);
   });
 
   test('R-528 phone: Settings -> Payments, the two switches on, off, and greyed with no payment account', async ({ page }) => {

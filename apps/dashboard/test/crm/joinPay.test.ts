@@ -7,7 +7,7 @@ import { readFileSync } from 'node:fs';
 
 import { describe, expect, it } from 'vitest';
 
-import { approveQuestion, approveSale, canApprove, isRealMoney, joinLeftover, joinPaidDay, joinPayFor } from '../../src/crm/logic/joinPay';
+import { approveQuestion, approveSale, canApprove, isRealMoney, joinLeftover, joinPaidDay, joinPayFor, openJoinPays, paidWhileClosing } from '../../src/crm/logic/joinPay';
 import { approveWords, payLine } from '../../src/crm/ui/JoinedOnlineCard';
 import type { JoinPay } from '../../src/crm/pay/payApi';
 import type { EnquirySelfJoin, Plan } from '../../src/crm/types';
@@ -189,6 +189,20 @@ describe('payment sweep (R-542): what the desk is asked, told and shown', () => 
     expect(page).toMatch(/payNow: 'अभी \{total\} दें'/);
     expect(page).toMatch(/payLink\(p\)|upiLink\(p\)/);
     expect(page).toContain("'am=' + (Math.round(Number(p.amountP) || 0) / 100).toFixed(2)");
+  });
+
+  // Review round 2 (R-542): Make member closes the open join payment first; one found paid then means Approve.
+  it('D-08 Make member closes only THIS request open payments; one found paid while closing stops it', () => {
+    const list = [
+      pay({ id: 'pr_a', ref: EID, status: 'open' }),
+      pay({ id: 'pr_b', ref: EID, status: 'cancelled' }),
+      pay({ id: 'pr_c', ref: 'join-other', status: 'open' }),
+      pay({ id: 'pr_d', ref: EID, status: 'paid' }),
+    ];
+    expect(openJoinPays(EID, list).map((p) => p.id)).toEqual(['pr_a']);
+    expect(openJoinPays(EID, null)).toEqual([]);
+    expect(paidWhileClosing([{ status: 'cancelled' }, { status: 'paid' }])).toBe(true);
+    expect(paidWhileClosing([{ status: 'cancelled' }, null, undefined])).toBe(false);
   });
 });
 

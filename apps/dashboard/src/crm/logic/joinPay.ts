@@ -84,6 +84,20 @@ export function joinLeftover(
   return { kind: 'stuck', why: isRealMoney(p) ? 'JOIN_NOT_APPROVED' : 'TEST_MODE' };
 }
 
+/**
+ * Review round 2 (R-542): the join payments still open for this request. "Make member" closes each first (the server
+ * asks the company, keeps a payment just made, and cancels the link there), so nobody pays online after paying at the
+ * desk. PURE.
+ */
+export function openJoinPays(enquiryId: string, pays: readonly JoinPay[] | null | undefined): JoinPay[] {
+  return (pays ?? []).filter((p) => p.kind === 'join' && p.ref === enquiryId && p.status === 'open');
+}
+
+/** After closing them: did one turn out paid a moment ago? Then it is Approve, never Make member. PURE. */
+export function paidWhileClosing(closed: readonly ({ status?: string } | null | undefined)[]): boolean {
+  return closed.some((r) => r?.status === 'paid');
+}
+
 /** Can the desk approve in one tap (the money is in, or the person says it is)? PURE. */
 export function canApprove(s: JoinPayState): s is { kind: 'paid' | 'said'; pay: JoinPay } {
   return s.kind === 'paid' || s.kind === 'said';

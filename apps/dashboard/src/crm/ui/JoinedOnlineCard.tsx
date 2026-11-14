@@ -15,12 +15,12 @@ import { useAuth } from '../auth/AuthProvider';
 import { takerOf } from '../auth/permissions';
 import { t } from '../lang/lang';
 import { formatDay } from '../logic/dates';
-import { approveQuestion, approveSale, canApprove, isRealMoney, joinPayFor, type JoinPayState } from '../logic/joinPay';
+import { approveQuestion, approveSale, canApprove, isRealMoney, joinPayFor, openJoinPays, paidWhileClosing, type JoinPayState } from '../logic/joinPay';
 import { emptyMemberForm, findDuplicatePhone, formatPhone, splitE164, validateMember } from '../logic/members';
 import { formatINR } from '../logic/money';
 import { waitingOnlineJoins, type OnlineJoin } from '../logic/selfJoin';
 import { startVisiblePoll } from '../logic/visiblePoll';
-import { claimReceipt, joinPays, markRecorded, type JoinPay } from '../pay/payApi';
+import { cancelRequest, checkBeforeApprove, claimReceipt, joinPays, markRecorded, type JoinPay } from '../pay/payApi';
 import { useDeskPay } from '../pay/useDeskPay';
 import { useCrm } from '../store';
 import type { Enquiry, EnquirySelfJoin, Member } from '../types';
@@ -101,6 +101,31 @@ export function JoinedOnlineCard() {
     }
   };
 
+  // Review round 2 (R-542): before Make member, the join page's open payment is closed (the server asks the company
+  // first and cancels the link there too), so nobody pays online after paying at the desk. Paid a moment ago: Approve.
+  const makeMember = async (enquiry: Enquiry) => {
+    setError(null);
+    const open = payOn && key ? openJoinPays(enquiry.id, pays) : [];
+    if (key && open.length > 0) {
+      setBusy(enquiry.id);
+      try {
+        const closed = await Promise.all(open.map((p) => cancelRequest(key, p.id)));
+        if (paidWhileClosing(closed)) {
+          setError(t('{name} has just paid online. Tap Approve instead.', { name: enquiry.name }));
+          return;
+        }
+      } catch (e) {
+        console.warn('[join-pay] the open online payment was not closed', e instanceof Error ? e.message : e);
+        setError(t('Could not check their online payment. Check your internet and try again.'));
+        return;
+      } finally {
+        setBusy(null);
+        void load();
+      }
+    }
+    setMaking(enquiry);
+  };
+
   if (rows.length === 0 && !making && !error) return null;
 
   return (
@@ -148,10 +173,7 @@ export function JoinedOnlineCard() {
                     <Button
                       needsInternet
                       disabled={busy !== null}
-                      onClick={() => {
-                        setError(null);
-                        setMaking(enquiry);
-                      }}
+                      onClick={() => void makeMember(enquiry)}
                       ariaLabel={t('Make {name} a member', { name: enquiry.name })}
                     >
                       {t('Make member')}
@@ -178,7 +200,7 @@ export function JoinedOnlineCard() {
 }
 
 class ApproveError extends Error {
-  constructor(readonly code: 'PLAN_GONE' | 'TAKEN' | 'BAD_DETAILS') {
+  constructor(readonly code: 'PLAN_GONE' | 'TAKEN' | 'BAD_DETAILS' | 'REFUNDED') {
     super(code);
     this.name = 'ApproveError';
   }
@@ -188,6 +210,7 @@ function approveProblem(e: unknown): string {
   if (e instanceof ApproveError && e.code === 'PLAN_GONE') return t('The plan they picked is no longer sold. Tap Make member and pick a plan.');
   if (e instanceof ApproveError && e.code === 'TAKEN') return t('Someone else at the desk is approving this person now. Wait a minute and look again.');
   if (e instanceof ApproveError && e.code === 'BAD_DETAILS') return t('Their name or number could not be saved. Tap Make member to check them.');
+  if (e instanceof ApproveError && e.code === 'REFUNDED') return t('This online payment was refunded, so nothing was saved. Ask them how they will pay.');
   return t('Could not approve. Check your internet and try again.');
 }
 
@@ -207,6 +230,15 @@ async function approveJoin(
   const { snapshot, today, createMember, setMemberArchived, sellMembership, updateEnquiry } = crm;
   const draftSale = approveSale({ memberId: '-', join, pay, plans: snapshot.plans, today, taker });
   if (!draftSale) throw new ApproveError('PLAN_GONE');
+  // Review round 2 (R-542): the company is asked once more right now. Refunded since (or reversed): nothing is saved
+  // as paid. No answer (an older server, no internet): Approve goes on as before; the claim below needs the server too.
+  if (pay.status === 'paid' && pay.provider) {
+    const fresh = await checkBeforeApprove(key, pay.id).catch((e: unknown) => {
+      console.warn('[join-pay] the check before Approve did not answer', e instanceof Error ? e.message : e);
+      return null;
+    });
+    if (fresh?.refunded) throw new ApproveError('REFUNDED');
+  }
   const { token, request } = await claimReceipt(key, pay.id);
   let member = findDuplicatePhone(snapshot.members, enquiry.phone);
   if (!token && request.recorded && member) {
