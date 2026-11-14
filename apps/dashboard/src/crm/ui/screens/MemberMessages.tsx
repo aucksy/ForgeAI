@@ -10,7 +10,7 @@
  * logic/memberMessages.ts.
  */
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { useAuth } from '../../auth/AuthProvider';
 import {
@@ -18,12 +18,13 @@ import {
   TALK_REPLY_MAX,
   TALK_THREAD_MAX,
   splitTalk,
+  talkChipLabel,
   talkErrorWords,
+  talkFilterFrom,
   talkFilters,
   talkLineHead,
   talkName,
   talkStatusLine,
-  shownOf,
   type TalkFilter,
   type TalkList,
   type TalkThread,
@@ -32,7 +33,7 @@ import { errorWords } from '../../shop/logic';
 import * as api from '../../shop/memberMessagesApi';
 import { useCrm } from '../../store';
 import { Button, Card, ChipToggle, EmptyState, ErrorBanner, PageHeader, Pill, Row, SectionTitle, TextField, color, font, space } from '../kit';
-import { refreshMemberMessageCount } from '../MemberMessageParts';
+import { refreshMemberMessageCount, useMemberMessageCount } from '../MemberMessageParts';
 import { navigate } from '../router';
 
 type Load = { state: 'loading' } | { state: 'missing' } | { state: 'error'; message: string } | { state: 'ready'; data: TalkList };
@@ -48,12 +49,13 @@ const said = { margin: 0, fontFamily: font.body, fontSize: 15, color: color.ink,
 
 const KIND_TONE = { question: 'accent', feedback: 'good', complaint: 'critical' } as const;
 
-export function MemberMessagesScreen() {
+/** `startWith`: a type from the address (`/member-messages/complaint`): a line on Today opens its own type. */
+export function MemberMessagesScreen({ startWith }: { startWith?: string } = {}) {
   const { session } = useAuth();
   const { today } = useCrm();
   const key = session?.online ? (session.ownerKey ?? null) : null;
   const [load, setLoad] = useState<Load>({ state: 'loading' });
-  const [filter, setFilter] = useState<TalkFilter>('all');
+  const [filter, setFilter] = useState<TalkFilter>(() => talkFilterFrom(startWith, 'owner'));
   const [note, setNote] = useState<Note>(null);
 
   const fetchList = useCallback(async () => {
@@ -71,6 +73,17 @@ export function MemberMessagesScreen() {
   useEffect(() => {
     void fetchList();
   }, [fetchList]);
+
+  // Fresh eyes (14 Nov 2026): a new message while the page is open. The waiting count (the menu badge, read with Needs
+  // you every minute) moves first; when it no longer matches the page, the page reads the list again.
+  // Only when the shared count moves (a ref for the page's number): the page's own reply lowers both, so nothing more.
+  const waitingNow = useMemberMessageCount();
+  const pageWaiting = useRef<number | null>(null);
+  pageWaiting.current = load.state === 'ready' ? load.data.waiting : null;
+  useEffect(() => {
+    const shown = pageWaiting.current;
+    if (waitingNow !== null && shown !== null && waitingNow !== shown) void fetchList();
+  }, [waitingNow, fetchList]);
 
   const role = load.state === 'ready' ? load.data.role : 'owner';
   const filters = talkFilters(role);
@@ -98,7 +111,8 @@ export function MemberMessagesScreen() {
         title={W.title}
         subtitle={W.intro}
         actions={
-          key ? (
+          // Fresh eyes (14 Nov 2026): not beside the error card's own "Try again" (two buttons for one thing).
+          key && load.state !== 'error' ? (
             <Button
               variant="ghost"
               onClick={() => {
@@ -145,10 +159,7 @@ export function MemberMessagesScreen() {
                 wrap
                 value={shown}
                 onChange={(v) => setFilter(v as TalkFilter)}
-                options={filters.map((f) => {
-                  const n = shownOf(load.data.threads, f);
-                  return { value: f, label: W.filter[f], count: n > 0 ? n : undefined };
-                })}
+                options={filters.map((f) => ({ value: f, label: talkChipLabel(load.data.threads, f) }))}
               />
               <section aria-label={W.waiting} style={{ display: 'grid', gap: space.md }}>
                 <SectionTitle>{`${W.waiting} (${parts.waiting.length})`}</SectionTitle>

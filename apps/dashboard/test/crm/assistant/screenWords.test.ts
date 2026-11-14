@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 
 import { EXAMPLES, PAGES } from '../../../src/crm/assistant/catalogue';
-import { CARD_TITLE, SAVE_WORDS, confirmWords, sendAtWords } from '../../../src/crm/assistant/conversation';
+import { CARD_TITLE, SAVE_WORDS, confirmWords, dayInWords, sendAtWords } from '../../../src/crm/assistant/conversation';
 import type { Draft } from '../../../src/crm/assistant/plan';
 import { GROUP_WORDS, STATUS_WORDS, WORKOUT_PLANS_ON, historyWhen } from '../../../src/crm/assistant/ui/AssistantHome';
 import { KIND_WORDS, pageName } from '../../../src/crm/assistant/ui/Cards';
@@ -109,6 +109,15 @@ describe('the button on a card', () => {
     expect(sendAtWords('2026-11-15T12:05')).toBe('15 Nov, 12:05 pm');
     expect(sendAtWords('2026-11-15T00:15')).toBe('15 Nov, 12:15 am');
     expect(confirmWords(expense, null, 20).action).toEqual({ text: 'Save expense' });
+  });
+
+  it('fresh eyes: a date box gets the day in words beside it (the box itself shows mm/dd/yyyy)', () => {
+    expect(dayInWords('2026-10-18')).toBe('Sun, 18 Oct');
+    expect(dayInWords('2026-11-14')).toBe('Sat, 14 Nov');
+    expect(dayInWords('2026-11-15T08:00')).toBe('Sun, 15 Nov, 8:00 am');
+    expect(dayInWords('')).toBeNull();
+    expect(dayInWords('2026-02-30')).toBeNull();
+    expect(dayInWords('2026-11-15T8')).toBeNull();
   });
 
   it('at 0 credits it says "Ask MettleUp for credits" and no price (buying in the panel is not built)', () => {

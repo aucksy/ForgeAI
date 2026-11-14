@@ -5,6 +5,7 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 import {
+  DEFAULT_ALERT_SETTINGS,
   PUSH_WORDS,
   TIME_CHOICES,
   alertSettingsFrom,
@@ -64,6 +65,18 @@ describe('alerts with the admin app closed: the words and checks', () => {
     expect(showAlertsOffer({ ...offer, on: true })).toBe(false);
     expect(showAlertsOffer({ ...offer, ready: false })).toBe(false);
     expect(showAlertsOffer({ ...offer, support: 'iphone-install' })).toBe(false);
+  });
+
+  it('fresh eyes: what comes at once, in plain words; the desk is never told complaints come to it', () => {
+    for (const w of [PUSH_WORDS.urgentOwner, PUSH_WORDS.urgentStaff]) {
+      expect(w).not.toMatch(/check-in numbers|3 days or less/i);
+      expect(w).toMatch(/new shop orders/);
+    }
+    expect(PUSH_WORDS.urgentOwner).toMatch(/^These always come at once: complaints,/);
+    expect(PUSH_WORDS.urgentStaff).not.toMatch(/come at once: complaints/i);
+    expect(PUSH_WORDS.urgentStaff).toMatch(/Complaints go to the owner only\.$/);
+    // Everything else is gathered once a day by default (R-506), not once a week.
+    expect(DEFAULT_ALERT_SETTINGS.mode).toBe('daily');
   });
 
   it('plain words', () => {

@@ -42,22 +42,37 @@ export const ADMIN_NEWS: readonly AdminNewsEntry[] = [
     // Panel code only (the logo is the one saved in Branding). id = the deploy day: change it if the deploy is later.
     id: '2026-11-14',
     lines: [
+      // The logo line stays first: it is the summary under the bell (e2e/whatsnew.spec.mjs J149).
+      {
+        text: 'Your gym’s logo now shows at the top of the admin app, next to your gym’s name. Your staff see it too. To add or change it, open Branding.',
+        go: { label: 'Open Branding', path: '/settings/branding' },
+      },
       // R-506/R-510 (moved from ADMIN_NEWS_PENDING at the deploy): 0075 + 0076 live, VAPID key set, HQ 558464b7.
       {
         text: 'New on Today: "Latest from your members". It shows when a member asks a question, sends a message or a complaint, orders from the shop, pays online or joins your gym. Tap a line to open it.',
       },
       {
-        text: 'Needs you on Today now also counts member questions and member messages waiting for your reply. With alerts on, you hear a sound and see a notice when a new one comes in.',
+        // Fresh eyes (14 Nov 2026): Needs you now follows a reply at once (one shared count with the menu).
+        text: 'Needs you on Today now also counts questions for trainers and member messages waiting for your reply. It goes down as soon as you reply. With alerts on, you hear a sound when a new one comes in.',
       },
       {
-        // R-506 phase 3 (0076): Web Push. Moves with the lines above, once 0076 and the VAPID key are live too.
-        text: 'New: alerts on your phone or computer even when the admin app is closed. Complaints, check-in numbers and shop orders come at once. Turn them on, and pick when the rest come, in Settings.',
+        // R-506 phase 3 (0076): Web Push.
+        text: 'New: alerts on your phone or computer even when the admin app is closed. Complaints, shop orders and members waiting at the check-in poster come at once. Turn them on, and pick when the rest come, in Settings.',
         go: { label: 'Open Settings', path: '/settings' },
         feature: true,
       },
       {
-        text: 'Your gym’s logo now shows at the top of the admin app, next to your gym’s name. Your staff see it too. To add or change it, open Branding.',
-        go: { label: 'Open Branding', path: '/settings/branding' },
+        // Fresh eyes (14 Nov 2026): two places were called "Questions".
+        text: 'The page where you answer what members ask a trainer is now called "Questions for trainers", in the menu. Questions, feedback and complaints sent to the gym stay in Member messages.',
+      },
+      {
+        text: 'Member messages now opens on the right type when you tap a line on Today, and each type button says how many wait for a reply, like "Complaints · 1 waiting".',
+      },
+      {
+        text: 'Today now shows one setup card at a time (Get started first, then alerts, then putting the admin app on your phone), so the page is shorter.',
+      },
+      {
+        text: 'In the AI Assistant, a day you pick now also shows in words, like "Sun, 18 Oct". When a message is ready, its Send button comes fully into view.',
       },
       // R-502: the desk camera photo keeps the preview's mirror flip (it was saved flipped back).
       { text: 'A member photo taken with the camera now looks exactly like the camera preview. It no longer flips after you tap "Take photo".' },
@@ -192,7 +207,7 @@ export const ADMIN_NEWS: readonly AdminNewsEntry[] = [
     lines: [
       {
         text: 'New "Questions" page: members can now ask a trainer a question in their MettleUp app. You or the trainer they picked reply here, and the member gets a notification on their phone.',
-        go: { label: 'Open Questions', path: '/questions' },
+        go: { label: 'Open Questions for trainers', path: '/questions' },
         feature: true,
       },
       {

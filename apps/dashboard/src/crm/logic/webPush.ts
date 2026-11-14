@@ -98,8 +98,13 @@ export const PUSH_WORDS = {
   iphone: 'On an iPhone or iPad, first add the admin app to your Home Screen (Share, then Add to Home Screen). Open it from there and turn alerts on.',
   notReady: 'Alerts are not ready yet. Try again later.',
   failed: 'Alerts could not be turned on. Check the internet and try again.',
-  urgent: 'Complaints, check-in numbers, shop orders, friends who ask about joining, and plan requests when the plan ends in 3 days or less always come at once.',
-  rest: 'Everything else (questions, messages, feedback, payments, new members, reports):',
+  // Fresh eyes (14 Nov 2026): plain words (no "check-in numbers", no "plan ends in 3 days or less"), and the desk's
+  // own line: complaints go to the owner only (0069), so the desk is never told they come.
+  urgentOwner:
+    'These always come at once: complaints, new shop orders, a member waiting at the check-in poster, a friend who wants to join, and a pause or renew request when the plan is about to end.',
+  urgentStaff:
+    'These always come at once: new shop orders, a member waiting at the check-in poster, a friend who wants to join, and a pause or renew request when the plan is about to end. Complaints go to the owner only.',
+  rest: 'The rest (questions, messages, feedback, online payments, new members, workout reports):',
   modeLabel: 'Send the rest',
   instant: 'Instantly',
   daily: 'Once a day',

@@ -19,7 +19,7 @@ import { answerAction, isAskTool, pickMember, type AnswerResult, type AnswerRow 
 import { line, pageById, pagePath, type Action, type Line } from './catalogue';
 import type { MessageWords } from './api';
 import type { DateISO } from '../logic/dates';
-import { dayMonth } from '../logic/messageWords';
+import { dayMonth, weekdayOf } from '../logic/messageWords';
 import { planAskFrom, type PlanAsk } from './planWriter';
 import type { WorkoutPlanDraft } from '../types';
 import { isDraftTool, messageWords, planAction, type Draft, type PlanData, type PlanResult } from './plan';
@@ -321,6 +321,23 @@ export function sendAtWords(sendAt: string): string | null {
   if (!m || !day) return null;
   const h = Number(m[2]);
   return `${day}, ${h % 12 || 12}:${m[3]} ${h < 12 ? 'am' : 'pm'}`;
+}
+
+const SHORT_WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] as const;
+
+/**
+ * Fresh eyes (14 Nov 2026): the date boxes show the computer's own format (mm/dd/yyyy in many browsers), so the card says
+ * the day in words beside them. "Sun, 18 Oct" for 'YYYY-MM-DD'; with a time ('YYYY-MM-DDTHH:mm'),
+ * "Sun, 18 Oct, 8:00 am". Null when it is not a real day. PURE.
+ */
+export function dayInWords(value: string): string | null {
+  const day = value.slice(0, 10) as DateISO;
+  const dm = dayMonth(day, 'en');
+  if (!dm) return null;
+  const words = `${SHORT_WEEKDAYS[weekdayOf(day)]}, ${dm}`;
+  if (value.length === 10) return words;
+  const at = sendAtWords(value);
+  return at ? `${SHORT_WEEKDAYS[weekdayOf(day)]}, ${at}` : null;
 }
 
 /**

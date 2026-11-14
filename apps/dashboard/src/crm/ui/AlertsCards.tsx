@@ -9,10 +9,11 @@
 
 import { useCallback, useEffect, useState } from 'react';
 
-import { useAuth } from '../auth/AuthProvider';
+import { useAuth, useRole } from '../auth/AuthProvider';
 import { PUSH_WORDS as W, TIME_CHOICES, WEEKDAYS, restLine, settingLine, showAlertsOffer, timeLabel, type AlertMode, type AlertSettings } from '../logic/webPush';
 import { browserPushSupport, getAlertSettings, pushIsOn, saveAlertSettings, turnOffPush, turnOnPush, type TurnOn } from '../shop/webPushApi';
 import { Button, Card, ChipToggle, ErrorBanner, SectionTitle, SelectField, color, font, space } from './kit';
+import { useSetupTurn } from './SetupSlot';
 
 const OFFER_KEY = 'mettleup.alertsOffer.closed';
 const body = { margin: 0, fontFamily: font.body, fontSize: 14, lineHeight: 1.5, color: color.inkSecondary } as const;
@@ -113,6 +114,7 @@ function DeviceSwitch({ apiKey, on, setOn }: { apiKey: string; on: boolean; setO
 /** Settings: this device, and when the rest come. */
 export function AlertsSettingsCard() {
   const { key, settings, setSettings, on, setOn } = useAlertsState();
+  const owner = useRole() === 'owner';
   const [draft, setDraft] = useState<Pick<AlertSettings, 'mode' | 'minute' | 'weekday'> | null>(null);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -144,7 +146,9 @@ export function AlertsSettingsCard() {
       <SectionTitle>{W.title}</SectionTitle>
       <p style={body}>{W.what}</p>
       <DeviceSwitch apiKey={key} on={on} setOn={setOn} />
-      <p style={{ ...body, marginTop: space.lg }}>{W.urgent}</p>
+      <p style={{ ...body, marginTop: space.lg }} data-testid="alerts-urgent">
+        {owner ? W.urgentOwner : W.urgentStaff}
+      </p>
       {settings.canEdit ? (
         <div data-testid="alerts-when">
           <p style={{ ...body, marginTop: space.sm }}>{W.rest}</p>
@@ -201,8 +205,9 @@ export function AlertsOfferCard() {
   const [note, setNote] = useState<string | null>(null);
   const [perm, setPerm] = useState(permission);
   const show = showAlertsOffer({ support: browserPushSupport(), permission: perm, on, dismissed: closed, ready: Boolean(key && settings) });
-  if (!show && !note) return null;
-  if (!key) return null;
+  // Fresh eyes (14 Nov 2026): one set-up card on Today at a time; this one comes after Get started.
+  const myTurn = useSetupTurn('alerts', Boolean(key) && (show || Boolean(note)));
+  if (!myTurn || !key) return null;
   const close = () => {
     try {
       localStorage.setItem(OFFER_KEY, '1');

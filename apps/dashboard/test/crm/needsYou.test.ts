@@ -17,14 +17,14 @@ describe('Needs you', () => {
     // R-506: the questions (0053) and member messages (0069) waiting for a reply show and ring too.
     const talk = needsItems({ planRequests: [], phoneLinks: [], shopOrders: [], questions: countIds('q', 2), messages: countIds('m', 1) });
     expect(needsLines(talk)).toEqual([
-      { kind: 'trainer-question', count: 2, text: '2 member questions to answer', to: '/questions' },
+      { kind: 'trainer-question', count: 2, text: '2 questions for trainers to answer', to: '/questions' },
       { kind: 'member-message', count: 1, text: '1 member message to reply to', to: '/member-messages' },
     ]);
     // A count that goes up is a new item, so it rings once.
     const more = needsItems({ planRequests: [], phoneLinks: [], shopOrders: [], questions: countIds('q', 2), messages: countIds('m', 2) });
     expect(newArrivals(itemKeys(talk), more)).toEqual([{ kind: 'member-message', id: 'm:2' }]);
     expect(arrivalLine([{ kind: 'member-message', id: 'm:2' }])).toBe('A member sent your gym a message. Open Member messages to reply.');
-    expect(arrivalLine([{ kind: 'trainer-question', id: 'q:1' }])).toBe('A member asked a trainer a question. Open Questions to reply.');
+    expect(arrivalLine([{ kind: 'trainer-question', id: 'q:1' }])).toBe('A member asked a trainer a question. Open Questions for trainers to reply.');
     expect(countIds('q', 0)).toEqual([]);
     expect(countIds('q', Number.NaN)).toEqual([]);
     expect(countIds('q', 9999)).toHaveLength(500);

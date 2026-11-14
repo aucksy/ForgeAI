@@ -175,22 +175,27 @@ test('F198 time: 5 Nov features end on 5 Dec, the 6 Nov ones on 6 Dec, Trainers 
   await shot(page, 'time-1-day30');
 
   // Day 31 of the 6 Nov features, 00:00 India time. The 7 Nov Branding fix is still under 30 days: a fix lights nothing.
-  // Only Trainers (a 7 Nov feature, day 30) is still lit. (The dots read the clock on each page change.)
+  // Of the old features only Trainers (a 7 Nov feature, day 30) is still lit. The 14 Nov alerts feature (Settings, day
+  // 22) is lit too: Settings is its page. (The dots read the clock on each page change.)
   await page.clock.setSystemTime(new Date('2026-12-06T00:00:30+05:30'));
   await barItem(page, 'More').tap();
   await expect(page.getByRole('heading', { name: 'More', exact: true })).toBeVisible();
   await expect(dot(moreRow(page, 'Trainers'))).toHaveCount(1);
-  await expect(dot(page.getByRole('main'))).toHaveCount(1);
+  await expect(dot(moreRow(page, 'Settings'))).toHaveCount(1);
+  await expect(dot(page.getByRole('main'))).toHaveCount(2);
   await moreRow(page, 'Settings').tap();
   await expect(page.getByRole('heading', { name: 'Settings', exact: true })).toBeVisible();
-  await expect(dot(page.getByRole('main'))).toHaveCount(0);
+  // The 6 Nov features (Bring a friend, on the Member app tab) are gone; only the 14 Nov one (the Gym tab) is left.
+  await expect(dot(tab(page, 'Member app'))).toHaveCount(0);
+  await expect(dot(tab(page, 'Sign-in & data'))).toHaveCount(0);
   await go(page, '/settings/branding');
   await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
   await expect(headingDot(page)).toHaveCount(0);
   await shot(page, 'time-2-day31-only-trainers');
 
-  // 7 Dec 00:00 India time: day 31 of Trainers too, so nothing is lit anywhere. Negative (9 Nov): the Questions
-  // feature is still live, but this gym has no Questions page, so it must light nothing (not even More).
+  // 7 Dec 00:00 India time: day 31 of Trainers too, and the 14 Nov Settings feature was seen above, so nothing is lit
+  // anywhere. Negative (9 Nov): the Questions feature is still live, but this gym has no Questions page, so it must
+  // light nothing (not even More).
   await page.clock.setSystemTime(new Date('2026-12-07T00:00:30+05:30'));
   await barItem(page, 'Today').tap();
   await expect(page.getByRole('heading', { name: 'Today', exact: true })).toBeVisible();

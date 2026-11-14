@@ -165,7 +165,12 @@ export function JoinCodeCard({
         </div>
       )}
       <div style={{ marginTop: space.sm, fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
-        {t('Easiest way: send members your gym’s link. One tap in the app and they are in. Or they can type this code in the app’s Shop tab. Their orders show up here.')}
+        {/* Fresh eyes (14 Nov 2026): joining and shop orders were one run-on line; two sentences, two lines. The member
+            app's tab is called Gym now (it was Shop). */}
+        {t('The easiest way for members to join is your gym’s link: they tap it, and they are in the app. They can also type this code on the app’s Gym tab.')}
+      </div>
+      <div style={{ marginTop: space.xs, fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
+        {t('When members order from your shop in the app, the orders show up in Shop.')}
       </div>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: space.sm, marginTop: space.md }}>
         <Button onClick={() => window.open(whatsAppHref(inviteMessage(cloud.name, cloud.joinCode)), '_blank', 'noopener')}>

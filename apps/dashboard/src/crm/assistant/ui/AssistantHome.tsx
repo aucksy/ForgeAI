@@ -229,6 +229,7 @@ export function AssistantHome({ assistKey, wallet, panel = false }: { assistKey:
         <div
           key={turn.id}
           ref={i === turns.length - 1 ? lastTurn : undefined}
+          data-last-turn={i === turns.length - 1 ? '' : undefined}
           style={{ display: 'flex', flexDirection: 'column', gap: space.md, scrollMarginTop: compact ? 88 : 24 }}
         >
           <RequestBubble text={turn.request} spoken={turn.spoken} />

@@ -69,6 +69,23 @@ async function readCount(key: string): Promise<void> {
   }
 }
 
+/** Fresh eyes (14 Nov 2026): one count with Needs you on Today (see MemberMessageParts.tsx). */
+export function publishQuestionCount(key: string, n: number | null): void {
+  if (countKey === key && count === n) return;
+  countKey = key;
+  count = n;
+  emit();
+}
+
+export function subscribeQuestionCountChange(fn: () => void): () => void {
+  return subscribeCount(fn);
+}
+
+/** The shared count for this key; null when not known (or no Questions for this person). */
+export function questionCountFor(key: string | null): number | null {
+  return key !== null && countKey === key ? count : null;
+}
+
 /** Ask again now (after a reply, or Refresh on the page). */
 export function refreshQuestionCount(): void {
   const ask = askers.values().next().value;

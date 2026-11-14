@@ -183,6 +183,22 @@ export function shownOf(list: readonly TalkThread[], filter: TalkFilter): number
   return list.filter((t) => filter === 'all' || t.kind === filter).length;
 }
 
+/**
+ * The words on a type button (fresh eyes, 14 Nov 2026). A bare number was read two ways: "All 1" over three cards (12
+ * Nov), then "All 3" while one waits (14 Nov). So the button says it in words, and only for what waits: "All · 1
+ * waiting", "Complaints · 1 waiting", or just "Feedback" when nothing of that type waits. PURE.
+ */
+export function talkChipLabel(list: readonly TalkThread[], filter: TalkFilter): string {
+  const n = waitingOf(list, filter);
+  return n > 0 ? `${MEMBER_MESSAGE_WORDS.filter[filter]} · ${MEMBER_MESSAGE_WORDS.waitingCount(n)}` : MEMBER_MESSAGE_WORDS.filter[filter];
+}
+
+/** A type from the address (`/member-messages/complaint`), or 'all'. PURE. */
+export function talkFilterFrom(seg: string | undefined, role: 'owner' | 'staff'): TalkFilter {
+  const f = seg as TalkFilter;
+  return seg && talkFilters(role).includes(f) ? f : 'all';
+}
+
 /** The member's name as the page shows it. PURE. */
 export function talkName(t: Pick<TalkThread, 'anonymous' | 'name'>): string {
   if (t.anonymous) return MEMBER_MESSAGE_WORDS.anonName;
@@ -211,6 +227,7 @@ export const MEMBER_MESSAGE_WORDS = {
   staffNote: 'Complaints go to the owner only, so they are not shown here.',
   keptNote: 'Messages are deleted 180 days after the last one in a conversation, or as soon as the member leaves the gym.',
   filterLabel: 'Show',
+  waitingCount: (n: number): string => `${n} waiting`,
   filter: { all: 'All', question: 'Questions', feedback: 'Feedback', complaint: 'Complaints' } as Record<TalkFilter, string>,
   kind: { question: 'Question', feedback: 'Feedback', complaint: 'Complaint' } as Record<TalkKind, string>,
   waiting: 'Waiting for a reply',

@@ -78,7 +78,7 @@ export function needsLines(items: readonly NeedsItem[]): NeedsLine[] {
   const shop = count('shop-order');
   if (shop) lines.push({ kind: 'shop-order', count: shop, text: `${plural(shop, 'new shop order', 'new shop orders')} to get ready`, to: '/shop' });
   const q = count('trainer-question');
-  if (q) lines.push({ kind: 'trainer-question', count: q, text: `${plural(q, 'member question', 'member questions')} to answer`, to: '/questions' });
+  if (q) lines.push({ kind: 'trainer-question', count: q, text: `${plural(q, 'question for trainers', 'questions for trainers')} to answer`, to: '/questions' });
   const m = count('member-message');
   if (m) lines.push({ kind: 'member-message', count: m, text: `${plural(m, 'member message', 'member messages')} to reply to`, to: '/member-messages' });
   return lines;
@@ -114,5 +114,5 @@ export function arrivalLine(items: readonly NeedsItem[]): string {
   if (k === 'phone-link') return 'A member typed their number at the check-in poster. Confirm it on Today.';
   if (k === 'shop-order') return 'A new shop order came in.';
   if (k === 'member-message') return 'A member sent your gym a message. Open Member messages to reply.';
-  return 'A member asked a trainer a question. Open Questions to reply.';
+  return 'A member asked a trainer a question. Open Questions for trainers to reply.';
 }

@@ -116,8 +116,10 @@ export function splitQuestions(list: readonly GymQuestion[]): { waiting: GymQues
 
 /** Every word on the Questions page. New (R-319, 4 Nov 2026): the owner checks them at UAT. */
 export const QUESTION_WORDS = {
-  title: 'Questions',
-  navHint: 'Questions members asked you in the app',
+  // Fresh eyes (14 Nov 2026): "Questions" was also a type inside Member messages. This page holds what members ask
+  // a trainer ("Ask a trainer" in their app), so it says so everywhere: menu, page, Today, notices.
+  title: 'Questions for trainers',
+  navHint: 'What members ask a trainer in the app',
   intro: 'Members ask from the MettleUp app. Your reply shows in their app, with a notification on their phone.',
   waiting: 'Waiting for your reply',
   noneWaiting: 'No questions are waiting.',
@@ -135,7 +137,7 @@ export const QUESTION_WORDS = {
   takenBack: 'The member took this question back.',
   noReply: 'Closed with no reply after 14 days.',
   repliedBy: (name: string | null): string => (name ? `${name} replied` : 'Replied'),
-  notReady: 'Questions from members are not switched on for your gym yet.',
+  notReady: 'Questions for trainers are not switched on for your gym yet.',
   notAllowed: 'Only trainers and the owner can see questions. Ask the owner to tick you as a trainer.',
   loadFailed: 'Could not load the questions. Check the internet and try again.',
   tryAgain: 'Try again',

@@ -7,6 +7,11 @@
  * and lists the latest on Today. PURE: the polling lives in ui/NeedsYou.tsx.
  */
 
+import { QUESTION_WORDS } from './askQuestions';
+
+/** The trainer questions page, as the menu names it. */
+const QUESTIONS_PAGE = QUESTION_WORDS.title;
+
 export type GymAlertKind =
   | 'trainer_question'
   | 'member_question'
@@ -81,7 +86,10 @@ export function freshAlerts(seen: ReadonlySet<string> | null, list: readonly Gym
 /** The browser notice's words for what just came in. PURE. */
 export function alertNotice(fresh: readonly GymAlert[]): { title: string; body: string; route: string } | null {
   if (fresh.length === 0) return null;
-  if (fresh.length === 1) return { title: ALERT_WORDS.noticeTitle, body: fresh[0].line, route: fresh[0].route };
+  if (fresh.length === 1) {
+    const shown = alertShown(fresh[0]);
+    return { title: ALERT_WORDS.noticeTitle, body: shown.line, route: shown.route };
+  }
   return { title: ALERT_WORDS.noticeTitle, body: `${fresh.length} new updates from your members. Open Today to see them.`, route: '/' };
 }
 
@@ -99,6 +107,64 @@ export function alertAge(at: number, now: number): string {
 /** The latest few for Today: the last 24 hours, newest first. PURE. */
 export function latestAlerts(list: readonly GymAlert[], now: number, max = 5): GymAlert[] {
   return list.filter((a) => now - a.at < 24 * 60 * 60 * 1000).slice(0, max);
+}
+
+/**
+ * Fresh eyes (14 Nov 2026): complaints are the owner's alone (0069; 0075 audience 'owner'). The server already keeps
+ * them from the desk and trainers; the admin app checks again, so a desk phone never shows or rings one. PURE.
+ */
+export function alertsFor(list: readonly GymAlert[], role: 'owner' | 'staff'): GymAlert[] {
+  return role === 'owner' ? [...list] : list.filter((a) => a.kind !== 'member_complaint');
+}
+
+/** What an order is now, for its line on Today (shop/logic.ts Order: only what is needed). */
+export interface AlertOrder {
+  orderNo: number;
+  status: 'ordered' | 'ready' | 'collected' | 'cancelled';
+}
+
+const SHOP_LINE = /^New shop order (\d+) from (.+?)\. Get it ready on Shop\.$/;
+
+/**
+ * How Today and the in-tab notice show an alert. The server's words (0075) stay the source; three things are put right
+ * here (fresh eyes, 14 Nov 2026):
+ *  - the trainer questions page is "Questions for trainers" now (Member messages has its own Questions), so "Open
+ *    Questions" says that name;
+ *  - a shop order says "#12", and once the desk has moved it on (`orders`: the shop's own list, the one "Shop today"
+ *    counts) the line says ready, collected or cancelled instead of "Get it ready", so the two never disagree;
+ *  - a member message opens Member messages on its own type (Complaints, Feedback, Questions).
+ * `done`: the shop order needs nothing more. PURE.
+ */
+export function alertShown(a: GymAlert, orders: readonly AlertOrder[] = []): { line: string; route: string; done: boolean } {
+  let line = a.line;
+  let route = a.route;
+  let done = false;
+  if (a.kind === 'trainer_question') line = line.replace(/\bOpen Questions\b(?! for trainers)/g, `Open ${QUESTIONS_PAGE}`);
+  if (a.kind === 'shop_order') {
+    const m = SHOP_LINE.exec(line);
+    if (m) {
+      const no = Number(m[1]);
+      const who = m[2];
+      const now = orders.find((o) => o.orderNo === no)?.status ?? 'ordered';
+      done = now !== 'ordered';
+      line =
+        now === 'ready'
+          ? `Shop order #${no} from ${who} is ready for pickup.`
+          : now === 'collected'
+            ? `${who} collected shop order #${no}.`
+            : now === 'cancelled'
+              ? `Shop order #${no} from ${who} was cancelled.`
+              : `New shop order #${no} from ${who}. Get it ready on Shop.`;
+    } else {
+      line = line.replace(/\bshop order (\d+)\b/, 'shop order #$1');
+    }
+  }
+  if (route === '/member-messages') {
+    if (a.kind === 'member_complaint') route = '/member-messages/complaint';
+    else if (a.kind === 'member_feedback') route = '/member-messages/feedback';
+    else if (a.kind === 'member_question') route = '/member-messages/question';
+  }
+  return { line, route, done };
 }
 
 /** Where a tap on an alert goes: the panel's hash address (what the service worker opens too). PURE. */

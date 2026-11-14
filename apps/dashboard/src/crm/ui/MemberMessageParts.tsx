@@ -42,6 +42,24 @@ async function readCount(key: string): Promise<void> {
   }
 }
 
+/**
+ * Fresh eyes (14 Nov 2026): Needs you on Today read its own copy of this count once a minute, so after a reply Today
+ * still said 3 while the menu said 1. Now there is one count: Needs you hands in what it reads (publish), and follows
+ * every change (subscribe), including the one a reply asks for.
+ */
+export function publishMemberMessageCount(key: string, n: number | null): void {
+  set(key, n);
+}
+
+export function subscribeMemberMessageCount(fn: () => void): () => void {
+  return subscribe(fn);
+}
+
+/** The shared count for this key; null when not known (or no Member messages). */
+export function memberMessageCountFor(key: string | null): number | null {
+  return key !== null && countKey === key ? count : null;
+}
+
 /** Ask again now (after a reply, "done", or Refresh on the page). */
 export function refreshMemberMessageCount(): void {
   const ask = askers.values().next().value;

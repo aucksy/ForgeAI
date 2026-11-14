@@ -12,8 +12,10 @@ vi.mock('../../src/lib/demoLock', () => ({ isDemoLocked: () => false }));
 import {
   MEMBER_MESSAGE_WORDS as W,
   splitTalk,
+  talkChipLabel,
   talkCountFrom,
   talkErrorWords,
+  talkFilterFrom,
   talkFilters,
   talkLineHead,
   talkListFrom,
@@ -124,6 +126,19 @@ describe('the page', () => {
     expect(shownOf(all, 'all')).toBe(4);
     expect(shownOf(all, 'question')).toBe(2);
     expect(shownOf(all, 'complaint')).toBe(1);
+  });
+  it('fresh eyes: a type button says in words what waits ("All 3" read as 3 waiting while 1 did)', () => {
+    expect(talkChipLabel(all, 'all')).toBe('All · 2 waiting');
+    expect(talkChipLabel(all, 'question')).toBe('Questions · 1 waiting');
+    expect(talkChipLabel(all, 'complaint')).toBe('Complaints');
+    expect(talkChipLabel([], 'all')).toBe('All');
+  });
+  it('fresh eyes: a line on Today opens its own type; the desk never opens Complaints', () => {
+    expect(talkFilterFrom('complaint', 'owner')).toBe('complaint');
+    expect(talkFilterFrom('feedback', 'staff')).toBe('feedback');
+    expect(talkFilterFrom('complaint', 'staff')).toBe('all');
+    expect(talkFilterFrom('nonsense', 'owner')).toBe('all');
+    expect(talkFilterFrom(undefined, 'owner')).toBe('all');
   });
   it('who wrote each line, with when (India time)', () => {
     expect(talkLineHead(q, q.messages[0], TODAY)).toBe('Asha Verma · Today, 9:30 am');

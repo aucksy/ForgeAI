@@ -16,7 +16,7 @@ import { mkdirSync } from 'node:fs';
 
 import { expect, test } from '@playwright/test';
 
-import { DESK, NOW, NoSuchFunction, Refusal, addDeskPerson, addMember, expectFitsPhone, openApp, secondPhone, signIn, startOnlineGym } from './support.mjs';
+import { DESK, NOW, addDeskPerson, addMember, expectFitsPhone, installQuestions, installTalk, openApp, secondPhone, signIn, startOnlineGym } from './support.mjs';
 
 const DIR = 'e2e/.results/uat';
 mkdirSync(DIR, { recursive: true });
@@ -31,65 +31,7 @@ const go = (page, path) =>
     window.location.hash = p;
   }, path);
 
-const TALK_FNS = ['owner_talk_count', 'owner_talk_list', 'owner_talk_reply', 'owner_talk_done'];
 const T0 = NOW.getTime();
-
-/** The 0069 calls on the pretend server. `talk.on` false: PGRST202, like the live server today. */
-function installTalk(server) {
-  const talk = { on: false, threads: [], gone: new Set() };
-  const base = server.answer.bind(server);
-  const view = (t) => ({
-    id: t.id,
-    kind: t.kind,
-    anonymous: t.anonymous,
-    appId: t.anonymous ? null : `app-${t.id}`,
-    memberId: t.anonymous ? null : t.memberId,
-    name: t.anonymous ? null : t.name,
-    phone: t.anonymous ? null : t.phone,
-    createdAt: t.lines[0].at,
-    lastAt: t.lines[t.lines.length - 1].at,
-    lastFrom: t.lines[t.lines.length - 1].fromGym ? 'gym' : 'member',
-    waiting: !t.doneAt && !t.lines[t.lines.length - 1].fromGym,
-    done: Boolean(t.doneAt),
-    doneAt: t.doneAt ?? null,
-    doneBy: t.doneBy ?? null,
-    readByMember: false,
-    messages: t.lines,
-  });
-  const visible = (p, t) => p.role === 'owner' || t.kind !== 'complaint';
-  const find = (p, id) => {
-    const t = talk.threads.find((x) => x.id === id);
-    if (!t || !visible(p, t) || talk.gone.has(id)) throw new Refusal('NOT_FOUND');
-    return t;
-  };
-  server.answer = (fn, args) => {
-    if (!TALK_FNS.includes(fn)) return base(fn, args);
-    server.calls.push(fn);
-    server.log.push({ fn, args });
-    if (!talk.on) throw new NoSuchFunction(`Could not find the function public.${fn} in the schema cache`);
-    const p = server.anyone(args.p_key);
-    const mine = talk.threads.filter((t) => visible(p, t) && !talk.gone.has(t.id));
-    const waiting = mine.filter((t) => view(t).waiting).length;
-    if (fn === 'owner_talk_count') return { ok: true, waiting };
-    if (fn === 'owner_talk_list') return { ok: true, role: p.role === 'owner' ? 'owner' : 'staff', waiting, threads: mine.map(view) };
-    const t = find(p, args.p_thread);
-    if (fn === 'owner_talk_reply') {
-      const text = String(args.p_text ?? '').trim();
-      if (!text) throw new Refusal('INVALID');
-      t.lines.push({ id: `${t.id}-${t.lines.length}`, fromGym: true, who: p.name, text, at: T0 + t.lines.length * 1000 });
-      return { ok: true, thread: view(t) };
-    }
-    if (args.p_done) {
-      t.doneAt = T0 + 5000;
-      t.doneBy = p.name;
-    } else {
-      t.doneAt = null;
-      t.doneBy = null;
-    }
-    return { ok: true, thread: view(t) };
-  };
-  return talk;
-}
 
 function rosterIdOf(server, fullName) {
   const r = [...server.records.values()].find((x) => x.k === 'member' && !x.x && x.d.fullName === fullName);
@@ -138,7 +80,13 @@ test('Member messages: not ready, the list, types, reply, done, the desk, a gone
   const row = main.getByRole('link', { name: /^Member messages/ });
   await expect(row).toContainText('Questions, feedback and complaints from members');
   await expect(row).toContainText('3');
-  await shot(page, 'phone-member-messages-2-more-row');
+  // Fresh eyes (14 Nov 2026): the full-page picture drew the bottom bar over this row (a fixed bar in a stitched
+  // picture). On the real screen, scrolled to it, the row sits whole above the bar; the picture is the screen itself.
+  await row.scrollIntoViewIfNeeded();
+  const rowBox = await row.boundingBox();
+  const barBox = await page.getByRole('navigation', { name: 'Main' }).boundingBox();
+  expect(rowBox.y + rowBox.height, 'the Member messages row ends above the bottom bar').toBeLessThanOrEqual(barBox.y + 1);
+  await shot(page, 'phone-member-messages-2-more-row', false);
   await row.tap();
   await expect(page.getByRole('heading', { name: 'Member messages', exact: true })).toBeVisible();
   const cards = main.getByTestId('member-message');
@@ -157,6 +105,8 @@ test('Member messages: not ready, the list, types, reply, done, the desk, a gone
 
   // 3. Type buttons.
   const types = main.getByRole('group', { name: 'Show' });
+  // Fresh eyes (14 Nov 2026): "All 3" read as three cards or three waiting; the buttons now say it in words.
+  await expect(types.getByRole('button')).toHaveText(['All · 3 waiting', 'Questions · 1 waiting', 'Feedback · 1 waiting', 'Complaints · 1 waiting']);
   await types.getByRole('button', { name: /^Complaints/ }).tap();
   await expect(cards).toHaveCount(1);
   await expect(cards.first()).toContainText('The AC in the cardio room has not worked for a week.');
@@ -180,6 +130,17 @@ test('Member messages: not ready, the list, types, reply, done, the desk, a gone
     expect.objectContaining({ p_thread: 'q1', p_text: 'Yes, 6 am to 12 noon on Diwali.' }),
   ]);
   await shot(page, 'phone-member-messages-5-replied');
+  await expect(types.getByRole('button', { name: /^All/ })).toHaveText('All · 2 waiting');
+  await expect(types.getByRole('button', { name: /^Questions/ })).toHaveText('Questions');
+  // Fresh eyes (14 Nov 2026): Today's "Needs you" still said 3 after the reply (it read its own count once a minute).
+  // Now it follows at once, with no minute passing.
+  await go(page, '/');
+  await expect(main.getByRole('heading', { name: 'Needs you', exact: true })).toBeVisible();
+  await expect(main).toContainText('2 member messages to reply to', { timeout: 5_000 });
+  await expect(main).not.toContainText('3 member messages');
+  await shot(page, 'phone-member-messages-5b-today-after-reply');
+  await go(page, '/member-messages');
+  await expect(main.getByRole('region', { name: 'Replied' })).toContainText('Asha Verma');
 
   // 5. Mark the feedback as done, then open it again.
   await anon.getByRole('button', { name: 'Mark as done' }).tap();
@@ -223,4 +184,45 @@ test('Member messages: not ready, the list, types, reply, done, the desk, a gone
   await expect(page.getByRole('link', { name: /^More\s*\d*$/ })).toHaveText(/^More\s*1$/);
   await expectFitsPhone(page, 'after a gone message');
   await shot(page, 'phone-member-messages-8-gone');
+  // And Today's "Needs you" with it.
+  await go(page, '/');
+  await expect(main).toContainText('1 member message to reply to', { timeout: 5_000 });
+});
+
+// Fresh eyes (14 Nov 2026): two pages were both called "Questions" (members' questions to a trainer, and the Questions
+// type inside Member messages), and neither was in the computer's menu picture (that gym had no 0050/0053/0069). With
+// all three on the server, the menu has both, each with its own clear name, and each opens its own page.
+test('the computer menu: "Questions for trainers" and "Member messages", each opens its page', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  const server = await openApp(page);
+  const talk = installTalk(server);
+  const qs = installQuestions(server);
+  talk.on = true;
+  qs.on = true;
+  talk.threads.push({
+    id: 'f9', kind: 'feedback', anonymous: false, memberId: null, name: 'Neha Joshi', phone: '98290 44444',
+    lines: [{ id: 'f9-0', fromGym: false, who: null, text: 'The new playlist is great.', at: T0 - 3600_000 }],
+  });
+  qs.list.push({ id: 'q9', name: 'Asha Verma', question: 'Is the 6 am batch full tomorrow?', askedAt: T0 - 2 * 3600_000 });
+  await startOnlineGym(page);
+  const nav = page.getByRole('navigation', { name: 'Main' });
+  const questions = nav.getByRole('link', { name: /^Questions for trainers/ });
+  const messages = nav.getByRole('link', { name: /^Member messages/ });
+  await expect(questions).toBeVisible({ timeout: 15_000 });
+  await expect(messages).toBeVisible();
+  await expect(questions).toContainText('1');
+  await expect(messages).toContainText('1');
+  // No menu row is called just "Questions" any more.
+  await expect(nav.getByRole('link', { name: /^Questions\s*\d*$/ })).toHaveCount(0);
+  await questions.scrollIntoViewIfNeeded();
+  await page.waitForTimeout(300);
+  await nav.screenshot({ path: `${DIR}/computer-menu-questions-and-messages.png` });
+
+  await questions.click();
+  await expect(page.getByRole('heading', { name: 'Questions for trainers', exact: true })).toBeVisible();
+  await expect(page.getByRole('main')).toContainText('Is the 6 am batch full tomorrow?');
+  await messages.click();
+  await expect(page.getByRole('heading', { name: 'Member messages', exact: true })).toBeVisible();
+  await expect(page.getByRole('main')).toContainText('The new playlist is great.');
+  await shot(page, 'computer-member-messages-from-menu', false);
 });

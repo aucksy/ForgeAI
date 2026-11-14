@@ -1517,3 +1517,128 @@ export async function browserOnlyGym(page) {
   server.reconnect();
   return server;
 }
+
+// ---------------------------------------------------------------- fresh eyes (14 Nov 2026): shared stand-ins
+
+/**
+ * Today shows one set-up card at a time, Get started first (src/crm/logic/setupCards.ts). A test that looks at the
+ * next card (the alerts offer, the install banner) hides the Get started list first, the way the owner would.
+ */
+export async function hideGetStarted(page) {
+  const hide = page.getByRole('main').getByRole('button', { name: 'Hide this list' });
+  await expect(hide).toBeVisible({ timeout: 15_000 });
+  await hide.click();
+  await expect(hide).toHaveCount(0);
+}
+
+/** The 0069 "Member messages" calls. */
+export const TALK_FNS = ['owner_talk_count', 'owner_talk_list', 'owner_talk_reply', 'owner_talk_done'];
+
+/**
+ * The 0069 calls on the pretend server, by the rules of supabase/migrations/0069_member_messages.sql: the owner sees
+ * everything, the desk sees questions and feedback but never complaints, and feedback sent without the name comes with
+ * no name, phone or member id. `talk.on` false: PGRST202, like a server without 0069.
+ */
+export function installTalk(server) {
+  const T0 = NOW.getTime();
+  const talk = { on: false, threads: [], gone: new Set() };
+  const base = server.answer.bind(server);
+  const view = (t) => ({
+    id: t.id,
+    kind: t.kind,
+    anonymous: t.anonymous,
+    appId: t.anonymous ? null : `app-${t.id}`,
+    memberId: t.anonymous ? null : t.memberId,
+    name: t.anonymous ? null : t.name,
+    phone: t.anonymous ? null : t.phone,
+    createdAt: t.lines[0].at,
+    lastAt: t.lines[t.lines.length - 1].at,
+    lastFrom: t.lines[t.lines.length - 1].fromGym ? 'gym' : 'member',
+    waiting: !t.doneAt && !t.lines[t.lines.length - 1].fromGym,
+    done: Boolean(t.doneAt),
+    doneAt: t.doneAt ?? null,
+    doneBy: t.doneBy ?? null,
+    readByMember: false,
+    messages: t.lines,
+  });
+  const visible = (p, t) => p.role === 'owner' || t.kind !== 'complaint';
+  const find = (p, id) => {
+    const t = talk.threads.find((x) => x.id === id);
+    if (!t || !visible(p, t) || talk.gone.has(id)) throw new Refusal('NOT_FOUND');
+    return t;
+  };
+  server.answer = (fn, args) => {
+    if (!TALK_FNS.includes(fn)) return base(fn, args);
+    server.calls.push(fn);
+    server.log.push({ fn, args });
+    if (!talk.on) throw new NoSuchFunction(`Could not find the function public.${fn} in the schema cache`);
+    const p = server.anyone(args.p_key);
+    const mine = talk.threads.filter((t) => visible(p, t) && !talk.gone.has(t.id));
+    const waiting = mine.filter((t) => view(t).waiting).length;
+    if (fn === 'owner_talk_count') return { ok: true, waiting };
+    if (fn === 'owner_talk_list') return { ok: true, role: p.role === 'owner' ? 'owner' : 'staff', waiting, threads: mine.map(view) };
+    const t = find(p, args.p_thread);
+    if (fn === 'owner_talk_reply') {
+      const text = String(args.p_text ?? '').trim();
+      if (!text) throw new Refusal('INVALID');
+      t.lines.push({ id: `${t.id}-${t.lines.length}`, fromGym: true, who: p.name, text, at: T0 + t.lines.length * 1000 });
+      return { ok: true, thread: view(t) };
+    }
+    if (args.p_done) {
+      t.doneAt = T0 + 5000;
+      t.doneBy = p.name;
+    } else {
+      t.doneAt = null;
+      t.doneBy = null;
+    }
+    return { ok: true, thread: view(t) };
+  };
+  return talk;
+}
+
+/** The trainer view (0050) and "Questions for trainers" (0053) calls. */
+export const QUESTION_FNS = ['owner_trainer_members', 'owner_questions', 'owner_question_count', 'owner_answer_question'];
+
+/**
+ * 0050 + 0053 on the pretend server: the owner and the people in `qs.trainers` (by name) may see the trainer pages and
+ * every question; anyone else gets TRAINER_ONLY. `qs.on` false: PGRST202. `qs.broken` true: owner_questions answers
+ * something that is not an answer (the page's error card).
+ */
+export function installQuestions(server) {
+  const qs = { on: false, broken: false, trainers: new Set(), list: [] };
+  const base = server.answer.bind(server);
+  const view = (q) => ({
+    id: q.id,
+    appId: `app-${q.id}`,
+    memberId: q.memberId ?? null,
+    name: q.name,
+    phone: q.phone ?? null,
+    trainerId: null,
+    question: q.question,
+    askedAt: q.askedAt,
+    answer: q.answer ?? null,
+    answeredBy: q.answeredBy ?? null,
+    answeredAt: q.answeredAt ?? null,
+    withdrawn: false,
+    open: !q.answer,
+  });
+  server.answer = (fn, args) => {
+    if (!QUESTION_FNS.includes(fn)) return base(fn, args);
+    server.calls.push(fn);
+    server.log.push({ fn, args });
+    if (!qs.on) throw new NoSuchFunction(`Could not find the function public.${fn} in the schema cache`);
+    const p = server.anyone(args.p_key);
+    const role = p.role === 'owner' ? 'owner' : qs.trainers.has(p.name) ? 'trainer' : null;
+    if (!role) throw new Refusal('TRAINER_ONLY');
+    const open = qs.list.filter((q) => !q.answer).length;
+    if (fn === 'owner_trainer_members') return { ok: true, role, members: [] };
+    if (fn === 'owner_question_count') return { ok: true, open };
+    if (fn === 'owner_questions') return qs.broken ? [] : { ok: true, role, open, questions: qs.list.map(view) };
+    const q = qs.list.find((x) => x.id === args.p_id);
+    if (!q) throw new Refusal('NOT_FOUND');
+    if (q.answer) throw new Refusal('ALREADY_ANSWERED');
+    Object.assign(q, { answer: String(args.p_answer ?? '').trim(), answeredBy: p.name, answeredAt: NOW.getTime() + 1000 });
+    return { ok: true, question: view(q) };
+  };
+  return qs;
+}

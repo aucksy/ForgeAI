@@ -11,6 +11,7 @@ import { t } from '../lang/lang';
 import { useCrm } from '../store';
 import { Card, SectionTitle, TOUCH, color, font, radius, space } from './kit';
 import { navigate } from './router';
+import { useSetupTurn } from './SetupSlot';
 
 const keyFor = (gymId: string) => `forgeai.getStarted.${gymId}`;
 
@@ -72,7 +73,9 @@ export function GetStartedCard() {
   const gymId = snapshot.gym.gymId;
   const [state, setState] = useState(() => readSaved(gymId));
   const steps = getStartedSteps(snapshot, new Set(state.ticked));
-  if (!owner || state.hidden || steps.every((s) => s.done)) return null;
+  // Fresh eyes (14 Nov 2026): one set-up card on Today at a time; Get started goes first.
+  const myTurn = useSetupTurn('get-started', owner && !state.hidden && !steps.every((s) => s.done));
+  if (!myTurn) return null;
 
   const update = (next: { ticked: StepKey[]; hidden: boolean }) => {
     setState(next);

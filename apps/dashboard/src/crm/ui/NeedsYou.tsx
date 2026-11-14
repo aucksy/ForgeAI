@@ -14,8 +14,8 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 
-import { useAuth } from '../auth/AuthProvider';
-import { ALERT_WORDS, alertAge, alertNotice, freshAlerts, latestAlerts, type GymAlert } from '../logic/gymAlerts';
+import { useAuth, useRole } from '../auth/AuthProvider';
+import { ALERT_WORDS, alertAge, alertNotice, alertShown, alertsFor, freshAlerts, latestAlerts, type GymAlert } from '../logic/gymAlerts';
 import { pendingLinks } from '../logic/phoneLinks';
 import {
   arrivalLine,
@@ -35,6 +35,8 @@ import { listPhoneLinks, phoneLinkServer } from '../shop/phoneLinkApi';
 import { listPlanRequests, planRequestServer } from '../shop/planRequestApi';
 import { getQuestionCount } from '../shop/questionsApi';
 import { useShop } from '../shop/ShopProvider';
+import { memberMessageCountFor, publishMemberMessageCount, subscribeMemberMessageCount } from './MemberMessageParts';
+import { publishQuestionCount, questionCountFor, subscribeQuestionCountChange } from './QuestionParts';
 import { navigate } from './router';
 import { Button, Card, color, font, space } from './kit';
 
@@ -114,6 +116,7 @@ function ringAlerts(fresh: GymAlert[]): void {
 export function NeedsYouProvider({ children }: { children: ReactNode }) {
   const { session } = useAuth();
   const key = session?.online ? (session.ownerKey ?? null) : null;
+  const role = useRole();
   const { orders } = useShop();
   const [plan, setPlan] = useState<string[]>([]);
   const [links, setLinks] = useState<string[]>([]);
@@ -124,6 +127,13 @@ export function NeedsYouProvider({ children }: { children: ReactNode }) {
 
   const refresh = useCallback(async () => {
     if (!key) return;
+    // Fresh eyes (14 Nov 2026): the alerts first, then the counts, so a line on Today is never newer than its count.
+    try {
+      const r = await getAlerts(key);
+      setAlerts(r === 'missing' ? null : r);
+    } catch (e) {
+      console.warn('[ForgeErr] needs you: alerts', e);
+    }
     if (planRequestServer() !== 'no') {
       try {
         const r = await listPlanRequests(key);
@@ -140,25 +150,41 @@ export function NeedsYouProvider({ children }: { children: ReactNode }) {
         console.warn('[ForgeErr] needs you: check-in numbers', e);
       }
     }
+    // One count with the menu badges (fresh eyes, 14 Nov 2026): what is read here goes to the menu at once, and a
+    // reply on Member messages or Questions for trainers (which asks the menu's count again) comes back here below.
     try {
       const n = await getQuestionCount(key);
       setQuestions(typeof n === 'number' ? n : 0);
+      publishQuestionCount(key, typeof n === 'number' ? n : null);
     } catch (e) {
       console.warn('[ForgeErr] needs you: questions', e);
     }
     try {
       const n = await getTalkCount(key);
       setMessages(typeof n === 'number' ? n : 0);
+      publishMemberMessageCount(key, typeof n === 'number' ? n : null);
     } catch (e) {
       console.warn('[ForgeErr] needs you: member messages', e);
     }
-    try {
-      const r = await getAlerts(key);
-      setAlerts(r === 'missing' ? null : r);
-    } catch (e) {
-      console.warn('[ForgeErr] needs you: alerts', e);
-    }
   }, [key]);
+
+  // A reply lowers the shared count; Needs you (Today's list and badge, the tab title) follows at once.
+  useEffect(
+    () =>
+      subscribeMemberMessageCount(() => {
+        const n = memberMessageCountFor(key);
+        if (n !== null) setMessages(n);
+      }),
+    [key],
+  );
+  useEffect(
+    () =>
+      subscribeQuestionCountChange(() => {
+        const n = questionCountFor(key);
+        if (n !== null) setQuestions(n);
+      }),
+    [key],
+  );
 
   // Every minute, also in a background tab: the point is to ring for what comes in meanwhile.
   useEffect(() => {
@@ -210,12 +236,14 @@ export function NeedsYouProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     seenAlerts.current = null;
   }, [key]);
+  // Only what this person may see (a complaint is the owner's alone; the server keeps it from the desk too).
+  const mine = useMemo(() => (alerts === null ? null : alertsFor(alerts, role)), [alerts, role]);
   useEffect(() => {
-    if (alerts === null) return;
-    const fresh = freshAlerts(seenAlerts.current, alerts);
-    seenAlerts.current = new Set([...(seenAlerts.current ?? []), ...alerts.map((a) => a.id)]);
+    if (mine === null) return;
+    const fresh = freshAlerts(seenAlerts.current, mine);
+    seenAlerts.current = new Set([...(seenAlerts.current ?? []), ...mine.map((a) => a.id)]);
     if (fresh.length) ringAlerts(fresh);
-  }, [alerts]);
+  }, [mine]);
 
   const total = items.length;
   useEffect(() => {
@@ -225,7 +253,7 @@ export function NeedsYouProvider({ children }: { children: ReactNode }) {
     };
   }, [total]);
 
-  const value = useMemo<NeedsValue>(() => ({ items, total, alerts: alerts ?? [], refresh }), [items, total, alerts, refresh]);
+  const value = useMemo<NeedsValue>(() => ({ items, total, alerts: mine ?? [], refresh }), [items, total, mine, refresh]);
   return <NeedsContext.Provider value={value}>{children}</NeedsContext.Provider>;
 }
 
@@ -316,6 +344,8 @@ export function NeedsYouCard() {
 /** R-506: the latest from members (the last 24 hours) on Today, each line opening its page. Hidden when none. */
 export function LatestAlertsCard() {
   const { alerts } = useNeedsYou();
+  // Fresh eyes (14 Nov 2026): a shop line reads the same orders as "Shop today", so the two always agree.
+  const { orders } = useShop();
   const now = Date.now();
   const list = latestAlerts(alerts, now);
   if (list.length === 0) return null;
@@ -323,11 +353,13 @@ export function LatestAlertsCard() {
     <Card style={{ marginBottom: space.lg }}>
       <h2 style={{ margin: 0, fontFamily: font.display, fontSize: 18, color: color.ink }}>{ALERT_WORDS.latest}</h2>
       <ul data-testid="latest-alerts" style={{ listStyle: 'none', margin: `${space.sm}px 0 0`, padding: 0, display: 'grid', gap: space.xs }}>
-        {list.map((a) => (
+        {list.map((a) => {
+          const shown = alertShown(a, orders);
+          return (
           <li key={a.id}>
             <button
               type="button"
-              onClick={() => navigate(a.route)}
+              onClick={() => navigate(shown.route)}
               style={{
                 width: '100%',
                 minHeight: 44,
@@ -342,11 +374,12 @@ export function LatestAlertsCard() {
                 color: color.ink,
               }}
             >
-              <span style={{ fontWeight: a.urgent ? 600 : 400 }}>{a.line}</span>{' '}
+              <span style={{ fontWeight: a.urgent && !shown.done ? 600 : 400 }}>{shown.line}</span>{' '}
               <span style={{ color: color.inkSecondary, fontSize: 13 }}>{alertAge(a.at, now)}</span>
             </button>
           </li>
-        ))}
+          );
+        })}
       </ul>
     </Card>
   );

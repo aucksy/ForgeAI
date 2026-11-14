@@ -77,7 +77,7 @@ export function MoreScreen() {
       : []),
     // R-319 item 1: members' "Ask a trainer" questions for this person; hidden until 0053 (count null).
     ...(trainerNav && questionsOpen !== null
-      ? [{ path: '/questions', group: 'talk', label: 'Questions', hint: QUESTION_WORDS.navHint, icon: 'feedback', badge: questionsOpen } as Row]
+      ? [{ path: '/questions', group: 'talk', label: 'Questions for trainers', hint: QUESTION_WORDS.navHint, icon: 'feedback', badge: questionsOpen } as Row]
       : []),
     // Owner, 12 Nov 2026: members' "Message your gym" (owner and staff; complaints the owner's). Hidden until 0069.
     ...(talkWaiting !== null

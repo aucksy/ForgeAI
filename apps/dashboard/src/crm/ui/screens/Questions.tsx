@@ -77,9 +77,12 @@ export function QuestionsScreen() {
         title={W.title}
         subtitle={W.intro}
         actions={
-          <Button variant="ghost" onClick={() => void fetchList().then(refreshQuestionCount)}>
-            Refresh
-          </Button>
+          // Fresh eyes (14 Nov 2026): with the error card's "Try again" under it, two buttons did the same thing.
+          load.state === 'error' ? undefined : (
+            <Button variant="ghost" onClick={() => void fetchList().then(refreshQuestionCount)}>
+              Refresh
+            </Button>
+          )
         }
       />
       {!key ? (

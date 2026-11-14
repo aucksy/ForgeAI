@@ -31,7 +31,8 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   'Training progress': 'Training progress',
   Trainers: 'Trainers',
   // R-319 item 1 (4 Nov 2026): words: owner checks at UAT.
-  Questions: 'Sawaal',
+  // Fresh eyes (14 Nov 2026): the page was "Questions" (one word, also a type inside Member messages).
+  'Questions for trainers': 'Trainers ke liye sawaal',
   // Owner, 12 Nov 2026 (0069): words: owner checks at UAT.
   'Member messages': 'Members ke messages',
   Challenges: 'Challenges',
@@ -352,8 +353,10 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   Copied: 'Copy ho gaya',
   'This browser blocked copying. The code is selected. Press Ctrl+C to copy it.':
     'Is browser ne copy rok diya. Code select ho gaya hai. Copy karne ke liye Ctrl+C dabao.',
-  'Easiest way: send members your gym’s link. One tap in the app and they are in. Or they can type this code in the app’s Shop tab. Their orders show up here.':
-    'Sabse aasaan: members ko apne gym ka link bhejo. App mein ek tap aur woh jud gaye. Ya woh app ke Shop tab mein yeh code daal sakte hain. Unke orders yahan dikhenge.',
+  'The easiest way for members to join is your gym’s link: they tap it, and they are in the app. They can also type this code on the app’s Gym tab.':
+    'Members ke judne ka sabse aasaan tareeka aapke gym ka link hai: woh tap karte hain aur app mein jud jaate hain. Woh app ke Gym tab par yeh code bhi daal sakte hain.',
+  'When members order from your shop in the app, the orders show up in Shop.':
+    'Jab members app mein aapki shop se order karte hain, woh orders Shop mein dikhte hain.',
   'Send link on WhatsApp': 'WhatsApp par link bhejo',
   'Invite & QR poster': 'Invite aur QR poster',
   'No internet right now. The code still works. New orders show up when the internet is back.':

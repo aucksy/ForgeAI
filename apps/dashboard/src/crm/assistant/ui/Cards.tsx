@@ -23,7 +23,7 @@ import type { ExpenseCategory, MemberView, PaymentMethod, Plan } from '../../typ
 import { Button, SelectField, TextField, color, font, radius, space } from '../../ui/kit';
 import type { AnswerRow, FollowUp } from '../answer';
 import { PAGES, type Line } from '../catalogue';
-import { CARD_TITLE, LANG_WORDS, MAX_REWRITES, chooseOnCard, confirmWords, langNote, pickLang, updateCard, withDraft, withMessage, type CardModel, type MessageState } from '../conversation';
+import { CARD_TITLE, LANG_WORDS, MAX_REWRITES, chooseOnCard, confirmWords, dayInWords, langNote, pickLang, updateCard, withDraft, withMessage, type CardModel, type MessageState } from '../conversation';
 import type { MessageWords } from '../api';
 import { checkDraft, messageReach, needsDay, swapDay, type Draft, type MessageDraftA, type PlanData } from '../plan';
 import { GOAL_WORDS, LEVEL_WORDS, PLAN_DAYS, PLAN_FOCUS_MAX, PLAN_GOALS, PLAN_LEVELS, exerciseCount, type PlanGoal, type PlanLevel } from '../planWriter';
@@ -592,6 +592,22 @@ function MessageView({ turnId, card, dr, data, ctl }: { turnId: string; card: Dr
     if (card.status !== 'open' || !el) return undefined;
     return keepClearOfAskBox(el);
   }, [rewrites, card.status]);
+  // Fresh eyes (14 Nov 2026): when the card first appears, Send sat half under the ask box too (the page scrolls to
+  // the card's top). Once, after that scroll has started, Send is brought fully into view as well.
+  useEffect(() => {
+    if (card.status !== 'open') return undefined;
+    let stop: (() => void) | null = null;
+    const wait = window.setTimeout(() => {
+      // Only the newest request's card: older open cards (a page opened again) stay where they are.
+      if (sendRow.current?.closest('[data-last-turn]')) stop = keepClearOfAskBox(sendRow.current);
+    }, 50);
+    return () => {
+      window.clearTimeout(wait);
+      stop?.();
+    };
+    // Only on the card's first showing: later moves are the rewrite effect's above.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const setWords = (title: string, bodyText: string) =>
     updateCard(turnId, card.id, (c) => (c.kind === 'draft' && c.result.kind === 'draft' && c.result.draft.tool === 'draft_message'
       ? { ...withDraft(c, { ...c.result.draft, title, body: bodyText }), message: c.message ? { ...c.message, edited: true } : null }
@@ -784,6 +800,12 @@ function DayRow({ turnId, card, dr, data }: { turnId: string; card: DraftCard; d
           }}
         />
       </div>
+      {/* Fresh eyes (14 Nov 2026): the box shows the computer's date format; the day in words sits under it. */}
+      {dayInWords(dr.day) ? (
+        <p data-testid="day-words" style={{ ...quiet, textAlign: 'right' }}>
+          {dayInWords(dr.day)}
+        </p>
+      ) : null}
       {problem ? (
         <p role="alert" style={{ ...quiet, color: color.criticalText, fontWeight: 700 }}>
           {say(problem.message)}
@@ -850,7 +872,7 @@ function WhenRow({ turnId, card, dr, today }: { turnId: string; card: DraftCard;
           </LangChip>
         </span>
       </div>
-      {later ? <TextField label={t('Send on')} type="datetime-local" value={dr.sendAt} onChange={set} /> : null}
+      {later ? <TextField label={t('Send on')} type="datetime-local" value={dr.sendAt} onChange={set} hint={dayInWords(dr.sendAt) ?? undefined} /> : null}
     </div>
   );
 }
@@ -1020,7 +1042,7 @@ function EditFields({ dr, data, set }: { dr: Exclude<Draft, MessageDraftA>; data
             onChange={pickPlan}
             options={[...(dr.tool === 'add_member' ? [{ value: '', label: t('No plan yet') }] : []), ...plans]}
           />
-          <TextField label={t('Starts on')} type="date" value={dr.startsOn} onChange={(v) => set({ ...dr, startsOn: v })} />
+          <TextField label={t('Starts on')} type="date" value={dr.startsOn} onChange={(v) => set({ ...dr, startsOn: v })} hint={dayInWords(dr.startsOn) ?? undefined} />
           <TextField label={t('Paid now')} prefix="₹" inputMode="numeric" value={rupees(dr.collectNowP)} onChange={(v) => set({ ...dr, collectNowP: toPaise(v) })} />
           <SelectField label={t('Paid by')} value={dr.method} onChange={(v) => set({ ...dr, method: v as PaymentMethod })} options={methods} />
         </>,
@@ -1047,7 +1069,7 @@ function EditFields({ dr, data, set }: { dr: Exclude<Draft, MessageDraftA>; data
           <TextField label={t('Name')} value={dr.form.name} onChange={(v) => set({ ...dr, form: { ...dr.form, name: v } })} />
           <TextField label={t('Mobile')} inputMode="tel" value={dr.form.phone} onChange={(v) => set({ ...dr, form: { ...dr.form, phone: v.replace(/[^\d]/g, '') } })} />
           <TextField label={t('Interested in')} value={dr.form.interest} onChange={(v) => set({ ...dr, form: { ...dr.form, interest: v } })} />
-          <TextField label={t('Call back on')} type="date" value={dr.form.followUpOn} onChange={(v) => set({ ...dr, form: { ...dr.form, followUpOn: v } })} />
+          <TextField label={t('Call back on')} type="date" value={dr.form.followUpOn} onChange={(v) => set({ ...dr, form: { ...dr.form, followUpOn: v } })} hint={dayInWords(dr.form.followUpOn) ?? undefined} />
         </>,
       );
     case 'add_expense':
@@ -1060,7 +1082,7 @@ function EditFields({ dr, data, set }: { dr: Exclude<Draft, MessageDraftA>; data
             onChange={(v) => set({ ...dr, category: v as ExpenseCategory })}
             options={EXPENSE_CATEGORIES.map((c) => ({ value: c, label: categoryLabel(c) }))}
           />
-          <TextField label={t('Date')} type="date" value={dr.spentOn} onChange={(v) => set({ ...dr, spentOn: v })} />
+          <TextField label={t('Date')} type="date" value={dr.spentOn} onChange={(v) => set({ ...dr, spentOn: v })} hint={dayInWords(dr.spentOn) ?? undefined} />
           <TextField label={t('Note')} value={dr.note} onChange={(v) => set({ ...dr, note: v })} />
         </>,
       );

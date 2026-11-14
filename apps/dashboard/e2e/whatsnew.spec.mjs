@@ -1,6 +1,8 @@
 // R-148 (28 Oct 2026): "What's new" in the admin app. R-245 (31 Oct 2026): not on Today any more ("I do
 // not want what's new ... right on the landing page"); it is the first part of the bell, and More /
 // the sidebar -> What's new keeps every update.
+import { mkdirSync } from 'node:fs';
+
 import { expect, test } from '@playwright/test';
 
 import { expectFitsPhone, freshGym, open } from './support.mjs';
@@ -94,4 +96,25 @@ test('J150 HQ messages: a new one counts in the bell, shows under From MettleUp 
   await expect(page).toHaveURL(/#\/settings\/timings$/);
   await page.reload();
   await expect(page.getByRole('button', { name: 'Notifications', exact: true })).toBeVisible();
+});
+
+// Fresh eyes (14 Nov 2026): a picture of the 14 Nov entry itself, on a phone and on a computer, to read every line.
+test('J149b the 14 Nov 2026 entry on What is new: every line, logo first, pictured', async ({ page }) => {
+  mkdirSync('e2e/.results/uat', { recursive: true });
+  await freshGym(page);
+  await open(page, "What's new");
+  await expect(page.getByRole('heading', { name: "What's new", level: 1 })).toBeVisible();
+  const entry = page
+    .getByRole('main')
+    .locator('li', { hasText: 'Your gym’s logo now shows at the top of the admin app' })
+    .locator('xpath=../..');
+  await expect(entry).toContainText('14 Nov 2026');
+  // The logo line first, the alerts lines after it.
+  await expect(entry.locator('li').first()).toContainText('Your gym’s logo now shows at the top of the admin app');
+  await expect(entry).toContainText('Latest from your members');
+  await expect(entry).toContainText('Questions for trainers');
+  await expectFitsPhone(page, 'on What is new');
+  await entry.screenshot({ path: 'e2e/.results/uat/whatsnew-2026-11-14-phone.png' });
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await entry.screenshot({ path: 'e2e/.results/uat/whatsnew-2026-11-14-computer.png' });
 });

@@ -42,7 +42,8 @@ export function BrandingScreen() {
     <>
       <PageHeader
         title="Branding"
-        subtitle="Your gym's logo and colours in the MettleUp app"
+        // Fresh eyes (14 Nov 2026): the logo also shows at the top of this admin app (R-495).
+        subtitle="Your gym's logo and colours in the MettleUp app. Your logo also shows at the top of this admin app."
         actions={
           <Button variant="ghost" onClick={() => navigate('/settings')}>
             Back to Settings

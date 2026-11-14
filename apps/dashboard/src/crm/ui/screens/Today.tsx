@@ -16,6 +16,7 @@ import { InstallCard } from '../InstallCard';
 import { PhoneLinksCard } from '../PhoneLinksCard';
 import { PlanRequestsCard } from '../PlanRequestsCard';
 import { AlertsOfferCard } from '../AlertsCards';
+import { SetupSlotProvider } from '../SetupSlot';
 import { JoinedOnlineCard } from '../JoinedOnlineCard';
 import { LatestAlertsCard, NeedsYouCard } from '../NeedsYou';
 import { TodayAiCard } from '../../assistant/ui/TodayAiCard';
@@ -145,7 +146,8 @@ export function TodayScreen() {
   const setupAtBottom = compact && hasRecords && appInUse;
 
   return (
-    <>
+    // Fresh eyes (14 Nov 2026): Get started, the alerts offer and the install banner take turns (one at a time).
+    <SetupSlotProvider>
       <PageHeader
         // The gym's name is already in the sidebar (and the phone's top bar); a
         // second copy as the page title said nothing about which page this is.
@@ -435,7 +437,7 @@ export function TodayScreen() {
       )}
       </>
       )}
-    </>
+    </SetupSlotProvider>
   );
 }
 

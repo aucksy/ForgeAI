@@ -245,7 +245,7 @@ export function Routes({ online }: { online: boolean }) {
       ...(trainerNav ? [{ path: '/trainer', label: t('Training progress'), icon: 'growth' } as NavItem] : []),
       // R-319 item 1 (4 Nov 2026): members' "Ask a trainer" questions, badged with the ones waiting (hidden until 0053).
       ...(trainerNav && questionsOpen !== null
-        ? [{ path: '/questions', label: t('Questions'), icon: 'feedback', badge: questionsOpen || undefined } as NavItem]
+        ? [{ path: '/questions', label: t('Questions for trainers'), icon: 'feedback', badge: questionsOpen || undefined } as NavItem]
         : []),
       // Owner, 12 Nov 2026: questions, feedback and complaints members send the gym from the app (owner and staff;
       // the server keeps complaints for the owner). Hidden until the gym's server has 0069.
@@ -309,7 +309,7 @@ function offlinePage(head: string | undefined, id: string | undefined): string |
   if (head === 'workouts') return 'Workout plans';
   if (head === 'diet') return 'Diet plans';
   if (head === 'challenges') return 'Challenges';
-  if (head === 'questions') return 'Questions';
+  if (head === 'questions') return 'Questions for trainers';
   if (head === 'member-messages') return 'Member messages';
   if (head === 'trainers') return 'Trainers';
   if (head === 'feedback') return 'Help and feedback';
@@ -390,7 +390,9 @@ function Screen({ segments, role }: { segments: string[]; role: Role }) {
       return <QuestionsScreen />;
     case 'member-messages':
       // Owner, 12 Nov 2026: members' "Message your gym"; the server keeps complaints for the owner (0069).
-      return <MemberMessagesScreen />;
+      // Fresh eyes (14 Nov 2026): `/member-messages/complaint` (and feedback, question) opens on that type, so a line on
+      // Today opens the message it is about.
+      return <MemberMessagesScreen key={id ?? 'all'} startWith={id} />;
     case 'challenges':
       return <ChallengesScreen />;
     case 'feedback':

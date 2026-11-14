@@ -11,6 +11,7 @@ import { useState } from 'react';
 
 import { installSteps, runningAsApp, useInstall } from '../install';
 import { Button, Card, SectionTitle, color, font, radius, space, useIsCompact } from './kit';
+import { useSetupTurn } from './SetupSlot';
 
 const DISMISS_KEY = 'forgeai.installBanner.closed';
 
@@ -30,6 +31,8 @@ export function InstallCard({ variant = 'full' }: { variant?: 'full' | 'banner' 
   const [closed, setClosed] = useState(dismissed);
   const [showSteps, setShowSteps] = useState(false);
   const [done, setDone] = useState(false);
+  // Fresh eyes (14 Nov 2026): the Today banner is one set-up card of three; it shows when it is its turn (the last).
+  const bannerTurn = useSetupTurn('install', variant === 'banner' && !installed && !done && !closed && compact);
 
   if (installed || done) {
     if (variant === 'banner') return null;
@@ -47,7 +50,7 @@ export function InstallCard({ variant = 'full' }: { variant?: 'full' | 'banner' 
       </Card>
     );
   }
-  if (variant === 'banner' && (closed || !compact)) return null;
+  if (variant === 'banner' && !bannerTurn) return null;
 
   const steps = installSteps(platform, typeof navigator !== 'undefined' ? navigator.userAgent : '');
   // R-446: an iPhone has no install sheet a button could open, so the steps show at once (a button that only
