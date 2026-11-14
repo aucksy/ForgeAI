@@ -5,7 +5,7 @@
 // the same, and nothing ever went to the gym server.
 import { expect, test } from '@playwright/test';
 
-import { addMember, bottomBar, expectFitsPhone } from './support.mjs';
+import { addMember, bottomBar, expectFitsPhone, open } from './support.mjs';
 
 const REAL_SESSION = {
   gymId: '6f1c2d9e-3b7a-4c58-9a10-5d2e8b0c7f41',
@@ -65,6 +65,8 @@ test('J-DEMO the demo link opens the made-up gym, never the signed-in one, and l
   expect(link.height).toBeGreaterThanOrEqual(44);
 
   // Things the screens remember on a device (a "Get started" tick) are remembered in the page only.
+  // R-526: the steps are on Set up your gym (More on a phone), no longer on Today.
+  await open(page, 'Set up your gym');
   await page.getByRole('button', { name: 'Mark “Add your staff and trainers” as done' }).tap();
   await expect(page.getByText('4 of 7 done')).toBeVisible();
 

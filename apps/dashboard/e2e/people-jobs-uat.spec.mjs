@@ -111,7 +111,9 @@ test('R-522: Add a person with Owner, Staff, Trainer or Other; the pill on each 
   await startOnlineGym(page);
   const main = page.getByRole('main');
 
-  // 1. Get started (R-523).
+  // 1. Get started (R-523), on its own page since R-526 (Set up your gym).
+  await go(page, '/setup');
+  await expect(page.getByRole('heading', { name: 'Set up your gym', level: 1 })).toBeVisible();
   const step = main.getByRole('button', { name: /Add your staff and trainers/ }).first();
   await expect(step).toBeVisible();
   await expect(main).toContainText('They sign in with their own mobile number and a code. A trainer sees only their own members.');
