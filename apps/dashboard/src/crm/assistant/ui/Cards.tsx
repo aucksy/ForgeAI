@@ -23,7 +23,7 @@ import type { ExpenseCategory, MemberView, PaymentMethod, Plan } from '../../typ
 import { Button, SelectField, TextField, color, font, radius, space } from '../../ui/kit';
 import type { AnswerRow, FollowUp } from '../answer';
 import { PAGES, type Line } from '../catalogue';
-import { CARD_TITLE, MAX_REWRITES, chooseOnCard, confirmWords, langNote, pickLang, updateCard, withDraft, withMessage, type CardModel, type MessageState } from '../conversation';
+import { CARD_TITLE, LANG_WORDS, MAX_REWRITES, chooseOnCard, confirmWords, langNote, pickLang, updateCard, withDraft, withMessage, type CardModel, type MessageState } from '../conversation';
 import type { MessageWords } from '../api';
 import { checkDraft, messageReach, type Draft, type MessageDraftA, type PlanData } from '../plan';
 import { GOAL_WORDS, LEVEL_WORDS, PLAN_DAYS, PLAN_FOCUS_MAX, PLAN_GOALS, PLAN_LEVELS, exerciseCount, type PlanGoal, type PlanLevel } from '../planWriter';
@@ -502,7 +502,8 @@ function Checks({ dr, data, card }: { dr: Draft; data: PlanData; card: DraftCard
           {say(w)}
         </p>
       ))}
-      {card.outcome && card.status === 'open' ? (
+      {/* R-501: "the Hindi words were not written" shows under the language chips instead, where he tapped. */}
+      {card.outcome && card.status === 'open' && card.outcome.text !== LANG_WORDS.failed ? (
         <p role="alert" style={{ ...quiet, color: color.criticalText, fontWeight: 700 }}>
           {say(card.outcome)}
         </p>
@@ -573,6 +574,8 @@ function MessageView({ turnId, card, dr, data, ctl }: { turnId: string; card: Dr
     else if (p?.kind === 'write') ctl.rewrite(turnId, card, p.how, { lang: p.lang, words: p.words });
   };
   const note = langNote(card);
+  // R-501 fresh look: the failure line sat below the buttons, under the ask box on a phone; it shows where he tapped.
+  const hindiFailed = card.status === 'open' && card.outcome?.text === LANG_WORDS.failed;
   const setWords = (title: string, bodyText: string) =>
     updateCard(turnId, card.id, (c) => (c.kind === 'draft' && c.result.kind === 'draft' && c.result.draft.tool === 'draft_message'
       ? { ...withDraft(c, { ...c.result.draft, title, body: bodyText }), message: c.message ? { ...c.message, edited: true } : null }
@@ -609,7 +612,11 @@ function MessageView({ turnId, card, dr, data, ctl }: { turnId: string; card: Dr
           </Row>
         ) : null}
         {/* R-501: Hindi or Both on a message with no Hindi words writes them first; this says so, and when it works. */}
-        {note ? (
+        {hindiFailed ? (
+          <div role="alert" style={{ ...quiet, margin: '8px 0 2px', color: color.criticalText, fontWeight: 700 }}>
+            {t(LANG_WORDS.failed)}
+          </div>
+        ) : note ? (
           <div role={msg?.writing ? 'status' : undefined} style={{ ...quiet, margin: '8px 0 2px' }}>
             {t(note)}
           </div>
