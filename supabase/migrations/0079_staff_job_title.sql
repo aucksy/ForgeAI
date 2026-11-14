@@ -1,4 +1,5 @@
--- NOT APPLIED. Waits for the owner's yes (R-522; his rule: "No LIVE database changes without my yes").
+-- APPLIED LIVE 14 Nov 2026 (R-536: owner said "Yes to both Ready-made plans and job title database change"; SQL
+-- Editor from a5e365dd; live test 0079 PASS 20). Re-runnable.
 --
 -- 0079: a job name for a person on Settings -> Staff & sign-in (R-522). Owner, 14 Nov 2026: the add-person pop-up
 -- "only has two options really the gym owner or the staff there is no option for trainer so please add that and
