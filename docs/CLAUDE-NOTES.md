@@ -7,6 +7,10 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-556 (15 Nov 2026) RELEASE APPROVED: owner going to sleep, "release everything"
+- Owner, verbatim (15 Nov 2026, night IST): "So I'm going to sleep. Are you expecting any decisions from me which you cannot take? If not then you can complete all the testing, make decisions whenever required and release everything."
+- This is ONE "release" = ONE app version (the next after 0.77.0: phone + watch, everything on main since 933e4bf4 plus the watch black-screen fix), after the standard tests, UAT of all types and a fresh-eyes review. Also the admin panel + HQ Worker deploys. Join payments, gym web pages and PAY_LIVE stay OFF.
+
 ## R-555 (15 Nov 2026) Admin panel made safe to deploy: join payments held behind JOIN_PAY, AI credits charging on, every switch in wrangler.jsonc (on main, NOT deployed)
 - Asked (coordinator, from a fresh-eyes review of d0a9f247 against the live build): make the panel safe to deploy; the owner's hold stands ("HOLD that deploy for payments until a full payment test sweep passes"); he already chose to switch AI credits charging on with this deploy.
 - Join payments: new Worker switch JOIN_PAY (on only for exactly "live", switches.js joinPayOpen). joinPay.js checks it first in offerForCode / offerForGym / attachJoinPay / pay-info / pay-check / pay-said (off: pay-info says {online:false} with no D1 query and no gym-server call; pay-check and pay-said 404; a form sent with pay "online" is kept with payWhy OFF). The gym web page's button and the join page follow offerForCode. Even with JOIN_PAY live, a company link is offered to the public only when PAY_LIVE is "on" (payMode live); a plain UPI ID is offered either way.
