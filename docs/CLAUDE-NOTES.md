@@ -7,6 +7,12 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-534. Training progress: "Well done" / "How's it going?" go as in-app messages, not WhatsApp — 14 Nov 2026
+He said (14 Nov 2026), with a picture of Training progress showing "WhatsApp: Well done" and "WhatsApp: How's it
+going?": "Why give WhatsApp option here... should be BAU in app notification"
+To do: these buttons send an in-app message (phone alert + the member's gym messages), not WhatsApp. Every member on
+Training progress has the app (they share workouts from it).
+
 ## R-533. "Ask a trainer": wrong name, and no alert or dot when the gym replies — 14 Nov 2026
 He said (14 Nov 2026): "in the gym section of the app there is an option for ask a trainer. First of all ask a trainer
 may not be accurate because you do let the user ask the gym owner or the trainer. Secondly, when I responded back from
