@@ -7,6 +7,10 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-511. LIVE yes for the Ask-a-trainer lock (R-505) — 14 Nov 2026
+I asked: "Say yes if I can add the Ask a trainer lock to the live database." He said (14 Nov 2026, chat): "yes."
+Covers ONLY the R-505 migration (member ask function refuses NO_PLAN for pass / no-plan / ended-plan members). I apply it live after the helper's CI is green, then test it like a member.
+
 ## R-510. Notifications both directions: his yes to A + LIVE change — 14 Nov 2026
 He said (14 Nov 2026, chat): "yes to A (my pick): Build both directions together, with the live database change."
 So: build R-506/R-507 per the R-509 audit, both directions together. His LIVE yes covers ONLY the notification pieces: the push-address table, the gym-alerts table, the digest-settings table and the triggers that fill alerts / send member pushes for new workout plan, diet plan, measurements, challenge, fee request. Instant: complaint (owner), check-in number, shop order, referral, plan request ending in <=3 days. Digest (default daily 11:00 am IST; Settings: Instantly / Daily at time / Weekly on day at time): trainer questions, questions/feedback, plan requests, paid online, report sent, joins. Panel gets real web push (works with the tab closed, also phone browser). Builder helper writes code + migrations; I apply the LIVE migration, set the Worker secret and deploy.
