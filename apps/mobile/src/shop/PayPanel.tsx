@@ -82,7 +82,7 @@ export function PayRequestView({ r, onOpened }: { r: MemberPayRequest; onOpened?
       {r.status === 'open' && r.url && r.testMode ? (
         <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.caption, color: color.warning }}>{W.testMode}</Text>
       ) : null}
-      {r.status === 'open' && !r.url ? <Text style={small()}>{W.deskConfirms}</Text> : null}
+      {r.status === 'open' && !r.url ? <Text style={small()}>{r.deskOnly ? W.deskOnly : W.deskConfirms}</Text> : null}
       {status ? (
         <Text accessibilityLiveRegion="polite" style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: r.status === 'paid' ? color.goodText : color.inkSecondary }}>
           {status}

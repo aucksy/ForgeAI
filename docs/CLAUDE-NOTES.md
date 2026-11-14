@@ -23,6 +23,18 @@ Answer: yes. F79 online payments (gym's own Razorpay/Cashfree account or UPI) is
 self sign-up / web page join form: "Pay now (UPI or card)" when the gym has online payments set up and its switch is on;
 "Pay at the desk" only as the fallback. Two owner switches: pay in the member app, pay on the web page / join link.
 Real money only after a gym's payment account (KYC) and his "payments live".
+Done (14 Nov 2026, built and pushed, NOT live): the join page asks /api/self-join/pay-info; online = "Pay now (UPI or
+card)" (or "Pay now by UPI" for a UPI-ID-only gym), details sent FIRST, then the F79 payment (company link, test mode,
+or the gym's UPI ID + "I have paid"); paid / failed / ran out / "Pay at the desk instead". The request is always made
+before the payment, and nobody becomes a member without the desk: Today's "Joined online" shows "Paid online" with one
+tap Approve (member + plan + receipt, requestId pay-<id>), "Check your bank before approving" for a plain UPI payment,
+"Not paid" + Make member for failed/unfinished. Settings -> Payments: the two switches (on once an account is set up;
+greyed with the reason otherwise). Member app: switch off = the fee shows with "Pay this at the gym desk.", no
+QR/link. Gym web page button: "Join and pay online" vs "Send your details. Pay at the desk.". F210 hook: joinCharge()
+takes a trial fee (deploy/panel/joinPay.js) and Approve collects only what was paid. Needs his yes: panel D1 0016
+(pay_switches, pay_said) and supabase 0081 (self_join_pay_gym, self_join_send returns enquiryId), then a panel deploy.
+Before that everything stays "Pay at the desk". Tests: deploy/panel/joinPay.test.mjs, supabase/tests/0081_join_pay.sql,
+apps/dashboard/test/crm/joinPay.test.ts, e2e/joinpay-uat.spec.mjs.
 
 ## R-527. HANDOFF before his weekly limit (14 Nov 2026) — where every piece of work stands
 He said (14 Nov 2026): "My weekly limit is about to be hit ... Just want to ensure that you can save everything that's

@@ -17,7 +17,11 @@
   supabase 0077) and the WhatsApp preview. Three steps: about you (the number checked with "Verify with WhatsApp",
   purpose 'join', deploy/panel/phoneInbound.js), your plan (prices from the gym server, never typed here), agree and
   send. The form posts to /api/self-join (deploy/panel/selfJoin.js); the gym server re-reads the price itself and
-  writes the request into that gym's Enquiries ("Joined online" on Today). Payment: at the desk only (phase 1).
+  writes the request into that gym's Enquiries ("Joined online" on Today). Payment: at the desk, or (R-528, 14 Nov
+  2026) online when the gym has a payment account and its owner's "Take payments on your web page and join link" is
+  on (/api/self-join/pay-info says so). Online, the details are sent FIRST, then the page shows the payment: a link
+  to the gym's own payment company, or its UPI ID. A payment that fails or is left half way keeps the request as
+  "Not paid"; the desk makes nobody a member without a tap.
   English or Hindi: the same switch and saved choice as the member site (mettleup.site.lang). A reload in the middle
   keeps the steps done so far (sessionStorage, this tab only). Light or dark follows the phone.
 -->
@@ -89,6 +93,10 @@
   .note a { color:inherit; }
   .done h2 { color:var(--good); }
   .done p { font-size:16px; line-height:1.5; margin:0 0 10px; }
+  .paybox { border:1px dashed var(--line); border-radius:12px; padding:14px; margin:4px 0 6px; }
+  .paybox .help { margin:10px 0 0; }
+  .test { color:var(--bad); font-size:14px; font-weight:700; line-height:1.4; margin:8px 0 10px; }
+  .paid { color:var(--good) !important; font-weight:700; }
   .trap { position:absolute; left:-10000px; width:1px; height:1px; overflow:hidden; }
   .hide { display:none !important; }
   @media (min-width:720px) { main { padding-top:40px; } }
@@ -159,7 +167,7 @@
         <p class="err hide" id="start-err" role="alert"></p>
       </div>
       <div class="total" id="total-box">
-        <span data-t="toPay">To pay at the gym desk</span>
+        <span id="to-pay">To pay at the gym desk</span>
         <b id="total">—</b>
       </div>
       <p class="help" id="total-parts"></p>
@@ -176,9 +184,11 @@
       <fieldset>
         <legend data-t="howPay">How you pay</legend>
         <div class="opts">
+          <label class="hide" id="pay-online-opt"><input type="radio" name="pay" value="online"><span id="pay-online-words">Pay now (UPI or card)</span></label>
           <label><input type="radio" name="pay" value="desk" checked><span data-t="payDesk">Pay at the desk</span></label>
         </div>
-        <p class="help" data-t="payNote">You pay when you come to the gym. Nothing is paid on this page.</p>
+        <p class="help" id="pay-note">You pay when you come to the gym. Nothing is paid on this page.</p>
+        <p class="help test hide" id="pay-test" data-t="testNote">Test mode: this gym is trying out online payments. No real money moves.</p>
       </fieldset>
       <label class="tick"><input type="checkbox" id="adult"><span data-t="consentAdult">I am 18 or older and agree to the gym's terms and privacy notice.</span></label>
       <p class="help" style="margin:-4px 0 12px" data-t="under18">Under 18? Please join at the gym desk with a parent or guardian.</p>
@@ -188,7 +198,7 @@
       <p class="err hide" id="send-err" role="alert"></p>
       <div class="row">
         <button class="btn ghost" type="button" id="back3" data-t="back">Back</button>
-        <button class="btn" type="submit" id="send" data-t="send">Send to the gym</button>
+        <button class="btn" type="submit" id="send">Send to the gym</button>
       </div>
       <p class="note"><span id="privacy"></span> <a href="/privacy" target="_blank" rel="noopener" data-t="privacyLink">How MettleUp keeps your details safe</a></p>
     </section>
@@ -198,7 +208,18 @@
     <h2 id="done-title"></h2>
     <p id="done-plan"></p>
     <p id="done-pay"></p>
-    <p class="note" data-t="doneClose">You can close this page now.</p>
+    <!-- R-528: the payment, after the details are sent. -->
+    <div class="paybox hide" id="paybox">
+      <p class="test hide" id="paybox-test" data-t="testNote">Test mode: this gym is trying out online payments. No real money moves.</p>
+      <p class="err hide" id="pay-err" role="alert"></p>
+      <a class="btn" id="pay-open" href="#" target="_blank" rel="noopener">Pay now</a>
+      <p class="help hide" id="pay-upi"></p>
+      <div class="wait hide" id="pay-wait"><span class="dot"></span><span data-t="payWaiting">Waiting for your payment…</span></div>
+      <div style="height:10px"></div>
+      <button class="btn ghost hide" type="button" id="pay-said" data-t="paySaid">I have paid</button>
+      <button class="link" type="button" id="pay-desk" data-t="payDeskInstead">Pay at the desk instead</button>
+    </div>
+    <p class="note" id="done-close" data-t="doneClose">You can close this page now.</p>
   </section>
 
   <section class="card hide" id="member" role="alert">
@@ -292,7 +313,24 @@
       TRY_AGAIN: 'Could not send. Check your internet and try again.',
       PROOF_AGAIN: 'Please check your number with WhatsApp again.',
       PLAN_CHANGED: 'The gym changed its plans. Please pick a plan again.',
-      pageTitle: 'Become a member of {gym}'
+      pageTitle: 'Become a member of {gym}',
+      // R-528: paying online (only when the gym has switched it on).
+      leadOnline: 'Join in 3 short steps. Pay online or at the gym desk.',
+      toPayOnline: 'To pay', sTotalOnline: 'To pay',
+      payOnline: 'Pay now (UPI or card)', payOnlineUpi: 'Pay now by UPI',
+      payNoteOnline: 'You send your details first. Then you pay {gym} on the next screen. The money goes straight to the gym.',
+      testNote: 'Test mode: this gym is trying out online payments. No real money moves.',
+      sendPay: 'Send and pay',
+      payNow: 'Pay {total} now', payUpiApp: 'Pay {total} in a UPI app',
+      payLead: 'Now pay {total}. The money goes straight to {gym}.',
+      payUpiId: 'Or pay to the UPI ID {upi} from any UPI app.',
+      payWaiting: 'Waiting for your payment…',
+      paySaid: 'I have paid', payDeskInstead: 'Pay at the desk instead',
+      paidLine: 'Paid {total}. {gym} will approve your request soon, and then you are a member.',
+      saidLine: 'Thank you. {gym} checks the payment in its bank, then makes you a member.',
+      payFailed: 'The payment did not go through. If money was taken, it comes back to you. Try again, or pay at the desk.',
+      payRanOut: 'The payment page ran out of time. Pay {total} at the gym desk on your first visit.',
+      payNoStart: 'Online payment is not working right now. Pay {total} at the gym desk on your first visit.'
     },
     hi: {
       lead: '3 छोटे स्टेप में मेंबर बनें। पैसे जिम के काउंटर पर देने हैं।',
@@ -349,7 +387,23 @@
       TRY_AGAIN: 'भेजा नहीं जा सका। इंटरनेट चेक करके फिर कोशिश करें।',
       PROOF_AGAIN: 'कृपया WhatsApp से अपना नंबर फिर से वेरिफ़ाई करें।',
       PLAN_CHANGED: 'जिम ने अपने प्लान बदले हैं। कृपया फिर से प्लान चुनें।',
-      pageTitle: '{gym} के मेंबर बनें'
+      pageTitle: '{gym} के मेंबर बनें',
+      leadOnline: '3 छोटे स्टेप में मेंबर बनें। पैसे ऑनलाइन दें या जिम के काउंटर पर।',
+      toPayOnline: 'देने हैं', sTotalOnline: 'देने हैं',
+      payOnline: 'अभी पैसे दें (UPI या कार्ड)', payOnlineUpi: 'अभी UPI से पैसे दें',
+      payNoteOnline: 'पहले आप अपनी जानकारी भेजेंगे। फिर अगली स्क्रीन पर {gym} को पैसे देंगे। पैसे सीधे जिम के पास जाते हैं।',
+      testNote: 'टेस्ट मोड: यह जिम ऑनलाइन पेमेंट आज़मा रहा है। कोई असली पैसा नहीं कटता।',
+      sendPay: 'भेजें और पैसे दें',
+      payNow: 'अभी {total} दें', payUpiApp: 'UPI ऐप में {total} दें',
+      payLead: 'अब {total} दें। पैसे सीधे {gym} के पास जाते हैं।',
+      payUpiId: 'या किसी भी UPI ऐप से UPI ID {upi} पर पैसे भेजें।',
+      payWaiting: 'आपके पेमेंट का इंतज़ार है…',
+      paySaid: 'मैंने पैसे दे दिए', payDeskInstead: 'इसके बजाय काउंटर पर पैसे दें',
+      paidLine: '{total} मिल गए। {gym} जल्द ही आपकी रिक्वेस्ट मंज़ूर करेगा, फिर आप मेंबर बन जाएँगे।',
+      saidLine: 'धन्यवाद। {gym} अपने बैंक में पेमेंट देखेगा, फिर आपको मेंबर बना देगा।',
+      payFailed: 'पेमेंट नहीं हो पाया। अगर पैसे कटे हैं, तो वापस आ जाएँगे। फिर से कोशिश करें, या काउंटर पर पैसे दें।',
+      payRanOut: 'पेमेंट पेज का समय खत्म हो गया। पहली बार आने पर जिम के काउंटर पर {total} दें।',
+      payNoStart: 'ऑनलाइन पेमेंट अभी काम नहीं कर रहा है। पहली बार आने पर जिम के काउंटर पर {total} दें।'
     }
   };
   var LANG = 'mettleup.site.lang';
@@ -386,7 +440,9 @@
   // ---------------------------------------------------------------- state (kept for a reload in the middle)
   var gym = null;
   var KEEP = 'mettleup.join.' + (code || '');
-  var S = { step: 1, name: '', phone: '', gender: '', plan: '', start: '', wa: null, waState: '', proof: '', proofPhone: '', proofExp: 0, done: null };
+  var S = { step: 1, name: '', phone: '', gender: '', plan: '', start: '', wa: null, waState: '', proof: '', proofPhone: '', proofExp: 0, done: null, pay: '', payTapped: false };
+  // R-528: can this gym be paid on this page? null = no (or not known yet): everything says "at the desk", as before.
+  var offer = null;
   try { var kept = JSON.parse(sessionStorage.getItem(KEEP) || 'null'); if (kept && typeof kept === 'object') for (var k in S) if (k in kept) S[k] = kept[k]; } catch (e) { /* quiet: nothing kept, start fresh */ }
   function save() { try { sessionStorage.setItem(KEEP, JSON.stringify(S)); } catch (e) { /* quiet: private window, a reload starts again */ } }
 
@@ -423,9 +479,85 @@
     }
     drawVerify();
     drawPlans();
+    drawPayWords();
     drawSummary();
     drawDone();
   }
+
+  // ---------------------------------------------------------------- R-528: paying online
+  function payChoice() { return offer && S.pay !== 'desk' ? 'online' : 'desk'; }
+  function drawPayWords() {
+    var online = payChoice() === 'online';
+    var gymName = gym ? gym.gymName : '';
+    $('sub').textContent = t(offer ? 'leadOnline' : 'lead');
+    $('to-pay').textContent = t(offer && online ? 'toPayOnline' : 'toPay');
+    show('pay-online-opt', !!offer);
+    $('pay-online-words').textContent = t(offer && offer.how === 'upi' ? 'payOnlineUpi' : 'payOnline');
+    all('input[name=pay]').forEach(function (i) { i.checked = i.value === payChoice(); });
+    $('pay-note').textContent = online ? t('payNoteOnline', { gym: gymName }) : t('payNote');
+    show('pay-test', online && !!offer.testMode);
+    $('send').textContent = t(online ? 'sendPay' : 'send');
+  }
+  all('input[name=pay]').forEach(function (i) {
+    i.addEventListener('change', function () { S.pay = i.value; save(); drawPayWords(); drawSummary(); });
+  });
+  function loadOffer() {
+    if (!code) return Promise.resolve();
+    return fetch('/api/self-join/pay-info', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ code: code }), cache: 'no-store' })
+      .then(function (r) { if (!r.ok) throw new Error(String(r.status)); return r.json(); })
+      .then(function (a) { offer = a && a.online === true ? { how: a.how === 'upi' ? 'upi' : 'link', testMode: a.testMode === true } : null; })
+      .catch(function (e) { offer = null; console.warn('[join] online payment not offered', e && e.message); })
+      .then(function () { drawPayWords(); drawSummary(); });
+  }
+
+  function upiPlain(text, max) { return String(text || '').replace(/[^A-Za-z0-9 .,-]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, max || 40); }
+  function upiLink(p) {
+    var enc = function (x) { return encodeURIComponent(x).replace(/%40/g, '@'); };
+    var parts = ['pa=' + enc(p.upiId), 'pn=' + enc(upiPlain(p.payee) || 'Gym'), 'am=' + (Math.round(Number(p.amountP) || 0) / 100).toFixed(2), 'cu=INR'];
+    var note = upiPlain(p.label, 50);
+    if (note) parts.push('tn=' + enc(note));
+    return 'upi://pay?' + parts.join('&');
+  }
+  function payOpen() { var d = S.done; return !!(d && d.online && d.pay && !d.payDesk && d.pay.status === 'open' && !d.pay.said); }
+
+  var payTimer = null;
+  function stopPayPolling() { if (payTimer) { clearInterval(payTimer); payTimer = null; } }
+  function startPayPolling() {
+    stopPayPolling();
+    if (!payOpen() || S.done.pay.how !== 'link') return;
+    payTimer = setInterval(function () { if (document.visibilityState === 'visible') payAsk('pay-check'); }, 5000);
+  }
+  function payAsk(what) {
+    var d = S.done;
+    if (!d || !d.pay) return Promise.resolve();
+    return fetch('/api/self-join/' + what, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: d.pay.id }), cache: 'no-store' })
+      .then(function (r) { if (!r.ok) throw new Error(String(r.status)); return r.json(); })
+      .then(function (a) {
+        if (!a || !a.pay || !S.done || !S.done.pay || a.pay.id !== S.done.pay.id) return;
+        S.done.pay = a.pay; save();
+        if (!payOpen()) stopPayPolling();
+        drawDone();
+      })
+      .catch(function (e) { console.warn('[join] payment not checked; asking again soon', e && e.message); });
+  }
+  document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible' && payTimer) payAsk('pay-check'); });
+  $('pay-open').addEventListener('click', function () {
+    if (!payOpen()) return;
+    S.payTapped = true; save();
+    unsay('pay-err');
+    show('pay-wait', S.done.pay.how === 'link');
+    startPayPolling();
+  });
+  $('pay-said').addEventListener('click', function () {
+    var btn = $('pay-said');
+    btn.disabled = true;
+    payAsk('pay-said').then(function () { btn.disabled = false; });
+  });
+  $('pay-desk').addEventListener('click', function () {
+    if (!S.done) return;
+    S.done.payDesk = true; save();
+    stopPayPolling(); drawDone(); $('done').focus();
+  });
 
   function drawVerify() {
     var d = digitsOf($('phone').value);
@@ -474,7 +606,7 @@
     var p = selectedPlan();
     var dl = $('summary');
     dl.innerHTML = '';
-    var rows = [['sName', S.name], ['sMobile', S.proofPhone ? phoneWords(S.proofPhone) : ''], ['sPlan', p ? p.name + ' (' + lengthWords(p) + ')' : ''], ['sStarts', dayWords(S.start)], ['sTotal', p ? rupees(p.totalP) : '']];
+    var rows = [['sName', S.name], ['sMobile', S.proofPhone ? phoneWords(S.proofPhone) : ''], ['sPlan', p ? p.name + ' (' + lengthWords(p) + ')' : ''], ['sStarts', dayWords(S.start)], [payChoice() === 'online' ? 'sTotalOnline' : 'sTotal', p ? rupees(p.totalP) : '']];
     rows.forEach(function (r) {
       var dt = document.createElement('dt'); dt.textContent = t(r[0]);
       var dd = document.createElement('dd'); dd.textContent = r[1];
@@ -485,9 +617,32 @@
   function drawDone() {
     var d = S.done;
     if (!d || !gym) return;
-    $('done-title').textContent = t('doneTitle', { gym: d.gymName || gym.gymName });
+    var gymName = d.gymName || gym.gymName;
+    var total = rupees(d.totalP);
+    $('done-title').textContent = t('doneTitle', { gym: gymName });
     $('done-plan').textContent = t('donePlan', { plan: d.planName || '', date: dayWords(d.startsOn) });
-    $('done-pay').textContent = t('donePay', { total: rupees(d.totalP) });
+    var p = d.online && !d.payDesk ? d.pay : null;
+    var line = 'donePay', good = false, box = false;
+    if (d.online && !d.payDesk && !p) line = 'payNoStart';
+    else if (p && p.status === 'paid') { line = 'paidLine'; good = true; total = rupees(p.paidP || p.amountP); }
+    else if (p && p.status === 'open' && p.said) { line = 'saidLine'; good = true; }
+    else if (p && p.status === 'open' && (p.url || p.upiId)) { line = 'payLead'; total = rupees(p.amountP); box = true; }
+    else if (p) line = 'payRanOut';
+    $('done-pay').textContent = t(line, { total: total, gym: gymName });
+    $('done-pay').classList.toggle('paid', good);
+    show('paybox', box);
+    show('done-close', !box);
+    if (!box) return;
+    var upi = p.how === 'upi';
+    show('paybox-test', !!p.testMode);
+    $('pay-open').href = upi ? upiLink(p) : p.url;
+    $('pay-open').target = upi ? '_self' : '_blank';
+    $('pay-open').textContent = t(upi ? 'payUpiApp' : 'payNow', { total: rupees(p.amountP) });
+    show('pay-upi', upi && !!p.upiId);
+    if (upi && p.upiId) $('pay-upi').textContent = t('payUpiId', { upi: p.upiId });
+    show('pay-said', upi);
+    show('pay-wait', !upi && S.payTapped && !p.failed);
+    if (p.failed) say('pay-err', 'payFailed'); else unsay('pay-err');
   }
 
   function goStep(n, focus) {
@@ -518,6 +673,7 @@
       img.src = b.logoUrl;
     }
     if (gym.closed) { only('closed'); drawWords(); return; }
+    loadOffer();
     // The start day: kept if still allowed, else today (the gym server's today, India time).
     $('start').min = gym.today || '';
     $('start').max = gym.lastDay || '';
@@ -527,7 +683,12 @@
     $('name').value = S.name;
     $('phone').value = S.phone;
     all('input[name=gender]').forEach(function (i) { i.checked = i.value === S.gender; });
-    if (S.done) { only('done'); drawWords(); return; }
+    if (S.done) {
+      only('done'); drawWords();
+      // Back on the page in the middle of paying: ask once where the payment is, and keep asking if they had tapped Pay.
+      if (payOpen()) payAsk('pay-check').then(function () { if (S.payTapped) startPayPolling(); });
+      return;
+    }
     only('form');
     drawWords();
     var step = S.step;
@@ -665,15 +826,16 @@
     fetch('/api/self-join', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ code: code, name: S.name, proof: S.proof, gender: S.gender || null, plan: S.plan, start: S.start, adult: true, health: true, lang: lang, website: $('website').value })
+      body: JSON.stringify({ code: code, name: S.name, proof: S.proof, gender: S.gender || null, plan: S.plan, start: S.start, adult: true, health: true, lang: lang, pay: payChoice(), website: $('website').value })
     })
       .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return { status: r.status, body: j }; }); })
       .then(function (a) {
         var b = a.body || {};
         if (a.status === 201 && b.ok) {
           var p = selectedPlan();
-          S.done = { gymName: b.gymName || gym.gymName, planName: b.planName || (p && p.name) || '', startsOn: b.startsOn || S.start, totalP: b.totalP != null ? b.totalP : p ? p.totalP : 0 };
-          S.proof = ''; S.wa = null; save();
+          S.done = { gymName: b.gymName || gym.gymName, planName: b.planName || (p && p.name) || '', startsOn: b.startsOn || S.start, totalP: b.totalP != null ? b.totalP : p ? p.totalP : 0, online: payChoice() === 'online', pay: b.pay && b.pay.id ? b.pay : null, payDesk: false };
+          S.proof = ''; S.wa = null; S.payTapped = false; save();
+          if (payOpen()) startPayPolling();
           only('done'); drawDone(); $('done').focus(); window.scrollTo(0, 0);
           return;
         }

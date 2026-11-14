@@ -221,6 +221,19 @@ export const ALL_HELP_ARTICLES = [
       'The request shows on Today under "Joined online". When they come in, tap "Make member": the Add member form opens filled in, then Sell membership on their plan. Type what they paid and save.',
   },
   {
+    id: 'join-pay-online-admin',
+    unreleased: 'R-528 Pay online when joining: needs panel D1 0016 and supabase 0081 applied and the panel worker deployed.',
+    who: 'owner',
+    title: 'Let new people pay online when they join',
+    text:
+      'Open Settings, then Payments. With your UPI ID added or a payment company connected, two switches show: "Take payments in the member app" and "Take payments on your web page and join link". Both start on. ' +
+      'People who join on your web page or join link can then pay for their plan there, straight to your account. ' +
+      'On Today, "Joined online" says "Paid online". Approve makes the member, plan and receipt in one tap. ' +
+      'A payment straight to your UPI ID says "Check your bank before approving". ' +
+      'A failed or unfinished payment says "Not paid": they pay at the desk and you tap "Make member". ' +
+      'Member app switch off: they still see what they owe, with no Pay button.',
+  },
+  {
     id: 'ai-assistant',
     unreleased: 'F201 AI Assistant: hidden until the gym server has 0071 and the panel worker is deployed (R-471).',
     who: 'owner',

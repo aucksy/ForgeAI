@@ -296,7 +296,7 @@ function planRow(p) {
  * The whole page. `nowMs` sets "Open now" (India time); `assetBase` is where /gym-page/page.js is served (the
  * page's own address by default). PURE.
  */
-export function renderGymPage(p, { nowMs = Date.now(), assetBase = '', origin = PAGE_ORIGIN } = {}) {
+export function renderGymPage(p, { nowMs = Date.now(), assetBase = '', origin = PAGE_ORIGIN, payOnline = false } = {}) {
   const url = `${origin}/${p.slug}`;
   const ink = inkOn(p.accent);
   const st = statusOf(p, nowMs);
@@ -315,7 +315,7 @@ export function renderGymPage(p, { nowMs = Date.now(), assetBase = '', origin = 
     : `<span>${escapeHtml((p.gymName.trim().charAt(0) || 'G').toUpperCase())}</span>`;
   const statusPlate = st ? `<p class="plate s-${st.state}" id="status"><i aria-hidden="true"></i>${escapeHtml(st.line)}</p>` : '';
   const primary = joinHref
-    ? `<a class="btn tin" href="${escapeHtml(joinHref)}">Become a member<small>Send your details. Pay at the desk.</small></a><a class="btn paint" href="#ask">Ask a question</a>`
+    ? `<a class="btn tin" href="${escapeHtml(joinHref)}">Become a member<small>${payOnline ? 'Join and pay online' : 'Send your details. Pay at the desk.'}</small></a><a class="btn paint" href="#ask">Ask a question</a>`
     : `<a class="btn tin" href="#ask">Ask a question<small>The gym replies on your phone.</small></a>`;
 
   const photos = p.photos.length

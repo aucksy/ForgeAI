@@ -538,13 +538,28 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   'Download join poster': 'Join poster download karo',
   'Could not make the picture. Try again.': 'Photo nahi ban paayi. Phir try karo.',
   'Joined online': 'Online join kiya',
-  'They filled your "Become a member" page. Make them a member when they come in and pay.':
-    'Inhone aapka "Become a member" page bhara hai. Jab yeh aakar pay karein, tab inhe member banao.',
+  'They filled your "Become a member" page. Approve the ones who paid online. Make the others members when they come in and pay.':
+    'Inhone aapka "Become a member" page bhara hai. Jinhone online pay kiya, unhe Approve karo. Baaki log aakar pay karein, tab unhe member banao.',
   '{plan} · starts {date}': '{plan} · {date} se shuru',
   '{total} paid': '{total} pay ho gaya',
   '{total} to pay at the desk · Not paid yet': 'Desk par {total} dene hain · Abhi pay nahi kiya',
   'Make {name} a member': '{name} ko member banao',
   'Make member': 'Member banao',
+  // R-528: paid on the join page.
+  '{total} paid online': '{total} online pay ho gaya',
+  '{total} paid online (test mode, no real money)': '{total} online pay ho gaya (test mode, asli paise nahi)',
+  '{total} paid by UPI, they say · Check your bank before approving': 'Inke hisaab se {total} UPI se pay kiya · Approve se pehle apna bank check karo',
+  '{total} · The online payment did not go through · Not paid': '{total} · Online payment nahi hua · Pay nahi kiya',
+  '{total} · Started paying online, did not finish · Not paid': '{total} · Online pay shuru kiya, poora nahi kiya · Pay nahi kiya',
+  'Approve makes them a member, with their plan and receipt.': 'Approve karne par yeh member ban jaate hain, plan aur receipt ke saath.',
+  Approve: 'Approve',
+  'Approve {name}': '{name} ko approve karo',
+  'Approving…': 'Approve ho raha hai…',
+  'The plan they picked is no longer sold. Tap Make member and pick a plan.': 'Inka chuna hua plan ab nahi bikta. Member banao dabao aur plan chuno.',
+  'Someone else at the desk is approving this person now. Wait a minute and look again.':
+    'Desk par koi aur abhi inhe approve kar raha hai. Ek minute ruko aur phir dekho.',
+  'Their name or number could not be saved. Tap Make member to check them.': 'Inka naam ya number save nahi hua. Member banao dabakar check karo.',
+  'Could not approve. Check your internet and try again.': 'Approve nahi hua. Internet check karo aur phir try karo.',
   'Download picture': 'Photo download karo',
   'Print it on A4 and stick it at the desk. On a phone, Print → “Save as PDF” also works. Use the picture for a print shop.':
     'Ise A4 par print karke desk par chipkao. Phone par Print → “Save as PDF” bhi chalta hai. Print shop ke liye photo use karo.',
@@ -609,6 +624,20 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   'Test mode': 'Test mode',
   'Test mode: no real money moves. Use your test keys.': 'Test mode: asli paisa nahi jaata. Apni test keys lagao.',
   'Test mode: no real money moves.': 'Test mode: asli paisa nahi jaata.',
+  // R-528: the owner's two switches.
+  'Where members can pay online': 'Members online kahan pay kar sakte hain',
+  'Take payments in the member app': 'Member app mein payment lo',
+  'Members see a Pay now button for what they owe. When off, they still see what they owe and pay at the desk.':
+    'Members ko baaki paison ke liye Pay now button dikhta hai. Band hone par bhi unhe baaki paise dikhte hain, aur woh desk par pay karte hain.',
+  'Take payments on your web page and join link': 'Apne web page aur join link par payment lo',
+  'People who join on your web page can pay for their plan there. When off, they send their details and pay at the desk.':
+    'Jo log aapke web page par join karte hain, woh wahin plan ke paise de sakte hain. Band hone par woh apni details bhejte hain aur desk par pay karte hain.',
+  'Add your UPI ID or connect a payment company first.': 'Pehle apni UPI ID daalo ya payment company connect karo.',
+  'These switches are not switched on yet. Until then members pay in the app as now, and people who join online pay at the desk.':
+    'Yeh switch abhi chalu nahi hue hain. Tab tak members app mein abhi jaise pay karte hain, aur online join karne waale desk par pay karte hain.',
+  'Only the owner can change these.': 'Inhe sirf owner badal sakte hain.',
+  'Could not save. Check your internet and try again.': 'Save nahi hua. Internet check karo aur phir try karo.',
+  'Saved.': 'Save ho gaya.',
   'Online payments are not switched on yet.': 'Online payments abhi chalu nahi hue hain.',
   'Online payments are not switched on yet. Until then, members can pay by the UPI QR above.':
     'Online payments abhi chalu nahi hue hain. Tab tak members upar wale UPI QR se pay kar sakte hain.',

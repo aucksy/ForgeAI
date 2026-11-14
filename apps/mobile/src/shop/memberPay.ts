@@ -35,6 +35,11 @@ export interface MemberPayRequest {
   paidP: number;
   paidAt: string | null;
   recorded: boolean;
+  /**
+   * R-528 (14 Nov 2026): the gym owner switched off "Take payments in the member app". The member still sees what they
+   * owe; there is no QR, UPI app or online button, only "Pay this at the gym desk."
+   */
+  deskOnly: boolean;
 }
 
 export interface MinePayAnswer {
@@ -99,6 +104,7 @@ export function requestFromJson(x: unknown): MemberPayRequest | null {
     paidP: Number(r.paidP) || 0,
     paidAt: typeof r.paidAt === 'string' ? r.paidAt : null,
     recorded: r.recorded === true,
+    deskOnly: r.deskOnly === true,
   };
 }
 
@@ -116,6 +122,7 @@ export const PAY_WORDS = {
   holdToCopy: 'Press and hold to copy the UPI ID.',
   testMode: 'Test mode: no real money moves.',
   deskConfirms: 'After you pay, the gym saves your receipt.',
+  deskOnly: 'Pay this at the gym desk.',
   failed: 'Your last try did not go through. You can try again.',
   noUpiApp: 'No UPI app found on this phone. Scan the QR from another phone, or pay at the desk.',
   linkProblem: 'The payment page did not open. Try again, or pay at the desk.',

@@ -164,6 +164,14 @@ test('the page: escaped, not listed by Google until the gym says so, prices and 
   assert.match(listed, /<meta name="robots" content="index, follow">/);
 });
 
+test('R-528: "Become a member" says how they pay: online when the gym takes it there, else at the desk', () => {
+  const desk = renderGymPage(pageFrom(RAW), { nowMs: THU_EVENING });
+  assert.match(desk, /Become a member<small>Send your details\. Pay at the desk\.<\/small>/);
+  const online = renderGymPage(pageFrom(RAW), { nowMs: THU_EVENING, payOnline: true });
+  assert.match(online, /Become a member<small>Join and pay online<\/small>/);
+  assert.ok(!online.includes('Pay at the desk.'));
+});
+
 test('the page without online joining asks a question instead; closed now shows on the shutter', () => {
   const late = Date.parse('2026-11-19T23:20:00+05:30');
   const html = renderGymPage(pageFrom({ ...RAW, joinOnline: false }), { nowMs: late });

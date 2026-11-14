@@ -1,6 +1,10 @@
 # ForgeAI progress
 
 ## Waiting for release (R-266: tag only when the owner says "release")
+- R-528 MEMBER APP: THE OWNER'S "TAKE PAYMENTS IN THE MEMBER APP" SWITCH. When the gym owner turns it off (admin panel,
+  Settings -> Payments; server part NOT live: panel D1 0016 + supabase 0081 need his yes), My membership still shows
+  what the member owes, with "Pay this at the gym desk." and no QR, UPI app or online button (src/shop/memberPay.ts
+  deskOnly, PayPanel). Nothing changes until the server part is live. Test: test/shop/memberPay.test.ts.
 - R-517 GYM TAB: BIGGER GYM LOGO AND NAME; TAP THE LOGO TO SEE IT FULL SIZE (owner, 14 Nov 2026, with a picture of
   the Gym tab: "let the logo of the gym and the name of the gym be bigger, and the logo can be tappable so people can
   tap on it and see the enlarged logo"). Gym tab only (Workout and Profile keep the small 28 dp mark). New header

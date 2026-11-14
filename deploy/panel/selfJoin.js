@@ -13,10 +13,15 @@
 // Nothing about the person is kept here (only a salted, daily one-way hash of the network address).
 //
 // The answer is a code the page turns into English or Hindi words:
-//   201 {ok: true, gymName, planName, startsOn, totalP, linked}
+//   201 {ok: true, gymName, planName, startsOn, totalP, linked, pay?, payWhy?}
+//       R-528: with "pay": "online" in the form, once the request is kept its payment is made (joinPay.js attachJoinPay):
+//       pay = the page's view of it; payWhy = why not (the page then says "Pay at the desk"). The request is kept
+//       either way: a payment that fails never loses it.
 //   400 {error: 'BAD_REQUEST' | 'BAD_NAME' | 'BAD_PROOF' | 'BAD_PLAN' | 'BAD_DATE' | 'NO_CONSENT'}
 //   403 {error: 'CLOSED'}   404 {error: 'NO_GYM'}   409 {error: 'MEMBER'}   429 {error: 'TOO_MANY'}
 //   503 {error: 'NOT_READY' | 'TRY_AGAIN'}
+
+import { attachJoinPay } from './joinPay.js';
 
 export const PER_DAY = 10;
 const GENDERS = ['male', 'female', 'other'];
@@ -108,7 +113,7 @@ async function overLimit(env, request, now) {
  * POST /api/self-join. `rpc(fn, args)` calls the gym server and resolves to {status, data} (worker.js passes the real
  * one; tests a fake).
  */
-export async function handleSelfJoin(request, env, rpc, now = new Date()) {
+export async function handleSelfJoin(request, env, rpc, now = new Date(), deps = {}) {
   if (request.method !== 'POST') return refused(405, 'BAD_REQUEST', 'not a POST');
   if (Number(request.headers.get('Content-Length') || 0) > 3000) return refused(413, 'BAD_REQUEST', 'body over 3000 bytes');
   const raw = await request.text();
@@ -157,5 +162,17 @@ export async function handleSelfJoin(request, env, rpc, now = new Date()) {
   const out = serverAnswer(r.data);
   if (out.status !== 201) console.warn(`[self-join] the gym server said ${out.body.error}`);
   else console.log(`[self-join] request kept${out.body.linked ? ' (linked to an open enquiry)' : ''}`);
+  // R-528: they chose "Pay now": the payment for THIS request (0081 answers its enquiry id; before 0081 there is none).
+  if (out.status === 201 && body.pay === 'online') {
+    const row = Array.isArray(r.data) ? r.data[0] : r.data;
+    const made = await attachJoinPay(
+      env,
+      rpc,
+      { code: v.code, enquiryId: row && row.enquiryId, totalP: out.body.totalP, planName: out.body.planName, gymName: out.body.gymName, name: v.name, proof: v.proof },
+      { now, origin: new URL(request.url).origin, f: deps.fetch },
+    );
+    if (made.pay) out.body.pay = made.pay;
+    else out.body.payWhy = made.why;
+  }
   return answer(out.status, out.body);
 }

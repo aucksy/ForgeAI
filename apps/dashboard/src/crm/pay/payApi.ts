@@ -39,13 +39,26 @@ export interface PayProvider {
   connection: PayConnection | null;
 }
 
+/**
+ * R-528: the owner's two switches. `ready` false = the server part (D1 0016) is not on yet: shown greyed. An older
+ * server sends none (undefined): read as not ready.
+ */
+export interface PaySwitches {
+  ready: boolean;
+  /** "Take payments in the member app". */
+  app: boolean;
+  /** "Take payments on your web page and join link". */
+  web: boolean;
+}
+
 export type DeskPay =
   | { on: false; why: 'NOT_READY' | 'NO_MASTER_KEY' | 'OFFLINE' | 'DEMO' }
-  | { on: true; connectOn: boolean; testMode: boolean; canManage: boolean; providers: PayProvider[] };
+  | { on: true; connectOn: boolean; testMode: boolean; canManage: boolean; providers: PayProvider[]; switches?: PaySwitches };
 
 export interface PayRequest {
   id: string;
-  kind: 'fee' | 'shop';
+  /** 'join' (R-528): paid on the join page; `ref` is the request's enquiry id, there is no member yet. */
+  kind: 'fee' | 'shop' | 'join';
   memberId: string | null;
   ref: string;
   amountP: Paise;
@@ -188,6 +201,22 @@ export async function claimReceipt(key: string, id: string): Promise<{ token: st
 
 export async function markRecorded(key: string, id: string, o: { token?: string | null; receiptNo: string; method?: string; amountP?: Paise }): Promise<PayRequest> {
   return (await payCall<{ request: PayRequest }>('recorded', { key, id, ...o })).request;
+}
+
+/** R-528: Settings -> Payments, the owner's switches. Owner only (the server checks). */
+export async function saveSwitches(key: string, patch: { app?: boolean; web?: boolean }): Promise<PaySwitches> {
+  return (await payCall<{ switches: PaySwitches }>('switches', { key, ...patch })).switches;
+}
+
+/** R-528: a payment made on the join page; `said` = a plain UPI payment the person says they made (check the bank). */
+export interface JoinPay extends PayRequest {
+  said: boolean;
+}
+
+/** R-528: the join page's payments of the last 45 days, for Today's "Joined online". */
+export async function joinPays(key: string): Promise<JoinPay[]> {
+  const r = await payCall<{ joins?: JoinPay[] }>('joins', { key });
+  return Array.isArray(r.joins) ? r.joins : [];
 }
 
 /** "+91 98290 12345" -> "9829012345"; anything else -> null. PURE. */

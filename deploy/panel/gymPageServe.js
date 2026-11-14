@@ -252,7 +252,8 @@ export function handleReport(request, env, rpc, now = new Date()) {
 
 /**
  * Every request to join.mettleup.fit. `rpc(fn, args)` -> {status, data} (worker.js passes the real one; tests a fake).
- * `opts.nowMs` and `opts.cache` are for tests.
+ * `opts.nowMs` and `opts.cache` are for tests. `opts.payOnline(code)` -> {online} (R-528, joinPay.js offerForCode): the
+ * "Become a member" button then says "Join and pay online" instead of "Pay at the desk".
  */
 export async function handleGymPageHost(request, env, ctx, url, rpc, opts = {}) {
   if (env.GYM_PAGES !== 'live') return notHere();
@@ -274,7 +275,15 @@ export async function handleGymPageHost(request, env, ctx, url, rpc, opts = {}) 
   const page = await pageData(slug, rpc, ctx, opts.cache);
   if (page === undefined) return notHere(503);
   if (!page) return notHere();
-  const html = renderGymPage(page, { nowMs: opts.nowMs ?? Date.now(), origin: PAGE_ORIGIN });
+  let payOnline = false;
+  if (opts.payOnline && page.joinOnline && page.joinCode) {
+    try {
+      payOnline = (await opts.payOnline(page.joinCode))?.online === true;
+    } catch {
+      console.warn('[gym-page] online pay not known; the button says pay at the desk');
+    }
+  }
+  const html = renderGymPage(page, { nowMs: opts.nowMs ?? Date.now(), origin: PAGE_ORIGIN, payOnline });
   return new Response(request.method === 'HEAD' ? null : html, {
     headers: pageHeaders({
       // A minute at the edge and in the browser: "Open now" moves with the clock.

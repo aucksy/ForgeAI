@@ -166,11 +166,13 @@ for (const [size, scheme, lang] of [
     await shot(page, `selfjoin-page-4-plan-${tag}`);
     await page.locator('#next2').click();
 
-    // Step 3: what they send, the two unticked boxes, pay at the desk only.
+    // Step 3: what they send, the two unticked boxes, pay at the desk only (this gym takes no online payments:
+    // R-528's "Pay now" is in joinpay-uat.spec.mjs).
     await expect(page.locator('#step3')).toBeVisible();
     await expect(page.locator('#adult')).not.toBeChecked();
     await expect(page.locator('#health')).not.toBeChecked();
-    await expect(page.locator('input[name=pay]')).toHaveCount(1);
+    await expect(page.locator('#pay-online-opt')).toBeHidden();
+    await expect(page.locator('input[name=pay][value=desk]')).toBeChecked();
     await expect(page.locator('#summary')).toContainText('Ravi Kumar');
     await expect(page.locator('#summary')).toContainText('₹2,000');
     await expect(page.locator('#summary')).toContainText(lang === 'hi' ? '20 नवंबर 2026' : '20 Nov 2026');
@@ -185,7 +187,7 @@ for (const [size, scheme, lang] of [
     await expect(page.locator('#done-pay')).toContainText('₹2,000');
     await expect(page.locator('#form')).toBeHidden();
     // Only the checked values go: never a price, a fee or a total (the gym server reads those itself).
-    expect(sent).toEqual([{ code: 'QA0002', name: 'Ravi Kumar', proof: PROOF, gender: 'male', plan: 'plan-month', start: '2026-11-20', adult: true, health: true, lang, website: '' }]);
+    expect(sent).toEqual([{ code: 'QA0002', name: 'Ravi Kumar', proof: PROOF, gender: 'male', plan: 'plan-month', start: '2026-11-20', adult: true, health: true, lang, pay: 'desk', website: '' }]);
     await noSideways(page);
     await shot(page, `selfjoin-page-6-sent-${tag}`);
     expect(errors).toEqual([]);

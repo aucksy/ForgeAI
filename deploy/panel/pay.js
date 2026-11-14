@@ -21,6 +21,7 @@
 import { answer } from './feedback.js';
 import { hasMasterKey, hmac256, lastFour, randomId, sameText, seal, toHex, unseal } from './payCrypto.js';
 import { PROVIDERS, PROVIDER_ORDER, PayError, requestIdOf } from './payProviders.js';
+import { saidAt, saveSwitches, switchesOf, switchesReady } from './paySwitches.js';
 
 const SUPABASE = 'https://hdxzqbdiokjklnypfisq.supabase.co';
 // The public, read-only app key (the same one in the panel and the app).
@@ -273,7 +274,7 @@ export async function checkWithCompany(env, db, row, { f = fetch, force = false,
 }
 
 /** Make the company link for a request row (also a fresh one when PhonePe's hour ran out). */
-async function makeLink(env, db, row, conn, extra, f, origin) {
+export async function makeLink(env, db, row, conn, extra, f, origin) {
   const adapter = PROVIDERS[conn.provider];
   const n = Number(row.link_n) || 1;
   const ref = n > 1 ? `${row.id}-${n}` : row.id;
@@ -368,6 +369,10 @@ export async function handlePay(request, env, url, deps = {}) {
         return await memberCheck(env, db, b, f, now);
       case '/api/pay/shop':
         return await shopRequest(env, db, b, f, now, url.origin);
+      case '/api/pay/switches':
+        return await setSwitches(env, db, b, f, now);
+      case '/api/pay/joins':
+        return await joinList(env, db, b, f, now);
       default:
         return no(404, 'Not found');
     }
@@ -392,11 +397,14 @@ async function deskState(env, db, b, f, now) {
   }
   const rows = (await db.prepare('SELECT * FROM pay_connections WHERE gym_id = ?').bind(who.gymId).all()).results || [];
   const keysOn = hasMasterKey(env);
+  // R-528: the owner's two switches (D1 0016). ready = false before it is applied: the screen greys them.
+  const ready = await switchesReady(db);
   return ok({
     on: true,
     connectOn: keysOn,
     testMode: payMode(env) === 'test',
     canManage: who.role === 'owner',
+    switches: { ready, ...(await switchesOf(db, who.gymId)) },
     providers: PROVIDER_ORDER.map((id) => ({
       id,
       name: PROVIDERS[id].name,
@@ -586,6 +594,34 @@ async function recorded(env, db, b, f, now) {
   return ok({ request: requestView(await requestOf(db, row.id)) });
 }
 
+/** R-528: Settings -> Payments, the owner's two switches. Owner only; before D1 0016 "not switched on yet". */
+async function setSwitches(env, db, b, f, now) {
+  const who = await deskWho(env, b.key, f);
+  if (who.role !== 'owner') return no(403, 'OWNER_ONLY');
+  if (!(await switchesReady(db))) return ok({ on: false, why: 'NOT_READY' });
+  const switches = await saveSwitches(db, who.gymId, { app: b.app, web: b.web }, now);
+  console.log('[pay] switches saved', switches.app ? 'app on' : 'app off', switches.web ? 'web on' : 'web off');
+  return ok({ switches: { ready: true, ...switches } });
+}
+
+/**
+ * R-528: the payments made from the join page (kind 'join', ref = the enquiry id), last 45 days, for Today's
+ * "Joined online": paid (by a company: confirmed), "I have paid" (a plain UPI payment: check the bank), or not paid.
+ */
+async function joinList(env, db, b, f, now) {
+  const who = await deskWho(env, b.key, f);
+  const rows =
+    (
+      await db
+        .prepare("SELECT * FROM pay_requests WHERE gym_id = ? AND kind = 'join' AND created_at >= ? ORDER BY created_at DESC LIMIT 100")
+        .bind(who.gymId, nowIso(now - 45 * 86400000))
+        .all()
+    ).results || [];
+  const joins = [];
+  for (const r of rows) joins.push({ ...requestView(r), said: Boolean(r.provider === '' && (await saidAt(db, r.id))) });
+  return ok({ joins });
+}
+
 /** A member's own requests: what the gym asked them to pay, and their shop orders' payments. */
 async function mine(env, db, b, f, now) {
   const who = await memberWho(env, b.memberKey, f);
@@ -602,7 +638,20 @@ async function mine(env, db, b, f, now) {
         .all()
     ).results || [];
   const gym = await db.prepare('SELECT * FROM pay_gyms WHERE gym_id = ?').bind(who.gymId).first();
-  return ok({ on: true, fees: Boolean(who.rosterId), requests: rows.map(memberView), gymUpi: gym ? gym.upi || null : null });
+  // R-528: the owner switched off "Take payments in the member app": what is owed still shows, the ways to pay do not.
+  const app = (await switchesOf(db, who.gymId)).app;
+  return ok({
+    on: true,
+    fees: Boolean(who.rosterId),
+    appPay: app,
+    requests: rows.map((r) => (app ? memberView(r) : deskOnlyView(memberView(r)))),
+    gymUpi: app && gym ? gym.upi || null : null,
+  });
+}
+
+/** R-528: the app switch is off: the amount, label and status stay; no QR, UPI link or payment page. PURE. */
+export function deskOnlyView(v) {
+  return v.status === 'open' ? { ...v, upiId: null, url: null, deskOnly: true } : v;
 }
 
 /** The member's view: no ids of other people, no payment ids. PURE. */
@@ -639,13 +688,14 @@ async function memberRow(env, db, b, f) {
 async function memberCheck(env, db, b, f, now) {
   const { row } = await memberRow(env, db, b, f);
   if (!row) return no(404, 'NOT_FOUND');
+  const app = (await switchesOf(db, row.gym_id)).app;
   let fresh = await checkWithCompany(env, db, row, { f, now });
   // PhonePe's page lasts an hour: an open request whose link ran out gets a new link when looked at.
-  if (fresh.status === 'expired' && fresh.provider === 'phonepe' && hasMasterKey(env)) fresh = await remake(env, db, fresh, f, now);
-  return ok({ request: memberView(fresh) });
+  if (app && fresh.status === 'expired' && fresh.provider === 'phonepe' && hasMasterKey(env)) fresh = await remake(env, db, fresh, f, now);
+  return ok({ request: app ? memberView(fresh) : deskOnlyView(memberView(fresh)) });
 }
 
-async function remake(env, db, row, f, now) {
+export async function remake(env, db, row, f, now) {
   const conn = await connOf(db, row.gym_id, row.provider);
   if (!conn || conn.status !== 'on') return row;
   await db.prepare('UPDATE pay_requests SET link_n = link_n + 1 WHERE id = ?').bind(row.id).run();
@@ -661,6 +711,8 @@ async function remake(env, db, row, f, now) {
 /** A member pays for their own shop order: the amount is the order's, read from the gym server. */
 async function shopRequest(env, db, b, f, now, origin) {
   const who = await memberWho(env, b.memberKey, f);
+  // R-528: "Take payments in the member app" is off: no new payment; the app says to pay at the desk.
+  if (!(await switchesOf(db, who.gymId)).app) return ok({ on: true, deskOnly: true, request: null });
   const orderId = str(b.orderId);
   const orders = await rpc(env, 'member_orders', { p_key: b.memberKey }, f);
   const order = Array.isArray(orders) ? orders.find((o) => o && str(o.order_id) === orderId) : null;

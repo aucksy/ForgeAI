@@ -19,9 +19,9 @@ import { useCan } from '../auth/AuthProvider';
 import { t } from '../lang/lang';
 import { validUpiId } from '../logic/upiPay';
 import { useCrm } from '../store';
-import { Button, Card, ErrorBanner, PageHeader, Pill, Row, SectionTitle, TextField, Toast, color, font, space } from '../ui/kit';
+import { Button, Card, CheckField, ErrorBanner, PageHeader, Pill, Row, SectionTitle, TextField, Toast, color, font, space } from '../ui/kit';
 import { navigate } from '../ui/router';
-import { PayRefused, connectKeys, disconnect, oauthStart, type DeskPay, type PayProvider } from './payApi';
+import { PayRefused, connectKeys, disconnect, oauthStart, saveSwitches, type DeskPay, type PayProvider } from './payApi';
 import { KEYS_HELP, connectProblem, connectionLine } from './payWords';
 import { setDeskPay, useDeskPay } from './useDeskPay';
 
@@ -138,7 +138,97 @@ export function PaymentsScreen() {
             }}
           />
         ))}
+
+      {state ? (
+        <SwitchesCard
+          live={live}
+          deskKey={key}
+          canManage={ownerCan}
+          hasAccount={Boolean(upi) || (live?.providers ?? []).some((p) => p.connection?.on)}
+          onSaved={(next) => {
+            if (key && live) setDeskPay(key, { ...live, switches: next });
+            setToast(t('Saved.'));
+          }}
+        />
+      ) : null}
     </div>
+  );
+}
+
+/** R-528: why the two switches cannot be changed, or null when they can. PURE. */
+export function switchesBlocked(o: { live: DeskPay | null; hasAccount: boolean; canManage: boolean }): string | null {
+  if (!o.hasAccount) return t('Add your UPI ID or connect a payment company first.');
+  const sw = o.live?.on === true ? o.live.switches : undefined;
+  if (!sw?.ready) return t('These switches are not switched on yet. Until then members pay in the app as now, and people who join online pay at the desk.');
+  if (!o.canManage) return t('Only the owner can change these.');
+  return null;
+}
+
+/**
+ * R-528 (14 Nov 2026): "Take payments in the member app" and "Take payments on your web page and join link". Both on
+ * once a payment account is set up; with none, both off and greyed with the reason. Off in the app only hides the
+ * Pay now button: the member still sees what they owe.
+ */
+function SwitchesCard({
+  live,
+  deskKey,
+  canManage,
+  hasAccount,
+  onSaved,
+}: {
+  live: DeskPay | null;
+  deskKey: string | null;
+  canManage: boolean;
+  hasAccount: boolean;
+  onSaved: (s: { ready: boolean; app: boolean; web: boolean }) => void;
+}) {
+  const sw = live?.on === true ? live.switches : undefined;
+  const [busy, setBusy] = useState(false);
+  const [problem, setProblem] = useState<string | null>(null);
+  const blocked = switchesBlocked({ live, hasAccount, canManage });
+  const appOn = hasAccount && (sw?.ready ? sw.app : false);
+  const webOn = hasAccount && (sw?.ready ? sw.web : false);
+
+  const save = async (patch: { app?: boolean; web?: boolean }) => {
+    if (!deskKey || blocked) return;
+    setBusy(true);
+    setProblem(null);
+    try {
+      onSaved(await saveSwitches(deskKey, patch));
+    } catch (e) {
+      console.warn('[pay] switches not saved', e instanceof Error ? e.message : e);
+      setProblem(t('Could not save. Check your internet and try again.'));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <Card style={{ marginBottom: space.lg }}>
+      <SectionTitle>{t('Where members can pay online')}</SectionTitle>
+      {problem ? <ErrorBanner>{problem}</ErrorBanner> : null}
+      <CheckField
+        checked={appOn}
+        disabled={busy || blocked !== null}
+        onChange={(v) => void save({ app: v })}
+        hint={t('Members see a Pay now button for what they owe. When off, they still see what they owe and pay at the desk.')}
+      >
+        {t('Take payments in the member app')}
+      </CheckField>
+      <CheckField
+        checked={webOn}
+        disabled={busy || blocked !== null}
+        onChange={(v) => void save({ web: v })}
+        hint={t('People who join on your web page can pay for their plan there. When off, they send their details and pay at the desk.')}
+      >
+        {t('Take payments on your web page and join link')}
+      </CheckField>
+      {blocked ? (
+        <p role="status" style={{ ...muted, fontWeight: 700 }}>
+          {blocked}
+        </p>
+      ) : null}
+    </Card>
   );
 }
 

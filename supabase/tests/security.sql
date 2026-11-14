@@ -86,6 +86,8 @@ declare
     'owner_save_web_push','owner_clear_web_push','owner_web_push_on','owner_alert_settings','owner_save_alert_settings',
     -- 0077: Join online (the public page: a gym code for the preview; the request also needs a one-use signed 'join' proof, and writes only into that gym's enquiries).
     'self_join_preview','self_join_send',
+    -- 0081: pay online on the join page (which gym a code is: the panel Worker's HMAC signature with 0061's secret only).
+    'self_join_pay_gym',
     -- 0078: AI questions on the gym's credits (take: the Worker's HMAC signature over the key, then the member, owner or staff key; give back: a question id only the Worker holds, once, within 10 minutes; the counts: the OWNER key only).
     'ai_question_take','ai_visitor_question_take','ai_question_back','owner_ai_questions',
     -- 0080: the gym's web page. The editor: owner_gym_page checks an owner or desk key, owner_save_gym_page the OWNER

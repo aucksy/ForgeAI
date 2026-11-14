@@ -50,6 +50,7 @@ import { handleHqNews } from './hqNews.js';
 import { handleLead } from './leads.js';
 import { deleteOldFriendAsks, handleFriend } from './friend.js';
 import { handleSelfJoin } from './selfJoin.js';
+import { handleJoinPay, offerForCode } from './joinPay.js';
 import { handleGymPageHost } from './gymPageServe.js';
 import { deleteOldVoiceCounts, handleVoice } from './voice.js';
 import { handleMatchColumns } from './aiMatch.js';
@@ -78,7 +79,7 @@ export default {
     if (where.kind === 'redirect') return new Response(null, { status: where.status, headers: { Location: where.to, 'Cache-Control': 'max-age=3600' } });
     // F207: join.mettleup.fit/<gym> is a gym's own page (gymPageServe.js). Off unless GYM_PAGES is "live"; the host is
     // not in wrangler.jsonc's routes yet either (docs/gym-page/PLAN.md).
-    if (where.kind === 'gympage') return handleGymPageHost(request, env, ctx, url, rpc);
+    if (where.kind === 'gympage') return handleGymPageHost(request, env, ctx, url, rpc, { payOnline: (code) => offerForCode(env, rpc, code) });
     // F184: mettleup.fit "/" is the member page (/member-site/), gyms.mettleup.fit "/" the gym page (/home/).
     // LANDING "off" hides both (the old kill switch).
     if (where.kind === 'landing' || where.kind === 'members') {
@@ -112,6 +113,8 @@ export default {
     if (selfJoin) return joinPage(request, env, ctx, url, selfJoin[1].toUpperCase(), SELFJOIN);
     if (url.pathname.startsWith('/m/')) return joinPage(request, env, ctx, url, null, SELFJOIN);
     if (url.pathname === '/api/self-join') return handleSelfJoin(request, env, rpc);
+    // R-528: pay online on the join page (joinPay.js): can this gym be paid online, and the page's own payment.
+    if (url.pathname.startsWith('/api/self-join/')) return handleJoinPay(request, env, url, rpc);
     // R-411: the update screen's What's new lines, from our own server (GitHub's India download edge failed).
     if (url.pathname === '/app/whats-new.json') return handleWhatsNew(request, ctx);
     if (url.pathname === '/app' || url.pathname === '/app/') return latestApk(ctx);

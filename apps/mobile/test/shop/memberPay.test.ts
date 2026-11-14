@@ -4,7 +4,7 @@
  */
 import { describe, expect, it } from 'vitest';
 
-import { askLine, feesToShow, mineFromJson, onlineButton, requestFromJson, statusLine, upiLink, validUpiId, type MemberPayRequest } from '@/shop/memberPay';
+import { PAY_WORDS, askLine, feesToShow, mineFromJson, onlineButton, requestFromJson, statusLine, upiLink, validUpiId, type MemberPayRequest } from '@/shop/memberPay';
 
 const raw = (o: Record<string, unknown> = {}) => ({
   id: 'pr_0123456789abcdef0123',
@@ -83,6 +83,17 @@ describe('what the member sees', () => {
     expect(statusLine(req({ status: 'paid', paidP: 150000 }))).toBe('Paid ₹1,500. Thank you!');
     expect(statusLine(req({ status: 'paid', paidP: 150000, recorded: true }))).toBe('Paid ₹1,500. Thank you! Your receipt is saved.');
     expect(statusLine(req({ status: 'expired' }))).toBe('This payment link has run out. Ask the desk for a new one.');
+  });
+
+  it('R-528: the owner switched off payments in the app: what they owe stays, the ways to pay go', () => {
+    const r = req({ upiId: null, url: null, deskOnly: true });
+    expect(r.deskOnly).toBe(true);
+    expect(r.upiId).toBeNull();
+    expect(r.url).toBeNull();
+    expect(askLine(r)).toBe('Monthly: ₹1,500');
+    expect(PAY_WORDS.deskOnly).toBe('Pay this at the gym desk.');
+    expect(req().deskOnly).toBe(false);
+    expect(mineFromJson({ on: true, appPay: false, requests: [raw({ upiId: null, url: null, deskOnly: true })], gymUpi: null })?.requests[0]?.deskOnly).toBe(true);
   });
 
   it('never uses the words the member app keeps out', () => {
