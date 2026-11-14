@@ -1077,7 +1077,6 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   Owner: 'Owner',
   'Staff (front desk)': 'Staff (front desk)',
   Staff: 'Staff',
-  You: 'Aap',
   'Type the job (for example Manager, Cleaner)': 'Kaam likho (jaise Manager, Cleaner)',
   'Type their job, like Manager or Cleaner.': 'Unka kaam likho, jaise Manager ya Cleaner.',
   'Can do everything, including money totals.': 'Sab kuch kar sakte hain, paison ka total bhi dekhte hain.',

@@ -88,6 +88,8 @@ declare
     'self_join_preview','self_join_send',
     -- 0078: AI questions on the gym's credits (take: the Worker's HMAC signature over the key, then the member, owner or staff key; give back: a question id only the Worker holds, once, within 10 minutes; the counts: the OWNER key only).
     'ai_question_take','ai_visitor_question_take','ai_question_back','owner_ai_questions',
+    -- 0079: a person's job name on Staff & sign-in (checks the key first: the gym OWNER only; a desk key gets OWNER_ONLY).
+    'owner_set_person_job',
     -- 0060: Pay MettleUp (each checks the key first: the gym OWNER only; a desk key gets OWNER_ONLY).
     'owner_pay_mettleup','owner_report_mettleup_payment',
     -- 0063: online buying (each checks the key first: the gym OWNER only; read only, the owner's own gym and receipts).
