@@ -1,4 +1,4 @@
--- NOT APPLIED - needs the owner's yes ("No LIVE database changes without my yes"). Cloudflare D1 `forgeai-web` (our
+-- APPLIED LIVE 14 Nov 2026 (R-542: owner's "yes"; wrangler d1 execute --remote --file, 2 queries, tables checked). Cloudflare D1 `forgeai-web` (our
 -- web server's own small database), NOT the gym server. Re-runnable: IF NOT EXISTS only.
 -- Apply with: npx wrangler d1 execute forgeai-web --remote --file migrations/0016_pay_switches.sql   (from deploy/panel)
 --

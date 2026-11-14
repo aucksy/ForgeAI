@@ -7,6 +7,16 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-542. YES to pay online when joining (0081 + D1 0016 live); payments must be "tested to death" — 14 Nov 2026
+He said (14 Nov 2026): "yes" (to the 2 database changes and the public join-and-pay words). Then: "wherever we are
+handling the payment for the gym owner that is a very very serious work so please ensure that thing is tested to death
+it should be tested so thoroughly there should never be any problem because of that because of us I'm not kidding You
+cannot shy away from testing every single angle on this"
+Done: 0081 live (tests 0081 PASS 19, 0077 PASS 69); D1 0016 live (pay_switches, pay_said). The feature turns on only
+with the next panel deploy. HOLD that deploy for payments until a full payment test sweep (every angle, written matrix,
+test-mode run on the provider, separate fresh-eyes review) passes. Saved as the hard rule
+money-features-are-tested-to-death. Payments stay in test mode until "payments live".
+
 ## R-541. YES to the Bring a friend database change and to connecting join.mettleup.fit (invite/join links only) — 14 Nov 2026
 He said (14 Nov 2026): "yes" to two things" - answering: (1) a database change so a friend whose number is already known
 still reaches the owner as "Invited again by <member>"; (2) connecting join.mettleup.fit only for invite and join links,

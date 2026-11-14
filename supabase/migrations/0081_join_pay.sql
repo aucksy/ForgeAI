@@ -1,4 +1,5 @@
--- NOT APPLIED - needs the owner's yes ("No LIVE database changes without my yes"). Re-runnable. Apply after 0077 (it
+-- APPLIED LIVE 14 Nov 2026 (R-542: owner said "yes" to switching on pay online when joining; SQL Editor from 1b520a49;
+-- live tests 0081 PASS 19, 0077 PASS 69). Re-runnable. Apply after 0077 (it
 -- replaces 0077's self_join_send) and 0061 (it checks the panel Worker's signature with 0061's secret).
 -- Test: supabase/tests/0081_join_pay.sql (CI runs it after every migration; pasted into the SQL Editor it always ends
 -- in an error and so changes nothing). 0077's own test still runs against the function replaced here.
