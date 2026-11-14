@@ -161,7 +161,8 @@ workout, Settings switch). He said "build all 5" (13 Nov 2026). Next app update;
 ## R-481. Google rejected 0.77.0 over watch heart rate; sent back with a video (his "A") — 13 Nov 2026
 PUBLISHED 14 Nov 2026 (his "publish"): Google approved; I pressed "Publish 4 changes" in Play Console (simpleapps108).
 Production shows "Active, Latest release: 77000 (0.77.0), 178 countries / regions". The watch closed-test copy went
-out in the same publish. Play banner seen: "Declare your trader status by February 1, 2027" (needs his business details).
+out in the same publish. Play banner seen: "Declare your trader status by February 1, 2027". ALREADY DONE on 10 Nov (R-433, all apps); he
+corrected me on 14 Nov. App content says "You're all caught up"; the banner is only a Play news card. Do not raise it again.
 Google (13 Nov 9:13 am): "Update rejected", 2 Health Connect issues, both only about HeartRate
 (android.permission.health.READ_HEART_RATE, the watch app's live heart rate; Wear OS 6 uses it instead of BODY_SENSORS):
 "Excessive Data Access" (could not verify it; "your app may require a companion device. Provide a video link in your
