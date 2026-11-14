@@ -7,6 +7,35 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-495. Show the gym's own logo in the admin panel — 14 Nov 2026
+He said: "when a gym owner adds their logo in the branding panel, we should also start showing that logo somewhere on
+the admin panel." My view: yes. Doing: the logo top-left in the panel's header next to the gym name (initials when no
+logo), so every page feels like their own system. Built by a helper; panel deploy after tests + UAT.
+
+## R-494. Do internal testers get production updates? Turn on open beta? — 14 Nov 2026
+He asked: now that the app is in production, do internal testers still get updates; and can we enable beta enrolment
+so people who join the beta get updates before production. Answered in chat (Play gives each phone the highest version
+it may get; testers get each version first). Open testing = a release step: waits for his pick (A now / B later).
+
+## R-493. Sign-in by phone number; no "Do you run a gym on MettleUp?" card — 14 Nov 2026
+He said: "I did not want this. I want a simple sign-in page which is connected to their phone number ... the primary
+sign in should be phone number and we automatically detect if someone phone number is already in the database as
+someone's gym member or as someone's gym staff or trainer or owner ... tell them that we have identified you as a
+trainer for this gym. Hence all the features of this app are unlocked for you ... for any staff, trainer or owner we'll
+have their phone number as well in the database. If not, we might wanna build it." He asked to see the current sign-in
+page first (shown: welcome screen with Continue with Google / Join my gym / Bring workouts / Use without an account; the
+R-458 card is on the Gym tab). Doing now: hide the R-458 card (StaffDoorCard) before the next release. Phone sign-in:
+designed, waits for his pick of the proof (A WhatsApp message to us, free / B SMS code, paid) and his yes on the LIVE
+server parts (0068 + panel) and privacy words. Staff and owners have mobiles (gym_staff); trainers are staff
+(gym_trainers.staff_id); members have the gym's phone on file.
+
+## R-492. Muscle tips: also offer Add on the swap tip; an (i) "why" and the words "Smart suggestion" — 14 Nov 2026
+He said: "are we only giving option to swap or we are also giving option to add. Some people might just want to add one
+exercise and not swap anything ... a letter I symbol which we can tap and find out why we are giving this suggestion and
+then the word smart suggestion should be mentioned so that they immediately know what they are looking at". (No earlier
+note of the (i) or "Smart suggestion"; built now as asked.) Doing: tip 2 gets Add next to Swap; every muscle tip shows
+"Smart suggestion" on top and an (i) that explains why in plain words. Rides the next release.
+
 ## R-491. One look everywhere: list pictures and the demo use the orange-tank pictures — 14 Nov 2026
 He said (14 Nov 2026): "Yes I pick A" (my question: 176 exercises showed the old grey Everkinetic line drawings in
 the exercise LIST, 120 of them although they have orange-tank pictures; A = show the orange-tank picture wherever one
