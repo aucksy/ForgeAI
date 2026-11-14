@@ -391,6 +391,20 @@ export interface EnquirySelfJoin {
   consents: { adultAt: number; healthAt: number; wording: string };
   /** When the request came in (ms). */
   at: number;
+  /**
+   * F210 (supabase 0088): they picked the gym's free trial instead of a plan. Then planId and planName are '' and every
+   * amount is 0; the desk picks the plan when they join. They may visit from `startsOn` to `endsOn` (both included).
+   */
+  trial?: EnquirySelfJoinTrial | null;
+}
+
+/** F210: a free trial picked on the "Become a member" page. */
+export interface EnquirySelfJoinTrial {
+  days: number;
+  /** The last day they may visit ('YYYY-MM-DD'): startsOn + days - 1. */
+  endsOn: DateISO;
+  /** Always 0 for now: the trial fee (R-524) waits for online join payments. */
+  feeP: number;
 }
 
 /** F207: a question from the gym's web page (join.mettleup.fit/<gym>), as the gym server keeps it. */

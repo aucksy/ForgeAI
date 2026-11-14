@@ -213,3 +213,43 @@ test('R-539: the payment webhook stays on app.mettleup.fit when the page is on j
   assert.equal(hookOrigin('https://forgeai.aakashpahuja.in/api/self-join'), 'https://forgeai.aakashpahuja.in');
   assert.equal(hookOrigin('http://localhost:8787/api/self-join'), 'http://localhost:8787');
 });
+
+// F210 (supabase 0088, NOT live): the gym's free trial is the same request with plan '_trial'.
+const TRIAL_OK = { status: 200, data: { ok: true, gymName: 'Shakti Gym', startsOn: '2026-11-20', totalP: 0, linked: false, enquiryId: 'join-1', trial: { days: 3, endsOn: '2026-11-22' } } };
+
+test('F210: a free trial goes on as plan "_trial", and the page hears its days and last day', quiet(async () => {
+  assert.equal(checkSelfJoin({ ...good, plan: '_trial' }).value.plan, '_trial');
+  assert.deepEqual(serverAnswer(TRIAL_OK.data), {
+    status: 201,
+    body: { ok: true, gymName: 'Shakti Gym', startsOn: '2026-11-20', totalP: 0, linked: false, trial: { days: 3, endsOn: '2026-11-22' } },
+  });
+  // A damaged trial answer is left out (the page then says the plain "sent").
+  assert.equal(serverAnswer({ ...TRIAL_OK.data, trial: { days: '3', endsOn: '22 Nov' } }).body.trial, undefined);
+  const { calls, rpc } = fakeRpc(TRIAL_OK);
+  const r = await handleSelfJoin(post({ ...good, plan: '_trial' }), env(sqliteD1()), rpc);
+  assert.equal(r.status, 201);
+  assert.deepEqual((await r.json()).trial, { days: 3, endsOn: '2026-11-22' });
+  assert.equal(calls[0].args.p_plan, '_trial');
+}));
+
+test('F210: trials switched off, or this number already had one: 409 with the reason', quiet(async () => {
+  const WEB = sqliteD1();
+  for (const [error, ip] of [['TRIAL_OFF', '3.3.3.1'], ['TRIAL_USED', '3.3.3.2']]) {
+    assert.deepEqual(serverAnswer({ error }), { status: 409, body: { error } });
+    const { rpc } = fakeRpc({ status: 200, data: { error } });
+    const r = await handleSelfJoin(post({ ...good, plan: '_trial' }, ip), env(WEB), rpc);
+    assert.equal(r.status, 409, error);
+    assert.deepEqual(await r.json(), { error });
+  }
+}));
+
+test('F210: a free trial is never paid online, even when the form says "pay": "online"', quiet(async () => {
+  const { calls, rpc } = fakeRpc(TRIAL_OK);
+  const r = await handleSelfJoin(post({ ...good, plan: '_trial', pay: 'online' }, '4.4.4.4'), env(sqliteD1()), rpc, new Date(), { fetch: async () => { throw new Error('no outside call for a trial'); } });
+  const body = await r.json();
+  assert.equal(r.status, 201);
+  assert.equal(body.pay, undefined);
+  assert.equal(body.payWhy, undefined);
+  // Only the request itself: no gym lookup for a payment (self_join_pay_gym) and no payment.
+  assert.deepEqual(calls.map((c) => c.fn), ['self_join_send']);
+}));

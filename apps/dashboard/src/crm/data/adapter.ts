@@ -60,6 +60,12 @@ export interface GymRecord {
    * reads it so the member app can say what the gym gives (supabase 0056 _friend_reward_days).
    */
   friendRewardDays?: number | null;
+  /**
+   * F210: the free trial new people may pick on the gym's "Become a member" link (Settings -> Member app). 1, 3 or 7
+   * days; absent or null = off (the default). Kept on the gym's details record; the gym server reads the same key
+   * (supabase 0088 _self_join_trial_days).
+   */
+  joinTrialDays?: number | null;
   createdAt: number;
 }
 

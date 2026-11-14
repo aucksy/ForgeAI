@@ -319,6 +319,11 @@ export function MakeMemberFlow({ enquiry, onClose, onError }: { enquiry: Enquiry
 function selfJoinLine(e: Enquiry): string | null {
   const j = selfJoinOf(e);
   if (!j) return null;
+  // F210 (0088): a free trial picked on the page instead of a plan.
+  if (j.trial) {
+    const days = j.trial.days === 1 ? '1 day' : `${j.trial.days} days`;
+    return `Free trial online: ${days}, ${formatDay(j.startsOn)} to ${formatDay(j.trial.endsOn)}. Nothing paid.`;
+  }
   return `Asked to join online: ${j.planName}, from ${formatDay(j.startsOn)}, ${formatINR(j.totalP)}. ${j.paid ? 'Paid.' : 'Not paid yet.'}`;
 }
 
@@ -405,8 +410,8 @@ function EnquiryRow({
           <div style={{ fontFamily: font.mono, fontSize: 13, color: color.inkSecondary, marginTop: 2 }}>
             {formatPhone(e.phone)}
           </div>
-          {/* R-513: the server's "Joined online: ..." note is the older app's copy of the line below. */}
-          {e.interest && !(selfJoinLine(e) && e.interest.startsWith('Joined online:')) && !(asked && e.interest.startsWith(PAGE_ASK_PREFIX)) && (
+          {/* R-513: the server's "Joined online: ..." note (F210: "Free trial online: ...") is the older app's copy of the line below. */}
+          {e.interest && !(selfJoinLine(e) && (e.interest.startsWith('Joined online:') || e.interest.startsWith('Free trial online:'))) && !(asked && e.interest.startsWith(PAGE_ASK_PREFIX)) && (
             <div style={{ fontFamily: font.body, fontSize: 13, color: color.ink, marginTop: 4, overflowWrap: 'anywhere' }}>
               {e.interest}
             </div>
@@ -810,6 +815,8 @@ function ConvertFlow({
   const [restoreError, setRestoreError] = useState<string | null>(null);
   // R-513: a "Become a member" request goes on to Sell membership, opened on the plan and day they picked.
   const [sellPlan] = useState(() => sellPlanFor(selfJoinOf(enquiry), snapshot.plans));
+  // F210: after a free trial Sell membership opens too, with no plan picked for them (the desk picks it).
+  const [sellNext] = useState(() => Boolean(sellPlan) || (Boolean(selfJoinOf(enquiry)?.trial) && snapshot.plans.some((p) => p.active)));
   const [selling, setSelling] = useState<Member | null>(null);
   const added = useRef(false);
 
@@ -817,7 +824,7 @@ function ConvertFlow({
   const link = async (member: Member): Promise<'selling' | 'done'> => {
     try {
       await updateEnquiry(enquiry.id, { status: 'joined', memberId: member.id });
-      if (sellPlan) {
+      if (sellNext) {
         setSelling(member);
         return 'selling';
       }
@@ -929,7 +936,7 @@ function ConvertFlow({
       initial={memberPrefill(enquiry)}
       onClose={() => {
         // Saved with a plan to sell next: the flow stays open (link above opens Sell membership).
-        if (!added.current || !sellPlan) onClose();
+        if (!added.current || !sellNext) onClose();
       }}
       onSaved={(member) => {
         added.current = true;

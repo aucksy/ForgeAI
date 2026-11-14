@@ -288,7 +288,12 @@ const SELFJOIN = {
  */
 export function selfJoinDesc(g, env) {
   if (g.closed) return `${g.gymName} is not taking sign-ups online right now.`;
-  return `Pick a plan and send your details to ${g.gymName}.${joinPayOpen(env) ? '' : ' Pay at the gym desk.'}`;
+  // F210 (supabase 0088): the owner's free trial is said first, only when it is on.
+  const days = g.trial && Number.isInteger(g.trial.days) && g.trial.days > 0 ? g.trial.days : 0;
+  const pick = days
+    ? `Try ${g.gymName} free for ${days} ${days === 1 ? 'day' : 'days'}, or pick a plan and send your details.`
+    : `Pick a plan and send your details to ${g.gymName}.`;
+  return `${pick}${joinPayOpen(env) ? '' : ' Pay at the gym desk.'}`;
 }
 const CHECKIN = {
   asset: '/checkin',

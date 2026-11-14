@@ -17,8 +17,10 @@
 //       R-528: with "pay": "online" in the form, once the request is kept its payment is made (joinPay.js attachJoinPay):
 //       pay = the page's view of it; payWhy = why not (the page then says "Pay at the desk"). The request is kept
 //       either way: a payment that fails never loses it.
+//       F210 (supabase 0088, NOT live until the owner's yes): plan '_trial' is the gym's free trial. The answer then
+//       carries trial: {days, endsOn} and no planName; nothing is ever paid online for it (no "pay" is attached).
 //   400 {error: 'BAD_REQUEST' | 'BAD_NAME' | 'BAD_PROOF' | 'BAD_PLAN' | 'BAD_DATE' | 'NO_CONSENT'}
-//   403 {error: 'CLOSED'}   404 {error: 'NO_GYM'}   409 {error: 'MEMBER'}   429 {error: 'TOO_MANY'}
+//   403 {error: 'CLOSED'}   404 {error: 'NO_GYM'}   409 {error: 'MEMBER' | 'TRIAL_OFF' | 'TRIAL_USED'}   429 {error: 'TOO_MANY'}
 //   503 {error: 'NOT_READY' | 'TRY_AGAIN'}
 
 import { APP_ORIGIN, GYM_PAGE_HOST } from './hosts.js';
@@ -59,12 +61,17 @@ export function serverAnswer(data) {
     const total = Number(row.totalP);
     if (row.totalP != null && Number.isSafeInteger(total)) body.totalP = total;
     body.linked = row.linked === true;
+    // F210 (0088): a free trial: its days and last day, as the gym server worked them out.
+    const tr = row.trial;
+    if (tr && typeof tr === 'object' && Number.isInteger(tr.days) && tr.days > 0 && typeof tr.endsOn === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(tr.endsOn)) {
+      body.trial = { days: tr.days, endsOn: tr.endsOn };
+    }
     return { status: 201, body };
   }
   const e = row && typeof row.error === 'string' ? row.error : '';
   if (e === 'NO_GYM') return { status: 404, body: { error: e } };
   if (e === 'CLOSED') return { status: 403, body: { error: e } };
-  if (e === 'MEMBER') return { status: 409, body: { error: e } };
+  if (e === 'MEMBER' || e === 'TRIAL_OFF' || e === 'TRIAL_USED') return { status: 409, body: { error: e } };
   if (['BAD_NAME', 'BAD_PROOF', 'BAD_PLAN', 'BAD_DATE', 'NO_CONSENT'].includes(e)) return { status: 400, body: { error: e } };
   if (e === 'TOO_MANY') return { status: 429, body: { error: e } };
   return { status: 503, body: { error: 'TRY_AGAIN' } };
@@ -165,7 +172,8 @@ export async function handleSelfJoin(request, env, rpc, now = new Date(), deps =
   if (out.status !== 201) console.warn(`[self-join] the gym server said ${out.body.error}`);
   else console.log(`[self-join] request kept${out.body.linked ? ' (linked to an open enquiry)' : ''}`);
   // R-528: they chose "Pay now": the payment for THIS request (0081 answers its enquiry id; before 0081 there is none).
-  if (out.status === 201 && body.pay === 'online') {
+  // F210: a free trial is never paid for online (the trial fee waits for join payments, R-524).
+  if (out.status === 201 && body.pay === 'online' && !out.body.trial) {
     const row = Array.isArray(r.data) ? r.data[0] : r.data;
     const made = await attachJoinPay(
       env,

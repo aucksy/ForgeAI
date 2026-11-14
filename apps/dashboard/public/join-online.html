@@ -22,6 +22,10 @@
   on (/api/self-join/pay-info says so). Online, the details are sent FIRST, then the page shows the payment: a link
   to the gym's own payment company, or its UPI ID. A payment that fails or is left half way keeps the request as
   "Not paid"; the desk makes nobody a member without a tap.
+  F210 (supabase 0088, NOT live until the owner's yes): when the owner switched on a free trial (1, 3 or 7 days), the
+  preview carries trial: {days}, and step 2 shows "Try free for N days" above the plans. It is sent as plan '_trial':
+  no plan, no money, the same number check and the same request; the gym sees "Free trial" on Today. No trial key (an
+  older server, or switched off) = no trial on this page.
   English or Hindi: the same switch and saved choice as the member site (mettleup.site.lang). A reload in the middle
   keeps the steps done so far (sessionStorage, this tab only). Light or dark follows the phone.
 -->
@@ -65,6 +69,9 @@
   .plan .price { font-size:17px; font-weight:800; text-align:right; }
   .plan .len, .plan .fee { color:var(--ink2); font-size:14px; font-weight:500; }
   .plan .fee { text-align:right; }
+  .plan.trial .price { color:var(--good); }
+  .plan.trial .len { grid-column:1 / -1; }
+  .or { color:var(--muted); font-size:14px; font-weight:700; text-align:center; margin:4px 0 0; }
   .help { color:var(--muted); font-size:14px; line-height:1.45; margin:6px 0 0; }
   .err { color:var(--bad); font-size:15px; font-weight:600; line-height:1.4; margin:8px 0 0; }
   .ok { color:var(--good); font-weight:700; }
@@ -161,7 +168,7 @@
         <p class="err hide" id="plan-err" role="alert"></p>
       </fieldset>
       <div class="field">
-        <label for="start" data-t="startDate">Start date</label>
+        <label for="start" id="start-label">Start date</label>
         <input id="start" type="date">
         <p class="help" id="start-help"></p>
         <p class="err hide" id="start-err" role="alert"></p>
@@ -181,9 +188,9 @@
     <section class="card hide" id="step3">
       <h2 tabindex="-1"><span class="kicker" data-t="step3of3">Step 3 of 3</span><span data-t="agreeSend">Agree and send</span></h2>
       <dl id="summary"></dl>
-      <fieldset>
-        <legend data-t="howPay">How you pay</legend>
-        <div class="opts">
+      <fieldset id="pay-box">
+        <legend data-t="howPay" id="pay-legend">How you pay</legend>
+        <div class="opts" id="pay-opts">
           <label class="hide" id="pay-online-opt"><input type="radio" name="pay" value="online"><span id="pay-online-words">Pay now (UPI or card)</span></label>
           <label><input type="radio" name="pay" value="desk" checked><span data-t="payDesk">Pay at the desk</span></label>
         </div>
@@ -330,7 +337,21 @@
       saidLine: 'Thank you. {gym} checks the payment in its bank, then makes you a member.',
       payFailed: 'The payment did not go through. If money was taken, it comes back to you. Try again, or pay at the desk.',
       payRanOut: 'The payment page ran out of time. Pay {total} at the gym desk on your first visit.',
-      payNoStart: 'Online payment is not working right now. Pay {total} at the gym desk on your first visit.'
+      payNoStart: 'Online payment is not working right now. Pay {total} at the gym desk on your first visit.',
+      // F210: the gym's free trial (only when the owner switched it on).
+      leadTrial: 'Join in 3 short steps, or try the gym free for {n} days.', leadTrial1: 'Join in 3 short steps, or try the gym free for 1 day.',
+      trialName: 'Try free for {n} days', trialName1: 'Try free for 1 day', free: 'Free',
+      trialHow: 'No payment. Visit the gym for {n} days, then pick a plan at the desk if you want to join.',
+      trialHow1: 'No payment. Visit the gym for 1 day, then pick a plan at the desk if you want to join.',
+      orPlan: 'or pick a plan',
+      trialStart: 'Trial starts on', trialToPay: 'To pay now', trialDays: 'Your free trial: {from} to {to}.',
+      sTrial: 'Free trial', sTrialLen: '{n} days', sTrialLen1: '1 day', sUntil: 'Visits until', sNothing: 'Nothing',
+      trialPayNote: 'A free trial costs nothing. Nothing is paid on this page.',
+      sendTrial: 'Start my free trial',
+      doneTrial: 'Your free trial: {from} to {to}.',
+      doneTrialHow: 'On your first visit, tell the gym desk your name. To keep training after the trial, pick a plan at the desk.',
+      TRIAL_USED: 'This number has already had a free trial at this gym. Please pick a plan instead.',
+      TRIAL_OFF: 'This gym is not giving free trials right now. Please pick a plan.'
     },
     hi: {
       lead: '3 छोटे स्टेप में मेंबर बनें। पैसे जिम के काउंटर पर देने हैं।',
@@ -403,7 +424,20 @@
       saidLine: 'धन्यवाद। {gym} अपने बैंक में पेमेंट देखेगा, फिर आपको मेंबर बना देगा।',
       payFailed: 'पेमेंट नहीं हो पाया। अगर पैसे कटे हैं, तो वापस आ जाएँगे। फिर से कोशिश करें, या काउंटर पर पैसे दें।',
       payRanOut: 'पेमेंट पेज का समय खत्म हो गया। पहली बार आने पर जिम के काउंटर पर {total} दें।',
-      payNoStart: 'ऑनलाइन पेमेंट अभी काम नहीं कर रहा है। पहली बार आने पर जिम के काउंटर पर {total} दें।'
+      payNoStart: 'ऑनलाइन पेमेंट अभी काम नहीं कर रहा है। पहली बार आने पर जिम के काउंटर पर {total} दें।',
+      leadTrial: '3 छोटे स्टेप में मेंबर बनें, या {n} दिन जिम मुफ़्त में आज़माएँ।', leadTrial1: '3 छोटे स्टेप में मेंबर बनें, या 1 दिन जिम मुफ़्त में आज़माएँ।',
+      trialName: '{n} दिन मुफ़्त आज़माएँ', trialName1: '1 दिन मुफ़्त आज़माएँ', free: 'मुफ़्त',
+      trialHow: 'कोई पैसा नहीं। {n} दिन जिम आएँ, फिर जॉइन करना हो तो काउंटर पर प्लान चुनें।',
+      trialHow1: 'कोई पैसा नहीं। 1 दिन जिम आएँ, फिर जॉइन करना हो तो काउंटर पर प्लान चुनें।',
+      orPlan: 'या कोई प्लान चुनें',
+      trialStart: 'ट्रायल शुरू होने की तारीख', trialToPay: 'अभी देने हैं', trialDays: 'आपका फ़्री ट्रायल: {from} से {to} तक।',
+      sTrial: 'फ़्री ट्रायल', sTrialLen: '{n} दिन', sTrialLen1: '1 दिन', sUntil: 'कब तक आ सकते हैं', sNothing: 'कुछ नहीं',
+      trialPayNote: 'फ़्री ट्रायल का कोई पैसा नहीं लगता। इस पेज पर कोई पैसा नहीं लिया जाता।',
+      sendTrial: 'मेरा फ़्री ट्रायल शुरू करें',
+      doneTrial: 'आपका फ़्री ट्रायल: {from} से {to} तक।',
+      doneTrialHow: 'पहली बार आने पर जिम के काउंटर पर अपना नाम बताएँ। ट्रायल के बाद भी आना हो, तो काउंटर पर प्लान चुनें।',
+      TRIAL_USED: 'इस नंबर से इस जिम में पहले ही फ़्री ट्रायल लिया जा चुका है। कृपया कोई प्लान चुनें।',
+      TRIAL_OFF: 'यह जिम अभी फ़्री ट्रायल नहीं दे रहा है। कृपया कोई प्लान चुनें।'
     }
   };
   var LANG = 'mettleup.site.lang';
@@ -464,6 +498,18 @@
     for (var i = 0; i < list.length; i++) if (list[i].id === S.plan) return list[i];
     return null;
   }
+  // F210: the gym's free trial, when the owner switched it on (0088's preview); picked = S.plan '_trial'.
+  var TRIAL = '_trial';
+  function trialDays() { var d = gym && gym.trial && Number(gym.trial.days); return d === 1 || d === 3 || d === 7 ? d : 0; }
+  function onTrial() { return S.plan === TRIAL && trialDays() > 0; }
+  function picked() { return onTrial() || !!selectedPlan(); }
+  function plusDays(iso, n) {
+    var p = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || '');
+    if (!p) return '';
+    return new Date(Date.UTC(Number(p[1]), Number(p[2]) - 1, Number(p[3]) + n)).toISOString().slice(0, 10);
+  }
+  function trialEnd() { return plusDays(S.start, trialDays() - 1); }
+  function nDays(key, n) { return n === 1 ? t(key + '1') : t(key, { n: n }); }
 
   function drawWords() {
     root.lang = lang;
@@ -485,18 +531,25 @@
   }
 
   // ---------------------------------------------------------------- R-528: paying online
-  function payChoice() { return offer && S.pay !== 'desk' ? 'online' : 'desk'; }
+  function payChoice() { return offer && S.pay !== 'desk' && !onTrial() ? 'online' : 'desk'; }
   function drawPayWords() {
     var online = payChoice() === 'online';
     var gymName = gym ? gym.gymName : '';
-    $('sub').textContent = t(offer ? 'leadOnline' : 'lead');
-    $('to-pay').textContent = t(offer && online ? 'toPayOnline' : 'toPay');
+    $('sub').textContent = offer ? t('leadOnline') : trialDays() ? nDays('leadTrial', trialDays()) : t('lead');
+    $('to-pay').textContent = onTrial() ? t('trialToPay') : t(offer && online ? 'toPayOnline' : 'toPay');
     show('pay-online-opt', !!offer);
     $('pay-online-words').textContent = t(offer && offer.how === 'upi' ? 'payOnlineUpi' : 'payOnline');
     all('input[name=pay]').forEach(function (i) { i.checked = i.value === payChoice(); });
     $('pay-note').textContent = online ? t('payNoteOnline', { gym: gymName }) : t('payNote');
     show('pay-test', online && !!offer.testMode);
     $('send').textContent = t(online ? 'sendPay' : 'send');
+    // F210: a free trial has nothing to pay, so there is no "How you pay" choice, only a note.
+    show('pay-legend', !onTrial());
+    show('pay-opts', !onTrial());
+    if (onTrial()) {
+      $('pay-note').textContent = t('trialPayNote');
+      $('send').textContent = t('sendTrial');
+    }
   }
   all('input[name=pay]').forEach(function (i) {
     i.addEventListener('change', function () { S.pay = i.value; save(); drawPayWords(); drawSummary(); });
@@ -578,12 +631,26 @@
     var box = $('plans');
     var list = (gym && gym.plans) || [];
     box.innerHTML = '';
+    var td = trialDays();
+    if (td) {
+      var tl = document.createElement('label');
+      tl.className = 'plan trial';
+      var ti = document.createElement('input');
+      ti.type = 'radio'; ti.name = 'plan'; ti.value = TRIAL; ti.checked = S.plan === TRIAL;
+      ti.addEventListener('change', function () { S.plan = TRIAL; save(); unsay('plan-err'); drawTotal(); drawPayWords(); });
+      var tb = document.createElement('b'); tb.textContent = nDays('trialName', td);
+      var tp = document.createElement('span'); tp.className = 'price'; tp.textContent = t('free');
+      var th = document.createElement('span'); th.className = 'len'; th.textContent = nDays('trialHow', td);
+      tl.appendChild(ti); tl.appendChild(tb); tl.appendChild(tp); tl.appendChild(th);
+      box.appendChild(tl);
+      if (list.length) { var or = document.createElement('p'); or.className = 'or'; or.textContent = t('orPlan'); box.appendChild(or); }
+    }
     list.forEach(function (p) {
       var l = document.createElement('label');
       l.className = 'plan';
       var i = document.createElement('input');
       i.type = 'radio'; i.name = 'plan'; i.value = p.id; i.checked = p.id === S.plan;
-      i.addEventListener('change', function () { S.plan = p.id; save(); unsay('plan-err'); drawTotal(); });
+      i.addEventListener('change', function () { S.plan = p.id; save(); unsay('plan-err'); drawTotal(); drawPayWords(); });
       var b = document.createElement('b'); b.textContent = p.name;
       var price = document.createElement('span'); price.className = 'price'; price.textContent = rupees(p.priceP);
       var len = document.createElement('span'); len.className = 'len'; len.textContent = lengthWords(p);
@@ -591,13 +658,21 @@
       l.appendChild(i); l.appendChild(b); l.appendChild(price); l.appendChild(len); l.appendChild(fee);
       box.appendChild(l);
     });
-    if (!list.length) say('plan-err', 'NO_PLANS');
+    if (!list.length && !td) say('plan-err', 'NO_PLANS');
     if (gym && gym.lastDay) $('start-help').textContent = t('startHelp', { last: dayWords(gym.lastDay) });
     drawTotal();
   }
 
   function drawTotal() {
     var p = selectedPlan();
+    $('start-label').textContent = t(onTrial() ? 'trialStart' : 'startDate');
+    if (onTrial()) {
+      $('to-pay').textContent = t('trialToPay');
+      $('total').textContent = rupees(0);
+      $('total-parts').textContent = t('trialDays', { from: dayWords(S.start), to: dayWords(trialEnd()) });
+      return;
+    }
+    $('to-pay').textContent = t(offer && payChoice() === 'online' ? 'toPayOnline' : 'toPay');
     $('total').textContent = p ? rupees(p.totalP) : '—';
     $('total-parts').textContent = p && Number(p.joiningFeeP) > 0 ? t('parts', { p: rupees(p.priceP), f: rupees(p.joiningFeeP) }) : '';
   }
@@ -607,6 +682,8 @@
     var dl = $('summary');
     dl.innerHTML = '';
     var rows = [['sName', S.name], ['sMobile', S.proofPhone ? phoneWords(S.proofPhone) : ''], ['sPlan', p ? p.name + ' (' + lengthWords(p) + ')' : ''], ['sStarts', dayWords(S.start)], [payChoice() === 'online' ? 'sTotalOnline' : 'sTotal', p ? rupees(p.totalP) : '']];
+    // F210: a free trial: how long, from and until when, and nothing to pay.
+    if (onTrial()) rows = [['sName', S.name], ['sMobile', S.proofPhone ? phoneWords(S.proofPhone) : ''], ['sPlan', t('sTrial') + ' (' + nDays('sTrialLen', trialDays()) + ')'], ['sStarts', dayWords(S.start)], ['sUntil', dayWords(trialEnd())], ['trialToPay', t('sNothing')]];
     rows.forEach(function (r) {
       var dt = document.createElement('dt'); dt.textContent = t(r[0]);
       var dd = document.createElement('dd'); dd.textContent = r[1];
@@ -621,6 +698,15 @@
     var total = rupees(d.totalP);
     $('done-title').textContent = t('doneTitle', { gym: gymName });
     $('done-plan').textContent = t('donePlan', { plan: d.planName || '', date: dayWords(d.startsOn) });
+    // F210: a free trial was started: its days, and what to do at the desk. Nothing to pay.
+    if (d.trial) {
+      $('done-plan').textContent = t('doneTrial', { from: dayWords(d.startsOn), to: dayWords(d.trial.endsOn) });
+      $('done-pay').textContent = t('doneTrialHow');
+      $('done-pay').classList.remove('paid');
+      show('paybox', false);
+      show('done-close', true);
+      return;
+    }
     var p = d.online && !d.payDesk ? d.pay : null;
     var line = 'donePay', good = false, box = false;
     if (d.online && !d.payDesk && !p) line = 'payNoStart';
@@ -679,7 +765,7 @@
     $('start').max = gym.lastDay || '';
     if (!S.start || (gym.today && S.start < gym.today) || (gym.lastDay && S.start > gym.lastDay)) S.start = gym.today || '';
     $('start').value = S.start;
-    if (S.plan && !selectedPlan()) S.plan = '';
+    if (S.plan && !picked()) S.plan = '';
     $('name').value = S.name;
     $('phone').value = S.phone;
     all('input[name=gender]').forEach(function (i) { i.checked = i.value === S.gender; });
@@ -693,7 +779,7 @@
     drawWords();
     var step = S.step;
     if (step >= 2 && !proofOk()) step = 1;
-    if (step === 3 && !selectedPlan()) step = 2;
+    if (step === 3 && !picked()) step = 2;
     goStep(step, false);
     if (!proofOk() && S.wa && S.wa.expiresAt > Date.now()) startPolling();
   }
@@ -791,12 +877,12 @@
   });
 
   // ---------------------------------------------------------------- step 2: plan and start day
-  $('start').addEventListener('change', function () { S.start = $('start').value; save(); unsay('start-err'); });
+  $('start').addEventListener('change', function () { S.start = $('start').value; save(); unsay('start-err'); drawTotal(); });
   $('back2').addEventListener('click', function () { clearErrors(); goStep(1); });
   $('next2').addEventListener('click', function () {
     clearErrors();
     var bad = false;
-    if (!selectedPlan()) { say('plan-err', (gym.plans || []).length ? 'PICK_PLAN' : 'NO_PLANS'); bad = true; }
+    if (!picked()) { say('plan-err', (gym.plans || []).length || trialDays() ? 'PICK_PLAN' : 'NO_PLANS'); bad = true; }
     S.start = $('start').value;
     if (!S.start || S.start < gym.today || S.start > gym.lastDay) { say('start-err', 'BAD_DATE', { last: dayWords(gym.lastDay) }); bad = true; }
     save();
@@ -811,7 +897,7 @@
   function reloadPlans() {
     return fetch(API, { method: 'POST', headers: { apikey: KEY, 'Content-Type': 'application/json' }, body: JSON.stringify({ p_code: code }) })
       .then(function (r) { if (!r.ok) throw new Error(String(r.status)); return r.json(); })
-      .then(function (g) { if (g && g.gymName && !g.closed) { gym = g; if (!selectedPlan()) S.plan = ''; save(); drawPlans(); } })
+      .then(function (g) { if (g && g.gymName && !g.closed) { gym = g; if (!picked()) S.plan = ''; save(); drawPlans(); drawPayWords(); } })
       .catch(function () { /* quiet: the plans on screen stay; sending again asks the server again */ });
   }
 
@@ -834,6 +920,8 @@
         if (a.status === 201 && b.ok) {
           var p = selectedPlan();
           S.done = { gymName: b.gymName || gym.gymName, planName: b.planName || (p && p.name) || '', startsOn: b.startsOn || S.start, totalP: b.totalP != null ? b.totalP : p ? p.totalP : 0, online: payChoice() === 'online', pay: b.pay && b.pay.id ? b.pay : null, payDesk: false };
+          // F210: the gym server's own days and last day for a free trial.
+          if (onTrial()) S.done.trial = b.trial && b.trial.endsOn ? { days: b.trial.days, endsOn: b.trial.endsOn } : { days: trialDays(), endsOn: trialEnd() };
           S.proof = ''; S.wa = null; S.payTapped = false; save();
           if (payOpen()) startPayPolling();
           only('done'); drawDone(); $('done').focus(); window.scrollTo(0, 0);
@@ -848,6 +936,9 @@
         if (e === 'BAD_PLAN') { reloadPlans().then(function () { goStep(2); say('plan-err', 'PLAN_CHANGED'); }); return; }
         if (e === 'BAD_DATE') { goStep(2); say('start-err', 'BAD_DATE', { last: dayWords(gym.lastDay) }); return; }
         if (e === 'NO_CONSENT') { say('send-err', 'NO_ADULT'); return; }
+        // F210: one free trial per number per gym; or the owner switched trials off a moment ago.
+        if (e === 'TRIAL_USED') { S.plan = ''; save(); drawPlans(); drawPayWords(); goStep(2); say('plan-err', 'TRIAL_USED'); return; }
+        if (e === 'TRIAL_OFF') { reloadPlans().then(function () { if (gym) gym.trial = null; S.plan = ''; save(); drawPlans(); drawPayWords(); goStep(2); say('plan-err', 'TRIAL_OFF'); }); return; }
         say('send-err', e === 'TOO_MANY' || e === 'NOT_READY' ? e : 'TRY_AGAIN');
       })
       .catch(function () { say('send-err', 'TRY_AGAIN'); })

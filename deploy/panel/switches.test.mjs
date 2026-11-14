@@ -66,6 +66,14 @@ test('the join page preview says "Pay at the gym desk." only while join payments
   assert.equal(selfJoinDesc({ ...g, closed: true }, {}), 'Shakti Gym is not taking sign-ups online right now.');
 });
 
+test('F210: the join page preview names the free trial only when the owner switched it on (0088)', () => {
+  const g = { gymName: 'Shakti Gym' };
+  assert.equal(selfJoinDesc({ ...g, trial: null }, {}), 'Pick a plan and send your details to Shakti Gym. Pay at the gym desk.');
+  assert.equal(selfJoinDesc({ ...g, trial: { days: 3, feeP: 0 } }, {}), 'Try Shakti Gym free for 3 days, or pick a plan and send your details. Pay at the gym desk.');
+  assert.equal(selfJoinDesc({ ...g, trial: { days: 1, feeP: 0 } }, { JOIN_PAY: 'live' }), 'Try Shakti Gym free for 1 day, or pick a plan and send your details.');
+  assert.equal(selfJoinDesc({ ...g, closed: true, trial: { days: 3 } }, {}), 'Shakti Gym is not taking sign-ups online right now.');
+});
+
 test('the help article "Let new people pay online when they join" is in the live help only while JOIN_PAY is live', () => {
   const pay = ALL_HELP_ARTICLES.find((a) => a.id === 'join-pay-online-admin');
   assert.equal(pay.onlyWhen, 'JOIN_PAY');

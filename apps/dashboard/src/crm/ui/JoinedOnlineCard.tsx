@@ -5,6 +5,9 @@
  *    together (logic/joinPay.ts). A plain UPI payment nobody confirms says "Check your bank before approving".
  *  - Not paid (pay at the desk, or an online try that failed or was left half way): "Make member", as before: the
  *    usual Add member form filled in, then Sell membership on that plan (nothing collected until they pay).
+ *  - F210 free trial (supabase 0088): "Free trial, 3 days · 20 Nov to 22 Nov" and "Let them in until 22 Nov · Nothing
+ *    paid" (after the last day: "Trial ended on 22 Nov · Not a member yet"). They are not members, so the desk lets them
+ *    in; "Make member" as for any request, and the desk picks the plan in Sell membership.
  * Hidden when nobody is waiting. Owner and desk (both may add members and sell plans). Rules: logic/selfJoin.ts,
  * logic/joinPay.ts. The join page's payments are asked every 2 minutes while Today is in view and a row is waiting.
  */
@@ -15,11 +18,11 @@ import { useAuth } from '../auth/AuthProvider';
 import { useJoinPayOn } from '../gympage/pagesOpen';
 import { takerOf } from '../auth/permissions';
 import { t } from '../lang/lang';
-import { formatDay } from '../logic/dates';
+import { formatDay, formatDayShort } from '../logic/dates';
 import { approveQuestion, approveSale, canApprove, isRealMoney, joinPayFor, openJoinPays, paidWhileClosing, type JoinPayState } from '../logic/joinPay';
 import { emptyMemberForm, findDuplicatePhone, formatPhone, splitE164, validateMember } from '../logic/members';
 import { formatINR } from '../logic/money';
-import { waitingOnlineJoins, type OnlineJoin } from '../logic/selfJoin';
+import { trialState, waitingOnlineJoins, type OnlineJoin } from '../logic/selfJoin';
 import { startVisiblePoll } from '../logic/visiblePoll';
 import { cancelRequest, checkBeforeApprove, claimReceipt, joinPays, markRecorded, type JoinPay } from '../pay/payApi';
 import { useDeskPay } from '../pay/useDeskPay';
@@ -49,6 +52,18 @@ export function payLine(total: number, s: JoinPayState): { text: string; tone: '
   return { text: t('{total} to pay at the desk · Not paid yet', { total: amount }), tone: 'warn' };
 }
 
+/** F210: the row's plan line for a free trial: its length and days. */
+export function trialDays(startsOn: string, trial: { days: number; endsOn: string }): string {
+  if (trial.days === 1) return t('Free trial, 1 day · {from}', { from: formatDay(startsOn) });
+  return t('Free trial, {n} days · {from} to {to}', { n: trial.days, from: formatDayShort(startsOn), to: formatDay(trial.endsOn) });
+}
+
+/** F210: the row's second line for a free trial: until when the desk lets them in, or that it has ended. */
+export function trialLine(s: NonNullable<ReturnType<typeof trialState>>): { text: string; tone: 'good' | 'warn' } {
+  if (s.kind === 'ended') return { text: t('Trial ended on {date} · Not a member yet', { date: formatDay(s.trial.endsOn) }), tone: 'warn' };
+  return { text: t('Let them in until {date} · Nothing paid', { date: formatDay(s.trial.endsOn) }), tone: 'good' };
+}
+
 /** The question Approve asks first (approveQuestion). */
 export function approveWords(ask: NonNullable<ReturnType<typeof approveQuestion>>, name: string): string {
   if (ask.kind === 'bank') return t('Can you see {amount} from {name} in your bank or UPI app? Approve saves it as paid.', { amount: formatINR(ask.askedP), name });
@@ -71,6 +86,8 @@ export function JoinedOnlineCard() {
   // not talk about approving online payments. One already paid (made while it was on) still says it, with Approve.
   const joinPay = useJoinPayOn();
   const anyPaid = pays.some((p) => p.status === 'paid');
+  // F210: rows are trials only when the gym server has 0088 and the owner switched trials on.
+  const anyTrial = rows.some((r) => r.join.trial);
 
   const load = useCallback(async () => {
     if (!key) return;
@@ -142,13 +159,20 @@ export function JoinedOnlineCard() {
             {joinPay || anyPaid
               ? t('They filled your "Become a member" page. Approve the ones who paid online. Make the others members when they come in and pay.')
               : t('They filled your "Become a member" page. Make them members when they come in and pay.')}
+            {anyTrial ? ` ${t('People on a free trial may visit until the day shown. Make them members when they join.')}` : null}
           </p>
           {error ? <ErrorBanner>{error}</ErrorBanner> : null}
           <div style={{ display: 'flex', flexDirection: 'column', gap: space.md }}>
             {rows.map((row) => {
               const { enquiry, join } = row;
-              const s = join.paid ? ({ kind: 'desk' } as JoinPayState) : joinPayFor(enquiry.id, pays);
-              const line = join.paid ? { text: t('{total} paid', { total: formatINR(join.totalP) }), tone: 'good' as const } : payLine(join.totalP, s);
+              // F210: a free trial is never paid for online, so it never has Approve.
+              const trial = trialState(join, crm.today);
+              const s = join.paid || trial ? ({ kind: 'desk' } as JoinPayState) : joinPayFor(enquiry.id, pays);
+              const line = trial
+                ? trialLine(trial)
+                : join.paid
+                  ? { text: t('{total} paid', { total: formatINR(join.totalP) }), tone: 'good' as const }
+                  : payLine(join.totalP, s);
               const one = canApprove(s);
               return (
                 <Row key={enquiry.id} gap={space.md}>
@@ -156,7 +180,7 @@ export function JoinedOnlineCard() {
                     <div style={{ fontFamily: font.body, fontSize: 14, fontWeight: 600, color: color.ink, overflowWrap: 'anywhere' }}>{enquiry.name}</div>
                     <div style={{ fontFamily: font.mono, fontSize: 12, color: color.inkSecondary }}>{formatPhone(enquiry.phone)}</div>
                     <div style={{ fontFamily: font.body, fontSize: 13, color: color.ink, overflowWrap: 'anywhere' }}>
-                      {t('{plan} · starts {date}', { plan: join.planName, date: formatDay(join.startsOn) })}
+                      {trial ? trialDays(join.startsOn, trial.trial) : t('{plan} · starts {date}', { plan: join.planName, date: formatDay(join.startsOn) })}
                     </div>
                     <div style={{ fontFamily: font.body, fontSize: 13, fontWeight: 600, color: line.tone === 'good' ? color.goodText : color.warning, overflowWrap: 'anywhere' }}>
                       {line.text}

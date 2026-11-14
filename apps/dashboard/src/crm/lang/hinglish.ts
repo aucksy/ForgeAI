@@ -1271,4 +1271,22 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   // R-552 (owner, 14 Nov 2026): a trainer's Member messages page has no feedback and no complaints.
   'Feedback goes to the owner and front desk, and complaints go to the owner only, so they are not shown here.':
     'Feedback sirf owner aur front desk ko jata hai, aur complaints sirf owner ko, isliye yeh yahan nahi dikhte.',
+  // F210 (owner, 14 Nov 2026): a free trial on the "Become a member" link (Settings, and Today's "Joined online").
+  'Free trial for new people': 'Naye logon ke liye free trial',
+  'People who open your "Become a member" link can try your gym free before they pick a plan. They check their number on WhatsApp, and you see them on Today under "Joined online".':
+    'Jo log aapka "Become a member" link kholte hain, woh plan chunne se pehle aapka gym free mein try kar sakte hain. Woh WhatsApp par apna number check karte hain, aur aap unhe Today par "Online join kiya" mein dekhenge.',
+  'Free trial length': 'Free trial kitne din ka',
+  Off: 'Band',
+  'Saved. Free trials are off.': 'Save ho gaya. Free trial band hai.',
+  'Saved. New people can try your gym free for 1 day.': 'Save ho gaya. Naye log aapka gym 1 din free mein try kar sakte hain.',
+  'Saved. New people can try your gym free for {n} days.': 'Save ho gaya. Naye log aapka gym {n} din free mein try kar sakte hain.',
+  'Each mobile number gets one free trial at your gym.': 'Aapke gym mein har mobile number ko ek hi free trial milta hai.',
+  'A person on a free trial is not a member yet. They cannot check in with the app or a card, so let them in at the desk until the day shown on Today.':
+    'Free trial wala vyakti abhi member nahi hai. Woh app ya card se check in nahi kar sakte, isliye Today par dikhe din tak unhe desk se andar aane do.',
+  'People on a free trial may visit until the day shown. Make them members when they join.':
+    'Free trial wale log dikhaye gaye din tak aa sakte hain. Jab woh join karein, tab unhe member banao.',
+  'Free trial, 1 day · {from}': 'Free trial, 1 din · {from}',
+  'Free trial, {n} days · {from} to {to}': 'Free trial, {n} din · {from} se {to} tak',
+  'Let them in until {date} · Nothing paid': '{date} tak andar aane do · Kuch pay nahi kiya',
+  'Trial ended on {date} · Not a member yet': 'Trial {date} ko khatam hua · Abhi member nahi hain',
 };

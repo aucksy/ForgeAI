@@ -120,7 +120,7 @@ export interface CrmCloudApi {
 }
 
 /** The gym's own details that live in a record (name, join code and created date are the server's). */
-type GymDetails = Pick<GymRecord, 'name' | 'phone' | 'address' | 'gstin' | 'receiptPrefix' | 'upiId' | 'friendRewardDays'>;
+type GymDetails = Pick<GymRecord, 'name' | 'phone' | 'address' | 'gstin' | 'receiptPrefix' | 'upiId' | 'friendRewardDays' | 'joinTrialDays'>;
 
 const COLLECTIONS = [
   ['member', 'members'],
@@ -179,6 +179,8 @@ export function applyRecords(rows: Rows, records: readonly CrmRecord[]): boolean
           upiId: typeof d.upiId === 'string' && d.upiId ? d.upiId : null,
           // F147: free days per friend who joins (supabase 0056 reads the same key).
           friendRewardDays: typeof d.friendRewardDays === 'number' && Number.isInteger(d.friendRewardDays) && d.friendRewardDays > 0 ? d.friendRewardDays : null,
+          // F210: the free trial on the join link (supabase 0088 reads the same key): 1, 3 or 7 days, else off.
+          joinTrialDays: d.joinTrialDays === 1 || d.joinTrialDays === 3 || d.joinTrialDays === 7 ? d.joinTrialDays : null,
         };
       }
       continue;
@@ -209,6 +211,7 @@ export function buildSnapshot(rows: Rows, gym: CloudGymRow): CrmSnapshot {
       receiptPrefix: rows.gym?.receiptPrefix ?? null,
       upiId: rows.gym?.upiId ?? null,
       friendRewardDays: rows.gym?.friendRewardDays ?? null,
+      joinTrialDays: rows.gym?.joinTrialDays ?? null,
       createdAt: gym.createdAt,
     },
     members: byTime(list<Member>(rows.member), (m) => m.createdAt ?? 0).map(normalizeMember),
@@ -231,6 +234,8 @@ function gymDetails(g: GymRecord): GymDetails {
   if (g.upiId) out.upiId = g.upiId;
   // F147: only once the owner sets free days for a friend who joins; clearing it removes the key.
   if (g.friendRewardDays) out.friendRewardDays = g.friendRewardDays;
+  // F210: only once the owner switches a free trial on; switching it off removes the key.
+  if (g.joinTrialDays) out.joinTrialDays = g.joinTrialDays;
   return out;
 }
 

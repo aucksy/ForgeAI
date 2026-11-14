@@ -24,6 +24,7 @@ import { ThemeToggle } from '../ThemeToggle';
 import { LangToggle } from '../LangToggle';
 import { t } from '../../lang/lang';
 import { JoinCodeCard } from '../../shop/JoinCode';
+import { JoinTrialCard } from '../../shop/JoinTrialCard';
 import { useShop } from '../../shop/ShopProvider';
 import { useCrm } from '../../store';
 import { Link, navigate } from '../router';
@@ -308,6 +309,9 @@ export function SettingsScreen({ section }: { section?: string }) {
       {/* Titled inside its card like the sections above and below it — the title
           used to sit outside, on the page, the only one that did. */}
       <JoinCodeCard title="Member app" />
+
+      {/* F210: a free trial on the "Become a member" link (shown only once the gym server has 0088). */}
+      <JoinTrialCard />
 
       {/* Gym branding: the gym's own logo and colours in the member app. */}
       <Card style={{ marginBottom: space.lg }}>
