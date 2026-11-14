@@ -7,6 +7,12 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-525. Get started list: add "Set your gym timings" (plans step already exists) — 14 Nov 2026
+He said (14 Nov 2026): "And this getting started steps should also have the steps for adding the gym plans and gym timings
+because we will need that for the web page anyway so that's kind of interconnected."
+"Add your plans" is already step 1. Add "Set your gym timings" (screen /settings/timings exists since R-124), ticking itself
+when timings are saved; order it before the web page step (R-523), and say in both hints that the gym's web page shows them.
+
 ## R-524. Paid trial on online sign-up: B, a small trial fee counted toward the plan — 14 Nov 2026
 He said (14 Nov 2026): "B: a small trial fee that counts toward the plan" (decision #97). So F210: the owner can switch a
 trial on or off, set its days (for example 3 or 7) and choose free or a small fee (example Rs 199); the fee is taken off
