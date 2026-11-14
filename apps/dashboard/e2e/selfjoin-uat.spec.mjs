@@ -389,7 +389,7 @@ test.describe('the gym side', () => {
 
     const sellSheet = sheet(page, 'Sell membership');
     await expect(sellSheet).toBeVisible({ timeout: 15_000 });
-    await expect(sellSheet.getByLabel('Plan')).toHaveValue(planIdOf(server, 'Monthly'));
+    await expect(sellSheet.getByLabel('Plan', { exact: true })).toHaveValue(planIdOf(server, 'Monthly'));
     await expect(sellSheet.getByLabel('Starts on')).toHaveValue('2026-10-20');
     await expect(sellSheet.getByLabel('Received now')).toHaveValue('');
     await expectFitsPhone(page, 'in Sell membership from Joined online');
