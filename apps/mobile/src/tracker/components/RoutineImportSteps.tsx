@@ -448,7 +448,7 @@ function useStepsBody({ app, workouts, link, onClose, backRef }: StepsProps, out
         <Text style={CAPTION()}>
           {link
             ? 'Sets, warm-ups, reps and rest are as saved in Hevy. You can change them later in the routine.'
-            : 'Sets and reps are from the last time you did each one. You can change them later in the routine.'}
+            : 'Sets and reps are from the previous time you did each one. You can change them later in the routine.'}
         </Text>
         <View style={{ gap: space.md }}>
           <PrimaryButton
@@ -623,7 +623,7 @@ function useStepsBody({ app, workouts, link, onClose, backRef }: StepsProps, out
         <Text style={{ ...CAPTION(), textAlign: 'center' }}>
           {question?.updatingName ? `${step.folder} is updated from this ${link ? 'link' : 'file'}.` : 'Find them in Workout → Routines.'}
           {step.keptEdits.length > 0 ? ` Your own changes to ${step.keptEdits.join(', ')} were kept.` : ''}
-          {step.today && !single ? ` The Workout tab shows ${step.today} today.` : ''}
+          {step.today && !single ? ` Up next on the Workout tab: ${step.today}.` : ''}
           {step.created > 0 ? ` ${countWord(step.created, 'new exercise')} added to your library.` : ''}
         </Text>
       </Card>

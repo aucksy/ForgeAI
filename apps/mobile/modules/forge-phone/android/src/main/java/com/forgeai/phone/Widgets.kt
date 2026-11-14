@@ -221,7 +221,7 @@ object Widgets {
       v.setTextViewText(R.id.forge_today_line, line)
       v.setTextViewText(R.id.forge_today_action, action)
       val said = listOfNotNull(beats?.optString(0, ""), beats?.optString(1, "")).filter { it.isNotEmpty() }.joinToString(". ")
-      v.setContentDescription(R.id.forge_today_root, if (said.isEmpty()) "Today: $title. $line. $action" else "Today: $title. $line. $said. $action")
+      v.setContentDescription(R.id.forge_today_root, if (said.isEmpty()) "Workout: $title. $line. $action" else "Workout: $title. $line. $said. $action")
       val routineId = t.optString("routineId", "")
       // The widget's own key: only a link that carries it starts a workout by itself.
       val token = d?.optString("token", "") ?: ""

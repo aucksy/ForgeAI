@@ -303,7 +303,7 @@ export function todayWords(a: {
     }
     case 'doneToday': {
       const done = a.doneName?.trim() || a.routine?.name || 'Workout';
-      const title = `Done today: ${done}`;
+      const title = `Done: ${done}`;
       const line = a.next ? `Next: ${a.next.name}` : '';
       return { title, line, sentence: line ? `${title} · ${line}` : title };
     }
@@ -317,7 +317,7 @@ export function todayWords(a: {
         return { title: name, line, sentence: `Up next: ${name} · ${line}` };
       }
       const line = `${exercises} from your plan`;
-      return { title: name, line, sentence: `Today: ${name} · ${line}` };
+      return { title: name, line, sentence: `Up next: ${name} · ${line}` };
     }
   }
 }

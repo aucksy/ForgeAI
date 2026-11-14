@@ -54,7 +54,7 @@ appId: com.mettleup.app
       KG: "27.6"
       REPS: "12"
 - assertNotVisible: "New record.*"
-- assertNotVisible: ".*on last time.*"
+- assertNotVisible: ".*on previous.*"
 - takeScreenshot: rel-t76-a-27-6-lb-no-record
 - runFlow: sub-uat-rest-clear.yaml
 - runFlow:

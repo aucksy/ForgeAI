@@ -97,7 +97,7 @@ describe('T76: the finish screen never compares totals across a Counting change'
     const h = kgHero({ kg: 1020, reps: 51 }, null, 'metric');
     expect(h?.tone).toBe('first');
     expect(h?.line).toBe('Your number to beat next time.');
-    expect(h?.line).not.toMatch(/Lighter|more than last time/);
+    expect(h?.line).not.toMatch(/Lighter|more than previous/);
   });
 });
 
@@ -118,10 +118,10 @@ describe('T76: "on last time" never compares across Countings', () => {
   it('positive: the same Counting still gets its line', () => {
     const p = toPrevSet({ weightKg: 10, reps: 12, loadMode: null }, 'weight_reps', 'side');
     expect(p.counting).toBeUndefined();
-    expect(vsLastTimeText(set({ weightKg: 10, reps: 18 }), p, 'weight_reps', 'side', 'metric')).toBe('+6 reps on last time');
+    expect(vsLastTimeText(set({ weightKg: 10, reps: 18 }), p, 'weight_reps', 'side', 'metric')).toBe('+6 reps on previous');
     const q = toPrevSet({ weightKg: 10, reps: 12, loadMode: 'side' }, 'weight_reps', 'side');
     expect(q.counting).toBeUndefined();
-    expect(vsLastTimeText(set({ weightKg: 12.5, reps: 12 }), q, 'weight_reps', 'side', 'metric')).toBe('+2.5 kg on last time');
+    expect(vsLastTimeText(set({ weightKg: 12.5, reps: 12 }), q, 'weight_reps', 'side', 'metric')).toBe('+2.5 kg on previous');
   });
 
   it('state change mid-workout: switched to per side, PREVIOUS keeps where it came from; switched back, it compares again', () => {
@@ -131,7 +131,7 @@ describe('T76: "on last time" never compares across Countings', () => {
     expect(vsLastTimeText(set({ weightKg: 10, reps: 18 }), perSide, 'weight_reps', 'side', 'metric')).toBeNull();
     const back = recount(perSide, 'side', 'one');
     expect(back).toEqual({ weightKg: 10, reps: 12 });
-    expect(vsLastTimeText(set({ weightKg: 10, reps: 18 }), back, 'weight_reps', 'one', 'metric')).toBe('+6 reps on last time');
+    expect(vsLastTimeText(set({ weightKg: 10, reps: 18 }), back, 'weight_reps', 'one', 'metric')).toBe('+6 reps on previous');
   });
 
   it('recount still converts the weight between "as typed" and "each" (TG-03 unchanged)', () => {
@@ -140,6 +140,6 @@ describe('T76: "on last time" never compares across Countings', () => {
   });
 
   it('an older draft (PREVIOUS without a Counting) is unchanged', () => {
-    expect(vsLastTimeText(set({ weightKg: 100, reps: 7 }), { weightKg: 100, reps: 5 }, 'weight_reps', 'one', 'metric')).toBe('+2 reps on last time');
+    expect(vsLastTimeText(set({ weightKg: 100, reps: 7 }), { weightKg: 100, reps: 5 }, 'weight_reps', 'one', 'metric')).toBe('+2 reps on previous');
   });
 });

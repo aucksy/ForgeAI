@@ -715,13 +715,13 @@ function WidgetsRow({ divider = true }: { divider?: boolean }) {
         caption={
           placed > 0
             ? `${placed} on your home screen. Add another, or long-press your home screen → Widgets → MettleUp.`
-            : "Today's workout and your week, on your home screen."
+            : "Your next workout and your week, on your home screen."
         }
         divider={divider}
       />
       <View style={{ flexDirection: 'row', gap: space.sm, paddingBottom: space.sm }}>
         <View style={{ flex: 1 }}>
-          <GhostButton label="Add Today" icon="plus" onPress={() => add('today')} />
+          <GhostButton label="Add Next workout" icon="plus" onPress={() => add('today')} />
         </View>
         <View style={{ flex: 1 }}>
           <GhostButton label="Add This week" icon="plus" onPress={() => add('week')} />

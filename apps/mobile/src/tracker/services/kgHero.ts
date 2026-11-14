@@ -72,7 +72,7 @@ export function kgHero(
   const shown = (n: number): number => (kgMode ? Math.round(kgToShown(n, units)) : Math.round(n));
   const word = (n: number): string => (kgMode ? `${fmtInt(n)} ${unit}` : `${fmtInt(n)} ${n === 1 ? 'rep' : 'reps'}`);
   const now = shown(kgMode ? today.kg : today.reps);
-  const label = kgMode ? `${unit[0].toUpperCase()}${unit.slice(1)} lifted today` : 'Reps today';
+  const label = kgMode ? `${unit[0].toUpperCase()}${unit.slice(1)} lifted` : 'Reps done';
   const base = { mode: kgMode ? 'kg' : 'reps', label, big: word(now) } as const;
   // Kilos compare with kilos; a no-weight workout compares reps only with another no-weight one.
   const comparable = last != null && (kgMode ? last.kg > 0.5 : !(last.kg > 0.5) && last.reps > 0);
@@ -83,17 +83,17 @@ export function kgHero(
   // the kilos must be well under too.
   const short = last.reps > 0 && today.reps < SHORT_SHARE * last.reps && (!kgMode || today.kg < SHORT_SHARE * last.kg);
   if (!easyWeek && short) {
-    return { ...base, tone: 'first', line: 'A shorter workout than last time. Every workout counts.', lastLine: null, shareLine: null };
+    return { ...base, tone: 'first', line: 'A shorter workout than the previous one. Every workout counts.', lastLine: null, shareLine: null };
   }
   const then = shown(kgMode ? last.kg : last.reps);
   const diff = kgMode && noiseKg > 0 && Math.abs(today.kg - last.kg) <= noiseKg ? 0 : now - then;
-  const lastLine = `Last time: ${word(then)}${last.against ? ` in ${last.against}` : ''}`;
+  const lastLine = `Previous: ${word(then)}${last.against ? ` in ${last.against}` : ''}`;
   if (diff >= 1) {
-    const plus = `+${word(diff)} more than last time`;
+    const plus = `+${word(diff)} more than previous`;
     return { ...base, tone: 'up', line: plus, lastLine, shareLine: plus };
   }
-  if (diff > -1) return { ...base, tone: 'same', line: 'Same as last time', lastLine, shareLine: null };
-  const kind = easyWeek ? 'Easy week: lighter on purpose.' : kgMode ? 'Lighter than last time. Every workout counts.' : 'Fewer reps than last time. Every workout counts.';
+  if (diff > -1) return { ...base, tone: 'same', line: 'Same as previous', lastLine, shareLine: null };
+  const kind = easyWeek ? 'Easy week: lighter on purpose.' : kgMode ? 'Lighter than previous. Every workout counts.' : 'Fewer reps than previous. Every workout counts.';
   return { ...base, tone: 'down', line: kind, lastLine, shareLine: null };
 }
 

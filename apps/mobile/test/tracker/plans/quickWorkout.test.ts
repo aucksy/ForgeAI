@@ -128,7 +128,7 @@ describe('the lines under each exercise (UAT run 41892416397: a plank said "pick
   it('a weighted exercise shows last time, or how to pick a weight', () => {
     const last = { lastISO: '2026-11-01', times: 2, lastKg: 60, lastReps: 8 };
     expect(quickTargetLine({ type: 'weight_reps', sets: 4, repMin: 6, repMax: 10 })).toBe('4 sets of 6–10 reps');
-    expect(quickLastLine({ type: 'weight_reps', repMin: 6, repMax: 10, last }, kg)).toBe('Last time: 60 kg × 8 reps');
+    expect(quickLastLine({ type: 'weight_reps', repMin: 6, repMax: 10, last }, kg)).toBe('Previous: 60 kg × 8 reps');
     expect(quickLastLine({ type: 'weight_reps', repMin: 6, repMax: 10, last: null }, kg)).toBe('First time: pick a weight you can lift for 6–10 reps.');
   });
   it('a plank in a real pick is held for time, and the title says Abs once', () => {

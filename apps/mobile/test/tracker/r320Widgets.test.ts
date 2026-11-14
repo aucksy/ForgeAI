@@ -24,9 +24,9 @@ const bench: BeatTarget = {
 
 describe('Today: what to beat', () => {
   it("last time's best set and the app's Target, in one line", () => {
-    expect(beatLine(bench, kg)).toBe('Bench Press 60 kg × 8 last time · try 62.5 × 8');
-    expect(beatLine({ ...bench, repGoal: null }, kg)).toBe('Bench Press 60 kg × 8 last time · try 62.5 × 6');
-    expect(beatLine({ ...bench, each: true }, kg)).toBe('Bench Press 60 kg each × 8 last time · try 62.5 × 8');
+    expect(beatLine(bench, kg)).toBe('Bench Press: previous 60 kg × 8 · next 62.5 × 8');
+    expect(beatLine({ ...bench, repGoal: null }, kg)).toBe('Bench Press: previous 60 kg × 8 · next 62.5 × 6');
+    expect(beatLine({ ...bench, each: true }, kg)).toBe('Bench Press: previous 60 kg each × 8 · next 62.5 × 8');
   });
   it('says nothing it cannot back: no last time, not weight and reps, bodyweight, easy week, another version', () => {
     expect(beatLine({ ...bench, last: null }, kg)).toBeNull();

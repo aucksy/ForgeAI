@@ -37,7 +37,7 @@ appId: com.mettleup.app
     text: "^Workout$"
     index: 0
 - extendedWaitUntil:
-    visible: "Up next: .*|Done today: .*|Workout in progress"
+    visible: "Up next: .*|Done: .*|Workout in progress"
     timeout: 30000
 # A workout left open by an earlier part that failed (run 38870025551: "Workout in progress",
 # so no "Start empty workout") costs only that part: thrown away as a member would, then back to
@@ -48,7 +48,7 @@ appId: com.mettleup.app
     commands:
       - runFlow: sub-workout-fresh.yaml
       - scrollUntilVisible:
-          element: "Up next: .*|Done today: .*"
+          element: "Up next: .*|Done: .*"
           direction: UP
           centerElement: true
           timeout: 20000
@@ -207,7 +207,7 @@ appId: com.mettleup.app
 - takeScreenshot: r-05b-explore-bring-routines-in
 - back
 - extendedWaitUntil:
-    visible: "^Routines$|Up next: .*|Done today: .*"
+    visible: "^Routines$|Up next: .*|Done: .*"
     timeout: 15000
 # ---------------------------------------------------------------- 2. the Profile page
 - tapOn:

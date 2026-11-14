@@ -156,7 +156,7 @@ describe('MED 5 / LOW 8 — the Routines screen', () => {
 
   it('the delete question counts right (before: "Its 1 routine go too.")', () => {
     expect(planState.deleteFolderMessage(1, false)).toBe('Its routine goes too. Your workout history stays.');
-    expect(planState.deleteFolderMessage(3, true)).toBe("Its 3 routines go too. Your workout history stays. Today's workout will have no plan until you follow another folder.");
+    expect(planState.deleteFolderMessage(3, true)).toBe("Its 3 routines go too. Your workout history stays. Up next will have no plan until you follow another folder.");
     expect(planState.deleteFolderMessage(0, false)).toBe('It has no routines. Your workout history stays.');
   });
 });

@@ -67,7 +67,7 @@ export function KgHeroCard({
             onPress={() => setOpen((o) => !o)}
             accessibilityRole="button"
             accessibilityState={{ expanded: open }}
-            accessibilityLabel={`${open ? 'Hide' : 'See'} each exercise against last time`}
+            accessibilityLabel={`${open ? 'Hide' : 'See'} each exercise against the previous time`}
             hitSlop={8}
             style={{ flexDirection: 'row', alignItems: 'center', gap: space.md, minHeight: 40 }}
           >

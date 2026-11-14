@@ -66,19 +66,19 @@ describe('planned sets from a Target (R-132)', () => {
   });
 });
 
-describe('what the Today card says (R-132)', () => {
-  it('kilos: the goal and how much more than last time', () => {
+describe('what the Next line says (R-132, R-499 words)', () => {
+  it('kilos: the goal and how much more than previous', () => {
     const t = goalText(goal(), 'volume', 'metric');
-    expect(goalTitle(goal())).toBe('Today: Push A');
+    expect(goalTitle(goal())).toBe('Next: Push A');
     expect(t.big).toBe('5,400 kg');
-    expect(t.label).toBe('to lift today');
-    expect(t.line).toBe('300 kg more than last time (5,100 kg).');
+    expect(t.label).toBe('to lift');
+    expect(t.line).toBe('300 kg more than previous (5,100 kg).');
     expect(t.trend).toBe('up');
   });
   it('kilos: an easy week is lower and says why', () => {
     const t = goalText(goal({ volumeKg: 2700, easy: true }), 'volume', 'metric');
     expect(t.trend).toBe('down');
-    expect(t.line).toContain('less than last time');
+    expect(t.line).toContain('less than previous');
     expect(t.note).toBe('This is an easy week, so the goal is lower.');
   });
   it('kilos: new exercises are named as not counted', () => {
@@ -91,14 +91,14 @@ describe('what the Today card says (R-132)', () => {
     expect(goalText(goal({ last: { volumeKg: 0, sets: 6, durationSec: 900, dateISO: '2026-10-20' } }), 'volume', 'metric').line).toContain('nothing to compare');
     expect(goalText(goal({ last: null }), 'volume', 'metric').line).toBe('Your first time doing this workout.');
   });
-  it('sets: planned against last time', () => {
+  it('sets: planned against previous', () => {
     const t = goalText(goal(), 'sets', 'metric');
     expect(t.big).toBe('18 sets');
-    expect(t.line).toBe('1 set more than last time (17 sets).');
-    expect(goalText(goal({ sets: 17 }), 'sets', 'metric').line).toBe('Same as last time (17 sets).');
+    expect(t.line).toBe('1 set more than previous (17 sets).');
+    expect(goalText(goal({ sets: 17 }), 'sets', 'metric').line).toBe('Same as previous (17 sets).');
   });
-  it('duration: last time, or nothing yet', () => {
-    expect(goalText(goal(), 'duration', 'metric').label).toBe('took last time');
+  it('duration: the previous time, or nothing yet', () => {
+    expect(goalText(goal(), 'duration', 'metric').label).toBe('took the previous time');
     expect(goalText(goal({ last: null }), 'duration', 'metric').big).toBe('—');
   });
   it('never uses member-banned words', () => {

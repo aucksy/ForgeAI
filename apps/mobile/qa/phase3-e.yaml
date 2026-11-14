@@ -249,13 +249,13 @@ appId: com.mettleup.app
     file: sub-see.yaml
     env:
       FIND: '^Summary$'
-# Audit Phase 4 (EX-07): the Summary leads with the member's own answer — "Last time · Today" and
+# Audit Phase 4 (EX-07): the Summary leads with the member's own answer — "Previous · Today" and
 # "Best · <kind>", in the way the exercise is logged.
 # Owner profile (360 dp, font 1.3): each line scrolled to before it is checked.
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: 'Last time · .*'
+      FIND: 'Previous · .*'
 - runFlow:
     file: sub-find.yaml
     env:
@@ -331,7 +331,7 @@ appId: com.mettleup.app
     index: 0
 # The tab keeps its scroll (this part started its workout from "Start empty workout" lower down).
 - scrollUntilVisible:
-    element: "Up next: .*|Done today: .*|Workout in progress"
+    element: "Up next: .*|Done: .*|Workout in progress"
     direction: UP
     centerElement: true
     timeout: 20000

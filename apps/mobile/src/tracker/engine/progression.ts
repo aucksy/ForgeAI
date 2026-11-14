@@ -754,7 +754,7 @@ function computeAt(input: ProgressionInput, depth: number): ProgressionTarget {
   if (L.ramp) {
     // R-454: never under what the heaviest set did last time.
     const goal = Math.max(lowestReps, Math.min(max, Math.max(min, lowestReps + 1)));
-    return out('R5', same, goal, `Last time ${repsList}${atLast}. Same weight, aim for ${goal} at your heaviest weight.`, null, undefined, max);
+    return out('R5', same, goal, `Previous: ${repsList}${atLast}. Same weight, aim for ${goal} at your heaviest weight.`, null, undefined, max);
   }
   // C3-12: the goals come from the newest FULL workout at this weight (a single cut-short set of 4
   // set every goal to 4).
@@ -960,7 +960,7 @@ function holdTarget(input: ProgressionInput): ProgressionTarget {
     const up = before != null && next > before + 1e-9;
     return mk('T2', next, up ? 'up' : null, `You held ${list}. Time for ${fmtDurationWords(next)} on every set.`);
   }
-  return mk('T3', next, null, `Last time ${list}. Hold ${fmtDurationWords(next)} on every set before adding time.`);
+  return mk('T3', next, null, `Previous: ${list}. Hold ${fmtDurationWords(next)} on every set before adding time.`);
 }
 
 // ---------------------------------------------------------------- display (shared by every screen)

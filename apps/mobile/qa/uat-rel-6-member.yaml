@@ -16,12 +16,12 @@ appId: com.mettleup.app
     index: 0
 # The Workout tab keeps its scroll place, and cards sit above "Up next": look up first.
 - scrollUntilVisible:
-    element: "Up next: .*|Done today: .*"
+    element: "Up next: .*|Done: .*"
     direction: UP
     timeout: 30000
     optional: true
 - extendedWaitUntil:
-    visible: "Up next: .*|Done today: .*"
+    visible: "Up next: .*|Done: .*"
     timeout: 30000
 # ---------------------------------------------------------------- #3 the backup card
 - runFlow:
@@ -79,12 +79,12 @@ appId: com.mettleup.app
     index: 0
 # The Workout tab keeps its scroll place, and cards sit above "Up next": look up first.
 - scrollUntilVisible:
-    element: "Up next: .*|Done today: .*"
+    element: "Up next: .*|Done: .*"
     direction: UP
     timeout: 30000
     optional: true
 - extendedWaitUntil:
-    visible: "Up next: .*|Done today: .*"
+    visible: "Up next: .*|Done: .*"
     timeout: 30000
 - extendedWaitUntil:
     visible: '^Your workouts are only on this phone\..*'

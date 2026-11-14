@@ -105,12 +105,12 @@ appId: com.mettleup.app
     index: 0
 # The Workout tab keeps its scroll place, and cards sit above "Up next": look up first.
 - scrollUntilVisible:
-    element: "Up next: .*|Done today: .*"
+    element: "Up next: .*|Done: .*"
     direction: UP
     timeout: 30000
     optional: true
 - extendedWaitUntil:
-    visible: "Up next: .*|Done today: .*"
+    visible: "Up next: .*|Done: .*"
     timeout: 30000
 - assertNotVisible: ".*backed up to Google Drive.*"
 - assertNotVisible: "^Backups now go to your MettleUp account\\..*"

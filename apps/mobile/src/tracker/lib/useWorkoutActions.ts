@@ -132,7 +132,7 @@ export function useWorkoutActions(router: Nav, show?: () => void): WorkoutAction
         void askConfirm({
           title: 'Saved as a routine',
           body: into?.following
-            ? `It is in ${into.name}, your plan — Today will include it.`
+            ? `It is in ${into.name}, your plan — Up next will include it.`
             : `It is in ${into?.name ?? 'My routines'}. Your plan has not changed.`,
           confirmLabel: 'Open routine',
           cancelLabel: 'Done',

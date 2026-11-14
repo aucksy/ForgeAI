@@ -28,7 +28,7 @@ describe('welcome start view words (R-131)', () => {
 
   it('uses the owner-approved words of the new welcome (R-277, 2 Nov 2026)', () => {
     expect(START_WORDS.title).toBe('Get stronger every week');
-    expect(START_WORDS.sub).toBe('Log every set at the gym. See what you lifted last time.');
+    expect(START_WORDS.sub).toBe('Log every set at the gym. See what you lifted the previous time.');
     expect(START_WORDS.joinGym).toBe('Join my gym');
     expect(START_WORDS.bringWorkouts).toBe('Bring workouts');
     expect(START_WORDS.useWithout).toBe('Use without an account');

@@ -513,7 +513,7 @@ export const SetRow = memo(function SetRow({
               {prevMain}
             </Text>
             {prevRpe ? (
-              <Text numberOfLines={1} accessibilityLabel={`RPE ${prevRpe.replace('@', '').trim()} last time`} style={prevStyle()}>
+              <Text numberOfLines={1} accessibilityLabel={`Previous RPE ${prevRpe.replace('@', '').trim()}`} style={prevStyle()}>
                 {prevRpe}
               </Text>
             ) : null}

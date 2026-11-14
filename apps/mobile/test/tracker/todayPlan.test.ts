@@ -105,7 +105,7 @@ describe('todayPlan — the one Today answer', () => {
     expect(a.routine?.name).toBe('Push 1');
     expect(a.next?.name).toBe('Pull 1');
     const w = todayWords({ status: a.status, routine: a.routine, next: a.next, doneName: 'Push 1' });
-    expect(w.sentence).toBe('Done today: Push 1 · Next: Pull 1');
+    expect(w.sentence).toBe('Done: Push 1 · Next: Pull 1');
     // The last routine wraps round to the first.
     expect(todayPlan({ todayISO: '2026-10-08', folder: FOLDER, sessions: [did('2026-10-08', PULL2)] }).next?.name).toBe('Push 1');
   });

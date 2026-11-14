@@ -258,9 +258,9 @@ export const PREVIOUS_FROM_CHOICES: readonly { value: PreviousFrom; label: strin
     // R-138 (28 Oct 2026): the Target reads the same last time as PREVIOUS (the newest workout
     // anywhere); the C3-3 "heavy and light days keep their own Target" exception is gone, so its
     // sentence is too. Separate heavy and light days: "Same routine".
-    line: 'Previous, Target and notes come from the last time you did the exercise, in any folder. Applies from your next workout.',
+    line: 'Previous, Target and notes come from the previous time you did the exercise, in any folder. Applies from your next workout.',
   },
-  { value: 'routine', label: 'Same routine', line: 'Previous, Target and notes come from the last time you did it in this routine. Applies from your next workout.' },
+  { value: 'routine', label: 'Same routine', line: 'Previous, Target and notes come from the previous time you did it in this routine. Applies from your next workout.' },
   // R-61 (owner, 22 Oct 2026: "It shouldn't be even folder"): "Same folder" is retired; a saved one
   // reads as Any workout (`shownPreviousFrom`). Its scope stays for the Target's folder check.
 ];
@@ -271,5 +271,5 @@ export const PREVIOUS_FROM_CHOICES: readonly { value: PreviousFrom; label: strin
  */
 export const BODY_WEIGHT_SWITCH = {
   title: 'Always use all workouts for body-weight moves',
-  caption: 'Push-ups, pull-ups and other moves with no weight show your last time from any workout, even one started without a routine',
+  caption: 'Push-ups, pull-ups and other moves with no weight show your previous numbers from any workout, even one started without a routine',
 } as const;

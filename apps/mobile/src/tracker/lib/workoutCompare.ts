@@ -129,17 +129,17 @@ export function mainCause(deltas: readonly ExerciseDelta[], totalDelta: number):
     if (!best || Math.abs(moved) > Math.abs(best.todayKg - best.lastKg)) best = d;
   }
   if (!best) return null;
-  const why = best.kind === 'skipped' ? 'not done today' : best.kind === 'new' ? 'new today' : best.reason;
+  const why = best.kind === 'skipped' ? 'not done this time' : best.kind === 'new' ? 'new this time' : best.reason;
   return why ? `Mostly ${best.name}: ${why}.` : `Mostly ${best.name}.`;
 }
 
-/** One row's right-hand words: "+8%", "−20%", "same", "new", "not today". PURE. */
+/** One row's right-hand words: "+8%", "−20%", "same", "new", "not done". PURE. */
 export function deltaTag(d: ExerciseDelta): string {
   switch (d.kind) {
     case 'new':
       return 'new';
     case 'skipped':
-      return 'not today';
+      return 'not done';
     case 'same':
       return 'same';
     default:
@@ -151,9 +151,9 @@ export function deltaTag(d: ExerciseDelta): string {
 export function spokenTag(d: ExerciseDelta): string {
   switch (d.kind) {
     case 'new':
-      return 'new today';
+      return 'new this time';
     case 'skipped':
-      return 'not done today';
+      return 'not done this time';
     case 'same':
       return 'about the same';
     default:

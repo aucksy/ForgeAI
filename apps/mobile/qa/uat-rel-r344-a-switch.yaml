@@ -16,7 +16,7 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: 'When a workout is lighter than last time, MettleUp can check how long you slept last night, from your watch or sleep app through Health Connect\. Your sleep stays on this phone\.'
+      FIND: 'When a workout is lighter than the previous one, MettleUp can check how long you slept last night, from your watch or sleep app through Health Connect\. Your sleep stays on this phone\.'
 - assertVisible:
     text: "Sleep and workouts"
     checked: false

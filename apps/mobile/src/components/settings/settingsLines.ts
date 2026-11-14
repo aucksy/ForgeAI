@@ -159,7 +159,7 @@ export function settingsGroups(ctx: SettingsContext): SettingsGroup[] {
  */
 export const MORE_WORKOUT_ROWS: readonly SettingsRow[] = [
   { key: 'nextWeight', title: 'How the app picks your next weight', href: '/settings/next-weight' },
-  { key: 'lastTime', title: "Last time's numbers", href: '/settings/last-time' },
+  { key: 'lastTime', title: 'Previous numbers', href: '/settings/last-time' },
   { key: 'muscleTips', title: 'Muscle tips', href: '/settings/muscle-tips' },
 ];
 

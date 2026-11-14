@@ -18,7 +18,7 @@ import { deltaTag, spokenTag, type ExerciseDelta } from '../lib/workoutCompare';
 const tagColor = (d: ExerciseDelta): string => (d.kind === 'up' ? color.goodText : d.kind === 'down' ? color.inkSecondary : color.inkMuted);
 
 export function DeltaRow({ d }: { d: ExerciseDelta }) {
-  const why = d.reason ?? (d.kind === 'skipped' ? 'Not done today' : d.kind === 'new' ? 'Not in that workout' : null);
+  const why = d.reason ?? (d.kind === 'skipped' ? 'Not done this time' : d.kind === 'new' ? 'Not in that workout' : null);
   return (
     <View
       accessible

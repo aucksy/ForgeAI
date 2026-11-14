@@ -35,7 +35,7 @@ appId: com.mettleup.app
     text: "^Workout$"
     index: 0
 - extendedWaitUntil:
-    visible: "Up next: .*|Done today: .*|Workout in progress|Start empty workout"
+    visible: "Up next: .*|Done: .*|Workout in progress|Start empty workout"
     timeout: 30000
 - waitForAnimationToEnd:
     timeout: 3000

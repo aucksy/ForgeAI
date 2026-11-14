@@ -429,10 +429,10 @@ export default function ExerciseScreen() {
                     <Pressable
                       onPress={() => openSession(last.sessionId)}
                       accessibilityRole="button"
-                      accessibilityLabel={`Last time · ${relativeDay(last.dateISO)}. Open the workout`}
+                      accessibilityLabel={`Previous · ${relativeDay(last.dateISO)}. Open the workout`}
                       style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: space.sm, minHeight: 48, opacity: pressed ? 0.7 : 1 })}
                     >
-                      <Text style={[sectionLabel(), { flex: 1 }]}>Last time · {relativeDay(last.dateISO)}</Text>
+                      <Text style={[sectionLabel(), { flex: 1 }]}>Previous · {relativeDay(last.dateISO)}</Text>
                       <Icon name="chevron-right" size={18} color={color.inkMuted} />
                     </Pressable>
                     <SetTable rows={last.rows} logType={shownAs} />

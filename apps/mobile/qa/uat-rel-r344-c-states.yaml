@@ -38,13 +38,13 @@ appId: com.mettleup.app
     env:
       KG: "20"
 - extendedWaitUntil:
-    visible: '.*Lighter than last time\. Every workout counts\..*'
+    visible: '.*Lighter than previous\. Every workout counts\..*'
     timeout: 15000
     optional: true
 - runFlow:
     file: sub-see.yaml
     env:
-      FIND: '.*Lighter than last time\. Every workout counts\..*'
+      FIND: '.*Lighter than previous\. Every workout counts\..*'
 - assertNotVisible: "You slept .*"
 - assertNotVisible: 'Test build: made-up sleep\.'
 - takeScreenshot: rel-r344-09-off-no-line
@@ -143,13 +143,13 @@ appId: com.mettleup.app
     env:
       KG: "20"
 - extendedWaitUntil:
-    visible: '.*Lighter than last time\. Every workout counts\..*'
+    visible: '.*Lighter than previous\. Every workout counts\..*'
     timeout: 15000
     optional: true
 - runFlow:
     file: sub-see.yaml
     env:
-      FIND: '.*Lighter than last time\. Every workout counts\..*'
+      FIND: '.*Lighter than previous\. Every workout counts\..*'
 - assertNotVisible: "You slept .*"
 - takeScreenshot: rel-r344-13-removed-no-line
 # Large text pushes "Done" below the edge (run 41994649037, font 2.0).

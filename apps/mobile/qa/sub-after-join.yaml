@@ -41,5 +41,5 @@ appId: com.mettleup.app
     index: 0
     optional: true
 - extendedWaitUntil:
-    visible: "Up next: .*|Done today: .*|Workout in progress|Start empty workout"
+    visible: "Up next: .*|Done: .*|Workout in progress|Start empty workout"
     timeout: 30000

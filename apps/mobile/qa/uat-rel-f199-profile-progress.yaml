@@ -40,10 +40,13 @@ appId: com.mettleup.app
       id: "today-goal"
     centerElement: true
     timeout: 20000
+# R-499 (owner, 14 Nov 2026): the line says Next and Previous, never "Today" or "last time":
+# "Next: <routine>. <n> kg to lift. <d> kg more than previous (<p> kg)." (or Same as previous / a first time).
 - runFlow:
     file: sub-see.yaml
     env:
-      FIND: 'Today: .*'
+      FIND: 'Next: .*'
+- assertNotVisible: '.*(Today: |to lift today|than last time|last time \().*'
 - takeScreenshot: rel-f199-02-chart-and-today
 - scrollUntilVisible:
     element: "(?i)^your progress$"
@@ -310,7 +313,7 @@ appId: com.mettleup.app
       id: "chart-open-workout"
     timeout: 5000
 - takeScreenshot: rel-f199-14-duration-picked
-# Duration: the Today line says how long the workout took last time.
+# Duration: the Next line says how long the workout took the previous time (R-499 words).
 - scrollUntilVisible:
     element:
       id: "today-goal"
@@ -319,7 +322,8 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-see.yaml
     env:
-      FIND: 'Today: .*'
+      FIND: 'Next: .*'
+- assertNotVisible: '.*(Last time it took|took last time).*'
 - scrollUntilVisible:
     element: "^Reps$"
     direction: UP
@@ -380,7 +384,7 @@ appId: com.mettleup.app
     text: "^Workout$"
     index: 0
 - extendedWaitUntil:
-    visible: "Up next: .*|Done today: .*|Workout in progress|Start empty workout"
+    visible: "Up next: .*|Done: .*|Workout in progress|Start empty workout"
     timeout: 20000
 - openLink: "mettleup://progress"
 - extendedWaitUntil:

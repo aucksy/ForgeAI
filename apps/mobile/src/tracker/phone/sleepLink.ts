@@ -276,7 +276,7 @@ export function askSleep(): boolean {
 
 export const SLEEP_TITLE = 'Sleep and workouts';
 export const SLEEP_ABOUT =
-  "When a workout is lighter than last time, MettleUp can check how long you slept last night, from your watch or sleep app through Health Connect. Your sleep stays on this phone.";
+  "When a workout is lighter than the previous one, MettleUp can check how long you slept last night, from your watch or sleep app through Health Connect. Your sleep stays on this phone.";
 export const SLEEP_ON =
   "On. After a lighter workout, MettleUp checks last night's sleep. Your sleep stays on this phone and is never sent anywhere.";
 export const SLEEP_NOT_ALLOWED =

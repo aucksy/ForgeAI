@@ -19,7 +19,7 @@ appId: com.mettleup.app
     text: "^Workout$"
     index: 0
 - extendedWaitUntil:
-    visible: "Up next: .*|Done today: .*|Workout in progress|Start empty workout"
+    visible: "Up next: .*|Done: .*|Workout in progress|Start empty workout"
     timeout: 20000
 - takeScreenshot: xj6-00-workout-forgeai-look
 # ---------------------------------------------------------------- leave gym A

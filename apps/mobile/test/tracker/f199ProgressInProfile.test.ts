@@ -186,18 +186,18 @@ describe('F199 the Today line follows the chip', () => {
     expect(todayModeFor('sets')).toBeNull();
   });
   it('the words of the line', () => {
-    expect(todayLineWords({ big: '12,300 kg', label: 'to lift today', line: '300 kg more than last time (12,000 kg).' }, 'volume')).toBe(
-      '12,300 kg to lift today. 300 kg more than last time (12,000 kg).',
+    expect(todayLineWords({ big: '12,300 kg', label: 'to lift', line: '300 kg more than previous (12,000 kg).' }, 'volume')).toBe(
+      '12,300 kg to lift. 300 kg more than previous (12,000 kg).',
     );
-    expect(todayLineWords({ big: '52 min', label: 'took last time', line: 'x' }, 'duration')).toBe('Last time it took 52 min.');
-    expect(todayLineWords({ big: '—', label: 'to lift today', line: 'Finish this workout once to see your goal here.' }, 'volume')).toBe(
+    expect(todayLineWords({ big: '52 min', label: 'took the previous time', line: 'x' }, 'duration')).toBe('It took 52 min the previous time.');
+    expect(todayLineWords({ big: '—', label: 'to lift', line: 'Finish this workout once to see your goal here.' }, 'volume')).toBe(
       'Finish this workout once to see your goal here.',
     );
   });
   it('never volume or PR or session on the line', () => {
     const lines = [
-      todayLineWords({ big: '1 kg', label: 'to lift today', line: 'Same as last time (1 kg).' }, 'volume'),
-      todayLineWords({ big: '5 min', label: 'took last time', line: '' }, 'duration'),
+      todayLineWords({ big: '1 kg', label: 'to lift', line: 'Same as previous (1 kg).' }, 'volume'),
+      todayLineWords({ big: '5 min', label: 'took the previous time', line: '' }, 'duration'),
       HINT_TEXT.progressInProfile,
     ];
     for (const l of lines) expect(l).not.toMatch(/\b(volume|PR|session)\b/i);

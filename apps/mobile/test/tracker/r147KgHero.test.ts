@@ -14,24 +14,24 @@ describe('R-147: kgHero', () => {
   it('his Triceps day: 1,925 kg vs 1,880 kg → "+45 kg more than last time"', () => {
     const h = kgHero({ kg: 1925, reps: 45 }, { kg: 1880, reps: 44, against: 'Push 2 on 13 Oct' }, 'metric')!;
     expect(h.mode).toBe('kg');
-    expect(h.label).toBe('Kg lifted today');
+    expect(h.label).toBe('Kg lifted');
     expect(h.big).toBe('1,925 kg');
     expect(h.tone).toBe('up');
-    expect(h.line).toBe('+45 kg more than last time');
-    expect(h.lastLine).toBe('Last time: 1,880 kg in Push 2 on 13 Oct');
-    expect(h.shareLine).toBe('+45 kg more than last time');
+    expect(h.line).toBe('+45 kg more than previous');
+    expect(h.lastLine).toBe('Previous: 1,880 kg in Push 2 on 13 Oct');
+    expect(h.shareLine).toBe('+45 kg more than previous');
   });
 
   it('lower: a kind line, nothing for the picture', () => {
     const h = kgHero({ kg: 1500, reps: 40 }, { kg: 1880, reps: 44, against: null }, 'metric')!;
     expect(h.tone).toBe('down');
-    expect(h.line).toBe('Lighter than last time. Every workout counts.');
-    expect(h.lastLine).toBe('Last time: 1,880 kg');
+    expect(h.line).toBe('Lighter than previous. Every workout counts.');
+    expect(h.lastLine).toBe('Previous: 1,880 kg');
     expect(h.shareLine).toBeNull();
   });
 
   it('a no-weight workout with fewer reps says fewer reps, not lighter', () => {
-    expect(kgHero({ kg: 0, reps: 30 }, { kg: 0, reps: 40, against: null }, 'metric')!.line).toBe('Fewer reps than last time. Every workout counts.');
+    expect(kgHero({ kg: 0, reps: 30 }, { kg: 0, reps: 40, against: null }, 'metric')!.line).toBe('Fewer reps than previous. Every workout counts.');
   });
 
   it('an easy week lower: lighter on purpose', () => {
@@ -41,7 +41,7 @@ describe('R-147: kgHero', () => {
   it('the same (under 1 kg apart)', () => {
     const h = kgHero({ kg: 1880.4, reps: 44 }, { kg: 1880, reps: 44, against: null }, 'metric')!;
     expect(h.tone).toBe('same');
-    expect(h.line).toBe('Same as last time');
+    expect(h.line).toBe('Same as previous');
   });
 
   it('first workout: today alone, no made-up last time', () => {
@@ -60,17 +60,17 @@ describe('R-147: kgHero', () => {
   it('a no-weight workout counts reps, and compares only with another no-weight one', () => {
     const h = kgHero({ kg: 0, reps: 60 }, { kg: 0, reps: 52, against: null }, 'metric')!;
     expect(h.mode).toBe('reps');
-    expect(h.label).toBe('Reps today');
+    expect(h.label).toBe('Reps done');
     expect(h.big).toBe('60 reps');
-    expect(h.line).toBe('+8 reps more than last time');
+    expect(h.line).toBe('+8 reps more than previous');
     expect(kgHero({ kg: 0, reps: 60 }, { kg: 1500, reps: 40, against: null }, 'metric')!.tone).toBe('first');
   });
 
   it('pounds for a member on lb', () => {
     const h = kgHero({ kg: 1000, reps: 30 }, { kg: 900, reps: 30, against: null }, 'imperial')!;
-    expect(h.label).toBe('Lb lifted today');
+    expect(h.label).toBe('Lb lifted');
     expect(h.big).toMatch(/ lb$/);
-    expect(h.line).toMatch(/^\+\d+ lb more than last time$/);
+    expect(h.line).toMatch(/^\+\d+ lb more than previous$/);
   });
 
   it('nothing lifted and no reps (cardio only): no card', () => {
@@ -109,8 +109,8 @@ describe('R-147: the share picture', () => {
       .map((n) => (n as { text: string }).text);
 
   it('adds "+45 kg more than last time" after "Workout complete" when today beat last time', () => {
-    expect(completeLine('+45 kg more than last time')).toBe('Workout complete · +45 kg more than last time');
-    expect(lines({ ...input, beatLast: '+45 kg more than last time' })).toContain('Workout complete · +45 kg more than last time');
+    expect(completeLine('+45 kg more than previous')).toBe('Workout complete · +45 kg more than previous');
+    expect(lines({ ...input, beatLast: '+45 kg more than previous' })).toContain('Workout complete · +45 kg more than previous');
   });
 
   it('without it the picture is as before', () => {
@@ -118,7 +118,7 @@ describe('R-147: the share picture', () => {
   });
 
   it('a line too long to fit whole is dropped, never cut', () => {
-    expect(completeLine(`+${'9'.repeat(80)} kg more than last time`)).toBe('Workout complete');
+    expect(completeLine(`+${'9'.repeat(80)} kg more than previous`)).toBe('Workout complete');
   });
 });
 
@@ -126,7 +126,7 @@ describe('UAT A-06: a much shorter workout is not compared', () => {
   it('2 sets against a full workout: no "lighter", no last-time line', () => {
     const h = kgHero({ kg: 1875, reps: 10 }, { kg: 7463, reps: 60, against: null }, 'metric')!;
     expect(h.tone).toBe('first');
-    expect(h.line).toBe('A shorter workout than last time. Every workout counts.');
+    expect(h.line).toBe('A shorter workout than the previous one. Every workout counts.');
     expect(h.lastLine).toBeNull();
   });
   it('fewer reps but far more kilos is a win, not "shorter"', () => {

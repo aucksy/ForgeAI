@@ -1,5 +1,5 @@
 # UAT WP4b, part UK (M-110), step 1 of 5: the REAL Today widget on the home screen.
-#   - Settings -> Widgets -> "Add Today" -> Android's "Add to home screen": the widget is placed.
+#   - Settings -> Widgets -> "Add Next workout" -> Android's "Add to home screen": the widget is placed.
 #   - Its "Start" (the widget's own keyed link) starts today's routine AT ONCE: the workout screen,
 #     never the calm "Start <routine>?" question (that is for a link without the key).
 #   - During the workout the widget says "Workout in progress. Resume"; tapped, it resumes it (set 1
@@ -15,17 +15,17 @@ appId: com.mettleup.app
     env:
       PAGE: "Widgets"
 - scrollUntilVisible:
-    element: "Add Today"
+    element: "Add Next workout"
     centerElement: true
     timeout: 15000
-- tapOn: "Add Today"
+- tapOn: "Add Next workout"
 - extendedWaitUntil:
     visible: '(?i).*(add to home screen|add automatically|^add$).*'
     timeout: 15000
 - tapOn: '(?i)^(add to home screen|add)$'
 - pressKey: Home
 - extendedWaitUntil:
-    visible: '^TODAY$'
+    visible: '^WORKOUT$'
     timeout: 15000
 # Back into the app once: it writes what the widget shows whenever it comes to the front.
 - launchApp:
@@ -37,17 +37,17 @@ appId: com.mettleup.app
     visible: "Home-screen widgets|^Profile$"
     timeout: 30000
 # 0.72.0 (R-320): the Today widget shows what to beat on the routine's first lifts, so it is spoken
-# "Today: Push Day A. 6 exercises. Barbell Bench Press 72.5 kg × 8 last time · try 75 × 5. Overhead
-# Press 40 kg × 8 last time · try 42.5 × 5. Start" (Widgets.kt); the demo has a last time for them.
+# "Workout: Push Day A. 6 exercises. Barbell Bench Press: previous 72.5 kg × 8 · next 75 × 5. Overhead
+# Press: previous 40 kg × 8 · next 42.5 × 5. Start" (Widgets.kt); the demo has a last time for them.
 - pressKey: Home
 - extendedWaitUntil:
-    visible: 'Today: .+\. \d+ exercises?\. .+ × \d+ last time · try .+\. Start'
+    visible: 'Workout: .+\. \d+ exercises?\. .+: previous .+ × \d+ · next .+\. Start'
     timeout: 30000
-- copyTextFrom: 'Today: .+\. \d+ exercises?\. .+ × \d+ last time · try .+\. Start'
+- copyTextFrom: 'Workout: .+\. \d+ exercises?\. .+: previous .+ × \d+ · next .+\. Start'
 - runScript: js/uat-widget.js
 - takeScreenshot: uk-01-widget-start
 # ---------------------------------------------------------------- the widget's Start
-- tapOn: 'Today: .+\. \d+ exercises?\. .+ × \d+ last time · try .+\. Start'
+- tapOn: 'Workout: .+\. \d+ exercises?\. .+: previous .+ × \d+ · next .+\. Start'
 - extendedWaitUntil:
     visible: "Log a set to finish|Finish workout"
     timeout: 30000
@@ -83,10 +83,10 @@ appId: com.mettleup.app
 # ---------------------------------------------------------------- the widget's Resume
 - pressKey: Home
 - extendedWaitUntil:
-    visible: 'Today: .+\. Workout in progress\. Resume'
+    visible: 'Workout: .+\. Workout in progress\. Resume'
     timeout: 30000
 - takeScreenshot: uk-03-widget-resume
-- tapOn: 'Today: .+\. Workout in progress\. Resume'
+- tapOn: 'Workout: .+\. Workout in progress\. Resume'
 - extendedWaitUntil:
     visible: "Minimise workout. It keeps running."
     timeout: 30000

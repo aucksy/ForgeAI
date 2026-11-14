@@ -184,7 +184,7 @@ function CurrentCard({
       >
         <View style={{ flex: 1 }}>
           <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink }}>This workout</Text>
-          <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.inkMuted }}>Today · ticked sets so far</Text>
+          <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.inkMuted }}>Ticked sets so far</Text>
         </View>
         <Badge label="In progress" tone="accent" />
       </View>

@@ -244,7 +244,7 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-settings-page.yaml
     env:
-      PAGE: "Last time's numbers"
+      PAGE: "Previous numbers"
 - extendedWaitUntil:
     visible: "^Any workout$"
     timeout: 20000
@@ -254,7 +254,7 @@ appId: com.mettleup.app
     env:
       FIND: '^Any workout$'
 - takeScreenshot: w-05b-previous-values
-# R-284: Last time's numbers → More workout choices → Settings → Profile.
+# R-284: Previous numbers → More workout choices → Settings → Profile.
 - back
 - back
 - back

@@ -92,7 +92,7 @@ describe('RP-08 where a new routine goes', () => {
     expect(choices.map((c) => [c.folderId, c.label, c.value])).toEqual([
       [null, 'My routines', 'Not in your plan'],
       ['x', 'Travel', '0 routines'],
-      ['p', 'PPL', 'Your plan · Today will include it'],
+      ['p', 'PPL', 'Your plan · Up next will include it'],
     ]);
     const mine = folderChoices([{ id: 'm', name: 'My routines', following: false, routines: [1] }]);
     expect(mine.map((c) => c.folderId)).toEqual(['m']);

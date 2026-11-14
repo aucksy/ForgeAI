@@ -17,7 +17,7 @@ appId: com.mettleup.app
     file: sub-settings-open.yaml
 - runFlow:
     when:
-      true: ${PAGE == 'How the app picks your next weight' || PAGE == "Last time's numbers" || PAGE == 'Muscle tips'}
+      true: ${PAGE == 'How the app picks your next weight' || PAGE == 'Previous numbers' || PAGE == 'Muscle tips'}
     commands:
       - scrollUntilVisible:
           element: "^More workout choices$"

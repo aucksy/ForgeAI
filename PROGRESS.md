@@ -15,6 +15,31 @@
   words; NOT run on a phone yet (needs the qa-device uat parts u454/u366 at the release round). What's new draft
   (member-words): "When you beat your previous workout on an exercise, the green line now says so first:
   \"Previous set volume beaten! +200 kg\", with both totals under it."
+- R-499 PROFILE "NEXT" LINE COMPARES LIKE FOR LIKE; "TODAY" AND "LAST TIME" LEAVE THE WORKOUT WORDS (owner, 14 Nov
+  2026, his Profile: "Today: Pull 2. 3,780 kg to lift today. 1,840 kg more than last time (1,940 kg). Not counted: 2
+  exercises..."; "remove the word today from everywhere ... It has to be next"). Cause: the goal (every exercise of the
+  routine as planned, minus the 2 not counted) was compared with the newest Pull 2 workout AS A WHOLE: a short previous
+  Pull 2, exercises last done in another workout, and the 2 uncounted exercises still inside the previous total. Now
+  (lib/todayGoal todayGoalFrom/goalParts, services/todayGoalService, volumeService setsKgCounter): the SAME exercises
+  on both sides, each one's previous = the sets its Target and PREVIOUS column read (lastSets), counted by the one
+  volume rule; each exercise's goal never under its previous (except an easy week, which says so); the plan's own
+  sets as the exercise card plans them (kgPlan: back-offs kept); a different set count is named ("The plan has 2 more
+  sets than previous."). Words: "Next: Pull 2. 1,990 kg to lift. 50 kg more than previous (1,940 kg)." Duration: "It
+  took 52 min the previous time." Every member word about a workout: Next / Previous / Done / This workout (finish
+  card "Kg lifted", "Previous: ...", "+45 kg more than previous", share picture the same; Up next "Done: Push 1";
+  Up next screen title "Up next"; widget "WORKOUT" header, "Bench Press: previous 60 kg × 8 · next 62.5 × 8"; tick
+  line "+2.5 kg on previous"; Settings "Previous numbers"; exercise page "Previous · <day>"; welcome line). NOT changed
+  here (other helper): kgTarget.ts and ExerciseLogCard.tsx ("Done: 0 of today's 1,800 kg", "+5% on last time", the
+  green line). Shared JS (Android and iPhone) + the phone widget's XML/Kotlin words (Gradle builds at the release tag).
+  Tests: r499NextGoal (16, his exact case reproduced: old rule 3,780 vs 1,940 = +1,840; new 3,780 vs 3,450 = +330),
+  todayGoal, f199, and every test asserting the old words. UAT: part u199 (uat-rel-f199-profile-progress) reads
+  "Next: ..." and asserts no "Today: " / "to lift today" / "than last time" / "Last time it took"; flows asserting old
+  words updated (uat-k1 widget, v0270-i, v0290-l, phase9-p, r344, r358, t76, u5-finish, Up next regexes).
+  What's new draft (member-words, needs the Gemini/fresh-reader pass before release):
+  "On the Profile tab, the line about your next workout now compares the same exercises with the previous time you did
+  them, so the extra kilos it shows are a real step up, for example \"50 kg more than previous\"."
+  "Workout words now say \"Next\" and \"Previous\" instead of \"Today\" and \"Last time\", so they still make sense
+  when you train on another day."
 - RELEASE STEP, PUBLIC BETA (owner #96 "A = now", 14 Nov 2026): from the next release every version goes to Play open testing first and to production about 3 days later. At that release: set up the open-testing track in Play Console (countries, feedback email) and make play-upload send the AAB to it; the watch follows the phone tracks.
 - R-500 PROFILE CHART: "LAST 3 MONTHS" INSTEAD OF "LAST 12 WEEKS" (owner, 14 Nov 2026: "I want to change the 12 weeks to 3
   months. It should be last 3 months or last 12 months or all time."). Shared JS (Android and iPhone), no native part,

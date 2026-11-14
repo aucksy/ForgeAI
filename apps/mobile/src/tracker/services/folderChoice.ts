@@ -39,6 +39,6 @@ export function folderChoices(folders: readonly { id: string; name: string; foll
     out.push({ folderId: f.id, label: f.name, value: countWord(f.routines.length, 'routine'), following: false });
   }
   const plan = folders.find((f) => f.following);
-  if (plan) out.push({ folderId: plan.id, label: plan.name, value: 'Your plan · Today will include it', following: true });
+  if (plan) out.push({ folderId: plan.id, label: plan.name, value: 'Your plan · Up next will include it', following: true });
   return out;
 }

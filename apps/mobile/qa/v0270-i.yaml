@@ -423,7 +423,7 @@ appId: com.mettleup.app
     env:
       PAGE: "Widgets"
 - scrollUntilVisible:
-    element: "Add Today"
+    element: "Add Next workout"
     centerElement: true
     timeout: 15000
 # None on the home screen yet: the row says what the widgets show, with both Add buttons.
@@ -435,7 +435,7 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: "Today's workout and your week, on your home screen\\."
+      FIND: "Your next workout and your week, on your home screen\\."
 - runFlow:
     file: sub-find.yaml
     env:
@@ -443,8 +443,8 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: "Add Today"
-- tapOn: "Add Today"
+      FIND: "Add Next workout"
+- tapOn: "Add Next workout"
 - extendedWaitUntil:
     visible: '(?i).*(add to home screen|add automatically|^add$).*'
     timeout: 15000
@@ -461,13 +461,13 @@ appId: com.mettleup.app
 - tapOn: '(?i)^(add to home screen|add)$'
 - pressKey: Home
 - extendedWaitUntil:
-    visible: '^TODAY$'
+    visible: '^WORKOUT$'
     timeout: 15000
     optional: true
 - runFlow:
     file: sub-see.yaml
     env:
-      FIND: '^TODAY$'
+      FIND: '^WORKOUT$'
 - takeScreenshot: 132-home-screen-widget
 # Back in the app, the Widgets page counts the one just placed (re-read on every return). The app
 # comes back on that page; if Android restarted it, it opens on the Workout tab: go there again.

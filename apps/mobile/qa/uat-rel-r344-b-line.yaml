@@ -20,13 +20,13 @@ appId: com.mettleup.app
     env:
       KG: "20"
 - extendedWaitUntil:
-    visible: '.*Lighter than last time\. Every workout counts\..*'
+    visible: '.*Lighter than previous\. Every workout counts\..*'
     timeout: 15000
     optional: true
 - runFlow:
     file: sub-see.yaml
     env:
-      FIND: '.*Lighter than last time\. Every workout counts\..*'
+      FIND: '.*Lighter than previous\. Every workout counts\..*'
 - extendedWaitUntil:
     visible: 'You slept 5 h 10 min last night\. A weaker day after short sleep is normal\. Aim for 7 hours or more tonight\.'
     timeout: 15000
@@ -48,13 +48,13 @@ appId: com.mettleup.app
     env:
       KG: "20"
 - extendedWaitUntil:
-    visible: '.*Lighter than last time\. Every workout counts\..*'
+    visible: '.*Lighter than previous\. Every workout counts\..*'
     timeout: 15000
     optional: true
 - runFlow:
     file: sub-see.yaml
     env:
-      FIND: '.*Lighter than last time\. Every workout counts\..*'
+      FIND: '.*Lighter than previous\. Every workout counts\..*'
 - extendedWaitUntil:
     visible: 'Eat enough protein\. A palm-sized portion with each meal helps your muscles recover\.'
     timeout: 15000
@@ -77,13 +77,13 @@ appId: com.mettleup.app
     env:
       KG: "20"
 - extendedWaitUntil:
-    visible: '.*Lighter than last time\. Every workout counts\..*'
+    visible: '.*Lighter than previous\. Every workout counts\..*'
     timeout: 15000
     optional: true
 - runFlow:
     file: sub-see.yaml
     env:
-      FIND: '.*Lighter than last time\. Every workout counts\..*'
+      FIND: '.*Lighter than previous\. Every workout counts\..*'
 - extendedWaitUntil:
     visible: ".*protein.*|You slept .*"
     timeout: 5000

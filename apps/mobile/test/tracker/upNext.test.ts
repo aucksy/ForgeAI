@@ -160,7 +160,7 @@ describe('the Up next card', () => {
   it('done today: ✓, "Next: Pull 1" and Start Pull 1 for a second workout', () => {
     const c = upNextCard(I({ today: T({ status: 'doneToday', doneName: 'Push 1' }) }));
     expect(c.kind).toBe('doneToday');
-    expect(c.title).toBe('Done today: Push 1');
+    expect(c.title).toBe('Done: Push 1');
     expect(c.done).toBe(true);
     expect(c.line).toBe('Next: Pull 1');
     expect(c.primary).toEqual({ label: 'Start Pull 1', action: 'start' });

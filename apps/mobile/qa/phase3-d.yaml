@@ -290,13 +290,13 @@ appId: com.mettleup.app
     text: "View Treadmill Run"
     index: 0
 - extendedWaitUntil:
-    visible: "Last time · .*"
+    visible: "Previous · .*"
     timeout: 15000
     optional: true
 - runFlow:
     file: sub-see.yaml
     env:
-      FIND: 'Last time · .*'
+      FIND: 'Previous · .*'
 - runFlow:
     file: sub-see.yaml
     env:

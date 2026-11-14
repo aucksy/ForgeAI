@@ -93,7 +93,7 @@ describe('T76: the finish screen big card after a switch to lb', () => {
   it('regression: with the allowance it is "Same as last time" (so no sleep or protein line)', () => {
     const h = kgHero(today, last, 'imperial', false, shownTotalNoise(sets));
     expect(h?.tone).toBe('same');
-    expect(h?.line).toBe('Same as last time');
+    expect(h?.line).toBe('Same as previous');
   });
 
   it('positive: a real lighter day is still "Lighter than last time"', () => {
@@ -107,6 +107,6 @@ describe('T76: the finish screen big card after a switch to lb', () => {
     const t = { kg: heavy.reduce((a, s) => a + s.weightKg * s.reps, 0), reps: 30 };
     const h = kgHero(t, last, 'imperial', false, shownTotalNoise(heavy));
     expect(h?.tone).toBe('up');
-    expect(h?.line).toMatch(/more than last time/);
+    expect(h?.line).toMatch(/more than previous/);
   });
 });

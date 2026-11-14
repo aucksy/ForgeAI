@@ -8,7 +8,7 @@ export const START_WORDS = {
   // R-273 / R-277 (owner, 1-2 Nov 2026): one hero screen. Approved words from the design canvas
   // (HgYB2U7cdYHvAJRRExDDSV): the headline, the line under it and the four ways in.
   title: 'Get stronger every week',
-  sub: 'Log every set at the gym. See what you lifted last time.',
+  sub: 'Log every set at the gym. See what you lifted the previous time.',
   googleButton: 'Continue with Google',
   joinGym: 'Join my gym',
   bringWorkouts: 'Bring workouts',

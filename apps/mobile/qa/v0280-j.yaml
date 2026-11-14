@@ -209,7 +209,7 @@ appId: com.mettleup.app
 - back
 # ---------------------------------------------------------------- the Workout tab: the next routine
 - scrollUntilVisible:
-    element: "Up next: .*|Done today: .*"
+    element: "Up next: .*|Done: .*"
     direction: UP
     centerElement: true
     timeout: 20000
@@ -329,7 +329,7 @@ appId: com.mettleup.app
 - takeScreenshot: 152-one-from-hevy-folder
 # ---------------------------------------------------------------- the Up next card's "See exercises" again
 - scrollUntilVisible:
-    element: "Up next: .*|Done today: .*"
+    element: "Up next: .*|Done: .*"
     direction: UP
     centerElement: true
     timeout: 20000

@@ -693,7 +693,7 @@ appId: com.mettleup.app
     timeout: 10000
 - assertVisible: "My routines, Not in your plan.*"
 - assertVisible:
-    text: ".*, Your plan · Today will include it"
+    text: ".*, Your plan · Up next will include it"
     below:
       text: "My routines, Not in your plan.*"
 - takeScreenshot: 109-new-routine-folder-picker

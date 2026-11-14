@@ -246,7 +246,7 @@ appId: com.mettleup.app
     visible: "6 routines in Jaipur"
     timeout: 20000
 # His last workout was Leg 2 (4 Oct), so the rotation continues with Push 1.
-- assertVisible: ".*The Workout tab shows Push 1 today\\..*"
+- assertVisible: ".*Up next on the Workout tab: Push 1\\..*"
 - assertVisible: ".*1 new exercise added to your library\\..*"
 - takeScreenshot: 176-link-saved
 # "Open routines" lands on the Workout tab: the followed folder "Jaipur (6)", open, its cards.
@@ -384,11 +384,11 @@ appId: com.mettleup.app
     visible: "^Workout$"
     timeout: 20000
 # The plan's proof: in the folder's rotation, Push 1 is followed by Pull 1. Redesign R1: the Up
-# next card titles "Done today: Push 1" over the line "Next: Pull 1", with "Start Pull 1" (a
-# second workout); its spoken title is one line ("Done today: Push 1. Next: Pull 1. Done"),
+# next card titles "Done: Push 1" over the line "Next: Pull 1", with "Start Pull 1" (a
+# second workout); its spoken title is one line ("Done: Push 1. Next: Pull 1. Done"),
 # which the patterns accept too.
 - scrollUntilVisible:
-    element: 'Done today: Push 1(\. .*)?'
+    element: 'Done: Push 1(\. .*)?'
     direction: UP
     centerElement: true
     timeout: 20000

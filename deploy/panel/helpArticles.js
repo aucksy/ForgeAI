@@ -525,15 +525,15 @@ export const ALL_HELP_ARTICLES = [
   {
     id: 'log-a-workout',
     who: 'member',
-    title: 'Log a workout and see last time\'s numbers',
+    title: 'Log a workout and see your previous numbers',
     text:
       '1. Open the Workout tab. Tap "Start routine" on a routine, or "Start empty workout". ' +
       '2. Tap "Add exercise" to add more exercises. ' +
       '3. Type the weight and reps for each set, then tap the tick. ' +
       '4. When you are done, tap "Finish workout". ' +
-      'The PREVIOUS column shows what you did last time for each set. ' +
+      'The PREVIOUS column shows what you did the previous time for each set. ' +
       'Tap an exercise name to open its page. Its History shows every time you did it. ' +
-      'To choose where last time\'s numbers come from, open Profile, tap Settings, then "More workout choices", then "Last time\'s numbers": "Any workout" or "Same routine".',
+      'To choose where your previous numbers come from, open Profile, tap Settings, then "More workout choices", then "Previous numbers": "Any workout" or "Same routine".',
     screens: [
       'apps/mobile/src/app/(tabs)/workout.tsx',
       'apps/mobile/src/app/session/active.tsx',
@@ -628,7 +628,7 @@ export const ALL_HELP_ARTICLES = [
     title: 'Look up an exercise, or make your own',
     text:
       '1. Open the Profile tab and tap "Exercises" under "Your progress". Search, or filter by equipment and muscle. ' +
-      '2. Tap an exercise. "Summary" shows last time, your best and a chart. "History" shows every time you did it. "How to" shows how to do it. ' +
+      '2. Tap an exercise. "Summary" shows the previous time, your best and a chart. "History" shows every time you did it. "How to" shows how to do it. ' +
       'To make your own: on Exercises, tap "Create". Type the name, pick how you log it, the main muscle and the equipment, then tap "Save exercise". ' +
       'To hide one you never do, open it, open its menu and tap "Hide from my lists". "Hidden exercises", at the bottom of the list, brings it back with "Show".',
     screens: [
@@ -682,11 +682,11 @@ export const ALL_HELP_ARTICLES = [
   {
     id: 'more-workout-choices',
     who: 'member',
-    title: 'Next weight, last time\'s numbers and when you are stuck',
+    title: 'Next weight, previous numbers and when you are stuck',
     text:
       'Open Profile, tap Settings, then "More workout choices". ' +
       '"How the app picks your next weight": pick the "Weight step" (Small, Standard or Large) and the "Reps to aim for" (Match my goal, Strength, Muscle or Higher reps). ' +
-      '"Last time\'s numbers": "Any workout" or "Same routine". ' +
+      '"Previous numbers": "Any workout" or "Same routine". ' +
       '"Muscle tips": now and then, Up next suggests a few sets for a muscle group you left out. ' +
       '"When I\'m stuck at a weight": "Ask me", "Step back by itself" or "Never suggest it".',
     screens: [
@@ -705,7 +705,7 @@ export const ALL_HELP_ARTICLES = [
       '6 is easy, with 4 or more reps left. 8 means 2 more reps left. 10 means you could not do another rep. ' +
       'To turn it on: open Profile, tap Settings, then "Rate how hard each set felt", and switch it on. Each set then gets an RPE box. ' +
       'During a workout, tap the box and pick a number. The set ticks itself and your rest starts. ' +
-      'Last time\'s RPE shows in the PREVIOUS column.',
+      'Your previous RPE shows in the PREVIOUS column.',
     screens: ['apps/mobile/src/app/settings/effort.tsx'],
   },
   {
@@ -735,7 +735,7 @@ export const ALL_HELP_ARTICLES = [
     text:
       'Open Profile, tap Settings, and look under "Phone and watch". ' +
       '"Your watch": tap "Install on watch", and switch on "Open MettleUp on my watch" so it opens when you start a workout. ' +
-      '"Widgets": tap "Add Today" or "Add This week". Today starts your next workout and shows what to beat from last time. ' +
+      '"Widgets": tap "Add Next workout" or "Add This week". Next workout starts your next workout and shows what to beat from the previous time. ' +
       'Gym members can tap "Add Gym right now": how busy your gym is, and when that was checked. Tap it to check in. ' +
       '"Health apps": connect Health Connect to send your workouts, and to read your weight or steps. ' +
       '"Sleep and workouts" tells you, after a lighter workout, if you slept under 6 hours. ' +

@@ -88,7 +88,7 @@ describe('Finish remembers the routine (schema v11)', () => {
     expect(tp.status).toBe('doneToday');
     expect(tp.doneToday?.name).toBe('Push 2');
     expect(tp.next?.name).toBe('Pull 2');
-    expect(tp.words.title).toBe('Done today: Push 2');
+    expect(tp.words.title).toBe('Done: Push 2');
     expect(tp.words.line).toBe('Next: Pull 2');
   });
 

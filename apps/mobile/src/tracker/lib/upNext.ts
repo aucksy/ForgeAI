@@ -129,7 +129,7 @@ export function upNextCard(i: UpNextInput): UpNextCard {
     const done = t.doneName?.trim() || 'Workout';
     return card({
       kind: 'doneToday',
-      title: `Done today: ${done}`,
+      title: `Done: ${done}`,
       line: t.nextName ? `Next: ${t.nextName}` : '',
       goalLine: goal,
       done: true,

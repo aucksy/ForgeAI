@@ -96,7 +96,7 @@ describe('T76: the finish screen after a Counting change', () => {
     const note = await noteOf(second);
     expect(note.againstId).toBe(first);
     expect(note.hero?.tone).toBe('up');
-    expect(note.hero?.line).toMatch(/more than last time/);
+    expect(note.hero?.line).toMatch(/more than previous/);
   });
 
   it('units switched to lb, the same dumbbells typed as shown (22.0 lb for 10 kg): never "Lighter than last time"', async () => {
@@ -107,7 +107,7 @@ describe('T76: the finish screen after a Counting change', () => {
     const today = await logPull(2, [[w, 10], [w, 10], [w, 10]]);
     const note = await noteOf(today);
     expect(note.hero?.tone).toBe('same');
-    expect(note.hero?.line).toBe('Same as last time');
+    expect(note.hero?.line).toBe('Same as previous');
     setDisplayUnits('metric');
   });
 

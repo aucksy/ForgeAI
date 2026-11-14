@@ -447,23 +447,20 @@ export async function getLastRoutineTotals(routineId: string, routineName = ''):
 }
 
 /**
- * R-132: kg a planned workout would lift, by the ONE volume rule (`setVolumeKg`: body weight on pull-ups
- * and dips at today's body weight, both dumbbells for "kg each"). Each item: an exercise and its planned
- * working sets; `loadMode` as the member last logged it (null = the exercise's own way).
+ * R-499: one read of the volume rule for these exercises, then a counter for any of their sets on any
+ * day (that day's body weight on pull-ups and dips; each set counted the exercise's current way, as the
+ * Targets and their last sets are both in that counting). The Next line counts its plan and the same
+ * exercises' previous sets with it, so both sides follow one rule.
  */
-export async function plannedVolumeKg(
-  items: readonly { exerciseId: string; loadMode: LoadMode | null; sets: readonly { weightKg: number; reps: number }[] }[],
-  dateISO: string = todayISO(),
-): Promise<number> {
-  if (items.length === 0) return 0;
-  const ctx = await getBaseContext([...new Set(items.map((i) => i.exerciseId))]);
-  const bw = bodyweightOn(ctx.bw, dateISO);
-  let kg = 0;
-  for (const it of items) {
-    const rule = ctx.exercises.get(it.exerciseId) ?? PLAIN;
-    for (const s of it.sets) kg += setVolumeKg({ weightKg: s.weightKg, reps: s.reps, isWarmup: false, loadMode: it.loadMode }, rule, bw);
-  }
-  return kg;
+export async function setsKgCounter(
+  exerciseIds: readonly string[],
+): Promise<(exerciseId: string, sets: readonly { weightKg: number; reps: number }[], dateISO: string) => number> {
+  const ctx = await getBaseContext([...new Set(exerciseIds)]);
+  return (exerciseId, sets, dateISO) => {
+    const rule = ctx.exercises.get(exerciseId) ?? PLAIN;
+    const bw = bodyweightOn(ctx.bw, dateISO);
+    return sets.reduce((kg, s) => kg + setVolumeKg({ weightKg: s.weightKg, reps: s.reps, isWarmup: false, loadMode: null }, rule, bw), 0);
+  };
 }
 
 

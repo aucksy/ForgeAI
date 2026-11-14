@@ -192,7 +192,7 @@ export function showNoRoutinesYet(folders: readonly unknown[]): boolean {
 /** The question before a folder is deleted. PURE. */
 export function deleteFolderMessage(routines: number, following: boolean): string {
   const gone = routines === 0 ? 'It has no routines.' : routines === 1 ? 'Its routine goes too.' : `Its ${routines} routines go too.`;
-  return `${gone} Your workout history stays.${following ? " Today's workout will have no plan until you follow another folder." : ''}`;
+  return `${gone} Your workout history stays.${following ? " Up next will have no plan until you follow another folder." : ''}`;
 }
 
 /**

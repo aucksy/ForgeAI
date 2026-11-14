@@ -64,7 +64,7 @@ export function vsLastTimeText(
     const now = Math.round(pos(set.durationSec));
     const last = Math.round(pos(prev.durationSec));
     if (now <= 0 || last <= 0 || now <= last) return null;
-    return `+${fmtDurationWords(now - last)} on last time`;
+    return `+${fmtDurationWords(now - last)} on previous`;
   }
 
   if (logType === 'distance' || logType === 'time_distance') {
@@ -74,11 +74,11 @@ export function vsLastTimeText(
     const a = shownDist(nowM, distUnit, units);
     const b = shownDist(lastM, distUnit, units);
     const d = Math.round((a.v - b.v) * 100) / 100;
-    if (d > 0) return `+${trimNum(d, 2)} ${a.unit} on last time`;
+    if (d > 0) return `+${trimNum(d, 2)} ${a.unit} on previous`;
     if (logType === 'time_distance' && d === 0) {
       const now = Math.round(pos(set.durationSec));
       const last = Math.round(pos(prev.durationSec));
-      if (now > 0 && last > 0 && now < last) return `${fmtDurationWords(last - now)} faster than last time`;
+      if (now > 0 && last > 0 && now < last) return `${fmtDurationWords(last - now)} faster than previous`;
     }
     return null;
   }
@@ -88,7 +88,7 @@ export function vsLastTimeText(
   const pr = pos(prev.reps);
   if (r <= 0 || pr <= 0) return null;
 
-  if (logType === 'reps') return r > pr ? `+${repsWords(r - pr)} on last time` : null;
+  if (logType === 'reps') return r > pr ? `+${repsWords(r - pr)} on previous` : null;
 
   // A blank weight on weighted / assisted is "none", as a tick saves it.
   const wKg = set.weightKg ?? (logType === 'weight_reps' ? null : 0);
@@ -101,21 +101,21 @@ export function vsLastTimeText(
   if (logType === 'assisted') {
     // Less help is the harder set.
     const less = Math.round((pw - w) * 100) / 100;
-    if (less > 0 && r >= pr) return `${trimNum(less, dp)} ${unit} less assistance than last time`;
-    if (less === 0 && r > pr) return `+${repsWords(r - pr)} on last time`;
+    if (less > 0 && r >= pr) return `${trimNum(less, dp)} ${unit} less assistance than previous`;
+    if (less === 0 && r > pr) return `+${repsWords(r - pr)} on previous`;
     return null;
   }
 
   const more = Math.round((w - pw) * 100) / 100;
   const each = weightIsEach(loadMode) ? ' each' : '';
-  if (more > 0 && r >= pr) return `+${trimNum(more, dp)} ${unit}${each} on last time`;
-  if (more === 0 && r > pr) return `+${repsWords(r - pr)} on last time`;
+  if (more > 0 && r >= pr) return `+${trimNum(more, dp)} ${unit}${each} on previous`;
+  if (more === 0 && r > pr) return `+${repsWords(r - pr)} on previous`;
   if (more > 0 && r < pr && logType === 'weight_reps') {
     // 13 Oct 2026 audit (B1): the records' estimate (reps above 12 count as 12).
     const before = estimatedOneRepMax(pw, pr);
     if (!(before > 0)) return null;
     const pct = Math.floor((estimatedOneRepMax(w, r) / before - 1) * 100 + 1e-9);
-    return pct >= 1 ? `Heavier for fewer reps: +${pct}% strength on last time` : null;
+    return pct >= 1 ? `Heavier for fewer reps: +${pct}% strength on previous` : null;
   }
   return null;
 }

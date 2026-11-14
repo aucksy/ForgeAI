@@ -229,5 +229,5 @@ export function quickLastLine(x: Pick<QuickExercise, 'type' | 'repMin' | 'repMax
   const range = `${x.repMin}–${x.repMax} reps`;
   if (HELD.has(x.type)) return x.last ? 'Done before: try to hold a little longer.' : 'First time: hold it as long as you can with good form.';
   if (!x.last) return NO_WEIGHT.has(x.type) ? `First time: use your body weight and aim for ${range}.` : `First time: pick a weight you can lift for ${range}.`;
-  return x.last.lastKg > 0 ? `Last time: ${fmtKg(x.last.lastKg)} × ${x.last.lastReps} reps` : `Last time: ${x.last.lastReps} reps`;
+  return x.last.lastKg > 0 ? `Previous: ${fmtKg(x.last.lastKg)} × ${x.last.lastReps} reps` : `Previous: ${x.last.lastReps} reps`;
 }

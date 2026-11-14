@@ -109,11 +109,11 @@ export default function TodayScreen() {
 
   return (
     <Screen
-      title="Today"
+      title="Up next"
       onBack={() => goBack(router)}
     >
       {todayLoad.state === 'error' ? (
-        <LoadError what="today's workout" onRetry={todayLoad.retry} />
+        <LoadError what="your next workout" onRetry={todayLoad.retry} />
       ) : today == null ? (
         <View style={{ gap: space.md }}>
           <Skeleton width="60%" height={28} />
@@ -146,8 +146,8 @@ export default function TodayScreen() {
             </Text>
             <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkSecondary, lineHeight: 19 }}>
               {done
-                ? `${today.today?.title ?? 'Done today'}${today.today?.line ? ` · ${today.today.line}` : ''}. ${countWord(today.targets.length, 'exercise')}, pre-filled with last time’s numbers.`
-                : `${countWord(today.targets.length, 'exercise')}, pre-filled with last time’s numbers.`}
+                ? `${today.today?.title ?? 'Done'}${today.today?.line ? ` · ${today.today.line}` : ''}. ${countWord(today.targets.length, 'exercise')}, pre-filled with your previous numbers.`
+                : `${countWord(today.targets.length, 'exercise')}, pre-filled with your previous numbers.`}
             </Text>
             {week ? (
               <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.inkMuted }}>{week}</Text>

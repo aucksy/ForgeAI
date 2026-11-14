@@ -87,7 +87,7 @@ export function widgetData(i: WidgetInput): WidgetData {
   const todayIndex = Array.from({ length: 7 }, (_, k) => addDays(start, k)).indexOf(i.todayISO);
 
   let today: WidgetToday;
-  if (i.doneToday) today = { title: `${i.doneToday} done`, line: i.next ? `Next: ${i.next}` : 'Nothing else planned today', action: 'Open' };
+  if (i.doneToday) today = { title: `${i.doneToday} done`, line: i.next ? `Next: ${i.next}` : 'Nothing else planned', action: 'Open' };
   else if (i.today && i.today.exercises.length > 0) {
     const beats = (i.today.beats ?? []).filter((x) => x.trim() !== '').slice(0, WIDGET_BEATS);
     const count = countWord(i.today.exercises.length, 'exercise');
@@ -180,7 +180,7 @@ export function beatLine(t: BeatTarget, kg: (kg: number) => string): string | nu
   if (!(goal > 0)) return null;
   const bare = (w: number): string => kg(w).replace(/\s*(kg|lb)$/, '');
   const each = t.each ? ' each' : '';
-  return `${t.exerciseName} ${kg(last.weightKg)}${each} × ${last.topReps} last time · try ${bare(t.targetWeightKg)} × ${goal}`;
+  return `${t.exerciseName}: previous ${kg(last.weightKg)}${each} × ${last.topReps} · next ${bare(t.targetWeightKg)} × ${goal}`;
 }
 
 /** Gym level → the widget's one word. The server knows quiet / as usual / busier / closed; nothing more. PURE. */

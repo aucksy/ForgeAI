@@ -28,7 +28,7 @@ describe('R-75: each exercise against the compared workout', () => {
       ['Lat Pulldown', 'up', '+10%', '5 kg heavier'],
       ['Barbell Row', 'down', '−50%', '2 sets fewer'],
       ['Face Pull', 'new', 'new', null],
-      ['Dumbbell Curl', 'skipped', 'not today', null],
+      ['Dumbbell Curl', 'skipped', 'not done', null],
     ]);
   });
 
@@ -103,8 +103,8 @@ describe('R-75: the finish list opens with the arrow on the right', () => {
     expect(spokenTag(row('up', 0.08))).toBe('up 8 percent');
     expect(spokenTag(row('down', -0.2))).toBe('down 20 percent');
     expect(spokenTag(row('same', 0.01))).toBe('about the same');
-    expect(spokenTag(row('new', null))).toBe('new today');
-    expect(spokenTag(row('skipped', null))).toBe('not done today');
+    expect(spokenTag(row('new', null))).toBe('new this time');
+    expect(spokenTag(row('skipped', null))).toBe('not done this time');
   });
 
   it('the finish screen shows the line through the opening card, and the words stay plain', async () => {
