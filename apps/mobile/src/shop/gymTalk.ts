@@ -9,6 +9,8 @@
  * A member writes a Question, Feedback or a Complaint; feedback may go without their name. The gym replies in the
  * same thread, the member may write back. Complaints are read by the gym owner only (the server's rule).
  * gymTalkSync.ts talks to the server.
+ * R-549 (14 Nov 2026): the same page also asks a trainer (0053); the one row and page's rules are gymMessages.ts (the
+ * Question hint's "For workout help, pick "A trainer" above." is gymMessages.questionHint).
  */
 
 /** Longest message (the server's limit). */
@@ -60,9 +62,6 @@ export const TALK_WORDS = {
     feedback: 'Share an idea, or tell them what you like.',
     complaint: 'Tell them what went wrong. Only the gym owner reads complaints.',
   } as Record<TalkKind, string>,
-  /** R-505: added after the question hint ONLY for a member who may ask a trainer now (`talkHint`). */
-  // R-533: the other row's new name (askTrainer.ts ASK_WORDS.rowTitle), in quotes so it reads as a place.
-  askHint: 'For workout help, use "Ask about your workout".',
   placeholder: {
     question: 'For example: Is the gym open on Diwali?',
     feedback: 'For example: Please add a second squat rack.',
@@ -106,17 +105,6 @@ const first = (raw: unknown): unknown => (Array.isArray(raw) ? raw[0] : raw);
 
 export function isTalkKind(v: unknown): v is TalkKind {
   return typeof v === 'string' && (TALK_KINDS as readonly string[]).includes(v);
-}
-
-/**
- * The line under "What is it about?". R-505 (14 Nov 2026): "For workout help, use Ask a trainer." is added to the
- * question hint only when this member can ask a trainer now (askTrainer.ts askShown(...)?.kind === 'open', the
- * Gym tab row's own check). A pass member (FITPASS, cultpass), a member with no plan or whose plan ended, or a
- * check not answered yet: no mention of it. PURE.
- */
-export function talkHint(kind: TalkKind, canAsk: boolean): string {
-  const base = TALK_WORDS.kindHint[kind];
-  return kind === 'question' && canAsk ? `${base} ${TALK_WORDS.askHint}` : base;
 }
 
 /** Only feedback may go without the name. PURE. */

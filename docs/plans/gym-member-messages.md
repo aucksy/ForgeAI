@@ -91,3 +91,10 @@ The privacy notice already says the gym sees what a member sends to it in the ap
 Draft line for the owner's yes (with the migration): "Messages you send to your gym from the Gym tab (questions,
 feedback, complaints) and the gym's replies are kept for 180 days after the last message, and deleted when you leave
 the gym. Feedback you send without your name is shown to the gym without your name." (legal words: his yes first).
+
+### R-549 (14 Nov 2026): one row and one page for the gym and the trainers
+The owner (option A): one "Message your gym" row; its first question is who the message is for. "The gym" is this
+plan's Question / Feedback / Complaint (0069); "A trainer" is "Ask about your workout" (0053), shown only to a member on
+a running paid plan (R-505). Feedback and Complaint never go to a trainer. One list of everything sent and every reply,
+newest first; one red count from both. Both servers, the owner panel and the trainer inboxes are unchanged. The old
+addresses stay: /shop/message opens "The gym", /shop/ask opens "A trainer". Rules: apps/mobile/src/shop/gymMessages.ts.

@@ -1,9 +1,9 @@
 # Part UAT, flow 12c (gym): R-533 (owner, 14 Nov 2026) "there was no dot or something in that section saying that
 # there's something to be checked". Runs only when qa/uat_gym.py answer replied, as the gym, to the question flow 12b
 # left open (run-device-qa.sh), so every check here is strict:
-#  - the Gym tab row says the gym replied and carries a red count (picture rel-125: the count on the row's icon and
-#    on the Gym tab);
-#  - the reply reads on the page (rel-126);
+#  - the Gym tab's ONE "Message your gym" row (R-549) says the gym replied and carries a red count (picture rel-125:
+#    the count on the row's icon and on the Gym tab): a trainer's reply counts there too;
+#  - the reply reads in the page's one list, under the question (rel-126);
 #  - back on the Gym tab the count and the "replied" line are gone (rel-127).
 appId: com.mettleup.app
 ---
@@ -18,9 +18,9 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: '.*(1 new reply|Your gym replied to your question\. Tap to read it\.).*'
+      FIND: '.*(1 new reply|Your gym replied\. Tap to read it\.).*'
 - takeScreenshot: rel-125-ask-reply-red-count
-- tapOn: '.*(1 new reply|Your gym replied to your question\. Tap to read it\.).*'
+- tapOn: '.*(1 new reply|Your gym replied\. Tap to read it\.).*'
 - extendedWaitUntil:
     visible: 'QA reply: one rest day is fine, two if your legs still ache\.'
     timeout: 30000
@@ -33,6 +33,11 @@ appId: com.mettleup.app
     file: sub-see.yaml
     env:
       FIND: 'QA check: is one rest day enough\?'
+# R-549: in the one list a workout question reads apart from a message to the gym.
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Workout question · To any trainer or the owner · (Today|Yesterday), [0-9]{1,2}:[0-9]{2} [ap]m$'
 - takeScreenshot: rel-126-ask-reply-read
 - back
 - extendedWaitUntil:
@@ -41,9 +46,9 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-see.yaml
     env:
-      FIND: '^Ask about your workout$'
+      FIND: '^Message your gym$'
 # in-view: the row was just brought into view; its count and "replied" line must be gone, not elsewhere.
 - assertNotVisible: ".*1 new reply.*"
 # in-view: the same row, just brought into view.
-- assertNotVisible: '^Your gym replied to your question\. Tap to read it\.$'
+- assertNotVisible: '^Your gym replied.*Tap to read.*$'
 - takeScreenshot: rel-127-ask-reply-count-gone

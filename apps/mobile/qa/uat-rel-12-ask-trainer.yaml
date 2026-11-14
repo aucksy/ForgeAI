@@ -1,14 +1,15 @@
-# Part UAT, flow 12 (gym, after flow 8): R-319 item 1 "Ask a trainer", named "Ask about your workout" since R-533 (owner, 4 and 14 Nov 2026).
+# Part UAT, flow 12 (gym, after flow 8): R-319 item 1 "Ask a trainer" ("Ask about your workout" since R-533), and
+# since R-549 (owner, 14 Nov 2026, option A) the "A trainer" side of the ONE "Message your gym" row and page.
 # The phone is a member ("Uma") of the fresh "QA UAT Gym" made by run-device-qa.sh.
-#  - Until the gym's server has 0053 (applied live 9 Nov 2026), the Gym tab shows NO "Ask a trainer" row and
-#    Settings -> What my gym can see keeps the old "Ask my trainer for help" button: this flow checks the
-#    row is absent and photographs the tab.
-#  - With 0053 live, the row shows: open it, read the words (who answers, the 500-letter limit), send a
-#    question to "Any trainer", read "Waiting for a reply", then take it back (the test gym keeps nothing open).
-#  - R-505 (14 Nov 2026): HAPPY PATH of "only on a running paid plan": Uma has one here ("QA Monthly", ends 4 days
-#    after the phone's today, qa/uat_gym.py setup), so the row is open and never locked. Flow 14 checks the
-#    NEGATIVE: once she is a FITPASS pass member there is no row at all.
-# The gym's side (Questions page, the reply, the member's Progress card) is checked in the admin panel at a
+#  - The Gym tab has ONE row, "Message your gym"; the old "Ask about your workout" row is gone (NEGATIVE).
+#  - The page asks "Who is it for?": "The gym" or "A trainer". Uma has a running paid plan here ("QA Monthly", ends 4
+#    days after the phone's today, qa/uat_gym.py setup), so both show (R-505 HAPPY PATH). Flow 14 checks the NEGATIVE:
+#    as a FITPASS pass member there is no "A trainer" and no choice.
+#  - Her first visit: the list is empty (picture rel-120b: "You have not sent a message yet.").
+#  - "A trainer": no Question / Feedback / Complaint (they always go to the gym), no "(gym owner)" person in the list,
+#    "Any trainer or the owner" as before. Send a question, read "Waiting for a reply", take it back.
+#  - A gym whose server has no 0053 shows no "A trainer" at all: the flow then checks that and stops.
+# The gym's side (Member questions, the reply, the member's Progress card) is checked in the admin panel at a
 # phone and a desktop width; see docs/CLAUDE-NOTES.md R-319.
 appId: com.mettleup.app
 ---
@@ -17,43 +18,85 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "${GYM}"
     timeout: 30000
-- scrollUntilVisible:
-    element:
-      text: "^Ask about your workout$"
-    direction: DOWN
-    timeout: 15000
-    optional: true
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: '^Message your gym$'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^(Ask your gym or a trainer, share feedback or make a complaint|Ask a question, share feedback or make a complaint|Your question is waiting for a reply|Your gym replied.*)$'
+# in-view: R-549, the old second row sat right under this one; it must be gone, not just off screen
+- assertNotVisible: "^Ask about your workout$"
+# in-view: the same rows; a running paid plan is never locked (R-505)
+- assertNotVisible: ".*is for members with a running plan.*"
 - takeScreenshot: rel-120-gym-tab-ask-row
-# ---------------------------------------------------------------- without 0053: nothing shows
+- tapOn: "^Message your gym$"
+# in-view: the page just opened at its top; the hint sits under the Question chip
+- extendedWaitUntil:
+    visible:
+      id: "talk-kind-hint-ready"
+    timeout: 30000
+- takeScreenshot: rel-120a-message-page-top
+# ---------------------------------------------------------------- without 0053: no "A trainer", no choice
 - runFlow:
     when:
-      notVisible: "^Ask about your workout$"
+      notVisible: "^A trainer$"
     commands:
-      - assertNotVisible: ".*Your trainer or the gym owner replies here.*"
-# ---------------------------------------------------------------- with 0053: ask, wait, take back
+      # in-view: the page just opened at its top, where the choice would be
+      - assertNotVisible: '^Who is it for\?$'
+      - back
+# ---------------------------------------------------------------- with 0053: pick "A trainer", ask, wait, take back
 - runFlow:
     when:
-      visible: "^Ask about your workout$"
+      visible: "^A trainer$"
     commands:
       - runFlow:
           file: sub-see.yaml
           env:
-            FIND: '^(Your trainer or the gym owner replies here\.|Your question is waiting for a reply|Your gym replied to your question\. Tap to read it\.)$'
-      # R-505: a running paid plan is never locked.
-      - assertNotVisible: ".*is for members with a running plan.*"
+            FIND: '^Write to your gym, or ask a trainer about your workout\. Every reply shows on this page\.$'
       - runFlow:
           file: sub-see.yaml
           env:
-            FIND: '^Ask about your workout$'
-      - tapOn: "^Ask about your workout$"
-      - extendedWaitUntil:
-          visible: 'Type one question about your workout\. Your trainer or the gym owner replies on this page\.'
-          timeout: 30000
-          optional: true
+            FIND: '^Who is it for\?$'
       - runFlow:
           file: sub-see.yaml
           env:
-            FIND: 'Type one question about your workout\. Your trainer or the gym owner replies on this page\.'
+            FIND: '^The gym$'
+      # "The gym" is picked first (the row opens it): its line says who reads questions and feedback.
+      - runFlow:
+          file: sub-see.yaml
+          env:
+            FIND: '^Questions and feedback go to your gym''s owner, front desk and trainers\.$'
+      - runFlow:
+          file: sub-see.yaml
+          env:
+            FIND: '^Ask about timings, fees, classes and more\. For workout help, pick "A trainer" above\.$'
+      # Her first visit to a fresh test gym: nothing sent yet (a retried flow may already list the question it took back).
+      - runFlow:
+          file: sub-find.yaml
+          env:
+            FIND: '^Your messages$'
+      - runFlow:
+          when:
+            visible: '^You have not sent a message yet\.$'
+          commands:
+            - takeScreenshot: rel-120b-messages-empty
+      - runFlow:
+          file: sub-find.yaml
+          env:
+            FIND: '^A trainer$'
+      - tapOn: "^A trainer$"
+      - runFlow:
+          file: sub-see.yaml
+          env:
+            FIND: '^Ask one question at a time about your workout\.$'
+      # in-view: the choice was just tapped at the top of the card; the gym's types sit right here when shown
+      - assertNotVisible: '^What is it about\?$'
+      # in-view: the same card (Feedback and Complaint always go to the gym, never to a trainer)
+      - assertNotVisible: '^Complaint$'
+      # in-view: the same card
+      - assertNotVisible: '^Send without my name$'
       # A question left open by an earlier run: take it back first.
       - runFlow:
           when:
@@ -81,6 +124,8 @@ appId: com.mettleup.app
           file: sub-see.yaml
           env:
             FIND: '^Any trainer or the owner$'
+      # in-view: R-549, the trainer list sits right here; the gym owner is no longer a person in it ("The gym" is)
+      - assertNotVisible: '.*\(gym owner\)$'
       # The test gym ticks no trainer, so the owner answers; a gym with trainers reads the second line.
       - runFlow:
           file: sub-see.yaml

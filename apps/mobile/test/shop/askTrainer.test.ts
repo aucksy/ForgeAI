@@ -186,7 +186,6 @@ describe('member words', () => {
     const lines: string[] = [
       ...(Object.values(ASK_WORDS) as unknown[]).filter((v): v is string => typeof v === 'string'),
       ASK_WORDS.yours('Rohit S.'),
-      ASK_WORDS.owner('Owner S.'),
       ASK_WORDS.counter(120),
       ASK_WORDS.replied('Rohit'),
       ASK_WORDS.replied(null),

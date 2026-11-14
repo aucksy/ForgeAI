@@ -1,7 +1,8 @@
 # Part UAT, flow 12b (gym, after flow 12): R-533 (owner, 14 Nov 2026) "when I responded back from the admin panel,
 # there was no notification... and there was no dot". Uma sends one question and leaves it open; run-device-qa.sh then
 # answers it as the gym (qa/uat_gym.py answer), and flow 12c checks the red count on the row, opens the reply, and
-# checks the count is gone. Skipped (the row is absent) until the gym's server has 0053 (live since 9 Nov 2026).
+# checks the count is gone. Skipped (no "A trainer" on "Message your gym") without 0053 (live since 9 Nov 2026).
+# R-549 (14 Nov 2026): the question is asked from the one "Message your gym" page, side "A trainer".
 appId: com.mettleup.app
 ---
 - tapOn:
@@ -9,21 +10,31 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "${GYM}"
     timeout: 30000
-- scrollUntilVisible:
-    element:
-      text: "^Ask about your workout$"
-    direction: DOWN
-    timeout: 15000
-    optional: true
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: '^Message your gym$'
+- tapOn: "^Message your gym$"
+# in-view: the page just opened at its top; the hint sits under the Question chip
+- extendedWaitUntil:
+    visible:
+      id: "talk-kind-hint-ready"
+    timeout: 30000
 - runFlow:
     when:
-      visible: "^Ask about your workout$"
+      notVisible: "^A trainer$"
+    commands:
+      - back
+# R-549: "Ask about your workout" is the "A trainer" side of "Message your gym" (skipped without 0053).
+- runFlow:
+    when:
+      visible: "^A trainer$"
     commands:
       - runFlow:
           file: sub-find.yaml
           env:
-            FIND: '^Ask about your workout$'
-      - tapOn: "^Ask about your workout$"
+            FIND: '^A trainer$'
+      - tapOn: "^A trainer$"
       - extendedWaitUntil:
           visible: '^Who should answer\?$'
           timeout: 30000

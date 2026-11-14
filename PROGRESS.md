@@ -1,6 +1,13 @@
 # ForgeAI progress
 
 ## Waiting for release (R-266: tag only when the owner says "release")
+- R-549 MEMBER APP: ONE "MESSAGE YOUR GYM" FOR THE GYM AND THE TRAINERS (owner, 14 Nov 2026, option A; notes R-549).
+  The Gym tab's "Ask about your workout" row is gone; "Message your gym" asks "Who is it for?": "The gym" (0069) or
+  "A trainer" (0053, only on a running paid plan). Feedback and Complaint always go to the gym. One list, one red count.
+  No database change. src/shop/gymMessages.ts, GymTalkRow.tsx, GymTalkScreen.tsx; tests test/shop/gymMessages.test.ts;
+  phone flows uat-rel-12/12b/12c/14/gym-talk (part ugym). It REPLACES the R-533 What's new line about the row's name.
+  What's new draft (feature, go /shop/message): "On the Gym tab, tap "Message your gym" to write to your gym, or to ask
+  a trainer about your workout if you have a running plan, and read every reply on the same page."
 - R-533 MEMBER APP: "ASK A TRAINER" IS NOW "ASK ABOUT YOUR WORKOUT", WITH A PHONE ALERT AND A RED COUNT FOR REPLIES.
   Gym tab row and page words (src/shop/askTrainer.ts ASK_WORDS): the trainer or the gym owner replies. A reply's push
   sets a red count on the Gym tab and on the row at once (askReplySync.ts, askReplyStore.ts); opening the page clears

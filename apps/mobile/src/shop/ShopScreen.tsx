@@ -42,7 +42,6 @@ import { GYM_SECTION_LABELS, gymSectionShown, gymSections, gymShopOn, type GymSe
 import { GymHeaderMark } from './GymHeaderMark';
 import { GymHoursRow } from './GymHoursRow';
 import { GymBusyCard } from './GymBusyCard';
-import { AskTrainerRow } from './AskTrainerRow';
 import { GymTalkRow } from './GymTalkRow';
 import { BringFriendCard } from './BringFriendCard';
 import { MachineTipCard } from './MachineTipCard';
@@ -324,9 +323,7 @@ function GymShop({ link }: { link: GymLink }) {
                 onPress={() => router.push('/scan')}
               />
             </View>
-            {/* R-319: "Ask a trainer" (hidden until the gym's server has 0053). */}
-            <AskTrainerRow link={link} refreshKey={pulls} />
-            {/* Owner, 12 Nov 2026: questions, feedback and complaints to the gym (hidden until the gym's server has 0069). */}
+            {/* R-549 (owner, 14 Nov 2026): ONE "Message your gym" row: to the gym (0069) or a trainer (0053, R-505 paid plan only). */}
             <GymTalkRow link={link} refreshKey={pulls} />
             {/* R-120: the diet plan the trainer sent (only once one has come). */}
             {plansOn && diets && diets.length > 0 ? (

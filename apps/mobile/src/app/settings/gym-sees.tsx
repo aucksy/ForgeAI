@@ -69,7 +69,9 @@ export default function GymSeesPage() {
   // R-319 (0053): with "Ask a trainer" and recent workouts live, the caption says what trainers now see, and
   // the help button opens "Ask a trainer" instead of the old one-tap request.
   const [askLive, setAskLive] = useState(false);
-  // R-505: "Ask a trainer" only for a member on a running paid plan (or one whose plan ended: old replies).
+  // R-505: "Ask a trainer" only for a member on a running paid plan. R-549: the button opens "Message your gym" on
+  // "A trainer", which shows only to a member who may ask today, so the button does too (a plan that ended: no button;
+  // the old replies stay in the Gym tab's "Message your gym").
   const [askShown, setAskShown] = useState(false);
   useEffect(() => {
     let alive = true;
@@ -80,7 +82,7 @@ export default function GymSeesPage() {
           if (!alive) return;
           setTrainer(s);
           setAskLive(choices !== null);
-          setAskShown(access != null && access.kind !== 'hidden');
+          setAskShown(access?.kind === 'open');
         })
         .catch((e: unknown) => console.warn('[trainer] could not read the status', e));
     return () => {

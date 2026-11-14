@@ -14,6 +14,9 @@
  * (askUnreadCount, askReplySync.ts), and the 15-minute check pops up a reply the push missed (planReplyAlerts).
  * R-505 (owner, 14 Nov 2026): only for members on a running paid gym plan (askAccess below; the server refuses the
  * others with NO_PLAN, supabase/migrations/0074_ask_trainer_paid_plan.sql).
+ * R-549 (owner, 14 Nov 2026, option A): no row or page of its own any more. It is the "A trainer" side of the one
+ * "Message your gym" (gymMessages.ts, GymTalkScreen.tsx); the gym owner is no longer a person in its list (the owner
+ * is "The gym"), "Any trainer or the owner" stays.
  */
 import type { MembershipAnswer } from './membership';
 
@@ -64,7 +67,6 @@ export const ASK_WORDS = {
   toLabel: 'Who should answer?',
   anyTrainer: 'Any trainer or the owner',
   yours: (name: string): string => `${name} (your trainer)`,
-  owner: (name: string): string => `${name} (gym owner)`,
   onlyThem: 'Only the person you pick sees your question. "Any trainer or the owner" sends it to every trainer and the gym owner.',
   noTrainers: 'Your gym has not listed its trainers in the app yet, so the gym owner will answer.',
   placeholder: 'For example: How can I squat deeper without pain in my knees?',

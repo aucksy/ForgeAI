@@ -3,7 +3,7 @@
 # Starts at the top of the page; ends with the sent card on screen.
 appId: com.mettleup.app
 ---
-# R-505: the Ask a trainer hint shows only to a member who can ask; Uma has a running plan here (flow 12 asked a
+# R-505 / R-549: the "A trainer" hint shows only to a member who can ask; Uma has a running plan here (flow 12 asked a
 # trainer), so she reads it once the page has checked ("talk-kind-hint-ready").
 # in-view: the page just opened at its top; the hint sits under the Question chip
 - extendedWaitUntil:
@@ -13,7 +13,7 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-see.yaml
     env:
-      FIND: '^Ask about timings, fees, classes and more\. For workout help, use "Ask about your workout"\.$'
+      FIND: '^Ask about timings, fees, classes and more\. For workout help, pick "A trainer" above\.$'
 - assertNotVisible: "^Send without my name$"
 - runFlow:
     file: sub-see.yaml

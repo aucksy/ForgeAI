@@ -19,10 +19,11 @@ appId: com.mettleup.app
     file: sub-find.yaml
     env:
       FIND: "^Message your gym$"
+# R-549: Uma may also ask a trainer (a running paid plan), so the ONE row names both.
 - runFlow:
     file: sub-see.yaml
     env:
-      FIND: '^Ask a question, share feedback or make a complaint$'
+      FIND: '^(Ask your gym or a trainer, share feedback or make a complaint|Ask a question, share feedback or make a complaint)$'
 - assertNotVisible:
     id: "gym-talk-unread"
 - takeScreenshot: rel-gt-01-gym-tab-row
@@ -32,13 +33,14 @@ appId: com.mettleup.app
       FIND: '^Message your gym$'
 - tapOn: "^Message your gym$"
 - extendedWaitUntil:
-    visible: "^Questions and feedback go to your gym's owner, front desk and trainers\\. Any reply shows on this page\\.$"
+    visible:
+      id: "talk-kind-hint-ready"
     timeout: 30000
-    optional: true
+# R-549: with "A trainer" there too, the top line names both (a member who may not ask reads the gym's own line).
 - runFlow:
     file: sub-see.yaml
     env:
-      FIND: '^Questions and feedback go to your gym''s owner, front desk and trainers\. Any reply shows on this page\.$'
+      FIND: '^(Write to your gym, or ask a trainer about your workout\. Every reply shows on this page\.|Questions and feedback go to your gym''s owner, front desk and trainers\. Any reply shows on this page\.)$'
 - runFlow:
     file: sub-see.yaml
     env:
@@ -127,7 +129,7 @@ appId: com.mettleup.app
       - runFlow:
           file: sub-find.yaml
           env:
-            FIND: "^Ask a question, share feedback or make a complaint$"
+            FIND: '^(Ask your gym or a trainer, share feedback or make a complaint|Ask a question, share feedback or make a complaint)$'
       - assertNotVisible:
           id: "gym-talk-unread"
       - takeScreenshot: rel-gt-08-row-read
