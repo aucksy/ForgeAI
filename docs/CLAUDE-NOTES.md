@@ -7,6 +7,10 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-505. Ask a trainer only for members on a paid gym plan — 14 Nov 2026
+He said: "I do not think that FitPass or CultFit or any of these kind of members should have the option to ask a trainer. So we should remove that option. Unless someone is on a paid plan with the gym, they shouldn't be able to send questions to a trainer."
+Plan (my calls, told him): pass members (F123 membership.pass: FITPASS, cultpass...) and members with no plan: the Gym tab's "Ask a trainer" row is not shown. A member whose plan ENDED sees the row locked with one line "Ask a trainer is for members with a running plan" and a Renew button (a renewal nudge; old questions and replies stay readable). Enforced on the server too (member ask function in a new migration refuses with NO_PLAN) so an old app cannot send; the migration needs his yes to run LIVE. Admin panel: unchanged except trainers never receive new questions from these members. Queued: 6 helpers running.
+
 ## R-504. Drop the desk check? (his view) — 14 Nov 2026
 He said: the member had no idea the request went to the admin panel; and "do we now need it? We are doing WhatsApp verification. We are checking whether the number is already in the database of the gym as an active member... it's unnecessary."
 My answer: right once WhatsApp proof (F203, #95 A) is live, because it proves the phone owns the number; the roster match alone does not (anyone with the poster can type a member's number: the 0048 security fix). F203 is Planned, not built. Proposed: A (my pick) replace the desk check with WhatsApp proof in the F203 version, and until then the member screen says it waits for the desk and checks in by itself; B remove it now (the hole reopens until F203). Waiting for his pick. Approving his own pending request still needs his yes.
