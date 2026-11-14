@@ -166,6 +166,7 @@ READ_HEART_RATE text now end with the demo video https://youtu.be/mEhvRw3mKjw (u
 Health Services test heart rate) and how to try it on a real watch. Saved, then "Send 4 changes for review" (production
 0.77.0, watch closed testing 0.77.0, resume track, Health apps declaration). Managed publishing stays on: ask him for
 "publish" when Google approves. If Google refuses again: B, or a fresh video that also shows the permission screen.
+APPROVED (Play inbox, 14 Nov 2026): "Your recent app update has been approved and is ready for you to publish". Publishing overview: "Changes ready to publish", "Publish 4 changes" (production 77000 / 0.77.0, watch closed testing, resume track, Health apps declaration). Waiting for his "publish".
 
 ## R-480. Morning answers: 2 numbers, phone, AI Assistant live, wording approved — 13 Nov 2026
 He said (13 Nov 2026, morning, in chat):
