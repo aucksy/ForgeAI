@@ -7,6 +7,16 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-515. Next-set hint says "Add 1 rep to each set" but set 1 goes DOWN (18 -> 15) — 14 Nov 2026
+Owner (picture, Dumbbell Curl, previous 20 kg x 18, 13, 11; hint "Suggested: 20 kg · 15, 14, 12 · RPE 9 /
+Add 1 rep to each set under 15: 20 kg × 15, 14, 12"): "is suggesting in plain English that add one more rep to
+each set, but suggesting something else." Also the box says "Done: 0 of today's 840 kg" ("today" is banned).
+Decision (my pick, his override welcome): at the same weight the app never asks for FEWER reps than the
+member did last time on that set (set 1 keeps 18). The words name exactly what changes, set by set, e.g.
+"Keep set 1 at 18. Add 1 rep to sets 2 and 3: 14, 12." Every hint line must match the numbers shown; add a
+test that rebuilds the numbers from the words for every hint kind. The kg total must equal the sum of the
+targets shown. Given to the words helper (same file as R-512), ships with the next release.
+
 ## R-514. AI Assistant "Gym closed" message: no day in the words; send time not clear — 14 Nov 2026
 He sent a picture of the live admin panel (Crispy Curves): he spoke in Hindi; the transcript shows "गर जिम बंद रहेगा सारे मेंबरस को मेसेज पेजो" (he most likely said "kal" = tomorrow; speech-to-text wrote "गर"). The card: Type "Gym closed", Language Hindi, When Now/Later (Now on), preview "जिम बंद रहेगा ... कृपया ध्यान दें कि जिम बंद रहेगा". He said: "First of all, the message is not mentioning that it's tomorrow. And then there is no options for the user to send it now or schedule it for later. It is by default scheduling it for tomorrow. So this doesn't seem proper."
 To do: (1) a "Gym closed" (and timing/holiday) message always says WHICH day, with the date ("कल, 15 नवंबर को"); if the owner gave no day, the card asks for it (date field) instead of sending a dateless message. (2) The send time must be his clear choice: Now / Later visible, and the closure day must never become the send time by itself; the Send button must show when it goes ("Send now" / "Send on 15 Nov, 8:00 am") and never hide behind the ask box (fresh-eyes item). Given to the panel-fix helper (same file).
