@@ -69,7 +69,7 @@ test('keyOf and takeResult read keys and gym server answers safely', () => {
 });
 
 test('takeQuestion: unreachable gym server = not counted; giveBack never throws', async () => {
-  const env = { PHONE_CODE_SECRET: 'test-secret-0123456789abcdef0123456789abcdef' };
+  const env = { PHONE_CODE_SECRET: 'test-secret-0123456789abcdef0123456789abcdef', AI_CREDITS_CHARGE: 'on' };
   const boom = async () => {
     throw new TypeError('network');
   };
@@ -82,4 +82,18 @@ test('takeQuestion: unreachable gym server = not counted; giveBack never throws'
   } finally {
     console.warn = quiet;
   }
+});
+
+test('R-530: without AI_CREDITS_CHARGE = "on" no question is charged and the gym server is never asked', async () => {
+  let asked = 0;
+  const spy = async () => {
+    asked += 1;
+    return new Response('{"ok":true,"id":"q1","who":"member"}', { status: 200 });
+  };
+  for (const flag of [undefined, '', 'off', 'ON', true]) {
+    const env = { PHONE_CODE_SECRET: 'test-secret-0123456789abcdef0123456789abcdef', AI_CREDITS_CHARGE: flag };
+    assert.deepEqual(await takeQuestion(env, 'member', 'member-key-abcdefghijklmnop', { fetchImpl: spy }), { state: 'skip', why: 'held' });
+    assert.deepEqual(await takeQuestion(env, 'admin', 'admin-key-abcdefghijklmnopq', { fetchImpl: spy }), { state: 'skip', why: 'held' });
+  }
+  assert.equal(asked, 0);
 });

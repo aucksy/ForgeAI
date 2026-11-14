@@ -49,7 +49,7 @@ function fakeNet({ take, claudeFails = false } = {}) {
   return { calls, fetchImpl, to: (who) => calls.filter((c) => c.to === who) };
 }
 
-const env = (extra = {}) => ({ WEB: sqliteD1(), CLAUDE_ASSIST_KEY: CLAUDE, PHONE_CODE_SECRET: SECRET, ...extra });
+const env = (extra = {}) => ({ WEB: sqliteD1(), CLAUDE_ASSIST_KEY: CLAUDE, PHONE_CODE_SECRET: SECRET, AI_CREDITS_CHARGE: 'on', ...extra });
 const ask = (body, path = '/api/assist') =>
   new Request(`https://app.mettleup.fit${path}`, { method: 'POST', body: JSON.stringify(body), headers: { 'X-Forge-Key': OWNER } });
 const ASK = { text: 'Send a Diwali offer to everyone', lang: 'en', ctx: CTX };

@@ -14,7 +14,7 @@ const MEMBER_KEY = 'member-key-abcdefghijklmnop';
 const STAFF_KEY = 'staff-session-key-abcdefgh';
 const NOW = new Date('2026-11-14T10:00:00Z');
 
-const env = (extra = {}) => ({ WEB: sqliteD1(), FEEDBACK_SALT: 'salt', CLAUDE_HELP_KEY: CLAUDE, PHONE_CODE_SECRET: SECRET, ...extra });
+const env = (extra = {}) => ({ WEB: sqliteD1(), FEEDBACK_SALT: 'salt', CLAUDE_HELP_KEY: CLAUDE, PHONE_CODE_SECRET: SECRET, AI_CREDITS_CHARGE: 'on', ...extra });
 
 const post = (body, headers = {}) =>
   new Request('https://x/api/help', { method: 'POST', body: JSON.stringify(body), headers: { 'CF-Connecting-IP': '1.2.3.4', ...headers } });

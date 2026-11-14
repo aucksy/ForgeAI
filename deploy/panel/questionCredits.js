@@ -63,6 +63,9 @@ async function rpc(name, args, fetchImpl) {
  * -> { state: 'ok', id, who } | { state: 'none', reason, who, perDay } | { state: 'skip', why }
  */
 export async function takeQuestion(env, app, key, { now = new Date(), fetchImpl = fetch } = {}) {
+  // R-530 (14 Nov 2026): charging waits for the owner's pick on who pays (decision #98). Until the Worker has
+  // AI_CREDITS_CHARGE = "on", every question is answered as before F209 and nothing is taken from any gym.
+  if (env?.AI_CREDITS_CHARGE !== 'on') return { state: 'skip', why: 'held' };
   const k = keyOf(key);
   if (!k) return { state: 'skip', why: 'no key' };
   const secret = typeof env?.PHONE_CODE_SECRET === 'string' ? env.PHONE_CODE_SECRET : '';
