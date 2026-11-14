@@ -19,6 +19,11 @@
 //               self_join_send writes the request into that gym's Enquiries ("Joined online" on Today).
 //  - join.mettleup.fit/<gym>  F207: every gym's own free page and its "Ask the gym" and "Report" forms (gymPageServe.js).
 //               HIDDEN until GYM_PAGES is "live" and the host is routed (docs/gym-page/PLAN.md).
+//  - join.mettleup.fit/f/<CODE>, /m/<CODE>  R-539: the friend invite and "Become a member" pages, outside the admin
+//               app's scope, with only their own calls and files (hosts.js JOIN_LINK_PATHS); the same code as on
+//               app.mettleup.fit, which keeps serving them for good.
+//  - /api/links  R-539: {join}: the address the admin app and the member app make those two links with (hosts.js
+//               joinOrigin: join.mettleup.fit once the var JOIN_HOST says so, else app.mettleup.fit).
 //  - /api/feedback  "Send feedback" from both apps (feedback.js, launch H7).
 //  - /api/help, /api/help/rate  "Help and feedback": the message saved as above, then a Claude answer (help.js, T22).
 //  - /api/feedback/voice  a spoken feedback clip -> text, via Groq Whisper (voice.js, R-206). Clip not kept.
@@ -62,7 +67,7 @@ import { deleteOldPhoneCodes, handlePhoneCode } from './phoneCode.js';
 import { deleteOldInbound } from './phoneInbound.js';
 import { handleWhatsAppHook } from './whatsappHook.js';
 import { handleProxy, isProxyPath, pushAfter } from './proxy.js';
-import { APP_HOST, APP_ORIGIN, handleMove, routeFor } from './hosts.js';
+import { APP_HOST, APP_ORIGIN, handleMove, linksAnswer, routeFor } from './hosts.js';
 
 const SUPABASE = 'https://hdxzqbdiokjklnypfisq.supabase.co';
 // The public, read-only app key (the same one in the panel and the app).
@@ -79,6 +84,7 @@ export default {
     if (where.kind === 'redirect') return new Response(null, { status: where.status, headers: { Location: where.to, 'Cache-Control': 'max-age=3600' } });
     // F207: join.mettleup.fit/<gym> is a gym's own page (gymPageServe.js). Off unless GYM_PAGES is "live"; the host is
     // not in wrangler.jsonc's routes yet either (docs/gym-page/PLAN.md).
+    // R-539: 'joinlink' (join.mettleup.fit/f/..., /m/... and their calls) goes on below like app.mettleup.fit.
     if (where.kind === 'gympage') return handleGymPageHost(request, env, ctx, url, rpc, { payOnline: (code) => offerForCode(env, rpc, code), appKey: KEY });
     // F184: mettleup.fit "/" is the member page (/member-site/), gyms.mettleup.fit "/" the gym page (/home/).
     // LANDING "off" hides both (the old kill switch).
@@ -145,6 +151,8 @@ export default {
     if (url.pathname.startsWith('/api/phone-code/')) return handlePhoneCode(request, env, url, rpc, { ctx });
     // R-392: Meta's news about each WhatsApp message (delivered / failed + why). Logs only (whatsappHook.js).
     if (url.pathname === '/api/whatsapp/hook') return handleWhatsAppHook(request, env, url);
+    // R-539: where the friend invite and "Become a member" links point (join.mettleup.fit once JOIN_HOST is set).
+    if (url.pathname === '/api/links') return linksAnswer(env);
     if (url.pathname === '/api/lead') return env.LANDING === 'live' ? handleLead(request, env) : new Response('Not found', { status: 404 });
     // Launch I2: the landing page goes public only when the owner says yes (wrangler.jsonc vars.LANDING).
     if (url.pathname === '/home' || url.pathname.startsWith('/home/') || url.pathname === '/member-site' || url.pathname.startsWith('/member-site/')) {

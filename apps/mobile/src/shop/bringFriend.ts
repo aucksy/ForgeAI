@@ -10,6 +10,18 @@
 
 /** The page friends open. /f/ is served by the panel Worker (deploy/panel/worker.js) and never opens the app. */
 export const FRIEND_LINK_BASE = 'https://app.mettleup.fit/f/';
+/**
+ * R-539: the same page on join.mettleup.fit, outside the gym's admin app (on a phone with the admin app installed,
+ * an app.mettleup.fit link opened inside it, its splash first). Used only once the panel's Worker says so
+ * (https://app.mettleup.fit/api/links answers {join: 'https://join.mettleup.fit'}; friendLinkBase.ts asks).
+ */
+export const FRIEND_LINK_BASE_JOIN = 'https://join.mettleup.fit/f/';
+
+/** /api/links's answer as the link base: join.mettleup.fit only when it says exactly that. PURE. */
+export function friendLinkBaseFrom(raw: unknown): string {
+  const join = raw && typeof raw === 'object' && !Array.isArray(raw) ? (raw as { join?: unknown }).join : undefined;
+  return join === 'https://join.mettleup.fit' ? FRIEND_LINK_BASE_JOIN : FRIEND_LINK_BASE;
+}
 
 const CODE = /^[A-HJ-NP-Z2-9]{8}$/;
 
@@ -41,14 +53,14 @@ export function friendInviteFrom(raw: unknown): FriendInvite | null {
   return { code: r.code, gymName, rewardDays, joined };
 }
 
-export function friendLink(code: string): string {
-  return `${FRIEND_LINK_BASE}${code}`;
+export function friendLink(code: string, base: string = FRIEND_LINK_BASE): string {
+  return `${base === FRIEND_LINK_BASE_JOIN ? FRIEND_LINK_BASE_JOIN : FRIEND_LINK_BASE}${code}`;
 }
 
 /** What the share menu sends (WhatsApp and the rest). */
-export function friendMessage(invite: Pick<FriendInvite, 'code' | 'gymName'>): string {
+export function friendMessage(invite: Pick<FriendInvite, 'code' | 'gymName'>, base: string = FRIEND_LINK_BASE): string {
   const gym = invite.gymName || 'my gym';
-  return `Come and train with me at ${gym}! Leave your name and number on this page, and the gym will call you: ${friendLink(invite.code)}`;
+  return `Come and train with me at ${gym}! Leave your name and number on this page, and the gym will call you: ${friendLink(invite.code, base)}`;
 }
 
 /** The free-days line, or null when the gym gives none. */

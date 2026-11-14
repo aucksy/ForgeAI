@@ -15,6 +15,7 @@ import { color, space, type } from '@/theme/tokens';
 import { hasQaPassStandIn, withQaPassStandIn } from './membership';
 import { readKeptMembership } from './membershipKept';
 import { FRIEND_WORDS, QA_STAND_IN_NOTE, friendJoinedLine, friendMessage, friendRewardLine, hasQaStandIn, qaStandInInvite, type FriendInvite } from './bringFriend';
+import { friendLinkBase, knownFriendLinkBase } from './friendLinkBase';
 import { apiFriendInvite } from './gymApi';
 import type { GymLink } from './types';
 
@@ -30,6 +31,8 @@ export function BringFriendCard({ link, refreshKey }: { link: GymLink; refreshKe
   const [standIn, setStandIn] = useState(false);
   // F123: a pass member (FITPASS, cultpass...) has no plan, so free days cannot be added: no reward line.
   const [onPass, setOnPass] = useState(false);
+  // R-539: join.mettleup.fit once the panel's Worker says so; app.mettleup.fit until then (and offline).
+  const [base, setBase] = useState(knownFriendLinkBase);
   useFocusEffect(
     useCallback(() => {
       // The kept answer can be written by other cards without the QA stand-in, and after this card asks:
@@ -54,6 +57,9 @@ export function BringFriendCard({ link, refreshKey }: { link: GymLink; refreshKe
         return;
       }
       let live = true;
+      void friendLinkBase().then((b) => {
+        if (live) setBase(b);
+      });
       apiFriendInvite(link.memberKey)
         .then((r) => {
           if (!live) return;
@@ -85,7 +91,7 @@ export function BringFriendCard({ link, refreshKey }: { link: GymLink; refreshKe
   if (!invite) return null;
   const reward = onPass ? null : friendRewardLine(invite.rewardDays);
   const share = (): void => {
-    Share.share({ message: friendMessage({ code: invite.code, gymName: invite.gymName || link.gymName }) }).catch((e: unknown) => {
+    Share.share({ message: friendMessage({ code: invite.code, gymName: invite.gymName || link.gymName }, base) }).catch((e: unknown) => {
       console.warn('[friend] share did not open', e);
     });
   };

@@ -22,6 +22,14 @@
 //                                and only once nothing is waiting to be sent (src/crm/move).
 //   join.mettleup.fit            F207 (R-519): every gym's own free page, join.mettleup.fit/<gym-slug>, and its forms
 //                                (gymPageServe.js). HIDDEN: not in wrangler.jsonc's routes, and off unless GYM_PAGES is "live".
+//                                R-539: also the two public pages for people who are not members yet, outside the
+//                                installed admin app's scope (on app.mettleup.fit Android opened them in the admin
+//                                app, its splash first): a member's friend invite /f/<CODE> and the gym's "Become a
+//                                member" page /m/<CODE>, with only the calls and files those two pages use
+//                                (JOIN_LINK_PATHS). Nothing else of the admin app answers here: no /sb, no sign-in, no
+//                                /j or /c, no other /api. The links say join.mettleup.fit only once the var JOIN_HOST
+//                                is "join.mettleup.fit" (joinOrigin, /api/links); until then they stay on
+//                                app.mettleup.fit, which keeps serving both pages for good (old links work).
 //   anything else (workers.dev, a laptop's `wrangler dev`)   behaves like the old address.
 
 export const OLD_HOST = 'forgeai.aakashpahuja.in';
@@ -33,6 +41,40 @@ export const GYM_PAGE_HOST = 'join.mettleup.fit';
 export const APP_ORIGIN = `https://${APP_HOST}`;
 export const SITE_ORIGIN = `https://${SITE_HOST}`;
 export const GYMS_ORIGIN = `https://${GYMS_HOST}`;
+/**
+ * R-539: what join.mettleup.fit serves besides the gym pages: the friend invite and "Become a member" pages, their
+ * forms, the WhatsApp number check the join page uses, and the privacy page both link to. Exactly these paths.
+ */
+export const JOIN_LINK_PATHS = [
+  /^\/(f|m)\/[A-Za-z0-9]{0,12}\/?$/,
+  /^\/api\/friend$/,
+  /^\/api\/self-join(\/[a-z-]{1,30})?$/,
+  /^\/api\/phone-code\/inbound\/(start|status)$/,
+  /^\/privacy(\.html)?$/,
+  /^\/favicon\.ico$/,
+];
+
+/**
+ * R-539: the address the friend invite and "Become a member" links are made with. join.mettleup.fit only when the
+ * Worker var JOIN_HOST is exactly that host (set once the owner said yes and the address is connected); anything else,
+ * or nothing, keeps app.mettleup.fit. PURE.
+ */
+export function joinOrigin(env) {
+  return String(env?.JOIN_HOST ?? '').trim().toLowerCase() === GYM_PAGE_HOST ? `https://${GYM_PAGE_HOST}` : APP_ORIGIN;
+}
+
+/** GET /api/links: {join} for the admin app and the member app (each falls back to app.mettleup.fit by itself). */
+export function linksAnswer(env) {
+  return new Response(JSON.stringify({ join: joinOrigin(env) }), {
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8',
+      'Cache-Control': 'public, max-age=300',
+      'Access-Control-Allow-Origin': '*',
+      'X-Content-Type-Options': 'nosniff',
+    },
+  });
+}
+
 /** Hosts that only send people to mettleup.fit. */
 export const REDIRECT_HOSTS = ['www.mettleup.fit', 'mettleup.in', 'www.mettleup.in'];
 
@@ -55,8 +97,9 @@ function move(to, method) {
 
 /**
  * What to do with one request, by host and path. PURE.
- * Returns { kind: 'redirect', to, status } | { kind: 'landing' } | { kind: 'members' } | { kind: 'gympage' } | { kind: 'app' }.
- *  - 'gympage': join.mettleup.fit, every path (gymPageServe.js decides; F207).
+ * Returns { kind: 'redirect', to, status } | { kind: 'landing' } | { kind: 'members' } | { kind: 'gympage' } | { kind: 'joinlink' } | { kind: 'app' }.
+ *  - 'joinlink': join.mettleup.fit, one of JOIN_LINK_PATHS (R-539): served exactly as on app.mettleup.fit.
+ *  - 'gympage': join.mettleup.fit, every other path (gymPageServe.js decides; F207).
  *  - 'landing': serve the gym-owner landing page (the /home/ file) at this path.
  *  - 'members': serve the member page (the /member-site/ file) at this path (F184).
  *  - 'app': carry on as the admin app's Worker always did (static files, /j, /c, /sb, /api ...).
@@ -69,7 +112,8 @@ export function routeFor(host, pathname, search = '', method = 'GET', { moveOld 
   const homePage = pathname === '/home' || pathname === '/home/' || pathname === '/home/index.html';
   const gymsPage = pathname === '/gyms' || pathname === '/gyms/' || pathname === '/gyms/index.html';
   if (REDIRECT_HOSTS.includes(h)) return move(`${SITE_ORIGIN}${rest}`, method);
-  if (h === GYM_PAGE_HOST) return { kind: 'gympage' };
+  // R-539: the two public join pages first (and only they); every other path is the gym pages' (off until GYM_PAGES).
+  if (h === GYM_PAGE_HOST) return JOIN_LINK_PATHS.some((re) => re.test(pathname)) ? { kind: 'joinlink' } : { kind: 'gympage' };
   if (h === SITE_HOST) {
     if (pathname === '/') return { kind: 'members' };
     if (homePage || gymsPage) return move(`${GYMS_ORIGIN}/${search}`, method);

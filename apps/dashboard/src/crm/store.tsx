@@ -38,6 +38,7 @@ import { demoSnapshot } from './data/demo';
 import { downloadTextFile } from './ui/download';
 import { emptySnapshot, LocalCrmData } from './data/local';
 import { todayISO, type DateISO } from './logic/dates';
+import { markFresh } from './logic/freshness';
 import { noteAccessChange } from './machines/accessChanges';
 import { color } from '../theme';
 import { buildMemberView } from './logic/membership';
@@ -242,9 +243,15 @@ export function CrmProvider({ data, children }: { data?: CrmBackend; children: R
       .finally(syncOffline);
   }, [db, syncOffline]);
 
+  // R-539: the first load of an online gym is its first pull ("Updated just now"); later loads only re-read this copy.
+  const firstFresh = useRef<CrmBackend | null>(null);
   const reload = useCallback(async () => {
     try {
       setSnapshot(await db.load());
+      if (db.refresh && firstFresh.current !== db) {
+        firstFresh.current = db;
+        markFresh('records');
+      }
       setError(null);
       setDamaged(null);
     } catch (e) {
@@ -262,7 +269,11 @@ export function CrmProvider({ data, children }: { data?: CrmBackend; children: R
 
   const refreshNow = useCallback(async () => {
     try {
-      if (db.refresh) await db.refresh();
+      if (db.refresh) {
+        await db.refresh();
+        // R-539: "Updated N s ago" on Enquiries (logic/freshness.ts).
+        markFresh('records');
+      }
     } catch (e) {
       console.warn('[ForgeErr] refresh now', e);
     }
@@ -280,6 +291,7 @@ export function CrmProvider({ data, children }: { data?: CrmBackend; children: R
       busy = true;
       try {
         if (await refresh()) setSnapshot(await db.load());
+        markFresh('records');
       } catch {
         // quiet: offline for a moment; the next tick tries again, the bar says so, a save says why.
       } finally {

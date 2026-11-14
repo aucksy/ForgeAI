@@ -3,7 +3,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { PER_DAY, checkSelfJoin, handleSelfJoin, serverAnswer } from './selfJoin.js';
+import { PER_DAY, checkSelfJoin, handleSelfJoin, hookOrigin, serverAnswer } from './selfJoin.js';
 import { sqliteD1 } from './sqliteD1.mjs';
 
 const env = (WEB) => ({ WEB, FEEDBACK_SALT: 'salt' });
@@ -205,3 +205,11 @@ test('a server without 0077 says NOT_READY; an outage says TRY_AGAIN; bad bodies
   assert.equal((await handleSelfJoin(post({ ...good, name: 'x'.repeat(4000) }), env(WEB), rpc)).status, 413);
   assert.equal(calls.length, 0);
 }));
+
+test('R-539: the payment webhook stays on app.mettleup.fit when the page is on join.mettleup.fit', () => {
+  assert.equal(hookOrigin('https://join.mettleup.fit/api/self-join'), 'https://app.mettleup.fit');
+  assert.equal(hookOrigin('https://JOIN.mettleup.fit/api/self-join'), 'https://app.mettleup.fit');
+  assert.equal(hookOrigin('https://app.mettleup.fit/api/self-join'), 'https://app.mettleup.fit');
+  assert.equal(hookOrigin('https://forgeai.aakashpahuja.in/api/self-join'), 'https://forgeai.aakashpahuja.in');
+  assert.equal(hookOrigin('http://localhost:8787/api/self-join'), 'http://localhost:8787');
+});

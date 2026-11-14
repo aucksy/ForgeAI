@@ -11,12 +11,17 @@
  * (0069), so they show and ring like the rest, and the gym's alerts list (0075 owner_alerts, logic/gymAlerts.ts):
  * once the server has it, a new alert rings with the server's own line ("Asha sent your gym a complaint...") and its
  * tap opens the right page; the latest show on Today. Without 0075 the ring comes from the lists, as before.
+ *
+ * R-539 (owner, 14 Nov 2026: new things must show at once, or a refresh button): the card says how fresh it is
+ * ("Updated 20 s ago", ui/UpdatedLine.tsx) with a Refresh button that reads the alerts and every list at once
+ * (refreshAll). Coming back to the tab already looks at once (logic/visiblePoll.ts); the minute stays a minute.
  */
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 
 import { useAuth, useRole } from '../auth/AuthProvider';
 import { ALERT_WORDS, alertAge, alertNotice, alertShown, alertsFor, freshAlerts, latestAlerts, type GymAlert, type GymAlertKind } from '../logic/gymAlerts';
+import { markFresh } from '../logic/freshness';
 import { LIST_PARTS, NEEDS_POLL_MS, partsToRead, type NeedsPart } from '../logic/needsPoll';
 import { pendingLinks, type PhoneLinkRow } from '../logic/phoneLinks';
 import type { PlanRequestRow } from '../logic/planRequests';
@@ -43,6 +48,7 @@ import { memberMessageCountFor, publishMemberMessageCount, subscribeMemberMessag
 import { publishQuestionCount, questionCountFor, subscribeQuestionCountChange } from './QuestionParts';
 import { navigate } from './router';
 import { Button, Card, color, font, space } from './kit';
+import { UpdatedLine } from './UpdatedLine';
 
 const BASE_TITLE = 'MettleUp for Gyms';
 
@@ -56,10 +62,12 @@ interface NeedsValue {
   linkRows: PhoneLinkRow[] | null;
   /** Read again now: the lists named, or all of them. */
   refresh: (parts?: readonly NeedsPart[]) => Promise<void>;
+  /** R-539: the Refresh button: the alerts and every list (the shop's orders too), now. False when the alerts failed. */
+  refreshAll: () => Promise<boolean>;
 }
 
 const NeedsContext = createContext<NeedsValue | null>(null);
-const EMPTY: NeedsValue = { items: [], total: 0, alerts: [], planRows: null, linkRows: null, refresh: async () => undefined };
+const EMPTY: NeedsValue = { items: [], total: 0, alerts: [], planRows: null, linkRows: null, refresh: async () => undefined, refreshAll: async () => true };
 
 /** The waiting items; nothing outside the provider (the demo gym). */
 export function useNeedsYou(): NeedsValue {
@@ -223,12 +231,16 @@ export function NeedsYouProvider({ children }: { children: ReactNode }) {
   // The alerts are read first (fresh eyes, 14 Nov 2026), so a line on Today is never newer than its count.
   const lastFull = useRef(-Infinity);
   const knownAlerts = useRef<Set<string> | null>(null);
+  // R-539: the poll's own look, for the Refresh button (`all`: every list now, as the every-5-minutes read does).
+  const lookRef = useRef<((all: boolean) => Promise<boolean>) | null>(null);
   useEffect(() => {
     lastFull.current = -Infinity;
     knownAlerts.current = null;
     sigs.current = {};
+    lookRef.current = null;
     if (!key) return;
-    const look = async () => {
+    const look = async (all = false): Promise<boolean> => {
+      let ok = true;
       let alertsOn = false;
       let fresh: GymAlertKind[] = [];
       try {
@@ -242,15 +254,25 @@ export function NeedsYouProvider({ children }: { children: ReactNode }) {
         const next = r === 'missing' ? null : r;
         if (changedRef.current('alerts', next)) setAlerts(next);
       } catch (e) {
+        ok = false;
         console.warn('[ForgeErr] needs you: alerts', e);
       }
       const now = Date.now();
-      const { parts, full } = partsToRead({ alertsOn, sinceFullMs: now - lastFull.current, fresh });
+      const { parts, full } = all
+        ? { parts: [...LIST_PARTS, 'orders' as const], full: true }
+        : partsToRead({ alertsOn, sinceFullMs: now - lastFull.current, fresh });
       if (full) lastFull.current = now;
       if (parts.length) await readParts(parts);
+      if (ok) markFresh('needs');
+      return ok;
     };
-    return startVisiblePoll(look, NEEDS_POLL_MS);
+    lookRef.current = look;
+    return startVisiblePoll(async () => {
+      await look();
+    }, NEEDS_POLL_MS);
   }, [key, readParts]);
+
+  const refreshAll = useCallback(async () => (lookRef.current ? lookRef.current(true) : true), []);
 
   const plan = useMemo(() => (planRows ?? []).filter((x) => x.status === 'pending').map((x) => x.id), [planRows]);
   const links = useMemo(() => pendingLinks(linkRows ?? []).map((x) => x.id), [linkRows]);
@@ -315,8 +337,8 @@ export function NeedsYouProvider({ children }: { children: ReactNode }) {
   }, [total]);
 
   const value = useMemo<NeedsValue>(
-    () => ({ items, total, alerts: mine ?? [], planRows, linkRows, refresh }),
-    [items, total, mine, planRows, linkRows, refresh],
+    () => ({ items, total, alerts: mine ?? [], planRows, linkRows, refresh, refreshAll }),
+    [items, total, mine, planRows, linkRows, refresh, refreshAll],
   );
   return <NeedsContext.Provider value={value}>{children}</NeedsContext.Provider>;
 }
@@ -401,13 +423,15 @@ export function NeedsYouCard() {
       ) : alerts === 'denied' ? (
         <p style={{ ...small, marginTop: space.sm }}>{W.alertsBlocked}</p>
       ) : null}
+      {/* R-539: how fresh this list is, and Refresh. */}
+      <UpdatedLine source="needs" />
     </Card>
   );
 }
 
 /** R-506: the latest from members (the last 24 hours) on Today, each line opening its page. Hidden when none. */
 export function LatestAlertsCard() {
-  const { alerts } = useNeedsYou();
+  const { alerts, items } = useNeedsYou();
   // Fresh eyes (14 Nov 2026): a shop line reads the same orders as "Shop today", so the two always agree.
   const { orders } = useShop();
   const now = Date.now();
@@ -445,6 +469,8 @@ export function LatestAlertsCard() {
           );
         })}
       </ul>
+      {/* R-539: the Refresh line sits on "Needs you" when that card shows, else here (never twice on Today). */}
+      {needsLines(items).length === 0 && <UpdatedLine source="needs" />}
     </Card>
   );
 }

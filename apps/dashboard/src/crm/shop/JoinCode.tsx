@@ -11,6 +11,7 @@ import { Button, Card, ErrorBanner, SectionTitle, color, font, radius, space } f
 import { useCan } from '../auth/AuthProvider';
 import { useShop } from './ShopProvider';
 import { inviteMessage, joinOnlineMessage, whatsAppHref } from './invite';
+import { useJoinOrigin } from './linkOrigin';
 import { useSelfJoinReady } from './selfJoinReady';
 import { navigate } from '../ui/router';
 import { t } from '../lang/lang';
@@ -53,6 +54,8 @@ export function JoinCodeCard({
   const { cloud, connectShop, online } = useShop();
   // R-513: the "Join on your phone" share, only once the gym server has the page (0077).
   const joinOnline = useSelfJoinReady(cloud?.joinCode);
+  // R-539: the join link's address (join.mettleup.fit once connected).
+  const joinOrigin = useJoinOrigin();
   const [copied, setCopied] = useState<'yes' | 'no' | null>(null);
   const codeRef = useRef<HTMLSpanElement>(null);
   const [busy, setBusy] = useState(false);
@@ -189,7 +192,7 @@ export function JoinCodeCard({
           {t('New people pick a plan on their own phone and send it to you. They pay at the desk.')}
         </div>
         <div style={{ marginTop: space.sm }}>
-          <Button variant="ghost" onClick={() => window.open(whatsAppHref(joinOnlineMessage(cloud.name, cloud.joinCode)), '_blank', 'noopener')}>
+          <Button variant="ghost" onClick={() => window.open(whatsAppHref(joinOnlineMessage(cloud.name, cloud.joinCode, joinOrigin)), '_blank', 'noopener')}>
             {t('Send join link on WhatsApp')}
           </Button>
         </div>

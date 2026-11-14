@@ -347,8 +347,23 @@ export interface Enquiry extends GymScoped {
    * gym_page_ask_send). The newest question only. Read it through gympage/logic.ts `pageAskOf`.
    */
   pageAsk?: EnquiryPageAsk | null;
+  /**
+   * R-539: set by the gym server when a member's friend invite carried the number of this OPEN enquiry (supabase 0085
+   * friend_invite_send): the newest such invite only. Read it through logic/referrals.ts `invitedAgainOf`.
+   */
+  invitedAgain?: EnquiryInvitedAgain | null;
   createdAt: number;
   updatedAt: number;
+}
+
+/** R-539: a member invited someone who had already asked about joining. */
+export interface EnquiryInvitedAgain {
+  v: 1;
+  /** The member's name as the gym's list has it (else their app name). */
+  by: string;
+  time: 'morning' | 'afternoon' | 'evening' | 'any';
+  /** When (ms). */
+  at: number;
 }
 
 /**

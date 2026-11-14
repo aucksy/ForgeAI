@@ -21,6 +21,7 @@
 //   403 {error: 'CLOSED'}   404 {error: 'NO_GYM'}   409 {error: 'MEMBER'}   429 {error: 'TOO_MANY'}
 //   503 {error: 'NOT_READY' | 'TRY_AGAIN'}
 
+import { APP_ORIGIN, GYM_PAGE_HOST } from './hosts.js';
 import { attachJoinPay } from './joinPay.js';
 
 export const PER_DAY = 10;
@@ -169,10 +170,18 @@ export async function handleSelfJoin(request, env, rpc, now = new Date(), deps =
       env,
       rpc,
       { code: v.code, enquiryId: row && row.enquiryId, totalP: out.body.totalP, planName: out.body.planName, gymName: out.body.gymName, name: v.name, proof: v.proof },
-      { now, origin: new URL(request.url).origin, f: deps.fetch },
+      // R-539: the payment company's webhook stays on app.mettleup.fit when this page is on join.mettleup.fit (that host
+      // serves only the join pages, never /api/pay/hook).
+      { now, origin: hookOrigin(request.url), f: deps.fetch },
     );
     if (made.pay) out.body.pay = made.pay;
     else out.body.payWhy = made.why;
   }
   return answer(out.status, out.body);
+}
+
+/** Where the payment webhook goes: this address, except join.mettleup.fit (R-539), which hands it to app.mettleup.fit. PURE. */
+export function hookOrigin(requestUrl) {
+  const u = new URL(requestUrl);
+  return u.hostname.toLowerCase() === GYM_PAGE_HOST ? APP_ORIGIN : u.origin;
 }

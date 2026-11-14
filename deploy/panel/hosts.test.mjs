@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 
-import { APP_ORIGIN, GYMS_HOST, GYMS_ORIGIN, MOVE_KEYS, OLD_HOST, handleMove, routeFor, safePath } from './hosts.js';
+import { APP_ORIGIN, GYMS_HOST, GYMS_ORIGIN, JOIN_LINK_PATHS, MOVE_KEYS, OLD_HOST, handleMove, joinOrigin, linksAnswer, routeFor, safePath } from './hosts.js';
 import worker from './worker.js';
 import { STAMP } from './proxy.js';
 
@@ -208,4 +208,68 @@ test('Android link check: both apps, the same signing key, one file for every ad
   const prints = new Set(links.flatMap((l) => l.target.sha256_cert_fingerprints));
   assert.deepEqual([...prints], ['B2:B0:C2:11:5C:A2:13:62:D4:EB:50:C0:70:97:5C:74:8E:2E:9B:37:93:DC:87:32:53:17:43:B5:2D:85:75:B2']);
   for (const l of links) assert.deepEqual(l.relation, ['delegate_permission/common.handle_all_urls']);
+});
+
+// ------------------------------------------------------------------ R-539: join.mettleup.fit's two public pages
+
+test('join.mettleup.fit: the friend invite and "Become a member" pages and only their calls; the rest is the gym pages', () => {
+  for (const p of ['/f/ABCD2345', '/f/ABCD2345/', '/f/', '/m/QA0002', '/m/QA0002/', '/api/friend', '/api/self-join', '/api/self-join/pay-info', '/api/self-join/pay-check', '/api/phone-code/inbound/start', '/api/phone-code/inbound/status', '/privacy', '/privacy.html', '/favicon.ico']) {
+    assert.deepEqual(go('join.mettleup.fit', p, '', p.startsWith('/api/') ? 'POST' : 'GET'), { kind: 'joinlink' }, p);
+  }
+  assert.deepEqual(go('JOIN.METTLEUP.FIT', '/f/ABCD2345'), { kind: 'joinlink' });
+  // Nothing else of the admin app: its pages, sign-in, gym server, other links, other calls.
+  for (const p of ['/', '/start', '/demo', '/members/abc', '/index.html', '/sw.js', '/manifest.webmanifest', '/sb/rest/v1/rpc/crm_pull', '/j/ABC123', '/c/ABC123', '/api/feedback', '/api/move', '/api/moved', '/api/links', '/api/phone-code/send', '/api/assist', '/api/pay/x', '/app', '/f/ABCD2345/x', '/f/../sb', '/terms', '/shakti-gym', '/gym-page/page.js', '/robots.txt']) {
+    assert.deepEqual(go('join.mettleup.fit', p), { kind: 'gympage' }, p);
+  }
+  // app.mettleup.fit keeps both pages for good (every link already sent).
+  for (const p of ['/f/ABCD2345', '/m/QA0002', '/api/friend', '/api/self-join', '/api/links']) assert.deepEqual(go('app.mettleup.fit', p), { kind: 'app' }, p);
+});
+
+test('the friend and "Become a member" pages call only what join.mettleup.fit serves', () => {
+  const pub = (f) => readFileSync(new URL(`../../apps/dashboard/public/${f}`, import.meta.url), 'utf8');
+  for (const f of ['friend.html', 'join-online.html']) {
+    // Every same-site address in the page: fetch('/...'), href="/...", '/api/self-join/' + what.
+    const paths = [...pub(f).matchAll(/["'](\/[A-Za-z0-9/_.-]*)/g)].map((m) => m[1].replace(/\/$/, '/pay-info'));
+    assert.ok(paths.length > 0, f);
+    for (const p of paths) assert.ok(JOIN_LINK_PATHS.some((re) => re.test(p)), `${f}: ${p} is not served on join.mettleup.fit`);
+  }
+});
+
+test('joinOrigin: join.mettleup.fit only when JOIN_HOST says exactly that; else app.mettleup.fit', () => {
+  assert.equal(joinOrigin({}), APP_ORIGIN);
+  assert.equal(joinOrigin(undefined), APP_ORIGIN);
+  assert.equal(joinOrigin({ JOIN_HOST: '' }), APP_ORIGIN);
+  assert.equal(joinOrigin({ JOIN_HOST: 'evil.example' }), APP_ORIGIN);
+  assert.equal(joinOrigin({ JOIN_HOST: 'https://join.mettleup.fit' }), APP_ORIGIN);
+  assert.equal(joinOrigin({ JOIN_HOST: 'join.mettleup.fit' }), 'https://join.mettleup.fit');
+  assert.equal(joinOrigin({ JOIN_HOST: ' JOIN.mettleup.fit ' }), 'https://join.mettleup.fit');
+});
+
+test('Worker: /api/links says where the links point; join.mettleup.fit refuses everything but its two pages', async () => {
+  let { env, seen } = fakeEnv();
+  assert.deepEqual(await (await linksAnswer(env)).json(), { join: APP_ORIGIN });
+  const links = await worker.fetch(new Request('https://app.mettleup.fit/api/links'), env, ctx);
+  assert.equal(links.status, 200);
+  assert.equal(links.headers.get('Access-Control-Allow-Origin'), '*');
+  assert.deepEqual(await links.json(), { join: APP_ORIGIN });
+  assert.deepEqual(await (await worker.fetch(new Request(`https://${OLD_HOST}/api/links`), env, ctx)).json(), { join: APP_ORIGIN });
+  ({ env, seen } = fakeEnv({ JOIN_HOST: 'join.mettleup.fit' }));
+  assert.deepEqual(await (await worker.fetch(new Request('https://app.mettleup.fit/api/links'), env, ctx)).json(), { join: 'https://join.mettleup.fit' });
+
+  // join.mettleup.fit with the gym pages off (today): the admin app, its gym server and its other calls are "not here".
+  for (const p of ['/', '/start', '/index.html', '/sw.js', '/sb/rest/v1/rpc/crm_pull', '/j/ABC123', '/c/ABC123', '/api/feedback', '/api/links', '/api/moved']) {
+    const res = await worker.fetch(new Request(`https://join.mettleup.fit${p}`), env, ctx);
+    assert.equal(res.status, 404, p);
+    assert.match(await res.text(), /This gym page is not here/, p);
+  }
+  assert.deepEqual(seen, []);
+  // Its two pages' own parts are served as on app.mettleup.fit.
+  assert.equal(await (await worker.fetch(new Request('https://join.mettleup.fit/privacy'), env, ctx)).text(), 'asset /privacy');
+  const post = (path, body) => new Request(`https://join.mettleup.fit${path}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body });
+  // A broken form reaches the friend form's own checks (400), not "not here".
+  const friend = await worker.fetch(post('/api/friend', 'not json'), env, ctx);
+  assert.equal(friend.status, 400);
+  assert.deepEqual(await friend.json(), { error: 'BAD_REQUEST' });
+  const join = await worker.fetch(post('/api/self-join', 'not json'), env, ctx);
+  assert.notEqual(join.status, 404);
 });

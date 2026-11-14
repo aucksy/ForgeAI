@@ -1209,4 +1209,13 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   '{n} exercises': '{n} exercises',
   'Show fewer': 'Kam dikhao',
   'Show all {n} workouts': 'Saare {n} workouts dikhao',
+  // R-539 (14 Nov 2026): the "Updated ... ago" line with Refresh on Enquiries and Needs you. Words: owner checks at UAT.
+  'Updated just now': 'Abhi update hua',
+  'Updated {n} s ago': '{n} second pehle update hua',
+  'Updated {n} min ago': '{n} minute pehle update hua',
+  'Updated over an hour ago': 'Ek ghante se pehle update hua',
+  Refresh: 'Refresh',
+  'Refreshing…': 'Refresh ho raha hai…',
+  'Could not refresh. Check the internet and try again.': 'Refresh nahi hua. Internet check karke phir try karo.',
+  'Invited again by {by}, best time to train: {time}': '{by} ne phir se bulaya, train karne ka sahi time: {time}',
 };

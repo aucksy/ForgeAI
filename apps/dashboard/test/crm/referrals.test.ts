@@ -3,6 +3,8 @@ import { describe, expect, it } from 'vitest';
 
 import {
   alreadyRewarded,
+  invitedAgainOf,
+  invitedAgainWords,
   checkFriendDays,
   friendReward,
   friendRewardDays,
@@ -111,5 +113,20 @@ describe('the owner’s thank-you', () => {
     const line = `+7 days (${friendRewardReason('Ravi  Kumar')}): 2026-11-30 -> 2026-12-07`;
     expect(alreadyRewarded([plan('a', 'm-asha', '2026-12-07', { notes: `Paid cash\n${line}` })], 'm-asha', 'Ravi Kumar')).toBe(true);
     expect(alreadyRewarded([plan('a', 'm-asha', '2026-12-07', { notes: line })], 'm-asha', 'Ravi K')).toBe(false);
+  });
+});
+
+describe('R-539: a member invited someone already in Enquiries (0085)', () => {
+  it('reads the note defensively', () => {
+    expect(invitedAgainOf({ invitedAgain: { v: 1, by: '  Asha   Rao ', time: 'evening', at: 5 } })).toEqual({ v: 1, by: 'Asha Rao', time: 'evening', at: 5 });
+    expect(invitedAgainOf({ invitedAgain: { v: 1, by: 'Asha', time: 'night', at: 'x' } as never })).toEqual({ v: 1, by: 'Asha', time: 'any', at: 0 });
+    for (const bad of [undefined, null, {}, { invitedAgain: null }, { invitedAgain: [] }, { invitedAgain: { by: ' ' } }, { invitedAgain: 'Asha' }]) {
+      expect(invitedAgainOf(bad as never)).toBeNull();
+    }
+  });
+  it('says who and when, in plain words', () => {
+    const w = invitedAgainWords({ v: 1, by: 'Asha Rao', time: 'evening', at: 1 });
+    expect(w.key.replace('{by}', w.vars.by).replace('{time}', w.vars.time)).toBe('Invited again by Asha Rao, best time to train: Evening');
+    expect(invitedAgainWords({ v: 1, by: 'Asha', time: 'any', at: 1 }).vars.time).toBe('Any time');
   });
 });

@@ -35,7 +35,9 @@ import {
   type EnquiryFilter,
   type EnquiryFormDraft,
 } from '../../logic/enquiries';
-import { alreadyRewarded, friendReward, referralOf, type FriendReward } from '../../logic/referrals';
+import { alreadyRewarded, friendReward, invitedAgainOf, invitedAgainWords, referralOf, type FriendReward } from '../../logic/referrals';
+import { t } from '../../lang/lang';
+import { UpdatedLine } from '../UpdatedLine';
 import { memberPrefill, selfJoinOf, sellPlanFor, sellStartFor } from '../../logic/selfJoin';
 import { PAGE_ASK_PREFIX, pageAskOf } from '../../gympage/logic';
 import { formatINR } from '../../logic/money';
@@ -161,6 +163,11 @@ export function EnquiriesScreen({ startAdding }: { startAdding?: boolean } = {})
         subtitle="People who asked about joining"
         actions={addButton}
       />
+
+      {/* R-539: how fresh this list is (pulled every 15 s while in view), and Refresh. */}
+      <div style={{ marginTop: -space.sm, marginBottom: space.md }}>
+        <UpdatedLine source="records" />
+      </div>
 
       {error && <ErrorBanner>{error}</ErrorBanner>}
 
@@ -368,6 +375,9 @@ function EnquiryRow({
 }) {
   const bucket = enquiryBucket(e, today);
   const referral = referralOf(e);
+  // R-539 (0085): a member invited this person again (their number was already an open enquiry).
+  const again = invitedAgainOf(e);
+  const againWords = again ? invitedAgainWords(again) : null;
   // F207: a question asked on the gym's web page (the server also put it on the interest line, for older apps).
   const pageAsk = pageAskOf(e);
   const open = e.status === 'open';
@@ -415,6 +425,11 @@ function EnquiryRow({
           {referral && (
             <div style={{ fontFamily: font.body, fontSize: 13, fontWeight: 600, color: color.accentBright, marginTop: 4, overflowWrap: 'anywhere' }}>
               {`Referred by ${referral.by}`}
+            </div>
+          )}
+          {againWords && (
+            <div style={{ fontFamily: font.body, fontSize: 13, fontWeight: 600, color: color.accentBright, marginTop: 4, overflowWrap: 'anywhere' }}>
+              {t(againWords.key, againWords.vars)}
             </div>
           )}
           {sourceLabel(e.source) && (

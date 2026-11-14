@@ -19,6 +19,7 @@ import * as api from './api';
 import { JoinCodeCard, copyText } from './JoinCode';
 import { useShop } from './ShopProvider';
 import { inviteLink, inviteMessage, joinOnlineLink, joinOnlineMessage, whatsAppHref } from './invite';
+import { useJoinOrigin } from './linkOrigin';
 import { useSelfJoinReady } from './selfJoinReady';
 import { Button, Card, PageHeader, SectionTitle, Toast, color, font, radius, space, useIsCompact } from '../ui/kit';
 import { navigate } from '../ui/router';
@@ -83,7 +84,9 @@ function InviteBody({ ownerKey, gymName, joinCode }: { ownerKey: string; gymName
   const link = inviteLink(joinCode);
   const message = inviteMessage(gymName, joinCode);
   // R-513 Join online: the "Become a member" page for people who are not members yet.
-  const joinLink = joinOnlineLink(joinCode);
+  // R-539: on join.mettleup.fit once that address is connected (outside the admin app on the owner's phone).
+  const joinOrigin = useJoinOrigin();
+  const joinLink = joinOnlineLink(joinCode, joinOrigin);
   const joinOnline = useSelfJoinReady(joinCode);
   const [toast, setToast] = useState<string | null>(null);
   const [brand, setBrand] = useState<GymBrand | null>(null);
@@ -222,7 +225,7 @@ function InviteBody({ ownerKey, gymName, joinCode }: { ownerKey: string; gymName
           {t('New people open this link on their own phone. They pick a plan, check their number on WhatsApp and send it to you. They pay at the desk, and you make them a member on Today.')}
         </p>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: space.sm, marginTop: space.lg }}>
-          <Button onClick={() => window.open(whatsAppHref(joinOnlineMessage(gymName, joinCode)), '_blank', 'noopener')}>{t('Send join link on WhatsApp')}</Button>
+          <Button onClick={() => window.open(whatsAppHref(joinOnlineMessage(gymName, joinCode, joinOrigin)), '_blank', 'noopener')}>{t('Send join link on WhatsApp')}</Button>
           <Button
             variant="ghost"
             onClick={async () =>

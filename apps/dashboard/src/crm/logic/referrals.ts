@@ -9,7 +9,7 @@
  */
 
 import type { CrmSnapshot } from '../data/adapter';
-import type { DateISO, Enquiry, EnquiryReferral, Member, Membership } from '../types';
+import type { DateISO, Enquiry, EnquiryInvitedAgain, EnquiryReferral, Member, Membership } from '../types';
 import { addDays } from './dates';
 import { isPtMembership } from './pt';
 
@@ -38,6 +38,28 @@ export function referralOf(e: Pick<Enquiry, 'referral'> | null | undefined): Enq
       ? { days: g.days, membershipId: g.membershipId, on: g.on as DateISO }
       : null;
   return { by, memberId, time, rewardGiven };
+}
+
+/**
+ * R-539 (0085): the note on an open enquiry a member invited again, or null. PURE.
+ * The words: "Invited again by Asha Rao, best time to train: Evening".
+ */
+export function invitedAgainOf(e: Pick<Enquiry, 'invitedAgain'> | null | undefined): EnquiryInvitedAgain | null {
+  const r = e?.invitedAgain as unknown;
+  if (!r || typeof r !== 'object' || Array.isArray(r)) return null;
+  const x = r as Record<string, unknown>;
+  const by = typeof x.by === 'string' ? x.by.replace(/\s+/g, ' ').trim().slice(0, 80) : '';
+  if (!by) return null;
+  const time = TIMES.find((t) => t === x.time) ?? 'any';
+  const at = typeof x.at === 'number' && Number.isFinite(x.at) ? x.at : 0;
+  return { v: 1, by, time, at };
+}
+
+const TIME_WORDS: Record<EnquiryInvitedAgain['time'], string> = { morning: 'Morning', afternoon: 'Afternoon', evening: 'Evening', any: 'Any time' };
+
+/** The row's line, as an English key and its values (for t()). PURE. */
+export function invitedAgainWords(x: EnquiryInvitedAgain): { key: string; vars: { by: string; time: string } } {
+  return { key: 'Invited again by {by}, best time to train: {time}', vars: { by: x.by, time: TIME_WORDS[x.time] } };
 }
 
 /** The gym's free days per friend, 1..60, or null when it is off. PURE. */
