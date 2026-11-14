@@ -1,4 +1,6 @@
--- NOT LIVE - needs the owner's yes ("No LIVE database changes without my yes"). Re-runnable. Apply after 0078 (AI
+-- APPLIED LIVE 14 Nov 2026 (R-544: owner said "yes to AI credits database change"; SQL Editor from 3db4fee9;
+-- live tests 0083 PASS 40, 0078 PASS 47). Charging still held: AI_CREDITS_CHARGE unset until the panel deploy.
+-- WAS: NOT LIVE - needs the owner's yes ("No LIVE database changes without my yes"). Re-runnable. Apply after 0078 (AI
 -- questions on the credits) and 0075 (gym alerts). Works with or without 0077 / 0080 (each adds a gym_alerts kind; the
 -- kind check is rebuilt from what it is, so theirs stay).
 -- Test: supabase/tests/0083_ai_members.sql (CI runs it after every migration; pasted into the SQL Editor it always ends

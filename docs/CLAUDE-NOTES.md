@@ -7,6 +7,11 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-544 (14 Nov 2026) AI credits B database change applied live; payment company question
+- Owner: "yes to AI credits database change". Applied 0083_ai_members.sql live (SQL Editor from 3db4fee9); live tests 0083 PASS 40, 0078 PASS 47.
+- Still to do: panel deploy (after green CI + fresh-eyes review), then set AI_CREDITS_CHARGE="on". Charging stays off until then.
+- Owner asked: "do you think Razorpay is the best choice today? ... consider all the possible factors and long term implications to choose the right payment processor". He is not sure he has a Razorpay account; he only has an IDFC First personal savings account. MettleUp never holds money: each gym connects its own account (code supports Razorpay, Cashfree, PayU, PhonePe).
+
 ## R-543. HANDOFF (usage limit, 14 Nov 2026 evening)
 In flight (helpers, all waiting on CI after 99f425e6): R-531 AI credits B (migration 0083, NOT live, needs his yes;
 charging held by AI_CREDITS_CHARGE unset); R-532 diet plans veg+non-veg; R-533/534 Ask your gym + reply alert + in-app
