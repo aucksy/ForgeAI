@@ -155,6 +155,7 @@ function MemberRow({ m, today, owner, from, ownerKey }: { m: TrainerMember; toda
   };
   const head = tag?.headline;
   return (
+    <div data-testid="progress-row">
     <Card>
       <Row gap={space.sm}>
         <strong style={{ fontFamily: font.body, fontSize: 16, color: color.ink }}>
@@ -209,6 +210,7 @@ function MemberRow({ m, today, owner, from, ownerKey }: { m: TrainerMember; toda
       </div>
       {!m.phone && <p style={{ ...small, marginTop: space.sm }}>No mobile number on the gym’s list: WhatsApp will ask who to send it to.</p>}
     </Card>
+    </div>
   );
 }
 

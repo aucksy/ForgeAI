@@ -170,7 +170,10 @@ test('R-535: Training progress shows lines and a tag per member, and the full pr
   await expect(card(page, 'Arjun Mehta').getByRole('img', { name: /Workouts per week, last 12 weeks: / })).toBeVisible();
   await expect(card(page, 'Arjun Mehta').getByTestId('progress-tag')).toContainText('Getting stronger');
   await expect(card(page, 'Arjun Mehta').getByTestId('progress-tag')).toContainText('Bench press: strength score');
+  // A card's workouts are read when it comes into view.
+  await card(page, 'Priya Nair').scrollIntoViewIfNeeded();
   await expect(card(page, 'Priya Nair').getByTestId('progress-tag')).toContainText('Dropping', { timeout: 10_000 });
+  await card(page, 'Rahul Das').scrollIntoViewIfNeeded();
   await expect(card(page, 'Rahul Das').getByTestId('progress-tag')).toContainText('Not enough data yet', { timeout: 10_000 });
   // Kabir's older app sends no workouts: no tag, the line still shows from his weekly summary.
   await expect(card(page, 'Kabir Shah')).toContainText('3 workouts in 12 weeks');
@@ -179,6 +182,7 @@ test('R-535: Training progress shows lines and a tag per member, and the full pr
   await expect(card(page, 'Neha Iyer').getByRole('button', { name: 'See full progress' })).toHaveCount(0);
   await expect(card(page, 'Neha Iyer')).toContainText('This member is not on your gym’s list yet, so their full progress cannot open.');
   await expectFitsPhone(page, 'on Training progress');
+  await page.evaluate(() => window.scrollTo(0, 0));
   await shot(page, 'progress-1-list-phone');
 
   // 2. Arjun's full progress.
