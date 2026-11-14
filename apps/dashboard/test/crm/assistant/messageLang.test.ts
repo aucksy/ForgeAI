@@ -36,6 +36,9 @@ const greeting = (over: Partial<ToolInputs['draft_message']> = {}): Action => ({
   },
 });
 
+/** The AI's English words, as a message's words (no Hindi). */
+const EN = { title_en: 'Happy Chhath Puja', body_en: 'Wishing you and your family a happy Chhath Puja. The gym is open as usual.', title_hi: '', body_hi: '' };
+
 const HINDI = { title_hi: 'छठ पूजा की शुभकामनाएं', body_hi: 'आपको और आपके परिवार को छठ पूजा की शुभकामनाएं। जिम रोज़ की तरह खुला है।' };
 
 function cardOf(action: Action, gymLang: 'en' | 'hi' | 'both' = 'en'): DraftCard {
@@ -120,7 +123,7 @@ describe('Hindi or Both on a message the AI wrote in English', () => {
   it('a gym that sends in Both, and an AI message with no Hindi: the chip starts on English, as the preview does', () => {
     const card = cardOf(greeting({ lang: 'gym' }), 'both');
     expect(card.message!.lang).toBe('en');
-    expect(draftOf(card).body).toBe(greeting().input.body_en);
+    expect(draftOf(card).body).toBe(EN.body_en);
     // And a language switch can never put Hindi or Both on English-only words.
     expect(withMessage(card, { ...card.message!, lang: 'both' }, planData()).message!.lang).toBe('en');
     expect(shownLang('hi', card.message!.words)).toBe('en');
@@ -136,7 +139,7 @@ describe('a message that already has its Hindi words (as before)', () => {
     const after = withMessage(card, both.next, planData());
     expect(after.message!.lang).toBe('both');
     expect(after.message!.rewrites).toBe(0);
-    expect(draftOf(after).body).toBe(`${greeting().input.body_en}\n\n${HINDI.body_hi}`);
+    expect(draftOf(after).body).toBe(`${EN.body_en}\n\n${HINDI.body_hi}`);
     const hi = pickLang(after, 'hi', shown(after));
     if (hi?.kind !== 'switch') throw new Error('expected a switch');
     expect(draftOf(withMessage(after, hi.next, planData())).body).toBe(HINDI.body_hi);
@@ -145,7 +148,7 @@ describe('a message that already has its Hindi words (as before)', () => {
 
   it('"Shorter" on a Both message keeps Both when the Hindi stays, and drops to English when it does not', () => {
     const msg = { ...cardOf(greeting(HINDI)).message!, lang: 'both' as const };
-    expect(afterRewrite(msg, { ...greeting().input, ...HINDI }, 'Make it shorter').next.lang).toBe('both');
-    expect(afterRewrite(msg, { ...greeting().input }, 'Make it shorter').next.lang).toBe('en');
+    expect(afterRewrite(msg, { ...EN, ...HINDI }, 'Make it shorter').next.lang).toBe('both');
+    expect(afterRewrite(msg, { ...EN }, 'Make it shorter').next.lang).toBe('en');
   });
 });
