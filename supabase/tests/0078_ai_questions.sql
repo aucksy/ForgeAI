@@ -120,7 +120,9 @@ begin
   checks := checks + 1; fails := fails || pg_temp.t78_is('6again', public.ai_question_back(q)->>'ok', 'false');
   checks := checks + 1; fails := fails || pg_temp.t78_is('6slots', (select slots from public.gym_ai_question_slots where gym_id = ga)::text, n::text);
   checks := checks + 1; fails := fails || pg_temp.t78_is('6unknown', public.ai_question_back(gen_random_uuid())->>'ok', 'false');
-  update public.gym_ai_questions set at = now() - interval '11 minutes' where question_id = (pg_temp.t78_take(kop, 'admin')->>'id')::uuid returning question_id into q;
+  -- Taken first: inside the WHERE the take would run once for every row the update looks at.
+  q := (pg_temp.t78_take(kop, 'admin')->>'id')::uuid;
+  update public.gym_ai_questions set at = now() - interval '11 minutes' where question_id = q;
   checks := checks + 1; fails := fails || pg_temp.t78_is('6late', public.ai_question_back(q)->>'ok', 'false');
 
   -- 7. No credits: nothing taken, no row; a paused gym: 'paused'.
