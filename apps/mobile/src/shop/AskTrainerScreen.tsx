@@ -164,10 +164,10 @@ function AskTrainer({ link }: { link: GymLink }) {
     // R-505: may this member ask now? Not known: the box shows (the server still checks).
     const locked = refused || (access != null && access.kind !== 'open');
     const offerRenew = access?.kind === 'locked' && access.renew;
+    // Back to the Gym tab, whichever page opened this one (the Gym tab, Settings, a reply's pop-up).
     const renew = (): void => {
       requestRenew();
-      if (router.canGoBack()) router.back();
-      else router.replace('/shop');
+      router.dismissTo('/shop');
     };
     body = (
       <View style={{ gap: space.md }}>
