@@ -9,7 +9,8 @@
  * the tick is remembered as 'no' too (the link stays hidden). Any other failure is not remembered.
  */
 
-import { demoWithoutServer } from '../../lib/demoLock';
+import { isDemoLocked } from '../../lib/demoLock';
+import { demoServer } from '../../lib/demoServerSlot';
 import { trainerMembersFrom, trainerSetupFrom, type TrainerMembers, type TrainerSetup } from '../logic/trainerView';
 import { isNoSuchFunction } from '../logic/workoutOffer';
 import { call } from './api';
@@ -30,7 +31,7 @@ function setAccess(key: string, a: TrainerAccess): void {
 
 /** What is known for this key. The demo gym never asks. */
 export function trainerAccess(key: string | null): TrainerAccess {
-  if (demoWithoutServer() || !key) return 'no';
+  if ((isDemoLocked() && !demoServer()) || !key) return 'no';
   return accessKey === key ? access : 'unknown';
 }
 
@@ -65,7 +66,7 @@ export async function getTrainerMembers(key: string): Promise<TrainerMembers | '
 
 /** The people with their Trainer tick, and who trains whom (owner only). 'missing' without 0050. */
 export async function getTrainerSetup(key: string): Promise<TrainerSetup | 'missing'> {
-  if (demoWithoutServer() || (accessKey === key && access === 'no')) return 'missing';
+  if ((isDemoLocked() && !demoServer()) || (accessKey === key && access === 'no')) return 'missing';
   try {
     return trainerSetupFrom(await call<unknown>('owner_trainer_setup', { p_key: key }));
   } catch (e) {

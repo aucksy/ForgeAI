@@ -18,7 +18,7 @@ import { todayISO } from '../logic/dates';
 import { ShopProvider } from '../shop/ShopProvider';
 import { CrmProvider } from '../store';
 import { useLang } from '../lang/lang';
-import { serveDemo } from '../../lib/demoLock';
+import { serveDemo } from '../../lib/demoServerSlot';
 import { makeDemoServer } from './demoServer';
 import { buildShowcase } from './showcase';
 import { DEMO_BAR_HEIGHT, DemoBar, DemoProvider, type DemoInfo } from './demoMode';

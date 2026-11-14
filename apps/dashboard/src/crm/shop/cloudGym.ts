@@ -12,7 +12,8 @@
  * browser.
  */
 
-import { demoServer, isDemoLocked } from '../../lib/demoLock';
+import { isDemoLocked } from '../../lib/demoLock';
+import { demoServer } from '../../lib/demoServerSlot';
 import type { KeyValueStore } from '../data/local';
 import { personFromRow, type Person } from '../auth/signin';
 

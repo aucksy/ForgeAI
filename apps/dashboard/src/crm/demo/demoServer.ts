@@ -2,7 +2,7 @@
  * R-540 (owner, 14 Nov 2026): the demo gym's pretend gym server, so the screens that only work with a server show the
  * sample gym too: Messages & offers, the shop and its orders, Staff & sign-in, Training progress, Member questions,
  * Member messages, Diet plans, measurements, Trainers and bookings, Challenges, Gym timings, Bring a friend, members'
- * requests from the app. Everything is made-up and held in this page's memory (lib/demoLock.ts `serveDemo`): nothing
+ * requests from the app. Everything is made-up and held in this page's memory (lib/demoServerSlot.ts `serveDemo`): nothing
  * goes to the network, a reload starts it over, and the demo banner stays on every screen.
  *
  * It answers with the rows the real gym server gives (supabase/migrations), so the screens read them through their
@@ -12,7 +12,8 @@
  * book a PT class, approve a request) do work, in memory, so the owner can show them.
  */
 
-import { DEMO_LOCKED_WORDS, type DemoServer } from '../../lib/demoLock';
+import { DEMO_LOCKED_WORDS } from '../../lib/demoLock';
+import { DEMO_REFUSED, type DemoServer } from '../../lib/demoServerSlot';
 import type { CrmSnapshot } from '../data/adapter';
 import { addDays, type DateISO } from '../logic/dates';
 import { STARTER_DIETS } from '../logic/dietPlans';
@@ -639,7 +640,7 @@ export function makeDemoServer(showcase: DemoShowcase, today: DateISO, now: () =
     }
     // A change the demo does not act out: the demo's own words.
     if (/_(save|set|add|remove|delete|make|send|give|undo|stop|cancel|book|decide|rename|withdraw|retire|sign|accept|request|report|confirm|hide|queue|clear|grant|end|go_online|push|create)/.test(fn) || fn.startsWith('staff_')) {
-      throw new Error(DEMO_LOCKED_WORDS);
+      throw new Error(`${DEMO_REFUSED}: ${DEMO_LOCKED_WORDS}`);
     }
     // Anything else answers like a gym server without that feature: the screen hides it.
     throw Object.assign(new Error(`Could not find the function public.${fn} in the schema cache`), { code: 'PGRST202' });

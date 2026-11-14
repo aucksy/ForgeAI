@@ -23,7 +23,8 @@ import { makeDemoServer } from '../../src/crm/demo/demoServer';
 import { buildShowcase } from '../../src/crm/demo/showcase';
 import { demoSnapshot } from '../../src/crm/data/demo';
 import { readCloudGym } from '../../src/crm/shop/cloudGym';
-import { lockForDemo, serveDemo } from '../../src/lib/demoLock';
+import { lockForDemo } from '../../src/lib/demoLock';
+import { serveDemo } from '../../src/lib/demoServerSlot';
 
 const TODAY = '2026-11-14' as DateISO;
 const show = buildShowcase(TODAY);

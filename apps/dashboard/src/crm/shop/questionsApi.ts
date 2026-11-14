@@ -9,7 +9,8 @@
  * trainerApi.ts does for 0050). Any other failure is not remembered.
  */
 
-import { demoWithoutServer } from '../../lib/demoLock';
+import { isDemoLocked } from '../../lib/demoLock';
+import { demoServer } from '../../lib/demoServerSlot';
 import { answeredFrom, gymQuestionsFrom, questionCountFrom, type GymQuestion, type GymQuestions } from '../logic/askQuestions';
 import { memberProgressFrom, type MemberProgress } from '../logic/memberProgress';
 import { isNoSuchFunction } from '../logic/workoutOffer';
@@ -29,7 +30,7 @@ const refused = (e: unknown): boolean => /\bTRAINER_ONLY\b/.test(e instanceof Er
 
 /** True once the server said it has no 0053 (or in the demo gym). */
 export function questionsMissing(): boolean {
-  return missing || demoWithoutServer();
+  return missing || (isDemoLocked() && !demoServer());
 }
 
 export function onQuestionsMissing(fn: () => void): () => void {

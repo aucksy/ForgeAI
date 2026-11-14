@@ -9,7 +9,8 @@
  * (no internet) is not remembered.
  */
 
-import { demoWithoutServer } from '../../lib/demoLock';
+import { isDemoLocked } from '../../lib/demoLock';
+import { demoServer } from '../../lib/demoServerSlot';
 import { bookingFrom, hoursFrom, scheduleFrom, type PtBooking, type TrainerSchedule, type WeekHours } from '../logic/trainerSchedule';
 import type { DateISO } from '../logic/dates';
 import { isNoSuchFunction } from '../logic/workoutOffer';
@@ -20,7 +21,7 @@ export type ScheduleServer = 'unknown' | 'yes' | 'no';
 let server: ScheduleServer = 'unknown';
 
 export function scheduleServer(): ScheduleServer {
-  return demoWithoutServer() ? 'no' : server;
+  return (isDemoLocked() && !demoServer()) ? 'no' : server;
 }
 
 /** The week starting `monday`, or 'missing' while the server has no 0065 (then remembered for the page). */

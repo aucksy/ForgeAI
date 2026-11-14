@@ -7,7 +7,8 @@
 
 import { parseGymBrand, type GymBrand, type HeadingStyle } from '@forgeai/theme';
 
-import { demoServer } from '../../lib/demoLock';
+import { isDemoLocked } from '../../lib/demoLock';
+import { demoServer } from '../../lib/demoServerSlot';
 import { supabase } from '../../lib/supabase';
 import {
   appMemberFromRow,
@@ -40,7 +41,7 @@ const TIMEOUT_MS = 15_000;
 
 export async function call<T>(fn: string, args: Record<string, unknown>): Promise<T> {
   // R-540: the demo gym's calls are answered by its pretend server in this page (lib/demoLock.ts); nothing leaves it.
-  const demo = demoServer();
+  const demo = isDemoLocked() ? demoServer() : null;
   if (demo) return (await demo.answer(fn, args)) as T;
   let timer: number | undefined;
   const timeout = new Promise<never>((_, reject) => {
