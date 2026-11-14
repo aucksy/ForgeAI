@@ -35,8 +35,9 @@ const summary = (n, last) => ({ weeks: [{ w: '2026-10-12', n, kg: 9000 }], best:
 const member = (appId, name, s) => ({ appId, memberId: null, name, phone: null, trainerId: null, trainerName: null, summary: s, updatedAt: NOW.getTime(), helpAt: null });
 const app = (id, name) => ({ member_id: id, name, phone: null, joined_at: '2026-10-01T10:00:00Z', last_seen: '2026-10-16T10:00:00Z', orders: 0, spent_p: 0 });
 
+// One member's card (R-535 gives each card a test id).
 function card(page, name) {
-  return page.getByRole('main').locator('div', { has: page.getByRole('link', { name }).or(page.getByText(name, { exact: true })) }).filter({ has: page.getByRole('button') }).last();
+  return page.getByRole('main').locator('[data-testid="progress-row"]').filter({ hasText: name });
 }
 
 const sends = (server) => server.log.filter((l) => l.fn === 'owner_send_message').map((l) => l.args);
