@@ -49,6 +49,8 @@ export function connectionLine(name: string, c: PayConnection | null): string {
 export function connectProblem(code: string, words: string | null, name: string): string {
   if (code === 'CHECK' && words) return words;
   if (code === 'BAD_KEYS') return t('{name} did not accept these keys. Check them and try again.', { name });
+  // Review round 4 (R-554): the company did not answer the "same account?" check: nothing was saved or closed.
+  if (code === 'CHECK_FAILED') return t('Could not check with {name}. Try again.', { name });
   if (code === 'OWNER_ONLY') return t('Only the gym owner can connect a payment company.');
   if (code === 'NO_MASTER_KEY' || code === 'NOT_READY') return t('Online payments are not switched on yet.');
   if (code === 'OFFLINE') return t('No internet. Try again.');

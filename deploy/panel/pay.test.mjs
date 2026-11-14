@@ -139,7 +139,9 @@ test('a request makes a Razorpay link (paise, reference, no SMS); the desk check
   const n = net(rzpRoutes(state));
   const e = env();
   await connectRazorpay(e, n);
-  const body = { key: DESK_KEY, kind: 'fee', memberId: 'm-1', ref: 'ms-1', amountP: 150000, label: 'Monthly plan', note: 'Receipt 2026-27-0042', upiId: 'IronTemple@okhdfc', payee: 'Iron Temple', name: 'Asha', phone: '9829012345' };
+  // Review round 4 (R-554): a staff key's request carries the UPI ID the OWNER's app saved, never one it sends itself.
+  await call(e, '/api/pay/desk', { key: OWNER_KEY, upiId: 'IronTemple@okhdfc', payee: 'Iron Temple' }, n);
+  const body = { key: DESK_KEY, kind: 'fee', memberId: 'm-1', ref: 'ms-1', amountP: 150000, label: 'Monthly plan', note: 'Receipt 2026-27-0042', upiId: 'someone.else@okaxis', payee: 'Iron Temple', name: 'Asha', phone: '9829012345' };
   const made = (await call(e, '/api/pay/request', body, n)).body.request;
   assert.equal(made.url, 'https://rzp.io/i/abc');
   assert.equal(made.provider, 'razorpay');
@@ -285,6 +287,7 @@ test('the scheduled check finds an open link paid; a member sees only their own 
   const e = env();
   await connectRazorpay(e, n);
   const t0 = Date.now();
+  await call(e, '/api/pay/desk', { key: OWNER_KEY, upiId: 'gym@okhdfc', payee: 'Iron Temple' }, n, t0);
   const mineReq = (await call(e, '/api/pay/request', { key: DESK_KEY, kind: 'fee', memberId: 'm-1', ref: 'ms-4', amountP: 99900, label: 'Monthly plan', upiId: 'gym@okhdfc' }, n, t0)).body.request;
   await call(e, '/api/pay/request', { key: DESK_KEY, kind: 'fee', memberId: 'm-OTHER', ref: 'ms-5', amountP: 99900, online: false }, n, t0);
   const seen = (await call(e, '/api/pay/mine', { memberKey: MEMBER_KEY }, n, t0)).body;

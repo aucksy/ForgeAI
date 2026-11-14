@@ -11,8 +11,8 @@ const nowIso = (now) => new Date(now ?? Date.now()).toISOString();
 export async function switchesReady(db) {
   if (!db) return false;
   try {
-    await db.prepare('SELECT 1 FROM pay_switches LIMIT 1').all();
-    await db.prepare('SELECT 1 FROM pay_said LIMIT 1').all();
+    // One query (review round 4, R-554: the free plan allows 50 D1 queries a request): fails when either is missing.
+    await db.prepare('SELECT (SELECT 1 FROM pay_switches LIMIT 1) AS a, (SELECT 1 FROM pay_said LIMIT 1) AS b').all();
     return true;
   } catch {
     return false;

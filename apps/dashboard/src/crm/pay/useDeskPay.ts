@@ -77,14 +77,18 @@ export function useDeskPay(force = false): { state: DeskPay | null; key: string 
  * payment made online a moment ago (the desk must not take the money again), else null. It never stops the desk: no
  * internet, an older server, a test payment or online payments not on all give null, and the desk saves as before.
  */
-export function useBeforeDeskMoney(): (kind: 'fee' | 'shop', ref: string | null | undefined) => Promise<PayRequest | null> {
+export function useBeforeDeskMoney(): (
+  kind: 'fee' | 'shop',
+  ref: string | null | undefined,
+  amounts?: { amountP: number; dueP: number },
+) => Promise<PayRequest | null> {
   const { state, key } = useDeskPay();
   const on = state?.on === true;
   return useCallback(
-    async (kind: 'fee' | 'shop', ref: string | null | undefined) => {
+    async (kind: 'fee' | 'shop', ref: string | null | undefined, amounts?: { amountP: number; dueP: number }) => {
       if (!key || !on || !ref) return null;
       try {
-        const paid = await settleForDesk(key, kind, ref);
+        const paid = await settleForDesk(key, kind, ref, amounts);
         return paid && isRealMoney(paid) ? paid : null;
       } catch (e) {
         console.warn('[pay] open online payments were not closed before a desk payment', e instanceof Error ? e.message : e);

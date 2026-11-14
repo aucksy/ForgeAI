@@ -13,21 +13,46 @@ export function sqliteD1({ skip = [] } = {}) {
   for (const f of readdirSync(MIGRATIONS).filter((n) => n.endsWith('.sql') && !skip.includes(n)).sort()) {
     db.exec(readFileSync(new URL(f, MIGRATIONS), 'utf8'));
   }
+  // Review round 4 (R-554): every query is counted as Cloudflare counts them (one batch = ONE query; the free plan allows
+  // 50 per invocation): `d1.queries` is the count since the last `d1.countFrom()`, so a test can assert a path's worst case.
+  let inBatch = false;
+  const counts = { n: 0 };
+  const count = () => {
+    if (!inBatch) counts.n += 1;
+  };
   const statement = (sql, args = []) => ({
     bind: (...a) => statement(sql, a),
-    first: async () => db.prepare(sql).get(...args) ?? null,
-    all: async () => ({ results: db.prepare(sql).all(...args) }),
+    first: async () => {
+      count();
+      return db.prepare(sql).get(...args) ?? null;
+    },
+    all: async () => {
+      count();
+      return { results: db.prepare(sql).all(...args) };
+    },
     run: async () => {
+      count();
       const r = db.prepare(sql).run(...args);
       return { success: true, meta: { changes: Number(r.changes), last_row_id: Number(r.lastInsertRowid) } };
     },
   });
-  const d1 = { sqlite: db, prepare: (sql) => statement(sql) };
+  const d1 = {
+    sqlite: db,
+    prepare: (sql) => statement(sql),
+    get queries() {
+      return counts.n;
+    },
+    countFrom: () => {
+      counts.n = 0;
+    },
+  };
   // D1's batch (review round 3, R-550): the statements run in order inside ONE transaction; when one fails, none of
   // them is kept (https://developers.cloudflare.com/d1/worker-api/d1-database/#batch). The statements go through
   // d1.prepare, so a test that swaps prepare to make one fail sees the whole batch undone, as it would live.
   d1.batch = async (statements) => {
+    count();
     db.exec('BEGIN');
+    inBatch = true;
     try {
       const out = [];
       for (const s of statements) out.push(await s.run());
@@ -36,6 +61,8 @@ export function sqliteD1({ skip = [] } = {}) {
     } catch (e) {
       db.exec('ROLLBACK');
       throw e;
+    } finally {
+      inBatch = false;
     }
   };
   return d1;

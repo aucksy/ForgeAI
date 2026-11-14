@@ -28,7 +28,7 @@
 import { answer } from './feedback.js';
 import { hasMasterKey } from './payCrypto.js';
 import { PROVIDERS, PayError } from './payProviders.js';
-import { checkWithCompany, cleanUpi, closeRequest, linkConnections, makeLink, newRequestId, payMode, remake, retireOtherMode, tablesReady, turnOff } from './pay.js';
+import { ASK_MOST_CALLS, D1_MOST, checkWithCompany, cleanUpi, countedFetch, d1Meter, linkConnections, makeLink, newRequestId, payMode, remake, retireOtherMode, runBudget, runCache, settleOpen, tablesReady, turnOff } from './pay.js';
 import { hmacHex } from './phoneCode.js';
 import { markSaid, saidAt, switchesOf, switchesReady } from './paySwitches.js';
 
@@ -123,8 +123,7 @@ async function waysOf(env, db, gymId) {
 }
 
 /** Everything the offer needs for one gym id. */
-async function offerForGym(env, gymId) {
-  const db = env && env.WEB;
+async function offerForGym(env, gymId, db = env && env.WEB) {
   if (!(await tablesReady(db)) || !(await switchesReady(db))) return { offer: { online: false, why: 'NOT_READY' } };
   const ways = await waysOf(env, db, gymId);
   const { web } = await switchesOf(db, gymId);
@@ -151,16 +150,19 @@ export async function offerForCode(env, rpc, code, now = new Date()) {
  * The request was kept (selfJoin.js): make its payment. `kept` = {code, enquiryId, totalP, planName, gymName, name,
  * proof}. -> {pay} (the page's view) | {why} (pay at the desk instead). Never throws.
  */
-export async function attachJoinPay(env, rpc, kept, { f = fetch, now = new Date(), origin } = {}) {
+export async function attachJoinPay(env, rpc, kept, { f: base = fetch, now = new Date(), origin } = {}) {
   try {
-    const db = env && env.WEB;
+    // Review round 4 (R-554): this runs inside the join page's send (selfJoin.js), ONE invocation on Cloudflare's free
+    // plan (50 D1 queries, 50 outside calls). The send itself uses 2 queries and a few calls before this; the rest is counted here.
+    const db = d1Meter(env && env.WEB, D1_MOST - 2);
+    const f = countedFetch(base, runBudget(env) - 4);
     const enquiryId = str(kept.enquiryId);
     if (!enquiryId || enquiryId.length > 64) return { why: 'NOT_READY' };
     const charge = joinCharge({ totalP: kept.totalP, planName: kept.planName }, kept.trial || null);
     if (!charge) return { why: 'NOTHING_TO_PAY' };
     const gymId = await gymIdFor(env, rpc, kept.code, now);
     if (!gymId) return { why: 'NOT_READY' };
-    const { offer, ways } = await offerForGym(env, gymId);
+    const { offer, ways } = await offerForGym(env, gymId, db);
     if (!offer.online) return { why: offer.why };
 
     // Paid already for this request (sent twice): never a second payment.
@@ -180,13 +182,11 @@ export async function attachJoinPay(env, rpc, kept, { f = fetch, now = new Date(
           .bind(gymId, enquiryId, charge.amountP)
           .all()
       ).results || [];
-    for (const o of older) {
-      const fresh = await checkWithCompany(env, db, o, { f, now: now.getTime(), force: true });
-      if (fresh && fresh.status === 'paid') return { pay: joinView(fresh, await saidAt(db, fresh.id)) };
-      if (!fresh || fresh.status !== 'open' || (await saidAt(db, fresh.id))) continue;
-      const conn = fresh.provider ? await db.prepare('SELECT * FROM pay_connections WHERE gym_id = ? AND provider = ?').bind(gymId, fresh.provider).first() : null;
-      await closeRequest(env, db, fresh, conn, f);
-    }
+    // Review round 4 (R-554): within this invocation's D1 queries and calls (settleOpen); afterwards it may still retire
+    // a link of the other mode and make the new payment and its link (about 19 queries, 10 calls).
+    const cache = runCache();
+    const settled = await settleOpen(env, db, older, { f, now: now.getTime(), cache, keep: { calls: ASK_MOST_CALLS + 4, queries: 19 }, skip: async (r) => Boolean(await saidAt(db, r.id)) });
+    if (settled.paid.length) return { pay: joinView(settled.paid[0], await saidAt(db, settled.paid[0].id)) };
     // The same request and amount still open: the same payment (and link). Review round 2 (R-542): never one made in
     // the other mode (a test link from before payments went live): it is asked once, then closed, and a new one made.
     let row = await db
@@ -194,7 +194,7 @@ export async function attachJoinPay(env, rpc, kept, { f = fetch, now = new Date(
       .bind(gymId, enquiryId, charge.amountP)
       .first();
     if (row && row.provider && row.mode && row.mode !== payMode(env)) {
-      const paidOld = await retireOtherMode(env, db, row, payMode(env), f, now.getTime());
+      const paidOld = await retireOtherMode(env, db, row, payMode(env), f, now.getTime(), cache);
       if (paidOld) return { pay: joinView(paidOld, await saidAt(db, paidOld.id)) };
       row = null;
     }
@@ -254,12 +254,13 @@ async function joinRow(db, id) {
 
 /** /api/self-join/pay-info | pay-check | pay-said. `deps.fetch`, `deps.now` for tests. */
 export async function handleJoinPay(request, env, url, rpc, deps = {}) {
-  const f = deps.fetch || fetch;
+  // Review round 4 (R-554): this request's outside calls and D1 queries are counted (free plan: 50 each).
+  const f = countedFetch(deps.fetch || fetch, runBudget(env));
   const now = deps.now ?? Date.now();
   const read = await readBody(request);
   if (read.refused) return read.refused;
   const b = read.body;
-  const db = env && env.WEB;
+  const db = d1Meter(env && env.WEB);
   const path = url.pathname.replace(/\/+$/, '');
   try {
     if (path === '/api/self-join/pay-info') {

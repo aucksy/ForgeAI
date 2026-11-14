@@ -54,11 +54,12 @@ async function readJson(res) {
 
 /** A company call that could not be made or answered with a server error. */
 export class PayError extends Error {
-  constructor(code, detail = '') {
+  constructor(code, detail = '', status = 0) {
     super(code);
     this.name = 'PayError';
     this.code = code;
     this.detail = detail; // the company's own short error words, never a key
+    this.status = status; // the company's HTTP status for a refusal (review round 4: 400/404 = "no such link")
   }
 }
 
@@ -137,7 +138,7 @@ export const razorpay = {
   },
   async status(creds, _mode, linkId, f = fetch) {
     const r = await send(f, `${RZP}/payment_links/${encodeURIComponent(linkId)}`, { headers: { Authorization: rzpAuth(creds) } });
-    if (r.status !== 200) throw new PayError('STATUS_REFUSED', companyWords(r.body));
+    if (r.status !== 200) throw new PayError('STATUS_REFUSED', companyWords(r.body), r.status);
     const b = r.body;
     const pays = Array.isArray(b.payments) ? b.payments : [];
     // Payment sweep (R-542): only CAPTURED money is paid. An "authorized" payment can still be dropped and refunded by
@@ -269,7 +270,7 @@ export const cashfree = {
   async status(creds, mode, linkId, f = fetch) {
     const host = cfHost(mode);
     const r = await send(f, `${host}/links/${encodeURIComponent(linkId)}`, { headers: cfHeaders(creds) });
-    if (r.status !== 200) throw new PayError('STATUS_REFUSED', companyWords(r.body));
+    if (r.status !== 200) throw new PayError('STATUS_REFUSED', companyWords(r.body), r.status);
     const st = str(r.body.link_status).toUpperCase();
     if (st === 'PAID') {
       // The payment id the webhook also carries (cf_payment_id): the link's paid order, then its payment.
@@ -494,7 +495,7 @@ export const phonepe = {
   async status(creds, mode, linkId, f = fetch) {
     const token = await ppToken(creds, mode, f);
     const r = await send(f, `${ppHosts(mode).pg}/checkout/v2/order/${encodeURIComponent(linkId)}/status`, { headers: { Authorization: `O-Bearer ${token}` } });
-    if (r.status !== 200) throw new PayError('STATUS_REFUSED', companyWords(r.body));
+    if (r.status !== 200) throw new PayError('STATUS_REFUSED', companyWords(r.body), r.status);
     const st = str(r.body.state).toUpperCase();
     const pays = Array.isArray(r.body.paymentDetails) ? r.body.paymentDetails : [];
     if (st === 'COMPLETED') {

@@ -124,7 +124,8 @@ export function CollectPaymentSheet({
     try {
       // Review round 3 (R-550): a link for this due could still be paid after the desk takes cash. The server closes
       // every open link for it first; if the member paid one a moment ago, nothing is saved (no double payment).
-      const paidOnline = await beforeDeskMoney('fee', selected.membership.id);
+      // Review round 4 (R-554): the amount and the due go too, so taking only the REST of a part payment made online is fine.
+      const paidOnline = await beforeDeskMoney('fee', selected.membership.id, { amountP, dueP: selected.unpaidP });
       if (paidOnline) {
         setError(justPaidOnline('fee', view.member.fullName, paidOnline));
         return;

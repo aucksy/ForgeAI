@@ -6,7 +6,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { upiPayLink, validUpiId } from '../../src/crm/logic/upiPay';
-import { paidDay, stuckWhy } from '../../src/crm/pay/PaidOnline';
+import { paidDay, stuckWhy, sweepPaid, type SweepApi } from '../../src/crm/pay/PaidOnline';
 import { qrPath } from '../../src/crm/pay/PayQr';
 import { offWords, oauthBackWords } from '../../src/crm/pay/PaymentsScreen';
 import { deskPay, settleForDesk, tenDigits, type PayConnection, type PayRequest } from '../../src/crm/pay/payApi';
@@ -115,6 +115,8 @@ describe('Settings -> Payments words', () => {
     expect(connectProblem('OWNER_ONLY', null, 'PayU')).toBe('Only the gym owner can connect a payment company.');
     expect(connectProblem('NO_MASTER_KEY', null, 'PayU')).toBe('Online payments are not switched on yet.');
     expect(connectProblem('WHAT', null, 'PayU')).toBe('Could not connect. Try again.');
+    // Review round 4 (R4-15): the company did not answer the "same account?" check; nothing was saved.
+    expect(connectProblem('CHECK_FAILED', null, 'Razorpay')).toBe('Could not check with Razorpay. Try again.');
   });
 
   it('with the server part off, the screen says "not switched on yet" (no buttons, no crash)', () => {
@@ -191,6 +193,41 @@ describe('payments that came in with no sheet open', () => {
     expect(stuckWhy(req({ status: 'paid', paidP: 150000, testMode: true }), memberships, () => 150000)).toBe('TEST_MODE');
   });
 
+  // Review round 4 (R4-16): the automatic receipts for online fee payments ask the company once more first, as Approve
+  // does: a payment refunded since never becomes a receipt; no answer = the receipt is made as before.
+  it('R4-16 a refunded online fee never becomes a receipt by itself; the desk sees it', async () => {
+    const saved: unknown[] = [];
+    const recorded: string[] = [];
+    const api = (refunded: boolean | 'down'): SweepApi => ({
+      claim: (async (_k: string, id: string) => ({ token: `t-${id}`, request: req({ id }) })) as SweepApi['claim'],
+      recorded: (async (_k: string, id: string) => {
+        recorded.push(id);
+        return req({ id });
+      }) as SweepApi['recorded'],
+      recheck: (async () => {
+        if (refunded === 'down') throw new Error('OFFLINE');
+        return { request: null, refunded };
+      }) as SweepApi['recheck'],
+    });
+    const ctx = {
+      snap: { memberships, payments: [], enquiries: [] } as never,
+      unpaid: () => 150000,
+      day: '2026-11-14',
+      taker: { id: null, name: null },
+      save: async (input: unknown) => {
+        saved.push(input);
+        return { receiptNo: 'R-1' };
+      },
+    };
+    const paid = req({ status: 'paid', paidP: 150000, testMode: false, paymentId: 'pay_A1' });
+    expect(await sweepPaid('k1', [paid], ctx, api(true))).toEqual([{ r: paid, why: 'REFUNDED' }]);
+    expect([saved.length, recorded.length]).toEqual([0, 0]);
+    expect(await sweepPaid('k1', [paid], ctx, api(false))).toEqual([]);
+    expect([saved.length, recorded]).toEqual([1, [paid.id]]);
+    expect(await sweepPaid('k1', [paid], ctx, api('down'))).toEqual([]);
+    expect(saved.length).toBe(2);
+  });
+
   it('the receipt is dated the day it was paid in India, never in the future', () => {
     // 4 Nov 2026, 11:30 pm in India is still 4 Nov there (6 pm UTC).
     expect(paidDay('2026-11-04T18:00:00.000Z', '2026-11-06')).toBe('2026-11-04');
@@ -234,6 +271,12 @@ describe('desk money and the gym UPI ID', () => {
     expect(paid?.status).toBe('paid');
     answerWith({ paidOnline: null, closed: 2 });
     expect(await settleForDesk('k1', 'shop', 'o1')).toBeNull();
+  });
+
+  it('R4-14 the desk taking the rest of a due part paid online sends the amount it saves and what is due', async () => {
+    answerWith({ paidOnline: null, closed: 0, onlineP: 50000 });
+    expect(await settleForDesk('k1', 'fee', 'ms1', { amountP: 150000, dueP: 200000 })).toBeNull();
+    expect(sent[0].body).toEqual({ key: 'k1', kind: 'fee', ref: 'ms1', amountP: 150000, dueP: 200000 });
   });
 
   it('R3-5 the desk is told plainly why the cash was not saved', () => {

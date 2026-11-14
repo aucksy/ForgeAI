@@ -15,9 +15,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { useAuth } from '../auth/AuthProvider';
+import type { CrmSnapshot, RecordPaymentInput } from '../data/adapter';
 import { takerOf } from '../auth/permissions';
 import { t } from '../lang/lang';
-import { dateISOFromEpoch } from '../logic/dates';
+import { dateISOFromEpoch, type DateISO } from '../logic/dates';
 import { isRealMoney, joinLeftover } from '../logic/joinPay';
 import { waitingOnlineJoins } from '../logic/selfJoin';
 import { startVisiblePoll } from '../logic/visiblePoll';
@@ -26,14 +27,14 @@ import { formatINR } from '../logic/money';
 import { useCrm } from '../store';
 import { Button, Card, Row, SectionTitle, color, font, space } from '../ui/kit';
 import { navigate } from '../ui/router';
-import { claimReceipt, markRecorded, paidOnline, type PayRequest } from './payApi';
+import { checkBeforeApprove, claimReceipt, markRecorded, paidOnline, type PayRequest } from './payApi';
 import { onlineReference, receiptMethod } from './payWords';
 import { useDeskPay } from './useDeskPay';
 
 // R-522: was every 2 minutes, also with the tab hidden (720 calls a day per open panel).
 const EVERY_MS = 5 * 60_000;
 
-export type StuckWhy = 'NO_MEMBERSHIP' | 'MORE_THAN_DUE' | 'TEST_MODE' | 'JOIN_NOT_APPROVED';
+export type StuckWhy = 'NO_MEMBERSHIP' | 'MORE_THAN_DUE' | 'TEST_MODE' | 'JOIN_NOT_APPROVED' | 'REFUNDED';
 
 /** Can this paid request become a receipt by itself? PURE. */
 export function stuckWhy(
@@ -56,6 +57,80 @@ export function paidDay(paidAt: string | null, today: string): string {
   return day && day <= today ? day : today;
 }
 
+/** The server calls one sweep makes (tests pass fakes). */
+export interface SweepApi {
+  claim: typeof claimReceipt;
+  recorded: typeof markRecorded;
+  recheck: typeof checkBeforeApprove;
+}
+const SERVER: SweepApi = { claim: claimReceipt, recorded: markRecorded, recheck: checkBeforeApprove };
+
+/**
+ * One sweep: every paid online payment with no receipt yet becomes a receipt by itself, or is listed as stuck (why).
+ * Review round 4 (R-554): a fee paid through a company is asked about once more first, exactly as Approve does: refunded
+ * since (in full or in part) = no receipt; the desk sees it ("REFUNDED"). No answer (no internet, an older server):
+ * the receipt is made as before.
+ */
+export async function sweepPaid(
+  key: string,
+  paid: readonly PayRequest[],
+  ctx: {
+    snap: Pick<CrmSnapshot, 'memberships' | 'payments' | 'enquiries'>;
+    unpaid: (membershipId: string) => number;
+    day: DateISO;
+    taker: { id: string | null; name: string | null };
+    save: (input: RecordPaymentInput) => Promise<{ receiptNo?: string | null }>;
+  },
+  api: SweepApi = SERVER,
+): Promise<{ r: PayRequest; why: StuckWhy }[]> {
+  const left: { r: PayRequest; why: StuckWhy }[] = [];
+  const waiting = new Set(waitingOnlineJoins(ctx.snap.enquiries).map((j) => j.enquiry.id));
+  for (const r of paid) {
+    // Payment sweep (R-542): a join payment nobody approved must not sit unseen: the gym holds that money.
+    if (r.kind === 'join') {
+      const leftover = joinLeftover(r, waiting, ctx.snap.payments);
+      if (leftover.kind === 'stuck') left.push({ r, why: leftover.why });
+      else if (leftover.kind === 'saved') {
+        const { token } = await api.claim(key, r.id);
+        if (token) await api.recorded(key, r.id, { token, receiptNo: leftover.receiptNo });
+      }
+      continue;
+    }
+    if (r.kind !== 'fee' || !r.memberId) continue;
+    const why = stuckWhy(r, ctx.snap.memberships, ctx.unpaid);
+    if (why) {
+      left.push({ r, why });
+      continue;
+    }
+    if (r.provider) {
+      const fresh = await api.recheck(key, r.id).catch((e: unknown) => {
+        console.warn('[pay] the check before an online receipt did not answer; made as before', e instanceof Error ? e.message : e);
+        return null;
+      });
+      if (fresh?.refunded) {
+        left.push({ r, why: 'REFUNDED' });
+        continue;
+      }
+    }
+    const { token } = await api.claim(key, r.id);
+    if (!token) continue; // another desk is making it
+    const payment = await ctx.save({
+      memberId: r.memberId,
+      membershipId: r.ref,
+      amountP: r.paidP || r.amountP,
+      method: receiptMethod(r),
+      paidOn: paidDay(r.paidAt, ctx.day),
+      reference: onlineReference(r) || null,
+      note: r.testMode ? 'Paid online (test mode)' : 'Paid online',
+      collectedBy: ctx.taker.id,
+      collectedByName: ctx.taker.name,
+      requestId: `pay-${r.id}`,
+    });
+    await api.recorded(key, r.id, { token, receiptNo: payment.receiptNo ?? '' });
+  }
+  return left;
+}
+
 export function PaidOnlineCard() {
   const { snapshot, today, recordPayment } = useCrm();
   const session = useAuth().session;
@@ -76,43 +151,7 @@ export function PaidOnlineCard() {
         const m = snap.memberships.find((x) => x.id === id);
         return m ? unpaidForMembership(m, snap.payments) : 0;
       };
-      const left: { r: PayRequest; why: StuckWhy }[] = [];
-      const waiting = new Set(waitingOnlineJoins(snap.enquiries).map((j) => j.enquiry.id));
-      for (const r of paid) {
-        // Payment sweep (R-542): a join payment nobody approved must not sit unseen: the gym holds that money.
-        if (r.kind === 'join') {
-          const leftover = joinLeftover(r, waiting, snap.payments);
-          if (leftover.kind === 'stuck') left.push({ r, why: leftover.why });
-          else if (leftover.kind === 'saved') {
-            const { token } = await claimReceipt(key, r.id);
-            if (token) await markRecorded(key, r.id, { token, receiptNo: leftover.receiptNo });
-          }
-          continue;
-        }
-        if (r.kind !== 'fee' || !r.memberId) continue;
-        const why = stuckWhy(r, snap.memberships, unpaid);
-        if (why) {
-          left.push({ r, why });
-          continue;
-        }
-        const { token } = await claimReceipt(key, r.id);
-        if (!token) continue; // another desk is making it
-        const taker = takerOf(who);
-        const payment = await save({
-          memberId: r.memberId,
-          membershipId: r.ref,
-          amountP: r.paidP || r.amountP,
-          method: receiptMethod(r),
-          paidOn: paidDay(r.paidAt, day),
-          reference: onlineReference(r) || null,
-          note: r.testMode ? 'Paid online (test mode)' : 'Paid online',
-          collectedBy: taker.id,
-          collectedByName: taker.name,
-          requestId: `pay-${r.id}`,
-        });
-        await markRecorded(key, r.id, { token, receiptNo: payment.receiptNo ?? '' });
-      }
-      setStuck(left);
+      setStuck(await sweepPaid(key, paid, { snap, unpaid, day, taker: takerOf(who), save }));
     } catch (e) {
       console.warn('[pay] paid-online check failed; trying again later', e instanceof Error ? e.message : e);
     } finally {
@@ -156,11 +195,13 @@ export function PaidOnlineCard() {
           <div style={{ fontFamily: font.body, fontSize: 13, color: color.inkMuted }}>
             {why === 'TEST_MODE'
               ? t('Test mode: no real money came in, so no receipt was made. Collect the fee at the desk.')
-              : why === 'JOIN_NOT_APPROVED'
-                ? t('They paid on your join page, but were made a member without Approve. They may have paid twice: check, and refund one if so. If not, save this payment on their member page.')
-                : why === 'NO_MEMBERSHIP'
-                  ? t('The plan this was for is no longer there.')
-                  : t('It is more than what is due on that plan now.')}{' '}
+              : why === 'REFUNDED'
+                ? t('This payment was refunded at the payment company, so no receipt was made. Ask them how they will pay.')
+                : why === 'JOIN_NOT_APPROVED'
+                  ? t('They paid on your join page, but were made a member without Approve. They may have paid twice: check, and refund one if so. If not, save this payment on their member page.')
+                  : why === 'NO_MEMBERSHIP'
+                    ? t('The plan this was for is no longer there.')
+                    : t('It is more than what is due on that plan now.')}{' '}
             {onlineReference(r)}
           </div>
           <Row gap={space.sm} align="center">
@@ -170,7 +211,7 @@ export function PaidOnlineCard() {
               </Button>
             )}
             <Button variant="quiet" onClick={() => savedByHand(r)}>
-              {why === 'TEST_MODE' ? t('Got it') : t('I saved it')}
+              {why === 'TEST_MODE' || why === 'REFUNDED' ? t('Got it') : t('I saved it')}
             </Button>
           </Row>
         </div>

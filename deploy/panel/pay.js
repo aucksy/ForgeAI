@@ -21,7 +21,7 @@
 import { answer } from './feedback.js';
 import { hasMasterKey, hmac256, lastFour, randomId, sameText, seal, toHex, unseal } from './payCrypto.js';
 import { OFFERED, PROVIDERS, PROVIDER_ORDER, PayError, requestIdOf } from './payProviders.js';
-import { saidAt, saveSwitches, switchesOf, switchesReady } from './paySwitches.js';
+import { saveSwitches, switchesOf, switchesReady } from './paySwitches.js';
 
 const SUPABASE = 'https://hdxzqbdiokjklnypfisq.supabase.co';
 // The public, read-only app key (the same one in the panel and the app).
@@ -42,13 +42,29 @@ const TODAY_CHECKS = 10;
 // Review round 3 (R-550): a link is watched until ITS OWN expiry plus this margin (and never less than CRON_DAYS from
 // the request). A request made on day 0 whose link was made on day 5 is payable until day 12, so it is watched to 13.
 const LINK_MARGIN_MS = 86400000;
-// Review round 3 (R-550): Cloudflare's free Workers plan allows 50 outside calls (fetch) per invocation
-// (https://developers.cloudflare.com/workers/platform/limits/, "Subrequests"); D1 queries are counted apart, 1,000 per
-// invocation on Free (same page, "Subrequests to internal services"). One ask about one link can cost up to ASK_MOST
-// outside calls (Cashfree, paid: link, orders, payments, refunds; an OAuth token refresh; a cancel). So every run that
-// asks about many links stops before its budget (default 40, PAY_SUBREQUESTS on a paid plan) can be overrun.
+// The panel Worker stays on Cloudflare's FREE plan (owner, 14 Nov 2026). Two limits per invocation (each HTTP request,
+// each cron run) bind every payment path:
+//   - 50 outside calls (fetch) (https://developers.cloudflare.com/workers/platform/limits/, "Subrequests");
+//   - 50 D1 queries (https://developers.cloudflare.com/d1/platform/limits/, "Queries per Worker invocation": 1,000 on
+//     Workers Paid, 50 on Free; "a db.batch() call counts as a single query"). Review round 4 (R-554): the 1,000 this
+//     comment used to give is the PAID plan's number.
+// One ask about one link can cost up to ASK_MOST outside calls (Cashfree, paid: link, orders, payments, refunds; an
+// OAuth token refresh; a cancel) and up to ASK_D1 D1 queries. Every invocation counts both (askBudget, d1Meter) and
+// stops starting new asks before either budget (40 each, a margin under 50) could be overrun; what is left over is
+// asked on the next run (the 10-minute check takes the longest-not-asked first).
 const ASK_MOST = 6;
+export const ASK_MOST_CALLS = ASK_MOST;
 const DEFAULT_ASKS = 40;
+export const D1_MOST = 40;
+// D1 queries one ask (checkWithCompany) can cost at worst: its connection (1, unless already read this run), "asked
+// now" (1), the keys' one re-seal (1: old keys dropped, a token refreshed), an old account's token refreshed (1), the
+// answer (3: markPaid's batch, and for a payment seen before, its re-read and id fix) and the fresh row (1). A close
+// after it (closeRequest, 2) and one more read a caller makes per row (1): ASK_D1.
+const CHECK_D1 = 8;
+const ASK_D1 = CHECK_D1 + 3;
+// The 10-minute check reads every connection once, marks every link "asked" in one write and needs no fresh row.
+const CRON_CHECK_D1 = 5;
+const CRON_ROWS = 40;
 const RECENT_PAID_MS = 15 * 60000;
 const MAX_AMOUNT_P = 10_00_000_00; // ₹10 lakh: a typing mistake, not a gym fee
 const UPI_ID = /^[a-z0-9._-]{2,256}@[a-z][a-z0-9.-]{1,63}$/;
@@ -96,7 +112,58 @@ export function askBudget(f, max) {
     used += 1;
     return used > max ? Promise.reject(new Error('BUDGET')) : f(...a);
   };
+  // Review round 4 (R-554): the counted fetch carries its own "calls left", so every loop in one invocation sees ONE
+  // budget (before, each loop counted only its own calls and the rest of the request could still pass 50).
+  counted.callsLeft = () => max - used;
   return { f: counted, left: () => max - used, roomForOne: () => max - used >= ASK_MOST };
+}
+
+/**
+ * Review round 4 (R-554): a D1 database that counts its queries (one batch = one query, as Cloudflare counts them), so
+ * one invocation can stop starting new asks before it reaches the free plan's 50. It never refuses a query: the loops
+ * check `d1Left()` before each ask, and the worst cost of each ask is known (CHECK_D1, ASK_D1). Wrapping a database
+ * that is already counted returns it as it is.
+ */
+export function d1Meter(db, max = D1_MOST) {
+  if (!db || typeof db.prepare !== 'function' || typeof db.d1Left === 'function') return db;
+  let used = 0;
+  const wrap = (s) => ({
+    inner: s,
+    bind: (...a) => wrap(s.bind(...a)),
+    first: (...a) => {
+      used += 1;
+      return s.first(...a);
+    },
+    all: () => {
+      used += 1;
+      return s.all();
+    },
+    run: () => {
+      used += 1;
+      return s.run();
+    },
+  });
+  return {
+    prepare: (sql) => wrap(db.prepare(sql)),
+    batch: (list) => {
+      used += 1;
+      return db.batch(list.map((s) => (s && s.inner) || s));
+    },
+    d1Used: () => used,
+    d1Left: () => max - used,
+  };
+}
+
+/** Room for one more ask in this invocation: `calls` outside calls and `queries` D1 queries left. PURE. */
+export function roomFor(f, db, calls = ASK_MOST, queries = ASK_D1) {
+  const c = f && typeof f.callsLeft === 'function' ? f.callsLeft() : Infinity;
+  const q = db && typeof db.d1Left === 'function' ? db.d1Left() : Infinity;
+  return c >= calls && q >= queries;
+}
+
+/** A fetch counted against this invocation's outside calls (an already counted one is kept). */
+export function countedFetch(f, max) {
+  return typeof f.callsLeft === 'function' ? f : askBudget(f, max).f;
 }
 
 /** Until when a request's company link may still be paid, so is still watched. PURE. */
@@ -178,8 +245,8 @@ export async function memberWho(env, key, f = fetch) {
 export async function tablesReady(db) {
   if (!db) return false;
   try {
-    await db.prepare('SELECT 1 FROM pay_requests LIMIT 1').all();
-    await db.prepare('SELECT 1 FROM pay_gyms LIMIT 1').all();
+    // One query (review round 4, R-554: every query counts against the free plan's 50): fails when either is missing.
+    await db.prepare('SELECT (SELECT 1 FROM pay_requests LIMIT 1) AS a, (SELECT 1 FROM pay_gyms LIMIT 1) AS b').all();
     return true;
   } catch {
     return false;
@@ -251,10 +318,11 @@ export function requestView(row) {
  * and sees "paid after the link closed".
  * -> 'paid' | 'duplicate' | 'unknown' (no such request) | 'second' (a second payment on a paid request)
  */
-export async function markPaid(db, { provider, requestId, paymentId, amountP, method, at }) {
+export async function markPaid(db, { provider, requestId, paymentId, amountP, method, at, row: known = null }) {
   const pid = str(paymentId).trim();
   if (!pid) return 'unknown';
-  const row = await requestOf(db, requestIdOf(requestId));
+  // Review round 4 (R-554): a caller that just read the row hands it over (one D1 query fewer per ask).
+  const row = known && known.id === requestIdOf(requestId) ? known : await requestOf(db, requestIdOf(requestId));
   if (!row || row.provider !== provider) return 'unknown';
   // Review round 3 (R-550): "this payment was seen" and "the request is paid" are ONE write (a D1 batch is one
   // transaction). Before, a failed second write left the payment seen and the request unpaid for ever, because every
@@ -306,24 +374,77 @@ export async function turnOff(db, gymId, provider, reason, now) {
 
 // ------------------------------------------------------------------------------------ company calls
 
-/** The connection's keys/tokens, opened; OAuth tokens refreshed when they are about to run out. */
-async function credsOf(env, db, conn, f, now = Date.now()) {
+/**
+ * Review round 4 (R-554): one invocation's connections and opened keys, so a loop over many links reads each
+ * connection once and opens (and, when needed, re-seals) its keys once. Key: "<gym id>|<company>".
+ */
+export const runCache = () => new Map();
+const cacheKey = (gymId, provider) => `${gymId}|${provider}`;
+
+/** The connection of a request's gym and company, read once per invocation when a cache is given. */
+async function connCached(db, cache, gymId, provider) {
+  if (!cache) return connOf(db, gymId, provider);
+  const k = cacheKey(gymId, provider);
+  if (!cache.has(k)) cache.set(k, { conn: (await connOf(db, gymId, provider)) || null, creds: null });
+  return cache.get(k).conn;
+}
+
+/** Every connection of these gyms in ONE query, into the cache (a gym and company with none is kept as none). */
+export async function preloadConns(db, cache, rows) {
+  const gyms = [...new Set(rows.map((r) => str(r.gym_id)).filter(Boolean))];
+  if (!gyms.length) return;
+  const found =
+    (await db.prepare(`SELECT * FROM pay_connections WHERE gym_id IN (${gyms.map(() => '?').join(', ')})`).bind(...gyms).all()).results || [];
+  for (const c of found) cache.set(cacheKey(c.gym_id, c.provider), { conn: c, creds: null });
+  for (const r of rows) if (r.provider && !cache.has(cacheKey(r.gym_id, r.provider))) cache.set(cacheKey(r.gym_id, r.provider), { conn: null, creds: null });
+}
+
+/** "The company now says this connection's own keys are wrong": switched off here and in this invocation's cache. */
+async function turnOffCached(db, conn, reason, now) {
+  await turnOff(db, conn.gym_id, conn.provider, reason, now);
+  conn.status = 'off';
+  conn.off_reason = reason;
+}
+
+const runningOut = (keys) => {
+  const left = Date.parse(str(keys && keys.expiresAt)) - Date.now();
+  return !(Number.isFinite(left) && left > 86400000);
+};
+
+/**
+ * The connection's keys/tokens, opened; OAuth tokens refreshed when they are about to run out. At most ONE D1 write
+ * (review round 4, R-554: old keys past watching dropped AND a refreshed token, sealed together), and once per
+ * invocation with a cache.
+ */
+async function credsOf(env, db, conn, f, now = Date.now(), cache = null) {
+  const k = cacheKey(conn.gym_id, conn.provider);
+  const hit = cache && cache.get(k);
+  if (hit && hit.conn === conn && hit.creds) return hit.creds;
   let creds = await unseal(env, conn.creds);
+  let changed = false;
   // Review round 3: an earlier account's keys kept for its old links (keyChange) go once those links are past watching.
   if (Array.isArray(creds.older) && creds.older.some((o) => !(Date.parse(str(o && o.until)) > now))) {
     const { older, ...rest } = creds;
     const live = older.filter((o) => Date.parse(str(o && o.until)) > now);
     creds = live.length ? { ...rest, older: live } : rest;
-    await db.prepare('UPDATE pay_connections SET creds = ?, updated_at = ? WHERE gym_id = ? AND provider = ?').bind(await seal(env, creds), nowIso(now), conn.gym_id, conn.provider).run();
+    changed = true;
   }
-  if (conn.via !== 'oauth' || !creds.refreshToken) return creds;
-  const left = Date.parse(str(creds.expiresAt)) - Date.now();
-  if (Number.isFinite(left) && left > 86400000) return creds;
-  const fresh = await refreshOauth(env, conn.provider, creds, conn.mode, f);
-  if (!fresh) return creds;
-  const next = { ...creds, ...fresh };
-  await db.prepare('UPDATE pay_connections SET creds = ?, updated_at = ? WHERE gym_id = ? AND provider = ?').bind(await seal(env, next), nowIso(), conn.gym_id, conn.provider).run();
-  return next;
+  if (conn.via === 'oauth' && creds.refreshToken && runningOut(creds)) {
+    const fresh = await refreshOauth(env, conn.provider, creds, conn.mode, f);
+    if (fresh) {
+      creds = { ...creds, ...fresh };
+      changed = true;
+    }
+  }
+  if (changed) await saveCreds(env, db, conn, creds, now);
+  if (cache) cache.set(k, { conn, creds });
+  return creds;
+}
+
+async function saveCreds(env, db, conn, creds, now) {
+  const sealed = await seal(env, creds);
+  await db.prepare('UPDATE pay_connections SET creds = ?, updated_at = ? WHERE gym_id = ? AND provider = ?').bind(sealed, nowIso(now), conn.gym_id, conn.provider).run();
+  conn.creds = sealed;
 }
 
 /**
@@ -342,7 +463,8 @@ export function stillWatched(row, now = Date.now()) {
 /**
  * Review round 3 (R-550): which keys ask about this request. When the owner pasted keys of a DIFFERENT account, the
  * old account's keys are kept sealed inside the new ones (`older`, keyChange) for the old links only, until those
- * links are past watching. Every other request uses the connection's own keys. PURE.
+ * links are past watching. Every other request uses the connection's own keys. A link made again later (PhonePe's
+ * hour ran out) is made with the connection's own keys, and makeLink takes it off the old list (review round 4). PURE.
  */
 export function keysFor(creds, row, now = Date.now()) {
   const older = Array.isArray(creds && creds.older) ? creds.older : [];
@@ -350,41 +472,73 @@ export function keysFor(creds, row, now = Date.now()) {
   return hit && hit.keys ? hit.keys : creds;
 }
 
+/**
+ * keysFor, and (review round 4, R-554) an OLD account's OAuth token ("Connect <company>", kept after the owner signed in
+ * with another account) refreshed like the connection's own when it is about to run out (Cashfree's lasts a day).
+ * One outside call and one D1 write at most.
+ */
+async function keysToAsk(env, db, conn, creds, row, f, now, cache) {
+  const keys = keysFor(creds, row, now);
+  if (keys === creds || !keys.refreshToken || !runningOut(keys)) return keys;
+  const fresh = await refreshOauth(env, conn.provider, keys, conn.mode, f);
+  if (!fresh) return keys;
+  const next = { ...keys, ...fresh };
+  const all = { ...creds, older: creds.older.map((o) => (o && o.keys === keys ? { ...o, keys: next } : o)) };
+  await saveCreds(env, db, conn, all, now);
+  if (cache) cache.set(cacheKey(conn.gym_id, conn.provider), { conn, creds: all });
+  return next;
+}
+
 /** A connection whose keys may still ASK about old links: on, or disconnected with its keys kept for that (below). */
 const canAsk = (conn) => Boolean(conn && conn.creds && (conn.status === 'on' || conn.off_reason === 'disconnected'));
 
-/** Ask the company about one request (throttled), and act on the answer. Returns the fresh row. */
-export async function checkWithCompany(env, db, row, { f = fetch, force = false, now = Date.now() } = {}) {
+/**
+ * Ask the company about one request (throttled), and act on the answer. Returns the fresh row.
+ * Review round 4 (R-554), for loops over many links inside the free plan's 50 D1 queries an invocation:
+ *   cache   this invocation's connections and opened keys (runCache; preloadConns reads them all in one query)
+ *   marked  the caller already wrote "asked now" for this row (the 10-minute check marks all its links in one write)
+ *   reread  false: no fresh read of the row; the answer is the row with its new status (paid, expired, cancelled)
+ * At most CHECK_D1 D1 queries (CRON_CHECK_D1 with a preloaded cache, marked and no reread) and ASK_MOST outside calls.
+ */
+export async function checkWithCompany(env, db, row, { f = fetch, force = false, now = Date.now(), cache = null, marked = false, reread = true } = {}) {
   if (!stillWatched(row, now)) return row;
   if (!force && row.checked_at && now - Date.parse(row.checked_at) < CHECK_EVERY_MS) return row;
   if (!hasMasterKey(env)) return row;
-  const conn = await connOf(db, row.gym_id, row.provider);
+  const conn = await connCached(db, cache, row.gym_id, row.provider);
   if (!canAsk(conn)) return row;
   // Review round 2 (R-542): each link in its OWN mode. Live keys cannot see a test link (and the other way round), so
   // asking would only fail, and must never switch a gym's live payments off as "bad keys".
   if (row.mode && conn.mode !== row.mode) return row;
-  await db.prepare('UPDATE pay_requests SET checked_at = ? WHERE id = ?').bind(nowIso(now), row.id).run();
+  if (!marked) await db.prepare('UPDATE pay_requests SET checked_at = ? WHERE id = ?').bind(nowIso(now), row.id).run();
+  const asked = { ...row, checked_at: nowIso(now) };
+  const done = async (status) => (reread ? requestOf(db, row.id) : status ? { ...asked, status } : asked);
   const adapter = PROVIDERS[row.provider];
   let st;
   let creds = null;
   let keys = null;
   try {
-    creds = await credsOf(env, db, conn, f, now);
-    keys = keysFor(creds, row, now);
+    creds = await credsOf(env, db, conn, f, now, cache);
+    keys = await keysToAsk(env, db, conn, creds, row, f, now, cache);
     st = await adapter.status(keys, row.mode || conn.mode, row.link_id, f);
   } catch (e) {
     // Only the connection's OWN keys failing switches it off; an old account's kept keys failing never does.
-    if (e instanceof PayError && e.code === 'BAD_KEYS' && conn.status === 'on' && keys === creds) await turnOff(db, row.gym_id, row.provider, 'bad_keys', now);
+    if (e instanceof PayError && e.code === 'BAD_KEYS' && conn.status === 'on' && keys === creds) await turnOffCached(db, conn, 'bad_keys', now);
     else console.warn('[pay] status check failed', row.provider, e instanceof PayError ? e.code : 'error');
-    return requestOf(db, row.id);
+    return done(null);
   }
   if (st.state === 'paid') {
-    await markPaid(db, { provider: row.provider, requestId: row.id, paymentId: st.paymentId || `${row.link_id}:paid`, amountP: st.amountP, method: st.method, at: now });
-  } else if (st.state === 'expired' || st.state === 'cancelled') {
-    await db.prepare("UPDATE pay_requests SET status = ?, failed_at = CASE WHEN ? THEN ? ELSE failed_at END WHERE id = ? AND status = 'open'").bind(st.state, st.failed ? 1 : 0, nowIso(now), row.id).run();
-    // The company itself says nobody can pay it any more: no more asking.
-    await db.prepare("UPDATE pay_requests SET checked_at = ? WHERE id = ? AND status <> 'paid'").bind(CHECK_DONE, row.id).run();
-  } else if (st.state === 'refunded') {
+    const said = await markPaid(db, { provider: row.provider, requestId: row.id, paymentId: st.paymentId || `${row.link_id}:paid`, amountP: st.amountP, method: st.method, at: now, row });
+    return done(said === 'paid' ? 'paid' : null);
+  }
+  if (st.state === 'expired' || st.state === 'cancelled') {
+    // One write (review round 4): closed as the company says, and (it says nobody can pay it any more) no more asking.
+    await db.batch([
+      db.prepare("UPDATE pay_requests SET status = ?, failed_at = CASE WHEN ? THEN ? ELSE failed_at END WHERE id = ? AND status = 'open'").bind(st.state, st.failed ? 1 : 0, nowIso(now), row.id),
+      db.prepare("UPDATE pay_requests SET checked_at = ? WHERE id = ? AND status <> 'paid'").bind(CHECK_DONE, row.id),
+    ]);
+    return done(row.status === 'open' ? st.state : null);
+  }
+  if (st.state === 'refunded') {
     // Money that came and went back (refunded before we ever saw it paid): never paid.
   } else if (st.state === 'open' && row.status === 'cancelled' && adapter.cancel) {
     // Review round 3 (R-550): we closed it here, but the company still takes money on it (its cancel failed, or a
@@ -398,21 +552,23 @@ export async function checkWithCompany(env, db, row, { f = fetch, force = false,
   } else if (st.failed) {
     await db.prepare('UPDATE pay_requests SET failed_at = ? WHERE id = ?').bind(nowIso(now), row.id).run();
   }
-  return requestOf(db, row.id);
+  return done(null);
 }
 
 /**
  * Payment sweep (R-542): close an open request so nobody can pay it any more: the company link is cancelled first
  * (best effort; Razorpay and Cashfree can, PayU cannot, PhonePe's page dies within the hour), then the row. A payment
  * that still lands on it later is kept as late (markPaid), never lost. `conn` = its connection, still with its keys.
+ * At most 2 D1 queries (1 with the keys already opened in `cache`) and 3 outside calls (2 token refreshes, a cancel).
  */
-export async function closeRequest(env, db, row, conn, f, now = Date.now()) {
+export async function closeRequest(env, db, row, conn, f, now = Date.now(), cache = null) {
   const adapter = PROVIDERS[row.provider];
   let atCompany = false;
   // Only with keys of the link's own mode (review round 2): live keys cannot cancel a test link.
   if (adapter && adapter.cancel && row.link_id && conn && conn.creds && (!row.mode || row.mode === conn.mode) && hasMasterKey(env)) {
     try {
-      await adapter.cancel(keysFor(await credsOf(env, db, conn, f, now), row, now), row.mode || conn.mode, row.link_id, f);
+      const creds = await credsOf(env, db, conn, f, now, cache);
+      await adapter.cancel(await keysToAsk(env, db, conn, creds, row, f, now, cache), row.mode || conn.mode, row.link_id, f);
       atCompany = true;
     } catch (e) {
       console.warn('[pay] the company did not cancel a link; it is closed here', row.provider, e instanceof PayError ? e.code : 'error');
@@ -423,20 +579,57 @@ export async function closeRequest(env, db, row, conn, f, now = Date.now()) {
 }
 
 /** The connection row (with its sealed keys) of a request, or null for a plain UPI one. */
-export async function connOfRow(db, row) {
-  return row && row.provider ? (await db.prepare('SELECT * FROM pay_connections WHERE gym_id = ? AND provider = ?').bind(row.gym_id, row.provider).first()) || null : null;
+export async function connOfRow(db, row, cache = null) {
+  return row && row.provider ? (await connCached(db, cache, row.gym_id, row.provider)) || null : null;
+}
+
+/**
+ * Review round 4 (R-554): ask and close, one by one, the open requests of a loop (a key change, a disconnect, a new
+ * amount, the desk taking cash), while this invocation has room for one more (ASK_MOST calls, ASK_D1 queries, plus
+ * `keep`: what the caller still needs afterwards). The ones there was no room for are closed HERE in one write; the
+ * 10-minute check then asks them and cancels them at the company (checkWithCompany: "closed here, open there").
+ * `conn`: the keys to use for all (a key change uses the OLD keys), else each row's own connection.
+ * -> { paid: rows found paid, closed: how many closed (here and, best effort, there), left: closed here only }
+ */
+export async function settleOpen(env, db, rows, { f, now, cache = runCache(), conn = null, keep = { calls: 0, queries: 0 }, skip = null } = {}) {
+  const out = { paid: [], closed: 0, left: 0, rest: [] };
+  if (conn) cache.set(cacheKey(conn.gym_id, conn.provider), { conn, creds: null });
+  for (const row of rows) {
+    if (!roomFor(f, db, ASK_MOST + keep.calls, ASK_D1 + keep.queries + 1)) {
+      out.rest.push(row);
+      continue;
+    }
+    const back = await checkWithCompany(env, db, row, { f, now, force: true, cache });
+    if (back && back.status === 'paid') {
+      out.paid.push(back);
+      continue;
+    }
+    if (!back || back.status !== 'open' || (skip && (await skip(back)))) continue;
+    await closeRequest(env, db, back, conn || (await connOfRow(db, back, cache)), f, now, cache);
+    out.closed += 1;
+  }
+  // A plain UPI request has nothing to cancel at a company: closed here too, unless the caller keeps some (`skip`: one
+  // the person said they paid by UPI stays for the desk to check, and that is not known without a read).
+  const rest = out.rest.filter((r) => r.status === 'open' && (r.provider || !skip));
+  if (rest.length) {
+    await db.prepare(`UPDATE pay_requests SET status = 'cancelled' WHERE status = 'open' AND id IN (${rest.map(() => '?').join(', ')})`).bind(...rest.map((r) => r.id)).run();
+    out.left = rest.length;
+    out.closed += rest.length;
+    console.log('[pay] past this request\'s budget: links closed here; the 10-minute check cancels them at the company', rest.length);
+  }
+  return out;
 }
 
 /**
  * Review round 2 (R-542): an open request made in the OTHER mode (a test link from before payments went live, or the
  * other way round) is never reused: it is asked once (a payment is kept) and closed. -> the fresh row when it turned
- * out paid, else null. `mode` = payMode(env).
+ * out paid, else null. `mode` = payMode(env). At most ASK_D1 queries.
  */
-export async function retireOtherMode(env, db, row, mode, f, now) {
+export async function retireOtherMode(env, db, row, mode, f, now, cache = null) {
   if (!row || !row.provider || !row.mode || row.mode === mode || row.status !== 'open') return null;
-  const fresh = await checkWithCompany(env, db, row, { f, now, force: true });
+  const fresh = await checkWithCompany(env, db, row, { f, now, force: true, cache });
   if (fresh && fresh.status === 'paid') return fresh;
-  if (fresh && fresh.status === 'open') await closeRequest(env, db, fresh, await connOfRow(db, fresh), f);
+  if (fresh && fresh.status === 'open') await closeRequest(env, db, fresh, await connOfRow(db, fresh, cache), f, now, cache);
   return null;
 }
 
@@ -450,7 +643,8 @@ export async function recheckPaid(env, db, row, f) {
   const conn = await connOfRow(db, row);
   if (!canAsk(conn) || (row.mode && conn.mode !== row.mode)) return 'unknown';
   try {
-    const st = await PROVIDERS[row.provider].status(keysFor(await credsOf(env, db, conn, f), row), row.mode || conn.mode, row.link_id, f);
+    const creds = await credsOf(env, db, conn, f);
+    const st = await PROVIDERS[row.provider].status(await keysToAsk(env, db, conn, creds, row, f, Date.now(), null), row.mode || conn.mode, row.link_id, f);
     // Review round 3 (R-550): ANY refund (in full or in part) is not a payment to Approve: the desk asks them instead.
     if (st.state === 'refunded' || Number(st.refundedP) > 0) {
       console.warn('[pay] a paid payment was refunded before Approve', row.provider);
@@ -476,13 +670,18 @@ export async function linkConnections(env, db, gymId) {
     .sort((x, y) => PROVIDER_ORDER.indexOf(x.provider) - PROVIDER_ORDER.indexOf(y.provider));
 }
 
-/** Make the company link for a request row (also a fresh one when PhonePe's hour ran out). */
+/**
+ * Make the company link for a request row (also a fresh one when PhonePe's hour ran out). At most 2 D1 queries.
+ * Review round 4 (R-554): the link is made with the connection's OWN keys, so a request on the old account's list
+ * (keyChange) comes off it in the same write: it is asked (and its webhooks verified) with the keys that made its link.
+ */
 export async function makeLink(env, db, row, conn, extra, f, origin) {
   const adapter = PROVIDERS[conn.provider];
   const n = Number(row.link_n) || 1;
   const ref = n > 1 ? `${row.id}-${n}` : row.id;
+  const creds = await credsOf(env, db, conn, f);
   const link = await adapter.createLink(
-    await credsOf(env, db, conn, f),
+    creds,
     conn.mode,
     {
       id: row.id,
@@ -496,10 +695,19 @@ export async function makeLink(env, db, row, conn, extra, f, origin) {
     },
     f,
   );
-  await db
-    .prepare("UPDATE pay_requests SET provider = ?, mode = ?, link_id = ?, link_url = ?, expires_at = ?, link_n = ?, status = 'open', checked_at = '' WHERE id = ?")
-    .bind(conn.provider, conn.mode, link.linkId, link.url, link.expiresAt, n, row.id)
-    .run();
+  const writes = [
+    db
+      .prepare("UPDATE pay_requests SET provider = ?, mode = ?, link_id = ?, link_url = ?, expires_at = ?, link_n = ?, status = 'open', checked_at = '' WHERE id = ?")
+      .bind(conn.provider, conn.mode, link.linkId, link.url, link.expiresAt, n, row.id),
+  ];
+  const older = Array.isArray(creds.older) ? creds.older : [];
+  if (older.some((o) => o && Array.isArray(o.ids) && o.ids.includes(row.id))) {
+    const next = { ...creds, older: older.map((o) => (o && Array.isArray(o.ids) ? { ...o, ids: o.ids.filter((id) => id !== row.id) } : o)) };
+    const sealed = await seal(env, next);
+    writes.push(db.prepare('UPDATE pay_connections SET creds = ?, updated_at = ? WHERE gym_id = ? AND provider = ?').bind(sealed, nowIso(), conn.gym_id, conn.provider));
+    conn.creds = sealed;
+  }
+  await db.batch(writes);
 }
 
 // ------------------------------------------------------------------------------------ HTTP
@@ -525,16 +733,17 @@ function whoRefusal(e) {
 
 /** Everything under /api/pay/. `deps.fetch` for tests. */
 export async function handlePay(request, env, url, deps = {}) {
-  const f = deps.fetch || fetch;
+  // Review round 4 (R-554): this request's outside calls and D1 queries are counted, each within 40 (free plan: 50).
+  const f = countedFetch(deps.fetch || fetch, runBudget(env));
   const now = deps.now ?? Date.now();
   const path = url.pathname.replace(/\/+$/, '');
-  const db = env && env.WEB;
+  const db = d1Meter(env && env.WEB);
 
   // Webhooks and the OAuth return come from the companies, not our apps.
   const hook = /^\/api\/pay\/hook\/([a-z]+)(?:\/([A-Za-z0-9_-]{8,64}))?$/.exec(path);
-  if (hook) return handleHook(request, env, hook[1], hook[2] || '', f, now);
+  if (hook) return handleHook(request, env, db, hook[1], hook[2] || '', f, now);
   const back = /^\/api\/pay\/oauth\/(razorpay|cashfree)\/back$/.exec(path);
-  if (back) return oauthBack(env, back[1], url, f, now);
+  if (back) return oauthBack(env, db, back[1], url, f, now);
 
   if (!(await tablesReady(db))) {
     if (request.method === 'POST') return ok({ on: false, why: 'NOT_READY' });
@@ -641,7 +850,15 @@ async function connect(env, db, b, f, now) {
   if (!tried.ok) return no(400, 'BAD_KEYS', { detail: tried.detail || '' });
   const hookId = prev ? prev.hook : randomId(18);
   // Review round 3 (R-550): keys of a different account first settle the old account's links (keyChange).
-  const older = await keyChange(env, db, prev, adapter.id, fields, mode, f, now);
+  // Review round 4 (R-554): when the company cannot say whether the new keys are of the same account (no answer, a
+  // server error, "too many requests"), nothing is saved and nothing is closed: the owner tries again.
+  let older;
+  try {
+    older = await keyChange(env, db, prev, adapter.id, fields, mode, f, now);
+  } catch (e) {
+    if (e instanceof PayError && e.code === 'CHECK_FAILED') return no(503, 'CHECK_FAILED', { words: `Could not check with ${adapter.name}. Try again.` });
+    throw e;
+  }
   const sealed = await seal(env, older.length ? { ...fields, older } : fields);
   await db
     .prepare(
@@ -659,6 +876,14 @@ async function connect(env, db, b, f, now) {
 // Companies whose status answer refuses a link of another account (Razorpay 400, Cashfree 404), so one ask tells
 // whether new keys belong to the same account as the old links. PayU answers "Not Found" inside a normal reply.
 const ASKS_ACROSS_ACCOUNTS = ['razorpay', 'cashfree'];
+
+/**
+ * Review round 4 (R-554): the company's own clear answer that these keys cannot see that link: Razorpay's 400 ("The id
+ * provided does not exist") or Cashfree's 404. A timeout, a 5xx, a 429 or anything else is NOT that answer. PURE.
+ */
+export function notThisAccount(e) {
+  return e instanceof PayError && e.code === 'STATUS_REFUSED' && (e.status === 400 || e.status === 404);
+}
 
 /** Do two sets of pasted keys name the same account (the same Key ID / App ID / merchant key)? PURE. */
 export function sameAccount(provider, a, b) {
@@ -705,18 +930,22 @@ export async function keyChange(env, db, prev, provider, fresh, mode, f, now = D
     try {
       await PROVIDERS[provider].status(fresh, mode, probe.link_id, f);
       return carried; // the new keys see an old link: the same account (new keys made for it)
-    } catch {
-      // Not found with the new keys: another account.
+    } catch (e) {
+      // Review round 4 (R-554): only the company's clear "no such link" (Razorpay 400, Cashfree 404) means another
+      // account. No answer, a server error or "too many requests" (429) says nothing: stop, save nothing.
+      if (!notThisAccount(e)) {
+        console.warn('[pay] could not tell whether new keys are of the same account; nothing saved', provider, e instanceof PayError ? e.code : 'error');
+        throw new PayError('CHECK_FAILED');
+      }
     }
   }
   console.log('[pay] keys of another account: the old links are settled with the old keys first', provider);
-  const budget = askBudget(f, runBudget(env) - 8);
-  for (const row of mine.filter((r) => r.status === 'open')) {
-    if (!budget.roomForOne()) break;
-    const back = await checkWithCompany(env, db, row, { f: budget.f, now, force: true });
-    if (back && back.status === 'open') await closeRequest(env, db, back, prev, budget.f, now);
-  }
-  // Past this run's calls: closed here; the 10-minute check cancels them at the company with the kept keys.
+  // Review round 4 (R-554): as many as this request's outside calls and D1 queries allow (it still has to save the new
+  // keys: 3 queries); the rest are closed here in one write, and the 10-minute check cancels them at the company with
+  // the kept keys. Never "FAILED" with the new keys unsaved.
+  const open = mine.filter((r) => r.status === 'open');
+  await settleOpen(env, db, open, { f, now, conn: prev, keep: { calls: 0, queries: 4 } });
+  // Any other open link of this company and mode, closed here too (as before).
   await db.prepare("UPDATE pay_requests SET status = 'cancelled' WHERE gym_id = ? AND provider = ? AND mode = ? AND status = 'open'").bind(prev.gym_id, provider, mode).run();
   const until = Math.max(...mine.map(watchUntil));
   return [{ keys: oldKeys, ids: mine.map((r) => r.id), until: nowIso(until) }, ...carried].slice(0, 3);
@@ -739,12 +968,9 @@ async function disconnect(env, db, b, f, now) {
           .bind(who.gymId, provider)
           .all()
       ).results || [];
-    const budget = askBudget(f, runBudget(env) - 4);
-    for (const row of open) {
-      if (!budget.roomForOne()) break;
-      const fresh = await checkWithCompany(env, db, row, { f: budget.f, now, force: true });
-      if (fresh && fresh.status === 'open') await closeRequest(env, db, fresh, conn, budget.f, now);
-    }
+    // Review round 4 (R-554): within this request's D1 queries too (free plan: 50). After the loop it still needs 5
+    // queries (close the rest, keep or wipe the keys, answer) and 1 call (an OAuth sign-out).
+    await settleOpen(env, db, open, { f, now, conn, keep: { calls: 1, queries: 5 } });
   }
   // The rest: closed here. They stay watched, and the 10-minute check cancels them at the company too with the keys
   // kept below (review round 3; before, they were only closed here and could be starved of turns).
@@ -804,7 +1030,16 @@ async function createRequest(env, db, b, f, now, origin) {
   const ref = str(b.ref).slice(0, 80);
   const memberId = str(b.memberId).slice(0, 80);
   if (!ref || (kind === 'fee' && !memberId)) return no(400, 'BAD_REQUEST');
-  const upi = cleanUpi(b.upiId);
+  // Review round 4 (R-554): the UPI ID and payee a member is shown come from the request only for the OWNER. A staff
+  // key always gets the gym's saved ones (saved by the owner's app, deskState), so nobody at the desk can make a member
+  // pay their own UPI ID. No saved UPI ID: none (the company link, when there is one, still works).
+  let upi = cleanUpi(b.upiId);
+  let payee = str(b.payee || who.gymName).slice(0, 60);
+  if (who.role !== 'owner') {
+    const gym = await db.prepare('SELECT upi, payee FROM pay_gyms WHERE gym_id = ?').bind(who.gymId).first();
+    upi = gym ? cleanUpi(gym.upi) : '';
+    payee = str((gym && gym.payee) || who.gymName).slice(0, 60);
+  }
   // Review round 3 (R-550): an open request for the same dues at ANOTHER amount (the desk changed the amount) is asked
   // once more and, unless it was just paid (then that payment stands and is answered), closed here and at the company,
   // so a member never has two live links for one due.
@@ -815,19 +1050,18 @@ async function createRequest(env, db, b, f, now, origin) {
         .bind(who.gymId, kind, ref, amountP)
         .all()
     ).results || [];
-  const budget = askBudget(f, runBudget(env) - 8);
-  for (const o of otherAmount) {
-    const back = budget.roomForOne() ? await checkWithCompany(env, db, o, { f: budget.f, now, force: true }) : o;
-    if (back && back.status === 'paid') return ok({ request: requestView(back) });
-    if (back && back.status === 'open') await closeRequest(env, db, back, await connOfRow(db, back), budget.f, now);
-  }
+  // Review round 4 (R-554): within this request's D1 queries; afterwards it may still retire a link of the other mode
+  // (ASK_D1), make the request and its link (7) and answer (1); and up to 10 outside calls.
+  const cache = runCache();
+  const settled = await settleOpen(env, db, otherAmount, { f, now, cache, keep: { calls: ASK_MOST + 4, queries: ASK_D1 + 8 } });
+  if (settled.paid.length) return ok({ request: requestView(settled.paid[0]) });
   // The same dues and amount already asked for: the same request (and link), never a second one. Review round 2
   // (R-542): never one made in the other mode (a test link from before payments went live): that one is closed.
   let same = await db
     .prepare("SELECT * FROM pay_requests WHERE gym_id = ? AND kind = ? AND ref = ? AND amount_p = ? AND status = 'open' ORDER BY created_at DESC LIMIT 1")
     .bind(who.gymId, kind, ref, amountP)
     .first();
-  if (same && same.provider && same.mode && same.mode !== payMode(env)) same = await retireOtherMode(env, db, same, payMode(env), f, now);
+  if (same && same.provider && same.mode && same.mode !== payMode(env)) same = await retireOtherMode(env, db, same, payMode(env), f, now, cache);
   let row = same;
   if (!row) {
     const id = newRequestId();
@@ -836,7 +1070,7 @@ async function createRequest(env, db, b, f, now, origin) {
         `INSERT INTO pay_requests (id, gym_id, kind, member_id, app_member, ref, amount_p, label, note, upi, payee, created_at)
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       )
-      .bind(id, who.gymId, kind, memberId, str(b.appMember).slice(0, 80), ref, amountP, str(b.label).slice(0, 80), str(b.note).slice(0, 60), upi, str(b.payee || who.gymName).slice(0, 60), nowIso(now))
+      .bind(id, who.gymId, kind, memberId, str(b.appMember).slice(0, 80), ref, amountP, str(b.label).slice(0, 80), str(b.note).slice(0, 60), upi, payee, nowIso(now))
       .run();
     row = await requestOf(db, id);
   }
@@ -980,25 +1214,17 @@ async function settleForDesk(env, db, b, f, now) {
         .bind(who.gymId, kind, ref, nowIso(now - RECENT_PAID_MS))
         .all()
     ).results || [];
-  const budget = askBudget(f, runBudget(env) - 4);
-  let paidOnline = null;
-  let closed = 0;
-  for (const row of rows) {
-    if (row.status === 'paid') {
-      if (kind === 'fee' && !paidOnline) paidOnline = row;
-      continue;
-    }
-    const back = budget.roomForOne() ? await checkWithCompany(env, db, row, { f: budget.f, now, force: true }) : row;
-    if (back && back.status === 'paid') {
-      if (!paidOnline) paidOnline = back;
-      continue;
-    }
-    if (back && back.status === 'open') {
-      await closeRequest(env, db, back, await connOfRow(db, back), budget.f, now);
-      closed += 1;
-    }
-  }
-  return ok({ paidOnline: paidOnline ? requestView(paidOnline) : null, closed });
+  // Review round 4 (R-554): within this request's D1 queries (free plan: 50); the rest are closed here in one write.
+  const settled = await settleOpen(env, db, rows.filter((r) => r.status === 'open'), { f, now });
+  const paid = [...(kind === 'fee' ? rows.filter((r) => r.status === 'paid') : []), ...settled.paid];
+  // Review round 4 (R-554): the desk taking only what is LEFT of a due part paid online is not a second payment. With
+  // the amount it is saving and what is due on that plan now (the online part has no receipt yet, so it is still in
+  // the due), cash is fine when what came online plus this is not more than the due.
+  const cashP = Math.round(Number(b.amountP));
+  const dueP = Math.round(Number(b.dueP));
+  const onlineP = paid.reduce((s, r) => s + (Number(r.paid_p) || Number(r.amount_p) || 0), 0);
+  const restOfDue = kind === 'fee' && paid.length > 0 && cashP > 0 && dueP > 0 && onlineP + cashP <= dueP;
+  return ok({ paidOnline: paid.length && !restOfDue ? requestView(paid[0]) : null, closed: settled.closed, onlineP: restOfDue ? onlineP : 0 });
 }
 
 /** R-528: Settings -> Payments, the owner's two switches. Owner only; before D1 0016 "not switched on yet". */
@@ -1031,23 +1257,34 @@ async function joinList(env, db, b, f, now) {
           .bind(who.gymId, CHECK_DONE, ...windowArgs(now), TODAY_CHECKS)
           .all()
       ).results || [];
-    // Review round 3 (R-550): inside the run's outside calls (one was the key check above).
-    const budget = askBudget(f, runBudget(env) - 4);
+    // Review round 3 (R-550): inside the run's outside calls (one was the key check above). Review round 4 (R-554): and
+    // inside its D1 queries: the gym's connections are read once, and the list below needs 2 more.
+    const cache = runCache();
+    if (unpaid.length) await preloadConns(db, cache, unpaid);
     for (const r of unpaid) {
-      if (!budget.roomForOne()) break;
-      await checkWithCompany(env, db, r, { f: budget.f, now });
+      if (!roomFor(f, db, ASK_MOST, CHECK_D1 + 2)) break;
+      await checkWithCompany(env, db, r, { f, now, cache, reread: false });
     }
   }
-  const rows =
-    (
-      await db
-        .prepare("SELECT * FROM pay_requests WHERE gym_id = ? AND kind = 'join' AND created_at >= ? ORDER BY created_at DESC LIMIT 100")
-        .bind(who.gymId, nowIso(now - 45 * 86400000))
-        .all()
-    ).results || [];
-  const joins = [];
-  for (const r of rows) joins.push({ ...requestView(r), said: Boolean(r.provider === '' && (await saidAt(db, r.id))) });
-  return ok({ joins });
+  // Review round 4 (R-554): the list and each one's "I have paid" in ONE query (before: one more query per payment,
+  // up to 100). Before D1 0016 (no pay_said table): the list alone, nobody has said anything.
+  const since = nowIso(now - 45 * 86400000);
+  let rows;
+  try {
+    rows =
+      (
+        await db
+          .prepare(
+            `SELECT r.*, s.at AS said_at FROM pay_requests r LEFT JOIN pay_said s ON s.request_id = r.id
+              WHERE r.gym_id = ? AND r.kind = 'join' AND r.created_at >= ? ORDER BY r.created_at DESC LIMIT 100`,
+          )
+          .bind(who.gymId, since)
+          .all()
+      ).results || [];
+  } catch {
+    rows = ((await db.prepare("SELECT * FROM pay_requests WHERE gym_id = ? AND kind = 'join' AND created_at >= ? ORDER BY created_at DESC LIMIT 100").bind(who.gymId, since).all()).results || []).map((r) => ({ ...r, said_at: '' }));
+  }
+  return ok({ joins: rows.map((r) => ({ ...requestView(r), said: Boolean(r.provider === '' && r.said_at) })) });
 }
 
 /** A member's own requests: what the gym asked them to pay, and their shop orders' payments. */
@@ -1194,10 +1431,9 @@ async function shopRequest(env, db, b, f, now, origin) {
  * POST /api/pay/hook/razorpay                   the Razorpay partner webhook ("Connect Razorpay")
  * Always 200 once the signature is good (so the company stops re-sending); 401 when it is not.
  */
-async function handleHook(request, env, provider, hookId, f, now) {
+async function handleHook(request, env, db, provider, hookId, f, now) {
   if (request.method !== 'POST') return no(405, 'Method not allowed');
   const adapter = PROVIDERS[provider];
-  const db = env && env.WEB;
   if (!adapter || !(await tablesReady(db)) || !hasMasterKey(env)) return no(404, 'Not found');
   const raw = await request.text();
   if (raw.length > 65536) return no(413, 'Too big');
@@ -1209,18 +1445,25 @@ async function handleHook(request, env, provider, hookId, f, now) {
     conn = await db.prepare('SELECT * FROM pay_connections WHERE hook = ? AND provider = ?').bind(hookId, provider).first();
     if (!conn || !conn.creds) return no(404, 'Not found');
     const creds = await unseal(env, conn.creds);
-    const sets = [creds, ...(Array.isArray(creds.older) ? creds.older.filter((o) => o && o.keys && Date.parse(str(o.until)) > now).map((o) => o.keys) : [])];
+    // Review round 4 (R-554): an old account's secret carries the requests it may speak for (its old links only).
+    const sets = [
+      [creds, null],
+      ...(Array.isArray(creds.older) ? creds.older.filter((o) => o && o.keys && Date.parse(str(o.until)) > now).map((o) => [o.keys, Array.isArray(o.ids) ? o.ids : []]) : []),
+    ];
     const secretOf = (c) => (provider === 'cashfree' ? c.secretKey || env.CASHFREE_PARTNER_KEY || '' : provider === 'payu' ? c.salt : provider === 'phonepe' ? c.webhookAuth || '' : c.webhookSecret || '');
-    tries = sets.map((c) => [secretOf(c), provider === 'payu' ? c : {}]);
+    tries = sets.map(([c, ids]) => [secretOf(c), provider === 'payu' ? c : {}, ids]);
   } else if (provider === 'razorpay') {
-    tries = [[str(env.RAZORPAY_PARTNER_WEBHOOK_SECRET), {}]];
+    tries = [[str(env.RAZORPAY_PARTNER_WEBHOOK_SECRET), {}, null]];
   } else if (provider === 'cashfree') {
-    tries = [[str(env.CASHFREE_PARTNER_KEY), {}]];
+    tries = [[str(env.CASHFREE_PARTNER_KEY), {}, null]];
   }
   let signed = false;
-  for (const [secret, creds] of tries) {
+  // null: the connection's own (or the partner) secret, for any request of the gym; a list: an old account's secret.
+  let onlyFor = null;
+  for (const [secret, creds, ids] of tries) {
     if (await adapter.verifyHook(secret, raw, request.headers, creds)) {
       signed = true;
+      onlyFor = ids;
       break;
     }
   }
@@ -1235,6 +1478,8 @@ async function handleHook(request, env, provider, hookId, f, now) {
     return ok({ ok: true });
   }
   const ev = adapter.readHook(j);
+  // Review round 4 (R-554): an old account's secret can never switch off the gym's CURRENT connection.
+  if (ev.kind === 'revoked' && onlyFor) return ok({ ok: true });
   if (ev.kind === 'revoked') {
     const c = conn || (ev.account ? await db.prepare('SELECT * FROM pay_connections WHERE provider = ? AND account = ?').bind(provider, ev.account).first() : null);
     if (c) await db.prepare("UPDATE pay_connections SET status = 'off', off_reason = 'revoked', creds = '', updated_at = ? WHERE gym_id = ? AND provider = ?").bind(nowIso(now), c.gym_id, provider).run();
@@ -1254,6 +1499,13 @@ async function handleHook(request, env, provider, hookId, f, now) {
     if (row) console.warn('[pay] webhook for a request of another gym ignored', provider);
     return ok({ ok: true });
   }
+  // Review round 4 (R-554): a notice signed with an OLD account's secret (kept after the owner switched accounts) speaks
+  // only for that account's old links, never for a request made with the new keys. Before, for up to 8 days, anyone
+  // holding the old secret could mark any of the gym's requests paid.
+  if (onlyFor && !onlyFor.includes(row.id)) {
+    console.warn('[pay] webhook signed with an old account secret for a request it does not cover; ignored', provider);
+    return ok({ ok: true });
+  }
   // A webhook that names the link but not the payment's own id: the same link-level id the check uses, so the two
   // never look like two payments (review round 2).
   if (ev.kind === 'paid') await markPaid(db, { provider, requestId: row.id, paymentId: ev.paymentId || (row.link_id ? `${row.link_id}:paid` : ''), amountP: ev.amountP, method: ev.method, at: now });
@@ -1269,9 +1521,26 @@ async function handleHook(request, env, provider, hookId, f, now) {
  * round 2, R-542) links WE closed that the company has not said are closed, not asked for 30 minutes. Then keys kept
  * after a disconnect that nothing needs any more are wiped.
  */
-export async function scheduledPay(env, { f = fetch, now = Date.now() } = {}) {
-  const db = env && env.WEB;
+export async function scheduledPay(env, { f: base = fetch, now = Date.now() } = {}) {
+  // Review round 4 (R-554): one cron run is ONE invocation: at most 40 D1 queries and 40 outside calls (free plan: 50).
+  const db = d1Meter(env && env.WEB);
+  const f = countedFetch(base, runBudget(env));
   if (!(await tablesReady(db)) || !hasMasterKey(env)) return 0;
+  try {
+    return await askDueLinks(env, db, f, now);
+  } finally {
+    // Review round 4 (R-554): on EVERY run, whatever the links cost or however the run ended: the asks always leave
+    // room for this one query, so keys settled in this very run are wiped in it.
+    try {
+      await wipeSpentKeys(db, now);
+    } catch (e) {
+      console.warn('[pay] kept keys not wiped this run; next run tries again', e instanceof Error ? e.message : 'error');
+    }
+  }
+}
+
+/** The 10-minute check's asks (scheduledPay). -> how many found paid. */
+async function askDueLinks(env, db, f, now) {
   // Review round 3 (R-550): longest-not-asked first, open or closed alike. Before, open links went first and every open
   // link was due on every run, so past 40 open links the closed-but-payable ones never got a turn.
   const rows =
@@ -1281,23 +1550,34 @@ export async function scheduledPay(env, { f = fetch, now = Date.now() } = {}) {
           `SELECT * FROM pay_requests WHERE provider <> '' AND link_id <> '' AND ${IN_WINDOW()}
              AND ((status = 'open' AND (checked_at = '' OR checked_at < ?))
                OR (status IN ('cancelled', 'expired') AND checked_at <> ? AND (checked_at = '' OR checked_at < ?)))
-           ORDER BY checked_at, created_at LIMIT 40`,
+           ORDER BY checked_at, created_at LIMIT ?`,
         )
-        .bind(...windowArgs(now), nowIso(now - CRON_EVERY_MS), CHECK_DONE, nowIso(now - CLOSED_EVERY_MS))
+        .bind(...windowArgs(now), nowIso(now - CRON_EVERY_MS), CHECK_DONE, nowIso(now - CLOSED_EVERY_MS), CRON_ROWS)
         .all()
     ).results || [];
-  // Inside Cloudflare's 50 outside calls a run (Free plan), with a margin: a run stops before it could pass them.
-  const budget = askBudget(f, runBudget(env));
+  if (!rows.length) return 0;
+  // Review round 4: every connection these links need, in ONE query; every link "asked now" in ONE write (also the
+  // ones that cannot be asked at all, keys gone or the other mode: they go to the back of the line, as before).
+  const cache = runCache();
+  await preloadConns(db, cache, rows);
+  const at = nowIso(now);
+  await db.prepare(`UPDATE pay_requests SET checked_at = ? WHERE checked_at <> ? AND id IN (${rows.map(() => '?').join(', ')})`).bind(at, CHECK_DONE, ...rows.map((r) => r.id)).run();
   let paid = 0;
+  const notAsked = [];
   for (const row of rows) {
-    if (!budget.roomForOne()) break;
-    const fresh = await checkWithCompany(env, db, row, { f: budget.f, now, force: true });
+    // Room for one more ask, the one write below that gives the links not asked their turn back, and the wipe.
+    if (!roomFor(f, db, ASK_MOST, CRON_CHECK_D1 + 2)) {
+      notAsked.push(row);
+      continue;
+    }
+    const fresh = await checkWithCompany(env, db, row, { f, now, force: true, cache, marked: true, reread: false });
     if (fresh && fresh.status === 'paid') paid += 1;
-    // One that could not be asked at all (its keys are gone, or it is of the other mode) goes to the back of the
-    // line, so it never takes the turn of one that can be asked.
-    else if (fresh && fresh.checked_at === row.checked_at) await db.prepare('UPDATE pay_requests SET checked_at = ? WHERE id = ? AND checked_at = ?').bind(nowIso(now), row.id, row.checked_at).run();
   }
-  await wipeSpentKeys(db, now);
+  // Links this run had no room for keep their place at the front of the line (one write).
+  if (notAsked.length) {
+    await db.batch(notAsked.map((r) => db.prepare('UPDATE pay_requests SET checked_at = ? WHERE id = ? AND checked_at = ?').bind(r.checked_at, r.id, at)));
+    console.log('[pay] scheduled check: past this run\'s budget; asked next run', notAsked.length);
+  }
   return paid;
 }
 
@@ -1345,8 +1625,7 @@ async function oauthStart(env, db, b, f, now) {
 }
 
 /** GET /api/pay/oauth/<company>/back?code&state: the company sends the owner back here. */
-async function oauthBack(env, provider, url, f, now) {
-  const db = env && env.WEB;
+async function oauthBack(env, db, provider, url, f, now) {
   const fail = (why) => Response.redirect(`${APP_ORIGIN}/?payments=${encodeURIComponent(why)}#/settings/payments`, 302);
   if (!oauthOn(env, provider) || !hasMasterKey(env) || !(await tablesReady(db))) return fail('off');
   const st = await readState(env, url.searchParams.get('state'), now);
@@ -1363,7 +1642,14 @@ async function oauthBack(env, provider, url, f, now) {
   }
   const prev = await connOf(db, st.g, provider);
   // Review round 3 (R-550): signing in with another account settles the old account's links first, as pasting does.
-  const older = await keyChange(env, db, prev, provider, tokens.creds, mode, f, now);
+  // Review round 4 (R-554): the company could not say whether it is the same account: nothing saved; sign in again.
+  let older;
+  try {
+    older = await keyChange(env, db, prev, provider, tokens.creds, mode, f, now);
+  } catch (e) {
+    if (e instanceof PayError && e.code === 'CHECK_FAILED') return fail('refused');
+    throw e;
+  }
   await db
     .prepare(
       `INSERT INTO pay_connections (gym_id, provider, mode, via, creds, hint, account, hook, status, off_reason, connected_at, updated_at)

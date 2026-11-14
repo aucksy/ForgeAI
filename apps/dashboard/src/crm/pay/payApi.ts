@@ -207,8 +207,15 @@ export async function checkBeforeApprove(key: string, id: string): Promise<{ req
  * about every open online payment for it and closes them, there and here, so the member cannot pay an old link too.
  * -> a payment made online a moment ago (the desk must not take the money again), or null.
  */
-export async function settleForDesk(key: string, kind: 'fee' | 'shop', ref: string): Promise<PayRequest | null> {
-  const r = await payCall<{ paidOnline?: PayRequest | null }>('settle', { key, kind, ref });
+export async function settleForDesk(
+  key: string,
+  kind: 'fee' | 'shop',
+  ref: string,
+  amounts?: { amountP: Paise; dueP: Paise },
+): Promise<PayRequest | null> {
+  // Review round 4 (R-554): with the amount the desk is saving and what is due on that plan now, the server lets the
+  // desk take the REST of a due that was part paid online a moment ago (online + this <= due).
+  const r = await payCall<{ paidOnline?: PayRequest | null }>('settle', amounts ? { key, kind, ref, amountP: amounts.amountP, dueP: amounts.dueP } : { key, kind, ref });
   return r.paidOnline ?? null;
 }
 
