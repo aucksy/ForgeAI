@@ -370,3 +370,21 @@ export function matchesQuery(member: Member, query: string): boolean {
   if (member.email && member.email.toLowerCase().includes(q)) return true;
   return false;
 }
+
+/**
+ * What an empty Members list says (R-540, 14 Nov 2026). Before, only a search or a batch counted as "narrowed": an
+ * empty chip list (Expiring, Has dues, a home tile's list) said "No members yet" in a gym full of members.
+ *  - 'search'      a search found nobody
+ *  - 'batch'       a batch holds nobody (with or without a chip)
+ *  - 'filter'      a chip or a home tile's list holds nobody
+ *  - 'no-members'  nothing is picked and the list is empty: the gym really has no members yet
+ * Every case but the last offers "Show all members", which clears the search, the batch and the chip. PURE.
+ */
+export type EmptyMembersCase = 'search' | 'batch' | 'filter' | 'no-members';
+
+export function emptyMembersCase(o: { query: string; batchPicked: boolean; filterPicked: boolean }): EmptyMembersCase {
+  if (o.query.trim()) return 'search';
+  if (o.batchPicked) return 'batch';
+  if (o.filterPicked) return 'filter';
+  return 'no-members';
+}

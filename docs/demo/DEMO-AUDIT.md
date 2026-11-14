@@ -16,8 +16,8 @@ page opens but has too little on it to show what it does. **Good** = enough to d
 | Screen | Before | Now | What is on it now |
 |---|---|---|---|
 | Today | Thin (1 plan ending this week, no birthday, no app requests) | Good | Money in today (2 early renewals, a balance paid in cash, a walk-in who joined), 8 plans ending this week (2 of them today), dues, 1 birthday today, app requests waiting (1 renew, 1 pause), new shop orders, member messages and questions waiting |
-| Set up your gym | Good | Good | Plans, members and app link done; staff, logo, timings, poster left to tick |
-| Members (all filters) | Thin ("Ending this week" had 1 name) | Good | 129 members: active, ending today / 1-3 / 4-7 / 8-15 days (8 this week), expired, birthdays, visited today |
+| Set up your gym | Good, but 3/7 on Today and 4/7 later | Good | 5 of 7 on every screen: plans, members, app link, staff and timings done; logo and check-in poster left |
+| Members (all filters) | Thin ("Ending this week" had 1 name) | Good | 128 members on the list (1 more archived): 95 with a running plan (the same 95 as Today and Your growth), ending today / 1-3 / 4-7 / 8-15 days (8 this week), 33 expired, birthdays, visited today |
 | Member detail: plans, payments, receipts, visits, notes | Good | Good | As before, plus PT packs with sessions used |
 | Member detail: measurements | Empty (needs internet) | Good | 6 members with 4 monthly check-ins each (weight, body fat, waist going down) |
 | Member detail: diet plan | Empty | Good | The member's assigned diet plan |
@@ -57,3 +57,17 @@ Checked by: `apps/dashboard/test/crm/demoShowcase.test.ts` (every server answer 
 the three training stories come out as "Getting stronger", "Steady" and "Dropping") and
 `apps/dashboard/e2e/demo-showcase-uat.spec.mjs` (pictures of every screen on a phone and a computer, owner and desk,
 no errors, nothing sent to the server).
+
+## Numbers that must agree between screens (checked 14 Nov 2026)
+
+| Number | Where | Agrees |
+|---|---|---|
+| Active members | Today tile, Members (Active + Expiring), Your growth "so far" | 95 everywhere (was 92 vs 95: archived members with a running plan) |
+| Money this month | Today "This month", Money "This month", Your growth "so far" | Same figure |
+| Today's money | Today tile, Money "Today" | Same figure |
+| Fees due | Today tile (members), Money menu badge | Same count |
+| Enquiries to call | Today tile, Enquiries menu badge | Same count |
+| Losing the habit | Today list, Visits menu badge, Today "Stopped coming" | Same count |
+| Needs you | Today card total, Today menu badge | Same count (requests + orders + questions + messages) |
+| Set up your gym | Menu ring on every screen | 5/7 everywhere (was 3/7 then 4/7) |
+| All members | Members "All" = Active + Expiring + Expired | Adds up |

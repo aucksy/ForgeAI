@@ -114,6 +114,16 @@ export function buildShowcase(today: DateISO): DemoShowcase {
   const viewOf = (m: Member) =>
     buildMemberView(m, snap.memberships.filter((x) => x.memberId === m.id), snap.payments.filter((p) => p.memberId === m.id), snap.visits.filter((v) => v.memberId === m.id), today);
 
+  // ---------------------------------------------------------------- one count of active members
+  // The sample gym has members archived in the middle of a running plan (one renewed for six months just before).
+  // Today and Members leave archived members out; Your growth counts every running plan, archived or not (on purpose:
+  // logic/businessGrowth.ts keeps the past honest). So the demo said 92 active on Today and 95 on Your growth. A gym
+  // archives someone after they stop paying, so here only members whose plans are over stay archived.
+  for (const m of snap.members) {
+    const state = views.get(m.id)?.state;
+    if (m.archived && (state === 'active' || state === 'expiring')) m.archived = false;
+  }
+
   // ---------------------------------------------------------------- renewals due this week
   // The sample gym has almost nobody whose plan ends in the next 7 days, and that is the list a desk works from
   // ("Ending this week", the renewal reminders). Eight members whose plan ends in 8-30 days are moved earlier, all

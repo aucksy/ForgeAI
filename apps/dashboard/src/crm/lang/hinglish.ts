@@ -410,6 +410,8 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   'WhatsApp all {n}, one by one': 'Sabhi {n} ko WhatsApp karo, ek ek karke',
   'Nobody matches that': 'Aisa koi nahi mila',
   'No members yet': 'Abhi koi member nahi',
+  'Nobody on the list fits this filter right now.': 'Abhi is filter mein koi member nahi hai.',
+  'Show all members': 'Saare members dikhao',
   'Nobody in this batch fits this filter. Pick “All batches” to see everyone.':
     'Is batch mein is filter wala koi nahi hai. Sabko dekhne ke liye “Saare batch” chuno.',
   'Try part of a name, or the last four digits of their mobile number.': 'Naam ka thoda hissa daalo, ya mobile number ke aakhri 4 digit.',

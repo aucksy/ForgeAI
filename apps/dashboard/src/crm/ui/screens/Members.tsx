@@ -15,7 +15,7 @@ import { useCrm } from '../../store';
 import { formatDay, relativeDay } from '../../logic/dates';
 import { compareByAttention, STATE_LABEL, stateTone } from '../../logic/membership';
 import { formatINR } from '../../logic/money';
-import { formatPhone, initials, matchesQuery } from '../../logic/members';
+import { emptyMembersCase, formatPhone, initials, matchesQuery } from '../../logic/members';
 import { isPtMembership, ptEndingMemberIds } from '../../logic/pt';
 import { activeBatches, ALL_BATCHES, countWithoutBatch, inBatch, listBatches, memberBatch, NO_BATCH } from '../../logic/batches';
 import type { MemberState, MemberView } from '../../types';
@@ -206,7 +206,14 @@ function RosterSection({
       { value: NO_BATCH, label: t('No batch ({n})', { n: none }) },
     ];
   }, [statusRows, batches, batch]);
-  const narrowed = Boolean(query.trim()) || batch !== ALL_BATCHES;
+  // R-540: a chip or a home tile's list counts too, so an empty "Expiring" never says "No members yet".
+  const emptyCase = emptyMembersCase({ query, batchPicked: batch !== ALL_BATCHES, filterPicked: filter !== 'all' });
+  const narrowed = emptyCase !== 'no-members';
+  const showAll = () => {
+    setQuery('');
+    setBatch(ALL_BATCHES);
+    setFilter('all');
+  };
 
   return (
     <>
@@ -270,14 +277,18 @@ function RosterSection({
           <EmptyState
             title={narrowed ? t('Nobody matches that') : t('No members yet')}
             body={
-              !query.trim() && batch !== ALL_BATCHES
+              emptyCase === 'batch'
                 ? t('Nobody in this batch fits this filter. Pick “All batches” to see everyone.')
-                : query
+                : emptyCase === 'search'
                 ? t('Try part of a name, or the last four digits of their mobile number.')
+                : emptyCase === 'filter'
+                ? t('Nobody on the list fits this filter right now.')
                 : t('Add your first member. Then you can sell them a membership.')
             }
             action={
-              !narrowed && (
+              narrowed ? (
+                <Button variant="ghost" wrap onClick={showAll}>{t('Show all members')}</Button>
+              ) : (
                 <Row gap={space.sm}>
                   <Button wrap onClick={() => setAdding(true)}>{t('+ Add member')}</Button>
                   {memberViews.length === 0 && (

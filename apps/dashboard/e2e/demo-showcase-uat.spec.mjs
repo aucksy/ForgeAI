@@ -122,7 +122,39 @@ test.describe('the sales demo, as the owner', () => {
     const seen = watch(page);
     await page.goto('./demo');
     await expect(page.getByRole('heading', { name: 'Today', exact: true })).toBeVisible({ timeout: 15_000 });
+    // One number per thing on every screen (coordinator, 14 Nov 2026): Today's active members are Your growth's
+    // "so far", and the Set up your gym mark is the same before and after the pages that used to tick it.
+    const main = page.getByRole('main');
+    const mark = async () => (await page.locator('nav [data-setup-mark] [aria-hidden]').first().textContent())?.trim();
+    const markOnToday = await mark();
+    // Each tile on its own: the whole page's text runs one tile's last figure into the next one's number.
+    const tileText = async (label) => ((await main.getByRole('button').filter({ hasText: label }).first().textContent()) ?? '').trim();
+    const active = (await tileText('Active members')).match(/^([\d,]+)Active members/)?.[1];
+    const monthMoney = (await tileText('collection')).match(/This month (₹[\d,]+)$/)?.[1];
+    expect(monthMoney, "Today shows this month's money").toBeTruthy();
+    expect(active, 'Today shows its active members').toBeTruthy();
     await walk(page, 'computer', { phone: false });
+    expect(await mark(), 'Set up your gym says the same after every screen').toBe(markOnToday);
+    expect(markOnToday).toBe('5/7');
+    await go(page, '/growth');
+    await expect(main.getByText(/so far:/).first()).toBeVisible({ timeout: 15_000 });
+    const growthText = (await main.textContent()) ?? '';
+    expect(growthText.match(/Members with a running plan on the last day of the month[\s\S]*?so far: ([\d,]+)/)?.[1], 'Your growth counts the same active members as Today').toBe(active);
+    expect(growthText, "Your growth has this month's money as Today does").toContain(`so far: ${monthMoney}`);
+
+    // A filter with nobody in it says so, and one tap shows everyone again (R-540; it said "No members yet").
+    await go(page, '/members');
+    await main.getByRole('searchbox').or(main.getByLabel('Search name or mobile number')).first().fill('Nobody Byname');
+    await expect(main.getByText('Nobody matches that', { exact: true })).toBeVisible();
+    await main.getByRole('button', { name: 'Show all members' }).click();
+    await expect(main.getByText('Nobody matches that', { exact: true })).toHaveCount(0);
+    // The sample gym has nobody without a plan: that chip is empty, and must not say "No members yet".
+    await main.getByRole('button', { name: /^No membership/ }).click();
+    await expect(main.getByText('Nobody on the list fits this filter right now.')).toBeVisible();
+    await expect(main.getByText('No members yet', { exact: true })).toHaveCount(0);
+    await shot(page, 'r540-computer-23-members-empty-filter', false);
+    await main.getByRole('button', { name: 'Show all members' }).click();
+    await expect(main.getByText('Nobody on the list fits this filter right now.')).toHaveCount(0);
     expect(seen.errors, 'no screen may throw').toEqual([]);
     expect(seen.calls, 'the demo must never call the gym server').toEqual([]);
   });

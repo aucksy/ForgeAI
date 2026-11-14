@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import {
   emptyMemberForm,
+  emptyMembersCase,
   findDuplicatePhone,
   formatPhone,
   initials,
@@ -307,5 +308,28 @@ describe('a phone number bound for a spreadsheet', () => {
       expect(/^\d+$/.test(cell)).toBe(false);
       expect(cell.replace(/\D/g, '')).toBe(e164.replace(/\D/g, ''));
     }
+  });
+});
+
+describe('emptyMembersCase: what an empty Members list says (R-540)', () => {
+  const pick = (query: string, batchPicked: boolean, filterPicked: boolean) => emptyMembersCase({ query, batchPicked, filterPicked });
+
+  it('an empty chip or home-tile list is "nobody matches", never "No members yet"', () => {
+    expect(pick('', false, true)).toBe('filter');
+  });
+
+  it('a search that finds nobody, with or without a chip or batch', () => {
+    expect(pick('ravi', false, false)).toBe('search');
+    expect(pick('ravi', true, true)).toBe('search');
+    expect(pick('   ', false, false)).toBe('no-members');
+  });
+
+  it('a batch that holds nobody, with or without a chip', () => {
+    expect(pick('', true, false)).toBe('batch');
+    expect(pick('', true, true)).toBe('batch');
+  });
+
+  it('only an empty gym with nothing picked says "No members yet"', () => {
+    expect(pick('', false, false)).toBe('no-members');
   });
 });

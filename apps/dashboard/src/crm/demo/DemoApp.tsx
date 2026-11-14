@@ -16,6 +16,7 @@ import { Routes } from '../CrmApp';
 import { LocalCrmData, memoryStore } from '../data/local';
 import { todayISO } from '../logic/dates';
 import { ShopProvider } from '../shop/ShopProvider';
+import { tickGetStarted } from '../ui/GetStartedCard';
 import { NeedsYouProvider } from '../ui/NeedsYou';
 import { CrmProvider } from '../store';
 import { useLang } from '../lang/lang';
@@ -35,6 +36,11 @@ export function DemoApp({ hasOwnGym }: DemoInfo) {
     const server = makeDemoServer(showcase, today);
     if (/(^|[?&])as=desk(&|$)/.test(window.location.search)) server.setRole('staff');
     serveDemo(server);
+    // Set up your gym: the sample gym HAS its staff and its timings, so those steps are ticked from the start (the
+    // demo's storage is the page's memory, demo/lockdown.ts). Before, they ticked only once their page was opened,
+    // so the menu said 3/7 on Today and 4/7 a few screens later.
+    tickGetStarted(showcase.snapshot.gym.gymId, 'staff');
+    tickGetStarted(showcase.snapshot.gym.gymId, 'timings');
     return new LocalCrmData({ store: memoryStore(), seed: () => showcase.snapshot });
   }, []);
   const info = useMemo<DemoInfo>(() => ({ hasOwnGym }), [hasOwnGym]);
