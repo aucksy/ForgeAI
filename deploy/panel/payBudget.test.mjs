@@ -174,9 +174,9 @@ function within(r, what) {
 async function addConn(e, o = {}) {
   await e.WEB.prepare(
     `INSERT INTO pay_connections (gym_id, provider, mode, via, creds, hint, account, hook, status, off_reason, connected_at, updated_at)
-     VALUES (?, ?, 'test', ?, ?, '3456', ?, ?, ?, ?, '2026-11-14T00:00:00Z', '2026-11-14T00:00:00Z')`,
+     VALUES (?, ?, ?, ?, ?, '3456', ?, ?, ?, ?, '2026-11-14T00:00:00Z', '2026-11-14T00:00:00Z')`,
   )
-    .bind(o.gymId || 'gym-1', o.provider || 'razorpay', o.via || 'keys', await seal(e, o.creds || { keyId: RZP_ID, keySecret: RZP_SECRET }), o.account || '', o.hook || `hook-${o.gymId || 'gym-1'}-${o.provider || 'razorpay'}-0123`, o.status || 'on', o.offReason || '')
+    .bind(o.gymId || 'gym-1', o.provider || 'razorpay', o.mode || 'test', o.via || 'keys', await seal(e, o.creds || { keyId: RZP_ID, keySecret: RZP_SECRET }), o.account || '', o.hook || `hook-${o.gymId || 'gym-1'}-${o.provider || 'razorpay'}-0123`, o.status || 'on', o.offReason || '')
     .run();
 }
 
@@ -194,7 +194,7 @@ async function addRow(e, o) {
       o.amountP || 200000,
       o.upi || '',
       o.provider ?? 'razorpay',
-      o.provider === '' ? '' : 'test',
+      o.provider === '' ? '' : o.mode || 'test',
       o.linkId ?? o.id,
       o.provider === '' ? '' : `https://pay.example/${o.linkId ?? o.id}`,
       o.status || 'open',
@@ -390,13 +390,14 @@ test('R4-8 every other payment path stays within 40/40 at its worst: check, requ
 }));
 
 test('R4-9 the join page send with 5 older open payments for the request: within 40/40 together with the send itself', quiet(async () => {
-  const e = env();
+  // R-555: join payments need JOIN_PAY "live", and a company link needs payments live (never a test link for the public).
+  const e = env({ JOIN_PAY: 'live', PAY_LIVE: 'on' });
   const w = world();
-  await addConn(e);
+  await addConn(e, { mode: 'live' });
   const EID = 'join-0a1b2c3d4e5f60718293a4b5c6d7e8f9';
   for (let i = 1; i <= 5; i += 1) {
     w.co.rzp[`plink_${i}`] = { acct: RZP_ID, status: 'created', payments: [] };
-    await addRow(e, { id: rid(i), kind: 'join', ref: EID, linkId: `plink_${i}`, amountP: 100000 + i, createdAt: iso(T0 - i * 1000) });
+    await addRow(e, { id: rid(i), kind: 'join', ref: EID, linkId: `plink_${i}`, amountP: 100000 + i, createdAt: iso(T0 - i * 1000), mode: 'live' });
   }
   const rpc = async (fn) => (fn === 'self_join_pay_gym' ? { status: 200, data: { ok: true, gymId: 'gym-1' } } : { status: 404, data: null });
   e.WEB.countFrom();

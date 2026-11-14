@@ -214,7 +214,6 @@ export const ALL_HELP_ARTICLES = [
   },
   {
     id: 'join-online-admin',
-    unreleased: 'R-513 Join online: needs supabase 0077 applied and the panel worker deployed.',
     who: 'owner',
     title: 'New people join on their own phone ("Join on your phone")',
     text:
@@ -224,7 +223,8 @@ export const ALL_HELP_ARTICLES = [
   },
   {
     id: 'join-pay-online-admin',
-    unreleased: 'R-528 Pay online when joining: needs panel D1 0016 and supabase 0081 applied and the panel worker deployed.',
+    // R-555: shown with its feature (the Worker's JOIN_PAY switch), held off until the owner's payment sweep passes.
+    onlyWhen: 'JOIN_PAY',
     who: 'owner',
     title: 'Let new people pay online when they join',
     text:
@@ -237,7 +237,6 @@ export const ALL_HELP_ARTICLES = [
   },
   {
     id: 'ai-assistant',
-    unreleased: 'F201 AI Assistant: hidden until the gym server has 0071 and the panel worker is deployed (R-471).',
     who: 'owner',
     title: 'Ask the AI Assistant, or give it a task',
     text:

@@ -122,8 +122,9 @@ export async function handleSelfJoin(request, env, rpc, now = new Date(), deps =
   let body;
   try {
     body = JSON.parse(raw);
-  } catch (e) {
-    return refused(400, 'BAD_REQUEST', `not JSON (${e instanceof Error ? e.message : 'parse error'})`);
+  } catch {
+    // R-555: a fixed reason only: the parser's message can quote part of the body (a name, a number).
+    return refused(400, 'BAD_REQUEST', 'not JSON');
   }
   const checked = checkSelfJoin(body);
   if (checked.bot) {

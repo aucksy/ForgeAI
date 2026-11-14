@@ -561,6 +561,9 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   'Joined online': 'Online join kiya',
   'They filled your "Become a member" page. Approve the ones who paid online. Make the others members when they come in and pay.':
     'Inhone aapka "Become a member" page bhara hai. Jinhone online pay kiya, unhe Approve karo. Baaki log aakar pay karein, tab unhe member banao.',
+  // R-555: the same card while join payments are held (nobody pays on the join page).
+  'They filled your "Become a member" page. Make them members when they come in and pay.':
+    'Inhone aapka "Become a member" page bhara hai. Jab woh aakar pay karein, tab unhe member banao.',
   '{plan} · starts {date}': '{plan} · {date} se shuru',
   '{total} paid': '{total} pay ho gaya',
   '{total} to pay at the desk · Not paid yet': 'Desk par {total} dene hain · Abhi pay nahi kiya',
@@ -664,6 +667,10 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   'These switches are not switched on yet. Until then members pay in the app as now, and people who join online pay at the desk.':
     'Yeh switch abhi chalu nahi hue hain. Tab tak members app mein abhi jaise pay karte hain, aur online join karne waale desk par pay karte hain.',
   'Only the owner can change these.': 'Inhe sirf owner badal sakte hain.',
+  // R-555: the switches card with only the member app switch (join payments held).
+  'This switch is not switched on yet. Until then members pay in the app as now.':
+    'Yeh switch abhi chalu nahi hua hai. Tab tak members app mein abhi jaise pay karte hain.',
+  'Only the owner can change this.': 'Ise sirf owner badal sakte hain.',
   'Could not save. Check your internet and try again.': 'Save nahi hua. Internet check karo aur phir try karo.',
   'Saved.': 'Save ho gaya.',
   'Online payments are not switched on yet.': 'Online payments abhi chalu nahi hue hain.',

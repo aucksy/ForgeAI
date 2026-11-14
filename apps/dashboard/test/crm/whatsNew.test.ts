@@ -66,6 +66,40 @@ describe('the list itself', () => {
     const ai = ADMIN_NEWS.find((e) => e.id === '2026-11-13')!.lines.map((l) => l.text).join(' ');
     for (const fact of ['question is free', '1 AI credit', 'uses 3', '20 AI credits, once', '50 on Starter, 100 on Pro', 'Monthly plans get none']) expect(ai).toContain(fact);
   });
+
+  // R-555 (the safe panel deploy): what reaches owners and is ON in it, said once each; nothing about what stays off.
+  it('the 14 Nov entry names what this deploy switches on, and never join payments or gym web pages (both off)', () => {
+    const entry = ADMIN_NEWS.find((e) => e.id === '2026-11-14')!;
+    const all = entry.lines.map((l) => l.text).join(' ');
+    for (const fact of [
+      'Join on your phone',
+      'Joined online',
+      'Make member',
+      'Razorpay and Cashfree',
+      'Invited again by',
+      'Updated 30 s ago',
+      'Refresh',
+      'Trainer or Other',
+      'six ready-made plans, veg and non-veg',
+      'grow as you type',
+      'line charts',
+      '12 months',
+      'only you and the front desk',
+      'your reply reaches their phone at once',
+      'Set your gym timings',
+      '10 answers use 1 credit',
+    ]) expect(all, fact).toContain(fact);
+    // Held or off in this deploy (JOIN_PAY, GYM_PAGES): not a word about them.
+    expect(all).not.toMatch(/pay online when|paid online|Approve|web page|join\.mettleup|Take payments/i);
+    // Fewer, clearer lines (member-words): one entry stays readable on a phone.
+    expect(entry.lines.length).toBeLessThanOrEqual(24);
+    expect(entry.lines[0].text).toContain('logo');
+    // Complete sentences: each line starts with a capital (or a quoted page name) and ends with a full stop.
+    for (const l of entry.lines) {
+      expect(l.text, l.text).toMatch(/^["A-Z]/);
+      expect(l.text, l.text).toMatch(/\.$/);
+    }
+  });
 });
 
 describe('which updates the card shows', () => {

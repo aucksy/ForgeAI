@@ -11,8 +11,9 @@ import { AI_PAGE_IDS, aiPageIdsFor, pageShown, pageById, toolsForClaude } from '
 import { helpSystem } from './help.js';
 import { ALL_HELP_ARTICLES, HELP_ARTICLES, helpArticlesFor } from './helpArticles.js';
 import { matchPages } from './helpPages.js';
-import { gymPagesOpen, switchOn, switchesAnswer } from './switches.js';
-import worker from './worker.js';
+import { aiChargeOn, gymPagesOpen, joinPayOpen, switchOn, switchesAnswer } from './switches.js';
+import worker, { selfJoinDesc } from './worker.js';
+import { readFileSync } from 'node:fs';
 
 const OFF = [undefined, null, {}, { GYM_PAGES: '' }, { GYM_PAGES: 'off' }, { GYM_PAGES: 'LIVE' }, { GYM_PAGES: true }];
 const ON = { GYM_PAGES: 'live' };
@@ -27,17 +28,79 @@ test('only GYM_PAGES = "live" opens gym web pages', () => {
   assert.equal(switchOn(ON, 'SOMETHING_ELSE'), false);
 });
 
+const NONE_ON = { gymPages: false, joinPay: false, aiCharge: false };
+
 test('GET /api/switches says gymPages false while off and true once on, never cached', async () => {
   for (const env of [{}, { GYM_PAGES: 'off' }]) {
     const r = await worker.fetch(new Request('https://app.mettleup.fit/api/switches'), env, ctx);
     assert.equal(r.status, 200);
     assert.match(r.headers.get('Content-Type') ?? '', /json/);
     assert.equal(r.headers.get('Cache-Control'), 'no-store');
-    assert.deepEqual(await r.json(), { gymPages: false });
+    assert.deepEqual(await r.json(), NONE_ON);
   }
   const on = await worker.fetch(new Request('https://app.mettleup.fit/api/switches'), ON, ctx);
-  assert.deepEqual(await on.json(), { gymPages: true });
-  assert.deepEqual(await switchesAnswer(ON).json(), { gymPages: true });
+  assert.deepEqual(await on.json(), { ...NONE_ON, gymPages: true });
+  assert.deepEqual(await switchesAnswer(ON).json(), { ...NONE_ON, gymPages: true });
+});
+
+// R-555: join payments (held by the owner) and AI credits charging, each told to the admin app on its own.
+test('JOIN_PAY only "live" and AI_CREDITS_CHARGE only "on": GET /api/switches says each one alone', async () => {
+  for (const v of [undefined, '', 'off', 'on', 'LIVE', true]) assert.equal(joinPayOpen({ JOIN_PAY: v }), false, String(v));
+  assert.equal(joinPayOpen({ JOIN_PAY: 'live' }), true);
+  for (const v of [undefined, '', 'off', 'live', 'ON', true]) assert.equal(aiChargeOn({ AI_CREDITS_CHARGE: v }), false, String(v));
+  assert.equal(aiChargeOn({ AI_CREDITS_CHARGE: 'on' }), true);
+  assert.equal(joinPayOpen(undefined), false);
+  assert.equal(aiChargeOn(null), false);
+  const ask = async (env) => (await worker.fetch(new Request('https://app.mettleup.fit/api/switches'), env, ctx)).json();
+  assert.deepEqual(await ask({ JOIN_PAY: 'live' }), { ...NONE_ON, joinPay: true });
+  assert.deepEqual(await ask({ AI_CREDITS_CHARGE: 'on' }), { ...NONE_ON, aiCharge: true });
+  assert.deepEqual(await ask({ JOIN_PAY: 'off', AI_CREDITS_CHARGE: 'on', GYM_PAGES: 'off' }), { ...NONE_ON, aiCharge: true });
+});
+
+test('the join page preview says "Pay at the gym desk." only while join payments are off', () => {
+  const g = { gymName: 'Shakti Gym' };
+  for (const env of [undefined, {}, { JOIN_PAY: 'off' }]) {
+    assert.equal(selfJoinDesc(g, env), 'Pick a plan and send your details to Shakti Gym. Pay at the gym desk.');
+  }
+  assert.equal(selfJoinDesc(g, { JOIN_PAY: 'live' }), 'Pick a plan and send your details to Shakti Gym.');
+  assert.equal(selfJoinDesc({ ...g, closed: true }, {}), 'Shakti Gym is not taking sign-ups online right now.');
+});
+
+test('the help article "Let new people pay online when they join" is in the live help only while JOIN_PAY is live', () => {
+  const pay = ALL_HELP_ARTICLES.find((a) => a.id === 'join-pay-online-admin');
+  assert.equal(pay.onlyWhen, 'JOIN_PAY');
+  assert.equal(pay.unreleased, undefined);
+  for (const env of OFF.concat([{ JOIN_PAY: 'on' }, { GYM_PAGES: 'live' }])) assert.ok(!helpArticlesFor(env).includes(pay), JSON.stringify(env));
+  assert.ok(helpArticlesFor({ JOIN_PAY: 'live' }).includes(pay));
+  assert.ok(!HELP_ARTICLES.includes(pay));
+  // Live with this deploy (R-555): Join online and the AI Assistant are in the live help, switch or no switch.
+  for (const id of ['join-online-admin', 'ai-assistant']) {
+    const a = ALL_HELP_ARTICLES.find((x) => x.id === id);
+    assert.equal(a.unreleased, undefined, id);
+    assert.equal(a.onlyWhen, undefined, id);
+    assert.ok(HELP_ARTICLES.includes(a), id);
+  }
+});
+
+// R-555: no keep_vars, so every deploy sets the Worker's vars to exactly this file's list. Each switch is written here.
+test('wrangler.jsonc names every switch with its value today, and has no keep_vars', () => {
+  const raw = readFileSync(new URL('./wrangler.jsonc', import.meta.url), 'utf8');
+  assert.doesNotMatch(raw, /"keep_vars"/);
+  assert.match(raw, /SWITCHES CHANGE IN THIS FILE, NOT IN THE CLOUDFLARE DASHBOARD/);
+  const vars = JSON.parse(/"vars": (\{[^}]*\})/.exec(raw)[1]);
+  assert.equal(vars.JOIN_PAY, 'off', 'join payments stay held until the owner says the payment sweep passed');
+  assert.equal(vars.GYM_PAGES, 'off');
+  assert.equal(vars.PAY_LIVE, 'off');
+  assert.equal(vars.PAY_OAUTH_RAZORPAY, 'off');
+  assert.equal(vars.PAY_OAUTH_CASHFREE, 'off');
+  assert.equal(vars.AI_CREDITS_CHARGE, 'on');
+  assert.equal(vars.JOIN_HOST, '');
+  assert.equal(vars.MOVE, 'on');
+  assert.equal(vars.LANDING, 'live');
+  // What the admin app is told with exactly these vars: nothing held is shown; members' AI answers are charged.
+  assert.deepEqual(JSON.parse(JSON.stringify({ gymPages: gymPagesOpen(vars), joinPay: joinPayOpen(vars), aiCharge: aiChargeOn(vars) })), { gymPages: false, joinPay: false, aiCharge: true });
+  // No secret is ever a plain var.
+  for (const k of Object.keys(vars)) assert.doesNotMatch(k, /KEY|SECRET|TOKEN/, k);
 });
 
 test('the assistant cannot name "Your web page" while gym web pages are off, and can once they are on', () => {

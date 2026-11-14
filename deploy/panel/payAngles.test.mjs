@@ -19,7 +19,8 @@ const OWNER_KEY = 'owner-key-0123456789abcdef';
 const DESK_KEY = 'desk-key-0123456789abcdef';
 const OTHER_GYM_KEY = 'other-gym-key-0123456789ab';
 const MEMBER_KEY = 'member-key-0123456789abcdef';
-const RZP_ID = 'rzp_test_AbCdEf123456';
+const RZP_ID = 'rzp_live_AbCdEf123456';
+const RZP_TEST_ID = 'rzp_test_AbCdEf123456';
 const RZP_SECRET = 'SeCrEtVaLuE9876543210xyz';
 const PHONE = '9000081001';
 const PROOF = `v1.join.${PHONE}.1999999999.${'a'.repeat(32)}.${'b'.repeat(64)}`;
@@ -48,7 +49,9 @@ async function logsOf(fn) {
 const quiet = (fn) => async () => void (await logsOf(fn));
 
 function env(extra = {}) {
-  return { WEB: sqliteD1(), PAYMENTS_MASTER_KEY: MASTER, PHONE_CODE_SECRET: SECRET, FEEDBACK_SALT: 'salt', ...extra };
+  // R-555: join payments need JOIN_PAY "live", and a company link for the public needs payments live (PAY_LIVE "on"):
+  // a test-mode link is never offered on the join page. So these join angles run live, with live keys.
+  return { WEB: sqliteD1(), PAYMENTS_MASTER_KEY: MASTER, PHONE_CODE_SECRET: SECRET, FEEDBACK_SALT: 'salt', JOIN_PAY: 'live', PAY_LIVE: 'on', ...extra };
 }
 
 /** The gym server. `state.sent` = self_join_send's answer; `state.down` = unreachable; `state.member` = already a member. */
@@ -156,7 +159,7 @@ function company(co = {}) {
   return { f, calls, co };
 }
 
-async function connectRazorpay(e, gymId = 'gym-1', hook = 'hook-0123456789abcdef', mode = 'test', extra = {}) {
+async function connectRazorpay(e, gymId = 'gym-1', hook = 'hook-0123456789abcdef', mode = 'live', extra = {}) {
   const creds = await seal(e, { keyId: RZP_ID, keySecret: RZP_SECRET, ...extra.creds });
   await e.WEB.prepare(
     `INSERT INTO pay_connections (gym_id, provider, mode, via, creds, hint, account, hook, status, off_reason, connected_at, updated_at)
@@ -167,7 +170,7 @@ async function connectRazorpay(e, gymId = 'gym-1', hook = 'hook-0123456789abcdef
 }
 
 /** A gym on PayU (pasted Merchant key + Salt). PayU has no link cancel and no per-link webhook. */
-async function connectPayU(e, gymId = 'gym-1', mode = 'test') {
+async function connectPayU(e, gymId = 'gym-1', mode = 'live') {
   const creds = await seal(e, { key: 'PayUKey123', salt: 'PayUSaltValue99' });
   await e.WEB.prepare(
     `INSERT INTO pay_connections (gym_id, provider, mode, via, creds, hint, account, hook, status, off_reason, connected_at, updated_at)
@@ -331,7 +334,7 @@ test('W-08 double tap on Pay: two payments reported for one request = paid once;
 
 test('W-09 webhook twice, late and out of order: paid once; "expired" after "paid" never unpays it', quiet(async () => {
   const e = env();
-  await connectRazorpay(e, 'gym-1', 'hook-0123456789abcdef', 'test', { via: 'oauth', account: 'acc_gym1' });
+  await connectRazorpay(e, 'gym-1', 'hook-0123456789abcdef', 'live', { via: 'oauth', account: 'acc_gym1' });
   const n = company();
   const a = await join(e, gymServer(), n);
   const ev = razorpaySigned('whsec_partner', rzpLinkPaid(a.body.pay.id, 'plink_1', 'pay_9', 200000, 'acc_gym1'));
@@ -358,7 +361,7 @@ test('W-10 webhook missing: the 10-minute check finds the payment by itself', qu
 
 test('W-11 webhook forged or with a bad signature: refused 401, nothing paid; an unsigned body too', quiet(async () => {
   const e = env({ RAZORPAY_PARTNER_WEBHOOK_SECRET: 'whsec_partner' });
-  await connectRazorpay(e, 'gym-1', 'hook-0123456789abcdef', 'test', { via: 'oauth', account: 'acc_gym1' });
+  await connectRazorpay(e, 'gym-1', 'hook-0123456789abcdef', 'live', { via: 'oauth', account: 'acc_gym1' });
   const n = company();
   const a = await join(e, gymServer(), n);
   const body = rzpLinkPaid(a.body.pay.id, 'plink_1', 'pay_forged', 200000, 'acc_gym1');
@@ -382,22 +385,22 @@ test('W-12 webhook for another gym: a gym hook cannot pay another gym request', 
   const n = company();
   const a = await join(e, gymServer(), n);
   // Gym 2 has Cashfree with its own secret and hook. It signs an event naming gym 1's request.
-  const creds = await seal(e, { appId: 'TEST1234567', secretKey: 'cfsk_ma_test_gym2secret' });
+  const creds = await seal(e, { appId: 'TEST1234567', secretKey: 'cfsk_ma_prod_gym2secret' });
   await e.WEB.prepare(
     `INSERT INTO pay_connections (gym_id, provider, mode, via, creds, hint, account, hook, status, off_reason, connected_at, updated_at)
-     VALUES ('gym-2', 'cashfree', 'test', 'keys', ?, '4567', '', 'hook-gym2-abcdef012345', 'on', '', '2026-11-14T00:00:00Z', '2026-11-14T00:00:00Z')`,
+     VALUES ('gym-2', 'cashfree', 'live', 'keys', ?, '4567', '', 'hook-gym2-abcdef012345', 'on', '', '2026-11-14T00:00:00Z', '2026-11-14T00:00:00Z')`,
   )
     .bind(creds)
     .run();
-  const ev = cashfreeSigned('cfsk_ma_test_gym2secret', { type: 'PAYMENT_LINK_EVENT', data: { link_id: a.body.pay.id, link_status: 'PAID', link_amount_paid: 2000, order: { transaction_id: 'cf_x', transaction_status: 'SUCCESS' } } });
+  const ev = cashfreeSigned('cfsk_ma_prod_gym2secret', { type: 'PAYMENT_LINK_EVENT', data: { link_id: a.body.pay.id, link_status: 'PAID', link_amount_paid: 2000, order: { transaction_id: 'cf_x', transaction_status: 'SUCCESS' } } });
   assert.equal(await hook(e, n, '/api/pay/hook/cashfree/hook-gym2-abcdef012345', ev.raw, ev.headers), 200);
   assert.equal((await rows(e))[0].status, 'open', 'gym 1 request untouched');
 }));
 
 test('W-13 partner webhook (Connect Razorpay) for another gym account: never pays a request of a different gym', quiet(async () => {
   const e = env({ RAZORPAY_PARTNER_WEBHOOK_SECRET: 'whsec_partner' });
-  await connectRazorpay(e, 'gym-1', 'hook-0123456789abcdef', 'test', { via: 'oauth', account: 'acc_gym1' });
-  await connectRazorpay(e, 'gym-2', 'hook-gym2-0123456789ab', 'test', { via: 'oauth', account: 'acc_gym2' });
+  await connectRazorpay(e, 'gym-1', 'hook-0123456789abcdef', 'live', { via: 'oauth', account: 'acc_gym1' });
+  await connectRazorpay(e, 'gym-2', 'hook-gym2-0123456789ab', 'live', { via: 'oauth', account: 'acc_gym2' });
   const n = company();
   const a = await join(e, gymServer(), n);
   // Razorpay's partner webhook from gym 2's account naming gym 1's request id (a payer who learnt the id).
@@ -416,24 +419,24 @@ test('W-13 partner webhook (Connect Razorpay) for another gym account: never pay
 
 test('W-14 webhook amount different from the plan: kept as what was really paid (never the asked amount), the desk sees both', quiet(async () => {
   const e = env();
-  const creds = await seal(e, { appId: 'TEST1234567', secretKey: 'cfsk_ma_test_secret123' });
+  const creds = await seal(e, { appId: 'TEST1234567', secretKey: 'cfsk_ma_prod_secret123' });
   await e.WEB.prepare(
     `INSERT INTO pay_connections (gym_id, provider, mode, via, creds, hint, account, hook, status, off_reason, connected_at, updated_at)
-     VALUES ('gym-1', 'cashfree', 'test', 'keys', ?, '4567', '', 'hook-cf-0123456789ab', 'on', '', '2026-11-14T00:00:00Z', '2026-11-14T00:00:00Z')`,
+     VALUES ('gym-1', 'cashfree', 'live', 'keys', ?, '4567', '', 'hook-cf-0123456789ab', 'on', '', '2026-11-14T00:00:00Z', '2026-11-14T00:00:00Z')`,
   )
     .bind(creds)
     .run();
   const f = async (url, init = {}) => {
     const u = String(url);
     if (u.endsWith('/rpc/staff_me')) return json({ gymId: 'gym-1', name: 'Shakti Gym', person: { role: 'owner' } });
-    if (/sandbox\.cashfree\.com\/pg\/links$/.test(u) && init.method === 'POST') {
+    if (/(sandbox|api)\.cashfree\.com\/pg\/links$/.test(u) && init.method === 'POST') {
       const b = JSON.parse(init.body);
       return json({ link_id: b.link_id, link_url: 'https://payments-test.cashfree.com/links/x', link_status: 'ACTIVE' });
     }
     return json({ error: 'no route' }, 599);
   };
   const a = await join(e, gymServer(), { f });
-  const ev = cashfreeSigned('cfsk_ma_test_secret123', { type: 'PAYMENT_LINK_EVENT', data: { link_id: a.body.pay.id, link_status: 'PAID', link_amount_paid: 1500, order: { transaction_id: 'cf_1500', transaction_status: 'SUCCESS' } } });
+  const ev = cashfreeSigned('cfsk_ma_prod_secret123', { type: 'PAYMENT_LINK_EVENT', data: { link_id: a.body.pay.id, link_status: 'PAID', link_amount_paid: 1500, order: { transaction_id: 'cf_1500', transaction_status: 'SUCCESS' } } });
   assert.equal(await hook(e, { f }, '/api/pay/hook/cashfree/hook-cf-0123456789ab', ev.raw, ev.headers), 200);
   const j = (await desk(e, { f }, '/api/pay/joins', { key: OWNER_KEY })).body.joins[0];
   assert.deepEqual([j.status, j.amountP, j.paidP], ['paid', 200000, 150000], 'asked 2,000, paid 1,500: both shown, the desk app never rounds it up');
@@ -441,7 +444,7 @@ test('W-14 webhook amount different from the plan: kept as what was really paid 
 
 test('W-15 webhook not JSON or for an unknown request: answered 200, nothing changes; a signed "paid" with no payment id is paid ONCE under the link id', quiet(async () => {
   const e = env({ RAZORPAY_PARTNER_WEBHOOK_SECRET: 'whsec_partner' });
-  await connectRazorpay(e, 'gym-1', 'hook-0123456789abcdef', 'test', { via: 'oauth', account: 'acc_gym1' });
+  await connectRazorpay(e, 'gym-1', 'hook-0123456789abcdef', 'live', { via: 'oauth', account: 'acc_gym1' });
   const n = company();
   const a = await join(e, gymServer(), n);
   const raw = 'not json';
@@ -624,11 +627,11 @@ test('W-25 our database (D1) failing while the payment is made: the request is k
 // ================================================================== test keys vs live keys
 
 test('W-26 test vs live: a live key is refused in test mode, and once live a TEST connection never makes a link for a real member', quiet(async () => {
-  const e = env();
+  const e = env({ PAY_LIVE: undefined }); // a test-mode Worker
   const n = company();
   const live = await desk(e, n, '/api/pay/connect', { key: OWNER_KEY, provider: 'razorpay', fields: { keyId: 'rzp_live_AbCdEf123456', keySecret: RZP_SECRET } });
   assert.equal(live.status, 400);
-  await connectRazorpay(e); // a test-mode connection made before "payments live"
+  await connectRazorpay(e, 'gym-1', 'hook-0123456789abcdef', 'test', { creds: { keyId: RZP_TEST_ID } }); // made before "payments live"
   const L = { ...e, PAY_LIVE: 'on' };
   const info = await page(L, gymServer(), n, '/api/self-join/pay-info', { code: 'QA0002' });
   assert.deepEqual(info.body, { online: false }, 'live Worker, test keys: the join page offers no test link');
@@ -638,9 +641,17 @@ test('W-26 test vs live: a live key is refused in test mode, and once live a TES
   const fee = await desk(L, n, '/api/pay/request', { key: DESK_KEY, kind: 'fee', memberId: 'm-1', ref: 'ms-1', amountP: 150000, upiId: 'gym@okhdfc' });
   assert.equal(fee.body.request.url, null, 'the desk too: UPI QR only until live keys are connected');
   assert.equal(n.co.made.length, 0);
-  // Before live (test Worker): the test connection works and everything says test mode.
+  // Before live (test Worker): R-555, the join page never offers a test link to the public (no UPI ID here: the desk);
+  // the desk's own fee link works in test mode and says so.
   const t = await join(e, gymServer(), n);
-  assert.equal(t.body.pay.testMode, true);
+  assert.equal(t.status, 201);
+  assert.equal(t.body.pay, undefined);
+  assert.equal(t.body.payWhy, 'NO_ACCOUNT');
+  assert.deepEqual((await page(e, gymServer(), n, '/api/self-join/pay-info', { code: 'QA0002' })).body, { online: false });
+  assert.equal(n.co.made.length, 0, 'no test link made for a visitor');
+  const testFee = await desk(e, n, '/api/pay/request', { key: DESK_KEY, kind: 'fee', memberId: 'm-1', ref: 'ms-2', amountP: 150000 });
+  assert.equal(testFee.body.request.testMode, true);
+  assert.equal(n.co.made.length, 1);
 }));
 
 // ================================================================== people
@@ -715,7 +726,7 @@ test('W-30 nothing marks paid without a verified company event: the page, a gues
 
 test('W-31 logs never hold a card, a phone, a name, a UPI ID, a key, a secret, a proof or an amount', async () => {
   const e = env({ RAZORPAY_PARTNER_WEBHOOK_SECRET: 'whsec_partner' });
-  await connectRazorpay(e, 'gym-1', 'hook-0123456789abcdef', 'test', { via: 'oauth', account: 'acc_gym1' });
+  await connectRazorpay(e, 'gym-1', 'hook-0123456789abcdef', 'live', { via: 'oauth', account: 'acc_gym1' });
   await setUpi(e);
   const n = company();
   const gs = gymServer();
@@ -866,26 +877,23 @@ test('W-39 a shop order whose total changed: the old link is cancelled at the co
 // ================================================================== review round 2: test vs live, refunds, ids, logs
 
 test('W-40 a TEST link is never reused after going live, never asked with live keys, and can never switch live payments off', quiet(async () => {
-  const e = env();
-  await connectRazorpay(e);
+  // R-555: a test-mode Worker never makes a join link at all (the public never sees a test payment), so no test join
+  // link can be left over at go-live. What is left to prove: live keys make a live link once live.
+  const e = env({ PAY_LIVE: undefined });
+  await connectRazorpay(e, 'gym-1', 'hook-0123456789abcdef', 'test', { creds: { keyId: RZP_TEST_ID } });
   const n = company();
   const a = await join(e, gymServer(), n);
-  assert.equal(n.co.made[0].mode, 'test');
+  assert.equal(a.body.pay, undefined);
+  assert.equal(n.co.made.length, 0, 'no test link for a visitor');
   // Payments go live: the owner connects live keys; the Worker says live.
   await e.WEB.prepare("UPDATE pay_connections SET mode = 'live', creds = ? WHERE provider = 'razorpay'").bind(await seal(e, { keyId: 'rzp_live_AbCdEf123456', keySecret: RZP_SECRET })).run();
   const L = { ...e, PAY_LIVE: 'on' };
-  n.co.asked = [];
-  const p = await page(L, gymServer(), n, '/api/self-join/pay-check', { id: a.body.pay.id }, T0 + 60000);
-  assert.equal(p.status, 200);
-  assert.deepEqual(n.co.asked, [], 'the test link is never asked with the live keys');
   assert.equal((await e.WEB.prepare('SELECT status FROM pay_connections').first()).status, 'on', 'live payments stay on');
   const b = await join(L, gymServer(), n, FORM, T0 + 120000);
-  assert.notEqual(b.body.pay.id, a.body.pay.id, 'not the old test payment');
   assert.equal(b.body.pay.testMode, false);
-  assert.equal(n.co.made[1].mode, 'live');
-  assert.equal((await rows(e)).find((r) => r.id === a.body.pay.id).status, 'cancelled');
+  assert.equal(n.co.made[0].mode, 'live');
   // The desk's fee links too: a test-mode one from before is not handed out once live.
-  await e.WEB.prepare("UPDATE pay_connections SET mode = 'test', creds = ? WHERE provider = 'razorpay'").bind(await seal(e, { keyId: RZP_ID, keySecret: RZP_SECRET })).run();
+  await e.WEB.prepare("UPDATE pay_connections SET mode = 'test', creds = ? WHERE provider = 'razorpay'").bind(await seal(e, { keyId: RZP_TEST_ID, keySecret: RZP_SECRET })).run();
   const fee1 = await desk(e, n, '/api/pay/request', { key: DESK_KEY, kind: 'fee', memberId: 'm-1', ref: 'ms-1', amountP: 150000 });
   assert.equal(fee1.body.request.testMode, true);
   await e.WEB.prepare("UPDATE pay_connections SET mode = 'live', creds = ? WHERE provider = 'razorpay'").bind(await seal(e, { keyId: 'rzp_live_AbCdEf123456', keySecret: RZP_SECRET })).run();
@@ -923,7 +931,7 @@ test('W-42 Cashfree: a full refund (done or under way) is "refunded"; a part ref
     if (/\/orders\/o_1\/refunds$/.test(u)) return json(refunds);
     return json({}, 404);
   };
-  const creds = { appId: 'TEST12345678', secretKey: 'cfsk_ma_test_abcdef' };
+  const creds = { appId: 'TEST12345678', secretKey: 'cfsk_ma_prod_abcdef' };
   assert.equal((await cashfree.status(creds, 'test', 'L1', cf([{ refund_status: 'SUCCESS', refund_amount: 2000 }]))).state, 'refunded');
   assert.equal((await cashfree.status(creds, 'test', 'L1', cf([{ refund_status: 'PENDING', refund_amount: 2000 }]))).state, 'refunded');
   const part = await cashfree.status(creds, 'test', 'L1', cf([{ refund_status: 'SUCCESS', refund_amount: 500 }]));
@@ -959,7 +967,7 @@ test('W-43 one payment named two ways (the check knew only the link, the webhook
 
 test('W-44 logs never hold a payment request id (anyone holding one can tap "I have paid" on the join page)', async () => {
   const e = env({ RAZORPAY_PARTNER_WEBHOOK_SECRET: 'whsec_partner' });
-  await connectRazorpay(e, 'gym-1', 'hook-0123456789abcdef', 'test', { via: 'oauth', account: 'acc_gym1' });
+  await connectRazorpay(e, 'gym-1', 'hook-0123456789abcdef', 'live', { via: 'oauth', account: 'acc_gym1' });
   const n = company();
   const lines = await logsOf(async () => {
     const a = await join(e, gymServer(), n);
@@ -1038,7 +1046,7 @@ const iso = (ms) => new Date(ms).toISOString();
 async function addRow(e, o) {
   await e.WEB.prepare(
     `INSERT INTO pay_requests (id, gym_id, kind, member_id, ref, amount_p, provider, mode, link_id, link_url, status, checked_at, created_at, expires_at)
-     VALUES (?, 'gym-1', ?, 'm-1', ?, ?, ?, 'test', ?, ?, ?, ?, ?, ?)`,
+     VALUES (?, 'gym-1', ?, 'm-1', ?, ?, ?, 'live', ?, ?, ?, ?, ?, ?)`,
   )
     .bind(o.id, o.kind || 'fee', o.ref || `ms-${o.id}`, o.amountP || 200000, o.provider || 'razorpay', o.linkId, `https://pay.example/${o.linkId}`, o.status || 'open', o.checkedAt ?? '', o.createdAt || iso(T0), o.expiresAt || iso(T0 + 7 * DAY))
     .run();
@@ -1089,10 +1097,10 @@ function withCashfree(n, cf = {}) {
   return { ...n, f, cf };
 }
 
-async function connectCashfree(e, appId = 'CFAPP_A_12345678', secretKey = 'cfsk_ma_test_secret_A_0001', hookId = 'hook-cf-0123456789ab') {
+async function connectCashfree(e, appId = 'CFAPP_A_12345678', secretKey = 'cfsk_ma_prod_secret_A_0001', hookId = 'hook-cf-0123456789ab') {
   await e.WEB.prepare(
     `INSERT INTO pay_connections (gym_id, provider, mode, via, creds, hint, account, hook, status, off_reason, connected_at, updated_at)
-     VALUES ('gym-1', 'cashfree', 'test', 'keys', ?, '5678', '', ?, 'on', '', '2026-11-14T00:00:00Z', '2026-11-14T00:00:00Z')`,
+     VALUES ('gym-1', 'cashfree', 'live', 'keys', ?, '5678', '', ?, 'on', '', '2026-11-14T00:00:00Z', '2026-11-14T00:00:00Z')`,
   )
     .bind(await seal(e, { appId, secretKey }), hookId)
     .run();
@@ -1163,7 +1171,7 @@ test('W-50 the 10-minute check takes turns: with more open links than one run ca
   await connectRazorpay(e);
   const n = company();
   for (let i = 1; i <= 45; i += 1) {
-    n.co.links[`plink_${100 + i}`] = { id: `plink_${100 + i}`, status: 'created', amount: 200000, payments: [], mode: 'test' };
+    n.co.links[`plink_${100 + i}`] = { id: `plink_${100 + i}`, status: 'created', amount: 200000, payments: [], mode: 'live' };
     await addRow(e, { id: rid(i), linkId: `plink_${100 + i}` });
   }
   // Closed by us an hour ago (its cancel failed at Razorpay) and then paid there.
@@ -1212,7 +1220,7 @@ test('W-52 disconnect with more open links than one run can ask: within 40 calls
   await connectRazorpay(e);
   const n = company();
   for (let i = 1; i <= 30; i += 1) {
-    n.co.links[`plink_${100 + i}`] = { id: `plink_${100 + i}`, status: 'created', amount: 200000, payments: [], mode: 'test' };
+    n.co.links[`plink_${100 + i}`] = { id: `plink_${100 + i}`, status: 'created', amount: 200000, payments: [], mode: 'live' };
     await addRow(e, { id: rid(i), linkId: `plink_${100 + i}` });
   }
   const before = n.calls.length;
@@ -1230,7 +1238,7 @@ test('W-53 new keys of a DIFFERENT account: the old links are settled with the o
   const a = await join(e, gymServer(), n);
   const b = await join(e, gymServer({ sent: { ...SENT, enquiryId: nextEnquiry() } }), n);
   n.co.cancelDown = true; // Razorpay does not answer the cancels this time
-  const NEW = 'rzp_test_OtherAcct99999';
+  const NEW = 'rzp_live_OtherAcct99999';
   const c = await desk(e, n, '/api/pay/connect', { key: OWNER_KEY, provider: 'razorpay', fields: { keyId: NEW, keySecret: 'AnotherSecretValue12345' } }, T0 + 120000);
   assert.equal(c.body.connection.on, true);
   assert.equal((await rowOf(e, a.body.pay.id)).status, 'cancelled', 'old links are closed here');
@@ -1251,10 +1259,10 @@ test('W-53 new keys of a DIFFERENT account: the old links are settled with the o
 test("W-54 the SAME account's keys pasted again (or new keys made for it): nothing is closed; the open link still works", quiet(async () => {
   const e = env();
   await connectRazorpay(e);
-  const n = company({ accounts: true, accountOf: { [RZP_ID]: 'acc_A', rzp_test_RemadeKeyOfA01: 'acc_A' } });
+  const n = company({ accounts: true, accountOf: { [RZP_ID]: 'acc_A', rzp_live_RemadeKeyOfA01: 'acc_A' } });
   const a = await join(e, gymServer(), n);
   await desk(e, n, '/api/pay/connect', { key: OWNER_KEY, provider: 'razorpay', fields: { keyId: RZP_ID, keySecret: 'ANewSecretForTheSameKey1' } });
-  await desk(e, n, '/api/pay/connect', { key: OWNER_KEY, provider: 'razorpay', fields: { keyId: 'rzp_test_RemadeKeyOfA01', keySecret: 'ANewSecretForTheSameKey2' } }, T0 + 130000);
+  await desk(e, n, '/api/pay/connect', { key: OWNER_KEY, provider: 'razorpay', fields: { keyId: 'rzp_live_RemadeKeyOfA01', keySecret: 'ANewSecretForTheSameKey2' } }, T0 + 130000);
   assert.deepEqual(n.co.cancelled, []);
   assert.equal((await rowOf(e, a.body.pay.id)).status, 'open');
   n.co.links.plink_1 = { ...rzpPaid('plink_1', 'pay_same', 200000), acct: 'acc_A' };
@@ -1269,10 +1277,10 @@ test('W-55 Cashfree, keys of another account: the old link is cancelled with the
   const a = await join(e, gymServer(), n);
   assert.equal(a.body.pay.how, 'link');
   assert.ok(n.cf.links[a.body.pay.id], 'a Cashfree link was made');
-  const c = await desk(e, n, '/api/pay/connect', { key: OWNER_KEY, provider: 'cashfree', fields: { appId: 'CFAPP_B_87654321', secretKey: 'cfsk_ma_test_secret_B_0002' } }, T0 + 120000);
+  const c = await desk(e, n, '/api/pay/connect', { key: OWNER_KEY, provider: 'cashfree', fields: { appId: 'CFAPP_B_87654321', secretKey: 'cfsk_ma_prod_secret_B_0002' } }, T0 + 120000);
   assert.equal(c.body.connection.on, true);
   assert.deepEqual(n.cf.cancelled, [a.body.pay.id], 'cancelled at Cashfree with the old keys');
-  const ev = cashfreeSigned('cfsk_ma_test_secret_A_0001', {
+  const ev = cashfreeSigned('cfsk_ma_prod_secret_A_0001', {
     type: 'PAYMENT_LINK_EVENT',
     data: { link_id: a.body.pay.id, link_status: 'PAID', link_amount: 2000, link_amount_paid: 2000, order: { transaction_id: 'cft_1', transaction_status: 'SUCCESS' } },
   });

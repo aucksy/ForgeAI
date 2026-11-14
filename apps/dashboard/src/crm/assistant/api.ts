@@ -205,6 +205,15 @@ export interface AiWallet {
   questions?: AiQuestions | null;
 }
 
+/**
+ * R-555: the wallet as the screens show it. While the panel Worker does not charge for AI questions
+ * (AI_CREDITS_CHARGE off: GET /api/switches `aiCharge` false) nothing is taken from any gym, so nothing about counted
+ * questions shows: no counts, no "AI answers for members". The same wallet when it does. PURE.
+ */
+export function chargedView(w: AiWallet | null, charge: boolean): AiWallet | null {
+  return w && !charge && w.questions ? { ...w, questions: null } : w;
+}
+
 /** F209: this month's AI questions by who asked, and the rules the server uses (owner_ai_questions, 0078). */
 export interface AiQuestions {
   month: string;

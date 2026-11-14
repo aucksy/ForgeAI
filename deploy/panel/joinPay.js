@@ -13,10 +13,12 @@
 // never a lost request. No member is ever made here: only the desk's Approve makes one.
 //
 // Offered only when ALL hold (else the page says "Pay at the desk", as before):
+//   R-555: the Worker's JOIN_PAY switch is "live" (switches.js; held off until the owner's payment sweep passes);
 //   D1 0011 and 0016 applied; the panel Worker can sign (PHONE_CODE_SECRET) and the gym server has 0081
 //   (self_join_pay_gym); the gym is open to online sign-ups; it has a payment company connected or a UPI ID; and the
 //   owner's "Take payments when people join online" is on (paySwitches.js).
-// Test mode: a company link is test (sandbox) until PAY_LIVE is "on" (pay.js payMode); the page says so.
+// R-555: a company link only once payments are live (PAY_LIVE "on", pay.js payMode): a visitor is never offered a
+// test-mode (sandbox) payment. Until then a gym with a UPI ID offers that; one with only a company offers nothing.
 //
 // Endpoints (no key: the page has none; a request id pr_<20 hex> is known only to the page that made it):
 //   POST /api/self-join/pay-info   {code}  -> {online, how: 'link'|'upi', testMode}
@@ -31,6 +33,7 @@ import { PROVIDERS, PayError } from './payProviders.js';
 import { ASK_MOST_CALLS, D1_MOST, checkWithCompany, cleanUpi, countedFetch, d1Meter, linkConnections, makeLink, newRequestId, payMode, remake, retireOtherMode, runBudget, runCache, settleOpen, tablesReady, turnOff } from './pay.js';
 import { hmacHex } from './phoneCode.js';
 import { markSaid, saidAt, switchesOf, switchesReady } from './paySwitches.js';
+import { joinPayOpen } from './switches.js';
 
 const str = (v) => (typeof v === 'string' ? v : v == null ? '' : String(v));
 const nowIso = (now) => new Date(now ?? Date.now()).toISOString();
@@ -117,13 +120,15 @@ export async function gymIdFor(env, rpc, code, now = new Date()) {
 /** The gym's first connected company (when its keys can be opened) and its UPI ID. */
 async function waysOf(env, db, gymId) {
   // Payment sweep (R-542): only a connection in the Worker's own mode (never a test link once payments are live).
-  const conns = await linkConnections(env, db, gymId);
+  // R-555: and none at all while payments are in test mode: the public never sees a test payment.
+  const conns = payMode(env) === 'live' ? await linkConnections(env, db, gymId) : [];
   const gym = await db.prepare('SELECT upi, payee FROM pay_gyms WHERE gym_id = ?').bind(gymId).first();
   return { conn: conns[0] || null, upi: gym ? cleanUpi(gym.upi) : '', payee: gym ? str(gym.payee) : '' };
 }
 
 /** Everything the offer needs for one gym id. */
 async function offerForGym(env, gymId, db = env && env.WEB) {
+  if (!joinPayOpen(env)) return { offer: { online: false, why: 'OFF' } };
   if (!(await tablesReady(db)) || !(await switchesReady(db))) return { offer: { online: false, why: 'NOT_READY' } };
   const ways = await waysOf(env, db, gymId);
   const { web } = await switchesOf(db, gymId);
@@ -133,6 +138,8 @@ async function offerForGym(env, gymId, db = env && env.WEB) {
 /** The join page's (and the gym web page's) question: can this gym be paid online now? Never throws. */
 export async function offerForCode(env, rpc, code, now = new Date()) {
   try {
+    // R-555: the JOIN_PAY switch first: while it is off nothing is asked (no D1 query, no call to the gym server).
+    if (!joinPayOpen(env)) return { online: false, why: 'OFF' };
     const db = env && env.WEB;
     if (!(await tablesReady(db)) || !(await switchesReady(db))) return { online: false, why: 'NOT_READY' };
     const gymId = await gymIdFor(env, rpc, code, now);
@@ -152,6 +159,8 @@ export async function offerForCode(env, rpc, code, now = new Date()) {
  */
 export async function attachJoinPay(env, rpc, kept, { f: base = fetch, now = new Date(), origin } = {}) {
   try {
+    // R-555: switched off (JOIN_PAY): pay at the desk, with nothing asked or made.
+    if (!joinPayOpen(env)) return { why: 'OFF' };
     // Review round 4 (R-554): this runs inside the join page's send (selfJoin.js), ONE invocation on Cloudflare's free
     // plan (50 D1 queries, 50 outside calls). The send itself uses 2 queries and a few calls before this; the rest is counted here.
     const db = d1Meter(env && env.WEB, D1_MOST - 2);
@@ -259,6 +268,11 @@ export async function handleJoinPay(request, env, url, rpc, deps = {}) {
   const now = deps.now ?? Date.now();
   const read = await readBody(request);
   if (read.refused) return read.refused;
+  // R-555: JOIN_PAY off: the page is told "pay at the desk" and has no payment to check or say paid. (A payment made
+  // while it was on is still settled by the 10-minute check and the webhook in pay.js, and the desk sees it.)
+  if (!joinPayOpen(env)) {
+    return url.pathname.replace(/\/+$/, '') === '/api/self-join/pay-info' ? answer(200, { online: false }) : answer(404, { error: 'NOT_FOUND' });
+  }
   const b = read.body;
   const db = d1Meter(env && env.WEB);
   const path = url.pathname.replace(/\/+$/, '');

@@ -58,7 +58,7 @@ import { deleteOldFriendAsks, handleFriend } from './friend.js';
 import { handleSelfJoin } from './selfJoin.js';
 import { handleJoinPay, offerForCode } from './joinPay.js';
 import { handleGymPageHost } from './gymPageServe.js';
-import { switchesAnswer } from './switches.js';
+import { joinPayOpen, switchesAnswer } from './switches.js';
 import { deleteOldVoiceCounts, handleVoice } from './voice.js';
 import { handleMatchColumns } from './aiMatch.js';
 import { handleAssist, handleAssistPlan, handleAssistRewrite, handleAssistVoice } from './assist.js';
@@ -279,8 +279,17 @@ const SELFJOIN = {
   asset: '/join-online',
   fn: 'self_join_preview',
   title: (g) => `Become a member of ${g.gymName}`,
-  desc: (g) => (g.closed ? `${g.gymName} is not taking sign-ups online right now.` : `Pick a plan and send your details to ${g.gymName}. Pay at the gym desk.`),
+  desc: (g, env) => selfJoinDesc(g, env),
 };
+
+/**
+ * The join page's preview line (WhatsApp, search). R-555: "Pay at the gym desk." is said only while join payments are
+ * off (JOIN_PAY): once on, a gym may take the payment online, so the line says nothing about how they pay. PURE.
+ */
+export function selfJoinDesc(g, env) {
+  if (g.closed) return `${g.gymName} is not taking sign-ups online right now.`;
+  return `Pick a plan and send your details to ${g.gymName}.${joinPayOpen(env) ? '' : ' Pay at the gym desk.'}`;
+}
 const CHECKIN = {
   asset: '/checkin',
   title: (g) => `Check in at ${g.gymName}`,
@@ -304,7 +313,7 @@ async function joinPage(request, env, ctx, url, code, kind = JOIN) {
   }
   if (gym) {
     const title = kind.title(gym);
-    const desc = kind.desc(gym);
+    const desc = kind.desc(gym, env);
     rw = rw
       .on('title', { element: (e) => e.setInnerContent(title) })
       .on('meta[property="og:title"]', { element: (e) => e.setAttribute('content', title) })

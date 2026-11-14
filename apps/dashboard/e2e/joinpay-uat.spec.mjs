@@ -11,6 +11,9 @@
 // The gym's side (phone 390): Today's "Joined online" with "Paid online" and one-tap Approve (member + plan + receipt),
 // a UPI payment to check in the bank, a failed one ("Not paid"); Settings -> Payments, the owner's two switches on,
 // off, and greyed with no payment account.
+// R-555: join payments are held behind the Worker's JOIN_PAY switch (GET /api/switches `joinPay`). The gym side runs
+// with it on; "R-555 held" proves the admin app with it off: only the member app switch, and Today's "Joined online"
+// with no word about online payments.
 import { mkdirSync, readFileSync } from 'node:fs';
 
 import { expect, test } from '@playwright/test';
@@ -364,8 +367,18 @@ function joinRow(o) {
   };
 }
 
+/** R-555: the Worker's switches as GET /api/switches says them (before openApp: the panel asks when it opens). */
+async function workerSwitches(page, sw) {
+  await page.context().route('**/api/switches', (route) =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ gymPages: false, joinPay: false, aiCharge: false, ...sw }) }),
+  );
+}
+
 test.describe('the gym side', () => {
   test.use({ viewport: { width: 390, height: 844 } });
+  test.beforeEach(async ({ page }) => {
+    await workerSwitches(page, { joinPay: true });
+  });
 
   test('R-528 phone: "Paid online" on Today, one tap Approve -> member, plan and receipt', async ({ page }) => {
     const server = await openApp(page);
@@ -618,5 +631,57 @@ test.describe('the gym side', () => {
     await expect(app).toBeDisabled();
     await main.getByText('Where members can pay online').scrollIntoViewIfNeeded();
     await shot(page, 'phone-joinpay-switches-4-not-ready');
+  });
+});
+
+// R-555 (15 Nov 2026): the owner's hold on join payments ("HOLD that deploy for payments until a full payment test sweep
+// passes"). The Worker's JOIN_PAY is off, so GET /api/switches says joinPay false: the admin app shows no part of it.
+test.describe('R-555 held: join payments off', () => {
+  test.use({ viewport: { width: 390, height: 844 } });
+
+  test('R-555 phone: Today\'s "Joined online" says Make member with no word about paying online; Settings -> Payments has only the member app switch', async ({ page }) => {
+    await workerSwitches(page, { joinPay: false });
+    const server = await openApp(page);
+    await startOnlineGym(page);
+    await addPlan(page, { name: 'Monthly', price: '1500', joining: '500', months: '1' });
+    personSendsTheForm(server, { id: 'join-0a1b2c3d4e5f60718293a4b5c6d7e8f0', name: 'Neha Singh', phone: '+919000077005' });
+    await payServer(page, { connected: true });
+    const go = (path) => page.evaluate((p) => {
+      window.location.hash = p;
+    }, path);
+    await go('/');
+    await page.reload();
+    const card = page.locator('#needs-online-joins');
+    await expect(card).toContainText('Neha Singh', { timeout: 15_000 });
+    await expect(card).toContainText('They filled your "Become a member" page. Make them members when they come in and pay.');
+    await expect(card).not.toContainText('paid online');
+    await expect(card).not.toContainText('Approve');
+    await expect(card).toContainText('₹2,000 to pay at the desk · Not paid yet');
+    await expect(card.getByRole('button', { name: 'Make Neha Singh a member' })).toBeVisible();
+    await card.scrollIntoViewIfNeeded();
+    await expectFitsPhone(page, 'on Today with join payments held');
+    await shot(page, 'phone-joinpay-held-1-today');
+
+    const main = page.getByRole('main');
+    await go('/settings/payments');
+    await expect(main).toContainText('Where members can pay online', { timeout: 15_000 });
+    const app = main.getByRole('checkbox', { name: /^Take payments in the member app/ });
+    await expect(app).toBeChecked();
+    await expect(main.getByRole('checkbox', { name: /^Take payments when people join online/ })).toHaveCount(0);
+    await expect(main).not.toContainText('Take payments when people join online');
+    await expect(main).not.toContainText('people who join online');
+    await main.getByText('Where members can pay online').scrollIntoViewIfNeeded();
+    await expectFitsPhone(page, 'on Settings -> Payments with join payments held');
+    await shot(page, 'phone-joinpay-held-2-switches');
+    await page.unroute('**/api/pay/**');
+
+    // Before the server part is live: the one switch is greyed, said in the singular, with no word about joining.
+    await payServer(page, { connected: true, switches: { ready: false, app: true, web: true } });
+    await page.reload();
+    await expect(main.getByRole('status').filter({ hasText: 'This switch is not switched on yet. Until then members pay in the app as now.' })).toBeVisible({ timeout: 15_000 });
+    await expect(app).toBeDisabled();
+    await expect(main).not.toContainText('people who join online');
+    await main.getByText('Where members can pay online').scrollIntoViewIfNeeded();
+    await shot(page, 'phone-joinpay-held-3-not-ready');
   });
 });

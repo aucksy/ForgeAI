@@ -16,6 +16,7 @@
 import { useEffect, useState } from 'react';
 
 import { useCan } from '../auth/AuthProvider';
+import { useJoinPayOn } from '../gympage/pagesOpen';
 import { t } from '../lang/lang';
 import { validUpiId } from '../logic/upiPay';
 import { useCrm } from '../store';
@@ -155,12 +156,19 @@ export function PaymentsScreen() {
   );
 }
 
-/** R-528: why the two switches cannot be changed, or null when they can. PURE. */
-export function switchesBlocked(o: { live: DeskPay | null; hasAccount: boolean; canManage: boolean }): string | null {
+/**
+ * R-528: why the two switches cannot be changed, or null when they can. R-555: with join payments held (the Worker's
+ * JOIN_PAY off) only the member app switch shows, so the words name only that one. PURE.
+ */
+export function switchesBlocked(o: { live: DeskPay | null; hasAccount: boolean; canManage: boolean; joinPay?: boolean }): string | null {
   if (!o.hasAccount) return t('Add your UPI ID or connect a payment company first.');
   const sw = o.live?.on === true ? o.live.switches : undefined;
-  if (!sw?.ready) return t('These switches are not switched on yet. Until then members pay in the app as now, and people who join online pay at the desk.');
-  if (!o.canManage) return t('Only the owner can change these.');
+  if (!sw?.ready) {
+    return o.joinPay
+      ? t('These switches are not switched on yet. Until then members pay in the app as now, and people who join online pay at the desk.')
+      : t('This switch is not switched on yet. Until then members pay in the app as now.');
+  }
+  if (!o.canManage) return o.joinPay ? t('Only the owner can change these.') : t('Only the owner can change this.');
   return null;
 }
 
@@ -168,6 +176,8 @@ export function switchesBlocked(o: { live: DeskPay | null; hasAccount: boolean; 
  * R-528 (14 Nov 2026): "Take payments in the member app" and "Take payments when people join online". Both on
  * once a payment account is set up; with none, both off and greyed with the reason. Off in the app only hides the
  * Pay now button: the member still sees what they owe.
+ * R-555: "Take payments when people join online" shows only while the Worker's JOIN_PAY switch is on (the owner's
+ * hold on join payments; "show a feature only when it is on").
  */
 function SwitchesCard({
   live,
@@ -183,9 +193,10 @@ function SwitchesCard({
   onSaved: (s: { ready: boolean; app: boolean; web: boolean }) => void;
 }) {
   const sw = live?.on === true ? live.switches : undefined;
+  const joinPay = useJoinPayOn();
   const [busy, setBusy] = useState(false);
   const [problem, setProblem] = useState<string | null>(null);
-  const blocked = switchesBlocked({ live, hasAccount, canManage });
+  const blocked = switchesBlocked({ live, hasAccount, canManage, joinPay });
   // The tick moves at once; it goes back if the save fails.
   const [pending, setPending] = useState<{ app?: boolean; web?: boolean }>({});
   const appOn = hasAccount && (pending.app ?? (sw?.ready ? sw.app : false));
@@ -219,14 +230,16 @@ function SwitchesCard({
       >
         {t('Take payments in the member app')}
       </CheckField>
-      <CheckField
-        checked={webOn}
-        disabled={busy || blocked !== null}
-        onChange={(v) => void save({ web: v })}
-        hint={t('People who join online with your join link can pay for their plan there. When off, they send their details and pay at the desk.')}
-      >
-        {t('Take payments when people join online')}
-      </CheckField>
+      {joinPay ? (
+        <CheckField
+          checked={webOn}
+          disabled={busy || blocked !== null}
+          onChange={(v) => void save({ web: v })}
+          hint={t('People who join online with your join link can pay for their plan there. When off, they send their details and pay at the desk.')}
+        >
+          {t('Take payments when people join online')}
+        </CheckField>
+      ) : null}
       {blocked ? (
         <p role="status" style={{ ...muted, fontWeight: 700 }}>
           {blocked}

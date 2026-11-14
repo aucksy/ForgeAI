@@ -12,6 +12,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { useAuth } from '../auth/AuthProvider';
+import { useJoinPayOn } from '../gympage/pagesOpen';
 import { takerOf } from '../auth/permissions';
 import { t } from '../lang/lang';
 import { formatDay } from '../logic/dates';
@@ -66,6 +67,10 @@ export function JoinedOnlineCard() {
   const [pays, setPays] = useState<JoinPay[]>([]);
   const [busy, setBusy] = useState<string | null>(null);
   const payOn = state?.on === true && Boolean(key);
+  // R-555: while join payments are held (the Worker's JOIN_PAY off) nobody can pay on the join page, so the card does
+  // not talk about approving online payments. One already paid (made while it was on) still says it, with Approve.
+  const joinPay = useJoinPayOn();
+  const anyPaid = pays.some((p) => p.status === 'paid');
 
   const load = useCallback(async () => {
     if (!key) return;
@@ -134,7 +139,9 @@ export function JoinedOnlineCard() {
         <Card pad={space.lg} style={{ marginBottom: space.md }}>
           <SectionTitle>{t('Joined online')}</SectionTitle>
           <p style={{ margin: `0 0 ${space.md}px`, fontFamily: font.body, fontSize: 13, color: color.inkSecondary, overflowWrap: 'anywhere' }}>
-            {t('They filled your "Become a member" page. Approve the ones who paid online. Make the others members when they come in and pay.')}
+            {joinPay || anyPaid
+              ? t('They filled your "Become a member" page. Approve the ones who paid online. Make the others members when they come in and pay.')
+              : t('They filled your "Become a member" page. Make them members when they come in and pay.')}
           </p>
           {error ? <ErrorBanner>{error}</ErrorBanner> : null}
           <div style={{ display: 'flex', flexDirection: 'column', gap: space.md }}>

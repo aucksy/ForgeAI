@@ -39,12 +39,13 @@ import type {
 } from '../types';
 
 /** The made-up people who work at the demo gym (Staff & sign-in, trainers, "collected by"). */
+// R-555: the public /demo shows these numbers, so they are the plainly made-up 98765 00xxx kind (never a real person's).
 export const DEMO_STAFF = {
-  owner: { staffId: 'demo-owner', name: 'Vikram Rathore', phone: '9829045617', role: 'owner' as const, job: null },
-  desk: { staffId: 'demo-desk', name: 'Sunita Joshi', phone: '9772318840', role: 'staff' as const, job: null },
-  trainerA: { staffId: 'demo-trainer-a', name: 'Arjun Rawat', phone: '9460127735', role: 'staff' as const, job: null },
-  trainerB: { staffId: 'demo-trainer-b', name: 'Kavita Shekhawat', phone: '9887504192', role: 'staff' as const, job: null },
-  manager: { staffId: 'demo-manager', name: 'Manoj Saini', phone: '9314462058', role: 'staff' as const, job: 'Manager' },
+  owner: { staffId: 'demo-owner', name: 'Vikram Rathore', phone: '9876500101', role: 'owner' as const, job: null },
+  desk: { staffId: 'demo-desk', name: 'Sunita Joshi', phone: '9876500102', role: 'staff' as const, job: null },
+  trainerA: { staffId: 'demo-trainer-a', name: 'Arjun Rawat', phone: '9876500103', role: 'staff' as const, job: null },
+  trainerB: { staffId: 'demo-trainer-b', name: 'Kavita Shekhawat', phone: '9876500104', role: 'staff' as const, job: null },
+  manager: { staffId: 'demo-manager', name: 'Manoj Saini', phone: '9876500105', role: 'staff' as const, job: 'Manager' },
 };
 
 export type DemoStaff = (typeof DEMO_STAFF)[keyof typeof DEMO_STAFF];
@@ -293,7 +294,10 @@ export function buildShowcase(today: DateISO): DemoShowcase {
   const usedPhones = new Set(snap.members.map((m) => m.phone));
   const phone = (): string => {
     for (;;) {
-      const n = `+91${int(7, 9)}${String(int(0, 999999999)).padStart(9, '0')}`;
+      // R-555: plainly made-up numbers (98765 xxxxx) on the public /demo. The first draw is kept (and not used) so every
+      // other random pick in the demo stays the same as before.
+      int(7, 9);
+      const n = `+9198765${String(int(0, 99999)).padStart(5, '0')}`;
       if (!usedPhones.has(n)) {
         usedPhones.add(n);
         return n;

@@ -10,13 +10,19 @@
  *
  * <AssistantWatch /> (mounted once, in the routes) asks for the wallet when the panel opens, when the tab comes
  * back into view and every 5 minutes; everything else only reads.
+ *
+ * R-555 (15 Nov 2026): what the gym's server says about AI questions (the counts, "AI answers for members") is shown
+ * only while the panel Worker charges for them (AI_CREDITS_CHARGE "on", told at GET /api/switches as `aiCharge`).
+ * With charging off nothing is taken from any gym, so `wallet.questions` reads as null: asking is free, and the credits
+ * sheet shows no members' section and no counts. Switching it on or off shows within minutes, with no release.
  */
-import { useEffect, useSyncExternalStore } from 'react';
+import { useEffect, useMemo, useSyncExternalStore } from 'react';
 
 import { useAuth, useRole } from '../auth/AuthProvider';
 import { useDemo } from '../demo/demoMode';
+import { switchesNow, useAiChargeOn } from '../gympage/pagesOpen';
 import { setQuestionsCounted } from './allowance';
-import { aiQuestions, aiWallet, type AiWallet } from './api';
+import { aiQuestions, aiWallet, chargedView, type AiWallet } from './api';
 
 interface State {
   key: string | null;
@@ -55,7 +61,7 @@ export async function refreshAssistantWallet(key: string | null = state.key): Pr
     const keep = state.key === key ? (state.wallet?.questions ?? null) : null;
     const w = w0 ? { ...w0, questions: q ?? keep } : null;
     // R-531 (decision #98 = B, supabase 0083): the owner's own questions are free again once the server has 0083.
-    if (w) setQuestionsCounted(!!w.questions && !w.questions.memberAi);
+    if (w) setQuestionsCounted(switchesNow()?.aiCharge === true && !!w.questions && !w.questions.memberAi);
     // Offline or a hiccup on a panel that already had it: keep what was shown (the next tick asks again).
     if (w || state.key !== key || state.wallet === null) set({ key, wallet: w, off: state.key === key ? state.off : false, asked: true });
   })().finally(() => {
@@ -110,8 +116,11 @@ export function useAssistant(): AssistantState {
   const key = useOnlineKey();
   const may = useMaySee();
   const s = useSyncExternalStore(subscribe, read, read);
+  const charge = useAiChargeOn();
   const mine = may && s.key === key;
-  const wallet = mine ? s.wallet : null;
+  const raw = mine ? s.wallet : null;
+  // R-555: nothing about charging for questions while the Worker does not charge (AI_CREDITS_CHARGE off).
+  const wallet = useMemo(() => chargedView(raw, charge), [raw, charge]);
   return { on: may && wallet !== null && !s.off, key, wallet, waiting: may && !(mine && s.asked) };
 }
 

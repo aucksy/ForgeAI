@@ -1,9 +1,11 @@
 // node --test deploy/panel (CI: ci.yml "Panel Worker tests"). R-528 (14 Nov 2026): pay online on the join page, with
 // the owner's two switches. No real payment company or gym server is called: both are faked here. Fake numbers only.
+// R-555: join payments are offered only with the Worker's JOIN_PAY "live", and a company link only once payments are
+// live (PAY_LIVE "on"): env() below has both, the tests at the end prove each one off.
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { handleJoinPay, joinCharge, joinView, phoneOfProof, webOffer } from './joinPay.js';
+import { attachJoinPay, handleJoinPay, joinCharge, joinView, offerForCode, phoneOfProof, webOffer } from './joinPay.js';
 import { handlePay } from './pay.js';
 import { seal } from './payCrypto.js';
 import { handleSelfJoin } from './selfJoin.js';
@@ -35,7 +37,7 @@ function quiet(fn) {
 }
 
 function env(extra = {}, d1 = {}) {
-  return { WEB: sqliteD1(d1), PAYMENTS_MASTER_KEY: MASTER, PHONE_CODE_SECRET: SECRET, FEEDBACK_SALT: 'salt', ...extra };
+  return { WEB: sqliteD1(d1), PAYMENTS_MASTER_KEY: MASTER, PHONE_CODE_SECRET: SECRET, FEEDBACK_SALT: 'salt', JOIN_PAY: 'live', PAY_LIVE: 'on', ...extra };
 }
 
 /** The gym server: 0081 (or not), the request, and who a key is. */
@@ -78,13 +80,13 @@ function net(state = {}) {
   return { f, calls };
 }
 
-async function connectRazorpay(e) {
-  const creds = await seal(e, { keyId: 'rzp_test_AbCdEf123456', keySecret: 'SeCrEtVaLuE9876543210xyz' });
+async function connectRazorpay(e, mode = 'live') {
+  const creds = await seal(e, { keyId: `rzp_${mode}_AbCdEf123456`, keySecret: 'SeCrEtVaLuE9876543210xyz' });
   await e.WEB.prepare(
     `INSERT INTO pay_connections (gym_id, provider, mode, via, creds, hint, account, hook, status, off_reason, connected_at, updated_at)
-     VALUES ('gym-1', 'razorpay', 'test', 'keys', ?, '3456', '', 'hook-0123456789abcdef', 'on', '', '2026-11-14T00:00:00Z', '2026-11-14T00:00:00Z')`,
+     VALUES ('gym-1', 'razorpay', ?, 'keys', ?, '3456', '', 'hook-0123456789abcdef', 'on', '', '2026-11-14T00:00:00Z', '2026-11-14T00:00:00Z')`,
   )
-    .bind(creds)
+    .bind(mode, creds)
     .run();
 }
 
@@ -150,7 +152,7 @@ test('pay-info: online only with 0016, 0081, the signature, an account and the s
   await setUpi(e);
   assert.deepEqual((await jp(e, gs, n, '/api/self-join/pay-info', { code: 'QA0002' })).body, { online: true, how: 'upi', testMode: false });
   await connectRazorpay(e);
-  assert.deepEqual((await jp(e, gs, n, '/api/self-join/pay-info', { code: 'QA0002' })).body, { online: true, how: 'link', testMode: true });
+  assert.deepEqual((await jp(e, gs, n, '/api/self-join/pay-info', { code: 'QA0002' })).body, { online: true, how: 'link', testMode: false });
   // The gym server is asked with the Worker's signature, never a bare code.
   const ask = gs.calls.find((c) => c.fn === 'self_join_pay_gym');
   assert.match(ask.args.p_sig, /^[0-9a-f]{64}$/);
@@ -184,7 +186,7 @@ test('a company link for the gym server price; sent twice = the same payment; th
   assert.equal(a.body.pay.how, 'link');
   assert.equal(a.body.pay.url, 'https://rzp.io/i/join');
   assert.equal(a.body.pay.amountP, 200000);
-  assert.equal(a.body.pay.testMode, true);
+  assert.equal(a.body.pay.testMode, false, 'payments are live: never a test payment for the public (R-555)');
   assert.equal(a.body.pay.status, 'open');
   assert.equal(state.made.amount, 200000, 'the price the gym server read, never one from the page');
   assert.equal(state.made.customer.contact, '9000081001', 'the number from the proof goes to the company only');
@@ -313,4 +315,59 @@ test('"Take payments in the member app" off: the app still shows what is owed, w
   // The desk's own link is not the member app: it still works.
   const deskLink = (await desk(e, n, '/api/pay/check', { key: DESK_KEY, id: made.body.request.id })).body.request;
   assert.equal(deskLink.url, 'https://rzp.io/i/join');
+}));
+
+// ------------------------------------------------------------------ R-555: the JOIN_PAY switch and live-only links
+
+test('JOIN_PAY off (the owner hold): pay at the desk, nothing asked, nothing made, no payment to check', quiet(async () => {
+  for (const flag of [undefined, '', 'off', 'on', 'LIVE', true]) {
+    const e = env({ JOIN_PAY: flag });
+    await connectRazorpay(e);
+    await setUpi(e);
+    const state = {};
+    const n = net(state);
+    const gs = gymServer();
+    const info = await jp(e, gs, n, '/api/self-join/pay-info', { code: 'QA0002' });
+    assert.equal(info.status, 200);
+    assert.deepEqual(info.body, { online: false }, String(flag));
+    assert.deepEqual(await offerForCode(e, gs.rpc, 'QA0002'), { online: false, why: 'OFF' });
+    assert.equal(gs.calls.filter((c) => c.fn === 'self_join_pay_gym').length, 0, 'the gym server is not asked');
+    // The form sent with "pay": "online" anyway: the request is kept, with no payment.
+    const sent = await join(e, gs, n);
+    assert.equal(sent.status, 201);
+    assert.equal(sent.body.ok, true);
+    assert.equal(sent.body.pay, undefined);
+    assert.equal(sent.body.payWhy, 'OFF');
+    assert.equal(state.made, undefined, 'no company link made');
+    assert.equal((await e.WEB.prepare('SELECT COUNT(*) AS n FROM pay_requests').first()).n, 0);
+    assert.deepEqual(await attachJoinPay(e, gs.rpc, { code: 'QA0002', enquiryId: SENT.enquiryId, totalP: 200000, planName: 'Monthly', proof: PROOF }, { f: n.f }), { why: 'OFF' });
+    for (const path of ['/api/self-join/pay-check', '/api/self-join/pay-said']) {
+      assert.equal((await jp(e, gs, n, path, { id: 'pr_0123456789abcdef0123' })).status, 404, path);
+    }
+    assert.equal(n.calls.length, 0, 'no outside call at all');
+  }
+}));
+
+test('JOIN_PAY live but payments in test mode: never a test company link for the public; a UPI ID still works', quiet(async () => {
+  const e = env({ PAY_LIVE: undefined });
+  await connectRazorpay(e, 'test');
+  const state = {};
+  const n = net(state);
+  const gs = gymServer();
+  assert.deepEqual((await jp(e, gs, n, '/api/self-join/pay-info', { code: 'QA0002' })).body, { online: false }, 'only a test-mode company: pay at the desk');
+  const noUpi = await join(e, gs, n);
+  assert.equal(noUpi.status, 201);
+  assert.equal(noUpi.body.payWhy, 'NO_ACCOUNT');
+  assert.equal(state.made, undefined);
+  await setUpi(e);
+  assert.deepEqual((await jp(e, gs, n, '/api/self-join/pay-info', { code: 'QA0002' })).body, { online: true, how: 'upi', testMode: false });
+  const upi = await join(e, gs, n);
+  assert.equal(upi.body.pay.how, 'upi');
+  assert.equal(upi.body.pay.url, null);
+  assert.equal(upi.body.pay.testMode, false);
+  assert.equal(state.made, undefined, 'the test company is never asked for a link');
+  // Live payments with a live connection: the company link (the tests above).
+  const live = env();
+  await connectRazorpay(live);
+  assert.deepEqual((await jp(live, gs, net(), '/api/self-join/pay-info', { code: 'QA0002' })).body, { online: true, how: 'link', testMode: false });
 }));

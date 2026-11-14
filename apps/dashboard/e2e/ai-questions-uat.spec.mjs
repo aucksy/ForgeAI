@@ -50,6 +50,16 @@ async function shots(page, name, fullPage = false) {
   await colours(page, 'dark');
 }
 
+/**
+ * R-555: the panel Worker's AI_CREDITS_CHARGE as GET /api/switches says it (`aiCharge`). Before openApp: the panel asks
+ * when it opens. With it off nothing is charged, so the screens say nothing about counted questions.
+ */
+async function aiCharge(page, on) {
+  await page.context().route('**/api/switches', (route) =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ gymPages: false, joinPay: false, aiCharge: on }) }),
+  );
+}
+
 const AI_FNS = ['owner_ai_wallet', 'owner_ai_task_save', 'owner_ai_spend', 'owner_ai_refund', 'owner_ai_tasks', 'owner_ai_status', 'owner_ai_questions', 'owner_alerts', 'owner_save_ai_member_rules'];
 
 /** 0071 (on) and 0078 (`ai.questions` false: PGRST202, like the live server today) on the pretend server. */
@@ -134,6 +144,7 @@ async function installHelp(page, sent, answer) {
 
 test('AI questions on the credits: as before until 0078, then the price, who asked, no-credit lines, help pages, the alert', async ({ page, browser }) => {
   test.setTimeout(180_000);
+  await aiCharge(page, true);
   const server = await openApp(page);
   const ai = installAi(server);
   const state = { noCredit: false };
@@ -242,6 +253,7 @@ test('AI questions on the credits: as before until 0078, then the price, who ask
 test('AI questions on the credits: the computer', async ({ page }) => {
   test.setTimeout(120_000);
   await page.setViewportSize({ width: 1280, height: 900 });
+  await aiCharge(page, true);
   const server = await openApp(page);
   const ai = installAi(server);
   ai.questions = true;
@@ -274,6 +286,7 @@ async function membersSection(credits) {
 
 test('R-531 phone: owner and staff ask free; members\' AI answers: the switch, the monthly limit, a wrong number, a failed save, the alert', async ({ page }) => {
   test.setTimeout(180_000);
+  await aiCharge(page, true);
   const server = await openApp(page);
   const ai = installAi(server);
   ai.questions = true;
@@ -369,6 +382,7 @@ test('R-531 phone: owner and staff ask free; members\' AI answers: the switch, t
 test('R-531 computer: the credits sheet with the members section', async ({ page }) => {
   test.setTimeout(120_000);
   await page.setViewportSize({ width: 1280, height: 900 });
+  await aiCharge(page, true);
   const server = await openApp(page);
   const ai = installAi(server);
   ai.questions = true;
@@ -390,4 +404,31 @@ test('R-531 computer: the credits sheet with the members section', async ({ page
   await expect(section.getByRole('status')).toHaveText('Saved.');
   expect(ai.saves.at(-1)).toEqual({ on: true, credits: 50 });
   await shots(page, 'b5-members-saved');
+});
+
+// R-555: AI_CREDITS_CHARGE off on the Worker: nothing is charged, so nothing about charging shows, even on a gym server
+// with 0078 and 0083 (the counts, "AI answers for members").
+test('R-555 phone: with charging off on the Worker, the credits sheet says questions are free and has no section for members', async ({ page }) => {
+  test.setTimeout(120_000);
+  await aiCharge(page, false);
+  const server = await openApp(page);
+  const ai = installAi(server);
+  ai.questions = true;
+  ai.b = true;
+  await installWorker(page, { noCredit: false });
+  await startOnlineGym(page);
+  await go(page, '/assistant');
+  const main = page.getByRole('main');
+  await expect(page.getByRole('heading', { level: 1, name: 'AI Assistant' })).toBeVisible();
+  await expect(main).toContainText('Asking is free. A task uses credits only when you send or save it.');
+  await main.getByRole('button', { name: /AI credits\. Open AI credits\./ }).first().tap();
+  const credits = page.getByRole('dialog', { name: 'AI credits' });
+  const uses = credits.getByRole('region', { name: 'What uses credits' });
+  await expect(uses).toContainText('Questions, voice, drafts');
+  await expect(uses).not.toContainText('AI answers for members');
+  await expect(credits.getByRole('region', { name: 'AI answers for members' })).toHaveCount(0);
+  await expect(credits.getByRole('region', { name: 'AI questions this month' })).toHaveCount(0);
+  await expect(credits).not.toContainText('Members can get AI answers');
+  await expectFitsPhone(page, 'on the credits sheet with charging off');
+  await shots(page, 'r555-credits-sheet-charging-off');
 });

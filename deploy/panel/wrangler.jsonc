@@ -65,7 +65,32 @@
   // "Verify with WhatsApp" (8 Nov 2026, phoneInbound.js): WHATSAPP_INBOUND_NUMBER = the business number people send
   // their code TO (digits, e.g. 91XXXXXXXXXX). EMPTY = off. Switch on only with the owner's yes, after D1
   // migrations/0013 is applied, the secret WHATSAPP_APP_SECRET is set and Meta's webhook gets the "messages" field.
-  "vars": { "WHATSAPP_INBOUND_NUMBER": "918690560741","LANDING": "live", "MOVE": "on", "WHATSAPP_PHONE_NUMBER_ID": "1410811765454726", "PHONE_CODE_DAILY_CAP": "200", "PHONE_CODES": "on", "WHATSAPP_HOOK_VERIFY": "mettleup-wa-hook-7nov" },
+  // R-555 (15 Nov 2026): SWITCHES CHANGE IN THIS FILE, NOT IN THE CLOUDFLARE DASHBOARD. There is no keep_vars, so every
+  // `wrangler deploy` replaces the Worker's plain vars with exactly this list: a var typed in the dashboard is wiped by
+  // the next deploy. Every switch is written here with its value, so this file is the one place that says what is on.
+  // Secrets (keys, tokens) are separate (`npx wrangler secret put`) and are never written here.
+  //   GYM_PAGES          "live" opens gym web pages (switches.js). Off.
+  //   JOIN_PAY           "live" offers pay online on the join page (joinPay.js). Off: owner's hold until the payment sweep passes.
+  //   PAY_LIVE           "on" = real money; anything else = test mode (pay.js payMode). Off.
+  //   PAY_OAUTH_RAZORPAY, PAY_OAUTH_CASHFREE  "on" shows "Connect <company>" (needs the partner secrets). Off.
+  //   AI_CREDITS_CHARGE  "on" takes members' AI answers from the gym's AI credits (questionCredits.js). On (owner's pick, R-555).
+  //   JOIN_HOST          "join.mettleup.fit" points invite and join links there (hosts.js); empty = app.mettleup.fit.
+  "vars": {
+    "WHATSAPP_INBOUND_NUMBER": "918690560741",
+    "LANDING": "live",
+    "MOVE": "on",
+    "WHATSAPP_PHONE_NUMBER_ID": "1410811765454726",
+    "PHONE_CODE_DAILY_CAP": "200",
+    "PHONE_CODES": "on",
+    "WHATSAPP_HOOK_VERIFY": "mettleup-wa-hook-7nov",
+    "GYM_PAGES": "off",
+    "JOIN_PAY": "off",
+    "PAY_LIVE": "off",
+    "PAY_OAUTH_RAZORPAY": "off",
+    "PAY_OAUTH_CASHFREE": "off",
+    "AI_CREDITS_CHARGE": "on",
+    "JOIN_HOST": ""
+  },
   // R-153 step 2: after the admin app sends a message or starts an offer, the proxy tells the HQ Worker
   // (deploy/hq/push.js) to send the phone pop-ups at once (proxy.js pushAfter). Without it they go
   // within a minute anyway (HQ's own Cron Trigger).

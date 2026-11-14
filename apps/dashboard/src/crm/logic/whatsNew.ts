@@ -52,6 +52,21 @@ export const ADMIN_NEWS: readonly AdminNewsEntry[] = [
         text: 'In the menu, pages now sit under five headings: Members, Money, Training, Reach members and Your gym. Your first steps moved from Today to a new page, "Set up your gym". A green ring shows how many are done.',
         go: { label: 'Open Set up your gym', path: '/setup' },
       },
+      {
+        // R-525: the Get started step that ticks itself from real saved timings.
+        text: '"Set up your gym" has a new step, "Set your gym timings". It ticks itself once you save your opening hours in Gym timings.',
+        go: { label: 'Open Gym timings', path: '/settings/timings' },
+      },
+      {
+        // R-513 Join online (0077 live). R-555: join payments are held (JOIN_PAY off), so nothing here about paying online.
+        text: 'New: people can ask to join your gym from their own phone, with no app. In Invite members, under "Join on your phone", send the join link on WhatsApp or download the poster. They pay at the desk.',
+        // No `feature` dot: e2e/newdots-uat.spec.mjs pins which 14 Nov features light (MAX_DOTS 3).
+        go: { label: 'Open Invite members', path: '/settings/invite' },
+      },
+      {
+        // R-555: "Make member", not Approve: Approve shows only for a join paid online, and join payments are held.
+        text: 'Each request shows on Today under "Joined online". When the person comes in and pays, tap "Make member". The Add member form opens with their details filled in.',
+      },
       // R-506/R-510 (moved from ADMIN_NEWS_PENDING at the deploy): 0075 + 0076 live, VAPID key set, HQ 558464b7.
       {
         text: 'New on Today: "Latest from your members". It shows when a member asks a question, sends a message or a complaint, orders from the shop, pays online or joins your gym. Tap a line to open it.',
@@ -61,6 +76,10 @@ export const ADMIN_NEWS: readonly AdminNewsEntry[] = [
         text: 'Needs you on Today now also counts member questions and member messages waiting for your reply. It goes down as soon as you reply. With alerts on, you hear a sound when a new one comes in.',
       },
       {
+        // R-539: the "Updated ... ago" line with Refresh on Enquiries and Needs you.
+        text: 'Enquiries and Needs you on Today now say when they were last updated, like "Updated 30 s ago". Tap Refresh to see the newest at once.',
+      },
+      {
         // R-506 phase 3 (0076): Web Push.
         text: 'New: alerts on your phone or computer even when the admin app is closed. Complaints, shop orders and members waiting at the check-in poster come at once. Turn them on, and pick when the rest come, in Settings.',
         go: { label: 'Open Settings', path: '/settings' },
@@ -68,11 +87,41 @@ export const ADMIN_NEWS: readonly AdminNewsEntry[] = [
       },
       {
         // Fresh eyes (14 Nov 2026): two places were called "Questions". R-533: named "Member questions" (the owner
-        // answers them too); members find it as "Ask about your workout" in their app.
-        text: 'The page where you answer members’ workout questions is now called "Member questions", in the menu. Members send them from "Ask about your workout" in their app. Feedback and complaints stay in Member messages.',
+        // answers them too, and the reply alerts the member's phone); members find it as "Ask about your workout".
+        text: 'Members’ workout questions are now in "Member questions", in the menu. Members send them from "Ask about your workout" in their app. You can answer them, and your reply reaches their phone at once.',
       },
       {
-        text: 'Member messages now opens on the right type when you tap a line on Today, and each type button says how many wait for a reply, like "Complaints · 1 waiting".',
+        // R-552 (0087 live): feedback goes to the owner and front desk only.
+        text: 'Member messages now opens on the right type when you tap a line on Today. Feedback there now reaches only you and the front desk, not trainers. Complaints still reach only you.',
+      },
+      {
+        // R-522 / F211 (0079 live): Owner, Staff, Trainer or Other when adding a person.
+        text: 'In Staff & sign-in, "Add a person" now asks for their job: Owner, Staff (front desk), Trainer or Other. For Other, type the job, like Manager. It shows next to their name.',
+        go: { label: 'Open Staff & sign-in', path: '/settings/people' },
+      },
+      {
+        // R-532: six ready-made diet plans; the food and notes boxes grow while typing.
+        text: '"Diet plans" now has six ready-made plans, veg and non-veg. Start from one and change what you like. The food and notes boxes now grow as you type, so you can read every line.',
+        go: { label: 'Open Diet plans', path: '/diet' },
+      },
+      {
+        // R-535 / R-537 (lines), R-551 (12 months since joining, 0084 live; the member app part waits for its release).
+        text: 'Training progress now shows each member’s progress as line charts. After members update their app, it can show up to 12 months of their workouts since they joined your gym.',
+        go: { label: 'Open Training progress', path: '/trainer' },
+      },
+      {
+        // R-539 / R-541 (0085 live): a friend form with a number the gym already has now reaches the panel.
+        text: 'When a member uses Bring a friend for someone already in your Enquiries, it now reaches you. That enquiry shows "Invited again by" and the member’s name.',
+      },
+      {
+        // R-547 (decision A): only Razorpay and Cashfree are offered.
+        text: 'In Settings, under Payments, the payment companies you can connect are now Razorpay and Cashfree.',
+      },
+      {
+        // R-531 + R-555: AI_CREDITS_CHARGE "on" with this deploy (owner's pick). The credits sheet shows the members'
+        // section only while the Worker charges (GET /api/switches aiCharge): take this line out if charging goes off.
+        text: 'Members’ AI answers in the MettleUp app now use your gym’s AI credits: 10 answers use 1 credit. Your and your staff’s questions stay free. To set a limit, tap your credits in the AI Assistant.',
+        go: { label: 'Open the AI Assistant', path: '/assistant' },
       },
       {
         // R-526: Get started has its own page now (the line above), so it is no longer named here.

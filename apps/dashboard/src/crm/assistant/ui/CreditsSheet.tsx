@@ -15,6 +15,7 @@
  */
 import { useEffect, useState } from 'react';
 
+import { checkPagesOpen } from '../../gympage/pagesOpen';
 import { t } from '../../lang/lang';
 import { navigate } from '../../ui/router';
 import { Button, CheckField, Sheet, TextField, color, font, space } from '../../ui/kit';
@@ -120,6 +121,8 @@ export function CreditsSheet({ wallet, onClose, plansOn, assistKey }: { wallet: 
   const [jobs, setJobs] = useState<Map<string, Line>>(new Map());
   useEffect(() => {
     void refreshAssistantWallet();
+    // R-555: ask the Worker's switches again too (AI_CREDITS_CHARGE decides whether the members' section shows).
+    void checkPagesOpen();
     let live = true;
     void aiTasks(assistKey, 30).then((rows) => {
       if (!live || !rows) return;
