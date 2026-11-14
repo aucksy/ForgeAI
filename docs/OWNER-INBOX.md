@@ -14,6 +14,7 @@ Page: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT (private to your account
 
 | # | Decision | My pick |
 |---|---|---|
+| 98 | AI questions: who pays from the gym's AI credits? | B: owner and staff free, members 10 answers = 1 credit |
 | 94 | iPhone and Apple Watch apps: restart now, or after Android is public on Play? | A: after Android is public |
 | 78 | Turn on the Starter and Pro split now? | A: not yet, until the first gym pays |
 
@@ -30,6 +31,7 @@ Done, built and "Not doing" items have no rating. The page sorts by these (Best 
 | Feature: Pop-ups both ways: gym news on members' phones, member actions on the admin app | High | Medium |
 | Feature: A free web page for each gym, set up during onboarding | High | High |
 | Feature: All AI questions paid from the gym's AI credits (about 20 questions = 1 credit) | Medium | Medium |
+| #98 | High | Low |
 | Feature: AI sales helper on the gym page | High | High |
 | Feature: Free trial when joining online | High | Medium |
 | Feature: Trainer and other jobs when adding a person | High | Low |
@@ -599,6 +601,20 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | F188 Big banner at the top of the Play listing | Idea | Parked (owner, 1 Nov: "add it to backlog for now"). Our 1024x500 banner picture is already on the listing; Play shows it at the top only when the listing has a YouTube video. | I make a 30-second video from the real app screens, for free. You watch it first. After your yes, it goes on YouTube as Unlisted (only people with the link see it) and its link goes in the listing, so the banner shows on top. Best done when the app goes public. |
 
 ---
+
+## 98. AI questions: who pays from the gym's AI credits? — 14 Nov 2026
+**Chat:** Mettle Up
+**Status:** WAITING FOR YOU
+**You asked (14 Nov):** Does "20 AI questions = 1 credit" make sense long term? Members and website visitors must never see credit details.
+
+**Members and visitors:** they never see credits. A member sees only "You have used today's 10 AI answers. AI answers come back tomorrow." or "AI answers are not on at your gym right now." Only the owner and staff see credits.
+
+**The maths (measured 12 Nov):** one AI answer costs us about ₹0.12. 20 answers cost about ₹2.40. One credit sells for ₹2.00 (₹999 pack) to ₹2.98 (₹149 pack). So at 20 = 1, the big pack loses about ₹0.40 per 20 answers. Saving the help pages between answers (caching) should bring the cost near ₹0.03 an answer, but that is not measured yet. A 200-member gym where each member asks 2 questions a week uses about 85 credits a month without the owner choosing it.
+
+**A:** As built: every question from anyone, 20 questions = 1 credit.
+**B (my pick):** The owner's and staff's own questions are free (a fair daily limit). Members' and visitors' AI answers use credits at 10 answers = 1 credit, so we never lose money. We move to 20 = 1 only after we measure the cost below ₹0.05 an answer. The owner gets a switch for members' AI answers and a monthly limit, so there is no surprise bill. The website line "Asking is free" stays true.
+
+**Now:** the credits database change is live (tests 47 of 47). Charging is OFF: the Worker charges nobody until it has the switch AI_CREDITS_CHARGE = "on" (commit 2c0ab1fb). I turn it on only after your pick is built.
 
 ## 97. A free web page for each gym (decided), and an AI sales helper (research) — 14 Nov 2026
 **Chat:** Mettle Up
