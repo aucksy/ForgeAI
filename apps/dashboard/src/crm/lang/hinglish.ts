@@ -261,6 +261,10 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   'Members scan it at the desk to check themselves in.': 'Members desk par ise scan karke khud check-in karte hain.',
   'Send members the app link': 'Members ko app ka link bhejo',
   'This ticks itself when your first member joins in the app.': 'Pehla member app mein judte hi yeh khud tick ho jayega.',
+  // R-523: hidden until the gym web page is live (getStarted.ts webPage).
+  'Make your free gym web page': 'Apna free gym web page banao',
+  'People who may join can see your fees, timings and photos, and send you a question.':
+    'Join karne wale log aapki fees, timings aur photos dekh sakte hain, aur aapko sawaal bhej sakte hain.',
   done: 'ho gaya',
   Open: 'Kholo',
   'Mark “{step}” as done': '“{step}” par tick karo',

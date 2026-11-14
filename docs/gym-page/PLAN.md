@@ -55,6 +55,12 @@ JavaScript; the one small script adds the shutter roll-up, the bottom bar on pho
 (off by default), the page link with Copy and Share on WhatsApp, "See my page", a "Taken down by MettleUp" banner with
 HQ's note when hidden, and later the AI helper switch (section 7). Owners only can save; staff can see the link.
 
+**C2. Get started on Today** (R-523, built, hidden): step "Make your free gym web page", hint "People who may join
+can see your fees, timings and photos, and send you a question." Opens Settings -> Your web page, ticks itself when
+the page is published. It appears only when the admin app passes the page's state (getStarted.ts `webPage`), which it
+does not yet: there is no set-up screen and no live database part, so a visible step would open nothing and never
+tick. The hint names the AI helper only once that helper is live (a test checks it does not now).
+
 **D. Enquiries** (small change, not built): a question from the page shows as "Asked on your web page" with the
 question, like Joined online rows do. Until the admin app learns it, the enquiry's "interest" line carries the
 question, so older admin apps still show it.

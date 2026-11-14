@@ -38,4 +38,17 @@ describe('Get started (I5)', () => {
   it('UAT 1 Nov 2026: every hint is a whole sentence', () => {
     for (const s of getStartedSteps({ plans: [], members: [] }, new Set())) expect(s.hint).toMatch(/^[A-Z].*\.$/);
   });
+
+  it('R-523: the web page step is hidden until the page is live, then ticks itself when published', () => {
+    expect(getStartedSteps({ plans: [], members: [] }, new Set()).some((s) => s.key === 'webpage')).toBe(false);
+    const off = getStartedSteps({ plans: [], members: [] }, new Set(['webpage']), { published: false });
+    const step = off.find((s) => s.key === 'webpage')!;
+    expect(step).toMatchObject({ done: false, manual: false, path: '/settings/web-page', title: 'Make your free gym web page' });
+    expect(step.hint).toMatch(/^[A-Z].*\.$/);
+    // Never promise the AI helper for visitors while it is not live (F208).
+    expect(step.hint).not.toMatch(/\bAI\b/);
+    expect(stepsLine(off)).toBe('0 of 7 done');
+    const on = getStartedSteps({ plans: [], members: [] }, new Set(), { published: true });
+    expect(on.find((s) => s.key === 'webpage')!.done).toBe(true);
+  });
 });

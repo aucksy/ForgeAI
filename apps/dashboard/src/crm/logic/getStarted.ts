@@ -11,7 +11,7 @@
  */
 import type { CrmSnapshot } from '../data/adapter';
 
-export type StepKey = 'plans' | 'members' | 'brand' | 'staff' | 'poster' | 'app';
+export type StepKey = 'plans' | 'members' | 'brand' | 'staff' | 'poster' | 'app' | 'webpage';
 
 export interface Step {
   key: StepKey;
@@ -23,8 +23,25 @@ export interface Step {
   manual: boolean;
 }
 
-export function getStartedSteps(s: Pick<CrmSnapshot, 'plans' | 'members'>, ticked: ReadonlySet<StepKey>): Step[] {
+/**
+ * R-523 (owner, 14 Nov 2026): "Make your free gym web page" (F207). HIDDEN until the gym page is live: pass
+ * `webPage` only once the gym server has the page (docs/gym-page/PLAN.md) and the set-up screen exists; until then
+ * the step is not in the list at all (never a step that opens nothing or can never tick). It ticks itself when the
+ * page is published. Its hint must not mention the AI helper for visitors until that helper is live (F208).
+ */
+export interface WebPageState {
+  published: boolean;
+}
+
+export function getStartedSteps(
+  s: Pick<CrmSnapshot, 'plans' | 'members'>,
+  ticked: ReadonlySet<StepKey>,
+  webPage: WebPageState | null = null,
+): Step[] {
   const active = s.members.filter((m) => !m.archived);
+  const page: Step[] = webPage
+    ? [{ key: 'webpage', title: 'Make your free gym web page', hint: 'People who may join can see your fees, timings and photos, and send you a question.', path: '/settings/web-page', done: webPage.published, manual: false }]
+    : [];
   return [
     { key: 'plans', title: 'Add your plans', hint: 'Set the price of each plan and the joining fee.', path: '/plans', done: s.plans.some((p) => p.active), manual: false },
     { key: 'members', title: 'Bring in your members', hint: 'Add them one by one, or bring in an Excel list, like one saved from your old gym software.', path: '/members', done: active.length > 0, manual: false },
@@ -33,6 +50,7 @@ export function getStartedSteps(s: Pick<CrmSnapshot, 'plans' | 'members'>, ticke
     { key: 'staff', title: 'Add your desk staff', hint: 'They sign in with their own mobile number and a code.', path: '/settings/people', done: ticked.has('staff'), manual: true },
     { key: 'poster', title: 'Print the check-in poster', hint: 'Members scan it at the desk to check themselves in.', path: '/attendance/qr', done: ticked.has('poster'), manual: true },
     { key: 'app', title: 'Send members the app link', hint: 'This ticks itself when your first member joins in the app.', path: '/settings/invite', done: active.some((m) => Boolean(m.appUserId)), manual: false },
+    ...page,
   ];
 }
 
