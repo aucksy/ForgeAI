@@ -7,6 +7,14 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-523. Get started list: "Add your staff or trainers"; add a "free web page" step later — 14 Nov 2026
+He said (14 Nov 2026): "The get started section on the admin panel has an item called add your desk staff. That need to
+change to something like add your staff or trainers. And then once we are done building the web page functionality, we
+can add deadstep here as well. Something like build your free web page and enable AI assistant for potential customers
+or something like that."
+("deadstep" = "that step".) Plan: rename now with the Trainer/Other work (R-522). Add the web page step only when the gym
+page (F207) is live; the AI helper part only when the page AI (F208) is live (never promise what is not live).
+
 ## R-522. Add-person pop-up: add "Trainer" and "Other (type it)"; plus the 13,806 Cloudflare question — 14 Nov 2026
 He said (14 Nov 2026): "when the gym owner or the admin user is trying to add a new person either a staff or a trainer so
 when the pop-up comes where you add the name and the number uh there's a drop down list which only has two options really
