@@ -550,6 +550,17 @@ function FieldLabel({ children, htmlFor }: { children: ReactNode; htmlFor: strin
   );
 }
 
+/** The tallest an autoGrow box gets before it scrolls inside: about 26 lines, so only a very long note scrolls. */
+export const AUTO_GROW_MAX_PX = 600;
+
+/** Sets a textarea's height to show all its lines (box-sizing is border-box, so the 1 px borders are added). */
+function fitToLines(el: HTMLTextAreaElement) {
+  el.style.height = 'auto';
+  const full = el.scrollHeight + el.offsetHeight - el.clientHeight;
+  el.style.height = `${Math.min(full, AUTO_GROW_MAX_PX)}px`;
+  el.style.overflowY = full > AUTO_GROW_MAX_PX ? 'auto' : 'hidden';
+}
+
 export function TextField({
   label,
   value,
@@ -562,6 +573,7 @@ export function TextField({
   autoFocus,
   inputMode,
   multiline,
+  autoGrow,
 }: {
   label: string;
   value: string;
@@ -574,9 +586,28 @@ export function TextField({
   autoFocus?: boolean;
   inputMode?: 'text' | 'numeric' | 'tel' | 'decimal' | 'email';
   multiline?: boolean;
+  /** Multiline only: the box grows to show every line (on load and while typing) up to AUTO_GROW_MAX_PX, then scrolls. */
+  autoGrow?: boolean;
 }) {
   const id = useId();
   const noteId = `${id}-note`;
+  const areaRef = useRef<HTMLTextAreaElement>(null);
+  const grow = Boolean(multiline && autoGrow);
+  useLayoutEffect(() => {
+    const el = areaRef.current;
+    if (!grow || !el) return;
+    fitToLines(el);
+    if (typeof ResizeObserver === 'undefined') return;
+    // A wider or narrower box wraps differently (phone turned, sheet opened), so fit again when the width changes.
+    let width = el.clientWidth;
+    const watch = new ResizeObserver(() => {
+      if (el.clientWidth === width) return;
+      width = el.clientWidth;
+      fitToLines(el);
+    });
+    watch.observe(el);
+    return () => watch.disconnect();
+  }, [grow, value]);
   const invalid = Boolean(error);
   const border = invalid ? color.critical : color.borderStrong;
   // Without this the error text is an unassociated div: `aria-invalid` announces
@@ -613,9 +644,10 @@ export function TextField({
             onChange={(e) => onChange(e.target.value)}
             placeholder={placeholder}
             rows={3}
+            ref={areaRef}
             aria-invalid={invalid}
             aria-describedby={describedBy}
-            style={{ ...fieldShell, border: `1px solid ${border}`, resize: 'vertical', minHeight: 80 }}
+            style={{ ...fieldShell, border: `1px solid ${border}`, resize: grow ? 'none' : 'vertical', minHeight: 80 }}
           />
         ) : (
           <input

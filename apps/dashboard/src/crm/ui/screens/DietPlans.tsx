@@ -469,7 +469,7 @@ function DietPlanSheet({
               <TextField label="Meal" value={m.name} onChange={(v) => setMeal(i, { name: v })} placeholder="Breakfast" />
               <TextField label="Time (optional)" value={m.time} onChange={(v) => setMeal(i, { time: v })} placeholder="8:00 am" />
             </div>
-            <TextField label="Food, one per line" value={m.itemsText} onChange={(v) => setMeal(i, { itemsText: v })} placeholder={'2 roti\n1 bowl dal\n1 bowl sabzi'} multiline />
+            <TextField label="Food, one per line" value={m.itemsText} onChange={(v) => setMeal(i, { itemsText: v })} placeholder={'2 roti\n1 bowl dal\n1 bowl sabzi'} multiline autoGrow />
             <div style={{ marginTop: space.xs }}>
               <Button variant="quiet" tone="danger" ariaLabel={`Remove meal ${m.name.trim() || i + 1}`} disabled={draft.meals.length <= 1} onClick={() => set({ meals: draft.meals.filter((_, j) => j !== i) })}>
                 Remove this meal
@@ -479,7 +479,7 @@ function DietPlanSheet({
         ))}
       </div>
 
-      <TextField label="Notes for the member (optional)" value={draft.notes} onChange={(v) => set({ notes: v })} placeholder={`Drink 3 litres of water a day. ${DOCTOR_LINE}`} multiline />
+      <TextField label="Notes for the member (optional)" value={draft.notes} onChange={(v) => set({ notes: v })} placeholder={`Drink 3 litres of water a day. ${DOCTOR_LINE}`} multiline autoGrow />
       {!draft.notes.includes(DOCTOR_LINE) && (
         <div style={{ marginTop: space.xs }}>
           <Button variant="quiet" onClick={() => set({ notes: `${draft.notes.trim()} ${DOCTOR_LINE}`.trim() })}>

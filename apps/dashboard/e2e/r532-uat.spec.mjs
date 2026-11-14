@@ -74,12 +74,27 @@ async function openPlan(page, device, title, n, { kcal, protein, food, line }) {
   if (food === 'veg') expect(foods).not.toMatch(/\b(eggs?|chicken|fish|omelette)\b/i);
   else expect(foods).toMatch(/\b(eggs?|chicken|fish)\b/i);
   if (device === 'phone') await expectFitsPhone(page, `in ${title}`);
+  // Every food box and the notes box shows all its lines: nothing hidden under the box's own scroll (R-532 follow-up).
+  const hidden = await b.locator('textarea').evaluateAll((els) =>
+    // A box may scroll inside only once it reaches the 600 px most (about 26 lines).
+    els.filter((e) => e.scrollHeight > e.clientHeight + 1 && e.offsetHeight < 600).map((e) => `${e.id}: ${e.scrollHeight} > ${e.clientHeight}`),
+  );
+  console.log(`[r532] ${title}: box heights ${await b.locator('textarea').evaluateAll((els) => els.map((e) => e.offsetHeight).join(', '))}`);
+  expect(hidden, `boxes in ${title} that hide lines`).toEqual([]);
   await shot(page, `${device}-${n}-${food}-top`);
   await b.getByLabel('Food, one per line').nth(2).scrollIntoViewIfNeeded();
   await shot(page, `${device}-${n}-${food}-meals`);
   await notes.scrollIntoViewIfNeeded();
   await shot(page, `${device}-${n}-${food}-notes`);
   console.log(`[r532] ${title}: ${(await notes.inputValue()).length} letters of notes`);
+  // Typing another line makes the box taller straight away, so the new line is not hidden either.
+  const box = b.getByLabel('Food, one per line').first();
+  const before = await box.evaluate((e) => e.clientHeight);
+  await box.press('End');
+  await box.evaluate((e) => e.setSelectionRange(e.value.length, e.value.length));
+  await box.pressSequentially('\n1 cup green tea, no sugar');
+  await expect.poll(() => box.evaluate((e) => e.clientHeight)).toBeGreaterThan(before);
+  expect(await box.evaluate((e) => e.scrollHeight <= e.clientHeight + 1)).toBe(true);
   await press(b.getByRole('button', { name: 'Cancel' }), device);
   await expect(b).toBeHidden();
 }
