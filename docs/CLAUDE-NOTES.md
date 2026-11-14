@@ -7,6 +7,13 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-550 (14 Nov 2026) 12-month training history: since joining; words and 0084 approved; 0084 APPLIED LIVE
+- Owner, verbatim: "since joining" / "Yes to the 12-month words" / "yes to the 12-month database change".
+- A gym sees only workouts SINCE THE MEMBER JOINED THIS GYM, up to the last 12 months (never an earlier gym's).
+- Approved caption under "Share my workouts with my trainers" (member app Settings): "Your phone sends your gym your workouts since you joined, up to the last 12 months. For each workout, it sends the day, the workout's name, and, for each exercise, your heaviest set and how many sets you did. Your gym and your trainers see this as charts, to check that you are getting stronger. They never see your body weight, photos or notes. If you switch this off or leave the gym, the gym deletes it at once."
+- 0084 applied live at ddbcc86b: Success; live tests 0084 PASS 22, 0053 PASS 68.
+- Next: phone switched to 12 months + since-joining filter + the caption, in one change; waits for "release". Fold the Training progress rule text behind "How is this worked out?".
+
 ## R-550 (14 Nov 2026) Payments review round 3: seven fixes, on main, payments still in test mode
 - Asked (via the payment review): fix the seven findings of a fresh-eyes review of the gym payment server and the admin app's payment parts, each with a test that fails on the old code.
 - Done: one write for "seen" + "paid" (D1 batch); each link watched until its own expiry + 1 day; the 10-minute check takes turns (asked longest ago first) and stops before 40 company calls (Cloudflare free plan: 50 per run), same for Today and disconnect; new keys of another account settle the old account's links with the old keys (kept sealed, off); the desk's cash/QR save and a shop order's "Collected (paid)" close open links first (/api/pay/settle), and a changed amount closes the old link; only the owner's key saves the UPI ID; Razorpay refunds read from the payment (amount_refunded, refund_status), any refund stops Approve. No migration. Matrix rows 60-71, bugs R3-1 to R3-7 in docs/payments/TEST-MATRIX.md.

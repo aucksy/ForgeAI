@@ -1,4 +1,4 @@
--- NOT LIVE — needs the owner's yes ("No LIVE database changes without my yes"). Re-runnable. Apply after 0053.
+-- APPLIED LIVE 14 Nov 2026 (owner: "yes to the 12-month database change"); live tests 0084 PASS 22, 0053 PASS 68. Re-runnable. Apply after 0053.
 -- Test: supabase/tests/0084_progress_year.sql (CI runs it after every migration; pasted into the SQL Editor it always
 -- ends in an error and so changes nothing). Plan and numbers: docs/progress/SINCE-JOINING.md.
 --
