@@ -67,8 +67,9 @@ test('J-DEMO the demo link opens the made-up gym, never the signed-in one, and l
   // Things the screens remember on a device (a "Get started" tick) are remembered in the page only.
   // R-526: the steps are on Set up your gym (More on a phone), no longer on Today.
   await open(page, 'Set up your gym');
-  await page.getByRole('button', { name: 'Mark “Add your staff and trainers” as done' }).tap();
-  await expect(page.getByText('4 of 7 done')).toBeVisible();
+  // R-540: the sample gym has its staff and timings, so it starts at 5 of 7; the poster is one a visitor can tick.
+  await page.getByRole('button', { name: 'Mark “Print the check-in poster” as done' }).tap();
+  await expect(page.getByText('6 of 7 done')).toBeVisible();
 
   // Used like the real app: members are there, a member can be added.
   await addMember(page, { name: 'Demo Visitor', phone: '98290 11111' });

@@ -125,7 +125,7 @@ test.describe('the sales demo, as the owner', () => {
     // One number per thing on every screen (coordinator, 14 Nov 2026): Today's active members are Your growth's
     // "so far", and the Set up your gym mark is the same before and after the pages that used to tick it.
     const main = page.getByRole('main');
-    const mark = async () => (await page.locator('nav [data-setup-mark] [aria-hidden]').first().textContent())?.trim();
+    const mark = async () => (await page.locator('nav [data-setup-mark] > span[aria-hidden]').first().textContent())?.trim();
     const markOnToday = await mark();
     // Each tile on its own: the whole page's text runs one tile's last figure into the next one's number.
     const tileText = async (label) => ((await main.getByRole('button').filter({ hasText: label }).first().textContent()) ?? '').trim();
