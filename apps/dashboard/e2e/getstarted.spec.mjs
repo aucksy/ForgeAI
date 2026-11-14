@@ -6,12 +6,12 @@ import { addPlan, freshGym, open } from './support.mjs';
 test('J32 Get started: ticks itself, takes a hand tick, hides for good', async ({ page }) => {
   await freshGym(page);
   await open(page, 'Today');
-  await expect(page.getByText('0 of 6 done')).toBeVisible();
+  await expect(page.getByText('0 of 7 done')).toBeVisible();
   await addPlan(page, { name: 'Monthly', price: '1500' });
   await open(page, 'Today');
-  await expect(page.getByText('1 of 6 done')).toBeVisible();
+  await expect(page.getByText('1 of 7 done')).toBeVisible();
   await page.getByRole('button', { name: 'Mark “Add your desk staff” as done' }).tap();
-  await expect(page.getByText('2 of 6 done')).toBeVisible();
+  await expect(page.getByText('2 of 7 done')).toBeVisible();
   await expect(page.getByRole('button', { name: 'Add your plans (done). Open' })).toBeVisible();
   await page.getByRole('button', { name: 'Bring in your members. Open' }).tap();
   // UAT 1 Nov 2026: Members (Add member and Import side by side), not the import screen alone.

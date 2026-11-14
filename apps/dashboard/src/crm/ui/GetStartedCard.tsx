@@ -1,5 +1,5 @@
 /**
- * Today → "Get started" (launch plan I5): a new gym's first six steps (logic/getStarted.ts). The
+ * Today → "Get started" (launch plan I5): a new gym's first steps (logic/getStarted.ts). The
  * owner only; gone when every step is done or when hidden. The hand-ticked steps and "hidden"
  * are kept in this browser per gym (a convenience: losing them only shows the card again).
  */

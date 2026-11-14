@@ -62,7 +62,7 @@ describe('2. Next step from a Get started screen', () => {
   });
 
   it('nothing next when every other step is done', () => {
-    expect(nextStepAfter(steps(['brand', 'staff', 'poster'], true, true), 'app')).toBeNull();
+    expect(nextStepAfter(steps(['brand', 'staff', 'timings', 'poster'], true, true), 'app')).toBeNull();
   });
 });
 

@@ -11,7 +11,7 @@
  */
 import type { CrmSnapshot } from '../data/adapter';
 
-export type StepKey = 'plans' | 'members' | 'brand' | 'staff' | 'poster' | 'app' | 'webpage';
+export type StepKey = 'plans' | 'members' | 'brand' | 'staff' | 'timings' | 'webpage' | 'poster' | 'app';
 
 export interface Step {
   key: StepKey;
@@ -42,15 +42,21 @@ export function getStartedSteps(
   const page: Step[] = webPage
     ? [{ key: 'webpage', title: 'Make your free gym web page', hint: 'People who may join can see your fees, timings and photos, and send you a question.', path: '/settings/web-page', done: webPage.published, manual: false }]
     : [];
+  // R-525: the hints say the web page shows plans and timings only once that page is live (webPage passed).
+  const plansHint = webPage ? 'Set the price of each plan and the joining fee. Your web page shows them too.' : 'Set the price of each plan and the joining fee.';
+  const timingsHint = webPage ? 'Members see when you are open in their app, and your web page shows it too.' : 'Members see when you are open in their app.';
   return [
-    { key: 'plans', title: 'Add your plans', hint: 'Set the price of each plan and the joining fee.', path: '/plans', done: s.plans.some((p) => p.active), manual: false },
+    { key: 'plans', title: 'Add your plans', hint: plansHint, path: '/plans', done: s.plans.some((p) => p.active), manual: false },
     { key: 'members', title: 'Bring in your members', hint: 'Add them one by one, or bring in an Excel list, like one saved from your old gym software.', path: '/members', done: active.length > 0, manual: false },
     // R-190 (owner, 30 Oct 2026): before the app link, so members first see the gym's own look.
     { key: 'brand', title: 'Add your logo and colours', hint: 'Members see your logo and colours in their app.', path: '/settings/branding', done: ticked.has('brand'), manual: true },
     { key: 'staff', title: 'Add your desk staff', hint: 'They sign in with their own mobile number and a code.', path: '/settings/people', done: ticked.has('staff'), manual: true },
+    // R-525 (owner, 14 Nov 2026): the gym page needs plans AND timings, so timings sit just before it. Ticks itself when
+    // the Gym timings screen reads or saves the gym's real timings (it cannot be ticked by hand).
+    { key: 'timings', title: 'Set your gym timings', hint: timingsHint, path: '/settings/timings', done: ticked.has('timings'), manual: false },
+    ...page,
     { key: 'poster', title: 'Print the check-in poster', hint: 'Members scan it at the desk to check themselves in.', path: '/attendance/qr', done: ticked.has('poster'), manual: true },
     { key: 'app', title: 'Send members the app link', hint: 'This ticks itself when your first member joins in the app.', path: '/settings/invite', done: active.some((m) => Boolean(m.appUserId)), manual: false },
-    ...page,
   ];
 }
 

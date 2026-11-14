@@ -8,8 +8,8 @@ const m = (archived = false, appUserId: string | null = null) => ({ archived, ap
 describe('Get started (I5)', () => {
   it('an empty gym: nothing done, in the order an owner needs', () => {
     const steps = getStartedSteps({ plans: [], members: [] }, new Set());
-    expect(steps.map((s) => s.key)).toEqual(['plans', 'members', 'brand', 'staff', 'poster', 'app']);
-    expect(stepsLine(steps)).toBe('0 of 6 done');
+    expect(steps.map((s) => s.key)).toEqual(['plans', 'members', 'brand', 'staff', 'timings', 'poster', 'app']);
+    expect(stepsLine(steps)).toBe('0 of 7 done');
   });
 
   it('plans, members and the app tick from the records; staff and poster only when ticked', () => {
@@ -24,7 +24,7 @@ describe('Get started (I5)', () => {
 
   it('a stopped plan or an archived member does not count', () => {
     const steps = getStartedSteps({ plans: [{ active: false } as never], members: [m(true, 'u1')] }, new Set());
-    expect(stepsLine(steps)).toBe('0 of 6 done');
+    expect(stepsLine(steps)).toBe('0 of 7 done');
   });
 
   it('UAT 1 Nov 2026: members opens Members, the poster step opens the CHECK-IN poster, not the join poster', () => {
@@ -47,8 +47,19 @@ describe('Get started (I5)', () => {
     expect(step.hint).toMatch(/^[A-Z].*\.$/);
     // Never promise the AI helper for visitors while it is not live (F208).
     expect(step.hint).not.toMatch(/\bAI\b/);
-    expect(stepsLine(off)).toBe('0 of 7 done');
+    expect(stepsLine(off)).toBe('0 of 8 done');
+    // Plans and timings come just before the web page step, and their hints say the page shows them.
+    expect(off.map((s) => s.key)).toEqual(['plans', 'members', 'brand', 'staff', 'timings', 'webpage', 'poster', 'app']);
+    expect(off.find((s) => s.key === 'plans')!.hint).toMatch(/web page/);
+    expect(off.find((s) => s.key === 'timings')!.hint).toMatch(/web page/);
     const on = getStartedSteps({ plans: [], members: [] }, new Set(), { published: true });
     expect(on.find((s) => s.key === 'webpage')!.done).toBe(true);
+  });
+
+  it('R-525: gym timings ticks itself (never by hand), opens Gym timings; no hint names the web page while it is hidden', () => {
+    const steps = getStartedSteps({ plans: [], members: [] }, new Set());
+    expect(steps.find((s) => s.key === 'timings')).toMatchObject({ done: false, manual: false, path: '/settings/timings', title: 'Set your gym timings' });
+    expect(getStartedSteps({ plans: [], members: [] }, new Set(['timings'])).find((s) => s.key === 'timings')!.done).toBe(true);
+    for (const s of steps) expect(s.hint).not.toMatch(/web page/);
   });
 });

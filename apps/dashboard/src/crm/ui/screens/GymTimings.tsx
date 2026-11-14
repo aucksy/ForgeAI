@@ -55,6 +55,8 @@ import * as timingsApi from '../../shop/timingsApi';
 import { errorWords } from '../../shop/logic';
 import { Button, Card, ChipToggle, EmptyState, ErrorBanner, PageHeader, SectionTitle, Sheet, TextField, Toast, color, font, radius, space } from '../kit';
 import { navigate } from '../router';
+import { tickGetStarted } from '../GetStartedCard';
+import { useCrm } from '../../store';
 import { ChoiceRow } from './WorkoutPlans';
 
 type Load = { state: 'loading' } | { state: 'missing' } | { state: 'error'; message: string } | { state: 'ready'; saved: TimingsAnswer };
@@ -80,18 +82,28 @@ export function GymTimingsScreen() {
   const { multi, branches, currentGymId } = useBranches();
   const branchName = multi ? branches.find((b) => b.gymId === currentGymId)?.name ?? null : null;
   const [load, setLoad] = useState<Load>({ state: 'loading' });
+  // R-525: Get started's "Set your gym timings" ticks itself once real saved timings are seen here.
+  const gymId = useCrm().snapshot.gym.gymId;
+  const seen = useCallback(
+    (saved: TimingsAnswer) => {
+      if (saved.hours) tickGetStarted(gymId, 'timings');
+    },
+    [gymId],
+  );
 
   const fetchTimings = useCallback(async () => {
     if (!key) return;
     setLoad({ state: 'loading' });
     try {
-      setLoad({ state: 'ready', saved: await timingsApi.getTimings(key) });
+      const saved = await timingsApi.getTimings(key);
+      seen(saved);
+      setLoad({ state: 'ready', saved });
     } catch (e) {
       if (isNoSuchFunction(e)) return setLoad({ state: 'missing' });
       console.warn('[ForgeErr] gym timings: reading', e);
       setLoad({ state: 'error', message: failWords(e) });
     }
-  }, [key]);
+  }, [key, seen]);
 
   useEffect(() => {
     void fetchTimings();
@@ -126,7 +138,10 @@ export function GymTimingsScreen() {
       ) : load.state === 'loading' ? (
         <p style={quiet}>Loading…</p>
       ) : load.saved.canEdit ? (
-        <TimingsEditor ownerKey={key} saved={load.saved} onSaved={(saved) => setLoad({ state: 'ready', saved })} />
+        <TimingsEditor ownerKey={key} saved={load.saved} onSaved={(saved) => {
+            seen(saved);
+            setLoad({ state: 'ready', saved });
+          }} />
       ) : (
         <TimingsReadOnly saved={load.saved} />
       )}
