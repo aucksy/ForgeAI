@@ -7,6 +7,12 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-524. Paid trial on online sign-up: B, a small trial fee counted toward the plan — 14 Nov 2026
+He said (14 Nov 2026): "B: a small trial fee that counts toward the plan" (decision #97). So F210: the owner can switch a
+trial on or off, set its days (for example 3 or 7) and choose free or a small fee (example Rs 199); the fee is taken off
+the plan if the person joins. No "pay first, refund" option. Money goes to the gym's own payment account; payments stay
+in test mode until he says "payments live".
+
 ## R-523. Get started list: "Add your staff or trainers"; add a "free web page" step later — 14 Nov 2026
 He said (14 Nov 2026): "The get started section on the admin panel has an item called add your desk staff. That need to
 change to something like add your staff or trainers. And then once we are done building the web page functionality, we

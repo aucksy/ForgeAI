@@ -16,7 +16,6 @@ Page: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT (private to your account
 |---|---|---|
 | 94 | iPhone and Apple Watch apps: restart now, or after Android is public on Play? | A: after Android is public |
 | 78 | Turn on the Starter and Pro split now? | A: not yet, until the first gym pays |
-| 97 | A paid trial when joining online: refund if they stop, or a small trial fee? | B: a small trial fee, counted toward the plan |
 
 ---
 
@@ -557,7 +556,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | F206 Ask a trainer: members with a paid plan only | Live | Your request, 14 Nov (R-505). Live 14 Nov (server check 0074; live test passed). | A member with a paid plan sees "Ask a trainer" on the Gym tab. A pass member (for example FITPASS) does not see it, and the server also refuses their question. |
 | F207 A free web page for each gym, set up during onboarding | Planned | You decided (14 Nov, R-519, #97): free for every gym, only on our own domain, with controls and disclaimers; the owner fills it in while setting up the gym. A gym's own domain is not part of the software. Being planned and built now. | Each gym gets a ready-made, good-looking page on our domain. The owner only adds timings, a short "about", a few photos; plans and prices come from the system. Visitors can join from the page (F204) or send a question, which lands in the admin panel under Enquiries. The gym can share the link on WhatsApp and Google Maps. |
 | F208 AI sales helper on the gym page | Idea | Your idea, 14 Nov (R-520, #97): an AI on the gym page that talks to visitors, tries to turn them into members, and gives an offer when they try to leave. On hold until the research is done. You added (14 Nov): the owner can switch it on or off; on by default. | The AI answers only from the gym's own facts and offers only what the owner set. Each chat uses the gym's AI credits. Research is running: who already does this, the cost per chat, and the Indian rules on pressure selling. |
-| F210 Free trial when joining online | Planned | You asked (14 Nov, R-521, #97): the owner switches a trial on or off for online sign-ups and sets its length (for example 3 or 7 days). Built after the gym page. | A visitor picks "Try free for 7 days" on the gym's page or join link. The gym sees the trial in Today and can turn the person into a member when it ends. A "pay first, refund if they stop" trial waits for your pick (#97). |
+| F210 Free trial when joining online | Planned | You asked (14 Nov, R-521, #97): the owner switches a trial on or off for online sign-ups and sets its length (for example 3 or 7 days). Built after the gym page. | A visitor picks "Try free for 7 days" on the gym's page or join link. The gym sees the trial in Today and can turn the person into a member when it ends. The owner can also ask a small trial fee instead of free (your pick B, 14 Nov); the fee is taken off the plan if the person joins. |
 | F211 Trainer and other jobs when adding a person | Building | You asked (14 Nov, R-522): the "add a person" pop-up only offers Owner or Staff. Now it also offers Trainer, and Other where the owner types the job. | A trainer gets the trainer view but never owner powers. The job shows next to each person's name. If a database change is needed, it waits for your yes. |
 | F209 All AI questions paid from the gym's AI credits (about 20 questions = 1 credit) | Planned | You decided (14 Nov, R-519, #97): questions from members in the app, from the owner and staff in the admin app, and later from visitors on the gym page all use the gym's credits. | About 20 questions use 1 credit. Each person has a daily limit, so nobody can empty the gym's credits. When credits run out, members still see the matching help pages (no AI), never an error, and the owner gets a "credits low" alert. Before this goes live, a cheaper way of sending the AI the same help pages each time cuts our cost, so 20 questions stay well below the price of 1 credit. |
 
@@ -653,9 +652,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 - Free trial: yes, a good idea (F210). Most gyms already give a free day or a free week, and it brings people through the door.
 - "Pay first, refund if they stop": my view is no. Refunds cost the gym the payment fee (about 2%, which is not returned), each refund is work and can go wrong, and India's 2023 rules against tricky selling look hard at trials that take money first. A small trial fee does the same job more simply: it keeps out people who are not serious, and nothing needs a refund.
 
-**Decide:** A paid trial when joining online: refund if they stop, or a small trial fee?
-- A: Pay the full plan first, refund if they stop
-- B: A small trial fee (for example Rs 199 for 7 days), counted toward the plan if they join (recommended)
+**You picked (14 Nov): B.** A small trial fee (for example Rs 199 for 7 days), taken off the plan if they join. No "pay first, refund" option. Built as part of F210.
 
 ## 96. Do testers still get updates, and should we open a public beta? — 14 Nov 2026
 **Chat:** Mettle Up
