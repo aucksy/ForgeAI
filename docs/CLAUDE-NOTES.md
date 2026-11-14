@@ -7,6 +7,21 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-539. Bring a friend test: admin splash flashed, nothing reached the panel; new things must show at once — 14 Nov 2026
+He said (14 Nov 2026): "I clicked on it It opened the form but very briefly it also showed a splash screen or something
+that showed admin like the brand logo with admin. That was weird. And then I submitted the form but I don't see anything
+that popped up on the admin panel either with notification or under the employee section. First of all check that
+problem and also ensure that these real time notifications or changes or anything that the admin user is supposed to be
+receiving is basically popping up real time. If not real-time, whatever the minimum possible gap should be If you think
+there could be problems around it and it may not be consistent Then we should give them a refresh button somewhere"
+Found (live, read-only): 8 invite links made today; the form reached the Worker at 16:27 IST (D1 friend_asks); NO
+referral, NO enquiry, NO alert. friend_invite_send (0056) answers "sent" and makes nothing when the number is the
+sharing member's own, a member's, or an open enquiry's (privacy by design) - the likely cause of his test. Splash: the
+link is on app.mettleup.fit, inside the installed admin app's scope, so Android opens it in the admin app (its splash).
+Plan: (1) a known number still notes the existing enquiry/member + alerts the owner (own number: nothing); needs a
+migration (his yes). (2) invite/join links on join.mettleup.fit (outside the admin app). (3) every list shows "Updated
+N s ago" + Refresh; new alerts reach an open panel within ~1 minute, web push when hidden.
+
 ## R-538. Gym page AI chats must land in Enquiries, answered or not; "decide the best implementation" — 14 Nov 2026
 He said (14 Nov 2026): "since we are giving the gyms their own webpages and for potential leads to talk to AI assistant
 but then we also have the inquiries section which means that if they do send a question and if the AI has responded or it
