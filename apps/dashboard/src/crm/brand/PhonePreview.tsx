@@ -203,7 +203,7 @@ export function PhonePreview({
                 <span style={{ fontFamily: display, fontWeight: 600, fontSize: 13, fontStyle: italic }}>Kg lifted</span>
                 <span style={{ fontFamily: font.mono, fontSize: 11, color: p.color.accent }}>+57 %</span>
               </div>
-              <div style={{ fontSize: 10, color: PHONE_INK.inkMuted, margin: '2px 0 8px' }}>Last 12 weeks</div>
+              <div style={{ fontSize: 10, color: PHONE_INK.inkMuted, margin: '2px 0 8px' }}>Last 3 months</div>
               <Chart p={p} />
             </div>
           </div>
