@@ -27,7 +27,9 @@ export type GymAlertKind =
   // R-513 (supabase 0077): someone filled the gym's "Become a member" page. Urgent: sent at once.
   | 'online_join'
   // F209 (supabase 0078): the gym's AI credits are down to 10 or fewer (once per top-up), for the owner.
-  | 'ai_credits_low';
+  | 'ai_credits_low'
+  // F207 (supabase 0080): a visitor asked a question on the gym's web page; it is an Enquiry.
+  | 'page_question';
 
 export const GYM_ALERT_KINDS: readonly GymAlertKind[] = [
   'trainer_question',
@@ -43,6 +45,7 @@ export const GYM_ALERT_KINDS: readonly GymAlertKind[] = [
   'friend_referred',
   'online_join',
   'ai_credits_low',
+  'page_question',
 ];
 
 export interface GymAlert {

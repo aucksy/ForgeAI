@@ -1,5 +1,5 @@
--- NOT APPLIED LIVE YET. The owner said yes to applying it live (R-529, 14 Nov 2026: "Yes, go ahead with the gym page
--- database change"); the main session applies it in the SQL Editor once CI's test passes.
+-- APPLIED LIVE 14 Nov 2026 (R-529: owner said "Yes, go ahead with the gym page database change"; SQL Editor,
+-- from commit 4ac6e557; live test 0080 PASS 127; re-ran 0077 PASS 69). Re-runnable.
 -- NEEDS 0005, 0036, 0075, 0077 (and 0026/0027 for the HQ part): 0005 the gyms brand columns and _brand_json, 0036
 -- gym_timings, 0075 gym_alerts and _alert, 0077 _self_join_closed (Join online, live since 14 Nov 2026).
 -- Re-runnable: create table/index if not exists, create or replace function, the alert kind added only when missing.
