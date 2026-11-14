@@ -7,6 +7,10 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-500. Profile chart range: Last 3 months instead of Last 12 weeks — 14 Nov 2026
+He said: "The drop downs that let me select the duration of the chart, like last 12 weeks or last 12 months. I want to change the 12 weeks to 3 months. It should be last 3 months or last 12 months or all time."
+Found: only the Profile chart (src/tracker/engine/historyChart.ts CHART_RANGES, id 'weeks') says 12 weeks; exercise charts and Statistics already use 3 months. Plan: keep the stored id 'weeks' (saved choices carry over), label "Last 3 months", weekly bars (Monday weeks) covering the 3 months ending today, captions "Kg lifted in the last 3 months", same as the exercise charts' 3 months. Helper builds it with tests + UAT flow updates.
+
 ## R-499. Profile goal line is wrong (+1,840 kg) and "Today" must go everywhere — 14 Nov 2026
 He sent a Profile picture (Kg lifted chip): "Today: Pull 2. 3,780 kg to lift today. 1,840 kg more than last time (1,940 kg). Not counted: 2 exercises...". He said: we fixed the logic behind the next total and next suggested weights; analyse and fix this too, because it suggests 1,840 kg more than last time. And: "remove the word today from everywhere. I've always told you it should always be previous and next... if I am not going to do this exercise today but tomorrow, then the word today doesn't make sense. It has to be next." Check everything around it and improve the experience.
 Plan: a helper finds why the goal (src/tracker/lib/todayGoal.ts, Up next targets) is ~2x the previous total (like-for-like compare, sets, dumbbells, uncounted exercises), fixes it with tests from his case, and replaces every member "today"/"last time" about workouts with Next/Previous. Green line second row becomes "Done 1,650 kg · Previous 1,450 kg" (not "Today"). Brain rule previous-and-next-never-last-and-today updated (3rd time).
