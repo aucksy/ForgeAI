@@ -4,7 +4,7 @@
  */
 import { describe, expect, it } from 'vitest';
 
-import { GYM_ALERT_KINDS, gymAlertsFrom } from '@/crm/logic/gymAlerts';
+import { GYM_ALERT_KINDS, gymAlertsFrom } from '../../src/crm/logic/gymAlerts';
 
 describe('web page question alert', () => {
   it('page_question is a kind the panel shows, and it opens Enquiries', () => {
