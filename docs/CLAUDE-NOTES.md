@@ -7,6 +7,15 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-543. HANDOFF (usage limit, 14 Nov 2026 evening)
+In flight (helpers, all waiting on CI after 99f425e6): R-531 AI credits B (migration 0083, NOT live, needs his yes;
+charging held by AI_CREDITS_CHARGE unset); R-532 diet plans veg+non-veg; R-533/534 Ask your gym + reply alert + in-app
+nudges; R-535/537 progress line graphs (12-month step NOT live); R-539/541 Bring a friend (0085 approved, apply after
+green; then panel deploy, join.mettleup.fit custom domain, JOIN_HOST); R-542 payment test sweep (join pay DBs live,
+feature HELD until the sweep + fresh-eyes review pass); R-540 demo gym data + script; F207 gym page owner screen.
+Next: collect each helper's pictures; AI credits B screen + ask yes for 0083; apply 0085; fresh-eyes review; panel
+deploy (get_dist.ps1 -Sha, wrangler deploy from deploy/panel, ADMIN_NEWS) with join pay held unless the sweep passed.
+
 ## R-542. YES to pay online when joining (0081 + D1 0016 live); payments must be "tested to death" — 14 Nov 2026
 He said (14 Nov 2026): "yes" (to the 2 database changes and the public join-and-pay words). Then: "wherever we are
 handling the payment for the gym owner that is a very very serious work so please ensure that thing is tested to death
