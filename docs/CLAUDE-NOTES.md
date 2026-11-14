@@ -139,6 +139,7 @@ He also said (mid-turn): "and sweep the tracker to keep it up to date". Done: T9
 He said (13 Nov 2026, with a screenshot of "gym logo kaise badlu"): "answer can be single here... why giving 2 CTAs?" The AI showed a "This is a how-to question. Help and feedback answers it" card (Open Help and feedback) AND a "Where to do it" card (3 steps, Open Branding).
 Cause: the open_page tool text said "and as the follow-up of a how-to answer", so the AI called how_to and open_page together.
 Fix: (1) tool texts: open_page = one page answers it, use it alone; how_to only when no single page answers it, never both; same rule in the AI's instructions; (2) the panel drops the Help card whenever the same answer has a "Where to do it" card, so even a model that calls both shows one answer. No ADMIN_NEWS line: a fix to the AI Assistant that went live today, already announced.
+Live test 14 Nov: PASS — one card. Crispy Curves asked "gym logo kaise badlu" once: one card, "Change the logo shown in the member app.", 3 steps, "Open Branding", "Free. This never uses credits."; no Help and feedback card. The card had no "Where to do it" heading.
 
 ## R-484. Up next went back to Week 1 after an old backup restore — 13 Nov 2026
 He said (13 Nov 2026, in chat): "Do this task here: Fix Up next resetting after an old backup restore" (found by the R-483 UAT helper).
