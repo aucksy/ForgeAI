@@ -15,6 +15,7 @@ import {
   assistSystem,
   checkAsk,
   claudeKey,
+  cleanAction,
   cleanCtx,
   handleAssist,
   handleAssistRewrite,
@@ -456,4 +457,16 @@ test('voice limits: 30 s, 1 MB, an empty clip, the owner only, 10 spoken minutes
   assert.equal((await go(30)).status, 200);
   assert.equal((await go(30)).status, 200);
   assert.equal((await go(1)).status, 429);
+});
+
+// R-514 (owner, 14 Nov 2026): "Gym closed" said no day, and the day could only go in send_at. The day has its own field.
+test('R-514: draft_message keeps a real closed day and empties a wrong one; the rules keep the day out of send_at', () => {
+  const base = { audience: {}, kind: 'closed', lang: 'hi', title_en: '', body_en: '', title_hi: 'जिम बंद रहेगा', body_hi: 'जिम बंद रहेगा।', send_at: '', offer: '' };
+  assert.equal(cleanAction('draft_message', { ...base, day: '2026-11-15' }).input.day, '2026-11-15');
+  assert.equal(cleanAction('draft_message', { ...base, day: 'kal' }).input.day, '');
+  assert.equal(cleanAction('draft_message', base).input.day, '');
+  const props = TOOLS.find((t) => t.name === 'draft_message').input_schema.properties;
+  assert.ok(props.day, 'the tool has a day field');
+  assert.match(props.send_at.description, /Never the day the gym is closed/);
+  assert.match(assistSystem(), /Never put the closed day in send_at/);
 });

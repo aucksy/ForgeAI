@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 
 import { EXAMPLES, PAGES } from '../../../src/crm/assistant/catalogue';
-import { CARD_TITLE, SAVE_WORDS, confirmWords } from '../../../src/crm/assistant/conversation';
+import { CARD_TITLE, SAVE_WORDS, confirmWords, sendAtWords } from '../../../src/crm/assistant/conversation';
 import type { Draft } from '../../../src/crm/assistant/plan';
 import { GROUP_WORDS, STATUS_WORDS, WORKOUT_PLANS_ON, historyWhen } from '../../../src/crm/assistant/ui/AssistantHome';
 import { KIND_WORDS, pageName } from '../../../src/crm/assistant/ui/Cards';
@@ -49,12 +49,12 @@ describe('the assistant speaks Hinglish too', () => {
       ...Object.values(GOAL_WORDS),
       ...Object.values(LEVEL_WORDS),
       'Save plan · {credits} credits',
-      'Send the message',
-      'Schedule the message',
-      'Send to 1 member',
-      'Schedule for 1 member',
-      'Send to {n} members',
-      'Schedule for {n} members',
+      'Send now',
+      'Send on {when}',
+      'Send now to 1 member',
+      'Send on {when} to 1 member',
+      'Send now to {n} members',
+      'Send on {when} to {n} members',
       'Ask MettleUp for credits',
     ];
     expect(dynamic.filter((k) => !(k in HINGLISH))).toEqual([]);
@@ -94,10 +94,20 @@ describe('the button on a card', () => {
   const expense = { tool: 'add_expense', credits: 1 } as unknown as Draft;
 
   it('says one member, not "1 members", and shows the price', () => {
-    expect(confirmWords(msg, 1, 20)).toEqual({ action: { text: 'Send to 1 member' }, credits: 1, needCredits: false });
-    expect(confirmWords(later, 1, 20).action).toEqual({ text: 'Schedule for 1 member' });
-    expect(confirmWords(msg, 4, 20).action).toEqual({ text: 'Send to {n} members', vars: { n: 4 } });
-    expect(confirmWords(msg, null, 20).action).toEqual({ text: 'Send the message' });
+    expect(confirmWords(msg, 1, 20)).toEqual({ action: { text: 'Send now to 1 member' }, credits: 1, needCredits: false });
+    expect(confirmWords(msg, 4, 20).action).toEqual({ text: 'Send now to {n} members', vars: { n: 4 } });
+    expect(confirmWords(msg, null, 20).action).toEqual({ text: 'Send now' });
+    expect(confirmWords(expense, null, 20).action).toEqual({ text: 'Save expense' });
+  });
+
+  it('R-514: says WHEN the message goes: "Send now" or "Send on 13 Nov, 9:00 am"', () => {
+    expect(confirmWords(later, 1, 20).action).toEqual({ text: 'Send on {when} to 1 member', vars: { when: '13 Nov, 9:00 am' } });
+    expect(confirmWords(later, 4, 20).action).toEqual({ text: 'Send on {when} to {n} members', vars: { when: '13 Nov, 9:00 am', n: 4 } });
+    expect(confirmWords(later, null, 20).action).toEqual({ text: 'Send on {when}', vars: { when: '13 Nov, 9:00 am' } });
+    expect(sendAtWords('2026-11-15T08:00')).toBe('15 Nov, 8:00 am');
+    expect(sendAtWords('2026-11-15T20:30')).toBe('15 Nov, 8:30 pm');
+    expect(sendAtWords('2026-11-15T12:05')).toBe('15 Nov, 12:05 pm');
+    expect(sendAtWords('2026-11-15T00:15')).toBe('15 Nov, 12:15 am');
     expect(confirmWords(expense, null, 20).action).toEqual({ text: 'Save expense' });
   });
 

@@ -95,6 +95,8 @@ export interface ToolInputs {
     title_hi: string;
     body_hi: string;
     send_at: string;
+    /** R-514: closed/timing only, YYYY-MM-DD or "". Missing from a panel server older than 14 Nov 2026. */
+    day?: string;
     offer: string;
   };
   add_member: {

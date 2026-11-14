@@ -9,7 +9,7 @@ import { addDays, diffDays, isValidDateISO, type DateISO } from '../logic/dates'
 import { emptyEnquiryForm, validateEnquiry, type EnquiryFormDraft } from '../logic/enquiries';
 import { emptyMemberForm, findDuplicatePhone, validateMember, type MemberFormDraft } from '../logic/members';
 import { bothTitle } from '../logic/messageTemplates';
-import type { MessageLang as GymMessageLang } from '../logic/messageWords';
+import { dayMonth, weekdayDayMonth, type MessageLang as GymMessageLang } from '../logic/messageWords';
 import { formatINR, rupeesToPaise, type Paise } from '../logic/money';
 import { owedListOn } from '../logic/ownerNumbers';
 import { saleDefaults, validateSale } from '../logic/selling';
@@ -59,6 +59,11 @@ export interface MessageDraftA extends DraftBase {
   body: string;
   /** '' = now; else 'YYYY-MM-DDTHH:mm', India time. */
   sendAt: string;
+  /**
+   * R-514: for "Gym closed" and "Timing change", the day it happens (YYYY-MM-DD); '' = not given yet (the card asks,
+   * and Send waits). Never the send time. '' for every other kind.
+   */
+  day: string;
 }
 
 export interface AddMemberDraft extends DraftBase {
@@ -202,18 +207,77 @@ function phoneParts(raw: string): { dialCode: string; phone: string } {
  * The words for one language choice. "both": the two bodies one under the other, and the title "English / हिन्दी" when
  * the Hindi title is there and both fit in 60 letters (else the English), as Messages & offers' templates do.
  */
-export function messageWords(input: ToolInputs['draft_message'], gymLang: GymMessageLang): { title: string; body: string } {
+export function messageWords(
+  input: ToolInputs['draft_message'],
+  gymLang: GymMessageLang,
+  when?: { day: string; today: DateISO },
+): { title: string; body: string } {
   const lang = input.lang === 'gym' ? gymLang : input.lang;
+  // R-514: a "Gym closed" or "Timing change" message always names its day with the date, in each language.
+  const dated = (body: string, l: 'en' | 'hi') => (when ? withDayLine(body, input.kind, when.day, when.today, l) : body);
   const en = { title: input.title_en.trim(), body: input.body_en.trim() };
-  const hi = { title: input.title_hi.trim() || en.title, body: input.body_hi.trim() || en.body };
+  const hiBody = input.body_hi.trim();
+  const hi = { title: input.title_hi.trim() || en.title, body: hiBody ? dated(hiBody, 'hi') : dated(en.body, 'en') };
   if (lang === 'hi') return hi;
-  if (lang === 'both' && input.body_hi.trim()) {
+  if (lang === 'both' && hiBody) {
     // Fresh eyes (14 Nov 2026): with Both, the title stayed English only while the message was in both languages.
     const hiTitle = input.title_hi.trim();
     const title = en.title && hiTitle && hiTitle !== en.title ? bothTitle(en.title, hiTitle, MESSAGE_TITLE_MAX) : en.title || hi.title;
-    return { title, body: `${en.body}\n\n${hi.body}` };
+    return { title, body: `${dated(en.body, 'en')}\n\n${dated(hiBody, 'hi')}` };
   }
-  return { title: en.title || hi.title, body: en.body || hi.body };
+  return { title: en.title || hi.title, body: en.body ? dated(en.body, 'en') : hi.body };
+}
+
+/** R-514: the message kinds about one day (the gym closed, a timing change): the card asks for that day. */
+export const DAY_KINDS: readonly MessageKind[] = ['closed', 'timing'];
+export const needsDay = (kind: MessageKind): boolean => DAY_KINDS.includes(kind);
+
+/**
+ * R-514 (owner, 14 Nov 2026): the AI wrote "the gym will be closed" with no day. The line that names it, on top of
+ * the message: "Gym closed: Tomorrow, Sunday 15 Nov." / "जिम बंद: कल, रविवार 15 नवंबर।". Null: not a day kind, or no
+ * day yet. PURE.
+ */
+export function dayLine(kind: MessageKind, day: string, today: DateISO, lang: 'en' | 'hi'): string | null {
+  if (!needsDay(kind) || !isValidDateISO(day)) return null;
+  const date = weekdayDayMonth(day, lang);
+  if (!date) return null;
+  const gap = isValidDateISO(today) ? diffDays(today, day) : null;
+  const near = gap === 0 ? (lang === 'hi' ? 'आज' : 'Today') : gap === 1 ? (lang === 'hi' ? 'कल' : 'Tomorrow') : null;
+  const when = near ? `${near}, ${date}` : date;
+  if (lang === 'hi') return kind === 'closed' ? `जिम बंद: ${when}।` : `समय में बदलाव: ${when}।`;
+  return kind === 'closed' ? `Gym closed: ${when}.` : `Timing change: ${when}.`;
+}
+
+/** The message with its day line on top, unless the words already name that date ("15 Nov" / "15 नवंबर"). PURE. */
+export function withDayLine(body: string, kind: MessageKind, day: string, today: DateISO, lang: 'en' | 'hi'): string {
+  const top = dayLine(kind, day, today, lang);
+  if (!top) return body;
+  const date = dayMonth(day, lang);
+  if (date && new RegExp(`(^|[^0-9])${date}`).test(body)) return body;
+  return body ? `${top}\n${body}` : top;
+}
+
+/**
+ * R-514: the day changed on a card whose words he edited by hand: the old day line (or the old date inside his words)
+ * becomes the new one, in both languages; with neither, the new line goes on top. PURE.
+ */
+export function swapDay(body: string, kind: MessageKind, from: string, to: string, today: DateISO): string {
+  let out = body;
+  for (const lang of ['en', 'hi'] as const) {
+    const oldLine = dayLine(kind, from, today, lang);
+    const newLine = dayLine(kind, to, today, lang);
+    const oldDate = isValidDateISO(from) ? dayMonth(from, lang) : null;
+    const newDate = isValidDateISO(to) ? dayMonth(to, lang) : null;
+    if (oldLine && out.includes(oldLine)) out = out.replace(oldLine, newLine ?? '').replace(/^\n/, '');
+    else if (oldDate && newDate && out.includes(oldDate)) out = out.split(oldDate).join(newDate);
+  }
+  if (out === body && isValidDateISO(to)) {
+    const hasHindi = /[ऀ-ॿ]/.test(body);
+    const hasLatin = /[A-Za-z]/.test(body);
+    if (hasLatin || !hasHindi) out = withDayLine(out, kind, to, today, 'en');
+    if (hasHindi && !hasLatin) out = withDayLine(out, kind, to, today, 'hi');
+  }
+  return out;
 }
 
 /**
@@ -245,7 +309,17 @@ export function planAction(action: Action, d: PlanData, requestId: string, chose
   switch (action.tool) {
     case 'draft_message': {
       const i = action.input;
-      const words = messageWords(i, d.gymLang);
+      // R-514: the day of a closure or timing change is its own field, never the send time. A panel server from before
+      // the `day` field had only send_at for it: a date put there for a closure is that day, and the message goes now.
+      const told = typeof i.day === 'string';
+      let day = told ? (i.day ?? '').trim() : '';
+      let sendAt = i.send_at.trim();
+      if (!told && needsDay(i.kind) && sendAt) {
+        day = sendAt.slice(0, 10);
+        sendAt = '';
+      }
+      if (!needsDay(i.kind) || !isValidDateISO(day)) day = '';
+      const words = messageWords(i, d.gymLang, { day, today });
       const memberIds: string[] = [];
       if (i.audience.group === 'members') {
         for (const name of i.audience.names) {
@@ -270,7 +344,8 @@ export function planAction(action: Action, d: PlanData, requestId: string, chose
           kind: i.kind,
           title: words.title,
           body: words.body,
-          sendAt: i.send_at.trim(),
+          sendAt,
+          day,
         },
       };
     }
@@ -491,6 +566,12 @@ export function checkDraft(dr: Draft, d: PlanData): DraftCheck {
       const p = draftProblem({ kind: dr.kind, title: dr.title, body: dr.body });
       if (p) problems.push(problem(/title/i.test(p) ? 'title' : 'body', p));
       if (dr.body.trim().length === 0) problems.push(problem('body', 'Write the message.'));
+      // R-514: never a closure message with no day; the day never moves the send time.
+      if (needsDay(dr.kind)) {
+        if (!isValidDateISO(dr.day)) problems.push(problem('day', dr.kind === 'closed' ? 'Pick the day the gym is closed.' : 'Pick the day the timing changes.'));
+        else if (dr.day < today) problems.push(problem('day', 'This day has passed. Pick today or a later day.'));
+        else if (dr.sendAt && dr.sendAt.slice(0, 10) > dr.day) problems.push(problem('sendAt', 'This would reach members after that day. Pick an earlier time, or Now.'));
+      }
       let at = d.now;
       if (dr.sendAt) {
         const when = sendAtFromLocal(dr.sendAt, d.now);

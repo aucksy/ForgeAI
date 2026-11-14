@@ -52,6 +52,10 @@ export const ADMIN_NEWS: readonly AdminNewsEntry[] = [
         // R-501 (owner, 14 Nov 2026): "Both" on an AI greeting kept English and it went out in English only.
         text: 'In the AI Assistant, tapping Hindi or Both on a message now writes the Hindi words first, so you see them before you send. Before, the message could still go out in English only.',
       },
+      {
+        // R-514 (owner, 14 Nov 2026): a "Gym closed" message went with no day, and it was not clear when it would go.
+        text: 'In the AI Assistant, a "Gym closed" message now always says which day, with the date. Its button says when it goes: "Send now", or the day and time you picked.',
+      },
     ],
   },
   {

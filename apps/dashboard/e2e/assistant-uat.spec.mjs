@@ -10,7 +10,7 @@
 //  3. A question: the Answer card, free (no credit spent).
 //  4. One request that makes two things (R-471): two cards, each with its own button and price, each its own task.
 //     Save the expense: 1 credit, the balance goes 84 -> 83, the message card is still waiting with its own button.
-//  5. Send the message: "Send to 2 members · 1 credit"; the members without the app get the WhatsApp button.
+//  5. Send the message: "Send now to 2 members · 1 credit"; the members without the app get the WhatsApp button.
 //  6. AskBack, "Where to do it" (open_page), Cannot.
 //  6b. The AI plan writer (R-471): goal, level and days from the request, "Write the plan" (free, the gym's exercise
 //     list, no member data), the builder opens with the plan for that member, Save = 3 credits. A diet plan: "not
@@ -123,9 +123,18 @@ const closedMessage = {
   tool: 'draft_message',
   input: {
     audience: everyone, kind: 'closed', lang: 'en', title_en: 'Gym closed tomorrow', body_en: 'The gym is closed tomorrow, Sunday 18 Oct. See you on Monday at 6 am.',
-    title_hi: '', body_hi: '', send_at: '', offer: '',
+    title_hi: '', body_hi: '', send_at: '', offer: '', day: '2026-10-18',
   },
 };
+// R-514 (owner, 14 Nov 2026): he said in Hindi "the gym will be closed, message all members". The AI wrote a Hindi
+// closure with no day. `day`: the closed day the AI heard ('' = he did not say); `send_at`: only when he said when to send.
+const hindiClosure = (day, sendAt = '') => ({
+  tool: 'draft_message',
+  input: {
+    audience: everyone, kind: 'closed', lang: 'hi', title_en: 'Gym closed', body_en: 'Please note that the gym will be closed.',
+    title_hi: 'जिम बंद', body_hi: 'कृपया ध्यान दें कि जिम बंद रहेगा।', send_at: sendAt, offer: '', day,
+  },
+});
 // R-501: the greeting the owner asked for, written by the AI in English only (no Hindi words), and its Hindi.
 const chhathGreeting = {
   tool: 'draft_message',
@@ -142,6 +151,9 @@ function aiAnswer(text) {
   if (/who are my members/i.test(text)) return { actions: [{ tool: 'list_members', input: { group: 'everyone', days: 0, plan: '', batch: '', trainer: '', gender: '' } }], note: '' };
   if (/bijli/i.test(text)) return { actions: [closedMessage, billExpense], note: 'Two things: a message and an expense.' };
   if (/^message everyone/i.test(text)) return { actions: [closedMessage], note: '' };
+  if (/^parso gym band/i.test(text)) return { actions: [hindiClosure('2026-10-19', '2026-10-18T08:00')], note: '' };
+  if (/^kal gym band/i.test(text)) return { actions: [hindiClosure('2026-10-18')], note: '' };
+  if (/^gym band/i.test(text)) return { actions: [hindiClosure('')], note: '' };
   if (/chhath/i.test(text)) return { actions: [chhathGreeting], note: '' };
   if (/^ravi ko/i.test(text)) return { actions: [{ tool: 'ask_back', input: { question: 'Which message should Ravi get?', options: ['Fee reminder', 'Birthday wishes'] } }], note: '' };
   if (/price/i.test(text)) {
@@ -335,7 +347,7 @@ test('AI Assistant: hidden without 0071; the button, cards, credits, voice, the 
   const expense = main.getByRole('article', { name: 'Save an expense' }).last();
   await expect(message).toBeVisible();
   await expect(expense).toBeVisible();
-  await expect(message.getByRole('button', { name: 'Send to 1 member · 1 credit' })).toBeVisible();
+  await expect(message.getByRole('button', { name: 'Send now to 1 member · 1 credit' })).toBeVisible();
   await expect(expense.getByRole('button', { name: 'Save expense · 1 credit' })).toBeVisible();
   await expect(message).toContainText('Everyone · 2 members');
   await expect(message).toContainText('1 has the app');
@@ -352,13 +364,13 @@ test('AI Assistant: hidden without 0071; the button, cards, credits, voice, the 
   expect(spends).toHaveLength(1);
   expect(spends[0].args.p_credits).toBe(1);
   expect(spends[0].args.p_task_id).toBe(saved.find((c) => c.args.p_actions[0].tool === 'add_expense').args.p_id);
-  await expect(message.getByRole('button', { name: 'Send to 1 member · 1 credit' })).toBeVisible();
+  await expect(message.getByRole('button', { name: 'Send now to 1 member · 1 credit' })).toBeVisible();
 
   // 5. "Shorter", then send the message.
   await message.getByRole('button', { name: 'Shorter' }).tap();
   await expect(message).toContainText('Closed tomorrow, Sunday. Open Monday 6 am.');
   expect(worker.rewrites).toHaveLength(1);
-  await message.getByRole('button', { name: 'Send to 1 member · 1 credit' }).tap();
+  await message.getByRole('button', { name: 'Send now to 1 member · 1 credit' }).tap();
   await expect(message).toContainText('Sent to 1 in the app. 1 member without the app is ready on WhatsApp.');
   await expect(message.getByRole('button', { name: '1 without the app: send on WhatsApp' })).toBeVisible();
   expect(server.messages[0]).toMatchObject({ kind: 'closed', title: 'Gym closed tomorrow' });
@@ -545,7 +557,7 @@ test('AI Assistant on a computer: Today, the side panel, every card, the plan wr
   await askIn(page, panel, 'Kal gym band hai sabko batao, aur bijli ka bill 3200 cash diya');
   const message = panel.getByRole('article', { name: 'Message to your members' }).last();
   const expense = panel.getByRole('article', { name: 'Save an expense' }).last();
-  await expect(message.getByRole('button', { name: 'Send to 1 member · 1 credit' })).toBeVisible();
+  await expect(message.getByRole('button', { name: 'Send now to 1 member · 1 credit' })).toBeVisible();
   await expect(expense.getByRole('button', { name: 'Save expense · 1 credit' })).toBeVisible();
   await shots(page, '04-message-card', false, message);
   await shots(page, '05-change-card', false, expense);
@@ -671,7 +683,7 @@ test('AI Assistant R-501: Both on an English greeting writes the Hindi first; a 
 
   // Fresh eyes (14 Nov 2026): Send sat under the "Ask or give a task" box. When the words come back, the card brings
   // Send up, fully above the box. (No scrolling by the test: this is where the screen left it.)
-  const send = card.getByRole('button', { name: 'Send to 1 member · 1 credit' });
+  const send = card.getByRole('button', { name: 'Send now to 1 member · 1 credit' });
   const askForm = page.locator('form').filter({ has: page.getByLabel('Ask or give a task', { exact: true }) });
   const clearOfAskBox = async () => {
     const s = await send.boundingBox();
@@ -707,9 +719,102 @@ test('AI Assistant R-501: Both on an English greeting writes the Hindi first; a 
   await expect(chip('Both')).toHaveAttribute('aria-pressed', 'true');
 
   // Send: what the members get is what the card showed, English and Hindi.
-  await card.getByRole('button', { name: 'Send to 1 member · 1 credit' }).tap();
+  await card.getByRole('button', { name: 'Send now to 1 member · 1 credit' }).tap();
   await expect(card).toContainText('Sent to 1 in the app.');
   expect(server.messages[0].body).toContain('Happy Chhath Puja to you and your family.');
   expect(server.messages[0].body).toContain(CHHATH_HI.body_hi);
   expect(server.messages[0].title).toBe(bothTitle);
+});
+
+test('AI Assistant R-514: a closure message names its day; with no day it asks; it sends now unless he said when', async ({ page }) => {
+  test.setTimeout(150_000);
+  const server = await openApp(page);
+  const ai = installAi(server);
+  await installWorker(page);
+  await startOnlineGym(page);
+  await addMember(page, { name: 'Asha Verma', phone: '98290 11111' });
+  server.appMembers = [{ member_id: 'app-1', name: 'Asha Verma', phone: '+919829011111', joined_at: '2026-10-01T10:00:00Z', last_seen: '2026-10-16T10:00:00Z', orders: 0, spent_p: 0 }];
+  ai.on = true;
+  await go(page, '/');
+  await page.reload();
+  await expect(page.getByRole('heading', { name: 'Today', exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Open the AI Assistant' }).tap();
+  await expect(page.getByRole('heading', { level: 1, name: 'AI Assistant' })).toBeVisible();
+  const main = page.getByRole('main');
+  const askForm = page.locator('form').filter({ has: page.getByLabel('Ask or give a task', { exact: true }) });
+  /** Scrolled to the end, the card's Send sits fully above the ask box (it never hides under it). */
+  const sendClearAtEnd = async (send, what) => {
+    await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+    await page.waitForTimeout(300);
+    const s = await send.boundingBox();
+    const a = await askForm.boundingBox();
+    expect(Math.round(a.y - (s.y + s.height)), `${what}: Send is fully above the ask box`).toBeGreaterThanOrEqual(4);
+  };
+
+  // (a) He said the day ("kal" = tomorrow, Sunday 18 Oct; today is Saturday 17 Oct). The Hindi message names it with
+  // its date, the card shows "Closed on" with that day, and it sends NOW (the closed day is not the send time).
+  await ask(page, 'kal gym band rahega, sab members ko message bhejo');
+  let card = main.getByRole('article', { name: 'Message to your members' }).last();
+  await expect(card).toContainText('जिम बंद: कल, रविवार 18 अक्टूबर।');
+  await expect(card).toContainText('कृपया ध्यान दें कि जिम बंद रहेगा।');
+  await expect(card.getByLabel('Closed on', { exact: true })).toHaveValue('2026-10-18');
+  await expect(card.getByRole('button', { name: 'Now', exact: true })).toHaveAttribute('aria-pressed', 'true');
+  let send = card.getByRole('button', { name: 'Send now to 1 member · 1 credit' });
+  await expect(send).toBeEnabled();
+  await expectFitsPhone(page, 'R-514 a closure with its day');
+  await sendClearAtEnd(send, 'a day given');
+  await shots(page, '19a-closed-day');
+  await shots(page, '19a-closed-day-card', false, card);
+  await send.tap();
+  await expect(card).toContainText('Sent to 1 in the app.');
+  expect(server.messages[0].body).toBe(['जिम बंद: कल, रविवार 18 अक्टूबर।', 'कृपया ध्यान दें कि जिम बंद रहेगा।'].join(String.fromCharCode(10)));
+  expect(server.messages[0].sendAt).toBeNull();
+
+  // (b) No day said (his real sentence lost "kal"): the date is empty, the card asks in plain words, Send is off.
+  // He picks the day: the words name it, and Send works.
+  await ask(page, 'gym band rahega sare members ko message bhejo');
+  card = main.getByRole('article', { name: 'Message to your members' }).last();
+  await expect(card).toContainText('कृपया ध्यान दें कि जिम बंद रहेगा।');
+  const day = card.getByLabel('Closed on', { exact: true });
+  await expect(day).toHaveValue('');
+  const askForDay = card.getByRole('alert').filter({ hasText: 'Pick the day the gym is closed.' });
+  await expect(askForDay).toHaveCount(1);
+  send = card.getByRole('button', { name: 'Send now to 1 member · 1 credit' });
+  await expect(send).toBeDisabled();
+  await expect(card).not.toContainText('जिम बंद: ');
+  await expectFitsPhone(page, 'R-514 no day');
+  await day.scrollIntoViewIfNeeded();
+  await shots(page, '19b-no-day');
+  await shots(page, '19b-no-day-card', false, card);
+  await day.fill('2026-10-18');
+  await expect(askForDay).toHaveCount(0);
+  await expect(card).toContainText('जिम बंद: कल, रविवार 18 अक्टूबर।');
+  await expect(send).toBeEnabled();
+  await sendClearAtEnd(send, 'the day picked');
+  await shots(page, '19b-day-picked');
+  await shots(page, '19b-day-picked-card', false, card);
+
+  // (c) "Closed the day after tomorrow, send it tomorrow at 8": Later is on with that time, the closed day stays
+  // Monday 19 Oct, and the button says when it goes.
+  await ask(page, 'parso gym band, kal subah 8 baje bhejo');
+  card = main.getByRole('article', { name: 'Message to your members' }).last();
+  await expect(card).toContainText('जिम बंद: सोमवार 19 अक्टूबर।');
+  await expect(card.getByLabel('Closed on', { exact: true })).toHaveValue('2026-10-19');
+  await expect(card.getByRole('button', { name: 'Later', exact: true })).toHaveAttribute('aria-pressed', 'true');
+  await expect(card.getByLabel('Send on', { exact: true })).toHaveValue('2026-10-18T08:00');
+  send = card.getByRole('button', { name: 'Send on 18 Oct, 8:00 am to 1 member · 1 credit' });
+  await expect(send).toBeEnabled();
+  await expectFitsPhone(page, 'R-514 send later');
+  await sendClearAtEnd(send, 'send later');
+  await shots(page, '19c-send-later');
+  await shots(page, '19c-send-later-card', false, card);
+  // (d) Back to Now: the button says so at once; then Later again with his time.
+  await card.getByRole('button', { name: 'Now', exact: true }).tap();
+  await expect(card.getByRole('button', { name: 'Send now to 1 member · 1 credit' })).toBeVisible();
+  await card.getByRole('button', { name: 'Later', exact: true }).tap();
+  await card.getByLabel('Send on', { exact: true }).fill('2026-10-18T08:00');
+  await send.tap();
+  await expect.poll(() => server.messages.length).toBe(2);
+  expect(server.messages[0].sendAt).toBe('2026-10-18T02:30:00.000Z');
+  expect(server.messages[0].body).toContain('जिम बंद: सोमवार 19 अक्टूबर।');
 });

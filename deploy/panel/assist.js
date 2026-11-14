@@ -263,6 +263,7 @@ export function assistSystem() {
     '- A how-to question that one page answers ("logo kaise badlu", "plan ka price"): call open_page ALONE with its steps. Call how_to only when no single page answers it. Never call how_to and open_page for the same question.',
     '- Messages to members: title at most 60 letters, body at most 300. Warm, short, plain. Hindi text always in Devanagari (never Hindi in Latin letters). lang = "gym" when the owner did not say a language. Never add a phone number, link, price or date the owner did not give.',
     '- Dates: YYYY-MM-DD and times YYYY-MM-DDTHH:mm, India time, worked out from today in the gym facts ("kal" = tomorrow, "Monday" = the coming Monday).',
+    '- Gym closed or a timing change (draft_message kind closed or timing): the day it happens goes in `day`; "" when the owner did not say which day (never guess one; the app asks him). Do not write that day or date in the title or text: the app adds it ("Tomorrow, Sunday 15 Nov"). send_at is only when to SEND it, and only when the owner said so; otherwise "" (now). Never put the closed day in send_at.',
     '- Money is rupees. "PT" is personal training. "Dues" or "baaki" is money owed.',
     '',
     'Pages of the admin app (for open_page):',
@@ -304,6 +305,9 @@ export function cleanAction(name, input) {
     for (const k of ['title_en', 'title_hi']) i[k] = typeof i[k] === 'string' ? i[k].trim().slice(0, MAX_TITLE) : '';
     for (const k of ['body_en', 'body_hi']) i[k] = typeof i[k] === 'string' ? i[k].trim().slice(0, MAX_MESSAGE) : '';
     if (!i.title_en && !i.body_en && !i.title_hi && !i.body_hi) return null;
+    // R-514: the day of a closure or timing change: a real YYYY-MM-DD or "" (the admin app then asks for it).
+    const day = typeof i.day === 'string' ? i.day.trim() : '';
+    i.day = /^\d{4}-\d{2}-\d{2}$/.test(day) ? day : '';
   }
   if (name === 'open_page') {
     if (!AI_PAGE_IDS.includes(i.page)) return null;

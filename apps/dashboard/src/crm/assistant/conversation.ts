@@ -18,6 +18,8 @@ import { useSyncExternalStore } from 'react';
 import { answerAction, isAskTool, pickMember, type AnswerResult, type AnswerRow } from './answer';
 import { line, pageById, pagePath, type Action, type Line } from './catalogue';
 import type { MessageWords } from './api';
+import type { DateISO } from '../logic/dates';
+import { dayMonth } from '../logic/messageWords';
 import { planAskFrom, type PlanAsk } from './planWriter';
 import type { WorkoutPlanDraft } from '../types';
 import { isDraftTool, messageWords, planAction, type Draft, type PlanData, type PlanResult } from './plan';
@@ -262,7 +264,8 @@ export function withMessage(card: Extract<CardModel, { kind: 'draft' }>, next: M
   if (card.action.tool !== 'draft_message' || card.result.kind !== 'draft' || card.result.draft.tool !== 'draft_message') return card;
   // R-501: never Hindi or Both on the chip while the words are English only.
   const shown = { ...next, lang: shownLang(next.lang, next.words) };
-  const { title, body } = messageWords({ ...card.action.input, ...shown.words, lang: shown.lang }, d.gymLang);
+  // R-514: the day line follows the day on the card (he can change it there).
+  const { title, body } = messageWords({ ...card.action.input, ...shown.words, lang: shown.lang }, d.gymLang, { day: card.result.draft.day, today: d.today });
   return { ...card, message: shown, result: { kind: 'draft', draft: { ...card.result.draft, title, body } } };
 }
 
@@ -311,17 +314,35 @@ export interface ConfirmWords {
   needCredits: boolean;
 }
 
-/** The words on a card's main button. `appCount`: members a message reaches in the app (null = not known). PURE. */
+/** "15 Nov, 8:00 am" for a send time 'YYYY-MM-DDTHH:mm' (India time, as typed); null when it is not one. PURE. */
+export function sendAtWords(sendAt: string): string | null {
+  const m = /^(\d{4}-\d{2}-\d{2})T(\d{2}):(\d{2})$/.exec(sendAt);
+  const day = m ? dayMonth(m[1] as DateISO, 'en') : null;
+  if (!m || !day) return null;
+  const h = Number(m[2]);
+  return `${day}, ${h % 12 || 12}:${m[3]} ${h < 12 ? 'am' : 'pm'}`;
+}
+
+/**
+ * The words on a card's main button. `appCount`: members a message reaches in the app (null = not known). R-514 (owner,
+ * 14 Nov 2026): a message's button says WHEN it goes: "Send now to 1 member" or "Send on 15 Nov, 8:00 am to 1 member".
+ * PURE.
+ */
 export function confirmWords(draft: Draft, appCount: number | null, balance: number | null): ConfirmWords {
   if (balance !== null && balance < draft.credits) return { action: line('Ask MettleUp for credits'), credits: null, needCredits: true };
-  const action =
-    draft.tool === 'draft_message'
-      ? appCount === null
-        ? line(draft.sendAt ? 'Schedule the message' : 'Send the message')
-        : appCount === 1
-          ? line(draft.sendAt ? 'Schedule for 1 member' : 'Send to 1 member')
-          : line(draft.sendAt ? 'Schedule for {n} members' : 'Send to {n} members', { n: appCount })
-      : line(SAVE_WORDS[draft.tool]);
+  if (draft.tool !== 'draft_message') return { action: line(SAVE_WORDS[draft.tool]), credits: draft.credits, needCredits: false };
+  const when = draft.sendAt ? sendAtWords(draft.sendAt) : null;
+  const action = when
+    ? appCount === null
+      ? line('Send on {when}', { when })
+      : appCount === 1
+        ? line('Send on {when} to 1 member', { when })
+        : line('Send on {when} to {n} members', { when, n: appCount })
+    : appCount === null
+      ? line('Send now')
+      : appCount === 1
+        ? line('Send now to 1 member')
+        : line('Send now to {n} members', { n: appCount });
   return { action, credits: draft.credits, needCredits: false };
 }
 

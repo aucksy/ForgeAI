@@ -25,7 +25,7 @@ import type { AnswerRow, FollowUp } from '../answer';
 import { PAGES, type Line } from '../catalogue';
 import { CARD_TITLE, LANG_WORDS, MAX_REWRITES, chooseOnCard, confirmWords, langNote, pickLang, updateCard, withDraft, withMessage, type CardModel, type MessageState } from '../conversation';
 import type { MessageWords } from '../api';
-import { checkDraft, messageReach, type Draft, type MessageDraftA, type PlanData } from '../plan';
+import { checkDraft, messageReach, needsDay, swapDay, type Draft, type MessageDraftA, type PlanData } from '../plan';
 import { GOAL_WORDS, LEVEL_WORDS, PLAN_DAYS, PLAN_FOCUS_MAX, PLAN_GOALS, PLAN_LEVELS, exerciseCount, type PlanGoal, type PlanLevel } from '../planWriter';
 import type { WorkoutWriterCard } from '../conversation';
 import { WorkoutPlanSheet } from '../../ui/screens/WorkoutPlans';
@@ -492,7 +492,8 @@ function Checks({ dr, data, card }: { dr: Draft; data: PlanData; card: DraftCard
   const { problems, warnings } = checkDraft(dr, data);
   return (
     <>
-      {problems.map((p, i) => (
+      {/* R-514: "Pick the day the gym is closed" shows under the day itself, not twice. */}
+      {problems.filter((p) => p.field !== 'day').map((p, i) => (
         <p key={`p${i}`} role="alert" style={{ ...quiet, color: color.criticalText, fontWeight: 700 }}>
           {say(p.message)}
         </p>
@@ -587,7 +588,9 @@ function MessageView({ turnId, card, dr, data, ctl }: { turnId: string; card: Dr
   useEffect(() => {
     if (rewrites === seenRewrites.current) return;
     seenRewrites.current = rewrites;
-    if (card.status === 'open') sendRow.current?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    const el = sendRow.current;
+    if (card.status !== 'open' || !el) return undefined;
+    return keepClearOfAskBox(el);
   }, [rewrites, card.status]);
   const setWords = (title: string, bodyText: string) =>
     updateCard(turnId, card.id, (c) => (c.kind === 'draft' && c.result.kind === 'draft' && c.result.draft.tool === 'draft_message'
@@ -613,6 +616,7 @@ function MessageView({ turnId, card, dr, data, ctl }: { turnId: string; card: Dr
         <Row label={t('Type')}>
           <b>{t(KIND_WORDS[dr.kind])}</b>
         </Row>
+        {needsDay(dr.kind) ? <DayRow turnId={turnId} card={card} dr={dr} data={data} /> : null}
         {msg ? (
           <Row label={t('Language')}>
             <span role="group" aria-label={t('Language')} style={{ display: 'inline-flex', gap: 4, padding: 3, borderRadius: 10, background: color.surfaceSunken }}>
@@ -643,7 +647,7 @@ function MessageView({ turnId, card, dr, data, ctl }: { turnId: string; card: Dr
             {t(note)}
           </div>
         ) : null}
-        <WhenRow turnId={turnId} card={card} dr={dr} />
+        <WhenRow turnId={turnId} card={card} dr={dr} today={data.today} />
       </dl>
       <div style={{ margin: `${space.sm}px ${space.lg}px 0`, padding: 14, borderRadius: 14, background: '#F4F5F7', color: '#14161C', border: '1px solid rgba(20,22,28,0.12)' }}>
         <p style={{ margin: '0 0 8px', display: 'flex', alignItems: 'center', gap: 8, fontFamily: font.body, fontSize: 12, color: '#464D5B', fontWeight: 700 }}>
@@ -689,8 +693,7 @@ function MessageView({ turnId, card, dr, data, ctl }: { turnId: string; card: Dr
       </div>
       <div style={{ padding: `14px ${space.lg}px ${space.lg}px`, display: 'grid', gap: 10 }}>
         <Checks dr={dr} data={data} card={card} />
-        {/* --assist-ask-space: the ask box's height on the phone page (AssistantHome), so Send stops above it. */}
-        <div ref={sendRow} style={{ scrollMarginBottom: 'calc(var(--assist-ask-space, 0px) + 12px)', scrollMarginTop: 96 }}>
+        <div ref={sendRow}>
           {inApp === 0 ? (
             <p style={{ ...quiet, color: color.ink }}>{t('None of these members has the MettleUp app yet, so the message cannot go in the app. Send it on WhatsApp below.')}</p>
           ) : (
@@ -739,7 +742,98 @@ function LangChip({ on, onClick, children }: { on: boolean; onClick: () => void;
   );
 }
 
-function WhenRow({ turnId, card, dr }: { turnId: string; card: DraftCard; dr: MessageDraftA }) {
+/**
+ * R-514 (owner, 14 Nov 2026): a "Gym closed" message went with no day in it. The day it happens, on the card, which he
+ * can change; empty when he did not say it, with a plain line, and Send waits until a day is picked. The day goes into
+ * the words ("Gym closed: Tomorrow, Sunday 15 Nov."); it never changes when the message is sent.
+ */
+function DayRow({ turnId, card, dr, data }: { turnId: string; card: DraftCard; dr: MessageDraftA; data: PlanData }) {
+  const label = dr.kind === 'closed' ? t('Closed on') : t('Timing changes on');
+  const problem = checkDraft(dr, data).problems.find((p) => p.field === 'day');
+  const setDay = (day: string) =>
+    updateCard(turnId, card.id, (c) => {
+      if (c.kind !== 'draft' || c.result.kind !== 'draft' || c.result.draft.tool !== 'draft_message') return c;
+      const now = c.result.draft;
+      const next = withDraft(c, { ...now, day });
+      // His own words: only the day in them changes. The AI's words: made again with the new day line.
+      if (!c.message || c.message.edited) return withDraft(next, { ...now, day, body: swapDay(now.body, now.kind, now.day, day, data.today) });
+      return withMessage(next, c.message, data);
+    });
+  return (
+    <div style={{ padding: '11px 0', borderBottom: `1px solid ${color.border}`, display: 'grid', gap: 6 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}>
+        <label htmlFor={`day-${card.id}`} style={{ fontFamily: font.body, fontSize: 14, color: color.inkMuted, flexShrink: 0 }}>
+          {label}
+        </label>
+        <input
+          id={`day-${card.id}`}
+          type="date"
+          value={dr.day}
+          min={data.today}
+          onChange={(e) => setDay(e.target.value)}
+          style={{
+            minHeight: 40,
+            minWidth: 0,
+            padding: '0 10px',
+            borderRadius: radius.md,
+            border: `1px solid ${problem ? color.critical : color.borderStrong}`,
+            background: color.surface,
+            color: color.ink,
+            fontFamily: font.body,
+            fontSize: 15,
+          }}
+        />
+      </div>
+      {problem ? (
+        <p role="alert" style={{ ...quiet, color: color.criticalText, fontWeight: 700 }}>
+          {say(problem.message)}
+        </p>
+      ) : null}
+    </div>
+  );
+}
+
+/**
+ * Fresh eyes (14 Nov 2026): brings Send up, fully above the ask box (the box stays on screen over the page on a phone;
+ * in the side panel it sits under the list), or down from under the top bar. CI caught the first try (CSS scroll-margin)
+ * leaving Send 8 px under the box: the words kept growing after the one scroll. So it measures, scrolls, and measures
+ * again whenever the card's size changes for a moment after. Returns the clean-up.
+ */
+function keepClearOfAskBox(el: HTMLElement): () => void {
+  const scroller = (() => {
+    for (let p = el.parentElement; p; p = p.parentElement) {
+      const y = getComputedStyle(p).overflowY;
+      if ((y === 'auto' || y === 'scroll') && p.scrollHeight > p.clientHeight) return p;
+    }
+    return null;
+  })();
+  const bring = () => {
+    const view = scroller ? scroller.getBoundingClientRect() : { top: 0, bottom: window.innerHeight };
+    const ask = document.querySelector('[data-assist-ask]')?.getBoundingClientRect();
+    const floor = Math.min(view.bottom, ask && ask.top > view.top ? ask.top : view.bottom) - 12;
+    const ceiling = view.top + 96;
+    const r = el.getBoundingClientRect();
+    const dy = r.bottom > floor ? r.bottom - floor : r.top < ceiling ? r.top - ceiling : 0;
+    if (Math.abs(dy) < 1) return;
+    // The target from where the page is NOW, so a second call mid-scroll still lands right.
+    if (scroller) scroller.scrollTo({ top: scroller.scrollTop + dy, behavior: 'smooth' });
+    else window.scrollTo({ top: window.scrollY + dy, behavior: 'smooth' });
+  };
+  bring();
+  const card = el.closest('article') ?? el.parentElement;
+  const seen = typeof ResizeObserver === 'undefined' || !card ? null : new ResizeObserver(() => bring());
+  if (card) seen?.observe(card);
+  let live = true;
+  void document.fonts?.ready.then(() => (live ? bring() : undefined));
+  const stop = window.setTimeout(() => seen?.disconnect(), 1500);
+  return () => {
+    live = false;
+    window.clearTimeout(stop);
+    seen?.disconnect();
+  };
+}
+
+function WhenRow({ turnId, card, dr, today }: { turnId: string; card: DraftCard; dr: MessageDraftA; today: string }) {
   const set = (sendAt: string) =>
     updateCard(turnId, card.id, (c) => (c.kind === 'draft' && c.result.kind === 'draft' && c.result.draft.tool === 'draft_message' ? withDraft(c, { ...c.result.draft, sendAt }) : c));
   const later = dr.sendAt !== '';
@@ -751,7 +845,7 @@ function WhenRow({ turnId, card, dr }: { turnId: string; card: DraftCard; dr: Me
           <LangChip on={!later} onClick={() => set('')}>
             {t('Now')}
           </LangChip>
-          <LangChip on={later} onClick={() => set(later ? dr.sendAt : tomorrowMorning())}>
+          <LangChip on={later} onClick={() => set(later ? dr.sendAt : laterDefault(dr.day, today))}>
             {t('Later')}
           </LangChip>
         </span>
@@ -761,10 +855,19 @@ function WhenRow({ turnId, card, dr }: { turnId: string; card: DraftCard; dr: Me
   );
 }
 
-function tomorrowMorning(): string {
-  const d = new Date(Date.now() + 24 * 3600 * 1000);
+/**
+ * The time "Later" starts on: tomorrow 8 am. R-514: for a closure, never the closed day itself or after it; then the
+ * next half hour at least an hour away (he can change it). `today` and the result are India dates (the panel's clock).
+ */
+function laterDefault(day: string, today: string): string {
   const p = (n: number) => String(n).padStart(2, '0');
-  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}T08:00`;
+  const local = (d: Date) => `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`;
+  const tomorrow = new Date(Date.now() + 24 * 3600 * 1000);
+  const morning = `${local(tomorrow).slice(0, 10)}T08:00`;
+  if (!day || morning.slice(0, 10) < day || day < today) return morning;
+  const soon = new Date(Date.now() + 60 * 60 * 1000);
+  soon.setMinutes(soon.getMinutes() <= 30 ? 30 : 60, 0, 0);
+  return local(soon);
 }
 
 // ------------------------------------------------------------------ changes

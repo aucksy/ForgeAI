@@ -292,7 +292,14 @@ export const TOOLS = Object.freeze([
       body_en: str('English text, or "" when lang is hi.'),
       title_hi: str('Hindi title in Devanagari, or "" when lang is en.'),
       body_hi: str('Hindi text in Devanagari, or "" when lang is en.'),
-      send_at: str('When to send, YYYY-MM-DDTHH:mm India time ("Diwali 8 am"); "" = now.'),
+      send_at: str(
+        'When to SEND it, YYYY-MM-DDTHH:mm India time, only when the owner said when to send ("kal subah 8 baje bhejo"); ' +
+          'else "" = now. Never the day the gym is closed.',
+      ),
+      day: str(
+        'For kind closed or timing: the day the gym is closed or the timing changes, YYYY-MM-DD ("kal" = tomorrow). ' +
+          '"" when the owner did not say the day, and "" for other kinds.',
+      ),
       offer: str('The offer in a few words ("20% off 3 months till 15 Nov"), or "".'),
     }),
   },
