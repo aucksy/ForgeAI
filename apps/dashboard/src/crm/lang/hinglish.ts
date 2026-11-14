@@ -907,7 +907,7 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   'These questions used {n} credits.': 'In sawaalon mein {n} credits lage.',
   'Each member can ask the AI {n} questions a day.': 'Har member din mein AI se {n} sawaal pooch sakta hai.',
   'Every {n} AI questions use 1 credit. A task uses credits when you send or save it.': 'Har {n} AI sawaal mein 1 credit lagta hai. Kaam ke credits tab lagte hain jab aap use bhejenge ya save karenge.',
-  // R-531 (14 Nov 2026, decision #98 = B, supabase 0082): owner and staff ask free; members' AI answers use credits.
+  // R-531 (14 Nov 2026, decision #98 = B, supabase 0083): owner and staff ask free; members' AI answers use credits.
   '{n} AI answers for members': 'Members ke {n} AI jawab',
   'AI questions from you and your staff': 'Aapke aur aapke staff ke AI sawaal',
   'AI answers for members': 'Members ke AI jawab',

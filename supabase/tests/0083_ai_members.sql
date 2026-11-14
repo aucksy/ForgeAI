@@ -1,4 +1,4 @@
--- R-531 decision #98 = B (0082): the owner's and staff's AI questions are free; members' and visitors' answers use the
+-- R-531 decision #98 = B (0083): the owner's and staff's AI questions are free; members' and visitors' answers use the
 -- gym's credits (10 = 1 credit) under the owner's switch and monthly limit. Runs in CI after every migration
 -- (scripts/ci/db_checks.sh); can also be pasted into the live SQL Editor. It ALWAYS ends in an error, so it changes nothing:
 --   "RESULT PASS (n checks)"  - everything worked; the error only undoes the test rows;
@@ -55,9 +55,9 @@ begin
   -- ga: in its free trial (20 starter credits). gz: the owner set the members' limit to 0.
   insert into public.gyms(name, join_code, crm_version) values ('T82 Gym', 'T82GYA', 1) returning gym_id into ga;
   insert into public.gyms(name, join_code, crm_version) values ('T82 Zero', 'T82GYZ', 1) returning gym_id into gz;
-  insert into public.gym_staff(gym_id, name, phone, role) values (ga, 'Owner Singh', '9000082101', 'owner') returning staff_id into s_owner;
-  insert into public.gym_staff(gym_id, name, phone, role) values (ga, 'Ravi Desk', '9000082102', 'staff') returning staff_id into s_desk;
-  insert into public.gym_staff(gym_id, name, phone, role) values (gz, 'Owner Z', '9000082103', 'owner') returning staff_id into s_oz;
+  insert into public.gym_staff(gym_id, name, phone, role) values (ga, 'Owner Singh', '9000083101', 'owner') returning staff_id into s_owner;
+  insert into public.gym_staff(gym_id, name, phone, role) values (ga, 'Ravi Desk', '9000083102', 'staff') returning staff_id into s_desk;
+  insert into public.gym_staff(gym_id, name, phone, role) values (gz, 'Owner Z', '9000083103', 'owner') returning staff_id into s_oz;
   insert into public.gym_sessions(staff_id, key_hash) values (s_owner, public._hash_key(kop)), (s_desk, public._hash_key(kd)),
     (s_oz, public._hash_key(koz));
   insert into public.gym_owner_keys(gym_id, key_hash) values (ga, public._hash_key(kok));

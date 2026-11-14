@@ -9,7 +9,7 @@
  * the sheet says what questions cost and shows who asked the AI this month (you, staff, members, gym page visitors).
  * Before that it is exactly as it was.
  *
- * R-531 (decision #98 = B, supabase 0082): the owner's and staff's own AI questions are free; members' AI answers use
+ * R-531 (decision #98 = B, supabase 0083): the owner's and staff's own AI questions are free; members' AI answers use
  * the credits (10 answers = 1 credit). "AI answers for members" holds the owner's switch, the monthly limit in credits
  * and what members used this month. Members never see any of this (their app says only "not on").
  */
@@ -55,7 +55,7 @@ export function walletRowWords(r: AiWalletRow): string {
     case 'spend':
       return r.note.trim() || t('A task');
     case 'questions': {
-      // F209: one credit for the next block of AI questions (the server's note: "20 AI questions"). R-531 (0082): only
+      // F209: one credit for the next block of AI questions (the server's note: "20 AI questions"). R-531 (0083): only
       // members' answers take credits ("10 AI answers for members").
       const m = /^(\d+)/.exec(r.note.trim());
       if (m && /for members/i.test(r.note)) return t('{n} AI answers for members', { n: Number(m[1]) });
@@ -183,7 +183,7 @@ export function CreditsSheet({ wallet, onClose, plansOn, assistKey }: { wallet: 
             {askedRows(q).map((r) => (
               <PriceRow key={r.label} label={r.label} price={String(r.n)} />
             ))}
-            {/* R-531: with 0082 the members' section says what their answers used; this line was about everyone's. */}
+            {/* R-531: with 0083 the members' section says what their answers used; this line was about everyone's. */}
             {q.memberAi ? null : (
               <p style={{ ...quiet, color: color.inkSecondary, marginTop: 4 }}>
                 {q.credits === 1 ? t('These questions used 1 credit.') : t('These questions used {n} credits.', { n: q.credits })}{' '}

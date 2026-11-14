@@ -3,8 +3,8 @@
 --   "RESULT PASS (n checks)"  - everything worked; the error only undoes the test rows;
 --   "RESULT FAIL: ..."         - the checks that failed (label:what came back).
 -- Fake numbers only (90000 78xxx); the secret here is a test value.
--- R-531 (0082): the numbers here are the rules after 0082 (10 answers = 1 credit; the owner's and staff questions are free,
--- so sections 10 and 11 spend through a member). 0082's own test covers the switch and the monthly limit.
+-- R-531 (0083): the numbers here are the rules after 0083 (10 answers = 1 credit; the owner's and staff questions are free,
+-- so sections 10 and 11 spend through a member). 0083's own test covers the switch and the monthly limit.
 
 create or replace function pg_temp.t78_run(q text) returns text
   language plpgsql as $$
@@ -105,7 +105,7 @@ begin
   checks := checks + 1; fails := fails || pg_temp.t78_is('3limit', (r->>'ok') || '/' || (r->>'reason') || '/' || (r->>'per_day'), 'false/day_limit/10');
   checks := checks + 1; fails := fails || pg_temp.t78_is('3count', (select count(*) from public.gym_ai_questions where gym_id = ga)::text, '10');
 
-  -- 4. Twenty members' answers use two credits; the desk's question is free (0082).
+  -- 4. Twenty members' answers use two credits; the desk's question is free (0083).
   for i in 1..10 loop r := pg_temp.t78_take(km2, 'member'); end loop;
   checks := checks + 1; fails := fails || pg_temp.t78_is('4twenty', (r->>'balance') || '/' || (select slots from public.gym_ai_question_slots where gym_id = ga), '18/0');
   r := pg_temp.t78_take(kd, 'admin');

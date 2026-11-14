@@ -59,16 +59,16 @@ describe('the credits sheet', () => {
     const row = (note: string): AiWalletRow => ({ at: 0, delta: -1, reason: 'questions', note, taskId: null });
     expect(walletRowWords(row('20 AI questions'))).toBe('20 AI questions');
     expect(walletRowWords(row(''))).toBe('AI questions');
-    // R-531 (0082): only members' answers take credits now.
+    // R-531 (0083): only members' answers take credits now.
     expect(walletRowWords(row('10 AI answers for members'))).toBe('10 AI answers for members');
   });
 });
 
-describe("R-531: members' AI answers (supabase 0082)", () => {
+describe("R-531: members' AI answers (supabase 0083)", () => {
   const SERVER = { members_on: true, month_credits: 20, month_max: 500, per_credit: 10, month_answers: 36, month_used: 4 };
   const M = { on: true, monthCredits: 20, monthMax: 500, perCredit: 10, monthAnswers: 36, monthUsed: 4 };
 
-  it("reads the owner's switch and limit with the month's questions; none before 0082", async () => {
+  it("reads the owner's switch and limit with the month's questions; none before 0083", async () => {
     const got = await aiQuestions('k', rpcOf({ ok: true, month: '2026-11', member_day: 10, visitor_day: 3, low_at: 10, owner: 3, staff: 1, members: 20, visitors: 0, credits: 4, ...SERVER }));
     expect(got?.memberAi).toEqual(M);
     expect(got?.perCredit).toBe(10);
@@ -77,7 +77,7 @@ describe("R-531: members' AI answers (supabase 0082)", () => {
     expect(memberAiFrom({ ...SERVER, members_on: false, month_credits: 900 })).toMatchObject({ on: false, monthCredits: 500 });
   });
 
-  it('saves the switch and the limit; a refusal or no 0082 is "not saved"', async () => {
+  it('saves the switch and the limit; a refusal or no 0083 is "not saved"', async () => {
     const sent: unknown[] = [];
     const ok = (async (name: string, args: unknown) => {
       sent.push([name, args]);

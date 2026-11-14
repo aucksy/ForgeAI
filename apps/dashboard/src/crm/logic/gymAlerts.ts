@@ -30,7 +30,7 @@ export type GymAlertKind =
   | 'ai_credits_low'
   // F207 (supabase 0080): a visitor asked a question on the gym's web page; it is an Enquiry.
   | 'page_question'
-  // R-531 (supabase 0082): members used this month's AI answers (the owner's limit), once a month, for the owner.
+  // R-531 (supabase 0083): members used this month's AI answers (the owner's limit), once a month, for the owner.
   | 'ai_members_limit';
 
 export const GYM_ALERT_KINDS: readonly GymAlertKind[] = [

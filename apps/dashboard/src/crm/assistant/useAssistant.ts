@@ -54,7 +54,7 @@ export async function refreshAssistantWallet(key: string | null = state.key): Pr
     const [w0, q] = await Promise.all([aiWallet(key), aiQuestions(key)]);
     const keep = state.key === key ? (state.wallet?.questions ?? null) : null;
     const w = w0 ? { ...w0, questions: q ?? keep } : null;
-    // R-531 (decision #98 = B, supabase 0082): the owner's own questions are free again once the server has 0082.
+    // R-531 (decision #98 = B, supabase 0083): the owner's own questions are free again once the server has 0083.
     if (w) setQuestionsCounted(!!w.questions && !w.questions.memberAi);
     // Offline or a hiccup on a panel that already had it: keep what was shown (the next tick asks again).
     if (w || state.key !== key || state.wallet === null) set({ key, wallet: w, off: state.key === key ? state.off : false, asked: true });

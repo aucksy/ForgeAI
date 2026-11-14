@@ -13,7 +13,7 @@
 //  5. Help and feedback (the front desk, on a second phone): the help pages' answer, "Ask your gym owner".
 //  6. The owner's "credits low" alert on Today.
 //
-// R-531 (decision #98 = B, supabase 0082), the last two tests: the owner's and staff's own questions are free again;
+// R-531 (decision #98 = B, supabase 0083), the last two tests: the owner's and staff's own questions are free again;
 // the credits sheet says so, and "AI answers for members" has the owner's switch, the monthly limit (in credits) and
 // what members used this month; saving them, a wrong number, a failed save; the once-a-month alert on Today. Phone
 // (390 x 844) and computer (1280 x 900).
@@ -54,7 +54,7 @@ const AI_FNS = ['owner_ai_wallet', 'owner_ai_task_save', 'owner_ai_spend', 'owne
 
 /** 0071 (on) and 0078 (`ai.questions` false: PGRST202, like the live server today) on the pretend server. */
 function installAi(server) {
-  // b: the server has 0082 (R-531): the members' switch and limit come with the questions. failSave: the next save fails.
+  // b: the server has 0083 (R-531): the members' switch and limit come with the questions. failSave: the next save fails.
   const ai = { questions: false, b: false, balance: 8, alerts: [], members: { on: true, credits: 20 }, failSave: false, saves: [] };
   const memberNumbers = () => ({ members_on: ai.members.on, month_credits: ai.members.credits, month_max: 500, per_credit: 10, month_answers: 36, month_used: 4 });
   const base = server.answer.bind(server);
@@ -263,7 +263,7 @@ test('AI questions on the credits: the computer', async ({ page }) => {
   await shots(page, '06-help-owner', true);
 });
 
-// ------------------------------------------------------------------ R-531 (decision #98 = B, supabase 0082)
+// ------------------------------------------------------------------ R-531 (decision #98 = B, supabase 0083)
 
 /** The members' section of the credits sheet, scrolled into view. */
 async function membersSection(credits) {

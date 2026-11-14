@@ -1,12 +1,12 @@
 -- NOT LIVE - needs the owner's yes ("No LIVE database changes without my yes"). Re-runnable. Apply after 0078 (AI
 -- questions on the credits) and 0075 (gym alerts). Works with or without 0077 / 0080 (each adds a gym_alerts kind; the
 -- kind check is rebuilt from what it is, so theirs stay).
--- Test: supabase/tests/0082_ai_members.sql (CI runs it after every migration; pasted into the SQL Editor it always ends
+-- Test: supabase/tests/0083_ai_members.sql (CI runs it after every migration; pasted into the SQL Editor it always ends
 -- in an error and so changes nothing). 0078's test runs against the functions replaced here (it was updated for them).
 -- Until this is applied, nothing changes: the panel Worker still holds charging (AI_CREDITS_CHARGE unset, R-530), and
 -- the admin app shows no "AI answers for members" controls (owner_ai_questions answers without the new numbers).
 --
--- 0082: decision #98 = B (R-531, owner 14 Nov 2026: "I pick B").
+-- 0083: decision #98 = B (R-531, owner 14 Nov 2026: "I pick B").
 --   * The owner's and staff's own AI questions are FREE. They still count against the fair daily limit (60 each) and
 --     are still recorded (who asked), but take no credit and never open a block.
 --   * Members' AI answers (and later the gym page's visitors') use the gym's credits: 10 answers = 1 credit
@@ -41,8 +41,8 @@ set lock_timeout = '3s';
 
 do $$
 begin
-  if to_regprocedure('public._ai_q_take(uuid, text, text)') is null then raise exception '0082 needs 0078 (AI questions) first'; end if;
-  if to_regclass('public.gym_alerts') is null then raise exception '0082 needs 0075 (gym alerts) first'; end if;
+  if to_regprocedure('public._ai_q_take(uuid, text, text)') is null then raise exception '0083 needs 0078 (AI questions) first'; end if;
+  if to_regclass('public.gym_alerts') is null then raise exception '0083 needs 0075 (gym alerts) first'; end if;
 end $$;
 
 -- ------------------------------------------------------------------ the owner's switch and monthly limit
@@ -69,10 +69,10 @@ begin
     end if;
     done := true;
   end loop;
-  if not done then raise exception '0082: the gym_alerts kind check was not found'; end if;
+  if not done then raise exception '0083: the gym_alerts kind check was not found'; end if;
   if not exists (select 1 from pg_constraint where conrelid = 'public.gym_alerts'::regclass and contype = 'c'
                   and pg_get_constraintdef(oid) like '%''ai_members_limit''%') then
-    raise exception '0082: ai_members_limit could not be added to the gym_alerts kind check';
+    raise exception '0083: ai_members_limit could not be added to the gym_alerts kind check';
   end if;
 end $$;
 

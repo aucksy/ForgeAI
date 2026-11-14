@@ -222,13 +222,13 @@ export interface AiQuestions {
   /** Credits these questions used this month. */
   credits: number;
   /**
-   * R-531 (decision #98 = B, supabase 0082): the owner's switch and monthly limit for members' AI answers, and what
-   * members used this month. Null on a server without 0082: the sheet then reads as before.
+   * R-531 (decision #98 = B, supabase 0083): the owner's switch and monthly limit for members' AI answers, and what
+   * members used this month. Null on a server without 0083: the sheet then reads as before.
    */
   memberAi: MemberAi | null;
 }
 
-/** R-531: members' AI answers (owner_ai_member_rules / owner_save_ai_member_rules, supabase 0082). */
+/** R-531: members' AI answers (owner_ai_member_rules / owner_save_ai_member_rules, supabase 0083). */
 export interface MemberAi {
   /** "Members can get AI answers" (the owner's switch; on until the owner turns it off). */
   on: boolean;
@@ -248,7 +248,7 @@ const count = (v: unknown): number => {
   return Number.isFinite(x) && x >= 0 ? x : 0;
 };
 
-/** The server's members' numbers, or null when it has none (no 0082). PURE. */
+/** The server's members' numbers, or null when it has none (no 0083). PURE. */
 export function memberAiFrom(w: Record<string, unknown>): MemberAi | null {
   if (typeof w.members_on !== 'boolean') return null;
   const max = count(w.month_max) || 500;
@@ -264,7 +264,7 @@ export function memberAiFrom(w: Record<string, unknown>): MemberAi | null {
 
 /**
  * R-531: save the owner's switch and monthly limit. -> the server's numbers after the save, or null (offline, refused,
- * or a server without 0082); the sheet then says it was not saved.
+ * or a server without 0083); the sheet then says it was not saved.
  */
 export async function saveMemberAi(key: string, on: boolean, monthCredits: number, rpc: typeof call = call): Promise<MemberAi | null> {
   try {

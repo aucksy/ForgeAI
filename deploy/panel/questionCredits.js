@@ -1,5 +1,5 @@
 // F209 (owner 14 Nov 2026, R-519 point 4): AI questions are counted on the gym's own AI credits (the numbers live in the
-// gym server, supabase/migrations/0078_ai_questions.sql and 0082_ai_members.sql, _ai_q_rules()). Decision #98 = B (R-531):
+// gym server, supabase/migrations/0078_ai_questions.sql and 0083_ai_members.sql, _ai_q_rules()). Decision #98 = B (R-531):
 // the owner's and staff's own questions are free (a fair daily limit only); members' and page visitors' answers use the
 // credits, 10 answers = 1 credit, under the owner's switch ('off') and monthly limit ('month_limit').
 // help.js (members' and the admin app's help box) and assist.js (the owner's AI Assistant) ask here BEFORE they call
