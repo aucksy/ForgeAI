@@ -7,6 +7,10 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-547 (14 Nov 2026) Payment companies = A (Razorpay + Cashfree); Razorpay test keys added
+- Owner: "Razorpay Test Mode keys are done / Lets go with A but lets test Razorpay for now". A = gyms see only Razorpay and Cashfree; PayU and PhonePe hidden (code kept so an existing connection still works). Real test-mode check against Razorpay only; Cashfree later.
+- GitHub secrets RAZORPAY_TEST_KEY_ID and RAZORPAY_TEST_KEY_SECRET confirmed present (added 14 Nov ~20:40 IST). The payment helper builds the hide + a CI check that creates, reads and cancels a real test link.
+
 ## R-546 (14 Nov 2026) DEPLOYED a website-only hotfix on top of the live version
 - Owner: "Get the app button is still directly downloading the github apk What's crazy is that you're telling me you have changed it and tested it ... the English is also not corrected. I do not think we have pushed the actual changes." He was right: R-545 was on main only; my reply said "now goes to Google Play" before any deploy. Lesson: say "on main, NOT live" in the first line until a deploy is checked live.
 - Fix: worktree at the live commit f9f9aaf6 + the live dist (wt-site, 13 Nov) + only the R-545 changes (worker /app -> Play, /app/apk -> APK; member site, join, check-in words; 9 watch pictures). hosts.test 12/12. Fresh-eyes review: SHIP. Panel Worker version 5eb8b376.
