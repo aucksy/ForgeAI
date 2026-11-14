@@ -136,7 +136,7 @@ There is no refund call. The gym refunds in its own company dashboard, then void
 | 56 | Webhooks of gyms on pasted Razorpay keys, and of PhonePe gyms | Always refused: no webhook secret is collected for them. The payment is still found by the page, Today, the check before Approve and the 10-minute check. | W-45 | PASS (written down, not a bug) | PASS |
 | 57 | Which payment companies a gym can pick (owner's decision A, 14 Nov 2026) | Exactly Razorpay and Cashfree, on the screen and in the server's list. PayU and PhonePe cannot be newly connected (refused even if asked directly). | W-46; pay.test.mjs "tables missing..."; dashboard pay.test.ts "R-547: the picker offers exactly Razorpay and Cashfree..."; e2e "F79 phone/computer: Settings -> Payments..." | **FAIL**, all four were offered | PASS |
 | 58 | A gym already on PayU or PhonePe | Still shown and still working (links made, checked, watched); can paste new keys after "bad keys"; can disconnect. Once disconnected it is gone and cannot be connected again. | W-46; W-47; W-33 | PASS (kept working) | PASS |
-| 59 | Our real Razorpay code against Razorpay's real test API | A Rs 1 link is made, Razorpay says "created" and we read it as open, not paid; cancelled, Razorpay says "cancelled" and we read it as cancelled, not paid, and stop asking; the 10-minute check agrees each time; a second cancel and an unknown link are refusals, not crashes; a wrong secret is "bad keys" and switches that connection off. Test keys only (refuses anything but rzp_test_). | ci.yml job "razorpay-test-mode" (deploy/panel/razorpayTestMode.check.mjs), push to main and by hand | new | see section 5 |
+| 59 | Our real Razorpay code against Razorpay's real test API | A Rs 1 link is made, Razorpay says "created" and we read it as open, not paid; cancelled, Razorpay says "cancelled" and we read it as cancelled, not paid, and stop asking; the 10-minute check agrees each time; a second cancel and an unknown link are refusals, not crashes; a wrong secret is "bad keys" and switches that connection off. Test keys only (refuses anything but rzp_test_). | ci.yml job "razorpay-test-mode" (deploy/panel/razorpayTestMode.check.mjs), push to main and by hand | new | PASS (real Razorpay, run 43609581939) |
 
 "Now" means the result in CI on the sweep's commit.
 
@@ -182,4 +182,17 @@ Each fix comes with a test that failed before it.
 
 ## 5. Real Razorpay test-mode run (row 59)
 
-Filled in from the first cloud run after it finishes.
+First run: GitHub Actions run 43609581939, job "razorpay-test-mode", 14 Nov 2026, on commit 0c7799f9, with the owner's Razorpay Test Mode keys. All 19 checks passed. Razorpay's own answers:
+
+| Step | Razorpay answered | We read it as |
+|---|---|---|
+| Our key check, then Razorpay's (list links) | keys accepted | connectable (a test key in live mode is refused by us) |
+| Make a Rs 1 link | made, `plink_...`, with a pay page | open |
+| Read it back | status "created", amount paid 0, no payments | open, not paid; the 10-minute check agrees |
+| Cancel it | cancelled | - |
+| Read it back | status "cancelled", amount paid 0, no payments | cancelled, not paid; the 10-minute check marks it done and stops asking |
+| Cancel it again | refused | a refusal we handle (CANCEL_REFUSED), not a crash |
+| Read a link that does not exist | refused | a refusal (STATUS_REFUSED), never paid |
+| Wrong secret, at connect and at the status check | refused (401) | BAD_KEYS, not a crash; the 10-minute check switches that connection off as "bad keys" |
+
+Not covered by this run: a real test payment (Razorpay's test checkout needs a person to pay), refunds and webhooks. Those stay proven against the fakes (section 4).
