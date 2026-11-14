@@ -207,7 +207,7 @@ OLD_PARTS="a b c d e f g h h3 p1 p2 i link i2 j j2 j3 k l n p9 r br inv invf p7 
 # R-123: ubk = a fresh install restores a backup FILE from the welcome screen (routines in order,
 # settings, profile), then saves a new one from Settings -> Back up and restore (qa/uat-bk.yaml).
 UAT_PARTS="uh ur un ud ue ubk ub uf ua uv ug uk"
-GATE_PARTS="w dnd longrest anim mk clip uat uatc u355 u344 u358 u366 usel ugym u15 u76 u198 u194 u401 u199 u404 u438 u444 ulook uage u439 u436 u336 u61 upic u452 u456 u458 u454 u461 u482 u484"
+GATE_PARTS="w dnd longrest anim mk clip uat uatc u355 u344 u358 u366 usel ugym u15 u76 u198 u194 u401 u199 u404 u438 u444 ulook uage u439 u436 u336 u61 upic u452 u456 u458 u454 u461 u482 u484 utour"
 qa_list() { echo "$1" | tr ',;' '  ' | tr '[:upper:]' '[:lower:]' | xargs; }
 QA_ONLY_LIST=$(qa_list "${QA_ONLY:-}")
 QA_EXTRA_LIST=$(qa_list "${QA_EXTRA:-}")
@@ -2607,6 +2607,9 @@ qa_runs u458 && ! qa_runs uat && { log "gate part U458 begins"; part_u458; }
 qa_runs u461 && ! qa_runs uat && { log "gate part U461 begins"; part_u461; }
 qa_runs u482 && ! qa_runs uat && { log "gate part U482 begins"; part_u482; }
 qa_runs u484 && ! qa_runs uat && { log "gate part U484 begins"; part_u484; }
+# Picture tour (owner, 14 Nov 2026): every first-launch screen of a fresh install, photographed in order (intro,
+# welcome, Join my gym, Bring workouts, Google without the 18+ tick, the 3 setup questions). Not a test; only=utour.
+qa_runs utour && { log "gate part UTOUR begins"; uat_flow utour tour-first-run.yaml || status=1; }
 # R-359/R-345 (5 Nov 2026): the In use journey alone (pictures rel-345/357/359), with only=u15.
 qa_runs u15 && ! qa_runs uat && { log "gate part U15 begins"; uat_flow uat15 uat-rel-15-inuse-journey.yaml || status=1; }
 # T76 (owner's full test round, 5 Nov 2026): negative checks found by the round. Flow a: kg history,

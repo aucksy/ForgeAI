@@ -1,0 +1,169 @@
+# Picture tour (owner, 14 Nov 2026: "Show me the first time launch and onboarding and signing and sign up screens
+# again"). Not a test: it only photographs every first-launch screen of a fresh install, in order. Every step after
+# the first launch is optional, so one changed word costs one picture, not the rest. Runs alone with only=utour.
+#  1. The 3 intro slides.  2. The welcome screen, top and bottom.  3. "Join my gym".  4. "Bring workouts".
+#  5. "Continue with Google" without the 18+ tick (Google's own sign-in cannot run in the cloud).
+#  6. "Use without an account": the 3 setup questions, then the first screen after "Start training".
+# Each branch starts from a fresh install (clearState), so no branch depends on the one before it.
+# Pictures tour-*.png.
+appId: com.mettleup.app
+---
+# ---------------------------------------------------------------- 1. intro slides
+- launchApp:
+    clearState: true
+    permissions:
+      all: allow
+- tapOn:
+    text: "Wait"
+    optional: true
+# in-view: a fresh install opens on the intro's top (Skip) or the welcome's title; nothing has scrolled yet.
+- extendedWaitUntil:
+    visible: "^Skip$|Get stronger every week"
+    timeout: 90000
+- takeScreenshot: tour-01-intro-1
+- tapOn:
+    text: "^Next$"
+    optional: true
+- takeScreenshot: tour-02-intro-2
+- tapOn:
+    text: "^Next$"
+    optional: true
+- takeScreenshot: tour-03-intro-3
+- tapOn:
+    text: "^Get started$"
+    optional: true
+# ---------------------------------------------------------------- 2. welcome, top and bottom
+- extendedWaitUntil:
+    visible: "Get stronger every week"
+    timeout: 60000
+    optional: true
+- takeScreenshot: tour-04-welcome-top
+- scrollUntilVisible:
+    element: "Use without an account"
+    timeout: 15000
+    optional: true
+- takeScreenshot: tour-05-welcome-bottom
+# ---------------------------------------------------------------- 3. Join my gym
+- launchApp:
+    clearState: true
+    permissions:
+      all: allow
+- tapOn:
+    text: "^Skip$"
+    optional: true
+- scrollUntilVisible:
+    element: "^Join my gym$"
+    timeout: 15000
+    optional: true
+- tapOn:
+    text: "^Join my gym$"
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: tour-06-join-gym
+- scrollUntilVisible:
+    element: "Gym code"
+    timeout: 10000
+    optional: true
+- takeScreenshot: tour-07-join-gym-code
+# ---------------------------------------------------------------- 4. Bring workouts
+- launchApp:
+    clearState: true
+    permissions:
+      all: allow
+- tapOn:
+    text: "^Skip$"
+    optional: true
+- scrollUntilVisible:
+    element: "^Bring workouts$"
+    timeout: 15000
+    optional: true
+- tapOn:
+    text: "^Bring workouts$"
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: tour-08-bring-workouts
+- scrollUntilVisible:
+    element: "A MettleUp backup"
+    timeout: 10000
+    optional: true
+- takeScreenshot: tour-09-bring-workouts-bottom
+# ---------------------------------------------------------------- 5. Continue with Google, no tick
+- launchApp:
+    clearState: true
+    permissions:
+      all: allow
+- tapOn:
+    text: "^Skip$"
+    optional: true
+- scrollUntilVisible:
+    element: "^Continue with Google$"
+    centerElement: true
+    timeout: 15000
+    optional: true
+- tapOn:
+    text: "^Continue with Google$"
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: tour-10-google-needs-tick
+# ---------------------------------------------------------------- 6. Use without an account: the 3 questions
+- launchApp:
+    clearState: true
+    permissions:
+      all: allow
+- tapOn:
+    text: "^Skip$"
+    optional: true
+- scrollUntilVisible:
+    element: "^Use without an account$"
+    timeout: 15000
+    optional: true
+- tapOn:
+    text: "^Use without an account$"
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: tour-11-name-step
+- tapOn:
+    text: "e.g. Rahul Sharma"
+    optional: true
+- inputText: "Asha"
+- hideKeyboard
+- tapOn:
+    text: "^Next$"
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: tour-12-units-step
+- tapOn:
+    text: "^Kilograms$"
+    optional: true
+- tapOn:
+    text: "^Next$"
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: tour-13-goal-step
+- tapOn:
+    text: "^Build muscle$"
+    optional: true
+- scrollUntilVisible:
+    element: "^New to lifting$"
+    timeout: 10000
+    optional: true
+- tapOn:
+    text: "^New to lifting$"
+    optional: true
+- scrollUntilVisible:
+    element: "^Start training$"
+    timeout: 10000
+    optional: true
+- takeScreenshot: tour-14-goal-step-filled
+- tapOn:
+    text: "^Start training$"
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: tour-15-first-screen-after-setup
