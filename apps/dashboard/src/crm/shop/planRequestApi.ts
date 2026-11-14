@@ -9,7 +9,7 @@
  * (no internet) is not remembered: the next read asks again.
  */
 
-import { isDemoLocked } from '../../lib/demoLock';
+import { demoWithoutServer } from '../../lib/demoLock';
 import { planRequestRowFrom, planRequestRowsFrom, type PlanRequestRow } from '../logic/planRequests';
 import { isNoSuchFunction } from '../logic/workoutOffer';
 import { call } from './api';
@@ -19,7 +19,7 @@ export type PlanRequestServer = 'unknown' | 'yes' | 'no';
 let server: PlanRequestServer = 'unknown';
 
 export function planRequestServer(): PlanRequestServer {
-  return isDemoLocked() ? 'no' : server;
+  return demoWithoutServer() ? 'no' : server;
 }
 
 function markNoServer(): void {

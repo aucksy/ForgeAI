@@ -8,7 +8,7 @@
  * shown (the same as plan requests, F150). Any other failure (no internet) is not remembered.
  */
 
-import { isDemoLocked } from '../../lib/demoLock';
+import { demoWithoutServer } from '../../lib/demoLock';
 import { isNoSuchFunction } from '../logic/workoutOffer';
 import { call } from './api';
 
@@ -26,7 +26,7 @@ export interface FriendSummary {
 let server: FriendServer = 'unknown';
 
 export function friendServer(): FriendServer {
-  return isDemoLocked() ? 'no' : server;
+  return demoWithoutServer() ? 'no' : server;
 }
 
 function count(v: unknown): number {

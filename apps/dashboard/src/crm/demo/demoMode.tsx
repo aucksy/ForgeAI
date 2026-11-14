@@ -9,8 +9,10 @@
  *   - lib/demoLock.ts is switched on first thing (main.tsx): the signed-in gym is invisible to the
  *     demo, writes and sign-outs are refused, the gym server is never called (lib/supabase.ts) and the
  *     page's fetch only reads this site's own files (lockdown.ts);
- *   - screens that exist to talk to a server (messages, shop, branding ...) show a plain card saying
- *     what they do in a real gym, instead of a form that could not work.
+ *   - screens that exist to talk to a server (branding, entry machines, importing ...) show a plain card
+ *     saying what they do in a real gym, instead of a form that could not work.
+ *   - R-540 (14 Nov 2026): the rest (messages, the shop, staff, trainers, training progress, questions,
+ *     challenges, timings ...) are answered by a pretend gym server in the page (demoServer.ts).
  */
 
 import { createContext, useContext, type ReactNode } from 'react';
@@ -86,22 +88,11 @@ export function DemoBar({ hasOwnGym }: DemoInfo) {
 
 /** What each page that needs a real gym does, in the words the demo shows in its place. */
 const NEEDS_A_REAL_GYM: Record<string, { title: string; body: string }> = {
-  messages: {
-    title: 'Messages & offers',
-    body: 'Write a message or an offer once. It reaches every member’s app inbox in seconds, and you see how many read it.',
-  },
-  shop: { title: 'The shop', body: 'Members order from your shop in the MettleUp app. Their orders land here for your front desk.' },
-  challenges: { title: 'Challenges', body: 'Give members a monthly goal. Everyone who reaches it wins free days, and a leaderboard shows the top 10 in the MettleUp app.' },
-  trainers: { title: 'Trainers', body: 'Give each trainer a page with their photo and hours, and book members for personal training with a free trainer.' },
-  workouts: { title: 'Workout plans', body: 'Send each member their routine. It shows up in their MettleUp app.' },
   feedback: { title: 'Help and feedback', body: 'Ask a question, or tell MettleUp about a problem or an idea.' },
   branches: { title: 'All branches', body: 'If you run more than one gym, see every branch’s numbers together.' },
   'members/import': { title: 'Importing members', body: 'Bring your members in from an Excel or CSV file in one go.' },
-  'members/app': { title: 'Members using the app', body: 'See who joined your gym in the MettleUp app.' },
   'settings': { title: 'Settings', body: 'Your gym’s details, the member app switch, staff sign-in and your data.' },
-  'settings/people': { title: 'Staff & sign-in', body: 'Choose who can open this admin app, and their PINs.' },
   'settings/branding': { title: 'Branding', body: 'Add your gym’s logo and colours. Members see them in the MettleUp app.' },
-  'settings/timings': { title: 'Gym timings', body: 'Set when your gym is open, morning and evening or 24 hours. Members see it in the MettleUp app.' },
   'settings/entry': { title: 'Entry machines', body: 'Connect your eSSL or ZKTeco finger or face machine. Members come in with a finger or face, and MettleUp keeps the register.' },
   'settings/machines': { title: 'Busy machines', body: 'Tell members when a machine is usually busy, so they can pick a quieter day.' },
   'settings/mettleup': { title: 'Pay MettleUp', body: 'Pay for your MettleUp plan by UPI or bank transfer, and see when it is confirmed.' },
@@ -111,8 +102,9 @@ const NEEDS_A_REAL_GYM: Record<string, { title: string; body: string }> = {
 /** The demo's page for a route that needs a real gym, or null when the demo can show it. PURE. */
 export function demoNeedsRealGym(head: string | undefined, id: string | undefined): { title: string; body: string } | null {
   if (!head) return null;
-  if (head === 'settings') return NEEDS_A_REAL_GYM[`settings/${id ?? ''}`] ?? NEEDS_A_REAL_GYM.settings!;
-  if (head === 'members') return id === 'import' || id === 'app' ? NEEDS_A_REAL_GYM[`members/${id}`]! : null;
+  // R-540: Staff & sign-in and Gym timings are answered by the demo's pretend server (demoServer.ts).
+  if (head === 'settings') return id === 'people' || id === 'timings' ? null : (NEEDS_A_REAL_GYM[`settings/${id ?? ''}`] ?? NEEDS_A_REAL_GYM.settings!);
+  if (head === 'members') return id === 'import' ? NEEDS_A_REAL_GYM['members/import']! : null;
   return NEEDS_A_REAL_GYM[head] ?? null;
 }
 

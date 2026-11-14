@@ -12,7 +12,7 @@
  * browser.
  */
 
-import { isDemoLocked } from '../../lib/demoLock';
+import { demoServer, isDemoLocked } from '../../lib/demoLock';
 import type { KeyValueStore } from '../data/local';
 import { personFromRow, type Person } from '../auth/signin';
 
@@ -45,8 +45,8 @@ function store(s?: KeyValueStore): KeyValueStore | null {
 }
 
 export function readCloudGym(s?: KeyValueStore): CloudGym | null {
-  // R-119: the demo gym never sees the gym this device is signed in to.
-  if (!s && isDemoLocked()) return null;
+  // R-119: the demo gym never sees the gym this device is signed in to. R-540: it reads its own pretend session.
+  if (!s && isDemoLocked()) return (demoServer()?.session() as CloudGym | null | undefined) ?? null;
   const st = store(s);
   if (!st) return null;
   try {

@@ -8,6 +8,7 @@
  * cancelled (stock goes back). Collected and cancelled are final.
  */
 
+import { DEMO_LOCKED_WORDS } from '../../lib/demoLock';
 import { SUSPENDED_WORDS } from '../auth/signin';
 import { formatINR, parseRupeeInput, type Paise } from '../logic/money';
 import { dateISOFromEpoch, IST_OFFSET_MS } from '../logic/dates';
@@ -659,10 +660,13 @@ export type ShopErrorCode =
   | 'SUSPENDED'
   | 'OFFLINE'
   | 'INVALID'
+  /** R-540: the demo gym's pretend server turned a change away (lib/demoLock.ts). */
+  | 'DEMO'
   | 'UNKNOWN';
 
 export function errorCode(err: unknown): ShopErrorCode {
   const msg = errorText(err);
+  if (msg.includes(DEMO_LOCKED_WORDS)) return 'DEMO';
   for (const code of ['BAD_KEY', 'GONE', 'BAD_STEP', 'EMPTY', 'BAD_OPTIONS', 'BUSY', 'CHANGED', 'TOO_MANY', 'BAD_PHOTO', 'SUSPENDED'] as const) {
     if (new RegExp(`\\b${code}\\b`).test(msg)) return code;
   }
@@ -721,6 +725,9 @@ const ERROR_WORDS: Record<ShopErrorCode, string> = {
   },
   get INVALID() {
     return 'Something in this form isn’t allowed. Check the price (₹1 to ₹1,00,000) and stock.';
+  },
+  get DEMO() {
+    return DEMO_LOCKED_WORDS;
   },
   get UNKNOWN() {
     return 'Something went wrong. Please try again.';

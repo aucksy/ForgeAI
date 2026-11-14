@@ -8,7 +8,7 @@
  * questionsApi.ts does for 0053). Any other failure is not remembered. The demo gym never calls.
  */
 
-import { isDemoLocked } from '../../lib/demoLock';
+import { demoWithoutServer } from '../../lib/demoLock';
 import { talkCountFrom, talkListFrom, talkThreadAnswerFrom, type TalkList, type TalkThread } from '../logic/memberMessages';
 import { isNoSuchFunction } from '../logic/workoutOffer';
 import { call } from './api';
@@ -23,7 +23,7 @@ function markMissing(): void {
 
 /** True once the server said it has no 0069 (or in the demo gym). */
 export function memberMessagesMissing(): boolean {
-  return missing || isDemoLocked();
+  return missing || demoWithoutServer();
 }
 
 async function guarded<T>(fn: () => Promise<T>): Promise<T | 'missing'> {

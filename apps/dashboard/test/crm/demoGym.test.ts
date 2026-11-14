@@ -43,9 +43,8 @@ describe('what the demo page may ask the network for', () => {
 describe('pages that need a real gym', () => {
   it('say what they do, instead of a form that could not work', () => {
     expect(demoNeedsRealGym('settings', 'branding')?.title).toBe('Branding');
-    expect(demoNeedsRealGym('messages', undefined)?.title).toBe('Messages & offers');
     expect(demoNeedsRealGym('settings', undefined)?.title).toBe('Settings');
-    expect(demoNeedsRealGym('shop', undefined)?.title).toBe('The shop');
+    expect(demoNeedsRealGym('settings', 'entry')?.title).toBe('Entry machines');
     expect(demoNeedsRealGym('members', 'import')?.title).toBe('Importing members');
   });
   it('leave the desk work to the demo', () => {
@@ -53,6 +52,14 @@ describe('pages that need a real gym', () => {
       expect(demoNeedsRealGym(head, undefined)).toBeNull();
     }
     expect(demoNeedsRealGym('members', 'mem_1')).toBeNull();
+  });
+  it('R-540: shows the parts its pretend gym server answers (messages, shop, staff, trainers ...)', () => {
+    for (const head of ['messages', 'shop', 'challenges', 'trainers', 'trainer', 'workouts', 'diet', 'questions', 'member-messages']) {
+      expect(demoNeedsRealGym(head, undefined)).toBeNull();
+    }
+    expect(demoNeedsRealGym('members', 'app')).toBeNull();
+    expect(demoNeedsRealGym('settings', 'people')).toBeNull();
+    expect(demoNeedsRealGym('settings', 'timings')).toBeNull();
   });
 });
 
