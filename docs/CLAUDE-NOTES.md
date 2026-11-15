@@ -7,6 +7,71 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-576 (15 Nov 2026) The target box rebuilt: three rules, and an unusual target always says why
+- His words (15 Nov 2026), Hip Thrust Machine after 29 days: the box said "Previous set volume: 360 kg · Today's
+  target: 310 kg" and the rows hinted 10x8, 10x8, 15x10 (last time 0 kg warm-up, 10x10 @8.5, 10x11 @9, 15x10 @8.5).
+  His decisions: the total target always beats last time's total; "the only exception is a break of 6 weeks or more"
+  (42+ days); remove R1's 21-41 day cut, keep R1b; a set never aims under what it did last time at the same weight;
+  whenever the target is the same or lower, the box says why, with the "i" standing out (accent, a gentle short
+  pulse, still with Remove animations on, stops once opened, plain on normal days). Widened: "We silently change the
+  way calculations work and they don't get to know ... if there's an unusual calculation, there is a reason behind
+  it, and we take them to the reason": every rule that changes a number gets a plain reason in the box or on the
+  row it affects, and a per-set rule gives its row a small "i" that opens the same reason.
+- Causes: (1) R1 (21+ days) aimed every set at the bottom of the range; (2) the box showed `p.planned ?? p.total`
+  (a different plan from the rows: R-351 put last time's total in as the target when the plan was lower).
+- The 3 rules now (kgTarget.ts header):
+  1. Previous = every working set last time added up (warm-ups and drop sets out; reps on a move with no kilos).
+  2. Today's target = exactly what the set rows suggest, added up. One source (activeWorkoutStore `beatRows`
+     over `fillForSet`) for the box, the rows, a tick on an empty row, the watch and the In use screen.
+  3. Not above Previous (and no 6+ week break): 1 rep at a time on the sets, first sets first, at most 2 extra a
+     set, until it is (engine `beatGoals`, `extraReps`). The rows show those reps. Still not: a reason line.
+     During the workout, after a short set the open rows get the catch-up reps (R-304 moved into the rows), and
+     the box says which sets and why.
+- His Hip Thrust before / after: 29 days was R1 -> 10x8, 10x8, 15x10 = 310 kg against 360. Now a normal day (R5):
+  10x11, 10x12, 15x10 = 380 kg against 360, no reason line, plain "i". At 49 days: R1 (10 kg has no lighter step)
+  310 kg with "Back after 7 weeks, so an easier start." and the standing-out "i".
+- Old rules: KEPT R-60 (reps-only counts reps), R-454 floor, R-498 green lines + "Previous set volume beaten!"
+  exception, R-516 live box ("X kg done · Y kg to go", "+Z kg over target"), R-358 (Counting changed: no box),
+  C3-4 (top set / back-off as last) and R-143 (a lighter set at the top moves up), R-300 (missed goal again),
+  F73 (a set after a long rest is not raised), T76 unit noise, R-515 goal words. MERGED R-304/kgProgress catch-up
+  into the row hints (beatRows). DROPPED R-351/R-366 (last time's total as the target when the plan was lower:
+  the rows now always beat it, or the box says why), R-138 (set-for-set compare: Previous is every set), R1's
+  21-41 day cut (R1/R1b/T1 now 42+ days), the "the previous total" words.
+- The rule table (rule -> unusual? -> reason words -> where):
+  | Rule | Unusual? | Reason words | Where |
+  |---|---|---|---|
+  | R5/R4 +1 rep, total beats | no | - | - |
+  | R2 weight up, sets fewer reps | yes | "Heavier weight, so some sets aim for fewer reps than previous." | box |
+  | Rule 3 extra reps (any rule) | yes | "Set 1 gets an extra rep so the total beats previous." / "up to 2 extra reps" | box + row marks |
+  | Still not above (fewer sets, step) | yes | "3 sets planned, 4 in the previous workout, so the target is not above previous." / "Even with 2 extra reps a set, the target is not above previous." | box |
+  | R1 / R1b / T1 break 6+ weeks | yes | "Back after N weeks, so a lighter start." / "an easier start." | box |
+  | R3 step back | yes | its drop note ("Reps fell under 6 twice, so a step back to 30 kg.") | box |
+  | R-143 lift-up | yes | "Set 3 reached the top of its range, so it moves up to 12 kg." | box + row mark |
+  | F73 long rest | yes | "Set 2 came after a long rest in the previous workout, so it is not raised." | box + row mark |
+  | R-300 missed goal | yes | "Set 2 fell short in the previous workout, so it aims again for 11." | box + row mark |
+  | B2cap / Tcap / A2zero, easy week, another version | yes | the Target's own reason | box (no total) |
+  | Counting changed (R-358) | yes | "You changed how this weight is counted, so there is no previous total to beat." | box |
+  | Live catch-up after a short set | yes | "Sets 2 and 3 aim for an extra rep to reach the target." | box + row marks |
+  | Live: cannot reach | yes | "The sets left can't reach the target. That's fine, the next workout aims again." | box |
+  | First time, pyramid, normal holds T2/T3, assisted normal steps, more sets than last time | no | - | nothing changes a number against the normal rule |
+  | C3-4 top set / back-off as last | no | - | its rows show the same PREVIOUS numbers, never lower |
+  | R-454 floor | no | - | it only stops a lower aim |
+  | T76 unit noise | no | - | never visible to the member |
+- Built: progression.ts (LONG_BREAK_DAYS 42, MAX_EXTRA_REPS 2, beatGoals, beatMode, planPlaces, breakWeeks,
+  extraReps, heldGoals, againGoals); kgTarget.ts rewritten (Why, whyText, whyIcon, targetWhy, liveWhy); store
+  beatRows + fillForSet; components WhyIcon.tsx (new), ExerciseLogCard (reason line, standing-out "i", row marks),
+  SetRow (row mark), ExerciseKgRow (reason under the to-beat line). Nothing frozen touched.
+- Tests: test/tracker/r576TargetBox.test.ts (his numbers, 6+ week break and 41 days, weight step, step that cannot
+  beat, fewer sets, R-143, F73, R-300, R3, live catch-up and cannot reach, typing moves nothing, reps only, lb/T76,
+  warm-ups and drops, no-box reasons, the hard rule, banned words); old tests updated to the three rules (kgTarget,
+  r350SimpleRule, r366, r498, r515, r516 ...). Phone: new part u576 (uat-rel-r576-a/b/c, pictures rel-r576-*.png);
+  u454 flow b's Lateral Raise now aims 18 on set 2 after set 1 at 20 kg (rel-r576-u454-lateral-catch-up).
+- Known effects of rule 3 (accepted, flagged to him): a ONE-set lift that always makes its goal steps up in
+  weight more often (a step asks as many reps as last time, up to +2); switching to a lower rep range (e.g.
+  Strength 3-6 after 60 x 10) aims the top + 2 and still says "not above previous".
+- Runs: CI 43727970516 on 658ebe6e: Typecheck (mobile) and Unit tests (mobile) green (the 35 old-test failures from 7514b644 fixed; the same run's Admin journeys failure was another helper's dashboard spec, fixed on main by R-580/R-584). Phone 43725652652 (u576, owner profile, on 8e087d67): uat-rel-r576-a/b/c all passed; pictures read: rel-r576-b-hip-thrust-normal (360 -> 380 kg, rows 10x11, 10x12, 15x10, plain i), rel-r576-c-hip-thrust-done ("Done 380 kg · Previous 360 kg" green), rel-r576-d/e/f-weight-step (Lateral Raise 22.5 kg, 1,420 -> 1,440 kg, both reasons, row marks on sets 1-2, highlighted i), rel-r576-h/i-break (Hip Thrust 310 kg "Back after 7 weeks, so an easier start."; Lateral Raise 17.5 kg 700 kg "... a lighter start."). Phone 43725655699 (u454 + w, u366, u439, longrest, default profile): STILL RUNNING when this was written. LEFT TO DO: read that run (download qa-out-partial, check part u454 passed and look at rel-r576-u454-lateral-catch-up.png: row 2 aims 18 after set 1 at 20 kg, "Set 2 aims for an extra rep to reach the target."); if a flow fails, fix the flow (numbers come from the 3 rules). Nothing else is open; no release (Waiting for release in PROGRESS.md).
+- Waiting for release. What's new draft (PROGRESS.md).
+
 ## R-585 (15 Nov 2026) Welcome screens approved; Hindi privacy approved; who a member's message goes to (proposed)
 - He said (15 Nov 2026): "yes messages" (build it, helper R-586; 0096 live apply still needs its own named yes) and
   "yes panel deploy". Deploy waits for: main CI green, a fresh-eyes review of b89823ce..HEAD, a UAT look at the
