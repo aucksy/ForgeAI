@@ -7,6 +7,24 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-589 (15 Nov 2026, night) Admin panel + HQ DEPLOYED LIVE from d2928aaa; phone on USB; welcome screen 3 words first
+- His "yes panel deploy" (15 Nov 2026). Panel Worker version 330e476a-2ef6-41f6-bcf0-8d546c931e09, HQ Worker version
+  e90a9f77-dbaa-4ee4-8ba5-00ac6c78832e (deploy/hq changed in the range: R-580 api.js), both from d2928aaa2715ee0ee2c1279ec242ce7d6321c6f1
+  (has every R-580/R-578 fix, NOT R-586: 0096 is not live). Dry runs: GYM_PAGES, JOIN_PAY, PAGE_AI off.
+- Checked LIVE: /api/switches {"gymPages":false,"joinPay":false,"aiCharge":true,"pageAi":false}; /app on Android -> 302 Google
+  Play; /app on iPhone -> "The iPhone app is coming soon"; /get-app 200; privacy pages (English + Hindi) "Last updated: 15 Nov
+  2026"; hq.mettleup.fit answers; live bundle has "Screen and language", "Save and show members", "These timings are saved",
+  "Share app link"; demo at 375 px: the round display button opens Dark|Light + English|Hinglish inside the screen.
+- What's new: R-574 and this deploy shipped without moving the waiting lines. Moved now to ADMIN_NEWS '2026-11-15'
+  (mobile digits, panel headings with the phone line corrected for R-584's menu, day-first dates, online journey, logo
+  background, share app link, plus a Gym timings "Saved" line). Owners see it with the NEXT panel deploy (the list ships
+  inside the page). Still waiting: pending-test-alert (0095), pending-gym-web-pages (switch off), pending-plus-lock.
+- His phone is on USB (15 Nov night). adb dumpsys: EVERY MettleUp alert channel is importance 3 (made at 4), no sound, no
+  banner, while WhatsApp/Teams/Paytm keep 4 + sound + banner on the same phone. R-583's "importance 5" was expo's enum
+  (5 = DEFAULT). A helper owns the fix (R-590); rule: never blame his phone settings.
+- His change to welcome screen 3 (15 Nov 2026): words first ("Does your gym use MettleUp?", headline, subtext), then the
+  phone row, the arrow and the gym card; "Checked" -> "Verified". Canvas v7; sent to the R-587 helper.
+
 ## R-586 (15 Nov 2026) Member picks who reads the message
 - His ask (15 Nov 2026, verbatim): "It should be GYM Onwer or the name of the trainers added in Admin Panel..user can
   select any. For feedback / complaint, they can select GYM Owner or GYM Admin (gym admin will send to both owner and

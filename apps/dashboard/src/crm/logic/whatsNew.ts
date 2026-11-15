@@ -38,6 +38,56 @@ export interface AdminNewsEntry {
 /** Newest first. member-words: Gemini second opinion + facts checked against the commits (28 Oct 2026). */
 export const ADMIN_NEWS: readonly AdminNewsEntry[] = [
   {
+    // Admin panel deploy 15 Nov 2026 (R-589, d2928aaa): R-561, day-first dates, R-571 online journey, R-573, R-579, R-580, R-584.
+    id: '2026-11-15',
+    lines: [
+      {
+        text: 'Mobile number boxes now keep only the 10-digit number. When a phone fills in “+91 98765 43210”, the box shows 9876543210, on sign-in, Add member, Enquiries and your join pages.',
+      },
+      {
+        text: 'The menu headings are now easier to see, and the menu is wider, so every page name fits on one line. "Set up your gym" shows how many steps are done wherever it sits in the menu.',
+      },
+      {
+        text: 'The bell now puts your notices in three groups: “Your gym”, “From MettleUp” and “What’s new”. Payments get their own colour and a “Payment” label, so you can spot them quickly.',
+      },
+      {
+        text: 'The top of every page now says when it was last updated, like "Updated 30 s ago". Tap Refresh there to get the newest for the whole page without losing your place.',
+      },
+      {
+        text: 'English or Hinglish and light or dark now sit at the top of every page. On a phone, tap the round button at the top right. When alerts are off on this device, the bell shows a card to turn them on.',
+      },
+      {
+        text: 'Each setting now has one short line under it that says what it does for your gym.',
+        go: { label: 'Open Settings', path: '/settings' },
+      },
+      {
+        text: 'Every date box in the admin app now shows the day first, like "17 Oct 2026", whatever language your phone or computer uses. Tap it to open the calendar, as before.',
+      },
+      {
+        text: 'Help and feedback now answers questions about member messages: who reads questions, feedback and complaints, and how to reply in "Member messages".',
+      },
+      {
+        text: 'Set up your gym has a new step, “Let people join your gym online”. It puts your join link, your QR poster and how people pay in one place. The step is done once you share your link.',
+        go: { label: 'Open Set up your gym', path: '/setup' },
+      },
+      {
+        text: 'When you upload a logo on a plain white or coloured box, Branding now takes the box off for you. You see both logos side by side first, and you can keep yours as it is.',
+        go: { label: 'Open Branding', path: '/settings/branding' },
+      },
+      {
+        text: 'Each member’s page now has a “Share app link” button. Tap it to send that member the app link and your gym code on WhatsApp, for example when they get a new phone.',
+        go: { label: 'Open Members', path: '/members' },
+      },
+      {
+        text: 'Your gym’s link now shows the right page on any phone or computer. On Android it opens the app or Google Play. On an iPhone it says the iPhone app is coming soon. On a computer it shows a QR code.',
+      },
+      {
+        text: 'Gym timings: after you save, the button shows “Saved ✓” and a line under it says your members can see these timings. Change any time to save again.',
+        go: { label: 'Open Gym timings', path: '/settings/timings' },
+      },
+    ],
+  },
+  {
     // R-495 (owner, 14 Nov 2026): the gym's own logo top-left in the admin app, for the owner, the desk and trainers.
     // Panel code only (the logo is the one saved in Branding). id = the deploy day: change it if the deploy is later.
     id: '2026-11-14',
@@ -587,64 +637,6 @@ export const ADMIN_NEWS_PENDING: readonly AdminNewsEntry[] = [
     ],
   },
   {
-    // R-580 (owner, 15 Nov 2026): every mobile number box keeps only the 10 digits, whatever a keyboard suggestion,
-    // autofill or paste puts in. Panel code, public pages and Workers: moves to ADMIN_NEWS with the next panel deploy.
-    id: 'pending-mobile-digits',
-    lines: [
-      {
-        text: 'Mobile number boxes now keep only the 10-digit number. When a phone fills in “+91 98765 43210”, the box shows 9876543210, on sign-in, Add member, Enquiries and your join pages.',
-      },
-    ],
-  },
-  {
-    // R-561 (owner, 15 Nov 2026): one look for group headings, a wider menu, the bell in groups with payment colours,
-    // the alerts card in the bell, the language switch in the top bar, one Refresh for the whole page and a line under
-    // each setting. Panel code only: moves to ADMIN_NEWS with the deploy day as its id.
-    id: 'pending-panel-headings',
-    lines: [
-      {
-        text: 'The menu headings are now easier to see, and the menu is wider, so every page name fits on one line. "Set up your gym" shows how many steps are done wherever it sits in the menu.',
-      },
-      {
-        text: 'The bell now puts your notices in three groups: “Your gym”, “From MettleUp” and “What’s new”. Payments get their own colour and a “Payment” label, so you can spot them quickly.',
-      },
-      {
-        text: 'The top of every page now says when it was last updated, like "Updated 30 s ago". Tap Refresh there to get the newest for the whole page without losing your place.',
-      },
-      {
-        text: 'The English and Hinglish switch now sits at the top, next to the light and dark switch. When alerts are off on this phone or computer, the bell shows a card to turn them on.',
-      },
-      {
-        text: 'Each setting now has one short line under it that says what it does for your gym.',
-        go: { label: 'Open Settings', path: '/settings' },
-      },
-    ],
-  },
-  {
-    // 15 Nov 2026 (after R-561): every date box is the day-first DayField; F220: the help answers "Message your gym"
-    // (the help articles live in the panel Worker, so both reach owners with the next admin panel deploy).
-    id: 'pending-day-first-dates',
-    lines: [
-      {
-        text: 'Every date box in the admin app now shows the day first, like "17 Oct 2026", whatever language your phone or computer uses. Tap it to open the calendar, as before.',
-      },
-      {
-        text: 'Help and feedback now answers questions about member messages: who reads questions, feedback and complaints, and how to reply in "Member messages".',
-      },
-    ],
-  },
-  {
-    // R-571 (owner, 15 Nov 2026): one set-up journey for joining online. Panel code only: moves to ADMIN_NEWS with the
-    // next admin panel deploy (the step shows for every online gym, gym web pages on or off).
-    id: 'pending-online-journey',
-    lines: [
-      {
-        text: 'Set up your gym has a new step, “Let people join your gym online”. It puts your join link, your QR poster and how people pay in one place. The step is done once you share your link.',
-        go: { label: 'Open Set up your gym', path: '/setup' },
-      },
-    ],
-  },
-  {
     // R-571: for the day gym web pages switch on (GYM_PAGES live, docs/gym-page/PLAN.md "Switch-on"). Not before.
     id: 'pending-gym-web-pages',
     lines: [
@@ -655,32 +647,6 @@ export const ADMIN_NEWS_PENDING: readonly AdminNewsEntry[] = [
       },
       {
         text: 'Your page is on by default, and it is your choice: you can turn it off or on again there at any time.',
-      },
-    ],
-  },
-  {
-    // R-573 (owner, 15 Nov 2026): the logo's plain background comes off on the owner's computer (reverses R-192).
-    // Panel code only: moves to ADMIN_NEWS with the next admin panel deploy.
-    id: 'pending-logo-background',
-    lines: [
-      {
-        text: 'When you upload a logo on a plain white or coloured box, Branding now takes the box off for you. You see both logos side by side first, and you can keep yours as it is.',
-        go: { label: 'Open Branding', path: '/settings/branding' },
-      },
-    ],
-  },
-  {
-    // R-579 (owner, 15 Nov 2026): "Share app link" on every member's page, and the one smart app link (Android: Google
-    // Play; iPhone: "coming soon" until APP_STORE_URL is set; computer: a QR code). Panel code and the panel Worker: moves
-    // to ADMIN_NEWS with the next admin panel deploy.
-    id: 'pending-share-app-link',
-    lines: [
-      {
-        text: 'Each member’s page now has a “Share app link” button. Tap it to send that member the app link and your gym code on WhatsApp, for example when they get a new phone.',
-        go: { label: 'Open Members', path: '/members' },
-      },
-      {
-        text: 'Your gym’s link now shows the right page on any phone or computer. On Android it opens the app or Google Play. On an iPhone it says the iPhone app is coming soon. On a computer it shows a QR code.',
       },
     ],
   },

@@ -102,6 +102,23 @@ describe('the list itself', () => {
   });
 });
 
+describe('the 15 Nov 2026 deploy (R-589)', () => {
+  it('names what went live and nothing that is still off or waiting for the gym server', () => {
+    const entry = ADMIN_NEWS.find((e) => e.id === '2026-11-15')!;
+    expect(ADMIN_NEWS[0]).toBe(entry);
+    const all = entry.lines.map((l) => l.text).join(' ');
+    for (const fact of ['10-digit number', 'Share app link', 'day first', 'Let people join your gym online', 'Branding', 'Saved ✓', 'round button']) {
+      expect(all, fact).toContain(fact);
+    }
+    expect(all).not.toMatch(/test alert|web page|join\.mettleup|Plus/i);
+    expect(ADMIN_NEWS_PENDING.map((e) => e.id)).toEqual(['pending-test-alert', 'pending-gym-web-pages', 'pending-plus-lock']);
+    for (const l of entry.lines) {
+      expect(l.text, l.text).toMatch(/^["A-Z]/);
+      expect(l.text, l.text).toMatch(/\.$/);
+    }
+  });
+});
+
 describe('which updates the card shows', () => {
   it('nothing for a browser that never saw an update (remembered, not announced)', () => {
     expect(newsToShow(null, LOG)).toEqual([]);
