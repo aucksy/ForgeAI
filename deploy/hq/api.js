@@ -141,7 +141,7 @@ async function creditsPart(db, gymId) {
  */
 async function webPagePart(db, gymId) {
   try {
-    return await db('hq_gym_page', { p_gym: gymId });
+    return await db('hq_web_page', { p_gym: gymId });
   } catch (e) {
     if (!(e instanceof DbError && e.code === 'NOT_READY')) console.error('[hq-api] web page switch not readable', e instanceof Error ? e.message : 'error');
     return null;
@@ -607,7 +607,7 @@ export async function handleApi(request, env, who, deps = {}) {
     if (route === 'POST /api/gym/web-page') {
       if (!isUuid(b.gymId) || typeof b.on !== 'boolean') return refuse('BAD_REQUEST');
       try {
-        return json(200, await db('hq_set_gym_page', { p_gym: b.gymId, p_on: b.on, p_note: text(b.reason, 300) || null }));
+        return json(200, await db('hq_set_web_page', { p_gym: b.gymId, p_on: b.on, p_note: text(b.reason, 300) || null }));
       } catch (e) {
         if (e instanceof DbError && e.code === 'NOT_READY') return refuse('PAGE_NOT_READY', 503);
         throw e;

@@ -817,7 +817,7 @@ export function checkDoneWords(c) {
 }
 
 /**
- * R-563 (owner, 15 Nov 2026): the "Web page" card on a gym's page. `webPage` is hq_gym_page's answer (0090) or null
+ * R-563 (owner, 15 Nov 2026): the "Web page" card on a gym's page. `webPage` is hq_web_page's answer (0090) or null
  * before 0090; `pagesLive` is the panel's GYM_PAGES (true / false / null when it could not be asked). Plain sentences:
  * { global, state, page, button } (global and page may be null). PURE.
  */

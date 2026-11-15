@@ -1,6 +1,6 @@
 // R-563 (owner, 15 Nov 2026): HQ's "Web page" switch for one gym, driven like a person on a phone (390 x 844) with
 // computer pictures (1280 x 900), light and dark. The HQ page is the real one (apps/hq/public, served as files); only
-// its Worker (/api/*) is pretend, answering the way deploy/hq/api.js answers (hq_gym_page / hq_set_gym_page, 0090,
+// its Worker (/api/*) is pretend, answering the way deploy/hq/api.js answers (hq_web_page / hq_set_web_page, 0090,
 // and the panel's GYM_PAGES as `pagesLive`). Pictures: e2e/.results/uat/hq-webpage-*.png.
 //
 //  1. Gym web pages still off for every gym: the card says why, and the gym's own switch is On (the default).

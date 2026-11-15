@@ -14,19 +14,19 @@
 -- The owner's own page row (words, photos, address) is kept, so switching back on shows the page again as it was.
 -- The global switch (the panel Worker's GYM_PAGES) still comes first: while it is off no gym has a page.
 --
--- NEW
+-- NEW (named hq_web_page / hq_set_web_page: 0028's test keeps every hq_gym_* name for the break-glass reads)
 --   table gym_page_off            one row per gym that HQ switched off (note, who, when). RLS on, no grants.
---   hq_gym_page(actor, gym)       HQ's read: {pageOn, slug, published, hiddenByHq}
---   hq_set_gym_page(actor, gym, on, note)  switch one gym's page on or off -> {ok, pageOn}; logged as gym_page_on/off
+--   hq_web_page(actor, gym)       HQ's read: {pageOn, slug, published, hiddenByHq}
+--   hq_set_web_page(actor, gym, on, note)  switch one gym's page on or off -> {ok, pageOn}; logged as gym_page_on/off
 -- CHANGED
 --   owner_gym_page(key)           exactly 0080's, + 'off': true when HQ switched this gym's page off
 --   gym_page_public(slug)         exactly 0080's, + null when HQ switched this gym's page off
 -- Not changed: gym_page_ask_send. A visitor who had the page open before it was switched off can still send one
 -- question; it lands in the gym's own Enquiries as before (the page itself no longer opens).
 -- Before this is applied: every gym's page follows only the global switch, and HQ's "Web page" switch says the
--- database change is not in yet (HQ checks for hq_gym_page).
--- Undo: re-run 0080's owner_gym_page and gym_page_public; drop function public.hq_set_gym_page(text, uuid, boolean, text);
---   drop function public.hq_gym_page(text, uuid); drop table public.gym_page_off.
+-- database change is not in yet (HQ checks for hq_web_page).
+-- Undo: re-run 0080's owner_gym_page and gym_page_public; drop function public.hq_set_web_page(text, uuid, boolean, text);
+--   drop function public.hq_web_page(text, uuid); drop table public.gym_page_off.
 
 set lock_timeout = '3s';
 
@@ -83,7 +83,7 @@ begin
 end $$;
 
 -- ------------------------------------------------------------------ MettleUp HQ (service role only)
-create or replace function public.hq_gym_page(p_actor text, p_gym uuid)
+create or replace function public.hq_web_page(p_actor text, p_gym uuid)
   returns jsonb language plpgsql stable security definer set search_path = public as $$
 declare r public.gym_pages;
 begin
@@ -99,7 +99,7 @@ begin
 end $$;
 
 -- On (p_on true): the row goes. Off: a row with the note (optional, at most 300 letters). Logged either way.
-create or replace function public.hq_set_gym_page(p_actor text, p_gym uuid, p_on boolean, p_note text default null)
+create or replace function public.hq_set_web_page(p_actor text, p_gym uuid, p_on boolean, p_note text default null)
   returns jsonb language plpgsql volatile security definer set search_path = public as $$
 declare a text; why text := nullif(left(btrim(coalesce(p_note, '')), 300), ''); turn_on boolean := coalesce(p_on, true);
 begin
@@ -117,9 +117,9 @@ begin
 end $$;
 
 -- ------------------------------------------------------------------ grants
-revoke all on function public.hq_gym_page(text, uuid) from public, anon, authenticated;
-revoke all on function public.hq_set_gym_page(text, uuid, boolean, text) from public, anon, authenticated;
-grant execute on function public.hq_gym_page(text, uuid) to service_role;
-grant execute on function public.hq_set_gym_page(text, uuid, boolean, text) to service_role;
+revoke all on function public.hq_web_page(text, uuid) from public, anon, authenticated;
+revoke all on function public.hq_set_web_page(text, uuid, boolean, text) from public, anon, authenticated;
+grant execute on function public.hq_web_page(text, uuid) to service_role;
+grant execute on function public.hq_set_web_page(text, uuid, boolean, text) to service_role;
 
 notify pgrst, 'reload schema';

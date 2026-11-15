@@ -41,23 +41,23 @@ begin
   checks := checks + 1; fails := fails || pg_temp.t90_is('1savea', (public.owner_save_gym_page(kop, page || jsonb_build_object('slug', sla))->>'ok'), 'true');
   checks := checks + 1; fails := fails || pg_temp.t90_is('1saveb', (public.owner_save_gym_page(kb, page || jsonb_build_object('slug', slb))->>'ok'), 'true');
   checks := checks + 1; fails := fails || pg_temp.t90_is('1publica', public.gym_page_public(sla)->>'slug', sla);
-  r := public.hq_gym_page(hq, ga);
+  r := public.hq_web_page(hq, ga);
   checks := checks + 1; fails := fails || pg_temp.t90_is('1hqread', (r->>'pageOn') || '/' || (r->>'slug') || '/' || (r->>'published') || '/' || (r->>'hiddenByHq'), 'true/' || sla || '/true/false');
   checks := checks + 1; fails := fails || pg_temp.t90_is('1owner', (public.owner_gym_page(kop) ? 'off')::text, 'false');
-  checks := checks + 1; fails := fails || pg_temp.t90_is('1nopage', (public.hq_gym_page(hq, gb)->>'pageOn'), 'true');
+  checks := checks + 1; fails := fails || pg_temp.t90_is('1nopage', (public.hq_web_page(hq, gb)->>'pageOn'), 'true');
 
   -- 2. Refused: no actor, a gym that is not there.
-  checks := checks + 1; fails := fails || pg_temp.t90_is('2noactor', pg_temp.t90_err(format('select public.hq_set_gym_page(%L, %L::uuid, false, null)', 'nobody', ga)), 'NO_ACTOR');
-  checks := checks + 1; fails := fails || pg_temp.t90_is('2gone', pg_temp.t90_err(format('select public.hq_set_gym_page(%L, %L::uuid, false, null)', hq, gen_random_uuid())), 'GONE');
+  checks := checks + 1; fails := fails || pg_temp.t90_is('2noactor', pg_temp.t90_err(format('select public.hq_set_web_page(%L, %L::uuid, false, null)', 'nobody', ga)), 'NO_ACTOR');
+  checks := checks + 1; fails := fails || pg_temp.t90_is('2gone', pg_temp.t90_err(format('select public.hq_set_web_page(%L, %L::uuid, false, null)', hq, gen_random_uuid())), 'GONE');
   checks := checks + 1; fails := fails || pg_temp.t90_is('2stillon', public.gym_page_public(sla)->>'slug', sla);
 
   -- 3. Off for gym A only: its page "not here", its admin app sees off, the page row kept; gym B untouched; logged.
-  r := public.hq_set_gym_page(hq, ga, false, 'Owner asked to stop the page for now');
+  r := public.hq_set_web_page(hq, ga, false, 'Owner asked to stop the page for now');
   checks := checks + 1; fails := fails || pg_temp.t90_is('3off', (r->>'ok') || '/' || (r->>'pageOn'), 'true/false');
   checks := checks + 1; fails := fails || pg_temp.t90_is('3public', public.gym_page_public(sla)::text, null);
   r := public.owner_gym_page(kop);
   checks := checks + 1; fails := fails || pg_temp.t90_is('3owner', (r->>'off') || '/' || coalesce(r->>'page', 'none') || '/' || (r->>'canEdit'), 'true/none/false');
-  checks := checks + 1; fails := fails || pg_temp.t90_is('3hqread', public.hq_gym_page(hq, ga)->>'pageOn', 'false');
+  checks := checks + 1; fails := fails || pg_temp.t90_is('3hqread', public.hq_web_page(hq, ga)->>'pageOn', 'false');
   checks := checks + 1; fails := fails || pg_temp.t90_is('3kept', (select count(*) from public.gym_pages where gym_id = ga and slug = sla and published)::text, '1');
   checks := checks + 1; fails := fails || pg_temp.t90_is('3other', public.gym_page_public(slb)->>'slug', slb);
   checks := checks + 1; fails := fails || pg_temp.t90_is('3log', (select count(*) from public.hq_audit where gym_id = ga and action = 'gym_page_off' and actor = hq
@@ -65,24 +65,24 @@ begin
   -- The join link is not part of this switch: Join online still answers for the gym.
   checks := checks + 1; fails := fails || pg_temp.t90_is('3join', public.self_join_preview('T90AAA')->>'gymName', 'T90 Gym');
   -- Off twice is fine (one row).
-  perform public.hq_set_gym_page(hq, ga, false, null);
+  perform public.hq_set_web_page(hq, ga, false, null);
   checks := checks + 1; fails := fails || pg_temp.t90_is('3once', (select count(*) from public.gym_page_off where gym_id = ga)::text, '1');
 
   -- 4. Back on: shown again exactly as it was; logged.
-  checks := checks + 1; fails := fails || pg_temp.t90_is('4on', public.hq_set_gym_page(hq, ga, true, null)->>'pageOn', 'true');
+  checks := checks + 1; fails := fails || pg_temp.t90_is('4on', public.hq_set_web_page(hq, ga, true, null)->>'pageOn', 'true');
   checks := checks + 1; fails := fails || pg_temp.t90_is('4public', public.gym_page_public(sla)->>'about', 'Big gym near the market.');
   checks := checks + 1; fails := fails || pg_temp.t90_is('4owner', public.owner_gym_page(kop)->'page'->>'slug', sla);
   checks := checks + 1; fails := fails || pg_temp.t90_is('4log', (select count(*) from public.hq_audit where gym_id = ga and action = 'gym_page_on')::text, '1');
 
   -- 5. Who may call what: HQ's two only with the service key; the table never.
   checks := checks + 1; fails := fails || pg_temp.t90_is('5anon',
-    (has_function_privilege('anon', 'public.hq_gym_page(text, uuid)', 'execute')
-     or has_function_privilege('authenticated', 'public.hq_gym_page(text, uuid)', 'execute')
-     or has_function_privilege('anon', 'public.hq_set_gym_page(text, uuid, boolean, text)', 'execute')
-     or has_function_privilege('authenticated', 'public.hq_set_gym_page(text, uuid, boolean, text)', 'execute'))::text, 'false');
+    (has_function_privilege('anon', 'public.hq_web_page(text, uuid)', 'execute')
+     or has_function_privilege('authenticated', 'public.hq_web_page(text, uuid)', 'execute')
+     or has_function_privilege('anon', 'public.hq_set_web_page(text, uuid, boolean, text)', 'execute')
+     or has_function_privilege('authenticated', 'public.hq_set_web_page(text, uuid, boolean, text)', 'execute'))::text, 'false');
   checks := checks + 1; fails := fails || pg_temp.t90_is('5service',
-    (has_function_privilege('service_role', 'public.hq_gym_page(text, uuid)', 'execute')
-     and has_function_privilege('service_role', 'public.hq_set_gym_page(text, uuid, boolean, text)', 'execute'))::text, 'true');
+    (has_function_privilege('service_role', 'public.hq_web_page(text, uuid)', 'execute')
+     and has_function_privilege('service_role', 'public.hq_set_web_page(text, uuid, boolean, text)', 'execute'))::text, 'true');
   checks := checks + 1; fails := fails || pg_temp.t90_is('5table',
     (has_table_privilege('anon', 'public.gym_page_off', 'select') or has_table_privilege('authenticated', 'public.gym_page_off', 'select'))::text, 'false');
   checks := checks + 1; fails := fails || pg_temp.t90_is('5ownerstill', has_function_privilege('anon', 'public.owner_gym_page(text)', 'execute')::text, 'true');
