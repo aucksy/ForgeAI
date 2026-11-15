@@ -56,8 +56,10 @@ begin
   checks := checks + 1; fails := fails || pg_temp.t95_is('1badkey',
     pg_temp.t95_run(format('select public.owner_send_test_alert(%L, %L)', 't95-nobody', e_own)), 'BAD_KEY');
   checks := checks + 1; fails := fails || pg_temp.t95_is('1status',
-    public.owner_test_alert(ko, 'https://fcm.googleapis.com/fcm/send/nobody')::text, '{"ok": true, "on": false, "test": null, "wait": 0}');
-  checks := checks + 1; fails := fails || pg_temp.t95_is('1nothing', public.owner_test_alert(ko, e_own)::text, '{"ok": true, "on": true, "test": null, "wait": 0}');
+    (public.owner_test_alert(ko, 'https://fcm.googleapis.com/fcm/send/nobody') - 'now')::text, '{"ok": true, "on": false, "test": null, "wait": 0}');
+  checks := checks + 1; fails := fails || pg_temp.t95_is('1nothing', (public.owner_test_alert(ko, e_own) - 'now')::text, '{"ok": true, "on": true, "test": null, "wait": 0}');
+  checks := checks + 1; fails := fails || pg_temp.t95_is('1now',
+    ((public.owner_test_alert(ko, e_own)->>'now')::bigint = floor(extract(epoch from now()) * 1000)::bigint)::text, 'true');
 
   -- 2. The owner sends one: urgent, for this browser only; a second tap within the minute waits.
   r := public.owner_send_test_alert(ko, e_own);
@@ -141,7 +143,7 @@ begin
   checks := checks + 1; fails := fails || pg_temp.t95_is('7again', (r->>'ok') || ' ' || (select count(*) from public.gym_alerts where tag = 't95:many1'), 'true 0');
   -- An hour later, the card forgets it.
   update public.gym_alerts set created_at = now() - interval '61 minutes' where alert_id = (r->>'id')::uuid;
-  checks := checks + 1; fails := fails || pg_temp.t95_is('7forgot', public.owner_test_alert(kdesk, e_desk)::text, '{"ok": true, "on": true, "test": null, "wait": 0}');
+  checks := checks + 1; fails := fails || pg_temp.t95_is('7forgot', (public.owner_test_alert(kdesk, e_desk) - 'now')::text, '{"ok": true, "on": true, "test": null, "wait": 0}');
 
   -- 8. The browser turned off: its test alerts go with it.
   perform public.owner_clear_web_push(kdesk, e_desk);

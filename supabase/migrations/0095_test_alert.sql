@@ -22,7 +22,8 @@
 --                                         THAT key (0076 owner_web_push_on). Once a minute a browser, 20 an hour a gym.
 --                                         -> {ok, id, at} | {ok: false, error: 'NOT_ON' | 'TOO_SOON', wait}
 --   owner_test_alert(key, endpoint)       this browser's latest test alert of the last hour, and how long until the
---                                         next may go -> {ok, test: null | {id, at, sentAt, sentHow, shownAt}, wait}
+--                                         next may go -> {ok, on, test: null | {id, at, sentAt, sentHow, shownAt}, wait,
+--                                         now (the server's clock, ms)}
 --   panel_test_alert_shown(alert)         the service worker's "shown" (no key: it has none). Only a test alert, only
 --                                         once, only within a day; the id is a random uuid only that browser got.
 --                                         Nothing else is sent or answered: always {ok: true}.
@@ -112,11 +113,15 @@ declare
   s public.gym_web_push := public._test_alert_sub(p_key, p_endpoint);
   a public.gym_alerts;
 begin
-  if s.sub_id is null then return jsonb_build_object('ok', true, 'on', false, 'test', null, 'wait', 0); end if;
+  if s.sub_id is null then
+    return jsonb_build_object('ok', true, 'on', false, 'test', null, 'wait', 0, 'now', floor(extract(epoch from now()) * 1000)::bigint);
+  end if;
   select x.* into a from public.gym_alerts x
    where x.kind = 'test_alert' and x.sub_id = s.sub_id and x.gym_id = g and x.created_at > now() - interval '1 hour'
    order by x.created_at desc limit 1;
-  return jsonb_build_object('ok', true, 'on', true, 'wait', public._test_alert_wait(s), 'test', case when a.alert_id is null then null else
+  -- 'now': the gym server's clock, so a phone or computer whose own clock is off still waits the right 90 seconds.
+  return jsonb_build_object('ok', true, 'on', true, 'wait', public._test_alert_wait(s),
+    'now', floor(extract(epoch from now()) * 1000)::bigint, 'test', case when a.alert_id is null then null else
     jsonb_build_object('id', a.alert_id,
       'at', floor(extract(epoch from a.created_at) * 1000)::bigint,
       'sentAt', floor(extract(epoch from a.sent_at) * 1000)::bigint,

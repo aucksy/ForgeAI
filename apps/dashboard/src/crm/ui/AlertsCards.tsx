@@ -161,11 +161,16 @@ function TestAlertBox({ apiKey }: { apiKey: string }) {
   const [note, setNote] = useState<string | null>(null);
   const [hiddenHelp, setHiddenHelp] = useState(false);
   const [now, setNow] = useState(() => Date.now());
+  // The gym server's clock minus this device's (a device whose clock is off still waits the right 90 seconds).
+  const [skew, setSkew] = useState(0);
   const read = useCallback(async () => {
     try {
       const r = await readTestAlert(apiKey);
       if (r === 'missing') setHere(false);
-      else if (r) setAnswer(r);
+      else if (r) {
+        setAnswer(r);
+        if (r.serverNow !== null) setSkew(r.serverNow - Date.now());
+      }
     } catch (e) {
       console.warn('[ForgeErr] test alert: reading', e);
     } finally {
@@ -177,8 +182,8 @@ function TestAlertBox({ apiKey }: { apiKey: string }) {
     void read();
   }, [read]);
   const test = answer?.test ?? null;
-  const state = testAlertState(test, now);
-  const poll = test ? testPollMs(state, now - test.at) : null;
+  const state = testAlertState(test, now + skew);
+  const poll = test ? testPollMs(state, now + skew - test.at) : null;
   useEffect(() => {
     if (poll === null) return;
     const id = window.setTimeout(() => void read(), poll);
@@ -209,8 +214,10 @@ function TestAlertBox({ apiKey }: { apiKey: string }) {
       const r = await sendTestAlert(apiKey);
       if (r === 'missing') setHere(false);
       else if (r.ok) {
-        setAnswer({ on: true, wait: 60, test: { id: r.id, at: r.at, sentAt: null, sentHow: null, shownAt: null } });
-        setNow(Date.now());
+        const sentNow = Date.now();
+        setAnswer({ on: true, wait: 60, serverNow: r.at, test: { id: r.id, at: r.at, sentAt: null, sentHow: null, shownAt: null } });
+        setSkew(r.at - sentNow);
+        setNow(sentNow);
       } else if (r.error === 'TOO_SOON') setNote(testWords(TW.tooSoon, { n: r.wait || 60 }));
       else if (r.error === 'NOT_ON') setNote(TW.unreached);
       else setNote(TW.failed);

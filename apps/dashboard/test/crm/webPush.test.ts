@@ -187,10 +187,12 @@ describe('the test alert: answers, what the card says, when it asks again', () =
   const AT = Date.UTC(2026, 10, 15, 14, 10, 0); // 7:40 pm India time
 
   it('reads the server answers, refusing anything else', () => {
-    expect(testAlertFrom({ ok: true, on: true, test: null, wait: 0 })).toEqual({ on: true, test: null, wait: 0 });
+    expect(testAlertFrom({ ok: true, on: true, test: null, wait: 0 })).toEqual({ on: true, test: null, wait: 0, serverNow: null });
+    expect(testAlertFrom({ ok: true, on: true, test: null, wait: 0, now: AT })?.serverNow).toBe(AT);
     expect(testAlertFrom({ ok: true, on: true, wait: 42, test: { id: ID, at: AT, sentAt: AT + 30_000, sentHow: 'instant', shownAt: null } })).toEqual({
       on: true,
       wait: 42,
+      serverNow: null,
       test: { id: ID, at: AT, sentAt: AT + 30_000, sentHow: 'instant', shownAt: null },
     });
     expect(testAlertFrom({ ok: true, on: false, test: null, wait: 0 })?.on).toBe(false);

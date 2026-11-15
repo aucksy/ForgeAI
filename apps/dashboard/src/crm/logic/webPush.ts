@@ -149,6 +149,8 @@ export interface TestAlertAnswer {
   test: TestAlert | null;
   /** Seconds until another test may go. */
   wait: number;
+  /** The gym server's clock when it answered (ms), or null: the card measures the 90 s on it, not the device's. */
+  serverNow: number | null;
 }
 
 const ms = (v: unknown): number | null => (typeof v === 'number' && Number.isFinite(v) && v > 0 ? v : null);
@@ -164,7 +166,7 @@ export function testAlertFrom(raw: unknown): TestAlertAnswer | null {
     if (typeof t.id !== 'string' || at === null) return null;
     test = { id: t.id, at, sentAt: ms(t.sentAt), sentHow: typeof t.sentHow === 'string' ? t.sentHow : null, shownAt: ms(t.shownAt) };
   } else if (t !== null && t !== undefined) return null;
-  return { on: raw.on !== false, test, wait: secs(raw.wait) };
+  return { on: raw.on !== false, test, wait: secs(raw.wait), serverNow: ms(raw.now) };
 }
 
 export type SendTestAnswer = { ok: true; id: string; at: number } | { ok: false; error: 'NOT_ON' | 'TOO_SOON' | 'UNREADABLE'; wait: number };
