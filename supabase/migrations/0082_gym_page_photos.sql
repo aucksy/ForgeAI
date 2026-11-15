@@ -1,4 +1,4 @@
--- NOT LIVE YET (14 Nov 2026). Waiting for CI to be green, then the main session applies it in the SQL Editor (R-529 covers
+-- APPLIED LIVE 15 Nov 2026 (owner: "Yes for 0082 database change"); live test 0082 PASS 23. (Was: NOT LIVE YET 14 Nov; R-529 covers
 -- it: "Photos: our own Supabase storage, served at join.mettleup.fit/p/..."). Re-runnable.
 -- NEEDS 0080 (gym_pages), 0027 (_gym_not_suspended), 0018 (_owner_only_gym).
 -- Test: supabase/tests/0082_gym_page_photos.sql (CI runs it after every migration; pasted into the SQL Editor it always
