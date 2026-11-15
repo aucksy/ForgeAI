@@ -167,9 +167,11 @@ for (const [size, scheme] of [
 ]) {
   test(`ONELINK-2 pages on, page published (${size} ${scheme}): "Your gym’s web page" is the one link for WhatsApp, the poster and Google Maps`, async ({ page }) => {
     test.setTimeout(120_000);
-    await page.setViewportSize(SIZES[size]);
+    // The gym is set up on a phone (support.mjs walks the phone's bottom bar), then looked at in this size.
+    await page.setViewportSize(SIZES.phone);
     await page.emulateMedia({ colorScheme: scheme });
     await gymReady(page, { pagesOn: true, webPage: PUBLISHED });
+    await page.setViewportSize(SIZES[size]);
     await page.reload();
     await openInvite(page);
     const main = page.getByRole('main');
