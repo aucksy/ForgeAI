@@ -90,7 +90,8 @@ test('photos only from our own addresses; maps links only from Google', () => {
   assert.equal(l.open, 'https://www.google.com/maps/search/?api=1&query=26.9%2C75.8');
   assert.equal(l.directions, 'https://www.google.com/maps/dir/?api=1&destination=26.9%2C75.8');
   assert.equal(mapsLinks({ mapsUrl: null, lat: null, lng: null, address: '', gymName: '' }), null);
-  assert.match(whatsappShare('Example Fitness', 'https://join.mettleup.fit/example'), /^https:\/\/wa\.me\/\?text=Example%20Fitness/);
+  // R-563: a complete sentence, then the link.
+  assert.equal(decodeURIComponent(whatsappShare('Example Fitness', 'https://join.mettleup.fit/example').split('?text=')[1]), 'See the fees, timings and photos of Example Fitness: https://join.mettleup.fit/example');
 });
 
 test('money words: rupees from paise, per month only when it helps', () => {
