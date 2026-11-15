@@ -537,7 +537,12 @@ Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept her
   Cloud runs: CI 43720782230 green; device QA 43720843604 green (u438 + u336 + u401, owner profile: the offer, no
   pop-up when up to date, the not-connected step, the phone update screen, the What's new card); wear unit tests
   passed inside 43720782161 (cancelled by a later push); wear 43724579949 failed on the new capability check (the
-  proof above); WEAR-AFTER-FIX.
+  proof above); wear 43726710831 (after the watch fix, fa963d98): the capability check PASSES, build + both large-watch UATs
+  green; the small-watch "largest text" step failed because emulator system screens (tray setup, charging) were
+  in front, same failure on 43726347844 before this change; re-run of that job started, result not read yet.
+  CI on fa963d98 (43726701725) red only on other helpers' rep-hint tests (R-576), already red on the 3 commits
+  before it. LEFT: read the 43726710831 re-run; follow-up: probeWatch (rest-alert bridging) is still
+  capability-only; the watch fix reaches his watch only with a watch release (none done).
 - **Only his real watch can confirm** the pop-up shows, and his next "Add my watch's screen log" says which signal
   found it (no cloud phone can pair a real watch).
 
