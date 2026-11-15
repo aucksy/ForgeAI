@@ -7,6 +7,48 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-587 (15 Nov 2026) New welcome screens and phone-number-first sign-in
+- His words (15 Nov 2026): "I'm good with the welcome screen designs" (R-585), and for sign-in (R-582): "we can keep
+  the primary method as phone number login, but we can keep the Google method hidden under something like try
+  another way ... the only option that they should see is the phone number login, and other options may be hidden."
+- **Welcome screens** (onboarding/introSlides.ts words, components/IntroSlides.tsx), words and look copied from the
+  approved canvas (Main / Watch / Gym .dc.html). Screen 1 "Beat your last workout" with the bench card; screen 2,
+  the watch, ONLY when a compatible Wear OS watch answers (watch app missing: "Install on my watch" opens the install;
+  already there: "On your watch" with a tick, installs nothing); last screen the gym, "Get started" and "Recommend
+  MettleUp to my gym" (the Gym tab's share message). "1 of 2" / "1 of 3", dots, Skip on every screen, Back walks
+  back. Nothing waits on the watch: the screens open at once as 2; a watch answer that comes while screen 1 is still
+  up adds the watch screen, a later one is ignored. Replaces the old two welcome screens.
+- **Sign-in** (welcomeStart.ts startButtons, WelcomeScreen.tsx): the first screen shows only "Continue with your phone
+  number" and a "Try another way" link; under it Google, Join my gym, Bring workouts, Use without an account and the
+  demo, exactly as before. A phone that kept its own workouts opens the other ways at once. PHONE_SIGN_IN_ON = true
+  (ships only with his "release").
+- **Straight in** (phoneSignInApi.ts goStraightIn, WelcomePhone.tsx): one match and it is a MEMBER = no Join tap, no 3
+  questions, no gym join screen. "Opening <gym>..." while the app joins the gym with the found code, then finishes
+  setup with the first name, the proven number and the gym's name; goal "Build muscle", level "New to lifting", kg
+  (all changeable in Profile). The 18+ and terms box moved onto the phone form (the join now happens there). If setup
+  cannot finish, the member gets the 3 questions with the name filled in.
+- QA: new 'watchIntro' stand-in (mettleup://qa-intro?watch=missing|installed, QA builds only) because the cloud phone
+  has no watch. qa/sub-other-ways.yaml opens "Try another way" in every flow that uses a hidden button. tour-first-run
+  (utour) and uat-rel-f203 (u203, now with "no tick" and "a found member goes straight in") rewritten.
+- Tests: test/onboarding/welcomeIntro.test.ts (screen count, step labels, which watch button, exact words, card
+  totals, banned words, which sign-in buttons show, who goes straight in, join before setup), plus phoneSignIn,
+  welcomeUat, watchStartAndIntro updated. CI 43730661597 on 3d5a2bdd: phone typecheck, all 3 unit-test time zones up to New York and the flow lint GREEN when last read (dashboard steps still running).
+- STATE when this session stopped (usage limit, 15 Nov 2026): code pushed (3d5a2bdd). PENDING, not yet read: phone
+  runs qa-device 43730720703 (only=utour,u203,u198, default profile 1080x2400) and 43730723379 (only=utour, owner
+  profile 360 dp, font 1.3). NO picture looked at yet. Next step: read both runs (and the rest of CI 43730661597);
+  on a red u203/utour step fix the flow or the screen; download the tour-*.png and rel-f203-*.png pictures, look at
+  every one (welcome 1 of 2 / 1 of 3, watch Install / On your watch, phone-only sign-in, Try another way opened,
+  straight-in member on the Workout and Gym tabs), check u198 (R-581 first-install dots) passed, delete the
+  downloads, then fill this line in.
+- Open:
+  - Gym staff (owner, trainer, desk) found by the number keep the old path (Join, 3 questions, the join screen).
+  - The straight-in defaults (Build muscle, New to lifting, kg) are a guess the member never confirmed.
+  - My view: the sign-in screen still has its own example card under the welcome's bench card: two similar cards in
+    a row. Worth dropping the sign-in one.
+  - The approved words say "last workout"; the 1 Nov rule says "previous", never "last". The approved design won.
+  - The watch screen was seen only through the stand-in, never with a real watch.
+  - No What's new line: only a new install sees the welcome, and every member who updates is already signed in.
+
 ## R-588 (15 Nov 2026, evening) RESUME HERE: coordinator state when the usage limit ran out (resets 10 pm)
 - **Admin panel deploy: APPROVED, NOT DONE.** He said "yes panel deploy". Every public word in it is approved:
   R-579 smart-link sentences ("yes app link words"), the two invite WhatsApp lines ("yes invite lines"), the 13 Hinglish
