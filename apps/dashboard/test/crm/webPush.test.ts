@@ -83,7 +83,7 @@ describe('alerts with the admin app closed: the words and checks', () => {
     }
     expect(PUSH_WORDS.urgentOwner).toMatch(/^These always come at once: complaints,/);
     expect(PUSH_WORDS.urgentStaff).not.toMatch(/come at once: complaints/i);
-    expect(PUSH_WORDS.urgentStaff).toMatch(/Complaints go to the owner, and to the front desk only when a member picks "Gym admin"\.$/);
+    expect(PUSH_WORDS.urgentStaff).toMatch(/and complaints sent to "Gym admin"\.$/);
     // Everything else is gathered once a day by default (R-506), not once a week.
     expect(DEFAULT_ALERT_SETTINGS.mode).toBe('daily');
   });

@@ -375,7 +375,7 @@ test('Alerts with the admin app closed: the offer in the bell, the device switch
   );
   await expect(deskMain.getByTestId('alerts-when')).toHaveCount(0);
   // Fresh eyes (14 Nov 2026): complaints are the owner's alone, so the desk is never told they come at once.
-  await expect(deskMain.getByTestId('alerts-urgent')).toContainText('Complaints go to the owner, and to the front desk only when a member picks "Gym admin".');
+  await expect(deskMain.getByTestId('alerts-urgent')).toContainText('and complaints sent to "Gym admin".');
   await expect(deskMain.getByTestId('alerts-urgent')).not.toContainText('come at once: complaints');
   await shot(desk, 'phone-alerts-6-desk-settings');
 });

@@ -102,11 +102,12 @@ export const PUSH_WORDS = {
   notReady: 'Alerts are not ready yet. Try again later.',
   failed: 'Alerts could not be turned on. Check the internet and try again.',
   // Fresh eyes (14 Nov 2026): plain words (no "check-in numbers", no "plan ends in 3 days or less"), and the desk's
-  // own line: complaints go to the owner only (0069), so the desk is never told they come.
+  // own line: complaints go to the owner only (0069), so the desk is never told they come. R-586 (0096): a member may
+  // now send a complaint to "Gym admin" (the owner and the front desk), so the desk's line names only those.
   urgentOwner:
     'These always come at once: complaints, new shop orders, a member waiting at the check-in poster, a friend who wants to join, and a pause or renew request when the plan is about to end.',
   urgentStaff:
-    'These always come at once: new shop orders, a member waiting at the check-in poster, a friend who wants to join, and a pause or renew request when the plan is about to end. Complaints go to the owner, and to the front desk only when a member picks "Gym admin".',
+    'These always come at once: new shop orders, a member waiting at the check-in poster, a friend who wants to join, a pause or renew request when the plan is about to end, and complaints sent to "Gym admin".',
   rest: 'The rest (questions, messages, feedback, online payments, new members, workout reports):',
   modeLabel: 'Send the rest',
   instant: 'Instantly',
