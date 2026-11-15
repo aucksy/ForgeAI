@@ -471,6 +471,7 @@ export const ALL_HELP_ARTICLES = [
       'Branding puts your logo and colours in the MettleUp app your members use. Only the owner can change it. ' +
       '1. Open Branding (on a phone, under More). ' +
       '2. Tap "Upload logo" and pick your logo picture. ' +
+      'If your logo sits on a plain white or coloured box, Branding offers to take the box off. You see both logos first. Pick one and tap "Upload this logo". ' +
       '3. Under "Colour", set "Your brand colour". ' +
       '4. Under "Headings", pick a heading style. ' +
       '5. Tap "Save". ' +

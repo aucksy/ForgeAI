@@ -25,7 +25,7 @@ import { tickGetStarted } from '../ui/GetStartedCard';
 import { Button, Card, ErrorBanner, PageHeader, SectionTitle, Sheet, Toast, color, font, radius, space, useIsCompact } from '../ui/kit';
 import { navigate } from '../ui/router';
 import { CLEAR_ARGS, LOGO_WORDS, brandErrorWords, logoSuggestionLines, draftChanged, draftFromBrand, hexError, previewPalette, saveArgs, shortcutColoursOf, type BrandDraft } from './brandLogic';
-import { LogoError, readLogoColours, readSavedLogoColours, uploadGymLogo } from './logoUpload';
+import { LogoError, prepareLogo, readLogoColours, readSavedLogoColours, uploadGymLogo, type LogoPrep } from './logoUpload';
 import { gymLogos } from './GymLogo';
 import { PhonePreview } from './PhonePreview';
 import { ShortcutPreview } from './ShortcutPreview';
@@ -509,6 +509,27 @@ function ColourField({ label, hint, value, onChange }: { label: string; hint: st
   );
 }
 
+/** R-573: the light screen the before/after choice shows each logo on, beside the app's own dark screen. */
+const LIGHT_SWATCH = '#F1F2F4';
+
+/** R-573: a picked logo whose plain background came off, waiting for the owner to pick before it uploads. */
+interface LogoChoice {
+  original: File;
+  cleaned: File;
+  originalUrl: string;
+  cleanedUrl: string;
+  background: LogoBackground;
+  pick: 'clean' | 'original';
+}
+
+type LogoBackground = Extract<LogoPrep, { kind: 'cleaned' }>['background'];
+
+const BACKGROUND_WORDS: Record<LogoBackground, string> = {
+  white: 'white background',
+  black: 'black background',
+  coloured: 'coloured background',
+};
+
 function LogoCard({
   ownerKey,
   logoUrl,
@@ -531,13 +552,26 @@ function LogoCard({
   onColours: (read: LogoRead) => void;
 }) {
   const fileRef = useRef<HTMLInputElement>(null);
-  const [busy, setBusy] = useState(false);
+  const [busy, setBusy] = useState<null | 'checking' | 'uploading'>(null);
   const [over, setOver] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // R-573: the before/after choice (null: none open), and what the logo now in the form is.
+  const [choice, setChoice] = useState<LogoChoice | null>(null);
+  const [used, setUsed] = useState<null | 'cleaned' | 'busy'>(null);
+  const choiceRef = useRef<LogoChoice | null>(null);
+  choiceRef.current = choice;
+  const dropChoice = useCallback(() => {
+    const c = choiceRef.current;
+    if (c) {
+      URL.revokeObjectURL(c.originalUrl);
+      URL.revokeObjectURL(c.cleanedUrl);
+    }
+    setChoice(null);
+  }, []);
+  useEffect(() => dropChoice, [dropChoice]);
 
-  const take = async (file: File | undefined) => {
-    if (!file || busy) return;
-    setBusy(true);
+  const upload = async (file: File, kind: null | 'cleaned' | 'busy') => {
+    setBusy('uploading');
     onBusy(true);
     setError(null);
     try {
@@ -545,15 +579,45 @@ function LogoCard({
       const [url, colours] = await Promise.all([uploadGymLogo(ownerKey, file), readLogoColours(file)]);
       onLogo(url);
       onColours(colours ?? 'failed');
+      setUsed(kind);
+      dropChoice();
     } catch (e) {
       setError(e instanceof LogoError ? e.message : 'The logo didn’t upload. Please try again.');
     } finally {
-      setBusy(false);
+      setBusy(null);
       onBusy(false);
     }
   };
 
+  const take = async (file: File | undefined) => {
+    if (!file || busy) return;
+    dropChoice();
+    setError(null);
+    setBusy('checking');
+    onBusy(true);
+    // R-573: a plain white or coloured background comes off on this computer; the owner sees both before upload.
+    const prep = await prepareLogo(file);
+    setBusy(null);
+    onBusy(false);
+    if (prep.kind === 'cleaned') {
+      setChoice({
+        original: file,
+        cleaned: prep.cleaned,
+        originalUrl: URL.createObjectURL(file),
+        cleanedUrl: URL.createObjectURL(prep.cleaned),
+        background: prep.background,
+        pick: 'clean',
+      });
+      return;
+    }
+    await upload(file, prep.why === 'busy' ? 'busy' : null);
+  };
+
+  const working = busy !== null;
+  const showTip = !choice && used !== 'cleaned';
+
   return (
+    <div data-testid="logo-card">
     <Card>
       <SectionTitle>Logo</SectionTitle>
       <div style={{ display: 'flex', gap: space.lg, alignItems: 'center', flexWrap: 'wrap' }}>
@@ -588,37 +652,52 @@ function LogoCard({
               No logo yet
             </span>
           )}
-          {busy && (
-            <div role="status" style={{ position: 'absolute', inset: 0, display: 'grid', placeItems: 'center', borderRadius: radius.lg, background: 'rgba(7,8,12,0.72)', color: color.ink, fontFamily: font.body, fontSize: 13, fontWeight: 700 }}>
-              Uploading…
+          {working && (
+            <div role="status" style={{ position: 'absolute', inset: 0, display: 'grid', placeItems: 'center', borderRadius: radius.lg, background: 'rgba(7,8,12,0.72)', color: '#F4F4F5', fontFamily: font.body, fontSize: 13, fontWeight: 700, textAlign: 'center', padding: space.sm }}>
+              {busy === 'checking' ? 'Checking your logo…' : 'Uploading…'}
             </div>
           )}
         </div>
         <div style={{ display: 'grid', gap: space.sm, flex: '1 1 200px', minWidth: 0 }}>
           <div style={{ display: 'flex', gap: space.sm, flexWrap: 'wrap' }}>
-            <Button variant="ghost" disabled={busy || disabled} onClick={() => fileRef.current?.click()}>
+            <Button variant="ghost" disabled={working || disabled} onClick={() => fileRef.current?.click()}>
               {logoUrl ? 'Change logo' : 'Upload logo'}
             </Button>
             {logoUrl && (
-              <Button variant="quiet" tone="danger" disabled={busy || disabled} onClick={() => onLogo(null)}>
+              <Button
+                variant="quiet"
+                tone="danger"
+                disabled={working || disabled}
+                onClick={() => {
+                  setUsed(null);
+                  onLogo(null);
+                }}
+              >
                 Remove logo
               </Button>
             )}
           </div>
           <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
-            A square PNG with a clear background works best. Members see it big when the app opens, and small at the top of each tab. You can also drag it onto the box.
+            A square logo works best. If it sits on a plain white or coloured box, we take the box off for you. Members see your logo big when the app opens, and small at the top of each tab. You can also drag it onto the box.
           </div>
-          {/* R-192 (owner, 30 Oct 2026): no background remover of our own; tell the owner how to do it free with an AI chat app. */}
-          <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkSecondary, background: color.surfaceSunken, borderRadius: radius.md, padding: space.sm }}>
-            <div style={{ fontWeight: 700, color: color.ink }}>Does your logo have a white or coloured box around it?</div>
-            It looks much better on the app’s dark screens without one. Remove the box for free:
-            <ol style={{ margin: `${space.xs}px 0`, paddingLeft: 18 }}>
-              <li>Open ChatGPT or Google Gemini on your phone or computer, and upload your logo.</li>
-              <li>Type this: “Remove the background. Give me a PNG with a see-through background.”</li>
-              <li>Download the new picture and upload it here.</li>
-            </ol>
-            If you see a grey and white checkerboard behind the logo, the background is still there. Try again, or try the other app.
-          </div>
+          {/* R-192 (30 Oct 2026) made this tip the only help; R-573 (15 Nov 2026) takes plain boxes off here, so the
+              tip is for a photo or a pattern behind the logo, and it hides once the cleaned logo is in use. */}
+          {showTip && (
+            <div data-testid="logo-tip" style={{ fontFamily: font.body, fontSize: 12, color: color.inkSecondary, background: color.surfaceSunken, borderRadius: radius.md, padding: space.sm }}>
+              <div style={{ fontWeight: 700, color: color.ink }}>
+                {used === 'busy' ? 'Your logo has a photo or a pattern behind it.' : 'Is there a photo or a pattern behind your logo?'}
+              </div>
+              {used === 'busy'
+                ? 'We can only take off a plain background, so we kept your logo as it is. It looks much better on the app’s dark screens without the background. You can remove it for free:'
+                : 'We take off a plain background for you, but not a photo or a pattern. You can remove those for free:'}
+              <ol style={{ margin: `${space.xs}px 0`, paddingLeft: 18 }}>
+                <li>Open ChatGPT or Google Gemini on your phone or computer, and upload your logo.</li>
+                <li>Type this: “Remove the background. Give me a PNG with a see-through background.”</li>
+                <li>Download the new picture and upload it here.</li>
+              </ol>
+              If you see a grey and white checkerboard behind the logo, the background is still there. Try again, or try the other app.
+            </div>
+          )}
           {error && (
             <div role="alert" style={{ fontFamily: font.body, fontSize: 13, color: color.criticalText }}>
               {error}
@@ -626,8 +705,18 @@ function LogoCard({
           )}
         </div>
       </div>
+      {choice && (
+        <LogoChoicePanel
+          choice={choice}
+          darkBg={bg}
+          busy={working}
+          onPick={(pick) => setChoice((c) => (c ? { ...c, pick } : c))}
+          onUpload={() => void upload(choice.pick === 'clean' ? choice.cleaned : choice.original, choice.pick === 'clean' ? 'cleaned' : null)}
+          onCancel={dropChoice}
+        />
+      )}
       {/* T74 (R-356): the logo as the round icon members can add to their phone's home screen. */}
-      {logoUrl && !busy && <ShortcutPreview logoUrl={logoUrl} gymName={gymName} gymColours={gymColours} />}
+      {logoUrl && !working && !choice && <ShortcutPreview logoUrl={logoUrl} gymName={gymName} gymColours={gymColours} />}
       <input
         ref={fileRef}
         type="file"
@@ -642,5 +731,105 @@ function LogoCard({
         }}
       />
     </Card>
+    </div>
+  );
+}
+
+/**
+ * R-573: the logo with its plain background taken off next to the logo as it was, each on the app's dark screen
+ * and on a light one. The cleaned logo is picked to start with; nothing uploads until "Upload this logo".
+ */
+function LogoChoicePanel({
+  choice,
+  darkBg,
+  busy,
+  onPick,
+  onUpload,
+  onCancel,
+}: {
+  choice: LogoChoice;
+  darkBg: string;
+  busy: boolean;
+  onPick: (pick: LogoChoice['pick']) => void;
+  onUpload: () => void;
+  onCancel: () => void;
+}) {
+  const what = BACKGROUND_WORDS[choice.background];
+  const options: { pick: LogoChoice['pick']; url: string; title: string; note: string }[] = [
+    { pick: 'clean', url: choice.cleanedUrl, title: 'Without the background', note: 'Best for the app' },
+    { pick: 'original', url: choice.originalUrl, title: 'Keep my logo as it is', note: `With its ${what}` },
+  ];
+  return (
+    <div
+      data-testid="logo-choice"
+      style={{ marginTop: space.lg, padding: space.md, borderRadius: radius.md, border: `1px solid ${color.border}`, background: color.surfaceSunken, display: 'grid', gap: space.md }}
+    >
+      <div>
+        <div style={{ fontFamily: font.body, fontSize: 14, fontWeight: 700, color: color.ink }}>We took the {what} off your logo.</div>
+        <p style={{ margin: '4px 0 0', fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>
+          Your logo looks better on the app’s dark screens without a box around it. Pick the one you want, then tap “Upload this logo”.
+        </p>
+      </div>
+      <div role="radiogroup" aria-label="Which logo to use" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: space.sm }}>
+        {options.map((o) => {
+          const on = choice.pick === o.pick;
+          return (
+            <button
+              key={o.pick}
+              type="button"
+              role="radio"
+              aria-checked={on}
+              data-pick={o.pick}
+              disabled={busy}
+              onClick={() => onPick(o.pick)}
+              style={{
+                display: 'grid',
+                gap: space.sm,
+                justifyItems: 'start',
+                textAlign: 'left',
+                padding: space.sm,
+                borderRadius: radius.md,
+                border: `2px solid ${on ? color.accent : color.border}`,
+                background: on ? color.accentSoft : 'transparent',
+                cursor: busy ? 'default' : 'pointer',
+                minWidth: 0,
+              }}
+            >
+              <div style={{ display: 'flex', gap: space.sm }}>
+                {[
+                  ['Dark screen', darkBg],
+                  ['Light screen', LIGHT_SWATCH],
+                ].map(([label, swatch]) => (
+                  <div key={label} style={{ display: 'grid', gap: 3, justifyItems: 'center' }}>
+                    <div style={{ width: 64, height: 64, borderRadius: radius.md, background: swatch, border: `1px solid ${color.border}`, display: 'grid', placeItems: 'center' }}>
+                      <img src={o.url} alt="" style={{ width: 52, height: 52, objectFit: 'contain' }} />
+                    </div>
+                    <span aria-hidden style={{ fontFamily: font.body, fontSize: 11, color: color.inkMuted }}>
+                      {label}
+                    </span>
+                  </div>
+                ))}
+              </div>
+              <span style={{ display: 'flex', alignItems: 'center', gap: 6, fontFamily: font.body, fontSize: 14, fontWeight: 700, color: color.ink }}>
+                <span
+                  aria-hidden
+                  style={{ width: 16, height: 16, flexShrink: 0, borderRadius: '50%', border: `2px solid ${on ? color.accent : color.borderStrong}`, boxShadow: on ? `inset 0 0 0 3px ${color.surfaceSunken}` : undefined, background: on ? color.accent : 'transparent' }}
+                />
+                {o.title}
+              </span>
+              <span style={{ fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>{o.note}</span>
+            </button>
+          );
+        })}
+      </div>
+      <div style={{ display: 'flex', gap: space.sm, flexWrap: 'wrap' }}>
+        <Button onClick={onUpload} disabled={busy}>
+          {busy ? 'Uploading…' : 'Upload this logo'}
+        </Button>
+        <Button variant="quiet" onClick={onCancel} disabled={busy}>
+          Cancel
+        </Button>
+      </div>
+    </div>
   );
 }

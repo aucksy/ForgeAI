@@ -11,6 +11,7 @@ import { savedPictureUrl, supabase } from '../../lib/supabase';
 import { photoTicket } from '../shop/api';
 import { checkSourceFile, fitWithin } from '../shop/photo';
 import { brandErrorWords, checkEncodedLogo, LOGO_BUCKET, LOGO_EDGE, logoPath, newLogoName } from './brandLogic';
+import { backgroundWord, cleanLogo } from './logoBackground';
 
 /** A failure whose message is already plain words for the owner. */
 export class LogoError extends Error {}
@@ -63,6 +64,58 @@ export async function shrinkLogo(file: File): Promise<Blob> {
     return blob;
   } finally {
     pic.close?.();
+  }
+}
+
+/**
+ * R-573: what picking a logo found. `cleaned`: it sat on a plain background, and `cleaned` is the logo without
+ * it (a PNG, trimmed), for the owner to compare before anything uploads. `as-is`: nothing to take off (SVG, the
+ * background is see-through already, a photo or a pattern behind it, or the picture could not be read here).
+ */
+export type LogoPrep =
+  | { kind: 'cleaned'; cleaned: File; background: ReturnType<typeof backgroundWord> }
+  | { kind: 'as-is'; why: 'svg' | 'clear' | 'busy' | 'nothing' | 'unreadable' };
+
+/**
+ * R-573: take a plain white or coloured background off a picked logo, on this computer (no AI, nothing sent
+ * anywhere). The pixel rules are the tested, pure `cleanLogo` (logoBackground.ts). Never throws: a picture it
+ * can't read goes on as it is, and the upload step gives the plain-words error if there is one.
+ */
+export async function prepareLogo(file: File): Promise<LogoPrep> {
+  if (file.type === 'image/svg+xml' || /\.svg$/i.test(file.name)) return { kind: 'as-is', why: 'svg' };
+  if (checkSourceFile(file)) return { kind: 'as-is', why: 'unreadable' };
+  let pic: Awaited<ReturnType<typeof decode>> | null = null;
+  try {
+    pic = await decode(file);
+    const { width, height } = fitWithin(pic.width, pic.height, LOGO_EDGE);
+    if (!width || !height) return { kind: 'as-is', why: 'unreadable' };
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+    if (!ctx) return { kind: 'as-is', why: 'unreadable' };
+    ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(pic.source, 0, 0, width, height);
+    const result = cleanLogo({ data: ctx.getImageData(0, 0, width, height).data, width, height });
+    if (result.kind === 'kept') return { kind: 'as-is', why: result.why };
+    const { pixels } = result;
+    const out = document.createElement('canvas');
+    out.width = pixels.width;
+    out.height = pixels.height;
+    const octx = out.getContext('2d');
+    if (!octx) return { kind: 'as-is', why: 'unreadable' };
+    const image = octx.createImageData(pixels.width, pixels.height);
+    image.data.set(pixels.data);
+    octx.putImageData(image, 0, 0);
+    const blob = await new Promise<Blob | null>((resolve) => out.toBlob(resolve, 'image/png'));
+    if (!blob) return { kind: 'as-is', why: 'unreadable' };
+    const name = `${file.name.replace(/\.[^.]+$/, '') || 'logo'}-clear.png`;
+    return { kind: 'cleaned', cleaned: new File([blob], name, { type: 'image/png' }), background: backgroundWord(result.colour) };
+  } catch (e) {
+    console.warn('[branding] could not check the logo background', e);
+    return { kind: 'as-is', why: 'unreadable' };
+  } finally {
+    pic?.close?.();
   }
 }
 

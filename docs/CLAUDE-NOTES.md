@@ -7,6 +7,28 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-573. Logo background remover on Branding (15 Nov 2026), reverses R-192
+- He said: "They won't remove it themselves on ChatGPT and app launches will look bad and I don't like that." Then:
+  "just do the free part, and if it doesn't work ... give them the instructions". No AI step is planned (coordinator,
+  15 Nov): no Bria, nothing paid.
+- Built (panel code only, waits for the next admin panel deploy): when the owner picks a PNG, JPEG or WebP logo (not SVG),
+  the browser reads its pixels. src/crm/brand/logoBackground.ts (pure, unit-tested in test/crm/logoBackground.test.ts):
+  border mostly see-through = nothing to do; 85% of the border's solid pixels within 32 (RGB distance) of one colour, or
+  60% plus all four corners that colour (a round badge cut to its square) = a plain background; flood-fill from the
+  border (4 neighbours) makes it see-through, so white letters inside stay; 2 rings of edge pixels are un-mixed from the
+  background against the nearest solid logo colour (no white fringe on dark), faint lone JPEG specks go; trimmed with 4%
+  even padding. Tolerance 32 measured on JPEG q40-90 logos on white, cream and blue: open background noise reaches 20,
+  ringing near the logo 16-29 for 9 in 10 pixels.
+- Branding (BrandingScreen LogoCard): "Checking your logo..." then a before/after panel, each logo on the app's dark
+  screen and a light one, "Without the background" picked, "Keep my logo as it is" the other choice, "Upload this logo"
+  and "Cancel". Then the old flow (shrinkLogo, readLogoColours, uploadGymLogo). The ChatGPT/Gemini tip now speaks of a
+  photo or a pattern behind the logo; it hides while the choice is open and once the cleaned logo is used; after a photo
+  logo it says "Your logo has a photo or a pattern behind it." Help article branding-logo-colours has one new sentence;
+  What's new "pending-logo-background" waits for the deploy; OWNER-INBOX F51 is "Next release".
+- UAT: e2e/r573-uat.spec.mjs (fixtures e2e/fixtures/logo-white-box.png, logo-photo-back.png), pictures r573-*.png.
+- Not done: the tip shows again for a cleaned logo after the page is reloaded (the page does not remember which upload was
+  cleaned).
+
 ## R-574 (15 Nov 2026) Admin panel update LIVE; Apple developer account in review
 - Panel deployed from b89823cefcef7022c01bad4101a914ab1c245ad3 (CI 43703566627 green; fresh-eyes review of 93c100f1..b89823ce:
   no blockers). Worker version 44afda0d. Checked live: /api/switches = gymPages false, joinPay false, pageAi false;

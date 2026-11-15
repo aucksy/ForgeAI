@@ -637,6 +637,17 @@ export const ADMIN_NEWS_PENDING: readonly AdminNewsEntry[] = [
     ],
   },
   {
+    // R-573 (owner, 15 Nov 2026): the logo's plain background comes off on the owner's computer (reverses R-192).
+    // Panel code only: moves to ADMIN_NEWS with the next admin panel deploy.
+    id: 'pending-logo-background',
+    lines: [
+      {
+        text: 'When you upload a logo on a plain white or coloured box, Branding now takes the box off for you. You see both logos side by side first, and you can keep yours as it is.',
+        go: { label: 'Open Branding', path: '/settings/branding' },
+      },
+    ],
+  },
+  {
     // F56 R-461, 12 Nov 2026: the MettleUp Plus switch (0070). Moves to ADMIN_NEWS only when 0070 is live, the panel is
     // deployed AND the app's paid plan is switched on (MEMBER_PLAN_GATE_ON); until then the card is hidden anyway.
     id: 'pending-plus-lock',
