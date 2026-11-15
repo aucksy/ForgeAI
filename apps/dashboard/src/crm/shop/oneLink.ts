@@ -34,11 +34,16 @@ export function gymLinkFrom(a: { pagesOpen: boolean; web: PageAnswer | null | un
   return { kind: 'join', url: joinOnlineLink(a.joinCode, a.joinOrigin), pageNotMade: notMade };
 }
 
-/** The WhatsApp message with the gym's one link. PURE. */
-export function gymLinkMessage(gymName: string, link: GymLink, joinCode: string, joinOrigin: string): string {
-  if (link.kind === 'join') return joinOnlineMessage(gymName, joinCode, joinOrigin);
+/**
+ * The WhatsApp message with the gym's one link. `joinPay`: the Worker's JOIN_PAY switch (pagesOpen.ts useJoinPayOn).
+ * Fresh-eyes review (15 Nov 2026): "You pay at the gym desk" is said only while it is off; once paying online on the
+ * join page can be on, the message says nothing about where to pay and the page itself shows it. PURE.
+ */
+export function gymLinkMessage(gymName: string, link: GymLink, joinCode: string, joinOrigin: string, joinPay = false): string {
+  if (link.kind === 'join') return joinOnlineMessage(gymName, joinCode, joinOrigin, joinPay);
   const gym = gymName.trim() || 'our gym';
-  return ['Hi!', `See the fees, timings and photos of ${gym}, and become a member online. You pay at the gym desk.`, '', 'Open our page:', link.url].join('\n');
+  const lead = `See the fees, timings and photos of ${gym}, and become a member online.${joinPay ? '' : ' You pay at the gym desk.'}`;
+  return ['Hi!', lead, '', 'Open our page:', link.url].join('\n');
 }
 
 /** The gym's one link, redrawn when pages open, the page is published or the join address is known. */

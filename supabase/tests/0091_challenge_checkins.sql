@@ -45,8 +45,8 @@ declare
   ga uuid; gb uuid; s_staff uuid;
   kok text := 't89-owner-key'; kob text := 't89-owner-b'; ks text := 't89-staff-session';
   kasha text := 't89-m-asha'; krahul text := 't89-m-rahul'; kpriya text := 't89-m-priya'; kneel text := 't89-m-neel';
-  kbob text := 't89-m-bob';
-  ma uuid; mr uuid; mp uuid; mn uuid; mb uuid;
+  kbob text := 't89-m-bob'; kvik text := 't89-m-vikram'; kmeera text := 't89-m-meera';
+  ma uuid; mr uuid; mp uuid; mn uuid; mb uuid; cf uuid;
   td date := (now() at time zone 'Asia/Kolkata')::date;
   fails text := ''; checks int := 0; r jsonb; cid uuid; cw uuid; e jsonb;
 begin
@@ -184,6 +184,35 @@ begin
   perform public.member_leave(kbob);
   r := public.owner_challenges(kob);
   checks := checks + 1; fails := fails || pg_temp.t89_is('6left', (r->'challenges'->0->>'entrants') || '/' || jsonb_array_length(r->'challenges'->0->'hitters')::text, '0/0');
+
+  -- 6b. Fresh-eyes review (15 Nov 2026): one number, two app members (a family on one phone). Both are linked to the
+  --     Kapoor row of the list; the visits cannot say who came, so the number counts for neither (no shared visits,
+  --     no two prizes). Once one of them leaves, the other counts.
+  insert into public.crm_records(gym_id, kind, id, data, version) values
+    (ga, 'member', 't89-r-kapoor', jsonb_build_object('fullName', 'Vikram Kapoor', 'phone', '9000091006'), 1);
+  insert into public.gym_members(gym_id, name, key_hash, checkin_phone) values
+    (ga, 'Vikram Kapoor', public._hash_key(kvik), '+919000091006'),
+    (ga, 'Meera Kapoor', public._hash_key(kmeera), '09000091006');
+  perform pg_temp.t89_visit(ga, 't89-v20', 't89-r-kapoor', 0);
+  perform pg_temp.t89_visit(ga, 't89-v21', 't89-r-kapoor', 1);
+  perform pg_temp.t89_visit(ga, 't89-v22', 't89-r-kapoor', 2);
+  r := public.owner_save_challenge(kok, pg_temp.t89_ch('checkins', 2, 0, 7, 'Family check'));
+  cf := (r->>'id')::uuid;
+  update public.gym_challenges set starts_on = td - 3, ends_on = td + 3 where id = cf;
+  r := public.member_board(kvik);
+  checks := checks + 1; fails := fails || pg_temp.t89_is('6bvikram', (r->'challenge'->>'title') || '/' || (r->'challenge'->>'myValue') || '/' || (r->'challenge'->>'hit'), 'Family check/0/false');
+  r := public.member_board(kmeera);
+  checks := checks + 1; fails := fails || pg_temp.t89_is('6bmeera', (r->'challenge'->>'myValue') || '/' || (r->'challenge'->>'hit'), '0/false');
+  -- The gym's view: Asha (3) and Rahul (today, 1 and 2 days ago = 3) took part and reached it; neither Kapoor.
+  r := public.owner_challenges(kok);
+  e := (select x from jsonb_array_elements(r->'challenges') x where x->>'id' = cf::text);
+  checks := checks + 1; fails := fails || pg_temp.t89_is('6bowner', (e->>'entrants') || '/' || jsonb_array_length(e->'hitters')::text
+    || '/' || (select string_agg(h->>'name', ',' order by h->>'name') from jsonb_array_elements(e->'hitters') h), '2/2/Asha Rao,Rahul Jain');
+  -- Meera leaves the gym: the number is Vikram's alone now, and his visits count.
+  perform public.member_leave(kmeera);
+  r := public.member_board(kvik);
+  checks := checks + 1; fails := fails || pg_temp.t89_is('6bsole', (r->'challenge'->>'myValue') || '/' || (r->'challenge'->>'hit'), '3/true');
+  perform public.owner_cancel_challenge(kok, cf);
 
   -- 7. Grants: the calls stay as they were; the new helpers are private.
   checks := checks + 1; fails := fails || pg_temp.t89_is('7calls',

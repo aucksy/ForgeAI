@@ -1522,6 +1522,10 @@ export const HINGLISH: Readonly<Record<string, string>> = {
     'Agar yeh branch GST mein registered hai, toh yeh number iski receipts par dikhta hai.',
   'This address shows on your receipts and on your web page.':
     'Yeh address aapki receipts aur aapke web page par dikhta hai.',
+  'This number is printed on your receipts.':
+    'Yeh number aapki receipts par chhapta hai.',
+  'This address shows on your receipts.':
+    'Yeh address aapki receipts par dikhta hai.',
   'Fee reminders, renewal messages and receipts show this UPI ID with a link that opens the member’s UPI app with the amount already filled in.':
     'Fee reminders, renewal messages aur receipts mein yeh UPI ID ek link ke saath dikhti hai, jo member ki UPI app ko amount bhar kar kholta hai.',
   'Tick this box to show members a Pay now button in the MettleUp app for what they owe, or leave it unticked so that they pay at the desk.':
@@ -1538,8 +1542,8 @@ export const HINGLISH: Readonly<Record<string, string>> = {
     'Is box par tick karein taaki members ko unki app ke Gym tab par ek tip dikhe, jaise “Leg day is quieter on Tuesday”.',
   'Tick this box to stop the paid features {n} days after a member’s plan ends until they renew, while their workouts are always kept.':
     'Is box par tick karein taaki member ka plan khatam hone ke {n} din baad paid features renew hone tak band rahein; unke workouts hamesha save rehte hain.',
-  'Type how many free days you give, with one tap, to each friend who joins through a member’s invite link, or leave it empty to give none.':
-    'Likhein ki member ke invite link se judne wale har dost ko kitne free din dene hain (aap unhe ek tap se dete hain), ya koi din na dene ke liye ise khali chhodein.',
+  'Type how many free days a member gets, with one tap from you, for each friend who joins through their invite link, or leave it empty to give none.':
+    'Likhein ki member ke invite link se judne wale har dost ke liye us member ko kitne free din milenge (aap unhe ek tap se dete hain), ya koi din na dene ke liye ise khali chhodein.',
   'Type up to 120 letters here to tell members something they should know about your gym timings.':
     'Yahan 120 letters tak likhein, taaki members ko aapke gym timings ke baare mein zaroori baat pata chale.',
   'This is your web page’s address, made from your gym’s name and area, and you can change it until the page is published.':

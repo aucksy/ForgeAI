@@ -60,8 +60,9 @@ export function AllBranchesScreen() {
     setLoading(false);
     return got.every((g) => g.error === null);
   }, [branches, currentGymId, dataFor]);
-  // R-561: the top bar's Refresh reads every branch again (it replaced this page's own Refresh button).
-  usePanelRefresh(load);
+  // R-561: the top bar's Refresh reads every branch again (it replaced this page's own Refresh button). Fresh-eyes
+  // review (15 Nov 2026): only while this page shows the branches; on "One branch" there is nothing to read.
+  usePanelRefresh(load, multi && canOpenOthers);
 
   useEffect(() => {
     if (multi && canOpenOthers) void load();

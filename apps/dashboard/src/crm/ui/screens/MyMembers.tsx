@@ -65,7 +65,9 @@ export function MyMembersScreen({ memberId = null }: { memberId?: string | null 
 
   const fetchList = useCallback(async (): Promise<boolean> => {
     if (!key) return true;
-    setLoad({ state: 'loading' });
+    // Fresh-eyes review (15 Nov 2026): a reload keeps the list on screen (as Questions does), so the top bar's Refresh
+    // never blanks it, jumps the page to the top or closes the member that is open. Only the first read says Loading.
+    setLoad((l) => (l.state === 'ready' ? l : { state: 'loading' }));
     try {
       const r = await trainerApi.getTrainerMembers(key);
       setLoad(r === 'missing' ? { state: 'missing' } : r === 'refused' ? { state: 'refused' } : { state: 'ready', data: r });

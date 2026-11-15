@@ -3,7 +3,9 @@ import { describe, expect, it } from 'vitest';
 import { DuplicatePhoneError, PartialSaveError } from '../../src/crm/data/adapter';
 import {
   allRecords,
+  applyRecords,
   CloudCrmData,
+  emptyRows,
   diffSnapshots,
   uploadSnapshot,
   UPLOAD_CHUNK,
@@ -12,6 +14,7 @@ import {
   type PullResult,
 } from '../../src/crm/data/cloud';
 import { emptySnapshot, normalizeSnapshot } from '../../src/crm/data/local';
+import { rowsToRecords } from '../../src/crm/data/savedCopy';
 import type { MemberDraft, PlanDraft } from '../../src/crm/types';
 import { openTerm } from './fixtures';
 
@@ -236,6 +239,35 @@ describe('CloudCrmData', () => {
     const snap = await desk.load();
     expect(snap.gym.name).toBe('Iron Temple Gym');
     expect(snap.gym.phone).toBe('0141 1234');
+  });
+
+  it('saving gym details keeps the stored keys this version does not know (fresh-eyes review, 15 Nov 2026)', async () => {
+    const server = new FakeServer();
+    // A key a newer version wrote on the gym record (like the free trial once was for an older bundle).
+    server.version = 1;
+    server.rows.set('gym:gym', { r: { k: 'gym', id: 'gym', d: { name: 'Iron Temple', phone: null, address: null, gstin: null, joinTrialDays: 3, laterKey: { on: true } } }, v: 1 });
+    const desk = new CloudCrmData('k', server);
+    await desk.updateGym({ phone: '0141 1234' });
+    const d = server.rows.get('gym:gym')!.r.d as Record<string, unknown>;
+    expect(d.phone).toBe('0141 1234');
+    expect(d.joinTrialDays).toBe(3);
+    expect(d.laterKey).toEqual({ on: true });
+    // A known key the owner clears is really removed: only unknown keys are kept.
+    await desk.updateGym({ joinTrialDays: null });
+    const d2 = server.rows.get('gym:gym')!.r.d as Record<string, unknown>;
+    expect('joinTrialDays' in d2).toBe(false);
+    expect(d2.laterKey).toEqual({ on: true });
+    // The kept keys sit flat on the record, never nested under a name of their own.
+    expect('kept' in d2).toBe(false);
+  });
+
+  it('the copy kept on this device keeps those keys too, flat, through any number of reads', () => {
+    const rows = emptyRows();
+    applyRecords(rows, [{ k: 'gym', id: 'gym', d: { name: 'G', phone: null, address: null, gstin: null, laterKey: 7 } }]);
+    const again = emptyRows();
+    applyRecords(again, rowsToRecords(rows));
+    applyRecords(again, rowsToRecords(again));
+    expect(rowsToRecords(again)[0].d).toEqual({ laterKey: 7, name: 'G', phone: null, address: null, gstin: null, receiptPrefix: null, upiId: null, friendRewardDays: null, joinTrialDays: null });
   });
 
   it('a dead key says so, in words', async () => {

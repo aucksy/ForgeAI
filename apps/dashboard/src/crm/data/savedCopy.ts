@@ -52,7 +52,11 @@ export interface SavedCopyStore {
 /** Every row of `rows` as records (the same shape a pull brings), ready to keep. PURE. */
 export function rowsToRecords(rows: Rows): CrmRecord[] {
   const out: CrmRecord[] = [];
-  if (rows.gym) out.push({ k: 'gym', id: 'gym', d: rows.gym });
+  if (rows.gym) {
+    // The gym record as the server holds it: the keys this version does not read (kept) go back flat beside the rest.
+    const { kept, ...gym } = rows.gym;
+    out.push({ k: 'gym', id: 'gym', d: kept ? { ...kept, ...gym } : gym });
+  }
   for (const kind of ['member', 'plan', 'membership', 'payment', 'visit', 'enquiry', 'expense', 'workout_plan'] as const) {
     for (const [id, d] of rows[kind]) out.push({ k: kind, id, d });
   }

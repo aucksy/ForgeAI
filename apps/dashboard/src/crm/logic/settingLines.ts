@@ -15,6 +15,10 @@ export const SETTING_LINES = {
   branchName: 'Members of this branch see this name in their MettleUp app and on its receipts.',
   // receiptDoc gymPhone; the web page's Call button reads the same number (gympage preview pagePhone).
   phone: 'This number is printed on your receipts, and your web page can show it with a Call button.',
+  // Fresh-eyes review (15 Nov 2026): while gym web pages are off (pagesOpen.ts, GYM_PAGES) there is no web page to
+  // name, so Settings shows these two in place of phone and address.
+  phoneNoPage: 'This number is printed on your receipts.',
+  addressNoPage: 'This address shows on your receipts.',
   // receiptDoc: the GSTIN prints only when GST applies to it (gstAppliesTo).
   gstin: 'If your gym is registered for GST, this number shows on your receipts.',
   gstinBranch: 'If this branch is registered for GST, this number shows on its receipts.',
@@ -38,8 +42,9 @@ export const SETTING_LINES = {
   busyMachines: 'Tick this box to show members one tip on the Gym tab of their app, for example “Leg day is quieter on Tuesday”.',
   // Member app -> Plus lock (logic/plusLock, 0070): the paid features lock {n} days after the plan ends; workouts stay.
   plusLock: 'Tick this box to stop the paid features {n} days after a member’s plan ends until they renew, while their workouts are always kept.',
-  // Member app -> Bring a friend (logic/referrals): the days are given by the desk with one tap, never by themselves.
-  friendDays: 'Type how many free days you give, with one tap, to each friend who joins through a member’s invite link, or leave it empty to give none.',
+  // Member app -> Bring a friend (logic/referrals): the days go to the member who invited (not the friend), and the
+  // desk gives them with one tap, never by themselves (fresh-eyes review, 15 Nov 2026).
+  friendDays: 'Type how many free days a member gets, with one tap from you, for each friend who joins through their invite link, or leave it empty to give none.',
 
   // Gym timings: the note under the timings (GymTimings NOTE_LIMIT 120).
   timingsNote: 'Type up to 120 letters here to tell members something they should know about your gym timings.',

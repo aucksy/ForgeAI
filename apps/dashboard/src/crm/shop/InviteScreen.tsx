@@ -24,7 +24,7 @@ import { gymLinkFrom, gymLinkMessage } from './oneLink';
 import { useSelfJoinReady } from './selfJoinReady';
 import { Button, Card, PageHeader, SectionTitle, Toast, color, font, radius, space, useIsCompact } from '../ui/kit';
 import { Link, navigate } from '../ui/router';
-import { usePagesOpen } from '../gympage/pagesOpen';
+import { useJoinPayOn, usePagesOpen } from '../gympage/pagesOpen';
 import { useWebPage } from '../gympage/pageState';
 import { t } from '../lang/lang';
 
@@ -92,6 +92,7 @@ function InviteBody({ ownerKey, gymName, joinCode }: { ownerKey: string; gymName
   // R-563: ONE link for people who may join: the gym's web page once pages are open and it is published, else the join link.
   const gymLink = gymLinkFrom({ pagesOpen: usePagesOpen(), web: useWebPage(), joinCode, joinOrigin });
   const joinLink = gymLink.url;
+  const joinPay = useJoinPayOn();
   const isPage = gymLink.kind === 'page';
   const joinPoster = isPage ? GYM_PAGE_POSTER : JOIN_ONLINE_POSTER;
   const joinOnline = useSelfJoinReady(joinCode);
@@ -247,7 +248,7 @@ function InviteBody({ ownerKey, gymName, joinCode }: { ownerKey: string; gymName
           </p>
         )}
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: space.sm, marginTop: space.lg }}>
-          <Button onClick={() => window.open(whatsAppHref(gymLinkMessage(gymName, gymLink, joinCode, joinOrigin)), '_blank', 'noopener')}>{isPage ? t('Send your page on WhatsApp') : t('Send join link on WhatsApp')}</Button>
+          <Button onClick={() => window.open(whatsAppHref(gymLinkMessage(gymName, gymLink, joinCode, joinOrigin, joinPay)), '_blank', 'noopener')}>{isPage ? t('Send your page on WhatsApp') : t('Send join link on WhatsApp')}</Button>
           <Button
             variant="ghost"
             onClick={async () =>

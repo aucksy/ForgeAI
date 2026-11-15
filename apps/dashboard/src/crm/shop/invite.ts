@@ -53,11 +53,12 @@ export function joinOnlineLink(joinCode: string, origin: string = INVITE_ORIGIN)
 }
 
 /** R-513: the WhatsApp message with the "Become a member" link, for people who are not members yet. PURE. */
-export function joinOnlineMessage(gymName: string, joinCode: string, origin: string = INVITE_ORIGIN): string {
+export function joinOnlineMessage(gymName: string, joinCode: string, origin: string = INVITE_ORIGIN, joinPay = false): string {
   const gym = gymName.trim() || 'our gym';
   return [
     'Hi!',
-    `Become a member of ${gym} online. Pick a plan and send your details. You pay at the gym desk.`,
+    // Fresh-eyes review (15 Nov 2026): "You pay at the gym desk" only while paying online on joining is off (JOIN_PAY).
+    `Become a member of ${gym} online. Pick a plan and send your details.${joinPay ? '' : ' You pay at the gym desk.'}`,
     '',
     'Open this link to join:',
     joinOnlineLink(joinCode, origin),

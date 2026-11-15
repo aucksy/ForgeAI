@@ -122,6 +122,17 @@ export interface CrmCloudApi {
 /** The gym's own details that live in a record (name, join code and created date are the server's). */
 type GymDetails = Pick<GymRecord, 'name' | 'phone' | 'address' | 'gstin' | 'receiptPrefix' | 'upiId' | 'friendRewardDays' | 'joinTrialDays'>;
 
+/** The keys of the gym record this version reads; every other stored key is kept as it is (`GymRow.kept`). */
+const GYM_KEYS: ReadonlySet<string> = new Set(['name', 'phone', 'address', 'gstin', 'receiptPrefix', 'upiId', 'friendRewardDays', 'joinTrialDays']);
+
+/**
+ * The gym record as pulled. Fresh-eyes review (15 Nov 2026): saving gym details writes the whole record, so a
+ * version that did not know a key (an older bundle and the free trial's joinTrialDays) dropped it. `kept` holds every
+ * stored key this version does not read, and the next save sends it back unchanged (a merge). A tab still running a
+ * bundle from before this fix cannot be fixed by it: it still writes only the keys it knows.
+ */
+type GymRow = GymDetails & { kept?: Record<string, unknown> };
+
 const COLLECTIONS = [
   ['member', 'members'],
   ['plan', 'plans'],
@@ -136,7 +147,7 @@ const COLLECTIONS = [
 type ListKey = (typeof COLLECTIONS)[number][1];
 
 /** Rows by kind, then id. */
-export type Rows = Record<Exclude<RecordKind, 'gym'>, Map<string, unknown>> & { gym: GymDetails | null };
+export type Rows = Record<Exclude<RecordKind, 'gym'>, Map<string, unknown>> & { gym: GymRow | null };
 
 export function emptyRows(): Rows {
   return {
@@ -168,7 +179,9 @@ export function applyRecords(rows: Rows, records: readonly CrmRecord[]): boolean
     if (r.k === 'gym') {
       if (!r.x && isRecordObject(r.d)) {
         const d = r.d;
+        const kept = Object.fromEntries(Object.entries(d).filter(([k]) => !GYM_KEYS.has(k)));
         rows.gym = {
+          ...(Object.keys(kept).length > 0 ? { kept } : {}),
           name: typeof d.name === 'string' ? d.name : '',
           phone: typeof d.phone === 'string' ? d.phone : null,
           address: typeof d.address === 'string' ? d.address : null,
@@ -239,12 +252,15 @@ function gymDetails(g: GymRecord): GymDetails {
   return out;
 }
 
-/** The rows that differ between two copies of the gym: changed or new, and deleted. PURE. */
-export function diffSnapshots(before: CrmSnapshot, after: CrmSnapshot): CrmRecord[] {
+/**
+ * The rows that differ between two copies of the gym: changed or new, and deleted. `keptGymKeys`: the stored gym
+ * record's keys this version does not read (GymRow.kept), sent back with a changed gym record so none is lost. PURE.
+ */
+export function diffSnapshots(before: CrmSnapshot, after: CrmSnapshot, keptGymKeys?: Record<string, unknown>): CrmRecord[] {
   const out: CrmRecord[] = [];
   const a = gymDetails(before.gym);
   const b = gymDetails(after.gym);
-  if (JSON.stringify(a) !== JSON.stringify(b)) out.push({ k: 'gym', id: 'gym', d: b });
+  if (JSON.stringify(a) !== JSON.stringify(b)) out.push({ k: 'gym', id: 'gym', d: keptGymKeys ? { ...keptGymKeys, ...b } : b });
 
   for (const [kind, key] of COLLECTIONS) {
     const old = new Map<string, string>();
@@ -1153,7 +1169,7 @@ export class CloudCrmData implements CrmData {
         const copy = new LocalCrmData({ store: memoryStore(raw), now: this.now, role: this.opts.role, today: this.opts.today });
         const result = await op(copy);
         const after = await copy.load();
-        const changes = diffSnapshots(before, after);
+        const changes = diffSnapshots(before, after, this.rows.gym?.kept);
         if (changes.length === 0) return result;
         try {
           this.version = await this.pushOnce(changes);

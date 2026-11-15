@@ -31,6 +31,7 @@ import { dateISOFromEpoch, formatDay } from '../../logic/dates';
 import { checkGymDetails } from '../../logic/gst';
 import { countOf, recordsLine } from '../../logic/plural';
 import { SETTING_LINES } from '../../logic/settingLines';
+import { usePagesOpen } from '../../gympage/pagesOpen';
 import { unreadableCopy } from '../../data/local';
 import { isDemoGym } from '../../data/demo';
 import { downloadSavedData } from '../../store';
@@ -101,6 +102,8 @@ export function SettingsScreen({ section }: { section?: string }) {
   const termsLine = acceptedLine(useTerms());
   // F198: dots on the tab and the row that lead to a new feature.
   const lit = useNewFeatures();
+  // Fresh-eyes review (15 Nov 2026): the phone and address lines name the web page only while gym web pages are open.
+  const pagesOpen = usePagesOpen();
 
   const [name, setName] = useState(gym.name);
   const [phone, setPhone] = useState(gym.phone ?? '');
@@ -231,7 +234,7 @@ export function SettingsScreen({ section }: { section?: string }) {
           hint={t(multi ? SETTING_LINES.branchName : SETTING_LINES.gymName)}
         />
         <Grid min={220}>
-          <TextField label="Phone" value={phone} onChange={setPhone} inputMode="tel" hint={t(SETTING_LINES.phone)} />
+          <TextField label="Phone" value={phone} onChange={setPhone} inputMode="tel" hint={t(pagesOpen ? SETTING_LINES.phone : SETTING_LINES.phoneNoPage)} />
           <TextField
             label="GSTIN (optional)"
             value={gstin}
@@ -240,7 +243,7 @@ export function SettingsScreen({ section }: { section?: string }) {
             hint={t(multi ? SETTING_LINES.gstinBranch : SETTING_LINES.gstin)}
           />
         </Grid>
-        <TextField label="Address" value={address} onChange={setAddress} multiline hint={t(SETTING_LINES.address)} />
+        <TextField label="Address" value={address} onChange={setAddress} multiline hint={t(pagesOpen ? SETTING_LINES.address : SETTING_LINES.addressNoPage)} />
         <TextField
           label="Gym UPI ID (optional)"
           value={upiId}

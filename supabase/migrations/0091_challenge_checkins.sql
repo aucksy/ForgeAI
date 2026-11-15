@@ -22,6 +22,11 @@
 -- desk confirms the number, 0048), through 0015's _checkin_roster_member: the same person member_check_in writes the
 -- visit for. A member who never checked in with the app has no linked number, so counts 0 until their first QR scan.
 -- Nothing new leaves any phone: the visits are the gym's own records.
+-- ONE NUMBER, TWO APP MEMBERS (fresh-eyes review, 15 Nov 2026): a visit is written for the gym's member with that number,
+-- not for an app member, so when two app members who have not left share one linked number (a family on one phone),
+-- the visits cannot say which of them came. Such a number counts for NEITHER of them (0, never a winner), instead of
+-- giving both the same visits and two prizes. Each counts again once only one of them has that number (the desk puts
+-- each person's own number on the list, or one of them leaves the gym).
 --
 -- THE RULES for 'checkins': the goal is a whole number from 1 to 31 and at most the number of days it runs (a goal
 -- of 13 visits in 12 days is a typing slip: INVALID). Everything else is 0037's: 7 to 31 days, starts today or later
@@ -55,7 +60,9 @@ alter table public.gym_challenges add constraint gym_challenges_measure_check ch
 
 -- ------------------------------------------------------------------ helpers (no grants)
 -- Visit days per app member inside [p_from, p_to] (p_member null = every member of the gym who has not left).
--- A member with no linked number, or whose number is on no live member of the gym's list, has no row.
+-- A member with no linked number, or whose number is on no live member of the gym's list, has no row. Nor has a member
+-- whose linked number another app member of the gym who has not left shares (the header: the visits cannot tell them
+-- apart). The list is matched on the number alone (0015's _checkin_roster_member), so one number = one list member.
 create or replace function public._challenge_checkin_days(p_gym uuid, p_from date, p_to date, p_member uuid)
   returns table(member_id uuid, total numeric)
   language sql stable security definer set search_path = public as $$
@@ -70,6 +77,11 @@ create or replace function public._challenge_checkin_days(p_gym uuid, p_from dat
      and (v.data->>'visitedOn') between to_char(p_from, 'YYYY-MM-DD') and to_char(p_to, 'YYYY-MM-DD')
    where m.gym_id = p_gym and m.left_at is null and m.checkin_phone is not null
      and (p_member is null or m.member_id = p_member)
+     -- Fresh-eyes review: a number two app members share counts for neither.
+     and not exists (select 1 from public.gym_members o
+                      where o.gym_id = p_gym and o.left_at is null and o.member_id <> m.member_id
+                        and o.checkin_phone is not null
+                        and public._norm_phone(o.checkin_phone) = public._norm_phone(m.checkin_phone))
    group by m.member_id
 $$;
 

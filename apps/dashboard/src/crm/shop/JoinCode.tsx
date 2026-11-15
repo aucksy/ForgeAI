@@ -12,6 +12,7 @@ import { useCan } from '../auth/AuthProvider';
 import { useShop } from './ShopProvider';
 import { inviteMessage, whatsAppHref } from './invite';
 import { useGymLink, gymLinkMessage } from './oneLink';
+import { useJoinPayOn } from '../gympage/pagesOpen';
 import { useJoinOrigin } from './linkOrigin';
 import { useSelfJoinReady } from './selfJoinReady';
 import { navigate } from '../ui/router';
@@ -59,6 +60,7 @@ export function JoinCodeCard({
   const joinOrigin = useJoinOrigin();
   // R-563: the gym's ONE link (its web page once pages are open and it is published, else the join link).
   const gymLink = useGymLink(cloud?.joinCode ?? '');
+  const joinPay = useJoinPayOn();
   const [copied, setCopied] = useState<'yes' | 'no' | null>(null);
   const codeRef = useRef<HTMLSpanElement>(null);
   const [busy, setBusy] = useState(false);
@@ -197,7 +199,7 @@ export function JoinCodeCard({
             : t('People pick a plan on a phone or a computer and send it to you. They pay at the desk.')}
         </div>
         <div style={{ marginTop: space.sm }}>
-          <Button variant="ghost" onClick={() => window.open(whatsAppHref(gymLinkMessage(cloud.name, gymLink, cloud.joinCode, joinOrigin)), '_blank', 'noopener')}>
+          <Button variant="ghost" onClick={() => window.open(whatsAppHref(gymLinkMessage(cloud.name, gymLink, cloud.joinCode, joinOrigin, joinPay)), '_blank', 'noopener')}>
             {gymLink.kind === 'page' ? t('Send your page on WhatsApp') : t('Send join link on WhatsApp')}
           </Button>
         </div>

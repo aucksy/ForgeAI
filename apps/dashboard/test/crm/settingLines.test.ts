@@ -69,4 +69,26 @@ describe('the line under each setting', () => {
     expect(SETTING_LINES.timingsNote).toContain('120 letters');
     expect(SETTING_LINES.serial).toContain('Menu > System Info > Serial Number');
   });
+
+  it('gives the free days to the member who invited, never to the friend (fresh-eyes review, 15 Nov 2026)', () => {
+    expect(SETTING_LINES.friendDays).toContain('a member gets');
+    expect(SETTING_LINES.friendDays).toContain('their invite link');
+    expect(SETTING_LINES.friendDays).not.toMatch(/to each friend/);
+    expect(HINGLISH[SETTING_LINES.friendDays]).toContain('us member ko');
+  });
+
+  it('names the web page under phone and address only while gym web pages are open', () => {
+    // Off (every gym today): no web page half.
+    expect(SETTING_LINES.phoneNoPage).not.toMatch(/web page/i);
+    expect(SETTING_LINES.addressNoPage).not.toMatch(/web page/i);
+    expect(HINGLISH[SETTING_LINES.phoneNoPage]).not.toMatch(/web page/i);
+    expect(HINGLISH[SETTING_LINES.addressNoPage]).not.toMatch(/web page/i);
+    expect(SETTING_LINES.phoneNoPage).toContain('receipts');
+    expect(SETTING_LINES.addressNoPage).toContain('receipts');
+    // Settings picks the line from the same GYM_PAGES switch the web page parts follow.
+    const settings = readFileSync(join(ROOT, 'ui/screens/Settings.tsx'), 'utf8');
+    expect(settings).toContain('usePagesOpen()');
+    expect(settings).toContain('pagesOpen ? SETTING_LINES.phone : SETTING_LINES.phoneNoPage');
+    expect(settings).toContain('pagesOpen ? SETTING_LINES.address : SETTING_LINES.addressNoPage');
+  });
 });

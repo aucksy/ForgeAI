@@ -28,6 +28,7 @@ import { BELL_ALERTS, bellGroups, paymentTone, readBellSeen, saveBellSeen, unsee
 import { alertAge, alertShown, type GymAlert } from '../logic/gymAlerts';
 import { onPanelRefresh } from '../logic/panelRefresh';
 import { useShop } from '../shop/ShopProvider';
+import { useCrm } from '../store';
 import { BellAlertsCard } from './AlertsCards';
 import { GroupLabel } from './GroupLabel';
 import { PaymentTag, paymentRowLook } from './PaymentTag';
@@ -339,7 +340,11 @@ export function NewsBell() {
   const hq = useHqNews(demo);
   // R-561: the gym's alerts (0075; none before it, and none in the demo gym), newest first, for this person.
   const { alerts } = useNeedsYou();
-  const [alertsSeen, setAlertsSeen] = useState<number | null>(() => readBellSeen(browserStore()));
+  // Fresh-eyes review (15 Nov 2026): each branch keeps its own seen time; switching branch reads that branch's.
+  const gymId = String(useCrm().snapshot.gym.gymId);
+  const [seen, setSeen] = useState<{ gymId: string; at: number | null }>(() => ({ gymId, at: readBellSeen(browserStore(), gymId) }));
+  if (seen.gymId !== gymId) setSeen({ gymId, at: readBellSeen(browserStore(), gymId) });
+  const alertsSeen = seen.gymId === gymId ? seen.at : null;
   const newAlerts = demo ? [] : unseenAlerts(alerts, alertsSeen, Date.now());
   const [open, setOpen] = useState(false);
   // Which updates were new when the list opened: they keep their "New" tag while it stays open.
@@ -374,8 +379,8 @@ export function NewsBell() {
       if (hq.unread.length > 0) hq.seen();
       const newestAlert = alerts[0]?.at;
       if (newestAlert && newestAlert > (alertsSeen ?? 0)) {
-        saveBellSeen(browserStore(), newestAlert);
-        setAlertsSeen(newestAlert);
+        saveBellSeen(browserStore(), gymId, newestAlert);
+        setSeen({ gymId, at: newestAlert });
       }
     }
     setOpen(!open);

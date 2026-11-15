@@ -64,7 +64,14 @@ export function bellGroups(counts: { gym: number; mettleup: number; news: number
 
 // ---------------------------------------------------------------- which alerts are new to the bell
 
+/**
+ * Fresh-eyes review (15 Nov 2026): each branch has its own alerts, so each gym id keeps its own seen time
+ * (`BELL_SEEN_PREFIX` + gym id). The one time every branch shared before (BELL_SEEN_KEY) is read for a gym that has no
+ * time of its own yet and copied to it once, so nobody suddenly sees every old alert as new. It is left in place for
+ * a tab still running an older version.
+ */
 export const BELL_SEEN_KEY = 'forgeai.bell.alertsSeen.v1';
+export const BELL_SEEN_PREFIX = 'forgeai.bell.alertsSeen.v2.';
 
 /** A browser that never opened the bell counts the alerts of the last day as new. */
 export const FIRST_LOOK_MS = 24 * 60 * 60 * 1000;
@@ -74,22 +81,33 @@ interface Store {
   setItem(k: string, v: string): void;
 }
 
-/** The newest alert time this browser saw in the bell; null when it never opened it (or cannot keep it). */
-export function readBellSeen(store: Store | null): number | null {
+function seenTime(raw: string | null): number | null {
+  const v = Number(raw);
+  return raw !== null && Number.isFinite(v) && v > 0 ? v : null;
+}
+
+/**
+ * The newest alert time this browser saw in this gym's bell; null when it never opened it (or cannot keep it). A gym
+ * with no time of its own takes the old shared time, copied to it once.
+ */
+export function readBellSeen(store: Store | null, gymId: string): number | null {
   if (!store) return null;
   try {
-    const v = Number(store.getItem(BELL_SEEN_KEY));
-    return Number.isFinite(v) && v > 0 ? v : null;
+    const own = seenTime(store.getItem(BELL_SEEN_PREFIX + gymId));
+    if (own !== null) return own;
+    const shared = seenTime(store.getItem(BELL_SEEN_KEY));
+    if (shared !== null) store.setItem(BELL_SEEN_PREFIX + gymId, String(shared));
+    return shared;
   } catch (e) {
     console.warn('[bell] seen time unreadable', e);
     return null;
   }
 }
 
-export function saveBellSeen(store: Store | null, at: number): void {
+export function saveBellSeen(store: Store | null, gymId: string, at: number): void {
   if (!store || !(at > 0)) return;
   try {
-    store.setItem(BELL_SEEN_KEY, String(at));
+    store.setItem(BELL_SEEN_PREFIX + gymId, String(at));
   } catch (e) {
     console.warn('[bell] could not keep the seen time', e);
   }

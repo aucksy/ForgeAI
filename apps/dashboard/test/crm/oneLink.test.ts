@@ -38,6 +38,17 @@ describe('the gym’s one link', () => {
     expect(pageMsg.split('\n')).toEqual(['Hi!', 'See the fees, timings and photos of Shakti Gym, and become a member online. You pay at the gym desk.', '', 'Open our page:', 'https://join.mettleup.fit/shakti-gym-sector-12']);
     for (const m of [joinMsg, pageMsg]) expect(m).not.toMatch(/phone/i);
   });
+  it('says "You pay at the gym desk" only while paying online on joining is off (JOIN_PAY; fresh-eyes review, 15 Nov 2026)', () => {
+    const join = gymLinkFrom({ pagesOpen: false, web: null, joinCode: 'RAMS01', joinOrigin: APP });
+    const pageLink = gymLinkFrom({ pagesOpen: true, web: answer(page()), joinCode: 'RAMS01', joinOrigin: APP });
+    expect(gymLinkMessage('Shakti Gym', pageLink, 'RAMS01', APP, false)).toContain('You pay at the gym desk.');
+    expect(gymLinkMessage('Shakti Gym', join, 'RAMS01', APP, false)).toContain('You pay at the gym desk.');
+    const pageOn = gymLinkMessage('Shakti Gym', pageLink, 'RAMS01', APP, true);
+    const joinOn = gymLinkMessage('Shakti Gym', join, 'RAMS01', APP, true);
+    expect(pageOn.split('\n')[1]).toBe('See the fees, timings and photos of Shakti Gym, and become a member online.');
+    expect(joinOn.split('\n')[1]).toBe('Become a member of Shakti Gym online. Pick a plan and send your details.');
+    for (const m of [pageOn, joinOn]) expect(m).not.toMatch(/desk/);
+  });
   it('both posters say a computer can type the link printed under the QR', () => {
     for (const p of [JOIN_ONLINE_POSTER, GYM_PAGE_POSTER]) {
       expect(p.lead).not.toMatch(/phone/i);
