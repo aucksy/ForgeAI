@@ -7,13 +7,13 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
-## R-600 (16 Nov 2026) Pre-deploy fixes for tonight's admin panel deploy (fresh-eyes review of d2928aaa..b65e6362)
+## R-600 (16 Nov 2026) Pre-deploy fixes for tonight's admin panel deploy (fresh-eyes review of d2928aaa..b65e6362, then of a645d692)
 - Brief (coordinator; owner approved the deploy, "no screen says something the code does not do"): 5 fixes, no deploy, no DB change, no version bump.
-- What's new: new ADMIN_NEWS entry '2026-11-16' = R-593's three Today lines (moved out of ADMIN_NEWS_PENDING) + 2 lines for R-586 (member picks "Gym owner" / a trainer / "Gym admin"; panel shows "To: Gym owner"). Words from shop/gymMessages.ts TO_WORDS + memberMessages.ts. Line 4 says "In the newest MettleUp app": the picker ships in 0.79.0 (not released yet). No `feature` dots. gym-web-pages + plus-lock stay pending.
-- Help (deploy/panel/helpArticles.js): member-messages-who-reads and message-your-gym now give 0096's recipient rules, plus the old rule for an older app; the desk's Complaints button shows only when a complaint went to "Gym admin".
-- Trainer note (memberMessages.ts): also says questions sent only to the owner or another trainer are hidden. NEW Hinglish line (hinglish.ts) for his read-aloud.
+- What's new: ADMIN_NEWS '2026-11-16' = R-593's three Today lines (moved out of pending). R-586's two recipient lines ("Gym owner" / a trainer by name / "Gym admin"; "To: Gym owner") wait in a NEW 'pending-message-recipient': the picker is member app 0.79.0, open testing only, so no message has a "To:" line yet. Move it to ADMIN_NEWS with the first panel deploy after 0.79.0 is in production. Words from shop/gymMessages.ts TO_WORDS + memberMessages.ts. gym-web-pages + plus-lock stay pending.
+- Help (deploy/panel/helpArticles.js, both 120 words, the limit): owner article "If a member's app asks "Who should read it?" ... Each such message says who it went to ... With no "To:" line, the older rule applies" (+ "Member questions" line back). Member article: the same "If asked", and "If not asked, the owner and front desk read feedback; only the owner reads a complaint."
+- Trainer note (memberMessages.ts, 147 of 160 letters): also says questions sent only to the owner or another trainer are hidden. NEW Hinglish line (hinglish.ts) for his read-aloud.
 - AI idea "joined N days ago, no visit yet" (assistant/suggestions.ts): N from member.joinedOn (a rejoin showed the new plan's start). Counting rule unchanged. Test: awayIdea.test.ts rejoin case (621 days).
-- Tests: whatsNew.test.ts (16 Nov entry, pending ids), e2e/whatsnew.spec.mjs J149 (Version/Update of 16 Nov 2026), helpArticles.test.mjs, memberMessages.test.ts, e2e/message-recipient-uat.spec.mjs (trainer note).
+- CI lessons: member-message words max 160 letters (memberMessages.test.ts); help articles max 120 words each (helpArticles.test.mjs). Count both before pushing.
 
 ## R-598 (16 Nov 2026) Import card: "Everything stays on this phone." only for members not signed in
 - Brief: the Workout tab's "Coming from Hevy or Strong?" card told signed-in members (workouts copied to their account) "Everything stays on this phone."; keep the words, show them only where true.

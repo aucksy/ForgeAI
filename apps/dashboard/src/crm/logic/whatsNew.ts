@@ -39,7 +39,7 @@ export interface AdminNewsEntry {
 export const ADMIN_NEWS: readonly AdminNewsEntry[] = [
   {
     // Admin panel deploy 16 Nov 2026 (R-600): R-593 Today keeps only what still needs him (moved from ADMIN_NEWS_PENDING
-    // at the deploy), and R-586's "To: ..." on Member messages (0096 live 15 Nov; the member app that picks is 0.79.0).
+    // at the deploy). R-586's recipient lines wait in 'pending-message-recipient' until 0.79.0 is in production.
     // The first line is the summary under the bell (e2e/whatsnew.spec.mjs J149). No `feature` dot (newdots-uat pins them).
     id: '2026-11-16',
     lines: [
@@ -51,13 +51,6 @@ export const ADMIN_NEWS: readonly AdminNewsEntry[] = [
       },
       {
         text: 'The AI Assistant ideas on Today now name the members, like “Asha: no visit in 12 days”. Tap “See who” for the list. Someone who joined today is no longer counted as not seen.',
-      },
-      {
-        text: 'In the newest MettleUp app, members pick who reads their message. A question goes to “Gym owner” or a trainer by name. Feedback or a complaint goes to “Gym owner” or “Gym admin”, which is you and the front desk.',
-        go: { label: 'Open Member messages', path: '/member-messages' },
-      },
-      {
-        text: 'In “Member messages”, each message now says who the member sent it to, like “To: Gym owner”. Messages from an older app have no “To:” line.',
       },
     ],
   },
@@ -653,6 +646,21 @@ function notifyNewsSeen(): void {
  * the deploy day) in the same commit as the admin-panel deploy (R-333). Never shown before the change is live.
  */
 export const ADMIN_NEWS_PENDING: readonly AdminNewsEntry[] = [
+  {
+    // R-586 / R-600: members pick who reads a message ("Who should read it?") and the panel shows "To: ...". 0096 is live,
+    // but the picker is in member app 0.79.0. Moves to ADMIN_NEWS with the first panel deploy after 0.79.0 is in
+    // production on Play (open testing is not enough: no member's message has a "To:" line before that).
+    id: 'pending-message-recipient',
+    lines: [
+      {
+        text: 'In the newest MettleUp app, members pick who reads their message. A question goes to “Gym owner” or a trainer by name. Feedback or a complaint goes to “Gym owner” or “Gym admin”, which is you and the front desk.',
+        go: { label: 'Open Member messages', path: '/member-messages' },
+      },
+      {
+        text: 'In “Member messages”, each message now says who the member sent it to, like “To: Gym owner”. Messages from an older app have no “To:” line.',
+      },
+    ],
+  },
   {
     // R-571: for the day gym web pages switch on (GYM_PAGES live, docs/gym-page/PLAN.md "Switch-on"). Not before.
     id: 'pending-gym-web-pages',

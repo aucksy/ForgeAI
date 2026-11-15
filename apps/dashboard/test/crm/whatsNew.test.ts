@@ -118,20 +118,24 @@ describe('the 15 Nov 2026 deploy (R-589)', () => {
   });
 });
 
-// R-600 (16 Nov 2026): the panel deploy publishes R-593's Today lines and R-586's message recipient ("To: ...").
+// R-600 (16 Nov 2026): the panel deploy publishes R-593's Today lines. R-586's message recipient ("To: ...") waits for
+// member app 0.79.0 in production.
 describe('the 16 Nov 2026 deploy (R-600)', () => {
-  it('is the newest update: the Today lines moved out of pending, and the recipient words are the real ones', () => {
+  it('is the newest update: the Today lines moved out of pending; the recipient lines wait, with the real words', () => {
     const entry = ADMIN_NEWS.find((e) => e.id === '2026-11-16')!;
     expect(ADMIN_NEWS[0]).toBe(entry);
     expect(entry.lines[0].text).toContain('Today now shows only what still needs you');
     const all = entry.lines.map((l) => l.text).join(' ');
-    // The words the member app (shop/gymMessages.ts TO_WORDS) and the panel (memberMessages.ts) show.
-    for (const fact of ['“Gym owner”', '“Gym admin”', 'a trainer by name', 'you and the front desk', '“Member messages”', '“To: Gym owner”', 'See who', 'small phones']) {
-      expect(all, fact).toContain(fact);
+    for (const fact of ['See who', 'small phones']) expect(all, fact).toContain(fact);
+    // Still off (GYM_PAGES, the Plus lock) or not on Play yet (the recipient picker, 0.79.0): not a word here.
+    expect(all).not.toMatch(/web page|join\.mettleup|Plus|lock|Gym admin|To: /i);
+    expect(ADMIN_NEWS_PENDING.map((e) => e.id)).toEqual(['pending-message-recipient', 'pending-gym-web-pages', 'pending-plus-lock']);
+    // The waiting recipient lines use the words the member app (shop/gymMessages.ts TO_WORDS) and the panel
+    // (memberMessages.ts) show.
+    const waiting = ADMIN_NEWS_PENDING[0].lines.map((l) => l.text).join(' ');
+    for (const fact of ['“Gym owner”', '“Gym admin”', 'a trainer by name', 'you and the front desk', '“Member messages”', '“To: Gym owner”']) {
+      expect(waiting, fact).toContain(fact);
     }
-    // Still off (GYM_PAGES, the Plus lock): not a word, and they stay waiting.
-    expect(all).not.toMatch(/web page|join\.mettleup|Plus|lock/i);
-    expect(ADMIN_NEWS_PENDING.map((e) => e.id)).toEqual(['pending-gym-web-pages', 'pending-plus-lock']);
     // No new dots: e2e/newdots-uat.spec.mjs pins which features light.
     expect(entry.lines.some((l) => l.feature)).toBe(false);
     for (const l of entry.lines) {

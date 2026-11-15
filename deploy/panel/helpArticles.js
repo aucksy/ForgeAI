@@ -364,12 +364,13 @@ export const ALL_HELP_ARTICLES = [
     who: 'owner',
     title: 'Who reads member questions, feedback and complaints, and how long messages are kept',
     text:
-      'Members write from "Message your gym" on the Gym tab of the MettleUp app. The owner reads every message. ' +
-      'In the newest app, the member answers "Who should read it?". A question goes to "Gym owner" or one trainer by name (only that trainer is alerted). ' +
+      'Members write from "Message your gym" in the MettleUp app. The owner reads every message. ' +
+      'If a member\'s app asks "Who should read it?", a question goes to "Gym owner" or one trainer by name (only that trainer is alerted). ' +
       'Feedback and complaints go to "Gym owner" or "Gym admin" (owner and front desk). Trainers never see feedback or complaints. ' +
-      'Each message says who it went to, like "To: Gym owner". ' +
-      'A message from an older app has no "To:" line. The front desk reads questions and feedback. Trainers read only questions. Only the owner reads complaints. ' +
-      'Messages are deleted 180 days after the last one, or when the member leaves your gym.',
+      'Each such message says who it went to, like "To: Gym owner". ' +
+      'With no "To:" line, the older rule applies. The front desk reads questions and feedback. Trainers read only questions. Only the owner reads complaints. ' +
+      'Workout questions sent to "A trainer" go to "Member questions". ' +
+      'Messages are deleted 180 days after the last one, or when the member leaves.',
   },
   {
     id: 'member-progress-card',
@@ -595,13 +596,13 @@ export const ALL_HELP_ARTICLES = [
     who: 'member',
     title: 'Message your gym: a question, feedback or a complaint',
     text:
-      'Open the Gym tab and tap "Message your gym". ' +
+      'On the Gym tab, tap "Message your gym". ' +
       '1. If asked "Who is it for?", pick "The gym". ' +
       '2. Under "What is it about?", pick Question, Feedback or Complaint. ' +
-      'If asked "Who should read it?", a question goes to "Gym owner" or a trainer by name. Feedback or a complaint goes to "Gym owner" or "Gym admin" (owner and front desk). Trainers never see feedback or a complaint. ' +
-      'If not asked, only the owner reads a complaint. ' +
-      '3. Type your message and tap "Send message". For feedback, you can switch on "Send without my name". ' +
-      'Replies show under "Your messages". Tap "Write back" to answer. For a notification, switch on "Messages from my gym" in Settings, then Reminders.',
+      'If asked "Who should read it?", a question goes to "Gym owner" or a named trainer. Feedback or a complaint goes to "Gym owner" or "Gym admin" (owner and front desk). Trainers never see feedback or a complaint. ' +
+      'If not asked, the owner and front desk read feedback; only the owner reads a complaint. ' +
+      '3. Type it and tap "Send message". Feedback can be sent with "Send without my name". ' +
+      'Replies show under "Your messages", with "Write back" to answer. For alerts, turn on "Messages from my gym" under Settings, Reminders.',
     screens: ['apps/mobile/src/app/shop/message.tsx'],
   },
   {
