@@ -8,6 +8,9 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
 ## R-585 (15 Nov 2026) Welcome screens approved; Hindi privacy approved; who a member's message goes to (proposed)
+- He said (15 Nov 2026): "yes messages" (build it, helper R-586; 0096 live apply still needs its own named yes) and
+  "yes panel deploy". Deploy waits for: main CI green, a fresh-eyes review of b89823ce..HEAD, a UAT look at the
+  pictures, and his yes to the R-579 smart-link public sentences (asked 15 Nov). Welcome build: helper R-587.
 - His words (15 Nov 2026): "I'm good with the welcome screen designs, but for the screenshot where we are talking
   about them joining the gym, the subtext ... should mention something like, if your gym uses MettleUp, otherwise
   everything is okay." Then: "if your gym uses MettleUp gym software". Done on the canvas (Gym.dc.html, version 6): "If your gym uses MettleUp gym software, sign in with your
