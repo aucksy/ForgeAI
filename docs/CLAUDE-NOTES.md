@@ -271,7 +271,12 @@ Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept her
   are on Android, it goes to the Android Play Store. If the user is on iPhone, when the iPhone app is built, it goes to the
   iPhone. ... Even for the website, we have the link there. So wherever we have the link that the user is sharing should be
   configured in that way."
-- Status: BUILT, waiting for the admin panel deploy (Worker + static pages + panel code). Public words below need his yes.
+- Status: BUILT and pushed (2ebca638, 449c029f). The public words, invite lines and Hinglish are all approved by him (R-585).
+  Left: (1) read CI run 43730819299 (first run whose admin journeys can load; earlier runs died on other helpers' syntax
+  errors): e2e/r579-uat.spec.mjs must pass; fix any R579-1/2/3 failure; (2) LOOK at the pictures r579-*.png in that run's
+  dashboard-uat-pictures artifact (member page phone/computer, light/dark, offline; gym link Android/iPhone/computer;
+  /app iPhone and computer); (3) fresh-eyes review of the pictures (R-335); (4) the panel deploy (Worker + dist), then
+  move ADMIN_NEWS_PENDING 'pending-share-app-link' to ADMIN_NEWS with the deploy day.
 - **The smart link (deploy/panel/appLink.js), two forms, one set of device rules:** `/app` (no gym) and `/j/<CODE>` (a gym
   known). /j/<CODE> stays the link with a gym because Android opens it straight in an installed app (an App Link); a
   redirect from another address would not. No cookie, nothing kept, only the User-Agent read; responses `Vary: User-Agent`.
@@ -316,7 +321,9 @@ Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept her
 - Tests: deploy/panel/appLink.test.mjs (Android Chrome, Samsung Internet, OPPO, Cubot, Facebook in-app; iPhone Safari and
   Chrome, iPad; Windows, Mac, no UA; WhatsApp, Facebook, iMessage, Telegram, Googlebot; with and without a gym code; with
   APP_STORE_URL empty and set); dashboard test/crm/invite.test.ts; admin journey e2e/r579-uat.spec.mjs (pictures r579-*).
-  Run ids: below.
+  Run ids: 43727970516 (head 658ebe6e, includes R-579): Typecheck dashboard, Unit tests dashboard, Panel Worker tests
+  (appLink.test.mjs), Build and Panel crawl all PASSED; Admin journeys could not load (other helpers' r561 duplicate
+  "panel" and the indianMobile import, both since fixed). Pending: 43730819299 (admin journeys incl. r579-uat).
 
 ## R-577 (15 Nov 2026) Watch screens checked on the sizes of the watches members own (owner chose "Option 1")
 - The brief (15 Nov 2026): the owner chose "Option 1": render the watch app's screens in the cloud on Galaxy
