@@ -112,8 +112,9 @@ appId: com.mettleup.app
 - waitForAnimationToEnd:
     timeout: 3000
 - takeScreenshot: tour-10-phone-number-screen
+# R-587 review G2: the bottom shows "Used MettleUp before? Bring back your workouts" (the Google backup link).
 - scrollUntilVisible:
-    element: "^Check with WhatsApp$"
+    element: "^Used MettleUp before. Bring back your workouts$"
     timeout: 10000
     optional: true
 - takeScreenshot: tour-11-phone-number-screen-bottom
