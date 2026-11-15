@@ -100,6 +100,13 @@ Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept her
   choice id: the sheet's "Abs" would also match a row value behind it); phase2-c, v0280-j and uat-g use it; part C
   photographs the form, the Main muscle sheet, the Also works sheet and the photo sheet (32, 32b, 32c, 33, 33b);
   uat-rel-look photographs the form and its sheets in light and dark (rel-look-*-04b..04e).
+- UAT round 1 (owner phone 360 dp, text 1.3, run 43713138161): values beside long labels were cut ("Front shoulders,
+  Tra..."), "Weight goes up by" wrapped, the empty photo card's text ran 5 lines. Fix 7236083e: when width / text
+  size < 340 dp each row puts its value under the label and the photo card drops its picture tile. Recheck run
+  43717942475 (owner, c + ulook light and dark): every value whole, photo text 4 lines, nothing under the feedback tab.
+- Runs: CI 43717932342 green on 7236083e (43713047915 failed: test file lacked the vitest import, fixed 100877bb;
+  43713409355 mobile green, 3 admin logo tests red from R-573). Device QA default 43713136025 (c, ug, ulook) and
+  43713140010 (j) passed; owner 43713138161 and 43717942475 passed.
 
 ## R-573. Logo background remover on Branding (15 Nov 2026), reverses R-192
 - He said: "They won't remove it themselves on ChatGPT and app launches will look bad and I don't like that." Then:
