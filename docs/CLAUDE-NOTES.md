@@ -15,6 +15,13 @@ the setup steps ... It should be like one journey to set this up." And the Gemin
 Gemini only when he asks, gemini-4-argon, medium thinking, full context + his style; never on trust.
 Then: "my 5-hour limit will be done in some time, so ensure that you have everything saved."
 
+PANEL DEPLOY (approved, NOT done yet): review fixes landed (ee394547 + b803e213, R-567, CI 43697712538 green). But
+main now holds 20 commits after the reviewed point 93c100f1 (F208 R-569, F203, F220, F217/F218), all behind off
+switches and not fresh-eyes reviewed. Next session: one fresh-eyes review of 93c100f1..main (R-335), wait for main CI
+green (F208 run 43699278433, F203 run 43698672600, F220 on 65c1214a), then deploy deploy/panel + HQ from that full
+sha, GYM_PAGES + PAGE_AI stay off, check live, update tracker. Helpers' STATE.md files sit in their scratchpad
+worktrees (wt-journey still building the setup journey).
+
 LIVE now:
 - Play: phone 0.78.0 published to internal/closed/open (Google approved; published by me 15 Nov ~08:25 UTC); watch
   0.78.0 uploaded (play-upload 43694560659, committed wear closed + wear beta) and published after approval.
