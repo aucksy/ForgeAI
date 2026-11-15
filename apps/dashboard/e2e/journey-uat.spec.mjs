@@ -76,6 +76,11 @@ async function joinOnlineReady(page, server) {
   });
 }
 
+/** The admin app's own Dark / Light switch (it does not follow the browser's setting). Takes effect on the next load. */
+async function look(page, scheme) {
+  await page.evaluate((v) => localStorage.setItem('forgeai.theme.v1', v), scheme);
+}
+
 async function keepOpened(page) {
   await page.addInitScript(() => {
     window.__opened = [];
@@ -110,6 +115,7 @@ test('JOURNEY-1 pages off: "Let people join your gym online": join link, poster,
   test.setTimeout(150_000);
   await page.setViewportSize(SIZES.phone);
   const { server } = await gymReady(page, { sw: {} });
+  await look(page, 'light');
   await page.reload();
   const main = await openJourney(page, TITLE_JOIN);
   await expect(main.getByText(TITLE_PAGE)).toHaveCount(0);
@@ -141,11 +147,14 @@ test('JOURNEY-1 pages off: "Let people join your gym online": join link, poster,
 
   await page.setViewportSize(SIZES.computer);
   await page.emulateMedia({ colorScheme: 'dark' });
+  await look(page, 'dark');
+  await page.reload();
   await openJourney(page, TITLE_JOIN);
   await shot(page, '1-off-computer-dark');
 
   await page.setViewportSize(SIZES.phone);
   await page.emulateMedia({ colorScheme: 'light' });
+  await look(page, 'light');
   await page.evaluate(() => localStorage.setItem('forgeai.lang.v1', 'hinglish'));
   await page.reload();
   await openJourney(page, 'Logon ko online aapke gym mein join karne do');
@@ -165,6 +174,7 @@ for (const [size, scheme] of [
     await page.setViewportSize(SIZES.phone);
     await page.emulateMedia({ colorScheme: scheme });
     await gymReady(page, { sw: { gymPages: true }, webPage: null });
+    await look(page, scheme);
     await page.setViewportSize(SIZES[size]);
     await page.reload();
     const main = await openJourney(page, TITLE_PAGE);
@@ -209,6 +219,7 @@ test('JOURNEY-3 pages on, page published, JOIN_PAY on: done; "Turn off my page" 
   test.setTimeout(150_000);
   await page.setViewportSize(SIZES.phone);
   const { box } = await gymReady(page, { sw: { gymPages: true, joinPay: true }, webPage: PUBLISHED });
+  await look(page, 'light');
   await page.reload();
   await page.goto('./#/setup');
   const main = page.getByRole('main');
