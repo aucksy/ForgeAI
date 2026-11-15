@@ -26,6 +26,7 @@ import {
   apiAskQuestions,
   apiAskTrainer,
   apiAskWithdraw,
+  apiMemberJoinDay,
   apiTrainerHelp,
   apiTrainerShare,
   apiTrainerShare2,
@@ -52,16 +53,60 @@ const asSend = (r: TrainerCall<true>): MateSendResult => {
   return 'failed';
 };
 
+/** F218: member_join_day (0092) not on the server: asked no more this run. */
+let joinDayMissing = false;
+/** F218: the member whose gym start date was already asked for this run (the answer had no day). */
+let joinDayAskedFor: string | null = null;
+
+/**
+ * F218: the member's start date on the gym's own list, for a phone that kept no join day (joined before R-86). Kept on
+ * the phone once the gym gives it. Without 0092, or with no day on the gym's list, or offline: null, and the share
+ * goes exactly the 0.78.0 way (from the first day this phone shared). Never throws; never shows the member anything.
+ */
+async function gymJoinDay(memberId: string, memberKey: string | null): Promise<string | null> {
+  const { keepGymJoinDay, keptGymJoinDay } = await import('./gymReminders');
+  const kept = await keptGymJoinDay(memberId);
+  if (kept) return kept;
+  if (!memberKey || joinDayMissing || joinDayAskedFor === memberId) return null;
+  try {
+    const r = await apiMemberJoinDay(memberKey);
+    if (!r.ok) {
+      if ('missing' in r) {
+        joinDayMissing = true;
+        console.log('[trainer] the gym server has no start dates yet (0092 not live); sharing from the first day this phone shared');
+      } else if ('error' in r) {
+        console.warn('[trainer] reading the gym start date failed; sharing from the first day this phone shared', r.error.kind);
+      }
+      return null;
+    }
+    joinDayAskedFor = memberId;
+    if (!r.data) {
+      console.log('[trainer] the gym has no start date for this member; sharing from the first day this phone shared');
+      return null;
+    }
+    await keepGymJoinDay(memberId, r.data);
+    return r.data;
+  } catch (e) {
+    console.warn('[trainer] reading the gym start date failed; sharing from the first day this phone shared', e);
+    return null;
+  }
+}
+
 /**
  * R-551: the first day this phone may share with its gym: the day it joined this gym in the app, else (a phone that
- * joined before R-86 kept no day) the first day it shared, kept. No link: today.
+ * joined before R-86 kept no day) F218 the member's start date on the gym's own list, else the first day it shared,
+ * kept. No link: today. The 12-month cap still applies after this. Exported for its test (trainerJoinDay.test.ts).
  */
-async function sharingSince(today: string): Promise<string> {
-  const memberId = useGymShop.getState().link?.memberId;
+export async function sharingSince(today: string): Promise<string> {
+  const link = useGymShop.getState().link;
+  const memberId = link?.memberId;
   if (!memberId) return today;
   const { appJoinedOn, shareFirstSeenOn } = await import('./gymReminders');
   const joined = await appJoinedOn(memberId);
-  return sharingSinceDay(joined, joined ? today : await shareFirstSeenOn(memberId, today), today);
+  if (joined) return sharingSinceDay(joined, today, today);
+  const gym = await gymJoinDay(memberId, link?.memberKey ?? null);
+  // The first share day is kept either way, so a later failed read never moves the start.
+  return sharingSinceDay(null, await shareFirstSeenOn(memberId, today), today, gym);
 }
 
 /**

@@ -14,6 +14,7 @@ import { Text, View } from 'react-native';
 import { Card, GhostButton, PrimaryButton, Screen, askConfirm } from '@/components/ui';
 import { goBack } from '@/lib/goBack';
 import { tell } from '@/lib/tell';
+import { PlusPageGate } from '@/plan/PlusPageGate';
 import { planTodayNow, useMemberAccess } from '@/plan/memberPlanStore';
 import { accessLine, buyLabel, plusGymCard, PLUS_WORDS } from '@/plan/planWords';
 import { buy, playPrices, restore, storeKind } from '@/plan/playBilling';
@@ -29,7 +30,16 @@ function Line({ text, on }: { text: string; on: boolean }) {
   );
 }
 
-export default function PlusScreen() {
+/** F217: opens only while MettleUp Plus is switched on (QA builds: always), see plan/PlusPageGate.tsx. */
+export default function PlusScreenRoute() {
+  return (
+    <PlusPageGate page="The MettleUp Plus page">
+      <PlusScreen />
+    </PlusPageGate>
+  );
+}
+
+function PlusScreen() {
   const router = useRouter();
   const access = useMemberAccess();
   const today = planTodayNow();

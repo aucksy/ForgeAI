@@ -49,8 +49,17 @@ export const GYM_REMINDERS_STAMP_KEY = 'forgeai-gym-reminders-stamp';
 export const GYM_REMINDERS_JOINED_KEY = 'forgeai-gym-reminders-joined';
 /** R-551: a phone that joined before R-86 kept no join day: the first day it shared with trainers ({ memberId, day }). */
 export const GYM_SHARE_SINCE_KEY = 'forgeai-gym-share-since';
+/** F218: for such a phone, the member's start date on the gym's own list (member_join_day, 0092) ({ memberId, day }). */
+export const GYM_JOIN_DAY_KEY = 'forgeai-gym-join-day';
 /** Every key above: Leave the gym and Erase all data remove them all. */
-export const GYM_REMINDER_STORAGE_KEYS = [GYM_REMINDERS_KEY, GYM_REMINDERS_SENT_KEY, GYM_REMINDERS_STAMP_KEY, GYM_REMINDERS_JOINED_KEY, GYM_SHARE_SINCE_KEY] as const;
+export const GYM_REMINDER_STORAGE_KEYS = [
+  GYM_REMINDERS_KEY,
+  GYM_REMINDERS_SENT_KEY,
+  GYM_REMINDERS_STAMP_KEY,
+  GYM_REMINDERS_JOINED_KEY,
+  GYM_SHARE_SINCE_KEY,
+  GYM_JOIN_DAY_KEY,
+] as const;
 
 export const GYM_CHANNEL = 'gym-reminders';
 
@@ -223,6 +232,21 @@ export async function shareFirstSeenOn(memberId: string, today: string): Promise
   }
   await writeJson(GYM_SHARE_SINCE_KEY, { memberId, day: today });
   return today;
+}
+
+/**
+ * F218: the gym's start date for this member, once the gym's server gave it (keepGymJoinDay); null when none is
+ * kept for this member. Kept so one failed read later (offline) never shrinks what the trainers see.
+ */
+export async function keptGymJoinDay(memberId: string): Promise<string | null> {
+  const v = await readJson(GYM_JOIN_DAY_KEY);
+  if (!v || typeof v !== 'object') return null;
+  const o = v as { memberId?: unknown; day?: unknown };
+  return o.memberId === memberId && typeof o.day === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(o.day) ? o.day : null;
+}
+
+export async function keepGymJoinDay(memberId: string, day: string): Promise<void> {
+  await writeJson(GYM_JOIN_DAY_KEY, { memberId, day });
 }
 
 /** What is set, as a string: changed words, times or colour mean set them again. PURE. */

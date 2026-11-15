@@ -20,6 +20,7 @@ import { InlineError } from '@/components/ui/InlineError';
 import { getProfile } from '@/db/repos/userRepo';
 import { tinyDateWithYear, todayISO } from '@/lib/date';
 import { getMemberPhone } from '@/onboarding/db/dataActions';
+import { PlusPageGate } from '@/plan/PlusPageGate';
 import {
   checkProblemWords,
   FIND_GYM,
@@ -58,7 +59,16 @@ const inputStyle = () =>
     fontSize: type.size.body,
   }) as const;
 
-export default function FindGymScreen() {
+/** F217: opens only while MettleUp Plus is switched on (QA builds: always), see plan/PlusPageGate.tsx. */
+export default function FindGymScreenRoute() {
+  return (
+    <PlusPageGate page="The Find my gym page">
+      <FindGymScreen />
+    </PlusPageGate>
+  );
+}
+
+function FindGymScreen() {
   const router = useRouter();
   // A Gym-tab page: back, or (opened alone, from a link) the Gym tab itself.
   const leave = (): void => {

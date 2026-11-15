@@ -7,6 +7,13 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-565 (15 Nov 2026) F217 + F218 from the 0.78.0 review: Plus pages shut while Plus is off; trainers' charts use the gym's start date
+- Asked (coordinator, from R-560's fresh-eyes review backlog rows F217, F218; Planned = build without asking).
+- F217: mettleup://plus and mettleup://find-gym opened the Plus page (prices, Buy) and "Find my gym" ("every feature free") with Plus switched off. Both routes are now wrapped in plan/PlusPageGate.tsx: plusPagesOpen (plan/memberPlan.ts, PURE) = MEMBER_PLAN_GATE_ON or a QA build with the 'memberPlan' stand-in (every qa-device build has it, so u461 still opens them with the switch off and on). Off: nothing is drawn, one '[plan]' log line, router back, or the Workout tab when the link opened the app there (Redirect). Test: test/plan/plusPagesOpen.test.ts.
+- F218: a phone that kept no join day (joined before R-86, 23 Oct) now asks member_join_day (supabase/migrations/0092_member_join_day.sql, NOT LIVE: needs the owner's yes; test supabase/tests/0092_member_join_day.sql; security.sql allowlist +1). It answers the gym's own start date exactly as 0045's report uses it (_report_join_day: the member record's joinedOn, else the earliest plan not cancelled), only after 0035's roster match, never after today. Order (trainerRecent.sharingSinceDay): the phone's own join day, then the gym's day, then the first day it shared; the 12-month cap (recentFrom) still holds. The gym's day is kept on the phone (GYM_JOIN_DAY_KEY, cleared on leave/erase) so an offline read later never shrinks the trainers' charts. Without 0092 (PGRST202): exactly the 0.78.0 way, one log line, asked no more that run; nothing on screen. Test: test/shop/trainerJoinDay.test.ts.
+- Known limit: once kept, a later change of the start date on the gym's list is not picked up by that phone (Leave the gym or Erase all data clears it).
+- Needs his yes: applying 0092 live. CI run ids below.
+
 ## R-564 (15 Nov 2026) Festival dates on "Today for you" re-checked against two sources each
 - He said: "you seem to be detecting the festivals and occasions and suggesting the user to send a message around it. I just want you to double check for the accuracy of these dates. I don't want you suggesting festivals on days which are incorrect."
 - The only dated list is apps/dashboard/src/crm/assistant/festivals.ts (24 festivals x 2026-2028). Messages templates, Gym timings and the phone app hold festival NAMES only (the owner picks the day); no migration holds a festival date.

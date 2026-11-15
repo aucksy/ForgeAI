@@ -32,7 +32,7 @@ import { talkSentFrom, talkThreadsFrom, talkUnreadFrom, type TalkKind, type Talk
 import { friendInviteFrom, type FriendInvite } from './bringFriend';
 import { staffDoorFromRow, type StaffDoorAnswer } from './staffDoor';
 import { claimAnswerFrom, findAnswerFrom, type ClaimAnswer, type FindAnswer } from './findGym';
-import type { RecentWorkout } from './trainerRecent';
+import { gymJoinDayFrom, type RecentWorkout } from './trainerRecent';
 import type { GymLink, GymOrder, Product } from './types';
 
 export type GymResult<T> = { ok: true; data: T } | { ok: false; error: GymError };
@@ -599,6 +599,17 @@ export async function apiTrainerShare3(key: string, summary: TrainerSummary, rec
   if (!r.ok) return r.noSuchFunction ? { ok: false, missing: true } : { ok: false, error: r.error };
   const data = (Array.isArray(r.data) ? r.data[0] : r.data) as { ok?: unknown } | null;
   return data?.ok === true ? { ok: true, data: true } : { ok: false, error: { kind: 'other' } };
+}
+
+/**
+ * F218: the member's start date at their gym, from the gym's own list (member_join_day, 0092). `data` null: the gym
+ * has no day for this member (or cannot match them to one person on its list). `missing`: 0092 is not live yet.
+ */
+export async function apiMemberJoinDay(key: string): Promise<TrainerCall<string | null>> {
+  const r = await call('member_join_day', { p_key: key }, READ_MS);
+  if (!r.ok) return r.noSuchFunction ? { ok: false, missing: true } : { ok: false, error: r.error };
+  const a = gymJoinDayFrom(r.data);
+  return a ? { ok: true, data: a.day } : { ok: false, error: { kind: 'other' } };
 }
 
 // ------------------------------------------------------------------ bring a friend (0056, F147)

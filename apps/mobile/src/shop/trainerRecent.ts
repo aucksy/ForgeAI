@@ -98,12 +98,26 @@ export function cutToLimits(list: readonly RecentWorkout[], today: string, limit
 
 /**
  * R-551: the first day this phone may share with this gym. `joinedOn`: the day this phone joined the gym in the
- * app (kept since R-86, 23 Oct 2026). A phone that joined before that has no record: then `firstSeenOn`, the first
- * day this version shared (kept), so nothing older than that ever goes. Never after today. PURE.
+ * app (kept since R-86, 23 Oct 2026). A phone that joined before that has no record: then (F218) `gymJoinedOn`, the
+ * member's start date on the gym's own list (member_join_day, 0092), and without that `firstSeenOn`, the first day
+ * this version shared (kept), so nothing older than that ever goes. Never after today. The 12-month cap is applied
+ * after this (recentFrom), so a start date years ago still sends at most the last 12 months. PURE.
  */
-export function sharingSinceDay(joinedOn: string | null, firstSeenOn: string, today: string): string {
-  const d = joinedOn && ISO_DAY.test(joinedOn) ? joinedOn : ISO_DAY.test(firstSeenOn) ? firstSeenOn : today;
+export function sharingSinceDay(joinedOn: string | null, firstSeenOn: string, today: string, gymJoinedOn: string | null = null): string {
+  const ok = (d: string | null): d is string => d != null && ISO_DAY.test(d);
+  const d = ok(joinedOn) ? joinedOn : ok(gymJoinedOn) ? gymJoinedOn : ok(firstSeenOn) ? firstSeenOn : today;
   return d > today ? today : d;
+}
+
+/**
+ * F218: member_join_day's answer (0092), checked. `{ day }`: the gym's start date for this member, or null when the
+ * gym has none; null (no object): not an answer at all. PURE.
+ */
+export function gymJoinDayFrom(raw: unknown): { day: string | null } | null {
+  const r = Array.isArray(raw) ? raw[0] : raw;
+  if (!r || typeof r !== 'object' || (r as { ok?: unknown }).ok !== true) return null;
+  const d = (r as { joinedOn?: unknown }).joinedOn;
+  return { day: typeof d === 'string' && ISO_DAY.test(d) ? d : null };
 }
 
 /** A year's list cut back to what a server without 0084 takes (3 months, 30 workouts). PURE. */

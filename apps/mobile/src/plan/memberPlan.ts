@@ -91,6 +91,17 @@ export function hasQaPlanStandIn(extra: unknown): boolean {
   return Array.isArray(list) && list.includes('memberPlan');
 }
 
+/**
+ * F217 (0.78.0 review, R-560): may the MettleUp Plus page (prices, Buy) and the "Find my gym" page ("every feature
+ * free") open? Only while the plan switch is on. Off (store builds today), a link such as mettleup://plus or
+ * mettleup://find-gym leaves at once: nothing there is true for a member while every feature is free for everyone.
+ * QA builds with the 'memberPlan' stand-in keep both open, as their test switch already does (the cloud phone test
+ * opens them with the switch off, then on). PURE.
+ */
+export function plusPagesOpen(qaBuild: boolean, gateOn: boolean = MEMBER_PLAN_GATE_ON): boolean {
+  return gateOn || qaBuild;
+}
+
 /** Who gets what, for this blob on `realToday` (a QA build's made-up today wins there). PURE. */
 export function accessOf(b: PlanBlob, realToday: string, qaBuild: boolean, gateOn: boolean = MEMBER_PLAN_GATE_ON): MemberAccess {
   const today = qaBuild && b.qaToday ? b.qaToday : realToday;
