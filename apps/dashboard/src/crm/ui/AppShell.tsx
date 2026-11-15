@@ -141,7 +141,7 @@ function Sidebar({ gymName, nav, activePath }: { gymName: string; nav: NavItem[]
   const short = useMediaQuery('(max-height: 820px)');
   const shorter = useMediaQuery('(max-height: 740px)');
   // R-526: 34 (not 36) on a tall window, so the five group headings still let a 1080-px-high window show every row.
-  const rowHeight = shorter ? 28 : short ? 30 : 34;
+  const rowHeight = shorter ? 28 : short ? 30 : 32;
   const list = useRef<HTMLDivElement>(null);
   // R-526: the five groups; a tap on a heading folds or opens it, kept in this browser (logic/navGroups.ts).
   const sections = useMemo(() => navSections(nav), [nav]);
@@ -337,7 +337,7 @@ function GroupHeading({
   return (
     // R-561 (owner, 15 Nov 2026): "the headings of each section are the same color and look the same". The shared
     // category heading (ui/GroupLabel.tsx): full-strength ink, heavy small capitals, a thin line and room above.
-    <div data-menu-group-head="" style={{ borderTop: `1px solid ${color.border}`, marginTop: short ? 6 : space.md, paddingTop: short ? 4 : 6 }}>
+    <div data-menu-group-head="" style={{ borderTop: `1px solid ${color.border}`, marginTop: short ? 6 : 10, paddingTop: 4 }}>
     <button
       type="button"
       id={`menu-group-${id}`}
@@ -350,7 +350,7 @@ function GroupHeading({
         alignItems: 'center',
         gap: 6,
         width: '100%',
-        minHeight: short ? 20 : 24,
+        minHeight: short ? 20 : 22,
         margin: 0,
         padding: `0 ${space.md}px`,
         border: 'none',

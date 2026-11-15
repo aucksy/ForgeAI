@@ -33,12 +33,13 @@ test('J32 Set up your gym: ticks itself, takes a hand tick, moves down the menu 
   await page.getByRole('navigation', { name: 'Set up your gym' }).getByRole('button', { name: 'Back to the list' }).tap();
   await expect(page).toHaveURL(/#\/setup$/);
 
-  // The old "Hide this list": the page stays, the ring goes and the row moves down to Your gym.
+  // The old "Hide this list": the page stays and the row moves down to Your gym. R-561 (owner, 15 Nov 2026): the
+  // ring and "3/7" stay on it there ("that progress tracker ... goes away. That should not happen").
   await page.getByRole('button', { name: 'Move this page to the bottom of the menu' }).tap();
-  await expect(bottomBar(page).locator('[data-setup-mark]')).toHaveCount(0);
+  await expect(bottomBar(page).locator('[data-setup-mark]')).toHaveCount(1);
   await page.reload();
   await expect(page.getByRole('heading', { name: 'Set up your gym', level: 1 })).toBeVisible();
-  await expect(bottomBar(page).locator('[data-setup-mark]')).toHaveCount(0);
+  await expect(bottomBar(page).locator('[data-setup-mark]')).toHaveCount(1);
   await open(page, 'More');
   const yourGym = page.getByRole('main').getByRole('region', { name: 'Your gym' });
   await expect(yourGym.getByRole('link', { name: /^Set up your gym/ })).toBeVisible();

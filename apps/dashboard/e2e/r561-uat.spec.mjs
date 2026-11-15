@@ -24,7 +24,7 @@ async function shot(page, name, opts = {}) {
 
 const T0 = NOW.getTime();
 const MIN = 60_000;
-const COMPUTER = { viewport: { width: 1280, height: 900 }, isMobile: false, hasTouch: false };
+const COMPUTER = { viewport: { width: 1280, height: 900 }, isMobile: false };
 const menuOf = (page) => page.getByRole('navigation', { name: 'Main' });
 const menuShot = (page, name) => shot(page, name, { clip: { x: 0, y: 0, width: 320, height: page.viewportSize().height } });
 
@@ -181,8 +181,7 @@ test.describe('R561 on a computer', () => {
     // The pages that had their own Refresh now have none (Enquiries, Member questions).
     await menu.getByRole('link', { name: 'Enquiries', exact: true }).click();
     await expect(page.getByRole('heading', { name: 'Enquiries', level: 1 })).toBeVisible();
-    await expect(main.getByRole('button', { name: /Refresh/ })).toHaveCount(0);
-    await expect(page.getByRole('button', { name: /^Refresh/ })).toHaveCount(1);
+    await expect(page.getByRole('button', { name: /Refresh/ }), 'only the top bar has one').toHaveCount(1);
 
     // Negative: Refresh with no internet says so in a sentence, and the page stays as it was.
     server.disconnect();
@@ -197,7 +196,7 @@ test.describe('R561 on a computer', () => {
     // The language is in the top bar only: Settings has no language card any more.
     await menu.getByRole('link', { name: 'Settings', exact: true }).click();
     await expect(page.getByRole('heading', { name: 'Settings', level: 1 })).toBeVisible();
-    await expect(main.getByRole('radiogroup', { name: 'Language' })).toHaveCount(0);
+    await expect(page.getByRole('radiogroup', { name: 'Language' }), 'only the top bar has one').toHaveCount(1);
 
     // 5. A line under each setting: Gym details.
     await expect(main.getByText('This name shows in your members’ MettleUp app and on your receipts.')).toBeVisible();

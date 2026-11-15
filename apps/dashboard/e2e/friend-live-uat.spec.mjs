@@ -243,7 +243,7 @@ for (const size of ['phone', 'computer']) {
       await expect(card).toContainText('Asha invited Sunil to your gym. Sunil already asked about joining: call them from Enquiries today.');
       await expect(card).toContainText("Asha's friend asked about joining your gym. Call them from Enquiries.");
       // R-561: Today has no Refresh of its own any more; the top bar's one Refresh reads the alerts too.
-      await expect(main.getByRole('button', { name: /^Refresh/ })).toHaveCount(0);
+      await expect(page.getByRole('button', { name: /^Refresh/ })).toHaveCount(1);
       const needsFresh = page.getByTestId('panel-refresh');
       await expect(needsFresh).toHaveCount(1);
       await expect(needsFresh.getByTestId('updated-words')).toHaveText(/^Updated (just now|\d+ s ago)$/);
