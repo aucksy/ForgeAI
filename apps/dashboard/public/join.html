@@ -16,6 +16,9 @@
   preview (og: tags) before sending it. On a phone WITH the app, Android opens the app instead and
   this page is never seen. Here: the gym, one button that opens the app's "Join <gym>" screen, and
   — when the app is not there — how to get it (/app = Google Play; /app/apk = the APK), with the code as fallback.
+  R-579 (15 Nov 2026): this link is the smart app link with a gym (deploy/panel/appLink.js). An iPhone sees "coming soon"
+  with only what works today (once APP_STORE_URL is set, the Worker sends iPhones straight to the App Store); a computer
+  sees a QR code of this link and both stores.
   English first, Hinglish under it: most members read one of the two more easily.
 -->
 <style>
@@ -41,6 +44,17 @@
   .note { color:var(--muted); font-size:13px; line-height:1.45; margin-top:10px; }
   .hide { display:none !important; }
   .gap { height:12px; }
+  /* R-579: the computer card's QR code and the two stores. */
+  .qr { width:200px; height:200px; margin:14px auto 4px; background:#fff; border-radius:12px; padding:8px; }
+  .qr svg { width:100%; height:100%; display:block; }
+  .stores { display:grid; gap:10px; margin-top:14px; }
+  .store { display:flex; align-items:center; gap:12px; min-height:56px; border-radius:14px; border:1px solid var(--line); background:#000; color:#fff; text-decoration:none; padding:8px 16px; }
+  .store svg { width:24px; height:24px; flex:0 0 auto; }
+  .store span { display:flex; flex-direction:column; line-height:1.15; }
+  .store small { font-size:12px; opacity:.8; }
+  .store b { font-size:17px; }
+  .store.soon { background:transparent; color:var(--ink2); border-style:dashed; }
+  .store.soon .tag { margin-left:auto; font-size:12px; font-weight:700; color:#1F0D05; background:#F0570F; border-radius:999px; padding:4px 10px; }
 </style>
 </head>
 <body>
@@ -67,9 +81,34 @@
       <a class="btn ghost" id="download" href="/app">Get it on Google Play<small>Google Play se app lijiye</small></a>
     </div>
 
-    <div class="card hide" id="notandroid">
-      <h2>MettleUp is an Android app for now</h2>
-      <p class="note" style="margin:0">Open this link on an Android phone, or ask the front desk.<small>Abhi MettleUp sirf Android phone par hai. Yeh link Android phone par kholiye.</small></p>
+    <!-- R-579: an iPhone or iPad while the iPhone app is not out (APP_STORE_URL empty; once set, the Worker sends iPhones
+         straight to the App Store and this card is never seen). Only what works today. -->
+    <div class="card hide" id="iphone">
+      <h2>The iPhone app is coming soon<br><small style="color:var(--ink2);font-weight:600">iPhone app jald aa raha hai</small></h2>
+      <p class="note" style="margin:0">MettleUp is on Android phones today. When the iPhone app is ready, this same link will open it.<small>Abhi MettleUp Android phone par hai. iPhone app aate hi yahi link use kholega.</small></p>
+      <p class="note">Until then, the front desk at <b id="desk-gym">your gym</b> can add you as a member. You do not need the app for that.<small>Tab tak gym ka front desk aapko member bana sakta hai. Uske liye app zaroori nahi hai.</small></p>
+    </div>
+
+    <!-- R-579: a computer: a QR code of this link to open it on the phone, and both stores. -->
+    <div class="card hide" id="computer">
+      <h2>Open this link on your phone<br><small style="color:var(--ink2);font-weight:600">Yeh link apne phone par kholiye</small></h2>
+      <p class="note" style="margin:0">Scan this code with your phone’s camera.<small>Is code ko phone ke camera se scan kijiye.</small></p>
+      <div class="qr" id="qr" role="img" aria-label="QR code for this gym link"></div>
+      <div class="stores">
+        <a class="store" id="play" href="https://play.google.com/store/apps/details?id=com.mettleup.app" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 2.8v18.4c0 .5.5.8.9.6L21 12.6c.4-.2.4-.9 0-1.1L4.9 2.2c-.4-.2-.9.1-.9.6Z" fill="currentColor"/></svg>
+          <span><small>GET IT ON</small><b>Google Play</b></span>
+        </a>
+        <a class="store hide" id="appstore" href="#" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.6 3.2c.1 1.1-.3 2.2-1 3-.7.8-1.8 1.3-2.8 1.2-.1-1.1.4-2.2 1-2.9.7-.8 1.9-1.3 2.8-1.3ZM19 16.6c-.5 1.2-.8 1.7-1.4 2.7-.9 1.4-2.2 3.1-3.8 3.1-1.4 0-1.8-.9-3.7-.9s-2.3.9-3.7.9c-1.6 0-2.8-1.6-3.7-3-2.5-3.9-2.8-8.5-1.2-10.9 1.1-1.7 2.9-2.8 4.6-2.8 1.7 0 2.8.9 4.2.9 1.4 0 2.2-.9 4.2-.9 1.5 0 3.1.8 4.2 2.2-3.7 2-3.1 7.3.3 8.7Z" fill="currentColor"/></svg>
+          <span><small>Download on the</small><b>App Store</b></span>
+        </a>
+        <div class="store soon" id="appstore-soon">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.6 3.2c.1 1.1-.3 2.2-1 3-.7.8-1.8 1.3-2.8 1.2-.1-1.1.4-2.2 1-2.9.7-.8 1.9-1.3 2.8-1.3ZM19 16.6c-.5 1.2-.8 1.7-1.4 2.7-.9 1.4-2.2 3.1-3.8 3.1-1.4 0-1.8-.9-3.7-.9s-2.3.9-3.7.9c-1.6 0-2.8-1.6-3.7-3-2.5-3.9-2.8-8.5-1.2-10.9 1.1-1.7 2.9-2.8 4.6-2.8 1.7 0 2.8.9 4.2.9 1.4 0 2.2-.9 4.2-.9 1.5 0 3.1.8 4.2 2.2-3.7 2-3.1 7.3.3 8.7Z" fill="currentColor"/></svg>
+          <span><small>iPhone</small><b>App Store</b></span>
+          <span class="tag">Coming soon</span>
+        </div>
+      </div>
     </div>
 
     <!-- R-513: not a member yet? The gym's "Become a member" page (join-online.html), on any phone, no app needed.
@@ -81,7 +120,7 @@
     </div>
 
     <div class="card">
-      <h2>Or type your gym’s code in the app<br><small style="color:var(--ink2);font-weight:600">Ya app ke Shop tab mein yeh code daalein</small></h2>
+      <h2 id="code-head">Or type your gym’s code in the app<br><small style="color:var(--ink2);font-weight:600">Ya app ke Shop tab mein yeh code daalein</small></h2>
       <div class="code" id="code">——————</div>
       <p class="note">Open MettleUp → Shop → type the code and your name → Join.</p>
     </div>
@@ -106,6 +145,33 @@
   var $ = function (id) { return document.getElementById(id); };
   var show = function (id, on) { $(id).classList.toggle('hide', !on); };
   var android = /Android/i.test(navigator.userAgent);
+  // R-579: the Worker writes the stores in (window.__APP__, deploy/panel/appLink.js). An iPad asking for the computer site
+  // says "Macintosh" but has a touch screen.
+  var APP = window.__APP__ || {};
+  var STORE = typeof APP.appStore === 'string' && /^https:\/\/apps\.apple\.com\//.test(APP.appStore) ? APP.appStore : '';
+  var ios = !android && (/iPhone|iPad|iPod/i.test(navigator.userAgent) || (/Macintosh/.test(navigator.userAgent) && navigator.maxTouchPoints > 1));
+
+  // R-579: a computer gets a QR code of this link. The QR drawer (public/vendor, MIT) is fetched only here: phones never wait for it.
+  function drawQr(link) {
+    var s = document.createElement('script');
+    s.src = '/vendor/qrcode-generator-2.0.4.js';
+    s.onload = function () {
+      try {
+        var qr = window.qrcode(0, 'M');
+        qr.addData(link);
+        qr.make();
+        var n = qr.getModuleCount(), d = '';
+        for (var r = 0; r < n; r++) for (var c = 0; c < n; c++) if (qr.isDark(r, c)) d += 'M' + c + ' ' + r + 'h1v1h-1z';
+        $('qr').innerHTML = '<svg viewBox="0 0 ' + n + ' ' + n + '" shape-rendering="crispEdges"><path d="' + d + '" fill="#000"/></svg>';
+        $('qr').dataset.link = link;
+      } catch (e) {
+        console.warn('[join] the QR code could not be drawn', e && e.message);
+        show('qr', false);
+      }
+    };
+    s.onerror = function () { show('qr', false); };
+    document.head.appendChild(s);
+  }
   var noApp = /[?&]noapp=1/.test(location.search);
   // MettleUp (R-105): set when the MettleUp app was not on the phone; the older ForgeAI app is tried next.
   var tryOld = /[?&]try=old/.test(location.search);
@@ -158,7 +224,19 @@
     $('open').href = tryOld ? oldApp : intent('mettleup', 'com.mettleup.app', base + '?try=old');
     // Chrome may want a tap for this one; then the button does it.
     if (android && tryOld && !noApp) location.replace(oldApp);
-    if (!android) { show('open', false); show('notandroid', true); }
+    if (!android) {
+      show('open', false);
+      $('code-head').innerHTML = 'Your gym’s code<br><small style="color:var(--ink2);font-weight:600">Aapke gym ka code</small>';
+      if (ios && STORE) { location.replace(STORE); return; }
+      if (ios) {
+        $('desk-gym').textContent = gym.gymName;
+        show('iphone', true);
+      } else {
+        if (STORE) { $('appstore').href = STORE; show('appstore', true); show('appstore-soon', false); }
+        show('computer', true);
+        drawQr(base);
+      }
+    }
     else if (noApp) {
       // No app yet: getting it comes first and is the big button; "Join" waits under it.
       show('getapp', true);

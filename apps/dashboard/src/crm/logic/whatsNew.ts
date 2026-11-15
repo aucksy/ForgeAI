@@ -660,6 +660,21 @@ export const ADMIN_NEWS_PENDING: readonly AdminNewsEntry[] = [
     ],
   },
   {
+    // R-579 (owner, 15 Nov 2026): "Share app link" on every member's page, and the one smart app link (Android: Google
+    // Play; iPhone: "coming soon" until APP_STORE_URL is set; computer: a QR code). Panel code and the panel Worker: moves
+    // to ADMIN_NEWS with the next admin panel deploy.
+    id: 'pending-share-app-link',
+    lines: [
+      {
+        text: 'Every member’s page now has a “Share app link” button. It opens WhatsApp with the app link and your gym code, also for a member who needs the app on a new phone.',
+        go: { label: 'Open Members', path: '/members' },
+      },
+      {
+        text: 'Your gym’s link now works on every device. On Android it opens the app or Google Play. On an iPhone it says the iPhone app is coming soon. On a computer it shows a QR code to scan.',
+      },
+    ],
+  },
+  {
     // F56 R-461, 12 Nov 2026: the MettleUp Plus switch (0070). Moves to ADMIN_NEWS only when 0070 is live, the panel is
     // deployed AND the app's paid plan is switched on (MEMBER_PLAN_GATE_ON); until then the card is hidden anyway.
     id: 'pending-plus-lock',

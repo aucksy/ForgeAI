@@ -47,6 +47,56 @@ Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept her
   gymAlerts.test.ts: a test alert is never listed), HQ (deploy/hq/panelPush.test.mjs, local pass 12/12), journey
   e2e/test-alert-uat.spec.mjs (no 0095 = no button; every state on phone and computer, dark and light). Cloud runs below.
 - Status: IN PROGRESS.
+
+## R-579 (15 Nov 2026) One smart app link everywhere, and "Share app link" on every member's page
+- The brief (15 Nov 2026), his words: "There should be a permanent share app link button on each member's profile, but you
+  have to also think about configuring a link that basically redirects the user to the correct Play Store. If you know they
+  are on Android, it goes to the Android Play Store. If the user is on iPhone, when the iPhone app is built, it goes to the
+  iPhone. ... Even for the website, we have the link there. So wherever we have the link that the user is sharing should be
+  configured in that way."
+- Status: BUILT, waiting for the admin panel deploy (Worker + static pages + panel code). Public words below need his yes.
+- **The smart link (deploy/panel/appLink.js), two forms, one set of device rules:** `/app` (no gym) and `/j/<CODE>` (a gym
+  known). /j/<CODE> stays the link with a gym because Android opens it straight in an installed app (an App Link); a
+  redirect from another address would not. No cookie, nothing kept, only the User-Agent read; responses `Vary: User-Agent`.
+  | visitor | /app | /j/<CODE> |
+  |---|---|---|
+  | Android (Chrome, Samsung Internet, OPPO, in-app browsers) | one 302 to Google Play, no page | the gym page: opens the app, or Google Play steps (unchanged). The app reads no Play install referrer (checked apps/mobile), so the gym page keeps the gym |
+  | iPhone / iPad, APP_STORE_URL empty (today) | public/get-app.html: "The iPhone app is coming soon" + what works now (the front desk can add them) | the gym page: "coming soon" card with the gym's name, "Become a member" when the gym has it open, the gym code |
+  | iPhone / iPad, APP_STORE_URL set | 302 to the App Store | 302 to the App Store |
+  | iPad asking for the computer site ("Macintosh" + touch) | the page spots it and does the iPhone rule | the same |
+  | computer / anything else | get-app.html: QR code of the link, Google Play button, App Store "Coming soon" (a real button once set) | the gym page: QR code of this link + both stores |
+  | link previews (WhatsApp, Facebook, iMessage, Telegram, Google) | get-app.html with og: title, description, picture | the gym page with its og: lines (unchanged) |
+  APP_STORE_URL (wrangler.jsonc vars, empty) switches iPhones to the App Store with no code change; only an apps.apple.com
+  /app/ address counts. appLink.test.mjs pins both states.
+- **Every place a person can share or tap an app link, and what changed:**
+  | place | link | changed |
+  |---|---|---|
+  | Admin panel, member page | "Share app link" (WhatsApp icon), every member, among Check in / Archive / Member card | NEW; the small "Send app invite" link (only for members not on the app) is gone. Not on the app: the invite message; on the app: words for a new phone or a reinstall; gym not online: /app. Offline: greyed out, "Needs internet" |
+  | Admin panel, Invite members (link, WhatsApp, copy, QR poster) | /j/<CODE> | no link change; the link itself is now smart. "Send app invite" words renamed |
+  | Admin panel, gym code card (JoinCode) and new-gym screen (NewGymReady) | /j/<CODE> | no change needed |
+  | Printed join poster QR | /j/<CODE> | no change needed |
+  | Member website mettleup.fit (3 "Get the app" buttons) | /app | no change needed: /app is smart |
+  | Gym invite page join.html | /j/<CODE>, its Play button /app | iPhone and computer views added (replaces "MettleUp is an Android app for now") |
+  | Check-in poster page checkin.html | its Play button /app (Android only) | unchanged: an iPhone still reads "Android app for now", which stays true |
+  | Help articles | member page and invite poster articles | "Send app invite" -> "Share app link" |
+  | Member app | no app-download link is shared (friend link /f/ is a lead page, recommend link is the gyms page, the update screen opens Play itself) | unchanged; apps/mobile not touched |
+  | Member card WhatsApp words, HQ Worker, emails | no app link | unchanged |
+- **Public sentences that need his yes before the deploy** (new): get-app.html "Get the MettleUp app" / "The free MettleUp app
+  tracks your workouts and links you to your gym." / "The iPhone app is coming soon" / "MettleUp is on Android phones today.
+  When the iPhone app is ready, this same link will open it in the App Store." / "Your gym can add you as a member at the front
+  desk. You do not need the app for that." / "Have an Android phone too? Open this link on it to get the app." / "Get the
+  MettleUp app on your phone" / "Scan this with your phone's camera"; preview "... On Android phones now. The iPhone app is
+  coming soon."; join.html "The iPhone app is coming soon" / "MettleUp is on Android phones today. When the iPhone app is
+  ready, this same link will open it." / "Until then, the front desk at <gym> can add you as a member. You do not need the app
+  for that." / "Open this link on your phone" / "Scan this code with your phone's camera." / "Your gym's code"; WhatsApp words
+  for a member on the app "Here is the MettleUp app link from <gym>. Use it on a new phone, or if you need to install the app
+  again." Each with its Hinglish line. Removed: "MettleUp is an Android app for now" / "Open this link on an Android phone, or ask the front desk."
+- What's new for owners: waiting as ADMIN_NEWS_PENDING 'pending-share-app-link' (moves at the panel deploy).
+- Tests: deploy/panel/appLink.test.mjs (Android Chrome, Samsung Internet, OPPO, Cubot, Facebook in-app; iPhone Safari and
+  Chrome, iPad; Windows, Mac, no UA; WhatsApp, Facebook, iMessage, Telegram, Googlebot; with and without a gym code; with
+  APP_STORE_URL empty and set); dashboard test/crm/invite.test.ts; admin journey e2e/r579-uat.spec.mjs (pictures r579-*).
+  Run ids: below.
+
 ## R-577 (15 Nov 2026) Watch screens checked on the sizes of the watches members own (owner chose "Option 1")
 - The brief (15 Nov 2026): the owner chose "Option 1": render the watch app's screens in the cloud on Galaxy
   Watch, OnePlus and TicWatch sizes too, not only Pixel, plus the biggest text a watch allows; a small-round

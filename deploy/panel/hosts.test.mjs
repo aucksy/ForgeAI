@@ -151,10 +151,11 @@ test('Worker: app.mettleup.fit/sb reaches the gym server with the stamp, exactly
   }
 });
 
-test('Worker: "Get the app" (/app) goes to the Google Play page (owner, 14 Nov 2026)', async () => {
+test('Worker: "Get the app" (/app) goes to the Google Play page on Android (owner, 14 Nov 2026; every device: appLink.test.mjs)', async () => {
   const { env } = fakeEnv();
+  const android = { 'User-Agent': 'Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Mobile Safari/537.36' };
   for (const p of ['/app', '/app/']) {
-    const res = await worker.fetch(new Request(`https://app.mettleup.fit${p}`), env, ctx);
+    const res = await worker.fetch(new Request(`https://app.mettleup.fit${p}`, { headers: android }), env, ctx);
     assert.equal(res.status, 302, p);
     assert.equal(res.headers.get('Location'), 'https://play.google.com/store/apps/details?id=com.mettleup.app', p);
   }

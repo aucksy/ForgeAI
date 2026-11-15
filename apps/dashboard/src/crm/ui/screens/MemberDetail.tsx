@@ -10,7 +10,8 @@ import { WhatsAppSheet } from '../WhatsAppSheet';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { useCrm } from '../../store';
-import { inviteMessage, whatsAppHref } from '../../shop/invite';
+import { appLinkMessage, whatsAppHref } from '../../shop/invite';
+import { Icon } from '../icons';
 import { useShop } from '../../shop/ShopProvider';
 import {
   attendanceProfile,
@@ -96,6 +97,9 @@ import { photoServerWords } from '../../logic/memberPhoto';
 import { errorWords } from '../../shop/logic';
 import { monthOfDay, passCompanyOf, passCompanyOfVisit } from '../../logic/passMembers';
 import { t } from '../../lang/lang';
+
+/** R-579: the member page's button that sends the smart app link on WhatsApp (help articles name it). */
+export const SHARE_APP_LINK = 'Share app link'; // member-words
 
 /** The photo under the member's initials (F107). */
 export const MEMBER_PHOTO_WORDS = {
@@ -367,6 +371,26 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
           Member card
         </Button>
       </div>
+      {/* R-579 (owner, 15 Nov 2026): "a permanent share app link button on each member's profile". Every member, on the app
+          or not: WhatsApp opens on this member's chat with the smart link (each phone goes to its own store) and the gym
+          code. Owner and staff both. */}
+      <div style={{ gridColumn: compact ? '1 / -1' : undefined }}>
+        <Button
+          full
+          variant="ghost"
+          needsInternet
+          onClick={() =>
+            window.open(
+              whatsAppHref(appLinkMessage(cloud?.name ?? snapshot.gym.name, cloud?.joinCode, member.fullName, Boolean(member.appUserId)), member.phone),
+              '_blank',
+              'noopener',
+            )
+          }
+        >
+          <Icon name="whatsapp" size={18} />
+          {SHARE_APP_LINK}
+        </Button>
+      </div>
     </div>
   );
 
@@ -481,17 +505,6 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
               >
                 {offline ? `WhatsApp (${NEEDS_INTERNET_WORDS.toLowerCase()})` : 'WhatsApp'}
               </button>
-              {/* Invite link: WhatsApp opens on this member with the gym's link typed in. */}
-              {cloud && !member.appUserId && !offline && (
-                <a
-                  href={whatsAppHref(inviteMessage(cloud.name, cloud.joinCode, member.fullName), member.phone)}
-                  target="_blank"
-                  rel="noreferrer"
-                  style={linkStyle}
-                >
-                  Send app invite
-                </a>
-              )}
             </Row>
           </div>
           {!compact && heroActions}

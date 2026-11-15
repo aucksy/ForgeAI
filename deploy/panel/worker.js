@@ -43,8 +43,10 @@
 //  - /sb/...    the gym server (Supabase) at our own address, so a block of supabase.co cannot stop
 //               the apps (proxy.js, owner R-40, built R-55). After the admin app sends a message or
 //               starts an offer, HQ is told to send the phone pop-ups now (proxy.js pushAfter).
-//  - /app       the MettleUp app on Google Play (owner, 14 Nov 2026: the app is in production, so "Get the app"
-//               goes to Play). Posters, pages and old messages all use /app, so this one line moves them all.
+//  - /app       the smart app link (R-579, appLink.js): Android goes straight to Google Play (owner, 14 Nov 2026), an
+//               iPhone to the App Store once APP_STORE_URL is set (a "coming soon" page until then), a computer to a
+//               page with a QR code and both stores, a link preview to a proper preview. Posters, pages and old
+//               messages all use /app. With a gym, /j/<CODE> is the smart link (same rules, joinPage below).
 //  - /app/apk   the newest MettleUp APK (whatever the latest GitHub release is), for a phone without Google Play.
 // Android's link check (/.well-known/assetlinks.json) is a plain static file.
 
@@ -70,6 +72,7 @@ import { deleteOldInbound } from './phoneInbound.js';
 import { handleWhatsAppHook } from './whatsappHook.js';
 import { handleProxy, isProxyPath, pushAfter } from './proxy.js';
 import { APP_HOST, APP_ORIGIN, handleMove, linksAnswer, routeFor } from './hosts.js';
+import { appBoot, deviceOf, goTo, handleAppLink, joinRedirect } from './appLink.js';
 
 const SUPABASE = 'https://hdxzqbdiokjklnypfisq.supabase.co';
 // The public, read-only app key (the same one in the panel and the app).
@@ -106,6 +109,9 @@ export default {
     // R-153 step 2: a message sent or an offer started goes to members' phones at once (deploy/hq/push.js).
     if (isProxyPath(url.pathname)) return pushAfter(request, url, env, ctx, await handleProxy(request, url));
     const invite = /^\/j\/([A-Za-z0-9]{6})\/?$/.exec(url.pathname);
+    // R-579: the gym's link is the smart app link with a gym: an iPhone goes straight to the App Store once it is set.
+    const toStore = invite ? joinRedirect(env, request.headers.get('User-Agent')) : null;
+    if (toStore) return goTo(toStore);
     if (invite) return joinPage(request, env, ctx, url, invite[1].toUpperCase());
     if (url.pathname.startsWith('/j/')) return joinPage(request, env, ctx, url, null);
     const checkIn = /^\/c\/([A-Za-z0-9]{6})\/?$/.exec(url.pathname);
@@ -125,7 +131,7 @@ export default {
     if (url.pathname.startsWith('/api/self-join/')) return handleJoinPay(request, env, url, rpc);
     // R-411: the update screen's What's new lines, from our own server (GitHub's India download edge failed).
     if (url.pathname === '/app/whats-new.json') return handleWhatsNew(request, ctx);
-    if (url.pathname === '/app' || url.pathname === '/app/') return playStore();
+    if (url.pathname === '/app' || url.pathname === '/app/') return handleAppLink(request, env);
     if (url.pathname === '/app/apk') return latestApk(ctx);
     const bundle = /^\/dl\/(v[0-9]+\.[0-9]+\.[0-9]+)\.aab$/.exec(url.pathname);
     if (bundle) return playBundle(request, bundle[1], `mettleup-${bundle[1]}.aab`, 'application/octet-stream');
@@ -311,6 +317,8 @@ async function joinPage(request, env, ctx, url, code, kind = JOIN) {
   if (!page.ok) return page;
   const gym = code ? await preview(code, ctx, kind.fn) : null;
   let rw = new HTMLRewriter();
+  // R-579: the invite page shows each kind of phone its own way to the app (the visitor's kind and the stores).
+  if (kind === JOIN) rw = rw.on('head', { element: (e) => e.append(appBoot(env, deviceOf(request.headers.get('User-Agent'))), { html: true }) });
   if (gym !== undefined) {
     // Inside a <script>: "<" escaped so a gym name can never close the tag.
     const json = JSON.stringify(gym).replace(/</g, '\\u003c');
@@ -337,6 +345,7 @@ async function joinPage(request, env, ctx, url, code, kind = JOIN) {
   headers.set('Content-Type', 'text/html; charset=utf-8');
   headers.set('X-Content-Type-Options', 'nosniff');
   headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+  if (kind === JOIN) headers.set('Vary', 'User-Agent');
   return new Response(out.body, { status: !code || gym === null ? 404 : 200, headers });
 }
 
@@ -355,13 +364,6 @@ async function playBundle(request, tag, file, type) {
   const headers = { ...cors, 'Content-Type': type, 'Cache-Control': 'no-store' };
   if (r.headers.get('Content-Length')) headers['Content-Length'] = r.headers.get('Content-Length');
   return new Response(r.body, { headers });
-}
-
-const PLAY_URL = 'https://play.google.com/store/apps/details?id=com.mettleup.app';
-
-/** 302 to the app's Google Play page (on an Android phone it opens the Play Store app). */
-function playStore() {
-  return new Response(null, { status: 302, headers: { Location: PLAY_URL, 'Cache-Control': 'no-store' } });
 }
 
 /** 302 to the newest release's APK; the tag is looked up at most every 10 minutes. */

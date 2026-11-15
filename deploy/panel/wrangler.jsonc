@@ -76,6 +76,9 @@
   //   PAY_OAUTH_RAZORPAY, PAY_OAUTH_CASHFREE  "on" shows "Connect <company>" (needs the partner secrets). Off.
   //   AI_CREDITS_CHARGE  "on" takes members' AI answers from the gym's AI credits (questionCredits.js). On (owner's pick, R-555).
   //   JOIN_HOST          "join.mettleup.fit" points invite and join links there (hosts.js); empty = app.mettleup.fit.
+  //   APP_STORE_URL      R-579: the iPhone app's App Store address (https://apps.apple.com/.../app/.../id...). EMPTY today: an
+  //                      iPhone opening /app or a gym link sees "coming soon". Set it the day the iPhone app is out and deploy:
+  //                      iPhones then go straight to the App Store, no code change (appLink.js; appLink.test.mjs pins it).
   "vars": {
     "WHATSAPP_INBOUND_NUMBER": "918690560741",
     "LANDING": "live",
@@ -91,7 +94,8 @@
     "PAY_OAUTH_RAZORPAY": "off",
     "PAY_OAUTH_CASHFREE": "off",
     "AI_CREDITS_CHARGE": "on",
-    "JOIN_HOST": ""
+    "JOIN_HOST": "",
+    "APP_STORE_URL": ""
   },
   // R-153 step 2: after the admin app sends a message or starts an offer, the proxy tells the HQ Worker
   // (deploy/hq/push.js) to send the phone pop-ups at once (proxy.js pushAfter). Without it they go

@@ -44,6 +44,34 @@ export function inviteMessage(gymName: string, joinCode: string, memberName?: st
 }
 
 /**
+ * R-579: the smart app link with no gym (the Worker sends each phone to its own store: deploy/panel/appLink.js). With a gym,
+ * the gym's invite link above is the smart link: it also opens an installed app straight on "Join <gym>".
+ */
+export const APP_LINK = `${INVITE_ORIGIN}/app`;
+
+/**
+ * R-579 "Share app link" on a member's page: a short WhatsApp message with the smart link, the gym's code included when the
+ * gym is online. A member already on the app gets words for a new phone or a reinstall; anyone else the invite. PURE.
+ */
+export function appLinkMessage(gymName: string, joinCode: string | null | undefined, memberName?: string | null, onApp = false): string {
+  const code = (joinCode ?? '').trim();
+  if (!onApp && code) return inviteMessage(gymName, code, memberName);
+  const hi = firstName(memberName);
+  const gym = gymName.trim();
+  const lines = [
+    hi ? `Hi ${hi}!` : 'Hi!',
+    onApp
+      ? `Here is the MettleUp app link${gym ? ` from ${gym}` : ''}. Use it on a new phone, or if you need to install the app again.`
+      : `Get the free MettleUp app${gym ? ` from ${gym}` : ''} to track your workouts.`,
+    '',
+    'Tap to get the app:',
+    code ? inviteLink(code) : APP_LINK,
+  ];
+  if (code) lines.push('', `Gym code: ${code.toUpperCase()}`);
+  return lines.join('\n');
+}
+
+/**
  * R-513 Join online: the gym's "Become a member" page (public/join-online.html). Not /j/: the MettleUp app claims
  * /j/ and /c/ on a phone, and this page is for people with no app. R-539: `origin` is join.mettleup.fit once the
  * panel's Worker says so (linkOrigin.ts useJoinOrigin), outside the admin app; app.mettleup.fit otherwise. PURE.

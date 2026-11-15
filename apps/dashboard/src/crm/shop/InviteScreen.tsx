@@ -1,7 +1,7 @@
 /**
  * Settings → Invite members (14 Oct 2026): the gym's ONE invite link, three ways out.
  *  - "Send on WhatsApp": WhatsApp opens with the invite typed in; the owner picks a person, a
- *    group or the gym's broadcast list. (Each member's own page has "Send app invite" too.)
+ *    group or the gym's broadcast list. (Each member's own page has "Share app link" too.)
  *  - "Copy link" / "Copy message": for anywhere else (Instagram bio, SMS, the gym's status).
  *  - The front-desk QR poster: printed (A4, from the browser's print — "Save as PDF" works on a
  *    phone too) or downloaded as a picture to send to a print shop.
@@ -179,7 +179,7 @@ function InviteBody({ ownerKey, gymName, joinCode }: { ownerKey: string; gymName
           {message}
         </pre>
         <p style={{ margin: `${space.sm}px 0 0`, fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
-          {t('To invite one member, open them in Members and tap “Send app invite”.')}
+          {t('To invite one member, open them in Members and tap “Share app link”.')}
         </p>
       </Card>
 

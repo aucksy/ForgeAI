@@ -6,9 +6,16 @@
  * tick was a hairline next to a solid Money block.
  */
 
-export type IconName = 'today' | 'members' | 'shop' | 'visits' | 'money' | 'plans' | 'settings' | 'more' | 'workouts' | 'messages' | 'branches' | 'brand' | 'clock' | 'trophy' | 'growth' | 'diet' | 'enquiries' | 'key' | 'invite' | 'news' | 'feedback' | 'bell' | 'trainer' | 'sparkle' | 'setup' | 'globe';
+export type IconName = 'today' | 'members' | 'shop' | 'visits' | 'money' | 'plans' | 'settings' | 'more' | 'workouts' | 'messages' | 'branches' | 'brand' | 'clock' | 'trophy' | 'growth' | 'diet' | 'enquiries' | 'key' | 'invite' | 'news' | 'feedback' | 'bell' | 'trainer' | 'sparkle' | 'setup' | 'globe' | 'whatsapp';
 
 const PATHS: Record<IconName, React.ReactNode> = {
+  // R-579 (15 Nov 2026): Share app link on WhatsApp: the chat bubble with its phone.
+  whatsapp: (
+    <>
+      <path d="M12 3.5a8.5 8.5 0 0 0-7.4 12.7L3.5 20.5l4.4-1.1A8.5 8.5 0 1 0 12 3.5Z" />
+      <path d="M9 8.6c.2-.4.4-.4.7-.4h.4c.2 0 .4 0 .5.4l.6 1.5c.1.2 0 .4-.1.5l-.5.6c.6 1.1 1.5 2 2.6 2.5l.6-.6c.2-.2.4-.2.5-.1l1.5.7c.3.1.4.3.3.6-.1.8-.8 1.4-1.7 1.4-3-.3-5.5-2.8-5.8-5.8 0-.5.1-.9.4-1.3Z" fill="currentColor" stroke="none" />
+    </>
+  ),
   // F207 (14 Nov 2026): Your web page: a globe.
   globe: (
     <>

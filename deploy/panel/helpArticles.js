@@ -94,7 +94,7 @@ export const ALL_HELP_ARTICLES = [
       '1. Tap "Check in" to mark today\'s visit. ' +
       '2. Tap "Freeze / extra days" to add days for a break or a gift. Pick the reason, then tap "Add days". Only the owner can do this. ' +
       '3. Tap "Member card" for an ID card with a QR code. ' +
-      '4. Tap "Send app invite" to send them the app link. ' +
+      '4. Tap "Share app link" to send the app link on WhatsApp. ' +
       '5. Under "Body measurements", tap "Add measurements" to save their weight and tape measurements. ' +
       '6. If they use the app, under "Full workout history" tap "Request workout report", then "Download full history" once their phone sends it. ' +
       '7. Tap "Archive member" when they leave. "Restore member" brings them back.',
@@ -413,7 +413,7 @@ export const ALL_HELP_ARTICLES = [
       '3. To send the link instead, tap "Send on WhatsApp", "Copy link" or "Copy message". ' +
       'Members scan the poster with their phone camera, get the MettleUp app, and tap Join. ' +
       'Members can also type your gym code (6 letters or numbers, shown on that page) in the app. ' +
-      'To invite one member, open them in Members and tap "Send app invite". ' +
+      'To invite one member, open them in Members and tap "Share app link". ' +
       'The separate check-in poster is in Visits, under "Check-in QR".',
     screens: ['apps/dashboard/src/crm/shop/InviteScreen.tsx'],
   },

@@ -813,7 +813,7 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   'Message copied.': 'Message copy ho gaya.',
   'Copy message': 'Message copy karo',
   'The message members get': 'Members ko yeh message milega',
-  'To invite one member, open them in Members and tap “Send app invite”.': 'Ek member ko bulane ke liye, Members mein unhe kholo aur “Send app invite” dabao.',
+  'To invite one member, open them in Members and tap “Share app link”.': 'Ek member ko bulane ke liye, Members mein unhe kholo aur “Share app link” dabao.',
   'Front-desk QR poster': 'Front desk ka QR poster',
   'Print poster': 'Poster print karo',
   'Poster saved as a picture.': 'Poster photo ki tarah save ho gaya.',
