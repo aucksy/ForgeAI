@@ -7,6 +7,27 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-595 (16 Nov 2026) Direct-read record: every owner-login read of gym data written down (he said "yes read log")
+- Why: Claude read Crispy Curves (test gym) member rows from the Supabase SQL editor on 15 Nov; nothing recorded it,
+  while the data agreement says "every look is recorded". A SELECT cannot fire a trigger.
+- Design (research: Supabase pgaudit docs; KB "Identifying Dashboard SQL Editor Activity by User" = the SQL editor,
+  table editor, psql and MCP all run as role postgres; logs SQL is ClickHouse now; Management API
+  GET /v1/projects/{ref}/analytics/endpoints/logs, max 24 h a query, scoped token permission "analytics logs read";
+  free plan keeps logs about 1 day):
+  1. 0097: pgaudit on; ALTER ROLE postgres SET pgaudit.log = 'read, write, misc_set', log_catalog off, log_relation on
+     (also tried on supabase_read_only_user / dashboard_user; a notice if Supabase refuses). App roles untouched.
+  2. HQ Worker deploy/hq/readLog.js, every 10 min inside the every-minute cron (no free cron slot left: 5 of 5 used):
+     cursor -> logs API -> one item per statement -> hq_db_reads_ingest. Worker is service_role = not audited, no loop.
+  3. public.db_direct_reads (append-only, ~1 KB/look, caps 2,000/day and 20,000 total, kept 2 years) + state row.
+     Writes 'gap' (log expired before a pull), 'audit_off'/'audit_on' (switch changed on postgres). owner_hq_access gets
+     "direct" (looks naming the gym or naming no gym; tables only, never query text) + "directSince". hq_db_reads = HQ.
+- On main: migration + test supabase/tests/0097_direct_read_log.sql, readLog.js + test, worker.js hook, wrangler note.
+- WAITING FOR HIS YES: (a) "yes 0097" (live apply); (b) a scoped Supabase token (only this project, only analytics
+  logs read, 1 year) as HQ Worker secret SUPABASE_LOGS_TOKEN; then HQ Worker deploy by the main session.
+- After both: read one Crispy Curves row in the SQL editor, wait 10 min, check hq_db_reads shows it (proof step).
+- Not built yet: the admin app's list (data is in owner_hq_access.direct; wording needs his yes), HQ page for
+  hq_db_reads, data-agreement line (draft in the report). Gap left: a curl with the service_role key is not logged.
+
 ## R-594 (15 Nov 2026, night) Release 0.79.0 fresh-eyes review: actions; MORNING LIST for him
 - Review: docs/reviews/2026-11-15-release-0.79.0-fresh-eyes.md (up to 65b35c1e). Blockers: (1) phone QA out of date
   with 0096 live + picker never run on a phone -> helper on it (adds to R-586); (2) panel deploy must go live before or

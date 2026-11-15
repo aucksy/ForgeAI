@@ -28,6 +28,7 @@ import { handlePushKick, runPush } from './push.js';
 import { feedCalls, feedFeeRequests, feedPaidOnline } from './payFeed.js';
 import { panelPushKey, runPanelPush } from './panelPush.js';
 import { backupStatus, runBackup } from './backup.js';
+import { readLogDue, runReadLog } from './readLog.js';
 import { handleBilling, runBillingDaily, runBillingReconcile } from './billing.js';
 import { runUsageWeekly } from './usage.js';
 
@@ -280,6 +281,15 @@ export async function everyMinute(env, deps = {}) {
       spent += feedCalls(await feed(env, feedDeps));
     } catch (e) {
       console.error(`[hq-cron] ${name} feed failed`, e instanceof Error ? e.message : 'error');
+    }
+  }
+  // R-595 (0097): every 10 minutes, the owner login's direct reads from Supabase's log into the gym server (readLog.js;
+  // off until the SUPABASE_LOGS_TOKEN secret is set; at most 4 calls, never throws).
+  if (readLogDue(feedDeps.now)) {
+    try {
+      spent += Number((await runReadLog(env, feedDeps)).calls) || 0;
+    } catch (e) {
+      console.error('[hq-cron] direct-read record failed', e instanceof Error ? e.message : 'error');
     }
   }
   try {

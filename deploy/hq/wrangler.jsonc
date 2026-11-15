@@ -30,6 +30,11 @@
 //                         Cloudflare API token (My Profile -> API Tokens -> Custom token) with ONLY
 //                         Account -> Account Analytics -> Read, for the account in var CF_ACCOUNT_ID. Read-only.
 //                         Not set: the check logs one line and does nothing.
+//   SUPABASE_LOGS_TOKEN   R-595 (supabase 0097): the direct-read record (readLog.js, every 10 minutes in the
+//                         every-minute trigger). A Supabase personal access token (supabase.com -> Account ->
+//                         Access Tokens -> scoped token): ONLY project hdxzqbdiokjklnypfisq, ONLY the permission
+//                         "analytics logs read" (read-only), expiry 1 year. Not set: nothing is pulled; the log
+//                         lines expire after about a day and the record shows a gap.
 // Variables below: AUTH_MODE "google" (no cost) or "access" (Cloudflare Access in front; then set
 // ACCESS_TEAM = the team name in <team>.cloudflareaccess.com and ACCESS_AUD = the application's
 // audience tag, and the Google secrets are not needed).
