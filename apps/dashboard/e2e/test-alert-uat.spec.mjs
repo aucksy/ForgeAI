@@ -28,7 +28,8 @@ const ENDPOINT = 'https://fcm.googleapis.com/fcm/send/e2e-owner-phone';
 /** 0076 + 0095 on the pretend server. `push.now()` is the page's clock (set by the test before each tap). */
 function installPush(server) {
   // `clock`: when set, owner_test_alert also answers the server's clock (0095 'now').
-  const push = { on: true, testOn: true, devices: new Map(), tests: [], at: 0, alerts: [], clock: null };
+  // `broken`: owner_test_alert fails with a server error (the gym server cannot be read: weak network, 5xx).
+  const push = { on: true, testOn: true, broken: false, devices: new Map(), tests: [], at: 0, alerts: [], clock: null };
   const base = server.answer.bind(server);
   server.answer = (fn, args) => {
     if (fn === 'owner_alerts') {
@@ -43,6 +44,7 @@ function installPush(server) {
     server.log.push({ fn, args });
     if (!push.on || (TEST_ALERT_FNS.includes(fn) && !push.testOn)) throw new NoSuchFunction(`Could not find the function public.${fn} in the schema cache`);
     server.anyone(args.p_key);
+    if (fn === 'owner_test_alert' && push.broken) throw new Error('the gym server is busy');
     const mine = push.devices.get(args.p_endpoint) === args.p_key;
     const last = push.tests.filter((t) => t.endpoint === args.p_endpoint).at(-1) ?? null;
     const wait = last ? Math.max(0, Math.ceil((last.at + 60_000 - push.at) / 1000)) : 0;
@@ -205,6 +207,31 @@ test('R-578: without 0095 the alerts card is as before, with no test button', as
   await expect(device.getByTestId('test-alert')).toHaveCount(0);
   await expect(device.getByRole('button', { name: 'Send a test alert' })).toHaveCount(0);
   await expect(device.getByRole('button', { name: 'Turn off on this device' })).toBeVisible();
+});
+
+// Fresh eyes (15 Nov 2026): the first read fails for another reason (a server error, a weak network): the button stays
+// hidden, since nobody knows yet that 0095 is live; once the server answers (the admin app opened again), it shows.
+test('R-578: a failed first read keeps the test button hidden; it shows once the server answers', async ({ page }) => {
+  await pushBrowser(page);
+  const server = await openApp(page);
+  const push = installPush(server);
+  push.broken = true;
+  await startOnlineGym(page);
+  await page.evaluate(() => {
+    window.location.hash = '/settings';
+  });
+  const device = page.getByRole('main').getByTestId('alerts-device');
+  await device.getByRole('button', { name: 'Turn on alerts on this device' }).click({ timeout: 15_000 });
+  await expect(device).toContainText('Alerts are on for this device.');
+  await expect.poll(() => server.log.filter((c) => c.fn === 'owner_test_alert').length).toBeGreaterThan(0);
+  await page.waitForTimeout(500);
+  await expect(device.getByTestId('test-alert')).toHaveCount(0);
+  await expect(device.getByRole('button', { name: 'Send a test alert' })).toHaveCount(0);
+  await expect(device).not.toContainText('could not be sent');
+  push.broken = false;
+  await page.reload();
+  const again = page.getByRole('main').getByTestId('alerts-device');
+  await expect(again.getByRole('button', { name: 'Send a test alert' })).toBeVisible({ timeout: 15_000 });
 });
 
 for (const look of [

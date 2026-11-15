@@ -15,6 +15,7 @@ import {
   sendTestFrom,
   testAlertFrom,
   testAlertState,
+  testBoxVisible,
   testPollMs,
   testWords,
   keyBytes,
@@ -217,6 +218,18 @@ describe('the test alert: answers, what the card says, when it asks again', () =
     expect(testAlertState({ ...t, sentAt: AT + 40_000, sentHow: 'instant', shownAt: AT + 45_000 }, AT + 5 * 60_000)).toBe('shown');
     expect(testAlertState({ ...t, sentAt: AT + 40_000, sentHow: 'instant', shownAt: AT + 45_000 }, AT + 45_000)).toBe('shown');
     expect(testAlertState({ ...t, sentAt: AT + 40_000, sentHow: 'none' }, AT + 50_000)).toBe('unreached');
+  });
+
+  it('fresh eyes: the button shows only once the gym server answered; a failure before that keeps it hidden', () => {
+    expect(testBoxVisible('answered', false)).toBe(true);
+    // A weak network, a timeout or a server error on the first read: hidden (0095 may not be live).
+    expect(testBoxVisible('failed', false)).toBe(false);
+    expect(testBoxVisible('no-device', false)).toBe(false);
+    expect(testBoxVisible('missing', false)).toBe(false);
+    // Once the server answered, a later failed read keeps it; no 0095 always hides it.
+    expect(testBoxVisible('failed', true)).toBe(true);
+    expect(testBoxVisible('no-device', true)).toBe(true);
+    expect(testBoxVisible('missing', true)).toBe(false);
   });
 
   it('asks every 5 s for 2 minutes, then every 20 s, and stops at 10 minutes or once answered', () => {

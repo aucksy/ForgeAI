@@ -24,6 +24,7 @@ import {
   settingLine,
   showAlertsOffer,
   testAlertState,
+  testBoxVisible,
   testPollMs,
   testWords,
   timeLabel,
@@ -156,9 +157,9 @@ function deviceClock(at: number): string {
  */
 function TestAlertBox({ apiKey }: { apiKey: string }) {
   const [answer, setAnswer] = useState<TestAlertAnswer | null>(null);
-  const [here, setHere] = useState(true);
-  // Nothing shows until the first answer: a server without 0095 never flashes the button.
-  const [ready, setReady] = useState(false);
+  // Fresh eyes (15 Nov 2026): shown only once the gym server has ANSWERED a test-alert call. A server without 0095,
+  // a weak network, a timeout or a server error before that keeps it hidden (never a button that cannot work).
+  const [visible, setVisible] = useState(false);
   const [busy, setBusy] = useState(false);
   const [note, setNote] = useState<string | null>(null);
   const [hiddenHelp, setHiddenHelp] = useState(false);
@@ -168,17 +169,17 @@ function TestAlertBox({ apiKey }: { apiKey: string }) {
   const read = useCallback(async () => {
     try {
       const r = await readTestAlert(apiKey);
-      if (r === 'missing') setHere(false);
-      else if (r) {
+      setVisible((before) => testBoxVisible(r === 'missing' ? 'missing' : r ? 'answered' : 'no-device', before));
+      if (r && r !== 'missing') {
         setAnswer(r);
         if (r.serverNow !== null) setSkew(r.serverNow - Date.now());
       }
     } catch (e) {
       console.warn('[ForgeErr] test alert: reading', e);
+      setVisible((before) => testBoxVisible('failed', before));
     } finally {
       // Also after a failed read: the next ask is planned from the new time.
       setNow(Date.now());
-      setReady(true);
     }
   }, [apiKey]);
   useEffect(() => {
@@ -208,14 +209,14 @@ function TestAlertBox({ apiKey }: { apiKey: string }) {
       document.removeEventListener('visibilitychange', onVisible);
     };
   }, [read]);
-  if (!here || !ready) return null;
+  if (!visible) return null;
   const send = async () => {
     setBusy(true);
     setNote(null);
     setHiddenHelp(false);
     try {
       const r = await sendTestAlert(apiKey);
-      if (r === 'missing') setHere(false);
+      if (r === 'missing') setVisible(false);
       else if (r.ok) {
         const sentNow = Date.now();
         setAnswer({ on: true, wait: 60, serverNow: r.at, test: { id: r.id, at: r.at, sentAt: null, sentHow: null, shownAt: null } });

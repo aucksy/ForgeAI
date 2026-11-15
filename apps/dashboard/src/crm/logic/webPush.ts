@@ -198,6 +198,20 @@ export function testAlertState(test: TestAlert | null, now: number): TestAlertSt
   return test.sentAt === null ? 'not-sent' : 'not-shown';
 }
 
+/** How the latest read of owner_test_alert went: answered by the gym server, no 0095 there, no push address on this
+ * browser (nothing asked), or failed (network, timeout, server error). */
+export type TestRead = 'answered' | 'missing' | 'no-device' | 'failed';
+
+/**
+ * Fresh eyes (15 Nov 2026): "Send a test alert" shows only after the gym server has answered a test-alert call. Before
+ * that, any failure keeps it hidden; once answered, a later failed read does not hide it again; no 0095 always hides it.
+ * PURE.
+ */
+export function testBoxVisible(read: TestRead, shownBefore: boolean): boolean {
+  if (read === 'missing') return false;
+  return read === 'answered' || shownBefore;
+}
+
 /** How often the card asks again: every 5 s for 2 minutes, then every 20 s until 10 minutes; null = stop. PURE. */
 export function testPollMs(state: TestAlertState, age: number): number | null {
   if (state === 'none' || state === 'shown' || state === 'unreached' || age >= TEST_WATCH_MS) return null;
