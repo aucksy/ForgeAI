@@ -8,6 +8,8 @@
  * reach (more than 3 workouts a day) is a typing slip. Spec: docs/research/R-leaderboard.md.
  */
 
+import { t } from '../lang/lang';
+
 import { addDays, diffDays, formatDay, formatDayShort, isValidDateISO, type DateISO } from './dates';
 import { countOf } from './plural';
 
@@ -297,30 +299,30 @@ export function challengePayload(d: ChallengeDraft, today: DateISO): { payload: 
   const L = CHALLENGE_LIMITS;
   const fail = (problem: string) => ({ payload: null, problem });
   const title = d.title.trim();
-  if (!title) return fail('Give the challenge a name, like “November challenge”.');
-  if (title.length > L.titleMax) return fail(`The name can be at most ${L.titleMax} letters.`);
+  if (!title) return fail(t('Give the challenge a name, like “November challenge”.'));
+  if (title.length > L.titleMax) return fail(t('The name can be at most {n} letters.', { n: L.titleMax }));
 
   const goalText = d.goal.replace(/,/g, '').trim();
   const goal = Number(goalText);
-  if (!goalText || !Number.isFinite(goal) || goal <= 0) return fail('Type the goal as a number above 0.');
+  if (!goalText || !Number.isFinite(goal) || goal <= 0) return fail(t('Type the goal as a number above 0.'));
   if (d.measure === 'workouts' && (!Number.isInteger(goal) || goal > L.workoutsGoalMax)) {
-    return fail(`The workouts goal must be a whole number from 1 to ${L.workoutsGoalMax} (the app counts up to 3 workouts a day).`);
+    return fail(t('The workouts goal must be a whole number from 1 to {max} (the app counts up to 3 workouts a day).', { max: L.workoutsGoalMax }));
   }
-  if (d.measure === 'kg' && goal > L.kgGoalMax) return fail(`The kg goal can be at most ${L.kgGoalMax.toLocaleString('en-IN')}.`);
+  if (d.measure === 'kg' && goal > L.kgGoalMax) return fail(t('The kg goal can be at most {max}.', { max: L.kgGoalMax.toLocaleString('en-IN') }));
   if (d.measure === 'checkins' && (!Number.isInteger(goal) || goal > L.checkinsGoalMax)) {
-    return fail(`The visits goal must be a whole number from 1 to ${L.checkinsGoalMax}, because a member counts once a day.`);
+    return fail(t('The visits goal must be a whole number from 1 to {max}, because a member counts once a day.', { max: L.checkinsGoalMax }));
   }
 
-  if (!isValidDateISO(d.startsOn)) return fail('Pick the day it starts.');
-  if (d.startsOn < today) return fail('It can start today or later, not on a day that has passed.');
-  if (d.startsOn > addDays(today, L.aheadMax)) return fail(`It can start at most ${L.aheadMax} days from today.`);
+  if (!isValidDateISO(d.startsOn)) return fail(t('Pick the day it starts.'));
+  if (d.startsOn < today) return fail(t('It can start today or later, not on a day that has passed.'));
+  if (d.startsOn > addDays(today, L.aheadMax)) return fail(t('It can start at most {n} days from today.', { n: L.aheadMax }));
 
   const days = wholeNumber(d.days);
-  if (days === null || days < L.daysMin || days > L.daysMax) return fail(`It must run from ${L.daysMin} to ${L.daysMax} days.`);
+  if (days === null || days < L.daysMin || days > L.daysMax) return fail(t('It must run from {min} to {max} days.', { min: L.daysMin, max: L.daysMax }));
 
   const prize = wholeNumber(d.prizeDays);
-  if (prize === null || prize > L.prizeMax) return fail(`Free days must be a whole number from 0 to ${L.prizeMax}.`);
-  if (d.measure === 'checkins' && goal > days) return fail('The visits goal cannot be more than the number of days the challenge runs.');
+  if (prize === null || prize > L.prizeMax) return fail(t('Free days must be a whole number from 0 to {max}.', { max: L.prizeMax }));
+  if (d.measure === 'checkins' && goal > days) return fail(t('The visits goal cannot be more than the number of days the challenge runs.'));
 
   const payload: ChallengePayload = {
     ...(d.id ? { id: d.id } : {}),
@@ -335,86 +337,100 @@ export function challengePayload(d: ChallengeDraft, today: DateISO): { payload: 
 }
 
 // ---------------------------------------------------------------- words
+// Every line here is in the owner's language (R-561, 15 Nov 2026: the running challenge and the leaderboard follow
+// Hinglish too). The English is the key in lang/hinglish.ts; numbers, names and days go in as {values}.
 
 const trim1 = (n: number): string => String(Math.round(n * 10) / 10);
 
-/** "16 workouts", "20,000 kg" or "12 visits". PURE. */
+/** "16 workouts", "20,000 kg" or "12 visits". The same in both languages. PURE. */
 export function valueWords(measure: ChallengeMeasure, value: number): string {
   if (measure === 'kg') return `${Number(trim1(value)).toLocaleString('en-IN')} kg`;
   return measure === 'checkins' ? countOf(Math.round(value), 'visit') : countOf(Math.round(value), 'workout');
 }
 
-/** "Workouts", "Kg lifted" or "Visits". PURE. */
+/** "Workouts", "Kg lifted" or "Visits". */
 export function measureLabel(measure: ChallengeMeasure): string {
-  return measure === 'kg' ? 'Kg lifted' : measure === 'checkins' ? 'Visits' : 'Workouts';
+  return measure === 'kg' ? t('Kg lifted') : measure === 'checkins' ? t('Visits') : t('Workouts');
 }
 
-/** "7 free days", "1 free day" or "No free days". PURE. */
+/** "7 free days", "1 free day" or "No free days". */
 export function prizeWords(days: number): string {
-  return days <= 0 ? 'No free days' : `${countOf(days, 'free day')}`;
+  if (days <= 0) return t('No free days');
+  return days === 1 ? t('1 free day') : t('{n} free days', { n: days });
 }
 
-/** "1 Nov to 30 Nov 2026". PURE. */
+/** "1 Nov to 30 Nov 2026". */
 export function periodWords(c: Pick<Challenge, 'startsOn' | 'endsOn'>): string {
-  return `${formatDayShort(c.startsOn)} to ${formatDay(c.endsOn)}`;
+  return t('{start} to {end}', { start: formatDayShort(c.startsOn), end: formatDay(c.endsOn) });
 }
 
-/** What it asks of members, in one line: "Log 16 workouts and win 7 free days". PURE. */
+/** What it asks of members, in one line: "Log 16 workouts to win 7 free days". */
 export function askWords(c: Pick<Challenge, 'measure' | 'goal' | 'prizeDays'>): string {
+  const n = Math.round(c.goal);
   const goal =
     c.measure === 'kg'
-      ? `Lift ${valueWords('kg', c.goal)}`
+      ? t('Lift {kg}', { kg: valueWords('kg', c.goal) })
       : c.measure === 'checkins'
-        ? `Check in on ${countOf(Math.round(c.goal), 'day')}`
-        : `Log ${valueWords('workouts', c.goal)}`;
-  return c.prizeDays > 0 ? `${goal} to win ${prizeWords(c.prizeDays)}` : goal;
+        ? n === 1
+          ? t('Check in on 1 day')
+          : t('Check in on {n} days', { n })
+        : n === 1
+          ? t('Log 1 workout')
+          : t('Log {n} workouts', { n });
+  return c.prizeDays > 0 ? t('{goal} to win {prize}', { goal, prize: prizeWords(c.prizeDays) }) : goal;
 }
 
-/** "Last day today", "6 days left", "Starts tomorrow", "Starts in 5 days". PURE. */
+/** "Last day today", "6 days left", "Starts tomorrow", "Starts in 5 days". */
 export function whenWords(c: Pick<Challenge, 'status' | 'startsOn' | 'endsOn'>, today: DateISO): string {
-  if (c.status === 'cancelled') return 'Cancelled';
-  if (c.status === 'ended') return `Finished ${formatDayShort(c.endsOn)}`;
+  if (c.status === 'cancelled') return t('Cancelled');
+  if (c.status === 'ended') return t('Finished {day}', { day: formatDayShort(c.endsOn) });
   if (c.status === 'running') {
     const left = diffDays(today, c.endsOn);
-    return left <= 0 ? 'Last day today' : `${countOf(left, 'day')} left`;
+    return left <= 0 ? t('Last day today') : left === 1 ? t('1 day left') : t('{n} days left', { n: left });
   }
   const to = diffDays(today, c.startsOn);
-  return to <= 0 ? 'Starts today' : to === 1 ? 'Starts tomorrow' : `Starts in ${to} days`;
+  return to <= 0 ? t('Starts today') : to === 1 ? t('Starts tomorrow') : t('Starts in {n} days', { n: to });
 }
 
-/** "Running now", "Not started", "Finished", "Cancelled". PURE. */
+/** "Running now", "Not started", "Finished", "Cancelled". */
 export function statusLabel(status: ChallengeStatus): string {
-  return status === 'running' ? 'Running now' : status === 'upcoming' ? 'Not started' : status === 'cancelled' ? 'Cancelled' : 'Finished';
+  return status === 'running' ? t('Running now') : status === 'upcoming' ? t('Not started') : status === 'cancelled' ? t('Cancelled') : t('Finished');
 }
 
-/** "3 of 12 members reached the goal". PURE. */
+/** "3 of 12 members reached the goal." */
 export function reachedWords(c: Pick<Challenge, 'hitters' | 'entrants'> & Partial<Pick<Challenge, 'measure'>>): string {
   const n = c.hitters.length;
   if (c.entrants === 0) {
     return c.measure === 'checkins'
-      ? 'No member with the MettleUp app has checked in during these days yet.'
-      : 'No member has logged a workout in these days yet.';
+      ? t('No member with the MettleUp app has checked in during these days yet.')
+      : t('No member has logged a workout in these days yet.');
   }
-  if (n === 0) return `Nobody has reached the goal yet. ${countOf(c.entrants, 'member')} took part.`;
-  return `${n} of ${countOf(c.entrants, 'member')} reached the goal.`;
+  if (n === 0) {
+    return c.entrants === 1
+      ? t('Nobody has reached the goal yet. 1 member took part.')
+      : t('Nobody has reached the goal yet. {n} members took part.', { n: c.entrants });
+  }
+  return c.entrants === 1 ? t('{n} of 1 member reached the goal.', { n }) : t('{n} of {total} members reached the goal.', { n, total: c.entrants });
 }
 
 /**
  * F143: what happened to one winner's free days, in a few words for their line on the list, or null when
  * there is nothing to say (no free days, a challenge still running, or a winner kept before the server
- * gave rewards by itself). PURE.
+ * gave rewards by itself).
  */
 export function rewardWords(h: Pick<Hitter, 'reward'>): string | null {
   const r = h.reward;
-  if (r?.state === 'none' && r.reason === 'skipped') return 'Skipped';
+  if (r?.state === 'none' && r.reason === 'skipped') return t('Skipped');
   if (!r || r.state === 'none' || r.days <= 0) return null;
   const prize = prizeWords(r.days);
-  if (r.state === 'confirm') return `Won ${prize}. Waiting for the owner.`;
-  if (r.state === 'added') return r.newEnd ? `${prize} added. Plan now ends ${formatDayShort(r.newEnd)}.` : `${prize} added.`;
-  if (r.state === 'pending') return `${prize} not added yet. They will be added soon.`;
-  if (r.reason === 'left') return 'Left the gym. No free days added.';
-  if (r.reason === 'no_match') return `Give by hand: ${prize}. Not matched to a member on your list.`;
-  return `Give by hand: ${prize}. No active membership.`;
+  if (r.state === 'confirm') return t('Won {prize}. Waiting for the owner.', { prize });
+  if (r.state === 'added') {
+    return r.newEnd ? t('{prize} added. Plan now ends {day}.', { prize, day: formatDayShort(r.newEnd) }) : t('{prize} added.', { prize });
+  }
+  if (r.state === 'pending') return t('{prize} not added yet. They will be added soon.', { prize });
+  if (r.reason === 'left') return t('Left the gym. No free days added.');
+  if (r.reason === 'no_match') return t('Give by hand: {prize}. Not matched to a member on your list.', { prize });
+  return t('Give by hand: {prize}. No active membership.', { prize });
 }
 
 /** 0048: true when this winner's free days wait for the owner's Give or Skip. PURE. */
@@ -422,25 +438,29 @@ export function needsConfirm(h: Pick<Hitter, 'reward'>): boolean {
   return h.reward?.state === 'confirm' && h.reward.days > 0;
 }
 
-/** The owner's button for one winner: "Give 7 free days" / "Give 1 free day". PURE. */
+/** The owner's button for one winner: "Give 7 free days" / "Give 1 free day". */
 export function giveLabel(days: number): string {
-  return `Give ${prizeWords(days).toLowerCase()}`;
+  return t('Give {prize}', { prize: prizeWords(days).toLowerCase() });
 }
 
-/** The owner's button for every winner still waiting: "Give all 3 their free days". PURE. */
+/** The owner's button for every winner still waiting: "Give all 3 their free days". */
 export function giveAllLabel(n: number): string {
-  return `Give all ${n} their free days`;
+  return t('Give all {n} their free days', { n });
 }
 
-/** What the owner's Give or Skip did, for the toast. PURE. */
+/** What the owner's Give or Skip did, for the toast. */
 export function confirmedWords(name: string, r: HitterReward | null): string {
-  if (!r) return 'Saved.';
-  if (r.state === 'none') return `Skipped. ${name} gets no free days.`;
+  if (!r) return t('Saved.');
+  if (r.state === 'none') return t('Skipped. {name} gets no free days.', { name });
   const prize = prizeWords(r.days);
-  if (r.state === 'added') return r.newEnd ? `${prize} added for ${name}. Plan now ends ${formatDayShort(r.newEnd)}.` : `${prize} added for ${name}.`;
-  if (r.state === 'pending') return `${prize} for ${name} will be added soon.`;
-  if (r.state === 'by_hand') return `${name}: give the ${prize.toLowerCase()} by hand (see their line).`;
-  return 'Saved.';
+  if (r.state === 'added') {
+    return r.newEnd
+      ? t('{prize} added for {name}. Plan now ends {day}.', { prize, name, day: formatDayShort(r.newEnd) })
+      : t('{prize} added for {name}.', { prize, name });
+  }
+  if (r.state === 'pending') return t('{prize} for {name} will be added soon.', { prize, name });
+  if (r.state === 'by_hand') return t('{name}: give the {prize} by hand (see their line).', { name, prize: prize.toLowerCase() });
+  return t('Saved.');
 }
 
 /** True when this winner's free days must be given by hand at the desk. PURE. */
@@ -448,17 +468,22 @@ export function needsHand(h: Pick<Hitter, 'reward'>): boolean {
   return h.reward?.state === 'by_hand' && h.reward.reason !== 'left' && h.reward.days > 0;
 }
 
-/** A past challenge's line: "3 reached the goal" or "3 reached the goal, 1 to give by hand". PURE. */
+/** A past challenge's line: "3 reached the goal" or "3 reached the goal, 1 to give by hand". */
 export function pastSummary(c: Pick<Challenge, 'hitters'>): string {
   const hand = c.hitters.filter(needsHand).length;
   const wait = c.hitters.filter(needsConfirm).length;
-  const more = [wait > 0 ? `${wait} waiting for the owner` : '', hand > 0 ? `${hand} to give by hand` : ''].filter(Boolean);
-  return `${c.hitters.length} reached the goal${more.length > 0 ? `, ${more.join(', ')}` : ''}`;
+  return [
+    t('{n} reached the goal', { n: c.hitters.length }),
+    wait > 0 ? t('{n} waiting for the owner', { n: wait }) : '',
+    hand > 0 ? t('{n} to give by hand', { n: hand }) : '',
+  ]
+    .filter(Boolean)
+    .join(', ');
 }
 
 /**
  * The line under the winners about the free days, or null when there are none to give. `autoRewards`:
- * the server adds them by itself (0047). Winners kept before that still get the old by-hand line. PURE.
+ * the server adds them by itself (0047). Winners kept before that still get the old by-hand line.
  */
 export function prizeNote(
   c: Pick<Challenge, 'prizeDays' | 'status' | 'hitters'>,
@@ -466,48 +491,52 @@ export function prizeNote(
   autoRewards: boolean,
 ): string | null {
   if (c.prizeDays <= 0 || c.status === 'cancelled' || c.hitters.length === 0) return null;
+  const prize = prizeWords(c.prizeDays);
   const byHand = canEdit
-    ? `To give the ${prizeWords(c.prizeDays)}: open the member and tap Freeze / extra days.`
-    : `The owner gives the ${prizeWords(c.prizeDays)} (the member’s page, Freeze / extra days). Share this list with them.`;
+    ? t('To give the {prize}: open the member and tap Freeze / extra days.', { prize })
+    : t('The owner gives the {prize} (the member’s page, Freeze / extra days). Share this list with them.', { prize });
   if (!autoRewards) return byHand;
   if (c.status === 'running' || c.status === 'upcoming') {
-    return `When it ends, each winner gets the ${prizeWords(c.prizeDays)} added to their plan by themselves, and a message in the app.`;
+    return t('When it ends, each winner gets the {prize} added to their plan by themselves, and a message in the app.', { prize });
   }
   const kept = c.hitters.filter((h) => h.reward !== null);
   if (kept.length < c.hitters.length) return byHand;
   // 0048: the owner gives (or skips) each winner's days first.
   if (kept.some(needsConfirm)) {
     return canEdit
-      ? `Check each winner, then tap ${giveLabel(c.prizeDays)} or Skip. The days go on their plan, and they get a message in the app.`
-      : `The owner gives each winner the ${prizeWords(c.prizeDays)} here. Ask them to look at this list.`;
+      ? t('Check each winner, then tap {give} or {skip}. The days go on their plan, and they get a message in the app.', {
+          give: giveLabel(c.prizeDays),
+          skip: t('Skip'),
+        })
+      : t('The owner gives each winner the {prize} here. Ask them to look at this list.', { prize });
   }
   if (kept.some(needsHand)) {
     return canEdit
-      ? 'For each member marked “Give by hand”: open the member and tap Freeze / extra days. They got a message to ask at the front desk.'
-      : 'For each member marked “Give by hand”, the owner adds the days (the member’s page, Freeze / extra days). They got a message to ask at the front desk.';
+      ? t('For each member marked “Give by hand”: open the member and tap Freeze / extra days. They got a message to ask at the front desk.')
+      : t('For each member marked “Give by hand”, the owner adds the days (the member’s page, Freeze / extra days). They got a message to ask at the front desk.');
   }
-  if (kept.some((h) => h.reward?.state === 'pending')) return 'The free days will be added soon. Each winner will get a message in the app.';
-  return 'The free days were added to each winner’s plan by themselves. Each winner got a message in the app.';
+  if (kept.some((h) => h.reward?.state === 'pending')) return t('The free days will be added soon. Each winner will get a message in the app.');
+  return t('The free days were added to each winner’s plan by themselves. Each winner got a message in the app.');
 }
 
-/** The list of winners as plain text to copy and send or print. PURE. */
+/** The list of winners as plain text to copy and send or print. */
 export function winnersText(c: Challenge): string {
   const head = [`${c.title}`, `${periodWords(c)}`, `${askWords(c)}`, ''];
-  if (c.hitters.length === 0) return [...head, 'Nobody has reached the goal yet.'].join('\n');
+  if (c.hitters.length === 0) return [...head, t('Nobody has reached the goal yet.')].join('\n');
   const lines = c.hitters.map((h, i) => {
     const reward = rewardWords(h);
     return `${i + 1}. ${h.name}${h.phone ? `, ${h.phone}` : ''}, ${valueWords(c.measure, h.value)}${reward ? `. ${reward}` : ''}`;
   });
-  return [...head, `Reached the goal (${c.hitters.length}):`, ...lines].join('\n');
+  return [...head, t('Reached the goal ({n}):', { n: c.hitters.length }), ...lines].join('\n');
 }
 
-/** Plain words for a refused action, or null when it is not one of these codes. PURE. */
+/** Plain words for a refused action, or null when it is not one of these codes. */
 export function challengeErrorWords(err: unknown): string | null {
-  const t = err instanceof Error ? err.message : typeof err === 'object' && err && 'message' in err ? String((err as { message: unknown }).message) : String(err);
-  if (/\bOWNER_ONLY\b|\bNOT_OWNER\b/.test(t)) return 'Only the owner can do this.';
-  if (/\bGONE\b/.test(t)) return 'This is no longer there. The list is up to date now.';
-  if (/\bOVERLAP\b/.test(t)) return 'Another challenge already uses some of these days. Pick days that are free, or cancel the other challenge first.';
-  if (/\bINVALID\b/.test(t)) return 'Your gym’s server could not take this. Check each box and try again. A challenge that has started can only be cancelled.';
+  const msg = err instanceof Error ? err.message : typeof err === 'object' && err && 'message' in err ? String((err as { message: unknown }).message) : String(err);
+  if (/\bOWNER_ONLY\b|\bNOT_OWNER\b/.test(msg)) return t('Only the owner can do this.');
+  if (/\bGONE\b/.test(msg)) return t('This is no longer there. The list is up to date now.');
+  if (/\bOVERLAP\b/.test(msg)) return t('Another challenge already uses some of these days. Pick days that are free, or cancel the other challenge first.');
+  if (/\bINVALID\b/.test(msg)) return t('Your gym’s server could not take this. Check each box and try again. A challenge that has started can only be cancelled.');
   return null;
 }
 
@@ -517,9 +546,9 @@ export const COUNTED_FROM_PHONE = 'Counted from each member’s phone. Check a s
 export const COUNTED_FROM_REGISTER =
   'Counted from your visit register: one visit a day, at the desk or with the QR code. Only members who use the MettleUp app take part.';
 
-/** The line under the winners list for this challenge. PURE. */
+/** The line under the winners list for this challenge, in the owner's language. */
 export function countedWords(measure: ChallengeMeasure): string {
-  return measure === 'checkins' ? COUNTED_FROM_REGISTER : COUNTED_FROM_PHONE;
+  return t(measure === 'checkins' ? COUNTED_FROM_REGISTER : COUNTED_FROM_PHONE);
 }
 export const MEMBERS_SEE_CHALLENGE =
   'Members see the challenge on the Gym tab of the MettleUp app, with how far they have got. It can take up to 10 minutes to show up.';

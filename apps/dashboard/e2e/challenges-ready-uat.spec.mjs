@@ -95,8 +95,8 @@ async function challengeServer(page, { canEdit = true, checkins = false, challen
 }
 
 /** A challenge row as owner_challenges answers it. */
-function serverChallenge({ id, title, measure = 'workouts', goal = 12, startsOn, days = 30, prizeDays = 7, entrants = 0 }) {
-  return { id, title, measure, goal, startsOn, endsOn: addDays(startsOn, days - 1), prizeDays, createdByName: 'Ramesh Sharma', createdAt: NOW.getTime(), cancelledAt: null, entrants, hitters: [] };
+function serverChallenge({ id, title, measure = 'workouts', goal = 12, startsOn, days = 30, prizeDays = 7, entrants = 0, hitters = [] }) {
+  return { id, title, measure, goal, startsOn, endsOn: addDays(startsOn, days - 1), prizeDays, createdByName: 'Ramesh Sharma', createdAt: NOW.getTime(), cancelledAt: null, entrants, hitters };
 }
 
 async function setLook(page, { dark = false, hinglish = false } = {}) {
@@ -184,6 +184,13 @@ test.describe('phone', () => {
     await form.getByLabel('Goal (number of workouts)').fill('8');
     await form.getByLabel('How many days').fill('21');
     await expect(form).toContainText('It runs from 17 Oct to 6 Nov 2026. Members log 8 workouts in the MettleUp app within 21 days.');
+    // The first day shows the day first, the Indian way, whatever the device language (the CI browser is US-ordered).
+    await expect(form.getByTestId('day-shown')).toHaveText('17 Oct 2026');
+    await form.getByLabel('First day').fill('2026-10-20');
+    await expect(form.getByTestId('day-shown')).toHaveText('20 Oct 2026');
+    await expect(form).toContainText('It runs from 20 Oct to 9 Nov 2026.');
+    await form.getByLabel('First day').fill(TODAY);
+    await expect(form.getByTestId('day-shown')).toHaveText('17 Oct 2026');
     await shot(page, 'phone-challenges-ready-4-change-form', false);
     // A goal the server would refuse is stopped here, in words.
     await form.getByLabel('How many days').fill('40');
@@ -204,11 +211,32 @@ test.describe('phone', () => {
     await onlineGym(page);
     await challengeServer(page, {
       checkins: true,
-      challenges: [serverChallenge({ id: 'c-run', title: 'Check-in habit', measure: 'checkins', goal: 12, startsOn: '2026-10-10', entrants: 9 })],
+      challenges: [
+        serverChallenge({
+          id: 'c-run',
+          title: 'Check-in habit',
+          measure: 'checkins',
+          goal: 12,
+          startsOn: '2026-10-10',
+          entrants: 9,
+          hitters: [{ memberId: 'm-1', name: 'Asha Patel', phone: '+919000056101', value: 12, reward: null }],
+        }),
+      ],
     });
     await setLook(page, { dark: true, hinglish: true });
     await page.reload();
     await openChallenges(page);
+
+    // The running challenge's card, its winner and the leaderboard follow Hinglish too.
+    await expect(page.getByText('Abhi chal raha hai', { exact: true })).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByText('12 din check in karo aur 7 free din jeeto', { exact: true })).toBeVisible();
+    await expect(page.getByText('10 Oct se 8 Nov 2026 tak · 22 din baaki')).toBeVisible();
+    await expect(page.getByText('9 members mein se 1 goal tak pahunche.')).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Yeh list copy karo' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Challenge cancel karo' })).toBeVisible();
+    await expect(page.getByText('Leaderboard · pichhle 30 din')).toBeVisible();
+    await expect(page.getByText('Aapke 3 members ne pichhle 30 din mein training ki.', { exact: false })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Asha Patel ko leaderboard se chhupao' })).toBeVisible();
 
     await expect(card(page, 'checkin-habit')).toBeVisible({ timeout: 15_000 });
     await expect(card(page, 'regular-month')).toBeVisible();
@@ -226,6 +254,7 @@ test.describe('phone', () => {
     await expect(form.getByRole('button', { name: 'Hazri', exact: true })).toBeVisible();
     await form.getByRole('button', { name: 'Hazri', exact: true }).tap();
     await expect(form.getByLabel('Goal (kitne din gym aana hai)')).toBeVisible();
+    await expect(form.getByTestId('day-shown')).toHaveText('17 Oct 2026');
     await shot(page, 'phone-challenges-ready-7-new-form-visits-hinglish', false);
   });
 

@@ -89,6 +89,7 @@ import {
   radius,
   space,
 } from '../kit';
+import { DayField } from '../DayField';
 import { navigate } from '../router';
 
 type Load = { state: 'loading' } | { state: 'missing' } | { state: 'error'; message: string } | { state: 'ready'; challenges: ChallengesAnswer; board: BoardAnswer };
@@ -149,23 +150,23 @@ export function ChallengesScreen() {
       {!online || !key ? (
         <Card>
           <EmptyState
-            title="Challenges need your gym online"
-            body="Members’ phones read the challenge from your gym’s server. Put your gym online first (Settings → Sign-in & data)."
+            title={t('Challenges need your gym online')}
+            body={t('Members’ phones read the challenge from your gym’s server. Put your gym online first (Settings → Sign-in & data).')}
           />
         </Card>
       ) : load.state === 'missing' ? (
         <Card>
-          <EmptyState title="Challenges are not switched on for your gym yet" body="They will appear here once your gym’s server has them." />
+          <EmptyState title={t('Challenges are not switched on for your gym yet')} body={t('They will appear here once your gym’s server has them.')} />
         </Card>
       ) : load.state === 'error' ? (
         <Card>
           <ErrorBanner>{load.message}</ErrorBanner>
           <Button variant="ghost" onClick={() => void fetchAll()}>
-            Try again
+            {t('Try again')}
           </Button>
         </Card>
       ) : load.state === 'loading' ? (
-        <p style={quiet}>Loading…</p>
+        <p style={quiet}>{t('Loading…')}</p>
       ) : (
         <Ready ownerKey={key} challenges={load.challenges} board={load.board} reload={fetchAll} flash={flash} />
       )}
@@ -211,7 +212,7 @@ function Ready({
       await challengesApi.cancelChallenge(ownerKey, cancelling.c.id);
       setCancelling(null);
       await reload();
-      flash(cancelling.ready ? t(READY_WORDS.toastOff, { title: cancelling.c.title }) : 'Challenge cancelled. Members no longer see it.');
+      flash(cancelling.ready ? t(READY_WORDS.toastOff, { title: cancelling.c.title }) : t('Challenge cancelled. Members no longer see it.'));
     } catch (e) {
       console.warn('[ForgeErr] challenges: cancelling', e);
       setCancelError(failWords(e));
@@ -263,7 +264,7 @@ function Ready({
           <p style={{ ...small, flex: '1 1 220px' }}>{t(READY_WORDS.ownLine)}</p>
         </div>
       ) : (
-        <p style={{ ...small, marginBottom: space.lg }}>Only the owner can start, change or cancel a challenge. You can see who has reached the goal.</p>
+        <p style={{ ...small, marginBottom: space.lg }}>{t('Only the owner can start, change or cancel a challenge. You can see who has reached the goal.')}</p>
       )}
 
       {running ? (
@@ -285,7 +286,7 @@ function Ready({
             {canEdit
               ? cards.length > 0
                 ? t('Turn on a ready-made challenge above, or make your own with “New challenge”.')
-                : 'Start one to give members a goal for the month. Everyone who reaches it wins free days.'
+                : t('Start one to give members a goal for the month. Everyone who reaches it wins free days.')
               : t('The owner has not started one.')}
           </p>
         </Card>
@@ -310,7 +311,7 @@ function Ready({
 
       {past.length > 0 && (
         <Card style={{ marginBottom: space.lg }}>
-          <SectionTitle>Past challenges</SectionTitle>
+          <SectionTitle>{t('Past challenges')}</SectionTitle>
           <div style={{ display: 'grid', gap: space.md }}>
             {past.map((c) => (
               <PastRow key={c.id} c={c} canEdit={canEdit} autoRewards={challenges.autoRewards} flash={flash} ownerKey={ownerKey} reload={reload} />
@@ -331,22 +332,22 @@ function Ready({
             const ready = form.ready;
             setForm(null);
             await reload();
-            flash(ready ? tl(readyOnToast(p.title, p.startsOn, today, Boolean(p.id))) : 'Challenge saved. Members see it in the MettleUp app within 10 minutes.');
+            flash(ready ? tl(readyOnToast(p.title, p.startsOn, today, Boolean(p.id))) : t('Challenge saved. Members see it in the MettleUp app within 10 minutes.'));
           }}
         />
       )}
 
       {cancelling && (
         <Sheet
-          title={cancelling.ready ? t(READY_WORDS.offTitle) : 'Cancel this challenge?'}
+          title={cancelling.ready ? t(READY_WORDS.offTitle) : t('Cancel this challenge?')}
           onClose={closeCancel}
           footer={
             <>
               <Button variant="ghost" onClick={closeCancel}>
-                {cancelling.ready ? t(READY_WORDS.keepOn) : 'Keep it'}
+                {cancelling.ready ? t(READY_WORDS.keepOn) : t('Keep it')}
               </Button>
               <Button tone="danger" needsInternet onClick={() => void cancel()}>
-                {cancelling.ready ? t(READY_WORDS.turnOff) : 'Cancel challenge'}
+                {cancelling.ready ? t(READY_WORDS.turnOff) : t('Cancel challenge')}
               </Button>
             </>
           }
@@ -355,7 +356,7 @@ function Ready({
           <p style={quiet}>
             {cancelling.ready
               ? t(READY_WORDS.offBody, { title: cancelling.c.title })
-              : `“${cancelling.c.title}” will disappear from members’ phones. Nobody gets free days for it. This cannot be undone, but you can start a new one.`}
+              : t('“{title}” will disappear from members’ phones. Nobody gets free days for it. This cannot be undone, but you can start a new one.', { title: cancelling.c.title })}
           </p>
         </Sheet>
       )}
@@ -518,7 +519,7 @@ function Winners({
         const r = await challengesApi.confirmChallengeReward(ownerKey, c.id, h.memberId, give);
         last = confirmedWords(h.name, r);
       }
-      flash(who.length === 1 ? last : `Done for ${who.length} winners. Each line says what happened.`);
+      flash(who.length === 1 ? last : t('Done for {n} winners. Each line says what happened.', { n: who.length }));
     } catch (e) {
       console.warn('[ForgeErr] challenges: giving free days', e);
       flash(failWords(e));
@@ -529,14 +530,14 @@ function Winners({
   };
   const copy = async () => {
     const ok = await copyText(winnersText(c));
-    flash(ok ? 'List copied. You can paste it into WhatsApp.' : 'Could not copy. Select the names and copy them by hand.');
+    flash(ok ? t('List copied. You can paste it into WhatsApp.') : t('Could not copy. Select the names and copy them by hand.'));
   };
   return (
     <div style={{ marginTop: space.md }}>
       <p style={{ ...quiet, color: color.ink, fontWeight: 700 }}>{reachedWords(c)}</p>
       {c.hitters.length > 0 && (
         <>
-          <ul aria-label={`Members who reached the goal of ${c.title}`} style={{ margin: `${space.sm}px 0 0`, padding: 0, listStyle: 'none', display: 'grid', gap: space.xs }}>
+          <ul aria-label={t('Members who reached the goal of {title}', { title: c.title })} style={{ margin: `${space.sm}px 0 0`, padding: 0, listStyle: 'none', display: 'grid', gap: space.xs }}>
             {c.hitters.map((h) => {
               const ask = canEdit && needsConfirm(h);
               const reward = ask ? null : rewardWords(h);
@@ -560,10 +561,10 @@ function Winners({
                         onClick={() => void confirm([h], true, h.memberId)}
                         ariaLabel={`${giveLabel(h.reward.days)}: ${h.name}`}
                       >
-                        {busy === h.memberId ? 'Saving…' : giveLabel(h.reward.days)}
+                        {busy === h.memberId ? t('Saving…') : giveLabel(h.reward.days)}
                       </Button>
-                      <Button variant="ghost" needsInternet disabled={busy !== null} onClick={() => void confirm([h], false, h.memberId)} ariaLabel={`Skip: ${h.name}`}>
-                        Skip
+                      <Button variant="ghost" needsInternet disabled={busy !== null} onClick={() => void confirm([h], false, h.memberId)} ariaLabel={`${t('Skip')}: ${h.name}`}>
+                        {t('Skip')}
                       </Button>
                     </span>
                   )}
@@ -575,15 +576,15 @@ function Winners({
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: space.sm, marginTop: space.md }}>
             {waiting.length > 1 && (
               <Button needsInternet disabled={busy !== null} onClick={() => void confirm(waiting, true, null)}>
-                {busy === 'all' ? 'Saving…' : giveAllLabel(waiting.length)}
+                {busy === 'all' ? t('Saving…') : giveAllLabel(waiting.length)}
               </Button>
             )}
             <Button variant="ghost" onClick={copy}>
-              Copy this list
+              {t('Copy this list')}
             </Button>
             {c.status !== 'cancelled' && (
               <Button variant="quiet" onClick={() => navigate('/members')}>
-                Open Members
+                {t('Open Members')}
               </Button>
             )}
           </div>
@@ -626,16 +627,16 @@ function ChallengeCard({
         {periodWords(c)} · {whenWords(c, today)}
       </p>
       {showWinners && <Winners c={c} canEdit={canEdit} autoRewards={autoRewards} flash={flash} ownerKey={ownerKey} reload={reload} />}
-      <p style={{ ...small, marginTop: space.md }}>{MEMBERS_SEE_CHALLENGE}</p>
+      <p style={{ ...small, marginTop: space.md }}>{t(MEMBERS_SEE_CHALLENGE)}</p>
       {canEdit && (
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: space.sm, marginTop: space.md }}>
           {onChange && (
             <Button variant="ghost" needsInternet onClick={onChange}>
-              Change
+              {t('Change')}
             </Button>
           )}
           <Button variant="quiet" tone="danger" needsInternet onClick={onCancel}>
-            Cancel challenge
+            {t('Cancel challenge')}
           </Button>
         </div>
       )}
@@ -659,7 +660,7 @@ function PastRow({
           {' · '}
           {periodWords(c)}
           {' · '}
-          {c.status === 'cancelled' ? 'Cancelled' : pastSummary(c)}
+          {c.status === 'cancelled' ? t('Cancelled') : pastSummary(c)}
         </span>
       </summary>
       <p style={{ ...small, marginTop: space.sm }}>{askWords(c)}</p>
@@ -769,7 +770,7 @@ function ChallengeForm({
         </>
       )}
       <TextField label={goalLabel} value={d.goal} onChange={(v) => set({ ...d, goal: v })} inputMode={d.measure === 'kg' ? 'decimal' : 'numeric'} hint={goalHint} />
-      <TextField label={t('First day')} type="date" value={d.startsOn} onChange={(v) => set({ ...d, startsOn: v })} hint={t('Today or a later day, up to 60 days from today.')} />
+      <DayField label={t('First day')} value={d.startsOn} onChange={(v) => set({ ...d, startsOn: v })} hint={t('Today or a later day, up to 60 days from today.')} />
       <TextField label={t('How many days')} value={d.days} onChange={(v) => set({ ...d, days: v })} inputMode="numeric" hint={t('From 7 to 31 days.')} />
       <TextField
         label={t('Free days for everyone who reaches the goal')}
@@ -812,7 +813,7 @@ function Leaderboard({
     try {
       await challengesApi.hideOnBoard(ownerKey, memberId, hidden);
       await reload();
-      flash(hidden ? `${name} is hidden from the leaderboard.` : `${name} is on the leaderboard again.`);
+      flash(hidden ? t('{name} is hidden from the leaderboard.', { name }) : t('{name} is on the leaderboard again.', { name }));
     } catch (e) {
       console.warn('[ForgeErr] challenges: hiding on the leaderboard', e);
       setError(failWords(e));
@@ -823,15 +824,18 @@ function Leaderboard({
 
   return (
     <Card style={{ marginBottom: space.lg }}>
-      <SectionTitle>Leaderboard · last 30 days</SectionTitle>
+      <SectionTitle>{t('Leaderboard · last 30 days')}</SectionTitle>
       <p style={small}>
-        {board.members === 0 ? 'No member has logged a workout in the last 30 days yet.' : `${board.members} of your members trained in the last 30 days.`} {MEMBERS_SEE_LEADERBOARD}
+        {board.members === 0
+          ? t('No member has logged a workout in the last 30 days yet.')
+          : t('{n} of your members trained in the last 30 days.', { n: board.members })}{' '}
+        {t(MEMBERS_SEE_LEADERBOARD)}
       </p>
       {error && <ErrorBanner>{error}</ErrorBanner>}
       <div style={{ marginTop: space.md }}>
         <ChipToggle
           variant="tabs"
-          label="Rank by"
+          label={t('Rank by')}
           options={[
             { value: 'workouts', label: measureLabel('workouts') },
             { value: 'kg', label: measureLabel('kg') },
@@ -841,9 +845,9 @@ function Leaderboard({
         />
       </div>
       {rows.length === 0 ? (
-        <p style={{ ...quiet, marginTop: space.md }}>Nobody to show yet. Totals appear after members train and open the MettleUp app.</p>
+        <p style={{ ...quiet, marginTop: space.md }}>{t('Nobody to show yet. Totals appear after members train and open the MettleUp app.')}</p>
       ) : (
-        <ol aria-label={`Top ${rows.length} by ${measureLabel(tab).toLowerCase()}`} style={{ margin: `${space.md}px 0 0`, padding: 0, listStyle: 'none', display: 'grid', gap: space.sm }}>
+        <ol aria-label={t('Top {n} by {what}', { n: rows.length, what: measureLabel(tab).toLowerCase() })} style={{ margin: `${space.md}px 0 0`, padding: 0, listStyle: 'none', display: 'grid', gap: space.sm }}>
           {rows.map((r) => (
             <BoardLine key={r.memberId} row={r} measure={tab} canEdit={canEdit} busy={busy === r.memberId} onHide={(hidden) => void hide(r.memberId, r.name, hidden)} />
           ))}
@@ -852,14 +856,14 @@ function Leaderboard({
 
       {board.hiddenMembers.length > 0 && (
         <div style={{ marginTop: space.lg }}>
-          <p style={{ ...quiet, color: color.ink, fontWeight: 700 }}>Hidden from members</p>
-          <ul aria-label="Hidden from the leaderboard" style={{ margin: `${space.xs}px 0 0`, padding: 0, listStyle: 'none', display: 'grid', gap: space.xs }}>
+          <p style={{ ...quiet, color: color.ink, fontWeight: 700 }}>{t('Hidden from members')}</p>
+          <ul aria-label={t('Hidden from the leaderboard')} style={{ margin: `${space.xs}px 0 0`, padding: 0, listStyle: 'none', display: 'grid', gap: space.xs }}>
             {board.hiddenMembers.map((h) => (
               <li key={h.memberId} style={{ display: 'flex', flexWrap: 'wrap', gap: space.sm, alignItems: 'center', justifyContent: 'space-between', fontFamily: font.body, fontSize: 14, color: color.ink }}>
                 <span>{h.name}</span>
                 {canEdit && (
-                  <Button variant="quiet" needsInternet disabled={busy === h.memberId} ariaLabel={`Show ${h.name} on the leaderboard again`} onClick={() => void hide(h.memberId, h.name, false)}>
-                    Show again
+                  <Button variant="quiet" needsInternet disabled={busy === h.memberId} ariaLabel={t('Show {name} on the leaderboard again', { name: h.name })} onClick={() => void hide(h.memberId, h.name, false)}>
+                    {t('Show again')}
                   </Button>
                 )}
               </li>
@@ -891,16 +895,16 @@ function BoardLine({ row, measure, canEdit, busy, onHide }: { row: BoardRow; mea
         {row.phone && <span style={{ color: color.inkSecondary }}>{` · ${row.phone}`}</span>}
       </span>
       <span style={{ fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>{valueWords(measure, row.value)}</span>
-      {row.hidden && <Pill>Hidden</Pill>}
+      {row.hidden && <Pill>{t('Hidden')}</Pill>}
       {canEdit && (
         <Button
           variant="quiet"
           needsInternet
           disabled={busy}
-          ariaLabel={row.hidden ? `Show ${row.name} on the leaderboard again` : `Hide ${row.name} from the leaderboard`}
+          ariaLabel={row.hidden ? t('Show {name} on the leaderboard again', { name: row.name }) : t('Hide {name} from the leaderboard', { name: row.name })}
           onClick={() => onHide(!row.hidden)}
         >
-          {row.hidden ? 'Show again' : 'Hide from the leaderboard'}
+          {row.hidden ? t('Show again') : t('Hide from the leaderboard')}
         </Button>
       )}
     </li>
