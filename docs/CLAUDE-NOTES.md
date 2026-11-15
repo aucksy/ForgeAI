@@ -7,6 +7,25 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-585 (15 Nov 2026) Welcome screens approved; Hindi privacy approved; who a member's message goes to (proposed)
+- His words (15 Nov 2026): "I'm good with the welcome screen designs, but for the screenshot where we are talking
+  about them joining the gym, the subtext ... should mention something like, if your gym uses MettleUp, otherwise
+  everything is okay." Done on the canvas (Gym.dc.html, version 5): "If your gym uses MettleUp, sign in with your
+  phone number and we find your gym for you. ..." The 3-screen design (watch screen only with a Wear OS watch) is
+  APPROVED. Build queued (a helper slot is needed), together with the phone-first sign-in of R-582; ships only with
+  his "release".
+- "OK Hindi privacy" (15 Nov 2026): the Hindi privacy line of R-582 is approved. Both pages reach the site with the
+  next admin panel deploy (needs his yes).
+- Message routing, his ask (15 Nov 2026): "It should be GYM Owner or the name of the trainers added in Admin Panel..
+  user can select any. For feedback / complaint, they can select GYM Owner or GYM Admin (gym admin will send to both
+  owner and staff, any type)". This replaces the A/B trainer-choice question of R-583.
+  Today (0069/0087): Question -> owner + front desk + trainers; Feedback -> owner + front desk; Complaint -> owner.
+  Proposed: Question -> "Gym owner" or one named trainer (every person ticked Trainer in the panel); Feedback and
+  Complaint -> "Gym owner" (owner only) or "Gym admin" (owner + front desk). My recommendation sent to him: "Gym
+  admin" does NOT include trainers (a complaint about a trainer must never reach that trainer); a question to a named
+  trainer alerts only that trainer, and the owner can still read it. Needs a new database change (next free number
+  0096), applied live only after his named yes, plus a phone release. Waiting for his answer.
+
 ## R-584 (15 Nov 2026) Admin panel on a phone: "Save timings" looked broken; the top bar had too many buttons
 - His report (15 Nov 2026, screenshot from his phone, Gym timings): "it has these pre-loaded gym timings that I'm just
   trying to save, but the save button is disabled" and "the very top of the app is kind of messed up because of too
