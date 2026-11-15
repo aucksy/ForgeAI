@@ -148,11 +148,37 @@ describe("R-557: the owner's 14 Nov black screens are counted, and the log names
     expect(watchAppVersions('{"ok":true,"nodes":[{"nodeId":"a","hasApp":true,"versionName":null,"versionCode":null}]}')).toBe('older than 0.77.0');
     expect(watchAppVersions('{"ok":true,"nodes":[{"nodeId":"a","hasApp":true,"versionName":"0.78.0","versionCode":1000078000},{"nodeId":"b","hasApp":false}]}')).toBe('0.78.0');
     expect(watchAppVersions('{"ok":true,"nodes":[{"nodeId":"a","hasApp":true,"versionName":"Aakash 1"}]}')).toBe('unknown');
-    expect(watchAppVersions('{"ok":false,"nodes":[]}')).toBe('');
-    expect(watchAppVersions(null)).toBe('');
-    expect(watchAppVersions('junk')).toBe('');
+    // R-575: never empty any more; it says why nothing was found.
+    expect(watchAppVersions('{"ok":false,"nodes":[]}')).toBe('not found (why: Wear OS could not say)');
+    expect(watchAppVersions(null)).toBe('not found (why: no answer)');
+    expect(watchAppVersions('junk')).toBe('not found (why: unreadable answer)');
     const head = watchLogText([{ at: Date.UTC(2026, 10, 14, 7, 18), log: HIS }], undefined, 'older than 0.77.0').split('\n')[0];
     expect(head).toBe('Watch screen log (R-441), written 11-14 07:18 UTC. Watch app: older than 0.77.0.');
+  });
+
+  it('R-575: the head always says what the phone found and how it read it', () => {
+    // His case: the capability empty, his watch found by its diary, no version item (an old watch app).
+    expect(
+      watchAppVersions(
+        '{"ok":true,"why":"nodes=1 capR=0 capA=0 ver=0 diag=1 asked=1 got=0","nodes":[{"nodeId":"X","hasApp":true,"connected":true,"versionName":null}]}',
+      ),
+    ).toBe('older than 0.77.0 (read: nodes=1 capR=0 capA=0 ver=0 diag=1 asked=1 got=0)');
+    expect(watchAppVersions('{"ok":true,"why":"nodes=0 capR=0 capA=0 ver=0 diag=1","nodes":[{"nodeId":"X","hasApp":true,"connected":false,"versionName":null}]}')).toBe(
+      'older than 0.77.0 (not connected) (read: nodes=0 capR=0 capA=0 ver=0 diag=1)',
+    );
+    expect(watchAppVersions('{"ok":true,"why":"nodes=1 capR=0 capA=0 ver=0 diag=0","nodes":[{"nodeId":"X","hasApp":false}]}')).toBe(
+      'not found (why: nodes=1 capR=0 capA=0 ver=0 diag=0)',
+    );
+    expect(watchAppVersions('{"ok":true,"nodes":[]}')).toBe('not found (why: no watch with the app)');
+    expect(watchAppVersions('{"ok":false,"why":"nodes=fail:8 capR=fail:8 capA=? ver=? diag=? late","nodes":[]}')).toBe(
+      'not found (why: nodes=fail:8 capR=fail:8 capA=? ver=? diag=? late)',
+    );
+    // A why in any other shape (a name) never reaches the log.
+    expect(watchAppVersions('{"ok":false,"why":"Sam\'s watch","nodes":[]}')).toBe('not found (why: Wear OS could not say)');
+    const head = watchLogText([{ at: Date.UTC(2026, 10, 15, 13, 27), log: HIS }], undefined, 'not found (why: timeout)', '11-15 13:20 UTC unknown, no pop-up: watch unknown').split('\n')[0];
+    expect(head).toBe(
+      'Watch screen log (R-441), written 11-15 13:27 UTC. Watch app: not found (why: timeout). Pop-up: 11-15 13:20 UTC unknown, no pop-up: watch unknown.',
+    );
   });
 
   it('sendWatchLog puts the version in the log it sends', async () => {
@@ -169,6 +195,8 @@ describe("R-557: the owner's 14 Nov black screens are counted, and the log names
     });
     const text = (JSON.parse(sent[0]) as { text: string }).text;
     expect(text.split('\n')[0]).toContain('Watch app: older than 0.77.0.');
+    // R-575: with no pop-up check yet in this run, the head says so.
+    expect(text.split('\n')[0]).toContain('Pop-up: no check in this app run.');
     expect(text).toContain('Off instead of dim: 4');
   });
 });

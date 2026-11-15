@@ -21,8 +21,14 @@ import { nativeUpdateOnWatch, nativeWatchVersions } from './restCard';
 export interface WatchNode {
   nodeId: string;
   displayName: string;
-  /** The MettleUp watch app is on it (its capability). */
+  /** The MettleUp watch app is on it (R-575: its capability, or an item it wrote on this phone). */
   hasApp: boolean;
+  /**
+   * R-575: connected now. False = a watch with the app that wrote items here lately but is out of reach
+   * (Bluetooth off, the connected-watches question failed): the pop-up still shows; "Update on watch"
+   * then answers 'none' ("Your watch is not connected"). An older phone build sends no field: true.
+   */
+  connected: boolean;
   versionName: string | null;
   versionCode: number | null;
 }
@@ -31,6 +37,15 @@ export interface WatchNode {
 export interface WatchVersions {
   ok: boolean;
   nodes: WatchNode[];
+  /** R-575: how the phone read it, step by step ("nodes=1 capR=0 capA=0 ver=0 diag=1"); '' from an older build. */
+  why: string;
+}
+
+/** R-575: the native "why", kept only in its known shape (step names, numbers, fail codes). PURE. */
+export function cleanWhy(raw: unknown): string {
+  if (typeof raw !== 'string') return '';
+  const t = raw.trim().slice(0, 160);
+  return /^[A-Za-z0-9=:?_ .-]*$/.test(t) ? t : '';
 }
 
 /**
@@ -57,8 +72,9 @@ export function parseWatchVersions(raw: unknown): WatchVersions | null {
     return null;
   }
   if (typeof o !== 'object' || o === null) return null;
-  const rec = o as { ok?: unknown; nodes?: unknown };
-  if (rec.ok !== true) return { ok: false, nodes: [] };
+  const rec = o as { ok?: unknown; nodes?: unknown; why?: unknown };
+  const why = cleanWhy(rec.why);
+  if (rec.ok !== true) return { ok: false, nodes: [], why };
   if (!Array.isArray(rec.nodes)) return null;
   const nodes: WatchNode[] = [];
   for (const n of rec.nodes as unknown[]) {
@@ -69,11 +85,12 @@ export function parseWatchVersions(raw: unknown): WatchVersions | null {
       nodeId: x.nodeId,
       displayName: typeof x.displayName === 'string' ? x.displayName : '',
       hasApp: x.hasApp === true,
+      connected: x.connected !== false,
       versionName: typeof x.versionName === 'string' && x.versionName.trim() !== '' ? x.versionName.trim() : null,
       versionCode: typeof x.versionCode === 'number' && Number.isFinite(x.versionCode) ? x.versionCode : null,
     });
   }
-  return { ok: true, nodes };
+  return { ok: true, nodes, why };
 }
 
 /** One watch with the app against the phone: older (or no version) / same-or-newer / cannot say. PURE. */
@@ -152,6 +169,21 @@ export async function readWatchUpdate(
 ): Promise<{ state: WatchUpdateState; stale: WatchNode[]; read: WatchVersions | null }> {
   const read = await readWatchVersions();
   return { state: watchUpdateState(phoneVersion, read), stale: watchesNeedingUpdate(phoneVersion, read), read };
+}
+
+// ------------------------------------------------------------------ R-575: the pop-up's last decision
+let popupNote = '';
+
+/** R-575: the pop-up's last decision, for the watch log's head ("" = no check yet in this app run). */
+export function lastPopupNote(): string {
+  return popupNote;
+}
+
+/** R-575: keeps the pop-up's decision for the watch log and says it once in the console (tagged). */
+export function notePopup(line: string): void {
+  if (line === popupNote) return;
+  popupNote = line;
+  console.warn(`[watch update] ${line}`);
 }
 
 /** "Update on watch": opens the Play Store on MettleUp on [nodeId] (null = every watch with the app). Never throws. */

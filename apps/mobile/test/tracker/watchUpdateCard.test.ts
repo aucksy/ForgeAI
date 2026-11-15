@@ -13,7 +13,9 @@ import type { WatchNode } from '@/tracker/services/watchUpdate';
 import {
   SNOOZE_MS,
   WATCH_UPDATE_WORDS,
+  cardDecision,
   cardShows,
+  popupLine,
   oldestWatchVersion,
   qaWatchLink,
   qaWatchRead,
@@ -35,6 +37,7 @@ const node = (over: Partial<WatchNode> = {}): WatchNode => ({
   nodeId: 'w1',
   displayName: 'Pixel Watch 3',
   hasApp: true,
+  connected: true,
   versionName: '0.76.0',
   versionCode: null,
   ...over,
@@ -229,5 +232,49 @@ describe('wiring (read as text)', () => {
     expect(src).toContain("useSegments()[0] === '(tabs)'");
     expect(src).toMatch(/workoutOpen: workout/);
     expect(src).toMatch(/!workout/);
+  });
+
+  it('R-575: it waits for another pop-up, tries a bad read again and notes each decision', () => {
+    const src = readFileSync(resolve(root, 'src/components/WatchUpdatePrompt.tsx'), 'utf8');
+    expect(src).toContain('useConfirmStore((s) => s.request != null)');
+    expect(src).toMatch(/otherPopup,/);
+    expect(src).toContain('RETRY_MS = [20_000, 120_000]');
+    expect(src).toMatch(/r\.state === 'unknown' \|\| r\.state === 'none'/);
+    expect(src).toContain('notePopup(popupLine(');
+    // The log's head reads the same note.
+    const diag = readFileSync(resolve(root, 'src/lib/watchDiag.ts'), 'utf8');
+    expect(diag).toContain('lastPopupNote');
+  });
+});
+
+describe('R-575: the decision says why', () => {
+  it('each rule names itself', () => {
+    expect(cardDecision(due)).toEqual({ shows: true, why: 'shown' });
+    expect(cardDecision({ ...due, state: 'unknown' })).toEqual({ shows: false, why: 'no pop-up: watch unknown' });
+    expect(cardDecision({ ...due, state: 'none' }).why).toBe('no pop-up: watch none');
+    expect(cardDecision({ ...due, snooze: undefined }).why).toBe('waits: Later not read yet');
+    expect(cardDecision({ ...due, workoutOpen: true }).why).toBe('waits: workout open');
+    expect(cardDecision({ ...due, phoneUpdateWaits: true }).why).toBe('waits: phone update first');
+    expect(cardDecision({ ...due, snooze: { version: '0.77.0', at: NOW } }).why).toBe('hidden: Later (24 hours)');
+    expect(cardDecision({ ...due, snooze: { version: '0.77.0', at: NOW, tapped: true } }).why).toBe('hidden: Update on watch tapped for this version');
+  });
+
+  it('another pop-up up (a question sheet) holds it; it shows once that closes', () => {
+    expect(cardDecision({ ...due, otherPopup: true })).toEqual({ shows: false, why: 'waits: another pop-up' });
+    expect(cardShows({ ...due, otherPopup: true })).toBe(false);
+    expect(cardShows({ ...due, otherPopup: false })).toBe(true);
+  });
+
+  it('the log line is short, timed, and carries the read only when it was not update-ready', () => {
+    const at = Date.UTC(2026, 10, 15, 13, 20);
+    expect(popupLine(at, 'update-ready', 'shown', 'nodes=1 capR=1 capA=1 ver=0 diag=1')).toBe('11-15 13:20 UTC update-ready, shown');
+    expect(popupLine(at, 'unknown', 'no pop-up: watch unknown', 'timeout')).toBe('11-15 13:20 UTC unknown, no pop-up: watch unknown (read: timeout)');
+    expect(popupLine(at, 'none', 'no pop-up: watch none')).toBe('11-15 13:20 UTC none, no pop-up: watch none');
+  });
+
+  it('the QA stand-in reads as a connected watch', () => {
+    const r = qaWatchRead('old', '0.78.0');
+    expect(r?.nodes[0].connected).toBe(true);
+    expect(r?.why).toBe('qa');
   });
 });

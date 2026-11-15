@@ -344,4 +344,115 @@ class WearWireTest {
     assertTrue(none.getBoolean("ok"))
     assertEquals(0, none.getJSONArray("watches").length())
   }
+  // ------------------------------------------------------------------ R-575: every signal of "has the app"
+  private val now = 1_763_200_000_000L
+  private fun sig(
+    connected: List<Pair<String, String>>? = emptyList(),
+    capR: List<Pair<String, String>>? = emptyList(),
+    capA: List<String>? = emptyList(),
+    ver: Set<String>? = emptySet(),
+    diag: Map<String, Long>? = emptyMap(),
+    local: String? = "phone",
+  ) = WearWire.Signals(connected, capR, capA, ver, diag, local)
+
+  @Test
+  fun hisCaseCapabilityEmptyDiaryFromTheWatchCountsAsTheApp() {
+    // 15 Nov 2026, feedback 105: connected watch X, capability empty, X's diary 2 minutes old, no version item.
+    val s = sig(connected = listOf("X" to "Watch"), diag = mapOf("X" to now - 120_000L))
+    val seen = WearWire.watchesSeen(s, now)
+    assertEquals(listOf(WearWire.WatchSeen("X", "Watch", hasApp = true, connected = true)), seen)
+    val o = JSONObject(WearWire.watchVersionsJson(WearWire.versionsOk(s, seen), seen, emptyMap(), WearWire.signalsWhy(s, emptyMap())))
+    assertTrue(o.getBoolean("ok"))
+    val w = o.getJSONArray("nodes").getJSONObject(0)
+    assertTrue(w.getBoolean("hasApp"))
+    assertTrue(w.getBoolean("connected"))
+    assertTrue(w.isNull("versionName"))
+    assertEquals("nodes=1 capR=0 capA=0 ver=0 diag=1", o.getString("why"))
+    // It is pinged (a 0.77.0+ watch would reply with its version item; his old one drops it).
+    assertEquals(listOf("X"), WearWire.pingTargets(seen, emptyMap()))
+  }
+
+  @Test
+  fun eachSignalAloneSaysTheAppIsThere() {
+    val c = listOf("X" to "Watch")
+    assertTrue(WearWire.watchesSeen(sig(connected = c, capR = c), now).single().hasApp)
+    assertTrue(WearWire.watchesSeen(sig(connected = c, capA = listOf("X")), now).single().hasApp)
+    assertTrue(WearWire.watchesSeen(sig(connected = c, ver = setOf("X")), now).single().hasApp)
+    assertTrue(WearWire.watchesSeen(sig(connected = c, diag = mapOf("X" to 1L)), now).single().hasApp)
+    // No signal: a connected watch without the app (F67's "Install on watch").
+    val none = WearWire.watchesSeen(sig(connected = c), now).single()
+    assertTrue(!none.hasApp && none.connected)
+  }
+
+  @Test
+  fun aFailedStepIsNotANo() {
+    // Capability lookups failed (null) and connectedNodes failed: the watch's own diary still finds it.
+    val s = sig(connected = null, capR = null, capA = null, diag = mapOf("X" to now - 60_000L))
+    val seen = WearWire.watchesSeen(s, now)
+    assertEquals(listOf(WearWire.WatchSeen("X", "", hasApp = true, connected = false)), seen)
+    assertTrue(WearWire.versionsOk(s, seen))
+    assertEquals("nodes=fail:17 capR=fail:8 capA=? ver=0 diag=1", WearWire.signalsWhy(s, mapOf("nodes" to "17", "capR" to "8")))
+    // connectedNodes failed but the reachable capability answered: that watch is connected.
+    val r = WearWire.watchesSeen(sig(connected = null, capR = listOf("X" to "Watch")), now).single()
+    assertTrue(r.hasApp && r.connected)
+    // Nothing answered and nothing found: Wear OS could not say (ok false), never "no watch".
+    val nothing = sig(connected = null, capR = null, capA = null, ver = null, diag = null)
+    assertTrue(!WearWire.versionsOk(nothing, WearWire.watchesSeen(nothing, now)))
+    assertEquals("nodes=? capR=? capA=? ver=? diag=?", WearWire.signalsWhy(nothing, emptyMap()))
+  }
+
+  @Test
+  fun aWatchNotConnectedCountsOnlyWithAFreshDiary() {
+    val week = WearWire.UNREACHED_FRESH_MS
+    val fresh = WearWire.watchesSeen(sig(diag = mapOf("X" to now - week + 60_000L)), now)
+    assertEquals(listOf(WearWire.WatchSeen("X", "", hasApp = true, connected = false)), fresh)
+    // A watch the member no longer has: an old diary, or FILTER_ALL / a version item alone, is not reported.
+    assertTrue(WearWire.watchesSeen(sig(diag = mapOf("X" to now - week - 60_000L)), now).isEmpty())
+    assertTrue(WearWire.watchesSeen(sig(capA = listOf("X"), ver = setOf("X")), now).isEmpty())
+    assertTrue(WearWire.watchesSeen(sig(diag = mapOf("X" to 0L)), now).isEmpty())
+    // Nothing connected, nothing written: no watch (ok, "none").
+    val empty = sig()
+    assertTrue(WearWire.versionsOk(empty, WearWire.watchesSeen(empty, now)))
+    assertEquals(0, JSONObject(WearWire.watchVersionsJson(true, emptyList(), emptyMap(), "")).getJSONArray("nodes").length())
+  }
+
+  @Test
+  fun thePhonesOwnNodeNeverCounts() {
+    val s = sig(connected = listOf("phone" to "Me", "X" to "Watch"), diag = mapOf("phone" to now, "X" to now), ver = setOf("phone"), local = "phone")
+    assertEquals(listOf("X"), WearWire.watchesSeen(s, now).map { it.nodeId })
+  }
+
+  @Test
+  fun connectedWatchesComeFirstWithoutRepeats() {
+    val s = sig(
+      connected = listOf("A" to "One", "A" to "One"),
+      capR = listOf("B" to "Two", "A" to "One"),
+      diag = mapOf("C" to now - 1_000L, "D" to now - 500L, "A" to now),
+    )
+    val seen = WearWire.watchesSeen(s, now)
+    assertEquals(listOf("A", "B", "D", "C"), seen.map { it.nodeId })
+    assertEquals(listOf(true, true, false, false), seen.map { it.connected })
+    val (connected, withApp) = WearWire.connectedAndWithApp(seen)
+    assertEquals(listOf("A", "B"), connected)
+    assertEquals(listOf("A", "B"), withApp)
+    // Only connected watches without a version item are pinged.
+    assertEquals(listOf("B"), WearWire.pingTargets(seen, mapOf("A" to WearWire.WatchVersion("0.77.0", 1L))))
+  }
+
+  @Test
+  fun theVersionGoesOnlyToAWatchWithTheAppAndTheWhyIsShort() {
+    val seen = listOf(WearWire.WatchSeen("A", "One", true, true), WearWire.WatchSeen("B", "Two", false, true))
+    val v = mapOf("A" to WearWire.WatchVersion("0.77.0", 7L), "B" to WearWire.WatchVersion("0.77.0", 7L))
+    val o = JSONObject(WearWire.watchVersionsJson(true, seen, v, "x".repeat(400)))
+    assertEquals("0.77.0", o.getJSONArray("nodes").getJSONObject(0).getString("versionName"))
+    assertTrue(o.getJSONArray("nodes").getJSONObject(1).isNull("versionName"))
+    assertEquals(160, o.getString("why").length)
+    // ok false carries no watches, only the why.
+    val bad = JSONObject(WearWire.watchVersionsJson(false, seen, v, "timeout"))
+    assertTrue(!bad.getBoolean("ok"))
+    assertEquals(0, bad.getJSONArray("nodes").length())
+    assertEquals("timeout", bad.getString("why"))
+    assertEquals("cap=fail:SecurityException", WearWire.step("cap", null, "SecurityException"))
+    assertEquals("cap=fail:error", WearWire.step("cap", 2, "!!"))
+  }
 }

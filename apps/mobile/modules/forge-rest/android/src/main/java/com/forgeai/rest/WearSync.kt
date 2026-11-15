@@ -372,38 +372,28 @@ object WearSync {
   }
 
   /**
-   * F67: the connected watches and the ones with the MettleUp watch app (capability
-   * [CAP_WATCH_APP]); [onFail] with a reason if Wear OS cannot say.
+   * F67: the connected watches and the ones with the MettleUp watch app; [onFail] with a reason if Wear
+   * OS cannot say. R-575: "with the app" is any signal of WearWire's rule table (the capability reachable
+   * or all, or an item the watch wrote), so "Update on watch" and "Install on watch" also reach a watch
+   * whose capability is missing.
    */
   private fun askWatches(app: Context, onFail: (String) -> Unit, then: (connected: List<String>, withApp: List<String>) -> Unit) {
     if (unavailable()) {
       onFail("Wear Data Layer paused (not on this phone)")
       return
     }
-    try {
-      Wearable.getNodeClient(app).connectedNodes
-        .addOnSuccessListener { nodes ->
-          val connected = nodes.map { it.id }
-          if (connected.isEmpty()) {
-            then(connected, emptyList())
-            return@addOnSuccessListener
-          }
-          Wearable.getCapabilityClient(app).getCapability(CAP_WATCH_APP, CapabilityClient.FILTER_REACHABLE)
-            .addOnSuccessListener { info -> then(connected, info.nodes.map { it.id }) }
-            .addOnFailureListener { e ->
-              failed(e, "watch app not looked up (install)")
-              onFail("capability lookup failed")
-            }
-        }
-        .addOnFailureListener { e ->
-          failed(e, "connected watches not read (install)")
-          onFail("connected watches not read")
-        }
-    } catch (e: Exception) {
-      // No Play services at all lands here on some phones.
-      Log.w(TAG, "watches not looked up (install)", e)
-      onFail("lookup threw")
-    }
+    // R-575: every signal at once (WatchSignalRead, WearWire's rule table), not the capability alone.
+    WatchSignalRead(app, FIRST_READ_MS) { r ->
+      val seen = WearWire.watchesSeen(r.signals, System.currentTimeMillis())
+      val why = WearWire.signalsWhy(r.signals, r.errs) + if (r.late) " late" else ""
+      if (!WearWire.versionsOk(r.signals, seen)) {
+        onFail("Wear OS could not say ($why)")
+      } else {
+        val (connected, withApp) = WearWire.connectedAndWithApp(seen)
+        Log.i(TAG, "watches: ${connected.size} connected, ${withApp.size} with the app ($why)")
+        then(connected, withApp)
+      }
+    }.run()
   }
 
   /**
@@ -492,6 +482,11 @@ object WearSync {
   // ------------------------------------------------------------------ watch update ready (10 Nov 2026)
   /** A watch that has the app but no version item is asked to write it; read again after this. */
   private const val VERSION_REREAD_MS = 2_500L
+  /**
+   * R-575: how long the signals may take (WatchSignalRead) before what answered is used; with the ask and
+   * [VERSION_REREAD_MS] it stays inside [ASK_TIMEOUT_MS].
+   */
+  private const val FIRST_READ_MS = 4_500L
 
   /**
    * Watch update ready (10 Nov 2026): every connected watch as JSON (WearWire.watchVersionsJson:
@@ -501,56 +496,68 @@ object WearSync {
    * closed. A watch with the app but no item is sent [WearWire.PATH_WATCH_VERSION_ASK] (a new build
    * installed and never opened writes it then) and read once more; an older watch build ignores the
    * message, so its version stays null = "an update is ready". Never throws; [done] is called once.
+   * R-575 (15 Nov 2026): "has the app" is any signal of WearWire's rule table, every watch carries
+   * "connected", and the answer carries "why" (each step's count or failure: "nodes=1 capR=0 capA=0
+   * ver=0 diag=1 asked=1 got=0"; "timeout" / "paused" when nothing could be read).
    */
   fun watchVersions(ctx: Context, done: (String) -> Unit) {
     val app = ctx.applicationContext
     val once = Once(done)
     main.postDelayed({
       if (once.pending()) Log.w(TAG, "watch versions: Wear OS did not answer in time")
-      once.answer(WearWire.WATCH_VERSIONS_UNKNOWN)
+      once.answer(WearWire.watchVersionsJson(false, emptyList(), emptyMap(), "timeout"))
     }, ASK_TIMEOUT_MS)
     if (unavailable()) {
-      once.answer(WearWire.WATCH_VERSIONS_UNKNOWN)
+      // R-575: a put failed with API_NOT_CONNECTED in the last RETRY_MS; the answer says so.
+      once.answer(WearWire.watchVersionsJson(false, emptyList(), emptyMap(), "paused"))
       return
     }
+    // R-575: every signal at once (WatchSignalRead, WearWire's rule table), with a "why" in the answer.
+    WatchSignalRead(app, FIRST_READ_MS) { r ->
+      val now = System.currentTimeMillis()
+      val seen = WearWire.watchesSeen(r.signals, now)
+      val ok = WearWire.versionsOk(r.signals, seen)
+      val why = WearWire.signalsWhy(r.signals, r.errs) + if (r.late) " late" else ""
+      // The ping: a connected watch without a version item is asked to write it (a 0.77.0+ watch app
+      // answers with the item, even when its capability is missing); an older watch app drops the ask.
+      val ask = WearWire.pingTargets(seen, r.versions)
+      if (!ok || ask.isEmpty()) {
+        Log.i(TAG, "watch versions: ${seen.size} watch(es) ($why)")
+        once.answer(WearWire.watchVersionsJson(ok, seen, r.versions, why))
+      } else {
+        askForVersions(app, ask)
+        main.postDelayed({ rereadVersions(app, r, ask, why, once) }, VERSION_REREAD_MS)
+      }
+    }.run()
+  }
+
+  /**
+   * R-575: the version items again after the ask; a watch whose item appeared now counts as having the
+   * app (the ping's reply). A failed read keeps the first answer (the asked watches stay without a version).
+   */
+  private fun rereadVersions(app: Context, first: WatchSignalRead.Result, asked: List<String>, why: String, once: Once) {
+    val firstJson = {
+      val seen = WearWire.watchesSeen(first.signals, System.currentTimeMillis())
+      WearWire.watchVersionsJson(true, seen, first.versions, "$why asked=${asked.size} got=?")
+    }
     try {
-      Wearable.getNodeClient(app).connectedNodes
-        .addOnSuccessListener { nodes ->
-          val connected = nodes.map { it.id to (it.displayName ?: "") }
-          if (connected.isEmpty()) {
-            once.answer(WearWire.watchVersionsJson(connected, emptyList(), emptyMap()))
-            return@addOnSuccessListener
-          }
-          Wearable.getCapabilityClient(app).getCapability(CAP_WATCH_APP, CapabilityClient.FILTER_REACHABLE)
-            .addOnSuccessListener { info ->
-              val withApp = info.nodes.map { it.id }
-              readWatchVersions(app, { once.answer(WearWire.WATCH_VERSIONS_UNKNOWN) }) { versions ->
-                val ask = WearWire.versionsToAsk(connected.map { it.first }, withApp, versions)
-                if (ask.isEmpty()) {
-                  once.answer(WearWire.watchVersionsJson(connected, withApp, versions))
-                } else {
-                  askForVersions(app, ask)
-                  main.postDelayed({
-                    // A failed second read keeps the first (the asked watches stay without a version).
-                    readWatchVersions(app, { once.answer(WearWire.watchVersionsJson(connected, withApp, versions)) }) { again ->
-                      once.answer(WearWire.watchVersionsJson(connected, withApp, again))
-                    }
-                  }, VERSION_REREAD_MS)
-                }
-              }
-            }
-            .addOnFailureListener { e ->
-              failed(e, "watch app not looked up (versions)")
-              once.answer(WearWire.WATCH_VERSIONS_UNKNOWN)
-            }
+      Wearable.getDataClient(app).getDataItems(WatchSignalRead.pathUri(WearWire.PATH_WATCH_VERSION))
+        .addOnSuccessListener { buf ->
+          val (hosts, versions) = WatchSignalRead.readVersionItems(buf)
+          val s = first.signals.copy(versionHosts = first.signals.versionHosts.orEmpty() + hosts)
+          val seen = WearWire.watchesSeen(s, System.currentTimeMillis())
+          val got = asked.count { it in versions }
+          val full = "$why asked=${asked.size} got=$got"
+          Log.i(TAG, "watch versions: ${seen.size} watch(es) ($full)")
+          once.answer(WearWire.watchVersionsJson(true, seen, first.versions + versions, full))
         }
         .addOnFailureListener { e ->
-          failed(e, "connected watches not read (versions)")
-          once.answer(WearWire.WATCH_VERSIONS_UNKNOWN)
+          Log.w(TAG, "watch version items not read again", e)
+          once.answer(firstJson())
         }
     } catch (e: Exception) {
-      Log.w(TAG, "watch versions not looked up", e)
-      once.answer(WearWire.WATCH_VERSIONS_UNKNOWN)
+      Log.w(TAG, "watch version items not read again", e)
+      once.answer(firstJson())
     }
   }
 
@@ -563,37 +570,6 @@ object WearSync {
       } catch (e: Exception) {
         Log.w(TAG, "watch version ask not sent", e)
       }
-    }
-  }
-
-  /** Every watch's version item on this phone, by node id; [onFail] when the Data Layer cannot say. */
-  private fun readWatchVersions(app: Context, onFail: () -> Unit, then: (Map<String, WearWire.WatchVersion>) -> Unit) {
-    try {
-      // No host: the item at this path of every node.
-      val uri = Uri.Builder().scheme(PutDataRequest.WEAR_URI_SCHEME).path(WearWire.PATH_WATCH_VERSION).build()
-      Wearable.getDataClient(app).getDataItems(uri)
-        .addOnSuccessListener { buf ->
-          val out = HashMap<String, WearWire.WatchVersion>()
-          try {
-            for (item in buf) {
-              val node = item.uri.host ?: continue
-              val m = DataMapItem.fromDataItem(item).dataMap
-              WearWire.watchVersion(m.getString(WearWire.KEY_NAME), m.getLong(WearWire.KEY_CODE, 0L))?.let { out[node] = it }
-            }
-          } catch (e: Exception) {
-            Log.w(TAG, "a watch version item not read", e)
-          } finally {
-            buf.release()
-          }
-          then(out)
-        }
-        .addOnFailureListener { e ->
-          Log.w(TAG, "watch version items not read", e)
-          onFail()
-        }
-    } catch (e: Exception) {
-      Log.w(TAG, "watch version items not read", e)
-      onFail()
     }
   }
 

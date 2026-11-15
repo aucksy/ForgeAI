@@ -7,6 +7,72 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-575 (15 Nov 2026) "Your watch app has an update" never showed on his phone: every signal, a why, retries
+- The brief (15 Nov 2026): the pop-up never shows on his phone (0.78.0, OPPO CPH2873, Android 17) although his
+  watch runs a watch app older than 0.77.0. Later the same day: find the root cause and a fix for EVERY Wear OS
+  watch brand (Pixel, Galaxy Watch, OnePlus, TicWatch; Wear OS 3 to 6), several independent signals, no single
+  one deciding, retries, a "why" in the answer, the rule table written here.
+- **Proof (feedback row 105, 15 Nov 13:27 UTC):** the watch log's head line had NO "Watch app:" part, while the
+  same send read his watch's screen diary fine (150 lines, the newest 2 minutes old; "old watch app 23"). The
+  diary is a Data Layer item only our watch app writes, so package, signature and the Data Layer itself work.
+  "Watch app:" was empty when the native answer was ok:false (a failure, the 8 s timeout, the 5-minute
+  "Data Layer paused") OR no watch had hasApp. It cannot say which step gave it.
+- **Every step that could give "" (old code, one after another, the first failure ended the read):**
+  | step | how it gave "" | ruled out? |
+  |---|---|---|
+  | unavailable() pause (a put got API_NOT_CONNECTED in the last 5 min) | ok:false at once | yes: the diary read right after checks the same pause and answered |
+  | connectedNodes failed | ok:false | no |
+  | connectedNodes empty (a watch reconnecting: Google says up to 4 min after Doze or off-wrist) | nodes [] | no |
+  | capability (FILTER_REACHABLE) failed | ok:false | no |
+  | capability empty or without the watch's node id | hasApp false | no |
+  | version items read failed | ok:false | unlikely: the diary items read the same way worked |
+  | the whole chain past 8 s (a slow Wear OS on a busy phone; 2.5 s of it is the ask-and-reread) | ok:false | no |
+  | the JS side: no native function / an error | null | yes: 0.78.0 exports watchVersions |
+- **Root-cause candidates (research: developer.android.com discover-devices and messages pages, the
+  CapabilityClient reference, Samsung developer forum and Stack Overflow threads):**
+  | candidate | what would prove it | handled now? |
+  |---|---|---|
+  | resource shrinking removed the watch's android_wear_capabilities array (release builds shrink; nothing in code names it; tools:keep is in values/wear.xml) | aapt2 dump of the release watch APK | proven either way by the new wear-build step (run below) |
+  | a stale capability cache after a watch app update or a phone app reinstall (reports, no official note) | capR/capA = 0 while nodes = 1 in the next log | yes: items + the ping |
+  | FILTER_REACHABLE says not reachable while the watch is paired (cloud-only link, reconnecting) | capR 0, capA 1 | yes: FILTER_ALL counts for a connected watch |
+  | no connected node at that moment (reconnect after Doze, Bluetooth off; OEM battery savers such as ColorOS on his OPPO hold back Play services) | nodes=0 with diag=1 | yes: a watch with a fresh diary is reported "not connected" |
+  | Wear OS slow or failing on the phone (timeout, a status code) | late / fail:<code> in the why | yes: all steps at once, 2 retries with backoff, a partial answer instead of nothing |
+  | app ID or signing mismatch (capabilities and items are per app) | items would not sync either | ruled out: his diary synced |
+  | Galaxy Watch / OEM pairing apps (Galaxy Wearable) | same signals; capability and items are Play services, not the OEM app | same rules cover it |
+- **The rule table (WearWire.watchesSeen; a watch has the app when ANY signal says so, "no app" needs every
+  signal that answered to say no; a failed step is never a "no"):**
+  | signal | "has the app" | "connected now" |
+  |---|---|---|
+  | NodeClient.connectedNodes | - | yes |
+  | capability forgeai_watch_app, FILTER_REACHABLE | yes | yes |
+  | the same, FILTER_ALL | yes, for a connected watch | - |
+  | its /forge/watch-version item (0.77.0 on) | yes, with the version | - |
+  | its /forge/diag item (every watch app since 5 Nov, 0.76.0 included) | yes | - |
+  | the ping: /forge/watch-version-ask to every connected watch without a version item; the item appears (0.77.0+) | yes | yes |
+  A watch NOT connected counts only with a diary under 7 days old (a watch he no longer owns would otherwise ask
+  for ever); FILTER_ALL or a version item alone never brings in an unconnected watch. The phone's own node never
+  counts. ok:false only when connectedNodes AND the reachable capability both failed and nothing was found.
+  Each step is tried 3 times at most (0.5 s, 1.5 s backoff) inside a 4.5 s budget, then the ask + 2.5 s reread,
+  inside the old 8 s cap. The same rules now feed "Update on watch" and F67 "Install on watch", so the Play
+  Store also opens on a watch whose capability is missing. probeWatch (the rest-alert bridging) is unchanged.
+- **The answer's why:** "nodes=1 capR=0 capA=0 ver=0 diag=1 asked=1 got=0" (counts; fail:<status code>; ? = no
+  answer; late; timeout; paused). No node id, no watch name. The watch log head now ALWAYS says "Watch app:
+  0.77.0 (read: ...)", "older than 0.77.0 (not connected) (read: ...)" or "not found (why: ...)", and "Pop-up:
+  <time> <state>, <reason>" (shown / waits: phone update first / waits: workout open / waits: another pop-up /
+  hidden: Later (24 hours) / hidden: Update on watch tapped for this version / waits: not on the main tabs),
+  also in the console as "[watch update] ...".
+- **The pop-up itself:** an 'unknown' or 'none' read is tried again after 20 s and 2 min (before: one bad read
+  hid it for 6 hours). It waits while another pop-up (a question sheet, the free month's notice) is up. The
+  "What's new" after a phone update is NOT a pop-up here: it is the Workout tab's "New in this version" card,
+  which stays until he closes it; waiting for it could hide the watch pop-up for a whole version, so it does not.
+  The phone's own update screen (UpdatePrompt) already held it (phonePopup).
+- **Tests:** WearWireTest (his exact case: capability empty, diary from node X, no version item -> hasApp true,
+  version null, pinged; each signal alone; a failed step is not a no; fresh-diary rule; own node; order),
+  watchUpdate / watchDiag / watchUpdateCard tests (parse, the head line, the decision and its reasons).
+  Cloud runs: RESULTS-BELOW.
+- **Only his real watch can confirm** the pop-up shows, and his next "Add my watch's screen log" says which signal
+  found it (no cloud phone can pair a real watch).
+
 ## R-572. "Edit exercise" / "New exercise" redesigned: one Details card of rows, Save pinned (15 Nov 2026)
 - He said (15 Nov 2026): "Yes go with A" (the drawn option A of the exercise form: the name on top, one "Details"
   card of rows that each open a sheet, one photo-or-video card with a +, Save fixed at the bottom).

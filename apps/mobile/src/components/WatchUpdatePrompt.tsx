@@ -11,6 +11,11 @@
  * drawn watch shows that page's Update button and the sheet says "Check your watch". Anything else
  * (no watch now, the watch refused, a timeout) gets the plain fallback: search MettleUp on the watch.
  * It scrolls: on a short phone at large text the buttons are below the fold, never cut off.
+ * R-575 (15 Nov 2026): a read that says 'unknown' or 'none' is tried again after 20 s and 2 min (a watch
+ * can take minutes to reconnect after the phone wakes; before, one bad read hid the pop-up for 6 hours).
+ * Each decision, with its reason, goes to the watch log's head (watchUpdate.ts notePopup). It waits while
+ * another pop-up (a question sheet) is up. The Workout tab's "New in this version" card is not a pop-up
+ * (it stays in the list until the member closes it), so the watch pop-up does not wait for it.
  */
 import Constants from 'expo-constants';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -20,16 +25,25 @@ import { AppState, Linking, Modal, Pressable, ScrollView, Text, View } from 'rea
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Circle, Defs, Rect, Stop, LinearGradient as SvgGradient } from 'react-native-svg';
 
-import { PrimaryButton } from '@/components/ui';
+import { PrimaryButton, useConfirmStore } from '@/components/ui';
 import { hasUpdateStandIn } from '@/lib/updatePrompt';
 import { popupBarsFollowLook } from '@/theme/appearance';
 import { useAppUpdate } from '@/lib/updateStore';
 import { color, darkColor, gradients, radius, space, type } from '@/theme/tokens';
 import { useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
-import { readWatchUpdate, updateOnWatch, watchUpdateState, watchesNeedingUpdate, type UpdateResult, type WatchNode, type WatchUpdateState } from '@/tracker/services/watchUpdate';
+import {
+  notePopup,
+  readWatchUpdate,
+  updateOnWatch,
+  watchUpdateState,
+  watchesNeedingUpdate,
+  type UpdateResult,
+  type WatchNode,
+  type WatchUpdateState,
+} from '@/tracker/services/watchUpdate';
 import {
   WATCH_UPDATE_WORDS as W,
-  cardShows,
+  cardDecision,
   oldestWatchVersion,
   qaForgetWatchSnooze,
   qaReadWatchStandIn,
@@ -38,6 +52,7 @@ import {
   qaWatchRead,
   qaWriteWatchStandIn,
   qaWriteWatchTap,
+  popupLine,
   readWatchSnooze,
   shortVersion,
   snoozeMark,
@@ -53,6 +68,8 @@ import {
 const RECHECK_MS = 6 * 60 * 60 * 1000;
 /** Let the phone's own update check speak first (it goes first, watchUpdateCard.ts). */
 const FIRST_CHECK_DELAY_MS = 4000;
+/** R-575: after an 'unknown' or 'none' read, ask again this long later (once each). */
+const RETRY_MS = [20_000, 120_000];
 
 /** The page colour at `alpha`: the veil over the app behind (both looks). */
 function bgTint(alpha: number): string {
@@ -66,6 +83,8 @@ interface Found {
   state: WatchUpdateState;
   stale: WatchNode[];
   at: number;
+  /** R-575: the native read's steps ('' for the QA stand-in or an older build). */
+  why: string;
 }
 
 export function WatchUpdatePrompt() {
@@ -75,25 +94,40 @@ export function WatchUpdatePrompt() {
   const phoneKind = useAppUpdate((s) => s.kind);
   const phonePopup = useAppUpdate((s) => s.popup);
   const onTabs = useSegments()[0] === '(tabs)';
+  const otherPopup = useConfirmStore((s) => s.request != null);
   const [found, setFound] = useState<Found | null>(null);
   const [snooze, setSnooze] = useState<Snooze | null | undefined>(undefined);
   const [step, setStep] = useState<CardStep>('offer');
   const [busy, setBusy] = useState(false);
   const [closed, setClosed] = useState(false);
   const lastCheck = useRef(0);
+  const retry = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const check = useCallback(async () => {
-    lastCheck.current = Date.now();
-    const s = await readWatchSnooze();
-    const fake = qa ? qaWatchRead(await qaReadWatchStandIn(), phoneVersion) : null;
-    const r = fake
-      ? { state: watchUpdateState(phoneVersion, fake), stale: watchesNeedingUpdate(phoneVersion, fake) }
-      : await readWatchUpdate(phoneVersion);
-    setSnooze(s);
-    setStep('offer');
-    setClosed(false);
-    setFound({ state: r.state, stale: r.stale, at: Date.now() });
-  }, [qa, phoneVersion]);
+  const check = useCallback(
+    async (attempt = 0) => {
+      lastCheck.current = Date.now();
+      if (retry.current) clearTimeout(retry.current);
+      retry.current = null;
+      const s = await readWatchSnooze();
+      const fake = qa ? qaWatchRead(await qaReadWatchStandIn(), phoneVersion) : null;
+      const r = fake
+        ? { state: watchUpdateState(phoneVersion, fake), stale: watchesNeedingUpdate(phoneVersion, fake), read: fake }
+        : await readWatchUpdate(phoneVersion);
+      setSnooze(s);
+      setStep('offer');
+      setClosed(false);
+      setFound({ state: r.state, stale: r.stale, at: Date.now(), why: r.read?.why ?? '' });
+      // R-575: a watch reconnecting, or a slow Wear OS, gets two more tries (not 6 hours).
+      const wait = RETRY_MS[attempt];
+      if (!fake && wait != null && (r.state === 'unknown' || r.state === 'none')) {
+        retry.current = setTimeout(() => {
+          retry.current = null;
+          void check(attempt + 1).catch((e: unknown) => console.warn('[watch update] the check failed', e));
+        }, wait);
+      }
+    },
+    [qa, phoneVersion],
+  );
 
   useEffect(() => {
     const run = () => void check().catch((e: unknown) => console.warn('[watch update] the check failed', e));
@@ -104,6 +138,7 @@ export function WatchUpdatePrompt() {
     });
     return () => {
       clearTimeout(first);
+      if (retry.current) clearTimeout(retry.current);
       sub.remove();
     };
   }, [check]);
@@ -133,18 +168,37 @@ export function WatchUpdatePrompt() {
     if (workout && found) setClosed(true);
   }, [workout, found]);
 
-  const due =
-    found != null &&
-    cardShows({
-      state: found.state,
-      snooze,
-      phoneVersion,
-      now: found.at,
-      workoutOpen: workout,
-      phoneUpdateWaits: phoneKind != null || phonePopup,
-    });
+  const decision =
+    found != null
+      ? cardDecision({
+          state: found.state,
+          snooze,
+          phoneVersion,
+          now: found.at,
+          workoutOpen: workout,
+          phoneUpdateWaits: phoneKind != null || phonePopup,
+          otherPopup,
+        })
+      : null;
+  const due = decision?.shows === true;
   // After the tap the member reads the answer even if the phone's own update turned up meanwhile.
   const visible = !closed && onTabs && !workout && found != null && (step !== 'offer' || due);
+  // R-575: why it is (not) up, once per change, for the watch log and the console.
+  const reason =
+    step !== 'offer'
+      ? `after Update on watch: ${step}`
+      : !decision
+        ? ''
+        : !decision.shows
+          ? decision.why
+          : closed
+            ? 'closed'
+            : !onTabs
+              ? 'waits: not on the main tabs'
+              : 'shown';
+  useEffect(() => {
+    if (found && reason) notePopup(popupLine(found.at, found.state, reason, found.why));
+  }, [found, reason]);
   if (!found || !phoneVersion) return null;
 
   // R-444: after "Update on watch" (step past 'offer'), "Got it" / back closes it for this phone version for good.

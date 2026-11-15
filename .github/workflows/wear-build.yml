@@ -153,6 +153,22 @@ jobs:
           grep -q "versionCode='${{ steps.version.outputs.wear_code }}'" <<< "$BADGING" \
             || { echo "::error::The watch APK's versionCode is not ${{ steps.version.outputs.wear_code }}."; exit 1; }
 
+      # R-575 (15 Nov 2026): the phone finds the watch app by the capability "forgeai_watch_app"
+      # (res/values/wear.xml). The release build shrinks resources and nothing in code names that array,
+      # so prove it is still in the APK the release ships (an empty capability hid "Your watch app has an
+      # update" on the owner's phone, cause not yet known).
+      - name: The watch APK still declares its capability (after resource shrinking)
+        run: |
+          set -euo pipefail
+          BT="$(ls -d "$ANDROID_HOME"/build-tools/*/ | sort -V | tail -1)"
+          DUMP="$("${BT%/}/aapt2" dump resources "${{ steps.apks.outputs.wear }}")"
+          grep -n -A4 "array/android_wear_capabilities" <<< "$DUMP" || true
+          grep -q "array/android_wear_capabilities" <<< "$DUMP" \
+            || { echo "::error::The release watch APK has no android_wear_capabilities array: the phone cannot find the watch app by its capability."; exit 1; }
+          grep -A4 "array/android_wear_capabilities" <<< "$DUMP" | grep -q "forgeai_watch_app" \
+            || { echo "::error::The release watch APK's android_wear_capabilities does not hold forgeai_watch_app."; exit 1; }
+          echo "The release watch APK declares forgeai_watch_app."
+
       # play-services-wearable joined the phone app in v0.46: its permission list must not change.
       - name: Phone app permissions (play-services-wearable must add none)
         run: python3 scripts/ci/release_checks.py "${{ steps.apks.outputs.phone }}" --only permissions --warn-only

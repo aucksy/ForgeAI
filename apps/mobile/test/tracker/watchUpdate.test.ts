@@ -8,6 +8,9 @@ import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 import {
+  cleanWhy,
+  lastPopupNote,
+  notePopup,
   parseUpdateResult,
   parseWatchVersions,
   watchUpdateState,
@@ -20,11 +23,12 @@ const node = (over: Partial<WatchNode> = {}): WatchNode => ({
   nodeId: 'w1',
   displayName: 'Pixel Watch 3',
   hasApp: true,
+  connected: true,
   versionName: '0.76.0',
   versionCode: 1_000_000_076,
   ...over,
 });
-const read = (...nodes: WatchNode[]): WatchVersions => ({ ok: true, nodes });
+const read = (...nodes: WatchNode[]): WatchVersions => ({ ok: true, nodes, why: '' });
 
 describe('watchUpdateState', () => {
   it('no watch connected is none', () => {
@@ -59,7 +63,7 @@ describe('watchUpdateState', () => {
 
   it('Wear OS could not say, or no native piece, is unknown', () => {
     expect(watchUpdateState('0.76.0', null)).toBe('unknown');
-    expect(watchUpdateState('0.76.0', { ok: false, nodes: [] })).toBe('unknown');
+    expect(watchUpdateState('0.76.0', { ok: false, nodes: [], why: 'timeout' })).toBe('unknown');
   });
 
   it('an unreadable phone or watch version is unknown, never a false card', () => {
@@ -92,9 +96,10 @@ describe('parseWatchVersions', () => {
       '{"nodeId":"b2","displayName":"Old","hasApp":true,"versionName":null,"versionCode":null}]}';
     expect(parseWatchVersions(raw)).toEqual({
       ok: true,
+      why: '',
       nodes: [
-        { nodeId: 'a1', displayName: 'Galaxy Watch', hasApp: true, versionName: '0.76.0', versionCode: 1000000076 },
-        { nodeId: 'b2', displayName: 'Old', hasApp: true, versionName: null, versionCode: null },
+        { nodeId: 'a1', displayName: 'Galaxy Watch', hasApp: true, connected: true, versionName: '0.76.0', versionCode: 1000000076 },
+        { nodeId: 'b2', displayName: 'Old', hasApp: true, connected: true, versionName: null, versionCode: null },
       ],
     });
   });
@@ -104,10 +109,11 @@ describe('parseWatchVersions', () => {
     expect(parseWatchVersions('')).toBeNull();
     expect(parseWatchVersions('not json')).toBeNull();
     expect(parseWatchVersions('{"ok":true}')).toBeNull();
-    expect(parseWatchVersions('{"ok":false,"nodes":[]}')).toEqual({ ok: false, nodes: [] });
+    expect(parseWatchVersions('{"ok":false,"nodes":[]}')).toEqual({ ok: false, nodes: [], why: '' });
     expect(parseWatchVersions('{"ok":true,"nodes":[{"displayName":"no id"},7,{"nodeId":"x"}]}')).toEqual({
       ok: true,
-      nodes: [{ nodeId: 'x', displayName: '', hasApp: false, versionName: null, versionCode: null }],
+      why: '',
+      nodes: [{ nodeId: 'x', displayName: '', hasApp: false, connected: true, versionName: null, versionCode: null }],
     });
   });
 });
@@ -137,5 +143,49 @@ describe('the watch and the phone agree on the wire (read as text)', () => {
 
   it('the watch listener wakes for the ask message', () => {
     expect(manifest).toContain(`android:path="${constant(watch, 'PATH_ASK')}"`);
+  });
+});
+
+describe('R-575: the read says where it came from', () => {
+  // His case (feedback 105, 15 Nov 2026): the capability empty, his watch found by its own diary item.
+  const his =
+    '{"ok":true,"why":"nodes=1 capR=0 capA=0 ver=0 diag=1 asked=1 got=0","nodes":[{"nodeId":"X","displayName":"Watch","hasApp":true,"connected":true,"versionName":null,"versionCode":null}]}';
+
+  it('his watch with an old app and no version is update-ready', () => {
+    const r = parseWatchVersions(his);
+    expect(r?.why).toBe('nodes=1 capR=0 capA=0 ver=0 diag=1 asked=1 got=0');
+    expect(watchUpdateState('0.78.0', r)).toBe('update-ready');
+    expect(watchesNeedingUpdate('0.78.0', r).map((w) => w.nodeId)).toEqual(['X']);
+  });
+
+  it('a watch out of reach with the app still counts, marked not connected', () => {
+    const r = parseWatchVersions(
+      '{"ok":true,"why":"nodes=0 capR=0 capA=0 ver=0 diag=1","nodes":[{"nodeId":"X","displayName":"","hasApp":true,"connected":false,"versionName":null,"versionCode":null}]}',
+    );
+    expect(r?.nodes[0].connected).toBe(false);
+    expect(watchUpdateState('0.78.0', r)).toBe('update-ready');
+  });
+
+  it('"could not say" keeps its why; a why in any other shape is dropped', () => {
+    expect(parseWatchVersions('{"ok":false,"why":"timeout","nodes":[]}')).toEqual({ ok: false, nodes: [], why: 'timeout' });
+    expect(cleanWhy('nodes=fail:17 capR=? late')).toBe('nodes=fail:17 capR=? late');
+    expect(cleanWhy('<script>')).toBe('');
+    expect(cleanWhy('name "Aakash"')).toBe('');
+    expect(cleanWhy(7)).toBe('');
+    expect(cleanWhy('x'.repeat(300))).toHaveLength(160);
+  });
+
+  it('the pop-up note keeps the last decision and says a repeat only once', () => {
+    const warn = console.warn;
+    const said: unknown[] = [];
+    console.warn = (...a: unknown[]) => said.push(a[0]);
+    try {
+      notePopup('11-15 13:20 UTC update-ready, shown');
+      notePopup('11-15 13:20 UTC update-ready, shown');
+      expect(lastPopupNote()).toBe('11-15 13:20 UTC update-ready, shown');
+      expect(said).toEqual(['[watch update] 11-15 13:20 UTC update-ready, shown']);
+    } finally {
+      console.warn = warn;
+    }
   });
 });

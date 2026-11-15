@@ -199,6 +199,7 @@ internal object WearWire {
       o.put("nodeId", id)
       o.put("displayName", label.take(MAX_LINE))
       o.put("hasApp", app)
+      o.put("connected", true)
       o.put("versionName", v?.name ?: JSONObject.NULL)
       o.put("versionCode", v?.code ?: JSONObject.NULL)
       arr.put(o)
@@ -208,6 +209,145 @@ internal object WearWire {
 
   /** watchVersions() when Wear OS could not say. */
   const val WATCH_VERSIONS_UNKNOWN = """{"ok":false,"nodes":[]}"""
+
+  // ------------------------------------------------------------------ R-575: "has the app" from the watch's own items
+  /**
+   * R-575 (15 Nov 2026): the owner's phone read his watch's screen diary (an item only the MettleUp watch
+   * app writes) but watchVersions() reported no watch with the app, so "Your watch app has an update"
+   * never showed. Which step gave the empty answer is not known (a failure, a timeout, no connected
+   * watch, or an empty capability all read the same). Now no single signal decides alone: a watch has
+   * the app when ANY of these says so, and "no app" needs every one that answered to say no.
+   *
+   *  | signal                                   | says "has the app"         | says "connected now"    |
+   *  |------------------------------------------|----------------------------|-------------------------|
+   *  | NodeClient.connectedNodes                 | -                          | yes                     |
+   *  | capability [WearSync.CAP_WATCH_APP], REACHABLE | yes                   | yes (reachable)         |
+   *  | the same capability, FILTER_ALL           | yes, for a connected watch | -                       |
+   *  | its /forge/watch-version item (0.77.0 on) | yes, with the version      | -                       |
+   *  | its /forge/diag item (every app since 5 Nov 2026, 0.76.0 included) | yes | -                  |
+   *  | a version item written after the phone's ask (the 0.77.0+ watch's reply) | yes | yes      |
+   *
+   * The item's host is the node that wrote it. The phone's own node never counts (the capability never
+   * returns it; items are filtered by [local]). A watch with the app that is NOT connected now (Bluetooth
+   * off, out of reach, the connected-watches question failed or timed out) is still reported, with
+   * connected=false, when its diary is fresher than [UNREACHED_FRESH_MS]: the pop-up can show, and
+   * "Update on watch" then says "Your watch is not connected" (stepAfter('none')) or "search MettleUp on
+   * your watch" (stepAfter('missing')), both a step the member can take. An older diary, or FILTER_ALL
+   * alone, does not count for an unconnected watch: a watch the member no longer has would otherwise ask
+   * for an update for ever.
+   */
+  const val UNREACHED_FRESH_MS = 7L * 24L * 60L * 60_000L
+
+  /** One watch as watchVersions() reports it. */
+  data class WatchSeen(val nodeId: String, val displayName: String, val hasApp: Boolean, val connected: Boolean)
+
+  /** R-575: what each signal answered (null = that step failed or did not answer in time). */
+  data class Signals(
+    /** connectedNodes: (node id, display name). */
+    val connected: List<Pair<String, String>>?,
+    /** Capability, FILTER_REACHABLE: (node id, display name). */
+    val capReachable: List<Pair<String, String>>?,
+    /** Capability, FILTER_ALL: node ids. */
+    val capAll: Collection<String>?,
+    /** Hosts of the /forge/watch-version items. */
+    val versionHosts: Collection<String>?,
+    /** Hosts of the /forge/diag items -> the diary's own time (ms). */
+    val diagAt: Map<String, Long>?,
+    /** This phone's node id (null when unknown). */
+    val local: String? = null,
+  )
+
+  /**
+   * R-575: every watch to report (the table above): connected or reachable watches first (connectedNodes
+   * order, then reachable-only ones), then unconnected watches with the app and a fresh diary (newest
+   * first). PURE.
+   */
+  fun watchesSeen(s: Signals, nowMs: Long): List<WatchSeen> {
+    val local = s.local
+    val capR = s.capReachable.orEmpty()
+    val app = HashSet<String>()
+    capR.forEach { app.add(it.first) }
+    s.capAll?.let { app.addAll(it) }
+    s.versionHosts?.let { app.addAll(it) }
+    s.diagAt?.let { app.addAll(it.keys) }
+    val out = ArrayList<WatchSeen>()
+    val seen = HashSet<String>()
+    for ((id, label) in s.connected.orEmpty() + capR) {
+      if (id.isBlank() || id == local || !seen.add(id)) continue
+      out.add(WatchSeen(id, label.take(MAX_LINE), id in app, true))
+    }
+    val away = s.diagAt.orEmpty().entries
+      .filter { (id, at) -> id.isNotBlank() && id != local && id !in seen && fresh(at, nowMs) }
+      .sortedByDescending { it.value }
+    for ((id, _) in away) if (seen.add(id)) out.add(WatchSeen(id, "", true, false))
+    return out
+  }
+
+  /** A diary time within [UNREACHED_FRESH_MS] (a watch clock up to a day ahead still counts). PURE. */
+  private fun fresh(at: Long, nowMs: Long): Boolean =
+    at > 0L && at <= nowMs + 24L * 60L * 60_000L && nowMs - at <= UNREACHED_FRESH_MS
+
+  /**
+   * R-575: the ping. Every CONNECTED watch without a version item is asked to write it (with the app
+   * signal or not: a 0.77.0+ watch app whose capability is missing replies with the item). PURE.
+   */
+  fun pingTargets(seen: List<WatchSeen>, versions: Map<String, WatchVersion>): List<String> =
+    seen.filter { it.connected && it.nodeId !in versions }.map { it.nodeId }.distinct()
+
+  /** R-575: the connected watches and those of them with the app, from [watchesSeen] (for the Play Store and F67). PURE. */
+  fun connectedAndWithApp(seen: List<WatchSeen>): Pair<List<String>, List<String>> {
+    val on = seen.filter { it.connected }
+    return on.map { it.nodeId } to on.filter { it.hasApp }.map { it.nodeId }
+  }
+
+  /**
+   * R-575: one step of the read for the answer's "why" (no node id, no name): "nodes=1", "cap=0",
+   * "cap=fail:8" (Wear OS's status code, or the error's kind), "diag=?" (no answer in time). PURE.
+   */
+  fun step(name: String, count: Int?, err: String?): String = when {
+    err != null -> "$name=fail:${err.filter { it.isLetterOrDigit() || it == '_' }.take(24).ifEmpty { "error" }}"
+    count == null -> "$name=?"
+    else -> "$name=$count"
+  }
+
+  /**
+   * R-575: Wear OS could say when the connected-watches or the reachable-capability question answered,
+   * or any watch was found at all (then a failed step only means less is known). PURE.
+   */
+  fun versionsOk(s: Signals, seen: List<WatchSeen>): Boolean = s.connected != null || s.capReachable != null || seen.isNotEmpty()
+
+  /** R-575: the "why" of a read ("nodes=1 capR=0 capA=1 ver=0 diag=1"), each step via [step]. PURE. */
+  fun signalsWhy(s: Signals, errs: Map<String, String>): String = listOf(
+    step("nodes", s.connected?.size, errs["nodes"]),
+    step("capR", s.capReachable?.size, errs["capR"]),
+    step("capA", s.capAll?.size, errs["capA"]),
+    step("ver", s.versionHosts?.size, errs["ver"]),
+    step("diag", s.diagAt?.size, errs["diag"]),
+  ).joinToString(" ")
+
+  /**
+   * R-575: the answer of watchVersions(): {"ok", "why", "nodes":[{nodeId, displayName, hasApp,
+   * connected, versionName|null, versionCode|null}]}. [why] is the steps ("nodes=1 cap=0 ver=0 diag=1"),
+   * so a member's log says why a watch was or was not found. PURE.
+   */
+  fun watchVersionsJson(ok: Boolean, seen: List<WatchSeen>, versions: Map<String, WatchVersion>, why: String): String {
+    val arr = org.json.JSONArray()
+    if (ok) {
+      for (w in seen) {
+        val v = if (w.hasApp) versions[w.nodeId] else null
+        arr.put(
+          JSONObject()
+            .put("nodeId", w.nodeId)
+            .put("displayName", w.displayName.take(MAX_LINE))
+            .put("hasApp", w.hasApp)
+            .put("connected", w.connected)
+            .put("versionName", v?.name ?: JSONObject.NULL)
+            .put("versionCode", v?.code ?: JSONObject.NULL),
+        )
+      }
+    }
+    return JSONObject().put("ok", ok).put("why", why.take(160)).put("nodes", arr).toString()
+  }
 
   // ------------------------------------------------------------------ R-441: the watch's screen diary
   /**

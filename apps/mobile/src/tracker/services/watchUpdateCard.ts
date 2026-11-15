@@ -117,14 +117,44 @@ export interface CardInput {
   workoutOpen: boolean;
   /** A newer PHONE version waits (lib/updateStore.ts `kind`), or its pop-up is up. */
   phoneUpdateWaits: boolean;
+  /**
+   * R-575: another pop-up is up now (a question sheet, e.g. the free month's notice). The watch pop-up
+   * waits until it is closed, then shows: two pop-ups at once put one under the other.
+   */
+  otherPopup?: boolean;
+}
+
+/**
+ * R-575: the rule with its reason, for the watch log ("waits: phone update first"). `shows` false with a
+ * "waits:" reason comes back by itself when that clears (the screen re-reads it); "hidden:" stays until
+ * the next check. PURE.
+ */
+export function cardDecision(o: CardInput): { shows: boolean; why: string } {
+  if (o.state !== 'update-ready') return { shows: false, why: `no pop-up: watch ${o.state}` };
+  if (o.snooze === undefined) return { shows: false, why: 'waits: Later not read yet' };
+  if (o.workoutOpen) return { shows: false, why: 'waits: workout open' };
+  if (o.phoneUpdateWaits) return { shows: false, why: 'waits: phone update first' };
+  if (snoozed(o.snooze, o.phoneVersion, o.now)) {
+    return { shows: false, why: o.snooze?.tapped ? 'hidden: Update on watch tapped for this version' : 'hidden: Later (24 hours)' };
+  }
+  if (o.otherPopup) return { shows: false, why: 'waits: another pop-up' };
+  return { shows: true, why: 'shown' };
 }
 
 /** The one rule: does the pop-up show on this open? PURE. */
 export function cardShows(o: CardInput): boolean {
-  if (o.state !== 'update-ready') return false;
-  if (o.snooze === undefined) return false;
-  if (o.workoutOpen || o.phoneUpdateWaits) return false;
-  return !snoozed(o.snooze, o.phoneVersion, o.now);
+  return cardDecision(o).shows;
+}
+
+/**
+ * R-575: the pop-up's decision as one short line for the watch log: "11-15 13:20 UTC update-ready, shown"
+ * (with the native read's steps when the watch read was not 'update-ready'). No name, no node id. PURE.
+ */
+export function popupLine(at: number, state: WatchUpdateState, why: string, readWhy = ''): string {
+  const d = new Date(at);
+  const when = Number.isNaN(d.getTime()) ? '' : `${d.toISOString().slice(5, 16).replace('T', ' ')} UTC `;
+  const read = readWhy && state !== 'update-ready' ? ` (read: ${readWhy})` : '';
+  return `${when}${state}, ${why}${read}`;
 }
 
 /** A line that is about the watch, as it reads under "New on your watch:"; null for any other. PURE. */
@@ -199,7 +229,7 @@ export function qaWatchRead(mode: string | null, phoneVersion: string | null | u
   const p = versionParts(phoneVersion);
   if (!p || (mode !== 'old' && mode !== 'same')) return null;
   const v = mode === 'same' ? `${p[0]}.${p[1]}.${p[2]}` : `${p[0]}.${Math.max(0, p[1] - 1)}.0`;
-  return { ok: true, nodes: [{ nodeId: 'qa-watch', displayName: 'QA watch', hasApp: true, versionName: v, versionCode: null }] };
+  return { ok: true, why: 'qa', nodes: [{ nodeId: 'qa-watch', displayName: 'QA watch', hasApp: true, connected: true, versionName: v, versionCode: null }] };
 }
 
 export const QA_WATCH_KEY = 'qa_watch_standin';

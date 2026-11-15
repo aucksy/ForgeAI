@@ -19,6 +19,7 @@ import { Platform } from 'react-native';
 
 import { deviceLine, FEEDBACK_MAX, FEEDBACK_URLS, postToBox, senderId } from '@/lib/feedback';
 import { nativeWatchDiag, nativeWatchVersions } from '@/tracker/services/restCard';
+import { cleanWhy, lastPopupNote } from '@/tracker/services/watchUpdate';
 
 export const WATCH_LOG_SCREEN = 'watch-diary';
 
@@ -141,27 +142,31 @@ export function compactLine(line: string): { day: string; event: string; text: s
 }
 
 /**
- * R-557: the MettleUp watch app's version on each connected watch, from the native answer of
- * WearSync.watchVersions (the phone reads /forge/watch-version; a watch app older than 0.77.0 writes no
- * version). "" when Wear OS could not say or no watch has the app. PURE.
+ * R-557: the MettleUp watch app's version on each watch, from the native answer of WearSync.watchVersions
+ * (the phone reads /forge/watch-version; a watch app older than 0.77.0 writes no version).
+ * R-575 (15 Nov 2026): it always says something, with the native read's steps ("why"): "0.77.0 (read:
+ * nodes=1 ...)", "older than 0.77.0 (not connected) (read: ...)" or "not found (why: ...)". The owner's
+ * log had no "Watch app:" at all, and an empty answer could not say which step gave it. PURE.
  */
 export function watchAppVersions(raw: string | null): string {
-  if (!raw) return '';
+  if (!raw) return 'not found (why: no answer)';
   try {
-    const o = JSON.parse(raw) as { ok?: unknown; nodes?: unknown };
-    if (o.ok !== true || !Array.isArray(o.nodes)) return '';
+    const o = JSON.parse(raw) as { ok?: unknown; nodes?: unknown; why?: unknown };
+    const why = cleanWhy(o.why);
+    if (o.ok !== true || !Array.isArray(o.nodes)) return `not found (why: ${why || 'Wear OS could not say'})`;
     const seen = (o.nodes as unknown[])
-      .map((n) => (typeof n === 'object' && n !== null ? (n as { hasApp?: unknown; versionName?: unknown }) : {}))
+      .map((n) => (typeof n === 'object' && n !== null ? (n as { hasApp?: unknown; versionName?: unknown; connected?: unknown }) : {}))
       .filter((n) => n.hasApp === true)
       .map((n) => {
         const v = typeof n.versionName === 'string' ? n.versionName.trim() : '';
-        if (v === '') return 'older than 0.77.0';
-        return /^\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(v) ? v : 'unknown';
+        const name = v === '' ? 'older than 0.77.0' : /^\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(v) ? v : 'unknown';
+        return n.connected === false ? `${name} (not connected)` : name;
       });
-    return [...new Set(seen)].join(', ');
+    if (seen.length === 0) return `not found (why: ${why || 'no watch with the app'})`;
+    return `${[...new Set(seen)].join(', ')}${why ? ` (read: ${why})` : ''}`;
   } catch (e) {
     console.warn('[watch-log] the watch app versions were not JSON', e);
-    return '';
+    return 'not found (why: unreadable answer)';
   }
 }
 
@@ -178,7 +183,7 @@ function when(at: number): string {
  * Battery Saver and always-on values, a legend), then the newest lines that fit in [max] letters, by day.
  * Minor lines (focus, pause) go first when it is too long. PURE.
  */
-export function watchLogText(items: WatchDiagItem[], max: number = FEEDBACK_MAX, watchApp: string = ''): string {
+export function watchLogText(items: WatchDiagItem[], max: number = FEEDBACK_MAX, watchApp: string = '', popup: string = ''): string {
   const w = items[0];
   if (!w) return '';
   const lines = w.log
@@ -210,7 +215,7 @@ export function watchLogText(items: WatchDiagItem[], max: number = FEEDBACK_MAX,
   const bs = lastState ? (/ (bs[01?])/.exec(lastState.text)?.[1] ?? '') : '';
   const aod = lastState ? (/ (aod[0-9?/-]+)/.exec(lastState.text)?.[1] ?? '') : '';
   const head = [
-    `Watch screen log (R-441), written ${when(w.at) || 'at an unknown time'}${items.length > 1 ? `, newest of ${items.length} watches` : ''}.${watchApp ? ` Watch app: ${watchApp}.` : ''}`,
+    `Watch screen log (R-441), written ${when(w.at) || 'at an unknown time'}${items.length > 1 ? `, newest of ${items.length} watches` : ''}.${watchApp ? ` Watch app: ${watchApp}.` : ''}${popup ? ` Pop-up: ${popup}.` : ''}`,
     `${lines.length} lines on the watch. Off instead of dim: ${black} (saver ${saver}, aod-off ${aodOff}, while held ${heldBlack}, old watch app ${oldApp}). Dimmed by the watch (Always-on on): ${dims}. Dimmed by the app (Always-on off): ${selfDims}; screen held ${holds}, let go ${letGo.length} (idle ${idle}, paused ${paused}). Rebuild: ${rebuilds}. Last: ${[bs, aod].filter(Boolean).join(' ') || '-'}.`,
     'Key: sc screen on, bs Battery Saver, id idle, aod always-on global/secure, th theatre, amb dimmed, wo workout open, bo rebuild armed, hd the app holds the screen; DIM/undim the watch dims, ADIM/aundim the app dims, hold/letgo the app keeps the screen on or lets go (and why); why the check on each wake (fr app in front, bk black before, pa paused, qt unused 12 min). Times are the watch clock.',
   ].join('\n');
@@ -258,6 +263,8 @@ export interface WatchLogDeps {
   device?: () => string;
   /** R-557: the native watch versions answer (WearSync.watchVersions), for the log's "Watch app:". */
   versions?: () => Promise<string | null>;
+  /** R-575: the update pop-up's last decision (watchUpdate.ts lastPopupNote). */
+  popup?: () => string;
 }
 
 /** "Pixel 7 (Google), Android 14", as Send feedback says it; '' when the phone cannot say. */
@@ -280,13 +287,15 @@ export async function sendWatchLog(app: string, deps: WatchLogDeps = {}): Promis
   const sender = deps.sender ?? senderId;
   try {
     const versions = deps.versions ?? nativeWatchVersions;
-    let watchApp = '';
+    let watchApp = 'not found (why: read failed)';
     try {
       watchApp = watchAppVersions(await versions());
     } catch (e) {
-      console.warn('[watch-log] the watch app version could not be read; the log goes without it', e);
+      console.warn('[watch-log] the watch app version could not be read; the log says so', e);
     }
-    const text = watchLogText(parseWatchDiag(await read()).watches, FEEDBACK_MAX, watchApp);
+    // R-575: the update pop-up's last decision in this app run (watchUpdate.ts notePopup).
+    const popup = (deps.popup ?? lastPopupNote)() || 'no check in this app run';
+    const text = watchLogText(parseWatchDiag(await read()).watches, FEEDBACK_MAX, watchApp, popup);
     if (!text) {
       console.warn('[watch-log] no watch screen log on this phone; nothing sent');
       return 'none';
