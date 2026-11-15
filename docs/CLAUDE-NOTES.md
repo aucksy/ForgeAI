@@ -10,7 +10,7 @@ Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept her
 ## R-585 (15 Nov 2026) Welcome screens approved; Hindi privacy approved; who a member's message goes to (proposed)
 - His words (15 Nov 2026): "I'm good with the welcome screen designs, but for the screenshot where we are talking
   about them joining the gym, the subtext ... should mention something like, if your gym uses MettleUp, otherwise
-  everything is okay." Done on the canvas (Gym.dc.html, version 5): "If your gym uses MettleUp, sign in with your
+  everything is okay." Then: "if your gym uses MettleUp gym software". Done on the canvas (Gym.dc.html, version 6): "If your gym uses MettleUp gym software, sign in with your
   phone number and we find your gym for you. ..." The 3-screen design (watch screen only with a Wear OS watch) is
   APPROVED. Build queued (a helper slot is needed), together with the phone-first sign-in of R-582; ships only with
   his "release".
