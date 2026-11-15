@@ -88,6 +88,10 @@ declare
     'owner_alerts',
     -- 0076: alerts with the admin app closed (each checks the key first; a browser is saved for that sign-in only; the OWNER changes when the rest come).
     'owner_save_web_push','owner_clear_web_push','owner_web_push_on','owner_alert_settings','owner_save_alert_settings',
+    -- 0095: "Send a test alert". The two owner_ calls check the key first and act only on a browser saved with that very
+    -- key (once a minute a browser, 20 an hour a gym). panel_test_alert_shown has no key (the service worker has none):
+    -- it only stamps "shown" once on a TEST alert of the last day, found by its random id, and always answers {ok: true}.
+    'owner_send_test_alert','owner_test_alert','panel_test_alert_shown',
     -- 0077: Join online (the public page: a gym code for the preview; the request also needs a one-use signed 'join' proof, and writes only into that gym's enquiries).
     'self_join_preview','self_join_send',
     -- 0081: pay online on the join page (which gym a code is: the panel Worker's HMAC signature with 0061's secret only).

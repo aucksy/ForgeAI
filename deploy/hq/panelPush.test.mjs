@@ -145,6 +145,26 @@ test('a run: urgent ones at once, the due summary once, a gone address dropped; 
   assert.equal(state.pushes.length, 3);
 });
 
+// R-578 (0095): "Send a test alert". The gym server hands the test for its ONE browser only, with its own title and
+// a 'mettleup-test-<alert id>' tag (the admin app's service worker knows a test by it and says "shown" back). The
+// Worker sends it exactly as it came: the same words, page and tag, to that browser alone.
+test('R-578: a test alert goes to its one browser, its title, words, page and tag untouched', async () => {
+  const id = '0b6f6a52-3c1e-4d2a-9f53-2a6c1d9e7b10';
+  const line = 'Alerts work on this device. Alerts from your members will look like this.';
+  const msg = { title: 'MettleUp: test alert', body: line, route: '/settings', tag: `mettleup-test-${id}` };
+  assert.deepEqual(pushMessage(msg), msg);
+  const env = { SUPABASE_URL: 'https://db.test', SUPABASE_HQ_KEY: 'hq-key', VAPID_PRIVATE_JWK: await vapidSecret() };
+  const { fetchImpl, state } = await standIn({ gyms: [] });
+  const keys = await browserKeys();
+  const phone = 'https://fcm.googleapis.com/fcm/send/owner-phone';
+  state.instant.push({ subId: 'sub-phone', endpoint: phone, ...keys, ...msg });
+  const out = await runPanelPush(env, { fetchImpl, now: NOW });
+  assert.equal(out.sent, 1);
+  assert.equal(out.failed, 0);
+  assert.deepEqual(state.pushes.map((p) => p.url), [phone]);
+  assert.equal(state.pushes[0].headers.Urgency, 'high');
+});
+
 test('the call budget: the server is asked for only what this run can send', async () => {
   const env = { SUPABASE_URL: 'https://db.test', SUPABASE_HQ_KEY: 'hq-key', VAPID_PRIVATE_JWK: await vapidSecret(), PANEL_PUSH_SUBREQUESTS: '4' };
   const ends = ['a', 'b', 'c', 'd'].map((x) => `https://fcm.googleapis.com/fcm/send/${x}`);

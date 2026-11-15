@@ -128,6 +128,116 @@ export const PUSH_WORDS = {
   bellClose: 'Close this card',
 } as const;
 
+// ---------------------------------------------------------------------------------------------- R-578 test alert
+// Owner, 15 Nov 2026: one tap checks that alerts reach THIS phone or computer with the admin app closed. The gym server
+// (supabase/migrations/0095_test_alert.sql) makes a test alert for this browser only; the HQ Worker sends it the real
+// way; the service worker (public/sw.js) shows it and says "shown" back. The card answers within about 90 seconds.
+
+/** This browser's latest test alert (owner_test_alert). Times in ms since 1970; null = not yet. */
+export interface TestAlert {
+  id: string;
+  at: number;
+  sentAt: number | null;
+  /** 'instant' (sent), 'none' (this browser was no longer saved), 'late' (too old). */
+  sentHow: string | null;
+  shownAt: number | null;
+}
+
+export interface TestAlertAnswer {
+  /** This browser is saved for this sign-in. */
+  on: boolean;
+  test: TestAlert | null;
+  /** Seconds until another test may go. */
+  wait: number;
+}
+
+const ms = (v: unknown): number | null => (typeof v === 'number' && Number.isFinite(v) && v > 0 ? v : null);
+const secs = (v: unknown): number => (typeof v === 'number' && Number.isFinite(v) && v > 0 ? Math.ceil(v) : 0);
+
+/** owner_test_alert's answer, checked; null when it is not one. PURE. */
+export function testAlertFrom(raw: unknown): TestAlertAnswer | null {
+  if (!isObj(raw) || raw.ok !== true) return null;
+  const t = raw.test;
+  let test: TestAlert | null = null;
+  if (isObj(t)) {
+    const at = ms(t.at);
+    if (typeof t.id !== 'string' || at === null) return null;
+    test = { id: t.id, at, sentAt: ms(t.sentAt), sentHow: typeof t.sentHow === 'string' ? t.sentHow : null, shownAt: ms(t.shownAt) };
+  } else if (t !== null && t !== undefined) return null;
+  return { on: raw.on !== false, test, wait: secs(raw.wait) };
+}
+
+export type SendTestAnswer = { ok: true; id: string; at: number } | { ok: false; error: 'NOT_ON' | 'TOO_SOON' | 'UNREADABLE'; wait: number };
+
+/** owner_send_test_alert's answer, checked. PURE. */
+export function sendTestFrom(raw: unknown): SendTestAnswer {
+  if (isObj(raw) && raw.ok === true && typeof raw.id === 'string' && ms(raw.at) !== null) return { ok: true, id: raw.id, at: raw.at as number };
+  if (isObj(raw) && raw.ok === false && (raw.error === 'NOT_ON' || raw.error === 'TOO_SOON')) return { ok: false, error: raw.error, wait: secs(raw.wait) };
+  return { ok: false, error: 'UNREADABLE', wait: 0 };
+}
+
+/** How long the card waits for "shown" before it says "not shown yet". */
+export const TEST_WAIT_MS = 90_000;
+/** After this the card stops asking (a "shown" that comes later still shows when the card is opened again). */
+export const TEST_WATCH_MS = 10 * 60_000;
+
+export type TestAlertState = 'none' | 'waiting' | 'shown' | 'not-sent' | 'not-shown' | 'unreached';
+
+/**
+ * What the card says about the latest test: 'shown' (the device showed it), 'unreached' (this browser was no longer
+ * saved when it went), 'waiting' (under 90 s), then 'not-sent' (still with us: our side) or 'not-shown' (sent, the
+ * device has not shown it yet). PURE.
+ */
+export function testAlertState(test: TestAlert | null, now: number): TestAlertState {
+  if (!test) return 'none';
+  if (test.shownAt !== null) return 'shown';
+  if (test.sentHow === 'none' || test.sentHow === 'late') return 'unreached';
+  if (now - test.at < TEST_WAIT_MS) return 'waiting';
+  return test.sentAt === null ? 'not-sent' : 'not-shown';
+}
+
+/** How often the card asks again: every 5 s for 2 minutes, then every 20 s until 10 minutes; null = stop. PURE. */
+export function testPollMs(state: TestAlertState, age: number): number | null {
+  if (state === 'none' || state === 'shown' || state === 'unreached' || age >= TEST_WATCH_MS) return null;
+  return age < 120_000 ? 5_000 : 20_000;
+}
+
+/** "7:41 pm" on this device's clock (offset: minutes east of UTC, as -Date#getTimezoneOffset()). PURE. */
+export function clockLabel(at: number, offsetMinutes: number): string {
+  const day = 24 * 60;
+  const m = Math.floor((at / 60_000 + offsetMinutes) % day);
+  return timeLabel(m < 0 ? m + day : m);
+}
+
+/** The service worker tells open pages when it showed a test (public/sw.js postMessage). */
+export const TEST_SHOWN_MESSAGE = 'mettleup-test-shown';
+
+/** member-words (R-578). `{time}` is the device's clock, `{n}` seconds. */
+export const TEST_WORDS = {
+  intro: 'Check that alerts reach this device, even with the admin app closed. Only this device gets the test.',
+  button: 'Send a test alert',
+  sending: 'Sending…',
+  waiting: 'We are sending a test alert to this device. It can take up to a minute. You can close the admin app now to check that alerts come when it is closed.',
+  shown: 'Sent. Did a notice pop up? It showed on this device at {time}.',
+  noPopup: 'No notice popped up',
+  hiddenIntro: 'This device got the test, but the notice may have been hidden. Things to look at on this device:',
+  notShown: 'We sent it, but this device has not shown it yet.',
+  checksIntro: 'Things to look at on this device:',
+  checkAllowed: 'Notices for “MettleUp for Gyms” (or for your browser) are allowed in the device’s settings, under Apps or Notifications.',
+  checkQuiet: 'A battery saver or “Do not disturb” is not holding notices back.',
+  checkOnline: 'This device is connected to the internet.',
+  tryAgain: 'Then tap “Send a test alert” again. If the notice shows later, this line will change by itself.',
+  notSent: 'The test alert has not left MettleUp yet. That is on our side, not your device. This line will change by itself.',
+  unreached: 'We could not reach this device. Tap “Turn off on this device”, turn alerts on again, then send another test.',
+  tooSoon: 'You just sent a test. You can send another in {n} seconds.',
+  failed: 'The test alert could not be sent. Check the internet and try again.',
+} as const;
+
+/** A TEST_WORDS line with its {time} / {n} filled in. PURE. */
+export function testWords(line: string, fill: { time?: string; n?: number } = {}): string {
+  return line.replace('{time}', fill.time ?? '').replace('{n}', String(fill.n ?? 60));
+}
+
 /** The line under the choices for the desk: "Your gym gets the rest daily at 11:00 am." PURE. */
 export function restLine(s: Pick<AlertSettings, 'mode' | 'minute' | 'weekday'>): string {
   if (s.mode === 'instant') return 'Your gym gets everything else at once too.';

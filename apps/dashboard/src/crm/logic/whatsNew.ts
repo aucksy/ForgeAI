@@ -575,6 +575,18 @@ function notifyNewsSeen(): void {
  */
 export const ADMIN_NEWS_PENDING: readonly AdminNewsEntry[] = [
   {
+    // R-578 (owner, 15 Nov 2026): "Send a test alert". Needs migration 0095 (NOT LIVE) and the admin panel deploy; the
+    // button stays hidden until 0095 is on the gym server. Moves to ADMIN_NEWS with the deploy day only when 0095 is live.
+    id: 'pending-test-alert',
+    lines: [
+      {
+        text: 'New: you can check that alerts reach this phone or computer. In Settings, under “Alerts from your members”, tap “Send a test alert”. Within about a minute and a half, it tells you if the notice showed on this device.',
+        go: { label: 'Open Settings', path: '/settings' },
+        feature: true,
+      },
+    ],
+  },
+  {
     // R-561 (owner, 15 Nov 2026): one look for group headings, a wider menu, the bell in groups with payment colours,
     // the alerts card in the bell, the language switch in the top bar, one Refresh for the whole page and a line under
     // each setting. Panel code only: moves to ADMIN_NEWS with the deploy day as its id.

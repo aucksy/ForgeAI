@@ -124,3 +124,16 @@ describe('gym alerts', () => {
     }
   });
 });
+
+describe('R-578: a test alert is never one of the gym alerts', () => {
+  it('a test alert from the server is dropped, so the open page never rings for it and no list or count shows it', () => {
+    const raw = {
+      ok: true,
+      alerts: [
+        { id: 't1', kind: 'test_alert', line: 'Alerts work on this device.', route: '/settings', urgent: true, at: 2000 },
+        { id: 'o1', kind: 'shop_order', line: 'New shop order 7 from Neha. Get it ready on Shop.', route: '/shop', urgent: true, at: 1000 },
+      ],
+    };
+    expect((gymAlertsFrom(raw) ?? []).map((a) => a.id)).toEqual(['o1']);
+  });
+});

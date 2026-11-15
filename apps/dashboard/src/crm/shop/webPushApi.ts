@@ -10,7 +10,18 @@
  */
 
 import { isDemoLocked } from '../../lib/demoLock';
-import { alertSettingsFrom, keyBytes, pushSupport, subscriptionParts, type AlertSettings, type PushSupport } from '../logic/webPush';
+import {
+  alertSettingsFrom,
+  keyBytes,
+  pushSupport,
+  sendTestFrom,
+  subscriptionParts,
+  testAlertFrom,
+  type AlertSettings,
+  type PushSupport,
+  type SendTestAnswer,
+  type TestAlertAnswer,
+} from '../logic/webPush';
 import { isNoSuchFunction } from '../logic/workoutOffer';
 import { call } from './api';
 
@@ -130,6 +141,56 @@ export async function turnOffPush(key: string): Promise<void> {
   await sub.unsubscribe().catch((e: unknown) => console.warn('[web push] unsubscribe', e));
 }
 
+// ---------------------------------------------------------------- R-578 "Send a test alert" (0095)
+// Its own "not here" flag: a server with 0076 but without 0095 keeps the alerts card and only hides the test button.
+let testMissing = false;
+
+/** True once the server said it has no 0095 (or in the demo gym). */
+export function testAlertMissing(): boolean {
+  return testMissing || webPushMissing();
+}
+
+async function testGuarded<T>(fn: () => Promise<T>): Promise<T | 'missing'> {
+  if (testAlertMissing()) return 'missing';
+  try {
+    return await fn();
+  } catch (e) {
+    if (isNoSuchFunction(e)) {
+      if (!testMissing) console.info('[web push] this gym server has no test alert yet (0095 not applied)');
+      testMissing = true;
+      return 'missing';
+    }
+    throw e;
+  }
+}
+
+/** This browser's push address, or null. */
+async function thisEndpoint(): Promise<string | null> {
+  const sub = await currentSubscription();
+  return sub ? (subscriptionParts(sub.toJSON())?.endpoint ?? null) : null;
+}
+
+/** This browser's latest test alert. 'missing': no 0095; null: this browser has no push address. */
+export async function readTestAlert(key: string): Promise<TestAlertAnswer | null | 'missing'> {
+  if (testAlertMissing()) return 'missing';
+  const endpoint = await thisEndpoint();
+  if (!endpoint) return null;
+  return testGuarded(async () => {
+    const r = testAlertFrom(await call<unknown>('owner_test_alert', { p_key: key, p_endpoint: endpoint }));
+    if (!r) throw new Error('unreadable answer');
+    return r;
+  });
+}
+
+/** Send a test alert to this browser only. */
+export async function sendTestAlert(key: string): Promise<SendTestAnswer | 'missing'> {
+  if (testAlertMissing()) return 'missing';
+  const endpoint = await thisEndpoint();
+  if (!endpoint) return { ok: false, error: 'NOT_ON', wait: 0 };
+  return testGuarded(async () => sendTestFrom(await call<unknown>('owner_send_test_alert', { p_key: key, p_endpoint: endpoint })));
+}
+
 export function resetWebPushApiForTest(): void {
   missing = false;
+  testMissing = false;
 }

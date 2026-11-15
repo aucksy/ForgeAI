@@ -118,6 +118,43 @@ function pushNotice(m) {
   };
 }
 
+// R-578 (supabase 0095): "Send a test alert". A test's tag is 'mettleup-test-<alert id>'. Once it is shown, this
+// worker tells the gym server (panel_test_alert_shown: the alert id only, nothing about the person or the device) and
+// any open admin app tab, so the alerts card can say "It showed on this device at 7:41 pm". The gym server is reached
+// the way the page reaches it: our own address (/sb) on our site, Supabase's own address otherwise or if that fails.
+// The key is the public one the page ships with (src/lib/supabase.ts); the call checks nothing but the alert id.
+const TEST_TAG = /^mettleup-test-([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/;
+const OUR_HOSTS = ['app.mettleup.fit', 'forgeai.aakashpahuja.in'];
+const GYM_SERVER = 'https://hdxzqbdiokjklnypfisq.supabase.co';
+const PUBLIC_KEY = 'sb_publishable_-GBJ1u036bdCX2mtff3ghQ_Gx-hZyGo';
+
+/** The test alert's id in a notice tag, or null (pure; also read by test/crm/webPush.test.ts). */
+function testAlertId(tag) {
+  const m = TEST_TAG.exec(typeof tag === 'string' ? tag : '');
+  return m ? m[1] : null;
+}
+
+/** Tell the gym server, then any open tab, that this test was shown. Never throws. */
+async function testShown(id) {
+  const host = new URL(self.location.origin).hostname;
+  const bases = OUR_HOSTS.includes(host) ? [`${self.location.origin}/sb`, GYM_SERVER] : [GYM_SERVER];
+  const opts = { method: 'POST', headers: { 'Content-Type': 'application/json', apikey: PUBLIC_KEY }, body: JSON.stringify({ p_alert: id }) };
+  for (const base of bases) {
+    try {
+      const res = await fetch(`${base}/rest/v1/rpc/panel_test_alert_shown`, opts);
+      if (res.ok) break;
+      console.warn('[sw] the test alert was shown, but the gym server answered', res.status);
+    } catch (err) {
+      console.warn('[sw] the test alert was shown, but the gym server could not be told', err);
+    }
+  }
+  try {
+    for (const c of await self.clients.matchAll({ type: 'window', includeUncontrolled: true })) c.postMessage({ type: 'mettleup-test-shown', id });
+  } catch (err) {
+    console.warn('[sw] could not tell the open admin app about the test alert', err);
+  }
+}
+
 self.addEventListener('push', (e) => {
   let m = null;
   try {
@@ -127,7 +164,11 @@ self.addEventListener('push', (e) => {
   }
   const n = pushNotice(m);
   e.waitUntil(
-    self.registration.showNotification(n.title, { body: n.body, tag: n.tag, icon: '/icons/admin-192.png', badge: '/icons/admin-192.png', data: { route: n.route } }),
+    (async () => {
+      await self.registration.showNotification(n.title, { body: n.body, tag: n.tag, icon: '/icons/admin-192.png', badge: '/icons/admin-192.png', data: { route: n.route } });
+      const test = testAlertId(n.tag);
+      if (test) await testShown(test);
+    })(),
   );
 });
 

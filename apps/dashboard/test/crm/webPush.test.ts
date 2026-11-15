@@ -7,8 +7,16 @@ import { describe, expect, it } from 'vitest';
 import {
   DEFAULT_ALERT_SETTINGS,
   PUSH_WORDS,
+  TEST_WAIT_MS,
+  TEST_WORDS,
   TIME_CHOICES,
   alertSettingsFrom,
+  clockLabel,
+  sendTestFrom,
+  testAlertFrom,
+  testAlertState,
+  testPollMs,
+  testWords,
   keyBytes,
   pushSupport,
   restLine,
@@ -90,12 +98,16 @@ describe('alerts with the admin app closed: the words and checks', () => {
 // ---------------------------------------------------------------- the service worker, run with a stand-in browser
 type Listener = (e: Record<string, unknown>) => void;
 
-function loadWorker(windows: { url: string; focused?: boolean; navigated?: string[] }[] = []) {
+function loadWorker(
+  windows: { url: string; focused?: boolean; navigated?: string[]; messages?: unknown[] }[] = [],
+  env: { origin?: string; fetch?: (url: string, init: RequestInit) => Promise<Response> } = {},
+) {
   const listeners: Record<string, Listener> = {};
   const shown: { title: string; opts: Record<string, unknown> }[] = [];
   const opened: string[] = [];
+  const fetched: { url: string; init: RequestInit }[] = [];
   const self = {
-    location: { origin: 'https://app.mettleup.fit' },
+    location: { origin: env.origin ?? 'https://app.mettleup.fit' },
     addEventListener: (name: string, fn: Listener) => {
       listeners[name] = fn;
     },
@@ -116,6 +128,9 @@ function loadWorker(windows: { url: string; focused?: boolean; navigated?: strin
           navigate: async (u: string) => {
             (w.navigated ??= []).push(u);
           },
+          postMessage: (m: unknown) => {
+            (w.messages ??= []).push(m);
+          },
         })),
       openWindow: async (u: string) => {
         opened.push(u);
@@ -123,13 +138,17 @@ function loadWorker(windows: { url: string; focused?: boolean; navigated?: strin
     },
   };
   const src = readFileSync(join(__dirname, '../../public/sw.js'), 'utf8');
-  new Function('self', 'caches', 'fetch', src)(self, {}, async () => new Response(''));
+  const fetchImpl = async (url: string, init: RequestInit) => {
+    fetched.push({ url, init });
+    return env.fetch ? env.fetch(url, init) : new Response('{"ok":true}');
+  };
+  new Function('self', 'caches', 'fetch', src)(self, {}, fetchImpl);
   const fire = async (name: string, e: Record<string, unknown>) => {
     let wait: Promise<unknown> = Promise.resolve();
     listeners[name]({ ...e, waitUntil: (p: Promise<unknown>) => (wait = p) });
     await wait;
   };
-  return { fire, shown, opened, windows };
+  return { fire, shown, opened, windows, fetched };
 }
 
 describe('the service worker shows an alert and opens its page', () => {
@@ -159,5 +178,124 @@ describe('the service worker shows an alert and opens its page', () => {
     const none = loadWorker([]);
     await none.fire('notificationclick', { notification: { data: { route: '/shop' }, close: () => undefined } });
     expect(none.opened).toEqual(['https://app.mettleup.fit/#/shop']);
+  });
+});
+
+// ---------------------------------------------------------------- R-578 "Send a test alert"
+describe('the test alert: answers, what the card says, when it asks again', () => {
+  const ID = '0b6f6a52-3c1e-4d2a-9f53-2a6c1d9e7b10';
+  const AT = Date.UTC(2026, 10, 15, 14, 10, 0); // 7:40 pm India time
+
+  it('reads the server answers, refusing anything else', () => {
+    expect(testAlertFrom({ ok: true, on: true, test: null, wait: 0 })).toEqual({ on: true, test: null, wait: 0 });
+    expect(testAlertFrom({ ok: true, on: true, wait: 42, test: { id: ID, at: AT, sentAt: AT + 30_000, sentHow: 'instant', shownAt: null } })).toEqual({
+      on: true,
+      wait: 42,
+      test: { id: ID, at: AT, sentAt: AT + 30_000, sentHow: 'instant', shownAt: null },
+    });
+    expect(testAlertFrom({ ok: true, on: false, test: null, wait: 0 })?.on).toBe(false);
+    expect(testAlertFrom({ ok: true, test: { id: 7, at: AT } })).toBeNull();
+    expect(testAlertFrom({ ok: true, test: 'x' })).toBeNull();
+    expect(testAlertFrom({ ok: false })).toBeNull();
+    expect(sendTestFrom({ ok: true, id: ID, at: AT })).toEqual({ ok: true, id: ID, at: AT });
+    expect(sendTestFrom({ ok: false, error: 'TOO_SOON', wait: 37 })).toEqual({ ok: false, error: 'TOO_SOON', wait: 37 });
+    expect(sendTestFrom({ ok: false, error: 'NOT_ON' })).toEqual({ ok: false, error: 'NOT_ON', wait: 0 });
+    expect(sendTestFrom({ ok: false, error: 'SOMETHING' })).toEqual({ ok: false, error: 'UNREADABLE', wait: 0 });
+    expect(sendTestFrom(null).ok).toBe(false);
+  });
+
+  it('waits about 90 seconds, then says shown, not shown, or still with us', () => {
+    const t = { id: ID, at: AT, sentAt: null, sentHow: null, shownAt: null };
+    expect(testAlertState(null, AT)).toBe('none');
+    expect(testAlertState(t, AT + 10_000)).toBe('waiting');
+    expect(testAlertState({ ...t, sentAt: AT + 40_000, sentHow: 'instant' }, AT + TEST_WAIT_MS - 1)).toBe('waiting');
+    expect(testAlertState({ ...t, sentAt: AT + 40_000, sentHow: 'instant' }, AT + TEST_WAIT_MS)).toBe('not-shown');
+    expect(testAlertState(t, AT + TEST_WAIT_MS)).toBe('not-sent');
+    // Shown wins at any time, even after "not shown yet" (a phone that showed it late).
+    expect(testAlertState({ ...t, sentAt: AT + 40_000, sentHow: 'instant', shownAt: AT + 45_000 }, AT + 5 * 60_000)).toBe('shown');
+    expect(testAlertState({ ...t, sentAt: AT + 40_000, sentHow: 'instant', shownAt: AT + 45_000 }, AT + 45_000)).toBe('shown');
+    expect(testAlertState({ ...t, sentAt: AT + 40_000, sentHow: 'none' }, AT + 50_000)).toBe('unreached');
+  });
+
+  it('asks every 5 s for 2 minutes, then every 20 s, and stops at 10 minutes or once answered', () => {
+    expect(testPollMs('waiting', 1_000)).toBe(5_000);
+    expect(testPollMs('not-shown', 119_000)).toBe(5_000);
+    expect(testPollMs('not-shown', 121_000)).toBe(20_000);
+    expect(testPollMs('not-sent', 9 * 60_000)).toBe(20_000);
+    expect(testPollMs('not-shown', 10 * 60_000)).toBeNull();
+    expect(testPollMs('shown', 1_000)).toBeNull();
+    expect(testPollMs('unreached', 1_000)).toBeNull();
+    expect(testPollMs('none', 0)).toBeNull();
+  });
+
+  it('says the time on the device clock', () => {
+    expect(clockLabel(AT + 60_000, 330)).toBe('7:41 pm');
+    expect(clockLabel(AT + 60_000, 0)).toBe('2:11 pm');
+    expect(clockLabel(Date.UTC(2026, 10, 15, 2, 0, 0), -300)).toBe('9:00 pm');
+    expect(testWords(TEST_WORDS.shown, { time: '7:41 pm' })).toBe('Sent. Did a notice pop up? It showed on this device at 7:41 pm.');
+    expect(testWords(TEST_WORDS.tooSoon, { n: 37 })).toBe('You just sent a test. You can send another in 37 seconds.');
+  });
+
+  it('plain words that never blame the device or its owner', () => {
+    expect(TEST_WORDS.button).toBe('Send a test alert');
+    expect(TEST_WORDS.notShown).toBe('We sent it, but this device has not shown it yet.');
+    for (const w of Object.values(TEST_WORDS)) {
+      expect(w).not.toMatch(/\b(volume|PR|session|push|VAPID|subscription|service worker|endpoint|wrong|fault|broken|your mistake|you must|you need to)\b/i);
+      expect(w.length).toBeLessThanOrEqual(220);
+    }
+    // The checks are things to look at, never "you turned it off".
+    for (const w of [TEST_WORDS.checkAllowed, TEST_WORDS.checkQuiet, TEST_WORDS.checkOnline]) expect(w).not.toMatch(/\byou\b/i);
+    expect(TEST_WORDS.notSent).toMatch(/on our side/);
+  });
+});
+
+describe('the service worker shows a test alert and says so', () => {
+  const ID = '0b6f6a52-3c1e-4d2a-9f53-2a6c1d9e7b10';
+  const testPush = (tag = `mettleup-test-${ID}`) => ({
+    data: { json: () => ({ title: 'MettleUp: test alert', body: 'Alerts work on this device. Alerts from your members will look like this.', route: '/settings', tag }) },
+  });
+
+  it('shown first, then the alert id (only) to the gym server at our own address, then the open tabs', async () => {
+    const tab = { url: 'https://app.mettleup.fit/#/settings', messages: [] as unknown[] };
+    const w = loadWorker([tab]);
+    await w.fire('push', testPush());
+    expect(w.shown).toHaveLength(1);
+    expect(w.shown[0].title).toBe('MettleUp: test alert');
+    expect(w.shown[0].opts.tag).toBe(`mettleup-test-${ID}`);
+    expect(w.fetched).toHaveLength(1);
+    expect(w.fetched[0].url).toBe('https://app.mettleup.fit/sb/rest/v1/rpc/panel_test_alert_shown');
+    expect(w.fetched[0].init.method).toBe('POST');
+    expect(JSON.parse(String(w.fetched[0].init.body))).toEqual({ p_alert: ID });
+    expect((w.fetched[0].init.headers as Record<string, string>).apikey).toMatch(/^sb_publishable_/);
+    expect(tab.messages).toEqual([{ type: 'mettleup-test-shown', id: ID }]);
+  });
+
+  it('our address failing: the direct address once; off our site: the direct address only', async () => {
+    const urls: string[] = [];
+    const w = loadWorker([], {
+      fetch: async (url) => {
+        urls.push(url);
+        if (url.startsWith('https://app.mettleup.fit/')) throw new TypeError('network');
+        return new Response('{"ok":true}');
+      },
+    });
+    await w.fire('push', testPush());
+    expect(urls).toEqual(['https://app.mettleup.fit/sb/rest/v1/rpc/panel_test_alert_shown', 'https://hdxzqbdiokjklnypfisq.supabase.co/rest/v1/rpc/panel_test_alert_shown']);
+    const dev = loadWorker([], { origin: 'http://localhost:5173' });
+    await dev.fire('push', testPush());
+    expect(dev.fetched.map((f) => f.url)).toEqual(['https://hdxzqbdiokjklnypfisq.supabase.co/rest/v1/rpc/panel_test_alert_shown']);
+  });
+
+  it('a normal alert, or a tag that only looks like a test, tells nobody; a server that fails still shows the notice', async () => {
+    const w = loadWorker();
+    await w.fire('push', { data: { json: () => ({ body: 'New shop order 7 from Neha. Get it ready on Shop.', route: '/shop', tag: `mettleup-alert-${ID}` }) } });
+    await w.fire('push', testPush('mettleup-test-not-an-id'));
+    await w.fire('push', testPush(`mettleup-test-${ID}-x`));
+    expect(w.shown).toHaveLength(3);
+    expect(w.fetched).toEqual([]);
+    const down = loadWorker([], { fetch: async () => new Response('', { status: 503 }) });
+    await down.fire('push', testPush());
+    expect(down.shown).toHaveLength(1);
+    expect(down.fetched).toHaveLength(2);
   });
 });

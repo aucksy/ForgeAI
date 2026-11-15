@@ -7,6 +7,35 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-578 (15 Nov 2026) "Send a test alert" on the admin app's alerts card
+- His ask (15 Nov 2026): a "Send a test alert" button in the admin panel, so an owner can check in one tap that alerts
+  reach this phone or computer with the admin app closed. Why: today his 2 friend enquiries made urgent alerts, HQ sent
+  them to both his browsers and Google's push service took both ("[panel-push] sent 2 failed 0"); his laptop was fine,
+  his OPPO phone (installed admin app) showed nothing. Cause unknown; the test plus a "shown" answer lets him (and
+  every owner) check it. Never blame his phone settings: the checks are things to look at.
+- Built: Settings > "Alerts from your members", for a device with alerts on: "Send a test alert". It goes the REAL way
+  (gym_alerts -> hq_panel_push_instant -> HQ Worker -> push company -> the admin app's service worker), to THIS
+  browser only (gym_alerts.sub_id = its gym_web_push row). Once a minute a browser, 20 an hour a gym. The service
+  worker shows it (tag mettleup-test-<alert id>, title "MettleUp: test alert", tap opens Settings), then tells the gym
+  server (panel_test_alert_shown: the alert id only; via /sb, falling back to Supabase's own address) and any open tab.
+  The card asks every 5 s, then 20 s, for 10 minutes, and again when the admin app is opened again, and says:
+  waiting ("It can take up to a minute. You can close the admin app now ..."), shown ("Sent. Did a notice pop up? It
+  showed on this device at 7:41 pm." + "No notice popped up" with 2 things to look at), not shown after 90 s ("We sent
+  it, but this device has not shown it yet." + 3 things to look at), not sent yet ("on our side, not your device"),
+  or "We could not reach this device". Test alerts never reach owner_alerts, the bell, Today, summaries or counts
+  (server and admin app both drop them), so with the admin app open there is one notice (the service worker's), not two.
+  The HQ Worker needs NO change (it sends what the server hands it; a new HQ test proves the test send is untouched).
+- Migration: supabase/migrations/0095_test_alert.sql, **NOT APPLIED (needs the owner's yes)**: gym_alerts.sub_id +
+  shown_at, kind 'test_alert', owner_send_test_alert / owner_test_alert / panel_test_alert_shown, and 0075's
+  owner_alerts + 0076's three hq_panel_ calls replaced (tests skip test alerts; every other alert goes as before).
+  Test: supabase/tests/0095_test_alert.sql; security.sql's anon list has the 3 new calls.
+- To go live: (1) his yes to 0095, then the SQL Editor + live test 0095; (2) an admin panel deploy (sw.js and the card).
+  No HQ deploy needed. Until 0095 is live the button stays hidden (the card is as before).
+- What's new: ADMIN_NEWS_PENDING 'pending-test-alert' (moves at the deploy after 0095 is live).
+- Tests: unit (test/crm/webPush.test.ts: answers, states, polling, clock, words, the service worker's "shown";
+  gymAlerts.test.ts: a test alert is never listed), HQ (deploy/hq/panelPush.test.mjs, local pass 12/12), journey
+  e2e/test-alert-uat.spec.mjs (no 0095 = no button; every state on phone and computer, dark and light). Cloud runs below.
+- Status: IN PROGRESS.
 ## R-577 (15 Nov 2026) Watch screens checked on the sizes of the watches members own (owner chose "Option 1")
 - The brief (15 Nov 2026): the owner chose "Option 1": render the watch app's screens in the cloud on Galaxy
   Watch, OnePlus and TicWatch sizes too, not only Pixel, plus the biggest text a watch allows; a small-round
