@@ -70,6 +70,29 @@ export interface WhatsNewEntry {
 /** Newest first. */
 export const WHATS_NEW_LOG: readonly WhatsNewEntry[] = [
   {
+    // Owner's release, 15 Nov 2026 ~22:20 IST ("release", R-592) and 16 Nov ("Take best decisions yourself to release
+    // whatever is pending"): everything since 0.78.0. member-words rules, no Gemini pass (only when he asks); with Play's
+    // "• " each line, 493 of 500 characters. Left out (fewer, clearer lines): the new welcome and phone-number sign-in
+    // (R-587: only a new install sees it), mobile number boxes keep the 10 digits (R-580), the watch update pop-up's
+    // checks (R-575, a fix of 0.77.0's line), no dots on a first install (R-581). Not proven on his OPPO yet: line 3
+    // (R-590, the app rings itself where the phone took the sound). The watch line starts "Your watch" so the phone's
+    // watch update card lists it under "New on your watch".
+    version: '0.79.0',
+    date: '16 Nov',
+    lines: [
+      {
+        text: '"Message your gym" on the Gym tab now lets you pick who reads it, like the owner or a trainer.',
+        go: { label: 'Open the Gym tab', href: '/shop', section: 'gym' },
+        feature: true,
+      },
+      { text: 'In a workout, "Today\'s target" now always beats your previous workout. If it can\'t, tap "i" to see why.' },
+      { text: 'On some phones, gym messages and "Rest is over" made no sound. Now they do.' },
+      { text: "Tapping a notification now opens its page, like your gym's reply." },
+      { text: '"New exercise" is simpler: tap a row, like "Main muscle", to change it.' },
+      { text: 'Your watch keeps its big numbers full size at the largest text size.' },
+    ],
+  },
+  {
     // Owner's release, 15 Nov 2026 night IST ("... complete all the testing, make decisions whenever required and release
     // everything", R-556): everything since 0.77.0. member-words + Gemini 3.1 Pro pass (its rewrites dropped facts, so
     // only "kilos you lifted" was taken); with Play's "• " each line, 485 of 500 characters. Left out to fit (fewer,

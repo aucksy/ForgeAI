@@ -7,6 +7,49 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-597 (16 Nov 2026) 0.79.0 release prep: waiting list cleaned, What's new written (no version bump, no tag)
+- Coordinator's brief (his "release" 15 Nov 2026 ~22:20 IST, R-592; 16 Nov "Take best decisions yourself to release
+  whatever is pending", R-594b). Version, tag and Play upload stay with the coordinator.
+- PROGRESS.md cleaned: 79 entries moved from "Waiting for release" to "## Done" (block "0.73.0 to 0.78.0 RELEASED",
+  verbatim, indented). Test: every R-/F-/T-number in each line was looked up in git log; all their commits are
+  ancestors of v0.78.0 and none come after (`git merge-base --is-ancestor`, same as the tag's history). Lines with no
+  number (UK5, light mode, watch logging, launch polish, owner dashboard, 0.7x release lines) are from 3-12 Nov, before
+  v0.78.0 (UK5's c3a85ede checked: inside it). Panel/server parts of the moved lines: in the live panel d2928aaa (R-589); every migration they name is live
+  (0050-0081 and 0086 as named; checked against the "applied live" commits, file headers can be stale).
+- Kept on the list: R-596, R-580, R-572, R-576, the open-testing release rule, OPS + WEBSITES (its 0052 "NOT applied"
+  line fixed: live since 4 Nov). Added (they had no line): R-586, R-590, R-583, R-575, R-577, R-587, R-581, F217/F218
+  phone part, R-561 item 6 phone part. New "Panel and server only" block: the next panel + HQ deploy (R-586 words,
+  R-593 Today, 'pending-today-handled'), R-595 (0097 + token), and what is switched off (GYM_PAGES, PAGE_AI/0094,
+  JOIN_PAY, Plus, 0091, 0092).
+- FINAL 0.79.0 LIST.
+  - Phone: R-586 "Who should read it?" (0096 live); R-576 "Today's target" always beats previous, the "i" says why;
+    R-572 New / Edit exercise as one card of rows; R-590 gym messages and "Rest is over" ring on phones that strip
+    the sound (NOT proven on his OPPO); R-583 a tapped notification opens its page; R-587 welcome screens + phone-first
+    sign-in (0093 live, G5 number not kept); R-580 10-digit mobile boxes; R-581 no dots on a first install; R-596 + R-575
+    watch update pop-up (phone side); F217/F218, R-561 item 6 (hidden until 0091/0092).
+  - Watch: R-577 largest text keeps the big numbers; R-575 the watch app advertises itself again.
+  - Panel/server only (deploy, not the release): the block in PROGRESS.md.
+- WHAT'S NEW 0.79.0 (apps/mobile/src/lib/whatsNew.ts, top entry, date '16 Nov'; member-words rules; no Gemini, he did not
+  ask; no Hinglish lines in this file; no fresh-reader helper: 6 helpers were already running). Play text = the same
+  6 lines, "• " each, 493 of 500 characters (play_upload.release_notes; the update screen's whats-new.json takes the
+  first 3):
+  1. "Message your gym" on the Gym tab now lets you pick who reads it, like the owner or a trainer. [Open the Gym tab, dot]
+  2. In a workout, "Today's target" now always beats your previous workout. If it can't, tap "i" to see why.
+  3. On some phones, gym messages and "Rest is over" made no sound. Now they do.
+  4. Tapping a notification now opens its page, like your gym's reply.
+  5. "New exercise" is simpler: tap a row, like "Main muscle", to change it.
+  6. Your watch keeps its big numbers full size at the largest text size. (also under "New on your watch")
+  Left out: welcome/phone sign-in (only new installs see it), 10-digit boxes, watch pop-up checks, first-install dots.
+  If R-590 is not proven before production, line 3 can be dropped (one line, nothing else changes).
+- RELEASE STEPS LEFT (coordinator): (1) all helpers green, fresh-eyes review of d2928aaa..HEAD panel/HQ diff, panel +
+  HQ deploy with 'pending-today-handled' moved into ADMIN_NEWS, live checks; (2) release commit: apps/mobile/app.json
+  "version" 0.78.0 -> 0.79.0 ONLY (the What's new entry is in; whatsNew.test "app.json and the log agree" then reads
+  0.79.0's lines); if the tag lands on 17 Nov IST or later, also change the entry's date '16 Nov' to that day;
+  (3) full UAT round, all types, on that commit; (4) quote his "release" (15 Nov 2026 ~22:20 IST) in chat, tag v0.79.0;
+  (5) release-apk run, then play-upload phone + watch to open testing (wear:beta and the watch closed track follow;
+  re-run play-upload if Google's review blocks the watch tracks); production by hand about 3 days later; (6) after the
+  release, move the "### 0.79.0" lines in PROGRESS.md to "## Done" and prove R-590 on his OPPO.
+
 ## R-596 (16 Nov 2026) Watch update pop-up waits for a watch that is out of reach (review G4)
 - His words (16 Nov 2026): "I do want the watch app new update pop issue fixed". Goes into 0.79.0.
 - The bug (G4, R-594 round 4): the R-438/R-575 pop-up "Your watch app has an update" also showed for a watch
