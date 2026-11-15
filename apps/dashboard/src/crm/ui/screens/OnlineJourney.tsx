@@ -76,7 +76,7 @@ function Journey({ title, done, ownerKey, gymName, joinCode }: { title: string; 
     shopApi
       .ownerGym(ownerKey)
       .then((g) => live && setBrand(g.brand ?? null))
-      .catch(() => undefined);
+      .catch((e) => console.warn('[journey] the gym logo for the poster could not be read (the poster shows without it)', e));
     return () => {
       live = false;
     };
