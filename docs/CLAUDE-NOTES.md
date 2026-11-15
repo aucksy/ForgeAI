@@ -173,7 +173,7 @@ Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept her
   - Pictures of runs 43730720703 (1080x2400, utour + u203 + u198, all passed) and 43730723379 (his size, 360 dp,
     font 1.3) showed the welcome picture pushing the words below the fold: on his size the title was cut off and
     the watch title was half hidden. Fixed: the picture shrinks to the room left above the words
-    (introSlides.artScale, floor 0.45; FitArt in IntroSlides.tsx). u203 pictures all fine: phone-only first screen,
+    (introSlides.artScale, floor 0.35; FitArt in IntroSlides.tsx). u203 pictures all fine: phone-only first screen,
     Try another way, no-tick message, not found, 2 gyms, the trainer's old path, and a found member straight onto
     the Workout tab with the Gym tab showing QA UAT Gym. u198 (R-581 first-install dots) passed.
   - Gym screen (canvas v7): the words first, right under "3 of 3" / Skip, then the phone row, arrow, "We found you"

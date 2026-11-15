@@ -134,7 +134,7 @@ export function wordsFirst(key: IntroKey): boolean {
 }
 
 /** The smallest the welcome picture is drawn (a very large display size scrolls below this). */
-export const ART_MIN_SCALE = 0.45;
+export const ART_MIN_SCALE = 0.35;
 
 /**
  * How much the welcome picture is shrunk so the title and words fit under it: 1 when it fits, never below
