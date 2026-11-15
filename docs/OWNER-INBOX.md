@@ -14,6 +14,7 @@ Page: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT (private to your account
 
 | # | Decision | My pick |
 |---|---|---|
+| 101 | Gym web pages and the next admin panel update: 4 yeses (panel update, page words, 6 join lines, 0089 + 0090) | Yes to all 4 |
 | 94 | iPhone and Apple Watch apps: restart now, or after Android is public on Play? | A: after Android is public |
 | 78 | Turn on the Starter and Pro split now? | A: not yet, until the first gym pays |
 
@@ -26,6 +27,7 @@ Done, built and "Not doing" items have no rating. The page sorts by these (Best 
 
 | Item | Impact | Effort |
 |---|---|---|
+| Decision: Gym web pages and the next admin panel update: 4 yeses in one list | High | Low |
 | Feature: Plus page and "Find my gym" page closed while Plus is off | Low | Low |
 | Feature: Trainers' charts keep the long-time members' history | Medium | Medium |
 | Feature: Play listing may say "In-app purchases" | Low | Low |
@@ -618,6 +620,29 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | F188 Big banner at the top of the Play listing | Idea | Parked (owner, 1 Nov: "add it to backlog for now"). Our 1024x500 banner picture is already on the listing; Play shows it at the top only when the listing has a YouTube video. | I make a 30-second video from the real app screens, for free. You watch it first. After your yes, it goes on YouTube as Unlisted (only people with the link see it) and its link goes in the listing, so the banner shows on top. Best done when the app goes public. |
 
 ---
+
+## 101. Gym web pages and the next admin panel update: 4 yeses in one list — 15 Nov 2026
+**Chat:** Mettle Up
+**Status:** WAITING FOR YOU
+**Why you see this:** the work you asked for on 15 Nov is built and tested (all cloud checks green). It is on main, not live yet. These 4 things need your yes. Each one is separate, so you can say yes to some and no to others.
+
+**1. The next admin panel update.** It carries: the clearer sidebar headings and the wider sidebar, "Set up your gym" keeping its "3 of 7" ring, the "Turn on alerts" card in the bell, English/Hinglish beside Dark/Light, one sentence under every setting, payment colours and 3 groups in the bell, one Refresh for the whole panel, the ready-made challenges, "one link per gym" on Invite members, the free trial words you approved, and the festival date fixes. A fresh-eyes review runs first; I deploy only after it passes. Gym web pages, online joining payments and real payments stay off.
+- Say: "yes to the panel update".
+
+**2. The words on the gym web page and the join form.** Every line, in English and Hindi, is in docs/gym-page/PUBLIC-WORDS.md (sections 1 and 2). A yes lets me switch gym web pages on for all gyms, on by default, with your per-gym off switch in HQ.
+- Say: "yes to the gym page words".
+
+**3. Six join-form lines rewritten as complete sentences.** For example, "Under 18? ..." becomes "If you are under 18, please ...". They are in section 3 of the same file. They change nothing else.
+- Say: "yes to the 6 join lines".
+
+**4. Two database changes.**
+- 0089: the server itself writes the free-trial alert in your approved words. Today the admin panel and HQ already show your words without it.
+- 0090: the per-gym "Web page" switch in HQ. Gym web pages need it before they go on.
+- Say: "yes to 0089 and 0090".
+
+**Later, not now:** 0091 (check-in challenges) goes live only after the next phone release, so phones can show "5 of 12 visits". I ask you then.
+
+**My pick:** yes to all 4. Then gym web pages go live in one step, and every owner gets one link for WhatsApp, the poster and Google Maps.
 
 ## 100. Cloudflare: stay on the free plan until the first online payment — 14 Nov 2026
 **Chat:** Mettle Up
