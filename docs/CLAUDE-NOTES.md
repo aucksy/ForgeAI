@@ -7,6 +7,17 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-592 (15 Nov 2026, 22:22 IST) RELEASE APPROVED (phone + watch 0.79.0); "yes 0095", "yes 0096"
+- His message, verbatim (15 Nov 2026, about 22:20 IST): "yes 0095 / yes 0096 / release". One "release" = one version.
+- 0095 and 0096: a helper applies them live with their live tests (R-591). The live panel (d2928aaa) already shows
+  "Send a test alert" once 0095 is live. R-586's panel words ("To: ...", desk lines) need ANOTHER panel deploy: ask him.
+- Release plan (coordinator's call): the release waits for the two fixes in flight, then UAT of all types, then the tag:
+  R-587 welcome screens + phone-first sign-in (incl. his screen-3 change, canvas v7) and R-590 silent gym alerts on his
+  OPPO. Also in it: R-575 watch "update" prompt, R-576 target box, R-577 watch sizes, R-578 test alert, R-579/R-580,
+  R-583 tap fix, R-586 message picker. Open testing first, production about 3 days later.
+- He asked (same time): is the "watch screen not dimming" fix in? Answer: the fix (R-557) shipped in 0.78.0 (R-560); his
+  watch was on an old watch app. 0.79.0 adds the prompt that tells him the watch app has an update (R-575).
+
 ## R-589 (15 Nov 2026, night) Admin panel + HQ DEPLOYED LIVE from d2928aaa; phone on USB; welcome screen 3 words first
 - His "yes panel deploy" (15 Nov 2026). Panel Worker version 330e476a-2ef6-41f6-bcf0-8d546c931e09, HQ Worker version
   e90a9f77-dbaa-4ee4-8ba5-00ac6c78832e (deploy/hq changed in the range: R-580 api.js), both from d2928aaa2715ee0ee2c1279ec242ce7d6321c6f1
