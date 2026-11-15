@@ -71,8 +71,9 @@ export function DayField({
             // A click on a computer lands on one part of the date; open the whole calendar instead.
             try {
               e.currentTarget.showPicker?.();
-            } catch {
+            } catch (err) {
               // Some browsers refuse outside a direct tap; the box still works by typing.
+              console.warn('[day-field] the calendar did not open; the day can still be typed', err);
             }
           }}
           aria-describedby={hint ? noteId : undefined}
