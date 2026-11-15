@@ -47,10 +47,10 @@ test('J149 Notifications bell: counts new updates, opens with a short What is ne
   await expect(bell).toBeVisible();
   await bell.tap();
   const list = page.getByRole('dialog', { name: 'Notifications' });
-  await expect(list).toContainText('Version 14 Nov 2026');
+  await expect(list).toContainText('Version 15 Nov 2026');
   const news = list.getByRole('region', { name: CARD });
-  await expect(news).toContainText('Update of 14 Nov 2026');
-  await expect(news).toContainText('Your gym’s logo now shows at the top of the admin app'); // 14 Nov 2026, the newest update (R-495)
+  await expect(news).toContainText('Update of 15 Nov 2026');
+  await expect(news).toContainText('you can check that alerts reach this phone or computer'); // 15 Nov 2026, the newest update (R-589)
   await expect(news).toContainText(/\d+ updates since you last looked/);
   await expect(news.getByText('New', { exact: true })).toBeVisible();
   await expectFitsPhone(page, 'with the notifications list open');
