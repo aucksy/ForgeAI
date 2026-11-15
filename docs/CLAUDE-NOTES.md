@@ -167,7 +167,19 @@ Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept her
   box's own check refuses it. All five plain-JS copies changed alike. Tests: mobileNumber.test.ts (landlines 080 /
   079 / 0712 / 0612 / 0141 / 011, two numbers, foreign refused, Settings + emergency use the safe rule),
   mobileRule.test.mjs (foreign refused by friend, lead, gym page, sign-in), phoneCode.test.mjs, shared tables.
-- Status: IN PROGRESS (cloud run ids follow).
+- Journeys fix (d2928aaa): packages/theme/package.json gets "type": "module"; the journey runner had compiled
+  indianMobile.ts as CommonJS ("Named export cleanMobile not found") when a spec imported a Worker file.
+- **State (15 Nov 2026, paused for the usage limit):** on main: 2c450aa0, 07cbced6, fix round df153fb9, d2928aaa.
+  Main CI is red at "Unit tests (mobile)" from 11 tracker test files (targetSettings, r454RepFloor, progression ...)
+  that were red BEFORE R-580 (same list on run 43725971912), so later steps skip on main. To run them anyway a
+  TEMP branch tmp-r580-ci adds continue-on-error to the 3 mobile unit steps (never on main): run 43727113404
+  (pre-fix) passed mobile R-580 tests (49), dashboard unit, Panel Worker (413/0), HQ (178/0); journeys failed to
+  load (fixed by d2928aaa). PENDING: run 43729446014 on d2928aaa (journeys + pictures r580-1..5 in artifact
+  dashboard-uat-pictures). Device QA 43726397502 (u203,u461) PASSED; picture rel-f203-5b-keyboard-number checked:
+  the box shows 9876543210.
+- **Left:** read run 43729446014 (journeys green, look at r580 pictures); delete branch tmp-r580-ci
+  (git push origin :tmp-r580-ci); remove worktree D:/Apps/ForgeAI/wt-r580; set Status DONE here.
+- Status: IN PROGRESS.
 ## R-583 (15 Nov 2026) Gym reply notification: tap opened nothing (fixed); no sound / no pop-up (open); trainer choice hidden
 - His test (15 Nov 2026, his own member on his gym): the gym replied to his feedback. "There is a notification in the
   notifications panel, but there is no sound. And the notification has no pop-up either. Tapping that notification did
