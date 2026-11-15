@@ -73,19 +73,25 @@ Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept her
 - Tests: test/onboarding/welcomeIntro.test.ts (screen count, step labels, which watch button, exact words, card
   totals, banned words, which sign-in buttons show, who goes straight in, join before setup), plus phoneSignIn,
   welcomeUat, watchStartAndIntro updated. CI 43730661597 on 3d5a2bdd: phone typecheck, all 3 unit-test time zones up to New York and the flow lint GREEN when last read (dashboard steps still running).
-- STATE when this session stopped (usage limit, 15 Nov 2026): code pushed (3d5a2bdd). PENDING, not yet read: phone
-  runs qa-device 43730720703 (only=utour,u203,u198, default profile 1080x2400) and 43730723379 (only=utour, owner
-  profile 360 dp, font 1.3). NO picture looked at yet. Next step: read both runs (and the rest of CI 43730661597);
-  on a red u203/utour step fix the flow or the screen; download the tour-*.png and rel-f203-*.png pictures, look at
-  every one (welcome 1 of 2 / 1 of 3, watch Install / On your watch, phone-only sign-in, Try another way opened,
-  straight-in member on the Workout and Gym tabs), check u198 (R-581 first-install dots) passed, delete the
-  downloads, then fill this line in.
+- Round 2 (15 Nov 2026, his answers "drop the sign-in card" and "keep last", then canvas v7 for the gym screen):
+  - The bench press example card is gone from the sign-in screen (WelcomeSetCard deleted); welcome screen 1 keeps
+    its own. "Beat your last workout" stays as approved.
+  - Pictures of runs 43730720703 (1080x2400, utour + u203 + u198, all passed) and 43730723379 (his size, 360 dp,
+    font 1.3) showed the welcome picture pushing the words below the fold: on his size the title was cut off and
+    the watch title was half hidden. Fixed: the picture shrinks to the room left above the words
+    (introSlides.artScale, floor 0.45; FitArt in IntroSlides.tsx). u203 pictures all fine: phone-only first screen,
+    Try another way, no-tick message, not found, 2 gyms, the trainer's old path, and a found member straight onto
+    the Workout tab with the Gym tab showing QA UAT Gym. u198 (R-581 first-install dots) passed.
+  - Gym screen (canvas v7): the words first, right under "3 of 3" / Skip, then the phone row, arrow, "We found you"
+    card and "Example"; the phone row says "Verified" (was "Checked"). introSlides.wordsFirst.
+  - PENDING when written: picture tours on 380aacf8: 43737448343 (1080x2400), 43737450694 (his size, font 1.3),
+    43737452877 (360 dp, font 2.0); CI 43737378612. Next: look at every picture, fill in the line below.
+- Pictures looked at (round 2): PENDING.
 - Open:
   - Gym staff (owner, trainer, desk) found by the number keep the old path (Join, 3 questions, the join screen).
   - The straight-in defaults (Build muscle, New to lifting, kg) are a guess the member never confirmed.
-  - My view: the sign-in screen still has its own example card under the welcome's bench card: two similar cards in
-    a row. Worth dropping the sign-in one.
-  - The approved words say "last workout"; the 1 Nov rule says "previous", never "last". The approved design won.
+  - Done: the sign-in card dropped (his "drop the sign-in card").
+  - "Beat your last workout" kept (his "keep last", 15 Nov 2026), an exception to the 1 Nov "previous" rule.
   - The watch screen was seen only through the stand-in, never with a real watch.
   - No What's new line: only a new install sees the welcome, and every member who updates is already signed in.
 
