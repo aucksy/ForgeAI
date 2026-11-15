@@ -1,13 +1,13 @@
-# Part UAT, flow "gt" (gym, after flow 12): "Message your gym" (owner request, 12 Nov 2026; docs/plans/gym-member-messages.md).
-# The phone is a member ("Uma") of the fresh "QA UAT Gym" made by run-device-qa.sh.
-#  - Until the gym's server has 0069 (NOT applied live yet), a store build hides the row. This QA build carries the
-#    'gymTalk' stand-in (qa-device.yml): the page runs on a pretend gym kept in the phone and says so on screen, and
-#    the pretend gym answers each new message once, a moment after it was sent. So the whole member side is seen.
-#  - Once 0069 is live the real server answers (no pretend reply): the flow then checks send and "waiting" only.
-# Both branches end on the Gym tab.
-# Types covered: happy path (send, reply, red count, New, write back), negative (no "without my name" for a question
-# or a complaint; empty text cannot be sent), edge (complaint hint says only the owner reads it).
-# The gym's side (Member messages in the admin app) is checked by apps/dashboard/e2e/member-messages-uat.spec.mjs.
+# Part UAT, flow "gt" (gym, after flow 12c): "Message your gym" (owner request, 12 Nov 2026; docs/plans/gym-member-messages.md)
+# with R-586 "Who should read it?" (owner, 15 Nov 2026; 0096 APPLIED LIVE 15 Nov 2026, R-591).
+# The phone is a member ("Uma") of the fresh "QA UAT Gym" made by run-device-qa.sh, with the two made-up trainers
+# flow 12b used ("Tara Singh", her own trainer, and "Vikram Rao"). 0069 is live, so the real server answers: there is
+# no QA-build pretend gym any more (its note must not show).
+# Types covered: happy path (a question to the owner, a complaint to "Gym admin", feedback to the owner without the
+# name, each message's "To: ..." line), negative (no trainer for a complaint or feedback; no "without my name" for a
+# question or a complaint), edge (each pick changes who reads it). The server side is checked after this flow
+# (qa/uat_gym.py talk-to / trainer: who each message really went to, and that trainers do not see them).
+# The gym's side (Member messages in the admin panel, "To: ...") is checked by the admin e2e message-recipient-uat.spec.mjs.
 appId: com.mettleup.app
 ---
 - tapOn:
@@ -23,113 +23,31 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-see.yaml
     env:
-      FIND: '^(Ask your gym or a trainer, share feedback or make a complaint|Ask a question, share feedback or make a complaint)$'
+      FIND: '^Ask your gym or a trainer, share feedback or make a complaint$'
+# in-view: the red count would sit on the row just brought into view
 - assertNotVisible:
     id: "gym-talk-unread"
 - takeScreenshot: rel-gt-01-gym-tab-row
-- runFlow:
-    file: sub-see.yaml
-    env:
-      FIND: '^Message your gym$'
 - tapOn: "^Message your gym$"
+# in-view: the page just opened at its top; the hint sits under the Question chip
 - extendedWaitUntil:
     visible:
       id: "talk-kind-hint-ready"
     timeout: 30000
-# R-549: with "A trainer" there too, the top line names both (a member who may not ask reads the gym's own line).
 - runFlow:
     file: sub-see.yaml
     env:
-      FIND: '^(Write to your gym, or ask a trainer about your workout\. Every reply shows on this page\.|Send your gym a question, feedback or a complaint\. Any reply shows on this page\.)$'
+      FIND: '^Send your gym a question, feedback or a complaint\. Any reply shows on this page\.$'
+# in-view: the page just opened at its top, where the QA-build note sat before 0069 was live
+- assertNotVisible: "^Test build: these messages stay on this phone and do not reach your gym\\.$"
+# in-view: the same place; the R-549 choice is gone with 0096
+- assertNotVisible: '^Who is it for\?$'
 - runFlow:
     file: sub-see.yaml
     env:
       FIND: '^What is it about\?$'
-# The page opens at its top, so the test-build note (QA build, server without 0069) is on screen if it is there.
-# Decided HERE, before any scrolling: the pretend gym then answers, and the whole member side is checked.
-- runFlow:
-    when:
-      notVisible: "^Test build: these messages stay on this phone and do not reach your gym\\.$"
-    commands:
-      # The real server (0069 live): send and "waiting" only; the gym answers from the admin app.
-      - runFlow: sub-gym-talk-send.yaml
-      - back
-      - extendedWaitUntil:
-          visible: "${GYM}"
-          timeout: 30000
-- runFlow:
-    when:
-      visible: "^Test build: these messages stay on this phone and do not reach your gym\\.$"
-    commands:
-      - takeScreenshot: rel-gt-01b-page-test-build-note
-      - runFlow: sub-gym-talk-send.yaml
-      - back
-      - extendedWaitUntil:
-          visible: "${GYM}"
-          timeout: 30000
-      # A pull asks again (the pretend gym answers 2 seconds after the message).
-      - swipe:
-          direction: DOWN
-      - runFlow:
-          file: sub-find.yaml
-          env:
-            FIND: "^Your gym replied\\. Tap to read it\\.$"
-      - assertVisible:
-          id: "gym-talk-unread"
-      - takeScreenshot: rel-gt-05-row-replied
-      - runFlow:
-          file: sub-see.yaml
-          env:
-            FIND: '^Your gym replied\. Tap to read it\.$'
-      - tapOn: "^Your gym replied\\. Tap to read it\\.$"
-      - extendedWaitUntil:
-          visible: "^Message your gym$"
-          timeout: 30000
-          optional: true
-      - runFlow:
-          file: sub-see.yaml
-          env:
-            FIND: '^Message your gym$'
-      - runFlow:
-          file: sub-find.yaml
-          env:
-            FIND: "^Ravi from your gym · (Today|Yesterday), [0-9]{1,2}:[0-9]{2} [ap]m$"
-      - runFlow:
-          file: sub-see.yaml
-          env:
-            FIND: '^New$'
-      - runFlow:
-          file: sub-see.yaml
-          env:
-            FIND: 'Thanks for writing to us\. We have read your message and will sort it out this week\.'
-      - takeScreenshot: rel-gt-06-reply-new
-      - runFlow:
-          file: sub-see.yaml
-          env:
-            FIND: '^Write back$'
-      - tapOn: "^Write back$"
-      - inputText: "QA check: thank you"
-      - hideKeyboard
-      - runFlow:
-          file: sub-see.yaml
-          env:
-            FIND: '^Send$'
-      - tapOn: "^Send$"
-      - runFlow:
-          file: sub-find.yaml
-          env:
-            FIND: "^Sent\\.$"
-      - assertVisible: "QA check: thank you"
-      - takeScreenshot: rel-gt-07-wrote-back
-      # Read: the red count is gone from the row.
-      - back
-      - extendedWaitUntil:
-          visible: "${GYM}"
-          timeout: 30000
-      - runFlow:
-          file: sub-find.yaml
-          env:
-            FIND: '^(Ask your gym or a trainer, share feedback or make a complaint|Ask a question, share feedback or make a complaint)$'
-      - assertNotVisible:
-          id: "gym-talk-unread"
-      - takeScreenshot: rel-gt-08-row-read
+- runFlow: sub-gym-talk-send.yaml
+- back
+- extendedWaitUntil:
+    visible: "${GYM}"
+    timeout: 30000

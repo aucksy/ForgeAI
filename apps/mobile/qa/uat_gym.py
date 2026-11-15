@@ -21,7 +21,20 @@ yes to a typed number), the way qa-journeys and qa-conditions make their own gym
   answer <slot> <text>         R-533: the gym (the owner's session) answers the newest open question in "Ask about your
                                workout" (owner_questions -> owner_answer_question, as the admin app's Member questions
                                page does). Prints ANSWERED=1, or NO_OPEN_QUESTION when none waits (0053 not live, or
-                               the phone sent none).
+                               the phone sent none). Not used since 0096 (R-586): questions go to "Message your gym".
+  trainers <slot> <full name>  R-586: two made-up trainers, "Tara Singh" (98765 00586) and "Vikram Rao" (98765 00587),
+                               added as people (owner_add_person) and ticked Trainer (owner_set_trainer), as the admin
+                               panel's Staff page does; Tara becomes <full name>'s own trainer (owner_assign_trainer).
+  untick <slot> <name>         R-586: that trainer is no longer ticked Trainer (the "no longer listed" check).
+  talk-to <slot> <kind> <to> [<trainer name>] [anon]
+                               R-586: the owner's Member messages list (owner_talk_list) holds the newest message of
+                               <kind> sent to <to> ('owner' | 'desk' | 'trainer'), to that trainer by name and staff id
+                               (to 'trainer'), sent without the name only when 'anon' is given. CHECK OK / CHECK FAILED.
+  trainer <slot> <name> <n> [<reply text>]
+                               R-586: that trainer signs in (a one-time code the owner makes, staff_sign_in), and their
+                               own Member messages list holds exactly <n> messages, each a question sent to them by
+                               name; with <reply text> they reply to the newest (owner_talk_reply). Signed out after.
+                               Neither the code nor the session key is ever printed.
   sign-out <slot>              end the owner session
 
 Security (WP6 rules, unchanged): the gym is made by this run; never FORGE1 / RAMS01; the owner session
@@ -91,6 +104,84 @@ def make_pass(st, full_name, company):
     return f"'{full_name}' is now a {company} pass member, {cancelled} plan(s) cancelled, stand-in plan added (version {v})"
 
 
+# R-586: made-up trainers (98765 00xxx is the QA range; never a real person).
+TRAINERS = [("Tara Singh", "+919876500586"), ("Vikram Rao", "+919876500587")]
+
+
+def add_trainers(slot, st, member_name):
+    ids = {}
+    for name, phone in TRAINERS:
+        person = xj.rpc("owner_add_person", {"p_key": st["key"], "p_name": name, "p_phone": phone, "p_role": "staff"}) or {}
+        sid = person.get("staffId")
+        if not sid:
+            return f"TRAINERS FAILED: '{name}' was not added"
+        xj.rpc("owner_set_trainer", {"p_key": st["key"], "p_staff": sid, "p_on": True})
+        ids[name] = sid
+    pulled = xj.rpc("crm_pull", {"p_key": st["key"], "p_since": 0}) or {}
+    rows = [r for r in pulled.get("records") or [] if not r.get("x") and r.get("d") is not None]
+    member = next((r["d"] for r in rows if r["k"] == "member" and r["d"].get("fullName") == member_name), None)
+    if not member:
+        return f"TRAINERS FAILED: no member '{member_name}' on the desk list"
+    xj.rpc("owner_assign_trainer", {"p_key": st["key"], "p_member": member["id"], "p_staff": ids[TRAINERS[0][0]]})
+    st["trainers"] = ids
+    xj.save(slot, st)
+    return f"TRAINERS OK: {', '.join(ids)} ticked Trainer; {TRAINERS[0][0]} is {member_name}'s own trainer"
+
+
+def check_talk_to(st, kind, to, name=None, anon=False):
+    threads = (xj.rpc("owner_talk_list", {"p_key": st["key"]}) or {}).get("threads") or []
+    t = next((x for x in threads if x.get("kind") == kind), None)
+    if not t:
+        return False, f"no {kind} in the owner's Member messages ({len(threads)} message(s))"
+    got = f"to={t.get('to')} toName={t.get('toName')} anonymous={t.get('anonymous')}"
+    if t.get("to") != to:
+        return False, f"the newest {kind} went {got}, not to '{to}'"
+    if to == "trainer":
+        if t.get("toName") != name or t.get("toStaff") != (st.get("trainers") or {}).get(name):
+            return False, f"the newest {kind} went {got}, not to trainer '{name}' (staff id checked too)"
+    elif t.get("toName") is not None:
+        return False, f"the newest {kind} carries a trainer name: {got}"
+    if bool(t.get("anonymous")) != anon:
+        return False, f"the newest {kind}: {got}, expected anonymous={anon}"
+    if anon and (t.get("name") or t.get("phone") or t.get("appId")):
+        return False, f"the newest {kind} was sent without the name but the gym sees who sent it"
+    return True, f"the newest {kind} went {got}"
+
+
+def trainer_view(st, name, n, reply):
+    sid = (st.get("trainers") or {}).get(name)
+    if not sid:
+        return False, f"no trainer '{name}' made by this run (uat_gym.py trainers)"
+    phone = dict(TRAINERS)[name]
+    code = str((xj.rpc("owner_make_signin_code", {"p_key": st["key"], "p_staff": sid}) or {}).get("code") or "")
+    if len(code) != 6:
+        return False, f"no sign-in code for '{name}'"
+    signed = xj.rpc("staff_sign_in", {"p_phone": phone, "p_code": code, "p_device": "QA UAT (uat_gym.py, R-586)"}) or {}
+    key = signed.get("sessionKey") or ""
+    if len(key) < 16:
+        return False, f"'{name}' could not sign in: {signed.get('error')}"
+    try:
+        threads = (xj.rpc("owner_talk_list", {"p_key": key}) or {}).get("threads") or []
+        said = [f"{t.get('kind')} to={t.get('to')} toName={t.get('toName')}" for t in threads]
+        if len(threads) != n:
+            return False, f"'{name}' sees {len(threads)} message(s), not {n}: {said}"
+        wrong = [s for s, t in zip(said, threads)
+                 if t.get("kind") != "question" or t.get("to") != "trainer" or t.get("toStaff") != sid]
+        if wrong:
+            return False, f"'{name}' sees a message that was not a question sent to them: {wrong}"
+        if reply:
+            done = xj.rpc("owner_talk_reply", {"p_key": key, "p_thread": threads[0]["id"], "p_text": reply}) or {}
+            if done.get("ok") is not True:
+                return False, f"'{name}' could not reply: {str(done)[:160]}"
+            return True, f"'{name}' sees exactly {n} message(s) ({said}) and replied to the newest"
+        return True, f"'{name}' sees exactly {n} message(s) {said}"
+    finally:
+        try:
+            xj.rpc("staff_sign_out", {"p_key": key})
+        except RuntimeError:
+            pass
+
+
 def main(argv):
     if len(argv) < 2:
         print(__doc__)
@@ -137,6 +228,33 @@ def main(argv):
             return 1
         print("ANSWERED=1")
         return 0
+    if cmd == "trainers":
+        said = add_trainers(slot, xj.load(slot), argv[2])
+        print(said)
+        return 0 if said.startswith("TRAINERS OK") else 1
+    if cmd == "untick":
+        st = xj.load(slot)
+        sid = (st.get("trainers") or {}).get(argv[2])
+        if not sid:
+            print(f"UNTICK FAILED: no trainer '{argv[2]}' made by this run")
+            return 1
+        xj.rpc("owner_set_trainer", {"p_key": st["key"], "p_staff": sid, "p_on": False})
+        print(f"UNTICKED: '{argv[2]}' is no longer ticked Trainer")
+        return 0
+    if cmd in ("talk-to", "trainer"):
+        st = xj.load(slot)
+        try:
+            if cmd == "talk-to":
+                rest = argv[4:]
+                anon = "anon" in rest
+                name = next((a for a in rest if a != "anon"), None)
+                ok, said = check_talk_to(st, argv[2], argv[3], name, anon)
+            else:
+                ok, said = trainer_view(st, argv[2], int(argv[3]), argv[4] if len(argv) > 4 else None)
+        except RuntimeError as e:
+            ok, said = False, str(e)
+        print(f"CHECK {'OK' if ok else 'FAILED'} {cmd}: {said}")
+        return 0 if ok else 1
     if cmd == "sign-out":
         return xj.main(["sign-out", slot])
     print(__doc__)

@@ -65,9 +65,10 @@ appId: com.mettleup.app
 - takeScreenshot: rel-142-pass-gym-tab-below
 # 5 Nov 2026: a pass member has no plan, so the card never offers "free days to your plan".
 - assertNotVisible: '.*free days? to your plan.*'
-# R-505 (owner, 14 Nov 2026): asking a trainer is only for members on a running paid gym plan. Since R-549 (14 Nov
-# 2026) it is the "A trainer" side of the ONE "Message your gym" row, so a pass member (FITPASS) sees the row with the
-# gym side only: no "Who is it for?", no "A trainer", no "For workout help" hint. NEGATIVE checks on the page top.
+# R-505 (owner, 14 Nov 2026): the old "Ask about your workout" (0053) is only for members on a running paid gym plan,
+# and since R-549 it has no row of its own. R-586 (0096 live, 15 Nov 2026): on "Message your gym" ANY member may pick
+# a trainer by name (the owner asked that members can pick "any" trainer), so the pass member sees "Who should read
+# it?" with Tara (Vikram was unticked by flow r586a/b). NEGATIVE checks: no old row, no "Who is it for?" / "A trainer".
 - runFlow:
     file: sub-find.yaml
     env:
@@ -86,11 +87,11 @@ appId: com.mettleup.app
     file: sub-find.yaml
     env:
       FIND: "^Message your gym$"
-# The pass member's row offers the gym side only (or says a reply waits).
+# The pass member's row: the gym's own line (the row's trainer side is the old 0053 plan rule).
 - runFlow:
     file: sub-see.yaml
     env:
-      FIND: '^(Ask a question, share feedback or make a complaint|Your gym replied.*)$'
+      FIND: '^Ask a question, share feedback or make a complaint$'
 - tapOn: "^Message your gym$"
 # in-view: the page just opened at its top; the hint sits under the Question chip
 - extendedWaitUntil:
@@ -100,8 +101,18 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-see.yaml
     env:
-      FIND: '^Ask about timings, fees, classes and more\.$'
-# in-view: the page just opened at its top, where the choice would be
+      FIND: '^Ask about timings, fees, your workout and more\.$'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Who should read it\?$'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Tara Singh( \(your trainer\))?$'
+# in-view: the chips just checked; Vikram was unticked (flow r586b)
+- assertNotVisible: '^Vikram Rao$'
+# in-view: the page just opened at its top, where the old choice was
 - assertNotVisible: "^A trainer$"
 # in-view: the same place
 - assertNotVisible: '^Who is it for\?$'

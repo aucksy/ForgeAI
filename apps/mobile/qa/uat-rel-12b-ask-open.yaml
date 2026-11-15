@@ -1,8 +1,13 @@
-# Part UAT, flow 12b (gym, after flow 12): R-533 (owner, 14 Nov 2026) "when I responded back from the admin panel,
-# there was no notification... and there was no dot". Uma sends one question and leaves it open; run-device-qa.sh then
-# answers it as the gym (qa/uat_gym.py answer), and flow 12c checks the red count on the row, opens the reply, and
-# checks the count is gone. Skipped (no "A trainer" on "Message your gym") without 0053 (live since 9 Nov 2026).
-# R-549 (14 Nov 2026): the question is asked from the one "Message your gym" page, side "A trainer".
+# Part UAT, flow 12b (gym, after flow 12). R-586 (owner, 15 Nov 2026, verbatim): "It should be GYM Onwer or the name
+# of the trainers added in Admin Panel..user can select any." 0096 is live (R-591).
+# Before this flow run-device-qa.sh added two made-up trainers to the fresh "QA UAT Gym" (qa/uat_gym.py trainers:
+# "Tara Singh", Uma's own trainer, and "Vikram Rao", both ticked Trainer), as the admin panel's Staff page does.
+#  - HAPPY PATH: Question -> "Who should read it?": "Gym owner", "Tara Singh (your trainer)" and "Vikram Rao". Each
+#    pick changes who reads it (the readers line names the trainer or the gym). Pick Tara, send a question, and the
+#    message reads "Question · To: Tara Singh"; it waits for a reply.
+#  - NEGATIVE: the trainers-not-added line is gone; "Gym admin" is not offered for a question.
+# After it, run-device-qa.sh checks on the server that the question went to Tara by name and staff id (talk-to), that
+# Vikram sees nothing and Tara sees only it, and Tara replies (uat_gym.py trainer); flow 12c reads the reply.
 appId: com.mettleup.app
 ---
 - tapOn:
@@ -15,62 +20,82 @@ appId: com.mettleup.app
     env:
       FIND: '^Message your gym$'
 - tapOn: "^Message your gym$"
-# in-view: the page just opened at its top; the hint sits under the Question chip
+# in-view: the page just opened at its top; once the hint shows, the trainers list has been read
 - extendedWaitUntil:
     visible:
       id: "talk-kind-hint-ready"
     timeout: 30000
 - runFlow:
-    when:
-      notVisible: "^A trainer$"
-    commands:
-      - back
-# R-549: "Ask about your workout" is the "A trainer" side of "Message your gym" (skipped without 0053).
+    file: sub-see.yaml
+    env:
+      FIND: '^Who should read it\?$'
 - runFlow:
-    when:
-      visible: "^A trainer$"
-    commands:
-      - runFlow:
-          file: sub-find.yaml
-          env:
-            FIND: '^A trainer$'
-      - tapOn: "^A trainer$"
-      - extendedWaitUntil:
-          visible: '^Who should answer\?$'
-          timeout: 30000
-          optional: true
-      - runFlow:
-          file: sub-see.yaml
-          env:
-            FIND: '^Who should answer\?$'
-      - runFlow:
-          file: sub-find.yaml
-          env:
-            FIND: '^Any trainer or the owner$'
-      - tapOn: "^Any trainer or the owner$"
-      - runFlow:
-          file: sub-find.yaml
-          env:
-            FIND: 'For example: How can I squat deeper without pain in my knees\?'
-      - tapOn: 'For example: How can I squat deeper without pain in my knees\?'
-      - inputText: "QA check: is one rest day enough?"
-      - hideKeyboard
-      - runFlow:
-          file: sub-find.yaml
-          env:
-            FIND: '^Send question$'
-      - tapOn: "^Send question$"
-      - extendedWaitUntil:
-          visible: 'Waiting for a reply\. You can ask a new question once this one is answered\.'
-          timeout: 30000
-          optional: true
-      - runFlow:
-          file: sub-see.yaml
-          env:
-            FIND: 'Waiting for a reply\. You can ask a new question once this one is answered\.'
-      - runFlow:
-          file: sub-see.yaml
-          env:
-            FIND: 'QA check: is one rest day enough\?'
-      - takeScreenshot: rel-124-ask-open-for-reply
-      - back
+    file: sub-see.yaml
+    env:
+      FIND: '^Gym owner$'
+# The member's own trainer is marked, and comes first after the owner.
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Tara Singh \(your trainer\)$'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Vikram Rao$'
+# in-view: the chips just checked; the trainers are listed now
+- assertNotVisible: '^Your gym has not added its trainers to the app yet.*'
+# in-view: the same chips; "Gym admin" is for feedback and complaints only
+- assertNotVisible: '^Gym admin$'
+# "Gym owner" is picked first.
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Only the owner of ${GYM} reads your question\. The front desk and trainers do not see it\.$'
+- takeScreenshot: rel-r586-01-question-choices
+- tapOn: "^Vikram Rao$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Vikram Rao reads your question and gets a notification\. The owner of ${GYM} can read it too\.$'
+- takeScreenshot: rel-r586-02-question-to-vikram
+- tapOn: '^Tara Singh \(your trainer\)$'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Tara Singh reads your question and gets a notification\. The owner of ${GYM} can read it too\.$'
+# in-view: the readers line just checked replaced Vikram's
+- assertNotVisible: '^Vikram Rao reads your question.*'
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: 'For example: Is the gym open on Diwali\?'
+- tapOn: 'For example: Is the gym open on Diwali\?'
+- inputText: "QA check: is one rest day enough?"
+- hideKeyboard
+- takeScreenshot: rel-r586-03-question-to-tara-typed
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: '^Send message$'
+- tapOn: "^Send message$"
+# in-view: the sent line shows right under the Send button just tapped
+- extendedWaitUntil:
+    visible: "^Sent\\. When your gym replies, you will see it below\\.$"
+    timeout: 30000
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: '^Question · To: Tara Singh · (Today|Yesterday), [0-9]{1,2}:[0-9]{2} [ap]m$'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'QA check: is one rest day enough\?'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Not seen by your gym yet\. Waiting for a reply\.$'
+- takeScreenshot: rel-r586-04-question-to-tara-sent
+- back
+- extendedWaitUntil:
+    visible: "${GYM}"
+    timeout: 30000

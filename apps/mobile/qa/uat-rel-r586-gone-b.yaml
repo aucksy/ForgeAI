@@ -1,0 +1,49 @@
+# Part UAT, flow r586b (gym, right after flow r586a on the SAME open page; run-device-qa.sh has just unticked "Vikram
+# Rao" as a trainer). R-586 NEGATIVE: Send is refused with "This trainer is no longer listed at your gym. Please pick
+# someone else."; nothing is sent (the typed question stays); the page reads the trainers again, so Vikram's chip goes,
+# and the pick falls back to "Gym owner" (its readers line). Back to the Gym tab after.
+appId: com.mettleup.app
+---
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: '^Send message$'
+- tapOn: "^Send message$"
+# in-view: the refusal shows right under the Send button just tapped
+- extendedWaitUntil:
+    visible: '^This trainer is no longer listed at your gym\. Please pick someone else\.$'
+    timeout: 30000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^This trainer is no longer listed at your gym\. Please pick someone else\.$'
+# in-view: the refusal just showed; the sent line must not
+- assertNotVisible: '^Sent\. When your gym replies, you will see it below\.$'
+- takeScreenshot: rel-r586-06-trainer-no-longer-listed
+# The page reads the trainers again: Vikram's chip goes, Tara stays, and the pick falls back to "Gym owner".
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: '^Who should read it\?$'
+# in-view: the chips sit right under the heading just brought into view
+- extendedWaitUntil:
+    notVisible: '^Vikram Rao$'
+    timeout: 30000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Tara Singh \(your trainer\)$'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Only the owner of ${GYM} reads your question\. The front desk and trainers do not see it\.$'
+# The typed question is kept (nothing was sent).
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'QA check: who takes the Sunday class\?'
+- takeScreenshot: rel-r586-07-vikram-gone-owner-picked
+- back
+- extendedWaitUntil:
+    visible: "${GYM}"
+    timeout: 30000

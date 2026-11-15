@@ -1,10 +1,15 @@
-# Sub-flow of uat-rel-gym-talk.yaml (not a part of its own): on "Message your gym", the negative checks (no
-# "Send without my name" for a question or a complaint), then a feedback sent without the name, and its card.
-# Starts at the top of the page; ends with the sent card on screen.
+# Sub-flow of uat-rel-gym-talk.yaml (not a part of its own). R-586 (owner, 15 Nov 2026; 0096 live): on "Message your
+# gym", three messages, each to the reader the member picks under "Who should read it?":
+#  1. a Question to "Gym owner" (the readers line: the owner only);
+#  2. a Complaint to "Gym admin": only "Gym owner" and "Gym admin" are offered, NEVER a trainer (NEGATIVE: a complaint
+#     about a trainer must never reach them); each pick changes the readers line;
+#  3. a Feedback to "Gym owner", sent without the name (only feedback offers that).
+# Each sent message says who it went to ("To: Gym owner" / "To: Gym admin"). Starts at the top of the page; ends
+# with the feedback's card on screen. The server side (who it really went to) is checked by run-device-qa.sh after
+# (qa/uat_gym.py talk-to and trainer).
 appId: com.mettleup.app
 ---
-# R-505 / R-549: the "A trainer" hint shows only to a member who can ask; Uma has a running plan here (flow 12 asked a
-# trainer), so she reads it once the page has checked ("talk-kind-hint-ready").
+# ---------------------------------------------------------------- 1. a Question to "Gym owner"
 # in-view: the page just opened at its top; the hint sits under the Question chip
 - extendedWaitUntil:
     visible:
@@ -13,10 +18,46 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-see.yaml
     env:
-      FIND: '^Ask about timings, fees, classes and more\. For workout help, pick "A trainer" above\.$'
+      FIND: '^Ask about timings, fees, your workout and more\.$'
+# in-view: the same card; a question can never go without the name
 - assertNotVisible: "^Send without my name$"
 - runFlow:
     file: sub-see.yaml
+    env:
+      FIND: '^Gym owner$'
+- tapOn: "^Gym owner$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Only the owner of ${GYM} reads your question\. The front desk and trainers do not see it\.$'
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: 'For example: Is the gym open on Diwali\?'
+- tapOn: 'For example: Is the gym open on Diwali\?'
+- inputText: "QA check: is the gym open on Sunday?"
+- hideKeyboard
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: '^Send message$'
+- tapOn: "^Send message$"
+# in-view: the sent line shows right under the Send button just tapped
+- extendedWaitUntil:
+    visible: "^Sent\\. When your gym replies, you will see it below\\.$"
+    timeout: 30000
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: '^Question · To: Gym owner · (Today|Yesterday), [0-9]{1,2}:[0-9]{2} [ap]m$'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'QA check: is the gym open on Sunday\?'
+- takeScreenshot: rel-gt-01c-question-to-owner-sent
+# ---------------------------------------------------------------- 2. a Complaint to "Gym admin"
+- runFlow:
+    file: sub-find.yaml
     env:
       FIND: '^Complaint$'
 - tapOn: "^Complaint$"
@@ -24,23 +65,91 @@ appId: com.mettleup.app
     file: sub-see.yaml
     env:
       FIND: '^Tell them what went wrong\.$'
-# R-552: who reads it, naming the gym.
 - runFlow:
     file: sub-see.yaml
     env:
-      FIND: '^Only the owner of .+ reads your complaint\. The front desk and trainers do not see it\.$'
-- assertNotVisible: "^Send without my name$"
-- takeScreenshot: rel-gt-02-complaint-picked
+      FIND: '^Who should read it\?$'
 - runFlow:
     file: sub-see.yaml
+    env:
+      FIND: '^Gym admin$'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Gym owner$'
+# in-view: the two chips just checked; no trainer is offered for a complaint
+- assertNotVisible: '^Tara Singh( \(your trainer\))?$'
+# in-view: the same chips
+- assertNotVisible: '^Vikram Rao$'
+# A new type starts on "Gym owner".
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Only the owner of ${GYM} reads your complaint\. The front desk and trainers do not see it\.$'
+# in-view: the same card
+- assertNotVisible: "^Send without my name$"
+- takeScreenshot: rel-gt-02-complaint-picked
+- tapOn: "^Gym admin$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^The owner and front desk at ${GYM} read your complaint\. Your trainers do not see it\.$'
+- takeScreenshot: rel-gt-02b-complaint-to-gym-admin
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: 'For example: The AC in the cardio room is not working\.'
+- tapOn: 'For example: The AC in the cardio room is not working\.'
+- inputText: "QA check: the AC in the cardio room is not working"
+- hideKeyboard
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: '^Send message$'
+- tapOn: "^Send message$"
+# in-view: the sent line shows right under the Send button just tapped
+- extendedWaitUntil:
+    visible: "^Sent\\. When your gym replies, you will see it below\\.$"
+    timeout: 30000
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: '^Complaint · To: Gym admin · (Today|Yesterday), [0-9]{1,2}:[0-9]{2} [ap]m$'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'QA check: the AC in the cardio room is not working'
+# ---------------------------------------------------------------- 3. a Feedback to "Gym owner", without the name
+- runFlow:
+    file: sub-find.yaml
     env:
       FIND: '^Feedback$'
 - tapOn: "^Feedback$"
-# R-552: feedback is for the gym, read by its owner and front desk only.
 - runFlow:
     file: sub-see.yaml
     env:
-      FIND: '^Only the owner and front desk at .+ read your feedback\. Your trainers do not see it\.$'
+      FIND: '^Only the owner of ${GYM} reads your feedback\. The front desk and trainers do not see it\.$'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Gym admin$'
+- tapOn: "^Gym admin$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^The owner and front desk at ${GYM} read your feedback\. Your trainers do not see it\.$'
+# in-view: the chips sit right above the line just checked; no trainer for feedback either
+- assertNotVisible: '^Tara Singh( \(your trainer\))?$'
+- takeScreenshot: rel-gt-02c-feedback-to-gym-admin
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Gym owner$'
+- tapOn: "^Gym owner$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Only the owner of ${GYM} reads your feedback\. The front desk and trainers do not see it\.$'
 - runFlow:
     file: sub-see.yaml
     env:
@@ -52,27 +161,34 @@ appId: com.mettleup.app
 - tapOn:
     id: "gym-talk-anon"
 - runFlow:
-    file: sub-see.yaml
+    file: sub-find.yaml
     env:
       FIND: 'For example: Please add a second squat rack\.'
 - tapOn: "For example: Please add a second squat rack\\."
 - inputText: "QA check: please add a second squat rack"
 - hideKeyboard
-- assertVisible: "^40 of 1000 letters$"
-- takeScreenshot: rel-gt-03-typed
 - runFlow:
     file: sub-see.yaml
     env:
+      FIND: '^40 of 1000 letters$'
+- takeScreenshot: rel-gt-03-typed
+- runFlow:
+    file: sub-find.yaml
+    env:
       FIND: '^Send message$'
 - tapOn: "^Send message$"
+# in-view: the sent line shows right under the Send button just tapped
 - extendedWaitUntil:
     visible: "^Sent\\. When your gym replies, you will see it below\\.$"
     timeout: 30000
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: "^Feedback · (Today|Yesterday), [0-9]{1,2}:[0-9]{2} [ap]m · Sent without your name$"
-- assertVisible: "QA check: please add a second squat rack"
+      FIND: "^Feedback · To: Gym owner · (Today|Yesterday), [0-9]{1,2}:[0-9]{2} [ap]m · Sent without your name$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'QA check: please add a second squat rack'
 - runFlow:
     file: sub-find.yaml
     env:

@@ -1970,6 +1970,50 @@ part_uat_t74() {
   fi
   return $rc
 }
+# R-586 (owner, 15 Nov 2026; 0096 APPLIED LIVE 15 Nov 2026, R-591): "Who should read it?" on "Message your gym", on
+# the run's fresh "QA UAT Gym" (slot U; never FORGE1 / RAMS01), after flow 12 saw it with no trainers. Two made-up
+# trainers are added (uat_gym.py trainers: "Tara Singh", Uma's own trainer, and "Vikram Rao"), then:
+#  12b  a question to Tara (the picker, each readers line, "To: Tara Singh"); the server must hold it to Tara by name
+#       and staff id, Vikram must see nothing, Tara only it, and Tara replies;
+#  12c  the red count, "Tara from your gym", the count gone;
+#  gt   a question to "Gym owner", a complaint to "Gym admin" (no trainer offered), feedback to "Gym owner" without
+#       the name; each checked on the server, and Tara still sees only her question;
+#  r586a/b  Vikram is unticked while his question is typed: Send says he is no longer listed, his chip goes.
+# 4 new messages in all (the server allows 5 a day per member). Any server check that fails fails the part.
+uat_r586_check() {  # $@ = uat_gym.py arguments
+  local out
+  out=$(python3 "$QA_DIR/uat_gym.py" "$@" 2>&1)
+  echo "$out" | sed 's/^/[uat r586] /' | tee -a "$OUT/timeline.txt"
+  echo "$out" | grep -qE '^(CHECK OK|TRAINERS OK|UNTICKED)' && return 0
+  log "PART UATR586 FAILED: uat_gym.py $1 ($(echo "$out" | tail -1))"
+  status=1
+  return 1
+}
+part_uat_r586() {
+  local rc=0
+  uat_r586_check trainers U "Uma Desk" || return 1
+  uat_flow uat12b uat-rel-12b-ask-open.yaml -e "GYM=QA UAT Gym" || rc=1
+  if [ $rc = 0 ]; then
+    uat_r586_check talk-to U question trainer "Tara Singh" || rc=1
+    uat_r586_check trainer U "Vikram Rao" 0 || rc=1
+    uat_r586_check trainer U "Tara Singh" 1 "QA reply: one rest day is fine, two if your legs still ache." || rc=1
+    [ $rc = 0 ] && { uat_flow uat12c uat-rel-12c-ask-reply.yaml -e "GYM=QA UAT Gym" || rc=1; }
+  fi
+  uat_flow uatgt uat-rel-gym-talk.yaml -e "GYM=QA UAT Gym" || rc=1
+  uat_r586_check talk-to U question owner || rc=1
+  uat_r586_check talk-to U complaint desk || rc=1
+  uat_r586_check talk-to U feedback owner anon || rc=1
+  uat_r586_check trainer U "Tara Singh" 1 || rc=1
+  if uat_flow uatr586a uat-rel-r586-gone-a.yaml -e "GYM=QA UAT Gym"; then
+    uat_r586_check untick U "Vikram Rao" && { uat_flow uatr586b uat-rel-r586-gone-b.yaml -e "GYM=QA UAT Gym" || rc=1; } || rc=1
+  else
+    rc=1
+    # Later flows expect Vikram unticked (flow 14).
+    uat_r586_check untick U "Vikram Rao" || true
+  fi
+  [ $rc = 0 ] || status=1
+  return $rc
+}
 # Launch polish (3 Nov 2026), the gym half: a FRESH online test gym (qa/uat_gym.py on the xj/xc helpers,
 # as qa-journeys does every run; never FORGE1 / RAMS01) with "Uma Desk" (98765 00031) on its desk list
 # and a plan ending 4 days after the phone's today. Flow 7 joins it and checks in by its poster link;
@@ -1997,24 +2041,12 @@ part_uat_gym() {  # $1 = the phone's today (YYYY-MM-DD)
   if [ $rc = 0 ]; then
     python3 "$QA_DIR/uat_gym.py" confirm U +919876500031 2>&1 | sed 's/^/[uat gym] /' | tee -a "$OUT/timeline.txt"
     uat_flow uat8 uat-rel-8-gym-plan.yaml -e "GYM=QA UAT Gym" -e "ENDS=$ends" || rc=1
-    # R-319 item 1: "Ask a trainer" (hidden until 0053 is live; the flow checks either way).
+    # R-586 (owner, 15 Nov 2026; 0096 live): "Message your gym" -> "Who should read it?". Flow 12: the gym has no
+    # trainer yet ("Gym owner" only, the trainers-not-added line); nothing is sent.
     uat_flow uat12 uat-rel-12-ask-trainer.yaml -e "GYM=QA UAT Gym" || rc=1
     # R-551 (0.78.0 round): Settings -> What my gym can see, the approved 12-month sharing caption (no flow opened it before).
     uat_flow uatr551 uat-rel-r551-gym-sees.yaml || rc=1
-    # R-533: the gym answers a question Uma leaves open (as the admin app's Member questions page does), and the Gym
-    # tab row shows a red count until she opens the reply. 12c only runs when there was a question to answer.
-    uat_flow uat12b uat-rel-12b-ask-open.yaml -e "GYM=QA UAT Gym" || rc=1
-    answered=$(python3 "$QA_DIR/uat_gym.py" answer U "QA reply: one rest day is fine, two if your legs still ache." 2>&1)
-    echo "$answered" | sed 's/^/[uat gym] /' | tee -a "$OUT/timeline.txt"
-    if echo "$answered" | grep -q '^ANSWERED=1'; then
-      uat_flow uat12c uat-rel-12c-ask-reply.yaml -e "GYM=QA UAT Gym" || rc=1
-    elif ! echo "$answered" | grep -q '^NO_OPEN_QUESTION'; then
-      log "PART UAT12C FAILED: the gym could not answer the question (uat_gym.py answer)"
-      status=1
-      rc=1
-    fi
-    # Owner, 12 Nov 2026: "Message your gym" (a QA-build pretend gym until 0069 is live; the flow checks either way).
-    uat_flow uatgt uat-rel-gym-talk.yaml -e "GYM=QA UAT Gym" || rc=1
+    part_uat_r586 || rc=1
     # F147: "Bring a friend" on the Gym tab (a QA-build stand-in until 0056 is live; the flow checks either way).
     uat_flow uatf147 uat-rel-f147-bring-friend.yaml -e "GYM=QA UAT Gym" || rc=1
     # F79: "Pay your gym" on the plan card (hidden until online payments are live; the flow checks either way).

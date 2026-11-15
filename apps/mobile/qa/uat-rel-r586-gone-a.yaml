@@ -1,0 +1,43 @@
+# Part UAT, flow r586a (gym, after flow gt). R-586 NEGATIVE / INTERRUPTION: a trainer the member picked is unticked in
+# the admin panel while the member is writing. This half: open "Message your gym", Question, pick "Vikram Rao" (a
+# made-up trainer of the fresh "QA UAT Gym", qa/uat_gym.py trainers), type a question and STOP with the page open.
+# run-device-qa.sh then unticks Vikram (qa/uat_gym.py untick, as the admin panel's Staff page does), and flow r586b
+# taps Send on the same page.
+appId: com.mettleup.app
+---
+- tapOn:
+    text: "^Gym$"
+- extendedWaitUntil:
+    visible: "${GYM}"
+    timeout: 30000
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: '^Message your gym$'
+- tapOn: "^Message your gym$"
+# in-view: the page just opened at its top; once the hint shows, the trainers list has been read
+- extendedWaitUntil:
+    visible:
+      id: "talk-kind-hint-ready"
+    timeout: 30000
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: '^Vikram Rao$'
+- tapOn: "^Vikram Rao$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Vikram Rao reads your question and gets a notification\. The owner of ${GYM} can read it too\.$'
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: 'For example: Is the gym open on Diwali\?'
+- tapOn: 'For example: Is the gym open on Diwali\?'
+- inputText: "QA check: who takes the Sunday class?"
+- hideKeyboard
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: '^Send message$'
+- takeScreenshot: rel-r586-05-vikram-picked-before-untick
