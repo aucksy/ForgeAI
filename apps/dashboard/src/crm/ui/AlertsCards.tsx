@@ -157,6 +157,8 @@ function deviceClock(at: number): string {
 function TestAlertBox({ apiKey }: { apiKey: string }) {
   const [answer, setAnswer] = useState<TestAlertAnswer | null>(null);
   const [here, setHere] = useState(true);
+  // Nothing shows until the first answer: a server without 0095 never flashes the button.
+  const [ready, setReady] = useState(false);
   const [busy, setBusy] = useState(false);
   const [note, setNote] = useState<string | null>(null);
   const [hiddenHelp, setHiddenHelp] = useState(false);
@@ -176,6 +178,7 @@ function TestAlertBox({ apiKey }: { apiKey: string }) {
     } finally {
       // Also after a failed read: the next ask is planned from the new time.
       setNow(Date.now());
+      setReady(true);
     }
   }, [apiKey]);
   useEffect(() => {
@@ -205,7 +208,7 @@ function TestAlertBox({ apiKey }: { apiKey: string }) {
       document.removeEventListener('visibilitychange', onVisible);
     };
   }, [read]);
-  if (!here) return null;
+  if (!here || !ready) return null;
   const send = async () => {
     setBusy(true);
     setNote(null);

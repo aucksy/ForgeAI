@@ -27,7 +27,8 @@ const ENDPOINT = 'https://fcm.googleapis.com/fcm/send/e2e-owner-phone';
 
 /** 0076 + 0095 on the pretend server. `push.now()` is the page's clock (set by the test before each tap). */
 function installPush(server) {
-  const push = { on: true, testOn: true, devices: new Map(), tests: [], at: 0, alerts: [] };
+  // `clock`: when set, owner_test_alert also answers the server's clock (0095 'now').
+  const push = { on: true, testOn: true, devices: new Map(), tests: [], at: 0, alerts: [], clock: null };
   const base = server.answer.bind(server);
   server.answer = (fn, args) => {
     if (fn === 'owner_alerts') {
@@ -66,7 +67,13 @@ function installPush(server) {
       case 'owner_test_alert': {
         if (!mine) return { ok: true, on: false, test: null, wait: 0 };
         const fresh = last && push.at - last.at < 60 * 60_000 ? last : null;
-        return { ok: true, on: true, wait, test: fresh && { id: fresh.id, at: fresh.at, sentAt: fresh.sentAt, sentHow: fresh.sentHow, shownAt: fresh.shownAt } };
+        return {
+          ok: true,
+          on: true,
+          wait,
+          ...(push.clock === null ? {} : { now: push.clock }),
+          test: fresh && { id: fresh.id, at: fresh.at, sentAt: fresh.sentAt, sentHow: fresh.sentHow, shownAt: fresh.shownAt },
+        };
       }
       default:
         throw new Error(`unexpected ${fn}`);
@@ -293,7 +300,9 @@ for (const look of [
     await wait(page, 95_000);
     await expect(box).toHaveAttribute('data-state', 'not-sent');
     await expect(box).toContainText('The test alert has not left MettleUp yet. That is on our side, not your device. This line will change by itself.');
+    // Opened again: the card reads the answer again, measured on the gym server's clock.
     push.at = await pageNow(page);
+    push.clock = push.at;
     await page.reload();
     await expect(page.getByRole('main').getByTestId('test-alert')).toHaveAttribute('data-state', 'not-sent', { timeout: 15_000 });
     await shot(page, page.getByRole('main').getByTestId('test-alert'), `${look.name}-test-alert-5-not-sent`);
