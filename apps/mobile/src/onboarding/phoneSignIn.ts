@@ -226,6 +226,9 @@ export const SIGN_IN = {
   intro: 'If your gym uses MettleUp, it may already have your number. We use it to find your gym and link this app to it.',
   phoneLabel: 'Your mobile number',
   nameLabel: 'Your first name, as your gym has it',
+  /** R-587 review: the labels sit above the boxes (a hint is cut at a large text size and goes once typing starts). */
+  phoneHint: 'e.g. 98765 43210',
+  nameHint: 'e.g. Priya',
   go: 'Check with WhatsApp',
   how: 'WhatsApp opens with a message to MettleUp ready. Send it, then come back to this app, and your number is checked. You pay nothing, and we never message you.',
   privacy: 'We only use your number to find your gym. Your number is checked once and is not kept for this.',
@@ -247,6 +250,10 @@ export const SIGN_IN = {
   otherWays: 'Try another way',
   /** R-587: while a found member is joined and the app is set up for them. */
   opening: (gym: string): string => `Opening ${gym}…`,
+  /** R-587 review: a member on a new phone is offered the Google backup without making Google the main button. */
+  returning: 'Used MettleUp before? Bring back your workouts',
+  /** R-587 review: joined straight in, but the setup could not be saved: the 3 questions, with why. */
+  finishSetup: (gym: string): string => `You joined ${gym}. We could not finish setting up the app, so answer these 3 quick questions.`,
 } as const;
 
 export const SIGN_IN_PHONE_ERROR = 'Type your 10-digit mobile number.';

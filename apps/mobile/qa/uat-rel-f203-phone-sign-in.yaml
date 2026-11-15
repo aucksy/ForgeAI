@@ -23,7 +23,8 @@
 #     name filled in; after "Start training" the gym's own join screen opens (live gym_preview), Join, and the Gym tab
 #     shows the gym.
 #  8. R-587, a fresh install found as a MEMBER of the live test gym: straight into the gym. No "Join" tap, no
-#     "Step 1 of 3", no "Gym code" join screen; the app opens on the Workout tab and the Gym tab shows the gym.
+#     "Step 1 of 3", no "Gym code" join screen; the app opens on the Workout tab, which says once that it picked
+#     "New to lifting" and "Build muscle" (change in Profile), and the Gym tab shows the gym.
 # Pictures rel-f203-*.png. Runs alone with only=u203, and in the whole uat part. Leaves the app on the tabs.
 appId: com.mettleup.app
 ---
@@ -131,13 +132,16 @@ appId: com.mettleup.app
     file: sub-find.yaml
     env:
       FIND: "^Your mobile number$"
-- tapOn: "^Your mobile number$"
+# R-587 review: the words are a label above the box now; tap the box itself.
+- tapOn:
+    id: "welcome-phone-number"
 - inputText: "9000000203"
 - runFlow:
     when:
       notVisible: "^9000000203$"
     commands:
-      - tapOn: "^Your mobile number$"
+      - tapOn:
+          id: "welcome-phone-number"
       - eraseText: 20
       - inputText: "9000000203"
 - hideKeyboard
@@ -145,13 +149,15 @@ appId: com.mettleup.app
     file: sub-find.yaml
     env:
       FIND: "^Your first name, as your gym has it$"
-- tapOn: "^Your first name, as your gym has it$"
+- tapOn:
+    id: "welcome-phone-name"
 - inputText: "Priya"
 - runFlow:
     when:
       notVisible: "^Priya$"
     commands:
-      - tapOn: "^Your first name, as your gym has it$"
+      - tapOn:
+          id: "welcome-phone-name"
       - eraseText: 20
       - inputText: "Priya"
 - hideKeyboard
@@ -407,6 +413,11 @@ appId: com.mettleup.app
 - assertNotVisible: "Gym code ${CODE}"
 - assertNotVisible: "^Join this gym$"
 - takeScreenshot: rel-f203-12-straight-in-workout
+# R-587 review: the Workout tab says once what the app picked for the member, and where to change it.
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "^We set you up as .New to lifting. and .Build muscle.\\. You can change both in Profile\\.$"
 - tapOn:
     text: "^Gym$"
     index: 0

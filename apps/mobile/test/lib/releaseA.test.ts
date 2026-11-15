@@ -155,7 +155,7 @@ describe('A5: the one-time "it moved" hints', () => {
 describe('A12: one notice at a time above Up next, one extra line inside it', () => {
   const today = '2026-10-26';
   it('the order: the link just tapped, What’s new, the backup reminder (R-336: a new version is the orange line, not a notice)', () => {
-    expect(NOTICE_ORDER).toEqual(['link', 'whatsNew', 'watch', 'planEnds', 'backup', 'safekeep']);
+    expect(NOTICE_ORDER).toEqual(['link', 'setupGuess', 'whatsNew', 'watch', 'planEnds', 'backup', 'safekeep']);
     expect(pickNotice({ whatsNew: true, backup: true }, null, today)).toBe('whatsNew');
     expect(pickNotice({ whatsNew: true, backup: true }, null, today)).toBe('whatsNew');
     expect(pickNotice({ backup: true }, null, today)).toBe('backup');

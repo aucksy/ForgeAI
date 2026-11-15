@@ -270,6 +270,11 @@ export function WelcomeScreen() {
   const [othersOpen, setOthersOpen] = useState(false);
   // R-587: a found member is being taken straight into the gym.
   const entering = useStraightIn((s) => s.gymName);
+  // R-587 review (G1): joined straight in, but the setup was not saved: the 3 questions, with why.
+  const needsSteps = useStraightIn((s) => s.needsSteps);
+  const [stepsNote, setStepsNote] = useState<string | null>(null);
+  // R-587 review (G2): "Used MettleUp before?" opened on the phone screen (the Google backup, as before).
+  const [returningOpen, setReturningOpen] = useState(false);
   const [step, setStep] = useState<WelcomeStep>(0);
   const [draft, setDraft] = useState<OnboardingDraft>(welcomeDraft);
   // Nothing is chosen for the member: step 2 waits for a tap (the pick is saved at once).
@@ -397,6 +402,17 @@ export function WelcomeScreen() {
     setStarted(true);
     goTo(0);
   }
+
+  // R-587 review (G1): read from the store, so it also works on a welcome rebuilt by the gym's colours.
+  useEffect(() => {
+    if (!needsSteps) return;
+    useStraightIn.setState({ needsSteps: null });
+    if (needsSteps.firstName) setDraft((d) => (d.name.trim() ? d : { ...d, name: needsSteps.firstName }));
+    setStepsNote(SIGN_IN.finishSetup(needsSteps.gymName));
+    startSteps();
+    // startSteps only sets state; the store change is the one trigger.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [needsSteps]);
 
   const backToStart = (): void => {
     setProblem(null);
@@ -572,13 +588,25 @@ export function WelcomeScreen() {
                   startSteps();
                 }}
                 onSetUp={startSteps}
-                onSteps={(first) => {
-                  // R-587: joined straight in, but the setup could not be saved: the 3 questions (no join screen).
-                  if (!draft.name.trim() && first) patch({ name: first });
-                  startSteps();
-                }}
                 onSkip={() => goView('main')}
               />
+              {/* R-587 review (G2): a member on a new phone gets their workouts back from Google, as before; the phone
+                  number stays the main button. */}
+              {googleShown ? (
+                returningOpen ? (
+                  <WelcomeGoogle
+                    small
+                    onName={(n) => (draft.name.trim() ? undefined : patch({ name: n }))}
+                    gymCodeWaiting={gymCodeWaiting != null}
+                    keptWorkouts={kept}
+                    onBusy={onGoogleBusy}
+                    onBeforeRestore={forgetSwitch}
+                    onContinue={startSteps}
+                  />
+                ) : (
+                  <TextLink label={SIGN_IN.returning} onPress={() => setReturningOpen(true)} />
+                )
+              ) : null}
             </Animated.View>
           ) : !started && view === 'gym' ? (
             <Animated.View key="gym" entering={FadeIn.duration(motion.base)} style={{ gap: space.xl }}>
@@ -749,6 +777,11 @@ export function WelcomeScreen() {
           >
             {step === 0 ? (
               <>
+                {stepsNote ? (
+                  <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, lineHeight: 20, color: color.ink, marginBottom: space.lg }}>
+                    {stepsNote}
+                  </Text>
+                ) : null}
                 <View onLayout={at('name')} style={{ marginBottom: space.lg }}>
                   <Text style={overline()}>Your name</Text>
                   <TextInput

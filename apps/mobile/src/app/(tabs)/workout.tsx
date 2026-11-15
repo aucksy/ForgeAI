@@ -27,6 +27,7 @@ import { BackupMovedCard } from '@/components/BackupMovedCard';
 import { SafekeepNudgeCard } from '@/components/SafekeepNudgeCard';
 import { PlanEndsCard } from '@/shop/PlanEndsCard';
 import { WatchInstallCard } from '@/components/WatchInstallCard';
+import { StraightInNoteCard } from '@/onboarding/components/StraightInNoteCard';
 import { Card, GhostButton, Screen, UndoBar, askConfirm } from '@/components/ui';
 import { todayISO } from '@/lib/date';
 import { runGuarded } from '@/lib/guardedAction';
@@ -403,6 +404,8 @@ export default function WorkoutScreen() {
               </Card>
             </Pressable>
           ) : null}
+          {/* R-587 review: straight into the gym: what the app picked for the member, and where to change it. */}
+          <StraightInNoteCard hidden={notice !== 'setupGuess'} onWant={want('setupGuess')} onDone={noticeClosed} />
           {/* Once per new version: what changed, in plain words (lib/whatsNew.ts). */}
           <WhatsNewCard hidden={notice !== 'whatsNew'} onWant={want('whatsNew')} onDone={noticeClosed} />
           {/* F67: after the first finished workout, a watch without MettleUp: "Install on watch", once. */}

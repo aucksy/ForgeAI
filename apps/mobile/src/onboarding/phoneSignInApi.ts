@@ -19,6 +19,7 @@ import { useSettings } from '@/store/settingsStore';
 import { validateOnboarding } from './form';
 import { foundGymOf, hasPhoneSignInStandIn, isGymPerson, phoneSignInShown, qaSignInFromUrl, straightInDraft, type QaSignIn, type SignInMatch } from './phoneSignIn';
 import { useOnboarding } from './store/onboardingStore';
+import { markStraightInNote } from './straightInNote';
 import { saveWelcomeResume } from './welcomeResume';
 
 interface QaState {
@@ -90,7 +91,21 @@ export function notePicked(m: SignInMatch, proof: string | null): void {
  * The gym being opened for a found member, or null. Kept outside the screen: the join repaints the app in the gym's
  * colours, which draws the welcome afresh, and the fresh welcome must keep saying "Opening <gym>…" until the app opens.
  */
-export const useStraightIn = create<{ gymName: string | null }>(() => ({ gymName: null }));
+/**
+ * R-587 review (G1): `needsSteps` outlives the screen too. A gym with its own colours rebuilds the welcome when it is
+ * joined, so the screen that started the join is gone when the setup save fails; the new one reads this, opens the 3
+ * questions with the name filled and says why (SIGN_IN.finishSetup). Never a silent return to the first screen.
+ */
+export const useStraightIn = create<{ gymName: string | null; needsSteps: { firstName: string; gymName: string } | null }>(() => ({
+  gymName: null,
+  needsSteps: null,
+}));
+
+/** Joined, but the setup must be asked: kept in the store for whichever welcome screen is up (G1). */
+function askSteps(firstName: string, gymName: string): 'steps' {
+  useStraightIn.setState({ needsSteps: { firstName, gymName } });
+  return 'steps';
+}
 
 /** 'in' = the app is open in the gym; 'steps' = joined, but the setup must be asked (the save failed); words = not joined. */
 export type StraightInOutcome = 'in' | 'steps' | { words: string };
@@ -112,16 +127,19 @@ export async function goStraightIn(m: SignInMatch, firstName: string, mobile: st
     const v = validateOnboarding(straightInDraft(firstName, mobile, m.gymName), 'metric');
     if (!v.ok) {
       console.warn('[phone sign-in] the setup answers were refused; asking the 3 questions', v.field);
-      return 'steps';
+      return askSteps(firstName, m.gymName);
     }
     useSettings.getState().setUnitSystem('metric');
+    // Before the save: the Workout tab may open before a later write lands (the note says what was picked).
+    await markStraightInNote('due');
     await useOnboarding.getState().complete(v.value);
     void saveWelcomeResume(null);
     console.log('[phone sign-in] a found member went straight into the gym');
     return 'in';
   } catch (e) {
     console.warn('[phone sign-in] going straight into the gym failed', e);
-    return useGymShop.getState().link ? 'steps' : { words: 'That did not work. Try again.' };
+    markStraightInNote('done').catch((e2: unknown) => console.warn('[phone sign-in] could not clear the setup note', e2));
+    return useGymShop.getState().link ? askSteps(firstName, m.gymName) : { words: 'That did not work. Try again.' };
   } finally {
     useStraightIn.setState({ gymName: null });
   }

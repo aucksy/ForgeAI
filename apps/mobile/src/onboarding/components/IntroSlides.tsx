@@ -30,6 +30,7 @@ import {
   WATCH_ART,
   introShows,
   introSlides,
+  introWatchAnswer,
   introStepLabel,
   watchButton,
   type IntroSlide,
@@ -86,9 +87,9 @@ export function IntroSlides({ onDone }: { onDone: () => void }) {
 
   useEffect(() => {
     let live = true;
-    void readWatchStateQuick(INTRO_WATCH_WAIT_MS).then((s) => {
-      // Moved on already: the list stays as the member saw it.
-      if (live && indexRef.current === 0) setWatch(s);
+    // R-587 review (G3): a slow Wear OS answer (seconds on a cold start) still adds the watch screen while screen 1 is up.
+    void introWatchAnswer(() => readWatchStateQuick(INTRO_WATCH_WAIT_MS), () => indexRef.current === 0).then((s) => {
+      if (live && s != null) setWatch(s);
     });
     return () => {
       live = false;

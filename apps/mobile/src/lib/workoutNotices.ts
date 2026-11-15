@@ -17,12 +17,13 @@
 import { getMeta, setMeta } from '@/db';
 import { enqueueWrite } from '@/db/writeQueue';
 
-export type NoticeKind = 'link' | 'whatsNew' | 'watch' | 'planEnds' | 'backup' | 'safekeep';
+export type NoticeKind = 'link' | 'setupGuess' | 'whatsNew' | 'watch' | 'planEnds' | 'backup' | 'safekeep';
 
-export const NOTICE_ORDER: readonly NoticeKind[] = ['link', 'whatsNew', 'watch', 'planEnds', 'backup', 'safekeep'];
+/** R-587 review: 'setupGuess', a member who went straight into the gym is told what the app picked for them. */
+export const NOTICE_ORDER: readonly NoticeKind[] = ['link', 'setupGuess', 'whatsNew', 'watch', 'planEnds', 'backup', 'safekeep'];
 
 /** Notices that never wait a day after another was closed: answers and facts, not offers. */
-const NEVER_WAIT: ReadonlySet<NoticeKind> = new Set<NoticeKind>(['link', 'whatsNew', 'planEnds']);
+const NEVER_WAIT: ReadonlySet<NoticeKind> = new Set<NoticeKind>(['link', 'setupGuess', 'whatsNew', 'planEnds']);
 
 /**
  * The one notice to draw now, or null. `restDay`: the day a notice was last closed; `undefined` =

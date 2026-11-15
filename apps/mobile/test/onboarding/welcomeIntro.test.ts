@@ -8,13 +8,15 @@
  */
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { usesBannedWord } from '@/lib/words';
 import { validateOnboarding } from '@/onboarding/form';
 import {
   ART_MIN_SCALE,
   artScale,
+  INTRO_WATCH_WAIT_MS,
+  introWatchAnswer,
   BEAT_CARD,
   GYM_ART,
   INTRO_SLIDES,
@@ -28,6 +30,7 @@ import {
 } from '@/onboarding/introSlides';
 import { goesStraightIn, SIGN_IN, straightInDraft, straightInMatch, type SignInMatch } from '@/onboarding/phoneSignIn';
 import { startButtons } from '@/onboarding/welcomeStart';
+import { STRAIGHT_IN_NOTE, straightInNoteDue } from '@/onboarding/straightInNote';
 import { RECOMMEND_BUTTON } from '@/shop/recommendGym';
 
 const read = (p: string) => readFileSync(resolve(__dirname, '../../src', p), 'utf8');
@@ -151,7 +154,7 @@ describe('[source-text check] the welcome screens behave as the design', () => {
   it('screen 1 is drawn at once: nothing waits on Wear OS, and a late answer is ignored once the member moved on', () => {
     expect(src).toContain("useState<WatchState>('unknown')");
     expect(src).not.toContain('watch === undefined');
-    expect(src).toContain('if (live && indexRef.current === 0) setWatch(s);');
+    expect(src).toContain('if (live && s != null) setWatch(s);');
   });
   it('one dot per screen, the current one long', () => {
     expect(src).toContain('width: i === at ? 22 : 8');
@@ -253,5 +256,71 @@ describe('the gym screen, canvas v7 (owner, 15 Nov 2026)', () => {
     expect(first).toBeGreaterThan(-1);
     expect(first).toBeLessThan(art);
     expect(art).toBeLessThan(last);
+  });
+});
+
+describe('fresh-eyes review fixes (R-587, 15 Nov 2026)', () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+  it('G3: a slow watch answer (4.5 s, as Wear OS on a cold start) still adds the watch screen while screen 1 is up', async () => {
+    vi.useFakeTimers();
+    const slow = (): Promise<'missing'> => new Promise((r) => setTimeout(() => r('missing'), 4500));
+    const onFirst = introWatchAnswer(slow, () => true);
+    await vi.advanceTimersByTimeAsync(4500);
+    await expect(onFirst).resolves.toBe('missing');
+    const movedOn = introWatchAnswer(slow, () => false);
+    await vi.advanceTimersByTimeAsync(4500);
+    await expect(movedOn).resolves.toBeNull();
+  });
+  it('G3: the welcome listens longer than Wear OS can take (first read 4.5 s + version read 2.5 s)', () => {
+    expect(INTRO_WATCH_WAIT_MS).toBeGreaterThan(4500 + 2500);
+    const native = readFileSync(resolve(__dirname, '../../modules/forge-rest/android/src/main/java/com/forgeai/rest/WearSync.kt'), 'utf8');
+    const ms = (name: string): number => Number(native.match(new RegExp(`${name} = ([0-9_]+)L`))?.[1].replace(/_/g, ''));
+    expect(INTRO_WATCH_WAIT_MS).toBeGreaterThan(ms('FIRST_READ_MS') + ms('VERSION_REREAD_MS'));
+  });
+  it('G1: a failed setup after a join is kept in the store and opens the 3 questions with why, never a silent return', () => {
+    const api = read('onboarding/phoneSignInApi.ts');
+    expect(api).toContain('useStraightIn.setState({ needsSteps: { firstName, gymName } });');
+    expect(api).toContain('return askSteps(firstName, m.gymName);');
+    expect(api).toContain("return useGymShop.getState().link ? askSteps(firstName, m.gymName) : { words: 'That did not work. Try again.' };");
+    const screen = read('onboarding/components/WelcomeScreen.tsx');
+    expect(screen).toContain('const needsSteps = useStraightIn((s) => s.needsSteps);');
+    expect(screen).toContain('setStepsNote(SIGN_IN.finishSetup(needsSteps.gymName));');
+    expect(screen).toContain('{stepsNote}');
+    expect(SIGN_IN.finishSetup('Iron Gym')).toBe('You joined Iron Gym. We could not finish setting up the app, so answer these 3 quick questions.');
+    // The phone screen no longer calls a callback that a rebuilt welcome would lose.
+    expect(read('onboarding/components/WelcomePhone.tsx')).not.toContain('onSteps');
+  });
+  it('G2: the phone screen offers the Google backup to a returning member, under the phone number', () => {
+    expect(SIGN_IN.returning).toBe('Used MettleUp before? Bring back your workouts');
+    const screen = read('onboarding/components/WelcomeScreen.tsx');
+    const phoneView = screen.indexOf('<WelcomePhone');
+    const link = screen.indexOf('<TextLink label={SIGN_IN.returning}');
+    expect(phoneView).toBeGreaterThan(-1);
+    expect(link).toBeGreaterThan(phoneView);
+    expect(screen).toContain('{googleShown ? (');
+  });
+  it('labels above the boxes; the hints are short examples', () => {
+    const phone = read('onboarding/components/WelcomePhone.tsx');
+    expect(phone).toContain('<Text style={label}>{SIGN_IN.phoneLabel}</Text>');
+    expect(phone).toContain('{SIGN_IN.nameLabel}</Text>');
+    expect(phone).toContain('placeholder={SIGN_IN.phoneHint}');
+    expect(phone).toContain('placeholder={SIGN_IN.nameHint}');
+    for (const w of [SIGN_IN.phoneLabel, SIGN_IN.nameLabel, SIGN_IN.phoneHint, SIGN_IN.nameHint, SIGN_IN.returning, SIGN_IN.finishSetup('Iron Gym')]) {
+      expect(usesBannedWord(w), w).toBe(false);
+    }
+  });
+  it('the straight-in note: due only after a straight-in setup, said in one line with where to change it', () => {
+    expect(straightInNoteDue('due')).toBe(true);
+    expect(straightInNoteDue('done')).toBe(false);
+    expect(straightInNoteDue(null)).toBe(false);
+    expect(STRAIGHT_IN_NOTE.body).toBe('We set you up as "New to lifting" and "Build muscle". You can change both in Profile.');
+    expect(usesBannedWord(STRAIGHT_IN_NOTE.body)).toBe(false);
+    const api = read('onboarding/phoneSignInApi.ts');
+    // Marked just before the setup is saved; cleared when the member answers the questions after all.
+    expect(api.indexOf("await markStraightInNote('due');")).toBeLessThan(api.indexOf('await useOnboarding.getState().complete(v.value)'));
+    expect(api).toContain("markStraightInNote('done')");
+    expect(read('app/(tabs)/workout.tsx')).toContain("<StraightInNoteCard hidden={notice !== 'setupGuess'}");
   });
 });

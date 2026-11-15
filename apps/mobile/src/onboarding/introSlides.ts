@@ -23,7 +23,21 @@ export const INTRO_DONE = 'done';
  * How long screen 1 listens for the watch answer. Screen 1 is drawn at once (nothing waits on Wear OS); an answer
  * inside this time may only add the watch screen while the member is still on screen 1. After it, the list is fixed.
  */
-export const INTRO_WATCH_WAIT_MS = 1500;
+/**
+ * R-587 review (G3): how long the welcome listens for Wear OS. The native answer can take up to 4.5 s for its first read
+ * plus 2.5 s for a watch asked to write its version (WearSync FIRST_READ_MS, VERSION_REREAD_MS), more on a cold start.
+ * Nothing waits on it: screen 1 is up at once, and an answer while it is still up adds the watch screen.
+ */
+export const INTRO_WATCH_WAIT_MS = 10_000;
+
+/**
+ * The watch answer, or null when it came too late (the member left screen 1: the list stays as they saw it). PURE
+ * apart from the two calls it is given.
+ */
+export async function introWatchAnswer(read: () => Promise<WatchState>, onFirstScreen: () => boolean): Promise<WatchState | null> {
+  const s = await read();
+  return onFirstScreen() ? s : null;
+}
 
 export type IntroKey = 'beat' | 'watch' | 'gym';
 

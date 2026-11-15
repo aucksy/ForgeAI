@@ -96,7 +96,7 @@ describe('R-248 / R-587 intro screens', () => {
 
   it('the screen list is fixed after a short wait for the watch (review: a button changed under a thumb)', () => {
     const src = read('onboarding/components/IntroSlides.tsx');
-    expect(src).toContain('readWatchStateQuick(INTRO_WATCH_WAIT_MS)');
+    expect(src).toContain('introWatchAnswer(() => readWatchStateQuick(INTRO_WATCH_WAIT_MS), () => indexRef.current === 0)');
     expect(src).toContain('<ScrollView');
     expect(src).toContain('enqueueWrite(() => setMeta(INTRO_KEY, INTRO_DONE))');
   });

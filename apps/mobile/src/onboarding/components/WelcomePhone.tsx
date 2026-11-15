@@ -76,7 +76,6 @@ export function WelcomePhone({
   initialName,
   onPicked,
   onSetUp,
-  onSteps,
   onSkip,
 }: {
   /** The name the welcome already has (Google, or typed), so the box starts filled. */
@@ -85,8 +84,6 @@ export function WelcomePhone({
   onPicked: (m: SignInMatch, firstName: string) => void;
   /** "Set up the app" after nothing was found: the setup questions, as "Use without an account". */
   onSetUp: () => void;
-  /** R-587: a member went straight into the gym but the setup could not be saved: the 3 questions (name filled). */
-  onSteps: (firstName: string) => void;
   onSkip: () => void;
 }) {
   const [step, setStep] = useState<Step>({ kind: 'form' });
@@ -101,8 +98,6 @@ export function WelcomePhone({
   // Read when the gym answers (a change of the boxes while waiting is fine).
   const typed = useRef({ phone: '', name: '' });
   typed.current = { phone, name };
-  const stepsRef = useRef(onSteps);
-  stepsRef.current = onSteps;
 
   /** R-587: a found member goes straight into the gym. Not joined: the card again, with why. */
   const enter = useCallback(
@@ -111,11 +106,9 @@ export function WelcomePhone({
       setError(null);
       setStep({ kind: 'entering', gymName: m.gymName });
       const r = await goStraightIn(m, first, mobile10(typed.current.phone) ?? '', proof);
-      if (r === 'in') return;
-      if (r === 'steps') {
-        stepsRef.current(first);
-        return;
-      }
+      // 'steps': the welcome screen opens the 3 questions from the store (useStraightIn.needsSteps), also when the
+      // gym's colours rebuilt it and this screen is gone (R-587 review, G1).
+      if (r === 'in' || r === 'steps') return;
       setError(r.words);
       setStep({ kind: 'found', matches: [m], proof });
     },
@@ -225,6 +218,8 @@ export function WelcomePhone({
 
   const body = { fontFamily: type.body, fontSize: type.size.sub, lineHeight: 20, color: color.inkSecondary } as const;
   const small = { fontFamily: type.body, fontSize: type.size.caption, lineHeight: 17, color: color.inkMuted } as const;
+  // R-587 review: a label above each box (it wraps at a large text size and stays while typing).
+  const label = { fontFamily: type.bodySemi, fontSize: type.size.sub, lineHeight: 20, color: color.inkSecondary } as const;
   const heading = { fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink } as const;
 
   return (
@@ -233,6 +228,7 @@ export function WelcomePhone({
 
       {step.kind === 'form' ? (
         <Card style={{ gap: space.sm }}>
+          <Text style={label}>{SIGN_IN.phoneLabel}</Text>
           <TextInput
             value={phone}
             onChangeText={(t) => {
@@ -244,12 +240,13 @@ export function WelcomePhone({
             keyboardType="phone-pad"
             autoComplete="tel-national"
             textContentType="telephoneNumber"
-            placeholder={SIGN_IN.phoneLabel}
+            placeholder={SIGN_IN.phoneHint}
             placeholderTextColor={color.inkFaint}
             accessibilityLabel={SIGN_IN.phoneLabel}
             testID="welcome-phone-number"
             style={inputStyle()}
           />
+          <Text style={[label, { paddingTop: space.xs }]}>{SIGN_IN.nameLabel}</Text>
           <TextInput
             value={name}
             onChangeText={(t) => {
@@ -259,7 +256,7 @@ export function WelcomePhone({
             autoCapitalize="words"
             autoComplete="name-given"
             maxLength={40}
-            placeholder={SIGN_IN.nameLabel}
+            placeholder={SIGN_IN.nameHint}
             placeholderTextColor={color.inkFaint}
             accessibilityLabel={SIGN_IN.nameLabel}
             testID="welcome-phone-name"
