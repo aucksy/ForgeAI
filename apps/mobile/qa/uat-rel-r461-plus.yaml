@@ -242,6 +242,12 @@ appId: com.mettleup.app
 # in-view: the same place (the card's button)
 - assertNotVisible: "^Find my gym$"
 - takeScreenshot: rel-r461-15b-gym-tab-no-card-when-off
+# Back to the page's top before leaving: the Gym tab keeps its scroll place, and sub-gym-none below waits for
+# "Join your gym" at the top without scrolling (default run 43656819898 timed out on the page left scrolled down).
+- scrollUntilVisible:
+    element: "^Join your gym$"
+    direction: UP
+    timeout: 20000
 - openLink: "mettleup://qa-plan?gate=1&day=5&find=none"
 - runFlow: sub-gym-none.yaml
 - runFlow:
