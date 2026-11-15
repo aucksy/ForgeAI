@@ -7,6 +7,27 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-574 (15 Nov 2026) Admin panel update LIVE; Apple developer account in review
+- Panel deployed from b89823cefcef7022c01bad4101a914ab1c245ad3 (CI 43703566627 green; fresh-eyes review of 93c100f1..b89823ce:
+  no blockers). Worker version 44afda0d. Checked live: /api/switches = gymPages false, joinPay false, pageAi false;
+  live JS has "Let people join your gym online"; Add member's Joining date shows "15 Nov 2026"; side menu "Set up your gym 4/8".
+  Carries R-566 (F220 help + day-first dates), R-567 (8 review fixes), R-571 journey (pages still off), R-569 (F208, off).
+- Deploy trap: wt-site's node_modules junction (Codebase/node_modules) lacks @anthropic-ai/sdk 0.133.0, so wrangler
+  could not bundle pageChat.js/assist.js. Fixed by `npm install --no-save @anthropic-ai/sdk@0.133.0` in wt-site/deploy
+  (its own node_modules, not the junction).
+- Review minors still open: (1) member help article "message-your-gym" describes a 0.78.0 button while Play production
+  is 0.77.0 until ~18 Nov; (2) OnlineJourney "Your join link works once your gym has at least one plan" shows for any
+  not-ready state (paused, offline, loading); (3) set-up list returns for finished owners; link-shared tick is per browser;
+  (4) What's new "pending-day-first-dates" and "pending-online-journey" still pending (move to live in a later deploy;
+  keep "pending-gym-web-pages" pending); (5) "Back to" bar can linger on Settings; (6) gym-details save can resend an old
+  value of an unknown field if another device changed it.
+- He said (15 Nov): "I have created the Apple developer account, made the payment today. I think it's under review right
+  now and they're going to send me an email." #89 now WAITING FOR APPLE. #94 decision stands: iPhone work restarts after
+  Android is public (production ~18 Nov).
+- Also 15 Nov: edit exercise screen redesign option A approved ("Yes go wit A"; canvas
+  https://claude.ai/artifact/YRaRpXDoPT1F5pC2o1GXQ1), helper building it (R-572). Logo background remover: he said "just do
+  the free part, and if it doesn't work ... give them the instructions"; helper building it (R-573, reverses R-192).
+
 ## R-571 (15 Nov 2026) One set-up journey for joining online; the 2 rewritten lines; the join form's QR code on a computer
 - He said: "can we still keep that in the setup steps so the gym owner knows that they can do it? They can choose to
   enable or disable it, and the whole setup will tell them about the page as well as the payments they can enable by
