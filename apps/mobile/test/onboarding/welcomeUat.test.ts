@@ -70,12 +70,11 @@ describe('a welcome restore that brings no profile', () => {
 });
 
 describe('first-run words', () => {
-  it('the intro uses the set line\'s word "previous", never "last" or "today"', () => {
-    for (const s of Object.values(INTRO_SLIDES)) {
-      expect(`${s.title} ${s.body}`, s.key).not.toMatch(/\b(last|today)\b/i);
-      expect(usesBannedWord(`${s.title} ${s.body}`)).toBe(false);
-    }
-    expect(INTRO_SLIDES.last.body).toMatch(/previous workout/);
+  it('R-587: the intro says what the owner approved on the canvas (15 Nov 2026), with no banned word', () => {
+    // The approved design's own words: "Beat your last workout" and "a little above last time" (R-587 replaces the
+    // 1 Nov 2026 UAT rule for these screens; the example card's column still reads PREVIOUS, as the set line does).
+    for (const s of Object.values(INTRO_SLIDES)) expect(usesBannedWord(`${s.eyebrow} ${s.title} ${s.body}`), s.key).toBe(false);
+    expect(INTRO_SLIDES.beat.title).toBe('Beat your last workout');
   });
   it('the step lines are whole sentences with no app-only word', () => {
     const src = read('onboarding/components/WelcomeScreen.tsx');

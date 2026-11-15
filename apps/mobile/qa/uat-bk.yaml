@@ -38,6 +38,8 @@ appId: com.mettleup.app
     file: sub-see.yaml
     env:
       FIND: 'Start fresh|Get stronger every week|Welcome to MettleUp|Step 1 of 3|Your name|^Next$|Restore from a backup|Load demo data instead'
+# R-587: the first screen shows only the phone number; the other ways in sit under "Try another way".
+- runFlow: sub-other-ways.yaml
 # R-277: the first screen is the one-screen welcome: "Bring workouts" opens its screen, where
 # "A MettleUp backup" opens "Restore from a backup"; sub-find scrolls to each before the tap.
 # ---------------------------------------------------------------- 1. restore from the welcome screen

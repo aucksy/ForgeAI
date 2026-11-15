@@ -38,6 +38,8 @@ appId: com.mettleup.app
     file: sub-see.yaml
     env:
       FIND: 'Start fresh|Get stronger every week|Welcome to MettleUp|Restore from a backup|Load demo data instead'
+# R-587: the first screen shows only the phone number; the other ways in sit under "Try another way".
+- runFlow: sub-other-ways.yaml
 # ---------------------------------------------------------------- 1. "Join my gym" and its two ways in
 # Owner profile (360 dp, font 1.3): the buttons can sit below the edge (trap 27).
 - runFlow:

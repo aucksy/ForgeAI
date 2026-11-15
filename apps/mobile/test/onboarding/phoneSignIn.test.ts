@@ -46,16 +46,16 @@ const line = (over: Record<string, unknown> = {}) => ({
 });
 
 describe('the switch', () => {
-  it('is off in every store and GitHub build', () => {
-    expect(PHONE_SIGN_IN_ON).toBe(false);
-    expect(phoneSignInShown({ qaBuild: false, qaOn: false })).toBe(false);
-    // A qa-signin link in a store build changes nothing (no stand-in there).
-    expect(phoneSignInShown({ qaBuild: false, qaOn: true })).toBe(false);
+  it('R-587: on for the next phone release, in every build (the owner, 15 Nov 2026: phone number login is the primary way)', () => {
+    expect(PHONE_SIGN_IN_ON).toBe(true);
+    expect(phoneSignInShown({ qaBuild: false, qaOn: false })).toBe(true);
+    expect(phoneSignInShown({ qaBuild: true, qaOn: false })).toBe(true);
   });
-  it('a QA build shows it only after its test link; the owner switch shows it for everyone', () => {
-    expect(phoneSignInShown({ qaBuild: true, qaOn: false })).toBe(false);
-    expect(phoneSignInShown({ qaBuild: true, qaOn: true })).toBe(true);
-    expect(phoneSignInShown({ qaBuild: false, qaOn: false }, true)).toBe(true);
+  it('with the owner switch off, a QA build shows it only after its test link; a store build never', () => {
+    expect(phoneSignInShown({ qaBuild: false, qaOn: false }, false)).toBe(false);
+    expect(phoneSignInShown({ qaBuild: false, qaOn: true }, false)).toBe(false);
+    expect(phoneSignInShown({ qaBuild: true, qaOn: false }, false)).toBe(false);
+    expect(phoneSignInShown({ qaBuild: true, qaOn: true }, false)).toBe(true);
   });
   it('the stand-in is read from app.json extra.qaStandIns only', () => {
     expect(hasPhoneSignInStandIn({ qaStandIns: ['memberPlan', 'phoneSignIn'] })).toBe(true);
@@ -195,7 +195,7 @@ describe('the words', () => {
     }
   });
   it('the problems name what to do; "not open yet" names the way in that works today', () => {
-    expect(signInProblemWords('NOT_AVAILABLE')).toBe('Signing in with your number is not open yet. Tap Back, then Join my gym, and type your gym’s 6-letter code.');
+    expect(signInProblemWords('NOT_AVAILABLE')).toBe('Signing in with your number is not open yet. Tap Back, then Try another way, then Join my gym, and type your gym’s 6-letter code.');
     expect(signInProblemWords('BAD_PHONE')).toBe(SIGN_IN_PHONE_ERROR);
     expect(signInProblemWords('OFFLINE')).toBe('No internet. Connect and try again.');
     expect(signInFindWords('BAD_PROOF')).toBe('The check ran out of time. Tap Start again.');
@@ -224,14 +224,15 @@ describe('[source-text check] the welcome wiring', () => {
   const screen = read('onboarding/components/WelcomeScreen.tsx');
   const google = read('onboarding/components/WelcomeGoogle.tsx');
   const layout = read('app/_layout.tsx');
-  it('the big button and the phone screen only while the switch is on', () => {
+  it('the big button and the phone screen only while the switch is on (R-587: welcomeStart.startButtons decides)', () => {
     expect(screen).toContain('const phoneOn = usePhoneSignInShown();');
-    expect(screen).toMatch(/\{phoneOn \? \(\s*<View[^>]*>\s*<OrangePill label=\{SIGN_IN\.button\} onPress=\{\(\) => goView\('phone'\)\} \/>/);
+    expect(screen).toContain('const shown = startButtons({ phoneOn, others: othersOpen || kept > 0, googleShown });');
+    expect(screen).toMatch(/\{has\('phone'\) \? \(\s*<View[^>]*>\s*<OrangePill label=\{SIGN_IN\.button\} onPress=\{\(\) => goView\('phone'\)\} \/>/);
     expect(screen).toContain("view === 'phone' && phoneOn ?");
   });
   it('off: Google keeps its orange button, and a build without Google keeps "Use without an account" orange', () => {
     expect(screen).toContain('small={phoneOn}');
-    expect(screen).toMatch(/\) : phoneOn \? null : \(\s*<OrangePill label=\{START_WORDS\.useWithout\} onPress=\{startSteps\} \/>/);
+    expect(screen).toMatch(/\) : has\('useWithout'\) \? \(\s*<OrangePill label=\{START_WORDS\.useWithout\} onPress=\{startSteps\} \/>/);
     expect(google).toMatch(/\(phase\.kind === 'idle' \|\| phase\.kind === 'looking'\) && small \? \(\s*<OutlinePill/);
   });
   it('a pick keeps the code exactly as "Join my gym" does, then the setup questions', () => {

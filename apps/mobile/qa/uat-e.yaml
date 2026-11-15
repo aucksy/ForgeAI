@@ -103,6 +103,8 @@ appId: com.mettleup.app
 - assertNotVisible: "^Profile$"
 - assertNotVisible: 'Your \d+ workouts? (is|are) still here.*'
 - takeScreenshot: ue-03-reopened-welcome
+# R-587: the first screen shows only the phone number; the other ways in sit under "Try another way".
+- runFlow: sub-other-ways.yaml
 # ---------------------------------------------------------------- 2. U-M2: "From Hevy" opens the import
 # R-277: "Bring workouts" on the start view opens its screen; "From Hevy" there goes straight on to
 # step 1, where the name is typed.
@@ -240,6 +242,8 @@ appId: com.mettleup.app
     direction: UP
     timeout: 20000
 - assertVisible: "Get stronger every week"
+# R-587: the first screen shows only the phone number; the other ways in sit under "Try another way".
+- runFlow: sub-other-ways.yaml
 # Into the app the quickest way (the demo), then: no gym.
 - scrollUntilVisible:
     element: "Load demo data instead"

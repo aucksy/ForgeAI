@@ -59,10 +59,10 @@ describe('R-248 watch card at the first workout start', () => {
   });
 });
 
-describe('R-248 intro screens', () => {
-  it('two screens; the watch one only when a watch lacks the app', () => {
-    expect(introSlides('missing').map((s) => s.key)).toEqual(['last', 'rest', 'watch']);
-    for (const s of ['none', 'installed', 'unknown'] as const) expect(introSlides(s).map((x) => x.key)).toEqual(['last', 'rest']);
+describe('R-248 / R-587 intro screens', () => {
+  it('R-587: two screens; the watch one in the middle only when a watch is connected (with or without the app)', () => {
+    for (const s of ['missing', 'installed'] as const) expect(introSlides(s).map((x) => x.key)).toEqual(['beat', 'watch', 'gym']);
+    for (const s of ['none', 'unknown'] as const) expect(introSlides(s).map((x) => x.key)).toEqual(['beat', 'gym']);
   });
 
   it('never more than 3 (owner: "maximum 2 or 3")', () => {
@@ -81,7 +81,7 @@ describe('R-248 intro screens', () => {
 
   it('every word a member reads is free of banned words', () => {
     const lines = [
-      ...Object.values(INTRO_SLIDES).flatMap((s) => [s.title, s.body]),
+      ...Object.values(INTRO_SLIDES).flatMap((s) => [s.eyebrow, s.title, s.body]),
       ...Object.values(INTRO_WORDS),
       WATCH_WORDS.startTitle,
       WATCH_WORDS.startBody,

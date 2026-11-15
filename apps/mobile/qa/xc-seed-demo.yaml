@@ -20,6 +20,8 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Start fresh|Get stronger every week|Welcome to MettleUp|Step 1 of 3|Your name|^Next$|Restore from a backup|Load demo data instead"
     timeout: 90000
+# R-587: the first screen shows only the phone number; the other ways in sit under "Try another way".
+- runFlow: sub-other-ways.yaml
 # R-277: the first screen is the one-screen start view (no step label); "Load demo data instead" is
 # its last link, so scroll down to it.
 - scrollUntilVisible:

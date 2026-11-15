@@ -30,6 +30,8 @@ appId: com.mettleup.app
     commands:
       - assertVisible: "Continue with Google|Get stronger every week|Start fresh|Welcome to MettleUp|Load demo data instead"
       - takeScreenshot: ios-02-welcome
+# R-587: the first screen shows only the phone number; the other ways in sit under "Try another way".
+- runFlow: sub-other-ways.yaml
 - scrollUntilVisible:
     element: "Load demo data instead"
     timeout: 30000

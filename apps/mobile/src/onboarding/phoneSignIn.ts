@@ -19,11 +19,17 @@
  */
 import { parseGymBrand, type GymBrand } from '@forgeai/theme';
 
+import { emptyDraft, GYM_NAME_MAX, type OnboardingDraft } from '@/onboarding/form';
 import type { CheckProblem, FoundGym } from '@/shop/findGym';
 import { checkProblemWords } from '@/shop/findGym';
 
-/** The whole flow. False until the owner's yes on the server change (0093) and the privacy line. */
-export const PHONE_SIGN_IN_ON = false;
+/**
+ * The whole flow. R-587 (owner, 15 Nov 2026: "we can keep the primary method as phone number login, but we can keep
+ * the Google method hidden under something like try another way"): ON from the next phone release. 0093 and the
+ * privacy line are live (R-582). The welcome's first screen then shows only "Continue with your phone number";
+ * every other way in sits under "Try another way" (welcomeStart.ts startButtons).
+ */
+export const PHONE_SIGN_IN_ON = true;
 
 /** Is the "Continue with your phone number" button shown? A QA build's test switch counts there only. PURE. */
 export function phoneSignInShown(i: { qaBuild: boolean; qaOn: boolean }, on: boolean = PHONE_SIGN_IN_ON): boolean {
@@ -91,6 +97,29 @@ export function matchesFromFoundGyms(gyms: readonly FoundGym[]): SignInMatch[] {
 /** A found member line as "Find my gym" keeps it (findGymApi.rememberFound: the link after the join). PURE. */
 export function foundGymOf(m: SignInMatch): FoundGym {
   return { gymId: m.gymId, gymName: m.gymName, joinCode: m.joinCode, endsOn: m.endsOn, pass: m.pass };
+}
+
+/**
+ * R-587: a member the gym knows (0093's 'member': this number and first name with a plan running today or a pass)
+ * goes straight into the gym: joined at once, no "Join" tap, no 3 setup questions, no gym join screen. The gym's own
+ * people (owner, trainer, desk staff) keep the "Join <gym>" card, then the questions and the gym's join screen. PURE.
+ */
+export function goesStraightIn(m: Pick<SignInMatch, 'role'>): boolean {
+  return m.role === 'member';
+}
+
+/** The one match that needs no tap at all: exactly one gym found, and as a member there. null = show the card(s). PURE. */
+export function straightInMatch(matches: readonly SignInMatch[]): SignInMatch | null {
+  return matches.length === 1 && goesStraightIn(matches[0]) ? matches[0] : null;
+}
+
+/**
+ * The welcome answers a member who went straight in never saw (R-587). The first name they typed, the number they
+ * proved, kg (the phone sign-in is for Indian numbers), the gym's name, and the app's first defaults (Build muscle,
+ * New to lifting: form.ts emptyDraft). Every one can be changed in Profile. PURE.
+ */
+export function straightInDraft(firstName: string, mobile: string, gymName: string): OnboardingDraft {
+  return { ...emptyDraft(), name: firstName.trim(), phone: mobile, gymName: gymName.trim().slice(0, GYM_NAME_MAX) };
 }
 
 /** Owner, trainer and desk staff are the gym's own people (T89: they get every feature, memberPlan staff). PURE. */
@@ -214,6 +243,10 @@ export const SIGN_IN = {
   setUp: 'Set up the app',
   tryAgain: 'Try another number',
   testBuild: 'Test build: no WhatsApp message. This answer is made up.',
+  /** R-587: under the one button on the first screen; opens every other way in. */
+  otherWays: 'Try another way',
+  /** R-587: while a found member is joined and the app is set up for them. */
+  opening: (gym: string): string => `Opening ${gym}…`,
 } as const;
 
 export const SIGN_IN_PHONE_ERROR = 'Type your 10-digit mobile number.';
@@ -221,7 +254,7 @@ export const SIGN_IN_NAME_ERROR = 'Type your first name, as your gym has it.';
 
 /** The words for a refused start ("not open yet" names the way in that works today). PURE. */
 export function signInProblemWords(p: CheckProblem): string {
-  if (p === 'NOT_AVAILABLE') return 'Signing in with your number is not open yet. Tap Back, then Join my gym, and type your gym’s 6-letter code.';
+  if (p === 'NOT_AVAILABLE') return 'Signing in with your number is not open yet. Tap Back, then Try another way, then Join my gym, and type your gym’s 6-letter code.';
   return checkProblemWords(p);
 }
 

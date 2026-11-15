@@ -1,61 +1,126 @@
 /**
- * R-248 (owner 31 Oct 2026: "plan the onboarding screens, the launch screens, with some hook lines,
- * how this is going to help their workout ... Not too many, just maximum 2 or 3"): short screens
- * shown once, before the welcome flow (components/WelcomeScreen). Two always; a third only when a
- * Wear OS watch is connected that lacks the MettleUp watch app (tracker/services/watchInstall.ts).
- * Seen = the meta key `INTRO_KEY` is 'done' (Skip and Get started both store it). "Erase all data" clears it
- * on purpose: an erased phone is a fresh start and sees the screens again (qa/uat-e.yaml expects that).
- * Words: member-words skill + Gemini pass, 31 Oct 2026; every claim is a live feature.
+ * R-587 (owner, 15 Nov 2026: "I'm good with the welcome screen designs"): the short screens shown once, before the
+ * welcome flow (components/WelcomeScreen). Replaces R-248's two screens (the previous set's numbers, and the rest
+ * timer). Approved canvas: design-welcome Main / Watch / Gym (version 6, the gym line with
+ * "if your gym uses MettleUp gym software", R-585). Every word below is copied from it word for word.
+ *
+ *   1. "Beat your last workout" (always), with the Previous vs Today's target example card.
+ *   2. "We found your watch" ONLY when Wear OS says a watch is connected (tracker/services/watchInstall.ts):
+ *      "Install on my watch" opens the watch's Play Store on MettleUp; a watch that already has the app reads
+ *      "On your watch" with a tick and installs nothing. No watch, an iPhone, a slow or failed lookup: no screen 2.
+ *   3. "Your gym, in your pocket" (always): "Get started" (on to the phone-number sign-in) and
+ *      "Recommend MettleUp to my gym" (the phone's share menu, the Gym tab's same message, shop/recommendGym.ts).
+ *
+ * With a watch: 3 screens, "1 of 3". Without: 2 screens, "1 of 2" and "2 of 2", 2 dots. Skip on every screen.
+ * Seen = the meta key `INTRO_KEY` is 'done' (Skip and Get started both store it). "Erase all data" clears it on
+ * purpose: an erased phone is a fresh start and sees the screens again (qa/uat-e.yaml expects that).
  */
-import type { IconName } from '@/components/ui';
-import type { WatchState } from '@/tracker/services/watchInstall';
+import type { InstallResult, WatchState } from '@/tracker/services/watchInstall';
 
 export const INTRO_KEY = 'intro_seen';
 export const INTRO_DONE = 'done';
-/** How long screen 1 waits for the watch answer. After it, the screen list never changes. */
+/**
+ * How long screen 1 listens for the watch answer. Screen 1 is drawn at once (nothing waits on Wear OS); an answer
+ * inside this time may only add the watch screen while the member is still on screen 1. After it, the list is fixed.
+ */
 export const INTRO_WATCH_WAIT_MS = 1500;
 
+export type IntroKey = 'beat' | 'watch' | 'gym';
+
 export interface IntroSlide {
-  key: 'last' | 'rest' | 'watch';
-  icon: IconName;
+  key: IntroKey;
+  /** The small orange line over the heading. */
+  eyebrow: string;
   title: string;
   body: string;
 }
 
-export const INTRO_SLIDES: Record<IntroSlide['key'], IntroSlide> = {
-  last: {
-    key: 'last',
-    icon: 'target',
-    // UAT 1 Nov 2026: the set line's own word is "Previous" (never "last" / "today").
-    title: 'See what you lifted the previous time', // member-words
-    body: 'Each set shows the weight and reps from your previous workout, so you know what to beat.', // member-words
-  },
-  rest: {
-    key: 'rest',
-    icon: 'clock',
-    title: 'Rest timer starts by itself', // member-words
-    body: 'Tick a set and the rest timer starts. The app alerts you when rest is over.', // member-words
+export const INTRO_SLIDES: Record<IntroKey, IntroSlide> = {
+  beat: {
+    key: 'beat',
+    eyebrow: 'Consistent progress requires accurate tracking.',
+    title: 'Beat your last workout',
+    body: 'Log every set. Our own progression engine gives each set a target, a little above last time. Progressive overload, done for you.',
   },
   watch: {
     key: 'watch',
-    icon: 'heart',
-    title: 'Use MettleUp on your watch', // member-words
-    body: 'Tap "Install on watch" to see your rest timer, next set and heart rate on your wrist.', // member-words
+    eyebrow: 'We found your watch',
+    title: 'Your workout on your wrist',
+    body: 'Start on your phone and your watch starts too. See your rest, next set and heart rate. Log each set with the dial and one tap on Done.',
+  },
+  gym: {
+    key: 'gym',
+    eyebrow: 'Does your gym use MettleUp?',
+    title: 'Your gym, in your pocket',
+    body: "If your gym uses MettleUp gym software, sign in with your phone number and we find your gym for you. Check in, see your membership and get your trainer's plan.",
   },
 };
 
 export const INTRO_WORDS = {
-  skip: 'Skip', // member-words
-  previous: 'Previous', // member-words
-  next: 'Next', // member-words
-  start: 'Get started', // member-words
+  skip: 'Skip',
+  next: 'Next',
+  start: 'Get started',
+  install: 'Install on my watch',
+  onWatch: 'On your watch',
+  recommend: 'Recommend MettleUp to my gym',
 } as const;
 
-/** The screens, in order: the watch one only when a watch lacks the app. PURE. */
+/** Screen 1's example card (approved design): 3 sets, the previous workout and today's target. */
+export const BEAT_CARD = {
+  exercise: 'Bench press',
+  example: 'Example',
+  setHead: 'SET',
+  previousHead: 'PREVIOUS',
+  targetHead: "TODAY'S TARGET",
+  rows: [
+    { set: 1, previous: '60 kg × 10', target: '60 kg × 10', plus: null },
+    { set: 2, previous: '60 kg × 8', target: '60 kg × 9', plus: '+1' },
+    { set: 3, previous: '60 kg × 7', target: '60 kg × 8', plus: '+1' },
+  ],
+  totalLabel: 'Total lifted',
+  totalBefore: '1,500 kg',
+  totalTarget: '1,620 kg',
+  caption: 'A little more, week after week',
+} as const;
+
+/** Screen 2's picture: the watch's rest screen and three short lines. */
+export const WATCH_ART = {
+  rest: 'REST',
+  time: '1:24',
+  next: 'Next: 60 kg × 9',
+  heart: '128',
+  chips: ['Starts with your phone', 'Buzzes when rest ends', 'Log sets with the dial'],
+} as const;
+
+/** Screen 3's picture: a checked number finds an example gym. */
+export const GYM_ART = {
+  phoneLabel: 'Your phone number',
+  phone: '98765 •••••',
+  checked: 'Checked',
+  found: 'We found you',
+  initials: 'EG',
+  gym: 'Example Gym',
+  plan: 'Member · plan till 12 Dec',
+  tiles: ['Check in', 'Your plan', "Trainer's plan"],
+  example: 'Example',
+} as const;
+
+/** Is a watch connected to this phone, so the watch screen may show? Unknown and no watch both count as no. PURE. */
+export function watchScreenShows(watch: WatchState): boolean {
+  return watch === 'missing' || watch === 'installed';
+}
+
+/** The screens, in order: the watch one only when a watch is connected. PURE. */
 export function introSlides(watch: WatchState): IntroSlide[] {
-  const out = [INTRO_SLIDES.last, INTRO_SLIDES.rest];
-  if (watch === 'missing') out.push(INTRO_SLIDES.watch);
-  return out;
+  return watchScreenShows(watch) ? [INTRO_SLIDES.beat, INTRO_SLIDES.watch, INTRO_SLIDES.gym] : [INTRO_SLIDES.beat, INTRO_SLIDES.gym];
+}
+
+/**
+ * The watch screen's big button: "On your watch" with a tick (installs nothing) when the watch already has the app,
+ * or "Install on my watch" tapped and Wear OS then said it is there; otherwise "Install on my watch". PURE.
+ */
+export function watchButton(watch: WatchState, result: InstallResult | null): 'install' | 'on-watch' {
+  return watch === 'installed' || result === 'installed' ? 'on-watch' : 'install';
 }
 
 /** The screens show before the welcome flow unless already seen; undefined = not read yet. PURE. */

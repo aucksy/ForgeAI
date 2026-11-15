@@ -25,6 +25,7 @@ import { BootErrorScreen } from '@/onboarding/components/BootErrorScreen';
 import { IntroGate } from '@/onboarding/components/IntroSlides';
 import { WelcomeScreen } from '@/onboarding/components/WelcomeScreen';
 import { applyQaSignInLink } from '@/onboarding/phoneSignInApi';
+import { applyQaIntroLink } from '@/onboarding/qaIntro';
 import { useOnboarding, type BootStatus } from '@/onboarding/store/onboardingStore';
 import { refreshGymIfDue, refreshGymNow } from '@/shop/gymActions';
 import { checkInCodeFromUrl } from '@/shop/checkIn';
@@ -187,6 +188,8 @@ export default function RootLayout() {
     if (status !== 'welcome') return;
     const keep = (url: string | null) => {
       // F203, QA builds only: mettleup://qa-signin switches "Continue with your phone number" on for this run.
+      // R-587, QA builds only: mettleup://qa-intro?watch=... stands in for Wear OS on the welcome's watch screen.
+      if (applyQaIntroLink(url)) return;
       if (applyQaSignInLink(url)) return;
       const code = inviteCodeFromUrl(url);
       if (code) setPendingInvite(code);

@@ -1,0 +1,28 @@
+# Sub-flow (called with runFlow; not a part of its own). R-587 (owner, 15 Nov 2026): the welcome's first screen shows
+# only "Continue with your phone number" and a "Try another way" link; Continue with Google, Join my gym, Bring
+# workouts, Use without an account and Load demo data instead sit under that link. Call this right before a flow
+# first uses one of those on a fresh install or after an erase. It opens them when the link is there and does nothing
+# anywhere else (an older build without the link, a screen already opened, any other page): both checks are
+# instant `when` checks, and the scroll runs only on the first screen with the link out of view.
+# No `env:` here (trap 22).
+appId: com.mettleup.app
+---
+- runFlow:
+    when:
+      visible: "^Try another way$"
+    commands:
+      - tapOn: "^Try another way$"
+- runFlow:
+    when:
+      visible: "Get stronger every week"
+      notVisible: "^Continue with Google$|^Join my gym$|^Bring workouts$|^Use without an account$|^Load demo data instead$"
+    commands:
+      - scrollUntilVisible:
+          element: "^Try another way$"
+          timeout: 8000
+          optional: true
+      - runFlow:
+          when:
+            visible: "^Try another way$"
+          commands:
+            - tapOn: "^Try another way$"

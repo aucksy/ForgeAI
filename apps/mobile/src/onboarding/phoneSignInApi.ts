@@ -11,9 +11,15 @@ import { create } from 'zustand';
 
 import { noteStaff } from '@/plan/memberPlanStore';
 import { rememberFound } from '@/shop/findGymApi';
+import { joinGym } from '@/shop/gymActions';
 import { apiPhoneSignIn } from '@/shop/gymApi';
+import { useGymShop } from '@/shop/gymStore';
+import { useSettings } from '@/store/settingsStore';
 
-import { foundGymOf, hasPhoneSignInStandIn, isGymPerson, phoneSignInShown, qaSignInFromUrl, type QaSignIn, type SignInMatch } from './phoneSignIn';
+import { validateOnboarding } from './form';
+import { foundGymOf, hasPhoneSignInStandIn, isGymPerson, phoneSignInShown, qaSignInFromUrl, straightInDraft, type QaSignIn, type SignInMatch } from './phoneSignIn';
+import { useOnboarding } from './store/onboardingStore';
+import { saveWelcomeResume } from './welcomeResume';
 
 interface QaState {
   on: boolean;
@@ -75,5 +81,48 @@ export function notePicked(m: SignInMatch, proof: string | null): void {
     else if (proof) rememberFound(proof, foundGymOf(m));
   } catch (e) {
     console.warn('[phone sign-in] the found gym could not be kept', e);
+  }
+}
+
+// ------------------------------------------------------------------ R-587: a found member goes straight in
+
+/**
+ * The gym being opened for a found member, or null. Kept outside the screen: the join repaints the app in the gym's
+ * colours, which draws the welcome afresh, and the fresh welcome must keep saying "Opening <gym>…" until the app opens.
+ */
+export const useStraightIn = create<{ gymName: string | null }>(() => ({ gymName: null }));
+
+/** 'in' = the app is open in the gym; 'steps' = joined, but the setup must be asked (the save failed); words = not joined. */
+export type StraightInOutcome = 'in' | 'steps' | { words: string };
+
+/**
+ * R-587 (owner, 15 Nov 2026): an active member found by the number goes straight into the gym. The gym is joined now
+ * with the first name typed (the same join as the gym's join screen; the 18+ and terms box was ticked on the phone
+ * screen), the proof is kept so the gym's list is linked after the join (notePicked), and the app is set up with
+ * straightInDraft's answers (changeable in Profile). Not joined (offline, a refused code): the words, and the card's
+ * "Join <gym>" stays. Joined but the save failed: 'steps' (the 3 questions, the gym is already joined). Never throws.
+ */
+export async function goStraightIn(m: SignInMatch, firstName: string, mobile: string, proof: string | null): Promise<StraightInOutcome> {
+  if (useStraightIn.getState().gymName != null) return { words: 'That did not work. Try again.' };
+  useStraightIn.setState({ gymName: m.gymName });
+  try {
+    notePicked(m, proof);
+    const words = await joinGym(m.joinCode, firstName);
+    if (words) return { words };
+    const v = validateOnboarding(straightInDraft(firstName, mobile, m.gymName), 'metric');
+    if (!v.ok) {
+      console.warn('[phone sign-in] the setup answers were refused; asking the 3 questions', v.field);
+      return 'steps';
+    }
+    useSettings.getState().setUnitSystem('metric');
+    await useOnboarding.getState().complete(v.value);
+    void saveWelcomeResume(null);
+    console.log('[phone sign-in] a found member went straight into the gym');
+    return 'in';
+  } catch (e) {
+    console.warn('[phone sign-in] going straight into the gym failed', e);
+    return useGymShop.getState().link ? 'steps' : { words: 'That did not work. Try again.' };
+  } finally {
+    useStraightIn.setState({ gymName: null });
   }
 }

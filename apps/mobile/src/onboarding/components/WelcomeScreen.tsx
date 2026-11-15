@@ -34,11 +34,17 @@
  *     gym's join screen opens after setup), then "Join <gym>" → step 1.
  *   - "Bring workouts": From Hevy / From Strong (the import opens after Start training, as before) and
  *     "A MettleUp backup" (the "Restore from a backup" view, RestoreBackupPanel).
+ * R-587 (owner, 15 Nov 2026): with the phone sign-in on (phoneSignIn.PHONE_SIGN_IN_ON), the first screen shows only
+ * "Continue with your phone number" and a "Try another way" link; the link opens every other way in underneath
+ * (welcomeStart.startButtons), each working exactly as before. A found member who goes straight into the gym
+ * (phoneSignInApi.goStraightIn) sees "Opening <gym>..." here until the app opens, also when the gym's colours draw
+ * this screen afresh.
  */
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { anyCountryMobileInput } from '@forgeai/theme';
 import {
   AccessibilityInfo,
+  ActivityIndicator,
   BackHandler,
   KeyboardAvoidingView,
   Platform,
@@ -87,9 +93,9 @@ import {
 } from '../welcomeSteps';
 import { RadioList, type RadioOption } from './RadioList';
 import { SIGN_IN } from '../phoneSignIn';
-import { usePhoneSignInShown } from '../phoneSignInApi';
+import { usePhoneSignInShown, useStraightIn } from '../phoneSignInApi';
 import { welcomeGymChecked, welcomeGymKept } from '../welcomeGym';
-import { keptWorkoutsLine, START_WORDS } from '../welcomeStart';
+import { keptWorkoutsLine, START_WORDS, startButtons, type StartButton } from '../welcomeStart';
 import { welcomeGoogleShown, WelcomeGoogle } from './WelcomeGoogle';
 import { useWaitingGym, WelcomeGymCode } from './WelcomeGymCode';
 import { BackRow, OrangePill, OutlinePill, SubHeading, TextLink } from './WelcomeParts';
@@ -259,6 +265,10 @@ export function WelcomeScreen() {
   const inGym = useGymShop((s) => s.link != null);
   // F203: "Continue with your phone number" (off in store builds: nothing on this screen changes then).
   const phoneOn = usePhoneSignInShown();
+  // R-587: "Try another way" opened (every other way in shows under the phone button).
+  const [othersOpen, setOthersOpen] = useState(false);
+  // R-587: a found member is being taken straight into the gym.
+  const entering = useStraightIn((s) => s.gymName);
   const [step, setStep] = useState<WelcomeStep>(0);
   const [draft, setDraft] = useState<OnboardingDraft>(welcomeDraft);
   // Nothing is chosen for the member: step 2 waits for a tap (the pick is saved at once).
@@ -412,9 +422,16 @@ export function WelcomeScreen() {
         return true;
       }
       if (!started) {
+        // R-587: a found member is being joined to the gym: Back waits.
+        if (useStraightIn.getState().gymName != null) return true;
         // "Join my gym" / "Bring workouts" go back to the main screen.
         if (view !== 'main') {
           goView('main');
+          return true;
+        }
+        // R-587: an opened "Try another way" closes first.
+        if (othersOpen && kept === 0) {
+          setOthersOpen(false);
           return true;
         }
         // A Google restore running holds Back; otherwise the start view leaves as usual.
@@ -429,7 +446,7 @@ export function WelcomeScreen() {
     return () => sub.remove();
     // goTo and backToStart only touch setters and refs.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [step, restoring, started, view]);
+  }, [step, restoring, started, view, othersOpen, kept]);
 
   const onNext = (): void => {
     const p = stepProblem(step, draft, units);
@@ -490,6 +507,21 @@ export function WelcomeScreen() {
       : 'Fills the app with a sample member and 13 weeks of made-up training, for showing MettleUp off. You can remove it any time.';
 
   const text = STEP_TEXT[step];
+  // R-587: the ways in this first screen shows (only the phone and "Try another way" until that is opened).
+  const shown = startButtons({ phoneOn, others: othersOpen || kept > 0, googleShown });
+  const has = (b: StartButton): boolean => shown.includes(b);
+
+  // R-587: the join drew this screen afresh in the gym's colours; the phone screen's own line went with it.
+  if (entering != null && !(view === 'phone' && phoneOn)) {
+    return (
+      <Screen scroll={false}>
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: space.md }}>
+          <ActivityIndicator color={color.accent} />
+          <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink, textAlign: 'center' }}>{SIGN_IN.opening(entering)}</Text>
+        </View>
+      </Screen>
+    );
+  }
 
   if (restoring) {
     return (
@@ -539,6 +571,11 @@ export function WelcomeScreen() {
                   startSteps();
                 }}
                 onSetUp={startSteps}
+                onSteps={(first) => {
+                  // R-587: joined straight in, but the setup could not be saved: the 3 questions (no join screen).
+                  if (!draft.name.trim() && first) patch({ name: first });
+                  startSteps();
+                }}
                 onSkip={() => goView('main')}
               />
             </Animated.View>
@@ -617,16 +654,17 @@ export function WelcomeScreen() {
                   </Text>
                 ) : null}
 
-                {/* Google: finds the member's Drive backup and offers it (gym members: the server copy). A build
-                    that cannot sign in has no Google button: "Use without an account" is the orange one. */}
-                {/* F203: with its switch on, the phone number is the one orange button and Google sits under it,
-                    smaller (for backups). Off (store builds): exactly as before. */}
-                {phoneOn ? (
+                {/* F203 / R-587: with its switch on, the phone number is the one orange button, and every other way
+                    in waits under "Try another way". Off: exactly as before (welcomeStart.startButtons). */}
+                {has('phone') ? (
                   <View pointerEvents={googleRestoring ? 'none' : 'auto'} style={{ opacity: googleRestoring ? 0.5 : 1 }}>
                     <OrangePill label={SIGN_IN.button} onPress={() => goView('phone')} />
                   </View>
                 ) : null}
-                {googleShown ? (
+                {has('otherWays') ? <TextLink label={SIGN_IN.otherWays} onPress={() => setOthersOpen(true)} /> : null}
+                {/* Google: finds the member's Drive backup and offers it (gym members: the server copy). A build
+                    that cannot sign in has no Google button: "Use without an account" is the orange one. */}
+                {has('google') ? (
                   <WelcomeGoogle
                     small={phoneOn}
                     onName={(n) => (draft.name.trim() ? undefined : patch({ name: n }))}
@@ -636,23 +674,25 @@ export function WelcomeScreen() {
                     onBeforeRestore={forgetSwitch}
                     onContinue={startSteps}
                   />
-                ) : phoneOn ? null : (
+                ) : has('useWithout') ? (
                   <OrangePill label={START_WORDS.useWithout} onPress={startSteps} />
-                )}
+                ) : null}
 
                 {/* While a Google restore runs, nothing else here can start (a demo or a second restore would mix data). */}
                 <View pointerEvents={googleRestoring ? 'none' : 'auto'} style={{ gap: space.sm, opacity: googleRestoring ? 0.5 : 1 }}>
-                  <View style={{ flexDirection: pillsSideBySide ? 'row' : 'column', gap: space.md }}>
-                    <View style={pillsSideBySide ? { flex: 1 } : null}>
-                      <OutlinePill label={START_WORDS.joinGym} icon="dumbbell" onPress={() => goView('gym')} />
+                  {has('joinGym') ? (
+                    <View style={{ flexDirection: pillsSideBySide ? 'row' : 'column', gap: space.md }}>
+                      <View style={pillsSideBySide ? { flex: 1 } : null}>
+                        <OutlinePill label={START_WORDS.joinGym} icon="dumbbell" onPress={() => goView('gym')} />
+                      </View>
+                      <View style={pillsSideBySide ? { flex: 1 } : null}>
+                        <OutlinePill label={START_WORDS.bringWorkouts} icon="import" onPress={() => goView('bring')} />
+                      </View>
                     </View>
-                    <View style={pillsSideBySide ? { flex: 1 } : null}>
-                      <OutlinePill label={START_WORDS.bringWorkouts} icon="import" onPress={() => goView('bring')} />
-                    </View>
-                  </View>
-                  {googleShown || phoneOn ? <TextLink label={START_WORDS.useWithout} onPress={startSteps} /> : null}
+                  ) : null}
+                  {has('useWithoutLink') ? <TextLink label={START_WORDS.useWithout} onPress={startSteps} /> : null}
                   {/* For showing MettleUp off (it asks first). The phone tests' way into a filled app. */}
-                  <TextLink label="Load demo data instead" faint onPress={onLoadDemo} />
+                  {has('demo') ? <TextLink label="Load demo data instead" faint onPress={onLoadDemo} /> : null}
                   <InlineError message={saveProblem} />
                 </View>
               </View>

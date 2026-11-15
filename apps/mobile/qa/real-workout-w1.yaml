@@ -35,6 +35,8 @@ appId: com.mettleup.app
     file: sub-see.yaml
     env:
       FIND: 'Start fresh|Get stronger every week|Welcome to MettleUp|Step 1 of 3|Your name|^Next$|Restore from a backup|Load demo data instead'
+# R-587: the first screen shows only the phone number; the other ways in sit under "Try another way".
+- runFlow: sub-other-ways.yaml
 # R-277: the first screen is the one-screen welcome. The switcher's way in: "Bring workouts" -> "From Hevy"
 # (its import opens after Start training). Tapping it goes straight on to step 1, then the name.
 - runFlow:

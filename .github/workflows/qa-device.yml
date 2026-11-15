@@ -149,13 +149,14 @@ jobs:
       # F56 MettleUp Plus (R-461, 12 Nov 2026): 'memberPlan' lets mettleup://qa-plan?gate=1&day=26 switch the free/paid plan on for one run, with a stand-in store that takes no money (qa/uat-rel-r461-plus.yaml).
       # R-501 (14 Nov 2026): 'gymPush' lets mettleup://qa-push?ready=1 make the gym message channels on a phone in no gym, so part u501 can deliver a made-up push and read how Android showed it.
       # F203 (15 Nov 2026): 'phoneSignIn' lets mettleup://qa-signin?on=1&role=trainer&gym=...&code=... switch "Continue with your phone number" on for one run, with a made-up answer instead of WhatsApp (qa/uat-rel-f203-phone-sign-in.yaml). Off until the link: every other flow sees the welcome as the store build does.
+      # R-587 (15 Nov 2026): 'watchIntro' lets mettleup://qa-intro?watch=missing|installed stand in for Wear OS on the first welcome screen (the cloud phone has no watch), so the watch screen can be photographed (qa/tour-first-run.yaml).
       - name: QA-only stand-ins in app.json
         run: |
           python3 - <<'PY'
           import json
           f = 'apps/mobile/app.json'
           j = json.load(open(f, encoding='utf-8'))
-          j['expo'].setdefault('extra', {})['qaStandIns'] = ['friendInvite', 'passMember', 'updateOffer', 'sleepSample', 'newDots', 'gymLook', 'helpReply', 'gymTalk', 'memberPlan', 'gymPush', 'phoneSignIn']
+          j['expo'].setdefault('extra', {})['qaStandIns'] = ['friendInvite', 'passMember', 'updateOffer', 'sleepSample', 'newDots', 'gymLook', 'helpReply', 'gymTalk', 'memberPlan', 'gymPush', 'phoneSignIn', 'watchIntro']
           open(f, 'w', encoding='utf-8').write(json.dumps(j, indent=2, ensure_ascii=False) + chr(10))
           print('qaStandIns', j['expo']['extra']['qaStandIns'])
           PY

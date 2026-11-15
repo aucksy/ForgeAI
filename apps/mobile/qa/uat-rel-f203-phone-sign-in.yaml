@@ -1,21 +1,29 @@
 # Part UAT, F203 "Sign in with your phone number; the app finds your gym and role" (owner, 14 Nov 2026, R-493; proof
-# pick A: one free WhatsApp message). Store builds ship it switched OFF (onboarding/phoneSignIn.ts PHONE_SIGN_IN_ON).
-# The QA build's 'phoneSignIn' stand-in: mettleup://qa-signin?on=1&... switches it on for this run and answers with
-# a made-up result instead of WhatsApp (the screen says so). The emulator has no WhatsApp: the real message, the
-# wait for it and the gym server's answer (0093, NOT LIVE) are not testable here.
+# pick A: one free WhatsApp message). R-587 (15 Nov 2026): switched ON for every build (PHONE_SIGN_IN_ON), and the
+# first screen shows ONLY "Continue with your phone number"; the other ways sit under "Try another way". A member the
+# gym knows goes straight into the gym (no Join tap, no 3 questions, no gym join screen).
+# The QA build's 'phoneSignIn' stand-in: mettleup://qa-signin?on=1&... answers with a made-up result instead of
+# WhatsApp (the screen says so). The emulator has no WhatsApp: the real message and the wait for it are not
+# testable here (0093 itself is live and tested by supabase/tests/0093).
 # run-device-qa.sh part u203 makes a FRESH "QA UAT Gym" (qa/uat_gym.py slot P) and passes its code as CODE and its
 # name as GYM, so the found gym's own join screen after setup is the live one.
 # Types (R-364):
-#  1. negative, switched off (the store build): a fresh install's welcome has no "Continue with your phone number".
-#  2. on: the big button; "Use without an account" stays as a link (Google, when this build shows it, sits under it).
+#  1. R-587: a fresh install's first screen shows only "Continue with your phone number" and "Try another way"
+#     (negative: no Join my gym, no Use without an account, no demo link).
+#  2. R-587: "Try another way" opens Join my gym, Bring workouts, Use without an account and the demo (regression:
+#     every old way in is still there).
 #  3. Skip: back to the first screen, exactly as today (regression).
 #  4. negative: "Check with WhatsApp" with no number says "Type your 10-digit mobile number." and finds nothing.
+#  4b. R-587 negative: a number and a name but no 18+ tick: "Please tick the box above..." and nothing is checked.
 #  5. not found: "We did not find your number at a gym on MettleUp", "Set up the app" and "Try another number";
 #     Try another number = the boxes again.
 #  6. found at 2 gyms: "We found you at 2 gyms...", "We found you: trainer at QA UAT Gym.", "We found you: member of
 #     QA Second Gym." with its plan end; no "every MettleUp feature free" while MettleUp Plus is off (negative).
-#  7. "Join QA UAT Gym": the 3 setup questions with the first name filled in; after "Start training" the gym's own
-#     join screen opens (live gym_preview), Join, and the Gym tab shows the gym.
+#  7. "Join QA UAT Gym" (a trainer: the gym's own people keep the old path): the 3 setup questions with the first
+#     name filled in; after "Start training" the gym's own join screen opens (live gym_preview), Join, and the Gym tab
+#     shows the gym.
+#  8. R-587, a fresh install found as a MEMBER of the live test gym: straight into the gym. No "Join" tap, no
+#     "Step 1 of 3", no "Gym code" join screen; the app opens on the Workout tab and the Gym tab shows the gym.
 # Pictures rel-f203-*.png. Runs alone with only=u203, and in the whole uat part. Leaves the app on the tabs.
 appId: com.mettleup.app
 ---
@@ -41,15 +49,7 @@ appId: com.mettleup.app
     file: sub-see.yaml
     env:
       FIND: "Get stronger every week"
-# ---------------------------------------------------------------- 1. switched off: the welcome as the store build
-- runFlow:
-    file: sub-see.yaml
-    env:
-      FIND: "^Join my gym$"
-- assertNotVisible: "^Continue with your phone number$"
-- takeScreenshot: rel-f203-1-off-welcome
-# ---------------------------------------------------------------- 2. switched on (QA link): the big button
-- openLink: "mettleup://qa-signin?on=1&none=1"
+# ---------------------------------------------------------------- 1. R-587: only the phone number on the first screen
 - runFlow:
     file: sub-see.yaml
     env:
@@ -57,8 +57,37 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-see.yaml
     env:
+      FIND: "^Try another way$"
+- assertNotVisible: "^Join my gym$"
+- assertNotVisible: "^Use without an account$"
+- assertNotVisible: "Load demo data instead"
+- assertNotVisible: "^Bring workouts$"
+- takeScreenshot: rel-f203-1-phone-first
+# ---------------------------------------------------------------- 2. "Try another way": every other way in
+- openLink: "mettleup://qa-signin?on=1&none=1"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Try another way$"
+- tapOn: "^Try another way$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "^Join my gym$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "^Bring workouts$"
+- runFlow:
+    file: sub-see.yaml
+    env:
       FIND: "^Use without an account$"
-- takeScreenshot: rel-f203-2-on-welcome
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "Load demo data instead"
+- assertNotVisible: "^Try another way$"
+- takeScreenshot: rel-f203-2-other-ways
 # ---------------------------------------------------------------- 3. Skip: back to the first screen
 - runFlow:
     file: sub-find.yaml
@@ -126,6 +155,19 @@ appId: com.mettleup.app
       - eraseText: 20
       - inputText: "Priya"
 - hideKeyboard
+# ---------------------------------------------------------------- 4b. R-587: no 18+ tick, nothing is checked
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Check with WhatsApp$"
+- tapOn: "^Check with WhatsApp$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "^Please tick the box above\\..*"
+- assertNotVisible: "^We did not find your number at a gym on MettleUp$"
+- takeScreenshot: rel-f203-4b-needs-tick
+- runFlow: sub-agree.yaml
 - runFlow:
     file: sub-find.yaml
     env:
@@ -296,3 +338,80 @@ appId: com.mettleup.app
     env:
       FIND: "^${GYM}$"
 - takeScreenshot: rel-f203-10-joined-gym-tab
+# ---------------------------------------------------------------- 8. R-587: a found member goes straight into the gym
+- launchApp:
+    clearState: true
+    permissions:
+      all: allow
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: "^Skip$|Get stronger every week"
+    timeout: 90000
+    optional: true
+- tapOn:
+    text: "^Skip$"
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "^Continue with your phone number$"
+- openLink: "mettleup://qa-signin?on=1&role=member&gym=QA%20UAT%20Gym&code=${CODE}"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Continue with your phone number$"
+- tapOn: "^Continue with your phone number$"
+- tapOn:
+    id: "welcome-phone-number"
+- inputText: "9000000293"
+- runFlow:
+    when:
+      notVisible: "^9000000293$"
+    commands:
+      - tapOn:
+          id: "welcome-phone-number"
+      - eraseText: 20
+      - inputText: "9000000293"
+- hideKeyboard
+- tapOn:
+    id: "welcome-phone-name"
+- inputText: "Pia"
+- runFlow:
+    when:
+      notVisible: "^Pia$"
+    commands:
+      - tapOn:
+          id: "welcome-phone-name"
+      - eraseText: 20
+      - inputText: "Pia"
+- hideKeyboard
+- runFlow: sub-agree.yaml
+- takeScreenshot: rel-f203-11-member-form
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Check with WhatsApp$"
+- tapOn: "^Check with WhatsApp$"
+# No "Join" tap: the join, then the app. Neither the 3 setup questions nor the gym's join screen may show.
+- extendedWaitUntil:
+    notVisible: "^Check with WhatsApp$"
+    timeout: 30000
+# in-view: "Opening <gym>..." covers the whole screen while the join runs.
+- extendedWaitUntil:
+    notVisible: "^Opening .*"
+    timeout: 45000
+- runFlow: sub-after-join.yaml
+- assertNotVisible: "Step 1 of 3"
+- assertNotVisible: "Gym code ${CODE}"
+- assertNotVisible: "^Join this gym$"
+- takeScreenshot: rel-f203-12-straight-in-workout
+- tapOn:
+    text: "^Gym$"
+    index: 0
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "^${GYM}$"
+- takeScreenshot: rel-f203-13-straight-in-gym-tab

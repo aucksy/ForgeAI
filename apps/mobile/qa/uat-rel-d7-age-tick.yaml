@@ -36,6 +36,8 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Get stronger every week"
     timeout: 90000
+# R-587: the first screen shows only the phone number; the other ways in sit under "Try another way".
+- runFlow: sub-other-ways.yaml
 # ---------------------------------------------------------------- 1. the box, not ticked, no message
 - scrollUntilVisible:
     element: "^Continue with Google$"
@@ -123,6 +125,8 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Get stronger every week"
     timeout: 90000
+# R-587: the first screen shows only the phone number; the other ways in sit under "Try another way".
+- runFlow: sub-other-ways.yaml
 - scrollUntilVisible:
     element: "^Continue with Google$"
     centerElement: true

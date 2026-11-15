@@ -1,14 +1,20 @@
 # Picture tour (owner, 14 Nov 2026: "Show me the first time launch and onboarding and signing and sign up screens
 # again"). Not a test: it only photographs every first-launch screen of a fresh install, in order. Every step after
 # the first launch is optional, so one changed word costs one picture, not the rest. Runs alone with only=utour.
-#  1. The 3 intro slides.  2. The welcome screen, top and bottom.  3. "Join my gym".  4. "Bring workouts".
-#  5. "Continue with Google" without the 18+ tick (Google's own sign-in cannot run in the cloud).
-#  6. "Use without an account": the 3 setup questions, then the first screen after "Start training".
+# R-587 (15 Nov 2026): the new welcome screens and the phone-number-first sign-in.
+#  1. The welcome screens with no watch (the cloud phone has none): "1 of 2", "2 of 2".
+#  2. With a watch: the QA build's 'watchIntro' stand-in (mettleup://qa-intro?watch=...) answers for Wear OS on
+#     screen 1: "1 of 3", the watch screen with "Install on my watch", then with "On your watch" (app already
+#     there), then "3 of 3".
+#  3. The first sign-in screen: only "Continue with your phone number" and "Try another way"; the link opened; the
+#     phone number screen.
+#  4. "Join my gym".  5. "Bring workouts".  6. "Continue with Google" without the 18+ tick.
+#  7. "Use without an account": the 3 setup questions, then the first screen after "Start training".
 # Each branch starts from a fresh install (clearState), so no branch depends on the one before it.
 # Pictures tour-*.png.
 appId: com.mettleup.app
 ---
-# ---------------------------------------------------------------- 1. intro slides
+# ---------------------------------------------------------------- 1. the welcome screens, no watch
 - launchApp:
     clearState: true
     permissions:
@@ -16,34 +22,102 @@ appId: com.mettleup.app
 - tapOn:
     text: "Wait"
     optional: true
-# in-view: a fresh install opens on the intro's top (Skip) or the welcome's title; nothing has scrolled yet.
+# in-view: a fresh install opens on the welcome screens' top (Skip) or the sign-in screen's title; nothing has scrolled yet.
 - extendedWaitUntil:
     visible: "^Skip$|Get stronger every week"
     timeout: 90000
-- takeScreenshot: tour-01-intro-1
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: tour-01-intro-1-of-2
 - tapOn:
     text: "^Next$"
     optional: true
-- takeScreenshot: tour-02-intro-2
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: tour-02-intro-2-of-2-gym
+# ---------------------------------------------------------------- 2. the welcome screens with a watch (stand-in)
+- launchApp:
+    clearState: true
+    permissions:
+      all: allow
+- tapOn:
+    text: "Wait"
+    optional: true
+# in-view: the first welcome screen's top, just opened.
+- extendedWaitUntil:
+    visible: "^Skip$"
+    timeout: 90000
+    optional: true
+- openLink: "mettleup://qa-intro?watch=missing"
+# in-view: the step label at the top of the first welcome screen.
+- extendedWaitUntil:
+    visible: "^1 of 3$"
+    timeout: 15000
+    optional: true
+- takeScreenshot: tour-03-intro-1-of-3
 - tapOn:
     text: "^Next$"
     optional: true
-- takeScreenshot: tour-03-intro-3
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: tour-04-watch-install
+- openLink: "mettleup://qa-intro?watch=installed"
+# in-view: the watch screen's big button sits above the bottom edge (pinned under the words).
+- extendedWaitUntil:
+    visible: "^On your watch$"
+    timeout: 15000
+    optional: true
+- takeScreenshot: tour-05-watch-on-your-watch
+- tapOn:
+    text: "^Next$"
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: tour-06-intro-3-of-3-gym
 - tapOn:
     text: "^Get started$"
     optional: true
-# ---------------------------------------------------------------- 2. welcome, top and bottom
+# ---------------------------------------------------------------- 3. the first sign-in screen: phone number first
+# in-view: the sign-in screen's title, just opened.
 - extendedWaitUntil:
     visible: "Get stronger every week"
     timeout: 60000
     optional: true
-- takeScreenshot: tour-04-welcome-top
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: tour-07-signin-phone-only
 - scrollUntilVisible:
-    element: "Use without an account"
+    element: "^Try another way$"
+    timeout: 10000
+    optional: true
+- tapOn:
+    text: "^Try another way$"
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: tour-08-signin-other-ways
+- scrollUntilVisible:
+    element: "Load demo data instead"
     timeout: 15000
     optional: true
-- takeScreenshot: tour-05-welcome-bottom
-# ---------------------------------------------------------------- 3. Join my gym
+- takeScreenshot: tour-09-signin-other-ways-bottom
+- scrollUntilVisible:
+    element: "^Continue with your phone number$"
+    direction: UP
+    timeout: 15000
+    optional: true
+- tapOn:
+    text: "^Continue with your phone number$"
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: tour-10-phone-number-screen
+- scrollUntilVisible:
+    element: "^Check with WhatsApp$"
+    timeout: 10000
+    optional: true
+- takeScreenshot: tour-11-phone-number-screen-bottom
+# ---------------------------------------------------------------- 4. Join my gym
 - launchApp:
     clearState: true
     permissions:
@@ -51,6 +125,7 @@ appId: com.mettleup.app
 - tapOn:
     text: "^Skip$"
     optional: true
+- runFlow: sub-other-ways.yaml
 - scrollUntilVisible:
     element: "^Join my gym$"
     timeout: 15000
@@ -60,13 +135,13 @@ appId: com.mettleup.app
     optional: true
 - waitForAnimationToEnd:
     timeout: 3000
-- takeScreenshot: tour-06-join-gym
+- takeScreenshot: tour-12-join-gym
 - scrollUntilVisible:
     element: "Gym code"
     timeout: 10000
     optional: true
-- takeScreenshot: tour-07-join-gym-code
-# ---------------------------------------------------------------- 4. Bring workouts
+- takeScreenshot: tour-13-join-gym-code
+# ---------------------------------------------------------------- 5. Bring workouts
 - launchApp:
     clearState: true
     permissions:
@@ -74,6 +149,7 @@ appId: com.mettleup.app
 - tapOn:
     text: "^Skip$"
     optional: true
+- runFlow: sub-other-ways.yaml
 - scrollUntilVisible:
     element: "^Bring workouts$"
     timeout: 15000
@@ -83,13 +159,13 @@ appId: com.mettleup.app
     optional: true
 - waitForAnimationToEnd:
     timeout: 3000
-- takeScreenshot: tour-08-bring-workouts
+- takeScreenshot: tour-14-bring-workouts
 - scrollUntilVisible:
     element: "A MettleUp backup"
     timeout: 10000
     optional: true
-- takeScreenshot: tour-09-bring-workouts-bottom
-# ---------------------------------------------------------------- 5. Continue with Google, no tick
+- takeScreenshot: tour-15-bring-workouts-bottom
+# ---------------------------------------------------------------- 6. Continue with Google, no tick
 - launchApp:
     clearState: true
     permissions:
@@ -97,6 +173,7 @@ appId: com.mettleup.app
 - tapOn:
     text: "^Skip$"
     optional: true
+- runFlow: sub-other-ways.yaml
 - scrollUntilVisible:
     element: "^Continue with Google$"
     centerElement: true
@@ -107,8 +184,8 @@ appId: com.mettleup.app
     optional: true
 - waitForAnimationToEnd:
     timeout: 3000
-- takeScreenshot: tour-10-google-needs-tick
-# ---------------------------------------------------------------- 6. Use without an account: the 3 questions
+- takeScreenshot: tour-16-google-needs-tick
+# ---------------------------------------------------------------- 7. Use without an account: the 3 questions
 - launchApp:
     clearState: true
     permissions:
@@ -116,6 +193,7 @@ appId: com.mettleup.app
 - tapOn:
     text: "^Skip$"
     optional: true
+- runFlow: sub-other-ways.yaml
 - scrollUntilVisible:
     element: "^Use without an account$"
     timeout: 15000
@@ -125,7 +203,7 @@ appId: com.mettleup.app
     optional: true
 - waitForAnimationToEnd:
     timeout: 3000
-- takeScreenshot: tour-11-name-step
+- takeScreenshot: tour-17-name-step
 - tapOn:
     text: "e.g. Rahul Sharma"
     optional: true
@@ -136,7 +214,7 @@ appId: com.mettleup.app
     optional: true
 - waitForAnimationToEnd:
     timeout: 3000
-- takeScreenshot: tour-12-units-step
+- takeScreenshot: tour-18-units-step
 - tapOn:
     text: "^Kilograms$"
     optional: true
@@ -145,7 +223,7 @@ appId: com.mettleup.app
     optional: true
 - waitForAnimationToEnd:
     timeout: 3000
-- takeScreenshot: tour-13-goal-step
+- takeScreenshot: tour-19-goal-step
 - tapOn:
     text: "^Build muscle$"
     optional: true
@@ -160,10 +238,10 @@ appId: com.mettleup.app
     element: "^Start training$"
     timeout: 10000
     optional: true
-- takeScreenshot: tour-14-goal-step-filled
+- takeScreenshot: tour-20-goal-step-filled
 - tapOn:
     text: "^Start training$"
     optional: true
 - waitForAnimationToEnd:
     timeout: 5000
-- takeScreenshot: tour-15-first-screen-after-setup
+- takeScreenshot: tour-21-first-screen-after-setup

@@ -6,13 +6,18 @@
  * or a short list when several gyms know it. "Join <gym>" hands the pick to the welcome (onPicked), which keeps the
  * gym's code exactly as "Join my gym" does and goes on to the 3 setup questions; the gym's join screen opens after.
  * Not found: "Set up the app" (as "Use without an account") or "Try another number". Skip: back to the first screen.
+ * R-587 (owner, 15 Nov 2026): a MEMBER the gym knows goes straight into the gym (phoneSignInApi.goStraightIn): one
+ * gym found as a member = no tap at all; several gyms = the member's tap on that gym joins it at once. No 3 setup
+ * questions, no gym join screen. The gym's own people (owner, trainer, desk) keep "Join <gym>" and the old path. So
+ * the join can happen here, the "I'm 18 or older ... terms" box (shop/JoinAgreement) sits above "Check with
+ * WhatsApp" until it was ticked once on this phone (the same saved tick as Continue with Google).
  * QA builds with the 'phoneSignIn' stand-in answer at once with the made-up result a qa-signin link set (said on
  * screen). Shared code: Android and iPhone alike (WhatsApp opens the same way on both).
  */
 import { Image } from 'expo-image';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { mobileInput } from '@forgeai/theme';
-import { AppState, Linking, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, AppState, Linking, Text, TextInput, View } from 'react-native';
 
 import { pictureUrl } from '@/cloud/picture';
 import { Card, GhostButton, PrimaryButton } from '@/components/ui';
@@ -22,9 +27,12 @@ import { useMemberAccess } from '@/plan/memberPlanStore';
 import { firstNameOf, mobile10, showWaNumber, stateWords, whatsAppLink, type CheckStart } from '@/shop/findGym';
 import { checkStatus, startCheck } from '@/shop/findGymApi';
 import { gymInitial } from '@/shop/gym';
+import { JoinAgreement } from '@/shop/JoinAgreement';
+import { useTermsAgreement } from '@/shop/useTermsAgreement';
 import { color, radius, space, type } from '@/theme/tokens';
 
 import {
+  goesStraightIn,
   foundBody,
   foundLine,
   plusLine,
@@ -34,15 +42,17 @@ import {
   SIGN_IN_PHONE_ERROR,
   signInFindWords,
   signInProblemWords,
+  straightInMatch,
   type SignInMatch,
 } from '../phoneSignIn';
-import { findMe, notePicked, qaSignInAnswer } from '../phoneSignInApi';
+import { findMe, goStraightIn, notePicked, qaSignInAnswer } from '../phoneSignInApi';
 
 type Step =
   | { kind: 'form' }
   | { kind: 'waiting'; start: CheckStart }
   | { kind: 'checking' }
   | { kind: 'found'; matches: SignInMatch[]; proof: string | null }
+  | { kind: 'entering'; gymName: string }
   | { kind: 'none' };
 
 const POLL_MS = 3000;
@@ -66,6 +76,7 @@ export function WelcomePhone({
   initialName,
   onPicked,
   onSetUp,
+  onSteps,
   onSkip,
 }: {
   /** The name the welcome already has (Google, or typed), so the box starts filled. */
@@ -74,6 +85,8 @@ export function WelcomePhone({
   onPicked: (m: SignInMatch, firstName: string) => void;
   /** "Set up the app" after nothing was found: the setup questions, as "Use without an account". */
   onSetUp: () => void;
+  /** R-587: a member went straight into the gym but the setup could not be saved: the 3 questions (name filled). */
+  onSteps: (firstName: string) => void;
   onSkip: () => void;
 }) {
   const [step, setStep] = useState<Step>({ kind: 'form' });
@@ -84,6 +97,30 @@ export function WelcomePhone({
   const [qa, setQa] = useState(false);
   const asking = useRef(false);
   const plusOn = useMemberAccess().why !== 'off';
+  const agreement = useTermsAgreement();
+  // Read when the gym answers (a change of the boxes while waiting is fine).
+  const typed = useRef({ phone: '', name: '' });
+  typed.current = { phone, name };
+  const stepsRef = useRef(onSteps);
+  stepsRef.current = onSteps;
+
+  /** R-587: a found member goes straight into the gym. Not joined: the card again, with why. */
+  const enter = useCallback(
+    async (m: SignInMatch, proof: string | null): Promise<void> => {
+      const first = firstNameOf(typed.current.name);
+      setError(null);
+      setStep({ kind: 'entering', gymName: m.gymName });
+      const r = await goStraightIn(m, first, mobile10(typed.current.phone) ?? '', proof);
+      if (r === 'in') return;
+      if (r === 'steps') {
+        stepsRef.current(first);
+        return;
+      }
+      setError(r.words);
+      setStep({ kind: 'found', matches: [m], proof });
+    },
+    [],
+  );
 
   const search = useCallback(async (proof: string, first: string): Promise<void> => {
     setStep({ kind: 'checking' });
@@ -94,8 +131,13 @@ export function WelcomePhone({
       return;
     }
     setError(null);
+    const straight = straightInMatch(a.matches);
+    if (straight) {
+      await enter(straight, proof);
+      return;
+    }
     setStep(a.matches.length > 0 ? { kind: 'found', matches: a.matches, proof } : { kind: 'none' });
-  }, []);
+  }, [enter]);
 
   const go = async (): Promise<void> => {
     if (busy) return;
@@ -106,9 +148,17 @@ export function WelcomePhone({
     setBusy(true);
     setError(null);
     try {
+      // R-587: a found member may be joined to the gym at once, so the 18+ and terms box comes first.
+      const notAgreed = await agreement.check();
+      if (notAgreed) return setError(notAgreed);
       const stand = qaSignInAnswer();
       if (stand) {
         setQa(true);
+        const straight = straightInMatch(stand);
+        if (straight) {
+          await enter(straight, null);
+          return;
+        }
         setStep(stand.length > 0 ? { kind: 'found', matches: stand, proof: null } : { kind: 'none' });
         return;
       }
@@ -159,6 +209,11 @@ export function WelcomePhone({
   }, [waiting, search]);
 
   const pick = (m: SignInMatch, proof: string | null): void => {
+    // R-587: a member's tap joins at once; the gym's own people go on to the setup and the gym's join screen.
+    if (goesStraightIn(m)) {
+      void enter(m, proof);
+      return;
+    }
     notePicked(m, proof);
     onPicked(m, firstNameOf(name));
   };
@@ -210,6 +265,15 @@ export function WelcomePhone({
             testID="welcome-phone-name"
             style={inputStyle()}
           />
+          {agreement.ask ? (
+            <JoinAgreement
+              agreed={agreement.ticked}
+              onChange={(v) => {
+                agreement.tick(v);
+                setError(null);
+              }}
+            />
+          ) : null}
           <InlineError message={error} />
           <PrimaryButton label={SIGN_IN.go} loading={busy} onPress={() => void go()} />
           <Text style={small}>{SIGN_IN.how}</Text>
@@ -233,9 +297,17 @@ export function WelcomePhone({
 
       {step.kind === 'checking' ? <Text style={body}>{SIGN_IN.checking}</Text> : null}
 
+      {step.kind === 'entering' ? (
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.md }} accessibilityLiveRegion="polite">
+          <ActivityIndicator color={color.accent} />
+          <Text style={{ ...body, color: color.ink }}>{SIGN_IN.opening(step.gymName)}</Text>
+        </View>
+      ) : null}
+
       {step.kind === 'found' ? (
         <>
           {step.matches.length > 1 ? <Text style={{ ...body, color: color.ink }}>{severalLine(step.matches.length)}</Text> : null}
+          <InlineError message={error} />
           {step.matches.map((m) => {
             const plus = plusLine(m, plusOn);
             const plan = m.role !== 'member' ? '' : m.pass ? SIGN_IN.pass : m.endsOn ? SIGN_IN.ends(tinyDateWithYear(m.endsOn, todayISO())) : '';

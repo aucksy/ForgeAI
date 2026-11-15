@@ -86,3 +86,21 @@ export function keptWorkoutsLine(n: number): string {
 export function welcomeRestoreOutcome(status: string): 'open' | 'needs-name' {
   return status === 'ready' ? 'open' : 'needs-name';
 }
+
+/** A way in on the welcome's first screen. */
+export type StartButton = 'phone' | 'otherWays' | 'google' | 'useWithout' | 'joinGym' | 'bringWorkouts' | 'useWithoutLink' | 'demo';
+
+/**
+ * Which ways in the first screen shows, top to bottom. PURE.
+ * R-587 (owner, 15 Nov 2026: "the only option that they should see is the phone number login, and other options may
+ * be hidden"): with the phone sign-in on, only "Continue with your phone number" and the "Try another way" link; the
+ * link opens every other way (Google when this build can sign in, Join my gym, Bring workouts, Use without an
+ * account, the demo). `others` is open too when this phone keeps its own workouts (after "Remove demo data"): that
+ * member is not new and is told to tap "Use without an account". Off: the R-277 screen exactly as before.
+ */
+export function startButtons(i: { phoneOn: boolean; others: boolean; googleShown: boolean }): StartButton[] {
+  const rest: StartButton[] = ['joinGym', 'bringWorkouts'];
+  if (!i.phoneOn) return [i.googleShown ? 'google' : 'useWithout', ...rest, ...(i.googleShown ? (['useWithoutLink'] as const) : []), 'demo'];
+  if (!i.others) return ['phone', 'otherWays'];
+  return ['phone', ...(i.googleShown ? (['google'] as const) : []), ...rest, 'useWithoutLink', 'demo'];
+}

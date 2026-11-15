@@ -38,6 +38,8 @@ appId: com.mettleup.app
 - assertVisible: "Get stronger every week"
 # The decorative set card is one picture to a screen reader, with one label.
 - assertVisible: "Example of a logged bench press"
+# R-587: the first screen shows only the phone number; the other ways in sit under "Try another way".
+- runFlow: sub-other-ways.yaml
 # Audit Phase 4 (point 6): switchers are met where they arrive. R-277: "Bring workouts" opens its own
 # screen with "From Hevy" / "From Strong" / "A MettleUp backup". Not tapped here: a pick goes on to
 # step 1 and opens the import on the Workout tab after Start training.
