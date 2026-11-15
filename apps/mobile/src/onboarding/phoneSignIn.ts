@@ -198,7 +198,7 @@ export const SIGN_IN = {
   phoneLabel: 'Your mobile number',
   nameLabel: 'Your first name, as your gym has it',
   go: 'Check with WhatsApp',
-  how: 'WhatsApp opens with a short ready message to MettleUp. Send it, then come back to this app. This proves the number is yours. You pay nothing, and we never message you.',
+  how: 'WhatsApp opens with a message to MettleUp ready. Send it, then come back to this app, and your number is checked. You pay nothing, and we never message you.',
   privacy: 'We only use your number to find your gym. Your number is checked once and is not kept for this.',
   skip: 'Skip',
   waitingTitle: 'Send the message in WhatsApp',
@@ -228,7 +228,7 @@ export function signInProblemWords(p: CheckProblem): string {
 /** The words for a search the gym server refused. PURE. */
 export function signInFindWords(p: Exclude<SignInAnswer, { ok: true }>['problem'] | 'OFFLINE'): string {
   if (p === 'BAD_PROOF') return 'The check ran out of time. Tap Start again.';
-  if (p === 'TOO_MANY') return 'Too many searches with this check. Tap Start again.';
-  if (p === 'OFFLINE') return 'No internet. Connect and try again.';
+  if (p === 'TOO_MANY') return 'You searched too many times with this check. Tap Start again.';
+  if (p === 'OFFLINE') return 'Your phone is not connected to the internet. Connect, then try again.';
   return 'That did not work. Try again.';
 }

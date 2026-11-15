@@ -199,12 +199,13 @@ describe('the words', () => {
     expect(signInProblemWords('BAD_PHONE')).toBe(SIGN_IN_PHONE_ERROR);
     expect(signInProblemWords('OFFLINE')).toBe('No internet. Connect and try again.');
     expect(signInFindWords('BAD_PROOF')).toBe('The check ran out of time. Tap Start again.');
-    expect(signInFindWords('TOO_MANY')).toBe('Too many searches with this check. Tap Start again.');
+    expect(signInFindWords('TOO_MANY')).toBe('You searched too many times with this check. Tap Start again.');
+    expect(signInFindWords('OFFLINE')).toBe('Your phone is not connected to the internet. Connect, then try again.');
     expect(signInFindWords('OTHER')).toBe('That did not work. Try again.');
   });
   it('every line is a whole sentence (or a button name) with no banned word, and the buttons it names exist', () => {
     const all = [
-      ...Object.values(SIGN_IN).filter((v): v is string => typeof v === 'string'),
+      ...(Object.values(SIGN_IN) as unknown[]).filter((v): v is string => typeof v === 'string'),
       SIGN_IN.join('Iron Gym'),
       SIGN_IN.ends('6 Dec 2026'),
       SIGN_IN_PHONE_ERROR,
