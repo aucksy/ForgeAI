@@ -85,14 +85,14 @@
          straight to the App Store and this card is never seen). Only what works today. -->
     <div class="card hide" id="iphone">
       <h2>The iPhone app is coming soon<br><small style="color:var(--ink2);font-weight:600">iPhone app jald aa raha hai</small></h2>
-      <p class="note" style="margin:0">MettleUp is on Android phones today. When the iPhone app is ready, this same link will open it.<small>Abhi MettleUp Android phone par hai. iPhone app aate hi yahi link use kholega.</small></p>
+      <p class="note" style="margin:0">MettleUp is on Android phones today. When the iPhone app is ready, this same link will open it. Keep this link.<small>Abhi MettleUp Android phone par hai. iPhone app aate hi yahi link use kholega. Yeh link sambhal kar rakhiye.</small></p>
       <p class="note">Until then, the front desk at <b id="desk-gym">your gym</b> can add you as a member. You do not need the app for that.<small>Tab tak gym ka front desk aapko member bana sakta hai. Uske liye app zaroori nahi hai.</small></p>
     </div>
 
     <!-- R-579: a computer: a QR code of this link to open it on the phone, and both stores. -->
     <div class="card hide" id="computer">
       <h2>Open this link on your phone<br><small style="color:var(--ink2);font-weight:600">Yeh link apne phone par kholiye</small></h2>
-      <p class="note" style="margin:0">Scan this code with your phone’s camera.<small>Is code ko phone ke camera se scan kijiye.</small></p>
+      <p class="note" style="margin:0">Scan this QR code with your phone’s camera.<small>Is QR code ko phone ke camera se scan kijiye.</small></p>
       <div class="qr" id="qr" role="img" aria-label="QR code for this gym link"></div>
       <div class="stores">
         <a class="store" id="play" href="https://play.google.com/store/apps/details?id=com.mettleup.app" target="_blank" rel="noopener">
@@ -122,7 +122,7 @@
     <div class="card">
       <h2 id="code-head">Or type your gym’s code in the app<br><small style="color:var(--ink2);font-weight:600">Ya app ke Shop tab mein yeh code daalein</small></h2>
       <div class="code" id="code">——————</div>
-      <p class="note">Open MettleUp → Shop → type the code and your name → Join.</p>
+      <p class="note" id="code-note">Open MettleUp → Shop → type the code and your name → Join.</p>
     </div>
   </div>
 
@@ -227,6 +227,7 @@
     if (!android) {
       show('open', false);
       $('code-head').innerHTML = 'Your gym’s code<br><small style="color:var(--ink2);font-weight:600">Aapke gym ka code</small>';
+      $('code-note').innerHTML = 'Keep this code. You type it in the MettleUp app to join your gym.<small>Yeh code sambhal kar rakhiye. App mein gym join karne ke liye yeh code daalna hota hai.</small>';
       if (ios && STORE) { location.replace(STORE); return; }
       if (ios) {
         $('desk-gym').textContent = gym.gymName;

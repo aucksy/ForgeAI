@@ -81,16 +81,20 @@ Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept her
   | Help articles | member page and invite poster articles | "Send app invite" -> "Share app link" |
   | Member app | no app-download link is shared (friend link /f/ is a lead page, recommend link is the gyms page, the update screen opens Play itself) | unchanged; apps/mobile not touched |
   | Member card WhatsApp words, HQ Worker, emails | no app link | unchanged |
-- **Public sentences that need his yes before the deploy** (new): get-app.html "Get the MettleUp app" / "The free MettleUp app
-  tracks your workouts and links you to your gym." / "The iPhone app is coming soon" / "MettleUp is on Android phones today.
-  When the iPhone app is ready, this same link will open it in the App Store." / "Your gym can add you as a member at the front
-  desk. You do not need the app for that." / "Have an Android phone too? Open this link on it to get the app." / "Get the
-  MettleUp app on your phone" / "Scan this with your phone's camera"; preview "... On Android phones now. The iPhone app is
-  coming soon."; join.html "The iPhone app is coming soon" / "MettleUp is on Android phones today. When the iPhone app is
-  ready, this same link will open it." / "Until then, the front desk at <gym> can add you as a member. You do not need the app
-  for that." / "Open this link on your phone" / "Scan this code with your phone's camera." / "Your gym's code"; WhatsApp words
-  for a member on the app "Here is the MettleUp app link from <gym>. Use it on a new phone, or if you need to install the app
-  again." Each with its Hinglish line. Removed: "MettleUp is an Android app for now" / "Open this link on an Android phone, or ask the front desk."
+- **Public sentences that need his yes before the deploy** (new; a fresh-reader pass changed 7 of them, noted *):
+  get-app.html: "Get the MettleUp app" / "The free MettleUp app tracks your workouts and connects you with your gym."* /
+  "The iPhone app is coming soon" / "MettleUp is on Android phones today. When the iPhone app is ready, this same link will
+  open it in the App Store. Keep this link."* / "What you can do now" / "If you train at a gym, ask the front desk to add you
+  as a member. You can be a member without the app."* / "Have an Android phone too? Open this link on it to get the app." /
+  "Get the MettleUp app on your phone" / "Scan this QR code with your phone's camera"* / "Coming soon" (App Store tile);
+  link preview "The free MettleUp app tracks your workouts and connects you with your gym. On Android phones now. The iPhone
+  app is coming soon." join.html: "The iPhone app is coming soon" / "MettleUp is on Android phones today. When the iPhone app
+  is ready, this same link will open it. Keep this link."* / "Until then, the front desk at <gym> can add you as a member.
+  You do not need the app for that." / "Open this link on your phone" / "Scan this QR code with your phone's camera."* /
+  "Your gym's code" / "Keep this code. You type it in the MettleUp app to join your gym."* (iPhone and computer only).
+  WhatsApp words for a member on the app: "Here is the MettleUp app link from <gym>, in case you need to install the app
+  again or use a new phone."* Each page line has its Hinglish line under it. Removed: "MettleUp is an Android app for now" /
+  "Open this link on an Android phone, or ask the front desk."
 - What's new for owners: waiting as ADMIN_NEWS_PENDING 'pending-share-app-link' (moves at the panel deploy).
 - Tests: deploy/panel/appLink.test.mjs (Android Chrome, Samsung Internet, OPPO, Cubot, Facebook in-app; iPhone Safari and
   Chrome, iPad; Windows, Mac, no UA; WhatsApp, Facebook, iMessage, Telegram, Googlebot; with and without a gym code; with

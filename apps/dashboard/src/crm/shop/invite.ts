@@ -61,7 +61,7 @@ export function appLinkMessage(gymName: string, joinCode: string | null | undefi
   const lines = [
     hi ? `Hi ${hi}!` : 'Hi!',
     onApp
-      ? `Here is the MettleUp app link${gym ? ` from ${gym}` : ''}. Use it on a new phone, or if you need to install the app again.`
+      ? `Here is the MettleUp app link${gym ? ` from ${gym}` : ''}, in case you need to install the app again or use a new phone.`
       : `Get the free MettleUp app${gym ? ` from ${gym}` : ''} to track your workouts.`,
     '',
     'Tap to get the app:',

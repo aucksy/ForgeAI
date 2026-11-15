@@ -94,7 +94,7 @@ test('R579-1 the member page: "Share app link" for every member, the smart link 
   const again = await nextWhatsApp(page, () => shareButton(page).click());
   expect(again.to).toBe('919829011111');
   expect(again.text).toBe(
-    ['Hi Asha!', 'Here is the MettleUp app link from Shakti Gym. Use it on a new phone, or if you need to install the app again.', '', 'Tap to get the app:', `https://app.mettleup.fit/j/${code}`, '', `Gym code: ${code}`].join('\n'),
+    ['Hi Asha!', 'Here is the MettleUp app link from Shakti Gym, in case you need to install the app again or use a new phone.', '', 'Tap to get the app:', `https://app.mettleup.fit/j/${code}`, '', `Gym code: ${code}`].join('\n'),
   );
   await shareButton(page).scrollIntoViewIfNeeded();
   await shot(page, 'member-page-on-app-phone-light');
@@ -192,6 +192,7 @@ test('R579-2 the gym link on Android, iPhone, an iPad and a computer', async ({ 
   await expect(i.locator('#become-card')).toBeVisible();
   await expect(i.locator('#code-head')).toContainText('Your gym’s code');
   await expect(i.locator('#code')).toHaveText('QA0002');
+  await expect(i.locator('#code-note')).toContainText('Keep this code. You type it in the MettleUp app to join your gym.');
   await expectFitsPhone(i, 'on the iPhone gym page');
   await shot(i, 'gym-link-iphone-coming-soon', true);
   expect(iStores).toEqual([]);
@@ -249,7 +250,7 @@ test('R579-3 the app link /app on an iPhone and a computer, and once the App Sto
   await i.goto('https://app.mettleup.fit/app');
   await expect(i.locator('#ios')).toBeVisible();
   await expect(i.locator('#ios h1')).toHaveText('The iPhone app is coming soon');
-  await expect(i.locator('#ios')).toContainText('Your gym can add you as a member at the front desk.');
+  await expect(i.locator('#ios')).toContainText('If you train at a gym, ask the front desk to add you as a member.');
   await expect(i.locator('#play')).toBeHidden();
   await expect(i.locator('#appstore-soon')).toBeVisible();
   await expect(i.locator('#computer')).toBeHidden();

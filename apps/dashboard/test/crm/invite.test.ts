@@ -48,7 +48,7 @@ describe('Share app link message', () => {
   it('a member already on the app gets words for a new phone or a reinstall, with the same link and code', () => {
     const lines = appLinkMessage('Shakti Gym', 'QA0002', 'Ravi Kumar', true).split('\n');
     expect(lines[0]).toBe('Hi Ravi!');
-    expect(lines[1]).toBe('Here is the MettleUp app link from Shakti Gym. Use it on a new phone, or if you need to install the app again.');
+    expect(lines[1]).toBe('Here is the MettleUp app link from Shakti Gym, in case you need to install the app again or use a new phone.');
     expect(lines).toContain('https://app.mettleup.fit/j/QA0002');
     expect(lines[lines.length - 1]).toBe('Gym code: QA0002');
     expect(lines.join(' ')).not.toMatch(/Join Shakti Gym/);

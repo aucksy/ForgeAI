@@ -666,11 +666,11 @@ export const ADMIN_NEWS_PENDING: readonly AdminNewsEntry[] = [
     id: 'pending-share-app-link',
     lines: [
       {
-        text: 'Every member’s page now has a “Share app link” button. It opens WhatsApp with the app link and your gym code, also for a member who needs the app on a new phone.',
+        text: 'Each member’s page now has a “Share app link” button. Tap it to send that member the app link and your gym code on WhatsApp, for example when they get a new phone.',
         go: { label: 'Open Members', path: '/members' },
       },
       {
-        text: 'Your gym’s link now works on every device. On Android it opens the app or Google Play. On an iPhone it says the iPhone app is coming soon. On a computer it shows a QR code to scan.',
+        text: 'Your gym’s link now shows the right page on any phone or computer. On Android it opens the app or Google Play. On an iPhone it says the iPhone app is coming soon. On a computer it shows a QR code.',
       },
     ],
   },
