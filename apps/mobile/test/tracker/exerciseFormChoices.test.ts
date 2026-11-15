@@ -6,6 +6,8 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
+import { describe, expect, it } from 'vitest';
+
 import { MUSCLES } from '@/tracker/catalog/muscles';
 import { alsoWorksText, groupsWithout, JOINT_WORDS, mediaWords, MUSCLE_GROUPS, SHEET_WORDS } from '@/tracker/components/exerciseForm/formChoices';
 
