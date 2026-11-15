@@ -23,10 +23,10 @@ appId: com.mettleup.app
 - tapOn: "^Check in$"
 # The gym's day is India's: when the chain crosses midnight IST (18:30 UTC) after flow 7's check-in, this is a NEW
 # day's check-in (runs 43743131861 / 43743134223, 15 Nov 2026). Either way she is let in.
-# No apostrophe here: a text with ${...} is run as JavaScript, and "You're" broke it ("Missing close quote", run
-# 43748701031), so "You.re" stands for it.
+# No apostrophe and no {n} counts here: a text with ${...} is run as JavaScript; "You're" broke it ("Missing close
+# quote", run 43748701031) and so did [0-9]{1,2} ("Expected eof but found }", run 43753637769).
 - extendedWaitUntil:
-    visible: '^(You were already checked in at ${GYM} today\. Nothing more to do\.|You.re checked in at [0-9]{1,2}:[0-9]{2} [ap]m)$'
+    visible: '^(You were already checked in at ${GYM} today\. Nothing more to do\.|You.re checked in at [0-9][0-9]?:[0-9][0-9] [ap]m)$'
     timeout: 30000
 # A pass member is covered: the check-in never sends her to the desk.
 - assertNotVisible: '.*Please see the desk.*'
