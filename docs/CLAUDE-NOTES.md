@@ -27,6 +27,9 @@ Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept her
   R-587 welcome screens + phone-first sign-in (incl. his screen-3 change, canvas v7) and R-590 silent gym alerts on his
   OPPO. Also in it: R-575 watch "update" prompt, R-576 target box, R-577 watch sizes, R-578 test alert, R-579/R-580,
   R-583 tap fix, R-586 message picker. Open testing first, production about 3 days later.
+- "yes panel deploy" (15 Nov 2026, after 0095/0096 went live, R-591). Plan: ONE panel deploy carrying R-586 panel words,
+  the What's new 15 Nov entry (now incl. the test alert line, 1f231dce) and the R-593 Today fixes once that helper is
+  green; then CI green on the deploy commit + fresh-eyes review of d2928aaa..<sha> + live checks.
 - He asked (same time): is the "watch screen not dimming" fix in? Answer: the fix (R-557) shipped in 0.78.0 (R-560); his
   watch was on an old watch app. 0.79.0 adds the prompt that tells him the watch app has an update (R-575).
 
