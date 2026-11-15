@@ -329,7 +329,32 @@ Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept her
 - The brief (15 Nov 2026): the owner chose "Option 1": render the watch app's screens in the cloud on Galaxy
   Watch, OnePlus and TicWatch sizes too, not only Pixel, plus the biggest text a watch allows; a small-round
   emulator UAT leg next to the large one. A screen that fails at the biggest text is a real bug: fix the layout.
-- Status: IN PROGRESS (size table, results and run ids follow).
+- Status (15 Nov 2026, 16:00 IST-ish, session paused for the usage limit): built and pushed; LAST CHECK PENDING:
+  run 43730772694 (wear-build at 83ebbfb1). Resume: read its result; on the small-watch leg read
+  watch-uat-api34-small/font-scale (results.txt, font-scale-arrays.txt = the largest text the Settings app
+  offers; if it is above 1.3, raise WatchSizes.LARGEST_FONT), look at the two largest-text pictures, then
+  finish this entry. Nothing else left.
+- Sizes added (WatchSizes.kt; px from the makers, density from Google's Horologist WearDevice list, Samsung 340 dpi):
+  | dp | px / density | stands for |
+  |---|---|---|
+  | 192 (kept, "small") | 384 xhdpi | Pixel Watch 1/2 41 mm |
+  | 198 | 396 xhdpi | Galaxy Watch4/5/FE 40 mm, Watch4 Classic 42 mm |
+  | 204 | 408 xhdpi | Pixel Watch 3/4 41 mm; also Galaxy Watch6/7/8 40 mm, Watch6 Classic 43, Watch8 Classic (432-438 px at 340 dpi = 203-206) |
+  | 212 | 450 at 340 dpi | Galaxy Watch4/5 44 mm, Watch4 Classic 46, Watch5 Pro |
+  | 226 | 480 at 340 dpi | Galaxy Watch6/7/8 44 mm, Watch6 Classic 47, Watch Ultra |
+  | 228 (kept, "large") | 456 xhdpi | Pixel Watch 3/4 45 mm |
+  | 233 | 466 xhdpi | TicWatch Pro 5 / Enduro, OnePlus Watch 2/2R/3 |
+  Largest text 1.3 (Galaxy "Largest"; Pixel 1.24) on 192 and 233. No square size: no Wear OS watch on sale in
+  India has a square screen. Sources: github.com/google/horologist (roboscreenshots WearDevice.kt), Google
+  Wear OS screen-size guide, maker spec pages (GSMArena/Samsung/Google Store), Galaxy font scale per droidwin/technastic.
+- Found and FIXED: at the largest text the rest countdown came out 23 % SMALLER (60 -> 46 px on 384 px;
+  73 -> 56 on 466), weight/reps 10 % smaller: Px.sp divided by the font scale but Android 14+ grows big text
+  non-linearly. Px now uses Density.toSp (WatchScreens.kt, 8a381e30); new test largestTextKeepsTheCountdownSize.
+  Before = run 43722838806 screens, after = run 43724481039 (countdown 60 px at both sizes).
+- Runs: renders all pass on all 9 sizes (43724481039, 695 tests, 0 failures; I looked at every new size's sheet).
+  Small-round emulator UAT (temp ref run 43726347844, branch deleted): keep-screen 6/6, dim 14/14,
+  dim-AOD-off 20/20 PASS; the font-size step failed on CI plumbing (adb offline after boot, charging screen),
+  fixed in 83ebbfb1. Cost: watch tests 1m13 -> 2m37; small UAT leg runs alongside (~+3 min wall time).
 ## R-575 (15 Nov 2026) "Your watch app has an update" never showed on his phone: every signal, a why, retries
 - The brief (15 Nov 2026): the pop-up never shows on his phone (0.78.0, OPPO CPH2873, Android 17) although his
   watch runs a watch app older than 0.77.0. Later the same day: find the root cause and a fix for EVERY Wear OS
