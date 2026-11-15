@@ -262,7 +262,7 @@ export const MEMBER_MESSAGE_WORDS = {
   // R-586: members now pick who reads a message; older messages follow the old rule (complaints: the owner only).
   staffNote: 'Messages a member sent only to the owner or to a trainer are not shown here. Complaints show here only when the member picked "Gym admin".',
   /** A trainer's note (R-552): no feedback and no complaints on their page; R-600: nor questions sent to someone else. */
-  trainerNote: 'Feedback and complaints never go to trainers, so they are not shown here. Questions a member sent only to the owner or to another trainer are not shown here either.',
+  trainerNote: 'Feedback and complaints never go to trainers, so they are not shown here. Neither are questions a member sent only to the owner or another trainer.',
   keptNote: 'Messages are deleted 180 days after the last one in a conversation, or as soon as the member leaves the gym.',
   filterLabel: 'Show',
   waitingCount: (n: number): string => `${n} waiting`,

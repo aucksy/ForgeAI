@@ -110,7 +110,7 @@ test('R-586: each person sees only the messages sent to them, and each card says
   await expect(taraMain).toContainText('How do I stop my knees hurting on squats?');
   await expect(taraMain).toContainText('Is the gym open on Diwali?');
   for (const hidden of ['30 minutes late', 'two parts', 'rude to me', 'softer music']) await expect(taraMain).not.toContainText(hidden);
-  await expect(taraMain).toContainText('Feedback and complaints never go to trainers, so they are not shown here. Questions a member sent only to the owner or to another trainer are not shown here either.');
+  await expect(taraMain).toContainText('Feedback and complaints never go to trainers, so they are not shown here. Neither are questions a member sent only to the owner or another trainer.');
   await expect(taraMain.getByRole('group', { name: 'Show' }).getByRole('button', { name: /^(Feedback|Complaints)/ })).toHaveCount(0);
   const asha = taraCards.filter({ hasText: 'Asha Verma' });
   await expect(asha.getByTestId('member-message-to')).toHaveText('To: Tara Singh');

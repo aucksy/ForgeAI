@@ -124,7 +124,7 @@ describe('the page', () => {
     expect(talkFilterFrom('feedback', 'staff', false)).toBe('all');
     expect(talkFilterFrom('question', 'staff', false)).toBe('question');
     expect(W.trainerNote).toBe(
-      'Feedback and complaints never go to trainers, so they are not shown here. Questions a member sent only to the owner or to another trainer are not shown here either.',
+      'Feedback and complaints never go to trainers, so they are not shown here. Neither are questions a member sent only to the owner or another trainer.',
     );
   });
   it('waiting (longest wait first), replied, done; and by type', () => {

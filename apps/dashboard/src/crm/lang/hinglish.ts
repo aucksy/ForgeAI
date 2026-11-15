@@ -1559,7 +1559,7 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   'Only the gym owner can send these from here for now.': 'Abhi yahan se sirf gym owner yeh bhej sakte hain.',
   // R-552 (owner, 14 Nov 2026): a trainer's Member messages page has no feedback and no complaints.
   // R-600 (16 Nov 2026): nor questions a member sent to the owner or another trainer (0096).
-  'Feedback and complaints never go to trainers, so they are not shown here. Questions a member sent only to the owner or to another trainer are not shown here either.':
+  'Feedback and complaints never go to trainers, so they are not shown here. Neither are questions a member sent only to the owner or another trainer.':
     'Feedback aur complaints trainers ko kabhi nahi jaate, isliye yeh yahan nahi dikhte. Jo sawaal member ne sirf owner ya kisi aur trainer ko bheja hai, woh bhi yahan nahi dikhta.',
   // F210 (owner, 14 Nov 2026): a free trial on the "Become a member" link (Settings, and Today's "Joined online").
   'Free trial for new people': 'Naye logon ke liye free trial',
