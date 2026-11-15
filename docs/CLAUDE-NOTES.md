@@ -7,6 +7,16 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-569 (15 Nov 2026) F208 built: the AI helper chat on the gym web page, every chat lands in Enquiries (switched off)
+- Asked (coordinator, from R-538 / PLAN.md section 10): build F208, switched off; no exit-intent offers or countdowns (a TODO in PLAN.md instead).
+- Visitor: "Ask the AI helper" box on the page; answers only from the page's own facts, else "saved for the gym" (the visitor is told the gym calls or sends a WhatsApp message on the number they leave); a name-and-number box once, with a tick; "Your chat is saved and seen by <gym>." under the box.
+- Owner: one Enquiry per visitor chat (random visitor id in the browser); the whole chat, status words "AI answered" / "Needs you: the AI could not answer" / "Wants a call" / "Asked to join"; the last three sort first until "Mark as done"; alerts reuse page_question only when the owner must act. Switch "AI helper on your page" (on by default) on Your web page.
+- AI: the admin panel AI Assistant's provider and key (Claude Haiku, CLAUDE_ASSIST_KEY, else CLAUDE_HELP_KEY); never the free Gemini key. About 1,000 tokens in and 100 out per answer, about $0.00015. 10 answers = 1 credit; 3 questions a visitor a day, 30 a gym a day (0078); over a limit or no credits = "Needs you".
+- Switches: GYM_PAGES plus new PAGE_AI = "off". Server NOT LIVE: supabase/migrations/0094_page_chat.sql (0093 was taken by F203) + supabase/tests/0094_page_chat.sql; 90-day page_chat_sweep.
+- Words: written in his style by hand (15 Nov rule: no Gemini unless he asks); PUBLIC-WORDS.md section 4, needs his yes, English and Hindi.
+- Tests: deploy/panel/pageChat.test.mjs, apps/dashboard/test/crm/pageChat.test.ts, e2e/pagechat-uat.spec.mjs (PAGECHAT-1..3, CI only). CI run ids below.
+- Needs his yes: the chat words (PUBLIC-WORDS.md section 4) and applying 0094; then PAGE_AI on in a deploy he names.
+
 ## R-568 (15 Nov 2026) F203 built: "Continue with your phone number" on the welcome; the app finds your gym and role (switch OFF)
 - Asked (coordinator, from #95 / R-493: owner decided pick A on 14 Nov, one free WhatsApp message; for the version after 0.78.0; switch off, server change not live).
 - App: welcome first screen, with the switch on, gets the big orange "Continue with your phone number"; Google stays as a smaller outlined button; "Use without an account" a link. Screen: number + first name -> "Check with WhatsApp" (the live 'member' check, findGymApi.startCheck/checkStatus, reused) -> wait -> gym server 0093 -> "We found you: trainer at Iron Gym." (one card per gym, logo tile, "Join <gym>"; several = "We found you at N gyms..."). Join = the gym code kept exactly as "Join my gym" does (pendingInvite), then the 3 setup questions (first name filled), then the gym's own join screen. Not found: "Set up the app" / "Try another number". Skip / Back: the first screen as today. Files: src/onboarding/phoneSignIn.ts (PURE: switch, answer checks, QA link, words), phoneSignInApi.ts, components/WelcomePhone.tsx, WelcomeScreen/WelcomeGoogle/WelcomeParts, shop/gymApi.apiPhoneSignIn (falls back to 0068 member_find_gyms when 0093 is missing).

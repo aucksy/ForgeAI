@@ -214,3 +214,39 @@ These live lines are questions or fragments. With the owner's yes they change to
 | memberOther | Is this someone else’s number? Use your own mobile number. | If this is someone else’s number, please use your own mobile number. | अगर यह किसी और का नंबर है, तो कृपया अपना मोबाइल नंबर डालें। |
 | noneTitle | This gym link does not work | This gym link does not work. | यह जिम लिंक काम नहीं कर रहा है। |
 | offlineTitle | Could not reach the gym | We could not reach the gym. | जिम से कनेक्ट नहीं हो पाया। |
+
+## 4. AI helper chat on the gym web page (F208, 15 Nov 2026, needs your yes)
+
+Switched off (PAGE_AI "off"), so nobody sees these yet. Written to your rule of 15 Nov: complete sentences, and every
+line that sends a question to the gym says how the gym answers (a call or a WhatsApp message to the number the visitor
+gives). The page shows the English lines; the Hindi heading and the Hindi privacy line show next to them. A visitor
+who types in Hindi gets the Hindi "saved for the gym" lines. Code: deploy/panel/gymPage.js (the box),
+apps/dashboard/public/gym-page/page.js (the chat), deploy/panel/pageChat.js (WORDS).
+
+| Where | English | Hindi |
+|---|---|---|
+| Heading | Ask the AI helper | AI से पूछें |
+| Under the heading | The AI helper answers from what is on this page: the fees, timings, address and facilities. If the answer is not on this page, it saves your question for {gym}. | AI हेल्पर इस पेज पर दी गई जानकारी से जवाब देता है: फीस, समय, पता और सुविधाएँ। अगर जवाब इस पेज पर नहीं है, तो वह आपका सवाल {gym} के लिए सेव कर देता है। |
+| Question box (grey hint) | Type your question about the fees, timings or facilities. | फीस, समय या सुविधाओं के बारे में अपना सवाल लिखें। |
+| Button | Ask | पूछें |
+| **Privacy line (under the box)** | **Your chat is saved and seen by {gym}.** | **आपकी बातचीत सेव होती है और {gym} इसे देखता है।** |
+| While the AI reads | The AI helper is reading this page. | AI हेल्पर यह पेज पढ़ रहा है। |
+| The AI cannot answer from the page ("I will ask the gym") | This page does not have that answer, so I have saved your question for the gym. To get an answer, write your name and number below. The gym will call you or send you a WhatsApp message on that number. | इस पेज पर इसका जवाब नहीं है, इसलिए मैंने आपका सवाल जिम के लिए सेव कर दिया है। जवाब पाने के लिए नीचे अपना नाम और नंबर लिखें। जिम उसी नंबर पर आपको कॉल करेगा या WhatsApp पर मैसेज भेजेगा। |
+| Over a limit, no AI credits, or the AI failed | Your question is saved for the gym. To get an answer, write your name and number below. The gym will call you or send you a WhatsApp message on that number. | आपका सवाल जिम के लिए सेव हो गया है। जवाब पाने के लिए नीचे अपना नाम और नंबर लिखें। जिम उसी नंबर पर आपको कॉल करेगा या WhatsApp पर मैसेज भेजेगा। |
+| Number box heading | Leave your number for the gym | जिम के लिए अपना नंबर छोड़ें |
+| Number box line | {gym} will call you or send you a WhatsApp message on this number. | {gym} इसी नंबर पर आपको कॉल करेगा या WhatsApp पर मैसेज भेजेगा। |
+| Number box tick | Send my name, my number and this chat to {gym}, so they can call me or send me a WhatsApp message. Only this gym sees them. | मेरा नाम, मेरा नंबर और यह बातचीत {gym} को भेजें, ताकि वे मुझे कॉल कर सकें या WhatsApp पर मैसेज भेज सकें। इन्हें सिर्फ़ यही जिम देखता है। |
+| Buttons | Ask the gym to call me · I want to join | जिम मुझे कॉल करे · मैं जॉइन करना चाहता/चाहती हूँ |
+| Sent | Your number is sent to {gym}. They will call you or send you a WhatsApp message on 90XXXXXX01. | आपका नंबर {gym} को भेज दिया गया है। वे 90XXXXXX01 पर आपको कॉल करेंगे या WhatsApp पर मैसेज भेजेंगे। |
+| Too many messages today | You have sent the most messages allowed for today. To ask the gym, use the "Ask the gym" form below. The gym will call you or send you a WhatsApp message on the number you give. | आज के लिए आप जितने मैसेज भेज सकते थे, भेज चुके हैं। जिम से पूछने के लिए नीचे "सवाल पूछें" फ़ॉर्म भरें। जिम आपके दिए नंबर पर आपको कॉल करेगा या WhatsApp पर मैसेज भेजेगा। |
+| The owner switched it off | The AI helper is switched off for this gym. To ask the gym, use the "Ask the gym" form below. | इस जिम के लिए AI हेल्पर बंद है। जिम से पूछने के लिए नीचे "सवाल पूछें" फ़ॉर्म भरें। |
+| A bad question | Please write your question in a few words, without a web address. | कृपया अपना सवाल कुछ शब्दों में लिखें, बिना किसी वेब पते के। |
+
+What the owner reads in Enquiries (admin app): "Chat on your web page"; the status "AI answered", "Needs you: the AI
+could not answer", "Wants a call" or "Asked to join"; under a question "The AI could not answer this from your page.",
+"Not sent to the AI: a daily limit or no AI credits left." or "The AI did not answer this."; "No number left yet";
+"Mark as done". Alerts (gym server 0094): "{Name} wants to join, from the chat on your web page. Open Enquiries to
+call them." / "{Name} asked for a call, from the chat on your web page. Open Enquiries to call them." / "{Name, or A visitor when no number was left} asked something on your web page that the AI could not answer. Open Enquiries to read the chat." The owner's switch
+on Your web page: "Let the AI helper answer visitors’ questions", with the line "The AI helper answers visitors only
+from what is on your page: your fees, timings, address and facilities. Every chat comes to Enquiries. When it cannot
+answer, the chat shows Needs you, so you can call the visitor. 10 answers use 1 AI credit."

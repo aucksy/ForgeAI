@@ -185,18 +185,44 @@ The owner: every visitor question, answered by the AI or not, must reach Enquiri
    join". The list sorts "Needs you" and "Wants a call" first.
 3. **Alerts only when the owner must act:** the AI could not answer, the visitor left a number, or asked to join or for
    a trial. A chat the AI answered fully, with no number left, is saved but sends no alert (no noise).
-4. **The AI asks for a name and number** once the visitor shows interest ("Want the gym to call you?"). A number turns
+4. **The AI asks for a name and number** once, after the visitor shows interest (a box: "Leave your number for the
+   gym"; full words in PUBLIC-WORDS.md section 4). A number turns
    the chat into a lead (same as a join-form enquiry; Call and WhatsApp buttons). The visitor has no app, so the owner
    replies by call or WhatsApp, never inside the page.
 5. **The AI never makes things up:** it answers only from the gym's page data (plans, prices, timings, address,
    facilities, offers). Anything else = "I will ask the gym" -> status "Needs you", the visitor may leave a number.
 6. **Cost and limits:** visitor answers use the gym's credits at 10 answers = 1 credit (decision #98 = B), 3 questions
    per visitor a day and 30 per gym a day (0078). Over a limit or no credits: the question is saved as "Needs you" and
-   the visitor sees "The gym will reply. Leave your number to get a call."
+   the visitor is told the question is saved and that the gym will call or send a WhatsApp message on the number they
+   leave (PUBLIC-WORDS.md section 4).
 7. **Privacy:** a line under the chat box: "Your chat is saved and seen by <gym>." (public words: needs his yes). Chats
    kept 90 days, then deleted; a visitor number is kept like any enquiry.
-8. **When:** built together with the page's AI helper (held since #97), after the page is public on join.mettleup.fit
-   and has real visitors. The non-AI "Ask the gym" box already makes an Enquiry today (0080, 'page_question' alert).
+8. **When:** built 15 Nov 2026 (F208, below) and switched off. It opens after the pages are public on
+   join.mettleup.fit, with his yes on the chat words and on 0094. The non-AI "Ask the gym" box already makes an Enquiry
+   (0080, 'page_question' alert).
+
+**Built (F208, 15 Nov 2026, R-569), all switched off:**
+- Switches: the Worker var PAGE_AI ("off" in deploy/panel/wrangler.jsonc) on top of GYM_PAGES; the panel's
+  /api/switches answers pageAi. The owner's own switch "AI helper on your page" (page aiHelper, on by default) shows
+  on Your web page only while PAGE_AI is on.
+- Visitor: the chat box on the page (deploy/panel/gymPage.js) and its script (apps/dashboard/public/gym-page/page.js,
+  visitor id in the browser for 90 days). Worker routes /api/gym-page/chat and /chat-contact (deploy/panel/pageChat.js):
+  the AI is the admin panel AI Assistant's provider and key (Claude Haiku, CLAUDE_ASSIST_KEY; never the free Gemini
+  key), forced to a reply tool that says whether the page has the answer. A guard turns any answer with a link, a phone
+  number, a price or a percentage that is not on the page into "Needs you". 30 chat calls per address a day.
+- Gym server, NOT LIVE: supabase/migrations/0094_page_chat.sql (test supabase/tests/0094_page_chat.sql): the chat on
+  the enquiry (data.pageChat), 10 messages a visitor a day, 40 new chats a gym a day, 3 numbers a day, the 0078 credit
+  take (10 answers = 1 credit) and give-back, the alerts (page_question, one a day per chat per reason) and
+  page_chat_sweep, 90 days after a chat's last message: a chat with no number goes with its enquiry; a chat with a
+  number keeps the enquiry without the messages. Each new question also runs the sweep now and then.
+- Owner: Enquiries shows the whole chat, the status, "Mark as done"; "Needs you", "Wants a call" and "Asked to join"
+  sort first (apps/dashboard/src/crm/logic/pageChat.ts).
+- Still to do before it opens: a daily run of page_chat_sweep (so quiet gyms are cleaned too) and CLAUDE_ASSIST_KEY on
+  the Worker if it is not set.
+
+**TODO (not built, on purpose):** no exit-intent offers, no countdowns, no pressure selling. Before any "offer when
+they try to leave" (his idea, #97), finish the research and check India's Guidelines for Prevention and Regulation of
+Dark Patterns, 2023 (false urgency, basket sneaking, nagging and confirm-shaming are listed there), then ask him.
 
 ## 9. Research behind the choices (14 Nov 2026)
 
