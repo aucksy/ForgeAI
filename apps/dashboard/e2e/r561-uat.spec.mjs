@@ -188,7 +188,9 @@ test.describe('R561 on a computer', () => {
     await refresh.getByRole('button', { name: /^Refresh/ }).click();
     await expect(refresh.getByTestId('updated-words')).toHaveText('Could not refresh. Check the internet and try again.', { timeout: 20_000 });
     await expect(page.getByRole('heading', { name: 'Enquiries', level: 1 })).toBeVisible();
-    await shot(page, 'computer-refresh-failed', { clip: { x: 640, y: 0, width: 640, height: 90 } });
+    // The offline bar pushes the top bar down: photograph the Refresh part itself.
+    await page.waitForTimeout(300);
+    await refresh.screenshot({ path: `${DIR}/r561-computer-refresh-failed.png` });
     server.reconnect();
     await refresh.getByRole('button', { name: /^Refresh/ }).click();
     await expect(refresh.getByTestId('updated-words')).toHaveText('Updated just now', { timeout: 20_000 });
@@ -233,6 +235,7 @@ test.describe('R561 on a computer', () => {
     expect(await moved.locator('[data-setup-mark]').textContent(), 'the same ring and count').toBe(before);
     await expect(moved).toHaveAccessibleName(/steps done/);
     expect(await wrappedRows(page)).toEqual([]);
+    await moved.scrollIntoViewIfNeeded();
     await menuShot(page, 'computer-menu-setup-moved-down');
     // It stays after a reload, and goes back to the top when asked.
     await page.reload();
