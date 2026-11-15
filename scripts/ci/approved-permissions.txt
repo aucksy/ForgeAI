@@ -30,6 +30,12 @@ android.permission.health.WRITE_ACTIVE_CALORIES_BURNED
 # Play's Health apps form declares both ("Nutrition and weight management").
 android.permission.health.READ_WEIGHT
 android.permission.health.READ_STEPS
+# R-462 F56 MettleUp Plus (owner approved the plan, prices and "Google Play in TEST MODE only", 12 Nov 2026):
+# Google Play Billing 8.0.0 (modules/forge-billing) adds this "normal" permission (no prompt to the member).
+# F56 missed this line; release run 43678783291 (v0.78.0) caught it. Approved for 0.78.0 under his R-556
+# release word ("make decisions whenever required and release everything", 15 Nov 2026). Plus ships
+# switched off; Play may label the listing "In-app purchases" (OWNER-INBOX F219).
+com.android.vending.BILLING
 
 # libraries
 android.permission.ACCESS_NETWORK_STATE
