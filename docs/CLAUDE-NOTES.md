@@ -105,7 +105,11 @@ Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept her
      Writes 'gap' (log expired before a pull), 'audit_off'/'audit_on' (switch changed on postgres). owner_hq_access gets
      "direct" (looks naming the gym or naming no gym; tables only, never query text) + "directSince". hq_db_reads = HQ.
 - On main: migration + test supabase/tests/0097_direct_read_log.sql, readLog.js + test, worker.js hook, wrangler note.
-- WAITING FOR HIS YES: (a) "yes 0097" (live apply); (b) a scoped Supabase token (only this project, only analytics
+- 16 Nov ~01:50 IST: he said "yes 0097" and "yes logs key". 0097 APPLIED LIVE (SQL editor; checked: pgaudit on, postgres has
+  pgaudit.log=read, write, misc_set / log_catalog=off / log_relation=on, db_direct_reads + hq_db_reads_ingest exist).
+  Scoped token "mettleup-hq-read-log" made (aucksy's Project only, Logs = Read only, expires 14 Nov 2027; Supabase caps
+  at 1 year from now). Value never read by Claude; he pastes it into Add a key as SUPABASE_LOGS_TOKEN (keys.json line added).
+- Was: WAITING FOR HIS YES: (a) "yes 0097" (live apply); (b) a scoped Supabase token (only this project, only analytics
   logs read, 1 year) as HQ Worker secret SUPABASE_LOGS_TOKEN; then HQ Worker deploy by the main session.
 - After both: read one Crispy Curves row in the SQL editor, wait 10 min, check hq_db_reads shows it (proof step).
 - Not built yet: the admin app's list (data is in owner_hq_access.direct; wording needs his yes), HQ page for
