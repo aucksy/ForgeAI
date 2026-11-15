@@ -76,7 +76,7 @@ async function post(path, body) {
 
 const WORDS = {
   NETWORK: 'Could not send. Please check your internet and try again.',
-  LIMIT: 'Too many questions from this phone today. Please call or visit the gym.',
+  LIMIT: 'Too many questions were sent from here today. Please call or visit the gym.',
   NOT_READY: 'This page cannot take questions yet. Please call or visit the gym.',
   CLOSED: 'This gym is not taking questions here right now. Please visit the gym.',
 };
@@ -108,7 +108,7 @@ if (form) {
     btn.disabled = false;
     if (r.ok) {
       form.reset();
-      say(msg, `Sent. ${data.gymName || 'The gym'} will reply on ${phone.slice(0, 2)}XXXXXX${phone.slice(8)}.`, true);
+      say(msg, `Your question is sent. ${data.gymName || 'The gym'} will reply to ${phone.slice(0, 2)}XXXXXX${phone.slice(8)}.`, true);
     } else say(msg, sayFail(r.error), false);
   });
 }
@@ -127,7 +127,7 @@ if (copy) {
     }
     try {
       await navigator.clipboard.writeText(url);
-      copy.lastChild.textContent = 'Link copied';
+      copy.lastChild.textContent = 'The link is copied';
     } catch {
       prompt('Copy this link', url);
     }

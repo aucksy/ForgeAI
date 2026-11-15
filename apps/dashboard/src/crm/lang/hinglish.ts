@@ -626,13 +626,26 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   'Poster saved as a picture.': 'Poster photo ki tarah save ho gaya.',
   'Could not make the picture. Try Print poster.': 'Photo nahi ban paayi. Poster print karke dekho.',
   // R-513 Join online: the "Become a member" link and poster, and Today's "Joined online".
-  'Join on your phone': 'Apne phone se join',
-  'New people pick a plan on their own phone and send it to you. They pay at the desk.':
-    'Naye log apne phone par plan chunte hain aur aapko bhejte hain. Paise woh desk par dete hain.',
-  'New people open this link on their own phone. They pick a plan, check their number on WhatsApp and send it to you. They pay at the desk, and you make them a member on Today.':
-    'Naye log yeh link apne phone par kholte hain. Woh plan chunte hain, WhatsApp par apna number check karte hain aur aapko bhejte hain. Paise woh desk par dete hain, aur aap Today par unhe member banate hain.',
+  // R-563: the gym's ONE link, on a phone or a computer.
+  'Your gym’s join link': 'Aapke gym ka join link',
+  'Your gym’s web page': 'Aapke gym ka web page',
+  'People pick a plan on a phone or a computer and send it to you. They pay at the desk.':
+    'Log phone ya computer par plan chunte hain aur aapko bhejte hain. Paise woh desk par dete hain.',
+  'People see your fees, timings and photos on a phone or a computer, and ask to join. They pay at the desk.':
+    'Log phone ya computer par aapki fees, timings aur photos dekhte hain, aur join karne ke liye poochte hain. Paise woh desk par dete hain.',
+  'People can open this link on a phone or a computer to ask to join your gym. They pick a plan, check their number on WhatsApp and send it to you. They pay at the desk, and you make them a member on Today.':
+    'Log yeh link phone ya computer par kholkar aapke gym mein join karne ke liye pooch sakte hain. Woh plan chunte hain, WhatsApp par apna number check karte hain aur aapko bhejte hain. Paise woh desk par dete hain, aur aap Today par unhe member banate hain.',
+  'This is your gym’s one link. People can open it on a phone or a computer, see your fees, timings and photos, and tap “Become a member” to ask to join. They pay at the desk, and you make them a member on Today.':
+    'Yeh aapke gym ka ek hi link hai. Log ise phone ya computer par kholkar aapki fees, timings aur photos dekh sakte hain, aur join karne ke liye “Become a member” dabate hain. Paise woh desk par dete hain, aur aap Today par unhe member banate hain.',
+  'Put this link on your gym’s Google Maps listing. In Google Business Profile, open Edit profile and paste it as your website.':
+    'Yeh link apne gym ki Google Maps listing par daalo. Google Business Profile mein Edit profile kholo aur ise website ki jagah paste karo.',
+  'Make your free gym web page, and this card will share it instead. It shows your fees, timings and photos, and its “Become a member” button opens this same join form.':
+    'Apna free gym web page banao, phir yeh card wahi page bhejega. Usmein aapki fees, timings aur photos dikhte hain, aur uska “Become a member” button yahi join form kholta hai.',
+  'Make your web page': 'Apna web page banao',
   'Send join link on WhatsApp': 'Join link WhatsApp par bhejo',
+  'Send your page on WhatsApp': 'Apna page WhatsApp par bhejo',
   'Copy join link': 'Join link copy karo',
+  'Copy page link': 'Page link copy karo',
   'Download join poster': 'Join poster download karo',
   'Could not make the picture. Try again.': 'Photo nahi ban paayi. Phir try karo.',
   'Joined online': 'Online join kiya',

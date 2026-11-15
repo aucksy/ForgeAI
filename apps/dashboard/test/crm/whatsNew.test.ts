@@ -72,7 +72,7 @@ describe('the list itself', () => {
     const entry = ADMIN_NEWS.find((e) => e.id === '2026-11-14')!;
     const all = entry.lines.map((l) => l.text).join(' ');
     for (const fact of [
-      'Join on your phone',
+      'Your gym’s join link',
       'Joined online',
       'Make member',
       'Razorpay and Cashfree',

@@ -113,13 +113,15 @@ describe('the join link and message', () => {
   });
   it('says what happens and where they pay; the link on its own line; no name or number', () => {
     const msg = joinOnlineMessage('Shakti Gym', 'RAMS01');
-    expect(msg).toContain('Become a member of Shakti Gym from your phone. Pick a plan and send your details. You pay at the gym desk.');
+    // R-563: a phone or a computer, so no "from your phone".
+    expect(msg).toContain('Become a member of Shakti Gym online. Pick a plan and send your details. You pay at the gym desk.');
+    expect(msg).not.toMatch(/your phone/);
     expect(msg.split('\n')).toContain('https://app.mettleup.fit/m/RAMS01');
     expect(msg).not.toMatch(/\+91|\d{10}/);
   });
   it('the poster says no app is needed', () => {
-    expect(JOIN_ONLINE_POSTER.lead).toBe('Become a member on your phone');
-    expect(JOIN_ONLINE_POSTER.codeLine('RAMS01')).toBe('No app needed. Ask at the desk if you need help.');
+    expect(JOIN_ONLINE_POSTER.lead).toBe('Become a member');
+    expect(JOIN_ONLINE_POSTER.codeLine('RAMS01')).toBe('No app needed. On a computer, type the link below. Ask at the desk if you need help.');
   });
 });
 

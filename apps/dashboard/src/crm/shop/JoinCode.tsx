@@ -10,7 +10,8 @@ import { useRef, useState } from 'react';
 import { Button, Card, ErrorBanner, SectionTitle, color, font, radius, space } from '../ui/kit';
 import { useCan } from '../auth/AuthProvider';
 import { useShop } from './ShopProvider';
-import { inviteMessage, joinOnlineMessage, whatsAppHref } from './invite';
+import { inviteMessage, whatsAppHref } from './invite';
+import { useGymLink, gymLinkMessage } from './oneLink';
 import { useJoinOrigin } from './linkOrigin';
 import { useSelfJoinReady } from './selfJoinReady';
 import { navigate } from '../ui/router';
@@ -52,10 +53,12 @@ export function JoinCodeCard({
   title?: string;
 }) {
   const { cloud, connectShop, online } = useShop();
-  // R-513: the "Join on your phone" share, only once the gym server has the page (0077).
+  // R-513: the join link share, only once the gym server has the page (0077).
   const joinOnline = useSelfJoinReady(cloud?.joinCode);
   // R-539: the join link's address (join.mettleup.fit once connected).
   const joinOrigin = useJoinOrigin();
+  // R-563: the gym's ONE link (its web page once pages are open and it is published, else the join link).
+  const gymLink = useGymLink(cloud?.joinCode ?? '');
   const [copied, setCopied] = useState<'yes' | 'no' | null>(null);
   const codeRef = useRef<HTMLSpanElement>(null);
   const [busy, setBusy] = useState(false);
@@ -183,17 +186,19 @@ export function JoinCodeCard({
           {t('Invite & QR poster')}
         </Button>
       </div>
-      {/* R-513 Join online: for people who are not members yet, on any phone, no app needed. Shown once the gym server
-          has the page (0077) and the gym is open with a plan. */}
+      {/* R-513 Join online: for people who are not members yet, on a phone or a computer, no app needed. Shown once the
+          gym server has the page (0077) and the gym is open with a plan. R-563: the gym's one link. */}
       {joinOnline && (
       <div style={{ marginTop: space.lg, paddingTop: space.md, borderTop: `1px solid ${color.border}` }}>
-        <div style={{ fontFamily: font.body, fontSize: 14, fontWeight: 700, color: color.ink }}>{t('Join on your phone')}</div>
+        <div style={{ fontFamily: font.body, fontSize: 14, fontWeight: 700, color: color.ink }}>{gymLink.kind === 'page' ? t('Your gym’s web page') : t('Your gym’s join link')}</div>
         <div style={{ marginTop: 4, fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
-          {t('New people pick a plan on their own phone and send it to you. They pay at the desk.')}
+          {gymLink.kind === 'page'
+            ? t('People see your fees, timings and photos on a phone or a computer, and ask to join. They pay at the desk.')
+            : t('People pick a plan on a phone or a computer and send it to you. They pay at the desk.')}
         </div>
         <div style={{ marginTop: space.sm }}>
-          <Button variant="ghost" onClick={() => window.open(whatsAppHref(joinOnlineMessage(cloud.name, cloud.joinCode, joinOrigin)), '_blank', 'noopener')}>
-            {t('Send join link on WhatsApp')}
+          <Button variant="ghost" onClick={() => window.open(whatsAppHref(gymLinkMessage(cloud.name, gymLink, cloud.joinCode, joinOrigin)), '_blank', 'noopener')}>
+            {gymLink.kind === 'page' ? t('Send your page on WhatsApp') : t('Send join link on WhatsApp')}
           </Button>
         </div>
       </div>

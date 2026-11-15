@@ -156,6 +156,9 @@ The editor shows it only once the AI helper (F208) exists. Until then it does no
 
 ## 8. Public words (draft, **needs owner yes**)
 
+**15 Nov 2026 (R-563): the full list, every line of the page and the join form in English and Hindi, is
+[PUBLIC-WORDS.md](PUBLIC-WORDS.md).** The lines below are the first draft and are kept for history.
+
 Run through the member-words skill before going live. Bilingual board headers (Fees · फीस, Timings · समय, Find us
 · पता, Ask the gym · सवाल पूछें) also need a Hindi check.
 
@@ -164,13 +167,13 @@ Run through the member-words skill before going live. Bilingual board headers (F
 - Under the fees: "Prices are set by <gym>. Please confirm at the desk before you pay."
 - Question consent (unticked box): "Send my name, number and question to <gym> so they can reply to me. Only this gym
   sees them."
-- After sending: "Sent. <gym> will reply on 98XXXXXX12."
+- After sending: "Your question is sent. <gym> will reply to 98XXXXXX12."
 - Report reasons: "Wrong or misleading fees, offers or timings", "Photos are not of this gym, or are copied",
   "Offensive or unsafe content", "Spam or a scam", "This gym has closed". After: "Thank you. MettleUp will look at
   this page."
 - Owner's tick before publishing: "These fees, photos and words are my gym's own, and I am responsible for them."
 - Facility list words (gymPage.js HIGHLIGHTS), e.g. "Women-only batch", "Workouts tracked in the MettleUp app".
-- Footer link: "Own a gym? Get a free page like this" (to gyms.mettleup.fit).
+- Footer link: "Do you own a gym? Get a free page like this one." (to gyms.mettleup.fit).
 - The page terms for owners (new section in Terms): what may go on a page, MettleUp may hide a page that breaks it.
 
 ## 10. AI chats on the page land in Enquiries (R-538, 14 Nov 2026)

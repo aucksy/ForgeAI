@@ -57,9 +57,9 @@ export function joinOnlineMessage(gymName: string, joinCode: string, origin: str
   const gym = gymName.trim() || 'our gym';
   return [
     'Hi!',
-    `Become a member of ${gym} from your phone. Pick a plan and send your details. You pay at the gym desk.`,
+    `Become a member of ${gym} online. Pick a plan and send your details. You pay at the gym desk.`,
     '',
-    'Tap to join:',
+    'Open this link to join:',
     joinOnlineLink(joinCode, origin),
   ].join('\n');
 }

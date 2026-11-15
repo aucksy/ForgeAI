@@ -37,7 +37,10 @@
   * { box-sizing:border-box; }
   html,body { margin:0; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans Devanagari",sans-serif; }
   main { max-width:480px; margin:0 auto; padding:16px 16px 40px; }
-  .bar { display:flex; justify-content:flex-end; }
+  .bar { display:flex; justify-content:flex-end; align-items:center; gap:8px; }
+  /* R-563: back to the gym's web page, when the form was opened from it. */
+  .back { margin-right:auto; display:inline-flex; align-items:center; min-height:44px; color:var(--ink); font-size:15px; font-weight:700; text-decoration:none; overflow-wrap:anywhere; }
+  .back:hover { text-decoration:underline; }
   .pill { min-height:44px; padding:0 16px; border-radius:12px; border:1px solid var(--line); background:var(--surface); color:var(--ink); font:inherit; font-size:15px; font-weight:700; cursor:pointer; }
   .logo { width:80px; height:80px; border-radius:20px; background:var(--surface); border:1px solid var(--line); display:flex; align-items:center; justify-content:center; overflow:hidden; margin:4px auto 12px; }
   .logo img { max-width:68px; max-height:68px; object-fit:contain; }
@@ -111,7 +114,7 @@
 </head>
 <body>
 <main>
-  <div class="bar"><button class="pill" type="button" id="lang" lang="hi">हिंदी</button></div>
+  <div class="bar"><a class="back hide" id="back" href="https://join.mettleup.fit/"><span aria-hidden="true">←&nbsp;</span><span id="back-words"></span></a><button class="pill" type="button" id="lang" lang="hi">हिंदी</button></div>
   <div class="logo" id="logo" aria-hidden="true"><span id="initial">M</span></div>
   <h1 id="title">Become a member</h1>
   <p class="sub" id="sub" data-t="lead">Join in 3 short steps. You pay at the gym desk.</p>
@@ -258,6 +261,14 @@
   var API = 'https://hdxzqbdiokjklnypfisq.supabase.co/rest/v1/rpc/self_join_preview';
   var m = /^\/m\/([A-Za-z0-9]{6})\/?$/.exec(location.pathname);
   var code = m ? m[1].toUpperCase() : null;
+  // R-563 (one link): opened from the gym's web page (its "Become a member" adds ?page=<page address>). Only a name the
+  // page rules allow (gymPage.js slugOk), and only ever back to join.mettleup.fit.
+  var pageSlug = (function () {
+    try {
+      var s = new URLSearchParams(location.search).get('page') || '';
+      return s.length >= 3 && s.length <= 48 && /^[a-z0-9]+(-[a-z0-9]+)*$/.test(s) ? s : '';
+    } catch (e) { return ''; }
+  })();
   var root = document.documentElement;
   var $ = function (id) { return document.getElementById(id); };
   var show = function (id, on) { $(id).classList.toggle('hide', !on); };
@@ -321,6 +332,7 @@
       PROOF_AGAIN: 'Please check your number with WhatsApp again.',
       PLAN_CHANGED: 'The gym changed its plans. Please pick a plan again.',
       pageTitle: 'Become a member of {gym}',
+      backToPage: 'Back to the page of {gym}',
       // R-528: paying online (only when the gym has switched it on).
       leadOnline: 'Join in 3 short steps. Pay online or at the gym desk.',
       toPayOnline: 'To pay', sTotalOnline: 'To pay',
@@ -409,6 +421,7 @@
       PROOF_AGAIN: 'कृपया WhatsApp से अपना नंबर फिर से वेरिफ़ाई करें।',
       PLAN_CHANGED: 'जिम ने अपने प्लान बदले हैं। कृपया फिर से प्लान चुनें।',
       pageTitle: '{gym} के मेंबर बनें',
+      backToPage: '{gym} के पेज पर वापस जाएँ',
       leadOnline: '3 छोटे स्टेप में मेंबर बनें। पैसे ऑनलाइन दें या जिम के काउंटर पर।',
       toPayOnline: 'देने हैं', sTotalOnline: 'देने हैं',
       payOnline: 'अभी पैसे दें (UPI या कार्ड)', payOnlineUpi: 'अभी UPI से पैसे दें',
@@ -518,6 +531,11 @@
     all('[data-t]').forEach(function (n) { n.textContent = t(n.getAttribute('data-t')); });
     // Errors already on screen follow the language too.
     all('.err').forEach(function (n) { if (n.dataset.key) n.textContent = t(n.dataset.key, JSON.parse(n.dataset.vars || '{}')); });
+    show('back', !!(gym && pageSlug));
+    if (gym && pageSlug) {
+      $('back').href = 'https://join.mettleup.fit/' + pageSlug;
+      $('back-words').textContent = t('backToPage', { gym: gym.gymName });
+    }
     if (gym) {
       document.title = t('pageTitle', { gym: gym.gymName });
       $('privacy').textContent = t('privacy', { gym: gym.gymName });

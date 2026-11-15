@@ -114,7 +114,7 @@ export function mapsLinks({ mapsUrl, lat, lng, address, gymName }) {
 
 /** WhatsApp's share link with the gym's name and page address. PURE. */
 export function whatsappShare(gymName, pageUrl) {
-  return `https://wa.me/?text=${encodeURIComponent(`${gymName}: fees, timings and photos. ${pageUrl}`)}`;
+  return `https://wa.me/?text=${encodeURIComponent(`See the fees, timings and photos of ${gymName}: ${pageUrl}`)}`;
 }
 
 /** Indian rupees from paise: 150000 -> "₹1,500". PURE. */
@@ -300,7 +300,10 @@ export function renderGymPage(p, { nowMs = Date.now(), assetBase = '', origin = 
   const url = `${origin}/${p.slug}`;
   const ink = inkOn(p.accent);
   const st = statusOf(p, nowMs);
-  const joinHref = p.joinOnline && p.joinCode ? `https://app.mettleup.fit/m/${p.joinCode}` : null;
+  // R-563 (owner, 15 Nov 2026: one link): "Become a member" opens the same join form as the gym's join link, on this
+  // same address (join.mettleup.fit/m/<CODE>, hosts.js JOIN_LINK_PATHS), on a phone or a computer. ?page= lets the form
+  // offer "Back to <gym>'s page" (join-online.html checks the name against the page address rules).
+  const joinHref = p.joinOnline && p.joinCode ? `${PAGE_ORIGIN}/m/${p.joinCode}?page=${encodeURIComponent(p.slug)}` : null;
   const maps = mapsLinks(p);
   const place = [p.area, p.city].filter(Boolean).join(', ');
   const title = `${p.gymName}${place ? `, ${place}` : ''}: fees, timings and photos`;
@@ -316,7 +319,7 @@ export function renderGymPage(p, { nowMs = Date.now(), assetBase = '', origin = 
   const statusPlate = st ? `<p class="plate s-${st.state}" id="status"><i aria-hidden="true"></i>${escapeHtml(st.line)}</p>` : '';
   const primary = joinHref
     ? `<a class="btn tin" href="${escapeHtml(joinHref)}">Become a member<small>${payOnline ? 'Join and pay online' : 'Send your details. Pay at the desk.'}</small></a><a class="btn paint" href="#ask">Ask a question</a>`
-    : `<a class="btn tin" href="#ask">Ask a question<small>The gym replies on your phone.</small></a>`;
+    : `<a class="btn tin" href="#ask">Ask a question<small>The gym replies to you on WhatsApp or by phone.</small></a>`;
 
   const photos = p.photos.length
     ? `<section class="floor${closedNow ? ' is-closed' : ''}" aria-label="Photos of ${escapeHtml(p.gymName)}">` +
@@ -378,7 +381,7 @@ export function renderGymPage(p, { nowMs = Date.now(), assetBase = '', origin = 
 
   const ask =
     `<section class="board ask" id="ask" aria-labelledby="ask-h"><header><h2 id="ask-h">Ask the gym</h2><span lang="hi">सवाल पूछें</span></header>` +
-    `<form id="ask-form" novalidate><p class="board-lead">Your question goes straight to ${escapeHtml(p.gymName)}. They reply on your phone.</p>` +
+    `<form id="ask-form" novalidate><p class="board-lead">Your question goes straight to ${escapeHtml(p.gymName)}. They reply to you on WhatsApp or by phone.</p>` +
     `<label for="a-name">Your name</label><input id="a-name" name="name" autocomplete="name" maxlength="80" required>` +
     `<label for="a-phone">Mobile number</label><div class="tel"><span>+91</span><input id="a-phone" name="phone" type="tel" inputmode="numeric" autocomplete="tel-national" maxlength="14" required></div>` +
     `<label for="a-q">Your question</label><textarea id="a-q" name="question" rows="3" maxlength="500" placeholder="Is there a ladies batch? Can I try one day first?" required></textarea>` +
@@ -450,7 +453,7 @@ ${photos}
       <button class="btn line" type="submit">Send the report to MettleUp</button><p class="msg" id="report-msg" role="status" aria-live="polite"></p>
     </form>
   </details>
-  <p class="links"><a href="https://mettleup.fit/privacy">Privacy</a><a href="https://mettleup.fit/terms">Terms</a><a href="https://gyms.mettleup.fit/">Own a gym? Get a free page like this</a></p>
+  <p class="links"><a href="https://mettleup.fit/privacy">Privacy</a><a href="https://mettleup.fit/terms">Terms</a><a href="https://gyms.mettleup.fit/">Do you own a gym? Get a free page like this one.</a></p>
   <p class="made">Made with <b>MettleUp</b></p>
 </footer>
 <nav class="dock" id="dock" aria-label="Quick actions">${joinHref ? `<a class="btn tin" href="${escapeHtml(joinHref)}">Become a member</a>` : ''}<a class="btn paint" href="#ask">Ask</a></nav>

@@ -154,7 +154,8 @@ test('the page: escaped, not listed by Google until the gym says so, prices and 
   assert.match(html, /₹1,500/);
   assert.match(html, /about ₹1,333 a month/);
   assert.match(html, /\+ ₹500 joining fee/);
-  assert.match(html, /href="https:\/\/app\.mettleup\.fit\/m\/EXMPL1"/);
+  // R-563: the same join form, on the page's own address, with the way back.
+  assert.match(html, /href="https:\/\/join\.mettleup\.fit\/m\/EXMPL1\?page=example-fitness-sector-12"/);
   assert.match(html, /Monday to Saturday/);
   assert.match(html, /tel:\+919000000001/);
   assert.match(html, /<script type="module" src="\/gym-page\/page\.js">/);
@@ -170,6 +171,16 @@ test('R-528: "Become a member" says how they pay: online when the gym takes it t
   const online = renderGymPage(pageFrom(RAW), { nowMs: THU_EVENING, payOnline: true });
   assert.match(online, /Become a member<small>Join and pay online<\/small>/);
   assert.ok(!online.includes('Pay at the desk.'));
+});
+
+test('R-563 one link: "Become a member" opens the same join form on this same address, with the way back to the page', () => {
+  const html = renderGymPage(pageFrom(RAW), { nowMs: THU_EVENING });
+  const href = /class="btn tin" href="([^"]+)">Become a member/.exec(html)[1];
+  assert.equal(href, `https://join.mettleup.fit/m/${RAW.joinCode}?page=${RAW.slug}`);
+  assert.ok(!html.includes('app.mettleup.fit/m/'));
+  // Nothing on the page says it works on a phone only.
+  assert.doesNotMatch(html, /on your phone/);
+  assert.doesNotMatch(renderGymPage(pageFrom({ ...RAW, joinOnline: false }), { nowMs: THU_EVENING }), /on your phone/);
 });
 
 test('the page without online joining asks a question instead; closed now shows on the shutter', () => {

@@ -18,11 +18,14 @@ import type { GymBrand } from '@forgeai/theme';
 import * as api from './api';
 import { JoinCodeCard, copyText } from './JoinCode';
 import { useShop } from './ShopProvider';
-import { inviteLink, inviteMessage, joinOnlineLink, joinOnlineMessage, whatsAppHref } from './invite';
+import { inviteLink, inviteMessage, whatsAppHref } from './invite';
 import { useJoinOrigin } from './linkOrigin';
+import { gymLinkFrom, gymLinkMessage } from './oneLink';
 import { useSelfJoinReady } from './selfJoinReady';
 import { Button, Card, PageHeader, SectionTitle, Toast, color, font, radius, space, useIsCompact } from '../ui/kit';
-import { navigate } from '../ui/router';
+import { Link, navigate } from '../ui/router';
+import { usePagesOpen } from '../gympage/pagesOpen';
+import { useWebPage } from '../gympage/pageState';
 import { t } from '../lang/lang';
 
 export function InviteScreen() {
@@ -86,7 +89,11 @@ function InviteBody({ ownerKey, gymName, joinCode }: { ownerKey: string; gymName
   // R-513 Join online: the "Become a member" page for people who are not members yet.
   // R-539: on join.mettleup.fit once that address is connected (outside the admin app on the owner's phone).
   const joinOrigin = useJoinOrigin();
-  const joinLink = joinOnlineLink(joinCode, joinOrigin);
+  // R-563: ONE link for people who may join: the gym's web page once pages are open and it is published, else the join link.
+  const gymLink = gymLinkFrom({ pagesOpen: usePagesOpen(), web: useWebPage(), joinCode, joinOrigin });
+  const joinLink = gymLink.url;
+  const isPage = gymLink.kind === 'page';
+  const joinPoster = isPage ? GYM_PAGE_POSTER : JOIN_ONLINE_POSTER;
   const joinOnline = useSelfJoinReady(joinCode);
   const [toast, setToast] = useState<string | null>(null);
   const [brand, setBrand] = useState<GymBrand | null>(null);
@@ -199,13 +206,15 @@ function InviteBody({ ownerKey, gymName, joinCode }: { ownerKey: string; gymName
         </p>
       </Card>
 
-      {/* R-513 Join online: new people fill the gym's "Become a member" page on their own phone (any phone, no app).
+      {/* R-513 Join online: new people fill the gym's "Become a member" page on a phone or a computer (no app).
           The request lands on Today ("Joined online"); they pay at the desk. Its poster is a picture to print, so the
           page's one print sheet stays the invite poster. Shown once the gym server has the page (0077) and the gym is
-          open with a plan. */}
+          open with a plan. R-563 (owner, 15 Nov 2026: "make it simpler"): ONE link. Once gym web pages are open and the
+          gym's page is published, this card, its WhatsApp message and its poster all use the page; its "Become a
+          member" opens the same join form. Old /m/<CODE> links and posters keep working. */}
       {joinOnline && (
       <Card>
-        <SectionTitle>{t('Join on your phone')}</SectionTitle>
+        <SectionTitle>{isPage ? t('Your gym’s web page') : t('Your gym’s join link')}</SectionTitle>
         <div
           style={{
             fontFamily: font.mono,
@@ -222,29 +231,42 @@ function InviteBody({ ownerKey, gymName, joinCode }: { ownerKey: string; gymName
           {joinLink}
         </div>
         <p style={{ margin: `${space.sm}px 0 0`, fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>
-          {t('New people open this link on their own phone. They pick a plan, check their number on WhatsApp and send it to you. They pay at the desk, and you make them a member on Today.')}
+          {isPage
+            ? t('This is your gym’s one link. People can open it on a phone or a computer, see your fees, timings and photos, and tap “Become a member” to ask to join. They pay at the desk, and you make them a member on Today.')
+            : t('People can open this link on a phone or a computer to ask to join your gym. They pick a plan, check their number on WhatsApp and send it to you. They pay at the desk, and you make them a member on Today.')}
         </p>
+        {isPage && (
+          <p style={{ margin: `${space.sm}px 0 0`, fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>
+            {t('Put this link on your gym’s Google Maps listing. In Google Business Profile, open Edit profile and paste it as your website.')}
+          </p>
+        )}
+        {gymLink.pageNotMade && (
+          <p style={{ margin: `${space.sm}px 0 0`, fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>
+            {t('Make your free gym web page, and this card will share it instead. It shows your fees, timings and photos, and its “Become a member” button opens this same join form.')}{' '}
+            <Link to="/settings/web-page" style={{ color: color.accentBright, fontWeight: 700, textDecoration: 'underline' }}>{t('Make your web page')}</Link>
+          </p>
+        )}
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: space.sm, marginTop: space.lg }}>
-          <Button onClick={() => window.open(whatsAppHref(joinOnlineMessage(gymName, joinCode, joinOrigin)), '_blank', 'noopener')}>{t('Send join link on WhatsApp')}</Button>
+          <Button onClick={() => window.open(whatsAppHref(gymLinkMessage(gymName, gymLink, joinCode, joinOrigin)), '_blank', 'noopener')}>{isPage ? t('Send your page on WhatsApp') : t('Send join link on WhatsApp')}</Button>
           <Button
             variant="ghost"
             onClick={async () =>
               say((await copyText(joinLink)) ? t('Link copied.') : t('This browser blocked copying. Select the text and copy it.'))
             }
           >
-            {t('Copy join link')}
+            {isPage ? t('Copy page link') : t('Copy join link')}
           </Button>
         </div>
         <div style={{ display: 'flex', justifyContent: 'center', marginTop: space.lg }}>
           <div style={{ width: '100%', maxWidth: 360 }}>
-            <Poster words={JOIN_ONLINE_POSTER} gymName={gymName} joinCode={joinCode} link={joinLink} brand={brand} />
+            <Poster words={joinPoster} gymName={gymName} joinCode={joinCode} link={joinLink} brand={brand} />
           </div>
         </div>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: space.sm, marginTop: space.lg }}>
           <Button
             variant="ghost"
             onClick={async () => {
-              const ok = await downloadPoster(JOIN_ONLINE_POSTER, gymName, joinCode, joinLink, brand);
+              const ok = await downloadPoster(joinPoster, gymName, joinCode, joinLink, brand);
               say(ok ? t('Poster saved as a picture.') : t('Could not make the picture. Try again.'));
             }}
           >
@@ -281,12 +303,21 @@ export const POSTER: PosterWords = {
   file: 'invite-poster',
 };
 
-/** R-513: the "Become a member" poster (its QR opens join-online.html). */
+/** R-513: the "Become a member" poster (its QR opens join-online.html). R-563: no "on your phone"; the link under the
+ * QR also opens on a computer. */
 export const JOIN_ONLINE_POSTER: PosterWords = {
-  lead: 'Become a member on your phone',
+  lead: 'Become a member',
   steps: ['Scan with your phone camera', 'Pick a plan and send it', 'Pay at the desk'],
-  codeLine: () => 'No app needed. Ask at the desk if you need help.',
+  codeLine: () => 'No app needed. On a computer, type the link below. Ask at the desk if you need help.',
   file: 'join-online-poster',
+};
+
+/** R-563: the same poster once the gym's web page is its one link (its QR opens the page). */
+export const GYM_PAGE_POSTER: PosterWords = {
+  lead: 'See our fees and become a member',
+  steps: ['Scan with your phone camera', 'See our fees, timings and photos', 'Tap “Become a member”'],
+  codeLine: () => 'No app needed. On a computer, type the link below. Ask at the desk if you need help.',
+  file: 'gym-page-poster',
 };
 
 /** The poster as it looks on screen and on paper: white, black text, the gym's logo on top. */

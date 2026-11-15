@@ -215,9 +215,9 @@ export const ALL_HELP_ARTICLES = [
   {
     id: 'join-online-admin',
     who: 'owner',
-    title: 'New people join on their own phone ("Join on your phone")',
+    title: 'New people join online, on a phone or a computer ("Your gym’s join link")',
     text:
-      'New people can ask to become members from their own phone, with no app. Open Settings, then "Invite members", and under "Join on your phone" tap "Send join link on WhatsApp" or download the join poster. ' +
+      'New people can ask to become members from a phone or a computer, with no app. Open Settings, then "Invite members", and under "Your gym’s join link" tap "Send join link on WhatsApp", copy the link, or download the join poster. ' +
       'They type their name, check their number with one WhatsApp message, pick one of your plans and a start day. They pay at the desk, not online. ' +
       'The request shows on Today under "Joined online". When they come in, tap "Make member": the Add member form opens filled in, then Sell membership on their plan. Type what they paid and save.',
   },
@@ -429,10 +429,10 @@ export const ALL_HELP_ARTICLES = [
     who: 'owner',
     title: 'Make your free gym web page',
     text:
-      'Your gym gets its own free page at join.mettleup.fit, for people who may join. Open "Your web page" (on a phone, under More). ' +
+      'Your gym gets its own free page at join.mettleup.fit. Open "Your web page" (on a phone, under More). ' +
       'Check the page address, then add your area, a few lines about your gym, what your gym has, up to 6 photos and your Google Maps link. Fees, timings, logo and address come from their own screens. ' +
       'Tap "See your page" to look at it. To publish, tick "Show my page to visitors" and the box saying the fees, photos and words are your own, then tap "Save and publish". ' +
-      'Once published, the address stays the same. Questions from the page show in Enquiries. Only the owner can change the page.',
+      'Once published, the address stays the same, and "Invite members" shares it as your gym’s one link. Questions from the page show in Enquiries. Only the owner can change the page.',
     screens: ['apps/dashboard/src/crm/ui/screens/WebPage.tsx'],
   },
   {

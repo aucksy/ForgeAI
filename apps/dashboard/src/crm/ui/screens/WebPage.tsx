@@ -562,7 +562,7 @@ function ShareButtons({ slug, gymName, onCopied }: { slug: string; gymName: stri
         Copy link
       </Button>
       <a
-        href={`https://wa.me/?text=${encodeURIComponent(`${gymName}: fees, timings and photos. ${link}`)}`}
+        href={`https://wa.me/?text=${encodeURIComponent(`See the fees, timings and photos of ${gymName}: ${link}`)}`}
         target="_blank"
         rel="noreferrer"
         style={{ ...small, alignSelf: 'center', color: color.accentBright, fontWeight: 700 }}

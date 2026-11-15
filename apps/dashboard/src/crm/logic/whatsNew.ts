@@ -59,7 +59,7 @@ export const ADMIN_NEWS: readonly AdminNewsEntry[] = [
       },
       {
         // R-513 Join online (0077 live). R-555: join payments are held (JOIN_PAY off), so nothing here about paying online.
-        text: 'New: people can ask to join your gym from their own phone, with no app. In Invite members, under "Join on your phone", send the join link on WhatsApp or download the poster. They pay at the desk.',
+        text: 'New: people can ask to join your gym from a phone or a computer, with no app. In Invite members, under "Your gym’s join link", send the join link on WhatsApp or download the poster. They pay at the desk.',
         // No `feature` dot: e2e/newdots-uat.spec.mjs pins which 14 Nov features light (MAX_DOTS 3).
         go: { label: 'Open Invite members', path: '/settings/invite' },
       },
