@@ -549,9 +549,12 @@ appId: com.mettleup.app
 # Skip the 30 s rest FIRST, while it still has time left. Run 43644981186 waited ~10 s for the
 # optional "Keep 300?" below, the rest ran out as "Skip rest" was tapped, and the tap fell
 # through to Overhead Press set 1's tick (a new rest and its In-use screen hid the next step).
+# No settle wait: the ticking countdown never settles, so a plain tap waited ~11 s and still
+# landed as the rest ended (run 43651213526).
 - tapOn:
     text: "Skip rest"
     optional: true
+    waitToSettleTimeoutMs: 300
 - extendedWaitUntil:
     notVisible: "Skip rest"
     timeout: 35000
