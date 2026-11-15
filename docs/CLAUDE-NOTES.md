@@ -7,6 +7,55 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-590 (15 Nov 2026) Gym messages silent on his OPPO: the phone strips every channel; the app now rings it itself
+- The bug (R-583): a gym reply lands in the notification list on his OPPO CPH2873 (ColorOS, Android 17, 0.78.0 from Play)
+  with no sound and no pop-up.
+- **ROOT CAUSE, proven on his phone (adb, read-only):** ColorOS's own notification app (NotificationCenter,
+  com.oplus.notificationmanager, /system_ext/app/NotificationCenter) ships a default rule for every app NOT on OPPO's
+  package list: banner off, sound off, vibration off (its config: default state="-1" banner="-1" sound="-1"
+  vibrate="-1"; the copy inside that app lists WhatsApp, Truecaller, Facebook, Instagram, Telegram... and OPPO's own;
+  the live list comes from OPPO's cloud, romupdate sys_notificationmanager_config_list_exp, not readable over adb).
+  It rewrites a channel right after the app makes it: our "Messages from your gym" was made HIGH (mOriginalImp=4) and
+  now reads mImportance=3, mSound=null, mShowBanner=false. Evidence it is the phone, not us:
+  - EVERY MettleUp channel is rewritten the same way, and so is nearly every other app on his phone: Swiggy, Zomato,
+    LinkedIn, Play Console, his own Spends app (about 100 apps). Only listed apps (WhatsApp, Truecaller, Facebook)
+    and Google's own apps keep importance 4 + sound + banner.
+  - It happens at channel creation, not once at install: gym-messages-quiet was made by 0.78.0 (R-501, installed
+    15 Nov), three weeks after the first install (25 Oct), and was rewritten too. So a new channel id does NOT help.
+  - Ruled out: our code never lowers a channel (every setNotificationChannelAsync/createNotificationChannel asks HIGH
+    or DEFAULT on purpose); expo-notifications 56 leaves the channel's default sound when no "sound" key is given
+    (AndroidXNotificationsChannelManager: setSound only with a sound key), so mSound=null was the phone; Swiggy and
+    Paytm were installed the same day from Play and only Paytm kept its sound (a package list, not install time).
+  - An OPPO community thread (ColorOS 17, Find X10) reports the same: new apps get banner/sound/vibration off, a new
+    channel goes HIGH -> DEFAULT ~60 ms after it is made, messaging apps get other defaults. No OPPO statement.
+- R-583's "importance 5 (highest)" was a misread: the feedback log printed expo's AndroidImportance (5 = DEFAULT =
+  Android 3), not Android's. The device line now prints Android's number (gymPopup.androidImportance) and says
+  "no channel sound" when the phone took it; the old "below 4" test compared expo's number and never fired.
+- **What an app can and cannot do:** no app can raise its own channel back, turn the banner on, or join OPPO's list
+  from code. The SOUND it can give: the app plays the phone's own notification sound once, right after a gym message
+  is posted. The POP-UP (banner) on his OPPO stays off for MettleUp, like for Swiggy or LinkedIn, until OPPO lists
+  the app; no setting line on screen (owner rule never-blame-his-device-settings).
+- **Built (on main, ships with the next phone release):**
+  - Native AlertRing.kt (forge-rest) + ForgeRest.ringIfMuted(channelId): rings only when the channel is still an
+    alerting one (importance >= DEFAULT), has no sound, the member did not set its sound (hasUserSetSound, Android
+    11+), the app's notifications are on, Do Not Disturb is off and the phone is on ring (not vibrate or silent);
+    never twice within 4 s. A phone that kept the sound (Pixel, Samsung, the emulator) answers "channel-rings" and
+    never rings twice. Sound only: no buzz (we cannot tell whether the member turned the buzz off).
+  - src/shop/gymAlertRing.ts + noticeAlertsRun.ringShownGymMessage, called at every place a gym message is shown
+    with a sound: the push with the app closed or in the background (onPushArrived; incl. member notes such as his
+    case, the gym's reply to feedback, push gym_reply, and the MettleUp team's reply: pushPlan.pushOnGymChannel), the app's own post with the app
+    in front (postPushInFront), the 15-minute check (showPopups), missed trainer replies (popReplies), the MettleUp
+    team's reply (helpReplyAlert). Never for the quiet copy over a workout (R-501).
+  - Tests: modules/forge-rest/.../AlertRingTest.kt (his OPPO's facts ring; sound kept, member's choice, silent,
+    vibrate, DND, twice, no channel stay quiet), test/shop/r590GymRing.test.ts (every path rings once, the quiet
+    copy never), test/shop/r501GymPopup.test.ts (expo numbers read as Android's). docs/ios/PARITY.yaml covers it.
+- NOT proven yet: the ring itself on his OPPO (needs the release build on his phone; the cloud emulator keeps channel
+  sounds, so it only proves "no double ring"). Check after release: a gym reply with the app closed should ring;
+  the feedback device line should read "no channel sound, app ring rang".
+- Same cause, NOT fixed here: "Rest is over" (rest-over-sound) on his OPPO is also importance 3 with no sound, so with
+  the screen off the rest end is silent on OPPO phones. AlertRing can serve it too (RestCard posts natively); its own
+  change and UAT.
+
 ## R-591 (15 Nov 2026) 0095 and 0096 APPLIED LIVE; every live test PASS
 - His words (15 Nov 2026, R-592): "yes 0095", "yes 0096". Nothing else applied; no data edited.
 - Applied from the Supabase SQL tab (management API, his personal account), byte for byte as on main f6ce4c38 (each
@@ -351,13 +400,15 @@ Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept her
   /shop/orders, /shop/diet, /measures. Now any plain app path opens (lib/alertRoute.ts alertTapPath; test
   test/lib/alertRoute.test.ts). Ships with the next phone release.
 - Sound and pop-up, NOT proven: his OPPO's feedback log (id 104) says the "Messages from your gym" channel is
-  importance 5 (highest), and expo-notifications 56 plays the channel sound for a data-only push with no "sound" key
+  importance 5 (CORRECTION, R-590: that is expo's number, 5 = DEFAULT = Android 3, no pop-up; not the highest), and expo-notifications 56 plays the channel sound for a data-only push with no "sound" key
   (NotificationData.shouldPlayDefaultSound = sound == null). So the code paths read right; the posted notification's
   record is needed: at home, adb shell dumpsys notification --noredact (the record's channel, importance, flags,
   "silent" group) right after a test reply, with the app closed, in front, and with a workout open.
 - Trainer choice: built in 0.78.0 (R-549), shown only when askAccess is 'open' (a plan running today, not a pass).
   His member record on his gym has NO plan, so only "The gym" showed and the page skipped the choice. Asked him:
   keep hidden, or always show "A trainer" with the reason when it is not open.
+- Sound and pop-up: cause found and the sound fixed in R-590 (ColorOS strips every non-listed app's channel; the
+  app now rings gym messages itself; the pop-up cannot be given back by any app).
 
 ## R-582 (15 Nov 2026) Phone sign-in: 0093 APPLIED LIVE, privacy line added; phone-only first screen decided
 - His words (15 Nov 2026): "yes 0093", "yes privacy line", and: "we can keep the primary method as phone number login,

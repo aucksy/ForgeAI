@@ -104,3 +104,23 @@ export function pushFromData(raw: unknown): PushNotice | null {
   }
   return null;
 }
+
+/**
+ * R-590: is this push one the library shows on "Messages from your gym" (deploy/hq/push.js CHANNEL_ID)? True for
+ * every gym push, including a member's own notes (gym_reply, a pause answered, an order ready) and the MettleUp
+ * team's reply, which pushFromData does not count. Same walk as pushFromData. PURE.
+ */
+export function pushOnGymChannel(raw: unknown): boolean {
+  const seen = new Set<unknown>();
+  const queue: unknown[] = [raw];
+  while (queue.length > 0) {
+    const r = asRecord(queue.shift());
+    if (!r || seen.has(r)) continue;
+    seen.add(r);
+    if (r.channelId === 'gym-messages' || r.kind === 'gym-message') return true;
+    for (const k of ['data', 'body', 'dataString', 'content', 'request', 'notification']) {
+      if (k in r) queue.push(r[k]);
+    }
+  }
+  return false;
+}

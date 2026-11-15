@@ -26,7 +26,8 @@ import { ensureNoticeChannel, GYM_NOTICE_CHANNEL, gymPopupsLine, repostGymMessag
 const channels: { id: string; importance: number; sound?: string | null; enableVibrate?: boolean }[] = [];
 const shown: { identifier: string; content: { title: string; body: string; data: Record<string, unknown> }; trigger: { channelId: string } }[] = [];
 let granted = true;
-let stored: { importance: number } | null = { importance: 4 };
+// R-590: expo's own numbers (AndroidImportance HIGH 6 = Android 4, DEFAULT 5 = Android 3).
+let stored: { importance: number; sound?: string | null } | null = { importance: 6, sound: 'default' };
 const fake = {
   AndroidImportance: { HIGH: 4 },
   getPermissionsAsync: async () => ({ granted }),
@@ -40,7 +41,7 @@ beforeEach(() => {
   channels.length = 0;
   shown.length = 0;
   granted = true;
-  stored = { importance: 4 };
+  stored = { importance: 6, sound: 'default' };
   setNoticeNotificationsForTest(fake);
 });
 
@@ -119,8 +120,11 @@ describe('the channels', () => {
 describe("the feedback box's device line", () => {
   it('says how Android set up the gym channel on this phone', async () => {
     expect(await gymPopupsLine()).toBe('gym pop-ups: importance 4');
-    stored = { importance: 3 };
+    stored = { importance: 5, sound: 'default' };
     expect(await gymPopupsLine()).toBe('gym pop-ups: importance 3 (below 4: no pop-up)');
+    // R-590, his OPPO (15 Nov 2026): expo's 5 is Android's DEFAULT (3), and the phone took the sound.
+    stored = { importance: 5, sound: null };
+    expect(await gymPopupsLine()).toBe('gym pop-ups: importance 3 (below 4: no pop-up), no channel sound');
     stored = null;
     expect(await gymPopupsLine()).toBe('gym pop-ups: no channel yet');
     granted = false;
@@ -129,6 +133,14 @@ describe("the feedback box's device line", () => {
 
   it('fits the box with the phone line (120 letters)', () => {
     expect(`CPH2873 (OPPO), Android 17, ${gymPopupsNote(true, 2)}`.length).toBeLessThanOrEqual(120);
+    expect(`CPH2873 (OPPO), Android 17, ${gymPopupsNote(true, 5, null, 'member-set-sound')}`.length).toBeLessThanOrEqual(120);
+  });
+
+  it('R-590: reads expo importance numbers as Android ones', () => {
+    expect(gymPopupsNote(true, 6)).toBe('gym pop-ups: importance 4');
+    expect(gymPopupsNote(true, 7)).toBe('gym pop-ups: importance 5');
+    expect(gymPopupsNote(true, 5, null, 'rang')).toBe('gym pop-ups: importance 3 (below 4: no pop-up), no channel sound, app ring rang');
+    expect(gymPopupsNote(true, 6, 'default', 'rang')).toBe('gym pop-ups: importance 4');
   });
 });
 

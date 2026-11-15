@@ -118,12 +118,26 @@ export function quietCopyData(data: unknown): Record<string, unknown> {
 }
 
 /**
- * One short line for the feedback box's "device" field (R-501): how Android set up this phone's gym
- * message channel, so a member's next message tells us whether pop-ups can show there (4 = high, the
- * only importance that pops up). Never words a member reads. PURE.
+ * expo-notifications' importance number (AndroidImportance: NONE 2, MIN 3, LOW 4, DEFAULT 5, HIGH 6, MAX 7)
+ * as Android's own (0 none ... 3 default, 4 high, 5 max); 0/1 (unknown) = -1000. R-590: R-583 read his
+ * "importance 5" as the highest, but it was expo's DEFAULT = Android 3 (no pop-up). PURE.
  */
-export function gymPopupsNote(allowed: boolean | null, importance: number | null): string {
+export function androidImportance(expoImportance: number): number {
+  return expoImportance >= 2 ? expoImportance - 2 : -1000;
+}
+
+/**
+ * One short line for the feedback box's "device" field (R-501): how Android set up this phone's gym
+ * message channel, so a member's next message tells us whether pop-ups can show there (Android 4 = high,
+ * the only importance that pops up). `importance` is expo's number (getNotificationChannelAsync);
+ * R-590: `sound` is the channel's sound as expo reports it (null = none: the phone took it, OPPO) and
+ * `ring` the app's own ring's last answer (gymAlertRing.ts). Never words a member reads. PURE.
+ */
+export function gymPopupsNote(allowed: boolean | null, importance: number | null, sound?: string | null, ring?: string): string {
   if (allowed === false) return 'gym pop-ups: notifications off';
   if (importance === null) return 'gym pop-ups: no channel yet';
-  return `gym pop-ups: importance ${importance}${importance >= 4 ? '' : ' (below 4: no pop-up)'}`;
+  const a = androidImportance(importance);
+  const pop = `gym pop-ups: importance ${a}${a >= 4 ? '' : ' (below 4: no pop-up)'}`;
+  if (sound !== null) return pop;
+  return `${pop}, no channel sound${ring ? `, app ring ${ring}` : ''}`;
 }

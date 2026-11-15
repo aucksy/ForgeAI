@@ -18,6 +18,7 @@ import { color } from '@/theme/tokens';
 import { usePhonePrefs } from '@/tracker/phone/phonePrefs';
 
 import { refreshInbox } from './gymActions';
+import { lastGymRing, ringGymMessage } from './gymAlertRing';
 import {
   type FrontPushPost,
   GYM_MESSAGES_CHANNEL,
@@ -68,6 +69,21 @@ export function setNoticeAppInFrontForTest(v: boolean | null): void {
 }
 function appInFront(): boolean {
   return frontForTest ?? AppState.currentState === 'active';
+}
+
+/**
+ * R-590: a gym message was just shown on `channelId` ("Messages from your gym" unless said): the app rings it
+ * itself when the phone took that channel's sound (OPPO / ColorOS). Not with the app open over a workout
+ * (R-501: the quiet copy). Never throws.
+ */
+export async function ringShownGymMessage(channelId: string = GYM_MESSAGES_CHANNEL): Promise<void> {
+  try {
+    const inFront = appInFront();
+    const workoutOpen = inFront ? (await import('@/tracker/phone/liveWorkout')).liveWorkout() != null : false;
+    ringGymMessage({ inFront, workoutOpen, channelId });
+  } catch (e) {
+    console.warn('[ForgeErr] gym ring: after showing a message', e);
+  }
 }
 
 /** The background job is running: a refresh it starts is its own to judge, not "the app in front". */
@@ -196,6 +212,7 @@ export async function postPushInFront(post: FrontPushPost): Promise<void> {
       content: { title: post.title, body: post.body, data: post.data, color: color.accent },
       trigger: { channelId: post.channelId },
     });
+    await ringShownGymMessage(post.channelId);
   } catch (e) {
     console.warn('[ForgeErr] gym push: showing it with the app open', e);
   }
@@ -208,7 +225,7 @@ export async function gymPopupsLine(): Promise<string> {
   try {
     const allowed = (await n.getPermissionsAsync()).granted;
     const ch = await n.getNotificationChannelAsync(GYM_NOTICE_CHANNEL);
-    return gymPopupsNote(allowed, ch ? ch.importance : null);
+    return gymPopupsNote(allowed, ch ? ch.importance : null, ch ? ch.sound : undefined, lastGymRing());
   } catch (e) {
     console.warn('[ForgeErr] gym notices: reading the channel', e);
     return '';
@@ -229,6 +246,7 @@ async function showPopups(popups: readonly NoticePopup[]): Promise<void> {
       trigger: { channelId: GYM_NOTICE_CHANNEL },
     });
   }
+  await ringShownGymMessage();
 }
 
 /** Remember these notices and (not in front) pop up the new ones. */
@@ -297,6 +315,7 @@ async function popReplies(link: GymLink, inFront: boolean): Promise<void> {
         trigger: { channelId: GYM_NOTICE_CHANNEL },
       });
     }
+    await ringShownGymMessage();
   } catch (e) {
     console.warn('[ForgeErr] gym notices: popping up a reply', e);
   }
@@ -340,9 +359,14 @@ export async function runNoticeCheck(): Promise<boolean> {
  */
 export async function onPushArrived(raw: unknown): Promise<void> {
   try {
-    const { pushFromData } = await import('./pushPlan');
+    const { pushFromData, pushOnGymChannel } = await import('./pushPlan');
     const p = pushFromData(raw);
-    if (!p) return;
+    if (!p) {
+      // R-590: a member's own note (the gym's reply, a pause answered...) or the MettleUp team's reply: nothing to
+      // remember, but the library showed it on "Messages from your gym", so it rings like a message.
+      if (!appInFront() && pushOnGymChannel(raw)) await ringShownGymMessage();
+      return;
+    }
     await storesReady();
     const link = useGymShop.getState().link;
     const wanted = !!link && (!p.gymId || p.gymId === link.gymId) && usePhonePrefs.getState().gymMessagesOn;
@@ -350,6 +374,9 @@ export async function onPushArrived(raw: unknown): Promise<void> {
       await N()?.dismissNotificationAsync(p.tag).catch(() => undefined);
       return;
     }
+    // R-590: the library showed it (app closed or in the background); ring it if the phone took the sound.
+    // With the app in front the app posts it itself (postPushInFront) and rings there.
+    if (!appInFront()) await ringShownGymMessage();
     if (p.push === 'reply') {
       // R-533: remembered, so the 15-minute check never pops it up again; the red count on the Gym tab at once.
       const m = await import('./askReplySync');

@@ -16,6 +16,8 @@ import expo.modules.kotlin.modules.ModuleDefinition
  *  - canScheduleExact() / openExactAlarmSettings()      — "Alarms & reminders";
  *  - notificationsEnabled() / openNotificationSettings() — ForgeAI's notifications;
  *  - is24Hour(), ringerMode() (0 silent, 1 vibrate, 2 normal), setRingThroughDnd(on).
+ *  - ringIfMuted(channelId)        — R-590: play the phone's notification sound for a message just posted
+ *                                    when the phone took that channel's sound ([AlertRing]).
  * Phase 6 ("Done" on the card and on "Rest is over"):
  *  - setDoneTarget(workout, exKey, setKey, open, values) — the row the next card's Done ticks
  *                                    (exKey null = no Done) and its grey hint; called just
@@ -185,6 +187,12 @@ class ForgeRestModule : Module() {
     Function("ringerMode") {
       val c = ctx ?: return@Function 2
       RestCard.ringerMode(c)
+    }
+
+    // R-590: ring a gym message ourselves when the phone (ColorOS) took its channel's sound ("rang" or why not).
+    Function("ringIfMuted") { channelId: String ->
+      val c = ctx ?: return@Function "no-context"
+      AlertRing.ringIfMuted(c, channelId)
     }
 
     // C5-4 + C1-10: who rings the end of a rest with the app on screen ("native" | "hold" | "app").

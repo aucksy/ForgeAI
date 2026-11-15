@@ -51,7 +51,7 @@ export async function showHelpReplyAlert(count: number): Promise<void> {
   try {
     const cur = await n.getPermissionsAsync();
     if (!cur.granted) return; // never ask: the red dot still shows
-    const { ensureNoticeChannel, GYM_NOTICE_CHANNEL } = await import('@/shop/noticeAlertsRun');
+    const { ensureNoticeChannel, GYM_NOTICE_CHANNEL, ringShownGymMessage } = await import('@/shop/noticeAlertsRun');
     await ensureNoticeChannel();
     const words = helpReplyAlertWords(count);
     await n.scheduleNotificationAsync({
@@ -60,6 +60,8 @@ export async function showHelpReplyAlert(count: number): Promise<void> {
       content: { title: words.title, body: words.body, data: { kind: 'gym-message', route: HELP_REPLY_ROUTE, push: 'help_reply' } },
       trigger: { channelId: GYM_NOTICE_CHANNEL },
     });
+    // R-590: the phone may have taken this channel's sound (OPPO): the app rings it itself.
+    await ringShownGymMessage();
   } catch (e) {
     console.warn('[help] the reply pop-up was not shown', e);
   }

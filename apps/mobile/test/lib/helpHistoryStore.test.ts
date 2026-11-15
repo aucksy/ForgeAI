@@ -31,7 +31,7 @@ vi.mock('@/lib/fetchTimeout', () => ({
     return new Response(JSON.stringify({ items }), { status: 200 });
   },
 }));
-vi.mock('@/shop/noticeAlertsRun', () => ({ GYM_NOTICE_CHANNEL: 'gym-messages', ensureNoticeChannel: async () => undefined }));
+vi.mock('@/shop/noticeAlertsRun', () => ({ GYM_NOTICE_CHANNEL: 'gym-messages', ensureNoticeChannel: async () => undefined, ringShownGymMessage: async () => undefined }));
 
 import { unreadReplies } from '@/lib/helpHistory';
 import { checkHelpReplies, resetHelpCheckForTest, useHelpHistory } from '@/lib/helpHistoryStore';
