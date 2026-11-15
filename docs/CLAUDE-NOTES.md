@@ -7,6 +7,11 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-563 (15 Nov 2026) Gym web pages: on by default for every gym, in onboarding; HQ switch per gym; one link per gym
+He said: "I'm not able to see any gym webpages setting in the headquarters. By default it should be on for all GYMS and part of their onboarding step. And then I may be able to switch it off if needed for GYMs individually." And before: one link per gym ("the gym will have their webpage under our domain ... users go to that page read the information and then join from there"), joining from a phone or a computer.
+Why he sees nothing: the whole feature is behind the global Worker switch GYM_PAGES=off (needs his yes on the public page words + migration 0082), and HQ has no per-gym switch yet.
+Doing (helper): one link per gym (the page with a Join button; old /m/ links keep working), "on your phone" wording removed, a per-gym "Web page" switch in HQ (on by default), the set-up step for every gym once pages are on. Then ONE list of yeses for him. Nothing deployed.
+
 ## R-562 (15 Nov 2026, morning) YES "0088 free trial": applied LIVE; whole-panel refresh; bell panel groups
 - He said: "0088 free trial". Applied 0088_join_trial.sql (68dea015) in the Supabase SQL Editor: Success; live test supabase/tests/0088_join_trial.sql RESULT PASS (57 checks). Nothing shows yet: the admin app with the trial setting and the join page with "Try free" go live with the next admin panel deploy (his yes), and the owner must switch the trial on.
 - He asked: the bell panel's sections are hard to see too; "it should be a theme across the system" that category headings are easy to notice; more groups? Decided: one shared heading style everywhere; bell panel = "Your gym", "From MettleUp", "What's new" (sent to the R-561 shell helper).
