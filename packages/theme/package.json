@@ -2,6 +2,7 @@
   "name": "@forgeai/theme",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "description": "Shared design primitives (palette + scales) for apps/mobile and apps/dashboard.",
   "main": "src/index.ts",
   "types": "src/index.ts",
