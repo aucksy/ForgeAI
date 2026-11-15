@@ -16,8 +16,41 @@ describe('festivals', () => {
     expect(FESTIVAL_DATES.every((f) => isValidDateISO(f.on))).toBe(true);
     expect(FESTIVAL_DATES.map((f) => f.on)).toEqual([...FESTIVAL_DATES.map((f) => f.on)].sort());
     expect(FESTIVAL_DATES.filter((f) => f.id === 'diwali').map((f) => f.on)).toEqual(['2026-11-08', '2027-10-29', '2028-10-17']);
-    expect(FESTIVAL_DATES.filter((f) => f.tentative).map((f) => f.on)).toEqual(['2028-02-27', '2028-05-05']);
+    expect(FESTIVAL_DATES.filter((f) => f.tentative).map((f) => `${f.id} ${f.on}`)).toEqual(['eid 2027-03-10', 'bakrid 2027-05-17', 'eid 2028-02-27', 'bakrid 2028-05-06']);
     expect(FESTIVAL_DATES.find((f) => f.id === 'holi' && f.on.startsWith('2027'))?.template).toBe('holi');
+  });
+
+  // Owner, 15 Nov 2026: "I don't want you suggesting festivals on days which are incorrect." Every date below
+  // was checked against Drik Panchang (New Delhi) and the DoPT holiday lists / truecalendar (festivals.ts says
+  // which). Change one only with two sources, and change it here too.
+  it('pins the checked dates, so a slip in the table fails here', () => {
+    const on = (id: string) => FESTIVAL_DATES.filter((f) => f.id === id).map((f) => f.on);
+    expect(on('lohri')).toEqual(['2026-01-13', '2027-01-14', '2028-01-14']);
+    expect(on('sankranti')).toEqual(['2026-01-14', '2027-01-15', '2028-01-15']);
+    expect(on('pongal')).toEqual(['2026-01-14', '2027-01-15', '2028-01-15']);
+    expect(on('shivratri')).toEqual(['2026-02-15', '2027-03-06', '2028-02-23']);
+    expect(on('holi')).toEqual(['2026-03-04', '2027-03-22', '2028-03-11']);
+    expect(on('gudi-padwa')).toEqual(['2026-03-19', '2027-04-07', '2028-03-27']);
+    expect(on('eid')).toEqual(['2026-03-21', '2027-03-10', '2028-02-27']);
+    expect(on('baisakhi')).toEqual(['2026-04-14', '2027-04-14', '2028-04-13']);
+    expect(on('bakrid')).toEqual(['2026-05-28', '2027-05-17', '2028-05-06']);
+    expect(on('onam')).toEqual(['2026-08-26', '2027-09-12', '2028-09-01']);
+    expect(on('rakhi')).toEqual(['2026-08-28', '2027-08-17', '2028-08-05']);
+    expect(on('janmashtami')).toEqual(['2026-09-04', '2027-08-25', '2028-08-13']);
+    expect(on('ganesh')).toEqual(['2026-09-14', '2027-09-04', '2028-08-23']);
+    expect(on('navratri')).toEqual(['2026-10-11', '2027-09-30', '2028-09-19']);
+    expect(on('dussehra')).toEqual(['2026-10-20', '2027-10-09', '2028-09-27']);
+    expect(on('karva-chauth')).toEqual(['2026-10-29', '2027-10-18', '2028-10-07']);
+    expect(on('chhath')).toEqual(['2026-11-15', '2027-11-04', '2028-10-23']);
+    expect(FESTIVAL_DATES).toHaveLength(72);
+  });
+
+  it('never offers a festival that has passed; Eid is never stated as certain', () => {
+    expect(festivalsWithin('2026-11-16').map((f) => f.id)).toEqual([]); // Chhath was yesterday
+    expect(nextFestival('2026-11-15')).toMatchObject({ id: 'chhath', inDays: 0 });
+    expect(nextFestival('2027-03-09')).toMatchObject({ id: 'eid', inDays: 1, tentative: true });
+    const eve = todaySuggestions(answerData({ today: '2027-03-09', seeTotals: false })).find((x) => x.id === 'festival');
+    expect(eve?.words).toEqual({ text: '{festival} is expected tomorrow (the moon decides the day)', vars: { festival: 'Eid ul-Fitr' } });
   });
 
   it('turns over at midnight India time, not UTC', () => {
@@ -43,7 +76,7 @@ describe('Today for you', () => {
   it('a festival close by comes early; money stays with the owner; empty cards are left out', () => {
     const s = todaySuggestions(answerData({ today: '2026-11-07', seeTotals: false }));
     expect(s.map((x) => x.id)).toEqual(['festival', 'away', 'winback']);
-    expect(s[0]).toMatchObject({ words: { text: '{festival} is in {days} days', vars: { festival: 'Diwali', days: 1 } }, request: 'Send a Diwali greeting to everyone' });
+    expect(s[0]).toMatchObject({ words: { text: '{festival} is tomorrow', vars: { festival: 'Diwali' } }, request: 'Send a Diwali greeting to everyone' });
     const empty = answerData({ today: '2026-06-02' });
     const quiet = todaySuggestions({ ...empty, snapshot: { ...empty.snapshot, members: [], memberships: [], payments: [], visits: [] }, views: [], allViews: [] });
     expect(quiet).toEqual([]);

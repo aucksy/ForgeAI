@@ -47,11 +47,18 @@ export function todaySuggestions(d: AnswerData): Suggestion[] {
 
   const fest = festivalsWithin(d.today)[0];
   if (fest) {
-    const words = fest.inDays === 0
-      ? line('{festival} is today', { festival: fest.name })
-      : fest.tentative
-        ? line('{festival} is around {days} days away', { festival: fest.name, days: fest.inDays })
-        : line('{festival} is in {days} days', { festival: fest.name, days: fest.inDays });
+    // 15 Nov 2026: a moon-dated day (Eid) is never stated as certain, and one day is "tomorrow", not "1 days".
+    const words = fest.tentative
+      ? fest.inDays === 0
+        ? line('{festival} is expected today (the moon decides the day)', { festival: fest.name })
+        : fest.inDays === 1
+          ? line('{festival} is expected tomorrow (the moon decides the day)', { festival: fest.name })
+          : line('{festival} is around {days} days away', { festival: fest.name, days: fest.inDays })
+      : fest.inDays === 0
+        ? line('{festival} is today', { festival: fest.name })
+        : fest.inDays === 1
+          ? line('{festival} is tomorrow', { festival: fest.name })
+          : line('{festival} is in {days} days', { festival: fest.name, days: fest.inDays });
     add(fest.inDays <= FESTIVAL_URGENT_DAYS ? 20 : 60, { id: 'festival', count: 1, words, action: line('Write a {festival} greeting', { festival: fest.name }), request: `Send a ${fest.name} greeting to everyone` });
   }
 

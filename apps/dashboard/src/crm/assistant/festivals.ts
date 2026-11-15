@@ -3,13 +3,25 @@
  * message ("Happy Diwali, the gym is open 6 to 10"). Dated by hand for 2026-2028, because the lunar
  * festivals move every year and no calendar code can work them out. PURE.
  *
- * Sources (read 12 Nov 2026):
- * - 2026 and 2027: officeholidays.com/countries/india/2026 and /2027 (gazetted and restricted holidays).
- * - Every year, the lunar dates checked against drikpanchang.com/festivals/month/festivals-<month>.html?year=<year>
- *   (Drik Panchang, New Delhi); where the two differed by a day, Drik Panchang's date for North India is used.
- * - Chhath 2027: Drik Panchang's November 2027 page gives two days; 4 Nov (Diwali + 6, as officeholidays) is used.
- * - Eid 2028: drikpanchang.com eid-al-fitr page, bankbazaar.com and publicholidays.in. Eid moves with the moon
- *   sighting, so 2028's two Eids are marked `tentative` and the card says "around".
+ * Every date re-checked on 15 Nov 2026 (owner, 15 Nov: "I don't want you suggesting festivals on days which
+ * are incorrect"), each against at least two of these (dates in India, New Delhi where a city matters):
+ * - Drik Panchang, New Delhi: drikpanchang.com/festivals/month/festivals-<month>.html?year=<year>, and
+ *   drikpanchang.com/sankranti/makar-sankranti-date-time.html?year=2027 (read 15 Nov 2026).
+ * - Government of India, DoPT O.M. F.No.12/2/2023-JCA: 2026 list dated 03.07.2025, 2027 list dated 16.07.2026
+ *   (gazetted + restricted holidays, Delhi), as reproduced at staffnews.in/2025/07/list-of-holidays-2026-*.html
+ *   and staffnews.in/2026/07/list-of-*holidays-for-the-year-2027*.html (read 15 Nov 2026). There is no 2028 list yet.
+ * - DoPT O.M. dated 22.05.2026 moving Bakrid 2026 from 27 to 28 May (peoplematters.in, read 15 Nov 2026); Eid
+ *   ul-Fitr 2026 was 21 Mar in India (Delhi Jama Masjid announcement, deccanherald.com, read 15 Nov 2026).
+ * - truecalendar.com/public-holidays/india/<year> (read 15 Nov 2026); for Lohri, panchang.astrosage.com
+ *   (New Delhi); for Baisakhi 2028, publicholidays.in/vaisakh (read 15 Nov 2026). timeanddate.com blocks robots.
+ * Which day counts: Diwali = Lakshmi Puja day; Navratri = the first day (Ghatasthapana); Holi = the colours day
+ * (Dhulandi), not Holika Dahan; Onam = Thiruvonam; Chhath = the main evening offering (Sandhya Arghya, Shashthi);
+ * Janmashtami = the Smarta / gazetted day. Lohri, Makar Sankranti and Pongal: the day North and West India keep.
+ * Known splits: Makar Sankranti 2027 is 15 Jan (the sun moves at 9:14 pm on 14 Jan, so the holy day is the
+ * 15th; DoPT's restricted list says 14 Jan). Holi 2027 is 22 Mar (Drik Panchang, truecalendar; Holika Dahan
+ * is the evening of 21 Mar); DoPT closes offices on 23 Mar.
+ * Eid moves with the moon sighting: every Eid not yet seen (2027, 2028) is `tentative` and the card says
+ * "around". 2026's Eids are the days India really kept.
  * A year after 2028 has no festivals until this list is extended (the card simply never shows one).
  */
 import { addDays, diffDays, type DateISO } from '../logic/dates';
@@ -33,15 +45,15 @@ const ROWS: readonly Row[] = [
   ['new-year', 'New Year', 'new-year', '01-01', '01-01', '01-01'],
   ['lohri', 'Lohri', null, '01-13', '01-14', '01-14'],
   ['sankranti', 'Makar Sankranti', 'sankranti', '01-14', '01-15', '01-15'],
-  ['pongal', 'Pongal', null, '01-15', '01-15', '01-15'],
+  ['pongal', 'Pongal', null, '01-14', '01-15', '01-15'],
   ['republic', 'Republic Day', 'republic', '01-26', '01-26', '01-26'],
   ['shivratri', 'Mahashivratri', null, '02-15', '03-06', '02-23'],
   ['womens-day', 'Women’s Day', 'womens-day', '03-08', '03-08', '03-08'],
   ['holi', 'Holi', 'holi', '03-04', '03-22', '03-11'],
   ['gudi-padwa', 'Gudi Padwa', null, '03-19', '04-07', '03-27'],
-  ['eid', 'Eid ul-Fitr', 'eid', '03-21', '03-09', '02-27?'],
+  ['eid', 'Eid ul-Fitr', 'eid', '03-21', '03-10?', '02-27?'],
   ['baisakhi', 'Baisakhi', null, '04-14', '04-14', '04-13'],
-  ['bakrid', 'Eid al-Adha', 'eid', '05-27', '05-17', '05-05?'],
+  ['bakrid', 'Eid al-Adha', 'eid', '05-28', '05-17?', '05-06?'],
   ['yoga-day', 'Yoga Day', 'yoga-day', '06-21', '06-21', '06-21'],
   ['independence', 'Independence Day', 'independence', '08-15', '08-15', '08-15'],
   ['onam', 'Onam', null, '08-26', '09-12', '09-01'],
