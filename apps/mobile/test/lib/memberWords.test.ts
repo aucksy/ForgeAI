@@ -94,15 +94,14 @@ export function activeAllow(features: Pick<Features, 'coach'>): typeof ALLOW {
 
 /**
  * R-498 (owner, 14 Nov 2026): his own exception to the banned word "volume", for the green finished line
- * on an exercise card ONLY ("Previous set volume beaten! +200 kg" / "Previous set volume matched") and its
- * copy in the welcome picture. Exactly these strings, in exactly these files; "volume" anywhere else fails.
+ * on an exercise card ONLY ("Previous set volume beaten! +200 kg" / "Previous set volume matched"). The welcome
+ * picture that copied it is gone (R-587). Exactly these strings, in exactly these files; "volume" anywhere else fails.
  */
 const OWNER_EXCEPTIONS: readonly { file: string; text: string; word: string }[] = [
   { file: 'src/tracker/lib/kgTarget.ts', text: 'Previous set volume beaten!', word: 'volume' },
   { file: 'src/tracker/lib/kgTarget.ts', text: 'Previous set volume matched', word: 'volume' },
   // R-516 (owner, 14 Nov 2026, "build it"): the live box's first line, "Previous set volume: 840 kg · Today's target: 880 kg".
   { file: 'src/tracker/lib/kgTarget.ts', text: 'Previous set volume:', word: 'volume' },
-  { file: 'src/onboarding/components/WelcomeSetCard.tsx', text: 'Previous set volume beaten!', word: 'volume' },
 ];
 
 function excepted(v: VisibleText, word: string): boolean {

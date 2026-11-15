@@ -1,6 +1,5 @@
 /**
- * R-273 / R-277 (owner, 1-2 Nov 2026): the one-screen welcome. Its picture is a still copy of the real set
- * card, every button reaches the flow it always did, and no word a member reads is banned.
+ * R-273 / R-277 (owner, 1-2 Nov 2026): the one-screen welcome. Every button reaches the flow it always did, and no word a member reads is banned.
  */
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
@@ -11,34 +10,11 @@ import { START_WORDS } from '@/onboarding/welcomeStart';
 
 const read = (p: string) => readFileSync(resolve(__dirname, '../../src', p), 'utf8');
 
-describe('the welcome set card (a picture, R-276/R-277)', () => {
-  const card = read('onboarding/components/WelcomeSetCard.tsx');
-  it('is one picture to a screen reader, with one label', () => {
-    expect(card).toContain('accessibilityLabel={START_WORDS.exampleCard}');
-    expect(card).toContain('importantForAccessibility="no-hide-descendants"');
-    expect(card).toContain('accessibilityElementsHidden');
-    expect(card).toContain('pointerEvents="none"');
-  });
-  it('shows what the real card shows: the beaten Target line and RPE in the real colours', () => {
-    // R-498 (owner, 14 Nov 2026): the real card's green line, "Previous set volume beaten! +200 kg" over
-    // "Done 1,650 kg · Previous 1,450 kg" (last time 4 x 72.5 x 5), never the old "1,650 kg done · Previous: ...".
-    expect(card).toContain("EXAMPLE_HEAD = 'Previous set volume beaten!'");
-    expect(card).toContain("EXAMPLE_GAIN = '+200 kg'");
-    expect(card).toContain("EXAMPLE_SUB = 'Done 1,650 kg · Previous 1,450 kg'");
-    expect(card).not.toContain('kg done · Previous:');
-    expect(card).not.toContain('beaten (');
-    expect(card).toContain('rpeColor(s.rpe)');
-    expect(card).toMatch(/1:30 · Previous: 23 Oct/);
-    // 4 sets of 75 kg: 5 + 5 + 6 + 6 reps = 1,650 kg, over the 1,500 kg plan (4 x 75 x 5).
-    const sets = [...card.matchAll(/\{ kg: (\d+), reps: (\d+), rpe: (\d+), prevRpe: (\d+) \}/g)].map((m) => m.slice(1).map(Number));
-    expect(sets).toHaveLength(4);
-    expect(sets.reduce((t, [kg, reps]) => t + kg * reps, 0)).toBe(1650);
-    expect(sets.map((s) => s[2])).toEqual([7, 8, 8, 9]);
-  });
-});
-
 describe('the welcome buttons keep their old behaviour', () => {
   const screen = read('onboarding/components/WelcomeScreen.tsx');
+  it('R-587: the sign-in screen has no example card (owner, 15 Nov 2026: "drop the sign-in card")', () => {
+    expect(screen).not.toContain('WelcomeSetCard');
+  });
   it('Continue with Google is the existing WelcomeGoogle (Drive backup, or the gym copy for gym members)', () => {
     expect(screen).toMatch(/<WelcomeGoogle[\s\S]*?onContinue=\{startSteps\}/);
   });

@@ -13,8 +13,6 @@ export const START_WORDS = {
   joinGym: 'Join my gym',
   bringWorkouts: 'Bring workouts',
   useWithout: 'Use without an account',
-  /** Spoken for the decorative set card (hidden from screen readers otherwise). */
-  exampleCard: 'Example of a logged bench press',
   looking: 'Checking your Google Drive for a backup…',
   restoreButton: 'Restore my backup',
   notNow: 'Not now',

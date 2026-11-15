@@ -37,6 +37,8 @@
  * R-587 (owner, 15 Nov 2026): with the phone sign-in on (phoneSignIn.PHONE_SIGN_IN_ON), the first screen shows only
  * "Continue with your phone number" and a "Try another way" link; the link opens every other way in underneath
  * (welcomeStart.startButtons), each working exactly as before. A found member who goes straight into the gym
+ * The bench press example card (R-277 WelcomeSetCard) is gone from this screen (owner, 15 Nov 2026: "drop the
+ * sign-in card"): the first welcome screen already shows one. A found member who goes straight into the gym
  * (phoneSignInApi.goStraightIn) sees "Opening <gym>..." here until the app opens, also when the gym's colours draw
  * this screen afresh.
  */
@@ -100,7 +102,6 @@ import { welcomeGoogleShown, WelcomeGoogle } from './WelcomeGoogle';
 import { useWaitingGym, WelcomeGymCode } from './WelcomeGymCode';
 import { BackRow, OrangePill, OutlinePill, SubHeading, TextLink } from './WelcomeParts';
 import { WelcomePhone } from './WelcomePhone';
-import { WelcomeSetCard } from './WelcomeSetCard';
 
 const GOAL_OPTIONS: readonly RadioOption<Goal>[] = [
   { id: 'muscle', label: 'Build muscle' },
@@ -634,7 +635,6 @@ export function WelcomeScreen() {
               </View>
 
               <View style={{ flexGrow: 1, justifyContent: 'center', gap: 18, paddingVertical: space.xl }}>
-                <WelcomeSetCard />
                 <View style={{ gap: space.sm }}>
                   <Text accessibilityRole="header" style={{ fontFamily: type.display, fontSize: 32, lineHeight: 38, color: color.ink, letterSpacing: -0.3 }}>
                     {START_WORDS.title}

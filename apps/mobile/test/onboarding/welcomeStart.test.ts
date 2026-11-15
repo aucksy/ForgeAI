@@ -32,7 +32,6 @@ describe('welcome start view words (R-131)', () => {
     expect(START_WORDS.joinGym).toBe('Join my gym');
     expect(START_WORDS.bringWorkouts).toBe('Bring workouts');
     expect(START_WORDS.useWithout).toBe('Use without an account');
-    expect(START_WORDS.exampleCard).toBe('Example of a logged bench press');
     expect([START_WORDS.fromHevy, START_WORDS.fromStrong, START_WORDS.fromBackup]).toEqual(['From Hevy', 'From Strong', 'A MettleUp backup']);
     // Google Drive is named only by the Google button's own note; the file row names this phone.
     expect(START_WORDS.driveNote).toMatch(/Google Drive.*Continue with Google/);
