@@ -1,4 +1,4 @@
--- NOT LIVE - needs the owner's yes. Re-runnable. Apply after 0080 (it replaces 0080's owner_gym_page and
+-- APPLIED LIVE 15 Nov 2026 (owner: "yes to 0089 and 0090"); live test 0090 PASS 26. Re-runnable. Apply after 0080 (it replaces 0080's owner_gym_page and
 -- gym_page_public) and 0026/0027 (the HQ guard, actor and audit log).
 -- Test: supabase/tests/0090_gym_page_switch.sql (CI runs it after every migration; pasted into the SQL Editor it always
 -- ends in an error and so changes nothing). 0080's own test still runs against the functions replaced here.

@@ -1,4 +1,4 @@
--- NOT LIVE - needs the owner's yes. Re-runnable. Apply after 0088 (it replaces 0088's self_join_send).
+-- APPLIED LIVE 15 Nov 2026 (owner: "yes to 0089 and 0090"); live test 0089 PASS 57. Re-runnable. Apply after 0088 (it replaces 0088's self_join_send).
 -- Test: supabase/tests/0089_trial_alert_words.sql (CI runs it after every migration; pasted into the SQL Editor it always
 -- ends in an error and so changes nothing). 0077's, 0081's and 0088's own tests still run against this function.
 --
