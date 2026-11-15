@@ -129,6 +129,8 @@ test.describe('phone', () => {
   test('R-561 phone: ready-made cards are Off; Turn on, the next one waits, Turn off asks first, Change picks the numbers', async ({ page }) => {
     await onlineGym(page);
     const server = await challengeServer(page);
+    await setLook(page, { dark: false, hinglish: false });
+    await page.reload();
     await openChallenges(page);
 
     const section = page.getByRole('list', { name: 'Ready-made challenges' });
@@ -250,6 +252,8 @@ test.describe('computer', () => {
       checkins: true,
       challenges: [serverChallenge({ id: 'c-run', title: 'Workout habit', startsOn: '2026-10-10', entrants: 14 })],
     });
+    await setLook(page, { dark: false, hinglish: false });
+    await page.reload();
     await openChallenges(page);
     await expect(card(page, 'regular-month')).toBeVisible({ timeout: 15_000 });
     await expect(card(page, 'workout-habit')).toContainText('This challenge is on.');
