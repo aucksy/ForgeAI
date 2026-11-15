@@ -139,7 +139,10 @@ begin
        and coalesce((v->>'trainer')::boolean, false) then
       return false;
     end if;
-    select * into t from public.gym_talk_threads where thread_id = a.ref_id::uuid;
+    -- Only a thread id is looked up (an alert written some other way keeps 0087's rule; never a failed cast).
+    if a.ref_id ~* '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$' then
+      select * into t from public.gym_talk_threads where thread_id = a.ref_id::uuid;
+    end if;
     if t.thread_id is not null and t.to_who is not null then
       if t.to_who = 'trainer' then
         return t.to_staff is not null and t.to_staff = nullif(v->>'staff', '')::uuid;
