@@ -26,6 +26,10 @@ Done, built and "Not doing" items have no rating. The page sorts by these (Best 
 
 | Item | Impact | Effort |
 |---|---|---|
+| Feature: Plus page and "Find my gym" page closed while Plus is off | Low | Low |
+| Feature: Trainers' charts keep the long-time members' history | Medium | Medium |
+| Feature: Play listing may say "In-app purchases" | Low | Low |
+| Feature: Help box answers "How do I message my gym?" | Low | Low |
 | Task: Release approved 15 Nov: the next app version (phone and watch) and the admin panel update (R-556) | High | Medium |
 | Task: Watch black-screen fix (R-556) | High | Medium |
 | Feature: Members join the gym from their own phone (self sign-up) | High | High |
