@@ -72,12 +72,20 @@ export function sendsFrom(answer) {
 }
 
 /**
+ * F210 (owner, 15 Nov 2026, "yes to the trial words"): the old free-trial line (0088, live) in the approved words; 0089
+ * (NOT LIVE) writes them itself. The same rule as the admin app's gymAlerts.ts trialAlertWords. PURE.
+ */
+export function trialAlertWords(line) {
+  return String(line).replace(/^(.+?) started a free (\d+)-day trial online \((.+?) to (.+?)\)\. Let them in until (.+?), and make them a member on Today when they join\.$/, '$1 started a free $2-day trial online, from $3 to $4. Please let them in until $5. If they join, make them a member from Today.');
+}
+
+/**
  * R-533 (owner, 14 Nov 2026): members ask the owner too, and the admin app's page is "Member questions". The gym's
  * server said "Asha asked a trainer a question. Open Questions to reply." until 0086 (NOT LIVE); this gives old and new
  * lines the same words, as the admin app does (apps/dashboard/src/crm/logic/gymAlerts.ts questionAlertWords). PURE.
  */
 export function alertWords(line) {
-  return String(line)
+  return trialAlertWords(line)
     .replace(/\basked a trainer a question\b/g, 'asked a workout question')
     .replace(/\bOpen Questions( for trainers)?(?= to reply\b)/g, 'Open Member questions');
 }

@@ -69,8 +69,8 @@ test('the join page preview says "Pay at the gym desk." only while join payments
 test('F210: the join page preview names the free trial only when the owner switched it on (0088)', () => {
   const g = { gymName: 'Shakti Gym' };
   assert.equal(selfJoinDesc({ ...g, trial: null }, {}), 'Pick a plan and send your details to Shakti Gym. Pay at the gym desk.');
-  assert.equal(selfJoinDesc({ ...g, trial: { days: 3, feeP: 0 } }, {}), 'Try Shakti Gym free for 3 days, or pick a plan and send your details. Pay at the gym desk.');
-  assert.equal(selfJoinDesc({ ...g, trial: { days: 1, feeP: 0 } }, { JOIN_PAY: 'live' }), 'Try Shakti Gym free for 1 day, or pick a plan and send your details.');
+  assert.equal(selfJoinDesc({ ...g, trial: { days: 3, feeP: 0 } }, {}), 'You can try Shakti Gym free for 3 days, or pick a plan and send your details. Pay at the gym desk.');
+  assert.equal(selfJoinDesc({ ...g, trial: { days: 1, feeP: 0 } }, { JOIN_PAY: 'live' }), 'You can try Shakti Gym free for 1 day, or pick a plan and send your details.');
   assert.equal(selfJoinDesc({ ...g, closed: true, trial: { days: 3 } }, {}), 'Shakti Gym is not taking sign-ups online right now.');
 });
 

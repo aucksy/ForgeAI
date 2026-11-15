@@ -13,6 +13,16 @@ import { QUESTION_WORDS } from './askQuestions';
 const QUESTIONS_PAGE = QUESTION_WORDS.title;
 
 /**
+ * F210 (owner, 15 Nov 2026, "yes to the trial words"): a free trial started online, in the approved words. The live
+ * server (0088) writes "Ravi started a free 3-day trial online (14 Nov to 16 Nov). Let them in until 16 Nov, and make
+ * them a member on Today when they join."; 0089 (NOT LIVE) writes the new words itself; both read the same here. Keep in
+ * step with deploy/hq/panelPush.js trialAlertWords. PURE.
+ */
+export function trialAlertWords(line: string): string {
+  return line.replace(/^(.+?) started a free (\d+)-day trial online \((.+?) to (.+?)\)\. Let them in until (.+?), and make them a member on Today when they join\.$/, '$1 started a free $2-day trial online, from $3 to $4. Please let them in until $5. If they join, make them a member from Today.');
+}
+
+/**
  * R-533 (owner, 14 Nov 2026): a member's workout question, in the words the admin app uses. The live server (0075)
  * writes "Asha asked a trainer a question. Open Questions to reply." (the member may have asked the owner, and the
  * page is "Member questions"); 0086 writes the new words itself once live; both read the same here. PURE.
@@ -160,6 +170,7 @@ export function alertShown(a: GymAlert, orders: readonly AlertOrder[] = []): { l
   let route = a.route;
   let done = false;
   if (a.kind === 'trainer_question') line = questionAlertWords(line);
+  if (a.kind === 'online_join') line = trialAlertWords(line);
   if (a.kind === 'shop_order') {
     const m = SHOP_LINE.exec(line);
     if (m) {

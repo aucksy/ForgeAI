@@ -347,7 +347,7 @@ for (const [size, scheme, lang] of [
     const trial = page.locator('label.plan.trial');
     await expect(trial).toContainText(hi ? '3 दिन मुफ़्त आज़माएँ' : 'Try free for 3 days');
     await expect(trial).toContainText(hi ? 'मुफ़्त' : 'Free');
-    await expect(trial).toContainText(hi ? 'कोई पैसा नहीं।' : 'No payment. Visit the gym for 3 days, then pick a plan at the desk if you want to join.');
+    await expect(trial).toContainText(hi ? 'आपको कुछ नहीं देना है। आप 3 दिन जिम आ सकते हैं।' : 'You pay nothing. You can visit the gym for 3 days. If you want to join after that, pick a plan at the gym desk.');
     await expect(page.locator('#plans .or')).toHaveText(hi ? 'या कोई प्लान चुनें' : 'or pick a plan');
     await expect(page.locator('#plans-legend')).toHaveText(hi ? 'एक चुनें' : 'Pick one');
     await expect(page.locator('#plans label')).toHaveCount(2);
@@ -369,7 +369,7 @@ for (const [size, scheme, lang] of [
     await expect(page.locator('#step3')).toBeVisible();
     await expect(page.locator('#pay-opts')).toBeHidden();
     await expect(page.locator('#pay-legend')).toBeHidden();
-    await expect(page.locator('#pay-note')).toHaveText(hi ? 'फ़्री ट्रायल का कोई पैसा नहीं लगता। इस पेज पर कोई पैसा नहीं लिया जाता।' : 'A free trial costs nothing. Nothing is paid on this page.');
+    await expect(page.locator('#pay-note')).toHaveText(hi ? 'फ़्री ट्रायल का कोई पैसा नहीं लगता। इस पेज पर आपको कुछ नहीं देना है।' : 'The free trial costs nothing. You do not pay anything on this page.');
     await expect(page.locator('#summary')).toContainText(hi ? 'फ़्री ट्रायल (3 दिन)' : 'Free trial (3 days)');
     await expect(page.locator('#summary')).toContainText(hi ? '16 नवंबर 2026' : '16 Nov 2026');
     await expect(page.locator('#send')).toHaveText(hi ? 'मेरा फ़्री ट्रायल शुरू करें' : 'Start my free trial');
@@ -384,8 +384,8 @@ for (const [size, scheme, lang] of [
     await expect(page.locator('#done-plan')).toHaveText(hi ? 'आपका फ़्री ट्रायल: 14 नवंबर 2026 से 16 नवंबर 2026 तक।' : 'Your free trial: 14 Nov 2026 to 16 Nov 2026.');
     await expect(page.locator('#done-pay')).toHaveText(
       hi
-        ? 'पहली बार आने पर जिम के काउंटर पर अपना नाम बताएँ। ट्रायल के बाद भी आना हो, तो काउंटर पर प्लान चुनें।'
-        : 'On your first visit, tell the gym desk your name. To keep training after the trial, pick a plan at the desk.',
+        ? 'जब आप पहली बार जिम आएँ, तो काउंटर पर अपना नाम बताएँ। ट्रायल के बाद भी कसरत जारी रखनी हो, तो आप काउंटर पर प्लान चुन सकते हैं।'
+        : 'When you visit the gym for the first time, tell the front desk your name. If you want to keep training after the trial, you can pick a plan at the desk.',
     );
     await expect(page.locator('#paybox')).toBeHidden();
     // The plan is "_trial", paid at the desk (nothing); never a price, a fee or a total.
@@ -409,7 +409,7 @@ test('F210 page, phone: this number already had a trial here; it picks a plan in
   await page.locator('#health').check();
   await page.locator('#send').click();
   await expect(page.locator('#step2')).toBeVisible();
-  await expect(page.locator('#plan-err')).toHaveText('This number has already had a free trial at this gym. Please pick a plan instead.');
+  await expect(page.locator('#plan-err')).toHaveText('You have already used a free trial at this gym with this mobile number. Please pick a plan to join.');
   // The trial is no longer offered to this person; the plans are.
   await expect(page.locator('label.plan.trial')).toHaveCount(0);
   await expect(page.locator('#sub')).toHaveText('Join in 3 short steps. You pay at the gym desk.');
@@ -461,7 +461,7 @@ test('F210 page, phone: the owner switched trials off while the page was open', 
   await page.locator('#adult').check();
   await page.locator('#health').check();
   await page.locator('#send').click();
-  await expect(page.locator('#plan-err')).toHaveText('This gym is not giving free trials right now. Please pick a plan.');
+  await expect(page.locator('#plan-err')).toHaveText('This gym is not offering free trials right now. Please pick a plan to join.');
   await expect(page.locator('label.plan.trial')).toHaveCount(0);
   await expect(page.locator('#sub')).toHaveText('Join in 3 short steps. You pay at the gym desk.');
   await shot(page, 'jointrial-page-uat-trial-switched-off-phone');

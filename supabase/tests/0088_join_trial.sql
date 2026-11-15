@@ -97,7 +97,9 @@ begin
   checks := checks + 1; fails := fails || pg_temp.t88_is('3version', (select (crm_version = v0 + 1)::text from public.gyms where gym_id = ga), 'true');
   checks := checks + 1; fails := fails || pg_temp.t88_is('3kept', (select count(*) from public.gym_self_joins where gym_id = ga and phone = ravi and trial)::text, '1');
   checks := checks + 1; fails := fails || pg_temp.t88_is('3alert', (select count(*) from public.gym_alerts
-    where gym_id = ga and kind = 'online_join' and ref_id = eid and line like 'Ravi started a free 3-day trial online (%). Let them in until %, and make them a member on Today when they join.')::text, '1');
+    where gym_id = ga and kind = 'online_join' and ref_id = eid and (line like 'Ravi started a free 3-day trial online (%). Let them in until %, and make them a member on Today when they join.'
+           -- 0089 (the approved words, 15 Nov 2026) writes the new line; either is right here.
+           or line like 'Ravi started a free 3-day trial online, from % to %. Please let them in until %. If they join, make them a member from Today.'))::text, '1');
   checks := checks + 1; fails := fails || pg_temp.t88_is('3alertnophone', (select count(*) from public.gym_alerts where gym_id = ga and line like '%90000%')::text, '0');
 
   -- 4. The same number again: one free trial per number per gym. A plan is still fine (and replaces the block).

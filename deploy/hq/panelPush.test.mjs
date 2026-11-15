@@ -4,7 +4,7 @@
 import assert from 'node:assert/strict';
 import { beforeEach, test } from 'node:test';
 
-import { IST_MS, alertWords, digestDue, digestSlot, panelPushKey, pushMessage, resetPanelPush, runPanelPush } from './panelPush.js';
+import { IST_MS, alertWords, trialAlertWords, digestDue, digestSlot, panelPushKey, pushMessage, resetPanelPush, runPanelPush } from './panelPush.js';
 import { b64u, readVapidKey, webPushPublicKey } from './webpush.js';
 import worker, { everyMinute } from './worker.js';
 
@@ -60,6 +60,13 @@ test('R-533: a question alert says "workout question" and "Member questions", ol
   assert.equal(alertWords('Asha asked a trainer a question. Open Questions for trainers to reply.'), want);
   assert.equal(alertWords(want), want);
   assert.equal(alertWords('Asha sent your gym a question. Open Member messages to reply.'), 'Asha sent your gym a question. Open Member messages to reply.');
+});
+
+test('F210 (yes to the trial words, 15 Nov): the old free-trial alert reads in the approved words; the new line stays', () => {
+  const want = 'Ravi started a free 3-day trial online, from 14 Nov to 16 Nov. Please let them in until 16 Nov. If they join, make them a member from Today.';
+  assert.equal(pushMessage({ body: 'Ravi started a free 3-day trial online (14 Nov to 16 Nov). Let them in until 16 Nov, and make them a member on Today when they join.' }).body, want);
+  assert.equal(alertWords(want), want);
+  assert.equal(trialAlertWords('Ravi asked to join your gym online (Monthly, from 14 Nov). Make them a member on Today.'), 'Ravi asked to join your gym online (Monthly, from 14 Nov). Make them a member on Today.');
 });
 
 // ---------------------------------------------------------------- a run, against a stand-in gym server

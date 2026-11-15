@@ -1,7 +1,7 @@
 /** R-506: the gym's alerts list (logic/gymAlerts.ts, from 0075 owner_alerts). */
 import { describe, expect, it } from 'vitest';
 
-import { ALERT_WORDS, questionAlertWords, alertAge, alertHref, alertNotice, alertShown, alertsFor, freshAlerts, gymAlertsFrom, latestAlerts, type GymAlert } from '../../src/crm/logic/gymAlerts';
+import { ALERT_WORDS, questionAlertWords, trialAlertWords, alertAge, alertHref, alertNotice, alertShown, alertsFor, freshAlerts, gymAlertsFrom, latestAlerts, type GymAlert } from '../../src/crm/logic/gymAlerts';
 
 const NOW = Date.UTC(2026, 10, 14, 6, 0, 0);
 const MIN = 60_000;
@@ -82,6 +82,14 @@ describe('gym alerts', () => {
     expect(questionAlertWords('Asha asked a trainer a question. Open Questions to reply.')).toBe(want);
     expect(questionAlertWords('Asha asked a trainer a question. Open Questions for trainers to reply.')).toBe(want);
     expect(questionAlertWords(want)).toBe(want);
+  });
+
+  it('F210 (yes to the trial words, 15 Nov): the live server trial line reads in the approved words', () => {
+    const want = 'Ravi started a free 3-day trial online, from 14 Nov to 16 Nov. Please let them in until 16 Nov. If they join, make them a member from Today.';
+    expect(trialAlertWords('Ravi started a free 3-day trial online (14 Nov to 16 Nov). Let them in until 16 Nov, and make them a member on Today when they join.')).toBe(want);
+    expect(trialAlertWords(want)).toBe(want);
+    const a = { ...list[0], kind: 'online_join' as const, line: 'Ravi started a free 3-day trial online (14 Nov to 16 Nov). Let them in until 16 Nov, and make them a member on Today when they join.' };
+    expect(alertShown(a).line).toBe(want);
   });
 
   it('fresh eyes: a shop line reads the same orders as Shop today', () => {
