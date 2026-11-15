@@ -42,6 +42,11 @@ export const ADMIN_NEWS: readonly AdminNewsEntry[] = [
     id: '2026-11-15',
     lines: [
       {
+        text: 'New: you can check that alerts reach this phone or computer. In Settings, under “Alerts from your members”, tap “Send a test alert”. Within about a minute and a half, it tells you if the notice showed on this device.',
+        go: { label: 'Open Settings', path: '/settings' },
+        feature: true,
+      },
+      {
         text: 'Mobile number boxes now keep only the 10-digit number. When a phone fills in “+91 98765 43210”, the box shows 9876543210, on sign-in, Add member, Enquiries and your join pages.',
       },
       {
@@ -624,18 +629,6 @@ function notifyNewsSeen(): void {
  * the deploy day) in the same commit as the admin-panel deploy (R-333). Never shown before the change is live.
  */
 export const ADMIN_NEWS_PENDING: readonly AdminNewsEntry[] = [
-  {
-    // R-578 (owner, 15 Nov 2026): "Send a test alert". Needs migration 0095 (NOT LIVE) and the admin panel deploy; the
-    // button stays hidden until 0095 is on the gym server. Moves to ADMIN_NEWS with the deploy day only when 0095 is live.
-    id: 'pending-test-alert',
-    lines: [
-      {
-        text: 'New: you can check that alerts reach this phone or computer. In Settings, under “Alerts from your members”, tap “Send a test alert”. Within about a minute and a half, it tells you if the notice showed on this device.',
-        go: { label: 'Open Settings', path: '/settings' },
-        feature: true,
-      },
-    ],
-  },
   {
     // R-571: for the day gym web pages switch on (GYM_PAGES live, docs/gym-page/PLAN.md "Switch-on"). Not before.
     id: 'pending-gym-web-pages',

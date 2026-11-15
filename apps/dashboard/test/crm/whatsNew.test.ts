@@ -107,11 +107,11 @@ describe('the 15 Nov 2026 deploy (R-589)', () => {
     const entry = ADMIN_NEWS.find((e) => e.id === '2026-11-15')!;
     expect(ADMIN_NEWS[0]).toBe(entry);
     const all = entry.lines.map((l) => l.text).join(' ');
-    for (const fact of ['10-digit number', 'Share app link', 'day first', 'Let people join your gym online', 'Branding', 'Saved ✓', 'round button']) {
+    for (const fact of ['10-digit number', 'Share app link', 'day first', 'Let people join your gym online', 'Branding', 'Saved ✓', 'round button', 'Send a test alert']) {
       expect(all, fact).toContain(fact);
     }
-    expect(all).not.toMatch(/test alert|web page|join\.mettleup|Plus/i);
-    expect(ADMIN_NEWS_PENDING.map((e) => e.id)).toEqual(['pending-test-alert', 'pending-gym-web-pages', 'pending-plus-lock']);
+    expect(all).not.toMatch(/web page|join\.mettleup|Plus/i);
+    expect(ADMIN_NEWS_PENDING.map((e) => e.id)).toEqual(['pending-gym-web-pages', 'pending-plus-lock']);
     for (const l of entry.lines) {
       expect(l.text, l.text).toMatch(/^["A-Z]/);
       expect(l.text, l.text).toMatch(/\.$/);
