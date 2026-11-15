@@ -14,7 +14,9 @@ import {
   canSendAnonymous,
   createPretendTalk,
   hasTalkStandIn,
+  talkChoicesFrom,
   talkErrorWords,
+  talkRecipientFrom,
   talkReaders,
   talkRowSub,
   talkSentFrom,
@@ -196,5 +198,36 @@ describe('member words', () => {
       expect(talkReaders(k, 'Iron Paradise')).toMatch(/\.$/);
     }
     expect(TALK_WORDS.anonHint).toMatch(/will not see who sent it/);
+  });
+});
+
+describe('R-586: who a message went to, and the trainers to pick (0096)', () => {
+  const base = { id: 't1', kind: 'question', anonymous: false, createdAt: 1, lastAt: 2, messages: [line('m1', false, 1)] };
+  it('reads "to" and "toName"; an old thread (no "to") has none', () => {
+    expect(talkThreadFrom({ ...base, to: 'trainer', toName: ' Tara   Singh ' })?.to).toEqual({ who: 'trainer', name: 'Tara Singh' });
+    expect(talkThreadFrom({ ...base, kind: 'complaint', to: 'desk', toName: 'x' })?.to).toEqual({ who: 'desk', name: null });
+    expect(talkThreadFrom({ ...base, to: 'owner' })?.to).toEqual({ who: 'owner', name: null });
+    expect(talkThreadFrom(base)?.to).toBeNull();
+    expect(talkThreadFrom({ ...base, to: 'everyone' })?.to).toBeNull();
+  });
+  it('never shows a pair the server refuses: a complaint "to a trainer" or a question "to Gym admin"', () => {
+    expect(talkRecipientFrom('trainer', 'Tara', 'complaint')).toBeNull();
+    expect(talkRecipientFrom('trainer', 'Tara', 'feedback')).toBeNull();
+    expect(talkRecipientFrom('desk', null, 'question')).toBeNull();
+  });
+  it('the trainers to pick: id and name only, no blanks or repeats; "mine" only when it is in the list', () => {
+    expect(
+      talkChoicesFrom({
+        ok: true,
+        mine: 's2',
+        trainers: [{ id: 's2', name: 'Vikram  Rao', phone: '98290 11111' }, { id: 's1', name: 'Tara Singh' }, { id: 's1', name: 'Again' }, { id: 's3', name: ' ' }, 'x'],
+      }),
+    ).toEqual({ mine: 's2', trainers: [{ id: 's2', name: 'Vikram Rao' }, { id: 's1', name: 'Tara Singh' }] });
+    expect(talkChoicesFrom([{ ok: true, mine: 'gone', trainers: [] }])).toEqual({ mine: null, trainers: [] });
+    expect(talkChoicesFrom({ ok: true })).toBeNull();
+    expect(talkChoicesFrom(null)).toBeNull();
+  });
+  it('a trainer who is no longer listed: plain words', () => {
+    expect(talkErrorWords('NOT_TRAINER')).toBe('This trainer is no longer listed at your gym. Please pick someone else.');
   });
 });

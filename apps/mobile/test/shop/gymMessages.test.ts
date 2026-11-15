@@ -23,8 +23,14 @@ import {
   questionHint,
   sendTarget,
   sideForRoute,
+  recipientLabel,
+  recipientOptions,
+  recipientReaders,
+  sendRecipient,
   startSide,
+  talkAudience,
   trainerChips,
+  TO_WORDS,
 } from '@/shop/gymMessages';
 import { TALK_KINDS, TALK_WORDS, type TalkThread } from '@/shop/gymTalk';
 
@@ -239,5 +245,117 @@ describe('member words', () => {
     expect(MSG_WORDS.side.trainer).toBe('A trainer');
     expect(MSG_WORDS.askHint).toContain(`"${MSG_WORDS.side.trainer}"`);
     expect(MSG_WORDS.rowTitle).toBe('Message your gym');
+  });
+});
+
+// ------------------------------------------------------------------ R-586: the member picks who reads it (0096)
+describe('R-586: who reads it, by type and recipient (the server rule, 0096 + 0087)', () => {
+  it('no recipient (an older app): exactly as before', () => {
+    expect(talkAudience('question', null)).toEqual({ owner: true, desk: true, trainers: 'all', alerted: 'readers' });
+    expect(talkAudience('feedback', null)).toEqual({ owner: true, desk: true, trainers: 'none', alerted: 'readers' });
+    expect(talkAudience('complaint', null)).toEqual({ owner: true, desk: false, trainers: 'none', alerted: 'readers' });
+  });
+  it('"Gym owner": the owner only, whatever the type', () => {
+    for (const k of TALK_KINDS) expect(talkAudience(k, 'owner')).toEqual({ owner: true, desk: false, trainers: 'none', alerted: 'readers' });
+  });
+  it('"Gym admin": the owner and the front desk, never trainers', () => {
+    expect(talkAudience('feedback', 'desk')).toEqual({ owner: true, desk: true, trainers: 'none', alerted: 'readers' });
+    expect(talkAudience('complaint', 'desk')).toEqual({ owner: true, desk: true, trainers: 'none', alerted: 'readers' });
+  });
+  it('a question to a trainer: that trainer only is alerted; the owner can read it; never the desk or other trainers', () => {
+    expect(talkAudience('question', 'trainer')).toEqual({ owner: true, desk: false, trainers: 'one', alerted: 'trainer' });
+  });
+  it('a complaint or feedback can never reach a trainer, even if a trainer were asked for', () => {
+    for (const k of ['feedback', 'complaint'] as const) {
+      for (const to of [null, 'owner', 'desk', 'trainer'] as const) expect(talkAudience(k, to).trainers, `${k} ${to}`).toBe('none');
+    }
+  });
+});
+
+describe('R-586: the chips under "Who should read it?"', () => {
+  const choices = { mine: 's-vik', trainers: [{ id: 's-tara', name: 'Tara Singh' }, { id: 's-vik', name: 'Vikram Rao' }] };
+  it('Question: "Gym owner", then the member’s own trainer, then the rest', () => {
+    const o = recipientOptions('question', choices);
+    expect(o.map(recipientLabel)).toEqual(['Gym owner', 'Vikram Rao (your trainer)', 'Tara Singh']);
+    expect(o.map((x) => x.key)).toEqual(['owner', 'trainer:s-vik', 'trainer:s-tara']);
+  });
+  it('no trainer of their own: "Gym owner", then the trainers as listed', () => {
+    expect(recipientOptions('question', { ...choices, mine: null }).map(recipientLabel)).toEqual(['Gym owner', 'Tara Singh', 'Vikram Rao']);
+  });
+  it('Feedback and Complaint: "Gym owner" and "Gym admin" only, never a trainer', () => {
+    for (const k of ['feedback', 'complaint'] as const) {
+      const o = recipientOptions(k, choices);
+      expect(o.map(recipientLabel)).toEqual(['Gym owner', 'Gym admin']);
+      expect(o.some((x) => x.to === 'trainer')).toBe(false);
+    }
+  });
+  it('a gym with no trainers listed: only "Gym owner" for a question', () => {
+    expect(recipientOptions('question', { mine: null, trainers: [] }).map(recipientLabel)).toEqual(['Gym owner']);
+  });
+});
+
+describe('R-586: what is sent', () => {
+  const choices = { mine: null, trainers: [{ id: 's-tara', name: 'Tara Singh' }] };
+  it('the pick, when it is one of this type’s chips', () => {
+    expect(sendRecipient('question', choices, 'trainer:s-tara')).toMatchObject({ to: 'trainer', staffId: 's-tara', name: 'Tara Singh' });
+    expect(sendRecipient('complaint', choices, 'desk')).toMatchObject({ to: 'desk', staffId: null });
+    expect(sendRecipient('feedback', choices, 'owner')).toMatchObject({ to: 'owner', staffId: null });
+  });
+  it('a complaint or feedback with a trainer picked goes to "Gym owner", never to the trainer', () => {
+    expect(sendRecipient('complaint', choices, 'trainer:s-tara')).toMatchObject({ to: 'owner', staffId: null });
+    expect(sendRecipient('feedback', choices, 'trainer:s-tara')).toMatchObject({ to: 'owner', staffId: null });
+  });
+  it('a question with "Gym admin" picked, or a trainer no longer listed, goes to "Gym owner"', () => {
+    expect(sendRecipient('question', choices, 'desk')).toMatchObject({ to: 'owner' });
+    expect(sendRecipient('question', choices, 'trainer:s-gone')).toMatchObject({ to: 'owner' });
+  });
+  it('the page sends through sendRecipient and sendTalkTo, and keeps the old send for a server without 0096', () => {
+    const page = read('shop', 'GymTalkScreen.tsx');
+    expect(page).toMatch(/sendRecipient\(kind, toChoices, toKey\)/);
+    expect(page).toMatch(/sendTalkTo\(link, kind, anonymous && canSendAnonymous\(kind\), t, recipient\.to, recipient\.staffId\)/);
+    expect(page).toMatch(/: await sendTalk\(link, kind, anonymous && canSendAnonymous\(kind\), t\)/);
+    // With 0096 there is no "A trainer" side (0053): every message goes to the gym's conversations with its recipient.
+    expect(page).toMatch(/const trainerOpen = !toMode && /);
+  });
+  it('a send with a recipient never falls back to a send without one (that could reach more people)', () => {
+    const sync = read('shop', 'gymTalkSync.ts');
+    const body = sync.slice(sync.indexOf('export async function sendTalkTo'), sync.indexOf('/** Write back in a thread.'));
+    expect(body).toMatch(/apiTalkSendTo\(/);
+    expect(body).not.toMatch(/apiTalkSend\(/);
+  });
+});
+
+describe('R-586: the words', () => {
+  const tara = { key: 'trainer:s-tara', to: 'trainer', staffId: 's-tara', name: 'Tara Singh', mine: false } as const;
+  const owner = { key: 'owner', to: 'owner', staffId: null, name: null, mine: false } as const;
+  const desk = { key: 'desk', to: 'desk', staffId: null, name: null, mine: false } as const;
+  it('who reads it, naming the gym, matching talkAudience', () => {
+    expect(recipientReaders('question', owner, 'Iron Paradise')).toBe('Only the owner of Iron Paradise reads your question. The front desk and trainers do not see it.');
+    expect(recipientReaders('question', tara, 'Iron Paradise')).toBe('Tara Singh reads your question and gets a notification. The owner of Iron Paradise can read it too.');
+    expect(recipientReaders('feedback', owner, 'Iron Paradise')).toBe('Only the owner of Iron Paradise reads your feedback. The front desk and trainers do not see it.');
+    expect(recipientReaders('feedback', desk, 'Iron Paradise')).toBe('The owner and front desk at Iron Paradise read your feedback. Your trainers do not see it.');
+    expect(recipientReaders('complaint', owner, 'Iron Paradise')).toBe('Only the owner of Iron Paradise reads your complaint. The front desk and trainers do not see it.');
+    expect(recipientReaders('complaint', desk, ' ')).toBe('The owner and front desk at your gym read your complaint. Your trainers do not see it.');
+  });
+  it('the line on each message says who it went to; an old message says nothing', () => {
+    expect(TO_WORDS.toLine({ who: 'owner', name: null })).toBe('To: Gym owner');
+    expect(TO_WORDS.toLine({ who: 'desk', name: null })).toBe('To: Gym admin');
+    expect(TO_WORDS.toLine({ who: 'trainer', name: 'Tara Singh' })).toBe('To: Tara Singh');
+    expect(read('shop', 'GymTalkScreen.tsx')).toContain('t.to ? ` · ${TO_WORDS.toLine(t.to)}` : \'\'');
+  });
+  it('plain words, none of the banned ones, short, full sentences end with a full stop', () => {
+    const BANNED = /\b(volume|sessions?|PRs?|sync(ing|ed)?|chat|thread|ticket|anonymous|submit|recipient|staff)\b/i;
+    const sentences = [
+      TO_WORDS.questionHint,
+      TO_WORDS.noTrainers,
+      ...(['question', 'feedback', 'complaint'] as const).flatMap((k) => [owner, desk, tara].map((o) => recipientReaders(k, o, 'Iron Paradise Fitness'))),
+      TALK_WORDS.errNotTrainer,
+    ];
+    for (const l of [...sentences, TO_WORDS.label, TO_WORDS.owner, TO_WORDS.desk, TO_WORDS.mine('Vikram Rao')]) {
+      expect(l, l).not.toMatch(BANNED);
+      expect(l.length, l).toBeLessThanOrEqual(120);
+      expect(l, l).not.toMatch(/MettleUp|ForgeAI/);
+    }
+    for (const l of sentences) expect(l, l).toMatch(/\.$/);
   });
 });

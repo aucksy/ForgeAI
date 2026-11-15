@@ -23,6 +23,7 @@ import {
   talkStatusLine,
   talkThreadAnswerFrom,
   talkThreadFrom,
+  talkToLine,
   waitingOf,
   shownOf,
   type TalkThread,
@@ -212,5 +213,36 @@ describe('hidden until the server has 0069', () => {
     callMock.mockResolvedValueOnce({ ok: true, thread: row({ done: true }) });
     expect((await api.setTalkDone('k', 't1', true)).done).toBe(true);
     expect(callMock).toHaveBeenLastCalledWith('owner_talk_done', { p_key: 'k', p_thread: 't1', p_done: true });
+  });
+});
+
+describe('R-586: who the member sent it to (0096)', () => {
+  it('reads "to" and "toName"; a message from an older app has none', () => {
+    expect(talkThreadFrom(row({ to: 'trainer', toName: ' Tara   Singh ', toStaff: 's-tara' }))).toMatchObject({ to: 'trainer', toName: 'Tara Singh' });
+    expect(talkThreadFrom(row({ kind: 'complaint', to: 'desk', toName: 'x' }))).toMatchObject({ to: 'desk', toName: null });
+    expect(talkThreadFrom(row({ kind: 'feedback', to: 'owner' }))).toMatchObject({ to: 'owner', toName: null });
+    expect(talkThreadFrom(row())).toMatchObject({ to: null, toName: null });
+  });
+  it('never shows a pair the server refuses: a complaint to a trainer, a question to "Gym admin"', () => {
+    expect(talkThreadFrom(row({ kind: 'complaint', to: 'trainer', toName: 'Tara' }))!.to).toBeNull();
+    expect(talkThreadFrom(row({ kind: 'question', to: 'desk' }))!.to).toBeNull();
+    expect(talkThreadFrom(row({ to: 'everyone' }))!.to).toBeNull();
+  });
+  it('each card says who it went to', () => {
+    expect(talkToLine({ to: 'owner', toName: null })).toBe('To: Gym owner');
+    expect(talkToLine({ to: 'desk', toName: null })).toBe('To: Gym admin');
+    expect(talkToLine({ to: 'trainer', toName: 'Tara Singh' })).toBe('To: Tara Singh');
+    expect(talkToLine({ to: 'trainer', toName: null })).toBe('To: a trainer');
+    expect(talkToLine({ to: null, toName: null })).toBeNull();
+  });
+  it('the desk gets a Complaints button only when a member sent one to "Gym admin" (the server shows it); a trainer never gets Feedback', () => {
+    expect(talkFilters('staff', true, true)).toEqual(['all', 'question', 'feedback', 'complaint']);
+    expect(talkFilters('staff', true, false)).toEqual(['all', 'question', 'feedback']);
+    expect(talkFilters('staff', false, false)).toEqual(['all', 'question']);
+    expect(talkFilters('owner', true, false)).toEqual(['all', 'question', 'feedback', 'complaint']);
+    expect(talkFilterFrom('complaint', 'staff')).toBe('all');
+  });
+  it('the desk note says what it does not see, truthfully before and after 0096', () => {
+    expect(W.staffNote).toBe('Messages a member sent only to the owner or to a trainer are not shown here. Complaints show here only when the member picked "Gym admin".');
   });
 });

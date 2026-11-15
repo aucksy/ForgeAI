@@ -170,7 +170,7 @@ test('Member messages: not ready, the list, types, reply, done, the desk, a gone
   const deskMain = desk.getByRole('main');
   await expect(deskMain.getByTestId('member-message')).toHaveCount(2);
   await expect(deskMain).not.toContainText('cardio room');
-  await expect(deskMain).toContainText('Complaints go to the owner only, so they are not shown here.');
+  await expect(deskMain).toContainText('Complaints show here only when the member picked "Gym admin".');
   await expect(deskMain.getByRole('group', { name: 'Show' }).getByRole('button', { name: /^Complaints/ })).toHaveCount(0);
   await expectFitsPhone(desk, 'on the desk’s Member messages');
   await shot(desk, 'phone-member-messages-7-desk');

@@ -84,6 +84,9 @@ declare
     'owner_trainer_schedule','owner_save_trainer_profile','owner_book_pt','owner_cancel_pt',
     -- 0069: Message your gym (members check their member key and act on their own threads only; the gym: owner or desk key, complaints for the owner only).
     'member_talk_unread','member_talk_list','member_talk_send','member_talk_reply','owner_talk_count','owner_talk_list','owner_talk_reply','owner_talk_done',
+    -- 0096: the member picks who reads a message (both check the member key; the choices answer only the names of
+    -- their own gym's ticked trainers, nothing else; sending writes only that member's own thread, as member_talk_send).
+    'member_talk_choices','member_talk_send_to',
     -- 0075: the gym's alerts list (checks the key first: owner, desk or trainer; each sees only what they may, complaints for the owner only).
     'owner_alerts',
     -- 0076: alerts with the admin app closed (each checks the key first; a browser is saved for that sign-in only; the OWNER changes when the rest come).

@@ -11,6 +11,11 @@
  * and feedback; a trainer sees questions only (R-552, owner 14 Nov 2026: "Feedback goes to you and the front desk
  * only", 0087); nobody but the owner sees complaints. Feedback sent "without my name" reaches the gym with no name,
  * phone or member id at all (the server leaves them out), so this file has nothing to hide itself.
+ *
+ * R-586 (owner, 15 Nov 2026; 0096, NOT live until his yes): the member picks who reads it. A question goes to "Gym
+ * owner" (the owner only) or one trainer by name (that trainer, and the owner can read it); feedback and complaints to
+ * "Gym owner" or "Gym admin" (the owner and the front desk, never trainers). Each card says who it went to ("To: ...").
+ * A message from an older app has no recipient and follows the rule above; a server without 0096 sends none.
  */
 
 import { whenText } from './askQuestions';
@@ -23,6 +28,8 @@ export const TALK_THREAD_MAX = 50;
 
 export type TalkKind = 'question' | 'feedback' | 'complaint';
 export const TALK_KINDS: readonly TalkKind[] = ['question', 'feedback', 'complaint'];
+/** R-586: who the member sent it to ('desk' = "Gym admin": the owner and the front desk). */
+export type TalkTo = 'owner' | 'desk' | 'trainer';
 
 export interface TalkLine {
   id: string;
@@ -52,6 +59,10 @@ export interface TalkThread {
   doneBy: string | null;
   /** The member opened the gym's newest reply. */
   readByMember: boolean;
+  /** R-586: who the member sent it to; null = sent before members could pick (or a server without 0096). */
+  to: TalkTo | null;
+  /** The trainer's name ('trainer' only). */
+  toName: string | null;
   /** Oldest first. */
   messages: TalkLine[];
 }
@@ -100,6 +111,9 @@ export function talkThreadFrom(v: unknown): TalkThread | null {
   const anonymous = v.anonymous === true && v.kind === 'feedback';
   const done = v.done === true;
   const lastFromMember = !messages[messages.length - 1].fromGym;
+  // The same pairs the server allows (a trainer: questions only; "Gym admin": feedback and complaints only).
+  const to: TalkTo | null =
+    (v.to === 'trainer' && v.kind === 'question') || (v.to === 'desk' && v.kind !== 'question') || v.to === 'owner' ? (v.to as TalkTo) : null;
   return {
     id,
     kind: v.kind,
@@ -115,6 +129,8 @@ export function talkThreadFrom(v: unknown): TalkThread | null {
     doneAt: done ? num(v.doneAt) : null,
     doneBy: done ? str(v.doneBy, 80) || null : null,
     readByMember: v.readByMember === true,
+    to,
+    toName: to === 'trainer' ? str(v.toName, 80).replace(/\s+/g, ' ') || null : null,
     messages,
   };
 }
@@ -157,12 +173,14 @@ export function talkThreadAnswerFrom(raw: unknown): TalkThread | null {
 export type TalkFilter = 'all' | TalkKind;
 
 /**
- * The type buttons on top: the front desk never gets complaints, so no Complaints button for them; a trainer never
- * gets feedback either (R-552), so no Feedback button for them. PURE.
+ * The type buttons on top: the front desk gets complaints only when a member sent one to "Gym admin" (R-586), so a
+ * Complaints button only when the list has one; a trainer never gets feedback (R-552), so no Feedback button for them.
+ * PURE.
  */
-export function talkFilters(role: 'owner' | 'staff', seesFeedback = true): TalkFilter[] {
+export function talkFilters(role: 'owner' | 'staff', seesFeedback = true, hasComplaints = false): TalkFilter[] {
   if (role === 'owner') return ['all', 'question', 'feedback', 'complaint'];
-  return seesFeedback ? ['all', 'question', 'feedback'] : ['all', 'question'];
+  const out: TalkFilter[] = seesFeedback ? ['all', 'question', 'feedback'] : ['all', 'question'];
+  return hasComplaints ? [...out, 'complaint'] : out;
 }
 
 /**
@@ -214,6 +232,14 @@ export function talkName(t: Pick<TalkThread, 'anonymous' | 'name'>): string {
   return t.name ?? MEMBER_MESSAGE_WORDS.aMember;
 }
 
+/** R-586: who the member sent it to, for the card; null for a message from an older app. PURE. */
+export function talkToLine(t: Pick<TalkThread, 'to' | 'toName'>): string | null {
+  if (t.to === 'owner') return MEMBER_MESSAGE_WORDS.toOwner;
+  if (t.to === 'desk') return MEMBER_MESSAGE_WORDS.toDesk;
+  if (t.to === 'trainer') return MEMBER_MESSAGE_WORDS.toTrainer(t.toName);
+  return null;
+}
+
 /** Who wrote a line, with when. PURE. */
 export function talkLineHead(t: Pick<TalkThread, 'anonymous' | 'name'>, m: TalkLine, today: DateISO): string {
   const who = m.fromGym ? MEMBER_MESSAGE_WORDS.gymLine(m.who) : t.anonymous ? MEMBER_MESSAGE_WORDS.theMember : (t.name ?? MEMBER_MESSAGE_WORDS.aMember);
@@ -233,7 +259,8 @@ export const MEMBER_MESSAGE_WORDS = {
   title: 'Member messages',
   navHint: 'Questions, feedback and complaints from members',
   intro: 'Members write to you from "Message your gym" on the Gym tab of their app. Your reply shows in their app, and on their phone if notifications are on.',
-  staffNote: 'Complaints go to the owner only, so they are not shown here.',
+  // R-586: members now pick who reads a message; older messages follow the old rule (complaints: the owner only).
+  staffNote: 'Messages a member sent only to the owner or to a trainer are not shown here. Complaints show here only when the member picked "Gym admin".',
   /** A trainer's note (R-552): no feedback and no complaints on their page. */
   trainerNote: 'Feedback goes to the owner and front desk, and complaints go to the owner only, so they are not shown here.',
   keptNote: 'Messages are deleted 180 days after the last one in a conversation, or as soon as the member leaves the gym.',
@@ -250,6 +277,10 @@ export const MEMBER_MESSAGE_WORDS = {
   aMember: 'A member',
   theMember: 'The member',
   anonName: 'A member (name hidden)',
+  // R-586: who the member sent it to (what the member picked in their app).
+  toOwner: 'To: Gym owner',
+  toDesk: 'To: Gym admin',
+  toTrainer: (name: string | null): string => `To: ${name ?? 'a trainer'}`,
   anonNote: 'The member sent this without their name. You can still reply here.',
   gymLine: (who: string | null): string => (who ? `${who} replied` : 'The gym replied'),
   replyLabel: 'Your reply',

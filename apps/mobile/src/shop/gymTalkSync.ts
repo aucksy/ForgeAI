@@ -10,8 +10,8 @@
  */
 import Constants from 'expo-constants';
 
-import { apiTalkList, apiTalkReply, apiTalkSend, apiTalkUnread } from './gymApi';
-import { PretendRefusal, createPretendTalk, hasTalkStandIn, talkErrorWords, type TalkKind, type TalkThread } from './gymTalk';
+import { apiTalkChoices, apiTalkList, apiTalkReply, apiTalkSend, apiTalkSendTo, apiTalkUnread } from './gymApi';
+import { PretendRefusal, createPretendTalk, hasTalkStandIn, talkErrorWords, type TalkChoices, type TalkKind, type TalkThread, type TalkTo } from './gymTalk';
 import { useGymShop } from './gymStore';
 import { useGymTalk } from './gymTalkStore';
 import type { GymLink } from './types';
@@ -22,6 +22,8 @@ export { talkUnreadFor, useGymTalk } from './gymTalkStore';
 const UNREAD_EVERY_MS = 5 * 60 * 1000;
 
 let missing = false;
+/** R-586: the server has no 0096 (member_talk_choices): the page keeps its old choice of side. */
+let choicesMissing = false;
 let lastAsked = 0;
 const standInBuild = hasTalkStandIn(Constants.expoConfig?.extra);
 let pretend: ReturnType<typeof createPretendTalk> | null = null;
@@ -170,6 +172,48 @@ export async function sendTalk(link: GymLink, kind: TalkKind, anonymous: boolean
   }
 }
 
+/**
+ * R-586 (0096): the trainers this member may pick by name. null = this server has no 0096 (remembered for this run),
+ * the pretend gym, offline, or not known: the page then works as before (no recipient). Never throws.
+ */
+export async function readTalkChoices(link: GymLink): Promise<TalkChoices | null> {
+  if (pretendGym() || missing || choicesMissing) return null;
+  try {
+    const r = await apiTalkChoices(link.memberKey);
+    if (r.ok) return r.data;
+    if ('missing' in r) {
+      if (!choicesMissing) console.log('[talk] the gym server cannot take a recipient yet (0096 not live); the page stays as before');
+      choicesMissing = true;
+      return null;
+    }
+    if (r.error.kind !== 'offline' && r.error.kind !== 'timeout') console.warn('[talk] could not read the trainers to pick', r.error.kind, r.message ?? '');
+    return null;
+  } catch (e) {
+    console.warn('[talk] reading the trainers to pick failed', e);
+    return null;
+  }
+}
+
+/**
+ * R-586 (0096): start a thread to who the member picked. Never falls back to a send with no recipient (that could
+ * reach more people than the member picked). Never throws.
+ */
+export async function sendTalkTo(link: GymLink, kind: TalkKind, anonymous: boolean, text: string, to: TalkTo, staffId: string | null): Promise<TalkSend> {
+  try {
+    const r = await apiTalkSendTo(link.memberKey, kind, anonymous, text, to, staffId);
+    if (r.ok) return { ok: true, thread: r.data };
+    if ('missing' in r) {
+      console.warn('[talk] the message with a recipient was refused: 0096 is not on the server');
+      return { ok: false, words: talkErrorWords(undefined) };
+    }
+    if (r.error.kind !== 'offline' && r.error.kind !== 'timeout') console.warn('[talk] the message was not accepted', r.error.kind, r.message ?? '');
+    return { ok: false, words: talkErrorWords(r.message) };
+  } catch (e) {
+    console.warn('[talk] sending failed', e);
+    return { ok: false, words: talkErrorWords(undefined) };
+  }
+}
+
 /** Write back in a thread. Never throws. */
 export async function replyTalk(link: GymLink, threadId: string, text: string): Promise<TalkSend> {
   const p = pretendGym();
@@ -189,6 +233,7 @@ export async function replyTalk(link: GymLink, threadId: string, text: string): 
 /** Tests only. */
 export function resetGymTalkForTests(): void {
   missing = false;
+  choicesMissing = false;
   lastAsked = 0;
   pretend = null;
   useGymTalk.setState({ memberId: null, unread: 0, mode: null });

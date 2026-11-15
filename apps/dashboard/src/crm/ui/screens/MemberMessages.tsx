@@ -29,6 +29,7 @@ import {
   talkLineHead,
   talkName,
   talkStatusLine,
+  talkToLine,
   type TalkFilter,
   type TalkList,
   type TalkThread,
@@ -95,7 +96,8 @@ export function MemberMessagesScreen({ startWith }: { startWith?: string } = {})
 
   const role = load.state === 'ready' ? load.data.role : 'owner';
   const seesFeedback = load.state === 'ready' ? load.data.seesFeedback : true;
-  const filters = talkFilters(role, seesFeedback);
+  const hasComplaints = load.state === 'ready' && load.data.threads.some((x) => x.kind === 'complaint');
+  const filters = talkFilters(role, seesFeedback, hasComplaints);
   const shown = filters.includes(filter) ? filter : 'all';
   const parts = useMemo(() => (load.state === 'ready' ? splitTalk(load.data.threads, shown) : null), [load, shown]);
 
@@ -281,6 +283,12 @@ function ThreadCard({
             )}
           </strong>
           <Pill tone={KIND_TONE[t.kind]}>{W.kind[t.kind]}</Pill>
+          {/* R-586: who the member sent it to. */}
+          {talkToLine(t) ? (
+            <span data-testid="member-message-to" style={{ ...small, fontWeight: 600, color: color.ink }}>
+              {talkToLine(t)}
+            </span>
+          ) : null}
         </Row>
         {t.anonymous ? <p style={small}>{W.anonNote}</p> : t.phone ? <p style={small}>{t.phone}</p> : null}
         {t.messages.map((m) => (

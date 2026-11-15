@@ -16,6 +16,10 @@
  *    read on both sides (readTalkThreads; saveAskSeen), so the red count on the row and the Gym tab goes.
  * A gym reply's notification opens /shop/message (kind 'gym_reply'), a trainer's /shop/ask (kind 'trainer_reply');
  * deploy/hq/push.js is unchanged. A server without 0069 / 0053: that side is not offered; neither: "not ready".
+ * R-586 (owner, 15 Nov 2026; 0096): on a server with 0096 the member picks the type, then "Who should read it?":
+ * a Question goes to "Gym owner" or ONE trainer by name (their own trainer first); Feedback and a Complaint to "Gym
+ * owner" or "Gym admin" (the owner and the front desk, never trainers). There is no "The gym" / "A trainer" choice then;
+ * old workout questions stay in the list. A server without 0096: everything above, exactly as before.
  */
 import { Redirect, useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useRef, useState, type ReactNode } from 'react';
@@ -28,9 +32,26 @@ import { usePhonePrefs } from '@/tracker/phone/phonePrefs';
 import { ASK_MAX, ASK_WORDS, askShown, askWhen, closedLine, defaultPick, openQuestion, type AskAccess, type AskChoices, type AskQuestion } from './askTrainer';
 import { readAskAccess } from './askAccessRead';
 import { saveAskSeen } from './askReplySync';
-import { MSG_WORDS, kindsFor, mergeMessages, messageSides, messagesIntro, questionHint, sendTarget, startSide, trainerChips, type MessageSide } from './gymMessages';
-import { TALK_MAX, TALK_WORDS, canSendAnonymous, talkReaders, talkStatus, type TalkKind, type TalkThread } from './gymTalk';
-import { readTalkThreads, replyTalk, sendTalk, talkIsStandIn, talkKnownMissing } from './gymTalkSync';
+import {
+  MSG_WORDS,
+  TO_WORDS,
+  kindsFor,
+  mergeMessages,
+  messageSides,
+  messagesIntro,
+  questionHint,
+  recipientLabel,
+  recipientOptions,
+  recipientReaders,
+  sendRecipient,
+  sendTarget,
+  startSide,
+  trainerChips,
+  type MessageSide,
+  type RecipientKey,
+} from './gymMessages';
+import { TALK_MAX, TALK_WORDS, canSendAnonymous, talkReaders, talkStatus, type TalkChoices, type TalkKind, type TalkThread } from './gymTalk';
+import { readTalkChoices, readTalkThreads, replyTalk, sendTalk, sendTalkTo, talkIsStandIn, talkKnownMissing } from './gymTalkSync';
 import { useGymShop } from './gymStore';
 import { useGymHydrated } from './shopSource';
 import { askServerKnownMissing, readAskChoices, readAskQuestions, sendAskQuestion, withdrawAskQuestion } from './trainerSync';
@@ -82,13 +103,24 @@ function GymMessages({ link, start }: { link: GymLink; start: MessageSide }) {
   const [access, setAccess] = useState<AskAccess | null>(null);
   // The server said NO_PLAN on this visit: "A trainer" goes until the page is opened again.
   const [refused, setRefused] = useState(false);
+  // R-586: the trainers to pick by name (0096); null = this server cannot take a recipient (the page as before).
+  const [toChoices, setToChoices] = useState<TalkChoices | null>(null);
+  const [toKey, setToKey] = useState<RecipientKey>('owner');
 
   const fetchAll = useCallback(
     async (byPull: boolean) => {
       if (byPull) setPulling(true);
-      const [talk, choices, questions, a] = await Promise.all([readTalkThreads(link), readAskChoices(link), readAskQuestions(link), readAskAccess(link)]);
+      const [talk, choices, questions, a, to] = await Promise.all([
+        readTalkThreads(link),
+        readAskChoices(link),
+        readAskQuestions(link),
+        readAskAccess(link),
+        readTalkChoices(link),
+      ]);
       setPulling(false);
       if (a) setAccess(a);
+      // Offline: keep the trainers shown before.
+      if (to) setToChoices(to);
       const ask = choices && questions ? { choices, list: questions } : null;
       if (!talk && !ask) {
         const missing = talkKnownMissing() && askServerKnownMissing();
@@ -116,13 +148,17 @@ function GymMessages({ link, start }: { link: GymLink; start: MessageSide }) {
   );
 
   const pickKind = (k: TalkKind): void => {
+    if (k !== kind) setToKey('owner');
     setKind(k);
     if (!canSendAnonymous(k)) setAnonymous(false);
     if (note) setNote(null);
   };
 
   const ready = load.state === 'ready' ? load : null;
-  const trainerOpen = !refused && !!ready?.ask && askShown(true, access)?.kind === 'open';
+  // R-586: with 0096 the member picks who reads it; the "A trainer" side (0053) is then not offered.
+  const toMode = !!ready?.talk && toChoices !== null;
+  const recipient = toMode && toChoices ? sendRecipient(kind, toChoices, toKey) : null;
+  const trainerOpen = !toMode && !refused && !!ready?.ask && askShown(true, access)?.kind === 'open';
   const sides = messageSides(!!ready?.talk, trainerOpen);
   const side = startSide(sides, picked ?? start);
 
@@ -161,7 +197,9 @@ function GymMessages({ link, start }: { link: GymLink; start: MessageSide }) {
       void fetchAll(false);
       return;
     }
-    const r = await sendTalk(link, kind, anonymous && canSendAnonymous(kind), t);
+    const r = recipient
+      ? await sendTalkTo(link, kind, anonymous && canSendAnonymous(kind), t, recipient.to, recipient.staffId)
+      : await sendTalk(link, kind, anonymous && canSendAnonymous(kind), t);
     busy.current = false;
     setSending(false);
     if (r.ok) {
@@ -171,6 +209,8 @@ function GymMessages({ link, start }: { link: GymLink; start: MessageSide }) {
       setLoad((l) => (l.state === 'ready' ? { ...l, talk: [r.thread, ...(l.talk ?? []).filter((x) => x.id !== r.thread.id)] } : l));
     } else {
       setNote({ ok: false, words: r.words });
+      // A trainer who is no longer listed: read the list of trainers again.
+      if (recipient?.to === 'trainer') void fetchAll(false);
     }
   };
 
@@ -245,11 +285,34 @@ function GymMessages({ link, start }: { link: GymLink; start: MessageSide }) {
                 {/* testID: the phone test waits for it before it reads the hint. The plan check (access) is read in the
                     same fetch as the list, so once this shows, "A trainer" is decided (a pass member: no mention). */}
                 <Text testID="talk-kind-hint-ready" style={smallStyle()}>
-                  {questionHint(kind, sides.includes('trainer'))}
+                  {recipient && kind === 'question' ? TO_WORDS.questionHint : questionHint(kind, sides.includes('trainer'))}
                 </Text>
-                {/* R-552: who at the gym reads this type, naming the gym (feedback: the owner and front desk only). */}
+                {recipient && toChoices ? (
+                  <>
+                    {/* R-586: who reads it. Question: "Gym owner" or one trainer; Feedback / Complaint: "Gym owner" or "Gym admin". */}
+                    <Text accessibilityRole="header" style={headStyle()}>
+                      {TO_WORDS.label}
+                    </Text>
+                    <View testID="talk-to-chips" accessibilityRole="radiogroup" style={{ flexDirection: 'row', flexWrap: 'wrap', gap: space.sm }}>
+                      {recipientOptions(kind, toChoices).map((o) => (
+                        <Chip
+                          key={o.key}
+                          role="radio"
+                          label={recipientLabel(o)}
+                          selected={recipient.key === o.key}
+                          onPress={() => {
+                            setToKey(o.key);
+                            if (note) setNote(null);
+                          }}
+                        />
+                      ))}
+                    </View>
+                    {kind === 'question' && toChoices.trainers.length === 0 ? <Text style={smallStyle()}>{TO_WORDS.noTrainers}</Text> : null}
+                  </>
+                ) : null}
+                {/* R-552 / R-586: who at the gym reads it, naming the gym. */}
                 <Text testID={`talk-readers-${kind}`} style={{ ...smallStyle(), fontFamily: type.bodySemi, color: color.ink }}>
-                  {talkReaders(kind, link.gymName)}
+                  {recipient ? recipientReaders(kind, recipient, link.gymName) : talkReaders(kind, link.gymName)}
                 </Text>
                 {canSendAnonymous(kind) ? (
                   <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.md }}>
@@ -423,7 +486,7 @@ function ThreadCard({ t, now, link, onChanged }: { t: TalkThread; now: number; l
     <View testID="gym-talk-thread">
       <Card style={{ gap: space.sm }}>
         <Text style={{ ...smallStyle(), color: color.inkMuted }}>
-          {`${TALK_WORDS.kind[t.kind]} · ${askWhen(t.createdAt, now)}${t.anonymous ? ` · ${TALK_WORDS.anonTag}` : ''}`}
+          {`${TALK_WORDS.kind[t.kind]}${t.to ? ` · ${TO_WORDS.toLine(t.to)}` : ''} · ${askWhen(t.createdAt, now)}${t.anonymous ? ` · ${TALK_WORDS.anonTag}` : ''}`}
         </Text>
         {t.messages.map((m) =>
           m.fromGym ? (

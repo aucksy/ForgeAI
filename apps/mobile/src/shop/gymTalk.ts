@@ -22,6 +22,24 @@ export const TALK_THREAD_MAX = 50;
 export type TalkKind = 'question' | 'feedback' | 'complaint';
 export const TALK_KINDS: readonly TalkKind[] = ['question', 'feedback', 'complaint'];
 
+/**
+ * R-586 (0096): who the member sent it to. 'owner' = "Gym owner"; 'desk' = "Gym admin" (the owner and the front desk,
+ * never trainers); 'trainer' = one trainer by name (questions only). A thread sent the old way has none (null).
+ */
+export type TalkTo = 'owner' | 'desk' | 'trainer';
+export interface TalkRecipient {
+  who: TalkTo;
+  /** The trainer's name as the gym typed it ('trainer' only). */
+  name: string | null;
+}
+
+/** member_talk_choices (0096): the trainers a member may write to, their own trainer first. */
+export interface TalkChoices {
+  /** The member's own trainer (picked by the gym), or null. */
+  mine: string | null;
+  trainers: { id: string; name: string }[];
+}
+
 export interface TalkLine {
   id: string;
   fromGym: boolean;
@@ -46,6 +64,8 @@ export interface TalkThread {
   unread: boolean;
   /** Oldest first. */
   messages: TalkLine[];
+  /** R-586: who it was sent to; null or missing = sent before the member could pick (0069's readers). */
+  to?: TalkRecipient | null;
 }
 
 /** Every word a member reads here. New (12 Nov 2026): the owner checks them at UAT. */
@@ -105,6 +125,7 @@ export const TALK_WORDS = {
   errAnon: 'Only feedback can be sent without your name.',
   errGone: 'This message is no longer here. Please send a new one.',
   errPaused: 'Messages to your gym are paused for now. Please ask at the front desk.',
+  errNotTrainer: 'This trainer is no longer listed at your gym. Please pick someone else.',
   standIn: 'Test build: these messages stay on this phone and do not reach your gym.',
 } as const;
 
@@ -138,6 +159,35 @@ function lineFrom(v: unknown): TalkLine | null {
   return { id, fromGym, who: fromGym ? str(v.who, 40) || null : null, text, at };
 }
 
+const isTalkTo = (v: unknown): v is TalkTo => v === 'owner' || v === 'desk' || v === 'trainer';
+
+/** Who a thread went to (0096 'to' / 'toName'); null for a thread sent the old way or an answer that is not one. PURE. */
+export function talkRecipientFrom(to: unknown, toName: unknown, kind: TalkKind): TalkRecipient | null {
+  if (!isTalkTo(to)) return null;
+  // The same pairs the server allows: a trainer gets questions only; "Gym admin" feedback and complaints only.
+  if (to === 'trainer' && kind !== 'question') return null;
+  if (to === 'desk' && kind === 'question') return null;
+  return { who: to, name: to === 'trainer' ? str(toName, 80).replace(/\s+/g, ' ') || null : null };
+}
+
+/** member_talk_choices' answer; null when it is not one. Only an id and a name per trainer; no duplicates. PURE. */
+export function talkChoicesFrom(raw: unknown): TalkChoices | null {
+  const r = first(raw);
+  if (!isObj(r) || r.ok !== true || !Array.isArray(r.trainers)) return null;
+  const seen = new Set<string>();
+  const trainers: TalkChoices['trainers'] = [];
+  for (const t of r.trainers.slice(0, 50)) {
+    if (!isObj(t)) continue;
+    const id = str(t.id, 64);
+    const name = str(t.name, 80).replace(/\s+/g, ' ');
+    if (!id || !name || seen.has(id)) continue;
+    seen.add(id);
+    trainers.push({ id, name });
+  }
+  const mine = str(r.mine, 64) || null;
+  return { mine: mine && seen.has(mine) ? mine : null, trainers };
+}
+
 /** One thread from the server; null when it is not one. PURE. */
 export function talkThreadFrom(v: unknown): TalkThread | null {
   if (!isObj(v)) return null;
@@ -161,6 +211,7 @@ export function talkThreadFrom(v: unknown): TalkThread | null {
     seenByGym: v.seenByGym === true,
     unread: v.unread === true,
     messages,
+    to: talkRecipientFrom(v.to, v.toName, v.kind),
   };
 }
 
@@ -212,6 +263,7 @@ export function talkErrorWords(message: string | undefined): string {
   if (m === 'THREAD_FULL') return TALK_WORDS.full;
   if (m === 'NOT_FOUND') return TALK_WORDS.errGone;
   if (m === 'SUSPENDED') return TALK_WORDS.errPaused;
+  if (m === 'NOT_TRAINER') return TALK_WORDS.errNotTrainer;
   return TALK_WORDS.failedOffline;
 }
 

@@ -106,7 +106,7 @@ export const PUSH_WORDS = {
   urgentOwner:
     'These always come at once: complaints, new shop orders, a member waiting at the check-in poster, a friend who wants to join, and a pause or renew request when the plan is about to end.',
   urgentStaff:
-    'These always come at once: new shop orders, a member waiting at the check-in poster, a friend who wants to join, and a pause or renew request when the plan is about to end. Complaints go to the owner only.',
+    'These always come at once: new shop orders, a member waiting at the check-in poster, a friend who wants to join, and a pause or renew request when the plan is about to end. Complaints go to the owner, and to the front desk only when a member picks "Gym admin".',
   rest: 'The rest (questions, messages, feedback, online payments, new members, workout reports):',
   modeLabel: 'Send the rest',
   instant: 'Instantly',

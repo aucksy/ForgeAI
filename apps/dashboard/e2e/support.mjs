@@ -1532,7 +1532,9 @@ export const TALK_FNS = ['owner_talk_count', 'owner_talk_list', 'owner_talk_repl
  */
 export function installTalk(server) {
   const T0 = NOW.getTime();
-  const talk = { on: false, threads: [], gone: new Set() };
+  // R-586: `trainers` = the names of people ticked as Trainer (0050). A thread's `to` ('owner' | 'desk' | 'trainer',
+  // with `toName`) is who the member picked (0096); none = an older app (0069 + 0087).
+  const talk = { on: false, threads: [], gone: new Set(), trainers: new Set() };
   const base = server.answer.bind(server);
   const view = (t) => ({
     id: t.id,
@@ -1550,9 +1552,20 @@ export function installTalk(server) {
     doneAt: t.doneAt ?? null,
     doneBy: t.doneBy ?? null,
     readByMember: false,
+    to: t.to ?? null,
+    toName: t.to === 'trainer' ? t.toName : null,
     messages: t.lines,
   });
-  const visible = (p, t) => p.role === 'owner' || t.kind !== 'complaint';
+  const isTrainer = (p) => p.role !== 'owner' && talk.trainers.has(p.name);
+  // The server's rule (0096 _talk_visible): the owner all; 'owner' nobody else; 'desk' people who are not trainers;
+  // 'trainer' that person only; no recipient: questions everyone, feedback not trainers, complaints the owner only.
+  const visible = (p, t) => {
+    if (p.role === 'owner') return true;
+    if (t.to === 'owner') return false;
+    if (t.to === 'desk') return !isTrainer(p);
+    if (t.to === 'trainer') return p.name === t.toName;
+    return t.kind === 'question' || (t.kind === 'feedback' && !isTrainer(p));
+  };
   const find = (p, id) => {
     const t = talk.threads.find((x) => x.id === id);
     if (!t || !visible(p, t) || talk.gone.has(id)) throw new Refusal('NOT_FOUND');
@@ -1567,7 +1580,7 @@ export function installTalk(server) {
     const mine = talk.threads.filter((t) => visible(p, t) && !talk.gone.has(t.id));
     const waiting = mine.filter((t) => view(t).waiting).length;
     if (fn === 'owner_talk_count') return { ok: true, waiting };
-    if (fn === 'owner_talk_list') return { ok: true, role: p.role === 'owner' ? 'owner' : 'staff', waiting, threads: mine.map(view) };
+    if (fn === 'owner_talk_list') return { ok: true, role: p.role === 'owner' ? 'owner' : 'staff', feedback: !isTrainer(p), waiting, threads: mine.map(view) };
     const t = find(p, args.p_thread);
     if (fn === 'owner_talk_reply') {
       const text = String(args.p_text ?? '').trim();

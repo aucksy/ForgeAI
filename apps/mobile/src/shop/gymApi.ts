@@ -28,7 +28,7 @@ import { askAnswerFromRow, planRequestsFromRow, type PlanRequest, type PlanReque
 import { reportAnswerFromRow, reportRequestsFromRow, type ReportRequest, type ReportRequestsAnswer } from './gymReport';
 import { trainerHelpFrom, trainerStatusFrom, type TrainerStatus, type TrainerSummary } from './trainerShare';
 import { askChoicesFrom, askQuestionsFrom, askSentFrom, type AskChoices, type AskQuestion } from './askTrainer';
-import { talkSentFrom, talkThreadsFrom, talkUnreadFrom, type TalkKind, type TalkThread } from './gymTalk';
+import { talkChoicesFrom, talkSentFrom, talkThreadsFrom, talkUnreadFrom, type TalkChoices, type TalkKind, type TalkThread, type TalkTo } from './gymTalk';
 import { friendInviteFrom, type FriendInvite } from './bringFriend';
 import { staffDoorFromRow, type StaffDoorAnswer } from './staffDoor';
 import { claimAnswerFrom, findAnswerFrom, type ClaimAnswer, type FindAnswer } from './findGym';
@@ -647,6 +647,25 @@ export async function apiTalkList(key: string): Promise<AskCall<TalkThread[]>> {
 /** Start a thread: a question, feedback (may be without the name) or a complaint. */
 export async function apiTalkSend(key: string, kind: TalkKind, anonymous: boolean, text: string): Promise<AskCall<TalkThread>> {
   const r = await call('member_talk_send', { p_key: key, p_kind: kind, p_anonymous: anonymous, p_text: text }, WRITE_MS);
+  if (!r.ok) return askFail(r);
+  const t = talkSentFrom(r.data);
+  return t ? { ok: true, data: t } : { ok: false, error: { kind: 'other' } };
+}
+
+/**
+ * R-586 (0096): the trainers a member may pick by name, their own first (member_talk_choices). `missing`: 0096 is not
+ * on the server: the page stays as it was (no recipient).
+ */
+export async function apiTalkChoices(key: string): Promise<AskCall<TalkChoices>> {
+  const r = await call('member_talk_choices', { p_key: key }, READ_MS);
+  if (!r.ok) return askFail(r);
+  const c = talkChoicesFrom(r.data);
+  return c ? { ok: true, data: c } : { ok: false, error: { kind: 'other' } };
+}
+
+/** R-586 (0096): start a thread to who the member picked ('trainer' needs the trainer's staff id). */
+export async function apiTalkSendTo(key: string, kind: TalkKind, anonymous: boolean, text: string, to: TalkTo, staffId: string | null): Promise<AskCall<TalkThread>> {
+  const r = await call('member_talk_send_to', { p_key: key, p_kind: kind, p_anonymous: anonymous, p_text: text, p_to: to, p_staff: staffId }, WRITE_MS);
   if (!r.ok) return askFail(r);
   const t = talkSentFrom(r.data);
   return t ? { ok: true, data: t } : { ok: false, error: { kind: 'other' } };
