@@ -249,11 +249,21 @@ Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept her
   Test: supabase/tests/0095_test_alert.sql; security.sql's anon list has the 3 new calls.
 - To go live: (1) his yes to 0095, then the SQL Editor + live test 0095; (2) an admin panel deploy (sw.js and the card).
   No HQ deploy needed. Until 0095 is live the button stays hidden (the card is as before).
+- Fresh-eyes fix (15 Nov 2026, fb9123fa): the button showed when the first read failed for another reason (weak
+  network, timeout, 5xx), though 0095 might not be live. Now it shows only after the gym server ANSWERED
+  owner_test_alert (testBoxVisible); any failure before that keeps it hidden. Unit + journey tests.
 - What's new: ADMIN_NEWS_PENDING 'pending-test-alert' (moves at the deploy after 0095 is live).
 - Tests: unit (test/crm/webPush.test.ts: answers, states, polling, clock, words, the service worker's "shown";
   gymAlerts.test.ts: a test alert is never listed), HQ (deploy/hq/panelPush.test.mjs, local pass 12/12), journey
   e2e/test-alert-uat.spec.mjs (no 0095 = no button; every state on phone and computer, dark and light). Cloud runs below.
-- Status: IN PROGRESS.
+- Cloud so far: database job green (0095 test PASS) since 71522d95. Run 43727970516 (658ebe6e): dashboard typecheck,
+  unit tests, HQ tests, build and panel crawl all green; admin journeys never started (other helpers' r561 spec and
+  the R-580 import broke loading; fixed by 43e037e4 + d2928aaa). First run that can run the R-578 journeys: main
+  d2928aaa (pending when the session stopped).
+- Status: PAUSED (usage limit, 15 Nov 2026). Left to do: (1) read the CI run of d2928aaa or later: "Admin journeys"
+  step, fix any R-578 journey failure; (2) download artifact dashboard-uat-pictures and LOOK at the 24 test-alert
+  pictures (4 looks x 6 states, e2e/.results/uat/<look>-test-alert-*.png); (3) put run ids here, mark done.
+  0095 is NOT APPLIED (needs the owner's yes); no panel deploy done.
 
 ## R-579 (15 Nov 2026) One smart app link everywhere, and "Share app link" on every member's page
 - The brief (15 Nov 2026), his words: "There should be a permanent share app link button on each member's profile, but you
