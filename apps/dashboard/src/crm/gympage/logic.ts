@@ -87,11 +87,22 @@ function pageOf(x: unknown): SavedPage | null {
 }
 
 /**
+ * R-563 (0090, NOT LIVE): MettleUp HQ switched this gym's web page off. owner_gym_page then answers {off: true}, and the
+ * admin app shows no web page part at all (menu row, screen, Set up your gym step), exactly as before pages exist. PURE.
+ */
+export function pageSwitchedOff(x: unknown): boolean {
+  const r = Array.isArray(x) ? x[0] : x;
+  return isObj(r) && r.off === true;
+}
+
+/**
  * owner_gym_page's answer, or null when it is not one (a server without 0080, the e2e server's empty list, a damaged
- * answer): the editor and its menu row then stay away. PURE.
+ * answer) or when HQ switched this gym's page off (0090): the editor, its menu row and the set-up step then stay away.
+ * PURE.
  */
 export function pageAnswerFrom(x: unknown): PageAnswer | null {
   const r = Array.isArray(x) ? x[0] : x;
+  if (pageSwitchedOff(r)) return null;
   if (!isObj(r) || typeof r.canEdit !== 'boolean' || !('page' in r)) return null;
   return { page: r.page === null ? null : pageOf(r.page), canEdit: r.canEdit };
 }

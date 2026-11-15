@@ -154,6 +154,7 @@ const ERRORS = {
   GEMINI_FAILED: 'Gemini could not rewrite this one. Your text is unchanged. Try again.',
   DRAFT_EMPTY: 'Type your reply first, then tap Rewrite.',
   AI_NOT_READY: 'AI credits need the database update 0071 (waiting for your yes).',
+  PAGE_NOT_READY: 'The web page switch for one gym needs the database update 0090 (waiting for your yes).',
   NOT_ENOUGH: 'The gym does not have that many credits to take back.',
   BAD_LINK: 'A button needs both: words for the button, and an admin app page like /plans or an https:// address.',
 };
@@ -192,6 +193,8 @@ const ACTIONS = {
   english_rewrite: 'Used the English helper on a reply',
   lead_status: 'Changed a lead status',
   ai_limit_set: 'Changed a gym’s AI limit',
+  gym_page_on: 'Switched a gym’s web page on',
+  gym_page_off: 'Switched a gym’s web page off',
   support_open: 'Opened support access (emergency)',
   support_close: 'Closed support access',
   support_view: 'Looked at a gym’s records (support access)',
@@ -811,4 +814,29 @@ export function checkDoneWords(c) {
   if (!c.checkedAt) return 'Not checked yet.';
   const how = c.checkedHow === 'refunded' ? 'Refunded' : 'Added to the plan by hand';
   return `${how} ${dateWords(c.checkedAt)} by ${c.checkedBy || 'HQ'}. Note: ${c.checkedNote || ''}`;
+}
+
+/**
+ * R-563 (owner, 15 Nov 2026): the "Web page" card on a gym's page. `webPage` is hq_gym_page's answer (0090) or null
+ * before 0090; `pagesLive` is the panel's GYM_PAGES (true / false / null when it could not be asked). Plain sentences:
+ * { global, state, page, button } (global and page may be null). PURE.
+ */
+export function webPageWords(webPage, pagesLive, gymName = 'this gym') {
+  const global =
+    pagesLive === true
+      ? null
+      : pagesLive === false
+        ? 'Gym web pages are switched off for every gym until you approve the page words.'
+        : 'Could not check whether gym web pages are switched on for every gym. Try again in a minute.';
+  if (!webPage) return { global, state: ERRORS.PAGE_NOT_READY, page: null, button: null };
+  const on = webPage.pageOn !== false;
+  const state = on
+    ? `On. ${gymName} can make its free web page, and it is a step in Set up your gym.`
+    : `Off. ${gymName}’s web page does not open, and the owner does not see “Your web page”. The join link still works.`;
+  const page = webPage.slug
+    ? webPage.published
+      ? `${webPage.hiddenByHq ? 'Taken down by MettleUp' : 'Published'} at join.mettleup.fit/${webPage.slug}.`
+      : `Not published yet (its address will be join.mettleup.fit/${webPage.slug}).`
+    : 'The owner has not made the page yet.';
+  return { global, state, page, button: on ? 'Switch the web page off' : 'Switch the web page on' };
 }

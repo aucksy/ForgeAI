@@ -135,6 +135,40 @@ async function creditsPart(db, gymId) {
   }
 }
 
+/**
+ * R-563 (0090, NOT LIVE): one gym's web page switch, as HQ sees it: {pageOn, slug, published, hiddenByHq}. null before
+ * 0090 is applied (the card then says the database update waits for his yes) or on a failure.
+ */
+async function webPagePart(db, gymId) {
+  try {
+    return await db('hq_gym_page', { p_gym: gymId });
+  } catch (e) {
+    if (!(e instanceof DbError && e.code === 'NOT_READY')) console.error('[hq-api] web page switch not readable', e instanceof Error ? e.message : 'error');
+    return null;
+  }
+}
+
+/**
+ * R-563: are gym web pages switched on for every gym (the panel Worker's GYM_PAGES, said at its GET /api/switches)?
+ * true / false, or null when it could not be asked (no PANEL_ORIGIN var, no answer in 4 seconds, a strange answer).
+ */
+export async function pagesLivePart(env, fetchImpl = fetch) {
+  const origin = String(env?.PANEL_ORIGIN ?? '');
+  if (!/^https:\/\/[a-z0-9.-]+$/.test(origin)) return null;
+  const stop = new AbortController();
+  const timer = setTimeout(() => stop.abort(), 4000);
+  try {
+    const r = await fetchImpl(`${origin}/api/switches`, { cache: 'no-store', signal: stop.signal });
+    const j = r.ok ? await r.json() : null;
+    return j && typeof j.gymPages === 'boolean' ? j.gymPages : null;
+  } catch (e) {
+    console.warn('[hq-api] the panel switches could not be read', e instanceof Error ? e.message : 'error');
+    return null;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 /** The D1 part of a page; null (and a log line) when Cloudflare's database could not be read. */
 async function webPart(what, fn) {
   try {
@@ -198,7 +232,9 @@ export async function handleApi(request, env, who, deps = {}) {
       const assistMonth = web ? await webPart('assistant use', () => assistUsage(web, id, monthStart(now))) : null;
       // R-467: the gym's AI Assistant allowance a day; null before panel D1 0015.
       const assistAllowance = web ? await webPart('assistant limit', () => assistLimit(web, id)) : null;
-      return json(200, { gym, aiDays: days, aiLimit: limits ? (limits[id] ?? NORMAL_AI_LIMIT) : null, normalAiLimit: NORMAL_AI_LIMIT, plansReady: plansReady(gym), aiCredits, assistMonth, assistAllowance });
+      // R-563: the gym's web page switch (0090) and whether gym web pages are open at all (the panel's GYM_PAGES).
+      const [webPage, pagesLive] = await Promise.all([webPagePart(db, id), pagesLivePart(env, fetchImpl)]);
+      return json(200, { gym, aiDays: days, aiLimit: limits ? (limits[id] ?? NORMAL_AI_LIMIT) : null, normalAiLimit: NORMAL_AI_LIMIT, plansReady: plansReady(gym), aiCredits, assistMonth, assistAllowance, webPage, pagesLive });
     }
 
     if (route === 'GET /api/system') {
@@ -562,6 +598,18 @@ export async function handleApi(request, env, who, deps = {}) {
         return json(200, await db('hq_ai_grant', { p_gym: b.gymId, p_credits: credits, p_note: text(b.note, 500), p_kind: kind }));
       } catch (e) {
         if (e instanceof DbError && e.code === 'NOT_READY') return refuse('AI_NOT_READY', 503);
+        throw e;
+      }
+    }
+
+    // R-563 (0090): switch one gym's web page off (its page answers "not here", its admin app hides the web page parts;
+    // the join link keeps working) or back on. On by default. Logged in HQ's audit by the database.
+    if (route === 'POST /api/gym/web-page') {
+      if (!isUuid(b.gymId) || typeof b.on !== 'boolean') return refuse('BAD_REQUEST');
+      try {
+        return json(200, await db('hq_set_gym_page', { p_gym: b.gymId, p_on: b.on, p_note: text(b.reason, 300) || null }));
+      } catch (e) {
+        if (e instanceof DbError && e.code === 'NOT_READY') return refuse('PAGE_NOT_READY', 503);
         throw e;
       }
     }

@@ -58,6 +58,7 @@ import {
   testKind,
   titleWithCount,
   trialPicks,
+  webPageWords,
   when,
 } from './logic.js';
 
@@ -542,6 +543,7 @@ async function gymPage(id, flash = '') {
       g.owners.length ? g.owners.map((o) => h('p', {}, `${o.name} · `, h('a', { href: `tel:+91${o.phone}` }, o.phone))) : h('p', {}, 'No owner on the list.')),
     g.deleteRequest ? h('div', { class: 'card warn' }, h('p', {}, `Delete asked ${when(g.deleteRequest.requestedAt)}: day ${g.deleteRequest.day} of 30.`), h('a', { href: '#deletes' }, 'Open delete requests')) : null,
     planCard(g, id, data.plansReady === true),
+    webPageCard(g, id, data),
     h('div', { class: 'card' }, h('h2', {}, 'Status'), h('div', { class: 'stack' }, statusActions), out),
     accessBox,
     reset,
@@ -595,6 +597,32 @@ function creditsCard(g, id, data) {
         await gymPage(id, `Saved: ${g.name} now has ${count(r.balance, 'AI credit')}.`);
       }, { out, sure: () => `${Number(howMany.value) < 0 ? 'Take back' : 'Add'} ${Math.abs(Number(howMany.value) || 0)} AI credits ${Number(howMany.value) < 0 ? 'from' : 'to'} ${g.name}?` }),
       out));
+}
+
+/**
+ * R-563 (owner, 15 Nov 2026): one gym's web page, on by default. Off: its page does not open, its admin app hides
+ * "Your web page" and the set-up step; the join link keeps working. The first line says when pages are off for every
+ * gym (the panel's GYM_PAGES), so he sees why no gym has a page yet.
+ */
+function webPageCard(g, id, data) {
+  const w = webPageWords(data.webPage, data.pagesLive, g.name);
+  const out = h('div');
+  const why = h('input', { maxlength: '300', placeholder: 'Why (optional, written in the log)' });
+  const on = data.webPage ? data.webPage.pageOn !== false : null;
+  return h('div', { class: 'card', id: 'web-page-card' },
+    h('h2', {}, 'Web page'),
+    w.global ? note(w.global, 'warn') : null,
+    h('p', {}, w.state),
+    w.page ? h('p', { class: 'muted' }, w.page) : null,
+    w.button
+      ? h('div', { class: 'stack' },
+          on ? field('Note', why) : null,
+          action(w.button, async () => {
+            await api('/api/gym/web-page', { gymId: id, on: !on, reason: on ? why.value : '' });
+            await gymPage(id, on ? `The web page of ${g.name} is switched off.` : `The web page of ${g.name} is switched on.`);
+          }, { out, tone: on ? 'danger' : '', sure: on ? `Switch off the web page of ${g.name}? Visitors will not see it, and the owner will not see “Your web page”. The join link still works.` : undefined }),
+          out)
+      : null);
 }
 
 /** R-467: the gym's AI Assistant allowance a day (normal 50 requests, 10 spoken minutes; 0 = off for this gym). */

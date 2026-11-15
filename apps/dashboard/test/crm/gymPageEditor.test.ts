@@ -16,6 +16,7 @@ import {
   hasLink,
   movePhoto,
   pageAnswerFrom,
+  pageSwitchedOff,
   pageAskOf,
   pageLive,
   photoObject,
@@ -154,6 +155,10 @@ describe('Your web page: the save', () => {
   it('reads the server answer, and rejects anything else', () => {
     expect(pageAnswerFrom({ canEdit: true, page: null })).toEqual({ canEdit: true, page: null });
     expect(pageAnswerFrom([])).toBeNull();
+    // R-563 (0090): switched off by MettleUp HQ for this gym = no web page part at all.
+    expect(pageAnswerFrom({ off: true, canEdit: false, page: null })).toBeNull();
+    expect(pageSwitchedOff({ off: true, canEdit: false, page: null })).toBe(true);
+    expect(pageSwitchedOff({ canEdit: true, page: null })).toBe(false);
     expect(pageAnswerFrom('x')).toBeNull();
   });
 });

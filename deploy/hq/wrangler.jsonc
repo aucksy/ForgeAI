@@ -58,7 +58,10 @@
     // 7 May 2027; a 404 falls back to gemini-flash-lite-latest, gemini-flash-latest, then gemini-pro-latest.
     "GEMINI_MODEL": "gemini-3.1-flash-lite",
     // R-519: the Cloudflare account whose Workers the weekly free-limit check counts (usage.js).
-    "CF_ACCOUNT_ID": "1dc428a67de48b96bf13fb430da7a9e8"
+    "CF_ACCOUNT_ID": "1dc428a67de48b96bf13fb430da7a9e8",
+    // R-563: where HQ asks whether gym web pages are switched on for every gym (the panel Worker's GET /api/switches,
+    // its GYM_PAGES var). Only shown on a gym's page, next to that gym's own "Web page" switch.
+    "PANEL_ORIGIN": "https://app.mettleup.fit"
   },
   // The same small Cloudflare database as the gym panel: feedback, leads, AI usage and AI limits
   // (tables: deploy/panel/migrations). HQ reads them and changes statuses and limits.

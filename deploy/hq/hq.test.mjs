@@ -1037,3 +1037,47 @@ test('AI Assistant daily limit (R-467): normal 50 requests and 10 minutes, HQ se
   assert.equal((await (await api('GET', `/api/gym?id=${GYM}`, null, env({ WEB: old }), net)).json()).assistAllowance, null);
   assert.equal((await api('POST', '/api/gym/assist-limit', { gymId: GYM, perDay: 60 }, env({ WEB: old }), net)).status, 503);
 });
+
+// ------------------------------------------------------------------ R-563 one gym's web page switch (0090)
+test('R-563 web page: the gym page reads the switch (0090) and whether pages are open for every gym; before 0090 it says so', async () => {
+  const page = { pageOn: false, slug: 'iron-gym', published: true, hiddenByHq: false };
+  const panel = [];
+  const net = fakeNet({ db: { hq_gym: { gymId: GYM, name: 'Iron', owners: [], recentHq: [] }, hq_gym_page: page } });
+  const fetchImpl = async (url, init) => {
+    if (String(url) === 'https://app.mettleup.fit/api/switches') {
+      panel.push(url);
+      return jsonRes(200, { gymPages: false, joinPay: false, aiCharge: true });
+    }
+    return net.fetchImpl(url, init);
+  };
+  const j = await (await api('GET', `/api/gym?id=${GYM}`, null, env({ PANEL_ORIGIN: 'https://app.mettleup.fit' }), { ...net, fetchImpl })).json();
+  assert.deepEqual(j.webPage, page);
+  assert.equal(j.pagesLive, false);
+  assert.equal(panel.length, 1);
+  assert.deepEqual(JSON.parse(net.rpcCalls('hq_gym_page')[0].init.body), { p_actor: OWNER, p_gym: GYM });
+  // No PANEL_ORIGIN: nothing asked, "could not check". Before 0090: no switch, the rest of the page still works.
+  const before = fakeNet({ db: { hq_gym: { gymId: GYM, name: 'Iron', owners: [], recentHq: [] } }, dbMissing: ['hq_gym_page'] });
+  const j2 = await (await api('GET', `/api/gym?id=${GYM}`, null, env(), before)).json();
+  assert.equal(j2.webPage, null);
+  assert.equal(j2.pagesLive, null);
+  assert.equal(j2.gym.name, 'Iron');
+});
+
+test('R-563 web page: switching one gym off and on goes to hq_set_gym_page; bad input never reaches the database; before 0090 it says so', async () => {
+  const net = fakeNet({ db: { hq_set_gym_page: (b) => ({ ok: true, pageOn: b.p_on }) } });
+  const off = await api('POST', '/api/gym/web-page', { gymId: GYM, on: false, reason: '  Owner asked  ' }, env(), net);
+  assert.equal(off.status, 200);
+  assert.deepEqual(await off.json(), { ok: true, pageOn: false });
+  assert.deepEqual(JSON.parse(net.rpcCalls('hq_set_gym_page')[0].init.body), { p_actor: OWNER, p_gym: GYM, p_on: false, p_note: 'Owner asked' });
+  const on = await api('POST', '/api/gym/web-page', { gymId: GYM, on: true }, env(), net);
+  assert.deepEqual(await on.json(), { ok: true, pageOn: true });
+  assert.equal(JSON.parse(net.rpcCalls('hq_set_gym_page')[1].init.body).p_note, null);
+  for (const bad of [{ gymId: 'x', on: false }, { gymId: GYM, on: 'no' }, { gymId: GYM }]) {
+    assert.equal((await api('POST', '/api/gym/web-page', bad, env(), net)).status, 400);
+  }
+  assert.equal(net.rpcCalls('hq_set_gym_page').length, 2);
+  const before = fakeNet({ dbMissing: ['hq_set_gym_page'] });
+  const r = await quiet(() => api('POST', '/api/gym/web-page', { gymId: GYM, on: false }, env(), before));
+  assert.equal(r.status, 503);
+  assert.equal((await r.json()).error, 'PAGE_NOT_READY');
+});

@@ -53,7 +53,7 @@ import * as timingsApi from '../../shop/timingsApi';
 import { ownerGym } from '../../shop/api';
 import { useCrm } from '../../store';
 import { Button, Card, CheckField, EmptyState, ErrorBanner, PageHeader, SectionTitle, Sheet, TOUCH, TextField, Toast, color, font, radius, space } from '../kit';
-import { Link, navigate } from '../router';
+import { Link, Redirect, navigate } from '../router';
 
 type Load = { state: 'loading' } | { state: 'missing' } | { state: 'error'; message: string } | { state: 'ready'; answer: PageAnswer };
 
@@ -94,9 +94,9 @@ export function WebPageScreen() {
           <EmptyState title="Your web page needs your gym online" body="The page is made from your gym’s records on its server. Put your gym online first (Settings → Sign-in & data)." />
         </Card>
       ) : load.state === 'missing' ? (
-        <Card>
-          <EmptyState title="Web pages are not switched on for your gym yet" body="This will appear here once your gym’s server has them." />
-        </Card>
+        // No web page part for this gym (a server before 0080, or MettleUp switched this gym's page off, 0090): the
+        // owner's rule "a feature shows only when it is on", so a typed address goes to Settings like the menu does.
+        <Redirect to="/settings" />
       ) : load.state === 'error' ? (
         <Card>
           <ErrorBanner>{load.message}</ErrorBanner>

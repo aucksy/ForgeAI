@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 
 import {
+  webPageWords,
   actionWords,
   ago,
   assistMonthWords,
@@ -418,4 +419,27 @@ test('F201 AI credits: history lines and this month in plain words', () => {
   assert.equal(assistMonthWords({ this_month: { spent: 12, tasks_done: 9 } }, { asks: 40, voiceSeconds: 95 }), '12 credits used, 9 tasks done, 40 requests to the AI, 2 min spoken');
   assert.equal(actionWords('ai_credits_added'), 'Added or took back a gym’s AI credits');
   for (const code of ['AI_NOT_READY', 'NOT_ENOUGH']) assert.notEqual(errorWords(code), errorWords('SOMETHING_ELSE'));
+});
+
+test('R-563 the Web page card: on by default, off, before 0090, and the line while pages are off for every gym', () => {
+  const on = { pageOn: true, slug: 'shakti-gym-sector-12', published: true, hiddenByHq: false };
+  assert.deepEqual(webPageWords(on, true, 'Shakti Gym'), {
+    global: null,
+    state: 'On. Shakti Gym can make its free web page, and it is a step in Set up your gym.',
+    page: 'Published at join.mettleup.fit/shakti-gym-sector-12.',
+    button: 'Switch the web page off',
+  });
+  const off = webPageWords({ ...on, pageOn: false }, false, 'Shakti Gym');
+  assert.equal(off.global, 'Gym web pages are switched off for every gym until you approve the page words.');
+  assert.equal(off.state, 'Off. Shakti Gym’s web page does not open, and the owner does not see “Your web page”. The join link still works.');
+  assert.equal(off.button, 'Switch the web page on');
+  assert.equal(webPageWords({ pageOn: true, slug: null, published: false }, true).page, 'The owner has not made the page yet.');
+  assert.equal(webPageWords({ pageOn: true, slug: 'x-gym', published: false }, true).page, 'Not published yet (its address will be join.mettleup.fit/x-gym).');
+  assert.equal(webPageWords({ ...on, hiddenByHq: true }, true).page, 'Taken down by MettleUp at join.mettleup.fit/shakti-gym-sector-12.');
+  assert.equal(webPageWords(on, null).global, 'Could not check whether gym web pages are switched on for every gym. Try again in a minute.');
+  const before = webPageWords(null, false);
+  assert.equal(before.state, 'The web page switch for one gym needs the database update 0090 (waiting for your yes).');
+  assert.equal(before.button, null);
+  assert.equal(actionWords('gym_page_off'), 'Switched a gym’s web page off');
+  assert.equal(actionWords('gym_page_on'), 'Switched a gym’s web page on');
 });
