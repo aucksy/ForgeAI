@@ -8,6 +8,7 @@ is on main after v0.78.0.
 ### 0.79.0, phone + watch (APPROVED: his "release", 15 Nov 2026 ~22:20 IST, R-592; 16 Nov: "Take best decisions
 yourself to release whatever is pending", R-594b). What's new written (apps/mobile/src/lib/whatsNew.ts, entry 0.79.0
 dated 16 Nov, 6 lines, 493 of 500 Play characters, R-597); the release commit only sets app.json to 0.79.0.
+- R-598 MEMBER APP: the Workout tab's "Coming from Hevy or Strong?" card says "Everything stays on this phone." only to members NOT signed in (a signed-in member's workouts are copied to the MettleUp account; same check as the copy, useAccount account != null). Words unchanged. Test switcherLine. No What's new line.
 - R-596 MEMBER APP: THE WATCH UPDATE POP-UP WAITS FOR A WATCH THAT IS OUT OF REACH (owner, 16 Nov 2026: "I do want
   the watch app new update pop issue fixed"; review G4; notes R-596). It showed for a paired watch out of reach,
   whose one button could only say "Your watch is not connected". Now it waits, reads again (20 s, then every 2 min

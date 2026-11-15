@@ -6,12 +6,14 @@
  * choice (`choosePendingImport`); Home opens the import as soon as it first shows
  * (`takePendingImport`).
  */
+import { useEffect } from 'react';
 import { Text, View } from 'react-native';
 
 import { Card, Chip, Icon } from '@/components/ui';
+import { useAccount } from '@/store/accountStore';
 import { color, space, type } from '@/theme/tokens';
 
-import type { SwitchApp } from '../services/switcher';
+import { switcherLine, type SwitchApp } from '../services/switcher';
 
 export { choosePendingImport, takePendingImport, type SwitchApp } from '../services/switcher';
 
@@ -29,6 +31,16 @@ export function SwitcherCard({
   /** Welcome: the import opens after "Start training". */
   later?: boolean;
 }) {
+  // R-598: "Everything stays on this phone." only when NOT signed in (a signed-in member's workouts
+  // are copied to the MettleUp account). Until the account is read, the sentence stays hidden.
+  const signedIn = useAccount((s) => !s.ready || s.account != null);
+  useEffect(() => {
+    if (useAccount.getState().ready) return;
+    void useAccount
+      .getState()
+      .init()
+      .catch((e: unknown) => console.warn('[switcher] could not read the account', e));
+  }, []);
   return (
     <Card style={{ gap: space.sm }}>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm }}>
@@ -38,11 +50,7 @@ export function SwitcherCard({
         <Text style={{ flex: 1, fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}>Coming from Hevy or Strong?</Text>
       </View>
       <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkMuted, lineHeight: 19 }}>
-        {later
-          ? selected
-            ? `Your ${selected === 'hevy' ? 'Hevy' : 'Strong'} workouts and routines come in right after you tap Start training.`
-            : 'Bring your workouts, records and routines with you. Pick your app; it opens right after you start.'
-          : 'Bring your workouts, records and routines with you. Everything stays on this phone.'}
+        {switcherLine({ later, selected, signedIn })}
       </Text>
       <View style={{ flexDirection: 'row', gap: space.sm, flexWrap: 'wrap' }}>
         <Chip label="From Hevy" icon={selected === 'hevy' ? 'check' : undefined} selected={selected === 'hevy'} onPress={() => onPick('hevy')} />

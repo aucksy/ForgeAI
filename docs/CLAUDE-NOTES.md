@@ -7,6 +7,11 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-598 (16 Nov 2026) Import card: "Everything stays on this phone." only for members not signed in
+- Brief: the Workout tab's "Coming from Hevy or Strong?" card told signed-in members (workouts copied to their account) "Everything stays on this phone."; keep the words, show them only where true.
+- Done: tracker/services/switcher.ts switcherLine (pure) + SwitcherCard reads useAccount (account != null, the copy's own check; hidden until read). Signed in: "Bring your workouts, records and routines with you." only.
+- Test test/tracker/switcherLine.test.ts (both cases); no Maestro flow asserted the sentence.
+
 ## R-597 (16 Nov 2026) 0.79.0 release prep: waiting list cleaned, What's new written (no version bump, no tag)
 - Coordinator's brief (his "release" 15 Nov 2026 ~22:20 IST, R-592; 16 Nov "Take best decisions yourself to release
   whatever is pending", R-594b). Version, tag and Play upload stay with the coordinator.
