@@ -1,4 +1,4 @@
--- NOT LIVE — needs the owner's yes
+-- APPLIED LIVE 15 Nov 2026 (owner: "0088 free trial"); live test 0088 PASS 57.
 -- Re-runnable. Apply after 0081 (it replaces 0081's self_join_send, which replaced 0077's) and 0077 (it replaces 0077's
 -- self_join_preview and adds a column to 0077's gym_self_joins). 0075 (_alert) and 0054 (_note_day) are used as before.
 -- Test: supabase/tests/0088_join_trial.sql (CI runs it after every migration; pasted into the SQL Editor it always ends

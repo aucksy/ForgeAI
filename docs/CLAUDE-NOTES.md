@@ -7,6 +7,12 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-562 (15 Nov 2026, morning) YES "0088 free trial": applied LIVE; whole-panel refresh; bell panel groups
+- He said: "0088 free trial". Applied 0088_join_trial.sql (68dea015) in the Supabase SQL Editor: Success; live test supabase/tests/0088_join_trial.sql RESULT PASS (57 checks). Nothing shows yet: the admin app with the trial setting and the join page with "Try free" go live with the next admin panel deploy (his yes), and the owner must switch the trial on.
+- He asked: the bell panel's sections are hard to see too; "it should be a theme across the system" that category headings are easy to notice; more groups? Decided: one shared heading style everywhere; bell panel = "Your gym", "From MettleUp", "What's new" (sent to the R-561 shell helper).
+- He asked: the whole-panel refresh ("updated XX seconds or minutes ago and then a button to refresh", R-539 item 3). Only Today's Enquiries and Needs you have it. Sent to the R-561 shell helper: one "Updated N s ago" + Refresh in the top bar on every page.
+- He asked me to explain the free trial words request and suggest better words: answered in chat.
+
 ## R-561 (15 Nov 2026, morning) Admin panel: sidebar, alerts card, language switch, setting one-liners, ready-made challenges, payment colours
 He said (chat, 7 asks):
 1. "the headings of each section are the same color and look the same so it's very hard to notice the separation" -> section headings must look different from the rows.
