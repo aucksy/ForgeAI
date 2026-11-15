@@ -1311,6 +1311,13 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   'This was done already.': 'Yeh pehle hi ho chuka hai.',
   'The AI credits could not be checked. Check the internet and try again.': 'AI credits check nahi ho paaye. Internet check karke phir try karo.',
   'Birthdays today: {n}': 'Aaj birthday: {n}',
+  // R-593 (owner, 16 Nov 2026): the names on an idea and its "See who" (for his read-aloud check).
+  '{names}': '{names}',
+  '{names} and {n} more': '{names} aur baaki {n}',
+  '{name}: no visit in {days} days': '{name}: {days} din se nahi aaye',
+  '{name}: joined {days} days ago, no visit yet': '{name}: {days} din pehle jude, ab tak nahi aaye',
+  'See who': 'Kaun hain, dekho',
+  'Nobody is on this list now.': 'Abhi is list mein koi nahi hai.',
   '{festival} is today': '{festival} aaj hai',
   '{festival} is tomorrow': '{festival} kal hai',
   '{festival} is expected today (the moon decides the day)': '{festival} aaj hone ki ummeed hai (din chaand se tay hota hai)',

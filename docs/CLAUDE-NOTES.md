@@ -51,6 +51,20 @@ Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept her
   "kal hone ki ummeed hai (din chaand se tay hota hai)" and Ganesh Chaturthi ideas, 320/360/390/412, English/Hinglish,
   dark/light, Today + AI Assistant page). alerts-uat: a ready shop order now leaves Today and shows Done in the bell.
 - What's new: ADMIN_NEWS_PENDING 'pending-today-handled' (moves to ADMIN_NEWS at the next panel deploy).
+- 16 Nov, coordinator (owner-approved, live bug at Crispy Curves): the idea "Not seen for 10+ days: 1" counted a member who
+  JOINED TODAY (annual plan from 15 Nov, no visit). answer.ts list_members 'away' (days > 0) kept every daysSinceVisit
+  null. Now awayDays(): since the last visit; never came: since the later of the plan run's start (new
+  logic/membership.ts coverageStartsOn, back-to-back terms) and joinedOn. One rule for the idea and the assistant's answer.
+  Tests: test/crm/assistant/awayIdea.test.ts (joined today -> no; joined 12 days ago -> yes; last visit 11 days -> yes;
+  9 -> no; a renewal from today after a gap -> no).
+- Owner asks ("both are good"): the idea row names its members (1-3: "Asha: no visit in 12 days" / "Asha: joined 12
+  days ago, no visit yet"; more: "Asha, Ravi and 4 more"; same first names get full names) and has "See who", which
+  shows the same list on the assistant by our own code (list_members card, no AI call, free, offline). Birthdays,
+  plans ending, not seen and plans ended have it; festival, fees and the week do not.
+  Hinglish for his read-aloud check: "{name}: {days} din se nahi aaye", "{name}: {days} din pehle jude, ab tak nahi
+  aaye", "{names} aur baaki {n}", "Kaun hain, dekho", "Abhi is list mein koi nahi hai."
+- Squeeze check found two real things and two false alarms: Today's "Sab dekho" broke onto 2 lines at 320 px (now
+  nowrap); tall tap targets were read as wrapped text (the check now counts real line boxes).
 
 ## R-590 (15 Nov 2026) Gym messages silent on his OPPO: the phone strips every channel; the app now rings it itself
 - The bug (R-583): a gym reply lands in the notification list on his OPPO CPH2873 (ColorOS, Android 17, 0.78.0 from Play)

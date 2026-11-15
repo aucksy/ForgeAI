@@ -18,7 +18,8 @@ import { formatINR, sumPaise, type Paise } from '../logic/money';
 import { methodLabel } from '../logic/payments';
 import { busyHours, newMembers, owedListOn, stoppedComingOn } from '../logic/ownerNumbers';
 import { isPassMember } from '../logic/passMembers';
-import { cleanTrainer, ptLeft, runningPtPacks } from '../logic/pt';
+import { coverageStartsOn } from '../logic/membership';
+import { cleanTrainer, gymTerms, ptLeft, runningPtPacks } from '../logic/pt';
 import { lastWeek, weekNumbers } from '../logic/weekSummary';
 import type { MemberView, Membership } from '../types';
 import { line, pagePath, type Line, type Period, type ToolInputs, type ToolName } from './catalogue';
@@ -210,6 +211,18 @@ function visitDetail(v: MemberView): Line {
   return v.daysSinceVisit === null ? line('Never came') : line('Last came {days} days ago', { days: v.daysSinceVisit });
 }
 
+/**
+ * R-593: how many days a member with a running plan has gone without coming: since the last visit; never came: since
+ * their plan's run began or they joined, whichever is later (a member who joined today has 0). PURE.
+ */
+export function awayDays(v: MemberView, memberships: readonly Membership[], today: DateISO): number | null {
+  if (v.daysSinceVisit !== null) return v.daysSinceVisit;
+  const start = coverageStartsOn(gymTerms(memberships), today);
+  if (!start) return null;
+  const from = v.member.joinedOn && v.member.joinedOn > start ? v.member.joinedOn : start;
+  return Math.max(0, diffDays(from, today));
+}
+
 // ------------------------------------------------------------------ list_members
 
 export const DEFAULT_DAYS = { ending: 7, ended: 30, away: 10, new_joins: 30 } as const;
@@ -262,9 +275,16 @@ function listGroup(input: ToolInputs['list_members'], d: AnswerData): Listed | A
     case 'away': {
       if (days > 0) {
         // "10 din se nahi aaye": a plain count of days, for a running plan (the page's rule needs no number).
+        // R-593 (live, 15 Nov 2026): a member who joined TODAY, with no visit yet, was counted. Never came counts only
+        // once their plan (the run of back-to-back terms) and their joining are both `days` old or more.
+        const terms = membershipsByMember(s.memberships);
         group = views
-          .filter((v) => running(v) && !isPassMember(v.member) && (v.daysSinceVisit === null || v.daysSinceVisit >= days))
-          .sort((a, b) => (b.daysSinceVisit ?? 9999) - (a.daysSinceVisit ?? 9999));
+          .filter((v) => running(v) && !isPassMember(v.member))
+          .filter((v) => {
+            const away = awayDays(v, terms.get(v.member.id) ?? [], today);
+            return away !== null && away >= days;
+          })
+          .sort((a, b) => (awayDays(b, terms.get(b.member.id) ?? [], today) ?? 0) - (awayDays(a, terms.get(a.member.id) ?? [], today) ?? 0));
         headline = line('Running plan, no visit in {days} days', { days });
       } else {
         // The same list as Visits -> Losing the habit.

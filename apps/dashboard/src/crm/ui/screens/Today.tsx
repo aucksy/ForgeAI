@@ -670,4 +670,6 @@ const moreLink: React.CSSProperties = {
   alignItems: 'center',
   minHeight: TOUCH,
   paddingLeft: space.sm,
+  // R-593: "Sab dekho" broke onto two lines on a 320 px phone; a two-word link stays whole (the title wraps instead).
+  whiteSpace: 'nowrap',
 };

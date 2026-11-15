@@ -35,9 +35,16 @@ function installWallet(server) {
   };
 }
 
+const addDays = (iso, n) => {
+  const d = new Date(`${iso}T12:00:00Z`);
+  d.setUTCDate(d.getUTCDate() + n);
+  return d.toISOString().slice(0, 10);
+};
+
 /**
- * A gym on `day` (10 am IST) whose AI ideas are a festival tomorrow and "not seen for 10+ days": Asha has a running
- * 12-month plan and no visit yet (the assistant counts a running plan with no visit as not seen).
+ * A gym on `day` (10 am IST) whose AI ideas are a festival tomorrow and "not seen for 10+ days". Two members on a
+ * 12-month plan, no visit yet: Asha joined 40 days ago (counted), Ravi joined today (NOT counted: the live bug of
+ * 15 Nov 2026 counted him). Their join and plan dates are set on the pretend server, then the panel reloads.
  */
 async function gymWithIdeas(page, day) {
   const server = await openApp(page, { time: new Date(`${day}T10:00:00+05:30`) });
@@ -46,19 +53,33 @@ async function gymWithIdeas(page, day) {
   await addPlan(page, { name: 'Yearly', price: '12000', joining: '0', months: '12' });
   await addMember(page, { name: 'Asha Verma', phone: '98290 11111' });
   await sell(page, { received: '12000' });
+  await addMember(page, { name: 'Ravi Kumar', phone: '98290 22222' });
+  await sell(page, { received: '12000' });
+  const live = (k, test) => [...server.records.values()].find((r) => r.k === k && !r.x && test(r.d));
+  await expect.poll(() => {
+    const m = live('member', (d) => d.fullName === 'Asha Verma');
+    return Boolean(m && live('membership', (d) => d.memberId === m.id) && live('member', (d) => d.fullName === 'Ravi Kumar'));
+  }, { message: 'the sales reached the server', timeout: 15_000 }).toBe(true);
+  const asha = live('member', (d) => d.fullName === 'Asha Verma');
+  const plan = live('membership', (d) => d.memberId === asha.id);
+  const since = addDays(day, -40);
+  server.version += 1;
+  server.records.set(`member:${asha.id}`, { ...asha, ver: server.version, d: { ...asha.d, joinedOn: since } });
+  server.records.set(`membership:${plan.id}`, { ...plan, ver: server.version, d: { ...plan.d, startsOn: since } });
   await go(page, '/');
+  await page.reload();
   await expect(page.getByRole('heading', { name: 'Today', exact: true })).toBeVisible({ timeout: 15_000 });
   return server;
 }
 
 const WORDS = {
   eid: {
-    English: ['Eid ul-Fitr is expected tomorrow (the moon decides the day)', 'Write a Eid ul-Fitr greeting', 'Not seen for 10+ days: 1', 'Write a we miss you message'],
-    Hinglish: ['Eid ul-Fitr kal hone ki ummeed hai (din chaand se tay hota hai)', 'Eid ul-Fitr ki badhai likho', '10+ din se nahi aaye: 1', 'Hum aapko miss kar rahe hain wala message likho'],
+    English: ['Eid ul-Fitr is expected tomorrow (the moon decides the day)', 'Write a Eid ul-Fitr greeting', 'Not seen for 10+ days: 1', 'Asha: joined 40 days ago, no visit yet', 'See who', 'Write a we miss you message'],
+    Hinglish: ['Eid ul-Fitr kal hone ki ummeed hai (din chaand se tay hota hai)', 'Eid ul-Fitr ki badhai likho', '10+ din se nahi aaye: 1', 'Asha: 40 din pehle jude, ab tak nahi aaye', 'Kaun hain, dekho', 'Hum aapko miss kar rahe hain wala message likho'],
   },
   ganesh: {
-    English: ['Ganesh Chaturthi is tomorrow', 'Write a Ganesh Chaturthi greeting', 'Not seen for 10+ days: 1', 'Write a we miss you message'],
-    Hinglish: ['Ganesh Chaturthi kal hai', 'Ganesh Chaturthi ki badhai likho', '10+ din se nahi aaye: 1', 'Hum aapko miss kar rahe hain wala message likho'],
+    English: ['Ganesh Chaturthi is tomorrow', 'Write a Ganesh Chaturthi greeting', 'Not seen for 10+ days: 1', 'Asha: joined 40 days ago, no visit yet', 'See who', 'Write a we miss you message'],
+    Hinglish: ['Ganesh Chaturthi kal hai', 'Ganesh Chaturthi ki badhai likho', '10+ din se nahi aaye: 1', 'Asha: 40 din pehle jude, ab tak nahi aaye', 'Kaun hain, dekho', 'Hum aapko miss kar rahe hain wala message likho'],
   },
 };
 
@@ -94,6 +115,7 @@ async function sweep(page, words, widths, shotsAt) {
         const card = main.getByRole('region', { name: 'AI Assistant', exact: true });
         await expect(card).toBeVisible({ timeout: 15_000 });
         for (const w of words[lang]) await expect(card).toContainText(w);
+        await expect(card).not.toContainText('Ravi');
         await expectFitsPhone(page, `on Today (${where})`);
         await expectNothingPastScreen(page, `on Today (${where})`);
         await expectIdeaRowsRoomy(page, card, `on Today (${where})`);
@@ -132,6 +154,18 @@ test('R-593 the AI ideas fit every phone: Eid (the longest idea) at 320/360/390/
   await go(page, '/');
   await expect(page.getByRole('heading', { name: 'Aaj', exact: true })).toBeVisible();
   await page.screenshot({ path: `${DIR}/today-fit-eid-390-Hinglish-whole-page.png`, fullPage: true });
+
+  // "See who" (owner, 16 Nov 2026): the list behind the number, on the assistant, by our own code (no AI call: this
+  // pretend server has no AI, so an ask would fail; the list still shows).
+  const card = page.getByRole('main').getByRole('region', { name: 'AI Assistant', exact: true });
+  await card.locator('[data-idea-row]').filter({ hasText: '10+ din se nahi aaye: 1' }).getByRole('button', { name: 'Kaun hain, dekho' }).click();
+  await expect(page.getByRole('heading', { level: 1, name: /AI Assistant/ })).toBeVisible();
+  const main = page.getByRole('main');
+  await expect(main).toContainText('Asha Verma', { timeout: 10_000 });
+  await expect(main.getByText('Ravi Kumar')).toHaveCount(0);
+  await expectNothingPastScreen(page, 'on the AI Assistant after See who (Hinglish)');
+  await page.waitForTimeout(300);
+  await page.screenshot({ path: `${DIR}/today-fit-eid-see-who-390-Hinglish.png` });
 });
 
 test('R-593 the AI ideas fit every phone: Ganesh Chaturthi (the longest festival name)', async ({ page }) => {

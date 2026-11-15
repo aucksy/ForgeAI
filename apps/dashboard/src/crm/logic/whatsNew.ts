@@ -640,6 +640,9 @@ export const ADMIN_NEWS_PENDING: readonly AdminNewsEntry[] = [
       {
         text: 'The AI Assistant card on Today now fits small phones, in English and Hinglish. Long ideas wrap onto the next line instead of running off the screen.',
       },
+      {
+        text: 'The AI Assistant ideas on Today now name the members, like “Asha: no visit in 12 days”. Tap “See who” for the list. Someone who joined today is no longer counted as not seen.',
+      },
     ],
   },
   {

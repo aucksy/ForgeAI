@@ -143,6 +143,23 @@ export function coverageEndsOn(
 }
 
 /**
+ * R-593: the first day of the run of back-to-back terms covering today (the mirror of coverageEndsOn), or null if
+ * nothing covers today. "Not seen for 10+ days" asks it: a member whose plan started today has not had 10 days.
+ */
+export function coverageStartsOn(memberships: readonly Membership[], today: DateISO): DateISO | null {
+  const live = memberships.filter((m) => !m.cancelled);
+  const covering = live.filter((m) => m.startsOn <= today && m.endsOn >= today);
+  if (covering.length === 0) return null;
+  let start = covering.reduce((min, m) => (m.startsOn < min ? m.startsOn : min), covering[0].startsOn);
+  for (let guard = 0; guard < live.length; guard += 1) {
+    const prev = live.find((m) => m.endsOn >= addDays(start, -1) && m.startsOn < start);
+    if (!prev) break;
+    start = prev.startsOn;
+  }
+  return start;
+}
+
+/**
  * When the next term should begin: the day after COVERAGE ends, otherwise today.
  *
  * Takes the coverage end (`coverageEndsOn`), never a single membership. Reading

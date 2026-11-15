@@ -25,7 +25,7 @@ import { aiPlanDraft, type PlanData } from '../plan';
 import { gymExerciseList, planLang, planRequestBody, writtenPlan } from '../planWriter';
 import type { WorkoutPlanDraft } from '../../types';
 import { markAssistantOff, noteBalance, refreshAssistantWallet } from '../useAssistant';
-import { newId } from './parts';
+import { newId, type ShowList } from './parts';
 
 type DraftCard = Extract<CardModel, { kind: 'draft' }>;
 
@@ -126,6 +126,16 @@ export function useConversation(key: string, data: PlanData, reload: () => Promi
       }
     },
     [key, data, deps, openCredits],
+  );
+
+  // R-593: an idea's "See who": the list behind its number, by our own code (no AI, no credit, works offline).
+  const show = useCallback(
+    (request: string, list: ShowList) => {
+      const id = newId();
+      const cards = cardsFor([list], data, newId);
+      addTurn(key, { id, request, spoken: false, status: 'done', cards, note: '', fail: cards.length === 0 ? line('Nobody is on this list now.') : null });
+    },
+    [key, data],
   );
 
   const confirm = useCallback(
@@ -268,5 +278,5 @@ export function useConversation(key: string, data: PlanData, reload: () => Promi
     [turns, data, deps, key, openCredits],
   );
 
-  return { turns, ask, confirm, rewrite, writePlan, savePlan };
+  return { turns, ask, show, confirm, rewrite, writePlan, savePlan };
 }

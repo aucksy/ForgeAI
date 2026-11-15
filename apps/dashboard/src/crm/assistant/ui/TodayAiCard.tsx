@@ -13,7 +13,7 @@ import { color, font, space, useIsCompact } from '../../ui/kit';
 import { navigate } from '../../ui/router';
 import { todaySuggestions } from '../suggestions';
 import { useAssistant } from '../useAssistant';
-import { CreditsPill, IdeaRow, SparkleIcon, queueRequest, say, setPanelOpen } from './parts';
+import { CreditsPill, IdeaRow, SparkleIcon, queueRequest, queueShow, say, setPanelOpen, type ShowList } from './parts';
 
 export function TodayAiCard() {
   const { on, wallet } = useAssistant();
@@ -29,6 +29,12 @@ export function TodayAiCard() {
 
   const open = (request: string | null): void => {
     if (request) queueRequest(request, true);
+    if (compact) navigate('/assistant');
+    else setPanelOpen(true);
+  };
+  // R-593: "See who" opens the assistant with the list behind the idea's number (no AI, free).
+  const seeWho = (words: string, list: ShowList): void => {
+    queueShow(words, list);
     if (compact) navigate('/assistant');
     else setPanelOpen(true);
   };
@@ -80,7 +86,14 @@ export function TodayAiCard() {
             {ideas.length === 1 ? t('1 idea for today') : t('{n} ideas for today', { n: ideas.length })}
           </p>
           {ideas.map((s) => (
-            <IdeaRow key={s.id} words={say(s.words)} action={say(s.action)} onClick={() => open(s.request)} />
+            <IdeaRow
+              key={s.id}
+              words={say(s.words)}
+              who={s.who.map(say)}
+              action={say(s.action)}
+              onClick={() => open(s.request)}
+              onSeeWho={s.show ? () => seeWho(say(s.words), s.show!) : undefined}
+            />
           ))}
         </div>
       ) : null}

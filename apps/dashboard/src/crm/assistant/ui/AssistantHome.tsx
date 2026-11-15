@@ -93,7 +93,10 @@ export function AssistantHome({ assistKey, wallet, panel = false }: { assistKey:
     if (!opener.pending) return;
     const p = takeRequest();
     if (!p) return;
-    if (p.send) send(p.text);
+    if (p.show) {
+      setTab('ask');
+      convo.show(p.text, p.show);
+    } else if (p.send) send(p.text);
     else {
       setText(p.text);
       box.current?.focus();
@@ -191,7 +194,16 @@ export function AssistantHome({ assistKey, wallet, panel = false }: { assistKey:
           {/* R-593: the same row as Today's card: the button goes under the words when they do not fit side by side. */}
           <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: space.sm }}>
             {suggestions.map((s) => (
-              <IdeaRow key={s.id} framed words={say(s.words)} action={say(s.action)} disabled={asking} onClick={() => send(s.request)} />
+              <IdeaRow
+                key={s.id}
+                framed
+                words={say(s.words)}
+                who={s.who.map(say)}
+                action={say(s.action)}
+                disabled={asking}
+                onClick={() => send(s.request)}
+                onSeeWho={s.show ? () => convo.show(say(s.words), s.show!) : undefined}
+              />
             ))}
           </div>
         </section>

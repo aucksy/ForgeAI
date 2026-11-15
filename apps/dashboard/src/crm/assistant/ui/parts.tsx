@@ -7,8 +7,11 @@ import { useSyncExternalStore, type CSSProperties, type ReactNode } from 'react'
 
 import { t } from '../../lang/lang';
 import { Button, TOUCH, color, font, radius, space } from '../../ui/kit';
-import type { Line } from '../catalogue';
+import type { Line, ToolInputs } from '../catalogue';
 import { groupLabelText } from '../../ui/GroupLabel';
+
+/** A member list the assistant shows by itself (an idea's "See who"). */
+export type ShowList = { tool: 'list_members'; input: ToolInputs['list_members'] };
 
 /** A Line in the owner's language (English or Hinglish). */
 export function say(l: Line): string {
@@ -138,7 +141,25 @@ export function Chip({ children, onClick, pressed, ariaLabel, round }: { childre
  * aaye: 1" into a one-word column. Now the words get the row and at least 12rem; when the button does not fit beside
  * them it goes under them, and its own words wrap inside the card. Today's card and the Assistant's "Today for you".
  */
-export function IdeaRow({ words, action, onClick, disabled, framed }: { words: string; action: string; onClick: () => void; disabled?: boolean; framed?: boolean }) {
+export function IdeaRow({
+  words,
+  action,
+  onClick,
+  disabled,
+  framed,
+  who = [],
+  onSeeWho,
+}: {
+  words: string;
+  action: string;
+  onClick: () => void;
+  disabled?: boolean;
+  framed?: boolean;
+  /** R-593: who it is about, one line each ("Digvijay: no visit in 12 days", or "Asha, Ravi and 4 more"). */
+  who?: readonly string[];
+  /** R-593: "See who" shows the list behind the number (our own code: free, no internet needed). */
+  onSeeWho?: () => void;
+}) {
   return (
     <div
       data-idea-row
@@ -153,8 +174,24 @@ export function IdeaRow({ words, action, onClick, disabled, framed }: { words: s
           : { paddingTop: space.sm, borderTop: `1px solid ${color.border}` }),
       }}
     >
-      <p style={{ ...body, flex: '1 1 12rem', minWidth: 0, fontWeight: 600, overflowWrap: 'anywhere' }}>{words}</p>
-      <div style={{ flex: '0 1 auto', minWidth: 0, maxWidth: '100%' }}>
+      <div style={{ flex: '1 1 12rem', minWidth: 0, display: 'grid', gap: 2 }}>
+        <p style={{ ...body, minWidth: 0, fontWeight: 600, overflowWrap: 'anywhere' }}>{words}</p>
+        {who.length > 0 ? (
+          <p data-idea-who style={{ ...quiet, minWidth: 0, overflowWrap: 'anywhere' }}>
+            {who.map((w) => (
+              <span key={w} style={{ display: 'block' }}>
+                {w}
+              </span>
+            ))}
+          </p>
+        ) : null}
+      </div>
+      <div style={{ flex: '0 1 auto', minWidth: 0, maxWidth: '100%', display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: space.sm }}>
+        {onSeeWho ? (
+          <Button variant="quiet" wrap onClick={onSeeWho}>
+            {t('See who')}
+          </Button>
+        ) : null}
         <Button variant="ghost" wrap needsInternet disabled={disabled} onClick={onClick}>
           {action}
         </Button>
@@ -201,8 +238,11 @@ export function CardHead({ title, icon }: { title: string; icon?: ReactNode }) {
 interface Opener {
   /** The computer's side panel is open. */
   panel: boolean;
-  /** A sentence waiting to go into the box (and be sent, when `send`). */
-  pending: { text: string; send: boolean } | null;
+  /**
+   * A sentence waiting to go into the box (and be sent, when `send`). R-593: `show` instead shows that list at once,
+   * worked out by our own code (an idea's "See who"), with `text` as the line it answers.
+   */
+  pending: { text: string; send: boolean; show?: ShowList } | null;
 }
 
 let opener: Opener = { panel: false, pending: null };
@@ -232,8 +272,13 @@ export function queueRequest(text: string, send: boolean): void {
   emitOpener({ ...opener, pending: { text, send } });
 }
 
+/** R-593: an idea's "See who": show its list on the assistant's screen (no AI). */
+export function queueShow(text: string, show: ShowList): void {
+  emitOpener({ ...opener, pending: { text, send: false, show } });
+}
+
 /** The waiting sentence, taken once by the screen that shows the box. */
-export function takeRequest(): { text: string; send: boolean } | null {
+export function takeRequest(): Opener['pending'] {
   const p = opener.pending;
   if (p) emitOpener({ ...opener, pending: null });
   return p;
