@@ -261,8 +261,8 @@ export const MEMBER_MESSAGE_WORDS = {
   intro: 'Members write to you from "Message your gym" on the Gym tab of their app. Your reply shows in their app, and on their phone if notifications are on.',
   // R-586: members now pick who reads a message; older messages follow the old rule (complaints: the owner only).
   staffNote: 'Messages a member sent only to the owner or to a trainer are not shown here. Complaints show here only when the member picked "Gym admin".',
-  /** A trainer's note (R-552): no feedback and no complaints on their page. */
-  trainerNote: 'Feedback goes to the owner and front desk, and complaints go to the owner only, so they are not shown here.',
+  /** A trainer's note (R-552): no feedback and no complaints on their page; R-600: nor questions sent to someone else. */
+  trainerNote: 'Feedback and complaints never go to trainers, so they are not shown here. Questions a member sent only to the owner or to another trainer are not shown here either.',
   keptNote: 'Messages are deleted 180 days after the last one in a conversation, or as soon as the member leaves the gym.',
   filterLabel: 'Show',
   waitingCount: (n: number): string => `${n} waiting`,

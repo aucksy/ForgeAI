@@ -1558,8 +1558,9 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   'This member is not on the MettleUp app any more.': 'Yeh member ab MettleUp app par nahi hai.',
   'Only the gym owner can send these from here for now.': 'Abhi yahan se sirf gym owner yeh bhej sakte hain.',
   // R-552 (owner, 14 Nov 2026): a trainer's Member messages page has no feedback and no complaints.
-  'Feedback goes to the owner and front desk, and complaints go to the owner only, so they are not shown here.':
-    'Feedback sirf owner aur front desk ko jata hai, aur complaints sirf owner ko, isliye yeh yahan nahi dikhte.',
+  // R-600 (16 Nov 2026): nor questions a member sent to the owner or another trainer (0096).
+  'Feedback and complaints never go to trainers, so they are not shown here. Questions a member sent only to the owner or to another trainer are not shown here either.':
+    'Feedback aur complaints trainers ko kabhi nahi jaate, isliye yeh yahan nahi dikhte. Jo sawaal member ne sirf owner ya kisi aur trainer ko bheja hai, woh bhi yahan nahi dikhta.',
   // F210 (owner, 14 Nov 2026): a free trial on the "Become a member" link (Settings, and Today's "Joined online").
   'Free trial for new people': 'Naye logon ke liye free trial',
   'People who open your "Become a member" link can try your gym free before they pick a plan. They check their number on WhatsApp, and you see them on Today under "Joined online".':

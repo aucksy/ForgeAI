@@ -38,6 +38,30 @@ export interface AdminNewsEntry {
 /** Newest first. member-words: Gemini second opinion + facts checked against the commits (28 Oct 2026). */
 export const ADMIN_NEWS: readonly AdminNewsEntry[] = [
   {
+    // Admin panel deploy 16 Nov 2026 (R-600): R-593 Today keeps only what still needs him (moved from ADMIN_NEWS_PENDING
+    // at the deploy), and R-586's "To: ..." on Member messages (0096 live 15 Nov; the member app that picks is 0.79.0).
+    // The first line is the summary under the bell (e2e/whatsnew.spec.mjs J149). No `feature` dot (newdots-uat pins them).
+    id: '2026-11-16',
+    lines: [
+      {
+        text: 'Today now shows only what still needs you. A member message leaves Today once you reply or mark it done, and news like a new member shows once. The bell still keeps every alert, marked “Done”.',
+      },
+      {
+        text: 'The AI Assistant card on Today now fits small phones, in English and Hinglish. Long ideas wrap onto the next line instead of running off the screen.',
+      },
+      {
+        text: 'The AI Assistant ideas on Today now name the members, like “Asha: no visit in 12 days”. Tap “See who” for the list. Someone who joined today is no longer counted as not seen.',
+      },
+      {
+        text: 'In the newest MettleUp app, members pick who reads their message. A question goes to “Gym owner” or a trainer by name. Feedback or a complaint goes to “Gym owner” or “Gym admin”, which is you and the front desk.',
+        go: { label: 'Open Member messages', path: '/member-messages' },
+      },
+      {
+        text: 'In “Member messages”, each message now says who the member sent it to, like “To: Gym owner”. Messages from an older app have no “To:” line.',
+      },
+    ],
+  },
+  {
     // Admin panel deploy 15 Nov 2026 (R-589, d2928aaa): R-561, day-first dates, R-571 online journey, R-573, R-579, R-580, R-584.
     id: '2026-11-15',
     lines: [
@@ -629,22 +653,6 @@ function notifyNewsSeen(): void {
  * the deploy day) in the same commit as the admin-panel deploy (R-333). Never shown before the change is live.
  */
 export const ADMIN_NEWS_PENDING: readonly AdminNewsEntry[] = [
-  {
-    // R-593 (owner, 15 Nov 2026): Today keeps only what still needs him; the AI card fits every phone. Moves to
-    // ADMIN_NEWS with the next admin panel deploy.
-    id: 'pending-today-handled',
-    lines: [
-      {
-        text: 'Today now shows only what still needs you. A member message leaves Today once you reply or mark it done, and news like a new member shows once. The bell still keeps every alert, marked “Done”.',
-      },
-      {
-        text: 'The AI Assistant card on Today now fits small phones, in English and Hinglish. Long ideas wrap onto the next line instead of running off the screen.',
-      },
-      {
-        text: 'The AI Assistant ideas on Today now name the members, like “Asha: no visit in 12 days”. Tap “See who” for the list. Someone who joined today is no longer counted as not seen.',
-      },
-    ],
-  },
   {
     // R-571: for the day gym web pages switch on (GYM_PAGES live, docs/gym-page/PLAN.md "Switch-on"). Not before.
     id: 'pending-gym-web-pages',

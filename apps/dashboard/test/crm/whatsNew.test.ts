@@ -105,15 +105,37 @@ describe('the list itself', () => {
 describe('the 15 Nov 2026 deploy (R-589)', () => {
   it('names what went live and nothing that is still off or waiting for the gym server', () => {
     const entry = ADMIN_NEWS.find((e) => e.id === '2026-11-15')!;
-    expect(ADMIN_NEWS[0]).toBe(entry);
+    expect(ADMIN_NEWS[1]).toBe(entry);
     const all = entry.lines.map((l) => l.text).join(' ');
     for (const fact of ['10-digit number', 'Share app link', 'day first', 'Let people join your gym online', 'Branding', 'Saved ✓', 'round button', 'Send a test alert']) {
       expect(all, fact).toContain(fact);
     }
     expect(all).not.toMatch(/web page|join\.mettleup|Plus/i);
-    expect(ADMIN_NEWS_PENDING.map((e) => e.id)).toEqual(['pending-today-handled', 'pending-gym-web-pages', 'pending-plus-lock']);
     for (const l of entry.lines) {
       expect(l.text, l.text).toMatch(/^["A-Z]/);
+      expect(l.text, l.text).toMatch(/\.$/);
+    }
+  });
+});
+
+// R-600 (16 Nov 2026): the panel deploy publishes R-593's Today lines and R-586's message recipient ("To: ...").
+describe('the 16 Nov 2026 deploy (R-600)', () => {
+  it('is the newest update: the Today lines moved out of pending, and the recipient words are the real ones', () => {
+    const entry = ADMIN_NEWS.find((e) => e.id === '2026-11-16')!;
+    expect(ADMIN_NEWS[0]).toBe(entry);
+    expect(entry.lines[0].text).toContain('Today now shows only what still needs you');
+    const all = entry.lines.map((l) => l.text).join(' ');
+    // The words the member app (shop/gymMessages.ts TO_WORDS) and the panel (memberMessages.ts) show.
+    for (const fact of ['“Gym owner”', '“Gym admin”', 'a trainer by name', 'you and the front desk', '“Member messages”', '“To: Gym owner”', 'See who', 'small phones']) {
+      expect(all, fact).toContain(fact);
+    }
+    // Still off (GYM_PAGES, the Plus lock): not a word, and they stay waiting.
+    expect(all).not.toMatch(/web page|join\.mettleup|Plus|lock/i);
+    expect(ADMIN_NEWS_PENDING.map((e) => e.id)).toEqual(['pending-gym-web-pages', 'pending-plus-lock']);
+    // No new dots: e2e/newdots-uat.spec.mjs pins which features light.
+    expect(entry.lines.some((l) => l.feature)).toBe(false);
+    for (const l of entry.lines) {
+      expect(l.text, l.text).toMatch(/^["“A-Z]/);
       expect(l.text, l.text).toMatch(/\.$/);
     }
   });

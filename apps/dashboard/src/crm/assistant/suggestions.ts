@@ -4,6 +4,7 @@
  * tapped ("Send a renewal reminder to ..."); the owner still reads the draft and confirms it. A card with
  * nobody in it is never shown. PURE.
  */
+import { diffDays, isValidDateISO } from '../logic/dates';
 import { formatINR, sumPaise } from '../logic/money';
 import { owedListOn } from '../logic/ownerNumbers';
 import { isMonday } from '../logic/weekSummary';
@@ -147,8 +148,13 @@ export function todaySuggestions(d: AnswerData): Suggestion[] {
     action: line('Write a we miss you message'),
     request: `Send a we miss you message to members who have not come for ${AWAY_DAYS} days`,
     who: whoLines(away, (v, name) => {
-      const days = awayDays(v, terms?.get(v.member.id) ?? [], d.today) ?? AWAY_DAYS;
-      return v.daysSinceVisit === null ? line('{name}: joined {days} days ago, no visit yet', { name, days }) : line('{name}: no visit in {days} days', { name, days });
+      if (v.daysSinceVisit !== null) return line('{name}: no visit in {days} days', { name, days: v.daysSinceVisit });
+      // R-600 (fresh eyes, 16 Nov 2026): "joined N days ago" is counted from the real joining day. A member who rejoined
+      // has a later plan run start (the counting rule, awayDays in membersInGroup, still needs both 10+ days old).
+      const days = isValidDateISO(v.member.joinedOn)
+        ? Math.max(0, diffDays(v.member.joinedOn, d.today))
+        : (awayDays(v, terms?.get(v.member.id) ?? [], d.today) ?? AWAY_DAYS);
+      return line('{name}: joined {days} days ago, no visit yet', { name, days });
     }),
     show: listOf('away', AWAY_DAYS),
   });

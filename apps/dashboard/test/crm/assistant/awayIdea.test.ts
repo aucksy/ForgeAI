@@ -87,6 +87,50 @@ describe('Not seen for 10+ days (R-593)', () => {
   });
 });
 
+// R-600 (fresh eyes, 16 Nov 2026): a member who rejoined showed "joined 14 days ago" (the new plan's start), though they
+// joined in March 2025. The shown number is the real joining day; who is counted is unchanged (both 10+ days old).
+describe('"joined N days ago" counts from the joining day (R-600)', () => {
+  function rejoinGym(): CrmSnapshot {
+    const base = fixtureGym();
+    const members = [
+      makeMember({ id: 'r_back', fullName: 'Rekha Das', phone: '+919700000011', joinedOn: '2025-03-01' }),
+      makeMember({ id: 'r_new', fullName: 'Kavita Joshi', phone: '+919700000012', joinedOn: '2026-10-31' }),
+    ];
+    const memberships = [
+      makeMembership({ id: 'ms_r_back_old', memberId: 'r_back', startsOn: '2025-03-01', endsOn: '2025-03-31' }),
+      // Rejoined after a long gap: this run started 14 days ago, and they have not come since.
+      makeMembership({ id: 'ms_r_back', memberId: 'r_back', planName: 'Yearly', startsOn: '2026-10-29', endsOn: '2027-10-28' }),
+      makeMembership({ id: 'ms_r_new', memberId: 'r_new', planName: 'Yearly', startsOn: '2026-10-31', endsOn: '2027-10-30' }),
+    ];
+    return { ...base, members, memberships, payments: [], visits: [] };
+  }
+  const rejoinData = () => {
+    const snapshot = rejoinGym();
+    const allViews = viewsOf(snapshot);
+    return answerData({ snapshot, views: allViews, allViews });
+  };
+
+  it('a rejoined member shows the days since they first joined; a new member the days since joining', () => {
+    const d = rejoinData();
+    const group = (membersInGroup(away(), d) ?? []).map((v) => v.member.id).sort();
+    expect(group).toEqual(['r_back', 'r_new']);
+    const idea = todaySuggestions(d).find((s) => s.id === 'away')!;
+    expect(idea.count).toBe(2);
+    // 1 Mar 2025 to 12 Nov 2026 is 621 days (not 14, the new plan's start).
+    expect(idea.who).toContainEqual({ text: '{name}: joined {days} days ago, no visit yet', vars: { name: 'Rekha', days: 621 } });
+    expect(idea.who).toContainEqual({ text: '{name}: joined {days} days ago, no visit yet', vars: { name: 'Kavita', days: 12 } });
+  });
+
+  it('the counting rule is unchanged: a rejoin whose new plan is under 10 days old is not counted', () => {
+    const snapshot = rejoinGym();
+    const memberships = snapshot.memberships.map((m) => (m.id === 'ms_r_back' ? { ...m, startsOn: '2026-11-05' } : m));
+    const s2 = { ...snapshot, memberships };
+    const allViews = viewsOf(s2);
+    const d = answerData({ snapshot: s2, views: allViews, allViews });
+    expect((membersInGroup(away(), d) ?? []).map((v) => v.member.id)).toEqual(['r_new']);
+  });
+});
+
 describe('the idea names its members and has "See who" (R-593)', () => {
   it('1-3 members: each by first name with their days; the number agrees', () => {
     const idea = todaySuggestions(data()).find((s) => s.id === 'away')!;

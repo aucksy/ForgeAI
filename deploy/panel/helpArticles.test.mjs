@@ -142,4 +142,13 @@ test('F220: the messaging articles name the real screens and buttons, and the ru
   assert.match(who, /Trainers read only questions\./);
   assert.match(who, /180 days/);
   assert.match(member, /Only the owner reads a complaint\./);
+  // R-600: the recipient a member picks (0096) and the "To:" line, in both articles.
+  for (const w of ['"Who should read it?"', '"Gym owner"', '"Gym admin"']) {
+    assert.ok(who.includes(w), `owner article misses ${w}`);
+    assert.ok(member.includes(w), `member article misses ${w}`);
+  }
+  assert.match(who, /"To: Gym owner"/);
+  assert.match(who, /Trainers never see feedback or complaints\./);
+  assert.match(member, /Trainers never see feedback or a complaint\./);
+  assert.doesNotMatch(who, /no Complaints button/);
 });
