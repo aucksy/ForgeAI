@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- R-575 (15 Nov 2026): release builds shrink resources, and nothing in code named the capability
+     array (values/wear.xml), so every released watch app (0.76.0, 0.77.0, 0.78.0 checked) shipped it
+     EMPTY: no phone ever saw "forgeai_watch_app". tools:keep on the values file itself did not hold;
+     a keep file in res/raw is where the shrinker reads it (and WatchCapability.kt now names the array in
+     code too). wear-build.yml fails when the release APK loses it. This file is not packaged. -->
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:keep="@array/android_wear_capabilities" />

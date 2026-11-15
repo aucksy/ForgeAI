@@ -40,6 +40,8 @@ object WatchVersion {
 
   /** Writes the item unless this process already did ([force] = write anyway). Never throws. */
   fun publish(ctx: Context, why: String, force: Boolean = false) {
+    // R-575: tell the phone this watch app is here (the capability), on every path that publishes.
+    WatchCapability.announce(ctx)
     if (done && !force) return
     val app = ctx.applicationContext
     try {

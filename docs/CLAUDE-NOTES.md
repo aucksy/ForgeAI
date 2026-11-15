@@ -207,13 +207,24 @@ Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept her
   CapabilityClient reference, Samsung developer forum and Stack Overflow threads):**
   | candidate | what would prove it | handled now? |
   |---|---|---|
-  | resource shrinking removed the watch's android_wear_capabilities array (release builds shrink; nothing in code names it; tools:keep is in values/wear.xml) | aapt2 dump of the release watch APK | proven either way by the new wear-build step (run below) |
+  | resource shrinking removed the watch's android_wear_capabilities array (release builds shrink; nothing in code names it; tools:keep is in values/wear.xml) | aapt2 dump of the release watch APK | **PROVEN, the root cause** (below) |
   | a stale capability cache after a watch app update or a phone app reinstall (reports, no official note) | capR/capA = 0 while nodes = 1 in the next log | yes: items + the ping |
   | FILTER_REACHABLE says not reachable while the watch is paired (cloud-only link, reconnecting) | capR 0, capA 1 | yes: FILTER_ALL counts for a connected watch |
   | no connected node at that moment (reconnect after Doze, Bluetooth off; OEM battery savers such as ColorOS on his OPPO hold back Play services) | nodes=0 with diag=1 | yes: a watch with a fresh diary is reported "not connected" |
   | Wear OS slow or failing on the phone (timeout, a status code) | late / fail:<code> in the why | yes: all steps at once, 2 retries with backoff, a partial answer instead of nothing |
   | app ID or signing mismatch (capabilities and items are per app) | items would not sync either | ruled out: his diary synced |
   | Galaxy Watch / OEM pairing apps (Galaxy Wearable) | same signals; capability and items are Play services, not the OEM app | same rules cover it |
+- **ROOT CAUSE, proven (very sure):** every released watch app (0.76.0, 0.77.0, 0.78.0 checked) has NO
+  "forgeai_watch_app" anywhere: the APKs' resources.arsc have no array type at all, and the 0.78.0 watch AAB (what
+  Play serves) keeps the android_wear_capabilities entry with NO value. Release builds shrink resources, nothing in
+  code named the array, and tools:keep on values/wear.xml is not honoured there. So no phone, on any watch brand,
+  ever saw the capability: watchVersions said hasApp false (no pop-up), probeWatch said "plain watch", F67 install
+  said missing. The new wear-build step failed on exactly this (run 43724579949: "The release watch APK has no
+  android_wear_capabilities array"). The phone-side fix (diary and version items count) makes the pop-up work for
+  watch apps already installed (0.76.0 on); the watch-side fix makes future watch apps advertise it:
+  res/raw/keep.xml keeps the array, WatchCapability names it in code and also announces it at run time
+  (addLocalCapability, DUPLICATE_CAPABILITY = fine) from WatchVersion.publish (app start, boot, update, listener).
+  Needs a watch release to reach his watch.
 - **The rule table (WearWire.watchesSeen; a watch has the app when ANY signal says so, "no app" needs every
   signal that answered to say no; a failed step is never a "no"):**
   | signal | "has the app" | "connected now" |
@@ -244,7 +255,10 @@ Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept her
 - **Tests:** WearWireTest (his exact case: capability empty, diary from node X, no version item -> hasApp true,
   version null, pinged; each signal alone; a failed step is not a no; fresh-diary rule; own node; order),
   watchUpdate / watchDiag / watchUpdateCard tests (parse, the head line, the decision and its reasons).
-  Cloud runs: RESULTS-BELOW.
+  Cloud runs: CI 43720782230 green; device QA 43720843604 green (u438 + u336 + u401, owner profile: the offer, no
+  pop-up when up to date, the not-connected step, the phone update screen, the What's new card); wear unit tests
+  passed inside 43720782161 (cancelled by a later push); wear 43724579949 failed on the new capability check (the
+  proof above); WEAR-AFTER-FIX.
 - **Only his real watch can confirm** the pop-up shows, and his next "Add my watch's screen log" says which signal
   found it (no cloud phone can pair a real watch).
 
