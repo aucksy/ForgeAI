@@ -587,6 +587,16 @@ export const ADMIN_NEWS_PENDING: readonly AdminNewsEntry[] = [
     ],
   },
   {
+    // R-580 (owner, 15 Nov 2026): every mobile number box keeps only the 10 digits, whatever a keyboard suggestion,
+    // autofill or paste puts in. Panel code, public pages and Workers: moves to ADMIN_NEWS with the next panel deploy.
+    id: 'pending-mobile-digits',
+    lines: [
+      {
+        text: 'Mobile number boxes now keep only the 10-digit number. When a phone fills in “+91 98765 43210”, the box shows 9876543210, on sign-in, Add member, Enquiries and your join pages.',
+      },
+    ],
+  },
+  {
     // R-561 (owner, 15 Nov 2026): one look for group headings, a wider menu, the bell in groups with payment colours,
     // the alerts card in the bell, the language switch in the top bar, one Refresh for the whole page and a line under
     // each setting. Panel code only: moves to ADMIN_NEWS with the deploy day as its id.

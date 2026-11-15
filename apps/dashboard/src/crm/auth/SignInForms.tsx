@@ -5,6 +5,7 @@
  */
 
 import { useState, type FormEvent, type ReactNode } from 'react';
+import { mobileInput } from '@forgeai/theme';
 
 import { t } from '../lang/lang';
 import { rememberNewGym } from '../logic/newGymReady';
@@ -112,7 +113,7 @@ export function SignInForm({ submitLabel, startPhone = '', heading }: { submitLa
       </div>
     )}
     <form onSubmit={(e) => void submit(e)} noValidate>
-      <TextField label={t('Your mobile number')} prefix="+91" inputMode="tel" value={phone} onChange={setPhone} placeholder="98290 12345" />
+      <TextField label={t('Your mobile number')} prefix="+91" inputMode="tel" autoComplete="tel-national" value={phone} onChange={(v) => setPhone(mobileInput(phone, v))} placeholder="98290 12345" />
       <TextField
         label={t('PIN (6 digits)')}
         type="password"
@@ -283,8 +284,9 @@ export function StartGymForm({ onSignInInstead }: { onSignInInstead?: (phone: st
         label={t('Your mobile number')}
         prefix="+91"
         inputMode="tel"
+        autoComplete="tel-national"
         value={phone}
-        onChange={setPhone}
+        onChange={(v) => setPhone(mobileInput(phone, v))}
         placeholder="98290 12345"
         hint={
           inbound

@@ -12,6 +12,8 @@
 //   400 {error: 'BAD_NAME' | 'BAD_PHONE' | 'BAD_REQUEST'}   404 {error: 'NO_INVITE'}
 //   429 {error: 'TOO_MANY'}   503 {error: 'NOT_READY' | 'TRY_AGAIN'}
 
+import { indianMobile } from '../../packages/theme/src/indianMobile.ts';
+
 export const PER_DAY = 5;
 const TIMES = ['morning', 'afternoon', 'evening', 'any'];
 
@@ -23,8 +25,9 @@ export function checkFriend(body) {
   if (!/^[A-HJ-NP-Z2-9]{8}$/.test(code)) return { error: 'NO_INVITE' };
   const name = typeof body.name === 'string' ? body.name.replace(/\s+/g, ' ').trim().slice(0, 80) : '';
   if (name.length < 2 || !/\p{L}/u.test(name)) return { error: 'BAD_NAME' };
-  const phone = String(body.phone ?? '').replace(/\D/g, '').replace(/^(91|0)(?=\d{10}$)/, '');
-  if (!/^[6-9]\d{9}$/.test(phone)) return { error: 'BAD_PHONE' };
+  // R-580: the shared rule (packages/theme/src/indianMobile.ts), never the page's word for it.
+  const phone = indianMobile(String(body.phone ?? ''));
+  if (!phone) return { error: 'BAD_PHONE' };
   const time = TIMES.includes(body.time) ? body.time : 'any';
   return { value: { code, name, phone, time } };
 }

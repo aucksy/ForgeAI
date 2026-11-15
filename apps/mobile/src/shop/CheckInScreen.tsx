@@ -17,6 +17,7 @@
  */
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
+import { mobileInput } from '@forgeai/theme';
 import { ActivityIndicator, Text, TextInput, View } from 'react-native';
 
 import { Card, GhostButton, PrimaryButton, Screen } from '@/components/ui';
@@ -260,11 +261,12 @@ export function CheckInScreen() {
           <TextInput
             value={phone}
             onChangeText={(t) => {
-              setPhone(t.slice(0, 16));
+              // R-580: the 10 digits, whatever the keyboard or autofill put in (it was cut at 16 characters first).
+              setPhone(mobileInput(phone, t));
               if (view.error) setView({ state: 'ask-phone', error: null });
             }}
             keyboardType="phone-pad"
-            autoComplete="tel"
+            autoComplete="tel-national"
             textContentType="telephoneNumber"
             returnKeyType="go"
             onSubmitEditing={sendPhone}

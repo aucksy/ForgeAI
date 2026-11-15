@@ -153,6 +153,22 @@ appId: com.mettleup.app
     file: sub-see.yaml
     env:
       FIND: "^Check with WhatsApp$"
+# ---------------------------------------------------------------- 5b. R-580: the keyboard's own number keeps 10 digits
+# A phone keyboard that suggests the member's own number puts in "+91 98765 43210" (country code and spaces). The box
+# keeps only 9876543210 (packages/theme/src/indianMobile.ts). Maestro types it one key at a time, which is the harder
+# case ("+", "+9", "+91" then the digits and spaces); the one-change paste is covered by the unit tests.
+- tapOn:
+    id: "welcome-phone-number"
+- eraseText: 20
+- inputText: "+91 98765 43210"
+- hideKeyboard
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "^9876543210$"
+- assertNotVisible: "^\\+91 98765 43210$"
+- assertNotVisible: "^\\+91.*"
+- takeScreenshot: rel-f203-5b-keyboard-number
 # ---------------------------------------------------------------- 6. found at 2 gyms: trainer and member
 - openLink: "mettleup://qa-signin?on=1&role=trainer&gym=QA%20UAT%20Gym&code=${CODE}&role2=member&gym2=QA%20Second%20Gym&code2=QASEC2&ends2=2027-01-31"
 - runFlow:

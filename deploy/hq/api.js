@@ -11,6 +11,7 @@ import { releases, removeFiles } from './outside.js';
 import { fcmHelpReplyMessage, sendOne } from './push.js';
 import { keyOn as englishKeyOn, monthUse as englishMonth, rewrite as englishRewrite } from './english.js';
 import { newGymsToCheck } from '../../apps/hq/public/logic.js';
+import { cleanMobile } from '../../packages/theme/src/indianMobile.ts';
 import { lastCheck as usageLastCheck, usageAlert } from './usage.js';
 import {
   AI_LIMIT_MAX,
@@ -500,7 +501,8 @@ export async function handleApi(request, env, who, deps = {}) {
       const made = await db('hq_create_gym', {
         p_gym_name: text(b.gymName, 60),
         p_owner_name: text(b.ownerName, 60),
-        p_phone: text(b.phone, 20),
+        // R-580: the shared 10-digit rule first ("+91 98765 43210" -> "9876543210"); the gym server checks it again.
+        p_phone: cleanMobile(text(b.phone, 40)),
         p_lead: leadId ? `lead-${leadId}` : null,
       });
       if (leadId && env.WEB) {

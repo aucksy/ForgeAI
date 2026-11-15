@@ -385,7 +385,7 @@ export function renderGymPage(p, { nowMs = Date.now(), assetBase = '', origin = 
     `<section class="board ask" id="ask" aria-labelledby="ask-h"><header><h2 id="ask-h">Ask the gym</h2><span lang="hi">सवाल पूछें</span></header>` +
     `<form id="ask-form" novalidate><p class="board-lead">Your question goes straight to ${escapeHtml(p.gymName)}. They reply to you on WhatsApp or by phone.</p>` +
     `<label for="a-name">Your name</label><input id="a-name" name="name" autocomplete="name" maxlength="80" required>` +
-    `<label for="a-phone">Mobile number</label><div class="tel"><span>+91</span><input id="a-phone" name="phone" type="tel" inputmode="numeric" autocomplete="tel-national" maxlength="14" required></div>` +
+    `<label for="a-phone">Mobile number</label><div class="tel"><span>+91</span><input id="a-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel-national" required></div>` +
     `<label for="a-q">Your question</label><textarea id="a-q" name="question" rows="3" maxlength="500" placeholder="Is there a ladies batch? Can I try one day first?" required></textarea>` +
     `<label class="tick"><input type="checkbox" name="consent" required><span>Send my name, number and question to ${escapeHtml(p.gymName)} so they can reply to me. Only this gym sees them.</span></label>` +
     `<input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">` +
@@ -404,7 +404,7 @@ export function renderGymPage(p, { nowMs = Date.now(), assetBase = '', origin = 
       `<input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true"><p class="msg" id="chat-msg" role="status" aria-live="polite"></p></form>` +
       `<form id="chat-contact" class="chat-contact" hidden novalidate><h3>Leave your number for the gym</h3><p class="board-lead">${gn} will call you or send you a WhatsApp message on this number.</p>` +
       `<label for="cc-name">Your name</label><input id="cc-name" name="name" autocomplete="name" maxlength="80" required>` +
-      `<label for="cc-phone">Mobile number</label><div class="tel"><span>+91</span><input id="cc-phone" name="phone" type="tel" inputmode="numeric" autocomplete="tel-national" maxlength="14" required></div>` +
+      `<label for="cc-phone">Mobile number</label><div class="tel"><span>+91</span><input id="cc-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel-national" required></div>` +
       `<label class="tick"><input type="checkbox" name="consent" required><span>Send my name, my number and this chat to ${gn}, so they can call me or send me a WhatsApp message. Only this gym sees them.</span></label>` +
       `<input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">` +
       `<div class="two"><button class="btn ink" type="submit" name="wants" value="call">Ask the gym to call me</button><button class="btn line" type="submit" name="wants" value="join">I want to join</button></div>` +

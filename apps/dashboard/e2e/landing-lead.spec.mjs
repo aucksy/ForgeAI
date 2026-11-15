@@ -100,7 +100,7 @@ test('L4 every failure is said on screen: a short number, no internet', async ({
   await top.getByRole('button', { name: 'Call me for a free demo' }).tap();
   await expect(top.getByRole('status')).toHaveText('Could not send. Check your internet and try again.');
   await expect(top.getByRole('status')).toBeInViewport();
-  await expect(box).toHaveValue('98290 12348'); // kept, to try again
+  await expect(box).toHaveValue('9829012348'); // kept, to try again (R-580: the box keeps only the 10 digits)
   expect(await site.hq()).toEqual([]);
 });
 

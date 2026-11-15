@@ -20,8 +20,10 @@ import {
   makeProof,
   newCode,
   sameText,
+  senderMobile,
   templateBody,
 } from './phoneCode.js';
+import { MOBILE_CASES } from '../../packages/theme/src/indianMobile.ts';
 import { sqliteD1 } from './sqliteD1.mjs';
 
 const SECRET = 'test-secret-0123456789abcdef0123456789abcdef';
@@ -100,7 +102,17 @@ test('Indian mobiles only: +91, 10 digits, starting 6-9', () => {
   assert.equal(indianMobile('+91 90000 00001'), OWNER);
   assert.equal(indianMobile('090000-00001'), OWNER);
   assert.equal(indianMobile('919000000001'), OWNER);
-  for (const bad of ['5000000001', '900000001', '+1 415 555 0100', '+44 7700 900123', '', null, '90000000011']) assert.equal(indianMobile(bad), null, String(bad));
+  for (const bad of ['5000000001', '900000001', '+1 415 555 0100', '', null, '90000000011']) assert.equal(indianMobile(bad), null, String(bad));
+  // R-580 (owner): a typed number with more than 10 digits keeps its last 10, whatever came in front.
+  assert.equal(indianMobile('+44 7700 900123'), '7700900123');
+  for (const [typed, ten] of MOBILE_CASES) assert.equal(indianMobile(typed), /^[6-9]\d{9}$/.test(ten) ? ten : null, typed);
+});
+
+test('R-580: the number a WhatsApp message came FROM stays strict (never "the last 10 digits")', () => {
+  assert.equal(senderMobile('919000000001'), OWNER);
+  assert.equal(senderMobile('9000000001'), OWNER);
+  // A foreign sender whose last 10 digits are an Indian number must never prove that number.
+  for (const bad of ['447700900123', '19000000001', '00919000000001', '', null]) assert.equal(senderMobile(bad), null, String(bad));
 });
 
 test('the WhatsApp body is Meta’s copy-code authentication template: the code in the body and the button', () => {

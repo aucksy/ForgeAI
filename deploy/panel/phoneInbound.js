@@ -26,7 +26,7 @@
 // LIMITS: the same as asking for a code (phoneCode.js limitFor, counted in phone_code_asks): per number 1 a minute,
 // 3 an hour, 5 a day; per network address 10 an hour. Codes last 10 minutes; a verified one never works again.
 
-import { CODE_MINUTES, GRAPH_VERSION, MAX_WRONG, PURPOSES, hmacHex, indianMobile, ipKey, limitFor, makeProof, newCode, phoneKey, sameText } from './phoneCode.js';
+import { CODE_MINUTES, GRAPH_VERSION, MAX_WRONG, PURPOSES, hmacHex, indianMobile, ipKey, senderMobile, limitFor, makeProof, newCode, phoneKey, sameText } from './phoneCode.js';
 
 export const WA_PREFIX = 'MettleUp code';
 
@@ -336,7 +336,7 @@ export async function replyText(env, to, text, log = console, fetcher = fetch) {
 }
 
 async function oneMessage(env, secret, from, text, now, log, seen = {}) {
-  const sender = indianMobile(from);
+  const sender = senderMobile(from);
   const senderKey = sender ? await phoneKey(secret, sender) : null;
   const code = parseCode(text);
   if (code) {

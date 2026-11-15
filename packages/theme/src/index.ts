@@ -18,3 +18,5 @@ export * from './memberPlan';
 export * from './busyMachines';
 // T74 (R-356): the gym's home-screen shortcut icon (logo edge colour, size inside the safe circle).
 export * from './shortcutIcon';
+// R-580: every mobile number box keeps only the 10-digit Indian number (autofill "+91 98765 43210" -> 9876543210).
+export * from './indianMobile';

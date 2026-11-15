@@ -18,6 +18,7 @@
 import { PAGE_ORIGIN, pageFrom, renderGymPage, slugOk } from './gymPage.js';
 import { handleChat, handleChatContact } from './pageChat.js';
 import { pageAiOn } from './switches.js';
+import { indianMobile } from '../../packages/theme/src/indianMobile.ts';
 
 export const ASK_PER_DAY = 5;
 export const REPORT_PER_DAY = 5;
@@ -28,10 +29,9 @@ const CACHE_ORIGIN = 'https://cache.forgeai/gym_page_public/';
 
 // ------------------------------------------------------------------ the forms, checked (PURE)
 
-/** "+91 98765 43210", "098765 43210" -> "9876543210"; anything else null. PURE. */
+/** "+91 98765 43210", "098765 43210" -> "9876543210"; anything else null. R-580: the shared rule (indianMobile.ts). PURE. */
 export function mobileOf(s) {
-  const d = String(s ?? '').replace(/\D/g, '').replace(/^(91|0)(?=\d{10}$)/, '');
-  return /^[6-9]\d{9}$/.test(d) ? d : null;
+  return indianMobile(String(s ?? ''));
 }
 
 /** The "Ask the gym" form: {value} | {bot} | {error}. Only these fields ever go on. PURE. */

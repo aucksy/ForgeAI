@@ -12,6 +12,7 @@
  * their roster row. So it is required, normalised, and checked for duplicates.
  */
 
+import { onlyDigits } from '@forgeai/theme';
 import type { Member, MemberDraft } from '../types';
 import { isValidDateISO, type DateISO } from './dates';
 import { BATCH_MAX, memberBatch, normalizeBatch } from './batches';
@@ -51,7 +52,8 @@ export function normalizePhone(dialCodeRaw: string, phoneRaw: string): PhonePart
   const dial = dialCodeRaw.replace(/\D/g, '');
   if (dial.length < 1 || dial.length > 4) return null;
 
-  const digits = phoneRaw.replace(/\D/g, '');
+  // R-580: Hindi and other Indian keyboards' digits count (onlyDigits maps them to 0-9).
+  const digits = onlyDigits(phoneRaw);
   if (digits.length === 0) return null;
 
   const asTyped = digits;
@@ -60,7 +62,11 @@ export function normalizePhone(dialCodeRaw: string, phoneRaw: string): PhonePart
   const trunkStripped = digits.replace(/^0+/, '');
 
   const candidates =
-    dial === '91' ? [asTyped, dialStripped, trunkStripped] : [dialStripped, asTyped, trunkStripped];
+    // R-580: for +91, also "0091 98765 43210". A stray extra digit is NOT cut here (the number box itself
+    // keeps the last 10, where the person sees it; an import or the AI Assistant must not guess).
+    dial === '91'
+      ? [asTyped, dialStripped, trunkStripped, digits.length === 14 && digits.startsWith('0091') ? digits.slice(4) : null]
+      : [dialStripped, asTyped, trunkStripped];
 
   for (const national of candidates) {
     if (national && isValidNational(dial, national)) {

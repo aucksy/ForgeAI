@@ -9,6 +9,7 @@
  */
 
 import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from 'react';
+import { dialMobileInput } from '@forgeai/theme';
 
 import { useCan } from '../../auth/AuthProvider';
 import { useCrm } from '../../store';
@@ -729,7 +730,7 @@ function AddEnquirySheet({ onClose }: { onClose: () => void }) {
           <TextField
             label="Mobile number"
             value={form.phone}
-            onChange={set('phone')}
+            onChange={(v) => set('phone')(dialMobileInput(form.dialCode, form.phone, v))}
             error={errorFor('phone')}
             inputMode="tel"
             placeholder="98765 43210"

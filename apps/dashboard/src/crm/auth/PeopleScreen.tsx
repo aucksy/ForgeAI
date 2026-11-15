@@ -13,6 +13,7 @@
  */
 
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { mobileInput } from '@forgeai/theme';
 
 import { copyText } from '../shop/JoinCode';
 import { useCrm } from '../store';
@@ -552,7 +553,7 @@ function AddPersonSheet({
     >
       {error && <ErrorBanner>{error}</ErrorBanner>}
       <TextField label={t('Name')} value={name} onChange={setName} placeholder="Suresh" autoFocus />
-      <TextField label={t('Mobile number')} prefix="+91" inputMode="tel" value={phone} onChange={setPhone} placeholder="98290 12345" />
+      <TextField label={t('Mobile number')} prefix="+91" inputMode="tel" value={phone} onChange={(v) => setPhone(mobileInput(phone, v))} placeholder="98290 12345" />
       <SelectField
         label={t(JOB_WORDS.label)}
         value={choice}

@@ -16,6 +16,7 @@
  */
 
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { mobileOrAsTyped } from '@forgeai/theme';
 
 import { useAuth, useCan } from '../../auth/AuthProvider';
 import { SignInCard } from '../../auth/GoOnlineCard';
@@ -234,7 +235,7 @@ export function SettingsScreen({ section }: { section?: string }) {
           hint={t(multi ? SETTING_LINES.branchName : SETTING_LINES.gymName)}
         />
         <Grid min={220}>
-          <TextField label="Phone" value={phone} onChange={setPhone} inputMode="tel" hint={t(pagesOpen ? SETTING_LINES.phone : SETTING_LINES.phoneNoPage)} />
+          <TextField label="Phone" value={phone} onChange={(v) => setPhone(mobileOrAsTyped(v))} inputMode="tel" hint={t(pagesOpen ? SETTING_LINES.phone : SETTING_LINES.phoneNoPage)} />
           <TextField
             label="GSTIN (optional)"
             value={gstin}

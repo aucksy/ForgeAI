@@ -15,6 +15,7 @@
  */
 
 import { useEffect, useMemo, useState } from 'react';
+import { anyCountryMobileInput, dialMobileInput } from '@forgeai/theme';
 
 import { useCrm } from '../../store';
 import type { Gender, Member } from '../../types';
@@ -319,7 +320,7 @@ export function MemberFormSheet({
           <TextField
             label={t('Mobile number')}
             value={form.phone}
-            onChange={set('phone')}
+            onChange={(v) => set('phone')(dialMobileInput(form.dialCode, form.phone, v))}
             error={errorFor('phone')}
             inputMode="tel"
             placeholder="98765 43210"
@@ -398,7 +399,7 @@ export function MemberFormSheet({
         <TextField
           label={t('Emergency number (optional)')}
           value={form.emergencyPhone}
-          onChange={set('emergencyPhone')}
+          onChange={(v) => set('emergencyPhone')(anyCountryMobileInput(form.emergencyPhone, v))}
           inputMode="tel"
           error={errorFor('emergencyPhone')}
         />

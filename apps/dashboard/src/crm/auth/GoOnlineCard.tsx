@@ -14,6 +14,7 @@
  */
 
 import { useCallback, useState } from 'react';
+import { mobileInput } from '@forgeai/theme';
 
 import type { CrmSnapshot } from '../data/adapter';
 import { uploadSnapshot } from '../data/cloud';
@@ -194,8 +195,9 @@ function PutOnlineCard() {
             label="Your mobile number"
             prefix="+91"
             inputMode="tel"
+            autoComplete="tel-national"
             value={phone}
-            onChange={setPhone}
+            onChange={(v) => setPhone(mobileInput(phone, v))}
             placeholder="98290 12345"
             hint="You sign in with this number."
           />

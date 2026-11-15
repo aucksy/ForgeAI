@@ -2,6 +2,16 @@
 
 ## Waiting for release (R-266: tag only when the owner says "release")
 - 0.78.0 RELEASED 15 Nov 2026 (R-556 approval, R-560): tag v0.78.0 on a4a67c81; phone on Play internal + closed + open testing; watch on wear:internal, its closed + open tracks waiting for Google's phone review to end (re-run play-upload.yml for v0.78.0, dry_run off). Production by hand about 3 days after open testing (R-494b).
+- R-580 EVERY MOBILE NUMBER BOX KEEPS ONLY THE 10 DIGITS (owner, 15 Nov 2026; notes R-580). A keyboard's own-number
+  suggestion, an autofill or a paste ("+91 98765 43210", "0091 ...", "(+91) 98765-43210", Hindi digits) becomes
+  9876543210; typing one key at a time is unchanged (an 11th key is ignored). One shared rule,
+  packages/theme/src/indianMobile.ts; no length limit on any phone box (it cut long autofills first). MEMBER APP:
+  welcome sign-in by phone, Find my gym, Check in, Staff door, the welcome and Profile mobile (any country kept).
+  PANEL (deploy): every admin-app mobile box; join-online, friend, home and gym pages; panel + HQ Workers.
+  Tests: apps/mobile/test/lib/indianMobile.test.ts, apps/dashboard/test/crm/mobileNumber.test.ts,
+  deploy/panel/mobileRule.test.mjs, e2e mobile-number-uat.spec.mjs, phone flow u203 step 5b (rel-f203-5b).
+  What's new draft (member-words): "Mobile number boxes now keep only your 10-digit number. If your keyboard fills in
+  +91 and spaces, they are removed for you."
 - R-572 MEMBER APP: "NEW EXERCISE" / "EDIT EXERCISE" REDESIGNED (owner, 15 Nov 2026, "Yes go with A"; notes R-572).
   The name on top, one "Details" card of rows (tap a row, a sheet changes that one thing), one "Add photo or video"
   card whose + opens gallery / photo / video, and Save pinned at the bottom. Every old rule kept. No database change.

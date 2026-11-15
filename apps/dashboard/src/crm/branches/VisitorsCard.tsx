@@ -7,6 +7,7 @@
  */
 
 import { useCallback, useEffect, useState } from 'react';
+import { mobileInput } from '@forgeai/theme';
 
 import { normalizeMobile } from '../auth/signin';
 import { useCrm } from '../store';
@@ -104,7 +105,7 @@ export function VisitorsCard({ onToast }: { onToast: (msg: string) => void }) {
           <ErrorBanner>{error}</ErrorBanner>
         </div>
       )}
-      <TextField label="Their mobile number" prefix="+91" inputMode="tel" value={phone} onChange={(v) => { setPhone(v); setFound(null); }} placeholder="98290 12345" />
+      <TextField label="Their mobile number" prefix="+91" inputMode="tel" value={phone} onChange={(v) => { setPhone(mobileInput(phone, v)); setFound(null); }} placeholder="98290 12345" />
       <div style={{ marginTop: space.sm }}>
         <Button variant="ghost" disabled={busy} onClick={() => void find()}>
           {busy && !found ? 'Looking…' : 'Find'}

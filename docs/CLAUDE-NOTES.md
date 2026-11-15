@@ -7,6 +7,48 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-580 (15 Nov 2026) Every mobile number box keeps only the 10-digit Indian number
+- His ask (15 Nov 2026): when a phone's keyboard suggests the user's own number, it fills in the country code and
+  spaces ("+91 98765 43210"); the field must strip anything extra and keep only the last 10 digits.
+- **The rule** (ONE pure module, packages/theme/src/indianMobile.ts, imported by both apps and both Workers): digits
+  only (spaces, dashes, dots, brackets, "+" go); Hindi/Bengali/Tamil/... keyboard digits map to 0-9 by an explicit
+  table (never a Unicode regex); a "+91" in front goes at once; more than 10 digits -> the LAST 10 ("91"+10, "0"+10,
+  "0091"+10, anything else); fewer than 10 -> kept so typing goes on; the "enter 10 digits" checks stay.
+  Typing (mobileInput(prev, next)): an 11th key after a full number is ignored like a length limit (it may not push
+  the first digit out); "+" and "+9" stay until "+91"; "0091 ..." by hand waits for all 14 digits; deleting works.
+  Shared tables MOBILE_CASES + MOBILE_INPUT_CASES run in every codebase. Public pages and the HQ page carry a
+  plain-JS copy between "// R-580 mobile rule >>>" markers; the dashboard test checks every copy is the same text
+  and passes both tables.
+- **The maxLength trap (found):** no box had maxLength={10}, but: member app WelcomePhone / Find my gym / Staff door
+  maxLength={16} and Check in .slice(0, 16), welcome + Profile maxLength 24; panel pages friend.html, join-online.html
+  and both home forms maxlength="16"; the gym page's Ask + chat forms maxlength="14" (deploy/panel/gymPage.js); HQ
+  "Owner's mobile" maxlength 16. 14 cut "+91 98765 43210" (15 characters) to "+91 98765 4321", which the server
+  refused: the gym page form failed on EVERY autofill. 16 cut "(+91) 98765-43210". All removed; the rule is the limit.
+- **Every field changed:** MEMBER APP (India only, mobileInput, autoComplete tel-national + textContentType):
+  onboarding/WelcomePhone (sign in with your phone number, R-493/F203), app/find-gym, shop/CheckInScreen,
+  shop/StaffDoorCard. Any country (anyCountryMobileInput: a "+44 ..." number stays as typed, SH-26): onboarding
+  WelcomeScreen "Mobile number, optional", settings/ProfileCard. No frozen file touched. ADMIN APP: TextField gets
+  an autoComplete prop (default off); SignInForms (sign-in + Set up a new gym, tel-national), ForgotPin (both,
+  tel-national), GoOnlineCard (tel-national), PeopleScreen (staff number), VisitorsCard (visitor), MemberFormSheet
+  mobile + emergency number, Enquiries add, AI Assistant add member / add enquiry cards (dialMobileInput: +91 cleans,
+  another code is left alone), Settings gym "Phone" (mobileOrAsTyped: a pasted mobile is cleaned, a landline like
+  "0141 2345678" keeps its 0). normalizeMobile = the shared rule; normalizePhone also takes "0091"+10 and Indian
+  digits but does NOT cut a stray 11th digit (imports and the AI Assistant must not guess). PUBLIC PAGES:
+  join-online.html, friend.html, home (both forms, autocomplete tel-national), gym-page/page.js (Ask + chat).
+  WORKERS (never trust the page): panel friend.js, leads.js, gymPageServe.js mobileOf (gym page + chat contact),
+  phoneCode.js indianMobile (sign-in codes, self-join WhatsApp check); HQ api.js gym/create. Kept STRICT on purpose:
+  the WhatsApp SENDER number (phoneInbound senderMobile): "the last 10 digits" there would let a foreign number
+  whose last 10 digits match an Indian one prove that number. HQ page "Owner's mobile" box. Not changed: the gym
+  server's SQL _norm_phone (no live database change) and the Excel import's parser.
+- **Tests:** apps/mobile/test/lib/indianMobile.test.ts (tables + every phone-pad box uses the rule, no maxLength),
+  apps/dashboard/test/crm/mobileNumber.test.ts (tables, normalizeMobile/normalizePhone, every JS copy, no tel box
+  with maxlength), deploy/panel/mobileRule.test.mjs + phoneCode.test.mjs (senderMobile strict), e2e
+  mobile-number-uat.spec.mjs (Set up a new gym, Add member, friend page, landing page; pictures r580-1..5),
+  landing-lead.spec.mjs (the box now shows 9829012348). Phone: u203 step 5b types "+91 98765 43210" into the
+  sign-in box and checks 9876543210 (picture rel-f203-5b-keyboard-number).
+- What's new: owners ADMIN_NEWS_PENDING 'pending-mobile-digits' (with the next panel deploy); members: PROGRESS.md
+  "Waiting for release" R-580 draft line.
+- Status: IN PROGRESS (cloud run ids follow).
 ## R-583 (15 Nov 2026) Gym reply notification: tap opened nothing (fixed); no sound / no pop-up (open); trainer choice hidden
 - His test (15 Nov 2026, his own member on his gym): the gym replied to his feedback. "There is a notification in the
   notifications panel, but there is no sound. And the notification has no pop-up either. Tapping that notification did

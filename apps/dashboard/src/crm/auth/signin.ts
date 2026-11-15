@@ -10,6 +10,7 @@
  * supabase/migrations/0010_signin_and_records.sql.
  */
 
+import { indianMobile } from '@forgeai/theme';
 import { INVITE_ORIGIN, firstName } from '../shop/invite';
 
 export type Role = 'owner' | 'staff';
@@ -82,13 +83,11 @@ export const CODE_MINUTES = 30;
 
 /**
  * An Indian mobile as 10 digits, or null. Takes "+91 98290 12345", "098290-12345",
- * "9829012345". Same rule as the server's _norm_phone. PURE.
+ * "9829012345". R-580: the shared rule (packages/theme/src/indianMobile.ts), the same one the
+ * Workers apply: more than 10 digits keeps the last 10. PURE.
  */
 export function normalizeMobile(raw: string): string | null {
-  let d = raw.replace(/\D/g, '');
-  if (d.length === 12 && d.startsWith('91')) d = d.slice(2);
-  if (d.length === 11 && d.startsWith('0')) d = d.slice(1);
-  return /^[6-9]\d{9}$/.test(d) ? d : null;
+  return indianMobile(raw);
 }
 
 /** "9829012345" -> "98290 12345", the way it is read out at a desk. PURE. */

@@ -36,6 +36,7 @@
  *     "A MettleUp backup" (the "Restore from a backup" view, RestoreBackupPanel).
  */
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { anyCountryMobileInput } from '@forgeai/theme';
 import {
   AccessibilityInfo,
   BackHandler,
@@ -734,15 +735,17 @@ export function WelcomeScreen() {
                   <TextInput
                     ref={phoneRef}
                     value={draft.phone}
-                    onChangeText={(t) => patch({ phone: t })}
+                    // R-580: an Indian number keeps only its 10 digits ("+91 98765 43210" -> 9876543210); a number
+                    // with another country's "+" code stays as typed (any country, SH-26), at most 24 characters.
+                    onChangeText={(t) => patch({ phone: anyCountryMobileInput(draft.phone, t) })}
                     placeholder="e.g. +91 98765 43210"
                     placeholderTextColor={color.inkMuted}
                     accessibilityLabel="Mobile number, optional"
                     keyboardType="phone-pad"
                     autoComplete="tel"
+                    textContentType="telephoneNumber"
                     returnKeyType="done"
                     onSubmitEditing={onNext}
-                    maxLength={24}
                     style={[inputStyle(), errFor('phone') ? { borderColor: color.criticalText } : null]}
                   />
                   <FieldError message={errFor('phone')} />

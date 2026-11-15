@@ -60,6 +60,8 @@ import {
   trialPicks,
   webPageWords,
   when,
+  cleanMobile,
+  keepMobile,
 } from './logic.js';
 
 const main = document.getElementById('main');
@@ -348,13 +350,15 @@ async function exportGyms(list, out) {
 function createGymForm(box, { gymName = '', phone = '', leadId = null }) {
   const name = h('input', { value: gymName, maxlength: '60', autocomplete: 'off' });
   const owner = h('input', { maxlength: '60', autocomplete: 'off' });
-  const mobile = h('input', { value: phone, inputmode: 'tel', maxlength: '16', autocomplete: 'off' });
+  // R-580: no length limit (it cut "+91 98765 43210" before it was cleaned); the box keeps the 10 digits itself.
+  const mobile = h('input', { value: cleanMobile(phone), type: 'tel', inputmode: 'tel', autocomplete: 'off' });
+  keepMobile(mobile);
   const out = h('div');
   box.replaceChildren(h('div', { class: 'card' },
     h('h2', {}, leadId ? 'Make a gym for this lead' : 'Make a gym'),
     field('Gym name', name), field('Owner’s name', owner), field('Owner’s mobile', mobile, '10 digits'),
     action('Make the gym', async () => {
-      const r = await api('/api/gym/create', { gymName: name.value, ownerName: owner.value, phone: mobile.value, leadId });
+      const r = await api('/api/gym/create', { gymName: name.value, ownerName: owner.value, phone: cleanMobile(mobile.value), leadId });
       out.replaceChildren(codeCard(r.name, r.code, `Gym made: ${r.name}, gym code ${r.joinCode}.`));
     }, { out }),
     out));

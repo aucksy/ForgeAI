@@ -139,7 +139,7 @@
       </div>
       <div class="field">
         <label for="phone" data-t="mobile">Mobile number</label>
-        <div class="phone"><span>+91</span><input id="phone" type="tel" inputmode="tel" autocomplete="tel-national" maxlength="16" placeholder="98765 43210"></div>
+        <div class="phone"><span>+91</span><input id="phone" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="98765 43210"></div>
         <div id="verify-box">
           <p class="help" data-t="verifyWhy">We check that this number is yours. You send one WhatsApp message to MettleUp. It is free.</p>
           <div class="gap" style="height:10px"></div>
@@ -490,7 +490,47 @@
     if (p.durationUnit === 'day') return n === 1 ? t('days1') : t('daysN', { n: n });
     return n === 1 ? t('months1') : t('monthsN', { n: n });
   }
-  function digitsOf(v) { return String(v || '').replace(/\D/g, '').replace(/^(91|0)(?=\d{10}$)/, ''); }
+  // R-580 mobile rule >>> (a plain-JS twin of packages/theme/src/indianMobile.ts; every copy is the same text, and
+  // apps/dashboard/test/crm/mobileNumber.test.ts runs each one on the shared cases. Change one, change them all.)
+  var MOBILE_ZEROS = [0x0660, 0x06f0, 0x0966, 0x09e6, 0x0a66, 0x0ae6, 0x0b66, 0x0be6, 0x0c66, 0x0ce6, 0x0d66, 0xff10];
+  function mobileAscii(raw) {
+    var s = String(raw == null ? '' : raw), out = '';
+    for (var i = 0; i < s.length; i++) {
+      var c = s.charCodeAt(i), ch = s.charAt(i);
+      for (var z = 0; z < MOBILE_ZEROS.length; z++) if (c >= MOBILE_ZEROS[z] && c <= MOBILE_ZEROS[z] + 9) { ch = String(c - MOBILE_ZEROS[z]); break; }
+      out += ch;
+    }
+    return out;
+  }
+  function cleanMobile(raw) {
+    var a = mobileAscii(raw), d = a.replace(/[^0-9]/g, '');
+    if (/^[^0-9]*\+/.test(a) && d.indexOf('91') === 0) d = d.slice(2);
+    return d.length > 10 ? d.slice(-10) : d;
+  }
+  function mobileInput(prev, raw) {
+    var a = mobileAscii(raw), plus = /^[^0-9]*\+\s*(9)?\s*$/.exec(a);
+    if (plus) return plus[1] ? '+9' : '+';
+    var d = a.replace(/[^0-9]/g, '');
+    if (/^[^0-9]*\+/.test(a) && d.indexOf('91') === 0) d = d.slice(2);
+    if (d.length <= 10) return d;
+    if (d.indexOf('0091') === 0 && d.length < 14) return d;
+    var before = mobileAscii(prev).replace(/[^0-9]/g, '');
+    if (before.length === 10 && d.length === 11 && d.charAt(0) !== '0') return before;
+    return d.slice(-10);
+  }
+  function keepMobile(input) {
+    var last = input.value;
+    function mark() { last = input.value; }
+    input.addEventListener('focus', mark);
+    input.addEventListener('beforeinput', mark);
+    input.addEventListener('input', function () {
+      var next = mobileInput(last, input.value);
+      if (next !== input.value) input.value = next;
+      last = next;
+    });
+  }
+  // <<< R-580 mobile rule
+  function digitsOf(v) { return cleanMobile(v); }
   function phoneWords(d) { return '+91 ' + d.slice(0, 5) + ' ' + d.slice(5); }
   function waNumberWords(n) { var d = String(n || ''); return d.length === 12 && d.indexOf('91') === 0 ? '+91 ' + d.slice(2, 7) + ' ' + d.slice(7) : '+' + d; }
 
@@ -852,6 +892,7 @@
 
   // ---------------------------------------------------------------- step 1: name, number, WhatsApp check
   $('name').addEventListener('input', function () { S.name = $('name').value; save(); });
+  keepMobile($('phone')); // R-580: first, so the lines below read the cleaned number
   $('phone').addEventListener('input', function () {
     S.phone = $('phone').value; save();
     // F210: "already had a trial" belongs to the number; a different number may try.

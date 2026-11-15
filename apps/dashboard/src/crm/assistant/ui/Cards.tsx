@@ -11,6 +11,7 @@
  * written yet: that card says so plainly and never mentions credits.
  */
 import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { dialMobileInput } from '@forgeai/theme';
 
 import { t } from '../../lang/lang';
 import { addDays, formatDayShort, isValidDateISO } from '../../logic/dates';
@@ -1008,7 +1009,7 @@ function EditFields({ dr, data, set }: { dr: Exclude<Draft, MessageDraftA>; data
           {dr.tool === 'add_member' ? (
             <>
               <TextField label={t('Name')} value={dr.form.fullName} onChange={(v) => set({ ...dr, form: { ...dr.form, fullName: v } })} />
-              <TextField label={t('Mobile')} inputMode="tel" value={dr.form.phone} onChange={(v) => set({ ...dr, form: { ...dr.form, phone: v.replace(/[^\d]/g, '') } })} />
+              <TextField label={t('Mobile')} inputMode="tel" value={dr.form.phone} onChange={(v) => set({ ...dr, form: { ...dr.form, phone: dialMobileInput(dr.form.dialCode, dr.form.phone, v) } })} />
             </>
           ) : null}
           <SelectField
@@ -1042,7 +1043,7 @@ function EditFields({ dr, data, set }: { dr: Exclude<Draft, MessageDraftA>; data
       return box(
         <>
           <TextField label={t('Name')} value={dr.form.name} onChange={(v) => set({ ...dr, form: { ...dr.form, name: v } })} />
-          <TextField label={t('Mobile')} inputMode="tel" value={dr.form.phone} onChange={(v) => set({ ...dr, form: { ...dr.form, phone: v.replace(/[^\d]/g, '') } })} />
+          <TextField label={t('Mobile')} inputMode="tel" value={dr.form.phone} onChange={(v) => set({ ...dr, form: { ...dr.form, phone: dialMobileInput(dr.form.dialCode, dr.form.phone, v) } })} />
           <TextField label={t('Interested in')} value={dr.form.interest} onChange={(v) => set({ ...dr, form: { ...dr.form, interest: v } })} />
           <DayField label={t('Call back on')} value={dr.form.followUpOn} onChange={(v) => set({ ...dr, form: { ...dr.form, followUpOn: v } })} hint={dayInWords(dr.form.followUpOn) ?? undefined} />
         </>,

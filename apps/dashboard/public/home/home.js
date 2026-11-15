@@ -413,7 +413,48 @@
   } catch (e) {
     source = /[?&]from=member(&|$)/.test(location.search) ? 'member-referral' : ''; // quiet: storage blocked
   }
+  // R-580 mobile rule >>> (a plain-JS twin of packages/theme/src/indianMobile.ts; every copy is the same text, and
+  // apps/dashboard/test/crm/mobileNumber.test.ts runs each one on the shared cases. Change one, change them all.)
+  var MOBILE_ZEROS = [0x0660, 0x06f0, 0x0966, 0x09e6, 0x0a66, 0x0ae6, 0x0b66, 0x0be6, 0x0c66, 0x0ce6, 0x0d66, 0xff10];
+  function mobileAscii(raw) {
+    var s = String(raw == null ? '' : raw), out = '';
+    for (var i = 0; i < s.length; i++) {
+      var c = s.charCodeAt(i), ch = s.charAt(i);
+      for (var z = 0; z < MOBILE_ZEROS.length; z++) if (c >= MOBILE_ZEROS[z] && c <= MOBILE_ZEROS[z] + 9) { ch = String(c - MOBILE_ZEROS[z]); break; }
+      out += ch;
+    }
+    return out;
+  }
+  function cleanMobile(raw) {
+    var a = mobileAscii(raw), d = a.replace(/[^0-9]/g, '');
+    if (/^[^0-9]*\+/.test(a) && d.indexOf('91') === 0) d = d.slice(2);
+    return d.length > 10 ? d.slice(-10) : d;
+  }
+  function mobileInput(prev, raw) {
+    var a = mobileAscii(raw), plus = /^[^0-9]*\+\s*(9)?\s*$/.exec(a);
+    if (plus) return plus[1] ? '+9' : '+';
+    var d = a.replace(/[^0-9]/g, '');
+    if (/^[^0-9]*\+/.test(a) && d.indexOf('91') === 0) d = d.slice(2);
+    if (d.length <= 10) return d;
+    if (d.indexOf('0091') === 0 && d.length < 14) return d;
+    var before = mobileAscii(prev).replace(/[^0-9]/g, '');
+    if (before.length === 10 && d.length === 11 && d.charAt(0) !== '0') return before;
+    return d.slice(-10);
+  }
+  function keepMobile(input) {
+    var last = input.value;
+    function mark() { last = input.value; }
+    input.addEventListener('focus', mark);
+    input.addEventListener('beforeinput', mark);
+    input.addEventListener('input', function () {
+      var next = mobileInput(last, input.value);
+      if (next !== input.value) input.value = next;
+      last = next;
+    });
+  }
+  // <<< R-580 mobile rule
   all('.lead-form').forEach(function (form) {
+    if (form.elements.phone) keepMobile(form.elements.phone);
     var msg = form.querySelector('.msg');
     var go = form.querySelector('.go');
     var busy = false;
@@ -427,7 +468,7 @@
       e.preventDefault();
       if (busy) return;
       var f = form.elements;
-      var digits = f.phone.value.replace(/\D/g, '').replace(/^(91|0)(?=\d{10}$)/, '');
+      var digits = cleanMobile(f.phone.value);
       if (!/^[6-9]\d{9}$/.test(digits)) { f.phone.focus(); say(w().phone, 'err'); return; }
       var gym = f.gym ? f.gym.value.trim() : nameBox.value.replace(/\s+/g, ' ').trim();
       if (f.gym && !gym) { f.gym.focus(); say(w().gym2, 'err'); return; }

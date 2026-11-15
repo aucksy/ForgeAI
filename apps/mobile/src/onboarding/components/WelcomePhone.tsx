@@ -11,6 +11,7 @@
  */
 import { Image } from 'expo-image';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { mobileInput } from '@forgeai/theme';
 import { AppState, Linking, Text, TextInput, View } from 'react-native';
 
 import { pictureUrl } from '@/cloud/picture';
@@ -180,13 +181,14 @@ export function WelcomePhone({
           <TextInput
             value={phone}
             onChangeText={(t) => {
-              setPhone(t);
+              // R-580: the keyboard's own-number suggestion ("+91 98765 43210") becomes the 10 digits. No
+              // maxLength: it cut a long autofill before this line saw it; mobileInput is the limit.
+              setPhone(mobileInput(phone, t));
               setError(null);
             }}
             keyboardType="phone-pad"
-            autoComplete="tel"
+            autoComplete="tel-national"
             textContentType="telephoneNumber"
-            maxLength={16}
             placeholder={SIGN_IN.phoneLabel}
             placeholderTextColor={color.inkFaint}
             accessibilityLabel={SIGN_IN.phoneLabel}

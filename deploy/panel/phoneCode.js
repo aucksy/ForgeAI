@@ -30,6 +30,7 @@
 // free and not blocked by Meta. /status then answers {available: true, mode: 'inbound'}; this file's send path stays.
 
 import { handleInbound, inboundAvailable } from './phoneInbound.js';
+import { indianMobile as typedMobile } from '../../packages/theme/src/indianMobile.ts';
 
 export const CODE_MINUTES = 10;
 export const MAX_WRONG = 5;
@@ -47,8 +48,20 @@ const IST = 330 * MIN;
 
 // ------------------------------------------------------------------ pure helpers
 
-/** An Indian mobile as 10 digits, or null (same rule as the gym server's _norm_phone). PURE. */
+/**
+ * A TYPED Indian mobile as 10 digits, or null. R-580: the shared rule (packages/theme/src/indianMobile.ts): digits
+ * only, a "+91" in front goes, more than 10 digits -> the last 10 (a keyboard's "+91 98765 43210"). PURE.
+ */
 export function indianMobile(raw) {
+  return typedMobile(String(raw ?? ''));
+}
+
+/**
+ * The number a WhatsApp message came FROM (Meta sends "919876543210"), as 10 digits, or null. Strict on purpose: never
+ * the "last 10 digits" of a typed number, or a foreign sender whose last 10 digits match an Indian number would
+ * prove that number (R-580). PURE.
+ */
+export function senderMobile(raw) {
   let d = String(raw ?? '').replace(/\D/g, '');
   if (d.length === 12 && d.startsWith('91')) d = d.slice(2);
   if (d.length === 11 && d.startsWith('0')) d = d.slice(1);

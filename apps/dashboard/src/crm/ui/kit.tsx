@@ -574,10 +574,13 @@ export function TextField({
   inputMode,
   multiline,
   autoGrow,
+  autoComplete = 'off',
 }: {
   label: string;
   value: string;
   onChange: (v: string) => void;
+  /** R-580: 'tel-national' on a box for the person's OWN mobile, so the keyboard offers it; 'off' everywhere else. */
+  autoComplete?: 'off' | 'tel-national';
   type?: string;
   placeholder?: string;
   error?: string | null;
@@ -658,7 +661,7 @@ export function TextField({
             inputMode={inputMode}
             placeholder={placeholder}
             autoFocus={autoFocus}
-            autoComplete="off"
+            autoComplete={autoComplete}
             aria-invalid={invalid}
             aria-describedby={describedBy}
             style={{

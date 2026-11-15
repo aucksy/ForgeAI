@@ -13,6 +13,7 @@
  */
 
 import { useEffect, useState, type FormEvent } from 'react';
+import { mobileInput } from '@forgeai/theme';
 
 import { t } from '../lang/lang';
 import { Button, ErrorBanner, TextField, color, font, space, useIsCompact } from '../ui/kit';
@@ -211,7 +212,7 @@ function ForgotPinInbound({ startPhone, onBack }: { startPhone: string; onBack: 
       ) : (
         <>
           <p style={note}>{t('First we check that this mobile number is yours. You send us one WhatsApp message. It is free.')}</p>
-          <TextField label={t('Your mobile number')} prefix="+91" inputMode="tel" value={phone} onChange={setPhone} placeholder="98290 12345" />
+          <TextField label={t('Your mobile number')} prefix="+91" inputMode="tel" autoComplete="tel-national" value={phone} onChange={(v) => setPhone(mobileInput(phone, v))} placeholder="98290 12345" />
           <BotTrap value={trap} onChange={setTrap} />
         </>
       )}
@@ -316,7 +317,7 @@ function ForgotPinByCode({ startPhone, onBack }: { startPhone: string; onBack: (
       {!sentTo ? (
         <>
           <p style={note}>{t('We send a 6-digit code to your mobile number on WhatsApp. Then you choose a new PIN.')}</p>
-          <TextField label={t('Your mobile number')} prefix="+91" inputMode="tel" value={phone} onChange={setPhone} placeholder="98290 12345" />
+          <TextField label={t('Your mobile number')} prefix="+91" inputMode="tel" autoComplete="tel-national" value={phone} onChange={(v) => setPhone(mobileInput(phone, v))} placeholder="98290 12345" />
           <BotTrap value={trap} onChange={setTrap} />
         </>
       ) : (

@@ -13,6 +13,8 @@
 // kept as '' (the gym found us by itself). Only known words are kept (migrations/0007_lead_source.sql).
 // F56 (R-461): 'member-app' = "Tell my gym" in the member app: a gym name (and city), no number (HQ calls the gym).
 
+import { cleanMobile } from '../../packages/theme/src/indianMobile.ts';
+
 export const PER_DAY = 5;
 export const ALL_PER_DAY = 300;
 const SIZES = ['Under 100', '100-300', '300-600', 'Over 600'];
@@ -25,7 +27,8 @@ export const SOURCES = ['member-referral', 'member-app'];
 export function checkLead(body) {
   if (!body || typeof body !== 'object') return { error: 'Send a JSON object.' };
   if (typeof body.website === 'string' && body.website.trim()) return { bot: true };
-  const digits = String(body.phone ?? '').replace(/\D/g, '').replace(/^(91|0)(?=\d{10}$)/, '');
+  // R-580: the shared rule (packages/theme/src/indianMobile.ts): "+91 98765 43210" -> "9876543210".
+  const digits = cleanMobile(String(body.phone ?? ''));
   const text = (v, n) => (typeof v === 'string' ? v.replace(/\s+/g, ' ').trim().slice(0, n) : '');
   const gym = text(body.gym, 80);
   // F56 "Tell my gym" (R-461, 12 Nov 2026): the member app sends only the gym's name and city a member typed,

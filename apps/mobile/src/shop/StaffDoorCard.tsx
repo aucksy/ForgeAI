@@ -7,6 +7,7 @@
  */
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
+import { mobileInput } from '@forgeai/theme';
 import { Text, TextInput, View } from 'react-native';
 
 import { Card, GhostButton, PrimaryButton } from '@/components/ui';
@@ -75,13 +76,13 @@ export function StaffDoorCard() {
           <TextInput
             value={phone}
             onChangeText={(t) => {
-              setPhone(t);
+              // R-580: the 10 digits, whatever the keyboard or autofill put in (no maxLength: it cut them first).
+              setPhone(mobileInput(phone, t));
               setError(null);
             }}
             keyboardType="phone-pad"
-            autoComplete="tel"
+            autoComplete="tel-national"
             textContentType="telephoneNumber"
-            maxLength={16}
             placeholder={STAFF_DOOR.phoneLabel}
             placeholderTextColor={color.inkFaint}
             accessibilityLabel={STAFF_DOOR.phoneLabel}

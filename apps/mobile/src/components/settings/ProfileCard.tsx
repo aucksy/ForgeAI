@@ -16,6 +16,7 @@
  * `setMemberPhone` (queued) for the number. Pure rules: `profileAutosave.ts`.
  */
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { anyCountryMobileInput } from '@forgeai/theme';
 import { AccessibilityInfo, AppState, Pressable, Text, TextInput, View } from 'react-native';
 
 import { ChipGroup } from '@/components/settings/ChipGroup';
@@ -416,12 +417,13 @@ export function ProfileCard({ onSaved, showHint = true }: { onSaved?: () => void
               // Typing a new number ends the Undo offer (Undo would overwrite it).
               onChangeText: (t: string) => {
                 setUndoPhone(null);
-                edit('phone', t);
+                // R-580: an Indian number keeps only its 10 digits; another country's "+" number stays as typed.
+                edit('phone', anyCountryMobileInput(texts.phone, t));
               },
               placeholder: 'e.g. +91 98765 43210',
               keyboardType: 'phone-pad',
               autoComplete: 'tel',
-              maxLength: 24,
+              textContentType: 'telephoneNumber',
             })}
           </View>
           {savedPhone ? (

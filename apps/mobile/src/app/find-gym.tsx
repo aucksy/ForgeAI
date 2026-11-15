@@ -13,6 +13,7 @@
  */
 import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { mobileInput } from '@forgeai/theme';
 import { AppState, Linking, Share, Text, TextInput, View } from 'react-native';
 
 import { Card, GhostButton, PrimaryButton, Screen } from '@/components/ui';
@@ -222,13 +223,13 @@ function FindGymScreen() {
             <TextInput
               value={phone}
               onChangeText={(t) => {
-                setPhone(t);
+                // R-580: "+91 98765 43210" from the keyboard -> 9876543210 (mobileInput is the limit, no maxLength).
+                setPhone(mobileInput(phone, t));
                 setError(null);
               }}
               keyboardType="phone-pad"
-              autoComplete="tel"
+              autoComplete="tel-national"
               textContentType="telephoneNumber"
-              maxLength={16}
               placeholder={FIND_GYM.phoneLabel}
               placeholderTextColor={color.inkFaint}
               accessibilityLabel={FIND_GYM.phoneLabel}

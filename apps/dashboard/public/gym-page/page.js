@@ -54,9 +54,50 @@ if (dock && sign && 'IntersectionObserver' in window) {
   }
 }
 
+// R-580 mobile rule >>> (a plain-JS twin of packages/theme/src/indianMobile.ts; every copy is the same text, and
+// apps/dashboard/test/crm/mobileNumber.test.ts runs each one on the shared cases. Change one, change them all.)
+var MOBILE_ZEROS = [0x0660, 0x06f0, 0x0966, 0x09e6, 0x0a66, 0x0ae6, 0x0b66, 0x0be6, 0x0c66, 0x0ce6, 0x0d66, 0xff10];
+function mobileAscii(raw) {
+  var s = String(raw == null ? '' : raw), out = '';
+  for (var i = 0; i < s.length; i++) {
+    var c = s.charCodeAt(i), ch = s.charAt(i);
+    for (var z = 0; z < MOBILE_ZEROS.length; z++) if (c >= MOBILE_ZEROS[z] && c <= MOBILE_ZEROS[z] + 9) { ch = String(c - MOBILE_ZEROS[z]); break; }
+    out += ch;
+  }
+  return out;
+}
+function cleanMobile(raw) {
+  var a = mobileAscii(raw), d = a.replace(/[^0-9]/g, '');
+  if (/^[^0-9]*\+/.test(a) && d.indexOf('91') === 0) d = d.slice(2);
+  return d.length > 10 ? d.slice(-10) : d;
+}
+function mobileInput(prev, raw) {
+  var a = mobileAscii(raw), plus = /^[^0-9]*\+\s*(9)?\s*$/.exec(a);
+  if (plus) return plus[1] ? '+9' : '+';
+  var d = a.replace(/[^0-9]/g, '');
+  if (/^[^0-9]*\+/.test(a) && d.indexOf('91') === 0) d = d.slice(2);
+  if (d.length <= 10) return d;
+  if (d.indexOf('0091') === 0 && d.length < 14) return d;
+  var before = mobileAscii(prev).replace(/[^0-9]/g, '');
+  if (before.length === 10 && d.length === 11 && d.charAt(0) !== '0') return before;
+  return d.slice(-10);
+}
+function keepMobile(input) {
+  var last = input.value;
+  function mark() { last = input.value; }
+  input.addEventListener('focus', mark);
+  input.addEventListener('beforeinput', mark);
+  input.addEventListener('input', function () {
+    var next = mobileInput(last, input.value);
+    if (next !== input.value) input.value = next;
+    last = next;
+  });
+}
+// <<< R-580 mobile rule
+
 /** Indian mobile number from what was typed: "+91 98765 43210" -> "9876543210", else null. */
 export function mobileOf(s) {
-  const d = String(s || '').replace(/\D/g, '').replace(/^(91|0)(?=\d{10}$)/, '');
+  const d = cleanMobile(s);
   return /^[6-9]\d{9}$/.test(d) ? d : null;
 }
 
@@ -106,6 +147,7 @@ function say(el, text, ok) {
 
 const form = $('ask-form');
 if (form) {
+  if (form.phone) keepMobile(form.phone);
   form.addEventListener('submit', async (ev) => {
     ev.preventDefault();
     const msg = $('ask-msg');
@@ -263,6 +305,7 @@ if (chatForm && chatLog && data.chat) {
     }
   });
   if (chatContact) {
+    if (chatContact.phone) keepMobile(chatContact.phone);
     chatContact.addEventListener('submit', async (ev) => {
       ev.preventDefault();
       const msg = $('chat-contact-msg');
