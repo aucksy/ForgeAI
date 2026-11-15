@@ -28,6 +28,22 @@ Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept her
 - Not built yet: the admin app's list (data is in owner_hq_access.direct; wording needs his yes), HQ page for
   hq_db_reads, data-agreement line (draft in the report). Gap left: a curl with the service_role key is not logged.
 
+## R-594b (16 Nov 2026, night) Coordinator: tonight's release plan, his words, the audit freeze
+- His words: "release" (15 Nov 2026 ~22:20 IST) and, going to sleep 16 Nov 2026: "Take best decisions yourself to
+  release whatever is pending" + "I do want the watch app new update pop issue fixed" (G4, helper on it).
+  Also "yes panel deploy" (15 Nov). Quote these again before the v0.79.0 tag.
+- Order: all helpers green (R-587 welcome incl. G5 number-not-kept fix + part A flow; R-593 Today incl. the
+  'Not seen for 10+ days' fix: a member who joined today counted, names + See who; R-590 OPPO rest sound; picker
+  phone tests; G4 watch pop-up; release notes helper cleans PROGRESS.md waiting list + writes 0.79.0 What's new)
+  -> fresh-eyes review of d2928aaa..HEAD panel/HQ diff -> panel + HQ deploy, live checks -> version 0.79.0 ->
+  full UAT round, all types -> tag -> release -> play-upload (phone + watch, open testing; production ~3 days later).
+  A part that cannot go green safely is left out and reported.
+- Read log (owner said "yes read log"): helper builds; live apply needs his named yes (ask "yes 00NN").
+- AUDIT: plan D:\Brain\Dev-Framework6-11-16-full-system-audit-plan.md, "audit plan ok - starts Nov 18 at 4:30pm
+  with Opus 5.5 Medium", "fast lane ok": from then no changes except fast-lane bugs; new asks -> OWNER-INBOX backlog
+  tagged after-audit. Scheduled task mettleup-full-audit-start fires 18 Nov 16:35 IST.
+- Data rule (15 Nov): never read a real gym's member rows directly; Crispy Curves (test gym) has his standing yes.
+
 ## R-594 (15 Nov 2026, night) Release 0.79.0 fresh-eyes review: actions; MORNING LIST for him
 - Review: docs/reviews/2026-11-15-release-0.79.0-fresh-eyes.md (up to 65b35c1e). Blockers: (1) phone QA out of date
   with 0096 live + picker never run on a phone -> helper on it (adds to R-586); (2) panel deploy must go live before or
