@@ -7,6 +7,46 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-570. Handoff (15 Nov 2026, afternoon): his yeses, what is live, what runs, what is next
+He said (15 Nov 2026, about the 4 yeses in #101): "I'm okay with the rest of the panel update." / gym page words:
+"Okay with rest" except the "Your question is sent" line / join lines: "Yes to all lines" except waComputer /
+"yes to 0089 and 0090". Also: "I don't understand why we are keeping the web pages off by default" and "keep that in
+the setup steps ... It should be like one journey to set this up." And the Gemini rule (note gemini-only-when-he-asks):
+Gemini only when he asks, gemini-4-argon, medium thinking, full context + his style; never on trust.
+Then: "my 5-hour limit will be done in some time, so ensure that you have everything saved."
+
+LIVE now:
+- Play: phone 0.78.0 published to internal/closed/open (Google approved; published by me 15 Nov ~08:25 UTC); watch
+  0.78.0 uploaded (play-upload 43694560659, committed wear closed + wear beta) and published after approval.
+  Production ~18 Nov (R-494b), phone + watch, done by me in the simpleapps108 window.
+- Supabase: 0089 and 0090 APPLIED LIVE from 33910061 (tests 0090 PASS 26, 0089 PASS 57, 0088 PASS 57, 0080 PASS 127);
+  headers marked in 9dde781e.
+- T94 checked live (one "Open Branding" card for "gym logo kaise badlu").
+- Panel live is still 30f79a79 (forgeai-panel d74ad3c5); HQ live 30f79a79.
+
+APPROVED, NOT DONE YET:
+- Panel deploy ("I'm okay with the rest of the panel update"): deploy from deploy/panel after the review-fix helper
+  (8 findings of the fresh-eyes review: settingLines Bring a friend + web-page halves, MyMembers Refresh, cloud.ts
+  merge-save, per-gym bell seen time, AllBranches refresh, oneLink JOIN_PAY words, 0091 per-member visits) is CI
+  green, plus a UAT look at its pictures. Steps: wt-site checkout --detach <full sha>, get_dist.ps1 -Sha <full sha>,
+  npx wrangler deploy in wt-site/deploy/panel; HQ: npx wrangler deploy in deploy/hq. Check live /api/switches etc.
+  GYM_PAGES stays off in this deploy.
+- Gym web pages switch-on (words approved): wait for the journey helper (one set-up step "Let people find and join
+  your gym online": page on/off + publish, one link + QR poster + Maps, how people pay; Sent line "Your question is
+  sent to <gym>. The gym will call you or send you a WhatsApp message on 98XXXXXX12."; QR code on a computer with
+  "Scan this QR code with the phone that has WhatsApp for this number. WhatsApp opens with a message to MettleUp
+  ready. Send the message, and your number is checked."; the 5 other approved join lines). Its report gives the
+  switch-on steps (GYM_PAGES var, join.mettleup.fit route/DNS) in docs/gym-page/PLAN.md "Switch-on". Then deploy,
+  check a page live, tell him.
+
+HELPERS RUNNING at handoff (all push to main; none deploys): F217+F218 phone fixes (0092 NOT LIVE), F220 help article
++ day-first date boxes, F203 phone-number sign-in (0093 NOT LIVE, behind a switch), F208 gym page AI chat (behind
+switches), review fixes, the gym page journey. If a helper died with its CI wait, read its last commit's CI and
+finish or re-brief.
+
+LATER yeses to ask (one list, when ready): 0091 after the next phone release; 0092 (F218 trainers' charts); 0093 +
+privacy line (F203); F208 chat words + migration; F219 Play "In-app purchases" label check after production.
+
 ## R-569 (15 Nov 2026) F208 built: the AI helper chat on the gym web page, every chat lands in Enquiries (switched off)
 - Asked (coordinator, from R-538 / PLAN.md section 10): build F208, switched off; no exit-intent offers or countdowns (a TODO in PLAN.md instead).
 - Visitor: "Ask the AI helper" box on the page; answers only from the page's own facts, else "saved for the gym" (the visitor is told the gym calls or sends a WhatsApp message on the number they leave); a name-and-number box once, with a tick; "Your chat is saved and seen by <gym>." under the box.
