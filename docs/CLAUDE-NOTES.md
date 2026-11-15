@@ -242,12 +242,43 @@ Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept her
     the Workout tab with the Gym tab showing QA UAT Gym. u198 (R-581 first-install dots) passed.
   - Gym screen (canvas v7): the words first, right under "3 of 3" / Skip, then the phone row, arrow, "We found you"
     card and "Example"; the phone row says "Verified" (was "Checked"). introSlides.wordsFirst.
-  - PENDING when written: picture tours on 380aacf8: 43737448343 (1080x2400), 43737450694 (his size, font 1.3),
-    43737452877 (360 dp, font 2.0); CI 43737378612. Next: look at every picture, fill in the line below.
-- Pictures looked at (round 2): PENDING.
+  - Picture tours on 380aacf8: 43737448343 (1080x2400), 43737450694 (his size, font 1.3), 43737452877 (360 dp,
+    font 2.0) all passed; his size cut the gym picture, so the floor went to 0.35 (346a6c47).
+- Round 3, the fresh-eyes review (docs/reviews/2026-11-15-release-0.79.0-fresh-eyes.md), commits 5e81b24b, 6c3df285,
+  1b5222d0:
+  - G1: a found member whose setup save fails after the join (also when the gym's own colours rebuilt the welcome)
+    now gets the 3 questions with the name filled and the line "You joined <gym>. We could not finish setting up
+    the app, so answer these 3 quick questions." Never a silent return to the first screen (useStraightIn.needsSteps).
+  - G3: the welcome listens up to 10 s for the watch (the phone side can take 4.5 s + 2.5 s); an answer that comes
+    late still adds the watch screen while screen 1 is up (introWatchAnswer; a unit test answers after 4.5 s).
+  - G2: under the phone form, "Used MettleUp before? Bring back your workouts" opens the existing Google backup
+    sign-in. The phone number stays the only main button.
+  - Labels above the boxes ("Your mobile number", "Your first name, as your gym has it"); hints are examples.
+  - Straight in: a one-off Workout tab note, "We set you up as "New to lifting" and "Build muscle". You can change
+    both in Profile." with "Open Profile" / "Got it" (notice kind setupGuess; meta straight_in_note, left out of
+    backups). u203 checks the line.
+  - Not changed, his calls: the single phone-number main button, and the screen between "Get started" and the form.
+  - CI 43742201093 on 5e81b24b failed one unit test (the new note key was not in the backup list), fixed in 6c3df285.
+    CI 43742790527 on 6c3df285: phone checks and every unit test green; only "Admin journeys" red (R-593 / R-579 /
+    alerts panel tests, already red on main before R-587 touched anything).
+- Pictures looked at (round 3, 15 Nov 2026):
+  - 43742372931 (1080x2400, utour): labels above the boxes, the "Used MettleUp before?" link under the form, the gym
+    screen words first with "Verified", every welcome screen fits.
+  - 43742374904 (his size, utour): every welcome title and the gym picture fully visible (0.35 floor works); labels
+    fine. The link sits below the fold there; 1b5222d0 makes the tour scroll to it, and rerun 43744714823 shows it
+    on two lines under Skip, fully readable.
+  - 43742376941 (360 dp, font 2.0, utour): labels fit; welcome body text scrolls under the dots (words cut mid-line
+    until scrolled), as before.
+  - 43742379237 (u203): phone-only first screen, labels, the link on every phone-form state, no-tick, not found,
+    2 gyms, the trainer's old path, straight in with the new Workout tab note on top, Gym tab QA UAT Gym.
+  - G1's failure path is proven by unit tests only; no cloud picture can force a setup save to fail.
 - Open:
   - Gym staff (owner, trainer, desk) found by the number keep the old path (Join, 3 questions, the join screen).
-  - The straight-in defaults (Build muscle, New to lifting, kg) are a guess the member never confirmed.
+  - The straight-in defaults (Build muscle, New to lifting, kg) are a guess; the Workout tab note now says so.
+  - Review G4 (watch update pop-up) and G5 (the found number saved into Profile vs the "not kept" line):
+    not asked of this helper, still open.
+  - The 18+ box sits right under the main button when the other ways are open; reads a little crowded.
+  - At font 2.0 the welcome words scroll under the dots and the sign-in screen has an empty band above the title.
   - Done: the sign-in card dropped (his "drop the sign-in card").
   - "Beat your last workout" kept (his "keep last", 15 Nov 2026), an exception to the 1 Nov "previous" rule.
   - The watch screen was seen only through the stand-in, never with a real watch.
