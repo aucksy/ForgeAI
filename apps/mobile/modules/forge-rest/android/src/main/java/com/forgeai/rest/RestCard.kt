@@ -1214,8 +1214,8 @@ object RestCard {
       else -> R.raw.forge_rest_done
     }
     if (res == 0) android.util.Log.w("ForgeErr", "rest sound resource missing: $s")
-    val file = if (s == DEFAULT_SOUND) "forge_rest_done" else "forge_rest_$s"
-    return Uri.parse("android.resource://${ctx.packageName}/raw/$file")
+    // R-590: one name rule for the channels and the app's own ring (AlertRing.restSoundFile).
+    return Uri.parse(AlertRing.restSoundAddress(ctx.packageName, s))
   }
 
   /** R-55: the chosen sound's own three loud channels (the chime's are made above). */
@@ -1533,6 +1533,32 @@ object RestCard {
     else -> chOver(ctx) // R-55: the member's chosen sound (the chime keeps the original ids)
   }
 
+  /**
+   * R-590 (15 Nov 2026): OPPO / OnePlus (ColorOS) take the sound off every channel of an app not on
+   * OPPO's list (his OPPO: rest-over-sound reads importance 3, sound none), so "Rest is over" came
+   * silently with the screen off or ForgeAI in the background. The app then plays the member's own
+   * rest sound (the same file as the channel and the open app: lesson an-alert-has-two-sound-paths)
+   * once itself. A phone that kept the channel sound rings through the channel only ("channel-rings");
+   * never with "Workout sounds" off or ForgeAI on screen (its own bell rings there: [restBell]); held
+   * by silent, vibrate and Do Not Disturb unless the member chose "Ring through Do Not Disturb".
+   */
+  private fun ringIfStripped(ctx: Context, channel: String) {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return // the notification carries the sound
+    val how = AlertRing.restRing(channel, appOnScreen(ctx), CH_OVER_OPEN, chOverOpenSound(ctx), chOverAlarm(ctx))
+    val why = when (how) {
+      AlertRing.RestRing.NONE -> "not-here"
+      AlertRing.RestRing.ALARM -> AlertRing.ringIfMuted(
+        ctx, channel, restSound(ctx, sound(ctx)), AudioAttributes.USAGE_ALARM, throughDnd = true,
+        askedImportance = NotificationManager.IMPORTANCE_HIGH,
+      )
+      AlertRing.RestRing.NOTIFICATION -> AlertRing.ringIfMuted(
+        ctx, channel, restSound(ctx, sound(ctx)), AudioAttributes.USAGE_NOTIFICATION,
+        askedImportance = NotificationManager.IMPORTANCE_HIGH,
+      )
+    }
+    android.util.Log.i(LOG_TAG, "Rest is over app ring: $why")
+  }
+
   @Suppress("DEPRECATION")
   private fun postOver(ctx: Context, next: String?, endsAt: Long, lateMs: Long, allDone: Boolean) {
     try {
@@ -1602,6 +1628,7 @@ object RestCard {
       WorkoutCard.hide(ctx)
       nm(ctx).notify(tag, OVER_ID, b.build())
       android.util.Log.i(LOG_TAG, "Rest is over posted on $channel")
+      ringIfStripped(ctx, channel)
     } catch (e: Exception) {
       android.util.Log.w(LOG_TAG, "Rest is over NOT posted", e)
     }

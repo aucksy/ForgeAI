@@ -97,9 +97,25 @@ Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept her
 - NOT proven yet: the ring itself on his OPPO (needs the release build on his phone; the cloud emulator keeps channel
   sounds, so it only proves "no double ring"). Check after release: a gym reply with the app closed should ring;
   the feedback device line should read "no channel sound, app ring rang".
-- Same cause, NOT fixed here: "Rest is over" (rest-over-sound) on his OPPO is also importance 3 with no sound, so with
-  the screen off the rest end is silent on OPPO phones. AlertRing can serve it too (RestCard posts natively); its own
-  change and UAT.
+- **"Rest is over" (same cause, fixed the same way, 15 Nov 2026):** on his OPPO rest-over-sound reads importance 3
+  (made 4), no sound, AND the sound lock on (ColorOS sets it when it strips), so with the screen locked or MettleUp
+  in the background the rest end was silent. Built (on main, ships with the next phone release):
+  - RestCard.postOver -> ringIfStripped: right after "Rest is over" is posted, the app plays the MEMBER'S OWN rest
+    sound (Settings, "Rest sound": chime, bell, beep or whistle) once itself: the same raw file the channel and the
+    open app play (one name rule, AlertRing.restSoundFile; lesson an-alert-has-two-sound-paths). Native, so it works
+    with the app closed (the rest alarm posts it).
+  - Never with "Workout sounds" off (the vibrate-only channel), never with MettleUp on screen (its own bell rings
+    there, RestCard.restBell "app"), never on a phone that kept the channel sound (Pixel, Samsung, the emulator:
+    "channel-rings"), never twice within 4 s per channel. Held by silent, vibrate and Do Not Disturb; through Do Not
+    Disturb only when the member chose "Ring through Do Not Disturb" (then as an alarm sound).
+  - A sound lock counts as the member's choice only while the channel keeps the importance the app made it with
+    (a member's own "None" leaves it at 4; ColorOS's strip drops it to 3). The gym path is unchanged.
+  - Logged: ForgeRest "Rest is over app ring: <answer>" (rang, channel-rings, not-here, do-not-disturb, ringer-1...).
+  - Tests: AlertRingTest (his OPPO's rest facts ring; Pixel kept sound, member's "None", sounds off, app on screen,
+    silent, vibrate, DND with and without ring-through, twice, each of the four sound files). Device QA parts A,
+    DND and LONGREST now fail if the app rings on the emulator (a second sound) and part A needs "channel-rings".
+  - NOT proven: the ring on his OPPO (release build on his phone: lock the phone mid-rest, the rest sound should
+    play at the end). Also not restored: the BUZZ (ColorOS took the vibration too; the watch still buzzes).
 
 ## R-591 (15 Nov 2026) 0095 and 0096 APPLIED LIVE; every live test PASS
 - His words (15 Nov 2026, R-592): "yes 0095", "yes 0096". Nothing else applied; no data edited.

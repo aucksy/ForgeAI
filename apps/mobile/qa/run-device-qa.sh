@@ -422,6 +422,18 @@ adb shell dumpsys alarm | grep -i -A3 "$PKG" > "$OUT/alarms.txt" || true
 # before part B's Maestro clears logcat.
 adb logcat -d -v time > "$OUT/a-rest-logcat.txt" 2>/dev/null || true
 log "rest end path (ForgeRest lines): $(grep 'ForgeRest' "$OUT/a-rest-logcat.txt" 2>/dev/null | sed 's/^.*ForgeRest[^:]*: //' | tr '\n' ';' | cut -c1-600)"
+# R-590 (15 Nov 2026): the app rings "Rest is over" itself only where the phone took the channel's
+# sound (OPPO / ColorOS). The emulator keeps it, so the app must answer "channel-rings" and never
+# ring a second time ("rang" here = two sounds on a Pixel or Samsung).
+if grep -q 'Rest is over app ring: rang' "$OUT/a-rest-logcat.txt" 2>/dev/null; then
+  status=1
+  log "REST APP RING FAILED: the app rang too although the channel keeps its sound (two sounds)"
+elif grep -q 'Rest is over app ring: channel-rings' "$OUT/a-rest-logcat.txt" 2>/dev/null; then
+  log "REST APP RING: OK (channel-rings: the channel's sound only, no second ring)"
+else
+  status=1
+  log "REST APP RING FAILED: no 'channel-rings' answer ($(grep -o 'Rest is over app ring: [^ ]*' "$OUT/a-rest-logcat.txt" 2>/dev/null | head -1))"
+fi
 adb shell input keyevent KEYCODE_WAKEUP
 sleep 1
 adb shell wm dismiss-keyguard || true
@@ -1727,6 +1739,10 @@ part_dnd() {
       gate_dump "dnd-$ring-after.txt"
       adb logcat -d -v time 2>/dev/null | grep 'ForgeRest' > "$OUT/dnd-$ring-forgerest.txt" || true
       log "DND ($ring) rest end path: $(sed 's/^.*ForgeRest[^:]*: //' "$OUT/dnd-$ring-forgerest.txt" | tail -4 | tr '\n' ';' | cut -c1-300)"
+      # R-590: the emulator keeps the channel sound, so the app itself must never ring here.
+      if grep -q 'Rest is over app ring: rang' "$OUT/dnd-$ring-forgerest.txt"; then
+        status=1; log "DND ($ring) FAILED: the app rang too (R-590 app ring on a channel that keeps its sound)"
+      fi
       gate_wake
       if [ "$ring" = "off" ]; then want_ch=rest-over-sound; want_cat=reminder; want_sound=silent
       else want_ch=rest-over-alarm-sound; want_cat=alarm; want_sound=sound; fi
@@ -1784,6 +1800,10 @@ part_longrest() {
   python3 "$QA_DIR/notif.py" live-back "$OUT/longrest-timeout.txt" >> "$OUT/timeline.txt" \
     || { status=1; log "LONGREST FAILED: after Rest is over timed out (2 min, phone asleep) the live workout card did not come back (longrest-timeout.txt)"; }
   adb logcat -d -v time 2>/dev/null | grep 'ForgeRest' > "$OUT/longrest-forgerest.txt" || true
+  # R-590: the emulator keeps the channel sound, so the app itself must never ring here.
+  if grep -q 'Rest is over app ring: rang' "$OUT/longrest-forgerest.txt"; then
+    status=1; log "LONGREST FAILED: the app rang too (R-590 app ring on a channel that keeps its sound)"
+  fi
   gate_wake
 }
 
