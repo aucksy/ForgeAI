@@ -11,11 +11,11 @@
 //  ONELINK-3 pages on, no page yet: still the join link, with the way to make the page; the set-up step shows.
 //  ONELINK-4 the visitor: the gym's page (the real renderGymPage) -> "Become a member" -> the same join form on the
 //            same address, with "Back to the page of <gym>", phone and computer, light and dark, English and Hindi.
+import { execFileSync } from 'node:child_process';
 import { mkdirSync, readFileSync } from 'node:fs';
 
 import { expect, test } from '@playwright/test';
 
-import { pageFrom, renderGymPage } from '../../../deploy/panel/gymPage.js';
 import { TODAY, addPlan, expectFitsPhone, openApp, startOnlineGym } from './support.mjs';
 
 const DIR = 'e2e/.results/uat';
@@ -228,12 +228,21 @@ test('ONELINK-3 pages on, no page yet: still the join link, with the way to make
 // ---------------------------------------------------------------- the visitor
 
 const HOURS = { week: Object.fromEntries(['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'].map((d) => [d, { kind: 'hours', ranges: [{ open: '05:30', close: '22:00' }] }])), special: [], note: '' };
-const PUBLIC_PAGE = pageFrom({
+const PUBLIC_RAW = {
   slug: SLUG, gymName: 'Shakti Gym', area: 'Sector 12', city: 'Jaipur', joinCode: 'QA0002', brand: { accent: '#e8590c' },
   about: 'A friendly gym near the market. Ladies batch every morning.', highlights: ['ac', 'women'], photos: [],
   plans: [{ id: 'm', name: 'Monthly', durationUnit: 'month', durationCount: 1, priceP: 150000, joiningFeeP: 50000 }],
   hours: HOURS, address: 'Plot 4, Sector 12, Jaipur', contact: { phone: null, whatsapp: false }, joinOnline: true, indexable: false,
-});
+};
+/**
+ * The real page (deploy/panel/gymPage.js renderGymPage), drawn by plain node: gymPage.js imports a .ts file that node
+ * reads but Playwright's loader does not (importing it here stopped every spec, CI run 43689330990).
+ */
+function gymPageHtml(nowMs) {
+  const mod = new URL('../../../deploy/panel/gymPage.js', import.meta.url).href;
+  const code = `const m = await import(${JSON.stringify(mod)}); process.stdout.write(m.renderGymPage(m.pageFrom(${JSON.stringify(PUBLIC_RAW)}), { nowMs: ${nowMs} }));`;
+  return execFileSync(process.execPath, ['--input-type=module', '-e', code], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] });
+}
 const JOIN_GYM = {
   gymName: 'Shakti Gym', joinCode: 'QA0002', brand: { accent: '#e8590c' }, closed: false, today: '2026-11-15', lastDay: '2026-12-15',
   plans: [{ id: 'm', name: 'Monthly', durationUnit: 'month', durationCount: 1, priceP: 150000, joiningFeeP: 50000, totalP: 200000 }],
@@ -241,13 +250,13 @@ const JOIN_GYM = {
 
 /** join.mettleup.fit as the Worker serves it once pages are on: the gym's page and, on the same address, /m/<CODE>. */
 async function serveJoinHost(page) {
-  const nowMs = Date.parse('2026-11-15T18:00:00+05:30');
+  const html = gymPageHtml(Date.parse('2026-11-15T18:00:00+05:30'));
   await page.route('https://fonts.googleapis.com/**', (r) => r.fulfill({ status: 200, contentType: 'text/css', body: '' }));
   await page.route('https://fonts.gstatic.com/**', (r) => r.fulfill({ status: 404, body: '' }));
   await page.route('https://hdxzqbdiokjklnypfisq.supabase.co/rest/v1/rpc/self_join_preview', (r) => r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(JOIN_GYM) }));
   await page.route(/^https:\/\/join\.mettleup\.fit\//, (route) => {
     const url = new URL(route.request().url());
-    if (url.pathname === `/${SLUG}`) return route.fulfill({ status: 200, contentType: 'text/html; charset=utf-8', body: renderGymPage(PUBLIC_PAGE, { nowMs }) });
+    if (url.pathname === `/${SLUG}`) return route.fulfill({ status: 200, contentType: 'text/html; charset=utf-8', body: html });
     if (url.pathname === '/gym-page/page.js') return route.fulfill({ status: 200, contentType: 'text/javascript', body: readFileSync(new URL('gym-page/page.js', PUB)) });
     if (/^\/m\/[A-Za-z0-9]{6}$/.test(url.pathname)) return route.fulfill({ status: 200, contentType: 'text/html; charset=utf-8', body: readFileSync(new URL('join-online.html', PUB)) });
     return route.fulfill({ status: 404, body: 'Not found' });
