@@ -7,6 +7,46 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-586 (15 Nov 2026) Member picks who reads the message
+- His ask (15 Nov 2026, verbatim): "It should be GYM Onwer or the name of the trainers added in Admin Panel..user can
+  select any. For feedback / complaint, they can select GYM Owner or GYM Admin (gym admin will send to both owner and
+  staff, any type)". He said "yes messages" to build it.
+- Built (on main 0f0ba3a8, NOT live): "Message your gym" asks the type, then "Who should read it?".
+  Question: "Gym owner" (the owner only) or ONE trainer by name (every person ticked Trainer in the admin panel, not
+  the owner; the member's own trainer first, shown "Name (your trainer)"). Only that trainer gets the bell / browser
+  push ("Asha sent you a question."); the owner can still read and reply in Member messages, with no alert.
+  Feedback and Complaint: "Gym owner" (owner only) or "Gym admin" (owner + front desk; NEVER trainers, front desk =
+  signed-in people not ticked Trainer, as 0087). Each message says "To: Gym owner" / "To: Gym admin" / "To: <name>"
+  in the member app and the admin panel. Replies show who replied (the trainer's first name, as today).
+- Database: supabase/migrations/0096_message_recipient.sql, NOT APPLIED (header says so). Three new columns on
+  gym_talk_threads (null = no recipient = 0069 + 0087 exactly, so older member apps and older panels keep today's
+  behaviour); new member calls member_talk_choices and member_talk_send_to (added to security.sql); _talk_visible,
+  _talk_member_row, _talk_gym_row, _alert_visible, _alert_talk_line replaced. Test supabase/tests/0096 (owner key,
+  owner who is also a trainer, desk, two trainers; refusals, lists, counts, alerts, replies, untick, grants).
+- Member app: only on a server with 0096 (member_talk_choices answers); without it the page is exactly as R-549.
+  With 0096 the "The gym" / "A trainer" choice goes: every message goes to the gym's conversations with its
+  recipient (old workout questions stay in the list). My call: a question to a trainer is no longer limited to a
+  running paid plan (R-505), because the owner asked that members can pick "any" trainer; tell him.
+- Admin panel: "To: ..." on each card; the desk gets a Complaints button only when a "Gym admin" complaint is there;
+  desk note now "Messages a member sent only to the owner or to a trainer are not shown here. Complaints show here
+  only when the member picked "Gym admin"."; staff alerts line (Settings, browser alerts) now ends "and complaints
+  sent to "Gym admin"." (it was over the 220-letter limit, so it is shorter) No Hinglish line added (these lines are English-only today).
+- Member words added: "Who should read it?", "Gym owner", "Gym admin", "<Name> (your trainer)", "Ask about timings,
+  fees, your workout and more.", "Your gym has not added its trainers to the app yet, so only the owner can be
+  picked.", the readers lines ("Only the owner of <gym> reads your question/feedback/complaint. The front desk and
+  trainers do not see it." / "The owner and front desk at <gym> read your feedback/complaint. Your trainers do not
+  see it." / "<Name> reads your question and gets a notification. The owner of <gym> can read it too."), "To: Gym
+  owner" / "To: Gym admin" / "To: <name>", "This trainer is no longer listed at your gym. Please pick someone else."
+- Tests: apps/mobile test/shop/gymMessages.test.ts + gymTalk.test.ts (who reads what for every type and recipient,
+  old apps with none, complaints never to a trainer); apps/dashboard test/crm/memberMessages.test.ts; e2e
+  message-recipient-uat.spec.mjs (owner, desk, trainer phones + computer). CI: run 43729776537 (mine failed: 0076 alerts with a non-uuid ref_id; fixed 52091559);
+  run 43730546215 database GREEN (0096 PASS 52, 0087/0075/0069 PASS); run 43730819299 on 93f0489e (desk-alerts line
+  length fix): database green, the Check job (unit tests + admin e2e incl. message-recipient-uat) STILL RUNNING when
+  the session ended. NEXT: read job 132862609715; if green, download "dashboard-uat-pictures" and LOOK at
+  phone-r586-1/1b/2/3 and computer-r586-4; fix only R-586 failures.
+- Needs his yes: (1) applying 0096 live; (2) the phone release; (3) the panel deploy. Order: 0096 first is safe
+  (older apps send no recipient); the new phone app shows the picker only once 0096 is live.
+
 ## R-587 (15 Nov 2026) New welcome screens and phone-number-first sign-in
 - His words (15 Nov 2026): "I'm good with the welcome screen designs" (R-585), and for sign-in (R-582): "we can keep
   the primary method as phone number login, but we can keep the Google method hidden under something like try
