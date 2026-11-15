@@ -51,7 +51,7 @@ begin
 
   -- 1. Trials off (the default): the preview says so with the key itself (that is how the admin app knows 0088 is in),
   --    and a trial request is refused. Plans work as before.
-  r := public.self_join_preview('t88aaa');
+  r := public.self_join_preview('t89aaa');
   checks := checks + 1; fails := fails || pg_temp.t89_is('1key', (r ? 'trial')::text, 'true');
   checks := checks + 1; fails := fails || pg_temp.t89_is('1off', jsonb_typeof(r->'trial'), 'null');
   checks := checks + 1; fails := fails || pg_temp.t89_is('1plans', jsonb_array_length(r->'plans')::text, '1');

@@ -415,7 +415,7 @@ test('F210 page, phone: this number already had a trial here; it picks a plan in
   await expect(page.locator('#sub')).toHaveText('Join in 3 short steps. You pay at the gym desk.');
   await shot(page, 'jointrial-page-uat-trial-used-phone');
   await page.locator('#lang').click();
-  await expect(page.locator('#plan-err')).toHaveText('इस नंबर से इस जिम में पहले ही फ़्री ट्रायल लिया जा चुका है। कृपया कोई प्लान चुनें।');
+  await expect(page.locator('#plan-err')).toHaveText('आप इस मोबाइल नंबर से इस जिम में पहले ही फ़्री ट्रायल ले चुके हैं। जॉइन करने के लिए कृपया कोई प्लान चुनें।');
   await page.locator('#lang').click();
   await page.locator('input[name=plan][value=plan-month]').check();
   await expect(page.locator('#total')).toHaveText('₹2,000');
