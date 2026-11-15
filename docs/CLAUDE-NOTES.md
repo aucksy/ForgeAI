@@ -7,6 +7,39 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-593 (15 Nov 2026) Today keeps only what still needs him; the AI Assistant card fits every phone
+- His words (admin panel, Today): "this today section is basically showing the new messages that came and what we
+  replied. But I marked those conversations as done. I did it myself as the admin user. So why should I be looking at
+  this history? ... Anything that user has already completed manually themselves doesn't have to be sitting here in the
+  today section unnecessarily." Same screenshot: on his phone in Hinglish the AI Assistant card was wider than the
+  screen (ask box and idea buttons cut off on the right) and "10+ din se nahi aaye: 1" was squeezed into a one-word column.
+- No database change. owner_alerts (0075) carries no ref id, but each alert is written in the same transaction as its
+  thing, so both carry the same now(): Today matches an alert to its thing by kind + time (within 2 s).
+  Pure rules: apps/dashboard/src/crm/logic/alertHandled.ts; what this browser knows: crm/shop/alertFacts.ts.
+- "Handled" per alert kind (one unit test each, test/crm/alertHandled.test.ts):
+  | Alert | Leaves Today when |
+  |---|---|
+  | member_question / member_feedback / member_complaint | the conversation is marked done, or the gym replied after the member's line, or nothing waits (owner_talk_count 0 read after the alert came), or it is gone from a Member messages list read after it came. A new member line brings it back. |
+  | trainer_question | answered (not open), or 0 open, or gone from a Member questions list read after it came |
+  | plan_request, phone_link | no longer pending, or gone from a list read after it came |
+  | shop_order | the order is ready, collected or cancelled (same rule as before) |
+  | friend_referred (to Enquiries), online_join, page_question | the enquiry is joined or lost, or has a follow-up date after today, or (web page question) the chat was marked done; an enquiry not found 10 min after the alert came counts as handled |
+  | paid_online, report_sent, member_joined, ai_credits_low, ai_members_limit, friend_referred (to a member) | news: shown in one visit to Today, gone on the next visit (my call: news needs no action, and showing it once is the least noise; the bell keeps it) |
+- Member messages: reading owner_talk_list tells members "Seen by your gym", so Today never reads it in the background.
+  It uses the waiting count plus what Member messages last read, replied or marked done (kept in this browser, by a
+  fingerprint of the sign-in key, 4 days). Clock skew: times are compared to when THIS browser first got the alert.
+- The bell keeps the full history: handled lines say "Done" ("Ho gaya" in Hinglish) and leave the bell's number. The
+  card hides when nothing is left. Needs you already counted only live waiting lists (nothing done counted there).
+- AI card: the grid's min-width:auto plus a no-wrap button widened the card past the screen. Now one shared IdeaRow
+  (crm/assistant/ui/parts.tsx): the words get at least 12rem or the whole row, the button wraps under them and its words
+  wrap; the ask box wraps. Same rows on the AI Assistant page ("Today for you").
+- Tests: e2e/support.mjs expectNothingPastScreen (every element: nothing past the right edge, no 2+ word text squeezed
+  under 80 px); e2e/today-handled-uat.spec.mjs (messages arrive, reply / mark done, gone from Today and the bell number,
+  bell history says Done, reload, a new line brings it back, Hinglish dark/light); e2e/today-fit-uat.spec.mjs (Eid
+  "kal hone ki ummeed hai (din chaand se tay hota hai)" and Ganesh Chaturthi ideas, 320/360/390/412, English/Hinglish,
+  dark/light, Today + AI Assistant page). alerts-uat: a ready shop order now leaves Today and shows Done in the bell.
+- What's new: ADMIN_NEWS_PENDING 'pending-today-handled' (moves to ADMIN_NEWS at the next panel deploy).
+
 ## R-590 (15 Nov 2026) Gym messages silent on his OPPO: the phone strips every channel; the app now rings it itself
 - The bug (R-583): a gym reply lands in the notification list on his OPPO CPH2873 (ColorOS, Android 17, 0.78.0 from Play)
   with no sound and no pop-up.

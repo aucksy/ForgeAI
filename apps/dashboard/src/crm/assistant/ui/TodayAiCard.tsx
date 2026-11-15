@@ -9,11 +9,11 @@ import { useCan } from '../../auth/AuthProvider';
 import { t } from '../../lang/lang';
 import { useShop } from '../../shop/ShopProvider';
 import { useCrm } from '../../store';
-import { Button, color, font, space, useIsCompact } from '../../ui/kit';
+import { color, font, space, useIsCompact } from '../../ui/kit';
 import { navigate } from '../../ui/router';
 import { todaySuggestions } from '../suggestions';
 import { useAssistant } from '../useAssistant';
-import { CreditsPill, SparkleIcon, body, queueRequest, say, setPanelOpen } from './parts';
+import { CreditsPill, IdeaRow, SparkleIcon, queueRequest, say, setPanelOpen } from './parts';
 
 export function TodayAiCard() {
   const { on, wallet } = useAssistant();
@@ -36,9 +36,10 @@ export function TodayAiCard() {
   return (
     <section
       aria-label={t('AI Assistant')}
-      style={{ marginBottom: space.lg, padding: space.lg, borderRadius: 16, background: color.surface, border: `1px solid ${color.border}`, display: 'grid', gap: space.md }}
+      // R-593: one column that never grows past the card (a long button inside used to push the card off a phone).
+      style={{ marginBottom: space.lg, padding: space.lg, borderRadius: 16, background: color.surface, border: `1px solid ${color.border}`, display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: space.md, minWidth: 0 }}
     >
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: space.sm }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: space.sm }}>
         <h2 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 8, fontFamily: font.display, fontSize: 18, fontWeight: 700, color: color.ink }}>
           <span aria-hidden style={{ color: color.accentBright }}>
             <SparkleIcon size={20} />
@@ -55,8 +56,10 @@ export function TodayAiCard() {
           display: 'flex',
           alignItems: 'center',
           gap: 10,
+          width: '100%',
+          minWidth: 0,
           minHeight: 48,
-          padding: '0 14px',
+          padding: '8px 14px',
           borderRadius: 14,
           border: `1px solid ${color.borderStrong}`,
           background: color.surfaceSunken,
@@ -64,23 +67,20 @@ export function TodayAiCard() {
           fontFamily: font.body,
           fontSize: 15,
           textAlign: 'left',
+          lineHeight: 1.35,
+          overflowWrap: 'anywhere',
           cursor: 'text',
         }}
       >
         {t('Ask or give a task, in Hindi or English')}
       </button>
       {ideas.length > 0 ? (
-        <div style={{ display: 'grid', gap: space.sm }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: space.sm }}>
           <p style={{ margin: 0, fontFamily: font.body, fontSize: 13, fontWeight: 800, letterSpacing: '0.08em', textTransform: 'uppercase', color: color.inkMuted }}>
             {ideas.length === 1 ? t('1 idea for today') : t('{n} ideas for today', { n: ideas.length })}
           </p>
           {ideas.map((s) => (
-            <div key={s.id} style={{ display: 'flex', alignItems: 'center', gap: space.md, paddingTop: space.sm, borderTop: `1px solid ${color.border}` }}>
-              <p style={{ ...body, flex: 1, minWidth: 0, fontWeight: 600 }}>{say(s.words)}</p>
-              <Button variant="ghost" needsInternet onClick={() => open(s.request)}>
-                {say(s.action)}
-              </Button>
-            </div>
+            <IdeaRow key={s.id} words={say(s.words)} action={say(s.action)} onClick={() => open(s.request)} />
           ))}
         </div>
       ) : null}

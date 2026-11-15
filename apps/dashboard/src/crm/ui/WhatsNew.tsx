@@ -26,13 +26,14 @@ import { useRole } from '../auth/AuthProvider';
 import { t } from '../lang/lang';
 import { BELL_ALERTS, bellGroups, paymentTone, readBellSeen, saveBellSeen, unseenAlerts } from '../logic/bellGroups';
 import { alertAge, alertShown, type GymAlert } from '../logic/gymAlerts';
+import type { AlertState } from '../logic/alertHandled';
 import { onPanelRefresh } from '../logic/panelRefresh';
 import { useShop } from '../shop/ShopProvider';
 import { useCrm } from '../store';
 import { BellAlertsCard } from './AlertsCards';
 import { GroupLabel } from './GroupLabel';
 import { PaymentTag, paymentRowLook } from './PaymentTag';
-import { useNeedsYou } from './NeedsYou';
+import { useAlertStates, useNeedsYou } from './NeedsYou';
 import { canOpen } from '../auth/permissions';
 import type { Role } from '../auth/signin';
 import { useDemo } from '../demo/demoMode';
@@ -123,6 +124,15 @@ const newTag = (
   <span style={{ padding: '1px 8px', borderRadius: radius.pill, background: color.accentSoft, color: color.accentBright, fontSize: 11, fontWeight: 800 }}>New</span>
 );
 
+/** R-593: a gym alert someone already handled (it is off Today and out of the bell's number). Made at render, so it
+ * follows the language picked. */
+function DoneTag() {
+  return (
+    <span data-done-tag style={{ padding: '1px 8px', borderRadius: radius.pill, background: color.surfaceSunken, color: color.inkSecondary, fontSize: 11, fontWeight: 800 }}>
+      {t('Done')}
+    </span>
+  );
+}
 
 /** R-245: one item in the bell. While it is new: a raised background, an orange edge (and a "New" tag). */
 function rowStyle(isNew: boolean) {
@@ -215,7 +225,19 @@ function HqMessages({ messages, fresh, role, onGo, first }: { messages: readonly
 }
 
 /** R-561: "Your gym": the newest of the gym's alerts, each opening its page; a payment one in its own colour. */
-function GymAlerts({ alerts, fresh, onGo, first }: { alerts: readonly GymAlert[]; fresh: ReadonlySet<string>; onGo: (route: string) => void; first: boolean }) {
+function GymAlerts({
+  alerts,
+  fresh,
+  onGo,
+  first,
+  stateOf,
+}: {
+  alerts: readonly GymAlert[];
+  fresh: ReadonlySet<string>;
+  onGo: (route: string) => void;
+  first: boolean;
+  stateOf: (a: GymAlert) => AlertState;
+}) {
   // The shop's own orders, so a shop line says ready or collected exactly as Today does.
   const { orders } = useShop();
   const now = Date.now();
@@ -229,6 +251,7 @@ function GymAlerts({ alerts, fresh, onGo, first }: { alerts: readonly GymAlert[]
           const shown = alertShown(a, orders);
           const tone = paymentTone(a);
           const isNew = fresh.has(`alert-${a.id}`);
+          const done = stateOf(a) === 'done';
           const pay = tone ? paymentRowLook(tone) : null;
           return (
             <li key={a.id}>
@@ -253,10 +276,11 @@ function GymAlerts({ alerts, fresh, onGo, first }: { alerts: readonly GymAlert[]
                   fontFamily: font.body,
                 }}
               >
-                {tone || isNew ? (
+                {tone || isNew || done ? (
                   <span style={{ display: 'flex', alignItems: 'center', gap: space.sm, flexWrap: 'wrap' }}>
                     {tone ? <PaymentTag tone={tone} /> : null}
                     {isNew ? newTag : null}
+                    {done ? <DoneTag /> : null}
                   </span>
                 ) : null}
                 <span style={{ fontSize: 14, lineHeight: 1.45, fontWeight: a.urgent && !shown.done ? 600 : 400 }}>{shown.line}</span>
@@ -345,7 +369,9 @@ export function NewsBell() {
   const [seen, setSeen] = useState<{ gymId: string; at: number | null }>(() => ({ gymId, at: readBellSeen(browserStore(), gymId) }));
   if (seen.gymId !== gymId) setSeen({ gymId, at: readBellSeen(browserStore(), gymId) });
   const alertsSeen = seen.gymId === gymId ? seen.at : null;
-  const newAlerts = demo ? [] : unseenAlerts(alerts, alertsSeen, Date.now());
+  // R-593: the number counts only what still needs someone (a conversation marked done is not news to act on).
+  const stateOf = useAlertStates();
+  const newAlerts = demo ? [] : unseenAlerts(alerts.filter((a) => stateOf(a) === 'waiting'), alertsSeen, Date.now());
   const [open, setOpen] = useState(false);
   // Which updates were new when the list opened: they keep their "New" tag while it stays open.
   const [fresh, setFresh] = useState<ReadonlySet<string>>(new Set());
@@ -466,6 +492,7 @@ export function NewsBell() {
                 first={i === 0}
                 alerts={gymShown}
                 fresh={fresh}
+                stateOf={stateOf}
                 onGo={(route) => {
                   setOpen(false);
                   navigate(route);

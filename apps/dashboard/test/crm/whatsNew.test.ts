@@ -111,7 +111,7 @@ describe('the 15 Nov 2026 deploy (R-589)', () => {
       expect(all, fact).toContain(fact);
     }
     expect(all).not.toMatch(/web page|join\.mettleup|Plus/i);
-    expect(ADMIN_NEWS_PENDING.map((e) => e.id)).toEqual(['pending-gym-web-pages', 'pending-plus-lock']);
+    expect(ADMIN_NEWS_PENDING.map((e) => e.id)).toEqual(['pending-today-handled', 'pending-gym-web-pages', 'pending-plus-lock']);
     for (const l of entry.lines) {
       expect(l.text, l.text).toMatch(/^["A-Z]/);
       expect(l.text, l.text).toMatch(/\.$/);

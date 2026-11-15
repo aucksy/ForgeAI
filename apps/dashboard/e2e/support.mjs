@@ -1202,6 +1202,58 @@ export async function expectFitsPhone(page, where = '') {
   expect(wide, `page is ${wide}px wide on a ${width}px phone ${where}`.trim()).toBeLessThanOrEqual(width + 1);
 }
 
+/**
+ * R-593 (owner, 15 Nov 2026: on his phone in Hinglish the AI Assistant card ran off the right edge and squeezed
+ * "10+ din se nahi aaye: 1" into a one-word column, while expectFitsPhone passed). Every element on the page, one by
+ * one: none may reach past the right edge of the screen (an element inside a box that scrolls sideways on purpose is
+ * judged by that box; one parked wholly off screen, like a closed drawer, is not shown), and no text of two or more
+ * words may be squeezed into a box narrower than `minText` px that wraps it onto several lines. Fails with a list of
+ * the offenders (tag, test id or label, its words, its edges). `scope`: a CSS selector to check only part of the page.
+ */
+export async function expectNothingPastScreen(page, where = '', { minText = 80, scope = 'body' } = {}) {
+  const width = page.viewportSize()?.width ?? 390;
+  const bad = await page.evaluate(
+    ({ width, minText, scope }) => {
+      const root = document.querySelector(scope);
+      if (!root) return [`no ${scope}`];
+      const name = (el) => {
+        const id = el.getAttribute('data-testid') || el.getAttribute('aria-label') || el.id || '';
+        const words = (el.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 60);
+        return `<${el.tagName.toLowerCase()}${id ? ` "${id}"` : ''}> "${words}"`;
+      };
+      const scrollsSideways = (el) => {
+        for (let p = el.parentElement; p && p !== document.body; p = p.parentElement) {
+          const ox = getComputedStyle(p).overflowX;
+          if ((ox === 'auto' || ox === 'scroll') && p.scrollWidth > p.clientWidth + 1) return true;
+        }
+        return false;
+      };
+      const out = [];
+      for (const el of [root, ...root.querySelectorAll('*')]) {
+        if (el.closest('svg') && el.tagName.toLowerCase() !== 'svg') continue;
+        const cs = getComputedStyle(el);
+        if (cs.display === 'none' || cs.visibility === 'hidden' || cs.display === 'contents') continue;
+        const r = el.getBoundingClientRect();
+        if (r.width <= 1 || r.height <= 1) continue;
+        if (r.left >= width) continue;
+        if (r.right > width + 1 && !scrollsSideways(el)) {
+          out.push(`past the screen: ${name(el)} left ${Math.round(r.left)} right ${Math.round(r.right)} (screen ${width})`);
+          continue;
+        }
+        if (cs.display.startsWith('inline') && !cs.display.includes('block') && !cs.display.includes('flex') && !cs.display.includes('grid')) continue;
+        const own = [...el.childNodes].filter((n) => n.nodeType === 3).map((n) => n.textContent || '').join(' ').replace(/\s+/g, ' ').trim();
+        if (own.split(' ').length < 2 || r.width >= minText) continue;
+        const fs = parseFloat(cs.fontSize) || 14;
+        const lh = cs.lineHeight === 'normal' ? fs * 1.25 : parseFloat(cs.lineHeight) || fs * 1.25;
+        if (r.height > lh * 1.9) out.push(`squeezed: ${name(el)} only ${Math.round(r.width)} px wide, ${Math.round(r.height / lh)} lines`);
+      }
+      return out;
+    },
+    { width, minText, scope },
+  );
+  expect(bad, `on a ${width}px screen ${where}:\n${bad.slice(0, 12).join('\n')}`.trim()).toEqual([]);
+}
+
 /** The fixed "Main" bar at the bottom of the phone screen. */
 export function bottomBar(page) {
   return page.getByRole('navigation', { name: 'Main' });
@@ -1585,11 +1637,13 @@ export function installTalk(server) {
     if (fn === 'owner_talk_reply') {
       const text = String(args.p_text ?? '').trim();
       if (!text) throw new Refusal('INVALID');
-      t.lines.push({ id: `${t.id}-${t.lines.length}`, fromGym: true, who: p.name, text, at: T0 + t.lines.length * 1000 });
+      // R-593: a reply is always after the member's newest line (the real server writes now()); Today compares them.
+      const at = Math.max(T0 + t.lines.length * 1000, t.lines[t.lines.length - 1].at + 1000);
+      t.lines.push({ id: `${t.id}-${t.lines.length}`, fromGym: true, who: p.name, text, at });
       return { ok: true, thread: view(t) };
     }
     if (args.p_done) {
-      t.doneAt = T0 + 5000;
+      t.doneAt = Math.max(T0 + 5000, t.lines[t.lines.length - 1].at + 1000);
       t.doneBy = p.name;
     } else {
       t.doneAt = null;
@@ -1598,6 +1652,24 @@ export function installTalk(server) {
     return { ok: true, thread: view(t) };
   };
   return talk;
+}
+
+/**
+ * R-593: owner_alerts (0075) on the pretend server, shared: `alerts.list` the way the server answers it (the last 3
+ * days, newest first). `alerts.on` false: PGRST202, like a server without 0075.
+ */
+export function installAlertsList(server) {
+  const alerts = { on: false, list: [] };
+  const base = server.answer.bind(server);
+  server.answer = (fn, args) => {
+    if (fn !== 'owner_alerts') return base(fn, args);
+    server.calls.push(fn);
+    server.log.push({ fn, args });
+    if (!alerts.on) throw new NoSuchFunction(`Could not find the function public.${fn} in the schema cache`);
+    server.anyone(args.p_key);
+    return { ok: true, alerts: [...alerts.list].sort((x, y) => y.at - x.at) };
+  };
+  return alerts;
 }
 
 /** The trainer view (0050) and "Member questions" (0053) calls. */

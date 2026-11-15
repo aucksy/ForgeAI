@@ -161,11 +161,18 @@ test('Gym alerts: not ready, the latest on Today, a new one rings once, a tap op
   await expectFitsPhone(page, 'on Today with the latest alerts');
   await shot(page, 'phone-alerts-1-latest');
 
-  // The order is made ready on Shop: the line says so, and Shop today has no new order left.
+  // The order is made ready on Shop: Shop today has no new order left, and (R-593, owner 15 Nov 2026: what was already
+  // handled does not sit on Today) the line leaves Today. The bell keeps it, in the shop's words, marked Done.
   orders[0].status = 'ready';
   await page.reload();
-  await expect(lines.nth(1)).toContainText('Shop order #12 from Neha is ready for pickup.', { timeout: 15_000 });
-  await expect(main.getByText('new orders', { exact: true })).toBeVisible();
+  await expect(main.getByText('new orders', { exact: true })).toBeVisible({ timeout: 15_000 });
+  await expect(lines).toHaveCount(1, { timeout: 15_000 });
+  await expect(card).not.toContainText('#12');
+  await page.getByRole('button', { name: /^Notifications/ }).click();
+  const bellOrder = page.getByTestId('bell-gym-alerts').getByRole('button').filter({ hasText: 'Shop order #12 from Neha is ready for pickup.' });
+  await expect(bellOrder).toBeVisible();
+  await expect(bellOrder).toContainText('Done');
+  await page.getByRole('button', { name: /^Notifications/ }).click();
   await shot(page, 'phone-alerts-1b-order-ready');
 
   // 3. A complaint comes in: one notice, the server's line, its own tag; the card puts it first.
@@ -181,7 +188,7 @@ test('Gym alerts: not ready, the latest on Today, a new one rings once, a tap op
   await expect.poll(() => notes(page)).toEqual([
     { title: 'MettleUp: news from your members', body: 'Ravi sent your gym a complaint. Open Member messages to read it.', tag: 'mettleup-alert-a3' },
   ]);
-  await expect(lines).toHaveCount(3);
+  await expect(lines).toHaveCount(2);
   await expect(lines.nth(0)).toContainText('Ravi sent your gym a complaint.');
   // Fresh eyes (14 Nov 2026): the complaint had no count in "Needs you" (the pretend server had no Member messages).
   // The count is read in the same go as the line, so the two arrive together.

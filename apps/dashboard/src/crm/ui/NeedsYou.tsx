@@ -16,10 +16,13 @@
  * list at once. R-561: its button is the panel's one Refresh in the top bar (ui/RefreshButton.tsx), on every page. Coming back to the tab already looks at once (logic/visiblePoll.ts); the minute stays a minute.
  */
 
-import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, useSyncExternalStore, type ReactNode } from 'react';
 
 import { useAuth, useRole } from '../auth/AuthProvider';
 import { ALERT_WORDS, alertAge, alertNotice, alertShown, alertsFor, freshAlerts, latestAlerts, type GymAlert, type GymAlertKind } from '../logic/gymAlerts';
+import { alertState, handledHow, type AlertFacts, type AlertState, type CountRead, type Read, type RequestFact } from '../logic/alertHandled';
+import { alertFactsVersion, markInfoShown, questionsFor, seenInfoFor, setTodayVisit, subscribeAlertFacts, talkFor } from '../shop/alertFacts';
+import { useCrm } from '../store';
 import { markFresh } from '../logic/freshness';
 import { LIST_PARTS, NEEDS_POLL_MS, partsToRead, type NeedsPart } from '../logic/needsPoll';
 import { pendingLinks, type PhoneLinkRow } from '../logic/phoneLinks';
@@ -41,7 +44,7 @@ import { turnOnPush } from '../shop/webPushApi';
 import { getTalkCount } from '../shop/memberMessagesApi';
 import { listPhoneLinks, phoneLinkServer } from '../shop/phoneLinkApi';
 import { listPlanRequests, planRequestServer } from '../shop/planRequestApi';
-import { getQuestionCount } from '../shop/questionsApi';
+import { getQuestionCount, getQuestions } from '../shop/questionsApi';
 import { useShop } from '../shop/ShopProvider';
 import { memberMessageCountFor, publishMemberMessageCount, subscribeMemberMessageCount } from './MemberMessageParts';
 import { publishQuestionCount, questionCountFor, subscribeQuestionCountChange } from './QuestionParts';
@@ -51,12 +54,20 @@ import { PaymentTag, paymentRowLook } from './PaymentTag';
 import { paymentTone } from '../logic/bellGroups';
 
 const BASE_TITLE = 'MettleUp for Gyms';
+const DAY_MS = 24 * 60 * 60 * 1000;
 
 interface NeedsValue {
   items: NeedsItem[];
   total: number;
   /** The gym's alerts of the last 3 days, newest first (empty until the server has 0075). */
   alerts: GymAlert[];
+  /**
+   * R-593: what the panel knows about each alert's thing (logic/alertHandled.ts), without the news seen on Today
+   * (each user adds its own: Today leaves out this visit, the bell counts every visit). null outside the provider.
+   */
+  facts: Omit<AlertFacts, 'seenInfo'> | null;
+  /** The gym id (the news seen on Today is kept per gym). */
+  gymId: string;
   /** R-522: the plan requests and the check-in numbers as last read (null: not read yet, or not on this server). */
   planRows: PlanRequestRow[] | null;
   linkRows: PhoneLinkRow[] | null;
@@ -67,7 +78,7 @@ interface NeedsValue {
 }
 
 const NeedsContext = createContext<NeedsValue | null>(null);
-const EMPTY: NeedsValue = { items: [], total: 0, alerts: [], planRows: null, linkRows: null, refresh: async () => undefined, refreshAll: async () => true };
+const EMPTY: NeedsValue = { items: [], total: 0, alerts: [], facts: null, gymId: '', planRows: null, linkRows: null, refresh: async () => undefined, refreshAll: async () => true };
 
 /** The waiting items; nothing outside the provider (the demo gym). */
 export function useNeedsYou(): NeedsValue {
@@ -140,6 +151,12 @@ export function NeedsYouProvider({ children }: { children: ReactNode }) {
   const [linkRows, setLinkRows] = useState<PhoneLinkRow[] | null>(null);
   const [questions, setQuestions] = useState(0);
   const [messages, setMessages] = useState(0);
+  // R-593: the same counts with when they were read (null: not read yet), and when the two lists were read, so a
+  // line on Today goes only when the panel KNOWS its thing was handled.
+  const [questionRead, setQuestionRead] = useState<CountRead | null>(null);
+  const [talkRead, setTalkRead] = useState<CountRead | null>(null);
+  const [planReadAt, setPlanReadAt] = useState(0);
+  const [linkReadAt, setLinkReadAt] = useState(0);
   // null: not read yet, or the server has no 0075 (then the lists ring instead).
   const [alerts, setAlerts] = useState<GymAlert[] | null>(null);
   // "Only a real change redraws" (a poll that redraws everything jumps the page): one signature per block.
@@ -163,6 +180,7 @@ export function NeedsYouProvider({ children }: { children: ReactNode }) {
           const r = await listPlanRequests(key);
           const rows = r === 'missing' ? null : r;
           if (same('plan', rows)) setPlanRows(rows);
+          setPlanReadAt(Date.now());
         } catch (e) {
           console.warn('[ForgeErr] needs you: plan requests', e);
         }
@@ -172,6 +190,7 @@ export function NeedsYouProvider({ children }: { children: ReactNode }) {
           const r = await listPhoneLinks(key);
           const rows = r === 'missing' ? null : r;
           if (same('links', rows)) setLinkRows(rows);
+          setLinkReadAt(Date.now());
         } catch (e) {
           console.warn('[ForgeErr] needs you: check-in numbers', e);
         }
@@ -183,6 +202,11 @@ export function NeedsYouProvider({ children }: { children: ReactNode }) {
           const n = await getQuestionCount(key);
           setQuestions(typeof n === 'number' ? n : 0);
           publishQuestionCount(key, typeof n === 'number' ? n : null);
+          if (typeof n === 'number') {
+            setQuestionRead({ n, readAt: Date.now() });
+            // R-593: a question line on Today and questions still open: which ones (no side effect on the server).
+            if (n > 0 && questionLinesRef.current) await getQuestions(key);
+          }
         } catch (e) {
           console.warn('[ForgeErr] needs you: questions', e);
         }
@@ -192,6 +216,7 @@ export function NeedsYouProvider({ children }: { children: ReactNode }) {
           const n = await getTalkCount(key);
           setMessages(typeof n === 'number' ? n : 0);
           publishMemberMessageCount(key, typeof n === 'number' ? n : null);
+          if (typeof n === 'number') setTalkRead({ n, readAt: Date.now() });
         } catch (e) {
           console.warn('[ForgeErr] needs you: member messages', e);
         }
@@ -213,7 +238,10 @@ export function NeedsYouProvider({ children }: { children: ReactNode }) {
     () =>
       subscribeMemberMessageCount(() => {
         const n = memberMessageCountFor(key);
-        if (n !== null) setMessages(n);
+        if (n !== null) {
+          setMessages(n);
+          setTalkRead({ n, readAt: Date.now() });
+        }
       }),
     [key],
   );
@@ -221,7 +249,10 @@ export function NeedsYouProvider({ children }: { children: ReactNode }) {
     () =>
       subscribeQuestionCountChange(() => {
         const n = questionCountFor(key);
-        if (n !== null) setQuestions(n);
+        if (n !== null) {
+          setQuestions(n);
+          setQuestionRead({ n, readAt: Date.now() });
+        }
       }),
     [key],
   );
@@ -231,11 +262,14 @@ export function NeedsYouProvider({ children }: { children: ReactNode }) {
   // The alerts are read first (fresh eyes, 14 Nov 2026), so a line on Today is never newer than its count.
   const lastFull = useRef(-Infinity);
   const knownAlerts = useRef<Set<string> | null>(null);
+  const firstSeen = useRef(new Map<string, number>());
+  const questionLinesRef = useRef(false);
   // R-539: the poll's own look, for the Refresh button (`all`: every list now, as the every-5-minutes read does).
   const lookRef = useRef<((all: boolean) => Promise<boolean>) | null>(null);
   useEffect(() => {
     lastFull.current = -Infinity;
     knownAlerts.current = null;
+    firstSeen.current = new Map();
     sigs.current = {};
     lookRef.current = null;
     if (!key) return;
@@ -243,6 +277,9 @@ export function NeedsYouProvider({ children }: { children: ReactNode }) {
       let ok = true;
       let alertsOn = false;
       let fresh: GymAlertKind[] = [];
+      // R-593: the new alerts are shown only after the lists below are read, so Today never shows (even for a moment)
+      // a line whose conversation or request was already handled.
+      let show: (() => void) | null = null;
       try {
         const r = await getAlerts(key);
         if (r !== 'missing') {
@@ -250,9 +287,15 @@ export function NeedsYouProvider({ children }: { children: ReactNode }) {
           const before = knownAlerts.current;
           if (before) fresh = r.filter((a) => !before.has(a.id)).map((a) => a.kind);
           knownAlerts.current = new Set(r.map((a) => a.id));
+          // R-593: when this browser first had each alert (its own clock), before the lists below are read.
+          const at = Date.now();
+          for (const a of r) if (!firstSeen.current.has(a.id)) firstSeen.current.set(a.id, at);
+          questionLinesRef.current = r.some((a) => a.kind === 'trainer_question' && at - a.at < DAY_MS + 60 * 60_000);
         }
         const next = r === 'missing' ? null : r;
-        if (changedRef.current('alerts', next)) setAlerts(next);
+        show = () => {
+          if (changedRef.current('alerts', next)) setAlerts(next);
+        };
       } catch (e) {
         ok = false;
         console.warn('[ForgeErr] needs you: alerts', e);
@@ -263,6 +306,7 @@ export function NeedsYouProvider({ children }: { children: ReactNode }) {
         : partsToRead({ alertsOn, sinceFullMs: now - lastFull.current, fresh });
       if (full) lastFull.current = now;
       if (parts.length) await readParts(parts);
+      show?.();
       if (ok) markFresh('needs');
       return ok;
     };
@@ -336,9 +380,32 @@ export function NeedsYouProvider({ children }: { children: ReactNode }) {
     };
   }, [total]);
 
+  // R-593: what the panel knows about each alert's thing (logic/alertHandled.ts).
+  const { snapshot, today } = useCrm();
+  const gymId = String(snapshot.gym.gymId);
+  const factsVersion = useSyncExternalStore(subscribeAlertFacts, alertFactsVersion, alertFactsVersion);
+  const facts = useMemo<Omit<AlertFacts, 'seenInfo'>>(() => {
+    const req = (rows: readonly RequestFact[] | null, readAt: number): Read<RequestFact> | null => (rows ? { rows, readAt } : null);
+    return {
+      now: Date.now(),
+      today,
+      firstSeen: (id: string) => firstSeen.current.get(id) ?? Infinity,
+      talkCount: talkRead,
+      talk: talkFor(key),
+      questionCount: questionRead,
+      questions: questionsFor(key),
+      plan: req(planRows, planReadAt),
+      links: req(linkRows, linkReadAt),
+      orders,
+      enquiries: snapshot.enquiries ?? null,
+    };
+    // factsVersion and mine: the kept Member messages / questions changed, or new alerts came (firstSeen).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [today, talkRead, key, questionRead, planRows, planReadAt, linkRows, linkReadAt, orders, snapshot.enquiries, factsVersion, mine]);
+
   const value = useMemo<NeedsValue>(
-    () => ({ items, total, alerts: mine ?? [], planRows, linkRows, refresh, refreshAll }),
-    [items, total, mine, planRows, linkRows, refresh, refreshAll],
+    () => ({ items, total, alerts: mine ?? [], facts, gymId, planRows, linkRows, refresh, refreshAll }),
+    [items, total, mine, facts, gymId, planRows, linkRows, refresh, refreshAll],
   );
   return <NeedsContext.Provider value={value}>{children}</NeedsContext.Provider>;
 }
@@ -429,11 +496,23 @@ export function NeedsYouCard() {
 
 /** R-506: the latest from members (the last 24 hours) on Today, each line opening its page. Hidden when none. */
 export function LatestAlertsCard() {
-  const { alerts } = useNeedsYou();
+  const { alerts, facts, gymId } = useNeedsYou();
   // Fresh eyes (14 Nov 2026): a shop line reads the same orders as "Shop today", so the two always agree.
   const { orders } = useShop();
+  // R-593: this visit to Today. News shown in an EARLIER visit is left out; news shown now stays until he leaves.
+  const [visit] = useState(() => `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`);
   const now = Date.now();
-  const list = latestAlerts(alerts, now);
+  // R-593: only what still needs someone (logic/alertHandled.ts); the bell keeps the whole history.
+  const seenInfo = gymId ? seenInfoFor(gymId, visit) : new Set<string>();
+  const list = latestAlerts(facts ? alerts.filter((a) => alertState(a, { ...facts, seenInfo }) === 'waiting') : alerts, now);
+  const newsShown = list.filter((a) => handledHow(a) === 'info').map((a) => a.id).join(',');
+  useEffect(() => {
+    setTodayVisit(visit);
+    return () => setTodayVisit(null);
+  }, [visit]);
+  useEffect(() => {
+    if (gymId && newsShown) markInfoShown(gymId, visit, newsShown.split(','));
+  }, [gymId, visit, newsShown]);
   if (list.length === 0) return null;
   return (
     <Card style={{ marginBottom: space.lg }}>
@@ -480,4 +559,17 @@ export function LatestAlertsCard() {
       </ul>
     </Card>
   );
+}
+
+/**
+ * R-593: how each alert stands, for the bell: its number counts only what still needs someone (news already seen on
+ * Today, in any visit, is not counted again); its list keeps every alert and marks the handled ones "Done".
+ */
+export function useAlertStates(): (a: GymAlert) => AlertState {
+  const { facts, gymId } = useNeedsYou();
+  return useMemo(() => {
+    if (!facts) return () => 'waiting';
+    const f: AlertFacts = { ...facts, seenInfo: gymId ? seenInfoFor(gymId) : new Set<string>() };
+    return (a: GymAlert) => alertState(a, f);
+  }, [facts, gymId]);
 }

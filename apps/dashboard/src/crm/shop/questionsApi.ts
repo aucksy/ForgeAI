@@ -14,6 +14,7 @@ import { demoServer } from '../../lib/demoServerSlot';
 import { answeredFrom, gymQuestionsFrom, questionCountFrom, type GymQuestion, type GymQuestions } from '../logic/askQuestions';
 import { memberProgressFrom, type MemberProgress } from '../logic/memberProgress';
 import { isNoSuchFunction } from '../logic/workoutOffer';
+import { noteQuestion, noteQuestions } from './alertFacts';
 import { call } from './api';
 
 let missing = false;
@@ -63,6 +64,8 @@ export async function getQuestions(key: string): Promise<GymQuestions | 'missing
   try {
     const r = gymQuestionsFrom(await call<unknown>('owner_questions', { p_key: key }));
     if (!r) throw new Error('unreadable answer');
+    // R-593: Today's "Latest from your members" drops answered questions.
+    noteQuestions(key, r);
     return r;
   } catch (e) {
     if (isNoSuchFunction(e)) {
@@ -78,6 +81,7 @@ export async function getQuestions(key: string): Promise<GymQuestions | 'missing
 export async function answerQuestion(key: string, id: string, text: string): Promise<GymQuestion> {
   const q = answeredFrom(await call<unknown>('owner_answer_question', { p_key: key, p_id: id, p_answer: text }));
   if (!q) throw new Error('unreadable answer');
+  noteQuestion(key, q);
   return q;
 }
 

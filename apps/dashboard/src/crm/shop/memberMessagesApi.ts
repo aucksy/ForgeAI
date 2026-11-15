@@ -12,6 +12,7 @@ import { isDemoLocked } from '../../lib/demoLock';
 import { demoServer } from '../../lib/demoServerSlot';
 import { talkCountFrom, talkListFrom, talkThreadAnswerFrom, type TalkList, type TalkThread } from '../logic/memberMessages';
 import { isNoSuchFunction } from '../logic/workoutOffer';
+import { noteTalkList, noteTalkThread } from './alertFacts';
 import { call } from './api';
 
 let missing = false;
@@ -54,6 +55,8 @@ export function getTalkList(key: string): Promise<TalkList | 'missing'> {
   return guarded(async () => {
     const r = talkListFrom(await call<unknown>('owner_talk_list', { p_key: key }));
     if (!r) throw new Error('unreadable answer');
+    // R-593: Today's "Latest from your members" drops what is handled.
+    noteTalkList(key, r);
     return r;
   });
 }
@@ -62,6 +65,7 @@ export function getTalkList(key: string): Promise<TalkList | 'missing'> {
 export async function replyTalk(key: string, threadId: string, text: string): Promise<TalkThread> {
   const t = talkThreadAnswerFrom(await call<unknown>('owner_talk_reply', { p_key: key, p_thread: threadId, p_text: text }));
   if (!t) throw new Error('unreadable answer');
+  noteTalkThread(key, t);
   return t;
 }
 
@@ -69,6 +73,7 @@ export async function replyTalk(key: string, threadId: string, text: string): Pr
 export async function setTalkDone(key: string, threadId: string, done: boolean): Promise<TalkThread> {
   const t = talkThreadAnswerFrom(await call<unknown>('owner_talk_done', { p_key: key, p_thread: threadId, p_done: done }));
   if (!t) throw new Error('unreadable answer');
+  noteTalkThread(key, t);
   return t;
 }
 

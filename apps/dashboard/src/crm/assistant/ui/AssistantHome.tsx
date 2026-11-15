@@ -20,7 +20,7 @@ import { todaySuggestions } from '../suggestions';
 import { isVoiceSupported } from '../voice';
 import { AssistantLine, CardView, RequestBubble, type CardControls } from './Cards';
 import { CreditsSheet } from './CreditsSheet';
-import { CreditsPill, Chip, MicIcon, SectionLabel, SendIcon, SparkleIcon, body, quiet, say, setPanelOpen, takeRequest, useOpener } from './parts';
+import { CreditsPill, Chip, MicIcon, SectionLabel, SendIcon, SparkleIcon, IdeaRow, quiet, say, setPanelOpen, takeRequest, useOpener } from './parts';
 import { useAssistantData } from './useAssistantData';
 import { useConversation } from './useConversation';
 import { VoiceSheet } from './VoiceSheet';
@@ -188,14 +188,10 @@ export function AssistantHome({ assistKey, wallet, panel = false }: { assistKey:
       {suggestions.length > 0 ? (
         <section aria-labelledby="ai-today" style={{ display: 'grid', gap: space.sm }}>
           <SectionLabel id="ai-today">{t('Today for you')}</SectionLabel>
-          <div style={{ display: 'grid', gap: space.sm }}>
+          {/* R-593: the same row as Today's card: the button goes under the words when they do not fit side by side. */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: space.sm }}>
             {suggestions.map((s) => (
-              <div key={s.id} style={{ display: 'flex', alignItems: 'center', gap: space.md, padding: '12px 14px', borderRadius: 14, background: color.surface, border: `1px solid ${color.border}` }}>
-                <p style={{ ...body, flex: 1, minWidth: 0, fontWeight: 600 }}>{say(s.words)}</p>
-                <Button variant="ghost" needsInternet disabled={asking} onClick={() => send(s.request)}>
-                  {say(s.action)}
-                </Button>
-              </div>
+              <IdeaRow key={s.id} framed words={say(s.words)} action={say(s.action)} disabled={asking} onClick={() => send(s.request)} />
             ))}
           </div>
         </section>

@@ -6,7 +6,7 @@
 import { useSyncExternalStore, type CSSProperties, type ReactNode } from 'react';
 
 import { t } from '../../lang/lang';
-import { TOUCH, color, font, radius, space } from '../../ui/kit';
+import { Button, TOUCH, color, font, radius, space } from '../../ui/kit';
 import type { Line } from '../catalogue';
 import { groupLabelText } from '../../ui/GroupLabel';
 
@@ -129,6 +129,37 @@ export function Chip({ children, onClick, pressed, ariaLabel, round }: { childre
     >
       {children}
     </button>
+  );
+}
+
+/**
+ * R-593 (owner, 15 Nov 2026, his phone in Hinglish): one idea and its button ("Chhath Puja aaj hai" | "Chhath Puja ki
+ * badhai likho"). The button used to stay on one line and push the card past the screen, squeezing "10+ din se nahi
+ * aaye: 1" into a one-word column. Now the words get the row and at least 12rem; when the button does not fit beside
+ * them it goes under them, and its own words wrap inside the card. Today's card and the Assistant's "Today for you".
+ */
+export function IdeaRow({ words, action, onClick, disabled, framed }: { words: string; action: string; onClick: () => void; disabled?: boolean; framed?: boolean }) {
+  return (
+    <div
+      data-idea-row
+      style={{
+        display: 'flex',
+        flexWrap: 'wrap',
+        alignItems: 'center',
+        gap: `${space.sm}px ${space.md}px`,
+        minWidth: 0,
+        ...(framed
+          ? { padding: '12px 14px', borderRadius: 14, background: color.surface, border: `1px solid ${color.border}` }
+          : { paddingTop: space.sm, borderTop: `1px solid ${color.border}` }),
+      }}
+    >
+      <p style={{ ...body, flex: '1 1 12rem', minWidth: 0, fontWeight: 600, overflowWrap: 'anywhere' }}>{words}</p>
+      <div style={{ flex: '0 1 auto', minWidth: 0, maxWidth: '100%' }}>
+        <Button variant="ghost" wrap needsInternet disabled={disabled} onClick={onClick}>
+          {action}
+        </Button>
+      </div>
+    </div>
   );
 }
 

@@ -630,6 +630,19 @@ function notifyNewsSeen(): void {
  */
 export const ADMIN_NEWS_PENDING: readonly AdminNewsEntry[] = [
   {
+    // R-593 (owner, 15 Nov 2026): Today keeps only what still needs him; the AI card fits every phone. Moves to
+    // ADMIN_NEWS with the next admin panel deploy.
+    id: 'pending-today-handled',
+    lines: [
+      {
+        text: 'Today now shows only what still needs you. A member message leaves Today once you reply or mark it done, and news like a new member shows once. The bell still keeps every alert, marked “Done”.',
+      },
+      {
+        text: 'The AI Assistant card on Today now fits small phones, in English and Hinglish. Long ideas wrap onto the next line instead of running off the screen.',
+      },
+    ],
+  },
+  {
     // R-571: for the day gym web pages switch on (GYM_PAGES live, docs/gym-page/PLAN.md "Switch-on"). Not before.
     id: 'pending-gym-web-pages',
     lines: [
