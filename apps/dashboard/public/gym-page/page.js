@@ -125,7 +125,8 @@ if (form) {
     btn.disabled = false;
     if (r.ok) {
       form.reset();
-      say(msg, `Your question is sent. ${data.gymName || 'The gym'} will reply to ${phone.slice(0, 2)}XXXXXX${phone.slice(8)}.`, true);
+      // Owner (15 Nov 2026): the visitor has no app; the gym calls or sends a WhatsApp message to this number.
+      say(msg, `Your question is sent to ${data.gymName || 'the gym'}. The gym will call you or send you a WhatsApp message on ${phone.slice(0, 2)}XXXXXX${phone.slice(8)}.`, true);
     } else say(msg, sayFail(r.error), false);
   });
 }

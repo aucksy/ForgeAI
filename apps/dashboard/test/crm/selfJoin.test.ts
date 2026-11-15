@@ -160,7 +160,7 @@ describe('the public page', () => {
     expect(page).toMatch(/<input type="checkbox" id="health">/);
     expect(page).not.toMatch(/id="(adult|health)"[^>]*checked/);
     expect(page).toContain('I have no medical condition that stops me exercising, or I will tell the trainer.');
-    expect(page).toContain('Under 18? Please join at the gym desk with a parent or guardian.');
+    expect(page).toContain('If you are under 18, please join at the gym desk with a parent or guardian.');
   });
   it('the WhatsApp check is for this page (purpose join) and the hidden box is there', () => {
     expect(page).toContain("purpose: 'join'");

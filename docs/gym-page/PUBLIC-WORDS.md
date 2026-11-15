@@ -1,6 +1,7 @@
-# Gym web page and join form: every public line (needs the owner's yes)
+# Gym web page and join form: every public line (approved 15 Nov 2026)
 
-R-563, 15 Nov 2026. Gym web pages (the Worker switch GYM_PAGES) stay off until the owner says yes to these words.
+R-563, 15 Nov 2026. **Approved 15 Nov 2026 (R-569, owner: "Yes to all lines", with the Sent line and the join form's
+computer line rewritten as he asked).** Gym web pages (the Worker switch GYM_PAGES) are ready to switch on.
 Each line is written as a complete, simple sentence (`member-words-are-complete-sentences`). Buttons, field names,
 headings and labels stay short on purpose. `<gym>` is the gym's own name, typed by the owner.
 
@@ -8,7 +9,7 @@ headings and labels stay short on purpose. `<gym>` is the gym's own name, typed 
 same join form as the gym's join link, on the same address (`join.mettleup.fit/m/<CODE>`), on a phone or a
 computer, with "Back to the page of <gym>" at the top. Old `app.mettleup.fit/m/<CODE>` links and posters keep working.
 
-## 1. The gym web page
+## 1. The gym web page (approved 15 Nov 2026 (owner: 'Yes to all lines', with the Sent line rewritten))
 
 The page shows English today, with Hindi in its four headings. The Hindi column is ready for a Hindi version of the
 page (an English / हिंदी button like the join form has), if the owner wants one.
@@ -42,7 +43,7 @@ page (an English / हिंदी button like the join form has), if the owner 
 | Tick box (not ticked) | Send my name, number and question to <gym> so they can reply to me. Only this gym sees them. | मेरा नाम, नंबर और सवाल <gym> को भेजें, ताकि वे मुझे जवाब दे सकें। इन्हें सिर्फ़ यही जिम देखता है। |
 | Button | Send to the gym | जिम को भेजें |
 | While sending | Sending… | भेजा जा रहा है… |
-| Sent | Your question is sent. <gym> will reply to 98XXXXXX12. | आपका सवाल भेज दिया गया है। <gym> 98XXXXXX12 पर जवाब देगा। |
+| Sent | Your question is sent to <gym>. The gym will call you or send you a WhatsApp message on 98XXXXXX12. | आपका सवाल <gym> को भेज दिया गया है। जिम आपको 98XXXXXX12 पर कॉल करेगा या WhatsApp मैसेज भेजेगा। |
 | Missing name | Please write your name. | कृपया अपना नाम लिखें। |
 | Bad number | Please write a 10-digit mobile number. | कृपया 10 अंकों का मोबाइल नंबर लिखें। |
 | Missing question | Please write your question. | कृपया अपना सवाल लिखें। |
@@ -65,7 +66,7 @@ page (an English / हिंदी button like the join form has), if the owner 
 | Footer links | Privacy · Terms · Do you own a gym? Get a free page like this one. · Made with MettleUp | प्राइवेसी · शर्तें · क्या आपका अपना जिम है? ऐसा ही एक फ़्री पेज पाएँ। · MettleUp से बना |
 | Bar at the bottom (phone) | Become a member · Ask | मेंबर बनें · पूछें |
 
-## 2. The join form (live since 14 Nov 2026 on the join link)
+## 2. The join form (live since 14 Nov 2026 on the join link; approved 15 Nov 2026 (owner: 'Yes to all lines', with the Sent line rewritten))
 
 Read from `apps/dashboard/public/join-online.html` (its WORDS) when this file was made; if they ever differ, that
 file wins. Lines marked "pay online" show only while join payments are switched on (JOIN_PAY, off). The free
@@ -88,7 +89,7 @@ trial lines were approved on 15 Nov ("yes to the trial words"). New with R-563: 
 | waOpen | Open WhatsApp | WhatsApp खोलें |
 | waOpenAgain | Open WhatsApp again | WhatsApp फिर से खोलें |
 | waManual | Or send "{text}" to {num} on WhatsApp. | या WhatsApp पर {num} को "{text}" भेजें। |
-| waComputer | On a computer? Send the message from WhatsApp on the phone with this number. | कंप्यूटर पर हैं? इस नंबर वाले फ़ोन के WhatsApp से मैसेज भेजें। |
+| waComputer (computer only, next to a QR code of the same WhatsApp link) | Scan this QR code with the phone that has WhatsApp for this number. WhatsApp opens with a message to MettleUp ready. Send the message, and your number is checked. | जिस फ़ोन में इस नंबर का WhatsApp है, उससे यह QR कोड स्कैन करें। WhatsApp में MettleUp को भेजने के लिए मैसेज तैयार मिलेगा। मैसेज भेजें, और आपका नंबर जाँच लिया जाएगा। |
 | waWaiting | Waiting for your WhatsApp message… | आपके WhatsApp मैसेज का इंतज़ार है… |
 | checkedLine | Number checked: {phone} | नंबर वेरिफ़ाई हो गया: {phone} |
 | change | Change number | नंबर बदलें |
@@ -131,7 +132,7 @@ trial lines were approved on 15 Nov ("yes to the trial words"). New with R-563: 
 | payNote | You pay when you come to the gym. Nothing is paid on this page. | आप जिम आने पर पैसे देंगे। इस पेज पर कोई पैसा नहीं लिया जाता। |
 | consentAdult | I am 18 or older and agree to the gym’s terms and privacy notice. | मेरी उम्र 18 साल या उससे ज़्यादा है। मुझे जिम की शर्तें और प्राइवेसी नोटिस मंज़ूर हैं। |
 | consentHealth | I have no medical condition that stops me exercising, or I will tell the trainer. | मुझे ऐसी कोई बीमारी नहीं है जिससे मैं कसरत न कर सकूँ। अगर है, तो मैं ट्रेनर को ज़रूर बताऊँगा/बताऊँगी। |
-| under18 | Under 18? Please join at the gym desk with a parent or guardian. | 18 साल से कम उम्र है? कृपया माता-पिता या अभिभावक के साथ जिम के काउंटर पर जॉइन करें। |
+| under18 | If you are under 18, please join at the gym desk with a parent or guardian. | अगर आपकी उम्र 18 साल से कम है, तो कृपया माता-पिता या अभिभावक के साथ जिम के काउंटर पर जॉइन करें। |
 | NO_ADULT | To join online, you must be 18 or older. If you are under 18, please join at the gym desk with a parent or guardian. | ऑनलाइन जॉइन करने के लिए उम्र 18 साल या उससे ज़्यादा होनी चाहिए। 18 से कम है, तो माता-पिता या अभिभावक के साथ जिम के काउंटर पर जॉइन करें। |
 | NO_HEALTH | Tick the second box to send. If you have a health problem, please talk to the gym first. | भेजने के लिए दूसरा बॉक्स टिक करें। अगर तबीयत की कोई परेशानी है, तो पहले जिम से बात करें। |
 | privacy | Only {gym} sees your details. | आपकी जानकारी सिर्फ़ {gym} देखेगा। |
@@ -141,15 +142,15 @@ trial lines were approved on 15 Nov ("yes to the trial words"). New with R-563: 
 | donePlan | Your plan: {plan}, starting {date}. | आपका प्लान: {plan}, {date} से। |
 | donePay | Pay {total} at the gym desk on your first visit. The gym then makes you a member. | पहली बार आने पर जिम के काउंटर पर {total} दें। फिर जिम आपको मेंबर बना देगा। |
 | doneClose | You can close this page now. | अब आप यह पेज बंद कर सकते हैं। |
-| memberTitle | This number is already a member here. Renew instead? | यह नंबर पहले से यहाँ का मेंबर है। प्लान रिन्यू करना है? |
+| memberTitle | This number is already a member of this gym. You can renew your plan instead. | यह नंबर पहले से इस जिम का मेंबर है। आप इसके बजाय अपना प्लान रिन्यू कर सकते हैं। |
 | memberHow | Renew at the gym desk, or in the MettleUp app: Gym → "My gym" → "Renew my plan". | जिम के काउंटर पर रिन्यू करें, या MettleUp ऐप में: Gym → "My gym" → "Renew my plan"। |
-| memberOther | Is this someone else’s number? Use your own mobile number. | क्या यह किसी और का नंबर है? अपना मोबाइल नंबर डालें। |
+| memberOther | If this is someone else’s number, please use your own mobile number. | अगर यह किसी और का नंबर है, तो कृपया अपना मोबाइल नंबर डालें। |
 | otherNumber | Use another number | दूसरा नंबर डालें |
 | closedTitle | {gym} is not taking sign-ups online right now | {gym} अभी ऑनलाइन जॉइनिंग नहीं ले रहा है |
 | joinAtDesk | Please join at the gym desk. | कृपया जिम के काउंटर पर जॉइन करें। |
-| noneTitle | This gym link does not work | यह जिम लिंक काम नहीं कर रहा |
+| noneTitle | This gym link does not work. | यह जिम लिंक काम नहीं कर रहा है। |
 | noneHow | Ask the gym for a new link. | जिम से नया लिंक माँगें। |
-| offlineTitle | Could not reach the gym | जिम से कनेक्ट नहीं हो पाया |
+| offlineTitle | We could not reach the gym. | जिम से कनेक्ट नहीं हो पाया। |
 | offlineHow | Check your internet and open the link again. | इंटरनेट चेक करें और लिंक फिर से खोलें। |
 | TOO_MANY | Too many sign-ups were sent today. Please try again tomorrow, or join at the gym desk. | आज बहुत सारे फ़ॉर्म भेजे जा चुके हैं। कल फिर कोशिश करें, या जिम के काउंटर पर जॉइन करें। |
 | NOT_READY | Online sign-up is not ready yet. Please join at the gym desk. | ऑनलाइन जॉइनिंग अभी तैयार नहीं है। कृपया जिम के काउंटर पर जॉइन करें। |
@@ -202,9 +203,11 @@ trial lines were approved on 15 Nov ("yes to the trial words"). New with R-563: 
 | TRIAL_USED | You have already used a free trial at this gym with this mobile number. Please pick a plan to join. | आप इस मोबाइल नंबर से इस जिम में पहले ही फ़्री ट्रायल ले चुके हैं। जॉइन करने के लिए कृपया कोई प्लान चुनें। |
 | TRIAL_OFF | This gym is not offering free trials right now. Please pick a plan to join. | यह जिम अभी फ़्री ट्रायल नहीं दे रहा है। जॉइन करने के लिए कृपया कोई प्लान चुनें। |
 
-## 3. Join form lines to make complete sentences (proposed, not changed yet)
+## 3. Join form lines made complete sentences (approved 15 Nov 2026)
 
-These live lines are questions or fragments. With the owner's yes they change to:
+The owner said yes to these on 15 Nov 2026 (R-569) and they are now in join-online.html (section 2 shows them). His
+one change: waComputer is not the line proposed below. On a computer the form now shows a QR code of the same
+WhatsApp link next to "Open WhatsApp", with the line in section 2. Kept for history:
 
 | Key | Now | Proposed English | Proposed Hindi |
 |---|---|---|---|

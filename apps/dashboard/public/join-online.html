@@ -201,7 +201,7 @@
         <p class="help test hide" id="pay-test" data-t="testNote">Test mode: this gym is trying out online payments. No real money moves.</p>
       </fieldset>
       <label class="tick"><input type="checkbox" id="adult"><span data-t="consentAdult">I am 18 or older and agree to the gym's terms and privacy notice.</span></label>
-      <p class="help" style="margin:-4px 0 12px" data-t="under18">Under 18? Please join at the gym desk with a parent or guardian.</p>
+      <p class="help" style="margin:-4px 0 12px" data-t="under18">If you are under 18, please join at the gym desk with a parent or guardian.</p>
       <label class="tick"><input type="checkbox" id="health"><span data-t="consentHealth">I have no medical condition that stops me exercising, or I will tell the trainer.</span></label>
       <!-- A bot fills every box; a person never sees this one. -->
       <div class="trap" aria-hidden="true"><label for="website">Website</label><input id="website" type="text" tabindex="-1" autocomplete="off"></div>
@@ -233,9 +233,9 @@
   </section>
 
   <section class="card hide" id="member" role="alert">
-    <h2 data-t="memberTitle">This number is already a member here. Renew instead?</h2>
+    <h2 data-t="memberTitle">This number is already a member of this gym. You can renew your plan instead.</h2>
     <p class="note" style="margin-top:0" data-t="memberHow">Renew at the gym desk, or in the MettleUp app: Gym → "My gym" → "Renew my plan".</p>
-    <p class="note" data-t="memberOther">Is this someone else's number? Use your own mobile number.</p>
+    <p class="note" data-t="memberOther">If this is someone else’s number, please use your own mobile number.</p>
     <div style="height:12px"></div>
     <button class="btn ghost" type="button" id="other-number" data-t="otherNumber">Use another number</button>
   </section>
@@ -246,12 +246,12 @@
   </section>
 
   <section class="card hide" id="none">
-    <h2 data-t="noneTitle">This gym link does not work</h2>
+    <h2 data-t="noneTitle">This gym link does not work.</h2>
     <p class="note" style="margin:0" data-t="noneHow">Ask the gym for a new link.</p>
   </section>
 
   <section class="card hide" id="offline">
-    <h2 data-t="offlineTitle">Could not reach the gym</h2>
+    <h2 data-t="offlineTitle">We could not reach the gym.</h2>
     <p class="note" style="margin:0" data-t="offlineHow">Check your internet and open the link again.</p>
   </section>
 </main>
@@ -311,7 +311,7 @@
       payNote: 'You pay when you come to the gym. Nothing is paid on this page.',
       consentAdult: 'I am 18 or older and agree to the gym’s terms and privacy notice.',
       consentHealth: 'I have no medical condition that stops me exercising, or I will tell the trainer.',
-      under18: 'Under 18? Please join at the gym desk with a parent or guardian.',
+      under18: 'If you are under 18, please join at the gym desk with a parent or guardian.',
       NO_ADULT: 'To join online, you must be 18 or older. If you are under 18, please join at the gym desk with a parent or guardian.',
       NO_HEALTH: 'Tick the second box to send. If you have a health problem, please talk to the gym first.',
       privacy: 'Only {gym} sees your details.', privacyLink: 'How MettleUp keeps your details safe',
@@ -319,13 +319,13 @@
       doneTitle: 'Sent to {gym}', donePlan: 'Your plan: {plan}, starting {date}.',
       donePay: 'Pay {total} at the gym desk on your first visit. The gym then makes you a member.',
       doneClose: 'You can close this page now.',
-      memberTitle: 'This number is already a member here. Renew instead?',
+      memberTitle: 'This number is already a member of this gym. You can renew your plan instead.',
       memberHow: 'Renew at the gym desk, or in the MettleUp app: Gym → "My gym" → "Renew my plan".',
-      memberOther: 'Is this someone else’s number? Use your own mobile number.',
+      memberOther: 'If this is someone else’s number, please use your own mobile number.',
       otherNumber: 'Use another number',
       closedTitle: '{gym} is not taking sign-ups online right now', joinAtDesk: 'Please join at the gym desk.',
-      noneTitle: 'This gym link does not work', noneHow: 'Ask the gym for a new link.',
-      offlineTitle: 'Could not reach the gym', offlineHow: 'Check your internet and open the link again.',
+      noneTitle: 'This gym link does not work.', noneHow: 'Ask the gym for a new link.',
+      offlineTitle: 'We could not reach the gym.', offlineHow: 'Check your internet and open the link again.',
       TOO_MANY: 'Too many sign-ups were sent today. Please try again tomorrow, or join at the gym desk.',
       NOT_READY: 'Online sign-up is not ready yet. Please join at the gym desk.',
       TRY_AGAIN: 'Could not send. Check your internet and try again.',
@@ -400,7 +400,7 @@
       payNote: 'आप जिम आने पर पैसे देंगे। इस पेज पर कोई पैसा नहीं लिया जाता।',
       consentAdult: 'मेरी उम्र 18 साल या उससे ज़्यादा है। मुझे जिम की शर्तें और प्राइवेसी नोटिस मंज़ूर हैं।',
       consentHealth: 'मुझे ऐसी कोई बीमारी नहीं है जिससे मैं कसरत न कर सकूँ। अगर है, तो मैं ट्रेनर को ज़रूर बताऊँगा/बताऊँगी।',
-      under18: '18 साल से कम उम्र है? कृपया माता-पिता या अभिभावक के साथ जिम के काउंटर पर जॉइन करें।',
+      under18: 'अगर आपकी उम्र 18 साल से कम है, तो कृपया माता-पिता या अभिभावक के साथ जिम के काउंटर पर जॉइन करें।',
       NO_ADULT: 'ऑनलाइन जॉइन करने के लिए उम्र 18 साल या उससे ज़्यादा होनी चाहिए। 18 से कम है, तो माता-पिता या अभिभावक के साथ जिम के काउंटर पर जॉइन करें।',
       NO_HEALTH: 'भेजने के लिए दूसरा बॉक्स टिक करें। अगर तबीयत की कोई परेशानी है, तो पहले जिम से बात करें।',
       privacy: 'आपकी जानकारी सिर्फ़ {gym} देखेगा।', privacyLink: 'MettleUp आपकी जानकारी कैसे सुरक्षित रखता है',
@@ -408,13 +408,13 @@
       doneTitle: '{gym} को भेज दिया', donePlan: 'आपका प्लान: {plan}, {date} से।',
       donePay: 'पहली बार आने पर जिम के काउंटर पर {total} दें। फिर जिम आपको मेंबर बना देगा।',
       doneClose: 'अब आप यह पेज बंद कर सकते हैं।',
-      memberTitle: 'यह नंबर पहले से यहाँ का मेंबर है। प्लान रिन्यू करना है?',
+      memberTitle: 'यह नंबर पहले से इस जिम का मेंबर है। आप इसके बजाय अपना प्लान रिन्यू कर सकते हैं।',
       memberHow: 'जिम के काउंटर पर रिन्यू करें, या MettleUp ऐप में: Gym → "My gym" → "Renew my plan"।',
-      memberOther: 'क्या यह किसी और का नंबर है? अपना मोबाइल नंबर डालें।',
+      memberOther: 'अगर यह किसी और का नंबर है, तो कृपया अपना मोबाइल नंबर डालें।',
       otherNumber: 'दूसरा नंबर डालें',
       closedTitle: '{gym} अभी ऑनलाइन जॉइनिंग नहीं ले रहा है', joinAtDesk: 'कृपया जिम के काउंटर पर जॉइन करें।',
-      noneTitle: 'यह जिम लिंक काम नहीं कर रहा', noneHow: 'जिम से नया लिंक माँगें।',
-      offlineTitle: 'जिम से कनेक्ट नहीं हो पाया', offlineHow: 'इंटरनेट चेक करें और लिंक फिर से खोलें।',
+      noneTitle: 'यह जिम लिंक काम नहीं कर रहा है।', noneHow: 'जिम से नया लिंक माँगें।',
+      offlineTitle: 'जिम से कनेक्ट नहीं हो पाया।', offlineHow: 'इंटरनेट चेक करें और लिंक फिर से खोलें।',
       TOO_MANY: 'आज बहुत सारे फ़ॉर्म भेजे जा चुके हैं। कल फिर कोशिश करें, या जिम के काउंटर पर जॉइन करें।',
       NOT_READY: 'ऑनलाइन जॉइनिंग अभी तैयार नहीं है। कृपया जिम के काउंटर पर जॉइन करें।',
       TRY_AGAIN: 'भेजा नहीं जा सका। इंटरनेट चेक करके फिर कोशिश करें।',

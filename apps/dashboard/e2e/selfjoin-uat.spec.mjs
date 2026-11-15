@@ -223,7 +223,7 @@ test('R-513 page, phone: the WhatsApp check not done, a message from the wrong n
   await expect(page.locator('#total-parts')).toHaveText('');
   await page.locator('#next2').click();
   // Under 18: the first box stays unticked; the page says to join at the desk with a parent. Nothing sent.
-  await expect(page.locator('#step3')).toContainText('Under 18? Please join at the gym desk with a parent or guardian.');
+  await expect(page.locator('#step3')).toContainText('If you are under 18, please join at the gym desk with a parent or guardian.');
   await page.locator('#health').check();
   await page.locator('#send').click();
   await expect(page.locator('#send-err')).toHaveText('To join online, you must be 18 or older. If you are under 18, please join at the gym desk with a parent or guardian.');
@@ -274,7 +274,7 @@ test('R-513 page, phone: already a member here, renew instead', async ({ page })
   await page.locator('#health').check();
   await page.locator('#send').click();
   await expect(page.locator('#member')).toBeVisible();
-  await expect(page.locator('#member')).toContainText('This number is already a member here. Renew instead?');
+  await expect(page.locator('#member')).toContainText('This number is already a member of this gym. You can renew your plan instead.');
   await expect(page.locator('#member')).toContainText('Renew at the gym desk, or in the MettleUp app: Gym → "My gym" → "Renew my plan".');
   await shot(page, 'selfjoin-page-uat-already-member-phone');
   await page.locator('#lang').click();
@@ -302,7 +302,7 @@ test('R-513 page, phone and computer: a paused gym, and a wrong code', async ({ 
   await servePage(other, null);
   await other.goto('https://app.mettleup.fit/m/ZZZZ99');
   await expect(other.locator('#none')).toBeVisible();
-  await expect(other.locator('#title')).toHaveText('This gym link does not work');
+  await expect(other.locator('#title')).toHaveText('This gym link does not work.');
   await expect(other.locator('#form')).toBeHidden();
   await shot(other, 'selfjoin-page-uat-wrong-code-phone');
 });
