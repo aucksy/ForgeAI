@@ -86,7 +86,7 @@ Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept her
   stand-in). R-575's "out of reach still counts" test now expects 'away'. Phone flow uat-rel-r438-a step 1b:
   watch=away shows no pop-up and no "Your watch is not connected" (picture rel-r438-01b-away-no-popup); step 2
   (watch=old) is the same watch back: the pop-up shows. Part u438.
-- Runs: pending (first push).
+- Runs on 9c7e3b85: CI 43749988125 green (mobile typecheck + unit tests incl. IST and New York, admin journeys). Phone part u438: default 43750012443 green; owner 43750014887 green on attempt 2 (attempt 1 never started: Google's emulator download failed). Log proof (default): "away, waits: watch not connected" then "update-ready, shown"; pictures rel-r438-01b (Workout tab, no pop-up) and rel-r438-02 (the pop-up) read and right.
 - Only his phone + a real watch can prove: walk away with the watch (or Bluetooth off) -> no pop-up; come back,
   open the app -> the pop-up shows; "Add my watch's screen log" head says "waits: watch not connected" while away.
 
