@@ -7,6 +7,30 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-588 (15 Nov 2026, evening) RESUME HERE: coordinator state when the usage limit ran out (resets 10 pm)
+- **Admin panel deploy: APPROVED, NOT DONE.** He said "yes panel deploy". Every public word in it is approved:
+  R-579 smart-link sentences ("yes app link words"), the two invite WhatsApp lines ("yes invite lines"), the 13 Hinglish
+  lines on get-app.html / join.html ("OK app link Hinglish"), Hindi privacy ("OK Hindi privacy").
+  Fresh-eyes review of b89823ce..26e4bef9 done: 1 BLOCKER (Settings gym Phone box rewrote landlines / two numbers),
+  fixed in df153fb9 (R-580 fix round, also refuses foreign numbers again); minor test-alert button on a weak network
+  fixed in fb9123fa (R-578); minor Hindi privacy lacks the 13 Nov AI Assistant change (old gap, English wins; left).
+  **Deploy candidate: d2928aaa** (it has every fix and NOT R-586, whose panel code needs 0096, which is not live).
+  Before deploying: (1) its CI run must be green incl. "Admin journeys (phone, real forms)"; (2) look at the UAT pictures
+  (r561 phone-display-menu-dark/-light, phone-top-bar-*, r579-*, timings); (3) a quick review of 26e4bef9..d2928aaa
+  (df153fb9, fb9123fa, d2928aaa, 43e037e4) if not reviewed; then deploy per R-574's steps: wt-site checkout --detach
+  <full sha>, get_dist.ps1 -Sha <full sha>, npx wrangler deploy in wt-site/deploy/panel (the @anthropic-ai/sdk trap in
+  R-574). HQ: only if deploy/hq changed in the range (R-580 touched deploy/hq/api.js: yes, deploy HQ too). Check live:
+  /api/switches (gymPages false), the top bar menu, /app and /j/<code>. GYM_PAGES stays off. Move ADMIN_NEWS_PENDING
+  items that this deploy carries (pending-share-app-link, pending-mobile-digits, ...) as their notes say.
+- **Building (helpers, each owns its note):** R-586 message recipient (0096 NOT APPLIED; needs his named yes before the
+  live apply; phone release). R-587 welcome screens + phone-first sign-in (approved design, canvas
+  https://claude.ai/artifact/Cj9n9P3mga1an9hYeV9Pb7 v6, gym line "If your gym uses MettleUp gym software, ..."). R-576
+  workout target box (device run pending). R-575 watch pop-up, R-577 watch sizes, R-578 test alert (0095 NOT APPLIED),
+  R-579 smart link, R-580 10-digit numbers: waiting on CI. Read each note's last lines for its state.
+- **Waiting for him:** "plugged in" (adb check of the gym reply sound / pop-up, R-583, and the watch pop-up); yes for
+  0095 and 0096 live applies (ask with what each changes); "release" for the phone app (nothing released).
+- Coordinator worktree: scratchpad/wt-tour (detached; fetch + checkout --detach origin/main first).
+
 ## R-576 (15 Nov 2026) The target box rebuilt: three rules, and an unusual target always says why
 - His words (15 Nov 2026), Hip Thrust Machine after 29 days: the box said "Previous set volume: 360 kg · Today's
   target: 310 kg" and the rows hinted 10x8, 10x8, 15x10 (last time 0 kg warm-up, 10x10 @8.5, 10x11 @9, 15x10 @8.5).
