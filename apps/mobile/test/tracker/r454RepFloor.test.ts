@@ -149,7 +149,9 @@ describe('R-454 keeps the live line changing with each set (owner, 12 Nov 2026)'
   it('(a) set 1 done 11 of 13: the missing reps go to set 2 first, at most 2 above its hint', () => {
     const rows = liveRows(card(11));
     // Set 2 is never hinted under last time's 12 (the row-above cap stops at last time's same set).
-    expect(rows.slice(1).map((r) => r.hintReps)).toEqual([12, 11, 9]);
+    // R-576 (owner, 15 Nov 2026): the rows themselves carry the 2 missing reps (1 at a time, first sets first),
+    // so the rows and the line show the same numbers: 12, 11, 9 + 1, 1, 0.
+    expect(rows.slice(1).map((r) => r.hintReps)).toEqual([13, 12, 9]);
     const g = kgProgress(p, rows);
     expect(g.done).toBe(440);
     expect(g.next.map((s) => s.reps)).toEqual([13, 12, 9]);
@@ -158,10 +160,11 @@ describe('R-454 keeps the live line changing with each set (owner, 12 Nov 2026)'
 
   it('(a) set 1 done 9: still never more than 2 extra reps a set', () => {
     const rows = liveRows(card(9));
-    expect(rows.slice(1).map((r) => r.hintReps)).toEqual([12, 10, 9]);
+    // R-576: 4 reps short of 1,800, so 12, 11, 9 + 2, 1, 1 on the rows (never more than 2 a set).
+    expect(rows.slice(1).map((r) => r.hintReps)).toEqual([14, 12, 10]);
     const g = kgProgress(p, rows);
     expect(g.next.map((s) => s.reps)).toEqual([14, 12, 10]);
-    g.next.forEach((s, i) => expect(s.reps).toBeLessThanOrEqual((rows[i + 1].hintReps as number) + MAX_EXTRA_REPS));
+    [12, 11, 9].forEach((plain, i) => expect(g.next[i].reps).toBeLessThanOrEqual(plain + MAX_EXTRA_REPS));
     expect(kgLiveLine(p, g, total, weight)).toBe("Next set: 40 kg × 14 · Done: 360 of 1,800 kg");
   });
 
@@ -263,7 +266,8 @@ describe('R-512: a very hard set no longer holds the next sets back', () => {
     const hard = cardOf([set('a', 13, 9), set('b', 11, 9.5), set('c', null), set('d', null)]);
     const plain = cardOf([set('a', 13), set('b', 11), set('c', null), set('d', null)]);
     expect(fillForSet(hard, 'c', fill)).toEqual(fillForSet(plain, 'c', fill));
-    expect(fillForSet(hard, 'c', fill)).toEqual({ weightKg: 40, reps: 11 }); // never under last time's 10
+    // Never under last time's 10; R-576: 11 + 1 catch-up rep so the rows still add up to 1,800.
+    expect(fillForSet(hard, 'c', fill)).toEqual({ weightKg: 40, reps: 12 });
   });
 
   it('reps only: an RPE 10 set 1 changes nothing on set 2 (9, as last time)', () => {
@@ -293,7 +297,8 @@ describe('R-512: a very hard set no longer holds the next sets back', () => {
       }) as unknown as DraftExercise;
     const f = rowTargetFill(t);
     expect(fillForSet(c(10), 'b', f)).toEqual(fillForSet(c(null), 'b', f));
-    expect(fillForSet(c(10), 'b', f)?.reps).toBe(9);
+    // 9 as last time, + 2 catch-up reps (R-576: set 1's 8 of 11 left the rows 3 short; at most 2 a set).
+    expect(fillForSet(c(10), 'b', f)?.reps).toBe(11);
   });
 });
 
@@ -347,7 +352,8 @@ describe('R-512: Chest Dip (reps only) after a very hard set', () => {
   it('behind: 16, then 13 @9.5 -> set 3 hints 9 as without the effort; the top line asks the catch-up reps', () => {
     const hard = cardOf([row('a', 16, 8.5), row('b', 13, 9.5), row('c', null)]);
     const plain = cardOf([row('a', 16), row('b', 13), row('c', null)]);
-    expect(fillForSet(hard, 'c', f)?.reps).toBe(9);
+    // R-576: 9 + 2 catch-up reps on the row itself (16 + 13 + 9 = 38 of 40; at most 2 a set).
+    expect(fillForSet(hard, 'c', f)?.reps).toBe(11);
     expect(line(hard)).toBe(line(plain));
     const m = /^Next set: (\d+) reps\b/.exec(line(hard));
     expect(Number(m?.[1])).toBeGreaterThan(9);
@@ -376,10 +382,11 @@ describe('R-454: the row-above cap stops at last time (UAT flow r439-b, Goblet S
         { key: 'b', weightKg: null, reps: null, isWarmup: false, done: false },
       ],
     } as unknown as DraftExercise;
-    expect(fillForSet(c, 'b', targetFill(t))).toEqual({ weightKg: 20, reps: 5 });
+    // 5 as last time, + 2 catch-up reps (R-576: the rows aim for 300 kg; at most 2 a set).
+    expect(fillForSet(c, 'b', targetFill(t))).toEqual({ weightKg: 20, reps: 7 });
     // Typed at another weight above: last time's 20 kg set says nothing about it (the old cap).
     const lighter = { ...c, sets: [{ ...c.sets[0], weightKg: 15 }, c.sets[1]] } as DraftExercise;
-    expect(fillForSet(lighter, 'b', targetFill(t))).toEqual({ weightKg: 15, reps: 3 });
+    expect(fillForSet(lighter, 'b', targetFill(t))).toEqual({ weightKg: 15, reps: 5 }); // 3 + 2 catch-up reps
   });
 });
 
@@ -400,17 +407,18 @@ describe('R-454: a set done at another weight than planned (his Lateral Raise, 1
     ({ key: 'l1', exerciseId: 'lateral', name: 'Lateral Raise', muscleGroup: 'shoulders', equipment: 'dumbbell', previousSets: lastSets, sets: rows }) as unknown as DraftExercise;
   const open = (key: string): DraftSet => ({ key, weightKg: null, reps: null, isWarmup: false, done: false });
 
-  it('the plan: 25 kg x 15, 13, 12, 15', () => {
+  it('the plan: 25 kg x 16, 14, 12, 15 (R-576: 15, 13, 12, 15 = 1,375 is under 1,420, so +1 on sets 1 and 2)', () => {
     expect(t.rule).toBe('R2');
     expect(t.targetWeightKg).toBe(25);
-    expect(t.setGoals).toEqual([15, 13, 12, 15]);
+    expect(t.setGoals).toEqual([16, 14, 12, 15]);
+    expect(t.extraReps).toEqual([1, 1, 0, 0]);
   });
 
   it('set 1 done at 20 kg x 20: sets 2-4 follow 20 kg and aim 17, 15, 19 (never 13, 12, 15)', () => {
     const c = lateralCard([{ key: 'a', weightKg: 20, reps: 20, isWarmup: false, done: true }, open('b'), open('c'), open('d')]);
     const hints = ['b', 'c', 'd'].map((k) => fillForSet(c, k, fill));
     expect(hints).toEqual([
-      { weightKg: 20, reps: 17 },
+      { weightKg: 20, reps: 18 }, // 17 + 1: the rows add up to 1,425 kg (R-576)
       { weightKg: 20, reps: 15 },
       { weightKg: 20, reps: 19 },
     ]);
@@ -426,8 +434,8 @@ describe('R-454: a set done at another weight than planned (his Lateral Raise, 1
       return { weightKg: null, reps: null, done: false, isWarmup: false, hintKg: h.weightKg, hintReps: h.reps };
     });
     const g = kgProgress(p, rows);
-    expect(g.next.map((s) => s.reps)).toEqual([17, 15, 19]);
-    expect(kgLiveLine(p, g, total, weight)).toBe("Next set: 20 kg × 17 · Done: 400 of 1,420 kg, the previous total");
+    expect(g.next.map((s) => s.reps)).toEqual([18, 15, 19]);
+    expect(kgLiveLine(p, g, total, weight)).toBe("Next set: 20 kg × 18 · Done: 400 of 1,425 kg");
   });
 
   // Owner, 12 Nov 2026 (screenshot): this card read "Today's 1,420 kg reached" with no previous number
@@ -442,9 +450,11 @@ describe('R-454: a set done at another weight than planned (his Lateral Raise, 1
 
   it('no history at the weight done: the planned aim moved by the kilos, never under it (22.5 kg: 13 -> 14)', () => {
     const c = lateralCard([{ key: 'a', weightKg: 22.5, reps: 16, isWarmup: false, done: true }, open('b'), open('c'), open('d')]);
-    expect(fillForSet(c, 'b', fill)).toEqual({ weightKg: 22.5, reps: 14 }); // 13 x 25 / 22.5 = 14.4
-    expect(fillForSet(c, 'c', fill)).toEqual({ weightKg: 22.5, reps: 13 }); // 12 x 25 / 22.5 = 13.3
-    expect(fillForSet(c, 'd', fill)).toEqual({ weightKg: 22.5, reps: 16 }); // 15 x 25 / 22.5 = 16.7, capped by the 16 just done
+    // Moved by the kilos: 14 x 25 / 22.5 = 15.6 -> 15, 12 -> 13.3 -> 13, 15 -> 16.7 capped by the 16 just done;
+    // R-576: those add up 4 reps short of 1,425 kg, so + 2, 1, 1 (1 at a time, first sets first).
+    expect(fillForSet(c, 'b', fill)).toEqual({ weightKg: 22.5, reps: 17 });
+    expect(fillForSet(c, 'c', fill)).toEqual({ weightKg: 22.5, reps: 14 });
+    expect(fillForSet(c, 'd', fill)).toEqual({ weightKg: 22.5, reps: 17 });
   });
 
   it('heavier than planned: never under the planned aims', () => {
@@ -489,7 +499,11 @@ describe('R-454: what stays the same', () => {
     });
     expect(t.rule).toBe('R2');
     expect(t.targetWeightKg).toBeGreaterThan(40);
-    expect(Math.max(...t.setGoals)).toBeLessThanOrEqual(12);
+    // The step's own goals stay in the range; only R-576's extra reps (at most 2 a set) go past it, so the
+    // total still beats last time's 1,960 kg.
+    t.setGoals.forEach((g, i) => expect(g - (t.extraReps?.[i] ?? 0)).toBeLessThanOrEqual(12));
+    t.setGoals.forEach((g) => expect(g).toBeLessThanOrEqual(12 + MAX_EXTRA_REPS));
+    expect(t.setGoals.reduce((a, g) => a + g * t.targetWeightKg, 0)).toBeGreaterThan(1960);
   });
 });
 

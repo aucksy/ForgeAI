@@ -154,12 +154,14 @@ describe('rules', () => {
     expect(t.rule).toBe('R0');
   });
 
-  it('R1: 3–5 weeks off holds the weight and aims for the bottom', () => {
+  // R-576 (owner, 15 Nov 2026): "The only exception is a break of 6+ weeks" - the 3-5 week cut (R1 at 21-41
+  // days) is gone, so 4 weeks off is a normal day: same weight, +1 rep, above last time.
+  it('R-576: 3–5 weeks off is a normal day (no more R1 hold at the bottom)', () => {
     const t = run(ex(), range(8, 12), [sess('2026-09-08', [[60, 10], [60, 10], [60, 9]])]);
-    expect(t.rule).toBe('R1');
+    expect(t.rule).toBe('R5');
     expect(t.targetWeightKg).toBe(60);
-    expect(t.repGoal).toBe(8);
-    expect(t.reason).toContain('4 weeks ago');
+    expect(t.setGoals).toEqual([11, 11, 10]);
+    expect(t.breakWeeks).toBeUndefined();
   });
 
   it('R1b: 6+ weeks off goes about 10% lighter', () => {
@@ -371,7 +373,8 @@ describe('big-jump line', () => {
     });
     expect(t.rule).toBe('R2');
     expect(t.targetWeightKg).toBe(25);
-    expect(t.setGoals).toEqual([12, 12, 12]);
+    // 12, 12, 12 = 900 kg ties 20 x 15 x 3; R-576 adds 1 rep on set 1 so the total beats it.
+    expect(t.setGoals).toEqual([13, 12, 12]);
   });
 });
 
@@ -463,10 +466,11 @@ describe('set-row fill from the Target (second review)', () => {
   });
 
   it('a normal Target fills its weight and rep goal', () => {
-    const t = run(ex(), range(5, 8), [sess('2026-10-03', [[72.5, 8], [72.5, 8], [72.5, 8], [72.5, 8]])]);
+    const t = run(ex(), range(5, 8, 4), [sess('2026-10-03', [[72.5, 8], [72.5, 8], [72.5, 8], [72.5, 8]])]);
     // R-61 (owner, 22 Oct 2026): warm-ups stay as last time, so a moved weight carries nothing for them.
-    // R-350: 72.5 x 8 = 580 kg a set -> 7 reps at 75 kg.
-    expect(targetFill(t)).toEqual({ weightKg: 75, reps: 7, fromKg: 72.5, liftUp: { topReps: 8, weightKg: 72.5, reps: 5 } }); // C3-4: fromKg = last time's main weight; R-143: where a lighter set at the top moves
+    // R-350: 72.5 x 8 = 580 kg a set -> 7 reps at 75 kg; R-576: 4 x 7 x 75 = 2,100 is under 2,320, so +1 on
+    // sets 1-3 (2,325 kg).
+    expect(targetFill(t)).toEqual({ weightKg: 75, reps: 8, setReps: [8, 8, 8, 7], fromKg: 72.5, beat: 'kg', liftUp: { topReps: 8, weightKg: 72.5, reps: 5 } }); // C3-4: fromKg = last time's main weight; R-143: where a lighter set at the top moves
   });
 });
 

@@ -67,9 +67,14 @@ describe('R-300 / R-304: the live line', () => {
   const total = (kg: number) => `${kg.toLocaleString('en-US')} kg`;
   const weight = (kg: number) => `${kg} kg`;
 
-  it('extra reps go to the NEXT open set first', () => {
-    const g = kgProgress(plan, [row(9, true), row(null, false), row(null, false)]);
+  // R-576 (owner, 15 Nov 2026): the extra reps go to the NEXT open set first ON THE ROW itself (fillForSet ->
+  // beatRows, tested in r454RepFloor); the line counts the rows exactly as they show, so the two always agree.
+  it('extra reps go to the NEXT open set first: the line shows what the rows hint', () => {
+    const hinted = (reps: number): KgRow => ({ weightKg: null, reps: null, done: false, isWarmup: false, hintKg: 40, hintReps: reps });
+    const g = kgProgress(plan, [row(9, true), hinted(11), hinted(10)]);
     expect(g.next.map((x) => x.reps)).toEqual([11, 10]);
+    // A row with no hint falls back to the plan's own set.
+    expect(kgProgress(plan, [row(9, true), row(null, false), row(null, false)]).next.map((x) => x.reps)).toEqual([10, 10]);
   });
 
   it('all sets done and short: no "add a set", just how much and that it is fine', () => {

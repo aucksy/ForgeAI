@@ -645,7 +645,7 @@ function computeAt(input: ProgressionInput, depth: number): ProgressionTarget {
     .filter((x) => (x.setType === 'normal' || x.setType === 'failure') && x.reps > 0 && Number.isFinite(x.weightKg) && Number.isFinite(x.reps))
     .map((x) => ({ weightKg: x.weightKg, reps: x.reps }));
   /** R-576 rule 3 on this lift: the goals at `weightKg`, topped up when they do not beat last time (`beatGoals`). */
-  const beat = (weightKg: number, goals: number[], rangeTop: number): { goals: number[]; extra?: number[] } => {
+  const beat = (weightKg: number, goals: number[], rangeTop: number, skip?: readonly number[]): { goals: number[]; extra?: number[] } => {
     const r = beatGoals(
       {
         targetSets: nSets,
@@ -660,6 +660,7 @@ function computeAt(input: ProgressionInput, depth: number): ProgressionTarget {
         bodyweightOnly,
       },
       lastAll,
+      skip,
     );
     return r ?? { goals };
   };
@@ -754,7 +755,7 @@ function computeAt(input: ProgressionInput, depth: number): ProgressionTarget {
       );
     }
     // R-576 rule 3: the reps add up to more than last time's (a set after a long rest is not raised).
-    const b = beat(0, plain, cap);
+    const b = beat(0, plain, cap, heldGoalsOf(L, cap));
     return marked(out('B1', 0, Math.max(...b.goals), plusOneWords(L, b.goals, null) + longRestNote(heldRest(L).held), null, b.goals), {
       extra: b.extra,
       held: heldGoalsOf(L, cap),
@@ -845,7 +846,7 @@ function computeAt(input: ProgressionInput, depth: number): ProgressionTarget {
   const again = missedGoals(plus, max);
   // R-576 rule 3: when these do not add up to more than last time (fewer sets than last time, a set after a
   // long rest, a lighter set moved up), 1 rep at a time on the first sets, at most 2 a set.
-  const b = beat(same, again ?? plus, max);
+  const b = beat(same, again ?? plus, max, heldGoalsOf(G, max));
   const goals = b.goals;
   // The words name a set "again" (R-300) only where the missed goal changed it, never for an extra rep.
   const plainWords = goals.map((g, i) => (again && again[i] !== plus[i] ? plus[i] : g));
@@ -1463,7 +1464,12 @@ export const setValue = (s: { weightKg: number; reps: number }, reps: boolean): 
  * needed (or the move gets no box, `beatMode`). A set that still cannot beat it is left at +2: the card
  * then says why. A break of 6+ weeks never comes here (rules R1 / R1b). PURE.
  */
-export function beatGoals(t: PlaceTarget, lastSets: readonly { weightKg: number; reps: number }[]): { goals: number[]; extra: number[] } | null {
+export function beatGoals(
+  t: PlaceTarget,
+  lastSets: readonly { weightKg: number; reps: number }[],
+  /** Goal places (0-based) never topped up: a set after a long rest (F73) is not raised. */
+  skip?: readonly number[],
+): { goals: number[]; extra: number[] } | null {
   const mode = beatMode({ action: 'hold', topSetOnly: false, ...t });
   if (!mode) return null;
   const reps = mode === 'reps';
@@ -1478,7 +1484,7 @@ export function beatGoals(t: PlaceTarget, lastSets: readonly { weightKg: number;
   for (let e = 1; e <= MAX_EXTRA_REPS && total < need - 1e-9; e++) {
     for (const p of places) {
       if (total >= need - 1e-9) break;
-      if (p.kind !== 'goal' || p.goal == null || p.goal >= goals.length || extra[p.goal] >= e) continue;
+      if (p.kind !== 'goal' || p.goal == null || p.goal >= goals.length || extra[p.goal] >= e || skip?.includes(p.goal)) continue;
       extra[p.goal] += 1;
       goals[p.goal] += 1;
       total += reps ? 1 : p.weightKg;

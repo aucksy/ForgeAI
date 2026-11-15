@@ -143,7 +143,8 @@ describe('Weight jumps: the heaviest rung within the chosen share, always at lea
     const t = run(machine, [three(20, 15)], { min: 10, max: 15, jump: 'large' });
     expect(t.rule).toBe('R2');
     expect(t.targetWeightKg).toBe(25);
-    expect(t.setGoals).toEqual([12, 12, 12]);
+    // About its kg: 12, 12, 12 = 900 kg, the same as 20 x 15 x 3; R-576 adds 1 rep on set 1 so it beats it.
+    expect(t.setGoals).toEqual([13, 12, 12]);
   });
 
   it('R-350: no beginner fast lane (R2c): a beginner gets his own Weight jumps step', () => {
@@ -155,8 +156,9 @@ describe('Weight jumps: the heaviest rung within the chosen share, always at lea
 
   it('R-350: after a jump each set aims for the reps that lift about its kg (60 x 12 -> 65 kg x 11)', () => {
     const t = run(ex(), [three(60, 12)], { jump: 'large' });
-    expect(t.setGoals).toEqual([11, 11, 11]);
-    expect(targetLine(t)).toBe('65 kg · aim for 11');
+    // 11, 11, 11 at 65 = 2,145 kg, under 2,160; R-576: +1 on set 1 (2,210 kg).
+    expect(t.setGoals).toEqual([12, 11, 11]);
+    expect(targetLine(t)).toBe('65 kg · 12, 11, 11');
   });
 });
 
@@ -330,10 +332,10 @@ describe('ONE source: targetFill → fillForSet', () => {
     }) as DraftExercise;
 
   it('targetFill carries the per-set goals only when they differ', () => {
-    expect(fill).toEqual({ weightKg: 50, reps: 11, setReps: [11, 9, 8], fromKg: 50, liftUp: { topReps: 12, weightKg: 50, reps: 8 } }); // C3-4: fromKg = last time's main weight; R-143
+    expect(fill).toEqual({ weightKg: 50, reps: 11, setReps: [11, 9, 8], fromKg: 50, beat: 'kg', liftUp: { topReps: 12, weightKg: 50, reps: 8 } }); // C3-4: fromKg = last time's main weight; R-143
     const flat = run(ex(), [sess('2026-10-03', [[60, 12], [60, 12], [60, 11]])]);
     expect(flat.setGoals).toEqual([12, 12, 12]);
-    expect(targetFill(flat)).toEqual({ weightKg: 60, reps: 12, fromKg: 60, liftUp: { topReps: 12, weightKg: 60, reps: 8 } });
+    expect(targetFill(flat)).toEqual({ weightKg: 60, reps: 12, fromKg: 60, beat: 'kg', liftUp: { topReps: 12, weightKg: 60, reps: 8 } });
   });
 
   it('each row hints its own goal by working-set number (warm-ups and drops not counted)', () => {
@@ -357,14 +359,16 @@ describe('ONE source: targetFill → fillForSet', () => {
     const c = card([s1, s2, s3]);
     // R-454 (owner, 12 Nov 2026: "Never suggesting less than before"): the cap stops at what the same
     // set did last time at this weight: set 2 did 8 last time, so 8 (was 7); set 3 did 7, so 7.
-    expect(fillForSet(c, s2.key, fill)).toEqual({ weightKg: 50, reps: 8 });
-    expect(fillForSet(c, s3.key, fill)).toEqual({ weightKg: 50, reps: 7 });
+    // R-576 (owner, 15 Nov 2026): the rows still add up to the target (1,400 kg), so each open row takes up to
+    // 2 catch-up reps: 8 + 2, 7 + 2.
+    expect(fillForSet(c, s2.key, fill)).toEqual({ weightKg: 50, reps: 10 });
+    expect(fillForSet(c, s3.key, fill)).toEqual({ weightKg: 50, reps: 9 });
     // More than the goal above: the row still aims for its own goal, not the 12.
     const [a1, a2] = [row({ weightKg: 50, reps: 12, done: true }), row()];
     expect(fillForSet(card([a1, a2]), a2.key, fill)).toEqual({ weightKg: 50, reps: 9 });
     // A heavier weight done above: carried down, and capped by what was done at it.
     const [h1, h2] = [row({ weightKg: 55, reps: 6, done: true }), row()];
-    expect(fillForSet(card([h1, h2]), h2.key, fill)).toEqual({ weightKg: 55, reps: 6 });
+    expect(fillForSet(card([h1, h2]), h2.key, fill)).toEqual({ weightKg: 55, reps: 8 }); // 6 + 2 catch-up reps (R-576)
   });
 
   it('R-61: a warm-up keeps last time\'s weight and reps when the working weight moves (40 × 8, not 42.5)', () => {
@@ -376,7 +380,7 @@ describe('ONE source: targetFill → fillForSet', () => {
     const c = { ...card([w, s1]), previousSets: [{ weightKg: 60, reps: 12 }], previousWarmups: [{ weightKg: 40, reps: 8 }] } as DraftExercise;
     // Owner, 22 Oct 2026: "we're not changing the weight for the warm-up sets people do".
     expect(fillForSet(c, w.key, upFill)).toEqual({ weightKg: 40, reps: 8 });
-    expect(fillForSet(c, s1.key, upFill)).toEqual({ weightKg: 65, reps: 11 }); // R-350: 60 x 12 = 720 kg -> 11 at 65
+    expect(fillForSet(c, s1.key, upFill)).toEqual({ weightKg: 65, reps: 12 }); // R-350: 60 x 12 = 720 kg -> 11 at 65; R-576 +1
     // No change of working weight: last time's warm-up as it was.
     const same = run(ex(), [sess('2026-10-03', [[40, 8, null, 'warmup'], [60, 10], [60, 9], [60, 8]])]);
     expect(same.change).toBeNull();

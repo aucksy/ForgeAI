@@ -112,7 +112,8 @@ describe('the Target never grows from a long-rest set', () => {
     const held = computeProgressionTarget({ exercise: bench, target: range, history: [all12(true)], todayISO: '2026-10-27' });
     expect(held.change).toBeNull();
     expect(held.targetWeightKg).toBe(60);
-    expect(held.setGoals).toEqual([12, 12, 12]);
+    // R-576: 12, 12, 12 only matches the previous total, so set 1 gets one more; set 2 (the long rest) is not raised.
+    expect(held.setGoals).toEqual([13, 12, 12]);
   });
 
   it('no long rest: nothing changes (no note)', () => {

@@ -16,7 +16,7 @@
  */
 import { describe, expect, it } from 'vitest';
 
-import { computeProgressionTarget, type ProgSession, type ProgressionTarget, type WeightJump } from '@/tracker/engine/progression';
+import { computeProgressionTarget, MAX_EXTRA_REPS, type ProgSession, type ProgressionTarget, type WeightJump } from '@/tracker/engine/progression';
 import { kgBeaten, kgLiveLine, kgPlan, kgProgress, lineGreen, type KgRow } from '@/tracker/lib/kgTarget';
 import type { Exercise } from '@/types/models';
 
@@ -85,9 +85,13 @@ function replay(lift: Lift, seed: number, workouts = 500) {
     if (withWarm.targetWeightKg !== t.targetWeightKg || withWarm.setGoals.join() !== goals.join()) bad('warm-up changed it');
 
     if (goals.length !== sets) bad('goal count');
+    // R-576 (owner, 15 Nov 2026): rule 3's extra reps are at most 2 a set, and only they may lift a goal past the
+    // bounds below (the top of the range after a step, last time + 1, the bottom after a step back).
+    const extra = (i: number) => t.extraReps?.[i] ?? 0;
+    if ((t.extraReps ?? []).some((x) => x < 0 || x > MAX_EXTRA_REPS)) bad('more than 2 extra reps on a set');
     if (goals.some((g) => g < 1)) bad('goal under 1');
     // R-454: only the same weight may aim past the top, and only as far as that set did last time.
-    if (Math.abs(t.targetWeightKg - w) > 1e-9 && goals.some((g) => g > range.max)) bad('goal over the top after a step');
+    if (Math.abs(t.targetWeightKg - w) > 1e-9 && goals.some((g, i) => g > range.max + extra(i))) bad('goal over the top after a step');
     if (Math.abs(t.targetWeightKg / lift.grid - Math.round(t.targetWeightKg / lift.grid)) > 1e-6) bad('off the grid');
     if (t.targetWeightKg > w + 1e-9) {
       ups += 1;
@@ -100,7 +104,7 @@ function replay(lift: Lift, seed: number, workouts = 500) {
       const under = (ss: typeof last) => ss.length > 0 && ss.every((s) => s.reps < range.min);
       if (!(under(last) && under(prev) && prev[0]?.weightKg === w)) bad('down without two workouts under the bottom');
       if (w - t.targetWeightKg > Math.max(lift.pair ? 5 : lift.grid, w * 0.125) + 1e-9) bad('more than one step down');
-      if (goals.some((g) => g !== range.min)) bad('step-down goal is not the bottom');
+      if (goals.some((g, i) => g !== range.min + extra(i))) bad('step-down goal is not the bottom');
     } else {
       sames += 1;
       // The first workout after a rep-range change: the short-day rule re-works the previous goals
@@ -114,7 +118,7 @@ function replay(lift: Lift, seed: number, workouts = 500) {
         if (i < last.length && g < last[i].reps) bad(`set ${i + 1} goal under last time's ${last[i].reps}`);
         if (rangeChanged) return;
         const allowed = Math.max(i < last.length ? did : 0, Math.min(range.max, Math.max(did + 1, pg?.[i] ?? 0)));
-        if (g > allowed) bad(`set ${i + 1} goal over last+1`);
+        if (g > allowed + extra(i)) bad(`set ${i + 1} goal over last+1`);
       });
     }
 
@@ -128,7 +132,10 @@ function replay(lift: Lift, seed: number, workouts = 500) {
     const plan = kgPlan(t, last.map((s) => ({ weightKg: s.weightKg, reps: s.reps })));
     if (plan) {
       const lastTotal = sumKg(last.slice(0, sets));
-      if (last.length === sets && plan.total + 1e-9 < lastTotal) bad(`kg to beat ${plan.total} under last time's ${lastTotal}`);
+      // R-576 rule 1-3: Previous is every working set; the target (the rows added up) is above it, or says why.
+      if (plan.last != null && Math.abs(plan.last - sumKg(last)) > 1e-6) bad(`Previous ${plan.last} is not every set (${sumKg(last)})`);
+      const said = (plan.why ?? []).some((y) => y.kind === 'notAbove' || y.kind === 'break' || y.kind === 'stepBack' || y.kind === 'said');
+      if (plan.last != null && plan.total <= plan.last + 1e-9 && !said) bad(`target ${plan.total} not above previous ${plan.last}, and no reason`);
       for (let k = 0; k <= doneSets.length; k++) {
         const rows: KgRow[] = doneSets.map((s, i) =>
           i < k ? { weightKg: s.weightKg, reps: s.reps, done: true, isWarmup: false } : { weightKg: null, reps: null, done: false, isWarmup: false, hintKg: t.targetWeightKg, hintReps: goals[i] },
@@ -136,7 +143,8 @@ function replay(lift: Lift, seed: number, workouts = 500) {
         const g = kgProgress(plan, rows);
         const doneKg = sumKg(doneSets.slice(0, k));
         if (kgBeaten(g) && doneKg + 1e-9 < plan.total) bad(`"beaten" at ${doneKg} of ${plan.total}`);
-        if (last.length === sets && kgBeaten(g) && doneKg + 1e-9 < lastTotal) bad(`"beaten" under last time's ${lastTotal}`);
+        // R-576: a target that says why it is not above Previous is reached under Previous (the line stays grey).
+        if (!said && last.length === sets && kgBeaten(g) && doneKg + 1e-9 < lastTotal) bad(`"beaten" under last time's ${lastTotal}`);
         const line = kgLiveLine(plan, g, (kg) => `${kg} kg`, (kg) => `${kg} kg`);
         // Owner, 12 Nov 2026: the finished line is "<done> done · Previous: ..." (no "reached"); R-498 (14 Nov):
         // green with a previous workout it is "Previous set volume beaten! ..." / "... matched" instead,
@@ -163,7 +171,10 @@ describe('R-364 oracle replay: 500 workouts per lift, every rule checked after e
       expect(out.failures).toEqual([]);
       // The replay really exercised the rules: steps up, and mostly +1 rep days.
       expect(out.ups).toBeGreaterThan(5);
-      expect(out.sames).toBeGreaterThan(out.ups);
+      // R-576 (owner, 15 Nov 2026): the total always beats last time, so with ONE set a step up asks for as many
+      // reps as last time (up to 2 extra); a member who always makes the goal then steps up every time. Known and
+      // accepted for one-set lifts; with 2+ sets the +1 rep days still dominate.
+      if (lift.sets > 1) expect(out.sames).toBeGreaterThan(out.ups);
     });
   }
   it('a weak member (many bad days) also steps down one step (about 10%), to the bottom of the range', () => {
@@ -194,7 +205,8 @@ describe('R-364 edge and state-change cases', () => {
   it('regression R-349: T-Bar Row after 30 x 13, 12, 10 is never 32.5 kg x 6 on every set', () => {
     const t = computeProgressionTarget({ ...base, history: tbar });
     expect(t.setGoals).not.toEqual([6, 6, 6]);
-    expect(t.setGoals).toEqual([10, 10, 9]);
+    // R-576: about its kg (10, 10, 9 = 942.5) is under 1,050, so 1 rep at a time on the first sets: 12, 11, 10.
+    expect(t.setGoals).toEqual([12, 11, 10]);
   });
 
   it('regression R-351: 585 kg "beaten" after 2 sets while 270 kg under last time can never come back', () => {

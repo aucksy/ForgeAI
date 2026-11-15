@@ -46,15 +46,19 @@ describe('R-60: reps to beat', () => {
     expect(repPlan({ ...pushUps, action: 'start' }, last)).toBeNull();
     expect(repPlan({ ...pushUps, repGoal: null }, last)).toBeNull();
     expect(repPlan({ ...pushUps, easy: true }, last)).toBeNull();
-    // R-138: another set count compares set for set (the first 2 planned vs 15, 15) and names the extra set.
+    // R-576 rule 1 (owner, 15 Nov 2026): Previous is every working set last time (15, 15 = 30), so the
+    // difference is the whole +15; the extra set is still named.
     const two = repPlan(pushUps, last.slice(0, 2))!;
     expect(two.last).toBe(30);
-    expect(repsToBeatLine(two)).toBe('45 reps to beat · +1 set · first 2 sets +1 on previous');
+    expect(repsToBeatLine(two)).toBe('45 reps to beat · +1 set · +15 on previous');
     expect(repPlan(pushUps, [])!.last).toBeNull();
     expect(repsToBeatLine(repPlan(pushUps, [])!)).toBe('45 reps to beat');
-    // R-366: never under last time's 48 (as R-351 for kg).
-    expect(repsToBeatLine(repPlan(pushUps, [{ weightKg: 0, reps: 16 }, { weightKg: 0, reps: 16 }, { weightKg: 0, reps: 16 }])!)).toBe(
-      '48 reps to beat · your previous total',
+    // R-576 rule 2 (owner, 15 Nov 2026): the target is exactly what the rows add up to, never lifted to Previous
+    // (was R-366's "48 ... your previous total"); a plan under Previous says why in the box instead.
+    const under = repPlan(pushUps, [{ weightKg: 0, reps: 16 }, { weightKg: 0, reps: 16 }, { weightKg: 0, reps: 16 }])!;
+    expect(under.why?.some((y) => y.kind === 'notAbove')).toBe(true);
+    expect(repsToBeatLine(under)).toBe(
+      '45 reps to beat · fewer than previous',
     );
   });
 

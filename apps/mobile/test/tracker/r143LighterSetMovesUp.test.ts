@@ -87,11 +87,14 @@ describe('R-143: a lighter set that reached the top of the range moves up', () =
   it('his case: the plan puts set 1 at 45 kg (bottom of the range), sets 2-3 +1 rep each (R-350: 13 -> 14, 11 -> 12)', () => {
     expect(t.targetWeightKg).toBe(45);
     const plan = kgPlan(t, lastSets)!;
+    // R-576 (owner, 15 Nov 2026): 12, 14, 12 at 45 kg = 1,710 kg, under last time's 1,880, so sets 2 and 3
+    // take 2 extra reps each (1 at a time, at most 2 a set): 1,890 kg. The moved-up set keeps its 12.
     expect(plan.sets.map((s) => [s.weightKg, s.reps, s.asLast])).toEqual([
       [45, 12, false],
+      [45, 16, false],
       [45, 14, false],
-      [45, 12, false],
     ]);
+    expect((t.extraReps ?? []).reduce((a, x) => a + x, 0)).toBe(4);
   });
 
   it('his case: set row 1 hints 45 kg too (the rows and the plan agree)', () => {
@@ -100,8 +103,8 @@ describe('R-143: a lighter set that reached the top of the range moves up', () =
     expect(fill?.liftUp).toEqual({ topReps: 20, weightKg: 45, reps: 12 });
     expect(['a', 'b', 'c3'].map((k) => wr(fillForSet(c, k, fill)))).toEqual([
       [45, 12],
+      [45, 16],
       [45, 14],
-      [45, 12],
     ]);
   });
 
@@ -116,7 +119,7 @@ describe('R-143: a lighter set that reached the top of the range moves up', () =
 
   it('a back-off AFTER the main sets that reached the top moves up too', () => {
     const plan = kgPlan(t, [{ weightKg: 45, reps: 13 }, { weightKg: 45, reps: 11 }, { weightKg: 40, reps: 20 }])!;
-    expect(plan.sets[2]).toEqual({ weightKg: 45, reps: 12, asLast: false });
+    expect(plan.sets[2]).toEqual({ weightKg: 45, reps: 12, asLast: false, liftUp: true });
   });
 
   it('a heavy top set is never moved, whatever its reps', () => {

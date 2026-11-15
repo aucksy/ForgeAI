@@ -268,7 +268,7 @@ describe('bodyweight reps: cap → harder version; stuck → easier version (§4
     const pull = ex({ name: 'Pull-up', equipment: 'bodyweight' });
     const t = computeProgressionTarget({ exercise: pull, target: range(8, 12), history: [reps('2026-10-03', [[0, 20], [0, 20], [0, 20]])], todayISO: TODAY, logType: 'reps', repCap: 15 });
     expect(t.rule).toBe('B2cap');
-    expect(targetFill(t)).toEqual({ weightKg: 0, reps: 20 });
+    expect(targetFill(t)).toEqual({ weightKg: 0, reps: 20, beat: 'reps' }); // R-576: the rows count reps toward the total
   });
   it('four workouts under the range → try the easier version', () => {
     const low = (d: string) => reps(d, [[0, 4], [0, 3], [0, 3]]);

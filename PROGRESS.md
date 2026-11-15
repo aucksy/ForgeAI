@@ -19,6 +19,13 @@
   phone flows phase2-c (part c), v0280-j (j), uat-g (ug), uat-rel-look (ulook), sub-exercise-pick.yaml.
   What's new draft (go /profile): "To make your own exercise, open Profile, then "Exercises", then "Create". Each
   detail is now one row: tap a row, such as "Main muscle", to change it. The Save button always stays in view."
+- R-576 MEMBER APP: THE TARGET BOX ALWAYS BEATS THE PREVIOUS TOTAL, AND AN UNUSUAL TARGET SAYS WHY (owner, 15 Nov
+  2026; notes R-576). Previous = every working set last time; the target = exactly what the rows suggest; not above
+  it -> 1 rep at a time on the first sets (at most 2 a set). Only a 6+ week break aims lower. Any unusual target gets a
+  plain reason in the box, a standing-out "i", and a small "i" on the rows it is about. His Hip Thrust after 29 days:
+  380 kg against 360 (was 310). R1's 21-41 day cut removed. No database change. Phone part u576 (+ u454 flow b).
+  What's new draft: "Your workout target now always adds up to more than your previous workout, unless you are back
+  after 6 weeks or more. When a target is different from usual, the card says why: tap the highlighted i."
 - R-549 MEMBER APP: ONE "MESSAGE YOUR GYM" FOR THE GYM AND THE TRAINERS (owner, 14 Nov 2026, option A; notes R-549).
   The Gym tab's "Ask about your workout" row is gone; "Message your gym" asks "Who is it for?": "The gym" (0069) or
   "A trainer" (0053, only on a running paid plan). Feedback and Complaint always go to the gym. One list, one red count.

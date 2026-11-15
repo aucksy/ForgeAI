@@ -45,7 +45,7 @@ describe('Targets in pounds', () => {
     expect(t.rule).toBe('R2');
     expect(wNum(t.targetWeightKg)).toBe('140');
     expect(t.reason).toMatch(/^All sets reached 12. Move up to 140 lb: /);
-    expect(targetLine(t)).toBe('140 lb · aim for 11'); // R-350: about the same kg a set
+    expect(targetLine(t)).toBe('140 lb · 12, 12, 11'); // R-350: about the same kg a set (11); R-576: +1, +1 to beat 4,860 lb
   });
 
   it('weights logged in kg before the switch still land on a clean pound number', () => {
@@ -60,7 +60,7 @@ describe('Targets in pounds', () => {
     const t = target([sess('2026-10-03', 65, [12, 12, 12]), sess('2026-09-30', 62.5, [12, 12, 12]), sess('2026-09-27', 60, [12, 12, 12])]);
     expect(wNum(t.targetWeightKg)).toBe('150');
     expect(t.reason).toContain('Move up to 150 lb:');
-    expect(targetLine(t)).toBe('150 lb · aim for 11'); // R-350: about the same kg a set
+    expect(targetLine(t)).toBe('150 lb · 12, 12, 11'); // R-350: about the same kg a set (11); R-576: +1, +1 to beat last time
   });
 
   it('the Target line on its own', () => {

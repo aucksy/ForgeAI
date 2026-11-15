@@ -146,7 +146,7 @@ describe('C3-7: "Weight jumps" works past the top of his ladder — with a custo
     expect(run(ex({ name: 'Bench Press' }), h, { jump: 'small', gym }).targetWeightKg).toBe(62.5);
     expect(run(ex({ name: 'Bench Press' }), h, { jump: 'standard', gym }).targetWeightKg).toBe(62.5);
     expect(run(ex({ name: 'Bench Press' }), h, { jump: 'large', gym }).targetWeightKg).toBe(65);
-    expect(targetLine(run(ex({ name: 'Bench Press' }), h, { jump: 'small', gym }))).toBe('62.5 kg · aim for 11'); // R-350: 60 x 12 = 720 kg a set -> 11 at 62.5
+    expect(targetLine(run(ex({ name: 'Bench Press' }), h, { jump: 'small', gym }))).toBe('62.5 kg · 12, 12, 11'); // R-350: 60 x 12 = 720 kg a set -> 11 at 62.5; R-576: +1, +1 so 2,187.5 beats 2,160
   });
   it('no setup (owner decision, review of 8b7c0c9): his own learned 5 kg step — 65 on every setting', () => {
     for (const jump of ['small', 'standard', 'large'] as const) expect(run(ex({ name: 'Bench Press' }), h, { jump }).targetWeightKg).toBe(65);
@@ -201,7 +201,10 @@ describe('C3-9: a changed rep range is never read as a failure', () => {
     const t = run(ex(), [three(60, 10, '2026-10-03')], { min: 3, max: 6 });
     expect(t.targetWeightKg).toBeLessThanOrEqual(63);
     expect(t.targetWeightKg).toBeGreaterThanOrEqual(60);
-    expect(t.repGoal).toBe(6);
+    // R-576 (owner, 15 Nov 2026): the top of the new range (6) + at most 2 extra reps toward last time's 1,800 kg;
+    // still under it, so the card says why (notAbove) rather than asking more.
+    expect(t.repGoal).toBe(8);
+    expect(Math.max(...(t.extraReps ?? [0]))).toBeLessThanOrEqual(2);
   });
 });
 
