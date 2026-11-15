@@ -687,7 +687,7 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   'Nobody has reached the goal yet.': 'Abhi tak koi goal tak nahi pahuncha.',
   'Reached the goal ({n}):': 'Goal tak pahunche ({n}):',
   'Only the owner can do this.': 'Yeh sirf owner kar sakte hain.',
-  'This is no longer there. The list is up to date now.': 'Yeh ab yahan nahi hai. List ab update ho gayi hai.',
+  'This is no longer there. The list is up to date now.': 'Yeh ab yahan nahi hai. List ab taaza hai.',
   'Another challenge already uses some of these days. Pick days that are free, or cancel the other challenge first.':
     'In mein se kuch din doosra challenge pehle se le raha hai. Khaali din chuno, ya pehle doosra challenge cancel karo.',
   'Your gym’s server could not take this. Check each box and try again. A challenge that has started can only be cancelled.':

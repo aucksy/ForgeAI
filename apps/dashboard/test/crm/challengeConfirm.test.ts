@@ -137,7 +137,8 @@ describe('the page', () => {
     expect(page).toContain('const waiting = canEdit ? c.hitters.filter(needsConfirm) : [];');
     expect(page).toContain('confirmChallengeReward(ownerKey, c.id, h.memberId, give)');
     expect(page).toContain('giveAllLabel(waiting.length)');
-    expect(page).toMatch(/>\s*Skip\s*</);
+    // R-561: the button's word comes from the language files ("Skip karo" in Hinglish).
+    expect(page).toContain("{t('Skip')}");
   });
 
   it('the server answers each winner’s member id, the one the call needs', () => {
