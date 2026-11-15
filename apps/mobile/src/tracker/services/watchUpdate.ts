@@ -25,8 +25,9 @@ export interface WatchNode {
   hasApp: boolean;
   /**
    * R-575: connected now. False = a watch with the app that wrote items here lately but is out of reach
-   * (Bluetooth off, the connected-watches question failed): the pop-up still shows; "Update on watch"
-   * then answers 'none' ("Your watch is not connected"). An older phone build sends no field: true.
+   * (Bluetooth off, the connected-watches question failed). An older phone build sends no field: true.
+   * R-596 (review G4): the pop-up waits for such a watch ('away') instead of showing a button that can
+   * only answer "Your watch is not connected"; it shows once the watch is connected again.
    */
   connected: boolean;
   versionName: string | null;
@@ -53,8 +54,11 @@ export function cleanWhy(raw: unknown): string {
  * 'up-to-date': every watch with the app is the phone's version or newer.
  * 'update-ready': at least one watch with the app is older, or too old to say its version.
  * 'unknown': Wear OS or a version could not be read.
+ * 'away' (R-596, review G4): the only older watch with the app is out of reach (connected false, a fresh
+ *   diary). The pop-up waits and asks again; it shows when that watch is connected ('update-ready').
+ * 'update-ready' and 'up-to-date' count CONNECTED watches only: "Update on watch" can reach only those.
  */
-export type WatchUpdateState = 'none' | 'up-to-date' | 'update-ready' | 'unknown';
+export type WatchUpdateState = 'none' | 'up-to-date' | 'update-ready' | 'away' | 'unknown';
 
 /** What "Update on watch" did. */
 export type UpdateResult = 'opened' | 'none' | 'missing' | 'failed' | 'unknown';
@@ -102,11 +106,14 @@ function compareWatch(phone: number[], w: WatchNode): 'older' | 'ok' | 'unknown'
   return 'ok';
 }
 
-/** The connected watches with the app that are older than the phone (the ones to update). PURE. */
+/**
+ * The CONNECTED watches with the app that are older than the phone (the ones to update). A watch out of
+ * reach is left out (R-596): "Update on watch" cannot open its Play Store. PURE.
+ */
 export function watchesNeedingUpdate(phoneVersion: string | null | undefined, read: WatchVersions | null): WatchNode[] {
   const phone = versionParts(phoneVersion);
   if (!phone || !read?.ok) return [];
-  return read.nodes.filter((w) => w.hasApp && compareWatch(phone, w) === 'older');
+  return read.nodes.filter((w) => w.hasApp && w.connected && compareWatch(phone, w) === 'older');
 }
 
 /** The rule the card will use (see WatchUpdateState). PURE. */
@@ -116,9 +123,11 @@ export function watchUpdateState(phoneVersion: string | null | undefined, read: 
   if (withApp.length === 0) return 'none';
   const phone = versionParts(phoneVersion);
   if (!phone) return 'unknown';
-  const seen = withApp.map((w) => compareWatch(phone, w));
-  if (seen.includes('older')) return 'update-ready';
-  if (seen.includes('unknown')) return 'unknown';
+  const near = withApp.filter((w) => w.connected).map((w) => compareWatch(phone, w));
+  if (near.includes('older')) return 'update-ready';
+  if (near.includes('unknown')) return 'unknown';
+  // R-596 (review G4): an older (or unreadable) watch out of reach waits; it is asked again later.
+  if (withApp.some((w) => !w.connected && compareWatch(phone, w) !== 'ok')) return 'away';
   return 'up-to-date';
 }
 

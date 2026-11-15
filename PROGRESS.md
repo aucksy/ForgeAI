@@ -2,6 +2,11 @@
 
 ## Waiting for release (R-266: tag only when the owner says "release")
 - 0.78.0 RELEASED 15 Nov 2026 (R-556 approval, R-560): tag v0.78.0 on a4a67c81; phone on Play internal + closed + open testing; watch on wear:internal, its closed + open tracks waiting for Google's phone review to end (re-run play-upload.yml for v0.78.0, dry_run off). Production by hand about 3 days after open testing (R-494b).
+- R-596 MEMBER APP: THE WATCH UPDATE POP-UP WAITS FOR A WATCH THAT IS OUT OF REACH (owner, 16 Nov 2026: "I do want
+  the watch app new update pop issue fixed"; review G4; notes R-596). It showed for a paired watch out of reach,
+  whose one button could only say "Your watch is not connected". Now it waits, reads again (20 s, then every 2 min
+  for ~30 min, and on every return to the app) and shows once the watch is connected. Tests watchUpdate /
+  watchUpdateCard; phone part u438 (flow uat-rel-r438-a step 1b). No What's new line (it fixes the 0.79.0 pop-up).
 - R-580 EVERY MOBILE NUMBER BOX KEEPS ONLY THE 10 DIGITS (owner, 15 Nov 2026; notes R-580). A keyboard's own-number
   suggestion, an autofill or a paste ("+91 98765 43210", "0091 ...", "(+91) 98765-43210", Hindi digits) becomes
   9876543210; typing one key at a time is unchanged (an 11th key is ignored). One shared rule,

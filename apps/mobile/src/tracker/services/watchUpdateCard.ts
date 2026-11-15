@@ -4,8 +4,10 @@
  * Play Store tap are watchUpdate.ts; the screen is components/WatchUpdatePrompt.tsx.
  *
  * When:
- * - Only when watchUpdate.ts says 'update-ready' (a watch with the app is older than this phone app).
- *   Never on 'unknown' or 'none'.
+ * - Only when watchUpdate.ts says 'update-ready' (a CONNECTED watch with the app is older than this
+ *   phone app). Never on 'unknown' or 'none'. R-596 (review G4): never for a watch that is out of
+ *   reach ('away'): its one button could only say "Your watch is not connected". The screen asks
+ *   again while it is away and shows the pop-up once the watch is connected.
  * - Checked when the app opens, and when it comes back after 6+ hours away (as the phone's own update
  *   pop-up, UpdatePrompt.tsx). Only over the 3 main tabs, never while a workout is open.
  * - The phone's own update goes first: while a newer PHONE version waits, the watch pop-up stays
@@ -130,6 +132,7 @@ export interface CardInput {
  * the next check. PURE.
  */
 export function cardDecision(o: CardInput): { shows: boolean; why: string } {
+  if (o.state === 'away') return { shows: false, why: 'waits: watch not connected' };
   if (o.state !== 'update-ready') return { shows: false, why: `no pop-up: watch ${o.state}` };
   if (o.snooze === undefined) return { shows: false, why: 'waits: Later not read yet' };
   if (o.workoutOpen) return { shows: false, why: 'waits: workout open' };
@@ -139,6 +142,23 @@ export function cardDecision(o: CardInput): { shows: boolean; why: string } {
   }
   if (o.otherPopup) return { shows: false, why: 'waits: another pop-up' };
   return { shows: true, why: 'shown' };
+}
+
+/** R-575: after an 'unknown' or 'none' read, ask again this long later (once each). */
+export const RETRY_MS: readonly number[] = [20_000, 120_000];
+/** R-596: while the older watch is out of reach ('away'), ask every 2 minutes, for about half an hour. */
+export const AWAY_RETRY_MS = 120_000;
+export const AWAY_TRIES = 15;
+
+/**
+ * When to read the watches again after a read with this state; null = not until the next app open or
+ * a return after 6 hours. 'away' (R-596): 20 s, then every 2 minutes up to AWAY_TRIES reads, and the
+ * screen also reads again whenever the app comes back to the front while the watch was away. PURE.
+ */
+export function retryAfter(state: WatchUpdateState, attempt: number): number | null {
+  if (state === 'away') return attempt === 0 ? RETRY_MS[0] : attempt < AWAY_TRIES ? AWAY_RETRY_MS : null;
+  if (state === 'unknown' || state === 'none') return RETRY_MS[attempt] ?? null;
+  return null;
 }
 
 /** The one rule: does the pop-up show on this open? PURE. */
@@ -210,26 +230,28 @@ export function targetNode(stale: readonly WatchNode[]): string | null {
  * hasUpdateStandIn) take these links so the device UAT can photograph the pop-up:
  *   mettleup://qa-update?watch=old     one watch with the app, one version behind this phone
  *   mettleup://qa-update?watch=same    one watch, up to date (no pop-up)
+ *   mettleup://qa-update?watch=away    R-596: the older watch, out of reach (no pop-up; it waits)
  *   mettleup://qa-update?watch=off     back to the real watch read
  *   mettleup://qa-update?watch=forget  forget "Later"
  *   mettleup://qa-update?watchtap=opened|failed|none|missing   what the next "Update on watch" gets
  * The stand-in is saved (meta), so a restart keeps it. PURE.
  */
-export type QaWatch = 'old' | 'same' | 'off' | 'forget';
+export type QaWatch = 'old' | 'same' | 'away' | 'off' | 'forget';
 export function qaWatchLink(url: string | null | undefined): { watch: QaWatch | null; tap: UpdateResult | null } {
   const u = url ?? '';
   if (!/^(?:mettleup|forgeai):\/\/\/?qa-update\/?\?/.test(u)) return { watch: null, tap: null };
-  const w = /[?&]watch=(old|same|off|forget)(?:&|$)/.exec(u);
+  const w = /[?&]watch=(old|same|away|off|forget)(?:&|$)/.exec(u);
   const t = /[?&]watchtap=(opened|failed|none|missing|unknown)(?:&|$)/.exec(u);
   return { watch: (w?.[1] as QaWatch | undefined) ?? null, tap: (t?.[1] as UpdateResult | undefined) ?? null };
 }
 
-/** The made-up watch read for a saved QA stand-in ('old' = one minor version behind). PURE. */
+/** The made-up watch read for a saved QA stand-in ('old' / 'away' = one minor version behind). PURE. */
 export function qaWatchRead(mode: string | null, phoneVersion: string | null | undefined): WatchVersions | null {
   const p = versionParts(phoneVersion);
-  if (!p || (mode !== 'old' && mode !== 'same')) return null;
+  if (!p || (mode !== 'old' && mode !== 'same' && mode !== 'away')) return null;
   const v = mode === 'same' ? `${p[0]}.${p[1]}.${p[2]}` : `${p[0]}.${Math.max(0, p[1] - 1)}.0`;
-  return { ok: true, why: 'qa', nodes: [{ nodeId: 'qa-watch', displayName: 'QA watch', hasApp: true, connected: true, versionName: v, versionCode: null }] };
+  const connected = mode !== 'away';
+  return { ok: true, why: 'qa', nodes: [{ nodeId: 'qa-watch', displayName: 'QA watch', hasApp: true, connected, versionName: v, versionCode: null }] };
 }
 
 export const QA_WATCH_KEY = 'qa_watch_standin';

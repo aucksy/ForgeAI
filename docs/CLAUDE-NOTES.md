@@ -7,6 +7,33 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-596 (16 Nov 2026) Watch update pop-up waits for a watch that is out of reach (review G4)
+- His words (16 Nov 2026): "I do want the watch app new update pop issue fixed". Goes into 0.79.0.
+- The bug (G4, R-594 round 4): the R-438/R-575 pop-up "Your watch app has an update" also showed for a watch
+  that is paired but out of reach (screen diary under 7 days old, connected=false, R-575's rule table). Its one
+  button could then only answer "Your watch is not connected": a dead end.
+- The fix (R-575's signals, diary rule and capability fix all kept; native code unchanged):
+  - watchUpdate.ts: 'update-ready' and 'up-to-date' now count CONNECTED watches only. New state 'away': the only
+    older (or unreadable) watch with the app is not connected. watchesNeedingUpdate leaves out-of-reach watches out,
+    so "Update on watch" aims only at a watch it can reach. A connected current watch beside an away old one = away.
+  - watchUpdateCard.ts: cardDecision 'away' = no pop-up, reason "waits: watch not connected" (watch log head and
+    console). retryAfter (pure, moved here from the screen): unknown/none keep 20 s + 2 min; away = 20 s, then every
+    2 min up to 15 reads (about 30 min). QA stand-in mettleup://qa-update?watch=away (old watch, not connected).
+  - WatchUpdatePrompt.tsx: uses retryAfter; an away retry that fires with the app in the background does not read;
+    coming back to the front after an away read reads again at once (not after 6 hours). Two reads at once keep
+    one retry chain. When the watch is connected again the next read is 'update-ready' and the pop-up shows once.
+  - Unchanged: "Later" = 24 hours, "Update on watch" tapped = never again for this phone version (both checked
+    only once the watch is back), never when the watch app is current, never in a workout, phone update first.
+- Tests: watchUpdate.test.ts and watchUpdateCard.test.ts open with an R-596 block, the reported case first
+  (old + fresh diary + not connected -> away, nothing to update; the same watch connected -> update-ready; connected
+  current -> up-to-date; no watch -> none; two watches; Later and tapped still hold; the retry timings; the QA
+  stand-in). R-575's "out of reach still counts" test now expects 'away'. Phone flow uat-rel-r438-a step 1b:
+  watch=away shows no pop-up and no "Your watch is not connected" (picture rel-r438-01b-away-no-popup); step 2
+  (watch=old) is the same watch back: the pop-up shows. Part u438.
+- Runs: pending (first push).
+- Only his phone + a real watch can prove: walk away with the watch (or Bluetooth off) -> no pop-up; come back,
+  open the app -> the pop-up shows; "Add my watch's screen log" head says "waits: watch not connected" while away.
+
 ## R-595 (16 Nov 2026) Direct-read record: every owner-login read of gym data written down (he said "yes read log")
 - Why: Claude read Crispy Curves (test gym) member rows from the Supabase SQL editor on 15 Nov; nothing recorded it,
   while the data agreement says "every look is recorded". A SELECT cannot fire a trigger.

@@ -11,6 +11,7 @@ import { describe, expect, it } from 'vitest';
 import { usesBannedWord } from '@/lib/words';
 import type { WatchNode } from '@/tracker/services/watchUpdate';
 import {
+  AWAY_TRIES,
   SNOOZE_MS,
   WATCH_UPDATE_WORDS,
   cardDecision,
@@ -20,6 +21,7 @@ import {
   qaWatchLink,
   qaWatchRead,
   readSnooze,
+  retryAfter,
   shortVersion,
   snoozeMark,
   snoozed,
@@ -43,13 +45,51 @@ const node = (over: Partial<WatchNode> = {}): WatchNode => ({
   ...over,
 });
 
+describe('R-596 (review G4): a watch out of reach waits, then shows when it is back', () => {
+  it('the reported case: away -> no pop-up, reason "waits: watch not connected"', () => {
+    expect(cardDecision({ ...due, state: 'away' })).toEqual({ shows: false, why: 'waits: watch not connected' });
+  });
+
+  it('reconnected (update-ready) -> shows', () => {
+    expect(cardShows({ ...due, state: 'away' })).toBe(false);
+    expect(cardShows({ ...due, state: 'update-ready' })).toBe(true);
+  });
+
+  it('"Later" and "Update on watch tapped" still hold once the watch is back', () => {
+    expect(cardDecision({ ...due, snooze: { version: '0.77.0', at: NOW } }).why).toBe('hidden: Later (24 hours)');
+    expect(cardDecision({ ...due, snooze: { version: '0.77.0', at: NOW, tapped: true } }).why).toBe('hidden: Update on watch tapped for this version');
+    expect(cardShows({ ...due, state: 'away', snooze: null })).toBe(false);
+  });
+
+  it('away is asked again: 20 s, then every 2 minutes for about half an hour, then not until the app is back', () => {
+    expect(retryAfter('away', 0)).toBe(20_000);
+    expect(retryAfter('away', 1)).toBe(120_000);
+    expect(retryAfter('away', AWAY_TRIES - 1)).toBe(120_000);
+    expect(retryAfter('away', AWAY_TRIES)).toBeNull();
+  });
+
+  it('the old retries are unchanged; a found or current watch is not asked again', () => {
+    expect(retryAfter('unknown', 0)).toBe(20_000);
+    expect(retryAfter('none', 1)).toBe(120_000);
+    expect(retryAfter('none', 2)).toBeNull();
+    expect(retryAfter('update-ready', 0)).toBeNull();
+    expect(retryAfter('up-to-date', 0)).toBeNull();
+  });
+
+  it('the QA stand-in "away" is the older watch, not connected', () => {
+    expect(qaWatchLink('mettleup://qa-update?watch=away')).toEqual({ watch: 'away', tap: null });
+    const r = qaWatchRead('away', '0.79.0');
+    expect(r?.nodes[0]).toMatchObject({ connected: false, hasApp: true, versionName: '0.78.0' });
+  });
+});
+
 describe('cardShows', () => {
   it('shows on update-ready with no "Later"', () => {
     expect(cardShows(due)).toBe(true);
   });
 
-  it('never on unknown, none or up-to-date', () => {
-    for (const state of ['unknown', 'none', 'up-to-date'] as const) expect(cardShows({ ...due, state })).toBe(false);
+  it('never on unknown, none, up-to-date or away', () => {
+    for (const state of ['unknown', 'none', 'up-to-date', 'away'] as const) expect(cardShows({ ...due, state })).toBe(false);
   });
 
   it('waits until "Later" has been read', () => {
@@ -238,8 +278,11 @@ describe('wiring (read as text)', () => {
     const src = readFileSync(resolve(root, 'src/components/WatchUpdatePrompt.tsx'), 'utf8');
     expect(src).toContain('useConfirmStore((s) => s.request != null)');
     expect(src).toMatch(/otherPopup,/);
-    expect(src).toContain('RETRY_MS = [20_000, 120_000]');
-    expect(src).toMatch(/r\.state === 'unknown' \|\| r\.state === 'none'/);
+    // R-596: the retry rule lives in watchUpdateCard.ts (retryAfter); the screen uses it and reads again on return.
+    expect(src).toContain('retryAfter(r.state, attempt)');
+    expect(src).toContain('away.current && retry.current == null');
+    const card = readFileSync(resolve(root, 'src/tracker/services/watchUpdateCard.ts'), 'utf8');
+    expect(card).toContain('RETRY_MS: readonly number[] = [20_000, 120_000]');
     expect(src).toContain('notePopup(popupLine(');
     // The log's head reads the same note.
     const diag = readFileSync(resolve(root, 'src/lib/watchDiag.ts'), 'utf8');

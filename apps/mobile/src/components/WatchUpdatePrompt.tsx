@@ -16,6 +16,10 @@
  * Each decision, with its reason, goes to the watch log's head (watchUpdate.ts notePopup). It waits while
  * another pop-up (a question sheet) is up. The Workout tab's "New in this version" card is not a pop-up
  * (it stays in the list until the member closes it), so the watch pop-up does not wait for it.
+ * R-596 (16 Nov 2026, review G4): a watch out of reach ('away') never gets the pop-up (its button could
+ * only say "Your watch is not connected"). The screen reads again after 20 s, then every 2 minutes for
+ * about half an hour (only while the app is in front), and whenever the app comes back to the front;
+ * the pop-up shows once the watch is connected (watchUpdateCard.ts retryAfter).
  */
 import Constants from 'expo-constants';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -54,6 +58,7 @@ import {
   qaWriteWatchStandIn,
   qaWriteWatchTap,
   readWatchSnooze,
+  retryAfter,
   shortVersion,
   snoozeMark,
   snoozeWatchCard,
@@ -68,8 +73,6 @@ import {
 const RECHECK_MS = 6 * 60 * 60 * 1000;
 /** Let the phone's own update check speak first (it goes first, watchUpdateCard.ts). */
 const FIRST_CHECK_DELAY_MS = 4000;
-/** R-575: after an 'unknown' or 'none' read, ask again this long later (once each). */
-const RETRY_MS = [20_000, 120_000];
 
 /** The page colour at `alpha`: the veil over the app behind (both looks). */
 function bgTint(alpha: number): string {
@@ -102,6 +105,8 @@ export function WatchUpdatePrompt() {
   const [closed, setClosed] = useState(false);
   const lastCheck = useRef(0);
   const retry = useRef<ReturnType<typeof setTimeout> | null>(null);
+  /** R-596: the last read said 'away' (an older watch out of reach): coming back to the front reads again. */
+  const away = useRef(false);
 
   const check = useCallback(
     async (attempt = 0) => {
@@ -117,11 +122,18 @@ export function WatchUpdatePrompt() {
       setStep('offer');
       setClosed(false);
       setFound({ state: r.state, stale: r.stale, at: Date.now(), why: r.read?.why ?? '' });
+      away.current = r.state === 'away';
       // R-575: a watch reconnecting, or a slow Wear OS, gets two more tries (not 6 hours).
-      const wait = RETRY_MS[attempt];
-      if (!fake && wait != null && (r.state === 'unknown' || r.state === 'none')) {
+      // R-596: a watch out of reach is asked again for about half an hour while the app is in front.
+      const wait = fake ? null : retryAfter(r.state, attempt);
+      // Two reads at once (a retry and a return to the front): only the last one keeps a retry.
+      if (retry.current) clearTimeout(retry.current);
+      retry.current = null;
+      if (wait != null) {
         retry.current = setTimeout(() => {
           retry.current = null;
+          // In the background: no read now; coming back to the front reads again (away.current).
+          if (AppState.currentState !== 'active' && r.state === 'away') return;
           void check(attempt + 1).catch((e: unknown) => console.warn('[watch update] the check failed', e));
         }, wait);
       }
@@ -134,7 +146,9 @@ export function WatchUpdatePrompt() {
     const first = setTimeout(run, FIRST_CHECK_DELAY_MS);
     lastCheck.current = Date.now();
     const sub = AppState.addEventListener('change', (st) => {
-      if (st === 'active' && Date.now() - lastCheck.current > RECHECK_MS) run();
+      if (st !== 'active') return;
+      // R-596: an older watch was out of reach: read again now (its retries stop in the background).
+      if (Date.now() - lastCheck.current > RECHECK_MS || (away.current && retry.current == null)) run();
     });
     return () => {
       clearTimeout(first);

@@ -30,6 +30,53 @@ const node = (over: Partial<WatchNode> = {}): WatchNode => ({
 });
 const read = (...nodes: WatchNode[]): WatchVersions => ({ ok: true, nodes, why: '' });
 
+describe('R-596 (review G4): a watch out of reach never gets the pop-up', () => {
+  // The reported case: paired, an old watch app, its screen diary fresh (so it is listed), but connected=false.
+  // Its one button could only answer "Your watch is not connected".
+  const awayRaw =
+    '{"ok":true,"why":"nodes=0 capR=0 capA=0 ver=0 diag=1","nodes":[{"nodeId":"X","displayName":"","hasApp":true,"connected":false,"versionName":null,"versionCode":null}]}';
+
+  it('the reported case: old watch app, fresh diary, not connected -> waits (away), nothing to update', () => {
+    const r = parseWatchVersions(awayRaw);
+    expect(watchUpdateState('0.79.0', r)).toBe('away');
+    expect(watchesNeedingUpdate('0.79.0', r)).toEqual([]);
+    expect(watchUpdateState('0.79.0', read(node({ connected: false, versionName: '0.77.0' })))).toBe('away');
+  });
+
+  it('the same watch once it is connected again -> update-ready, and it is the one to update', () => {
+    const back = read(node({ nodeId: 'X', connected: true, versionName: null, versionCode: null }));
+    expect(watchUpdateState('0.79.0', back)).toBe('update-ready');
+    expect(watchesNeedingUpdate('0.79.0', back).map((w) => w.nodeId)).toEqual(['X']);
+  });
+
+  it('connected and old -> update-ready', () => {
+    expect(watchUpdateState('0.79.0', read(node({ versionName: '0.78.0' })))).toBe('update-ready');
+  });
+
+  it('connected and current -> up-to-date (no pop-up)', () => {
+    expect(watchUpdateState('0.79.0', read(node({ versionName: '0.79.0' })))).toBe('up-to-date');
+    expect(watchesNeedingUpdate('0.79.0', read(node({ versionName: '0.79.0' })))).toEqual([]);
+  });
+
+  it('out of reach but current -> up-to-date (nothing to wait for)', () => {
+    expect(watchUpdateState('0.79.0', read(node({ connected: false, versionName: '0.79.0' })))).toBe('up-to-date');
+  });
+
+  it('no watch, or no watch with the app -> none', () => {
+    expect(watchUpdateState('0.79.0', read())).toBe('none');
+    expect(watchUpdateState('0.79.0', read(node({ hasApp: false, connected: false, versionName: null })))).toBe('none');
+  });
+
+  it('two watches: the connected old one decides; a connected current one beside an away old one waits', () => {
+    const both = read(node({ nodeId: 'near', versionName: '0.78.0' }), node({ nodeId: 'far', connected: false, versionName: null }));
+    expect(watchUpdateState('0.79.0', both)).toBe('update-ready');
+    expect(watchesNeedingUpdate('0.79.0', both).map((w) => w.nodeId)).toEqual(['near']);
+    const nearOk = read(node({ nodeId: 'near', versionName: '0.79.0' }), node({ nodeId: 'far', connected: false, versionName: null }));
+    expect(watchUpdateState('0.79.0', nearOk)).toBe('away');
+    expect(watchesNeedingUpdate('0.79.0', nearOk)).toEqual([]);
+  });
+});
+
 describe('watchUpdateState', () => {
   it('no watch connected is none', () => {
     expect(watchUpdateState('0.76.0', read())).toBe('none');
@@ -158,12 +205,13 @@ describe('R-575: the read says where it came from', () => {
     expect(watchesNeedingUpdate('0.78.0', r).map((w) => w.nodeId)).toEqual(['X']);
   });
 
-  it('a watch out of reach with the app still counts, marked not connected', () => {
+  it('a watch out of reach with the app still counts, marked not connected (R-596: it waits, away)', () => {
     const r = parseWatchVersions(
       '{"ok":true,"why":"nodes=0 capR=0 capA=0 ver=0 diag=1","nodes":[{"nodeId":"X","displayName":"","hasApp":true,"connected":false,"versionName":null,"versionCode":null}]}',
     );
     expect(r?.nodes[0].connected).toBe(false);
-    expect(watchUpdateState('0.78.0', r)).toBe('update-ready');
+    expect(r?.nodes[0].hasApp).toBe(true);
+    expect(watchUpdateState('0.78.0', r)).toBe('away');
   });
 
   it('"could not say" keeps its why; a why in any other shape is dropped', () => {

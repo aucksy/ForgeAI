@@ -4,6 +4,8 @@
 # (forget "Later"), watchtap=opened|failed|none (what the next "Update on watch" gets). Starts from gate-demo.
 # Flow a: happy path, "Later", Android's back, a restart within 24 hours keeps it away (negative), and an
 # up-to-date watch never shows it (negative). Flow b runs after the phone clock moved 25 hours on.
+# R-596 (review G4): watch=away is the older watch out of reach: no pop-up (its button could only say
+# "Your watch is not connected"); step 2 (watch=old) is the same watch connected again: the pop-up shows.
 appId: com.mettleup.app
 ---
 # A link sent while the app starts is dropped (F198 lesson): wait for the tabs first.
@@ -18,7 +20,17 @@ appId: com.mettleup.app
     optional: true
 - assertNotVisible: "Your watch app has an update"
 - takeScreenshot: rel-r438-01-up-to-date-no-popup
-# ---------------------------------------------------------------- 2. happy path: an older watch
+# ---------------------------------------------------------------- 1b. R-596 negative: the older watch out of reach, no pop-up
+- openLink: "mettleup://qa-update?watch=away"
+- extendedWaitUntil:
+    visible: "Your watch app has an update"
+    timeout: 10000
+    optional: true
+- assertNotVisible: "Your watch app has an update"
+- assertNotVisible: "Your watch is not connected"
+- assertVisible: "^Profile$"
+- takeScreenshot: rel-r438-01b-away-no-popup
+# ---------------------------------------------------------------- 2. happy path: an older watch (R-596: the away watch, connected again)
 - openLink: "mettleup://qa-update?watch=old"
 - extendedWaitUntil:
     visible: "Your watch app has an update"

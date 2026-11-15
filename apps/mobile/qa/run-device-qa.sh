@@ -2369,7 +2369,7 @@ part_u456() {
 }
 # R-438 (owner, 10 Nov 2026, design 2 "Watch in hand"): the phone's "Your watch app has an update" pop-up, on
 # the QA build's made-up watch (a cloud phone has none; mettleup://qa-update?watch=old). From a fresh install
-# with the demo. Flow a: an up-to-date watch shows nothing, the pop-up, "Later", back, a restart within 24 hours
+# with the demo. Flow a: an up-to-date watch shows nothing, an older watch out of reach shows nothing (R-596), the pop-up, "Later", back, a restart within 24 hours
 # shows nothing. The phone clock then moves 25 hours on; flow b: it asks again, then each answer to "Update on
 # watch" (opened, did not start + Try again, not connected) and never in a workout. Flow c: the other look
 # (dark mode flipped). Also runs alone with only=u438. Pictures rel-r438-*.png.
