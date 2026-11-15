@@ -96,6 +96,9 @@ Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept her
   Fresh-eyes review of b89823ce..26e4bef9 done: 1 BLOCKER (Settings gym Phone box rewrote landlines / two numbers),
   fixed in df153fb9 (R-580 fix round, also refuses foreign numbers again); minor test-alert button on a weak network
   fixed in fb9123fa (R-578); minor Hindi privacy lacks the 13 Nov AI Assistant change (old gap, English wins; left).
+  UPDATE: d2928aaa CI run 43729439897 = 312 passed, 1 failed (J10a, a test-only mistake of mine, fixed in 05698111). The
+  code is the same, so either deploy d2928aaa (the failure is in a test file only) or check R-586 is safe without 0096
+  and deploy a later green commit.
   **Deploy candidate: d2928aaa** (it has every fix and NOT R-586, whose panel code needs 0096, which is not live).
   Before deploying: (1) its CI run must be green incl. "Admin journeys (phone, real forms)"; (2) look at the UAT pictures
   (r561 phone-display-menu-dark/-light, phone-top-bar-*, r579-*, timings); (3) a quick review of 26e4bef9..d2928aaa
