@@ -9,7 +9,10 @@
 #   regression: Goblet Squat (weighted, with a Target): last time 20 x 8, 20 x 5, today set 1 20 x 3 -> set 2
 #     keeps the Target's own rule (its goal 6, capped at the set just done, 3), never the same-set rule's 2
 #     (5 x 3/8); R-454 (owner, 12 Nov 2026: "Never suggesting less than before") stops that cap at last
-#     time's same set, so it saves 5. Unit tests: test/tracker/r439SameSetHint.test.ts, r454RepFloor.test.ts.
+#     time's same set, so 5; R-576 (15 Nov 2026, rule 3 live catch-up: after a short set the open rows add up to 2
+#     reps to still reach today's target, 300 kg here) adds 2, so it saves 7 (activeWorkoutStore beatRows: 60 kg
+#     done, 240 to go, set 2 at 20 kg x 5 + 2). Unit tests: test/tracker/r439SameSetHint.test.ts,
+#     r454RepFloor.test.ts, r576TargetBox.test.ts.
 # The grey hint itself is drawn hidden from the screen reader, so the pictures show it and the TICK proves it
 # (a tick on an empty row saves the hint; the box's own text is read back). Pictures rel-r439-b..h-*.png.
 appId: com.mettleup.app
@@ -158,8 +161,9 @@ appId: com.mettleup.app
     file: sub-uat-r439-saved.yaml
     env:
       FIELD: "Goblet Squat set 2 reps"
-      WANT: "5"
+      WANT: "7"
 - assertTrue: ${maestro.copiedText != '2'}
 - assertTrue: ${maestro.copiedText != '3'}
+- assertTrue: ${maestro.copiedText != '5'}
 - takeScreenshot: rel-r439-h-goblet-set-2-target-rule
 - runFlow: sub-uat-r439-finish.yaml
