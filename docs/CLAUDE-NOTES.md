@@ -7,6 +7,17 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-581 (15 Nov 2026) New-feature dots on a FIRST install (friend's Android phone)
+- His report (15 Nov 2026): a friend's first install showed dots on Settings > "Light or dark", "Plates and bars",
+  "Health app". "This is the first time install ... So why there are dots? That's just confusing."
+- Cause: lib/newDots.ts parseSeen(null) = [] (nothing seen), so a fresh install lit every feature under 30 days old.
+- Fix: lib/newDotsStore.ts loadNewDots. No stored list AND no older version remembered (whatsNew
+  installMetEarlierVersion false) = first install: store every feature up to the installed version as seen
+  (newDots.ts seenOnFirstInstall). Only features of LATER updates light. A phone that updates from an older version
+  still gets its dots. Known gap: a phone updating from a version before dots existed whose What's new card was
+  already closed before the dots loaded counts as fresh (no dots; harmless).
+- Tests: test/lib/newDots.test.ts "a first install shows no dots (R-581)". Ships with the next phone release.
+
 ## R-578 (15 Nov 2026) "Send a test alert" on the admin app's alerts card
 - His ask (15 Nov 2026): a "Send a test alert" button in the admin panel, so an owner can check in one tap that alerts
   reach this phone or computer with the admin app closed. Why: today his 2 friend enquiries made urgent alerts, HQ sent

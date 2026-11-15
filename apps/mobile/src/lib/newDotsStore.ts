@@ -15,9 +15,9 @@ import { create } from 'zustand';
 import { healthState } from '@/tracker/phone/healthConnect';
 import { canReadSleep } from '@/tracker/phone/sleepLink';
 
-import { featuresAt, litFeatures, litSpots, parseSeen, withSeen, type DotSpot, type NewFeature } from './newDots';
+import { featuresAt, litFeatures, litSpots, parseSeen, seenOnFirstInstall, withSeen, type DotSpot, type NewFeature } from './newDots';
 import { onIphone } from './onIphone';
-import { WHATS_NEW_LOG } from './whatsNew';
+import { installMetEarlierVersion, WHATS_NEW_LOG } from './whatsNew';
 
 const KEY = 'mettleup.newDotsSeen.v1';
 
@@ -41,8 +41,19 @@ export function loadNewDots(): Promise<void> {
   loading = (async () => {
     let seen: string[] | null = null;
     try {
-      seen = parseSeen(await AsyncStorage.getItem(KEY));
+      const raw = await AsyncStorage.getItem(KEY);
+      seen = parseSeen(raw);
       if (seen == null) console.warn('[new dots] the seen list could not be read; no dots');
+      // R-581: no list yet. A phone that updated from an older version still gets its dots; a FIRST install
+      // (no older version remembered) starts with every current feature seen, so it shows no dots at all.
+      else if (raw == null) {
+        const current = Constants.expoConfig?.version;
+        if (!(await installMetEarlierVersion(current))) {
+          seen = seenOnFirstInstall(WHATS_NEW_LOG, current, Date.now());
+          await AsyncStorage.setItem(KEY, JSON.stringify(seen));
+          console.log(`[new dots] first install of ${current ?? '?'}: ${seen.length} features already seen`);
+        }
+      }
     } catch (e) {
       console.warn('[new dots] the seen list could not be read; no dots', e);
     }

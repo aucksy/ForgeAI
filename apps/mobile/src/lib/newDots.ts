@@ -174,6 +174,33 @@ export function parseSeen(raw: string | null): string[] | null {
   }
 }
 
+/** "0.78.0" as numbers, or null (kept here: lib/appUpdate.ts pulls in the database). PURE. */
+function versionNums(v: string | null | undefined): number[] | null {
+  const m = /^v?(\d+)\.(\d+)\.(\d+)$/.exec((v ?? '').trim());
+  return m ? [Number(m[1]), Number(m[2]), Number(m[3])] : null;
+}
+
+/** True when `v` is a later version than `current` (an unreadable one counts as later: never seeded). PURE. */
+function laterThan(v: string, current: string): boolean {
+  const a = versionNums(v);
+  const b = versionNums(current);
+  if (!a || !b) return true;
+  for (let i = 0; i < 3; i++) if (a[i] !== b[i]) return a[i] > b[i];
+  return false;
+}
+
+/**
+ * R-581 (owner, 15 Nov 2026: dots on a friend's FIRST install, "That's just confusing"): the dots mean "new
+ * since you last used the app". A fresh install has met nothing older, so every feature up to the installed
+ * version is already "seen"; only features of later updates light. `current` unknown = nothing seeded. PURE.
+ */
+export function seenOnFirstInstall(log: readonly WhatsNewEntry[], current: string | null | undefined, now: number): string[] {
+  if (!current || !versionNums(current)) return [];
+  return featuresOf(log, now)
+    .filter((f) => !laterThan(f.version, current))
+    .map((f) => f.id);
+}
+
 /** A dot's test id (qa flows find it by this): "new-dot-row-health", "new-dot-tab-profile", "new-dot-gear". PURE. */
 export function dotTestId(spot: DotSpot): string {
   return `new-dot-${spot.replace(/:\/?/, '-').replace(/^(row|page)-settings\//, '$1-').replace(/[/#]/g, '-')}`;

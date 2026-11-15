@@ -14,6 +14,7 @@ import {
   litSpots,
   liveAtOf,
   parseSeen,
+  seenOnFirstInstall,
   stillNew,
   trailOf,
   withSeen,
@@ -176,5 +177,27 @@ describe('broken storage stays quiet', () => {
     expect(parseSeen('{"a":1}')).toBeNull();
     expect(parseSeen('[1,2]')).toBeNull();
     expect(litFeatures({ log: LOG, now: NOW, seen: null })).toEqual([]);
+  });
+});
+
+describe('a first install shows no dots (R-581)', () => {
+  it('every feature up to the installed version is already seen: nothing lights', () => {
+    const seen = seenOnFirstInstall(LOG, '0.74.0', NOW);
+    expect(seen).toEqual(['0.74.0|/settings/ask-ai', '0.73.0|/settings/health', '0.72.0|/shop#gym', '0.71.0|/settings/watch']);
+    expect(litFeatures({ log: LOG, now: NOW, seen: new Set(seen) })).toEqual([]);
+  });
+  it('a feature of a LATER update still lights after a first install', () => {
+    const seen = seenOnFirstInstall(LOG, '0.73.0', NOW);
+    expect(seen).not.toContain('0.74.0|/settings/ask-ai');
+    expect(litFeatures({ log: LOG, now: NOW, seen: new Set(seen) }).map((f) => f.id)).toContain('0.74.0|/settings/ask-ai');
+  });
+  it('an unknown version seeds nothing (the old behaviour, never fewer dots by mistake)', () => {
+    expect(seenOnFirstInstall(LOG, null, NOW)).toEqual([]);
+    expect(seenOnFirstInstall(LOG, 'dev', NOW)).toEqual([]);
+  });
+  it('the real log: a fresh install of the newest version lights nothing', () => {
+    const top = WHATS_NEW_LOG[0].version;
+    const seen = seenOnFirstInstall(WHATS_NEW_LOG, top, NOW);
+    expect(litFeatures({ log: WHATS_NEW_LOG, now: NOW, seen: new Set(seen) })).toEqual([]);
   });
 });
