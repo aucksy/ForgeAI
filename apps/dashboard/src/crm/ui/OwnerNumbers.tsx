@@ -64,7 +64,6 @@ import {
   PageHeader,
   Row,
   SectionTitle,
-  TextField,
   TOUCH,
   Toast,
   color,
@@ -75,6 +74,7 @@ import {
 } from './kit';
 import { Link, navigate, Redirect, replace } from './router';
 import { WhatsAppSheet } from './WhatsAppSheet';
+import { DayField } from './DayField';
 
 // ---------------------------------------------------------------- the remembered range
 
@@ -179,8 +179,8 @@ function RangePicker({
       />
       {value.kind === 'custom' && (
         <Grid min={150}>
-          <TextField label="From" type="date" value={from} onChange={(v) => typed(v, to)} />
-          <TextField label="To" type="date" value={to} onChange={(v) => typed(from, v)} />
+          <DayField label="From" value={from} onChange={(v) => typed(v, to)} />
+          <DayField label="To" value={to} onChange={(v) => typed(from, v)} />
         </Grid>
       )}
     </div>

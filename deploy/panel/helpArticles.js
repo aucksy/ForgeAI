@@ -332,14 +332,41 @@ export const ALL_HELP_ARTICLES = [
     who: 'owner',
     title: 'Answer members\' workout questions (Member questions)',
     text:
-      'Members can ask their trainer or the owner a workout question from the MettleUp app ("Ask about your workout" on the Gym tab; "Ask a trainer" in older versions). ' +
+      'Members ask a workout question from "Message your gym" on the Gym tab of their app, by picking "A trainer". Older app versions show "Ask about your workout". ' +
       'Only the person the member picked sees it; "Any trainer or the owner" questions go to every trainer and the owner. ' +
-      '1. Open "Member questions" (on a phone, under More). Its number shows how many wait. ' +
+      '1. Open "Member questions" ("Members ke sawaal" in Hinglish; on a phone, under More). Its number shows how many wait. ' +
       '2. "Waiting for your reply" lists them, the longest wait first. ' +
       '3. Type in "Your reply" and tap "Send reply". ' +
       'The reply shows in the member\'s app, with a notification if they allowed messages from the gym. ' +
       'Only trainers (ticked in Staff & sign-in) and the owner can open Member questions.',
     screens: ['apps/dashboard/src/crm/ui/screens/Questions.tsx'],
+  },
+  {
+    // F220 (15 Nov 2026): "Message your gym" is live (0069, 0087 applied 14 Nov; leads the 0.78.0 What's new). Checked
+    // against logic/memberMessages.ts and ui/screens/MemberMessages.tsx; who reads what is the server's rule (0087).
+    id: 'answer-member-messages',
+    who: 'owner',
+    title: 'Read and reply to member messages, feedback and complaints (Member messages)',
+    text:
+      'Members send a Question, Feedback or a Complaint from "Message your gym" on the Gym tab of the MettleUp app. ' +
+      '1. Open "Member messages" ("Members ke messages" in Hinglish; on a phone, under More). Its number shows how many messages wait for a reply. ' +
+      '2. Under "Waiting for a reply", type in "Your reply" and tap "Send reply". ' +
+      '3. When it is settled, tap "Mark as done". If the member writes again, the message moves back to "Waiting for a reply". ' +
+      'The member reads your reply in the app, with a notification if they turned notifications on, and can write back. ' +
+      'Feedback sent without a name shows as "A member (name hidden)", but you can still reply to it.',
+    screens: ['apps/dashboard/src/crm/ui/screens/MemberMessages.tsx'],
+  },
+  {
+    // F220: who reads each type is the server's rule (_talk_visible, 0069 + 0087, both live).
+    id: 'member-messages-who-reads',
+    who: 'owner',
+    title: 'Who reads member feedback and complaints, and how long messages are kept',
+    text:
+      'Members write from "Message your gym" on the Gym tab of the MettleUp app. ' +
+      'The owner reads every message. The front desk reads questions and feedback. Trainers read only questions. Only the owner reads complaints. ' +
+      'So on "Member messages", the front desk has no Complaints button, and trainers see only Questions. ' +
+      'Workout questions sent to "A trainer" go to "Member questions" instead. ' +
+      'Messages are deleted 180 days after the last one, or when the member leaves your gym.',
   },
   {
     id: 'member-progress-card',
@@ -558,15 +585,29 @@ export const ALL_HELP_ARTICLES = [
     ],
   },
   {
+    // F220 (15 Nov 2026): live since 0.78.0. Checked against shop/gymTalk.ts, shop/gymMessages.ts and GymTalkScreen.tsx.
+    id: 'message-your-gym',
+    who: 'member',
+    title: 'Message your gym: a question, feedback or a complaint',
+    text:
+      'If you joined a gym, open the Gym tab and tap "Message your gym". ' +
+      '1. If the page asks "Who is it for?", pick "The gym". ' +
+      '2. Under "What is it about?", pick Question, Feedback or Complaint. The owner, front desk and trainers read questions. Only the owner and front desk read feedback. Only the owner reads a complaint. ' +
+      '3. Type your message and tap "Send message". For feedback, you can switch on "Send without my name". ' +
+      'The reply shows below, under "Your messages". Tap "Write back" to answer. ' +
+      'When your gym replies, the "Message your gym" row says "Your gym replied. Tap to read it." For a notification, switch on "Messages from my gym" in Settings, then Reminders.',
+    screens: ['apps/mobile/src/app/shop/message.tsx'],
+  },
+  {
     id: 'ask-a-trainer',
     who: 'member',
     title: 'Ask your trainer or gym owner about your workout',
     text:
-      'If your gym has it: open the Gym tab and tap "Ask about your workout" (called "Ask a trainer" in older versions of the app). ' +
-      '1. Under "Who should answer?" pick a trainer or the owner. Your own trainer is picked first. "Any trainer or the owner" sends it to every trainer and the gym owner. ' +
+      'Open the Gym tab, tap "Message your gym", and pick "A trainer" under "Who is it for?". In older versions of the app, tap "Ask about your workout" instead. You need a running plan. ' +
+      '1. Under "Who should answer?" pick a trainer. Your own trainer is picked first. "Any trainer or the owner" sends it to every trainer and the gym owner. ' +
       '2. Type your question (up to 500 letters) and tap "Send question". ' +
       '3. The reply shows on the same page. Switch on "Messages from my gym" in Settings, then Reminders, to get a notification when they reply. ' +
-      'You can have one question waiting at a time. To ask something else first, tap "Take back my question". Only the person you pick sees your question.',
+      'You can have one question waiting at a time. To ask something else first, tap "Take back my question".',
     screens: ['apps/mobile/src/app/shop/ask.tsx'],
   },
   {
@@ -940,8 +981,6 @@ export const NO_HELP_SCREENS = {
   'apps/dashboard/src/crm/ui/screens/MettleUpReceipt.tsx': 'Not live yet (billing step 3: one MettleUp receipt, opened from Pay MettleUp; server 0063 is not applied). Its help goes in the Pay MettleUp article when that goes live.',
   'apps/dashboard/src/crm/ui/screens/PayMettleUp.tsx': 'Not live yet (T79 Pay MettleUp: server 0060 is not applied and MettleUp has not added its payment details); the screen says so itself. Its help article is written when it goes live.',
   'apps/dashboard/src/crm/ui/screens/EntryMachines.tsx': 'Not live yet (F103 entry machines: server 0059 and the gate are not switched on); the screen says so itself. Its help article is written when it goes live.',
-  'apps/dashboard/src/crm/ui/screens/MemberMessages.tsx': 'Not live yet (R-459 Member messages: server 0069 is not applied, so the menu item is hidden). Its help article is written when it goes live.',
-  'apps/mobile/src/app/shop/message.tsx': 'Not live yet (R-459 Message your gym: server 0069 is not applied, so the Gym tab row is hidden). Its help article is written when it goes live.',
   'apps/mobile/src/app/_layout.tsx': 'The app frame around every screen; nothing to tap.',
   'apps/mobile/src/app/(tabs)/_layout.tsx': 'The bottom tab bar frame; each tab has its own article.',
   'apps/mobile/src/app/+not-found.tsx': 'Shown only for a broken link; it sends the member back into the app.',

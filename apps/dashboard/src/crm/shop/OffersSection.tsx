@@ -44,6 +44,7 @@ import * as api from './api';
 import { probeOffers, type OfferServer } from './offerServer';
 import { errorWords } from './logic';
 import { usePoll } from './ShopProvider';
+import { DayField } from '../ui/DayField';
 
 const quiet = { margin: 0, fontFamily: font.body, fontSize: 13, color: color.inkSecondary } as const;
 
@@ -269,9 +270,8 @@ function StartOfferForm({
         />
         <TextField label="Reward (extra days)" value={draft.rewardDays} inputMode="numeric" onChange={(v) => set({ rewardDays: digits(v) })} hint={`${L.rewardDays.min} to ${L.rewardDays.max}`} />
       </div>
-      <TextField
+      <DayField
         label="Members can join until"
-        type="date"
         value={draft.joinUntil}
         onChange={(v) => set({ joinUntil: v })}
         hint={`Up to ${formatDay(addDays(today, L.joinAheadMax))}.`}

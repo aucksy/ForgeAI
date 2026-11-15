@@ -599,6 +599,19 @@ export const ADMIN_NEWS_PENDING: readonly AdminNewsEntry[] = [
     ],
   },
   {
+    // 15 Nov 2026 (after R-561): every date box is the day-first DayField; F220: the help answers "Message your gym"
+    // (the help articles live in the panel Worker, so both reach owners with the next admin panel deploy).
+    id: 'pending-day-first-dates',
+    lines: [
+      {
+        text: 'Every date box in the admin app now shows the day first, like "17 Oct 2026", whatever language your phone or computer uses. Tap it to open the calendar, as before.',
+      },
+      {
+        text: 'Help and feedback now answers questions about member messages: who reads questions, feedback and complaints, and how to reply in "Member messages".',
+      },
+    ],
+  },
+  {
     // F56 R-461, 12 Nov 2026: the MettleUp Plus switch (0070). Moves to ADMIN_NEWS only when 0070 is live, the panel is
     // deployed AND the app's paid plan is switched on (MEMBER_PLAN_GATE_ON); until then the card is hidden anyway.
     id: 'pending-plus-lock',

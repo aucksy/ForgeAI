@@ -70,6 +70,7 @@ import {
 } from '../kit';
 import { Link, navigate } from '../router';
 import { WaitingPill } from '../offline';
+import { DayField } from '../DayField';
 
 export function MoneyScreen({ section }: { section?: string }) {
   // Staff (front desk) gets only Dues — the PEOPLE to collect from — with no ₹ totals, charts or
@@ -221,15 +222,13 @@ function Collections({ onToast, startOn = 'thisMonth' }: { onToast: (msg: string
         />
         {presetId === 'custom' && (
           <Grid min={200}>
-            <TextField
+            <DayField
               label="From"
-              type="date"
               value={custom.from}
               onChange={(v) => setCustom((c) => ({ ...c, from: v }))}
             />
-            <TextField
+            <DayField
               label="To"
-              type="date"
               value={custom.to}
               onChange={(v) => setCustom((c) => ({ ...c, to: v }))}
             />

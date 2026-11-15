@@ -46,6 +46,7 @@ import {
   space,
   TOUCH,
 } from '../kit';
+import { DayField } from '../DayField';
 
 export function ExpensesScreen() {
   const { snapshot, today, removeExpense } = useCrm();
@@ -387,7 +388,7 @@ function AddExpenseSheet({ onClose, onAdded }: { onClose: () => void; onAdded: (
         onChange={(v) => setCategory(v as ExpenseCategory)}
         options={categoryOptions()}
       />
-      <TextField label="Date" value={spentOn} onChange={setSpentOn} type="date" />
+      <DayField label="Date" value={spentOn} onChange={setSpentOn} />
       <TextField
         label="Note (optional)"
         value={note}

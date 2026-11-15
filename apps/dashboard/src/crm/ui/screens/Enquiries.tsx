@@ -69,6 +69,7 @@ import {
 } from '../kit';
 import { navigate } from '../router';
 import { newRequestId } from '../../data/local';
+import { DayField } from '../DayField';
 
 function filterLabel(f: EnquiryFilter): string {
   switch (f) {
@@ -686,11 +687,10 @@ function AddEnquirySheet({ onClose }: { onClose: () => void }) {
         options={[{ value: '', label: 'Not asked' }, ...ENQUIRY_SOURCES]}
       />
 
-      <TextField
+      <DayField
         label="Follow-up date"
         value={form.followUpOn}
         onChange={set('followUpOn')}
-        type="date"
         error={errorFor('followUpOn')}
         hint={form.followUpOn ? `Call back on ${formatDay(form.followUpOn)} (${relativeDay(form.followUpOn, today)})` : 'No date: it goes under Later.'}
       />
@@ -765,14 +765,13 @@ function FollowUpSheet({ enquiry, onClose }: { enquiry: Enquiry; onClose: () => 
           </Button>
         ))}
       </div>
-      <TextField
+      <DayField
         label="Or pick a date"
         value={custom}
         onChange={(v) => {
           setCustom(v);
           setError(null);
         }}
-        type="date"
         error={error}
         hint={custom ? relativeDay(custom, today) : undefined}
       />

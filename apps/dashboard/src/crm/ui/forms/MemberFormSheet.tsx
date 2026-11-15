@@ -41,6 +41,7 @@ import { photoServerWords } from '../../logic/memberPhoto';
 import { errorWords } from '../../shop/logic';
 import { t } from '../../lang/lang';
 import { isPassMember, normalizePassCompany, passCompanyChoices, passCompanyKey, passCompanyOf, passFields, PASS_COMPANY_MAX } from '../../logic/passMembers';
+import { DayField } from '../DayField';
 
 /** The photo row on "Add member" (F107). */
 export const FORM_PHOTO_WORDS = {
@@ -350,11 +351,10 @@ export function MemberFormSheet({
       />
 
       <Grid min={220}>
-        <TextField
+        <DayField
           label={t('Joining date')}
           value={form.joinedOn}
           onChange={set('joinedOn')}
-          type="date"
           error={errorFor('joinedOn')}
         />
         <SelectField
@@ -371,11 +371,10 @@ export function MemberFormSheet({
       </Grid>
 
       <Grid min={220}>
-        <TextField
+        <DayField
           label={t('Date of birth (optional)')}
           value={form.dateOfBirth}
           onChange={set('dateOfBirth')}
-          type="date"
           error={errorFor('dateOfBirth')}
         />
         <TextField

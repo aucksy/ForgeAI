@@ -60,6 +60,7 @@ import { navigate } from '../router';
 import { tickGetStarted } from '../GetStartedCard';
 import { useCrm } from '../../store';
 import { ChoiceRow } from './WorkoutPlans';
+import { DayField } from '../DayField';
 
 type Load = { state: 'loading' } | { state: 'missing' } | { state: 'error'; message: string } | { state: 'ready'; saved: TimingsAnswer };
 
@@ -443,7 +444,7 @@ function SpecialEditor({ index, special, onChange, onRemove }: { index: number; 
   return (
     <div style={{ display: 'grid', gap: space.xs }}>
       <div style={pairGrid}>
-        <TextField label={`Special day ${index + 1}: date`} type="date" value={special.date} onChange={(v) => onChange({ ...special, date: v })} />
+        <DayField label={`Special day ${index + 1}: date`} value={special.date} onChange={(v) => onChange({ ...special, date: v })} />
         <TextField label={`Special day ${index + 1}: why (optional)`} value={special.note ?? ''} onChange={(v) => onChange({ ...special, note: v })} placeholder="Diwali" />
       </div>
       <DayEditor label={label} day={special} onChange={onChange} />

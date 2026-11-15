@@ -5,6 +5,10 @@
  * set to US English shows "10/17/2026". Here the box shows the day in words (formatDay, as everywhere else in the admin
  * app) and the device's own date box lies on top of it, invisible: a tap still opens the phone's or browser's own
  * calendar, and the label, keyboard and screen readers still reach a real date box.
+ *
+ * Every owner-facing date box in the admin app is this one (15 Nov 2026; test/crm/dayFirstDates.test.ts fails on any
+ * other date box). The value stays YYYY-MM-DD, exactly what the device's date box gave before. `error` works like
+ * TextField's: a red edge, and the words in place of the hint.
  */
 
 import { useId, useState, type CSSProperties } from 'react';
@@ -18,17 +22,27 @@ export function DayField({
   value,
   onChange,
   hint,
+  error,
+  min,
+  max,
 }: {
   label: string;
   /** YYYY-MM-DD, or '' while the box is empty. */
   value: string;
   onChange: (v: string) => void;
   hint?: string;
+  /** Shown in red in place of the hint; the box gets a red edge. */
+  error?: string | null;
+  /** The earliest and latest day the calendar offers (YYYY-MM-DD). */
+  min?: string;
+  max?: string;
 }) {
   const id = useId();
   const noteId = `${id}-note`;
   const [focused, setFocused] = useState(false);
   const shown = isValidDateISO(value) ? formatDay(value) : '';
+  const invalid = Boolean(error);
+  const note = error || hint;
 
   const shell: CSSProperties = {
     display: 'flex',
@@ -38,7 +52,7 @@ export function DayField({
     width: '100%',
     minHeight: TOUCH,
     background: color.surfaceSunken,
-    border: `1px solid ${focused ? color.accent : color.borderStrong}`,
+    border: `1px solid ${invalid ? color.critical : focused ? color.accent : color.borderStrong}`,
     borderRadius: radius.md,
     padding: '10px 12px',
     color: color.ink,
@@ -64,6 +78,8 @@ export function DayField({
           id={id}
           type="date"
           value={value}
+          min={min}
+          max={max}
           onChange={(e) => onChange(e.target.value)}
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
@@ -76,13 +92,14 @@ export function DayField({
               console.warn('[day-field] the calendar did not open; the day can still be typed', err);
             }
           }}
-          aria-describedby={hint ? noteId : undefined}
+          aria-invalid={invalid}
+          aria-describedby={note ? noteId : undefined}
           style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', margin: 0, padding: 0, border: 0, opacity: 0, cursor: 'pointer' }}
         />
       </div>
-      {hint && (
-        <div id={noteId} style={{ fontFamily: font.body, fontSize: 12, color: color.inkMuted, marginTop: 5 }}>
-          {hint}
+      {note && (
+        <div id={noteId} style={{ fontFamily: font.body, fontSize: 12, color: invalid ? color.criticalText : color.inkMuted, marginTop: 5 }}>
+          {note}
         </div>
       )}
     </div>

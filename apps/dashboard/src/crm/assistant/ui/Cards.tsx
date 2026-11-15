@@ -31,6 +31,7 @@ import type { WorkoutWriterCard } from '../conversation';
 import { WorkoutPlanSheet } from '../../ui/screens/WorkoutPlans';
 import type { WorkoutPlanDraft } from '../../types';
 import { CardFrame, CardHead, Chip, body, quiet, say } from './parts';
+import { DayField } from '../../ui/DayField';
 
 type DraftCard = Extract<CardModel, { kind: 'draft' }>;
 
@@ -777,35 +778,9 @@ function DayRow({ turnId, card, dr, data }: { turnId: string; card: DraftCard; d
     });
   return (
     <div style={{ padding: '11px 0', borderBottom: `1px solid ${color.border}`, display: 'grid', gap: 6 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}>
-        <label htmlFor={`day-${card.id}`} style={{ fontFamily: font.body, fontSize: 14, color: color.inkMuted, flexShrink: 0 }}>
-          {label}
-        </label>
-        <input
-          id={`day-${card.id}`}
-          type="date"
-          value={dr.day}
-          min={data.today}
-          onChange={(e) => setDay(e.target.value)}
-          style={{
-            minHeight: 40,
-            minWidth: 0,
-            padding: '0 10px',
-            borderRadius: radius.md,
-            border: `1px solid ${problem ? color.critical : color.borderStrong}`,
-            background: color.surface,
-            color: color.ink,
-            fontFamily: font.body,
-            fontSize: 15,
-          }}
-        />
-      </div>
-      {/* Fresh eyes (14 Nov 2026): the box shows the computer's date format; the day in words sits under it. */}
-      {dayInWords(dr.day) ? (
-        <p data-testid="day-words" style={{ ...quiet, textAlign: 'right' }}>
-          {dayInWords(dr.day)}
-        </p>
-      ) : null}
+      {/* Fresh eyes (14 Nov 2026) said the computer's own date format (10/17/2026) confused; the day-first box (15 Nov)
+          shows "17 Oct 2026", and the weekday sits under it. */}
+      <DayField label={label} value={dr.day} min={data.today} onChange={setDay} hint={dayInWords(dr.day) ?? undefined} />
       {problem ? (
         <p role="alert" style={{ ...quiet, color: color.criticalText, fontWeight: 700 }}>
           {say(problem.message)}
@@ -1042,7 +1017,7 @@ function EditFields({ dr, data, set }: { dr: Exclude<Draft, MessageDraftA>; data
             onChange={pickPlan}
             options={[...(dr.tool === 'add_member' ? [{ value: '', label: t('No plan yet') }] : []), ...plans]}
           />
-          <TextField label={t('Starts on')} type="date" value={dr.startsOn} onChange={(v) => set({ ...dr, startsOn: v })} hint={dayInWords(dr.startsOn) ?? undefined} />
+          <DayField label={t('Starts on')} value={dr.startsOn} onChange={(v) => set({ ...dr, startsOn: v })} hint={dayInWords(dr.startsOn) ?? undefined} />
           <TextField label={t('Paid now')} prefix="₹" inputMode="numeric" value={rupees(dr.collectNowP)} onChange={(v) => set({ ...dr, collectNowP: toPaise(v) })} />
           <SelectField label={t('Paid by')} value={dr.method} onChange={(v) => set({ ...dr, method: v as PaymentMethod })} options={methods} />
         </>,
@@ -1069,7 +1044,7 @@ function EditFields({ dr, data, set }: { dr: Exclude<Draft, MessageDraftA>; data
           <TextField label={t('Name')} value={dr.form.name} onChange={(v) => set({ ...dr, form: { ...dr.form, name: v } })} />
           <TextField label={t('Mobile')} inputMode="tel" value={dr.form.phone} onChange={(v) => set({ ...dr, form: { ...dr.form, phone: v.replace(/[^\d]/g, '') } })} />
           <TextField label={t('Interested in')} value={dr.form.interest} onChange={(v) => set({ ...dr, form: { ...dr.form, interest: v } })} />
-          <TextField label={t('Call back on')} type="date" value={dr.form.followUpOn} onChange={(v) => set({ ...dr, form: { ...dr.form, followUpOn: v } })} hint={dayInWords(dr.form.followUpOn) ?? undefined} />
+          <DayField label={t('Call back on')} value={dr.form.followUpOn} onChange={(v) => set({ ...dr, form: { ...dr.form, followUpOn: v } })} hint={dayInWords(dr.form.followUpOn) ?? undefined} />
         </>,
       );
     case 'add_expense':
@@ -1082,7 +1057,7 @@ function EditFields({ dr, data, set }: { dr: Exclude<Draft, MessageDraftA>; data
             onChange={(v) => set({ ...dr, category: v as ExpenseCategory })}
             options={EXPENSE_CATEGORIES.map((c) => ({ value: c, label: categoryLabel(c) }))}
           />
-          <TextField label={t('Date')} type="date" value={dr.spentOn} onChange={(v) => set({ ...dr, spentOn: v })} hint={dayInWords(dr.spentOn) ?? undefined} />
+          <DayField label={t('Date')} value={dr.spentOn} onChange={(v) => set({ ...dr, spentOn: v })} hint={dayInWords(dr.spentOn) ?? undefined} />
           <TextField label={t('Note')} value={dr.note} onChange={(v) => set({ ...dr, note: v })} />
         </>,
       );

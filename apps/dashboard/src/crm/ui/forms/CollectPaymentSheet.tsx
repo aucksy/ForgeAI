@@ -28,6 +28,7 @@ import { CollectOnline } from '../../pay/CollectOnline';
 import type { PayRequest } from '../../pay/payApi';
 import { justPaidOnline, onlineReference, receiptMethod, upiReceiptNote } from '../../pay/payWords';
 import { useBeforeDeskMoney } from '../../pay/useDeskPay';
+import { DayField } from '../DayField';
 
 export function CollectPaymentSheet({
   view,
@@ -241,14 +242,13 @@ export function CollectPaymentSheet({
         />
       </Grid>
 
-      <TextField
+      <DayField
         label="Received on"
         value={paidOn}
         onChange={(v) => {
           setPaidOn(v);
           setError(null);
         }}
-        type="date"
         hint={role === 'staff' ? `Today, or up to ${DESK_BACKDATE_DAYS} days back.` : undefined}
       />
 

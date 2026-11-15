@@ -98,6 +98,7 @@ import {
 } from './messages';
 import { useOfferServer } from './offerServer';
 import { usePoll, useShop } from './ShopProvider';
+import { DayField } from '../ui/DayField';
 
 type GroupPick = TemplateGroup | 'custom';
 type Scope = 'notInApp' | 'all';
@@ -781,7 +782,7 @@ function SlotBox({
   switch (slot.kind) {
     case 'day':
     case 'date':
-      return <TextField label={slot.label} type="date" value={v} onChange={(x) => setValue(slot.key, x)} />;
+      return <DayField label={slot.label} value={v} onChange={(x) => setValue(slot.key, x)} />;
     case 'time':
       return <TextField label={slot.label} type="time" value={v} onChange={(x) => setValue(slot.key, x)} />;
     case 'choice':

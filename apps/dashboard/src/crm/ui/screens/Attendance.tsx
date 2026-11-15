@@ -59,7 +59,6 @@ import {
   SearchField,
   SectionTitle,
   StatTile,
-  TextField,
   Toast,
   color,
   font,
@@ -74,6 +73,7 @@ import { useBranches } from '../../branches/context';
 import { isPassMember, passCompanyOfVisit } from '../../logic/passMembers';
 import { t } from '../../lang/lang';
 import { PassVisitsScreen } from './PassVisits';
+import { DayField } from '../DayField';
 
 type Tab = 'register' | 'risk';
 
@@ -312,9 +312,8 @@ function Register({ onToast }: { onToast: (msg: string) => void }) {
         )}
 
         {mode === 'other' && (
-          <TextField
+          <DayField
             label="Register date"
-            type="date"
             value={customDay}
             onChange={setCustomDay}
             error={

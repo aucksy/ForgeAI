@@ -4,6 +4,7 @@ import { test } from 'node:test';
 
 import { coverageProblems, screensOnDisk } from '../../scripts/ci/help_coverage.mjs';
 import { helpSystem } from './help.js';
+import { matchPages } from './helpPages.js';
 import { ALL_HELP_ARTICLES, HELP_ARTICLES, NO_HELP_SCREENS } from './helpArticles.js';
 
 const WHO = new Set(['member', 'owner', 'both']);
@@ -103,4 +104,42 @@ test('no personal data: no phone numbers or email addresses', () => {
     assert.ok(!/\b\d{10}\b|\b\d{5}\s\d{5}\b/.test(a.text), `${a.id} has a phone number`);
     assert.ok(!/[\w.+-]+@[\w-]+\.[\w.]+/.test(a.text), `${a.id} has an email`);
   }
+});
+
+// F220 (15 Nov 2026): "Message your gym" is live (0069 + 0087; it leads the 0.78.0 What's new), but the help said it was
+// not, so the help box had no answer to "How do I message my gym?". Members and the gym each get a live article, no
+// line calls it not live, and plain English and Hinglish questions find it (also without the AI, helpPages.js).
+test('F220: "Message your gym" and "Member messages" are in the live help, and nothing calls them not live', () => {
+  const live = new Set(HELP_ARTICLES.map((a) => a.id));
+  for (const id of ['message-your-gym', 'answer-member-messages', 'member-messages-who-reads', 'ask-a-trainer']) assert.ok(live.has(id), `${id} is not in the live help`);
+  for (const a of ALL_HELP_ARTICLES) {
+    assert.ok(!/(message your gym|member messages)[^.]* not (yet )?(live|ready|available)/i.test(a.text), `${a.id} calls messaging not live`);
+  }
+  for (const [p, why] of Object.entries(NO_HELP_SCREENS)) assert.ok(!/Message your gym|Member messages|0069/.test(why), `${p}: ${why}`);
+  const top = (q, source) => matchPages(q, source).map((a) => a.id);
+  assert.equal(top('How do I message my gym?', 'app')[0], 'message-your-gym');
+  assert.equal(top('gym ko message kaise bheju', 'app')[0], 'message-your-gym');
+  assert.equal(top('gym ko complaint kaise karu', 'app')[0], 'message-your-gym');
+  assert.equal(top('trainer se sawaal kaise puchu', 'app')[0], 'ask-a-trainer');
+  assert.equal(top('how do I reply to a member message', 'admin')[0], 'answer-member-messages');
+  assert.equal(top('member ka message kahan dikhega', 'admin')[0], 'answer-member-messages');
+  assert.ok(top('Where do I see member complaints?', 'admin').includes('member-messages-who-reads'));
+});
+
+test('F220: the messaging articles name the real screens and buttons, and the rule of who reads what', () => {
+  const text = (id) => ALL_HELP_ARTICLES.find((a) => a.id === id).text;
+  const member = text('message-your-gym');
+  for (const w of ['"Message your gym"', '"Who is it for?"', '"The gym"', '"What is it about?"', '"Send message"', '"Send without my name"', '"Your messages"', '"Write back"', '"Messages from my gym"']) {
+    assert.ok(member.includes(w), `member article misses ${w}`);
+  }
+  const owner = text('answer-member-messages');
+  for (const w of ['"Member messages"', '"Members ke messages"', '"Waiting for a reply"', '"Your reply"', '"Send reply"', '"Mark as done"', '"A member (name hidden)"']) {
+    assert.ok(owner.includes(w), `owner article misses ${w}`);
+  }
+  const who = text('member-messages-who-reads');
+  assert.match(who, /Only the owner reads complaints\./);
+  assert.match(who, /The front desk reads questions and feedback\./);
+  assert.match(who, /Trainers read only questions\./);
+  assert.match(who, /180 days/);
+  assert.match(member, /Only the owner reads a complaint\./);
 });

@@ -29,6 +29,7 @@ import { CollectOnline } from '../../pay/CollectOnline';
 import { upiReceiptNote } from '../../pay/payWords';
 import { Button, ErrorBanner, Grid, Row, SelectField, Sheet, TextField, color, font, space } from '../kit';
 import { isPtPlan, ptPlanLine } from '../../logic/pt';
+import { DayField } from '../DayField';
 
 export function SellMembershipSheet({
   view,
@@ -236,14 +237,13 @@ export function SellMembershipSheet({
       )}
 
       <Grid min={220}>
-        <TextField
+        <DayField
           label="Starts on"
           value={startsOn}
           onChange={(v) => {
             setStartsOnOverride(v);
             setProblem(null);
           }}
-          type="date"
           error={errorFor('startsOn')}
           hint={!startsOnOverride && defaults && defaults.startsOn > today ? `The day after their current plan ends (${formatDay(addDays(defaults.startsOn, -1))}).` : undefined}
         />
@@ -371,14 +371,13 @@ export function SellMembershipSheet({
         </Grid>
 
         {collectP !== null && collectP > 0 && (
-          <TextField
+          <DayField
             label="Received on"
             value={paidOn}
             onChange={(v) => {
               setPaidOn(v);
               setProblem(null);
             }}
-            type="date"
             error={errorFor('paidOn')}
           />
         )}

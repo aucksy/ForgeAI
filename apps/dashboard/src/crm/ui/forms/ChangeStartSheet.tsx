@@ -11,7 +11,8 @@ import { useCrm } from '../../store';
 import { formatDay, isValidDateISO } from '../../logic/dates';
 import { movedEndDate, moveStartProblem } from '../../logic/membership';
 import type { Membership } from '../../types';
-import { Button, ErrorBanner, Sheet, TextField, color, font } from '../kit';
+import { Button, ErrorBanner, Sheet, color, font } from '../kit';
+import { DayField } from '../DayField';
 
 export function ChangeStartSheet({
   membership,
@@ -74,9 +75,8 @@ export function ChangeStartSheet({
         {`: now ${formatDay(membership.startsOn)} → ${formatDay(membership.endsOn)}.`}
       </p>
 
-      <TextField
+      <DayField
         label="New start date"
-        type="date"
         value={startText}
         onChange={(v) => {
           setStartText(v);

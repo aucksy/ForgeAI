@@ -28,6 +28,7 @@ import * as bodyApi from '../../shop/bodyApi';
 import { errorWords } from '../../shop/logic';
 import { useCrm } from '../../store';
 import { Button, Card, EmptyState, ErrorBanner, SectionTitle, Sheet, TextField, color, font, radius, space } from '../kit';
+import { DayField } from '../DayField';
 
 /** Where the member finds them (said under the section and in the form). */
 export const MEMBER_SEES_MEASURES = 'Members see these in their MettleUp app (Progress → Body) after they check in at the gym once.';
@@ -281,7 +282,7 @@ function MeasureSheet({
       <p style={{ ...quiet, fontSize: 13 }}>
         {memberName}. Fill in only what you measured{lastDate && !editingSaved ? `; last time was ${formatDayShort(lastDate)}` : ''}.
       </p>
-      <TextField label="Day measured" type="date" value={draft.date} onChange={(v) => set({ date: v })} error={problems.date} />
+      <DayField label="Day measured" value={draft.date} onChange={(v) => set({ date: v })} error={problems.date} />
       <div style={boxGrid}>
         <TextField label="Body weight (kg)" inputMode="decimal" value={draft.weightKg} onChange={(v) => set({ weightKg: v })} error={problems.weightKg} placeholder="72.5" />
         <TextField label="Body fat (%)" inputMode="decimal" value={draft.bodyFat} onChange={(v) => set({ bodyFat: v })} error={problems.bodyFat} placeholder="Optional" />
