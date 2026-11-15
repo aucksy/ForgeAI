@@ -20,6 +20,7 @@ import { color, darkColor, space, type } from '@/theme/tokens';
 import { accentTint, inkTint } from '@/theme/tint';
 import {
   artScale,
+  wordsFirst,
   BEAT_CARD,
   GYM_ART,
   INTRO_DONE,
@@ -125,6 +126,20 @@ export function IntroSlides({ onDone }: { onDone: () => void }) {
 
   const next = () => setIndex(at + 1);
   const bodyLine = slide.key === 'watch' && (busy || note) ? (busy ? WATCH_WORDS.opening : note) : slide.body;
+  const words = (
+    <View
+      onLayout={(e) => setWordsH(e.nativeEvent.layout.height)}
+      style={{ paddingHorizontal: 24, gap: space.md, paddingTop: wordsFirst(slide.key) ? 18 : 0 }}
+    >
+      <Text style={{ fontFamily: type.display, fontSize: 13, letterSpacing: 0.3, color: color.accent }}>{slide.eyebrow}</Text>
+      <Text accessibilityRole="header" style={{ fontFamily: type.display, fontSize: 32, lineHeight: 36, color: color.ink }}>
+        {slide.title}
+      </Text>
+      <Text accessibilityLiveRegion="polite" style={{ fontFamily: type.body, fontSize: 16, lineHeight: 24, color: color.inkSecondary }}>
+        {bodyLine}
+      </Text>
+    </View>
+  );
 
   return (
     <View testID="intro-screens" style={{ flex: 1, backgroundColor: color.bg }}>
@@ -149,20 +164,14 @@ export function IntroSlides({ onDone }: { onDone: () => void }) {
           showsVerticalScrollIndicator={false}
           onLayout={(e) => setViewH(e.nativeEvent.layout.height)}
         >
+          {/* The gym screen puts its words first, right under the top bar (owner, 15 Nov 2026, canvas v7). */}
+          {wordsFirst(slide.key) ? words : null}
           <View style={{ flexGrow: 1, justifyContent: 'center', paddingVertical: space.lg }}>
             <FitArt room={viewH - wordsH - 2 * space.lg}>
               {slide.key === 'beat' ? <BeatArt /> : slide.key === 'watch' ? <WatchArt k={1} /> : <GymArt />}
             </FitArt>
           </View>
-          <View onLayout={(e) => setWordsH(e.nativeEvent.layout.height)} style={{ paddingHorizontal: 24, gap: space.md }}>
-            <Text style={{ fontFamily: type.display, fontSize: 13, letterSpacing: 0.3, color: color.accent }}>{slide.eyebrow}</Text>
-            <Text accessibilityRole="header" style={{ fontFamily: type.display, fontSize: 32, lineHeight: 36, color: color.ink }}>
-              {slide.title}
-            </Text>
-            <Text accessibilityLiveRegion="polite" style={{ fontFamily: type.body, fontSize: 16, lineHeight: 24, color: color.inkSecondary }}>
-              {bodyLine}
-            </Text>
-          </View>
+          {wordsFirst(slide.key) ? null : words}
         </ScrollView>
 
         <View style={{ paddingHorizontal: space.xl, paddingTop: space.xl, paddingBottom: 28, gap: space.md, alignItems: 'center' }}>
@@ -484,7 +493,7 @@ function GymArt() {
     <View
       style={{ paddingHorizontal: space.xl, gap: 14 }}
       accessible
-      accessibilityLabel={`${GYM_ART.example}: ${GYM_ART.phoneLabel}, ${GYM_ART.checked}. ${GYM_ART.found}: ${GYM_ART.gym}.`}
+      accessibilityLabel={`${GYM_ART.example}: ${GYM_ART.phoneLabel}, ${GYM_ART.verified}. ${GYM_ART.found}: ${GYM_ART.gym}.`}
       pointerEvents="none"
     >
       <View
@@ -511,7 +520,7 @@ function GymArt() {
             <Path d="M5 12l5 5L20 7" stroke={color.goodText} strokeWidth={3} strokeLinecap="round" strokeLinejoin="round" />
           </Svg>
           <Text maxFontSizeMultiplier={ART_CAP} style={{ fontFamily: type.bodyBold, fontSize: 12, color: color.goodText }}>
-            {GYM_ART.checked}
+            {GYM_ART.verified}
           </Text>
         </View>
       </View>

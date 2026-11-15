@@ -24,6 +24,7 @@ import {
   introStepLabel,
   watchButton,
   watchScreenShows,
+  wordsFirst,
 } from '@/onboarding/introSlides';
 import { goesStraightIn, SIGN_IN, straightInDraft, straightInMatch, type SignInMatch } from '@/onboarding/phoneSignIn';
 import { startButtons } from '@/onboarding/welcomeStart';
@@ -231,5 +232,26 @@ describe('the picture shrinks so the title and words always show (R-587, his pho
     const src = read('onboarding/components/IntroSlides.tsx');
     expect(src).toContain('<FitArt room={viewH - wordsH - 2 * space.lg}>');
     expect(src).toContain('artScale(room, natural)');
+  });
+});
+
+describe('the gym screen, canvas v7 (owner, 15 Nov 2026)', () => {
+  it('puts the words first and says "Verified", never "Checked"', () => {
+    expect(wordsFirst('gym')).toBe(true);
+    expect(wordsFirst('beat')).toBe(false);
+    expect(wordsFirst('watch')).toBe(false);
+    expect(GYM_ART.verified).toBe('Verified');
+    expect(Object.values(GYM_ART).flat()).not.toContain('Checked');
+    expect(INTRO_SLIDES.gym.eyebrow).toBe('Does your gym use MettleUp?');
+    expect(INTRO_SLIDES.gym.title).toBe('Your gym, in your pocket');
+  });
+  it('[source-text check] the words block is drawn before the picture on the gym screen only', () => {
+    const src = read('onboarding/components/IntroSlides.tsx');
+    const first = src.indexOf('{wordsFirst(slide.key) ? words : null}');
+    const art = src.indexOf('<FitArt room=');
+    const last = src.indexOf('{wordsFirst(slide.key) ? null : words}');
+    expect(first).toBeGreaterThan(-1);
+    expect(first).toBeLessThan(art);
+    expect(art).toBeLessThan(last);
   });
 });

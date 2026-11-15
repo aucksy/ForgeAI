@@ -92,11 +92,11 @@ export const WATCH_ART = {
   chips: ['Starts with your phone', 'Buzzes when rest ends', 'Log sets with the dial'],
 } as const;
 
-/** Screen 3's picture: a checked number finds an example gym. */
+/** Screen 3's picture: a verified number finds an example gym. Canvas v7 (15 Nov 2026): "Checked" became "Verified". */
 export const GYM_ART = {
   phoneLabel: 'Your phone number',
   phone: '98765 •••••',
-  checked: 'Checked',
+  verified: 'Verified',
   found: 'We found you',
   initials: 'EG',
   gym: 'Example Gym',
@@ -126,6 +126,11 @@ export function watchButton(watch: WatchState, result: InstallResult | null): 'i
 /** The screens show before the welcome flow unless already seen; undefined = not read yet. PURE. */
 export function introShows(stored: string | null | undefined): boolean {
   return stored === null;
+}
+
+/** The gym screen shows its words first, then the picture (owner, 15 Nov 2026, canvas v7); the others picture first. PURE. */
+export function wordsFirst(key: IntroKey): boolean {
+  return key === 'gym';
 }
 
 /** The smallest the welcome picture is drawn (a very large display size scrolls below this). */
