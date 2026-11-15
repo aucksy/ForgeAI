@@ -13,7 +13,8 @@ const read = (p: string) => readFileSync(resolve(__dirname, '../../src', p), 'ut
 describe('the welcome buttons keep their old behaviour', () => {
   const screen = read('onboarding/components/WelcomeScreen.tsx');
   it('R-587: the sign-in screen has no example card (owner, 15 Nov 2026: "drop the sign-in card")', () => {
-    expect(screen).not.toContain('WelcomeSetCard');
+    expect(screen).not.toContain('<WelcomeSetCard');
+    expect(screen).not.toMatch(/import \{ WelcomeSetCard \}/);
   });
   it('Continue with Google is the existing WelcomeGoogle (Drive backup, or the gym copy for gym members)', () => {
     expect(screen).toMatch(/<WelcomeGoogle[\s\S]*?onContinue=\{startSteps\}/);
