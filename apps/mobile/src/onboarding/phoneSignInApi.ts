@@ -117,14 +117,15 @@ export type StraightInOutcome = 'in' | 'steps' | { words: string };
  * straightInDraft's answers (changeable in Profile). Not joined (offline, a refused code): the words, and the card's
  * "Join <gym>" stays. Joined but the save failed: 'steps' (the 3 questions, the gym is already joined). Never throws.
  */
-export async function goStraightIn(m: SignInMatch, firstName: string, mobile: string, proof: string | null): Promise<StraightInOutcome> {
+export async function goStraightIn(m: SignInMatch, firstName: string, proof: string | null): Promise<StraightInOutcome> {
   if (useStraightIn.getState().gymName != null) return { words: 'That did not work. Try again.' };
   useStraightIn.setState({ gymName: m.gymName });
   try {
     notePicked(m, proof);
     const words = await joinGym(m.joinCode, firstName);
     if (words) return { words };
-    const v = validateOnboarding(straightInDraft(firstName, mobile, m.gymName), 'metric');
+    // No number: the phone form promised it is not kept (G5).
+    const v = validateOnboarding(straightInDraft(firstName, m.gymName), 'metric');
     if (!v.ok) {
       console.warn('[phone sign-in] the setup answers were refused; asking the 3 questions', v.field);
       return askSteps(firstName, m.gymName);

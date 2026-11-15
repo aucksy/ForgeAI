@@ -114,12 +114,16 @@ export function straightInMatch(matches: readonly SignInMatch[]): SignInMatch | 
 }
 
 /**
- * The welcome answers a member who went straight in never saw (R-587). The first name they typed, the number they
- * proved, kg (the phone sign-in is for Indian numbers), the gym's name, and the app's first defaults (Build muscle,
- * New to lifting: form.ts emptyDraft). Every one can be changed in Profile. PURE.
+ * The welcome answers a member who went straight in never saw (R-587). The first name they typed, kg (the phone
+ * sign-in is for Indian numbers), the gym's name, and the app's first defaults (Build muscle, New to lifting: form.ts
+ * emptyDraft). Every one can be changed in Profile. PURE.
+ *
+ * NO phone number (R-587 review G5, a release blocker): the phone form promises "Your number is checked once and is
+ * not kept for this" (SIGN_IN.privacy), so the number the member proved never goes into Profile. Profile's number
+ * stays empty until the member types one there. welcomeIntro.test.ts fails if the number comes back.
  */
-export function straightInDraft(firstName: string, mobile: string, gymName: string): OnboardingDraft {
-  return { ...emptyDraft(), name: firstName.trim(), phone: mobile, gymName: gymName.trim().slice(0, GYM_NAME_MAX) };
+export function straightInDraft(firstName: string, gymName: string): OnboardingDraft {
+  return { ...emptyDraft(), name: firstName.trim(), phone: '', gymName: gymName.trim().slice(0, GYM_NAME_MAX) };
 }
 
 /** Owner, trainer and desk staff are the gym's own people (T89: they get every feature, memberPlan staff). PURE. */

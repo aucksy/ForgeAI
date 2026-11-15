@@ -662,7 +662,9 @@ export function WelcomeScreen() {
                 <MettleUpLogo height={26} />
               </View>
 
-              <View style={{ flexGrow: 1, justifyContent: 'center', gap: 18, paddingVertical: space.xl }}>
+              {/* R-587 (coordinator, 16 Nov 2026): the title sits under the logo, no empty band above it; the room left
+                  goes between the words and the buttons, which stay at the bottom within the thumb's reach. */}
+              <View style={{ flexGrow: 1, justifyContent: 'flex-start', gap: 18, paddingTop: space.xxl, paddingBottom: space.xl }}>
                 <View style={{ gap: space.sm }}>
                   <Text accessibilityRole="header" style={{ fontFamily: type.display, fontSize: 32, lineHeight: 38, color: color.ink, letterSpacing: -0.3 }}>
                     {START_WORDS.title}
@@ -693,15 +695,19 @@ export function WelcomeScreen() {
                 {/* Google: finds the member's Drive backup and offers it (gym members: the server copy). A build
                     that cannot sign in has no Google button: "Use without an account" is the orange one. */}
                 {has('google') ? (
-                  <WelcomeGoogle
-                    small={phoneOn}
-                    onName={(n) => (draft.name.trim() ? undefined : patch({ name: n }))}
-                    gymCodeWaiting={gymCodeWaiting != null}
-                    keptWorkouts={kept}
-                    onBusy={onGoogleBusy}
-                    onBeforeRestore={forgetSwitch}
-                    onContinue={startSteps}
-                  />
+                  // R-587: with the phone button above it, Google's own 18+ box keeps clear of that button, so it
+                  // does not read as the phone button's box.
+                  <View style={phoneOn ? { marginTop: space.lg } : null}>
+                    <WelcomeGoogle
+                      small={phoneOn}
+                      onName={(n) => (draft.name.trim() ? undefined : patch({ name: n }))}
+                      gymCodeWaiting={gymCodeWaiting != null}
+                      keptWorkouts={kept}
+                      onBusy={onGoogleBusy}
+                      onBeforeRestore={forgetSwitch}
+                      onContinue={startSteps}
+                    />
+                  </View>
                 ) : has('useWithout') ? (
                   <OrangePill label={START_WORDS.useWithout} onPress={startSteps} />
                 ) : null}

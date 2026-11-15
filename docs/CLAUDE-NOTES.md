@@ -286,13 +286,37 @@ Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept her
   - 43742379237 (u203): phone-only first screen, labels, the link on every phone-form state, no-tick, not found,
     2 gyms, the trainer's old path, straight in with the new Workout tab note on top, Gym tab QA UAT Gym.
   - G1's failure path is proven by unit tests only; no cloud picture can force a setup save to fail.
+- Round 4 (coordinator, 16 Nov 2026, before release):
+  - G5 RELEASE BLOCKER, fixed: the phone form promises "Your number is checked once and is not kept for this", but a
+    member who went straight in had the proven number saved into Profile. Now straightInDraft carries no number and
+    goStraightIn is never handed it; Profile's number stays empty until the member types one. The promise wording is
+    unchanged (privacy words need his yes). Tests: welcomeIntro "G5 (release blocker)" (no number in the setup for
+    any name; the phone path never writes to storage); u203 opens Profile after the straight-in and checks the number
+    is not there (rel-f203-14). The proof itself is held in memory only, for 15 minutes, to link the gym's list after
+    the join (findGymApi.rememberFound), never on disk. Server: the check tables keep only a one-time code, no number;
+    after the join the gym's own list record (which already had the number) is marked as checked.
+  - G4 NOT fixed (outside the welcome flow): the watch update pop-up (R-438) can show for a watch that is paired but
+    out of reach (a diary newer than 7 days, connected=false); its one button can then only say "Your watch is not
+    connected". Fix: show the pop-up only while the watch is connected (the 20 s / 2 min retries already exist). Owner
+    of that code: the watch update pop-up, not R-587.
+  - Layout: the first sign-in screen's title now sits under the logo (no empty band above it); Google's 18+ box has
+    16 px more room under the phone button when the other ways are open.
+  - "Not kept / stays on this phone / never" promises in the member app, checked against the code:
+    - TRUE: the PIN line on the staff door (never stored); the gym lead line "We never share your number" (the lead
+      sends gym and city only); the sleep lines (no network in sleepLink); the trainer share lines (no notes, photos
+      or body weight in the payload); the sign-in account line "Progress photos stay on this phone" (the account copy
+      leaves them out); the Profile number line "Stays on this phone" (backups never carry it; nothing sends it); a
+      progress photo or exercise video "stays on your phone" (true unless the member saves a backup file or switches
+      on "Include photos in my backup", both their own choice).
+    - LIKELY UNTRUE, not changed (wording needs his yes): the Workout tab import card "Bring your workouts, records
+      and routines with you. Everything stays on this phone." shows to members who are signed in too, whose workouts
+      are copied to their MettleUp account. Suggest: show that sentence only when not signed in, or drop it.
 - Open:
   - Gym staff (owner, trainer, desk) found by the number keep the old path (Join, 3 questions, the join screen).
   - The straight-in defaults (Build muscle, New to lifting, kg) are a guess; the Workout tab note now says so.
-  - Review G4 (watch update pop-up) and G5 (the found number saved into Profile vs the "not kept" line):
-    not asked of this helper, still open.
-  - The 18+ box sits right under the main button when the other ways are open; reads a little crowded.
-  - At font 2.0 the welcome words scroll under the dots and the sign-in screen has an empty band above the title.
+  - Review G4 (watch update pop-up for an out-of-reach watch): written up in round 4, not fixed (not welcome code).
+  - The import card's "Everything stays on this phone" for signed-in members: needs his yes on the words.
+  - At font 2.0 the welcome words scroll under the dots (cut mid-line until scrolled).
   - Done: the sign-in card dropped (his "drop the sign-in card").
   - "Beat your last workout" kept (his "keep last", 15 Nov 2026), an exception to the 1 Nov "previous" rule.
   - The watch screen was seen only through the stand-in, never with a real watch.

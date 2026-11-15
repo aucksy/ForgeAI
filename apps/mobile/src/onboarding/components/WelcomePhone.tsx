@@ -96,8 +96,8 @@ export function WelcomePhone({
   const plusOn = useMemberAccess().why !== 'off';
   const agreement = useTermsAgreement();
   // Read when the gym answers (a change of the boxes while waiting is fine).
-  const typed = useRef({ phone: '', name: '' });
-  typed.current = { phone, name };
+  const typed = useRef({ name: '' });
+  typed.current = { name };
 
   /** R-587: a found member goes straight into the gym. Not joined: the card again, with why. */
   const enter = useCallback(
@@ -105,7 +105,8 @@ export function WelcomePhone({
       const first = firstNameOf(typed.current.name);
       setError(null);
       setStep({ kind: 'entering', gymName: m.gymName });
-      const r = await goStraightIn(m, first, mobile10(typed.current.phone) ?? '', proof);
+      // Never the number: the form promises it is not kept (R-587 review G5).
+      const r = await goStraightIn(m, first, proof);
       // 'steps': the welcome screen opens the 3 questions from the store (useStraightIn.needsSteps), also when the
       // gym's colours rebuilt it and this screen is gone (R-587 review, G1).
       if (r === 'in' || r === 'steps') return;

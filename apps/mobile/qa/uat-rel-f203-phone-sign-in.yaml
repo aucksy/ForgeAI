@@ -24,7 +24,8 @@
 #     shows the gym.
 #  8. R-587, a fresh install found as a MEMBER of the live test gym: straight into the gym. No "Join" tap, no
 #     "Step 1 of 3", no "Gym code" join screen; the app opens on the Workout tab, which says once that it picked
-#     "New to lifting" and "Build muscle" (change in Profile), and the Gym tab shows the gym.
+#     "New to lifting" and "Build muscle" (change in Profile), and the Gym tab shows the gym. G5 (release blocker): Profile has no
+#     mobile number (the phone form promised the number "is not kept for this").
 # Pictures rel-f203-*.png. Runs alone with only=u203, and in the whole uat part. Leaves the app on the tabs.
 appId: com.mettleup.app
 ---
@@ -426,3 +427,19 @@ appId: com.mettleup.app
     env:
       FIND: "^${GYM}$"
 - takeScreenshot: rel-f203-13-straight-in-gym-tab
+# R-587 review G5: the number checked on the phone form is not kept, so Profile's mobile number box is empty.
+- tapOn:
+    text: "^Profile$"
+    index: 0
+- extendedWaitUntil:
+    visible: "Edit profile"
+    timeout: 30000
+- tapOn: "Edit profile"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Mobile number, optional"
+- assertNotVisible: ".*90000 ?00293.*"
+- assertNotVisible: ".*9000000293.*"
+- takeScreenshot: rel-f203-14-straight-in-profile-no-number
+- back

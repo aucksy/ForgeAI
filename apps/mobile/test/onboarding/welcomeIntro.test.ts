@@ -197,13 +197,15 @@ describe('a member found by the number goes straight into the gym', () => {
     // From the list, a member's own tap joins at once.
     expect(goesStraightIn(match('member'))).toBe(true);
   });
-  it('the setup answers it fills in pass the welcome\'s own check (first name, the proven number, kg, the gym)', () => {
-    const d = straightInDraft('  Priya ', '9876543210', 'Iron Gym');
+  it('the setup answers it fills in pass the welcome\'s own check (first name, kg, the gym; no number)', () => {
+    const d = straightInDraft('  Priya ', 'Iron Gym');
     const v = validateOnboarding(d, 'metric');
     expect(v.ok).toBe(true);
     if (!v.ok) return;
     expect(v.value.name).toBe('Priya');
-    expect(v.value.phoneE164).toBe('9876543210');
+    // R-587 review G5: the phone form promises the number "is not kept for this", so Profile gets none.
+    expect(d.phone).toBe('');
+    expect(v.value.phoneE164).toBeNull();
     expect(v.value.gymName).toBe('Iron Gym');
     expect(v.value.goal).toBe('muscle');
     expect(v.value.experience).toBe('beginner');
@@ -322,5 +324,31 @@ describe('fresh-eyes review fixes (R-587, 15 Nov 2026)', () => {
     expect(api.indexOf("await markStraightInNote('due');")).toBeLessThan(api.indexOf('await useOnboarding.getState().complete(v.value)'));
     expect(api).toContain("markStraightInNote('done')");
     expect(read('app/(tabs)/workout.tsx')).toContain("<StraightInNoteCard hidden={notice !== 'setupGuess'}");
+  });
+  it('G5 (release blocker): the number the form promises is "not kept" is never stored', () => {
+    // The promise on the screen, word for word (changing it needs the owner's yes).
+    expect(SIGN_IN.privacy).toBe('We only use your number to find your gym. Your number is checked once and is not kept for this.');
+    // The setup a found member gets carries no number, for any number typed.
+    for (const name of ['Priya', '  Ravi Kumar ']) {
+      const d = straightInDraft(name, 'Iron Gym');
+      expect(d.phone).toBe('');
+      expect(JSON.stringify(d)).not.toMatch(/\d{10}/);
+    }
+    // [source-text check] the number is never handed to the straight-in setup, nor written anywhere by the phone path.
+    const api = read('onboarding/phoneSignInApi.ts');
+    expect(api).toContain('export async function goStraightIn(m: SignInMatch, firstName: string, proof: string | null)');
+    expect(api).toContain('straightInDraft(firstName, m.gymName)');
+    const phone = read('onboarding/components/WelcomePhone.tsx');
+    expect(phone).toContain('await goStraightIn(m, first, proof)');
+    for (const [file, src] of [['phoneSignInApi.ts', api], ['WelcomePhone.tsx', phone], ['phoneSignIn.ts', read('onboarding/phoneSignIn.ts')]] as const) {
+      expect(src, `${file} writes to storage`).not.toMatch(/setMeta\(|AsyncStorage|SecureStore|saveWelcomeResume\(\{/);
+      expect(src, `${file} puts a number into a profile`).not.toMatch(/phone:\s*(mobile|phone|typed)/);
+    }
+  });
+  it('[source-text check] first sign-in screen: the title sits under the logo; Google\'s 18+ box keeps clear of the phone button', () => {
+    const screen = read('onboarding/components/WelcomeScreen.tsx');
+    expect(screen).toContain("justifyContent: 'flex-start', gap: 18, paddingTop: space.xxl");
+    expect(screen).not.toContain("justifyContent: 'center', gap: 18, paddingVertical: space.xl");
+    expect(screen).toContain('<View style={phoneOn ? { marginTop: space.lg } : null}>');
   });
 });
