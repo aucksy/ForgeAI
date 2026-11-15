@@ -149,8 +149,8 @@ begin
 
   -- 9. Every other kind still checked; a kind nobody knows is refused.
   checks := checks + 1; fails := fails || pg_temp.t95_is('9kind',
-    pg_temp.t95_run(format('insert into public.gym_alerts(gym_id, kind, ref_id, tag, line, route) values (%L, %L, %L, %L, %L, %L)',
-      gid, 'nope', 'x', 't95:nope', 'A line.', '/')) like '%gym_alerts_kind_check%', 'true');
+    (pg_temp.t95_run(format('insert into public.gym_alerts(gym_id, kind, ref_id, tag, line, route) values (%L, %L, %L, %L, %L, %L)',
+      gid, 'nope', 'x', 't95:nope', 'A line.', '/')) like '%gym_alerts_kind_check%')::text, 'true');
   checks := checks + 1; fails := fails || pg_temp.t95_is('9oldkinds',
     pg_temp.t95_run(format('insert into public.gym_alerts(gym_id, kind, ref_id, tag, line, route) values (%L, %L, %L, %L, %L, %L)',
       gid, 'ai_members_limit', 'x', 't95:ai', 'A line.', '/')), 'ok');
