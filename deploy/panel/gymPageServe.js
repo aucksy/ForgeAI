@@ -3,6 +3,7 @@
 //   GET  /gym-page/page.js    the page's one script (a static file, apps/dashboard/public/gym-page/)
 //   POST /api/gym-page/ask    "Ask the gym": checked, limited, then gym_page_ask_send puts it in the gym's Enquiries
 //   POST /api/gym-page/report "Report this page": checked, limited, then gym_page_report_send tells MettleUp HQ
+//   POST /api/gym-page/chat, /api/gym-page/chat-contact   F208 the AI helper (pageChat.js), only while PAGE_AI is "live"
 //   GET  /robots.txt          allow; each page says itself whether Google may list it (noindex until published)
 //   GET  /                    to gyms.mettleup.fit (the page that offers gyms this free page)
 //
@@ -15,6 +16,8 @@
 // per network address in D1 friend_asks (own hash prefix, so no new D1 table). Nothing about the person is kept here.
 
 import { PAGE_ORIGIN, pageFrom, renderGymPage, slugOk } from './gymPage.js';
+import { handleChat, handleChatContact } from './pageChat.js';
+import { pageAiOn } from './switches.js';
 
 export const ASK_PER_DAY = 5;
 export const REPORT_PER_DAY = 5;
@@ -171,7 +174,7 @@ async function hashIp(prefix, ip, salt, day) {
 }
 
 /** true = over the day's limit. Without D1 the send goes on (the gym server has its own limits); the log says why. */
-async function overLimit(env, request, now, prefix, perDay) {
+export async function overLimit(env, request, now, prefix, perDay) {
   if (!env.WEB || !env.FEEDBACK_SALT) {
     console.warn(`[gym-page] ${prefix}: no address limit (D1 binding WEB or secret FEEDBACK_SALT missing)`);
     return false;
@@ -349,6 +352,12 @@ export async function handleGymPageHost(request, env, ctx, url, rpc, opts = {}) 
   }
   if (path === '/api/gym-page/ask') return handleAsk(request, env, rpc);
   if (path === '/api/gym-page/report') return handleReport(request, env, rpc);
+  // F208 the AI helper: a plain "not here" while PAGE_AI is off, as if it did not exist.
+  if (path === '/api/gym-page/chat' || path === '/api/gym-page/chat-contact') {
+    if (!pageAiOn(env)) return notHere();
+    const chatOpts = { cache: opts.cache, fetchImpl: opts.fetchImpl, now: opts.nowMs ? new Date(opts.nowMs) : undefined };
+    return path === '/api/gym-page/chat' ? handleChat(request, env, ctx, rpc, chatOpts) : handleChatContact(request, env, ctx, rpc, chatOpts);
+  }
   if (request.method !== 'GET' && request.method !== 'HEAD') return notHere(405);
   // One gym's page: the slug in small letters; a capital or a trailing slash moves to the one true address.
   const m = /^\/([A-Za-z0-9-]{3,48})\/?$/.exec(path);
@@ -367,7 +376,8 @@ export async function handleGymPageHost(request, env, ctx, url, rpc, opts = {}) 
       console.warn('[gym-page] online pay not known; the button says pay at the desk');
     }
   }
-  const html = renderGymPage(page, { nowMs: opts.nowMs ?? Date.now(), origin: PAGE_ORIGIN, payOnline });
+  // F208: the AI helper box shows only while PAGE_AI is live AND the owner's own switch is on.
+  const html = renderGymPage(page, { nowMs: opts.nowMs ?? Date.now(), origin: PAGE_ORIGIN, payOnline, chat: pageAiOn(env) && page.aiHelper });
   return new Response(request.method === 'HEAD' ? null : html, {
     headers: pageHeaders({
       // A minute at the edge and in the browser: "Open now" moves with the clock.

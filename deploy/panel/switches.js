@@ -15,6 +15,11 @@
 // Even when live, visitors are offered a payment company's link only when payments are live (PAY_LIVE "on"): never a
 // test-mode payment for the public. A plain UPI ID needs no company, so it is offered either way.
 //
+// PAGE_AI = "live" (F208, R-538, 15 Nov 2026): the AI helper chat on the gym web page (pageChat.js). It needs GYM_PAGES
+// live too (no page, no chat). Off: the page shows no chat box, the chat addresses are "not here", and the admin app
+// hides the owner's "AI helper on your page" switch and the chat inside an enquiry. The gym server's 0094 is not live
+// either (it needs the owner's yes).
+//
 // AI_CREDITS_CHARGE = "on" (questionCredits.js; its own value, older than this file): members' AI answers are taken
 // from the gym's AI credits. The admin app shows the credits sheet's "AI answers for members" and the question counts
 // only while it is on (aiCharge below): with it off nothing is charged, so nothing is shown about charging.
@@ -34,6 +39,11 @@ export function joinPayOpen(env) {
   return switchOn(env, 'JOIN_PAY');
 }
 
+/** F208: is the AI helper chat on gym web pages open? Only with the pages themselves open. */
+export function pageAiOn(env) {
+  return gymPagesOpen(env) && switchOn(env, 'PAGE_AI');
+}
+
 /** R-555: are AI questions charged on the gym's credits? questionCredits.js reads the same value. */
 export function aiChargeOn(env) {
   return Boolean(env) && env.AI_CREDITS_CHARGE === 'on';
@@ -41,7 +51,7 @@ export function aiChargeOn(env) {
 
 /** GET /api/switches: what the admin app may show. Never cached for long: switching on shows within minutes. */
 export function switchesAnswer(env) {
-  return new Response(JSON.stringify({ gymPages: gymPagesOpen(env), joinPay: joinPayOpen(env), aiCharge: aiChargeOn(env) }), {
+  return new Response(JSON.stringify({ gymPages: gymPagesOpen(env), joinPay: joinPayOpen(env), aiCharge: aiChargeOn(env), pageAi: pageAiOn(env) }), {
     headers: {
       'Content-Type': 'application/json; charset=utf-8',
       'Cache-Control': 'no-store',

@@ -49,6 +49,7 @@ import {
 import { rememberPage, useWebPage } from '../../gympage/pageState';
 import { PagePhotoError, uploadPagePhoto } from '../../gympage/photoUpload';
 import { buildPreview } from '../../gympage/preview';
+import { usePageAiOn } from '../../gympage/pagesOpen';
 import { formatPhone } from '../../logic/members';
 import { isNoSuchFunction } from '../../logic/workoutOffer';
 import * as timingsApi from '../../shop/timingsApi';
@@ -193,6 +194,7 @@ function PageEditor({ ownerKey, saved, onSaved }: { ownerKey: string; saved: Sav
   const thumbs = usePhotoThumbs(draft.photos.map((p) => p.url));
   const locked = addressLocked(saved);
   const termsAt = saved?.termsAt ?? null;
+  const pageAi = usePageAiOn();
 
   const set = (patch: Partial<PageDraft>) => {
     setBanner(null);
@@ -426,6 +428,20 @@ function PageEditor({ ownerKey, saved, onSaved }: { ownerKey: string; saved: Sav
         </CheckField>
         <p style={{ ...small, marginTop: space.sm }}>Questions sent from your page come to Enquiries either way.</p>
       </Card>
+
+      {/* F208: the owner's own switch for the page's AI helper, shown only while the chat is switched on (PAGE_AI). */}
+      {pageAi && (
+        <Card style={{ marginBottom: space.lg }}>
+          <SectionTitle>AI helper on your page</SectionTitle>
+          <CheckField
+            checked={draft.aiHelper !== false}
+            onChange={(v) => set({ aiHelper: v })}
+            hint="The AI helper answers visitors only from what is on your page: your fees, timings, address and facilities. Every chat comes to Enquiries. When it cannot answer, the chat shows Needs you, so you can call the visitor. 10 answers use 1 AI credit."
+          >
+            Let the AI helper answer visitors’ questions
+          </CheckField>
+        </Card>
+      )}
 
       <Card style={{ marginBottom: space.lg }}>
         <SectionTitle>Also on your page, from your other screens</SectionTitle>

@@ -1,6 +1,7 @@
 // F207 gym page (join.mettleup.fit/<gym>): the page's only script. The page is complete without it (the Worker
 // renders all of it, deploy/panel/gymPage.js); this adds the shutter rolling up, the bar at the bottom of the phone,
-// sending a question to the gym, Copy link, and the report form. No other scripts, no trackers, no cookies.
+// sending a question to the gym, Copy link, the report form, and (F208, only when the page has it) the AI helper
+// chat. No other scripts, no trackers, no cookies.
 // HIDDEN until the gym page is switched on (docs/gym-page/PLAN.md).
 
 const $ = (id) => document.getElementById(id);
@@ -69,6 +70,22 @@ async function post(path, body) {
   } catch (e) {
     console.warn('gym page: send failed', e);
     return { ok: false, error: 'NETWORK' };
+  } finally {
+    clearTimeout(t);
+  }
+}
+
+/** A POST whose answer the caller reads: {ok, body, error}. */
+async function postJson(path, body) {
+  const ctl = new AbortController();
+  const t = setTimeout(() => ctl.abort(), 25000);
+  try {
+    const r = await fetch(path, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body), signal: ctl.signal });
+    const j = await r.json().catch(() => ({}));
+    return { ok: r.ok && j.ok === true, body: j, error: j.error || (r.ok ? null : `HTTP_${r.status}`) };
+  } catch (e) {
+    console.warn('gym page: chat send failed', e);
+    return { ok: false, body: {}, error: 'NETWORK' };
   } finally {
     clearTimeout(t);
   }
@@ -151,4 +168,121 @@ if (report) {
       say(msg, 'Thank you. MettleUp will look at this page.', true);
     } else say(msg, sayFail(r.error), false);
   });
+}
+
+// ------------------------------------------------------------------ F208 the AI helper chat (deploy/panel/pageChat.js)
+// Only on a page drawn with the chat box (the Worker's PAGE_AI live and the owner's switch on). The browser keeps a
+// random id for this gym and the chat's lines, so a reload shows the chat again (90 days, then forgotten). Asks for a
+// name and number once: when the visitor shows interest, or the AI could not answer.
+const chatForm = $('chat-form');
+const chatLog = $('chat-log');
+const chatContact = $('chat-contact');
+const CHAT_DAYS = 90;
+const chatKey = `mettleup-chat:${data.slug || ''}`;
+
+function newVisitorId() {
+  const b = new Uint8Array(18);
+  crypto.getRandomValues(b);
+  return btoa(String.fromCharCode(...b)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+/** This browser's chat with this gym: {id, lines, at, contact}. A fresh one when none, or older than 90 days. */
+function chatState() {
+  let s = null;
+  try {
+    s = JSON.parse(localStorage.getItem(chatKey) || 'null');
+  } catch (e) {
+    console.warn('gym page: saved chat not readable', e);
+  }
+  const fresh = s && typeof s.id === 'string' && /^[A-Za-z0-9_-]{16,64}$/.test(s.id) && Date.now() - Number(s.at || 0) < CHAT_DAYS * 864e5;
+  return fresh
+    ? { id: s.id, lines: Array.isArray(s.lines) ? s.lines.slice(-40) : [], at: s.at, contact: s.contact === true }
+    : { id: newVisitorId(), lines: [], at: Date.now(), contact: false };
+}
+
+function keepChat(s) {
+  try {
+    localStorage.setItem(chatKey, JSON.stringify({ ...s, lines: s.lines.slice(-40) }));
+  } catch (e) {
+    console.warn('gym page: chat not saved in this browser (private window?)', e);
+  }
+}
+
+function chatLine(from, text, extra = '') {
+  const li = document.createElement('li');
+  li.className = `${from === 'me' ? 'me' : 'ai'}${extra ? ` ${extra}` : ''}`;
+  const who = document.createElement('span');
+  who.className = 'vh';
+  who.textContent = from === 'me' ? 'You: ' : 'AI helper: ';
+  li.append(who, document.createTextNode(text));
+  chatLog.append(li);
+  chatLog.scrollTop = chatLog.scrollHeight;
+  return li;
+}
+
+const CHAT_WORDS = {
+  ...WORDS,
+  LIMIT: 'You have sent the most messages allowed for today. To ask the gym, use the "Ask the gym" form below. The gym will call you or send you a WhatsApp message on the number you give.',
+  OFF: 'The AI helper is switched off for this gym. To ask the gym, use the "Ask the gym" form below.',
+  BAD_QUESTION: 'Please write your question in a few words, without a web address.',
+};
+
+if (chatForm && chatLog && data.chat) {
+  const st = chatState();
+  for (const l of st.lines) chatLine(l.from, l.text);
+  const showContact = () => {
+    if (chatContact && !st.contact) chatContact.hidden = false;
+  };
+  if (st.lines.some((l) => l.ask)) showContact();
+  chatForm.addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+    const msg = $('chat-msg');
+    const f = new FormData(chatForm);
+    const question = String(f.get('question') || '').replace(/\s+/g, ' ').trim();
+    if (!question) return say(msg, 'Please write your question.', false), chatForm.question.focus();
+    const btn = chatForm.querySelector('button[type=submit]');
+    btn.disabled = true;
+    msg.textContent = '';
+    msg.className = 'msg';
+    const mine = chatLine('me', question);
+    const wait = chatLine('ai', 'The AI helper is reading this page.', 'wait');
+    const r = await postJson('/api/gym-page/chat', { slug: data.slug, visitor: st.id, question, website: String(f.get('website') || '') });
+    wait.remove();
+    btn.disabled = false;
+    if (r.ok && typeof r.body.answer === 'string') {
+      chatForm.reset();
+      chatLine('ai', r.body.answer);
+      st.lines.push({ from: 'me', text: question }, { from: 'ai', text: r.body.answer, ask: r.body.askNumber === true });
+      st.at = Date.now();
+      keepChat(st);
+      if (r.body.askNumber === true) showContact();
+    } else {
+      mine.remove();
+      say(msg, CHAT_WORDS[r.error] || sayFail(r.error), false);
+    }
+  });
+  if (chatContact) {
+    chatContact.addEventListener('submit', async (ev) => {
+      ev.preventDefault();
+      const msg = $('chat-contact-msg');
+      const f = new FormData(chatContact);
+      const wants = ev.submitter && ev.submitter.value === 'join' ? 'join' : 'call';
+      const name = String(f.get('name') || '').trim();
+      const phone = mobileOf(f.get('phone'));
+      if (name.length < 2) return say(msg, 'Please write your name.', false), chatContact.name.focus();
+      if (!phone) return say(msg, 'Please write a 10-digit mobile number.', false), chatContact.phone.focus();
+      if (!f.get('consent')) return say(msg, 'Please tick the box so the gym can call you.', false), chatContact.consent.focus();
+      const buttons = chatContact.querySelectorAll('button');
+      for (const b of buttons) b.disabled = true;
+      const r = await postJson('/api/gym-page/chat-contact', { slug: data.slug, visitor: st.id, name, phone, consent: true, wants, website: String(f.get('website') || '') });
+      for (const b of buttons) b.disabled = false;
+      if (r.ok) {
+        st.contact = true;
+        keepChat(st);
+        chatContact.reset();
+        for (const el of chatContact.querySelectorAll('label, input, .tel, .two, h3')) el.hidden = true;
+        say(msg, `Your number is sent to ${data.gymName || 'the gym'}. They will call you or send you a WhatsApp message on ${phone.slice(0, 2)}XXXXXX${phone.slice(8)}.`, true);
+      } else say(msg, sayFail(r.error), false);
+    });
+  }
 }

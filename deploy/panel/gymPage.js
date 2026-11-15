@@ -205,7 +205,8 @@ export function pageFrom(raw) {
     whatsapp: phone !== null && contact.whatsapp === true,
     joinOnline: raw.joinOnline === true && !!raw.joinCode,
     indexable: raw.indexable === true,
-    // R-521: the owner's AI helper switch, on unless the owner turned it off. Nothing on the page reads it yet (F208).
+    // R-521: the owner's AI helper switch, on unless the owner turned it off. F208: the chat box shows only while it is
+    // on AND the Worker's PAGE_AI is live (gymPageServe.js passes `chat` to renderGymPage).
     aiHelper: raw.aiHelper !== false,
     updatedAt: typeof raw.updatedAt === 'string' ? raw.updatedAt.slice(0, 40) : null,
   };
@@ -294,9 +295,10 @@ function planRow(p) {
 
 /**
  * The whole page. `nowMs` sets "Open now" (India time); `assetBase` is where /gym-page/page.js is served (the
- * page's own address by default). PURE.
+ * page's own address by default). `chat` (F208): show the AI helper box (only while PAGE_AI is live and the owner's
+ * switch is on). PURE.
  */
-export function renderGymPage(p, { nowMs = Date.now(), assetBase = '', origin = PAGE_ORIGIN, payOnline = false } = {}) {
+export function renderGymPage(p, { nowMs = Date.now(), assetBase = '', origin = PAGE_ORIGIN, payOnline = false, chat = false } = {}) {
   const url = `${origin}/${p.slug}`;
   const ink = inkOn(p.accent);
   const st = statusOf(p, nowMs);
@@ -390,6 +392,27 @@ export function renderGymPage(p, { nowMs = Date.now(), assetBase = '', origin = 
     `<button class="btn ink" type="submit">Send to the gym</button><p class="msg" id="ask-msg" role="status" aria-live="polite"></p></form>` +
     `</section>`;
 
+  // F208 the AI helper (pageChat.js). Hidden until page.js runs (it needs the script); the words need the owner's yes
+  // (docs/gym-page/PUBLIC-WORDS.md section 4).
+  const gn = escapeHtml(p.gymName);
+  const chatBox = chat
+    ? `<section class="board chat" id="chat" aria-labelledby="chat-h"><header><h2 id="chat-h">Ask the AI helper</h2><span lang="hi">AI से पूछें</span></header>` +
+      `<p class="board-lead chat-lead">The AI helper answers from what is on this page: the fees, timings, address and facilities. If the answer is not on this page, it saves your question for ${gn}.</p>` +
+      `<ol class="chat-log" id="chat-log" aria-live="polite"></ol>` +
+      `<form id="chat-form" class="chat-ask" novalidate><label for="c-q" class="vh">Your question</label>` +
+      `<div class="chat-row"><input id="c-q" name="question" maxlength="300" autocomplete="off" enterkeyhint="send" placeholder="Type your question about the fees, timings or facilities."><button class="btn ink" type="submit">Ask</button></div>` +
+      `<input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true"><p class="msg" id="chat-msg" role="status" aria-live="polite"></p></form>` +
+      `<form id="chat-contact" class="chat-contact" hidden novalidate><h3>Leave your number for the gym</h3><p class="board-lead">${gn} will call you or send you a WhatsApp message on this number.</p>` +
+      `<label for="cc-name">Your name</label><input id="cc-name" name="name" autocomplete="name" maxlength="80" required>` +
+      `<label for="cc-phone">Mobile number</label><div class="tel"><span>+91</span><input id="cc-phone" name="phone" type="tel" inputmode="numeric" autocomplete="tel-national" maxlength="14" required></div>` +
+      `<label class="tick"><input type="checkbox" name="consent" required><span>Send my name, my number and this chat to ${gn}, so they can call me or send me a WhatsApp message. Only this gym sees them.</span></label>` +
+      `<input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">` +
+      `<div class="two"><button class="btn ink" type="submit" name="wants" value="call">Ask the gym to call me</button><button class="btn line" type="submit" name="wants" value="join">I want to join</button></div>` +
+      `<p class="msg" id="chat-contact-msg" role="status" aria-live="polite"></p></form>` +
+      `<p class="chat-privacy">Your chat is saved and seen by ${gn}. <span lang="hi">आपकी बातचीत सेव होती है और ${gn} इसे देखता है।</span></p>` +
+      `</section>`
+    : '';
+
   const shareHref = whatsappShare(p.gymName, url);
   const ld = gymJsonLd(p, url);
 
@@ -413,7 +436,7 @@ ${ogImage ? `<meta property="og:image" content="${escapeHtml(ogImage)}">` : ''}
 <link href="https://fonts.googleapis.com/css2?family=Teko:wght@500;600;700&family=Hind:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>${css(p.accent, ink)}</style>
 <script type="application/ld+json">${scriptJson(ld)}</script>
-<script type="application/json" id="gym-data">${scriptJson({ slug: p.slug, gymName: p.gymName, url })}</script>
+<script type="application/json" id="gym-data">${scriptJson({ slug: p.slug, gymName: p.gymName, url, chat: !!chat })}</script>
 <script type="module" src="${assetBase}/gym-page/page.js"></script>
 </head>
 <body>
@@ -429,7 +452,7 @@ ${ogImage ? `<meta property="og:image" content="${escapeHtml(ogImage)}">` : ''}
 <main>
 ${photos}
 <div class="wall">
-  <div class="col-a">${about}${findUs}${ask}</div>
+  <div class="col-a">${about}${findUs}${chatBox}${ask}</div>
   <div class="col-b">${fees}${timings}
   <section class="share" aria-label="Share this page">
     <a class="btn wa" href="${escapeHtml(shareHref)}" rel="noopener" target="_blank" id="share-wa">${ICON.wa}Share on WhatsApp</a>
@@ -528,7 +551,7 @@ svg{width:20px;height:20px;flex:none}
 /* the wall by the door, and its tin boards */
 .wall{padding:26px 16px 8px;display:grid;gap:22px;max-width:1180px;margin:0 auto}
 .wall{display:flex;flex-direction:column}.col-a,.col-b{display:contents}
-.fees{order:1}.timings{order:2}.about{order:3}.find{order:4}.ask{order:5}.share{order:6}
+.fees{order:1}.timings{order:2}.about{order:3}.find{order:4}.chat{order:5}.ask{order:5}.share{order:6}
 .board{background:var(--tin);color:var(--tin-ink);border-radius:5px;box-shadow:0 1px 0 rgba(0,0,0,.06),0 18px 34px -22px rgba(0,0,0,.55);overflow:hidden}
 .board header{display:flex;align-items:baseline;justify-content:space-between;gap:12px;background:var(--accent);color:var(--on-accent);padding:12px 18px 6px}
 .board h2{font-size:40px;line-height:.9}
@@ -578,6 +601,26 @@ input:focus,textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 
 .msg{margin:10px 0 0;font-weight:600;font-size:15.5px;min-height:1px}
 .msg.ok{color:var(--good)}.msg.bad{color:var(--bad)}
 button[disabled]{opacity:.6;cursor:progress}
+
+/* F208 the AI helper chat (shown only once page.js runs) */
+html:not(.js) .chat{display:none}
+.chat [hidden]{display:none!important}
+.chat .chat-lead{padding:14px 18px 0;margin:0}
+.chat-log{list-style:none;margin:0;padding:12px 18px 0;display:grid;gap:8px;max-height:430px;overflow-y:auto}
+.chat-log:empty{display:none}
+.chat-log li{max-width:88%;padding:9px 13px 8px;border-radius:12px;font-size:16px;line-height:1.42;overflow-wrap:anywhere}
+.chat-log .me{justify-self:end;background:var(--accent);color:var(--on-accent);border-bottom-right-radius:3px}
+.chat-log .ai{justify-self:start;background:color-mix(in srgb,var(--tin-ink) 7%,var(--tin));color:var(--tin-ink);border-bottom-left-radius:3px}
+.chat-log .wait{color:var(--tin-soft);font-style:italic}
+.chat-ask{padding-bottom:6px}
+.chat-row{display:flex;gap:8px}.chat-row input{margin-bottom:0!important;min-width:0}.chat-row .btn{flex:none;min-width:84px}
+.chat-contact{border-top:1px dashed var(--tin-line);padding-top:14px}
+.chat-contact h3{margin:0 0 10px;font:600 19px/1.3 var(--text)}
+.chat-contact .two{display:grid;gap:10px}
+.chat-contact .btn.line{display:flex}
+.chat-privacy{margin:0;padding:12px 18px 16px;color:var(--tin-soft);font-size:14.5px;border-top:1px dashed var(--tin-line)}
+.chat-privacy span{display:block}
+.vh{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
 .share{display:grid;gap:10px;grid-template-columns:1fr 1fr}
 .share .btn.line{color:var(--wall-ink);border-color:var(--wall-ink)}

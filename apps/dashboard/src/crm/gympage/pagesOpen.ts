@@ -14,6 +14,9 @@
  * "Take payments when people join online" switch and Today's Approve line are hidden) and `aiCharge`
  * (AI_CREDITS_CHARGE "on": members' AI answers use the gym's credits; while off the credits sheet shows nothing about
  * charging, because nothing is charged). Each is off until the Worker says exactly `true`.
+ *
+ * F208 (15 Nov 2026): `pageAi` (PAGE_AI "live", and only with GYM_PAGES live): the AI helper chat on gym web pages.
+ * While off the owner's "AI helper on your page" switch and the chat inside an enquiry are hidden.
  */
 import { useSyncExternalStore } from 'react';
 
@@ -25,15 +28,17 @@ export interface WorkerSwitches {
   gymPages: boolean;
   joinPay: boolean;
   aiCharge: boolean;
+  /** F208: the AI helper chat on gym web pages. */
+  pageAi: boolean;
 }
 
-export const ALL_OFF: Readonly<WorkerSwitches> = Object.freeze({ gymPages: false, joinPay: false, aiCharge: false });
+export const ALL_OFF: Readonly<WorkerSwitches> = Object.freeze({ gymPages: false, joinPay: false, aiCharge: false, pageAi: false });
 
 /** /api/switches's answer: each switch on only when it says exactly `true`. PURE. */
 export function switchesFrom(raw: unknown): WorkerSwitches {
   if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return { ...ALL_OFF };
   const r = raw as Record<string, unknown>;
-  return { gymPages: r.gymPages === true, joinPay: r.joinPay === true, aiCharge: r.aiCharge === true };
+  return { gymPages: r.gymPages === true, joinPay: r.joinPay === true, aiCharge: r.aiCharge === true, pageAi: r.gymPages === true && r.pageAi === true };
 }
 
 /** /api/switches's answer: on only when it says exactly `gymPages: true`. PURE. */
@@ -47,7 +52,7 @@ let asking: Promise<void> | null = null;
 const listeners = new Set<() => void>();
 
 function setKnown(v: WorkerSwitches) {
-  if (known && known.gymPages === v.gymPages && known.joinPay === v.joinPay && known.aiCharge === v.aiCharge) return;
+  if (known && known.gymPages === v.gymPages && known.joinPay === v.joinPay && known.aiCharge === v.aiCharge && known.pageAi === v.pageAi) return;
   known = v;
   for (const f of listeners) f();
 }
@@ -121,6 +126,11 @@ export function useJoinPayOn(): boolean {
 /** R-555: are AI questions charged on the gym's credits (AI_CREDITS_CHARGE)? false until the Worker says so. */
 export function useAiChargeOn(): boolean {
   return useSyncExternalStore(subscribe, () => known?.aiCharge === true, () => false);
+}
+
+/** F208: is the AI helper chat on gym web pages switched on (PAGE_AI)? false until the Worker says so. */
+export function usePageAiOn(): boolean {
+  return useSyncExternalStore(subscribe, () => known?.pageAi === true, () => false);
 }
 
 /** For tests: set or forget the gym web pages answer (the other switches stay as they are, off when unknown). */

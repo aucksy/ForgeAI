@@ -53,24 +53,28 @@ describe('gym web pages switch (pagesOpen.ts)', () => {
 // answer; each is off until the Worker says exactly true, and each is told apart from the others.
 describe('the other Worker switches (R-555)', () => {
   it('reads each switch on its own, on only for exactly true', () => {
-    expect(switchesFrom({ gymPages: false, joinPay: true, aiCharge: false })).toEqual({ gymPages: false, joinPay: true, aiCharge: false });
-    expect(switchesFrom({ gymPages: true, joinPay: false, aiCharge: true })).toEqual({ gymPages: true, joinPay: false, aiCharge: true });
+    expect(switchesFrom({ gymPages: false, joinPay: true, aiCharge: false })).toEqual({ gymPages: false, joinPay: true, aiCharge: false, pageAi: false });
+    // F208: the chat only with the pages themselves.
+    expect(switchesFrom({ gymPages: true, pageAi: true }).pageAi).toBe(true);
+    expect(switchesFrom({ gymPages: false, pageAi: true }).pageAi).toBe(false);
+    expect(switchesFrom({ gymPages: true, pageAi: 'true' }).pageAi).toBe(false);
+    expect(switchesFrom({ gymPages: true, joinPay: false, aiCharge: true })).toEqual({ gymPages: true, joinPay: false, aiCharge: true, pageAi: false });
     for (const raw of [null, undefined, 'live', [], {}, { joinPay: 'true', aiCharge: 1 }, { gymPages: true }]) {
       const s = switchesFrom(raw);
       expect(s.joinPay).toBe(false);
       expect(s.aiCharge).toBe(false);
     }
     // An older Worker that only knows gymPages: the new switches are off.
-    expect(switchesFrom({ gymPages: true })).toEqual({ gymPages: true, joinPay: false, aiCharge: false });
+    expect(switchesFrom({ gymPages: true })).toEqual({ gymPages: true, joinPay: false, aiCharge: false, pageAi: false });
   });
 
   it('follows the Worker both ways; an answer that is not JSON turns them all off', async () => {
     expect(switchesNow()).toBeUndefined();
     await checkPagesOpen(answer({ gymPages: false, joinPay: false, aiCharge: true }));
-    expect(switchesNow()).toEqual({ gymPages: false, joinPay: false, aiCharge: true });
+    expect(switchesNow()).toEqual({ gymPages: false, joinPay: false, aiCharge: true, pageAi: false });
     expect(pagesOpenNow()).toBe(false);
     await checkPagesOpen(answer({ gymPages: false, joinPay: true, aiCharge: false }));
-    expect(switchesNow()).toEqual({ gymPages: false, joinPay: true, aiCharge: false });
+    expect(switchesNow()).toEqual({ gymPages: false, joinPay: true, aiCharge: false, pageAi: false });
     await checkPagesOpen(answer('<!doctype html>', 'text/html'));
     expect(switchesNow()).toEqual(ALL_OFF);
     setSwitchesForTests({ aiCharge: true });

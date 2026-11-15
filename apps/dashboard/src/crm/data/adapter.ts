@@ -337,7 +337,7 @@ export interface CrmData {
 
   // Step 5 (15 Oct 2026)
   createEnquiry(draft: EnquiryDraft): Promise<Enquiry>;
-  updateEnquiry(id: string, patch: Partial<EnquiryDraft & Pick<Enquiry, 'status' | 'memberId' | 'lostReason' | 'referral'>>): Promise<Enquiry>;
+  updateEnquiry(id: string, patch: Partial<EnquiryDraft & Pick<Enquiry, 'status' | 'memberId' | 'lostReason' | 'referral' | 'pageChat'>>): Promise<Enquiry>;
   addExpense(draft: ExpenseDraft): Promise<Expense>;
   /** An expense typed wrong is taken out (it is not a receipt: no number to keep). */
   removeExpense(id: string): Promise<void>;

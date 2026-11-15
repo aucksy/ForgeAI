@@ -39,7 +39,17 @@ import { alreadyRewarded, friendReward, invitedAgainOf, invitedAgainWords, refer
 import { t } from '../../lang/lang';
 import { memberPrefill, selfJoinOf, sellPlanFor, sellStartFor } from '../../logic/selfJoin';
 import { PAGE_ASK_PREFIX, pageAskOf } from '../../gympage/logic';
-import { usePagesOpen } from '../../gympage/pagesOpen';
+import { usePageAiOn, usePagesOpen } from '../../gympage/pagesOpen';
+import {
+  CHAT_STATUS_WORDS,
+  PAGE_CHAT_PREFIXES,
+  chatLineNote,
+  chatNeedsOwner,
+  chatsNeedingOwnerFirst,
+  markChatDone,
+  noNumber,
+  pageChatOf,
+} from '../../logic/pageChat';
 import { formatINR } from '../../logic/money';
 import type { CrmSnapshot } from '../../data/adapter';
 import { DIAL_CODES, findDuplicatePhone, formatPhone, normalizePhone, phoneDigits } from '../../logic/members';
@@ -103,7 +113,12 @@ export function EnquiriesScreen({ startAdding }: { startAdding?: boolean } = {})
   const counts = useMemo(() => filterCounts(enquiries, today), [enquiries, today]);
   // Launch audit 3 Nov 2026: which source brings people who join (only enquiries with a source).
   const sources = useMemo(() => joinedBySource(enquiries), [enquiries]);
-  const rows = useMemo(() => filterEnquiries(enquiries, filter, today), [enquiries, filter, today]);
+  // F208: while the web page's AI helper is on, the chats that need the owner come first.
+  const pageAi = usePageAiOn();
+  const rows = useMemo(() => {
+    const list = filterEnquiries(enquiries, filter, today);
+    return pageAi ? chatsNeedingOwnerFirst(list) : list;
+  }, [enquiries, filter, today, pageAi]);
 
   // The undo bar goes away on its own; the "Nahi aayenge" chip keeps a permanent way back.
   useEffect(() => {
@@ -131,6 +146,13 @@ export function EnquiriesScreen({ startAdding }: { startAdding?: boolean } = {})
     run(async () => {
       await updateEnquiry(e.id, { status: 'open', lostReason: null });
       setUndo(null);
+    });
+
+  /** F208: the owner answered the visitor; the chat stays, it leaves the top until the visitor needs them again. */
+  const chatDone = (e: Enquiry) =>
+    run(async () => {
+      const chat = markChatDone(e, Date.now());
+      if (chat) await updateEnquiry(e.id, { pageChat: chat });
     });
 
   const setLostReason = (e: Enquiry, value: string) =>
@@ -208,6 +230,7 @@ export function EnquiriesScreen({ startAdding }: { startAdding?: boolean } = {})
               reward={friendReward(e, snapshot, today)}
               canReward={canReward}
               onReward={() => setThanking({ enquiryId: e.id, memberId: null })}
+              onChatDone={() => void chatDone(e)}
             />
           ))}
         </Card>
@@ -360,6 +383,7 @@ function EnquiryRow({
   reward,
   canReward,
   onReward,
+  onChatDone,
 }: {
   enquiry: Enquiry;
   first: boolean;
@@ -373,6 +397,7 @@ function EnquiryRow({
   reward: FriendReward;
   canReward: boolean;
   onReward: () => void;
+  onChatDone: () => void;
 }) {
   const bucket = enquiryBucket(e, today);
   const referral = referralOf(e);
@@ -383,6 +408,11 @@ function EnquiryRow({
   // only while gym web pages are open to visitors (pagesOpen.ts); the interest line's copy of it never shows.
   const asked = pageAskOf(e);
   const pageAsk = usePagesOpen() ? asked : null;
+  // F208: the visitor's whole chat with the web page's AI helper (supabase 0094), only while PAGE_AI is on.
+  const chatRaw = pageChatOf(e);
+  const chat = usePageAiOn() ? chatRaw : null;
+  const needsOwner = chatNeedsOwner(chat);
+  const numberless = noNumber(e);
   const open = e.status === 'open';
   const followTone =
     bucket === 'overdue' ? color.criticalText : bucket === 'today' ? color.warning : color.inkSecondary;
@@ -403,10 +433,10 @@ function EnquiryRow({
             {e.name}
           </div>
           <div style={{ fontFamily: font.mono, fontSize: 13, color: color.inkSecondary, marginTop: 2 }}>
-            {formatPhone(e.phone)}
+            {numberless ? <span style={{ fontFamily: font.body }}>No number left yet</span> : formatPhone(e.phone)}
           </div>
           {/* R-513: the server's "Joined online: ..." note (F210: "Free trial online: ...") is the older app's copy of the line below. */}
-          {e.interest && !(selfJoinLine(e) && (e.interest.startsWith('Joined online:') || e.interest.startsWith('Free trial online:'))) && !(asked && e.interest.startsWith(PAGE_ASK_PREFIX)) && (
+          {e.interest && !(selfJoinLine(e) && (e.interest.startsWith('Joined online:') || e.interest.startsWith('Free trial online:'))) && !(asked && e.interest.startsWith(PAGE_ASK_PREFIX)) && !(chat && PAGE_CHAT_PREFIXES.some((x) => e.interest?.startsWith(x))) && (
             <div style={{ fontFamily: font.body, fontSize: 13, color: color.ink, marginTop: 4, overflowWrap: 'anywhere' }}>
               {e.interest}
             </div>
@@ -422,6 +452,36 @@ function EnquiryRow({
               <div style={{ fontFamily: font.body, fontSize: 13, color: color.ink, marginTop: 2, overflowWrap: 'anywhere', whiteSpace: 'pre-line' }}>
                 {`“${pageAsk.question}”`}
               </div>
+            </div>
+          )}
+          {chat && (
+            <div style={{ marginTop: 6, minWidth: 0 }} data-testid="page-chat">
+              <div style={{ fontFamily: font.body, fontSize: 13, fontWeight: 600, color: color.accentBright }}>Chat on your web page</div>
+              <div style={{ fontFamily: font.body, fontSize: 13, fontWeight: 700, color: needsOwner ? color.warning : color.inkSecondary, marginTop: 2 }}>
+                {CHAT_STATUS_WORDS[chat.status]}
+                {chat.status !== 'answered' && !needsOwner ? ' · Done' : ''}
+              </div>
+              {chat.messages.length > 0 ? (
+                <ol
+                  aria-label="The whole chat, newest last"
+                  style={{ listStyle: 'none', margin: `${space.sm}px 0 0`, padding: space.sm, display: 'grid', gap: 6, maxHeight: 320, overflowY: 'auto', background: color.surfaceSunken, borderRadius: radius.md }}
+                >
+                  {chat.messages.map((m, i) => {
+                    const note = chatLineNote(m);
+                    return (
+                      <li key={m.id || i} style={{ fontFamily: font.body, fontSize: 13, lineHeight: 1.4, color: color.ink, overflowWrap: 'anywhere' }}>
+                        <span style={{ fontWeight: 700, color: m.from === 'ai' ? color.inkSecondary : color.ink }}>{m.from === 'ai' ? 'AI helper: ' : 'Visitor: '}</span>
+                        {m.text}
+                        {note && <div style={{ fontSize: 12, fontWeight: 600, color: color.warning, marginTop: 1 }}>{note}</div>}
+                      </li>
+                    );
+                  })}
+                </ol>
+              ) : (
+                <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkSecondary, marginTop: 2 }}>
+                  The chat's messages were deleted 90 days after the last one.
+                </div>
+              )}
             </div>
           )}
           {/* F147: a friend a member invited from the app. Only the member's name, never their number. */}
@@ -452,18 +512,28 @@ function EnquiryRow({
       </div>
 
       <div style={actionsGrid}>
-        <a href={`tel:+${phoneDigits(e.phone)}`} style={linkButton} aria-label={`Call ${e.name}`}>
-          Call
-        </a>
-        <a
-          href={whatsAppHref(followUpMessage(e, { name: gymName }), e.phone)}
-          target="_blank"
-          rel="noreferrer"
-          style={linkButton}
-          aria-label={`WhatsApp ${e.name}`}
-        >
-          WhatsApp
-        </a>
+        {/* F208: a visitor who only chatted left no number: nothing to call yet. */}
+        {!numberless && (
+          <>
+            <a href={`tel:+${phoneDigits(e.phone)}`} style={linkButton} aria-label={`Call ${e.name}`}>
+              Call
+            </a>
+            <a
+              href={whatsAppHref(followUpMessage(e, { name: gymName }), e.phone)}
+              target="_blank"
+              rel="noreferrer"
+              style={linkButton}
+              aria-label={`WhatsApp ${e.name}`}
+            >
+              WhatsApp
+            </a>
+          </>
+        )}
+        {needsOwner && (
+          <Button wrap variant="ghost" needsInternet onClick={onChatDone} ariaLabel={`Mark the web page chat with ${e.name} as done`}>
+            Mark as done
+          </Button>
+        )}
         {open && (
           <>
             <Button wrap needsInternet onClick={onConvert} ariaLabel={`Make ${e.name} a member`}>

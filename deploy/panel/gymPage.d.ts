@@ -22,4 +22,4 @@ export interface GymPublicPage {
   [k: string]: unknown;
 }
 export function pageFrom(raw: unknown): GymPublicPage | null;
-export function renderGymPage(p: GymPublicPage, opts?: { nowMs?: number; assetBase?: string; origin?: string; payOnline?: boolean }): string;
+export function renderGymPage(p: GymPublicPage, opts?: { nowMs?: number; assetBase?: string; origin?: string; payOnline?: boolean; chat?: boolean }): string;

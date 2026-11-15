@@ -11,7 +11,7 @@ import { AI_PAGE_IDS, aiPageIdsFor, pageShown, pageById, toolsForClaude } from '
 import { helpSystem } from './help.js';
 import { ALL_HELP_ARTICLES, HELP_ARTICLES, helpArticlesFor } from './helpArticles.js';
 import { matchPages } from './helpPages.js';
-import { aiChargeOn, gymPagesOpen, joinPayOpen, switchOn, switchesAnswer } from './switches.js';
+import { aiChargeOn, gymPagesOpen, joinPayOpen, pageAiOn, switchOn, switchesAnswer } from './switches.js';
 import worker, { selfJoinDesc } from './worker.js';
 import { readFileSync } from 'node:fs';
 
@@ -28,7 +28,7 @@ test('only GYM_PAGES = "live" opens gym web pages', () => {
   assert.equal(switchOn(ON, 'SOMETHING_ELSE'), false);
 });
 
-const NONE_ON = { gymPages: false, joinPay: false, aiCharge: false };
+const NONE_ON = { gymPages: false, joinPay: false, aiCharge: false, pageAi: false };
 
 test('GET /api/switches says gymPages false while off and true once on, never cached', async () => {
   for (const env of [{}, { GYM_PAGES: 'off' }]) {
@@ -41,6 +41,19 @@ test('GET /api/switches says gymPages false while off and true once on, never ca
   const on = await worker.fetch(new Request('https://app.mettleup.fit/api/switches'), ON, ctx);
   assert.deepEqual(await on.json(), { ...NONE_ON, gymPages: true });
   assert.deepEqual(await switchesAnswer(ON).json(), { ...NONE_ON, gymPages: true });
+});
+
+// F208: the page's AI helper chat opens only with PAGE_AI exactly "live" AND the pages themselves open.
+test('PAGE_AI only "live", and only with GYM_PAGES live: GET /api/switches says pageAi', async () => {
+  for (const v of [undefined, '', 'off', 'on', 'LIVE', true]) assert.equal(pageAiOn({ GYM_PAGES: 'live', PAGE_AI: v }), false, String(v));
+  assert.equal(pageAiOn({ GYM_PAGES: 'off', PAGE_AI: 'live' }), false);
+  assert.equal(pageAiOn({ GYM_PAGES: 'live', PAGE_AI: 'live' }), true);
+  assert.equal(pageAiOn(undefined), false);
+  const wr = readFileSync(new URL('./wrangler.jsonc', import.meta.url), 'utf8');
+  assert.match(wr, /"PAGE_AI": "off"/);
+  const ask = async (env) => (await worker.fetch(new Request('https://app.mettleup.fit/api/switches'), env, ctx)).json();
+  assert.deepEqual(await ask({ PAGE_AI: 'live' }), NONE_ON);
+  assert.deepEqual(await ask({ GYM_PAGES: 'live', PAGE_AI: 'live' }), { ...NONE_ON, gymPages: true, pageAi: true });
 });
 
 // R-555: join payments (held by the owner) and AI credits charging, each told to the admin app on its own.
@@ -98,6 +111,7 @@ test('wrangler.jsonc names every switch with its value today, and has no keep_va
   const vars = JSON.parse(/"vars": (\{[^}]*\})/.exec(raw)[1]);
   assert.equal(vars.JOIN_PAY, 'off', 'join payments stay held until the owner says the payment sweep passed');
   assert.equal(vars.GYM_PAGES, 'off');
+  assert.equal(vars.PAGE_AI, 'off', 'F208: the AI helper chat waits for the owner');
   assert.equal(vars.PAY_LIVE, 'off');
   assert.equal(vars.PAY_OAUTH_RAZORPAY, 'off');
   assert.equal(vars.PAY_OAUTH_CASHFREE, 'off');

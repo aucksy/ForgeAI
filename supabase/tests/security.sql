@@ -101,6 +101,10 @@ declare
     -- page (terms ticked, not hidden by HQ, gym not paused); the question form has daily limits (40 per gym, 3 per
     -- number), the report form 50 per page; nothing returns a member, staff, money or the phone unless show_phone.
     'owner_gym_page','owner_save_gym_page','gym_page_public','gym_page_ask_send','gym_page_report_send',
+    -- 0094: the web page's AI helper chat (each needs the panel Worker's HMAC signature with 0061's secret over the page
+    -- and the visitor; it writes only into that gym's Enquiries: 10 messages a visitor a day, 40 new chats a gym a day,
+    -- 3 numbers a day; the AI's answers come out of the gym's AI credits, 0078).
+    'page_chat_ask','page_chat_reply','page_chat_contact',
     -- 0082: the page's photos. A slot: the OWNER key only (12 open, 60 a day). The two storage checks are called by the
     -- storage rules AS the uploader or reader (anon), like _photo_ticket_ok; each answers only yes or no for one file name.
     'owner_gym_page_photo_slot','_gym_page_photo_upload_ok','_gym_page_photo_read_ok',

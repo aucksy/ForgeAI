@@ -137,6 +137,8 @@ export interface PageDraft {
   published: boolean;
   /** The owner's tick on the page terms (needed once, to publish). */
   termsAgreed: boolean;
+  /** F208: the AI helper chat on the page (R-521, ON by default). The switch shows only while PAGE_AI is live. */
+  aiHelper?: boolean;
 }
 
 /** A first draft: the address suggested from the gym's name (and the area once typed). PURE. */
@@ -155,6 +157,7 @@ export function draftFrom(saved: SavedPage | null, gym: { name: string; joinCode
       indexable: saved.indexable,
       published: saved.published,
       termsAgreed: false,
+      aiHelper: saved.aiHelper,
     };
   }
   return {
@@ -170,6 +173,7 @@ export function draftFrom(saved: SavedPage | null, gym: { name: string; joinCode
     indexable: false,
     published: false,
     termsAgreed: false,
+    aiHelper: true,
   };
 }
 
@@ -227,7 +231,7 @@ export function draftErrors(d: PageDraft, termsAt: number | null): FieldErrors {
   return e;
 }
 
-/** What owner_save_gym_page gets: the whole page (it saves the whole row). The map pin and AI switch stay as saved. PURE. */
+/** What owner_save_gym_page gets: the whole page (it saves the whole row). The map pin stays as saved; the AI switch is the draft's (F208), else as saved. PURE. */
 export function savePayload(d: PageDraft, saved: SavedPage | null): Record<string, unknown> {
   return {
     slug: d.slug,
@@ -243,7 +247,7 @@ export function savePayload(d: PageDraft, saved: SavedPage | null): Record<strin
     whatsapp: d.showPhone && d.whatsapp,
     indexable: d.indexable,
     published: d.published,
-    aiHelper: saved?.aiHelper ?? true,
+    aiHelper: d.aiHelper ?? saved?.aiHelper ?? true,
     // The tick counts only when publishing (it is the agreement to show the page).
     termsAgreed: d.published && d.termsAgreed,
   };

@@ -352,8 +352,44 @@ export interface Enquiry extends GymScoped {
    * friend_invite_send): the newest such invite only. Read it through logic/referrals.ts `invitedAgainOf`.
    */
   invitedAgain?: EnquiryInvitedAgain | null;
+  /**
+   * F208: set by the gym server for a chat with the AI helper on the gym's web page (supabase 0094): the whole chat,
+   * newest last, and its status. One enquiry per visitor chat. Read it through logic/pageChat.ts `pageChatOf`. The
+   * owner's "Mark as done" writes `doneAt` here.
+   */
+  pageChat?: EnquiryPageChat | null;
   createdAt: number;
   updatedAt: number;
+}
+
+/** F208: one line of a web page chat. A visitor's line carries what happened to it. */
+export interface PageChatMessage {
+  id: string;
+  from: 'visitor' | 'ai';
+  text: string;
+  /** When (ms). */
+  at: number;
+  /** A visitor's line: answered by the AI, not known to it, the AI failed, not sent (a limit or no credits), or still waiting. */
+  state?: 'waiting' | 'answered' | 'unknown' | 'failed' | 'limit';
+}
+
+/** F208: what the owner scans: "AI answered", "Needs you", "Wants a call", "Asked to join". */
+export type PageChatStatus = 'answered' | 'needs_you' | 'wants_call' | 'join';
+
+/** F208: a visitor's chat with the AI helper on the gym's web page (supabase 0094). */
+export interface EnquiryPageChat {
+  v: 1;
+  messages: PageChatMessage[];
+  status: PageChatStatus;
+  wants: 'call' | 'join' | null;
+  startedAt?: number;
+  lastAt?: number;
+  /** The last time the owner was needed (ms). */
+  needAt?: number;
+  /** The owner's "Mark as done" (ms). Needed again when a newer needAt comes. */
+  doneAt?: number;
+  /** The messages were deleted after 90 days (the enquiry and its number stay). */
+  cleared?: boolean;
 }
 
 /** R-539: a member invited someone who had already asked about joining. */
