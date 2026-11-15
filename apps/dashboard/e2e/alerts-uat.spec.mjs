@@ -436,7 +436,13 @@ test('Latest from your members on a computer, light theme; payments and joins; t
   await page.evaluate(() => {
     window.location.hash = '/';
   });
-  await lines.filter({ hasText: 'Vikram joined' }).click();
+  // R-593: news shows on Today once; on the next visit it is gone (the complaint and the question still wait). The
+  // bell keeps it, and its line still opens Members using the app.
+  await expect(lines).toHaveCount(2, { timeout: 10_000 });
+  await expect(card).not.toContainText('Vikram joined');
+  await expect(card).not.toContainText('Asha paid online');
+  await page.getByRole('button', { name: /^Notifications/ }).click();
+  await page.getByTestId('bell-gym-alerts').getByRole('button').filter({ hasText: 'Vikram joined' }).click();
   await expect.poll(() => page.evaluate(() => window.location.hash)).toBe('#/members/app');
 
   // The desk person, ticked as a trainer.

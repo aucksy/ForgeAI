@@ -1207,7 +1207,8 @@ export async function expectFitsPhone(page, where = '') {
  * "10+ din se nahi aaye: 1" into a one-word column, while expectFitsPhone passed). Every element on the page, one by
  * one: none may reach past the right edge of the screen (an element inside a box that scrolls sideways on purpose is
  * judged by that box; one parked wholly off screen, like a closed drawer, is not shown), and no text of two or more
- * words may be squeezed into a box narrower than `minText` px that wraps it onto several lines. Fails with a list of
+ * words may be squeezed into a box narrower than `minText` px: three lines or more, or one word per line (the lines
+ * the words really take, so a tall tap target is not mistaken for wrapping; a 2-line label in a narrow tile is fine). Fails with a list of
  * the offenders (tag, test id or label, its words, its edges). `scope`: a CSS selector to check only part of the page.
  */
 export async function expectNothingPastScreen(page, where = '', { minText = 80, scope = 'body' } = {}) {
@@ -1241,11 +1242,20 @@ export async function expectNothingPastScreen(page, where = '', { minText = 80, 
           continue;
         }
         if (cs.display.startsWith('inline') && !cs.display.includes('block') && !cs.display.includes('flex') && !cs.display.includes('grid')) continue;
-        const own = [...el.childNodes].filter((n) => n.nodeType === 3).map((n) => n.textContent || '').join(' ').replace(/\s+/g, ' ').trim();
-        if (own.split(' ').length < 2 || r.width >= minText) continue;
-        const fs = parseFloat(cs.fontSize) || 14;
-        const lh = cs.lineHeight === 'normal' ? fs * 1.25 : parseFloat(cs.lineHeight) || fs * 1.25;
-        if (r.height > lh * 1.9) out.push(`squeezed: ${name(el)} only ${Math.round(r.width)} px wide, ${Math.round(r.height / lh)} lines`);
+        const texts = [...el.childNodes].filter((n) => n.nodeType === 3 && (n.textContent || '').trim());
+        const words = texts.map((n) => n.textContent || '').join(' ').replace(/\s+/g, ' ').trim().split(' ').length;
+        if (words < 2 || r.width >= minText) continue;
+        // The lines the words really take (a tall tap target or padding is not a line): one rect per line fragment.
+        const tops = [];
+        for (const n of texts) {
+          const range = document.createRange();
+          range.selectNodeContents(n);
+          for (const q of range.getClientRects()) if (q.width > 0 && !tops.some((y) => Math.abs(y - q.top) < 3)) tops.push(q.top);
+        }
+        // Squeezed: three lines or more in a narrow box, or one word per line ("10+ / din / se / nahi / aaye: 1").
+        if (tops.length >= 3 || (tops.length >= 2 && tops.length >= words)) {
+          out.push(`squeezed: ${name(el)} only ${Math.round(r.width)} px wide, ${tops.length} lines for ${words} words`);
+        }
       }
       return out;
     },
