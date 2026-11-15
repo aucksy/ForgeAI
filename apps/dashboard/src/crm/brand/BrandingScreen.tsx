@@ -817,7 +817,7 @@ function LogoChoicePanel({
                 />
                 {o.title}
               </span>
-              <span style={{ fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>{o.note}</span>
+              <span style={{ paddingLeft: 22, fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>{o.note}</span>
             </button>
           );
         })}

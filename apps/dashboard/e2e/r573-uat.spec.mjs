@@ -33,7 +33,7 @@ const setTheme = (page, mode) =>
 /** The PNG inside a storage upload (supabase-js sends the file as a form). */
 function pngOf(body) {
   const start = body.indexOf(Buffer.from([0x89, 0x50, 0x4e, 0x47]));
-  const end = body.indexOf(Buffer.from('IEND'));
+  const end = body.lastIndexOf(Buffer.from('IEND'));
   if (start < 0 || end < 0) return body;
   return body.subarray(start, end + 8);
 }

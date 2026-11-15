@@ -69,12 +69,20 @@ async function fakeBranding(page, png) {
   });
 }
 
-async function upload(page, png, name) {
+/** Branding -> Upload logo. `keepBox`: the logo sits on a white square, and the owner keeps it as it is (R-573). */
+async function upload(page, png, name, { keepBox = false } = {}) {
   await page.goto('./#/settings/branding');
   await expect(page.getByRole('heading', { name: 'Branding', exact: true })).toBeVisible();
   const chooser = page.waitForEvent('filechooser');
   await page.getByRole('button', { name: 'Upload logo' }).tap();
   await (await chooser).setFiles({ name, mimeType: 'image/png', buffer: png });
+  if (keepBox) {
+    // R-573 offers the logo without its white square first; this test is about the square kept as it is.
+    const panel = page.getByTestId('logo-choice');
+    await expect(panel).toBeVisible({ timeout: 15_000 });
+    await panel.getByRole('radio', { name: /Keep my logo as it is/ }).tap();
+    await panel.getByRole('button', { name: 'Upload this logo' }).tap();
+  }
 }
 
 /** The colours the round icon shows in a thin ring just inside its edge (what a mask leaves). */
@@ -115,7 +123,7 @@ test('T74-a the owner case: a badge on a white square shows as a clean white cir
   await startOnlineGym(page);
   const png = await drawLogo(page, 'badge');
   await fakeBranding(page, png);
-  await upload(page, png, 'badge.png');
+  await upload(page, png, 'badge.png', { keepBox: true });
 
   const preview = page.getByTestId('shortcut-preview');
   await expect(preview).toBeVisible({ timeout: 15_000 });

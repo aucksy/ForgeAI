@@ -51,6 +51,14 @@ async function fakeBranding(page, png) {
   return saved;
 }
 
+/** R-573: press "Upload this logo" on the before/after choice (the logo without its white box). */
+async function useCleanLogo(page) {
+  const panel = page.getByTestId('logo-choice');
+  await expect(panel).toBeVisible({ timeout: 15_000 });
+  await expect(panel.getByRole('radio', { name: /Without the background/ })).toHaveAttribute('aria-checked', 'true');
+  await panel.getByRole('button', { name: 'Upload this logo' }).tap();
+}
+
 test('J-LOGO-a a new logo suggests its colour; one press uses it and Save sends it', async ({ page }) => {
   await openApp(page);
   await startOnlineGym(page);
@@ -62,6 +70,8 @@ test('J-LOGO-a a new logo suggests its colour; one press uses it and Save sends 
   const chooser = page.waitForEvent('filechooser');
   await page.getByRole('button', { name: 'Upload logo' }).tap();
   await (await chooser).setFiles({ name: 'logo.png', mimeType: 'image/png', buffer: png });
+  // R-573: the logo sits on white, so Branding first offers it without the white box (picked to start with).
+  await useCleanLogo(page);
 
   const box = page.getByTestId('logo-colour');
   await expect(box).toBeVisible({ timeout: 15_000 });
@@ -108,6 +118,8 @@ test('J-LOGO-b a black-and-white logo says there is no colour to suggest', async
   const chooser = page.waitForEvent('filechooser');
   await page.getByRole('button', { name: 'Upload logo' }).tap();
   await (await chooser).setFiles({ name: 'mono.png', mimeType: 'image/png', buffer: png });
+  // R-573: the logo sits on white, so Branding first offers it without the white box (picked to start with).
+  await useCleanLogo(page);
   await expect(page.getByText('Your logo is only black, white or grey, so there is no colour to suggest.', { exact: false })).toBeVisible({ timeout: 15_000 });
   await expect(page.getByRole('button', { name: 'Use this colour' })).toHaveCount(0);
 });
