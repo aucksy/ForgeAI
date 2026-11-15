@@ -13,6 +13,7 @@ import { keyOn as englishKeyOn, monthUse as englishMonth, rewrite as englishRewr
 import { newGymsToCheck } from '../../apps/hq/public/logic.js';
 import { cleanMobile } from '../../packages/theme/src/indianMobile.ts';
 import { lastCheck as usageLastCheck, usageAlert } from './usage.js';
+import { readLogState } from './readLogAlert.js';
 import {
   AI_LIMIT_MAX,
   aiLimits,
@@ -293,6 +294,9 @@ export async function handleApi(request, env, who, deps = {}) {
         // R-519: the week's Cloudflare free-limit alert (usage.js): { level, pct, requests, day, limit }; left out
         // of the answer when there is none.
         usageAlert: (await usageAlert(env, now)) || undefined,
+        // R-601: the direct-read record (readLogAlert.js): { on:false } or { on, failing, failingSince, why, keyEnds,
+        // renewNow }. HQ shows a red line, the key reminder, or a grey "off" line.
+        readLog: await readLogState(env, now),
       });
     }
 

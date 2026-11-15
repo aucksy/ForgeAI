@@ -7,6 +7,29 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-601 (16 Nov 2026) Read log alert + 30-day key reminder (R-595; his pick "alert plus 30-day reminder")
+- Built (helper; NOT DEPLOYED, no DB change, no migration): deploy/hq/readLogAlert.js. After each 10-minute pull
+  (worker.js everyMinute) ONE KV entry (BACKUP, key readlog/health) notes since when pulls fail and why; written only on a
+  change (first failure, new reason, first good pull), so a normal day writes nothing. Reasons: key (401/403), unreachable,
+  logs, server, setup, error. Key end date = var SUPABASE_LOGS_TOKEN_EXPIRES "2027-11-14" in wrangler.jsonc.
+- HQ (/api/needs gets readLog; app.js banner on top of every page + Needs you line, counted, rings once):
+  red "Read log is not working since <time>: <reason>. Supabase keeps its logs only about a day, so direct looks at gym
+  data are not being recorded. Fix it today." after 1 hour without a good pull; yellow from 15 Oct 2027 "The logs key ends
+  on 14 Nov 2027. In Supabase, make a new "Logs read" token for the MettleUp project and paste it into Add a key as
+  SUPABASE_LOGS_TOKEN. Then tell Claude its end date."; grey, not counted: "Read log is off: no logs key saved."
+- Email = the existing path (scripts/watch/outage.mjs, every 10 min, GitHub issue @aucksy): new public GET
+  /readlog/status ({on, failing, failingSince, why, keyEnds, renewNow}; no key, no text, no member data). Failing an hour ->
+  outage issue "Outage: Read log not working" (one email); same trouble -> silent; works again -> one "Everything answers
+  again" comment + closed. Reminder: one "key-reminder" issue "Reminder: the Supabase logs key ends on 14 Nov 2027" per end
+  date, never re-opened; closes itself when a later end date is deployed. No 24-hour repeat email (optional; left out).
+- Tests: deploy/hq/readLogAlert.test.mjs (7, pass locally): 59 min = no alert, 61 min = one issue, still failing = no
+  more, recovery = one email, a good pull restarts the hour, reminder from 15 Oct 2027 00:01 IST (not 14 Oct 23:59),
+  once per date, off = grey line + no email + no write, the public route, the every-minute hook. hq.test /api/needs shapes
+  updated. CI: see the report.
+- With a new key later: he pastes it into Add a key; Claude writes its end date into SUPABASE_LOGS_TOKEN_EXPIRES and
+  deploys HQ.
+- NEXT (main session): a fresh review of this diff, then an HQ deploy (worker + page). Until deployed, nothing changes live.
+
 ## R-600 (16 Nov 2026) Pre-deploy fixes for tonight's admin panel deploy (fresh-eyes review of d2928aaa..b65e6362, then of a645d692)
 - DEPLOYED 16 Nov ~02:45 IST from 0a0f87d2 (CI 43759121911 green; fresh review blockers fixed): panel version
   97ec6ea3, HQ version c967e487. Live check: /api/switches gymPages false; live bundle has "See who", "Kaun hain, dekho",

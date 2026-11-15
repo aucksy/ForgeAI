@@ -724,7 +724,50 @@ export function needsLines(d) {
   ];
   const out = lines.filter(([, n]) => Number(n) > 0).map(([key, n, words, href]) => ({ key, n: Number(n), words: words(Number(n)), href }));
   const u = usageLine(d && d.usageAlert);
-  return u ? [...out, u] : out;
+  return [...out, ...(u ? [u] : []), ...readLogLines(d && d.readLog).filter((l) => l.n > 0)];
+}
+
+// R-601: the direct-read record (deploy/hq/readLogAlert.js). Supabase keeps its logs about a day, so a failure
+// loses looks for good; the watch workflow also emails the owner (scripts/watch/outage.mjs).
+export const READ_LOG_WHY = {
+  key: 'Supabase refused the logs key (it may have ended or been deleted)',
+  unreachable: 'Supabase\u2019s logs service did not answer',
+  logs: 'Supabase would not give the logs',
+  server: 'the gym server did not take the record',
+  setup: 'the gym server is missing the read log setup',
+  error: 'it stopped with an error',
+};
+
+/**
+ * The read log's lines for the top of every HQ page and for Needs you, from /api/needs readLog. Each:
+ * { key, n, tone, words, href }; n 0 = shown, never counted (the grey "off" line). PURE.
+ */
+export function readLogLines(r, now = Date.now()) {
+  if (!r || typeof r !== 'object') return [];
+  if (r.on === false) return [{ key: 'readlog-off', n: 0, tone: 'muted', words: 'Read log is off: no logs key saved.', href: '#needs' }];
+  const out = [];
+  if (r.failing) {
+    out.push({
+      key: 'readlog',
+      n: 1,
+      tone: 'bad',
+      words: `Read log is not working since ${when(r.failingSince) || 'over an hour ago'}: ${READ_LOG_WHY[r.why] || READ_LOG_WHY.error}. `
+        + 'Supabase keeps its logs only about a day, so direct looks at gym data are not being recorded. Fix it today.',
+      href: '#needs',
+    });
+  }
+  if (r.renewNow && /^\d{4}-\d\d-\d\d$/.test(String(r.keyEnds || ''))) {
+    const ended = indiaDayOf(new Date(now).toISOString()) > r.keyEnds;
+    out.push({
+      key: 'readlog-key',
+      n: 1,
+      tone: 'warn',
+      words: `The logs key ${ended ? 'ended' : 'ends'} on ${dateWords(`${r.keyEnds}T12:00:00Z`)}. In Supabase, make a new \u201cLogs read\u201d token `
+        + 'for the MettleUp project and paste it into Add a key as SUPABASE_LOGS_TOKEN. Then tell Claude its end date.',
+      href: '#needs',
+    });
+  }
+  return out;
 }
 
 /**
@@ -755,7 +798,8 @@ export function usageLine(a) {
  */
 export function needsTotal(d) {
   if (!d) return 0;
-  return [d.helpNeedsReply, d.leadsNew, d.gymsNew, d.paymentsWaiting, d.paymentsToCheck, usageLine(d.usageAlert) ? 1 : 0].reduce((a, n) => a + (Number(n) || 0), 0);
+  return [d.helpNeedsReply, d.leadsNew, d.gymsNew, d.paymentsWaiting, d.paymentsToCheck, usageLine(d.usageAlert) ? 1 : 0,
+    readLogLines(d.readLog).filter((l) => l.n > 0).length].reduce((a, n) => a + (Number(n) || 0), 0);
 }
 
 /** "(3) MettleUp HQ" - the number first in the browser tab, nothing when 0. PURE. */
@@ -768,7 +812,7 @@ export function titleWithCount(base, n) {
 /** Which counts went UP since the last look (for the sound and the pop-up). First look: none. PURE. */
 export function needsRose(before, now) {
   if (!before || !now) return [];
-  const was = (key) => (key === 'usage' ? (usageLine(before.usageAlert) ? 1 : 0)
+  const was = (key) => (['usage', 'readlog', 'readlog-key'].includes(key) ? (needsLines(before).some((l) => l.key === key) ? 1 : 0)
     : Number(before[{ help: 'helpNeedsReply', leads: 'leadsNew', gyms: 'gymsNew', feedback: 'feedbackNew', payments: 'paymentsWaiting', checks: 'paymentsToCheck' }[key]]) || 0);
   return needsLines(now).filter((l) => l.n > was(l.key));
 }

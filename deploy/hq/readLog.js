@@ -264,7 +264,8 @@ export async function runReadLog(env, { fetchImpl = fetch, now = Date.now() } = 
     } catch (e) {
       console.error('[read-log] could not note the failure', e instanceof Error ? e.message : 'error');
     }
-    return { calls, skipped: 'logs' };
+    // The answer's status and the plain reason (never the token) let readLogAlert.js tell a refused key apart.
+    return { calls, skipped: 'logs', status: got.status || 0, error: got.error };
   }
   const items = looksFromRows(got.rows);
   // A full answer stops at its last line (the rest comes next run); otherwise everything up to `until` is seen.

@@ -255,6 +255,10 @@ textarea { width: 100%; resize: vertical; }
 input[type="checkbox"] { width: 20px; height: 20px; min-height: 0; accent-color: var(--accent); flex: none; }
 
 /* Messages on the page. */
+/* R-601: the read log's line on top of every page (app.js renderBanner). */
+.banner { display: grid; gap: 8px; margin-bottom: 14px; }
+.banner[hidden] { display: none; }
+.banner .muted { margin: 0; }
 .note { padding: 10px 14px; border-radius: 12px; font-size: 14px; border: 0; background: color-mix(in srgb, currentColor 11%, transparent); }
 .note.bad { color: var(--bad); }
 .note.warn { color: var(--warn); }

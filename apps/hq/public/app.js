@@ -37,6 +37,7 @@ import {
   needsLines,
   needsRose,
   needsTotal,
+  readLogLines,
   NOT_CHECKED_WORDS,
   PAY_STATUS_CHOICES,
   CHECK_LIST_CHOICES,
@@ -185,9 +186,20 @@ function loading() {
   show(h('p', { class: 'muted' }, 'Loading…'));
 }
 
+// R-601: the read log's red warning, the logs key reminder, or the grey "off" line, on top of every page.
+// Filled from /api/needs (every minute, refreshNeeds).
+const banner = document.createElement('div');
+banner.className = 'banner';
+banner.hidden = true;
+function renderBanner(d) {
+  const lines = readLogLines(d && d.readLog);
+  banner.replaceChildren(...lines.map((l) => (l.tone === 'muted' ? h('p', { class: 'muted' }, l.words) : note(l.words, l.tone))));
+  banner.hidden = lines.length === 0;
+}
+
 /** The page's content (null and false are skipped, so optional parts can be written inline). */
 function show(...kids) {
-  main.replaceChildren(...kids.flat().filter((k) => k !== null && k !== undefined && k !== false));
+  main.replaceChildren(banner, ...kids.flat().filter((k) => k !== null && k !== undefined && k !== false));
 }
 
 let gymsCache = [];
@@ -896,6 +908,7 @@ async function refreshNeeds() {
   }
   alertNew(needsRose(needsData, d));
   needsData = d;
+  renderBanner(d);
   const n = needsTotal(d);
   document.title = titleWithCount(BASE_TITLE, n);
   for (const badge of document.querySelectorAll('[data-needs-badge]')) {
@@ -920,7 +933,7 @@ function alertsControl() {
     out);
 }
 
-const NEEDS_ICONS = { help: 'feedback', leads: 'leads', gyms: 'gyms', feedback: 'feedback', payments: 'pay', checks: 'pay' };
+const NEEDS_ICONS = { help: 'feedback', leads: 'leads', gyms: 'gyms', feedback: 'feedback', payments: 'pay', checks: 'pay', usage: 'system', readlog: 'system', 'readlog-key': 'system' };
 
 async function needsPage(withLoading = true) {
   if (withLoading) loading();
@@ -934,7 +947,7 @@ async function needsPage(withLoading = true) {
         ? `${count(total, 'thing')} to do. Tap one to open it.`
         : lines.length ? 'Nothing to do. Only new feedback to read.' : 'Nothing is waiting. New leads, feedback, gyms and payments show here.')),
     lines.length
-      ? h('div', { class: 'stack' }, lines.map((l) => h('a', { class: `card needs-line ${l.key}`, href: l.href },
+      ? h('div', { class: 'stack' }, lines.map((l) => h('a', { class: `card needs-line ${l.key} ${l.tone || ''}`, href: l.href },
           h('span', { class: 'needs-ic' }, icon(NEEDS_ICONS[l.key] || 'needs')),
           h('span', { class: 'needs-words' }, l.words),
           h('span', { class: 'needs-go' }, icon('next')))))

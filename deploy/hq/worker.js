@@ -29,6 +29,7 @@ import { feedCalls, feedFeeRequests, feedPaidOnline } from './payFeed.js';
 import { panelPushKey, runPanelPush } from './panelPush.js';
 import { backupStatus, runBackup } from './backup.js';
 import { readLogDue, runReadLog } from './readLog.js';
+import { noteReadLogRun, readLogStatus } from './readLogAlert.js';
 import { handleBilling, runBillingDaily, runBillingReconcile } from './billing.js';
 import { runUsageWeekly } from './usage.js';
 
@@ -237,6 +238,9 @@ export default {
     if (url.pathname === '/push/web-key' && request.method === 'GET') return secure(webKey(env));
     // The nightly backup's health, no sign-in: only whether it is fresh and when (backup.js). The watch reads it.
     if (url.pathname === '/backup/status' && request.method === 'GET') return secure(await backupStatus(env));
+    // R-601: the direct-read record's health, no sign-in: on or off, failing for an hour or not, the key's end date
+    // (readLogAlert.js). The watch workflow reads it and emails the owner through a GitHub issue.
+    if (url.pathname === '/readlog/status' && request.method === 'GET') return secure(await readLogStatus(env));
     // Billing step 3 (billing.js, OFF until its settings exist): the owner's online purchase (forwarded by the
     // gym panel) and the payment company's webhook. No HQ sign-in: a signature or the owner's key proves them.
     if (url.pathname.startsWith('/billing/')) return secure(await handleBilling(request, env));
@@ -285,12 +289,16 @@ export async function everyMinute(env, deps = {}) {
   }
   // R-595 (0097): every 10 minutes, the owner login's direct reads from Supabase's log into the gym server (readLog.js;
   // off until the SUPABASE_LOGS_TOKEN secret is set; at most 4 calls, never throws).
+  // R-601: then when the pulls started failing (or that they work again) is noted in KV (readLogAlert.js, never throws).
   if (readLogDue(feedDeps.now)) {
+    let pulled = null;
     try {
-      spent += Number((await runReadLog(env, feedDeps)).calls) || 0;
+      pulled = await runReadLog(env, feedDeps);
+      spent += Number(pulled.calls) || 0;
     } catch (e) {
       console.error('[hq-cron] direct-read record failed', e instanceof Error ? e.message : 'error');
     }
+    await noteReadLogRun(env, pulled, feedDeps.now);
   }
   try {
     const panel = await runPanelPush(env, feedDeps);

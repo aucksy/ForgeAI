@@ -869,7 +869,7 @@ test('Feedback shows the AI answer, the tap and "Needs reply"; a reply is saved,
 
   const needs = await (await api('GET', '/api/needs', null, e, n2)).json();
   // 2 help questions waiting; the answered one is the only other new feedback; 1 real new gym (not QA, not old).
-  assert.deepEqual(needs, { leadsNew: 1, feedbackNew: 1, helpNeedsReply: 2, gymsNew: 1, paymentsWaiting: null, paymentsToCheck: null });
+  assert.deepEqual(needs, { leadsNew: 1, feedbackNew: 1, helpNeedsReply: 2, gymsNew: 1, paymentsWaiting: null, paymentsToCheck: null, readLog: { on: false } });
 
   assert.equal((await api('POST', '/api/feedback/reply', { id: rows[0].id, reply: ' ' }, e, n2)).status, 400);
   const sent = await api('POST', '/api/feedback/reply', { id: rows[0].id, reply: 'Yes, up to 30 days. Ask at the desk.' }, e, n2);
@@ -952,7 +952,7 @@ test('before panel migration 0009: Feedback still lists, a reply says it needs t
   assert.equal(res.status, 503);
   assert.deepEqual(await res.json(), { error: 'REPLY_NOT_READY' });
   const needs = await (await api('GET', '/api/needs', null, e, net)).json();
-  assert.deepEqual(needs, { leadsNew: 0, feedbackNew: 1, helpNeedsReply: null, gymsNew: 0, paymentsWaiting: null, paymentsToCheck: null });
+  assert.deepEqual(needs, { leadsNew: 0, feedbackNew: 1, helpNeedsReply: null, gymsNew: 0, paymentsWaiting: null, paymentsToCheck: null, readLog: { on: false } });
 });
 
 // ------------------------------------------------------------------ F201 AI assistant credits (0071)

@@ -66,7 +66,10 @@
     "CF_ACCOUNT_ID": "1dc428a67de48b96bf13fb430da7a9e8",
     // R-563: where HQ asks whether gym web pages are switched on for every gym (the panel Worker's GET /api/switches,
     // its GYM_PAGES var). Only shown on a gym's page, next to that gym's own "Web page" switch.
-    "PANEL_ORIGIN": "https://app.mettleup.fit"
+    "PANEL_ORIGIN": "https://app.mettleup.fit",
+    // R-601: the day the logs key (secret SUPABASE_LOGS_TOKEN, R-595) ends. HQ and the watch remind the owner from
+    // 30 days before. With a new key, write its end date here and deploy HQ.
+    "SUPABASE_LOGS_TOKEN_EXPIRES": "2027-11-14"
   },
   // The same small Cloudflare database as the gym panel: feedback, leads, AI usage and AI limits
   // (tables: deploy/panel/migrations). HQ reads them and changes statuses and limits.
