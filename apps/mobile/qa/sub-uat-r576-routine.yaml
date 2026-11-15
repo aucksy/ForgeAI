@@ -19,6 +19,7 @@ appId: com.mettleup.app
 - tapOn:
     text: "More for .*"
     index: 0
+# in-view: the workout menu sheet opens over the feed.
 - extendedWaitUntil:
     visible: "Save as routine"
     timeout: 10000
@@ -27,12 +28,14 @@ appId: com.mettleup.app
     env:
       FIND: 'Save as routine'
 - tapOn: "Save as routine"
+# in-view: the folder picker sheet opens over the feed.
 - extendedWaitUntil:
     visible: "Your plan only changes if you pick it."
     timeout: 10000
 - tapOn:
     text: "^My routines.*"
     index: 0
+# in-view: the confirm dialog opens over the feed.
 - extendedWaitUntil:
     visible: "Saved as a routine"
     timeout: 15000

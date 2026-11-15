@@ -6,6 +6,7 @@ appId: com.mettleup.app
     element: "Discard workout"
     timeout: 20000
 - tapOn: "Discard workout"
+# in-view: the app's own confirm sheet opens over the page.
 - extendedWaitUntil:
     visible: 'Discard workout\?'
     timeout: 10000
