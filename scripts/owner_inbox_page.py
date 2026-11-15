@@ -1925,7 +1925,9 @@ def mark_shipped(text):
         commits = git("log", "--format=%H", "-E", r"--grep=\b" + fid + r"\b").split()
         if not commits:
             return m.group(0)
-        tags = git("tag", "--contains", commits[-1], "--sort=creatordate", "--list", "v*").split()
+        # The NEWEST commit naming the item (15 Nov 2026): the oldest one is often a note that only named it
+        # (F217 was first named in the 0.78.0 review notes, inside v0.78.0), which flipped unreleased work to Live.
+        tags = git("tag", "--contains", commits[0], "--sort=creatordate", "--list", "v*").split()
         if not tags:
             return m.group(0)
         flipped.append(fid + " -> " + tags[0])
