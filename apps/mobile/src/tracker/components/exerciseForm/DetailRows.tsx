@@ -7,7 +7,7 @@
  * The floating feedback button docks as a 24 dp tab on a screen edge, over the outer 4 dp of a 20 dp
  * page margin. The card keeps a 4 dp inner margin, so no row's touch area reaches under that tab.
  */
-import { Pressable, Text, View } from 'react-native';
+import { Pressable, Text, View, useWindowDimensions } from 'react-native';
 
 import { Card, Chip, Icon, PrimaryButton, Sheet } from '@/components/ui';
 import { color, radius, space, type } from '@/theme/tokens';
@@ -42,7 +42,23 @@ export function DetailRows({ rows }: { rows: readonly DetailRowSpec[] }) {
   );
 }
 
+/**
+ * UAT run 43713138161 (his phone: 360 dp, text 1.3): beside its label a value like "Front shoulders, Traps"
+ * had about 150 dp, so it wrapped and was cut. When the screen is that narrow for its text size, a row puts
+ * its value under its label instead (and the photo card drops its small picture tile).
+ */
+export function useCompactForm(): boolean {
+  const { width, fontScale } = useWindowDimensions();
+  return width / Math.max(1, fontScale) < 340;
+}
+
 function DetailRow({ row }: { row: DetailRowSpec }) {
+  const compact = useCompactForm();
+  const valueStyle = {
+    fontFamily: type.bodySemi,
+    fontSize: type.size.body,
+    color: row.missing ? color.accent : color.ink,
+  } as const;
   return (
     <Pressable
       testID={`exercise-row-${row.kind}`}
@@ -63,19 +79,21 @@ function DetailRow({ row }: { row: DetailRowSpec }) {
         backgroundColor: pressed ? color.surfaceSunken : 'transparent',
       })}
     >
-      <Text style={{ fontFamily: type.body, fontSize: type.size.body, color: color.inkMuted, flexShrink: 0, maxWidth: '55%' }}>{row.label}</Text>
-      <Text
-        numberOfLines={2}
-        style={{
-          flex: 1,
-          textAlign: 'right',
-          fontFamily: type.bodySemi,
-          fontSize: type.size.body,
-          color: row.missing ? color.accent : color.ink,
-        }}
-      >
-        {row.value}
-      </Text>
+      {compact ? (
+        <View style={{ flex: 1, gap: 2 }}>
+          <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkMuted }}>{row.label}</Text>
+          <Text numberOfLines={2} style={valueStyle}>
+            {row.value}
+          </Text>
+        </View>
+      ) : (
+        <>
+          <Text style={{ fontFamily: type.body, fontSize: type.size.body, color: color.inkMuted, flexShrink: 0, maxWidth: '55%' }}>{row.label}</Text>
+          <Text numberOfLines={2} style={[valueStyle, { flex: 1, textAlign: 'right' }]}>
+            {row.value}
+          </Text>
+        </>
+      )}
       {row.locked ? null : <Icon name="chevron-right" size={16} color={color.inkFaint} />}
     </Pressable>
   );

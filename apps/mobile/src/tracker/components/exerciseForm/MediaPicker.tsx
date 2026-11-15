@@ -14,6 +14,7 @@ import { color, radius, space, type } from '@/theme/tokens';
 import { Glyph } from '@/tracker/components/TrackerGlyph';
 import type { PickedMedia } from '@/tracker/services/exerciseMedia';
 
+import { useCompactForm } from './DetailRows';
 import { mediaWords } from './formChoices';
 
 type Words = ReturnType<typeof mediaWords>;
@@ -31,6 +32,8 @@ export function MediaCard({
   onOpen: () => void;
   onRemove: () => void;
 }) {
+  // UAT (his phone, 360 dp, text 1.3): beside the tile and the + the words had ~160 dp and ran to 5 lines.
+  const compact = useCompactForm();
   if (!media) {
     return (
       <View
@@ -60,9 +63,11 @@ export function MediaCard({
             backgroundColor: pressed ? color.surface : 'transparent',
           })}
         >
-          <View style={{ width: 56, height: 56, borderRadius: radius.md, backgroundColor: color.accentSoft, alignItems: 'center', justifyContent: 'center' }}>
-            <Glyph name="image" size={26} color={color.accent} />
-          </View>
+          {compact ? null : (
+            <View style={{ width: 56, height: 56, borderRadius: radius.md, backgroundColor: color.accentSoft, alignItems: 'center', justifyContent: 'center' }}>
+              <Glyph name="image" size={26} color={color.accent} />
+            </View>
+          )}
           <View style={{ flex: 1, gap: 3 }}>
             <Text style={{ fontFamily: type.bodyBold, fontSize: type.size.body, color: color.ink }}>{words.add}</Text>
             <Text style={{ fontFamily: type.body, fontSize: type.size.sub, lineHeight: 18, color: color.inkMuted }}>
