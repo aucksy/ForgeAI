@@ -109,6 +109,9 @@ Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept her
   pgaudit.log=read, write, misc_set / log_catalog=off / log_relation=on, db_direct_reads + hq_db_reads_ingest exist).
   Scoped token "mettleup-hq-read-log" made (aucksy's Project only, Logs = Read only, expires 14 Nov 2027; Supabase caps
   at 1 year from now). Value never read by Claude; he pastes it into Add a key as SUPABASE_LOGS_TOKEN (keys.json line added).
+- 16 Nov: he picked option 1 for the key: HQ shows a red warning + emails him when the read log has failed for 1 hour,
+  and emails him 30 days before the token ends (14 Nov 2027). To build after the 5-hour usage reset, before the 18 Nov freeze.
+- 16 Nov: he said "Hindi ok" for R-593's 5 Today lines and R-600's trainers' note (Hinglish read-aloud done).
 - Was: WAITING FOR HIS YES: (a) "yes 0097" (live apply); (b) a scoped Supabase token (only this project, only analytics
   logs read, 1 year) as HQ Worker secret SUPABASE_LOGS_TOKEN; then HQ Worker deploy by the main session.
 - After both: read one Crispy Curves row in the SQL editor, wait 10 min, check hq_db_reads shows it (proof step).
