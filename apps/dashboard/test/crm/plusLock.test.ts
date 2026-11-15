@@ -9,6 +9,7 @@ vi.mock('../../src/crm/shop/api', () => ({ call: (...a: unknown[]) => callMock(.
 vi.mock('../../src/lib/demoLock', () => ({ isDemoLocked: () => false }));
 
 import { GYM_LOCK_AFTER_END_DEFAULT, GYM_UNLOCK_GRACE_DAYS, MEMBER_PLAN_GATE_ON } from '@forgeai/theme';
+import { SETTING_LINES } from '../../src/crm/logic/settingLines';
 import { PLUS_LOCK_WORDS, plusLockCardShown, plusLockChangedLine, plusLockFrom } from '../../src/crm/logic/plusLock';
 import { getPlusLock, plusLockServer, resetPlusLockServerForTest, savePlusLock } from '../../src/crm/shop/plusLockApi';
 
@@ -46,8 +47,9 @@ describe('plusLockFrom', () => {
 
 describe('the words', () => {
   it('say the grace days and never say the data locks', () => {
-    expect(PLUS_LOCK_WORDS.switchHint).toContain(`${GYM_UNLOCK_GRACE_DAYS} more days`);
-    expect(PLUS_LOCK_WORDS.switchHint).toContain('never lose their workouts');
+    // R-561: the line under the switch lives in SETTING_LINES (one sentence, Hinglish too); it says the days and keeps the workouts.
+    expect(SETTING_LINES.plusLock).toContain('{n} days');
+    expect(SETTING_LINES.plusLock).toContain('workouts are always kept');
     expect(PLUS_LOCK_WORDS.savedOn).toContain(`${GYM_UNLOCK_GRACE_DAYS} days`);
     for (const v of Object.values(PLUS_LOCK_WORDS)) expect(v).not.toMatch(/\bOK\b/);
   });

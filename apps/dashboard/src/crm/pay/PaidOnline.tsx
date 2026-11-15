@@ -14,6 +14,8 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 
+import { usePanelRefresh } from '../ui/usePanelRefresh';
+
 import { useAuth } from '../auth/AuthProvider';
 import type { CrmSnapshot, RecordPaymentInput } from '../data/adapter';
 import { takerOf } from '../auth/permissions';
@@ -163,6 +165,8 @@ export function PaidOnlineCard() {
     if (!on || !key) return;
     return startVisiblePoll(sweep, EVERY_MS);
   }, [on, key, sweep]);
+  // R-561: the top bar's Refresh looks for online payments again too.
+  usePanelRefresh(sweep, on && Boolean(key));
 
   const savedByHand = async (r: PayRequest) => {
     if (!key) return;

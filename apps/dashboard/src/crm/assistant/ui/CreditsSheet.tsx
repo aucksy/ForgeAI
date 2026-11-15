@@ -23,6 +23,7 @@ import { refreshAssistantWallet } from '../useAssistant';
 import { aiTasks, saveMemberAi, type AiQuestions, type AiWallet, type AiWalletRow, type MemberAi } from '../api';
 import type { Line } from '../catalogue';
 import { jobLine } from '../jobs';
+import { groupLabelText } from '../../ui/GroupLabel';
 import { quiet, say } from './parts';
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -302,7 +303,8 @@ function MemberAiSection({ start, memberDay, assistKey }: { start: MemberAi; mem
   );
 }
 
-const headStyle = { margin: '0 0 4px', fontFamily: font.body, fontSize: 13, fontWeight: 800, letterSpacing: '0.08em', textTransform: 'uppercase', color: color.inkMuted } as const;
+/** R-561: the sheet's section headings use the shared category heading look (ui/GroupLabel.tsx). */
+const headStyle = { ...groupLabelText, margin: '0 0 4px' } as const;
 
 function PriceRow({ label, price }: { label: string; price: string }) {
   return (

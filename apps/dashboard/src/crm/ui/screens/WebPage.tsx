@@ -20,6 +20,8 @@ import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, 
 import type { GymHours } from '@forgeai/theme';
 
 import { useAuth } from '../../auth/AuthProvider';
+import { t } from '../../lang/lang';
+import { SETTING_LINES } from '../../logic/settingLines';
 import { getPage, photoFile, savePage } from '../../gympage/api';
 import {
   HIGHLIGHTS,
@@ -301,7 +303,7 @@ function PageEditor({ ownerKey, saved, onSaved }: { ownerKey: string; saved: Sav
                 set({ slug: slugTyped(v) });
               }}
               error={errors.slug}
-              hint="Small letters, numbers and dashes. Made from your gym’s name and area; you can change it until you publish."
+              hint={t(SETTING_LINES.pageAddress)}
             />
             <p aria-live="polite" style={{ ...small, marginTop: space.xs, overflowWrap: 'anywhere' }}>
               Your page: <strong style={{ color: color.ink, fontFamily: font.mono }}>{pageAddress(draft.slug || '…')}</strong>
@@ -322,7 +324,7 @@ function PageEditor({ ownerKey, saved, onSaved }: { ownerKey: string; saved: Sav
           onChange={(v) => set({ mapsUrl: v.trim() })}
           placeholder="https://maps.app.goo.gl/…"
           error={errors.mapsUrl}
-          hint="Open your gym in Google Maps, tap Share, then Copy link and paste it here. Without it, the page finds your gym by its name and address."
+          hint={t(SETTING_LINES.mapsLink)}
         />
       </Card>
 
@@ -419,7 +421,7 @@ function PageEditor({ ownerKey, saved, onSaved }: { ownerKey: string; saved: Sav
         >
           Show my gym’s phone number, with a Call button
         </CheckField>
-        <CheckField checked={draft.whatsapp} onChange={(v) => set({ whatsapp: v })} disabled={!draft.showPhone}>
+        <CheckField checked={draft.whatsapp} onChange={(v) => set({ whatsapp: v })} disabled={!draft.showPhone} hint={t(SETTING_LINES.whatsapp)}>
           Add a WhatsApp button for the same number
         </CheckField>
         <p style={{ ...small, marginTop: space.sm }}>Questions sent from your page come to Enquiries either way.</p>
@@ -441,11 +443,11 @@ function PageEditor({ ownerKey, saved, onSaved }: { ownerKey: string; saved: Sav
         <CheckField
           checked={draft.published}
           onChange={(v) => set({ published: v })}
-          hint="Untick to take your page down at any time."
+          hint={t(SETTING_LINES.publish)}
         >
           Show my page to visitors
         </CheckField>
-        <CheckField checked={draft.indexable} onChange={(v) => set({ indexable: v })} hint="Off: only people with the link find your page. On: Google may show it in search results.">
+        <CheckField checked={draft.indexable} onChange={(v) => set({ indexable: v })} hint={t(SETTING_LINES.indexable)}>
           Let Google list my page
         </CheckField>
         {draft.published && termsAt === null && (

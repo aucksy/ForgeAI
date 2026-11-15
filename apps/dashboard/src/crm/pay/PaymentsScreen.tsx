@@ -18,6 +18,7 @@ import { useEffect, useState } from 'react';
 import { useCan } from '../auth/AuthProvider';
 import { useJoinPayOn } from '../gympage/pagesOpen';
 import { t } from '../lang/lang';
+import { SETTING_LINES } from '../logic/settingLines';
 import { validUpiId } from '../logic/upiPay';
 import { useCrm } from '../store';
 import { Button, Card, CheckField, ErrorBanner, PageHeader, Pill, Row, SectionTitle, TextField, Toast, color, font, space } from '../ui/kit';
@@ -226,7 +227,7 @@ function SwitchesCard({
         checked={appOn}
         disabled={busy || blocked !== null}
         onChange={(v) => void save({ app: v })}
-        hint={t('Members see a Pay now button for what they owe. When off, they still see what they owe and pay at the desk.')}
+        hint={t(SETTING_LINES.payInApp)}
       >
         {t('Take payments in the member app')}
       </CheckField>
@@ -235,7 +236,7 @@ function SwitchesCard({
           checked={webOn}
           disabled={busy || blocked !== null}
           onChange={(v) => void save({ web: v })}
-          hint={t('People who join online with your join link can pay for their plan there. When off, they send their details and pay at the desk.')}
+          hint={t(SETTING_LINES.payOnJoin)}
         >
           {t('Take payments when people join online')}
         </CheckField>

@@ -2,8 +2,11 @@
  * R-506 phase 3: the gym's alerts on this phone or computer with the admin app closed (logic/webPush.ts).
  *  - AlertsSettingsCard (Settings): turn alerts on or off for this device; the owner picks when the rest come
  *    ("Instantly", "Once a day" at a time, "Once a week" on a day at a time). The desk sees the choice, read only.
- *  - AlertsOfferCard (Today): the one-time offer, until it is turned on, blocked or "Not now". The browser's own
- *    permission question comes only from a tap on "Turn on alerts", never on load.
+ *  - BellAlertsCard (R-561, owner 15 Nov 2026: "the button to switch on the alerts can just stay there [in the
+ *    notifications panel] until they either turn it on or X out of it ... it's already there in the settings"): at the
+ *    top of the bell panel while alerts are off for this device. X hides it for good on this device. It replaced the
+ *    offer on Today (same closed flag, so a "Not now" tapped there stays closed). The
+ *    browser's own permission question comes only from a tap on "Turn on alerts", never on load.
  * Both are hidden in the demo gym, offline, and until the gym's server has 0076.
  */
 
@@ -12,8 +15,8 @@ import { useCallback, useEffect, useState } from 'react';
 import { useAuth, useRole } from '../auth/AuthProvider';
 import { PUSH_WORDS as W, TIME_CHOICES, WEEKDAYS, restLine, settingLine, showAlertsOffer, timeLabel, type AlertMode, type AlertSettings } from '../logic/webPush';
 import { browserPushSupport, getAlertSettings, pushIsOn, saveAlertSettings, turnOffPush, turnOnPush, type TurnOn } from '../shop/webPushApi';
-import { Button, Card, ChipToggle, ErrorBanner, SectionTitle, SelectField, color, font, space } from './kit';
-import { useSetupTurn } from './SetupSlot';
+import { t } from '../lang/lang';
+import { Button, Card, ChipToggle, ErrorBanner, SectionTitle, SelectField, TOUCH, color, font, radius, space } from './kit';
 
 const OFFER_KEY = 'mettleup.alertsOffer.closed';
 const body = { margin: 0, fontFamily: font.body, fontSize: 14, lineHeight: 1.5, color: color.inkSecondary } as const;
@@ -197,22 +200,24 @@ function timeOptions(current: number): { value: string; label: string }[] {
   return all.map((m) => ({ value: String(m), label: timeLabel(m) }));
 }
 
-/** Today: the one-time offer. */
-export function AlertsOfferCard() {
+/**
+ * R-561: the bell panel's first card while alerts are off for this device. Hidden when they are on, when this browser
+ * cannot show them (an iPhone not added to the Home Screen, an old browser), when they are blocked, when the gym's
+ * server has no alerts part (0076), and for good once X is tapped on this device.
+ */
+export function BellAlertsCard() {
   const { key, settings, on, setOn } = useAlertsState();
   const [closed, setClosed] = useState(offerClosed);
   const [busy, setBusy] = useState(false);
   const [note, setNote] = useState<string | null>(null);
   const [perm, setPerm] = useState(permission);
   const show = showAlertsOffer({ support: browserPushSupport(), permission: perm, on, dismissed: closed, ready: Boolean(key && settings) });
-  // Fresh eyes (14 Nov 2026): one set-up card on Today at a time; this one comes after Get started.
-  const myTurn = useSetupTurn('alerts', Boolean(key) && (show || Boolean(note)));
-  if (!myTurn || !key) return null;
+  if (!key || (!show && !note)) return null;
   const close = () => {
     try {
       localStorage.setItem(OFFER_KEY, '1');
     } catch {
-      // quiet: a browser that keeps nothing shows the offer again next time
+      // quiet: a browser that keeps nothing shows the card again next time
     }
     setClosed(true);
     setNote(null);
@@ -225,34 +230,70 @@ export function AlertsOfferCard() {
       setOn(r === 'on');
       setNote(r === 'on' ? W.on : (turnOnWords(r) ?? W.failed));
     } catch (e) {
-      console.warn('[ForgeErr] alerts: turning on from Today', e);
+      console.warn('[ForgeErr] alerts: turning on from the bell', e);
       setNote(W.failed);
     } finally {
       setBusy(false);
     }
   };
+  const done = on && note === W.on;
   return (
-    <Card style={{ marginBottom: space.lg }}>
-      <div data-testid="alerts-offer">
-        <SectionTitle>{W.offerTitle}</SectionTitle>
-        {note ? <p style={body}>{note}</p> : <p style={body}>{W.offerText}</p>}
-        <div style={{ marginTop: space.md, display: 'flex', flexWrap: 'wrap', gap: space.sm }}>
-          {note ? (
-            <Button variant="ghost" onClick={close}>
-              OK
-            </Button>
-          ) : (
-            <>
-              <Button onClick={yes} disabled={busy} needsInternet>
-                {W.offerYes}
-              </Button>
-              <Button variant="quiet" onClick={close}>
-                {W.offerNo}
-              </Button>
-            </>
-          )}
-        </div>
+    <section
+      data-testid="bell-alerts-card"
+      aria-label={t(W.bellTitle)}
+      style={{
+        position: 'relative',
+        display: 'grid',
+        gap: space.sm,
+        padding: `${space.md}px ${space.md}px ${space.md}px ${space.md}px`,
+        marginBottom: space.md,
+        borderRadius: radius.md,
+        border: `1px solid ${color.accent}`,
+        background: color.accentSoft,
+      }}
+    >
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: space.sm }}>
+        <h3 style={{ margin: 0, flex: 1, minWidth: 0, paddingTop: 6, fontFamily: font.body, fontSize: 15, fontWeight: 800, color: color.ink }}>{t(W.bellTitle)}</h3>
+        {done ? null : (
+          <button
+            type="button"
+            onClick={close}
+            aria-label={t(W.bellClose)}
+            style={{
+              flexShrink: 0,
+              width: TOUCH - 8,
+              height: TOUCH - 8,
+              margin: -4,
+              display: 'grid',
+              placeItems: 'center',
+              background: 'transparent',
+              border: 'none',
+              borderRadius: radius.pill,
+              color: color.inkSecondary,
+              cursor: 'pointer',
+            }}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden>
+              <path d="M6 6l12 12M18 6L6 18" />
+            </svg>
+          </button>
+        )}
       </div>
-    </Card>
+      {note ? (
+        <p style={{ ...body, color: color.ink }}>{t(note)}</p>
+      ) : (
+        <>
+          <p style={{ ...body, color: color.ink }}>{t(W.bellText)}</p>
+          <p style={body}>{t(W.bellLater)}</p>
+        </>
+      )}
+      {done ? null : (
+        <div>
+          <Button onClick={yes} disabled={busy} needsInternet>
+            {t(W.offerYes)}
+          </Button>
+        </div>
+      )}
+    </section>
   );
 }

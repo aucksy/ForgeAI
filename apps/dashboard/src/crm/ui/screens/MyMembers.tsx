@@ -20,6 +20,8 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import { usePanelRefresh } from '../usePanelRefresh';
+
 import { useAuth } from '../../auth/AuthProvider';
 import { t } from '../../lang/lang';
 import { progressTag } from '../../logic/progressTrend';
@@ -61,17 +63,25 @@ export function MyMembersScreen({ memberId = null }: { memberId?: string | null 
   const me = session?.person?.name ?? null;
   const [load, setLoad] = useState<Load>({ state: 'loading' });
 
-  const fetchList = useCallback(async () => {
-    if (!key) return;
+  const fetchList = useCallback(async (): Promise<boolean> => {
+    if (!key) return true;
     setLoad({ state: 'loading' });
     try {
       const r = await trainerApi.getTrainerMembers(key);
       setLoad(r === 'missing' ? { state: 'missing' } : r === 'refused' ? { state: 'refused' } : { state: 'ready', data: r });
+      return true;
     } catch (e) {
       console.warn('[ForgeErr] my members: reading', e);
       setLoad({ state: 'error', message: trainerErrorWords(e) ?? errorWords(e) });
+      return false;
     }
   }, [key]);
+  // R-561: the top bar's Refresh reads the list again and forgets what was read of each member (it replaced this
+  // page's own Refresh button).
+  usePanelRefresh(async () => {
+    forgetProgress();
+    return fetchList();
+  });
 
   useEffect(() => {
     void fetchList();
@@ -90,17 +100,6 @@ export function MyMembersScreen({ memberId = null }: { memberId?: string | null 
       <PageHeader
         title="Training progress"
         subtitle={owner ? 'Every member who shares their workouts, and their trainer' : 'Your members: who to talk to today'}
-        actions={
-          <Button
-            variant="ghost"
-            onClick={() => {
-              forgetProgress();
-              void fetchList();
-            }}
-          >
-            Refresh
-          </Button>
-        }
       />
       {!key ? (
         <Card>

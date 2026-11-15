@@ -26,6 +26,7 @@ import { useAssistant } from '../../assistant/useAssistant';
 import { useBranches } from '../../branches/context';
 import { t } from '../../lang/lang';
 import { navSections, type NavGroupId, type SetupProgress } from '../../logic/navGroups';
+import { GroupLabel } from '../GroupLabel';
 import { ProgressRing, progressWords, useGetStarted } from '../GetStartedCard';
 import { useWebPage } from '../../gympage/pageState';
 
@@ -55,7 +56,8 @@ export function MoreScreen() {
   const assistantOn = useAssistant().on;
   // #41: "All branches", as in the side menu (an owner with 2 or more branches).
   const { multi, canOpenOthers } = useBranches();
-  // R-526: Set up your gym, on top with its ring while steps are left; under Your gym once done or moved down.
+  // R-526: Set up your gym, on top while steps are left; under Your gym once done or moved down. R-561: its ring and
+  // "3 of 7" stay on the row wherever it sits, until every step is done.
   const getStarted = useGetStarted();
   // F207: the gym's web page, once its server has the web page part (0080).
   const webPageOn = Boolean(useWebPage());
@@ -64,7 +66,8 @@ export function MoreScreen() {
     label: 'Set up your gym',
     hint: 'Finish these steps and your gym is ready for members.',
     icon: 'setup',
-    ...(getStarted.pending ? { progress: getStarted.progress } : { group: 'gym' as const }),
+    ...(getStarted.pending ? {} : { group: 'gym' as const }),
+    ...(getStarted.showProgress ? { progress: getStarted.progress } : {}),
   };
   // Staff never sees Expenses (permissions.ts); the rest stays, with words that fit what they can do.
   // R-526: in the side menu's order. Members, Visits and Money are on the bottom bar, so not here.
@@ -129,7 +132,7 @@ export function MoreScreen() {
     {
       path: '/settings', group: 'gym',
       label: 'Settings',
-      hint: owner ? 'Gym details, screen colours, app' : 'Screen colours, app, sign-in',
+      hint: owner ? 'Gym details, payments and the member app' : 'Screen colours, app, sign-in',
       icon: 'settings',
     },
     // R-148: what changed in the admin app (R-239: its own page, /news).
@@ -149,20 +152,11 @@ export function MoreScreen() {
         const title = g.title ? t(g.title) : null;
         return (
       <section key={g.group ?? 'top'} aria-label={title ?? t('More')} style={{ marginBottom: space.lg }}>
+      {/* R-561: the shared category heading (ui/GroupLabel.tsx), easy to tell from the rows. */}
       {title ? (
-      <h2
-        style={{
-          margin: `0 0 ${space.sm}px`,
-          fontFamily: font.body,
-          fontSize: 12,
-          fontWeight: 700,
-          letterSpacing: 0.6,
-          textTransform: 'uppercase',
-          color: color.inkMuted,
-        }}
-      >
-        {title}
-      </h2>
+        <GroupLabel first={false} roomAbove={space.xs}>
+          {title}
+        </GroupLabel>
       ) : null}
       <Card>
         <div style={{ display: 'grid' }}>

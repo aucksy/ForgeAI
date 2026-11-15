@@ -71,7 +71,7 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   'Who can open this admin app, and your PIN': 'Yeh admin app kaun khol sakta hai, aur aapka PIN',
   'Your PIN, and signing out': 'Aapka PIN, aur sign out',
   'Link and QR poster': 'Link aur QR poster',
-  'Gym details, screen colours, app': 'Gym ki details, screen ke rang, app',
+  'Gym details, payments and the member app': 'Gym ki details, payments aur member app',
   'Screen colours, app, sign-in': 'Screen ke rang, app, sign-in',
   'Changes to this admin app': 'Is admin app mein kya badla',
   'Ask a question, or tell MettleUp a problem or an idea': 'Sawaal poocho, ya MettleUp ko koi dikkat ya idea batao',
@@ -233,8 +233,6 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   'Your members and payments are kept online. They stay safe if a phone or computer breaks.':
     'Aapke members aur payments online rakhe jaate hain. Phone ya computer kharab ho jaye, tab bhi sab safe rahta hai.',
   Language: 'Bhasha',
-  'Hinglish shows the main screens in Hindi words written in English letters. Other screens stay in English for now. Your choice is kept on this device.':
-    'Hinglish mein main screens Hindi shabdon mein, English letters mein dikhti hain. Baaki screens abhi English mein rahengi. Aapki pasand isi device par yaad rahegi.',
 
   // ── Gym ready (after Create my gym) ────────────────────────────────────
   'Your gym is ready': 'Aapka gym taiyaar hai',
@@ -737,11 +735,7 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   // R-528: the owner's two switches.
   'Where members can pay online': 'Members online kahan pay kar sakte hain',
   'Take payments in the member app': 'Member app mein payment lo',
-  'Members see a Pay now button for what they owe. When off, they still see what they owe and pay at the desk.':
-    'Members ko baaki paison ke liye Pay now button dikhta hai. Band hone par bhi unhe baaki paise dikhte hain, aur woh desk par pay karte hain.',
   'Take payments when people join online': 'Online join karne walon se payment lo',
-  'People who join online with your join link can pay for their plan there. When off, they send their details and pay at the desk.':
-    'Jo log aapke join link se online join karte hain, woh wahin plan ke paise de sakte hain. Band hone par woh apni details bhejte hain aur desk par pay karte hain.',
   'Add your UPI ID or connect a payment company first.': 'Pehle apni UPI ID daalo ya payment company connect karo.',
   'These switches are not switched on yet. Until then members pay in the app as now, and people who join online pay at the desk.':
     'Yeh switch abhi chalu nahi hue hain. Tab tak members app mein abhi jaise pay karte hain, aur online join karne waale desk par pay karte hain.',
@@ -1371,4 +1365,90 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   'Free trial, {n} days · {from} to {to}': 'Free trial, {n} din · {from} se {to} tak',
   'Let them in until {date} · Nothing paid': '{date} tak andar aane do · Kuch pay nahi kiya',
   'Trial ended on {date} · Not a member yet': 'Trial {date} ko khatam hua · Abhi member nahi hain',
+  // R-561 (15 Nov 2026): the line under each setting (logic/settingLines), the bell's groups and payment labels,
+  // the alerts card in the bell, and the top bar's short Refresh ages.
+  'This name shows in your members’ MettleUp app and on your receipts.':
+    'Yeh naam aapke members ki MettleUp app mein aur aapki receipts par dikhta hai.',
+  'Members of this branch see this name in their MettleUp app and on its receipts.':
+    'Is branch ke members ko yeh naam unki MettleUp app mein aur is branch ki receipts par dikhta hai.',
+  'This number is printed on your receipts, and your web page can show it with a Call button.':
+    'Yeh number aapki receipts par chhapta hai, aur aapka web page ise Call button ke saath dikha sakta hai.',
+  'If your gym is registered for GST, this number shows on your receipts.':
+    'Agar aapka gym GST mein registered hai, toh yeh number aapki receipts par dikhta hai.',
+  'If this branch is registered for GST, this number shows on its receipts.':
+    'Agar yeh branch GST mein registered hai, toh yeh number iski receipts par dikhta hai.',
+  'This address shows on your receipts and on your web page.':
+    'Yeh address aapki receipts aur aapke web page par dikhta hai.',
+  'Fee reminders, renewal messages and receipts show this UPI ID with a link that opens the member’s UPI app with the amount already filled in.':
+    'Fee reminders, renewal messages aur receipts mein yeh UPI ID ek link ke saath dikhti hai, jo member ki UPI app ko amount bhar kar kholta hai.',
+  'Tick this box to show members a Pay now button in the MettleUp app for what they owe, or leave it unticked so that they pay at the desk.':
+    'Is box par tick karein taaki members ko MettleUp app mein baaki paison ke liye Pay now button dikhe, ya tick na karein taaki woh desk par pay karein.',
+  'Tick this box to let people who join with your join link pay for their plan online, or leave it unticked so that they pay at the desk.':
+    'Is box par tick karein taaki aapke join link se judne wale log apna plan online pay kar sakein, ya tick na karein taaki woh desk par pay karein.',
+  'This name shows at the top of the All branches screen, but members still see each branch’s own name.':
+    'Yeh naam All branches screen ke upar dikhta hai, par members ko har branch ka apna naam hi dikhta hai.',
+  'Your members’ MettleUp app uses this colour for its buttons, highlights and charts.':
+    'Aapke members ki MettleUp app yeh rang apne buttons, highlights aur charts ke liye use karti hai.',
+  'Your members’ MettleUp app uses this dark colour for its pages and makes the cards a little lighter.':
+    'Aapke members ki MettleUp app yeh dark rang apne pages ke liye use karti hai, aur cards ko thoda halka banati hai.',
+  'Tick this box to show members one tip on the Gym tab of their app, for example “Leg day is quieter on Tuesday”.':
+    'Is box par tick karein taaki members ko unki app ke Gym tab par ek tip dikhe, jaise “Leg day is quieter on Tuesday”.',
+  'Tick this box to stop the paid features {n} days after a member’s plan ends until they renew, while their workouts are always kept.':
+    'Is box par tick karein taaki member ka plan khatam hone ke {n} din baad paid features renew hone tak band rahein; unke workouts hamesha save rehte hain.',
+  'Type how many free days you give, with one tap, to each friend who joins through a member’s invite link, or leave it empty to give none.':
+    'Likhein ki member ke invite link se judne wale har dost ko kitne free din dene hain (aap unhe ek tap se dete hain), ya koi din na dene ke liye ise khali chhodein.',
+  'Type up to 120 letters here to tell members something they should know about your gym timings.':
+    'Yahan 120 letters tak likhein, taaki members ko aapke gym timings ke baare mein zaroori baat pata chale.',
+  'This is your web page’s address, made from your gym’s name and area, and you can change it until the page is published.':
+    'Yeh aapke web page ka address hai, jo aapke gym ke naam aur area se bana hai, aur page publish hone tak aap ise badal sakte hain.',
+  'Paste your gym’s Google Maps link here by tapping Share and then Copy link in Maps, so that visitors find the right place.':
+    'Maps mein Share aur phir Copy link tap karke apne gym ka Google Maps link yahan paste karein, taaki log sahi jagah pahunchein.',
+  'Tick this box to let people message your gym on WhatsApp from your web page.':
+    'Is box par tick karein taaki log aapke web page se aapke gym ko WhatsApp par message kar sakein.',
+  'Tick this box to let anyone with the link see your web page, and untick it at any time to hide the page.':
+    'Is box par tick karein taaki link wala koi bhi aapka web page dekh sake, aur page chhupane ke liye kabhi bhi tick hata dein.',
+  'Tick this box so that Google may show your web page in search results, or leave it unticked so that only people with the link find it.':
+    'Is box par tick karein taaki Google aapka web page search results mein dikha sake, ya tick na karein taaki sirf link wale log hi ise dhoondh sakein.',
+  'You find this number on the machine under Menu > System Info > Serial Number.':
+    'Yeh number machine par Menu > System Info > Serial Number mein milta hai.',
+  'From MettleUp':
+    'MettleUp ki taraf se',
+  'Notifications':
+    'Notifications',
+  'Payment':
+    'Payment',
+  'Paid':
+    'Pay ho gaya',
+  'Check this payment':
+    'Yeh payment check karein',
+  'Payment problem':
+    'Payment mein dikkat',
+  now:
+    'abhi',
+  '{n} s':
+    '{n} s',
+  '{n} min':
+    '{n} min',
+  '1 h+':
+    '1 h+',
+  'Turn on alerts':
+    'Alerts chalu karein',
+  'Get a notice on this phone or computer when a member needs you, even when the admin app is closed.':
+    'Jab kisi member ko aapki zaroorat pade, toh admin app band hone par bhi is phone ya computer par notice paayein.',
+  'If you close this card, you can still turn alerts on in Settings.':
+    'Yeh card band karne ke baad bhi aap Settings mein alerts chalu kar sakte hain.',
+  'Close this card':
+    'Yeh card band karein',
+  'Alerts are on for this device.':
+    'Is device par alerts chalu hain.',
+  'Alerts could not be turned on. Check the internet and try again.':
+    'Alerts chalu nahi ho paaye. Internet check karke dobara koshish karein.',
+  'Alerts are blocked in this browser. Allow notifications for this site in the browser settings, then come back here.':
+    'Is browser mein alerts block hain. Browser settings mein is site ke liye notifications allow karein, phir yahan wapas aayein.',
+  'This browser cannot show alerts when the admin app is closed. Use Chrome, Edge or Firefox.':
+    'Admin app band hone par yeh browser alerts nahi dikha sakta. Chrome, Edge ya Firefox use karein.',
+  'On an iPhone or iPad, first add the admin app to your Home Screen (Share, then Add to Home Screen). Open it from there and turn alerts on.':
+    'iPhone ya iPad par pehle admin app ko Home Screen par jodein (Share, phir Add to Home Screen). Phir wahan se kholkar alerts chalu karein.',
+  'Alerts are not ready yet. Try again later.':
+    'Alerts abhi taiyaar nahi hain. Thodi der baad koshish karein.',
 };

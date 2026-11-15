@@ -8,6 +8,7 @@ import { useSyncExternalStore, type CSSProperties, type ReactNode } from 'react'
 import { t } from '../../lang/lang';
 import { TOUCH, color, font, radius, space } from '../../ui/kit';
 import type { Line } from '../catalogue';
+import { groupLabelText } from '../../ui/GroupLabel';
 
 /** A Line in the owner's language (English or Hinglish). */
 export function say(l: Line): string {
@@ -92,15 +93,8 @@ export function SectionLabel({ children, id }: { children: ReactNode; id?: strin
   return (
     <h3
       id={id}
-      style={{
-        margin: 0,
-        fontFamily: font.body,
-        fontSize: 13,
-        fontWeight: 800,
-        letterSpacing: '0.08em',
-        textTransform: 'uppercase',
-        color: color.inkMuted,
-      }}
+      // R-561: the shared category heading look (ui/GroupLabel.tsx), easy to notice in light and dark.
+      style={{ ...groupLabelText, margin: 0 }}
     >
       {children}
     </h3>

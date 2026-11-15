@@ -23,7 +23,7 @@ async function menuRows(page) {
   const links = menuOf(page).locator('[data-sidebar-rows]').getByRole('link');
   return (await links.allInnerTexts()).map((t) => t.split('\n')[0].trim());
 }
-const menuShot = (page, name) => shot(page, name, { clip: { x: 0, y: 0, width: 260, height: page.viewportSize().height } });
+const menuShot = (page, name) => shot(page, name, { clip: { x: 0, y: 0, width: 300, height: page.viewportSize().height } });
 
 test.describe('R526 on a computer', () => {
   test.use(COMPUTER);

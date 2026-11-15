@@ -14,7 +14,6 @@ import { QuickActions } from '../QuickActions';
 import { InstallCard } from '../InstallCard';
 import { PhoneLinksCard } from '../PhoneLinksCard';
 import { PlanRequestsCard } from '../PlanRequestsCard';
-import { AlertsOfferCard } from '../AlertsCards';
 import { SetupSlotProvider } from '../SetupSlot';
 import { JoinedOnlineCard } from '../JoinedOnlineCard';
 import { LatestAlertsCard, NeedsYouCard } from '../NeedsYou';
@@ -159,8 +158,7 @@ export function TodayScreen() {
       <NeedsYouCard />
       {/* R-506 (0075): the latest from members, the last 24 hours (hidden when none or before 0075). */}
       <LatestAlertsCard />
-      {/* R-506 (0076): the one-time offer of alerts with the admin app closed. */}
-      <AlertsOfferCard />
+      {/* R-561: the offer of alerts with the admin app closed moved to the top of the bell panel (BellAlertsCard). */}
 
       {/* F201: the AI Assistant's box and today's ideas (owner only; hidden until the gym's server has 0071). */}
       <TodayAiCard />

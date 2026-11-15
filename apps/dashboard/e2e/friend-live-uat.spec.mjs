@@ -186,12 +186,12 @@ for (const size of ['phone', 'computer']) {
         },
       });
 
-      // 1. Enquiries says how fresh it is.
+      // 1. The top bar says how fresh the page is (R-561: one Refresh for the whole panel, on every page).
       await toEnquiries();
-      const fresh = main.getByTestId('updated-records');
+      const fresh = page.getByTestId('panel-refresh');
       await expect(fresh).toBeVisible({ timeout: 15_000 });
       await expect(fresh.getByTestId('updated-words')).toHaveText(/^Updated (just now|\d+ s ago)$/);
-      await expect(fresh.getByRole('button', { name: 'Refresh' })).toBeVisible();
+      await expect(fresh.getByRole('button', { name: /^Refresh/ })).toBeVisible();
       await expect(main.getByText('Sunil Mehta', { exact: true })).toHaveCount(0);
       if (phone) await expectFitsPhone(page, 'on Enquiries with the Updated line');
       await shot(page, `${size}-friendlive-1-enquiries-fresh`);
@@ -230,10 +230,10 @@ for (const size of ['phone', 'computer']) {
       await fillFriendForm(tab, 'Karan Singh', '9829066666', 'Any time');
       await page.bringToFront();
       const alertReads = server.calls.filter((c) => c === 'owner_alerts').length;
-      await main.getByTestId('updated-records').getByRole('button', { name: 'Refresh' }).click();
+      await page.getByTestId('panel-refresh').getByRole('button', { name: /^Refresh/ }).click();
       await expect(main.getByText('Karan Singh', { exact: true })).toBeVisible({ timeout: 5_000 });
       expect(server.calls.filter((c) => c === 'owner_alerts').length).toBeGreaterThan(alertReads);
-      await expect(main.getByTestId('updated-records').getByTestId('updated-words')).toHaveText('Updated just now');
+      await expect(page.getByTestId('panel-refresh').getByTestId('updated-words')).toHaveText('Updated just now');
       await shot(page, `${size}-friendlive-4-after-refresh`);
 
       // 5. Today: the three alerts on "Latest from your members", newest first, with the same Refresh line.
@@ -242,10 +242,12 @@ for (const size of ['phone', 'computer']) {
       await expect(card).toBeVisible({ timeout: 15_000 });
       await expect(card).toContainText('Asha invited Sunil to your gym. Sunil already asked about joining: call them from Enquiries today.');
       await expect(card).toContainText("Asha's friend asked about joining your gym. Call them from Enquiries.");
-      const needsFresh = main.getByTestId('updated-needs');
+      // R-561: Today has no Refresh of its own any more; the top bar's one Refresh reads the alerts too.
+      await expect(main.getByRole('button', { name: /^Refresh/ })).toHaveCount(0);
+      const needsFresh = page.getByTestId('panel-refresh');
       await expect(needsFresh).toHaveCount(1);
       await expect(needsFresh.getByTestId('updated-words')).toHaveText(/^Updated (just now|\d+ s ago)$/);
-      await needsFresh.getByRole('button', { name: 'Refresh' }).click();
+      await needsFresh.getByRole('button', { name: /^Refresh/ }).click();
       await expect(needsFresh.getByTestId('updated-words')).toHaveText('Updated just now');
       if (phone) await expectFitsPhone(page, 'on Today with the alerts and the Updated line');
       await shot(page, `${size}-friendlive-5-today-alerts`);

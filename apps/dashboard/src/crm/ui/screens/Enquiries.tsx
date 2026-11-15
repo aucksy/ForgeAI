@@ -37,7 +37,6 @@ import {
 } from '../../logic/enquiries';
 import { alreadyRewarded, friendReward, invitedAgainOf, invitedAgainWords, referralOf, type FriendReward } from '../../logic/referrals';
 import { t } from '../../lang/lang';
-import { UpdatedLine } from '../UpdatedLine';
 import { memberPrefill, selfJoinOf, sellPlanFor, sellStartFor } from '../../logic/selfJoin';
 import { PAGE_ASK_PREFIX, pageAskOf } from '../../gympage/logic';
 import { usePagesOpen } from '../../gympage/pagesOpen';
@@ -164,11 +163,6 @@ export function EnquiriesScreen({ startAdding }: { startAdding?: boolean } = {})
         subtitle="People who asked about joining"
         actions={addButton}
       />
-
-      {/* R-539: how fresh this list is (pulled every 15 s while in view), and Refresh. */}
-      <div style={{ marginTop: -space.sm, marginBottom: space.md }}>
-        <UpdatedLine source="records" />
-      </div>
 
       {error && <ErrorBanner>{error}</ErrorBanner>}
 

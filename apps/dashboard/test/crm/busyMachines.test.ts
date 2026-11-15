@@ -9,9 +9,10 @@ vi.mock('../../src/crm/shop/api', () => ({ call: (...a: unknown[]) => callMock(.
 vi.mock('../../src/lib/demoLock', () => ({ isDemoLocked: () => false }));
 
 import { READY_MACHINES } from '@forgeai/theme';
+
+import { SETTING_LINES } from '../../src/crm/logic/settingLines';
 import {
   MACHINES_HOW,
-  MACHINES_MEMBER_SEES,
   countedInDraft,
   draftFrom,
   machineErrorWords,
@@ -117,7 +118,7 @@ describe('the words', () => {
     expect(machineErrorWords({ message: 'INVALID' })).toMatch(/could not be saved/);
     expect(machineErrorWords(new Error('SUSPENDED'))).toMatch(/paused/);
     expect(machineErrorWords(new Error('timed out'))).toBeNull();
-    expect(`${MACHINES_HOW} ${MACHINES_MEMBER_SEES}`).not.toMatch(/\b(volume|PR|session)\b/i);
+    expect(`${MACHINES_HOW} ${SETTING_LINES.busyMachines}`).not.toMatch(/\b(volume|PR|session)\b/i);
   });
 });
 

@@ -1,8 +1,8 @@
 /**
  * R-539 (owner, 14 Nov 2026): "ensure that these real time notifications or changes ... is basically popping up real
  * time. If not real-time, whatever the minimum possible gap ... we should give them a refresh button somewhere".
- * How fresh the panel's lists are, for the quiet "Updated 20 s ago" line with its Refresh button (ui/UpdatedLine.tsx)
- * on Enquiries and on Today's "Needs you":
+ * How fresh the panel's lists are, for "Updated 20 s ago" beside the panel's one Refresh button in the top bar
+ * (R-561, ui/RefreshButton.tsx; it replaced the quiet lines on Enquiries and on Today's "Needs you"):
  *  - 'records': the gym's records (members, enquiries ...), pulled every 15 s while the tab is in view (store.tsx);
  *  - 'needs':   the alerts and the waiting lists, read every minute while the tab is in view (ui/NeedsYou.tsx).
  * Both stop while the tab is hidden (R-522: Cloudflare's free plan) and look again at once when it comes back. New

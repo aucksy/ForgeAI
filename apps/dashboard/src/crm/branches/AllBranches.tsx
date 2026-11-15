@@ -7,6 +7,8 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
+import { usePanelRefresh } from '../ui/usePanelRefresh';
+
 import type { CrmData, CrmSnapshot } from '../data/adapter';
 import { formatDay } from '../logic/dates';
 import { formatINR, formatINRShort } from '../logic/money';
@@ -56,7 +58,10 @@ export function AllBranchesScreen() {
     );
     setOthers(got);
     setLoading(false);
+    return got.every((g) => g.error === null);
   }, [branches, currentGymId, dataFor]);
+  // R-561: the top bar's Refresh reads every branch again (it replaced this page's own Refresh button).
+  usePanelRefresh(load);
 
   useEffect(() => {
     if (multi && canOpenOthers) void load();
@@ -106,7 +111,7 @@ export function AllBranchesScreen() {
 
   return (
     <>
-      <PageHeader title="All branches" subtitle={`${groupName} · ${branches.length} branches`} actions={<Button variant="ghost" onClick={() => void load()} disabled={loading}>{loading ? 'Loading…' : 'Refresh'}</Button>} />
+      <PageHeader title="All branches" subtitle={`${groupName} · ${branches.length} branches`} />
 
       {openError && <ErrorBanner>{openError}</ErrorBanner>}
       {failed.map((f) => (

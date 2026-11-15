@@ -16,6 +16,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { brandReport, normalizeHex, suggestBrandColour, type BrandPalette, type GymBrand, type HeadingStyle, type LogoColour, type LogoSuggestion } from '@forgeai/theme';
 
 import * as api from '../shop/api';
+import { t } from '../lang/lang';
+import { SETTING_LINES } from '../logic/settingLines';
 import { JoinCodeCard } from '../shop/JoinCode';
 import { useShop } from '../shop/ShopProvider';
 import { useCrm } from '../store';
@@ -224,7 +226,7 @@ function BrandingForm({ ownerKey, cloudGymId, gymName }: { ownerKey: string; clo
             />
             <ColourField
               label="Your brand colour"
-              hint="Buttons, the active tab, highlights and charts."
+              hint={t(SETTING_LINES.brandColour)}
               value={draft.accent}
               onChange={(v) => set({ accent: v })}
             />
@@ -236,7 +238,7 @@ function BrandingForm({ ownerKey, cloudGymId, gymName }: { ownerKey: string; clo
               {draft.useBg && (
                 <ColourField
                   label="Background tone"
-                  hint="A dark colour for the page. Cards are made a little lighter than it."
+                  hint={t(SETTING_LINES.brandBackground)}
                   value={draft.bg}
                   onChange={(v) => set({ bg: v })}
                 />

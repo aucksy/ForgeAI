@@ -575,6 +575,30 @@ function notifyNewsSeen(): void {
  */
 export const ADMIN_NEWS_PENDING: readonly AdminNewsEntry[] = [
   {
+    // R-561 (owner, 15 Nov 2026): one look for group headings, a wider menu, the bell in groups with payment colours,
+    // the alerts card in the bell, the language switch in the top bar, one Refresh for the whole page and a line under
+    // each setting. Panel code only: moves to ADMIN_NEWS with the deploy day as its id.
+    id: 'pending-panel-headings',
+    lines: [
+      {
+        text: 'The menu headings are now easier to see, and the menu is wider, so every page name fits on one line. "Set up your gym" shows how many steps are done wherever it sits in the menu.',
+      },
+      {
+        text: 'The bell now puts your notices in three groups: “Your gym”, “From MettleUp” and “What’s new”. Payments get their own colour and a “Payment” label, so you can spot them quickly.',
+      },
+      {
+        text: 'The top of every page now says when it was last updated, like "Updated 30 s ago". Tap Refresh there to get the newest for the whole page without losing your place.',
+      },
+      {
+        text: 'The English and Hinglish switch now sits at the top, next to the light and dark switch. When alerts are off on this phone or computer, the bell shows a card to turn them on.',
+      },
+      {
+        text: 'Each setting now has one short line under it that says what it does for your gym.',
+        go: { label: 'Open Settings', path: '/settings' },
+      },
+    ],
+  },
+  {
     // F56 R-461, 12 Nov 2026: the MettleUp Plus switch (0070). Moves to ADMIN_NEWS only when 0070 is live, the panel is
     // deployed AND the app's paid plan is switched on (MEMBER_PLAN_GATE_ON); until then the card is hidden anyway.
     id: 'pending-plus-lock',

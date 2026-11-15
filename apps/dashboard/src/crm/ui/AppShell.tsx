@@ -14,6 +14,9 @@ import { BranchSwitch } from '../branches/BranchSwitch';
 import { GymLogo } from '../brand/GymLogo';
 import { Icon, type IconName } from './icons';
 import { ThemeToggle } from './ThemeToggle';
+import { LangToggle } from './LangToggle';
+import { RefreshButton } from './RefreshButton';
+import { groupLabelText } from './GroupLabel';
 import { NewsBell, NewsSidebarLink } from './WhatsNew';
 import { NewDot, color, font, radius, space, useIsCompact, useMediaQuery } from './kit';
 import { useNewFeatures } from './NewDots';
@@ -35,6 +38,9 @@ export interface NavItem {
   /** R-526: Set up your gym's steps done, while some are left: a small green ring, not a number badge. */
   progress?: SetupProgress;
 }
+
+/** R-561: the side menu's width on a computer (was 236). */
+export const SIDEBAR_WIDTH = 280;
 
 /** Height of the demo gym's banner (demo/demoMode.tsx), set as a page variable by the shell; 0 in the real app. */
 const UNDER_DEMO_BAR = 'var(--demo-bar, 0px)';
@@ -79,7 +85,9 @@ export function AppShell({
         background: color.bg,
         color: color.ink,
         display: compact ? 'block' : 'grid',
-        gridTemplateColumns: compact ? undefined : '236px 1fr',
+        // R-561 (owner, 15 Nov 2026): "just set up your gym is two-liner. Can you increase the size of the left bar". 280, so the
+        // longest row (Hinglish "Apna gym set up karo" with its 3/7 mark, in bold while open) stays on one line.
+        gridTemplateColumns: compact ? undefined : `${SIDEBAR_WIDTH}px 1fr`,
       }}
     >
       {compact ? (
@@ -101,10 +109,17 @@ export function AppShell({
       >
         {/* R-239: the bell, top right on a computer (a phone has it in the header). */}
         {compact ? null : (
-          <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: space.sm, marginTop: -space.lg, marginBottom: space.sm }}>
+          <div
+            data-top-bar=""
+            style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', flexWrap: 'wrap', gap: space.sm, marginTop: -space.lg, marginBottom: space.sm }}
+          >
+            {/* R-561: the panel's one Refresh, with how fresh the page is ("Updated 20 s ago"). */}
+            <RefreshButton />
             <NewsBell />
             {/* R-447: Dark | Light moved here from the side menu (as on a phone's header), so the menu has room. */}
             <ThemeToggle compact />
+            {/* R-561 (owner, 15 Nov 2026): English | Hinglish right beside Dark | Light. */}
+            <LangToggle compact />
           </div>
         )}
         {children}
@@ -320,6 +335,9 @@ function GroupHeading({
   onToggle: () => void;
 }) {
   return (
+    // R-561 (owner, 15 Nov 2026): "the headings of each section are the same color and look the same". The shared
+    // category heading (ui/GroupLabel.tsx): full-strength ink, heavy small capitals, a thin line and room above.
+    <div data-menu-group-head="" style={{ borderTop: `1px solid ${color.border}`, marginTop: short ? 6 : space.md, paddingTop: short ? 4 : 6 }}>
     <button
       type="button"
       id={`menu-group-${id}`}
@@ -332,20 +350,14 @@ function GroupHeading({
         alignItems: 'center',
         gap: 6,
         width: '100%',
-        minHeight: short ? 18 : 20,
-        margin: short ? '6px 0 0' : `${space.sm}px 0 0`,
+        minHeight: short ? 20 : 24,
+        margin: 0,
         padding: `0 ${space.md}px`,
         border: 'none',
         borderRadius: radius.sm,
         background: 'transparent',
         cursor: 'pointer',
-        fontFamily: font.body,
-        fontSize: 11,
-        fontWeight: 700,
-        letterSpacing: 0.6,
-        // CSS capitals, so a screen reader says the word ("Members"), not the letters.
-        textTransform: 'uppercase',
-        color: color.inkMuted,
+        ...groupLabelText,
         textAlign: 'left',
       }}
     >
@@ -364,11 +376,12 @@ function GroupHeading({
         strokeLinecap="round"
         strokeLinejoin="round"
         aria-hidden
-        style={{ flexShrink: 0, transform: folded ? 'rotate(-90deg)' : 'none', transition: 'transform 160ms cubic-bezier(0.16, 1, 0.3, 1)' }}
+        style={{ flexShrink: 0, color: color.inkMuted, transform: folded ? 'rotate(-90deg)' : 'none', transition: 'transform 160ms cubic-bezier(0.16, 1, 0.3, 1)' }}
       >
         <path d="m6 9 6 6 6-6" />
       </svg>
     </button>
+    </div>
   );
 }
 
@@ -434,11 +447,11 @@ function CompactHeader({ gymName }: { gymName: string }) {
         zIndex: 20,
         background: color.surfaceSunken,
         borderBottom: `1px solid ${color.border}`,
-        padding: `${space.sm}px ${space.lg}px`,
+        padding: `${space.sm}px ${space.md}px`,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        gap: space.md,
+        gap: space.sm,
       }}
     >
       {/* R-495: the gym's own logo before its name (nothing when it has none). */}
@@ -446,9 +459,13 @@ function CompactHeader({ gymName }: { gymName: string }) {
         <GymLogo gymName={gymName} size={26} />
         <BranchSwitch gymName={gymName} compact />
       </div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: space.sm, flexShrink: 0 }}>
+      {/* R-561: Refresh, the bell, then Dark | Light with English | Hinglish right beside it. On a 375-px phone the two
+          switches show a moon and a sun, and EN and HI, so the gym's name keeps its room. */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0 }}>
+        <RefreshButton compact />
         <NewsBell />
-        <ThemeToggle compact />
+        <ThemeToggle compact icons />
+        <LangToggle compact short />
       </div>
     </header>
   );

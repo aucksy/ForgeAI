@@ -48,9 +48,7 @@ export const PLUS_LOCK_WORDS = {
     'Your members get every paid feature of the MettleUp app free while their plan is active: the watch app, ' +
     'charts older than 3 months, suggested weights, the calculators and more of their own exercises.',
   switchLabel: 'Lock the paid features when a member’s plan ends',
-  switchHint:
-    `Members keep them for ${GYM_UNLOCK_GRACE_DAYS} more days after the plan ends. Then they lock until the member ` +
-    'renews. Members never lose their workouts, history or routines.',
+  // The line under the switch: SETTING_LINES.plusLock (logic/settingLines, R-561).
   save: 'Save',
   savedOn: `Saved. Paid features lock ${GYM_UNLOCK_GRACE_DAYS} days after a member’s plan ends.`,
   savedOff: 'Saved. Members keep the paid features after their plan ends.',

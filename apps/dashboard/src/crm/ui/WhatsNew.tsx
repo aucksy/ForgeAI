@@ -13,11 +13,25 @@
  *   sidebar's last row, with the version.
  * - WhatsNewScreen: /news, every update to read again (also More -> What's new on a phone).
  * Each change may carry a button to the page where it is; a page this person cannot open has none.
+ * R-561 (owner, 15 Nov 2026): the panel in three groups with headings that are easy to notice (ui/GroupLabel.tsx), in
+ * this order: "Your gym" (the gym's alerts, 0075: members, payments, joins), "From MettleUp", "What's new"; an empty
+ * group is left out and each heading shows its count (logic/bellGroups.ts). Payment notices have their own colour,
+ * mark and "Payment" label. While alerts are off for this device, "Turn on alerts" sits at the top (BellAlertsCard).
+ * The bell's number also counts the gym's alerts that came since the bell was last opened.
  * The bell is not in the demo gym (a visitor there has no "update" to hear about).
  */
 import { useEffect, useRef, useState } from 'react';
 
 import { useRole } from '../auth/AuthProvider';
+import { t } from '../lang/lang';
+import { BELL_ALERTS, bellGroups, paymentTone, readBellSeen, saveBellSeen, unseenAlerts } from '../logic/bellGroups';
+import { alertAge, alertShown, type GymAlert } from '../logic/gymAlerts';
+import { onPanelRefresh } from '../logic/panelRefresh';
+import { useShop } from '../shop/ShopProvider';
+import { BellAlertsCard } from './AlertsCards';
+import { GroupLabel } from './GroupLabel';
+import { PaymentTag, paymentRowLook } from './PaymentTag';
+import { useNeedsYou } from './NeedsYou';
 import { canOpen } from '../auth/permissions';
 import type { Role } from '../auth/signin';
 import { useDemo } from '../demo/demoMode';
@@ -74,9 +88,14 @@ function useHqNews(demo: boolean): { messages: HqMessage[]; unread: HqMessage[];
     // R-245: a desk that comes back to the tab sees a new message without waiting for the timer.
     // R-522: and nothing is asked while the tab is hidden (logic/visiblePoll.ts).
     const stop = startVisiblePoll(load, HQ_POLL_MS);
+    // R-561: the top bar's Refresh reads MettleUp's messages again too.
+    const leave = onPanelRefresh(async () => {
+      await load();
+    });
     return () => {
       live = false;
       stop();
+      leave();
     };
   }, [demo]);
   const seen = () => {
@@ -103,7 +122,6 @@ const newTag = (
   <span style={{ padding: '1px 8px', borderRadius: radius.pill, background: color.accentSoft, color: color.accentBright, fontSize: 11, fontWeight: 800 }}>New</span>
 );
 
-const sectionLabel = { margin: 0, fontFamily: font.body, fontSize: 12, fontWeight: 800, letterSpacing: 0.4, textTransform: 'uppercase', color: color.inkMuted } as const;
 
 /** R-245: one item in the bell. While it is new: a raised background, an orange edge (and a "New" tag). */
 function rowStyle(isNew: boolean) {
@@ -121,11 +139,13 @@ function rowStyle(isNew: boolean) {
 const SUMMARY_LINES = 2;
 
 /** R-245: the bell's first part: the newest update in short, and the way to the whole list. */
-function NewsSummary({ entry, isNew, newCount, onSee }: { entry: AdminNewsEntry; isNew: boolean; newCount: number; onSee: () => void }) {
+function NewsSummary({ entry, isNew, newCount, onSee, first }: { entry: AdminNewsEntry; isNew: boolean; newCount: number; onSee: () => void; first: boolean }) {
   const more = entry.lines.length - SUMMARY_LINES;
   return (
     <section aria-label="What's new in the admin app" style={{ display: 'grid', gap: space.sm }}>
-      <p style={sectionLabel}>What's new in the admin app</p>
+      <GroupLabel as="h3" first={first} count={entry.lines.length}>
+        {t("What's new")}
+      </GroupLabel>
       <div style={rowStyle(isNew)}>
         <p style={{ margin: 0, display: 'flex', alignItems: 'center', gap: space.sm, fontFamily: font.body, fontSize: 13, fontWeight: 700, color: color.inkSecondary }}>
           {`Update of ${newsDay(entry.id)}`}
@@ -154,10 +174,12 @@ function NewsSummary({ entry, isNew, newCount, onSee }: { entry: AdminNewsEntry;
   );
 }
 
-function HqMessages({ messages, fresh, role, onGo }: { messages: readonly HqMessage[]; fresh: ReadonlySet<string>; role: Role; onGo: () => void }) {
+function HqMessages({ messages, fresh, role, onGo, first }: { messages: readonly HqMessage[]; fresh: ReadonlySet<string>; role: Role; onGo: () => void; first: boolean }) {
   return (
     <section aria-label="From MettleUp" style={{ display: 'grid', gap: space.sm }}>
-      <p style={sectionLabel}>From MettleUp</p>
+      <GroupLabel as="h3" first={first} count={messages.length}>
+        {t('From MettleUp')}
+      </GroupLabel>
       {messages.map((m) => {
         const go = hqGo(m, role);
         return (
@@ -187,6 +209,62 @@ function HqMessages({ messages, fresh, role, onGo }: { messages: readonly HqMess
           </article>
         );
       })}
+    </section>
+  );
+}
+
+/** R-561: "Your gym": the newest of the gym's alerts, each opening its page; a payment one in its own colour. */
+function GymAlerts({ alerts, fresh, onGo, first }: { alerts: readonly GymAlert[]; fresh: ReadonlySet<string>; onGo: (route: string) => void; first: boolean }) {
+  // The shop's own orders, so a shop line says ready or collected exactly as Today does.
+  const { orders } = useShop();
+  const now = Date.now();
+  return (
+    <section aria-label="Your gym" style={{ display: 'grid', gap: space.xs }}>
+      <GroupLabel as="h3" first={first} count={alerts.length}>
+        {t('Your gym')}
+      </GroupLabel>
+      <ul data-testid="bell-gym-alerts" style={{ listStyle: 'none', margin: 0, padding: 0, display: 'grid', gap: space.xs }}>
+        {alerts.map((a) => {
+          const shown = alertShown(a, orders);
+          const tone = paymentTone(a);
+          const isNew = fresh.has(`alert-${a.id}`);
+          const pay = tone ? paymentRowLook(tone) : null;
+          return (
+            <li key={a.id}>
+              <button
+                type="button"
+                className="tap-row"
+                data-pay-row={tone ?? undefined}
+                onClick={() => onGo(shown.route)}
+                style={{
+                  width: '100%',
+                  minHeight: TOUCH,
+                  display: 'grid',
+                  gap: 4,
+                  textAlign: 'left',
+                  cursor: 'pointer',
+                  padding: `${space.sm}px ${space.md}px`,
+                  border: 'none',
+                  borderRadius: radius.md,
+                  borderLeft: pay ? pay.borderLeft : `3px solid ${isNew ? color.accent : 'transparent'}`,
+                  background: pay ? pay.background : isNew ? color.surfaceRaised : 'transparent',
+                  color: color.ink,
+                  fontFamily: font.body,
+                }}
+              >
+                {tone || isNew ? (
+                  <span style={{ display: 'flex', alignItems: 'center', gap: space.sm, flexWrap: 'wrap' }}>
+                    {tone ? <PaymentTag tone={tone} /> : null}
+                    {isNew ? newTag : null}
+                  </span>
+                ) : null}
+                <span style={{ fontSize: 14, lineHeight: 1.45, fontWeight: a.urgent && !shown.done ? 600 : 400 }}>{shown.line}</span>
+                <span style={{ fontSize: 12, color: color.inkSecondary }}>{alertAge(a.at, now)}</span>
+              </button>
+            </li>
+          );
+        })}
+      </ul>
     </section>
   );
 }
@@ -259,6 +337,10 @@ export function NewsBell() {
   const compact = useIsCompact();
   const unread = useUnreadNews(demo);
   const hq = useHqNews(demo);
+  // R-561: the gym's alerts (0075; none before it, and none in the demo gym), newest first, for this person.
+  const { alerts } = useNeedsYou();
+  const [alertsSeen, setAlertsSeen] = useState<number | null>(() => readBellSeen(browserStore()));
+  const newAlerts = demo ? [] : unseenAlerts(alerts, alertsSeen, Date.now());
   const [open, setOpen] = useState(false);
   // Which updates were new when the list opened: they keep their "New" tag while it stays open.
   const [fresh, setFresh] = useState<ReadonlySet<string>>(new Set());
@@ -279,14 +361,22 @@ export function NewsBell() {
     };
   }, [open]);
   if (demo) return null;
-  const count = unread.length + hq.unread.length;
+  const count = unread.length + hq.unread.length + newAlerts.length;
   const newest = ADMIN_NEWS.find((e) => e.lines.length > 0);
   const newUpdates = ADMIN_NEWS.filter((e) => fresh.has(e.id)).length;
+  const gymShown = alerts.slice(0, BELL_ALERTS);
+  const hqShown = hq.messages.slice(0, SHOWN_UPDATES);
+  const groups = bellGroups({ gym: gymShown.length, mettleup: hqShown.length, news: newest?.lines.length ?? 0 });
   const toggle = () => {
     if (!open) {
-      setFresh(new Set([...unread.map((e) => e.id), ...hq.unread.map((m) => `hq-${m.id}`)]));
+      setFresh(new Set([...unread.map((e) => e.id), ...hq.unread.map((m) => `hq-${m.id}`), ...newAlerts.map((a) => `alert-${a.id}`)]));
       if (unread.length > 0) markNewsSeen();
       if (hq.unread.length > 0) hq.seen();
+      const newestAlert = alerts[0]?.at;
+      if (newestAlert && newestAlert > (alertsSeen ?? 0)) {
+        saveBellSeen(browserStore(), newestAlert);
+        setAlertsSeen(newestAlert);
+      }
     }
     setOpen(!open);
   };
@@ -359,26 +449,39 @@ export function NewsBell() {
           }}
         >
           <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: space.md, marginBottom: space.md }}>
-            <h2 style={{ margin: 0, fontFamily: font.display, fontSize: 18, color: color.ink }}>Notifications</h2>
+            <h2 style={{ margin: 0, fontFamily: font.display, fontSize: 18, color: color.ink }}>{t('Notifications')}</h2>
             <span style={{ fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>{ADMIN_VERSION}</span>
           </div>
-          {newest ? (
-            <NewsSummary
-              entry={newest}
-              isNew={fresh.has(newest.id)}
-              newCount={newUpdates}
-              onSee={() => {
-                setOpen(false);
-                navigate('/news');
-              }}
-            />
-          ) : null}
-          {hq.messages.length > 0 ? (
-            <>
-              <div style={{ borderTop: `1px solid ${color.border}`, margin: `${space.lg}px 0` }} />
-              <HqMessages messages={hq.messages.slice(0, SHOWN_UPDATES)} fresh={fresh} role={role} onGo={() => setOpen(false)} />
-            </>
-          ) : null}
+          {/* R-561: while alerts are off for this device, until they are on or the card is closed. */}
+          <BellAlertsCard />
+          {groups.map((g, i) =>
+            g.id === 'gym' ? (
+              <GymAlerts
+                key={g.id}
+                first={i === 0}
+                alerts={gymShown}
+                fresh={fresh}
+                onGo={(route) => {
+                  setOpen(false);
+                  navigate(route);
+                }}
+              />
+            ) : g.id === 'mettleup' ? (
+              <HqMessages key={g.id} first={i === 0} messages={hqShown} fresh={fresh} role={role} onGo={() => setOpen(false)} />
+            ) : newest ? (
+              <NewsSummary
+                key={g.id}
+                first={i === 0}
+                entry={newest}
+                isNew={fresh.has(newest.id)}
+                newCount={newUpdates}
+                onSee={() => {
+                  setOpen(false);
+                  navigate('/news');
+                }}
+              />
+            ) : null,
+          )}
         </section>
       )}
     </div>

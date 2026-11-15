@@ -28,6 +28,8 @@ import {
   type MachineRowView,
 } from '../../machines/entryMachineAdmin';
 import { noteAccessChange } from '../../machines/accessChanges';
+import { t } from '../../lang/lang';
+import { SETTING_LINES } from '../../logic/settingLines';
 import type { MachineFamily } from '../../machines/entryMachine';
 import * as entryApi from '../../shop/entryMachinesApi';
 import { errorWords } from '../../shop/logic';
@@ -310,7 +312,7 @@ function AddMachineSheet({
         }}
         placeholder="CJDE231560123"
         error={problem?.field === 'serial' ? problem.message : null}
-        hint="On the machine: Menu > System Info > Serial Number."
+        hint={t(SETTING_LINES.serial)}
       />
       <TextField
         label="Machine name"

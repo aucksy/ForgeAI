@@ -13,6 +13,8 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import { usePanelRefresh } from '../usePanelRefresh';
+
 import { useAuth } from '../../auth/AuthProvider';
 import { t } from '../../lang/lang';
 import {
@@ -60,17 +62,21 @@ export function MemberMessagesScreen({ startWith }: { startWith?: string } = {})
   const [filter, setFilter] = useState<TalkFilter>(() => talkFilterFrom(startWith, 'owner'));
   const [note, setNote] = useState<Note>(null);
 
-  const fetchList = useCallback(async () => {
-    if (!key) return;
+  const fetchList = useCallback(async (): Promise<boolean> => {
+    if (!key) return true;
     setLoad((l) => (l.state === 'ready' ? l : { state: 'loading' }));
     try {
       const r = await api.getTalkList(key);
       setLoad(r === 'missing' ? { state: 'missing' } : { state: 'ready', data: r });
+      return true;
     } catch (e) {
       console.warn('[ForgeErr] member messages: reading', e);
       setLoad({ state: 'error', message: talkErrorWords(e) ?? errorWords(e) });
+      return false;
     }
   }, [key]);
+  // R-561: the top bar's Refresh reads the messages again.
+  usePanelRefresh(fetchList);
 
   useEffect(() => {
     void fetchList();

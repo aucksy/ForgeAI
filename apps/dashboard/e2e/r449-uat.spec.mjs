@@ -65,7 +65,7 @@ test.describe('R449 phone (375 px, Android Chrome)', () => {
 
     // Gym tab (Settings opens on it): the install card, under the gym details (fresh eyes: above them it pushed them down).
     await openSettings(page, 'Gym');
-    await expect(page.getByText('Gym details, opening times, screen language and the admin app', { exact: true })).toBeVisible();
+    await expect(page.getByText('Gym details, opening times and the admin app', { exact: true })).toBeVisible();
     const install = heading(page, PHONE_INSTALL);
     await expect(install).toBeVisible();
     expect(await top(install)).toBeGreaterThan(await top(heading(page, 'Gym details')));

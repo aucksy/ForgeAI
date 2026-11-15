@@ -171,4 +171,4 @@ export const MACHINES_HOW =
   'It learns from workouts your members log in the MettleUp app: the day, the hour and the exercises. No names. ' +
   'Only machines you have 1 or 2 of can get busy. Each week it guesses which hours will be busy and checks itself. ' +
   'Members see a tip only after it has been right 4 weeks out of 6 (usually 6 to 8 weeks).';
-export const MACHINES_MEMBER_SEES = 'Members see one line on the Gym tab, for example: “Leg day is quieter on Tuesday”.';
+// What a member sees (the line under the switch): SETTING_LINES.busyMachines (logic/settingLines, R-561).

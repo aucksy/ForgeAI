@@ -9,9 +9,13 @@
 
 import { useEffect, useState } from 'react';
 
+import { GYM_UNLOCK_GRACE_DAYS } from '@forgeai/theme';
+
 import { useAuth } from '../../auth/AuthProvider';
 import { dateISOFromEpoch, formatDay } from '../../logic/dates';
 import { PLUS_LOCK_WORDS, plusLockCardShown, plusLockChangedLine, type PlusLock } from '../../logic/plusLock';
+import { t } from '../../lang/lang';
+import { SETTING_LINES } from '../../logic/settingLines';
 import * as plusLockApi from '../../shop/plusLockApi';
 import { errorWords } from '../../shop/logic';
 import { Button, Card, CheckField, ErrorBanner, SectionTitle, Toast, color, font, space } from '../kit';
@@ -80,7 +84,7 @@ export function PlusLockCard() {
       <p style={quiet}>{W.body}</p>
       {saved.canEdit ? (
         <>
-          <CheckField checked={on} onChange={setOn} hint={W.switchHint} disabled={busy}>
+          <CheckField checked={on} onChange={setOn} hint={t(SETTING_LINES.plusLock, { n: GYM_UNLOCK_GRACE_DAYS })} disabled={busy}>
             {W.switchLabel}
           </CheckField>
           {error && <ErrorBanner>{error}</ErrorBanner>}

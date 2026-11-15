@@ -6,6 +6,8 @@
 import { useCallback, useEffect, useState } from 'react';
 
 import { useAuth } from '../auth/AuthProvider';
+import { t } from '../lang/lang';
+import { SETTING_LINES } from '../logic/settingLines';
 import { Button, Card, CheckField, ErrorBanner, Pill, SectionTitle, Sheet, TextField, Toast, color, font, space } from '../ui/kit';
 import { replace } from '../ui/router';
 import { useBranchActions } from './BranchProvider';
@@ -129,7 +131,7 @@ export function BranchesCard() {
 
       {multi && (
         <div style={{ marginTop: space.md }}>
-          <TextField label="Your business name" value={group} onChange={setGroup} hint="Shown at the top of “All branches”. Members see each branch’s own name." />
+          <TextField label="Your business name" value={group} onChange={setGroup} hint={t(SETTING_LINES.businessName)} />
           <div style={{ marginTop: space.sm }}>
             <Button variant="ghost" needsInternet disabled={groupBusy || !group.trim() || group.trim() === groupName} onClick={() => void saveGroup()}>
               {groupBusy ? 'Saving…' : 'Save name'}
@@ -171,7 +173,7 @@ export function BranchesCard() {
           }
         >
           {error && <ErrorBanner>{error}</ErrorBanner>}
-          <TextField label="Branch name" value={name} onChange={setName} placeholder="Iron Temple, Vaishali Nagar" hint="Members see this name in their app." />
+          <TextField label="Branch name" value={name} onChange={setName} placeholder="Iron Temple, Vaishali Nagar" hint={t(SETTING_LINES.branchName)} />
           <CheckField checked={copyPlans} onChange={setCopyPlans} hint="You can change the prices there later.">
             Copy this branch’s plans to the new branch
           </CheckField>

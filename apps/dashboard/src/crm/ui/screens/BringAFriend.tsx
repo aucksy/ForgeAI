@@ -12,7 +12,9 @@
 import { useEffect, useState } from 'react';
 
 import { useAuth } from '../../auth/AuthProvider';
+import { t } from '../../lang/lang';
 import { checkFriendDays, friendRewardDays } from '../../logic/referrals';
+import { SETTING_LINES } from '../../logic/settingLines';
 import * as friendApi from '../../shop/friendApi';
 import { useCrm } from '../../store';
 import { Button, Card, SectionTitle, TextField, Toast, color, font, space } from '../kit';
@@ -100,7 +102,7 @@ export function BringAFriendCard() {
           inputMode="numeric"
           placeholder="None"
           error={error}
-          hint="Leave it empty to give no free days. When a friend joins, you choose to give the days with one tap. They are never added by themselves."
+          hint={t(SETTING_LINES.friendDays)}
         />
       </div>
       <div style={{ marginTop: space.md }}>

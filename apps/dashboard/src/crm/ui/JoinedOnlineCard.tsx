@@ -14,6 +14,8 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
+import { usePanelRefresh } from './usePanelRefresh';
+
 import { useAuth } from '../auth/AuthProvider';
 import { useJoinPayOn } from '../gympage/pagesOpen';
 import { takerOf } from '../auth/permissions';
@@ -103,6 +105,8 @@ export function JoinedOnlineCard() {
     if (!payOn || rows.length === 0) return;
     return startVisiblePoll(load, EVERY_MS);
   }, [payOn, rows.length, load]);
+  // R-561: the top bar's Refresh reads the join payments again too.
+  usePanelRefresh(load, payOn && rows.length > 0);
 
   const approve = async ({ enquiry, join }: OnlineJoin, s: JoinPayState) => {
     if (!key || !canApprove(s)) return;

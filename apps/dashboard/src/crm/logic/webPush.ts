@@ -81,7 +81,10 @@ export function pushSupport(env: { serviceWorker: boolean; pushManager: boolean;
   return env.serviceWorker && env.pushManager && env.notification ? 'yes' : 'no';
 }
 
-/** The one-time offer on Today: shown until turned on, blocked, or "Not now". PURE. */
+/**
+ * The alerts offer (R-561: at the top of the bell panel; it was on Today): shown until alerts are on, blocked, or the
+ * card is closed on this device. Never where the browser cannot show alerts. PURE.
+ */
 export function showAlertsOffer(p: { support: PushSupport; permission: string; on: boolean; dismissed: boolean; ready: boolean }): boolean {
   return p.ready && p.support === 'yes' && p.permission === 'default' && !p.on && !p.dismissed;
 }
@@ -118,6 +121,11 @@ export const PUSH_WORDS = {
   offerText: 'Hear about a new question, complaint, shop order or payment even when the admin app is closed.',
   offerYes: 'Turn on alerts',
   offerNo: 'Not now',
+  // R-561 (owner, 15 Nov 2026): the card at the top of the bell panel, until alerts are on or it is closed with X.
+  bellTitle: 'Turn on alerts',
+  bellText: 'Get a notice on this phone or computer when a member needs you, even when the admin app is closed.',
+  bellLater: 'If you close this card, you can still turn alerts on in Settings.',
+  bellClose: 'Close this card',
 } as const;
 
 /** The line under the choices for the desk: "Your gym gets the rest daily at 11:00 am." PURE. */

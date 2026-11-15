@@ -3,7 +3,10 @@
  * R-526 (owner, 14 Nov 2026): out of Today into its own page, "Set up your gym" (/setup), with a progress ring on its
  * menu row while steps are left (the menu, the phone's More). The hand-ticked steps and "hidden" are kept in this
  * browser per gym (a convenience: losing them only shows the ring again). "Hidden" (the old "Hide this list") now
- * means: no ring, and the menu row moves down to "Your gym"; the page itself always shows the list.
+ * means: the menu row moves down to "Your gym"; the page itself always shows the list.
+ * R-561 (owner, 15 Nov 2026: "If you move the set up your gym section at the bottom ... that progress tracker element
+ * ... like 3 of 7 goes away. That should not happen."): the ring and "3/7" stay on the row wherever it sits, until
+ * every step is done (`showProgress`).
  */
 import { useCallback, useEffect, useState } from 'react';
 
@@ -90,8 +93,10 @@ export interface GetStartedState {
   owner: boolean;
   allDone: boolean;
   progress: SetupProgress;
-  /** Steps left and not moved down: the menu row sits at the top with its ring. */
+  /** Steps left and not moved down: the menu row sits at the top. */
   pending: boolean;
+  /** R-561: steps left (the owner's): the menu row shows its ring and "3/7", at the top or moved down. */
+  showProgress: boolean;
   update: (next: Saved) => void;
 }
 
@@ -128,7 +133,16 @@ export function useGetStarted(): GetStartedState {
   const steps = getStartedSteps(snapshot, new Set(saved.ticked), web ? { published: pageLive(web.page) } : null);
   const done = steps.filter((x) => x.done).length;
   const allDone = done === steps.length;
-  return { steps, saved, owner, allDone, progress: { done, total: steps.length }, pending: owner && !allDone && !saved.hidden, update };
+  return {
+    steps,
+    saved,
+    owner,
+    allDone,
+    progress: { done, total: steps.length },
+    pending: owner && !allDone && !saved.hidden,
+    showProgress: owner && !allDone,
+    update,
+  };
 }
 
 /**
@@ -229,7 +243,7 @@ export function GetStartedList() {
           ))}
         </ol>
       </Card>
-      {/* The old "Hide this list": the row and its ring move down to "Your gym" (and back), the steps stay here. */}
+      {/* The old "Hide this list": the row moves down to "Your gym" with its ring (and back), the steps stay here. */}
       {allDone ? null : saved.hidden ? (
         <button type="button" onClick={() => update({ ...saved, hidden: false })} style={{ ...link, color: color.accentBright }}>
           {t('Show this page at the top of the menu again')}

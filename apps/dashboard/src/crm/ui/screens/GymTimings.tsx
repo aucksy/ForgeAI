@@ -35,6 +35,8 @@ import {
 import { useAuth } from '../../auth/AuthProvider';
 import { useBranches } from '../../branches/context';
 import { dateISOFromEpoch, formatDay } from '../../logic/dates';
+import { t } from '../../lang/lang';
+import { SETTING_LINES } from '../../logic/settingLines';
 import {
   MEMBERS_SEE_TIMINGS,
   TIMINGS_SAVED,
@@ -353,7 +355,7 @@ function TimingsEditor({ ownerKey, saved, onSaved }: { ownerKey: string; saved: 
           value={draft.note ?? ''}
           onChange={(v) => set({ ...draft, note: v })}
           placeholder="Ladies batch 11 am to 12 pm"
-          hint="At most 120 letters."
+          hint={t(SETTING_LINES.timingsNote)}
         />
       </Card>
 

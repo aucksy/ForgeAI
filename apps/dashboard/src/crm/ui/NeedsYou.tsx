@@ -12,9 +12,8 @@
  * once the server has it, a new alert rings with the server's own line ("Asha sent your gym a complaint...") and its
  * tap opens the right page; the latest show on Today. Without 0075 the ring comes from the lists, as before.
  *
- * R-539 (owner, 14 Nov 2026: new things must show at once, or a refresh button): the card says how fresh it is
- * ("Updated 20 s ago", ui/UpdatedLine.tsx) with a Refresh button that reads the alerts and every list at once
- * (refreshAll). Coming back to the tab already looks at once (logic/visiblePoll.ts); the minute stays a minute.
+ * R-539 (owner, 14 Nov 2026: new things must show at once, or a refresh button): refreshAll reads the alerts and every
+ * list at once. R-561: its button is the panel's one Refresh in the top bar (ui/RefreshButton.tsx), on every page. Coming back to the tab already looks at once (logic/visiblePoll.ts); the minute stays a minute.
  */
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
@@ -47,8 +46,9 @@ import { useShop } from '../shop/ShopProvider';
 import { memberMessageCountFor, publishMemberMessageCount, subscribeMemberMessageCount } from './MemberMessageParts';
 import { publishQuestionCount, questionCountFor, subscribeQuestionCountChange } from './QuestionParts';
 import { navigate } from './router';
-import { Button, Card, color, font, space } from './kit';
-import { UpdatedLine } from './UpdatedLine';
+import { Button, Card, color, font, radius, space } from './kit';
+import { PaymentTag, paymentRowLook } from './PaymentTag';
+import { paymentTone } from '../logic/bellGroups';
 
 const BASE_TITLE = 'MettleUp for Gyms';
 
@@ -423,15 +423,13 @@ export function NeedsYouCard() {
       ) : alerts === 'denied' ? (
         <p style={{ ...small, marginTop: space.sm }}>{W.alertsBlocked}</p>
       ) : null}
-      {/* R-539: how fresh this list is, and Refresh. */}
-      <UpdatedLine source="needs" />
     </Card>
   );
 }
 
 /** R-506: the latest from members (the last 24 hours) on Today, each line opening its page. Hidden when none. */
 export function LatestAlertsCard() {
-  const { alerts, items } = useNeedsYou();
+  const { alerts } = useNeedsYou();
   // Fresh eyes (14 Nov 2026): a shop line reads the same orders as "Shop today", so the two always agree.
   const { orders } = useShop();
   const now = Date.now();
@@ -443,18 +441,24 @@ export function LatestAlertsCard() {
       <ul data-testid="latest-alerts" style={{ listStyle: 'none', margin: `${space.sm}px 0 0`, padding: 0, display: 'grid', gap: space.xs }}>
         {list.map((a) => {
           const shown = alertShown(a, orders);
+          // R-561: a payment line in its own colour, with its mark and "Payment" label (as in the bell panel).
+          const tone = paymentTone(a);
+          const pay = tone ? paymentRowLook(tone) : null;
           return (
           <li key={a.id}>
             <button
               type="button"
+              data-pay-row={tone ?? undefined}
               onClick={() => navigate(shown.route)}
               style={{
                 width: '100%',
                 minHeight: 44,
                 textAlign: 'left',
-                background: 'none',
+                background: pay ? pay.background : 'none',
                 border: 'none',
-                padding: `${space.xs}px 0`,
+                borderLeft: pay ? pay.borderLeft : 'none',
+                borderRadius: pay ? radius.md : undefined,
+                padding: pay ? `${space.xs}px ${space.sm}px` : `${space.xs}px 0`,
                 cursor: 'pointer',
                 fontFamily: font.body,
                 fontSize: 14,
@@ -462,6 +466,11 @@ export function LatestAlertsCard() {
                 color: color.ink,
               }}
             >
+              {tone ? (
+                <span style={{ display: 'block', marginBottom: 2 }}>
+                  <PaymentTag tone={tone} />
+                </span>
+              ) : null}
               <span style={{ fontWeight: a.urgent && !shown.done ? 600 : 400 }}>{shown.line}</span>{' '}
               <span style={{ color: color.inkSecondary, fontSize: 13 }}>{alertAge(a.at, now)}</span>
             </button>
@@ -469,8 +478,6 @@ export function LatestAlertsCard() {
           );
         })}
       </ul>
-      {/* R-539: the Refresh line sits on "Needs you" when that card shows, else here (never twice on Today). */}
-      {needsLines(items).length === 0 && <UpdatedLine source="needs" />}
     </Card>
   );
 }

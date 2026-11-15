@@ -21,7 +21,6 @@ import { useAuth, useCan } from '../../auth/AuthProvider';
 import { SignInCard } from '../../auth/GoOnlineCard';
 import { InstallCard } from '../InstallCard';
 import { ThemeToggle } from '../ThemeToggle';
-import { LangToggle } from '../LangToggle';
 import { t } from '../../lang/lang';
 import { JoinCodeCard } from '../../shop/JoinCode';
 import { JoinTrialCard } from '../../shop/JoinTrialCard';
@@ -31,6 +30,7 @@ import { Link, navigate } from '../router';
 import { dateISOFromEpoch, formatDay } from '../../logic/dates';
 import { checkGymDetails } from '../../logic/gst';
 import { countOf, recordsLine } from '../../logic/plural';
+import { SETTING_LINES } from '../../logic/settingLines';
 import { unreadableCopy } from '../../data/local';
 import { isDemoGym } from '../../data/demo';
 import { downloadSavedData } from '../../store';
@@ -76,7 +76,7 @@ export function settingsTabFor(section: string | undefined): SettingsTab {
 
 const TAB_PATH: Record<SettingsTab, string> = { gym: '/settings', app: '/settings/app', data: '/settings/data' };
 const TAB_SUBTITLE: Record<SettingsTab, string> = {
-  gym: 'Gym details, opening times, screen language and the admin app',
+  gym: 'Gym details, opening times and the admin app',
   app: 'What your members see in the MettleUp app',
   data: 'Your sign-in, staff, backups and your gym’s records',
 };
@@ -203,7 +203,7 @@ export function SettingsScreen({ section }: { section?: string }) {
 
       {tab === 'gym' && (
       <>
-      <LanguageCard />
+      {/* R-561: English | Hinglish moved to the top bar, right beside Dark | Light (one place, every page). */}
       {/* R-247: going online is what protects the gym, so a gym that is not online yet is told here too. */}
       {!online && (
         <Card style={{ marginBottom: space.lg }}>
@@ -228,19 +228,19 @@ export function SettingsScreen({ section }: { section?: string }) {
           value={name}
           onChange={setName}
           error={fieldError?.field === 'name' ? fieldError.message : null}
-          hint={multi ? 'Members of this branch see this name in their app.' : undefined}
+          hint={t(multi ? SETTING_LINES.branchName : SETTING_LINES.gymName)}
         />
         <Grid min={220}>
-          <TextField label="Phone" value={phone} onChange={setPhone} inputMode="tel" />
+          <TextField label="Phone" value={phone} onChange={setPhone} inputMode="tel" hint={t(SETTING_LINES.phone)} />
           <TextField
             label="GSTIN (optional)"
             value={gstin}
             onChange={setGstin}
             error={fieldError?.field === 'gstin' ? fieldError.message : null}
-            hint={multi ? 'Only if you have GST. It shows on this branch’s receipts.' : 'Only if you have GST. It shows on your receipts.'}
+            hint={t(multi ? SETTING_LINES.gstinBranch : SETTING_LINES.gstin)}
           />
         </Grid>
-        <TextField label="Address" value={address} onChange={setAddress} multiline />
+        <TextField label="Address" value={address} onChange={setAddress} multiline hint={t(SETTING_LINES.address)} />
         <TextField
           label="Gym UPI ID (optional)"
           value={upiId}
@@ -250,7 +250,7 @@ export function SettingsScreen({ section }: { section?: string }) {
           }}
           placeholder="irontemple@okhdfc"
           error={upiError}
-          hint="Fee reminders, renewal messages and receipts show this UPI ID and a link that opens the member's UPI app with the amount filled in."
+          hint={t(SETTING_LINES.upiId)}
         />
         <div style={{ marginTop: space.lg }}>
           <Button onClick={save} disabled={saving} needsInternet>
@@ -549,19 +549,6 @@ export function SettingsScreen({ section }: { section?: string }) {
   );
 }
 
-/** English | Hinglish (owner, 1 Nov 2026), kept on this device. */
-function LanguageCard() {
-  return (
-    <Card style={{ marginBottom: space.lg }}>
-      <SectionTitle>{t('Language')}</SectionTitle>
-      <LangToggle />
-      <p style={{ margin: `${space.sm}px 0 0`, fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>
-        {t('Hinglish shows the main screens in Hindi words written in English letters. Other screens stay in English for now. Your choice is kept on this device.')}
-      </p>
-    </Card>
-  );
-}
-
 /** Settings for a Staff person: screen colours, the app on this phone, and their own sign-in (sign out). */
 function StaffSettings() {
   return (
@@ -571,7 +558,6 @@ function StaffSettings() {
         <SectionTitle>Dark or light</SectionTitle>
         <ThemeToggle />
       </Card>
-      <LanguageCard />
       {/* Adding members is front-desk work, so Staff may import a list too. */}
       <Card style={{ marginBottom: space.lg }}>
         <SectionTitle>Members</SectionTitle>

@@ -11,6 +11,8 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
+import { usePanelRefresh } from '../usePanelRefresh';
+
 import { useAuth } from '../../auth/AuthProvider';
 import {
   QUESTION_WORDS as W,
@@ -48,17 +50,25 @@ export function QuestionsScreen() {
   const myStaffId = session?.person?.staffId ?? null;
   const [load, setLoad] = useState<Load>({ state: 'loading' });
 
-  const fetchList = useCallback(async () => {
-    if (!key) return;
+  const fetchList = useCallback(async (): Promise<boolean> => {
+    if (!key) return true;
     setLoad((l) => (l.state === 'ready' ? l : { state: 'loading' }));
     try {
       const r = await questionsApi.getQuestions(key);
       setLoad(r === 'missing' ? { state: 'missing' } : r === 'refused' ? { state: 'refused' } : { state: 'ready', data: r });
+      return true;
     } catch (e) {
       console.warn('[ForgeErr] questions: reading', e);
       setLoad({ state: 'error', message: questionErrorWords(e) ?? errorWords(e) });
+      return false;
     }
   }, [key]);
+  // R-561: the top bar's Refresh reads the questions again (it replaced this page's own Refresh button).
+  usePanelRefresh(async () => {
+    const ok = await fetchList();
+    refreshQuestionCount();
+    return ok;
+  });
 
   useEffect(() => {
     void fetchList();
@@ -76,14 +86,6 @@ export function QuestionsScreen() {
       <PageHeader
         title={W.title}
         subtitle={W.intro}
-        actions={
-          // Fresh eyes (14 Nov 2026): with the error card's "Try again" under it, two buttons did the same thing.
-          load.state === 'error' ? undefined : (
-            <Button variant="ghost" onClick={() => void fetchList().then(refreshQuestionCount)}>
-              Refresh
-            </Button>
-          )
-        }
       />
       {!key ? (
         <Card>

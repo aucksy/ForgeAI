@@ -182,12 +182,17 @@ export function Routes({ online }: { online: boolean }) {
   const assistantOn = useAssistant().on;
   // F207: "Your web page", once the gym's server has the web page part (0080) and the gym is online (pageState.ts).
   const webPageOn = Boolean(useWebPage());
-  // R-526: Set up your gym, for the owner: its place in the menu and its ring (ui/GetStartedCard.tsx). The ring's
-  // numbers while steps are left and the row is at the top; undefined when every step is done or it was moved down.
+  // R-526: Set up your gym, for the owner: its place in the menu and its ring (ui/GetStartedCard.tsx). At the top while
+  // steps are left and it was not moved down (`setupAtTop`). R-561 (owner, 15 Nov 2026): the ring's numbers stay on the
+  // row wherever it sits, until every step is done; undefined then.
   const getStarted = useGetStarted();
   const { done: setupDone, total: setupTotal } = getStarted.progress;
-  const setupPending = getStarted.pending;
-  const setupProgress = useMemo(() => (setupPending ? { done: setupDone, total: setupTotal } : undefined), [setupPending, setupDone, setupTotal]);
+  const setupAtTop = getStarted.pending;
+  const setupShowsProgress = getStarted.showProgress;
+  const setupProgress = useMemo(
+    () => (setupShowsProgress ? { done: setupDone, total: setupTotal } : undefined),
+    [setupShowsProgress, setupDone, setupTotal],
+  );
 
   // Never set up: no plans, no members, and still the placeholder name.
   // An online gym is always set up: it was named when it was made, and its welcome screen's
@@ -217,17 +222,18 @@ export function Routes({ online }: { online: boolean }) {
     // Counted in PEOPLE like the two badges beside it, and like the list it opens.
     const atRisk = atRiskList(snapshot.members, snapshot.memberships, snapshot.visits, today).length;
     const enquiriesDue = dueCount(snapshot.enquiries, today);
-    // R-526 (owner, 14 Nov 2026): Set up your gym. Right under Today with its ring while steps are left; at the bottom
-    // (Your gym) with no ring once every step is done or the owner moved it down. The owner's (permissions.ts).
-    const setup: NavItem = setupProgress
+    // R-526 (owner, 14 Nov 2026): Set up your gym. Right under Today while steps are left; at the bottom (Your gym) once
+    // every step is done or the owner moved it down. R-561: its ring and "3/7" go with it, until every step is done.
+    // The owner's (permissions.ts).
+    const setup: NavItem = setupAtTop
       ? { path: '/setup', label: t('Set up your gym'), icon: 'setup', progress: setupProgress }
-      : { path: '/setup', label: t('Set up your gym'), icon: 'setup', group: 'gym' };
+      : { path: '/setup', label: t('Set up your gym'), icon: 'setup', group: 'gym', progress: setupProgress };
     // R-526: the top rows (no heading), then five small groups (logic/navGroups.ts). Every row and every role, flag
     // and server condition is as before; only the order and the headings changed.
     // A Staff person never sees a page they cannot open (permissions.ts): no Expenses.
     return navFor<NavItem>(role, [
       { path: '/', label: t('Today'), icon: 'today', badge: needsTotal || undefined },
-      ...(setupProgress ? [setup] : []),
+      ...(setupAtTop ? [setup] : []),
       // F201: right under Today on a computer (a phone has the floating button and the row under More).
       ...(assistantOn ? [{ path: '/assistant', label: t('AI Assistant'), icon: 'sparkle' } as NavItem] : []),
       // #41: an owner with 2 or more branches gets "All branches" (totals and lists across branches).
@@ -297,10 +303,10 @@ export function Routes({ online }: { online: boolean }) {
       // Launch H7 (21 Oct 2026): write to MettleUp (problems, ideas). Owner and Staff. Not in the demo
       // gym, which sends nothing to anyone.
       ...(demo ? [] : [{ path: '/feedback', label: t('Help and feedback'), icon: 'feedback', group: 'gym' } as NavItem]),
-      ...(setupProgress ? [] : [setup]),
+      ...(setupAtTop ? [] : [setup]),
     ]);
     // `lang`: the labels are words, so a language switch makes them again.
-  }, [memberViews, snapshot, today, newCount, role, allBranches, demo, lang, trainerNav, questionsOpen, talkWaiting, needsTotal, assistantOn, setupProgress, webPageOn]);
+  }, [memberViews, snapshot, today, newCount, role, allBranches, demo, lang, trainerNav, questionsOpen, talkWaiting, needsTotal, assistantOn, setupAtTop, setupProgress, webPageOn]);
   // Step 3 (15 Oct 2026): five on a phone's bottom bar, like GoGym4U and GymBook — Aaj, Members,
   // Hisaab, Hazri and More (Plans, Shop, Settings). Six or seven icons were too small to read.
   const phoneNav = useMemo<NavItem[]>(() => {

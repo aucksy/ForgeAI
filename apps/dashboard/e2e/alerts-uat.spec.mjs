@@ -13,7 +13,7 @@
 // (0069) and the shop's orders, so every line on the card agrees with the counts and pages it points to.
 // Second journey (0076, alerts with the admin app closed; the browser's push parts are stand-ins: a headless browser
 // has no push company):
-//  6. Today offers "Get alerts on this device" once; "Turn on alerts" asks the browser, saves this device, says so.
+//  6. R-561: the bell offers "Turn on alerts" at the top of its panel while alerts are off (Today no longer does); "Turn on alerts" asks the browser, saves this device, says so.
 //  7. Settings: the device is on; the owner picks "Once a week", Sunday, 8:00 pm, and saves it; then turns it off.
 //  8. The desk on a second phone: their own device switch, and the owner's choice in words (no way to change it).
 import { mkdirSync } from 'node:fs';
@@ -199,14 +199,16 @@ test('Gym alerts: not ready, the latest on Today, a new one rings once, a tap op
   await expect(main).toContainText('Is the 6 am batch full tomorrow?');
   await expect(main).not.toContainText('Something went wrong');
   await expect(main.getByRole('button', { name: 'Try again' })).toHaveCount(0);
-  await expect(page.getByRole('button', { name: 'Refresh' })).toHaveCount(1);
+  // R-561: the page has no Refresh of its own; the top bar's one Refresh reads it again.
+  await expect(main.getByRole('button', { name: /Refresh/ })).toHaveCount(0);
+  await expect(page.getByTestId('panel-refresh')).toHaveCount(1);
   await expectFitsPhone(page, 'on Member questions from Today');
   await shot(page, 'phone-alerts-3-opened-questions');
   // Negative: when the page cannot be read, the error card has the only button (no Refresh above it).
   qs.broken = true;
   await page.reload();
   await expect(main.getByRole('button', { name: 'Try again' })).toBeVisible({ timeout: 15_000 });
-  await expect(page.getByRole('button', { name: 'Refresh' })).toHaveCount(0);
+  await expect(main.getByRole('button', { name: /Refresh/ })).toHaveCount(0);
   await shot(page, 'phone-alerts-3b-questions-error');
   qs.broken = false;
 
@@ -296,34 +298,39 @@ async function pushBrowser(page, endpoint) {
   }, endpoint);
 }
 
-test('Alerts with the admin app closed: the offer on Today, the device switch, when the rest come, the desk', async ({ page, browser }) => {
+test('Alerts with the admin app closed: the offer in the bell, the device switch, when the rest come, the desk', async ({ page, browser }) => {
   await pushBrowser(page, 'https://fcm.googleapis.com/fcm/send/e2e-owner-phone');
   const server = await openApp(page);
   const push = installWebPush(server);
   push.on = true;
   await startOnlineGym(page);
   const main = page.getByRole('main');
-  // R-526: Get started has its own page (Set up your gym), so the alerts offer is the first set-up card on Today.
 
-  // 6. The offer, once.
-  const offer = main.getByTestId('alerts-offer');
-  await expect(offer).toContainText('Get alerts on this device', { timeout: 15_000 });
+  // 6. R-561 (owner, 15 Nov 2026): the offer is a card at the top of the bell panel, not on Today.
+  await expect(page.getByRole('heading', { name: 'Today', exact: true })).toBeVisible({ timeout: 15_000 });
+  await expect(main.getByTestId('alerts-offer')).toHaveCount(0);
+  await page.getByRole('button', { name: /^Notifications/ }).click();
+  const offer = page.getByTestId('bell-alerts-card');
+  await expect(offer).toContainText('Turn on alerts', { timeout: 15_000 });
   await expect(offer).toContainText('even when the admin app is closed');
+  await expect(offer).toContainText('you can still turn alerts on in Settings');
   expect(await page.evaluate(() => window.__asked ?? 0), 'the browser is never asked before the tap').toBe(0);
-  await expectFitsPhone(page, 'on Today with the alerts offer');
+  await expectFitsPhone(page, 'on the bell with the alerts card');
   await shot(page, 'phone-alerts-4-offer');
   await offer.getByRole('button', { name: 'Turn on alerts' }).click();
   await expect(offer).toContainText('Alerts are on for this device.');
+  await expect(offer.getByRole('button', { name: 'Close this card' }), 'nothing to close once on').toHaveCount(0);
   expect(await page.evaluate(() => window.__subscribedWithKey)).toBe(65);
   const saved = server.log.filter((c) => c.fn === 'owner_save_web_push');
   expect(saved).toHaveLength(1);
   expect(saved[0].args).toMatchObject({ p_endpoint: 'https://fcm.googleapis.com/fcm/send/e2e-owner-phone', p_p256dh: 'B'.repeat(87), p_auth: 'A'.repeat(22) });
-  await offer.getByRole('button', { name: 'OK' }).click();
-  await expect(main.getByTestId('alerts-offer')).toHaveCount(0);
   await page.reload();
   await expect(page.getByRole('heading', { name: 'Today', exact: true })).toBeVisible({ timeout: 15_000 });
+  await page.getByRole('button', { name: /^Notifications/ }).click();
+  await expect(page.getByRole('dialog', { name: 'Notifications' })).toBeVisible();
   await page.waitForTimeout(500);
-  await expect(main.getByTestId('alerts-offer'), 'never offered again').toHaveCount(0);
+  await expect(page.getByTestId('bell-alerts-card'), 'never offered once alerts are on').toHaveCount(0);
+  await page.keyboard.press('Escape');
 
   // 7. Settings: on for this device; the owner's choice.
   await page.evaluate(() => {

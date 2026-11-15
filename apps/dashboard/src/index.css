@@ -154,3 +154,15 @@ table {
   outline: 2px solid var(--c-accent);
   outline-offset: 1px;
 }
+
+/* R-561: the top bar's Refresh mark turns while the panel reads again (ui/RefreshButton.tsx). */
+@keyframes mu-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-panel-refresh] svg {
+    animation: none !important;
+  }
+}

@@ -17,9 +17,10 @@ import { READY_EXERCISE_NAMES, READY_MACHINES } from '@forgeai/theme';
 
 import { useAuth } from '../../auth/AuthProvider';
 import { dateISOFromEpoch, formatDay } from '../../logic/dates';
+import { t } from '../../lang/lang';
+import { SETTING_LINES } from '../../logic/settingLines';
 import {
   MACHINES_HOW,
-  MACHINES_MEMBER_SEES,
   MACHINES_SAVED,
   countedInDraft,
   draftFrom,
@@ -206,7 +207,7 @@ function MachinesEditor({ ownerKey, saved, onSaved }: { ownerKey: string; saved:
   return (
     <>
       <Card style={{ marginBottom: space.lg }}>
-        <CheckField checked={draft.enabled} onChange={(v) => set({ ...draft, enabled: v })} hint={MACHINES_MEMBER_SEES}>
+        <CheckField checked={draft.enabled} onChange={(v) => set({ ...draft, enabled: v })} hint={t(SETTING_LINES.busyMachines)}>
           Show busy machines to members
         </CheckField>
         <p style={{ ...quiet, marginTop: space.md }}>{MACHINES_HOW}</p>
