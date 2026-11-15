@@ -432,7 +432,8 @@ Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept her
   APP_STORE_URL empty and set); dashboard test/crm/invite.test.ts; admin journey e2e/r579-uat.spec.mjs (pictures r579-*).
   Run ids: 43727970516 (head 658ebe6e, includes R-579): Typecheck dashboard, Unit tests dashboard, Panel Worker tests
   (appLink.test.mjs), Build and Panel crawl all PASSED; Admin journeys could not load (other helpers' r561 duplicate
-  "panel" and the indianMobile import, both since fixed). Pending: 43730819299 (admin journeys incl. r579-uat).
+  "panel" and the indianMobile import, both since fixed). 43730819299 (head 93f0489e): R579-1, R579-2 and R579-3 all PASSED (the run is red only from other helpers' journeys);
+  its r579-*.png pictures are in that run's dashboard-uat-pictures artifact, NOT looked at yet.
 
 ## R-577 (15 Nov 2026) Watch screens checked on the sizes of the watches members own (owner chose "Option 1")
 - The brief (15 Nov 2026): the owner chose "Option 1": render the watch app's screens in the cloud on Galaxy
