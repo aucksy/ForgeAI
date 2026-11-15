@@ -35,6 +35,15 @@ test('R-580: the keyboard suggestion "+91 98765 43210" is one number everywhere'
   assert.equal(indianMobile('0091 98765 43210'), '9876543210');
 });
 
+test('R-580 fix round: a number with another country code is refused everywhere, never cut to 10 digits', () => {
+  for (const typed of ['+44 7911 123456', '0044 7911 123456', '+1 415 555 0134', '+971 50 123 4567']) {
+    assert.equal(checkFriend({ code: 'ABCD2345', name: 'Riya Sharma', phone: typed }).error, 'BAD_PHONE', typed);
+    assert.ok(checkLead({ phone: typed, gym: 'Shakti Gym' }).error, typed);
+    assert.equal(mobileOf(typed), null, typed);
+    assert.equal(indianMobile(typed), null, typed);
+  }
+});
+
 test('R-580: the WhatsApp sender is never cut to its last 10 digits', () => {
   assert.equal(senderMobile('919876543210'), '9876543210');
   assert.equal(senderMobile('449876543210'), null);

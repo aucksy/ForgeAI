@@ -15,7 +15,7 @@
  */
 
 import { useEffect, useMemo, useState } from 'react';
-import { anyCountryMobileInput, dialMobileInput } from '@forgeai/theme';
+import { dialMobileInput, mobileOrAsTyped } from '@forgeai/theme';
 
 import { useCrm } from '../../store';
 import type { Gender, Member } from '../../types';
@@ -399,7 +399,7 @@ export function MemberFormSheet({
         <TextField
           label={t('Emergency number (optional)')}
           value={form.emergencyPhone}
-          onChange={(v) => set('emergencyPhone')(anyCountryMobileInput(form.emergencyPhone, v))}
+          onChange={(v) => set('emergencyPhone')(mobileOrAsTyped(v))}
           inputMode="tel"
           error={errorFor('emergencyPhone')}
         />

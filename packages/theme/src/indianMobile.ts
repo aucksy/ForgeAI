@@ -7,7 +7,7 @@
  * ONE pure module, shared by the member app, the admin app and the Workers (deploy/panel, deploy/hq
  * import this file directly), so every box and every server agrees. The pages that cannot import
  * TypeScript carry a plain-JS twin, tested on the same MOBILE_CASES table:
- *   apps/dashboard/public/mobile-number.js (join-online, friend, home, gym page) and
+ *   join-online.html, friend.html, home/home.js and gym-page/page.js (apps/dashboard/public), and
  *   apps/hq/public/logic.js (HQ "Owner's mobile").
  *
  * The rule:
@@ -15,6 +15,9 @@
  *    keyboards' digits count as 0-9 (an explicit table, never a Unicode regex: the Android JS engine
  *    and the test runner disagree on those, D:/Brain/Lessons jvm-tests-cannot-see-android-regex);
  *  - a "+91" written in front is the country code and goes at once;
+ *  - a number written with "+" or "00" and ANOTHER country code ("+44 7911 123456") is not an Indian number:
+ *    it is kept whole, never cut to its last 10 digits, so every check refuses it as before (fix round,
+ *    15 Nov 2026: "+44 7911 123456" had passed as 7911123456);
  *  - more than 10 digits ("91" + 10, "0" + 10, "0091" + 10, anything else): the LAST 10 (his words);
  *  - fewer than 10: kept as typed, so the person can keep typing. The "enter 10 digits" checks stay.
  *
@@ -71,6 +74,15 @@ function plusInFront(ascii: string): boolean {
 }
 
 /**
+ * Written with another country's code: "+" and a code that is not (on its way to) 91, or "00" and a code that is
+ * not 91. "+9" is still on its way to "+91", so it is not foreign yet. PURE.
+ */
+function foreignNumber(ascii: string, d: string): boolean {
+  if (plusInFront(ascii)) return d.length > 0 && !d.startsWith('91') && !'91'.startsWith(d.slice(0, 2));
+  return d.length >= 4 && d.startsWith('00') && !d.startsWith('0091');
+}
+
+/**
  * The 10-digit rule on a whole value (a paste, an autofill, what a server receives). PURE.
  * "+91 98765 43210" / "919876543210" / "09876543210" / "0091 98765 43210" / "(+91) 98765-43210"
  * -> "9876543210"; "98765" -> "98765"; "" -> "".
@@ -78,6 +90,7 @@ function plusInFront(ascii: string): boolean {
 export function cleanMobile(raw: string): string {
   const ascii = asciiDigits(raw);
   let d = ascii.replace(/[^0-9]/g, '');
+  if (foreignNumber(ascii, d)) return d; // "+44 7911 123456" -> "447911123456": refused, never 7911123456
   if (plusInFront(ascii) && d.startsWith('91')) d = d.slice(2);
   return d.length > MOBILE_LENGTH ? d.slice(-MOBILE_LENGTH) : d;
 }
@@ -98,6 +111,8 @@ export function mobileInput(prev: string, raw: string): string {
   const partialPlus = /^[^0-9]*\+\s*(9)?\s*$/.exec(ascii);
   if (partialPlus) return partialPlus[1] ? '+9' : '+';
   let d = ascii.replace(/[^0-9]/g, '');
+  // Another country's number stays as typed, so the box's own check can say it is not an Indian mobile.
+  if (foreignNumber(ascii, d)) return ascii.slice(0, 24);
   if (plusInFront(ascii) && d.startsWith('91')) d = d.slice(2);
   if (d.length <= MOBILE_LENGTH) return d;
   // "0091 98765 43210" typed by hand: wait for all 14 digits.
@@ -117,11 +132,7 @@ export function mobileInput(prev: string, raw: string): string {
  */
 export function anyCountryMobileInput(prev: string, raw: string, maxChars = 24): string {
   const ascii = asciiDigits(raw);
-  const d = ascii.replace(/[^0-9]/g, '');
-  const plus = plusInFront(ascii);
-  const foreignPlus = plus && d.length > 0 && !'91'.startsWith(d.slice(0, 2)) && !d.startsWith('91');
-  const foreignZeros = !plus && /^00/.test(d) && d.length >= 4 && !d.startsWith('0091');
-  if (foreignPlus || foreignZeros) return ascii.slice(0, maxChars);
+  if (foreignNumber(ascii, ascii.replace(/[^0-9]/g, ''))) return ascii.slice(0, maxChars);
   return mobileInput(prev, raw);
 }
 
@@ -135,13 +146,19 @@ export function dialMobileInput(dialCode: string, prev: string, raw: string): st
 }
 
 /**
- * A box that may hold a landline (the gym's own "Phone" in Settings): a paste or autofill of a mobile with extra
- * in front ("+91 98765 43210") becomes the 10 digits; anything else is left exactly as typed, so "0141 2345678"
- * keeps its 0. PURE.
+ * A box that may hold a landline or two numbers (the gym's own "Phone" in Settings, printed on receipts; a member's
+ * emergency contact). Only ONE thing is cleaned: a single mobile written with a clear India code in front
+ * ("+91 98765 43210", "91 98765 43210", "0091 98765 43210": 12 or 14 digits) becomes its 10 digits. Everything
+ * else is left exactly as typed: a landline with its 0 ("080 23456789" stays, never 8023456789), two numbers
+ * ("98290 12345 / 98290 12346"), words, a foreign number. Fix round, 15 Nov 2026: the first version cut
+ * "080 23456789" to a fake mobile and joined two numbers into one. PURE.
  */
 export function mobileOrAsTyped(raw: string): string {
-  const ten = indianMobile(raw);
-  return ten !== null && onlyDigits(raw).length > MOBILE_LENGTH ? ten : raw;
+  const ascii = asciiDigits(raw);
+  if (!/^[\s0-9+().-]*$/.test(ascii)) return raw; // a "/", ",", a word: more than one plain number
+  const d = ascii.replace(/[^0-9]/g, '');
+  const ten = d.length === 12 && d.startsWith('91') ? d.slice(2) : d.length === 14 && d.startsWith('0091') ? d.slice(4) : '';
+  return /^[6-9][0-9]{9}$/.test(ten) ? ten : raw;
 }
 
 /** The shared table: [what went in, what cleanMobile gives]. Every codebase's tests run it. */
@@ -163,6 +180,10 @@ export const MOBILE_CASES: readonly (readonly [string, string])[] = [
   ['+91 98765', '98765'],
   ['', ''],
   ['abc', ''],
+  // Another country's number is kept whole, so no check takes it for an Indian mobile (made-up numbers).
+  ['+44 7911 123456', '447911123456'],
+  ['0044 7911 123456', '00447911123456'],
+  ['+1 415 555 0134', '14155550134'],
 ];
 
 /** Typing and pasting into a box: [what it showed, what the change made it, what it shows now]. */
@@ -190,4 +211,8 @@ export const MOBILE_INPUT_CASES: readonly (readonly [string, string, string])[] 
   ['0091987654', '00919876543', '00919876543'], // "0091 ..." typed by hand
   ['0091987654321', '00919876543210', '9876543210'],
   ['9876543210', '+91 91234 56789', '9123456789'], // an autofill over a full box replaces it
+  ['', '+4', '+4'], // another country's number stays as typed, so the box's check refuses it
+  ['', '+44 7911 123456', '+44 7911 123456'],
+  ['9876543210', '+44 7911 123456', '+44 7911 123456'],
+  ['', '0044 7911 123456', '0044 7911 123456'],
 ];

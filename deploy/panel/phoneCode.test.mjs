@@ -104,7 +104,9 @@ test('Indian mobiles only: +91, 10 digits, starting 6-9', () => {
   assert.equal(indianMobile('919000000001'), OWNER);
   for (const bad of ['5000000001', '900000001', '+1 415 555 0100', '', null, '90000000011']) assert.equal(indianMobile(bad), null, String(bad));
   // R-580 (owner): a typed number with more than 10 digits keeps its last 10, whatever came in front.
-  assert.equal(indianMobile('+44 7700 900123'), '7700900123');
+  // Fix round (15 Nov 2026): another country's number is refused as before, never cut to its last 10 digits.
+  assert.equal(indianMobile('+44 7700 900123'), null);
+  assert.equal(indianMobile('0044 7700 900123'), null);
   for (const [typed, ten] of MOBILE_CASES) assert.equal(indianMobile(typed), /^[6-9]\d{9}$/.test(ten) ? ten : null, typed);
 });
 

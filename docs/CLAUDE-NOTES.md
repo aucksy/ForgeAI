@@ -90,6 +90,18 @@ Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept her
   sign-in box and checks 9876543210 (picture rel-f203-5b-keyboard-number).
 - What's new: owners ADMIN_NEWS_PENDING 'pending-mobile-digits' (with the next panel deploy); members: PROGRESS.md
   "Waiting for release" R-580 draft line.
+- **Fix round (15 Nov 2026, fresh-eyes review before the panel deploy):** (1) BLOCKER: the Settings gym "Phone" box
+  (printed on receipts; may hold a landline or two numbers) ran "last 10 digits": "080 23456789" became the fake
+  mobile 8023456789 (any area code whose 2nd digit is 6-9: 079, 0712, 0612 ...) and "98290 12345 / 9" collapsed into
+  one number. mobileOrAsTyped now cleans ONLY a single mobile with a clear India code in front (12 digits from 91,
+  14 from 0091, 6-9 first); a landline, two numbers, a "/", ",", a word or a foreign number stay exactly as typed.
+  The member form's EMERGENCY number (may be a landline too) moved to the same rule. Every other switched box is a
+  mobile used for sign-in codes, WhatsApp or the 10-digit check, so the owner's "0 + 10 -> last 10" stays there.
+  (2) A number with "+" or "00" and another country code ("+44 7911 123456") had passed every server as 7911123456:
+  cleanMobile now keeps it whole (refused by every check, as before R-580) and mobileInput shows it as typed so the
+  box's own check refuses it. All five plain-JS copies changed alike. Tests: mobileNumber.test.ts (landlines 080 /
+  079 / 0712 / 0612 / 0141 / 011, two numbers, foreign refused, Settings + emergency use the safe rule),
+  mobileRule.test.mjs (foreign refused by friend, lead, gym page, sign-in), phoneCode.test.mjs, shared tables.
 - Status: IN PROGRESS (cloud run ids follow).
 ## R-583 (15 Nov 2026) Gym reply notification: tap opened nothing (fixed); no sound / no pop-up (open); trainer choice hidden
 - His test (15 Nov 2026, his own member on his gym): the gym replied to his feedback. "There is a notification in the

@@ -105,10 +105,44 @@ describe('R-580: the 10-digit rule', () => {
     expect(dialMobileInput('+971', '', '+971 50 123 4567')).toBe('+971 50 123 4567');
   });
 
-  it('the gym phone in Settings: an autofilled mobile is cleaned, a landline keeps its 0', () => {
+  it('the gym phone in Settings and the emergency contact: only a clear +91 / 91 / 0091 mobile is cleaned', () => {
     expect(mobileOrAsTyped('+91 98765 43210')).toBe('9876543210');
-    expect(mobileOrAsTyped('0141 2345678')).toBe('0141 2345678');
+    expect(mobileOrAsTyped('91 98765 43210')).toBe('9876543210');
+    expect(mobileOrAsTyped('0091 98765 43210')).toBe('9876543210');
+    expect(mobileOrAsTyped('(+91) 98765-43210')).toBe('9876543210');
+    expect(mobileOrAsTyped('९८७६५४३२१०')).toBe('९८७६५४३२१०'); // already 10: left as typed
     expect(mobileOrAsTyped('98765 4321')).toBe('98765 4321');
+  });
+
+  it('fix round: a landline keeps its 0 and two numbers stay two (made-up numbers)', () => {
+    // Bengaluru, Ahmedabad, Nagpur, Patna, Jaipur: an area code whose 2nd digit is 6-9 once became a fake mobile.
+    for (const landline of ['080 23456789', '079 23456789', '0712 2345678', '0612 2345678', '0141 2345678', '08023456789', '011-23456789']) {
+      expect(mobileOrAsTyped(landline), landline).toBe(landline);
+    }
+    for (const two of ['98290 12345 / 98290 12346', '98290 12345 / 9', '98290 12345, 98290 12346', '98290 12345 98290 12346', '98290 12345 or 080 23456789']) {
+      expect(mobileOrAsTyped(two), two).toBe(two);
+    }
+    expect(mobileOrAsTyped('+44 7911 123456')).toBe('+44 7911 123456');
+    expect(mobileOrAsTyped('Front desk')).toBe('Front desk');
+    expect(mobileOrAsTyped('')).toBe('');
+  });
+
+  it('fix round: a foreign number is never cut to its last 10 digits', () => {
+    for (const foreign of ['+44 7911 123456', '0044 7911 123456', '+1 415 555 0134', '+971 50 123 4567']) {
+      expect(indianMobile(foreign), foreign).toBeNull();
+      expect(normalizeMobile(foreign), foreign).toBeNull();
+      expect(cleanMobile(foreign).length, foreign).toBeGreaterThan(10);
+      expect(mobileInput('', foreign), foreign).toBe(foreign); // the box shows it, its check refuses it
+    }
+    expect(indianMobile('+91 98765 43210')).toBe('9876543210');
+  });
+
+  it('the Settings phone and the emergency contact use the landline-safe rule, never the mobile rule', () => {
+    const settings = read('apps/dashboard/src/crm/ui/screens/Settings.tsx');
+    expect(settings).toContain('setPhone(mobileOrAsTyped(v))');
+    expect(settings).not.toMatch(/mobileInput\(|anyCountryMobileInput\(/);
+    const form = read('apps/dashboard/src/crm/ui/forms/MemberFormSheet.tsx');
+    expect(form).toContain("set('emergencyPhone')(mobileOrAsTyped(v))");
   });
 });
 
