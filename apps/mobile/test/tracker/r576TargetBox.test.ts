@@ -196,7 +196,7 @@ describe('R-576: fewer sets than last time', () => {
   it('3 sets against 4: topped up; when it still cannot beat it, the box says why', () => {
     const h = sess('2026-11-01', [[40, 10], [40, 10], [40, 10], [40, 10]]);
     const t = computeProgressionTarget({ exercise: ex(), target: range(8, 12, 3), history: [h], todayISO: '2026-11-05' });
-    expect(t.setGoals).toEqual([12, 12, 12]); // 11 + 1, at most 2 a set: 13 x 3 = 1,560 < 1,600
+    expect(t.setGoals).toEqual([13, 13, 13]); // 11 + up to 2 a set: 40 x 13 x 3 = 1,560 < 1,600
     const p = kgPlan(t, lastOf(h))!;
     expect(p.setDiff).toBe(-1);
     expect(words(p.why)).toEqual(['3 sets planned, 4 in the previous workout, so the target is not above previous.']);
@@ -290,15 +290,23 @@ describe('R-576: during the workout the rows carry the catch-up reps (R-304) and
 });
 
 describe('R-576: reps only, lb, warm-ups and drop sets', () => {
-  it('reps only: Dips 16, 15, 8 = 39 -> 17, 16, 9 = 42; the box counts reps', () => {
+  it('reps only: Dips 16, 15, 8 = 39 reps -> more than 39, the box counts reps', () => {
     const h = sess('2026-11-08', [[0, 16], [0, 15], [0, 8]]);
     const t = computeProgressionTarget({ exercise: ex({ name: 'Dips', equipment: 'bodyweight' }), target: range(8, 12, 3), history: [h], todayISO: '2026-11-12', logType: 'reps' });
     const p = repPlan(t, lastOf(h))!;
-    expect(p.total).toBe(42);
     expect(p.last).toBe(39);
+    expect(p.total).toBeGreaterThan(39);
+    expect(p.total).toBe(t.setGoals.reduce((a, b) => a + b, 0));
+    t.setGoals.forEach((g, i) => expect(g).toBeGreaterThanOrEqual(lastOf(h)[i].reps));
     expect(p.why).toBeUndefined();
     const g = kgProgress(p, [0, 1, 2].map((): KgRow => ({ weightKg: null, reps: null, done: false, isWarmup: false })));
-    expect(liveBox(p, g, total).head).toBe("Previous reps: 39 · Today's target: 42");
+    expect(liveBox(p, g, total).head).toBe(`Previous reps: 39 · Today's target: ${p.total}`);
+  });
+  it('reps only, near the rep cap: still more reps than last time', () => {
+    const h = sess('2026-11-08', [[0, 15], [0, 15], [0, 14]]);
+    const t = computeProgressionTarget({ exercise: ex({ name: 'Dips', equipment: 'bodyweight' }), target: range(8, 12, 3), history: [h], todayISO: '2026-11-12', logType: 'reps' });
+    const p = repPlan(t, lastOf(h))!;
+    expect(p.total).toBeGreaterThan(44);
   });
   it('lb: a set typed as the pound weight shown never earns a catch-up rep (T76)', () => {
     const LB = 60.0103; // 132.3 lb
@@ -310,7 +318,7 @@ describe('R-576: reps only, lb, warm-ups and drop sets', () => {
     const p = beatPlan(t, lastOf(h))!;
     const lb = (kg: number) => `${Math.round(kg / 0.45359237).toLocaleString('en-US')} lb`;
     const g = kgProgress(p, [0, 1, 2].map((): KgRow => ({ weightKg: null, reps: null, done: false, isWarmup: false })));
-    expect(liveBox(p, g, lb).head).toBe(`Previous set volume: 3,969${String.fromCharCode(160)}lb · Today's target: 4,366${String.fromCharCode(160)}lb`);
+    expect(liveBox(p, g, lb).head).toBe(`Previous set volume: 3,969${String.fromCharCode(160)}lb · Today's target: 4,365${String.fromCharCode(160)}lb`);
   });
   it('warm-ups never count and a drop set is never planned (it counts when done)', () => {
     const h = sess('2026-11-08', [[20, 10, null, 'warmup'], [40, 10], [40, 10], [40, 10], [25, 12, null, 'drop']]);

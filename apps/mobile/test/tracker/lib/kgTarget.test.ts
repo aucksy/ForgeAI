@@ -70,24 +70,26 @@ describe('#9 kg to beat: the plan', () => {
       { weightKg: 45, reps: 5, asLast: false },
     ]);
   });
-  it('R-138: another number of sets than last time compares set for set and names the extra sets', () => {
-    // 2 sets last time, 3 planned: the first 2 (45 x 9, 8 = 765) against last time's 2 (680).
+  it('R-576 (was R-138): another number of sets than last time is named; Previous is every set last time', () => {
+    // 2 sets last time, 3 planned: all 3 (1,125) against last time's 2 (680). (R-138 compared set for set; the
+    // owner's R-576 box compares every working set, the one number it shows as Previous.)
     const more = kgPlan(base, last3.slice(0, 2))!;
-    expect([more.setDiff, more.compared, more.comparedTotal, more.last]).toEqual([1, 2, 765, 680]);
-    expect(kgToBeatLine(more, total)).toBe('1,125 kg to beat · +1 set · first 2 sets +13% on previous');
-    // 4 sets last time, 3 planned: these 3 (1,125) against last time's first 3 (977.5).
+    expect([more.setDiff, more.total, more.last]).toEqual([1, 1125, 680]);
+    expect(kgToBeatLine(more, total)).toBe('1,125 kg to beat · +1 set · +65% on previous');
+    // 4 sets last time, 3 planned: 1,125 against all 4 (1,232.5): topped up, then said.
     const fewer = kgPlan(base, [...last3, { weightKg: 42.5, reps: 6 }])!;
-    expect(kgToBeatLine(fewer, total)).toBe('1,125 kg to beat · 1 set fewer · these 3 sets +15% on previous');
+    expect(fewer.setDiff).toBe(-1);
+    expect(kgToBeatLine(fewer, total)).toMatch(/^[0-9,]+ kg to beat · 1 set fewer/);
     // The same number: as before.
     expect(kgPlan(base, last3)!.setDiff).toBeUndefined();
     expect(kgToBeatLine(kgPlan(base, last3)!, total)).toBe('1,125 kg to beat · +15% on previous');
   });
-  it('R-138: his case - an extra 4th set never hides a lower aim on the first 3', () => {
-    // 20 Oct: 40 x 12, 11, 9 (3 sets); the plan 40 x 13, 10, 8, 8 (4 sets): the first 3 aim 31 reps vs 32.
+  it('R-576 (was R-138): his case - the target is the sets the rows show, all of them, against every set last time', () => {
+    // 20 Oct: 40 x 12, 11, 9 (3 sets = 1,280); the plan 40 x 13, 10, 8, 8 (4 sets) = 1,560. The engine's Target
+    // never aims a set under its own last reps (R-454, beatGoals); the box adds up exactly what the rows show.
     const t = { ...base, targetWeightKg: 40, targetSets: 4, setGoals: [13, 10, 8, 8], repGoal: 13 };
     const p = kgPlan(t, [{ weightKg: 40, reps: 12 }, { weightKg: 40, reps: 11 }, { weightKg: 40, reps: 9 }])!;
-    // R-351: never under last time's total: the first 3 sets must pass 1,280 (+40 kg), so 1,600 in all.
-    expect(kgToBeatLine(p, total)).toBe('1,600 kg to beat · +1 set · first 3 sets same as previous');
+    expect(kgToBeatLine(p, total)).toBe('1,560 kg to beat · +1 set · +22% on previous');
   });
   it('the % words', () => {
     expect(pctWords(0.002)).toBe('same as previous');
@@ -113,24 +115,25 @@ describe('#9 kg to beat: during the workout', () => {
     const each = (kg: number) => `${total(kg)} each`;
     expect(kgLiveLine(p, g, each, weight)).toBe("Next set: 45 kg × 8 · Done: 405 of 1,125 kg each");
   });
-  it('a short set: the open sets catch up, at most 2 reps above plan each', () => {
-    const g = kgProgress(p, [row(45, 6, true), row(null, null, false), row(null, null, false)]);
-    // 1,125 − 270 = 855 left; 45 × 8 + 45 × 8 = 720 → +2 each = 45 × 10, 10 = 900 ≥ 855 (one rep at a time).
-    expect(g.next.every((s, i) => s.reps - [8, 8][i] <= MAX_EXTRA_REPS)).toBe(true);
+  // R-576 (owner, 15 Nov 2026): the catch-up reps after a short set (R-304) are in the ROW hints now
+  // (activeWorkoutStore beatRows / fillForSet: r576TargetBox.test.ts), so the box counts the rows exactly as
+  // they show and never plans reps a row does not show.
+  it('a short set: the open rows count as they show; topped-up hints reach the target', () => {
+    const plain = kgProgress(p, [row(45, 6, true), row(null, null, false), row(null, null, false)]);
+    // 1,125 - 270 = 855 left; the plan's 45 x 8, 8 = 720 as shown: short.
+    expect(plain.next).toEqual([{ weightKg: 45, reps: 8 }, { weightKg: 45, reps: 8 }]);
+    expect(plain.short).toBe(true);
+    // The rows topped up (+2 each, at most MAX_EXTRA_REPS): 45 x 10, 10 = 900 >= 855.
+    const up = (reps: number): KgRow => ({ ...row(null, null, false), hintKg: 45, hintReps: reps });
+    const g = kgProgress(p, [row(45, 6, true), up(8 + MAX_EXTRA_REPS), up(8 + MAX_EXTRA_REPS)]);
     expect(g.next.reduce((a, s) => a + s.weightKg * s.reps, 0)).toBeGreaterThanOrEqual(855);
     expect(g.short).toBe(false);
   });
-  it('too far behind: capped, and says close enough', () => {
-    const g = kgProgress(p, [row(45, 2, true), row(45, 2, true), row(null, null, false)]);
+  it('too far behind: says a little less is fine', () => {
+    const g = kgProgress(p, [row(45, 2, true), row(45, 2, true), { ...row(null, null, false), hintKg: 45, hintReps: 8 + MAX_EXTRA_REPS }]);
     expect(g.next).toEqual([{ weightKg: 45, reps: 8 + MAX_EXTRA_REPS }]);
     expect(g.short).toBe(true);
     expect(kgLiveLine(p, g, total, weight)).toMatch(/\(a little less is fine\)$/);
-  });
-  it('R-512: how hard a set felt no longer stops catch-up reps (no "eased" row any more)', () => {
-    // Before (R-324), a row "eased" after a very hard set took no extra reps. That rule is gone with the hint.
-    const hinted: KgRow = { ...row(null, null, false), hintKg: 45, hintReps: 8 };
-    const g = kgProgress(p, [row(45, 2, true), hinted, row(null, null, false)]);
-    expect(g.next.every((s) => s.reps === 8 + MAX_EXTRA_REPS)).toBe(true);
   });
   it('beaten: says what was done next to the previous workout (owner, 12 Nov 2026)', () => {
     const g = kgProgress(p, [row(45, 10, true), row(45, 10, true), row(45, 9, true)]);
@@ -173,7 +176,7 @@ describe('#9 kg to beat: during the workout', () => {
   });
   it('a row added mid-workout with a hint is planned from it', () => {
     const g = kgProgress(p, [row(45, 5, true), row(45, 5, true), row(45, 5, true), { weightKg: null, reps: null, done: false, isWarmup: false, hintKg: 45, hintReps: 5 }]);
-    expect(g.next).toEqual([{ weightKg: 45, reps: 5 + MAX_EXTRA_REPS }]);
+    expect(g.next).toEqual([{ weightKg: 45, reps: 5 }]);
     expect(g.short).toBe(true);
   });
   it('typing into an open row never moves the line; a tick, an added or removed row does', () => {

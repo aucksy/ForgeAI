@@ -138,17 +138,26 @@ appId: com.mettleup.app
       FIND: "^400.kg done · [0-9,]+.kg to go$"
 - assertNotVisible: "^Next set: .*"
 - takeScreenshot: rel-r454-g-lateral-after-set-1
+# R-576 (owner, 15 Nov 2026): 20 x 17, 15, 19 after set 1 would only match 1,420 kg, under today's target, so
+# set 2 aims one more (18) and carries the small "i" that opens the reason; the box says which set and why.
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Set 2 aims for an extra rep to reach the target[.]$"
+- assertVisible:
+    id: "set-why-Lateral Raise-2"
+- takeScreenshot: rel-r576-u454-lateral-catch-up
 - runFlow:
     file: sub-uat-r454-hint.yaml
     env:
       EX: "Lateral Raise"
       N: "2"
       KG: "20"
-      REPS: "17"
+      REPS: "18"
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: "^740.kg done · [0-9,]+.kg to go$"
+      FIND: "^760.kg done · [0-9,]+.kg to go$"
 - runFlow:
     file: sub-uat-r454-hint.yaml
     env:
@@ -159,7 +168,7 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: "^1,040.kg done · [0-9,]+.kg to go$"
+      FIND: "^1,060.kg done · [0-9,]+.kg to go$"
 - runFlow:
     file: sub-uat-r454-hint.yaml
     env:
@@ -167,12 +176,12 @@ appId: com.mettleup.app
       N: "4"
       KG: "20"
       REPS: "19"
-# ---------------------------------------------------------------- (d) equal to last time: "Previous set volume matched" (green)
+# ---------------------------------------------------------------- (d) the rows beat last time: "Previous set volume beaten!" (green)
 - runFlow:
     file: sub-uat-r454-line.yaml
     env:
       EX: "Lateral Raise"
-      WANT: "Previous set volume matched / Done 1,420 kg · Previous 1,420 kg"
+      WANT: "Previous set volume beaten! +20 kg / Done 1,440 kg · Previous 1,420 kg"
 - assertNotVisible: "(?is).*(reached|beaten \\(|done · Previous:).*"
 - assertNotVisible: ".*kg each done.*|.*Previous: [0-9,]+ kg each.*|.*of (today.s )?[0-9,]+ kg each.*"
 - takeScreenshot: rel-r454-h-lateral-same

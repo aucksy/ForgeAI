@@ -56,7 +56,6 @@ describe('R-515: his Dumbbell Curl, 20 kg x 18, 13, 11', () => {
     const t = his();
     const p = kgPlan(t, at(20, [18, 13, 11]).map(([weightKg, reps]) => ({ weightKg, reps })))!;
     expect(p.total).toBe(20 * (18 + 14 + 12));
-    expect(p.atLast).toBeUndefined();
     const g = kgProgress(p, [open(20, 18), open(20, 14), open(20, 12)]);
     const line = kgLiveLine(p, g, total, weight);
     expect(line).toBe('Next set: 20 kg × 18 · Done: 0 of 880 kg');
@@ -160,7 +159,10 @@ describe('R-515 sweep: every hint kind says what its numbers do', () => {
       did: [6, 5, 5],
       rule: 'R3',
     },
-    { name: 'a long break', exercise: bench, r: range(8, 12), history: [sess('2026-10-14', at(60, [11, 10, 9]))], did: [11, 10, 9], rule: 'R1' },
+    // R-576 (owner, 15 Nov 2026): a month off is a normal day; only 6 weeks or more is a break (R1 keeps the
+    // weight where no lighter step exists: a bodyweight move).
+    { name: 'a month off: a normal day', exercise: bench, r: range(8, 12), history: [sess('2026-10-14', at(60, [11, 10, 9]))], did: [11, 10, 9], rule: 'R5' },
+    { name: 'a long break', exercise: pull, r: range(8, 12), history: [sess('2026-09-30', at(0, [11, 10, 9]))], did: [11, 10, 9], rule: 'R1' },
     { name: 'a longer break: lighter start', exercise: bench, r: range(8, 12), history: [sess('2026-09-01', at(60, [11, 10, 9]))], did: [11, 10, 9], rule: 'R1b' },
     { name: 'bodyweight +1', exercise: pull, r: range(8, 12), history: [sess('2026-11-10', at(0, [8, 7, 6]))], did: [8, 7, 6], rule: 'B1' },
     { name: 'bodyweight, one set above the range', exercise: pull, r: range(5, 8), history: [sess('2026-11-10', at(0, [30, 7, 6]))], did: [30, 7, 6], rule: 'B1' },
@@ -198,7 +200,7 @@ describe('R-515 sweep: every hint kind says what its numbers do', () => {
     };
     expect(run(4)).toBe('Same weight, 60 kg. Add 1 rep to sets 1, 2 and 3: 11, 10, 9. Set 4 is new: 8.');
     expect(run(6)).toBe('Same weight, 60 kg. Add 1 rep to sets 1 and 3: 11, 9. Keep set 2 at 10. Set 2 came after a long rest, so its goal is not raised.');
-    expect(run(12)).toBe('Keep set 1 at 30. Add 1 rep to sets 2 and 3: 8, 7.');
-    expect(run(13)).toBe('Same help, 20 kg. Keep set 1 at 12. Add 1 rep to sets 2 and 3: 10, 9.');
+    expect(run(13)).toBe('Keep set 1 at 30. Add 1 rep to sets 2 and 3: 8, 7.');
+    expect(run(14)).toBe('Same help, 20 kg. Keep set 1 at 12. Add 1 rep to sets 2 and 3: 10, 9.');
   });
 });

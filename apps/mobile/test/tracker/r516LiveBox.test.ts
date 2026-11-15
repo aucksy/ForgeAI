@@ -33,7 +33,7 @@ const box = (rows: KgRow[]) => liveBox(plan(), kgProgress(plan(), rows), total);
 describe('R-516: his Dumbbell Curl box, 840 kg previous, 880 kg target', () => {
   it('the numbers: previous 840 (every working set), target 880 (the goals shown, 18, 14, 12)', () => {
     expect(t.setGoals).toEqual([18, 14, 12]);
-    expect(plan().previous).toBe(840);
+    expect(plan().last).toBe(840);
     expect(plan().total).toBe(880);
   });
 

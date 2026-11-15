@@ -53,7 +53,7 @@ describe('R-498: kilos, beaten', () => {
     expect(kgLiveLine(bench, g, totalLb, weight)).toBe(`Previous set volume beaten! +441${NBSP}lb\nDone 3,638 lb · Previous 3,197 lb`);
   });
   it('a different number of sets keeps its note on line 2', () => {
-    const plus: KgPlan = { ...bench, setDiff: 1, compared: 4 };
+    const plus: KgPlan = { ...bench, setDiff: 1 };
     const g = kgProgress(plus, [done(75, 5), done(75, 5), done(75, 6), done(75, 6), done(75, 5)]);
     expect(lineGreen(plus, g)).toBe(true);
     expect(lines(kgLiveLine(plus, g, total, weight))[1]).toBe('Done 2,025 kg · Previous 1,450 kg · +1 set');
@@ -123,9 +123,9 @@ describe('R-498: the card draws two lines, the info button stays', () => {
     expect(card).toMatch(/fontFamily: type\.bodyMedium, fontSize: type\.size\.sub, color: faded\(color\.goodText\) \}\}>\{greenSub\}/);
     expect(card).toContain('testID={`target-line-${exercise.name}`}');
   });
-  it('the (i) and its tap are unchanged; a screen reader hears the two lines as two sentences', () => {
-    expect(card).toContain('onPress={() => setShowWhy((v) => !v)}');
-    expect(card).toContain('<Glyph name="info" size={16} color={showWhy ? color.accent : color.inkMuted} />');
+  it('the (i) and its tap stay (R-576: the "i" stands out when there is a reason); two lines, two sentences', () => {
+    expect(card).toContain('onPress={() => (showWhy ? setShowWhy(false) : openWhy())}');
+    expect(card).toContain('<WhyIcon state={iconState} open={showWhy}');
     expect(card).toContain("kgLine.text.split(GREEN_LINE_BREAK).join('. ')");
   });
 });

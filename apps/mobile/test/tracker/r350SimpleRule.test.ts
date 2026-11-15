@@ -54,33 +54,34 @@ const TBAR_LAST = [
 describe('R-350: the owner T-Bar Row', () => {
   const t = run(ex(), range(6, 10), TBAR, { jump: 'standard' });
 
-  it('every set reached 10 -> 32.5 kg, each set keeping about its kg: 10, 10, 9', () => {
+  it('every set reached 10 -> 32.5 kg; R-576: the sets still add up to more than 1,050 kg: 12, 11, 10', () => {
     expect(t.rule).toBe('R2');
     expect(t.change).toBe('up');
     expect(t.targetWeightKg).toBe(32.5);
-    expect(t.setGoals).toEqual([10, 10, 9]);
-    expect(targetLine(t)).toBe('32.5 kg · 10, 10, 9');
-    expect(t.reason).toBe('All sets reached 10. Move up to 32.5 kg: 10, 10, 9.');
+    // Each set keeping about its kg would be 10, 10, 9 (942.5 kg, under last time); R-576 (owner, 15 Nov 2026)
+    // adds 1 rep at a time, first sets first, at most 2 a set: 12, 11, 10 = 1,072.5 kg.
+    expect(t.setGoals).toEqual([12, 11, 10]);
+    expect(t.extraReps).toEqual([2, 1, 1]);
+    expect(targetLine(t)).toBe('32.5 kg · 12, 11, 10');
+    expect(t.reason).toBe('All sets reached 10. Move up to 32.5 kg: 12, 11, 10.');
   });
 
-  it('R-351: the kg to beat is last time\'s 1,050 kg, never the plan\'s 942.5', () => {
+  it('R-576 (was R-351): the target is the sets the rows show, 1,072.5 kg, above the previous 1,050', () => {
     const p = kgPlan(t, TBAR_LAST)!;
-    expect(p.total).toBe(1050);
-    expect(p.planned).toBe(942.5);
-    expect(kgToBeatLine(p, total)).toBe('1,050 kg to beat · your previous total');
-    // Before a set: the next set asks what the row shows (10), never extra reps past the top.
-    const g0 = kgProgress(p, [open(32.5, 10), open(32.5, 10), open(32.5, 9)]);
-    // R-515: 1,050 is not the sets shown added up (942.5), so the line says what it is.
-    expect(kgLiveLine(p, g0, total, weight)).toBe("Next set: 32.5 kg × 10 · Done: 0 of 1,050 kg, the previous total");
+    expect(p.total).toBe(1072.5);
+    expect(p.last).toBe(1050);
+    expect(kgToBeatLine(p, total)).toBe('1,073 kg to beat · +2% on previous');
+    const g0 = kgProgress(p, [open(32.5, 12), open(32.5, 11), open(32.5, 10)]);
+    expect(kgLiveLine(p, g0, total, weight)).toBe('Next set: 32.5 kg × 12 · Done: 0 of 1,073 kg');
   });
 
   it('R-351: his screen, 30 x 13 twice done and one set left, is not "beaten"', () => {
     const p = kgPlan(t, TBAR_LAST)!;
     const g = kgProgress(p, [done(30, 13), done(30, 13), open(30, 9)]);
     expect(kgBeaten(g)).toBe(false);
-    expect(g.left).toBe(270);
+    expect(g.left).toBe(292.5);
     const line = kgLiveLine(p, g, total, weight);
-    expect(line).toContain('780 of 1,050 kg');
+    expect(line).toContain('780 of 1,073 kg');
     expect(line).not.toMatch(/beaten|matched|reached| done · /);
     // Owner, 12 Nov 2026: one finished format; R-498 (14 Nov): exactly last time's 1,050 is "Previous set volume matched".
     expect(kgLiveLine(p, kgProgress(p, [done(30, 13), done(30, 13), done(30, 10)]), total, weight)).toBe('Previous set volume beaten! +30\u00a0kg\nDone 1,080 kg · Previous 1,050 kg');
@@ -136,7 +137,8 @@ describe('R-350: under the top -> same weight, +1 rep on each set', () => {
     });
     expect(t.rule).toBe('R2');
     expect(t.targetWeightKg).toBe(25);
-    expect(t.setGoals).toEqual([12, 12, 12]);
+    // 12, 12, 12 would only match 900 kg (R-576): set 1 gets one more.
+    expect(t.setGoals).toEqual([13, 12, 12]);
   });
 });
 
@@ -188,12 +190,12 @@ describe('R-350 on other kinds of exercise', () => {
   it('two dumbbells typed as one total move to a real pair: 20 (10 + 10) -> 25 (12.5 + 12.5)', () => {
     const t = run(curl, range(8, 12), [sess('2026-11-02', [[20, 12], [20, 12], [20, 12]])], { pair: true });
     expect(t.targetWeightKg).toBe(25);
-    // 20 x 12 = 240 kg a set -> 9 reps at 25 kg.
-    expect(t.setGoals).toEqual([9, 9, 9]);
+    // 20 x 12 = 240 kg a set -> 9 reps at 25 kg; R-576: 9, 9, 9 (675) is under 720, so 10, 10, 9 (725).
+    expect(t.setGoals).toEqual([10, 10, 9]);
     // Typed as one dumbbell: 22.5 kg, 10 reps.
     const one = run(curl, range(8, 12), [sess('2026-11-02', [[20, 12], [20, 12], [20, 12]])]);
     expect(one.targetWeightKg).toBe(22.5);
-    expect(one.setGoals).toEqual([10, 10, 10]);
+    expect(one.setGoals).toEqual([11, 11, 11]);
   });
 
   it('assisted: +1 rep with the same help, then one step less help from the bottom of the range', () => {

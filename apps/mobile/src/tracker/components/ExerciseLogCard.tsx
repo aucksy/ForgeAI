@@ -343,10 +343,11 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
     // rows are read through the ref on purpose: only tickKey (ticks, adds, removes) moves the line.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [kgPlanned, fillTarget, tickKey, units, loadMode]);
-  // R-576 (owner, 15 Nov 2026): why this target is unusual, in plain words: the plan's reasons, then the live
-  // ones (a box), or the Target's own (no box: an easy week, another version, a hold after a long break ...).
+  // R-576 (owner, 15 Nov 2026): why this target is unusual, in plain words: the live ones first (a row topped up
+  // after a short set is what matters mid-workout), then the plan's, or the Target's own (no box: an easy week,
+  // another version, a hold after a long break ...).
   const why: Why[] = useMemo(
-    () => (kgPlanned ? [...(kgPlanned.why ?? []), ...(kgLine?.live ?? [])] : target ? targetWhy(target) : []),
+    () => (kgPlanned ? [...(kgLine?.live ?? []), ...(kgPlanned.why ?? [])] : target ? targetWhy(target) : []),
     [kgPlanned, kgLine, target],
   );
   const whyLinesShown = why.map((w) => whyText(w, (kg) => fmtWeight(kg, units)));
