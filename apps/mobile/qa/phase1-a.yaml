@@ -238,7 +238,10 @@ appId: com.mettleup.app
 - takeScreenshot: 03-active-workout
 # Progression v2: the Target line reads "<weight> · aim for N" (or bodyweight / first-time
 # range); tapping it shows the one-sentence reason, tapping again hides it.
-- assertVisible: 'Target .*(aim for \d+|×|First time).*Tap for why\.'
+# 0.79.0 round (16 Nov 2026, owner run 43765515975): the spoken label is "Target <weight> · <reps>. Previous set
+# volume ... Tap for why." (R-516/R-576, as uat-rel-3-goals.yaml reads it); when its reason says "aim for fewer reps"
+# (no number) only the "·" form matches, so it is allowed too. The box itself was right in the picture.
+- assertVisible: 'Target .*(aim for \d+|×|·|First time).*Tap for why\.'
 - tapOn:
     text: 'Target .*Tap for why\.'
     index: 0
