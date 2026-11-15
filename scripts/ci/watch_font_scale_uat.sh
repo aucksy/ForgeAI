@@ -28,27 +28,48 @@ front() {
   adb shell dumpsys window 2>/dev/null | grep -E "mCurrentFocus" | head -1 | tr -d '\r'
 }
 
-adb wait-for-device
+ready() { # the emulator is up and adb answers (it drops "offline" for a moment after boot and after adb root)
+  local i
+  for i in $(seq 1 60); do
+    adb wait-for-device >/dev/null 2>&1
+    if [ "$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')" = "1" ]; then return 0; fi
+    sleep 3
+  done
+  return 1
+}
+# Root first (as the other watch UATs do): it restarts adbd, so everything after waits for it.
+ready
+adb root || true
+sleep 5
+ready
+sleep 10
+ready
+ROOT=0; [ "$(adb shell id -u | tr -d '\r')" = "0" ] && ROOT=1
 SDK=$(adb shell getprop ro.build.version.sdk | tr -d '\r')
-{ echo "sdk $SDK"; adb shell getprop ro.build.fingerprint; adb shell wm size; adb shell wm density; } | tr -d '\r' | tee "$OUT/device.txt"
+{ echo "sdk $SDK root $ROOT"; adb shell getprop ro.build.fingerprint; adb shell wm size; adb shell wm density; } | tr -d '\r' | tee "$OUT/device.txt"
 
 # ---- 1. what the watch's Settings app offers ----
 BT="$(ls -d "$ANDROID_HOME"/build-tools/*/ | sort -V | tail -1)"
 AAPT2="${BT%/}/aapt2"
 FS="$OUT/font-scales.txt"
+HITS_ALL="$OUT/font-scale-arrays.txt"
+: > "$HITS_ALL"
 {
   echo "== font_scale now: $(adb shell settings get system font_scale | tr -d '\r')"
-  for p in $(adb shell pm list packages | tr -d '\r' | sed 's/^package://' | grep -iE 'settings' ); do
+  PKGS="$(adb shell pm list packages | tr -d '\r' | sed 's/^package://' | grep -iE 'settings' || true)"
+  echo "== settings packages: $(echo $PKGS)"
+  for p in $PKGS; do
     for apk in $(adb shell pm path "$p" | tr -d '\r' | sed 's/^package://'); do
-      adb pull "$apk" /tmp/s.apk >/dev/null 2>&1 || continue
+      ready
+      adb pull "$apk" /tmp/s.apk >/dev/null 2>&1 || { echo "== could not pull $apk"; continue; }
       HITS="$("$AAPT2" dump resources /tmp/s.apk 2>/dev/null | grep -iE -A14 'array/[a-z_]*font[a-z_]*(scale|size)[a-z_]*' || true)"
-      if [ -n "$HITS" ]; then echo "== $p ($apk)"; echo "$HITS"; fi
+      if [ -n "$HITS" ]; then echo "== $p ($apk)"; echo "$HITS"; echo "$HITS" >> "$HITS_ALL"; fi
     done
   done
 } > "$FS" 2>&1
 cat "$FS"
 # The largest decimal between 1 and 3 any font-size array holds (the Settings app's own choices).
-MAX="$(grep -oE '"?\b[12]\.[0-9]+\b"?' "$FS" | tr -d '"' | awk '$1 >= 1.0 && $1 <= 3.0' | sort -g | tail -1)"
+MAX="$(grep -oE '"[12]\.[0-9]+"' "$HITS_ALL" | tr -d '"' | awk '$1 >= 1.0 && $1 <= 3.0' | sort -g | tail -1)"
 if [ -z "$MAX" ]; then
   MAX=1.3
   result font-scales INFO "no font-size list found in the Settings app's resources; using 1.3 (Galaxy's Largest)"
@@ -57,11 +78,12 @@ else
 fi
 
 # ---- 2. the app at that size ----
-adb root || true
-sleep 3
-adb wait-for-device
-ROOT=0; [ "$(adb shell id -u | tr -d '\r')" = "0" ] && ROOT=1
-adb shell svc power stayon true || true
+# A real member's watch is off the charger (a charging watch shows its charging screen over every app).
+adb shell dumpsys battery unplug || true
+adb shell dumpsys battery set ac 0 || true
+adb shell dumpsys battery set usb 0 || true
+adb shell dumpsys battery set status 3 || true
+adb shell dumpsys battery set level 82 || trueadb shell svc power stayon true || true
 adb shell input keyevent KEYCODE_WAKEUP || true
 log "install"
 adb install -r -g "$APK" || exit 1
