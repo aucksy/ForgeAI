@@ -7,6 +7,12 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-564 (15 Nov 2026) Festival dates on "Today for you" re-checked against two sources each
+- He said: "you seem to be detecting the festivals and occasions and suggesting the user to send a message around it. I just want you to double check for the accuracy of these dates. I don't want you suggesting festivals on days which are incorrect."
+- The only dated list is apps/dashboard/src/crm/assistant/festivals.ts (24 festivals x 2026-2028). Messages templates, Gym timings and the phone app hold festival NAMES only (the owner picks the day); no migration holds a festival date.
+- Checked all 72 against Drik Panchang (New Delhi) plus the DoPT 2026/2027 lists or truecalendar.com (timeanddate.com blocks robots). Fixed: Pongal 2026 14 Jan (was 15); Bakrid 2026 28 May (was 27; DoPT moved it 22 May 2026); Eid ul-Fitr 2027 10 Mar (was 9; DoPT); Bakrid 2028 6 May (was 5). Eid 2027 + both 2028 Eids now "around". Splits kept on purpose: Makar Sankranti 2027 = 15 Jan (DoPT says 14), Holi 2027 = 22 Mar (DoPT closes 23).
+- Logic was right: India's day (todayISO, +05:30), never a passed festival. Fixed words: Eid on the day/eve says "expected ... (the moon decides the day)"; 1 day says "tomorrow", not "in 1 days". New test pins every date. Dashboard only: reaches owners on the next admin panel deploy (not deployed).
+
 ## R-563 (15 Nov 2026) Gym web pages: on by default for every gym, in onboarding; HQ switch per gym; one link per gym
 He said: "I'm not able to see any gym webpages setting in the headquarters. By default it should be on for all GYMS and part of their onboarding step. And then I may be able to switch it off if needed for GYMs individually." And before: one link per gym ("the gym will have their webpage under our domain ... users go to that page read the information and then join from there"), joining from a phone or a computer.
 Why he sees nothing: the whole feature is behind the global Worker switch GYM_PAGES=off (needs his yes on the public page words + migration 0082), and HQ has no per-gym switch yet.
