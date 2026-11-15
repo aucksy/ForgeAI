@@ -7,6 +7,11 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-577 (15 Nov 2026) Watch screens checked on the sizes of the watches members own (owner chose "Option 1")
+- The brief (15 Nov 2026): the owner chose "Option 1": render the watch app's screens in the cloud on Galaxy
+  Watch, OnePlus and TicWatch sizes too, not only Pixel, plus the biggest text a watch allows; a small-round
+  emulator UAT leg next to the large one. A screen that fails at the biggest text is a real bug: fix the layout.
+- Status: IN PROGRESS (size table, results and run ids follow).
 ## R-575 (15 Nov 2026) "Your watch app has an update" never showed on his phone: every signal, a why, retries
 - The brief (15 Nov 2026): the pop-up never shows on his phone (0.78.0, OPPO CPH2873, Android 17) although his
   watch runs a watch app older than 0.77.0. Later the same day: find the root cause and a fix for EVERY Wear OS

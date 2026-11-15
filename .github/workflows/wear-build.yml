@@ -29,6 +29,7 @@ on:
       - 'scripts/ci/watch_keep_screen_uat.sh'
       - 'scripts/ci/watch_dim_uat.sh'
       - 'scripts/ci/watch_dim_aod_off_uat.sh'
+      - 'scripts/ci/watch_font_scale_uat.sh'
 
 # A newer push replaces a run still going for the same branch (a hand-started run is never cut).
 concurrency:
@@ -253,11 +254,17 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 70
+    # R-577 (15 Nov 2026): also the SMALL round watch (wearos_small_round, 384 px) on API 34, so every
+    # UAT below also runs on the smallest screen; that leg adds the largest-text pictures
+    # (watch_font_scale_uat.sh). Legs run side by side: wall time stays that of one leg.
     strategy:
       fail-fast: false
       matrix:
-        api: ["34", "35-ext15"]
-    name: watch UAT (api ${{ matrix.api }})
+        include:
+          - { api: "34", profile: wearos_large_round, tag: "34" }
+          - { api: "35-ext15", profile: wearos_large_round, tag: "35-ext15" }
+          - { api: "34", profile: wearos_small_round, tag: "34-small" }
+    name: watch UAT (api ${{ matrix.api }}, ${{ matrix.profile }})
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -280,7 +287,7 @@ jobs:
           api-level: ${{ matrix.api }}
           target: android-wear
           arch: x86_64
-          profile: wearos_large_round
+          profile: ${{ matrix.profile }}
           emulator-options: -no-snapshot -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           script: bash scripts/ci/watch_keep_screen_uat.sh "$(ls $GITHUB_WORKSPACE/apk/*.apk | head -1)" "$GITHUB_WORKSPACE/watch-uat"
 
@@ -294,7 +301,7 @@ jobs:
           api-level: ${{ matrix.api }}
           target: android-wear
           arch: x86_64
-          profile: wearos_large_round
+          profile: ${{ matrix.profile }}
           emulator-options: -no-snapshot -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           script: bash scripts/ci/watch_dim_uat.sh "$(ls $GITHUB_WORKSPACE/apk/*.apk | head -1)" "$GITHUB_WORKSPACE/watch-uat/dim"
 
@@ -309,14 +316,27 @@ jobs:
           api-level: ${{ matrix.api }}
           target: android-wear
           arch: x86_64
-          profile: wearos_large_round
+          profile: ${{ matrix.profile }}
           emulator-options: -no-snapshot -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           script: bash scripts/ci/watch_dim_aod_off_uat.sh "$(ls $GITHUB_WORKSPACE/apk/*.apk | head -1)" "$GITHUB_WORKSPACE/watch-uat/dim-aod-off"
+
+      # R-577: the largest text a watch offers (read from the watch's own Settings app), on the real app,
+      # with nothing open and with a workout open; small watch only.
+      - name: The largest text on the small watch (real app)
+        if: always() && matrix.profile == 'wearos_small_round'
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ matrix.api }}
+          target: android-wear
+          arch: x86_64
+          profile: ${{ matrix.profile }}
+          emulator-options: -no-snapshot -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          script: bash scripts/ci/watch_font_scale_uat.sh "$(ls $GITHUB_WORKSPACE/apk/*.apk | head -1)" "$GITHUB_WORKSPACE/watch-uat/font-scale"
 
       - name: Upload the UAT pictures and dumps
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: watch-uat-api${{ matrix.api }}
+          name: watch-uat-api${{ matrix.tag }}
           path: watch-uat
           retention-days: 7

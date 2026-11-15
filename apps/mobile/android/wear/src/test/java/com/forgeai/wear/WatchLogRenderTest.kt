@@ -21,7 +21,7 @@ import java.io.File
  * plus real data the design does not draw (pounds, a 5-digit weight, the largest text size).
  * PNGs go next to the older screens' ("L.." names) and get the same round-edge checks.
  */
-abstract class WatchLogRenderBase(private val size: String) {
+abstract class WatchLogRenderBase(private val size: WatchSize) {
   private val out = File(System.getProperty("watchScreens.out") ?: "build/outputs/watch-screens").apply { mkdirs() }
   private val now = 1_761_650_000_000L
   private val row = "{\"exKey\":\"ex-1\",\"setKey\":\"set-2\",\"sig\":\"20|15\"}"
@@ -57,7 +57,7 @@ abstract class WatchLogRenderBase(private val size: String) {
   }
 
   private fun shot(name: String, s: Shot, ambient: Boolean) {
-    val file = File(out, "$size-$name.png")
+    val file = File(out, "${size.name}-$name.png")
     TextFit.cut.clear()
     captureRoboImage(file.absolutePath) {
       Scaled(s.fontScale) {
@@ -73,7 +73,7 @@ abstract class WatchLogRenderBase(private val size: String) {
         )
       }
     }
-    checkRoundCapture(file, size, s.ring, s.edgeRing)
+    checkRoundCapture(file, size.dp, s.ring, s.edgeRing, size.px)
     if (s.clear && !ambient) checkClearAboveButton(file)
     // R-455: the dim screen never shows the tip (nothing can be tapped there): Previous stays, the tip is absent.
     val whole = if (ambient) s.whole - "dialTip" else s.whole
@@ -234,9 +234,48 @@ abstract class WatchLogRenderBase(private val size: String) {
 @RunWith(AndroidJUnit4::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 @Config(qualifiers = "w192dp-h192dp-round-watch-xhdpi")
-class WatchLogSmallRoundTest : WatchLogRenderBase("small")
+class WatchLogSmallRoundTest : WatchLogRenderBase(WatchSizes.SMALL)
 
 @RunWith(AndroidJUnit4::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 @Config(qualifiers = "w228dp-h228dp-round-watch-xhdpi")
-class WatchLogLargeRoundTest : WatchLogRenderBase("large")
+class WatchLogLargeRoundTest : WatchLogRenderBase(WatchSizes.LARGE)
+
+// R-577 (15 Nov 2026): the screen sizes of the other watches members own (WatchSizes).
+
+@RunWith(AndroidJUnit4::class)
+@GraphicsMode(GraphicsMode.Mode.NATIVE)
+@Config(qualifiers = "w198dp-h198dp-round-watch-xhdpi")
+class WatchLogGalaxy40OldTest : WatchLogRenderBase(WatchSizes.GALAXY_40_OLD)
+
+@RunWith(AndroidJUnit4::class)
+@GraphicsMode(GraphicsMode.Mode.NATIVE)
+@Config(qualifiers = "w204dp-h204dp-round-watch-xhdpi")
+class WatchLogPixel3SmallTest : WatchLogRenderBase(WatchSizes.PIXEL3_41)
+
+@RunWith(AndroidJUnit4::class)
+@GraphicsMode(GraphicsMode.Mode.NATIVE)
+@Config(qualifiers = "w212dp-h212dp-round-watch-340dpi")
+class WatchLogGalaxy44OldTest : WatchLogRenderBase(WatchSizes.GALAXY_44_OLD)
+
+@RunWith(AndroidJUnit4::class)
+@GraphicsMode(GraphicsMode.Mode.NATIVE)
+@Config(qualifiers = "w226dp-h226dp-round-watch-340dpi")
+class WatchLogGalaxy44NewTest : WatchLogRenderBase(WatchSizes.GALAXY_44_NEW)
+
+@RunWith(AndroidJUnit4::class)
+@GraphicsMode(GraphicsMode.Mode.NATIVE)
+@Config(qualifiers = "w233dp-h233dp-round-watch-xhdpi")
+class WatchLogWideRoundTest : WatchLogRenderBase(WatchSizes.WIDE)
+
+// The largest text the watch offers, set as the watch sets it (the whole configuration).
+
+@RunWith(AndroidJUnit4::class)
+@GraphicsMode(GraphicsMode.Mode.NATIVE)
+@Config(qualifiers = "w192dp-h192dp-round-watch-xhdpi", fontScale = WatchSizes.LARGEST_FONT)
+class WatchLogSmallLargestTextTest : WatchLogRenderBase(WatchSizes.SMALL_LARGEST_TEXT)
+
+@RunWith(AndroidJUnit4::class)
+@GraphicsMode(GraphicsMode.Mode.NATIVE)
+@Config(qualifiers = "w233dp-h233dp-round-watch-xhdpi", fontScale = WatchSizes.LARGEST_FONT)
+class WatchLogWideLargestTextTest : WatchLogRenderBase(WatchSizes.WIDE_LARGEST_TEXT)

@@ -25,6 +25,8 @@ import kotlin.math.hypot
  * a LARGE one (228 dp: Pixel Watch 45 mm, 456 px, the design's own size), as PNGs
  * (build/outputs/watch-screens, uploaded by wear-build.yml as "watch-screens"). File names follow
  * the hand-off's, so each PNG can be laid next to its design picture.
+ * R-577 (15 Nov 2026): also on the sizes of the Galaxy, OnePlus and TicWatch watches and at the
+ * largest text a watch offers (WatchSizes; the classes at the end of this file).
  *
  * Each capture is also CHECKED, so a clipped screen fails the build:
  *  - nothing drawn outside the round screen (a square render shows what a round watch cuts off);
@@ -33,7 +35,7 @@ import kotlin.math.hypot
  * The clock at the top is left out of the checks (the top fifth of the screen).
  * Next to each raw PNG a "-round" copy greys out what the round glass hides, for a human look.
  */
-abstract class WatchScreensRenderBase(private val size: String) {
+abstract class WatchScreensRenderBase(private val size: WatchSize) {
   private val out = File(System.getProperty("watchScreens.out") ?: "build/outputs/watch-screens").apply { mkdirs() }
   private val now = 1_761_650_000_000L
 
@@ -76,7 +78,7 @@ abstract class WatchScreensRenderBase(private val size: String) {
   }
 
   private fun shot(name: String, s: Shot, ambient: Boolean) {
-    val file = File(out, "$size-$name.png")
+    val file = File(out, "${size.name}-$name.png")
     captureRoboImage(file.absolutePath) {
       Scaled(s.fontScale) {
         WatchScreen(
@@ -95,7 +97,7 @@ abstract class WatchScreensRenderBase(private val size: String) {
         )
       }
     }
-    checkRoundCapture(file, size, s.ring)
+    checkRoundCapture(file, size.dp, s.ring, px = size.px)
   }
 
   @Composable
@@ -210,31 +212,73 @@ abstract class WatchScreensRenderBase(private val size: String) {
 @RunWith(AndroidJUnit4::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 @Config(qualifiers = "w192dp-h192dp-round-watch-xhdpi")
-class WatchScreensSmallRoundTest : WatchScreensRenderBase("small")
+class WatchScreensSmallRoundTest : WatchScreensRenderBase(WatchSizes.SMALL)
 
 @RunWith(AndroidJUnit4::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 @Config(qualifiers = "w228dp-h228dp-round-watch-xhdpi")
-class WatchScreensLargeRoundTest : WatchScreensRenderBase("large")
+class WatchScreensLargeRoundTest : WatchScreensRenderBase(WatchSizes.LARGE)
+
+// R-577 (15 Nov 2026): the screen sizes of the other watches members own (WatchSizes).
+
+@RunWith(AndroidJUnit4::class)
+@GraphicsMode(GraphicsMode.Mode.NATIVE)
+@Config(qualifiers = "w198dp-h198dp-round-watch-xhdpi")
+class WatchScreensGalaxy40OldTest : WatchScreensRenderBase(WatchSizes.GALAXY_40_OLD)
+
+@RunWith(AndroidJUnit4::class)
+@GraphicsMode(GraphicsMode.Mode.NATIVE)
+@Config(qualifiers = "w204dp-h204dp-round-watch-xhdpi")
+class WatchScreensPixel3SmallTest : WatchScreensRenderBase(WatchSizes.PIXEL3_41)
+
+@RunWith(AndroidJUnit4::class)
+@GraphicsMode(GraphicsMode.Mode.NATIVE)
+@Config(qualifiers = "w212dp-h212dp-round-watch-340dpi")
+class WatchScreensGalaxy44OldTest : WatchScreensRenderBase(WatchSizes.GALAXY_44_OLD)
+
+@RunWith(AndroidJUnit4::class)
+@GraphicsMode(GraphicsMode.Mode.NATIVE)
+@Config(qualifiers = "w226dp-h226dp-round-watch-340dpi")
+class WatchScreensGalaxy44NewTest : WatchScreensRenderBase(WatchSizes.GALAXY_44_NEW)
+
+@RunWith(AndroidJUnit4::class)
+@GraphicsMode(GraphicsMode.Mode.NATIVE)
+@Config(qualifiers = "w233dp-h233dp-round-watch-xhdpi")
+class WatchScreensWideRoundTest : WatchScreensRenderBase(WatchSizes.WIDE)
+
+// The largest text the watch offers, set as the watch sets it (the whole configuration), on the
+// smallest and the widest size.
+
+@RunWith(AndroidJUnit4::class)
+@GraphicsMode(GraphicsMode.Mode.NATIVE)
+@Config(qualifiers = "w192dp-h192dp-round-watch-xhdpi", fontScale = WatchSizes.LARGEST_FONT)
+class WatchScreensSmallLargestTextTest : WatchScreensRenderBase(WatchSizes.SMALL_LARGEST_TEXT)
+
+@RunWith(AndroidJUnit4::class)
+@GraphicsMode(GraphicsMode.Mode.NATIVE)
+@Config(qualifiers = "w233dp-h233dp-round-watch-xhdpi", fontScale = WatchSizes.LARGEST_FONT)
+class WatchScreensWideLargestTextTest : WatchScreensRenderBase(WatchSizes.WIDE_LARGEST_TEXT)
 
 /**
- * Fails on anything a round screen would clip; writes the "-round" copy. [size]: "small" (192 dp)
- * or "large" (228 dp). [edgeRing]: the screen draws a thin grey ring at 218 px (the effort
+ * Fails on anything a round screen would clip; writes the "-round" copy. [dp]: the screen's width
+ * in dp ([WatchSizes]); [px]: its width in pixels (0 = not checked). [edgeRing]: the screen draws a thin grey ring at 218 px (the effort
  * countdown): that band is left out (it is drawn, not text).
  */
-internal fun checkRoundCapture(file: File, size: String, ring: Boolean, edgeRing: Boolean = false) {
+internal fun checkRoundCapture(file: File, dp: Int, ring: Boolean, edgeRing: Boolean = false, px: Int = 0) {
   assertTrue("no capture at ${file.path}", file.exists() && file.length() > 0)
   val img = BitmapFactory.decodeFile(file.absolutePath)
   assertTrue("${file.name} could not be read", img != null)
   val w = img.width
   val h = img.height
   assertTrue("$file is ${w}x$h, not square", w == h)
-  val dp = w / (if (size == "small") 192f else 228f)
+  // R-577: the capture is as wide as the real watch's screen, so the density qualifier took effect.
+  assertTrue("${file.name} is $w px wide, not the watch's $px px", px == 0 || kotlin.math.abs(w - px) <= 1)
+  val pxPerDp = w / dp.toFloat()
   val c = (w - 1) / 2f
   val r = w / 2f
   // The text may not come closer to the edge than this: the ring's inside edge (208 - 14 / 2 px
   // from the centre at 456, so 27 design px in from the edge), else 2 dp.
-  val limit = if (ring) r - (RingMath.DESIGN_PX / 2f - RingMath.RADIUS + RingMath.STROKE / 2f) * RingMath.scale(w.toFloat()) else r - 2f * dp
+  val limit = if (ring) r - (RingMath.DESIGN_PX / 2f - RingMath.RADIUS + RingMath.STROKE / 2f) * RingMath.scale(w.toFloat()) else r - 2f * pxPerDp
   var outside = 0
   var onRing = 0
   val round = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
