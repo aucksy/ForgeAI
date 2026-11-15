@@ -17,9 +17,9 @@ package com.forgeai.wear
  * [name] is the PNG prefix: "small" and "large" keep their old names (the Pixel sizes). [px]: the real
  * watch's screen; every capture must come out this wide (+-1 px), which proves the density was used.
  */
-internal data class WatchSize(val name: String, val dp: Int, val px: Int)
+data class WatchSize(val name: String, val dp: Int, val px: Int)
 
-internal object WatchSizes {
+object WatchSizes {
   /** 192 dp, 384 px xhdpi: Pixel Watch 1 and 2 (41 mm); Google's smallest round. */
   val SMALL = WatchSize("small", 192, 384)
 
