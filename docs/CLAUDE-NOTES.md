@@ -8,6 +8,9 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
 ## R-601 (16 Nov 2026) Read log alert + 30-day key reminder (R-595; his pick "alert plus 30-day reminder")
+- DEPLOYED 16 Nov ~03:55 IST: HQ version 3129d34b from 5be30bfd after a fresh review (NO BLOCKERS). Live: /readlog/status
+  = {"on":false} (key not saved yet). Optional non-blockers left: clear the failure time on "off" (readLogAlert.js:62);
+  a failed KV read restarts the hour (:54,:63); #needs link + double red line on Needs you (logic.js:747-767).
 - Built (helper; NOT DEPLOYED, no DB change, no migration): deploy/hq/readLogAlert.js. After each 10-minute pull
   (worker.js everyMinute) ONE KV entry (BACKUP, key readlog/health) notes since when pulls fail and why; written only on a
   change (first failure, new reason, first good pull), so a normal day writes nothing. Reasons: key (401/403), unreachable,
