@@ -1,0 +1,127 @@
+# Part UAT, R-576 flow a (owner, 15 Nov 2026: the target box always beats the previous total, and "if there's
+# an unusual calculation, there is a reason behind it, and we take them to the reason"). From a fresh install
+# with the demo (the part runs gate-demo.yaml first), "last time" as his screenshots had it:
+#   Hip Thrust Machine 10 kg x 10, 10 kg x 11, 15 kg x 10 (= 360 kg; range 8-12),
+#   Lateral Raise 20 kg x 20, 17, 15, 19 (= 1,420 kg; range 10-15, every set at the top: a heavier weight next).
+# Saved as a routine from the Profile feed (a card added on the spot gets no Target; a routine's rows do). The
+# part then moves the phone clock 29 days on (flow b: a normal day and a weight step), then 20 more (flow c: a
+# 7-week break). Pictures rel-r576-a*.png.
+appId: com.mettleup.app
+---
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 60000
+- runFlow: sub-workout-fresh.yaml
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Start empty workout'
+- tapOn: "Start empty workout"
+- tapOn:
+    text: "(?i)^allow$"
+    optional: true
+- runFlow: sub-start-blank.yaml
+- extendedWaitUntil:
+    visible: "Add exercise"
+    timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Add exercise'
+# Hip Thrust Machine 10 x 10, 10 x 11, 15 x 10
+- runFlow:
+    file: sub-uat-r439-add.yaml
+    env:
+      SEARCH: "hip thrust machine"
+      EX: "Hip Thrust Machine"
+- runFlow:
+    file: sub-uat-r439-set.yaml
+    env:
+      EX: "Hip Thrust Machine"
+      N: "1"
+      KG: "10"
+      REPS: "10"
+- runFlow:
+    file: sub-uat-r454-row.yaml
+    env:
+      EX: "Hip Thrust Machine"
+      PREV: "1"
+      N: "2"
+- runFlow:
+    file: sub-uat-r439-set.yaml
+    env:
+      EX: "Hip Thrust Machine"
+      N: "2"
+      KG: "10"
+      REPS: "11"
+- runFlow:
+    file: sub-uat-r454-row.yaml
+    env:
+      EX: "Hip Thrust Machine"
+      PREV: "2"
+      N: "3"
+- runFlow:
+    file: sub-uat-r439-set.yaml
+    env:
+      EX: "Hip Thrust Machine"
+      N: "3"
+      KG: "15"
+      REPS: "10"
+# Lateral Raise 20 x 20, 17, 15, 19
+- runFlow:
+    file: sub-uat-r439-add.yaml
+    env:
+      SEARCH: "lateral raise"
+      EX: "Lateral Raise"
+- runFlow:
+    file: sub-uat-r439-set.yaml
+    env:
+      EX: "Lateral Raise"
+      N: "1"
+      KG: "20"
+      REPS: "20"
+- runFlow:
+    file: sub-uat-r454-row.yaml
+    env:
+      EX: "Lateral Raise"
+      PREV: "1"
+      N: "2"
+- runFlow:
+    file: sub-uat-r439-set.yaml
+    env:
+      EX: "Lateral Raise"
+      N: "2"
+      KG: "20"
+      REPS: "17"
+- runFlow:
+    file: sub-uat-r454-row.yaml
+    env:
+      EX: "Lateral Raise"
+      PREV: "2"
+      N: "3"
+- runFlow:
+    file: sub-uat-r439-set.yaml
+    env:
+      EX: "Lateral Raise"
+      N: "3"
+      KG: "20"
+      REPS: "15"
+- runFlow:
+    file: sub-uat-r454-row.yaml
+    env:
+      EX: "Lateral Raise"
+      PREV: "3"
+      N: "4"
+- runFlow:
+    file: sub-uat-r439-set.yaml
+    env:
+      EX: "Lateral Raise"
+      N: "4"
+      KG: "20"
+      REPS: "19"
+- takeScreenshot: rel-r576-a-last-time
+- runFlow: sub-uat-r439-finish.yaml
+# ---------------------------------------------------------------- saved as a routine, opened
+- runFlow: sub-uat-r576-routine.yaml
+- takeScreenshot: rel-r576-a2-routine-saved

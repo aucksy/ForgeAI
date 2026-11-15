@@ -1,0 +1,55 @@
+# Sub-flow (called with runFlow; not a part of its own): R-576 UAT. The newest workout of the Profile feed
+# (flow a's "last time"; flows b and c discard theirs) saved as a routine and opened on "Start routine". Saving
+# again in flow c only adds a second copy of the same routine. (As R-454's flow a.)
+appId: com.mettleup.app
+---
+- tapOn: "^Profile$"
+- extendedWaitUntil:
+    visible: "Edit profile"
+    timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Edit profile'
+- scrollUntilVisible:
+    element: "More for .*"
+    centerElement: true
+    timeout: 30000
+- tapOn:
+    text: "More for .*"
+    index: 0
+- extendedWaitUntil:
+    visible: "Save as routine"
+    timeout: 10000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Save as routine'
+- tapOn: "Save as routine"
+- extendedWaitUntil:
+    visible: "Your plan only changes if you pick it."
+    timeout: 10000
+- tapOn:
+    text: "^My routines.*"
+    index: 0
+- extendedWaitUntil:
+    visible: "Saved as a routine"
+    timeout: 15000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Open routine$'
+- tapOn: "^Open routine$"
+- extendedWaitUntil:
+    visible: "Edit routine"
+    timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: 'Hip Thrust Machine'
+- scrollUntilVisible:
+    element: "^Start routine$"
+    centerElement: true
+    timeout: 20000

@@ -207,7 +207,7 @@ OLD_PARTS="a b c d e f g h h3 p1 p2 i link i2 j j2 j3 k l n p9 r br inv invf p7 
 # R-123: ubk = a fresh install restores a backup FILE from the welcome screen (routines in order,
 # settings, profile), then saves a new one from Settings -> Back up and restore (qa/uat-bk.yaml).
 UAT_PARTS="uh ur un ud ue ubk ub uf ua uv ug uk"
-GATE_PARTS="w dnd longrest anim mk clip uat uatc u355 u344 u358 u366 usel ugym u15 u76 u198 u194 u401 u199 u404 u438 u444 ulook uage u439 u436 u336 u61 upic u452 u501 u456 u458 u454 u461 u482 u484 u517 u203 utour"
+GATE_PARTS="w dnd longrest anim mk clip uat uatc u355 u344 u358 u366 usel ugym u15 u76 u198 u194 u401 u199 u404 u438 u444 ulook uage u439 u436 u336 u61 upic u452 u501 u456 u458 u454 u576 u461 u482 u484 u517 u203 utour"
 qa_list() { echo "$1" | tr ',;' '  ' | tr '[:upper:]' '[:lower:]' | xargs; }
 QA_ONLY_LIST=$(qa_list "${QA_ONLY:-}")
 QA_EXTRA_LIST=$(qa_list "${QA_EXTRA:-}")
@@ -2035,6 +2035,7 @@ part_uat() {
   part_u439
   part_u436
   part_u454
+  part_u576
   part_uage
   # part_u458: out of the chain while the staff card is hidden (R-493, owner 14 Nov 2026: "I did not want this").
   part_u461
@@ -2416,6 +2417,34 @@ part_u454() {
   [ "$rc" = 0 ] || status=1
   return $rc
 }
+# R-576 (owner, 15 Nov 2026: the target box always beats the previous total, except after a break of 6+ weeks,
+# and "if there's an unusual calculation, there is a reason behind it, and we take them to the reason"). From
+# a fresh install with the demo: flow a logs his Hip Thrust Machine 10 x 10, 10 x 11, 15 x 10 and Lateral Raise
+# 20 x 20, 17, 15, 19 and saves them as a routine. The phone clock moves 29 days on; flow b: Hip Thrust reads
+# "Previous set volume: 360 kg · Today's target: 380 kg" (before: 310) with no reason and the plain "i", rows
+# 10 x 11, 10 x 12, 15 x 10; Lateral Raise steps to 22.5 kg with its reason, the standing-out "i" and row marks;
+# discarded. 20 more days (7 weeks); flow c: the break, lower on purpose and said. Also runs alone with
+# only=u576. Pictures rel-r576-*.png.
+part_u576() {
+  local rc=0 now
+  gate_flow u576_seed gate-demo.yaml || { status=1; return 1; }
+  uat_flow uatr576a uat-rel-r576-a-history.yaml || { status=1; return 1; }
+  now=$(adb shell date +%s | tr -d '\r')
+  adb shell settings put global auto_time 0 >/dev/null 2>&1 || true
+  adb shell "su 0 date @$((now + 29 * 86400))" >/dev/null 2>&1 || true
+  log "UAT R576 b: phone clock moved to $(adb shell date '+%F %T %z' | tr -d '\r') (29 days on)"
+  uat_flow uatr576b uat-rel-r576-b-normal-and-step.yaml || rc=1
+  now=$(adb shell date +%s | tr -d '\r')
+  adb shell "su 0 date @$((now + 20 * 86400))" >/dev/null 2>&1 || true
+  log "UAT R576 c: phone clock moved to $(adb shell date '+%F %T %z' | tr -d '\r') (49 days on)"
+  uat_flow uatr576c uat-rel-r576-c-break.yaml || rc=1
+  now=$(adb shell date +%s | tr -d '\r')
+  adb shell "su 0 date @$((now - 49 * 86400))" >/dev/null 2>&1 || true
+  adb shell settings put global auto_time 1 >/dev/null 2>&1 || true
+  log "UAT R576: phone clock back to $(adb shell date '+%F %T' | tr -d '\r')"
+  [ "$rc" = 0 ] || status=1
+  return $rc
+}
 # R-429 (start-up splash follows the phone's light/dark): the app is stopped, opened cold, and the screen is
 # photographed a few moments after the launch, with the phone in light mode, then in dark mode; the phone's own
 # setting is put back after. Pictures only (rel-r429-splash-<look>-<seconds>s.png), read by a person: light =
@@ -2789,6 +2818,7 @@ qa_runs u444 && ! qa_runs uat && { log "gate part U444 begins"; part_u444; }
 qa_runs u439 && ! qa_runs uat && { log "gate part U439 begins"; part_u439; }
 qa_runs u436 && ! qa_runs uat && { log "gate part U436 begins"; part_u436; }
 qa_runs u454 && ! qa_runs uat && { log "gate part U454 begins"; part_u454; }
+qa_runs u576 && ! qa_runs uat && { log "gate part U576 begins"; part_u576; }
 qa_runs u336 && ! qa_runs uat && { log "gate part U336 begins"; part_u336; }
 qa_runs u61 && ! qa_runs uat && { log "gate part U61 begins"; part_u61; }
 qa_runs ulook && ! qa_runs uat && { log "gate part ULOOK begins"; part_ulook; }

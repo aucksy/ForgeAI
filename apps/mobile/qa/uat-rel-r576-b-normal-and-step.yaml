@@ -1,0 +1,112 @@
+# Part UAT, R-576 flow b: 29 days after flow a (the part moved the phone clock), the routine from flow a started.
+# Types (R-364):
+#   happy path, his exact numbers: Hip Thrust Machine after 29 days aims 10 x 11, 10 x 12, 15 x 10 and the box
+#     reads "Previous set volume: 360 kg · Today's target: 380 kg" (before: "... Today's target: 310 kg", every set
+#     at 8); a normal day has NO reason line and the plain "i"; each row's aim proven by ticking it empty; the
+#     finished line "Previous set volume beaten! +20 kg";
+#   unusual case, a weight step: Lateral Raise (20 x 20, 17, 15, 19 = 1,420 kg, every set at the top) moves to
+#     22.5 kg x 17, 17, 14, 16 = 1,440 kg; the box says why ("Heavier weight, ...") with the standing-out "i"
+#     and the rows the reason is about carry the small "i"; tapping the box opens every reason and the "i"
+#     keeps its colour, still;
+#   negative: never 310 kg, never the reason line on the normal card.
+# Then the workout is discarded (never a previous workout for flow c). Unit tests: test/tracker/r576TargetBox.test.ts.
+# Pictures rel-r576-b..f-*.png.
+appId: com.mettleup.app
+---
+- scrollUntilVisible:
+    element: "^Start routine$"
+    centerElement: true
+    timeout: 15000
+- tapOn: "^Start routine$"
+- tapOn:
+    text: "(?i)^allow$"
+    optional: true
+- extendedWaitUntil:
+    visible: "More for Hip Thrust Machine"
+    timeout: 30000
+# ---------------------------------------------------------------- (a) Hip Thrust Machine: 380 kg against 360
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Previous set volume: 360.kg · Today's target: 380.kg$"
+# in-view: the same Target box as the line found just above.
+- assertVisible: "^0.kg done · 380.kg to go$"
+- assertNotVisible: ".*310.kg.*"
+- assertNotVisible:
+    id: "target-reason-Hip Thrust Machine"
+- assertNotVisible:
+    id: "target-why-standout-Hip Thrust Machine"
+- takeScreenshot: rel-r576-b-hip-thrust-normal
+- runFlow:
+    file: sub-uat-r454-hint.yaml
+    env:
+      EX: "Hip Thrust Machine"
+      N: "1"
+      KG: "10"
+      REPS: "11"
+- runFlow:
+    file: sub-uat-r454-hint.yaml
+    env:
+      EX: "Hip Thrust Machine"
+      N: "2"
+      KG: "10"
+      REPS: "12"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^230.kg done · 150.kg to go$"
+- runFlow:
+    file: sub-uat-r454-hint.yaml
+    env:
+      EX: "Hip Thrust Machine"
+      N: "3"
+      KG: "15"
+      REPS: "10"
+- runFlow:
+    file: sub-uat-r454-line.yaml
+    env:
+      EX: "Hip Thrust Machine"
+      WANT: "Previous set volume beaten! +20 kg / Done 380 kg · Previous 360 kg"
+- takeScreenshot: rel-r576-c-hip-thrust-done
+# ---------------------------------------------------------------- (b) Lateral Raise: a weight step, said
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Lateral Raise set 1 reps"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Previous set volume: 1,420.kg · Today's target: 1,440.kg$"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Heavier weight, so some sets aim for fewer reps than previous[.]$"
+- assertVisible:
+    id: "target-why-standout-Lateral Raise"
+- assertVisible:
+    id: "set-why-Lateral Raise-1"
+- takeScreenshot: rel-r576-d-weight-step-reason
+- tapOn: "^Previous set volume: 1,420.kg · Today's target: 1,440.kg$"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Sets 1, 2, 3 and 4 get up to 2 extra reps so the total beats previous[.]$"
+- assertVisible:
+    id: "target-why-seen-Lateral Raise"
+- assertNotVisible:
+    id: "target-why-standout-Lateral Raise"
+- takeScreenshot: rel-r576-e-weight-step-opened
+# The row shows what the box adds up: set 1 at 22.5 kg x 17.
+- runFlow:
+    file: sub-uat-r454-hint.yaml
+    env:
+      EX: "Lateral Raise"
+      N: "1"
+      KG: "22.5"
+      REPS: "17"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^382.5.kg done · 1,057.5.kg to go$|^383.kg done · 1,058.kg to go$"
+- takeScreenshot: rel-r576-f-weight-step-set-1
+- runFlow: sub-uat-r576-discard.yaml

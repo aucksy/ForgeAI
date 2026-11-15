@@ -1,0 +1,43 @@
+# Part UAT, R-576 flow c: 49 days after flow a (7 weeks; flow b's workout was discarded). The one case the owner
+# allows a target under the previous total (owner, 15 Nov 2026: "the only exception is a break of 6 weeks or
+# more"), and the card says why:
+#   Hip Thrust Machine: "Previous set volume: 360 kg · Today's target: 310 kg" with the reason "Back after 7 weeks,
+#     so an easier start." and the standing-out "i"; tapping the box opens it, the "i" keeps its colour, still;
+#   Lateral Raise: a lighter weight, "Back after 7 weeks, so a lighter start."
+# Then the workout is discarded. Pictures rel-r576-g..i-*.png.
+appId: com.mettleup.app
+---
+- runFlow: sub-uat-r576-routine.yaml
+- tapOn: "^Start routine$"
+- tapOn:
+    text: "(?i)^allow$"
+    optional: true
+- extendedWaitUntil:
+    visible: "More for Hip Thrust Machine"
+    timeout: 30000
+# ---------------------------------------------------------------- (a) Hip Thrust Machine: lower, and why
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Previous set volume: 360.kg · Today's target: 310.kg$"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Back after 7 weeks, so an easier start[.]$"
+- assertVisible:
+    id: "target-why-standout-Hip Thrust Machine"
+- takeScreenshot: rel-r576-g-break-reason
+- tapOn: "^Previous set volume: 360.kg · Today's target: 310.kg$"
+- assertVisible:
+    id: "target-why-seen-Hip Thrust Machine"
+- assertVisible: "^Back after 7 weeks, so an easier start[.]$"
+- takeScreenshot: rel-r576-h-break-opened
+# ---------------------------------------------------------------- (b) Lateral Raise: lighter, and why
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Back after 7 weeks, so a lighter start[.]$"
+- assertVisible:
+    id: "target-why-standout-Lateral Raise"
+- takeScreenshot: rel-r576-i-break-lighter
+- runFlow: sub-uat-r576-discard.yaml

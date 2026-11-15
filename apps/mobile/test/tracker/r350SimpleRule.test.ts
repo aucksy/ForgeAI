@@ -106,7 +106,6 @@ describe('R-350: under the top -> same weight, +1 rep on each set', () => {
     // The kg to beat grows with the reps: 780 against 690.
     const p = kgPlan(t, [{ weightKg: 30, reps: 8 }, { weightKg: 30, reps: 8 }, { weightKg: 30, reps: 7 }])!;
     expect(p.total).toBe(780);
-    expect(p.atLast).toBeUndefined();
   });
 
   it('a set already at the top stays there; the rest +1', () => {

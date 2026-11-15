@@ -1,0 +1,24 @@
+# Sub-flow (called with runFlow; not a part of its own): R-576 UAT. Discard the open workout (the app's own
+# "Discard workout?" sheet, as part J3's end), so it never counts as a previous workout for the next flow.
+appId: com.mettleup.app
+---
+- scrollUntilVisible:
+    element: "Discard workout"
+    timeout: 20000
+- tapOn: "Discard workout"
+- extendedWaitUntil:
+    visible: 'Discard workout\?'
+    timeout: 10000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Discard$'
+- tapOn: "^Discard$"
+- extendedWaitUntil:
+    visible: "Start empty workout|Start routine.*"
+    timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Start empty workout|Start routine.*'
