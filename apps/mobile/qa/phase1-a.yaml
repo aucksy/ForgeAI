@@ -31,13 +31,17 @@ appId: com.mettleup.app
     file: sub-see.yaml
     env:
       FIND: 'Start fresh|Get stronger every week|Welcome to MettleUp|Step 1 of 3|Your name|^Next$|Restore from a backup|Load demo data instead'
-# R-277: the first screen is the one-screen welcome (no step label): the example set card, "Get
-# stronger every week", Continue with Google, "Join my gym", "Bring workouts", "Use without an account",
-# then the demo. "Bring workouts" is checked first, then "Use without an account" opens step 1
-# (checked), and Back returns here.
+# R-277: the first screen is the one-screen welcome (no step label): "Get stronger every week", Continue with
+# Google, "Join my gym", "Bring workouts", "Use without an account", then the demo. "Bring workouts" is checked
+# first, then "Use without an account" opens step 1 (checked), and Back returns here.
+# R-587 (owner, 15 Nov 2026, "drop the sign-in card"): no example bench press card here any more; the one orange
+# button is "Continue with your phone number".
 - assertVisible: "Get stronger every week"
-# The decorative set card is one picture to a screen reader, with one label.
-- assertVisible: "Example of a logged bench press"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Continue with your phone number$"
+- assertNotVisible: "Example of a logged bench press"
 # R-587: the first screen shows only the phone number; the other ways in sit under "Try another way".
 - runFlow: sub-other-ways.yaml
 # Audit Phase 4 (point 6): switchers are met where they arrive. R-277: "Bring workouts" opens its own

@@ -431,9 +431,10 @@ appId: com.mettleup.app
 - tapOn:
     text: "^Profile$"
     index: 0
-- extendedWaitUntil:
-    visible: "Edit profile"
-    timeout: 30000
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Edit profile"
 - tapOn: "Edit profile"
 - runFlow:
     file: sub-find.yaml
