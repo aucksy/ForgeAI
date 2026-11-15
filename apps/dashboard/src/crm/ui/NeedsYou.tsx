@@ -20,7 +20,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef, use
 
 import { useAuth, useRole } from '../auth/AuthProvider';
 import { ALERT_WORDS, alertAge, alertNotice, alertShown, alertsFor, freshAlerts, latestAlerts, type GymAlert, type GymAlertKind } from '../logic/gymAlerts';
-import { alertState, handledHow, type AlertFacts, type AlertState, type CountRead, type Read, type RequestFact } from '../logic/alertHandled';
+import { alertState as handledState, handledHow, type AlertFacts, type AlertState as HandledState, type CountRead, type Read, type RequestFact } from '../logic/alertHandled';
 import { alertFactsVersion, markInfoShown, questionsFor, seenInfoFor, setTodayVisit, subscribeAlertFacts, talkFor } from '../shop/alertFacts';
 import { useCrm } from '../store';
 import { markFresh } from '../logic/freshness';
@@ -504,7 +504,7 @@ export function LatestAlertsCard() {
   const now = Date.now();
   // R-593: only what still needs someone (logic/alertHandled.ts); the bell keeps the whole history.
   const seenInfo = gymId ? seenInfoFor(gymId, visit) : new Set<string>();
-  const list = latestAlerts(facts ? alerts.filter((a) => alertState(a, { ...facts, seenInfo }) === 'waiting') : alerts, now);
+  const list = latestAlerts(facts ? alerts.filter((a) => handledState(a, { ...facts, seenInfo }) === 'waiting') : alerts, now);
   const newsShown = list.filter((a) => handledHow(a) === 'info').map((a) => a.id).join(',');
   useEffect(() => {
     setTodayVisit(visit);
@@ -565,11 +565,11 @@ export function LatestAlertsCard() {
  * R-593: how each alert stands, for the bell: its number counts only what still needs someone (news already seen on
  * Today, in any visit, is not counted again); its list keeps every alert and marks the handled ones "Done".
  */
-export function useAlertStates(): (a: GymAlert) => AlertState {
+export function useAlertStates(): (a: GymAlert) => HandledState {
   const { facts, gymId } = useNeedsYou();
   return useMemo(() => {
-    if (!facts) return () => 'waiting';
+    if (!facts) return (): HandledState => 'waiting';
     const f: AlertFacts = { ...facts, seenInfo: gymId ? seenInfoFor(gymId) : new Set<string>() };
-    return (a: GymAlert) => alertState(a, f);
+    return (a: GymAlert) => handledState(a, f);
   }, [facts, gymId]);
 }
