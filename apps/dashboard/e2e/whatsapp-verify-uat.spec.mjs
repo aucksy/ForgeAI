@@ -243,7 +243,7 @@ test('Verify with WhatsApp, phone: the code runs out, too many tries, a differen
 
   // "Use a different number": back to the number box, the typed number kept.
   await forgot.getByRole('button', { name: 'Use a different number' }).click();
-  await expect(forgot.getByLabel('Your mobile number')).toHaveValue(OWNER_PHONE);
+  await expect(forgot.getByLabel('Your mobile number')).toHaveValue(OWNER_PHONE.replace(/ /g, '')); // R-580: the box keeps only the 10 digits
   await expect(forgot.getByRole('button', { name: 'Verify with WhatsApp' })).toBeVisible();
   await forgot.getByRole('button', { name: 'Back to sign in' }).click();
   await expect(page.getByRole('form', { name: 'Forgot your PIN?' })).toHaveCount(0);
