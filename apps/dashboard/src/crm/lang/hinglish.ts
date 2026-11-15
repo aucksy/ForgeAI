@@ -580,8 +580,8 @@ export const HINGLISH: Readonly<Record<string, string>> = {
     'Jo members MettleUp app mein apne workouts log karte hain, woh apni progress dekh sakte hain, isliye woh aate rehte hain. Ise on karo taaki unhe har workout log karne ki aadat pade.',
   'A small goal is easy to reach for new members and for members who are coming back after a break. It helps them build the habit in their first weeks.':
     'Chhota goal naye members aur break ke baad wapas aane wale members ke liye aasaan hai. Isse pehle hafton mein unki aadat banti hai.',
-  'This goal is for your most regular members. It thanks the people who come to the gym on most days of the month.':
-    'Yeh goal aapke sabse regular members ke liye hai. Isse un logon ko shukriya milta hai jo mahine ke zyada din gym aate hain.',
+  'This goal is for your most regular members. It rewards the people who come to the gym on most days of the month.':
+    'Yeh goal aapke sabse regular members ke liye hai. Isse un logon ko reward milta hai jo mahine ke zyada din gym aate hain.',
   'No challenge is running': 'Abhi koi challenge nahi chal raha',
   'Turn on a ready-made challenge above, or make your own with “New challenge”.': 'Upar se koi ready-made challenge on karo, ya “Naya challenge” se apna challenge banao.',
   'The owner has not started one.': 'Owner ne abhi koi challenge shuru nahi kiya hai.',

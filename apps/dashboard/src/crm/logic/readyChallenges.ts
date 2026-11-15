@@ -72,7 +72,7 @@ export const READY_CHALLENGES: readonly ReadyChallenge[] = [
     goal: 20,
     days: 30,
     prizeDays: 10,
-    why: 'This goal is for your most regular members. It thanks the people who come to the gym on most days of the month.',
+    why: 'This goal is for your most regular members. It rewards the people who come to the gym on most days of the month.',
   },
 ];
 

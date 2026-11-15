@@ -2,7 +2,7 @@
 -- (scripts/ci/db_checks.sh); can also be pasted into the live SQL Editor. It ALWAYS ends in an error, so it changes nothing:
 --   "RESULT PASS (n checks)"  - everything worked; the error only undoes the test rows;
 --   "RESULT FAIL: ..."         - the checks that failed (label:what came back).
--- Fake numbers only (90000 89xxx).
+-- Fake numbers only (90000 91xxx).
 
 -- Run one statement: 'ok', or the error it raised (nothing kept on an error).
 create or replace function pg_temp.t89_run(q text) returns text
@@ -58,7 +58,7 @@ begin
 
   -- The gym's own list (roster): Asha, Rahul, Neel. Neel's row is archived (not a live member).
   insert into public.crm_records(gym_id, kind, id, data, version) values
-    (ga, 'member', 't89-r-asha', jsonb_build_object('fullName', 'Asha Rao', 'phone', '+91 90000 89001'), 1),
+    (ga, 'member', 't89-r-asha', jsonb_build_object('fullName', 'Asha Rao', 'phone', '+91 90000 91001'), 1),
     (ga, 'member', 't89-r-rahul', jsonb_build_object('fullName', 'Rahul Jain', 'phone', '09000091002'), 1),
     (ga, 'member', 't89-r-neel', jsonb_build_object('fullName', 'Neel Shah', 'phone', '9000091004', 'archived', true), 1),
     (gb, 'member', 't89-r-bob', jsonb_build_object('fullName', 'Bob Das', 'phone', '9000091005'), 1);
