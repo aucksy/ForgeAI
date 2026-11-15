@@ -1,4 +1,4 @@
--- NOT APPLIED. Needs the owner's yes.
+-- APPLIED LIVE 15 Nov 2026 (owner: "yes 0096")
 -- (No live database change without his named yes. Apply in the SQL Editor only after CI is green.)
 --
 -- 0096: R-586 "Member picks who reads the message". Owner, 15 Nov 2026 (verbatim): "It should be GYM Onwer or the name

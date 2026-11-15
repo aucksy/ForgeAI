@@ -1,4 +1,4 @@
--- NOT LIVE: needs the owner's yes
+-- APPLIED LIVE 15 Nov 2026 (owner: "yes 0095")
 -- Re-runnable. Apply after 0075 (gym alerts) and 0076 (alerts with the admin app closed). Additive: two new columns on
 -- gym_alerts, one new alert kind, three new calls; 0076's three HQ calls and 0075's owner_alerts are replaced with the
 -- same names, arguments and grants (every alert that is not a test goes exactly as before).

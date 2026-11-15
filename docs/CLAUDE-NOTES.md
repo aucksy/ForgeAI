@@ -7,6 +7,18 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-591 (15 Nov 2026) 0095 and 0096 APPLIED LIVE; every live test PASS
+- His words (15 Nov 2026, R-592): "yes 0095", "yes 0096". Nothing else applied; no data edited.
+- Applied from the Supabase SQL tab (management API, his personal account), byte for byte as on main f6ce4c38 (each
+  file fetched at that commit; SHA-256 matched the repo copy; 0095 last changed in 71522d95, 0096 in 52091559).
+  Checked first (read-only): all 60 columns and 32 functions they use were live, none of their new columns, functions
+  or checks existed. 0095 first: Success. Then 0096: Success.
+- Live tests: 0095 RESULT PASS (35 checks, run before and after 0096), 0096 PASS (52), and what 0096 replaces:
+  0087 PASS (30), 0075 PASS (28), 0069 PASS (56). Nothing left behind: no T95/T96 gym (95 gyms before and after),
+  no test_alert rows, no test browsers, 128 unsent alerts before and after, no message with a recipient yet.
+- "Send a test alert" should now show on the live panel (d2928aaa has the card; not yet checked on screen). R-586's panel words
+  ("To: ...", desk lines) still need a panel deploy (coordinator); the member picker ships with the phone release.
+
 ## R-592 (15 Nov 2026, 22:22 IST) RELEASE APPROVED (phone + watch 0.79.0); "yes 0095", "yes 0096"
 - His message, verbatim (15 Nov 2026, about 22:20 IST): "yes 0095 / yes 0096 / release". One "release" = one version.
 - 0095 and 0096: a helper applies them live with their live tests (R-591). The live panel (d2928aaa) already shows
@@ -47,7 +59,7 @@ Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept her
   Feedback and Complaint: "Gym owner" (owner only) or "Gym admin" (owner + front desk; NEVER trainers, front desk =
   signed-in people not ticked Trainer, as 0087). Each message says "To: Gym owner" / "To: Gym admin" / "To: <name>"
   in the member app and the admin panel. Replies show who replied (the trainer's first name, as today).
-- Database: supabase/migrations/0096_message_recipient.sql, NOT APPLIED (header says so). Three new columns on
+- Database: supabase/migrations/0096_message_recipient.sql, APPLIED LIVE 15 Nov 2026 (R-591). Three new columns on
   gym_talk_threads (null = no recipient = 0069 + 0087 exactly, so older member apps and older panels keep today's
   behaviour); new member calls member_talk_choices and member_talk_send_to (added to security.sql); _talk_visible,
   _talk_member_row, _talk_gym_row, _alert_visible, _alert_talk_line replaced. Test supabase/tests/0096 (owner key,
@@ -73,7 +85,8 @@ Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept her
   length fix): database green, the Check job (unit tests + admin e2e incl. message-recipient-uat) STILL RUNNING when
   the session ended. NEXT: read job 132862609715; if green, download "dashboard-uat-pictures" and LOOK at
   phone-r586-1/1b/2/3 and computer-r586-4; fix only R-586 failures.
-- Needs his yes: (1) applying 0096 live; (2) the phone release; (3) the panel deploy. Order: 0096 first is safe
+- APPLIED LIVE 15 Nov 2026, tests PASS: see R-591.
+- Needs his yes: (1) applying 0096 live (DONE, R-591); (2) the phone release; (3) the panel deploy. Order: 0096 first is safe
   (older apps send no recipient); the new phone app shows the picker only once 0096 is live.
 
 ## R-587 (15 Nov 2026) New welcome screens and phone-number-first sign-in
@@ -387,7 +400,8 @@ Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept her
   or "We could not reach this device". Test alerts never reach owner_alerts, the bell, Today, summaries or counts
   (server and admin app both drop them), so with the admin app open there is one notice (the service worker's), not two.
   The HQ Worker needs NO change (it sends what the server hands it; a new HQ test proves the test send is untouched).
-- Migration: supabase/migrations/0095_test_alert.sql, **NOT APPLIED (needs the owner's yes)**: gym_alerts.sub_id +
+- APPLIED LIVE 15 Nov 2026, test PASS 35: see R-591.
+- Migration: supabase/migrations/0095_test_alert.sql, **APPLIED LIVE 15 Nov 2026 (R-591)**: gym_alerts.sub_id +
   shown_at, kind 'test_alert', owner_send_test_alert / owner_test_alert / panel_test_alert_shown, and 0075's
   owner_alerts + 0076's three hq_panel_ calls replaced (tests skip test alerts; every other alert goes as before).
   Test: supabase/tests/0095_test_alert.sql; security.sql's anon list has the 3 new calls.
@@ -407,7 +421,7 @@ Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept her
 - Status: PAUSED (usage limit, 15 Nov 2026). Left to do: (1) read the CI run of d2928aaa or later: "Admin journeys"
   step, fix any R-578 journey failure; (2) download artifact dashboard-uat-pictures and LOOK at the 24 test-alert
   pictures (4 looks x 6 states, e2e/.results/uat/<look>-test-alert-*.png); (3) put run ids here, mark done.
-  0095 is NOT APPLIED (needs the owner's yes); no panel deploy done.
+  0095 APPLIED LIVE 15 Nov 2026 (R-591).
 
 ## R-579 (15 Nov 2026) One smart app link everywhere, and "Share app link" on every member's page
 - The brief (15 Nov 2026), his words: "There should be a permanent share app link button on each member's profile, but you
