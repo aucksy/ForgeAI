@@ -32,6 +32,7 @@ import { talkSentFrom, talkThreadsFrom, talkUnreadFrom, type TalkKind, type Talk
 import { friendInviteFrom, type FriendInvite } from './bringFriend';
 import { staffDoorFromRow, type StaffDoorAnswer } from './staffDoor';
 import { claimAnswerFrom, findAnswerFrom, type ClaimAnswer, type FindAnswer } from './findGym';
+import { matchesFromFoundGyms, signInAnswerFrom, type SignInAnswer } from '@/onboarding/phoneSignIn';
 import { gymJoinDayFrom, type RecentWorkout } from './trainerRecent';
 import type { GymLink, GymOrder, Product } from './types';
 
@@ -670,6 +671,24 @@ export async function apiFindGyms(proof: string, firstName: string): Promise<Fin
     return r.error.kind === 'offline' || r.error.kind === 'timeout' ? { ok: false, problem: 'OFFLINE' } : { ok: false, problem: 'OTHER' };
   }
   return findAnswerFrom(r.data);
+}
+
+/**
+ * F203 "Continue with your phone number" (0093 phone_sign_in_find): which MettleUp gyms know the PROVEN number, and as
+ * whom (owner, trainer, desk staff, member). A server without 0093 (PGRST202: not applied yet) answers with 0068's
+ * member search instead (members only, no brand), logged. Never throws.
+ */
+export async function apiPhoneSignIn(proof: string, firstName: string): Promise<SignInAnswer | { ok: false; problem: 'OFFLINE' }> {
+  const r = await call('phone_sign_in_find', { p_proof: proof, p_name: firstName }, READ_MS);
+  if (r.ok) return signInAnswerFrom(r.data);
+  if (r.noSuchFunction) {
+    console.warn('[gym] phone sign-in: no 0093 on this server; the member search (0068) answers instead');
+    const a = await apiFindGyms(proof, firstName);
+    if (a.ok) return { ok: true, matches: matchesFromFoundGyms(a.gyms) };
+    return a.problem === 'OFFLINE' || a.problem === 'BAD_PROOF' || a.problem === 'TOO_MANY' ? { ok: false, problem: a.problem } : { ok: false, problem: 'OTHER' };
+  }
+  console.warn('[gym] phone sign-in failed', r.error.kind);
+  return r.error.kind === 'offline' || r.error.kind === 'timeout' ? { ok: false, problem: 'OFFLINE' } : { ok: false, problem: 'OTHER' };
 }
 
 /** After joining a found gym: the same proof links the gym's list member to this app member (0068). */

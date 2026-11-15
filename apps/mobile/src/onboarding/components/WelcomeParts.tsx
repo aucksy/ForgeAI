@@ -86,11 +86,28 @@ export function OrangePill({
   );
 }
 
-/** An outlined pill with an orange icon ("Join my gym", "Bring workouts"). */
-export function OutlinePill({ label, icon, onPress }: { label: string; icon: IconName; onPress: () => void }) {
+/**
+ * An outlined pill with an orange icon ("Join my gym", "Bring workouts"). F203: `glyph` in place of the icon (the
+ * smaller "Continue with Google" under "Continue with your phone number"), and `loading` while it works.
+ */
+export function OutlinePill({
+  label,
+  icon,
+  glyph,
+  loading,
+  onPress,
+}: {
+  label: string;
+  icon?: IconName;
+  glyph?: ReactNode;
+  loading?: boolean;
+  onPress: () => void;
+}) {
   return (
     <PressScale
       onPress={onPress}
+      disabled={loading}
+      accessibilityState={loading ? { busy: true } : undefined}
       style={{
         minHeight: 52,
         paddingVertical: space.sm,
@@ -104,7 +121,7 @@ export function OutlinePill({ label, icon, onPress }: { label: string; icon: Ico
         gap: space.sm,
       }}
     >
-      <Icon name={icon} size={18} color={color.accent} />
+      {loading ? <ActivityIndicator size="small" color={color.accent} /> : glyph ?? (icon ? <Icon name={icon} size={18} color={color.accent} /> : null)}
       <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink, textAlign: 'center', flexShrink: 1 }}>{label}</Text>
     </PressScale>
   );

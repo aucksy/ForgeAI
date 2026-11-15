@@ -45,7 +45,7 @@ import { color, space, type } from '@/theme/tokens';
 
 import { useOnboarding } from '../store/onboardingStore';
 import { foundBackupLine, replaceBody, RESTORED_NO_PROFILE, START_WORDS, welcomeRestoreOutcome } from '../welcomeStart';
-import { GoogleG, OrangePill } from './WelcomeParts';
+import { GoogleG, OrangePill, OutlinePill } from './WelcomeParts';
 
 type Phase =
   | { kind: 'idle' }
@@ -72,7 +72,13 @@ export function WelcomeGoogle({
   onBusy,
   onBeforeRestore,
   onContinue,
+  small,
 }: {
+  /**
+   * F203: "Continue with your phone number" is the welcome's one orange button, so Google's sits under it as an
+   * outlined pill (Google stays for backups). Only the first button changes; what it does is the same.
+   */
+  small?: boolean;
   onName: (name: string) => void;
   gymCodeWaiting: boolean;
   /** Workouts already on this phone (kept after "Remove demo data"): a restore replaces them, so it asks first. */
@@ -252,7 +258,14 @@ export function WelcomeGoogle({
         />
       ) : null}
       {/* R-277: the welcome's one orange button. Double taps wait on `inFlight` / `working` inside go(). */}
-      {phase.kind === 'idle' || phase.kind === 'looking' ? (
+      {(phase.kind === 'idle' || phase.kind === 'looking') && small ? (
+        <OutlinePill
+          label={phase.kind === 'looking' ? START_WORDS.looking : accountBusy || backupBusy ? 'Signing in…' : START_WORDS.googleButton}
+          glyph={<GoogleG size={18} fill={color.ink} />}
+          loading={phase.kind === 'looking'}
+          onPress={() => void go()}
+        />
+      ) : phase.kind === 'idle' || phase.kind === 'looking' ? (
         <OrangePill
           label={phase.kind === 'looking' ? START_WORDS.looking : accountBusy || backupBusy ? 'Signing in…' : START_WORDS.googleButton}
           glyph={<GoogleG />}

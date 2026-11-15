@@ -1,0 +1,282 @@
+# Part UAT, F203 "Sign in with your phone number; the app finds your gym and role" (owner, 14 Nov 2026, R-493; proof
+# pick A: one free WhatsApp message). Store builds ship it switched OFF (onboarding/phoneSignIn.ts PHONE_SIGN_IN_ON).
+# The QA build's 'phoneSignIn' stand-in: mettleup://qa-signin?on=1&... switches it on for this run and answers with
+# a made-up result instead of WhatsApp (the screen says so). The emulator has no WhatsApp: the real message, the
+# wait for it and the gym server's answer (0093, NOT LIVE) are not testable here.
+# run-device-qa.sh part u203 makes a FRESH "QA UAT Gym" (qa/uat_gym.py slot P) and passes its code as CODE and its
+# name as GYM, so the found gym's own join screen after setup is the live one.
+# Types (R-364):
+#  1. negative, switched off (the store build): a fresh install's welcome has no "Continue with your phone number".
+#  2. on: the big button; "Use without an account" stays as a link (Google, when this build shows it, sits under it).
+#  3. Skip: back to the first screen, exactly as today (regression).
+#  4. negative: "Check with WhatsApp" with no number says "Type your 10-digit mobile number." and finds nothing.
+#  5. not found: "We did not find your number at a gym on MettleUp", "Set up the app" and "Try another number";
+#     Try another number = the boxes again.
+#  6. found at 2 gyms: "We found you at 2 gyms...", "We found you: trainer at QA UAT Gym.", "We found you: member of
+#     QA Second Gym." with its plan end; no "every MettleUp feature free" while MettleUp Plus is off (negative).
+#  7. "Join QA UAT Gym": the 3 setup questions with the first name filled in; after "Start training" the gym's own
+#     join screen opens (live gym_preview), Join, and the Gym tab shows the gym.
+# Pictures rel-f203-*.png. Runs alone with only=u203, and in the whole uat part. Leaves the app on the tabs.
+appId: com.mettleup.app
+---
+- launchApp:
+    clearState: true
+    permissions:
+      all: allow
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: "^Skip$|Get stronger every week|Load demo data instead"
+    timeout: 90000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Skip$|Get stronger every week|Load demo data instead'
+- tapOn:
+    text: "^Skip$"
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "Get stronger every week"
+# ---------------------------------------------------------------- 1. switched off: the welcome as the store build
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "^Join my gym$"
+- assertNotVisible: "^Continue with your phone number$"
+- takeScreenshot: rel-f203-1-off-welcome
+# ---------------------------------------------------------------- 2. switched on (QA link): the big button
+- openLink: "mettleup://qa-signin?on=1&none=1"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "^Continue with your phone number$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "^Use without an account$"
+- takeScreenshot: rel-f203-2-on-welcome
+# ---------------------------------------------------------------- 3. Skip: back to the first screen
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Continue with your phone number$"
+- tapOn: "^Continue with your phone number$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "^Check with WhatsApp$"
+- takeScreenshot: rel-f203-3-phone-screen
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Skip$"
+- tapOn: "^Skip$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "^Join my gym$"
+- assertNotVisible: "^Check with WhatsApp$"
+# ---------------------------------------------------------------- 4. no number: told, nothing found
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Continue with your phone number$"
+- tapOn: "^Continue with your phone number$"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Check with WhatsApp$"
+- tapOn: "^Check with WhatsApp$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "^Type your 10-digit mobile number\\.$"
+- assertNotVisible: "^Test build: no WhatsApp message\\. This answer is made up\\.$"
+- takeScreenshot: rel-f203-4-no-number
+# ---------------------------------------------------------------- 5. not found (the link said none=1)
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Your mobile number$"
+- tapOn: "^Your mobile number$"
+- inputText: "9000000203"
+- runFlow:
+    when:
+      notVisible: "^9000000203$"
+    commands:
+      - tapOn: "^Your mobile number$"
+      - eraseText: 20
+      - inputText: "9000000203"
+- hideKeyboard
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Your first name, as your gym has it$"
+- tapOn: "^Your first name, as your gym has it$"
+- inputText: "Priya"
+- runFlow:
+    when:
+      notVisible: "^Priya$"
+    commands:
+      - tapOn: "^Your first name, as your gym has it$"
+      - eraseText: 20
+      - inputText: "Priya"
+- hideKeyboard
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Check with WhatsApp$"
+- tapOn: "^Check with WhatsApp$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "^We did not find your number at a gym on MettleUp$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "^Test build: no WhatsApp message\\. This answer is made up\\.$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "^Set up the app$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "^Try another number$"
+- takeScreenshot: rel-f203-5-not-found
+- tapOn: "^Try another number$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "^Check with WhatsApp$"
+# ---------------------------------------------------------------- 6. found at 2 gyms: trainer and member
+- openLink: "mettleup://qa-signin?on=1&role=trainer&gym=QA%20UAT%20Gym&code=${CODE}&role2=member&gym2=QA%20Second%20Gym&code2=QASEC2&ends2=2027-01-31"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Check with WhatsApp$"
+- tapOn: "^Check with WhatsApp$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "^We found you at 2 gyms\\. Pick the gym to open in the app\\.$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "^We found you: trainer at ${GYM}\\.$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "^Join ${GYM} in the app to open your gym\\.$"
+- takeScreenshot: rel-f203-6-found-top
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "^We found you: member of QA Second Gym\\.$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "^Your plan runs until .*\\.$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "^Join QA Second Gym$"
+# MettleUp Plus is off in this build until a qa-plan link: nothing may promise free features (negative).
+- assertNotVisible: ".*every MettleUp feature free.*"
+- takeScreenshot: rel-f203-7-found-second
+# ---------------------------------------------------------------- 7. Join: setup, then the gym's own join screen
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Join ${GYM}$"
+- tapOn: "^Join ${GYM}$"
+- extendedWaitUntil:
+    visible: "Step 1 of 3"
+    timeout: 15000
+- scrollUntilVisible:
+    element: "Step 1 of 3"
+    direction: UP
+    timeout: 20000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "^Priya$"
+- takeScreenshot: rel-f203-8-name-filled
+- scrollUntilVisible:
+    element: "^Next$"
+    centerElement: true
+    timeout: 20000
+- tapOn: "^Next$"
+- extendedWaitUntil:
+    visible: "Kilograms or pounds\\?"
+    timeout: 15000
+- tapOn: "^Kilograms$"
+- scrollUntilVisible:
+    element: "^Next$"
+    centerElement: true
+    timeout: 20000
+- tapOn: "^Next$"
+- extendedWaitUntil:
+    visible: "Step 3 of 3"
+    timeout: 15000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Build muscle'
+- tapOn: "Build muscle"
+- scrollUntilVisible:
+    element: "Intermediate"
+    centerElement: true
+    timeout: 20000
+- tapOn: "Intermediate"
+- scrollUntilVisible:
+    element: "Start training"
+    centerElement: true
+    timeout: 20000
+- tapOn: "Start training"
+# The gym's own join screen (the live gym_preview of the fresh test gym), as after a code typed on "Join my gym".
+- extendedWaitUntil:
+    visible: "Gym code ${CODE}"
+    timeout: 60000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "^${GYM}$"
+- takeScreenshot: rel-f203-9-gym-join-screen
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Your name"
+- tapOn: "Your name"
+- eraseText: 70
+- inputText: "Priya"
+- runFlow:
+    when:
+      notVisible: "^Priya$"
+    commands:
+      - tapOn: "Your name"
+      - eraseText: 70
+      - inputText: "Priya"
+- hideKeyboard
+- runFlow: sub-agree.yaml
+- scrollUntilVisible:
+    element: "^Join this gym$"
+    centerElement: true
+    timeout: 15000
+- tapOn: "^Join this gym$"
+- extendedWaitUntil:
+    notVisible: "Your name"
+    timeout: 45000
+- runFlow: sub-after-join.yaml
+- tapOn:
+    text: "^Gym$"
+    index: 0
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "^${GYM}$"
+- takeScreenshot: rel-f203-10-joined-gym-tab

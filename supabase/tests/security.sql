@@ -114,6 +114,8 @@ declare
     'phone_code_has_account','staff_reset_pin_with_proof',
     -- 0068: find my gym by my proven number (a one-use signed 'member' proof; the link also needs the member key).
     'member_find_gyms','member_claim_phone',
+    -- 0093: sign in with your phone number (the same one-use signed 'member' proof; answers only the proven number's own gyms and roles).
+    'phone_sign_in_find',
     -- 0070: MettleUp Plus, the gym owner's switch (owner or desk key to read, the OWNER to change; members read their own gym's only).
     'owner_plus_lock','owner_save_plus_lock','member_plus_lock',
     -- 0071: the AI assistant's credits and task history (each checks the key first: the gym OWNER only).

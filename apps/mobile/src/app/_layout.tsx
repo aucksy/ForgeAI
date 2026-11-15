@@ -24,6 +24,7 @@ import { useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
 import { BootErrorScreen } from '@/onboarding/components/BootErrorScreen';
 import { IntroGate } from '@/onboarding/components/IntroSlides';
 import { WelcomeScreen } from '@/onboarding/components/WelcomeScreen';
+import { applyQaSignInLink } from '@/onboarding/phoneSignInApi';
 import { useOnboarding, type BootStatus } from '@/onboarding/store/onboardingStore';
 import { refreshGymIfDue, refreshGymNow } from '@/shop/gymActions';
 import { checkInCodeFromUrl } from '@/shop/checkIn';
@@ -185,6 +186,8 @@ export default function RootLayout() {
   useEffect(() => {
     if (status !== 'welcome') return;
     const keep = (url: string | null) => {
+      // F203, QA builds only: mettleup://qa-signin switches "Continue with your phone number" on for this run.
+      if (applyQaSignInLink(url)) return;
       const code = inviteCodeFromUrl(url);
       if (code) setPendingInvite(code);
       // QR self check-in: a check-in poster scanned before setup opens "Check in at <gym>" after it.

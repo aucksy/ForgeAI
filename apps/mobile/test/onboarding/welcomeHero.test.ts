@@ -50,7 +50,8 @@ describe('the welcome buttons keep their old behaviour', () => {
   it('"Join my gym" and "Bring workouts" open their own screens; Back returns', () => {
     expect(screen).toContain("onPress={() => goView('gym')}");
     expect(screen).toContain("onPress={() => goView('bring')}");
-    expect(screen.match(/<BackRow onPress=\{\(\) => goView\('main'\)\} \/>/g)).toHaveLength(2);
+    // F203: a third one on "Continue with your phone number" (shown only while its switch is on).
+    expect(screen.match(/<BackRow onPress=\{\(\) => goView\('main'\)\} \/>/g)).toHaveLength(3);
   });
   it('Hevy and Strong keep the pick that opens their import after setup; the backup row opens the backup file view', () => {
     expect(screen).toContain("onPress={() => pickSwitch('hevy')}");

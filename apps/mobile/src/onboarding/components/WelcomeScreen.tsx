@@ -85,11 +85,14 @@ import {
   type WelcomeStep,
 } from '../welcomeSteps';
 import { RadioList, type RadioOption } from './RadioList';
-import { welcomeGymKept } from '../welcomeGym';
+import { SIGN_IN } from '../phoneSignIn';
+import { usePhoneSignInShown } from '../phoneSignInApi';
+import { welcomeGymChecked, welcomeGymKept } from '../welcomeGym';
 import { keptWorkoutsLine, START_WORDS } from '../welcomeStart';
 import { welcomeGoogleShown, WelcomeGoogle } from './WelcomeGoogle';
 import { useWaitingGym, WelcomeGymCode } from './WelcomeGymCode';
 import { BackRow, OrangePill, OutlinePill, SubHeading, TextLink } from './WelcomeParts';
+import { WelcomePhone } from './WelcomePhone';
 import { WelcomeSetCard } from './WelcomeSetCard';
 
 const GOAL_OPTIONS: readonly RadioOption<Goal>[] = [
@@ -227,12 +230,15 @@ function BringRow({
   );
 }
 
-/** The start view's three screens (the 3 setup steps and the backup-file view are separate). */
-type StartView = 'main' | 'gym' | 'bring';
+/**
+ * The start view's screens (the 3 setup steps and the backup-file view are separate). F203: 'phone' = "Continue
+ * with your phone number" (only while its switch is on: phoneSignIn.PHONE_SIGN_IN_ON, or a QA build's test link).
+ */
+type StartView = 'main' | 'gym' | 'bring' | 'phone';
 
 /** What a screen reader says when a start screen opens. */
 function viewTitle(v: StartView): string {
-  return v === 'gym' ? START_WORDS.gymTitle : v === 'bring' ? START_WORDS.bringTitle : START_WORDS.title;
+  return v === 'gym' ? START_WORDS.gymTitle : v === 'bring' ? START_WORDS.bringTitle : v === 'phone' ? SIGN_IN.title : START_WORDS.title;
 }
 
 export function WelcomeScreen() {
@@ -250,6 +256,8 @@ export function WelcomeScreen() {
   const pillsSideBySide = width / Math.max(1, fontScale) >= 340;
   const configured = useAccount((s) => s.configured);
   const inGym = useGymShop((s) => s.link != null);
+  // F203: "Continue with your phone number" (off in store builds: nothing on this screen changes then).
+  const phoneOn = usePhoneSignInShown();
   const [step, setStep] = useState<WelcomeStep>(0);
   const [draft, setDraft] = useState<OnboardingDraft>(welcomeDraft);
   // Nothing is chosen for the member: step 2 waits for a tap (the pick is saved at once).
@@ -515,7 +523,25 @@ export function WelcomeScreen() {
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ flexGrow: 1, paddingBottom: space.xxl + insets.bottom }}
         >
-          {!started && view === 'gym' ? (
+          {!started && view === 'phone' && phoneOn ? (
+            <Animated.View key="phone" entering={FadeIn.duration(motion.base)} style={{ gap: space.xl }}>
+              {/* ---------------------------------------------------------------- F203 "Continue with your phone number" */}
+              <BackRow onPress={() => goView('main')} />
+              <SubHeading title={SIGN_IN.title} body={SIGN_IN.intro} />
+              <WelcomePhone
+                initialName={draft.name}
+                onPicked={(m, first) => {
+                  // Exactly as a code typed on "Join my gym": kept, then the gym's join screen after setup.
+                  const checked = welcomeGymChecked(m.joinCode, { gymName: m.gymName });
+                  gym.keep(m.joinCode, checked.keep ? checked.line : null, m.gymName);
+                  if (!draft.name.trim() && first) patch({ name: first });
+                  startSteps();
+                }}
+                onSetUp={startSteps}
+                onSkip={() => goView('main')}
+              />
+            </Animated.View>
+          ) : !started && view === 'gym' ? (
             <Animated.View key="gym" entering={FadeIn.duration(motion.base)} style={{ gap: space.xl }}>
               {/* ---------------------------------------------------------------- R-277 "Join my gym" */}
               <BackRow onPress={() => goView('main')} />
@@ -592,8 +618,16 @@ export function WelcomeScreen() {
 
                 {/* Google: finds the member's Drive backup and offers it (gym members: the server copy). A build
                     that cannot sign in has no Google button: "Use without an account" is the orange one. */}
+                {/* F203: with its switch on, the phone number is the one orange button and Google sits under it,
+                    smaller (for backups). Off (store builds): exactly as before. */}
+                {phoneOn ? (
+                  <View pointerEvents={googleRestoring ? 'none' : 'auto'} style={{ opacity: googleRestoring ? 0.5 : 1 }}>
+                    <OrangePill label={SIGN_IN.button} onPress={() => goView('phone')} />
+                  </View>
+                ) : null}
                 {googleShown ? (
                   <WelcomeGoogle
+                    small={phoneOn}
                     onName={(n) => (draft.name.trim() ? undefined : patch({ name: n }))}
                     gymCodeWaiting={gymCodeWaiting != null}
                     keptWorkouts={kept}
@@ -601,7 +635,7 @@ export function WelcomeScreen() {
                     onBeforeRestore={forgetSwitch}
                     onContinue={startSteps}
                   />
-                ) : (
+                ) : phoneOn ? null : (
                   <OrangePill label={START_WORDS.useWithout} onPress={startSteps} />
                 )}
 
@@ -615,7 +649,7 @@ export function WelcomeScreen() {
                       <OutlinePill label={START_WORDS.bringWorkouts} icon="import" onPress={() => goView('bring')} />
                     </View>
                   </View>
-                  {googleShown ? <TextLink label={START_WORDS.useWithout} onPress={startSteps} /> : null}
+                  {googleShown || phoneOn ? <TextLink label={START_WORDS.useWithout} onPress={startSteps} /> : null}
                   {/* For showing MettleUp off (it asks first). The phone tests' way into a filled app. */}
                   <TextLink label="Load demo data instead" faint onPress={onLoadDemo} />
                   <InlineError message={saveProblem} />
