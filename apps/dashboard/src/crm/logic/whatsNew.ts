@@ -612,6 +612,31 @@ export const ADMIN_NEWS_PENDING: readonly AdminNewsEntry[] = [
     ],
   },
   {
+    // R-571 (owner, 15 Nov 2026): one set-up journey for joining online. Panel code only: moves to ADMIN_NEWS with the
+    // next admin panel deploy (the step shows for every online gym, gym web pages on or off).
+    id: 'pending-online-journey',
+    lines: [
+      {
+        text: 'Set up your gym has a new step, “Let people join your gym online”. It puts your join link, your QR poster and how people pay in one place. The step is done once you share your link.',
+        go: { label: 'Open Set up your gym', path: '/setup' },
+      },
+    ],
+  },
+  {
+    // R-571: for the day gym web pages switch on (GYM_PAGES live, docs/gym-page/PLAN.md "Switch-on"). Not before.
+    id: 'pending-gym-web-pages',
+    lines: [
+      {
+        text: 'New: a free web page for your gym at join.mettleup.fit, with your fees, timings, photos and a “Become a member” button. Make it in Set up your gym, under “Let people find and join your gym online”.',
+        go: { label: 'Open Set up your gym', path: '/setup' },
+        feature: true,
+      },
+      {
+        text: 'Your page is on by default, and it is your choice: you can turn it off or on again there at any time.',
+      },
+    ],
+  },
+  {
     // F56 R-461, 12 Nov 2026: the MettleUp Plus switch (0070). Moves to ADMIN_NEWS only when 0070 is live, the panel is
     // deployed AND the app's paid plan is switched on (MEMBER_PLAN_GATE_ON); until then the card is hidden anyway.
     id: 'pending-plus-lock',

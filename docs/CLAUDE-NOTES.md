@@ -7,6 +7,27 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-571 (15 Nov 2026) One set-up journey for joining online; the 2 rewritten lines; the join form's QR code on a computer
+- He said: "can we still keep that in the setup steps so the gym owner knows that they can do it? They can choose to
+  enable or disable it, and the whole setup will tell them about the page as well as the payments they can enable by
+  having them add the QR code or the link. It should be like one journey to set this up." On the Sent line: "doesn't
+  make sense to me ... we have to be clear about it." On the computer line: "it should just speak it plainly. Scan this
+  QR code ...". And "Yes to all lines" for the rest.
+- Done (4f4b804f): Sent line "Your question is sent to <gym>. The gym will call you or send you a WhatsApp message on
+  98XXXXXX12." (+ Hindi); the 5 approved join-form lines (+ Hindi); PUBLIC-WORDS.md sections 1-3 marked approved.
+- Done (this commit): Set up your gym's web page step became one journey, "Let people find and join your gym online"
+  ("Let people join your gym online" while pages are off), at /setup/online: 1. the free web page (on by default; "Not
+  now" or "Turn off my page", which asks first; "Make my page" opens the editor with a "Back to" bar); 2. the one link and
+  QR poster (WhatsApp, Copy, Print, picture, Google Maps tip); 3. how people pay (desk, the UPI QR from the UPI ID,
+  online only while JOIN_PAY is on). Done when the page is published, or after "Not now" and sharing the link. The
+  ring is "x of 8" for an online gym (demo 7). Join form: on a computer a QR code of the same wa.me link with "Scan this
+  QR code with the phone that has WhatsApp for this number. WhatsApp opens with a message to MettleUp ready. Send the
+  message, and your number is checked." (+ Hindi); hidden on phones. qrcode-generator 2.0.4 (MIT) copied to
+  apps/dashboard/public/vendor with its licence and allowed on join.mettleup.fit (hosts.js). Help article and two
+  waiting What's new entries (pending-online-journey, pending-gym-web-pages).
+- Switch-on steps: docs/gym-page/PLAN.md section 6b (DNS check, GYM_PAGES "live", the join.mettleup.fit route, JOIN_HOST,
+  What's new, deploy, live checks, undo). Not done: the coordinator does it.
+
 ## R-570. Handoff (15 Nov 2026, afternoon): his yeses, what is live, what runs, what is next
 He said (15 Nov 2026, about the 4 yeses in #101): "I'm okay with the rest of the panel update." / gym page words:
 "Okay with rest" except the "Your question is sent" line / join lines: "Yes to all lines" except waComputer /

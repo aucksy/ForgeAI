@@ -52,6 +52,8 @@ export const JOIN_LINK_PATHS = [
   /^\/api\/phone-code\/inbound\/(start|status)$/,
   /^\/privacy(\.html)?$/,
   /^\/favicon\.ico$/,
+  // R-571: the QR code drawer the join form uses on a computer (a copy of qrcode-generator, MIT; public/vendor/).
+  /^\/vendor\/qrcode-generator-2\.0\.4\.js$/,
 ];
 
 /**

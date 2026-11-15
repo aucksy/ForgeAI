@@ -136,6 +136,10 @@ describe('the translated screens are complete', () => {
   it('the words drawn through t(variable): Get started, quick buttons, tiles, member status, sign-in lines', () => {
     const dynamic = [
       ...getStartedSteps({ plans: [], members: [] }, new Set()).flatMap((s) => [s.title, s.hint]),
+      // R-571: the journey step, with and without the web page part (and the plans and timings hints that follow it).
+      ...[true, false].flatMap((pagePart) =>
+        getStartedSteps({ plans: [], members: [] }, new Set(), { pagePart, published: false, takenDown: false, pageNotNow: false, linkShared: false }).flatMap((s) => [s.title, s.hint]),
+      ),
       ...QUICK_ACTIONS.map((a) => a.label),
       ...TILE_FILTERS.filter((f) => f !== 'visited-today').map(tileLabel),
       ...Object.values(STATE_LABEL),

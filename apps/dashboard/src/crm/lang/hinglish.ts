@@ -281,10 +281,73 @@ export const HINGLISH: Readonly<Record<string, string>> = {
     'Members ko unki app mein dikhta hai ki gym kab khula hai, aur aapke web page par bhi dikhta hai.',
   'Set the price of each plan and the joining fee. Your web page shows them too.':
     'Har plan ka daam aur joining fee set karo. Aapke web page par bhi yeh dikhte hain.',
-  // R-523: shown once the gym's server has the web page part (getStarted.ts webPage).
-  'Make your free gym web page': 'Apna free gym web page banao',
-  'People who may join can see your fees, timings and photos, and send you a question.':
-    'Join karne wale log aapki fees, timings aur photos dekh sakte hain, aur aapko sawaal bhej sakte hain.',
+  // R-571: the one journey "Let people find and join your gym online" (getStarted.ts, ui/screens/OnlineJourney.tsx).
+  'Let people find and join your gym online': 'Logon ko online aapka gym dhoondhne aur join karne do',
+  'Let people join your gym online': 'Logon ko online aapke gym mein join karne do',
+  'Make your free web page, share your one link and QR poster, and see how people pay.':
+    'Apna free web page banao, apna ek link aur QR poster share karo, aur dekho log paise kaise denge.',
+  'Share your join link and QR poster, and see how people pay.': 'Apna join link aur QR poster share karo, aur dekho log paise kaise denge.',
+  'Back to “{step}”': '“{step}” par wapas jao',
+  'Three parts, in order: your free web page, your one link and QR poster, and how people pay.':
+    'Teen hisse, isi kram mein: aapka free web page, aapka ek link aur QR poster, aur log paise kaise denge.',
+  'Two parts, in order: your join link and QR poster, and how people pay.':
+    'Do hisse, isi kram mein: aapka join link aur QR poster, aur log paise kaise denge.',
+  'Your free web page': 'Aapka free web page',
+  'Your one link and QR poster': 'Aapka ek link aur QR poster',
+  'Your join link and QR poster': 'Aapka join link aur QR poster',
+  'Your join link works once your gym has at least one plan that people can pick. Add one in Plans.':
+    'Aapka join link tab chalega jab aapke gym mein kam se kam ek aisa plan ho jo log chun sakein. Plans mein ek plan jodo.',
+  'Open Plans': 'Plans kholo',
+  'This is your gym’s one link. It opens your web page on a phone or a computer, and its “Become a member” button opens your join form.':
+    'Yeh aapke gym ka ek hi link hai. Yeh phone ya computer par aapka web page kholta hai, aur uska “Become a member” button aapka join form kholta hai.',
+  'This is your gym’s one link. People open it on a phone or a computer, pick a plan and send you their details.':
+    'Yeh aapke gym ka ek hi link hai. Log ise phone ya computer par kholte hain, plan chunte hain aur aapko apni details bhejte hain.',
+  'Once your page is on, this link and the poster show your page instead. A poster you print now keeps working.':
+    'Jab aapka page chalu hoga, tab yeh link aur poster aapka page dikhayenge. Jo poster aap abhi print karenge, woh bhi chalta rahega.',
+  'Google Maps': 'Google Maps',
+  'You have shared your link.': 'Aapne apna link share kar diya hai.',
+  'How people pay': 'Log paise kaise denge',
+  'Pay at the gym desk': 'Gym ke desk par paise dena',
+  'People who ask to join online pay at your desk on their first visit. Then you make them a member on Today.':
+    'Jo log online join karne ke liye poochte hain, woh pehli baar aane par aapke desk par paise dete hain. Phir aap Today par unhe member banate hain.',
+  'UPI at the desk': 'Desk par UPI',
+  'Your UPI ID {upi} is saved. When the desk collects a payment, it can show a UPI QR with the amount, and people scan it with any UPI app.':
+    'Aapka UPI ID {upi} save hai. Jab desk payment leta hai, tab woh amount ke saath UPI QR dikha sakta hai, aur log use kisi bhi UPI app se scan karte hain.',
+  'Add your gym’s UPI ID in Settings, under Gym details. Then the desk can show a UPI QR with the amount when people pay.':
+    'Settings mein Gym details ke neeche apne gym ka UPI ID daalo. Phir log jab pay karenge, tab desk amount ke saath UPI QR dikha sakta hai.',
+  'Pay online when they join': 'Join karte waqt online paise dena',
+  'Connect your Razorpay or Cashfree account in Payments, then switch on “Take payments when people join online”. The money goes straight to your own account.':
+    'Payments mein apna Razorpay ya Cashfree account jodo, phir “Online join karne walon se payment lo” chalu karo. Paisa seedha aapke apne account mein aata hai.',
+  'Open Payments': 'Payments kholo',
+  'This step is done. You can come back here at any time.': 'Yeh step ho gaya. Aap kabhi bhi yahan wapas aa sakte hain.',
+  'MettleUp makes a free web page for your gym at join.mettleup.fit. It shows your fees, timings, photos and address. People can send you a question there, or tap “Become a member” to ask to join.':
+    'MettleUp join.mettleup.fit par aapke gym ka free web page banata hai. Usmein aapki fees, timings, photos aur address dikhte hain. Log wahan aapko sawaal bhej sakte hain, ya join karne ke liye “Become a member” dabate hain.',
+  'MettleUp has taken your page down, so visitors cannot see it. Open your page to read MettleUp’s note.':
+    'MettleUp ne aapka page hata diya hai, isliye visitors use nahi dekh sakte. MettleUp ka note padhne ke liye apna page kholo.',
+  'Open your page': 'Apna page kholo',
+  'Your page is on. People can open it at {address}.': 'Aapka page chalu hai. Log ise {address} par khol sakte hain.',
+  'Edit your page': 'Apna page badlo',
+  'Turn off my page': 'Mera page band karo',
+  'Your web page is off. Your one link below opens the join form instead.':
+    'Aapka web page band hai. Neeche wala aapka ek link uski jagah join form kholta hai.',
+  'To turn it on, open your page, tick “Show my page to visitors” and save.':
+    'Ise chalu karne ke liye apna page kholo, “Show my page to visitors” par tick karo aur save karo.',
+  'Turn my page on': 'Mera page chalu karo',
+  'Your page is saved but not on yet. Open it, tick “Show my page to visitors” and save.':
+    'Aapka page save hai, par abhi chalu nahi hai. Ise kholo, “Show my page to visitors” par tick karo aur save karo.',
+  'Your page is not made yet. Add a few lines about your gym, what it has and some photos, then publish it.':
+    'Aapka page abhi bana nahi hai. Apne gym ke baare mein kuch lines, gym mein kya kya hai, aur kuch photos daalo, phir ise publish karo.',
+  'Finish my page': 'Mera page poora karo',
+  'Make my page': 'Mera page banao',
+  'It is your choice. You can turn your page on or off here at any time.':
+    'Yeh aapki marzi hai. Aap yahan kabhi bhi apna page chalu ya band kar sakte hain.',
+  'Your page is off.': 'Aapka page band hai.',
+  'Your page could not be turned off. Check your internet and try again.':
+    'Aapka page band nahi ho paaya. Internet check karke phir try karo.',
+  'Turn off your web page?': 'Apna web page band karna hai?',
+  'Turning off…': 'Band ho raha hai…',
+  'Visitors then see that the page is not here, and links or posters with your page address stop working until you turn it on again. Your one link then opens the join form instead.':
+    'Phir visitors ko dikhega ki page yahan nahi hai, aur aapke page address wale links ya posters tab tak kaam nahi karenge jab tak aap ise phir se chalu nahi karte. Phir aapka ek link uski jagah join form kholega.',
   done: 'ho gaya',
   Open: 'Kholo',
   'Mark “{step}” as done': '“{step}” par tick karo',

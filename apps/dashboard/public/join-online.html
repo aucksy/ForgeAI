@@ -84,6 +84,13 @@
   .wa { border:1px dashed var(--line); border-radius:12px; padding:14px; margin-top:12px; }
   .wa p { margin:0 0 10px; line-height:1.45; font-size:15px; }
   .wa .code { font-family:ui-monospace,Menlo,Consolas,monospace; font-weight:800; }
+  /* R-571 (owner, 15 Nov 2026): on a computer, a QR code of the same WhatsApp link, to scan with the phone that has
+     the number. A computer = a wide screen with a mouse (a phone or tablet has a finger as its main pointer). */
+  .wa-qr { display:none; gap:14px; align-items:center; margin:12px 0 4px; }
+  .wa-qr .qr { width:168px; height:168px; flex-shrink:0; background:#fff; border-radius:10px; overflow:hidden; }
+  .wa-qr .qr svg { display:block; width:100%; height:100%; }
+  .wa-qr p { margin:0; }
+  @media (min-width:720px) and (hover:hover) and (pointer:fine) { .wa-qr { display:flex; } }
   .wait { display:flex; align-items:center; gap:10px; color:var(--ink2); font-size:15px; margin-top:10px; }
   .dot { width:10px; height:10px; border-radius:50%; background:var(--accent); animation:blink 1.2s infinite; flex:none; }
   @keyframes blink { 50% { opacity:.25; } }
@@ -142,7 +149,7 @@
           <p data-t="waHow">Tap the button below. WhatsApp opens with the message ready. Tap Send, then come back to this page.</p>
           <a class="btn" id="wa-open" href="#" target="_blank" rel="noopener" data-t="waOpen">Open WhatsApp</a>
           <p class="help" id="wa-manual"></p>
-          <p class="help" data-t="waComputer">On a computer? Send the message from WhatsApp on the phone with this number.</p>
+          <div class="wa-qr" id="wa-qr-box"><div class="qr" id="wa-qr" role="img"></div><p data-t="waComputer">Scan this QR code with the phone that has WhatsApp for this number. WhatsApp opens with a message to MettleUp ready. Send the message, and your number is checked.</p></div>
           <div class="wait" id="wa-wait"><span class="dot"></span><span data-t="waWaiting">Waiting for your WhatsApp message…</span></div>
         </div>
         <div class="checked hide" id="checked">
@@ -255,6 +262,7 @@
     <p class="note" style="margin:0" data-t="offlineHow">Check your internet and open the link again.</p>
   </section>
 </main>
+<script src="/vendor/qrcode-generator-2.0.4.js"></script>
 <script>
 (function () {
   var KEY = 'sb_publishable_-GBJ1u036bdCX2mtff3ghQ_Gx-hZyGo';
@@ -286,7 +294,8 @@
       waHow: 'Tap the button below. WhatsApp opens with the message ready. Tap Send, then come back to this page.',
       waOpen: 'Open WhatsApp', waOpenAgain: 'Open WhatsApp again',
       waManual: 'Or send "{text}" to {num} on WhatsApp.',
-      waComputer: 'On a computer? Send the message from WhatsApp on the phone with this number.',
+      waComputer: 'Scan this QR code with the phone that has WhatsApp for this number. WhatsApp opens with a message to MettleUp ready. Send the message, and your number is checked.',
+      waQrLabel: 'QR code that opens WhatsApp with the message ready',
       waWaiting: 'Waiting for your WhatsApp message…',
       checkedLine: 'Number checked: {phone}', change: 'Change number',
       wrong_number: 'That message came from a different WhatsApp number. Send it from the WhatsApp on {phone}.',
@@ -375,7 +384,8 @@
       waHow: 'नीचे बटन दबाएँ। WhatsApp में मैसेज तैयार मिलेगा। Send दबाएँ, फिर इस पेज पर वापस आएँ।',
       waOpen: 'WhatsApp खोलें', waOpenAgain: 'WhatsApp फिर से खोलें',
       waManual: 'या WhatsApp पर {num} को "{text}" भेजें।',
-      waComputer: 'कंप्यूटर पर हैं? इस नंबर वाले फ़ोन के WhatsApp से मैसेज भेजें।',
+      waComputer: 'जिस फ़ोन में इस नंबर का WhatsApp है, उससे यह QR कोड स्कैन करें। WhatsApp में MettleUp को भेजने के लिए मैसेज तैयार मिलेगा। मैसेज भेजें, और आपका नंबर जाँच लिया जाएगा।',
+      waQrLabel: 'QR कोड, जो मैसेज के साथ WhatsApp खोलता है',
       waWaiting: 'आपके WhatsApp मैसेज का इंतज़ार है…',
       checkedLine: 'नंबर वेरिफ़ाई हो गया: {phone}', change: 'नंबर बदलें',
       wrong_number: 'यह मैसेज किसी दूसरे WhatsApp नंबर से आया। इसे {phone} वाले WhatsApp से भेजें।',
@@ -642,6 +652,42 @@
       $('wa-open').href = 'https://wa.me/' + S.wa.waNumber + '?text=' + encodeURIComponent(S.wa.waText);
       $('wa-open').textContent = t(S.waState === 'waiting' ? 'waOpen' : 'waOpenAgain');
       $('wa-manual').textContent = t('waManual', { text: 'MettleUp code ' + S.wa.code, num: waNumberWords(S.wa.waNumber) });
+      drawWaQr($('wa-open').href);
+    }
+  }
+
+  // R-571: the QR code of the same wa.me link (shown only on a computer, by the stylesheet). Without the QR script
+  // (blocked, not loaded) the box stays hidden and "Open WhatsApp" and the typed message still work.
+  var qrFor = '';
+  function drawWaQr(link) {
+    var box = $('wa-qr');
+    box.setAttribute('aria-label', t('waQrLabel'));
+    if (link === qrFor) return;
+    if (typeof window.qrcode !== 'function') { show('wa-qr-box', false); return; }
+    try {
+      var qr = window.qrcode(0, 'M');
+      qr.addData(link);
+      qr.make();
+      var n = qr.getModuleCount(), q = 4, d = '';
+      for (var r = 0; r < n; r++) for (var c = 0; c < n; c++) if (qr.isDark(r, c)) d += 'M' + (c + q) + ' ' + (r + q) + 'h1v1h-1z';
+      var ns = 'http://www.w3.org/2000/svg';
+      var svg = document.createElementNS(ns, 'svg');
+      svg.setAttribute('viewBox', '0 0 ' + (n + 2 * q) + ' ' + (n + 2 * q));
+      svg.setAttribute('shape-rendering', 'crispEdges');
+      svg.setAttribute('aria-hidden', 'true');
+      var bg = document.createElementNS(ns, 'rect');
+      bg.setAttribute('width', String(n + 2 * q)); bg.setAttribute('height', String(n + 2 * q)); bg.setAttribute('fill', '#ffffff');
+      var path = document.createElementNS(ns, 'path');
+      path.setAttribute('d', d); path.setAttribute('fill', '#000000');
+      svg.appendChild(bg); svg.appendChild(path);
+      box.textContent = '';
+      box.appendChild(svg);
+      box.dataset.link = link;
+      qrFor = link;
+      show('wa-qr-box', true);
+    } catch (e) {
+      console.warn('[join] the WhatsApp QR code could not be drawn', e && e.message);
+      show('wa-qr-box', false);
     }
   }
 

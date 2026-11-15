@@ -1,7 +1,7 @@
 /** Launch I5: the five first steps tick themselves from the records where they can. */
 import { describe, expect, it } from 'vitest';
 
-import { getStartedSteps, stepsLine } from '../../src/crm/logic/getStarted';
+import { getStartedSteps, isAlsoPath, onlineDone, stepForPath, stepsLine } from '../../src/crm/logic/getStarted';
 
 const m = (archived = false, appUserId: string | null = null) => ({ archived, appUserId }) as never;
 
@@ -39,21 +39,54 @@ describe('Get started (I5)', () => {
     for (const s of getStartedSteps({ plans: [], members: [] }, new Set())) expect(s.hint).toMatch(/^[A-Z].*\.$/);
   });
 
-  it('R-523: the web page step is hidden until the page is live, then ticks itself when published', () => {
-    expect(getStartedSteps({ plans: [], members: [] }, new Set()).some((s) => s.key === 'webpage')).toBe(false);
-    const off = getStartedSteps({ plans: [], members: [] }, new Set(['webpage']), { published: false });
-    const step = off.find((s) => s.key === 'webpage')!;
-    expect(step).toMatchObject({ done: false, manual: false, path: '/settings/web-page', title: 'Make your free gym web page' });
+  it('R-571: one journey "Let people find and join your gym online" for an online gym; none without one (the demo)', () => {
+    const none = { plans: [], members: [] };
+    expect(getStartedSteps(none, new Set()).some((s) => s.key === 'online')).toBe(false);
+    const base = { pagePart: true, published: false, takenDown: false, pageNotNow: false, linkShared: false };
+    const steps = getStartedSteps(none, new Set(), base);
+    expect(steps.map((s) => s.key)).toEqual(['plans', 'members', 'brand', 'staff', 'timings', 'online', 'poster', 'app']);
+    expect(stepsLine(steps)).toBe('0 of 8 done');
+    const step = steps.find((s) => s.key === 'online')!;
+    expect(step).toMatchObject({ title: 'Let people find and join your gym online', path: '/setup/online', manual: false, done: false });
     expect(step.hint).toMatch(/^[A-Z].*\.$/);
-    // Never promise the AI helper for visitors while it is not live (F208).
     expect(step.hint).not.toMatch(/\bAI\b/);
-    expect(stepsLine(off)).toBe('0 of 8 done');
-    // Plans and timings come just before the web page step, and their hints say the page shows them.
-    expect(off.map((s) => s.key)).toEqual(['plans', 'members', 'brand', 'staff', 'timings', 'webpage', 'poster', 'app']);
-    expect(off.find((s) => s.key === 'plans')!.hint).toMatch(/web page/);
-    expect(off.find((s) => s.key === 'timings')!.hint).toMatch(/web page/);
-    const on = getStartedSteps({ plans: [], members: [] }, new Set(), { published: true });
-    expect(on.find((s) => s.key === 'webpage')!.done).toBe(true);
+    // Plans and timings say the page shows them only while the page part is here.
+    expect(steps.find((s) => s.key === 'plans')!.hint).toMatch(/web page/);
+    expect(steps.find((s) => s.key === 'timings')!.hint).toMatch(/web page/);
+    // Gym web pages off (or HQ switched this gym's page off): the same step, about the join link only.
+    const join = getStartedSteps(none, new Set(), { ...base, pagePart: false });
+    const j = join.find((s) => s.key === 'online')!;
+    expect(j.title).toBe('Let people join your gym online');
+    expect(j.hint).not.toMatch(/web page/);
+    for (const s of join) expect(s.hint).not.toMatch(/web page/);
+  });
+
+  it('R-571: done when the page is published, or after "Not now" and sharing the link', () => {
+    const base = { pagePart: true, published: false, takenDown: false, pageNotNow: false, linkShared: false };
+    expect(onlineDone(base)).toBe(false);
+    expect(onlineDone({ ...base, published: true })).toBe(true);
+    expect(onlineDone({ ...base, linkShared: true })).toBe(false);
+    expect(onlineDone({ ...base, pageNotNow: true })).toBe(false);
+    expect(onlineDone({ ...base, pageNotNow: true, linkShared: true })).toBe(true);
+    // Taken down by MettleUp, or no page part: sharing the join link is the step.
+    expect(onlineDone({ ...base, takenDown: true, linkShared: true })).toBe(true);
+    expect(onlineDone({ ...base, pagePart: false })).toBe(false);
+    expect(onlineDone({ ...base, pagePart: false, linkShared: true })).toBe(true);
+  });
+
+  it('R-571: the screens the journey sends the owner to offer "Back to" it (exact paths only)', () => {
+    const steps = getStartedSteps({ plans: [], members: [] }, new Set(), { pagePart: true, published: false, takenDown: false, pageNotNow: false, linkShared: false });
+    const online = steps.find((s) => s.key === 'online')!;
+    for (const p of ['/settings/web-page', '/settings/payments', '/settings']) {
+      expect(stepForPath(steps, p)?.key).toBe('online');
+      expect(isAlsoPath(online, p)).toBe(true);
+    }
+    expect(stepForPath(steps, '/setup/online')?.key).toBe('online');
+    expect(isAlsoPath(online, '/setup/online')).toBe(false);
+    // Other Settings screens keep their own step (or none).
+    expect(stepForPath(steps, '/settings/invite')?.key).toBe('app');
+    expect(stepForPath(steps, '/settings/branding')?.key).toBe('brand');
+    expect(stepForPath(steps, '/settings/machines')).toBeNull();
   });
 
   it('R-525: gym timings ticks itself (never by hand), opens Gym timings; no hint names the web page while it is hidden', () => {

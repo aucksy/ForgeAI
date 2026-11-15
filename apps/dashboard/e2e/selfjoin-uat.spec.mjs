@@ -87,6 +87,7 @@ async function servePage(page, gym, { checks = ['waiting', 'waiting', 'verified'
     if (/^\/j\/[A-Za-z0-9]{6}$/.test(url.pathname)) {
       return route.fulfill({ status: 200, contentType: 'text/html; charset=utf-8', body: readFileSync(new URL('join.html', PUB)) });
     }
+    if (url.pathname === '/vendor/qrcode-generator-2.0.4.js') return route.fulfill({ status: 200, contentType: 'text/javascript', body: readFileSync(new URL('vendor/qrcode-generator-2.0.4.js', PUB)) });
     if (url.pathname === '/privacy') return route.fulfill({ status: 200, contentType: 'text/html', body: '<p>Privacy</p>' });
     return route.fulfill({ status: 404, body: 'Not found' });
   });

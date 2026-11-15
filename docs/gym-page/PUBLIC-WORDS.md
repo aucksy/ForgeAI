@@ -1,6 +1,6 @@
 # Gym web page and join form: every public line (approved 15 Nov 2026)
 
-R-563, 15 Nov 2026. **Approved 15 Nov 2026 (R-569, owner: "Yes to all lines", with the Sent line and the join form's
+R-563, 15 Nov 2026. **Approved 15 Nov 2026 (R-571, owner: "Yes to all lines", with the Sent line and the join form's
 computer line rewritten as he asked).** Gym web pages (the Worker switch GYM_PAGES) are ready to switch on.
 Each line is written as a complete, simple sentence (`member-words-are-complete-sentences`). Buttons, field names,
 headings and labels stay short on purpose. `<gym>` is the gym's own name, typed by the owner.
@@ -205,7 +205,7 @@ trial lines were approved on 15 Nov ("yes to the trial words"). New with R-563: 
 
 ## 3. Join form lines made complete sentences (approved 15 Nov 2026)
 
-The owner said yes to these on 15 Nov 2026 (R-569) and they are now in join-online.html (section 2 shows them). His
+The owner said yes to these on 15 Nov 2026 (R-571) and they are now in join-online.html (section 2 shows them). His
 one change: waComputer is not the line proposed below. On a computer the form now shows a QR code of the same
 WhatsApp link next to "Open WhatsApp", with the line in section 2. Kept for history:
 

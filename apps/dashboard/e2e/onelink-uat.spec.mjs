@@ -222,8 +222,8 @@ test('ONELINK-3 pages on, no page yet: still the join link, with the way to make
   await expect(page.getByRole('heading', { name: 'Your web page', level: 1 })).toBeVisible({ timeout: 15_000 });
   // The set-up step is there while pages are on (WEBPAGE-0 proves it hides while they are off).
   await page.goto('./#/setup');
-  await expect(main.getByText('Make your free gym web page')).toBeVisible({ timeout: 15_000 });
-  await main.getByText('Make your free gym web page').scrollIntoViewIfNeeded();
+  await expect(main.getByText('Let people find and join your gym online')).toBeVisible({ timeout: 15_000 });
+  await main.getByText('Let people find and join your gym online').scrollIntoViewIfNeeded();
   await shot(page, '3-setup-step-pages-on', false);
 });
 
@@ -259,6 +259,7 @@ async function serveJoinHost(page) {
   await page.route(/^https:\/\/join\.mettleup\.fit\//, (route) => {
     const url = new URL(route.request().url());
     if (url.pathname === `/${SLUG}`) return route.fulfill({ status: 200, contentType: 'text/html; charset=utf-8', body: html });
+    if (url.pathname === '/vendor/qrcode-generator-2.0.4.js') return route.fulfill({ status: 200, contentType: 'text/javascript', body: readFileSync(new URL('vendor/qrcode-generator-2.0.4.js', PUB)) });
     if (url.pathname === '/gym-page/page.js') return route.fulfill({ status: 200, contentType: 'text/javascript', body: readFileSync(new URL('gym-page/page.js', PUB)) });
     if (/^\/m\/[A-Za-z0-9]{6}$/.test(url.pathname)) return route.fulfill({ status: 200, contentType: 'text/html; charset=utf-8', body: readFileSync(new URL('join-online.html', PUB)) });
     return route.fulfill({ status: 404, body: 'Not found' });

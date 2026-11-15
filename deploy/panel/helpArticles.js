@@ -35,8 +35,9 @@ export const ALL_HELP_ARTICLES = [
       'In the admin app, "Set up your gym" lists the first steps for a new gym, like adding your plans, members, logo, staff and gym timings. ' +
       'Tap a step to open the page where you do it. Some steps tick themselves; for the others, tap "Mark done". ' +
       'While steps are left, it sits right under Today in the menu with a small green ring that fills as you finish (on a phone, the ring is on More). ' +
+      'The step for joining online holds your join link, poster and how people pay. ' +
       'To move it down the menu, tap "Move this page to the bottom of the menu". When every step is done, it moves to "Your gym" at the bottom.',
-    screens: ['apps/dashboard/src/crm/ui/screens/SetupGym.tsx'],
+    screens: ['apps/dashboard/src/crm/ui/screens/SetupGym.tsx', 'apps/dashboard/src/crm/ui/screens/OnlineJourney.tsx'],
   },
   {
     id: 'needs-you-alerts',

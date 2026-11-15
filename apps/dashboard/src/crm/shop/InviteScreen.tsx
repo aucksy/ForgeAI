@@ -27,6 +27,8 @@ import { Link, navigate } from '../ui/router';
 import { useJoinPayOn, usePagesOpen } from '../gympage/pagesOpen';
 import { useWebPage } from '../gympage/pageState';
 import { t } from '../lang/lang';
+import { useCrm } from '../store';
+import { noteLinkShared } from '../ui/GetStartedCard';
 
 export function InviteScreen() {
   const { cloud } = useShop();
@@ -96,6 +98,8 @@ function InviteBody({ ownerKey, gymName, joinCode }: { ownerKey: string; gymName
   const isPage = gymLink.kind === 'page';
   const joinPoster = isPage ? GYM_PAGE_POSTER : JOIN_ONLINE_POSTER;
   const joinOnline = useSelfJoinReady(joinCode);
+  // R-571: sharing the one link here counts for Set up your gym's "Let people ... join your gym online" too.
+  const gymId = useCrm().snapshot.gym.gymId;
   const [toast, setToast] = useState<string | null>(null);
   const [brand, setBrand] = useState<GymBrand | null>(null);
 
@@ -248,12 +252,19 @@ function InviteBody({ ownerKey, gymName, joinCode }: { ownerKey: string; gymName
           </p>
         )}
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: space.sm, marginTop: space.lg }}>
-          <Button onClick={() => window.open(whatsAppHref(gymLinkMessage(gymName, gymLink, joinCode, joinOrigin, joinPay)), '_blank', 'noopener')}>{isPage ? t('Send your page on WhatsApp') : t('Send join link on WhatsApp')}</Button>
+          <Button
+            onClick={() => {
+              window.open(whatsAppHref(gymLinkMessage(gymName, gymLink, joinCode, joinOrigin, joinPay)), '_blank', 'noopener');
+              noteLinkShared(gymId);
+            }}
+          >{isPage ? t('Send your page on WhatsApp') : t('Send join link on WhatsApp')}</Button>
           <Button
             variant="ghost"
-            onClick={async () =>
-              say((await copyText(joinLink)) ? t('Link copied.') : t('This browser blocked copying. Select the text and copy it.'))
-            }
+            onClick={async () => {
+              const ok = await copyText(joinLink);
+              if (ok) noteLinkShared(gymId);
+              say(ok ? t('Link copied.') : t('This browser blocked copying. Select the text and copy it.'));
+            }}
           >
             {isPage ? t('Copy page link') : t('Copy join link')}
           </Button>
@@ -268,6 +279,7 @@ function InviteBody({ ownerKey, gymName, joinCode }: { ownerKey: string; gymName
             variant="ghost"
             onClick={async () => {
               const ok = await downloadPoster(joinPoster, gymName, joinCode, joinLink, brand);
+              if (ok) noteLinkShared(gymId);
               say(ok ? t('Poster saved as a picture.') : t('Could not make the picture. Try again.'));
             }}
           >

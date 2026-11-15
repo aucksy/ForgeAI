@@ -72,6 +72,7 @@ import { MessagesScreen } from './ui/screens/Messages';
 import { Welcome } from './ui/Welcome';
 import { NextStepBar, useGetStarted } from './ui/GetStartedCard';
 import { SetupGymScreen } from './ui/screens/SetupGym';
+import { OnlineJourneyScreen } from './ui/screens/OnlineJourney';
 import { NewGymReady } from './ui/NewGymReady';
 import { t, useLang } from './lang/lang';
 import { WhatsNewScreen } from './ui/WhatsNew';
@@ -368,6 +369,7 @@ function offlinePage(head: string | undefined, id: string | undefined): string |
   if (head === 'settings' && id === 'entry') return 'Entry machines';
   if (head === 'settings' && id === 'mettleup') return 'Paying MettleUp';
   if (head === 'settings' && id === 'invite') return 'The invite link';
+  if (head === 'setup' && id === 'online') return 'Letting people join online';
   return null;
 }
 
@@ -454,7 +456,8 @@ function Screen({ segments, role }: { segments: string[]; role: Role }) {
       return <AssistantScreen />;
     case 'setup':
       // R-526 (owner, 14 Nov 2026): Set up your gym, the first steps, out of Today (owner only, permissions.ts).
-      return <SetupGymScreen />;
+      // R-571: `/setup/online` is its step "Let people find and join your gym online" (web page, one link, paying).
+      return id === 'online' ? <OnlineJourneyScreen /> : <SetupGymScreen />;
     case 'get-started':
       // R-526: an old or typed "get-started" address lands on the same page.
       return <Redirect to="/setup" />;

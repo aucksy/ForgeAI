@@ -45,7 +45,17 @@ a gym doing dumbbell curls; CC BY-SA 4.0 / CC BY 2.0). The render script is `scr
 computer the photos become a mosaic and the boards sit in a right-hand column. The page is complete without
 JavaScript; the one small script adds the shutter roll-up, the bottom bar on phones, the forms and Copy link.
 
-**B. Owner setup step in new-gym onboarding** (not built; needs the database part). One screen after brand colour:
+**B. Owner setup step: one journey (BUILT 15 Nov 2026, R-571).** The owner: "It should be like one journey to set this
+up." Set up your gym has one step, "Let people find and join your gym online" ("Let people join your gym online" while
+pages are off, or HQ switched this gym's page off). It opens /setup/online (ui/screens/OnlineJourney.tsx), three parts in
+order: 1. the free web page (what it is, on by default, the owner's own "Not now" or "Turn off my page" with a
+warning first, "Make my page" opens the editor with a "Back to" bar); 2. the one link and QR poster (WhatsApp, Copy,
+Print, Download picture, the Google Maps tip); 3. how people pay: the desk, the desk's UPI QR from the UPI ID, and
+paying online only while JOIN_PAY is on. Done when the page is published, or after "Not now" and sharing the link
+(logic/getStarted.ts onlineDone). The ring counts 8 steps for an online gym (the demo stays 7). Proof:
+test/crm/getStarted.test.ts, e2e/journey-uat.spec.mjs. The first plan below is kept for history.
+
+*First plan (14 Nov, replaced):* one screen after brand colour:
 - "Your free web page" with a live small preview of their page.
 - Address part, filled from name + area, editable, with a "free" or "taken" check.
 - About (500 letters, a counter), facility ticks (fixed list), up to 6 photos (pick, crop to 4:5, shrink in browser).
@@ -60,7 +70,7 @@ draws the real page in the panel. Code: apps/dashboard/src/crm/gympage/, ui/scre
 (off by default), the page link with Copy and Share on WhatsApp, "See my page", a "Taken down by MettleUp" banner with
 HQ's note when hidden, and later the AI helper switch (section 7). Owners only can save; staff can see the link.
 
-**C2. Get started on Today** (R-523, R-525, step switched on by R-529). Built: a "Set your gym timings" step (live now; ticks itself when the
+**C2. Get started on Today** (R-523, R-525, step switched on by R-529; the web page step became the journey in B, R-571). Built: a "Set your gym timings" step (live now; ticks itself when the
 Gym timings screen sees real saved timings), placed just before the web page step. Built but hidden: step "Make your free gym web page", hint "People who may join
 can see your fees, timings and photos, and send you a question." Opens Settings -> Your web page, ticks itself when
 the page is published. It appears only when the gym's server answers owner_gym_page (getStarted.ts `webPage`, passed by
@@ -139,6 +149,37 @@ at GET /api/switches (deploy/panel/switches.js); the admin app asks on opening, 
 deploy/panel/switches.test.mjs and e2e/webpage-uat.spec.mjs WEBPAGE-0. Because owners only see the editor once pages
 are open, the first gyms' pages are empty at switch-on: test with the test gym by setting the switch, then tell owners.
 
+## 6b. Switch-on (prepared 15 Nov 2026, R-571; NOT done: the coordinator does it with the owner's yes)
+
+State today: 0080, 0082, 0089 and 0090 are live; the words are approved (PUBLIC-WORDS.md, 15 Nov). In
+deploy/panel/wrangler.jsonc: `"GYM_PAGES": "off"`, `"PAGE_AI": "off"`, `"JOIN_PAY": "off"`, `"PAY_LIVE": "off"`,
+`"JOIN_HOST": ""`, and join.mettleup.fit is not in `routes`. The file has no keep_vars, so what it says is what is live
+after a deploy.
+
+1. **DNS check first.** In Cloudflare, zone mettleup.fit, DNS records: there must be no record named `join` (A, AAAA or
+   CNAME). A Worker custom domain makes its own DNS record and certificate and fails if one is already there. If one
+   is there, delete it only with the owner's yes.
+2. **Code change, one commit to main** (exact paths):
+   - deploy/panel/wrangler.jsonc, in `routes`, after `app.mettleup.fit`:
+     `{ "pattern": "join.mettleup.fit", "custom_domain": true },`
+   - deploy/panel/wrangler.jsonc, in `vars`: `"GYM_PAGES": "live"` and `"JOIN_HOST": "join.mettleup.fit"`. Update the
+     comment lines above `vars` for both. Keep `PAGE_AI`, `JOIN_PAY` and `PAY_LIVE` "off".
+   - apps/dashboard/src/crm/logic/whatsNew.ts: move `pending-online-journey` (if the panel was not deployed since it
+     was added) and `pending-gym-web-pages` from ADMIN_NEWS_PENDING into ADMIN_NEWS, with the deploy day as the id.
+   Then wait for CI green on that commit (it builds dashboard-dist).
+3. **Deploy** that full sha, as R-570 says: `git -C <wt-site> checkout --detach <sha>`, `get_dist.ps1 -Sha <sha>`, then
+   `npx wrangler deploy` in `<wt-site>/deploy/panel`. Deploy HQ too if HQ code changed since its last deploy.
+4. **Check live** (a minute after the deploy, for the certificate):
+   - `https://app.mettleup.fit/api/switches` answers `"gymPages":true` and `"joinPay":false`.
+   - `https://join.mettleup.fit/m/<test gym code>` opens the join form; on a computer it shows the WhatsApp QR code.
+   - In the test gym's admin app: Set up your gym shows "Let people find and join your gym online"; make and publish
+     the test page; `https://join.mettleup.fit/<its address>` opens it; send a question and see it in Enquiries.
+   - Invite members and the poster now show the page address (join.mettleup.fit/<address>) for a published gym, and
+     join.mettleup.fit/m/<code> for the rest.
+   - HQ: the gym's "Web page" card no longer says pages are switched off for every gym.
+5. **Undo** if anything is wrong: set `"GYM_PAGES": "off"` again and deploy. Leave the route and JOIN_HOST, because
+   join.mettleup.fit/m/<code> links that people already got keep working with pages off.
+
 ## 7. Owner switches added on 14 Nov (R-521)
 
 **AI helper switch.** Stored now in the draft (`gym_pages.ai_helper`, default ON; the page data carries `aiHelper`).
@@ -167,7 +208,8 @@ Run through the member-words skill before going live. Bilingual board headers (F
 - Under the fees: "Prices are set by <gym>. Please confirm at the desk before you pay."
 - Question consent (unticked box): "Send my name, number and question to <gym> so they can reply to me. Only this gym
   sees them."
-- After sending: "Your question is sent. <gym> will reply to 98XXXXXX12."
+- After sending: "Your question is sent. <gym> will reply to 98XXXXXX12." (replaced 15 Nov 2026, the owner's words: "Your
+  question is sent to <gym>. The gym will call you or send you a WhatsApp message on 98XXXXXX12.")
 - Report reasons: "Wrong or misleading fees, offers or timings", "Photos are not of this gym, or are copied",
   "Offensive or unsafe content", "Spam or a scam", "This gym has closed". After: "Thank you. MettleUp will look at
   this page."

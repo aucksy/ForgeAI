@@ -227,7 +227,7 @@ test('Android link check: both apps, the same signing key, one file for every ad
 // ------------------------------------------------------------------ R-539: join.mettleup.fit's two public pages
 
 test('join.mettleup.fit: the friend invite and "Become a member" pages and only their calls; the rest is the gym pages', () => {
-  for (const p of ['/f/ABCD2345', '/f/ABCD2345/', '/f/', '/m/QA0002', '/m/QA0002/', '/api/friend', '/api/self-join', '/api/self-join/pay-info', '/api/self-join/pay-check', '/api/phone-code/inbound/start', '/api/phone-code/inbound/status', '/privacy', '/privacy.html', '/favicon.ico']) {
+  for (const p of ['/f/ABCD2345', '/f/ABCD2345/', '/f/', '/m/QA0002', '/m/QA0002/', '/api/friend', '/api/self-join', '/api/self-join/pay-info', '/api/self-join/pay-check', '/api/phone-code/inbound/start', '/api/phone-code/inbound/status', '/privacy', '/privacy.html', '/favicon.ico', '/vendor/qrcode-generator-2.0.4.js']) {
     assert.deepEqual(go('join.mettleup.fit', p, '', p.startsWith('/api/') ? 'POST' : 'GET'), { kind: 'joinlink' }, p);
   }
   assert.deepEqual(go('JOIN.METTLEUP.FIT', '/f/ABCD2345'), { kind: 'joinlink' });

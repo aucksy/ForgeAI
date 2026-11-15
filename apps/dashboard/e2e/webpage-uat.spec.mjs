@@ -164,10 +164,11 @@ test('WEBPAGE-0 every web page part is hidden while gym web pages are off, and a
   await expect(main.getByRole('link', { name: /^Gym timings/ })).toBeVisible();
   await expect(main.getByRole('link', { name: /^Your web page/ })).toHaveCount(0);
   await shot(page, 'off-more');
-  // Set up your gym: no web page step.
+  // Set up your gym: no web page part (R-571: its one journey step is about the join link only).
   await page.goto('./#/setup');
   await expect(main.getByText('Add your plans', { exact: false }).first()).toBeVisible();
-  await expect(main.getByText('Make your free gym web page')).toHaveCount(0);
+  await expect(main.getByText('Let people find and join your gym online')).toHaveCount(0);
+  await expect(main.getByText('Let people join your gym online')).toBeVisible();
   await shot(page, 'off-setup');
   // Enquiries: the person is there, but no "Asked on your web page" (nor the server's copy of it for older apps).
   await page.goto('./#/enquiries');
@@ -187,7 +188,7 @@ test('WEBPAGE-0 every web page part is hidden while gym web pages are off, and a
   await expect(main.getByText('“Is there a ladies batch in the evening?”')).toBeVisible();
   await shot(page, 'on-enquiry');
   await page.goto('./#/setup');
-  await expect(main.getByText('Make your free gym web page')).toBeVisible({ timeout: 10_000 });
+  await expect(main.getByText('Let people find and join your gym online')).toBeVisible({ timeout: 10_000 });
   await shot(page, 'on-setup');
   await bottomBar(page).getByRole('link', { name: /^More/ }).tap();
   await expect(main.getByRole('link', { name: /^Your web page/ })).toBeVisible({ timeout: 10_000 });
@@ -219,7 +220,7 @@ test('WEBPAGE-1 owner on a phone: empty, every error, refused without the tick, 
 
   // Set up your gym shows the step, not done yet.
   await page.goto('./#/setup');
-  const step = page.getByRole('main').getByText('Make your free gym web page');
+  const step = page.getByRole('main').getByText('Let people find and join your gym online');
   await expect(step).toBeVisible();
   await shot(page, 'setup-step-not-done');
 
@@ -329,7 +330,7 @@ test('WEBPAGE-1 owner on a phone: empty, every error, refused without the tick, 
 
   // Set up your gym: the step ticked itself.
   await page.goto('./#/setup');
-  await expect(page.getByRole('main').getByText('Make your free gym web page')).toBeVisible();
+  await expect(page.getByRole('main').getByRole('button', { name: 'Let people find and join your gym online (done). Open' })).toBeVisible();
   await shot(page, 'setup-step-done');
 
   // After a reload: the saved photos come back from the bucket.

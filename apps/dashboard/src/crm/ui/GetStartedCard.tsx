@@ -10,10 +10,11 @@
  */
 import { useCallback, useEffect, useState } from 'react';
 
-import { useCan } from '../auth/AuthProvider';
+import { useAuth, useCan } from '../auth/AuthProvider';
+import { useDemo } from '../demo/demoMode';
 import { pageLive } from '../gympage/logic';
 import { useWebPage } from '../gympage/pageState';
-import { getStartedSteps, nextStepAfter, stepForPath, type Step, type StepKey } from '../logic/getStarted';
+import { getStartedSteps, isAlsoPath, nextStepAfter, stepForPath, type OnlineState, type Step, type StepKey } from '../logic/getStarted';
 import { progressShare, type SetupProgress } from '../logic/navGroups';
 import { t } from '../lang/lang';
 import { useCrm } from '../store';
@@ -27,12 +28,16 @@ const CHANGED = 'forgeai:getstarted';
 interface Saved {
   ticked: StepKey[];
   hidden: boolean;
+  /** R-571: the owner said "Not now" to the web page (or turned it off) in the journey. */
+  pageNotNow?: boolean;
+  /** R-571: the owner shared the gym's one link (WhatsApp, copy, print or the poster picture). */
+  linkShared?: boolean;
 }
 
 function readSaved(gymId: string): Saved {
   try {
-    const v = JSON.parse(localStorage.getItem(keyFor(gymId)) ?? 'null') as { ticked?: StepKey[]; hidden?: boolean } | null;
-    return { ticked: Array.isArray(v?.ticked) ? v.ticked : [], hidden: v?.hidden === true };
+    const v = JSON.parse(localStorage.getItem(keyFor(gymId)) ?? 'null') as { ticked?: StepKey[]; hidden?: boolean; pageNotNow?: boolean; linkShared?: boolean } | null;
+    return { ticked: Array.isArray(v?.ticked) ? v.ticked : [], hidden: v?.hidden === true, pageNotNow: v?.pageNotNow === true, linkShared: v?.linkShared === true };
   } catch (e) {
     console.warn('[get started] saved state unreadable', e);
     return { ticked: [], hidden: false };
@@ -67,13 +72,18 @@ function readOpened(): StepKey | null {
   }
 }
 
-/** Open a step's screen, remembering it came from Set up your gym. */
-function openStep(s: Step) {
+/** Remember the step being worked on, so its screens can offer "Next step" or "Back to" it (this tab only). */
+export function rememberOpened(key: StepKey) {
   try {
-    sessionStorage.setItem(OPENED_KEY, s.key);
+    sessionStorage.setItem(OPENED_KEY, key);
   } catch (e) {
     console.warn('[get started] could not keep the opened step', e);
   }
+}
+
+/** Open a step's screen, remembering it came from Set up your gym. */
+function openStep(s: Step) {
+  rememberOpened(s.key);
   navigate(s.path);
 }
 
@@ -84,6 +94,18 @@ const titleOf = (s: Step) => t(s.title);
 export function tickGetStarted(gymId: string, key: StepKey) {
   const v = readSaved(gymId);
   if (!v.ticked.includes(key)) save(gymId, { ...v, ticked: [...v.ticked, key] });
+}
+
+/** R-571: the gym's one link was shared (the journey, or Invite members' join card): part of "Let people ... online". */
+export function noteLinkShared(gymId: string) {
+  const v = readSaved(gymId);
+  if (!v.linkShared) save(gymId, { ...v, linkShared: true });
+}
+
+/** R-571: the owner's own choice for the web page in the journey: true = "Not now" (or turned off). */
+export function setPageNotNow(gymId: string, notNow: boolean) {
+  const v = readSaved(gymId);
+  if (Boolean(v.pageNotNow) !== notNow) save(gymId, { ...v, pageNotNow: notNow });
 }
 
 export interface GetStartedState {
@@ -127,10 +149,23 @@ export function useGetStarted(): GetStartedState {
     },
     [gymId],
   );
-  // F207 (R-523): "Make your free gym web page" once the gym's server has the web page part; it ticks itself when the
-  // page is published (and not taken down by MettleUp).
+  // R-571: "Let people find and join your gym online" for a gym that is online (not the demo). Its web page part only
+  // while gym web pages are open and the gym's server has it (HQ's per-gym switch, 0090, removes it); it ticks itself
+  // when the page is published, or after "Not now" and sharing the link.
   const web = useWebPage();
-  const steps = getStartedSteps(snapshot, new Set(saved.ticked), web ? { published: pageLive(web.page) } : null);
+  const { session } = useAuth();
+  const demo = useDemo() !== null;
+  const online: OnlineState | null =
+    session?.online && !demo
+      ? {
+          pagePart: Boolean(web?.canEdit),
+          published: pageLive(web?.page ?? null),
+          takenDown: Boolean(web?.page?.hiddenByHq),
+          pageNotNow: saved.pageNotNow === true,
+          linkShared: saved.linkShared === true,
+        }
+      : null;
+  const steps = getStartedSteps(snapshot, new Set(saved.ticked), online);
   const done = steps.filter((x) => x.done).length;
   const allDone = done === steps.length;
   return {
@@ -274,6 +309,8 @@ export function NextStepBar({ path }: { path: string }) {
   const here = stepForPath(steps, path);
   if (!here || here.key !== opened) return null;
   const next = nextStepAfter(steps, here.key);
+  // R-571: on a screen the journey sent the owner to (the web page editor, Settings, Payments): back to the journey.
+  const sub = isAlsoPath(here, path);
 
   const linkStyle = {
     background: 'none',
@@ -302,7 +339,11 @@ export function NextStepBar({ path }: { path: string }) {
         background: color.surfaceSunken,
       }}
     >
-      {next ? (
+      {sub ? (
+        <button type="button" onClick={() => navigate(here.path)} style={{ ...linkStyle, fontWeight: 700, color: color.accentBright, minWidth: 0 }}>
+          ‹ {t('Back to “{step}”', { step: titleOf(here) })}
+        </button>
+      ) : next ? (
         <button type="button" onClick={() => openStep(next)} style={{ ...linkStyle, fontWeight: 700, color: color.accentBright, minWidth: 0 }}>
           {t('Next step: {step}', { step: titleOf(next) })} ›
         </button>
