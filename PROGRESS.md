@@ -1,7 +1,7 @@
 # ForgeAI progress
 
 ## Waiting for release (R-266: tag only when the owner says "release")
-- 0.78.0 RELEASE IN PROGRESS (R-556 approval, R-560): app.json is 0.78.0; everything below this line up to the R-557 watch work goes out in 0.78.0. Gate runs, tag and Play results in docs/CLAUDE-NOTES.md R-560.
+- 0.78.0 RELEASED 15 Nov 2026 (R-556 approval, R-560): tag v0.78.0 on a4a67c81; phone on Play internal + closed + open testing; watch on wear:internal, its closed + open tracks waiting for Google's phone review to end (re-run play-upload.yml for v0.78.0, dry_run off). Production by hand about 3 days after open testing (R-494b).
 - R-549 MEMBER APP: ONE "MESSAGE YOUR GYM" FOR THE GYM AND THE TRAINERS (owner, 14 Nov 2026, option A; notes R-549).
   The Gym tab's "Ask about your workout" row is gone; "Message your gym" asks "Who is it for?": "The gym" (0069) or
   "A trainer" (0053, only on a running paid plan). Feedback and Complaint always go to the gym. One list, one red count.
