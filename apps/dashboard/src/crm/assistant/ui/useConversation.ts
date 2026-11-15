@@ -46,6 +46,8 @@ function hideIfOff(f: AssistFail): void {
 export interface Conversation {
   turns: Turn[];
   ask: (text: string, spoken: boolean) => Promise<void>;
+  /** R-593: an idea's "See who": its member list, worked out here (no AI, no credit). */
+  show: (request: string, list: ShowList) => void;
   confirm: (turnId: string, card: DraftCard) => Promise<void>;
   /** `want`: Hindi or Both was tapped on a message with no Hindi words (R-501): the AI writes them from `words`. */
   rewrite: (turnId: string, card: DraftCard, how: string, want?: { lang: 'hi' | 'both'; words: MessageWords }) => Promise<void>;
