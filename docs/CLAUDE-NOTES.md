@@ -7,6 +7,25 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-583 (15 Nov 2026) Gym reply notification: tap opened nothing (fixed); no sound / no pop-up (open); trainer choice hidden
+- His test (15 Nov 2026, his own member on his gym): the gym replied to his feedback. "There is a notification in the
+  notifications panel, but there is no sound. And the notification has no pop-up either. Tapping that notification did
+  not directly take me to that conversation." Also: no choice of owner or trainer under "Message your gym".
+- Server proven fine: member_push_notes row kind gym_reply, route /shop/message, made 14:35:51 UTC, sent 7 s later
+  (why_done 'sent'); the member has 1 push address.
+- Tap, FIXED: tracker/components/WorkoutPresenceHost.tsx opened only /workout, /shop, /shop/inbox, /shop/ask and the
+  workout. Every other route was dropped: /shop/message (gym reply), /settings/feedback (the MettleUp team's reply),
+  /shop/orders, /shop/diet, /measures. Now any plain app path opens (lib/alertRoute.ts alertTapPath; test
+  test/lib/alertRoute.test.ts). Ships with the next phone release.
+- Sound and pop-up, NOT proven: his OPPO's feedback log (id 104) says the "Messages from your gym" channel is
+  importance 5 (highest), and expo-notifications 56 plays the channel sound for a data-only push with no "sound" key
+  (NotificationData.shouldPlayDefaultSound = sound == null). So the code paths read right; the posted notification's
+  record is needed: at home, adb shell dumpsys notification --noredact (the record's channel, importance, flags,
+  "silent" group) right after a test reply, with the app closed, in front, and with a workout open.
+- Trainer choice: built in 0.78.0 (R-549), shown only when askAccess is 'open' (a plan running today, not a pass).
+  His member record on his gym has NO plan, so only "The gym" showed and the page skipped the choice. Asked him:
+  keep hidden, or always show "A trainer" with the reason when it is not open.
+
 ## R-582 (15 Nov 2026) Phone sign-in: 0093 APPLIED LIVE, privacy line added; phone-only first screen decided
 - His words (15 Nov 2026): "yes 0093", "yes privacy line", and: "we can keep the primary method as phone number login,
   but we can keep the Google method hidden under something like try another way ... the only option that they should

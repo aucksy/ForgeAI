@@ -7,6 +7,7 @@
 import { useRouter } from 'expo-router';
 import { useEffect } from 'react';
 
+import { alertTapPath } from '@/lib/alertRoute';
 import { requestGymSection } from '@/shop/gymSectionRequest';
 import { NOTICE_ROUTE } from '@/shop/noticeAlerts';
 
@@ -65,7 +66,14 @@ export function WorkoutPresenceHost() {
         setTimeout(() => router.navigate('/shop/ask'), 400);
         return;
       }
-      if (route !== WORKOUT_ROUTE) return;
+      if (route !== WORKOUT_ROUTE) {
+        // R-583: every other page a notification names (a gym reply, the MettleUp team's reply, an order, a diet
+        // plan, new measures): open it once the navigator is up. Before, these taps only opened the app.
+        const path = alertTapPath(route);
+        if (path) setTimeout(() => router.navigate(path as never), 400);
+        else console.warn('[alerts] a tapped notification named no page the app can open', route);
+        return;
+      }
       void useActiveWorkout
         .getState()
         .hydrate()
