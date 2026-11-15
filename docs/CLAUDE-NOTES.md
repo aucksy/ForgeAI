@@ -7,6 +7,21 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-582 (15 Nov 2026) Phone sign-in: 0093 APPLIED LIVE, privacy line added; phone-only first screen decided
+- His words (15 Nov 2026): "yes 0093", "yes privacy line", and: "we can keep the primary method as phone number login,
+  but we can keep the Google method hidden under something like try another way ... the only option that they should
+  see is the phone number login, and other options may be hidden."
+- 0093 phone_sign_in_find applied live from the Supabase SQL tab (management API; the function body as in the file,
+  comments left out). Checked first: every helper it needs is live. anon may run it, public may not. Live test
+  supabase/tests/0093 PASS 35; no T93 gym left; phone_code_settings still 1 row.
+- Privacy: docs/legal/privacy.body.html (section D, his approved line word for word) + privacy-hi.body.html (Hindi
+  rendering, needs his read-aloud check), Meta row now names members too, dates 15 Nov; rebuilt with
+  scripts/legal_pages.py. Reaches the site only with the next admin panel deploy (needs his yes).
+- Next (queued, a helper slot is needed): first screen = only "Continue with your phone number"; Google, "Join my gym",
+  "Bring workouts", "Use without an account" behind one "Try another way" link; an active member found by the number
+  goes straight into the gym (no Join tap, no 3 questions, no gym join screen); PHONE_SIGN_IN_ON on for the next
+  phone release (ships only with his "release").
+
 ## R-581 (15 Nov 2026) New-feature dots on a FIRST install (friend's Android phone)
 - His report (15 Nov 2026): a friend's first install showed dots on Settings > "Light or dark", "Plates and bars",
   "Health app". "This is the first time install ... So why there are dots? That's just confusing."

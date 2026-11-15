@@ -1,4 +1,4 @@
--- NOT LIVE: needs the owner's yes
+-- APPLIED LIVE 15 Nov 2026 (owner: "yes 0093"); live test 0093 PASS 35, nothing left behind.
 -- Re-runnable. Apply after 0068 (member_find_tries, the member search rules), 0061 (_phone_proof), 0050 (gym_trainers),
 -- 0055 (_checkin_plan_ok) and 0005 (_brand_json). Additive: one new function the member app calls. No new table or
 -- column, no change to any existing function.
