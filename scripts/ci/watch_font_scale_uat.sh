@@ -83,8 +83,25 @@ adb shell dumpsys battery unplug || true
 adb shell dumpsys battery set ac 0 || true
 adb shell dumpsys battery set usb 0 || true
 adb shell dumpsys battery set status 3 || true
-adb shell dumpsys battery set level 82 || trueadb shell svc power stayon true || true
+adb shell dumpsys battery set level 82 || true
+adb shell svc power stayon true || true
 adb shell input keyevent KEYCODE_WAKEUP || true
+# 0.79.0 round (16 Nov 2026): on a fresh small-round boot Wear OS can keep its own first-boot
+# "TrayInitializationOverlay" in front for a while; it sat over the app in every picture of runs
+# 43726710831 and 43743014201 (the app was never in front, so nothing about it was tested). Wait
+# for the watch's own overlay to go before the pictures, and say how long it took.
+tray_wait() {
+  local i f
+  for i in $(seq 1 40); do
+    f="$(front)"
+    if ! grep -q "TrayInitializationOverlay" <<< "$f"; then return 0; fi
+    adb shell input keyevent KEYCODE_WAKEUP || true
+    sleep 3
+  done
+  return 1
+}
+T0=$(date +%s)
+if tray_wait; then result tray INFO "watch first-boot overlay gone after $(( $(date +%s) - T0 )) s"; else result tray INFO "watch first-boot overlay still in front after 120 s"; fi
 log "install"
 adb install -r -g "$APK" || exit 1
 adb shell pm grant $PKG android.permission.BODY_SENSORS || true
@@ -160,6 +177,12 @@ pictures() { # label scale
   adb shell input keyevent KEYCODE_WAKEUP
   adb shell am start -W -n $ACT >/dev/null || true
   sleep 6
+  # The watch's own first-boot overlay (see tray_wait) can come back over the app: wait it out, open again.
+  if grep -q "TrayInitializationOverlay" <<< "$(front)"; then
+    tray_wait || true
+    adb shell am start -W -n $ACT >/dev/null || true
+    sleep 6
+  fi
   shot "$label-1-nothing-open"
   local f; f="$(front)"
   if grep -q "$PKG" <<< "$f"; then result "$label-nothing-open" PASS "font_scale $scale, MettleUp in front"; else result "$label-nothing-open" FAIL "font_scale $scale, in front: $f"; fi
@@ -168,6 +191,11 @@ pictures() { # label scale
     workout_on
     adb shell am start -W -n $ACT >/dev/null || true
     sleep 2
+    if grep -q "TrayInitializationOverlay" <<< "$(front)"; then
+      tray_wait || true
+      adb shell am start -W -n $ACT >/dev/null || true
+      sleep 3
+    fi
     shot "$label-2-workout-next-set"
     f="$(front)"
     if grep -q "$PKG" <<< "$f"; then result "$label-workout" PASS "font_scale $scale, MettleUp in front with a workout"; else result "$label-workout" FAIL "font_scale $scale, in front: $f"; fi
