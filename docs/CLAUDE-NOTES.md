@@ -362,8 +362,9 @@ Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept her
   43748701031 / 43748703653 and 43753637769 / 43753639925: R-586 all PASSED again; flow 14 hit my own test-script slips
   (an apostrophe, then {1,2}, in a text with ${GYM}: Maestro runs it as JavaScript; fixed 99a2f72e, 176712bd).
   Pictures read (font 2.0 + his size): picker, Gym admin readers line, "no longer listed", Tara's reply, empty state: all right.
-- NEXT: read reruns 43758784959 (his size) and 43758787395 (font 2.0) on 176712bd; green = B1 closed. CI 43743116395 red
-  on an admin journey (alerts-uat.spec.mjs "Latest from your members"), not this change.
+- DONE: reruns 43758784959 (his size, 1.3) and 43758787395 (font 2.0, 360 dp) on 176712bd both GREEN, with 43743129226
+  (default): B1 closed on all three. CI 43743116395 was red on an admin journey (alerts-uat.spec.mjs "Latest from your
+  members"), not this change.
 
 ## R-587 (15 Nov 2026) New welcome screens and phone-number-first sign-in
 - His words (15 Nov 2026): "I'm good with the welcome screen designs" (R-585), and for sign-in (R-582): "we can keep
