@@ -19,6 +19,7 @@ import { recommendMessage } from '@/shop/recommendGym';
 import { color, darkColor, space, type } from '@/theme/tokens';
 import { accentTint, inkTint } from '@/theme/tint';
 import {
+  artScale,
   BEAT_CARD,
   GYM_ART,
   INTRO_DONE,
@@ -66,7 +67,10 @@ export function IntroGate({ children }: { children: ReactElement }) {
 
 export function IntroSlides({ onDone }: { onDone: () => void }) {
   const insets = useSafeAreaInsets();
-  const { width, height } = useWindowDimensions();
+  const { width } = useWindowDimensions();
+  // The picture is drawn smaller when the words would not fit under it (a small phone, a big display size).
+  const [viewH, setViewH] = useState(0);
+  const [wordsH, setWordsH] = useState(0);
   // 'unknown' = 2 screens until Wear OS says a watch is connected (and only while screen 1 is up).
   const [realWatch, setWatch] = useState<WatchState>('unknown');
   // QA builds only: the cloud phone has no watch; a qa-intro link stands in for Wear OS (onboarding/qaIntro.ts).
@@ -120,8 +124,6 @@ export function IntroSlides({ onDone }: { onDone: () => void }) {
   };
 
   const next = () => setIndex(at + 1);
-  // A small phone: the watch picture is drawn smaller so the words and buttons keep their room.
-  const k = height < 720 || width < 340 ? 0.78 : 1;
   const bodyLine = slide.key === 'watch' && (busy || note) ? (busy ? WATCH_WORDS.opening : note) : slide.body;
 
   return (
@@ -140,11 +142,19 @@ export function IntroSlides({ onDone }: { onDone: () => void }) {
         </View>
 
         {/* Scrolls on a big display size, so the buttons below are never cut off. */}
-        <ScrollView key={slide.key} style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
+        <ScrollView
+          key={slide.key}
+          style={{ flex: 1 }}
+          contentContainerStyle={{ flexGrow: 1 }}
+          showsVerticalScrollIndicator={false}
+          onLayout={(e) => setViewH(e.nativeEvent.layout.height)}
+        >
           <View style={{ flexGrow: 1, justifyContent: 'center', paddingVertical: space.lg }}>
-            {slide.key === 'beat' ? <BeatArt /> : slide.key === 'watch' ? <WatchArt k={k} /> : <GymArt />}
+            <FitArt room={viewH - wordsH - 2 * space.lg}>
+              {slide.key === 'beat' ? <BeatArt /> : slide.key === 'watch' ? <WatchArt k={1} /> : <GymArt />}
+            </FitArt>
           </View>
-          <View style={{ paddingHorizontal: 24, gap: space.md }}>
+          <View onLayout={(e) => setWordsH(e.nativeEvent.layout.height)} style={{ paddingHorizontal: 24, gap: space.md }}>
             <Text style={{ fontFamily: type.display, fontSize: 13, letterSpacing: 0.3, color: color.accent }}>{slide.eyebrow}</Text>
             <Text accessibilityRole="header" style={{ fontFamily: type.display, fontSize: 32, lineHeight: 36, color: color.ink }}>
               {slide.title}
@@ -159,6 +169,30 @@ export function IntroSlides({ onDone }: { onDone: () => void }) {
           <Dots slides={slides} at={at} />
           <Buttons slide={slide} watch={watch} result={result} busy={busy} onNext={next} onInstall={install} onStart={onDone} onRecommend={recommend} />
         </View>
+      </View>
+    </View>
+  );
+}
+
+/**
+ * R-587 (pictures of run 43730723379, his phone size): the picture pushed the title below the fold. The picture is
+ * now shrunk (introSlides.artScale) to the room left above the words, so the title and words always show; at the
+ * smallest scale a very large display size still scrolls. Hidden for the one frame before it is measured.
+ */
+function FitArt({ room, children }: { room: number; children: ReactNode }) {
+  const [natural, setNatural] = useState(0);
+  const ready = natural > 0 && room > 0;
+  const s = ready ? artScale(room, natural) : 1;
+  return (
+    <View style={{ height: ready ? natural * s : undefined, justifyContent: 'center', opacity: ready ? 1 : 0 }}>
+      <View
+        onLayout={(e) => {
+          const h = e.nativeEvent.layout.height;
+          setNatural((old) => (Math.abs(old - h) > 1 ? h : old));
+        }}
+        style={{ transform: [{ scale: s }] }}
+      >
+        {children}
       </View>
     </View>
   );

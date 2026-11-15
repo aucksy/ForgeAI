@@ -13,6 +13,8 @@ import { describe, expect, it } from 'vitest';
 import { usesBannedWord } from '@/lib/words';
 import { validateOnboarding } from '@/onboarding/form';
 import {
+  ART_MIN_SCALE,
+  artScale,
   BEAT_CARD,
   GYM_ART,
   INTRO_SLIDES,
@@ -213,5 +215,21 @@ describe('a member found by the number goes straight into the gym', () => {
     const phone = read('onboarding/components/WelcomePhone.tsx');
     expect(phone.indexOf('const notAgreed = await agreement.check();')).toBeLessThan(phone.indexOf('const stand = qaSignInAnswer();'));
     expect(phone).toContain('<JoinAgreement');
+  });
+});
+
+describe('the picture shrinks so the title and words always show (R-587, his phone size)', () => {
+  it('full size when it fits, smaller when it does not, never below the floor, full size before it is measured', () => {
+    expect(artScale(600, 500)).toBe(1);
+    expect(artScale(250, 500)).toBe(0.5);
+    expect(artScale(100, 500)).toBe(ART_MIN_SCALE);
+    expect(artScale(0, 500)).toBe(1);
+    expect(artScale(-40, 500)).toBe(1);
+    expect(artScale(300, 0)).toBe(1);
+  });
+  it('[source-text check] every picture is drawn through FitArt with the room above the words', () => {
+    const src = read('onboarding/components/IntroSlides.tsx');
+    expect(src).toContain('<FitArt room={viewH - wordsH - 2 * space.lg}>');
+    expect(src).toContain('artScale(room, natural)');
   });
 });

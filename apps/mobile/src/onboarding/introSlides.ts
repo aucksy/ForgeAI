@@ -128,6 +128,18 @@ export function introShows(stored: string | null | undefined): boolean {
   return stored === null;
 }
 
+/** The smallest the welcome picture is drawn (a very large display size scrolls below this). */
+export const ART_MIN_SCALE = 0.45;
+
+/**
+ * How much the welcome picture is shrunk so the title and words fit under it: 1 when it fits, never below
+ * ART_MIN_SCALE, 1 while nothing is measured yet. PURE.
+ */
+export function artScale(room: number, natural: number): number {
+  if (!(room > 0) || !(natural > 0)) return 1;
+  return Math.max(ART_MIN_SCALE, Math.min(1, room / natural));
+}
+
 /** "2 of 3". PURE. */
 export function introStepLabel(index: number, total: number): string {
   return `${index + 1} of ${total}`;
