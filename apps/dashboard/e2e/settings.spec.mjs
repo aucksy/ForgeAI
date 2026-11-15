@@ -33,13 +33,13 @@ test('J10a Dark/Light: the colours change, and the choice is kept after a reload
   await page.keyboard.press('Escape');
   await expect(inMenu).toHaveCount(0);
 
-  // And back to Dark, from Settings (its own switch stays there).
-  const colours = page.getByRole('main').getByRole('radiogroup', { name: 'Screen colours' });
+  // And back to Dark, from another page (Settings).
   await open(page, 'Settings');
-  await colours.getByRole('radio', { name: 'Dark' }).tap();
+  await pickInTopBar(page, 'Dark');
   expect(await background(page)).toBe(dark);
   await page.reload();
-  await expect(colours.getByRole('radio', { name: 'Dark' })).toHaveAttribute('aria-checked', 'true');
+  await menu.tap();
+  await expect(inMenu.getByRole('radio', { name: 'Dark' })).toHaveAttribute('aria-checked', 'true');
   expect(await background(page)).toBe(dark);
 });
 
