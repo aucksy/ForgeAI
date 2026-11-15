@@ -603,10 +603,10 @@ export const ALL_HELP_ARTICLES = [
     who: 'member',
     title: 'Ask your trainer or gym owner about your workout',
     text:
-      'Open the Gym tab, tap "Message your gym", and pick "A trainer" under "Who is it for?". In older versions of the app, tap "Ask about your workout" instead. You need a running plan. ' +
-      '1. Under "Who should answer?" pick a trainer. Your own trainer is picked first. "Any trainer or the owner" sends it to every trainer and the gym owner. ' +
+      'Open the Gym tab, tap "Message your gym", and pick "A trainer" under "Who is it for?". In older versions of the app, tap "Ask about your workout" instead. You need a running plan to ask a trainer. ' +
+      '1. Under "Who should answer?" pick a trainer. Your own trainer is picked first. "Any trainer or the owner" sends it to every trainer and the owner. ' +
       '2. Type your question (up to 500 letters) and tap "Send question". ' +
-      '3. The reply shows on the same page. Switch on "Messages from my gym" in Settings, then Reminders, to get a notification when they reply. ' +
+      '3. The reply shows on the same page. Switch on "Messages from my gym" in Settings, then Reminders, for a notification when they reply. ' +
       'You can have one question waiting at a time. To ask something else first, tap "Take back my question".',
     screens: ['apps/mobile/src/app/shop/ask.tsx'],
   },
