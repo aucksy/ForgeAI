@@ -719,7 +719,7 @@ export const ALL_HELP_ARTICLES = [
     text:
       '1. Open the Profile tab and tap "Exercises" under "Your progress". Search, or filter by equipment and muscle. ' +
       '2. Tap an exercise. "Summary" shows the previous time, your best and a chart. "History" shows every time you did it. "How to" shows how to do it. ' +
-      'To make your own: on Exercises, tap "Create". Type the name, pick how you log it, the main muscle and the equipment, then tap "Save exercise". ' +
+      'To make your own: on Exercises, tap "Create". Type the name, then tap each row, such as "Main muscle", and pick from the list. Tap "Save exercise" at the bottom. ' +
       'To hide one you never do, open it, open its menu and tap "Hide from my lists". "Hidden exercises", at the bottom of the list, brings it back with "Show".',
     screens: [
       'apps/mobile/src/app/exercises.tsx',

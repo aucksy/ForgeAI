@@ -26,13 +26,13 @@ appId: com.mettleup.app
       FIND: 'Create an exercise'
 - tapOn: "Create an exercise"
 - extendedWaitUntil:
-    visible: "How you log it"
+    visible: "How you log it.*"
     timeout: 15000
     optional: true
 - runFlow:
     file: sub-see.yaml
     env:
-      FIND: 'How you log it'
+      FIND: 'How you log it.*'
 - runFlow:
     file: sub-see.yaml
     env:
@@ -40,24 +40,22 @@ appId: com.mettleup.app
 - tapOn: "Exercise name"
 - inputText: " QA Bench Twin"
 - hideKeyboard
+# R-572: each fact is a row of one Details card that opens a sheet with the choices.
 - runFlow:
-    file: sub-find.yaml
+    file: sub-exercise-pick.yaml
     env:
-      FIND: "^Weight and reps$"
-- tapOn: "^Weight and reps$"
+      ROW: "type"
+      PICK: "weight_reps"
 - runFlow:
-    file: sub-find.yaml
+    file: sub-exercise-pick.yaml
     env:
-      FIND: "^Chest$"
-# The main muscle's chip comes first (the optional second muscles repeat the names below it).
-- tapOn:
-    text: "^Chest$"
-    index: 0
+      ROW: "muscle"
+      PICK: "chest"
 - runFlow:
-    file: sub-find.yaml
+    file: sub-exercise-pick.yaml
     env:
-      FIND: "^Barbell$"
-- tapOn: "^Barbell$"
+      ROW: "equipment"
+      PICK: "barbell"
 - runFlow:
     file: sub-find.yaml
     env:

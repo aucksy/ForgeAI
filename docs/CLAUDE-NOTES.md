@@ -7,6 +7,29 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-572. "Edit exercise" / "New exercise" redesigned: one Details card of rows, Save pinned (15 Nov 2026)
+- He said (15 Nov 2026): "Yes go with A" (the drawn option A of the exercise form: the name on top, one "Details"
+  card of rows that each open a sheet, one photo-or-video card with a +, Save fixed at the bottom).
+- Done: apps/mobile/src/app/library/new.tsx keeps every rule (guesses from the name and their line, the "already has
+  logged sets" line, library exercises show only the photo part, loading and failed states, a photo brought back
+  after Android closed the app, picked files deleted on leaving, for=workout / for=routine / with=). New pieces in
+  src/tracker/components/exerciseForm/: DetailRows.tsx (the card; ChoiceSheet for one-of-many; MuscleSheet with chips
+  under Chest and shoulders / Back / Arms and core / Legs / Other), MediaPicker.tsx (the card: empty = "Add photo or
+  video" + round +; set = picture, "Change", "Remove"; the sheet: "Choose from your gallery", "Take a photo",
+  "Record a video", Cancel; the sheet slides away before the camera or gallery opens), formChoices.ts (pure words).
+  Rows: How you log it, Distance in (distance types only), Main muscle, Equipment, Also works (several; "None",
+  "Front shoulders, Traps", "A, B and 2 more"; Done), Body weight in kg lifted (body-weight types only), Joints it
+  moves ("One (isolation)" / "Several (compound)") and Weight goes up by (both only when the type uses weight). A
+  missing main muscle or equipment reads "Pick one" in orange; the Save labels are unchanged.
+- Feedback tab: it peeks 24 dp from the screen edge over a 20 dp page margin. The cards keep their own inner margin
+  (4 dp for the rows, 8 dp for the photo card), so no tap area sits under the tab; Save is in the bottom band it
+  never enters.
+- Words: member-words rules, no Gemini (his rule). Help article "Look up an exercise, or make your own" updated.
+- Tests: test/tracker/exerciseFormChoices.test.ts. Phone tests: new sub-flow qa/sub-exercise-pick.yaml (row id, then
+  choice id: the sheet's "Abs" would also match a row value behind it); phase2-c, v0280-j and uat-g use it; part C
+  photographs the form, the Main muscle sheet, the Also works sheet and the photo sheet (32, 32b, 32c, 33, 33b);
+  uat-rel-look photographs the form and its sheets in light and dark (rel-look-*-04b..04e).
+
 ## R-573. Logo background remover on Branding (15 Nov 2026), reverses R-192
 - He said: "They won't remove it themselves on ChatGPT and app launches will look bad and I don't like that." Then:
   "just do the free part, and if it doesn't work ... give them the instructions". No AI step is planned (coordinator,

@@ -17,24 +17,39 @@
  * cannot be read says so — it never saves a copy as a new exercise (EX-19); a photo brought
  * back after Android closed the app returns to the exercise it was taken for (EX-13); every
  * save refreshes the exercise lists (EX-03).
+ * R-572 (owner, 15 Nov 2026, "Yes go with A"): the long wall of chips became the name on top, one
+ * "Details" card of rows (label left, value right; a tap opens a sheet that changes that one thing:
+ * tracker/components/exerciseForm), one "Add photo or video" card whose + opens a sheet (gallery, photo,
+ * video, Cancel), and Save pinned to the bottom of the screen, always in view. Every rule above stays.
  */
 import { reachedLimit } from '@/cloud/limitsFlag';
 import { explainLimit } from '@/cloud/limitsPrompt';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { Image } from 'expo-image';
 import { useDeferredValue, useEffect, useRef, useState } from 'react';
-import { Pressable, Text, TextInput, View } from 'react-native';
+import { ScrollView, Text, TextInput, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { Chip, GhostButton, IconButton, LoadError, PrimaryButton, Screen, Skeleton, askConfirm } from '@/components/ui';
+import { IconButton, LoadError, PrimaryButton, Screen, Skeleton, askConfirm } from '@/components/ui';
+import { SHEET_CLOSE_MS } from '@/components/ui/sheetClock';
 import { getAllExercises } from '@/db/repos/exerciseRepo';
 import { liftedWords, stepFor } from '@/lib/units';
 import { useUnits } from '@/lib/useUnits';
 import { color, radius, space, type } from '@/theme/tokens';
 import type { Exercise } from '@/types/models';
 
-import { MUSCLE_LABEL, MUSCLES, type Muscle } from '@/tracker/catalog/muscles';
-import { Glyph } from '@/tracker/components/TrackerGlyph';
-import { incrementChoices, pickedIncrement } from '@/tracker/components/unitText';
+import { MUSCLE_LABEL, type Muscle } from '@/tracker/catalog/muscles';
+import { ChoiceSheet, DetailRows, MuscleSheet, type DetailRowSpec } from '@/tracker/components/exerciseForm/DetailRows';
+import {
+  alsoWorksText,
+  groupsWithout,
+  JOINT_WORDS,
+  mediaWords,
+  MUSCLE_GROUPS,
+  NOT_PICKED,
+  SHEET_WORDS,
+} from '@/tracker/components/exerciseForm/formChoices';
+import { MediaCard, MediaSheet, type MediaFrom } from '@/tracker/components/exerciseForm/MediaPicker';
+import { incrementChoices, pickedIncrement, showWU } from '@/tracker/components/unitText';
 import { createCustomExercise, setExerciseMedia, updateCustomExercise } from '@/tracker/db/customExercise';
 import { exerciseHasSets, getTrackerExercise, type TrackerExercise } from '@/tracker/db/exerciseInfo';
 import { useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
@@ -73,12 +88,17 @@ function defaultIncrement(eq: Equipment): number {
 const isBodyweightType = (t: LogType): boolean => t === 'reps' || t === 'weighted' || t === 'assisted';
 const usesWeight = (t: LogType): boolean => t === 'weight_reps' || t === 'weighted' || t === 'assisted';
 
+/** Which Details sheet is open (one at a time). */
+type OpenSheet = 'type' | 'dist' | 'muscle' | 'equipment' | 'also' | 'bodyweight' | 'joints' | 'step' | 'media' | null;
+
 function FieldLabel({ children }: { children: string }) {
   return <Text style={{ fontFamily: type.heading, fontSize: type.size.sub, color: color.inkSecondary }}>{children}</Text>;
 }
 
 export default function NewExerciseScreen() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
+  const [open, setOpen] = useState<OpenSheet>(null);
   const params = useLocalSearchParams<{ id?: string | string[]; name?: string; for?: string; dayId?: string; with?: string }>();
   // A4 (13 Oct 2026 audit): exercises ticked in the workout's picker before Create, added with the new one.
   const withIds = typeof params.with === 'string' ? params.with.split(',').filter((s) => s !== '') : [];
@@ -241,6 +261,12 @@ export default function NewExerciseScreen() {
     }
   };
 
+  // R-572: the photo sheet slides away first; then the gallery or the camera opens (as Edit profile).
+  const pickMediaFrom = (from: MediaFrom): void => {
+    setOpen(null);
+    setTimeout(() => void addMedia(from), SHEET_CLOSE_MS);
+  };
+
   // Never while a picked file is still being copied in (the save would miss it).
   // EX-08: what still stops Save, said on the button ("Pick a main muscle").
   const missing = isLibrary ? null : missingForSave({ name, muscle, equipment });
@@ -380,12 +406,67 @@ export default function NewExerciseScreen() {
     );
   }
 
+  // R-572: the Details rows. Rows that do not apply keep today's rules: the distance unit only for
+  // distance types, body weight only for body-weight types, joints and the weight step only with weight.
+  const steps = incrementChoices(units);
+  const stepAt = pickedIncrement(increment, units);
+  const distLabel = units === 'imperial' ? 'Miles' : 'Kilometres';
+  const bwLabel = `Body weight in ${liftedWords(units)}`;
+  const words = mediaWords(MAX_VIDEO_SEC, isLibrary);
+  const close = (): void => setOpen(null);
+
+  const rows: DetailRowSpec[] = [
+    { kind: 'type', label: 'How you log it', value: LOG_TYPE_LABEL[logType], locked: typeLocked, onPress: () => setOpen('type') },
+    ...(logType === 'distance' || logType === 'time_distance'
+      ? [{ kind: 'dist', label: 'Distance in', value: distUnit === 'm' ? 'Metres' : distLabel, onPress: () => setOpen('dist') }]
+      : []),
+    {
+      kind: 'muscle',
+      label: 'Main muscle',
+      value: muscle ? MUSCLE_LABEL[muscle] : NOT_PICKED,
+      missing: muscle == null,
+      onPress: () => setOpen('muscle'),
+    },
+    {
+      kind: 'equipment',
+      label: 'Equipment',
+      value: equipment ? cap(equipment) : NOT_PICKED,
+      missing: equipment == null,
+      onPress: () => setOpen('equipment'),
+    },
+    { kind: 'also', label: 'Also works', value: alsoWorksText(secondary, muscle), onPress: () => setOpen('also') },
+    ...(isBodyweightType(logType)
+      ? [{ kind: 'bodyweight', label: bwLabel, value: countsBodyweight ? 'Counts' : "Doesn't count", onPress: () => setOpen('bodyweight') }]
+      : []),
+    ...(usesWeight(logType)
+      ? [
+          {
+            kind: 'joints',
+            label: 'Joints it moves',
+            value: isCompound ? JOINT_WORDS.several.row : JOINT_WORDS.one.row,
+            onPress: () => setOpen('joints'),
+          },
+          {
+            kind: 'step',
+            label: 'Weight goes up by',
+            value: stepAt >= 0 ? steps[stepAt].label : showWU(increment, units, 2),
+            onPress: () => setOpen('step'),
+          },
+        ]
+      : []),
+  ];
+
   return (
-    <Screen title={title} right={<IconButton icon="close" onPress={() => router.back()} accessibilityLabel="Close" />}>
-      <View style={{ gap: space.lg }}>
+    <Screen scroll={false} title={title} right={<IconButton icon="close" onPress={() => router.back()} accessibilityLabel="Close" />}>
+      <ScrollView
+        style={{ flex: 1, marginHorizontal: -space.screenX }}
+        contentContainerStyle={{ paddingHorizontal: space.screenX, paddingBottom: space.xl, gap: space.xl }}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
         {isLibrary ? (
-          <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkSecondary }}>
-            {existing?.name} is from the exercise library. Add your own photo or video of it — for example your gym's machine. It shows instead of the library picture.
+          <Text style={{ fontFamily: type.body, fontSize: type.size.body, lineHeight: 21, color: color.inkSecondary }}>
+            {existing?.name} comes from the exercise library. You can add your own photo or video of it here.
           </Text>
         ) : (
           <>
@@ -394,8 +475,8 @@ export default function NewExerciseScreen() {
               <FieldLabel>Name</FieldLabel>
               <View
                 style={{
-                  height: 46,
-                  paddingHorizontal: space.md,
+                  minHeight: 52,
+                  paddingHorizontal: space.lg,
                   justifyContent: 'center',
                   borderRadius: radius.md,
                   backgroundColor: color.surfaceSunken,
@@ -410,7 +491,7 @@ export default function NewExerciseScreen() {
                   placeholderTextColor={color.inkMuted}
                   autoCorrect={false}
                   accessibilityLabel="Exercise name"
-                  style={{ fontFamily: type.bodyMedium, fontSize: type.size.body, color: color.ink, paddingVertical: 0 }}
+                  style={{ fontFamily: type.bodySemi, fontSize: type.size.body + 1, color: color.ink, paddingVertical: space.sm }}
                 />
               </View>
               {guessedFrom && !existing ? (
@@ -420,155 +501,38 @@ export default function NewExerciseScreen() {
               ) : null}
             </View>
 
-            {/* how it is logged */}
+            {/* the details: one row each, a tap opens its sheet */}
             <View style={{ gap: space.sm }}>
-              <FieldLabel>How you log it</FieldLabel>
-              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: space.sm }}>
-                {LOG_TYPES.map((t) => (
-                  <Chip key={t} label={LOG_TYPE_LABEL[t]} selected={logType === t} onPress={() => pickType(t)} />
-                ))}
-              </View>
+              <FieldLabel>Details</FieldLabel>
+              <DetailRows rows={rows} />
               {typeLocked ? (
                 <Text style={{ fontFamily: type.body, fontSize: type.size.caption, color: color.inkMuted }}>
                   This exercise already has logged sets, so how it is logged stays the same.
                 </Text>
               ) : null}
             </View>
-
-            {logType === 'distance' || logType === 'time_distance' ? (
-              <View style={{ gap: space.sm }}>
-                <FieldLabel>Distance in</FieldLabel>
-                <View style={{ flexDirection: 'row', gap: space.sm }}>
-                  <Chip label={units === 'imperial' ? 'Miles' : 'Kilometres'} selected={distUnit === 'km'} onPress={() => setDistUnit('km')} />
-                  <Chip label="Metres" selected={distUnit === 'm'} onPress={() => setDistUnit('m')} />
-                </View>
-              </View>
-            ) : null}
-
-            {/* primary muscle (finer) */}
-            <View style={{ gap: space.sm }}>
-              <FieldLabel>Main muscle</FieldLabel>
-              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: space.sm }}>
-                {MUSCLES.map((m) => (
-                  <Chip
-                    key={m}
-                    label={MUSCLE_LABEL[m]}
-                    selected={muscle === m}
-                    onPress={() => {
-                      touched.current.muscle = true;
-                      setMuscle(m);
-                    }}
-                  />
-                ))}
-              </View>
-            </View>
-
-            {/* equipment */}
-            <View style={{ gap: space.sm }}>
-              <FieldLabel>Equipment</FieldLabel>
-              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: space.sm }}>
-                {EQUIPMENTS.map((eq) => (
-                  <Chip key={eq} label={cap(eq)} selected={equipment === eq} onPress={() => pickEquipment(eq)} />
-                ))}
-              </View>
-            </View>
-
-            {/* secondary muscles (optional) */}
-            <View style={{ gap: space.sm }}>
-              <FieldLabel>Also works (optional)</FieldLabel>
-              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: space.sm }}>
-                {MUSCLES.filter((m) => m !== muscle).map((m) => (
-                  <Chip key={m} label={MUSCLE_LABEL[m]} selected={secondary.includes(m)} onPress={() => toggleSecondary(m)} />
-                ))}
-              </View>
-            </View>
-
-            {isBodyweightType(logType) ? (
-              <View style={{ gap: space.sm }}>
-                <FieldLabel>{`Body weight in ${liftedWords(units)}`}</FieldLabel>
-                <View style={{ flexDirection: 'row', gap: space.sm }}>
-                  <Chip label="Counts (pull-up, dip)" selected={countsBodyweight} onPress={() => setCountsBodyweight(true)} />
-                  <Chip label="Doesn't count" selected={!countsBodyweight} onPress={() => setCountsBodyweight(false)} />
-                </View>
-              </View>
-            ) : null}
-
-            {usesWeight(logType) ? (
-              <>
-                <View style={{ gap: space.sm }}>
-                  <FieldLabel>Movement type</FieldLabel>
-                  <View style={{ flexDirection: 'row', gap: space.sm }}>
-                    <Chip label="Compound" selected={isCompound} onPress={() => setIsCompound(true)} />
-                    <Chip label="Isolation" selected={!isCompound} onPress={() => setIsCompound(false)} />
-                  </View>
-                </View>
-                <View style={{ gap: space.sm }}>
-                  <FieldLabel>Weight increment</FieldLabel>
-                  <View style={{ flexDirection: 'row', gap: space.sm }}>
-                    {incrementChoices(units).map((c, i) => (
-                      <Chip key={c.label} label={c.label} selected={pickedIncrement(increment, units) === i} onPress={() => setIncrement(c.kg)} />
-                    ))}
-                  </View>
-                </View>
-              </>
-            ) : null}
           </>
         )}
 
         {/* the member's own photo or video */}
         <View style={{ gap: space.sm }}>
-          <FieldLabel>Photo or video (optional)</FieldLabel>
-          {media ? (
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.md }}>
-              {media.type === 'image' ? (
-                <Image source={{ uri: media.uri }} style={{ width: 72, height: 72, borderRadius: radius.md }} contentFit="cover" />
-              ) : (
-                <View
-                  style={{
-                    width: 72,
-                    height: 72,
-                    borderRadius: radius.md,
-                    backgroundColor: color.accentSoft,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                  <Glyph name="play" size={28} color={color.accent} />
-                </View>
-              )}
-              <View style={{ flex: 1, gap: 4 }}>
-                <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.ink }}>
-                  {media.type === 'video' ? 'Your video' : 'Your photo'}
-                </Text>
-                <Pressable
-                  onPress={() => setMedia(null)}
-                  accessibilityRole="button"
-                  accessibilityLabel="Remove photo or video"
-                  style={{ minHeight: 48, justifyContent: 'center', alignSelf: 'flex-start' }}
-                >
-                  <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.criticalText }}>Remove</Text>
-                </Pressable>
-              </View>
-            </View>
-          ) : null}
-          <View style={{ flexDirection: 'row', gap: space.sm, opacity: mediaBusy ? 0.5 : 1 }}>
-            <View style={{ flex: 1 }}>
-              <GhostButton label="Choose" icon="plus" onPress={() => void addMedia('gallery')} />
-            </View>
-            <View style={{ flex: 1 }}>
-              <GhostButton label="Photo" icon="camera" onPress={() => void addMedia('photo')} />
-            </View>
-            <View style={{ flex: 1 }}>
-              <GhostButton label="Video" icon="video" onPress={() => void addMedia('video')} />
-            </View>
-          </View>
-          <Text style={{ fontFamily: type.body, fontSize: type.size.caption, color: color.inkMuted }}>
-            {mediaBusy
-              ? 'Adding it…'
-              : `Kept on this phone. Videos up to ${MAX_VIDEO_SEC} s play on a silent loop when you tap the exercise's picture.`}
-          </Text>
+          {isLibrary ? null : <FieldLabel>Your photo or video</FieldLabel>}
+          <MediaCard media={media} busy={mediaBusy} words={words} onOpen={() => setOpen('media')} onRemove={() => setMedia(null)} />
         </View>
+      </ScrollView>
 
+      {/* R-572: Save stays pinned to the bottom, always in view. */}
+      <View
+        style={{
+          marginHorizontal: -space.screenX,
+          paddingHorizontal: space.screenX,
+          paddingTop: space.md,
+          paddingBottom: Math.max(insets.bottom, space.md),
+          borderTopWidth: 1,
+          borderTopColor: color.border,
+          backgroundColor: color.bg,
+        }}
+      >
         <PrimaryButton
           label={missing ?? (existing ? 'Save changes' : forWorkout ? 'Save and add to workout' : 'Save exercise')}
           icon="check"
@@ -577,6 +541,125 @@ export default function NewExerciseScreen() {
           onPress={() => void onSave()}
         />
       </View>
+
+      {isLibrary ? null : (
+        <>
+          <ChoiceSheet
+            kind="type"
+            visible={open === 'type'}
+            title="How you log it"
+            line={SHEET_WORDS.type}
+            choices={LOG_TYPES.map((t) => ({ key: t, label: LOG_TYPE_LABEL[t] }))}
+            value={logType}
+            onPick={(t) => {
+              pickType(t);
+              close();
+            }}
+            onClose={close}
+          />
+          <ChoiceSheet
+            kind="dist"
+            visible={open === 'dist'}
+            title="Distance in"
+            line={SHEET_WORDS.dist}
+            choices={[
+              { key: 'km', label: distLabel },
+              { key: 'm', label: 'Metres' },
+            ]}
+            value={distUnit}
+            onPick={(u) => {
+              setDistUnit(u);
+              close();
+            }}
+            onClose={close}
+          />
+          <MuscleSheet
+            kind="muscle"
+            visible={open === 'muscle'}
+            title="Main muscle"
+            line={SHEET_WORDS.muscle}
+            groups={MUSCLE_GROUPS}
+            picked={muscle ? [muscle] : []}
+            onPick={(m) => {
+              touched.current.muscle = true;
+              setMuscle(m);
+              close();
+            }}
+            onClose={close}
+          />
+          <ChoiceSheet
+            kind="equipment"
+            visible={open === 'equipment'}
+            title="Equipment"
+            line={SHEET_WORDS.equipment}
+            choices={EQUIPMENTS.map((eq) => ({ key: eq, label: cap(eq) }))}
+            value={equipment}
+            onPick={(eq) => {
+              pickEquipment(eq);
+              close();
+            }}
+            onClose={close}
+          />
+          <MuscleSheet
+            kind="also"
+            multi
+            visible={open === 'also'}
+            title="Also works"
+            line={SHEET_WORDS.also}
+            groups={groupsWithout(muscle)}
+            picked={secondary}
+            onPick={toggleSecondary}
+            onClose={close}
+          />
+          <ChoiceSheet
+            kind="bodyweight"
+            visible={open === 'bodyweight'}
+            title={bwLabel}
+            line={SHEET_WORDS.bodyweight}
+            choices={[
+              { key: 'yes', label: 'Counts (pull-up, dip)' },
+              { key: 'no', label: "Doesn't count" },
+            ]}
+            value={countsBodyweight ? 'yes' : 'no'}
+            onPick={(k) => {
+              setCountsBodyweight(k === 'yes');
+              close();
+            }}
+            onClose={close}
+          />
+          <ChoiceSheet
+            kind="joints"
+            visible={open === 'joints'}
+            title="Joints it moves"
+            line={SHEET_WORDS.joints}
+            choices={[
+              { key: 'one', label: JOINT_WORDS.one.choice, detail: JOINT_WORDS.one.detail },
+              { key: 'several', label: JOINT_WORDS.several.choice, detail: JOINT_WORDS.several.detail },
+            ]}
+            value={isCompound ? 'several' : 'one'}
+            onPick={(k) => {
+              setIsCompound(k === 'several');
+              close();
+            }}
+            onClose={close}
+          />
+          <ChoiceSheet
+            kind="step"
+            visible={open === 'step'}
+            title="Weight goes up by"
+            line={SHEET_WORDS.step}
+            choices={steps.map((c, i) => ({ key: String(i), label: c.label }))}
+            value={stepAt >= 0 ? String(stepAt) : null}
+            onPick={(k) => {
+              const c = steps[Number(k)];
+              if (c) setIncrement(c.kg);
+              close();
+            }}
+            onClose={close}
+          />
+        </>
+      )}
+      <MediaSheet visible={open === 'media'} hasMedia={media != null} words={words} onPick={pickMediaFrom} onClose={close} />
     </Screen>
   );
 }

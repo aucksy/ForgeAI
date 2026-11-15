@@ -79,6 +79,60 @@ appId: com.mettleup.app
     timeout: 15000
 - takeScreenshot: rel-look-${LOOK}-04-exercise
 - back
+# R-572 (15 Nov 2026): the New exercise form (one Details card of rows, the photo card, Save pinned at the
+# bottom) and its Main muscle, Also works and photo sheets, in this look. Leaves without saving.
+# in-view: the Exercises page's top bar (its "Create an exercise" button never scrolls away)
+- tapOn: "Create an exercise"
+- extendedWaitUntil:
+    visible: "How you log it.*"
+    timeout: 15000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Exercise name'
+- tapOn: "Exercise name"
+- inputText: "Lateral Raise Look"
+- hideKeyboard
+- runFlow:
+    file: sub-exercise-pick.yaml
+    env:
+      ROW: "also"
+      PICK: "front_delts"
+- tapOn:
+    id: "exercise-pick-also-traps"
+- takeScreenshot: rel-look-${LOOK}-04c-also-works-sheet
+- tapOn: "^Done$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Also works, .*'
+- takeScreenshot: rel-look-${LOOK}-04b-new-exercise
+- tapOn:
+    id: "exercise-row-muscle"
+# in-view: the sheet just opened, its line at the top
+- extendedWaitUntil:
+    visible: "Pick the muscle this exercise works most."
+    timeout: 10000
+- takeScreenshot: rel-look-${LOOK}-04d-main-muscle-sheet
+- back
+- scrollUntilVisible:
+    element:
+      id: "exercise-media-add"
+    centerElement: true
+    timeout: 15000
+- tapOn:
+    id: "exercise-media-add"
+# in-view: the photo sheet just opened
+- extendedWaitUntil:
+    visible: "Choose from your gallery.*"
+    timeout: 10000
+- takeScreenshot: rel-look-${LOOK}-04e-photo-sheet
+- tapOn: "^Cancel$"
+- back
+- extendedWaitUntil:
+    visible: "Search exercises"
+    timeout: 15000
 - back
 # "Your workouts" (a chart's "See these workouts" list); without a range the link opens Profile.
 - openLink: "mettleup://history?from=2026-01-01&to=2030-12-31"

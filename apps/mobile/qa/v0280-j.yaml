@@ -371,48 +371,43 @@ appId: com.mettleup.app
 - takeScreenshot: 154-create-offer
 - tapOn: "Create “Sled Drag QA”"
 - extendedWaitUntil:
-    visible: "How you log it"
+    visible: "How you log it.*"
     timeout: 15000
     optional: true
 - runFlow:
     file: sub-see.yaml
     env:
-      FIND: 'How you log it'
+      FIND: 'How you log it.*'
+# R-572: each fact is a row of one Details card that opens a sheet; "Distance in" shows only for distance.
+- runFlow:
+    file: sub-exercise-pick.yaml
+    env:
+      ROW: "type"
+      PICK: "distance"
+- runFlow:
+    file: sub-exercise-pick.yaml
+    env:
+      ROW: "dist"
+      PICK: "m"
+- runFlow:
+    file: sub-exercise-pick.yaml
+    env:
+      ROW: "muscle"
+      PICK: "abs"
+- runFlow:
+    file: sub-exercise-pick.yaml
+    env:
+      ROW: "equipment"
+      PICK: "other"
 - runFlow:
     file: sub-see.yaml
     env:
-      FIND: '^Distance$'
-- tapOn: "^Distance$"
-- scrollUntilVisible:
-    element: "Distance in"
-    centerElement: true
-    timeout: 10000
-- scrollUntilVisible:
-    element: "^Metres$"
-    centerElement: true
-    timeout: 10000
-- tapOn: "^Metres$"
-# "Abs" is a chip twice: Main muscle, and Also works (optional) further down. Until a main muscle
-# is picked both show, and a plain tap picked the second (owner phone, run 43205683435: part J saved
-# nothing, "Pick a main muscle"). Centre the Main muscle label, then tap the first Abs below it.
-- scrollUntilVisible:
-    element: "^Main muscle$"
-    centerElement: true
-    timeout: 10000
-- tapOn:
-    text: "^Abs$"
-    below: "^Main muscle$"
-    index: 0
-- scrollUntilVisible:
-    element: "^Other$"
-    centerElement: true
-    timeout: 10000
-- tapOn: "^Other$"
+      FIND: 'Distance in, Metres'
 - takeScreenshot: 155-create-form-metres
-- scrollUntilVisible:
-    element: "Save and add to workout"
-    centerElement: true
-    timeout: 15000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Save and add to workout'
 - tapOn: "Save and add to workout"
 - extendedWaitUntil:
     visible: "Sled Drag QA"

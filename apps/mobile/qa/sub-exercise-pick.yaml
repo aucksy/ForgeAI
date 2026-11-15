@@ -1,0 +1,41 @@
+# Sub-flow (called with runFlow; not a part of its own): on the "New exercise" / "Edit exercise" form
+# (R-572, 15 Nov 2026: one Details card of rows, each opening a sheet), open one row and tap one choice in
+# the sheet it opens. A one-choice sheet closes itself on the tap.
+#   - runFlow:
+#       file: sub-exercise-pick.yaml
+#       env:
+#         ROW: "muscle"      # type, dist, muscle, equipment, also, bodyweight, joints, step
+#         PICK: "abs"        # the choice: a log type (time, distance...), a muscle, an equipment, km / m, yes / no,
+#                            # one / several, or the weight step's place (0 = the smallest)
+# By id, not by text: Maestro reads every window on screen, so a muscle name in the sheet would also match
+# the same name shown as a row's value on the page behind it (forgeai-qa-lessons trap 10).
+# "also" (several muscles) stays open: tap its "Done" after. No `env:` default here (trap 22).
+appId: com.mettleup.app
+---
+- scrollUntilVisible:
+    element:
+      id: "exercise-row-${ROW}"
+    centerElement: true
+    timeout: 15000
+    optional: true
+- runFlow:
+    when:
+      notVisible:
+        id: "exercise-row-${ROW}"
+    commands:
+      - scrollUntilVisible:
+          element:
+            id: "exercise-row-${ROW}"
+          direction: UP
+          centerElement: true
+          timeout: 20000
+- tapOn:
+    id: "exercise-row-${ROW}"
+# The sheet scrolls only when it is taller than the screen (big text): bring the choice into view.
+- scrollUntilVisible:
+    element:
+      id: "exercise-pick-${ROW}-${PICK}"
+    timeout: 10000
+    optional: true
+- tapOn:
+    id: "exercise-pick-${ROW}-${PICK}"
