@@ -7,6 +7,18 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-594 (15 Nov 2026, night) Release 0.79.0 fresh-eyes review: actions; MORNING LIST for him
+- Review: docs/reviews/2026-11-15-release-0.79.0-fresh-eyes.md (up to 65b35c1e). Blockers: (1) phone QA out of date
+  with 0096 live + picker never run on a phone -> helper on it (adds to R-586); (2) panel deploy must go live before or
+  with the phone release (planned, R-592); (3) no phone What's new for 0.79.0 -> written at the release step, and the
+  waiting list cleaned (drop 0.78.0 items, fix the message line).
+- Welcome bugs + small improvements (labels above boxes, "set up as New to lifting / Build muscle" line, "Bring back
+  your workouts" on the phone path, watch screen wait) sent to the R-587 helper.
+- Admin e2e J149 expected "Version 14 Nov 2026": updated to 15 Nov (my What's new entry).
+- MORNING LIST (his design calls, parked): (a) the gym welcome screen asks "Does your gym use MettleUp?": add Yes / No
+  buttons so members with no MettleUp gym skip the WhatsApp check (he asked for phone-only, so his call); (b) remove the
+  extra screen between "Get started" and the phone form.
+
 ## R-593 (15 Nov 2026) Today keeps only what still needs him; the AI Assistant card fits every phone
 - His words (admin panel, Today): "this today section is basically showing the new messages that came and what we
   replied. But I marked those conversations as done. I did it myself as the admin user. So why should I be looking at
