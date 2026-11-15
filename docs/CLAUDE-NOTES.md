@@ -8,6 +8,10 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
 ## R-600 (16 Nov 2026) Pre-deploy fixes for tonight's admin panel deploy (fresh-eyes review of d2928aaa..b65e6362, then of a645d692)
+- DEPLOYED 16 Nov ~02:45 IST from 0a0f87d2 (CI 43759121911 green; fresh review blockers fixed): panel version
+  97ec6ea3, HQ version c967e487. Live check: /api/switches gymPages false; live bundle has "See who", "Kaun hain, dekho",
+  "Today now shows only what still needs you"; no "In the newest MettleUp app" line. HQ read log is off until
+  SUPABASE_LOGS_TOKEN is saved. NEXT: move pending-message-recipient live after 0.79.0 is in production.
 - Brief (coordinator; owner approved the deploy, "no screen says something the code does not do"): 5 fixes, no deploy, no DB change, no version bump.
 - What's new: ADMIN_NEWS '2026-11-16' = R-593's three Today lines (moved out of pending). R-586's two recipient lines ("Gym owner" / a trainer by name / "Gym admin"; "To: Gym owner") wait in a NEW 'pending-message-recipient': the picker is member app 0.79.0, open testing only, so no message has a "To:" line yet. Move it to ADMIN_NEWS with the first panel deploy after 0.79.0 is in production. Words from shop/gymMessages.ts TO_WORDS + memberMessages.ts. gym-web-pages + plus-lock stay pending.
 - Help (deploy/panel/helpArticles.js, both 120 words, the limit): owner article "If a member's app asks "Who should read it?" ... Each such message says who it went to ... With no "To:" line, the older rule applies" (+ "Member questions" line back). Member article: the same "If asked", and "If not asked, the owner and front desk read feedback; only the owner reads a complaint."
