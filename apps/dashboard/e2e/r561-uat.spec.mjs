@@ -272,7 +272,7 @@ test.describe('R561 on a computer', () => {
     await expect(payRow).toHaveCount(1);
     await expect(payRow).toContainText('Payment');
     await expect(payRow).toContainText('Asha Verma paid online for 3 months.');
-    await expect(payRow).toHaveAccessibleName(/Payment: Paid/);
+    await expect(payRow).toHaveAccessibleName(/^Payment ?: Paid/);
     await expect(panel.locator('[data-pay-row]')).toHaveCount(1);
     await shot(page, 'computer-bell-dark', { clip: { x: 520, y: 0, width: 760, height: 900 } });
     // A tap outside (the Light switch) closes the panel; open it again in light.
