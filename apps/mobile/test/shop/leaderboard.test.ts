@@ -144,6 +144,12 @@ describe("the gym's answer", () => {
     expect(boardFromRow({ ok: true, challenge: c })?.challenge).not.toBeNull();
   });
 
+  // R-561 (supabase 0091): a challenge may count check-ins (visits at the gym). Before this, the app read it as no challenge.
+  it('a check-in challenge is read, with its numbers', () => {
+    const b = boardFromRow({ ok: true, challenge: { ...good.challenge, title: 'Check-in habit', measure: 'checkins', goal: 12, myValue: 12, hit: true } });
+    expect(b?.challenge).toMatchObject({ title: 'Check-in habit', measure: 'checkins', goal: 12, myValue: 12, hit: true });
+  });
+
   it('a challenge: a missing prize is 0 days, "hit" follows the numbers, the date may carry a time', () => {
     const b = boardFromRow({ ok: true, challenge: { ...good.challenge, prizeDays: undefined, myValue: 16, hit: undefined, endsOn: '2026-11-30T00:00:00Z' } });
     expect(b?.challenge).toMatchObject({ prizeDays: 0, hit: true, endsOn: '2026-11-30' });

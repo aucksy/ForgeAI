@@ -348,7 +348,8 @@ export function makeDemoServer(showcase: DemoShowcase, today: DateISO, now: () =
   const challenges: Row[] = [
     {
       id: 'ch-demo-now',
-      title: '20 workouts this month',
+      // R-561: the ready-made "Workout habit" card shows On in the demo.
+      title: 'Workout habit',
       measure: 'workouts',
       goal: 20,
       startsOn: month1,

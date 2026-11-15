@@ -10,7 +10,9 @@ import { describe, expect, it } from 'vitest';
 import { canOpen, navFor } from '../../src/crm/auth/permissions';
 import {
   COUNTED_FROM_PHONE,
+  COUNTED_FROM_REGISTER,
   askWords,
+  countedWords,
   boardFromAnswer,
   challengeErrorWords,
   challengePayload,
@@ -78,9 +80,9 @@ describe('the server answers, read back', () => {
   });
 
   it('anything odd reads as nothing, and the desk cannot edit', () => {
-    expect(challengesFromAnswer(null)).toEqual({ canEdit: false, autoRewards: false, challenges: [] });
-    expect(challengesFromAnswer('x')).toEqual({ canEdit: false, autoRewards: false, challenges: [] });
-    expect(challengesFromAnswer([{ canEdit: false, challenges: [] }])).toEqual({ canEdit: false, autoRewards: false, challenges: [] });
+    expect(challengesFromAnswer(null)).toEqual({ canEdit: false, autoRewards: false, checkins: false, challenges: [] });
+    expect(challengesFromAnswer('x')).toEqual({ canEdit: false, autoRewards: false, checkins: false, challenges: [] });
+    expect(challengesFromAnswer([{ canEdit: false, challenges: [] }])).toEqual({ canEdit: false, autoRewards: false, checkins: false, challenges: [] });
     expect(challengesFromAnswer({ challenges: 5 }).challenges).toEqual([]);
   });
 
@@ -246,8 +248,13 @@ describe('words', () => {
 describe('the winners list', () => {
   it('says the numbers come from members’ phones, and the page shows that line under the list', () => {
     expect(COUNTED_FROM_PHONE).toBe('Counted from each member’s phone. Check a surprising number with the member before giving free days.');
+    expect(countedWords('workouts')).toBe(COUNTED_FROM_PHONE);
+    expect(countedWords('kg')).toBe(COUNTED_FROM_PHONE);
+    // 0091: a check-in challenge counts the gym's own visit register.
+    expect(countedWords('checkins')).toBe(COUNTED_FROM_REGISTER);
+    expect(COUNTED_FROM_REGISTER).toMatch(/visit register/);
     const page = readFileSync(fileURLToPath(new URL('../../src/crm/ui/screens/Challenges.tsx', import.meta.url)), 'utf8');
-    expect(page).toContain('{COUNTED_FROM_PHONE}');
+    expect(page).toContain('{countedWords(c.measure)}');
   });
 });
 

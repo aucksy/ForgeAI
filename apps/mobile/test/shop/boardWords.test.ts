@@ -71,6 +71,15 @@ describe('the lines', () => {
     expect(progressText(challenge({ measure: 'kg', goal: 1000, myValue: 500 }), 'imperial')).toBe('1,102 of 2,205 lb');
   });
 
+  // R-561 (supabase 0091): a check-in challenge counts the days the member checked in at the gym.
+  it('a check-in challenge counts visits, the same in kg and lb', () => {
+    const visits = challenge({ title: 'Check-in habit', measure: 'checkins', goal: 12, myValue: 5 });
+    expect(progressText(visits, 'metric')).toBe('5 of 12 visits');
+    expect(progressText(visits, 'imperial')).toBe('5 of 12 visits');
+    expect(challengeLine(visits, '2026-11-10', 'metric')).toBe('5 of 12 visits · ends 30 Nov');
+    expect(progressText(challenge({ measure: 'checkins', goal: 1, myValue: 0 }), 'metric')).toBe('0 of 1 visit');
+  });
+
   it('a challenge that ended, and one still to start', () => {
     expect(challengeLine(challenge(), '2026-12-02', 'metric')).toBe('12 of 16 workouts · Ended 30 Nov');
     expect(challengeLine(challenge(), '2026-10-30', 'metric')).toBe('Starts 1 Nov · 12 of 16 workouts');
@@ -126,6 +135,7 @@ describe('member words', () => {
     lines.push(kgTabLabel('metric'), kgTabLabel('imperial'));
     lines.push(youLine(7, 12, 'workouts', 'metric'), youLine(7, 5, 'kg', 'imperial'));
     lines.push(challengeLine(challenge(), '2026-11-10', 'metric'), challengeLine(challenge({ measure: 'kg' }), '2026-12-10', 'imperial'));
+    lines.push(challengeLine(challenge({ measure: 'checkins', goal: 12 }), '2026-11-10', 'metric'));
     for (const l of lines) expect(l, l).not.toMatch(BANNED);
   });
 

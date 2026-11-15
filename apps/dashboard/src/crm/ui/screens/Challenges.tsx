@@ -14,15 +14,31 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { useAuth } from '../../auth/AuthProvider';
 import { useBranches } from '../../branches/context';
-import { todayISO } from '../../logic/dates';
+import { t } from '../../lang/lang';
+import { diffDays, formatDay, formatDayShort, todayISO } from '../../logic/dates';
 import {
-  COUNTED_FROM_PHONE,
+  READY_WORDS,
+  readyAsk,
+  readyDraft,
+  readyMatch,
+  readyOnToast,
+  readyReward,
+  readyShown,
+  readyStart,
+  readyState,
+  readyTurnOnLabel,
+  readyWaits,
+  type Line,
+  type ReadyChallenge,
+} from '../../logic/readyChallenges';
+import {
   MEMBERS_SEE_CHALLENGE,
   MEMBERS_SEE_LEADERBOARD,
   askWords,
   challengeErrorWords,
   challengePayload,
   confirmedWords,
+  countedWords,
   draftFromChallenge,
   giveAllLabel,
   giveLabel,
@@ -44,10 +60,12 @@ import {
   winnersText,
   withMeasure,
   type BoardAnswer,
+  type BoardMeasure,
   type BoardRow,
   type Challenge,
   type ChallengeDraft,
   type ChallengeMeasure,
+  type ChallengePayload,
   type ChallengesAnswer,
 } from '../../logic/challenges';
 import { isNoSuchFunction } from '../../logic/workoutOffer';
@@ -81,6 +99,9 @@ const small = { ...quiet, fontSize: 13 } as const;
 function failWords(e: unknown): string {
   return challengeErrorWords(e) ?? errorWords(e);
 }
+
+/** A line from logic/readyChallenges.ts in the owner's language (English or Hinglish). */
+const tl = (l: Line): string => t(l.en, l.vars);
 
 export function ChallengesScreen() {
   const { session } = useAuth();
@@ -118,11 +139,11 @@ export function ChallengesScreen() {
   return (
     <>
       <PageHeader
-        title="Challenges"
+        title={t('Challenges')}
         subtitle={
           branchName
-            ? `A challenge for ${branchName}’s members. Each branch has its own.`
-            : 'A challenge for your members. Everyone who reaches the goal wins.'
+            ? t('A challenge for {branch}’s members. Each branch has its own.', { branch: branchName })
+            : t('A challenge for your members. Everyone who reaches the goal wins.')
         }
       />
       {!online || !key ? (
@@ -173,33 +194,73 @@ function Ready({
   const running = runningChallenge(challenges.challenges);
   const next = upcomingChallenges(challenges.challenges);
   const past = pastChallenges(challenges.challenges);
-  const [form, setForm] = useState<ChallengeDraft | null>(null);
-  const [cancelling, setCancelling] = useState<Challenge | null>(null);
+  // The form is either a challenge of the owner's own, or a ready-made card's (`ready`: name and measure fixed).
+  const [form, setForm] = useState<{ draft: ChallengeDraft; ready: boolean } | null>(null);
+  // `ready`: turned off from a ready-made card (its own words), else cancelled from the challenge's card.
+  const [cancelling, setCancelling] = useState<{ c: Challenge; ready: boolean } | null>(null);
   const closeForm = useCallback(() => setForm(null), []);
   const closeCancel = useCallback(() => setCancelling(null), []);
   const [cancelError, setCancelError] = useState<string | null>(null);
+  const [busy, setBusy] = useState<string | null>(null);
+  const cards = readyShown(challenges);
 
   const cancel = async () => {
     if (!cancelling) return;
     setCancelError(null);
     try {
-      await challengesApi.cancelChallenge(ownerKey, cancelling.id);
+      await challengesApi.cancelChallenge(ownerKey, cancelling.c.id);
       setCancelling(null);
       await reload();
-      flash('Challenge cancelled. Members no longer see it.');
+      flash(cancelling.ready ? t(READY_WORDS.toastOff, { title: cancelling.c.title }) : 'Challenge cancelled. Members no longer see it.');
     } catch (e) {
       console.warn('[ForgeErr] challenges: cancelling', e);
       setCancelError(failWords(e));
     }
   };
 
+  // One tap: the card's own numbers, from today or the day after the challenge in its way ends.
+  const turnOn = async (r: ReadyChallenge) => {
+    if (busy) return;
+    const start = readyStart(challenges.challenges, r.days, today);
+    if (!start) return flash(t(READY_WORDS.blocked));
+    const { payload, problem } = challengePayload(readyDraft(r, start.startsOn), today);
+    if (!payload) return flash(problem ?? '');
+    setBusy(r.id);
+    try {
+      await challengesApi.saveChallenge(ownerKey, payload);
+      await reload();
+      flash(tl(readyOnToast(r.title, payload.startsOn, today, false)));
+    } catch (e) {
+      console.warn('[ForgeErr] challenges: turning on a ready-made challenge', e);
+      flash(failWords(e));
+    } finally {
+      setBusy(null);
+    }
+  };
+
   return (
     <>
+      <ReadyList
+        cards={cards}
+        list={challenges.challenges}
+        today={today}
+        canEdit={canEdit}
+        busy={busy}
+        onTurnOn={(r) => void turnOn(r)}
+        onChange={(r, on) => {
+          if (on) return setForm({ draft: draftFromChallenge(on), ready: true });
+          const start = readyStart(challenges.challenges, r.days, today);
+          setForm({ draft: readyDraft(r, start?.startsOn ?? today), ready: true });
+        }}
+        onTurnOff={(c) => setCancelling({ c, ready: true })}
+      />
+
       {canEdit ? (
-        <div style={{ marginBottom: space.lg }}>
-          <Button needsInternet onClick={() => setForm(newDraft(today))}>
-            New challenge
+        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: space.md, marginBottom: space.lg }}>
+          <Button variant="ghost" needsInternet onClick={() => setForm({ draft: newDraft(today), ready: false })}>
+            {t('New challenge')}
           </Button>
+          <p style={{ ...small, flex: '1 1 220px' }}>{t(READY_WORDS.ownLine)}</p>
         </div>
       ) : (
         <p style={{ ...small, marginBottom: space.lg }}>Only the owner can start, change or cancel a challenge. You can see who has reached the goal.</p>
@@ -211,7 +272,7 @@ function Ready({
           today={today}
           canEdit={canEdit}
           autoRewards={challenges.autoRewards}
-          onCancel={() => setCancelling(running)}
+          onCancel={() => setCancelling({ c: running, ready: false })}
           flash={flash}
           ownerKey={ownerKey}
           reload={reload}
@@ -219,11 +280,13 @@ function Ready({
         />
       ) : (
         <Card style={{ marginBottom: space.lg }}>
-          <SectionTitle>No challenge is running</SectionTitle>
+          <SectionTitle>{t('No challenge is running')}</SectionTitle>
           <p style={quiet}>
             {canEdit
-              ? 'Start one to give members a goal for the month. Everyone who reaches it wins free days.'
-              : 'The owner has not started one.'}
+              ? cards.length > 0
+                ? t('Turn on a ready-made challenge above, or make your own with “New challenge”.')
+                : 'Start one to give members a goal for the month. Everyone who reaches it wins free days.'
+              : t('The owner has not started one.')}
           </p>
         </Card>
       )}
@@ -235,8 +298,8 @@ function Ready({
           today={today}
           canEdit={canEdit}
           autoRewards={challenges.autoRewards}
-          onChange={() => setForm(draftFromChallenge(c))}
-          onCancel={() => setCancelling(c)}
+          onChange={() => setForm({ draft: draftFromChallenge(c), ready: false })}
+          onCancel={() => setCancelling({ c, ready: false })}
           flash={flash}
           ownerKey={ownerKey}
           reload={reload}
@@ -259,39 +322,169 @@ function Ready({
       {form && (
         <ChallengeForm
           ownerKey={ownerKey}
-          start={form}
+          start={form.draft}
+          ready={form.ready}
+          checkins={challenges.checkins}
           today={today}
           onClose={closeForm}
-          onSaved={async () => {
+          onSaved={async (p) => {
+            const ready = form.ready;
             setForm(null);
             await reload();
-            flash('Challenge saved. Members see it in the MettleUp app within 10 minutes.');
+            flash(ready ? tl(readyOnToast(p.title, p.startsOn, today, Boolean(p.id))) : 'Challenge saved. Members see it in the MettleUp app within 10 minutes.');
           }}
         />
       )}
 
       {cancelling && (
         <Sheet
-          title="Cancel this challenge?"
+          title={cancelling.ready ? t(READY_WORDS.offTitle) : 'Cancel this challenge?'}
           onClose={closeCancel}
           footer={
             <>
               <Button variant="ghost" onClick={closeCancel}>
-                Keep it
+                {cancelling.ready ? t(READY_WORDS.keepOn) : 'Keep it'}
               </Button>
               <Button tone="danger" needsInternet onClick={() => void cancel()}>
-                Cancel challenge
+                {cancelling.ready ? t(READY_WORDS.turnOff) : 'Cancel challenge'}
               </Button>
             </>
           }
         >
           {cancelError && <ErrorBanner>{cancelError}</ErrorBanner>}
           <p style={quiet}>
-            “{cancelling.title}” will disappear from members’ phones. Nobody gets free days for it. This cannot be undone, but you can start a new one.
+            {cancelling.ready
+              ? t(READY_WORDS.offBody, { title: cancelling.c.title })
+              : `“${cancelling.c.title}” will disappear from members’ phones. Nobody gets free days for it. This cannot be undone, but you can start a new one.`}
           </p>
         </Sheet>
       )}
     </>
+  );
+}
+
+// ---------------------------------------------------------------- ready-made challenges
+
+function ReadyList({
+  cards,
+  list,
+  today,
+  canEdit,
+  busy,
+  onTurnOn,
+  onChange,
+  onTurnOff,
+}: {
+  cards: readonly ReadyChallenge[];
+  list: readonly Challenge[];
+  today: string;
+  canEdit: boolean;
+  busy: string | null;
+  onTurnOn: (r: ReadyChallenge) => void;
+  onChange: (r: ReadyChallenge, on: Challenge | null) => void;
+  onTurnOff: (c: Challenge) => void;
+}) {
+  if (cards.length === 0) return null;
+  return (
+    <Card style={{ marginBottom: space.lg }}>
+      <SectionTitle>{t(READY_WORDS.section)}</SectionTitle>
+      <p style={quiet}>{t(READY_WORDS.intro)}</p>
+      {!canEdit && <p style={{ ...small, marginTop: space.xs }}>{t(READY_WORDS.deskOnly)}</p>}
+      <ul
+        aria-label={t(READY_WORDS.section)}
+        style={{ margin: `${space.md}px 0 0`, padding: 0, listStyle: 'none', display: 'grid', gap: space.md, gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))' }}
+      >
+        {cards.map((r) => (
+          <ReadyCard
+            key={r.id}
+            r={r}
+            list={list}
+            today={today}
+            canEdit={canEdit}
+            busy={busy === r.id}
+            anyBusy={busy !== null}
+            onTurnOn={() => onTurnOn(r)}
+            onChange={(on) => onChange(r, on)}
+            onTurnOff={onTurnOff}
+          />
+        ))}
+      </ul>
+    </Card>
+  );
+}
+
+function ReadyCard({
+  r,
+  list,
+  today,
+  canEdit,
+  busy,
+  anyBusy,
+  onTurnOn,
+  onChange,
+  onTurnOff,
+}: {
+  r: ReadyChallenge;
+  list: readonly Challenge[];
+  today: string;
+  canEdit: boolean;
+  busy: boolean;
+  anyBusy: boolean;
+  onTurnOn: () => void;
+  onChange: (on: Challenge | null) => void;
+  onTurnOff: (c: Challenge) => void;
+}) {
+  const on = readyMatch(r, list);
+  const start = on ? null : readyStart(list, r.days, today);
+  // An "on" card shows the numbers the owner saved; an "off" card the ready-made ones.
+  const goal = on ? on.goal : r.goal;
+  const days = on ? diffDays(on.startsOn, on.endsOn) + 1 : r.days;
+  const prize = on ? on.prizeDays : r.prizeDays;
+  const waits = on ? null : readyWaits(start);
+  return (
+    <li
+      data-testid={`ready-${r.id}`}
+      aria-label={r.title}
+      style={{
+        display: 'grid',
+        gap: space.xs,
+        alignContent: 'start',
+        padding: space.md,
+        border: `1px solid ${on ? color.accent : color.border}`,
+        borderRadius: radius.md,
+        background: color.surface,
+      }}
+    >
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: space.sm, alignItems: 'center', justifyContent: 'space-between' }}>
+        <h3 style={{ margin: 0, fontFamily: font.display, fontSize: 16, fontWeight: 700, color: color.ink }}>{r.title}</h3>
+        <Pill tone={on ? 'good' : 'muted'}>{on ? t(READY_WORDS.on) : t(READY_WORDS.off)}</Pill>
+      </div>
+      <p style={quiet}>{t(r.why)}</p>
+      <p style={{ ...quiet, color: color.ink }}>
+        {tl(readyAsk(r.measure, goal, days))} {tl(readyReward(prize))}
+      </p>
+      <p style={{ ...small, fontWeight: on ? 700 : 400, color: on ? color.ink : color.inkSecondary }}>{tl(readyState(on))}</p>
+      {canEdit && waits && <p style={small}>{tl(waits)}</p>}
+      {canEdit && (
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: space.sm, marginTop: space.xs }}>
+          {!on && start && (
+            <Button needsInternet disabled={anyBusy} onClick={onTurnOn} ariaLabel={`${tl(readyTurnOnLabel(start))}: ${r.title}`}>
+              {busy ? t(READY_WORDS.saving) : tl(readyTurnOnLabel(start))}
+            </Button>
+          )}
+          {(!on ? start !== null : on.status === 'upcoming') && (
+            <Button variant="ghost" needsInternet disabled={anyBusy} onClick={() => onChange(on)} ariaLabel={`${t(READY_WORDS.change)}: ${r.title}`}>
+              {t(READY_WORDS.change)}
+            </Button>
+          )}
+          {on && (
+            <Button variant="quiet" tone="danger" needsInternet disabled={anyBusy} onClick={() => onTurnOff(on)} ariaLabel={`${t(READY_WORDS.turnOff)}: ${r.title}`}>
+              {t(READY_WORDS.turnOff)}
+            </Button>
+          )}
+        </div>
+      )}
+    </li>
   );
 }
 
@@ -378,7 +571,7 @@ function Winners({
               );
             })}
           </ul>
-          <p style={{ ...small, marginTop: space.sm }}>{COUNTED_FROM_PHONE}</p>
+          <p style={{ ...small, marginTop: space.sm }}>{countedWords(c.measure)}</p>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: space.sm, marginTop: space.md }}>
             {waiting.length > 1 && (
               <Button needsInternet disabled={busy !== null} onClick={() => void confirm(waiting, true, null)}>
@@ -480,15 +673,21 @@ function PastRow({
 function ChallengeForm({
   ownerKey,
   start,
+  ready,
+  checkins,
   today,
   onClose,
   onSaved,
 }: {
   ownerKey: string;
   start: ChallengeDraft;
+  /** A ready-made card's form: its name and what counts stay as they are; Save turns it on. */
+  ready: boolean;
+  /** 0091: the gym's server can count visits, so "Visits" is offered. */
+  checkins: boolean;
   today: string;
   onClose: () => void;
-  onSaved: () => Promise<void>;
+  onSaved: (payload: ChallengePayload) => Promise<void>;
 }) {
   const [d, setD] = useState<ChallengeDraft>(start);
   const [error, setError] = useState<string | null>(null);
@@ -506,7 +705,7 @@ function ChallengeForm({
     setError(null);
     try {
       await challengesApi.saveChallenge(ownerKey, checked.payload);
-      await onSaved();
+      await onSaved(checked.payload);
     } catch (e) {
       console.warn('[ForgeErr] challenges: saving', e);
       setError(failWords(e));
@@ -514,57 +713,73 @@ function ChallengeForm({
     }
   };
 
-  const preview = checked.payload
-    ? `Runs ${periodWords(checked.payload)}. ${askWords(checked.payload)}.`
+  // What members will read, in the owner's language: the dates, the goal, the reward.
+  const p = checked.payload;
+  const preview = p
+    ? [
+        t(READY_WORDS.runs, { start: formatDayShort(p.startsOn), end: formatDay(p.endsOn) }),
+        tl(readyAsk(p.measure, p.goal, diffDays(p.startsOn, p.endsOn) + 1)),
+        tl(readyReward(p.prizeDays)),
+      ].join(' ')
     : null;
+  const measures = [
+    { value: 'workouts', label: t('Workouts') },
+    { value: 'kg', label: t('Kg lifted') },
+    ...(checkins || d.measure === 'checkins' ? [{ value: 'checkins', label: t('Visits') }] : []),
+  ];
+  const goalLabel =
+    d.measure === 'kg' ? t('Goal (kg lifted in total)') : d.measure === 'checkins' ? t('Goal (number of days with a visit)') : t('Goal (number of workouts)');
+  const goalHint =
+    d.measure === 'kg'
+      ? t('Total kg a member lifts in these days, counted from the app.')
+      : d.measure === 'checkins'
+        ? t('A member counts once a day, at the desk or with the QR code.')
+        : t('The app counts up to 3 workouts a day for each member.');
 
   return (
     <Sheet
-      title={d.id ? 'Change the challenge' : 'New challenge'}
+      title={ready ? d.title : d.id ? t('Change the challenge') : t('New challenge')}
       onClose={onClose}
       footer={
         <>
           <Button variant="ghost" onClick={onClose}>
-            Not now
+            {t('Not now')}
           </Button>
           <Button needsInternet disabled={saving} onClick={save}>
-            {saving ? 'Saving…' : d.id ? 'Save changes' : 'Start challenge'}
+            {saving ? t('Saving…') : d.id ? t('Save changes') : ready ? t(READY_WORDS.turnOn) : t('Start challenge')}
           </Button>
         </>
       }
     >
       {error && <ErrorBanner>{error}</ErrorBanner>}
-      <TextField label="Name" value={d.title} onChange={(v) => set({ ...d, title: v })} placeholder="November challenge" hint="Members see this name. At most 60 letters." />
-      <div style={{ marginTop: space.md }}>
-        <ChipToggle
-          variant="tabs"
-          label="What counts"
-          options={[
-            { value: 'workouts', label: 'Workouts' },
-            { value: 'kg', label: 'Kg lifted' },
-          ]}
-          value={d.measure}
-          onChange={(v) => set(withMeasure(d, v as ChallengeMeasure))}
-        />
-      </div>
+      {ready ? (
+        <p style={{ ...quiet, marginBottom: space.md }}>{t(d.id ? READY_WORDS.formIntroUpcoming : READY_WORDS.formIntro, { title: d.title })}</p>
+      ) : (
+        <>
+          <TextField
+            label={t('Name')}
+            value={d.title}
+            onChange={(v) => set({ ...d, title: v })}
+            placeholder={t('November challenge')}
+            hint={t('Members see this name. At most 60 letters.')}
+          />
+          <div style={{ marginTop: space.md }}>
+            <ChipToggle variant="tabs" label={t('What counts')} options={measures} value={d.measure} onChange={(v) => set(withMeasure(d, v as ChallengeMeasure))} />
+          </div>
+        </>
+      )}
+      <TextField label={goalLabel} value={d.goal} onChange={(v) => set({ ...d, goal: v })} inputMode={d.measure === 'kg' ? 'decimal' : 'numeric'} hint={goalHint} />
+      <TextField label={t('First day')} type="date" value={d.startsOn} onChange={(v) => set({ ...d, startsOn: v })} hint={t('Today or a later day, up to 60 days from today.')} />
+      <TextField label={t('How many days')} value={d.days} onChange={(v) => set({ ...d, days: v })} inputMode="numeric" hint={t('From 7 to 31 days.')} />
       <TextField
-        label={d.measure === 'kg' ? 'Goal (kg lifted in total)' : 'Goal (number of workouts)'}
-        value={d.goal}
-        onChange={(v) => set({ ...d, goal: v })}
-        inputMode="decimal"
-        hint={d.measure === 'kg' ? 'Total kg a member lifts in these days, counted from the app.' : 'The app counts up to 3 workouts a day for each member.'}
-      />
-      <TextField label="First day" type="date" value={d.startsOn} onChange={(v) => set({ ...d, startsOn: v })} hint="Today or a later day, up to 60 days from today." />
-      <TextField label="How many days" value={d.days} onChange={(v) => set({ ...d, days: v })} inputMode="numeric" hint="From 7 to 31 days." />
-      <TextField
-        label="Free days for everyone who reaches the goal"
+        label={t('Free days for everyone who reaches the goal')}
         value={d.prizeDays}
         onChange={(v) => set({ ...d, prizeDays: v })}
         inputMode="numeric"
-        hint="From 0 to 60. You give them yourself when members show their phone."
+        hint={t('From 0 to 60. You check each winner before the days are added.')}
       />
       <p aria-live="polite" style={{ ...quiet, marginTop: space.md, color: color.ink }}>
-        {preview ?? 'Fill in the boxes above to see what members will read.'}
+        {preview ?? t('Fill in the boxes above to see what members will read.')}
       </p>
     </Sheet>
   );
@@ -585,7 +800,7 @@ function Leaderboard({
   reload: () => Promise<void>;
   flash: (m: string) => void;
 }) {
-  const [tab, setTab] = useState<ChallengeMeasure>('workouts');
+  const [tab, setTab] = useState<BoardMeasure>('workouts');
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const rows = tab === 'kg' ? board.kg : board.workouts;
@@ -622,7 +837,7 @@ function Leaderboard({
             { value: 'kg', label: measureLabel('kg') },
           ]}
           value={tab}
-          onChange={(v) => setTab(v as ChallengeMeasure)}
+          onChange={(v) => setTab(v as BoardMeasure)}
         />
       </div>
       {rows.length === 0 ? (
@@ -656,7 +871,7 @@ function Leaderboard({
   );
 }
 
-function BoardLine({ row, measure, canEdit, busy, onHide }: { row: BoardRow; measure: ChallengeMeasure; canEdit: boolean; busy: boolean; onHide: (hidden: boolean) => void }) {
+function BoardLine({ row, measure, canEdit, busy, onHide }: { row: BoardRow; measure: BoardMeasure; canEdit: boolean; busy: boolean; onHide: (hidden: boolean) => void }) {
   return (
     <li
       style={{

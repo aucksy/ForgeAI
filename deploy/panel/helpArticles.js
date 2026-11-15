@@ -358,11 +358,9 @@ export const ALL_HELP_ARTICLES = [
     title: 'Run a challenge and see the leaderboard',
     text:
       'A challenge gives members a goal for a number of days. Everyone who reaches it wins. ' +
-      '1. Open Challenges (on a phone, under More). ' +
-      '2. Tap "New challenge". ' +
-      '3. Type a name, pick "What counts" (Workouts or Kg lifted), the "First day", "How many days" and the goal. ' +
-      '4. If you want, add "Free days for everyone who reaches the goal". ' +
-      '5. Tap "Start challenge". Members see it in the MettleUp app within 10 minutes. ' +
+      'The fastest way: open Challenges (on a phone, under More) and tap "Turn on" on a ready-made challenge, such as "Workout habit". "Change" picks its goal, days or free days. "Turn off" stops it. ' +
+      'To make your own, tap "New challenge", pick "What counts", the "First day", "How many days" and the goal, then tap "Start challenge". ' +
+      'Members see it in the MettleUp app within 10 minutes. ' +
       'The page also shows the "Leaderboard · last 30 days". "Copy this list" copies it for WhatsApp. Only the owner can start or change a challenge.',
     screens: ['apps/dashboard/src/crm/ui/screens/Challenges.tsx'],
   },

@@ -532,6 +532,85 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   'No eggs, meat or fish': 'Anda, meat ya fish nahi',
   'With eggs, chicken or fish': 'Anda, chicken ya fish ke saath',
 
+  // ── Challenges: ready-made challenges (R-561 item 6, 15 Nov 2026). Words: owner checks at UAT. ────────
+  'A challenge for your members. Everyone who reaches the goal wins.': 'Aapke members ke liye ek challenge. Goal tak pahunchne wale sabhi jeette hain.',
+  'A challenge for {branch}’s members. Each branch has its own.': '{branch} ke members ke liye ek challenge. Har branch ka apna challenge hota hai.',
+  'Ready-made challenges': 'Ready-made challenges',
+  'These challenges are ready to use. Turn one on, and members see it with their progress on the leaderboard in the MettleUp app. Only one challenge runs at a time, so members always have one clear goal.':
+    'Yeh challenges use ke liye taiyaar hain. Kisi ek ko on karo, aur members use MettleUp app ke leaderboard par apni progress ke saath dekhenge. Ek samay par ek hi challenge chalta hai, taaki members ke paas hamesha ek saaf goal rahe.',
+  'Only the owner can turn these challenges on or off.': 'Sirf owner in challenges ko on ya off kar sakte hain.',
+  'You can also make your own challenge with your own name, goal and dates.': 'Aap apne naam, goal aur dates ke saath apna khud ka challenge bhi bana sakte hain.',
+  'New challenge': 'Naya challenge',
+  On: 'Chalu',
+  'Turn on': 'On karo',
+  'Turn on from {day}': '{day} se on karo',
+  Change: 'Badlo',
+  'Turn off': 'Off karo',
+  'This challenge is off. Members do not see it.': 'Yeh challenge band hai. Members ise nahi dekhte.',
+  'This challenge is on. It runs until {end}, and members see their progress on the leaderboard in the MettleUp app.':
+    'Yeh challenge chalu hai. Yeh {end} tak chalega, aur members MettleUp app ke leaderboard par apni progress dekhte hain.',
+  'This challenge is on. It starts on {start} and runs until {end}.': 'Yeh challenge chalu hai. Yeh {start} ko shuru hoga aur {end} tak chalega.',
+  'Only one challenge runs at a time, so this one would start on {day}, after “{other}” ends.':
+    'Ek samay par ek hi challenge chalta hai, isliye yeh {day} ko shuru hoga, “{other}” khatam hone ke baad.',
+  'Another challenge takes up the next 60 days, so this one cannot be turned on yet.':
+    'Agle 60 din mein doosra challenge chal raha hai, isliye yeh abhi on nahi ho sakta.',
+  'Members log {goal} workouts in the MettleUp app within {days} days.': 'Members {days} din ke andar MettleUp app mein {goal} workouts log karte hain.',
+  'Members log 1 workout in the MettleUp app within {days} days.': 'Members {days} din ke andar MettleUp app mein 1 workout log karte hain.',
+  'Members check in at your gym on {goal} different days within {days} days.': 'Members {days} din ke andar {goal} alag-alag din aapke gym mein check in karte hain.',
+  'Members check in at your gym once within {days} days.': 'Members {days} din ke andar ek baar aapke gym mein check in karte hain.',
+  'Members lift {goal} kg in total within {days} days.': 'Members {days} din ke andar kul {goal} kg uthaate hain.',
+  'Everyone who reaches the goal wins {n} free days on their membership. You check each winner before the days are added.':
+    'Goal tak pahunchne wale har member ko unki membership par {n} free din milte hain. Din jodne se pehle aap har winner ko check karte hain.',
+  'Everyone who reaches the goal wins 1 free day on their membership. You check each winner before the days are added.':
+    'Goal tak pahunchne wale har member ko unki membership par 1 free din milta hai. Din jodne se pehle aap har winner ko check karte hain.',
+  'There is no reward, but members still see their progress on the leaderboard.': 'Koi reward nahi hai, par members leaderboard par apni progress phir bhi dekhte hain.',
+  'Members see this challenge as “{title}”. Change the goal, the days or the reward, and then turn it on.':
+    'Members is challenge ko “{title}” naam se dekhte hain. Goal, din ya reward badlo, aur phir ise on karo.',
+  'Members see this challenge as “{title}”. You can change it until the day it starts.':
+    'Members is challenge ko “{title}” naam se dekhte hain. Shuru hone ke din tak aap ise badal sakte hain.',
+  'Turned on. Members see “{title}” in the MettleUp app within 10 minutes.': 'On ho gaya. Members 10 minute ke andar MettleUp app mein “{title}” dekhenge.',
+  'Turned on. “{title}” starts on {day}.': 'On ho gaya. “{title}” {day} ko shuru hoga.',
+  'Saved. “{title}” starts on {day}.': 'Save ho gaya. “{title}” {day} ko shuru hoga.',
+  'Turned off. Members no longer see “{title}”.': 'Off ho gaya. Members ab “{title}” nahi dekhte.',
+  'Turn off this challenge?': 'Yeh challenge off karna hai?',
+  'Members will no longer see “{title}”, and nobody gets the reward for it. You can turn it on again later, but it starts again from zero.':
+    'Members ab “{title}” nahi dekhenge, aur kisi ko iska reward nahi milega. Aap ise baad mein phir se on kar sakte hain, par yeh zero se shuru hoga.',
+  'Keep it on': 'Chalu rehne do',
+  'Members who come to the gym often are the ones who stay. Turn this on to give them a goal, and to get them used to scanning your gym’s QR code when they arrive.':
+    'Jo members aksar gym aate hain, wahi tikte hain. Ise on karo taaki unhe ek goal mile, aur aate hi aapke gym ka QR code scan karne ki aadat pade.',
+  'Members who log their workouts in the MettleUp app can see their own progress, so they keep coming back. Turn this on to get them used to logging every workout.':
+    'Jo members MettleUp app mein apne workouts log karte hain, woh apni progress dekh sakte hain, isliye woh aate rehte hain. Ise on karo taaki unhe har workout log karne ki aadat pade.',
+  'A small goal is easy to reach for new members and for members who are coming back after a break. It helps them build the habit in their first weeks.':
+    'Chhota goal naye members aur break ke baad wapas aane wale members ke liye aasaan hai. Isse pehle hafton mein unki aadat banti hai.',
+  'This goal is for your most regular members. It thanks the people who come to the gym on most days of the month.':
+    'Yeh goal aapke sabse regular members ke liye hai. Isse un logon ko shukriya milta hai jo mahine ke zyada din gym aate hain.',
+  'No challenge is running': 'Abhi koi challenge nahi chal raha',
+  'Turn on a ready-made challenge above, or make your own with “New challenge”.': 'Upar se koi ready-made challenge on karo, ya “Naya challenge” se apna challenge banao.',
+  'The owner has not started one.': 'Owner ne abhi koi challenge shuru nahi kiya hai.',
+  // The challenge form (New challenge, Change, and a ready-made card's Change).
+  'Change the challenge': 'Challenge badlo',
+  'Start challenge': 'Challenge shuru karo',
+  'Not now': 'Abhi nahi',
+  'Members see this name. At most 60 letters.': 'Members yeh naam dekhte hain. Zyada se zyada 60 akshar.',
+  'November challenge': 'November challenge',
+  'What counts': 'Kya ginega',
+  Workouts: 'Workouts',
+  'Kg lifted': 'Kitne kg uthaye',
+  'Goal (number of workouts)': 'Goal (kitne workouts)',
+  'Goal (kg lifted in total)': 'Goal (kul kitne kg)',
+  'Goal (number of days with a visit)': 'Goal (kitne din gym aana hai)',
+  'The app counts up to 3 workouts a day for each member.': 'App har member ke ek din mein 3 workouts tak ginta hai.',
+  'Total kg a member lifts in these days, counted from the app.': 'In dino mein member kul kitne kg uthata hai, app se gina jaata hai.',
+  'A member counts once a day, at the desk or with the QR code.': 'Har member ka din mein ek hi visit ginta hai, desk par ya QR code se.',
+  'First day': 'Pehla din',
+  'Today or a later day, up to 60 days from today.': 'Aaj ya baad ka koi din, aaj se 60 din tak.',
+  'How many days': 'Kitne din',
+  'From 7 to 31 days.': '7 se 31 din tak.',
+  'Free days for everyone who reaches the goal': 'Goal tak pahunchne wale sabko free din',
+  'From 0 to 60. You check each winner before the days are added.': '0 se 60 tak. Din jodne se pehle aap har winner ko check karte hain.',
+  'It runs from {start} to {end}.': 'Yeh {start} se {end} tak chalega.',
+  'Fill in the boxes above to see what members will read.': 'Upar ke box bharo, phir dikhega ki members kya padhenge.',
+
   // ── Invite ─────────────────────────────────────────────────────────────
   'Send your gym’s link on WhatsApp, or put a QR poster at the front desk.': 'Apne gym ka link WhatsApp par bhejo, ya front desk par QR poster lagao.',
   'Back to Settings': 'Settings par wapas',

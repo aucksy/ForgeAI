@@ -11,7 +11,13 @@
 import { addDays, diffDays, formatDay, formatDayShort, isValidDateISO, type DateISO } from './dates';
 import { countOf } from './plural';
 
-export type ChallengeMeasure = 'workouts' | 'kg';
+/**
+ * What a challenge counts. 'checkins' (visits: days the gym's register shows the member, at the desk or with the QR
+ * code) only once the gym's server has 0091 (ChallengesAnswer.checkins). The leaderboard itself ranks only workouts
+ * and kg (BoardMeasure).
+ */
+export type ChallengeMeasure = 'workouts' | 'kg' | 'checkins';
+export type BoardMeasure = 'workouts' | 'kg';
 export type ChallengeStatus = 'upcoming' | 'running' | 'ended' | 'cancelled';
 
 export const CHALLENGE_LIMITS = {
@@ -23,6 +29,8 @@ export const CHALLENGE_LIMITS = {
   /** The app counts at most 3 workouts a day, so 31 days cannot reach more than 93. */
   workoutsGoalMax: 93,
   kgGoalMax: 1_860_000,
+  /** 0091: one visit a day at most, so 31 days cannot reach more than 31. */
+  checkinsGoalMax: 31,
 } as const;
 
 /**
@@ -79,6 +87,8 @@ export interface ChallengesAnswer {
   canEdit: boolean;
   /** F143: the gym's server adds the free days by itself when a challenge ends (0047 is applied). */
   autoRewards: boolean;
+  /** 0091: the gym's server can count visits (check-ins), so check-in challenges can be offered. */
+  checkins: boolean;
   /** Newest first. */
   challenges: Challenge[];
 }
@@ -144,7 +154,7 @@ function challengeFrom(raw: unknown): Challenge | null {
   return {
     id: text(r.id),
     title: text(r.title).trim(),
-    measure: r.measure === 'kg' ? 'kg' : 'workouts',
+    measure: r.measure === 'kg' || r.measure === 'checkins' ? r.measure : 'workouts',
     goal: num(r.goal),
     startsOn: r.startsOn,
     endsOn: r.endsOn,
@@ -161,11 +171,12 @@ function challengeFrom(raw: unknown): Challenge | null {
 /** owner_challenges' answer, checked. PURE. */
 export function challengesFromAnswer(raw: unknown): ChallengesAnswer {
   const r = obj(unwrap(raw));
-  if (!r) return { canEdit: false, autoRewards: false, challenges: [] };
+  if (!r) return { canEdit: false, autoRewards: false, checkins: false, challenges: [] };
   const list = Array.isArray(r.challenges) ? r.challenges : [];
   return {
     canEdit: r.canEdit === true,
     autoRewards: r.autoRewards === true,
+    checkins: r.checkins === true,
     challenges: list.map(challengeFrom).filter((c): c is Challenge => c !== null),
   };
 }
@@ -247,7 +258,7 @@ export interface ChallengePayload {
   prizeDays: number;
 }
 
-const START_GOAL: Record<ChallengeMeasure, string> = { workouts: '12', kg: '50000' };
+const START_GOAL: Record<ChallengeMeasure, string> = { workouts: '12', kg: '50000', checkins: '12' };
 
 /** A fresh form: starts today, 30 days, 7 free days. PURE. */
 export function newDraft(today: DateISO): ChallengeDraft {
@@ -267,11 +278,10 @@ export function draftFromChallenge(c: Challenge): ChallengeDraft {
   };
 }
 
-/** Switching between Workouts and Kg lifted: a goal still at the other one's starting number follows. PURE. */
+/** Switching between Workouts, Kg lifted and Visits: a goal still at the old one's starting number follows. PURE. */
 export function withMeasure(d: ChallengeDraft, measure: ChallengeMeasure): ChallengeDraft {
   if (measure === d.measure) return d;
-  const other: ChallengeMeasure = measure === 'kg' ? 'workouts' : 'kg';
-  return { ...d, measure, goal: d.goal.trim() === START_GOAL[other] ? START_GOAL[measure] : d.goal };
+  return { ...d, measure, goal: d.goal.trim() === START_GOAL[d.measure] ? START_GOAL[measure] : d.goal };
 }
 
 const wholeNumber = (s: string): number | null => {
@@ -297,6 +307,9 @@ export function challengePayload(d: ChallengeDraft, today: DateISO): { payload: 
     return fail(`The workouts goal must be a whole number from 1 to ${L.workoutsGoalMax} (the app counts up to 3 workouts a day).`);
   }
   if (d.measure === 'kg' && goal > L.kgGoalMax) return fail(`The kg goal can be at most ${L.kgGoalMax.toLocaleString('en-IN')}.`);
+  if (d.measure === 'checkins' && (!Number.isInteger(goal) || goal > L.checkinsGoalMax)) {
+    return fail(`The visits goal must be a whole number from 1 to ${L.checkinsGoalMax}, because a member counts once a day.`);
+  }
 
   if (!isValidDateISO(d.startsOn)) return fail('Pick the day it starts.');
   if (d.startsOn < today) return fail('It can start today or later, not on a day that has passed.');
@@ -307,6 +320,7 @@ export function challengePayload(d: ChallengeDraft, today: DateISO): { payload: 
 
   const prize = wholeNumber(d.prizeDays);
   if (prize === null || prize > L.prizeMax) return fail(`Free days must be a whole number from 0 to ${L.prizeMax}.`);
+  if (d.measure === 'checkins' && goal > days) return fail('The visits goal cannot be more than the number of days the challenge runs.');
 
   const payload: ChallengePayload = {
     ...(d.id ? { id: d.id } : {}),
@@ -324,14 +338,15 @@ export function challengePayload(d: ChallengeDraft, today: DateISO): { payload: 
 
 const trim1 = (n: number): string => String(Math.round(n * 10) / 10);
 
-/** "16 workouts" or "20,000 kg". PURE. */
+/** "16 workouts", "20,000 kg" or "12 visits". PURE. */
 export function valueWords(measure: ChallengeMeasure, value: number): string {
-  return measure === 'kg' ? `${Number(trim1(value)).toLocaleString('en-IN')} kg` : countOf(Math.round(value), 'workout');
+  if (measure === 'kg') return `${Number(trim1(value)).toLocaleString('en-IN')} kg`;
+  return measure === 'checkins' ? countOf(Math.round(value), 'visit') : countOf(Math.round(value), 'workout');
 }
 
-/** "Workouts" or "Kg lifted". PURE. */
+/** "Workouts", "Kg lifted" or "Visits". PURE. */
 export function measureLabel(measure: ChallengeMeasure): string {
-  return measure === 'kg' ? 'Kg lifted' : 'Workouts';
+  return measure === 'kg' ? 'Kg lifted' : measure === 'checkins' ? 'Visits' : 'Workouts';
 }
 
 /** "7 free days", "1 free day" or "No free days". PURE. */
@@ -346,7 +361,12 @@ export function periodWords(c: Pick<Challenge, 'startsOn' | 'endsOn'>): string {
 
 /** What it asks of members, in one line: "Log 16 workouts and win 7 free days". PURE. */
 export function askWords(c: Pick<Challenge, 'measure' | 'goal' | 'prizeDays'>): string {
-  const goal = c.measure === 'kg' ? `Lift ${valueWords('kg', c.goal)}` : `Log ${valueWords('workouts', c.goal)}`;
+  const goal =
+    c.measure === 'kg'
+      ? `Lift ${valueWords('kg', c.goal)}`
+      : c.measure === 'checkins'
+        ? `Check in on ${countOf(Math.round(c.goal), 'day')}`
+        : `Log ${valueWords('workouts', c.goal)}`;
   return c.prizeDays > 0 ? `${goal} to win ${prizeWords(c.prizeDays)}` : goal;
 }
 
@@ -368,9 +388,13 @@ export function statusLabel(status: ChallengeStatus): string {
 }
 
 /** "3 of 12 members reached the goal". PURE. */
-export function reachedWords(c: Pick<Challenge, 'hitters' | 'entrants'>): string {
+export function reachedWords(c: Pick<Challenge, 'hitters' | 'entrants'> & Partial<Pick<Challenge, 'measure'>>): string {
   const n = c.hitters.length;
-  if (c.entrants === 0) return 'No member has logged a workout in these days yet.';
+  if (c.entrants === 0) {
+    return c.measure === 'checkins'
+      ? 'No member with the MettleUp app has checked in during these days yet.'
+      : 'No member has logged a workout in these days yet.';
+  }
   if (n === 0) return `Nobody has reached the goal yet. ${countOf(c.entrants, 'member')} took part.`;
   return `${n} of ${countOf(c.entrants, 'member')} reached the goal.`;
 }
@@ -489,6 +513,14 @@ export function challengeErrorWords(err: unknown): string | null {
 
 /** Under the winners list: the numbers come from members' phones, so a surprising one is worth a word with the member. */
 export const COUNTED_FROM_PHONE = 'Counted from each member’s phone. Check a surprising number with the member before giving free days.';
+/** 0091: a check-in challenge counts the gym's own visit register, not the phone. */
+export const COUNTED_FROM_REGISTER =
+  'Counted from your visit register: one visit a day, at the desk or with the QR code. Only members who use the MettleUp app take part.';
+
+/** The line under the winners list for this challenge. PURE. */
+export function countedWords(measure: ChallengeMeasure): string {
+  return measure === 'checkins' ? COUNTED_FROM_REGISTER : COUNTED_FROM_PHONE;
+}
 export const MEMBERS_SEE_CHALLENGE =
   'Members see the challenge on the Gym tab of the MettleUp app, with how far they have got. It can take up to 10 minutes to show up.';
 export const MEMBERS_SEE_LEADERBOARD =

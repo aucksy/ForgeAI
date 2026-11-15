@@ -86,9 +86,13 @@ export function dayText(iso: string): string {
   return month ? `${Number(m[3])} ${month}` : iso;
 }
 
-/** "12 of 16 workouts" / "41,200 of 60,000 kg" (in lb for a member who counts in pounds). */
+/**
+ * "12 of 16 workouts" / "41,200 of 60,000 kg" (in lb for a member who counts in pounds) / "5 of 12 visits" (R-561: a
+ * check-in challenge counts the days the member checked in at the gym).
+ */
 export function progressText(c: Pick<BoardChallenge, 'measure' | 'goal' | 'myValue'>, u: UnitSystem): string {
   if (c.measure === 'kg') return `${groupInt(kgToShown(c.myValue, u))} of ${groupInt(kgToShown(c.goal, u))} ${weightUnitOf(u)}`;
+  if (c.measure === 'checkins') return `${groupInt(c.myValue)} of ${groupInt(c.goal)} ${c.goal === 1 ? 'visit' : 'visits'}`;
   return `${groupInt(c.myValue)} of ${groupInt(c.goal)} workouts`;
 }
 

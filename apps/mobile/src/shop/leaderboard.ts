@@ -63,6 +63,12 @@ export function boardDays(workouts: readonly WorkoutTotal[], today: string): Boa
 // ------------------------------------------------------------------ the gym's answer
 
 export type BoardMeasure = 'workouts' | 'kg';
+/**
+ * What the gym's challenge counts. 'checkins' (R-561, supabase 0091, NOT live until the owner's yes): the days the
+ * gym's own register shows the member, at the desk or by scanning the gym's QR code. An app from before this change
+ * read only workouts and kg, so it shows no challenge card for a check-in challenge (never a wrong one).
+ */
+export type ChallengeMeasure = BoardMeasure | 'checkins';
 
 export interface BoardRow {
   rank: number;
@@ -81,7 +87,7 @@ export interface BoardList {
 export interface BoardChallenge {
   id: string;
   title: string;
-  measure: BoardMeasure;
+  measure: ChallengeMeasure;
   goal: number;
   startsOn: string;
   endsOn: string;
@@ -134,7 +140,7 @@ function challengeFrom(raw: unknown): BoardChallenge | null {
   if (!isObj(raw)) return null;
   const goal = num(raw.goal);
   const title = str(raw.title);
-  const measure = raw.measure === 'workouts' || raw.measure === 'kg' ? raw.measure : null;
+  const measure = raw.measure === 'workouts' || raw.measure === 'kg' || raw.measure === 'checkins' ? raw.measure : null;
   const startsOn = str(raw.startsOn).slice(0, 10);
   const endsOn = str(raw.endsOn).slice(0, 10);
   if (!measure || goal == null || goal <= 0 || !title || !ISO_DAY.test(startsOn) || !ISO_DAY.test(endsOn)) return null;
