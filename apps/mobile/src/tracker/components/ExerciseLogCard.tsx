@@ -43,20 +43,39 @@ import { earlierCards, liveRecordFlags } from '../services/liveRecords';
 import { effectiveRestSec, fmtRest } from '../services/restRules';
 import { computeWarmups, warmupBarFor } from '../services/warmupMath';
 import { moveKind, supersetChoices } from '../services/workoutOrder';
-import { fillForSet, prevForSet, useActiveWorkout } from '../store/activeWorkoutStore';
+import { beatRows, fillForSet, prevForSet, useActiveWorkout } from '../store/activeWorkoutStore';
 import type { DraftExercise } from '../store/activeWorkoutStore';
 import { useRestTimer } from '../store/restTimerStore';
 import { useTrackerPrefs } from '../store/trackerPrefsStore';
 import { useWorkoutUi } from '../store/workoutUiStore';
 import { answerStepBack } from '../store/targetStore';
-import { dropLine, showStepBack, stepBackAsk } from '../lib/stepBack';
+import { showStepBack, stepBackAsk } from '../lib/stepBack';
 import { ExerciseDemoSheet } from './ExerciseDemoSheet';
 import { ExerciseThumb } from './ExerciseThumb';
 import { HoldTimerSheet } from './HoldTimerSheet';
 import { PlateCalcSheet } from './PlateCalcSheet';
 import { RestPickerSheet } from './RestPickerSheet';
 import { cardSourceLine } from '../lib/previousSource';
-import { beatPlan, GREEN_LINE_BREAK, kgLiveLine, kgProgress, kgTickKey, lineGreen, liveBox, liveBoxShows, repLiveLine, type LiveBox } from '../lib/kgTarget';
+import {
+  beatPlan,
+  GREEN_LINE_BREAK,
+  kgLiveLine,
+  kgProgress,
+  kgTickKey,
+  lineGreen,
+  liveBox,
+  liveBoxShows,
+  liveWhy,
+  repLiveLine,
+  targetWhy,
+  whyIcon,
+  whyKey,
+  whySets,
+  whyText,
+  type LiveBox,
+  type Why,
+} from '../lib/kgTarget';
+import { WhyIcon } from './WhyIcon';
 import { afterTick, SetRow, useRowLayout } from './SetRow';
 import { DragGrip } from './DragGrip';
 import { MachineDetailsRow } from './MachineDetailsRow';
@@ -231,7 +250,6 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
   const anyTicked = exercise.sets.some((s) => s.done);
   const kgWords = (kg: number): string => `${fmtWeight(kg, units)}${weightIsEach(loadMode) ? ' each' : ''}`;
   const ask = showStepBack(target, anyTicked) ? stepBackAsk(target.stepBack, kgWords) : null;
-  const drop = dropLine(target);
 
   // OWNER-INBOX #9: the kg to beat and what the open sets need (decision 2 A: at most 2 extra reps a
   // set; it never blocks anything). Last time = this card's own PREVIOUS sets, drops left out.
@@ -253,7 +271,10 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
     const flags = easyWeek ? new Map<string, never>() : liveRecordFlags(exercise, earlier);
     let working = 0;
     let warm = 0;
+    // R-576: a working row's place in today's plan (drop rows take none), as the reasons number the sets.
+    let place = 0;
     return exercise.sets.map((s) => {
+      const planNo = !s.isWarmup && s.setType !== 'drop' ? ++place : null;
       // PREVIOUS is prevForSet() itself, so display + auto-fill agree: a working row by
       // WORKING-set ordinal (previousSets excludes warm-ups), a warm-up row by warm-up order
       // (previousWarmups, last time's warm-ups of the same workout).
@@ -272,9 +293,11 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
       }
       // R-512 (owner, 14 Nov 2026): no "Set 2 was very hard, so ..." / "felt easy, so ..." line under the rows,
       // and how hard a set felt no longer moves the rows after it (fillForSet).
-      return { set: s, label, spoken, previous, fill: fillForSet(exercise, s.key, fillTarget), record: flags.get(s.key) ?? null };
+      return { set: s, label, spoken, planNo, previous, fill: fillForSet(exercise, s.key, fillTarget), record: flags.get(s.key) ?? null };
     });
   }, [exercise, fillTarget, earlier, easyWeek]);
+  const exerciseRef = useRef(exercise);
+  exerciseRef.current = exercise;
 
   // #9: the line starts from what each row hints (never disagreeing with the rows), see kgProgress.
   // Phone runs 39095656699 / 39095657897 (part UR): worked out on every keystroke, the line grew from
@@ -286,31 +309,55 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
   const tickKey = kgTickKey(rows.map((r) => ({ weightKg: r.set.weightKg, reps: r.set.reps, done: r.set.done, isWarmup: r.set.isWarmup, setType: r.set.setType })));
   const kgLine = useMemo(() => {
     if (!kgPlanned) return null;
+    // R-576 rule 2: today's target is the rows' own hints added up (beatRows), so the box and rows agree.
+    const br = beatRows(exerciseRef.current, fillTarget);
+    const plan = br ? { ...kgPlanned, total: br.target } : kgPlanned;
     const g = kgProgress(
-      kgPlanned,
+      plan,
       rowsRef.current.map((r) => ({ weightKg: r.set.weightKg, reps: r.set.reps, done: r.set.done, isWarmup: r.set.isWarmup, setType: r.set.setType, hintKg: r.fill?.weightKg, hintReps: r.fill?.reps })),
     );
     const totalFmt = (kg: number) => `${fmtInt(Math.round(kgToDisplay(kg, units)))} ${weightUnit(units)}`;
     // R-516 (owner, 14 Nov 2026, "build it"): while a working set is open, the box is "Previous set volume:
     // 840 kg · Today's target: 880 kg" over a bar with "720 kg done · 160 kg to go" (no "Next set" words: the
     // row shows them). Every set ticked: the finished line below (green R-498 words), as before.
-    const box: LiveBox | null = liveBoxShows(g) ? liveBox(kgPlanned, g, totalFmt) : null;
+    const box: LiveBox | null = liveBoxShows(g) ? liveBox(plan, g, totalFmt) : null;
+    // R-576: open rows topped up after a short set (R-304) say so, and so does a target the sets left cannot reach.
+    const topped = rowsRef.current.flatMap((r) => (r.planNo != null && (br?.extra.get(r.set.key) ?? 0) > 0 ? [r.planNo] : []));
+    const live: Why[] = box
+      ? liveWhy({ sets: topped, most: Math.max(0, ...(br ? [...br.extra.values()] : [])), short: br?.short === true, ticked: rowsRef.current.some((r) => r.set.done && !r.set.isWarmup) })
+      : [];
     return {
       box,
+      live,
       // Owner, 12 Nov 2026 (R-454): totals never say "each" ("Done: 0 of 1,800 kg", "1,800 kg done ·
       // Previous: 1,720 kg · +80 kg"); "each" stays on the per-set weight (KG EACH, "Suggested: 40 kg each").
       text: box
         ? `${box.head}${GREEN_LINE_BREAK}${box.done}`
-        : kgPlanned.reps
-          ? repLiveLine(kgPlanned, g)
-          : kgLiveLine(kgPlanned, g, totalFmt, (kg) => fmtWeight(kg, units)),
+        : plan.reps
+          ? repLiveLine(plan, g)
+          : kgLiveLine(plan, g, totalFmt, (kg) => fmtWeight(kg, units)),
       // Owner, 12 Nov 2026: ONE rule for kilos and reps: green once every working set is ticked and the
       // total is at least last time's (more or the same), `lineGreen`.
-      beaten: lineGreen(kgPlanned, g),
+      beaten: lineGreen(plan, g),
     };
     // rows are read through the ref on purpose: only tickKey (ticks, adds, removes) moves the line.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [kgPlanned, tickKey, units, loadMode]);
+  }, [kgPlanned, fillTarget, tickKey, units, loadMode]);
+  // R-576 (owner, 15 Nov 2026): why this target is unusual, in plain words: the plan's reasons, then the live
+  // ones (a box), or the Target's own (no box: an easy week, another version, a hold after a long break ...).
+  const why: Why[] = useMemo(
+    () => (kgPlanned ? [...(kgPlanned.why ?? []), ...(kgLine?.live ?? [])] : target ? targetWhy(target) : []),
+    [kgPlanned, kgLine, target],
+  );
+  const whyLinesShown = why.map((w) => whyText(w, (kg) => fmtWeight(kg, units)));
+  const markedSets = useMemo(() => new Set(whySets(why)), [why]);
+  // The "i" stands out until this reason is opened; a new reason (a set came up short) stands out again.
+  const [seenWhy, setSeenWhy] = useState<string | null>(null);
+  const iconState = whyIcon(why, seenWhy);
+  const openWhy = useCallback(() => {
+    setShowWhy(true);
+    setSeenWhy(whyKey(why));
+  }, [why]);
   // R-498: a green line with a previous workout comes as two lines (kgTarget `greenLines`); the rest is one.
   const greenSplit = kgLine?.beaten ? kgLine.text.split(GREEN_LINE_BREAK) : [];
   const greenHead = greenSplit.length === 2 ? greenSplit[0] : null;
@@ -578,9 +625,9 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
           suggestion and its why stay one tap away (ⓘ). */}
       {target && line ? (
         <Pressable
-          onPress={() => setShowWhy((v) => !v)}
+          onPress={() => (showWhy ? setShowWhy(false) : openWhy())}
           accessibilityRole="button"
-          accessibilityLabel={kgLine ? `Target ${line}. ${kgLine.text.split(GREEN_LINE_BREAK).join('. ')}. Tap for why.` : `Target ${line}. Tap for why.`}
+          accessibilityLabel={`Target ${line}.${kgLine ? ` ${kgLine.text.split(GREEN_LINE_BREAK).join('. ')}.` : ''}${whyLinesShown.length > 0 ? ` ${whyLinesShown[0]}` : ''} Tap for why.`}
           style={{
             gap: 4,
             borderRadius: radius.sm,
@@ -631,7 +678,7 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
             {!kgLine && targetBadge(target) ? (
               <Badge label={targetBadge(target)!} tone={BADGE_TONE[targetBadge(target)!]} />
             ) : null}
-            <Glyph name="info" size={16} color={showWhy ? color.accent : color.inkMuted} />
+            <WhyIcon state={iconState} open={showWhy} testID={`target-why-${iconState}-${exercise.name}`} />
           </View>
           {/* R-516: the progress bar (orange on a darker track, thin, rounded) and what is done / to go. Full once
               the target is passed ("+40 kg over target"). The words wrap at a large text size, never cut. */}
@@ -653,6 +700,16 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
               >
                 {kgLine.box.done}
               </Text>
+            </View>
+          ) : null}
+          {/* R-576: why the target is unusual, in the box itself (the first reason; every reason once opened). */}
+          {whyLinesShown.length > 0 ? (
+            <View style={{ gap: 2 }} testID={`target-reason-${exercise.name}`}>
+              {(showWhy ? whyLinesShown : whyLinesShown.slice(0, 1)).map((w) => (
+                <Text key={w} style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.ink, lineHeight: 18 }}>
+                  {w}
+                </Text>
+              ))}
             </View>
           ) : null}
           {/* R-73: the suggestion itself, one tap away. */}
@@ -700,10 +757,6 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
             </Pressable>
           ) : null}
         </Pressable>
-      ) : null}
-      {/* R-306: why the weight went down, one muted line under the Target. */}
-      {drop ? (
-        <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkSecondary, paddingHorizontal: space.xs }}>{drop}</Text>
       ) : null}
       {/* R-308: a stuck lift asks first: Try the lighter weight today, or Stay. Inline, never a pop-up. */}
       {ask ? (
@@ -814,6 +867,8 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
             onOpenTimer={logType === 'time' ? onOpenTimer : undefined}
             exName={exercise.name}
             spoken={r.spoken}
+            whyMark={r.planNo != null && markedSets.has(r.planNo)}
+            onOpenWhy={openWhy}
           />
           {/* F64: a treadmill's speed and incline, a bike's / rower's level — only on those machines. */}
           {machineFields.length > 0 ? (

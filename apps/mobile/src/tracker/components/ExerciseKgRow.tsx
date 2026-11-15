@@ -14,7 +14,7 @@ import { color, space, type } from '@/theme/tokens';
 import type { UnitSystem } from '@/types/models';
 
 import { targetLine } from '../engine/progression';
-import { beatPlan, kgSetLines, kgToBeatLine, repSetLines, repsToBeatLine } from '../lib/kgTarget';
+import { beatPlan, kgSetLines, kgToBeatLine, repSetLines, repsToBeatLine, targetWhy, whyText } from '../lib/kgTarget';
 import type { KgTarget } from '../services/coachTargets';
 
 export function ExerciseKgRow({ target: t, index, units }: { target: KgTarget; index: number; units: UnitSystem }) {
@@ -30,6 +30,9 @@ export function ExerciseKgRow({ target: t, index, units }: { target: KgTarget; i
       ? repsToBeatLine(plan, t.perSide === true)
       : kgToBeatLine(plan, (kg) => `${fmtInt(Math.round(kgToDisplay(kg, units)))} ${weightUnit(units)}`);
   const sets = plan && open ? (plan.reps ? repSetLines(plan) : kgSetLines(plan, weight)) : null;
+  // R-576: an unusual target says why here too (the first reason; the workout card lists them all).
+  const why = (plan ? plan.why ?? [] : targetWhy(t))[0];
+  const reason = why ? whyText(why, weight) : null;
 
   const body = (
     <>
@@ -38,6 +41,7 @@ export function ExerciseKgRow({ target: t, index, units }: { target: KgTarget; i
         <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.body, color: color.ink }}>{t.exerciseName}</Text>
         <Text style={{ fontFamily: type.mono, fontSize: type.size.sub, color: color.inkSecondary }}>{line}</Text>
         {toBeat ? <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.accentBright }}>{toBeat}</Text> : null}
+        {reason ? <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkSecondary }}>{reason}</Text> : null}
         {sets ? (
           <View style={{ gap: 2, marginTop: space.xs }}>
             {sets.map((s) => (
@@ -69,7 +73,7 @@ export function ExerciseKgRow({ target: t, index, units }: { target: KgTarget; i
       onPress={() => setOpen((v) => !v)}
       accessibilityRole="button"
       accessibilityState={{ expanded: open }}
-      accessibilityLabel={`${t.exerciseName}. ${line}. ${toBeat}.`}
+      accessibilityLabel={`${t.exerciseName}. ${line}. ${toBeat}.${reason ? ` ${reason}` : ''}`}
       accessibilityHint={
         plan.reps
           ? open

@@ -160,6 +160,21 @@ export interface ProgressionTarget extends OverloadTarget {
    * Target keeps the weight and carries this offer; the card asks "Try 40 kg today?" (`applyStepBack`).
    */
   stepBack?: StepBackOffer;
+  /**
+   * R-576 (owner, 15 Nov 2026): the weeks since this lift was last done, only when a break of 6 weeks or
+   * more (42+ days) set the Target (rules R1 / R1b / T1). The one case allowed to aim at last time's total
+   * or less; the card says so ("Back after 7 weeks, so a lighter start.").
+   */
+  breakWeeks?: number;
+  /**
+   * R-576: reps added to each set goal (parallel to `setGoals`) so today's sets add up to MORE than last
+   * time's (`beatGoals`). Absent when none were needed.
+   */
+  extraReps?: number[];
+  /** R-576: goal places (0-based, as `setGoals`) whose set came after a long rest last time (F73): not raised. */
+  heldGoals?: number[];
+  /** R-576: goal places (0-based) that missed their goal in the previous workout and aim for it again (R-300). */
+  againGoals?: number[];
 }
 
 /** R-308: the lighter weight a stall offers, with each set's goal there (`stepBackGoals`). */
@@ -195,6 +210,9 @@ export function applyStepBack(t: ProgressionTarget): ProgressionTarget {
   void _offer;
   return {
     ...rest,
+    extraReps: undefined,
+    heldGoals: undefined,
+    againGoals: undefined,
     targetWeightKg: o.weightKg,
     setGoals: o.setGoals,
     repGoal: Math.max(...o.setGoals),
@@ -239,6 +257,10 @@ export function toEasyTarget(t: ProgressionTarget, reason: string, sets: (n: num
     // R-306 / R-308: the easy week keeps the weight, so no drop line and no step-back offer.
     dropNote: undefined,
     stepBack: undefined,
+    // R-576: no set goals in an easy week, so nothing to mark on them.
+    extraReps: undefined,
+    heldGoals: undefined,
+    againGoals: undefined,
   };
 }
 
@@ -563,6 +585,9 @@ function computeAt(input: ProgressionInput, depth: number): ProgressionTarget {
     const held = S.mainSets.map((_, i) => heldAt(S.mainSets, i));
     return { held, base: held.map((h, i) => (h ? normalRestReps(sessions, S, w, i) : null)) };
   };
+  /** R-576: the goal places (0-based) whose same set in S came after a long rest (F73), so it is not raised. */
+  const heldGoalsOf = (S: Summary, top: number): number[] =>
+    S.mainSets.flatMap((s, i) => (i < nSets && heldAt(S.mainSets, i) && s.reps < top ? [i] : []));
   /**
    * Rule 1: each set one rep more than the same set did in S, never past `top` — and R-454 never
    * under what that same set did (13 in 8-12 stays 13). A set planned past S's sets aims for S's
@@ -614,34 +639,69 @@ function computeAt(input: ProgressionInput, depth: number): ProgressionTarget {
     return goalWords(S.mainSets.map((x) => x.reps), goals, { lead, loadText, plain });
   };
 
+  // R-576 (owner, 15 Nov 2026): last time's working sets, as the PREVIOUS column shows them (warm-ups and
+  // drop sets out), for rule 3 below: today's sets must add up to more than these.
+  const lastAll = (input.history.find((h) => h.dateISO === L.dateISO)?.sets ?? [])
+    .filter((x) => (x.setType === 'normal' || x.setType === 'failure') && x.reps > 0 && Number.isFinite(x.weightKg) && Number.isFinite(x.reps))
+    .map((x) => ({ weightKg: x.weightKg, reps: x.reps }));
+  /** R-576 rule 3 on this lift: the goals at `weightKg`, topped up when they do not beat last time (`beatGoals`). */
+  const beat = (weightKg: number, goals: number[], rangeTop: number): { goals: number[]; extra?: number[] } => {
+    const r = beatGoals(
+      {
+        targetSets: nSets,
+        targetWeightKg: weightKg,
+        setGoals: goals,
+        repGoal: Math.max(...goals),
+        last,
+        targetRepsMin: min,
+        targetRepsMax: rangeTop,
+        sameWeightKg: same,
+        logType,
+        bodyweightOnly,
+      },
+      lastAll,
+    );
+    return r ?? { goals };
+  };
+
   // R1 / R1b — coming back after a break. Review (R-61): from the newest day anywhere, when known.
+  // R-576 (owner, 15 Nov 2026: the total target always beats last time; "the only exception is a break of 6
+  // weeks or more"): 21-41 days is a normal day now (his Hip Thrust after 29 days aimed every set at 8, the
+  // bottom of the range, and the box read 310 kg against 360). Only 6 weeks or more keeps (R1) or lightens
+  // (R1b) the weight, and the card says why (`breakWeeks`).
   const gap = daysBetween(input.breakFromISO && input.breakFromISO > lastDoneISO ? input.breakFromISO : lastDoneISO, todayISO);
-  if (gap >= 21) {
+  if (gap >= LONG_BREAK_DAYS) {
     const weeks = Math.floor(gap / 7);
-    if (gap >= 42 && !bodyweightOnly) {
+    if (!bodyweightOnly) {
       // 16 Oct 2026 audit (C3-8): the longer the break, the bigger the cut — about 10% up to 13
       // weeks, 20% up to 26 weeks, 30% after that (a year off was the same 10% as six weeks).
       const cut = gap < 91 ? 0.1 : gap < 183 ? 0.2 : 0.3;
       const down = assisted ? clean(round3(w - step)) : both(downRungKg(w / per, ladder, cut));
       if (down !== null) {
-        return withDrop(`${weeks} weeks off, so a lighter start at ${targetKgText(down)}.`, out(
-          'R1b',
-          down,
-          min,
-          assisted
-            ? `${weeks} weeks since your last ${name}. Start with a little more help, ${load(down)}, and build back.`
-            : cut > 0.1
-              ? `${weeks} weeks since your last ${name}. Start lighter at ${targetKgText(down)} and build back.`
-              : `${weeks} weeks since your last ${name}. Start a little lighter at ${targetKgText(down)} and build back.`,
-        ));
+        return withDrop(`${weeks} weeks off, so a lighter start at ${targetKgText(down)}.`, {
+          ...out(
+            'R1b',
+            down,
+            min,
+            assisted
+              ? `${weeks} weeks since your last ${name}. Start with a little more help, ${load(down)}, and build back.`
+              : cut > 0.1
+                ? `${weeks} weeks since your last ${name}. Start lighter at ${targetKgText(down)} and build back.`
+                : `${weeks} weeks since your last ${name}. Start a little lighter at ${targetKgText(down)} and build back.`,
+          ),
+          breakWeeks: weeks,
+        });
       }
     }
-    return out(
-      'R1',
-      same,
-      min,
-      `Your last ${name} was ${weeks} weeks ago. ${bodyweightOnly ? 'Aim' : assisted ? 'Same help, aim' : 'Same weight, aim'} for ${min} and see how it feels.`,
-    );
+    return {
+      ...out(
+        'R1',
+        same,
+        min,
+        `Your last ${name} was ${weeks} weeks ago. ${bodyweightOnly ? 'Aim' : assisted ? 'Same help, aim' : 'Same weight, aim'} for ${min} and see how it feels.`,
+      ),
+      breakWeeks: weeks,
+    };
   }
 
   // C3-4: a top set or back-offs are part of the routine's sets, not of the main sets needed.
@@ -681,19 +741,24 @@ function computeAt(input: ProgressionInput, depth: number): ProgressionTarget {
       const floor = L.mainSets.length === nSets ? L.mainSets.map((s) => Math.max(keep, s.reps)) : undefined;
       return out('B2cap', 0, keep, `You did ${repsList}. That's plenty — ready for a harder version, or a little added weight.`, null, floor);
     }
-    const goals = plusOne(L, cap);
+    const plain = plusOne(L, cap);
     // Four workouts running under the range at body weight → an easier version builds up to it.
     if (input.easier && sessions.length >= RULE_WINDOW && sessions.every((s) => s.mainWeight <= 0 && best(s) < min)) {
       return out(
         'B1easy',
         0,
-        Math.max(...goals),
+        Math.max(...plain),
         `Under ${min} reps for ${RULE_WINDOW} workouts. ${input.easier.name} builds you up to it — then come back.`,
         { kind: 'easier', ...input.easier },
-        goals,
+        plain,
       );
     }
-    return out('B1', 0, Math.max(...goals), plusOneWords(L, goals, null) + longRestNote(heldRest(L).held), null, goals);
+    // R-576 rule 3: the reps add up to more than last time's (a set after a long rest is not raised).
+    const b = beat(0, plain, cap);
+    return marked(out('B1', 0, Math.max(...b.goals), plusOneWords(L, b.goals, null) + longRestNote(heldRest(L).held), null, b.goals), {
+      extra: b.extra,
+      held: heldGoalsOf(L, cap),
+    });
   }
 
   // Rule 2 — every working set reached the top: the next weight (assisted: one step less help).
@@ -721,14 +786,20 @@ function computeAt(input: ProgressionInput, depth: number): ProgressionTarget {
     // Each set aims for the reps that lift about the kg it lifted last time, inside the range
     // (30 x 13, 12, 10 -> 32.5 kg: 12, 11, 9 -> 10, 10, 9 in 6-10). Added weight on a bodyweight
     // move is small next to the body itself, so there every set starts from the bottom.
-    const goals =
+    const step2 =
       isBodyweight || !(next > 0)
         ? Array.from({ length: nSets }, () => min)
         : Array.from({ length: nSets }, (_, i) => {
             const s = L.mainSets[Math.min(i, L.mainSets.length - 1)];
             return Math.min(max, Math.max(min, Math.floor((w * s.reps) / next + 1e-9)));
           });
-    return out('R2', next, Math.max(...goals), `${did} Move up to ${targetKgText(next)}: ${goals.join(', ')}.`, null, goals);
+    // R-576 rule 3 (owner, 15 Nov 2026): the heavier sets still add up to more than last time (30 x 13, 12, 10
+    // = 1,050 kg -> 32.5 kg x 12, 11, 10 = 1,072.5, not 10, 10, 9 = 942.5). The range's top stays the range's.
+    const b = beat(next, step2, max);
+    const goals = b.goals;
+    return marked(out('R2', next, Math.max(...goals), `${did} Move up to ${targetKgText(next)}: ${goals.join(', ')}.`, null, goals, max), {
+      extra: b.extra,
+    });
   }
 
   // Rule 3 — the one safety rule: under the bottom of the range (every set) two workouts running at
@@ -745,9 +816,15 @@ function computeAt(input: ProgressionInput, depth: number): ProgressionTarget {
     }
     const down = lighter();
     if (down !== null) {
+      // R-576 rule 3: the lighter sets still add up to more than last time (extra reps, at most 2 a set).
+      const b = beat(down, Array.from({ length: nSets }, () => min), max);
+      const aim = b.extra ? `: ${b.goals.join(', ')}` : ` × ${min}`;
       return withDrop(
         `Reps fell under ${min} twice, so a step back to ${targetKgText(down)}.`,
-        out('R3', down, min, `You did under ${min} reps twice at ${targetKgText(same)}. Go one step lighter: ${targetKgText(down)} × ${min}.`),
+        marked(
+          out('R3', down, Math.max(...b.goals), `You did under ${min} reps twice at ${targetKgText(same)}. Go one step lighter: ${targetKgText(down)}${aim}.`, null, b.goals, max),
+          { extra: b.extra },
+        ),
       );
     }
     // Nothing lighter on his rack: keep the weight, rule 1 below.
@@ -766,7 +843,12 @@ function computeAt(input: ProgressionInput, depth: number): ProgressionTarget {
   const plus = plusOne(G, max);
   // R-300: after a short day, each set aims again for its missed goal (nothing piled on top).
   const again = missedGoals(plus, max);
-  const goals = again ?? plus;
+  // R-576 rule 3: when these do not add up to more than last time (fewer sets than last time, a set after a
+  // long rest, a lighter set moved up), 1 rep at a time on the first sets, at most 2 a set.
+  const b = beat(same, again ?? plus, max);
+  const goals = b.goals;
+  // The words name a set "again" (R-300) only where the missed goal changed it, never for an extra rep.
+  const plainWords = goals.map((g, i) => (again && again[i] !== plus[i] ? plus[i] : g));
   const loadText = assisted ? load(same) : targetKgText(same);
   // Phase 4 (plan easy week): 4 workouts at this weight, none better than the oldest, and not one rep
   // from the top, still read as rule R4, so a plan can offer its easy week early (`stalledLiftsInPlan`).
@@ -777,17 +859,39 @@ function computeAt(input: ProgressionInput, depth: number): ProgressionTarget {
     n4 > 0 &&
     Math.min(...L.mainSets.map((x) => x.reps)) < max - 1 &&
     run.slice(0, RULE_WINDOW - 1).every((S) => top4(S, n4) <= top4(run[RULE_WINDOW - 1], n4));
-  return out(
-    stalled ? 'R4' : 'R5',
-    same,
-    Math.max(...goals),
-    plusOneWords(G, goals, loadText, plus) + longRestNote(heldRest(G).held),
-    null,
-    goals,
-    // R-454: a goal above the top (the floor) never moves the range's top.
-    max,
+  return marked(
+    out(
+      stalled ? 'R4' : 'R5',
+      same,
+      Math.max(...goals),
+      plusOneWords(G, goals, loadText, plainWords) + longRestNote(heldRest(G).held),
+      null,
+      goals,
+      // R-454: a goal above the top (the floor) never moves the range's top.
+      max,
+    ),
+    {
+      extra: b.extra,
+      held: heldGoalsOf(G, max),
+      again: again ? again.flatMap((g, i) => (g !== plus[i] ? [i] : [])) : undefined,
+    },
   );
 }
+
+/** R-576: the marks a rule leaves on its set goals, kept only when there are some. PURE. */
+function marked(t: ProgressionTarget, m: { extra?: number[]; held?: number[]; again?: number[] }): ProgressionTarget {
+  return {
+    ...t,
+    ...(m.extra && m.extra.some((x) => x > 0) ? { extraReps: m.extra } : {}),
+    ...(m.held && m.held.length > 0 ? { heldGoals: m.held } : {}),
+    ...(m.again && m.again.length > 0 ? { againGoals: m.again } : {}),
+  };
+}
+
+/** R-576: only a break of this many days or more may aim at last time's total or less (R1 / R1b / T1). */
+export const LONG_BREAK_DAYS = 42;
+/** At most this many reps above a set's own goal, to beat last time (R-576 rule 3) or to catch up (R-304). */
+export const MAX_EXTRA_REPS = 2;
 
 /** "set 2", "sets 2 and 3", "sets 1, 2 and 4". */
 function setsText(n: readonly number[]): string {
@@ -978,9 +1082,11 @@ function holdTarget(input: ProgressionInput): ProgressionTarget {
   });
 
   const gap = daysBetween(input.breakFromISO && input.breakFromISO > L.dateISO ? input.breakFromISO : L.dateISO, todayISO);
-  if (gap >= 21) {
+  // R-576 (owner, 15 Nov 2026): as R1, only a break of 6 weeks or more holds the time back (21-41 days is a
+  // normal day), and the card says why (`breakWeeks`).
+  if (gap >= LONG_BREAK_DAYS) {
     const weeks = Math.floor(gap / 7);
-    return mk('T1', lowest, null, `Your last ${name} was ${weeks} weeks ago. Hold ${fmtDurationWords(lowest)} and see how it feels.`);
+    return { ...mk('T1', lowest, null, `Your last ${name} was ${weeks} weeks ago. Hold ${fmtDurationWords(lowest)} and see how it feels.`), breakWeeks: weeks };
   }
 
   let goal: number | null = null;
@@ -1126,6 +1232,11 @@ export interface TargetFill {
    * 2026): the "felt easy / very hard" suggestion that read it is gone; goalAtWeight still reads repMax.
    */
   nudge?: { effortRpe?: number; repMax?: number; stepUpKg?: number; stepDownKg?: number | null };
+  /**
+   * R-576: this move has a box (kilos or reps to beat, `beatMode`): after a tick, the open rows add up to 2 reps
+   * each so they still reach today's target (R-304), and the rows show those reps (`fillForSet`).
+   */
+  beat?: 'kg' | 'reps';
 }
 
 /** An easy week stops with this many reps left (easyWeek.ts: "stop with 3 or more reps left"). */
@@ -1143,7 +1254,7 @@ export function targetFill(
       Pick<
         ProgressionTarget,
         | 'logType' | 'holdSec' | 'version' | 'free' | 'easy' | 'last' | 'setGoals' | 'change' | 'targetRepsMin' | 'targetRepsMax' | 'sameWeightKg'
-        | 'effortRpe' | 'stepUpKg' | 'stepDownKg'
+        | 'effortRpe' | 'stepUpKg' | 'stepDownKg' | 'targetSets' | 'bodyweightOnly' | 'countingChanged'
       >
     >,
 ): TargetFill | null {
@@ -1160,6 +1271,9 @@ export function targetFill(
   if (t.repGoal == null) return null;
   const perSet = !t.easy && perSetLine(t.setGoals) != null ? [...(t.setGoals as readonly number[])] : null;
   const out: TargetFill = perSet ? { weightKg, reps: t.repGoal, setReps: perSet } : { weightKg, reps: t.repGoal };
+  // R-576: the rows of a move with a box top themselves up to reach today's target (illForSet).
+  const beat = beatMode({ ...t, targetSets: t.targetSets ?? 0 });
+  if (beat) out.beat = beat;
   if (!t.easy && (t.logType ?? 'weight_reps') === 'weight_reps' && t.last && t.last.weightKg > 0) {
     out.fromKg = t.last.weightKg;
     const up = liftUpOf({ ...t, last: t.last });
@@ -1260,6 +1374,117 @@ export function liftsUp(set: { weightKg: number; reps: number }, mainKg: number,
   // Far ABOVE the range (C3-9's "range moved" spread: 80 x 10 after 100 x 5 in 4-6) is a planned
   // high-rep back-off with its own aim: it stays as last time (16 Oct audit C3-4).
   return lighter && set.weightKg < up.weightKg - 1e-9 && set.reps >= up.topReps && set.reps <= up.topReps + RANGE_MOVED_REPS;
+}
+
+// ---------------------------------------------------------------- R-576: today's sets against last time's
+
+/** What a Target needs to lay out today's working sets (`planPlaces`). */
+export type PlaceTarget = Pick<ProgressionTarget, 'targetSets' | 'targetWeightKg' | 'setGoals' | 'repGoal'> &
+  Partial<Pick<ProgressionTarget, 'last' | 'targetRepsMin' | 'targetRepsMax' | 'sameWeightKg' | 'logType' | 'bodyweightOnly'>>;
+
+/**
+ * One working set of today, as its row hints it before anything is typed (`fillForSet`): a set goal at
+ * the Target weight ('goal', `goal` = its place in `setGoals`), last time's heavy top set or lighter
+ * back-off as it was (C3-4, 'asLast'), or a lighter set that reached the top moved up (R-143, 'liftUp').
+ */
+export interface PlanPlace {
+  weightKg: number;
+  reps: number;
+  kind: 'goal' | 'asLast' | 'liftUp';
+  goal?: number;
+}
+
+/**
+ * R-576: the box counts reps (a move with no kilos: "Reps only", or a bodyweight move logged at 0 kg),
+ * kilos, or nothing at all (a first time, an easy week, a pyramid, "try the other version", a hold, help on
+ * an assisted machine, added weight on a bodyweight move, or last time logged in another Counting). PURE.
+ */
+export function beatMode(
+  t: Pick<ProgressionTarget, 'action' | 'targetWeightKg' | 'targetSets' | 'repGoal' | 'topSetOnly'> &
+    Partial<Pick<ProgressionTarget, 'logType' | 'bodyweightOnly' | 'free' | 'easy' | 'version' | 'countingChanged'>>,
+): 'kg' | 'reps' | null {
+  if (t.action === 'start' || t.free || t.easy || t.topSetOnly || t.version || t.countingChanged) return null;
+  if (t.repGoal == null || !(t.targetSets > 0)) return null;
+  const lt = t.logType ?? 'weight_reps';
+  if (lt === 'reps' || (lt === 'weight_reps' && t.bodyweightOnly)) return 'reps';
+  return lt === 'weight_reps' && t.targetWeightKg > 0 ? 'kg' : null;
+}
+
+/** The weight most of these sets used (ties: the heavier), as `summarise` picks the main weight. PURE. */
+function mainWeightOf(sets: readonly { weightKg: number }[]): number | null {
+  const tally = new Map<number, number>();
+  for (const s of sets) tally.set(round3(s.weightKg), (tally.get(round3(s.weightKg)) ?? 0) + 1);
+  let best: number | null = null;
+  let n = 0;
+  for (const [kg, c] of tally) {
+    if (c > n || (c === n && best != null && kg > best)) {
+      best = kg;
+      n = c;
+    }
+  }
+  return best;
+}
+
+/**
+ * Today's working sets in last time's order (`last`: last time's working sets, warm-ups and drops out), as
+ * the set rows hint them: a place that was a heavy top set or a lighter back-off stays one (C3-4), a lighter
+ * set that reached the top moves up to the main weight with the bottom of the range (R-143), and the other
+ * places take the Target weight and the next set goal. `reps`: a move with no kilos (every place a goal,
+ * counted in reps). PURE.
+ */
+export function planPlaces(t: PlaceTarget, last: readonly { weightKg: number; reps: number }[], reps = false): PlanPlace[] {
+  const goalAt = (g: number): number => t.setGoals[g] ?? t.repGoal ?? 0;
+  if (reps) return Array.from({ length: t.targetSets }, (_, i) => ({ weightKg: 1, reps: goalAt(i), kind: 'goal' as const, goal: i }));
+  const main = mainWeightOf(last);
+  const off = main != null && main > 0 ? last.filter((s) => Math.abs(s.weightKg - main) >= main * OFF_MAIN_SHARE - 1e-9) : [];
+  const up = main != null && t.last ? liftUpOf({ ...t, last: t.last }) : null;
+  const out: PlanPlace[] = [];
+  let goal = 0;
+  for (let i = 0; i < t.targetSets; i++) {
+    const was = last[i];
+    if (was && off.includes(was) && main != null && liftsUp(was, main, up)) out.push({ weightKg: up.weightKg, reps: up.reps, kind: 'liftUp' });
+    else if (was && off.includes(was)) out.push({ weightKg: was.weightKg, reps: was.reps, kind: 'asLast' });
+    else {
+      out.push({ weightKg: t.targetWeightKg, reps: goalAt(goal), kind: 'goal', goal });
+      goal += 1;
+    }
+  }
+  return out;
+}
+
+/** One set as the box counts it: kilos lifted, or (a move with no kilos) reps. PURE. */
+export const setValue = (s: { weightKg: number; reps: number }, reps: boolean): number => (reps ? s.reps : s.weightKg * s.reps);
+
+/**
+ * R-576 rule 3 (owner, 15 Nov 2026: "the total target always beats last time's total"): when today's sets
+ * (`planPlaces`) do not add up to more than last time's working sets, add 1 rep at a time to the set goals,
+ * first sets first, at most MAX_EXTRA_REPS a set, until they do (by at least one whole kilo or rep, so the two
+ * numbers never read the same). Returns the goals and the reps added to each, or null when nothing was
+ * needed (or the move gets no box, `beatMode`). A set that still cannot beat it is left at +2: the card
+ * then says why. A break of 6+ weeks never comes here (rules R1 / R1b). PURE.
+ */
+export function beatGoals(t: PlaceTarget, lastSets: readonly { weightKg: number; reps: number }[]): { goals: number[]; extra: number[] } | null {
+  const mode = beatMode({ action: 'hold', topSetOnly: false, ...t });
+  if (!mode) return null;
+  const reps = mode === 'reps';
+  const last = lastSets.filter((s) => s.reps > 0 && (reps || s.weightKg > 0));
+  if (last.length === 0 || t.setGoals.length === 0) return null;
+  const need = last.reduce((a, s) => a + setValue(s, reps), 0) + 1;
+  const places = planPlaces(t, last, reps);
+  const goals = [...t.setGoals];
+  let total = places.reduce((a, p) => a + setValue(p, reps), 0);
+  if (total >= need - 1e-9) return null;
+  const extra = goals.map(() => 0);
+  for (let e = 1; e <= MAX_EXTRA_REPS && total < need - 1e-9; e++) {
+    for (const p of places) {
+      if (total >= need - 1e-9) break;
+      if (p.kind !== 'goal' || p.goal == null || p.goal >= goals.length || extra[p.goal] >= e) continue;
+      extra[p.goal] += 1;
+      goals[p.goal] += 1;
+      total += reps ? 1 : p.weightKg;
+    }
+  }
+  return extra.some((x) => x > 0) ? { goals, extra } : null;
 }
 
 /**

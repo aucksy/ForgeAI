@@ -102,6 +102,12 @@ interface SetRowProps {
   exName?: string;
   /** LW-27: how the row is spoken: "set 2", "warm-up 1", "drop set 3". */
   spoken?: string;
+  /**
+   * R-576: this set's aim is unusual (not raised after a long rest, moved up, topped up ...): a small accent mark
+   * on the set number, which opens the card's reason (`onOpenWhy`).
+   */
+  whyMark?: boolean;
+  onOpenWhy?: () => void;
 }
 
 const parseNum = parseTyped;
@@ -137,6 +143,8 @@ export const SetRow = memo(function SetRow({
   onOpenTimer,
   exName = 'Exercise',
   spoken,
+  whyMark = false,
+  onOpenWhy,
 }: SetRowProps) {
   const updateSet = useActiveWorkout((s) => s.updateSet);
   const toggleDone = useActiveWorkout((s) => s.toggleDone);
@@ -506,6 +514,22 @@ export const SetRow = memo(function SetRow({
               </View>
             ) : null}
           </Pressable>
+          {/* R-576: the set's aim has a reason: a small accent "i" on the set number opens it in the box above. */}
+          {whyMark ? (
+            <Pressable
+              onPress={() => {
+                tap();
+                onOpenWhy?.();
+              }}
+              hitSlop={8}
+              testID={`set-why-${exName}-${label}`}
+              accessibilityRole="button"
+              accessibilityLabel={`Why ${which} aims this way`}
+              style={{ position: 'absolute', left: L.padX - 2, bottom: 2, width: 14, height: 14, borderRadius: 7, alignItems: 'center', justifyContent: 'center', backgroundColor: color.accent }}
+            >
+              <Text style={{ fontFamily: type.bodyBold, fontSize: 10, lineHeight: 12, color: color.onAccent }}>i</Text>
+            </Pressable>
+          ) : null}
 
           {/* PREVIOUS — the numbers (a second line rather than cut off), then "@ 9" with Track RPE */}
           <View style={{ width: prevW, marginHorizontal: L.prevGap - L.gap, justifyContent: 'center' }}>

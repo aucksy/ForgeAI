@@ -36,7 +36,8 @@ import {
 } from '@/tracker/db/exerciseInfo';
 import type { MachineDetails } from '@/tracker/engine/cardioMachine';
 import { typedWeight, type DistUnit, type LoadMode, type LogType } from '@/tracker/engine/logTypes';
-import { HOLD_STEP_SEC, liftsUp, OFF_MAIN_SHARE, type LiftUp, type TargetFill } from '@/tracker/engine/progression';
+import { HOLD_STEP_SEC, liftsUp, MAX_EXTRA_REPS, OFF_MAIN_SHARE, type LiftUp, type TargetFill } from '@/tracker/engine/progression';
+import { shownTotalNoise } from '@/tracker/lib/kgTarget';
 import { sameSetHint } from '@/tracker/lib/sameSetHint';
 import type { RestTaken } from '@/tracker/engine/restTaken';
 import { MUSCLE_LABEL } from '@/tracker/catalog/muscles';
@@ -1372,11 +1373,84 @@ export function fillForSet(
   setKey: string,
   target?: TargetFillLike | null,
 ): SetFill | null {
-  return baseFillForSet(ex, setKey, target);
+  const base = baseFillForSet(ex, setKey, target);
+  // R-576 (owner, 15 Nov 2026): an open row topped up to still reach today's target shows those reps too.
+  const add = base && base.reps > 0 ? (beatRows(ex, target)?.extra.get(setKey) ?? 0) : 0;
+  return add > 0 && base ? { ...base, reps: base.reps + add } : base;
 }
 
 /** What `fillForSet` takes as the card's Target fill. */
-type TargetFillLike = SetFill & { setReps?: readonly number[]; fromKg?: number; liftUp?: LiftUp; nudge?: TargetFill['nudge'] };
+type TargetFillLike = SetFill & { setReps?: readonly number[]; fromKg?: number; liftUp?: LiftUp; nudge?: TargetFill['nudge']; beat?: TargetFill['beat'] };
+
+/** R-576: the card's working rows against today's target (`beatRows`). */
+export interface BeatRows {
+  /** Counted in reps (a move with no kilos), else kilos. */
+  reps: boolean;
+  /** Today's target (rule 2): every working row's own hint added up, as the rows read before anything was typed or ticked. */
+  target: number;
+  /** The ticked working rows added up (drop sets too: they help, never block). */
+  done: number;
+  /** Reps added to an open working row's hint (set key -> 1 or 2) so the open rows still reach the target. */
+  extra: ReadonlyMap<string, number>;
+  /** Even with 2 extra reps a row, the open rows cannot reach the target. */
+  short: boolean;
+}
+
+const beatMemo = new WeakMap<DraftExercise, { target: TargetFillLike; out: BeatRows | null }>();
+
+/**
+ * R-576 rules 2 and 3 on the live card (PURE). Today's target is the rows' own hints before anything was
+ * typed or ticked, added up: the one number the box shows, so the box and the rows never disagree (the Target's
+ * set goals already beat the previous workout, engine `beatGoals`). After a tick, the open rows (as they hint
+ * from the ticked rows alone, so typing never moves them) add 1 rep at a time, first rows first, at most 2 a
+ * row, until they reach what is left (R-304: the next set first, the last is the most tired). Ahead of the
+ * target, nothing is added (a good day stays a good day). null: this move has no box (`TargetFill.beat`).
+ */
+export function beatRows(ex: DraftExercise, target?: TargetFillLike | null): BeatRows | null {
+  if (!target?.beat) return null;
+  const hit = beatMemo.get(ex);
+  if (hit && hit.target === target) return hit.out;
+  const reps = target.beat === 'reps';
+  const working = (s: DraftSet): boolean => !s.isWarmup && s.setType !== 'drop';
+  const blank = (s: DraftSet): DraftSet => ({ ...s, done: false, weightKg: null, reps: null, rpe: null, durationSec: null, distanceM: null, autoFilled: undefined });
+  const value = (w: number | null | undefined, r: number | null | undefined): number | null => {
+    if (r == null || !(r > 0)) return null;
+    if (reps) return r;
+    return w != null && w > 0 ? w * r : null;
+  };
+  const fresh: DraftExercise = { ...ex, sets: ex.sets.map(blank) };
+  const ticked: DraftExercise = { ...ex, sets: ex.sets.map((s) => (s.done ? s : blank(s))) };
+  let total = 0;
+  let done = 0;
+  const open: { key: string; weightKg: number; reps: number }[] = [];
+  for (const s of ex.sets) {
+    if (s.isWarmup) continue;
+    if (working(s)) {
+      const f = baseFillForSet(fresh, s.key, target);
+      total += value(f?.weightKg, f?.reps) ?? 0;
+    }
+    if (s.done) done += value(s.weightKg, s.reps) ?? 0;
+    else if (working(s)) {
+      const f = baseFillForSet(ticked, s.key, target);
+      if (f && value(f.weightKg, f.reps) != null) open.push({ key: s.key, weightKg: reps ? 1 : f.weightKg, reps: f.reps });
+    }
+  }
+  // T76: weights typed in the other unit can sit a hair off the hints; never a rep for that.
+  const room = reps ? 1e-9 : Math.max(1e-9, shownTotalNoise(ex.sets.flatMap((s) => (s.done && !s.isWarmup && s.weightKg != null && s.reps != null ? [{ weightKg: s.weightKg, reps: s.reps }] : []))));
+  const need = total - done - room;
+  let sum = open.reduce((a, o) => a + o.weightKg * o.reps, 0);
+  const extra = new Map<string, number>();
+  for (let e = 1; e <= MAX_EXTRA_REPS && sum < need; e++) {
+    for (const o of open) {
+      if (sum >= need) break;
+      extra.set(o.key, e);
+      sum += o.weightKg;
+    }
+  }
+  const out: BeatRows = { reps, target: total, done, extra, short: open.length > 0 && sum < need };
+  beatMemo.set(ex, { target, out });
+  return out;
+}
 
 /**
  * R-439: the same-set hint for the working row at `idx` (`sameSetHint`), or null = keep the old rule.
