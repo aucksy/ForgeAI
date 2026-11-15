@@ -279,7 +279,7 @@ test('R-513 page, phone: already a member here, renew instead', async ({ page })
   await expect(page.locator('#member')).toContainText('Renew at the gym desk, or in the MettleUp app: Gym → "My gym" → "Renew my plan".');
   await shot(page, 'selfjoin-page-uat-already-member-phone');
   await page.locator('#lang').click();
-  await expect(page.locator('#member h2')).toHaveText('यह नंबर पहले से यहाँ का मेंबर है। प्लान रिन्यू करना है?');
+  await expect(page.locator('#member h2')).toHaveText('यह नंबर पहले से इस जिम का मेंबर है। आप इसके बजाय अपना प्लान रिन्यू कर सकते हैं।');
   await shot(page, 'selfjoin-page-uat-already-member-phone-hi');
   await page.locator('#lang').click();
   await page.locator('#other-number').click();

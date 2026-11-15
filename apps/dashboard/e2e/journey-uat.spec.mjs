@@ -270,6 +270,9 @@ for (const [size, scheme, lang] of [
   ['computer', 'dark', 'hi'],
   ['phone', 'light', 'en'],
 ]) {
+  test.describe(`JOURNEY-4 ${size}`, () => {
+  // A computer: a mouse, no touch screen (the project's default is a phone with a finger, even at 1280 wide).
+  if (size === 'computer') test.use({ viewport: SIZES.computer, isMobile: false, hasTouch: false });
   test(`JOURNEY-4 join form (${size} ${scheme} ${lang}): the WhatsApp QR code shows on a computer only`, async ({ page }) => {
     await page.setViewportSize(SIZES[size]);
     await page.emulateMedia({ colorScheme: scheme });
@@ -302,5 +305,6 @@ for (const [size, scheme, lang] of [
     await page.locator('#wa').scrollIntoViewIfNeeded();
     await shot(page, `4-join-wa-${size}-${scheme}-${lang}`, false);
     expect(errors).toEqual([]);
+  });
   });
 }
