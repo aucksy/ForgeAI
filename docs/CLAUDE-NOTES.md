@@ -418,6 +418,13 @@ Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept her
     - LIKELY UNTRUE, not changed (wording needs his yes): the Workout tab import card "Bring your workouts, records
       and routines with you. Everything stays on this phone." shows to members who are signed in too, whose workouts
       are copied to their MettleUp account. Suggest: show that sentence only when not signed in, or drop it.
+  - Part A (phase1-a.yaml) waited for the dropped sign-in card ("Example of a logged bench press"); it now checks the
+    phone button and that the card is gone (f7e0ef90). No other flow waits for a removed welcome text.
+  - Runs: CI 43748562296 on f7e0ef90 = phone typecheck, scroll lint and unit tests in all 3 time zones GREEN; only
+    the dashboard typecheck red (R-593's Conversation type, not R-587). Part A 43748574359 passed. Pictures looked
+    at: 43748158293 (his size) and 43748160227 (360 dp, font 2.0): the title under the logo, the 18+ box clear of
+    the phone button; 43748162312 (u203): Profile's mobile number box empty after the straight-in (rel-f203-14),
+    Build muscle and New to lifting picked.
 - Open:
   - Gym staff (owner, trainer, desk) found by the number keep the old path (Join, 3 questions, the join screen).
   - The straight-in defaults (Build muscle, New to lifting, kg) are a guess; the Workout tab note now says so.
