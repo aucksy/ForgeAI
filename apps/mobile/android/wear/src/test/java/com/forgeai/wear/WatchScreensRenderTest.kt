@@ -193,6 +193,20 @@ abstract class WatchScreensRenderBase(private val size: WatchSize) {
 
   @Test fun largerText() = both("x8-larger-text", Shot(resting(), ring = true, fontScale = 1.3f))
 
+  /**
+   * R-577 (15 Nov 2026): the largest text must not SHRINK the big numbers. Android 14+ (Wear OS 5+)
+   * grows big text less than the setting, and the old divide-by-font-scale made the countdown 23 %
+   * smaller at 1.3 (60 px tall at 384 px became 46). Same rest, normal vs largest text: the tallest
+   * text line (the countdown) must be the same height within 2 px.
+   */
+  @Test fun largestTextKeepsTheCountdownSize() {
+    shot("x14-countdown-text-1.0", Shot(resting(), ring = true, fontScale = 1f), ambient = false)
+    shot("x14-countdown-text-1.3", Shot(resting(), ring = true, fontScale = WatchSizes.LARGEST_FONT), ambient = false)
+    val normal = tallestTextLine(File(out, "${size.name}-x14-countdown-text-1.0.png"))
+    val largest = tallestTextLine(File(out, "${size.name}-x14-countdown-text-1.3.png"))
+    assertTrue("${size.name}: the countdown is $normal px tall at the normal text, $largest px at the largest", kotlin.math.abs(normal - largest) <= 2)
+  }
+
   // "Watch in the gym's colour" (29 Oct 2026): a gym green as sent, and a navy too dark for black
   // (made lighter by BrandColour.readable, as the watch does with the phone's "accent").
   private val green = BrandColour.accentFor("#16A34A")
@@ -258,6 +272,23 @@ class WatchScreensSmallLargestTextTest : WatchScreensRenderBase(WatchSizes.SMALL
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 @Config(qualifiers = "w233dp-h233dp-round-watch-xhdpi", fontScale = WatchSizes.LARGEST_FONT)
 class WatchScreensWideLargestTextTest : WatchScreensRenderBase(WatchSizes.WIDE_LARGEST_TEXT)
+
+/** The height in px of the tallest run of white text rows (the middle 70 % of the width, below the clock). */
+internal fun tallestTextLine(file: File): Int {
+  val img = BitmapFactory.decodeFile(file.absolutePath)
+  val w = img.width
+  var best = 0
+  var run = 0
+  for (y in (img.height * 0.2f).toInt() until (img.height * 0.9f).toInt()) {
+    val white = ((w * 0.15f).toInt() until (w * 0.85f).toInt()).any { x ->
+      val p = img.getPixel(x, y)
+      minOf((p shr 16) and 0xFF, (p shr 8) and 0xFF, p and 0xFF) > 200
+    }
+    run = if (white) run + 1 else 0
+    best = maxOf(best, run)
+  }
+  return best
+}
 
 /**
  * Fails on anything a round screen would clip; writes the "-round" copy. [dp]: the screen's width

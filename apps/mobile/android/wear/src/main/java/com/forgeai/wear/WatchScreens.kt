@@ -47,6 +47,7 @@ import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -141,9 +142,18 @@ internal val Pill = RoundedCornerShape(percent = 50)
  * The hand-off's px to this screen: value x (screen width / 456). Text is converted without the
  * member's font scale: the layout is drawn to fit inside the ring at exactly these sizes.
  */
-internal class Px(private val dpPerPx: Float, private val fontScale: Float) {
+internal class Px(private val dpPerPx: Float, private val density: Density) {
+  private val fontScale = density.fontScale
+
   fun dp(px: Float): Dp = (px * dpPerPx).dp
-  fun sp(px: Float): TextUnit = (px * dpPerPx / fontScale).sp
+
+  /**
+   * R-577 (15 Nov 2026): exactly [dp] of [px] on screen at any text size. Dp.toSp undoes the member's
+   * text size the way Android applies it: from Android 14 (Wear OS 5) big text grows LESS than the
+   * setting (non-linear font scaling), so the old "divide by the font scale" shrank the big numbers
+   * instead: at the largest text the rest countdown came out 23 % smaller than at the normal size.
+   */
+  fun sp(px: Float): TextUnit = with(density) { dp(px).toSp() }
 
   /**
    * Watch logging (3 Nov 2026, design "Largest system text"): labels grow with the member's text
@@ -151,7 +161,7 @@ internal class Px(private val dpPerPx: Float, private val fontScale: Float) {
    */
   val labelScale: Float = fontScale.coerceIn(1f, LABEL_SCALE_MAX)
 
-  fun label(px: Float): TextUnit = (px * labelScale * dpPerPx / fontScale).sp
+  fun label(px: Float): TextUnit = with(density) { dp(px * labelScale).toSp() }
 
   companion object {
     const val LABEL_SCALE_MAX = 1.24f
@@ -161,8 +171,8 @@ internal class Px(private val dpPerPx: Float, private val fontScale: Float) {
 @Composable
 private fun rememberPx(): Px {
   val widthDp = LocalConfiguration.current.screenWidthDp
-  val fontScale = LocalDensity.current.fontScale
-  return remember(widthDp, fontScale) { Px(RingMath.scale(widthDp.toFloat()), fontScale) }
+  val density = LocalDensity.current
+  return remember(widthDp, density) { Px(RingMath.scale(widthDp.toFloat()), density) }
 }
 
 /**
