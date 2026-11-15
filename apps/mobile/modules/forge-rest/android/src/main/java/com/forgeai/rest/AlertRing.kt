@@ -108,8 +108,9 @@ object AlertRing {
         playing?.stop()
         playing = r
         r.play()
-      } catch (_: Exception) {
+      } catch (e: Exception) {
         // a sound that will not play is only a lost ring; the notification is already shown
+        android.util.Log.w("ForgeErr", "gym ring did not play", e)
       }
     }
     return "rang"
