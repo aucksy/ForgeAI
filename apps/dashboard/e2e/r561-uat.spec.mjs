@@ -202,8 +202,10 @@ test.describe('R561 on a computer', () => {
 
     // 5. A line under each setting: Gym details.
     await expect(main.getByText('This name shows in your members’ MettleUp app and on your receipts.')).toBeVisible();
-    await expect(main.getByText('This number is printed on your receipts, and your web page can show it with a Call button.')).toBeVisible();
-    await expect(main.getByText('This address shows on your receipts and on your web page.')).toBeVisible();
+    // Fresh-eyes review (15 Nov 2026): gym web pages are off here (no GYM_PAGES answer), so no line names a web page.
+    await expect(main.getByText('This number is printed on your receipts.', { exact: true })).toBeVisible();
+    await expect(main.getByText('This address shows on your receipts.', { exact: true })).toBeVisible();
+    await expect(main.getByText(/can show it with a Call button|and on your web page/)).toHaveCount(0);
     await setTheme(page, 'light');
     await shot(page, 'computer-settings-lines-en', { fullPage: true });
 

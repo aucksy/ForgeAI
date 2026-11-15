@@ -63,6 +63,29 @@ test('Training progress: "Well done" and "How\'s it going?" go in the app, never
   await expect(main.getByText('Goes to their MettleUp app, with a notification on their phone.').first()).toBeVisible();
   await expectFitsPhone(page, 'on Training progress');
   await shot(page, 'r534-01-training-progress-phone');
+
+  // 1b. Fresh-eyes review (15 Nov 2026): the top bar's Refresh reads the list again WITHOUT blanking it ("Loading…"
+  //     never shows, the cards stay, the page does not jump to the top).
+  await page.evaluate(() => {
+    const w = window;
+    w.__sawLoading = false;
+    const main = document.querySelector('main');
+    new MutationObserver(() => {
+      if (main && main.textContent && main.textContent.includes('Loading…')) w.__sawLoading = true;
+    }).observe(main ?? document.body, { childList: true, subtree: true, characterData: true });
+    window.scrollTo(0, 120);
+  });
+  const scrolled = await page.evaluate(() => window.scrollY);
+  const reads = () => server.log.filter((l) => l.fn === 'owner_trainer_members').length;
+  const readsBefore = reads();
+  await page.getByTestId('panel-refresh').getByRole('button', { name: /^Refresh/ }).tap();
+  await expect.poll(reads, { timeout: 20_000 }).toBeGreaterThan(readsBefore);
+  await page.waitForTimeout(500);
+  expect(await page.evaluate(() => window.__sawLoading), 'Refresh never blanks the list').toBe(false);
+  await expect(main.getByText('Asha Verma', { exact: true })).toBeVisible();
+  await expect(main.getByText('Chand Mehta', { exact: true })).toBeVisible();
+  expect(await page.evaluate(() => window.scrollY), 'the page stays where it was').toBe(scrolled);
+  await shot(page, 'r534-01b-after-refresh-phone', false);
   const asha = card(page, 'Asha Verma');
   await asha.getByRole('button', { name: 'Send: Well done' }).tap();
   await expect(asha.getByRole('status')).toHaveText('Sent. It is in their app now.');
