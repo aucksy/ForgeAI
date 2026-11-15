@@ -2,7 +2,7 @@
 // records (U-A3): Load demo gym, Erase and start fresh, Start over with a new demo gym.
 import { expect, test } from '@playwright/test';
 
-import { addMember, expectFitsPhone, open, openApp, sheet, startDemo, openSettings } from './support.mjs';
+import { addMember, expectFitsPhone, open, openApp, pickInTopBar, sheet, startDemo, openSettings } from './support.mjs';
 
 /** The page's own background colour, as the browser paints it. */
 const background = (page) => page.evaluate(() => getComputedStyle(document.body).backgroundColor);
@@ -10,21 +10,31 @@ const background = (page) => page.evaluate(() => getComputedStyle(document.body)
 test('J10a Dark/Light: the colours change, and the choice is kept after a reload', async ({ page }) => {
   await openApp(page);
   await startDemo(page);
-  const colours = page.getByRole('radiogroup', { name: 'Screen colours' }).first();
-  await expect(colours.getByRole('radio', { name: 'Dark' })).toHaveAttribute('aria-checked', 'true');
+  // R-584: on a phone the switch sits behind the round "Screen and language" button in the top bar.
+  const menu = page.getByRole('button', { name: 'Screen and language' });
+  const inMenu = page.getByRole('group', { name: 'Screen and language' }).getByRole('radiogroup', { name: 'Screen colours' });
+  await menu.tap();
+  await expect(inMenu.getByRole('radio', { name: 'Dark' })).toHaveAttribute('aria-checked', 'true');
   const dark = await background(page);
 
-  await colours.getByRole('radio', { name: 'Light' }).tap();
-  await expect(colours.getByRole('radio', { name: 'Light' })).toHaveAttribute('aria-checked', 'true');
+  await inMenu.getByRole('radio', { name: 'Light' }).tap();
+  await expect(inMenu.getByRole('radio', { name: 'Light' })).toHaveAttribute('aria-checked', 'true');
   const light = await background(page);
   expect(light).not.toBe(dark);
+  // A tap anywhere else closes it.
+  await page.getByRole('heading', { name: 'Today', exact: true }).tap();
+  await expect(inMenu).toHaveCount(0);
 
   await page.reload();
   await expect(page.getByRole('heading', { name: 'Today', exact: true })).toBeVisible();
-  await expect(colours.getByRole('radio', { name: 'Light' })).toHaveAttribute('aria-checked', 'true');
+  await menu.tap();
+  await expect(inMenu.getByRole('radio', { name: 'Light' })).toHaveAttribute('aria-checked', 'true');
   expect(await background(page)).toBe(light);
+  await page.keyboard.press('Escape');
+  await expect(inMenu).toHaveCount(0);
 
-  // And back to Dark, from Settings.
+  // And back to Dark, from Settings (its own switch stays there).
+  const colours = page.getByRole('main').getByRole('radiogroup', { name: 'Screen colours' });
   await open(page, 'Settings');
   await colours.getByRole('radio', { name: 'Dark' }).tap();
   expect(await background(page)).toBe(dark);

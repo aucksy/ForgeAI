@@ -18,7 +18,7 @@ import { mkdirSync } from 'node:fs';
 
 import { expect, test } from '@playwright/test';
 
-import { NoSuchFunction, TEST_ALERT_FNS, WEB_PUSH_FNS, expectFitsPhone, openApp, startOnlineGym, wait } from './support.mjs';
+import { NoSuchFunction, TEST_ALERT_FNS, WEB_PUSH_FNS, expectFitsPhone, openApp, pickInTopBar, startOnlineGym, wait } from './support.mjs';
 
 const DIR = 'e2e/.results/uat';
 mkdirSync(DIR, { recursive: true });
@@ -175,8 +175,8 @@ async function settingsWithAlertsOn(page, { light, width, height }) {
   const push = installPush(server);
   await startOnlineGym(page);
   if (light) {
-    await page.getByRole('radio', { name: 'Light' }).first().click();
-    await expect(page.getByRole('radio', { name: 'Light' }).first()).toBeChecked();
+    await pickInTopBar(page, 'Light');
+    await expect.poll(() => page.evaluate(() => document.documentElement.dataset.theme)).toBe('light');
   }
   await page.evaluate(() => {
     window.location.hash = '/settings';

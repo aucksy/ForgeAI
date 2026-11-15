@@ -76,8 +76,9 @@ test('J70 gym timings: the owner sets morning and evening, a closed Sunday, a ho
   expect(sent.special).toEqual([{ date: '2026-11-08', kind: 'closed', ranges: [], note: 'Diwali' }]);
   expect(sent.note).toBe('Ladies batch 11 am to 12 pm');
   await expect(main).toContainText('Last saved 17 Oct 2026 by Ramesh Sharma.');
-  // Nothing changed since: Save waits.
-  await expect(main.getByRole('button', { name: 'Save timings' })).toBeDisabled();
+  // Nothing changed since: Save waits, and says why right under the button (R-584).
+  await expect(main.getByRole('button', { name: 'Saved' })).toBeDisabled();
+  await expect(main).toContainText('These timings are saved (17 Oct 2026) and members see them. Change any time above to save again.');
 
   // ---- Opened again later: the saved timings come back.
   await page.reload();

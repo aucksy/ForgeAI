@@ -7,6 +7,26 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-584 (15 Nov 2026) Admin panel on a phone: "Save timings" looked broken; the top bar had too many buttons
+- His report (15 Nov 2026, screenshot from his phone, Gym timings): "it has these pre-loaded gym timings that I'm just
+  trying to save, but the save button is disabled" and "the very top of the app is kind of messed up because of too
+  many buttons, so you might want to rethink that".
+- **Save timings: not a bug, a missing reason.** His timings were already saved (gym_timings row: 14 Nov 2026, 10:56
+  UTC, by him). Save stays off until something changes (timingsChanged). The "Last saved" line sits at the top of the
+  editor, a full phone screen above the button, so the grey button looked broken. Now, when nothing changed: the
+  button reads "Saved ✓" (still off), and a line right under it says "These timings are saved (14 Nov 2026) and
+  members see them. Change any time above to save again." Changing anything brings back "Save timings".
+- **Phone top bar** (CompactHeader): was logo + name + Refresh + bell + moon/sun + EN/HI; the gym's name was cut to
+  "Crisp…". Now Refresh, the bell, and ONE round "Screen and language" button (ui/DisplayMenu.tsx, drawn like the
+  bell). Tapping it drops a small panel with Dark | Light and English | Hinglish side by side (R-561 kept the two
+  together). Not a pop-up: a tap anywhere else or Escape closes it, and that tap still works. A computer's top bar is
+  unchanged (both switches in it). ThemeToggle `icons` and LangToggle `short` are now unused.
+- Tests: two shared steps in e2e/support.mjs, `pickInTopBar(page, name)` (opens the menu on a phone, taps, closes)
+  and `themeByEvents(page, mode)` (the same by events, works under an open sheet). Moved to them: ai-questions,
+  assistant, test-alert, r450, r495, settings J10a, r561-4 (now checks the name keeps >= 180 px and the panel fits
+  390 px, with pictures phone-display-menu-dark/-light). timings.spec checks "Saved" and the new line.
+- A panel change: on main, not live until a panel deploy (needs his yes).
+
 ## R-580 (15 Nov 2026) Every mobile number box keeps only the 10-digit Indian number
 - His ask (15 Nov 2026): when a phone's keyboard suggests the user's own number, it fills in the country code and
   spaces ("+91 98765 43210"); the field must strip anything extra and keep only the last 10 digits.

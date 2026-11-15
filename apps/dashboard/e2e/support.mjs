@@ -1633,3 +1633,37 @@ export function installQuestions(server) {
   };
   return qs;
 }
+
+/**
+ * R-584: on a phone, Dark | Light and English | Hinglish sit behind the round "Screen and language" button in the top
+ * bar. Picks one the way a person does (opens it, taps, closes it so pictures show the page). A computer has both
+ * switches in its top bar. `name`: 'Dark', 'Light', 'English' or 'Hinglish'.
+ */
+export async function pickInTopBar(page, name) {
+  const menu = page.getByRole('button', { name: 'Screen and language' });
+  if (await menu.isVisible()) {
+    if ((await menu.getAttribute('aria-expanded')) !== 'true') await menu.click();
+    await page.getByRole('group', { name: 'Screen and language' }).getByRole('radio', { name, exact: true }).click();
+    await menu.click();
+    await expect(page.getByRole('group', { name: 'Screen and language' })).toHaveCount(0);
+    return;
+  }
+  await page.locator('[data-top-bar]').getByRole('radio', { name, exact: true }).click();
+}
+
+/**
+ * The same, by events only, so it works even under an open sheet (the assistant and question journeys switch colours
+ * with a sheet open). `mode`: 'dark' or 'light'.
+ */
+export async function themeByEvents(page, mode) {
+  const label = mode === 'light' ? 'Light' : 'Dark';
+  const menu = page.getByRole('button', { name: 'Screen and language' });
+  if ((await menu.count()) > 0) {
+    await menu.dispatchEvent('click');
+    await page.getByRole('group', { name: 'Screen and language' }).getByRole('radio', { name: label, exact: true }).dispatchEvent('click');
+    await menu.dispatchEvent('click');
+  } else {
+    await page.getByRole('radiogroup', { name: 'Screen colours' }).first().getByRole('radio', { name: label }).dispatchEvent('click');
+  }
+  await expect.poll(() => page.evaluate(() => document.documentElement.dataset.theme)).toBe(mode);
+}

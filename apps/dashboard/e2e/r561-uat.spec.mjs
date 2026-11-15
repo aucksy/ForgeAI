@@ -12,7 +12,7 @@ import { mkdirSync } from 'node:fs';
 
 import { expect, test } from '@playwright/test';
 
-import { NOW, NoSuchFunction, WEB_PUSH_FNS, expectFitsPhone, open, openApp, startOnlineGym } from './support.mjs';
+import { NOW, NoSuchFunction, WEB_PUSH_FNS, expectFitsPhone, open, openApp, pickInTopBar, startOnlineGym } from './support.mjs';
 
 const DIR = 'e2e/.results/uat';
 mkdirSync(DIR, { recursive: true });
@@ -310,21 +310,38 @@ test.describe('R561 on a phone', () => {
     const main = page.getByRole('main');
     await expect(page.getByRole('heading', { name: 'Today', exact: true })).toBeVisible({ timeout: 15_000 });
 
-    // The top bar: one round Refresh with a short age, the bell, the two switches, all inside 390 px.
+    // The top bar: one round Refresh with a short age, the bell, and (R-584) one round "Screen and language" button
+    // that holds Dark | Light and English | Hinglish together, all inside 390 px.
     const refresh = page.getByTestId('panel-refresh');
     await expect(refresh).toHaveCount(1);
     await expect(refresh.getByRole('button', { name: /^Refresh\. Updated/ })).toBeVisible({ timeout: 15_000 });
-    await expect(page.getByRole('radiogroup', { name: 'Language' }).first()).toBeVisible();
-    await expect(page.getByRole('radio', { name: 'Hinglish' }).first()).toBeVisible();
-    await expect(page.getByRole('radio', { name: 'Dark' }).first()).toBeVisible();
+    const display = page.getByRole('button', { name: 'Screen and language' });
+    await expect(display).toBeVisible();
+    await expect(page.getByRole('banner').getByRole('radiogroup')).toHaveCount(0);
     await expectFitsPhone(page, 'on Today with the new top bar');
-    for (const el of [refresh, page.getByRole('button', { name: /^Notifications/ }), page.getByRole('radiogroup', { name: 'Language' }).first()]) {
+    for (const el of [refresh, page.getByRole('button', { name: /^Notifications/ }), display]) {
       const box = await el.boundingBox();
       expect(box.x + box.width, 'inside the phone').toBeLessThanOrEqual(391);
     }
-    await page.getByRole('radio', { name: 'Light' }).first().click();
+    // R-584: the gym's name gets the room the two switches used to take (was cut to "Crisp..." on his phone).
+    const nameBox = await page.getByRole('banner').locator('div').first().boundingBox();
+    expect(nameBox.width, "the gym's name keeps at least half the bar").toBeGreaterThanOrEqual(180);
+    await display.click();
+    const panel = page.getByRole('group', { name: 'Screen and language' });
+    await expect(panel.getByRole('radiogroup', { name: 'Screen colours' })).toBeVisible();
+    await expect(panel.getByRole('radiogroup', { name: 'Language' })).toBeVisible();
+    await expectFitsPhone(page, 'with Screen and language open');
+    const panelBox = await panel.boundingBox();
+    expect(panelBox.x, 'the panel inside the phone').toBeGreaterThanOrEqual(0);
+    expect(panelBox.x + panelBox.width, 'the panel inside the phone').toBeLessThanOrEqual(391);
+    await shot(page, 'phone-display-menu-dark', { clip: { x: 0, y: 0, width: 390, height: 200 } });
+    await panel.getByRole('radio', { name: 'Light' }).click();
+    await expect(panel.getByRole('radio', { name: 'Light' })).toHaveAttribute('aria-checked', 'true');
+    await shot(page, 'phone-display-menu-light', { clip: { x: 0, y: 0, width: 390, height: 200 } });
+    await page.keyboard.press('Escape');
+    await expect(panel).toHaveCount(0);
     await shot(page, 'phone-top-bar-light', { clip: { x: 0, y: 0, width: 390, height: 120 } });
-    await page.getByRole('radio', { name: 'Dark' }).first().click();
+    await pickInTopBar(page, 'Dark');
     await shot(page, 'phone-top-bar-dark', { clip: { x: 0, y: 0, width: 390, height: 120 } });
 
     // Refresh on a phone: the age goes back to "now".
@@ -338,7 +355,7 @@ test.describe('R561 on a phone', () => {
     await expect(panel.locator('[data-pay-row="paid"]')).toBeVisible({ timeout: 70_000 });
     await expectFitsPhone(page, 'with the bell open');
     await shot(page, 'phone-bell-dark');
-    await page.getByRole('radio', { name: 'Light' }).first().click();
+    await pickInTopBar(page, 'Light');
     await page.getByRole('button', { name: /^Notifications/ }).click();
     if (!(await panel.isVisible())) await page.getByRole('button', { name: /^Notifications/ }).click();
     await expect(panel).toBeVisible();
@@ -352,9 +369,11 @@ test.describe('R561 on a phone', () => {
     await expectFitsPhone(page, 'on More');
     await shot(page, 'phone-more-light', { fullPage: true });
 
-    // Hinglish from the top bar: the bell's groups and the short switch.
-    await page.getByRole('radio', { name: 'Hinglish' }).first().click();
-    await expect(page.getByRole('radio', { name: 'Hinglish' }).first()).toHaveAttribute('aria-checked', 'true');
+    // Hinglish from the top bar (R-584: behind "Screen and language"): the bell's groups.
+    await pickInTopBar(page, 'Hinglish');
+    await page.getByRole('button', { name: 'Screen and language' }).click();
+    await expect(page.getByRole('group', { name: 'Screen and language' }).getByRole('radio', { name: 'Hinglish' })).toHaveAttribute('aria-checked', 'true');
+    await page.keyboard.press('Escape');
     await expectFitsPhone(page, 'on More in Hinglish');
     await shot(page, 'phone-more-hi', { fullPage: true });
     await page.getByRole('button', { name: /^Notifications/ }).click();

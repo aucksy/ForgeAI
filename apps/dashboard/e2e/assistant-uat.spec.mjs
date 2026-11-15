@@ -26,7 +26,7 @@ import { mkdirSync } from 'node:fs';
 
 import { expect, test } from '@playwright/test';
 
-import { DESK, NOW, NoSuchFunction, Refusal, addDeskPerson, addMember, expectFitsPhone, openApp, secondPhone, signIn, startOnlineGym } from './support.mjs';
+import { DESK, NOW, NoSuchFunction, Refusal, addDeskPerson, addMember, expectFitsPhone, openApp, secondPhone, signIn, startOnlineGym, themeByEvents } from './support.mjs';
 
 const DIR = 'e2e/.results/uat';
 mkdirSync(DIR, { recursive: true });
@@ -44,9 +44,8 @@ const go = (page, path) =>
 
 /** The screen colours, switched the way the owner does it (the Dark | Light switch), even under an open sheet. */
 async function colours(page, mode) {
-  const radio = page.getByRole('radiogroup', { name: 'Screen colours' }).first().getByRole('radio', { name: mode === 'light' ? 'Light' : 'Dark' });
-  await radio.dispatchEvent('click');
-  await expect.poll(() => page.evaluate(() => document.documentElement.dataset.theme)).toBe(mode);
+  // R-584: on a phone the switch sits behind "Screen and language"; the shared step opens it.
+  await themeByEvents(page, mode);
 }
 
 /** One picture in the dark colours and one in the light, then back to dark. `focus`: the card to show, scrolled to the top. */

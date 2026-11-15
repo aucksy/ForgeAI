@@ -31,6 +31,7 @@ import {
   open,
   openApp,
   openSettings,
+  pickInTopBar,
   secondPhone,
   sheet,
   startDemo,
@@ -210,7 +211,7 @@ test.describe('R450 phone (375 px, Android Chrome)', () => {
 
     // Hinglish: Members and Plans with the "aap ... sakte hain / bechte hain" lines.
     await openSettings(page, 'Gym');
-    await page.getByRole('radio', { name: 'Hinglish' }).click();
+    await pickInTopBar(page, 'Hinglish');
     await bottomBar(page).getByRole('link', { name: /^Members/ }).tap();
     await expect(main.getByRole('button', { name: 'Excel se laao' }).first()).toBeVisible();
     await expect(main.getByText('Apna pehla member jodo. Phir aap unhe membership de sakte hain.', { exact: true })).toBeVisible();

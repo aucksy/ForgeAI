@@ -13,7 +13,7 @@ import { mkdirSync } from 'node:fs';
 
 import { expect, test } from '@playwright/test';
 
-import { DESK, OWNER, addDeskPerson, expectFitsPhone, openApp, secondPhone, signIn, startOnlineGym } from './support.mjs';
+import { DESK, OWNER, addDeskPerson, expectFitsPhone, openApp, pickInTopBar, secondPhone, signIn, startOnlineGym } from './support.mjs';
 
 const DIR = 'e2e/.results/uat';
 mkdirSync(DIR, { recursive: true });
@@ -206,7 +206,7 @@ test('R495-a the owner saves a logo: it shows top-left at once on a phone and a 
   await expectNeatLogo(page, 'phone, after a reload');
 
   // Light look (a setting change): still neat, still visible.
-  await page.getByRole('banner').getByRole('radio', { name: 'Light' }).tap();
+  await pickInTopBar(page, 'Light');
   await expectNeatLogo(page, 'phone, light');
   await shot(page, 'phone-header-light', { x: 0, y: 0, width: 390, height: 140 });
 

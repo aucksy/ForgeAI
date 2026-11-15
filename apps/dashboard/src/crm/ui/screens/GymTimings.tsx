@@ -362,7 +362,7 @@ function TimingsEditor({ ownerKey, saved, onSaved }: { ownerKey: string; saved: 
 
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: space.sm, alignItems: 'center' }}>
         <Button needsInternet onClick={save} disabled={saving || !changed}>
-          {saving ? 'Saving…' : saved.hours ? 'Save timings' : 'Save and show members'}
+          {saving ? 'Saving…' : saved.hours ? (changed ? 'Save timings' : 'Saved ✓') : 'Save and show members'}
         </Button>
         {saved.hours && (
           <Button variant="quiet" tone="danger" needsInternet disabled={saving} onClick={() => setConfirmRemove(true)}>
@@ -370,6 +370,13 @@ function TimingsEditor({ ownerKey, saved, onSaved }: { ownerKey: string; saved: 
           </Button>
         )}
       </div>
+      {/* R-584: on a phone the "Last saved" line sits a screen above this button, so a greyed
+          Save looked broken. Say why it waits, right under it. */}
+      {saved.hours && !changed && !saving && (
+        <p aria-live="polite" style={{ ...quiet, fontSize: 13, marginTop: space.sm }}>
+          {`These timings are saved${saved.updatedAt ? ` (${formatDay(dateISOFromEpoch(saved.updatedAt))})` : ''} and members see them. Change any time above to save again.`}
+        </p>
+      )}
 
       {confirmRemove && (
         <Sheet

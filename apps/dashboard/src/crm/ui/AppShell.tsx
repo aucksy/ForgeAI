@@ -16,6 +16,7 @@ import { Icon, type IconName } from './icons';
 import { ThemeToggle } from './ThemeToggle';
 import { LangToggle } from './LangToggle';
 import { RefreshButton } from './RefreshButton';
+import { DisplayMenu } from './DisplayMenu';
 import { groupLabelText } from './GroupLabel';
 import { NewsBell, NewsSidebarLink } from './WhatsNew';
 import { NewDot, color, font, radius, space, useIsCompact, useMediaQuery } from './kit';
@@ -464,8 +465,9 @@ function CompactHeader({ gymName }: { gymName: string }) {
       <div style={{ display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0 }}>
         <RefreshButton compact />
         <NewsBell />
-        <ThemeToggle compact icons />
-        <LangToggle compact short />
+        {/* R-584 (owner, 15 Nov 2026: "too many buttons"): Dark | Light and English | Hinglish now sit together
+            behind one round button, so the gym's name keeps its room. */}
+        <DisplayMenu />
       </div>
     </header>
   );
