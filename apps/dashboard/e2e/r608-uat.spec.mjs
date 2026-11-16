@@ -180,7 +180,7 @@ test('R-608 switch ON and both members use the app: no birthday idea, no birthda
 });
 
 test.describe('on a computer', () => {
-  test.use({ viewport: { width: 1280, height: 900 }, isMobile: false, hasTouch: false });
+  test.use({ viewport: { width: 1280, height: 900 }, isMobile: false });
 
   test('R-608 switch ON at desktop width: idea, Messages to send and See who show only the member without the app', async ({ page }) => {
     test.setTimeout(180_000);
