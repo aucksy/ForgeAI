@@ -183,6 +183,7 @@ export const INBOX_WORDS = {
   opened: 'Opened',
   removedTag: 'Removed',
   notDoneYet: 'Not done yet',
+  removedNotDone: 'Removed · Not done yet',
   old: 'Older than 7 days',
   doneBy: 'Done by {name}',
   removeLabel: 'Remove from your list: {line}',
@@ -195,6 +196,6 @@ export const INBOX_WORDS = {
 export function historyTag(a: Pick<InboxAlert, 'left' | 'done' | 'needs'>): string {
   if (a.left === 'opened') return INBOX_WORDS.opened;
   if (a.left === 'old') return INBOX_WORDS.old;
-  if (a.left === 'removed') return a.needs === 'action' && a.done === false ? `${INBOX_WORDS.removedTag} · ${INBOX_WORDS.notDoneYet}` : INBOX_WORDS.removedTag;
+  if (a.left === 'removed') return a.needs === 'action' && a.done === false ? INBOX_WORDS.removedNotDone : INBOX_WORDS.removedTag;
   return INBOX_WORDS.done;
 }

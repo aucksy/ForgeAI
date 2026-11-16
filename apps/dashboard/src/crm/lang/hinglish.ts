@@ -1669,4 +1669,17 @@ export const HINGLISH: Readonly<Record<string, string>> = {
     'iPhone ya iPad par pehle admin app ko Home Screen par jodein (Share, phir Add to Home Screen). Phir wahan se kholkar alerts chalu karein.',
   'Alerts are not ready yet. Try again later.':
     'Alerts abhi taiyaar nahi hain. Thodi der baad koshish karein.',
+  // ── The bell (R-604; your read-aloud yes, 16 Nov 2026) ──
+  'Nothing is waiting for you. New messages and requests from your members will show here.':
+    'Abhi aapke liye kuch baaki nahi hai. Members ke naye messages aur requests yahan dikhenge.',
+  'Removed from your list.': 'Aapki list se hata diya.',
+  Opened: 'Khol liya',
+  'Removed · Not done yet': 'Hataya · Abhi hua nahi',
+  'Older than 7 days': '7 din se purana',
+  'Done by {name}': '{name} ne kiya',
+  'The last 7 days: what was done, opened or removed. Tap a line to open it.':
+    'Pichhle 7 din: jo ho gaya, khola gaya ya hataya gaya. Kholne ke liye line par tap karein.',
+  'Nothing here yet. What you finish or remove shows here for 7 days.':
+    'Abhi yahan kuch nahi. Jo aap poora karenge ya hatayenge, woh 7 din yahan dikhega.',
+  'Remove from your list: {line}': 'Apni list se hatayein: {line}',
 };
