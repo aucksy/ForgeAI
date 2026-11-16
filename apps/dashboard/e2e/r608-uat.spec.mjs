@@ -179,16 +179,16 @@ test('R-608 switch ON and both members use the app: no birthday idea, no birthda
   await shot(page, 'on-all-app-390');
 });
 
-test.describe('on a computer', () => {
-  test.use({ viewport: { width: 1280, height: 900 }, isMobile: false });
-
-  test('R-608 switch ON at desktop width: idea, Messages to send and See who show only the member without the app', async ({ page }) => {
-    test.setTimeout(180_000);
-    await gymWithBirthdays(page, true);
-    await expectOnlyRavi(page, 'on Today at 1280px');
-    await shot(page, 'on-today-desktop');
-    await seeWhoOnlyRavi(page, 'at 1280px', true);
-    await page.waitForTimeout(300);
-    await page.screenshot({ path: `${DIR}/r608-on-see-who-desktop.png` });
-  });
+// A computer: the gym is set up on the phone (the shared sign-up steps are phone-shaped), then the window widens to
+// 1280 px, as r579-uat does; "See who" then opens the side panel.
+test('R-608 switch ON at desktop width: idea, Messages to send and See who show only the member without the app', async ({ page }) => {
+  test.setTimeout(180_000);
+  await gymWithBirthdays(page, true);
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await go(page, '/');
+  await expectOnlyRavi(page, 'on Today at 1280px');
+  await shot(page, 'on-today-desktop');
+  await seeWhoOnlyRavi(page, 'at 1280px', true);
+  await page.waitForTimeout(300);
+  await page.screenshot({ path: `${DIR}/r608-on-see-who-desktop.png` });
 });
