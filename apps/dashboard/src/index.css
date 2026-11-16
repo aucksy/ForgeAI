@@ -190,6 +190,11 @@ table {
   outline: 2px solid var(--c-accent);
   outline-offset: 2px;
 }
+/* The bell's "Removed from your list." sits on one line on a phone (the toast hangs from the middle of the screen, so
+   it would otherwise wrap into half the width). */
+.bell-undo [data-floating='toast'] {
+  width: max-content;
+}
 @media (prefers-reduced-motion: reduce) {
   .bell-card,
   .tap-chevron {

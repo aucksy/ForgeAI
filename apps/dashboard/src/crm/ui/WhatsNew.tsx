@@ -419,8 +419,10 @@ export function NewsBell() {
   const newUpdates = ADMIN_NEWS.filter((e) => fresh.has(e.id)).length;
   const gymShown = alerts.slice(0, BELL_ALERTS);
   const hqShown = hq.messages.slice(0, SHOWN_UPDATES);
-  const inboxShown = serverTruth && inbox && frozen ? shownWhileOpen(frozen.open, inbox, removedHere) : [];
-  const historyShown = serverTruth && frozen ? historyWhileOpen(frozen.open, frozen.history, removedHere) : [];
+  // The panel opened before the server's first answer: what came is shown as it is (frozen from the next opening).
+  const still = frozen ?? (inbox ? { open: inbox.open, history: inbox.history } : null);
+  const inboxShown = serverTruth && inbox && still ? shownWhileOpen(still.open, inbox, removedHere) : [];
+  const historyShown = serverTruth && still ? historyWhileOpen(still.open, still.history, removedHere) : [];
   const otherGroups = bellGroups({ gym: serverTruth ? 0 : gymShown.length, mettleup: hqShown.length, news: newest?.lines.length ?? 0 });
   // R-604: "Your gym" is always there with the server's truth (an empty list says nothing is waiting).
   const groups = serverTruth ? [{ id: 'gym' as const, title: 'Your gym', count: inboxShown.length }, ...otherGroups] : otherGroups;
@@ -509,7 +511,8 @@ export function NewsBell() {
               fontWeight: 800,
             }}
           >
-            {count}
+            {/* R-604: a busy morning reads "99+" (the full number is in the bell's name). */}
+            {count > 99 ? '99+' : count}
           </span>
         ) : null}
       </button>
@@ -580,7 +583,11 @@ export function NewsBell() {
         </section>
       )}
       {/* R-604: a mis-tap on the X is one tap from undone (inside the bell's box: tapping it never closes the panel). */}
-      {undo ? <UndoBar message={t(INBOX_WORDS.removed)} onUndo={undoRemove} undoLabel={t(INBOX_WORDS.undoLabel, { line: undo.line })} /> : null}
+      {undo ? (
+        <div className="bell-undo">
+          <UndoBar message={t(INBOX_WORDS.removed)} onUndo={undoRemove} undoLabel={t(INBOX_WORDS.undoLabel, { line: undo.line })} />
+        </div>
+      ) : null}
     </div>
   );
 }

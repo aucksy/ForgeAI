@@ -364,8 +364,11 @@ export function NeedsYouProvider({ children }: { children: ReactNode }) {
   reloadRef.current = reloadInbox;
   // What this person did: the list changes here at once, then the server is told, then the list is read again.
   const inboxDo = useMemo<InboxDo>(() => {
+    // One after another, in the order they were made: an X and its quick Undo must reach the server in that order.
+    let queue: Promise<void> = Promise.resolve();
     const send = (what: string, job: () => Promise<void>) => {
-      void job()
+      queue = queue
+        .then(job)
         .catch((e: unknown) => console.warn(`[ForgeErr] alerts: ${what} not saved`, e))
         .finally(() => void reloadRef.current());
     };

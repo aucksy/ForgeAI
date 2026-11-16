@@ -137,6 +137,8 @@ test('Owner on a phone: the bell keeps what is not done, news until opened, X wi
   await expect(history).toContainText('2');
   const undoBar = page.getByRole('status').filter({ hasText: 'Removed from your list.' });
   await expect(undoBar).toBeVisible();
+  // One line, not wrapped into half the screen (fresh eyes on the first pictures).
+  expect((await undoBar.boundingBox()).height).toBeLessThan(64);
   await expect(panel).toBeVisible();
   await shot(page, 'bell-3-phone-removed-undo');
   // Undo: back in its place, History as it was. The panel stays open (the Undo is part of the bell).
@@ -172,7 +174,7 @@ test('Owner on a phone: the bell keeps what is not done, news until opened, X wi
   await expect(panel).toHaveCount(0);
   // Removed is not done: the question still waits on its page, and on Today.
   await expect(main).toContainText('Is the 6 am batch full tomorrow?', { timeout: 15_000 });
-  await expect(main.getByLabel('Your reply')).toBeVisible();
+  await expect(main.getByRole('textbox', { name: 'Your reply' })).toBeVisible();
   await go(page, '/');
   await expect(main.getByTestId('latest-alerts')).toContainText('Ravi', { timeout: 15_000 });
   // The bell: Asha's question only (the news is read; Ravi's is off this person's list).
@@ -284,7 +286,7 @@ test('Desk at 360 and a trainer: each their own bell; the X never marks done; th
   await cardsOf(trainer).filter({ hasText: 'Ravi' }).locator('button.tap-row').tap();
   await expect.poll(() => hash(trainer)).toBe('#/questions');
   const tmain = trainer.getByRole('main');
-  await tmain.getByLabel('Your reply').fill('Yes, 2 places left at 6 am.');
+  await tmain.getByRole('textbox', { name: 'Your reply' }).fill('Yes, 2 places left at 6 am.');
   await tmain.getByRole('button', { name: 'Send reply' }).tap();
   await expect.poll(() => box.list.find((a) => a.id === 'a2').handledBy).toBe(TRAINER.name);
   // Soon after (a few seconds; at the latest the minute's look) the trainer's bell has it in History, "Done by Tara Singh".
@@ -336,6 +338,7 @@ test('A computer: nothing waiting, then 120 at once; hover, the keyboard, the li
   }
   await page.reload();
   await expect(bell).toHaveAttribute('aria-label', 'Notifications, 100 waiting for you', { timeout: 15_000 });
+  await expect(bell).toContainText('99+');
   await shot(page, 'bell-13-computer-badge-100');
   await bell.click();
   await expect(cards).toHaveCount(100);
