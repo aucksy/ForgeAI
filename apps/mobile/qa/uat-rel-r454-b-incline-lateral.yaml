@@ -68,6 +68,14 @@ appId: com.mettleup.app
       KG: "40"
       REPS: "11"
 # The top line names the same number the last row aims for.
+# 0.79.0 round (run 43784919647, owner size): after a row's edit or tick the page sits on that row and
+# the box is ABOVE it; sub-find looks down first (16 s) and its look up ran out of time while centring.
+# Look up first: nothing moves when the line is already in view.
+- scrollUntilVisible:
+    element: "^1,440.kg done · 360.kg to go$"
+    direction: UP
+    timeout: 20000
+    optional: true
 - runFlow:
     file: sub-find.yaml
     env:
@@ -80,6 +88,11 @@ appId: com.mettleup.app
       FIELD: "Incline Dumbbell Press set 3 reps"
       VALUE: " 25"
 - runFlow: sub-uat-r439-clear.yaml
+- scrollUntilVisible:
+    element: '^2,000.kg done · [+]200.kg over target$'
+    direction: UP
+    timeout: 20000
+    optional: true
 - runFlow:
     file: sub-find.yaml
     env:
@@ -94,6 +107,11 @@ appId: com.mettleup.app
       FIELD: "Incline Dumbbell Press set 3 reps"
       VALUE: " 11"
 - runFlow: sub-uat-r439-clear.yaml
+- scrollUntilVisible:
+    element: "^1,440.kg done · 360.kg to go$"
+    direction: UP
+    timeout: 20000
+    optional: true
 - runFlow:
     file: sub-find.yaml
     env:
@@ -154,6 +172,11 @@ appId: com.mettleup.app
       N: "2"
       KG: "20"
       REPS: "18"
+- scrollUntilVisible:
+    element: "^760.kg done · [0-9,]+.kg to go$"
+    direction: UP
+    timeout: 20000
+    optional: true
 - runFlow:
     file: sub-find.yaml
     env:
@@ -165,6 +188,11 @@ appId: com.mettleup.app
       N: "3"
       KG: "20"
       REPS: "15"
+- scrollUntilVisible:
+    element: "^1,060.kg done · [0-9,]+.kg to go$"
+    direction: UP
+    timeout: 20000
+    optional: true
 - runFlow:
     file: sub-find.yaml
     env:
