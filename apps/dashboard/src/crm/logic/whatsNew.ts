@@ -647,6 +647,23 @@ function notifyNewsSeen(): void {
  */
 export const ADMIN_NEWS_PENDING: readonly AdminNewsEntry[] = [
   {
+    // R-604 (owner, 16 Nov 2026, "yes alerts fix"): the bell as each person's to-do list. Moves to ADMIN_NEWS in the
+    // commit of the first panel deploy after migration 0098 is live (he says "yes 0098"). Not before: without 0098 the
+    // bell still works the old way.
+    id: 'pending-bell-to-do-list',
+    lines: [
+      {
+        text: 'The bell is now your to-do list. A message or request stays there until someone handles it in its page. News, like a new member or a payment, stays until you open it.',
+      },
+      {
+        text: 'Each person has their own bell. Tap the X to take a line off your list. It still waits in its page. “History” at the top of the bell keeps the last 7 days.',
+      },
+      {
+        text: 'Alerts on your phone now count only what is new to you and not done yet. When everything is done, no alert comes.',
+      },
+    ],
+  },
+  {
     // R-586 / R-600: members pick who reads a message ("Who should read it?") and the panel shows "To: ...". 0096 is live,
     // but the picker is in member app 0.79.0. Moves to ADMIN_NEWS with the first panel deploy after 0.79.0 is in
     // production on Play (open testing is not enough: no member's message has a "To:" line before that).

@@ -57,6 +57,8 @@ const TERMS_FNS = ['owner_terms', 'owner_accept_terms'];
 export const WEB_PUSH_FNS = ['owner_save_web_push', 'owner_clear_web_push', 'owner_web_push_on', 'owner_alert_settings', 'owner_save_alert_settings'];
 /** R-578 (0095): "Send a test alert". Not on the pretend server by default (like the live server today). */
 export const TEST_ALERT_FNS = ['owner_send_test_alert', 'owner_test_alert'];
+/** R-604: the bell's to-do list (0098); not on the live server yet, so a server without it is the default. */
+export const ALERT_INBOX_FNS = ['owner_alert_list', 'owner_alerts_read', 'owner_alert_opened', 'owner_alert_remove'];
 
 /** R-117 (0034): the PIN calls, answered only when `pinServer` is on. */
 const PIN_FNS = ['staff_set_pin', 'staff_pin_status'];
@@ -472,7 +474,7 @@ export class FakeServer {
     }
     // R-506: a server before 0075 / 0076 (the live server today) has no alerts list and no alerts with the app closed;
     // alerts-uat.spec.mjs answers them itself.
-    if (fn === 'owner_alerts' || WEB_PUSH_FNS.includes(fn) || TEST_ALERT_FNS.includes(fn)) {
+    if (fn === 'owner_alerts' || WEB_PUSH_FNS.includes(fn) || TEST_ALERT_FNS.includes(fn) || ALERT_INBOX_FNS.includes(fn)) {
       throw new NoSuchFunction(`Could not find the function public.${fn} in the schema cache`);
     }
     if (BRANCH_FNS.includes(fn) || (!this.termsServer && TERMS_FNS.includes(fn))) {
@@ -1680,6 +1682,112 @@ export function installAlertsList(server) {
     return { ok: true, alerts: [...alerts.list].sort((x, y) => y.at - x.at) };
   };
   return alerts;
+}
+
+/**
+ * R-604: 0098 on the pretend server, by the rules of supabase/migrations/0098_alerts_done_and_read.sql. `box.list`:
+ * alerts { id, kind, line, route, at, urgent?, ref?, onlyFor? (a person's name), handledAt?, handledBy? }. Done is the
+ * same for everyone (`handledAt`); read, opened and removed are each person's own (`box.marks`, by reader: 'owner' for
+ * the old owner key, else the person's id). A step the server would see (`box.steps`: a reply, a thread marked done, a
+ * question answered) handles the open action alerts with that `ref`, the way 0098's triggers do. `box.now`: the
+ * server's clock (ms); null: NOW plus the real time since. `box.on` false: PGRST202, like a server without 0098.
+ */
+export function installAlertInbox(server) {
+  const started = Date.now();
+  const box = {
+    on: false,
+    list: [],
+    marks: new Map(),
+    now: null,
+    steps: [
+      { fn: 'owner_talk_reply', arg: 'p_thread' },
+      { fn: 'owner_talk_done', arg: 'p_thread', when: (args) => args.p_done === true },
+      { fn: 'owner_answer_question', arg: 'p_id' },
+    ],
+  };
+  const INFO = ['paid_online', 'report_sent', 'member_joined', 'ai_credits_low', 'ai_members_limit', 'test_alert'];
+  const DAY = 24 * 60 * 60 * 1000;
+  const clock = () => box.now ?? NOW.getTime() + (Date.now() - started);
+  const needs = (a) => (INFO.includes(a.kind) || (a.kind === 'friend_referred' && a.route !== '/enquiries') ? 'info' : 'action');
+  const readerOf = (p) => (p.staffId ? String(p.staffId) : 'owner');
+  const visible = (p, a) => p.role === 'owner' || (a.kind !== 'member_complaint' && (!a.onlyFor || a.onlyFor === p.name));
+  const mark = (reader, id) => {
+    const k = `${reader}|${id}`;
+    if (!box.marks.has(k)) box.marks.set(k, { readAt: null, openedAt: null, removedAt: null });
+    return box.marks.get(k);
+  };
+  const json = (a, m) => ({ id: a.id, kind: a.kind, line: a.line, route: a.route, urgent: a.urgent === true, at: a.at, needs: needs(a), read: Boolean(m.readAt) });
+  const leftOf = (a, m, now) => {
+    if (needs(a) === 'action') {
+      if (a.handledAt) return ['done', a.handledAt];
+      if (m.removedAt) return ['removed', m.removedAt];
+      return null;
+    }
+    if (m.openedAt) return ['opened', m.openedAt];
+    if (m.removedAt) return ['removed', m.removedAt];
+    if (a.at < now - 7 * DAY) return ['old', a.at + 7 * DAY];
+    return null;
+  };
+  const base = server.answer.bind(server);
+  server.answer = (fn, args) => {
+    if (!ALERT_INBOX_FNS.includes(fn)) {
+      const out = base(fn, args);
+      const step = box.steps.find((x) => x.fn === fn && (!x.when || x.when(args)));
+      if (box.on && step) {
+        const p = server.anyone(args.p_key);
+        for (const a of box.list) if (a.ref && a.ref === args[step.arg] && needs(a) === 'action' && !a.handledAt) Object.assign(a, { handledAt: clock(), handledBy: p.name });
+      }
+      return out;
+    }
+    server.calls.push(fn);
+    server.log.push({ fn, args });
+    if (!box.on) throw new NoSuchFunction(`Could not find the function public.${fn} in the schema cache`);
+    const p = server.anyone(args.p_key);
+    const reader = readerOf(p);
+    const now = clock();
+    const mine = box.list.filter((a) => a.kind !== 'test_alert' && visible(p, a) && a.at >= now - 30 * DAY);
+    if (fn === 'owner_alert_list') {
+      const open = [];
+      const history = [];
+      for (const a of [...mine].sort((x, y) => y.at - x.at || x.id.localeCompare(y.id))) {
+        const m = mark(reader, a.id);
+        const left = leftOf(a, m, now);
+        if (!left) {
+          if (open.length < 100) open.push(json(a, m));
+        } else if (left[1] >= now - 7 * DAY && history.length < 60) {
+          const done = needs(a) === 'info' || Boolean(a.handledAt);
+          history.push({ ...json(a, m), read: true, left: left[0], leftAt: left[1], done, doneHow: a.handledAt ? 'reply' : null, doneBy: a.handledBy ?? null });
+        }
+      }
+      return { ok: true, now, count: open.filter((a) => a.needs === 'action' || !a.read).length, newCount: open.filter((a) => !a.read).length, open, history };
+    }
+    if (fn === 'owner_alerts_read') {
+      const ids = Array.isArray(args.p_ids) ? args.p_ids : [];
+      if (ids.length > 200) throw new Refusal('INVALID');
+      let read = 0;
+      for (const a of mine) {
+        if (!ids.includes(a.id)) continue;
+        const m = mark(reader, a.id);
+        if (!m.readAt) {
+          m.readAt = now;
+          read += 1;
+        }
+      }
+      return { ok: true, read };
+    }
+    const a = mine.find((x) => x.id === args.p_alert);
+    if (!a) return { ok: false, error: 'NOT_FOUND' };
+    const m = mark(reader, a.id);
+    m.readAt = m.readAt ?? now;
+    if (fn === 'owner_alert_opened') {
+      m.openedAt = m.openedAt ?? now;
+      return { ok: true, opened: true };
+    }
+    const remove = args.p_remove !== false;
+    m.removedAt = remove ? now : null;
+    return { ok: true, removed: remove };
+  };
+  return box;
 }
 
 /** The trainer view (0050) and "Member questions" (0053) calls. */

@@ -51,6 +51,19 @@ export const ALL_HELP_ARTICLES = [
       'Alerts work while the admin app is open in a tab.',
   },
   {
+    // R-604 (owner, 16 Nov 2026, "yes alerts fix"): the bell as each person's to-do list (ui/BellInbox.tsx,
+    // logic/alertInbox.ts, supabase 0098). The number: action items not done + news not read yet.
+    id: 'bell-to-do-list',
+    who: 'owner',
+    title: 'The bell: what is waiting for you',
+    unreleased: 'R-604: waits for migration 0098 and the admin panel deploy',
+    text:
+      'In the admin app, the bell at the top right lists what is waiting for you. Its number counts messages, questions and requests nobody has handled yet, and news you have not seen. ' +
+      'A message or request stays until someone handles it in its own page, with a reply or Approve. News, like a new member or an online payment, stays until you tap it, or for 7 days. ' +
+      'Tap a line to open its page. Tap the X beside a line to take it off your list. It still waits in its page and on Today. Tap Undo to put it back. ' +
+      '"History" at the top keeps the last 7 days. Each person has their own list.',
+  },
+  {
     id: 'add-a-member',
     who: 'owner',
     title: 'Add a new member, or find one',

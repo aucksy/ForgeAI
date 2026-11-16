@@ -129,10 +129,11 @@ describe('the 16 Nov 2026 deploy (R-600)', () => {
     for (const fact of ['See who', 'small phones']) expect(all, fact).toContain(fact);
     // Still off (GYM_PAGES, the Plus lock) or not on Play yet (the recipient picker, 0.79.0): not a word here.
     expect(all).not.toMatch(/web page|join\.mettleup|Plus|lock|Gym admin|To: /i);
-    expect(ADMIN_NEWS_PENDING.map((e) => e.id)).toEqual(['pending-message-recipient', 'pending-gym-web-pages', 'pending-plus-lock']);
+    // R-604: the bell's to-do list waits for 0098 and the deploy after it.
+    expect(ADMIN_NEWS_PENDING.map((e) => e.id)).toEqual(['pending-bell-to-do-list', 'pending-message-recipient', 'pending-gym-web-pages', 'pending-plus-lock']);
     // The waiting recipient lines use the words the member app (shop/gymMessages.ts TO_WORDS) and the panel
     // (memberMessages.ts) show.
-    const waiting = ADMIN_NEWS_PENDING[0].lines.map((l) => l.text).join(' ');
+    const waiting = ADMIN_NEWS_PENDING.find((e) => e.id === 'pending-message-recipient')!.lines.map((l) => l.text).join(' ');
     for (const fact of ['“Gym owner”', '“Gym admin”', 'a trainer by name', 'you and the front desk', '“Member messages”', '“To: Gym owner”']) {
       expect(waiting, fact).toContain(fact);
     }

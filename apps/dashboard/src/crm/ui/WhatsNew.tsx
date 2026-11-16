@@ -19,8 +19,16 @@
  * mark and "Payment" label. While alerts are off for this device, "Turn on alerts" sits at the top (BellAlertsCard).
  * The bell's number also counts the gym's alerts that came since the bell was last opened.
  * The bell is not in the demo gym (a visitor there has no "update" to hear about).
+ * R-604 (owner, 16 Nov 2026, "yes alerts fix"): with 0098 on the server, "Your gym" is this person's to-do list from the
+ * server (ui/BellInbox.tsx, logic/alertInbox.ts): an action item stays until it is done in its page, news until it is
+ * opened; a folded History at the top keeps the last 7 days; each card has its own X ("Removed. Undo"). Opening the
+ * panel reads what it shows (on the server, for this person). Nothing moves while it is open, except a card removed
+ * with the X. The bell's number: action items not done + news not read. Without 0098: as before.
  */
 import { useEffect, useRef, useState } from 'react';
+
+import { historyWhileOpen, shownWhileOpen, unreadIds, INBOX_WORDS, type InboxAlert } from '../logic/alertInbox';
+import { BellHistory, BellInbox } from './BellInbox';
 
 import { useRole } from '../auth/AuthProvider';
 import { t } from '../lang/lang';
@@ -52,7 +60,7 @@ import {
   type AdminNewsLine,
 } from '../logic/whatsNew';
 import { Icon } from './icons';
-import { Card, PageHeader, SectionTitle, TOUCH, color, font, radius, space, useIsCompact } from './kit';
+import { Card, PageHeader, SectionTitle, TOUCH, UndoBar, color, font, radius, space, useIsCompact } from './kit';
 import { Link, navigate } from './router';
 
 /** "Version 31 Oct 2026": the admin app's version is its newest update's day. */
@@ -363,7 +371,20 @@ export function NewsBell() {
   const unread = useUnreadNews(demo);
   const hq = useHqNews(demo);
   // R-561: the gym's alerts (0075; none before it, and none in the demo gym), newest first, for this person.
-  const { alerts } = useNeedsYou();
+  const { alerts, inbox, inboxDo } = useNeedsYou();
+  // R-604: the server's truth (0098) when it is there; the browser's own rules before it.
+  const serverTruth = !demo && inbox !== null;
+  const { orders } = useShop();
+  // What the open panel shows, as it was when it opened (nothing moves under the finger), and the cards removed here.
+  const [frozen, setFrozen] = useState<{ open: InboxAlert[]; history: InboxAlert[] } | null>(null);
+  const [removedHere, setRemovedHere] = useState<ReadonlyMap<string, number>>(new Map());
+  const [undo, setUndo] = useState<{ id: string; line: string } | null>(null);
+  const panelRef = useRef<HTMLElement>(null);
+  useEffect(() => {
+    if (!undo) return undefined;
+    const t = window.setTimeout(() => setUndo(null), 7_000);
+    return () => window.clearTimeout(t);
+  }, [undo]);
   // Fresh-eyes review (15 Nov 2026): each branch keeps its own seen time; switching branch reads that branch's.
   const gymId = String(useCrm().snapshot.gym.gymId);
   const [seen, setSeen] = useState<{ gymId: string; at: number | null }>(() => ({ gymId, at: readBellSeen(browserStore(), gymId) }));
@@ -392,15 +413,50 @@ export function NewsBell() {
     };
   }, [open]);
   if (demo) return null;
-  const count = unread.length + hq.unread.length + newAlerts.length;
+  const gymCount = serverTruth && inbox ? inbox.count : newAlerts.length;
+  const count = unread.length + hq.unread.length + gymCount;
   const newest = ADMIN_NEWS.find((e) => e.lines.length > 0);
   const newUpdates = ADMIN_NEWS.filter((e) => fresh.has(e.id)).length;
   const gymShown = alerts.slice(0, BELL_ALERTS);
   const hqShown = hq.messages.slice(0, SHOWN_UPDATES);
-  const groups = bellGroups({ gym: gymShown.length, mettleup: hqShown.length, news: newest?.lines.length ?? 0 });
+  const inboxShown = serverTruth && inbox && frozen ? shownWhileOpen(frozen.open, inbox, removedHere) : [];
+  const historyShown = serverTruth && frozen ? historyWhileOpen(frozen.open, frozen.history, removedHere) : [];
+  const otherGroups = bellGroups({ gym: serverTruth ? 0 : gymShown.length, mettleup: hqShown.length, news: newest?.lines.length ?? 0 });
+  // R-604: "Your gym" is always there with the server's truth (an empty list says nothing is waiting).
+  const groups = serverTruth ? [{ id: 'gym' as const, title: 'Your gym', count: inboxShown.length }, ...otherGroups] : otherGroups;
+  const goAlert = (a: InboxAlert, route: string) => {
+    inboxDo.opened(a.id);
+    setOpen(false);
+    navigate(route);
+  };
+  const removeAlert = (a: InboxAlert, line: string) => {
+    setRemovedHere((m) => new Map(m).set(a.id, Date.now()));
+    inboxDo.remove(a.id);
+    setUndo({ id: a.id, line });
+    // The X is gone with its card: the panel keeps the keyboard's place.
+    panelRef.current?.focus({ preventScroll: true });
+  };
+  const undoRemove = () => {
+    if (!undo) return;
+    const id = undo.id;
+    setRemovedHere((m) => {
+      const next = new Map(m);
+      next.delete(id);
+      return next;
+    });
+    inboxDo.undo(id);
+    setUndo(null);
+  };
   const toggle = () => {
     if (!open) {
-      setFresh(new Set([...unread.map((e) => e.id), ...hq.unread.map((m) => `hq-${m.id}`), ...newAlerts.map((a) => `alert-${a.id}`)]));
+      const gymNew = serverTruth && inbox ? unreadIds(inbox) : newAlerts.map((a) => a.id);
+      setFresh(new Set([...unread.map((e) => e.id), ...hq.unread.map((m) => `hq-${m.id}`), ...gymNew.map((id) => `alert-${id}`)]));
+      if (serverTruth && inbox) {
+        // R-604: freeze what is shown, and read it (for this person, on the server).
+        setFrozen({ open: inbox.open, history: inbox.history });
+        setRemovedHere(new Map());
+        inboxDo.read(gymNew);
+      }
       if (unread.length > 0) markNewsSeen();
       if (hq.unread.length > 0) hq.seen();
       const newestAlert = alerts[0]?.at;
@@ -415,7 +471,7 @@ export function NewsBell() {
     <div ref={box} style={{ position: 'relative' }}>
       <button
         type="button"
-        aria-label={count > 0 ? `Notifications, ${count} new` : 'Notifications'}
+        aria-label={count > 0 ? (serverTruth ? `Notifications, ${count} waiting for you` : `Notifications, ${count} new`) : 'Notifications'}
         aria-expanded={open}
         onClick={toggle}
         style={{
@@ -459,9 +515,12 @@ export function NewsBell() {
       </button>
       {open && (
         <section
+          ref={panelRef}
+          tabIndex={-1}
           role="dialog"
           aria-label="Notifications"
           style={{
+            outline: 'none',
             // A phone: the full width under the header. A computer: hangs from the bell.
             position: compact ? 'fixed' : 'absolute',
             top: compact ? 'calc(var(--demo-bar, 0px) + 64px)' : TOUCH + space.sm,
@@ -485,8 +544,12 @@ export function NewsBell() {
           </div>
           {/* R-561: while alerts are off for this device, until they are on or the card is closed. */}
           <BellAlertsCard />
+          {/* R-604: History at the top, folded to one row. */}
+          {serverTruth ? <BellHistory items={historyShown} orders={orders} onGo={goAlert} /> : null}
           {groups.map((g, i) =>
-            g.id === 'gym' ? (
+            g.id === 'gym' && serverTruth ? (
+              <BellInbox key={g.id} first={i === 0} items={inboxShown} fresh={fresh} orders={orders} onGo={goAlert} onRemove={removeAlert} />
+            ) : g.id === 'gym' ? (
               <GymAlerts
                 key={g.id}
                 first={i === 0}
@@ -516,6 +579,8 @@ export function NewsBell() {
           )}
         </section>
       )}
+      {/* R-604: a mis-tap on the X is one tap from undone (inside the bell's box: tapping it never closes the panel). */}
+      {undo ? <UndoBar message={t(INBOX_WORDS.removed)} onUndo={undoRemove} undoLabel={t(INBOX_WORDS.undoLabel, { line: undo.line })} /> : null}
     </div>
   );
 }

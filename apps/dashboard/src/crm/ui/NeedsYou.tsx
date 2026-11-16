@@ -14,6 +14,12 @@
  *
  * R-539 (owner, 14 Nov 2026: new things must show at once, or a refresh button): refreshAll reads the alerts and every
  * list at once. R-561: its button is the panel's one Refresh in the top bar (ui/RefreshButton.tsx), on every page. Coming back to the tab already looks at once (logic/visiblePoll.ts); the minute stays a minute.
+ *
+ * R-604 (owner, 16 Nov 2026, "yes alerts fix"): with 0098 on the server the bell and Today read THIS person's list from
+ * the server (owner_alert_list, logic/alertInbox.ts): done is what the server knows was done in its page, read / opened
+ * / removed are this person's own, on every device. Without 0098 everything works as before (owner_alerts + the
+ * browser's own guesses, logic/alertHandled.ts). After a step that can handle something (a reply, a decision, an order
+ * moved on, an enquiry saved) the list is read again a few seconds later, so the bell is right when it next opens.
  */
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, useSyncExternalStore, type ReactNode } from 'react';
@@ -39,7 +45,8 @@ import {
   titleWithCount,
   type NeedsItem,
 } from '../logic/needsYou';
-import { getAlerts } from '../shop/alertsApi';
+import { getAlertInbox, getAlerts, markAlertOpenedOnServer, markAlertsReadOnServer, removeAlertOnServer } from '../shop/alertsApi';
+import { markOpened, markRead, markRemoved, recount, todayFromInbox, undoRemoved, type AlertInbox } from '../logic/alertInbox';
 import { turnOnPush } from '../shop/webPushApi';
 import { getTalkCount } from '../shop/memberMessagesApi';
 import { listPhoneLinks, phoneLinkServer } from '../shop/phoneLinkApi';
@@ -75,10 +82,26 @@ interface NeedsValue {
   refresh: (parts?: readonly NeedsPart[]) => Promise<void>;
   /** R-539: the Refresh button: the alerts and every list (the shop's orders too), now. False when the alerts failed. */
   refreshAll: () => Promise<boolean>;
+  /** R-604: this person's bell from the server (0098); null before the first answer or on a server without 0098. */
+  inbox: AlertInbox | null;
+  /** R-604: what this person did, sent to the server (the list changes here at once). */
+  inboxDo: InboxDo;
 }
 
+export interface InboxDo {
+  /** The panel showed these. */
+  read: (ids: readonly string[]) => void;
+  /** Its page was opened (bell or Today). */
+  opened: (id: string) => void;
+  /** The X, and its Undo. */
+  remove: (id: string) => void;
+  undo: (id: string) => void;
+}
+
+const NO_INBOX_DO: InboxDo = { read: () => undefined, opened: () => undefined, remove: () => undefined, undo: () => undefined };
+
 const NeedsContext = createContext<NeedsValue | null>(null);
-const EMPTY: NeedsValue = { items: [], total: 0, alerts: [], facts: null, gymId: '', planRows: null, linkRows: null, refresh: async () => undefined, refreshAll: async () => true };
+const EMPTY: NeedsValue = { items: [], total: 0, alerts: [], facts: null, gymId: '', planRows: null, linkRows: null, refresh: async () => undefined, refreshAll: async () => true, inbox: null, inboxDo: NO_INBOX_DO };
 
 /** The waiting items; nothing outside the provider (the demo gym). */
 export function useNeedsYou(): NeedsValue {
@@ -159,6 +182,8 @@ export function NeedsYouProvider({ children }: { children: ReactNode }) {
   const [linkReadAt, setLinkReadAt] = useState(0);
   // null: not read yet, or the server has no 0075 (then the lists ring instead).
   const [alerts, setAlerts] = useState<GymAlert[] | null>(null);
+  // R-604: this person's list from the server (0098); null until read, or on a server without it.
+  const [inbox, setInbox] = useState<AlertInbox | null>(null);
   // "Only a real change redraws" (a poll that redraws everything jumps the page): one signature per block.
   const sigs = useRef<Record<string, string>>({});
   const changed = (block: string, value: unknown): boolean => {
@@ -281,7 +306,9 @@ export function NeedsYouProvider({ children }: { children: ReactNode }) {
       // a line whose conversation or request was already handled.
       let show: (() => void) | null = null;
       try {
-        const r = await getAlerts(key);
+        // R-604: this person's list from the server (0098) when it has one; else 0075's list, as before.
+        const box = await getAlertInbox(key);
+        const r = box !== 'missing' ? box.open : await getAlerts(key);
         if (r !== 'missing') {
           alertsOn = true;
           const before = knownAlerts.current;
@@ -293,8 +320,11 @@ export function NeedsYouProvider({ children }: { children: ReactNode }) {
           questionLinesRef.current = r.some((a) => a.kind === 'trainer_question' && at - a.at < DAY_MS + 60 * 60_000);
         }
         const next = r === 'missing' ? null : r;
+        // The server's clock moves on every answer: left out of the signature (only a real change redraws).
+        const nextBox = box === 'missing' ? null : { ...box, now: 0 };
         show = () => {
           if (changedRef.current('alerts', next)) setAlerts(next);
+          if (changedRef.current('inbox', nextBox)) setInbox(box === 'missing' ? null : box);
         };
       } catch (e) {
         ok = false;
@@ -317,6 +347,54 @@ export function NeedsYouProvider({ children }: { children: ReactNode }) {
   }, [key, readParts]);
 
   const refreshAll = useCallback(async () => (lookRef.current ? lookRef.current(true) : true), []);
+
+  // R-604: read this person's list again (only the list; on a server without 0098 nothing happens).
+  const reloadInbox = useCallback(async () => {
+    if (!key) return;
+    try {
+      const box = await getAlertInbox(key);
+      if (box === 'missing') return;
+      if (changedRef.current('inbox', { ...box, now: 0 })) setInbox(box);
+      if (changedRef.current('alerts', box.open)) setAlerts(box.open);
+    } catch (e) {
+      console.warn('[ForgeErr] needs you: alerts list again', e);
+    }
+  }, [key]);
+  const reloadRef = useRef(reloadInbox);
+  reloadRef.current = reloadInbox;
+  // What this person did: the list changes here at once, then the server is told, then the list is read again.
+  const inboxDo = useMemo<InboxDo>(() => {
+    const send = (what: string, job: () => Promise<void>) => {
+      void job()
+        .catch((e: unknown) => console.warn(`[ForgeErr] alerts: ${what} not saved`, e))
+        .finally(() => void reloadRef.current());
+    };
+    return {
+      read: (ids) => {
+        if (!key || ids.length === 0) return;
+        setInbox((b) => (b ? markRead(b, new Set(ids)) : b));
+        send('read', () => markAlertsReadOnServer(key, ids));
+      },
+      opened: (id) => {
+        if (!key) return;
+        setInbox((b) => (b ? markOpened(b, id, Date.now()) : b));
+        send('opened', () => markAlertOpenedOnServer(key, id));
+      },
+      remove: (id) => {
+        if (!key) return;
+        setInbox((b) => (b ? markRemoved(b, id, Date.now()) : b));
+        send('remove', () => removeAlertOnServer(key, id, true));
+      },
+      undo: (id) => {
+        if (!key) return;
+        setInbox((b) => (b ? undoRemoved(b, id) : b));
+        send('undo', () => removeAlertOnServer(key, id, false));
+      },
+    };
+  }, [key]);
+  useEffect(() => {
+    setInbox(null);
+  }, [key]);
 
   const plan = useMemo(() => (planRows ?? []).filter((x) => x.status === 'pending').map((x) => x.id), [planRows]);
   const links = useMemo(() => pendingLinks(linkRows ?? []).map((x) => x.id), [linkRows]);
@@ -365,6 +443,12 @@ export function NeedsYouProvider({ children }: { children: ReactNode }) {
   }, [key]);
   // Only what this person may see (a complaint is the owner's alone; the server keeps it from the desk too).
   const mine = useMemo(() => (alerts === null ? null : alertsFor(alerts, role)), [alerts, role]);
+  // R-604: the server already sends only what this person may see; the admin app's own check runs on its list too.
+  const inboxMine = useMemo(() => {
+    if (!inbox) return null;
+    const ok = new Set(alertsFor([...inbox.open, ...inbox.history], role).map((a) => a.id));
+    return recount({ ...inbox, open: inbox.open.filter((a) => ok.has(a.id)), history: inbox.history.filter((a) => ok.has(a.id)) });
+  }, [inbox, role]);
   useEffect(() => {
     if (mine === null) return;
     const fresh = freshAlerts(seenAlerts.current, mine);
@@ -403,9 +487,25 @@ export function NeedsYouProvider({ children }: { children: ReactNode }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [today, talkRead, key, questionRead, planRows, planReadAt, linkRows, linkReadAt, orders, snapshot.enquiries, factsVersion, mine]);
 
+  // R-604: a step that can handle something happened (a reply or answer lowered a count, a request or number was
+  // decided, an order moved on, an enquiry changed): read the list again a few seconds later (the server has it by
+  // then; an enquiry reaches it with the gym's next sync, and the minute's look catches anything later).
+  const inboxOn = inbox !== null;
+  const firstFacts = useRef(true);
+  useEffect(() => {
+    if (firstFacts.current) {
+      firstFacts.current = false;
+      return undefined;
+    }
+    if (!inboxOn) return undefined;
+    const t = window.setTimeout(() => void reloadRef.current(), 3_000);
+    return () => window.clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [talkRead, questionRead, planRows, linkRows, orders, snapshot.enquiries]);
+
   const value = useMemo<NeedsValue>(
-    () => ({ items, total, alerts: mine ?? [], facts, gymId, planRows, linkRows, refresh, refreshAll }),
-    [items, total, mine, facts, gymId, planRows, linkRows, refresh, refreshAll],
+    () => ({ items, total, alerts: mine ?? [], facts, gymId, planRows, linkRows, refresh, refreshAll, inbox: inboxMine, inboxDo }),
+    [items, total, mine, facts, gymId, planRows, linkRows, refresh, refreshAll, inboxMine, inboxDo],
   );
   return <NeedsContext.Provider value={value}>{children}</NeedsContext.Provider>;
 }
@@ -496,7 +596,7 @@ export function NeedsYouCard() {
 
 /** R-506: the latest from members (the last 24 hours) on Today, each line opening its page. Hidden when none. */
 export function LatestAlertsCard() {
-  const { alerts, facts, gymId } = useNeedsYou();
+  const { alerts, facts, gymId, inbox, inboxDo } = useNeedsYou();
   // Fresh eyes (14 Nov 2026): a shop line reads the same orders as "Shop today", so the two always agree.
   const { orders } = useShop();
   // R-593: this visit to Today. News shown in an EARLIER visit is left out; news shown now stays until he leaves.
@@ -504,7 +604,10 @@ export function LatestAlertsCard() {
   const now = Date.now();
   // R-593: only what still needs someone (logic/alertHandled.ts); the bell keeps the whole history.
   const seenInfo = gymId ? seenInfoFor(gymId, visit) : new Set<string>();
-  const list = latestAlerts(facts ? alerts.filter((a) => handledState(a, { ...facts, seenInfo }) === 'waiting') : alerts, now);
+  // R-604: with 0098 the server says what is done (and what this person opened); else the browser's own rules.
+  const list = inbox
+    ? todayFromInbox(inbox, seenInfo, now)
+    : latestAlerts(facts ? alerts.filter((a) => handledState(a, { ...facts, seenInfo }) === 'waiting') : alerts, now);
   const newsShown = list.filter((a) => handledHow(a) === 'info').map((a) => a.id).join(',');
   useEffect(() => {
     setTodayVisit(visit);
@@ -528,7 +631,12 @@ export function LatestAlertsCard() {
             <button
               type="button"
               data-pay-row={tone ?? undefined}
-              onClick={() => navigate(shown.route)}
+              className="tap-line"
+              onClick={() => {
+                // R-604: opened from Today counts as opened (news then leaves this person's bell).
+                if (inbox) inboxDo.opened(a.id);
+                navigate(shown.route);
+              }}
               style={{
                 width: '100%',
                 minHeight: 44,
