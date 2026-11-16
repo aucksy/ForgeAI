@@ -208,7 +208,8 @@ test('Owner on a phone: the bell keeps what is not done, news until opened, X wi
   await expect(cards).toHaveCount(1);
   await expect(cards.first()).toContainText('Neha');
 
-  // A reload (a new tab, the next morning): the same list, from the server.
+  // A reload (a new tab, the next morning): the same list, from the server. (The page is still Members using the app.)
+  await go(page, '/');
   await page.reload();
   await expect(main.getByTestId('latest-alerts')).toContainText('Ravi', { timeout: 15_000 });
   await bell.tap();
