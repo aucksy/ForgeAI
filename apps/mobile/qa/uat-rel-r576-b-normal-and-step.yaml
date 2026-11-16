@@ -81,16 +81,37 @@ appId: com.mettleup.app
     file: sub-find.yaml
     env:
       FIND: "^Heavier weight, so some sets aim for fewer reps than previous[.]$"
+# R-602 (16 Nov 2026, font 2.0 / 360 dp run 43842027998): at a big font the box is so tall that, with the reason
+# line centred, the standing-out "i" (on the box's top line) sits under the top bar, and set 1's small "i" can
+# sit below the edge. Scroll to each before its check (scrollUntilVisible does not move what is in view).
+- scrollUntilVisible:
+    element:
+      id: "target-why-standout-Lateral Raise"
+    direction: UP
+    timeout: 15000
 - assertVisible:
     id: "target-why-standout-Lateral Raise"
+- scrollUntilVisible:
+    element:
+      id: "set-why-Lateral Raise-1"
+    timeout: 15000
 - assertVisible:
     id: "set-why-Lateral Raise-1"
 - takeScreenshot: rel-r576-d-weight-step-reason
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Previous set volume: 1,420.kg · Today's target: 1,440.kg$"
 - tapOn: "^Previous set volume: 1,420.kg · Today's target: 1,440.kg$"
 - runFlow:
     file: sub-find.yaml
     env:
       FIND: "^Sets 1, 2, 3 and 4 get up to 2 extra reps so the total beats previous[.]$"
+- scrollUntilVisible:
+    element:
+      id: "target-why-seen-Lateral Raise"
+    direction: UP
+    timeout: 15000
 - assertVisible:
     id: "target-why-seen-Lateral Raise"
 - assertNotVisible:

@@ -128,6 +128,12 @@ Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept her
   "Up next" below the edge after the 2nd join). uatr438a and ulookd now PASS at font 2.0. Owner plain 43861757297 RED
   at uat5 "Chart shows" (tap on "Heaviest weight" opened a workout instead; unchanged flow, passed in both whole owner
   runs: a one-off). Default 43861753274 running. Fix 2 (test only) follows; partials rerun on it.
+- Fix 2 = 012801b8 (tag qa-rel-079h), CI 43879435649 GREEN (tag CI 43879470390 red once on a dashboard web test,
+  R-593 today-handled, timing; GREEN on rerun). Partials: default 43879470303 GREEN; owner 43879476184 and owner font
+  2.0 43879480647 running. Font 2.0 uat on 719fd05c 43842027998 RED: uat4 (tick not found; passed in 43861761013, so
+  flaky), f199/r438a/f203 (fixed), r576b (the "i" icons above/below the edge at a big font: test fault), r576c
+  (started inside r576b's unfinished workout). Fix 3 (test only): r576b scrolls to each "i" first. Partials on fix 3
+  with u576 added: parts uatc,u199,u203,ulook,u438,u576, default + owner + owner font 2.0.
 
 ## R-601 (16 Nov 2026) Read log alert + 30-day key reminder (R-595; his pick "alert plus 30-day reminder")
 - DEPLOYED 16 Nov ~03:55 IST: HQ version 3129d34b from 5be30bfd after a fresh review (NO BLOCKERS). Live: /readlog/status
