@@ -28,7 +28,9 @@ Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept her
   gets the wish, both fixed). Hinglish: 6 lines in lang/hinglish.ts.
 - Tests: awayIdea.test.ts (switch on with app + no-app, all app = no idea, off = all, unknown = all, the plain list,
   a group draft unchanged); e2e r608-uat.spec.mjs (on: card 1 + only Ravi + See who + Messages to send, at 390, 360 and
-  1280; off: both; all app: no idea). CI: see below.
+  1280; off: both; all app: no idea). CI 43934148340 green (325 e2e passed, unit tests green); pictures read: the card
+  says "Birthdays today, not in the app: 1 / Ravi", See who lists only Ravi Kumar, off shows "Birthdays today: 2 / Asha, Ravi".
+  Also fixed whatsNew.test order checks left stale by R-607 (run 43922194025 had stopped on them).
 - Proposed What's new (not added; the coordinator adds it at the deploy): "Birthday wishes: when the automatic birthday
   wish is on, the AI Assistant and Today ask you to wish only the members who are not in the app. Members in the app get
   the wish on their phone at 9:30 am."
