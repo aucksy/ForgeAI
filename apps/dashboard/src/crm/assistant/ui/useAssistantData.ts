@@ -8,6 +8,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useCan, useRole } from '../../auth/AuthProvider';
 import { appPhones } from '../../logic/audience';
 import * as shopApi from '../../shop/api';
+import { useBirthdayAutoWish } from '../../shop/birthdayAuto';
 import type { AppMember } from '../../shop/logic';
 import type { SentMessage } from '../../shop/messages';
 import { useShop } from '../../shop/ShopProvider';
@@ -27,6 +28,7 @@ export function useAssistantData(key: string | null): AssistantData {
   const role = useRole();
   const seeTotals = useCan()('seeTotals');
   const [gymLang] = useMessageLang();
+  const birthdayAuto = useBirthdayAutoWish();
   const [appMembers, setAppMembers] = useState<AppMember[] | null>(null);
   const [sent, setSent] = useState<SentMessage[] | null>(null);
 
@@ -55,12 +57,13 @@ export function useAssistantData(key: string | null): AssistantData {
       now,
       appPhones: appMembers ? appPhones(appMembers) : null,
       seeTotals,
+      birthdayAuto,
       role,
       sent,
       appMembers,
       gymLang,
     }),
-    [snapshot, memberViews, allMemberViews, today, now, appMembers, seeTotals, role, sent, gymLang],
+    [snapshot, memberViews, allMemberViews, today, now, appMembers, seeTotals, birthdayAuto, role, sent, gymLang],
   );
   return { data, reload };
 }

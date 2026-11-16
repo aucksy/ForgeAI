@@ -7,6 +7,32 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-608 The AI Assistant stops asking for birthday wishes the app already sends (16 Nov 2026)
+- Owner: "the birthdays are set to be automated but the AI assistant is still suggesting that" (his gym has the
+  automatic birthday wish ON; "Today for you" still said "Birthdays today: N · Write birthday wishes"). He approved the
+  direction: count only the members the automatic wish will not reach.
+- How the wish really works: the member's own phone app shows it at 9:30 am, only when the app is linked to their record
+  (`appUserId`, the "Using the app" pill). No app, or an unlinked app: no automatic wish.
+- Built (panel only, no server change): shop/birthdayAuto.ts reads the birthday switch once for the panel
+  (owner_auto_reminders; null when offline/demo/old server/failed = old behaviour; the reminders page passes on each save).
+  With the switch ON: the AI idea reads "Birthdays today, not in the app: N", names only them, its request names them
+  ("Send birthday wishes to <full names>", so the AI drafts for just those people), and "See who" lists the same
+  (list_members input `withoutAutoWish`, our own code only; the AI's tool list is unchanged). Nobody left: no idea.
+  A plain "whose birthday is today?" still lists everyone; with the switch on, app members carry "Gets the automatic wish
+  at 9:30 am" and the button is "Wish the ones not in the app". Today's "Messages to send" says
+  "N members not in the app have a birthday today" (none: no row). Switch off or unknown: everything as before.
+- Left as is: the "Birthdays today" count tile on Today (a fact, not a nudge); Messages > "Birthday wish" still lists
+  every birthday member when opened (a tool he opens on purpose); a message the AI drafts for the whole group
+  "birthday_today" when he types that himself.
+- Words checked with member-words (fresh-reader pass: "without the app" read oddly and the plain list did not say who
+  gets the wish, both fixed). Hinglish: 6 lines in lang/hinglish.ts.
+- Tests: awayIdea.test.ts (switch on with app + no-app, all app = no idea, off = all, unknown = all, the plain list,
+  a group draft unchanged); e2e r608-uat.spec.mjs (on: card 1 + only Ravi + See who + Messages to send, at 390, 360 and
+  1280; off: both; all app: no idea). CI: see below.
+- Proposed What's new (not added; the coordinator adds it at the deploy): "Birthday wishes: when the automatic birthday
+  wish is on, the AI Assistant and Today ask you to wish only the members who are not in the app. Members in the app get
+  the wish on their phone at 9:30 am."
+
 ## R-607 0098 is LIVE; bell news moved to What's new for the panel deploy (16 Nov 2026)
 - Owner: "yes 0098", then "retry 0098", "lets go with 1", "go 0098" (16 Nov).
 - apply_migration was "declined" twice: the desktop app hides Supabase MCP's own SQL confirmation form and answers no.

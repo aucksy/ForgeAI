@@ -8,8 +8,8 @@ import { diffDays, isValidDateISO } from '../logic/dates';
 import { formatINR, sumPaise } from '../logic/money';
 import { owedListOn } from '../logic/ownerNumbers';
 import { isMonday } from '../logic/weekSummary';
-import { awayDays, membersInGroup, type AnswerData } from './answer';
-import { line, type Line, type ToolInputs } from './catalogue';
+import { awayDays, birthdayWishRequest, membersInGroup, type AnswerData, type ListInput } from './answer';
+import { line, type Line } from './catalogue';
 import type { MemberView, Membership } from '../types';
 import { festivalsWithin } from './festivals';
 
@@ -33,14 +33,14 @@ export interface Suggestion {
    * R-593: "See who": the same list behind the number, shown on the assistant's screen by our own code (no AI, free,
    * works offline). Null when there is no member list to show.
    */
-  show: { tool: 'list_members'; input: ToolInputs['list_members'] } | null;
+  show: { tool: 'list_members'; input: ListInput } | null;
 }
 
 /** A group's list for "See who" (the defaults of list_members' other filters). */
 type MemberGroup = 'ending' | 'away' | 'birthday_today' | 'ended';
-const listOf = (group: MemberGroup, days: number): NonNullable<Suggestion['show']> => ({
+const listOf = (group: MemberGroup, days: number, withoutAutoWish = false): NonNullable<Suggestion['show']> => ({
   tool: 'list_members',
-  input: { group, days, plan: '', batch: '', trainer: '', gender: '' },
+  input: { group, days, plan: '', batch: '', trainer: '', gender: '', ...(withoutAutoWish ? { withoutAutoWish } : {}) },
 });
 
 /** How many names an idea shows before "and N more". */
@@ -68,7 +68,8 @@ export const WINBACK_DAYS = 30;
 /** Festivals this close come before the member lists (a greeting has a deadline). */
 const FESTIVAL_URGENT_DAYS = 2;
 
-const groupOf = (d: AnswerData, group: MemberGroup, days: number): MemberView[] => membersInGroup(listOf(group, days).input, d) ?? [];
+const groupOf = (d: AnswerData, group: MemberGroup, days: number, withoutAutoWish = false): MemberView[] =>
+  membersInGroup(listOf(group, days, withoutAutoWish).input, d) ?? [];
 
 function termsOf(d: AnswerData): Map<string, Membership[]> {
   const out = new Map<string, Membership[]>();
@@ -87,15 +88,19 @@ export function todaySuggestions(d: AnswerData): Suggestion[] {
     if (s.count > 0) ranked.push({ rank, s });
   };
 
-  const birthdays = groupOf(d, 'birthday_today', 0);
+  // R-608 (owner, 16 Nov 2026: "the birthdays are set to be automated but the AI assistant is still suggesting that"):
+  // with the automatic birthday wish on, the idea counts, names, asks for and lists only the members it will not reach
+  // (no app linked to their record); none left: no idea. Off, or not known (offline): every birthday, as before.
+  const autoWish = d.birthdayAuto === true;
+  const birthdays = groupOf(d, 'birthday_today', 0, autoWish);
   add(10, {
     id: 'birthdays',
     count: birthdays.length,
-    words: line('Birthdays today: {n}', { n: birthdays.length }),
+    words: autoWish ? line('Birthdays today, not in the app: {n}', { n: birthdays.length }) : line('Birthdays today: {n}', { n: birthdays.length }),
     action: line('Write birthday wishes'),
-    request: 'Send birthday wishes to members whose birthday is today',
+    request: birthdayWishRequest(birthdays, autoWish),
     who: whoLines(birthdays),
-    show: listOf('birthday_today', 0),
+    show: listOf('birthday_today', 0, autoWish),
   });
 
   const fest = festivalsWithin(d.today)[0];

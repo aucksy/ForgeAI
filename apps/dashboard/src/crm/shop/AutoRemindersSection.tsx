@@ -27,6 +27,7 @@ import { isNoSuchFunction } from '../logic/workoutOffer';
 import { useCrm } from '../store';
 import { Button, Card, EmptyState, ErrorBanner, SectionTitle, TextField, Toast, color, font, space } from '../ui/kit';
 import * as api from './api';
+import { noteAutoReminders } from './birthdayAuto';
 import { errorWords } from './logic';
 
 const quiet = { margin: 0, fontFamily: font.body, fontSize: 13, color: color.inkSecondary } as const;
@@ -60,11 +61,16 @@ export function AutoRemindersSection() {
   const [busy, setBusy] = useState(false);
   const toastTimer = useRef<number | undefined>(undefined);
 
-  const take = useCallback((a: RemindersAnswer) => {
-    setAnswer(a);
-    setDraft(a.settings);
-    setTexts(textsOf(a.settings));
-  }, []);
+  const take = useCallback(
+    (a: RemindersAnswer) => {
+      setAnswer(a);
+      setDraft(a.settings);
+      setTexts(textsOf(a.settings));
+      // R-608: the AI Assistant's birthday idea and Today's "Messages to send" follow the birthday switch at once.
+      if (key) noteAutoReminders(key, a);
+    },
+    [key],
+  );
 
   useEffect(() => {
     if (!key) return;

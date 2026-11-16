@@ -1311,6 +1311,13 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   'This was done already.': 'Yeh pehle hi ho chuka hai.',
   'The AI credits could not be checked. Check the internet and try again.': 'AI credits check nahi ho paaye. Internet check karke phir try karo.',
   'Birthdays today: {n}': 'Aaj birthday: {n}',
+  // R-608 (owner, 16 Nov 2026): the automatic birthday wish is on, so only the members it will not reach.
+  'Birthdays today, not in the app: {n}': 'Aaj birthday, app mein nahi: {n}',
+  'Birthdays today, not in the app': 'Aaj birthday, app mein nahi',
+  'Wish the ones not in the app': 'Jo app mein nahi hain, unhe wish karo',
+  'Gets the automatic wish at 9:30 am': 'Subah 9:30 baje app mein automatic wish milegi',
+  '1 member not in the app has a birthday today': 'Aaj 1 member ka birthday hai jo app mein nahi hai',
+  '{n} members not in the app have a birthday today': 'Aaj {n} members ka birthday hai jo app mein nahi hain',
   // R-593 (owner, 16 Nov 2026): the names on an idea and its "See who" (for his read-aloud check).
   '{names}': '{names}',
   '{names} and {n} more': '{names} aur baaki {n}',

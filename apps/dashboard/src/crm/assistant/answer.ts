@@ -55,6 +55,30 @@ export interface AnswerData {
   appPhones: ReadonlySet<string> | null;
   /** False for desk staff: money totals stay with the owner, as on the pages (owner-only pages). */
   seeTotals: boolean;
+  /**
+   * R-608: is the gym's automatic birthday wish on (Messages & offers > Automatic reminders)? null or left out = not
+   * known (offline, still loading, a server without it): every birthday is suggested, as before.
+   */
+  birthdayAuto?: boolean | null;
+}
+
+/**
+ * R-608 (owner, 16 Nov 2026): with the automatic birthday wish on, the member's own phone shows the wish at 9:30 am,
+ * but only when their app is linked to their record on the gym's list (`appUserId`, the "Using the app" pill). The
+ * others get no automatic wish: they are the ones to wish by hand. PURE.
+ */
+export const getsAutoWish = (v: Pick<MemberView, 'member'>): boolean => Boolean(v.member.appUserId);
+
+/**
+ * list_members' input, plus R-608's filter used only by our own code (the "See who" of the birthday idea; the AI's
+ * tool list does not have it): birthday_today without the members who get the automatic wish.
+ */
+export type ListInput = ToolInputs['list_members'] & { withoutAutoWish?: boolean };
+
+/** R-608: the sentence that asks for birthday wishes: the named members when only some need one, else everyone's. PURE. */
+export function birthdayWishRequest(group: readonly MemberView[], onlyThese: boolean): string {
+  if (!onlyThese || group.length === 0) return 'Send birthday wishes to members whose birthday is today';
+  return `Send birthday wishes to ${group.map((v) => v.member.fullName.trim()).join(', ')}`;
 }
 
 export interface AnswerRow {
@@ -237,7 +261,7 @@ interface Listed {
 }
 
 /** The members of a group (list_members' filters), or the card that says why there is no list. */
-function listGroup(input: ToolInputs['list_members'], d: AnswerData): Listed | AnswerResult {
+function listGroup(input: ListInput, d: AnswerData): Listed | AnswerResult {
   const { snapshot: s, today } = d;
   const views = d.views;
   const aud = { views, members: s.members, memberships: s.memberships, visits: s.visits, today };
@@ -298,12 +322,26 @@ function listGroup(input: ToolInputs['list_members'], d: AnswerData): Listed | A
       followUps = [{ label: line('Send them a “we miss you” message'), request: 'Send a we miss you message to members who stopped coming' }];
       break;
     }
-    case 'birthday_today':
+    case 'birthday_today': {
       group = views.filter((v) => isBirthdayToday(v.member.dateOfBirth, today));
       headline = line('Birthdays today');
       detail = () => null;
-      followUps = [{ label: line('Send birthday wishes'), request: 'Send birthday wishes to members whose birthday is today' }];
+      // R-608: the birthday idea's "See who" lists only those the automatic wish will not reach. A plain "whose birthday
+      // is today?" still lists everyone, and with the wish on its button asks only for the others (none: no button).
+      const noWish = group.filter((v) => !getsAutoWish(v));
+      if (input.withoutAutoWish) {
+        group = noWish;
+        headline = line('Birthdays today, not in the app');
+        followUps = [{ label: line('Send birthday wishes'), request: birthdayWishRequest(noWish, true) }];
+      } else if (d.birthdayAuto === true) {
+        // Each row says who the phone wishes (fresh-reader check: the button covers only some of the list).
+        detail = (v) => (getsAutoWish(v) ? line('Gets the automatic wish at 9:30 am') : null);
+        followUps = noWish.length > 0 ? [{ label: line('Wish the ones not in the app'), request: birthdayWishRequest(noWish, true) }] : [];
+      } else {
+        followUps = [{ label: line('Send birthday wishes'), request: birthdayWishRequest(group, false) }];
+      }
       break;
+    }
     case 'birthday_week':
       group = views.filter((v) => birthdayThisWeek(v.member.dateOfBirth, today));
       headline = line('Birthdays in the next 7 days');
@@ -386,7 +424,7 @@ function listGroup(input: ToolInputs['list_members'], d: AnswerData): Listed | A
   return { kind: 'list', group, headline, detail, seeAll, followUps };
 }
 
-function listMembers(input: ToolInputs['list_members'], d: AnswerData): AnswerResult {
+function listMembers(input: ListInput, d: AnswerData): AnswerResult {
   // "Who owes" as a list is the Dues card, with its total.
   if (input.group === 'owes') return whoOwes({ member: '' }, d);
   const l = listGroup(input, d);
@@ -399,7 +437,7 @@ function listMembers(input: ToolInputs['list_members'], d: AnswerData): AnswerRe
  * The members of a group, for a message (plan.ts): the same lists the answers show. Null when the group
  * cannot be listed (an unknown plan or batch, money for desk staff, the app list not loaded).
  */
-export function membersInGroup(input: ToolInputs['list_members'], d: AnswerData): MemberView[] | null {
+export function membersInGroup(input: ListInput, d: AnswerData): MemberView[] | null {
   const l = listGroup(input, d);
   return l.kind === 'list' ? l.group : null;
 }

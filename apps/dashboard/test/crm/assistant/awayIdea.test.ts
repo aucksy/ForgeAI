@@ -170,3 +170,81 @@ describe('the idea names its members and has "See who" (R-593)', () => {
     expect(s.find((x) => x.id === 'birthdays')?.who).toEqual([{ text: '{names}', vars: { names: 'Preeti' } }]);
   });
 });
+
+// R-608 (owner, 16 Nov 2026: "the birthdays are set to be automated but the AI assistant is still suggesting that"): with
+// the gym's automatic birthday wish on, a member whose app is linked to their record (appUserId) is wished by their own
+// phone at 9:30 am. The birthday idea then counts, names, asks for and lists only the others; none left: no idea.
+// Off, or not known (offline, still loading): every birthday, as before.
+describe('R-608 the birthday idea with the automatic birthday wish', () => {
+  /** Preeti (birthday today, no app linked) and Arjun (birthday today, app linked). */
+  function bdayGym(preetiApp = false): CrmSnapshot {
+    const base = fixtureGym();
+    const members = base.members.map((m) => (m.id === 'm_preeti' && preetiApp ? { ...m, appUserId: 'user_preeti' } : m));
+    members.push(makeMember({ id: 'm_arjun', fullName: 'Arjun Nair', phone: '+919800000099', dateOfBirth: '1992-11-12', joinedOn: '2026-01-05', appUserId: 'user_arjun' }));
+    return { ...base, members };
+  }
+  const idea = (birthdayAuto: boolean | null | undefined, preetiApp = false) =>
+    todaySuggestions(answerData({ snapshot: bdayGym(preetiApp), birthdayAuto })).find((s) => s.id === 'birthdays');
+  const listCard = (r: AnswerResult) => {
+    if (r.kind !== 'card') throw new Error(`expected a card, got ${r.kind}`);
+    return r.card;
+  };
+  const birthdayList = (over: Partial<ToolInputs['list_members']> & { withoutAutoWish?: boolean } = {}) => ({ group: 'birthday_today' as const, days: 0, plan: '', batch: '', trainer: '', gender: '' as const, ...over });
+
+  it('switch on, one with the app and one without: the idea is about the one without, and See who lists the same', () => {
+    const s = idea(true)!;
+    expect(s.count).toBe(1);
+    expect(s.words).toEqual({ text: 'Birthdays today, not in the app: {n}', vars: { n: 1 } });
+    expect(s.action).toEqual({ text: 'Write birthday wishes' });
+    expect(s.who).toEqual([{ text: '{names}', vars: { names: 'Preeti' } }]);
+    expect(s.request).toBe('Send birthday wishes to Preeti Sharma');
+    expect(s.show?.input.withoutAutoWish).toBe(true);
+    const d = answerData({ snapshot: bdayGym(), birthdayAuto: true });
+    const card = listCard(answerAsk('list_members', s.show!.input, d));
+    expect(card.rows.map((r) => r.memberId)).toEqual(['m_preeti']);
+    expect(card.headline).toEqual({ text: 'Birthdays today, not in the app' });
+    expect(card.followUps).toEqual([{ label: { text: 'Send birthday wishes' }, request: 'Send birthday wishes to Preeti Sharma' }]);
+  });
+
+  it('switch on and every birthday member has the app: no birthday idea at all', () => {
+    expect(idea(true, true)).toBeUndefined();
+  });
+
+  it('switch off: every birthday, as before', () => {
+    const s = idea(false)!;
+    expect(s.count).toBe(2);
+    expect(s.words).toEqual({ text: 'Birthdays today: {n}', vars: { n: 2 } });
+    expect(s.request).toBe('Send birthday wishes to members whose birthday is today');
+    expect(s.show?.input.withoutAutoWish).toBeUndefined();
+    const card = listCard(answerAsk('list_members', s.show!.input, answerData({ snapshot: bdayGym(), birthdayAuto: false })));
+    expect(card.rows.map((r) => r.memberId).sort()).toEqual(['m_arjun', 'm_preeti']);
+  });
+
+  it('not known (offline, loading, an old server): every birthday, as before', () => {
+    for (const notKnown of [null, undefined]) {
+      const s = idea(notKnown)!;
+      expect(s.count, String(notKnown)).toBe(2);
+      expect(s.words.text).toBe('Birthdays today: {n}');
+      expect(s.request).toBe('Send birthday wishes to members whose birthday is today');
+    }
+  });
+
+  it('"whose birthday is today?" still lists everyone; with the switch on each app member says so, and the button asks only for the rest', () => {
+    const on = listCard(answerAsk('list_members', birthdayList(), answerData({ snapshot: bdayGym(), birthdayAuto: true })));
+    expect(on.rows.map((r) => r.memberId).sort()).toEqual(['m_arjun', 'm_preeti']);
+    expect(on.rows.find((r) => r.memberId === 'm_arjun')?.detail).toEqual({ text: 'Gets the automatic wish at 9:30 am' });
+    expect(on.rows.find((r) => r.memberId === 'm_preeti')?.detail).toBeNull();
+    expect(on.followUps).toEqual([{ label: { text: 'Wish the ones not in the app' }, request: 'Send birthday wishes to Preeti Sharma' }]);
+    const allApp = listCard(answerAsk('list_members', birthdayList(), answerData({ snapshot: bdayGym(true), birthdayAuto: true })));
+    expect(allApp.rows).toHaveLength(2);
+    expect(allApp.followUps).toEqual([]);
+    const off = listCard(answerAsk('list_members', birthdayList(), answerData({ snapshot: bdayGym(), birthdayAuto: false })));
+    expect(off.followUps).toEqual([{ label: { text: 'Send birthday wishes' }, request: 'Send birthday wishes to members whose birthday is today' }]);
+    expect(off.rows.every((r) => r.detail === null)).toBe(true);
+  });
+
+  it('a message drafted for "birthday_today" (the AI picked the group) still reaches every birthday member', () => {
+    const group = membersInGroup(birthdayList(), answerData({ snapshot: bdayGym(), birthdayAuto: true }));
+    expect(group?.map((v) => v.member.id).sort()).toEqual(['m_arjun', 'm_preeti']);
+  });
+});

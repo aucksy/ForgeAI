@@ -7,11 +7,12 @@ import { useSyncExternalStore, type CSSProperties, type ReactNode } from 'react'
 
 import { t } from '../../lang/lang';
 import { Button, TOUCH, color, font, radius, space } from '../../ui/kit';
-import type { Line, ToolInputs } from '../catalogue';
+import type { ListInput } from '../answer';
+import type { Line } from '../catalogue';
 import { groupLabelText } from '../../ui/GroupLabel';
 
 /** A member list the assistant shows by itself (an idea's "See who"). */
-export type ShowList = { tool: 'list_members'; input: ToolInputs['list_members'] };
+export type ShowList = { tool: 'list_members'; input: ListInput };
 
 /** A Line in the owner's language (English or Hinglish). */
 export function say(l: Line): string {
