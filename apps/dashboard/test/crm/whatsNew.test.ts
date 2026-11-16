@@ -105,7 +105,8 @@ describe('the list itself', () => {
 describe('the 15 Nov 2026 deploy (R-589)', () => {
   it('names what went live and nothing that is still off or waiting for the gym server', () => {
     const entry = ADMIN_NEWS.find((e) => e.id === '2026-11-15')!;
-    expect(ADMIN_NEWS[1]).toBe(entry);
+    // R-607 put the bell's 17 Nov entry on top: this one is third.
+    expect(ADMIN_NEWS[2]).toBe(entry);
     const all = entry.lines.map((l) => l.text).join(' ');
     for (const fact of ['10-digit number', 'Share app link', 'day first', 'Let people join your gym online', 'Branding', 'Saved ✓', 'round button', 'Send a test alert']) {
       expect(all, fact).toContain(fact);
@@ -121,9 +122,9 @@ describe('the 15 Nov 2026 deploy (R-589)', () => {
 // R-600 (16 Nov 2026): the panel deploy publishes R-593's Today lines. R-586's message recipient ("To: ...") waits for
 // member app 0.79.0 in production.
 describe('the 16 Nov 2026 deploy (R-600)', () => {
-  it('is the newest update: the Today lines moved out of pending; the recipient lines wait, with the real words', () => {
+  it('comes right after the 17 Nov bell update: the Today lines moved out of pending; the recipient lines wait, with the real words', () => {
     const entry = ADMIN_NEWS.find((e) => e.id === '2026-11-16')!;
-    expect(ADMIN_NEWS[0]).toBe(entry);
+    expect(ADMIN_NEWS[1]).toBe(entry);
     expect(entry.lines[0].text).toContain('Today now shows only what still needs you');
     const all = entry.lines.map((l) => l.text).join(' ');
     for (const fact of ['See who', 'small phones']) expect(all, fact).toContain(fact);
