@@ -40,6 +40,12 @@ Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept her
   u439 a/b, u454 a + row, u576 a, u436 a.
 - NEXT: partial runs (only=ua,u454 default; only=u439,u454,u576,u436 owner), then the full round on the same commit:
   emulator + uat, owner + uat, uat font 2.0/360 dp, phone conditions, cross-role journeys, Wear OS build. Run ids below.
+- Runs on 6f893b2e: CI 43809737473 GREEN; partial ua,u454 default 43809751891 GREEN (uatr454a passed with the fix);
+  partial u439,u454,u576,u436 owner 43809754655 and j2,j3 owner 43809774231 (is J3 repeatable?) running.
+- FULL ROUND dispatched on 496cb688 (main had moved: other helpers pushed c1c17b94 admin icon + 496cb688 0098 file,
+  no phone-app change; a whole run on the tag commit itself is gate rule 1): emulator + uat 43817100950, owner + uat
+  43817104084, uat font 2.0/360 dp owner 43817107325, phone conditions 43817110240, journeys 43817112692, Wear OS
+  build 43817115099. Tag only a commit these passed on (or one whose later diff is notes only).
 
 ## R-601 (16 Nov 2026) Read log alert + 30-day key reminder (R-595; his pick "alert plus 30-day reminder")
 - DEPLOYED 16 Nov ~03:55 IST: HQ version 3129d34b from 5be30bfd after a fresh review (NO BLOCKERS). Live: /readlog/status
