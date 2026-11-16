@@ -165,7 +165,7 @@ self.addEventListener('push', (e) => {
   const n = pushNotice(m);
   e.waitUntil(
     (async () => {
-      await self.registration.showNotification(n.title, { body: n.body, tag: n.tag, icon: '/icons/admin-192.png', badge: '/icons/admin-192.png', data: { route: n.route } });
+      await self.registration.showNotification(n.title, { body: n.body, tag: n.tag, icon: '/brand/admin-icon-192.png', badge: '/brand/admin-icon-192.png', data: { route: n.route } });
       const test = testAlertId(n.tag);
       if (test) await testShown(test);
     })(),
