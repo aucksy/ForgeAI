@@ -104,6 +104,15 @@ Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept her
   J3 scrolls the row into view. Partials j2,j3 on 148fa669: owner 43821923647, default 43821926843.
 - APP QUESTION (not fixed, not new in 0.79.0: drag code unchanged since Oct): twice a dragged-up card ended LOWER
   (43796622071: Lateral Raise to the bottom). Possible cause: the held card's offset follows the list scroll (dragShift).
+- ROUND on 496cb688: emulator + uat 43817100950 GREEN, owner + uat 43817104084 GREEN (J3 passed this time),
+  journeys 43817112692 GREEN, conditions 43817110240 GREEN, Wear OS 43817115099 GREEN, font 2.0 uat 43817107325 running.
+  BUT CI 43815460386 on 496cb688 is RED (another helper's 0098 database test, fixed later in e2799d85), and the release
+  gate needs CI green on the tagged commit. j2,j3 on 148fa669: default 43821926843 GREEN, owner 43821923647 RED (J3
+  dropped Lateral Raise at the bottom again). J3 owner history: 7 of 7 passes on 8-14 Nov builds; on 0.79.0 builds 2
+  passes, 3 fails (2 "dropped at the bottom", 1 test grab fault). Looks like a 0.79.0 change; cause not found.
+- ROUND 2 on tag qa-rel-079f = 719fd05c (main tip, CI 43833567273 GREEN; both test fixes; no phone-app change since
+  930ebf77 apart from apps/mobile/qa): emulator + uat 43841923587, owner + uat 43841927489, journeys 43841931157,
+  conditions 43841935528, Wear OS 43841939870, font 2.0 uat 43842027998. Tag v0.79.0 only on 719fd05c if green.
 
 ## R-601 (16 Nov 2026) Read log alert + 30-day key reminder (R-595; his pick "alert plus 30-day reminder")
 - DEPLOYED 16 Nov ~03:55 IST: HQ version 3129d34b from 5be30bfd after a fresh review (NO BLOCKERS). Live: /readlog/status
