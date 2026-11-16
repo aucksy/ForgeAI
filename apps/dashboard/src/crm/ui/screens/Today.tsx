@@ -19,7 +19,7 @@ import { JoinedOnlineCard } from '../JoinedOnlineCard';
 import { LatestAlertsCard, NeedsYouCard } from '../NeedsYou';
 import { TodayAiCard } from '../../assistant/ui/TodayAiCard';
 import { getsAutoWish } from '../../assistant/answer';
-import { useBirthdayAutoWish } from '../../shop/birthdayAuto';
+import { useAutoWish } from '../../shop/birthdayAuto';
 import { TrialBanner } from '../TrialBanner';
 import { LapseBanner, useLapseWords } from '../LapseBanner';
 import { RenewReminder, useRenewWords } from '../BillingOnline';
@@ -534,24 +534,27 @@ function WeekSummaryCard() {
  * Messages & offers step 1 (22 Oct 2026, R-offers-notices §6): "3 birthdays today", "5 plans end this
  * week", each opening the ready message with its group picked. The owner's (messages are owner-only);
  * gone when there is nobody to message. R-608 (16 Nov 2026): with the automatic birthday wish on, only the birthdays
- * it will not reach (no app linked to the record) are counted, as on the AI Assistant's idea; none: no row.
+ * it will not reach are counted (logic/autoWish.ts), as on the AI Assistant's idea; none: no row. Online and not
+ * answered yet: no birthday row for that moment.
  */
 function MessageNudges() {
   const { memberViews, today } = useCrm();
   const role = useRole();
-  const autoWish = useBirthdayAutoWish() === true;
+  const wish = useAutoWish();
+  const ids = wish instanceof Set ? wish : null;
   const counts = useMemo(
     () => ({
-      birthdays: memberViews.filter((v) => isBirthdayToday(v.member.dateOfBirth, today) && !(autoWish && getsAutoWish(v))).length,
+      birthdays:
+        wish === 'waiting' ? 0 : memberViews.filter((v) => isBirthdayToday(v.member.dateOfBirth, today) && !(ids && getsAutoWish(v, ids))).length,
       ending: memberViews.filter((v) => endingSoon(v)).length,
     }),
-    [memberViews, today, autoWish],
+    [memberViews, today, wish, ids],
   );
   if (!canOpen(role, '/messages') || (counts.birthdays === 0 && counts.ending === 0)) return null;
-  const birthdayText = autoWish
+  const birthdayText = ids
     ? counts.birthdays === 1
-      ? t('1 member not in the app has a birthday today')
-      : t('{n} members not in the app have a birthday today', { n: counts.birthdays })
+      ? t('1 member gets no automatic birthday wish today')
+      : t('{n} members get no automatic birthday wish today', { n: counts.birthdays })
     : counts.birthdays === 1
       ? t('1 birthday today')
       : t('{n} birthdays today', { n: counts.birthdays });

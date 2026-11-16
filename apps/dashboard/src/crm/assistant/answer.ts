@@ -55,19 +55,22 @@ export interface AnswerData {
   appPhones: ReadonlySet<string> | null;
   /** False for desk staff: money totals stay with the owner, as on the pages (owner-only pages). */
   seeTotals: boolean;
-  /**
-   * R-608: is the gym's automatic birthday wish on (Messages & offers > Automatic reminders)? null or left out = not
-   * known (offline, still loading, a server without it): every birthday is suggested, as before.
-   */
-  birthdayAuto?: boolean | null;
+  /** R-608: the automatic birthday wish (see AutoWish). Left out = null. */
+  autoWish?: AutoWish;
 }
 
 /**
- * R-608 (owner, 16 Nov 2026): with the automatic birthday wish on, the member's own phone shows the wish at 9:30 am,
- * but only when their app is linked to their record on the gym's list (`appUserId`, the "Using the app" pill). The
- * others get no automatic wish: they are the ones to wish by hand. PURE.
+ * R-608 (owner, 16 Nov 2026): the automatic birthday wish, as the panel knows it (shop/birthdayAuto.ts):
+ *  - a set: the switch is ON, and these list members get the wish on their own phone (logic/autoWish.ts, the server's
+ *    own rule), so only the others are suggested;
+ *  - 'waiting': online and the server has not answered yet: no birthday idea or row for now (never a count that
+ *    jumps down a moment later);
+ *  - null: the switch is off, or it cannot be known (offline, demo, a failed or old server): every birthday, as before.
  */
-export const getsAutoWish = (v: Pick<MemberView, 'member'>): boolean => Boolean(v.member.appUserId);
+export type AutoWish = ReadonlySet<string> | 'waiting' | null;
+
+/** R-608: does this member get the automatic birthday wish? PURE. */
+export const getsAutoWish = (v: Pick<MemberView, 'member'>, ids: ReadonlySet<string>): boolean => ids.has(v.member.id);
 
 /**
  * list_members' input, plus R-608's filter used only by our own code (the "See who" of the birthday idea; the AI's
@@ -328,15 +331,20 @@ function listGroup(input: ListInput, d: AnswerData): Listed | AnswerResult {
       detail = () => null;
       // R-608: the birthday idea's "See who" lists only those the automatic wish will not reach. A plain "whose birthday
       // is today?" still lists everyone, and with the wish on its button asks only for the others (none: no button).
-      const noWish = group.filter((v) => !getsAutoWish(v));
-      if (input.withoutAutoWish) {
+      const ids = d.autoWish instanceof Set ? d.autoWish : null;
+      const noWish = ids ? group.filter((v) => !getsAutoWish(v, ids)) : group;
+      if (input.withoutAutoWish && ids) {
         group = noWish;
-        headline = line('Birthdays today, not in the app');
+        headline = line('Birthdays today, no automatic wish');
         followUps = [{ label: line('Send birthday wishes'), request: birthdayWishRequest(noWish, true) }];
-      } else if (d.birthdayAuto === true) {
+      } else if (ids) {
         // Each row says who the phone wishes (fresh-reader check: the button covers only some of the list).
-        detail = (v) => (getsAutoWish(v) ? line('Gets the automatic wish at 9:30 am') : null);
-        followUps = noWish.length > 0 ? [{ label: line('Wish the ones not in the app'), request: birthdayWishRequest(noWish, true) }] : [];
+        detail = (v) => (getsAutoWish(v, ids) ? line('Gets the automatic wish at 9:30 am') : line('No automatic wish'));
+        const label =
+          noWish.length <= 3
+            ? line('Wish {names}', { names: noWish.map((v) => v.member.fullName.trim().split(/\s+/)[0] || v.member.fullName).join(', ') })
+            : line('Wish the other {n}', { n: noWish.length });
+        followUps = noWish.length > 0 ? [{ label, request: birthdayWishRequest(noWish, true) }] : [];
       } else {
         followUps = [{ label: line('Send birthday wishes'), request: birthdayWishRequest(group, false) }];
       }

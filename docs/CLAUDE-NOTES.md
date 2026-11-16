@@ -7,33 +7,42 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
-## R-608 The AI Assistant stops asking for birthday wishes the app already sends (16 Nov 2026)
+## R-608 The AI Assistant stops asking for birthday wishes the app already sends (16-17 Nov 2026)
 - Owner: "the birthdays are set to be automated but the AI assistant is still suggesting that" (his gym has the
   automatic birthday wish ON; "Today for you" still said "Birthdays today: N · Write birthday wishes"). He approved the
   direction: count only the members the automatic wish will not reach.
-- How the wish really works: the member's own phone app shows it at 9:30 am, only when the app is linked to their record
-  (`appUserId`, the "Using the app" pill). No app, or an unlinked app: no automatic wish.
-- Built (panel only, no server change): shop/birthdayAuto.ts reads the birthday switch once for the panel
-  (owner_auto_reminders; null when offline/demo/old server/failed = old behaviour; the reminders page passes on each save).
-  With the switch ON: the AI idea reads "Birthdays today, not in the app: N", names only them, its request names them
-  ("Send birthday wishes to <full names>", so the AI drafts for just those people), and "See who" lists the same
-  (list_members input `withoutAutoWish`, our own code only; the AI's tool list is unchanged). Nobody left: no idea.
-  A plain "whose birthday is today?" still lists everyone; with the switch on, app members carry "Gets the automatic wish
-  at 9:30 am" and the button is "Wish the ones not in the app". Today's "Messages to send" says
-  "N members not in the app have a birthday today" (none: no row). Switch off or unknown: everything as before.
+- How the wish really works: the member's phone shows it at 9:30 am only when the server gives it the birthday:
+  member_auto_reminders (0029) -> member_membership (0055): the app member's proven number (checkin_phone) is on
+  exactly one member of the list (not archived; shared = refused) and the first names match (_first_name_key).
+- First build (cffc7f03..2551a70e) used the list member's appUserId. REVIEW BLOCKER (coordinator, 16 Nov): nothing on
+  the server writes appUserId (Crispy Curves: 2 list members, 2 app members, 0 linked), so every birthday still
+  counted, labelled "not in the app". Fixed forward, no server change:
+  - logic/autoWish.ts mirrors the server rule with what the panel already loads: owner_app_members' `phone` (every
+    server step that proves a number writes checkin_phone and phone together since 0016; leaving clears both), one
+    list member with that number among those not archived, firstNameKey = _first_name_key. appUserId = extra yes.
+    Gap (no server change allowed): an old row whose `phone` was typed but never proven (0015 era, or an old app
+    passing p_phone at join) would count as wished when the server does not wish it.
+  - shop/birthdayAuto.ts reads the switch AND the app members (one store, 5-minute re-read while a screen uses it,
+    a late answer for a gym the owner left is dropped, the reminders page passes on each save). Online and not
+    answered yet: 'waiting' = no birthday idea / row for that moment (no count that jumps). Offline, demo, a failed or
+    old server, switch off: as before.
+  - Words (fresh-reader pass twice; "not in the app" was wrong for an app member without a proven number):
+    idea "Birthdays today, no automatic wish: N" + "Write birthday wishes"; See who title "Birthdays today, no
+    automatic wish"; plain "whose birthday is today?" rows say "Gets the automatic wish at 9:30 am" / "No automatic
+    wish", button "Wish {names}" (4+: "Wish the other {n}"); Today "N members get no automatic birthday wish today".
+    Hinglish in lang/hinglish.ts (old "not in the app" lines removed).
 - Left as is: the "Birthdays today" count tile on Today (a fact, not a nudge); Messages > "Birthday wish" still lists
-  every birthday member when opened (a tool he opens on purpose); a message the AI drafts for the whole group
-  "birthday_today" when he types that himself.
-- Words checked with member-words (fresh-reader pass: "without the app" read oddly and the plain list did not say who
-  gets the wish, both fixed). Hinglish: 6 lines in lang/hinglish.ts.
-- Tests: awayIdea.test.ts (switch on with app + no-app, all app = no idea, off = all, unknown = all, the plain list,
-  a group draft unchanged); e2e r608-uat.spec.mjs (on: card 1 + only Ravi + See who + Messages to send, at 390, 360 and
-  1280; off: both; all app: no idea). CI 43934148340 green (325 e2e passed, unit tests green); pictures read: the card
-  says "Birthdays today, not in the app: 1 / Ravi", See who lists only Ravi Kumar, off shows "Birthdays today: 2 / Asha, Ravi".
-  Also fixed whatsNew.test order checks left stale by R-607 (run 43922194025 had stopped on them).
+  every birthday member (a tool he opens on purpose); a message the AI drafts for the whole group "birthday_today"
+  when he types that himself.
+- Tests: awayIdea.test.ts R-608 block (app member with matching number and first name; no proven number like Crispy's
+  Digvijay = NOT wished; name mismatch; shared number; archived not sharing; appUserId extra; waiting = no idea; off;
+  unknown; plain list). e2e r608-uat.spec.mjs: Asha in the app with her number, Ravi in the app with no number (still
+  counted); all wished = no idea; off = both; 390, 360, 1280. First build: CI 43934148340 green. Fix: CI below.
+- Also fixed whatsNew.test order checks left stale by R-607 (58aa692f).
 - Proposed What's new (not added; the coordinator adds it at the deploy): "Birthday wishes: when the automatic birthday
-  wish is on, the AI Assistant and Today ask you to wish only the members who are not in the app. Members in the app get
-  the wish on their phone at 9:30 am."
+  wish is on, the AI Assistant and Today ask you to wish only the members who will not get it. A member gets the
+  automatic wish on their phone at 9:30 am once they use the MettleUp app with the same mobile number and first name
+  as on your member list."
 
 ## R-607 0098 is LIVE; bell news moved to What's new for the panel deploy (16 Nov 2026)
 - Owner: "yes 0098", then "retry 0098", "lets go with 1", "go 0098" (16 Nov).

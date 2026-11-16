@@ -7,7 +7,7 @@ import { useMemo } from 'react';
 
 import { useCan } from '../../auth/AuthProvider';
 import { t } from '../../lang/lang';
-import { useBirthdayAutoWish } from '../../shop/birthdayAuto';
+import { useAutoWish } from '../../shop/birthdayAuto';
 import { useShop } from '../../shop/ShopProvider';
 import { useCrm } from '../../store';
 import { color, font, space, useIsCompact } from '../../ui/kit';
@@ -22,10 +22,10 @@ export function TodayAiCard() {
   const { now } = useShop();
   const seeTotals = useCan()('seeTotals');
   const compact = useIsCompact();
-  const birthdayAuto = useBirthdayAutoWish();
+  const autoWish = useAutoWish();
   const ideas = useMemo(
-    () => (on ? todaySuggestions({ snapshot, views: memberViews, allViews: allMemberViews, today, now, appPhones: null, seeTotals, birthdayAuto }).slice(0, 2) : []),
-    [on, snapshot, memberViews, allMemberViews, today, now, seeTotals, birthdayAuto],
+    () => (on ? todaySuggestions({ snapshot, views: memberViews, allViews: allMemberViews, today, now, appPhones: null, seeTotals, autoWish }).slice(0, 2) : []),
+    [on, snapshot, memberViews, allMemberViews, today, now, seeTotals, autoWish],
   );
   if (!on || !wallet) return null;
 

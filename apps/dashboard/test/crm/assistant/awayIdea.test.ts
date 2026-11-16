@@ -6,6 +6,7 @@ import { describe, expect, it } from 'vitest';
 import { answerAsk, awayDays, membersInGroup, type AnswerResult } from '../../../src/crm/assistant/answer';
 import type { ToolInputs } from '../../../src/crm/assistant/catalogue';
 import { WHO_NAMED, todaySuggestions, whoLines } from '../../../src/crm/assistant/suggestions';
+import { autoWishIds, firstNameKey } from '../../../src/crm/logic/autoWish';
 import { coverageStartsOn } from '../../../src/crm/logic/membership';
 import type { CrmSnapshot } from '../../../src/crm/data/adapter';
 import { makeMember, makeMembership, makeVisit } from '../fixtures';
@@ -172,79 +173,125 @@ describe('the idea names its members and has "See who" (R-593)', () => {
 });
 
 // R-608 (owner, 16 Nov 2026: "the birthdays are set to be automated but the AI assistant is still suggesting that"): with
-// the gym's automatic birthday wish on, a member whose app is linked to their record (appUserId) is wished by their own
-// phone at 9:30 am. The birthday idea then counts, names, asks for and lists only the others; none left: no idea.
-// Off, or not known (offline, still loading): every birthday, as before.
+// the gym's automatic birthday wish on, an app member is wished by their own phone at 9:30 am when the server's rule
+// finds them on the list (member_auto_reminders -> member_membership: their proven number on exactly one member, first
+// names match). The birthday idea then counts, names, asks for and lists only the others; none left: no idea. Off, or
+// not known (offline): every birthday, as before. Online and not answered yet: no birthday idea for that moment.
+// Review (16 Nov): real gyms never have appUserId, so "in the app" is set up here the way a real member gets there.
 describe('R-608 the birthday idea with the automatic birthday wish', () => {
-  /** Preeti (birthday today, no app linked) and Arjun (birthday today, app linked). */
-  function bdayGym(preetiApp = false): CrmSnapshot {
+  /** Preeti (+91 98000 00001) and Arjun (+91 98000 00099), both born on 12 Nov. */
+  function bdayGym(): CrmSnapshot {
     const base = fixtureGym();
-    const members = base.members.map((m) => (m.id === 'm_preeti' && preetiApp ? { ...m, appUserId: 'user_preeti' } : m));
-    members.push(makeMember({ id: 'm_arjun', fullName: 'Arjun Nair', phone: '+919800000099', dateOfBirth: '1992-11-12', joinedOn: '2026-01-05', appUserId: 'user_arjun' }));
+    const members = [...base.members, makeMember({ id: 'm_arjun', fullName: 'Arjun Nair', phone: '+919800000099', dateOfBirth: '1992-11-12', joinedOn: '2026-01-05' })];
     return { ...base, members };
   }
-  const idea = (birthdayAuto: boolean | null | undefined, preetiApp = false) =>
-    todaySuggestions(answerData({ snapshot: bdayGym(preetiApp), birthdayAuto })).find((s) => s.id === 'birthdays');
+  const app = (name: string, phone: string | null) => ({ name, phone });
+  const ARJUN_APP = app('Arjun', '+91 98000 00099'); // his proven number, as owner_app_members gives it
+  const PREETI_APP = app('Preeti S.', '9800000001');
+  type Wish = readonly { name: string; phone: string | null }[] | null | 'waiting';
+  /** answerData with the switch: a list of app members = ON (worked out by the server's rule), or null / 'waiting'. */
+  const dataWith = (wish: Wish, snapshot = bdayGym()) => {
+    const views = viewsOf(snapshot).filter((v) => !v.member.archived);
+    return answerData({ snapshot, autoWish: wish === null || wish === 'waiting' ? wish : autoWishIds(views, wish) });
+  };
+  const idea = (wish: Wish) => todaySuggestions(dataWith(wish)).find((s) => s.id === 'birthdays');
   const listCard = (r: AnswerResult) => {
     if (r.kind !== 'card') throw new Error(`expected a card, got ${r.kind}`);
     return r.card;
   };
   const birthdayList = (over: Partial<ToolInputs['list_members']> & { withoutAutoWish?: boolean } = {}) => ({ group: 'birthday_today' as const, days: 0, plan: '', batch: '', trainer: '', gender: '' as const, ...over });
+  const notArchived = (s: CrmSnapshot) => viewsOf(s).filter((v) => !v.member.archived);
 
-  it('switch on, one with the app and one without: the idea is about the one without, and See who lists the same', () => {
-    const s = idea(true)!;
+  it('switch on, Arjun in the app (his number and first name match): the idea is about Preeti only, and See who lists the same', () => {
+    const s = idea([ARJUN_APP])!;
     expect(s.count).toBe(1);
-    expect(s.words).toEqual({ text: 'Birthdays today, not in the app: {n}', vars: { n: 1 } });
+    expect(s.words).toEqual({ text: 'Birthdays today, no automatic wish: {n}', vars: { n: 1 } });
     expect(s.action).toEqual({ text: 'Write birthday wishes' });
     expect(s.who).toEqual([{ text: '{names}', vars: { names: 'Preeti' } }]);
     expect(s.request).toBe('Send birthday wishes to Preeti Sharma');
     expect(s.show?.input.withoutAutoWish).toBe(true);
-    const d = answerData({ snapshot: bdayGym(), birthdayAuto: true });
-    const card = listCard(answerAsk('list_members', s.show!.input, d));
+    const card = listCard(answerAsk('list_members', s.show!.input, dataWith([ARJUN_APP])));
     expect(card.rows.map((r) => r.memberId)).toEqual(['m_preeti']);
-    expect(card.headline).toEqual({ text: 'Birthdays today, not in the app' });
+    expect(card.headline).toEqual({ text: 'Birthdays today, no automatic wish' });
     expect(card.followUps).toEqual([{ label: { text: 'Send birthday wishes' }, request: 'Send birthday wishes to Preeti Sharma' }]);
   });
 
-  it('switch on and every birthday member has the app: no birthday idea at all', () => {
-    expect(idea(true, true)).toBeUndefined();
+  it('switch on and both birthday members are in the app: no birthday idea at all', () => {
+    expect(idea([ARJUN_APP, PREETI_APP])).toBeUndefined();
+  });
+
+  it('switch on, but the app member has no proven number (like Crispy Curves\' Digvijay): still counted, no automatic wish', () => {
+    const s = idea([ARJUN_APP, app('Preeti', null)])!;
+    expect(s.count).toBe(1);
+    expect(s.request).toBe('Send birthday wishes to Preeti Sharma');
   });
 
   it('switch off: every birthday, as before', () => {
-    const s = idea(false)!;
+    const s = idea(null)!;
     expect(s.count).toBe(2);
     expect(s.words).toEqual({ text: 'Birthdays today: {n}', vars: { n: 2 } });
     expect(s.request).toBe('Send birthday wishes to members whose birthday is today');
     expect(s.show?.input.withoutAutoWish).toBeUndefined();
-    const card = listCard(answerAsk('list_members', s.show!.input, answerData({ snapshot: bdayGym(), birthdayAuto: false })));
+    const card = listCard(answerAsk('list_members', s.show!.input, dataWith(null)));
     expect(card.rows.map((r) => r.memberId).sort()).toEqual(['m_arjun', 'm_preeti']);
   });
 
-  it('not known (offline, loading, an old server): every birthday, as before', () => {
-    for (const notKnown of [null, undefined]) {
-      const s = idea(notKnown)!;
-      expect(s.count, String(notKnown)).toBe(2);
-      expect(s.words.text).toBe('Birthdays today: {n}');
-      expect(s.request).toBe('Send birthday wishes to members whose birthday is today');
-    }
+  it('not known (offline, demo, an old server): every birthday, as before', () => {
+    const s = todaySuggestions(answerData({ snapshot: bdayGym() })).find((x) => x.id === 'birthdays')!;
+    expect(s.count).toBe(2);
+    expect(s.words.text).toBe('Birthdays today: {n}');
   });
 
-  it('"whose birthday is today?" still lists everyone; with the switch on each app member says so, and the button asks only for the rest', () => {
-    const on = listCard(answerAsk('list_members', birthdayList(), answerData({ snapshot: bdayGym(), birthdayAuto: true })));
+  it('online and the switch not answered yet: no birthday idea for that moment (never a count that jumps down); the rest stay', () => {
+    const s = todaySuggestions(dataWith('waiting'));
+    expect(s.find((x) => x.id === 'birthdays')).toBeUndefined();
+    expect(s.map((x) => x.id)).toContain('ending');
+  });
+
+  it('who the phone wishes, by the server rule: no proven number, another first name, a shared number = NOT wished', () => {
+    const views = notArchived(bdayGym());
+    expect([...autoWishIds(views, [app('Preeti', null)])]).toEqual([]);
+    // The number is Preeti's, the app name is someone else's (the server answers NAME_MISMATCH).
+    expect([...autoWishIds(views, [app('Pinky', '9800000001')])]).toEqual([]);
+    // A number not on the list.
+    expect([...autoWishIds(views, [app('Preeti', '9811111111')])]).toEqual([]);
+    expect([...autoWishIds(views, [PREETI_APP])]).toEqual(['m_preeti']);
+    // Two members on the list share the number (the server answers SHARED_NUMBER): neither is wished.
+    const shared = { ...bdayGym(), members: [...bdayGym().members, makeMember({ id: 'm_mom', fullName: 'Preeti Devi', phone: '+919800000001' })] };
+    expect([...autoWishIds(notArchived(shared), [PREETI_APP])]).toEqual([]);
+    // An archived member does not count as sharing it (the server leaves archived members out).
+    const archived = { ...bdayGym(), members: [...bdayGym().members, makeMember({ id: 'm_old2', fullName: 'Preeti Old', phone: '+919800000001', archived: true })] };
+    expect([...autoWishIds(notArchived(archived), [PREETI_APP])]).toEqual(['m_preeti']);
+    // A record linked to an app account still counts (an extra yes).
+    const linked = views.map((v) => (v.member.id === 'm_preeti' ? { ...v, member: { ...v.member, appUserId: 'u1' } } : v));
+    expect([...autoWishIds(linked, [])]).toEqual(['m_preeti']);
+  });
+
+  it('first names compare as the server does: first word, letters only, any case', () => {
+    expect(firstNameKey('  Preeti Sharma ')).toBe('preeti');
+    expect(firstNameKey('PREETI')).toBe('preeti');
+    expect(firstNameKey("D'Souza Ray")).toBe('dsouza');
+    expect(firstNameKey('Dr. Asha')).toBe('dr');
+    expect(firstNameKey('123')).toBeNull();
+    expect(firstNameKey(null)).toBeNull();
+  });
+
+  it('"whose birthday is today?" still lists everyone; with the switch on each wished member says so, and the button asks only for the rest', () => {
+    const on = listCard(answerAsk('list_members', birthdayList(), dataWith([ARJUN_APP])));
     expect(on.rows.map((r) => r.memberId).sort()).toEqual(['m_arjun', 'm_preeti']);
     expect(on.rows.find((r) => r.memberId === 'm_arjun')?.detail).toEqual({ text: 'Gets the automatic wish at 9:30 am' });
-    expect(on.rows.find((r) => r.memberId === 'm_preeti')?.detail).toBeNull();
-    expect(on.followUps).toEqual([{ label: { text: 'Wish the ones not in the app' }, request: 'Send birthday wishes to Preeti Sharma' }]);
-    const allApp = listCard(answerAsk('list_members', birthdayList(), answerData({ snapshot: bdayGym(true), birthdayAuto: true })));
+    expect(on.rows.find((r) => r.memberId === 'm_preeti')?.detail).toEqual({ text: 'No automatic wish' });
+    expect(on.followUps).toEqual([{ label: { text: 'Wish {names}', vars: { names: 'Preeti' } }, request: 'Send birthday wishes to Preeti Sharma' }]);
+    const allApp = listCard(answerAsk('list_members', birthdayList(), dataWith([ARJUN_APP, PREETI_APP])));
     expect(allApp.rows).toHaveLength(2);
     expect(allApp.followUps).toEqual([]);
-    const off = listCard(answerAsk('list_members', birthdayList(), answerData({ snapshot: bdayGym(), birthdayAuto: false })));
+    const off = listCard(answerAsk('list_members', birthdayList(), dataWith(null)));
     expect(off.followUps).toEqual([{ label: { text: 'Send birthday wishes' }, request: 'Send birthday wishes to members whose birthday is today' }]);
     expect(off.rows.every((r) => r.detail === null)).toBe(true);
   });
 
   it('a message drafted for "birthday_today" (the AI picked the group) still reaches every birthday member', () => {
-    const group = membersInGroup(birthdayList(), answerData({ snapshot: bdayGym(), birthdayAuto: true }));
+    const group = membersInGroup(birthdayList(), dataWith([ARJUN_APP]));
     expect(group?.map((v) => v.member.id).sort()).toEqual(['m_arjun', 'm_preeti']);
   });
 });

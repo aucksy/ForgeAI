@@ -91,12 +91,13 @@ export function todaySuggestions(d: AnswerData): Suggestion[] {
   // R-608 (owner, 16 Nov 2026: "the birthdays are set to be automated but the AI assistant is still suggesting that"):
   // with the automatic birthday wish on, the idea counts, names, asks for and lists only the members it will not reach
   // (no app linked to their record); none left: no idea. Off, or not known (offline): every birthday, as before.
-  const autoWish = d.birthdayAuto === true;
-  const birthdays = groupOf(d, 'birthday_today', 0, autoWish);
+  // Online and the switch not known yet: no birthday idea for now (it appears with the right count a moment later).
+  const autoWish = d.autoWish instanceof Set;
+  const birthdays = d.autoWish === 'waiting' ? [] : groupOf(d, 'birthday_today', 0, autoWish);
   add(10, {
     id: 'birthdays',
     count: birthdays.length,
-    words: autoWish ? line('Birthdays today, not in the app: {n}', { n: birthdays.length }) : line('Birthdays today: {n}', { n: birthdays.length }),
+    words: autoWish ? line('Birthdays today, no automatic wish: {n}', { n: birthdays.length }) : line('Birthdays today: {n}', { n: birthdays.length }),
     action: line('Write birthday wishes'),
     request: birthdayWishRequest(birthdays, autoWish),
     who: whoLines(birthdays),
