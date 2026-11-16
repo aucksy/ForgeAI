@@ -415,7 +415,37 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     notVisible: "^Opening .*"
     timeout: 45000
-- runFlow: sub-after-join.yaml
+# R-602 (16 Nov 2026, font 2.0 / 360 dp run 43861761013): after this join two cards ("We set you up as ..." and
+# "Coming from Hevy or Strong?") push the Workout tab's "Up next" line below the screen's edge, and the last wait
+# in sub-after-join.yaml never scrolls. Its steps are here instead (the shared file stays as it is: the journeys
+# use it), the last one through sub-see.yaml.
+- extendedWaitUntil:
+    visible:
+      id: "brand-opening"
+    timeout: 3000
+    optional: true
+- extendedWaitUntil:
+    notVisible:
+      id: "brand-opening"
+    timeout: 15000
+- extendedWaitUntil:
+    visible: "Put .* on your home screen"
+    timeout: 5000
+    optional: true
+- runFlow:
+    when:
+      visible: "Put .* on your home screen"
+    commands:
+      - tapOn:
+          text: "^Not now$"
+          index: 0
+      - extendedWaitUntil:
+          notVisible: "Put .* on your home screen"
+          timeout: 10000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "Up next: .*|Done: .*|Workout in progress|Start empty workout"
 - assertNotVisible: "Step 1 of 3"
 - assertNotVisible: "Gym code ${CODE}"
 - assertNotVisible: "^Join this gym$"

@@ -382,9 +382,12 @@ appId: com.mettleup.app
     env:
       FIND: '^Kg lifted$'
 - tapOn: "^Kg lifted$"
-- extendedWaitUntil:
-    visible:
+# R-602 (16 Nov 2026, font 2.0 / 360 dp run 43861761013): the line comes back below the screen's edge there;
+# scroll to it (scrollUntilVisible also waits for it).
+- scrollUntilVisible:
+    element:
       id: "today-goal"
+    centerElement: true
     timeout: 15000
 # ---------------------------------------------------------------- 6. the old link lands on Profile
 - tapOn:

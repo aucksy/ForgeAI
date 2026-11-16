@@ -176,7 +176,13 @@ appId: com.mettleup.app
     file: sub-see.yaml
     env:
       FIND: '^Cancel$'
-- tapOn: "^Cancel$"
+# R-602 (16 Nov 2026, font 2.0 / 360 dp run 43861761013): "^Cancel$" also matches the sheet's dimmed backdrop (a
+# full-screen button labelled Cancel); Maestro tapped its middle, which at a big font is inside the taller sheet,
+# so nothing closed. Tap the sheet's own Cancel button, the one under "Erase everything".
+- tapOn:
+    text: "^Cancel$"
+    below:
+      text: "^Erase everything$"
 - extendedWaitUntil:
     notVisible: 'Erase all data\?'
     timeout: 10000

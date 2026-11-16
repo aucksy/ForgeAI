@@ -119,6 +119,15 @@ Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept her
   eraseText left a "3" after the cursor: box read 9876543213), ulookd (Main muscle row under the top bar). Fix (test
   only): scroll before each check; f203 taps + erases twice. Gate R-375: the tag commit needs green partials of parts
   uatc,u199,u203,ulook,u438 on it (default and owner). Round 2 whole runs stay on 719fd05c (diff = qa + docs only).
+- ROUND 2 on 719fd05c: emulator + uat 43841923587 GREEN, owner + uat 43841927489 GREEN (J3 passed: owner J3 on 0.79.0
+  now 3 passes, 2 drops at the bottom, 1 test grab fault), journeys 43841931157 GREEN, conditions 43841935528 GREEN,
+  Wear OS 43841939870 GREEN, CI 43833567273 GREEN. Font 2.0 uat 43842027998 still running (expected to hit the same 5).
+- Fix 1 = 412d70ef (tag qa-rel-079g), CI 43861724090 GREEN. Partials there: owner font 2.0 43861761013 RED, 3 more test
+  faults further on (uat10: "^Cancel$" matched the sheet backdrop, a full-screen button, and the tap at its middle
+  landed inside the taller sheet; uatf199: the Next line below the edge after "Kg lifted"; uatf203: two cards push
+  "Up next" below the edge after the 2nd join). uatr438a and ulookd now PASS at font 2.0. Owner plain 43861757297 RED
+  at uat5 "Chart shows" (tap on "Heaviest weight" opened a workout instead; unchanged flow, passed in both whole owner
+  runs: a one-off). Default 43861753274 running. Fix 2 (test only) follows; partials rerun on it.
 
 ## R-601 (16 Nov 2026) Read log alert + 30-day key reminder (R-595; his pick "alert plus 30-day reminder")
 - DEPLOYED 16 Nov ~03:55 IST: HQ version 3129d34b from 5be30bfd after a fresh review (NO BLOCKERS). Live: /readlog/status
