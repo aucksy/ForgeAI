@@ -52,7 +52,7 @@ export const ADMIN_NEWS: readonly AdminNewsEntry[] = [
         text: 'Alerts on your phone now count only what is new to you and not done yet. When everything is done, no alert comes.',
       },
       {
-        text: 'With the automatic birthday wish on, the AI Assistant and Today now ask you to wish only the members who will not get it. A member gets the wish on their phone at 9:30 am when they use the MettleUp app with the same mobile number and first name as on your list.',
+        text: 'With the automatic birthday wish on, the AI Assistant and Today ask you to wish only members who will not get it. A member gets it on the app at 9:30 am if their mobile number and name match your list.',
       },
     ],
   },
