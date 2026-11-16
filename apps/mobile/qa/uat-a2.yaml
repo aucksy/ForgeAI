@@ -27,9 +27,17 @@ appId: com.mettleup.app
     env:
       FIND: 'Resume Workout Timer'
 - tapOn: "Resume Workout Timer"
+# 0.79.0 round (run 43776698253, owner size): the offer's line sat above the top edge with only
+# "Count it" in view (the bench card's R-576 target box is taller), so a bare wait on the line
+# failed with the line on the page. Wait for either part of the offer, then scroll to the line.
+# in-view: a wait for the offer to appear; one of its two parts is always in view, sub-see finds the line
 - extendedWaitUntil:
-    visible: 'Timer paused .* to .* while no sets were logged\.'
+    visible: 'Count the paused time in the workout|Timer paused .* to .* while no sets were logged\.'
     timeout: 15000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Timer paused .* to .* while no sets were logged\.'
 - runFlow:
     file: sub-see.yaml
     env:
