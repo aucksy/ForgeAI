@@ -108,6 +108,14 @@ appId: com.mettleup.app
     env:
       FIND: 'Also works, .*'
 - takeScreenshot: rel-look-${LOOK}-04b-new-exercise
+# R-602 (16 Nov 2026, font 2.0 / 360 dp run 43817107325): the Main muscle row (above Also works) sat under the
+# top bar there, too little of it shown to tap; bring it into view first.
+- scrollUntilVisible:
+    element:
+      id: "exercise-row-muscle"
+    direction: UP
+    centerElement: true
+    timeout: 15000
 - tapOn:
     id: "exercise-row-muscle"
 # in-view: the sheet just opened, its line at the top

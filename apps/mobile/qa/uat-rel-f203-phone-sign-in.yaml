@@ -206,6 +206,12 @@ appId: com.mettleup.app
 # A phone keyboard that suggests the member's own number puts in "+91 98765 43210" (country code and spaces). The box
 # keeps only 9876543210 (packages/theme/src/indianMobile.ts). Maestro types it one key at a time, which is the harder
 # case ("+", "+9", "+91" then the digits and spaces); the one-change paste is covered by the unit tests.
+# R-602 (16 Nov 2026, font 2.0 / 360 dp run 43817107325): at a big font the box's middle (where the tap lands)
+# is inside the old number, and eraseText only deletes what is before the cursor: a "3" stayed after it and
+# the box read 9876543213. A second tap + erase clears what was left (the cursor now lands after it).
+- tapOn:
+    id: "welcome-phone-number"
+- eraseText: 20
 - tapOn:
     id: "welcome-phone-number"
 - eraseText: 20

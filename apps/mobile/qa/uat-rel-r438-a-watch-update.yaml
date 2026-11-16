@@ -45,7 +45,12 @@ appId: com.mettleup.app
     file: sub-see.yaml
     env:
       FIND: 'Update on watch'
-- assertVisible: "^Later$"
+# R-602 (16 Nov 2026, font 2.0 / 360 dp run 43817107325): "Later" sits below the screen's edge under a
+# bigger font (the pop-up scrolls); scroll to it first, as flow b does.
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "^Later$"
 - takeScreenshot: rel-r438-02-offer
 # ---------------------------------------------------------------- 3. "Later" closes it
 - tapOn: "^Later$"

@@ -113,6 +113,12 @@ Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept her
 - ROUND 2 on tag qa-rel-079f = 719fd05c (main tip, CI 43833567273 GREEN; both test fixes; no phone-app change since
   930ebf77 apart from apps/mobile/qa): emulator + uat 43841923587, owner + uat 43841927489, journeys 43841931157,
   conditions 43841935528, Wear OS 43841939870, font 2.0 uat 43842027998. Tag v0.79.0 only on 719fd05c if green.
+- FONT 2.0 / 360 dp uat 43817107325 (on 496cb688) RED, 5 parts, all TEST faults (pictures read; the flows assumed a
+  page fits one screen): uat10 (Hevy heading above the top edge), uatf199 (Exercises row below the edge), uatr438a
+  ("Later" below the edge of the watch pop-up; it scrolls, flow b already scrolls to it), uatf203 (tap lands mid-number,
+  eraseText left a "3" after the cursor: box read 9876543213), ulookd (Main muscle row under the top bar). Fix (test
+  only): scroll before each check; f203 taps + erases twice. Gate R-375: the tag commit needs green partials of parts
+  uatc,u199,u203,ulook,u438 on it (default and owner). Round 2 whole runs stay on 719fd05c (diff = qa + docs only).
 
 ## R-601 (16 Nov 2026) Read log alert + 30-day key reminder (R-595; his pick "alert plus 30-day reminder")
 - DEPLOYED 16 Nov ~03:55 IST: HQ version 3129d34b from 5be30bfd after a fresh review (NO BLOCKERS). Live: /readlog/status

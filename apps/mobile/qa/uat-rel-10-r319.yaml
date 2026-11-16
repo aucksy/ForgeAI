@@ -124,7 +124,12 @@ appId: com.mettleup.app
     file: sub-see.yaml
     env:
       FIND: 'Choose Hevy file'
-- assertVisible: "Bring your Hevy history in"
+# R-602 (16 Nov 2026, font 2.0 / 360 dp run 43817107325): the heading sits above the screen's top edge once
+# the button is in view; look up for it (sub-see), a scroll before the check.
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Bring your Hevy history in'
 - runFlow:
     file: sub-find.yaml
     env:

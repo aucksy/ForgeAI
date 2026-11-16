@@ -54,6 +54,13 @@ appId: com.mettleup.app
     timeout: 20000
 - assertVisible:
     id: "progress-row-Charts"
+# R-602 (16 Nov 2026, font 2.0 / 360 dp run 43817107325): the Exercises row sits below the screen's edge
+# there (the Charts row is two lines taller); scroll to it before the check.
+- scrollUntilVisible:
+    element:
+      id: "progress-row-Exercises"
+    timeout: 15000
+    visibilityPercentage: 10
 - assertVisible:
     id: "progress-row-Exercises"
 - takeScreenshot: rel-f199-03-your-progress
