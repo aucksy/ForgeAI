@@ -7,6 +7,22 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-603 (16 Nov 2026) Admin app alerts showed the old ForgeAI hexagon icon: fixed and deployed (panel only)
+- Bug: the owner's phone lock screen showed admin web-push alerts with the old ForgeAI hexagon. The service worker
+  (apps/dashboard/public/sw.js) used /icons/admin-192.png for icon and badge.
+- Fix: c1c17b94 uses /brand/admin-icon-192.png (the MettleUp "M Admin" icon, 192x192 PNG) for both; webPush.test.ts
+  updated. The old /icons/ files stay (deploy/panel/hosts.test.mjs keeps /icons/admin-192.png served).
+- Fresh review of 0a0f87d2..c1c17b94 (apps/dashboard + deploy/panel): only those two lines change. The SW still caches
+  /brand/ and /icons/. Nothing else ships.
+- CI 43811576084: attempt 1 red on the known flaky e2e alerts-uat.spec.mjs:394 "latest-alerts" count (expected 2, got 4;
+  same test red on 7f7dd880, ca1726d0, 2c90323a, each also green on a sibling run; R-604 then fixed that test). Re-ran
+  the failed job: attempt 2 green.
+- DEPLOYED panel only (no HQ) from wt-site detached at c1c17b94f7a58f3183b6992e82681c0ee82d1e07 with the CI
+  dashboard-dist: version ad11860c-fc36-40f5-ae9f-b4739af37a55.
+- Live check: app.mettleup.fit/sw.js line 168 has '/brand/admin-icon-192.png' (icon + badge);
+  /brand/admin-icon-192.png 200 image/png; /icons/admin-192.png still 200 image/png; /api/switches unchanged.
+  Phones pick up the new SW on their next visit to the panel; alerts after that show the M Admin icon.
+
 ## R-604 (16 Nov 2026) The bell = the to-do list: the server knows DONE and each person's READ (owner: "yes alerts fix")
 - Bug he hit: 11:00 push "4 new updates from your members" after he had handled everything the day before. Cause: the
   summary (0076/0095 hq_panel_digest_claim) counted every unsent alert of 8 days; "done" lived only in the browser
