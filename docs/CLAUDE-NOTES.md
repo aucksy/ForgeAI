@@ -7,6 +7,11 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-605 Admin alert badge is one colour (16 Nov 2026)
+- Android draws a notification badge from its alpha only, so the full-colour admin icon became a white square in the status bar.
+- New: branding/mettleup/web/admin/badge-96.png (white hex with the M cut out, transparent), mapped by install.py to apps/dashboard/public/brand/admin-badge-96.png. sw.js badge now points there; icon stays admin-icon-192.png.
+- Made by drawing the mark-mono.svg shapes with PIL (8x supersample). On main, not live yet: goes out with the next panel deploy (the bell-fix deploy).
+
 ## R-603 (16 Nov 2026) Admin app alerts showed the old ForgeAI hexagon icon: fixed and deployed (panel only)
 - Bug: the owner's phone lock screen showed admin web-push alerts with the old ForgeAI hexagon. The service worker
   (apps/dashboard/public/sw.js) used /icons/admin-192.png for icon and badge.

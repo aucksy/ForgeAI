@@ -159,7 +159,7 @@ describe('the service worker shows an alert and opens its page', () => {
     await w.fire('push', { data });
     expect(w.shown[0]).toEqual({
       title: 'MettleUp: news from your members',
-      opts: { body: 'Ravi sent your gym a complaint. Open Member messages to read it.', tag: 'mettleup-alert-a3', icon: '/brand/admin-icon-192.png', badge: '/brand/admin-icon-192.png', data: { route: '/member-messages' } },
+      opts: { body: 'Ravi sent your gym a complaint. Open Member messages to read it.', tag: 'mettleup-alert-a3', icon: '/brand/admin-icon-192.png', badge: '/brand/admin-badge-96.png', data: { route: '/member-messages' } },
     });
     await w.fire('push', { data: { json: () => { throw new Error('not json'); } } });
     expect(w.shown[1].title).toBe('MettleUp: news from your members');

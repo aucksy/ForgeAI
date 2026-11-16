@@ -53,7 +53,9 @@ def copies():
                        ('web/favicon.svg', f'{pub}/favicon.svg'),
                        ('web/favicon.ico', f'{pub}/favicon.ico'),
                        ('web/wordmark-light.svg', f'{pub}/brand/wordmark-light.svg'),
-                       ('web/wordmark-dark.svg', f'{pub}/brand/wordmark-dark.svg')]
+                       ('web/wordmark-dark.svg', f'{pub}/brand/wordmark-dark.svg'),
+                       # one-colour Android status-bar badge for admin alerts (sw.js)
+                       ('web/admin/badge-96.png', f'{pub}/brand/admin-badge-96.png')]
     return c
 
 
