@@ -221,16 +221,20 @@ begin
     'true decided Dinesh Desk true');
   checks := checks + 1; fails := fails || pg_temp.t98_is('8ashape',
     (select string_agg(k, ',' order by k) from jsonb_object_keys(public.owner_alert_list(kok)) k), 'count,history,newCount,now,ok,open');
-  -- Open for the owner key: a4 (question), a3 (complaint); j1, pay1, afi (news, not read). Count: all 5; new: 5.
-  checks := checks + 1; fails := fails || pg_temp.t98_is('8acount', pg_temp.t98_count(kok), '5/5/2/3/3');
+  -- Open for the owner key: a4 (question), a3 (complaint); j1, pay1, afi and the two joins 0075 raised when Asha and
+  -- Bilal joined at the start (news, not read). Count: all 7; new: 7.
+  checks := checks + 1; fails := fails || pg_temp.t98_is('7joins',
+    (select string_agg(kind, ',' order by kind) from public.gym_alerts where gym_id = ga and public._alert_needs(kind, route) = 'info' and alert_id not in (j1, pay1, afi)),
+    'member_joined,member_joined');
+  checks := checks + 1; fails := fails || pg_temp.t98_is('8acount', pg_temp.t98_count(kok), '7/7/2/5/5');
   -- 8b. The panel opens: everything shown is read for THIS person only. Action items stay and still count; news
   --     stays in the list without a number.
   select array_agg((x->>'id')::uuid) into ids from jsonb_array_elements(public.owner_alert_list(kok)->'open') x;
-  checks := checks + 1; fails := fails || pg_temp.t98_is('8bread', public.owner_alerts_read(kok, ids)::text, '{"ok": true, "read": 5}');
+  checks := checks + 1; fails := fails || pg_temp.t98_is('8bread', public.owner_alerts_read(kok, ids)::text, '{"ok": true, "read": 7}');
   checks := checks + 1; fails := fails || pg_temp.t98_is('8bagain', public.owner_alerts_read(kok, ids)->>'read', '0');
-  checks := checks + 1; fails := fails || pg_temp.t98_is('8bowner', pg_temp.t98_count(kok), '2/0/2/0/3');
-  checks := checks + 1; fails := fails || pg_temp.t98_is('8bperson', pg_temp.t98_count(kop), '5/5/2/3/3');
-  checks := checks + 1; fails := fails || pg_temp.t98_is('8bdesk', pg_temp.t98_count(kd), '4/4/1/3/3');
+  checks := checks + 1; fails := fails || pg_temp.t98_is('8bowner', pg_temp.t98_count(kok), '2/0/2/0/5');
+  checks := checks + 1; fails := fails || pg_temp.t98_is('8bperson', pg_temp.t98_count(kop), '7/7/2/5/5');
+  checks := checks + 1; fails := fails || pg_temp.t98_is('8bdesk', pg_temp.t98_count(kd), '6/6/1/5/5');
   checks := checks + 1; fails := fails || pg_temp.t98_is('8bnotdone', pg_temp.t98_how(a4) || ' ' || pg_temp.t98_how(a3), 'null null');
   -- 8c. News opened (tapped) by the owner key: in its History; still open for the desk and the owner's own sign-in.
   checks := checks + 1; fails := fails || pg_temp.t98_is('8copened', public.owner_alert_opened(kok, j1)::text, '{"ok": true, "opened": true}');
@@ -247,9 +251,9 @@ begin
   checks := checks + 1; fails := fails || pg_temp.t98_is('8dnotdone',
     (select x->>'done' from jsonb_array_elements(public.owner_alert_list(kd)->'history') x where x->>'id' = a4::text)
       || ' ' || (public.owner_talk_count(kok)->>'waiting'), 'false 2');
-  checks := checks + 1; fails := fails || pg_temp.t98_is('8dcount', pg_temp.t98_count(kd), '3/3/0/3/3');
+  checks := checks + 1; fails := fails || pg_temp.t98_is('8dcount', pg_temp.t98_count(kd), '5/5/0/5/5');
   checks := checks + 1; fails := fails || pg_temp.t98_is('8dundo', public.owner_alert_remove(kd, a4, false)::text, '{"ok": true, "removed": false}');
-  checks := checks + 1; fails := fails || pg_temp.t98_is('8dback', pg_temp.t98_where(kd, a4) || ' ' || pg_temp.t98_count(kd), 'open 4/3/1/3/3');
+  checks := checks + 1; fails := fails || pg_temp.t98_is('8dback', pg_temp.t98_where(kd, a4) || ' ' || pg_temp.t98_count(kd), 'open 6/5/1/5/5');
   -- X on news: History for this person.
   perform public.owner_alert_remove(kd, pay1, true);
   checks := checks + 1; fails := fails || pg_temp.t98_is('8dnews', pg_temp.t98_where(kd, pay1) || ' ' || pg_temp.t98_where(kok, pay1), 'history:removed open');

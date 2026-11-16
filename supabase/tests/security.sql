@@ -89,6 +89,9 @@ declare
     'member_talk_choices','member_talk_send_to',
     -- 0075: the gym's alerts list (checks the key first: owner, desk or trainer; each sees only what they may, complaints for the owner only).
     'owner_alerts',
+    -- 0098 (R-604): each person's bell (each checks the key first; reads, opens and removes only alerts that person may
+    -- see, and only for that person; never marks anything done).
+    'owner_alert_list','owner_alerts_read','owner_alert_opened','owner_alert_remove',
     -- 0076: alerts with the admin app closed (each checks the key first; a browser is saved for that sign-in only; the OWNER changes when the rest come).
     'owner_save_web_push','owner_clear_web_push','owner_web_push_on','owner_alert_settings','owner_save_alert_settings',
     -- 0095: "Send a test alert". The two owner_ calls check the key first and act only on a browser saved with that very
