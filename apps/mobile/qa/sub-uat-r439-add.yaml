@@ -16,6 +16,10 @@ appId: com.mettleup.app
 - tapOn:
     text: "Select ${EX}"
     index: 0
+# R-602 (16 Nov 2026, run 43796624722 part uatr454a): the keyboard stays open after the tick and
+# covers "Add 1"; the tap hit the suggestion strip ("press" became "pressure") and nothing was added.
+# Close it first, as uat-d.yaml does (the keyboard is open here, so Back only closes it, trap 20).
+- hideKeyboard
 - tapOn: "Add 1"
 - extendedWaitUntil:
     visible: "More for ${EX}"

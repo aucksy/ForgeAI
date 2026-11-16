@@ -7,6 +7,24 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-602 (16 Nov 2026) 0.79.0 UAT round: what failed on ed5360aa, the fix, the new round (helper; no tag, no release)
+- Coordinator's brief: get the full UAT round green on the release commit, then report. No tag, no release run, no Play.
+- What failed on ed5360aa (read from the logs and pictures):
+  - Owner phone + uat 43796622071: ONLY shard 1-history-routines, part J3 (drag an exercise in a live workout):
+    "J3 DRAG FAILED: order after the drag is 'Dumbbell Skull Crusher|Lateral Raise'". Picture j3-after-drag: Lateral
+    Raise, dragged UP above Bench Press, landed at the BOTTOM of the list. The held picture is identical to the green
+    run on 14 Nov (43644983246, same coords 472 2025 -> 300, "J3 DRAG OK"). Drag code (DragList, dragOrder,
+    active.tsx lift/shift) unchanged since October, so already in 0.78.0: NOT a 0.79.0 change. Not proven to be a test
+    fault: possibly a rare real glitch (the held card's offset follows the list's scroll; if the list moved during the
+    drag, the drop lands lower). Shards 4-workout, 5-uat-b, 6-uat-c were cancelled by fail-fast (never ran).
+  - Partial ua,u454 default 43796624722: part uatr454a, sub-uat-r439-add.yaml. The keyboard stayed open over "Add 1"; the
+    tap hit the keyboard's suggestion strip ("incline dumbbell press" became "pressure") and nothing was added. Test
+    fault. u454 alone then passed (43800014373) by luck of the keyboard.
+- Fix (test only): sub-uat-r439-add.yaml closes the keyboard (hideKeyboard) before "Add 1", as uat-d.yaml does. Used by
+  u439 a/b, u454 a + row, u576 a, u436 a.
+- NEXT: partial runs (only=ua,u454 default; only=u439,u454,u576,u436 owner), then the full round on the same commit:
+  emulator + uat, owner + uat, uat font 2.0/360 dp, phone conditions, cross-role journeys, Wear OS build. Run ids below.
+
 ## R-601 (16 Nov 2026) Read log alert + 30-day key reminder (R-595; his pick "alert plus 30-day reminder")
 - DEPLOYED 16 Nov ~03:55 IST: HQ version 3129d34b from 5be30bfd after a fresh review (NO BLOCKERS). Live: /readlog/status
   = {"on":false} (key not saved yet). Optional non-blockers left: clear the failure time on "off" (readLogAlert.js:62);
