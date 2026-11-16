@@ -197,6 +197,16 @@ begin
   -- Made a member (status 'joined') handles it too.
   update public.crm_records set data = data || '{"status":"joined"}' where gym_id = ga and kind = 'enquiry' and id = 't98-e5';
   checks := checks + 1; fails := fails || pg_temp.t98_is('6joined', pg_temp.t98_how(ae5), 'joined');
+  -- Open again (Undo / Reopen) waits again; a later next call handles it; moved back to today it waits again
+  -- (review R-606).
+  update public.crm_records set data = data || '{"status":"open"}' where gym_id = ga and kind = 'enquiry' and id = 't98-e5';
+  checks := checks + 1; fails := fails || pg_temp.t98_is('6reopen', coalesce(pg_temp.t98_how(ae5), 'null'), 'null');
+  update public.crm_records set data = data || jsonb_build_object('followUpOn', to_char(public._ist_today() + 2, 'YYYY-MM-DD'))
+   where gym_id = ga and kind = 'enquiry' and id = 't98-e5';
+  checks := checks + 1; fails := fails || pg_temp.t98_is('6later', pg_temp.t98_how(ae5), 'called');
+  update public.crm_records set data = data || jsonb_build_object('followUpOn', today) where gym_id = ga and kind = 'enquiry' and id = 't98-e5';
+  checks := checks + 1; fails := fails || pg_temp.t98_is('6back', coalesce(pg_temp.t98_how(ae5), 'null'), 'null');
+  update public.crm_records set data = data || '{"status":"joined"}' where gym_id = ga and kind = 'enquiry' and id = 't98-e5';
 
   -- 7. Info items are never "done" on the server (each person's bell decides).
   perform public._alert(ga, 'member_joined', ma::text, 't98:j1', 'all', false, 'Asha joined your gym in the MettleUp app. See them in Members using the app.', '/members/app');

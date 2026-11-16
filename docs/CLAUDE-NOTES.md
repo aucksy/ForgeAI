@@ -7,6 +7,16 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-606 Bell fix: fresh-eyes review and 3 fixes to 0098 before it goes live (16 Nov 2026)
+- Owner said "yes 0098" and "Hinglish is fine" (16 Nov). Hinglish bell lines added (b1fee045).
+- Review (no blockers, no security hole). Fixed in 0098 before applying:
+  1. Backfill now marks enquiry alerts 'called' when the enquiry is open and its next call is a later day (the old app showed these as done).
+  2. Enquiry trigger: open again after joined/lost clears 'joined'/'not_interested'; a next call moved back to today or earlier clears 'called'.
+  3. The 'already sent = read by all' step runs only on the first run (session flag mettleup.m0098_first).
+  4. Header: seven triggers (not eight); undo in one transaction.
+- Tests 6reopen / 6later / 6back added. Panel nits left (Undo after reopening the bell; panel opened before the first answer; brief count flicker): small, after-audit.
+- Next: CI green, then apply 0098 live at a quiet hour, deploy panel (and HQ if changed), check live.
+
 ## R-605 Admin alert badge is one colour (16 Nov 2026)
 - Android draws a notification badge from its alpha only, so the full-colour admin icon became a white square in the status bar.
 - New: branding/mettleup/web/admin/badge-96.png (white hex with the M cut out, transparent), mapped by install.py to apps/dashboard/public/brand/admin-badge-96.png. sw.js badge now points there; icon stays admin-icon-192.png.

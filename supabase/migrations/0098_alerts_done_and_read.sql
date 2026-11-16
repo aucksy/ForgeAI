@@ -49,13 +49,14 @@
 --   and that its person has not read (or opened, or removed); nothing is sent when that is 0. An alert already done
 --   when its turn comes is marked sent_how 'none' and sent to nobody. Nothing is ever sent twice (sent_at, as before).
 --
--- Additive and re-runnable: three columns and one flag on gym_alerts, one new table, eight new triggers (each never
+-- Additive and re-runnable: three columns and one flag on gym_alerts, one new table, seven new triggers (each never
 -- stands in the way of the step it watches: any failure inside is only a warning), four new owner/desk-key calls, and
 -- CREATE OR REPLACE of 0095's hq_panel_push_instant and hq_panel_digest_claim (same names, arguments and grants).
 -- owner_alerts (0075 / 0095) is NOT changed: admin apps released before this change keep working exactly as today.
 -- Apply after 0075, 0076, 0095 and 0096. Test: supabase/tests/0098_alerts_done_and_read.sql (CI runs it after every
 -- migration; pasted into the SQL Editor it always ends in an error and so changes nothing).
--- Undo: drop the eight triggers below and their functions; drop owner_alert_list, owner_alerts_read,
+-- Undo (all in ONE transaction, so the 1-minute push worker never sees half of it):
+-- drop the seven triggers below and their functions; drop owner_alert_list, owner_alerts_read,
 -- owner_alert_opened, owner_alert_remove, _alert_needs, _alert_reader, _alert_handle, _alert_pending_for; re-run 0095's
 -- hq_panel_push_instant and hq_panel_digest_claim; drop the table gym_alert_reads; drop the columns handled_at,
 -- handled_how, handled_by and read_by_all. The admin app goes back to its own guesses by itself without them.
@@ -73,6 +74,11 @@ begin
 end $$;
 
 -- ------------------------------------------------------------------ columns and the reads table
+-- First run or a re-run? (review R-606: the "already sent = read by all" step below must run only once, or a re-run
+-- would mark days of later alerts read for everyone.) Kept for this session only.
+select set_config('mettleup.m0098_first',
+  (not exists (select 1 from information_schema.columns where table_schema = 'public' and table_name = 'gym_alerts'
+                and column_name = 'read_by_all'))::text, false);
 alter table public.gym_alerts add column if not exists handled_at timestamptz;
 alter table public.gym_alerts add column if not exists handled_how text;
 alter table public.gym_alerts add column if not exists handled_by text;
@@ -290,6 +296,8 @@ declare
   kinds constant text[] := array['friend_referred', 'online_join', 'page_question'];
   st text;
   fu text;
+  later boolean;
+  was_later boolean;
 begin
   if tg_op = 'DELETE' then
     perform public._alert_handle(old.gym_id, kinds, old.id, null, 'gone');
@@ -300,14 +308,26 @@ begin
     return new;
   end if;
   st := new.data->>'status';
+  fu := new.data->>'followUpOn';
+  later := coalesce(fu ~ '^\d{4}-\d{2}-\d{2}$' and fu > to_char(public._ist_today(), 'YYYY-MM-DD'), false);
+  was_later := coalesce((old.data->>'followUpOn') ~ '^\d{4}-\d{2}-\d{2}$'
+                        and (old.data->>'followUpOn') > to_char(public._ist_today(), 'YYYY-MM-DD'), false);
+  -- Open again (Undo of "Not interested", or Reopen; review R-606): what only that status handled waits again.
+  if coalesce(old.data->>'status', '') in ('joined', 'lost') and coalesce(st, '') not in ('joined', 'lost') then
+    update public.gym_alerts set handled_at = null, handled_how = null, handled_by = null
+     where gym_id = new.gym_id and ref_id = new.id and kind = any(kinds) and handled_how in ('joined', 'not_interested');
+    if later then perform public._alert_handle(new.gym_id, kinds, new.id, null, 'called'); end if;
+  end if;
   if st in ('joined', 'lost') and st is distinct from old.data->>'status' then
     perform public._alert_handle(new.gym_id, kinds, new.id, null, case st when 'joined' then 'joined' else 'not_interested' end);
     return new;
   end if;
-  fu := new.data->>'followUpOn';
-  if fu ~ '^\d{4}-\d{2}-\d{2}$' and fu is distinct from old.data->>'followUpOn'
-     and fu > to_char(public._ist_today(), 'YYYY-MM-DD') then
+  if later and fu is distinct from old.data->>'followUpOn' then
     perform public._alert_handle(new.gym_id, kinds, new.id, null, 'called');
+  elsif was_later and not later then
+    -- The next call moved back to today or earlier (a slip, put right): it waits again, as the admin app showed it.
+    update public.gym_alerts set handled_at = null, handled_how = null, handled_by = null
+     where gym_id = new.gym_id and ref_id = new.id and kind = any(kinds) and handled_how = 'called';
   end if;
   if new.data->'pageChat'->>'doneAt' is not null
      and (new.data->'pageChat'->>'doneAt') is distinct from (old.data->'pageChat'->>'doneAt') then
@@ -376,6 +396,15 @@ begin
            where x.kind in ('friend_referred', 'online_join', 'page_question') and x.handled_at is null
              and public._alert_needs(x.kind, x.route) = 'action') e
    where a.alert_id = e.alert_id and (e.id is null or e.deleted or e.data->>'status' in ('joined', 'lost'));
+  -- Called: still open, and the next call booked for a later day (as the admin app decided it before; review R-606).
+  update public.gym_alerts a set handled_at = now(), handled_how = 'called'
+   where a.handled_at is null and a.kind in ('friend_referred', 'online_join', 'page_question')
+     and public._alert_needs(a.kind, a.route) = 'action'
+     and exists (select 1 from public.crm_records r
+                  where r.gym_id = a.gym_id and r.kind = 'enquiry' and r.id = a.ref_id and not r.deleted
+                    and coalesce(r.data->>'status', 'open') not in ('joined', 'lost')
+                    and coalesce(r.data->>'followUpOn', '') ~ '^\d{4}-\d{2}-\d{2}$'
+                    and r.data->>'followUpOn' > to_char(public._ist_today(), 'YYYY-MM-DD'));
   -- A web page chat marked done after the alert came (its time is the panel's: doneAt, ms).
   update public.gym_alerts a set handled_at = now(), handled_how = 'chat_done'
    where a.handled_at is null and a.kind = 'page_question'
@@ -384,7 +413,10 @@ begin
                     and coalesce(r.data->'pageChat'->>'doneAt', '') ~ '^\d{1,16}$'
                     and (r.data->'pageChat'->>'doneAt')::bigint >= floor(extract(epoch from a.created_at) * 1000)::bigint);
   -- Everything already sent before this change: nobody hears of it again (it stays in the lists as it is).
-  update public.gym_alerts set read_by_all = true where sent_at is not null and not read_by_all;
+  -- Only on the first run (see m0098_first above).
+  if coalesce(current_setting('mettleup.m0098_first', true), '') = 'true' then
+    update public.gym_alerts set read_by_all = true where sent_at is not null and not read_by_all;
+  end if;
 end $$;
 
 -- ------------------------------------------------------------------ the admin app's calls (owner, desk, trainer keys)
