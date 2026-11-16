@@ -37,7 +37,26 @@ Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept her
   supabase/tests/0098_alerts_done_and_read.sql.
 - Bell number (final rule): action items not done and not removed + info items not read yet. A read info item stays in
   the list without a number until it is opened, removed, or 7 days old.
-- Status: in progress (helper). Commits, CI runs and pictures below.
+- Panel: logic/alertInbox.ts (pure rules), ui/BellInbox.tsx (cards, X, History), ui/WhatsNew.tsx NewsBell (frozen
+  while open, UndoBar), ui/NeedsYou.tsx (inbox from owner_alert_list, falls back to owner_alerts on PGRST202; Today uses
+  todayFromInbox: an action item removed from the bell but not done stays on Today), shop/alertsApi.ts, index.css (tap
+  look: no grey tap cover, pressed + hover, chevron, focus ring inside the card). History row always shown (with 0) so
+  the first X never pushes the list down. X and Undo are sent to the server in order.
+- Decisions: viewing Today does not mark anything read on the server (tapping a line there counts as opened); a
+  handled alert gets sent_how 'none'; news older than 7 days is in History until it is 14 days old; the bell reads
+  "99+" past 99.
+- Words (English only, through t(W.x), no Hinglish entries; proposed Hinglish for his read-aloud check is in the
+  report): History, the History hint/empty lines, "Nothing is waiting for you. ...", "Removed from your list.",
+  Remove, "Undo: put back {line}", Opened, "Removed · Not done yet", "Older than 7 days", "Done by {name}".
+- Help: deploy/panel/helpArticles.js 'bell-to-do-list' (unreleased until 0098 + deploy). What's new:
+  ADMIN_NEWS_PENDING 'pending-bell-to-do-list' (moves at the first panel deploy after 0098 is live).
+- Tests: supabase/tests/0098 (55 checks, PASS), unit test/crm/alertInbox.test.ts, e2e/bell-inbox-uat.spec.mjs
+  (owner 390, desk 360, trainer, computer 1280 dark + light, 0 and 120 items, old server then upgrade). Pictures
+  bell-1 .. bell-18 in the "dashboard-uat-pictures" artifact.
+- Commits: 496cb688 (0098 + its test), 2485c293 (panel), e2799d85 (test counts + security list), 66825dba (fixes from
+  the pictures: one-line Undo toast, 99+, ordered sends). CI: 43827788987 green on 737a18e3 (database: 0098 applied + lint + 55 checks pass; dashboard typecheck, unit tests, build, crawl, 321 journeys incl. bell-inbox-uat). Earlier runs: 43815460386 (security list), 43817737306 / 43822375917 (UAT locator and Today-page fixes).
+- Status: built, NOT live. Live needs: his "yes 0098" (apply the migration), then a panel deploy (move the pending
+  What's new entry and drop the help article's `unreleased` line in that deploy).
 
 ## R-602 (16 Nov 2026) 0.79.0 UAT round: what failed on ed5360aa, the fix, the new round (helper; no tag, no release)
 - Coordinator's brief: get the full UAT round green on the release commit, then report. No tag, no release run, no Play.
