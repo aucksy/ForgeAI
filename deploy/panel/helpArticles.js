@@ -56,7 +56,6 @@ export const ALL_HELP_ARTICLES = [
     id: 'bell-to-do-list',
     who: 'owner',
     title: 'The bell: what is waiting for you',
-    unreleased: 'R-604: waits for migration 0098 and the admin panel deploy',
     text:
       'In the admin app, the bell at the top right lists what is waiting for you. Its number counts messages, questions and requests nobody has handled yet, and news you have not seen. ' +
       'A message or request stays until someone handles it in its own page, with a reply or Approve. News, like a new member or an online payment, stays until you tap it, or for 7 days. ' +

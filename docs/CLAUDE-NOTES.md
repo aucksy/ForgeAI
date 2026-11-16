@@ -7,6 +7,18 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-607 0098 is LIVE; bell news moved to What's new for the panel deploy (16 Nov 2026)
+- Owner: "yes 0098", then "retry 0098", "lets go with 1", "go 0098" (16 Nov).
+- apply_migration was "declined" twice: the desktop app hides Supabase MCP's own SQL confirmation form and answers no.
+  With his "1": the Supabase MCP URL in his Claude settings now skips that form for apply_migration (the
+  supabase-guard "ask" box stays the human check). He signed in again via /mcp. Third try: success (~22:30 IST).
+- Live check (read-only): 4 new gym_alerts columns, gym_alert_reads table, 8 functions, 7 triggers. Backfill: 141 alerts
+  marked done, 134 already-sent alerts marked read by all.
+- Installed the official Supabase skills (supabase, supabase-postgres-best-practices; markdown only) at his suggestion.
+- Panel: ADMIN_NEWS_PENDING 'pending-bell-to-do-list' moved to ADMIN_NEWS id 2026-11-17 (16 Nov already used; deploy
+  after midnight IST). Help article 'bell-to-do-list' is live (unreleased line dropped). whatsnew.spec J149 and
+  whatsNew.test updated. Next: CI green, deploy panel from wt-site with the CI dist, live check bell + badge + Hinglish.
+
 ## R-606 Bell fix: fresh-eyes review and 3 fixes to 0098 before it goes live (16 Nov 2026)
 - Owner said "yes 0098" and "Hinglish is fine" (16 Nov). Hinglish bell lines added (b1fee045).
 - Review (no blockers, no security hole). Fixed in 0098 before applying:

@@ -38,6 +38,22 @@ export interface AdminNewsEntry {
 /** Newest first. member-words: Gemini second opinion + facts checked against the commits (28 Oct 2026). */
 export const ADMIN_NEWS: readonly AdminNewsEntry[] = [
   {
+    // Admin panel deploy 17 Nov 2026 (R-607): R-604 bell to-do list, moved from ADMIN_NEWS_PENDING after migration
+    // 0098 went live (16 Nov, owner "yes 0098"). Also R-603/R-605 alert icon and badge (not listed: small).
+    id: '2026-11-17',
+    lines: [
+      {
+        text: 'The bell is now your to-do list. A message or request stays there until someone handles it in its page. News, like a new member or a payment, stays until you open it.',
+      },
+      {
+        text: 'Each person has their own bell. Tap the X to take a line off your list. It still waits in its page. “History” at the top of the bell keeps the last 7 days.',
+      },
+      {
+        text: 'Alerts on your phone now count only what is new to you and not done yet. When everything is done, no alert comes.',
+      },
+    ],
+  },
+  {
     // Admin panel deploy 16 Nov 2026 (R-600): R-593 Today keeps only what still needs him (moved from ADMIN_NEWS_PENDING
     // at the deploy). R-586's recipient lines wait in 'pending-message-recipient' until 0.79.0 is in production.
     // The first line is the summary under the bell (e2e/whatsnew.spec.mjs J149). No `feature` dot (newdots-uat pins them).
@@ -646,23 +662,6 @@ function notifyNewsSeen(): void {
  * the deploy day) in the same commit as the admin-panel deploy (R-333). Never shown before the change is live.
  */
 export const ADMIN_NEWS_PENDING: readonly AdminNewsEntry[] = [
-  {
-    // R-604 (owner, 16 Nov 2026, "yes alerts fix"): the bell as each person's to-do list. Moves to ADMIN_NEWS in the
-    // commit of the first panel deploy after migration 0098 is live (he says "yes 0098"). Not before: without 0098 the
-    // bell still works the old way.
-    id: 'pending-bell-to-do-list',
-    lines: [
-      {
-        text: 'The bell is now your to-do list. A message or request stays there until someone handles it in its page. News, like a new member or a payment, stays until you open it.',
-      },
-      {
-        text: 'Each person has their own bell. Tap the X to take a line off your list. It still waits in its page. “History” at the top of the bell keeps the last 7 days.',
-      },
-      {
-        text: 'Alerts on your phone now count only what is new to you and not done yet. When everything is done, no alert comes.',
-      },
-    ],
-  },
   {
     // R-586 / R-600: members pick who reads a message ("Who should read it?") and the panel shows "To: ...". 0096 is live,
     // but the picker is in member app 0.79.0. Moves to ADMIN_NEWS with the first panel deploy after 0.79.0 is in
