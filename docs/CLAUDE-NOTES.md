@@ -62,6 +62,14 @@ Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept her
   no phone-app change; a whole run on the tag commit itself is gate rule 1): emulator + uat 43817100950, owner + uat
   43817104084, uat font 2.0/360 dp owner 43817107325, phone conditions 43817110240, journeys 43817112692, Wear OS
   build 43817115099. Tag only a commit these passed on (or one whose later diff is notes only).
+- Partials on 6f893b2e: u439,u454,u576,u436 owner 43809754655 device job GREEN. j2,j3 owner 43809774231 RED again at J3,
+  a different way: the 2nd name row was in the dump but below the list edge (clipped box [267,2275][677,2130]); the
+  test held its "centre" y 2202, under the "Log a set to finish" bar (test fault). The order then still changed (Bench
+  Press ended below Triceps Pushdown); unexplained. On 903b62ef owner J3 passed (job 133036451395). So J3 owner on
+  0.79.0 builds: 1 pass, 2 fails. Fix 148fa669 (test only): drag_check ex-drag/ex-next skip rows under 40 px on screen,
+  J3 scrolls the row into view. Partials j2,j3 on 148fa669: owner 43821923647, default 43821926843.
+- APP QUESTION (not fixed, not new in 0.79.0: drag code unchanged since Oct): twice a dragged-up card ended LOWER
+  (43796622071: Lateral Raise to the bottom). Possible cause: the held card's offset follows the list scroll (dragShift).
 
 ## R-601 (16 Nov 2026) Read log alert + 30-day key reminder (R-595; his pick "alert plus 30-day reminder")
 - DEPLOYED 16 Nov ~03:55 IST: HQ version 3129d34b from 5be30bfd after a fresh review (NO BLOCKERS). Live: /readlog/status
