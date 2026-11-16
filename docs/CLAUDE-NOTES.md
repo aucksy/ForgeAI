@@ -7,6 +7,22 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-604 (16 Nov 2026) The bell = the to-do list: the server knows DONE and each person's READ (owner: "yes alerts fix")
+- Bug he hit: 11:00 push "4 new updates from your members" after he had handled everything the day before. Cause: the
+  summary (0076/0095 hq_panel_digest_claim) counted every unsent alert of 8 days; "done" lived only in the browser
+  (alertHandled.ts, R-593, matched by kind + time).
+- His rules (16 Nov): opening the panel = read, but an item stays until he has acted on it in its page; the panel is the
+  place to track what is not done; anything done goes away; robust and accurate. Cards must look tappable; no browser
+  tap cover. Later the same day (coordinator relayed): info items (nothing to do) are done only when THAT item is opened
+  (tapped), or by themselves after 7 days; opening the panel only reads them; nothing leaves the open panel while it is
+  open; a collapsed "History" at the top (last 7 days of done, opened, removed); an X on every card, per person, with
+  "Removed. Undo"; X on an action item NEVER marks it done (the member's page and Today still show it waiting).
+- Server: supabase/migrations/0098_alerts_done_and_read.sql (NOT APPLIED LIVE; waits for "yes 0098"). Test:
+  supabase/tests/0098_alerts_done_and_read.sql.
+- Bell number (final rule): action items not done and not removed + info items not read yet. A read info item stays in
+  the list without a number until it is opened, removed, or 7 days old.
+- Status: in progress (helper). Commits, CI runs and pictures below.
+
 ## R-602 (16 Nov 2026) 0.79.0 UAT round: what failed on ed5360aa, the fix, the new round (helper; no tag, no release)
 - Coordinator's brief: get the full UAT round green on the release commit, then report. No tag, no release run, no Play.
 - What failed on ed5360aa (read from the logs and pictures):
