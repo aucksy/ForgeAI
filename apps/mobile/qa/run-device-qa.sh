@@ -911,7 +911,9 @@ if maestro test --format junit --output "$OUT/part-j3.xml" --test-output-dir "$O
   j3_dump j3-before.xml
   j3_before=$(python3 "$QA_DIR/drag_check.py" ex-names "$OUT/j3-before.xml")
   j3_coords=$(python3 "$QA_DIR/drag_check.py" ex-drag "$OUT/j3-before.xml")
-  if [ "$j3_before" = "missing" ]; then
+  # R-602: also when the 2nd name row is in the dump but not on screen (no place to hold it: ex-drag
+  # "missing"), scroll it into view first.
+  if [ "$j3_before" = "missing" ] || [ "$j3_coords" = "missing" ]; then
     # The 1st card is taller than the list (owner phone): hold the 2nd name row once it is scrolled
     # into view; every card shrinks to its name row, so dragging to the list's top puts it first.
     j3_top=$(python3 "$QA_DIR/drag_check.py" ex-first "$OUT/j3-before.xml")

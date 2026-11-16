@@ -55,13 +55,23 @@ def nodes(path):
         return []
 
 
-def exercises(path):
-    """J3: the live workout's exercise name rows, top to bottom: [(name, (x1, y1, x2, y2))]."""
+# R-602 (16 Nov 2026, owner run 43809774231): a name row below the list's bottom edge is still in the
+# dump, clipped to an upside-down box ([267,2275][677,2130]); its "centre" (y 2202) sat under the
+# "Log a set to finish" bar, so the hold landed on the bar. A row a finger can hold shows at least this much.
+MIN_VISIBLE = 40
+
+
+def exercises(path, visible=False):
+    """J3: the live workout's exercise name rows, top to bottom: [(name, (x1, y1, x2, y2))].
+    visible=True keeps only rows showing at least MIN_VISIBLE px (a place a finger can hold)."""
     out = []
     for d, bounds in nodes(path):
         m = BOUNDS.match(bounds)
         if d.endswith(SUFFIX) and m:
-            out.append((d[: -len(SUFFIX)], tuple(int(v) for v in m.groups())))
+            box = tuple(int(v) for v in m.groups())
+            if visible and box[3] - box[1] < MIN_VISIBLE:
+                continue
+            out.append((d[: -len(SUFFIX)], box))
     return sorted(out, key=lambda t: t[1][1])
 
 
@@ -73,7 +83,7 @@ def main():
         return
     if sys.argv[1] == "ex-drag":
         # python3 drag_check.py ex-drag <dump.xml>  -> "x1 y1 x2 y2": the 2nd name row to above the 1st
-        ex = exercises(sys.argv[2])
+        ex = exercises(sys.argv[2], visible=True)
         if len(ex) < 2:
             print("missing")
             return
@@ -86,7 +96,7 @@ def main():
         # screen that is NOT <name>, and its centre ("missing" if none). v0.48.0 owner run 39111140587:
         # at 360 dp and font 1.3 the first exercise's card (now with its kg-to-beat line) is taller
         # than the list, so its name row and the next one are never on screen together.
-        for n, (x1, y1, x2, y2) in exercises(sys.argv[2]):
+        for n, (x1, y1, x2, y2) in exercises(sys.argv[2], visible=True):
             if n != sys.argv[3]:
                 print(f"{n}|{(x1 + x2) // 2} {(y1 + y2) // 2}")
                 return
