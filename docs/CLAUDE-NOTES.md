@@ -7,6 +7,21 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-610 (17 Nov 2026) Release 0.79.0 (phone + watch) to Play OPEN TESTING: IN PROGRESS (helper; state as of 10:40 IST)
+- Approval (quoted by the coordinator): "yes 0095 / yes 0096 / release" (15 Nov 2026, 22:21 IST) and "Take best
+  decisions yourself to release whatever is pending" (16 Nov 2026, 00:23 IST). One release = v0.79.0 only.
+- Release commit 1257a600 (on main): the 0.79.0 What's new entry dated '17 Nov' (was '16 Nov'); nothing else.
+  Since 0d63a5e5 main changed only apps/dashboard, deploy/panel and docs before it, and only panel/docs after it (R-609).
+- Full round on tag qa-rel-079j = 1257a600 (gate rule 1: a whole round on the tag commit itself):
+  CI (main push) 44011797895 GREEN; CI (tag push) 44011842958 GREEN; journeys 44011857204 GREEN; Wear OS build
+  44011860511 GREEN; phone conditions (all) 44011853645 GREEN; emulator + uat 44011843148 RUNNING; owner + uat
+  44011846187 RUNNING; uat font 2.0 / 360 dp owner (only=uat) 44011849464 RUNNING.
+- Tag v0.79.0: NOT made yet. NEXT: when the three device runs are green, tag v0.79.0 on 1257a600 (its message has no
+  skip-ci marker), push the tag (release-apk.yml runs the gate, build, publish and play-upload, dry_run off), read the
+  play-upload log for "Trying again with" (watch closed/open refused while the phone review runs; then re-run
+  play-upload.yml for v0.79.0, dry_run off, after the review). Then PROGRESS.md: "### 0.79.0" lines to "## Done".
+  If J3 (owner) fails: re-run it once (only=j2,j3 owner); two fails = possible app bug, no release.
+
 ## R-609 Birthday wish: the panel now reads first names exactly as the live server does (17 Nov 2026)
 - R-607 + R-608 were deployed live 17 Nov 2026 at 283ce69b (panel Version 17 Nov 2026; bell History, X and tappable
   cards checked live in Chrome).
