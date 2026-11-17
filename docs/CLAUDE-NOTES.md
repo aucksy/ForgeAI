@@ -22,6 +22,16 @@ Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept her
   play-upload.yml for v0.79.0, dry_run off, after the review). Then PROGRESS.md: "### 0.79.0" lines to "## Done".
   If J3 (owner) fails: re-run it once (only=j2,j3 owner); two fails = possible app bug, no release.
 
+- 17 Nov 18:46 IST UPDATE (coordinator): owner said "debug now and release before tomorrow / I dont want another
+  long test.." (17 Nov). The font 2.0 run 44011849464 failed 2 flows, both TEST faults (pictures + hierarchy
+  show the app right): uat-rel-4-workout tapped set 1's tick while the screen moved (label present);
+  uat-rel-r576-c-break asserted the why mark while it was above the screen edge (fixed c095249b: scroll UP).
+  phone_gate needs only the two whole rounds (both green), so v0.79.0 was tagged on 1257a600 and pushed.
+  release-apk 44091025092 GREEN: phone 79000 committed to internal/alpha/beta (in Google review); watch
+  1000079000 only on wear:internal (closed/open refused while the phone review runs). Session cron cd3d7657
+  re-runs play-upload v0.79.0 hourly until the watch lands. Production by hand about 3 days later.
+  Owner asked (17 Nov) that the audit also fixes the test system: plan section 3E added.
+
 ## R-609 Birthday wish: the panel now reads first names exactly as the live server does (17 Nov 2026)
 - R-607 + R-608 were deployed live 17 Nov 2026 at 283ce69b (panel Version 17 Nov 2026; bell History, X and tappable
   cards checked live in Chrome).
