@@ -22,7 +22,10 @@ Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept her
   - shop/birthdayAuto.ts: a background read that started before the reminders page passed a switch (the owner saved
     it) keeps the saved switch instead of putting the old one back for up to 5 minutes; its app members are still taken.
 - Tests: awayIdea.test.ts: appUserId alone = not wished; new R-609 first-name test (Devanagari, NBSP before a space,
-  NBSP stuck to the name, tab before a space). Not run locally (this laptop's esbuild binary is missing); CI below.
+  NBSP stuck to the name, tab before a space). Not run locally (this laptop's esbuild binary is missing).
+- CI 44012526785 on b1aa8318: GREEN after one re-run of the failed jobs. First try: all 5503 unit tests passed; the
+  database job died on the runner (port 54322 already in use) and 2 timing e2e specs unrelated to birthdays failed
+  (r448-uat WhatsApp verify note, today-handled-uat R-593 bell count); the previous commit 1257a600 was green.
 - Not deployed.
 
 ## R-608 The AI Assistant stops asking for birthday wishes the app already sends (16-17 Nov 2026)
