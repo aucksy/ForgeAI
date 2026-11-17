@@ -37,7 +37,12 @@ appId: com.mettleup.app
     file: sub-find.yaml
     env:
       FIND: "^Back after 7 weeks, so a lighter start[.]$"
-- assertVisible:
-    id: "target-why-standout-Lateral Raise"
+# 17 Nov 2026 (font 2.0, 360 dp): the reason line sits low in a tall box, so the why mark at the box top
+# can be above the screen edge. Scroll up to it instead of asserting in place.
+- scrollUntilVisible:
+    element:
+      id: "target-why-standout-Lateral Raise"
+    direction: UP
+    timeout: 10000
 - takeScreenshot: rel-r576-i-break-lighter
 - runFlow: sub-uat-r576-discard.yaml
