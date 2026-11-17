@@ -78,7 +78,7 @@ export const WHATS_NEW_LOG: readonly WhatsNewEntry[] = [
     // (R-590, the app rings itself where the phone took the sound). The watch line starts "Your watch" so the phone's
     // watch update card lists it under "New on your watch".
     version: '0.79.0',
-    date: '16 Nov',
+    date: '17 Nov',
     lines: [
       {
         text: '"Message your gym" on the Gym tab now lets you pick who reads it, like the owner or a trainer.',
