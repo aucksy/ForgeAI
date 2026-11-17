@@ -9,6 +9,8 @@
  *  - online, not answered yet: 'waiting' (no birthday idea or row for a moment, never a count that jumps);
  *  - the switch off, or the switch or the app list could not be read (old server, failed call): null, as before.
  * Review (16 Nov): a late answer for a gym the owner already left is dropped.
+ * Review (17 Nov, R-609): a background read that started before the reminders page passed a switch (the owner saved
+ * it) keeps that switch, or the old one would come back for up to 5 minutes; its app members are still taken.
  */
 import { useEffect, useMemo, useSyncExternalStore } from 'react';
 
@@ -34,6 +36,8 @@ let state: State = { key: null, on: undefined, app: undefined };
 /** The gym the panel is on now: an answer for any other is dropped. */
 let current: string | null = null;
 let asking: string | null = null;
+/** Counts the switches the reminders page passed: a read that started before the last one keeps that switch. */
+let noted = 0;
 const listeners = new Set<() => void>();
 
 function set(next: State): void {
@@ -55,6 +59,7 @@ function enterGym(key: string): void {
 
 /** The reminders page's answer (loaded or just saved): every screen follows the birthday switch at once. */
 export function noteAutoReminders(key: string, a: RemindersAnswer): void {
+  noted += 1;
   enterGym(key);
   set({ ...state, on: a.settings.birthday.on });
   if (state.app === undefined) void ask(key);
@@ -63,13 +68,16 @@ export function noteAutoReminders(key: string, a: RemindersAnswer): void {
 async function ask(key: string): Promise<void> {
   if (asking === key) return;
   asking = key;
+  const notedAtStart = noted;
   try {
     const [sw, app] = await Promise.allSettled([api.getAutoReminders(key), api.listAppMembers(key)]);
     if (current !== key) return; // the owner moved to another gym meanwhile
     if (sw.status === 'rejected' && !isNoSuchFunction(sw.reason)) console.warn('[ForgeErr] automatic birthday wish: the switch', sw.reason);
     if (app.status === 'rejected') console.warn('[ForgeErr] automatic birthday wish: the app members', app.reason);
     // A failure is an answer too (null): the screens keep the old behaviour until the next read, 5 minutes on.
-    set({ key, on: sw.status === 'fulfilled' ? sw.value.settings.birthday.on : null, app: app.status === 'fulfilled' ? app.value : null });
+    // The owner saved the switch while this read was out: what he saved wins over this older answer.
+    const on = noted !== notedAtStart ? state.on : sw.status === 'fulfilled' ? sw.value.settings.birthday.on : null;
+    set({ key, on, app: app.status === 'fulfilled' ? app.value : null });
   } finally {
     if (asking === key) asking = null;
   }

@@ -262,9 +262,10 @@ describe('R-608 the birthday idea with the automatic birthday wish', () => {
     // An archived member does not count as sharing it (the server leaves archived members out).
     const archived = { ...bdayGym(), members: [...bdayGym().members, makeMember({ id: 'm_old2', fullName: 'Preeti Old', phone: '+919800000001', archived: true })] };
     expect([...autoWishIds(notArchived(archived), [PREETI_APP])]).toEqual(['m_preeti']);
-    // A record linked to an app account still counts (an extra yes).
+    // R-609: a record linked to an app account but with no app member on its number is NOT wished (the server never
+    // looks at appUserId).
     const linked = views.map((v) => (v.member.id === 'm_preeti' ? { ...v, member: { ...v.member, appUserId: 'u1' } } : v));
-    expect([...autoWishIds(linked, [])]).toEqual(['m_preeti']);
+    expect([...autoWishIds(linked, [])]).toEqual([]);
   });
 
   it('first names compare as the server does: first word, letters only, any case', () => {
@@ -274,6 +275,23 @@ describe('R-608 the birthday idea with the automatic birthday wish', () => {
     expect(firstNameKey('Dr. Asha')).toBe('dr');
     expect(firstNameKey('123')).toBeNull();
     expect(firstNameKey(null)).toBeNull();
+  });
+
+  it('R-609 first names as the LIVE server reads them: Hindi vowel signs dropped, only plain spaces trimmed', () => {
+    const ch = (...codes: number[]) => String.fromCharCode(...codes);
+    const NBSP = ch(0xa0);
+    // Rahul Sharma in Devanagari: the live server keeps the letters r, h, l only (no vowel signs).
+    const rahul = ch(0x930, 0x93e, 0x939, 0x941, 0x932);
+    const sharma = ch(0x936, 0x930, 0x94d, 0x92e, 0x93e);
+    expect(firstNameKey(`${rahul} ${sharma}`)).toBe(ch(0x930, 0x939, 0x932));
+    // The app name typed with the vowel signs and the list name typed without them still match, as on the server.
+    expect(firstNameKey(rahul)).toBe(firstNameKey(ch(0x930, 0x939, 0x932)));
+    // A non-breaking space before a plain space: the server gives no name (so no automatic wish).
+    expect(firstNameKey(`${NBSP} Rahul Sharma`)).toBeNull();
+    // A non-breaking space stuck to the name is not a letter, so it simply drops out.
+    expect(firstNameKey(`${NBSP}Rahul Sharma`)).toBe('rahul');
+    // Only plain spaces are trimmed: a tab before a space leaves the tab as the first word.
+    expect(firstNameKey('\t Rahul')).toBeNull();
   });
 
   it('"whose birthday is today?" still lists everyone; with the switch on each wished member says so, and the button asks only for the rest', () => {

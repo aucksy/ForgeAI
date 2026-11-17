@@ -7,6 +7,24 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-609 Birthday wish: the panel now reads first names exactly as the live server does (17 Nov 2026)
+- R-607 + R-608 were deployed live 17 Nov 2026 at 283ce69b (panel Version 17 Nov 2026; bell History, X and tappable
+  cards checked live in Chrome).
+- Fresh-eyes review of R-608, three fixes (panel only, no server or wording change):
+  - logic/autoWish.ts firstNameKey = the server's _first_name_key (0023) exactly: letters only (\p{L}; Postgres
+    [:alpha:] drops marks), trims plain spaces only. Checked on the live server with plain SQL (built-ins only):
+    Rahul Sharma in Devanagari -> the letters r, h, l only; NBSP + "Rahul" -> rahul; NBSP + space + "Rahul" -> no name;
+    tab + "Rahul" -> rahul. Before, the panel kept the vowel signs (a Hindi name typed with signs on one side and
+    without on the other matched on the server but not in the panel) and .trim() removed every kind of space.
+  - logic/autoWish.ts: a list member's appUserId no longer counts as "gets the wish" (the server never looks at it; real
+    gyms never set it). Demo is online and does use this logic, but the demo app list carries the name and number of
+    every linked member, so the demo answer is unchanged unless two demo members share a number.
+  - shop/birthdayAuto.ts: a background read that started before the reminders page passed a switch (the owner saved
+    it) keeps the saved switch instead of putting the old one back for up to 5 minutes; its app members are still taken.
+- Tests: awayIdea.test.ts: appUserId alone = not wished; new R-609 first-name test (Devanagari, NBSP before a space,
+  NBSP stuck to the name, tab before a space). Not run locally (this laptop's esbuild binary is missing); CI below.
+- Not deployed.
+
 ## R-608 The AI Assistant stops asking for birthday wishes the app already sends (16-17 Nov 2026)
 - Owner: "the birthdays are set to be automated but the AI assistant is still suggesting that" (his gym has the
   automatic birthday wish ON; "Today for you" still said "Birthdays today: N · Write birthday wishes"). He approved the
@@ -19,7 +37,7 @@ Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept her
   counted, labelled "not in the app". Fixed forward, no server change:
   - logic/autoWish.ts mirrors the server rule with what the panel already loads: owner_app_members' `phone` (every
     server step that proves a number writes checkin_phone and phone together since 0016; leaving clears both), one
-    list member with that number among those not archived, firstNameKey = _first_name_key. appUserId = extra yes.
+    list member with that number among those not archived, firstNameKey = _first_name_key. appUserId = extra yes (R-609: dropped, the server never reads it).
     Gap (no server change allowed): an old row whose `phone` was typed but never proven (0015 era, or an old app
     passing p_phone at join) would count as wished when the server does not wish it.
   - shop/birthdayAuto.ts reads the switch AND the app members (one store, 5-minute re-read while a screen uses it,
@@ -35,7 +53,7 @@ Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept her
   every birthday member (a tool he opens on purpose); a message the AI drafts for the whole group "birthday_today"
   when he types that himself.
 - Tests: awayIdea.test.ts R-608 block (app member with matching number and first name; no proven number like Crispy's
-  Digvijay = NOT wished; name mismatch; shared number; archived not sharing; appUserId extra; waiting = no idea; off;
+  Digvijay = NOT wished; name mismatch; shared number; archived not sharing; appUserId (R-609: alone = not wished); waiting = no idea; off;
   unknown; plain list). e2e r608-uat.spec.mjs: Asha in the app with her number, Ravi in the app with no number (still
   counted); all wished = no idea; off = both; 390, 360, 1280. First build: CI 43934148340 green. Fix: CI below.
 - Also fixed whatsNew.test order checks left stale by R-607 (58aa692f).

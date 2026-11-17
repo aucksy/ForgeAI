@@ -8,18 +8,21 @@
  * and the first names match (_first_name_key). The panel cannot see checkin_phone, but owner_app_members gives each
  * app member's `phone`, and since 0016 every server step that proves a number writes checkin_phone and phone together
  * (leaving clears both), so `phone` stands for it. The review of 16 Nov found that nothing writes a list member's
- * `appUserId` on real gyms (Crispy Curves: 2 app members, 0 linked), so it is only an extra "yes" when it is there.
+ * `appUserId` on real gyms (Crispy Curves: 2 app members, 0 linked), and the server never looks at it, so neither does
+ * this (R-609: it used to be an extra "yes").
  */
 import { phone10 } from './audience';
 import type { MemberView } from '../types';
 
 /**
- * The server's _first_name_key: the first word of the trimmed name, letters only, lower case; null when nothing is
- * left. (Postgres [:alpha:] is any letter, so \p{L} and its marks here.)
+ * The server's _first_name_key (0023), exactly: btrim (plain spaces only), the first word up to a plain space, letters
+ * only, lower case; null when nothing is left. Postgres [:alpha:] keeps letters only, NOT marks: checked on the live
+ * server (R-609, 17 Nov 2026), Rahul written in Devanagari loses its vowel signs (only r, h, l stay), and a name that
+ * starts with a non-breaking space and then a space gives no name at all (the non-breaking space is the first word).
  */
 export function firstNameKey(name: string | null | undefined): string | null {
-  const first = (name ?? '').trim().split(' ')[0] ?? '';
-  const key = first.replace(/[^\p{L}\p{M}]/gu, '').toLowerCase();
+  const first = (name ?? '').replace(/^ +| +$/g, '').split(' ')[0] ?? '';
+  const key = first.replace(/[^\p{L}]/gu, '').toLowerCase();
   return key || null;
 }
 
@@ -49,6 +52,5 @@ export function autoWishIds(
     const key = firstNameKey(roster.member.fullName);
     if (key !== null && key === firstNameKey(a.name)) out.add(roster.member.id);
   }
-  for (const v of views) if (v.member.appUserId) out.add(v.member.id);
   return out;
 }
