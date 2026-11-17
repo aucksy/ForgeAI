@@ -31,6 +31,9 @@ Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept her
   1000079000 only on wear:internal (closed/open refused while the phone review runs). Session cron cd3d7657
   re-runs play-upload v0.79.0 hourly until the watch lands. Production by hand about 3 days later.
   Owner asked (17 Nov) that the audit also fixes the test system: plan section 3E added.
+- 17 Nov ~20:40 IST: play-upload 44109513123 (v0.79.0, dry_run off): phone tracks already had 79000 (skipped);
+  watch 1000079000 Set on wear:Watch closed testing + wear:beta, committed. Phone + watch 0.79.0 on internal,
+  closed and open testing. Cron cd3d7657 deleted. NEXT: production by hand about 3 days later, with his yes.
 
 ## R-609 Birthday wish: the panel now reads first names exactly as the live server does (17 Nov 2026)
 - R-607 + R-608 were deployed live 17 Nov 2026 at 283ce69b (panel Version 17 Nov 2026; bell History, X and tappable
