@@ -65,11 +65,7 @@ You do no audit work yourself.
   ITEMS, INPUT FILES, OUTPUT FILE, ROW FORMAT with one made-up row, SIZE), then use it.
 
 ## Formulas (all in 5-hour-limit percent)
-- S = 80 (his words, 18 Nov 2026: "only consume up to 80% of my 5 hour window by these audit tasks"). The last 20% of every window stays free for Aakash.
-- hours_left = hours until the 5-hour reset. hours_gone = 5 - hours_left.
-- T = F5_start + (S - F5_start) x min(1, (hours_gone + 1) / 5).
-- RESERVED = the sum of cost(step) of every helper this run started that has not reported.
-- Launch rule: launch a helper only if F5_now + RESERVED + cost(its step) <= T. Re-read F5 after every report.
+- NO HOURLY SPREADING (his words, 18 Nov 2026, later the same day: "let the audit run ... without any early limitations. Because it's one and the same thing you wait now or you wait later ... once you know it's 85% do not start anything new ... Do not let the review stop just because you have reached 85%. Let it complete, it's okay if it goes 90%"). RULE: launch helpers at full speed (max 6 at once) while F5_now + RESERVED + cost(step) <= 85. Aim to end each window between 80 and 85. At F5 >= 85: start nothing new. Helpers already running ALWAYS finish (ending near 90 is fine); never tell them to stop for the 5-hour limit unless F5 >= 95. The hourly target T is no longer used.
 - No open window (no reset time shown): F5_start = F5_now, hours_gone = 0. The first helper opens the
   window; read the reset time after it reports.
 - A helper still running at the reset is charged to the new window. Write the new F5_start only after
@@ -91,8 +87,8 @@ You do no audit work yourself.
   Never cut: lenses 2-6, 17, the gap hunts, 3E, 3F, 3G.
 
 ## Hard stops
-- F5 >= 80: launch nothing more this window.
-- F5 >= 87: tell every running helper (SendMessage) "save your checkpoint now and stop". Wait for them.
+- F5 >= 85: launch nothing more this window. Running helpers finish (near 90 is fine).
+- F5 >= 95: tell every running helper (SendMessage) "save your checkpoint now and stop". Wait for them.
 - WF >= 95 or WA >= 95: status PAUSED. Tell Aakash once: "The audit used the weekly limit. Reset it when
   you want the audit to continue." Keep checking each hour. Resume by yourself when both are under 95.
   Never message him again about the same pause.
