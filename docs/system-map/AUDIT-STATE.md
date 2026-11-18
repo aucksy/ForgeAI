@@ -25,22 +25,22 @@ blind check: never put the held-out rows or hints into a helper brief (ids are i
 | 3F | 0 | 5 (start value) |
 
 ## Work items
-Counts: 39 todo, 0 in progress, 10 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 34 todo, 5 in progress, 10 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
+| W9 | E3 | 3E E3 release gate cost by script: minutes per round part, 20 slowest flows, repeated checks | in progress | _work/E3.md |  |
+| A2-panel-screens-2 | A2 | A2 features: area panel/screens-2 (53 items, 9167 lines) | in progress | _work/A2-panel-screens-2.md |  |
+| A2-panel-logic-1 | A2 | A2 features: area panel/logic-1 (43 items, 10928 lines) | in progress | _work/A2-panel-logic-1.md |  |
+| A2-panel-shop | A2 | A2 features: area panel/shop (128 items, 8869 lines) | in progress | _work/A2-panel-shop.md |  |
+| A2-panel-assistant | A2 | A2 features: area panel/assistant (30 items, 6837 lines) | in progress | _work/A2-panel-assistant.md |  |
 | A7-pilot | A7 | promises: PILOT, one source group of at most 120 candidate sentences from _sources/promises.txt; runs alone | todo | _work/A7-pilot.md |  |
-| W9 | E3 | 3E E3 release gate cost by script: minutes per round part, 20 slowest flows, repeated checks | todo | _work/E3.md |  |
 | W10 | E4 | 3E E4 better test framework: research + proposals only -> TEST-SYSTEM-REVIEW.md | todo | _work/E4.md |  |
 | W11 | 3F | 3F F1, F4-F6 change-360 review (proposals only; switch stays OFF) -> CHANGE-360-REVIEW.md draft | todo | _work/F.md |  |
 | A2-web-pages | A2 | A2 features: area web/pages (398 items, 9556 lines) | todo | _work/A2-web-pages.md |  |
-| A2-panel-screens-2 | A2 | A2 features: area panel/screens-2 (53 items, 9167 lines) | todo | _work/A2-panel-screens-2.md |  |
 | A2-panel-forms | A2 | A2 features: area panel/forms (6 items, 1647 lines) | todo | _work/A2-panel-forms.md |  |
 | A2-panel-ui-shell | A2 | A2 features: area panel/ui-shell (153 items, 11728 lines) | todo | _work/A2-panel-ui-shell.md |  |
-| A2-panel-logic-1 | A2 | A2 features: area panel/logic-1 (43 items, 10928 lines) | todo | _work/A2-panel-logic-1.md |  |
 | A2-panel-logic-2 | A2 | A2 features: area panel/logic-2 (96 items, 10982 lines) | todo | _work/A2-panel-logic-2.md |  |
-| A2-panel-shop | A2 | A2 features: area panel/shop (128 items, 8869 lines) | todo | _work/A2-panel-shop.md |  |
-| A2-panel-assistant | A2 | A2 features: area panel/assistant (30 items, 6837 lines) | todo | _work/A2-panel-assistant.md |  |
 | A2-panel-auth-data | A2 | A2 features: area panel/auth-data (56 items, 8459 lines) | todo | _work/A2-panel-auth-data.md |  |
 | A2-panel-brand-shell | A2 | A2 features: area panel/brand-shell (740 items, 8507 lines) | todo | _work/A2-panel-brand-shell.md |  |
 | A2-phone-screens-1 | A2 | A2 features: area phone/screens-1 (161 items, 7231 lines) | todo | _work/A2-phone-screens-1.md |  |
@@ -54,6 +54,11 @@ Counts: 39 todo, 0 in progress, 10 done, 0 blocked. Full list: work-items.jsonl.
 | A2-phone-tracker-engine | A2 | A2 features: area phone/tracker-engine (35 items, 10011 lines) | todo | _work/A2-phone-tracker-engine.md |  |
 | A2-phone-tracker-data | A2 | A2 features: area phone/tracker-data (40 items, 9326 lines) | todo | _work/A2-phone-tracker-data.md |  |
 | A2-phone-tracker-lib | A2 | A2 features: area phone/tracker-lib (59 items, 9117 lines) | todo | _work/A2-phone-tracker-lib.md |  |
+| A2-phone-native | A2 | A2 features: area phone/native (103 items, 11102 lines) | todo | _work/A2-phone-native.md |  |
+| A2-phone-components-1 | A2 | A2 features: area phone/components-1 (127 items, 7312 lines) | todo | _work/A2-phone-components-1.md |  |
+| A2-phone-components-2 | A2 | A2 features: area phone/components-2 (127 items, 7178 lines) | todo | _work/A2-phone-components-2.md |  |
+| A2-phone-cloud-backup-ai | A2 | A2 features: area phone/cloud-backup-ai (59 items, 9259 lines) | todo | _work/A2-phone-cloud-backup-ai.md |  |
+| A2-phone-onboarding-db | A2 | A2 features: area phone/onboarding-db (81 items, 11893 lines) | todo | _work/A2-phone-onboarding-db.md |  |
 | T1a | tools | coordinator tooling: work-items.jsonl, _tools/state.mjs, _tools/merge.mjs, _briefs/, RUNBOOK.md | done | _work/T1a.md | tools, briefs, runbook built and tested |
 | A1b | A1b | source lists by script: _tools/sources.mjs -> _sources/<surface>.txt, sizes.csv, readers-raw.txt, promises.txt (no model reading) | done | _work/A1b.md | 37 areas, source lists pushed |
 | G0 | redact | blind-check redaction: _tools/redact.mjs -> _sources/owner-inbox-redacted.md + claude-notes-redacted.md (parts of at most 600 lines); prints counts only | done | _work/G0.md | redacted copies written by the coordinator's script |
@@ -62,7 +67,7 @@ Counts: 39 todo, 0 in progress, 10 done, 0 blocked. Full list: work-items.jsonl.
 | W7 | E1 | 3E E1 test history (script) -> test-history.csv | done | _work/E1.md | 3,128 runs, 39% red tries, 91 proven flaky |
 | W8 | E2 | 3E E2 label failed jobs by rule (script), then one helper reads only the UNKNOWN rows (at most 40) -> test-failures.jsonl | done | _work/E2.md | 483 of 1,247 red jobs not app bugs (39%; range 29-39); 429 unknown |
 | A2-panel-screens-1 | A2 | A2 features: area panel/screens-1 (39 items, 9139 lines) | done | _work/A2-panel-screens-1.md | 40 features (hit the 40 limit), 39 of 39 lines |
-(+ 14 more todo items, not shown)
+(+ 9 more todo items, not shown)
 (+ 2 older done items, not shown)
 
 ## Needs Aakash
