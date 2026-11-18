@@ -9,7 +9,7 @@ blind check: never put the held-out rows or hints into a helper brief (ids are i
 | window reset (IST) | F5 start | F5 now | WF | WA | helpers run | why stopped |
 |---|---|---|---|---|---|---|
 | 18 Nov 20:00 | 6 | 84 | 20 | 11 | plan-review, E1-E3, tools, A1b, A2 x9 | closed at 84 |
-| 19 Nov 01:00 | 3 | 71 | 39 | 21 | A2 x13, E4, 3F, A7-src | last helper running, then closed |
+| 19 Nov 01:00 | 3 | 74 | 40 | 21 | A2 x13, E4, 3F, A7-src | closed at 74-76: the stop line |
 
 ## Learned cost per helper type (5-hour %)
 | step | helpers so far | average cost |
@@ -17,7 +17,7 @@ blind check: never put the held-out rows or hints into a helper brief (ids are i
 | plan-review | 1 | 5.5 (171k tokens) |
 | tools | 2 | 6.1 (190k tokens) |
 | A1b | 1 | 6.4 (201k tokens) |
-| A2 | 21 | 5.1 (159k tokens) |
+| A2 | 22 | 5.1 (159k tokens) |
 | A7 | 1 | 6.0 (187k tokens) |
 | E1 | 1 | 6.0 (189k tokens) |
 | E2 | 1 | 9.6 (299k tokens) |
@@ -26,11 +26,10 @@ blind check: never put the held-out rows or hints into a helper brief (ids are i
 | 3F | 1 | 5.5 (171k tokens) |
 
 ## Work items
-Counts: 32 todo, 1 in progress, 34 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 32 todo, 0 in progress, 35 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
-| A2-phone-tracker-data | A2 | A2 features: area phone/tracker-data (40 items, 9326 lines) | in progress | _work/A2-phone-tracker-data.md |  |
 | A2-phone-tracker-lib | A2 | A2 features: area phone/tracker-lib (59 items, 9117 lines) | todo | _work/A2-phone-tracker-lib.md |  |
 | A2-phone-native | A2 | A2 features: area phone/native (103 items, 11102 lines) | todo | _work/A2-phone-native.md |  |
 | A2-phone-components-1 | A2 | A2 features: area phone/components-1 (127 items, 7312 lines) | todo | _work/A2-phone-components-1.md |  |
@@ -56,22 +55,22 @@ Counts: 32 todo, 1 in progress, 34 done, 0 blocked. Full list: work-items.jsonl.
 | A7-panel-3 | A7 | promises: group panel part 3, lines 717-836 of _sources/promises.txt | todo | _work/A7-panel-3.md |  |
 | A7-panel-4 | A7 | promises: group panel part 4, lines 837-847 of _sources/promises.txt | todo | _work/A7-panel-4.md |  |
 | A7-phone-watch-1 | A7 | promises: group phone-watch part 1, lines 848-967 of _sources/promises.txt | todo | _work/A7-phone-watch-1.md |  |
-| A2-phone-shop-1 | A2 | A2 features: area phone/shop-1 (68 items, 9373 lines) | done | _work/A2-phone-shop-1.md | 37 rows (36 features), 68 of 68 lines; 18 live, 15 behind switch, 3 hidden |
 | A2-phone-shop-2 | A2 | A2 features: area phone/shop-2 (185 items, 9398 lines) | done | _work/A2-phone-shop-2.md | 36 rows (34 features), 185 of 185 lines; plan gates written but off; surface name fixed by coordinator |
 | A2-phone-tracker-services-1 | A2 | A2 features: area phone/tracker-services-1 (74 items, 10762 lines) | done | _work/A2-phone-tracker-services-1.md | 40 features, 74 of 74 lines; 33 live, 7 behind switch; status from file headers, screens not opened |
 | A2-phone-tracker-services-2 | A2 | A2 features: area phone/tracker-services-2 (73 items, 10868 lines) | done | _work/A2-phone-tracker-services-2.md | 40 rows (38 features), 73 of 73 lines; all tier free; 5 member settings gate behaviour |
 | A2-phone-tracker-components-1 | A2 | A2 features: area phone/tracker-components-1 (52 items, 8226 lines) | done | _work/A2-phone-tracker-components-1.md | 38 rows (36 features), 52 of 52 lines; 33 live, 3 behind switch; 2 Plus-only features |
 | A2-phone-tracker-components-2 | A2 | A2 features: area phone/tracker-components-2 (102 items, 8215 lines) | done | _work/A2-phone-tracker-components-2.md | 40 rows (39 features), 50 of 50 lines; no plan gate read in this area |
 | A2-phone-tracker-engine | A2 | A2 features: area phone/tracker-engine (35 items, 10011 lines) | done | _work/A2-phone-tracker-engine.md | 33 rows (32 features), 35 of 35 lines; no plan gate in this area |
+| A2-phone-tracker-data | A2 | A2 features: area phone/tracker-data (40 items, 9326 lines) | done | _work/A2-phone-tracker-data.md | 30 rows (26 features), 40 of 40 lines; one Plus gate (targets) |
 | A7-src | tools | script: _tools/promises.mjs -> _sources/promises.txt (candidate sentences per source group; the file was missing) | done | _work/A7-src.md | promises.txt made by script: 1,631 candidates in 8 groups (with word endings); Hindi lines and words inside store pictures are not listed |
 (+ 7 more todo items, not shown)
-(+ 26 older done items, not shown)
+(+ 27 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
 
 ## Resume notes
-- PACER RUN pacer-1118-2003 (window reset 19 Nov 01:00 IST; saved 18 Nov 20:40 IST): F5 3 -> 71, weekly Fable 21 -> 39, weekly all 12 -> 21. 17 helpers ran; measured alone (A7 pilot): PCT_PER_100K = 3.2, so one helper = about 5 F5 points and about 1.1 weekly-Fable points. LAST helper of this window still running: A2-phone-tracker-data (merge it, then nothing more starts; the window ends near 76). DONE this window: 14 A2 areas (23 of 37 done, 754 feature rows before the last one), E4 (TEST-SYSTEM-REVIEW.md), 3F draft F1, F4-F6 (CHANGE-360-REVIEW.md; F2 and F3 wait for findings), A7-src, A7 pilot (90 promises: 3 GAP, 20 partly). 17 A7 items added (A7-<group>-<n>; build each brief like _work/briefs/A7-pilot.md with its own line range; A7 cost = about 6 points each). NEXT WINDOW (after 01:00 IST, night rule: up to 96): the 13 A2 areas left (phone tracker-lib, native, components-1/2, cloud-backup-ai, onboarding-db, lib-core, watch-app, hq-app, server x5), then A7 items. LESSONS: (1) helpers write surface as 'websites' or 'phone app': put the exact word (web, phone, panel, watch, hq, server: check surfaces.json) in the launch prompt, or fix with sed before merge. (2) Paired item lists were the same file twice (screens-1/2, components-1/2, tracker-components): components and tracker-components are now split; screens-1/2 and panel-brand-shell rows repeat other areas: de-duplicate in A3. Check server-database-1/2/3 item files do not overlap (they did not at 20:15). (3) _sources/promises.txt is made by: node docs/system-map/_tools/promises.mjs --inflections --write (run from the repo root; prints the part ranges). Hindi lines and words inside store pictures are not in it. (4) Briefs W10, W11, A7-src, A7-pilot are in _work/briefs/; template _briefs/3F.md is new. (5) Another chat pushes to main (docs/CLAUDE-NOTES.md): on a rejected push use git fetch + git merge origin/main, then push. (6) get_usage answers are cached for 1-2 minutes: count RESERVED yourself. (7) In Git Bash, node cannot read /tmp paths written by bash: keep temp files inside the worktree. Chat compacts at 20% now; after it, read these notes before saying we never discussed or he never approved something.
+- PACER RUN pacer-1118-2003 (window reset 19 Nov 01:00 IST) CLOSED 18 Nov 20:45 IST at F5 74 (the number lags; true value about 76), weekly Fable 40, weekly all 21. No helper runs. Lock deleted. 18 helpers ran; measured alone (A7 pilot): PCT_PER_100K = 3.2, so one helper = about 5 F5 points and about 1.1 weekly-Fable points; one full window = about 20 weekly-Fable points, so about 2.7 more windows fit before the weekly Fable limit reaches 95. DONE this window: 15 A2 areas (24 of 37 done, 784 feature rows), E4 (TEST-SYSTEM-REVIEW.md, 15 proposals), 3F draft F1, F4-F6 (CHANGE-360-REVIEW.md, 18 proposals; F2 and F3 wait for findings), A7-src, A7 pilot (90 promises: 3 GAP, 20 partly, 56 unknown). 17 A7 items added (A7-<group>-<n>; build each brief like _work/briefs/A7-pilot.md with its own line range). NEXT WINDOW (after 01:00 IST, night rule: up to 96): the 13 A2 areas left (phone tracker-lib, native, components-1/2, cloud-backup-ai, onboarding-db, lib-core, watch-app, hq-app, server x5), then A7 items. LESSONS: (1) helpers write surface as 'websites' or 'phone app': put the exact word (check surfaces.json: web, phone, panel ...) in the launch prompt, or fix with sed before merge. (2) Paired item lists were the same file twice (screens-1/2, components-1/2, tracker-components): components and tracker-components are now split; screens-1/2 and panel-brand-shell rows repeat other areas: de-duplicate in A3. (3) _sources/promises.txt is made by: node docs/system-map/_tools/promises.mjs --inflections --write (run from the repo root; it prints the part ranges). Hindi lines and words inside store pictures are not in it. (4) Briefs W10, W11, A7-src, A7-pilot are in _work/briefs/; template _briefs/3F.md is new. (5) Another chat pushes to main (docs/CLAUDE-NOTES.md): on a rejected push use git fetch + git merge origin/main, then push. (6) get_usage answers lag 1-2 minutes: count RESERVED yourself. (7) In Git Bash, node cannot read /tmp paths written by bash: keep temp files inside the worktree. (8) The launch prompt that worked is one line: 'Your full brief is the file <abs path>; read it in full and follow it exactly' + repo root + never-open list + surface word. Chat compacts at 20% now; after it, read these notes before saying we never discussed or he never approved something.
 - ADDED 18 Nov evening: NIGHT RULE (his words, 18 Nov 2026: "Anywhere between 12am to 6am, you can feel free to use up to 100% of my 5 hour limit. Just ensure that you're not starting tasks at the very end moment that gets impacted by the limit end."). Between 00:00 and 06:00 IST this replaces the 75 / 80 / 85 numbers above, wherever they appear in this file: launch at full speed (max 6 at once) only while F5_now + RESERVED + cost(step) <= 96, costs rounded up, so that no helper is cut by the limit. Start nothing new at F5 >= 92. Tell helpers to save and stop only at F5 >= 98. From 06:00 IST the day rule applies again to every new launch; helpers that started before 06:00 finish. The weekly limits and their stop lines do not change at night.
 - 18 Nov 18:10 IST: window 1 CLOSED at F5 84 (weekly Fable 20, weekly all 11). No helper runs. Lock file deleted, so the hourly pacer task takes over after the 20:00 IST reset. 9 of 37 A2 areas done, 264 feature rows. Next: the other 28 A2 areas.
 - NEWEST PACING RULE, 18 Nov evening (replaces every pacing line below): NO HOURLY SPREADING; STOP BETWEEN 75 AND 80 (his words, 18 Nov 2026, newest: "stop anywhere between 75 to 80% and in case needed maximum it can go up to 85% ... sooner the better"; earlier the same day: "it's one and the same thing you wait now or you wait later"). RULE: launch helpers at full speed (max 6 at once) only while F5_now + RESERVED + cost(step) <= 80. At F5 >= 75: start nothing new. Helpers already running always finish; the window should end between 75 and 80 and must not pass 85, so count RESERVED honestly and round costs up. Tell helpers to save and stop only at F5 >= 95. The hourly target T is not used.
