@@ -7,6 +7,18 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-613. Terms: exercise pictures are only a guide; house writing style - 18 Nov 2026
+- Terms part A section 4 "Your health" got his version A paragraph (commit 0f80fcdc), plus a summary bullet and the
+  what-changed note. Members only: TERMS_VERSION unchanged (no owner re-accept).
+- NOT LIVE: public pages ship only with an owner panel deploy. His answer (18 Nov 2026): "A" = deploy AFTER the
+  audit, with the first fixes. Do not deploy the panel for this before then.
+- House style = version A (his words: "That's how I want you to write English. Simple, to the point, and correctly
+  done."). Saved in D:\Brain note member-words-are-complete-sentences and the member-words skill.
+- Gemini script now refuses a brief without 7 headings (who reads, where, kind, why, true facts, must not say,
+  surrounding text).
+- Backlog: F228 (rewrite all copy and legal pages in the house style), F229 (longer rest raises the next set's
+  target, with a note). Both after-audit.
+
 ## R-612. Change 360 flow: global, behind a switch, his yes per change - 18 Nov 2026
 
 He said: install the gap-prevention flow globally "but with a switch. So before this flow activates, I want to approve it first. I do not want it activated for each and every simple fix"; generic questions globally, MettleUp's own questions only here; review for negative side effects.
