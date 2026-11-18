@@ -7,6 +7,13 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-617. Audit did not resume at 20:00: the pacer looked in the wrong folder - 18 Nov 2026
+
+He asked why the audit had not resumed at the 20:00 IST reset. Cause: the pacer task said "Work in D:\Apps\ForgeAI"; AUDIT-STATE.md
+lives only on origin/main (audit worktree scratchpad wt-audit), so runs at 17:46, 18:46, 19:46 IST quit "Audit not started yet".
+Fix: pacer SKILL.md now names the wt-audit worktree (fetch + detach to origin/main first, recreate it if gone) and checks quick exits
+only after that. Ran it at 20:03 IST on Fable 5.2: lock written, A2 panel/auth-data merged (3b691fbf 20:09), 6 helpers in progress.
+
 ## R-616. F235: compare our build framework with Google's Elephant and Goldfish method, first after the audit - 18 Nov 2026
 
 His words: "add an item to backlog. It is actually the first item we are going to explore after the audit is done and before
