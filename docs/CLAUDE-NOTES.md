@@ -9,7 +9,7 @@ Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept her
 
 ## R-615. Full system audit: STARTED (scheduled start run) - 18 Nov 2026 16:37 IST
 
-- Plan: D:\Brain\Dev-Framework6-11-16-full-system-audit-plan.md. Live state: docs/system-map/AUDIT-STATE.md.
+- Plan: D:\Brain\Dev-Framework\2026-11-16-full-system-audit-plan.md. Live state: docs/system-map/AUDIT-STATE.md.
 - Analysis only (his words, 18 Nov 2026): no app code, tests, workflows, skills or settings change; proposals only.
 - Helpers: Fable 5.2, effort medium, max 6. Model router OFF (checked). change-360 switch OFF (checked).
 - Done: A1 (docs/system-map/surfaces.json, 11 surfaces). Running: plan review helper -> docs/system-map/PLAN-REVIEW.md.
