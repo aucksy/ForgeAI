@@ -161,7 +161,197 @@ Three cost facts worth more than the table:
   C-03 to C-06). Keep the docstring at the top of the current file.
 
 ```python
-@@PATCHED@@
+import glob
+import json
+import os
+import re
+import sys
+
+HOME = os.path.join(os.path.expanduser("~"), ".claude", "change-360")
+GATE_STEPS = ("questions", "blast_radius", "tests_first")
+ORDER = GATE_STEPS + ("build", "gates", "fresh_eyes", "map_updated", "escape_log")
+BUILD_WORDS = re.compile(
+    r"\b(build|add|implement|create|make|change|fix|feature|bug|redesign|rework|update|remove|delete|replace|rename|"
+    r"move|improve|redo|ship|launch|banao|bana do|theek|hata do|badal do)\b", re.I)
+# "git commit", also behind options (git -C "a path" commit, git --no-pager commit); not "git log --grep commit"
+COMMIT = re.compile(
+    r"\bgit(?:\.exe)?(?:\s+(?:-[cC]\s+(?:\"[^\"]*\"|'[^']*'|\S+)|--?[\w-]+(?:=(?:\"[^\"]*\"|'[^']*'|\S+))?))*"
+    r"\s+commit(?![\w-])", re.I)
+MOVES = re.compile(r"(?:\b(?:cd|pushd|set-location|sl)|\s-C)\s+(?:\"([^\"]+)\"|'([^']+)'|([^\s;&|)]+))", re.I)
+
+
+def norm(p):
+    if not p or not isinstance(p, str):
+        return ""
+    m = re.match(r"^/([a-zA-Z])(/.*)?$", p)  # Git Bash spelling: /d/Apps/Demo
+    if m:
+        p = m.group(1) + ":" + (m.group(2) or "/")
+    try:
+        if os.path.exists(p):
+            p = os.path.realpath(p)  # AAKASH~1 becomes the long name, so both spellings match
+    except Exception:
+        pass
+    return os.path.normcase(os.path.normpath(p)).replace("\\", "/")
+
+
+def as_list(v):
+    return [v] if isinstance(v, str) else [x for x in (v or []) if isinstance(x, str)]
+
+
+def switch():
+    try:
+        with open(os.path.join(HOME, "switch.json"), encoding="utf-8") as f:
+            sw = json.load(f)
+        return sw if isinstance(sw, dict) else {"on": False}
+    except Exception:
+        return {"on": False}
+
+
+def repo_roots(where):
+    """The git folder `where` sits in, plus the MAIN repo when `where` is a linked worktree. Reads files, runs nothing."""
+    out, d = [], where
+    for _ in range(40):
+        if not d:
+            break
+        g = os.path.join(d, ".git")
+        if os.path.isdir(g):
+            out.append(d)
+            break
+        if os.path.isfile(g):
+            out.append(d)
+            with open(g, encoding="utf-8") as f:
+                m = re.match(r"gitdir:\s*(.+)", f.read().strip())
+            if m:
+                gd = m.group(1).strip()
+                if not os.path.isabs(gd):
+                    gd = os.path.join(d, gd)
+                parts = norm(gd).split("/.git/worktrees/")
+                if len(parts) == 2:
+                    out.append(parts[0])
+            break
+        nd = os.path.dirname(d)
+        if nd == d:
+            break
+        d = nd
+    return out
+
+
+def places(cwd, command):
+    """Every folder this call may act in: cwd, the folders the command moves to, and their git roots."""
+    spots = [cwd] if cwd else []
+    for m in MOVES.finditer(command or ""):
+        t = next(g for g in m.groups() if g)
+        spots.append(t if (os.path.isabs(t) or t.startswith("/") or not cwd) else os.path.join(cwd, t))
+    out = []
+    for s in spots:
+        try:
+            out.append(norm(s))
+            out.extend(norm(r) for r in repo_roots(s))
+        except Exception:
+            continue
+    return out
+
+
+def path_hit(paths, cwd, command):
+    paths = [n for n in (norm(p) for p in paths) if len(n) > 3]  # never a bare drive
+    cmd = re.sub(r"(?<![\w:.])/([a-z])/", r"\1:/", (command or "").replace("\\", "/").lower())
+    blob = " ".join(places(cwd, command)) + " " + cmd
+    # the path must end at a separator, so "D:/Apps/Demo" never matches "D:/Apps/Demo2"
+    return any(re.search(re.escape(p) + r"(?=[/\s\"';&|)]|$)", blob) for p in paths)
+
+
+def project_off(sw, cwd, command=""):
+    return path_hit(as_list(sw.get("projects_off")), cwd, command)
+
+
+def card_matches(card, cwd, command):
+    return path_hit(as_list(card.get("project_path")) + as_list(card.get("also_paths")), cwd, command)
+
+
+def active_cards():
+    out = []
+    for p in sorted(glob.glob(os.path.join(HOME, "cards", "*", "*.json"))):
+        try:
+            with open(p, encoding="utf-8") as f:
+                c = json.load(f)
+            if isinstance(c, dict) and c.get("status") == "active" and isinstance(c.get("steps"), dict):
+                out.append(c)
+        except Exception:
+            continue
+    return out
+
+
+def undone(card, names):
+    steps = card.get("steps", {})
+    return [s for s in names if not (isinstance(steps.get(s), dict) and steps[s].get("done"))]
+
+
+def do_prompt(data):
+    sw = switch()
+    cwd = data.get("cwd") or ""
+    if not sw.get("on") or project_off(sw, cwd):
+        return
+    lines = []
+    for c in active_cards():
+        try:
+            below = any(norm(p).startswith(norm(cwd) + "/") for p in as_list(c.get("project_path")) if cwd)
+            if card_matches(c, cwd, "") or below:
+                todo = undone(c, ORDER)
+                lines.append(f"CHANGE 360: card {c.get('id')} is active for {c.get('project_path')}; "
+                             f"next step: {todo[0] if todo else 'set status done'}.")
+        except Exception:
+            continue
+    prompt = data.get("prompt")
+    if isinstance(prompt, str) and BUILD_WORDS.search(prompt):
+        lines.append("CHANGE 360 is on: triage this request (skill change-360, section 1). Small fix = just do it, "
+                     "no question. Flow-class change = one 'My view: run the 360 flow?' line and wait for his yes.")
+    if lines:
+        print(json.dumps({"hookSpecificOutput": {"hookEventName": "UserPromptSubmit",
+                                                 "additionalContext": " ".join(lines)}}))
+
+
+def do_commit(data):
+    cmd = (data.get("tool_input") or {}).get("command", "") or ""
+    if not COMMIT.search(cmd):
+        return
+    sw = switch()
+    cwd = data.get("cwd") or ""
+    if not sw.get("on") or project_off(sw, cwd, cmd):
+        return
+    for c in active_cards():
+        try:
+            m = undone(c, GATE_STEPS) if card_matches(c, cwd, cmd) else []
+        except Exception:
+            continue  # one odd card never switches the gate off for the others
+        if m:
+            reason = (f"CHANGE 360 commit gate: card {c.get('id')} ('{c.get('title', '')}') is active and these "
+                      f"steps are not done: {', '.join(m)}. Finish them (with evidence in the card) before "
+                      f"committing, or set the card status to 'skipped' with Aakash's words.")
+            print(json.dumps({"hookSpecificOutput": {"hookEventName": "PreToolUse",
+                                                     "permissionDecision": "deny",
+                                                     "permissionDecisionReason": reason}}))
+            return
+
+
+def main():
+    try:
+        data = json.load(sys.stdin)
+        mode = sys.argv[1] if len(sys.argv) > 1 else ""
+        if mode == "prompt":
+            do_prompt(data)
+        elif mode == "commit":
+            do_commit(data)
+    except Exception as e:  # fail open
+        try:
+            with open(os.path.join(HOME, "hook-errors.log"), "a", encoding="utf-8") as f:
+                f.write(f"{type(e).__name__}: {e}\n")
+        except Exception:
+            pass
+    sys.exit(0)
+
+
+if __name__ == "__main__":
+    main()
 ```
 - Risk: a symlinked or junctioned project folder now resolves to its real path, so a card that names the link and
   a session that names the target match (wanted), but a card on a mapped drive could stop matching. Re-run the

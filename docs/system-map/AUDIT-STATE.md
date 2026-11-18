@@ -1,5 +1,5 @@
 status: RUNNING
-phase/step: plan review DONE and applied (22 of 26), A1 done; next = tools (T1), A1b, then A2 pilot
+phase/step: A2 feature inventory running (see the Work items counts below); E1-E4 done; 3F draft and A7 pilot next
 expected end: unknown until A2 learned costs (rough: 3 weekly periods = by about 9 Dec 2026)
 mode: ANALYSIS ONLY. No app code, tests, workflows, skills or settings change. "Apply" items in 3E/3F = proposals only.
 model: every helper = Fable 5.2 ("fable"), effort "medium". Max 6 helpers at once.
@@ -8,7 +8,8 @@ blind check: never put the held-out rows or hints into a helper brief (ids are i
 ## Windows
 | window reset (IST) | F5 start | F5 now | WF | WA | helpers run | why stopped |
 |---|---|---|---|---|---|---|
-| 18 Nov 20:00 | 6 | 6 | 0 | 0 | plan-review, E1 | running |
+| 18 Nov 20:00 | 6 | 84 | 20 | 11 | plan-review, E1-E3, tools, A1b, A2 x9 | closed at 84 |
+| 19 Nov 01:00 | 3 | 60 | 37 | 20 | A2 x13, E4, 3F, A7-src | running |
 
 ## Learned cost per helper type (5-hour %)
 | step | helpers so far | average cost |
@@ -63,6 +64,7 @@ Counts: 17 todo, 3 in progress, 30 done, 0 blocked. Full list: work-items.jsonl.
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
 
 ## Resume notes
+- PACER RUN pacer-1118-2003 (window reset 19 Nov 01:00 IST; saved 18 Nov 20:25 IST): F5 3 -> 60, weekly Fable 21 -> 37, weekly all 12 -> 20. One helper = about 4.5 F5 points and about 1.2 weekly-Fable points. Still running under this run: W11 (3F), A2-phone-tracker-components-2, A2-phone-tracker-engine; nothing more starts this window (reserve takes it to about 75). LESSONS: (1) helpers write surface as 'websites' or 'phone app': tell them the exact word (web, phone, panel) in the launch prompt, or fix with sed before merge. (2) Paired item lists were the same file twice (screens-1/2, components-1/2, tracker-components): components and tracker-components are now split; screens-1/2 and panel-brand-shell rows repeat other areas, de-duplicate in A3. (3) _sources/promises.txt did not exist; _tools/promises.mjs --inflections --write now makes it (1,631 lines, 8 groups; part line ranges are in _work/A7-src.md but were made BEFORE --inflections: re-run the script to print the right ranges). A7-pilot is ready: brief from _briefs/A7.md, runs ALONE. (4) Briefs W10, W11, A7-src are in _work/briefs/; template _briefs/3F.md is new; 3F parts F2 and F3 wait for findings. (5) Another chat pushes to main (docs/CLAUDE-NOTES.md): on a rejected push use git fetch + git merge origin/main, then push. (6) get_usage answers are cached for 1-2 minutes: count RESERVED yourself. Chat compacts at 20% now; after it, read these notes before saying we never discussed or he never approved something.
 - ADDED 18 Nov evening: NIGHT RULE (his words, 18 Nov 2026: "Anywhere between 12am to 6am, you can feel free to use up to 100% of my 5 hour limit. Just ensure that you're not starting tasks at the very end moment that gets impacted by the limit end."). Between 00:00 and 06:00 IST this replaces the 75 / 80 / 85 numbers above, wherever they appear in this file: launch at full speed (max 6 at once) only while F5_now + RESERVED + cost(step) <= 96, costs rounded up, so that no helper is cut by the limit. Start nothing new at F5 >= 92. Tell helpers to save and stop only at F5 >= 98. From 06:00 IST the day rule applies again to every new launch; helpers that started before 06:00 finish. The weekly limits and their stop lines do not change at night.
 - 18 Nov 18:10 IST: window 1 CLOSED at F5 84 (weekly Fable 20, weekly all 11). No helper runs. Lock file deleted, so the hourly pacer task takes over after the 20:00 IST reset. 9 of 37 A2 areas done, 264 feature rows. Next: the other 28 A2 areas.
 - NEWEST PACING RULE, 18 Nov evening (replaces every pacing line below): NO HOURLY SPREADING; STOP BETWEEN 75 AND 80 (his words, 18 Nov 2026, newest: "stop anywhere between 75 to 80% and in case needed maximum it can go up to 85% ... sooner the better"; earlier the same day: "it's one and the same thing you wait now or you wait later"). RULE: launch helpers at full speed (max 6 at once) only while F5_now + RESERVED + cost(step) <= 80. At F5 >= 75: start nothing new. Helpers already running always finish; the window should end between 75 and 80 and must not pass 85, so count RESERVED honestly and round costs up. Tell helpers to save and stop only at F5 >= 95. The hourly target T is not used.
