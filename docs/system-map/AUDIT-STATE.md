@@ -16,7 +16,7 @@ blind check: never put the held-out rows or hints into a helper brief (ids are i
 | plan-review | 1 | 171k tokens (% not measured yet; plan with 5) |
 | tools | 1 | 212k tokens (% not measured yet; plan with 5) |
 | A1b | 1 | 201k tokens (% not measured yet; plan with 5) |
-| A2 | 1 | 135k tokens (% not measured yet; plan with 5) |
+| A2 | 2 | 148k tokens (% not measured yet; plan with 5) |
 | A7 | 0 | 5 (start value) |
 | E1 | 1 | 189k tokens (% not measured yet; plan with 5) |
 | E2 | 0 | 5 (start value) |
@@ -25,7 +25,7 @@ blind check: never put the held-out rows or hints into a helper brief (ids are i
 | 3F | 0 | 5 (start value) |
 
 ## Work items
-Counts: 40 todo, 1 in progress, 8 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 39 todo, 1 in progress, 9 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
@@ -35,7 +35,6 @@ Counts: 40 todo, 1 in progress, 8 done, 0 blocked. Full list: work-items.jsonl. 
 | W10 | E4 | 3E E4 better test framework: research + proposals only -> TEST-SYSTEM-REVIEW.md | todo | _work/E4.md |  |
 | W11 | 3F | 3F F1, F4-F6 change-360 review (proposals only; switch stays OFF) -> CHANGE-360-REVIEW.md draft | todo | _work/F.md |  |
 | A2-web-pages | A2 | A2 features: area web/pages (398 items, 9556 lines) | todo | _work/A2-web-pages.md |  |
-| A2-panel-screens-1 | A2 | A2 features: area panel/screens-1 (39 items, 9139 lines) | todo | _work/A2-panel-screens-1.md |  |
 | A2-panel-screens-2 | A2 | A2 features: area panel/screens-2 (53 items, 9167 lines) | todo | _work/A2-panel-screens-2.md |  |
 | A2-panel-forms | A2 | A2 features: area panel/forms (6 items, 1647 lines) | todo | _work/A2-panel-forms.md |  |
 | A2-panel-ui-shell | A2 | A2 features: area panel/ui-shell (153 items, 11728 lines) | todo | _work/A2-panel-ui-shell.md |  |
@@ -55,7 +54,7 @@ Counts: 40 todo, 1 in progress, 8 done, 0 blocked. Full list: work-items.jsonl. 
 | A2-phone-tracker-components-2 | A2 | A2 features: area phone/tracker-components-2 (102 items, 8215 lines) | todo | _work/A2-phone-tracker-components-2.md |  |
 | A2-phone-tracker-engine | A2 | A2 features: area phone/tracker-engine (35 items, 10011 lines) | todo | _work/A2-phone-tracker-engine.md |  |
 | A2-phone-tracker-data | A2 | A2 features: area phone/tracker-data (40 items, 9326 lines) | todo | _work/A2-phone-tracker-data.md |  |
-| W0 | plan-review | plan review -> PLAN-REVIEW.md | done | _work/plan-review.md | 26 proposals: 22 applied, 4 need Aakash; 171k tokens |
+| A2-phone-tracker-lib | A2 | A2 features: area phone/tracker-lib (59 items, 9117 lines) | todo | _work/A2-phone-tracker-lib.md |  |
 | W1 | A1 | surfaces.json (11 surfaces) | done | - | coordinator |
 | T1a | tools | coordinator tooling: work-items.jsonl, _tools/state.mjs, _tools/merge.mjs, _briefs/, RUNBOOK.md | done | _work/T1a.md | tools, briefs, runbook built and tested |
 | A1b | A1b | source lists by script: _tools/sources.mjs -> _sources/<surface>.txt, sizes.csv, readers-raw.txt, promises.txt (no model reading) | done | _work/A1b.md | 37 areas, source lists pushed |
@@ -63,7 +62,9 @@ Counts: 40 todo, 1 in progress, 8 done, 0 blocked. Full list: work-items.jsonl. 
 | A2-pilot | A2 | features: PILOT, one area of at most 12,000 lines picked from sizes.csv; runs alone | done | _work/A2-pilot.md | 28 features, 60 of 60 source lines; source list misses files in pay/ move/ machines/ |
 | A2-split | coord | coordinator: add one A2 item per area from sizes.csv, sized by the A2 pilot cost (state.mjs add) | done | - | 36 area items made by script, every source file listed |
 | W7 | E1 | 3E E1 test history (script) -> test-history.csv | done | _work/E1.md | 3,128 runs, 39% red tries, 91 proven flaky |
-(+ 15 more todo items, not shown)
+| A2-panel-screens-1 | A2 | A2 features: area panel/screens-1 (39 items, 9139 lines) | done | _work/A2-panel-screens-1.md | 40 features (hit the 40 limit), 39 of 39 lines |
+(+ 14 more todo items, not shown)
+(+ 1 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
