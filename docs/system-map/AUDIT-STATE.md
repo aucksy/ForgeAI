@@ -16,7 +16,7 @@ blind check: never put the held-out rows or hints into a helper brief (ids are i
 | plan-review | 1 | 171k tokens (% not measured yet; plan with 5) |
 | tools | 1 | 212k tokens (% not measured yet; plan with 5) |
 | A1b | 1 | 201k tokens (% not measured yet; plan with 5) |
-| A2 | 16 | 161k tokens (% not measured yet; plan with 5) |
+| A2 | 17 | 161k tokens (% not measured yet; plan with 5) |
 | A7 | 0 | 5 (start value) |
 | E1 | 1 | 189k tokens (% not measured yet; plan with 5) |
 | E2 | 1 | 299k tokens (% not measured yet; plan with 5) |
@@ -25,17 +25,16 @@ blind check: never put the held-out rows or hints into a helper brief (ids are i
 | 3F | 0 | 5 (start value) |
 
 ## Work items
-Counts: 20 todo, 4 in progress, 26 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 18 todo, 5 in progress, 27 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
 | W11 | 3F | 3F F1, F4-F6 change-360 review (proposals only; switch stays OFF) -> CHANGE-360-REVIEW.md draft | in progress | _work/F.md |  |
-| A2-phone-tracker-services-1 | A2 | A2 features: area phone/tracker-services-1 (74 items, 10762 lines) | in progress | _work/A2-phone-tracker-services-1.md |  |
 | A2-phone-tracker-services-2 | A2 | A2 features: area phone/tracker-services-2 (73 items, 10868 lines) | in progress | _work/A2-phone-tracker-services-2.md |  |
+| A2-phone-tracker-components-1 | A2 | A2 features: area phone/tracker-components-1 (52 items, 8226 lines) | in progress | _work/A2-phone-tracker-components-1.md |  |
+| A2-phone-tracker-components-2 | A2 | A2 features: area phone/tracker-components-2 (102 items, 8215 lines) | in progress | _work/A2-phone-tracker-components-2.md |  |
 | A7-src | tools | script: _tools/promises.mjs -> _sources/promises.txt (candidate sentences per source group; the file was missing) | in progress | _work/A7-src.md |  |
 | A7-pilot | A7 | promises: PILOT, one source group of at most 120 candidate sentences from _sources/promises.txt; runs alone | todo | _work/A7-pilot.md |  |
-| A2-phone-tracker-components-1 | A2 | A2 features: area phone/tracker-components-1 (52 items, 8226 lines) | todo | _work/A2-phone-tracker-components-1.md |  |
-| A2-phone-tracker-components-2 | A2 | A2 features: area phone/tracker-components-2 (102 items, 8215 lines) | todo | _work/A2-phone-tracker-components-2.md |  |
 | A2-phone-tracker-engine | A2 | A2 features: area phone/tracker-engine (35 items, 10011 lines) | todo | _work/A2-phone-tracker-engine.md |  |
 | A2-phone-tracker-data | A2 | A2 features: area phone/tracker-data (40 items, 9326 lines) | todo | _work/A2-phone-tracker-data.md |  |
 | A2-phone-tracker-lib | A2 | A2 features: area phone/tracker-lib (59 items, 9117 lines) | todo | _work/A2-phone-tracker-lib.md |  |
@@ -53,7 +52,6 @@ Counts: 20 todo, 4 in progress, 26 done, 0 blocked. Full list: work-items.jsonl.
 | A2-server-database-2 | A2 | A2 features: area server/database-2 (293 items, 7930 lines) | todo | _work/A2-server-database-2.md |  |
 | A2-server-database-3 | A2 | A2 features: area server/database-3 (251 items, 8114 lines) | todo | _work/A2-server-database-3.md |  |
 | A2-server-ci-workflows | A2 | A2 features: area server/ci-workflows (20 items, 3524 lines) | todo | _work/A2-server-ci-workflows.md |  |
-| A2-panel-shop | A2 | A2 features: area panel/shop (128 items, 8869 lines) | done | _work/A2-panel-shop.md | 39 rows (38 features), 128 of 128 lines; tier unknown on all |
 | A2-panel-assistant | A2 | A2 features: area panel/assistant (30 items, 6837 lines) | done | _work/A2-panel-assistant.md | 18 features, 30 of 30 lines; all behind switch |
 | A2-panel-auth-data | A2 | A2 features: area panel/auth-data (56 items, 8459 lines) | done | _work/A2-panel-auth-data.md | 26 features, 56 of 56 lines; 23 live, 2 behind a switch, 1 unknown; 5 passing notes in checkpoint |
 | A2-panel-brand-shell | A2 | A2 features: area panel/brand-shell (740 items, 8507 lines) | done | _work/A2-panel-brand-shell.md | 40 rows (38 features), 740 of 740 lines, placed mostly by file header; list overlaps other panel areas (de-duplicate in A3); old dashboard is dead code |
@@ -61,7 +59,8 @@ Counts: 20 todo, 4 in progress, 26 done, 0 blocked. Full list: work-items.jsonl.
 | A2-phone-screens-2 | A2 | A2 features: area phone/screens-2 (161 items, 7566 lines) | done | _work/A2-phone-screens-2.md | 40 rows, 161 of 161 lines; 31 live, 6 behind switch; about 80 lines are the same as screens-1 (de-duplicate in A3) |
 | A2-phone-shop-1 | A2 | A2 features: area phone/shop-1 (68 items, 9373 lines) | done | _work/A2-phone-shop-1.md | 37 rows (36 features), 68 of 68 lines; 18 live, 15 behind switch, 3 hidden |
 | A2-phone-shop-2 | A2 | A2 features: area phone/shop-2 (185 items, 9398 lines) | done | _work/A2-phone-shop-2.md | 36 rows (34 features), 185 of 185 lines; plan gates written but off; surface name fixed by coordinator |
-(+ 18 older done items, not shown)
+| A2-phone-tracker-services-1 | A2 | A2 features: area phone/tracker-services-1 (74 items, 10762 lines) | done | _work/A2-phone-tracker-services-1.md | 40 features, 74 of 74 lines; 33 live, 7 behind switch; status from file headers, screens not opened |
+(+ 19 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
