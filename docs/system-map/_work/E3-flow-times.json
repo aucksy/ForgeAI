@@ -1,0 +1,887 @@
+{
+ "run_id": "44011846187",
+ "shards": {
+  "device-qa (1-history-routines)": {
+   "job_id": "133805982144",
+   "job_minutes": 119.1,
+   "setup_minutes_before_first_test_line": 3.0,
+   "before_first_part": 0.7,
+   "after_last_test_line": 0.2,
+   "flows": [
+    {
+     "name": "A",
+     "minutes": 5.0
+    },
+    {
+     "name": "B0",
+     "minutes": 0.5
+    },
+    {
+     "name": "B",
+     "minutes": 2.4
+    },
+    {
+     "name": "C",
+     "minutes": 8.4
+    },
+    {
+     "name": "D",
+     "minutes": 7.6
+    },
+    {
+     "name": "E",
+     "minutes": 4.3
+    },
+    {
+     "name": "F",
+     "minutes": 4.4
+    },
+    {
+     "name": "G",
+     "minutes": 7.6
+    },
+    {
+     "name": "H1",
+     "minutes": 2.2
+    },
+    {
+     "name": "H1D",
+     "minutes": 1.3
+    },
+    {
+     "name": "H2",
+     "minutes": 2.7
+    },
+    {
+     "name": "H3A",
+     "minutes": 0.8
+    },
+    {
+     "name": "H3B",
+     "minutes": 1.4
+    },
+    {
+     "name": "H3C",
+     "minutes": 0.7
+    },
+    {
+     "name": "P1",
+     "minutes": 1.0
+    },
+    {
+     "name": "P2",
+     "minutes": 2.6
+    },
+    {
+     "name": "I",
+     "minutes": 8.8
+    },
+    {
+     "name": "link1",
+     "minutes": 0.7
+    },
+    {
+     "name": "link2",
+     "minutes": 0.8
+    },
+    {
+     "name": "I2",
+     "minutes": 0.9
+    },
+    {
+     "name": "J",
+     "minutes": 6.0
+    },
+    {
+     "name": "J2",
+     "minutes": 0.7
+    },
+    {
+     "name": "J2R",
+     "minutes": 0.7
+    },
+    {
+     "name": "J3",
+     "minutes": 5.6
+    },
+    {
+     "name": "J3R",
+     "minutes": 4.3
+    },
+    {
+     "name": "K",
+     "minutes": 0.6
+    },
+    {
+     "name": "L",
+     "minutes": 4.7
+    },
+    {
+     "name": "N",
+     "minutes": 2.4
+    },
+    {
+     "name": "P9",
+     "minutes": 6.7
+    },
+    {
+     "name": "R",
+     "minutes": 19.5
+    }
+   ]
+  },
+  "device-qa (2-gym-backup)": {
+   "job_id": "133805982126",
+   "job_minutes": 59.3,
+   "setup_minutes_before_first_test_line": 2.8,
+   "before_first_part": 0.8,
+   "after_last_test_line": 0.1,
+   "flows": [
+    {
+     "name": "seed",
+     "minutes": 1.2
+    },
+    {
+     "name": "BR-welcome",
+     "minutes": 2.3
+    },
+    {
+     "name": "BR",
+     "minutes": 5.5
+    },
+    {
+     "name": "INV-a",
+     "minutes": 1.1
+    },
+    {
+     "name": "INV-b",
+     "minutes": 0.5
+    },
+    {
+     "name": "INV-c",
+     "minutes": 1.8
+    },
+    {
+     "name": "INV-d",
+     "minutes": 0.5
+    },
+    {
+     "name": "INV-e",
+     "minutes": 2.2
+    },
+    {
+     "name": "INV-f1",
+     "minutes": 1.1
+    },
+    {
+     "name": "INV-f2",
+     "minutes": 1.1
+    },
+    {
+     "name": "INV-f3",
+     "minutes": 1.6
+    },
+    {
+     "name": "p7big",
+     "minutes": 3.8
+    },
+    {
+     "name": "p7nav3",
+     "minutes": 4.0
+    },
+    {
+     "name": "P0",
+     "minutes": 0.5
+    },
+    {
+     "name": "M",
+     "minutes": 10.6
+    },
+    {
+     "name": "uh",
+     "minutes": 10.1
+    },
+    {
+     "name": "ur",
+     "minutes": 7.9
+    }
+   ]
+  },
+  "device-qa (3-uat-a)": {
+   "job_id": "133805982198",
+   "job_minutes": 69.9,
+   "setup_minutes_before_first_test_line": 2.8,
+   "before_first_part": 1.0,
+   "after_last_test_line": 0.1,
+   "flows": [
+    {
+     "name": "un_seed",
+     "minutes": 0.9
+    },
+    {
+     "name": "un",
+     "minutes": 1.9
+    },
+    {
+     "name": "ud",
+     "minutes": 10.9
+    },
+    {
+     "name": "ue",
+     "minutes": 6.5
+    },
+    {
+     "name": "ubk_gym",
+     "minutes": 2.8
+    },
+    {
+     "name": "ubk",
+     "minutes": 3.9
+    },
+    {
+     "name": "ub1",
+     "minutes": 1.1
+    },
+    {
+     "name": "ub2",
+     "minutes": 0.7
+    },
+    {
+     "name": "ub3",
+     "minutes": 0.4
+    },
+    {
+     "name": "ub4",
+     "minutes": 0.6
+    },
+    {
+     "name": "uf1",
+     "minutes": 1.0
+    },
+    {
+     "name": "uf2",
+     "minutes": 3.0
+    },
+    {
+     "name": "uf3",
+     "minutes": 1.7
+    },
+    {
+     "name": "uf4",
+     "minutes": 3.6
+    },
+    {
+     "name": "uf5",
+     "minutes": 2.2
+    },
+    {
+     "name": "ua1",
+     "minutes": 2.4
+    },
+    {
+     "name": "ua2",
+     "minutes": 3.1
+    },
+    {
+     "name": "uv",
+     "minutes": 5.5
+    },
+    {
+     "name": "ug",
+     "minutes": 7.2
+    },
+    {
+     "name": "uk1",
+     "minutes": 2.9
+    },
+    {
+     "name": "uk2",
+     "minutes": 1.2
+    },
+    {
+     "name": "uk3",
+     "minutes": 1.1
+    },
+    {
+     "name": "uk4",
+     "minutes": 0.7
+    },
+    {
+     "name": "uk5",
+     "minutes": 0.8
+    }
+   ]
+  },
+  "device-qa (4-workout)": {
+   "job_id": "133805982137",
+   "job_minutes": 92.1,
+   "setup_minutes_before_first_test_line": 2.6,
+   "before_first_part": 0.9,
+   "after_last_test_line": 0.2,
+   "flows": [
+    {
+     "name": "UATC",
+     "minutes": 0.3
+    },
+    {
+     "name": "uat15",
+     "minutes": 11.2
+    },
+    {
+     "name": "uat1",
+     "minutes": 3.0
+    },
+    {
+     "name": "uat2",
+     "minutes": 0.9
+    },
+    {
+     "name": "uat3",
+     "minutes": 3.2
+    },
+    {
+     "name": "uat4",
+     "minutes": 7.4
+    },
+    {
+     "name": "uat5",
+     "minutes": 1.4
+    },
+    {
+     "name": "uat6",
+     "minutes": 2.5
+    },
+    {
+     "name": "uat10",
+     "minutes": 3.4
+    },
+    {
+     "name": "uat11",
+     "minutes": 2.0
+    },
+    {
+     "name": "uat13",
+     "minutes": 3.0
+    },
+    {
+     "name": "uat7",
+     "minutes": 2.2
+    },
+    {
+     "name": "uat8",
+     "minutes": 1.1
+    },
+    {
+     "name": "uat12",
+     "minutes": 1.2
+    },
+    {
+     "name": "uatr551",
+     "minutes": 0.7
+    },
+    {
+     "name": "uat12b",
+     "minutes": 1.9
+    },
+    {
+     "name": "uat12c",
+     "minutes": 1.4
+    },
+    {
+     "name": "uatgt",
+     "minutes": 4.8
+    },
+    {
+     "name": "uatr586a",
+     "minutes": 1.4
+    },
+    {
+     "name": "uatr586b",
+     "minutes": 1.2
+    },
+    {
+     "name": "uatf147",
+     "minutes": 0.8
+    },
+    {
+     "name": "uatf79",
+     "minutes": 0.8
+    },
+    {
+     "name": "uat14",
+     "minutes": 2.1
+    },
+    {
+     "name": "uatf146",
+     "minutes": 3.8
+    },
+    {
+     "name": "uatt74",
+     "minutes": 1.2
+    },
+    {
+     "name": "uatt74b",
+     "minutes": 0.9
+    },
+    {
+     "name": "uat9",
+     "minutes": 2.1
+    },
+    {
+     "name": "uatf61",
+     "minutes": 1.4
+    },
+    {
+     "name": "uatr336",
+     "minutes": 4.5
+    },
+    {
+     "name": "uatr336b",
+     "minutes": 0.7
+    },
+    {
+     "name": "W",
+     "minutes": 0.3
+    },
+    {
+     "name": "w1",
+     "minutes": 4.6
+    },
+    {
+     "name": "w2",
+     "minutes": 2.1
+    },
+    {
+     "name": "w3",
+     "minutes": 6.0
+    },
+    {
+     "name": "w4",
+     "minutes": 2.6
+    }
+   ]
+  },
+  "device-qa (5-uat-b)": {
+   "job_id": "133805982110",
+   "job_minutes": 99.5,
+   "setup_minutes_before_first_test_line": 3.0,
+   "before_first_part": 0.7,
+   "after_last_test_line": 0.2,
+   "flows": [
+    {
+     "name": "U355",
+     "minutes": 0.2
+    },
+    {
+     "name": "uatr355a",
+     "minutes": 5.3
+    },
+    {
+     "name": "uatr355b",
+     "minutes": 1.9
+    },
+    {
+     "name": "U344",
+     "minutes": 0.2
+    },
+    {
+     "name": "uatr344a",
+     "minutes": 3.8
+    },
+    {
+     "name": "uatr344b",
+     "minutes": 6.6
+    },
+    {
+     "name": "uatr344c",
+     "minutes": 8.7
+    },
+    {
+     "name": "U358",
+     "minutes": 0.2
+    },
+    {
+     "name": "uatr358a",
+     "minutes": 4.2
+    },
+    {
+     "name": "uatr358b",
+     "minutes": 4.8
+    },
+    {
+     "name": "uatr358c",
+     "minutes": 3.9
+    },
+    {
+     "name": "U366",
+     "minutes": 0.2
+    },
+    {
+     "name": "uatr366",
+     "minutes": 6.0
+    },
+    {
+     "name": "uatr366b",
+     "minutes": 3.7
+    },
+    {
+     "name": "USEL",
+     "minutes": 0.2
+    },
+    {
+     "name": "uatusel",
+     "minutes": 6.3
+    },
+    {
+     "name": "U198",
+     "minutes": 0.2
+    },
+    {
+     "name": "uatf198",
+     "minutes": 2.9
+    },
+    {
+     "name": "uatf198b",
+     "minutes": 0.7
+    },
+    {
+     "name": "U194",
+     "minutes": 0.2
+    },
+    {
+     "name": "uatf194",
+     "minutes": 7.2
+    },
+    {
+     "name": "uatf194b",
+     "minutes": 4.2
+    },
+    {
+     "name": "UPIC",
+     "minutes": 0.2
+    },
+    {
+     "name": "upic_seed",
+     "minutes": 0.8
+    },
+    {
+     "name": "uatpics",
+     "minutes": 3.3
+    },
+    {
+     "name": "U456",
+     "minutes": 0.2
+    },
+    {
+     "name": "uatr456",
+     "minutes": 6.3
+    },
+    {
+     "name": "U461",
+     "minutes": 0.2
+    },
+    {
+     "name": "u461_seed",
+     "minutes": 0.8
+    },
+    {
+     "name": "uatr461",
+     "minutes": 7.9
+    },
+    {
+     "name": "U517",
+     "minutes": 0.2
+    },
+    {
+     "name": "u517_seed",
+     "minutes": 0.8
+    },
+    {
+     "name": "uatr517a",
+     "minutes": 2.0
+    },
+    {
+     "name": "uatr517b",
+     "minutes": 1.1
+    },
+    {
+     "name": "uatr517c",
+     "minutes": 0.7
+    }
+   ]
+  },
+  "device-qa (6-uat-c)": {
+   "job_id": "133805982209",
+   "job_minutes": 165.5,
+   "setup_minutes_before_first_test_line": 2.6,
+   "before_first_part": 0.8,
+   "after_last_test_line": 0.2,
+   "flows": [
+    {
+     "name": "U401",
+     "minutes": 0.2
+    },
+    {
+     "name": "u401_seed",
+     "minutes": 0.9
+    },
+    {
+     "name": "uatr401",
+     "minutes": 1.1
+    },
+    {
+     "name": "u402_seed",
+     "minutes": 0.8
+    },
+    {
+     "name": "uatr402",
+     "minutes": 0.6
+    },
+    {
+     "name": "U199",
+     "minutes": 0.2
+    },
+    {
+     "name": "u199_seed",
+     "minutes": 0.8
+    },
+    {
+     "name": "uatf199",
+     "minutes": 2.9
+    },
+    {
+     "name": "U404",
+     "minutes": 0.2
+    },
+    {
+     "name": "u404_seed",
+     "minutes": 0.8
+    },
+    {
+     "name": "uatr404",
+     "minutes": 1.9
+    },
+    {
+     "name": "U452",
+     "minutes": 0.2
+    },
+    {
+     "name": "u452_seed",
+     "minutes": 0.8
+    },
+    {
+     "name": "uatr452",
+     "minutes": 3.5
+    },
+    {
+     "name": "U501",
+     "minutes": 0.2
+    },
+    {
+     "name": "u501_seed",
+     "minutes": 1.4
+    },
+    {
+     "name": "uatr501",
+     "minutes": 0.7
+    },
+    {
+     "name": "U438",
+     "minutes": 0.2
+    },
+    {
+     "name": "u438_seed",
+     "minutes": 0.8
+    },
+    {
+     "name": "uatr438a",
+     "minutes": 1.1
+    },
+    {
+     "name": "uatr438b",
+     "minutes": 3.0
+    },
+    {
+     "name": "uatr438c",
+     "minutes": 0.5
+    },
+    {
+     "name": "uatr440x",
+     "minutes": 1.1
+    },
+    {
+     "name": "uatr440y",
+     "minutes": 0.8
+    },
+    {
+     "name": "U444",
+     "minutes": 0.2
+    },
+    {
+     "name": "u444_seed",
+     "minutes": 0.8
+    },
+    {
+     "name": "uatr444",
+     "minutes": 3.5
+    },
+    {
+     "name": "U439",
+     "minutes": 0.2
+    },
+    {
+     "name": "u439_seed",
+     "minutes": 0.8
+    },
+    {
+     "name": "uatr439a",
+     "minutes": 6.5
+    },
+    {
+     "name": "uatr439b",
+     "minutes": 6.7
+    },
+    {
+     "name": "U436",
+     "minutes": 0.2
+    },
+    {
+     "name": "u436_seed",
+     "minutes": 0.8
+    },
+    {
+     "name": "uatr436a",
+     "minutes": 10.6
+    },
+    {
+     "name": "uatr436b",
+     "minutes": 1.7
+    },
+    {
+     "name": "U454",
+     "minutes": 0.2
+    },
+    {
+     "name": "u454_seed",
+     "minutes": 0.8
+    },
+    {
+     "name": "uatr454a",
+     "minutes": 14.2
+    },
+    {
+     "name": "uatr454b",
+     "minutes": 12.6
+    },
+    {
+     "name": "uatr454c",
+     "minutes": 5.4
+    },
+    {
+     "name": "U576",
+     "minutes": 0.2
+    },
+    {
+     "name": "u576_seed",
+     "minutes": 0.8
+    },
+    {
+     "name": "uatr576a",
+     "minutes": 9.5
+    },
+    {
+     "name": "uatr576b",
+     "minutes": 6.2
+    },
+    {
+     "name": "uatr576c",
+     "minutes": 1.8
+    },
+    {
+     "name": "ULOOK",
+     "minutes": 0.2
+    },
+    {
+     "name": "ulookw1",
+     "minutes": 0.5
+    },
+    {
+     "name": "ulook_seed",
+     "minutes": 0.8
+    },
+    {
+     "name": "ulookl",
+     "minutes": 6.6
+    },
+    {
+     "name": "ulookc",
+     "minutes": 0.9
+    },
+    {
+     "name": "ulookd",
+     "minutes": 6.4
+    },
+    {
+     "name": "ulookw2",
+     "minutes": 0.4
+    },
+    {
+     "name": "UAGE",
+     "minutes": 0.2
+    },
+    {
+     "name": "uatd7",
+     "minutes": 3.4
+    },
+    {
+     "name": "U482",
+     "minutes": 0.2
+    },
+    {
+     "name": "uatr482a",
+     "minutes": 4.7
+    },
+    {
+     "name": "uatr482b",
+     "minutes": 2.4
+    },
+    {
+     "name": "uatr482c",
+     "minutes": 3.3
+    },
+    {
+     "name": "uatr482d",
+     "minutes": 4.8
+    },
+    {
+     "name": "uatr482e",
+     "minutes": 3.0
+    },
+    {
+     "name": "uatr482f",
+     "minutes": 4.0
+    },
+    {
+     "name": "uatr482g",
+     "minutes": 3.3
+    },
+    {
+     "name": "U484",
+     "minutes": 0.2
+    },
+    {
+     "name": "uatr484a",
+     "minutes": 2.1
+    },
+    {
+     "name": "U203",
+     "minutes": 0.2
+    },
+    {
+     "name": "uatf203",
+     "minutes": 6.8
+    }
+   ]
+  }
+ }
+}

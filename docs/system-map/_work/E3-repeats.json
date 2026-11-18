@@ -1,0 +1,214 @@
+{
+ "flow_files": 289,
+ "sub_flows": 46,
+ "flows_that_wipe_and_relaunch_the_app": [
+  "gate-demo.yaml",
+  "ios-first-screens.yaml",
+  "phase1-a.yaml",
+  "real-workout-w1.yaml",
+  "store-a.yaml",
+  "sub-uat-r482-restore.yaml",
+  "tour-first-run.yaml",
+  "uat-bk.yaml",
+  "uat-rel-1-seed.yaml",
+  "uat-rel-d7-age-tick.yaml",
+  "uat-rel-f203-phone-sign-in.yaml",
+  "uat-rel-look-welcome.yaml",
+  "welcome-gym.yaml",
+  "xc-1-old-seed.yaml",
+  "xc-seed-demo.yaml",
+  "xj-seed.yaml"
+ ],
+ "launchApp_steps_total": 128,
+ "most_shared_sub_flows": [
+  {
+   "sub_flow": "sub-see.yaml",
+   "used_by_flows": 153,
+   "calls": 1235
+  },
+  {
+   "sub_flow": "sub-find.yaml",
+   "used_by_flows": 106,
+   "calls": 439
+  },
+  {
+   "sub_flow": "sub-settings-page.yaml",
+   "used_by_flows": 35,
+   "calls": 60
+  },
+  {
+   "sub_flow": "sub-back-to-tabs.yaml",
+   "used_by_flows": 34,
+   "calls": 61
+  },
+  {
+   "sub_flow": "sub-workout-fresh.yaml",
+   "used_by_flows": 33,
+   "calls": 45
+  },
+  {
+   "sub_flow": "sub-inuse-close.yaml",
+   "used_by_flows": 26,
+   "calls": 46
+  },
+  {
+   "sub_flow": "sub-start-blank.yaml",
+   "used_by_flows": 24,
+   "calls": 25
+  },
+  {
+   "sub_flow": "sub-type.yaml",
+   "used_by_flows": 23,
+   "calls": 67
+  },
+  {
+   "sub_flow": "sub-progress-row.yaml",
+   "used_by_flows": 22,
+   "calls": 38
+  },
+  {
+   "sub_flow": "gate-demo.yaml",
+   "used_by_flows": 22,
+   "calls": 22
+  },
+  {
+   "sub_flow": "xc-sub-find.yaml",
+   "used_by_flows": 18,
+   "calls": 40
+  },
+  {
+   "sub_flow": "sub-gym-none.yaml",
+   "used_by_flows": 15,
+   "calls": 20
+  },
+  {
+   "sub_flow": "sub-other-ways.yaml",
+   "used_by_flows": 15,
+   "calls": 20
+  },
+  {
+   "sub_flow": "xc-sub-back-to-tabs.yaml",
+   "used_by_flows": 14,
+   "calls": 24
+  },
+  {
+   "sub_flow": "sub-uat-tick.yaml",
+   "used_by_flows": 14,
+   "calls": 39
+  }
+ ],
+ "words_waited_for_or_asserted_in_most_flows": [
+  {
+   "words": "^Profile$",
+   "flows": 73
+  },
+  {
+   "words": "^Workout$",
+   "flows": 40
+  },
+  {
+   "words": "Edit profile",
+   "flows": 30
+  },
+  {
+   "words": "Search exercises",
+   "flows": 24
+  },
+  {
+   "words": "Log a set to finish|Finish workout",
+   "flows": 22
+  },
+  {
+   "words": "Finish workout\\?",
+   "flows": 21
+  },
+  {
+   "words": "Skip rest",
+   "flows": 18
+  },
+  {
+   "words": "^${GYM}$",
+   "flows": 17
+  },
+  {
+   "words": "Workout complete",
+   "flows": 15
+  },
+  {
+   "words": "Add exercise",
+   "flows": 14
+  },
+  {
+   "words": "^Skip$|Start fresh|Get stronger every week|Welcome to MettleUp|Step 1 of 3|Restore from a ",
+   "flows": 12
+  },
+  {
+   "words": "Add measures",
+   "flows": 11
+  },
+  {
+   "words": "Start fresh|Get stronger every week|Welcome to MettleUp|Step 1 of 3|Your name|^Next$|Resto",
+   "flows": 10
+  },
+  {
+   "words": "Choose Hevy file",
+   "flows": 10
+  },
+  {
+   "words": "Last 7 days",
+   "flows": 9
+  },
+  {
+   "words": "${GYM}",
+   "flows": 9
+  },
+  {
+   "words": "First check-in: go to the front desk and ask them to confirm your mobile number\\. When the",
+   "flows": 8
+  },
+  {
+   "words": "Resume workout",
+   "flows": 8
+  },
+  {
+   "words": "Step 1 of 3",
+   "flows": 8
+  },
+  {
+   "words": "Update routine",
+   "flows": 8
+  }
+ ],
+ "flow_pairs_checking_the_same_words": [
+  {
+   "a": "uat-rel-r439-a-history.yaml",
+   "b": "uat-rel-r454-a-history.yaml",
+   "same_words": 9,
+   "a_words": 9,
+   "b_words": 10,
+   "overlap": 0.9
+  },
+  {
+   "a": "uat-rel-f194-a-history.yaml",
+   "b": "uat-rel-r454-a-history.yaml",
+   "same_words": 7,
+   "a_words": 9,
+   "b_words": 10,
+   "overlap": 0.58
+  },
+  {
+   "a": "uat-rel-f194-a-history.yaml",
+   "b": "uat-rel-r439-a-history.yaml",
+   "same_words": 6,
+   "a_words": 9,
+   "b_words": 9,
+   "overlap": 0.5
+  }
+ ],
+ "flow_pairs_at_or_over_half": 3,
+ "run_device_qa_calls": {
+  "gate-demo.yaml": 29,
+  "pm clear": 2,
+  "adb install": 2
+ }
+}

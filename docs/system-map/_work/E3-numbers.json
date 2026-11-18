@@ -1,0 +1,1295 @@
+{
+ "window": [
+  "2026-10-19T07:17:10Z",
+  "2026-11-18T11:15:27Z"
+ ],
+ "tables": {
+  "phone_uat_default": {
+   "label": "Phone test, whole run + release UAT, default phone (layout since 12 Nov: canary + 6 shards)",
+   "green_attempts": 6,
+   "example_runs": [
+    "43817100950",
+    "43841923587",
+    "44011843148"
+   ],
+   "wall_median": 183.9,
+   "wall_slowest": 201.6,
+   "machine_median": 622.1,
+   "machine_slowest": 702.7,
+   "jobs": {
+    "build": {
+     "n": 6,
+     "median": 18.1,
+     "slowest": 21.3
+    },
+    "device-qa (0-affected)": {
+     "n": 1,
+     "median": 82.4,
+     "slowest": 82.4
+    },
+    "device-qa (0-canary)": {
+     "n": 6,
+     "median": 11.8,
+     "slowest": 12.6
+    },
+    "device-qa (1-history-routines)": {
+     "n": 6,
+     "median": 108.5,
+     "slowest": 118.0
+    },
+    "device-qa (2-gym-backup)": {
+     "n": 6,
+     "median": 61.8,
+     "slowest": 62.9
+    },
+    "device-qa (3-uat-a)": {
+     "n": 6,
+     "median": 68.8,
+     "slowest": 71.9
+    },
+    "device-qa (4-workout)": {
+     "n": 6,
+     "median": 84.5,
+     "slowest": 91.1
+    },
+    "device-qa (5-uat-b)": {
+     "n": 6,
+     "median": 101.0,
+     "slowest": 106.2
+    },
+    "device-qa (6-uat-c)": {
+     "n": 6,
+     "median": 161.6,
+     "slowest": 173.4
+    },
+    "plan": {
+     "n": 6,
+     "median": 0.5,
+     "slowest": 1.3
+    },
+    "report": {
+     "n": 6,
+     "median": 0.9,
+     "slowest": 1.1
+    }
+   }
+  },
+  "phone_uat_owner": {
+   "label": "Phone test, whole run + release UAT, owner phone (layout since 12 Nov)",
+   "green_attempts": 5,
+   "example_runs": [
+    "43817104084",
+    "43841927489",
+    "44011846187"
+   ],
+   "wall_median": 179.5,
+   "wall_slowest": 193.0,
+   "machine_median": 633.5,
+   "machine_slowest": 637.4,
+   "jobs": {
+    "build": {
+     "n": 5,
+     "median": 16.5,
+     "slowest": 17.9
+    },
+    "device-qa (0-canary)": {
+     "n": 5,
+     "median": 12.2,
+     "slowest": 12.5
+    },
+    "device-qa (1-history-routines)": {
+     "n": 5,
+     "median": 116.2,
+     "slowest": 119.1
+    },
+    "device-qa (2-gym-backup)": {
+     "n": 5,
+     "median": 59.4,
+     "slowest": 63.5
+    },
+    "device-qa (3-uat-a)": {
+     "n": 5,
+     "median": 72.2,
+     "slowest": 74.2
+    },
+    "device-qa (4-workout)": {
+     "n": 5,
+     "median": 88.4,
+     "slowest": 92.4
+    },
+    "device-qa (5-uat-b)": {
+     "n": 5,
+     "median": 100.9,
+     "slowest": 102.6
+    },
+    "device-qa (6-uat-c)": {
+     "n": 5,
+     "median": 161.8,
+     "slowest": 177.6
+    },
+    "plan": {
+     "n": 5,
+     "median": 0.6,
+     "slowest": 1.3
+    },
+    "report": {
+     "n": 5,
+     "median": 1.0,
+     "slowest": 1.1
+    }
+   }
+  },
+  "phone_plain_new": {
+   "label": "Phone test, whole run without the UAT extra, either phone (layout since 12 Nov)",
+   "green_attempts": 0,
+   "example_runs": [],
+   "wall_median": null,
+   "wall_slowest": null,
+   "machine_median": null,
+   "machine_slowest": null,
+   "jobs": {}
+  },
+  "phone_uat_old": {
+   "label": "Phone test, whole run + release UAT, either phone (old layout: 4 shards, before 12 Nov)",
+   "green_attempts": 10,
+   "example_runs": [
+    "42431470075",
+    "42521872640",
+    "42521874882"
+   ],
+   "wall_median": 177.7,
+   "wall_slowest": 206.3,
+   "machine_median": 386.5,
+   "machine_slowest": 426.7,
+   "jobs": {
+    "build": {
+     "n": 10,
+     "median": 18.4,
+     "slowest": 20.2
+    },
+    "device-qa (1-history-routines)": {
+     "n": 10,
+     "median": 108.5,
+     "slowest": 114.1
+    },
+    "device-qa (2-gym-backup)": {
+     "n": 10,
+     "median": 59.7,
+     "slowest": 63.1
+    },
+    "device-qa (3-uat-a)": {
+     "n": 10,
+     "median": 42.8,
+     "slowest": 45.3
+    },
+    "device-qa (4-uat-b-workout)": {
+     "n": 10,
+     "median": 158.4,
+     "slowest": 187.3
+    },
+    "plan": {
+     "n": 10,
+     "median": 0.1,
+     "slowest": 0.7
+    },
+    "report": {
+     "n": 10,
+     "median": 0.7,
+     "slowest": 1.1
+    }
+   }
+  },
+  "phone_plain_old": {
+   "label": "Phone test, whole run without UAT, either phone (old layout: 4 shards)",
+   "green_attempts": 55,
+   "example_runs": [
+    "41971904558",
+    "41994334345",
+    "41994337044"
+   ],
+   "wall_median": 122.0,
+   "wall_slowest": 140.0,
+   "machine_median": 249.9,
+   "machine_slowest": 286.4,
+   "jobs": {
+    "build": {
+     "n": 55,
+     "median": 18.7,
+     "slowest": 24.9
+    },
+    "device-qa (1-history-routines)": {
+     "n": 55,
+     "median": 101.2,
+     "slowest": 117.2
+    },
+    "device-qa (2-gym-backup)": {
+     "n": 55,
+     "median": 56.1,
+     "slowest": 64.0
+    },
+    "device-qa (3-uat-a)": {
+     "n": 55,
+     "median": 37.9,
+     "slowest": 44.6
+    },
+    "device-qa (4-uat-b-workout)": {
+     "n": 55,
+     "median": 38.5,
+     "slowest": 45.6
+    },
+    "plan": {
+     "n": 55,
+     "median": 0.1,
+     "slowest": 0.7
+    },
+    "report": {
+     "n": 55,
+     "median": 0.5,
+     "slowest": 1.5
+    }
+   }
+  },
+  "journeys": {
+   "label": "Cross-role journeys",
+   "green_attempts": 74,
+   "example_runs": [
+    "43817112692",
+    "43841931157",
+    "44011857204"
+   ],
+   "wall_median": 42.2,
+   "wall_slowest": 54.9,
+   "machine_median": 42.2,
+   "machine_slowest": 54.9,
+   "jobs": {
+    "journeys": {
+     "n": 74,
+     "median": 42.2,
+     "slowest": 54.9
+    }
+   }
+  },
+  "conditions_all": {
+   "label": "Phone conditions (all)",
+   "green_attempts": 7,
+   "example_runs": [
+    "43817110240",
+    "43841935528",
+    "44011853645"
+   ],
+   "wall_median": 91.1,
+   "wall_slowest": 99.0,
+   "machine_median": 102.7,
+   "machine_slowest": 113.6,
+   "jobs": {
+    "build (new)": {
+     "n": 7,
+     "median": 16.9,
+     "slowest": 21.0
+    },
+    "build (old)": {
+     "n": 7,
+     "median": 17.4,
+     "slowest": 20.8
+    },
+    "conditions": {
+     "n": 7,
+     "median": 71.5,
+     "slowest": 72.1
+    },
+    "previous": {
+     "n": 7,
+     "median": 0.1,
+     "slowest": 0.2
+    }
+   }
+  },
+  "release_tag": {
+   "label": "Build & Release on a tag (published)",
+   "green_attempts": 21,
+   "example_runs": [
+    "43195542456",
+    "43689666626",
+    "44091025092"
+   ],
+   "wall_median": 33.0,
+   "wall_slowest": 49.7,
+   "machine_median": 32.8,
+   "machine_slowest": 49.7,
+   "jobs": {
+    "build": {
+     "n": 21,
+     "median": 23.3,
+     "slowest": 30.4
+    },
+    "phone-gate": {
+     "n": 21,
+     "median": 0.2,
+     "slowest": 17.1
+    },
+    "play-upload / upload": {
+     "n": 10,
+     "median": 1.9,
+     "slowest": 2.8
+    },
+    "publish": {
+     "n": 21,
+     "median": 0.3,
+     "slowest": 0.4
+    },
+    "update-proof": {
+     "n": 21,
+     "median": 3.1,
+     "slowest": 4.9
+    }
+   }
+  },
+  "ci_main": {
+   "label": "CI on main (every push)",
+   "green_attempts": 1195,
+   "example_runs": [
+    "44267301607",
+    "44267777490",
+    "44270144913"
+   ],
+   "wall_median": 16.6,
+   "wall_slowest": 50.1,
+   "machine_median": 17.8,
+   "machine_slowest": 51.6,
+   "jobs": {
+    "check": {
+     "n": 1195,
+     "median": 16.5,
+     "slowest": 50.1
+    },
+    "database": {
+     "n": 1194,
+     "median": 1.3,
+     "slowest": 2.6
+    },
+    "razorpay-test-mode": {
+     "n": 107,
+     "median": 0.3,
+     "slowest": 0.5
+    }
+   }
+  },
+  "wear_build": {
+   "label": "Wear OS build + watch UAT",
+   "green_attempts": 46,
+   "example_runs": [
+    "43817115099",
+    "43841939870",
+    "44011860511"
+   ],
+   "wall_median": 23.1,
+   "wall_slowest": 63.8,
+   "machine_median": 23.1,
+   "machine_slowest": 106.9,
+   "jobs": {
+    "build": {
+     "n": 46,
+     "median": 19.9,
+     "slowest": 25.4
+    },
+    "watch UAT (api 34)": {
+     "n": 14,
+     "median": 17.1,
+     "slowest": 26.3
+    },
+    "watch UAT (api 34, wearos_large_round)": {
+     "n": 5,
+     "median": 26.0,
+     "slowest": 26.5
+    },
+    "watch UAT (api 34, wearos_small_round)": {
+     "n": 5,
+     "median": 28.0,
+     "slowest": 29.4
+    },
+    "watch UAT (api 35-ext15)": {
+     "n": 14,
+     "median": 16.9,
+     "slowest": 26.1
+    },
+    "watch UAT (api 35-ext15, wearos_large_round)": {
+     "n": 5,
+     "median": 25.6,
+     "slowest": 25.9
+    }
+   }
+  },
+  "play_upload_manual": {
+   "label": "Play upload started by hand",
+   "green_attempts": 17,
+   "example_runs": [
+    "43694560659",
+    "43740436255",
+    "44109513123"
+   ],
+   "wall_median": 0.4,
+   "wall_slowest": 1.8,
+   "machine_median": 0.4,
+   "machine_slowest": 1.8,
+   "jobs": {
+    "upload": {
+     "n": 17,
+     "median": 0.4,
+     "slowest": 1.8
+    }
+   }
+  }
+ },
+ "both_phone_green_rounds_new_layout_uat": {
+  "n": 4,
+  "wall_median": 189.8,
+  "wall_slowest": 201.6,
+  "machine_median": 1259.6,
+  "machine_slowest": 1337.2,
+  "runs": [
+   [
+    "43239286609",
+    "43240713376"
+   ],
+   [
+    "43817100950",
+    "43817104084"
+   ],
+   [
+    "43841923587",
+    "43841927489"
+   ],
+   [
+    "44011843148",
+    "44011846187"
+   ]
+  ]
+ },
+ "releases": [
+  {
+   "tag": "v0.50.0",
+   "published": "2026-10-21T22:16:47Z",
+   "prev_published": "2026-10-21T17:21:57Z",
+   "days_since_prev": 0.2,
+   "rounds": 2,
+   "rounds_uat": 0,
+   "rounds_both_green": 0,
+   "whole_runs": 5,
+   "whole_green": 2,
+   "whole_red": 3,
+   "whole_cancelled": 0,
+   "partial_runs": 0,
+   "journey_runs": 2,
+   "release_runs_on_tag": 1,
+   "release_runs_red_on_tag": 0,
+   "hours_first_round_to_published": 4.5,
+   "phone_machine_min": 693.0,
+   "all_gate_machine_min": 774.0
+  },
+  {
+   "tag": "v0.54.0",
+   "published": "2026-10-22T14:26:02Z",
+   "prev_published": "2026-10-21T22:16:47Z",
+   "days_since_prev": 0.67,
+   "rounds": 7,
+   "rounds_uat": 0,
+   "rounds_both_green": 1,
+   "whole_runs": 16,
+   "whole_green": 4,
+   "whole_red": 12,
+   "whole_cancelled": 0,
+   "partial_runs": 0,
+   "journey_runs": 7,
+   "release_runs_on_tag": 1,
+   "release_runs_red_on_tag": 0,
+   "hours_first_round_to_published": 9.9,
+   "phone_machine_min": 2653.0,
+   "all_gate_machine_min": 2926.0
+  },
+  {
+   "tag": "v0.54.1",
+   "published": "2026-10-22T19:21:39Z",
+   "prev_published": "2026-10-22T14:26:02Z",
+   "days_since_prev": 0.21,
+   "rounds": 1,
+   "rounds_uat": 0,
+   "rounds_both_green": 1,
+   "whole_runs": 2,
+   "whole_green": 2,
+   "whole_red": 0,
+   "whole_cancelled": 0,
+   "partial_runs": 0,
+   "journey_runs": 1,
+   "release_runs_on_tag": 1,
+   "release_runs_red_on_tag": 0,
+   "hours_first_round_to_published": 2.8,
+   "phone_machine_min": 487.0,
+   "all_gate_machine_min": 563.0
+  },
+  {
+   "tag": "v0.55.0",
+   "published": "2026-10-24T01:11:29Z",
+   "prev_published": "2026-10-22T19:21:39Z",
+   "days_since_prev": 1.24,
+   "rounds": 10,
+   "rounds_uat": 0,
+   "rounds_both_green": 0,
+   "whole_runs": 19,
+   "whole_green": 5,
+   "whole_red": 14,
+   "whole_cancelled": 0,
+   "partial_runs": 0,
+   "journey_runs": 9,
+   "release_runs_on_tag": 1,
+   "release_runs_red_on_tag": 0,
+   "hours_first_round_to_published": 20.6,
+   "phone_machine_min": 3545.0,
+   "all_gate_machine_min": 3898.0
+  },
+  {
+   "tag": "v0.55.1",
+   "published": "2026-10-24T09:12:32Z",
+   "prev_published": "2026-10-24T01:11:29Z",
+   "days_since_prev": 0.33,
+   "rounds": 1,
+   "rounds_uat": 0,
+   "rounds_both_green": 1,
+   "whole_runs": 2,
+   "whole_green": 2,
+   "whole_red": 0,
+   "whole_cancelled": 0,
+   "partial_runs": 0,
+   "journey_runs": 1,
+   "release_runs_on_tag": 1,
+   "release_runs_red_on_tag": 0,
+   "hours_first_round_to_published": 2.6,
+   "phone_machine_min": 472.0,
+   "all_gate_machine_min": 530.0
+  },
+  {
+   "tag": "v0.56.0",
+   "published": "2026-10-24T20:33:03Z",
+   "prev_published": "2026-10-24T09:12:32Z",
+   "days_since_prev": 0.47,
+   "rounds": 3,
+   "rounds_uat": 0,
+   "rounds_both_green": 1,
+   "whole_runs": 6,
+   "whole_green": 3,
+   "whole_red": 3,
+   "whole_cancelled": 0,
+   "partial_runs": 0,
+   "journey_runs": 4,
+   "release_runs_on_tag": 1,
+   "release_runs_red_on_tag": 0,
+   "hours_first_round_to_published": 7.2,
+   "phone_machine_min": 1448.0,
+   "all_gate_machine_min": 1597.0
+  },
+  {
+   "tag": "v0.56.1",
+   "published": "2026-10-25T00:57:01Z",
+   "prev_published": "2026-10-24T20:33:03Z",
+   "days_since_prev": 0.18,
+   "rounds": 2,
+   "rounds_uat": 0,
+   "rounds_both_green": 0,
+   "whole_runs": 3,
+   "whole_green": 2,
+   "whole_red": 1,
+   "whole_cancelled": 0,
+   "partial_runs": 0,
+   "journey_runs": 1,
+   "release_runs_on_tag": 1,
+   "release_runs_red_on_tag": 0,
+   "hours_first_round_to_published": 3.5,
+   "phone_machine_min": 547.0,
+   "all_gate_machine_min": 671.0
+  },
+  {
+   "tag": "v0.55.2",
+   "published": "2026-10-25T07:14:09Z",
+   "prev_published": "2026-10-25T00:57:01Z",
+   "days_since_prev": 0.26,
+   "rounds": 4,
+   "rounds_uat": 0,
+   "rounds_both_green": 1,
+   "whole_runs": 12,
+   "whole_green": 3,
+   "whole_red": 9,
+   "whole_cancelled": 0,
+   "partial_runs": 0,
+   "journey_runs": 6,
+   "release_runs_on_tag": 2,
+   "release_runs_red_on_tag": 1,
+   "hours_first_round_to_published": 3.4,
+   "phone_machine_min": 1997.0,
+   "all_gate_machine_min": 2275.0
+  },
+  {
+   "tag": "v0.57.0",
+   "published": "2026-10-25T12:45:47Z",
+   "prev_published": "2026-10-25T07:14:09Z",
+   "days_since_prev": 0.23,
+   "rounds": 2,
+   "rounds_uat": 0,
+   "rounds_both_green": 1,
+   "whole_runs": 4,
+   "whole_green": 2,
+   "whole_red": 2,
+   "whole_cancelled": 0,
+   "partial_runs": 0,
+   "journey_runs": 2,
+   "release_runs_on_tag": 1,
+   "release_runs_red_on_tag": 0,
+   "hours_first_round_to_published": 4.6,
+   "phone_machine_min": 677.0,
+   "all_gate_machine_min": 761.0
+  },
+  {
+   "tag": "v0.57.1",
+   "published": "2026-10-25T19:54:11Z",
+   "prev_published": "2026-10-25T12:45:47Z",
+   "days_since_prev": 0.3,
+   "rounds": 2,
+   "rounds_uat": 0,
+   "rounds_both_green": 1,
+   "whole_runs": 4,
+   "whole_green": 2,
+   "whole_red": 2,
+   "whole_cancelled": 0,
+   "partial_runs": 0,
+   "journey_runs": 2,
+   "release_runs_on_tag": 1,
+   "release_runs_red_on_tag": 0,
+   "hours_first_round_to_published": 4.1,
+   "phone_machine_min": 945.0,
+   "all_gate_machine_min": 1063.0
+  },
+  {
+   "tag": "v0.58.0",
+   "published": "2026-10-26T10:12:19Z",
+   "prev_published": "2026-10-25T19:54:11Z",
+   "days_since_prev": 0.6,
+   "rounds": 2,
+   "rounds_uat": 0,
+   "rounds_both_green": 1,
+   "whole_runs": 4,
+   "whole_green": 2,
+   "whole_red": 2,
+   "whole_cancelled": 0,
+   "partial_runs": 0,
+   "journey_runs": 2,
+   "release_runs_on_tag": 1,
+   "release_runs_red_on_tag": 0,
+   "hours_first_round_to_published": 3.8,
+   "phone_machine_min": 945.0,
+   "all_gate_machine_min": 1048.0
+  },
+  {
+   "tag": "v0.59.0",
+   "published": "2026-10-28T19:39:50Z",
+   "prev_published": "2026-10-26T10:12:19Z",
+   "days_since_prev": 2.39,
+   "rounds": 5,
+   "rounds_uat": 0,
+   "rounds_both_green": 0,
+   "whole_runs": 8,
+   "whole_green": 4,
+   "whole_red": 4,
+   "whole_cancelled": 0,
+   "partial_runs": 1,
+   "journey_runs": 8,
+   "release_runs_on_tag": 1,
+   "release_runs_red_on_tag": 0,
+   "hours_first_round_to_published": 14.1,
+   "phone_machine_min": 1720.0,
+   "all_gate_machine_min": 2086.0
+  },
+  {
+   "tag": "v0.60.0",
+   "published": "2026-10-29T08:32:42Z",
+   "prev_published": "2026-10-28T19:39:50Z",
+   "days_since_prev": 0.54,
+   "rounds": 5,
+   "rounds_uat": 0,
+   "rounds_both_green": 0,
+   "whole_runs": 8,
+   "whole_green": 2,
+   "whole_red": 6,
+   "whole_cancelled": 0,
+   "partial_runs": 3,
+   "journey_runs": 3,
+   "release_runs_on_tag": 4,
+   "release_runs_red_on_tag": 3,
+   "hours_first_round_to_published": 12.0,
+   "phone_machine_min": 2012.0,
+   "all_gate_machine_min": 2174.0
+  },
+  {
+   "tag": "v0.61.0",
+   "published": "2026-10-29T19:22:57Z",
+   "prev_published": "2026-10-29T08:32:42Z",
+   "days_since_prev": 0.45,
+   "rounds": 1,
+   "rounds_uat": 0,
+   "rounds_both_green": 1,
+   "whole_runs": 3,
+   "whole_green": 2,
+   "whole_red": 1,
+   "whole_cancelled": 0,
+   "partial_runs": 0,
+   "journey_runs": 1,
+   "release_runs_on_tag": 1,
+   "release_runs_red_on_tag": 0,
+   "hours_first_round_to_published": 3.0,
+   "phone_machine_min": 536.0,
+   "all_gate_machine_min": 616.0
+  },
+  {
+   "tag": "v0.62.1",
+   "published": "2026-10-30T22:13:55Z",
+   "prev_published": "2026-10-29T19:22:57Z",
+   "days_since_prev": 1.12,
+   "rounds": 9,
+   "rounds_uat": 0,
+   "rounds_both_green": 1,
+   "whole_runs": 18,
+   "whole_green": 4,
+   "whole_red": 14,
+   "whole_cancelled": 0,
+   "partial_runs": 2,
+   "journey_runs": 10,
+   "release_runs_on_tag": 9,
+   "release_runs_red_on_tag": 8,
+   "hours_first_round_to_published": 19.1,
+   "phone_machine_min": 4604.0,
+   "all_gate_machine_min": 5007.0
+  },
+  {
+   "tag": "v0.65.0",
+   "published": "2026-10-31T16:00:25Z",
+   "prev_published": "2026-10-30T22:13:55Z",
+   "days_since_prev": 0.74,
+   "rounds": 3,
+   "rounds_uat": 0,
+   "rounds_both_green": 2,
+   "whole_runs": 6,
+   "whole_green": 5,
+   "whole_red": 1,
+   "whole_cancelled": 0,
+   "partial_runs": 2,
+   "journey_runs": 4,
+   "release_runs_on_tag": 2,
+   "release_runs_red_on_tag": 1,
+   "hours_first_round_to_published": 11.1,
+   "phone_machine_min": 1590.0,
+   "all_gate_machine_min": 1752.0
+  },
+  {
+   "tag": "v0.67.0",
+   "published": "2026-11-01T18:08:54Z",
+   "prev_published": "2026-10-31T16:00:25Z",
+   "days_since_prev": 1.09,
+   "rounds": 5,
+   "rounds_uat": 0,
+   "rounds_both_green": 0,
+   "whole_runs": 8,
+   "whole_green": 4,
+   "whole_red": 4,
+   "whole_cancelled": 0,
+   "partial_runs": 1,
+   "journey_runs": 3,
+   "release_runs_on_tag": 7,
+   "release_runs_red_on_tag": 3,
+   "hours_first_round_to_published": 13.5,
+   "phone_machine_min": 1729.0,
+   "all_gate_machine_min": 1960.0
+  },
+  {
+   "tag": "v0.68.0",
+   "published": "2026-11-02T11:31:05Z",
+   "prev_published": "2026-11-01T18:08:54Z",
+   "days_since_prev": 0.72,
+   "rounds": 1,
+   "rounds_uat": 0,
+   "rounds_both_green": 1,
+   "whole_runs": 2,
+   "whole_green": 2,
+   "whole_red": 0,
+   "whole_cancelled": 0,
+   "partial_runs": 10,
+   "journey_runs": 1,
+   "release_runs_on_tag": 1,
+   "release_runs_red_on_tag": 0,
+   "hours_first_round_to_published": 2.9,
+   "phone_machine_min": 843.0,
+   "all_gate_machine_min": 940.0
+  },
+  {
+   "tag": "v0.69.0",
+   "published": "2026-11-02T22:58:28Z",
+   "prev_published": "2026-11-02T11:31:05Z",
+   "days_since_prev": 0.48,
+   "rounds": 4,
+   "rounds_uat": 0,
+   "rounds_both_green": 1,
+   "whole_runs": 8,
+   "whole_green": 2,
+   "whole_red": 5,
+   "whole_cancelled": 1,
+   "partial_runs": 1,
+   "journey_runs": 3,
+   "release_runs_on_tag": 1,
+   "release_runs_red_on_tag": 0,
+   "hours_first_round_to_published": 9.4,
+   "phone_machine_min": 1554.0,
+   "all_gate_machine_min": 1810.0
+  },
+  {
+   "tag": "v0.70.0",
+   "published": "2026-11-03T07:29:34Z",
+   "prev_published": "2026-11-02T22:58:28Z",
+   "days_since_prev": 0.35,
+   "rounds": 2,
+   "rounds_uat": 0,
+   "rounds_both_green": 1,
+   "whole_runs": 4,
+   "whole_green": 2,
+   "whole_red": 2,
+   "whole_cancelled": 0,
+   "partial_runs": 0,
+   "journey_runs": 2,
+   "release_runs_on_tag": 1,
+   "release_runs_red_on_tag": 0,
+   "hours_first_round_to_published": 3.3,
+   "phone_machine_min": 599.0,
+   "all_gate_machine_min": 882.0
+  },
+  {
+   "tag": "v0.71.0",
+   "published": "2026-11-03T21:52:02Z",
+   "prev_published": "2026-11-03T07:29:34Z",
+   "days_since_prev": 0.6,
+   "rounds": 3,
+   "rounds_uat": 1,
+   "rounds_both_green": 2,
+   "whole_runs": 8,
+   "whole_green": 6,
+   "whole_red": 2,
+   "whole_cancelled": 0,
+   "partial_runs": 8,
+   "journey_runs": 6,
+   "release_runs_on_tag": 1,
+   "release_runs_red_on_tag": 1,
+   "hours_first_round_to_published": 8.2,
+   "phone_machine_min": 2340.0,
+   "all_gate_machine_min": 3112.0
+  },
+  {
+   "tag": "v0.72.0",
+   "published": "2026-11-05T11:16:26Z",
+   "prev_published": "2026-11-03T21:52:02Z",
+   "days_since_prev": 1.56,
+   "rounds": 3,
+   "rounds_uat": 0,
+   "rounds_both_green": 1,
+   "whole_runs": 6,
+   "whole_green": 3,
+   "whole_red": 3,
+   "whole_cancelled": 0,
+   "partial_runs": 83,
+   "journey_runs": 3,
+   "release_runs_on_tag": 2,
+   "release_runs_red_on_tag": 1,
+   "hours_first_round_to_published": 8.1,
+   "phone_machine_min": 5123.0,
+   "all_gate_machine_min": 5290.0
+  },
+  {
+   "tag": "v0.73.0",
+   "published": "2026-11-06T05:27:19Z",
+   "prev_published": "2026-11-05T11:16:26Z",
+   "days_since_prev": 0.76,
+   "rounds": 4,
+   "rounds_uat": 4,
+   "rounds_both_green": 1,
+   "whole_runs": 8,
+   "whole_green": 3,
+   "whole_red": 5,
+   "whole_cancelled": 0,
+   "partial_runs": 24,
+   "journey_runs": 4,
+   "release_runs_on_tag": 2,
+   "release_runs_red_on_tag": 1,
+   "hours_first_round_to_published": 15.3,
+   "phone_machine_min": 3662.0,
+   "all_gate_machine_min": 3893.0
+  },
+  {
+   "tag": "v0.74.0",
+   "published": "2026-11-07T13:39:52Z",
+   "prev_published": "2026-11-06T05:27:19Z",
+   "days_since_prev": 1.34,
+   "rounds": 1,
+   "rounds_uat": 1,
+   "rounds_both_green": 1,
+   "whole_runs": 4,
+   "whole_green": 2,
+   "whole_red": 2,
+   "whole_cancelled": 0,
+   "partial_runs": 5,
+   "journey_runs": 2,
+   "release_runs_on_tag": 1,
+   "release_runs_red_on_tag": 1,
+   "hours_first_round_to_published": 3.6,
+   "phone_machine_min": 1061.0,
+   "all_gate_machine_min": 1142.0
+  },
+  {
+   "tag": "v0.75.0",
+   "published": "2026-11-08T05:21:22Z",
+   "prev_published": "2026-11-07T13:39:52Z",
+   "days_since_prev": 0.65,
+   "rounds": 3,
+   "rounds_uat": 3,
+   "rounds_both_green": 0,
+   "whole_runs": 5,
+   "whole_green": 2,
+   "whole_red": 3,
+   "whole_cancelled": 0,
+   "partial_runs": 1,
+   "journey_runs": 2,
+   "release_runs_on_tag": 2,
+   "release_runs_red_on_tag": 1,
+   "hours_first_round_to_published": 11.1,
+   "phone_machine_min": 2039.0,
+   "all_gate_machine_min": 2167.0
+  },
+  {
+   "tag": "v0.76.0",
+   "published": "2026-11-09T00:48:59Z",
+   "prev_published": "2026-11-08T05:21:22Z",
+   "days_since_prev": 0.81,
+   "rounds": 3,
+   "rounds_uat": 3,
+   "rounds_both_green": 1,
+   "whole_runs": 8,
+   "whole_green": 2,
+   "whole_red": 6,
+   "whole_cancelled": 0,
+   "partial_runs": 18,
+   "journey_runs": 4,
+   "release_runs_on_tag": 1,
+   "release_runs_red_on_tag": 1,
+   "hours_first_round_to_published": 10.6,
+   "phone_machine_min": 2732.0,
+   "all_gate_machine_min": 2908.0
+  },
+  {
+   "tag": "v0.77.0",
+   "published": "2026-11-12T10:25:59Z",
+   "prev_published": "2026-11-09T00:48:59Z",
+   "days_since_prev": 3.4,
+   "rounds": 8,
+   "rounds_uat": 8,
+   "rounds_both_green": 0,
+   "whole_runs": 13,
+   "whole_green": 2,
+   "whole_red": 11,
+   "whole_cancelled": 0,
+   "partial_runs": 52,
+   "journey_runs": 5,
+   "release_runs_on_tag": 1,
+   "release_runs_red_on_tag": 0,
+   "hours_first_round_to_published": 24.2,
+   "phone_machine_min": 6264.0,
+   "all_gate_machine_min": 6509.0
+  },
+  {
+   "tag": "v0.78.0",
+   "published": "2026-11-15T07:51:10Z",
+   "prev_published": "2026-11-12T10:25:59Z",
+   "days_since_prev": 2.89,
+   "rounds": 14,
+   "rounds_uat": 14,
+   "rounds_both_green": 1,
+   "whole_runs": 29,
+   "whole_green": 4,
+   "whole_red": 24,
+   "whole_cancelled": 1,
+   "partial_runs": 82,
+   "journey_runs": 4,
+   "release_runs_on_tag": 2,
+   "release_runs_red_on_tag": 1,
+   "hours_first_round_to_published": 69.4,
+   "phone_machine_min": 10093.0,
+   "all_gate_machine_min": 10588.0
+  },
+  {
+   "tag": "v0.79.0",
+   "published": "2026-11-17T13:50:33Z",
+   "prev_published": "2026-11-15T07:51:10Z",
+   "days_since_prev": 2.25,
+   "rounds": 8,
+   "rounds_uat": 8,
+   "rounds_both_green": 3,
+   "whole_runs": 14,
+   "whole_green": 7,
+   "whole_red": 7,
+   "whole_cancelled": 0,
+   "partial_runs": 66,
+   "journey_runs": 5,
+   "release_runs_on_tag": 1,
+   "release_runs_red_on_tag": 0,
+   "hours_first_round_to_published": 40.1,
+   "phone_machine_min": 11514.0,
+   "all_gate_machine_min": 12282.0
+  }
+ ],
+ "release_summary": {
+  "releases_in_window": 29,
+  "releases_with_a_whole_round": 29,
+  "rounds_mean": 4.1,
+  "rounds_median": 3,
+  "rounds_max": 14,
+  "hours_median": 8.2,
+  "hours_mean": 11.9,
+  "hours_max": 69.4,
+  "partials_mean": 12.4,
+  "phone_machine_hours_mean": 42.8
+ },
+ "qa_rel_079": {
+  "tags": [
+   "qa-rel-079",
+   "qa-rel-079b",
+   "qa-rel-079c",
+   "qa-rel-079d",
+   "qa-rel-079e",
+   "qa-rel-079f",
+   "qa-rel-079g",
+   "qa-rel-079h",
+   "qa-rel-079i",
+   "qa-rel-079j"
+  ],
+  "whole_runs": 12,
+  "whole_green": 5,
+  "partial_runs": 20,
+  "first_start": "2026-11-15T21:46:11Z",
+  "last_end": "2026-11-17T09:24:13Z",
+  "hours": 35.6,
+  "machine_min": 8739.0,
+  "per_tag": [
+   {
+    "tag": "qa-rel-079",
+    "whole": [
+     [
+      "default",
+      "red",
+      39.1,
+      "43765513595"
+     ],
+     [
+      "owner",
+      "red",
+      27.3,
+      "43765515975"
+     ]
+    ],
+    "partials": 2
+   },
+   {
+    "tag": "qa-rel-079b",
+    "whole": [
+     [
+      "default",
+      "red",
+      68.2,
+      "43770159330"
+     ],
+     [
+      "owner",
+      "red",
+      63.6,
+      "43770161543"
+     ]
+    ],
+    "partials": 1
+   },
+   {
+    "tag": "qa-rel-079c",
+    "whole": [
+     [
+      "default",
+      "green",
+      187.5,
+      "43776696006"
+     ],
+     [
+      "owner",
+      "red",
+      69.1,
+      "43776698253"
+     ]
+    ],
+    "partials": 2
+   },
+   {
+    "tag": "qa-rel-079d",
+    "whole": [
+     [
+      "owner",
+      "red",
+      109.1,
+      "43784919647"
+     ]
+    ],
+    "partials": 2
+   },
+   {
+    "tag": "qa-rel-079e",
+    "whole": [
+     [
+      "owner",
+      "red",
+      102.7,
+      "43796622071"
+     ]
+    ],
+    "partials": 2
+   },
+   {
+    "tag": "qa-rel-079f",
+    "whole": [
+     [
+      "default",
+      "green",
+      181.3,
+      "43841923587"
+     ],
+     [
+      "owner",
+      "green",
+      193.0,
+      "43841927489"
+     ]
+    ],
+    "partials": 1
+   },
+   {
+    "tag": "qa-rel-079g",
+    "whole": [],
+    "partials": 3
+   },
+   {
+    "tag": "qa-rel-079h",
+    "whole": [],
+    "partials": 3
+   },
+   {
+    "tag": "qa-rel-079i",
+    "whole": [],
+    "partials": 3
+   },
+   {
+    "tag": "qa-rel-079j",
+    "whole": [
+     [
+      "default",
+      "green",
+      201.6,
+      "44011843148"
+     ],
+     [
+      "owner",
+      "green",
+      181.2,
+      "44011846187"
+     ]
+    ],
+    "partials": 1
+   }
+  ]
+ },
+ "no_app_change": {
+  "ci_push_runs_by_head_commit": {
+   "code": {
+    "runs": 891,
+    "machine_min": 13983
+   },
+   "docs only": {
+    "runs": 843,
+    "machine_min": 13753
+   },
+   "nothing the phone app or the panels are built from (tests, CI scripts, docs)": {
+    "runs": 162,
+    "machine_min": 2857
+   },
+   "phone-test files only (+docs)": {
+    "runs": 149,
+    "machine_min": 2590
+   },
+   "merge or empty commit": {
+    "runs": 11,
+    "machine_min": 99
+   },
+   "unknown (commit not in the local clone)": {
+    "runs": 5,
+    "machine_min": 43
+   }
+  },
+  "ci_push_runs_total": 2061,
+  "whole_runs_vs_previous_whole_run": {
+   "phone app changed": {
+    "runs": 152,
+    "machine_min": 34010,
+    "example_runs": [
+     "39599877750",
+     "39599880778",
+     "39604087736",
+     "39604091364"
+    ]
+   },
+   "only phone-test files, CI scripts, unit tests or docs changed": {
+    "runs": 47,
+    "machine_min": 14465,
+    "example_runs": [
+     "39902230052",
+     "39902232208",
+     "39950792788",
+     "39950796016"
+    ]
+   },
+   "server or web panels changed, phone app not": {
+    "runs": 20,
+    "machine_min": 7809,
+    "example_runs": [
+     "39920974273",
+     "39920977372",
+     "40107399956",
+     "40107401680"
+    ]
+   },
+   "same commit as the previous whole run on this phone": {
+    "runs": 6,
+    "machine_min": 1471,
+    "example_runs": [
+     "39664337093",
+     "39936640177",
+     "40002348835",
+     "40034087489"
+    ]
+   },
+   "unknown (commit not in the local clone)": {
+    "runs": 4,
+    "machine_min": 514,
+    "example_runs": [
+     "40160126116",
+     "40160127473",
+     "40160846314",
+     "40160847577"
+    ]
+   }
+  }
+ }
+}
