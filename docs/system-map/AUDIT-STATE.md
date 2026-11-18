@@ -54,6 +54,7 @@ Counts: 9 todo, 0 in progress, 59 done, 0 blocked. Full list: work-items.jsonl. 
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
 
 ## Resume notes
+- PACER RUN 19 Nov 02:43 IST: F5 95 at start (weekly Fable 71, weekly all 37), window resets 19 Nov 06:00 IST. Night rule: start nothing new at F5 >= 92, so nothing started. No helper runs. Model router still off, change-360 still off. No lock left. Next launches: the same as the 01:57 note below.
 - PACER RUN 19 Nov 02:27 IST: F5 94 at start (weekly Fable 71, weekly all 37), window resets 19 Nov 06:00 IST. Night rule: start nothing new at F5 >= 92, so nothing started. No helper runs. Model router still off. No lock left. Next launches: the same as the 01:57 note below.
 - PACER RUN 19 Nov 02:12 IST: F5 93 at start (weekly Fable 70, weekly all 37), window resets 19 Nov 06:00 IST. Night rule: start nothing new at F5 >= 92, so nothing started. No helper runs. Model router still off. No lock left. Next launches: the same as the 01:57 note below.
 - PACER RUN 19 Nov 01:57 IST: F5 92 at start (weekly Fable 70, weekly all 36), window resets 19 Nov 06:00 IST. Night rule: start nothing new at F5 >= 92, so nothing started. No helper runs. Model router still off, change-360 still off. No lock left. Next launches: after 06:00 IST, day rule (launch only while F5 + RESERVED + cost <= 80): the 8 A7 parts left + A7-panel-3b, then the A3 and A4 pilots.
