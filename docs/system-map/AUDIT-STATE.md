@@ -13,25 +13,36 @@ blind check: never put the held-out rows or hints into a helper brief (ids are i
 ## Learned cost per helper type (5-hour %)
 | step | helpers so far | average cost |
 |---|---|---|
-| plan-review | 1 | 171k tokens (ran beside E1, % not measured) |
+| plan-review | 1 | 171k tokens (% not measured yet; plan with 5) |
+| tools | 1 | 212k tokens (% not measured yet; plan with 5) |
+| A1b | 1 | 201k tokens (% not measured yet; plan with 5) |
+| redact | 0 | 5 (start value) |
 | A2 | 0 | 5 (start value) |
+| A7 | 0 | 5 (start value) |
+| E1 | 1 | 189k tokens (% not measured yet; plan with 5) |
+| E2 | 0 | 5 (start value) |
+| E3 | 0 | 5 (start value) |
+| E4 | 0 | 5 (start value) |
+| 3F | 0 | 5 (start value) |
 
 ## Work items
+Counts: 7 todo, 1 in progress, 5 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
-| W0 | review | plan review -> PLAN-REVIEW.md | done | _work/plan-review.md | 26 proposals: 22 applied, 4 need Aakash; 171k tokens |
-| T1 | tools | build docs/system-map/_tools/: sources.mjs, merge.mjs, state.mjs, redact.mjs (G0), work-items.jsonl, RUNBOOK.md, _briefs/ | todo | _work/T1.md | must finish before A2 |
+| W8 | E2 | 3E E2 label failed jobs by rule (script), then one helper reads only the UNKNOWN rows (at most 40) -> test-failures.jsonl | in progress | _work/E2.md |  |
+| G0 | redact | blind-check redaction: _tools/redact.mjs -> _sources/owner-inbox-redacted.md + claude-notes-redacted.md (parts of at most 600 lines); prints counts only | todo | _work/G0.md |  |
+| A2-pilot | A2 | features: PILOT, one area of at most 12,000 lines picked from sizes.csv; runs alone | todo | _work/A2-pilot.md |  |
+| A2-split | coord | coordinator: add one A2 item per area from sizes.csv, sized by the A2 pilot cost (state.mjs add) | todo | - |  |
+| A7-pilot | A7 | promises: PILOT, one source group of at most 120 candidate sentences from _sources/promises.txt; runs alone | todo | _work/A7-pilot.md |  |
+| W9 | E3 | 3E E3 release gate cost by script: minutes per round part, 20 slowest flows, repeated checks | todo | _work/E3.md |  |
+| W10 | E4 | 3E E4 better test framework: research + proposals only -> TEST-SYSTEM-REVIEW.md | todo | _work/E4.md |  |
+| W11 | 3F | 3F F1, F4-F6 change-360 review (proposals only; switch stays OFF) -> CHANGE-360-REVIEW.md draft | todo | _work/F.md |  |
+| W0 | plan-review | plan review -> PLAN-REVIEW.md | done | _work/plan-review.md | 26 proposals: 22 applied, 4 need Aakash; 171k tokens |
 | W1 | A1 | surfaces.json (11 surfaces) | done | - | coordinator |
-| W2 | A2 | features: panel | todo | _work/A2-panel.md | |
-| W3 | A2 | features: phone | todo | _work/A2-phone.md | |
-| W4 | A2 | features: server (Workers, DB, crons, messages) | todo | _work/A2-server.md | |
-| W5 | A2 | features: websites + HQ + gate | todo | _work/A2-web-hq.md | |
-| W6 | A2 | features: watch + store listing | todo | _work/A2-watch-store.md | |
-| W7 | 3E | E1 test history (script) | in progress | _work/E1.md | |
-| W8 | 3E | E2 classify failures | todo | _work/E2.md | |
-| W9 | 3E | E3 release gate cost | todo | _work/E3.md | |
-| W10 | 3E | E4 better framework proposal | todo | _work/E4.md | |
-| W11 | 3F | F1, F4-F6 change-360 review (proposals only) | todo | _work/F.md | |
+| T1a | tools | coordinator tooling: work-items.jsonl, _tools/state.mjs, _tools/merge.mjs, _briefs/, RUNBOOK.md | done | _work/T1a.md | tools, briefs, runbook built and tested |
+| A1b | A1b | source lists by script: _tools/sources.mjs -> _sources/<surface>.txt, sizes.csv, readers-raw.txt, promises.txt (no model reading) | done | _work/A1b.md | 37 areas, source lists pushed |
+| W7 | E1 | 3E E1 test history (script) -> test-history.csv | done | _work/E1.md | 3,128 runs, 39% red tries, 91 proven flaky |
 
 ## Needs Aakash
 - The scheduled task mettleup-audit-pacer could not be switched on by the unattended start run (it needs his click). Backup: an hourly pacer cron inside the start session (dies if that chat closes).
