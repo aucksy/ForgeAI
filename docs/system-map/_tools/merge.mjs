@@ -134,6 +134,9 @@ function evid(v) {
 }
 function srcLine(v) { // "panel.txt#212" = line 212 of _sources/panel.txt
   if (v === 'unknown') return null;
+  // "file#<repo path>" = a whole source file of the area (A2 item lists, added 18 Nov 2026 after the pilot)
+  const f = typeof v === 'string' && v.match(/^file#(.+)$/);
+  if (f) { const p = inside(REPO, f[1]); return p && fs.existsSync(p) ? null : `file# source not found in the repo: ${f[1]}`; }
   const m = typeof v === 'string' && v.match(/^([A-Za-z0-9._-]+)#(\d+)$/);
   if (!m) return `source form not recognised: "${String(v).slice(0, 60)}" (use <file>#<line>, a line of an _sources file)`;
   const n = lineCount(path.join(MAP, '_sources', m[1]));
