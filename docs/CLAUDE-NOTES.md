@@ -7,6 +7,12 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-612. Change 360 flow: global, behind a switch, his yes per change - 18 Nov 2026
+
+He said: install the gap-prevention flow globally "but with a switch. So before this flow activates, I want to approve it first. I do not want it activated for each and every simple fix"; generic questions globally, MettleUp's own questions only here; review for negative side effects.
+
+Built (master switch OFF until he turns it on): skill ~/.claude/skills/change-360 (SKILL.md + 43 generic QUESTIONS.md), switch ~/.claude/change-360/switch.json, hook ~/.claude/hooks/change_360.py (prompt: triage line; commit: blocks git commit only while an ACTIVE approved card has questions/blast radius/tests-first undone; fails open). MettleUp's 20 extra questions: docs/change-360-project.md. Answers go into the 15 Nov change card docs/changes/R-<n>.json (one card). Rule note: change-360-runs-only-with-his-yes. Research + design: D:/Brain/Dev-Framework/2026-11-18-feature-360-questions.md.
+
 ## R-611. Watch update pop-up: how often, and a lasting dot - 18 Nov 2026
 
 He asked: after 0.79.0 he saw the watch update pop-up once, closed the app without tapping, and never saw it again over many opens. How often should it show? The phone has a lasting top banner after its pop-up is closed; should the watch get a lasting dot that leads to the watch settings?
