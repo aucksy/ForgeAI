@@ -1,0 +1,135 @@
+api-call | /api/gyms | apps/hq/public/app.js:214
+api-call | /api/gyms/export-log | apps/hq/public/app.js:352
+api-call | /api/gym/create | apps/hq/public/app.js:373
+api-call | /api/gym/trial | apps/hq/public/app.js:421
+api-call | /api/gym/plan | apps/hq/public/app.js:455
+api-call | /api/gym | apps/hq/public/app.js:463
+api-call | /api/gym/status | apps/hq/public/app.js:472
+api-call | /api/gym/status | apps/hq/public/app.js:478
+api-call | /api/gym/status | apps/hq/public/app.js:482
+api-call | /api/gym/reset-signin | apps/hq/public/app.js:495
+api-call | /api/gym/sign-out-all | apps/hq/public/app.js:508
+api-call | /api/ai/limit | apps/hq/public/app.js:526
+api-call | /api/ai/limit | apps/hq/public/app.js:530
+api-call | /api/gym/access-log | apps/hq/public/app.js:572
+api-call | /api/gym/ai-credits | apps/hq/public/app.js:612
+api-call | /api/gym/web-page | apps/hq/public/app.js:637
+api-call | /api/gym/assist-limit | apps/hq/public/app.js:652
+api-call | /api/access/records | apps/hq/public/app.js:679
+api-call | /api/access/end | apps/hq/public/app.js:683
+api-call | /api/access/open | apps/hq/public/app.js:695
+api-call | /api/system | apps/hq/public/app.js:704
+api-call | /api/feedback | apps/hq/public/app.js:760
+api-call | /api/english | apps/hq/public/app.js:761
+api-call | /api/feedback/reply | apps/hq/public/app.js:807
+api-call | /api/feedback/status | apps/hq/public/app.js:814
+api-call | /api/english/rewrite | apps/hq/public/app.js:847
+api-call | /api/needs | apps/hq/public/app.js:904
+api-call | /api/leads | apps/hq/public/app.js:967
+api-call | /api/leads/status | apps/hq/public/app.js:983
+api-call | /api/delete-requests | apps/hq/public/app.js:994
+api-call | /api/gyms | apps/hq/public/app.js:994
+api-call | /api/delete-requests/add | apps/hq/public/app.js:1004
+api-call | /api/delete-requests/add | apps/hq/public/app.js:1028
+api-call | /api/delete-requests/step | apps/hq/public/app.js:1038
+api-call | /api/delete-requests/delete-gym | apps/hq/public/app.js:1052
+api-call | /api/delete-requests/step | apps/hq/public/app.js:1057
+api-call | /api/messages | apps/hq/public/app.js:1070
+api-call | /api/messages/send | apps/hq/public/app.js:1094
+api-call | /api/messages/remove | apps/hq/public/app.js:1112
+api-call | /api/payments | apps/hq/public/app.js:1126
+api-call | /api/billing-checks | apps/hq/public/app.js:1157
+api-call | /api/billing-checks/done | apps/hq/public/app.js:1183
+api-call | /api/payments/confirm | apps/hq/public/app.js:1211
+api-call | /api/payments/reject | apps/hq/public/app.js:1215
+api-call | /api/pay-details | apps/hq/public/app.js:1225
+api-call | /api/pay-details | apps/hq/public/app.js:1255
+api-call | /api/audit | apps/hq/public/app.js:1264
+api-call | /api/me | apps/hq/public/app.js:1305
+heading | h2: Gyms with branches (${cards.length}) | apps/hq/public/app.js:228
+heading | h1: All gyms | apps/hq/public/app.js:319
+heading | h2: Free trial and plan | apps/hq/public/app.js:405
+heading | h3: Change the free trial | apps/hq/public/app.js:447
+heading | h3: Set the plan | apps/hq/public/app.js:449
+heading | h2: Owner lost their sign-in | apps/hq/public/app.js:490
+heading | h2: Sign the gym out everywhere | apps/hq/public/app.js:504
+heading | h2: AI column matching | apps/hq/public/app.js:517
+heading | h2: Owner | apps/hq/public/app.js:558
+heading | h2: Status | apps/hq/public/app.js:563
+heading | h2: Sign-in history | apps/hq/public/app.js:569
+heading | h2: What HQ did here | apps/hq/public/app.js:585
+heading | h2: AI Assistant credits | apps/hq/public/app.js:591
+heading | h3: Add AI credits | apps/hq/public/app.js:606
+heading | h2: Web page | apps/hq/public/app.js:629
+heading | h3: Daily limit | apps/hq/public/app.js:658
+heading | h2: Support access is open | apps/hq/public/app.js:676
+heading | h2: Support access | apps/hq/public/app.js:691
+heading | h1: System | apps/hq/public/app.js:709
+heading | h2: Gym server storage | apps/hq/public/app.js:710
+heading | h2: Member app downloads | apps/hq/public/app.js:722
+heading | h2: Cloudflare free limit | apps/hq/public/app.js:728
+heading | h2: Errors and outages | apps/hq/public/app.js:733
+heading | h2: Which app version members use | apps/hq/public/app.js:735
+heading | h1: Feedback | apps/hq/public/app.js:770
+heading | h1: Needs you | apps/hq/public/app.js:945
+heading | h2: All clear | apps/hq/public/app.js:954
+heading | h2: Alerts | apps/hq/public/app.js:957
+heading | h1: Leads | apps/hq/public/app.js:969
+heading | h1: Delete requests | apps/hq/public/app.js:1019
+heading | h2: New from the admin app | apps/hq/public/app.js:1022
+heading | h2: Open (${open.length}) | apps/hq/public/app.js:1023
+heading | h2: Write down a request that came another way | apps/hq/public/app.js:1025
+heading | h1: Messages | apps/hq/public/app.js:1073
+heading | h1: Messages | apps/hq/public/app.js:1086
+heading | h2: New message to every gym | apps/hq/public/app.js:1088
+heading | h2: Sent (${sent.length}) | apps/hq/public/app.js:1098
+heading | h1: Payments | apps/hq/public/app.js:1129
+heading | h2: Your payment details | apps/hq/public/app.js:1136
+heading | h1: Payments | apps/hq/public/app.js:1140
+heading | h2: Online payments to check | apps/hq/public/app.js:1171
+heading | h2: Your payment details | apps/hq/public/app.js:1241
+heading | h1: Log | apps/hq/public/app.js:1272
+menu-link | #needs | apps/hq/public/index.html:41
+menu-link | #gyms | apps/hq/public/index.html:54
+menu-link | #payments | apps/hq/public/index.html:55
+menu-link | #feedback | apps/hq/public/index.html:56
+menu-link | #leads | apps/hq/public/index.html:58
+menu-link | #messages | apps/hq/public/index.html:60
+menu-link | #deletes | apps/hq/public/index.html:61
+menu-link | #system | apps/hq/public/index.html:62
+menu-link | #log | apps/hq/public/index.html:63
+page-part | main#main | apps/hq/public/index.html:68
+route | #needs | apps/hq/public/app.js:1284
+route | #payments | apps/hq/public/app.js:1284
+route | #gyms | apps/hq/public/app.js:1284
+route | #system | apps/hq/public/app.js:1284
+route | #feedback | apps/hq/public/app.js:1284
+route | #leads | apps/hq/public/app.js:1284
+route | #messages | apps/hq/public/app.js:1284
+route | #deletes | apps/hq/public/app.js:1284
+route | #log | apps/hq/public/app.js:1284
+route | #gym/<id> | apps/hq/public/app.js:1293
+route | #feedback/<id> | apps/hq/public/app.js:1294
+screen | gymsPage | apps/hq/public/app.js:212
+screen | gymPage | apps/hq/public/app.js:461
+screen | systemPage | apps/hq/public/app.js:702
+screen | feedbackPage | apps/hq/public/app.js:758
+screen | needsPage | apps/hq/public/app.js:938
+screen | leadsPage | apps/hq/public/app.js:965
+screen | deletesPage | apps/hq/public/app.js:992
+screen | messagesPage | apps/hq/public/app.js:1066
+screen | paymentsPage | apps/hq/public/app.js:1122
+screen | logPage | apps/hq/public/app.js:1262
+section | renderBanner | apps/hq/public/app.js:194
+section | groupsCard | apps/hq/public/app.js:224
+section | codeCard | apps/hq/public/app.js:380
+section | planCard | apps/hq/public/app.js:404
+section | creditsCard | apps/hq/public/app.js:590
+section | webPageCard | apps/hq/public/app.js:623
+section | feedbackCard | apps/hq/public/app.js:776
+section | requestCard | apps/hq/public/app.js:1035
+section | messageCard | apps/hq/public/app.js:1104
+section | checksCard | apps/hq/public/app.js:1154
+section | checkCard | apps/hq/public/app.js:1179
+section | paymentCard | apps/hq/public/app.js:1198
+section | payDetailsCard | apps/hq/public/app.js:1222

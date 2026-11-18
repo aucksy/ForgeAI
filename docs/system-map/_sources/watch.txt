@@ -1,0 +1,55 @@
+activity | .MainActivity (manifest) | apps/mobile/android/wear/src/main/AndroidManifest.xml:52
+activity | MainActivity : ComponentActivity | apps/mobile/android/wear/src/main/java/com/forgeai/wear/MainActivity.kt:52
+channel | rest-live [CH_LIVE] | apps/mobile/android/wear/src/main/java/com/forgeai/wear/RestAlerts.kt:56
+channel | rest-over [CH_OVER] | apps/mobile/android/wear/src/main/java/com/forgeai/wear/RestAlerts.kt:67
+channel | workout-live [CH] | apps/mobile/android/wear/src/main/java/com/forgeai/wear/WorkoutLive.kt:150
+channel | workout-started-popup [CH] | apps/mobile/android/wear/src/main/java/com/forgeai/wear/WorkoutStarted.kt:133
+composable-screen | NextSetScreen | apps/mobile/android/wear/src/main/java/com/forgeai/wear/LogScreens.kt:318
+composable-screen | EffortScreen | apps/mobile/android/wear/src/main/java/com/forgeai/wear/LogScreens.kt:498
+composable-screen | RestScreen | apps/mobile/android/wear/src/main/java/com/forgeai/wear/LogScreens.kt:555
+composable-screen | RestOverScreen | apps/mobile/android/wear/src/main/java/com/forgeai/wear/LogScreens.kt:637
+composable-screen | ExerciseDoneScreen | apps/mobile/android/wear/src/main/java/com/forgeai/wear/LogScreens.kt:670
+composable-screen | NotSavedScreen | apps/mobile/android/wear/src/main/java/com/forgeai/wear/LogScreens.kt:744
+composable-screen | WatchScreen | apps/mobile/android/wear/src/main/java/com/forgeai/wear/WatchScreens.kt:183
+composable-screen | RestTimerScreen | apps/mobile/android/wear/src/main/java/com/forgeai/wear/WatchScreens.kt:479
+composable-screen | RestIsOverScreen | apps/mobile/android/wear/src/main/java/com/forgeai/wear/WatchScreens.kt:542
+composable-screen | BetweenRestsScreen | apps/mobile/android/wear/src/main/java/com/forgeai/wear/WatchScreens.kt:580
+composable-screen | NothingOpenScreen | apps/mobile/android/wear/src/main/java/com/forgeai/wear/WatchScreens.kt:682
+composable-screen | WorkoutSavedScreen | apps/mobile/android/wear/src/main/java/com/forgeai/wear/WatchScreens.kt:702
+composable-screen | PhoneAppMissingScreen | apps/mobile/android/wear/src/main/java/com/forgeai/wear/WatchScreens.kt:725
+composable-screen | PermissionScreen | apps/mobile/android/wear/src/main/java/com/forgeai/wear/WatchScreens.kt:760
+composable-screen | PhoneNotConnectedScreen | apps/mobile/android/wear/src/main/java/com/forgeai/wear/WatchScreens.kt:835
+permission | android.permission.VIBRATE | apps/mobile/android/wear/src/main/AndroidManifest.xml:10
+permission | android.permission.WAKE_LOCK | apps/mobile/android/wear/src/main/AndroidManifest.xml:11
+permission | android.permission.RECEIVE_BOOT_COMPLETED | apps/mobile/android/wear/src/main/AndroidManifest.xml:13
+permission | android.permission.POST_NOTIFICATIONS | apps/mobile/android/wear/src/main/AndroidManifest.xml:15
+permission | android.permission.BODY_SENSORS | apps/mobile/android/wear/src/main/AndroidManifest.xml:18
+permission | android.permission.health.READ_HEART_RATE | apps/mobile/android/wear/src/main/AndroidManifest.xml:19
+permission | android.permission.SCHEDULE_EXACT_ALARM | apps/mobile/android/wear/src/main/AndroidManifest.xml:25
+permission | android.permission.FOREGROUND_SERVICE | apps/mobile/android/wear/src/main/AndroidManifest.xml:30
+permission | android.permission.FOREGROUND_SERVICE_HEALTH | apps/mobile/android/wear/src/main/AndroidManifest.xml:31
+prefs | forgeai_watch_diag [PREFS] | apps/mobile/android/wear/src/main/java/com/forgeai/wear/AmbientDiag.kt:150
+prefs | forgeai_watch_diag [PREFS] | apps/mobile/android/wear/src/main/java/com/forgeai/wear/AmbientDiag.kt:162
+prefs | forgeai_watch_bridging [PREFS] | apps/mobile/android/wear/src/main/java/com/forgeai/wear/Bridging.kt:52
+prefs | forgeai_watch_ui | apps/mobile/android/wear/src/main/java/com/forgeai/wear/MainActivity.kt:760
+prefs | forgeai_watch | apps/mobile/android/wear/src/main/java/com/forgeai/wear/RestAlerts.kt:274
+prefs | forgeai_watch [PREFS] | apps/mobile/android/wear/src/main/java/com/forgeai/wear/WatchState.kt:76
+prefs | forgeai_watch | apps/mobile/android/wear/src/main/java/com/forgeai/wear/WorkoutLive.kt:164
+prefs | forgeai_watch_open [PREFS] | apps/mobile/android/wear/src/main/java/com/forgeai/wear/WorkoutStarted.kt:68
+prefs | forgeai_watch_open [PREFS] | apps/mobile/android/wear/src/main/java/com/forgeai/wear/WorkoutStarted.kt:90
+prefs | forgeai_watch | apps/mobile/android/wear/src/main/java/com/forgeai/wear/WorkoutStarted.kt:143
+receiver | .BootReceiver (manifest) | apps/mobile/android/wear/src/main/AndroidManifest.xml:128
+receiver | .RestAlarmReceiver (manifest) | apps/mobile/android/wear/src/main/AndroidManifest.xml:140
+receiver | .WatchActionReceiver (manifest) | apps/mobile/android/wear/src/main/AndroidManifest.xml:145
+receiver | BootReceiver : BroadcastReceiver | apps/mobile/android/wear/src/main/java/com/forgeai/wear/BootReceiver.kt:12
+receiver | RestAlarmReceiver : BroadcastReceiver | apps/mobile/android/wear/src/main/java/com/forgeai/wear/RestAlarmReceiver.kt:8
+receiver | WatchActionReceiver : BroadcastReceiver | apps/mobile/android/wear/src/main/java/com/forgeai/wear/WatchActions.kt:163
+service | .ForgeListenerService (manifest) | apps/mobile/android/wear/src/main/AndroidManifest.xml:77
+service | .WorkoutService (manifest) | apps/mobile/android/wear/src/main/AndroidManifest.xml:122
+service | ForgeListenerService : WearableListenerService | apps/mobile/android/wear/src/main/java/com/forgeai/wear/ForgeListenerService.kt:12
+service | WorkoutService : Service | apps/mobile/android/wear/src/main/java/com/forgeai/wear/WorkoutService.kt:32
+wear-message-path | /forge | apps/mobile/android/wear/src/main/AndroidManifest.xml:84
+wear-message-path | /forge/nack | apps/mobile/android/wear/src/main/AndroidManifest.xml:92
+wear-message-path | /forge/watch-version-ask | apps/mobile/android/wear/src/main/AndroidManifest.xml:100
+wear-message-path | /forge/diag-ask | apps/mobile/android/wear/src/main/AndroidManifest.xml:108
+wear-message-path | /forge/open | apps/mobile/android/wear/src/main/AndroidManifest.xml:116

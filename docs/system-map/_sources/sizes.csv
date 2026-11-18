@@ -1,0 +1,110 @@
+folder,files,lines
+"apps/dashboard/src (files directly inside)",6,476
+"apps/dashboard/src/brand (files directly inside)",1,23
+"apps/dashboard/src/components (files directly inside)",7,861
+"apps/dashboard/src/crm (files directly inside)",5,2035
+"apps/dashboard/src/crm/assistant",25,6837
+"apps/dashboard/src/crm/auth",16,4218
+"apps/dashboard/src/crm/branches",8,1517
+"apps/dashboard/src/crm/brand",8,2196
+"apps/dashboard/src/crm/data",7,4241
+"apps/dashboard/src/crm/demo",6,1715
+"apps/dashboard/src/crm/gympage",6,800
+"apps/dashboard/src/crm/lang",2,1779
+"apps/dashboard/src/crm/logic",99,21910
+"apps/dashboard/src/crm/machines",7,1903
+"apps/dashboard/src/crm/move",2,382
+"apps/dashboard/src/crm/pay",7,1437
+"apps/dashboard/src/crm/plan",3,130
+"apps/dashboard/src/crm/shop",47,8869
+"apps/dashboard/src/crm/ui",94,31681
+"apps/dashboard/src/hooks (files directly inside)",2,116
+"apps/dashboard/src/lib (files directly inside)",5,221
+"TOTAL apps/dashboard/src",363,93347
+"apps/dashboard/public (files directly inside)",15,3126
+"apps/dashboard/public/gym-page (files directly inside)",1,338
+"apps/dashboard/public/home (files directly inside)",2,1656
+"apps/dashboard/public/member-site (files directly inside)",2,654
+"TOTAL apps/dashboard/public",20,5774
+"apps/mobile/src/ai (files directly inside)",8,2802
+"apps/mobile/src/ai/providers",3,342
+"apps/mobile/src/app (files directly inside)",30,3762
+"apps/mobile/src/app/(tabs)",6,1457
+"apps/mobile/src/app/c",1,2
+"apps/mobile/src/app/exercise",1,698
+"apps/mobile/src/app/import",2,1115
+"apps/mobile/src/app/j",1,2
+"apps/mobile/src/app/library",3,784
+"apps/mobile/src/app/measurements",2,24
+"apps/mobile/src/app/measures",2,640
+"apps/mobile/src/app/photos",2,512
+"apps/mobile/src/app/plan",2,378
+"apps/mobile/src/app/programs",2,297
+"apps/mobile/src/app/progress",1,38
+"apps/mobile/src/app/report",1,482
+"apps/mobile/src/app/routines",5,1434
+"apps/mobile/src/app/session",4,1627
+"apps/mobile/src/app/settings",32,1326
+"apps/mobile/src/app/shop",9,29
+"apps/mobile/src/app/workout",1,190
+"apps/mobile/src/backup (files directly inside)",11,2205
+"apps/mobile/src/cloud (files directly inside)",24,3910
+"apps/mobile/src/components (files directly inside)",18,2020
+"apps/mobile/src/components/analytics",22,1794
+"apps/mobile/src/components/brand",3,295
+"apps/mobile/src/components/charts",10,1300
+"apps/mobile/src/components/chat",14,1711
+"apps/mobile/src/components/exercise",2,321
+"apps/mobile/src/components/feedback",6,978
+"apps/mobile/src/components/settings",16,3232
+"apps/mobile/src/components/stats",1,113
+"apps/mobile/src/components/ui",35,2726
+"apps/mobile/src/db (files directly inside)",5,433
+"apps/mobile/src/db/repos",7,1313
+"apps/mobile/src/db/seed",8,1771
+"apps/mobile/src/engine (files directly inside)",4,423
+"apps/mobile/src/lib (files directly inside)",54,5534
+"apps/mobile/src/onboarding (files directly inside)",15,1787
+"apps/mobile/src/onboarding/components",9,3072
+"apps/mobile/src/onboarding/db",4,875
+"apps/mobile/src/onboarding/services",1,99
+"apps/mobile/src/onboarding/store",1,287
+"apps/mobile/src/plan (files directly inside)",8,812
+"apps/mobile/src/services (files directly inside)",3,479
+"apps/mobile/src/shop (files directly inside)",118,18771
+"apps/mobile/src/store (files directly inside)",7,1106
+"apps/mobile/src/theme (files directly inside)",11,1150
+"apps/mobile/src/tracker/catalog",10,4092
+"apps/mobile/src/tracker/clips",3,242
+"apps/mobile/src/tracker/components",101,16441
+"apps/mobile/src/tracker/db",27,4963
+"apps/mobile/src/tracker/engine",23,7487
+"apps/mobile/src/tracker/lib",38,3451
+"apps/mobile/src/tracker/phone",14,4177
+"apps/mobile/src/tracker/plans",9,2282
+"apps/mobile/src/tracker/services",121,21630
+"apps/mobile/src/tracker/share",11,1574
+"apps/mobile/src/tracker/store",12,4363
+"apps/mobile/src/types (files directly inside)",1,346
+"TOTAL apps/mobile/src",905,147506
+"apps/mobile/modules/forge-billing/android",1,232
+"apps/mobile/modules/forge-phone/android",10,1917
+"apps/mobile/modules/forge-rest/android",11,4649
+"TOTAL apps/mobile/modules",22,6798
+"apps/mobile/android/app/src/main/java/com",2,127
+"TOTAL apps/mobile/android/app/src/main",2,127
+"apps/mobile/android/wear/src/main",25,5958
+"TOTAL apps/mobile/android/wear",25,5958
+"apps/hq/public (files directly inside)",8,2841
+"TOTAL apps/hq/public",8,2841
+"deploy/panel (files directly inside)",37,11443
+"deploy/panel/migrations (files directly inside)",16,353
+"TOTAL deploy/panel",53,11796
+"deploy/hq (files directly inside)",17,4447
+"TOTAL deploy/hq",17,4447
+"deploy/gate (files directly inside)",1,36
+"TOTAL deploy/gate",1,36
+"supabase/migrations (files directly inside)",98,23962
+"TOTAL supabase/migrations",98,23962
+".github/workflows (files directly inside)",20,3524
+"TOTAL .github/workflows",20,3524

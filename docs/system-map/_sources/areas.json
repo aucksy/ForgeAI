@@ -1,0 +1,568 @@
+{
+ "_note": "Step A1b proposal for A2, made by docs/system-map/_tools/sources.mjs. One area = at most 12,000 non-test source lines. A numbered area (-1, -2) is one folder group cut along its sorted file list: firstFile..lastFile say where. sourceListLines = lines of _sources/*.txt that point into the area.",
+ "maxLines": 12000,
+ "areas": [
+  {
+   "id": "web/pages",
+   "surface": "web",
+   "folders": [
+    "apps/dashboard/public",
+    "apps/dashboard/public/gym-page",
+    "apps/dashboard/public/home",
+    "apps/dashboard/public/member-site",
+    "deploy/panel"
+   ],
+   "files": 33,
+   "firstFile": "apps/dashboard/public/about.html",
+   "lastFile": "deploy/panel/whatsNewFeed.js",
+   "lines": 9556,
+   "overLimit": false,
+   "sourceListLines": 55
+  },
+  {
+   "id": "panel/screens-1",
+   "surface": "panel",
+   "folders": [
+    "apps/dashboard/src/crm/ui/screens"
+   ],
+   "files": 14,
+   "firstFile": "apps/dashboard/src/crm/ui/screens/Assistant.tsx",
+   "lastFile": "apps/dashboard/src/crm/ui/screens/MemberMeasurements.tsx",
+   "lines": 9139,
+   "overLimit": false,
+   "sourceListLines": 39
+  },
+  {
+   "id": "panel/screens-2",
+   "surface": "panel",
+   "folders": [
+    "apps/dashboard/src/crm/ui/screens"
+   ],
+   "files": 22,
+   "firstFile": "apps/dashboard/src/crm/ui/screens/MemberMessages.tsx",
+   "lastFile": "apps/dashboard/src/crm/ui/screens/useWodServer.ts",
+   "lines": 9167,
+   "overLimit": false,
+   "sourceListLines": 54
+  },
+  {
+   "id": "panel/forms",
+   "surface": "panel",
+   "folders": [
+    "apps/dashboard/src/crm/ui/forms"
+   ],
+   "files": 6,
+   "firstFile": "apps/dashboard/src/crm/ui/forms/ChangeStartSheet.tsx",
+   "lastFile": "apps/dashboard/src/crm/ui/forms/VoidPaymentSheet.tsx",
+   "lines": 1647,
+   "overLimit": false,
+   "sourceListLines": 7
+  },
+  {
+   "id": "panel/ui-shell",
+   "surface": "panel",
+   "folders": [
+    "apps/dashboard/src/crm/ui"
+   ],
+   "files": 52,
+   "firstFile": "apps/dashboard/src/crm/ui/AlertsCards.tsx",
+   "lastFile": "apps/dashboard/src/crm/ui/usePanelRefresh.ts",
+   "lines": 11728,
+   "overLimit": false,
+   "sourceListLines": 19
+  },
+  {
+   "id": "panel/logic-1",
+   "surface": "panel",
+   "folders": [
+    "apps/dashboard/src/crm/logic"
+   ],
+   "files": 43,
+   "firstFile": "apps/dashboard/src/crm/logic/aiImport.ts",
+   "lastFile": "apps/dashboard/src/crm/logic/importSave.ts",
+   "lines": 10928,
+   "overLimit": false,
+   "sourceListLines": 1
+  },
+  {
+   "id": "panel/logic-2",
+   "surface": "panel",
+   "folders": [
+    "apps/dashboard/src/crm/logic"
+   ],
+   "files": 56,
+   "firstFile": "apps/dashboard/src/crm/logic/importTerms.ts",
+   "lastFile": "apps/dashboard/src/crm/logic/workoutPlans.ts",
+   "lines": 10982,
+   "overLimit": false,
+   "sourceListLines": 46
+  },
+  {
+   "id": "panel/shop",
+   "surface": "panel",
+   "folders": [
+    "apps/dashboard/src/crm/shop"
+   ],
+   "files": 47,
+   "firstFile": "apps/dashboard/src/crm/shop/AppMembers.tsx",
+   "lastFile": "apps/dashboard/src/crm/shop/wodApi.ts",
+   "lines": 8869,
+   "overLimit": false,
+   "sourceListLines": 110
+  },
+  {
+   "id": "panel/assistant",
+   "surface": "panel",
+   "folders": [
+    "apps/dashboard/src/crm/assistant",
+    "apps/dashboard/src/crm/assistant/ui"
+   ],
+   "files": 25,
+   "firstFile": "apps/dashboard/src/crm/assistant/allowance.ts",
+   "lastFile": "apps/dashboard/src/crm/assistant/voice.ts",
+   "lines": 6837,
+   "overLimit": false,
+   "sourceListLines": 11
+  },
+  {
+   "id": "panel/auth-data",
+   "surface": "panel",
+   "folders": [
+    "apps/dashboard/src/crm/auth",
+    "apps/dashboard/src/crm/data"
+   ],
+   "files": 23,
+   "firstFile": "apps/dashboard/src/crm/auth/AuthProvider.tsx",
+   "lastFile": "apps/dashboard/src/crm/data/savedCopy.ts",
+   "lines": 8459,
+   "overLimit": false,
+   "sourceListLines": 45
+  },
+  {
+   "id": "panel/pay-machines",
+   "surface": "panel",
+   "folders": [
+    "apps/dashboard/src/crm/branches",
+    "apps/dashboard/src/crm/demo",
+    "apps/dashboard/src/crm/machines",
+    "apps/dashboard/src/crm/move",
+    "apps/dashboard/src/crm/pay",
+    "apps/dashboard/src/crm/plan"
+   ],
+   "files": 33,
+   "firstFile": "apps/dashboard/src/crm/branches/AllBranches.tsx",
+   "lastFile": "apps/dashboard/src/crm/plan/pack.ts",
+   "lines": 7084,
+   "overLimit": false,
+   "sourceListLines": 67
+  },
+  {
+   "id": "panel/brand-shell",
+   "surface": "panel",
+   "folders": [
+    "apps/dashboard/src",
+    "apps/dashboard/src/brand",
+    "apps/dashboard/src/components",
+    "apps/dashboard/src/crm",
+    "apps/dashboard/src/crm/brand",
+    "apps/dashboard/src/crm/gympage",
+    "apps/dashboard/src/crm/lang",
+    "apps/dashboard/src/hooks",
+    "apps/dashboard/src/lib"
+   ],
+   "files": 42,
+   "firstFile": "apps/dashboard/src/App.tsx",
+   "lastFile": "apps/dashboard/src/vite-env.d.ts",
+   "lines": 8507,
+   "overLimit": false,
+   "sourceListLines": 120
+  },
+  {
+   "id": "phone/screens-1",
+   "surface": "phone",
+   "folders": [
+    "apps/mobile/src/app",
+    "apps/mobile/src/app/(tabs)",
+    "apps/mobile/src/app/c",
+    "apps/mobile/src/app/exercise",
+    "apps/mobile/src/app/import",
+    "apps/mobile/src/app/j",
+    "apps/mobile/src/app/library",
+    "apps/mobile/src/app/measurements",
+    "apps/mobile/src/app/measures",
+    "apps/mobile/src/app/photos"
+   ],
+   "files": 34,
+   "firstFile": "apps/mobile/src/app/(tabs)/_layout.tsx",
+   "lastFile": "apps/mobile/src/app/photos/compare.tsx",
+   "lines": 7231,
+   "overLimit": false,
+   "sourceListLines": 59
+  },
+  {
+   "id": "phone/screens-2",
+   "surface": "phone",
+   "folders": [
+    "apps/mobile/src/app",
+    "apps/mobile/src/app/photos",
+    "apps/mobile/src/app/plan",
+    "apps/mobile/src/app/programs",
+    "apps/mobile/src/app/progress",
+    "apps/mobile/src/app/report",
+    "apps/mobile/src/app/routines",
+    "apps/mobile/src/app/routines/view",
+    "apps/mobile/src/app/session",
+    "apps/mobile/src/app/settings",
+    "apps/mobile/src/app/shop",
+    "apps/mobile/src/app/shop/mate",
+    "apps/mobile/src/app/workout"
+   ],
+   "files": 73,
+   "firstFile": "apps/mobile/src/app/photos/index.tsx",
+   "lastFile": "apps/mobile/src/app/workout/start.tsx",
+   "lines": 7566,
+   "overLimit": false,
+   "sourceListLines": 102
+  },
+  {
+   "id": "phone/shop-1",
+   "surface": "phone",
+   "folders": [
+    "apps/mobile/src/shop"
+   ],
+   "files": 50,
+   "firstFile": "apps/mobile/src/shop/BagScreen.tsx",
+   "lastFile": "apps/mobile/src/shop/gymAlertRing.ts",
+   "lines": 9373,
+   "overLimit": false,
+   "sourceListLines": 35
+  },
+  {
+   "id": "phone/shop-2",
+   "surface": "phone",
+   "folders": [
+    "apps/mobile/src/shop"
+   ],
+   "files": 68,
+   "firstFile": "apps/mobile/src/shop/gymApi.ts",
+   "lastFile": "apps/mobile/src/shop/workoutCode.ts",
+   "lines": 9398,
+   "overLimit": false,
+   "sourceListLines": 135
+  },
+  {
+   "id": "phone/tracker-services-1",
+   "surface": "phone",
+   "folders": [
+    "apps/mobile/src/tracker/services"
+   ],
+   "files": 63,
+   "firstFile": "apps/mobile/src/tracker/services/aiSummaryService.ts",
+   "lastFile": "apps/mobile/src/tracker/services/plansService.ts",
+   "lines": 10762,
+   "overLimit": false,
+   "sourceListLines": 20
+  },
+  {
+   "id": "phone/tracker-services-2",
+   "surface": "phone",
+   "folders": [
+    "apps/mobile/src/tracker/services"
+   ],
+   "files": 58,
+   "firstFile": "apps/mobile/src/tracker/services/plateMath.ts",
+   "lastFile": "apps/mobile/src/tracker/services/workoutStart.ts",
+   "lines": 10868,
+   "overLimit": false,
+   "sourceListLines": 22
+  },
+  {
+   "id": "phone/tracker-components-1",
+   "surface": "phone",
+   "folders": [
+    "apps/mobile/src/tracker/components"
+   ],
+   "files": 52,
+   "firstFile": "apps/mobile/src/tracker/components/BeforeAfterShare.tsx",
+   "lastFile": "apps/mobile/src/tracker/components/RestAlertsStatusRow.tsx",
+   "lines": 8226,
+   "overLimit": false,
+   "sourceListLines": 11
+  },
+  {
+   "id": "phone/tracker-components-2",
+   "surface": "phone",
+   "folders": [
+    "apps/mobile/src/tracker/components",
+    "apps/mobile/src/tracker/components/exerciseForm",
+    "apps/mobile/src/tracker/components/profile",
+    "apps/mobile/src/tracker/components/progress"
+   ],
+   "files": 49,
+   "firstFile": "apps/mobile/src/tracker/components/RestPickerSheet.tsx",
+   "lastFile": "apps/mobile/src/tracker/components/zoomMath.ts",
+   "lines": 8215,
+   "overLimit": false,
+   "sourceListLines": 11
+  },
+  {
+   "id": "phone/tracker-engine",
+   "surface": "phone",
+   "folders": [
+    "apps/mobile/src/tracker/clips",
+    "apps/mobile/src/tracker/engine",
+    "apps/mobile/src/tracker/plans"
+   ],
+   "files": 35,
+   "firstFile": "apps/mobile/src/tracker/clips/clipCache.ts",
+   "lastFile": "apps/mobile/src/tracker/plans/todayPlan.ts",
+   "lines": 10011,
+   "overLimit": false,
+   "sourceListLines": 0
+  },
+  {
+   "id": "phone/tracker-data",
+   "surface": "phone",
+   "folders": [
+    "apps/mobile/src/tracker/db",
+    "apps/mobile/src/tracker/store"
+   ],
+   "files": 39,
+   "firstFile": "apps/mobile/src/tracker/db/bodyEntries.ts",
+   "lastFile": "apps/mobile/src/tracker/store/workoutUiStore.ts",
+   "lines": 9326,
+   "overLimit": false,
+   "sourceListLines": 10
+  },
+  {
+   "id": "phone/tracker-lib",
+   "surface": "phone",
+   "folders": [
+    "apps/mobile/src/tracker/catalog",
+    "apps/mobile/src/tracker/lib",
+    "apps/mobile/src/tracker/share"
+   ],
+   "files": 59,
+   "firstFile": "apps/mobile/src/tracker/catalog/bodyMapPaths.ts",
+   "lastFile": "apps/mobile/src/tracker/share/workoutInput.ts",
+   "lines": 9117,
+   "overLimit": false,
+   "sourceListLines": 2
+  },
+  {
+   "id": "phone/native",
+   "surface": "phone",
+   "folders": [
+    "apps/mobile/android/app/src/main/java/com/forgeai/app",
+    "apps/mobile/modules/forge-billing/android/src/main/java/com/forgeai/billing",
+    "apps/mobile/modules/forge-phone/android/src/main/java/com/forgeai/phone",
+    "apps/mobile/modules/forge-rest/android/src/main/java/com/forgeai/rest",
+    "apps/mobile/src/tracker/phone"
+   ],
+   "files": 38,
+   "firstFile": "apps/mobile/android/app/src/main/java/com/forgeai/app/MainActivity.kt",
+   "lastFile": "apps/mobile/src/tracker/phone/widgets.ts",
+   "lines": 11102,
+   "overLimit": false,
+   "sourceListLines": 81
+  },
+  {
+   "id": "phone/components-1",
+   "surface": "phone",
+   "folders": [
+    "apps/mobile/src/components",
+    "apps/mobile/src/components/analytics",
+    "apps/mobile/src/components/brand",
+    "apps/mobile/src/components/charts",
+    "apps/mobile/src/components/chat",
+    "apps/mobile/src/components/chat/cards",
+    "apps/mobile/src/components/exercise"
+   ],
+   "files": 67,
+   "firstFile": "apps/mobile/src/components/BackupMovedCard.tsx",
+   "lastFile": "apps/mobile/src/components/exercise/SessionHistory.tsx",
+   "lines": 7312,
+   "overLimit": false,
+   "sourceListLines": 3
+  },
+  {
+   "id": "phone/components-2",
+   "surface": "phone",
+   "folders": [
+    "apps/mobile/src/components",
+    "apps/mobile/src/components/feedback",
+    "apps/mobile/src/components/settings",
+    "apps/mobile/src/components/stats",
+    "apps/mobile/src/components/ui"
+   ],
+   "files": 60,
+   "firstFile": "apps/mobile/src/components/feedback/FeedbackButton.tsx",
+   "lastFile": "apps/mobile/src/components/ui/useReduceMotion.ts",
+   "lines": 7178,
+   "overLimit": false,
+   "sourceListLines": 2
+  },
+  {
+   "id": "phone/cloud-backup-ai",
+   "surface": "phone",
+   "folders": [
+    "apps/mobile/src/ai",
+    "apps/mobile/src/ai/providers",
+    "apps/mobile/src/backup",
+    "apps/mobile/src/cloud"
+   ],
+   "files": 46,
+   "firstFile": "apps/mobile/src/ai/grounding.ts",
+   "lastFile": "apps/mobile/src/cloud/sync.ts",
+   "lines": 9259,
+   "overLimit": false,
+   "sourceListLines": 19
+  },
+  {
+   "id": "phone/onboarding-db",
+   "surface": "phone",
+   "folders": [
+    "apps/mobile/src/db",
+    "apps/mobile/src/db/repos",
+    "apps/mobile/src/db/seed",
+    "apps/mobile/src/onboarding",
+    "apps/mobile/src/onboarding/components",
+    "apps/mobile/src/onboarding/db",
+    "apps/mobile/src/onboarding/services",
+    "apps/mobile/src/onboarding/store",
+    "apps/mobile/src/store",
+    "apps/mobile/src/theme"
+   ],
+   "files": 68,
+   "firstFile": "apps/mobile/src/db/index.ts",
+   "lastFile": "apps/mobile/src/theme/tokens.ts",
+   "lines": 11893,
+   "overLimit": false,
+   "sourceListLines": 25
+  },
+  {
+   "id": "phone/lib-core",
+   "surface": "phone",
+   "folders": [
+    "apps/mobile/src/engine",
+    "apps/mobile/src/lib",
+    "apps/mobile/src/plan",
+    "apps/mobile/src/services",
+    "apps/mobile/src/types"
+   ],
+   "files": 70,
+   "firstFile": "apps/mobile/src/engine/insights.ts",
+   "lastFile": "apps/mobile/src/types/models.ts",
+   "lines": 7594,
+   "overLimit": false,
+   "sourceListLines": 75
+  },
+  {
+   "id": "watch/app",
+   "surface": "watch",
+   "folders": [
+    "apps/mobile/android/wear/src/main/java/com/forgeai/wear"
+   ],
+   "files": 25,
+   "firstFile": "apps/mobile/android/wear/src/main/java/com/forgeai/wear/AmbientDiag.kt",
+   "lastFile": "apps/mobile/android/wear/src/main/java/com/forgeai/wear/WorkoutStarted.kt",
+   "lines": 5958,
+   "overLimit": false,
+   "sourceListLines": 39
+  },
+  {
+   "id": "hq/app",
+   "surface": "hq",
+   "folders": [
+    "apps/hq/public"
+   ],
+   "files": 8,
+   "firstFile": "apps/hq/public/app.js",
+   "lastFile": "apps/hq/public/sw.js",
+   "lines": 2841,
+   "overLimit": false,
+   "sourceListLines": 135
+  },
+  {
+   "id": "server/panel-worker",
+   "surface": "server",
+   "folders": [
+    "deploy/panel",
+    "deploy/panel/migrations"
+   ],
+   "files": 40,
+   "firstFile": "deploy/panel/aiMatch.js",
+   "lastFile": "deploy/panel/worker.js",
+   "lines": 8014,
+   "overLimit": false,
+   "sourceListLines": 272
+  },
+  {
+   "id": "server/hq-gate-workers",
+   "surface": "server",
+   "folders": [
+    "deploy/gate",
+    "deploy/hq"
+   ],
+   "files": 18,
+   "firstFile": "deploy/gate/worker.ts",
+   "lastFile": "deploy/hq/worker.js",
+   "lines": 4483,
+   "overLimit": false,
+   "sourceListLines": 169
+  },
+  {
+   "id": "server/database-1",
+   "surface": "server",
+   "folders": [
+    "supabase/migrations"
+   ],
+   "files": 33,
+   "firstFile": "supabase/migrations/0001_init.sql",
+   "lastFile": "supabase/migrations/0033_terms_acceptance.sql",
+   "lines": 7918,
+   "overLimit": false,
+   "sourceListLines": 225
+  },
+  {
+   "id": "server/database-2",
+   "surface": "server",
+   "folders": [
+    "supabase/migrations"
+   ],
+   "files": 29,
+   "firstFile": "supabase/migrations/0034_signin_pin.sql",
+   "lastFile": "supabase/migrations/0062_plan_features.sql",
+   "lines": 7930,
+   "overLimit": false,
+   "sourceListLines": 293
+  },
+  {
+   "id": "server/database-3",
+   "surface": "server",
+   "folders": [
+    "supabase/migrations"
+   ],
+   "files": 36,
+   "firstFile": "supabase/migrations/0063_gym_checkout.sql",
+   "lastFile": "supabase/migrations/0098_alerts_done_and_read.sql",
+   "lines": 8114,
+   "overLimit": false,
+   "sourceListLines": 252
+  },
+  {
+   "id": "server/ci-workflows",
+   "surface": "server",
+   "folders": [
+    ".github/workflows"
+   ],
+   "files": 20,
+   "firstFile": ".github/workflows/ci.yml",
+   "lastFile": ".github/workflows/whatsapp-setup.yml",
+   "lines": 3524,
+   "overLimit": false,
+   "sourceListLines": 2
+  }
+ ],
+ "filesInNoArea": []
+}
