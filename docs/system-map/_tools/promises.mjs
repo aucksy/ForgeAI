@@ -331,6 +331,10 @@ function scanHtml(src) {
     const tag = src.slice(i, e + 1);
     const name = (/^<\/?\s*([A-Za-z0-9:-]+)/.exec(tag) || [])[1]?.toLowerCase() || '';
     const closing = tag[1] === '/';
+    if (!closing && name === 'nav') { // the row of page links on top of every page: not a sentence
+      const endNav = src.toLowerCase().indexOf('</nav', e); const stop = endNav < 0 ? n : endNav;
+      flush(); countNl(i, stop); i = stop; continue;
+    }
     if (!closing && (name === 'script' || name === 'style')) {
       const endTag = src.toLowerCase().indexOf(`</${name}`, e); const stop = endTag < 0 ? n : endTag;
       countNl(i, e + 1);
@@ -424,7 +428,8 @@ function rowsOfBlock(block, mode, strict) {
     }
     if (buf) rows.push(buf);
   } else {
-    for (const x of sents) if (TRIGGER.test(x.s) && readable(x.s)) rows.push(x);
+    // a trigger word inside a {placeholder} is a variable name, not a word the user reads
+    for (const x of sents) if (TRIGGER.test(x.s.replace(/{[^{}]*}/g, '{}')) && readable(x.s)) rows.push(x);
   }
   return rows.map((r) => ({ line: r.line, s: r.s.length > 300 ? r.s.slice(0, 299) + '…' : r.s }));
 }

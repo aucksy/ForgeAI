@@ -1,4 +1,3 @@
-legal | apps/dashboard/public/data-agreement.html:13 | Privacy notice · Terms · Data agreement · Refunds · Shipping and delivery · Contact · About · Delete your account
 legal | apps/dashboard/public/data-agreement.html:15 | This agreement is between MettleUp, run by Aakash Pahuja, Jaipur, India ("we"), and the gym whose owner ticks "I agree" ("you").
 legal | apps/dashboard/public/data-agreement.html:18 | Under India's data law (the DPDP Act 2023), you are the Data Fiduciary for them and we are your Data Processor .
 legal | apps/dashboard/public/data-agreement.html:20 | What we do with them
@@ -11,6 +10,7 @@ legal | apps/dashboard/public/data-agreement.html:32 | We tell you in the admin 
 legal | apps/dashboard/public/data-agreement.html:35 | Each gym can reach only its own records.
 legal | apps/dashboard/public/data-agreement.html:35 | Only people the owner adds can sign in, with their own PIN or a one-time code.
 legal | apps/dashboard/public/data-agreement.html:35 | PINs are kept only in scrambled form.
+legal | apps/dashboard/public/data-agreement.html:35 | Signing that device out deletes the copy.
 legal | apps/dashboard/public/data-agreement.html:36 | We look at your records only in a window that you open (in Settings, for 1 hour).
 legal | apps/dashboard/public/data-agreement.html:36 | In an emergency, such as a fault that stops your desk, we open it for up to 1 hour and write down why.
 legal | apps/dashboard/public/data-agreement.html:36 | We can only read, never change.
@@ -26,6 +26,7 @@ legal | apps/dashboard/public/data-agreement.html:47 | Only import a member list
 legal | apps/dashboard/public/data-agreement.html:52 | If a member asks you to see, correct or erase their details, you handle it, and we help when you ask.
 legal | apps/dashboard/public/data-agreement.html:52 | If a member asks us, we pass it to you.
 legal | apps/dashboard/public/data-agreement.html:55 | If that does not work for you, we send you the same within 7 days of asking.
+legal | apps/dashboard/public/data-agreement.html:57 | Deleting your gym
 legal | apps/dashboard/public/data-agreement.html:58 | We call the gym's number to confirm and remind you to download first.
 legal | apps/dashboard/public/data-agreement.html:58 | Then we delete every member, payment, check-in and shop order of your gym from our server within 30 days of the request.
 legal | apps/dashboard/public/data-agreement.html:58 | We keep the deletion request itself for 2 years, as proof.
@@ -35,6 +36,7 @@ legal | apps/dashboard/public/data-agreement.html:64 | That scrambled form can s
 legal | apps/dashboard/public/data-agreement.html:64 | We keep this record while your gym uses MettleUp.
 legal | apps/dashboard/public/data-agreement.html:67 | You can stop at any time and ask us to delete your gym (point 9).
 legal | apps/dashboard/public/data-agreement.html:67 | We may end it with 30 days' notice, or at once for serious misuse.
+legal | apps/dashboard/public/data-agreement.html:67 | Even after it ends, points 5, 9 and 10 (leaks, deleting your gym, and members' own workouts) still apply until your records are deleted.
 legal | apps/dashboard/public/data-agreement.html:73 | Before a new version applies, we tell the owner in the admin app and ask them to accept it again.
 legal | apps/dashboard/public/data-agreement.html:78 | What changed: we rewrote the agreement in simpler words.
 legal | apps/dashboard/public/data-agreement.html:78 | Corrected: staff sign in with their own PIN or a one-time code, and we keep the record of your acceptance while your gym uses MettleUp.
@@ -42,7 +44,6 @@ legal | apps/dashboard/public/data-agreement.html:82 | We use them only to run y
 legal | apps/dashboard/public/data-agreement.html:82 | We must keep payment records as the law requires.
 legal | apps/dashboard/public/delete-account.html:7 | Delete your account — MettleUp
 legal | apps/dashboard/public/delete-account.html:8 | How to delete your MettleUp account and the workouts saved with it, what is deleted, and what is kept.
-legal | apps/dashboard/public/delete-account.html:15 | Privacy notice · Terms · Data agreement · Refunds · Shipping and delivery · Contact · About · Delete your account
 legal | apps/dashboard/public/delete-account.html:16 | Delete your MettleUp account
 legal | apps/dashboard/public/delete-account.html:17 | This page helps you delete your account in the MettleUp workout app (by Aakash Pahuja, on Google Play as "MettleUp: Gym Workout Tracker") and the workouts saved with it.
 legal | apps/dashboard/public/delete-account.html:18 | You only have an account if you tapped Continue with Google in the app.
@@ -59,8 +60,8 @@ legal | apps/dashboard/public/delete-account.html:38 | Your profile, and the ema
 legal | apps/dashboard/public/delete-account.html:43 | Backup copies: we remove every backup copy of your data within 7 days of deletion.
 legal | apps/dashboard/public/delete-account.html:44 | If you also run or work at a gym with the same Google account (as an owner or trainer): we delete your saved workouts but keep that sign-in, so the gym's app keeps working.
 legal | apps/dashboard/public/delete-account.html:45 | When you leave the gym in the app, we erase your mobile number from them.
+legal | apps/dashboard/public/delete-account.html:46 | Your trainers' weekly summary of your workouts is deleted when you turn off Share my workouts with my trainers or leave the gym.
 legal | apps/dashboard/public/delete-account.html:49 | What changed: backup copies are removed within 7 days (this page said 15; the privacy notice already said 7), and the way to the button is now Settings, Your data, Backup and restore.
-legal | apps/dashboard/public/delivery.html:13 | Privacy notice · Terms · Data agreement · Refunds · Shipping and delivery · Contact · About · Delete your account
 legal | apps/dashboard/public/delivery.html:15 | Your members use the free MettleUp app on their phones.
 legal | apps/dashboard/public/delivery.html:18 | Free trial: starts as soon as you sign up.
 legal | apps/dashboard/public/delivery.html:18 | We check it and turn your plan on.
@@ -69,9 +70,10 @@ legal | apps/dashboard/public/delivery.html:21 | Today, the "Pay MettleUp" scree
 legal | apps/dashboard/public/delivery.html:24 | When online payments start, we will remind you in the admin app 7, 3 and 1 days before a monthly or yearly plan ends.
 legal | apps/dashboard/public/delivery.html:24 | If you do not pay, we tell you in the admin app first.
 legal | apps/dashboard/public/delivery.html:24 | After that, we may switch off the paid features step by step.
+legal | apps/dashboard/public/delivery.html:24 | See refunds and cancellation , section 6.
 legal | apps/dashboard/public/delivery.html:24 | We never delete your data because a payment is late.
 legal | apps/dashboard/public/delivery.html:24 | If you ask us to, we delete your gym's data within 30 days.
-legal | apps/dashboard/public/privacy.html:13 | Privacy notice · Terms · Data agreement · Refunds · Shipping and delivery · Contact · About · Delete your account
+legal | apps/dashboard/public/delivery.html:26 | For refunds and cancelling, see refunds and cancellation .
 legal | apps/dashboard/public/privacy.html:21 | We only store them for it.
 legal | apps/dashboard/public/privacy.html:22 | We never sell your data or show ads.
 legal | apps/dashboard/public/privacy.html:22 | Data from Health Connect never goes to your gym or to any AI.
@@ -103,6 +105,7 @@ legal | apps/dashboard/public/privacy.html:89 | Members see only how busy the gy
 legal | apps/dashboard/public/privacy.html:93 | Which machines you used, and when (only if your gym turned on busy machines)
 legal | apps/dashboard/public/privacy.html:99 | Only if the gym asks and you tap yes
 legal | apps/dashboard/public/privacy.html:102 | It never includes your body weight, photos, notes, food or mobile number.
+legal | apps/dashboard/public/privacy.html:106 | Messages you send to your gym from the Gym tab (questions, feedback, complaints) and the gym's replies are kept for 180 days after the last message, and deleted when you leave the gym.
 legal | apps/dashboard/public/privacy.html:108 | You see only how many friends joined.
 legal | apps/dashboard/public/privacy.html:109 | We pass the company your name, mobile number and the amount.
 legal | apps/dashboard/public/privacy.html:109 | We never see your card, UPI or bank details.
@@ -120,6 +123,7 @@ legal | apps/dashboard/public/privacy.html:135 | Your PIN is kept only in a code
 legal | apps/dashboard/public/privacy.html:136 | Wrong attempts are recorded too.
 legal | apps/dashboard/public/privacy.html:137 | We check that it is your number, and keep only a coded form of it.
 legal | apps/dashboard/public/privacy.html:138 | Someone could still match that code to an address, so we protect it like other personal data.
+legal | apps/dashboard/public/privacy.html:141 | Signing that device out deletes the copy.
 legal | apps/dashboard/public/privacy.html:143 | The AI Assistant (gym owners only): what the owner types or says goes to Anthropic's Claude AI so it can understand the request and get a message or a change ready.
 legal | apps/dashboard/public/privacy.html:143 | A member's name goes only if the owner says it.
 legal | apps/dashboard/public/privacy.html:143 | When the owner asks it to write a workout plan, Claude gets the goal, level, days a week and session length he picks, his short notes on focus and equipment (including any injury he mentions, with mobile numbers and emails hidden) and the names of the gym's exercises; never the member's name or rec…
@@ -145,11 +149,20 @@ legal | apps/dashboard/public/privacy.html:175 | Until you delete your account.
 legal | apps/dashboard/public/privacy.html:175 | When you delete an item in the app, it is deleted on our server too.
 legal | apps/dashboard/public/privacy.html:175 | We keep only an empty marker, so another phone of yours does not bring it back.
 legal | apps/dashboard/public/privacy.html:176 | If the gym leaves MettleUp, we delete its records within 30 days of its request.
+legal | apps/dashboard/public/privacy.html:177 | All of them are deleted when you leave the gym.
+legal | apps/dashboard/public/privacy.html:178 | Deleted at once when you switch it off or leave the gym, or after 90 days with no update.
+legal | apps/dashboard/public/privacy.html:179 | Deleted at once when you leave the gym.
+legal | apps/dashboard/public/privacy.html:180 | Deleted at once when you leave the gym.
+legal | apps/dashboard/public/privacy.html:181 | All of them are deleted at once when you switch it off or leave the gym.
+legal | apps/dashboard/public/privacy.html:192 | Records of support looks and gym deletion requests
+legal | apps/dashboard/public/privacy.html:197 | From 13 May 2027, the law also asks us to keep sign-in and technical logs for 1 year, even after an account is deleted.
 legal | apps/dashboard/public/privacy.html:197 | We use them only to look into security problems.
 legal | apps/dashboard/public/privacy.html:199 | Delete your data
 legal | apps/dashboard/public/privacy.html:202 | Your saved copy and MettleUp account: Settings → Your data → Backup and restore → "Delete my account".
 legal | apps/dashboard/public/privacy.html:202 | Both are deleted from our server at once; backup copies expire within 7 days.
 legal | apps/dashboard/public/privacy.html:202 | If your Google account is also used for another MettleUp sign-in, we delete your saved workouts but keep that other sign-in working.
+legal | apps/dashboard/public/privacy.html:203 | Your leaderboard numbers, trainer summary, machine use, shared workouts and questions are then deleted.
+legal | apps/dashboard/public/privacy.html:207 | Where section 6 says so, what was shared is deleted at once too.
 legal | apps/dashboard/public/privacy.html:215 | Tell us the Google email or mobile number your data is linked to, so we can find it.
 legal | apps/dashboard/public/privacy.html:215 | We answer within 30 days.
 legal | apps/dashboard/public/privacy.html:215 | If we do not solve your complaint, you can complain to the Data Protection Board of India.
@@ -194,8 +207,10 @@ legal | apps/dashboard/public/privacy.html:290 | Nothing changed in what we coll
 legal | apps/dashboard/public/privacy.html:291 | 10 Nov 2026: we rewrote the whole notice in simpler words, with a summary and a table of what goes to your gym.
 legal | apps/dashboard/public/privacy.html:291 | Changed: crash reports now go to a private bug list on GitHub.
 legal | apps/dashboard/public/privacy.html:474 | आपकी सेव की गई कॉपी और MettleUp खाता: Settings → Your data → Backup and restore → "Delete my account"।
-legal | apps/dashboard/public/refund.html:13 | Privacy notice · Terms · Data agreement · Refunds · Shipping and delivery · Contact · About · Delete your account
+legal | apps/dashboard/public/refund.html:2 | Refunds and cancellation — MettleUp
+legal | apps/dashboard/public/refund.html:14 | MettleUp refunds and cancellation
 legal | apps/dashboard/public/refund.html:15 | Members of a gym never pay MettleUp: the member app is free.
+legal | apps/dashboard/public/refund.html:15 | Your membership fees and refunds at your gym are between you and your gym.
 legal | apps/dashboard/public/refund.html:17 | The free trial
 legal | apps/dashboard/public/refund.html:18 | Every new gym gets 3 months free .
 legal | apps/dashboard/public/refund.html:18 | You pay nothing during the free months, so there is nothing to refund.
@@ -203,8 +218,11 @@ legal | apps/dashboard/public/refund.html:20 | We never charge you automatically
 legal | apps/dashboard/public/refund.html:21 | You pay only when you choose to pay.
 legal | apps/dashboard/public/refund.html:21 | We never take money from your card or bank account on our own.
 legal | apps/dashboard/public/refund.html:21 | If we add automatic payments later, they stay off unless you switch them on.
+legal | apps/dashboard/public/refund.html:23 | Payments are not refunded
+legal | apps/dashboard/public/refund.html:24 | Once your paid plan is on, payments are not refunded .
 legal | apps/dashboard/public/refund.html:24 | Please use the 3 free months to try MettleUp before you pay.
 legal | apps/dashboard/public/refund.html:24 | If you paid twice by mistake , or paid more than the price , we refund the extra amount.
+legal | apps/dashboard/public/refund.html:27 | AI credits you buy are not refunded and cannot be changed into cash.
 legal | apps/dashboard/public/refund.html:27 | Credits you buy never expire .
 legal | apps/dashboard/public/refund.html:27 | Free credits for a month end on the last day of that month.
 legal | apps/dashboard/public/refund.html:27 | Unused free credits do not move to the next month.
@@ -215,11 +233,13 @@ legal | apps/dashboard/public/refund.html:33 | After that, we may switch off the
 legal | apps/dashboard/public/refund.html:33 | We never delete your data because a payment is late.
 legal | apps/dashboard/public/refund.html:33 | If you ask us to, we delete your gym's data within 30 days.
 legal | apps/dashboard/public/refund.html:35 | How a refund is paid
+legal | apps/dashboard/public/refund.html:36 | Refunds go back to the same way you paid (the same UPI, card or bank account).
 legal | apps/dashboard/public/refund.html:36 | The money reaches you within 5–7 working days (Monday to Saturday) after we approve the refund.
 legal | apps/dashboard/public/refund.html:36 | No GST is charged, so a refund has no GST in it.
-legal | apps/dashboard/public/terms.html:13 | Privacy notice · Terms · Data agreement · Refunds · Shipping and delivery · Contact · About · Delete your account
 legal | apps/dashboard/public/terms.html:19 | The MettleUp app is free for gym members.
 legal | apps/dashboard/public/terms.html:21 | The exercise pictures and animations are only a guide.
+legal | apps/dashboard/public/terms.html:22 | Your membership, fees and refunds at your gym are between you and your gym.
+legal | apps/dashboard/public/terms.html:23 | Payments are not refunded, except a double payment or a payment above the price.
 legal | apps/dashboard/public/terms.html:27 | These terms are between you and MettleUp, run by Aakash Pahuja, a sole proprietor in Jaipur, Rajasthan, India ("we").
 legal | apps/dashboard/public/terms.html:35 | The app is only for people aged 18 or over.
 legal | apps/dashboard/public/terms.html:38 | MettleUp is a free workout log for your phone and watch.
@@ -227,6 +247,7 @@ legal | apps/dashboard/public/terms.html:38 | We keep improving the app.
 legal | apps/dashboard/public/terms.html:42 | We may add, change or correct them at any time, and the new ones are also only a guide.
 legal | apps/dashboard/public/terms.html:46 | If you do not sign in, your workouts are only on your phone, so keep your phone backed up.
 legal | apps/dashboard/public/terms.html:47 | You can download them (Settings → Your data → Backup and restore → "Download my data") or delete them at any time.
+legal | apps/dashboard/public/terms.html:53 | Your membership, prices, payments and refunds are between you and your gym.
 legal | apps/dashboard/public/terms.html:55 | We do not take or hold your money.
 legal | apps/dashboard/public/terms.html:56 | Some features exist only if your gym switches them on.
 legal | apps/dashboard/public/terms.html:60 | Do not post another person's private details.
@@ -244,6 +265,7 @@ legal | apps/dashboard/public/terms.html:88 | Every new gym gets 3 months free.
 legal | apps/dashboard/public/terms.html:88 | We may give a longer trial.
 legal | apps/dashboard/public/terms.html:88 | When the trial ends, we ask you to pick a plan and pay.
 legal | apps/dashboard/public/terms.html:93 | Your plan starts or extends when we confirm the payment.
+legal | apps/dashboard/public/terms.html:97 | Once a paid plan is on, payments are not refunded.
 legal | apps/dashboard/public/terms.html:97 | If you paid twice by mistake, or paid more than the price, we refund the extra amount to the same account.
 legal | apps/dashboard/public/terms.html:100 | We tell you in the admin app first.
 legal | apps/dashboard/public/terms.html:100 | After that, we may switch off the paid features step by step.
@@ -266,7 +288,6 @@ legal | apps/dashboard/public/terms.html:137 | Before a new version applies, we 
 legal | apps/dashboard/public/terms.html:142 | What changed: new for members, in section 4 "Your health", the exercise pictures and animations are only a guide and do not replace a qualified trainer.
 legal | apps/dashboard/public/terms.html:142 | Before that, 10 Nov 2026: we rewrote the terms in simpler words, with a summary at the top.
 legal | apps/dashboard/public/terms.html:142 | New for gyms: the free trial, plans and payment, refunds, late payments, online payments from members, data export and a limit on responsibility.
-websites | apps/dashboard/public/about.html:13 | Privacy notice · Terms · Data agreement · Refunds · Shipping and delivery · Contact · About · Delete your account
 websites | apps/dashboard/public/about.html:18 | For every member: a free workout app with the gym's name.
 websites | apps/dashboard/public/about.html:18 | Members never pay MettleUp.
 websites | apps/dashboard/public/about.html:21 | Every gym starts with 3 months free .
@@ -280,10 +301,11 @@ websites | apps/dashboard/public/about.html:53 | Free set-up, and we move your d
 websites | apps/dashboard/public/about.html:53 | Free training for your trainers and desk staff, when you ask.
 websites | apps/dashboard/public/about.html:56 | We never charge you automatically.
 websites | apps/dashboard/public/about.html:56 | You pay only when you choose to pay.
-websites | apps/dashboard/public/contact.html:13 | Privacy notice · Terms · Data agreement · Refunds · Shipping and delivery · Contact · About · Delete your account
+websites | apps/dashboard/public/about.html:56 | Refunds and cancelling: see refunds and cancellation .
 websites | apps/dashboard/public/contact.html:15 | Write to us about anything: a question before you buy, help with the app, a payment, a refund or a complaint.
 websites | apps/dashboard/public/contact.html:26 | For a payment or refund, add the payment date or its reference number.
 websites | apps/dashboard/public/contact.html:30 | We confirm we got your complaint within 48 hours and resolve it within one month.
+websites | apps/dashboard/public/contact.html:33 | Your membership, fees and refunds are handled by your gym.
 websites | apps/dashboard/public/friend.html:94 | Only the gym sees your number.
 websites | apps/dashboard/public/get-app.html:7 | The free MettleUp app tracks your workouts and connects you with your gym.
 websites | apps/dashboard/public/get-app.html:9 | The free MettleUp app tracks your workouts and connects you with your gym.
@@ -338,6 +360,7 @@ websites | apps/dashboard/public/home/index.html:1096 | Start free for 3 months
 websites | apps/dashboard/public/home/index.html:1100 | Rather we set it up with you?
 websites | apps/dashboard/public/home/index.html:1113 | We use these details only to call you about a demo.
 websites | apps/dashboard/public/home/index.html:1113 | If we don't work together they are deleted within 12 months.
+websites | apps/dashboard/public/home/index.html:1127 | Write to us: contact@mettleup.fit Privacy Terms Data agreement Refunds Shipping and delivery Contact About
 websites | apps/dashboard/public/home/index.html:1141 | 3 months free No card, no setup fee
 websites | apps/dashboard/public/join-online.html:144 | We check that this number is yours.
 websites | apps/dashboard/public/join-online.html:144 | It is free.
@@ -370,6 +393,7 @@ websites | apps/dashboard/public/member-site/index.html:396 | Progress photos st
 websites | apps/dashboard/public/member-site/index.html:407 | Get the app, free.
 websites | apps/dashboard/public/member-site/index.html:422 | iPhone and Apple Watch We are working on them.
 websites | apps/dashboard/public/member-site/index.html:442 | Every member of a MettleUp gym gets every feature of this app free.
+websites | apps/dashboard/public/member-site/index.html:461 | MettleUp · Jaipur, Rajasthan, India Privacy Terms Refunds Contact About
 websites | apps/dashboard/public/member-site/index.html:471 | Free workout log For Android phones and watches
 websites | apps/dashboard/public/member-site/member.js:112 | Every member also gets a free workout app.
 websites | deploy/panel/gymPage.js:390 | Only this gym sees them. Send to the gym
@@ -390,6 +414,7 @@ help | deploy/panel/helpArticles.js:87 | Never enter a payment twice to test it.
 help | deploy/panel/helpArticles.js:107 | Only the owner can do this.
 help | deploy/panel/helpArticles.js:147 | They have no plan and no dues, and are never on the renewal list.
 help | deploy/panel/helpArticles.js:162 | Aadhaar and PAN numbers are never imported.
+help | deploy/panel/helpArticles.js:176 | To stop selling a plan without deleting it, tap "Edit" and set "For sale?" to "Not for sale".
 help | deploy/panel/helpArticles.js:185 | Only the owner can send messages.
 help | deploy/panel/helpArticles.js:221 | Members bring a friend (free days for each friend who joins)
 help | deploy/panel/helpArticles.js:224 | To give free days: open Settings, then "Member app".
@@ -412,12 +437,14 @@ help | deploy/panel/helpArticles.js:380 | If a member's app asks "Who should rea
 help | deploy/panel/helpArticles.js:381 | Trainers never see feedback or complaints.
 help | deploy/panel/helpArticles.js:383 | Trainers read only questions.
 help | deploy/panel/helpArticles.js:383 | Only the owner reads complaints.
+help | deploy/panel/helpArticles.js:385 | Messages are deleted 180 days after the last one, or when the member leaves.
 help | deploy/panel/helpArticles.js:394 | It shows only while the member has "Share my workouts with my trainers" switched on in their app.
 help | deploy/panel/helpArticles.js:394 | Body weight, photos and notes are never shared.
 help | deploy/panel/helpArticles.js:395 | A line like "No new best in 6 weeks" is only for staff: it suggests a good time to offer personal training.
 help | deploy/panel/helpArticles.js:404 | "Change" picks its goal, days or free days.
 help | deploy/panel/helpArticles.js:406 | Members see it in the MettleUp app within 10 minutes.
 help | deploy/panel/helpArticles.js:407 | Only the owner can start or change a challenge.
+help | deploy/panel/helpArticles.js:418 | "Hide from app" takes a product off the app without deleting it.
 help | deploy/panel/helpArticles.js:440 | If it asks to turn the member app on first, only the owner can do it, with "Turn on the shop".
 help | deploy/panel/helpArticles.js:454 | "Sign-in & data": "Staff & sign-in", "Download a backup" (an Excel file of all your gym data), "Your gym’s records" (how many members, memberships sold, payments and check-ins are saved), "Clear offline copy" and "Delete our gym from MettleUp".
 help | deploy/panel/helpArticles.js:465 | Only the owner can change these.
@@ -436,6 +463,7 @@ help | deploy/panel/helpArticles.js:740 | To hide one you never do, open it, ope
 help | deploy/panel/helpArticles.js:757 | Tap an entry under "History" to fix or delete it.
 help | deploy/panel/helpArticles.js:758 | Your photos are private.
 help | deploy/panel/helpArticles.js:798 | "When I'm stuck at a weight": "Ask me", "Step back by itself" or "Never suggest it".
+help | deploy/panel/helpArticles.js:898 | "Erase or start over": "Erase all data" deletes everything on this phone and starts over.
 help | deploy/panel/helpArticles.js:916 | It uses only the workouts you logged; sleep and soreness are not counted.
 help | deploy/panel/helpArticles.js:938 | Tap "Join" to join it and get every feature free.
 help | deploy/panel/helpArticles.js:947 | MettleUp Plus: what is free and what is paid
@@ -629,6 +657,7 @@ panel | apps/dashboard/src/crm/logic/memberMessages.ts:263 | Messages a member s
 panel | apps/dashboard/src/crm/logic/memberMessages.ts:263 | Complaints show here only when the member picked "Gym admin".
 panel | apps/dashboard/src/crm/logic/memberMessages.ts:265 | Feedback and complaints never go to trainers, so they are not shown here.
 panel | apps/dashboard/src/crm/logic/memberMessages.ts:265 | Neither are questions a member sent only to the owner or another trainer.
+panel | apps/dashboard/src/crm/logic/memberMessages.ts:266 | Messages are deleted 180 days after the last one in a conversation, or as soon as the member leaves the gym.
 panel | apps/dashboard/src/crm/logic/payMettleUp.ts:234 | You are on the free trial until {payDate(o.trialEndsAt)}.
 panel | apps/dashboard/src/crm/logic/payMettleUp.ts:235 | Your free trial ended on {payDate(o.trialEndsAt)}.
 panel | apps/dashboard/src/crm/logic/payMettleUp.ts:237 | You are on the free trial.
@@ -674,6 +703,7 @@ panel | apps/dashboard/src/crm/machines/entryMachineAdmin.ts:128 | A serial numb
 panel | apps/dashboard/src/crm/machines/entryMachineAdmin.ts:236 | It shows Online within a minute.
 panel | apps/dashboard/src/crm/machines/entryMachineAdmin.ts:282 | Only the gym owner can add or remove a machine.
 panel | apps/dashboard/src/crm/move/move.ts:83 | {head} Your gym's records are only in this browser.
+panel | apps/dashboard/src/crm/pay/PaidOnline.tsx:203 | This payment was refunded at the payment company, so no receipt was made.
 panel | apps/dashboard/src/crm/pay/PaidOnline.tsx:205 | They may have paid twice: check, and refund one if so.
 panel | apps/dashboard/src/crm/pay/PaymentsScreen.tsx:172 | Only the owner can change these.
 panel | apps/dashboard/src/crm/pay/PaymentsScreen.tsx:172 | Only the owner can change this.
@@ -700,6 +730,7 @@ panel | apps/dashboard/src/crm/shop/MessagesSection.tsx:600 | Goes to all {…} 
 panel | apps/dashboard/src/crm/shop/OffersSection.tsx:259 | A workout counts only on a day your register shows a check-in for that member, and only if they logged 20+ minutes with 6+ sets in the MettleUp app.
 panel | apps/dashboard/src/crm/shop/OffersSection.tsx:299 | No receipt and no GST: free days are not a sale.
 panel | apps/dashboard/src/crm/shop/OffersSection.tsx:398 | Only desk check-ins count.
+panel | apps/dashboard/src/crm/shop/ProductSheet.tsx:108 | This product was deleted while you were editing it.
 panel | apps/dashboard/src/crm/shop/invite.ts:65 | Get the free MettleUp app{…} to track your workouts.
 panel | apps/dashboard/src/crm/shop/logic.ts:696 | We updated the list.
 panel | apps/dashboard/src/crm/shop/logic.ts:699 | We updated the list.
@@ -719,6 +750,7 @@ panel | apps/dashboard/src/crm/ui/GymDataActions.tsx:29 | We will call you on th
 panel | apps/dashboard/src/crm/ui/GymDataActions.tsx:82 | We suggest once a month.
 panel | apps/dashboard/src/crm/ui/GymDataActions.tsx:111 | DELETE REQUEST: gym "{snapshot.gym.name}", code {snapshot.gym.joinCode}, gym phone {…}, asked by {who}.
 panel | apps/dashboard/src/crm/ui/JoinedOnlineCard.tsx:166 | People on a free trial may visit until the day shown.
+panel | apps/dashboard/src/crm/ui/JoinedOnlineCard.tsx:248 | This online payment was refunded, so nothing was saved.
 panel | apps/dashboard/src/crm/ui/MemberCardSheet.tsx:120 | The QR has only the member’s ID, not their name or phone number.
 panel | apps/dashboard/src/crm/ui/ProgressView.tsx:268 | (Only staff see this line.)
 panel | apps/dashboard/src/crm/ui/ProgressView.tsx:330 | Body weight, photos and notes are never shared.
@@ -730,6 +762,8 @@ panel | apps/dashboard/src/crm/ui/forms/VoidPaymentSheet.tsx:102 | Its number is
 panel | apps/dashboard/src/crm/ui/offline.tsx:189 | It was never sent, so it will be gone.
 panel | apps/dashboard/src/crm/ui/offline.tsx:258 | Clearing it deletes only that copy.
 panel | apps/dashboard/src/crm/ui/offline.tsx:259 | Use it only while the internet is working, and only if this device shows old details that do not update, or if MettleUp support asks you to.
+panel | apps/dashboard/src/crm/ui/offline.tsx:261 | Nothing is deleted from your gym’s records online.
+panel | apps/dashboard/src/crm/ui/offline.tsx:274 | Clearing deletes {…} for good.
 panel | apps/dashboard/src/crm/ui/offline.tsx:279 | Delete {…} and clear
 panel | apps/dashboard/src/crm/ui/screens/Attendance.tsx:378 | Searching only {batchName}.
 panel | apps/dashboard/src/crm/ui/screens/Attendance.tsx:813 | Nobody is listed just because their visits were never added.
@@ -746,6 +780,7 @@ panel | apps/dashboard/src/crm/ui/screens/Challenges.tsx:359 | Nobody gets free 
 panel | apps/dashboard/src/crm/ui/screens/Challenges.tsx:776 | Free days for everyone who reaches the goal
 panel | apps/dashboard/src/crm/ui/screens/Enquiries.tsx:344 | Free trial online: {days}, {formatDay(j.startsOn)} to {formatDay(j.trial.endsOn)}.
 panel | apps/dashboard/src/crm/ui/screens/Enquiries.tsx:440 | Free trial online:
+panel | apps/dashboard/src/crm/ui/screens/Enquiries.tsx:483 | The chat's messages were deleted 90 days after the last one.
 panel | apps/dashboard/src/crm/ui/screens/Enquiries.tsx:565 | Give free days
 panel | apps/dashboard/src/crm/ui/screens/Enquiries.tsx:1042 | Free days added
 panel | apps/dashboard/src/crm/ui/screens/Enquiries.tsx:1043 | {done.by} got {done.days} free {…}.
@@ -800,8 +835,6 @@ panel | apps/dashboard/src/crm/ui/screens/WebPage.tsx:165 | Only the owner can c
 panel | apps/dashboard/src/crm/ui/screens/WebPage.tsx:439 | The AI helper answers visitors only from what is on your page: your fees, timings, address and facilities.
 panel | apps/dashboard/src/crm/ui/screens/WebPage.tsx:454 | Members, money and staff never show on the page.
 panel | apps/dashboard/src/crm/ui/screens/WorkoutPlans.tsx:88 | Members get these plans only once your gym is online (Settings → Sign-in & data).
-panel | apps/dashboard/src/crm/ui/screens/WorkoutPlans.tsx:397 | {only} sees it in the MettleUp app after one check-in at the gym.
-panel | apps/dashboard/src/crm/ui/screens/WorkoutPlans.tsx:409 | Note for {only} (optional)
 panel | apps/dashboard/src/crm/ui/screens/WorkoutPlans.tsx:671 | Empty: body weight only
 panel | deploy/panel/phoneCode.js:382 | no live code (expired, used, dead or never sent)
 panel | deploy/panel/voice.js:107 | We heard nothing.
@@ -819,6 +852,8 @@ phone-watch | apps/mobile/modules/forge-rest/android/src/main/java/com/forgeai/r
 phone-watch | apps/mobile/modules/forge-rest/android/src/main/java/com/forgeai/rest/RestCard.kt:1340 | Used only when you turn on Ring through Do Not Disturb in MettleUp
 phone-watch | apps/mobile/modules/forge-rest/android/src/main/java/com/forgeai/rest/WorkoutCard.kt:76 | Never makes a sound.
 phone-watch | apps/mobile/src/ai/localCoach.ts:472 | No records yet — log a few workouts and we will start tracking them.
+phone-watch | apps/mobile/src/app/(tabs)/coach.tsx:174 | This deletes your entire chat history with the coach.
+phone-watch | apps/mobile/src/app/(tabs)/workout.tsx:348 | Your in-progress workout will be deleted.
 phone-watch | apps/mobile/src/app/exercise/[id].tsx:685 | Only ones logged the same way are listed.
 phone-watch | apps/mobile/src/app/import/index.tsx:231 | It is never stopped half-way.
 phone-watch | apps/mobile/src/app/import/index.tsx:379 | Delete {impact.removed} workout{…} first?
@@ -826,20 +861,29 @@ phone-watch | apps/mobile/src/app/import/index.tsx:692 | This file writes dates 
 phone-watch | apps/mobile/src/app/import/index.tsx:770 | Delete all {ownWorkouts} of your workout{…} in MettleUp, then import.
 phone-watch | apps/mobile/src/app/import/index.tsx:778 | A workout already here is skipped, also one you logged in MettleUp too (same day, started within 30 minutes), so it’s safe to re-run.
 phone-watch | apps/mobile/src/app/measures/index.tsx:199 | Couldn’t delete it.
+phone-watch | apps/mobile/src/app/measures/index.tsx:217 | {…} on {tinyDateWithYear(day)} deleted
 phone-watch | apps/mobile/src/app/measures/index.tsx:334 | Tap your own entry to fix or delete it.
 phone-watch | apps/mobile/src/app/measures/index.tsx:334 | Ask your gym to change the ones they recorded.
 phone-watch | apps/mobile/src/app/measures/index.tsx:334 | Tap an entry to fix or delete it.
 phone-watch | apps/mobile/src/app/measures/index.tsx:371 | {dateWithYear(r.dateISO)}, {…}.{…} Fix or delete
 phone-watch | apps/mobile/src/app/nutrition.tsx:157 | Could not delete
+phone-watch | apps/mobile/src/app/photos/compare.tsx:57 | One of these photos was deleted.
 phone-watch | apps/mobile/src/app/photos/index.tsx:171 | Delete this photo?
 phone-watch | apps/mobile/src/app/photos/index.tsx:182 | Couldn’t delete the photo.
 phone-watch | apps/mobile/src/app/plan/avoid.tsx:34 | Tap the exercises you never want.
 phone-watch | apps/mobile/src/app/ready.tsx:120 | Worked out only from the workouts you logged in this app.
+phone-watch | apps/mobile/src/app/routines/[id].tsx:196 | This routine may have been deleted.
 phone-watch | apps/mobile/src/app/routines/[id].tsx:308 | Could not delete this routine.
+phone-watch | apps/mobile/src/app/routines/[id].tsx:455 | This routine may have been deleted.
+phone-watch | apps/mobile/src/app/routines/view/[id].tsx:153 | This routine may have been deleted.
+phone-watch | apps/mobile/src/app/session/[id].tsx:211 | This workout may have been deleted.
+phone-watch | apps/mobile/src/app/session/active.tsx:450 | This workout and its sets will be deleted.
 phone-watch | apps/mobile/src/app/session/active.tsx:487 | To get rid of it entirely, discard these changes and delete the workout instead.
+phone-watch | apps/mobile/src/app/session/active.tsx:508 | This workout was deleted, so your changes were discarded.
 phone-watch | apps/mobile/src/app/session/add-exercise.tsx:105 | Instead of {swapName}, for this workout only
 phone-watch | apps/mobile/src/app/session/add-exercise.tsx:105 | For this workout only
 phone-watch | apps/mobile/src/app/session/finish.tsx:386 | Your workout was saved — we just couldn't load its summary.
+phone-watch | apps/mobile/src/app/settings/coach.tsx:71 | Keys are stored securely on this device.
 phone-watch | apps/mobile/src/backup/backupCoverage.ts:52 | QA builds only: the made-up watch for the cloud phone test (R-438)
 phone-watch | apps/mobile/src/backup/backupCoverage.ts:53 | QA builds only: the made-up answer to "Update on watch" (R-438)
 phone-watch | apps/mobile/src/backup/backupCoverage.ts:54 | one-off "Make your first routine" card (F186; a restored phone with routines never shows it anyway)
@@ -860,6 +904,9 @@ phone-watch | apps/mobile/src/cloud/accountWords.ts:18 | Only you can see what i
 phone-watch | apps/mobile/src/cloud/accountWords.ts:25 | Your space on MettleUp is full, so new workouts stay on this phone only.
 phone-watch | apps/mobile/src/cloud/accountWords.ts:32 | Delete my account
 phone-watch | apps/mobile/src/cloud/accountWords.ts:33 | Delete your MettleUp account?
+phone-watch | apps/mobile/src/cloud/accountWords.ts:34 | This deletes your account and everything saved on MettleUp’s server.
+phone-watch | apps/mobile/src/cloud/accountWords.ts:36 | Your account and everything saved on MettleUp are deleted.
+phone-watch | apps/mobile/src/cloud/accountWords.ts:38 | Everything saved on MettleUp is deleted.
 phone-watch | apps/mobile/src/cloud/backupWords.ts:53 | Free some space in Drive, then tap Back up now.
 phone-watch | apps/mobile/src/components/saveProblemStore.ts:16 | Free some space; we'll keep trying.
 phone-watch | apps/mobile/src/components/saveProblemStore.ts:17 | We'll keep trying.
@@ -869,7 +916,12 @@ phone-watch | apps/mobile/src/components/settings/ApiKeyField.tsx:56 | Secure st
 phone-watch | apps/mobile/src/components/settings/CloudCard.tsx:160 | Delete my cloud data
 phone-watch | apps/mobile/src/components/settings/CloudCard.tsx:163 | Delete cloud data?
 phone-watch | apps/mobile/src/components/settings/CloudCard.tsx:170 | Could not delete
+phone-watch | apps/mobile/src/components/settings/DataCard.tsx:73 | Your {ownWorkouts} workout{…}, profile, routines, body weight, measurements and photos are deleted
+phone-watch | apps/mobile/src/components/settings/DataCard.tsx:74 | Your profile, routines, body weight, measurements and photos are deleted
+phone-watch | apps/mobile/src/components/settings/DataCard.tsx:144 | Nothing was deleted.
+phone-watch | apps/mobile/src/components/settings/DataCard.tsx:240 | Deletes everything on this phone and starts over from the welcome screen.
 phone-watch | apps/mobile/src/components/settings/PhotoBackupCard.tsx:87 | Off: photos stay on this phone only.
+phone-watch | apps/mobile/src/components/settings/PhotoBackupCard.tsx:91 | Turning this off deletes the copies.
 phone-watch | apps/mobile/src/db/schema.ts:58 | session_id TEXT NOT NULL REFERENCES workout_sessions(id) ON DELETE CASCADE,
 phone-watch | apps/mobile/src/db/schema.ts:88 | plan_id TEXT NOT NULL REFERENCES workout_plans(id) ON DELETE CASCADE,
 phone-watch | apps/mobile/src/db/schema.ts:96 | plan_day_id TEXT NOT NULL REFERENCES plan_days(id) ON DELETE CASCADE,
@@ -890,10 +942,12 @@ phone-watch | apps/mobile/src/lib/watchDiag.ts:28 | It holds only the times your
 phone-watch | apps/mobile/src/lib/watchDiag.ts:220 | Key: sc screen on, bs Battery Saver, id idle, aod always-on global/secure, th theatre, amb dimmed, wo workout open, bo rebuild armed, hd the app holds the screen; DIM/undim the watch dims, ADIM/aundim the app dims, hold/letgo the app keeps the screen on or lets go (and why); why the check on each w…
 phone-watch | apps/mobile/src/onboarding/bootFailure.ts:54 | Free some space, then tap Try again.
 phone-watch | apps/mobile/src/onboarding/components/BootErrorScreen.tsx:26 | No details were recorded.
+phone-watch | apps/mobile/src/onboarding/components/WelcomeScreen.tsx:523 | Your {kept} workout{…} on this phone {…} deleted.
 phone-watch | apps/mobile/src/onboarding/components/WelcomeScreen.tsx:831 | Only for your gym, once you link one.
 phone-watch | apps/mobile/src/onboarding/db/importSafety.ts:233 | {onlyHere} of them {…} only in MettleUp, not in this file.
 phone-watch | apps/mobile/src/onboarding/eraseWords.ts:21 | Erase this phone only
 phone-watch | apps/mobile/src/onboarding/eraseWords.ts:23 | Erase this phone and delete my MettleUp account
+phone-watch | apps/mobile/src/onboarding/eraseWords.ts:24 | Your MettleUp account and everything saved in it are deleted too.
 phone-watch | apps/mobile/src/onboarding/eraseWords.ts:25 | Erase this phone and delete your account?
 phone-watch | apps/mobile/src/onboarding/eraseWords.ts:26 | Erase and delete
 phone-watch | apps/mobile/src/onboarding/eraseWords.ts:28 | Could not delete your MettleUp account, so nothing was erased.
@@ -914,6 +968,8 @@ phone-watch | apps/mobile/src/onboarding/phoneSignIn.ts:248 | We did not find yo
 phone-watch | apps/mobile/src/onboarding/phoneSignIn.ts:260 | We could not finish setting up the app, so answer these 3 quick questions.
 phone-watch | apps/mobile/src/onboarding/straightInNote.ts:13 | We set you up as "New to lifting" and "Build muscle".
 phone-watch | apps/mobile/src/onboarding/welcomeStart.ts:61 | We found your backup{from}{count}.
+phone-watch | apps/mobile/src/onboarding/welcomeStart.ts:67 | The 1 workout on this phone is deleted and your backup takes its place.
+phone-watch | apps/mobile/src/onboarding/welcomeStart.ts:68 | The {workouts} workouts on this phone are deleted and your backup takes their place.
 phone-watch | apps/mobile/src/plan/planWords.ts:20 | Free for everyone, always
 phone-watch | apps/mobile/src/plan/planWords.ts:40 | We found your {PLUS_NAME}.
 phone-watch | apps/mobile/src/plan/planWords.ts:43 | Members of a gym that uses MettleUp get every feature free.
@@ -972,17 +1028,22 @@ phone-watch | apps/mobile/src/shop/gymTalk.ts:93 | Only the owner of {gym} reads
 phone-watch | apps/mobile/src/shop/gymTalk.ts:125 | Only feedback can be sent without your name.
 phone-watch | apps/mobile/src/shop/gymTalk.ts:288 | We have read your message and will sort it out this week.
 phone-watch | apps/mobile/src/shop/mateProfile.ts:249 | Never photos, body weight, notes or your phone number.
+phone-watch | apps/mobile/src/shop/mateProfile.ts:249 | Turn it off and what you shared is deleted at once.
 phone-watch | apps/mobile/src/shop/mateProfile.ts:250 | Gym mates can open your workouts only while 'Show my name on my gym's leaderboard' is on.
 phone-watch | apps/mobile/src/shop/money.ts:258 | Only {n} left
 phone-watch | apps/mobile/src/shop/offerWords.ts:39 | What the gym gets: only the dates of those workouts.
 phone-watch | apps/mobile/src/shop/offerWords.ts:39 | Never your exercises, weights, sets, body weight or photos.
+phone-watch | apps/mobile/src/shop/offerWords.ts:41 | The dates are deleted and nothing more is sent.
+phone-watch | apps/mobile/src/shop/offerWords.ts:71 | Your workout dates are deleted from the gym, and nothing more is sent.
 phone-watch | apps/mobile/src/shop/recommendGym.ts:15 | Every member of a MettleUp gym gets every feature of this app free, and can also get their trainer's workout plans in it.
 phone-watch | apps/mobile/src/shop/recommendGym.ts:21 | Every member also gets a free workout app.
 phone-watch | apps/mobile/src/shop/staffDoor.ts:75 | Your PIN is only checked.
 phone-watch | apps/mobile/src/shop/staffDoor.ts:75 | It is never saved on this phone.
 phone-watch | apps/mobile/src/shop/staffDoor.ts:113 | We could not sign you in just now.
 phone-watch | apps/mobile/src/shop/trainerShare.ts:29 | Never your body weight, photos or notes.
+phone-watch | apps/mobile/src/shop/trainerShare.ts:29 | Off: the gym deletes it at once.
 phone-watch | apps/mobile/src/shop/trainerShare.ts:33 | They never see your body weight, photos or notes.
+phone-watch | apps/mobile/src/shop/trainerShare.ts:33 | If you switch this off or leave the gym, the gym deletes it at once.
 phone-watch | apps/mobile/src/tracker/catalog/bodyMapPaths.ts:22 | Permission is hereby granted, free of charge, to any person obtaining a copy
 phone-watch | apps/mobile/src/tracker/catalog/catalogData.ts:39 | Bend only your elbows to lower the bar to your forehead.
 phone-watch | apps/mobile/src/tracker/catalog/catalogData.ts:44 | Lower slowly, moving only your wrists.
@@ -1012,8 +1073,10 @@ phone-watch | apps/mobile/src/tracker/components/RoutineImportSteps.tsx:480 | We
 phone-watch | apps/mobile/src/tracker/components/RoutineImportSteps.tsx:542 | Your plan only changes if you pick it.
 phone-watch | apps/mobile/src/tracker/components/ShareSheet.tsx:146 | The picture now shows your gym’s name only.
 phone-watch | apps/mobile/src/tracker/components/StrengthLevelLine.tsx:113 | Your body weight stays private and is never shown.
+phone-watch | apps/mobile/src/tracker/components/WorkoutPhotos.tsx:113 | It is deleted from this workout and from the app for good.
 phone-watch | apps/mobile/src/tracker/components/WorkoutPhotos.tsx:226 | Private: they stay on this phone.
 phone-watch | apps/mobile/src/tracker/components/WorkoutPrefsCard.tsx:223 | Workout sounds are off: Rest is over only buzzes
+phone-watch | apps/mobile/src/tracker/components/profile/FeedMenu.tsx:142 | It may have been deleted.
 phone-watch | apps/mobile/src/tracker/db/historyScope.ts:273 | Always use all workouts for body-weight moves
 phone-watch | apps/mobile/src/tracker/engine/muscleBalance.ts:504 | Why we suggest this
 phone-watch | apps/mobile/src/tracker/engine/muscleBalance.ts:600 | We added up the sets planned in your {nameList(w.routineNames)} routine.
@@ -1057,6 +1120,8 @@ phone-watch | apps/mobile/src/tracker/services/targetChoices.ts:33 | On barbell 
 phone-watch | apps/mobile/src/tracker/services/targetChoices.ts:49 | Never suggest it
 phone-watch | apps/mobile/src/tracker/services/targetChoices.ts:73 | The app then suggests only weights your machines and cables really have.
 phone-watch | apps/mobile/src/tracker/services/workoutPause.ts:165 | Paused time never counts toward the workout.
+phone-watch | apps/mobile/src/tracker/services/workoutPhotos.ts:99 | This workout was deleted, so the photo wasn’t added.
+phone-watch | apps/mobile/src/tracker/services/workoutStart.ts:95 | Discarding deletes its {ticked} {…}.
 phone-watch | apps/mobile/src/tracker/share/gymBrand.ts:142 | It never shows your name or body weight.
 phone-watch | apps/mobile/src/tracker/share/gymBrand.ts:142 | The picture never shows your name, your gym or your body weight.
 whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:46 | The bell is now your to-do list. A message or request stays there until someone handles it in its page. News, like a new member or a payment, stays until you open it.
