@@ -1,0 +1,1566 @@
+legal | apps/dashboard/public/data-agreement.html:13 | Privacy notice · Terms · Data agreement · Refunds · Shipping and delivery · Contact · About · Delete your account
+legal | apps/dashboard/public/data-agreement.html:15 | This agreement is between MettleUp, run by Aakash Pahuja, Jaipur, India ("we"), and the gym whose owner ticks "I agree" ("you").
+legal | apps/dashboard/public/data-agreement.html:18 | Under India's data law (the DPDP Act 2023), you are the Data Fiduciary for them and we are your Data Processor .
+legal | apps/dashboard/public/data-agreement.html:20 | What we do with them
+legal | apps/dashboard/public/data-agreement.html:21 | We store and process your records only to run MettleUp for your gym, as the app's features and your staff direct.
+legal | apps/dashboard/public/data-agreement.html:21 | We do not sell them, use them for ads or for our own marketing, or share them with other gyms.
+legal | apps/dashboard/public/data-agreement.html:21 | We may count them in totals that name no gym and no person (for example, how many check-ins MettleUp handled).
+legal | apps/dashboard/public/data-agreement.html:28 | Google Gemini, then Anthropic Claude if Gemini fails: only when you import a member list.
+legal | apps/dashboard/public/data-agreement.html:28 | The AI only says which column is which, and we keep nothing from the file.
+legal | apps/dashboard/public/data-agreement.html:32 | We tell you in the admin app before we add a new company that sees your records.
+legal | apps/dashboard/public/data-agreement.html:35 | Each gym can reach only its own records.
+legal | apps/dashboard/public/data-agreement.html:35 | Only people the owner adds can sign in, with their own PIN or a one-time code.
+legal | apps/dashboard/public/data-agreement.html:35 | PINs are kept only in scrambled form.
+legal | apps/dashboard/public/data-agreement.html:36 | We look at your records only in a window that you open (in Settings, for 1 hour).
+legal | apps/dashboard/public/data-agreement.html:36 | In an emergency, such as a fault that stops your desk, we open it for up to 1 hour and write down why.
+legal | apps/dashboard/public/data-agreement.html:36 | We can only read, never change.
+legal | apps/dashboard/public/data-agreement.html:36 | Every look is recorded, and you can see each one in the admin app.
+legal | apps/dashboard/public/data-agreement.html:39 | We tell you in writing within 24 hours of finding out.
+legal | apps/dashboard/public/data-agreement.html:39 | We say what happened, what data, what we did and what comes next.
+legal | apps/dashboard/public/data-agreement.html:39 | We help you tell the Data Protection Board straight away and send the full report within 72 hours, and we help tell the members affected.
+legal | apps/dashboard/public/data-agreement.html:43 | Keep only what you need to run their membership, or what they agreed to.
+legal | apps/dashboard/public/data-agreement.html:45 | Add only people who need access, and remove staff who leave.
+legal | apps/dashboard/public/data-agreement.html:46 | Use members' details only for your gym's work.
+legal | apps/dashboard/public/data-agreement.html:46 | Take a member's photo only with their agreement.
+legal | apps/dashboard/public/data-agreement.html:47 | Only import a member list you are allowed to use.
+legal | apps/dashboard/public/data-agreement.html:52 | If a member asks you to see, correct or erase their details, you handle it, and we help when you ask.
+legal | apps/dashboard/public/data-agreement.html:52 | If a member asks us, we pass it to you.
+legal | apps/dashboard/public/data-agreement.html:55 | If that does not work for you, we send you the same within 7 days of asking.
+legal | apps/dashboard/public/data-agreement.html:58 | We call the gym's number to confirm and remind you to download first.
+legal | apps/dashboard/public/data-agreement.html:58 | Then we delete every member, payment, check-in and shop order of your gym from our server within 30 days of the request.
+legal | apps/dashboard/public/data-agreement.html:58 | We keep the deletion request itself for 2 years, as proof.
+legal | apps/dashboard/public/data-agreement.html:61 | You, your trainers and your desk cannot see it, and deleting your gym does not delete it.
+legal | apps/dashboard/public/data-agreement.html:64 | When your owner ticks "I agree", we keep: the gym, who ticked it (their name as signed in), when, which version, how (at "Create my gym" or at a later sign-in), and a scrambled form of the internet address it came from.
+legal | apps/dashboard/public/data-agreement.html:64 | That scrambled form can still be traced back, so we protect it like other personal data.
+legal | apps/dashboard/public/data-agreement.html:64 | We keep this record while your gym uses MettleUp.
+legal | apps/dashboard/public/data-agreement.html:67 | You can stop at any time and ask us to delete your gym (point 9).
+legal | apps/dashboard/public/data-agreement.html:67 | We may end it with 30 days' notice, or at once for serious misuse.
+legal | apps/dashboard/public/data-agreement.html:73 | Before a new version applies, we tell the owner in the admin app and ask them to accept it again.
+legal | apps/dashboard/public/data-agreement.html:78 | What changed: we rewrote the agreement in simpler words.
+legal | apps/dashboard/public/data-agreement.html:78 | Corrected: staff sign in with their own PIN or a one-time code, and we keep the record of your acceptance while your gym uses MettleUp.
+legal | apps/dashboard/public/data-agreement.html:82 | We use them only to run your membership.
+legal | apps/dashboard/public/data-agreement.html:82 | We must keep payment records as the law requires.
+legal | apps/dashboard/public/delete-account.html:7 | Delete your account — MettleUp
+legal | apps/dashboard/public/delete-account.html:8 | How to delete your MettleUp account and the workouts saved with it, what is deleted, and what is kept.
+legal | apps/dashboard/public/delete-account.html:15 | Privacy notice · Terms · Data agreement · Refunds · Shipping and delivery · Contact · About · Delete your account
+legal | apps/dashboard/public/delete-account.html:16 | Delete your MettleUp account
+legal | apps/dashboard/public/delete-account.html:17 | This page helps you delete your account in the MettleUp workout app (by Aakash Pahuja, on Google Play as "MettleUp: Gym Workout Tracker") and the workouts saved with it.
+legal | apps/dashboard/public/delete-account.html:18 | You only have an account if you tapped Continue with Google in the app.
+legal | apps/dashboard/public/delete-account.html:18 | If you never did, nothing is saved on our server: your workouts are only on your phone, and there is nothing for us to delete.
+legal | apps/dashboard/public/delete-account.html:20 | Delete it in the app
+legal | apps/dashboard/public/delete-account.html:23 | Tap Delete my account .
+legal | apps/dashboard/public/delete-account.html:24 | Confirm with Delete account .
+legal | apps/dashboard/public/delete-account.html:26 | We delete your account and everything saved on our server at once.
+legal | apps/dashboard/public/delete-account.html:29 | Email contact@mettleup.fit from the Google email address you signed in with, and ask us to delete your account.
+legal | apps/dashboard/public/delete-account.html:29 | We do it within 30 days and reply when it is done.
+legal | apps/dashboard/public/delete-account.html:31 | What we delete
+legal | apps/dashboard/public/delete-account.html:37 | The photos themselves stay on your phone, because we never save them on our server.
+legal | apps/dashboard/public/delete-account.html:38 | Your profile, and the email, name and picture link we got from Google.
+legal | apps/dashboard/public/delete-account.html:43 | Backup copies: we remove every backup copy of your data within 7 days of deletion.
+legal | apps/dashboard/public/delete-account.html:44 | If you also run or work at a gym with the same Google account (as an owner or trainer): we delete your saved workouts but keep that sign-in, so the gym's app keeps working.
+legal | apps/dashboard/public/delete-account.html:45 | When you leave the gym in the app, we erase your mobile number from them.
+legal | apps/dashboard/public/delete-account.html:49 | What changed: backup copies are removed within 7 days (this page said 15; the privacy notice already said 7), and the way to the button is now Settings, Your data, Backup and restore.
+legal | apps/dashboard/public/delivery.html:13 | Privacy notice · Terms · Data agreement · Refunds · Shipping and delivery · Contact · About · Delete your account
+legal | apps/dashboard/public/delivery.html:15 | Your members use the free MettleUp app on their phones.
+legal | apps/dashboard/public/delivery.html:18 | Free trial: starts as soon as you sign up.
+legal | apps/dashboard/public/delivery.html:18 | We check it and turn your plan on.
+legal | apps/dashboard/public/delivery.html:21 | Coming soon: card and net banking, on the payment company's own secure page.
+legal | apps/dashboard/public/delivery.html:21 | Today, the "Pay MettleUp" screen lists each payment you sent and whether we confirmed it.
+legal | apps/dashboard/public/delivery.html:24 | When online payments start, we will remind you in the admin app 7, 3 and 1 days before a monthly or yearly plan ends.
+legal | apps/dashboard/public/delivery.html:24 | If you do not pay, we tell you in the admin app first.
+legal | apps/dashboard/public/delivery.html:24 | After that, we may switch off the paid features step by step.
+legal | apps/dashboard/public/delivery.html:24 | We never delete your data because a payment is late.
+legal | apps/dashboard/public/delivery.html:24 | If you ask us to, we delete your gym's data within 30 days.
+legal | apps/dashboard/public/privacy.html:13 | Privacy notice · Terms · Data agreement · Refunds · Shipping and delivery · Contact · About · Delete your account
+legal | apps/dashboard/public/privacy.html:21 | We only store them for it.
+legal | apps/dashboard/public/privacy.html:22 | We never sell your data or show ads.
+legal | apps/dashboard/public/privacy.html:22 | Data from Health Connect never goes to your gym or to any AI.
+legal | apps/dashboard/public/privacy.html:23 | You can see, correct or delete your data at any time.
+legal | apps/dashboard/public/privacy.html:29 | Who we are
+legal | apps/dashboard/public/privacy.html:32 | What we collect, and why
+legal | apps/dashboard/public/privacy.html:34 | How long we keep it
+legal | apps/dashboard/public/privacy.html:35 | Delete your data
+legal | apps/dashboard/public/privacy.html:38 | How we protect it
+legal | apps/dashboard/public/privacy.html:44 | Who we are
+legal | apps/dashboard/public/privacy.html:45 | In this notice, "we" means MettleUp.
+legal | apps/dashboard/public/privacy.html:47 | We answer within 30 days.
+legal | apps/dashboard/public/privacy.html:51 | We are also in charge of help and feedback messages, crash reports, workouts you share with gym mates, and our technical logs.
+legal | apps/dashboard/public/privacy.html:51 | (Under India's data law, we are the "Data Fiduciary" for these.)
+legal | apps/dashboard/public/privacy.html:52 | We only store these records for your gym, under a written agreement.
+legal | apps/dashboard/public/privacy.html:52 | (Your gym is the "Data Fiduciary" and we are its "Data Processor".)
+legal | apps/dashboard/public/privacy.html:52 | If you write to us instead, we pass your request to your gym and help it answer.
+legal | apps/dashboard/public/privacy.html:56 | Your progress photos never leave your phone.
+legal | apps/dashboard/public/privacy.html:57 | "Ask an AI about your workouts" (Settings → Your data) only opens your phone's share menu.
+legal | apps/dashboard/public/privacy.html:59 | What we collect, and why
+legal | apps/dashboard/public/privacy.html:74 | This copy never holds your mobile number.
+legal | apps/dashboard/public/privacy.html:76 | Who can see it: only you.
+legal | apps/dashboard/public/privacy.html:76 | We look at it only to fix a fault, or when the law makes us.
+legal | apps/dashboard/public/privacy.html:81 | Find my gym: if you check your mobile number in the app, we look for it on the member lists of gyms that use MettleUp, only to show you your own gym.
+legal | apps/dashboard/public/privacy.html:81 | The number is checked once and is not kept for this.
+legal | apps/dashboard/public/privacy.html:82 | Tell my gym: if you type your gym's name and city, we keep only those two, so our team can contact that gym.
+legal | apps/dashboard/public/privacy.html:82 | We never share your number.
+legal | apps/dashboard/public/privacy.html:89 | Members see only how busy the gym is, never who came
+legal | apps/dashboard/public/privacy.html:93 | Which machines you used, and when (only if your gym turned on busy machines)
+legal | apps/dashboard/public/privacy.html:99 | Only if the gym asks and you tap yes
+legal | apps/dashboard/public/privacy.html:102 | It never includes your body weight, photos, notes, food or mobile number.
+legal | apps/dashboard/public/privacy.html:108 | You see only how many friends joined.
+legal | apps/dashboard/public/privacy.html:109 | We pass the company your name, mobile number and the amount.
+legal | apps/dashboard/public/privacy.html:109 | We never see your card, UPI or bank details.
+legal | apps/dashboard/public/privacy.html:120 | Data from Health Connect never goes to your gym, to advertisers or to any AI.
+legal | apps/dashboard/public/privacy.html:125 | Help and feedback (Settings → Help and feedback): we get your message, the app and its version, your phone model, the screen you were on and your gym's code.
+legal | apps/dashboard/public/privacy.html:125 | We also get a random number for this install and a coded form of your internet (IP) address, used only to stop misuse.
+legal | apps/dashboard/public/privacy.html:125 | We do not get your name or mobile number, unless you type them.
+legal | apps/dashboard/public/privacy.html:127 | Neither we nor Groq keep the recording.
+legal | apps/dashboard/public/privacy.html:127 | To stop misuse, we count how many recordings each phone and each coded internet address makes a day.
+legal | apps/dashboard/public/privacy.html:129 | A report never holds your workouts, name, gym or phone details.
+legal | apps/dashboard/public/privacy.html:129 | The error text is copied to our private bug list on GitHub.
+legal | apps/dashboard/public/privacy.html:130 | Sign in with your phone number: when you check your mobile number in the app, we look for it on the member and staff lists of gyms that use MettleUp, only to show you your own gym and your role there.
+legal | apps/dashboard/public/privacy.html:130 | You prove the number by sending us one WhatsApp message; we do not keep the number for this.
+legal | apps/dashboard/public/privacy.html:135 | Your PIN is kept only in a coded form that cannot be turned back into the PIN.
+legal | apps/dashboard/public/privacy.html:136 | Wrong attempts are recorded too.
+legal | apps/dashboard/public/privacy.html:137 | We check that it is your number, and keep only a coded form of it.
+legal | apps/dashboard/public/privacy.html:138 | Someone could still match that code to an address, so we protect it like other personal data.
+legal | apps/dashboard/public/privacy.html:143 | The AI Assistant (gym owners only): what the owner types or says goes to Anthropic's Claude AI so it can understand the request and get a message or a change ready.
+legal | apps/dashboard/public/privacy.html:143 | A member's name goes only if the owner says it.
+legal | apps/dashboard/public/privacy.html:143 | When the owner asks it to write a workout plan, Claude gets the goal, level, days a week and session length he picks, his short notes on focus and equipment (including any injury he mentions, with mobile numbers and emails hidden) and the names of the gym's exercises; never the member's name or rec…
+legal | apps/dashboard/public/privacy.html:143 | A spoken request goes through our server to Groq, which turns it into text; neither we nor Groq keep the recording.
+legal | apps/dashboard/public/privacy.html:143 | We keep each request, what the owner did with it and the credits it used for 400 days, so the owner can see them in the admin app.
+legal | apps/dashboard/public/privacy.html:143 | After 400 days the request and its words are deleted; only the number of credits used stays, for our accounts.
+legal | apps/dashboard/public/privacy.html:144 | MettleUp support looks at a gym's records only in a short window.
+legal | apps/dashboard/public/privacy.html:144 | In an emergency, such as a fault that stops the desk, we open it for up to 1 hour and write down why.
+legal | apps/dashboard/public/privacy.html:144 | We can only read the records, never change them.
+legal | apps/dashboard/public/privacy.html:144 | Every look is recorded, and the owner can see each one in the admin app.
+legal | apps/dashboard/public/privacy.html:149 | A page may remember your light or dark choice, on your device only.
+legal | apps/dashboard/public/privacy.html:150 | We use it only to call you back about MettleUp.
+legal | apps/dashboard/public/privacy.html:151 | A friend's invite page sends your details only to that friend's gym (section 4B).
+legal | apps/dashboard/public/privacy.html:156 | We never sell your data.
+legal | apps/dashboard/public/privacy.html:156 | They may use the data only to do that work for us:
+legal | apps/dashboard/public/privacy.html:160 | Everything we keep on our server
+legal | apps/dashboard/public/privacy.html:162 | Google Drive is used only to bring back an old Drive backup.
+legal | apps/dashboard/public/privacy.html:166 | Our private bug list
+legal | apps/dashboard/public/privacy.html:167 | Takes your payment to your gym, only when you pay online
+legal | apps/dashboard/public/privacy.html:169 | We also share data when Indian law requires it, for example with a court or the police.
+legal | apps/dashboard/public/privacy.html:171 | How long we keep it
+legal | apps/dashboard/public/privacy.html:175 | Until you delete your account.
+legal | apps/dashboard/public/privacy.html:175 | When you delete an item in the app, it is deleted on our server too.
+legal | apps/dashboard/public/privacy.html:175 | We keep only an empty marker, so another phone of yours does not bring it back.
+legal | apps/dashboard/public/privacy.html:176 | If the gym leaves MettleUp, we delete its records within 30 days of its request.
+legal | apps/dashboard/public/privacy.html:197 | We use them only to look into security problems.
+legal | apps/dashboard/public/privacy.html:199 | Delete your data
+legal | apps/dashboard/public/privacy.html:202 | Your saved copy and MettleUp account: Settings → Your data → Backup and restore → "Delete my account".
+legal | apps/dashboard/public/privacy.html:202 | Both are deleted from our server at once; backup copies expire within 7 days.
+legal | apps/dashboard/public/privacy.html:202 | If your Google account is also used for another MettleUp sign-in, we delete your saved workouts but keep that other sign-in working.
+legal | apps/dashboard/public/privacy.html:215 | Tell us the Google email or mobile number your data is linked to, so we can find it.
+legal | apps/dashboard/public/privacy.html:215 | We answer within 30 days.
+legal | apps/dashboard/public/privacy.html:215 | If we do not solve your complaint, you can complain to the Data Protection Board of India.
+legal | apps/dashboard/public/privacy.html:220 | MettleUp is only for people aged 18 or over.
+legal | apps/dashboard/public/privacy.html:220 | If we learn that we hold data of someone under 18, we delete it.
+legal | apps/dashboard/public/privacy.html:222 | How we protect it
+legal | apps/dashboard/public/privacy.html:223 | Each gym can reach only its own records.
+legal | apps/dashboard/public/privacy.html:223 | Only people the gym's owner adds can sign in to its admin app.
+legal | apps/dashboard/public/privacy.html:223 | MettleUp support can look only in a recorded window (section 4E).
+legal | apps/dashboard/public/privacy.html:223 | We keep backup copies so data is not lost.
+legal | apps/dashboard/public/privacy.html:224 | If your data leaks, we tell you without delay, in the app or by message.
+legal | apps/dashboard/public/privacy.html:224 | We tell you what happened, what it means for you and what you can do.
+legal | apps/dashboard/public/privacy.html:224 | We report it to the Data Protection Board as the law requires.
+legal | apps/dashboard/public/privacy.html:224 | If it involves a gym's records, we also tell that gym within 24 hours.
+legal | apps/dashboard/public/privacy.html:227 | They get only what the table in section 5 says.
+legal | apps/dashboard/public/privacy.html:234 | We only handle those records for your gym.
+legal | apps/dashboard/public/privacy.html:237 | The law lets us use your data only for a reason it accepts.
+legal | apps/dashboard/public/privacy.html:239 | Contract: we need the data to give you something you asked for.
+legal | apps/dashboard/public/privacy.html:240 | Legitimate interest: we have a fair reason, and you can object to it at any time.
+legal | apps/dashboard/public/privacy.html:244 | What we do
+legal | apps/dashboard/public/privacy.html:248 | What always goes to your gym (your name, check-ins and leaderboard numbers), and anything you choose to send your gym
+legal | apps/dashboard/public/privacy.html:261 | We keep them on our server only if you sign in with Google to keep a copy.
+legal | apps/dashboard/public/privacy.html:262 | To take back your consent, delete those entries in the app, or delete your account (section 7).
+legal | apps/dashboard/public/privacy.html:262 | Entries you delete in the app are deleted on our server too.
+legal | apps/dashboard/public/privacy.html:263 | Your progress photos never leave your phone, so we never get them.
+legal | apps/dashboard/public/privacy.html:263 | We never get your sleep, steps or heart rate either.
+legal | apps/dashboard/public/privacy.html:263 | The app only shows them on your phone or watch.
+legal | apps/dashboard/public/privacy.html:271 | You can ask us for a copy of your data, and ask us to correct it or delete it.
+legal | apps/dashboard/public/privacy.html:274 | We then stop, unless we have a strong reason the law accepts.
+legal | apps/dashboard/public/privacy.html:275 | This does not change what we did with your consent before.
+legal | apps/dashboard/public/privacy.html:277 | It is free, and we answer within 30 days.
+legal | apps/dashboard/public/privacy.html:277 | We may ask you to show that the data is yours.
+legal | apps/dashboard/public/privacy.html:277 | If you never signed in, your data is only on your phone, and you can see and erase it there (section 7).
+legal | apps/dashboard/public/privacy.html:278 | You can also write to us first, and we will try to fix it.
+legal | apps/dashboard/public/privacy.html:282 | How long we keep it: the table in section 6 applies to you too.
+legal | apps/dashboard/public/privacy.html:283 | Age: MettleUp is only for people aged 18 or over, in every country.
+legal | apps/dashboard/public/privacy.html:284 | Decisions by computer: we never make a decision about you by computer alone that has a legal or similarly big effect on you.
+legal | apps/dashboard/public/privacy.html:288 | Before a change that affects you, we tell you in the app.
+legal | apps/dashboard/public/privacy.html:290 | Earlier the same day: MettleUp is now on Google Play in the EU, the EEA and the UK, so we added section 12 for people who live there.
+legal | apps/dashboard/public/privacy.html:290 | It says who is responsible for your data, the legal reason for each use, how we treat health data, how data sent outside Europe is protected, and how to use your rights.
+legal | apps/dashboard/public/privacy.html:290 | Nothing changed in what we collect or share.
+legal | apps/dashboard/public/privacy.html:291 | 10 Nov 2026: we rewrote the whole notice in simpler words, with a summary and a table of what goes to your gym.
+legal | apps/dashboard/public/privacy.html:291 | Changed: crash reports now go to a private bug list on GitHub.
+legal | apps/dashboard/public/privacy.html:474 | आपकी सेव की गई कॉपी और MettleUp खाता: Settings → Your data → Backup and restore → "Delete my account"।
+legal | apps/dashboard/public/refund.html:13 | Privacy notice · Terms · Data agreement · Refunds · Shipping and delivery · Contact · About · Delete your account
+legal | apps/dashboard/public/refund.html:15 | Members of a gym never pay MettleUp: the member app is free.
+legal | apps/dashboard/public/refund.html:17 | The free trial
+legal | apps/dashboard/public/refund.html:18 | Every new gym gets 3 months free .
+legal | apps/dashboard/public/refund.html:18 | You pay nothing during the free months, so there is nothing to refund.
+legal | apps/dashboard/public/refund.html:20 | We never charge you automatically
+legal | apps/dashboard/public/refund.html:21 | You pay only when you choose to pay.
+legal | apps/dashboard/public/refund.html:21 | We never take money from your card or bank account on our own.
+legal | apps/dashboard/public/refund.html:21 | If we add automatic payments later, they stay off unless you switch them on.
+legal | apps/dashboard/public/refund.html:24 | Please use the 3 free months to try MettleUp before you pay.
+legal | apps/dashboard/public/refund.html:24 | If you paid twice by mistake , or paid more than the price , we refund the extra amount.
+legal | apps/dashboard/public/refund.html:27 | Credits you buy never expire .
+legal | apps/dashboard/public/refund.html:27 | Free credits for a month end on the last day of that month.
+legal | apps/dashboard/public/refund.html:27 | Unused free credits do not move to the next month.
+legal | apps/dashboard/public/refund.html:30 | Changing your plan: today, email us and we set it up for you.
+legal | apps/dashboard/public/refund.html:30 | When online payments start: a smaller plan starts when your paid time ends, with no money back for the days left; a bigger plan starts at once, and you pay only the difference for the days left.
+legal | apps/dashboard/public/refund.html:33 | We tell you in the admin app first.
+legal | apps/dashboard/public/refund.html:33 | After that, we may switch off the paid features step by step.
+legal | apps/dashboard/public/refund.html:33 | We never delete your data because a payment is late.
+legal | apps/dashboard/public/refund.html:33 | If you ask us to, we delete your gym's data within 30 days.
+legal | apps/dashboard/public/refund.html:35 | How a refund is paid
+legal | apps/dashboard/public/refund.html:36 | The money reaches you within 5–7 working days (Monday to Saturday) after we approve the refund.
+legal | apps/dashboard/public/refund.html:36 | No GST is charged, so a refund has no GST in it.
+legal | apps/dashboard/public/terms.html:13 | Privacy notice · Terms · Data agreement · Refunds · Shipping and delivery · Contact · About · Delete your account
+legal | apps/dashboard/public/terms.html:19 | The MettleUp app is free for gym members.
+legal | apps/dashboard/public/terms.html:21 | The exercise pictures and animations are only a guide.
+legal | apps/dashboard/public/terms.html:27 | These terms are between you and MettleUp, run by Aakash Pahuja, a sole proprietor in Jaipur, Rajasthan, India ("we").
+legal | apps/dashboard/public/terms.html:35 | The app is only for people aged 18 or over.
+legal | apps/dashboard/public/terms.html:38 | MettleUp is a free workout log for your phone and watch.
+legal | apps/dashboard/public/terms.html:38 | We keep improving the app.
+legal | apps/dashboard/public/terms.html:42 | We may add, change or correct them at any time, and the new ones are also only a guide.
+legal | apps/dashboard/public/terms.html:46 | If you do not sign in, your workouts are only on your phone, so keep your phone backed up.
+legal | apps/dashboard/public/terms.html:47 | You can download them (Settings → Your data → Backup and restore → "Download my data") or delete them at any time.
+legal | apps/dashboard/public/terms.html:55 | We do not take or hold your money.
+legal | apps/dashboard/public/terms.html:56 | Some features exist only if your gym switches them on.
+legal | apps/dashboard/public/terms.html:60 | Do not post another person's private details.
+legal | apps/dashboard/public/terms.html:60 | Only give a friend's details in "Bring a friend" if they agreed.
+legal | apps/dashboard/public/terms.html:60 | We may remove anything that breaks these rules.
+legal | apps/dashboard/public/terms.html:69 | You can stop using the app, leave your gym or delete your account at any time.
+legal | apps/dashboard/public/terms.html:69 | We may stop your access if you misuse the app or break these terms.
+legal | apps/dashboard/public/terms.html:72 | We work hard to keep MettleUp running and your data safe, but we cannot promise it will never fail.
+legal | apps/dashboard/public/terms.html:72 | As far as the law allows, we are not responsible for indirect losses.
+legal | apps/dashboard/public/terms.html:72 | If you did not sign in and you lose your phone, we cannot bring your workouts back.
+legal | apps/dashboard/public/terms.html:75 | Before a change takes effect, we tell you in the app.
+legal | apps/dashboard/public/terms.html:75 | If you do not agree, stop using it and you can delete your account.
+legal | apps/dashboard/public/terms.html:78 | We answer within 30 days.
+legal | apps/dashboard/public/terms.html:88 | Every new gym gets 3 months free.
+legal | apps/dashboard/public/terms.html:88 | We may give a longer trial.
+legal | apps/dashboard/public/terms.html:88 | When the trial ends, we ask you to pick a plan and pay.
+legal | apps/dashboard/public/terms.html:93 | Your plan starts or extends when we confirm the payment.
+legal | apps/dashboard/public/terms.html:97 | If you paid twice by mistake, or paid more than the price, we refund the extra amount to the same account.
+legal | apps/dashboard/public/terms.html:100 | We tell you in the admin app first.
+legal | apps/dashboard/public/terms.html:100 | After that, we may switch off the paid features step by step.
+legal | apps/dashboard/public/terms.html:100 | We never delete your records because a payment is late, and you can always see and export them.
+legal | apps/dashboard/public/terms.html:104 | Your gym is in charge of them, and MettleUp only stores them for you.
+legal | apps/dashboard/public/terms.html:110 | Only add people who need access, and remove them when they leave.
+legal | apps/dashboard/public/terms.html:111 | Each person uses only their own sign-in and never shares a PIN or code.
+legal | apps/dashboard/public/terms.html:112 | Staff use members' details only for the gym's work, during and after their job.
+legal | apps/dashboard/public/terms.html:113 | Never change a receipt to hide money.
+legal | apps/dashboard/public/terms.html:113 | Only the owner can cancel a receipt, with the true reason.
+legal | apps/dashboard/public/terms.html:118 | We only ask it to make payment links and to tell us when they are paid.
+legal | apps/dashboard/public/terms.html:118 | We keep your connection keys locked and never show them again.
+legal | apps/dashboard/public/terms.html:123 | You can also ask us to delete your gym.
+legal | apps/dashboard/public/terms.html:123 | We delete its records within 30 days of your request (section 9 of the data agreement).
+legal | apps/dashboard/public/terms.html:124 | We may end this agreement with 30 days' notice, or at once for serious misuse.
+legal | apps/dashboard/public/terms.html:128 | You decide which plans to send, and you can change, delete or add plans at any time.
+legal | apps/dashboard/public/terms.html:131 | We work to keep the admin app running and to fix faults quickly, but we cannot promise it will never stop.
+legal | apps/dashboard/public/terms.html:134 | We are not responsible for lost profits or indirect losses.
+legal | apps/dashboard/public/terms.html:137 | Before a new version applies, we tell the owner in the admin app and ask them to accept it again.
+legal | apps/dashboard/public/terms.html:142 | What changed: new for members, in section 4 "Your health", the exercise pictures and animations are only a guide and do not replace a qualified trainer.
+legal | apps/dashboard/public/terms.html:142 | Before that, 10 Nov 2026: we rewrote the terms in simpler words, with a summary at the top.
+legal | apps/dashboard/public/terms.html:142 | New for gyms: the free trial, plans and payment, refunds, late payments, online payments from members, data export and a limit on responsibility.
+websites | apps/dashboard/public/about.html:13 | Privacy notice · Terms · Data agreement · Refunds · Shipping and delivery · Contact · About · Delete your account
+websites | apps/dashboard/public/about.html:18 | For every member: a free workout app with the gym's name.
+websites | apps/dashboard/public/about.html:18 | Members never pay MettleUp.
+websites | apps/dashboard/public/about.html:21 | Every gym starts with 3 months free .
+websites | apps/dashboard/public/about.html:27 | You never pay for this plan again.
+websites | apps/dashboard/public/about.html:27 | Only for the first 25 gyms, and only until 31 March 2027.
+websites | apps/dashboard/public/about.html:30 | Asking is free.
+websites | apps/dashboard/public/about.html:30 | You use AI credits only when the AI finishes a task for you.
+websites | apps/dashboard/public/about.html:44 | Free credits end on the last day of each month.
+websites | apps/dashboard/public/about.html:44 | Credit packs you buy never expire:
+websites | apps/dashboard/public/about.html:53 | Free set-up, and we move your data from your old software or Excel.
+websites | apps/dashboard/public/about.html:53 | Free training for your trainers and desk staff, when you ask.
+websites | apps/dashboard/public/about.html:56 | We never charge you automatically.
+websites | apps/dashboard/public/about.html:56 | You pay only when you choose to pay.
+websites | apps/dashboard/public/contact.html:13 | Privacy notice · Terms · Data agreement · Refunds · Shipping and delivery · Contact · About · Delete your account
+websites | apps/dashboard/public/contact.html:15 | Write to us about anything: a question before you buy, help with the app, a payment, a refund or a complaint.
+websites | apps/dashboard/public/contact.html:26 | For a payment or refund, add the payment date or its reference number.
+websites | apps/dashboard/public/contact.html:30 | We confirm we got your complaint within 48 hours and resolve it within one month.
+websites | apps/dashboard/public/friend.html:94 | Only the gym sees your number.
+websites | apps/dashboard/public/get-app.html:7 | The free MettleUp app tracks your workouts and connects you with your gym.
+websites | apps/dashboard/public/get-app.html:9 | The free MettleUp app tracks your workouts and connects you with your gym.
+websites | apps/dashboard/public/get-app.html:63 | The free MettleUp app tracks your workouts and connects you with your gym.
+websites | apps/dashboard/public/get-app.html:64 | MettleUp ka free app aapke workout track karta hai aur aapko aapke gym se jodta hai.
+websites | apps/dashboard/public/home/home.js:401 | We will call you soon.
+websites | apps/dashboard/public/home/index.html:10 | MettleUp for Gyms — gym software + a free member app in your gym's name
+websites | apps/dashboard/public/home/index.html:11 | Free for 3 months, no card.
+websites | apps/dashboard/public/home/index.html:11 | Every member gets a free workout app in your gym's name: they see their progress, so they keep coming.
+websites | apps/dashboard/public/home/index.html:13 | Free for 3 months.
+websites | apps/dashboard/public/home/index.html:13 | Every member gets a free workout app in your gym's name.
+websites | apps/dashboard/public/home/index.html:562 | Sign in Start free
+websites | apps/dashboard/public/home/index.html:575 | It gives every member a free app in your gym's name, and a reason to keep coming back.
+websites | apps/dashboard/public/home/index.html:577 | Start free for 3 months
+websites | apps/dashboard/public/home/index.html:587 | Or we call you:
+websites | apps/dashboard/public/home/index.html:590 | Call me for a free demo
+websites | apps/dashboard/public/home/index.html:718 | Every member gets it free, in every pack.
+websites | apps/dashboard/public/home/index.html:733 | Your messages · in the app's inbox, free
+websites | apps/dashboard/public/home/index.html:776 | The free MettleUp watch app works on Android (Wear OS) watches.
+websites | apps/dashboard/public/home/index.html:783 | It is free for every member, like the phone app.
+websites | apps/dashboard/public/home/index.html:824 | 14 members owe ₹38,500 Free
+websites | apps/dashboard/public/home/index.html:841 | We are open as usual the day after.
+websites | apps/dashboard/public/home/index.html:866 | Asking is free.
+websites | apps/dashboard/public/home/index.html:867 | Try it free: 20 AI credits in your free trial.
+websites | apps/dashboard/public/home/index.html:867 | Yearly plans get free credits every month: 50 on Starter, 100 on Pro.
+websites | apps/dashboard/public/home/index.html:867 | A credit is used only when the AI Assistant sends or saves something.
+websites | apps/dashboard/public/home/index.html:895 | AI never sees member details
+websites | apps/dashboard/public/home/index.html:899 | members 2024 (final).xlsx AI · columns only
+websites | apps/dashboard/public/home/index.html:945 | Free messages to everyone
+websites | apps/dashboard/public/home/index.html:989 | Your member data is safe and private.
+websites | apps/dashboard/public/home/index.html:1004 | Every pack starts with 3 months free, for as many members as you have.
+websites | apps/dashboard/public/home/index.html:1007 | Yearly · 2 months free + free AI credits
+websites | apps/dashboard/public/home/index.html:1014 | + 50 AI credits every month, free
+websites | apps/dashboard/public/home/index.html:1015 | Start free for 3 months
+websites | apps/dashboard/public/home/index.html:1017 | Free workout app for every member, with your gym's name
+websites | apps/dashboard/public/home/index.html:1021 | Free messages to every member's app
+websites | apps/dashboard/public/home/index.html:1032 | + 100 AI credits every month, free
+websites | apps/dashboard/public/home/index.html:1033 | Start free for 3 months
+websites | apps/dashboard/public/home/index.html:1046 | After the free 3 months, pay by UPI or bank transfer.
+websites | apps/dashboard/public/home/index.html:1046 | We confirm the payment and your plan starts.
+websites | apps/dashboard/public/home/index.html:1051 | Pay ₹29,999 once for one branch, and never pay for Pro again.
+websites | apps/dashboard/public/home/index.html:1051 | Only for the first 25 gyms, and only until 31 March 2027.
+websites | apps/dashboard/public/home/index.html:1052 | Start your free 3 months first, and tell us before they end.
+websites | apps/dashboard/public/home/index.html:1052 | When the AI Assistant comes, you also get 100 free AI credits every month.
+websites | apps/dashboard/public/home/index.html:1067 | QR Put up your QR poster Members join with one scan, free.
+websites | apps/dashboard/public/home/index.html:1080 | The app is free for every member of your gym, in every pack.
+websites | apps/dashboard/public/home/index.html:1081 | What happens after the 3 free months?
+websites | apps/dashboard/public/home/index.html:1081 | We confirm the payment and your plan starts.
+websites | apps/dashboard/public/home/index.html:1084 | We call you and set it up with you at your gym.
+websites | apps/dashboard/public/home/index.html:1094 | Start your 3-month free trial today.
+websites | apps/dashboard/public/home/index.html:1096 | Start free for 3 months
+websites | apps/dashboard/public/home/index.html:1100 | Rather we set it up with you?
+websites | apps/dashboard/public/home/index.html:1113 | We use these details only to call you about a demo.
+websites | apps/dashboard/public/home/index.html:1113 | If we don't work together they are deleted within 12 months.
+websites | apps/dashboard/public/home/index.html:1141 | 3 months free No card, no setup fee
+websites | apps/dashboard/public/join-online.html:144 | We check that this number is yours.
+websites | apps/dashboard/public/join-online.html:144 | It is free.
+websites | apps/dashboard/public/join-online.html:261 | We could not reach the gym.
+websites | apps/dashboard/public/join-online.html:292 | We check that this number is yours.
+websites | apps/dashboard/public/join-online.html:292 | It is free.
+websites | apps/dashboard/public/join-online.html:302 | We got your message, but the code was missing.
+websites | apps/dashboard/public/join-online.html:307 | We cannot check numbers right now.
+websites | apps/dashboard/public/join-online.html:326 | Only {gym} sees your details.
+websites | apps/dashboard/public/join-online.html:337 | We could not reach the gym.
+websites | apps/dashboard/public/join-online.html:363 | Join in 3 short steps, or try the gym free for {n} days.
+websites | apps/dashboard/public/join-online.html:363 | Join in 3 short steps, or try the gym free for 1 day.
+websites | apps/dashboard/public/join-online.html:364 | Try free for {n} days
+websites | apps/dashboard/public/join-online.html:364 | Try free for 1 day
+websites | apps/dashboard/public/join-online.html:368 | Your free trial: {from} to {to}.
+websites | apps/dashboard/public/join-online.html:370 | The free trial costs nothing.
+websites | apps/dashboard/public/join-online.html:371 | Start my free trial
+websites | apps/dashboard/public/join-online.html:372 | Your free trial: {from} to {to}.
+websites | apps/dashboard/public/join-online.html:374 | You have already used a free trial at this gym with this mobile number.
+websites | apps/dashboard/public/join-online.html:375 | This gym is not offering free trials right now.
+websites | apps/dashboard/public/member-site/index.html:13 | MettleUp: free workout log for Android phones and watches
+websites | apps/dashboard/public/member-site/index.html:14 | MettleUp is a free workout log for your Android phone and your Wear OS watch.
+websites | apps/dashboard/public/member-site/index.html:18 | A free workout log for your Android phone and watch.
+websites | apps/dashboard/public/member-site/index.html:270 | FREE For Android phones and Wear OS watches
+websites | apps/dashboard/public/member-site/index.html:272 | MettleUp is a free workout log.
+websites | apps/dashboard/public/member-site/index.html:274 | Get the app, free See the watch app
+websites | apps/dashboard/public/member-site/index.html:319 | The free MettleUp watch app works on Android (Wear OS) watches.
+websites | apps/dashboard/public/member-site/index.html:327 | Free on Wear OS watches Coming soon Apple Watch
+websites | apps/dashboard/public/member-site/index.html:396 | Progress photos stay on your phone, so they stay private.
+websites | apps/dashboard/public/member-site/index.html:407 | Get the app, free.
+websites | apps/dashboard/public/member-site/index.html:422 | iPhone and Apple Watch We are working on them.
+websites | apps/dashboard/public/member-site/index.html:442 | Every member of a MettleUp gym gets every feature of this app free.
+websites | apps/dashboard/public/member-site/index.html:471 | Free workout log For Android phones and watches
+websites | apps/dashboard/public/member-site/member.js:112 | Every member also gets a free workout app.
+websites | deploy/panel/gymPage.js:390 | Only this gym sees them. Send to the gym
+websites | deploy/panel/gymPage.js:408 | Only this gym sees them. Ask the gym to call me I want to join Your chat is saved and seen by {gn}.
+websites | deploy/panel/gymPage.js:479 | Get a free page like this one.
+websites | deploy/panel/gymPage.js:605 | /* F208 the AI helper chat (shown only once page.js runs) */
+websites | deploy/panel/pageChat.js:143 | Answer ONLY from GYM FACTS.
+websites | deploy/panel/pageChat.js:143 | Never guess or add a price, offer, discount, trainer, batch, time, facility or rule that is not in GYM FACTS.
+websites | deploy/panel/pageChat.js:145 | Never push, hurry or pressure the visitor.
+websites | deploy/panel/pageChat.js:145 | No countdowns, no "only today", no "last few spots", no offers the facts do not have.
+websites | deploy/panel/pageChat.js:150 | Never ask for a phone number in your answer; the page shows its own box for that.
+websites | deploy/panel/pageChat.js:164 | true only when every fact in your answer is in GYM FACTS
+store | branding/mettleup/store/listing-draft.txt:25 | FULL23: • Track body weight and measurements, and keep private progress photos to compare side by side.
+store | branding/mettleup/store/listing-draft.txt:42 | FULL40: Logging your workouts is free, and there are no ads.
+help | deploy/panel/helpArticles.js:72 | Only these two are needed.
+help | deploy/panel/helpArticles.js:86 | Tap "Collect payment" (it shows only when money is due).
+help | deploy/panel/helpArticles.js:87 | Never enter a payment twice to test it.
+help | deploy/panel/helpArticles.js:107 | Only the owner can do this.
+help | deploy/panel/helpArticles.js:147 | They have no plan and no dues, and are never on the renewal list.
+help | deploy/panel/helpArticles.js:162 | Aadhaar and PAN numbers are never imported.
+help | deploy/panel/helpArticles.js:185 | Only the owner can send messages.
+help | deploy/panel/helpArticles.js:221 | Members bring a friend (free days for each friend who joins)
+help | deploy/panel/helpArticles.js:224 | To give free days: open Settings, then "Member app".
+help | deploy/panel/helpArticles.js:224 | Under "Bring a friend", type the days in "Free days for each friend who joins" and tap "Save free days".
+help | deploy/panel/helpArticles.js:225 | Only the owner can give them.
+help | deploy/panel/helpArticles.js:256 | Only the gym owner sees the AI Assistant.
+help | deploy/panel/helpArticles.js:258 | Questions, like "Who has not paid?", are free.
+help | deploy/panel/helpArticles.js:260 | It can also write a workout plan for a member from your gym's exercises, for free.
+help | deploy/panel/helpArticles.js:270 | Free MettleUp Plus for your members, and when it ends
+help | deploy/panel/helpArticles.js:272 | Your members get every paid feature of the MettleUp app free while their plan is active: the watch app, older charts, suggested weights and the calculators.
+help | deploy/panel/helpArticles.js:273 | Under "Free MettleUp Plus for your members", tick or untick "Lock the paid features when a member’s plan ends" and tap "Save".
+help | deploy/panel/helpArticles.js:275 | Members never lose their workouts or history.
+help | deploy/panel/helpArticles.js:275 | Only the owner can change this; the front desk sees it.
+help | deploy/panel/helpArticles.js:325 | To book: under "Personal training this week", pick the day, tap "Free" next to the time, pick the member and tap "Book".
+help | deploy/panel/helpArticles.js:335 | Only trainers and the owner see it.
+help | deploy/panel/helpArticles.js:340 | A member shows here only after they switch on "Share my workouts with my trainers" in their app.
+help | deploy/panel/helpArticles.js:349 | Only the person the member picked sees it; "Any trainer or the owner" questions go to every trainer and the owner.
+help | deploy/panel/helpArticles.js:354 | Only trainers (ticked in Staff & sign-in) and the owner can open Member questions.
+help | deploy/panel/helpArticles.js:380 | If a member's app asks "Who should read it?", a question goes to "Gym owner" or one trainer by name (only that trainer is alerted).
+help | deploy/panel/helpArticles.js:381 | Trainers never see feedback or complaints.
+help | deploy/panel/helpArticles.js:383 | Trainers read only questions.
+help | deploy/panel/helpArticles.js:383 | Only the owner reads complaints.
+help | deploy/panel/helpArticles.js:394 | It shows only while the member has "Share my workouts with my trainers" switched on in their app.
+help | deploy/panel/helpArticles.js:394 | Body weight, photos and notes are never shared.
+help | deploy/panel/helpArticles.js:395 | A line like "No new best in 6 weeks" is only for staff: it suggests a good time to offer personal training.
+help | deploy/panel/helpArticles.js:404 | "Change" picks its goal, days or free days.
+help | deploy/panel/helpArticles.js:406 | Members see it in the MettleUp app within 10 minutes.
+help | deploy/panel/helpArticles.js:407 | Only the owner can start or change a challenge.
+help | deploy/panel/helpArticles.js:440 | If it asks to turn the member app on first, only the owner can do it, with "Turn on the shop".
+help | deploy/panel/helpArticles.js:454 | "Sign-in & data": "Staff & sign-in", "Download a backup" (an Excel file of all your gym data), "Your gym’s records" (how many members, memberships sold, payments and check-ins are saved), "Clear offline copy" and "Delete our gym from MettleUp".
+help | deploy/panel/helpArticles.js:465 | Only the owner can change these.
+help | deploy/panel/helpArticles.js:473 | Make your free gym web page
+help | deploy/panel/helpArticles.js:475 | Your gym gets its own free page at join.mettleup.fit.
+help | deploy/panel/helpArticles.js:478 | Only the owner can change the page.
+help | deploy/panel/helpArticles.js:486 | Only the owner can change it.
+help | deploy/panel/helpArticles.js:515 | Only the owner sees it.
+help | deploy/panel/helpArticles.js:561 | Only the gym sees their number.
+help | deploy/panel/helpArticles.js:562 | If your gym gives free days for this, the card says how many.
+help | deploy/panel/helpArticles.js:614 | Trainers never see feedback or a complaint.
+help | deploy/panel/helpArticles.js:615 | If not asked, the owner and front desk read feedback; only the owner reads a complaint.
+help | deploy/panel/helpArticles.js:673 | The ⋯ menu on a routine can share it, move it to a folder, or delete it.
+help | deploy/panel/helpArticles.js:706 | Tap ⋯ for "Save as routine", "Repeat workout", "Rename workout", "Edit workout" or "Delete workout".
+help | deploy/panel/helpArticles.js:740 | To hide one you never do, open it, open its menu and tap "Hide from my lists".
+help | deploy/panel/helpArticles.js:757 | Tap an entry under "History" to fix or delete it.
+help | deploy/panel/helpArticles.js:758 | Your photos are private.
+help | deploy/panel/helpArticles.js:798 | "When I'm stuck at a weight": "Ask me", "Step back by itself" or "Never suggest it".
+help | deploy/panel/helpArticles.js:916 | It uses only the workouts you logged; sleep and soreness are not counted.
+help | deploy/panel/helpArticles.js:938 | Tap "Join" to join it and get every feature free.
+help | deploy/panel/helpArticles.js:947 | MettleUp Plus: what is free and what is paid
+help | deploy/panel/helpArticles.js:949 | Free for everyone, always: logging workouts, your history, routines, the rest timer, backup and export, and charts of the last 3 months.
+help | deploy/panel/helpArticles.js:951 | New members get every feature free for their first month.
+help | deploy/panel/helpArticles.js:951 | Members of a gym that uses MettleUp, gym owners and desk staff get every feature free.
+help | deploy/panel/helpArticles.js:953 | Your workouts and history are never locked.
+help | deploy/panel/helpArticles.js:1005 | Shown only for a broken link; it sends the member back into the app.
+help | deploy/panel/helpArticles.js:1027 | No row in the app opens it since R-320 (Backup shows only the MettleUp account); kept for the cloud check of Android backup.
+help | deploy/panel/helpPages.js:84 | We read every message and reply as soon as we can.
+panel | apps/dashboard/src/crm/assistant/allowance.ts:69 | 1 free question left today.
+panel | apps/dashboard/src/crm/assistant/allowance.ts:69 | {n} free questions left today.
+panel | apps/dashboard/src/crm/assistant/allowance.ts:80 | You have used today's {n} free questions.
+panel | apps/dashboard/src/crm/assistant/allowance.ts:81 | You have used today's free questions.
+panel | apps/dashboard/src/crm/assistant/answer.ts:204 | Only the gym owner can see money totals.
+panel | apps/dashboard/src/crm/assistant/answer.ts:325 | Send them a “we miss you” message
+panel | apps/dashboard/src/crm/assistant/answer.ts:325 | Send a we miss you message to members who stopped coming
+panel | apps/dashboard/src/crm/assistant/conversation.ts:274 | The AI writes the Hindi words first, for free.
+panel | apps/dashboard/src/crm/assistant/conversation.ts:277 | The message will go in English only, unless you try again.
+panel | apps/dashboard/src/crm/assistant/plan.ts:647 | Only a plan the AI wrote uses credits.
+panel | apps/dashboard/src/crm/assistant/suggestions.ts:154 | Write a we miss you message
+panel | apps/dashboard/src/crm/assistant/suggestions.ts:155 | Send a we miss you message to members who have not come for {AWAY_DAYS} days
+panel | apps/dashboard/src/crm/assistant/ui/AssistantHome.tsx:229 | Asking is free.
+panel | apps/dashboard/src/crm/assistant/ui/AssistantHome.tsx:229 | A task uses credits only when you send or save it.
+panel | apps/dashboard/src/crm/assistant/ui/AssistantHome.tsx:299 | No more free questions today.
+panel | apps/dashboard/src/crm/assistant/ui/Cards.tsx:103 | This never uses credits.
+panel | apps/dashboard/src/crm/assistant/ui/Cards.tsx:245 | Writing the plan is free.
+panel | apps/dashboard/src/crm/assistant/ui/Cards.tsx:325 | Questions never use credits.
+panel | apps/dashboard/src/crm/assistant/ui/CreditsSheet.tsx:48 | Free credits for this month
+panel | apps/dashboard/src/crm/assistant/ui/CreditsSheet.tsx:50 | Unused free credits ended
+panel | apps/dashboard/src/crm/assistant/ui/CreditsSheet.tsx:75 | Questions stay free.
+panel | apps/dashboard/src/crm/assistant/ui/CreditsSheet.tsx:115 | Your plan gets {n} free credits every month.
+panel | apps/dashboard/src/crm/assistant/ui/CreditsSheet.tsx:117 | Yearly plans get free credits every month.
+panel | apps/dashboard/src/crm/assistant/ui/CreditsSheet.tsx:142 | {n} of them are this month's free credits.
+panel | apps/dashboard/src/crm/auth/ForgotPin.tsx:214 | First we check that this mobile number is yours.
+panel | apps/dashboard/src/crm/auth/ForgotPin.tsx:214 | It is free.
+panel | apps/dashboard/src/crm/auth/ForgotPin.tsx:319 | We send a 6-digit code to your mobile number on WhatsApp.
+panel | apps/dashboard/src/crm/auth/GoOnlineCard.tsx:103 | Its members are made up, and they are kept only in this browser.
+panel | apps/dashboard/src/crm/auth/GoOnlineCard.tsx:104 | Its members are made up, and they are kept only in this browser.
+panel | apps/dashboard/src/crm/auth/GoOnlineCard.tsx:189 | Right now your members and payments are only in this browser.
+panel | apps/dashboard/src/crm/auth/OwnerOnly.tsx:13 | Only an owner can see this
+panel | apps/dashboard/src/crm/auth/PeopleScreen.tsx:300 | Only an owner can add people or make sign-in codes.
+panel | apps/dashboard/src/crm/auth/SignInForms.tsx:293 | It is free.
+panel | apps/dashboard/src/crm/auth/SignInForms.tsx:295 | We check it with a code on WhatsApp.
+panel | apps/dashboard/src/crm/auth/SignInForms.tsx:326 | We sent a 6-digit code to {phone} on WhatsApp.
+panel | apps/dashboard/src/crm/auth/WhatsAppVerify.tsx:153 | We check it in a few seconds.
+panel | apps/dashboard/src/crm/auth/WhatsAppVerify.tsx:188 | We got your message from a different number.
+panel | apps/dashboard/src/crm/auth/WhatsAppVerify.tsx:191 | We keep checking when it is back.
+panel | apps/dashboard/src/crm/auth/WhatsAppVerify.tsx:192 | We could not find the code in your message.
+panel | apps/dashboard/src/crm/auth/WhatsAppVerify.tsx:345 | We have not got your message yet.
+panel | apps/dashboard/src/crm/auth/WhatsAppVerify.tsx:346 | We have not got your message yet.
+panel | apps/dashboard/src/crm/auth/hqAccess.ts:145 | MettleUp changed the end of your free trial
+panel | apps/dashboard/src/crm/auth/permissions.ts:174 | Staff work only at the branch they are added to.
+panel | apps/dashboard/src/crm/auth/permissions.ts:174 | Staff can date a payment at most 31 days back, never ahead.
+panel | apps/dashboard/src/crm/auth/phoneCode.ts:67 | We could not send the code on WhatsApp.
+panel | apps/dashboard/src/crm/auth/signin.ts:210 | Keep it private.
+panel | apps/dashboard/src/crm/auth/signin.ts:411 | We could not hear back from MettleUp, so your gym may already be made.
+panel | apps/dashboard/src/crm/auth/signin.ts:436 | We call you to check it is you, then give you a sign-in code.
+panel | apps/dashboard/src/crm/auth/signin.ts:443 | We could not check your mobile number.
+panel | apps/dashboard/src/crm/auth/signin.ts:486 | Your MettleUp plan has run out, so only check-in, fees and the member list work for now.
+panel | apps/dashboard/src/crm/auth/signin.ts:494 | Only an owner can do this.
+panel | apps/dashboard/src/crm/auth/signin.ts:504 | We updated the list.
+panel | apps/dashboard/src/crm/auth/terms.ts:66 | We updated the MettleUp terms and the data agreement on {day}.
+panel | apps/dashboard/src/crm/branches/BranchesCard.tsx:181 | Every owner of this gym is an owner of the new branch too. To add its front-desk staff, pick the new branch at the top of the screen, then go to Settings → Staff & sign-in. Its receipt numbers start with its own code (like B2), so two branches never print the same number. It gets its own gym code a…
+panel | apps/dashboard/src/crm/branches/BranchesCard.tsx:185 | If the new branch has its own, change it in Settings after you open it. Its free trial ends when your first branch’s does, on the same MettleUp plan.
+panel | apps/dashboard/src/crm/branches/logic.ts:348 | Their plan is for that branch only.
+panel | apps/dashboard/src/crm/branches/logic.ts:364 | This member’s plan is for their own branch only.
+panel | apps/dashboard/src/crm/brand/BrandingScreen.tsx:39 | The app checks at most once an hour, and never in the middle of a workout.
+panel | apps/dashboard/src/crm/brand/BrandingScreen.tsx:343 | Members see MettleUp’s look on a later visit to the app, never in the middle of a workout.
+panel | apps/dashboard/src/crm/brand/BrandingScreen.tsx:681 | If it sits on a plain white or coloured box, we take the box off for you.
+panel | apps/dashboard/src/crm/brand/BrandingScreen.tsx:691 | We can only take off a plain background, so we kept your logo as it is.
+panel | apps/dashboard/src/crm/brand/BrandingScreen.tsx:691 | You can remove it for free:
+panel | apps/dashboard/src/crm/brand/BrandingScreen.tsx:692 | We take off a plain background for you, but not a photo or a pattern.
+panel | apps/dashboard/src/crm/brand/BrandingScreen.tsx:692 | You can remove those for free:
+panel | apps/dashboard/src/crm/brand/BrandingScreen.tsx:768 | We took the {what} off your logo.
+panel | apps/dashboard/src/crm/brand/brandLogic.ts:143 | We couldn’t read the colours in this logo.
+panel | apps/dashboard/src/crm/brand/brandLogic.ts:144 | Your logo is only black, white or grey, so there is no colour to suggest.
+panel | apps/dashboard/src/crm/brand/brandLogic.ts:158 | We couldn’t make this preview.
+panel | apps/dashboard/src/crm/brand/brandLogic.ts:184 | We made it lighter so words in it are easy to read on the member app’s dark screens.
+panel | apps/dashboard/src/crm/data/adapter.ts:237 | Free up space, or put your gym online in Settings.
+panel | apps/dashboard/src/crm/data/adapter.ts:274 | We couldn’t read the gym saved in this browser.
+panel | apps/dashboard/src/crm/data/cloud.ts:371 | Free up space, or try again when the internet is back.
+panel | apps/dashboard/src/crm/demo/demoMode.tsx:119 | {page.body} The demo gym is made-up data kept only on this page, so this part is switched off here.
+panel | apps/dashboard/src/crm/demo/demoServer.ts:176 | I can only come after 5.
+panel | apps/dashboard/src/crm/demo/demoServer.ts:177 | We will tell her.
+panel | apps/dashboard/src/crm/demo/demoServer.ts:179 | Send it from the app under My plan > Pause, and we will approve it.
+panel | apps/dashboard/src/crm/demo/demoServer.ts:187 | Free for all members.
+panel | apps/dashboard/src/crm/demo/demoServer.ts:188 | Bring a friend, get 7 free days
+panel | apps/dashboard/src/crm/demo/demoServer.ts:188 | Every friend who joins gives you 7 days free on your plan.
+panel | apps/dashboard/src/crm/demo/demoServer.ts:190 | From this Sunday the gym opens 6 am to 12 noon only.
+panel | apps/dashboard/src/crm/demo/demoServer.ts:200 | Train 12 days in 30 days, get 3 free days
+panel | apps/dashboard/src/crm/lang/hinglish.ts:44 | Aapke gym ka free page: fees, timings aur photos
+panel | apps/dashboard/src/crm/lang/hinglish.ts:45 | Gym ka free web page
+panel | apps/dashboard/src/crm/lang/hinglish.ts:101 | Aapke members ki app hamesha free hai.
+panel | apps/dashboard/src/crm/lang/hinglish.ts:181 | Yeh free hai.
+panel | apps/dashboard/src/crm/lang/hinglish.ts:229 | Yeh free hai.
+panel | apps/dashboard/src/crm/lang/hinglish.ts:288 | Apna free web page banao, apna ek link aur QR poster share karo, aur dekho log paise kaise denge.
+panel | apps/dashboard/src/crm/lang/hinglish.ts:292 | Teen hisse, isi kram mein: aapka free web page, aapka ek link aur QR poster, aur log paise kaise denge.
+panel | apps/dashboard/src/crm/lang/hinglish.ts:295 | Aapka free web page
+panel | apps/dashboard/src/crm/lang/hinglish.ts:324 | MettleUp join.mettleup.fit par aapke gym ka free web page banata hai.
+panel | apps/dashboard/src/crm/lang/hinglish.ts:624 | Goal tak pahunchne wale har member ko unki membership par {n} free din milte hain.
+panel | apps/dashboard/src/crm/lang/hinglish.ts:626 | Goal tak pahunchne wale har member ko unki membership par 1 free din milta hai.
+panel | apps/dashboard/src/crm/lang/hinglish.ts:670 | Goal tak pahunchne wale sabko free din
+panel | apps/dashboard/src/crm/lang/hinglish.ts:688 | Free din 0 se {max} tak ka poora number hone chahiye.
+panel | apps/dashboard/src/crm/lang/hinglish.ts:690 | Koi free din nahi
+panel | apps/dashboard/src/crm/lang/hinglish.ts:692 | {n} free din
+panel | apps/dashboard/src/crm/lang/hinglish.ts:721 | Koi free din nahi jude.
+panel | apps/dashboard/src/crm/lang/hinglish.ts:725 | Sabhi {n} ko unke free din do
+panel | apps/dashboard/src/crm/lang/hinglish.ts:726 | {name} ko koi free din nahi milenge.
+panel | apps/dashboard/src/crm/lang/hinglish.ts:747 | Free din jaldi jud jayenge.
+panel | apps/dashboard/src/crm/lang/hinglish.ts:749 | Free din har winner ke plan mein apne aap jud gaye.
+panel | apps/dashboard/src/crm/lang/hinglish.ts:754 | Pick days that are free, or cancel the other challenge first.
+panel | apps/dashboard/src/crm/lang/hinglish.ts:756 | A challenge that has started can only be cancelled.
+panel | apps/dashboard/src/crm/lang/hinglish.ts:767 | Goal tak pahunchne wale sabhi free din jeette hain.
+panel | apps/dashboard/src/crm/lang/hinglish.ts:774 | Iske liye kisi ko free din nahi milenge.
+panel | apps/dashboard/src/crm/lang/hinglish.ts:798 | Free din dene se pehle koi ajeeb number member se check karo.
+panel | apps/dashboard/src/crm/lang/hinglish.ts:836 | Apna free gym web page banao, phir yeh card wahi page bhejega.
+panel | apps/dashboard/src/crm/lang/hinglish.ts:1039 | Ho sakta hai do baar pay kiya ho: check karo, aur aisa ho to ek refund karo.
+panel | apps/dashboard/src/crm/lang/hinglish.ts:1044 | Yeh online payment refund ho gaya, isliye kuch save nahi hua.
+panel | apps/dashboard/src/crm/lang/hinglish.ts:1056 | Yeh payment, payment company par refund ho gaya, isliye receipt nahi bani.
+panel | apps/dashboard/src/crm/lang/hinglish.ts:1081 | Poochhna free hai.
+panel | apps/dashboard/src/crm/lang/hinglish.ts:1147 | AI pehle Hindi mein likhega, free mein.
+panel | apps/dashboard/src/crm/lang/hinglish.ts:1223 | Inmein se {n} is mahine ke free credits hain.
+panel | apps/dashboard/src/crm/lang/hinglish.ts:1224 | Sawaal free hi rahenge.
+panel | apps/dashboard/src/crm/lang/hinglish.ts:1225 | Sawaal free hi rahenge.
+panel | apps/dashboard/src/crm/lang/hinglish.ts:1269 | Is mahine ke free credits
+panel | apps/dashboard/src/crm/lang/hinglish.ts:1270 | Bache free credits khatam hue
+panel | apps/dashboard/src/crm/lang/hinglish.ts:1290 | Aaj 1 free sawaal bacha hai.
+panel | apps/dashboard/src/crm/lang/hinglish.ts:1291 | Aaj {n} free sawaal bache hain.
+panel | apps/dashboard/src/crm/lang/hinglish.ts:1292 | Aaj ke {n} free sawaal ho gaye.
+panel | apps/dashboard/src/crm/lang/hinglish.ts:1293 | Aaj ke free sawaal ho gaye.
+panel | apps/dashboard/src/crm/lang/hinglish.ts:1294 | Aaj ke free sawaal khatam.
+panel | apps/dashboard/src/crm/lang/hinglish.ts:1355 | Unhe “we miss you” message bhejo
+panel | apps/dashboard/src/crm/lang/hinglish.ts:1465 | Plan likhwana free hai.
+panel | apps/dashboard/src/crm/lang/hinglish.ts:1475 | Aapke plan mein har mahine {n} free credits milte hain.
+panel | apps/dashboard/src/crm/lang/hinglish.ts:1476 | Saal wale plans mein har mahine free credits milte hain.
+panel | apps/dashboard/src/crm/lang/hinglish.ts:1574 | Naye logon ke liye free trial
+panel | apps/dashboard/src/crm/lang/hinglish.ts:1576 | Jo log aapka "Become a member" link kholte hain, woh plan chunne se pehle aapka gym free mein try kar sakte hain.
+panel | apps/dashboard/src/crm/lang/hinglish.ts:1577 | Free trial kitne din ka
+panel | apps/dashboard/src/crm/lang/hinglish.ts:1579 | Free trial band hai.
+panel | apps/dashboard/src/crm/lang/hinglish.ts:1580 | Naye log aapka gym 1 din free mein try kar sakte hain.
+panel | apps/dashboard/src/crm/lang/hinglish.ts:1581 | Naye log aapka gym {n} din free mein try kar sakte hain.
+panel | apps/dashboard/src/crm/lang/hinglish.ts:1582 | Aapke gym mein har mobile number ko ek hi free trial milta hai.
+panel | apps/dashboard/src/crm/lang/hinglish.ts:1584 | Free trial wala vyakti abhi member nahi hai.
+panel | apps/dashboard/src/crm/lang/hinglish.ts:1586 | Free trial wale log dikhaye gaye din tak aa sakte hain.
+panel | apps/dashboard/src/crm/lang/hinglish.ts:1588 | Free trial, {n} din · {from} se {to} tak
+panel | apps/dashboard/src/crm/lang/hinglish.ts:1626 | Likhein ki member ke invite link se judne wale har dost ke liye us member ko kitne free din milenge (aap unhe ek tap se dete hain), ya koi din na dene ke liye ise khali chhodein.
+panel | apps/dashboard/src/crm/logic/askQuestions.ts:142 | Only trainers and the owner can see questions.
+panel | apps/dashboard/src/crm/logic/attendance.ts:406 | Never checked in
+panel | apps/dashboard/src/crm/logic/attendance.ts:503 | Only {profile.totalVisitsN} {…} since joining {describeDays(profile.tenureDays)} ago.
+panel | apps/dashboard/src/crm/logic/attendance.ts:507 | Has never checked in.
+panel | apps/dashboard/src/crm/logic/attendance.ts:532 | Never checked in
+panel | apps/dashboard/src/crm/logic/autoReminders.ts:91 | We haven't seen you
+panel | apps/dashboard/src/crm/logic/autoReminders.ts:92 | Kind words, never an offer.
+panel | apps/dashboard/src/crm/logic/autoReminders.ts:93 | We haven't seen you for 14 days, Asha.
+panel | apps/dashboard/src/crm/logic/billing.ts:154 | You pay only the difference for the days left.
+panel | apps/dashboard/src/crm/logic/billing.ts:162 | {name} starts when your free trial ends on {payDate(info.scheduled.from)}.
+panel | apps/dashboard/src/crm/logic/billing.ts:200 | Only the gym owner can pay MettleUp.
+panel | apps/dashboard/src/crm/logic/busyMachines.ts:172 | Only machines you have 1 or 2 of can get busy.
+panel | apps/dashboard/src/crm/logic/busyMachines.ts:173 | Members see a tip only after it has been right 4 weeks out of 6 (usually 6 to 8 weeks).
+panel | apps/dashboard/src/crm/logic/challenges.ts:324 | Free days must be a whole number from 0 to {max}.
+panel | apps/dashboard/src/crm/logic/challenges.ts:358 | No free days
+panel | apps/dashboard/src/crm/logic/challenges.ts:359 | {n} free days
+panel | apps/dashboard/src/crm/logic/challenges.ts:431 | No free days added.
+panel | apps/dashboard/src/crm/logic/challenges.ts:448 | Give all {n} their free days
+panel | apps/dashboard/src/crm/logic/challenges.ts:454 | {name} gets no free days.
+panel | apps/dashboard/src/crm/logic/challenges.ts:518 | The free days will be added soon.
+panel | apps/dashboard/src/crm/logic/challenges.ts:519 | The free days were added to each winner’s plan by themselves.
+panel | apps/dashboard/src/crm/logic/challenges.ts:544 | Check a surprising number with the member before giving free days.
+panel | apps/dashboard/src/crm/logic/challenges.ts:547 | Only members who use the MettleUp app take part.
+panel | apps/dashboard/src/crm/logic/challenges.ts:556 | Their name shows only if they switch it on in the app (first name and initial).
+panel | apps/dashboard/src/crm/logic/claimMatch.ts:37 | That code has a letter a workout code never uses.
+panel | apps/dashboard/src/crm/logic/dietPlans.ts:261 | Whey is optional, for adults only.
+panel | apps/dashboard/src/crm/logic/enquiries.ts:33 | Was only asking
+panel | apps/dashboard/src/crm/logic/feedback.ts:28 | We read every message.
+panel | apps/dashboard/src/crm/logic/feedback.ts:31 | We reply as soon as we can.
+panel | apps/dashboard/src/crm/logic/getStarted.ts:72 | Make your free web page, share your one link and QR poster, and see how people pay.
+panel | apps/dashboard/src/crm/logic/getStarted.ts:97 | A trainer sees only their own members.
+panel | apps/dashboard/src/crm/logic/gymAlerts.ts:22 | $1 started a free $2-day trial online, from $3 to $4.
+panel | apps/dashboard/src/crm/logic/gymReports.ts:90 | Only workouts from the day they joined your gym are included.
+panel | apps/dashboard/src/crm/logic/gymReports.ts:125 | No report came within 30 days.
+panel | apps/dashboard/src/crm/logic/gymState.ts:58 | Your free trial ended on {trialDate(info.endsAt)}.
+panel | apps/dashboard/src/crm/logic/gymState.ts:72 | {ended} Until {until} only check-in, fees and the member list work.
+panel | apps/dashboard/src/crm/logic/gymTimings.ts:126 | Members see them in the MettleUp app (Gym tab) within 10 minutes.
+panel | apps/dashboard/src/crm/logic/importMembers.ts:1289 | Joining date “{text('joinedOn')}” is not a date we can read.
+panel | apps/dashboard/src/crm/logic/importMembers.ts:1344 | {fieldLabel(f)} “{text(f)}” is not an amount we can read.
+panel | apps/dashboard/src/crm/logic/importMembers.ts:1428 | “{e.label}” is not kept for this member.
+panel | apps/dashboard/src/crm/logic/importMembers.ts:1436 | ID numbers are never imported.
+panel | apps/dashboard/src/crm/logic/importMembers.ts:1484 | If it is a copy, delete one row in Excel and import again.
+panel | apps/dashboard/src/crm/logic/memberMessages.ts:263 | Messages a member sent only to the owner or to a trainer are not shown here.
+panel | apps/dashboard/src/crm/logic/memberMessages.ts:263 | Complaints show here only when the member picked "Gym admin".
+panel | apps/dashboard/src/crm/logic/memberMessages.ts:265 | Feedback and complaints never go to trainers, so they are not shown here.
+panel | apps/dashboard/src/crm/logic/memberMessages.ts:265 | Neither are questions a member sent only to the owner or another trainer.
+panel | apps/dashboard/src/crm/logic/payMettleUp.ts:234 | You are on the free trial until {payDate(o.trialEndsAt)}.
+panel | apps/dashboard/src/crm/logic/payMettleUp.ts:235 | Your free trial ended on {payDate(o.trialEndsAt)}.
+panel | apps/dashboard/src/crm/logic/payMettleUp.ts:237 | You are on the free trial.
+panel | apps/dashboard/src/crm/logic/payMettleUp.ts:336 | Your paid {what} starts on the day MettleUp confirms your payment, not when your free trial ends on {payDate(o.trialEndsAt)}.
+panel | apps/dashboard/src/crm/logic/payMettleUp.ts:336 | To keep every free day, pay nearer that date.
+panel | apps/dashboard/src/crm/logic/phoneLinks.ts:74 | Say yes only if the number is really theirs.
+panel | apps/dashboard/src/crm/logic/plusLock.ts:46 | Free MettleUp Plus for your members
+panel | apps/dashboard/src/crm/logic/plusLock.ts:48 | Your members get every paid feature of the MettleUp app free while their plan is active: the watch app, charts older than 3 months, suggested weights, the calculators and more of their own exercises.
+panel | apps/dashboard/src/crm/logic/plusLock.ts:57 | Only the owner can change this.
+panel | apps/dashboard/src/crm/logic/readyChallenges.ts:145 | Only one challenge runs at a time, so members always have one clear goal.
+panel | apps/dashboard/src/crm/logic/readyChallenges.ts:146 | Only the owner can turn these challenges on or off.
+panel | apps/dashboard/src/crm/logic/readyChallenges.ts:158 | Only one challenge runs at a time, so this one would start on {day}, after “{other}” ends.
+panel | apps/dashboard/src/crm/logic/readyChallenges.ts:166 | Everyone who reaches the goal wins {n} free days on their membership.
+panel | apps/dashboard/src/crm/logic/readyChallenges.ts:167 | Everyone who reaches the goal wins 1 free day on their membership.
+panel | apps/dashboard/src/crm/logic/readyChallenges.ts:171 | Members see “{title}” in the MettleUp app within 10 minutes.
+panel | apps/dashboard/src/crm/logic/selling.ts:219 | Only the owner can remove it.
+panel | apps/dashboard/src/crm/logic/settingLines.ts:44 | Tick this box to stop the paid features {n} days after a member’s plan ends until they renew, while their workouts are always kept.
+panel | apps/dashboard/src/crm/logic/settingLines.ts:47 | Type how many free days a member gets, with one tap from you, for each friend who joins through their invite link, or leave it empty to give none.
+panel | apps/dashboard/src/crm/logic/settingLines.ts:57 | Tick this box so that Google may show your web page in search results, or leave it unticked so that only people with the link find it.
+panel | apps/dashboard/src/crm/logic/staffJobs.ts:32 | Never sees money totals.
+panel | apps/dashboard/src/crm/logic/staffJobs.ts:33 | Works only at this branch: adds members, collects fees and checks members in.
+panel | apps/dashboard/src/crm/logic/staffJobs.ts:33 | Never sees money totals.
+panel | apps/dashboard/src/crm/logic/staffJobs.ts:35 | The job only shows next to their name.
+panel | apps/dashboard/src/crm/logic/trainerView.ts:274 | Only the gym owner can send these from here for now.
+panel | apps/dashboard/src/crm/logic/trial.ts:94 | Your free trial ended on {on}.
+panel | apps/dashboard/src/crm/logic/trial.ts:104 | Free trial: {howLong} (ends {on}).
+panel | apps/dashboard/src/crm/logic/trial.ts:105 | Free trial: {howLong} (ends {on})
+panel | apps/dashboard/src/crm/logic/trial.ts:116 | Free for 3 months.
+panel | apps/dashboard/src/crm/logic/trial.ts:116 | Your members’ app is free, always.
+panel | apps/dashboard/src/crm/logic/webPush.ts:108 | These always come at once: complaints, new shop orders, a member waiting at the check-in poster, a friend who wants to join, and a pause or renew request when the plan is about to end.
+panel | apps/dashboard/src/crm/logic/webPush.ts:110 | These always come at once: new shop orders, a member waiting at the check-in poster, a friend who wants to join, a pause or renew request when the plan is about to end, and complaints sent to "Gym admin".
+panel | apps/dashboard/src/crm/logic/webPush.ts:120 | Only the owner can change when they come.
+panel | apps/dashboard/src/crm/logic/webPush.ts:234 | Only this device gets the test.
+panel | apps/dashboard/src/crm/logic/webPush.ts:237 | We are sending a test alert to this device.
+panel | apps/dashboard/src/crm/logic/webPush.ts:241 | We sent it, but this device has not shown it yet.
+panel | apps/dashboard/src/crm/logic/webPush.ts:248 | We could not reach this device.
+panel | apps/dashboard/src/crm/logic/words.ts:81 | {sign}{underHundred(rest)} Paise Only
+panel | apps/dashboard/src/crm/logic/words.ts:82 | {sign}Rupees {numberInWords(rupees)} Only
+panel | apps/dashboard/src/crm/logic/words.ts:83 | {sign}Rupees {numberInWords(rupees)} and {underHundred(rest)} Paise Only
+panel | apps/dashboard/src/crm/logic/workoutOffer.ts:239 | Extended free by {…} (reward)
+panel | apps/dashboard/src/crm/machines/entryMachine.ts:354 | The machine never answered
+panel | apps/dashboard/src/crm/machines/entryMachineAdmin.ts:128 | A serial number has only letters and numbers, like CJDE231560123.
+panel | apps/dashboard/src/crm/machines/entryMachineAdmin.ts:236 | It shows Online within a minute.
+panel | apps/dashboard/src/crm/machines/entryMachineAdmin.ts:282 | Only the gym owner can add or remove a machine.
+panel | apps/dashboard/src/crm/move/move.ts:83 | {head} Your gym's records are only in this browser.
+panel | apps/dashboard/src/crm/pay/PaidOnline.tsx:205 | They may have paid twice: check, and refund one if so.
+panel | apps/dashboard/src/crm/pay/PaymentsScreen.tsx:172 | Only the owner can change these.
+panel | apps/dashboard/src/crm/pay/PaymentsScreen.tsx:172 | Only the owner can change this.
+panel | apps/dashboard/src/crm/pay/PaymentsScreen.tsx:358 | Shown only while you type.
+panel | apps/dashboard/src/crm/pay/PaymentsScreen.tsx:358 | After you connect, only its last 4 letters show.
+panel | apps/dashboard/src/crm/pay/PaymentsScreen.tsx:386 | Only the gym owner can connect a payment company.
+panel | apps/dashboard/src/crm/pay/payWords.ts:54 | Only the gym owner can connect a payment company.
+panel | apps/dashboard/src/crm/shop/AutoRemindersSection.tsx:171 | Members with the MettleUp app get these on their phone at 9:30 am, never more than one a day.
+panel | apps/dashboard/src/crm/shop/AutoRemindersSection.tsx:178 | Only the owner can change these.
+panel | apps/dashboard/src/crm/shop/CheckInQrScreen.tsx:128 | It asks for the number only the first time.
+panel | apps/dashboard/src/crm/shop/InviteScreen.tsx:250 | Make your free gym web page, and this card will share it instead.
+panel | apps/dashboard/src/crm/shop/JoinCode.tsx:75 | Only an owner can turn them on.
+panel | apps/dashboard/src/crm/shop/JoinCode.tsx:88 | It comes with 12 sample products you can change or delete.
+panel | apps/dashboard/src/crm/shop/JoinTrialCard.tsx:34 | Free trials are off.
+panel | apps/dashboard/src/crm/shop/JoinTrialCard.tsx:35 | New people can try your gym free for 1 day.
+panel | apps/dashboard/src/crm/shop/JoinTrialCard.tsx:35 | New people can try your gym free for {n} days.
+panel | apps/dashboard/src/crm/shop/JoinTrialCard.tsx:77 | Free trial for new people
+panel | apps/dashboard/src/crm/shop/JoinTrialCard.tsx:79 | People who open your "Become a member" link can try your gym free before they pick a plan.
+panel | apps/dashboard/src/crm/shop/JoinTrialCard.tsx:83 | Free trial length
+panel | apps/dashboard/src/crm/shop/JoinTrialCard.tsx:97 | Each mobile number gets one free trial at your gym.
+panel | apps/dashboard/src/crm/shop/JoinTrialCard.tsx:99 | A person on a free trial is not a member yet.
+panel | apps/dashboard/src/crm/shop/MessagesSection.tsx:365 | Sent on WhatsApp only, one member at a time, each with their own name and dates.
+panel | apps/dashboard/src/crm/shop/MessagesSection.tsx:600 | Goes to all {…} in the app, not only this group.
+panel | apps/dashboard/src/crm/shop/OffersSection.tsx:259 | A workout counts only on a day your register shows a check-in for that member, and only if they logged 20+ minutes with 6+ sets in the MettleUp app.
+panel | apps/dashboard/src/crm/shop/OffersSection.tsx:299 | No receipt and no GST: free days are not a sale.
+panel | apps/dashboard/src/crm/shop/OffersSection.tsx:398 | Only desk check-ins count.
+panel | apps/dashboard/src/crm/shop/invite.ts:65 | Get the free MettleUp app{…} to track your workouts.
+panel | apps/dashboard/src/crm/shop/logic.ts:696 | We updated the list.
+panel | apps/dashboard/src/crm/shop/logic.ts:699 | We updated the list.
+panel | apps/dashboard/src/crm/shop/logic.ts:711 | We loaded the new details.
+panel | apps/dashboard/src/crm/store.tsx:603 | We couldn’t read the gym saved in this browser.
+panel | apps/dashboard/src/crm/ui/BillingOnline.tsx:99 | Pay by UPI, card or net banking on the payment company’s secure page.
+panel | apps/dashboard/src/crm/ui/BusinessGrowth.tsx:164 | Old records count only if you added them.
+panel | apps/dashboard/src/crm/ui/DeskCameraSheet.tsx:43 | Only your gym’s staff can see this photo.
+panel | apps/dashboard/src/crm/ui/ForgeAccessCard.tsx:28 | MettleUp sees only your gym’s totals (how many members, check-ins and money in all), never a member’s name or number.
+panel | apps/dashboard/src/crm/ui/ForgeAccessCard.tsx:28 | MettleUp support can look at your records only when you let them, for one hour at most, and only to read.
+panel | apps/dashboard/src/crm/ui/ForgeAccessCard.tsx:35 | MettleUp has never opened your records.
+panel | apps/dashboard/src/crm/ui/GymDataActions.tsx:24 | Delete our gym from MettleUp
+panel | apps/dashboard/src/crm/ui/GymDataActions.tsx:25 | Delete your gym from MettleUp?
+panel | apps/dashboard/src/crm/ui/GymDataActions.tsx:27 | Then we delete every member, payment, check-in and shop order of this gym from our server within 30 days, and call you on the gym’s number to confirm before we do.
+panel | apps/dashboard/src/crm/ui/GymDataActions.tsx:28 | Send delete request
+panel | apps/dashboard/src/crm/ui/GymDataActions.tsx:29 | We will call you on the gym’s number before anything is deleted.
+panel | apps/dashboard/src/crm/ui/GymDataActions.tsx:82 | We suggest once a month.
+panel | apps/dashboard/src/crm/ui/GymDataActions.tsx:111 | DELETE REQUEST: gym "{snapshot.gym.name}", code {snapshot.gym.joinCode}, gym phone {…}, asked by {who}.
+panel | apps/dashboard/src/crm/ui/JoinedOnlineCard.tsx:166 | People on a free trial may visit until the day shown.
+panel | apps/dashboard/src/crm/ui/MemberCardSheet.tsx:120 | The QR has only the member’s ID, not their name or phone number.
+panel | apps/dashboard/src/crm/ui/ProgressView.tsx:268 | (Only staff see this line.)
+panel | apps/dashboard/src/crm/ui/ProgressView.tsx:330 | Body weight, photos and notes are never shared.
+panel | apps/dashboard/src/crm/ui/ProgressView.tsx:390 | Only 1 workout with it so far.
+panel | apps/dashboard/src/crm/ui/QuickActions.tsx:102 | Staff see only the ones they may use.
+panel | apps/dashboard/src/crm/ui/forms/MemberFormSheet.tsx:53 | Only your gym’s staff can see it.
+panel | apps/dashboard/src/crm/ui/forms/MemberFormSheet.tsx:543 | No plan and no dues, and never on the renewal list.
+panel | apps/dashboard/src/crm/ui/forms/VoidPaymentSheet.tsx:102 | Its number is never used again.
+panel | apps/dashboard/src/crm/ui/offline.tsx:189 | It was never sent, so it will be gone.
+panel | apps/dashboard/src/crm/ui/offline.tsx:258 | Clearing it deletes only that copy.
+panel | apps/dashboard/src/crm/ui/offline.tsx:259 | Use it only while the internet is working, and only if this device shows old details that do not update, or if MettleUp support asks you to.
+panel | apps/dashboard/src/crm/ui/offline.tsx:279 | Delete {…} and clear
+panel | apps/dashboard/src/crm/ui/screens/Attendance.tsx:378 | Searching only {batchName}.
+panel | apps/dashboard/src/crm/ui/screens/Attendance.tsx:813 | Nobody is listed just because their visits were never added.
+panel | apps/dashboard/src/crm/ui/screens/Attendance.tsx:858 | Everyone here has weeks left on their plan, but they stopped coming or never really started.
+panel | apps/dashboard/src/crm/ui/screens/BringAFriend.tsx:79 | A member gets {c.days} free {…} for each friend who joins.
+panel | apps/dashboard/src/crm/ui/screens/BringAFriend.tsx:79 | No free days for a friend who joins.
+panel | apps/dashboard/src/crm/ui/screens/BringAFriend.tsx:96 | Free days for each friend who joins
+panel | apps/dashboard/src/crm/ui/screens/BringAFriend.tsx:110 | Save free days
+panel | apps/dashboard/src/crm/ui/screens/BusyMachines.tsx:156 | Only the owner can change this.
+panel | apps/dashboard/src/crm/ui/screens/Challenges.tsx:267 | Only the owner can start, change or cancel a challenge.
+panel | apps/dashboard/src/crm/ui/screens/Challenges.tsx:289 | Everyone who reaches it wins free days.
+panel | apps/dashboard/src/crm/ui/screens/Challenges.tsx:335 | Members see it in the MettleUp app within 10 minutes.
+panel | apps/dashboard/src/crm/ui/screens/Challenges.tsx:359 | Nobody gets free days for it.
+panel | apps/dashboard/src/crm/ui/screens/Challenges.tsx:776 | Free days for everyone who reaches the goal
+panel | apps/dashboard/src/crm/ui/screens/Enquiries.tsx:344 | Free trial online: {days}, {formatDay(j.startsOn)} to {formatDay(j.trial.endsOn)}.
+panel | apps/dashboard/src/crm/ui/screens/Enquiries.tsx:440 | Free trial online:
+panel | apps/dashboard/src/crm/ui/screens/Enquiries.tsx:565 | Give free days
+panel | apps/dashboard/src/crm/ui/screens/Enquiries.tsx:1042 | Free days added
+panel | apps/dashboard/src/crm/ui/screens/Enquiries.tsx:1043 | {done.by} got {done.days} free {…}.
+panel | apps/dashboard/src/crm/ui/screens/Enquiries.tsx:1050 | There are no free days to give for this friend.
+panel | apps/dashboard/src/crm/ui/screens/Enquiries.tsx:1075 | Could not add the free days.
+panel | apps/dashboard/src/crm/ui/screens/Enquiries.tsx:1090 | You set these free days in Settings → Member app.
+panel | apps/dashboard/src/crm/ui/screens/EntryMachines.tsx:180 | {name} shows Online within a minute of its first call.
+panel | apps/dashboard/src/crm/ui/screens/GymTimings.tsx:196 | Only the owner can change the gym timings.
+panel | apps/dashboard/src/crm/ui/screens/ImportMembers.tsx:309 | We couldn’t read that file.
+panel | apps/dashboard/src/crm/ui/screens/ImportMembers.tsx:554 | Aadhaar and PAN numbers are never imported.
+panel | apps/dashboard/src/crm/ui/screens/ImportMembers.tsx:584 | We matched them from the column names and what is in them.
+panel | apps/dashboard/src/crm/ui/screens/ImportMembers.tsx:628 | ID numbers are never imported.
+panel | apps/dashboard/src/crm/ui/screens/ImportMembers.tsx:718 | We couldn’t add up the money in this file before the import.
+panel | apps/dashboard/src/crm/ui/screens/ImportMembers.tsx:826 | Only the first {MAX_IMPORT_ROWS} rows can be imported at once.
+panel | apps/dashboard/src/crm/ui/screens/ImportMembers.tsx:837 | Not added: {rowsWord(strays)} {…} only one cell filled in, with no name and no mobile.
+panel | apps/dashboard/src/crm/ui/screens/ImportMembers.tsx:857 | Only empty details are filled in.
+panel | apps/dashboard/src/crm/ui/screens/ImportMembers.tsx:1035 | AI says this column is not needed, so it is not kept.
+panel | apps/dashboard/src/crm/ui/screens/ImportMembers.tsx:1038 | It only numbers the rows, so it is not kept.
+panel | apps/dashboard/src/crm/ui/screens/ImportMembers.tsx:1055 | A ticked column with no name is not kept.
+panel | apps/dashboard/src/crm/ui/screens/ImportMembers.tsx:1384 | Then import the same file again, so every payment comes in only once.
+panel | apps/dashboard/src/crm/ui/screens/ImportMembers.tsx:1385 | Then import the same file again, so every payment comes in only once.
+panel | apps/dashboard/src/crm/ui/screens/ImportMembers.tsx:1391 | Only the owner can add the plans and payments in this file.
+panel | apps/dashboard/src/crm/ui/screens/ImportMembers.tsx:1513 | Only the owner can add plans and payments.
+panel | apps/dashboard/src/crm/ui/screens/MemberDetail.tsx:602 | Sell a membership only if they also want a plan of their own.
+panel | apps/dashboard/src/crm/ui/screens/MemberDetail.tsx:1154 | Only 1 PT session left
+panel | apps/dashboard/src/crm/ui/screens/MemberDetail.tsx:1155 | Only {leftAll} PT sessions left
+panel | apps/dashboard/src/crm/ui/screens/MemberDetail.tsx:1224 | Only the owner can extend it.
+panel | apps/dashboard/src/crm/ui/screens/MemberMeasurements.tsx:239 | Delete these measurements?
+panel | apps/dashboard/src/crm/ui/screens/MemberMeasurements.tsx:296 | Desk note (only your gym sees it)
+panel | apps/dashboard/src/crm/ui/screens/More.tsx:124 | Your gym’s free page: fees, timings and photos
+panel | apps/dashboard/src/crm/ui/screens/More.tsx:124 | The gym’s free web page
+panel | apps/dashboard/src/crm/ui/screens/MyMembers.tsx:116 | Only trainers and the owner see this
+panel | apps/dashboard/src/crm/ui/screens/MyMembers.tsx:143 | Body weight, photos and notes are never shared.
+panel | apps/dashboard/src/crm/ui/screens/MyMembers.tsx:291 | Only the owner and this member’s own trainer can see this.
+panel | apps/dashboard/src/crm/ui/screens/OnlineJourney.tsx:99 | Three parts, in order: your free web page, your one link and QR poster, and how people pay.
+panel | apps/dashboard/src/crm/ui/screens/OnlineJourney.tsx:105 | Your free web page
+panel | apps/dashboard/src/crm/ui/screens/OnlineJourney.tsx:300 | MettleUp makes a free web page for your gym at join.mettleup.fit.
+panel | apps/dashboard/src/crm/ui/screens/PayMettleUp.tsx:151 | Only the gym owner can pay MettleUp
+panel | apps/dashboard/src/crm/ui/screens/PayMettleUp.tsx:172 | To pay now, message MettleUp and we will send you the payment details.
+panel | apps/dashboard/src/crm/ui/screens/Plans.tsx:355 | A new price is used only for new sales.
+panel | apps/dashboard/src/crm/ui/screens/Settings.tsx:215 | Your gym is saved in this browser only.
+panel | apps/dashboard/src/crm/ui/screens/Settings.tsx:340 | Everyone who reaches it wins free days.
+panel | apps/dashboard/src/crm/ui/screens/Settings.tsx:380 | Saved in this browser only.
+panel | apps/dashboard/src/crm/ui/screens/Settings.tsx:380 | A demo gym is never put online.
+panel | apps/dashboard/src/crm/ui/screens/Settings.tsx:381 | Saved in this browser only.
+panel | apps/dashboard/src/crm/ui/screens/Settings.tsx:386 | MettleUp support can look at your records only if you let them.
+panel | apps/dashboard/src/crm/ui/screens/Trainers.tsx:370 | Free to book
+panel | apps/dashboard/src/crm/ui/screens/Trainers.tsx:414 | Tap a free time to book.
+panel | apps/dashboard/src/crm/ui/screens/Trainers.tsx:777 | This booking has started, so only the gym owner can cancel it.
+panel | apps/dashboard/src/crm/ui/screens/WebPage.tsx:94 | Your gym’s own free page, for people who may join: fees, timings, photos and a way to ask you a question.
+panel | apps/dashboard/src/crm/ui/screens/WebPage.tsx:165 | Only the owner can change the web page.
+panel | apps/dashboard/src/crm/ui/screens/WebPage.tsx:439 | The AI helper answers visitors only from what is on your page: your fees, timings, address and facilities.
+panel | apps/dashboard/src/crm/ui/screens/WebPage.tsx:454 | Members, money and staff never show on the page.
+panel | apps/dashboard/src/crm/ui/screens/WorkoutPlans.tsx:88 | Members get these plans only once your gym is online (Settings → Sign-in & data).
+panel | apps/dashboard/src/crm/ui/screens/WorkoutPlans.tsx:397 | {only} sees it in the MettleUp app after one check-in at the gym.
+panel | apps/dashboard/src/crm/ui/screens/WorkoutPlans.tsx:409 | Note for {only} (optional)
+panel | apps/dashboard/src/crm/ui/screens/WorkoutPlans.tsx:671 | Empty: body weight only
+panel | deploy/panel/phoneCode.js:382 | no live code (expired, used, dead or never sent)
+panel | deploy/panel/voice.js:107 | We heard nothing.
+panel | deploy/panel/voice.js:157 | We heard nothing.
+panel | deploy/panel/worker.js:300 | You can try {g.gymName} free for {days} {…}, or pick a plan and send your details.
+panel | supabase/migrations/0071_ai_assistant.sql:179 | Free credits of
+panel | supabase/migrations/0071_ai_assistant.sql:185 | Free credits for
+panel | supabase/migrations/0088_join_trial.sql:171 | Free trial online: %s %s, %s to %s.
+panel | supabase/migrations/0088_join_trial.sql:186 | %s started a free %s-day trial online (%s to %s).
+panel | supabase/migrations/0097_direct_read_log.sql:196 | Not recorded: no pull read the log before Supabase deleted it.
+phone-watch | apps/mobile/app.json:121 | MettleUp uses the microphone only when you tap Speak to send us feedback.
+phone-watch | apps/mobile/modules/forge-rest/android/src/main/java/com/forgeai/rest/RestCard.kt:819 | Open it within 10 min to log this set.
+phone-watch | apps/mobile/modules/forge-rest/android/src/main/java/com/forgeai/rest/RestCard.kt:1256 | Used only when you turn on Ring through Do Not Disturb in MettleUp
+phone-watch | apps/mobile/modules/forge-rest/android/src/main/java/com/forgeai/rest/RestCard.kt:1307 | Never makes a sound.
+phone-watch | apps/mobile/modules/forge-rest/android/src/main/java/com/forgeai/rest/RestCard.kt:1340 | Used only when you turn on Ring through Do Not Disturb in MettleUp
+phone-watch | apps/mobile/modules/forge-rest/android/src/main/java/com/forgeai/rest/WorkoutCard.kt:76 | Never makes a sound.
+phone-watch | apps/mobile/src/ai/localCoach.ts:472 | No records yet — log a few workouts and we will start tracking them.
+phone-watch | apps/mobile/src/app/exercise/[id].tsx:685 | Only ones logged the same way are listed.
+phone-watch | apps/mobile/src/app/import/index.tsx:231 | It is never stopped half-way.
+phone-watch | apps/mobile/src/app/import/index.tsx:379 | Delete {impact.removed} workout{…} first?
+phone-watch | apps/mobile/src/app/import/index.tsx:692 | This file writes dates as numbers only, and they can be read two ways.
+phone-watch | apps/mobile/src/app/import/index.tsx:770 | Delete all {ownWorkouts} of your workout{…} in MettleUp, then import.
+phone-watch | apps/mobile/src/app/import/index.tsx:778 | A workout already here is skipped, also one you logged in MettleUp too (same day, started within 30 minutes), so it’s safe to re-run.
+phone-watch | apps/mobile/src/app/measures/index.tsx:199 | Couldn’t delete it.
+phone-watch | apps/mobile/src/app/measures/index.tsx:334 | Tap your own entry to fix or delete it.
+phone-watch | apps/mobile/src/app/measures/index.tsx:334 | Ask your gym to change the ones they recorded.
+phone-watch | apps/mobile/src/app/measures/index.tsx:334 | Tap an entry to fix or delete it.
+phone-watch | apps/mobile/src/app/measures/index.tsx:371 | {dateWithYear(r.dateISO)}, {…}.{…} Fix or delete
+phone-watch | apps/mobile/src/app/nutrition.tsx:157 | Could not delete
+phone-watch | apps/mobile/src/app/photos/index.tsx:171 | Delete this photo?
+phone-watch | apps/mobile/src/app/photos/index.tsx:182 | Couldn’t delete the photo.
+phone-watch | apps/mobile/src/app/plan/avoid.tsx:34 | Tap the exercises you never want.
+phone-watch | apps/mobile/src/app/ready.tsx:120 | Worked out only from the workouts you logged in this app.
+phone-watch | apps/mobile/src/app/routines/[id].tsx:308 | Could not delete this routine.
+phone-watch | apps/mobile/src/app/session/active.tsx:487 | To get rid of it entirely, discard these changes and delete the workout instead.
+phone-watch | apps/mobile/src/app/session/add-exercise.tsx:105 | Instead of {swapName}, for this workout only
+phone-watch | apps/mobile/src/app/session/add-exercise.tsx:105 | For this workout only
+phone-watch | apps/mobile/src/app/session/finish.tsx:386 | Your workout was saved — we just couldn't load its summary.
+phone-watch | apps/mobile/src/backup/backupCoverage.ts:52 | QA builds only: the made-up watch for the cloud phone test (R-438)
+phone-watch | apps/mobile/src/backup/backupCoverage.ts:53 | QA builds only: the made-up answer to "Update on watch" (R-438)
+phone-watch | apps/mobile/src/backup/backupCoverage.ts:54 | one-off "Make your first routine" card (F186; a restored phone with routines never shows it anyway)
+phone-watch | apps/mobile/src/backup/backupCoverage.ts:73 | AI key (never leaves the phone)
+phone-watch | apps/mobile/src/backup/backupCoverage.ts:74 | AI key (never leaves the phone)
+phone-watch | apps/mobile/src/backup/backupCoverage.ts:75 | AI key (never leaves the phone)
+phone-watch | apps/mobile/src/backup/backupCoverage.ts:82 | MettleUp Plus on this phone (F56, R-461): the free month's first day, the gym and staff unlock (proved again on a new phone) and what Google Play said (asked again; "I already paid")
+phone-watch | apps/mobile/src/backup/backupCoverage.ts:124 | AI coach (hidden in this build; its provider needs keys that never leave the phone)
+phone-watch | apps/mobile/src/backup/backupCoverage.ts:135 | bookkeeping: the gym has not been told the name switch yet (this phone only)
+phone-watch | apps/mobile/src/backup/backupCoverage.ts:137 | bookkeeping: the gym has not been told the share switch yet (this phone only)
+phone-watch | apps/mobile/src/backup/backupCoverage.ts:138 | bookkeeping: the gym has not been told the trainer switch yet (this phone only)
+phone-watch | apps/mobile/src/backup/backupCoverage.ts:159 | 'u' (never the phone number) and the profile photo
+phone-watch | apps/mobile/src/backup/backupText.ts:14 | Your phone number and your gym membership are never in the file.
+phone-watch | apps/mobile/src/backup/backupText.ts:30 | Your phone is short of space: this needs about {sizeWords(needBytes)} and only {sizeWords(freeBytes)} is free.
+phone-watch | apps/mobile/src/backup/backupText.ts:30 | Free up some space, then try again.
+phone-watch | apps/mobile/src/backup/backupText.ts:55 | “{ADD_LABEL}”: only what this phone doesn’t have yet comes in; your settings stay.
+phone-watch | apps/mobile/src/cloud/accountWords.ts:18 | Only you can see what is saved.
+phone-watch | apps/mobile/src/cloud/accountWords.ts:25 | Your space on MettleUp is full, so new workouts stay on this phone only.
+phone-watch | apps/mobile/src/cloud/accountWords.ts:32 | Delete my account
+phone-watch | apps/mobile/src/cloud/accountWords.ts:33 | Delete your MettleUp account?
+phone-watch | apps/mobile/src/cloud/backupWords.ts:53 | Free some space in Drive, then tap Back up now.
+phone-watch | apps/mobile/src/components/saveProblemStore.ts:16 | Free some space; we'll keep trying.
+phone-watch | apps/mobile/src/components/saveProblemStore.ts:17 | We'll keep trying.
+phone-watch | apps/mobile/src/components/saveProblemStore.ts:20 | It's still open: free some space, then tap Finish again.
+phone-watch | apps/mobile/src/components/saveProblemStore.ts:23 | They're still open: free some space, then tap Save changes again.
+phone-watch | apps/mobile/src/components/settings/ApiKeyField.tsx:56 | Secure storage was unavailable — please try again.
+phone-watch | apps/mobile/src/components/settings/CloudCard.tsx:160 | Delete my cloud data
+phone-watch | apps/mobile/src/components/settings/CloudCard.tsx:163 | Delete cloud data?
+phone-watch | apps/mobile/src/components/settings/CloudCard.tsx:170 | Could not delete
+phone-watch | apps/mobile/src/components/settings/PhotoBackupCard.tsx:87 | Off: photos stay on this phone only.
+phone-watch | apps/mobile/src/db/schema.ts:58 | session_id TEXT NOT NULL REFERENCES workout_sessions(id) ON DELETE CASCADE,
+phone-watch | apps/mobile/src/db/schema.ts:88 | plan_id TEXT NOT NULL REFERENCES workout_plans(id) ON DELETE CASCADE,
+phone-watch | apps/mobile/src/db/schema.ts:96 | plan_day_id TEXT NOT NULL REFERENCES plan_days(id) ON DELETE CASCADE,
+phone-watch | apps/mobile/src/engine/insights.ts:22 | 1 lift beat its best this week — your strength curve is pointing exactly where we want it.
+phone-watch | apps/mobile/src/engine/insights.ts:23 | {liftsUp} lifts beat their best this week — strength is trending exactly where we want it.
+phone-watch | apps/mobile/src/engine/insights.ts:33 | You're only {g} g away from your protein goal — one scoop of whey closes it.
+phone-watch | apps/mobile/src/engine/overload.ts:69 | First time on {exercise.name} — bodyweight only today, focus on clean controlled reps.
+phone-watch | apps/mobile/src/engine/overload.ts:169 | Top set hit {lastS.topReps} at {trimNum(lastS.topWeightKg)} kg — bring every set to {target.repRangeMax} and we add weight.
+phone-watch | apps/mobile/src/engine/overload.ts:195 | Bodyweight here — own the movement and add a clean rep before we add load.
+phone-watch | apps/mobile/src/lib/credits.ts:43 | RepDB Free Tier licence
+phone-watch | apps/mobile/src/lib/feedback.ts:38 | We read every message.
+phone-watch | apps/mobile/src/lib/feedback.ts:43 | We reply as soon as we can.
+phone-watch | apps/mobile/src/lib/feedbackVoice.ts:53 | Only the recording is sent.
+phone-watch | apps/mobile/src/lib/feedbackVoice.ts:53 | Neither we nor that service keep it.
+phone-watch | apps/mobile/src/lib/feedbackVoice.ts:53 | The text reaches us only if you tap Send.
+phone-watch | apps/mobile/src/lib/safekeepNudge.ts:30 | Your workouts are only on this phone.
+phone-watch | apps/mobile/src/lib/watchDiag.ts:28 | It holds only the times your watch screen turned on, off or dim, and your watch's Battery Saver and screen settings.
+phone-watch | apps/mobile/src/lib/watchDiag.ts:220 | Key: sc screen on, bs Battery Saver, id idle, aod always-on global/secure, th theatre, amb dimmed, wo workout open, bo rebuild armed, hd the app holds the screen; DIM/undim the watch dims, ADIM/aundim the app dims, hold/letgo the app keeps the screen on or lets go (and why); why the check on each w…
+phone-watch | apps/mobile/src/onboarding/bootFailure.ts:54 | Free some space, then tap Try again.
+phone-watch | apps/mobile/src/onboarding/components/BootErrorScreen.tsx:26 | No details were recorded.
+phone-watch | apps/mobile/src/onboarding/components/WelcomeScreen.tsx:831 | Only for your gym, once you link one.
+phone-watch | apps/mobile/src/onboarding/db/importSafety.ts:233 | {onlyHere} of them {…} only in MettleUp, not in this file.
+phone-watch | apps/mobile/src/onboarding/eraseWords.ts:21 | Erase this phone only
+phone-watch | apps/mobile/src/onboarding/eraseWords.ts:23 | Erase this phone and delete my MettleUp account
+phone-watch | apps/mobile/src/onboarding/eraseWords.ts:25 | Erase this phone and delete your account?
+phone-watch | apps/mobile/src/onboarding/eraseWords.ts:26 | Erase and delete
+phone-watch | apps/mobile/src/onboarding/eraseWords.ts:28 | Could not delete your MettleUp account, so nothing was erased.
+phone-watch | apps/mobile/src/onboarding/eraseWords.ts:29 | Delete it in Google Drive if you want it gone.
+phone-watch | apps/mobile/src/onboarding/introSlides.ts:61 | We found your watch
+phone-watch | apps/mobile/src/onboarding/introSlides.ts:69 | If your gym uses MettleUp gym software, sign in with your phone number and we find your gym for you.
+phone-watch | apps/mobile/src/onboarding/introSlides.ts:114 | We found you
+phone-watch | apps/mobile/src/onboarding/phoneSignIn.ts:198 | We found you: {…}.
+phone-watch | apps/mobile/src/onboarding/phoneSignIn.ts:218 | {m.gymName} gives you every MettleUp feature free while your gym plan is active.
+phone-watch | apps/mobile/src/onboarding/phoneSignIn.ts:219 | As {…}, you get every MettleUp feature free.
+phone-watch | apps/mobile/src/onboarding/phoneSignIn.ts:224 | We found you at {n} gyms.
+phone-watch | apps/mobile/src/onboarding/phoneSignIn.ts:230 | We use it to find your gym and link this app to it.
+phone-watch | apps/mobile/src/onboarding/phoneSignIn.ts:237 | You pay nothing, and we never message you.
+phone-watch | apps/mobile/src/onboarding/phoneSignIn.ts:238 | We only use your number to find your gym.
+phone-watch | apps/mobile/src/onboarding/phoneSignIn.ts:238 | Your number is checked once and is not kept for this.
+phone-watch | apps/mobile/src/onboarding/phoneSignIn.ts:241 | We look for your gym as soon as it arrives.
+phone-watch | apps/mobile/src/onboarding/phoneSignIn.ts:248 | We did not find your number at a gym on MettleUp
+phone-watch | apps/mobile/src/onboarding/phoneSignIn.ts:260 | We could not finish setting up the app, so answer these 3 quick questions.
+phone-watch | apps/mobile/src/onboarding/straightInNote.ts:13 | We set you up as "New to lifting" and "Build muscle".
+phone-watch | apps/mobile/src/onboarding/welcomeStart.ts:61 | We found your backup{from}{count}.
+phone-watch | apps/mobile/src/plan/planWords.ts:20 | Free for everyone, always
+phone-watch | apps/mobile/src/plan/planWords.ts:40 | We found your {PLUS_NAME}.
+phone-watch | apps/mobile/src/plan/planWords.ts:43 | Members of a gym that uses MettleUp get every feature free.
+phone-watch | apps/mobile/src/plan/planWords.ts:70 | Every feature is free.
+phone-watch | apps/mobile/src/plan/planWords.ts:72 | Your free month ends today.
+phone-watch | apps/mobile/src/plan/planWords.ts:72 | Your free month: every feature is open for {dayWord(a.daysLeft)}.
+phone-watch | apps/mobile/src/plan/planWords.ts:74 | You work at {a.gymName}, so every feature is free for you.
+phone-watch | apps/mobile/src/plan/planWords.ts:77 | Renew at {a.gymName} to keep them free.
+phone-watch | apps/mobile/src/plan/planWords.ts:79 | {a.gymName} gives you every feature free, because you are a member there.
+phone-watch | apps/mobile/src/plan/planWords.ts:83 | Renew there to get every feature free again, or get {PLUS_NAME}.
+phone-watch | apps/mobile/src/plan/planWords.ts:84 | Your free month has ended.
+phone-watch | apps/mobile/src/plan/planWords.ts:84 | Everything under "Free for everyone" stays free.
+phone-watch | apps/mobile/src/plan/planWords.ts:96 | Your gym plan gave you every MettleUp feature free.
+phone-watch | apps/mobile/src/plan/planWords.ts:115 | Your workouts, history and routines stay free.
+phone-watch | apps/mobile/src/plan/planWords.ts:115 | Members of a gym that uses MettleUp get every feature free.
+phone-watch | apps/mobile/src/plan/planWords.ts:121 | Your free month ends today
+phone-watch | apps/mobile/src/plan/planWords.ts:122 | Your free month has {daysLeft} days left
+phone-watch | apps/mobile/src/plan/planWords.ts:124 | After that, logging, history and routines stay free.
+phone-watch | apps/mobile/src/plan/planWords.ts:124 | You get them free if your gym uses MettleUp.
+phone-watch | apps/mobile/src/plan/planWords.ts:125 | See what stays free
+phone-watch | apps/mobile/src/plan/planWords.ts:128 | Your free month has ended
+phone-watch | apps/mobile/src/plan/planWords.ts:129 | Your workouts, history and routines stay free, and nothing was deleted.
+phone-watch | apps/mobile/src/plan/planWords.ts:134 | Gym owners and desk staff also get every feature of {PLUS_NAME} free.
+phone-watch | apps/mobile/src/shop/askTrainer.ts:70 | Only the person you pick sees your question.
+phone-watch | apps/mobile/src/shop/boardWords.ts:19 | You hit the goal: {prizeDays} free {…}.
+phone-watch | apps/mobile/src/shop/boardWords.ts:24 | Other members see your name only if you switch it on.
+phone-watch | apps/mobile/src/shop/boardWords.ts:30 | MettleUp never sends which exercises you did, your body weight, photos or notes.
+phone-watch | apps/mobile/src/shop/boardWords.ts:33 | MettleUp never sends your body weight, photos or notes.
+phone-watch | apps/mobile/src/shop/boardWords.ts:35 | Your gym sees only totals, never your name.
+phone-watch | apps/mobile/src/shop/boardWords.ts:39 | Your gym's staff always see your name.
+phone-watch | apps/mobile/src/shop/bringFriend.ts:69 | When a friend joins, your gym can add {days} free {…} to your plan.
+phone-watch | apps/mobile/src/shop/checkIn.ts:150 | The app asks only once.
+phone-watch | apps/mobile/src/shop/checkIn.ts:173 | You do this only once.
+phone-watch | apps/mobile/src/shop/findGym.ts:165 | If your gym uses MettleUp, we can find your membership with your mobile number.
+phone-watch | apps/mobile/src/shop/findGym.ts:165 | Members of a MettleUp gym get every feature free.
+phone-watch | apps/mobile/src/shop/findGym.ts:168 | We check your number against the member lists of gyms that use MettleUp.
+phone-watch | apps/mobile/src/shop/findGym.ts:168 | We only show you your own gym.
+phone-watch | apps/mobile/src/shop/findGym.ts:172 | Your number is checked once and is not kept for this.
+phone-watch | apps/mobile/src/shop/findGym.ts:173 | You pay nothing, and we never message you.
+phone-watch | apps/mobile/src/shop/findGym.ts:175 | We look for your gym as soon as it arrives.
+phone-watch | apps/mobile/src/shop/findGym.ts:180 | {gym} gives you every MettleUp feature free while your gym plan is active.
+phone-watch | apps/mobile/src/shop/findGym.ts:184 | We did not find your gym
+phone-watch | apps/mobile/src/shop/findGym.ts:185 | You can unlock every feature free if your gym uses MettleUp.
+phone-watch | apps/mobile/src/shop/findGym.ts:186 | We look only for a plan that runs today, under the number and first name your gym has for you.
+phone-watch | apps/mobile/src/shop/findGym.ts:192 | We never share your number.
+phone-watch | apps/mobile/src/shop/findGym.ts:242 | Every member of a MettleUp gym also gets every feature of the MettleUp workout app free.
+phone-watch | apps/mobile/src/shop/gym.ts:369 | We refreshed the shop.
+phone-watch | apps/mobile/src/shop/gym.ts:440 | Only {left} of {name} left now.
+phone-watch | apps/mobile/src/shop/gym.ts:907 | We couldn't find this gym
+phone-watch | apps/mobile/src/shop/gymIconWords.ts:26 | Only its icon leaves the home screen.
+phone-watch | apps/mobile/src/shop/gymMessages.ts:177 | Your gym has not added its trainers to the app yet, so only the owner can be picked.
+phone-watch | apps/mobile/src/shop/gymMessages.ts:238 | Only the owner of {gym} reads your {noun}.
+phone-watch | apps/mobile/src/shop/gymReport.ts:106 | We could not send your report because it is too big.
+phone-watch | apps/mobile/src/shop/gymTalk.ts:92 | Only the owner and front desk at {gym} read your feedback.
+phone-watch | apps/mobile/src/shop/gymTalk.ts:93 | Only the owner of {gym} reads your complaint.
+phone-watch | apps/mobile/src/shop/gymTalk.ts:125 | Only feedback can be sent without your name.
+phone-watch | apps/mobile/src/shop/gymTalk.ts:288 | We have read your message and will sort it out this week.
+phone-watch | apps/mobile/src/shop/mateProfile.ts:249 | Never photos, body weight, notes or your phone number.
+phone-watch | apps/mobile/src/shop/mateProfile.ts:250 | Gym mates can open your workouts only while 'Show my name on my gym's leaderboard' is on.
+phone-watch | apps/mobile/src/shop/money.ts:258 | Only {n} left
+phone-watch | apps/mobile/src/shop/offerWords.ts:39 | What the gym gets: only the dates of those workouts.
+phone-watch | apps/mobile/src/shop/offerWords.ts:39 | Never your exercises, weights, sets, body weight or photos.
+phone-watch | apps/mobile/src/shop/recommendGym.ts:15 | Every member of a MettleUp gym gets every feature of this app free, and can also get their trainer's workout plans in it.
+phone-watch | apps/mobile/src/shop/recommendGym.ts:21 | Every member also gets a free workout app.
+phone-watch | apps/mobile/src/shop/staffDoor.ts:75 | Your PIN is only checked.
+phone-watch | apps/mobile/src/shop/staffDoor.ts:75 | It is never saved on this phone.
+phone-watch | apps/mobile/src/shop/staffDoor.ts:113 | We could not sign you in just now.
+phone-watch | apps/mobile/src/shop/trainerShare.ts:29 | Never your body weight, photos or notes.
+phone-watch | apps/mobile/src/shop/trainerShare.ts:33 | They never see your body weight, photos or notes.
+phone-watch | apps/mobile/src/tracker/catalog/bodyMapPaths.ts:22 | Permission is hereby granted, free of charge, to any person obtaining a copy
+phone-watch | apps/mobile/src/tracker/catalog/catalogData.ts:39 | Bend only your elbows to lower the bar to your forehead.
+phone-watch | apps/mobile/src/tracker/catalog/catalogData.ts:44 | Lower slowly, moving only your wrists.
+phone-watch | apps/mobile/src/tracker/catalog/catalogData.ts:54 | free calf raise
+phone-watch | apps/mobile/src/tracker/catalog/catalogData.ts:102 | Lower slowly, keeping your hands light so you never pull your neck.
+phone-watch | apps/mobile/src/tracker/catalog/catalogData.ts:214 | Hold the free end of a landmine bar at your chest with both hands.
+phone-watch | apps/mobile/src/tracker/catalog/catalogData.ts:220 | Use a weight you control so your feet never slip off the edge.
+phone-watch | apps/mobile/src/tracker/catalog/catalogData.ts:243 | Hold a dumbbell in your free hand with your arm hanging straight.
+phone-watch | apps/mobile/src/tracker/catalog/catalogData.ts:270 | Lower the bar slowly, moving only your wrists.
+phone-watch | apps/mobile/src/tracker/catalog/catalogData.ts:272 | Raise the backs of your hands, bending only at the wrists.
+phone-watch | apps/mobile/src/tracker/catalog/catalogData.ts:318 | Hold one dumbbell at your side, palm forward, free hand on your hip.
+phone-watch | apps/mobile/src/tracker/catalog/catalogData.ts:332 | Hold a rail with your free hand for balance.
+phone-watch | apps/mobile/src/tracker/catalog/catalogData.ts:337 | Lean forward from the hips as your free leg rises straight behind you.
+phone-watch | apps/mobile/src/tracker/catalog/catalogData.ts:365 | Stand holding the bar at your thighs, knees only slightly bent.
+phone-watch | apps/mobile/src/tracker/catalog/catalogData.ts:369 | Hold one heavy dumbbell at your side, other arm free.
+phone-watch | apps/mobile/src/tracker/catalog/catalogData.ts:401 | Hug a plate to your chest and hold a post with your free hand.
+phone-watch | apps/mobile/src/tracker/catalog/catalogData.ts:403 | Grip the bar wider than usual, but never so wide it hurts your shoulders.
+phone-watch | apps/mobile/src/tracker/components/BodyEntrySheet.tsx:155 | Delete this entry
+phone-watch | apps/mobile/src/tracker/components/ExerciseLogCard.tsx:1017 | For this workout only.
+phone-watch | apps/mobile/src/tracker/components/ExerciseLogCard.tsx:1101 | How {exercise.name} is counted in this workout only.
+phone-watch | apps/mobile/src/tracker/components/FolderPickerSheet.tsx:29 | Your plan only changes if you pick it.
+phone-watch | apps/mobile/src/tracker/components/MuscleTipNote.tsx:63 | Why we suggest this
+phone-watch | apps/mobile/src/tracker/components/RoutineImportSteps.tsx:334 | We found {shownCount} routine{…} in “{link.folderName}”
+phone-watch | apps/mobile/src/tracker/components/RoutineImportSteps.tsx:335 | We found {shownCount} routine{…} in your {appName} workouts
+phone-watch | apps/mobile/src/tracker/components/RoutineImportSteps.tsx:342 | {appName} does not export routines, so we rebuilt them from the workouts you started from each one.
+phone-watch | apps/mobile/src/tracker/components/RoutineImportSteps.tsx:480 | We add {…} to your exercises with the same name, so your Hevy history and these routines stay together.
+phone-watch | apps/mobile/src/tracker/components/RoutineImportSteps.tsx:542 | Your plan only changes if you pick it.
+phone-watch | apps/mobile/src/tracker/components/ShareSheet.tsx:146 | The picture now shows your gym’s name only.
+phone-watch | apps/mobile/src/tracker/components/StrengthLevelLine.tsx:113 | Your body weight stays private and is never shown.
+phone-watch | apps/mobile/src/tracker/components/WorkoutPhotos.tsx:226 | Private: they stay on this phone.
+phone-watch | apps/mobile/src/tracker/components/WorkoutPrefsCard.tsx:223 | Workout sounds are off: Rest is over only buzzes
+phone-watch | apps/mobile/src/tracker/db/historyScope.ts:273 | Always use all workouts for body-weight moves
+phone-watch | apps/mobile/src/tracker/engine/muscleBalance.ts:504 | Why we suggest this
+phone-watch | apps/mobile/src/tracker/engine/muscleBalance.ts:600 | We added up the sets planned in your {nameList(w.routineNames)} routine.
+phone-watch | apps/mobile/src/tracker/engine/muscleBalance.ts:601 | We added up the sets planned in your {n} routines: {nameList(w.routineNames)}.
+phone-watch | apps/mobile/src/tracker/engine/muscleBalance.ts:623 | For shoulders, only shoulder exercises count.
+phone-watch | apps/mobile/src/tracker/engine/progression.ts:418 | Next time we take it from there.
+phone-watch | apps/mobile/src/tracker/engine/progression.ts:420 | Next time we take it from there.
+phone-watch | apps/mobile/src/tracker/engine/progression.ts:421 | Next time we take it from there.
+phone-watch | apps/mobile/src/tracker/engine/progression.ts:1058 | Next time we take it from there.
+phone-watch | apps/mobile/src/tracker/engine/records.ts:109 | Best pace counts only sets of {words} or more, so a short sprint can't set it.
+phone-watch | apps/mobile/src/tracker/engine/reports.ts:318 | {label} got only {fmtSetsWord(lag.sets)} — try {lag.move} next month.
+phone-watch | apps/mobile/src/tracker/lib/firstRoutine.ts:144 | We will help you make one in 4 short steps.
+phone-watch | apps/mobile/src/tracker/lib/useWorkoutActions.ts:150 | Delete this workout?
+phone-watch | apps/mobile/src/tracker/lib/useWorkoutActions.ts:159 | Could not delete this workout.
+phone-watch | apps/mobile/src/tracker/lib/workoutTab.ts:223 | Delete '{f.name}' folder?
+phone-watch | apps/mobile/src/tracker/phone/healthConnect.ts:311 | Workouts on demo data are never sent.
+phone-watch | apps/mobile/src/tracker/phone/healthConnect.ts:428 | Only workouts logged in MettleUp are sent.
+phone-watch | apps/mobile/src/tracker/phone/healthConnect.ts:460 | Nothing to send: workouts on demo data never leave your phone.
+phone-watch | apps/mobile/src/tracker/phone/healthRead.ts:341 | No steps recorded today yet.
+phone-watch | apps/mobile/src/tracker/phone/healthRead.ts:349 | A weight you typed yourself is never changed.
+phone-watch | apps/mobile/src/tracker/phone/healthRead.ts:351 | A weight you typed yourself is never changed.
+phone-watch | apps/mobile/src/tracker/phone/sleepLink.ts:281 | Your sleep stays on this phone and is never sent anywhere.
+phone-watch | apps/mobile/src/tracker/plans/fit.ts:44 | We leave out moves that often bother that area.
+phone-watch | apps/mobile/src/tracker/services/coachNote.ts:302 | In ONE sentence of at most 28 words, give the member a specific post-workout note grounded ONLY in the facts provided.
+phone-watch | apps/mobile/src/tracker/services/coachNote.ts:305 | Say "record", never "PR"; say "{liftedWords()}", never "volume".
+phone-watch | apps/mobile/src/tracker/services/coachNote.ts:306 | Never mention food, protein, eating, drinking or sleep.
+phone-watch | apps/mobile/src/tracker/services/emptyWorkoutMemory.ts:38 | We added the exercises from your last empty workout.
+phone-watch | apps/mobile/src/tracker/services/importFlowWords.ts:19 | We build your routines from it.
+phone-watch | apps/mobile/src/tracker/services/importFlowWords.ts:45 | After your workouts come in, we build your routines from the workouts you repeat most.
+phone-watch | apps/mobile/src/tracker/services/importFlowWords.ts:46 | After your workouts come in, we build your routines from the workouts you repeat most.
+phone-watch | apps/mobile/src/tracker/services/importFlowWords.ts:52 | We built {n} routine{…} from the workouts you repeat most.
+phone-watch | apps/mobile/src/tracker/services/photoBackupPlan.ts:62 | ; older ones stay on this phone only
+phone-watch | apps/mobile/src/tracker/services/photoBackupPlan.ts:65 | Older ones stay on this phone only.
+phone-watch | apps/mobile/src/tracker/services/restSounds.ts:44 | Workout sounds are off, so Rest is over only buzzes.
+phone-watch | apps/mobile/src/tracker/services/routineLink.ts:276 | Only {p.found} of {p.expected} routines could be read — try again
+phone-watch | apps/mobile/src/tracker/services/routineLink.ts:284 | We couldn’t open that link.
+phone-watch | apps/mobile/src/tracker/services/routineLink.ts:287 | We found no routines on that page.
+phone-watch | apps/mobile/src/tracker/services/routineLink.ts:365 | // A routine's answer never replaces the folder's.
+phone-watch | apps/mobile/src/tracker/services/routineLink.ts:426 | // Only what ForgeAI reads of the page's own data (its other languages and pictures stay out).
+phone-watch | apps/mobile/src/tracker/services/targetChoices.ts:33 | On barbell lifts we use your gym's smallest plates.
+phone-watch | apps/mobile/src/tracker/services/targetChoices.ts:49 | Never suggest it
+phone-watch | apps/mobile/src/tracker/services/targetChoices.ts:73 | The app then suggests only weights your machines and cables really have.
+phone-watch | apps/mobile/src/tracker/services/workoutPause.ts:165 | Paused time never counts toward the workout.
+phone-watch | apps/mobile/src/tracker/share/gymBrand.ts:142 | It never shows your name or body weight.
+phone-watch | apps/mobile/src/tracker/share/gymBrand.ts:142 | The picture never shows your name, your gym or your body weight.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:46 | The bell is now your to-do list. A message or request stays there until someone handles it in its page. News, like a new member or a payment, stays until you open it.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:49 | Each person has their own bell. Tap the X to take a line off your list. It still waits in its page. “History” at the top of the bell keeps the last 7 days.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:52 | Alerts on your phone now count only what is new to you and not done yet. When everything is done, no alert comes.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:55 | With the automatic birthday wish on, the AI Assistant and Today ask you to wish only members who will not get it. A member gets it on the app at 9:30 am if their mobile number and name match your list.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:66 | Today now shows only what still needs you. A member message leaves Today once you reply or mark it done, and news like a new member shows once. The bell still keeps every alert, marked “Done”.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:69 | The AI Assistant card on Today now fits small phones, in English and Hinglish. Long ideas wrap onto the next line instead of running off the screen.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:72 | The AI Assistant ideas on Today now name the members, like “Asha: no visit in 12 days”. Tap “See who” for the list. Someone who joined today is no longer counted as not seen.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:81 | New: you can check that alerts reach this phone or computer. In Settings, under “Alerts from your members”, tap “Send a test alert”. Within about a minute and a half, it tells you if the notice showed on this device.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:86 | Mobile number boxes now keep only the 10-digit number. When a phone fills in “+91 98765 43210”, the box shows 9876543210, on sign-in, Add member, Enquiries and your join pages.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:89 | The menu headings are now easier to see, and the menu is wider, so every page name fits on one line. "Set up your gym" shows how many steps are done wherever it sits in the menu.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:92 | The bell now puts your notices in three groups: “Your gym”, “From MettleUp” and “What’s new”. Payments get their own colour and a “Payment” label, so you can spot them quickly.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:95 | The top of every page now says when it was last updated, like "Updated 30 s ago". Tap Refresh there to get the newest for the whole page without losing your place.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:98 | English or Hinglish and light or dark now sit at the top of every page. On a phone, tap the round button at the top right. When alerts are off on this device, the bell shows a card to turn them on.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:101 | Each setting now has one short line under it that says what it does for your gym.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:105 | Every date box in the admin app now shows the day first, like "17 Oct 2026", whatever language your phone or computer uses. Tap it to open the calendar, as before.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:108 | Help and feedback now answers questions about member messages: who reads questions, feedback and complaints, and how to reply in "Member messages".
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:111 | Set up your gym has a new step, “Let people join your gym online”. It puts your join link, your QR poster and how people pay in one place. The step is done once you share your link.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:112 | Open Set up your gym
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:115 | When you upload a logo on a plain white or coloured box, Branding now takes the box off for you. You see both logos side by side first, and you can keep yours as it is.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:119 | Each member’s page now has a “Share app link” button. Tap it to send that member the app link and your gym code on WhatsApp, for example when they get a new phone.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:123 | Your gym’s link now shows the right page on any phone or computer. On Android it opens the app or Google Play. On an iPhone it says the iPhone app is coming soon. On a computer it shows a QR code.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:126 | Gym timings: after you save, the button shows “Saved ✓” and a line under it says your members can see these timings. Change any time to save again.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:127 | Open Gym timings
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:138 | Your gym’s logo now shows at the top of the admin app, next to your gym’s name. Your staff see it too. To add or change it, open Branding.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:143 | In the menu, pages now sit under five headings: Members, Money, Training, Reach members and Your gym. Your first steps moved from Today to a new page, "Set up your gym". A green ring shows how many are done.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:144 | Open Set up your gym
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:148 | "Set up your gym" has a new step, "Set your gym timings". It ticks itself once you save your opening hours in Gym timings.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:149 | Open Gym timings
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:153 | New: people can ask to join your gym from a phone or a computer, with no app. In Invite members, under "Your gym’s join link", send the join link on WhatsApp or download the poster. They pay at the desk.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:155 | Open Invite members
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:159 | Each request shows on Today under "Joined online". When the person comes in and pays, tap "Make member". The Add member form opens with their details filled in.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:163 | New on Today: "Latest from your members". It shows when a member asks a question, sends a message or a complaint, orders from the shop, pays online or joins your gym. Tap a line to open it.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:167 | Needs you on Today now also counts member questions and member messages waiting for your reply. It goes down as soon as you reply. With alerts on, you hear a sound when a new one comes in.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:171 | Enquiries and Needs you on Today now say when they were last updated, like "Updated 30 s ago". Tap Refresh to see the newest at once.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:175 | New: alerts on your phone or computer even when the admin app is closed. Complaints, shop orders and members waiting at the check-in poster come at once. Turn them on, and pick when the rest come, in Settings.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:182 | Members’ workout questions are now in "Member questions", in the menu. Members send them from "Ask about your workout" in their app. You can answer them, and your reply reaches their phone at once.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:186 | Member messages now opens on the right type when you tap a line on Today. Feedback there now reaches only you and the front desk, not trainers. Complaints still reach only you.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:190 | In Staff & sign-in, "Add a person" now asks for their job: Owner, Staff (front desk), Trainer or Other. For Other, type the job, like Manager. It shows next to their name.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:191 | Open Staff & sign-in
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:195 | "Diet plans" now has six ready-made plans, veg and non-veg. Start from one and change what you like. The food and notes boxes now grow as you type, so you can read every line.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:196 | Open Diet plans
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:200 | Training progress now shows each member’s progress as line charts. After members update their app, it can show up to 12 months of their workouts since they joined your gym.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:201 | Open Training progress
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:205 | When a member uses Bring a friend for someone already in your Enquiries, it now reaches you. That enquiry shows "Invited again by" and the member’s name.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:209 | In Settings, under Payments, the payment companies you can connect are now Razorpay and Cashfree.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:214 | Members’ AI answers in the MettleUp app now use your gym’s AI credits: 10 answers use 1 credit. Your and your staff’s questions stay free. To set a limit, tap your credits in the AI Assistant.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:215 | Open the AI Assistant
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:219 | Today now shows one setup card at a time (first alerts, then putting the admin app on your phone), so the page is shorter.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:222 | In the AI Assistant, a day you pick now also shows in words, like "Sun, 18 Oct". When a message is ready, its Send button comes fully into view.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:225 | A member photo taken with the camera now looks exactly like the camera preview. It no longer flips after you tap "Take photo".
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:228 | In the AI Assistant, tapping Hindi or Both on a message now writes the Hindi words first, so you see them before you send. Before, the message could still go out in English only.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:232 | In the AI Assistant, a "Gym closed" message now always says which day, with the date. Its button says when it goes: "Send now", or the day and time you picked.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:242 | New: the AI Assistant, in the menu. Type or say what you need, in Hindi or English. It gets a message or a change ready for you to check. Nothing is sent or saved until you tap its button.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:243 | Open the AI Assistant
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:247 | Asking the AI Assistant a question is free. Each message it sends, and each member or payment it saves, uses 1 AI credit. Each workout plan it writes and you save uses 3.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:250 | Your free trial comes with 20 AI credits, once. Paid yearly plans and founding gyms get free credits every month: 50 on Starter, 100 on Pro. Monthly plans get none.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:253 | The MettleUp privacy notice now explains what the AI Assistant sends to Claude and Groq, and how long your requests are kept. Read it at mettleup.fit/privacy.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:256 | The MettleUp website now has pages on refunds and cancelling, how you get access after you pay, how to contact us, and about MettleUp. Find them at the bottom of gyms.mettleup.fit.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:266 | The MettleUp privacy notice has a new section for members in the EU, the EEA and the UK. It explains their rights and the legal reason for each use of their data. Read it at mettleup.fit/privacy.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:271 | New: Member messages. When members update their app, they can send you questions, feedback and complaints here.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:272 | Open Member messages
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:282 | Forgot your PIN? Tap "Can’t use WhatsApp? Other ways back in". For example, make a sign-in code on another phone or computer where you are signed in. Then choose a new PIN.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:285 | Checking your number on WhatsApp: the message now tells you to come back to the MettleUp page after you tap Send. Back on the page, it says "Checking your message…".
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:288 | In Settings → Sign-in & data, the button "Clear this device’s saved data" is now "Clear offline copy", with a note on what it does. It never deletes your gym’s records online.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:293 | The card to put the admin app on your phone or computer is now on the first Settings tab, Gym.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:297 | "MettleUp access", where you let MettleUp support look at your records and see each time they did, is now on Help and feedback.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:298 | Open Help and feedback
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:303 | Money → Dues: each filter ("Up to 30 days" and the others) now shows how many people are in its list. Each tile says how many memberships are not fully paid.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:314 | We updated the MettleUp terms and the data agreement for gyms. The next time you sign in as the owner, please read them and tick "I agree" again. Your staff are not asked.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:317 | The data agreement now ends with a short notice for your members. It tells them your gym keeps their membership, payments and visits in MettleUp. Copy it from mettleup.fit/data-agreement.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:320 | We rewrote the MettleUp privacy notice in simpler words. It now lists every company that helps run MettleUp. Read it at mettleup.fit/privacy.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:325 | The MettleUp name now has its new look on the sign-in page and at the bottom of the menu, the same as in the member app.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:331 | On iPhone, Settings now shows clear numbered steps to put the admin app on your home screen. The first time you open it from there, sign in once more. After that, you stay signed in.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:336 | The small "new" dots in the menu now only show for things added after your gym joined MettleUp.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:340 | On the sign-in page, "Sign in" is now the main button. To start a new gym, tap "Set up a new gym" under "New to MettleUp?".
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:343 | On a computer, the whole menu on the left now fits most screens, with "Invite members" added. "Dark" and "Light" moved to the top right. In a small window, tap "More below".
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:346 | In Settings → Sign-in & data, two cards have clearer names: "Download a backup" and "Your gym’s records".
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:356 | New "Questions" page: members can now ask a trainer a question in their MettleUp app. You or the trainer they picked reply here, and the member gets a notification on their phone.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:357 | Open Member questions
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:361 | Members now get a notification on their phone when you approve their pause or renewal, send the workout report they asked for, or have their shop order ready.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:370 | Forgot your PIN? On the sign-in page, tap "Verify with WhatsApp" and send MettleUp one free WhatsApp message. Then choose a new PIN.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:380 | More → Trainers: each trainer gets a page with their photo, hours and personal-training members. Book members with a free trainer for personal training.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:385 | Settings → Branding: the page no longer loses the logo or colour you pick before you tap Save.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:390 | Settings → Pay MettleUp: if you pay during your free trial, you keep every free day. Your paid plan starts when the trial ends.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:391 | Open Pay MettleUp
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:395 | A small orange dot now shows the way to each new feature: on the menu, on the button, and next to the page title. Open the feature and its dot goes away.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:404 | Settings → Branding: see how your logo looks as an icon on a member’s phone home screen. It shows right under your logo.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:411 | Settings → Pay MettleUp: pay for your MettleUp plan by UPI or bank transfer, then send us the reference number. This page shows when we confirm your payment and until when your plan is paid.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:412 | Open Pay MettleUp
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:424 | FITPASS, cultpass and other pass members: open a member and turn on "Comes with a pass". They get no plan and no dues, and each check-in counts as a pass visit under Visits → Pass visits.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:430 | Bring a friend: members can now send a friend a link to your gym from the MettleUp app. The friend shows in Enquiries with the member’s name. In Settings → Member app, choose free days for the member when a friend joins.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:436 | Settings → Payments: add your UPI ID, and the desk can show a UPI QR code for each payment. Online payment links work in test mode only for now: no real money moves.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:442 | Trainers: in Settings → People, tick "Trainer" on a staff member. They then see their members’ weekly progress under "Training progress". This page was called "My members" before.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:448 | Busy machines: switch it on in Settings → Member app, and members see when each machine is usually busy, so they can pick a quieter time.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:454 | Small fixes: Today’s numbers now say "Fees due" in full rupees, a pass member’s page no longer asks you to sell a membership twice, and pages that send you to Settings name the right tab.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:463 | On Money and Today you now see full amounts, like ₹12,500, not short forms like ₹12.5k.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:468 | Sell membership: if the price is above the plan’s price, or the plan starts over 30 days later than usual, the app asks you to check once. Tap "Yes, save" to keep it.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:472 | Collect payment: the app no longer takes more than the member owes.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:476 | The sign-in page now has two tabs: "Sign in" and "Set up a new gym".
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:485 | On Today, "Requests from the app" shows members who asked to pause or renew their plan. Tap Approve or Decline.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:489 | On a member’s page, tap "Request workout report". When their app sends it, tap "Download report".
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:499 | On Today, "Your numbers" shows 5 key numbers for your gym. Tap one to see the members behind it, call or WhatsApp them, or download the list.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:503 | "Your growth" (owners only, under More): see month by month if your gym is growing since it started on MettleUp.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:504 | Open Your growth
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:508 | When you add or edit a member, "Take photo" uses the desk computer’s camera.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:512 | Settings → Branding: the app suggests a gym colour from your logo.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:522 | Import members: the app now matches your Excel columns by itself, using AI. Check the columns and change any that are wrong.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:527 | Import members: if your sheet has more than one phone column, the app picks the one with real mobile numbers. You can change it on the same page.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:531 | Messages and offers you send from "Messages & offers" now pop up on members' phones at once, even when their app is closed. Members need MettleUp 0.59.0 or newer, with notifications allowed.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:532 | Open Messages & offers
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:541 | New "Challenges" page: set a goal for the month, in workouts or kg lifted. Every member who reaches it wins, and members see a top 10 list in their app.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:551 | New "Gym timings" page: add your morning and evening hours for each day (or 24 hours) and holidays. Members see in their app if you are open now.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:552 | Open Gym timings
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:561 | New "Diet plans" page: trainers send members what to eat. Members read it in their app.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:562 | Open Diet plans
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:564 | On a member's page, "Body measurements" lets the trainer note weight and body sizes, so you can see their progress.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:567 | Each person who signs in now has their own 6-digit PIN that keeps working, so nobody waits for a new code.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:568 | Open Staff & sign-in
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:675 | In the newest MettleUp app, members pick who reads their message. A question goes to “Gym owner” or a trainer by name. Feedback or a complaint goes to “Gym owner” or “Gym admin”, which is you and the front desk.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:676 | Open Member messages
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:679 | In “Member messages”, each message now says who the member sent it to, like “To: Gym owner”. Messages from an older app have no “To:” line.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:688 | New: a free web page for your gym at join.mettleup.fit, with your fees, timings, photos and a “Become a member” button. Make it in Set up your gym, under “Let people find and join your gym online”.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:689 | Open Set up your gym
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:693 | Your page is on by default, and it is your choice: you can turn it off or on again there at any time.
+whats-new | apps/dashboard/src/crm/logic/whatsNew.ts:703 | Your members now get every paid feature of the MettleUp app free while their plan is active. In Settings, Member app, choose whether those features lock 7 days after a plan ends. Members never lose their workouts.
+whats-new | apps/mobile/src/lib/whatsNew.ts:55 | Join your gym
+whats-new | apps/mobile/src/lib/whatsNew.ts:84 | "Message your gym" on the Gym tab now lets you pick who reads it, like the owner or a trainer.
+whats-new | apps/mobile/src/lib/whatsNew.ts:85 | Open the Gym tab
+whats-new | apps/mobile/src/lib/whatsNew.ts:88 | In a workout, "Today's target" now always beats your previous workout. If it can't, tap "i" to see why.
+whats-new | apps/mobile/src/lib/whatsNew.ts:89 | On some phones, gym messages and "Rest is over" made no sound. Now they do.
+whats-new | apps/mobile/src/lib/whatsNew.ts:90 | Tapping a notification now opens its page, like your gym's reply.
+whats-new | apps/mobile/src/lib/whatsNew.ts:91 | "New exercise" is simpler: tap a row, like "Main muscle", to change it.
+whats-new | apps/mobile/src/lib/whatsNew.ts:92 | Your watch keeps its big numbers full size at the largest text size.
+whats-new | apps/mobile/src/lib/whatsNew.ts:105 | On the Gym tab, tap "Message your gym" to ask a question, give feedback or make a complaint.
+whats-new | apps/mobile/src/lib/whatsNew.ts:106 | Open the Gym tab
+whats-new | apps/mobile/src/lib/whatsNew.ts:109 | Messages from your gym now pop up even while the app is open.
+whats-new | apps/mobile/src/lib/whatsNew.ts:110 | In a workout, a bar under each exercise shows the kilos you lifted and the kilos still to go.
+whats-new | apps/mobile/src/lib/whatsNew.ts:111 | Suggested reps never drop below what each set did in your previous workout at the same weight.
+whats-new | apps/mobile/src/lib/whatsNew.ts:112 | 81 exercises now have new pictures that show how to do each move.
+whats-new | apps/mobile/src/lib/whatsNew.ts:113 | On your watch, turn the dial to change your reps straight away.
+whats-new | apps/mobile/src/lib/whatsNew.ts:126 | Light mode is here: the app now follows your phone's light or dark setting.
+whats-new | apps/mobile/src/lib/whatsNew.ts:127 | Light or dark
+whats-new | apps/mobile/src/lib/whatsNew.ts:130 | Tap "Start empty workout" to get the exercises of your last one. "Start blank" removes them.
+whats-new | apps/mobile/src/lib/whatsNew.ts:131 | Suggested reps now follow the same set last time, not the set you just did.
+whats-new | apps/mobile/src/lib/whatsNew.ts:132 | Your watch screen now stays on dimmed during a workout, even with Always-on display off.
+whats-new | apps/mobile/src/lib/whatsNew.ts:133 | The phone now tells you when your watch app has an update.
+whats-new | apps/mobile/src/lib/whatsNew.ts:134 | Before Google sign-in, tick once to confirm you are 18 or older and accept our terms.
+whats-new | apps/mobile/src/lib/whatsNew.ts:143 | Your progress is now on the Profile tab: Charts, Exercises, Records, Body and Reports.
+whats-new | apps/mobile/src/lib/whatsNew.ts:144 | On any chart, tap a dot or bar, then tap the date to see those workouts.
+whats-new | apps/mobile/src/lib/whatsNew.ts:145 | Bar charts now show month names along the bottom.
+whats-new | apps/mobile/src/lib/whatsNew.ts:156 | In Settings, Plates and bars, pick 2.5 kg or 5 kg steps for machines and cables, so suggested weights match your gym.
+whats-new | apps/mobile/src/lib/whatsNew.ts:157 | Machine and cable steps
+whats-new | apps/mobile/src/lib/whatsNew.ts:160 | Exercise charts now add up your total for the time you pick, for example all-time kg lifted.
+whats-new | apps/mobile/src/lib/whatsNew.ts:161 | On an exercise chart, tap a dot, then tap its date to open that day's workout.
+whats-new | apps/mobile/src/lib/whatsNew.ts:170 | New features now have a small dot. Start on the Profile tab and follow the dots to find them.
+whats-new | apps/mobile/src/lib/whatsNew.ts:179 | Suggested weights are simpler: 1 more rep on each set until all sets reach the top of your rep range, then more weight.
+whats-new | apps/mobile/src/lib/whatsNew.ts:180 | Bodyweight exercises: the green line says when you beat last time's total reps.
+whats-new | apps/mobile/src/lib/whatsNew.ts:181 | Turn on "Sleep and workouts" in Settings to see if you slept under 6 hours before a lighter workout.
+whats-new | apps/mobile/src/lib/whatsNew.ts:181 | Sleep and workouts
+whats-new | apps/mobile/src/lib/whatsNew.ts:182 | Watch: bigger -15 and +15 buttons on the rest timer, and long names fit.
+whats-new | apps/mobile/src/lib/whatsNew.ts:183 | "Muscles ready today" and Quick workout are gone from the Workout tab.
+whats-new | apps/mobile/src/lib/whatsNew.ts:184 | Many small fixes.
+whats-new | apps/mobile/src/lib/whatsNew.ts:195 | Ask your own AI app about your workouts: open Settings, then "Ask an AI about your workouts".
+whats-new | apps/mobile/src/lib/whatsNew.ts:195 | Ask an AI
+whats-new | apps/mobile/src/lib/whatsNew.ts:196 | If you train at a gym, your share pictures can show its logo. In Progress photos, tap "Share before and after".
+whats-new | apps/mobile/src/lib/whatsNew.ts:197 | Tap "Invite a friend" on the Gym tab to send a friend a link to your gym.
+whats-new | apps/mobile/src/lib/whatsNew.ts:197 | Open the Gym tab
+whats-new | apps/mobile/src/lib/whatsNew.ts:206 | After a set on a machine or barbell, your phone shows "In use" and how many kg you need to beat your previous total.
+whats-new | apps/mobile/src/lib/whatsNew.ts:207 | Each set now gets its own rep goal. If you are stuck at a weight, the app asks before it suggests a lighter one.
+whats-new | apps/mobile/src/lib/whatsNew.ts:208 | Suggested machine weights now follow the steps on the machine, like 35, 40 and 45 kg.
+whats-new | apps/mobile/src/lib/whatsNew.ts:209 | On the chart of an exercise, tap a point and then its label to open that workout.
+whats-new | apps/mobile/src/lib/whatsNew.ts:210 | On your watch, you can now log each set with the dial and one tap on Done.
+whats-new | apps/mobile/src/lib/whatsNew.ts:219 | Your gym can post a workout of the day. Find it on the Workout tab and start it with one tap.
+whats-new | apps/mobile/src/lib/whatsNew.ts:220 | If your trainer filmed an exercise, tap "Watch your trainer" on that exercise's page.
+whats-new | apps/mobile/src/lib/whatsNew.ts:223 | Want your trainer to follow your progress? Switch on "Share my workouts with my trainers".
+whats-new | apps/mobile/src/lib/whatsNew.ts:224 | What my gym can see
+whats-new | apps/mobile/src/lib/whatsNew.ts:226 | If your gym shows busy machines, "What my gym can see" says what is shared, and you can switch it off.
+whats-new | apps/mobile/src/lib/whatsNew.ts:236 | Your main lifts now show a strength level on the exercise page. Your body weight stays private.
+whats-new | apps/mobile/src/lib/whatsNew.ts:237 | Earn badges by training, like 50 workouts. Tap "Badges" on your Profile to see them all.
+whats-new | apps/mobile/src/lib/whatsNew.ts:238 | If a set felt easy, the next sets suggest a little more. Rest that runs over now shows in red.
+whats-new | apps/mobile/src/lib/whatsNew.ts:239 | Charts spots a muscle you train much less than the rest and offers one exercise swap for 8 weeks.
+whats-new | apps/mobile/src/lib/whatsNew.ts:240 | Settings is simpler, with one place for backup. The muscle map can show the last 30 or 90 days.
+whats-new | apps/mobile/src/lib/whatsNew.ts:241 | At gym check-in, the front desk confirms your mobile number once, so nobody else can use it.
+whats-new | apps/mobile/src/lib/whatsNew.ts:250 | Exercise pictures now use the MettleUp colours. The exercise list shows a close-up of each one.
+whats-new | apps/mobile/src/lib/whatsNew.ts:251 | Triceps Dip, Cable Lateral Raise, Walking Lunge and Plank now have pictures.
+whats-new | apps/mobile/src/lib/whatsNew.ts:261 | Settings → Health Connect can now add weigh-ins from your smart scale to your body weight, and show today's steps.
+whats-new | apps/mobile/src/lib/whatsNew.ts:262 | Open Health Connect
+whats-new | apps/mobile/src/lib/whatsNew.ts:264 | On your watch, the rest timer has bigger text, and "Workout saved" shows when you finish.
+whats-new | apps/mobile/src/lib/whatsNew.ts:265 | When you join a gym, you can scan the gym poster instead of typing the code. A wrong code is caught at once.
+whats-new | apps/mobile/src/lib/whatsNew.ts:266 | Is your gym not on MettleUp yet? Open the Gym tab and tap "Recommend MettleUp to my gym".
+whats-new | apps/mobile/src/lib/whatsNew.ts:276 | The new MettleUp logo now shows when the app opens and at the top of the Workout, Progress and Gym tabs.
+whats-new | apps/mobile/src/lib/whatsNew.ts:277 | When a new version is ready, a pop-up tells you (never during a workout). "Later" asks again in 3 days.
+whats-new | apps/mobile/src/lib/whatsNew.ts:278 | Touch and hold the app icon and tap "Resume workout". It now opens your workout, not the Workout tab.
+whats-new | apps/mobile/src/lib/whatsNew.ts:287 | Have a Wear OS watch? Start a workout and tap "Install on watch" at the top to see rest, next set and heart rate there.
+whats-new | apps/mobile/src/lib/whatsNew.ts:296 | Your watch now keeps MettleUp open all workout. It dims with your wrist down and lights up when you look.
+whats-new | apps/mobile/src/lib/whatsNew.ts:297 | During a workout, each exercise now shows your next set first, like "Next: 75 kg × 5".
+whats-new | apps/mobile/src/lib/whatsNew.ts:298 | In the exercises list, exercises without a drawing now show a photo of the start position.
+whats-new | apps/mobile/src/lib/whatsNew.ts:300 | On the Gym tab, "Leaderboard" is now called "Ranking", so it fits when you use big text.
+whats-new | apps/mobile/src/lib/whatsNew.ts:301 | Open the Gym tab
+whats-new | apps/mobile/src/lib/whatsNew.ts:303 | To join a gym, "Scan the poster" is now the first button on the Gym tab. You can still type the code.
+whats-new | apps/mobile/src/lib/whatsNew.ts:304 | On the Progress photos screen, if your phone blocks the camera, tap "Allow the camera in Settings" to turn it on.
+whats-new | apps/mobile/src/lib/whatsNew.ts:313 | "Check in" on the Gym tab now opens a scanner in MettleUp. Point it at the QR poster at your gym’s desk.
+whats-new | apps/mobile/src/lib/whatsNew.ts:314 | Open the Gym tab
+whats-new | apps/mobile/src/lib/whatsNew.ts:316 | Fixed: MettleUp could close by itself when a message from your gym came in.
+whats-new | apps/mobile/src/lib/whatsNew.ts:325 | The Gym tab now has 3 parts at the top: "Shop" (only if your gym sells things), "My gym" and "Leaderboard".
+whats-new | apps/mobile/src/lib/whatsNew.ts:326 | Open the Gym tab
+whats-new | apps/mobile/src/lib/whatsNew.ts:329 | To pause or renew your membership, go to Gym, then "My gym", and tap "Pause my plan" or "Renew my plan".
+whats-new | apps/mobile/src/lib/whatsNew.ts:330 | Open the Gym tab
+whats-new | apps/mobile/src/lib/whatsNew.ts:332 | If your gym wants to see your workout report, the app asks you first. Nothing is sent unless you say yes.
+whats-new | apps/mobile/src/lib/whatsNew.ts:333 | Many exercises now show a start and an end picture, so you can check your body position.
+whats-new | apps/mobile/src/lib/whatsNew.ts:334 | On an exercise page, tap "1-rep max and % calculator" to see the most you can lift once, and any % of it.
+whats-new | apps/mobile/src/lib/whatsNew.ts:335 | Voice feedback now has a second way to send. If you saw "Couldn't reach us" before, please try again.
+whats-new | apps/mobile/src/lib/whatsNew.ts:344 | In the feedback box, tap "Speak" and talk in Hindi or English. The app writes it as text you can fix before "Send".
+whats-new | apps/mobile/src/lib/whatsNew.ts:348 | Your gym's first 2 messages a day still pop up. Any more that day wait quietly in the Gym tab, so your phone stays calm.
+whats-new | apps/mobile/src/lib/whatsNew.ts:349 | Open the Gym tab
+whats-new | apps/mobile/src/lib/whatsNew.ts:360 | Tap the round button on any screen to tell us what is wrong or what you want, by speaking or typing.
+whats-new | apps/mobile/src/lib/whatsNew.ts:363 | After a workout, see the kg you lifted today next to last time. Each exercise's History shows kg per workout too.
+whats-new | apps/mobile/src/lib/whatsNew.ts:364 | Pull-ups, push-ups and other body-weight moves now show last time's numbers from any workout, in any routine.
+whats-new | apps/mobile/src/lib/whatsNew.ts:365 | On the Gym tab, see how busy your gym is right now and its quiet hours later today.
+whats-new | apps/mobile/src/lib/whatsNew.ts:365 | Open the Gym tab
+whats-new | apps/mobile/src/lib/whatsNew.ts:367 | Tap a name on your gym's leaderboard to see the workouts that member shares. Sharing yours is off until you turn it on.
+whats-new | apps/mobile/src/lib/whatsNew.ts:368 | Share my workouts
+whats-new | apps/mobile/src/lib/whatsNew.ts:370 | Lateral Raise and Incline Dumbbell Press now have a short moving demo on their exercise page, to check your form.
+whats-new | apps/mobile/src/lib/whatsNew.ts:380 | Messages and offers from your gym now pop up on your phone right away, even when the app is closed.
+whats-new | apps/mobile/src/lib/whatsNew.ts:383 | During a workout, the "kg to beat" and the PREVIOUS column now come from the same last workout, so the numbers match.
+whats-new | apps/mobile/src/lib/whatsNew.ts:384 | If a lighter first set hit the top of its reps last time, the app now suggests your main weight for it.
+whats-new | apps/mobile/src/lib/whatsNew.ts:385 | Match the "kg to beat" exactly and the app says "reached". It says "beaten" only when you lift more.
+whats-new | apps/mobile/src/lib/whatsNew.ts:386 | "Resume workout" now opens at the exercise you were on, so you do not have to scroll.
+whats-new | apps/mobile/src/lib/whatsNew.ts:395 | Gym tab: a leaderboard of your gym for the last 30 days, by workouts or by kg lifted. See your place and the top 10.
+whats-new | apps/mobile/src/lib/whatsNew.ts:398 | Reach the challenge goal shown in the Gym tab, then show that screen at the front desk for your reward.
+whats-new | apps/mobile/src/lib/whatsNew.ts:400 | Other members see your name only if you switch it on: Settings → Your gym → What my gym can see.
+whats-new | apps/mobile/src/lib/whatsNew.ts:410 | Progress tab: new tabs at the top, Kg lifted, Sets and Duration. Tap one to see your totals for it.
+whats-new | apps/mobile/src/lib/whatsNew.ts:414 | Progress also shows your next workout's total kg if you hit every target, next to last time's total.
+whats-new | apps/mobile/src/lib/whatsNew.ts:418 | New phone? Tap "Continue with Google" on the first screen to find and restore your Google Drive backup.
+whats-new | apps/mobile/src/lib/whatsNew.ts:428 | Settings → Back up and restore → "Save a backup": one file with your workouts, routines, photos and settings.
+whats-new | apps/mobile/src/lib/whatsNew.ts:429 | Save a backup
+whats-new | apps/mobile/src/lib/whatsNew.ts:432 | New phone, or back after a while? Tap "Restore from a backup" to bring it all back, even from the old ForgeAI app.
+whats-new | apps/mobile/src/lib/whatsNew.ts:433 | Restore from a backup
+whats-new | apps/mobile/src/lib/whatsNew.ts:436 | Gym members: measurements your trainer takes now show in Progress → Body, marked with your gym's name.
+whats-new | apps/mobile/src/lib/whatsNew.ts:440 | Your trainer can now send you a diet plan. Once sent, tap "Diet plan" in the Gym tab to see your meals.
+whats-new | apps/mobile/src/lib/whatsNew.ts:441 | Open the Gym tab
+whats-new | apps/mobile/src/lib/whatsNew.ts:445 | The Gym tab now shows if your gym is open right now, with its hours for the week and any holiday.
+whats-new | apps/mobile/src/lib/whatsNew.ts:446 | Open the Gym tab
+whats-new | apps/mobile/src/lib/whatsNew.ts:456 | When MettleUp asks, turn on "Alarms & reminders" so "Rest is over" rings on time, even on a locked phone.
+whats-new | apps/mobile/src/lib/whatsNew.ts:457 | Open Rest timer and sounds
+whats-new | apps/mobile/src/lib/whatsNew.ts:465 | ForgeAI is now called MettleUp, with a new orange logo. Same app: your workouts and history are all still here.
+whats-new | apps/mobile/src/lib/whatsNew.ts:466 | At the bottom of the screen, the same 4 tabs always show: Workout, Progress, Gym and Profile. They never move.
+whats-new | apps/mobile/src/lib/whatsNew.ts:468 | Your charts, records and body weight are now together in the new Progress tab.
+whats-new | apps/mobile/src/lib/whatsNew.ts:472 | In the Gym tab, join your gym, or check in at the front desk by scanning the poster with your camera.
+whats-new | apps/mobile/src/lib/whatsNew.ts:473 | Open the Gym tab
+whats-new | apps/mobile/src/lib/whatsNew.ts:476 | Settings is now in clear groups. Rest timer options and sounds have their own page, "Rest timer and sounds".
+whats-new | apps/mobile/src/lib/whatsNew.ts:477 | Open Rest timer and sounds
+whats-new | apps/mobile/src/lib/whatsNew.ts:480 | Health Connect (Google's health app) now stays on. Your workouts are sent even if you don't allow calories there.
+whats-new | apps/mobile/src/lib/whatsNew.ts:481 | Health Connect settings
+whats-new | apps/mobile/src/lib/whatsNew.ts:490 | "What's new" is now easier to read, and a button under a change takes you straight to it.
+whats-new | apps/mobile/src/lib/whatsNew.ts:491 | See what's new
+whats-new | apps/mobile/src/lib/whatsNew.ts:493 | Settings → "What's new" shows your last 3 updates.
+whats-new | apps/mobile/src/lib/whatsNew.ts:501 | Gym members: your gym can reward you for training. Hit its target days and get free days on your membership.
+whats-new | apps/mobile/src/lib/whatsNew.ts:502 | See your gym's offer
+whats-new | apps/mobile/src/lib/whatsNew.ts:504 | Only the dates of the workouts that count leave your phone, and only after you tap Join. Leave the offer any time.
+whats-new | apps/mobile/src/lib/whatsNew.ts:510 | Scrolling a workout is easier. A swipe that starts on a weight or reps box now scrolls the page.
+whats-new | apps/mobile/src/lib/whatsNew.ts:517 | Joined a gym that has its own look? The app changes to your gym's name and colours.
+whats-new | apps/mobile/src/lib/whatsNew.ts:518 | Open the Gym tab
+whats-new | apps/mobile/src/lib/whatsNew.ts:520 | After you join, a "Gym" button appears at the bottom.
+whats-new | apps/mobile/src/lib/whatsNew.ts:521 | To leave your gym, open Settings, then "Your gym".
+whats-new | apps/mobile/src/lib/whatsNew.ts:521 | Open Your gym
+whats-new | apps/mobile/src/lib/whatsNew.ts:528 | After a workout, see if you beat your last time on the same routine. Tap the result to see each exercise.
+whats-new | apps/mobile/src/lib/whatsNew.ts:530 | Haven't trained a muscle in 3 weeks? The Workout tab may suggest a few sets for it.
+whats-new | apps/mobile/src/lib/whatsNew.ts:531 | Turn tips on or off
+whats-new | apps/mobile/src/lib/whatsNew.ts:534 | Gym members: show your workout days to the front desk on your screen, from "My membership".
+whats-new | apps/mobile/src/lib/whatsNew.ts:535 | Open My membership
+whats-new | apps/mobile/src/lib/whatsNew.ts:543 | Each exercise shows how many kilos you still need to beat last time. It turns green when you do.
+whats-new | apps/mobile/src/lib/whatsNew.ts:545 | Last time's numbers now come from the last time you did that exercise, in any routine.
+whats-new | apps/mobile/src/lib/whatsNew.ts:548 | Warm-up sets stay as they were last time. The app never changes them.
+whats-new | apps/mobile/src/lib/whatsNew.ts:549 | Push-ups, pull-ups and other bodyweight moves now show how many reps beat last time.
+whats-new | apps/mobile/src/lib/whatsNew.ts:551 | Turn on a big "In use" screen after each set, so others know the machine is taken.
+whats-new | apps/mobile/src/lib/whatsNew.ts:552 | Turn it on
+whats-new | apps/mobile/src/lib/whatsNew.ts:555 | The app now asks before sending past workouts to Health Connect (Google's health app).
+whats-new | apps/mobile/src/lib/whatsNew.ts:564 | During a workout, your phone's notifications show how long you've been training.
+whats-new | apps/mobile/src/lib/whatsNew.ts:566 | Pick the sound that plays when your rest is over: chime, bell, double beep or whistle.
+whats-new | apps/mobile/src/lib/whatsNew.ts:567 | Pick a sound
+whats-new | apps/mobile/src/lib/whatsNew.ts:575 | Did a workout without a routine? Save it as a routine in one tap when you finish.
+whats-new | apps/mobile/src/lib/whatsNew.ts:576 | Resting? Tap the rest timer to show a big "In use" screen, so others know the machine is taken.
+whats-new | apps/mobile/src/lib/whatsNew.ts:577 | Change an exercise's rest time while you rest, and the running timer changes too.
+whats-new | apps/mobile/src/lib/whatsNew.ts:586 | The Workout tab now tells you when a new version of MettleUp is ready.
+whats-new | apps/mobile/src/lib/whatsNew.ts:587 | Tell us what to fix or add, by typing or speaking.
+whats-new | apps/mobile/src/lib/whatsNew.ts:588 | Joining a gym now asks you to confirm you are 18 or older and agree to the terms.
+whats-new | apps/mobile/src/lib/whatsNew.ts:589 | MettleUp no longer asks to use your microphone.
+whats-new | apps/mobile/src/lib/whatsNew.ts:596 | Your trainer's workout plans now appear on your Workout tab by themselves.
+whats-new | apps/mobile/src/lib/whatsNew.ts:597 | In a routine, each exercise shows the kilos to beat, and each set shows what to aim for.
+whats-new | apps/mobile/src/lib/whatsNew.ts:599 | New "My membership" page: your plan, end date, days left and visits this month.
+whats-new | apps/mobile/src/lib/whatsNew.ts:600 | Open My membership
+whats-new | apps/mobile/src/lib/whatsNew.ts:602 | Scan the QR code at your gym's desk, then start today's workout in one tap.
+whats-new | apps/mobile/src/lib/whatsNew.ts:603 | Got a code from your gym? Join from the first screen and add your gym's logo to your home screen.
+whats-new | apps/mobile/src/lib/whatsNew.ts:610 | After you rate how hard a set felt, the tick shows once and keeps the numbers you typed.
+whats-new | apps/mobile/src/lib/whatsNew.ts:611 | Switching gyms while a shop order is waiting now asks you first, because switching cancels it.
+whats-new | apps/mobile/src/lib/whatsNew.ts:618 | Join your gym with its code.
+whats-new | apps/mobile/src/lib/whatsNew.ts:618 | Open the Gym tab
+whats-new | apps/mobile/src/lib/whatsNew.ts:619 | Rate how hard a set felt, and the set ticks itself before your rest starts.
+whats-new | apps/mobile/src/lib/whatsNew.ts:620 | A small handle shows which exercises and routines you can drag to move.
+whats-new | apps/mobile/src/lib/whatsNew.ts:621 | Fixes for large text sizes, and for the keyboard after opening the app from its home-screen shortcut.
+whats-new | apps/mobile/src/lib/whatsNew.ts:628 | New: the MettleUp watch app. Your rest counts down and buzzes on your Wear OS watch.
+whats-new | apps/mobile/src/lib/whatsNew.ts:629 | Said no to the camera? The app now tells you and opens your phone's Settings to allow it.
+whats-new | apps/mobile/src/lib/whatsNew.ts:630 | Many small fixes from a full check of the app.
+whats-new | apps/mobile/src/lib/whatsNew.ts:638 | The rep range you set in Settings now shows when you edit a routine.
+whats-new | apps/mobile/src/lib/whatsNew.ts:639 | Choose your reps
+whats-new | apps/mobile/src/lib/whatsNew.ts:641 | A new app icon that fits round home screens.
+whats-new | apps/mobile/src/lib/whatsNew.ts:648 | Rate how hard a set felt with one tap, and your rest timer starts.
+whats-new | apps/mobile/src/lib/whatsNew.ts:649 | The "Rest is over" sound is now the same with the screen off as with the app open.
+whats-new | apps/mobile/src/lib/whatsNew.ts:650 | A new record pops up with confetti and names the record you beat.
+whats-new | apps/mobile/src/lib/whatsNew.ts:651 | During a workout, hold and drag an exercise to move it.
+whats-new | apps/mobile/src/lib/whatsNew.ts:653 | Choose how big each suggested weight increase is: "Weight jumps".
+whats-new | apps/mobile/src/lib/whatsNew.ts:654 | Choose your weight step
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:111 | a power cut
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:112 | a water problem
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:112 | पानी की समस्या
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:113 | मरम्मत के काम
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:118 | put the weights back after use
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:118 | इस्तेमाल के बाद वज़न वापस रखें
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:119 | wear clean shoes inside the gym
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:119 | जिम के अंदर साफ़ जूते पहनें
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:120 | bring a towel and wipe the bench after use
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:120 | तौलिया साथ लाएँ और इस्तेमाल के बाद बेंच पोंछें
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:140 | Closed for a festival
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:143 | Open again on
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:143 | Open again at
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:146 | The gym is closed on {closedOn} for {festival}. We open again on {openOn} at {openAt}. Happy {festival}!
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:149 | {closedOn} को जिम बंद रहेगा
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:150 | {festival} के कारण {closedOn} को जिम बंद रहेगा। {openOn} को {openAt} से फिर खुलेगा। {festival} की शुभकामनाएँ!
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:159 | Open again on
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:159 | Open again at
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:161 | Gym closed today
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:162 | Sorry, the gym is closed today because of {reason}. We open again on {openOn} at {openAt}.
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:165 | आज जिम बंद है
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:166 | माफ़ कीजिए, {reason} के कारण आज जिम बंद है। {openOn} को {openAt} से फिर खुलेगा।
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:179 | Sunday opens at (optional)
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:180 | Sunday closes at (optional)
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:184 | From {from} the gym is open {opens} to {closes}.<< Sunday: {sunOpens} to {sunCloses}.>>
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:187 | {from} से जिम का नया समय
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:188 | {from} से जिम {opens} से {closes} तक खुलेगा।<< रविवार: {sunOpens} से {sunCloses} तक।>>
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:198 | On {on} the gym is open only {opens} to {closes}.
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:199 | {festival} पर जिम का समय
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:199 | {on} को जिम सिर्फ़ {opens} से {closes} तक खुला रहेगा।
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:204 | Machine under repair
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:209 | {machine} under repair
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:210 | The {machine} is under repair till {till}. Sorry for the trouble. Ask a trainer for another exercise.
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:213 | {machine} की मरम्मत चल रही है
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:214 | {till} तक {machine} की मरम्मत चल रही है। असुविधा के लिए माफ़ी। ट्रेनर से दूसरी एक्सरसाइज़ पूछें।
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:224 | New {batch} batch
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:224 | A new {batch} batch starts on {starts}, {from} to {to}. Ask at the desk to join.
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:225 | नया {batch} बैच
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:225 | {starts} से नया {batch} बैच शुरू, {from} से {to} तक। जुड़ने के लिए डेस्क पर पूछें।
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:233 | strength and fat loss
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:234 | {name} joins us from {from} and trains {what}. Say hello at the gym!
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:235 | {from} से {name} हमारे साथ हैं। वे {what} सिखाते हैं। जिम में मिलिए!
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:240 | A request to everyone
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:244 | A request to everyone
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:244 | Please {rule}. It keeps the gym clean and safe for all. Thank you!
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:245 | सबसे एक निवेदन
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:245 | कृपया {rule}। इससे जिम सबके लिए साफ़ और सुरक्षित रहता है। धन्यवाद!
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:254 | Join or renew by
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:256 | {festival} offer: {discount} off
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:257 | Join or renew by {by} and get {discount} off the {plan} plan. Ask at the desk.
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:260 | {festival} ऑफ़र: {discount} की छूट
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:261 | {by} तक जॉइन या रिन्यू करें और {plan} प्लान पर {discount} की छूट पाएँ। डेस्क पर पूछें।
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:272 | Renew early, get {days} free
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:273 | Renew before your plan ends and get {days} extra free. Offer till {till}.
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:276 | जल्दी रिन्यू करें, {days} मुफ़्त
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:277 | प्लान ख़त्म होने से पहले रिन्यू करें और {days} मुफ़्त पाएँ। ऑफ़र {till} तक।
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:283 | Bring a friend
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:286 | Free days for the member
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:286 | Discount for the friend
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:288 | Bring a friend, get {days} free
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:289 | When a friend joins and names you, you get {days} extra and your friend gets {discount} off. Till {till}.
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:292 | दोस्त को लाएँ, {days} मुफ़्त
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:293 | आपका नाम लेकर दोस्त जॉइन करे तो आपको {days} ज़्यादा और दोस्त को {discount} की छूट। {till} तक।
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:299 | Couple and family
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:304 | Couple and family offer
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:305 | Join together and save: {discount} off each for 2 or more family members, any plan. Till {till}.
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:308 | कपल और फ़ैमिली ऑफ़र
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:309 | साथ जॉइन करें: परिवार के 2 या ज़्यादा लोगों में हर सदस्य को किसी भी प्लान पर {discount} की छूट। {till} तक।
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:318 | Price a month (₹)
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:320 | Student offer: {price} a month
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:321 | Students get the {plan} plan for {price} a month. Show your college ID at the desk.
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:324 | स्टूडेंट ऑफ़र: {price} प्रति महीना
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:325 | स्टूडेंट्स को {plan} प्लान {price} प्रति महीना। डेस्क पर कॉलेज आईडी दिखाएँ।
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:331 | Longer plan saves money
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:341 | Save with a {months}-month plan
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:342 | Take the {months}-month plan for {price} and save {saving} over paying monthly. Till {till}.
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:345 | {months} महीने के प्लान पर बचत
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:347 | {months} महीने का प्लान {price} में लें। हर महीने फ़ीस देने के मुक़ाबले {saving} की बचत। {till} तक।
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:358 | Join us for {event} on {on} at {at}. Free for members. Bring a friend!
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:359 | {on} को {at} {event} में आइए। मेंबर्स के लिए मुफ़्त। दोस्त को भी लाएँ!
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:367 | a free month
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:368 | Our {challenge} starts on {starts}. Sign up at the desk. Prize: {prize}.
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:369 | {starts} से {challenge} शुरू
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:369 | {starts} से हमारा {challenge} शुरू। डेस्क पर नाम लिखवाएँ। इनाम: {prize}।
+templates | apps/dashboard/src/crm/logic/messageTemplates.ts:378 | Haven’t seen you
+templates | apps/dashboard/src/crm/logic/whatsapp.ts:60 | या {offer.months} महीने का प्लान {formatINR(offer.priceP)} में लें। हर महीने फ़ीस देने के मुक़ाबले {formatINR(offer.savingP)} की बचत।
+templates | apps/dashboard/src/crm/logic/whatsapp.ts:61 | Or take the {offer.months}-month plan for {formatINR(offer.priceP)} and save {formatINR(offer.savingP)} over paying month by month.
+templates | apps/dashboard/src/crm/logic/whatsapp.ts:97 | नमस्ते {n} जी,
+templates | apps/dashboard/src/crm/logic/whatsapp.ts:146 | Haven’t seen you
+templates | apps/dashboard/src/crm/logic/whatsapp.ts:148 | Years with us
+templates | apps/dashboard/src/crm/logic/whatsapp.ts:159 | {hi} {formatINR(v.outstandingP)} of your fees is due. Please pay at the front desk or on UPI.
+templates | apps/dashboard/src/crm/logic/whatsapp.ts:166 | {hi} your {plan} plan ends {when}. Renew at the desk to keep training without a break.
+templates | apps/dashboard/src/crm/logic/whatsapp.ts:171 | your {plan} plan ended on {ended}. We miss you at the gym. Renew and come back any day.
+templates | apps/dashboard/src/crm/logic/whatsapp.ts:172 | we miss you at the gym. Renew and come back any day.
+templates | apps/dashboard/src/crm/logic/whatsapp.ts:178 | Happy birthday, {n}! Wishing you a great year and great workouts.
+templates | apps/dashboard/src/crm/logic/whatsapp.ts:179 | Happy birthday! Wishing you a great year and great workouts.
+templates | apps/dashboard/src/crm/logic/whatsapp.ts:184 | welcome to {name}!
+templates | apps/dashboard/src/crm/logic/whatsapp.ts:184 | welcome to the gym!
+templates | apps/dashboard/src/crm/logic/whatsapp.ts:185 | Your {plan} plan runs till {formatDay(v.coversUntil)}.
+templates | apps/dashboard/src/crm/logic/whatsapp.ts:186 | See you at the gym.
+templates | apps/dashboard/src/crm/logic/whatsapp.ts:191 | we haven’t seen you at the gym yet.
+templates | apps/dashboard/src/crm/logic/whatsapp.ts:191 | we haven’t seen you in {…}.
+templates | apps/dashboard/src/crm/logic/whatsapp.ts:192 | Your plan runs till {formatDay(v.coversUntil)}.
+templates | apps/dashboard/src/crm/logic/whatsapp.ts:193 | {hi} {since} All well?{runs} See you soon.
+templates | apps/dashboard/src/crm/logic/whatsapp.ts:199 | at the gym
+templates | apps/dashboard/src/crm/logic/whatsapp.ts:200 | {hi} today you complete {span} {where}. Thank you for training with us!
+templates | apps/dashboard/src/crm/logic/whatsapp.ts:207 | आपका {planWord(v.current.planName)} प्लान
+templates | apps/dashboard/src/crm/logic/whatsapp.ts:212 | {hi} आपकी {formatINR(v.outstandingP)} फ़ीस बाक़ी है। कृपया डेस्क पर या UPI से जमा करें।
+templates | apps/dashboard/src/crm/logic/whatsapp.ts:219 | {hi} {plan} {when} ख़त्म हो रहा है। बिना ब्रेक ट्रेनिंग जारी रखने के लिए डेस्क पर रिन्यू करें।
+templates | apps/dashboard/src/crm/logic/whatsapp.ts:223 | {plan} {formatDayHi(v.current.endsOn)} को ख़त्म हो गया। जिम में आपकी कमी महसूस हो रही है। कभी भी रिन्यू करके वापस आइए।
+templates | apps/dashboard/src/crm/logic/whatsapp.ts:224 | जिम में आपकी कमी महसूस हो रही है। कभी भी रिन्यू करके वापस आइए।
+templates | apps/dashboard/src/crm/logic/whatsapp.ts:230 | जन्मदिन की बहुत-बहुत शुभकामनाएँ, {n} जी! आपका साल शानदार रहे।
+templates | apps/dashboard/src/crm/logic/whatsapp.ts:231 | जन्मदिन की बहुत-बहुत शुभकामनाएँ! आपका साल शानदार रहे।
+templates | apps/dashboard/src/crm/logic/whatsapp.ts:236 | {plan} {formatDayHi(v.coversUntil)} तक है।
+templates | apps/dashboard/src/crm/logic/whatsapp.ts:237 | जिम में मिलते हैं।
+templates | apps/dashboard/src/crm/logic/whatsapp.ts:241 | आप अभी तक जिम नहीं आए।
+templates | apps/dashboard/src/crm/logic/whatsapp.ts:241 | {n} दिन से आप जिम नहीं आए।
+templates | apps/dashboard/src/crm/logic/whatsapp.ts:242 | आपका प्लान {formatDayHi(v.coversUntil)} तक है।
+templates | apps/dashboard/src/crm/logic/whatsapp.ts:243 | {hi} {since} सब ठीक है?{runs} जल्द मिलते हैं।
+templates | apps/dashboard/src/crm/logic/whatsapp.ts:247 | आपका 1 साल पूरा हुआ
+templates | apps/dashboard/src/crm/logic/whatsapp.ts:247 | आपके {years} साल पूरे हुए
+templates | apps/dashboard/src/crm/logic/whatsapp.ts:249 | {name} के साथ
+templates | apps/dashboard/src/crm/logic/whatsapp.ts:250 | {hi} आज {where} {span}। हमारे साथ ट्रेनिंग के लिए शुक्रिया!
+templates | apps/dashboard/src/crm/logic/whatsapp.ts:282 | Received by {taker}.
+templates | apps/dashboard/src/crm/logic/whatsapp.ts:282 | {hello(memberName)} we received your {formatINR(p.amountP)} on {formatDay(p.paidOn)} ({methodLabel(p.method)}). Receipt no. {p.receiptNo}.{…} Thank you!
+templates | apps/dashboard/src/crm/logic/whatsapp.ts:283 | {formatINR(stillDueP)} is still due.
+templates | apps/dashboard/src/crm/shop/messages.ts:39 | Gym closed on [day]
+templates | apps/dashboard/src/crm/shop/messages.ts:42 | The gym is closed on [day] for [reason]. We open again on [day] at [time].
+templates | apps/dashboard/src/crm/shop/messages.ts:51 | New gym timings
+templates | apps/dashboard/src/crm/shop/messages.ts:54 | From [date], the gym is open [time] to [time]. Sunday: [time] to [time].
+templates | apps/dashboard/src/crm/shop/messages.ts:78 | Join us for [event] on [date] at [time]. Everyone is welcome.
+templates | apps/dashboard/src/crm/shop/messages.ts:112 | Write a title.
+templates | apps/dashboard/src/crm/shop/messages.ts:114 | Keep the title to {TITLE_MAX} letters.
+templates | apps/dashboard/src/crm/shop/messages.ts:115 | Keep the message to {BODY_MAX} letters.
+templates | apps/dashboard/src/crm/shop/messages.ts:141 | You sent {DAY_MAX} messages today. That is the most for one day. Send it in the app tomorrow, or on WhatsApp now.
+templates | apps/dashboard/src/crm/shop/messages.ts:147 | You already sent an offer or event today. Members get at most one a day in the app. Send it tomorrow, or on WhatsApp now.
+templates | apps/dashboard/src/crm/shop/messages.ts:148 | An offer or event already goes out that day. Members get at most one a day in the app. Pick another day.
+templates | apps/dashboard/src/crm/shop/messages.ts:151 | You sent {OFFERS_A_WEEK} offers or events this week. Members get at most {OFFERS_A_WEEK} a week in the app. Wait a few days, or use WhatsApp now.
+templates | apps/dashboard/src/crm/shop/messages.ts:183 | Members who get many messages start to ignore them
+templates | apps/dashboard/src/crm/shop/messages.ts:185 | for that day
+templates | apps/dashboard/src/crm/shop/messages.ts:188 | This is your {ordinal(thisDay)} message {day}, so members get it in the app without a phone pop-up. {ignore}.
+templates | apps/dashboard/src/crm/shop/messages.ts:189 | This is your {ordinal(thisDay)} message {day}. {ignore}, so send only what matters.
+templates | apps/dashboard/src/crm/shop/messages.ts:193 | This is your {ordinal(thisWeek)} message {…}. {ignore}, so send only what matters.
+templates | apps/dashboard/src/crm/shop/messages.ts:273 | Pick a day and a time.
+templates | apps/dashboard/src/crm/shop/messages.ts:274 | Pick a time at least 5 minutes from now.
+templates | apps/dashboard/src/crm/shop/messages.ts:275 | Pick a time within the next 30 days.
+templates | apps/dashboard/src/crm/shop/messages.ts:285 | No app members yet
+templates | apps/dashboard/src/crm/shop/messages.ts:293 | You already sent an offer or event today. Members get at most one a day. Send it tomorrow.
+templates | apps/dashboard/src/crm/shop/messages.ts:295 | You sent 3 offers or events this week. Members get at most 3 a week. Wait a few days.
+templates | apps/dashboard/src/crm/shop/messages.ts:297 | You sent {DAY_MAX} messages today. That is the most for one day. Send it tomorrow.
+templates | apps/dashboard/src/crm/shop/messages.ts:299 | Keep the title to {TITLE_MAX} letters and the message to {BODY_MAX}.
+templates | apps/dashboard/src/crm/shop/messages.ts:304 | {errorWords(err)} Check the Sent list below before sending it again.
+templates | apps/mobile/src/shop/autoReminders.ts:159 | Your plan ends tomorrow. Renew at the desk to keep training.
+templates | apps/mobile/src/shop/autoReminders.ts:160 | Your plan ends in {n} days, on {…}. Renew at the desk to keep training.
+templates | apps/mobile/src/shop/autoReminders.ts:161 | Your plan ends today. Renew at the desk to keep training.
+templates | apps/mobile/src/shop/autoReminders.ts:163 | Your plan ended on {…}. Renew at the desk to keep your progress going.
+templates | apps/mobile/src/shop/autoReminders.ts:164 | Happy birthday{…}! Best wishes from all of us at {gym}.
+templates | apps/mobile/src/shop/autoReminders.ts:165 | Welcome to {gym}{…}! Your plan and the gym's news are in MettleUp.
+templates | apps/mobile/src/shop/autoReminders.ts:167 | {…} added to your plan for your workouts. It now ends on {…}.
+templates | apps/mobile/src/shop/autoReminders.ts:169 | Your workout offer ends on {…}: {…} for {…}.
+templates | apps/mobile/src/shop/autoReminders.ts:171 | {…} for your {…}. Check in and train today.
+templates | apps/mobile/src/shop/autoReminders.ts:172 | Personal training: {left} of {total} left. Ask the desk to add more.
+templates | apps/mobile/src/shop/autoReminders.ts:173 | We haven't seen you for {days} days{…}. Come in when you can.
+templates | apps/mobile/src/shop/autoReminders.ts:175 | {…} with {gym} today. Thank you for training with us!
+templates | apps/mobile/src/shop/autoReminders.ts:180 | Your plan ending, birthday wishes and other news from {…}, at 9:30 am. Never more than one a day.
+templates | apps/mobile/src/shop/gymReminders.ts:288 | Plan ending, birthday wishes and other reminders from your gym
+templates | apps/mobile/src/shop/noticeAlertWords.ts:8 | Messages from your gym
+templates | apps/mobile/src/shop/noticeAlertWords.ts:9 | News from your gym: a holiday, new timings or an offer
+templates | apps/mobile/src/shop/noticeAlertWords.ts:11 | Messages from my gym
+templates | apps/mobile/src/shop/noticeAlertWords.ts:12 | Notifications are off for MettleUp
+templates | apps/mobile/src/shop/noticeAlertWords.ts:13 | No message from your gym can pop up. Turn them on in your phone's settings.
+templates | apps/mobile/src/shop/noticeAlertWords.ts:21 | Get a pop-up when {name} sends news, like a holiday, new timings or an offer. It can take a few minutes to reach you.
+templates | apps/mobile/src/shop/noticeAlertWords.ts:46 | Tap to read them.
+templates | apps/mobile/src/tracker/services/workoutAlerts.ts:114 | Tells you when your rest is over
+templates | apps/mobile/src/tracker/services/workoutAlerts.ts:123 | Workout in progress
+templates | apps/mobile/src/tracker/services/workoutAlerts.ts:124 | Shows your open workout so you can jump back in
+templates | apps/mobile/src/tracker/services/workoutAlerts.ts:197 | Rest is over
+templates | apps/mobile/src/tracker/services/workoutAlerts.ts:199 | Time for your next set
+templates | deploy/hq/panelPush.js:79 | $1 started a free $2-day trial online, from $3 to $4. Please let them in until $5. If they join, make them a member from Today.
+templates | deploy/hq/panelPush.js:89 | asked a workout question
+templates | deploy/hq/panelPush.js:90 | Open Member questions
+templates | deploy/hq/panelPush.js:96 | MettleUp: news from your members
+templates | deploy/hq/push.js:159 | The MettleUp team replied to your question. Tap to read it.
+templates | deploy/panel/phoneInbound.js:47 | After you send this, go back to the MettleUp page.
+templates | deploy/panel/phoneInbound.js:48 | Yeh bhejne ke baad MettleUp page par wapas jao.
+templates | deploy/panel/phoneInbound.js:60 | After you send this, go back to the MettleUp app.
+templates | deploy/panel/phoneInbound.js:61 | Yeh bhejne ke baad MettleUp app par wapas jao.
+templates | deploy/panel/phoneInbound.js:306 | Your phone number is successfully verified for MettleUp. Go back to the MettleUp page to finish.
+templates | deploy/panel/phoneInbound.js:308 | Your phone number is successfully verified for MettleUp. Go back to the MettleUp app to finish.
+templates | deploy/panel/phoneInbound.js:309 | We could not find your MettleUp code in this message. Go back to the MettleUp page, tap "Open WhatsApp again" and send the message without changes.
+templates | supabase/migrations/0089_trial_alert_words.sql:115 | Free trial online: %s %s, %s to %s.
+templates | supabase/migrations/0089_trial_alert_words.sql:130 | %s started a free %s-day trial online, from %s to %s.
