@@ -148,8 +148,10 @@ def fetch(cache, only_job=None, reverse=False):
         if code == "200" and size > 0:
             with open(os.path.join(cache, "digest", jid + ".txt"), "w", encoding="utf-8", newline="\n") as f:
                 f.write(digest(raw))
-        if os.path.exists(raw):
+        try:
             os.remove(raw)
+        except OSError:
+            pass
         return jid, {"code": code, "bytes": size}
 
     done = 0
@@ -202,6 +204,24 @@ RUNNER = [
 
 TEST_PATH = re.compile(r"(^|/)(e2e|test|tests|__tests__|qa|\.maestro|__mocks__|fixtures|goldens?)/|\.(test|spec)\.[a-z]+$|^supabase/tests/")
 APP_PATH = re.compile(r"^(apps/|deploy/|supabase/|packages/|plugins/|scripts/(?!ci/))")
+
+
+# The app code a step's tests exercise. A change outside it cannot be what turned the step green.
+SCOPES = [
+    ("Admin journeys|Panel crawl|Unit tests (dashboard", ("apps/dashboard/", "packages/", "deploy/panel/", "supabase/")),
+    ("Unit tests (mobile", ("apps/mobile/", "packages/")),
+    ("Panel Worker tests", ("deploy/panel/", "scripts/watch/", "scripts/backup/", "packages/")),
+    ("HQ Worker", ("deploy/hq/", "apps/hq/", "packages/")),
+    ("Security check and feature tests", ("supabase/",)),
+    ("Watch unit tests", ("apps/mobile/", "packages/", "plugins/")),
+]
+
+
+def scope_of(step):
+    for key, pre in SCOPES:
+        if any(k in step for k in key.split("|")):
+            return pre
+    return ("",)
 
 
 def kind_of(step):
@@ -285,6 +305,9 @@ def extract(kind, step, sec):
             m = re.match(r"^(?:##\[error\])?(\S+\.(?:tsx?|mjs|js|kt))[(:](\d+)[,:]\d+\)?:? .*error (TS\d+)", l)
             if m:
                 add(m.group(1) + " " + m.group(3), l)
+    nt = [f for f in flows if f.startswith("node test: ")]
+    if len(nt) > 1:      # one broken file fails all its tests at once: name the first, not all 18
+        flows = [f for f in flows if not f.startswith("node test: ")] + [nt[0] + " (first of several failed in the job)"]
     errs = [l.split("\t", 1)[-1] for l in sec["ERRORS"]]
     real = [e for e in errs if "Process completed with exit code" not in e and "failed with exit code" not in e]
     if not line:
@@ -348,8 +371,6 @@ def label_all(cache, only=None):
     for r in failed:
         if r["failed_steps"] in ECHO_STEPS:
             continue
-        if only and r["job_id"] != only:
-            continue
         step = r["failed_steps"].split(" | ")[0]
         kind = kind_of(step)
         dpath = os.path.join(cache, "digest", r["job_id"] + ".txt")
@@ -366,20 +387,23 @@ def label_all(cache, only=None):
         if not any("[qa] done" in l for l in qa):
             continue
         failed_parts = {m.group(1).lower(): m.group(2) for m in
-                        (re.search(r"PART (\S+) FAILED \(([^:)]+\.yaml)", l) for l in qa) if m}
+                        (re.search(r"PART (\S+?):? FAILED(?: \(([^:)]+\.yaml))?", l) for l in qa) if m}
         w["failed_parts"] = failed_parts
         for l in qa:
             m = re.match(r"\[qa\] part (\S+) start", l)
             if m and m.group(1).lower() not in failed_parts:
                 flow_pass[(w["r"]["head_sha"], m.group(1).lower())].add(w["r"]["job_id"])
 
+    flows_of = {w["r"]["job_id"]: set(w["flows"]) for w in work}
     out = []
     for w in work:
+        if only and w["r"]["job_id"] != only:
+            continue
         r, step, kind, sec, flows, line = w["r"], w["step"], w["kind"], w["sec"], w["flows"], w["line"]
         label, rule = "UNKNOWN", "no rule matched"
         st = status.get(r["job_id"], {})
         if sec is None:
-            label, rule = "NO LOG KEPT", "GitHub answered %s for the job log" % st.get("code", "nothing")
+            label, rule = "NO LOG KEPT", "GitHub gave no log for this job -- answer %s" % st.get("code", "none")
         else:
             rf = runner_fault(kind, flows, sec, step)
             hits = ok.get(fk(r), [])
@@ -391,17 +415,17 @@ def label_all(cache, only=None):
             elif rf:
                 label, rule, line = "RUNNER FAULT", "R: " + rf[0], rf[1]
             elif kind == "setup":
-                label, rule = "RUNNER FAULT", "R: a setup step failed (%s)" % step
+                label, rule = "RUNNER FAULT", "R: a setup step failed -- %s" % step
             elif rerun or other:
-                label, rule = "TEST FAULT", "T1: same commit passed this job on %s (no code change)" % ("a re-run" if rerun else "another run")
+                label, rule = "TEST FAULT", "T1: same commit passed this job on %s (no code change)" % ("a re-run" if rerun else "another run of it")
             elif kind == "device" and w.get("failed_parts") and all(
                     flow_pass.get((r["head_sha"], p)) for p in w["failed_parts"]):
-                label, rule = "TEST FAULT", "T2: every failed flow ran clean on the same commit in another job (%s)" % ", ".join(
+                label, rule = "TEST FAULT", "T2: every failed flow ran clean on the same commit in another job -- jobs %s" % ", ".join(
                     sorted({j for p in w["failed_parts"] for j in flow_pass[(r["head_sha"], p)]})[:3])
             elif kind == "e2e" and re.search(r"strict mode violation", "\n".join(sec["KEEP"] + sec["BLOCKS"])):
                 label, rule = "TEST FAULT", "T3: Playwright strict mode violation (the wanted element was on screen, more than once)"
             elif kind == "testlint":
-                label, rule = "TEST FAULT", "T5: the failed check lints the phone-test files themselves (%s)" % step
+                label, rule = "TEST FAULT", "T5: the failed check lints the phone-test files themselves -- %s" % step
             elif kind == "type":
                 files = [f.split(" ")[0] for f in flows]
                 if files and all(TEST_PATH.search(f) for f in files):
@@ -409,49 +433,70 @@ def label_all(cache, only=None):
                 else:
                     label, rule = "APP BUG", "A0: type error"
             elif kind == "lint":
-                label, rule = "APP BUG", "A0: lint / ratchet / release check failed (%s)" % step
+                label, rule = "APP BUG", "A0: lint / ratchet / release check failed -- %s" % step
+            elif kind == "e2e" and not flows and re.search(r"SyntaxError: |Cannot find module|ERR_MODULE_NOT_FOUND", " ".join(sec["ERRORS"])):
+                label, rule = "APP BUG", "A0: compile error -- the browser tests could not even load the code"
             elif kind == "build" and re.search(r"Compilation (error|failed)|error TS\d+|e: file://|Execution failed for task .*compile",
                                                "\n".join(sec["KEEP"] + sec["BLOCKS"])):
                 label, rule = "APP BUG", "A0: compile error"
             if label == "UNKNOWN" and kind in ("unit", "e2e") and r["event"] == "push":
                 s = seq[(r["workflow_file"], r["job_name"], r["ref"])]
                 i = next((k for k, x in enumerate(s) if x["job_id"] == r["job_id"]), None)
-                nxt = next((x for x in s[i + 1:] if x["conclusion"] == "success"), None) if i is not None else None
+                # the next run where THIS test no longer failed: a green job, or a job red at the same step
+                # for other tests only (the step runs every test, so this one ran and passed there)
+                mine = set(flows)
+                nxt = None
+                for x in (s[i + 1:] if i is not None else []):
+                    if x["conclusion"] == "success":
+                        nxt = x
+                        break
+                    of = flows_of.get(x["job_id"])
+                    if mine and of and x["failed_steps"].split(" | ")[0] == step and not (mine & of):
+                        nxt = x
+                        break
                 # how many runs in a row failed at this same step (a one-off can be a random fail)
                 row = 1
                 if i is not None:
                     k = i - 1
-                    while k >= 0 and s[k]["conclusion"] in BAD and step in s[k]["failed_steps"].split(" | "):
+                    def same(x):
+                        of = flows_of.get(x["job_id"])
+                        return x["conclusion"] in BAD and step in x["failed_steps"].split(" | ") and (not mine or not of or bool(mine & of))
+                    while k >= 0 and same(s[k]):
                         row += 1
                         k -= 1
                     k = i + 1
-                    while k < len(s) and s[k]["conclusion"] in BAD and step in s[k]["failed_steps"].split(" | "):
+                    while k < len(s) and same(s[k]):
                         row += 1
                         k += 1
                 files = changed_files(r["head_sha"], nxt["head_sha"]) if nxt and nxt["head_sha"] != r["head_sha"] else None
                 if nxt and files is not None:
-                    app = [f for f in files if is_app_file(f)]
+                    app = [f for f in files if is_app_file(f) and f.startswith(scope_of(step))]
                     tfiles = {f.split(" ")[0].split(" › ")[0].split(" > ")[0] for f in flows}
                     test_changed = any(any(f.endswith(t) for t in tfiles) for f in files) if tfiles else None
-                    where = "next green run %s (%s..%s)" % (nxt["run_id"], r["head_sha"][:8], nxt["head_sha"][:8])
+                    where = "next run where it passed %s (%s..%s)" % (nxt["run_id"], r["head_sha"][:8], nxt["head_sha"][:8])
+                    any_app = [f for f in files if is_app_file(f)]
                     if not app:
-                        label, rule = "TEST FAULT", "T4: went green with no app code changed; %s, %d files" % (where, len(files))
+                        label = "TEST FAULT"
+                        rule = "T4: went green with %s -- %s, %d files changed" % (
+                            "no app code changed at all (only tests, test tools or notes)" if not any_app
+                            else "no change to the app code this step tests (only tests, notes, or another app's code)", where, len(files))
                     elif kind == "unit":
                         label = "APP BUG"
-                        rule = "A1: went green after app code changed (%s); failing test file %s" % (
-                            where, "also changed" if test_changed else "unchanged" if test_changed is False else "not named in the log")
+                        rule = "A1: unit/database test went green after app code changed; the failing test file was %s -- %s" % (
+                            "also changed" if test_changed else "unchanged" if test_changed is False else "not named in the log", where)
                     elif kind == "e2e" and test_changed is False and row >= 2:
-                        label, rule = "APP BUG", "A2: red %d runs in a row, went green after app code changed with the spec file unchanged; %s" % (row, where)
+                        label, rule = "APP BUG", "A2: browser journey red 2+ runs in a row, went green after app code changed with the spec file unchanged -- %d in a row, %s" % (row, where)
                     else:
-                        rule = "no rule matched: went green after app code changed (%s); spec %s; %d red in a row" % (
-                            where, "also changed" if test_changed else "unchanged" if test_changed is False else "not named", row)
+                        rule = "no rule matched: went green after app code changed, spec %s, %s -- %s" % (
+                            "also changed" if test_changed else "unchanged" if test_changed is False else "not named",
+                            "a one-off red" if row == 1 else "red 2+ runs in a row", where)
                 elif not nxt:
-                    rule = "no rule matched: no later green run of this job on %s" % r["ref"]
+                    rule = "no rule matched: no later green run of this job on its branch -- %s" % r["ref"]
         h = hand.get(r["job_id"])
         if h:
             label, rule, line = h["label"], "HAND: " + h["rule"], h.get("log_line") or line
         out.append({"run_id": r["run_id"], "job_id": r["job_id"], "workflow": r["workflow_file"], "job": r["job_name"],
-                    "step": step, "flow": "; ".join(flows) if flows else "(" + (step or "no failed step recorded") + ")",
+                    "step": step, "flow": " ;; ".join(flows) if flows else "(" + (step or "no failed step recorded") + ")",
                     "head_sha": r["head_sha"], "label": label, "rule_that_fired": rule, "log_line": line,
                     "minutes": float(r["minutes"] or 0), "event": r["event"], "ref": r["ref"], "created": r["run_created_at"]})
     if only:
@@ -504,7 +549,13 @@ def summary(seconds_note=""):
       "(the test failed while the app was right, or it passed again with no app change)." % (
           notapp, M, pct(notapp, M), cnt["RUNNER FAULT"], cnt["TEST FAULT"]))
     A("")
-    A("- App bug (the red was right): **%d** (%s)." % (cnt["APP BUG"], pct(cnt["APP BUG"], M)))
+    weak_t = sum(1 for x in o if x["label"] == "TEST FAULT" and "no change to the app code this step tests" in x["rule_that_fired"])
+    weak_a = sum(1 for x in o if x["label"] == "APP BUG" and "was also changed" in x["rule_that_fired"])
+    A("- How sure: %d of the %d test faults rest on the weaker rule \"went green while only tests, notes or ANOTHER app's code changed\"; "
+      "without them it is **%d of %d (%s)**. So the honest range is %s to %s, and it can only go up: every UNKNOWN is a red nobody could "
+      "tie to an app bug either." % (weak_t, cnt["TEST FAULT"], notapp - weak_t, M, pct(notapp - weak_t, M), pct(notapp - weak_t, M), pct(notapp, M)))
+    A("- App bug (the red was right): **%d** (%s). %d of these are the weaker kind too: the fix changed the app code AND the failing test "
+      "file in one go, so the test may simply have been brought up to date." % (cnt["APP BUG"], pct(cnt["APP BUG"], M), weak_a))
     A("- Could not be told from the log: **%d UNKNOWN** (%s)." % (cnt["UNKNOWN"], pct(cnt["UNKNOWN"], M)))
     A("- Log no longer on GitHub: **%d NO LOG KEPT**." % cnt["NO LOG KEPT"])
     A("- Of the %d jobs that could be judged, %d were not app bugs (%s)." % (decided, notapp, pct(notapp, decided)))
@@ -530,7 +581,7 @@ def summary(seconds_note=""):
     rc = collections.defaultdict(lambda: [0, 0.0])
     for x in o:
         rule = x["rule_that_fired"]
-        rule = re.sub(r"\(next green run.*|; next green run.*|\(\d{6,}.*| \(Re.*| \(Se.*| \(Th.*| \(Si.*| \(Pr.*| \(He.*| \(Ph.*| \(Set.*| \(Sta.*|: went green after.*|: no later green.*", "", rule)
+        rule = rule.split(" -- ")[0]
         b = rc[(x["label"], rule)]
         b[0] += 1
         b[1] += x["minutes"]
@@ -561,7 +612,7 @@ def summary(seconds_note=""):
     A("|---|---|---|---|---|---|---|---|")
     fl = collections.defaultdict(lambda: {"fk": 0, "tf": 0, "m": 0.0, "all": 0, "unk": 0, "ex": ""})
     for x in real:
-        names = x["flow"].split("; ")
+        names = x["flow"].split(" ;; ")
         for nme in names:
             b = fl[(x["workflow"], nme)]
             b["all"] += 1
@@ -587,7 +638,7 @@ def summary(seconds_note=""):
     A("|---|---|---|---|---|---|---|---|")
     fa = collections.defaultdict(lambda: [collections.Counter(), 0.0])
     for x in real:
-        names = x["flow"].split("; ")
+        names = x["flow"].split(" ;; ")
         for nme in names:
             if nme.startswith("("):
                 continue
@@ -616,7 +667,7 @@ def summary(seconds_note=""):
     A("|---|---|---|---|---|---|---|")
     sp = collections.defaultdict(collections.Counter)
     for x in aj:
-        for f in {n.split(" › ")[0] for n in x["flow"].split("; ")}:
+        for f in {n.split(" › ")[0] for n in x["flow"].split(" ;; ")}:
             sp[f][x["label"]] += 1
     for i, (f, cc) in enumerate(sorted(sp.items(), key=lambda kv: -sum(kv[1].values()))[:5], 1):
         A("| %d | %s | %d | %d | %d | %d | %d |" % (i, f, sum(cc.values()), cc["RUNNER FAULT"], cc["TEST FAULT"], cc["APP BUG"], cc["UNKNOWN"]))

@@ -19,17 +19,16 @@ blind check: never put the held-out rows or hints into a helper brief (ids are i
 | A2 | 2 | 148k tokens (% not measured yet; plan with 5) |
 | A7 | 0 | 5 (start value) |
 | E1 | 1 | 189k tokens (% not measured yet; plan with 5) |
-| E2 | 0 | 5 (start value) |
+| E2 | 1 | 299k tokens (% not measured yet; plan with 5) |
 | E3 | 0 | 5 (start value) |
 | E4 | 0 | 5 (start value) |
 | 3F | 0 | 5 (start value) |
 
 ## Work items
-Counts: 39 todo, 1 in progress, 9 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 39 todo, 0 in progress, 10 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
-| W8 | E2 | 3E E2 label failed jobs by rule (script), then one helper reads only the UNKNOWN rows (at most 40) -> test-failures.jsonl | in progress | _work/E2.md |  |
 | A7-pilot | A7 | promises: PILOT, one source group of at most 120 candidate sentences from _sources/promises.txt; runs alone | todo | _work/A7-pilot.md |  |
 | W9 | E3 | 3E E3 release gate cost by script: minutes per round part, 20 slowest flows, repeated checks | todo | _work/E3.md |  |
 | W10 | E4 | 3E E4 better test framework: research + proposals only -> TEST-SYSTEM-REVIEW.md | todo | _work/E4.md |  |
@@ -55,16 +54,16 @@ Counts: 39 todo, 1 in progress, 9 done, 0 blocked. Full list: work-items.jsonl. 
 | A2-phone-tracker-engine | A2 | A2 features: area phone/tracker-engine (35 items, 10011 lines) | todo | _work/A2-phone-tracker-engine.md |  |
 | A2-phone-tracker-data | A2 | A2 features: area phone/tracker-data (40 items, 9326 lines) | todo | _work/A2-phone-tracker-data.md |  |
 | A2-phone-tracker-lib | A2 | A2 features: area phone/tracker-lib (59 items, 9117 lines) | todo | _work/A2-phone-tracker-lib.md |  |
-| W1 | A1 | surfaces.json (11 surfaces) | done | - | coordinator |
 | T1a | tools | coordinator tooling: work-items.jsonl, _tools/state.mjs, _tools/merge.mjs, _briefs/, RUNBOOK.md | done | _work/T1a.md | tools, briefs, runbook built and tested |
 | A1b | A1b | source lists by script: _tools/sources.mjs -> _sources/<surface>.txt, sizes.csv, readers-raw.txt, promises.txt (no model reading) | done | _work/A1b.md | 37 areas, source lists pushed |
 | G0 | redact | blind-check redaction: _tools/redact.mjs -> _sources/owner-inbox-redacted.md + claude-notes-redacted.md (parts of at most 600 lines); prints counts only | done | _work/G0.md | redacted copies written by the coordinator's script |
 | A2-pilot | A2 | features: PILOT, one area of at most 12,000 lines picked from sizes.csv; runs alone | done | _work/A2-pilot.md | 28 features, 60 of 60 source lines; source list misses files in pay/ move/ machines/ |
 | A2-split | coord | coordinator: add one A2 item per area from sizes.csv, sized by the A2 pilot cost (state.mjs add) | done | - | 36 area items made by script, every source file listed |
 | W7 | E1 | 3E E1 test history (script) -> test-history.csv | done | _work/E1.md | 3,128 runs, 39% red tries, 91 proven flaky |
+| W8 | E2 | 3E E2 label failed jobs by rule (script), then one helper reads only the UNKNOWN rows (at most 40) -> test-failures.jsonl | done | _work/E2.md | 483 of 1,247 red jobs not app bugs (39%; range 29-39); 429 unknown |
 | A2-panel-screens-1 | A2 | A2 features: area panel/screens-1 (39 items, 9139 lines) | done | _work/A2-panel-screens-1.md | 40 features (hit the 40 limit), 39 of 39 lines |
 (+ 14 more todo items, not shown)
-(+ 1 older done items, not shown)
+(+ 2 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).

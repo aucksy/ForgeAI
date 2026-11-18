@@ -1,0 +1,317 @@
+{
+ "132354528401": {
+  "label": "UNKNOWN",
+  "rule": "read the flow's own log and screen dump inside the qa-out artifact of run 43562670140: the wanted text was NOT on screen, so this is not a proven test fault; app bug or stale flow, the log cannot say",
+  "log_line": "R: [Failed] redesign-r (47s) (No visible element found: \"Jaipur \\(6\\)\"); wanted text on screen at the failure: no"
+ },
+ "127366218473": {
+  "label": "UNKNOWN",
+  "rule": "read the flow's own log and screen dump inside the qa-out artifact of run 42059791344: the wanted text was NOT on screen, so this is not a proven test fault; app bug or stale flow, the log cannot say",
+  "log_line": "J: [Failed] v0280-j (1m 6s) (Assertion is false: \"The demo goes first\" is not visible); wanted text on screen at the failure: no || J2: [Failed] v0400-j2 (33s) (Assertion is false: \"^Workout$\" is visible); wanted text on screen at the failure: no || J3: [Failed] j3-workout-drag (33s) (Assertion is false: \"^Workout$\" is visible); wanted text on screen at the failure: no || K: [Failed] v0280-k (1m 20s) (Assertion is false: \"Already in MettleUp\" is visible); wanted text on screen at the failure: no"
+ },
+ "127188981513": {
+  "label": "UNKNOWN",
+  "rule": "read the flow's own log and screen dump inside the qa-out artifact of run 42008396524: the wanted text was NOT on screen, so this is not a proven test fault; app bug or stale flow, the log cannot say",
+  "log_line": "UATR355A: [Failed] uat-rel-r355-a-last-set (3m 18s) (Assertion is false: \"Skip rest\" is visible); wanted text on screen at the failure: no || UATR366: [Failed] uat-rel-r366-reps (5m 56s) (Assertion is false: \"^Start routine$\" is visible); wanted text on screen at the failure: no"
+ },
+ "127186316121": {
+  "label": "UNKNOWN",
+  "rule": "read the flow's own log and screen dump inside the qa-out artifact of run 42007309172: the wanted text was NOT on screen, so this is not a proven test fault; app bug or stale flow, the log cannot say",
+  "log_line": "UAT15: [Failed] uat-rel-15-inuse-journey (5m 36s) (Assertion is false: \"Skip rest\" is visible); wanted text on screen at the failure: no || UAT3: [Failed] uat-rel-3-goals (3m 4s) (No visible element found: \"^Target 40 kg · 11, 10, 9( · RPE \\d+)?\\. Next set: 40 kg × 11 · Done: 0 of today's 1,200 kg\\. Tap for why\\.$\"; wanted text on screen at the failure: no || UATR355A: [Failed] uat-rel-r355-a-last-set (2m 52s) (Assertion is false: \"Skip rest\" is visible); wanted text on screen at the failure: no || UATR366B: [Failed] uat-rel-r366-b-today (1m 28s) (No visible element found: \"^Target .*Tap for why\\.$\"); wanted text on screen at the failure: no"
+ },
+ "127308414934": {
+  "label": "UNKNOWN",
+  "rule": "read the flow's own log and screen dump inside the qa-out artifact of run 42042517157: the wanted text was NOT on screen, so this is not a proven test fault; app bug or stale flow, the log cannot say",
+  "log_line": "UAT3: [Failed] uat-rel-3-goals (1m 10s) (No visible element found: \"^Previous: \\d{1,2} [A-Z][a-z]{2}( \\d{4})? · .*\"); wanted text on screen at the failure: no || UATR344B: [Failed] uat-rel-r344-b-line (1m 28s) (Assertion is false: \"Skip rest|In use\\. .*\" is visible); wanted text on screen at the failure: no || UATR344C: [Failed] uat-rel-r344-c-states (2m 14s) (Assertion is false: \"Skip rest|In use\\. .*\" is visible); wanted text on screen at the failure: no || UATUSEL: [Failed] uat-rel-usel-tap-selects (5m 50s) (Assertion is false: \"Skip rest|In use\\. .*\" is visible); wanted text on screen at the failure: no"
+ },
+ "127151640456": {
+  "label": "UNKNOWN",
+  "rule": "read the flow's own log and screen dump inside the qa-out artifact of run 41997519660: the wanted text was NOT on screen, so this is not a proven test fault; app bug or stale flow, the log cannot say",
+  "log_line": "UAT15: [Failed] uat-rel-15-inuse-journey (5m 50s) (Assertion is false: \"Skip rest\" is visible); wanted text on screen at the failure: no || UAT3: [Failed] uat-rel-3-goals (3m 7s) (No visible element found: \"^Target 40 kg · 11, 10, 9( · RPE \\d+)?\\. Next set: 40 kg × 11 · Done: 0 of today's 1,200 kg\\. Tap for why\\.$\"; wanted text on screen at the failure: no || UATR344B: [Failed] uat-rel-r344-b-line (2m 26s) (Element not found: Text matching regex: ^Done$); wanted text on screen at the failure: no || UATR344C: [Failed] uat-rel-r344-c-states (3m 6s) (Assertion is false: \".*protein.*\" is not visible); wanted text on screen at the failure: no"
+ },
+ "127305312673": {
+  "label": "UNKNOWN",
+  "rule": "read the flow's own log and screen dump inside the qa-out artifact of run 42042522492: the wanted text was NOT on screen, so this is not a proven test fault; app bug or stale flow, the log cannot say",
+  "log_line": "UAT3: [Failed] uat-rel-3-goals (1m 11s) (No visible element found: \"^Previous: \\d{1,2} [A-Z][a-z]{2}( \\d{4})? · .*\"); wanted text on screen at the failure: no || UATUSEL: [Failed] uat-rel-usel-tap-selects (6m 19s) (Assertion is false: \"Skip rest|In use\\. .*\" is visible); wanted text on screen at the failure: no || W2: [Failed] real-workout-w2 (52s) (No visible element found: \"Previous: .* · Push A\"); wanted text on screen at the failure: no"
+ },
+ "127165804699": {
+  "label": "UNKNOWN",
+  "rule": "read the flow's own log and screen dump inside the qa-out artifact of run 42001465285: the wanted text was NOT on screen, so this is not a proven test fault; app bug or stale flow, the log cannot say",
+  "log_line": "UAT3: [Failed] uat-rel-3-goals (3m 7s) (No visible element found: \"^Target 40 kg · 11, 10, 9( · RPE \\d+)?\\. Next set: 40 kg × 11 · Done: 0 of today's 1,200 kg\\. Tap for why\\.$\"; wanted text on screen at the failure: no || UATR355A: [Failed] uat-rel-r355-a-last-set (3m 10s) (Assertion is false: \"Skip rest\" is visible); wanted text on screen at the failure: no || UATR358C: [Failed] uat-rel-r358-c-real (1m 41s) (Assertion is false: \"New record.*\" is visible); wanted text on screen at the failure: no || UATR366B: [Failed] uat-rel-r366-b-today (1m 25s) (No visible element found: \"^Target .*Tap for why\\.$\"); wanted text on screen at the failure: no"
+ },
+ "132937283233": {
+  "label": "UNKNOWN",
+  "rule": "read the flow's own log and screen dump inside the qa-out artifact of run 43753639925: the wanted text was NOT on screen, so this is not a proven test fault; app bug or stale flow, the log cannot say",
+  "log_line": "UAT14: [Failed] uat-rel-14-pass-member (8s); wanted text on screen at the failure: no"
+ },
+ "132938399259": {
+  "label": "UNKNOWN",
+  "rule": "read the flow's own log and screen dump inside the qa-out artifact of run 43753637769: the wanted text was NOT on screen, so this is not a proven test fault; app bug or stale flow, the log cannot say",
+  "log_line": "UAT14: [Failed] uat-rel-14-pass-member (8s); wanted text on screen at the failure: no"
+ },
+ "127509511524": {
+  "label": "UNKNOWN",
+  "rule": "read the flow's own log and screen dump inside the qa-out artifact of run 42099515859: the wanted text was NOT on screen, so this is not a proven test fault; app bug or stale flow, the log cannot say",
+  "log_line": "UATF61: [Failed] uat-rel-f61-ask-ai (32s) (Assertion is false: \"^Profile$\" is visible); wanted text on screen at the failure: no"
+ },
+ "127511462573": {
+  "label": "UNKNOWN",
+  "rule": "read the flow's own log and screen dump inside the qa-out artifact of run 42099510423: the wanted text was NOT on screen, so this is not a proven test fault; app bug or stale flow, the log cannot say",
+  "log_line": "UAT12: Impl.run(Tasks.kt:89)\n\tat kotlinx.coroutines.scheduling.CoroutineScheduler.runSafely(CoroutineScheduler.kt:586)\n\tat kotlinx.coroutines.scheduling.CoroutineScheduler$Worke; wanted text on screen at the failure: no screen dump || UATF61: [Failed] uat-rel-f61-ask-ai (32s) (Assertion is false: \"^Profile$\" is visible); wanted text on screen at the failure: no"
+ },
+ "127164567234": {
+  "label": "UNKNOWN",
+  "rule": "read the flow's own log and screen dump inside the qa-out artifact of run 42001468763: the wanted text was NOT on screen, so this is not a proven test fault; app bug or stale flow, the log cannot say",
+  "log_line": "UAT15: [Failed] uat-rel-15-inuse-journey (6m 20s) (Assertion is false: \"Skip rest\" is visible); wanted text on screen at the failure: no || UAT1: [Failed] uat-rel-1-seed (2m 14s) (Assertion is false: \"Choose Hevy file\" is visible); wanted text on screen at the failure: no || UATF59: [Failed] uat-rel-f59-ready (35s) (Assertion is false: \"Quick workout for the time you have\" is visible); wanted text on screen at the failure: no || UATF61: [Failed] uat-rel-f61-ask-ai (1m 12s) (Assertion is false: \"^Ask an AI$\" is visible); wanted text on screen at the failure: no"
+ },
+ "127125329495": {
+  "label": "UNKNOWN",
+  "rule": "read the flow's own log and screen dump inside the qa-out artifact of run 41988716247: the wanted text was NOT on screen, so this is not a proven test fault; app bug or stale flow, the log cannot say",
+  "log_line": "UAT15: [Failed] uat-rel-15-inuse-journey (5m 33s) (Assertion is false: \"Skip rest\" is visible); wanted text on screen at the failure: no || UAT3: [Failed] uat-rel-3-goals (46s) (Assertion is false: \"^Target 60 kg · 10, 9, 7( · RPE \\d+)?\\. 1,560 kg to beat · .*\" is visible); wanted text on screen at the failure: no || UATR344B: [Failed] uat-rel-r344-b-line (2m 26s) (Element not found: Text matching regex: ^Done$); wanted text on screen at the failure: no || UATR344C: [Failed] uat-rel-r344-c-states (3m 5s) (Assertion is false: \".*protein.*\" is not visible); wanted text on screen at the failure: no"
+ },
+ "127212247914": {
+  "label": "UNKNOWN",
+  "rule": "read the flow's own log and screen dump inside the qa-out artifact of run 42014586705: the wanted text was NOT on screen, so this is not a proven test fault; app bug or stale flow, the log cannot say",
+  "log_line": "UAT1: [Failed] uat-rel-1-seed (2m 13s) (Assertion is false: \"Choose Hevy file\" is visible); wanted text on screen at the failure: no || UATF59: [Failed] uat-rel-f59-ready (35s) (Assertion is false: \"Quick workout for the time you have\" is visible); wanted text on screen at the failure: no || UATF61: [Failed] uat-rel-f61-ask-ai (1m 13s) (Assertion is false: \"^Ask an AI$\" is visible); wanted text on screen at the failure: no || UATR336: [Failed] uat-rel-r336-update (38s) (Assertion is false: \"3\\. Invite a friend to your gym\\.\" is visible); wanted text on screen at the failure: no"
+ },
+ "127123215779": {
+  "label": "UNKNOWN",
+  "rule": "read the flow's own log and screen dump inside the qa-out artifact of run 41988654066: the wanted text was NOT on screen, so this is not a proven test fault; app bug or stale flow, the log cannot say",
+  "log_line": "UAT15: [Failed] uat-rel-15-inuse-journey (5m 43s) (Assertion is false: \"Skip rest\" is visible); wanted text on screen at the failure: no || UAT1: [Failed] uat-rel-1-seed (2m 9s) (Assertion is false: \"Choose Hevy file\" is visible); wanted text on screen at the failure: no || UATF59: [Failed] uat-rel-f59-ready (32s) (Assertion is false: \"Quick workout for the time you have\" is visible); wanted text on screen at the failure: no || UATF61: [Failed] uat-rel-f61-ask-ai (1m 9s) (Assertion is false: \"^Ask an AI$\" is visible); wanted text on screen at the failure: no"
+ },
+ "128814737190": {
+  "label": "UNKNOWN",
+  "rule": "read the flow's own log and screen dump inside the qa-out artifact of run 42506481894: the wanted text was NOT on screen, so this is not a proven test fault; app bug or stale flow, the log cannot say",
+  "log_line": "P7BIG: [Failed] phase7-bigtext (2m 8s) (No visible element found: \"(?i)^your progress$\"); wanted text on screen at the failure: no || P7NAV3: [Failed] phase7-bigtext (2m 6s) (No visible element found: \"(?i)^your progress$\"); wanted text on screen at the failure: no"
+ },
+ "128814663346": {
+  "label": "UNKNOWN",
+  "rule": "read the flow's own log and screen dump inside the qa-out artifact of run 42506479727: the wanted text was NOT on screen, so this is not a proven test fault; app bug or stale flow, the log cannot say",
+  "log_line": "P7BIG: [Failed] phase7-bigtext (2m 23s) (No visible element found: \"(?i)^your progress$\"); wanted text on screen at the failure: no || P7NAV3: [Failed] phase7-bigtext (2m 36s) (No visible element found: \"(?i)^your progress$\"); wanted text on screen at the failure: no"
+ },
+ "125361128179": {
+  "label": "UNKNOWN",
+  "rule": "read the flow's own log and screen dump inside the qa-out artifact of run 41467000998: the wanted text was NOT on screen, so this is not a proven test fault; app bug or stale flow, the log cannot say",
+  "log_line": "B0: [Failed] phase1-b0 (19s) (Element not found: Text matching regex: Rest is over|Set \\d+ of \\d+.*|Workout in progress); wanted text on screen at the failure: no || B: [Failed] phase1-b (31s) (Assertion is false: \"Log a set to finish|Finish workout\" is visible); wanted text on screen at the failure: no || UBK_GYM: [Failed] welcome-gym (1m 33s) (Assertion is false: \"^Skip$|Start fresh|Get stronger every week|Welcome to MettleUp|Step 1 of 3|Restore from a backup|Load demo data instea; wanted text on screen at the failure: no || UBK: [Failed] uat-bk (1m 33s) (Assertion is false: \"^Skip$|Start fresh|Get stronger every week|Welcome to MettleUp|Step 1 of 3|Restore from a backup|Load demo data ins"
+ },
+ "125121598855": {
+  "label": "UNKNOWN",
+  "rule": "read the flow's own log and screen dump inside the qa-out artifact of run 41395559723: the wanted text was NOT on screen, so this is not a proven test fault; app bug or stale flow, the log cannot say",
+  "log_line": "UBK_GYM: [Failed] welcome-gym (2m 13s) (Assertion is false: \"Get stronger every week\" is visible); wanted text on screen at the failure: no"
+ },
+ "126839559454": {
+  "label": "UNKNOWN",
+  "rule": "read the flow's own log and screen dump inside the qa-out artifact of run 41902368034: the wanted text was NOT on screen, so this is not a proven test fault; app bug or stale flow, the log cannot say",
+  "log_line": "UATF146: [Failed] uat-rel-f146-share-gym (1m 14s) (No visible element found: \"^Share picture$\"); wanted text on screen at the failure: YES ['Share picture'] || UATF59: [Failed] uat-rel-f59-ready (3m 15s) (Assertion is false: \"^Workout$\" is visible); wanted text on screen at the failure: no || UATF61: [Failed] uat-rel-f61-ask-ai (32s) (Assertion is false: \"^Profile$\" is visible); wanted text on screen at the failure: no"
+ },
+ "126806290149": {
+  "label": "UNKNOWN",
+  "rule": "read the flow's own log and screen dump inside the qa-out artifact of run 41893668534: the wanted text was NOT on screen, so this is not a proven test fault; app bug or stale flow, the log cannot say",
+  "log_line": "UATF146: [Failed] uat-rel-f146-share-gym (1m 11s) (No visible element found: \"^Share picture$\"); wanted text on screen at the failure: YES ['Share picture'] || UATF59: [Failed] uat-rel-f59-ready (3m 24s) (Assertion is false: \"^Workout$\" is visible); wanted text on screen at the failure: no || UATF61: [Failed] uat-rel-f61-ask-ai (32s) (Assertion is false: \"^Profile$\" is visible); wanted text on screen at the failure: no"
+ },
+ "132365794091": {
+  "label": "UNKNOWN",
+  "rule": "read the flow's own log and screen dump inside the qa-out artifact of run 43566434502: the wanted text was NOT on screen, so this is not a proven test fault; app bug or stale flow, the log cannot say",
+  "log_line": "C: [Failed] phase2-c (55s) (Assertion is false: \"Drawing: Everkinetic.*\" is visible); wanted text on screen at the failure: no || D: [Failed] phase3-d (4m 16s) (Assertion is false: \"Previous · .*\" is visible); wanted text on screen at the failure: no || F: [Failed] v0251-f (2m 59s) (Assertion is false: \"New record.*Best pace.*\" is visible); wanted text on screen at the failure: no || I: [Failed] v0270-i (4m 20s) (Assertion is false: \"Last time.*\" is visible); wanted text on screen at the failure: no"
+ },
+ "132359504388": {
+  "label": "TEST FAULT",
+  "rule": "wrong clock in the test: read one log (run 43565878978) and the fix, commit b6cf9f97 'alerts journey reads the page's own clock', which changes only the spec so its times come from the page's clock; no app code in that commit",
+  "log_line": "1) e2e/alerts-uat.spec.mjs:67:1 › Gym alerts: not ready, the latest on Today, a new one rings once, a tap opens its page || Error: expect(locator).toContainText(expected) failed | Locator: getByRole('main').getByTestId('latest-alerts').getByRole('button').first() | > 93 | await expect(lines.nth(0)).toContainText('5 min ago');"
+ },
+ "132359580517": {
+  "label": "TEST FAULT",
+  "rule": "wrong clock in the test: read one log (run 43565878978) and the fix, commit b6cf9f97 'alerts journey reads the page's own clock', which changes only the spec so its times come from the page's clock; no app code in that commit",
+  "log_line": "1) e2e/alerts-uat.spec.mjs:67:1 › Gym alerts: not ready, the latest on Today, a new one rings once, a tap opens its page || Error: expect(locator).toContainText(expected) failed | Locator: getByRole('main').getByTestId('latest-alerts').getByRole('button').first() | > 93 | await expect(lines.nth(0)).toContainText('5 min ago');"
+ },
+ "132361172396": {
+  "label": "TEST FAULT",
+  "rule": "wrong clock in the test: read one log (run 43565878978) and the fix, commit b6cf9f97 'alerts journey reads the page's own clock', which changes only the spec so its times come from the page's clock; no app code in that commit",
+  "log_line": "1) e2e/alerts-uat.spec.mjs:67:1 › Gym alerts: not ready, the latest on Today, a new one rings once, a tap opens its page || Error: expect(locator).toContainText(expected) failed | Locator: getByRole('main').getByTestId('latest-alerts').getByRole('button').first() | > 93 | await expect(lines.nth(0)).toContainText('5 min ago');"
+ },
+ "132361433395": {
+  "label": "TEST FAULT",
+  "rule": "wrong clock in the test: read one log (run 43565878978) and the fix, commit b6cf9f97 'alerts journey reads the page's own clock', which changes only the spec so its times come from the page's clock; no app code in that commit",
+  "log_line": "1) e2e/alerts-uat.spec.mjs:67:1 › Gym alerts: not ready, the latest on Today, a new one rings once, a tap opens its page || Error: expect(locator).toContainText(expected) failed | Locator: getByRole('main').getByTestId('latest-alerts').getByRole('button').first() | > 93 | await expect(lines.nth(0)).toContainText('5 min ago');"
+ },
+ "132361527436": {
+  "label": "TEST FAULT",
+  "rule": "wrong clock in the test: read one log (run 43565878978) and the fix, commit b6cf9f97 'alerts journey reads the page's own clock', which changes only the spec so its times come from the page's clock; no app code in that commit",
+  "log_line": "1) e2e/alerts-uat.spec.mjs:67:1 › Gym alerts: not ready, the latest on Today, a new one rings once, a tap opens its page || Error: expect(locator).toContainText(expected) failed | Locator: getByRole('main').getByTestId('latest-alerts').getByRole('button').first() | > 93 | await expect(lines.nth(0)).toContainText('5 min ago');"
+ },
+ "132362986165": {
+  "label": "TEST FAULT",
+  "rule": "wrong clock in the test: read one log (run 43565878978) and the fix, commit b6cf9f97 'alerts journey reads the page's own clock', which changes only the spec so its times come from the page's clock; no app code in that commit",
+  "log_line": "1) e2e/alerts-uat.spec.mjs:67:1 › Gym alerts: not ready, the latest on Today, a new one rings once, a tap opens its page || Error: expect(locator).toContainText(expected) failed | Locator: getByRole('main').getByTestId('latest-alerts').getByRole('button').first() | > 93 | await expect(lines.nth(0)).toContainText('5 min ago');"
+ },
+ "132363221871": {
+  "label": "TEST FAULT",
+  "rule": "wrong clock in the test: read one log (run 43565878978) and the fix, commit b6cf9f97 'alerts journey reads the page's own clock', which changes only the spec so its times come from the page's clock; no app code in that commit",
+  "log_line": "1) e2e/alerts-uat.spec.mjs:67:1 › Gym alerts: not ready, the latest on Today, a new one rings once, a tap opens its page || Error: expect(locator).toContainText(expected) failed | Locator: getByRole('main').getByTestId('latest-alerts').getByRole('button').first() | > 93 | await expect(lines.nth(0)).toContainText('5 min ago');"
+ },
+ "132363340588": {
+  "label": "TEST FAULT",
+  "rule": "wrong clock in the test: read one log (run 43565878978) and the fix, commit b6cf9f97 'alerts journey reads the page's own clock', which changes only the spec so its times come from the page's clock; no app code in that commit",
+  "log_line": "1) e2e/alerts-uat.spec.mjs:67:1 › Gym alerts: not ready, the latest on Today, a new one rings once, a tap opens its page || Error: expect(locator).toContainText(expected) failed | Locator: getByRole('main').getByTestId('latest-alerts').getByRole('button').first() | > 93 | await expect(lines.nth(0)).toContainText('5 min ago');"
+ },
+ "132363634065": {
+  "label": "TEST FAULT",
+  "rule": "wrong clock in the test: read one log (run 43565878978) and the fix, commit b6cf9f97 'alerts journey reads the page's own clock', which changes only the spec so its times come from the page's clock; no app code in that commit",
+  "log_line": "1) e2e/alerts-uat.spec.mjs:67:1 › Gym alerts: not ready, the latest on Today, a new one rings once, a tap opens its page || Error: expect(locator).toContainText(expected) failed | Locator: getByRole('main').getByTestId('latest-alerts').getByRole('button').first() | > 93 | await expect(lines.nth(0)).toContainText('5 min ago');"
+ },
+ "132363873029": {
+  "label": "TEST FAULT",
+  "rule": "wrong clock in the test: read one log (run 43565878978) and the fix, commit b6cf9f97 'alerts journey reads the page's own clock', which changes only the spec so its times come from the page's clock; no app code in that commit",
+  "log_line": "1) e2e/alerts-uat.spec.mjs:67:1 › Gym alerts: not ready, the latest on Today, a new one rings once, a tap opens its page || Error: expect(locator).toContainText(expected) failed | Locator: getByRole('main').getByTestId('latest-alerts').getByRole('button').first() | > 93 | await expect(lines.nth(0)).toContainText('5 min ago');"
+ },
+ "132364274854": {
+  "label": "TEST FAULT",
+  "rule": "wrong clock in the test: read one log (run 43565878978) and the fix, commit b6cf9f97 'alerts journey reads the page's own clock', which changes only the spec so its times come from the page's clock; no app code in that commit",
+  "log_line": "1) e2e/alerts-uat.spec.mjs:67:1 › Gym alerts: not ready, the latest on Today, a new one rings once, a tap opens its page || Error: expect(locator).toContainText(expected) failed | Locator: getByRole('main').getByTestId('latest-alerts').getByRole('button').first() | > 93 | await expect(lines.nth(0)).toContainText('5 min ago');"
+ },
+ "132365301622": {
+  "label": "TEST FAULT",
+  "rule": "wrong clock in the test: read one log (run 43565878978) and the fix, commit b6cf9f97 'alerts journey reads the page's own clock', which changes only the spec so its times come from the page's clock; no app code in that commit",
+  "log_line": "1) e2e/alerts-uat.spec.mjs:67:1 › Gym alerts: not ready, the latest on Today, a new one rings once, a tap opens its page || Error: expect(locator).toContainText(expected) failed | Locator: getByRole('main').getByTestId('latest-alerts').getByRole('button').first() | > 93 | await expect(lines.nth(0)).toContainText('5 min ago');"
+ },
+ "132365480147": {
+  "label": "TEST FAULT",
+  "rule": "wrong clock in the test: read one log (run 43565878978) and the fix, commit b6cf9f97 'alerts journey reads the page's own clock', which changes only the spec so its times come from the page's clock; no app code in that commit",
+  "log_line": "1) e2e/alerts-uat.spec.mjs:67:1 › Gym alerts: not ready, the latest on Today, a new one rings once, a tap opens its page || Error: expect(locator).toContainText(expected) failed | Locator: getByRole('main').getByTestId('latest-alerts').getByRole('button').first() | > 93 | await expect(lines.nth(0)).toContainText('5 min ago');"
+ },
+ "132390554542": {
+  "label": "TEST FAULT",
+  "rule": "stale expectation: read one log (run 43576089586) and the fix, commit 23eac447, which changes the spec's count from 1 to 2 because the new 14 Nov feature rightly lights a second dot; the app showed what it was built to show",
+  "log_line": "1) e2e/newdots-uat.spec.mjs:169:1 › F198 time: 5 Nov features end on 5 Dec, the 6 Nov ones on 6 Dec, Trainers (7 Nov) on 7 Dec || Error: expect(locator).toHaveCount(expected) failed | Locator:  getByRole('main').locator('[data-new-dot]') | > 183 | await expect(dot(page.getByRole('main'))).toHaveCount(1);"
+ },
+ "132391165809": {
+  "label": "TEST FAULT",
+  "rule": "stale expectation: read one log (run 43576089586) and the fix, commit 23eac447, which changes the spec's count from 1 to 2 because the new 14 Nov feature rightly lights a second dot; the app showed what it was built to show",
+  "log_line": "1) e2e/newdots-uat.spec.mjs:169:1 › F198 time: 5 Nov features end on 5 Dec, the 6 Nov ones on 6 Dec, Trainers (7 Nov) on 7 Dec || Error: expect(locator).toHaveCount(expected) failed | Locator:  getByRole('main').locator('[data-new-dot]') | > 183 | await expect(dot(page.getByRole('main'))).toHaveCount(1);"
+ },
+ "132391541227": {
+  "label": "TEST FAULT",
+  "rule": "stale expectation: read one log (run 43576089586) and the fix, commit 23eac447, which changes the spec's count from 1 to 2 because the new 14 Nov feature rightly lights a second dot; the app showed what it was built to show",
+  "log_line": "1) e2e/newdots-uat.spec.mjs:169:1 › F198 time: 5 Nov features end on 5 Dec, the 6 Nov ones on 6 Dec, Trainers (7 Nov) on 7 Dec || Error: expect(locator).toHaveCount(expected) failed | Locator:  getByRole('main').locator('[data-new-dot]') | > 183 | await expect(dot(page.getByRole('main'))).toHaveCount(1);"
+ },
+ "132393828056": {
+  "label": "TEST FAULT",
+  "rule": "stale expectation: read one log (run 43576089586) and the fix, commit 23eac447, which changes the spec's count from 1 to 2 because the new 14 Nov feature rightly lights a second dot; the app showed what it was built to show",
+  "log_line": "1) e2e/newdots-uat.spec.mjs:169:1 › F198 time: 5 Nov features end on 5 Dec, the 6 Nov ones on 6 Dec, Trainers (7 Nov) on 7 Dec || Error: expect(locator).toHaveCount(expected) failed | Locator:  getByRole('main').locator('[data-new-dot]') | > 183 | await expect(dot(page.getByRole('main'))).toHaveCount(1);"
+ },
+ "132394510768": {
+  "label": "TEST FAULT",
+  "rule": "stale expectation: read one log (run 43576089586) and the fix, commit 23eac447, which changes the spec's count from 1 to 2 because the new 14 Nov feature rightly lights a second dot; the app showed what it was built to show",
+  "log_line": "1) e2e/newdots-uat.spec.mjs:169:1 › F198 time: 5 Nov features end on 5 Dec, the 6 Nov ones on 6 Dec, Trainers (7 Nov) on 7 Dec || Error: expect(locator).toHaveCount(expected) failed | Locator:  getByRole('main').locator('[data-new-dot]') | > 183 | await expect(dot(page.getByRole('main'))).toHaveCount(1);"
+ },
+ "132395624308": {
+  "label": "TEST FAULT",
+  "rule": "stale expectation: read one log (run 43576089586) and the fix, commit 23eac447, which changes the spec's count from 1 to 2 because the new 14 Nov feature rightly lights a second dot; the app showed what it was built to show",
+  "log_line": "1) e2e/newdots-uat.spec.mjs:169:1 › F198 time: 5 Nov features end on 5 Dec, the 6 Nov ones on 6 Dec, Trainers (7 Nov) on 7 Dec || Error: expect(locator).toHaveCount(expected) failed | Locator:  getByRole('main').locator('[data-new-dot]') | > 183 | await expect(dot(page.getByRole('main'))).toHaveCount(1);"
+ },
+ "132396896006": {
+  "label": "TEST FAULT",
+  "rule": "stale expectation: read one log (run 43576089586) and the fix, commit 23eac447, which changes the spec's count from 1 to 2 because the new 14 Nov feature rightly lights a second dot; the app showed what it was built to show",
+  "log_line": "1) e2e/newdots-uat.spec.mjs:169:1 › F198 time: 5 Nov features end on 5 Dec, the 6 Nov ones on 6 Dec, Trainers (7 Nov) on 7 Dec || Error: expect(locator).toHaveCount(expected) failed | Locator:  getByRole('main').locator('[data-new-dot]') | > 183 | await expect(dot(page.getByRole('main'))).toHaveCount(1);"
+ },
+ "132397489503": {
+  "label": "TEST FAULT",
+  "rule": "stale expectation: read one log (run 43576089586) and the fix, commit 23eac447, which changes the spec's count from 1 to 2 because the new 14 Nov feature rightly lights a second dot; the app showed what it was built to show",
+  "log_line": "1) e2e/newdots-uat.spec.mjs:169:1 › F198 time: 5 Nov features end on 5 Dec, the 6 Nov ones on 6 Dec, Trainers (7 Nov) on 7 Dec || Error: expect(locator).toHaveCount(expected) failed | Locator:  getByRole('main').locator('[data-new-dot]') | > 183 | await expect(dot(page.getByRole('main'))).toHaveCount(1);"
+ },
+ "132397820433": {
+  "label": "TEST FAULT",
+  "rule": "stale expectation: read one log (run 43576089586) and the fix, commit 23eac447, which changes the spec's count from 1 to 2 because the new 14 Nov feature rightly lights a second dot; the app showed what it was built to show",
+  "log_line": "1) e2e/newdots-uat.spec.mjs:169:1 › F198 time: 5 Nov features end on 5 Dec, the 6 Nov ones on 6 Dec, Trainers (7 Nov) on 7 Dec || Error: expect(locator).toHaveCount(expected) failed | Locator:  getByRole('main').locator('[data-new-dot]') | > 183 | await expect(dot(page.getByRole('main'))).toHaveCount(1);"
+ },
+ "132398538440": {
+  "label": "TEST FAULT",
+  "rule": "stale expectation: read one log (run 43576089586) and the fix, commit 23eac447, which changes the spec's count from 1 to 2 because the new 14 Nov feature rightly lights a second dot; the app showed what it was built to show",
+  "log_line": "1) e2e/newdots-uat.spec.mjs:169:1 › F198 time: 5 Nov features end on 5 Dec, the 6 Nov ones on 6 Dec, Trainers (7 Nov) on 7 Dec || Error: expect(locator).toHaveCount(expected) failed | Locator:  getByRole('main').locator('[data-new-dot]') | > 183 | await expect(dot(page.getByRole('main'))).toHaveCount(1);"
+ },
+ "132400129382": {
+  "label": "TEST FAULT",
+  "rule": "stale expectation: read one log (run 43576089586) and the fix, commit 23eac447, which changes the spec's count from 1 to 2 because the new 14 Nov feature rightly lights a second dot; the app showed what it was built to show",
+  "log_line": "1) e2e/newdots-uat.spec.mjs:169:1 › F198 time: 5 Nov features end on 5 Dec, the 6 Nov ones on 6 Dec, Trainers (7 Nov) on 7 Dec || Error: expect(locator).toHaveCount(expected) failed | Locator:  getByRole('main').locator('[data-new-dot]') | > 183 | await expect(dot(page.getByRole('main'))).toHaveCount(1);"
+ },
+ "132400399178": {
+  "label": "TEST FAULT",
+  "rule": "stale expectation: read one log (run 43576089586) and the fix, commit 23eac447, which changes the spec's count from 1 to 2 because the new 14 Nov feature rightly lights a second dot; the app showed what it was built to show",
+  "log_line": "1) e2e/newdots-uat.spec.mjs:169:1 › F198 time: 5 Nov features end on 5 Dec, the 6 Nov ones on 6 Dec, Trainers (7 Nov) on 7 Dec || Error: expect(locator).toHaveCount(expected) failed | Locator:  getByRole('main').locator('[data-new-dot]') | > 183 | await expect(dot(page.getByRole('main'))).toHaveCount(1);"
+ },
+ "132400539610": {
+  "label": "TEST FAULT",
+  "rule": "stale expectation: read one log (run 43576089586) and the fix, commit 23eac447, which changes the spec's count from 1 to 2 because the new 14 Nov feature rightly lights a second dot; the app showed what it was built to show",
+  "log_line": "1) e2e/newdots-uat.spec.mjs:169:1 › F198 time: 5 Nov features end on 5 Dec, the 6 Nov ones on 6 Dec, Trainers (7 Nov) on 7 Dec || Error: expect(locator).toHaveCount(expected) failed | Locator:  getByRole('main').locator('[data-new-dot]') | > 183 | await expect(dot(page.getByRole('main'))).toHaveCount(1);"
+ },
+ "132446483928": {
+  "label": "TEST FAULT",
+  "rule": "test did not bring the card into view: read one log (run 43594657561) and the fix, commit bf53a853 'fix the red demo screen test', which makes the spec scroll every card into view before looking (the tag loads only near the screen)",
+  "log_line": "1) e2e/demo-showcase-uat.spec.mjs:80:3 › the sales demo, as the owner › phone: every main screen has the sample gym in it, and nothing leaves the page || Error: expect(locator).toBeVisible() failed | Locator:  getByRole('main').getByText('Getting stronger').first() | > 92 | await expect(main.getByText('Getting stronger').first()).toBeVisible({ timeout: 15_000 });"
+ },
+ "132478923811": {
+  "label": "TEST FAULT",
+  "rule": "test did not bring the card into view: read one log (run 43594657561) and the fix, commit bf53a853 'fix the red demo screen test', which makes the spec scroll every card into view before looking (the tag loads only near the screen)",
+  "log_line": "1) e2e/demo-showcase-uat.spec.mjs:80:3 › the sales demo, as the owner › phone: every main screen has the sample gym in it, and nothing leaves the page || Error: expect(locator).toBeVisible() failed | Locator:  getByRole('main').getByText('Getting stronger').first() | > 92 | await expect(main.getByText('Getting stronger').first()).toBeVisible({ timeout: 15_000 });"
+ },
+ "132479006053": {
+  "label": "TEST FAULT",
+  "rule": "test did not bring the card into view: read one log (run 43594657561) and the fix, commit bf53a853 'fix the red demo screen test', which makes the spec scroll every card into view before looking (the tag loads only near the screen)",
+  "log_line": "1) e2e/demo-showcase-uat.spec.mjs:80:3 › the sales demo, as the owner › phone: every main screen has the sample gym in it, and nothing leaves the page || Error: expect(locator).toBeVisible() failed | Locator:  getByRole('main').getByText('Getting stronger').first() | > 92 | await expect(main.getByText('Getting stronger').first()).toBeVisible({ timeout: 15_000 });"
+ },
+ "132480779876": {
+  "label": "TEST FAULT",
+  "rule": "test did not bring the card into view: read one log (run 43594657561) and the fix, commit bf53a853 'fix the red demo screen test', which makes the spec scroll every card into view before looking (the tag loads only near the screen)",
+  "log_line": "1) e2e/demo-showcase-uat.spec.mjs:80:3 › the sales demo, as the owner › phone: every main screen has the sample gym in it, and nothing leaves the page || Error: expect(locator).toBeVisible() failed | Locator:  getByRole('main').getByText('Getting stronger').first() | > 92 | await expect(main.getByText('Getting stronger').first()).toBeVisible({ timeout: 15_000 });"
+ },
+ "132481773580": {
+  "label": "TEST FAULT",
+  "rule": "test did not bring the card into view: read one log (run 43594657561) and the fix, commit bf53a853 'fix the red demo screen test', which makes the spec scroll every card into view before looking (the tag loads only near the screen)",
+  "log_line": "1) e2e/demo-showcase-uat.spec.mjs:80:3 › the sales demo, as the owner › phone: every main screen has the sample gym in it, and nothing leaves the page || Error: expect(locator).toBeVisible() failed | Locator:  getByRole('main').getByText('Getting stronger').first() | > 92 | await expect(main.getByText('Getting stronger').first()).toBeVisible({ timeout: 15_000 });"
+ },
+ "132482271998": {
+  "label": "TEST FAULT",
+  "rule": "test did not bring the card into view: read one log (run 43594657561) and the fix, commit bf53a853 'fix the red demo screen test', which makes the spec scroll every card into view before looking (the tag loads only near the screen)",
+  "log_line": "1) e2e/demo-showcase-uat.spec.mjs:80:3 › the sales demo, as the owner › phone: every main screen has the sample gym in it, and nothing leaves the page || Error: expect(locator).toBeVisible() failed | Locator:  getByRole('main').getByText('Getting stronger').first() | > 92 | await expect(main.getByText('Getting stronger').first()).toBeVisible({ timeout: 15_000 });"
+ },
+ "132482873736": {
+  "label": "TEST FAULT",
+  "rule": "test did not bring the card into view: read one log (run 43594657561) and the fix, commit bf53a853 'fix the red demo screen test', which makes the spec scroll every card into view before looking (the tag loads only near the screen)",
+  "log_line": "1) e2e/demo-showcase-uat.spec.mjs:80:3 › the sales demo, as the owner › phone: every main screen has the sample gym in it, and nothing leaves the page || Error: expect(locator).toBeVisible() failed | Locator:  getByRole('main').getByText('Getting stronger').first() | > 92 | await expect(main.getByText('Getting stronger').first()).toBeVisible({ timeout: 15_000 });"
+ },
+ "132884588253": {
+  "label": "TEST FAULT",
+  "rule": "a date pinned in the test went stale: read one log (run 43737944737) and the fix, commit 5b886cd5 'the bell test reads the 15 Nov update (was 14 Nov)', which changes only the spec",
+  "log_line": "1) e2e/whatsnew.spec.mjs:38:1 › J149 Notifications bell: counts new updates, opens with a short What is new summary, marks them seen || Error: expect(locator).toContainText(expected) failed | Locator: getByRole('dialog', { name: 'Notifications' }) | > 50 | await expect(list).toContainText('Version 14 Nov 2026');"
+ },
+ "132884687244": {
+  "label": "TEST FAULT",
+  "rule": "a date pinned in the test went stale: read one log (run 43737944737) and the fix, commit 5b886cd5 'the bell test reads the 15 Nov update (was 14 Nov)', which changes only the spec",
+  "log_line": "1) e2e/whatsnew.spec.mjs:38:1 › J149 Notifications bell: counts new updates, opens with a short What is new summary, marks them seen || Error: expect(locator).toContainText(expected) failed | Locator: getByRole('dialog', { name: 'Notifications' }) | > 50 | await expect(list).toContainText('Version 14 Nov 2026');"
+ },
+ "132886069101": {
+  "label": "TEST FAULT",
+  "rule": "a date pinned in the test went stale: read one log (run 43737944737) and the fix, commit 5b886cd5 'the bell test reads the 15 Nov update (was 14 Nov)', which changes only the spec",
+  "log_line": "1) e2e/whatsnew.spec.mjs:38:1 › J149 Notifications bell: counts new updates, opens with a short What is new summary, marks them seen || Error: expect(locator).toContainText(expected) failed | Locator: getByRole('dialog', { name: 'Notifications' }) | > 50 | await expect(list).toContainText('Version 14 Nov 2026');"
+ },
+ "132887737950": {
+  "label": "TEST FAULT",
+  "rule": "a date pinned in the test went stale: read one log (run 43737944737) and the fix, commit 5b886cd5 'the bell test reads the 15 Nov update (was 14 Nov)', which changes only the spec",
+  "log_line": "1) e2e/whatsnew.spec.mjs:38:1 › J149 Notifications bell: counts new updates, opens with a short What is new summary, marks them seen || Error: expect(locator).toContainText(expected) failed | Locator: getByRole('dialog', { name: 'Notifications' }) | > 50 | await expect(list).toContainText('Version 14 Nov 2026');"
+ },
+ "132887798875": {
+  "label": "TEST FAULT",
+  "rule": "a date pinned in the test went stale: read one log (run 43737944737) and the fix, commit 5b886cd5 'the bell test reads the 15 Nov update (was 14 Nov)', which changes only the spec",
+  "log_line": "1) e2e/whatsnew.spec.mjs:38:1 › J149 Notifications bell: counts new updates, opens with a short What is new summary, marks them seen || Error: expect(locator).toContainText(expected) failed | Locator: getByRole('dialog', { name: 'Notifications' }) | > 50 | await expect(list).toContainText('Version 14 Nov 2026');"
+ },
+ "132889528593": {
+  "label": "TEST FAULT",
+  "rule": "a date pinned in the test went stale: read one log (run 43737944737) and the fix, commit 5b886cd5 'the bell test reads the 15 Nov update (was 14 Nov)', which changes only the spec",
+  "log_line": "1) e2e/whatsnew.spec.mjs:38:1 › J149 Notifications bell: counts new updates, opens with a short What is new summary, marks them seen || Error: expect(locator).toContainText(expected) failed | Locator: getByRole('dialog', { name: 'Notifications' }) | > 50 | await expect(list).toContainText('Version 14 Nov 2026');"
+ },
+ "132891442065": {
+  "label": "TEST FAULT",
+  "rule": "a date pinned in the test went stale: read one log (run 43737944737) and the fix, commit 5b886cd5 'the bell test reads the 15 Nov update (was 14 Nov)', which changes only the spec",
+  "log_line": "1) e2e/whatsnew.spec.mjs:38:1 › J149 Notifications bell: counts new updates, opens with a short What is new summary, marks them seen || Error: expect(locator).toContainText(expected) failed | Locator: getByRole('dialog', { name: 'Notifications' }) | > 50 | await expect(list).toContainText('Version 14 Nov 2026');"
+ }
+}
