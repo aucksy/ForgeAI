@@ -14,24 +14,23 @@ blind check: never put the held-out rows or hints into a helper brief (ids are i
 ## Learned cost per helper type (5-hour %)
 | step | helpers so far | average cost |
 |---|---|---|
-| plan-review | 1 | 171k tokens (% not measured yet; plan with 5) |
-| tools | 2 | 190k tokens (% not measured yet; plan with 5) |
-| A1b | 1 | 201k tokens (% not measured yet; plan with 5) |
-| A2 | 21 | 159k tokens (% not measured yet; plan with 5) |
-| A7 | 0 | 5 (start value) |
-| E1 | 1 | 189k tokens (% not measured yet; plan with 5) |
-| E2 | 1 | 299k tokens (% not measured yet; plan with 5) |
-| E3 | 1 | 198k tokens (% not measured yet; plan with 5) |
-| E4 | 1 | 184k tokens (% not measured yet; plan with 5) |
-| 3F | 1 | 171k tokens (% not measured yet; plan with 5) |
+| plan-review | 1 | 5.5 (171k tokens) |
+| tools | 2 | 6.1 (190k tokens) |
+| A1b | 1 | 6.4 (201k tokens) |
+| A2 | 21 | 5.1 (159k tokens) |
+| A7 | 1 | 6.0 (187k tokens) |
+| E1 | 1 | 6.0 (189k tokens) |
+| E2 | 1 | 9.6 (299k tokens) |
+| E3 | 1 | 6.3 (198k tokens) |
+| E4 | 1 | 5.9 (184k tokens) |
+| 3F | 1 | 5.5 (171k tokens) |
 
 ## Work items
-Counts: 17 todo, 0 in progress, 33 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 15 todo, 1 in progress, 34 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
-| A7-pilot | A7 | promises: PILOT, one source group of at most 120 candidate sentences from _sources/promises.txt; runs alone | todo | _work/A7-pilot.md |  |
-| A2-phone-tracker-data | A2 | A2 features: area phone/tracker-data (40 items, 9326 lines) | todo | _work/A2-phone-tracker-data.md |  |
+| A2-phone-tracker-data | A2 | A2 features: area phone/tracker-data (40 items, 9326 lines) | in progress | _work/A2-phone-tracker-data.md |  |
 | A2-phone-tracker-lib | A2 | A2 features: area phone/tracker-lib (59 items, 9117 lines) | todo | _work/A2-phone-tracker-lib.md |  |
 | A2-phone-native | A2 | A2 features: area phone/native (103 items, 11102 lines) | todo | _work/A2-phone-native.md |  |
 | A2-phone-components-1 | A2 | A2 features: area phone/components-1 (127 items, 7312 lines) | todo | _work/A2-phone-components-1.md |  |
@@ -55,7 +54,7 @@ Counts: 17 todo, 0 in progress, 33 done, 0 blocked. Full list: work-items.jsonl.
 | A2-phone-tracker-components-2 | A2 | A2 features: area phone/tracker-components-2 (102 items, 8215 lines) | done | _work/A2-phone-tracker-components-2.md | 40 rows (39 features), 50 of 50 lines; no plan gate read in this area |
 | A2-phone-tracker-engine | A2 | A2 features: area phone/tracker-engine (35 items, 10011 lines) | done | _work/A2-phone-tracker-engine.md | 33 rows (32 features), 35 of 35 lines; no plan gate in this area |
 | A7-src | tools | script: _tools/promises.mjs -> _sources/promises.txt (candidate sentences per source group; the file was missing) | done | _work/A7-src.md | promises.txt made by script: 1,631 candidates in 8 groups (with word endings); Hindi lines and words inside store pictures are not listed |
-(+ 25 older done items, not shown)
+(+ 26 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
