@@ -1,0 +1,68 @@
+phone.txt#33 | deeplink-custom | mettleup://c/CODE | apps/mobile/src/shop/checkIn.ts:14
+phone.txt#34 | deeplink-custom | forgeai://c/CODE | apps/mobile/src/shop/checkIn.ts:14
+phone.txt#35 | deeplink-custom | forgeai://c/RAMS01 | apps/mobile/src/shop/CheckInScreen.tsx:4
+phone.txt#36 | deeplink-custom | forgeai://j/RAMS01 | apps/mobile/src/shop/InviteScreen.tsx:3
+phone.txt#54 | from-call | state.profile.name (value unknown: built in code) | apps/mobile/src/shop/MateProfileScreen.tsx:118
+phone.txt#269 | screen-component | BagScreen | apps/mobile/src/shop/BagScreen.tsx:24
+phone.txt#270 | screen-component | CheckInScreen | apps/mobile/src/shop/CheckInScreen.tsx:75
+phone.txt#271 | screen-component | DietPlanScreen | apps/mobile/src/shop/DietPlanScreen.tsx:22
+phone.txt#272 | screen-component | GymHoursScreen | apps/mobile/src/shop/GymHoursScreen.tsx:26
+phone.txt#273 | screen-component | GymTalkScreen | apps/mobile/src/shop/GymTalkScreen.tsx:64
+phone.txt#274 | screen-component | InboxScreen | apps/mobile/src/shop/InboxScreen.tsx:19
+phone.txt#275 | screen-component | InviteScreen | apps/mobile/src/shop/InviteScreen.tsx:44
+phone.txt#276 | screen-component | MateProfileScreen | apps/mobile/src/shop/MateProfileScreen.tsx:30
+phone.txt#277 | screen-component | OrdersScreen | apps/mobile/src/shop/OrdersScreen.tsx:40
+phone.txt#278 | screen-component | ProductScreen | apps/mobile/src/shop/ProductScreen.tsx:25
+phone.txt#279 | screen-component | ScanPosterScreen | apps/mobile/src/shop/ScanPosterScreen.tsx:17
+phone.txt#280 | screen-component | ShopScreen | apps/mobile/src/shop/ShopScreen.tsx:65
+phone.txt#427 | storage-key-const | forgeai.askTrainer.seenReplies [ASK_SEEN_KEY] | apps/mobile/src/shop/askReplySync.ts:27
+phone.txt#428 | storage-key-const | forgeai.askTrainer.alertedReplies [ASK_ALERTED_KEY] | apps/mobile/src/shop/askReplySync.ts:29
+phone.txt#429 | storage-key-const | forgeai-gym-join-try [JOIN_TRY_STORAGE_KEY] | apps/mobile/src/shop/gym.ts:51
+phone.txt#490 | storage-read | forgeai.askTrainer.seenReplies [ASK_SEEN_KEY] | apps/mobile/src/shop/askReplySync.ts:40
+phone.txt#491 | storage-read | forgeai.askTrainer.alertedReplies [ASK_ALERTED_KEY] | apps/mobile/src/shop/askReplySync.ts:138
+phone.txt#492 | storage-read | forgeai-gym-join-try [JOIN_TRY_STORAGE_KEY] | apps/mobile/src/shop/gymActions.ts:120
+phone.txt#523 | storage-remove | forgeai-gym-join-try [JOIN_TRY_STORAGE_KEY] | apps/mobile/src/shop/gymActions.ts:136
+phone.txt#524 | storage-remove | forgeai-membership [MEMBERSHIP_STORAGE_KEY] | apps/mobile/src/shop/gymActions.ts:531
+phone.txt#525 | storage-remove | k (value unknown: built in code) | apps/mobile/src/shop/gymActions.ts:533
+phone.txt#550 | storage-write | forgeai.askTrainer.seenReplies [ASK_SEEN_KEY] | apps/mobile/src/shop/askReplySync.ts:56
+phone.txt#551 | storage-write | forgeai.askTrainer.alertedReplies [ASK_ALERTED_KEY] | apps/mobile/src/shop/askReplySync.ts:147
+phone.txt#552 | storage-write | forgeai-gym-join-try [JOIN_TRY_STORAGE_KEY] | apps/mobile/src/shop/gymActions.ts:127
+words.txt#21 | message-builder | whatsAppLink | apps/mobile/src/shop/findGym.ts:82
+words.txt#22 | message-builder | checkProblemWords | apps/mobile/src/shop/findGym.ts:200
+words.txt#23 | message-builder | stateWords | apps/mobile/src/shop/findGym.ts:218
+words.txt#24 | message-builder | findProblemWords | apps/mobile/src/shop/findGym.ts:227
+words.txt#25 | message-builder | tellGymMessage | apps/mobile/src/shop/findGym.ts:239
+words.txt#85 | whatsapp-link-built-here | whatsAppLink | apps/mobile/src/shop/findGym.ts:83
+file#apps/mobile/src/shop/BringFriendCard.tsx | file | BringFriendCard.tsx | apps/mobile/src/shop/BringFriendCard.tsx:1
+file#apps/mobile/src/shop/GymBusyCard.tsx | file | GymBusyCard.tsx | apps/mobile/src/shop/GymBusyCard.tsx:1
+file#apps/mobile/src/shop/GymHeaderMark.tsx | file | GymHeaderMark.tsx | apps/mobile/src/shop/GymHeaderMark.tsx:1
+file#apps/mobile/src/shop/GymHoursRow.tsx | file | GymHoursRow.tsx | apps/mobile/src/shop/GymHoursRow.tsx:1
+file#apps/mobile/src/shop/GymIconOffer.tsx | file | GymIconOffer.tsx | apps/mobile/src/shop/GymIconOffer.tsx:1
+file#apps/mobile/src/shop/GymNotFoundCard.tsx | file | GymNotFoundCard.tsx | apps/mobile/src/shop/GymNotFoundCard.tsx:1
+file#apps/mobile/src/shop/GymOnly.tsx | file | GymOnly.tsx | apps/mobile/src/shop/GymOnly.tsx:1
+file#apps/mobile/src/shop/GymReportPanel.tsx | file | GymReportPanel.tsx | apps/mobile/src/shop/GymReportPanel.tsx:1
+file#apps/mobile/src/shop/GymTalkRow.tsx | file | GymTalkRow.tsx | apps/mobile/src/shop/GymTalkRow.tsx:1
+file#apps/mobile/src/shop/JoinAgreement.tsx | file | JoinAgreement.tsx | apps/mobile/src/shop/JoinAgreement.tsx:1
+file#apps/mobile/src/shop/LeaderboardCard.tsx | file | LeaderboardCard.tsx | apps/mobile/src/shop/LeaderboardCard.tsx:1
+file#apps/mobile/src/shop/MachineTipCard.tsx | file | MachineTipCard.tsx | apps/mobile/src/shop/MachineTipCard.tsx:1
+file#apps/mobile/src/shop/MembershipCard.tsx | file | MembershipCard.tsx | apps/mobile/src/shop/MembershipCard.tsx:1
+file#apps/mobile/src/shop/OfferCard.tsx | file | OfferCard.tsx | apps/mobile/src/shop/OfferCard.tsx:1
+file#apps/mobile/src/shop/PayPanel.tsx | file | PayPanel.tsx | apps/mobile/src/shop/PayPanel.tsx:1
+file#apps/mobile/src/shop/PlanEndsCard.tsx | file | PlanEndsCard.tsx | apps/mobile/src/shop/PlanEndsCard.tsx:1
+file#apps/mobile/src/shop/PlanRequestPanel.tsx | file | PlanRequestPanel.tsx | apps/mobile/src/shop/PlanRequestPanel.tsx:1
+file#apps/mobile/src/shop/PosterScanner.tsx | file | PosterScanner.tsx | apps/mobile/src/shop/PosterScanner.tsx:1
+file#apps/mobile/src/shop/ProductArt.tsx | file | ProductArt.tsx | apps/mobile/src/shop/ProductArt.tsx:1
+file#apps/mobile/src/shop/ProductPicture.tsx | file | ProductPicture.tsx | apps/mobile/src/shop/ProductPicture.tsx:1
+file#apps/mobile/src/shop/ShopParts.tsx | file | ShopParts.tsx | apps/mobile/src/shop/ShopParts.tsx:1
+file#apps/mobile/src/shop/StaffDoorCard.tsx | file | StaffDoorCard.tsx | apps/mobile/src/shop/StaffDoorCard.tsx:1
+file#apps/mobile/src/shop/askAccessRead.ts | file | askAccessRead.ts | apps/mobile/src/shop/askAccessRead.ts:1
+file#apps/mobile/src/shop/askReplyStore.ts | file | askReplyStore.ts | apps/mobile/src/shop/askReplyStore.ts:1
+file#apps/mobile/src/shop/askTrainer.ts | file | askTrainer.ts | apps/mobile/src/shop/askTrainer.ts:1
+file#apps/mobile/src/shop/autoReminders.ts | file | autoReminders.ts | apps/mobile/src/shop/autoReminders.ts:1
+file#apps/mobile/src/shop/boardWords.ts | file | boardWords.ts | apps/mobile/src/shop/boardWords.ts:1
+file#apps/mobile/src/shop/bringFriend.ts | file | bringFriend.ts | apps/mobile/src/shop/bringFriend.ts:1
+file#apps/mobile/src/shop/catalog.ts | file | catalog.ts | apps/mobile/src/shop/catalog.ts:1
+file#apps/mobile/src/shop/claimCode.ts | file | claimCode.ts | apps/mobile/src/shop/claimCode.ts:1
+file#apps/mobile/src/shop/findGymApi.ts | file | findGymApi.ts | apps/mobile/src/shop/findGymApi.ts:1
+file#apps/mobile/src/shop/friendLinkBase.ts | file | friendLinkBase.ts | apps/mobile/src/shop/friendLinkBase.ts:1
+file#apps/mobile/src/shop/gymAlertRing.ts | file | gymAlertRing.ts | apps/mobile/src/shop/gymAlertRing.ts:1

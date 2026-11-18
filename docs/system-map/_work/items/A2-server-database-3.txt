@@ -1,0 +1,251 @@
+server.txt#585 | db-function | _billing_on (defined 1x, newest shown) | supabase/migrations/0063_gym_checkout.sql:84
+server.txt#586 | db-function | _paid_from (defined 1x, newest shown) | supabase/migrations/0063_gym_checkout.sql:175
+server.txt#587 | db-function | _days_left (defined 1x, newest shown) | supabase/migrations/0063_gym_checkout.sql:186
+server.txt#588 | db-function | _upgrade_paise (defined 1x, newest shown) | supabase/migrations/0063_gym_checkout.sql:194
+server.txt#589 | db-function | _founding_open (defined 1x, newest shown) | supabase/migrations/0063_gym_checkout.sql:203
+server.txt#590 | db-function | _founding_taken (defined 1x, newest shown) | supabase/migrations/0063_gym_checkout.sql:210
+server.txt#591 | db-function | apply_gym_payment (defined 3x, newest shown) | supabase/migrations/0063_gym_checkout.sql:294
+server.txt#592 | db-function | _ledger_receipt (defined 1x, newest shown) | supabase/migrations/0063_gym_checkout.sql:302
+server.txt#593 | db-function | _receipt_json (defined 1x, newest shown) | supabase/migrations/0063_gym_checkout.sql:335
+server.txt#594 | db-function | owner_billing (defined 1x, newest shown) | supabase/migrations/0063_gym_checkout.sql:342
+server.txt#595 | db-function | owner_receipt (defined 1x, newest shown) | supabase/migrations/0063_gym_checkout.sql:368
+server.txt#596 | db-function | hq_billing_checkout_start (defined 1x, newest shown) | supabase/migrations/0063_gym_checkout.sql:378
+server.txt#597 | db-function | hq_billing_checkout_link (defined 1x, newest shown) | supabase/migrations/0063_gym_checkout.sql:444
+server.txt#598 | db-function | hq_billing_checkout_failed (defined 1x, newest shown) | supabase/migrations/0063_gym_checkout.sql:458
+server.txt#599 | db-function | hq_billing_order (defined 1x, newest shown) | supabase/migrations/0063_gym_checkout.sql:466
+server.txt#600 | db-function | hq_billing_paid (defined 1x, newest shown) | supabase/migrations/0063_gym_checkout.sql:479
+server.txt#601 | db-function | hq_billing_daily (defined 1x, newest shown) | supabase/migrations/0063_gym_checkout.sql:527
+server.txt#602 | db-function | _billing_check_json (defined 1x, newest shown) | supabase/migrations/0064_billing_checks.sql:53
+server.txt#603 | db-function | hq_billing_checks (defined 1x, newest shown) | supabase/migrations/0064_billing_checks.sql:66
+server.txt#604 | db-function | hq_billing_checks_waiting (defined 1x, newest shown) | supabase/migrations/0064_billing_checks.sql:83
+server.txt#605 | db-function | hq_billing_check_done (defined 1x, newest shown) | supabase/migrations/0064_billing_checks.sql:91
+server.txt#606 | db-function | hq_billing_open_links (defined 1x, newest shown) | supabase/migrations/0064_billing_checks.sql:113
+server.txt#607 | db-function | hq_mettleup_payments (defined 2x, newest shown) | supabase/migrations/0064_billing_checks.sql:129
+server.txt#608 | db-function | _pt_clean_hours (defined 1x, newest shown) | supabase/migrations/0065_trainer_schedule.sql:71
+server.txt#609 | db-function | owner_trainer_schedule (defined 1x, newest shown) | supabase/migrations/0065_trainer_schedule.sql:93
+server.txt#610 | db-function | owner_save_trainer_profile (defined 1x, newest shown) | supabase/migrations/0065_trainer_schedule.sql:141
+server.txt#611 | db-function | owner_book_pt (defined 1x, newest shown) | supabase/migrations/0065_trainer_schedule.sql:173
+server.txt#612 | db-function | owner_cancel_pt (defined 1x, newest shown) | supabase/migrations/0065_trainer_schedule.sql:230
+server.txt#613 | db-function | hq_purge_qa_gyms (defined 1x, newest shown) | supabase/migrations/0066_purge_qa_gyms.sql:18
+server.txt#614 | db-function | _terms_versions (defined 2x, newest shown) | supabase/migrations/0067_terms_version_2026_11_10.sql:20
+server.txt#615 | db-function | member_find_gyms (defined 1x, newest shown) | supabase/migrations/0068_member_find_gym.sql:57
+server.txt#616 | db-function | member_claim_phone (defined 1x, newest shown) | supabase/migrations/0068_member_find_gym.sql:108
+server.txt#617 | db-function | _talk_lines (defined 1x, newest shown) | supabase/migrations/0069_member_messages.sql:129
+server.txt#618 | db-function | _talk_unread (defined 1x, newest shown) | supabase/migrations/0069_member_messages.sql:143
+server.txt#619 | db-function | _talk_member_limits (defined 1x, newest shown) | supabase/migrations/0069_member_messages.sql:193
+server.txt#620 | db-function | _talk_member_left (defined 1x, newest shown) | supabase/migrations/0069_member_messages.sql:207
+server.txt#621 | db-function | member_talk_unread (defined 1x, newest shown) | supabase/migrations/0069_member_messages.sql:219
+server.txt#622 | db-function | member_talk_list (defined 1x, newest shown) | supabase/migrations/0069_member_messages.sql:229
+server.txt#623 | db-function | member_talk_send (defined 1x, newest shown) | supabase/migrations/0069_member_messages.sql:244
+server.txt#624 | db-function | member_talk_reply (defined 1x, newest shown) | supabase/migrations/0069_member_messages.sql:270
+server.txt#625 | db-function | owner_talk_count (defined 1x, newest shown) | supabase/migrations/0069_member_messages.sql:291
+server.txt#626 | db-function | owner_talk_reply (defined 1x, newest shown) | supabase/migrations/0069_member_messages.sql:323
+server.txt#627 | db-function | owner_talk_done (defined 1x, newest shown) | supabase/migrations/0069_member_messages.sql:352
+server.txt#628 | db-function | owner_plus_lock (defined 1x, newest shown) | supabase/migrations/0070_member_plus_lock.sql:40
+server.txt#629 | db-function | owner_save_plus_lock (defined 1x, newest shown) | supabase/migrations/0070_member_plus_lock.sql:51
+server.txt#630 | db-function | member_plus_lock (defined 1x, newest shown) | supabase/migrations/0070_member_plus_lock.sql:64
+server.txt#631 | db-function | _ai_month (defined 1x, newest shown) | supabase/migrations/0071_ai_assistant.sql:110
+server.txt#632 | db-function | _ai_plan (defined 1x, newest shown) | supabase/migrations/0071_ai_assistant.sql:116
+server.txt#633 | db-function | _ai_paid (defined 1x, newest shown) | supabase/migrations/0071_ai_assistant.sql:122
+server.txt#634 | db-function | _ai_trial (defined 1x, newest shown) | supabase/migrations/0071_ai_assistant.sql:129
+server.txt#635 | db-function | _ai_monthly_free (defined 1x, newest shown) | supabase/migrations/0071_ai_assistant.sql:136
+server.txt#636 | db-function | _ai_balance (defined 1x, newest shown) | supabase/migrations/0071_ai_assistant.sql:146
+server.txt#637 | db-function | _ai_add_free (defined 1x, newest shown) | supabase/migrations/0071_ai_assistant.sql:160
+server.txt#638 | db-function | _ai_wallet_json (defined 1x, newest shown) | supabase/migrations/0071_ai_assistant.sql:190
+server.txt#639 | db-function | owner_ai_wallet (defined 1x, newest shown) | supabase/migrations/0071_ai_assistant.sql:217
+server.txt#640 | db-function | owner_ai_task_save (defined 1x, newest shown) | supabase/migrations/0071_ai_assistant.sql:226
+server.txt#641 | db-function | owner_ai_spend (defined 1x, newest shown) | supabase/migrations/0071_ai_assistant.sql:255
+server.txt#642 | db-function | owner_ai_refund (defined 1x, newest shown) | supabase/migrations/0071_ai_assistant.sql:281
+server.txt#643 | db-function | owner_ai_tasks (defined 1x, newest shown) | supabase/migrations/0071_ai_assistant.sql:301
+server.txt#644 | db-function | owner_ai_status (defined 1x, newest shown) | supabase/migrations/0071_ai_assistant.sql:314
+server.txt#645 | db-function | hq_ai_wallet (defined 1x, newest shown) | supabase/migrations/0071_ai_assistant.sql:322
+server.txt#646 | db-function | hq_ai_grant (defined 1x, newest shown) | supabase/migrations/0071_ai_assistant.sql:352
+server.txt#647 | db-function | hq_ai_purge_old (defined 1x, newest shown) | supabase/migrations/0071_ai_assistant.sql:375
+server.txt#648 | db-function | _plan_word (defined 2x, newest shown) | supabase/migrations/0072_retired_ai_pack_name.sql:15
+server.txt#649 | db-function | _roster_app_members (defined 1x, newest shown) | supabase/migrations/0073_member_push_more.sql:42
+server.txt#650 | db-function | _assigned_rosters (defined 1x, newest shown) | supabase/migrations/0073_member_push_more.sql:67
+server.txt#651 | db-function | _push_note_rosters (defined 1x, newest shown) | supabase/migrations/0073_member_push_more.sql:87
+server.txt#652 | db-function | _push_note_workout_plan (defined 1x, newest shown) | supabase/migrations/0073_member_push_more.sql:112
+server.txt#653 | db-function | _push_note_diet_plan (defined 1x, newest shown) | supabase/migrations/0073_member_push_more.sql:147
+server.txt#654 | db-function | _push_note_measurement (defined 1x, newest shown) | supabase/migrations/0073_member_push_more.sql:181
+server.txt#655 | db-function | _push_note_challenge (defined 1x, newest shown) | supabase/migrations/0073_member_push_more.sql:202
+server.txt#656 | db-function | hq_fee_request_notes (defined 1x, newest shown) | supabase/migrations/0073_member_push_more.sql:232
+server.txt#657 | db-function | _tq_plan_ok (defined 1x, newest shown) | supabase/migrations/0074_ask_trainer_paid_plan.sql:27
+server.txt#658 | db-function | member_ask_trainer (defined 2x, newest shown) | supabase/migrations/0074_ask_trainer_paid_plan.sql:38
+server.txt#659 | db-function | _alert (defined 1x, newest shown) | supabase/migrations/0075_gym_alerts.sql:67
+server.txt#660 | db-function | _alert_first_name (defined 1x, newest shown) | supabase/migrations/0075_gym_alerts.sql:83
+server.txt#661 | db-function | _alert_member_name (defined 1x, newest shown) | supabase/migrations/0075_gym_alerts.sql:89
+server.txt#662 | db-function | _alert_viewer (defined 1x, newest shown) | supabase/migrations/0075_gym_alerts.sql:98
+server.txt#663 | db-function | _alert_json (defined 1x, newest shown) | supabase/migrations/0075_gym_alerts.sql:124
+server.txt#664 | db-function | _alert_plan_request (defined 1x, newest shown) | supabase/migrations/0075_gym_alerts.sql:178
+server.txt#665 | db-function | _alert_phone_link (defined 1x, newest shown) | supabase/migrations/0075_gym_alerts.sql:209
+server.txt#666 | db-function | _alert_shop_order (defined 1x, newest shown) | supabase/migrations/0075_gym_alerts.sql:227
+server.txt#667 | db-function | _alert_report_sent (defined 1x, newest shown) | supabase/migrations/0075_gym_alerts.sql:245
+server.txt#668 | db-function | _alert_member_joined (defined 1x, newest shown) | supabase/migrations/0075_gym_alerts.sql:264
+server.txt#669 | db-function | _alert_friend_referred (defined 1x, newest shown) | supabase/migrations/0075_gym_alerts.sql:281
+server.txt#670 | db-function | hq_paid_alerts (defined 1x, newest shown) | supabase/migrations/0075_gym_alerts.sql:302
+server.txt#671 | db-function | _web_push_endpoint_ok (defined 1x, newest shown) | supabase/migrations/0076_panel_web_push.sql:57
+server.txt#672 | db-function | _web_push_live (defined 1x, newest shown) | supabase/migrations/0076_panel_web_push.sql:65
+server.txt#673 | db-function | _web_push_item (defined 1x, newest shown) | supabase/migrations/0076_panel_web_push.sql:75
+server.txt#674 | db-function | owner_save_web_push (defined 1x, newest shown) | supabase/migrations/0076_panel_web_push.sql:83
+server.txt#675 | db-function | owner_clear_web_push (defined 1x, newest shown) | supabase/migrations/0076_panel_web_push.sql:106
+server.txt#676 | db-function | owner_web_push_on (defined 1x, newest shown) | supabase/migrations/0076_panel_web_push.sql:116
+server.txt#677 | db-function | owner_alert_settings (defined 1x, newest shown) | supabase/migrations/0076_panel_web_push.sql:126
+server.txt#678 | db-function | owner_save_alert_settings (defined 1x, newest shown) | supabase/migrations/0076_panel_web_push.sql:139
+server.txt#679 | db-function | hq_panel_drop_push (defined 1x, newest shown) | supabase/migrations/0076_panel_web_push.sql:273
+server.txt#680 | db-function | _self_join_closed (defined 1x, newest shown) | supabase/migrations/0077_self_join.sql:100
+server.txt#681 | db-function | _self_join_plans (defined 1x, newest shown) | supabase/migrations/0077_self_join.sql:107
+server.txt#682 | db-function | _ai_month_spent (defined 2x, newest shown) | supabase/migrations/0078_ai_questions.sql:120
+server.txt#683 | db-function | ai_question_take (defined 1x, newest shown) | supabase/migrations/0078_ai_questions.sql:221
+server.txt#684 | db-function | ai_visitor_question_take (defined 1x, newest shown) | supabase/migrations/0078_ai_questions.sql:259
+server.txt#685 | db-function | _ai_low_alert (defined 1x, newest shown) | supabase/migrations/0078_ai_questions.sql:293
+server.txt#686 | db-function | owner_set_person_job (defined 1x, newest shown) | supabase/migrations/0079_staff_job_title.sql:34
+server.txt#687 | db-function | owner_people (defined 5x, newest shown) | supabase/migrations/0079_staff_job_title.sql:49
+server.txt#688 | db-function | _gym_page_plans (defined 1x, newest shown) | supabase/migrations/0080_gym_page.sql:138
+server.txt#689 | db-function | _gym_details (defined 1x, newest shown) | supabase/migrations/0080_gym_page.sql:158
+server.txt#690 | db-function | _gym_page_has_link (defined 1x, newest shown) | supabase/migrations/0080_gym_page.sql:166
+server.txt#691 | db-function | _gym_page_json (defined 1x, newest shown) | supabase/migrations/0080_gym_page.sql:172
+server.txt#692 | db-function | owner_save_gym_page (defined 1x, newest shown) | supabase/migrations/0080_gym_page.sql:200
+server.txt#693 | db-function | gym_page_ask_send (defined 1x, newest shown) | supabase/migrations/0080_gym_page.sql:327
+server.txt#694 | db-function | gym_page_report_send (defined 1x, newest shown) | supabase/migrations/0080_gym_page.sql:385
+server.txt#695 | db-function | hq_hide_gym_page (defined 1x, newest shown) | supabase/migrations/0080_gym_page.sql:408
+server.txt#696 | db-function | self_join_pay_gym (defined 1x, newest shown) | supabase/migrations/0081_join_pay.sql:123
+server.txt#697 | db-function | owner_gym_page_photo_slot (defined 1x, newest shown) | supabase/migrations/0082_gym_page_photos.sql:73
+server.txt#698 | db-function | _gym_page_photo_upload_ok (defined 1x, newest shown) | supabase/migrations/0082_gym_page_photos.sql:93
+server.txt#699 | db-function | _gym_page_photo_read_ok (defined 1x, newest shown) | supabase/migrations/0082_gym_page_photos.sql:103
+server.txt#700 | db-function | _ai_q_rules (defined 2x, newest shown) | supabase/migrations/0083_ai_members.sql:82
+server.txt#701 | db-function | _ai_member_rules (defined 1x, newest shown) | supabase/migrations/0083_ai_members.sql:97
+server.txt#702 | db-function | _ai_members_limit_alert (defined 1x, newest shown) | supabase/migrations/0083_ai_members.sql:106
+server.txt#703 | db-function | _ai_q_take (defined 2x, newest shown) | supabase/migrations/0083_ai_members.sql:119
+server.txt#704 | db-function | ai_question_back (defined 2x, newest shown) | supabase/migrations/0083_ai_members.sql:199
+server.txt#705 | db-function | _ai_member_json (defined 1x, newest shown) | supabase/migrations/0083_ai_members.sql:216
+server.txt#706 | db-function | owner_ai_member_rules (defined 1x, newest shown) | supabase/migrations/0083_ai_members.sql:227
+server.txt#707 | db-function | owner_save_ai_member_rules (defined 1x, newest shown) | supabase/migrations/0083_ai_members.sql:234
+server.txt#708 | db-function | owner_ai_questions (defined 2x, newest shown) | supabase/migrations/0083_ai_members.sql:248
+server.txt#709 | db-function | _trainer_year_clean (defined 1x, newest shown) | supabase/migrations/0084_progress_year.sql:31
+server.txt#710 | db-function | member_trainer_share3 (defined 1x, newest shown) | supabase/migrations/0084_progress_year.sql:61
+server.txt#711 | db-function | friend_invite_send (defined 2x, newest shown) | supabase/migrations/0085_friend_known_number.sql:26
+server.txt#712 | db-function | _alert_trainer_question (defined 2x, newest shown) | supabase/migrations/0086_member_questions_words.sql:17
+server.txt#713 | db-function | _tq_member_row (defined 2x, newest shown) | supabase/migrations/0086_member_questions_words.sql:31
+server.txt#714 | db-function | _talk_viewer (defined 2x, newest shown) | supabase/migrations/0087_feedback_owner_desk.sql:36
+server.txt#715 | db-function | owner_talk_list (defined 2x, newest shown) | supabase/migrations/0087_feedback_owner_desk.sql:62
+server.txt#716 | db-function | _self_join_trial_days (defined 1x, newest shown) | supabase/migrations/0088_join_trial.sql:46
+server.txt#717 | db-function | self_join_preview (defined 2x, newest shown) | supabase/migrations/0088_join_trial.sql:58
+server.txt#718 | db-function | self_join_send (defined 4x, newest shown) | supabase/migrations/0089_trial_alert_words.sql:20
+server.txt#719 | db-function | owner_gym_page (defined 2x, newest shown) | supabase/migrations/0090_gym_page_switch.sql:44
+server.txt#720 | db-function | gym_page_public (defined 2x, newest shown) | supabase/migrations/0090_gym_page_switch.sql:58
+server.txt#721 | db-function | hq_web_page (defined 1x, newest shown) | supabase/migrations/0090_gym_page_switch.sql:86
+server.txt#722 | db-function | hq_set_web_page (defined 1x, newest shown) | supabase/migrations/0090_gym_page_switch.sql:102
+server.txt#723 | db-function | _challenge_checkin_days (defined 1x, newest shown) | supabase/migrations/0091_challenge_checkins.sql:66
+server.txt#724 | db-function | _challenge_value (defined 1x, newest shown) | supabase/migrations/0091_challenge_checkins.sql:89
+server.txt#725 | db-function | _challenge_entrants (defined 1x, newest shown) | supabase/migrations/0091_challenge_checkins.sql:104
+server.txt#726 | db-function | _challenge_hitters (defined 2x, newest shown) | supabase/migrations/0091_challenge_checkins.sql:119
+server.txt#727 | db-function | _challenge_results (defined 4x, newest shown) | supabase/migrations/0091_challenge_checkins.sql:142
+server.txt#728 | db-function | member_board (defined 2x, newest shown) | supabase/migrations/0091_challenge_checkins.sql:170
+server.txt#729 | db-function | owner_challenges (defined 3x, newest shown) | supabase/migrations/0091_challenge_checkins.sql:221
+server.txt#730 | db-function | owner_save_challenge (defined 2x, newest shown) | supabase/migrations/0091_challenge_checkins.sql:269
+server.txt#731 | db-function | member_join_day (defined 1x, newest shown) | supabase/migrations/0092_member_join_day.sql:24
+server.txt#732 | db-function | phone_sign_in_find (defined 1x, newest shown) | supabase/migrations/0093_phone_sign_in.sql:35
+server.txt#733 | db-function | _page_chat_gym (defined 1x, newest shown) | supabase/migrations/0094_page_chat.sql:76
+server.txt#734 | db-function | _page_chat_status (defined 1x, newest shown) | supabase/migrations/0094_page_chat.sql:87
+server.txt#735 | db-function | _page_chat_keep (defined 1x, newest shown) | supabase/migrations/0094_page_chat.sql:98
+server.txt#736 | db-function | _page_chat_alert (defined 1x, newest shown) | supabase/migrations/0094_page_chat.sql:107
+server.txt#737 | db-function | page_chat_sweep (defined 1x, newest shown) | supabase/migrations/0094_page_chat.sql:124
+server.txt#738 | db-function | page_chat_ask (defined 1x, newest shown) | supabase/migrations/0094_page_chat.sql:159
+server.txt#739 | db-function | page_chat_reply (defined 1x, newest shown) | supabase/migrations/0094_page_chat.sql:256
+server.txt#740 | db-function | page_chat_contact (defined 1x, newest shown) | supabase/migrations/0094_page_chat.sql:307
+server.txt#741 | db-function | _test_alert_sub (defined 1x, newest shown) | supabase/migrations/0095_test_alert.sql:63
+server.txt#742 | db-function | _test_alert_wait (defined 1x, newest shown) | supabase/migrations/0095_test_alert.sql:71
+server.txt#743 | db-function | owner_send_test_alert (defined 1x, newest shown) | supabase/migrations/0095_test_alert.sql:87
+server.txt#744 | db-function | owner_test_alert (defined 1x, newest shown) | supabase/migrations/0095_test_alert.sql:109
+server.txt#745 | db-function | panel_test_alert_shown (defined 1x, newest shown) | supabase/migrations/0095_test_alert.sql:134
+server.txt#746 | db-function | owner_alerts (defined 2x, newest shown) | supabase/migrations/0095_test_alert.sql:143
+server.txt#747 | db-function | hq_panel_digest_gyms (defined 2x, newest shown) | supabase/migrations/0095_test_alert.sql:208
+server.txt#748 | db-function | _talk_visible (defined 3x, newest shown) | supabase/migrations/0096_message_recipient.sql:67
+server.txt#749 | db-function | _talk_member_row (defined 2x, newest shown) | supabase/migrations/0096_message_recipient.sql:81
+server.txt#750 | db-function | _talk_gym_row (defined 2x, newest shown) | supabase/migrations/0096_message_recipient.sql:99
+server.txt#751 | db-function | _alert_visible (defined 3x, newest shown) | supabase/migrations/0096_message_recipient.sql:132
+server.txt#752 | db-function | _alert_talk_line (defined 2x, newest shown) | supabase/migrations/0096_message_recipient.sql:169
+server.txt#753 | db-function | member_talk_choices (defined 1x, newest shown) | supabase/migrations/0096_message_recipient.sql:206
+server.txt#754 | db-function | member_talk_send_to (defined 1x, newest shown) | supabase/migrations/0096_message_recipient.sql:227
+server.txt#755 | db-function | _db_reads_append_only (defined 1x, newest shown) | supabase/migrations/0097_direct_read_log.sql:107
+server.txt#756 | db-function | _db_reads_no_truncate (defined 1x, newest shown) | supabase/migrations/0097_direct_read_log.sql:123
+server.txt#757 | db-function | _db_audited_roles (defined 1x, newest shown) | supabase/migrations/0097_direct_read_log.sql:137
+server.txt#758 | db-function | hq_db_reads_cursor (defined 1x, newest shown) | supabase/migrations/0097_direct_read_log.sql:147
+server.txt#759 | db-function | hq_db_reads_ingest (defined 1x, newest shown) | supabase/migrations/0097_direct_read_log.sql:162
+server.txt#760 | db-function | hq_db_reads (defined 1x, newest shown) | supabase/migrations/0097_direct_read_log.sql:251
+server.txt#761 | db-function | owner_hq_access (defined 3x, newest shown) | supabase/migrations/0097_direct_read_log.sql:281
+server.txt#762 | db-function | _alert_needs (defined 1x, newest shown) | supabase/migrations/0098_alerts_done_and_read.sql:114
+server.txt#763 | db-function | _alert_reader (defined 1x, newest shown) | supabase/migrations/0098_alerts_done_and_read.sql:122
+server.txt#764 | db-function | _alert_handle (defined 1x, newest shown) | supabase/migrations/0098_alerts_done_and_read.sql:129
+server.txt#765 | db-function | _alert_pending_for (defined 1x, newest shown) | supabase/migrations/0098_alerts_done_and_read.sql:148
+server.txt#766 | db-function | _alert_done_talk_line (defined 1x, newest shown) | supabase/migrations/0098_alerts_done_and_read.sql:158
+server.txt#767 | db-function | _alert_done_talk_thread (defined 1x, newest shown) | supabase/migrations/0098_alerts_done_and_read.sql:173
+server.txt#768 | db-function | _alert_done_question (defined 1x, newest shown) | supabase/migrations/0098_alerts_done_and_read.sql:206
+server.txt#769 | db-function | _alert_done_plan_request (defined 1x, newest shown) | supabase/migrations/0098_alerts_done_and_read.sql:229
+server.txt#770 | db-function | _alert_done_phone_link (defined 1x, newest shown) | supabase/migrations/0098_alerts_done_and_read.sql:250
+server.txt#771 | db-function | _alert_done_shop_order (defined 1x, newest shown) | supabase/migrations/0098_alerts_done_and_read.sql:271
+server.txt#772 | db-function | _alert_done_enquiry (defined 1x, newest shown) | supabase/migrations/0098_alerts_done_and_read.sql:293
+server.txt#773 | db-function | owner_alert_list (defined 1x, newest shown) | supabase/migrations/0098_alerts_done_and_read.sql:428
+server.txt#774 | db-function | owner_alerts_read (defined 1x, newest shown) | supabase/migrations/0098_alerts_done_and_read.sql:480
+server.txt#775 | db-function | owner_alert_opened (defined 1x, newest shown) | supabase/migrations/0098_alerts_done_and_read.sql:501
+server.txt#776 | db-function | owner_alert_remove (defined 1x, newest shown) | supabase/migrations/0098_alerts_done_and_read.sql:520
+server.txt#777 | db-function | hq_panel_push_instant (defined 3x, newest shown) | supabase/migrations/0098_alerts_done_and_read.sql:541
+server.txt#778 | db-function | hq_panel_digest_claim (defined 3x, newest shown) | supabase/migrations/0098_alerts_done_and_read.sql:594
+server.txt#855 | db-table | gym_plan_changes | supabase/migrations/0063_gym_checkout.sql:101
+server.txt#856 | db-table | gym_checkouts | supabase/migrations/0063_gym_checkout.sql:112
+server.txt#857 | db-table | receipt_counters | supabase/migrations/0063_gym_checkout.sql:142
+server.txt#858 | db-table | gym_receipts | supabase/migrations/0063_gym_checkout.sql:149
+server.txt#859 | db-table | gym_billing_reminders | supabase/migrations/0063_gym_checkout.sql:161
+server.txt#860 | db-table | gym_trainer_profiles | supabase/migrations/0065_trainer_schedule.sql:35
+server.txt#861 | db-table | gym_pt_bookings | supabase/migrations/0065_trainer_schedule.sql:49
+server.txt#862 | db-table | member_find_tries | supabase/migrations/0068_member_find_gym.sql:43
+server.txt#863 | db-table | gym_talk_threads | supabase/migrations/0069_member_messages.sql:56
+server.txt#864 | db-table | gym_talk_messages | supabase/migrations/0069_member_messages.sql:79
+server.txt#865 | db-table | gym_plus_settings | supabase/migrations/0070_member_plus_lock.sql:30
+server.txt#866 | db-table | gym_ai_tasks | supabase/migrations/0071_ai_assistant.sql:69
+server.txt#867 | db-table | gym_ai_credit_ledger | supabase/migrations/0071_ai_assistant.sql:85
+server.txt#868 | db-table | gym_alerts | supabase/migrations/0075_gym_alerts.sql:40
+server.txt#869 | db-table | gym_web_push | supabase/migrations/0076_panel_web_push.sql:26
+server.txt#870 | db-table | gym_alert_settings | supabase/migrations/0076_panel_web_push.sql:43
+server.txt#871 | db-table | gym_self_joins | supabase/migrations/0077_self_join.sql:63
+server.txt#872 | db-table | gym_ai_questions | supabase/migrations/0078_ai_questions.sql:68
+server.txt#873 | db-table | gym_ai_question_slots | supabase/migrations/0078_ai_questions.sql:84
+server.txt#874 | db-table | gym_pages | supabase/migrations/0080_gym_page.sql:55
+server.txt#875 | db-table | gym_page_reports | supabase/migrations/0080_gym_page.sql:88
+server.txt#876 | db-table | gym_page_asks | supabase/migrations/0080_gym_page.sql:100
+server.txt#877 | db-table | gym_page_photo_slots | supabase/migrations/0082_gym_page_photos.sql:52
+server.txt#878 | db-table | gym_ai_member_rules | supabase/migrations/0083_ai_members.sql:51
+server.txt#879 | db-table | gym_page_off | supabase/migrations/0090_gym_page_switch.sql:34
+server.txt#880 | db-table | gym_page_chats | supabase/migrations/0094_page_chat.sql:56
+server.txt#881 | db-table | db_direct_reads | supabase/migrations/0097_direct_read_log.sql:72
+server.txt#882 | db-table | db_read_log_state | supabase/migrations/0097_direct_read_log.sql:91
+server.txt#883 | db-table | gym_alert_reads | supabase/migrations/0098_alerts_done_and_read.sql:99
+server.txt#948 | db-trigger | gym_payment_ledger_receipt | supabase/migrations/0063_gym_checkout.sql:331
+server.txt#949 | db-trigger | gym_talk_threads_not_suspended | supabase/migrations/0069_member_messages.sql:96
+server.txt#950 | db-trigger | gym_talk_messages_not_suspended | supabase/migrations/0069_member_messages.sql:99
+server.txt#951 | db-trigger | gym_members_talk_left | supabase/migrations/0069_member_messages.sql:214
+server.txt#952 | db-trigger | crm_records_workout_plan_push_note | supabase/migrations/0073_member_push_more.sql:142
+server.txt#953 | db-trigger | gym_diet_plans_push_note | supabase/migrations/0073_member_push_more.sql:177
+server.txt#954 | db-trigger | gym_body_measurements_push_note | supabase/migrations/0073_member_push_more.sql:198
+server.txt#955 | db-trigger | gym_challenges_push_note | supabase/migrations/0073_member_push_more.sql:225
+server.txt#956 | db-trigger | trainer_questions_alert | supabase/migrations/0075_gym_alerts.sql:144
+server.txt#957 | db-trigger | gym_talk_messages_alert | supabase/migrations/0075_gym_alerts.sql:174
+server.txt#958 | db-trigger | gym_plan_requests_alert | supabase/migrations/0075_gym_alerts.sql:205
+server.txt#959 | db-trigger | gym_phone_links_alert | supabase/migrations/0075_gym_alerts.sql:223
+server.txt#960 | db-trigger | shop_orders_alert | supabase/migrations/0075_gym_alerts.sql:241
+server.txt#961 | db-trigger | gym_report_requests_alert | supabase/migrations/0075_gym_alerts.sql:260
+server.txt#962 | db-trigger | gym_members_alert | supabase/migrations/0075_gym_alerts.sql:277
+server.txt#963 | db-trigger | gym_friend_referrals_alert | supabase/migrations/0075_gym_alerts.sql:295
+server.txt#964 | db-trigger | ai_credits_low | supabase/migrations/0078_ai_questions.sql:316
+server.txt#965 | db-trigger | gym_pages_not_suspended | supabase/migrations/0080_gym_page.sql:85
+server.txt#966 | db-trigger | gym_page_photo_slots_not_suspended | supabase/migrations/0082_gym_page_photos.sql:64
+server.txt#967 | db-trigger | db_direct_reads_append_only | supabase/migrations/0097_direct_read_log.sql:130
+server.txt#968 | db-trigger | db_direct_reads_no_truncate | supabase/migrations/0097_direct_read_log.sql:133
+server.txt#969 | db-trigger | gym_talk_messages_alert_done | supabase/migrations/0098_alerts_done_and_read.sql:169
+server.txt#970 | db-trigger | gym_talk_threads_alert_done | supabase/migrations/0098_alerts_done_and_read.sql:202
+server.txt#971 | db-trigger | trainer_questions_alert_done | supabase/migrations/0098_alerts_done_and_read.sql:225
+server.txt#972 | db-trigger | gym_plan_requests_alert_done | supabase/migrations/0098_alerts_done_and_read.sql:246
+server.txt#973 | db-trigger | gym_phone_links_alert_done | supabase/migrations/0098_alerts_done_and_read.sql:267
+server.txt#974 | db-trigger | shop_orders_alert_done | supabase/migrations/0098_alerts_done_and_read.sql:288
+server.txt#975 | db-trigger | crm_records_alert_done | supabase/migrations/0098_alerts_done_and_read.sql:343

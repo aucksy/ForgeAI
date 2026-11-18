@@ -1,0 +1,81 @@
+phone.txt#267 | screen-component | BootErrorScreen | apps/mobile/src/onboarding/components/BootErrorScreen.tsx:28
+phone.txt#268 | screen-component | WelcomeScreen | apps/mobile/src/onboarding/components/WelcomeScreen.tsx:252
+phone.txt#402 | storage-key-const | first_run_at [FIRST_RUN_KEY] | apps/mobile/src/db/index.ts:10
+phone.txt#422 | storage-key-const | member_schema_version [META_KEY] | apps/mobile/src/onboarding/db/memberSchema.ts:20
+phone.txt#423 | storage-key-const | intro_seen [INTRO_KEY] | apps/mobile/src/onboarding/introSlides.ts:20
+phone.txt#424 | storage-key-const | straight_in_note [STRAIGHT_IN_NOTE_KEY] | apps/mobile/src/onboarding/straightInNote.ts:10
+phone.txt#425 | storage-key-const | welcome_resume [RESUME_KEY] | apps/mobile/src/onboarding/welcomeResume.ts:14
+phone.txt#451 | storage-key-const | drive_linked [LINKED_KEY] | apps/mobile/src/store/backupStore.ts:43
+phone.txt#452 | storage-key-const | drive_last_backup_at [LAST_BACKUP_KEY] | apps/mobile/src/store/backupStore.ts:44
+phone.txt#453 | storage-key-const | mettleup-look [LOOK_CHOICE_KEY] | apps/mobile/src/theme/lookChoice.ts:14
+phone.txt#454 | storage-key-const | forgeai-gym-theme [THEME_MIRROR_KEY] | apps/mobile/src/theme/themeMirror.ts:12
+phone.txt#510 | storage-remove | forgeai-shop | apps/mobile/src/onboarding/eraseDevice.ts:211
+phone.txt#511 | storage-remove | forgeai-gym-shop [GYM_SHOP_STORAGE_KEY] | apps/mobile/src/onboarding/eraseDevice.ts:227
+phone.txt#512 | storage-remove | forgeai-gym-inbox [GYM_INBOX_STORAGE_KEY] | apps/mobile/src/onboarding/eraseDevice.ts:228
+phone.txt#513 | storage-remove | forgeai-pending-link [PENDING_LINK_STORAGE_KEY] | apps/mobile/src/onboarding/eraseDevice.ts:231
+phone.txt#514 | storage-remove | forgeai-gym-join-try [JOIN_TRY_STORAGE_KEY] | apps/mobile/src/onboarding/eraseDevice.ts:234
+phone.txt#515 | storage-remove | forgeai-gym-shortcut-offered [SHORTCUT_OFFERED_KEY] | apps/mobile/src/onboarding/eraseDevice.ts:237
+phone.txt#516 | storage-remove | forgeai-membership [MEMBERSHIP_STORAGE_KEY] | apps/mobile/src/onboarding/eraseDevice.ts:243
+phone.txt#517 | storage-remove | k (value unknown: built in code) | apps/mobile/src/onboarding/eraseDevice.ts:246
+phone.txt#518 | storage-remove | forgeai-gym-plans-known [GYM_PLANS_KNOWN_KEY] | apps/mobile/src/onboarding/eraseDevice.ts:252
+phone.txt#519 | storage-remove | forgeai-gym-measures [GYM_MEASURES_KEY] | apps/mobile/src/onboarding/eraseDevice.ts:258
+phone.txt#520 | storage-remove | forgeai-gym-diets [GYM_DIETS_KEY] | apps/mobile/src/onboarding/eraseDevice.ts:259
+phone.txt#521 | storage-remove | forgeai-gym-hours [GYM_HOURS_KEY] | apps/mobile/src/onboarding/eraseDevice.ts:262
+phone.txt#522 | storage-remove | forgeai.pendingPick | apps/mobile/src/onboarding/eraseDevice.ts:273
+phone.txt#540 | storage-store | forgeai-settings (zustand persist) | apps/mobile/src/store/settingsStore.ts:55
+file#apps/mobile/src/db/queuedWrites.ts | file | queuedWrites.ts | apps/mobile/src/db/queuedWrites.ts:1
+file#apps/mobile/src/db/repos/chatRepo.ts | file | chatRepo.ts | apps/mobile/src/db/repos/chatRepo.ts:1
+file#apps/mobile/src/db/repos/exerciseRepo.ts | file | exerciseRepo.ts | apps/mobile/src/db/repos/exerciseRepo.ts:1
+file#apps/mobile/src/db/repos/nutritionRepo.ts | file | nutritionRepo.ts | apps/mobile/src/db/repos/nutritionRepo.ts:1
+file#apps/mobile/src/db/repos/planRepo.ts | file | planRepo.ts | apps/mobile/src/db/repos/planRepo.ts:1
+file#apps/mobile/src/db/repos/prRepo.ts | file | prRepo.ts | apps/mobile/src/db/repos/prRepo.ts:1
+file#apps/mobile/src/db/repos/userRepo.ts | file | userRepo.ts | apps/mobile/src/db/repos/userRepo.ts:1
+file#apps/mobile/src/db/repos/workoutRepo.ts | file | workoutRepo.ts | apps/mobile/src/db/repos/workoutRepo.ts:1
+file#apps/mobile/src/db/schema.ts | file | schema.ts | apps/mobile/src/db/schema.ts:1
+file#apps/mobile/src/db/seed/chat.ts | file | chat.ts | apps/mobile/src/db/seed/chat.ts:1
+file#apps/mobile/src/db/seed/exercises.ts | file | exercises.ts | apps/mobile/src/db/seed/exercises.ts:1
+file#apps/mobile/src/db/seed/history.ts | file | history.ts | apps/mobile/src/db/seed/history.ts:1
+file#apps/mobile/src/db/seed/index.ts | file | index.ts | apps/mobile/src/db/seed/index.ts:1
+file#apps/mobile/src/db/seed/meals.ts | file | meals.ts | apps/mobile/src/db/seed/meals.ts:1
+file#apps/mobile/src/db/seed/plan.ts | file | plan.ts | apps/mobile/src/db/seed/plan.ts:1
+file#apps/mobile/src/db/seed/profile.ts | file | profile.ts | apps/mobile/src/db/seed/profile.ts:1
+file#apps/mobile/src/db/seed/rng.ts | file | rng.ts | apps/mobile/src/db/seed/rng.ts:1
+file#apps/mobile/src/db/startupError.ts | file | startupError.ts | apps/mobile/src/db/startupError.ts:1
+file#apps/mobile/src/db/writeQueue.ts | file | writeQueue.ts | apps/mobile/src/db/writeQueue.ts:1
+file#apps/mobile/src/onboarding/bootFailure.ts | file | bootFailure.ts | apps/mobile/src/onboarding/bootFailure.ts:1
+file#apps/mobile/src/onboarding/components/IntroSlides.tsx | file | IntroSlides.tsx | apps/mobile/src/onboarding/components/IntroSlides.tsx:1
+file#apps/mobile/src/onboarding/components/RadioList.tsx | file | RadioList.tsx | apps/mobile/src/onboarding/components/RadioList.tsx:1
+file#apps/mobile/src/onboarding/components/StraightInNoteCard.tsx | file | StraightInNoteCard.tsx | apps/mobile/src/onboarding/components/StraightInNoteCard.tsx:1
+file#apps/mobile/src/onboarding/components/WelcomeGoogle.tsx | file | WelcomeGoogle.tsx | apps/mobile/src/onboarding/components/WelcomeGoogle.tsx:1
+file#apps/mobile/src/onboarding/components/WelcomeGymCode.tsx | file | WelcomeGymCode.tsx | apps/mobile/src/onboarding/components/WelcomeGymCode.tsx:1
+file#apps/mobile/src/onboarding/components/WelcomeParts.tsx | file | WelcomeParts.tsx | apps/mobile/src/onboarding/components/WelcomeParts.tsx:1
+file#apps/mobile/src/onboarding/components/WelcomePhone.tsx | file | WelcomePhone.tsx | apps/mobile/src/onboarding/components/WelcomePhone.tsx:1
+file#apps/mobile/src/onboarding/db/catalog.ts | file | catalog.ts | apps/mobile/src/onboarding/db/catalog.ts:1
+file#apps/mobile/src/onboarding/db/dataActions.ts | file | dataActions.ts | apps/mobile/src/onboarding/db/dataActions.ts:1
+file#apps/mobile/src/onboarding/db/importSafety.ts | file | importSafety.ts | apps/mobile/src/onboarding/db/importSafety.ts:1
+file#apps/mobile/src/onboarding/demoRemoval.ts | file | demoRemoval.ts | apps/mobile/src/onboarding/demoRemoval.ts:1
+file#apps/mobile/src/onboarding/demoText.ts | file | demoText.ts | apps/mobile/src/onboarding/demoText.ts:1
+file#apps/mobile/src/onboarding/eraseWords.ts | file | eraseWords.ts | apps/mobile/src/onboarding/eraseWords.ts:1
+file#apps/mobile/src/onboarding/form.ts | file | form.ts | apps/mobile/src/onboarding/form.ts:1
+file#apps/mobile/src/onboarding/phoneSignIn.ts | file | phoneSignIn.ts | apps/mobile/src/onboarding/phoneSignIn.ts:1
+file#apps/mobile/src/onboarding/phoneSignInApi.ts | file | phoneSignInApi.ts | apps/mobile/src/onboarding/phoneSignInApi.ts:1
+file#apps/mobile/src/onboarding/qaIntro.ts | file | qaIntro.ts | apps/mobile/src/onboarding/qaIntro.ts:1
+file#apps/mobile/src/onboarding/services/saveDataFile.ts | file | saveDataFile.ts | apps/mobile/src/onboarding/services/saveDataFile.ts:1
+file#apps/mobile/src/onboarding/store/onboardingStore.ts | file | onboardingStore.ts | apps/mobile/src/onboarding/store/onboardingStore.ts:1
+file#apps/mobile/src/onboarding/welcomeGym.ts | file | welcomeGym.ts | apps/mobile/src/onboarding/welcomeGym.ts:1
+file#apps/mobile/src/onboarding/welcomeStart.ts | file | welcomeStart.ts | apps/mobile/src/onboarding/welcomeStart.ts:1
+file#apps/mobile/src/onboarding/welcomeSteps.ts | file | welcomeSteps.ts | apps/mobile/src/onboarding/welcomeSteps.ts:1
+file#apps/mobile/src/store/accountStore.ts | file | accountStore.ts | apps/mobile/src/store/accountStore.ts:1
+file#apps/mobile/src/store/chatStore.ts | file | chatStore.ts | apps/mobile/src/store/chatStore.ts:1
+file#apps/mobile/src/store/cloudStore.ts | file | cloudStore.ts | apps/mobile/src/store/cloudStore.ts:1
+file#apps/mobile/src/store/dashboardStore.ts | file | dashboardStore.ts | apps/mobile/src/store/dashboardStore.ts:1
+file#apps/mobile/src/store/restoreImpact.ts | file | restoreImpact.ts | apps/mobile/src/store/restoreImpact.ts:1
+file#apps/mobile/src/theme/appearance.ts | file | appearance.ts | apps/mobile/src/theme/appearance.ts:1
+file#apps/mobile/src/theme/bootTheme.ts | file | bootTheme.ts | apps/mobile/src/theme/bootTheme.ts:1
+file#apps/mobile/src/theme/brandTokens.ts | file | brandTokens.ts | apps/mobile/src/theme/brandTokens.ts:1
+file#apps/mobile/src/theme/fontGate.ts | file | fontGate.ts | apps/mobile/src/theme/fontGate.ts:1
+file#apps/mobile/src/theme/fonts.ts | file | fonts.ts | apps/mobile/src/theme/fonts.ts:1
+file#apps/mobile/src/theme/gymTheme.ts | file | gymTheme.ts | apps/mobile/src/theme/gymTheme.ts:1
+file#apps/mobile/src/theme/logoPrefetch.ts | file | logoPrefetch.ts | apps/mobile/src/theme/logoPrefetch.ts:1
+file#apps/mobile/src/theme/tint.ts | file | tint.ts | apps/mobile/src/theme/tint.ts:1
+file#apps/mobile/src/theme/tokens.ts | file | tokens.ts | apps/mobile/src/theme/tokens.ts:1

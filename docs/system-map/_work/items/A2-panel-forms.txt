@@ -1,0 +1,6 @@
+panel.txt#79 | overlay | ChangeStartSheet | apps/dashboard/src/crm/ui/forms/ChangeStartSheet.tsx:17
+panel.txt#80 | overlay | CollectPaymentSheet | apps/dashboard/src/crm/ui/forms/CollectPaymentSheet.tsx:33
+panel.txt#81 | overlay | ExtendMembershipSheet | apps/dashboard/src/crm/ui/forms/ExtendMembershipSheet.tsx:37
+panel.txt#82 | overlay | MemberFormSheet | apps/dashboard/src/crm/ui/forms/MemberFormSheet.tsx:60
+panel.txt#83 | overlay | SellMembershipSheet | apps/dashboard/src/crm/ui/forms/SellMembershipSheet.tsx:34
+panel.txt#84 | overlay | VoidPaymentSheet | apps/dashboard/src/crm/ui/forms/VoidPaymentSheet.tsx:24

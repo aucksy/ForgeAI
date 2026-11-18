@@ -1,0 +1,131 @@
+phone.txt#31 | deeplink-custom | mettleup://plus | apps/mobile/src/plan/PlusPageGate.tsx:3
+phone.txt#32 | deeplink-custom | mettleup://find-gym | apps/mobile/src/plan/PlusPageGate.tsx:3
+phone.txt#384 | secure-write | forgeai.openai_api_key [OPENAI_KEY] | apps/mobile/src/lib/keys.ts:17
+phone.txt#385 | secure-write | forgeai.openai_api_key [OPENAI_KEY] | apps/mobile/src/lib/keys.ts:18
+phone.txt#386 | secure-write | forgeai.anthropic_api_key [ANTHROPIC_KEY] | apps/mobile/src/lib/keys.ts:26
+phone.txt#387 | secure-write | forgeai.anthropic_api_key [ANTHROPIC_KEY] | apps/mobile/src/lib/keys.ts:27
+phone.txt#388 | secure-write | forgeai.groq_api_key [GROQ_KEY] | apps/mobile/src/lib/keys.ts:35
+phone.txt#389 | secure-write | forgeai.groq_api_key [GROQ_KEY] | apps/mobile/src/lib/keys.ts:36
+phone.txt#403 | storage-key-const | update_seen [SEEN_KEY] | apps/mobile/src/lib/appUpdate.ts:18
+phone.txt#404 | storage-key-const | update_later [LATER_KEY] | apps/mobile/src/lib/appUpdate.ts:19
+phone.txt#405 | storage-key-const | update_whats_new [NEWS_KEY] | apps/mobile/src/lib/appUpdate.ts:126
+phone.txt#406 | storage-key-const | backup_moved_seen [BACKUP_MOVED_KEY] | apps/mobile/src/lib/backupMoved.ts:23
+phone.txt#407 | storage-key-const | drive_linked [DRIVE_LINKED_KEY] | apps/mobile/src/lib/backupMoved.ts:25
+phone.txt#408 | storage-key-const | forgeai-gym-push-token [PUSH_TOKEN_KEY] | apps/mobile/src/lib/feedback.ts:19
+phone.txt#409 | storage-key-const | feedback_sender [SENDER_KEY] | apps/mobile/src/lib/feedback.ts:33
+phone.txt#410 | storage-key-const | feedback_button [ON_KEY] | apps/mobile/src/lib/feedbackButtonStore.ts:17
+phone.txt#411 | storage-key-const | feedback_button_spot [SPOT_KEY] | apps/mobile/src/lib/feedbackButtonStore.ts:18
+phone.txt#412 | storage-key-const | help_questions [HISTORY_KEY] | apps/mobile/src/lib/helpHistoryStore.ts:31
+phone.txt#413 | storage-key-const | forgeai.openai_api_key [OPENAI_KEY] | apps/mobile/src/lib/keys.ts:8
+phone.txt#414 | storage-key-const | forgeai.anthropic_api_key [ANTHROPIC_KEY] | apps/mobile/src/lib/keys.ts:9
+phone.txt#415 | storage-key-const | forgeai.groq_api_key [GROQ_KEY] | apps/mobile/src/lib/keys.ts:10
+phone.txt#416 | storage-key-const | safekeep_hidden_until [HIDE_KEY] | apps/mobile/src/lib/safekeepNudge.ts:68
+phone.txt#417 | storage-key-const | update_popup [POPUP_KEY] | apps/mobile/src/lib/updateStore.ts:36
+phone.txt#418 | storage-key-const | update_qa_stand_in [QA_KEY] | apps/mobile/src/lib/updateStore.ts:37
+phone.txt#419 | storage-key-const | whats_new_seen [SEEN_KEY] | apps/mobile/src/lib/whatsNew.ts:682
+phone.txt#420 | storage-key-const | whats_new_previewed [PREVIEWED_KEY] | apps/mobile/src/lib/whatsNew.ts:684
+phone.txt#421 | storage-key-const | notice_rest_day [REST_KEY] | apps/mobile/src/lib/workoutNotices.ts:57
+phone.txt#426 | storage-key-const | mettleup-member-plan [MEMBER_PLAN_STORAGE_KEY] | apps/mobile/src/plan/memberPlan.ts:40
+phone.txt#488 | storage-read | forgeai-gym-push-token [PUSH_TOKEN_KEY] | apps/mobile/src/lib/feedback.ts:183
+phone.txt#489 | storage-read | mettleup.newDotsSeen.v1 [KEY] | apps/mobile/src/lib/newDotsStore.ts:44
+phone.txt#509 | storage-remove | mettleup.newDotsSeen.v1 [KEY] | apps/mobile/src/lib/newDotsStore.ts:92
+phone.txt#548 | storage-write | mettleup.newDotsSeen.v1 [KEY] | apps/mobile/src/lib/newDotsStore.ts:53
+phone.txt#549 | storage-write | mettleup.newDotsSeen.v1 [KEY] | apps/mobile/src/lib/newDotsStore.ts:78
+words.txt#34 | phone-notification | showHelpReplyAlert | apps/mobile/src/lib/helpReplyAlert.ts:57
+words.txt#108 | whatsnew-phone | 0.79.0 | apps/mobile/src/lib/whatsNew.ts:80
+words.txt#109 | whatsnew-phone | 0.78.0 | apps/mobile/src/lib/whatsNew.ts:101
+words.txt#110 | whatsnew-phone | 0.77.0 | apps/mobile/src/lib/whatsNew.ts:122
+words.txt#111 | whatsnew-phone | 0.76.0 | apps/mobile/src/lib/whatsNew.ts:140
+words.txt#112 | whatsnew-phone | 0.75.0 | apps/mobile/src/lib/whatsNew.ts:152
+words.txt#113 | whatsnew-phone | 0.74.0 | apps/mobile/src/lib/whatsNew.ts:167
+words.txt#114 | whatsnew-phone | 0.73.0 | apps/mobile/src/lib/whatsNew.ts:176
+words.txt#115 | whatsnew-phone | 0.72.0 | apps/mobile/src/lib/whatsNew.ts:192
+words.txt#116 | whatsnew-phone | 0.71.0 | apps/mobile/src/lib/whatsNew.ts:203
+words.txt#117 | whatsnew-phone | 0.70.0 | apps/mobile/src/lib/whatsNew.ts:216
+words.txt#118 | whatsnew-phone | 0.69.0 | apps/mobile/src/lib/whatsNew.ts:233
+words.txt#119 | whatsnew-phone | 0.68.0 | apps/mobile/src/lib/whatsNew.ts:247
+words.txt#120 | whatsnew-phone | 0.67.0 | apps/mobile/src/lib/whatsNew.ts:257
+words.txt#121 | whatsnew-phone | 0.65.0 | apps/mobile/src/lib/whatsNew.ts:273
+words.txt#122 | whatsnew-phone | 0.64.0 | apps/mobile/src/lib/whatsNew.ts:284
+words.txt#123 | whatsnew-phone | 0.63.0 | apps/mobile/src/lib/whatsNew.ts:293
+words.txt#124 | whatsnew-phone | 0.62.1 | apps/mobile/src/lib/whatsNew.ts:309
+words.txt#125 | whatsnew-phone | 0.62.0 | apps/mobile/src/lib/whatsNew.ts:321
+words.txt#126 | whatsnew-phone | 0.61.0 | apps/mobile/src/lib/whatsNew.ts:340
+words.txt#127 | whatsnew-phone | 0.60.0 | apps/mobile/src/lib/whatsNew.ts:356
+words.txt#128 | whatsnew-phone | 0.59.0 | apps/mobile/src/lib/whatsNew.ts:374
+words.txt#129 | whatsnew-phone | 0.58.0 | apps/mobile/src/lib/whatsNew.ts:390
+words.txt#130 | whatsnew-phone | 0.57.1 | apps/mobile/src/lib/whatsNew.ts:405
+words.txt#131 | whatsnew-phone | 0.57.0 | apps/mobile/src/lib/whatsNew.ts:423
+words.txt#132 | whatsnew-phone | 0.56.1 | apps/mobile/src/lib/whatsNew.ts:451
+words.txt#133 | whatsnew-phone | 0.56.0 | apps/mobile/src/lib/whatsNew.ts:462
+words.txt#134 | whatsnew-phone | 0.55.1 | apps/mobile/src/lib/whatsNew.ts:486
+words.txt#135 | whatsnew-phone | 0.55.0 | apps/mobile/src/lib/whatsNew.ts:497
+words.txt#136 | whatsnew-phone | 0.54.1 | apps/mobile/src/lib/whatsNew.ts:508
+words.txt#137 | whatsnew-phone | 0.54.0 | apps/mobile/src/lib/whatsNew.ts:513
+words.txt#138 | whatsnew-phone | 0.53.0 | apps/mobile/src/lib/whatsNew.ts:525
+words.txt#139 | whatsnew-phone | 0.52.0 | apps/mobile/src/lib/whatsNew.ts:540
+words.txt#140 | whatsnew-phone | 0.51.0 | apps/mobile/src/lib/whatsNew.ts:561
+words.txt#141 | whatsnew-phone | 0.50.0 | apps/mobile/src/lib/whatsNew.ts:572
+words.txt#142 | whatsnew-phone | 0.49.0 | apps/mobile/src/lib/whatsNew.ts:583
+words.txt#143 | whatsnew-phone | 0.48.0 | apps/mobile/src/lib/whatsNew.ts:593
+words.txt#144 | whatsnew-phone | 0.47.1 | apps/mobile/src/lib/whatsNew.ts:607
+words.txt#145 | whatsnew-phone | 0.47.0 | apps/mobile/src/lib/whatsNew.ts:615
+words.txt#146 | whatsnew-phone | 0.46.0 | apps/mobile/src/lib/whatsNew.ts:625
+words.txt#147 | whatsnew-phone | 0.45.0 | apps/mobile/src/lib/whatsNew.ts:634
+words.txt#148 | whatsnew-phone | 0.44.0 | apps/mobile/src/lib/whatsNew.ts:645
+file#apps/mobile/src/engine/insights.ts | file | insights.ts | apps/mobile/src/engine/insights.ts:1
+file#apps/mobile/src/engine/overload.ts | file | overload.ts | apps/mobile/src/engine/overload.ts:1
+file#apps/mobile/src/engine/recovery.ts | file | recovery.ts | apps/mobile/src/engine/recovery.ts:1
+file#apps/mobile/src/engine/strength.ts | file | strength.ts | apps/mobile/src/engine/strength.ts:1
+file#apps/mobile/src/lib/alertRoute.ts | file | alertRoute.ts | apps/mobile/src/lib/alertRoute.ts:1
+file#apps/mobile/src/lib/appTabs.ts | file | appTabs.ts | apps/mobile/src/lib/appTabs.ts:1
+file#apps/mobile/src/lib/crashReport.ts | file | crashReport.ts | apps/mobile/src/lib/crashReport.ts:1
+file#apps/mobile/src/lib/credits.ts | file | credits.ts | apps/mobile/src/lib/credits.ts:1
+file#apps/mobile/src/lib/date.ts | file | date.ts | apps/mobile/src/lib/date.ts:1
+file#apps/mobile/src/lib/e1rm.ts | file | e1rm.ts | apps/mobile/src/lib/e1rm.ts:1
+file#apps/mobile/src/lib/features.ts | file | features.ts | apps/mobile/src/lib/features.ts:1
+file#apps/mobile/src/lib/feedbackButton.ts | file | feedbackButton.ts | apps/mobile/src/lib/feedbackButton.ts:1
+file#apps/mobile/src/lib/feedbackVoice.ts | file | feedbackVoice.ts | apps/mobile/src/lib/feedbackVoice.ts:1
+file#apps/mobile/src/lib/fetchTimeout.ts | file | fetchTimeout.ts | apps/mobile/src/lib/fetchTimeout.ts:1
+file#apps/mobile/src/lib/format.ts | file | format.ts | apps/mobile/src/lib/format.ts:1
+file#apps/mobile/src/lib/goBack.ts | file | goBack.ts | apps/mobile/src/lib/goBack.ts:1
+file#apps/mobile/src/lib/guardedAction.ts | file | guardedAction.ts | apps/mobile/src/lib/guardedAction.ts:1
+file#apps/mobile/src/lib/haptics.ts | file | haptics.ts | apps/mobile/src/lib/haptics.ts:1
+file#apps/mobile/src/lib/helpHistory.ts | file | helpHistory.ts | apps/mobile/src/lib/helpHistory.ts:1
+file#apps/mobile/src/lib/installSource.ts | file | installSource.ts | apps/mobile/src/lib/installSource.ts:1
+file#apps/mobile/src/lib/keyboardRoom.ts | file | keyboardRoom.ts | apps/mobile/src/lib/keyboardRoom.ts:1
+file#apps/mobile/src/lib/launchLink.ts | file | launchLink.ts | apps/mobile/src/lib/launchLink.ts:1
+file#apps/mobile/src/lib/layoutHints.ts | file | layoutHints.ts | apps/mobile/src/lib/layoutHints.ts:1
+file#apps/mobile/src/lib/linkNotice.ts | file | linkNotice.ts | apps/mobile/src/lib/linkNotice.ts:1
+file#apps/mobile/src/lib/loadState.ts | file | loadState.ts | apps/mobile/src/lib/loadState.ts:1
+file#apps/mobile/src/lib/newDots.ts | file | newDots.ts | apps/mobile/src/lib/newDots.ts:1
+file#apps/mobile/src/lib/numberFormat.ts | file | numberFormat.ts | apps/mobile/src/lib/numberFormat.ts:1
+file#apps/mobile/src/lib/oldRoutes.ts | file | oldRoutes.ts | apps/mobile/src/lib/oldRoutes.ts:1
+file#apps/mobile/src/lib/onIphone.ts | file | onIphone.ts | apps/mobile/src/lib/onIphone.ts:1
+file#apps/mobile/src/lib/pendingPick.ts | file | pendingPick.ts | apps/mobile/src/lib/pendingPick.ts:1
+file#apps/mobile/src/lib/permissionRefusal.ts | file | permissionRefusal.ts | apps/mobile/src/lib/permissionRefusal.ts:1
+file#apps/mobile/src/lib/retryRead.ts | file | retryRead.ts | apps/mobile/src/lib/retryRead.ts:1
+file#apps/mobile/src/lib/streak.ts | file | streak.ts | apps/mobile/src/lib/streak.ts:1
+file#apps/mobile/src/lib/tell.ts | file | tell.ts | apps/mobile/src/lib/tell.ts:1
+file#apps/mobile/src/lib/tempPictures.ts | file | tempPictures.ts | apps/mobile/src/lib/tempPictures.ts:1
+file#apps/mobile/src/lib/units.ts | file | units.ts | apps/mobile/src/lib/units.ts:1
+file#apps/mobile/src/lib/updatePrompt.ts | file | updatePrompt.ts | apps/mobile/src/lib/updatePrompt.ts:1
+file#apps/mobile/src/lib/useBackGuard.ts | file | useBackGuard.ts | apps/mobile/src/lib/useBackGuard.ts:1
+file#apps/mobile/src/lib/useLoad.ts | file | useLoad.ts | apps/mobile/src/lib/useLoad.ts:1
+file#apps/mobile/src/lib/useRereadWhenFailed.ts | file | useRereadWhenFailed.ts | apps/mobile/src/lib/useRereadWhenFailed.ts:1
+file#apps/mobile/src/lib/useUnits.ts | file | useUnits.ts | apps/mobile/src/lib/useUnits.ts:1
+file#apps/mobile/src/lib/uuid.ts | file | uuid.ts | apps/mobile/src/lib/uuid.ts:1
+file#apps/mobile/src/lib/voice.ts | file | voice.ts | apps/mobile/src/lib/voice.ts:1
+file#apps/mobile/src/lib/voiceProblem.ts | file | voiceProblem.ts | apps/mobile/src/lib/voiceProblem.ts:1
+file#apps/mobile/src/lib/watchDiag.ts | file | watchDiag.ts | apps/mobile/src/lib/watchDiag.ts:1
+file#apps/mobile/src/lib/words.ts | file | words.ts | apps/mobile/src/lib/words.ts:1
+file#apps/mobile/src/plan/PlanNotice.tsx | file | PlanNotice.tsx | apps/mobile/src/plan/PlanNotice.tsx:1
+file#apps/mobile/src/plan/locked.ts | file | locked.ts | apps/mobile/src/plan/locked.ts:1
+file#apps/mobile/src/plan/memberPlanStore.ts | file | memberPlanStore.ts | apps/mobile/src/plan/memberPlanStore.ts:1
+file#apps/mobile/src/plan/planSync.ts | file | planSync.ts | apps/mobile/src/plan/planSync.ts:1
+file#apps/mobile/src/plan/planWords.ts | file | planWords.ts | apps/mobile/src/plan/planWords.ts:1
+file#apps/mobile/src/plan/playBilling.ts | file | playBilling.ts | apps/mobile/src/plan/playBilling.ts:1
+file#apps/mobile/src/services/analytics.ts | file | analytics.ts | apps/mobile/src/services/analytics.ts:1
+file#apps/mobile/src/services/coach.ts | file | coach.ts | apps/mobile/src/services/coach.ts:1
+file#apps/mobile/src/services/dashboard.ts | file | dashboard.ts | apps/mobile/src/services/dashboard.ts:1
+file#apps/mobile/src/types/models.ts | file | models.ts | apps/mobile/src/types/models.ts:1

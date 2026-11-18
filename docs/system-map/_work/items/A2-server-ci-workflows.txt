@@ -1,0 +1,20 @@
+server.txt#2 | cron-github | */10 * * * * (watch.yml, UTC) | .github/workflows/watch.yml:12
+words.txt#76 | whatsapp-cloud-template | login_code (checked by whatsapp-setup.yml) | .github/workflows/whatsapp-setup.yml:84
+file#.github/workflows/ci.yml | file | ci.yml | .github/workflows/ci.yml:1
+file#.github/workflows/exercise-clips.yml | file | exercise-clips.yml | .github/workflows/exercise-clips.yml:1
+file#.github/workflows/final-voice.yml | file | final-voice.yml | .github/workflows/final-voice.yml:1
+file#.github/workflows/ios.yml | file | ios.yml | .github/workflows/ios.yml:1
+file#.github/workflows/music-choices.yml | file | music-choices.yml | .github/workflows/music-choices.yml:1
+file#.github/workflows/owner-ads.yml | file | owner-ads.yml | .github/workflows/owner-ads.yml:1
+file#.github/workflows/play-listing.yml | file | play-listing.yml | .github/workflows/play-listing.yml:1
+file#.github/workflows/play-upload.yml | file | play-upload.yml | .github/workflows/play-upload.yml:1
+file#.github/workflows/qa-conditions.yml | file | qa-conditions.yml | .github/workflows/qa-conditions.yml:1
+file#.github/workflows/qa-device.yml | file | qa-device.yml | .github/workflows/qa-device.yml:1
+file#.github/workflows/qa-journeys.yml | file | qa-journeys.yml | .github/workflows/qa-journeys.yml:1
+file#.github/workflows/release-apk.yml | file | release-apk.yml | .github/workflows/release-apk.yml:1
+file#.github/workflows/store-shots.yml | file | store-shots.yml | .github/workflows/store-shots.yml:1
+file#.github/workflows/test-lab.yml | file | test-lab.yml | .github/workflows/test-lab.yml:1
+file#.github/workflows/voice-samples.yml | file | voice-samples.yml | .github/workflows/voice-samples.yml:1
+file#.github/workflows/watch-video.yml | file | watch-video.yml | .github/workflows/watch-video.yml:1
+file#.github/workflows/wear-build.yml | file | wear-build.yml | .github/workflows/wear-build.yml:1
+file#.github/workflows/whatsapp-probe.yml | file | whatsapp-probe.yml | .github/workflows/whatsapp-probe.yml:1

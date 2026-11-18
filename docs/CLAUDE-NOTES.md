@@ -14,6 +14,8 @@ Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept her
 - Helpers: Fable 5.2, effort medium, max 6. Model router OFF (checked). change-360 switch OFF (checked).
 - Done: A1 (docs/system-map/surfaces.json, 11 surfaces). Running: plan review helper -> docs/system-map/PLAN-REVIEW.md.
 - Plan review DONE (docs/system-map/PLAN-REVIEW.md): 22 of 26 applied to the plan file; P2, P23, P24, P25 wait for him (see AUDIT-STATE.md Needs Aakash).
+- 18 Nov, he said "Yes, switch on": pacer task ENABLED. He said "take best decisions yourself...": P2, P23, P24, P25 = recommended options, written into the plan.
+- A1b, tools, G0 redaction, E1, A2 pilot DONE; 36 A2 area items queued; E2 running.
 - Pacer task could NOT be enabled unattended (needs his click); backup hourly cron lives in the start chat. E1 helper running.
 - Next: T1 tools + A1b source lists, then the A2 pilot. 18 Nov 2026: chat compacts at 20% now; after it, read these notes before saying we never discussed or he never approved something.
 - 0.79.0: in Play open testing; production is his call (R-614). Audit runs beside it.
