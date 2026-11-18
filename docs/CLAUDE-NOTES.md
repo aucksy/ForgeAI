@@ -7,6 +7,14 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-611. Watch update pop-up: how often, and a lasting dot - 18 Nov 2026
+
+He asked: after 0.79.0 he saw the watch update pop-up once, closed the app without tapping, and never saw it again over many opens. How often should it show? The phone has a lasting top banner after its pop-up is closed; should the watch get a lasting dot that leads to the watch settings?
+
+Answer (from watchUpdateCard.ts + WatchUpdatePrompt.tsx): it shows on app open (4 s in) and on return after 6 h, only on the 3 main tabs, never in a workout, never while a phone update waits. 'Later' OR the Android back button (onRequestClose = later) = no pop-up for 24 h. 'Update on watch' = never again for this phone version (R-444). It also stops for good when the watch reports the new version (Play auto-update on the watch). Swiping the app away writes nothing, so it would ask again on the next open. Likely causes for him: the watch auto-updated, or back = 24 h snooze. No lasting reminder exists.
+
+My view given: yes, add a quiet lasting sign (dot on Settings + an 'Update ready' row in the watch section). Audit freeze: goes to the backlog as after-audit only when he confirms.
+
 ## R-610 (17 Nov 2026) Release 0.79.0 (phone + watch) to Play OPEN TESTING: IN PROGRESS (helper; state as of 10:40 IST)
 - Approval (quoted by the coordinator): "yes 0095 / yes 0096 / release" (15 Nov 2026, 22:21 IST) and "Take best
   decisions yourself to release whatever is pending" (16 Nov 2026, 00:23 IST). One release = v0.79.0 only.
