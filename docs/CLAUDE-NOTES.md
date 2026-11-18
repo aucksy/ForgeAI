@@ -7,6 +7,15 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-618. Audit restarts on its own after each 5-hour reset - 18 Nov 2026 21:15 IST
+
+His words: "ensure that it will actually start at 1 without fail because I will not be available .. it should continue working as per set rules of limits".
+Window 2 hit 75% at 20:51 IST (started 20:00); next reset 01:00 IST 19 Nov. Done: (1) pacer cron now every 15 min (7,22,37,52) instead of
+hourly, so every new window starts within ~15 min of its reset; quick-exit runs are cheap. (2) one-shot task mettleup-audit-resume at
+01:02 IST 19 Nov: a Fable run that follows the pacer SKILL.md itself (unattended runs cannot start or change scheduled tasks, so it does
+not call run_scheduled_task). (3) Pacer frontmatter keeps effort: medium (the description update had dropped it; restored).
+Checked: PC sleep timeout = never (AC and battery), lid close = do nothing, on mains power. Limits unchanged: day 75-80, night 00-06 up to 96, weekly 95.
+
 ## R-617. Audit did not resume at 20:00: the pacer looked in the wrong folder - 18 Nov 2026
 
 He asked why the audit had not resumed at the 20:00 IST reset. Cause: the pacer task said "Work in D:\Apps\ForgeAI"; AUDIT-STATE.md
