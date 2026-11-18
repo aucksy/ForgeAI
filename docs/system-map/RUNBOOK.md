@@ -65,7 +65,7 @@ You do no audit work yourself.
   ITEMS, INPUT FILES, OUTPUT FILE, ROW FORMAT with one made-up row, SIZE), then use it.
 
 ## Formulas (all in 5-hour-limit percent)
-- NO HOURLY SPREADING (his words, 18 Nov 2026, later the same day: "let the audit run ... without any early limitations. Because it's one and the same thing you wait now or you wait later ... once you know it's 85% do not start anything new ... Do not let the review stop just because you have reached 85%. Let it complete, it's okay if it goes 90%"). RULE: launch helpers at full speed (max 6 at once) while F5_now + RESERVED + cost(step) <= 85. Aim to end each window between 80 and 85. At F5 >= 85: start nothing new. Helpers already running ALWAYS finish (ending near 90 is fine); never tell them to stop for the 5-hour limit unless F5 >= 95. The hourly target T is no longer used.
+- NO HOURLY SPREADING; STOP BETWEEN 75 AND 80 (his words, 18 Nov 2026, newest: "stop anywhere between 75 to 80% and in case needed maximum it can go up to 85% ... sooner the better"; earlier the same day: "it's one and the same thing you wait now or you wait later"). RULE: launch helpers at full speed (max 6 at once) only while F5_now + RESERVED + cost(step) <= 80. At F5 >= 75: start nothing new. Helpers already running always finish; the window should end between 75 and 80 and must not pass 85, so count RESERVED honestly and round costs up. Tell helpers to save and stop only at F5 >= 95. The hourly target T is not used.
 - No open window (no reset time shown): F5_start = F5_now, hours_gone = 0. The first helper opens the
   window; read the reset time after it reports.
 - A helper still running at the reset is charged to the new window. Write the new F5_start only after
@@ -87,7 +87,7 @@ You do no audit work yourself.
   Never cut: lenses 2-6, 17, the gap hunts, 3E, 3F, 3G.
 
 ## Hard stops
-- F5 >= 85: launch nothing more this window. Running helpers finish (near 90 is fine).
+- F5 >= 75: launch nothing more this window. Running helpers finish (the window must not pass 85).
 - F5 >= 95: tell every running helper (SendMessage) "save your checkpoint now and stop". Wait for them.
 - WF >= 95 or WA >= 95: status PAUSED. Tell Aakash once: "The audit used the weekly limit. Reset it when
   you want the audit to continue." Keep checking each hour. Resume by yourself when both are under 95.
