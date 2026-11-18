@@ -17,7 +17,7 @@ blind check: never put the held-out rows or hints into a helper brief (ids are i
 | plan-review | 1 | 5.5 (171k tokens) |
 | tools | 2 | 6.1 (190k tokens) |
 | A1b | 1 | 6.4 (201k tokens) |
-| A2 | 23 | 5.0 (158k tokens) |
+| A2 | 24 | 5.0 (158k tokens) |
 | A7 | 1 | 6.0 (187k tokens) |
 | E1 | 1 | 6.0 (189k tokens) |
 | E2 | 1 | 9.6 (299k tokens) |
@@ -26,16 +26,15 @@ blind check: never put the held-out rows or hints into a helper brief (ids are i
 | 3F | 1 | 5.5 (171k tokens) |
 
 ## Work items
-Counts: 31 todo, 0 in progress, 36 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 25 todo, 5 in progress, 37 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
-| A2-phone-tracker-lib | A2 | A2 features: area phone/tracker-lib (59 items, 9117 lines) | todo | _work/A2-phone-tracker-lib.md |  |
-| A2-phone-native | A2 | A2 features: area phone/native (103 items, 11102 lines) | todo | _work/A2-phone-native.md |  |
-| A2-phone-components-1 | A2 | A2 features: area phone/components-1 (127 items, 7312 lines) | todo | _work/A2-phone-components-1.md |  |
-| A2-phone-components-2 | A2 | A2 features: area phone/components-2 (127 items, 7178 lines) | todo | _work/A2-phone-components-2.md |  |
-| A2-phone-cloud-backup-ai | A2 | A2 features: area phone/cloud-backup-ai (59 items, 9259 lines) | todo | _work/A2-phone-cloud-backup-ai.md |  |
-| A2-phone-onboarding-db | A2 | A2 features: area phone/onboarding-db (81 items, 11893 lines) | todo | _work/A2-phone-onboarding-db.md |  |
+| A2-phone-tracker-lib | A2 | A2 features: area phone/tracker-lib (59 items, 9117 lines) | in progress | _work/A2-phone-tracker-lib.md |  |
+| A2-phone-native | A2 | A2 features: area phone/native (103 items, 11102 lines) | in progress | _work/A2-phone-native.md |  |
+| A2-phone-components-1 | A2 | A2 features: area phone/components-1 (127 items, 7312 lines) | in progress | _work/A2-phone-components-1.md |  |
+| A2-phone-components-2 | A2 | A2 features: area phone/components-2 (127 items, 7178 lines) | in progress | _work/A2-phone-components-2.md |  |
+| A2-phone-cloud-backup-ai | A2 | A2 features: area phone/cloud-backup-ai (59 items, 9259 lines) | in progress | _work/A2-phone-cloud-backup-ai.md |  |
 | A2-phone-lib-core | A2 | A2 features: area phone/lib-core (131 items, 7594 lines) | todo | _work/A2-phone-lib-core.md |  |
 | A2-watch-app | A2 | A2 features: area watch/app (50 items, 5958 lines) | todo | _work/A2-watch-app.md |  |
 | A2-hq-app | A2 | A2 features: area hq/app (141 items, 2841 lines) | todo | _work/A2-hq-app.md |  |
@@ -55,16 +54,21 @@ Counts: 31 todo, 0 in progress, 36 done, 0 blocked. Full list: work-items.jsonl.
 | A7-panel-4 | A7 | promises: group panel part 4, lines 837-847 of _sources/promises.txt | todo | _work/A7-panel-4.md |  |
 | A7-phone-watch-1 | A7 | promises: group phone-watch part 1, lines 848-967 of _sources/promises.txt | todo | _work/A7-phone-watch-1.md |  |
 | A7-phone-watch-2 | A7 | promises: group phone-watch part 2, lines 968-1087 of _sources/promises.txt | todo | _work/A7-phone-watch-2.md |  |
-| A2-phone-tracker-services-1 | A2 | A2 features: area phone/tracker-services-1 (74 items, 10762 lines) | done | _work/A2-phone-tracker-services-1.md | 40 features, 74 of 74 lines; 33 live, 7 behind switch; status from file headers, screens not opened |
+| A7-phone-watch-3 | A7 | promises: group phone-watch part 3, lines 1088-1126 of _sources/promises.txt | todo | _work/A7-phone-watch-3.md |  |
+| A7-whats-new-1 | A7 | promises: group whats-new part 1, lines 1127-1246 of _sources/promises.txt | todo | _work/A7-whats-new-1.md |  |
+| A7-whats-new-2 | A7 | promises: group whats-new part 2, lines 1247-1366 of _sources/promises.txt | todo | _work/A7-whats-new-2.md |  |
+| A7-whats-new-3 | A7 | promises: group whats-new part 3, lines 1367-1439 of _sources/promises.txt | todo | _work/A7-whats-new-3.md |  |
+| A7-templates-1 | A7 | promises: group templates part 1, lines 1440-1559 of _sources/promises.txt | todo | _work/A7-templates-1.md |  |
+| A7-templates-2 | A7 | promises: group templates part 2, lines 1560-1631 of _sources/promises.txt | todo | _work/A7-templates-2.md |  |
 | A2-phone-tracker-services-2 | A2 | A2 features: area phone/tracker-services-2 (73 items, 10868 lines) | done | _work/A2-phone-tracker-services-2.md | 40 rows (38 features), 73 of 73 lines; all tier free; 5 member settings gate behaviour |
 | A2-phone-tracker-components-1 | A2 | A2 features: area phone/tracker-components-1 (52 items, 8226 lines) | done | _work/A2-phone-tracker-components-1.md | 38 rows (36 features), 52 of 52 lines; 33 live, 3 behind switch; 2 Plus-only features |
 | A2-phone-tracker-components-2 | A2 | A2 features: area phone/tracker-components-2 (102 items, 8215 lines) | done | _work/A2-phone-tracker-components-2.md | 40 rows (39 features), 50 of 50 lines; no plan gate read in this area |
 | A2-phone-tracker-engine | A2 | A2 features: area phone/tracker-engine (35 items, 10011 lines) | done | _work/A2-phone-tracker-engine.md | 33 rows (32 features), 35 of 35 lines; no plan gate in this area |
 | A2-phone-tracker-data | A2 | A2 features: area phone/tracker-data (40 items, 9326 lines) | done | _work/A2-phone-tracker-data.md | 30 rows (26 features), 40 of 40 lines; one Plus gate (targets) |
+| A2-phone-onboarding-db | A2 | A2 features: area phone/onboarding-db (81 items, 11893 lines) | done | _work/A2-phone-onboarding-db.md | 32 rows, 81 of 81 lines; 23 live, 3 hidden (AI coach chat, food log, old email sync), 2 unknown; no plan gate |
 | A2-server-ci-workflows | A2 | A2 features: area server/ci-workflows (20 items, 3524 lines) | done | _work/A2-server-ci-workflows.md | 22 rows (18 features), 20 of 20 lines; 16 live, 1 hidden (iPhone build), 1 behind switch (Test Lab crawl); no plan gate; step bodies of most workflows not read |
 | A7-src | tools | script: _tools/promises.mjs -> _sources/promises.txt (candidate sentences per source group; the file was missing) | done | _work/A7-src.md | promises.txt made by script: 1,631 candidates in 8 groups (with word endings); Hindi lines and words inside store pictures are not listed |
-(+ 6 more todo items, not shown)
-(+ 28 older done items, not shown)
+(+ 29 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
