@@ -70,6 +70,7 @@ Counts: 32 todo, 0 in progress, 35 done, 0 blocked. Full list: work-items.jsonl.
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
 
 ## Resume notes
+- PACER RUN 18 Nov 21:58 IST: F5 79 (weekly Fable 41, weekly all 22), window resets 19 Nov 01:00 IST. Day rule: at F5 >= 75 nothing new starts. No helper launched, none running. Model router still off, change-360 still off. Lock deleted. Next launches: after 01:00 IST (night rule, up to 96): the 15 A2 areas in todo, then A7 items.
 - PACER RUN 18 Nov 21:44 IST: F5 77 (weekly Fable 41, weekly all 22), window resets 19 Nov 01:00 IST. Day rule: at F5 >= 75 nothing new starts. No helper launched, none running. Model router not checked (nothing launched). Lock deleted. Next launches: after 01:00 IST (night rule, up to 96): the 15 A2 areas in todo, then A7 items.
 - PACER RUN 18 Nov 21:28 IST: F5 77 (weekly Fable 41, weekly all 22), window resets 19 Nov 01:00 IST. Day rule: at F5 >= 75 nothing new starts. No helper launched, none running. Model router still off. Lock deleted. Next launches: after 01:00 IST (night rule, up to 96): the 13 A2 areas left, then A7 items.
 - PACER RUN 18 Nov 20:47 IST: F5 75 (weekly Fable 41, weekly all 22), window resets 19 Nov 01:00 IST. Day rule: at F5 >= 75 nothing new starts. No helper launched, none running. Lock deleted. Next launches: after 01:00 IST (night rule, up to 96): the 13 A2 areas left, then A7 items.
