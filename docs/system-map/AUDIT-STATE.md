@@ -69,6 +69,8 @@ Counts: 39 todo, 0 in progress, 10 done, 0 blocked. Full list: work-items.jsonl.
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
 
 ## Resume notes
+- STOP LINE IS 80, not 85 (his words, 18 Nov 2026: "only consume up to 80% of my 5 hour window by these audit tasks"). Target T = F5_start + (80 - F5_start) x min(1, (hours_gone + 1) / 5). At 87: tell helpers to save and stop. Changed in the plan (8C), RUNBOOK.md and the pacer task file.
+- 17:26 IST: start chat has no helpers running; lock deleted; the pacer task owns the next launches.
 - BUDGET WARNING (18 Nov 18:42 IST): window 1 so far: F5 6 -> 52 while Weekly-Fable 0 -> 12 and Weekly-all 0 -> 7. WEEK_PER_F5 = about 0.26 (Fable binds). One full window (79 points) = about 20% of a weekly Fable period, so one period = about 4.5 windows and 3 periods = about 13-14 windows. The first guess for the whole audit was 20 windows: OVER budget. Recompute after A2 with real costs (A2 helper = about 4-5 F5 points, 135-160k tokens); if still over 2.7 periods, cut in the plan's order and tell him in one line. Part of window 1 was his own other chat, so the ratio may be a little high.
 - 18:42 IST: F5 52, target 56.6, E2 still running (reserve 6): nothing more launched this hour.
 

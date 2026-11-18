@@ -65,7 +65,7 @@ You do no audit work yourself.
   ITEMS, INPUT FILES, OUTPUT FILE, ROW FORMAT with one made-up row, SIZE), then use it.
 
 ## Formulas (all in 5-hour-limit percent)
-- S = 85. The last 15% of every window stays free for Aakash.
+- S = 80 (his words, 18 Nov 2026: "only consume up to 80% of my 5 hour window by these audit tasks"). The last 20% of every window stays free for Aakash.
 - hours_left = hours until the 5-hour reset. hours_gone = 5 - hours_left.
 - T = F5_start + (S - F5_start) x min(1, (hours_gone + 1) / 5).
 - RESERVED = the sum of cost(step) of every helper this run started that has not reported.
@@ -91,8 +91,8 @@ You do no audit work yourself.
   Never cut: lenses 2-6, 17, the gap hunts, 3E, 3F, 3G.
 
 ## Hard stops
-- F5 >= 85: launch nothing more this window.
-- F5 >= 92: tell every running helper (SendMessage) "save your checkpoint now and stop". Wait for them.
+- F5 >= 80: launch nothing more this window.
+- F5 >= 87: tell every running helper (SendMessage) "save your checkpoint now and stop". Wait for them.
 - WF >= 95 or WA >= 95: status PAUSED. Tell Aakash once: "The audit used the weekly limit. Reset it when
   you want the audit to continue." Keep checking each hour. Resume by yourself when both are under 95.
   Never message him again about the same pause.
