@@ -27,6 +27,7 @@ import csv
 import datetime as dt
 import json
 import os
+import re
 import subprocess
 import sys
 import time
@@ -46,8 +47,41 @@ FIELDS = [
     "run_id", "workflow", "workflow_file", "event", "head_sha", "ref", "run_attempt",
     "run_attempts_total", "run_conclusion_latest", "run_created_at", "run_title",
     "job_id", "job_name", "conclusion", "failed_steps", "job_started_at", "job_completed_at",
-    "minutes", "job_url",
+    "minutes", "job_url", "only_parts", "flow_name_in",
 ]
+
+# Steps that run many test flows inside ONE step: the step name does not say which flow failed.
+# Value = the line to look for in the job log (checked by hand on 5 logs, 18 Nov 2026: runs
+# 43141461077, 44011849464, 43796622071, 44264776182, 43630726782).
+MANY_FLOW_STEPS = {
+    "Run the workout QA on an emulator": "job log line '[qa] PART <X> FAILED (<flow>.yaml: ...)' + artifact qa-out-<shard>",
+    "Run the phone conditions": "job log + artifact (not sampled)",
+    "Run the cross-role journeys": "job log line '[xj] J<n> step <k> FAILED (...)'",
+    "Admin journeys (phone, real forms)": "job log: Playwright line with the failed e2e/<file>.spec.mjs and test title",
+    "Panel crawl (every page, phone + computer, dark theme)": "job log (not sampled)",
+}
+ECHO_STEPS = ("Every shard green, every part run", "Require a passing phone test on this commit")
+
+
+def only_parts(title):
+    """The `only` input of a partial phone run, read from the run title, else ''."""
+    m = re.search(r"\(partial (.+?), api \d+", title or "")
+    if m and m.group(1) != "whole run":
+        return m.group(1)
+    m = re.search(r"^Phone conditions \((.+)\)$", title or "")
+    if m and m.group(1) != "all":
+        return m.group(1)
+    return ""
+
+
+def flow_name_in(failed_steps, parts):
+    """Where the name of the failed flow can be found for this failed job."""
+    steps = failed_steps.split(" | ") if failed_steps else []
+    many = [s for s in steps if s in MANY_FLOW_STEPS]
+    if not many:
+        return "step name" if steps else ""
+    one_part = parts and parts != "uat" and not re.search(r"[ ,]", parts)
+    return "run title (one part: %s); log for the flow file" % parts if one_part else "log needed"
 
 
 # ------------------------------------------------------------------ GitHub API
@@ -270,7 +304,9 @@ def write_csv(cache):
                 failed_steps=" | ".join(failed),
                 job_started_at=j.get("started_at") or "", job_completed_at=j.get("completed_at") or "",
                 minutes=minutes(j.get("started_at"), j.get("completed_at")) if ran else "0.0",
-                job_url=j.get("html_url") or ""))
+                job_url=j.get("html_url") or "", only_parts=only_parts(base["run_title"]),
+                flow_name_in=flow_name_in(" | ".join(failed), only_parts(base["run_title"]))
+                if j.get("conclusion") in BAD else ""))
     rows.sort(key=lambda x: (x["run_created_at"], x["run_id"], int(x["run_attempt"]), str(x["job_name"])))
     with open(CSV_PATH, "w", encoding="utf-8", newline="") as f:
         w = csv.DictWriter(f, fieldnames=FIELDS, lineterminator="\n")
@@ -304,14 +340,20 @@ def summarize(window=""):
     still_red = {r["run_id"] for r in rows if r["run_conclusion_latest"] in BAD}
 
     # flaky candidates: same workflow + job name + sha has a success somewhere
-    ok = collections.defaultdict(list)                # (wf, job, sha) -> [(run_id, attempt)]
+    def fk(r):
+        # hand-started runs: the run title carries the inputs (which parts, which phone), so two runs
+        # of one commit only count as "the same test" when their titles match too
+        return (r["workflow_file"], r["job_name"], r["head_sha"],
+                r["run_title"] if r["event"] == "workflow_dispatch" else "")
+
+    ok = collections.defaultdict(list)                # fk -> [(run_id, attempt)]
     for r in rows:
         if r["conclusion"] == "success":
-            ok[(r["workflow_file"], r["job_name"], r["head_sha"])].append((r["run_id"], r["run_attempt"]))
+            ok[fk(r)].append((r["run_id"], r["run_attempt"]))
     for r in rows:
         r["flaky"] = ""
         if r["conclusion"] in BAD:
-            hits = ok.get((r["workflow_file"], r["job_name"], r["head_sha"]), [])
+            hits = ok.get(fk(r), [])
             if any(h[0] == r["run_id"] and h[1] > r["run_attempt"] for h in hits):
                 r["flaky"] = "re-run"
             elif any(h[0] != r["run_id"] for h in hits):
@@ -320,13 +362,49 @@ def summarize(window=""):
     green_by_wf_sha = collections.defaultdict(set)
     for k, js in attempts.items():
         if k not in red_attempts and all(j["conclusion"] in ("success", "skipped") for j in js):
-            green_by_wf_sha[(js[0]["workflow_file"], js[0]["head_sha"])].add(k)
+            green_by_wf_sha[fk(dict(js[0], job_name=""))].add(k)
     red_then_green = set()
     for k in red_attempts:
         js = attempts[k]
-        greens = green_by_wf_sha.get((js[0]["workflow_file"], js[0]["head_sha"]), set())
+        greens = green_by_wf_sha.get(fk(dict(js[0], job_name="")), set())
         if any(g != k for g in greens):
             red_then_green.add(k)
+
+    # Neighbour check (a HINT only): order every job's runs in time on one branch (+ same title). A failed
+    # step is "alone" when the run before and the run after did not fail at that step. Also the longest
+    # unbroken row of fails. Push runs change the code every time, so this cannot prove a flaky test.
+    seqs = collections.defaultdict(list)
+    for r in sorted(rows, key=lambda x: (x["run_created_at"], x["run_id"], x["run_attempt"])):
+        if r["conclusion"] in ("success",) + BAD:
+            seqs[(r["workflow_file"], r["job_name"], r["ref"],
+                  r["run_title"] if r["event"] == "workflow_dispatch" else "")].append(r)
+    alone = collections.Counter()                     # (wf, step) -> fails with clean neighbours
+    streak = collections.Counter()                    # (wf, step) -> longest unbroken row of fails
+    for key, seq in seqs.items():
+        marks = [set(x["failed_steps"].split(" | ")) if x["conclusion"] in BAD and x["failed_steps"] else set()
+                 for x in seq]
+        for s_name in (set().union(*marks) if marks else ()):
+            run = 0
+            for i, m in enumerate(marks):
+                if s_name in m:
+                    run += 1
+                    streak[(key[0], s_name)] = max(streak[(key[0], s_name)], run)
+                    before = i == 0 or s_name not in marks[i - 1]
+                    after = i == len(marks) - 1 or s_name not in marks[i + 1]
+                    if before and after and len(marks) > 1:
+                        alone[(key[0], s_name)] += 1
+                else:
+                    run = 0
+    sole = collections.Counter()                      # (wf, step) -> red attempts where it was the only failed step
+    for k in red_attempts:
+        steps = set()
+        for j in attempts[k]:
+            if j["conclusion"] in BAD:
+                names = j["failed_steps"].split(" | ") if j["failed_steps"] else ["(no failed step recorded)"]
+                steps.update(x for x in names if x not in ECHO_STEPS)
+        if len(steps) == 1:
+            sole[(attempts[k][0]["workflow_file"], next(iter(steps)))] += 1
+    echo_jobs = [r for r in rows if r["conclusion"] in BAD and r["failed_steps"] in ECHO_STEPS]
 
     total_min = sum(r["m"] for r in rows)
     red_min = sum(r["m"] for k in red_attempts for r in attempts[k])
@@ -358,6 +436,8 @@ def summarize(window=""):
     A("| Red run attempts where the same workflow + commit also went fully green | %d |" % len(red_then_green))
     A("| Job rows | %d |" % len(rows))
     A("| Failed or timed-out jobs | %d |" % len(failed_jobs))
+    A("| ...of which only an echo of another failure (phone-test `report` job, release `phone-gate`) | %d |" % len(echo_jobs))
+    A("| Failed jobs that really ran a test or build | %d |" % (len(failed_jobs) - len(echo_jobs)))
     A("| **Flaky candidate jobs** | **%d** (%d passed on a re-run, %d passed in another run of the same commit) |" % (
         len(flaky_jobs), sum(1 for r in flaky_jobs if r["flaky"] == "re-run"),
         sum(1 for r in flaky_jobs if r["flaky"] == "other run")))
@@ -417,10 +497,21 @@ def summarize(window=""):
                 b["fo"] += 1
         elif r["conclusion"] == "cancelled":
             b["c"] += 1
+    quiet = collections.defaultdict(lambda: [0, 0, 0, 0.0])
     for (w, j), b in sorted(jb.items(), key=lambda kv: (-kv[1]["fm"], -kv[1]["m"])):
+        if not b["f"] and b["m"] < 400:
+            q = quiet[w]
+            q[0] += 1
+            q[1] += b["n"]
+            q[2] += b["c"]
+            q[3] += b["m"]
+            continue
         A("| %s | %s | %d | %d | %.0f%% | %d (%d / %d) | %d | %s | %s |" % (
             w, j.replace("|", "/"), b["n"], b["f"], 100.0 * b["f"] / max(1, b["n"]), b["fr"] + b["fo"],
             b["fr"], b["fo"], b["c"], fnum(b["m"]), fnum(b["fm"])))
+    for w, q in sorted(quiet.items(), key=lambda kv: -kv[1][3]):
+        A("| %s | (%d other jobs that never failed, each under 400 min) | %d | 0 | 0%% | 0 (0 / 0) | %d | %s | 0 |" % (
+            w, q[0], q[1], q[2], fnum(q[3])))
     A("")
 
     # top 20 jobs
@@ -462,8 +553,12 @@ def summarize(window=""):
     # failed step names with the job folded away (same step in many matrix parts)
     A("## Failing steps, all jobs of a workflow added together")
     A("")
-    A("| Workflow | Failed step | Fails | Flaky candidates | Minutes of those jobs |")
-    A("|---|---|---|---|---|")
+    A("\"Only failed step\" = red run attempts where nothing else failed. \"Alone\" = the run before and the run after")
+    A("(same job, same branch) did not fail at this step: a hint of a random fail, not proof. \"Longest row\" = most")
+    A("fails in a row: a long row usually means a real break (or a broken test) that stayed until someone fixed it.")
+    A("")
+    A("| Workflow | Failed step | Fails | Only failed step | Flaky candidates | Alone | Longest row | Minutes of those jobs |")
+    A("|---|---|---|---|---|---|---|---|")
     st2 = collections.defaultdict(lambda: {"f": 0, "fl": 0, "m": 0.0})
     for (w, j, s), b in st.items():
         c = st2[(w, s)]
@@ -471,7 +566,67 @@ def summarize(window=""):
         c["fl"] += b["fl"]
         c["m"] += b["m"]
     for (w, s), b in sorted(st2.items(), key=lambda kv: (-kv[1]["f"], -kv[1]["m"]))[:30]:
-        A("| %s | %s | %d | %d | %s |" % (w, s.replace("|", "/"), b["f"], b["fl"], fnum(b["m"])))
+        A("| %s | %s | %d | %d | %d | %d | %d | %s |" % (w, s.replace("|", "/"), b["f"], sole[(w, s)], b["fl"],
+                                                   alone[(w, s)], streak[(w, s)], fnum(b["m"])))
+    A("")
+
+    # where the flow name lives
+    A("## Phone and browser flows: which flow failed?")
+    A("")
+    A("The GitHub jobs API stops at the step. These steps each run many flows, so the step name does not say which")
+    A("flow failed. Checked by hand on 5 job logs (runs 43141461077, 44011849464, 43796622071, 44264776182,")
+    A("43630726782): the flow name IS in the job log, as one line that a script can grep. No flow name is in a job or step name.")
+    A("")
+    A("| Step | Where the failed flow is named | Failed jobs | Part known from the run title | Log needed (E2) |")
+    A("|---|---|---|---|---|")
+    need = collections.defaultdict(list)
+    for sname, where in MANY_FLOW_STEPS.items():
+        fj = [r for r in failed_jobs if sname in r["failed_steps"].split(" | ")]
+        t = [r for r in fj if r["flow_name_in"].startswith("run title")]
+        n = [r for r in fj if r["flow_name_in"] == "log needed"]
+        for r in n:
+            need[r["workflow_file"]].append(r)
+        A("| %s | %s | %d | %d | %d |" % (sname, where, len(fj), len(t), len(n)))
+    A("")
+    A("Seen in those logs: phone test `[qa] PART UATR401 FAILED (uat-rel-r401-whats-new.yaml: ...)` (run 43141461077);")
+    A("`[qa] PART UAT4 FAILED (uat-rel-4-workout.yaml ...)` and `PART UATR576C FAILED (uat-rel-r576-c-break.yaml ...)` (run 44011849464);")
+    A("journeys `[xj] J3 step 3 FAILED (member: bell shows 1 new, opens the inbox)` (run 43630726782); admin journeys")
+    A("`e2e/alerts-uat.spec.mjs:394 > Latest from your members on a computer, light theme...`, 1 failed / 324 passed (run 44264776182).")
+    A("Run 43796622071 (shard 1-history-routines) is red with NO `PART ... FAILED` line in its log: cause unknown from the log lines read; E2 must open its artifact.")
+    A("Also seen in all 4 phone logs read: the step \"Install the Android emulator (3 tries)\" prints `emulator download failed` three times")
+    A("(in 3 of them with `sdkmanager: command not found`) and waits 20 s each time, so its 3 tries did not work in any log read")
+    A("(about 1 minute lost per phone job; the emulator runner step then installs it itself).")
+    A("")
+    A("### Phone test fails where the run title names the part")
+    A("")
+    A("| Run title part (`only`) | Failed jobs | Passed jobs | Flaky candidates | Minutes on failed | Run ids of the fails |")
+    A("|---|---|---|---|---|---|")
+    pt = collections.defaultdict(lambda: {"f": [], "ok": 0, "fl": 0, "m": 0.0})
+    for r in rows:
+        if (r["workflow_file"] in ("qa-device.yml", "qa-conditions.yml") and r["only_parts"]
+                and r["job_name"].startswith(("device-qa", "conditions"))):
+            b = pt[(r["workflow_file"], r["only_parts"])]
+            if r["conclusion"] in BAD:
+                b["f"].append(r["run_id"])
+                b["m"] += r["m"]
+                b["fl"] += 1 if r["flaky"] else 0
+            elif r["conclusion"] == "success":
+                b["ok"] += 1
+    for (w, part), b in sorted(pt.items(), key=lambda kv: -len(kv[1]["f"])):
+        if b["f"]:
+            A("| %s: %s | %d | %d | %d | %s | %s |" % (w.replace(".yml", ""), part, len(b["f"]), b["ok"], b["fl"],
+                                                    fnum(b["m"]), ", ".join(b["f"])))
+    A("")
+    A("### Runs whose logs E2 must read to get the flow name")
+    A("")
+    A("Every row is in the CSV with `flow_name_in` = `log needed` (job id and URL there). Run ids, oldest first:")
+    A("")
+    for w, lst in sorted(need.items(), key=lambda kv: -len(kv[1])):
+        ids = []
+        for r in lst:
+            if r["run_id"] not in ids:
+                ids.append(r["run_id"])
+        A("- **%s**: %d failed jobs in %d runs: %s" % (w, len(lst), len(ids), ", ".join(ids)))
     A("")
 
     # by event
@@ -514,6 +669,51 @@ def summarize(window=""):
             per.append("%d: %d" % (n, sum(1 for j in attempts[(rid, n)] if j["conclusion"] in BAD)))
         A("| %s | %s | %s | %d | %s | %s |" % (rid, r["workflow_file"], r["ref"], max(multi[rid]),
                                              r["run_conclusion_latest"], "; ".join(per)))
+    A("")
+
+    # whole phone rounds: clock time
+    def ts(x):
+        return dt.datetime.strptime(x, "%Y-%m-%dT%H:%M:%SZ")
+
+    green_wall, red_wall = [], []
+    for k, js in attempts.items():
+        if js[0]["workflow_file"] != "qa-device.yml" or js[0]["only_parts"]:
+            continue
+        timed = [j for j in js if j["job_started_at"] and j["job_completed_at"]]
+        if not timed:
+            continue
+        wall = (max(ts(j["job_completed_at"]) for j in timed) - min(ts(j["job_started_at"]) for j in timed)).total_seconds() / 60
+        if k in red_attempts:
+            red_wall.append(wall)
+        elif k not in cancelled_attempts:
+            green_wall.append(wall)
+    A("## Whole phone-test rounds (qa-device.yml without `only`): clock time")
+    A("")
+    A("Clock time = first job start to last job end of one run attempt (shards run side by side).")
+    A("")
+    A("| Result | Rounds | Median clock minutes | Longest | Clock hours in total |")
+    A("|---|---|---|---|---|")
+    for name, w in (("Green", green_wall), ("Red", red_wall)):
+        if w:
+            sw = sorted(w)
+            A("| %s | %d | %.0f | %.0f | %.0f |" % (name, len(w), sw[len(sw) // 2], sw[-1], sum(w) / 60))
+    A("")
+
+    A("## Limits of this file (what it cannot say)")
+    A("")
+    no_jobs = collections.Counter((r["workflow_file"], r["conclusion"]) for r in rows if r["job_name"] == "(no jobs)")
+    A("- **Flow level**: not in the API. See \"Phone and browser flows\" above for the runs E2 must read.")
+    A("- **Flaky candidates are a floor, not the real count.** A push run tests a new commit every time and is rarely")
+    A("  re-run, so a random fail on a push can only show up as \"Alone\" (a hint). Hand-started phone runs only match")
+    A("  when the run title (parts, phone, extras) is the same.")
+    A("- **Cancelled jobs** (%d job rows) are not counted as fails. The API does not say why a job was cancelled: by hand, by a newer"
+      % sum(1 for r in rows if r["conclusion"] == "cancelled"))
+    A("  round replacing it, by a sibling shard failing first (fail-fast), or by a time limit. No job in the window has the result `timed_out`.")
+    A("- **Minutes** are job start to job end. They are not the billed minutes and leave out time waiting for a runner.")
+    A("- **Runs with no job rows**: %s. Counted as runs; they have no minutes." % (
+        "; ".join("%s %s x%d" % (w, c, n) for (w, c), n in sorted(no_jobs.items())) or "none"))
+    A("- **test-lab.yml**: %d runs in the window." % sum(1 for r in first.values() if r["workflow_file"] == "test-lab.yml"))
+    A("- **Why a run failed** (app bug, test fault, runner fault) is step E2. Nothing here is a verdict.")
     A("")
 
     with open(SUMMARY_PATH, "w", encoding="utf-8", newline="\n") as f:
