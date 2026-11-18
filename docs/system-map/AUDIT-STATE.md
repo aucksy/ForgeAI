@@ -45,7 +45,7 @@ Counts: 7 todo, 1 in progress, 5 done, 0 blocked. Full list: work-items.jsonl. T
 | W7 | E1 | 3E E1 test history (script) -> test-history.csv | done | _work/E1.md | 3,128 runs, 39% red tries, 91 proven flaky |
 
 ## Needs Aakash
-- The scheduled task mettleup-audit-pacer could not be switched on by the unattended start run (it needs his click). Backup: an hourly pacer cron inside the start session (dies if that chat closes).
+- (done 18 Nov, his "Yes, switch on") pacer task mettleup-audit-pacer is ENABLED; the backup cron in the start chat was deleted.
 - P2: how Phase B proves journeys. My view: (1, recommended) trace all in code and drive the top 150 in the cloud on a scratch branch that is never merged, writes only in the demo gym; (2) code trace only + about 40 driven by hand.
 - P23: report length. My view: (1, recommended) one card per merged problem, full cards for every Serious + top 40 Medium, the rest one line each; (2) a full card for every finding.
 - P24: 5 expert panels repeat 5 lenses. My view: (1, recommended) fold them into the lens briefs; (2) keep all 12 separate.
@@ -57,6 +57,6 @@ Counts: 7 todo, 1 in progress, 5 done, 0 blocked. Full list: work-items.jsonl. T
   has unrelated uncommitted changes and is 729 commits behind: do not use it for the audit.
 - Keep-awake tool was not available in the start run.
 - Plan file was edited 18 Nov (change log at its top; backup beside it). Helpers must NOT open the plan: pasted briefs only.
-- Session crons in the start chat: hourly pacer backup (:41) and one usage guard. They die if that chat closes.
+- The start chat (run id start-run) still owns helpers W8 (E2) and A2-pilot and keeps the lock fresh until they report. Pacer: work in a clean worktree of origin/main, never D:\Apps\ForgeAI\Codebase's main checkout (stale).
 - E1 helper (test history) was started with the OLD brief style; its outputs: test-history.csv, test-history-summary.md, _sources/e1_history.py.
 - 18 Nov 2026: chat compacts at 20% now; after it, read these notes before saying we never discussed or he never approved something.
