@@ -18,7 +18,7 @@ blind check: never put the held-out rows or hints into a helper brief (ids are i
 | tools | 2 | 6.1 (190k tokens) |
 | A1b | 1 | 6.4 (201k tokens) |
 | A2 | 37 | 5.1 (158k tokens) |
-| A7 | 7 | 6.0 (186k tokens) |
+| A7 | 8 | 5.7 (179k tokens) |
 | E1 | 1 | 6.0 (189k tokens) |
 | E2 | 1 | 9.6 (299k tokens) |
 | E3 | 1 | 6.3 (198k tokens) |
@@ -26,12 +26,11 @@ blind check: never put the held-out rows or hints into a helper brief (ids are i
 | 3F | 1 | 5.5 (171k tokens) |
 
 ## Work items
-Counts: 9 todo, 2 in progress, 56 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 9 todo, 1 in progress, 57 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
 | A7-panel-2 | A7 | promises: group panel part 2, lines 597-716 of _sources/promises.txt | in progress | _work/A7-panel-2.md |  |
-| A7-panel-4 | A7 | promises: group panel part 4, lines 837-847 of _sources/promises.txt | in progress | _work/A7-panel-4.md |  |
 | A7-panel-3 | A7 | promises: group panel part 3, lines 717-836 of _sources/promises.txt | todo | _work/A7-panel-3.md |  |
 | A7-phone-watch-1 | A7 | promises: group phone-watch part 1, lines 848-967 of _sources/promises.txt | todo | _work/A7-phone-watch-1.md |  |
 | A7-phone-watch-2 | A7 | promises: group phone-watch part 2, lines 968-1087 of _sources/promises.txt | todo | _work/A7-phone-watch-2.md |  |
@@ -41,7 +40,6 @@ Counts: 9 todo, 2 in progress, 56 done, 0 blocked. Full list: work-items.jsonl. 
 | A7-whats-new-3 | A7 | promises: group whats-new part 3, lines 1367-1439 of _sources/promises.txt | todo | _work/A7-whats-new-3.md |  |
 | A7-templates-1 | A7 | promises: group templates part 1, lines 1440-1559 of _sources/promises.txt | todo | _work/A7-templates-1.md |  |
 | A7-templates-2 | A7 | promises: group templates part 2, lines 1560-1631 of _sources/promises.txt | todo | _work/A7-templates-2.md |  |
-| A2-server-ci-workflows | A2 | A2 features: area server/ci-workflows (20 items, 3524 lines) | done | _work/A2-server-ci-workflows.md | 22 rows (18 features), 20 of 20 lines; 16 live, 1 hidden (iPhone build), 1 behind switch (Test Lab crawl); no plan gate; step bodies of most workflows not read |
 | A7-src | tools | script: _tools/promises.mjs -> _sources/promises.txt (candidate sentences per source group; the file was missing) | done | _work/A7-src.md | promises.txt made by script: 1,631 candidates in 8 groups (with word endings); Hindi lines and words inside store pictures are not listed |
 | A7-legal-2 | A7 | promises: group legal part 2, lines 121-240 of _sources/promises.txt | done | _work/A7-legal-2.md | 94 promises from 120 candidates: 20 kept, 30 partly, 1 GAP, 43 unknown; GAP: Every look is recorded (a direct database read was not recorded) |
 | A7-legal-3 | A7 | promises: group legal part 3, lines 241-290 of _sources/promises.txt | done | _work/A7-legal-3.md | 31 promises from 50 candidates: 8 kept, 11 partly, 2 GAP, 10 unknown; GAPs: owners and members were not asked or told after the terms page changed |
@@ -49,7 +47,8 @@ Counts: 9 todo, 2 in progress, 56 done, 0 blocked. Full list: work-items.jsonl. 
 | A7-store-1 | A7 | promises: group store part 1, lines 409-410 of _sources/promises.txt | done | _work/A7-store-1.md | 2 promises from 2 candidates: 1 kept, 1 partly (no ads is true only by absence); note for legal group: opt-in photo backup against photos never leave your phone |
 | A7-help-1 | A7 | promises: group help part 1, lines 411-476 of _sources/promises.txt | done | _work/A7-help-1.md | 48 promises from 66 candidates: 26 kept, 9 partly, 13 unknown, 0 GAP; no test file opened; top: 180-day message delete runs only when someone opens the messages |
 | A7-panel-1 | A7 | promises: group panel part 1, lines 477-596 of _sources/promises.txt | done | _work/A7-panel-1.md | 73 promises from 120 candidates: 15 kept, 20 partly, 0 GAP, 38 unknown (reading limit); row 24 names a test the helper did not open; top: Questions never use credits is shown with no guard |
-(+ 48 older done items, not shown)
+| A7-panel-4 | A7 | promises: group panel part 4, lines 837-847 of _sources/promises.txt | done | _work/A7-panel-4.md | 7 promises from 11 candidates: 5 kept, 1 partly, 1 unknown, 0 GAP; top: which trial alert wording is live is unknown |
+(+ 49 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
