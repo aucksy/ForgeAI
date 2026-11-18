@@ -17,7 +17,7 @@ blind check: never put the held-out rows or hints into a helper brief (ids are i
 | plan-review | 1 | 5.5 (171k tokens) |
 | tools | 2 | 6.1 (190k tokens) |
 | A1b | 1 | 6.4 (201k tokens) |
-| A2 | 22 | 5.1 (159k tokens) |
+| A2 | 23 | 5.0 (158k tokens) |
 | A7 | 1 | 6.0 (187k tokens) |
 | E1 | 1 | 6.0 (189k tokens) |
 | E2 | 1 | 9.6 (299k tokens) |
@@ -26,7 +26,7 @@ blind check: never put the held-out rows or hints into a helper brief (ids are i
 | 3F | 1 | 5.5 (171k tokens) |
 
 ## Work items
-Counts: 32 todo, 0 in progress, 35 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 31 todo, 0 in progress, 36 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
@@ -44,7 +44,6 @@ Counts: 32 todo, 0 in progress, 35 done, 0 blocked. Full list: work-items.jsonl.
 | A2-server-database-1 | A2 | A2 features: area server/database-1 (231 items, 7918 lines) | todo | _work/A2-server-database-1.md |  |
 | A2-server-database-2 | A2 | A2 features: area server/database-2 (293 items, 7930 lines) | todo | _work/A2-server-database-2.md |  |
 | A2-server-database-3 | A2 | A2 features: area server/database-3 (251 items, 8114 lines) | todo | _work/A2-server-database-3.md |  |
-| A2-server-ci-workflows | A2 | A2 features: area server/ci-workflows (20 items, 3524 lines) | todo | _work/A2-server-ci-workflows.md |  |
 | A7-legal-2 | A7 | promises: group legal part 2, lines 121-240 of _sources/promises.txt | todo | _work/A7-legal-2.md |  |
 | A7-legal-3 | A7 | promises: group legal part 3, lines 241-290 of _sources/promises.txt | todo | _work/A7-legal-3.md |  |
 | A7-websites-1 | A7 | promises: group websites part 1, lines 291-408 of _sources/promises.txt | todo | _work/A7-websites-1.md |  |
@@ -55,21 +54,23 @@ Counts: 32 todo, 0 in progress, 35 done, 0 blocked. Full list: work-items.jsonl.
 | A7-panel-3 | A7 | promises: group panel part 3, lines 717-836 of _sources/promises.txt | todo | _work/A7-panel-3.md |  |
 | A7-panel-4 | A7 | promises: group panel part 4, lines 837-847 of _sources/promises.txt | todo | _work/A7-panel-4.md |  |
 | A7-phone-watch-1 | A7 | promises: group phone-watch part 1, lines 848-967 of _sources/promises.txt | todo | _work/A7-phone-watch-1.md |  |
-| A2-phone-shop-2 | A2 | A2 features: area phone/shop-2 (185 items, 9398 lines) | done | _work/A2-phone-shop-2.md | 36 rows (34 features), 185 of 185 lines; plan gates written but off; surface name fixed by coordinator |
+| A7-phone-watch-2 | A7 | promises: group phone-watch part 2, lines 968-1087 of _sources/promises.txt | todo | _work/A7-phone-watch-2.md |  |
 | A2-phone-tracker-services-1 | A2 | A2 features: area phone/tracker-services-1 (74 items, 10762 lines) | done | _work/A2-phone-tracker-services-1.md | 40 features, 74 of 74 lines; 33 live, 7 behind switch; status from file headers, screens not opened |
 | A2-phone-tracker-services-2 | A2 | A2 features: area phone/tracker-services-2 (73 items, 10868 lines) | done | _work/A2-phone-tracker-services-2.md | 40 rows (38 features), 73 of 73 lines; all tier free; 5 member settings gate behaviour |
 | A2-phone-tracker-components-1 | A2 | A2 features: area phone/tracker-components-1 (52 items, 8226 lines) | done | _work/A2-phone-tracker-components-1.md | 38 rows (36 features), 52 of 52 lines; 33 live, 3 behind switch; 2 Plus-only features |
 | A2-phone-tracker-components-2 | A2 | A2 features: area phone/tracker-components-2 (102 items, 8215 lines) | done | _work/A2-phone-tracker-components-2.md | 40 rows (39 features), 50 of 50 lines; no plan gate read in this area |
 | A2-phone-tracker-engine | A2 | A2 features: area phone/tracker-engine (35 items, 10011 lines) | done | _work/A2-phone-tracker-engine.md | 33 rows (32 features), 35 of 35 lines; no plan gate in this area |
 | A2-phone-tracker-data | A2 | A2 features: area phone/tracker-data (40 items, 9326 lines) | done | _work/A2-phone-tracker-data.md | 30 rows (26 features), 40 of 40 lines; one Plus gate (targets) |
+| A2-server-ci-workflows | A2 | A2 features: area server/ci-workflows (20 items, 3524 lines) | done | _work/A2-server-ci-workflows.md | 22 rows (18 features), 20 of 20 lines; 16 live, 1 hidden (iPhone build), 1 behind switch (Test Lab crawl); no plan gate; step bodies of most workflows not read |
 | A7-src | tools | script: _tools/promises.mjs -> _sources/promises.txt (candidate sentences per source group; the file was missing) | done | _work/A7-src.md | promises.txt made by script: 1,631 candidates in 8 groups (with word endings); Hindi lines and words inside store pictures are not listed |
-(+ 7 more todo items, not shown)
-(+ 27 older done items, not shown)
+(+ 6 more todo items, not shown)
+(+ 28 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
 
 ## Resume notes
+- PACER RUN 19 Nov 00:00 IST: F5 88 at start (weekly Fable 44, weekly all 23), window resets 19 Nov 01:00 IST. Night rule: one helper fitted (88 + 6 <= 96). Ran A2-server-ci-workflows: done, 22 rows merged, 132k tokens, 5 lines "seen in passing" in its checkpoint (_work/A2-server-ci-workflows.md) for the findings phase. F5 91 after it (weekly Fable 45, weekly all 24): 91 + 6 > 96, so nothing more starts in this window. No helper runs. Model router still off, change-360 still off. Lock deleted. Next launches: after 01:00 IST (night rule, up to 96, max 6 at once): the 14 A2 areas in todo, then A7 items.
 - PACER RUN 18 Nov 23:44 IST: F5 86 (weekly Fable 43, weekly all 23), window resets 19 Nov 01:00 IST. Day rule: at F5 >= 75 nothing new starts. No helper launched, none running. Model router still off. No lock left. Next launches: after 01:00 IST (night rule, up to 96): the 15 A2 areas in todo, then A7 items.
 - PACER RUN 18 Nov 23:29 IST: F5 85 (weekly Fable 43, weekly all 23), window resets 19 Nov 01:00 IST. Day rule: at F5 >= 75 nothing new starts. No helper launched, none running. Model router still off. Lock deleted. Next launches: after 01:00 IST (night rule, up to 96): the 15 A2 areas in todo, then A7 items.
 - PACER RUN 18 Nov 23:14 IST: F5 84 (weekly Fable 43, weekly all 23), window resets 19 Nov 01:00 IST. Day rule: at F5 >= 75 nothing new starts. No helper launched, none running. Model router not checked (nothing launched). Lock deleted. Next launches: after 01:00 IST (night rule, up to 96): the 15 A2 areas in todo, then A7 items.
