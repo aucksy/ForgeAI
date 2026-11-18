@@ -7,6 +7,15 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-615. Full system audit: STARTED (scheduled start run) - 18 Nov 2026 16:37 IST
+
+- Plan: D:\Brain\Dev-Framework6-11-16-full-system-audit-plan.md. Live state: docs/system-map/AUDIT-STATE.md.
+- Analysis only (his words, 18 Nov 2026): no app code, tests, workflows, skills or settings change; proposals only.
+- Helpers: Fable 5.2, effort medium, max 6. Model router OFF (checked). change-360 switch OFF (checked).
+- Done: A1 (docs/system-map/surfaces.json, 11 surfaces). Running: plan review helper -> docs/system-map/PLAN-REVIEW.md.
+- Next: apply "apply" proposals to the plan file, enable the hourly pacer, start A2 + 3E helpers.
+- 0.79.0: in Play open testing; production is his call (R-614). Audit runs beside it.
+
 ## R-614. Is the Air Squat bug (F227) in 0.79.0? Checked before production - 18 Nov 2026
 
 He asked what 0.79.0 fixed, to decide on production; I warned that F227 may break What's new line 2. He said "Yes, check it first".
