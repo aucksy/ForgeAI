@@ -7,6 +7,16 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-616. F235: compare our build framework with Google's Elephant and Goldfish method, first after the audit - 18 Nov 2026
+
+His words: "add an item to backlog. It is actually the first item we are going to explore after the audit is done and before
+the [fixes start] ... We are going to explore the elephant and goldfish framework laid out by Google ... judge our framework, our
+future framework for development against it." Found it: github.com/google/elephant-goldfish-model (Apache 2.0). One agent with
+full context (elephant) writes a design doc; stateless fresh reviewers (goldfish) review it until one passes it with zero
+reservations; then the human approves. Not meant for small fixes. Idea from Dave Rensin's essay "Elephants, Goldfish, and the
+New Golden Age of Software Engineering". Done: F235 row (after-audit, first); audit plan section 5 gets a "STEP ZERO" before
+change-360 goes on. Not touched: audit state files. Next F is F236.
+
 ## R-615. Full system audit: STARTED (scheduled start run) - 18 Nov 2026 16:37 IST
 
 - Plan: D:\Brain\Dev-Framework\2026-11-16-full-system-audit-plan.md. Live state: docs/system-map/AUDIT-STATE.md.
