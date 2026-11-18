@@ -10,7 +10,7 @@ Source: docs/system-map/_sources/promises.txt lines 477-596 (120 candidates). Ou
 - ALL DONE: 120 of 120 candidates handled. 73 rows (72 candidates; 530 gave 2 rows), 48 "not a promise".
 
 ## Counts
-kept 16, partly 20, GAP 0, unknown 37.
+kept 15, partly 20, GAP 0, unknown 38.
 
 ## Not a promise
 - apps/dashboard/src/crm/assistant/answer.ts:325 (2 candidates), a follow-up button label and the request text it sends
