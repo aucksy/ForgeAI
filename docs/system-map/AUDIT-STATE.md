@@ -8,7 +8,7 @@ blind check: never put backlog rows F222-F227, F232 or hints into a helper brief
 ## Windows
 | window reset (IST) | F5 start | F5 now | WF | WA | helpers run | why stopped |
 |---|---|---|---|---|---|---|
-| 18 Nov 20:00 | 6 | 6 | 0 | 0 | plan-review | running |
+| 18 Nov 20:00 | 6 | 6 | 0 | 0 | plan-review, E1 | running |
 
 ## Learned cost per helper type (5-hour %)
 | step | helpers so far | average cost |
@@ -26,14 +26,15 @@ blind check: never put backlog rows F222-F227, F232 or hints into a helper brief
 | W4 | A2 | features: server (Workers, DB, crons, messages) | todo | _work/A2-server.md | |
 | W5 | A2 | features: websites + HQ + gate | todo | _work/A2-web-hq.md | |
 | W6 | A2 | features: watch + store listing | todo | _work/A2-watch-store.md | |
-| W7 | 3E | E1 test history (script) | todo | _work/E1.md | |
+| W7 | 3E | E1 test history (script) | in progress | _work/E1.md | |
 | W8 | 3E | E2 classify failures | todo | _work/E2.md | |
 | W9 | 3E | E3 release gate cost | todo | _work/E3.md | |
 | W10 | 3E | E4 better framework proposal | todo | _work/E4.md | |
 | W11 | 3F | F1, F4-F6 change-360 review (proposals only) | todo | _work/F.md | |
 
 ## Needs Aakash
-(filled after the plan review)
+- The scheduled task mettleup-audit-pacer could not be switched on by the unattended start run (it needs his click). Backup: an hourly pacer cron inside the start session (dies if that chat closes).
+(more after the plan review)
 
 ## Resume notes
 - Audit worktree (coordinator): scratchpad wt-audit, detached at origin/main. The main checkout D:\Apps\ForgeAI\Codebase
