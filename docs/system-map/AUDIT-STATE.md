@@ -21,15 +21,14 @@ blind check: never put the held-out rows or hints into a helper brief (ids are i
 | E1 | 1 | 189k tokens (% not measured yet; plan with 5) |
 | E2 | 1 | 299k tokens (% not measured yet; plan with 5) |
 | E3 | 1 | 198k tokens (% not measured yet; plan with 5) |
-| E4 | 0 | 5 (start value) |
+| E4 | 1 | 184k tokens (% not measured yet; plan with 5) |
 | 3F | 0 | 5 (start value) |
 
 ## Work items
-Counts: 20 todo, 6 in progress, 24 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 20 todo, 5 in progress, 25 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
-| W10 | E4 | 3E E4 better test framework: research + proposals only -> TEST-SYSTEM-REVIEW.md | in progress | _work/E4.md |  |
 | W11 | 3F | 3F F1, F4-F6 change-360 review (proposals only; switch stays OFF) -> CHANGE-360-REVIEW.md draft | in progress | _work/F.md |  |
 | A2-phone-shop-1 | A2 | A2 features: area phone/shop-1 (68 items, 9373 lines) | in progress | _work/A2-phone-shop-1.md |  |
 | A2-phone-tracker-services-1 | A2 | A2 features: area phone/tracker-services-1 (74 items, 10762 lines) | in progress | _work/A2-phone-tracker-services-1.md |  |
@@ -63,7 +62,7 @@ Counts: 20 todo, 6 in progress, 24 done, 0 blocked. Full list: work-items.jsonl.
 | A2-phone-screens-1 | A2 | A2 features: area phone/screens-1 (161 items, 7231 lines) | done | _work/A2-phone-screens-1.md | 40 rows (39 features), 161 of 161 lines; 34 live, 3 behind switch, 2 hidden; items file also holds lines of later screens |
 | A2-phone-screens-2 | A2 | A2 features: area phone/screens-2 (161 items, 7566 lines) | done | _work/A2-phone-screens-2.md | 40 rows, 161 of 161 lines; 31 live, 6 behind switch; about 80 lines are the same as screens-1 (de-duplicate in A3) |
 | A2-phone-shop-2 | A2 | A2 features: area phone/shop-2 (185 items, 9398 lines) | done | _work/A2-phone-shop-2.md | 36 rows (34 features), 185 of 185 lines; plan gates written but off; surface name fixed by coordinator |
-(+ 16 older done items, not shown)
+(+ 17 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
