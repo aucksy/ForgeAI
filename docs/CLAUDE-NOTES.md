@@ -7,6 +7,13 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-619. Audit weekly stop: 90%, or 95% on the last day; the extra 01:02 run removed - 18 Nov 2026 21:20 IST
+
+His words: "Weekly stop at 90% if more than 1 days are remaining for weekly reset. It can go upto 95% if its last day". And: "What do you
+mean by Extra audit start? I hope it wont have 2 separate windows running multiple agents". Done: pacer step 3 and plan section 8C now use
+W = 90 while the weekly reset is more than 24 h away, 95 in the last 24 h (higher of Fable and all-models meters). The one-shot
+mettleup-audit-resume (R-618) is DISABLED: only one pacer runs (every 15 min, the lock stops overlaps), first after the reset at about 01:07 IST.
+
 ## R-618. Audit restarts on its own after each 5-hour reset - 18 Nov 2026 21:15 IST
 
 His words: "ensure that it will actually start at 1 without fail because I will not be available .. it should continue working as per set rules of limits".
