@@ -16,6 +16,16 @@ Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept her
 - Next: apply "apply" proposals to the plan file, enable the hourly pacer, start A2 + 3E helpers.
 - 0.79.0: in Play open testing; production is his call (R-614). Audit runs beside it.
 
+## R-615. Audit: "skipped" was the pacer; main audit chat moved from Opus to Fable - 18 Nov 2026
+
+He asked why the audit did not run (Scheduled showed "skipped") while his 5-hour meter was at 10%.
+Found: mettleup-full-audit-start ran on time (16:36 IST, session local_a9a94e8b-c80f-43bd-a5c9-6a2171cb235a) and was working.
+The skip was mettleup-audit-pacer: it stays disabled until the start run's step 7 turns it on. But the start session ran on
+claude-opus-5-5, not Fable (the task file set no model; only its helpers were "fable").
+He said "Yes, switch to Fable": set that session to claude-fable-5-2 (from its next turn), and gave the pacer SKILL.md
+frontmatter model: claude-fable-5-2 + effort: medium plus a MODEL CHECK FIRST step (not Fable -> only coordinate, every
+piece of work to fable helpers). NEXT: after the first pacer run, get_session its id; if not Fable, set_session_model it.
+
 ## R-614. Is the Air Squat bug (F227) in 0.79.0? Checked before production - 18 Nov 2026
 
 He asked what 0.79.0 fixed, to decide on production; I warned that F227 may break What's new line 2. He said "Yes, check it first".
