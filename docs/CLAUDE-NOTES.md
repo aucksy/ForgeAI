@@ -15,6 +15,8 @@ Answer (from watchUpdateCard.ts + WatchUpdatePrompt.tsx): it shows on app open (
 
 My view given: yes, add a quiet lasting sign (dot on Settings + an 'Update ready' row in the watch section). Audit freeze: goes to the backlog as after-audit only when he confirms.
 
+Follow-up (he said): every watch pop-up, card and notification must show only with a detected, connected, eligible watch, eligible = any watch that can install the app. Checked in code: all of them (intro slide, start card, after-workout card, Settings row, update pop-up) read Wear OS connected nodes; no node = nothing shows. Garmin, Fitbit, Amazfit, Noise, boAt, Apple and old Samsung Tizen watches never appear as nodes. Update pop-up needs the app already on the watch. Gap: a Wear OS 2 watch (Android 7-9, minSdk 30 blocks it) still gets the INSTALL offer; the phone cannot read a watch's Android version without our app on it. Tiny group in 2026; fallback note shows if the store refuses. Not changed.
+
 ## R-610 (17 Nov 2026) Release 0.79.0 (phone + watch) to Play OPEN TESTING: IN PROGRESS (helper; state as of 10:40 IST)
 - Approval (quoted by the coordinator): "yes 0095 / yes 0096 / release" (15 Nov 2026, 22:21 IST) and "Take best
   decisions yourself to release whatever is pending" (16 Nov 2026, 00:23 IST). One release = v0.79.0 only.
