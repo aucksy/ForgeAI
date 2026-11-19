@@ -27,10 +27,10 @@ blind check: never put the held-out rows or hints into a helper brief (ids are i
 | E4 | 1 | 4.6 (184k tokens) |
 | 3F | 1 | 4.3 (171k tokens) |
 | A3 | 1 | 5.3 (212k tokens) |
-| A4 | 0 | 5 (start value) |
+| A4 | 1 | 4.6 (185k tokens) |
 
 ## Work items
-Counts: 11 todo, 0 in progress, 69 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 10 todo, 0 in progress, 70 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
@@ -44,8 +44,6 @@ Counts: 11 todo, 0 in progress, 69 done, 0 blocked. Full list: work-items.jsonl.
 | A3-inbox-2 | A3 | human side: redacted backlog copy, part 2 | todo | _work/A3-inbox-2.md |  |
 | A3-inbox-3 | A3 | human side: redacted backlog copy, part 3 | todo | _work/A3-inbox-3.md |  |
 | A3-inbox-4 | A3 | human side: redacted backlog copy, parts 4 and 5 | todo | _work/A3-inbox-4.md |  |
-| A4-d1-1 | A4 | entities and readers: 12 d1 tables, lines 4-122 of _sources/readers-raw.txt | todo | _work/A4-d1-1.md |  |
-| A7-phone-watch-3 | A7 | promises: group phone-watch part 3, lines 1088-1126 of _sources/promises.txt | done | _work/A7-phone-watch-3.md | 26 promises from 39 candidates: 12 kept, 10 partly, 0 GAP, 4 unknown; 13 not a promise; top: share picture never shows your name has no test for the name half |
 | A7-whats-new-1 | A7 | promises: group whats-new part 1, lines 1127-1246 of _sources/promises.txt | done | _work/A7-whats-new-1.md | 99 promises from 120 candidates: 12 kept, 2 partly, 0 GAP, 85 unknown (73 never searched: read limit); 21 not a promise; top: complaints reach only you is partly true, the front desk sees them too |
 | A7-whats-new-2 | A7 | promises: group whats-new part 2, lines 1247-1366 of _sources/promises.txt | done | _work/A7-whats-new-2.md | 99 promises from 120 candidates: 3 kept, 48 partly, 1 GAP, 47 unknown; 21 not a promise; GAP: the update pop-up note says Later asks again in 3 days, but the rule is now the 7th app start |
 | A7-whats-new-3 | A7 | promises: group whats-new part 3, lines 1367-1439 of _sources/promises.txt | done | _work/A7-whats-new-3.md | 54 promises from 73 candidates: 9 kept, 19 partly, 5 GAP, 21 unknown; 19 not a promise; GAPs: old update notes no longer true (microphone, 4 tabs, Progress tab, workout days to front desk, 3-week muscle tip) |
@@ -53,7 +51,8 @@ Counts: 11 todo, 0 in progress, 69 done, 0 blocked. Full list: work-items.jsonl.
 | A7-templates-2 | A7 | promises: group templates part 2, lines 1560-1631 of _sources/promises.txt | done | _work/A7-templates-2.md | 50 promises from 72 candidates: 43 kept, 2 partly, 0 GAP, 5 unknown; 22 not a promise; top: Settings says you get a pop-up for gym news, but from the 3rd message of a day none shows |
 | A7-panel-3b | A7 | promises: group panel part 3, second pass: the 63 rows of _work/out/A7-panel-3.jsonl with status unknown (lines 717-836 of _sources/promises.txt); find what keeps each one, privacy and money rows first; write patch rows | done | _work/A7-panel-3b.md | 34 of 63 unknown rows settled: 25 kept, 8 partly, 1 GAP; 29 lower-value rows still unknown (read limit; list in the checkpoint); GAP: MettleUp has never opened your records can show when old records were deleted |
 | A3-help | A3 | human side: help articles | done | _work/A3-help.md | 146 features named in 71 help articles: 145 matched, 1 new row, 7 findings (2 S2, 5 S3); top: help says a payment link puts money in the owner account, but payments are in test mode; help says messages are deleted after 180 days, but no timed clean-up exists |
-(+ 61 older done items, not shown)
+| A4-d1-1 | A4 | entities and readers: 12 d1 tables, lines 4-122 of _sources/readers-raw.txt | done | _work/A4-d1-1.md | 12 entity rows and 100 reader rows for 12 d1 tables (96 candidates + 4 app readers): 55 readers, 45 not-a-reader; seen in passing: HQ cannot show the AI assistant or help cost, ai_usage keep time is stated three ways |
+(+ 62 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
