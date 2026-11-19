@@ -1,0 +1,124 @@
+name: iPhone upload to TestFlight (draft, not in use yet)
+
+# 19 Nov 2026 (owner: "set up a backend entry point to automatically push releases ... I don't want to
+# start the app development right now"). Groundwork only. The iPhone app is still paused (R-348), so this
+# runs ONLY when started by hand, and it stops at once, green, until the three Apple secrets exist.
+#
+# What it does when started: makes the iPhone project (expo prebuild), builds a signed store build on
+# GitHub's free Mac runner, and uploads it to App Store Connect -> TestFlight. It never submits for App
+# Review and never releases: that stays a manual step after the owner's "release" message.
+#
+# Apple side already set up (docs/ios/APP-STORE-SETUP.md): bundle ID com.mettleup.app, team 6LR22K4WZ9,
+# App Store Connect record 6836681097 "MettleUp - Workout Tracker".
+#
+# Secrets the owner adds himself (Settings -> Secrets and variables -> Actions); Claude never sees the key:
+#   ASC_KEY_ID      the Key ID of an App Store Connect API key (role App Manager)
+#   ASC_ISSUER_ID   the Issuer ID shown above the key list
+#   ASC_KEY_P8      the full text of the downloaded AuthKey_<id>.p8 file
+# Signing is automatic: xcodebuild uses the API key to make the certificate and profile itself.
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: ios-release
+  cancel-in-progress: false
+
+jobs:
+  upload:
+    runs-on: macos-26
+    timeout-minutes: 120
+    env:
+      CI: 1
+      EXPO_NO_TELEMETRY: 1
+      TEAM_ID: 6LR22K4WZ9
+      HAS_KEY: ${{ secrets.ASC_KEY_P8 != '' && secrets.ASC_KEY_ID != '' && secrets.ASC_ISSUER_ID != '' }}
+    steps:
+      - name: Stop here until the Apple key exists
+        if: env.HAS_KEY != 'true'
+        run: |
+          echo "::notice::No App Store Connect API key in the repo secrets yet (ASC_KEY_ID, ASC_ISSUER_ID, ASC_KEY_P8). Nothing built, nothing uploaded."
+
+      - name: Checkout
+        if: env.HAS_KEY == 'true'
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        if: env.HAS_KEY == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install JS dependencies
+        if: env.HAS_KEY == 'true'
+        run: npm ci
+
+      - name: Exercise pictures (RepDB, fetched at build time)
+        if: env.HAS_KEY == 'true'
+        uses: ./.github/actions/exercise-pictures
+
+      - name: Make the iPhone project (expo prebuild, CI only)
+        if: env.HAS_KEY == 'true'
+        working-directory: apps/mobile
+        run: npx expo prebuild --platform ios --clean --no-install
+
+      - name: CocoaPods
+        if: env.HAS_KEY == 'true'
+        working-directory: apps/mobile/ios
+        run: pod install
+
+      - name: Write the API key to a temporary file
+        if: env.HAS_KEY == 'true'
+        env:
+          ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+        run: |
+          KEY="$RUNNER_TEMP/AuthKey_${ASC_KEY_ID}.p8"
+          printf '%s\n' "$ASC_KEY_P8" > "$KEY"
+          chmod 600 "$KEY"
+          echo "KEY_PATH=$KEY" >> "$GITHUB_ENV"
+
+      # Build number = this workflow's run number, so every upload is higher than the one before.
+      - name: Archive (signed for the App Store)
+        if: env.HAS_KEY == 'true'
+        working-directory: apps/mobile/ios
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+        run: |
+          set -o pipefail
+          WS=$(ls -d *.xcworkspace | head -1)
+          SCHEME="${WS%.xcworkspace}"
+          xcodebuild -workspace "$WS" -scheme "$SCHEME" -configuration Release \
+            -destination 'generic/platform=iOS' -archivePath "$RUNNER_TEMP/MettleUp.xcarchive" \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$KEY_PATH" -authenticationKeyID "$ASC_KEY_ID" -authenticationKeyIssuerID "$ASC_ISSUER_ID" \
+            DEVELOPMENT_TEAM="$TEAM_ID" CODE_SIGN_STYLE=Automatic \
+            CURRENT_PROJECT_VERSION="${{ github.run_number }}" \
+            archive | tail -40
+
+      - name: Upload to App Store Connect (TestFlight)
+        if: env.HAS_KEY == 'true'
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+        run: |
+          cat > "$RUNNER_TEMP/ExportOptions.plist" <<PLIST
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0"><dict>
+            <key>method</key><string>app-store-connect</string>
+            <key>destination</key><string>upload</string>
+            <key>teamID</key><string>${TEAM_ID}</string>
+            <key>signingStyle</key><string>automatic</string>
+            <key>manageAppVersionAndBuildNumber</key><false/>
+          </dict></plist>
+          PLIST
+          xcodebuild -exportArchive -archivePath "$RUNNER_TEMP/MettleUp.xcarchive" \
+            -exportOptionsPlist "$RUNNER_TEMP/ExportOptions.plist" -exportPath "$RUNNER_TEMP/export" \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$KEY_PATH" -authenticationKeyID "$ASC_KEY_ID" -authenticationKeyIssuerID "$ASC_ISSUER_ID"
+
+      - name: Remove the key file
+        if: always() && env.HAS_KEY == 'true'
+        run: rm -f "$RUNNER_TEMP"/AuthKey_*.p8

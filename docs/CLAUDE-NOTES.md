@@ -7,6 +7,10 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-621. Apple App Store groundwork (no app code) - 19 Nov 2026
+He said: Apple developer account approved; set up whatever saves time (listing, images, release path, GitHub) without starting iPhone app development. Mid-way: Apple lives in the simpleapps108 Chrome window (saved to D:/Brain); name must be "MettleUp - Workout Tracker"; the listing must be optimised for App Store search.
+Did: bundle ID com.mettleup.app registered; App Store Connect record 6836681097 made; name, subtitle draft, keywords, category, support/marketing/privacy URLs, copyright saved (all drafts, nothing public). Draft .github/workflows/ios-release.yml (manual start only, green no-op until the ASC_* secrets exist). Full detail and what waits: docs/ios/APP-STORE-SETUP.md. Not done: API key (Apple's API terms are his click), description, privacy answers, age rating, screenshots (all must match a real iPhone build).
+
 ## R-620. Audit Fable stop line moved to 99% - 19 Nov 2026 09:40 IST
 
 His words: "Lets stop if fable reaches 99% / I will reset Fable Limit and then continue". The audit had paused at weekly Fable 88-91 under the old 90 line. Now: weekly Fable stops at 99 every day (no new helper when Fable + 2 would pass 99; pause and tell him once at 97+). Weekly all-models keeps 90 (95 on its last day). Changed in the pacer task file and the audit plan (section 8C). The pacer deletes the old "resume at 87" line from AUDIT-STATE.md on its next run. At the pause he resets the Fable limit himself and the pacer resumes within 15 minutes. His fact, same day: a Fable reset also gives back the all-models weekly share that Fable used, so the all-models meter does not cap the Fable resets.
