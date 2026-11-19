@@ -1,0 +1,47 @@
+F-panel-1025 | Mark a person on the staff list as a trainer (tick on Staff & sign-in) | apps/dashboard/src/crm/auth/PeopleScreen.tsx:353
+F-panel-1108 | Alerts: bell inbox, latest from your members, alerts on this device with the app closed (web push), alert timing settings, test alert | apps/dashboard/src/crm/shop/alertsApi.ts:27
+F-panel-1121 | Workout offer: train N times get extra days, give or undo a reward, check a member's workout code | apps/dashboard/src/crm/ui/WorkoutCodeCheckSheet.tsx:18
+F-panel-1132 | Member-app settings: gym timings, busy machines counts, MettleUp Plus lock when a plan ends | apps/dashboard/src/crm/ui/screens/BusyMachines.tsx:82
+F-panel-3000 | Help library: a place to browse the help pages | unknown
+F-panel-3500 | Owner sees every direct look at the gym's records made with the database owner login, in the admin app's MettleUp access list | unknown
+F-panel-3702 | AI helper that adds shop products for the owner | unknown
+F-panel-3703 | Send payment link from anywhere the gym collects money (free UPI link page with a Pay button and a QR) | unknown
+F-panel-3706 | Check-in QR that changes every minute | unknown
+F-panel-3710 | Class booking: weekly timetable, book or cancel, waiting list | unknown
+F-panel-3711 | AI drafts answers to members' questions for the gym | unknown
+F-panel-3712 | Fast call-back for new enquiries | unknown
+F-panel-3902 | Import members from a photo of a paper register (read by AI) | unknown
+F-panel-402 | Take the money online from the collect or sell sheet (UPI QR, payment link; the receipt saves itself when paid) | apps/dashboard/src/crm/ui/forms/CollectPaymentSheet.tsx:83
+F-panel-405 | Give extra days as a reward (sheet opens on Gift with the reward days, from the workout offer) | apps/dashboard/src/crm/ui/forms/ExtendMembershipSheet.tsx:41
+F-panel-531 | Entry machines: add or remove the gym's door machines, give a member a machine number, keep machines in step in the background | apps/dashboard/src/crm/ui/screens/EntryMachines.tsx:87
+F-phone-1215 | Watch shows the "free part" words of MettleUp Plus instead of the workout (watch lock) | apps/mobile/modules/forge-rest/android/src/main/java/com/forgeai/rest/ForgeRestModule.kt:304
+F-phone-1217 | Read the watch app's trouble log on the phone (watch diagnostics) | apps/mobile/modules/forge-rest/android/src/main/java/com/forgeai/rest/ForgeRestModule.kt:360
+F-phone-1620 | Active workout plan (the plan's days and exercises in rotation order, read for today's workout) | apps/mobile/src/db/repos/planRepo.ts:95
+F-phone-1624 | Google Drive backup and restore (link Google, back up now, find a backup, restore it after saying how many workouts go, undo a restore for 24 hours). A code comment says new Drive backups are no longer offered (R-320); the restore is still used from the welcome | apps/mobile/src/store/backupStore.ts:253
+F-phone-1722 | Home summary numbers: recovery score, strength score and the one-line insight (whether each card is on screen today was not checked in this area) | apps/mobile/src/services/dashboard.ts:31
+F-phone-1731 | On iPhone, parts not built yet say so on screen instead of showing an Android page (whether an iPhone build is with members was not checked) | apps/mobile/src/lib/onIphone.ts:8
+F-phone-3700 | Check-in by location when a workout starts, and a reminder at the member's usual time | unknown
+F-phone-3701 | Highlight the exercise you are doing now, and ask before logging a set on another exercise | unknown
+F-phone-3704 | Hindi screens in the member app | unknown
+F-phone-3705 | Make a routine by speaking | unknown
+F-phone-3707 | Stronger than X% of your gym | unknown
+F-phone-3708 | Follow gym mates (a feed of your gym) | unknown
+F-phone-3709 | Compare with a friend | unknown
+F-phone-3713 | Water tap each day (count glasses of water on Today) | unknown
+F-phone-3801 | Teen accounts (13 to 17): a parent's mobile or email, a one-time code and the parent's I agree before a member under 18 joins a gym | unknown
+F-phone-3900 | Log water each day (next to steps) | unknown
+F-phone-3901 | Join my gym by itself when my Google email matches the email the gym has for me (asks Join? first) | unknown
+F-phone-3904 | Follow gym mates: a feed of your gym only (parked by the owner) | unknown
+F-phone-3905 | Compare with a friend, train together (parked by the owner) | unknown
+F-phone-3906 | Stronger than X% of your gym (parked by the owner) | unknown
+F-phone-3907 | Step challenge across the gym (parked by the owner) | unknown
+F-phone-3908 | Count reps by listening to the member count aloud (cancelled by the owner) | unknown
+F-phone-4000 | Location check at the QR check-in: the owner drops a pin on the gym, and only a check-in made within about 150 m counts for challenges and rewards | unknown
+F-phone-4001 | Class booking: group class timetable, spaces left, book and cancel | unknown
+F-phone-424 | Message your gym: a question, feedback or a complaint to the owner or a trainer, with the red unread count | apps/mobile/src/shop/gymApi.ts:632
+F-phone-431 | Pay the gym from the app: UPI QR, UPI app, or online payment for fees and shop orders | apps/mobile/src/shop/memberPay.ts:1
+F-watch-3200 | Watch keeps its big numbers full size at the largest text size | unknown
+F-watch-3400 | Apple Watch app (the member website says it is coming soon) | unknown
+F-watch-106 | Log a set from the watch (tap weight or reps, turn the crown, tap Done; the phone saves it) | apps/mobile/android/wear/src/main/java/com/forgeai/wear/LogScreens.kt:318
+F-phone-334 | 'Do you run a gym on MettleUp?' sign-in for the gym's owner or desk person with the admin app's mobile number and PIN (opens Join for their own gym) | apps/mobile/src/shop/StaffDoorCard.tsx:23
+F-phone-401 | Gym owner or desk staff unlock their gym in the member app with their mobile number and PIN | apps/mobile/src/shop/gymApi.ts:98

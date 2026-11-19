@@ -1,0 +1,37 @@
+F-hq-3800 | Owner inbox page: a private page where the owner reads answers, marks them read, sends his picks, and comments on or moves rows of the feature backlog | scripts/owner_inbox_page.py:2
+F-hq-3903 | Export one gym's data from HQ | unknown
+F-server-114 | Spoken feedback: the member app sends a short voice clip, gets the text back to fix and send; the clip is not kept; counted per phone and address | deploy/panel/worker.js:145
+F-server-118 | AI column matching in the member import: the AI is shown column names and a few masked example rows and says which column is which (signed-in desk only, with per-gym limits and a usage count) | deploy/panel/worker.js:148
+F-server-119 | Owner's AI Assistant: the owner's typed or spoken sentence becomes 1 to 3 cards from a fixed list of tools and admin pages (nothing runs until the owner taps Send or Save); also rewrites a message and turns a spoken ask into text; daily fair-use count and a monthly money cap for trial gyms | deploy/panel/worker.js:149
+F-server-122 | AI workout plan writer: the assistant writes a plan for one member from the goal, level and days the owner gave, using the gym's own exercise list (3 credits, spent only when the owner taps Save) | deploy/panel/worker.js:152
+F-server-124 | Connect the gym's own payment company: the owner types the company's keys (sealed before they are stored), sees the connection state, changes keys or disconnects; a broken connection is turned off | deploy/panel/worker.js:154
+F-server-126 | Collect a payment online at the desk: make a payment link (or UPI request) for a member through the gym's own account, check whether it is paid, cancel it, see the "paid online" list, claim one, mark it recorded and settle open links | deploy/panel/pay.js:766
+F-server-128 | Member pays in the app: the member sees what can be paid online, pays a due or a shop order through the gym's payment link, and the app checks when it is paid | deploy/panel/pay.js:778
+F-server-130 | Payment company webhook: the company tells us a link was paid (signature checked, each event kept once) and the request is marked paid | deploy/panel/pay.js:743
+F-server-131 | Every 10 minutes: open payment links are checked with each gym's payment company and marked paid when the money has arrived | deploy/panel/worker.js:179
+F-server-132 | Owner's two payment switches ("Take payments in the member app", "Take payments when people join online") and the desk's list of join payments, including people who said "I have paid" by plain UPI | deploy/panel/pay.js:786
+F-server-133 | Sign-in code by WhatsApp: a 6-digit code sent to a mobile number for Forgot PIN and for the new-gym number check (login_code template, daily cap, code hashes kept 2 days); /status tells the screens whether to show the WhatsApp way | deploy/panel/worker.js:160
+F-server-134 | "Verify with WhatsApp": the person sends MettleUp's number one WhatsApp message with a code to prove the number is theirs (Forgot PIN, new gym, member app, join online); the screen waits for it and MettleUp replies on WhatsApp | deploy/panel/phoneCode.js:247
+F-server-135 | WhatsApp delivery news: Meta tells us whether each WhatsApp message was sent, delivered or failed and why (written to the logs only) | deploy/panel/worker.js:162
+F-server-136 | Pay online for a MettleUp plan: the admin app's "Pay online" request is passed to the HQ server, which makes the payment (never a price from the browser) | deploy/panel/worker.js:156
+F-server-137 | Public key for the admin app's alerts when the app is closed (browser push), passed on from the HQ server | deploy/panel/worker.js:158
+F-server-231 | The desk's "please pay" fee request reaches the member's phone (each new request becomes one note for the member) | deploy/hq/payFeed.js:52
+F-server-232 | "Asha paid online" alert: what a member paid online becomes an alert for the gym's admin app | deploy/hq/payFeed.js:115
+F-server-300 | Old sign-in-account link between a gym and its people, the one-row workout summary a member phone sends up, and "erase my cloud data" (the first design, for signed-in accounts only) | supabase/migrations/0001_init.sql:120
+F-server-332 | Branches: several gyms under one business - list, add, open another branch, rename the business, owners shared across branches, receipt prefix per branch, HQ list of groups (file header says NOT APPLIED to the live database; needs the owner's yes) | supabase/migrations/0031_branches.sql:206
+F-server-333 | Branches: find a member of another branch by mobile, check the visitor in, list visitors, undo (file header says NOT APPLIED to the live database; needs the owner's yes) | supabase/migrations/0031_branches.sql:449
+F-server-334 | Member cloud copy: a signed-in member's workouts, routines and body data kept on the server and restored on a new phone; delete my account (file header says NOT APPLIED to the live database; needs the owner's yes) | supabase/migrations/0032_member_cloud.sql:121
+F-server-335 | Free plan limits for the member app (routines 4, own exercises 7, charts 3 months), one switch, shipped off (file header says NOT APPLIED to the live database; needs the owner's yes) | supabase/migrations/0032_member_cloud.sql:111
+F-server-336 | Accept the terms and the data agreement online: the owner ticks the box, each acceptance kept for ever (file header says NOT APPLIED to the live database; needs the owner's yes) | supabase/migrations/0033_terms_acceptance.sql:107
+F-server-511 | AI Assistant credits wallet for gym owners (balance, free welcome and monthly credits, save a task, spend, refund, task history; HQ sees a wallet, grants credits, clears old requests). Live state unclear: 0071 header says NOT APPLIED but 0078 and 0083 (applied live) need it | supabase/migrations/0071_ai_assistant.sql:217
+F-web-126 | Online payments: the owner connects, changes or disconnects the gym's own payment company (keys sealed), and the desk sees whether payments are on | deploy/panel/worker.js:154
+F-web-127 | Online payments: the desk asks a member to pay by link or QR, checks, cancels, sees who paid, claims and records the payment | deploy/panel/pay.js:1025
+F-web-128 | Online payments: the owner's two switches (take payments in the member app; when people join online) and the list of join payments | deploy/panel/pay.js:1231
+F-web-129 | Online payments: a member pays dues or a shop order in the member app and the app checks the payment | deploy/panel/pay.js:1291
+F-web-131 | Online payments: the payment company's webhook and the 10-minute check mark open links paid | deploy/panel/pay.js:743
+F-web-132 | The owner buys a MettleUp plan online (the request is passed to HQ) | deploy/panel/worker.js:156
+F-web-133 | Browser alerts for the admin app: the public key a browser subscribes with | deploy/panel/worker.js:158
+F-web-134 | Sign-in code sent by WhatsApp (forgot PIN, set up a new gym): send the 6-digit code and check it; WhatsApp news about each message (delivered, failed and why) is logged | deploy/panel/worker.js:160
+F-web-3401 | Money comes back by itself when an online payment on the join page fails | unknown
+F-web-4002 | Pro + AI pack at 2,499 rupees a month (24,990 a year), shown on the website next to Pro | unknown
+F-web-4003 | Switching offer for gyms leaving their old software: records moved free, desk set up in person, nothing to pay until the old software's paid year ends (up to 6 months) | unknown
