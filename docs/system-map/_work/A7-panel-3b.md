@@ -2,3 +2,20 @@
 - unit 1 done: rows 07 08 80 15 71 75 63 64 41 42 43
 - unit 2 done: rows 10 11 12 13 14 03 06 65
 - unit 3 done: rows 37 39 56 57 66 25 26 27 28 36 38
+- unit 4 done: rows 44 45 47 46
+- LIMIT REACHED (2,000 lines read). 34 rows patched, 29 left.
+## still unknown
+- 22, 67, 68, 78 (free gym web page): grep found no paid-plan check in 0080, 0082, 0090 or 0062, but the save function body was not read; absence not proven.
+- 23 (only an owner can turn on the app and shop): the turn-on call was not found by name in apps/dashboard/src/crm; not searched further.
+- 24 (12 sample products): no seed list found by grep for "sample product" outside the wording files.
+- 29 (WhatsApp only, one member at a time), 30 (goes to all in the app): MessagesSection.tsx:596-601 read, send code not read.
+- 31 (no receipt and no GST for free days): the code that gives free days was not read.
+- 32 (only desk check-ins count): 0047 grep for countAppCheckins gave nothing; the counting code was not found.
+- 33, 34, 70 (invite text, payment page, pay MettleUp by message): wording about outside pages or a manual step; not searched.
+- 35 (old records count only if added), 55, 58, 59, 60 (import column rules): not reached.
+- 40 (held payment removed for good): removeHeld at apps/dashboard/src/crm/data/cloud.ts:999 found, body not read.
+- 50, 52, 73 (challenge winners and free days): challenges tests listed (apps/dashboard/test/crm/challenges.test.ts:297) but not opened.
+- 51 (members see a challenge within 10 minutes): phone refresh time for challenges not found; apps/mobile/src/shop/gym.ts:687 has a 10-minute list timer, not confirmed to be the challenge one.
+- 53 (machine shows Online within a minute): status is online when seen in the last 3 minutes (apps/dashboard/src/crm/machines/entryMachineAdmin.ts:180,186); how often the panel fetches the machine list was not found.
+- 61, 62 (payments come in only once after undo and re-import): undo and re-import code not read.
+- 72, 74, 76 (saved in this browser only): local.ts:10-30 comments say localStorage; the code path was not read.
