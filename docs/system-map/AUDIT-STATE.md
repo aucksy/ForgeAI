@@ -34,20 +34,18 @@ weekly stop lines (his words, 19 Nov 2026 09:40 IST: "Lets stop if fable reaches
 | A3 | 11 | 5.2 (207k tokens) |
 | A4 | 13 | 4.1 (162k tokens) |
 | A4b | 2 | 5.1 (204k tokens) |
-| A5 | 22 | 5.2 (207k tokens) |
+| A5 | 23 | 5.2 (207k tokens) |
 | L4 | 1 | 4.4 (177k tokens) |
 
 ## Work items
-Counts: 0 todo, 5 in progress, 119 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 0 todo, 4 in progress, 120 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
-| A5-panel-logic-2-2 | A5 | journeys: 8 features (17 feature x role pairs) of panel / panel/logic-2; list in _work/items/A5-panel-logic-2-2.txt | in progress | _work/A5-panel-logic-2-2.md |  |
 | A5-panel-logic-2-3 | A5 | journeys: 8 features (13 feature x role pairs) of panel / panel/logic-2; list in _work/items/A5-panel-logic-2-3.txt | in progress | _work/A5-panel-logic-2-3.md |  |
 | A5-panel-logic-2-4 | A5 | journeys: 8 features (16 feature x role pairs) of panel / panel/logic-2; list in _work/items/A5-panel-logic-2-4.txt | in progress | _work/A5-panel-logic-2-4.md |  |
 | A5-panel-shop-1 | A5 | journeys: 6 features (12 feature x role pairs) of panel / panel/shop; list in _work/items/A5-panel-shop-1.txt | in progress | _work/A5-panel-shop-1.md |  |
 | A5-panel-shop-2 | A5 | journeys: 5 features (8 feature x role pairs) of panel / panel/shop; list in _work/items/A5-panel-shop-2.txt | in progress | _work/A5-panel-shop-2.md |  |
-| A5-panel-forms-1 | A5 | journeys: 9 features (16 feature x role pairs) of panel / panel/forms; list in _work/items/A5-panel-forms-1.txt | done | _work/A5-panel-forms-1.md | 9 features (16 feature x role pairs): 82 full journeys and 123 type lines; 3 findings (S3): an offline payment from Money Dues says only Payment saved; a desk login sees an empty Pay online box; the owner reads a staff line after a workout code check; 11 seen-in-passing lines in the checkpoint |
 | A5-panel-forms-2 | A5 | journeys: 8 features (15 feature x role pairs) of panel / panel/forms; list in _work/items/A5-panel-forms-2.txt | done | _work/A5-panel-forms-2.md | 8 features (15 feature x role pairs): 83 full journeys and 111 type lines; 1 finding (S3): Comes with a pass ticked and no company picked, Add member saves nothing and the message is off screen; 8 seen-in-passing lines in the checkpoint |
 | A5-panel-forms-3 | A5 | journeys: 8 features (14 feature x role pairs) of panel / panel/forms; list in _work/items/A5-panel-forms-3.txt | done | _work/A5-panel-forms-3.md | 8 features (14 feature x role pairs): 68 full journeys and 108 type lines; 1 finding (S3): on the sell sheet, a changed plan keeps the old price question and Yes, save; 10 seen-in-passing lines in the checkpoint |
 | A5-panel-logic-1-1 | A5 | journeys: 8 features (17 feature x role pairs) of panel / panel/logic-1; list in _work/items/A5-panel-logic-1-1.txt | done | _work/A5-panel-logic-1-1.md | 8 features (17 feature x role pairs): 81 full journeys and 125 type lines; 1 finding (S3): Latest from your members on Today uses the device clock, so a wrong clock can hide a waiting message; 9 seen-in-passing lines in the checkpoint |
@@ -55,7 +53,8 @@ Counts: 0 todo, 5 in progress, 119 done, 0 blocked. Full list: work-items.jsonl.
 | A5-panel-logic-1-3 | A5 | journeys: 8 features (13 feature x role pairs) of panel / panel/logic-1; list in _work/items/A5-panel-logic-1-3.txt | done | _work/A5-panel-logic-1-3.md | 8 features (13 feature x role pairs): 61 full journeys and 97 type lines; 3 findings (S2): Download all your gym's data leaves out shop, diet plans, trainers, staff, measurements, messages and photos; times in that download are 5.5 hours behind India time with no label; Your questions in Help is kept per browser, so staff on a shared computer see the owner's questions; 15 seen-in-passing lines in the checkpoint |
 | A5-panel-logic-1-4 | A5 | journeys: 7 features (11 feature x role pairs) of panel / panel/logic-1; list in _work/items/A5-panel-logic-1-4.txt | done | _work/A5-panel-logic-1-4.md | 7 features (11 feature x role pairs): 60 full journeys and 77 type lines; 2 findings: S3 a special day with a date already over is dropped without a word on Gym timings; S4 the import button reads Update 1 members; 11 seen-in-passing lines in the checkpoint (one: a mistyped Aadhaar can stay in imported text) |
 | A5-panel-logic-2-1 | A5 | journeys: 9 features (18 feature x role pairs) of panel / panel/logic-2; list in _work/items/A5-panel-logic-2-1.txt | done | _work/A5-panel-logic-2-1.md | 9 features (18 feature x role pairs): 96 full journeys and 126 type lines; 1 finding (S2): an imported plan named by visits per week, such as 3 Days a Week Monthly, is saved as a 3-day plan and shows as expired; 6 seen-in-passing lines in the checkpoint |
-(+ 111 older done items, not shown)
+| A5-panel-logic-2-2 | A5 | journeys: 8 features (17 feature x role pairs) of panel / panel/logic-2; list in _work/items/A5-panel-logic-2-2.txt | done | _work/A5-panel-logic-2-2.md | 8 features (17 feature x role pairs): 81 full journeys and 124 type lines; 1 finding (S2): unticking the pass box removes a member's past QR visits from the monthly pass count, and a changed company moves them, so the gym claims too little or from the wrong company; 8 seen-in-passing lines in the checkpoint |
+(+ 112 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
