@@ -68,8 +68,8 @@ Each line: table (entity id) <- function | candidate file:line | what I saw (new
 - deploy/panel/worker.js:249 is a comment line; the real gym_preview use is :251 (join page shown to a visitor: surface web).
 
 ## Seen in passing
-- deploy/hq/billing.js:422: runBillingDaily returns "sent: 0" always, though the line above counts the renewal messages really sent; whoever reads the result sees zero messages.
-- hq_system (supabase/migrations/0026_hq_audit_and_counts.sql:210) hard-codes the database limit as 500 MB; if the plan changes the HQ System page shows the wrong "full" level.
+- deploy/hq/billing.js:418: runBillingDaily returns "sent: 0" always, though the line above counts the renewal messages really sent; whoever reads the result sees zero messages.
+- hq_system (supabase/migrations/0026_hq_audit_and_counts.sql:212) hard-codes the database limit as 500 MB; if the plan changes the HQ System page shows the wrong "full" level.
 - member_account_delete was assigned to profiles; it also deletes member_items and member_summary (0032_member_cloud.sql:216-229), which have no entity row yet.
 
 ## Could not check

@@ -30,20 +30,18 @@ weekly stop lines (his words, 19 Nov 2026 09:40 IST: "Lets stop if fable reaches
 | E4 | 1 | 4.6 (184k tokens) |
 | 3F | 1 | 4.3 (171k tokens) |
 | A3 | 11 | 5.2 (207k tokens) |
-| A4 | 3 | 4.1 (163k tokens) |
+| A4 | 4 | 4.0 (160k tokens) |
 
 ## Work items
-Counts: 3 todo, 3 in progress, 82 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 3 todo, 2 in progress, 83 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
 | A4-rpc-1 | A4 | entities and readers: 91 database-function groups, lines 220-500 of _sources/readers-raw.txt | in progress | _work/A4-rpc-1.md |  |
-| A4-rpc-3 | A4 | entities and readers: 75 database-function groups, lines 780-1028 of _sources/readers-raw.txt | in progress | _work/A4-rpc-3.md |  |
 | A4-rpc-4 | A4 | entities and readers: 39 database-function groups, lines 1030-1163 of _sources/readers-raw.txt | in progress | _work/A4-rpc-4.md |  |
 | A4-nocaller-1 | A4 | entities and readers: database functions with no caller found, lines 1166-1261 of _sources/readers-raw.txt | todo | _work/A4-nocaller-1.md |  |
 | A4-nocaller-2 | A4 | entities and readers: database functions with no caller found, lines 1262-1357 of _sources/readers-raw.txt | todo | _work/A4-nocaller-2.md |  |
 | A4-nocaller-3 | A4 | entities and readers: database functions with no caller found, lines 1358-1451 of _sources/readers-raw.txt | todo | _work/A4-nocaller-3.md |  |
-| A3-notes-claude-2 | A3 | human side: redacted notes copy, parts 2 and 3 | done | _work/A3-notes-claude-2.md | 47 features named in notes parts 2 and 3: 47 matched, 0 new rows, 4 findings (1 S2, 3 S3); top: the Hindi privacy notice does not say that AI Assistant requests go to outside AI companies, the English one does; the watch rest alert still uses the one broken signal to decide if the watch has the app |
 | A3-inbox-1 | A3 | human side: redacted backlog copy, part 1 | done | _work/A3-inbox-1.md | about 205 features named in backlog part 1: 176 matched, 14 new rows, 19 findings (3 S2, 16 S3); top: the backlog says Google Drive backup is live, but it stopped on 4 Nov; long-history trainer charts are marked released, but their database change is not live; Steps and water is marked live, but water does not exist |
 | A3-inbox-2 | A3 | human side: redacted backlog copy, part 2 | done | _work/A3-inbox-2.md | 122 items named in backlog part 2: 102 matched, 2 new rows, 6 findings (2 S2, 4 S3); top: the note says a small trial fee was built, but the fee is always zero; the owner was told Move it moves the routine in one tap, but the member card has only Not now |
 | A3-inbox-3 | A3 | human side: redacted backlog copy, part 3 | done | _work/A3-inbox-3.md | about 75 features named in backlog part 3: about 66 matched, 9 new rows, 12 findings (2 S2, 10 S3); top: the website says staff cannot open a member list unless the owner lets them in, but HQ has an emergency open with no OK from the gym; the panel still shows Check workout code, but the member app stopped showing that code on 2 Nov |
@@ -51,7 +49,8 @@ Counts: 3 todo, 3 in progress, 82 done, 0 blocked. Full list: work-items.jsonl. 
 | A4-d1-1 | A4 | entities and readers: 12 d1 tables, lines 4-122 of _sources/readers-raw.txt | done | _work/A4-d1-1.md | 12 entity rows and 100 reader rows for 12 d1 tables (96 candidates + 4 app readers): 55 readers, 45 not-a-reader; seen in passing: HQ cannot show the AI assistant or help cost, ai_usage keep time is stated three ways |
 | A4-d1-2 | A4 | entities and readers: 6 d1 tables, lines 124-218 of _sources/readers-raw.txt | done | _work/A4-d1-2.md | 6 entity rows and 84 reader rows for 6 d1 tables: 37 readers, 47 not-a-reader; seen in passing: an online join payment raises no paid-online alert to the gym; payment request rows are never deleted |
 | A4-rpc-2 | A4 | entities and readers: 89 database-function groups, lines 502-778 of _sources/readers-raw.txt | done | _work/A4-rpc-2.md | 12 entity rows and 59 reader rows for database-function groups (lines 502-778): 26 readers, 33 not-a-reader; 41 candidates on 24 more tables left for item A4-rpc-2b (list in the checkpoint) |
-(+ 74 older done items, not shown)
+| A4-rpc-3 | A4 | entities and readers: 75 database-function groups, lines 780-1028 of _sources/readers-raw.txt | done | _work/A4-rpc-3.md | 9 entity rows and 57 reader rows for database-function groups (lines 780-1028): 15 readers, 42 not-a-reader; 3 entity rows were repeats of A4-rpc-2 and were dropped; 43 candidates on 27 more tables left for item A4-rpc-3b (list in the checkpoint) |
+(+ 75 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
