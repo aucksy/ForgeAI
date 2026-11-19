@@ -1,0 +1,11 @@
+import fs from 'node:fs';
+const p = 'docs/system-map/AUDIT-STATE.md';
+let t = fs.readFileSync(p, 'utf8');
+const nl = t.includes('\r\n') ? '\r\n' : '\n';
+const L = t.split(nl);
+L[0] = 'status: RUNNING (weekly Fable about 45, weekly all about 26 at 17:45 IST on 19 Nov)';
+L[1] = 'phase/step: A2, A3, A4, A4b and A7 DONE. A5 (journeys) started: 6 of 139 items done. Lens 4 pilot done; lenses 4, 3, 5 are ready to run beside A5. E1-E4 done; 3F draft done';
+L[2] = 'expected end: not before about 10 Dec 2026 at the present size. projection: about 3.6 weekly periods of 3 (A5 alone needs about 2.1 more): OVER; he was asked on 19 Nov how to cut';
+const i = L.findIndex((l) => l.startsWith('| 19 Nov 16:20 |'));
+L.splice(i + 1, 0, '| 19 Nov 21:20 | 1 | 76 | 45 | 26 | A4 x2 (the last ones), A4b x2, tools x2, lens 4 pilot, A5 x6 | closed at about 76: the stop line |');
+fs.writeFileSync(p, L.join(nl));

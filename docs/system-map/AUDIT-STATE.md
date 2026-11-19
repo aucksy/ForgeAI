@@ -32,24 +32,23 @@ weekly stop lines (his words, 19 Nov 2026 09:40 IST: "Lets stop if fable reaches
 | A3 | 11 | 5.2 (207k tokens) |
 | A4 | 13 | 4.1 (162k tokens) |
 | A4b | 2 | 5.1 (204k tokens) |
-| A5 | 5 | 4.9 (196k tokens) |
+| A5 | 6 | 5.1 (205k tokens) |
 | L4 | 1 | 4.4 (177k tokens) |
 
 ## Work items
-Counts: 0 todo, 1 in progress, 102 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 0 todo, 0 in progress, 103 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
-| A5-panel-auth-data-2 | A5 | journeys: 9 features (18 feature x role pairs) of panel / panel/auth-data; list in _work/items/A5-panel-auth-data-2.txt | in progress | _work/A5-panel-auth-data-2.md |  |
-| T-A5 | tools | tooling: A5 template, journey templates, expand script, items script | done | _work/T-A5.md | A5 is ready: template _briefs/A5.md, 42 journey templates, expand.mjs, a5-items.mjs (175 items at 8 features each), merge.mjs takes type lines and has the --a5cover done-check; pilot item made: A5-phone-components-1-1 |
 | T-lens | tools | tooling: lens items, applies grid, lens template, items script for lenses 4, 3, 5 | done | _work/T-lens.md | lens grid is ready: 106 numbered items, applies.json (2 no cells), template _briefs/lens.md, lens-items-make.mjs (lens 4 = 42 items, lens 3 = 37, lens 5 = 34), lens-cover.mjs done-check, machine-pass.md, secrets-hits.txt (174 hits, file:line only); pilot item made: L4-hq-app |
 | A5-phone-components-1-1 | A5 | journeys: 7 features (14 feature x role pairs) of phone / phone/components-1; list in _work/items/A5-phone-components-1-1.txt | done | _work/A5-phone-components-1-1.md | A5 pilot: 7 features, 62 full journeys (14 happy, 12 alternate, 14 negative, 14 state, 8 privacy) and 110 type lines; 0 findings; 4 seen-in-passing lines in the checkpoint; about 1,250 code lines read |
 | L4-hq-app | L4 | lens 4 (Privacy and law) x hq / hq/app: 6 items | done | _work/L4-hq-app.md | lens 4 pilot on HQ: 6 items in the grid (5 checked, 1 does not apply), 6 findings: 1 S1 (the HQ English helper sends help questions to Google while the privacy notice names only Anthropic), 2 S2 (HQ cannot erase one member; a deleted gym keeps its web page photos), 3 S3 |
 | A5-panel-assistant-1 | A5 | journeys: 9 features (9 feature x role pairs) of panel / panel/assistant; list in _work/items/A5-panel-assistant-1.txt | done | _work/A5-panel-assistant-1.md | 9 AI Assistant features: 58 full journeys (owner) and 63 type lines; 3 findings: S2 with six or more members of one first name only five can be picked; S2 a failed save can keep the credit with no word; S3 a wrong big figure on the members-by-batch answer; 12 seen-in-passing lines in the checkpoint |
 | A5-panel-assistant-2 | A5 | journeys: 9 features (9 feature x role pairs) of panel / panel/assistant; list in _work/items/A5-panel-assistant-2.txt | done | _work/A5-panel-assistant-2.md | 9 features: 43 full journeys (owner) and 70 type lines; 2 findings (S3): the credits pill on the AI card opens the assistant, not the credits; an idea tapped on Today is dropped with no word when the assistant is busy or the day limit is reached; 6 seen-in-passing lines in the checkpoint |
 | A5-panel-auth-data-1 | A5 | journeys: 9 features (14 feature x role pairs) of panel / panel/auth-data; list in _work/items/A5-panel-auth-data-1.txt | done | _work/A5-panel-auth-data-1.md | 9 sign-in and staff features: 70 full journeys and 102 type lines; 3 findings (2 S3, 1 S4): Forgot your PIN can save the new PIN and then say the check ran out; the sign-out words tell everyone they need a new code from the owner; 14 seen-in-passing lines in the checkpoint |
+| A5-panel-auth-data-2 | A5 | journeys: 9 features (18 feature x role pairs) of panel / panel/auth-data; list in _work/items/A5-panel-auth-data-2.txt | done | _work/A5-panel-auth-data-2.md | 9 features (18 feature x role pairs): 108 full journeys and 127 type lines; 2 findings (S3): the Choose a new PIN box asks for the current PIN but has no box for it after 15 minutes; a staff job name cannot be changed after the person is added; 7 seen-in-passing lines in the checkpoint |
 | A5-panel-auth-data-3 | A5 | journeys: 8 features (19 feature x role pairs) of panel / panel/auth-data; list in _work/items/A5-panel-auth-data-3.txt | done | _work/A5-panel-auth-data-3.md | 8 features (19 feature x role pairs): 84 full journeys and 146 type lines; 0 findings; 5 seen-in-passing lines in the checkpoint (offline copy replaced in two steps; Load demo gym replaces a browser-only gym after one confirm) |
-(+ 94 older done items, not shown)
+(+ 95 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
