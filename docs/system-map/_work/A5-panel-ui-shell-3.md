@@ -21,3 +21,15 @@ Seen in passing: the delete request names the asker as '(role)' and is sent thro
 F-panel-504: 6 journeys, 7 type lines
 F-panel-504: owner only (1 role). Hand ticks, hidden and pageNotNow are kept in browser storage (no entity fits, left out).
 Seen in passing: because hand ticks are per browser, an owner who ticked 'Add your logo and colours' on the laptop sees it not done on the phone (apps/dashboard/src/crm/ui/GetStartedCard.tsx:49, 96-98).
+F-panel-507: 11 journeys, 14 type lines
+F-panel-507 note: the waiting cards (NeedsYou, PlanRequests, JoinedOnline, PhoneLinks, PaidOnline) were not opened; their steps are from the comments in Today.tsx:158-200.
+Seen in passing: the 'Message' link on a Today row is a bare wa.me link built from whatever digits the member has, with no check that the number is complete and no ready words, unlike the WhatsApp sheet (apps/dashboard/src/crm/ui/screens/Today.tsx:653-656).
+F-panel-524: 17 journeys, 21 type lines
+F-panel-524 note: 'trainer' is a staff sign-in with the Trainer tick; the panel has no third role, so the trainer journeys rest on schedule.me (trainerSchedule.ts:267-270). The switch is 'unknown' in features.json; the code shows the page needs an online gym and a server part (Trainers.tsx:195-201).
+Seen in passing: a trainer can open every other trainer's page with that trainer's members and bookings, while the Set up your gym hint says 'A trainer sees only their own members' (Trainers.tsx:255-266; not opened far enough to be sure, so no finding).
+F-panel-525: 21 journeys, 21 type lines
+F-panel-525 note: workout plans map to E-crm-records, the workout of the day to E-gym-wods. The ready-plan list (WorkoutPlans.tsx:951), the send sheet body (983-1077) and useWodServer were read by their words only. The trainer role is a staff sign-in with the Trainer tick; nothing in the lines read cuts the page to the trainer's own members (unknown, written into the trainer type 12 journey).
+Seen in passing: the whole Workout plans page, the builder and the workout of the day sheet are plain English strings, not translated (WorkoutPlans.tsx:118-131).
+Added 3 type-2 'no' lines for staff (F-panel-515, F-panel-524, F-panel-528).
+ALL 10 FEATURES DONE. 20 feature x role pairs, 116 journeys, 145 type lines, 1 finding (FN-A5-panel-ui-shell-3-01).
+Could not check: nothing was driven in a browser (code read only); role cut-offs by typed address rest on permissions.ts canOpen, the router itself was not opened; server-side refusals for staff were not read; tests were not opened, so every coverage is 'unknown'.
