@@ -40,7 +40,7 @@ Nothing is public. A listing goes live only after a build is submitted for revie
 
 ## Only he can do
 
-1. App Store Connect > Users and Access > Integrations > App Store Connect API: press "Request Access" and accept Apple's API terms.
-2. Then make a key (role App Manager), download the .p8 once, and paste it into GitHub > aucksy/ForgeAI > Settings > Secrets > Actions as ASC_KEY_P8, with ASC_KEY_ID and ASC_ISSUER_ID.
+1. Done 19 Nov (his yes in chat): Apple API terms accepted; key "GitHub upload" made (Key ID 8W23T9A7QW, role App Manager, issuer f32203cc-7342-403a-9619-afb148ba298c). GitHub secrets ASC_KEY_ID and ASC_ISSUER_ID added by Claude.
+2. HIS step: App Store Connect > Users and Access > Integrations > App Store Connect API > "GitHub upload" > Download (works once). Paste the file's full text into GitHub > aucksy/ForgeAI > Settings > Secrets > Actions as ASC_KEY_P8.
 3. Business page: the Free Apps agreement is enough while the app is free. The Paid Apps agreement, bank and tax are needed only before MettleUp Plus is sold on iPhone.
 4. EU trader status (App Store Connect banner) before the app goes to EU stores.
