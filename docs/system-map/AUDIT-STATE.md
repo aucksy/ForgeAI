@@ -29,20 +29,19 @@ weekly stop lines (his words, 19 Nov 2026 09:40 IST: "Lets stop if fable reaches
 | E3 | 1 | 5.0 (198k tokens) |
 | E4 | 1 | 4.6 (184k tokens) |
 | 3F | 1 | 4.3 (171k tokens) |
-| A3 | 6 | 5.1 (203k tokens) |
+| A3 | 7 | 5.1 (202k tokens) |
 | A4 | 1 | 4.6 (185k tokens) |
 
 ## Work items
-Counts: 8 todo, 5 in progress, 75 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 7 todo, 5 in progress, 76 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
-| A3-notes-claude-1 | A3 | human side: redacted notes copy, part 1 | in progress | _work/A3-notes-claude-1.md |  |
 | A3-inbox-1 | A3 | human side: redacted backlog copy, part 1 | in progress | _work/A3-inbox-1.md |  |
 | A3-inbox-2 | A3 | human side: redacted backlog copy, part 2 | in progress | _work/A3-inbox-2.md |  |
 | A3-inbox-3 | A3 | human side: redacted backlog copy, part 3 | in progress | _work/A3-inbox-3.md |  |
 | A3-inbox-4 | A3 | human side: redacted backlog copy, parts 4 and 5 | in progress | _work/A3-inbox-4.md |  |
-| A4-d1-2 | A4 | entities and readers: 6 d1 tables, lines 124-218 of _sources/readers-raw.txt | todo | _work/A4-d1-2.md |  |
+| A4-d1-2 | A4 | entities and readers: 6 d1 tables, lines 124-218 of _sources/readers-raw.txt | in progress | _work/A4-d1-2.md |  |
 | A4-rpc-1 | A4 | entities and readers: 91 database-function groups, lines 220-500 of _sources/readers-raw.txt | todo | _work/A4-rpc-1.md |  |
 | A4-rpc-2 | A4 | entities and readers: 89 database-function groups, lines 502-778 of _sources/readers-raw.txt | todo | _work/A4-rpc-2.md |  |
 | A4-rpc-3 | A4 | entities and readers: 75 database-function groups, lines 780-1028 of _sources/readers-raw.txt | todo | _work/A4-rpc-3.md |  |
@@ -50,15 +49,15 @@ Counts: 8 todo, 5 in progress, 75 done, 0 blocked. Full list: work-items.jsonl. 
 | A4-nocaller-1 | A4 | entities and readers: database functions with no caller found, lines 1166-1261 of _sources/readers-raw.txt | todo | _work/A4-nocaller-1.md |  |
 | A4-nocaller-2 | A4 | entities and readers: database functions with no caller found, lines 1262-1357 of _sources/readers-raw.txt | todo | _work/A4-nocaller-2.md |  |
 | A4-nocaller-3 | A4 | entities and readers: database functions with no caller found, lines 1358-1451 of _sources/readers-raw.txt | todo | _work/A4-nocaller-3.md |  |
-| A7-panel-3b | A7 | promises: group panel part 3, second pass: the 63 rows of _work/out/A7-panel-3.jsonl with status unknown (lines 717-836 of _sources/promises.txt); find what keeps each one, privacy and money rows first; write patch rows | done | _work/A7-panel-3b.md | 34 of 63 unknown rows settled: 25 kept, 8 partly, 1 GAP; 29 lower-value rows still unknown (read limit; list in the checkpoint); GAP: MettleUp has never opened your records can show when old records were deleted |
 | A3-help | A3 | human side: help articles | done | _work/A3-help.md | 146 features named in 71 help articles: 145 matched, 1 new row, 7 findings (2 S2, 5 S3); top: help says a payment link puts money in the owner account, but payments are in test mode; help says messages are deleted after 180 days, but no timed clean-up exists |
 | A3-whats-new-panel | A3 | human side: the panel What's new history | done | _work/A3-whats-new-panel.md | 101 features named in the panel update notes: 99 matched, 2 new rows, 6 findings (2 S2, 4 S3); top: a note says complaints reach only the owner, but the front desk can get them too; notes announce 4 features as live while their database files say not applied |
 | A3-whats-new-phone | A3 | human side: the phone app What's new history | done | _work/A3-whats-new-phone.md | about 150 lines of the phone update notes in 40 versions: all but 1 matched, 1 new row, 4 findings (1 S2, 3 S3); top: the newest note tells every member the silent Rest is over sound is fixed, but it was never proven on the phone it was built for; 3 feature rows are marked live but were switched off on 5 Nov |
 | A3-website-1 | A3 | human side: the website home pages and the Play listing draft | done | _work/A3-website-1.md | 96 features named on the website home pages and the Play listing draft: 96 matched, 0 new rows, 7 findings (5 S2, 2 S3); top: the home page says MettleUp staff cannot open a member list without the owner, but HQ has an emergency open with no yes from the owner; the home page says AI never sees member details, but up to 5 masked example rows are sent |
 | A3-website-2 | A3 | human side: the join-online page, the friend page and the member website | done | _work/A3-website-2.md | 52 features named on the join page, friend page and member website: 50 matched, 2 new rows, 7 findings (3 S2, 4 S3); top: the member website promises backup to your own Google Drive, but Drive backup stopped on 4 Nov 2026; it says an Apple Watch app is coming soon, but no Apple Watch code exists |
+| A3-notes-claude-1 | A3 | human side: redacted notes copy, part 1 | done | _work/A3-notes-claude-1.md | 41 features named in notes part 1: 37 matched, 1 new row, 7 findings (4 S2, 3 S3); top: the data agreement says every look at gym records is recorded and listed, but direct database looks are never shown; the panel says a member gets the birthday wish at 9:30, but a phone with gym reminders off shows nothing |
 | A3-notes-claude-2 | A3 | human side: redacted notes copy, parts 2 and 3 | done | _work/A3-notes-claude-2.md | 47 features named in notes parts 2 and 3: 47 matched, 0 new rows, 4 findings (1 S2, 3 S3); top: the Hindi privacy notice does not say that AI Assistant requests go to outside AI companies, the English one does; the watch rest alert still uses the one broken signal to decide if the watch has the app |
 | A4-d1-1 | A4 | entities and readers: 12 d1 tables, lines 4-122 of _sources/readers-raw.txt | done | _work/A4-d1-1.md | 12 entity rows and 100 reader rows for 12 d1 tables (96 candidates + 4 app readers): 55 readers, 45 not-a-reader; seen in passing: HQ cannot show the AI assistant or help cost, ai_usage keep time is stated three ways |
-(+ 67 older done items, not shown)
+(+ 68 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
