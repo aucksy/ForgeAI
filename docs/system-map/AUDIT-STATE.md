@@ -34,18 +34,16 @@ weekly stop lines (his words, 19 Nov 2026 09:40 IST: "Lets stop if fable reaches
 | A3 | 11 | 5.2 (207k tokens) |
 | A4 | 13 | 4.1 (162k tokens) |
 | A4b | 2 | 5.1 (204k tokens) |
-| A5 | 16 | 5.2 (210k tokens) |
+| A5 | 17 | 5.2 (208k tokens) |
 | L4 | 1 | 4.4 (177k tokens) |
 
 ## Work items
-Counts: 1 todo, 2 in progress, 113 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 1 todo, 1 in progress, 114 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
-| A5-panel-forms-3 | A5 | journeys: 8 features (14 feature x role pairs) of panel / panel/forms; list in _work/items/A5-panel-forms-3.txt | in progress | _work/A5-panel-forms-3.md |  |
 | A5-panel-logic-1-1 | A5 | journeys: 8 features (17 feature x role pairs) of panel / panel/logic-1; list in _work/items/A5-panel-logic-1-1.txt | in progress | _work/A5-panel-logic-1-1.md |  |
 | A5-panel-logic-1-2 | A5 | journeys: 8 features (14 feature x role pairs) of panel / panel/logic-1; list in _work/items/A5-panel-logic-1-2.txt | todo | _work/A5-panel-logic-1-2.md |  |
-| A5-panel-screens-1-3 | A5 | journeys: 10 features (18 feature x role pairs) of panel / panel/screens-1; list in _work/items/A5-panel-screens-1-3.txt | done | _work/A5-panel-screens-1-3.md | 10 features (18 feature x role pairs): 88 full journeys and 131 type lines; 1 finding (S3): Gym timings shows Right now members see for times typed but not saved; 8 seen-in-passing lines in the checkpoint |
 | A5-panel-screens-1-4 | A5 | journeys: 10 features (19 feature x role pairs) of panel / panel/screens-1; list in _work/items/A5-panel-screens-1-4.txt | done | _work/A5-panel-screens-1-4.md | 10 features (19 feature x role pairs): 93 full journeys and 141 type lines; 1 finding (S3): an owner checking a workout code for a member with no plan reads a line meant for staff; 8 seen-in-passing lines in the checkpoint |
 | A5-panel-screens-2-1 | A5 | journeys: 10 features (19 feature x role pairs) of panel / panel/screens-2; list in _work/items/A5-panel-screens-2-1.txt | done | _work/A5-panel-screens-2-1.md | 10 features (19 feature x role pairs): 90 full journeys and 146 type lines; 1 finding (S3): a MettleUp receipt that fails to load says Receipt not found with no Try again; 9 seen-in-passing lines in the checkpoint |
 | A5-panel-screens-2-2 | A5 | journeys: 10 features (16 feature x role pairs) of panel / panel/screens-2; list in _work/items/A5-panel-screens-2-2.txt | done | _work/A5-panel-screens-2-2.md | 10 features (16 feature x role pairs): 70 full journeys and 125 type lines; 2 findings: S2 a receipt saved while the internet dropped greys Print but still offers Send on WhatsApp with the unsure number; S3 the desk can never see if the MettleUp Plus lock is on; 13 seen-in-passing lines in the checkpoint |
@@ -53,7 +51,8 @@ Counts: 1 todo, 2 in progress, 113 done, 0 blocked. Full list: work-items.jsonl.
 | A5-panel-screens-2-4 | A5 | journeys: 9 features (22 feature x role pairs) of panel / panel/screens-2; list in _work/items/A5-panel-screens-2-4.txt | done | _work/A5-panel-screens-2-4.md | 9 features (22 feature x role pairs): 105 full journeys and 159 type lines; 2 findings: S3 Copy link on Your web page shows nothing when the browser refuses to copy; S4 the Fees row reads 1 plans and 0 plans with no hint; 12 seen-in-passing lines in the checkpoint |
 | A5-panel-forms-1 | A5 | journeys: 9 features (16 feature x role pairs) of panel / panel/forms; list in _work/items/A5-panel-forms-1.txt | done | _work/A5-panel-forms-1.md | 9 features (16 feature x role pairs): 82 full journeys and 123 type lines; 3 findings (S3): an offline payment from Money Dues says only Payment saved; a desk login sees an empty Pay online box; the owner reads a staff line after a workout code check; 11 seen-in-passing lines in the checkpoint |
 | A5-panel-forms-2 | A5 | journeys: 8 features (15 feature x role pairs) of panel / panel/forms; list in _work/items/A5-panel-forms-2.txt | done | _work/A5-panel-forms-2.md | 8 features (15 feature x role pairs): 83 full journeys and 111 type lines; 1 finding (S3): Comes with a pass ticked and no company picked, Add member saves nothing and the message is off screen; 8 seen-in-passing lines in the checkpoint |
-(+ 105 older done items, not shown)
+| A5-panel-forms-3 | A5 | journeys: 8 features (14 feature x role pairs) of panel / panel/forms; list in _work/items/A5-panel-forms-3.txt | done | _work/A5-panel-forms-3.md | 8 features (14 feature x role pairs): 68 full journeys and 108 type lines; 1 finding (S3): on the sell sheet, a changed plan keeps the old price question and Yes, save; 10 seen-in-passing lines in the checkpoint |
+(+ 106 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
