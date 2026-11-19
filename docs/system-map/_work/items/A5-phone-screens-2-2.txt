@@ -6,4 +6,3 @@ F-phone-207 | Routine preview: read a routine's exercises, sets, rest and notes,
 F-phone-210 | A saved workout's page: stats, sets, photos, share as picture or text, save as routine, repeat, edit, delete | apps/mobile/src/app/session/[id].tsx:68
 F-phone-208 | Log a live workout: log sets, rest timer, minimise, add or swap exercises mid-workout, undo, discard, finish | apps/mobile/src/app/session/active.tsx:100
 F-phone-209 | Workout summary after Finish: time, sets, kg lifted against last time, records, add photos, update the routine, share | apps/mobile/src/app/session/finish.tsx:102
-F-phone-219 | Backup and restore: MettleUp account backup, Download my data, Restore from a backup file, bring back an old Google Drive backup; plus the unlinked Android phone-backup page kept only for the cloud test | apps/mobile/src/app/settings/backup.tsx:37

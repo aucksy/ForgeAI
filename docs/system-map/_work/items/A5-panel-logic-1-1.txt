@@ -1,9 +1,8 @@
-F-panel-601 | AI column matching for the member import (automatic, masked sample rows sent once; own rules stand if AI is off, over limit or the gym is the demo) | apps/dashboard/src/crm/logic/aiImport.ts:596
 F-panel-605 | Today: 'Latest from your members' shows only alerts that still need someone (handled ones drop off) | apps/dashboard/src/crm/logic/alertHandled.ts:241
 F-panel-604 | Notification bell: the gym's alerts as a to-do list (action and info items, read, remove with X, History, three groups, payment colours) | apps/dashboard/src/crm/logic/alertInbox.ts:77
-F-panel-606 | Ask a trainer: read and reply to members' questions | apps/dashboard/src/crm/logic/askQuestions.ts:83
 F-panel-607 | Attendance register and the at-risk (Away) list judged by each member's own rhythm | apps/dashboard/src/crm/logic/attendance.ts:566
 F-panel-608 | Messages and offers: choose who gets a message (everyone, running plan, ending in 7 days, ended in 30 days, away, birthday, one plan, one batch) | apps/dashboard/src/crm/logic/audience.ts:91
 F-panel-609 | Automatic reminders: switch each reminder on or off and set its days | apps/dashboard/src/crm/logic/autoReminders.ts:185
 F-panel-610 | Automatic birthday wish: which members get it on their own phone (so the assistant stops suggesting them) | apps/dashboard/src/crm/logic/autoWish.ts:34
 F-panel-611 | Batches: a member's time slot, picked as chips and used as a list filter | apps/dashboard/src/crm/logic/batches.ts:57
+F-panel-613 | Body measurements taken by the trainer (weight, body fat, nine tape sizes) that the member sees in the app | apps/dashboard/src/crm/logic/bodyMeasures.ts:60

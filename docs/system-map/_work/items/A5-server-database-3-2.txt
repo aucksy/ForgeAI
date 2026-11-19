@@ -1,9 +1,10 @@
-F-server-510 | MettleUp Plus lock switch: owner decides whether the member app's paid extras lock 7 days after a member's plan ends | supabase/migrations/0070_member_plus_lock.sql:40
-F-server-511 | AI Assistant credits wallet for gym owners (balance, free welcome and monthly credits, save a task, spend, refund, task history; HQ sees a wallet, grants credits, clears old requests). Live state unclear: 0071 header says NOT APPLIED but 0078 and 0083 (applied live) need it | supabase/migrations/0071_ai_assistant.sql:217
-F-server-514 | Gym news pops up on the member's phone (new or changed workout plan, diet plan, body measurements, new challenge, a fee the desk asked them to pay online) | supabase/migrations/0073_member_push_more.sql:112
-F-server-515 | Ask about your workout (member questions): only a member on a running paid gym plan may send a question; the member's question row and reply name ('Your gym replied') | supabase/migrations/0074_ask_trainer_paid_plan.sql:38
-F-server-516 | Gym alerts list (the bell): one alert for each thing a member does that the gym should hear about (question, message, plan request, check-in number, shop order, online payment, report sent, member joined, friend referred), shown to each person by what they may see | supabase/migrations/0075_gym_alerts.sql:67
 F-server-517 | Alerts reach staff browsers with the admin app closed (turn browser alerts on or off, choose instant, daily or weekly summary; the HQ Worker fetches what to send every minute) | supabase/migrations/0076_panel_web_push.sql:83
-F-server-512 | AI questions counted against the gym's AI credits (10 answers = 1 credit for members and page visitors, daily limits, give a question back when the AI fails, owner sees question counts, low-credits alert) | supabase/migrations/0078_ai_questions.sql:221
 F-server-522 | Job name for a person on Staff & sign-in (Owner, Staff, Trainer or a typed job; access stays two levels) | supabase/migrations/0079_staff_job_title.sql:34
-F-server-524 | Visitor sends the gym a question from its web page (daily limits per gym and per number) | supabase/migrations/0080_gym_page.sql:327
+F-server-513 | Owner's switch 'Members can get AI answers' and a monthly credit limit for members' AI answers, with one alert when the limit is reached | supabase/migrations/0083_ai_members.sql:227
+F-server-528 | Training progress: the member's phone shares up to 12 months of workouts with the gym's trainers | supabase/migrations/0084_progress_year.sql:61
+F-server-529 | Bring a friend: a friend's form whose number the gym already knows now adds a note or an alert for the gym | supabase/migrations/0085_friend_known_number.sql:26
+F-server-519 | Join online: a new person fills their own form on the gym's link, proves the number, picks a plan and start day, and it lands in the gym's Enquiries as 'Joined online' | supabase/migrations/0089_trial_alert_words.sql:20
+F-server-526 | HQ's switch to turn one gym's web page part on or off (on by default; off hides 'Your web page' in the admin app) | supabase/migrations/0090_gym_page_switch.sql:86
+F-server-532 | Sign in with your phone number: the app finds your gym and your role (owner, trainer, desk or member) | supabase/migrations/0093_phone_sign_in.sql:35
+F-server-518 | Send a test alert to this browser and see whether it showed | supabase/migrations/0095_test_alert.sql:87
+F-server-509 | Member picks who reads the message (gym owner, one trainer, or gym admin = owner and front desk) | supabase/migrations/0096_message_recipient.sql:206

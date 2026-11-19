@@ -3,7 +3,6 @@ F-phone-136 | Phone and watch: send workouts to health apps, install or open the
 F-phone-129 | Settings home (6 groups of rows) and More workout choices | apps/mobile/src/app/settings/index.tsx:135
 F-phone-135 | App preferences: light or dark, units, workout reminders and reminders from my gym | apps/mobile/src/app/settings/look.tsx:25
 F-phone-130 | Workout settings: weekly goal, rest timer and sounds, how the next weight is picked, plates and bars, previous numbers, rate each set, muscle tips | apps/mobile/src/app/settings/weekly-goal.tsx:4
-F-phone-138 | Gym shop: a product's page, the bag (place an order, pay at the desk), my orders | apps/mobile/src/app/shop/[id].tsx:2
 F-phone-139 | Message your gym or ask a trainer, gym messages inbox, the diet plan the trainer sent | apps/mobile/src/app/shop/message.tsx:5
 F-phone-105 | Statistics: last 7 days, sets per muscle, muscle distribution, main exercises, strength score | apps/mobile/src/app/stats.tsx:71
 F-phone-125 | See today's workout before starting it, and start or resume it from the home-screen widget link | apps/mobile/src/app/today.tsx:42

@@ -1,10 +1,9 @@
-F-panel-1119 | Shop: products, stock, photos, orders from the member app, cancel an order, today's shop card | apps/dashboard/src/crm/shop/ShopScreen.tsx:65
-F-panel-1108 | Alerts: bell inbox, latest from your members, alerts on this device with the app closed (web push), alert timing settings, test alert | apps/dashboard/src/crm/shop/alertsApi.ts:27
-F-panel-1129 | Your numbers and Your growth: number tiles with the list behind each, month-by-month growth, one-page print report | apps/dashboard/src/crm/ui/BusinessGrowth.tsx:70
 F-panel-1109 | What's new page, MettleUp HQ news in the bell, new-feature dots | apps/dashboard/src/crm/ui/WhatsNew.tsx:351
 F-panel-1121 | Workout offer: train N times get extra days, give or undo a reward, check a member's workout code | apps/dashboard/src/crm/ui/WorkoutCodeCheckSheet.tsx:18
-F-panel-1130 | AI Assistant: ask about the gym, suggestions, voice, tasks, credits, member rules, AI-written plans | apps/dashboard/src/crm/ui/screens/Assistant.tsx:11
 F-panel-1132 | Member-app settings: gym timings, busy machines counts, MettleUp Plus lock when a plan ends | apps/dashboard/src/crm/ui/screens/BusyMachines.tsx:82
 F-panel-1127 | Challenges: monthly challenge, leaderboard, hide a member on the board, confirm the reward | apps/dashboard/src/crm/ui/screens/Challenges.tsx:107
 F-panel-1126 | Diet plans and body measurements for members | apps/dashboard/src/crm/ui/screens/DietPlans.tsx:138
 F-panel-1116 | Enquiries: add, follow up, thank, turn into a member; Bring a friend setting and referral free days | apps/dashboard/src/crm/ui/screens/Enquiries.tsx:100
+F-panel-1128 | Expenses: add and remove gym expenses, profit | apps/dashboard/src/crm/ui/screens/Expenses.tsx:51
+F-panel-1135 | Help and feedback: write to MettleUp, your questions history, MettleUp access (let support look for one hour, see every look), support email line | apps/dashboard/src/crm/ui/screens/Feedback.tsx:29
+F-panel-1111 | Import members from Excel or CSV (with AI column guess), preview, branches, undo an import | apps/dashboard/src/crm/ui/screens/ImportMembers.tsx:125

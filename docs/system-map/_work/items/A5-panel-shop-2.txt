@@ -1,10 +1,5 @@
-F-panel-815 | Gym alerts: Needs you / Latest from your members list, mark read, opened, remove | apps/dashboard/src/crm/shop/alertsApi.ts:27
+F-panel-803 | Shop card on Today: orders waiting and shop money today | apps/dashboard/src/crm/shop/ShopTodayCard.tsx:1
 F-panel-804 | Start a demo gym / turn on the member app for a gym (this browser holds the gym key) | apps/dashboard/src/crm/shop/api.ts:68
 F-panel-805 | Gym look in the member app (colour, background, logo, heading style) | apps/dashboard/src/crm/shop/api.ts:90
 F-panel-806 | Rename the gym | apps/dashboard/src/crm/shop/api.ts:95
-F-panel-816 | MettleUp billing for the gym: plan, receipts, checkout | apps/dashboard/src/crm/shop/billingApi.ts:17
-F-panel-817 | Member body measurements taken by the trainer | apps/dashboard/src/crm/shop/bodyApi.ts:14
-F-panel-818 | Diet plans for a member: save, withdraw | apps/dashboard/src/crm/shop/bodyApi.ts:30
-F-panel-819 | Challenges and leaderboard: create, cancel, hide a member on the board, confirm the reward | apps/dashboard/src/crm/shop/challengesApi.ts:21
-F-panel-820 | Entry machines (door devices): list, add, remove, member numbers, queue commands | apps/dashboard/src/crm/shop/entryMachinesApi.ts:100
-F-panel-821 | Bring a friend: count on the Settings card | apps/dashboard/src/crm/shop/friendApi.ts:41
+F-panel-802 | Product photo upload (shrunk in the browser; the same uploader also serves gym page photos) | apps/dashboard/src/crm/shop/photoUpload.ts:96

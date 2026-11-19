@@ -5,4 +5,6 @@ F-watch-119 | One buzz, not two: the phone's rest alerts are not copied to the w
 F-watch-116 | The watch follows the phone's workout: rests, the open workout and the next set arrive from the phone, also with the watch app closed, and are kept on the watch | apps/mobile/android/wear/src/main/java/com/forgeai/wear/ForgeListenerService.kt:12
 F-watch-110 | Live heart rate on the workout screens (the watch's own sensor, only while the screen is bright and a workout is open) | apps/mobile/android/wear/src/main/java/com/forgeai/wear/HeartRate.kt:19
 F-watch-106 | Log a set from the watch (tap weight or reps, turn the crown, tap Done; the phone saves it) | apps/mobile/android/wear/src/main/java/com/forgeai/wear/LogScreens.kt:318
-F-watch-107 | Rate the effort of a set (RPE) on the watch after Done; Skip or 4 s untouched saves the set without it | apps/mobile/android/wear/src/main/java/com/forgeai/wear/LogScreens.kt:498
+F-watch-100 | Open the watch app: one screen chosen from the workout's state (permissions, rest, rest over, saved, no phone, no phone app, nothing open, between rests) | apps/mobile/android/wear/src/main/java/com/forgeai/wear/MainActivity.kt:52
+F-watch-102 | Rest countdown card on the watch face and in Recents, with Done / +15 s / Skip buttons that act on the phone | apps/mobile/android/wear/src/main/java/com/forgeai/wear/RestAlerts.kt:88
+F-watch-103 | Rest is over: the watch's own buzz, a full-colour "Rest is over" screen and a card with "Complete set" | apps/mobile/android/wear/src/main/java/com/forgeai/wear/RestAlerts.kt:101

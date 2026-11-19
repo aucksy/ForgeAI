@@ -1,9 +1,8 @@
-F-server-207 | English helper: Gemini rewrites the owner's rough reply before he sends it, and shows this month's rough cost | deploy/hq/api.js:322
-F-server-212 | Leads from the website: see the list and move each lead on (new, called, demo, won, lost) with a note | deploy/hq/api.js:327
-F-server-213 | Send a message to every gym's admin app (shown in its bell), list sent ones and remove one | deploy/hq/api.js:333
 F-server-214 | HQ audit log: every HQ action is written down, and the owner can read the list (all gyms or one gym) | deploy/hq/api.js:344
 F-server-216 | Delete requests: write one down, tick its steps, and delete a whole gym with its pictures (typed code, fresh sign-in) | deploy/hq/api.js:356
 F-server-206 | Reply to a help question; the person's phone gets "The MettleUp team replied" | deploy/hq/api.js:395
 F-server-218 | Suspend a gym or make it active again, with a reason | deploy/hq/api.js:455
 F-server-219 | Set a gym's free-trial end date and its MettleUp plan (plan, monthly / yearly / lifetime, paid until) | deploy/hq/api.js:461
 F-server-215 | Export the gym list as a CSV file (the download is written to the audit log first) | deploy/hq/api.js:496
+F-server-220 | Create a new gym from HQ (gym name, owner name, phone), optionally from a lead, which then moves to "demo" | deploy/hq/api.js:503
+F-server-221 | Give a gym owner a new sign-in code (fresh sign-in) and sign everyone of a gym out | deploy/hq/api.js:540

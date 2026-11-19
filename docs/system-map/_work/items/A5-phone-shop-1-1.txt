@@ -1,9 +1,10 @@
-F-phone-303 | Bag and place an order with the gym (change quantity, remove, total, pay at the desk) | apps/mobile/src/shop/BagScreen.tsx:24
 F-phone-327 | Bring a friend (share your own link from the phone's share menu; see how many friends joined) | apps/mobile/src/shop/BringFriendCard.tsx:29
 F-phone-308 | Check in by QR (the gym's poster link opens 'Check in', one tap, mobile number asked the first time, then offers today's workout) | apps/mobile/src/shop/CheckInScreen.tsx:75
-F-phone-325 | Diet plan from the gym's trainer (read-only: goal, calories, protein, meals, notes) | apps/mobile/src/shop/DietPlanScreen.tsx:22
 F-phone-318 | How busy the gym is (people checked in lately, usual busy level per hour, quietest time later today) | apps/mobile/src/shop/GymBusyCard.tsx:40
 F-phone-330 | The gym's logo and name on top of the Gym tab; tap the logo to see it full size | apps/mobile/src/shop/GymHeaderMark.tsx:40
 F-phone-317 | Gym timings (open or closed now on the Gym tab, the week, special days, the gym's note) | apps/mobile/src/shop/GymHoursScreen.tsx:26
-F-phone-331 | Add the gym's icon to the home screen (offered once right after joining, then how to take the MettleUp icon off) | apps/mobile/src/shop/GymIconOffer.tsx:34
 F-phone-311 | 'We couldn't find this gym' page for a join or check-in link that matches no gym (scan the poster, type a gym code, or close) | apps/mobile/src/shop/GymNotFoundCard.tsx:17
+F-phone-315 | Send my workout report to the gym when the desk asks (Yes sends it to this gym only, No sends nothing) | apps/mobile/src/shop/GymReportPanel.tsx:31
+F-phone-320 | Message your gym (question, feedback or complaint, the list of what was sent and every reply, red unread count on the row) | apps/mobile/src/shop/GymTalkScreen.tsx:64
+F-phone-323 | Gym messages inbox (the gym's messages newest first from the bell; opening marks them seen) | apps/mobile/src/shop/InboxScreen.tsx:19
+F-phone-310 | Join a gym from its invite link or code, or switch to another gym (gym shown first, tick the Terms box, one Join button; a retry reuses the same join id for 15 minutes) | apps/mobile/src/shop/InviteScreen.tsx:44

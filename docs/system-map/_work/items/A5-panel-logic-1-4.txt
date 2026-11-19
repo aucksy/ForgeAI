@@ -1,5 +1,3 @@
-F-panel-631 | Request a member's workout report and download it | apps/dashboard/src/crm/logic/gymReports.ts:44
-F-panel-632 | Banner when the gym's MettleUp plan or trial has ended (grace, basic, read-only) with 'Pay now' | apps/dashboard/src/crm/logic/gymState.ts:56
 F-panel-633 | Gym timings editor (each day, copy Monday, special days) | apps/dashboard/src/crm/logic/gymTimings.ts:43
 F-panel-634 | The gym's workout of the day (pick or build one for today or the next 7 days) | apps/dashboard/src/crm/logic/gymWod.ts:56
 F-panel-635 | Home tiles: today's collection, active members, expiry buckets, expired, birthdays, came in today; each opens its member list | apps/dashboard/src/crm/logic/homeTiles.ts:82

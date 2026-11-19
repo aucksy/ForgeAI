@@ -2,9 +2,7 @@ F-phone-510 | One-time repairs at app start: old imported workout times moved to
 F-phone-532 | Live workout notification card (current exercise and set, 'Complete set' that works with the app closed, workout clock, exercise picture, the same lines for the watch) | apps/mobile/src/tracker/services/liveCard.ts:1
 F-phone-533 | Record alert and medal the moment a set is ticked during a workout | apps/mobile/src/tracker/services/liveRecords.ts:1
 F-phone-530 | Save my measurements (body weight and measurements as a CSV; nothing written while demo data is loaded) | apps/mobile/src/tracker/services/measurementsExport.ts:135
-F-phone-534 | Muscle tips ('Smart suggestion') on the Up next card: Add or Swap an exercise, Not now, Undo bar | apps/mobile/src/tracker/services/muscleTips.ts:1
 F-phone-535 | 1-rep max and percent calculator (rounded to weights the gym's bar and plates can load) | apps/mobile/src/tracker/services/oneRepMax.ts:1
-F-phone-536 | Include photos in my backup (default off; newest progress photos shrunk to fit a 15 MB budget in Android's own backup, restored on a fresh install) | apps/mobile/src/tracker/services/photoBackup.ts:43
 F-phone-537 | Save a progress photo to the phone gallery (through the phone's share list) | apps/mobile/src/tracker/services/photoSave.ts:20
 F-phone-538 | Followed plan: which week it is and easy weeks (take one now, skip one, how often) | apps/mobile/src/tracker/services/planState.ts:1
 F-phone-539 | Get a routine folder from a ready program, the plan builder or a shared file, and follow it as the plan | apps/mobile/src/tracker/services/plansService.ts:1

@@ -1,4 +1,3 @@
-F-phone-119 | AI coach chat and its settings page (a coach link only fills the message box) | apps/mobile/src/app/(tabs)/coach.tsx:35
 F-phone-103 | Profile tab: photo and numbers, history chart, Your progress links, workouts feed, the workouts of one week or month, badge shelf | apps/mobile/src/app/(tabs)/profile.tsx:150
 F-phone-137 | Gym tab: join your gym, or the gym's home (membership, check in, leaderboard and a gym mate's shared workouts, gym timings) | apps/mobile/src/app/(tabs)/shop.tsx:2
 F-phone-102 | Workout tab: Up next card (resume, start, done today), start an empty workout, folders and routines, find a plan | apps/mobile/src/app/(tabs)/workout.tsx:99

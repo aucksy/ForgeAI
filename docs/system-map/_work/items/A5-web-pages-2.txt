@@ -1,10 +1,8 @@
-F-web-128 | Online payments: the owner's two switches (take payments in the member app; when people join online) and the list of join payments | deploy/panel/pay.js:1231
-F-web-129 | Online payments: a member pays dues or a shop order in the member app and the app checks the payment | deploy/panel/pay.js:1291
-F-web-135 | Verify with WhatsApp: the person sends a code to MettleUp's business number to prove their mobile (forgot PIN, new gym, member app, join online) and gets a reply | deploy/panel/phoneCode.js:247
-F-web-119 | AI answers for members and page visitors are taken from the gym's AI credits (owner's and staff's own questions are free, with a daily limit) | deploy/panel/questionCredits.js:82
-F-web-101 | Move a desk's sign-in from the old address (forgeai.aakashpahuja.in) to app.mettleup.fit without signing in again | deploy/panel/worker.js:101
-F-web-137 | Block-proof server address (/sb): both apps reach the gym server through MettleUp's own address; a sent message, a new offer or an answer reaches phones at once | deploy/panel/worker.js:110
-F-web-108 | Join your gym by invite link (/j/CODE): a page with the gym's name, code and QR that opens or installs the app | deploy/panel/worker.js:111
-F-web-109 | Check in at the gym by link or QR (/c/CODE): a page that opens the app to check in | deploy/panel/worker.js:117
 F-web-110 | Bring a friend: a member's invite link (/f/CODE) where the friend leaves name and number for the gym to call | deploy/panel/worker.js:121
 F-web-111 | Become a member online (/m/CODE): see the gym's plans and prices, verify the mobile number, pick a plan or free trial and send details to the gym | deploy/panel/worker.js:126
+F-web-107 | What's new notes for the app's update screen, served from MettleUp's own address | deploy/panel/worker.js:133
+F-web-105 | Get the app: one smart link (/app) sends Android to Play, iPhone to the App Store or 'coming soon'; the Get the app page with a QR; direct APK download; Android opens gym links straight in the installed app | deploy/panel/worker.js:134
+F-web-106 | Download a release's Play bundle (.aab) and store pictures by version from /dl/ | deploy/panel/worker.js:136
+F-web-117 | Send feedback from the member app or the admin app | deploy/panel/worker.js:140
+F-web-118 | Help and feedback with an AI answer from the help articles (or matching help pages when no AI is asked), 'Did this solve it?', and reading the team's reply | deploy/panel/worker.js:141
+F-web-120 | Speak your feedback: the member app's voice clip is turned into text to check and send | deploy/panel/worker.js:145

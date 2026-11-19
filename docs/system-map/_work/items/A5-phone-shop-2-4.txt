@@ -1,8 +1,0 @@
-F-phone-430 | Add the gym's logo to the home screen | apps/mobile/src/shop/gymShortcut.ts:103
-F-phone-403 | Gym tab home: the gym's name and logo, its parts, and staying linked to the gym | apps/mobile/src/shop/gymTab.ts:1
-F-phone-425 | demo copy of Message your gym (the pretend gym in QA test builds; the page says the messages stay on the phone) | apps/mobile/src/shop/gymTalk.ts:129
-F-phone-431 | Pay the gym from the app: UPI QR, UPI app, or online payment for fees and shop orders | apps/mobile/src/shop/memberPay.ts:1
-F-phone-407 | Gym messages pop up on the phone (15-minute background check and instant push; quiet pop-up during a workout) | apps/mobile/src/shop/noticeAlertsRun.ts:147
-F-phone-432 | Recommend MettleUp to your gym (share link on the no-gym screen) | apps/mobile/src/shop/recommendGym.ts:1
-F-phone-405 | demo copy of Gym shop (the sample shop and its pretend orders, shown before joining a gym) | apps/mobile/src/shop/shopStore.ts:72
-F-phone-414 | Watch your trainer: the gym's own form videos on an exercise | apps/mobile/src/shop/trainerVideo.ts:1

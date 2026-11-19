@@ -1,9 +1,0 @@
-F-server-526 | HQ's switch to turn one gym's web page part on or off (on by default; off hides 'Your web page' in the admin app) | supabase/migrations/0090_gym_page_switch.sql:86
-F-server-530 | Challenges that count check-in days (the ready-made 'Check-in habit'), with the leaderboard and results. Migration 0091 header says NOT LIVE | supabase/migrations/0091_challenge_checkins.sql:269
-F-server-531 | The phone asks the gym for the member's join day, so long-time members share workouts 'since joining'. Migration 0092 header says NOT LIVE | supabase/migrations/0092_member_join_day.sql:24
-F-server-532 | Sign in with your phone number: the app finds your gym and your role (owner, trainer, desk or member) | supabase/migrations/0093_phone_sign_in.sql:35
-F-server-533 | AI helper on the gym web page: every visitor chat lands in the gym's Enquiries, with alerts only when the owner must act, kept 90 days. Migration 0094 header says NOT LIVE | supabase/migrations/0094_page_chat.sql:159
-F-server-518 | Send a test alert to this browser and see whether it showed | supabase/migrations/0095_test_alert.sql:87
-F-server-509 | Member picks who reads the message (gym owner, one trainer, or gym admin = owner and front desk) | supabase/migrations/0096_message_recipient.sql:206
-F-server-534 | Record of every direct read of gym data made with the database owner login, kept 2 years; the gym owner sees the ones that touched the gym next to support access. Migration 0097 header says NOT APPLIED live | supabase/migrations/0097_direct_read_log.sql:162
-F-server-535 | The bell knows what is done and what each person has read (alerts leave when the thing is handled; read state per person; summaries count only what still waits). Migration 0098 header says NOT APPLIED live | supabase/migrations/0098_alerts_done_and_read.sql:428

@@ -1,9 +1,8 @@
-F-panel-612 | Pay MettleUp online: buy or renew a plan, numbered receipts, plan-end reminder on Today | apps/dashboard/src/crm/logic/billing.ts:89
-F-panel-613 | Body measurements taken by the trainer (weight, body fat, nine tape sizes) that the member sees in the app | apps/dashboard/src/crm/logic/bodyMeasures.ts:60
 F-panel-614 | Your growth: month by month money, active and new members, renewal rate, members lost, visits per member, with CSV | apps/dashboard/src/crm/logic/businessGrowth.ts:375
-F-panel-615 | Busy machines: switch it on and type how many of each machine the gym has | apps/dashboard/src/crm/logic/busyMachines.ts:66
 F-panel-616 | Today: who came in today on an ended plan, with no plan, or owing money | apps/dashboard/src/crm/logic/cameInToday.ts:29
 F-panel-617 | Challenges and the leaderboard (create, run, prizes, winners) | apps/dashboard/src/crm/logic/challenges.ts:298
 F-panel-618 | Check workout code: the desk types the member's claim code and matches workout days against check-ins | apps/dashboard/src/crm/logic/claimMatch.ts:42
 F-panel-619 | Collections report and dues list with ages (money in by method and period, who owes and since when) | apps/dashboard/src/crm/logic/collections.ts:132
 F-panel-620 | Download a report as an Excel-safe CSV file (UTF-8 mark, formula guard) | apps/dashboard/src/crm/logic/csv.ts:54
+F-panel-622 | Diet plans from the trainer, with six ready-made plans, sent to members or to a membership plan | apps/dashboard/src/crm/logic/dietPlans.ts:460
+F-panel-623 | Enquiries: people who asked about joining, chased by follow-up date, with source, lost reason and a WhatsApp follow-up message | apps/dashboard/src/crm/logic/enquiries.ts:87

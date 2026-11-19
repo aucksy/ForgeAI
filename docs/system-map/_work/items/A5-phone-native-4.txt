@@ -1,4 +1,3 @@
-F-phone-1229 | Stop and remove MettleUp's Health Connect access (and open Health Connect settings) | apps/mobile/src/tracker/phone/healthConnect.ts:172
 F-phone-1224 | Health Connect: send finished workouts and estimated calories (also past workouts, send again, remove a deleted one) | apps/mobile/src/tracker/phone/healthConnect.ts:586
 F-phone-1226 | Weight from Health Connect: weigh-ins from a scale or another app join the body-weight log | apps/mobile/src/tracker/phone/healthRead.ts:233
 F-phone-1227 | Steps today from Health Connect | apps/mobile/src/tracker/phone/healthRead.ts:324

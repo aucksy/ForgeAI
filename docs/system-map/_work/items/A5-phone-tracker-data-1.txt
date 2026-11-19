@@ -1,6 +1,5 @@
 F-phone-1000 | Fix a body-weight or measurement entry (edit, change its day, delete, Undo) and set a progress photo's date | apps/mobile/src/tracker/db/bodyEntries.ts:35
 F-phone-1003 | Create and edit my own exercise, with my own photo or video | apps/mobile/src/tracker/db/customExercise.ts:54
-F-phone-1002 | demo copy of Log body measurements (pretend 13-week trend added by Load demo data) | apps/mobile/src/tracker/db/demoBody.ts:34
 F-phone-1006 | Previous values in a live workout (last time's numbers and the 'Previous: date, workout name' line; from any workout or the same routine) | apps/mobile/src/tracker/db/exerciseHistory.ts:174
 F-phone-1021 | How an exercise is logged and counted (weight and reps, time or distance; 'kg each' or 'as one'; body weight in volume) | apps/mobile/src/tracker/db/exerciseInfo.ts:147
 F-phone-1004 | Merge a duplicate exercise into another, and hide library exercises I never use | apps/mobile/src/tracker/db/exerciseManage.ts:66

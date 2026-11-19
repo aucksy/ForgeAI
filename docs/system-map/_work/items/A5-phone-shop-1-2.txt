@@ -1,9 +1,10 @@
-F-phone-315 | Send my workout report to the gym when the desk asks (Yes sends it to this gym only, No sends nothing) | apps/mobile/src/shop/GymReportPanel.tsx:31
-F-phone-320 | Message your gym (question, feedback or complaint, the list of what was sent and every reply, red unread count on the row) | apps/mobile/src/shop/GymTalkScreen.tsx:64
-F-phone-321 | Ask a trainer about your workout (one question at a time to your trainer, another trainer or any trainer; take a waiting question back) | apps/mobile/src/shop/GymTalkScreen.tsx:161
-F-phone-323 | Gym messages inbox (the gym's messages newest first from the bell; opening marks them seen) | apps/mobile/src/shop/InboxScreen.tsx:19
-F-phone-310 | Join a gym from its invite link or code, or switch to another gym (gym shown first, tick the Terms box, one Join button; a retry reuses the same join id for 15 minutes) | apps/mobile/src/shop/InviteScreen.tsx:44
-F-phone-328 | Gym leaderboard (last 30 days, Workouts or Kg lifted, top 10 and your own place, the gym's challenge on top) | apps/mobile/src/shop/LeaderboardCard.tsx:36
-F-phone-319 | Busy times by exercise tip ('Leg day is quieter on Tuesday', 'Not now' hides it for 30 days) | apps/mobile/src/shop/MachineTipCard.tsx:21
-F-phone-329 | See a gym mate's profile and shared workouts from the leaderboard (read-only) | apps/mobile/src/shop/MateProfileScreen.tsx:30
 F-phone-313 | My membership (the member's plan from the gym's records, kept on the phone for no-signal use) | apps/mobile/src/shop/MembershipCard.tsx:31
+F-phone-304 | My orders (status of each order, refreshed every 10 seconds, cancel while still Ordered) | apps/mobile/src/shop/OrdersScreen.tsx:40
+F-phone-316 | 'Your plan ends on Friday. Renew at the front desk.' card on the Workout tab | apps/mobile/src/shop/PlanEndsCard.tsx:25
+F-phone-314 | Ask the desk to pause or renew my plan (pause calendar, plan list, request sent, the desk's answer) | apps/mobile/src/shop/PlanRequestPanel.tsx:35
+F-phone-309 | Scan the gym poster with the app's own QR scanner (opens check-in or join; also fills the gym code on the welcome screen) | apps/mobile/src/shop/ScanPosterScreen.tsx:17
+F-phone-300 | Gym tab home for a joined gym (tabs Shop, My gym, Leaderboard; pull to refresh; bell and bag on top) | apps/mobile/src/shop/ShopScreen.tsx:65
+F-phone-301 | Join your gym screen when no gym is joined (type the gym code, scan the poster, what a gym gives you, recommend MettleUp to your gym) | apps/mobile/src/shop/ShopScreen.tsx:87
+F-phone-322 | Trainer reply alert (red count on the Gym tab and the row until the reply is opened, and a pop-up from the 15-minute check when the push was missed) | apps/mobile/src/shop/askReplySync.ts:99
+F-phone-312 | Leave the gym (the phone forgets the gym, its kept plan, offer, reminders, diet plans and hours, then tells the gym) | apps/mobile/src/shop/gymActions.ts:525
+F-phone-324 | Gym message sound on phones that silence it (OPPO / OnePlus: plays the phone's notification sound once; Android only) | apps/mobile/src/shop/gymAlertRing.ts:62

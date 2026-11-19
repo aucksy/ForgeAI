@@ -1,10 +1,8 @@
-F-web-112 | Pay online on the join page: is online pay offered, pay through the gym's own payment company, check it, or say 'I have paid' for a UPI payment | deploy/panel/worker.js:131
-F-web-107 | What's new notes for the app's update screen, served from MettleUp's own address | deploy/panel/worker.js:133
-F-web-105 | Get the app: one smart link (/app) sends Android to Play, iPhone to the App Store or 'coming soon'; the Get the app page with a QR; direct APK download; Android opens gym links straight in the installed app | deploy/panel/worker.js:134
-F-web-106 | Download a release's Play bundle (.aab) and store pictures by version from /dl/ | deploy/panel/worker.js:136
-F-web-117 | Send feedback from the member app or the admin app | deploy/panel/worker.js:140
-F-web-118 | Help and feedback with an AI answer from the help articles (or matching help pages when no AI is asked), 'Did this solve it?', and reading the team's reply | deploy/panel/worker.js:141
-F-web-120 | Speak your feedback: the member app's voice clip is turned into text to check and send | deploy/panel/worker.js:145
 F-web-121 | Crash reports from both apps, kept 90 days | deploy/panel/worker.js:146
 F-web-122 | MettleUp news in the admin app's notification bell (what HQ sent to every gym) | deploy/panel/worker.js:147
 F-web-123 | AI matches the columns of a gym's member file during import (with a per-gym limit) | deploy/panel/worker.js:148
+F-web-124 | AI Assistant for the gym owner: ask in words or by voice, get answers from reports, a message rewritten, or the right admin page opened (the catalogue of pages it may open) | deploy/panel/worker.js:149
+F-web-125 | AI writes a workout plan for a member from the gym's own exercise list (3 credits on Save) | deploy/panel/worker.js:152
+F-web-133 | Browser alerts for the admin app: the public key a browser subscribes with | deploy/panel/worker.js:158
+F-web-116 | Tell the admin app which built features are switched on (/api/switches) and where invite and join links point (/api/links) | deploy/panel/worker.js:164
+F-web-140 | Daily clean-up at 03:00 India: old crash reports, voice counts, sign-in codes and join-form counts are deleted | deploy/panel/wrangler.jsonc:59

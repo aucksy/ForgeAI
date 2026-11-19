@@ -1,4 +1,3 @@
-F-phone-613 | Rest timer (starts when a set is ticked; per-exercise length; supersets rest per round) | apps/mobile/src/tracker/services/restRules.ts:1
 F-phone-621 | Import routines from a Hevy share link (read in a hidden in-app browser) | apps/mobile/src/tracker/services/routineLink.ts:1
 F-phone-618 | "Update routine?" after a workout that changed its routine | apps/mobile/src/tracker/services/routineOffer.ts:1
 F-phone-620 | Import routines from Hevy or Strong: rebuilt from the workout export, saved as a From Hevy / From Strong folder, copied again without losing the member's own edits | apps/mobile/src/tracker/services/routineRebuild.ts:1

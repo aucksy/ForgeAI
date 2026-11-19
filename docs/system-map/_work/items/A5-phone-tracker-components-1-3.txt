@@ -1,5 +1,4 @@
 F-phone-726 | Choose which folder a routine goes in | apps/mobile/src/tracker/components/FolderPickerSheet.tsx:14
-F-phone-728 | Today at your gym: start the workout the gym set for today | apps/mobile/src/tracker/components/GymWodCard.tsx:22
 F-phone-729 | Stopwatch and countdown for a timed set (planks, holds) | apps/mobile/src/tracker/components/HoldTimerSheet.tsx:50
 F-phone-730 | Bring in workouts and routines from Hevy or Strong (pick the app, read a Hevy link, match unknown exercise names) | apps/mobile/src/tracker/components/ImportCard.tsx:45
 F-phone-705 | Workout complete: kg lifted compared with last time, exercise by exercise | apps/mobile/src/tracker/components/KgHeroCard.tsx:19

@@ -1,4 +1,3 @@
-F-server-418 | Trainers see their members' progress (owner ticks trainers and assigns members; member shares a summary and recent workouts; "Ask my trainer for help") | supabase/migrations/0050_trainer_view.sql:242
 F-server-419 | Trainer form videos on workout plan exercises (YouTube links only) | supabase/migrations/0051_gym_videos_and_wod.sql:38
 F-server-420 | Gym workout of the day for every member | supabase/migrations/0051_gym_videos_and_wod.sql:150
 F-server-421 | Nightly backup: one full copy of every table for the HQ Worker | supabase/migrations/0052_hq_backup.sql:34
@@ -6,3 +5,4 @@ F-server-422 | Ask a trainer: a member sends one question, a trainer or the owne
 F-server-423 | Phone pop-ups for the gym's answers: plan request decided, report asked for, shop order ready or cancelled | supabase/migrations/0054_member_alerts.sql:180
 F-server-424 | Pass members (FITPASS, cultpass): QR check-in counts as OK and "My membership" shows the pass company | supabase/migrations/0055_pass_members.sql:43
 F-server-425 | Bring a friend: member shares an invite link, the friend's form lands in Enquiries, member sees how many joined | supabase/migrations/0056_bring_a_friend.sql:104
+F-server-426 | Online payment requests: tells the web server which gym member an app member is, so "your gym asked you to pay" reaches the right person | supabase/migrations/0057_member_pay_me.sql:20

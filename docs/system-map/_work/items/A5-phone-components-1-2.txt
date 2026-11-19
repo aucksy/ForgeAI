@@ -5,3 +5,6 @@ F-phone-1313 | What's new: the one-time "New in this version" card on the Workou
 F-phone-1315 | Charts page: Balance check, names a muscle trained much less than the rest in the last 4 weeks (Not now; Keep it / Go back for an older focus block) | apps/mobile/src/components/analytics/BalanceCard.tsx:27
 F-phone-1314 | Charts page: body map of muscles trained (7 / 30 / 90 days); tap a muscle for its sets, the exercises that trained it and an "under 10 sets" hint | apps/mobile/src/components/analytics/BodyMapSection.tsx:45
 F-phone-1317 | Charts page: Reports card, opens the monthly report, the year in review and earlier reports | apps/mobile/src/components/analytics/ReportsCard.tsx:54
+F-phone-1316 | Charts page: Strength score trend (0-100), with "Add body weight" when it is missing | apps/mobile/src/components/analytics/StrengthSection.tsx:23
+F-phone-1321 | Charts everywhere: tap a bar or point to see its number and date in a box, drag to move it, tap the box to open that workout (bar charts, line charts, small trend lines, bar lists) | apps/mobile/src/components/charts/BarChart.tsx:58
+F-phone-1326 | Exercise page, History tab: every workout with this exercise, newest first, with its sets and stats; tap one to open that workout; "Show more" | apps/mobile/src/components/exercise/SessionHistory.tsx:45

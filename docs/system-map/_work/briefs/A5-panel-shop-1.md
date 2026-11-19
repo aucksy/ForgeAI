@@ -52,7 +52,7 @@ For EACH feature in ITEMS:
 4. A clear bug seen while reading (the code plainly does the wrong thing): ONE finding row. Shape: docs/system-map/_briefs/rows.md, part "finding"; id FN-A5-panel-shop-1-<nn>; lens "A5". At most 3 per work item. Do not hunt. Not sure = a "seen in passing" line in the checkpoint.
 
 ITEMS
-The 10 features (19 feature x role pairs) listed in docs/system-map/_work/items/A5-panel-shop-1.txt, one per line: feature id | name | first entry point. Area: panel / panel/shop. Do them in the order of the file.
+The 6 features (12 feature x role pairs) listed in docs/system-map/_work/items/A5-panel-shop-1.txt, one per line: feature id | name | first entry point. Area: panel / panel/shop. Do them in the order of the file.
 
 INPUT FILES
 docs/system-map/features.json, entities.json and promises.json (search only, never read whole); docs/system-map/journey-templates.json (read it whole: 42 short lines); docs/system-map/_briefs/rows.md (only for a finding row); the code at each entry point. Repo root: C:/Users/Aakash Pahuja/AppData/Local/Temp/claude/19050ed31f641eaa/a75edd9f-3244-414f-b133-ce887d21fe49/scratchpad/wt-audit

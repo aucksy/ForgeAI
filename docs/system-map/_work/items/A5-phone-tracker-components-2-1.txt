@@ -1,10 +1,10 @@
 F-phone-800 | Pick a rest length (per exercise or the default, up to 10:00 or custom) | apps/mobile/src/tracker/components/RestPickerSheet.tsx:89
 F-phone-801 | Rest timer bar in a workout (countdown, -15s, +15s, Skip, alerts-off and on-time alert prompts) | apps/mobile/src/tracker/components/RestTimerBar.tsx:157
 F-phone-810 | Bring routines in after a Hevy or Strong import, or from a Hevy share link (step by step) | apps/mobile/src/tracker/components/RoutineImportSteps.tsx:135
-F-phone-804 | Rate how hard a set felt (RPE, one tap) | apps/mobile/src/tracker/components/RpeSheet.tsx:18
 F-phone-812 | Workout recap after finishing (totals, new records, muscle split, sets) | apps/mobile/src/tracker/components/SessionSummary.tsx:26
 F-phone-802 | Log a set (weight, reps, time or distance, tick it done, swipe to delete, start a set timer, fix a typo, see why a target is unusual) | apps/mobile/src/tracker/components/SetRow.tsx:132
 F-phone-803 | Change a set type (normal, warm-up, drop set, failure) or remove the set | apps/mobile/src/tracker/components/SetTypeSheet.tsx:34
 F-phone-809 | Share a routine or a folder (as text or as a file) | apps/mobile/src/tracker/components/ShareRoutineSheet.tsx:14
 F-phone-807 | Share as a picture (size, background, gym logo and name shown or hidden) | apps/mobile/src/tracker/components/ShareSheet.tsx:85
 F-phone-808 | Share a workout, month or year as text | apps/mobile/src/tracker/components/ShareTextRow.tsx:27
+F-phone-815 | Lighter-day line on the finish screen (short sleep last night, or a protein tip) | apps/mobile/src/tracker/components/ShortDayLine.tsx:18

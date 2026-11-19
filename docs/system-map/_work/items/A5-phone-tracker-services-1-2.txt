@@ -6,5 +6,3 @@ F-phone-518 | Search and filter exercises (library, Add exercise, Swap): typos, 
 F-phone-512 | Exercise page Summary (Last time and Best, the chart with its chips and range, records, set-record ladder, numbers for every exercise type) | apps/mobile/src/tracker/services/exerciseStats.ts:1
 F-phone-519 | Profile's Workouts feed (one card per workout: time, kg lifted, records, first 3 exercises, month lines); also a gym mate's profile | apps/mobile/src/tracker/services/feedCard.ts:1
 F-phone-521 | Finish sheet before saving (what will be saved, rows with numbers never ticked, a better end time, a default name) | apps/mobile/src/tracker/services/finishCheck.ts:1
-F-phone-505 | Workout complete screen (summary, muscle split, new records, kg lifted against last time, short note of facts, milestone like 'Your 100th workout') | apps/mobile/src/tracker/services/finishSummary.ts:1
-F-phone-523 | Guided first routine (makes a 'My plan' folder and one routine from picked exercises) | apps/mobile/src/tracker/services/firstRoutineGuide.ts:19

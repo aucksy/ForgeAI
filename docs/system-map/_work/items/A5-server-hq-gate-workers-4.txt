@@ -1,9 +1,0 @@
-F-server-233 | Gym alerts reach the staff's browsers with the admin app closed: urgent ones at once, the rest as a daily or weekly summary at 11:00 am | deploy/hq/panelPush.js:114
-F-server-231 | The desk's "please pay" fee request reaches the member's phone (each new request becomes one note for the member) | deploy/hq/payFeed.js:52
-F-server-232 | "Asha paid online" alert: what a member paid online becomes an alert for the gym's admin app | deploy/hq/payFeed.js:115
-F-server-230 | Pop-ups on members' phones: the gym's messages, new offers, a trainer's or the gym's reply to a question, and the member's own notes (request answered, order ready); sent every minute and at once after a send | deploy/hq/push.js:298
-F-server-234 | Direct-read record: every 10 minutes, reads made with the database owner login are copied to the gym server so gym owners can see who looked; HQ and the watch are told when it fails or its key is about to end | deploy/hq/readLog.js:226
-F-server-229 | Weekly Cloudflare free-limit check (Mondays): one warning line on HQ when the busiest day passed 60% or 80% of the daily allowance | deploy/hq/usage.js:91
-F-server-201 | Install HQ on a phone and see "You're offline" (install files served without sign-in) | deploy/hq/worker.js:67
-F-server-200 | Sign in to HQ with the owner's Google account (or Cloudflare Access), and sign out | deploy/hq/worker.js:134
-F-server-228 | Nightly clean-up: old feedback, old leads without a deal, old AI usage, old logs, the tests' own QA gyms, AI Assistant requests older than 400 days | deploy/hq/worker.js:184

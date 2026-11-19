@@ -2,7 +2,6 @@ F-server-602 | Checks on every push: phone-test file lints, typecheck and unit t
 F-server-603 | Database checks on every push: every migration applied to a fresh local database, function lint, security check and feature tests, backup restore drill | .github/workflows/ci.yml:220
 F-server-604 | Razorpay test-mode check against the real Razorpay API (pushes to main and hand-started runs only) | .github/workflows/ci.yml:254
 F-server-605 | Make exercise demo clips and exercise pictures in the cloud (Blender) and publish the clips to the exercise-clips release (hand-started) | .github/workflows/exercise-clips.yml:7
-F-server-607 | iPhone app build on a simulator with first-screen pictures (paused by the owner on 5 Nov 2026: hand-started only, no signing, nothing published) | .github/workflows/ios.yml:12
 F-server-610 | Update the Play store listing: replace the store pictures in order, optionally the title and descriptions, from the committed files (hand-started, has a dry run) | .github/workflows/play-listing.yml:10
 F-server-611 | Send a release to Google Play testing tracks: phone app and watch app, with the What's new notes; never production (started by the release run, or by hand as a dry run) | .github/workflows/play-upload.yml:25
 F-server-612 | Phone conditions test: upgrade from the previous release, no internet, flaky link, app killed, Doze, exact alarm denied (hand-started, advisory, not part of the release gate) | .github/workflows/qa-conditions.yml:37

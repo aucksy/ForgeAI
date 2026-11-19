@@ -38,10 +38,13 @@ weekly stop lines (his words, 19 Nov 2026 09:40 IST: "Lets stop if fable reaches
 | L4 | 1 | 4.4 (177k tokens) |
 
 ## Work items
-Counts: 0 todo, 0 in progress, 113 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 0 todo, 3 in progress, 113 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
+| A5-panel-forms-3 | A5 | journeys: 8 features (14 feature x role pairs) of panel / panel/forms; list in _work/items/A5-panel-forms-3.txt | in progress | _work/A5-panel-forms-3.md |  |
+| A5-panel-logic-1-1 | A5 | journeys: 8 features (17 feature x role pairs) of panel / panel/logic-1; list in _work/items/A5-panel-logic-1-1.txt | in progress | _work/A5-panel-logic-1-1.md |  |
+| A5-panel-logic-1-2 | A5 | journeys: 8 features (14 feature x role pairs) of panel / panel/logic-1; list in _work/items/A5-panel-logic-1-2.txt | in progress | _work/A5-panel-logic-1-2.md |  |
 | A5-panel-screens-1-3 | A5 | journeys: 10 features (18 feature x role pairs) of panel / panel/screens-1; list in _work/items/A5-panel-screens-1-3.txt | done | _work/A5-panel-screens-1-3.md | 10 features (18 feature x role pairs): 88 full journeys and 131 type lines; 1 finding (S3): Gym timings shows Right now members see for times typed but not saved; 8 seen-in-passing lines in the checkpoint |
 | A5-panel-screens-1-4 | A5 | journeys: 10 features (19 feature x role pairs) of panel / panel/screens-1; list in _work/items/A5-panel-screens-1-4.txt | done | _work/A5-panel-screens-1-4.md | 10 features (19 feature x role pairs): 93 full journeys and 141 type lines; 1 finding (S3): an owner checking a workout code for a member with no plan reads a line meant for staff; 8 seen-in-passing lines in the checkpoint |
 | A5-panel-screens-2-1 | A5 | journeys: 10 features (19 feature x role pairs) of panel / panel/screens-2; list in _work/items/A5-panel-screens-2-1.txt | done | _work/A5-panel-screens-2-1.md | 10 features (19 feature x role pairs): 90 full journeys and 146 type lines; 1 finding (S3): a MettleUp receipt that fails to load says Receipt not found with no Try again; 9 seen-in-passing lines in the checkpoint |

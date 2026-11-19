@@ -1,3 +1,4 @@
+F-server-318 | Check in by QR from the member app: mobile matched to the gym roster, with limits on typed numbers | supabase/migrations/0015_qr_checkin.sql:53
 F-server-317 | Undo this import: the owner deletes records a data import created | supabase/migrations/0017_undo_import.sql:1
 F-server-303 | Gym shop: upload a product photo | supabase/migrations/0018_staff_and_owner_rules.sql:303
 F-server-307 | Gym branding: brand colour, background tone, logo and heading style shown in the member app | supabase/migrations/0018_staff_and_owner_rules.sql:370
@@ -6,4 +7,3 @@ F-server-306 | Join a gym in the app with its code, set my name, load my gym on 
 F-server-316 | Receipt rules and receipt change history: amounts and prices checked on save, every change to a receipt kept and shown to the owner | supabase/migrations/0021_receipt_rules.sql:91
 F-server-319 | My membership in the member app: plan, dates, days left (member matched by first name and check-in number) | supabase/migrations/0023_member_membership.sql:31
 F-server-314 | Gym records kept online and synced between devices (members, plans, memberships, receipts, check-ins, enquiries, expenses), with safe retries | supabase/migrations/0024_workout_plans.sql:55
-F-server-320 | Workout plans from the gym or trainer shown in the member app | supabase/migrations/0024_workout_plans.sql:170

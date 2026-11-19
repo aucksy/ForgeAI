@@ -2,7 +2,7 @@ F-phone-1714 | Floating feedback button on every screen: drag it to an edge, swi
 F-phone-1715 | Speak your feedback: record in Hindi or English, the server turns it into text, then check and Send | apps/mobile/src/lib/feedbackVoice.ts:151
 F-phone-1716 | Your questions: the list of questions sent from this phone with the AI's answer, 'Did this solve it?' and the MettleUp team's replies | apps/mobile/src/lib/helpHistory.ts:179
 F-phone-1717 | Notification 'The MettleUp team answered your question' (Android only, only when notifications are already allowed); a tap opens Help and feedback | apps/mobile/src/lib/helpReplyAlert.ts:57
-F-phone-1704 | AI coach: save your own OpenAI, Anthropic or Groq key on the phone (kept in the phone's secure store) | apps/mobile/src/lib/keys.ts:16
 F-phone-1728 | One-time 'it moved' hints after the layout change (the shop is now in the Gym tab; the Progress-tab hint is retired) | apps/mobile/src/lib/layoutHints.ts:35
 F-phone-1732 | Every screen that reads data: loading skeleton, 'Couldn't load' with Try again, quiet retries, a second tap is ignored while a button works, and notices in the app's own sheet | apps/mobile/src/lib/loadState.ts:1
 F-phone-1709 | Follow the dots: small dots on the tab, button, row and page that lead to a new feature, cleared when the page is opened (30 days at most) | apps/mobile/src/lib/newDots.ts:84
+F-phone-1730 | Take or pick a picture: the picture is kept when Android closes the app behind the camera, a refused permission is explained, and temporary pictures are deleted by 'Erase all data' | apps/mobile/src/lib/pendingPick.ts:41

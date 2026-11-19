@@ -1,9 +1,9 @@
-F-panel-1133 | Entry machines (door/biometric): add or remove a machine, member numbers, keep machines in step with sales; includes the gate server code (file headers say the Worker is not deployed and 0058 not applied) | apps/dashboard/src/crm/ui/screens/EntryMachines.tsx:87
-F-panel-1128 | Expenses: add and remove gym expenses, profit | apps/dashboard/src/crm/ui/screens/Expenses.tsx:51
-F-panel-1135 | Help and feedback: write to MettleUp, your questions history, MettleUp access (let support look for one hour, see every look), support email line | apps/dashboard/src/crm/ui/screens/Feedback.tsx:29
-F-panel-1111 | Import members from Excel or CSV (with AI column guess), preview, branches, undo an import | apps/dashboard/src/crm/ui/screens/ImportMembers.tsx:125
 F-panel-1110 | Members: list and filters, add or edit a member, member page, photo by desk camera, ID card print and share, members who joined in the app, numbers to confirm | apps/dashboard/src/crm/ui/screens/MemberDetail.tsx:112
-F-panel-1122 | Member messages: questions, feedback and complaints members send from the app; reply and mark done | apps/dashboard/src/crm/ui/screens/MemberMessages.tsx:58
 F-panel-1120 | Messages & offers: ready notices and offers to members, who gets it, WhatsApp one-by-one queue, personal WhatsApp messages, automatic reminders and birthday wish, message language, sent list and withdraw | apps/dashboard/src/crm/ui/screens/Messages.tsx:27
-F-panel-1134 | Paying MettleUp: Pay MettleUp page, receipts, pay online, free-trial line, stopped-paying banner, Starter/Pro pack and the Pro-only page | apps/dashboard/src/crm/ui/screens/MettleUpReceipt.tsx:31
 F-panel-1113 | Money: collect a payment, dues and collections tabs, receipts with amount in words and GST, cancel (void) a receipt, receipt on WhatsApp | apps/dashboard/src/crm/ui/screens/Money.tsx:75
+F-panel-1100 | Panel frame: side menu, phone bottom bar and More, page routing, owner-only page block, 'needs internet' card, dark/light and English/Hinglish switches, gym logo in the header, crash reports, move from the old web address | apps/dashboard/src/crm/ui/screens/More.tsx:45
+F-panel-1112 | Plans and memberships: make plans, sell or renew, extend, change start day, cancel a membership, decide members' plan requests, renewal offer words | apps/dashboard/src/crm/ui/screens/Plans.tsx:39
+F-panel-1131 | Settings: gym details and name, Member app and Sign-in & data tabs, download all gym data, erase or start over, put the admin app on your phone | apps/dashboard/src/crm/ui/screens/Settings.tsx:88
+F-panel-1118 | Set up your gym: first steps list with progress ring, hand-ticked steps | apps/dashboard/src/crm/ui/screens/SetupGym.tsx:10
+F-panel-1107 | Today home: tiles, quick action buttons, Needs you list, one set-up card at a time, Monday week summary on WhatsApp, WhatsApp a member from a list | apps/dashboard/src/crm/ui/screens/Today.tsx:72
+F-panel-1125 | Workout plans: write, start and send plans to members, exercise list, ready programmes, trainer videos, workout of the day | apps/dashboard/src/crm/ui/screens/WorkoutPlans.tsx:94

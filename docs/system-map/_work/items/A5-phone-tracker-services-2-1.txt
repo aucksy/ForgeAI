@@ -3,8 +3,8 @@ F-phone-601 | Profile photo (camera, gallery, remove; kept on this phone) | apps
 F-phone-602 | Profile tab: header counts, history chart, workouts feed and the Next goal line | apps/mobile/src/tracker/services/profileService.ts:1
 F-phone-603 | Progress photos (take or pick, compare two, private on the phone) | apps/mobile/src/tracker/services/progressPhotos.ts:1
 F-phone-604 | Progress page top: this week vs your usual, Your lifts, body map muscle sets | apps/mobile/src/tracker/services/progressTop.ts:1
-F-phone-605 | Quick workout (the app picks exercises and starts it) | apps/mobile/src/tracker/services/quickWorkoutService.ts:1
 F-phone-606 | Which muscles are ready today | apps/mobile/src/tracker/services/readinessService.ts:15
 F-phone-607 | Personal records (found from logged sets, one wording everywhere, hidden when meaningless) | apps/mobile/src/tracker/services/recordsService.ts:1
 F-phone-609 | Monthly report and year in review | apps/mobile/src/tracker/services/reportsService.ts:1
 F-phone-615 | Rest card with Done, +15 s and Skip (log the next set from the shade, lock screen or watch without opening the app) | apps/mobile/src/tracker/services/restCard.ts:418
+F-phone-613 | Rest timer (starts when a set is ticked; per-exercise length; supersets rest per round) | apps/mobile/src/tracker/services/restRules.ts:1

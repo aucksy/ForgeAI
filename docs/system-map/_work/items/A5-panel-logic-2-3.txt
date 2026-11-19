@@ -1,4 +1,3 @@
-F-panel-721 | Personal training packs with a count of classes used | apps/dashboard/src/crm/logic/pt.ts:25
 F-panel-722 | Quick action buttons at the top of Today, picked and ordered by the owner | apps/dashboard/src/crm/logic/quickActions.ts:35
 F-panel-723 | Ready-made challenges to turn on, off or edit | apps/dashboard/src/crm/logic/readyChallenges.ts:80
 F-panel-709 | Receipts (number per financial year, receipt rules, printable receipt with amount in words, receipt on WhatsApp) | apps/dashboard/src/crm/logic/receiptDoc.ts:95

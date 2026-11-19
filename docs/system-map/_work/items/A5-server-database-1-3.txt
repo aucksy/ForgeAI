@@ -1,3 +1,4 @@
+F-server-320 | Workout plans from the gym or trainer shown in the member app | supabase/migrations/0024_workout_plans.sql:170
 F-server-321 | Workout offer, gym side: create or stop an offer, see who joined and their days, give the reward at the desk, undo a reward | supabase/migrations/0025_workout_offer.sql:312
 F-server-322 | Workout offer, member side: see offers, join, see my counted days, leave | supabase/migrations/0025_workout_offer.sql:477
 F-server-310 | Gym messages: sent list with "seen by x of y", take a message back, member inbox and unread count, messages to a chosen group | supabase/migrations/0025_workout_offer.sql:737
@@ -6,4 +7,3 @@ F-server-324 | HQ pauses a gym (suspended = read-only): status change, and every
 F-server-325 | HQ makes a gym for an owner and signs every device of a gym out | supabase/migrations/0027_hq_actions.sql:203
 F-server-326 | HQ deletes a gym through a delete-request list with steps | supabase/migrations/0027_hq_actions.sql:268
 F-server-327 | Support access (break-glass): the owner lets support look for 1 hour or HQ opens emergency access; read-only gym records; owner or HQ ends it | supabase/migrations/0028_hq_breakglass_and_logs.sql:166
-F-server-328 | Access log of the admin app: sign-ins, sign-outs, wrong codes, saves and whole-copy downloads, shown in HQ | supabase/migrations/0028_hq_breakglass_and_logs.sql:285

@@ -1,9 +1,0 @@
-F-phone-326 | The gym's workout offer ('Train 10 times in 30 days, get 3 extra days': join after a consent screen, progress dots, leave the offer) | apps/mobile/src/shop/OfferCard.tsx:24
-F-phone-304 | My orders (status of each order, refreshed every 10 seconds, cancel while still Ordered) | apps/mobile/src/shop/OrdersScreen.tsx:40
-F-phone-306 | Pay your gym for the membership (UPI QR, pay by UPI app, copy UPI ID, pay online) | apps/mobile/src/shop/PayPanel.tsx:97
-F-phone-305 | Pay for a shop order (UPI QR, pay by UPI app, copy UPI ID, pay online) | apps/mobile/src/shop/PayPanel.tsx:144
-F-phone-316 | 'Your plan ends on Friday. Renew at the front desk.' card on the Workout tab | apps/mobile/src/shop/PlanEndsCard.tsx:25
-F-phone-314 | Ask the desk to pause or renew my plan (pause calendar, plan list, request sent, the desk's answer) | apps/mobile/src/shop/PlanRequestPanel.tsx:35
-F-phone-309 | Scan the gym poster with the app's own QR scanner (opens check-in or join; also fills the gym code on the welcome screen) | apps/mobile/src/shop/ScanPosterScreen.tsx:17
-F-phone-300 | Gym tab home for a joined gym (tabs Shop, My gym, Leaderboard; pull to refresh; bell and bag on top) | apps/mobile/src/shop/ShopScreen.tsx:65
-F-phone-301 | Join your gym screen when no gym is joined (type the gym code, scan the poster, what a gym gives you, recommend MettleUp to your gym) | apps/mobile/src/shop/ShopScreen.tsx:87

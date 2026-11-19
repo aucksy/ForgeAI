@@ -2,9 +2,6 @@ F-phone-1410 | Save workouts or measurements as a spreadsheet | apps/mobile/src/
 F-phone-1411 | Bring back an old Google Drive backup (restore, undo the last restore, unlink Drive) | apps/mobile/src/components/settings/BackupCard.tsx:195
 F-phone-1413 | Download my data: save one backup file and share it | apps/mobile/src/components/settings/BackupFilePanels.tsx:90
 F-phone-1414 | Restore from a backup file (replace everything or add to what's here, undo restore); also on the welcome screen | apps/mobile/src/components/settings/BackupFilePanels.tsx:154
-F-phone-1415 | Connect to your gym with email, password and gym code (cloud sync); disconnect; delete my cloud data | apps/mobile/src/components/settings/CloudCard.tsx:57
 F-phone-1416 | Erase all data or start over; remove demo data | apps/mobile/src/components/settings/DataCard.tsx:78
-F-phone-1417 | Hidden sales switch: hold the 'stored on this phone' line for 2 seconds to load demo data | apps/mobile/src/components/settings/DataCard.tsx:263
 F-phone-1419 | Leave my gym, and open 'what my gym sees' | apps/mobile/src/components/settings/GymSettings.tsx:32
-F-phone-1418 | Put my gym's logo on my home screen | apps/mobile/src/components/settings/GymSettings.tsx:66
 F-phone-1420 | Switch gym reminders and gym messages on or off (with a 'notifications are off' way out) | apps/mobile/src/components/settings/GymSettings.tsx:93

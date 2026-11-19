@@ -1,4 +1,3 @@
-F-phone-814 | Workout history list (one card per saved workout) | apps/mobile/src/tracker/components/WorkoutCard.tsx:23
 F-phone-813 | Saved workout page (stats, note, muscle split, every set, records) | apps/mobile/src/tracker/components/WorkoutDetail.tsx:32
 F-phone-822 | Minimised workout bar above the tabs (elapsed time or rest countdown, tap to return) | apps/mobile/src/tracker/components/WorkoutMiniBar.tsx:29
 F-phone-823 | Workout photos (up to 4, camera or gallery, full screen with pinch to zoom, remove) | apps/mobile/src/tracker/components/WorkoutPhotos.tsx:48

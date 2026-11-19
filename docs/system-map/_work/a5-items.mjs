@@ -23,7 +23,7 @@ const all = args.includes('--all');
 const listOnly = args.includes('--list');
 if ((only ? 1 : 0) + (all ? 1 : 0) + (listOnly ? 1 : 0) !== 1) { console.error('use: a5-items.mjs --list | --only <item id> | --all'); process.exit(2); }
 
-const features = JSON.parse(fs.readFileSync(`${root}/features.json`, 'utf8')).filter((f) => f.status !== 'not-a-feature');
+const features = JSON.parse(fs.readFileSync(`${root}/features.json`, 'utf8')).filter((f) => f.status === 'live'); // live features first (his choice, 19 Nov 2026): behind switch, hidden and unknown are deferred
 const first = (f) => (f.entry || [])[0] || 'unknown';
 const entryKey = (f) => { const m = first(f).match(/^(.+?):(\d+)/); return m ? [m[1], Number(m[2])] : [first(f), 0]; };
 const byEntry = (a, b) => { const [fa, la] = entryKey(a); const [fb, lb] = entryKey(b); return fa < fb ? -1 : fa > fb ? 1 : la - lb || (a.id < b.id ? -1 : 1); };

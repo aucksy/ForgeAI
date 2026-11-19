@@ -4,4 +4,4 @@ F-panel-104 | Add a branch (optionally copying plans; gets its own receipt prefi
 F-panel-105 | Rename the business (the name over all branches) | apps/dashboard/src/crm/branches/api.ts:45
 F-panel-106 | Check in a member from another branch by mobile number, list today's visitors from other branches, undo a visitor check-in | apps/dashboard/src/crm/branches/api.ts:50
 F-panel-3101 | Branding: suggest a gym colour from the uploaded logo | apps/dashboard/src/crm/brand/brandLogic.ts:141
-F-panel-100 | Entry machine reports in to the gym server (machine recognised by serial, last-seen kept, unknown machine noted) | apps/dashboard/src/crm/machines/supabaseStore.ts:57
+F-panel-125 | Payments settings: UPI QR status (uses the gym's UPI ID, no server part) | apps/dashboard/src/crm/pay/PaymentsScreen.tsx:57

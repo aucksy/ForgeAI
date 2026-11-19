@@ -1,6 +1,0 @@
-F-phone-1316 | Charts page: Strength score trend (0-100), with "Add body weight" when it is missing | apps/mobile/src/components/analytics/StrengthSection.tsx:23
-F-phone-1321 | Charts everywhere: tap a bar or point to see its number and date in a box, drag to move it, tap the box to open that workout (bar charts, line charts, small trend lines, bar lists) | apps/mobile/src/components/charts/BarChart.tsx:58
-F-phone-1325 | Coach chat voice: hold the mic to speak a message instead of typing | apps/mobile/src/components/chat/InputBar.tsx:89
-F-phone-1323 | Coach chat: ask the AI coach by typing or a suggested prompt; replies come as bubbles and cards (today's workout plan, workout logged, records, stats) | apps/mobile/src/components/chat/MessageBubble.tsx:150
-F-phone-1324 | Coach chat food cards: a logged meal with its macros, and the day's calories and protein against target | apps/mobile/src/components/chat/cards/MealCard.tsx:25
-F-phone-1326 | Exercise page, History tab: every workout with this exercise, newest first, with its sets and stats; tap one to open that workout; "Show more" | apps/mobile/src/components/exercise/SessionHistory.tsx:45

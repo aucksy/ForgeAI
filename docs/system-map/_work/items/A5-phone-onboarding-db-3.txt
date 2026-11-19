@@ -1,8 +1,7 @@
+F-phone-1612 | App start: opens on the welcome (no profile yet), on your own data, or on the error screen; notes when the app was first opened on this phone | apps/mobile/src/onboarding/store/onboardingStore.ts:206
 F-phone-1603 | Setup answers survive the app closing (carry on where you left the 3 steps) | apps/mobile/src/onboarding/welcomeResume.ts:61
 F-phone-1623 | MettleUp account (sign in with Google to keep workouts on MettleUp, bring the copy back, sign out, delete my account) | apps/mobile/src/store/accountStore.ts:100
 F-phone-1624 | Google Drive backup and restore (link Google, back up now, find a backup, restore it after saying how many workouts go, undo a restore for 24 hours). A code comment says new Drive backups are no longer offered (R-320); the restore is still used from the welcome | apps/mobile/src/store/backupStore.ts:253
-F-phone-1619 | AI coach chat (send a message or photo to the coach, saved conversation, clear the chat) | apps/mobile/src/store/chatStore.ts:31
-F-phone-1622 | Old gym sync (sign in with email and password plus a gym code, re-sign in, disconnect, delete my cloud data) | apps/mobile/src/store/cloudStore.ts:43
 F-phone-1621 | Home summary (loads and refreshes the home screen's numbers; 'Couldn't load your summary, Try again' on a failed read) | apps/mobile/src/store/dashboardStore.ts:26
 F-phone-1627 | App settings kept on the phone (kg or lb, language, AI provider and model, voice on or off, speak replies) | apps/mobile/src/store/settingsStore.ts:24
 F-phone-1625 | Light or dark look (Same as phone, Light or Dark; follows the phone, waits while a workout is open) | apps/mobile/src/theme/appearance.ts:98

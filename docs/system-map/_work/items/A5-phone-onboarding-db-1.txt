@@ -1,4 +1,3 @@
-F-phone-1618 | Food log (log a meal, the day's calories and protein, delete a meal) | apps/mobile/src/db/repos/nutritionRepo.ts:43
 F-phone-1620 | Active workout plan (the plan's days and exercises in rotation order, read for today's workout) | apps/mobile/src/db/repos/planRepo.ts:95
 F-phone-1616 | Personal records (a finished workout is checked for a new best weight and best estimated one-rep max; record list and history per exercise) | apps/mobile/src/db/repos/prRepo.ts:76
 F-phone-1617 | My profile and body weight (change name, goal, experience and targets; log body weight; body weight history) | apps/mobile/src/db/repos/userRepo.ts:79

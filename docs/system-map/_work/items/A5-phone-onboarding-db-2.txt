@@ -6,4 +6,3 @@ F-phone-1613 | Import safety: says how many workouts a Replace import removes, k
 F-phone-1609 | Remove demo data (the sample member goes, your own workouts stay, then you add your details) | apps/mobile/src/onboarding/demoRemoval.ts:23
 F-phone-1610 | Erase all data (this phone only, or this phone and the MettleUp account; clears the database, files, AI keys, gym link, shop, gym lists, settings; says what stays in Google Drive) | apps/mobile/src/onboarding/eraseWords.ts:48
 F-phone-1605 | A member the gym knows goes straight into the gym (no setup questions), with a one-time Workout-tab note 'We set you up as New to lifting and Build muscle' | apps/mobile/src/onboarding/phoneSignInApi.ts:120
-F-phone-1612 | App start: opens on the welcome (no profile yet), on your own data, or on the error screen; notes when the app was first opened on this phone | apps/mobile/src/onboarding/store/onboardingStore.ts:206

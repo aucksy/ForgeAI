@@ -7,4 +7,3 @@ F-server-308 | Gym details: load the gym (name, code, brand) in the panel and re
 F-server-309 | Invite link and front-desk QR: show the gym's name and logo for a join code before joining | supabase/migrations/0007_invite_link.sql:13
 F-server-313 | Put the gym online: an owner-key gym gets its owner as a signed-in person on this device | supabase/migrations/0010_signin_and_records.sql:219
 F-server-311 | Panel sign-in with mobile number and a 6-digit code the owner makes: device sessions, sign out, guess limits, why a key stopped working, retiring the old owner key, support-made code | supabase/migrations/0010_signin_and_records.sql:349
-F-server-318 | Check in by QR from the member app: mobile matched to the gym roster, with limits on typed numbers | supabase/migrations/0015_qr_checkin.sql:53

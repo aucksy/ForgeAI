@@ -1,9 +1,0 @@
-F-panel-829 | MettleUp Plus lock: the gym owner switch for members | apps/dashboard/src/crm/shop/plusLockApi.ts:27
-F-panel-830 | Ask a trainer: members questions, count, answer | apps/dashboard/src/crm/shop/questionsApi.ts:48
-F-panel-831 | A member live Progress card on the member page | apps/dashboard/src/crm/shop/questionsApi.ts:92
-F-panel-832 | Gym opening hours: see and save | apps/dashboard/src/crm/shop/timingsApi.ts:14
-F-panel-833 | Trainers see their members progress: Trainer tick on staff, assign a member to a trainer | apps/dashboard/src/crm/shop/trainerApi.ts:49
-F-panel-834 | Trainer pages and personal-training bookings: profile, hours, book, cancel | apps/dashboard/src/crm/shop/trainerScheduleApi.ts:31
-F-panel-835 | Alert settings: when the gym alerts come | apps/dashboard/src/crm/shop/webPushApi.ts:52
-F-panel-836 | Alerts in this browser with the admin app closed (web push on/off) and send a test alert | apps/dashboard/src/crm/shop/webPushApi.ts:106
-F-panel-837 | Workout of the day (and form video links): set or clear a day | apps/dashboard/src/crm/shop/wodApi.ts:35

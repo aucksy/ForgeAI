@@ -3,7 +3,7 @@ F-hq-104 | All gyms: list of every gym with search, filter, sort, summary tiles,
 F-hq-105 | Gyms with branches: each gym business with its branches, member counts and the extra-branch price | apps/hq/public/app.js:224
 F-hq-106 | Export the shown gyms as a CSV file (written to the log first; has owners' names and mobiles) | apps/hq/public/app.js:347
 F-hq-107 | Make a gym by hand (also from a lead) and get the owner's one-time sign-in code with a WhatsApp message to copy | apps/hq/public/app.js:362
-F-hq-109 | Change a gym's free trial end date (with a reason, up to the cap) | apps/hq/public/app.js:404
-F-hq-110 | Set a gym's plan by hand after a payment (Starter or Pro, monthly, yearly or lifetime, paid until), or take the plan off | apps/hq/public/app.js:404
 F-hq-108 | One gym's page: counts (members, check-ins, takings, cancelled receipts, orders, staff, wrong codes), owner to call, delete-request notice, what HQ did here | apps/hq/public/app.js:461
 F-hq-111 | Gym status: mark a new gym as checked, pause a gym (read-only), un-pause it | apps/hq/public/app.js:469
+F-hq-112 | Owner lost their sign-in: make a new one-time sign-in code after calling the gym | apps/hq/public/app.js:486
+F-hq-113 | Sign a gym out everywhere (every phone and computer at once) | apps/hq/public/app.js:501

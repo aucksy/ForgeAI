@@ -1,4 +1,3 @@
-F-phone-815 | Lighter-day line on the finish screen (short sleep last night, or a protein tip) | apps/mobile/src/tracker/components/ShortDayLine.tsx:18
 F-phone-816 | Strength level on an exercise (level in words, who you are compared with) | apps/mobile/src/tracker/components/StrengthLevelLine.tsx:44
 F-phone-805 | Superset two exercises (pair, join or leave) | apps/mobile/src/tracker/components/SupersetSheet.tsx:18
 F-phone-806 | Swap an exercise for one that fits | apps/mobile/src/tracker/components/SwapSheet.tsx:13
@@ -8,3 +7,4 @@ F-phone-817 | Bottom tab bar (Workout, Gym, Profile; unread count on Gym; new do
 F-phone-819 | Watch your trainer (YouTube link a gym trainer gave an exercise) | apps/mobile/src/tracker/components/TrainerVideoLink.tsx:18
 F-phone-820 | Up next card on the Workout tab (the one answer for today and its buttons) | apps/mobile/src/tracker/components/UpNextCard.tsx:20
 F-phone-821 | Install MettleUp on your watch (one-time card at workout start) | apps/mobile/src/tracker/components/WatchStartCard.tsx:34
+F-phone-814 | Workout history list (one card per saved workout) | apps/mobile/src/tracker/components/WorkoutCard.tsx:23

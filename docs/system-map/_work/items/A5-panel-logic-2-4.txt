@@ -1,4 +1,3 @@
-F-panel-731 | Trainer profiles and schedules: working hours, book personal-training classes | apps/dashboard/src/crm/logic/trainerSchedule.ts:38
 F-panel-732 | The gym's own form videos: a trainer's YouTube link on an exercise | apps/dashboard/src/crm/logic/trainerVideos.ts:17
 F-panel-733 | Free-trial banner for the gym owner on Today | apps/dashboard/src/crm/logic/trial.ts:48
 F-panel-734 | Gym alerts on this phone or computer with the admin app closed (at once, daily or weekly) | apps/dashboard/src/crm/logic/webPush.ts:29

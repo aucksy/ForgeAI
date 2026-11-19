@@ -1,9 +1,0 @@
-F-panel-534 | Pay MettleUp: the free-trial line on Today, pick Starter or Pro, pay by UPI or bank transfer and send the proof | apps/dashboard/src/crm/ui/screens/PayMettleUp.tsx:88
-F-panel-515 | Plans: the gym's price list (add or edit a plan) | apps/dashboard/src/crm/ui/screens/Plans.tsx:39
-F-panel-533 | MettleUp Plus lock: the owner decides whether a member's paid app extras lock 7 days after their plan ends | apps/dashboard/src/crm/ui/screens/PlusLock.tsx:28
-F-panel-528 | Settings: gym details and UPI ID, Member app tab, Sign-in and data tab, download all the gym's data, the 'leaving' actions | apps/dashboard/src/crm/ui/screens/Settings.tsx:88
-F-panel-504 | Set up your gym: the new gym's steps with a progress ring, and the 'find and join your gym online' journey (web page, one link and QR poster, how people pay) | apps/dashboard/src/crm/ui/screens/SetupGym.tsx:10
-F-panel-507 | Today: the first screen (who needs attention, quick action buttons the owner picks, WhatsApp a member from a row) | apps/dashboard/src/crm/ui/screens/Today.tsx:72
-F-panel-524 | Trainers: their profiles and hours, book or change a personal-training session | apps/dashboard/src/crm/ui/screens/Trainers.tsx:174
-F-panel-530 | Your web page: make, preview and publish the gym's free page, and share its link on WhatsApp | apps/dashboard/src/crm/ui/screens/WebPage.tsx:66
-F-panel-525 | Workout plans: build a routine, start from a ready plan, send it to members, and set the gym's workout of the day | apps/dashboard/src/crm/ui/screens/WorkoutPlans.tsx:94

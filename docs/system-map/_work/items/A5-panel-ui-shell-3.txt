@@ -1,10 +1,10 @@
-F-panel-531 | Entry machines: add or remove the gym's door machines, give a member a machine number, keep machines in step in the background | apps/dashboard/src/crm/ui/screens/EntryMachines.tsx:87
-F-panel-514 | Expenses: what the gym spent month by month, and profit | apps/dashboard/src/crm/ui/screens/Expenses.tsx:51
-F-panel-538 | Help and feedback: write to MettleUp, see every time MettleUp support opened the gym's records, and the support email line | apps/dashboard/src/crm/ui/screens/Feedback.tsx:29
-F-panel-529 | Gym timings: when the gym is open, shown to members in their app | apps/dashboard/src/crm/ui/screens/GymTimings.tsx:81
-F-panel-519 | Import members from Excel or CSV | apps/dashboard/src/crm/ui/screens/ImportMembers.tsx:125
-F-panel-522 | Member messages and Member questions: read and reply to what members sent from the app ('Message your gym', 'Ask a trainer') | apps/dashboard/src/crm/ui/screens/MemberMessages.tsx:58
 F-panel-510 | Members: the list with search and filters, one member's page, add or edit a member, take the member's photo at the desk | apps/dashboard/src/crm/ui/screens/Members.tsx:64
 F-panel-520 | Messages and offers: ready WhatsApp messages to one member or a group one by one, in English, Hindi or both | apps/dashboard/src/crm/ui/screens/Messages.tsx:27
 F-panel-513 | Money: collect dues, the cash book and who still owes, print a receipt, void a receipt | apps/dashboard/src/crm/ui/screens/Money.tsx:75
-F-panel-523 | Training progress: members' workout progress for the owner or their trainer, ready messages, and a member's workout report | apps/dashboard/src/crm/ui/screens/MyMembers.tsx:59
+F-panel-534 | Pay MettleUp: the free-trial line on Today, pick Starter or Pro, pay by UPI or bank transfer and send the proof | apps/dashboard/src/crm/ui/screens/PayMettleUp.tsx:88
+F-panel-515 | Plans: the gym's price list (add or edit a plan) | apps/dashboard/src/crm/ui/screens/Plans.tsx:39
+F-panel-528 | Settings: gym details and UPI ID, Member app tab, Sign-in and data tab, download all the gym's data, the 'leaving' actions | apps/dashboard/src/crm/ui/screens/Settings.tsx:88
+F-panel-504 | Set up your gym: the new gym's steps with a progress ring, and the 'find and join your gym online' journey (web page, one link and QR poster, how people pay) | apps/dashboard/src/crm/ui/screens/SetupGym.tsx:10
+F-panel-507 | Today: the first screen (who needs attention, quick action buttons the owner picks, WhatsApp a member from a row) | apps/dashboard/src/crm/ui/screens/Today.tsx:72
+F-panel-524 | Trainers: their profiles and hours, book or change a personal-training session | apps/dashboard/src/crm/ui/screens/Trainers.tsx:174
+F-panel-525 | Workout plans: build a routine, start from a ready plan, send it to members, and set the gym's workout of the day | apps/dashboard/src/crm/ui/screens/WorkoutPlans.tsx:94

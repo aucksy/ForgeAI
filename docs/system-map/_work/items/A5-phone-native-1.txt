@@ -1,4 +1,3 @@
-F-phone-1232 | Buy MettleUp Plus with Google Play (monthly, yearly, lifetime; prices, pay, what is owned) | apps/mobile/modules/forge-billing/android/src/main/java/com/forgeai/billing/ForgeBillingModule.kt:148
 F-phone-1233 | Gym-branded start-up screen (plain start screen so the gym's logo is the first one shown, Android 13+) | apps/mobile/modules/forge-phone/android/src/main/java/com/forgeai/phone/ForgePhoneModule.kt:292
 F-phone-1223 | "Add <gym> to your home screen": a home-screen shortcut drawn from the gym's logo | apps/mobile/modules/forge-phone/android/src/main/java/com/forgeai/phone/GymShortcut.kt:47
 F-phone-1225 | Privacy policy page opened from Health Connect's permission screen | apps/mobile/modules/forge-phone/android/src/main/java/com/forgeai/phone/HealthRationaleActivity.kt:18
@@ -7,3 +6,4 @@ F-phone-1230 | Share a Hevy / Strong export file to the app from Android's share
 F-phone-1222 | Long-press shortcuts on the app icon ("Start workout" / "Resume workout", "Log body weight") | apps/mobile/modules/forge-phone/android/src/main/java/com/forgeai/phone/Shortcuts.kt:24
 F-phone-1219 | Home-screen widgets "Today" (today's workout, what to beat, Start / Resume) and "This week" (days trained) | apps/mobile/modules/forge-phone/android/src/main/java/com/forgeai/phone/Widgets.kt:383
 F-phone-1220 | Home-screen widget "Gym right now" (how busy the gym is; tap opens the check-in scanner) | apps/mobile/modules/forge-phone/android/src/main/java/com/forgeai/phone/Widgets.kt:409
+F-phone-1202 | Phone plays the alert sound itself when the phone maker silenced the app (OPPO / OnePlus): rest over and gym messages | apps/mobile/modules/forge-rest/android/src/main/java/com/forgeai/rest/AlertRing.kt:122

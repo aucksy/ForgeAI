@@ -3,7 +3,6 @@ F-phone-501 | Badge shelf (badges earned from workouts, lifts, body weight and r
 F-phone-502 | Balance check card on Charts (a muscle trained much less than the rest; Not now; an old focus block runs to its end) | apps/mobile/src/tracker/services/balanceCheck.ts:37
 F-phone-503 | Share a before/after picture of two progress photos | apps/mobile/src/tracker/services/beforeAfterCopies.ts:15
 F-phone-504 | Workout calendar and week streak (days trained per month, weeks in a row, rest days) | apps/mobile/src/tracker/services/calendarService.ts:5
-F-phone-506 | AI-written finish note from Groq (opt-in; needs the coach switch, the member's coach-notes setting and a Groq key) | apps/mobile/src/tracker/services/coachNote.ts:314
 F-phone-507 | The Target line for each exercise of a plan day (live workout, Home and the chat coach's 'today's workout'; follows Weight jumps, Rep range and Plates and bars settings) | apps/mobile/src/tracker/services/coachTargets.ts:1
 F-phone-511 | Exercise page History tab (each past workout's kg lifted, sets and best set, with the workout in progress shown as 'current') | apps/mobile/src/tracker/services/currentInHistory.ts:17
 F-phone-508 | Home screen numbers (today's workout with Targets, volume and recovery, lifts that beat a best this week; insight line and strength score only while the coach is on) | apps/mobile/src/tracker/services/dashboardPhase2.ts:64
