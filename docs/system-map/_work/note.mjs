@@ -1,0 +1,10 @@
+import fs from 'node:fs';
+const p = 'docs/system-map/AUDIT-STATE.md';
+let t = fs.readFileSync(p, 'utf8');
+const nl = t.includes('\r\n') ? '\r\n' : '\n';
+const note = fs.readFileSync('docs/system-map/_work/note.txt', 'utf8').trim();
+const tag = '- PACER RUN pacer-1119-0627';
+const lines = t.split(nl).filter((l) => !l.startsWith(tag));
+const i = lines.findIndex((l) => l.startsWith('## Resume notes'));
+lines.splice(i + 1, 0, note);
+fs.writeFileSync(p, lines.join(nl));
