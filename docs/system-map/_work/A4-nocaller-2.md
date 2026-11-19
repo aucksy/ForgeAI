@@ -1,0 +1,113 @@
+# A4-nocaller-2 checkpoint
+
+Finished units (one database function each):
+- done _gym_page_photo_upload_ok | E-gym-page-photo-slots | not-a-reader | helper used by the storage upload policy (0082:115): only checks that a live upload slot exists, shows nothing | called by: storage policy
+- done _gym_page_plans | E-crm-records | list | called by gym_page_public (0090:77): the plan list on the public gym page
+- done _gym_row_not_suspended | E-gyms | not-a-reader | trigger guard on gyms (0027:124): blocks changes to a suspended gym, shows nothing | called by: trigger
+- done _gym_staff_not_suspended | E-gyms | not-a-reader | trigger guard on gym_staff (0031:169): reads the gym status only to block writes, shows nothing | called by: trigger
+- done _hash_key | E-gym-sessions | not-a-reader | pure helper (sha256 of a key): reads no table | called by 21 functions
+- done _hhmm_min | E-gym-timings | not-a-reader | pure helper (HH:MM text to minutes): reads no table | called by _timings_day, _busy_open_hours
+- done _hq_actor | E-hq-audit | not-a-reader | pure helper (checks the HQ person's email shape): reads no table | called by _hq_log and 10 hq_ functions
+- done _hq_audit_append_only | E-hq-audit | not-a-reader | trigger guard on hq_audit (0026:63,66): blocks edits and deletes, shows nothing | called by: 2 triggers
+- done _hq_grant_json | E-hq-grants | screen | called by owner_hq_grant, owner_hq_access, hq_open_emergency: the support-access window shown to the owner and to HQ
+- done _hq_grant_live | E-hq-grants | not-a-reader | gate helper: picks the open support window so hq_gym_records and hq_access_log can refuse or go on; the grant itself is not shown | called by hq_gym_records (0028:253), hq_access_log (0028:287)
+- done _hq_guard | E-hq-audit | not-a-reader | pure gate helper (refuses anon and signed-in app roles): reads no table | called by 58 hq_ functions
+- done _hq_gym_counts | E-crm-records | count | called by hq_gyms, hq_gym, hq_set_gym_status, hq_set_trial, hq_set_plan: per-gym counts and money totals on the HQ gym list
+- done _hq_gym_extra | E-gyms | screen | called by _hq_gym_counts only: gym status, open delete request, support window, trial and plan on the HQ gym screen
+- done _hq_ip | E-hq-audit | not-a-reader | pure helper (reads the caller IP from the request header): reads no table | called by _hq_log, hq_delete_gym
+- done _hq_log | E-hq-audit | not-a-reader | only inserts an hq_audit row (reads the gym name to store beside it) | called by 30 hq_ functions
+- done _hq_reason | E-hq-audit | not-a-reader | pure helper (a reason must be 3+ characters): reads no table | called by 9 hq_ functions
+- done _hq_request_json | E-hq-delete-requests | list | called by hq_delete_requests, hq_delete_request_add, hq_delete_request_step, _hq_gym_extra: the HQ delete-request list with day count and due date
+- done _iso_day | E-crm-records | not-a-reader | pure helper (text to date, or null): reads no table | called by 15 functions
+- done _ist_today | E-gym-offers | not-a-reader | pure helper (today's date in India): reads no table | called by 21 functions
+- done _ledger_receipt | E-gym-receipts | not-a-reader | trigger (0063:332) that writes: numbers and inserts one gym_receipts row for each ledger row; reads gyms and app_config only to fill it | called by: trigger
+- done _logo_url_ok | E-gyms | not-a-reader | pure helper (logo address pattern) used by a check on gyms (0006:24) and by owner_set_brand: reads no table | called by: check constraint, owner_set_brand
+- done _make_code | E-gym-signin-codes | not-a-reader | only writes: deletes old sign-in codes and fail rows, inserts a new code and hands it to the caller | called by owner_make_signin_code, support_make_signin_code, hq_create_gym, hq_reset_owner_signin
+- done _mate_cleanup | E-gym-mate-profiles | not-a-reader | only deletes: gym mate workouts older than 60 days and profiles that are stale or of members who left | called by member_mate_share, member_mate_board, member_mate_profile
+- done _mate_member_left | E-gym-mate-profiles | not-a-reader | trigger (0040:109) that only deletes a member's gym mate profile when they leave | called by: trigger
+- done _mate_open_id | E-gym-mate-profiles | list | called by _mate_top, member_mate_profile: decides whose profile link shows on the gym mates board
+- done _mate_top | E-gym-member-board | list | called by member_mate_board: the top 10 of the gym mates board
+- done _mbusy_clean | E-gym-machine-setup | not-a-reader | pure helper (checks and tidies the machine list the owner sends): reads no table | called by owner_save_machine_setup
+- done _mbusy_counts | E-gym-exercise-starts | count | called by _mbusy_guess, _mbusy_refresh: people per machine per hour, which becomes the busy levels members see
+- done _mbusy_dk | E-gym-exercise-starts | not-a-reader | pure helper (date to mon..sun): reads no table | called by _mbusy_counts
+- done _mbusy_guess | E-gym-exercise-starts | count | called by _mbusy_refresh: turns past counts into this week's busy levels
+- done _mbusy_keys | E-gym-machine-setup | not-a-reader | pure helper (lists the exercise keys in a machine list it is handed): reads no table | called by _mbusy_member_view, owner_save_machine_setup, member_machine_push
+- done _mbusy_maybe_refresh | E-gym-machine-setup | not-a-reader | only writes (stamps refreshed_at, then runs _mbusy_refresh at most once a minute); runs when a screen opens, no timed job | called by owner_machine_setup, member_machine_busy
+- done _mbusy_member_left | E-gym-exercise-starts | not-a-reader | trigger (0049:308) that only deletes a member's exercise starts when they leave | called by: trigger
+- done _mbusy_member_view | E-gym-machine-guesses | screen | called by member_machine_busy: the member's busy-by-machine week view
+- done _mbusy_owner_view | E-gym-machine-setup | screen | called by owner_machine_setup, owner_save_machine_setup: the owner's machine setup screen with the count of members sending
+- done _mbusy_refresh | E-gym-machine-guesses | job | called by _mbusy_maybe_refresh (on screen open, max once a minute): makes this week's guesses, checks last week's, deletes old rows
+- done _mbusy_score | E-gym-machine-guesses | count | called by _mbusy_member_view, _mbusy_owner_view: weeks checked and weeks right for a machine
+- done _measure_clean | E-gym-body-measurements | not-a-reader | helper that checks a measurement before it is saved: reads no table | called by owner_save_measurement
+- done _measure_json | E-gym-body-measurements | list | called by owner_member_measurements, owner_save_measurement: one measurement row for the panel list
+- done _member | E-gym-members | not-a-reader | helper used as the member key check: finds the member row for 55 member_ functions, shows nothing itself | called by 55 member_ functions
+- done _member_photo_json | E-gym-member-photos | list | called by owner_member_photos, owner_save_member_photo: the member photo sent to the panel
+- done _member_roster_link | E-crm-records | not-a-reader | gate helper: matches the app member to a register row by phone and first name for 20 member_ functions; hands back ids and the gym name, shows no record | called by 20 member_ functions
+- done _message_json | E-gym-messages | list | called by owner_messages, member_messages, owner_send_message: one message in the panel and phone message lists
+- done _message_quiet | E-gym-messages | not-a-reader | trigger (0042:49) that only sets the quiet flag on a new message after counting that day's messages | called by: trigger
+- done _mettleup_extend | E-gyms | not-a-reader | pure helper (works out the new paid-until date): reads no table | called by hq_mettleup_payments, apply_gym_payment, hq_billing_checkout_start
+- done _mettleup_payment_json | E-mettleup-payments | list | called by owner_pay_mettleup, owner_report_mettleup_payment, hq_mettleup_payments, hq_confirm_mettleup_payment, hq_reject_mettleup_payment: one MettleUp payment for the panel and HQ lists
+- done _mettleup_price | E-mettleup-payments | not-a-reader | pure helper (fixed price table in paise): reads no table | called by owner_report_mettleup_payment, _upgrade_paise, hq_billing_checkout_start
+- done _new_key | E-gym-sessions | not-a-reader | pure helper (makes a random key): reads no table | called by demo_start_gym, member_join, member_leave, owner_photo_ticket, _new_session
+- done _new_session | E-gym-sessions | not-a-reader | only writes: inserts a sign-in session and ends all but the newest 10 | called by gym_create_online, owner_go_online, staff_sign_in, owner_add_branch, owner_open_branch
+- done _norm_phone | E-crm-records | not-a-reader | pure helper (tidies a phone number to 10 digits): reads no table | called by 28 functions
+- done _note_day | E-member-push-notes | not-a-reader | pure helper (date to "5 Nov" text): reads no table | called by _push_note_plan_request, _push_note_measurement, _push_note_challenge, _alert_plan_request, self_join_send
+- done _now_ms | E-gyms | not-a-reader | pure helper (the time in milliseconds): reads no table | called by owner_add_branch, branch_check_in_visitor
+- done _num | E-crm-records | not-a-reader | pure helper (JSON number or 0): reads no table | called by _receipt_ok, _hq_gym_counts
+- done _num01 | E-gym-body-measurements | not-a-reader | pure helper (checks a number is in range): reads no table | called by _measure_clean
+- done _offer_give | E-offer-members | not-a-reader | mainly writes: adds the reward days to the membership, marks the reward given and logs it; hands back the old and new end date | called by staff_give_reward, member_offers, member_offer_days
+- done _offer_identity | E-crm-records | not-a-reader | gate helper: matches the app member to a register row by phone and first name; hands back an id or an error code, shows no record | called by member_offers, member_join_offer, _challenge_rewards, friend_invite_send
+- done _offer_json | E-gym-offers | list | called by owner_offers, owner_save_offer, owner_stop_offer: one workout offer for the panel list
+- done _offer_me_json | E-offer-members | screen | called by member_offers: the member's own progress in a workout offer (days counted, earned, given)
+- done _offer_member_offer_json | E-gym-offers | list | called by member_offers: one workout offer as the member sees it
+- done _offer_plan | E-crm-records | not-a-reader | lookup helper: picks the member's running membership for the offer functions; the row goes to the caller, not to a screen | called by _offer_give, member_offers, member_join_offer, _challenge_rewards
+- done _offer_tidy | E-gym-offers | not-a-reader | only writes: stops offers that are over and deletes old offer days, members and log rows; runs when the owner opens or saves offers, no timed job | called by owner_save_offer, owner_offers
+- done _option_stock_sum | E-shop-products | not-a-reader | pure helper (adds up the stock in an options list it is handed): reads no table | called by owner_save_product, member_place_order, _shop_restock, owner_add_stock
+- done _owner_gym | E-gym-sessions | not-a-reader | key check used by 81 owner_ functions: finds the gym for a key, shows nothing itself | called by 81 functions
+- done _owner_only_gym | E-gym-owner-keys | not-a-reader | key check used by 46 owner-only functions: finds the gym and refuses non-owners, shows nothing itself | called by 46 functions
+- done _page_chat_alert | E-gym-page-chats | notification | called by page_chat_ask, page_chat_reply, page_chat_contact: makes the "visitor asked / wants to join / wants a call" alert for the gym (through _alert)
+- done _page_chat_gym | E-gym-pages | not-a-reader | gate helper: hands the page row to the chat functions only when the page is public, shows nothing itself | called by page_chat_ask, page_chat_contact
+- done _page_chat_keep | E-gym-page-chats | not-a-reader | pure helper (keeps the last 60 chat lines of a list it is handed): reads no table | called by page_chat_ask, page_chat_reply
+- done _page_chat_status | E-gym-page-chats | not-a-reader | pure helper (works out the chat status from the chat it is handed): reads no table | called by page_chat_ask, page_chat_reply, page_chat_contact
+- done _paid_from | E-gyms | not-a-reader | pure helper (later of paid-until and a running trial end): reads no table | called by apply_gym_payment, hq_billing_checkout_start, hq_mettleup_payments
+- done _pass_company | E-crm-records | not-a-reader | pure helper (tidies the pass company name it is handed): reads no table | called by _checkin_plan_ok, member_membership, member_find_gyms, phone_sign_in_find
+- done _pay_details_json | E-platform-payment-details | screen | called by owner_pay_mettleup, owner_report_mettleup_payment, hq_payment_details, hq_set_payment_details: MettleUp's UPI and bank details shown to the owner and HQ
+- done _people_admin | E-gym-owner-keys | not-a-reader | key check used by 7 people functions: finds the gym and refuses non-owners, shows nothing itself | called by owner_people, owner_add_person, owner_remove_person, owner_make_signin_code, owner_sign_out_person, owner_save_alert_settings, owner_set_person_job
+- done _person_json | E-gym-staff | screen | called by _signed_in_json, staff_me, owner_add_person: the signed-in person's name, phone and role
+- done _phone_proof | E-phone-proofs-used | not-a-reader | gate helper: checks a signed phone proof and marks it used (insert); hands back the phone number to the caller only | called by staff_reset_pin_with_proof, gym_create_online, member_find_gyms, member_claim_phone, self_join_send, phone_sign_in_find
+- done _phone_sig_ok | E-phone-code-settings | not-a-reader | gate helper: reads the signing secret only to check a signature, shows nothing | called by _phone_proof, phone_code_has_account, ai_question_take, ai_visitor_question_take, self_join_pay_gym, page_chat_ask, page_chat_reply, page_chat_contact
+- done _photo_ticket_ok | E-photo-tickets | not-a-reader | helper used by two storage upload policies (0004:52, 0005:36): only checks a live ticket exists, shows nothing | called by: 2 storage policies
+- done _photo_url_ok | E-shop-products | not-a-reader | pure helper (product photo address pattern): reads no table | called by owner_set_product_photo, owner_save_product
+- done _pin_lock_for | E-gym-staff-pins | not-a-reader | pure helper (lock length for wrong-PIN streak): reads no table | called by staff_sign_in
+- done _pin_people | E-gym-staff | not-a-reader | lookup helper: lists the same owner's staff ids across branches so a PIN change or sign-out covers all; ids go to the caller only | called by staff_set_pin, owner_sign_out_person, hq_reset_owner_signin
+- done _pin_problem | E-gym-staff-pins | not-a-reader | pure helper (is this PIN weak or wrong shape): reads no table | called by gym_create_online, staff_set_pin, staff_reset_pin_with_proof
+- done _plan_end | E-crm-records | not-a-reader | pure helper (works out a plan end date): reads no table | called by _staff_write_ok
+- done _plan_gate_brand | E-gyms | not-a-reader | trigger guard on gyms (0062:173): blocks branding changes the gym's plan does not cover, shows nothing | called by: trigger
+- done _plan_gate_crm | E-crm-records | not-a-reader | trigger guard on crm_records (0062:199): blocks writes the gym's plan does not cover, shows nothing | called by: trigger
+- done _plan_gate_insert | E-gyms | not-a-reader | trigger guard on six tables (0062:135-150; shop, challenge, workout offer, trainer plans): blocks inserts the gym's plan does not cover | called by: 6 triggers
+- done _plan_gate_on | E-app-config | not-a-reader | switch helper: reads the plan_gate setting so the gates know whether to run; owner_gym_state also uses it | called by gym_has_feature, _plan_gate_insert, _plan_gate_brand, _plan_gate_crm, owner_gym_state
+- done _plan_request_json | E-gym-plan-requests | list | called by member_plan_requests, member_ask_plan_change, owner_plan_requests, owner_decide_plan_request: one plan-change request for the phone and panel lists
+- done _plan_request_mark | E-gym-plan-requests | not-a-reader | pure helper (makes the "app #1234abcd" mark): reads no table | called by owner_decide_plan_request
+- done _plan_word | E-gym-receipts | not-a-reader | pure helper (plan code to the word Starter or Pro): reads no table | called by _ledger_receipt, hq_billing_checkout_start
+- done _prices_ok | E-crm-records | not-a-reader | write check: reads the old record only to refuse a bad new price, shows nothing | called by crm_push
+- done _pt_clean_hours | E-gym-trainer-profiles | not-a-reader | pure helper (checks and tidies the trainer hours the owner sends): reads no table | called by owner_save_trainer_profile
+- done _push_job_message | E-push-jobs | not-a-reader | trigger on gym_messages (0038:81) that only inserts a push job | called by: trigger
+- done _push_job_offer | E-push-jobs | not-a-reader | trigger on gym_offers (0038:97) that only inserts a push job | called by: trigger
+- done _push_member_left | E-member-push-tokens | not-a-reader | trigger (0038:109) that only deletes a member's push addresses when they leave | called by: trigger
+- done _push_note | E-member-push-notes | not-a-reader | only inserts a push note row (checks the member is still in the gym first); the callers supply the words | called by 8 functions
+- done _push_note_challenge | E-gym-challenges | notification | called by trigger (0073:226): writes a "New challenge at your gym" push note for every member with a push address (max 3000)
+- done _push_note_diet_plan | E-gym-diet-plans | notification | called by trigger (0073:178): writes a "New diet plan" or "changed your diet plan" push note for the assigned members
+
+ALL 96 UNITS DONE. Output: docs/system-map/_work/out/A4-nocaller-2.jsonl (3 entity rows, 96 reader rows).
+
+Functions that nothing at all calls: none. Every one of the 96 has a caller in supabase/migrations (another function, a trigger, a storage policy or a check).
+
+Seen in passing:
+- _people_admin (0010_signin_and_records.sql:136) and _owner_only_gym (0018_staff_and_owner_rules.sql:68) have the same body, word for word: two copies of one owner check that can drift apart.
+- _logo_url_ok (0005_gym_theme.sql:39) and _photo_url_ok (0004_product_photos.sql:55) hard-code the database project address: a move to another project would make every logo and product photo save fail.
+- _mbusy_refresh and _offer_tidy (clean-up of old exercise starts, guesses, offer days) run only when someone opens the screen; no timed job runs them, so a gym nobody opens keeps its old rows.
+
+Could not check:
+- Whether each top-level function in a caller chain (for example gym_page_public, hq_gyms, member_machine_busy) is itself called by an app screen: outside this unit's input files.
+- Retention for phone_code_settings and phone_proofs_used: no file line says.
+- No database catalog read was made; everything is from the migration files.
