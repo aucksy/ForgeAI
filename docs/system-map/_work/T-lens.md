@@ -2,3 +2,9 @@
 - part 1 done: _tools/lens-items.mjs + lens-items.json (106 items; --check re-run gives same ids)
 - part 2 done: applies.json (6 surfaces x 30; 2 no cells: server x lens 9, watch x lens 5)
 - part 3 done: _briefs/lens.md (rules block copied from A4.md by script, identical)
+- part 3 re-cut: lens.md trimmed (unfilled ~930 words). part 4 done: _work/lens-items-make.mjs; ran ONLY: 4 --surface hq -> L4-hq-app (brief, items file, lens-add json). Dry runs of 3, 5 and all bundles ok.
+- part 5a done: _sources/machine/secrets-hits.txt (file:line | pattern only)
+- part 4 final: re-ran `lens-items-make.mjs 4 --surface hq` -> L4-hq-app, brief 1,103 words (limit 1,200). NOT added to state (coordinator runs state.mjs add @_work/lens-add/L4-hq-app.json).
+- part 5 done: _work/machine-pass.md (db-security.json and cve.json: how to make, NOT made; secrets-hits.txt made, 174 hits).
+- part 6 done: merge.mjs NOT edited (another helper has it). It accepts grid rows but has no "every item id has an entry" check. Wrote _tools/lens-cover.mjs <id> instead (exit 1 when an item id has no grid entry). Tested with made-up ZZ-lens-t1 (ok, exit 0) and ZZ-lens-t2 (one item missing, exit 1); merge --dry passed both; test files deleted.
+- ALL PARTS DONE. Open for the coordinator: see the report.

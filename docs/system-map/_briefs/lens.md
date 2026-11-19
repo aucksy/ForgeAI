@@ -36,20 +36,20 @@ THIS HELPER
 
 WORDS
 - Lens: one way to look at the product. Hunt: a search for what is MISSING. Item: one numbered check (L3.1, H5.1).
-- Area: one group of folders of a surface. Machine file: a list a tool made before you started.
+- Area: one group of folders of a surface. Machine file: a list a tool made earlier.
 
 STEP LENS: CHECK EVERY ITEM ON ONE AREA
 ITEMS gives your surface, area and items. Check only that area.
-1. Read the input files first. Start with the rows they flag, then the code no tool can judge.
+1. Read the input files first: the rows they flag, then the code no tool can judge.
 2. For EACH item, look in your area for the fault it names. Read the exact code lines. Then decide:
    - checked: you looked and can show where (path:line, machine row or data count). A fault = also a finding row, its id in finding_ids.
    - does-not-apply: the area holds nothing of that kind. Give "reason".
    - could-not-check: it needs a second gym, a real phone, a live write or a missing input. Give "reason".
    An item that is a rule ("... = finding") is checked once you applied it.
-3. One finding per fault, not per item. Search docs/system-map/findings.jsonl first: if the fault is there, use that id and write no second finding.
+3. One finding per fault, not per item. Search docs/system-map/findings.jsonl first: a fault already there = use that id, no second finding.
 4. Severity: S1 money wrong, personal data against a promise or the law, data lost, locked out | S2 a task cannot be finished, wrong facts shown | S3 confusing | S4 polish.
 5. Write ONE grid row per lens or hunt, holding every item of it.
-Done when every item id in ITEMS is in a grid row. A script fails the work item if one is missing.
+Done when every item id in ITEMS is in a grid row: a script checks.
 
 ITEMS
 {ITEMS}
@@ -63,7 +63,7 @@ OUTPUT FILE
 ROW FORMAT (one JSON object per line; every field required; MADE-UP examples, copy the shape only)
 {"kind":"finding","id":"FN-{WORK ITEM ID}-01","date":"2026-11-20","lens":"3","surface":"server","area":"server/pay","refs":["F-panel-014"],"severity":"S1","title":"A desk login can change another gym's dues","what":"Plain words.","expected":"Plain words.","evidence":["deploy/panel/joinPay.js:118-131"],"proof":"code-read","root_cause_key":"dues-save-no-gym-check","who":"owners","how_often":"every time","fix_line":"Plain words","fix_size":"small","needs_him":false,"verified":"pending","status":"open"}
 {"kind":"grid","surface":"server","area":"server/pay","lens":"3","checked_on":"2026-11-20","items":[{"item":"L3.1","status":"checked","evidence":["deploy/panel/joinPay.js:118-131"],"finding_ids":["FN-{WORK ITEM ID}-01"]},{"item":"L3.9","status":"does-not-apply","reason":"no uploads here","evidence":[],"finding_ids":[]}]}
-Finding: title, what, expected, who, how_often, fix_line in plain words, no file or function names. evidence: real repo path:line (a script checks). root_cause_key: 3 to 6 lower-case words joined by dashes, never over 6. fix_size: the whole word small | medium | large | unknown. proof: driven | code-read | data-count | machine. refs: existing ids or [].
+Finding: title, what, expected, who, how_often, fix_line in plain words, no file or function names. evidence: real repo path:line. root_cause_key: 3 to 6 lower-case words joined by dashes, never over 6. fix_size: the whole word small | medium | large | unknown. proof: driven | code-read | data-count | machine. refs: existing ids or [].
 Grid: surface, area, lens exactly as ITEMS says. Never print a key or password: file:line only.
 
 SIZE: read at most 3,000 code lines; at most 40 findings. Never read a file over 800 lines whole: search, then read 100 lines. At a limit: mark the items left could-not-check ("size limit"), write the checkpoint, report "limit reached, N items left".
