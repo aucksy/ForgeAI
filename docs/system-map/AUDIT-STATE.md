@@ -30,23 +30,22 @@ weekly stop lines (his words, 19 Nov 2026 09:40 IST: "Lets stop if fable reaches
 | E4 | 1 | 4.6 (184k tokens) |
 | 3F | 1 | 4.3 (171k tokens) |
 | A3 | 11 | 5.2 (207k tokens) |
-| A4 | 9 | 4.1 (165k tokens) |
+| A4 | 10 | 4.3 (171k tokens) |
 
 ## Work items
-Counts: 0 todo, 1 in progress, 88 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 0 todo, 0 in progress, 89 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
-| A4-nocaller-3 | A4 | entities and readers: database functions with no caller found, lines 1358-1451 of _sources/readers-raw.txt | in progress | _work/A4-nocaller-3.md |  |
-| A4-d1-2 | A4 | entities and readers: 6 d1 tables, lines 124-218 of _sources/readers-raw.txt | done | _work/A4-d1-2.md | 6 entity rows and 84 reader rows for 6 d1 tables: 37 readers, 47 not-a-reader; seen in passing: an online join payment raises no paid-online alert to the gym; payment request rows are never deleted |
 | A4-rpc-1 | A4 | entities and readers: 91 database-function groups, lines 220-500 of _sources/readers-raw.txt | done | _work/A4-rpc-1.md | entity rows and 64 reader rows for database-function groups (lines 220-500): 28 readers, 36 not-a-reader; repeated entity rows dropped; 36 candidates on 24 more tables left for item A4-rpc-1b (list in the checkpoint); seen in passing: the nightly billing job always reports sent 0 |
 | A4-rpc-2 | A4 | entities and readers: 89 database-function groups, lines 502-778 of _sources/readers-raw.txt | done | _work/A4-rpc-2.md | 12 entity rows and 59 reader rows for database-function groups (lines 502-778): 26 readers, 33 not-a-reader; 41 candidates on 24 more tables left for item A4-rpc-2b (list in the checkpoint) |
 | A4-rpc-3 | A4 | entities and readers: 75 database-function groups, lines 780-1028 of _sources/readers-raw.txt | done | _work/A4-rpc-3.md | 9 entity rows and 57 reader rows for database-function groups (lines 780-1028): 15 readers, 42 not-a-reader; 3 entity rows were repeats of A4-rpc-2 and were dropped; 43 candidates on 27 more tables left for item A4-rpc-3b (list in the checkpoint) |
 | A4-rpc-4 | A4 | entities and readers: 39 database-function groups, lines 1030-1163 of _sources/readers-raw.txt | done | _work/A4-rpc-4.md | entity rows and 46 reader rows for database-function, storage and table groups (lines 1030-1163): 16 readers, 30 not-a-reader; repeated entity rows dropped; 11 candidates left for item A4-rpc-4b (list in the checkpoint); seen in passing: opening the member-messages list also deletes threads older than 180 days |
 | A4-nocaller-1 | A4 | entities and readers: database functions with no caller found, lines 1166-1261 of _sources/readers-raw.txt | done | _work/A4-nocaller-1.md | 96 reader rows for database functions with no caller in app code (lines 1166-1261): 11 notification, 85 not-a-reader, 0 dead; seen in passing: the low AI credit alert fires at 10 while the wallet says 5; a photo of an unpublished gym page may stay readable by its direct address |
 | A4-nocaller-2 | A4 | entities and readers: database functions with no caller found, lines 1262-1357 of _sources/readers-raw.txt | done | _work/A4-nocaller-2.md | 3 entity rows and 96 reader rows for database functions with no caller in app code (lines 1262-1357): 26 readers, 70 not-a-reader, 0 dead; seen in passing: two word-for-word copies of the owner check can drift apart; old busy-machine and offer rows are cleaned only when someone opens the screen |
+| A4-nocaller-3 | A4 | entities and readers: database functions with no caller found, lines 1358-1451 of _sources/readers-raw.txt | done | _work/A4-nocaller-3.md | 2 entity rows and 94 reader rows for database functions with no caller in app code (lines 1358-1451): 5 notification, 89 not-a-reader, 7 that nothing calls; seen in passing: receipt changes are recorded but no screen shows them to the owner; the log of direct database reads is written but no HQ screen shows it; old web page chats of a quiet gym can stay past 90 days |
 | A4-entities-1 | A4 | entity rows only: the tables that A4-rpc-1, A4-rpc-2 and A4-rpc-3 left under entity rows still to write | done | _work/A4-entities-1.md | 45 entity rows (43 tables, 2 storage buckets) for the tables the function-group helpers left out; 17 were already there; seen in passing: door punches are kept for ever; phone numbers left on the public gym page and the online join page are never cleaned up |
-(+ 80 older done items, not shown)
+(+ 81 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
