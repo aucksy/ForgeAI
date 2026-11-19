@@ -1,5 +1,5 @@
-status: RUNNING (19 Nov 09:45 IST: weekly Fable is 91 and its stop line is now 99, so helpers fit again; nothing started in this 5-hour window because it is at 74 and the day rule starts nothing new from 75; next launches after the window reset of 19 Nov 11:10 IST)
-phase/step: A2 and A7 DONE. A3 running: 2 of 11 items done (help, panel update notes). A4 running: pilot done (12 of 313 groups); the other A4 items are not made yet. E1-E4 done; 3F draft done
+status: PAUSED (19 Nov 11:40 IST: weekly Fable is 98 and its stop line is 99, so no helper fits. HE WAS TOLD ONCE for this pause on 19 Nov 11:40 IST: do not tell him again. Set RUNNING by yourself when weekly Fable + 2 is 99 or under: after he resets the Fable limit, or after the weekly reset of 25 Nov 16:30 IST)
+phase/step: A2 and A7 DONE. A3 running: 5 of 11 items done (help, panel update notes, phone update notes, website 1 and 2). A4 running: pilot done (12 of 313 groups); the other A4 items are not made yet. E1-E4 done; 3F draft done
 expected end: unknown until A2 learned costs (rough: 3 weekly periods = by about 9 Dec 2026)
 mode: ANALYSIS ONLY. No app code, tests, workflows, skills or settings change. "Apply" items in 3E/3F = proposals only.
 model: every helper = Fable 5.2 ("fable"), effort "medium". Max 6 helpers at once.
@@ -13,6 +13,8 @@ weekly stop lines (his words, 19 Nov 2026 09:40 IST: "Lets stop if fable reaches
 | 19 Nov 01:00 | 3 | 74 | 40 | 21 | A2 x13, E4, 3F, A7-src | closed at 74-76: the stop line |
 | 19 Nov 06:00 | 0 | 89 | 69 | 36 | A2 x14 (the last ones), A7 x9 | closed at 89: night stop line (89 + 7 > 96 with the usage lag) |
 | 19 Nov 11:10 | 2 | 61 | 88 | 46 | A7 x9 (the last ones), A3 x2, A4 x1 | closed at 61: weekly Fable pause (old stop line; the line is 99 from 19 Nov 09:40 IST) |
+
+| 19 Nov 16:10 | 1 | 18 | 98 | 51 | A3 x3 | closed at 18: weekly Fable pause (98; stop line 99) |
 
 ## Learned cost per helper type (5-hour %)
 | step | helpers so far | average cost |
@@ -55,6 +57,7 @@ Counts: 6 todo, 0 in progress, 74 done, 0 blocked. Full list: work-items.jsonl. 
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
 
 ## Resume notes
+- PACER RUN pacer-1119-1112 (window reset 19 Nov 16:10 IST) CLOSED 19 Nov 11:40 IST at F5 18 (was 1), weekly Fable 98 (was 93), weekly all 51 (was 48). No helper runs. Lock deleted. 3 helpers ran at once, all merged and pushed, 0 failed: A3-whats-new-phone (173k tokens: 4 findings), A3-website-1 (253k tokens: 7 findings, 5 of them S2), A3-website-2 (201k tokens: 7 findings). findings.jsonl has 31 rows now. MEASURED: 3 helpers = 17 F5 points and 5 weekly-Fable points (1.7 each). WEEKLY FABLE PAUSE: he was told once in this run. NEXT, when weekly Fable + 2 for each helper is 99 or under: the 6 A3 items in todo (notes-claude-1, notes-claude-2, inbox-1 to inbox-4; briefs ready in _work/briefs/), then make the other A4 items (sizes in the pacer-1119-0627 note). LESSONS: (26) one helper wrote a root_cause_key of 7 words and merge rejected the row: say "at most 6 words" in the launch prompt. (27) A3-website-2 says feature row F-watch-106 (log a set from the watch) is marked behind switch, but the phone always sends that switch on: fix the row in A4b. (28) A3-whats-new-phone says three rows (Muscles ready today, Quick workout) are marked live but were switched off on 5 Nov: the finding row holds the ids. (29) finish.ps1 holds this run id and msg.txt path: change both at the start of the next run.
 - PACER RUN 19 Nov 10:58 IST: F5 81 at start (weekly Fable 93, weekly all 48), window resets 19 Nov 11:10 IST. Day rule: start nothing new at F5 >= 75, so nothing started. No helper runs. Model router still off, change-360 still off. Lock deleted. NEXT (after 11:10 IST, day rule, max 6 at once): weekly Fable 93 + 2 for each helper must stay at 99 or under, so 3 helpers fit before the Fable pause: the 9 A3 items in todo first (briefs ready in _work/briefs/).
 - PACER RUN 19 Nov 10:43 IST: F5 79 at start (weekly Fable 93, weekly all 48), window resets 19 Nov 11:10 IST. Day rule: start nothing new at F5 >= 75, so nothing started. No helper runs. Model router still off. Lock deleted. NEXT (after 11:10 IST, day rule, max 6 at once): weekly Fable 93 + 2 for each helper must stay at 99 or under, so 3 helpers fit before the Fable pause: the 9 A3 items in todo first (briefs ready in _work/briefs/).
 - PACER RUN 19 Nov 10:28 IST: F5 78 at start (weekly Fable 93, weekly all 48), window resets 19 Nov 11:10 IST. Day rule: start nothing new at F5 >= 75, so nothing started. No helper runs. Model router still off, change-360 still off. Lock deleted. NEXT (after 11:10 IST, day rule, max 6 at once): weekly Fable 93 + 2 for each helper must stay at 99 or under, so 3 helpers fit before the Fable pause: the 9 A3 items in todo first (briefs ready in _work/briefs/).
