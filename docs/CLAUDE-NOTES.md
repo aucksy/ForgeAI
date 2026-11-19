@@ -7,6 +7,12 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-623. Audit: 95% tonight, then Opus only after his next Fable reset - 19 Nov 2026 22:00 IST
+
+- His words, 21:50 IST: "feel free to use it to 95% and then keep going overnight as long as we have the [Fable] limit till 99%". The pacer has a TONIGHT ONLY paragraph until 20 Nov 07:00 IST: start line 91, launch while the total stays at or under 95, helpers save at 97. A new pacer run was started at about 21:50 IST.
+- His words, 22:00 IST: "after we consume Fable's limit this time, and we reset it, we will not be using Fable at all for audit ... audit will continue with only and only Opus 5.5 medium". Fable was used only because he had two Fable resets.
+- How: the pacer has an "OPUS AFTER HIS NEXT FABLE RESET" paragraph. After 20 Nov 05:00 IST, weekly Fable at 30 or lower (he reset it) means every helper runs on Opus at medium, the Fable 99 line ends, and the all-models line (90, 95 on its last day) is the only weekly stop line. The main chat also changes the pacer's own model line to Opus at the first check after his reset. Opus cost per helper is not yet measured.
+
 ## R-622. Audit pacer: no more runs every 15 minutes; one run after each 5-hour reset - 19 Nov 2026 16:00 IST
 
 His words: the pacer was "eating up my limit that is left after 75%". Measured: after the window closed at 11:54 at F5 73, 16 idle pacer runs took F5 to 96 by 15:43 (about 1% each), doing nothing. Now: the pacer task has no repeat schedule. This main chat arms it as a one-time run at each reset + 2 minutes (first: 16:22 IST) and checks it 20 minutes later, then arms the next. The pacer's first step is a limit read; at the stop line it writes nothing and stops. Risk: if the Claude app is closed at a reset, the audit waits until this chat runs again.
