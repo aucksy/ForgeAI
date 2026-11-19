@@ -16,6 +16,7 @@ weekly stop lines (his words, 19 Nov 2026 09:40 IST: "Lets stop if fable reaches
 | 19 Nov 16:10 | 1 | 18 | 98 | 51 | A3 x3 | closed at 18: weekly Fable pause (98; stop line 99) |
 | 19 Nov 16:20 | 1 | 73 | 20 | 12 | A3 x6 (the last ones), A4 x10 | closed at 73 (true about 75): the stop line |
 | 19 Nov 21:20 | 1 | 76 | 45 | 26 | A4 x2 (the last ones), A4b x2, tools x2, lens 4 pilot, A5 x6 | closed at about 76: the stop line |
+| 20 Nov 02:20 | 1 | 70 | 63 | 34 | A5 x10 (panel screens-1 x4, screens-2 x4, forms-1, forms-2) | closed at 70 (true about 73): one more helper + the closing turns would pass 80 |
 
 ## Learned cost per helper type (5-hour %)
 | step | helpers so far | average cost |
