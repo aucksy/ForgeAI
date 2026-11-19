@@ -1,0 +1,8 @@
+F-phone-900 | Exercise demo clips: a short looping film of the exercise, downloaded the first time it is opened and kept on the phone for offline use (2 exercises have an approved clip today) | apps/mobile/src/tracker/clips/clipManifest.ts:38
+F-phone-901 | Ask your own AI: a plain text of my last 4 weeks of training to share to any AI app (no name, phone or body weight in it) | apps/mobile/src/tracker/engine/aiSummary.ts:85
+F-phone-902 | Badge shelf: 16 badges earned once each from workouts, weeks in a row, heavy lifts and records, with how to earn the locked ones | apps/mobile/src/tracker/engine/badges.ts:131
+F-phone-903 | Balance check and focus block: after 4 weeks the Charts page names one muscle that gets few sets and offers one exercise swap for 8 weeks, then asks keep it or go back | apps/mobile/src/tracker/engine/balanceBlock.ts:123
+F-phone-904 | Body weight typo question: asks 'Keep it?' when a weigh-in is far from the last one, and asks before replacing the same day's weigh-in or measurements | apps/mobile/src/tracker/engine/bodyCheck.ts:41
+F-phone-906 | Body map: a body drawing shaded by how many sets each muscle got, with the muscles I skipped | apps/mobile/src/tracker/engine/bodyMap.ts:33
+F-phone-907 | Treadmill and cycle details: log speed, incline or machine level on a cardio machine's set | apps/mobile/src/tracker/engine/cardioMachine.ts:62
+F-phone-908 | Headline numbers that match on every screen: 'N lifts beat their best' and body-weight change with its time span | apps/mobile/src/tracker/engine/headline.ts:21

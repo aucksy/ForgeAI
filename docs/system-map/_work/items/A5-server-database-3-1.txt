@@ -1,0 +1,9 @@
+F-server-501 | Numbered receipt for every MettleUp plan payment (owner opens a receipt; plan name on it, retired AI pack shown as Pro). Migrations 0063 and 0072 headers say NOT APPLIED live | supabase/migrations/0063_gym_checkout.sql:368
+F-server-500 | Gym owner buys or renews a MettleUp plan online (pay link, webhook makes it a plan, upgrade and founding offer). Migration 0063 header says NOT APPLIED live | supabase/migrations/0063_gym_checkout.sql:378
+F-server-502 | Nightly MettleUp billing job: plan-end reminders 7, 3 and 1 days before, and a booked downgrade to Starter starts when Pro days end. Migration 0063 header says NOT APPLIED live | supabase/migrations/0063_gym_checkout.sql:527
+F-server-503 | HQ 'Payments to check': list plan payments that could not become a plan, mark refunded or applied by hand, open pay links for nightly reconciliation, MettleUp payments list. Migration 0064 header says NOT APPLIED live | supabase/migrations/0064_billing_checks.sql:66
+F-server-504 | Trainer profiles and personal-training bookings (week schedule, save a trainer page, book and cancel a PT class) | supabase/migrations/0065_trainer_schedule.sql:93
+F-server-505 | Nightly delete of the phone tests' own 'QA ...' gyms (at most 100 a night, older than 1 day) | supabase/migrations/0066_purge_qa_gyms.sql:18
+F-server-506 | Agree to the new MettleUp terms at sign-in (the list of valid terms versions, now with 2026-11-10) | supabase/migrations/0067_terms_version_2026_11_10.sql:20
+F-server-507 | Find my gym by my number (member proves the number with WhatsApp, sees gyms that have it, links the number to the gym's list) | supabase/migrations/0068_member_find_gym.sql:57
+F-server-508 | Message your gym (member sends a question, feedback or complaint and replies) and Member messages (gym reads, replies, marks done; feedback to owner and desk only, complaints to owner only) | supabase/migrations/0069_member_messages.sql:244

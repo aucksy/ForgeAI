@@ -1,0 +1,8 @@
+F-phone-1005 | Log a live workout (sets with weight, reps, time, distance, set type, RPE) and pick it up again after the app closes | apps/mobile/src/tracker/store/activeWorkoutStore.ts:99
+F-phone-1022 | Muscle tips: a missing-muscle suggestion with 'Not now' (4 weeks), 'I skip this on purpose' and 'Bring back put-away tips' | apps/mobile/src/tracker/store/muscleTipsStore.ts:82
+F-phone-1013 | Plan builder (answer 5 steps, build my plan, leave exercises out; nothing saved until I follow it) | apps/mobile/src/tracker/store/planBuilderStore.ts:53
+F-phone-1023 | Plates and bars: my gym's plates and bar for the plate calculator (one setup for kg, one for lb) | apps/mobile/src/tracker/store/plateSetupStore.ts:24
+F-phone-1025 | Progress > Your lifts > 'Any exercise': pick an exercise to chart (forgotten after a restart) | apps/mobile/src/tracker/store/progressPickStore.ts:16
+F-phone-1009 | Rest timer between sets (default length, bell and buzz at zero, on-time alert ask, ring through Do Not Disturb, open the watch app when a workout starts) | apps/mobile/src/tracker/store/restTimerStore.ts:115
+F-phone-1007 | Targets: suggested weight and reps on each exercise card of a routine workout | apps/mobile/src/tracker/store/targetStore.ts:133
+F-phone-1024 | Workout settings kept on the phone (Track RPE, AI coach note, sounds and rest-over sound, body figure, weekly goal, Previous values, share picture size, background and gym name, Weight jumps, Rep range, machine steps, 'In use' after sets, 'When I'm stuck at a weight', Profile chart choice) | apps/mobile/src/tracker/store/trackerPrefsStore.ts:240

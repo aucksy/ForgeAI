@@ -1,0 +1,10 @@
+F-phone-119 | AI coach chat and its settings page (a coach link only fills the message box) | apps/mobile/src/app/(tabs)/coach.tsx:35
+F-phone-103 | Profile tab: photo and numbers, history chart, Your progress links, workouts feed, the workouts of one week or month, badge shelf | apps/mobile/src/app/(tabs)/profile.tsx:150
+F-phone-137 | Gym tab: join your gym, or the gym's home (membership, check in, leaderboard and a gym mate's shared workouts, gym timings) | apps/mobile/src/app/(tabs)/shop.tsx:2
+F-phone-102 | Workout tab: Up next card (resume, start, done today), start an empty workout, folders and routines, find a plan | apps/mobile/src/app/(tabs)/workout.tsx:99
+F-phone-101 | Old, retired or broken links land on the page that replaced them (Progress, Analytics, Body weight, Home, Library, Measurements, Routines, Your details, Workouts settings; a bad link says 'That link didn't work'; the launch-link handler) | apps/mobile/src/app/+not-found.tsx:9
+F-phone-100 | App start-up and frame: open the database, welcome or error screen instead of the app, gym look, keep a gym link for after setup, 3-tab bar (Workout, Gym, Profile) with the update pop-ups | apps/mobile/src/app/_layout.tsx:98
+F-phone-116 | Check in at the gym by QR (poster link or the app's own scanner) | apps/mobile/src/app/c/[code].tsx:2
+F-phone-106 | Calendar: streak, workout days by month and year, search workouts, log a past workout | apps/mobile/src/app/calendar.tsx:34
+F-phone-104 | Edit your profile (photo, name, bio, link, mobile, goal, experience, age, height, body figure) | apps/mobile/src/app/edit-profile.tsx:58
+F-phone-109 | Exercise list (search, filters) and one exercise's page (summary, chart, records, history, how to) | apps/mobile/src/app/exercises.tsx:18

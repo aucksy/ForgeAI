@@ -1,0 +1,10 @@
+F-panel-1102 | Staff & sign-in: add or remove people, set their job, make a one-time sign-in code, sign a person out | apps/dashboard/src/crm/auth/PeopleScreen.tsx:109
+F-panel-1101 | Sign in, set up a new gym, PIN and Forgot PIN by WhatsApp, verify number with WhatsApp, put a browser-only gym online, agree to terms once, gym code shown after Create my gym | apps/dashboard/src/crm/auth/PinForms.tsx:60
+F-panel-1103 | Gym records store: pull and push to the gym server, browser-only gym, saved copy and outbox for an offline front desk, Refresh button and 'Updated ... ago', polling only while the tab is in view | apps/dashboard/src/crm/auth/api.ts:208
+F-panel-1104 | Branches: All branches totals, branch switcher, add or rename a branch, check in a member from another branch | apps/dashboard/src/crm/branches/AllBranches.tsx:32
+F-panel-1105 | Branding: gym logo and colours for the member app, logo upload, remove logo background, phone and shortcut preview | apps/dashboard/src/crm/brand/BrandingScreen.tsx:41
+F-panel-1136 | Demo gym at /demo: made-up sample gym in page memory, locked away from the real gym and the network | apps/dashboard/src/crm/data/demo.ts:1
+F-panel-1137 | demo copy of server-backed features (staff, trainers, progress, questions, member messages, messages, reminders, offers, shop, measurements, diet, PT bookings, challenges, timings, bring a friend, plan requests) | apps/dashboard/src/crm/demo/demoServer.ts:445
+F-panel-1114 | Online payments: Settings > Payments (UPI QR, gym's own payment company), Pay online inside the money sheets, payments that came in online on Today | apps/dashboard/src/crm/pay/PaymentsScreen.tsx:57
+F-panel-1115 | Visits: attendance register, members at risk with WhatsApp nudge, check-in QR poster, pass visits per pass company | apps/dashboard/src/crm/shop/CheckInQrScreen.tsx:27
+F-panel-1117 | Invite and join online: invite link and QR poster, one link per gym, 'Become a member' page readiness, free trial for new people, Joined online approvals on Today, set-up journey for joining online | apps/dashboard/src/crm/shop/InviteScreen.tsx:33

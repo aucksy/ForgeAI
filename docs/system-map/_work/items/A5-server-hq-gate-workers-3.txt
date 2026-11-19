@@ -1,0 +1,9 @@
+F-server-220 | Create a new gym from HQ (gym name, owner name, phone), optionally from a lead, which then moves to "demo" | deploy/hq/api.js:503
+F-server-221 | Give a gym owner a new sign-in code (fresh sign-in) and sign everyone of a gym out | deploy/hq/api.js:540
+F-server-222 | Add AI credits to a gym (a pack it paid for, or a gift) or take credits back, with a note | deploy/hq/api.js:597
+F-server-223 | Switch one gym's public web page off or back on from HQ | deploy/hq/api.js:613
+F-server-224 | Set one gym's daily AI limits: AI requests a day, and the AI Assistant's requests and spoken minutes a day (0 = off) | deploy/hq/api.js:624
+F-server-217 | Support access to one gym's data: open it for some minutes with a reason (fresh sign-in), read the gym's records, see who looked, end it | deploy/hq/api.js:649
+F-server-227 | Nightly backup of all gym data (kept 7 days), and a public "did last night's backup work" answer for the watch | deploy/hq/backup.js:69
+F-server-225 | Gym owner buys a MettleUp plan online: a payment link is made, and the payment company's call turns the payment into a plan (test mode only) | deploy/hq/billing.js:383
+F-server-226 | Nightly billing jobs: plans that ran out are downgraded, plan-end reminders are listed (the message is a stub that sends nothing), and paid links no webhook brought are caught up | deploy/hq/billing.js:411

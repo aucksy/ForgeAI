@@ -1,0 +1,8 @@
+F-panel-414 | Sell a membership (pick plan, start date, price or discount, joining fee, money received now, notes) | apps/dashboard/src/crm/ui/forms/SellMembershipSheet.tsx:34
+F-panel-416 | Sell or renew a personal training (PT) pack alongside the gym plan | apps/dashboard/src/crm/ui/forms/SellMembershipSheet.tsx:42
+F-panel-415 | Renew a membership (starts the day after the current plan ends; joining fee not charged twice) | apps/dashboard/src/crm/ui/forms/SellMembershipSheet.tsx:78
+F-panel-419 | Front desk limits on money: at most 10% off a plan, joining fee as listed, payment date at most 31 days back and never ahead | apps/dashboard/src/crm/ui/forms/SellMembershipSheet.tsx:123
+F-panel-418 | Ask once before saving a sale with an unusual price or start date | apps/dashboard/src/crm/ui/forms/SellMembershipSheet.tsx:145
+F-panel-422 | No plans yet: the sell sheet tells the owner to add a plan, and staff to ask the owner | apps/dashboard/src/crm/ui/forms/SellMembershipSheet.tsx:178
+F-panel-417 | Take part payment at the sale and leave the rest as dues | apps/dashboard/src/crm/ui/forms/SellMembershipSheet.tsx:327
+F-panel-423 | Cancel (void) a receipt with a written reason; the amount goes back onto the member's dues unless the plan is cancelled | apps/dashboard/src/crm/ui/forms/VoidPaymentSheet.tsx:24

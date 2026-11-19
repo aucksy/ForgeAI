@@ -1,0 +1,9 @@
+F-phone-1108 | Monthly report and year in review (the Reports rows on the Progress tab, the 'Against last month' cards) | apps/mobile/src/tracker/lib/progressTab.ts:19
+F-phone-1122 | Resume workout opens on the exercise in progress | apps/mobile/src/tracker/lib/resumeExercise.ts:15
+F-phone-1123 | RPE: say how hard a set felt (6 to 10); tapping a value ticks the set | apps/mobile/src/tracker/lib/rpe.ts:9
+F-phone-1124 | Typing a set's numbers: every tap on a number box selects the whole number | apps/mobile/src/tracker/lib/selectAllOnTap.ts:28
+F-phone-1118 | Step back when a lift is stuck ('Try 40 kg today?' with Try / Stay, and the line that says why the target is lower) | apps/mobile/src/tracker/lib/stepBack.ts:18
+F-phone-1125 | Supersets (groups shown as A, B, C) | apps/mobile/src/tracker/lib/superset.ts:4
+F-phone-1126 | Profile 'Next' line: today's goal to lift, against the same exercises last time | apps/mobile/src/tracker/lib/todayGoal.ts:124
+F-phone-1113 | Up next card on the Workout tab (Resume or Discard an open workout, Start the next routine, See exercises, weekly goal line, Hevy/Strong import offer) and where the Today link goes | apps/mobile/src/tracker/lib/upNext.ts:80
+F-phone-1127 | Actions on a saved workout: Repeat, Edit, Save as routine, Delete (workout page and the Profile feed's menu) | apps/mobile/src/tracker/lib/useWorkoutActions.ts:47

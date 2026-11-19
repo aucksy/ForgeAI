@@ -1,0 +1,10 @@
+F-phone-613 | Rest timer (starts when a set is ticked; per-exercise length; supersets rest per round) | apps/mobile/src/tracker/services/restRules.ts:1
+F-phone-621 | Import routines from a Hevy share link (read in a hidden in-app browser) | apps/mobile/src/tracker/services/routineLink.ts:1
+F-phone-618 | "Update routine?" after a workout that changed its routine | apps/mobile/src/tracker/services/routineOffer.ts:1
+F-phone-620 | Import routines from Hevy or Strong: rebuilt from the workout export, saved as a From Hevy / From Strong folder, copied again without losing the member's own edits | apps/mobile/src/tracker/services/routineRebuild.ts:1
+F-phone-622 | Share routines as text or a file, and import a routine file | apps/mobile/src/tracker/services/routineShare.ts:18
+F-phone-619 | "Save as routine" on the finish screen (first empty workout, no routines yet) | apps/mobile/src/tracker/services/saveFirstRoutine.ts:12
+F-phone-624 | Move a saved workout to another day or time (edit workout) | apps/mobile/src/tracker/services/sessionTiming.ts:1
+F-phone-625 | Entry bar above the keyboard in a live workout (plus / minus steps, Copy to sets below) | apps/mobile/src/tracker/services/setEntry.ts:1
+F-phone-626 | Tick a set: saves exactly what the row shows, asks about a likely typo, then says a record or "on last time" line | apps/mobile/src/tracker/services/setTick.ts:1
+F-phone-627 | Share as text (a workout, a month or a year, to paste into any AI chat; never gives away body weight) | apps/mobile/src/tracker/services/shareText.ts:1

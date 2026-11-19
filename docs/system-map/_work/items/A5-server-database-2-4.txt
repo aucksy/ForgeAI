@@ -1,0 +1,8 @@
+F-server-426 | Online payment requests: tells the web server which gym member an app member is, so "your gym asked you to pay" reaches the right person | supabase/migrations/0057_member_pay_me.sql:20
+F-server-427 | Entry machines at the gym door, machine side: punches become visits, command queue (file header says NOT APPLIED, gate Worker not deployed) | supabase/migrations/0058_entry_machines.sql:213
+F-server-428 | Entry machines, admin app side: add or remove a machine, give members machine numbers, queue member commands (file header says NOT APPLIED) | supabase/migrations/0059_entry_machines_owner.sql:41
+F-server-429 | Pay MettleUp: owner pays for a plan by UPI or bank transfer and sends the reference number (file header says NOT APPLIED) | supabase/migrations/0060_pay_mettleup.sql:142
+F-server-430 | HQ checks MettleUp payments: count waiting, confirm or reject, and set MettleUp's own payment details (file header says NOT APPLIED) | supabase/migrations/0060_pay_mettleup.sql:217
+F-server-431 | Forgot PIN: a WhatsApp code proves the mobile number, then a new PIN is set (file header says NOT APPLIED) | supabase/migrations/0061_phone_codes.sql:115
+F-server-432 | Create my gym online; newest version adds a WhatsApp-checked number and one free trial per number (that version: file header says NOT APPLIED) | supabase/migrations/0061_phone_codes.sql:140
+F-server-433 | Plan limits checked on the server: Pro extras closed for Starter gyms, and grace, basic and read-only states when a gym stops paying (file header says NOT APPLIED LIVE) | supabase/migrations/0062_plan_features.sql:99

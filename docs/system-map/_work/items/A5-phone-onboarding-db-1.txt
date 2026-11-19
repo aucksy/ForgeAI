@@ -1,0 +1,10 @@
+F-phone-1618 | Food log (log a meal, the day's calories and protein, delete a meal) | apps/mobile/src/db/repos/nutritionRepo.ts:43
+F-phone-1620 | Active workout plan (the plan's days and exercises in rotation order, read for today's workout) | apps/mobile/src/db/repos/planRepo.ts:95
+F-phone-1616 | Personal records (a finished workout is checked for a new best weight and best estimated one-rep max; record list and history per exercise) | apps/mobile/src/db/repos/prRepo.ts:76
+F-phone-1617 | My profile and body weight (change name, goal, experience and targets; log body weight; body weight history) | apps/mobile/src/db/repos/userRepo.ts:79
+F-phone-1615 | Workouts saved on the phone (save a workout and its sets, workout history, one exercise's history, delete a workout, streak, weekly volume, muscle split, consistency) | apps/mobile/src/db/repos/workoutRepo.ts:103
+F-phone-1611 | Start-up error screen when the app cannot open its data (says what failed, Try again, Save my data file, Details) | apps/mobile/src/onboarding/components/BootErrorScreen.tsx:28
+F-phone-1601 | Intro screens shown once before the welcome (beat your last workout, we found your watch, your gym in your pocket; Skip; recommend MettleUp to my gym) | apps/mobile/src/onboarding/components/IntroSlides.tsx:1
+F-phone-1606 | Continue with Google on the welcome (finds the newest backup in the member's Google Drive and offers to restore it; a gym member signs in to the MettleUp server copy instead) | apps/mobile/src/onboarding/components/WelcomeGoogle.tsx:64
+F-phone-1607 | Join my gym from the welcome (scan the gym's poster or type the gym code; the code is checked and kept, the gym's join screen opens after setup) | apps/mobile/src/onboarding/components/WelcomeGymCode.tsx:1
+F-phone-1604 | Continue with your phone number (check with WhatsApp; the app finds your gym and your role, then Join <gym>) | apps/mobile/src/onboarding/components/WelcomePhone.tsx:1

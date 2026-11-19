@@ -1,0 +1,9 @@
+F-panel-631 | Request a member's workout report and download it | apps/dashboard/src/crm/logic/gymReports.ts:44
+F-panel-632 | Banner when the gym's MettleUp plan or trial has ended (grace, basic, read-only) with 'Pay now' | apps/dashboard/src/crm/logic/gymState.ts:56
+F-panel-633 | Gym timings editor (each day, copy Monday, special days) | apps/dashboard/src/crm/logic/gymTimings.ts:43
+F-panel-634 | The gym's workout of the day (pick or build one for today or the next 7 days) | apps/dashboard/src/crm/logic/gymWod.ts:56
+F-panel-635 | Home tiles: today's collection, active members, expiry buckets, expired, birthdays, came in today; each opens its member list | apps/dashboard/src/crm/logic/homeTiles.ts:82
+F-panel-636 | Messages from MettleUp HQ in the notification bell | apps/dashboard/src/crm/logic/hqNews.ts:83
+F-panel-602 | Import members into several branches (branch column or one sheet per branch, pick a branch or skip rows) | apps/dashboard/src/crm/logic/importBranches.ts:35
+F-panel-603 | Aadhaar and PAN numbers are left out of an import (whole column dropped, numbers cut out of notes) | apps/dashboard/src/crm/logic/importIds.ts:66
+F-panel-600 | Import members from an Excel or CSV file (read the sheet, match columns, check dates and mobiles, find duplicates, save in batches, undo, try again) | apps/dashboard/src/crm/logic/importMembers.ts:1134

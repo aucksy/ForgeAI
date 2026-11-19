@@ -1,0 +1,10 @@
+F-panel-211 | Enquiries list: who to call today, call or WhatsApp with a ready message, move the follow-up date, mark not interested (with undo and reason), reopen | apps/dashboard/src/crm/ui/screens/Enquiries.tsx:100
+F-panel-213 | Make an enquiry a member (add member, sell plan, then the new member page) | apps/dashboard/src/crm/ui/screens/Enquiries.tsx:297
+F-panel-214 | Web page question and AI chat shown on an enquiry; chats needing the owner come first; "mark chat done" | apps/dashboard/src/crm/ui/screens/Enquiries.tsx:408
+F-panel-212 | Add an enquiry by hand | apps/dashboard/src/crm/ui/screens/Enquiries.tsx:651
+F-panel-205 | Bring a friend thank-you: give the inviting member free days from the enquiry or right after the friend joins | apps/dashboard/src/crm/ui/screens/Enquiries.tsx:1020
+F-panel-215 | Entry machines: owner adds or removes a finger/face machine by serial; list shows Online/Offline, last call and entries refused today | apps/dashboard/src/crm/ui/screens/EntryMachines.tsx:87
+F-panel-216 | Entry machine number of a member, on the member page (see and change the PIN typed on the machine) | apps/dashboard/src/crm/ui/screens/EntryMachines.tsx:387
+F-panel-217 | Expenses (Kharcha): month by month collected, expenses and profit; add an expense; remove one | apps/dashboard/src/crm/ui/screens/Expenses.tsx:51
+F-panel-218 | Help and feedback: write to MettleUp, get an answer (AI credits or help pages), rate it, see your past questions | apps/dashboard/src/crm/ui/screens/Feedback.tsx:29
+F-panel-219 | MettleUp access card: owner lets MettleUp support look at the gym records and sees every look | apps/dashboard/src/crm/ui/screens/Feedback.tsx:135

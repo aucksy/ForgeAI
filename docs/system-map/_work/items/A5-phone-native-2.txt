@@ -1,0 +1,9 @@
+F-phone-1202 | Phone plays the alert sound itself when the phone maker silenced the app (OPPO / OnePlus): rest over and gym messages | apps/mobile/modules/forge-rest/android/src/main/java/com/forgeai/rest/AlertRing.kt:122
+F-phone-1205 | Workout sounds off: "Rest is over" only vibrates | apps/mobile/modules/forge-rest/android/src/main/java/com/forgeai/rest/ForgeRestModule.kt:111
+F-phone-1210 | Alert check-up: is the phone blocking notifications, exact alarms, alert sound or background use, with links to the phone settings pages that fix it | apps/mobile/modules/forge-rest/android/src/main/java/com/forgeai/rest/ForgeRestModule.kt:141
+F-phone-1204 | Ring through Do Not Disturb for "Rest is over" | apps/mobile/modules/forge-rest/android/src/main/java/com/forgeai/rest/ForgeRestModule.kt:204
+F-phone-1203 | Choose the rest-over sound (bell, beep, whistle) | apps/mobile/modules/forge-rest/android/src/main/java/com/forgeai/rest/ForgeRestModule.kt:263
+F-phone-1211 | Gym's colour on the rest and workout notification cards | apps/mobile/modules/forge-rest/android/src/main/java/com/forgeai/rest/ForgeRestModule.kt:290
+F-phone-1214 | Gym's colour on the watch app | apps/mobile/modules/forge-rest/android/src/main/java/com/forgeai/rest/ForgeRestModule.kt:297
+F-phone-1215 | Watch shows the "free part" words of MettleUp Plus instead of the workout (watch lock) | apps/mobile/modules/forge-rest/android/src/main/java/com/forgeai/rest/ForgeRestModule.kt:304
+F-phone-1216 | Find, install, update and open the watch app from the phone (watch app status and versions) | apps/mobile/modules/forge-rest/android/src/main/java/com/forgeai/rest/ForgeRestModule.kt:311

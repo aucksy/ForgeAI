@@ -1,0 +1,9 @@
+F-phone-400 | Join a gym by invite link or gym code (with the 18+ and terms tick box) | apps/mobile/src/shop/gymApi.ts:85
+F-phone-401 | Gym owner or desk staff unlock their gym in the member app with their mobile number and PIN | apps/mobile/src/shop/gymApi.ts:98
+F-phone-406 | Messages from the gym: the inbox behind the bell (holidays, timings, offers, events) | apps/mobile/src/shop/gymApi.ts:116
+F-phone-404 | Gym shop: see products, fill the bag, place and cancel an order | apps/mobile/src/shop/gymApi.ts:152
+F-phone-411 | Check in by QR: scan the poster at the desk | apps/mobile/src/shop/gymApi.ts:186
+F-phone-409 | My membership: plan, end date, days left, and the "plan ends soon" card on the Workout tab | apps/mobile/src/shop/gymApi.ts:197
+F-phone-412 | Workout plans sent by the gym | apps/mobile/src/shop/gymApi.ts:220
+F-phone-413 | The gym's workout of the day | apps/mobile/src/shop/gymApi.ts:231
+F-phone-415 | Measurements taken by the gym's trainer and diet plans from the gym | apps/mobile/src/shop/gymApi.ts:242

@@ -1,0 +1,8 @@
+F-hq-112 | Owner lost their sign-in: make a new one-time sign-in code after calling the gym | apps/hq/public/app.js:486
+F-hq-113 | Sign a gym out everywhere (every phone and computer at once) | apps/hq/public/app.js:501
+F-hq-114 | AI column matching: see a gym's 30-day AI use and cost, set its reads-a-day limit or put it back to normal | apps/hq/public/app.js:514
+F-hq-119 | Sign-in history of a gym (times only; names, devices and addresses only while support access is open) | apps/hq/public/app.js:569
+F-hq-115 | AI Assistant credits: see a gym's balance, this month's use and cost, add a paid pack or free credits, or take free credits back | apps/hq/public/app.js:590
+F-hq-117 | Gym web page: switch one gym's public web page off or on | apps/hq/public/app.js:623
+F-hq-116 | AI Assistant daily limit: set a gym's AI requests and spoken minutes a day, or put it back to normal | apps/hq/public/app.js:645
+F-hq-118 | Support access: open read-only access to a gym in an emergency (reason, 15 to 60 minutes), look at its records while open, close it | apps/hq/public/app.js:670

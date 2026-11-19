@@ -1,0 +1,7 @@
+F-panel-101 | Entry machine punch becomes a member visit (machine number matched to member, repeat punches dropped, punches and visits saved) | apps/dashboard/src/crm/machines/supabaseStore.ts:90
+F-panel-102 | Entry machine picks up queued jobs from the gym and reports each result | apps/dashboard/src/crm/machines/supabaseStore.ts:119
+F-panel-125 | Payments settings: UPI QR status (uses the gym's UPI ID, no server part) | apps/dashboard/src/crm/pay/PaymentsScreen.tsx:57
+F-panel-126 | Connect or disconnect a payment company (Razorpay, Cashfree; PayU and PhonePe only if already on them) by keys or company sign-in; test mode shown | apps/dashboard/src/crm/pay/PaymentsScreen.tsx:129
+F-panel-127 | Where members can pay online: "Take payments in the member app" and "Take payments when people join online" switches | apps/dashboard/src/crm/pay/PaymentsScreen.tsx:183
+F-panel-124 | Pro pack gate: a Starter gym sees "Part of the Pro pack" in place of Branding, Shop, Challenges, Workout offer, Workout and diet plans, Your numbers | apps/dashboard/src/crm/plan/GymPackProvider.tsx:26
+F-panel-3500 | Owner sees every direct look at the gym's records made with the database owner login, in the admin app's MettleUp access list | unknown

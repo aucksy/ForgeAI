@@ -1,0 +1,9 @@
+F-phone-315 | Send my workout report to the gym when the desk asks (Yes sends it to this gym only, No sends nothing) | apps/mobile/src/shop/GymReportPanel.tsx:31
+F-phone-320 | Message your gym (question, feedback or complaint, the list of what was sent and every reply, red unread count on the row) | apps/mobile/src/shop/GymTalkScreen.tsx:64
+F-phone-321 | Ask a trainer about your workout (one question at a time to your trainer, another trainer or any trainer; take a waiting question back) | apps/mobile/src/shop/GymTalkScreen.tsx:161
+F-phone-323 | Gym messages inbox (the gym's messages newest first from the bell; opening marks them seen) | apps/mobile/src/shop/InboxScreen.tsx:19
+F-phone-310 | Join a gym from its invite link or code, or switch to another gym (gym shown first, tick the Terms box, one Join button; a retry reuses the same join id for 15 minutes) | apps/mobile/src/shop/InviteScreen.tsx:44
+F-phone-328 | Gym leaderboard (last 30 days, Workouts or Kg lifted, top 10 and your own place, the gym's challenge on top) | apps/mobile/src/shop/LeaderboardCard.tsx:36
+F-phone-319 | Busy times by exercise tip ('Leg day is quieter on Tuesday', 'Not now' hides it for 30 days) | apps/mobile/src/shop/MachineTipCard.tsx:21
+F-phone-329 | See a gym mate's profile and shared workouts from the leaderboard (read-only) | apps/mobile/src/shop/MateProfileScreen.tsx:30
+F-phone-313 | My membership (the member's plan from the gym's records, kept on the phone for no-signal use) | apps/mobile/src/shop/MembershipCard.tsx:31

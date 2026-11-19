@@ -1,0 +1,9 @@
+F-panel-3100 | Mobile number boxes keep only the 10-digit number (a pasted or auto-filled +91 number is cut down), on sign-in, Add member, Enquiries and the join pages | apps/dashboard/src/crm/logic/members.ts:237
+F-panel-400 | Change the start date of a plan that has not started yet (the last day moves by the same days) | apps/dashboard/src/crm/ui/forms/ChangeStartSheet.tsx:17
+F-panel-401 | Collect a payment against a member's dues (full or part, cash/UPI/other, reference, date received) | apps/dashboard/src/crm/ui/forms/CollectPaymentSheet.tsx:33
+F-panel-421 | Keep taking payments when the internet goes (the device gets its own receipt series; a retry never makes a second receipt) | apps/dashboard/src/crm/ui/forms/CollectPaymentSheet.tsx:46
+F-panel-420 | Receipt records who took the money | apps/dashboard/src/crm/ui/forms/CollectPaymentSheet.tsx:48
+F-panel-402 | Take the money online from the collect or sell sheet (UPI QR, payment link; the receipt saves itself when paid) | apps/dashboard/src/crm/ui/forms/CollectPaymentSheet.tsx:83
+F-panel-403 | Close open online payment links before the desk takes the same due another way (no double payment) | apps/dashboard/src/crm/ui/forms/CollectPaymentSheet.tsx:129
+F-panel-404 | Freeze a membership or add extra days (medical, travel, other, gift; 1 to 365 days; works on an ended plan and a PT pack) | apps/dashboard/src/crm/ui/forms/ExtendMembershipSheet.tsx:37
+F-panel-405 | Give extra days as a reward (sheet opens on Gift with the reward days, from the workout offer) | apps/dashboard/src/crm/ui/forms/ExtendMembershipSheet.tsx:41

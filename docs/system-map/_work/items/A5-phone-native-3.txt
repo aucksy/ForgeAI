@@ -1,0 +1,9 @@
+F-phone-1217 | Read the watch app's trouble log on the phone (watch diagnostics) | apps/mobile/modules/forge-rest/android/src/main/java/com/forgeai/rest/ForgeRestModule.kt:360
+F-phone-1206 | Tick a set from the notification ("Done" / "Complete set"), also when the app is closed | apps/mobile/modules/forge-rest/android/src/main/java/com/forgeai/rest/RestActionReceiver.kt:47
+F-phone-1209 | Rest timer and workout card come back after a phone restart, an app update, or when "Alarms & reminders" is allowed | apps/mobile/modules/forge-rest/android/src/main/java/com/forgeai/rest/RestBootReceiver.kt:24
+F-phone-1200 | Rest timer card in the notification shade (countdown, +15 s, Skip; works with the app in the background) | apps/mobile/modules/forge-rest/android/src/main/java/com/forgeai/rest/RestCard.kt:519
+F-phone-1207 | "Open MettleUp to save ..." note when a tap on the notification could not be saved yet | apps/mobile/modules/forge-rest/android/src/main/java/com/forgeai/rest/RestCard.kt:831
+F-phone-1201 | "Rest is over" alert (sound, buzz, shows on the lock screen, goes away by itself) | apps/mobile/modules/forge-rest/android/src/main/java/com/forgeai/rest/RestCard.kt:1563
+F-phone-1213 | Watch buttons log on the phone (Complete set, Done, +15 s, -15 s, Skip from the watch app) | apps/mobile/modules/forge-rest/android/src/main/java/com/forgeai/rest/WearActionService.kt:24
+F-phone-1212 | Watch shows the live workout and the rest countdown (phone to watch sync, retried until it arrives) | apps/mobile/modules/forge-rest/android/src/main/java/com/forgeai/rest/WearSync.kt:134
+F-phone-1208 | Live workout card in notifications (current exercise, next set, picture, workout time, "Complete set") | apps/mobile/modules/forge-rest/android/src/main/java/com/forgeai/rest/WorkoutCard.kt:180

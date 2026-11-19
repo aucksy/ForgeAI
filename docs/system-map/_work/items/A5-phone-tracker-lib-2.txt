@@ -1,0 +1,9 @@
+F-phone-1111 | First routine guide for a new member (name the folder, name the routine, pick exercises, save; Skip always there) | apps/mobile/src/tracker/lib/firstRoutine.ts:18
+F-phone-1114 | The gym's plans arrive as folders on the phone (saved, updated, relabelled when the plan or the gym is gone; 'Workouts of the day' folder kept apart) | apps/mobile/src/tracker/lib/gymPlanSteps.ts:34
+F-phone-1107 | Tap a chart point to open the workouts behind it (history for that day, week or month) | apps/mobile/src/tracker/lib/historyRange.ts:17
+F-phone-1115 | Machine 'In use' screen while resting ('Resting, back in', 'I'm back') | apps/mobile/src/tracker/lib/inUse.ts:2
+F-phone-1116 | Exercise card target box in a workout (Previous, today's target, what is done, why a target is unusual, first-time starting weight from the routine) | apps/mobile/src/tracker/lib/kgTarget.ts:32
+F-phone-1119 | Measures page and add form (body weight plus ten body measurements) | apps/mobile/src/tracker/lib/measuresView.ts:15
+F-phone-1120 | Tab bar: the minimised workout bar on every tab but Workout, and the sliding highlight between tabs | apps/mobile/src/tracker/lib/miniBar.ts:8
+F-phone-1121 | Progress photos grid and comparing two photos ('6 weeks apart') | apps/mobile/src/tracker/lib/photoGrid.ts:17
+F-phone-1117 | 'Previous' line above the set table and the grey hint on the next set | apps/mobile/src/tracker/lib/previousSource.ts:38

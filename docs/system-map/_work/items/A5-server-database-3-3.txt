@@ -1,0 +1,9 @@
+F-server-525 | Report this page (visitor reports a gym web page) and HQ takes a gym page down | supabase/migrations/0080_gym_page.sql:385
+F-server-521 | Pay online when joining: the panel Worker asks which gym a join code is, so a join payment is tied to the right gym and request | supabase/migrations/0081_join_pay.sql:123
+F-server-527 | Gym web page photos (owner gets an upload slot; storage rules for who may add and read a photo) | supabase/migrations/0082_gym_page_photos.sql:73
+F-server-513 | Owner's switch 'Members can get AI answers' and a monthly credit limit for members' AI answers, with one alert when the limit is reached | supabase/migrations/0083_ai_members.sql:227
+F-server-528 | Training progress: the member's phone shares up to 12 months of workouts with the gym's trainers | supabase/migrations/0084_progress_year.sql:61
+F-server-529 | Bring a friend: a friend's form whose number the gym already knows now adds a note or an alert for the gym | supabase/migrations/0085_friend_known_number.sql:26
+F-server-520 | Free trial when joining online (owner sets Off, 1, 3 or 7 days; one trial per number per gym; the gym gets a trial alert) | supabase/migrations/0088_join_trial.sql:46
+F-server-519 | Join online: a new person fills their own form on the gym's link, proves the number, picks a plan and start day, and it lands in the gym's Enquiries as 'Joined online' | supabase/migrations/0089_trial_alert_words.sql:20
+F-server-523 | The gym's own free web page (owner edits and publishes words, photos, address and plans; visitors read the public page) | supabase/migrations/0090_gym_page_switch.sql:44

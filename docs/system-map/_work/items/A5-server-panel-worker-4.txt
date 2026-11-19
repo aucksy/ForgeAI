@@ -1,0 +1,9 @@
+F-server-124 | Connect the gym's own payment company: the owner types the company's keys (sealed before they are stored), sees the connection state, changes keys or disconnects; a broken connection is turned off | deploy/panel/worker.js:154
+F-server-136 | Pay online for a MettleUp plan: the admin app's "Pay online" request is passed to the HQ server, which makes the payment (never a price from the browser) | deploy/panel/worker.js:156
+F-server-137 | Public key for the admin app's alerts when the app is closed (browser push), passed on from the HQ server | deploy/panel/worker.js:158
+F-server-133 | Sign-in code by WhatsApp: a 6-digit code sent to a mobile number for Forgot PIN and for the new-gym number check (login_code template, daily cap, code hashes kept 2 days); /status tells the screens whether to show the WhatsApp way | deploy/panel/worker.js:160
+F-server-135 | WhatsApp delivery news: Meta tells us whether each WhatsApp message was sent, delivered or failed and why (written to the logs only) | deploy/panel/worker.js:162
+F-server-139 | Feature switches for the admin app (/api/switches): says whether gym web pages, pay online on the join page, AI credit charging and the page AI helper are on, so the admin app shows only what works | deploy/panel/worker.js:166
+F-server-140 | Free demo request form on the gym-owner landing page: the gym's contact details are kept for MettleUp to call back, with where the request came from (5 a day per network address, 300 a day in all) | deploy/panel/worker.js:167
+F-server-116 | Daily clean-up at 03:00 India time: deletes crash reports older than 90 days, spoken-feedback counts older than 7 days, and WhatsApp code rows, waiting "Verify with WhatsApp" taps and friend-page address counts older than 2 days | deploy/panel/worker.js:177
+F-server-131 | Every 10 minutes: open payment links are checked with each gym's payment company and marked paid when the money has arrived | deploy/panel/worker.js:179

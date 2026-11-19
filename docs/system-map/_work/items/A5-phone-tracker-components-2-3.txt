@@ -1,0 +1,10 @@
+F-phone-814 | Workout history list (one card per saved workout) | apps/mobile/src/tracker/components/WorkoutCard.tsx:23
+F-phone-813 | Saved workout page (stats, note, muscle split, every set, records) | apps/mobile/src/tracker/components/WorkoutDetail.tsx:32
+F-phone-822 | Minimised workout bar above the tabs (elapsed time or rest countdown, tap to return) | apps/mobile/src/tracker/components/WorkoutMiniBar.tsx:29
+F-phone-823 | Workout photos (up to 4, camera or gallery, full screen with pinch to zoom, remove) | apps/mobile/src/tracker/components/WorkoutPhotos.tsx:48
+F-phone-824 | Settings: weekly workout goal (off, or 1 to 7 a week) | apps/mobile/src/tracker/components/WorkoutPrefsCard.tsx:133
+F-phone-826 | Settings: open MettleUp on my watch when a workout starts | apps/mobile/src/tracker/components/WorkoutPrefsCard.tsx:159
+F-phone-825 | Settings: rest timer and sounds (default rest, workout sounds, rest-over sound, ring through Do Not Disturb on Android, In use screen after each set) | apps/mobile/src/tracker/components/WorkoutPrefsCard.tsx:175
+F-phone-827 | Settings: how the app picks your next weight (weight step, reps to aim for, easy weeks) | apps/mobile/src/tracker/components/WorkoutPrefsCard.tsx:300
+F-phone-828 | Settings: last time's numbers (where Previous, the Target and notes come from) | apps/mobile/src/tracker/components/WorkoutPrefsCard.tsx:408
+F-phone-829 | Settings: rate how hard each set felt, and AI coach notes | apps/mobile/src/tracker/components/WorkoutPrefsCard.tsx:447

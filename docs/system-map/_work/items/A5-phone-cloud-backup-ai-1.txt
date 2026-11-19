@@ -1,0 +1,7 @@
+F-phone-1502 | Coach without a key: understands typed workouts and body weight in English, Hindi and Hinglish, fully offline | apps/mobile/src/ai/localCoach.ts:839
+F-phone-1500 | Chat with the coach: send a message, get a reply and cards (Coach tab; switched off in code, FEATURES.coach is false) | apps/mobile/src/ai/orchestrator.ts:111
+F-phone-1505 | Send the coach a meal photo to estimate calories and log it (needs a Claude or OpenAI key; offline coach asks you to describe it) | apps/mobile/src/ai/orchestrator.ts:113
+F-phone-1501 | Use your own AI key for the coach (Claude, OpenAI or Groq) and pick the model in Settings | apps/mobile/src/ai/providers/anthropic.ts:79
+F-phone-1503 | Coach reads and changes your data by chat: log a workout, meal or body weight, show today's workout, records, stats and food totals, make or edit routines, change targets, delete a meal or workout (20 tools) | apps/mobile/src/ai/tools.ts:441
+F-phone-1511 | Restore from a backup file: open it, see what is inside, then replace everything on this phone or add only what is missing | apps/mobile/src/backup/backupOpen.ts:36
+F-phone-1512 | Undo a restore: put the phone back as it was before the backup was put in | apps/mobile/src/backup/backupRestore.ts:551

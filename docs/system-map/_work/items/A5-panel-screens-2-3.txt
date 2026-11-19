@@ -1,0 +1,10 @@
+F-panel-322 | Settings -> Sign-in & data tab: put the gym online / sign in, download a backup, import members, clear this device, load the demo gym, start fresh, start over, disconnect the shop (each asks first) | apps/dashboard/src/crm/ui/screens/Settings.tsx:362
+F-panel-324 | Set up your gym page: the first steps of a new gym with progress | apps/dashboard/src/crm/ui/screens/SetupGym.tsx:10
+F-panel-325 | Today home: number tiles that open filtered lists, who to renew, who owes, who stopped coming, who came in, needs-you and alert cards, quick actions, trial / lapse / renew line, Monday week summary | apps/dashboard/src/crm/ui/screens/Today.tsx:72
+F-panel-326 | Today -> Your numbers section | apps/dashboard/src/crm/ui/screens/Today.tsx:429
+F-panel-327 | Today nudges: 'N birthdays today' / plans ending open the ready message; 'Give rewards' opens the workout offer | apps/dashboard/src/crm/ui/screens/Today.tsx:540
+F-panel-328 | Today person rows: 'Message' link opens a WhatsApp chat with that member (wa.me link built here, no ready text) | apps/dashboard/src/crm/ui/screens/Today.tsx:625
+F-panel-330 | Trainers: list of trainers, the week's personal-training calendar and time grid, one trainer's page with hours, PT members and bookings | apps/dashboard/src/crm/ui/screens/Trainers.tsx:174
+F-panel-331 | Book a personal-training session: pick trainer, member, day, time and length from a free slot | apps/dashboard/src/crm/ui/screens/Trainers.tsx:529
+F-panel-332 | See a personal-training booking, cancel it, open the member | apps/dashboard/src/crm/ui/screens/Trainers.tsx:718
+F-panel-333 | Edit a trainer's profile: what they teach, working days and shifts, photo | apps/dashboard/src/crm/ui/screens/Trainers.tsx:953

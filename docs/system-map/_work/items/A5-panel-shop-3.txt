@@ -1,0 +1,9 @@
+F-panel-822 | Workout reports the gym asks a member for: request, list, open the file | apps/dashboard/src/crm/shop/gymReportApi.ts:35
+F-panel-812 | Join online: the gym one link / "Become a member" link, its WhatsApp message and poster | apps/dashboard/src/crm/shop/invite.ts:79
+F-panel-823 | Busy machines: switch and machine list | apps/dashboard/src/crm/shop/machinesApi.ts:33
+F-panel-824 | Member messages: waiting count, read, reply, mark as done | apps/dashboard/src/crm/shop/memberMessagesApi.ts:47
+F-panel-825 | Member photo taken at the desk: show, save, remove | apps/dashboard/src/crm/shop/memberPhotoApi.ts:89
+F-panel-826 | Pay MettleUp: see what the gym owes and report a payment | apps/dashboard/src/crm/shop/payMettleUpApi.ts:14
+F-panel-827 | Numbers to confirm: approve or refuse a member phone link | apps/dashboard/src/crm/shop/phoneLinkApi.ts:36
+F-panel-802 | Product photo upload (shrunk in the browser; the same uploader also serves gym page photos) | apps/dashboard/src/crm/shop/photoUpload.ts:96
+F-panel-828 | Pause / renew requests from the member app: list and decide | apps/dashboard/src/crm/shop/planRequestApi.ts:39

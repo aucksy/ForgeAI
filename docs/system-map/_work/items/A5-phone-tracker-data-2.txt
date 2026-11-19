@@ -1,0 +1,9 @@
+F-phone-1001 | Log body measurements (one value per measurement per day) | apps/mobile/src/tracker/db/measurementRepo.ts:19
+F-phone-1020 | Profile photo, short bio and one link | apps/mobile/src/tracker/db/profileExtras.ts:65
+F-phone-1019 | Recent exercises band at the top of the Add exercise picker, and when each exercise was last done | apps/mobile/src/tracker/db/recentExercises.ts:8
+F-phone-1010 | Start records fresh for one exercise from a chosen day | apps/mobile/src/tracker/db/recordStart.ts:40
+F-phone-1012 | Routine editor (create, rename, copy, delete and reorder routines; add, swap, remove and reorder their exercises; save a workout as a routine or update the routine from a workout) | apps/mobile/src/tracker/db/routineRepo.ts:98
+F-phone-1018 | Browse workout history (recent workouts and workouts between two days, with their exercises, sets and volume) | apps/mobile/src/tracker/db/sessionDetails.ts:130
+F-phone-1015 | Edit an already-logged workout (sets, date, time; records worked out again) | apps/mobile/src/tracker/db/sessionEdit.ts:75
+F-phone-1016 | Rename a workout, and show each workout's name on the exercise page's History tab | apps/mobile/src/tracker/db/workoutNames.ts:38
+F-phone-1017 | Photos on a workout (up to 4, kept on this phone only, not in the Drive backup) | apps/mobile/src/tracker/db/workoutPhotoRepo.ts:102

@@ -1,0 +1,10 @@
+F-panel-700 | Import members from another software's sheet (plans become real memberships, several sheets, undo this import) | apps/dashboard/src/crm/logic/importTerms.ts:47
+F-panel-702 | Member ID card (print, picture, WhatsApp) | apps/dashboard/src/crm/logic/memberCard.ts:25
+F-panel-703 | Member messages: read and reply to what members send from 'Message your gym' | apps/dashboard/src/crm/logic/memberMessages.ts:99
+F-panel-704 | Member photo taken at the desk | apps/dashboard/src/crm/logic/memberPhoto.ts:33
+F-panel-705 | Gym and trainers see a member's training progress (Progress card, strength trend, My members list, cheer on WhatsApp) | apps/dashboard/src/crm/logic/memberProgress.ts:50
+F-panel-706 | Add and edit members (mobile number rules, duplicates) | apps/dashboard/src/crm/logic/members.ts:51
+F-panel-707 | Sell, renew and extend a membership (term dates, start-day and joining-fee defaults) | apps/dashboard/src/crm/logic/membership.ts:37
+F-panel-726 | Messages & offers: ready messages for all members (gym news, offers, events) sent in the app and on WhatsApp down a list, one member at a time | apps/dashboard/src/crm/logic/messageTemplates.ts:138
+F-panel-710 | Side menu and More page in five groups that fold | apps/dashboard/src/crm/logic/navGroups.ts:33
+F-panel-711 | 'Needs you' on Today (count, badge, list, sound and browser notice for waiting requests) | apps/dashboard/src/crm/logic/needsYou.ts:51

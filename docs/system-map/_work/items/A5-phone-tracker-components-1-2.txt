@@ -1,0 +1,9 @@
+F-phone-711 | See how to do an exercise: small picture, moving demo, start and end pictures, steps, drawing credit | apps/mobile/src/tracker/components/ExerciseDemoSheet.tsx:92
+F-phone-716 | Start screen: each exercise's target and the kg or reps to beat | apps/mobile/src/tracker/components/ExerciseKgRow.tsx:20
+F-phone-717 | Log an exercise in a live workout: sets, add set, note, rest time, warm-up sets, counting, move, superset, swap, remove | apps/mobile/src/tracker/components/ExerciseLogCard.tsx:119
+F-phone-718 | Suggested weight for the next set (free members see a locked line that opens MettleUp Plus) | apps/mobile/src/tracker/components/ExerciseLogCard.tsx:158
+F-phone-707 | Exercise progress charts: pick what to show and the range, tap a point to open that workout | apps/mobile/src/tracker/components/ExerciseMetricChart.tsx:80
+F-phone-723 | Find an exercise: search, muscle and gear filters, recent, hidden, create your own | apps/mobile/src/tracker/components/ExercisePickerList.tsx:44
+F-phone-708 | Exercise records: personal records and set records, tap one to open its workout | apps/mobile/src/tracker/components/ExercisePrRows.tsx:86
+F-phone-724 | Finish a workout: what will be saved, unticked rows, end time, name and note | apps/mobile/src/tracker/components/FinishSheet.tsx:121
+F-phone-725 | Make your first routine card (guide, or Skip for good) | apps/mobile/src/tracker/components/FirstRoutineCard.tsx:20

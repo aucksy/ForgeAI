@@ -1,0 +1,9 @@
+F-phone-1720 | Suggested weight and reps for today's workout (progressive overload targets from past sets) | apps/mobile/src/engine/overload.ts:44
+F-phone-1727 | Opening the app from a link, an app-icon shortcut or a tapped notification lands on the right page: old page addresses redirect, a wrong link says 'That link didn't work' | apps/mobile/src/lib/alertRoute.ts:13
+F-phone-1726 | The three tabs (Workout, Gym, Profile), the back arrow that always goes somewhere, and Android Back inside a screen with steps | apps/mobile/src/lib/appTabs.ts:27
+F-phone-1706 | 'A new version is ready' for copies installed from the GitHub APK (asks GitHub every 6 hours; never shown on a Google Play copy), with the new version's what-changed lines | apps/mobile/src/lib/appUpdate.ts:87
+F-phone-1710 | 'Backups now go to your MettleUp account' card, shown once on the Workout tab to a phone that had Google Drive linked | apps/mobile/src/lib/backupMoved.ts:36
+F-phone-1719 | Crash reports: the app sends a crash (message, short stack, app version; no personal data) to MettleUp by itself | apps/mobile/src/lib/crashReport.ts:83
+F-phone-1729 | Credits page: the third-party drawings, body map and fonts the app uses | apps/mobile/src/lib/credits.ts:1
+F-phone-1721 | Estimated 1-rep max and its record rule (reps above 12 count as 12; a lighter set is never a record) | apps/mobile/src/lib/e1rm.ts:25
+F-phone-1713 | Send feedback or ask for help (Settings > Help and feedback): the message goes to MettleUp's feedback box with the app version, phone model, gym code, a random install id and the phone's push address for the reply | apps/mobile/src/lib/feedback.ts:110

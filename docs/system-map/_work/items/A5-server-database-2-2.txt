@@ -1,0 +1,9 @@
+F-server-409 | Gym mate profile opened from the leaderboard (bio and recent workout summaries) | supabase/migrations/0040_gym_mate_profiles.sql:136
+F-server-410 | Receipt printed at a desk with no internet is accepted even when the member has overpaid | supabase/migrations/0041_offline_desk_receipts.sql:24
+F-server-411 | Send a message to members: at most 10 a day, and from the 3rd of the day no phone pop-up | supabase/migrations/0042_message_calm.sql:76
+F-server-412 | Member photo taken at the desk (add, change, remove) | supabase/migrations/0043_member_photos.sql:80
+F-server-413 | Member asks to pause or renew their plan from the app; the desk approves or declines | supabase/migrations/0044_plan_requests.sql:165
+F-server-414 | Gym asks for a member's workout report; the member says yes or no and the desk downloads it | supabase/migrations/0045_report_requests.sql:310
+F-server-415 | Apps read which pack the gym is on (starter, pro, ai); file header says NOT APPLIED LIVE | supabase/migrations/0046_gym_pack.sql:24
+F-server-416 | Check in by the gym's QR; a typed check-in number waits for the desk to approve or decline | supabase/migrations/0048_security_fixes.sql:61
+F-server-417 | Busy machines by day and hour (owner enters machine counts; members see proven busy times) | supabase/migrations/0049_busy_by_exercise.sql:319

@@ -1,0 +1,9 @@
+F-web-124 | AI Assistant for the gym owner: ask in words or by voice, get answers from reports, a message rewritten, or the right admin page opened (the catalogue of pages it may open) | deploy/panel/worker.js:149
+F-web-125 | AI writes a workout plan for a member from the gym's own exercise list (3 credits on Save) | deploy/panel/worker.js:152
+F-web-126 | Online payments: the owner connects, changes or disconnects the gym's own payment company (keys sealed), and the desk sees whether payments are on | deploy/panel/worker.js:154
+F-web-132 | The owner buys a MettleUp plan online (the request is passed to HQ) | deploy/panel/worker.js:156
+F-web-133 | Browser alerts for the admin app: the public key a browser subscribes with | deploy/panel/worker.js:158
+F-web-134 | Sign-in code sent by WhatsApp (forgot PIN, set up a new gym): send the 6-digit code and check it; WhatsApp news about each message (delivered, failed and why) is logged | deploy/panel/worker.js:160
+F-web-116 | Tell the admin app which built features are switched on (/api/switches) and where invite and join links point (/api/links) | deploy/panel/worker.js:164
+F-web-103 | Ask for a free demo: the gym-owner site's form, kept for MettleUp to call back | deploy/panel/worker.js:167
+F-web-140 | Daily clean-up at 03:00 India: old crash reports, voice counts, sign-in codes and join-form counts are deleted | deploy/panel/wrangler.jsonc:59

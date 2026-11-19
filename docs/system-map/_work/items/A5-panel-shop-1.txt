@@ -1,0 +1,10 @@
+F-panel-807 | App members list: who joined the gym from the app | apps/dashboard/src/crm/shop/AppMembers.tsx:1
+F-panel-810 | Automatic reminders: one switch per reminder (plan ends, birthday, welcome); also feeds the automatic birthday wish on Today and the AI Assistant | apps/dashboard/src/crm/shop/AutoRemindersSection.tsx:1
+F-panel-814 | Check-in QR poster: print or download "Scan to check in" | apps/dashboard/src/crm/shop/CheckInQrScreen.tsx:27
+F-panel-811 | Invite members: gym join code, invite link, send on WhatsApp, copy, front-desk QR poster | apps/dashboard/src/crm/shop/InviteScreen.tsx:33
+F-panel-813 | Free trial for new people joining online (Off, 1, 3 or 7 days) | apps/dashboard/src/crm/shop/JoinTrialCard.tsx:1
+F-panel-808 | Messages & offers: send a ready or own message to app members, sent list, withdraw | apps/dashboard/src/crm/shop/MessagesSection.tsx:1
+F-panel-809 | Workout offer: train N times, get extra days; give or take back the reward | apps/dashboard/src/crm/shop/OffersSection.tsx:1
+F-panel-801 | Shop products: add, edit, price, choices, stock, hide, delete | apps/dashboard/src/crm/shop/ProductSheet.tsx:44
+F-panel-800 | See member app shop orders, mark ready or collected, cancel an order | apps/dashboard/src/crm/shop/ShopScreen.tsx:65
+F-panel-803 | Shop card on Today: orders waiting and shop money today | apps/dashboard/src/crm/shop/ShopTodayCard.tsx:1

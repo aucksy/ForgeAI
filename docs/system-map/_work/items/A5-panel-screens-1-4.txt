@@ -1,0 +1,10 @@
+F-panel-232 | Sell or renew a membership and collect a payment from the member page | apps/dashboard/src/crm/ui/screens/MemberDetail.tsx:417
+F-panel-231 | Member photo: take, change, remove | apps/dashboard/src/crm/ui/screens/MemberDetail.tsx:458
+F-panel-230 | WhatsApp a member with the message already typed (fees, plan ending, birthday) | apps/dashboard/src/crm/ui/screens/MemberDetail.tsx:503
+F-panel-235 | Personal training pack: mark a session, undo the last one, renew PT | apps/dashboard/src/crm/ui/screens/MemberDetail.tsx:545
+F-panel-237 | Check a workout code (workout offer reward claim) from the member page | apps/dashboard/src/crm/ui/screens/MemberDetail.tsx:576
+F-panel-238 | Send or build a workout plan from the member page | apps/dashboard/src/crm/ui/screens/MemberDetail.tsx:643
+F-panel-233 | Cancel a membership (with a reason) and undo the cancel | apps/dashboard/src/crm/ui/screens/MemberDetail.tsx:909
+F-panel-234 | Freeze / extra days on a plan, and move the start date of a plan not started yet | apps/dashboard/src/crm/ui/screens/MemberDetail.tsx:1377
+F-panel-236 | Cancel (void) a receipt from the member page | apps/dashboard/src/crm/ui/screens/MemberDetail.tsx:1434
+F-panel-239 | Body measurements: measure a member at the desk (weight, body fat, tape), fix or delete an entry, history with change | apps/dashboard/src/crm/ui/screens/MemberMeasurements.tsx:44

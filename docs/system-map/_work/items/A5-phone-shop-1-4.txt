@@ -1,0 +1,9 @@
+F-phone-332 | Find my gym with my number (verify the mobile number by sending one WhatsApp message, the app finds the gyms that list it, then join and link the plan) | apps/mobile/src/shop/ShopScreen.tsx:99
+F-phone-302 | Browse the gym's shop and open a product (category chips, pictures, price, stock, options, add to bag) | apps/mobile/src/shop/ShopScreen.tsx:165
+F-phone-334 | 'Do you run a gym on MettleUp?' sign-in for the gym's owner or desk person with the admin app's mobile number and PIN (opens Join for their own gym) | apps/mobile/src/shop/StaffDoorCard.tsx:23
+F-phone-322 | Trainer reply alert (red count on the Gym tab and the row until the reply is opened, and a pop-up from the 15-minute check when the push was missed) | apps/mobile/src/shop/askReplySync.ts:99
+F-phone-335 | Automatic reminders from the gym (phone notifications at 9:30 am, at most one a day: plan ending, welcome, days added, offer almost done, 'we haven't seen you') | apps/mobile/src/shop/autoReminders.ts:280
+F-phone-307 | demo copy of the gym shop (sample products drawn in the app, pretend 'demo order' in the bag); no way in today: every shop page sends a phone with no gym back to the Gym tab (GymOnly) | apps/mobile/src/shop/catalog.ts:224
+F-phone-333 | Tell my gym about MettleUp (when no gym lists the number: a ready message with the link in the phone's share menu, and an optional gym name and city sent as a lead) | apps/mobile/src/shop/findGym.ts:239
+F-phone-312 | Leave the gym (the phone forgets the gym, its kept plan, offer, reminders, diet plans and hours, then tells the gym) | apps/mobile/src/shop/gymActions.ts:525
+F-phone-324 | Gym message sound on phones that silence it (OPPO / OnePlus: plays the phone's notification sound once; Android only) | apps/mobile/src/shop/gymAlertRing.ts:62

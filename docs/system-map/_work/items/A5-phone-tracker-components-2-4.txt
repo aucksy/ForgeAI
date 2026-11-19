@@ -1,0 +1,9 @@
+F-phone-830 | Settings: muscle tips on Up next, and bring back muscles you asked to skip | apps/mobile/src/tracker/components/WorkoutPrefsCard.tsx:476
+F-phone-831 | Keep an open workout alive across the app (restore on launch, lock-screen card, Done on the rest card) and open the right page from a tapped notification or a file shared to the app | apps/mobile/src/tracker/components/WorkoutPresenceHost.tsx:26
+F-phone-832 | Routines and folders on the Workout tab (start empty workout, new routine, find a plan, new folder, rename, move, copy, reorder, delete, stop following) | apps/mobile/src/tracker/components/WorkoutRoutines.tsx:218
+F-phone-833 | Easy weeks for a plan (every 6 weeks, take one now, train normally this week) | apps/mobile/src/tracker/components/WorkoutRoutines.tsx:658
+F-phone-834 | New or edit your own exercise: Details rows (pick one choice per row, pick muscles) | apps/mobile/src/tracker/components/exerciseForm/DetailRows.tsx:115
+F-phone-835 | Add your own photo or video to an exercise (gallery, photo, video, change, remove) | apps/mobile/src/tracker/components/exerciseForm/MediaPicker.tsx:161
+F-phone-836 | Badges row on the Profile (earned count, newest marks, opens the shelf) | apps/mobile/src/tracker/components/profile/BadgeShelf.tsx:42
+F-phone-837 | Profile workouts feed (card per workout with photo or letter, stats, photos; menu: save as routine, repeat, edit, share, delete) | apps/mobile/src/tracker/components/profile/FeedCard.tsx:59
+F-phone-838 | Profile history chart (duration, kg lifted, reps over time; tap a point to see those workouts) and the Today goal card | apps/mobile/src/tracker/components/profile/HistoryChartCard.tsx:61

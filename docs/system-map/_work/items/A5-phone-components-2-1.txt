@@ -1,0 +1,10 @@
+F-phone-1400 | Send help or feedback from the floating button (and the workout top-bar button) | apps/mobile/src/components/feedback/FeedbackButton.tsx:50
+F-phone-1401 | Speak your feedback: record, turn voice into text, check it, send | apps/mobile/src/components/feedback/FeedbackComposer.tsx:46
+F-phone-1402 | See your questions and the MettleUp team's replies (unread count on the button, 'New' tags) | apps/mobile/src/components/feedback/HelpQuestions.tsx:40
+F-phone-1403 | Quick automatic answer to a help question, with 'Did this solve it? Yes / No' | apps/mobile/src/components/feedback/HelpReply.tsx:15
+F-phone-1404 | Add my watch's screen log to a feedback message | apps/mobile/src/components/feedback/WatchLogSwitch.tsx:29
+F-phone-1406 | Workout tab shows one notice card at a time | apps/mobile/src/components/noticeSlot.ts:19
+F-phone-1407 | 'Couldn't save' banner (storage full, finish failed, save changes failed) | apps/mobile/src/components/saveProblemStore.ts:41
+F-phone-1408 | MettleUp account: sign in with Google, keep workouts safe, bring the copy back, sign out, delete account | apps/mobile/src/components/settings/AccountCard.tsx:28
+F-phone-1409 | AI coach: enter your own AI key (masked, kept in secure storage) | apps/mobile/src/components/settings/ApiKeyField.tsx:25
+F-phone-1412 | Android's own phone backup card with 'Include photos in my backup' (on a page no Settings row links to) | apps/mobile/src/components/settings/BackupCard.tsx:86

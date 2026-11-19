@@ -1,0 +1,10 @@
+F-phone-117 | Find my gym (prove your number by WhatsApp, join the gym that lists you, or tell your gym) | apps/mobile/src/app/find-gym.tsx:64
+F-phone-114 | Bring in past workouts and routines from Hevy or Strong (export file, or a Hevy share link) | apps/mobile/src/app/import/index.tsx:133
+F-phone-115 | Join a gym from its invite link (kept through setup if the app is new) | apps/mobile/src/app/j/[code].tsx:2
+F-phone-110 | Create or edit your own exercise, and hide or show library exercises | apps/mobile/src/app/library/new.tsx:98
+F-phone-111 | Body: log and chart body weight and measurements (also shows what the gym's trainer measured) | apps/mobile/src/app/measures/index.tsx:66
+F-phone-120 | Nutrition page | apps/mobile/src/app/nutrition.tsx:62
+F-phone-113 | 1-rep max and percentage calculator | apps/mobile/src/app/one-rep-max.tsx:29
+F-phone-112 | Progress photos: add, view, re-date, save to gallery, compare two side by side | apps/mobile/src/app/photos/index.tsx:82
+F-phone-123 | Build a plan from your answers (goal, days, equipment, sore areas, exercises to leave out) | apps/mobile/src/app/plan/build.tsx:73
+F-phone-118 | MettleUp Plus page (where you stand, what is free and paid, prices, buy through Google Play in test mode) | apps/mobile/src/app/plus.tsx:34

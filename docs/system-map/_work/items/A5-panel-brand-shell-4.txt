@@ -1,0 +1,9 @@
+F-panel-1100 | Panel frame: side menu, phone bottom bar and More, page routing, owner-only page block, 'needs internet' card, dark/light and English/Hinglish switches, gym logo in the header, crash reports, move from the old web address | apps/dashboard/src/crm/ui/screens/More.tsx:45
+F-panel-1124 | Training progress and Member questions: members' workout progress for owner and ticked trainers, answer Ask-a-trainer questions, request a workout report | apps/dashboard/src/crm/ui/screens/MyMembers.tsx:59
+F-panel-1112 | Plans and memberships: make plans, sell or renew, extend, change start day, cancel a membership, decide members' plan requests, renewal offer words | apps/dashboard/src/crm/ui/screens/Plans.tsx:39
+F-panel-1131 | Settings: gym details and name, Member app and Sign-in & data tabs, download all gym data, erase or start over, put the admin app on your phone | apps/dashboard/src/crm/ui/screens/Settings.tsx:88
+F-panel-1118 | Set up your gym: first steps list with progress ring, hand-ticked steps | apps/dashboard/src/crm/ui/screens/SetupGym.tsx:10
+F-panel-1107 | Today home: tiles, quick action buttons, Needs you list, one set-up card at a time, Monday week summary on WhatsApp, WhatsApp a member from a list | apps/dashboard/src/crm/ui/screens/Today.tsx:72
+F-panel-1123 | Trainers: trainer pages, assign members, personal-training bookings week, PT session packs | apps/dashboard/src/crm/ui/screens/Trainers.tsx:174
+F-panel-1106 | Your web page: edit and publish the gym's free web page, photos, preview, share links, visitor AI chat shown on enquiries | apps/dashboard/src/crm/ui/screens/WebPage.tsx:66
+F-panel-1125 | Workout plans: write, start and send plans to members, exercise list, ready programmes, trainer videos, workout of the day | apps/dashboard/src/crm/ui/screens/WorkoutPlans.tsx:94

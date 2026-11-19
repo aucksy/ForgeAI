@@ -1,0 +1,9 @@
+F-panel-622 | Diet plans from the trainer, with six ready-made plans, sent to members or to a membership plan | apps/dashboard/src/crm/logic/dietPlans.ts:460
+F-panel-623 | Enquiries: people who asked about joining, chased by follow-up date, with source, lost reason and a WhatsApp follow-up message | apps/dashboard/src/crm/logic/enquiries.ts:87
+F-panel-624 | Workout plans: the exercise list a trainer picks from | apps/dashboard/src/crm/logic/exerciseCatalog.ts:224
+F-panel-625 | Expenses (Kharcha): money going out by category and month, and what the gym kept | apps/dashboard/src/crm/logic/expenses.ts:26
+F-panel-626 | Help and feedback: ask a question, get an AI answer (uses AI credits), 'Your questions' history and replies from MettleUp | apps/dashboard/src/crm/logic/feedback.ts:47
+F-panel-627 | 'Updated 20 s ago' beside the panel's Refresh button | apps/dashboard/src/crm/logic/freshness.ts:19
+F-panel-628 | Get started card on Today: the first setup steps for a new gym (plans, members, logo, staff, timings, go online, poster, app link) | apps/dashboard/src/crm/logic/getStarted.ts:82
+F-panel-629 | GST on receipts (tax split out of the amount received, rate by date) and the gym's GSTIN check in Settings | apps/dashboard/src/crm/logic/gst.ts:71
+F-panel-630 | Settings: download all your gym's data (Excel and full JSON copy) | apps/dashboard/src/crm/logic/gymExport.ts:115

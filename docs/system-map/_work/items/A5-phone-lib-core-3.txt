@@ -1,0 +1,8 @@
+F-phone-1731 | On iPhone, parts not built yet say so on screen instead of showing an Android page (whether an iPhone build is with members was not checked) | apps/mobile/src/lib/onIphone.ts:8
+F-phone-1730 | Take or pick a picture: the picture is kept when Android closes the app behind the camera, a refused permission is explained, and temporary pictures are deleted by 'Erase all data' | apps/mobile/src/lib/pendingPick.ts:41
+F-phone-1711 | 'Your workouts are only on this phone' card after the 3rd workout for a member with no account, with 'Hide for 30 days' | apps/mobile/src/lib/safekeepNudge.ts:48
+F-phone-1724 | Week streak: weeks in a row with at least one workout | apps/mobile/src/lib/streak.ts:11
+F-phone-1725 | Units: show weights and distances as 'kg, km' or 'lb, miles', with numbers grouped the phone's way | apps/mobile/src/lib/units.ts:28
+F-phone-1707 | Update prompt: full-screen 'A new MettleUp is here' (first launch, then every 7th launch, every 3rd when far behind), 'Later', and the orange line on the Workout tab; Google Play in-app update or the GitHub APK | apps/mobile/src/lib/updatePrompt.ts:81
+F-phone-1705 | AI coach: talk to the coach by voice and hear replies, with a plain reason when the mic cannot listen | apps/mobile/src/lib/voice.ts:17
+F-phone-1718 | 'Add my watch's screen log' in Help and feedback: sends the watch's screen diary with the message | apps/mobile/src/lib/watchDiag.ts:284

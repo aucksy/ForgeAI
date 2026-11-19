@@ -1,0 +1,9 @@
+F-server-614 | Cross-role journeys test: member app + admin app + live server on the run's own fresh gyms (orders, cancels, messages, check-in, import, brand colour); hand-started | .github/workflows/qa-journeys.yml:19
+F-server-615 | Build and release the phone app and watch app on a version tag: phone gate, tests, signing with key rotation, release checks, in-place update proof, publish the GitHub Release, then the Play upload | .github/workflows/release-apk.yml:49
+F-server-616 | Take the Play Store app pictures on a cloud phone (hand-started; uploads pictures only, not a test) | .github/workflows/store-shots.yml:9
+F-server-617 | Robot crawl of a released app on real phones in Firebase Test Lab (advisory; stops green with nothing tested unless the two Test Lab secrets exist) | .github/workflows/test-lab.yml:17
+F-server-619 | Record the watch app demo video for Google Play's foreground-service form, from the released watch app on a Wear OS emulator (hand-started) | .github/workflows/watch-video.yml:10
+F-server-600 | Outage alarm: every 10 minutes check the website, admin app, HQ and gym server answer; open a GitHub issue labelled outage (emails the owner) and close it when all answer again | .github/workflows/watch.yml:12
+F-server-620 | Watch app build and checks on pushes that touch the watch: unit tests, rendered watch screens, same-signer and signing dry run, then watch UAT on an emulator (stays in front, dims, largest text) | .github/workflows/wear-build.yml:17
+F-server-621 | WhatsApp probe: one test message (plain text and/or the login_code template) to the owner's own phone, to learn what Meta's block stops (hand-started) | .github/workflows/whatsapp-probe.yml:13
+F-server-601 | WhatsApp sign-in code set-up: register MettleUp's WhatsApp number, show the number's and the login_code template's status and health, put the WhatsApp token into the panel Worker (hand-started) | .github/workflows/whatsapp-setup.yml:17

@@ -1,0 +1,10 @@
+F-phone-1421 | Join your gym: scan the poster or type the gym's code | apps/mobile/src/components/settings/JoinGymCard.tsx:21
+F-phone-1422 | Edit your profile: mobile number, goal, experience, age, height, body figure (saves as you go) | apps/mobile/src/components/settings/ProfileCard.tsx:136
+F-phone-1423 | Set daily calorie and protein, carbs, fat targets | apps/mobile/src/components/settings/ProfileCard.tsx:503
+F-phone-1426 | iPhone build: reminders, watch, Health apps and widgets rows left out, with a 'Not on iPhone yet' line | apps/mobile/src/components/settings/settingsLines.ts:64
+F-phone-1424 | Settings menu: one page in six headed groups (You, Workouts, Your gym, Phone and watch, Your data, Help), with a dot on new features | apps/mobile/src/components/settings/settingsLines.ts:90
+F-phone-1425 | 'MettleUp Plus' row in Settings (where the member stands, what is free or paid) | apps/mobile/src/components/settings/settingsLines.ts:96
+F-phone-1405 | 'Are you sure?' question and one-button notices in the app's own sheet | apps/mobile/src/components/ui/ConfirmSheet.tsx:44
+F-phone-1428 | 'Couldn't load, try again' state and the short error line under a failed button | apps/mobile/src/components/ui/LoadError.tsx:23
+F-phone-1427 | Undo bar after a delete (stays at least 6 seconds) | apps/mobile/src/components/ui/UndoBar.tsx:28
+F-phone-1429 | Accessibility: text grows with the phone's font size (capped), 48 dp touch areas, screen-reader wording, less motion when the phone asks | apps/mobile/src/components/ui/a11y.ts:28

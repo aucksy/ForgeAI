@@ -1,0 +1,10 @@
+F-phone-524 | Choose which folder a new, saved or duplicated routine goes into | apps/mobile/src/tracker/services/folderChoice.ts:22
+F-phone-525 | Measurements taken by the gym's trainer show on the Body page (kept on the phone, also after leaving the gym) | apps/mobile/src/tracker/services/gymBodySync.ts:25
+F-phone-526 | The gym's diet plans on the phone (kept for offline; removed when the member leaves the gym) | apps/mobile/src/tracker/services/gymBodySync.ts:27
+F-phone-527 | Workout plans from the gym appear as routine folders (updated on a new version, relabelled 'No longer sent', a deleted one never comes back) | apps/mobile/src/tracker/services/gymPlansSync.ts:38
+F-phone-528 | The gym's workout of the day card on the Workout tab (Start saves it as a routine in 'Workouts of the day' and starts it) | apps/mobile/src/tracker/services/gymWodSync.ts:45
+F-phone-509 | Bring in workouts from Hevy or Strong (pick the app, read the file on the phone, match unknown exercise names, import, then offer routines) | apps/mobile/src/tracker/services/hevyImport.ts:61
+F-phone-529 | Save my history (whole workout history as a CSV that imports back) | apps/mobile/src/tracker/services/historyExport.ts:1
+F-phone-520 | Workout history (endless list by month, search by workout or exercise name, a day's workouts, the History card's words) | apps/mobile/src/tracker/services/historyFeed.ts:1
+F-phone-531 | Hold timer for a timed set (a brushed screen never loses it; Back or X asks Keep / Discard / Keep going) | apps/mobile/src/tracker/services/holdTimerRules.ts:10
+F-phone-522 | Forgotten Finish: a workout left open for an hour pauses itself, back-dated (never while a hold timer is open) | apps/mobile/src/tracker/services/idlePause.ts:16

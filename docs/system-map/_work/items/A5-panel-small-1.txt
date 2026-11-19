@@ -1,0 +1,7 @@
+F-panel-107 | All branches page: totals, lists and member search across every branch, open a branch | apps/dashboard/src/crm/branches/AllBranches.tsx:32
+F-panel-103 | See the gym's branches and switch to another branch | apps/dashboard/src/crm/branches/api.ts:26
+F-panel-104 | Add a branch (optionally copying plans; gets its own receipt prefix) | apps/dashboard/src/crm/branches/api.ts:31
+F-panel-105 | Rename the business (the name over all branches) | apps/dashboard/src/crm/branches/api.ts:45
+F-panel-106 | Check in a member from another branch by mobile number, list today's visitors from other branches, undo a visitor check-in | apps/dashboard/src/crm/branches/api.ts:50
+F-panel-3101 | Branding: suggest a gym colour from the uploaded logo | apps/dashboard/src/crm/brand/brandLogic.ts:141
+F-panel-100 | Entry machine reports in to the gym server (machine recognised by serial, last-seen kept, unknown machine noted) | apps/dashboard/src/crm/machines/supabaseStore.ts:57

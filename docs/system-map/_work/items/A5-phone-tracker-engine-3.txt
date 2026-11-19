@@ -1,0 +1,8 @@
+F-phone-917 | Rep range: a default rep range for each new routine exercise from my goal and the kind of exercise, and the 'Rep range' setting | apps/mobile/src/tracker/engine/repRanges.ts:28
+F-phone-918 | Monthly report and year in review, with a short coach note written by fixed rules (no AI call) | apps/mobile/src/tracker/engine/reports.ts:66
+F-phone-919 | Real rest taken before each set, and the 'long rest' mark: a set done after a much longer rest than planned never raises the next Target | apps/mobile/src/tracker/engine/restTaken.ts:47
+F-phone-920 | Statistics screen: sets per muscle group over time, this period against the one before, and the period's totals | apps/mobile/src/tracker/engine/statistics.ts:58
+F-phone-921 | Strength level on the exercise page: Beginner, Intermediate, Advanced or Elite for each main lift (the level only, never the body weight) | apps/mobile/src/tracker/engine/strengthLevel.ts:135
+F-phone-922 | Kg lifted and sets per muscle: the one rule every screen uses (body weight counted on pull-ups and dips, both dumbbells counted, timed sets count as sets only) | apps/mobile/src/tracker/engine/volume.ts:38
+F-phone-923 | Your own weight ladder: a suggested weight is always one I have logged or can load, and the 'Machine and cable steps' setting (learn, 2.5 kg or 5 kg) | apps/mobile/src/tracker/engine/weightLadder.ts:48
+F-phone-924 | Plan builder: answer goal, level, equipment, days, time and sore areas and get a set of routines built by rules (no AI, works offline) | apps/mobile/src/tracker/plans/builder.ts:211

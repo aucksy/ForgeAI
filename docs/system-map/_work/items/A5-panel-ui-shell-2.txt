@@ -1,0 +1,10 @@
+F-panel-521 | Workout offer: check a member's workout code at the desk against the gym's check-ins | apps/dashboard/src/crm/ui/WorkoutCodeCheckSheet.tsx:18
+F-panel-512 | Sell or renew a membership, freeze or add extra days, change a future start date, cancel a membership | apps/dashboard/src/crm/ui/forms/SellMembershipSheet.tsx:34
+F-panel-502 | Offline front desk: keep working without internet, Offline banner, greyed-out buttons, sync when back | apps/dashboard/src/crm/ui/offline.tsx:1
+F-panel-537 | AI Assistant: ask a question or give a task in Hindi or English | apps/dashboard/src/crm/ui/screens/Assistant.tsx:11
+F-panel-516 | Visits: the attendance register, members who stopped coming (with a WhatsApp link), and pass-company visits month by month | apps/dashboard/src/crm/ui/screens/Attendance.tsx:86
+F-panel-518 | Bring a friend: set the free days for a member whose friend joins, and thank that member with one tap | apps/dashboard/src/crm/ui/screens/BringAFriend.tsx:1
+F-panel-532 | Busy machines: the owner switches it on and types how many of each machine the gym has, so members see tips on busy times | apps/dashboard/src/crm/ui/screens/BusyMachines.tsx:82
+F-panel-527 | Challenges: a monthly goal for members and the leaderboard (owner sets it, desk reads it) | apps/dashboard/src/crm/ui/screens/Challenges.tsx:107
+F-panel-526 | Diet plans and body measurements: send members what to eat, and record a member's weight, body fat and tape measurements | apps/dashboard/src/crm/ui/screens/DietPlans.tsx:138
+F-panel-517 | Enquiries: people who asked about joining, add one, set a follow-up day | apps/dashboard/src/crm/ui/screens/Enquiries.tsx:100

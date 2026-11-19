@@ -1,0 +1,9 @@
+F-server-235 | Entry machines (eSSL / ZKTeco) send their punches to MettleUp at /iclock/ (gate Worker: written, NOT deployed, its address is commented out, no scheduled jobs) | deploy/gate/worker.ts:24
+F-server-202 | See every gym in one list (groups, plan, AI use this month and today, new feedback count) | deploy/hq/api.js:206
+F-server-203 | Open one gym's HQ page (gym facts, 30 days of AI use, AI credits, assistant use and allowance, web page switch) | deploy/hq/api.js:225
+F-server-204 | System page: whole-system totals, feedback and lead counts, AI cost this month, member-app release downloads | deploy/hq/api.js:242
+F-server-205 | Read feedback and help questions from members and gyms, and sort each one (bug, idea, question, praise, spam, done) | deploy/hq/api.js:251
+F-server-208 | "Needs you" counts on HQ: new leads, new feedback, help questions waiting, new gyms to check, payments waiting, payments to check, free-limit alert, direct-read record state | deploy/hq/api.js:259
+F-server-209 | Confirm or reject what a gym owner says he paid MettleUp by UPI or bank transfer (confirm moves the gym's plan on) | deploy/hq/api.js:304
+F-server-210 | Payments to check: online payments that were taken but did not become a plan; mark each refunded or applied by hand | deploy/hq/api.js:310
+F-server-211 | Set MettleUp's own payment details (UPI ID, bank account) that gym owners see on Pay MettleUp; needs a sign-in from the last 15 minutes | deploy/hq/api.js:316

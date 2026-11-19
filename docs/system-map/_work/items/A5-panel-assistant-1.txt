@@ -1,0 +1,9 @@
+F-panel-910 | Daily question allowance: N questions left today from 5 down, and the ask box locks with a calm line when used up | apps/dashboard/src/crm/assistant/allowance.ts:54
+F-panel-901 | Ask a question about the gym and get an answer card (member lists, who owes, money, attendance, growth, one member, week in numbers, gym numbers); free | apps/dashboard/src/crm/assistant/answer.ts:744
+F-panel-917 | Privacy: phone numbers and email addresses in the owner's sentence are swapped for placeholders before the AI sees them, and put back afterwards | apps/dashboard/src/crm/assistant/mask.ts:23
+F-panel-916 | Find the member the owner named, including Hindi-script and loose spellings; pick one when several match, or offer to add as a new member | apps/dashboard/src/crm/assistant/match.ts:29
+F-panel-903 | Save a change by asking: add a member, renew a plan, record a payment, extend a plan, save an enquiry, save an expense; editable card, 1 credit on Save, credit given back if it fails | apps/dashboard/src/crm/assistant/plan.ts:304
+F-panel-902 | Send a message to members by asking: editable draft, rewrite, Hindi or both, pick the day, send now or later, in-app plus WhatsApp queue; 1 credit on Send | apps/dashboard/src/crm/assistant/plan.ts:499
+F-panel-904 | AI writes a workout plan for a member (goal, level, days a week); writing is free, saving it from the Workout plans builder costs 3 credits | apps/dashboard/src/crm/assistant/planWriter.ts:85
+F-panel-911 | Today for you ideas, at most four: birthdays, a festival coming, plans ending, dues, stopped coming, win back, week in numbers (Mondays); a tap drafts it | apps/dashboard/src/crm/assistant/suggestions.ts:85
+F-panel-900 | Open the AI Assistant (floating button, side panel on a computer, full screen on a phone, menu entry) | apps/dashboard/src/crm/assistant/ui/AssistantFab.tsx:87

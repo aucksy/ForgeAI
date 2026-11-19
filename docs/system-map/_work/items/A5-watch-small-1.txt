@@ -1,0 +1,1 @@
+F-watch-3200 | Watch keeps its big numbers full size at the largest text size | unknown

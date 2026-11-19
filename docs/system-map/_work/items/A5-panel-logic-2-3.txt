@@ -1,0 +1,9 @@
+F-panel-721 | Personal training packs with a count of classes used | apps/dashboard/src/crm/logic/pt.ts:25
+F-panel-722 | Quick action buttons at the top of Today, picked and ordered by the owner | apps/dashboard/src/crm/logic/quickActions.ts:35
+F-panel-723 | Ready-made challenges to turn on, off or edit | apps/dashboard/src/crm/logic/readyChallenges.ts:80
+F-panel-709 | Receipts (number per financial year, receipt rules, printable receipt with amount in words, receipt on WhatsApp) | apps/dashboard/src/crm/logic/receiptDoc.ts:95
+F-panel-724 | Bring a friend: thank the member who brought a new member with free days | apps/dashboard/src/crm/logic/referrals.ts:20
+F-panel-701 | Joined online: make a member from a join-page request, approve one that paid online, let a free-trial person in | apps/dashboard/src/crm/logic/selfJoin.ts:40
+F-panel-727 | One plain sentence under each setting | apps/dashboard/src/crm/logic/settingLines.ts:12
+F-panel-729 | Set-up cards on Today, one at a time (get alerts on this device, put the admin app on your phone) | apps/dashboard/src/crm/logic/setupCards.ts:14
+F-panel-730 | Add a person with a job (Owner, Staff, Trainer, Other) in Settings > Staff & sign-in | apps/dashboard/src/crm/logic/staffJobs.ts:44

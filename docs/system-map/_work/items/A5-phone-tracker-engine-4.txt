@@ -1,0 +1,8 @@
+F-phone-925 | Swap an exercise for another that fits my equipment, sore areas and 'never give me' list | apps/mobile/src/tracker/plans/builder.ts:244
+F-phone-926 | Easy weeks: every 6 weeks of a followed plan one lighter week (half the sets, same weights) that stays out of records; take one now or train normally | apps/mobile/src/tracker/plans/easyWeek.ts:43
+F-phone-927 | Effort per plan week (reps to leave in the tank, shown to members who log RPE) and an early easy-week offer when 3 lifts stall at once | apps/mobile/src/tracker/plans/effort.ts:28
+F-phone-928 | Ready programs: a library of programs for a full gym, dumbbells only and home, beginner to advanced, to add and follow | apps/mobile/src/tracker/plans/programs.ts:393
+F-phone-929 | Quick workout: 'I have 20, 30, 45 or 60 minutes', pick body parts (the most ready by default) and get a workout that fits the time | apps/mobile/src/tracker/plans/quickWorkout.ts:126
+F-phone-930 | Share a routine or a folder as text or as a file, and import a routine file (also the format the gym's plans and workout of the day arrive in) | apps/mobile/src/tracker/plans/routineFile.ts:115
+F-phone-931 | Routine sets: each set of a routine exercise can be a warm-up, normal, drop or failure set with its own target reps, weight or time | apps/mobile/src/tracker/plans/routineSets.ts:52
+F-phone-932 | Today's routine: one answer for Home, the Workout tab, the Today page, reminders and widgets for which routine is next in the followed plan ('Done today: Push 1, Next: Pull 1') | apps/mobile/src/tracker/plans/todayPlan.ts:180

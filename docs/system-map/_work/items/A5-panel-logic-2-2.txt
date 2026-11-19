@@ -1,0 +1,10 @@
+F-panel-728 | Settings tabs (Gym, Member app, Sign-in & data) carrying new-feature dots | apps/dashboard/src/crm/logic/newDots.ts:133
+F-panel-712 | New gym ready card: gym code and join link shown once after 'Create my gym' | apps/dashboard/src/crm/logic/newGymReady.ts:16
+F-panel-713 | Numbers for the owner on Today (renewals due, fees due, stopped coming, new members, busy hours) | apps/dashboard/src/crm/logic/ownerNumbers.ts:44
+F-panel-714 | Read a web-page visitor's chat with the AI helper in Enquiries | apps/dashboard/src/crm/logic/pageChat.ts:27
+F-panel-715 | Refresh the whole panel from the top bar | apps/dashboard/src/crm/logic/panelRefresh.ts:17
+F-panel-716 | Pass members (FITPASS, cultpass): add, count pass visits, match the company's payment | apps/dashboard/src/crm/logic/passMembers.ts:31
+F-panel-717 | Pay MettleUp for a plan (UPI QR or bank transfer, send the reference number) | apps/dashboard/src/crm/logic/payMettleUp.ts:85
+F-panel-718 | Numbers to confirm: say yes or no to a mobile number typed at the poster check-in | apps/dashboard/src/crm/logic/phoneLinks.ts:36
+F-panel-719 | Approve pause and renew requests from the member app | apps/dashboard/src/crm/logic/planRequests.ts:53
+F-panel-720 | MettleUp Plus: owner's switch to lock paid extras after a member's plan ends | apps/dashboard/src/crm/logic/plusLock.ts:18

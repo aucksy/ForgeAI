@@ -1,0 +1,8 @@
+F-phone-1708 | What's new after an update: the card on the Workout tab, 'See earlier updates', and Settings > What's new (release notes 0.44.0 to 0.79.0) | apps/mobile/src/lib/whatsNew.ts:687
+F-phone-1712 | Workout tab shows one notice card at a time; after one is closed the others wait for the next day | apps/mobile/src/lib/workoutNotices.ts:33
+F-phone-1702 | Free month pop-ups: '5 days left' and 'Your free month has ended' (once each, never during a workout) | apps/mobile/src/plan/PlanNotice.tsx:17
+F-phone-1700 | Open the MettleUp Plus page or the Find my gym page from a link (mettleup://plus, mettleup://find-gym); the page leaves at once while Plus is switched off | apps/mobile/src/plan/PlusPageGate.tsx:3
+F-phone-1701 | MettleUp Plus: free month, what stays free, and the 'needs MettleUp Plus' pop-up on paid features (charts, own exercises, calculators, suggested weights, the watch); member paid plan, not the gym Pro plan | apps/mobile/src/plan/memberPlan.ts:40
+F-phone-1703 | Buy or restore MettleUp Plus through Google Play (monthly, yearly, lifetime); test mode with a stand-in store until payments go live; not on iPhone | apps/mobile/src/plan/playBilling.ts:96
+F-phone-1723 | Charts and per-exercise stats (30, 90 or 180 days) | apps/mobile/src/services/analytics.ts:29
+F-phone-1722 | Home summary numbers: recovery score, strength score and the one-line insight (whether each card is on screen today was not checked in this area) | apps/mobile/src/services/dashboard.ts:31

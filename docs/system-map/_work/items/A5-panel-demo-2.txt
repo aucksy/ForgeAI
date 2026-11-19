@@ -1,0 +1,8 @@
+F-panel-116 | Demo gym (pretend server, in memory): Shop products, orders and order status | apps/dashboard/src/crm/demo/demoServer.ts:549
+F-panel-117 | Demo gym (pretend server, in memory): Member body measurements (list, save, delete) | apps/dashboard/src/crm/demo/demoServer.ts:563
+F-panel-118 | Demo gym (pretend server, in memory): Diet plans (list, save, withdraw) | apps/dashboard/src/crm/demo/demoServer.ts:578
+F-panel-119 | Demo gym (pretend server, in memory): Trainers week schedule, book and cancel a PT class | apps/dashboard/src/crm/demo/demoServer.ts:596
+F-panel-120 | Demo gym (pretend server, in memory): Challenges and leaderboard | apps/dashboard/src/crm/demo/demoServer.ts:611
+F-panel-121 | Demo gym (pretend server, in memory): Gym timings (read and save) | apps/dashboard/src/crm/demo/demoServer.ts:619
+F-panel-122 | Demo gym (pretend server, in memory): Bring a friend summary | apps/dashboard/src/crm/demo/demoServer.ts:627
+F-panel-123 | Demo gym (pretend server, in memory): Members' renew/pause plan requests (list, approve or decline) | apps/dashboard/src/crm/demo/demoServer.ts:633

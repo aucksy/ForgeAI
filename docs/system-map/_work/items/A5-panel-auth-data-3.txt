@@ -1,0 +1,8 @@
+F-panel-1018 | Staff limits: front desk sees only Dues in Money and only Orders in Shop, cannot open owner pages, and gets an Only an owner can see this page instead | apps/dashboard/src/crm/auth/permissions.ts:83
+F-panel-1006 | One-time prompt to set your own PIN after signing in with a one-time code (skippable with Not now) | apps/dashboard/src/crm/auth/pinPrompt.ts:25
+F-panel-1019 | The gym's records online: every desk sees the same members, plans and receipts; two desks never save the same receipt number or the same payment twice | apps/dashboard/src/crm/data/cloud.ts:512
+F-panel-1021 | demo copy of the gym's records (a made-up gym with members, plans, payments and check-ins for the sales demo; also the starter plans for a new gym) | apps/dashboard/src/crm/data/demo.ts:82
+F-panel-1024 | Import members: see how many receipts and how much money an import will really save, before tapping Add | apps/dashboard/src/crm/data/importPreview.ts:31
+F-panel-1020 | Gym kept in this browser only (no sign-in): all records saved on this device, with a backup of anything unreadable | apps/dashboard/src/crm/data/local.ts:177
+F-panel-1023 | Offline front desk waiting list: check-ins, new members, member changes, payments and plans sold with no internet are shown at once and sent when the internet is back | apps/dashboard/src/crm/data/outbox.ts:163
+F-panel-1022 | Offline front desk: the panel still opens and members, plans and dues can be looked up with no internet (a copy of the gym kept on this device, removed on sign-out) | apps/dashboard/src/crm/data/savedCopy.ts:130

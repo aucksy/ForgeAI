@@ -1,0 +1,9 @@
+F-phone-1229 | Stop and remove MettleUp's Health Connect access (and open Health Connect settings) | apps/mobile/src/tracker/phone/healthConnect.ts:172
+F-phone-1224 | Health Connect: send finished workouts and estimated calories (also past workouts, send again, remove a deleted one) | apps/mobile/src/tracker/phone/healthConnect.ts:586
+F-phone-1226 | Weight from Health Connect: weigh-ins from a scale or another app join the body-weight log | apps/mobile/src/tracker/phone/healthRead.ts:233
+F-phone-1227 | Steps today from Health Connect | apps/mobile/src/tracker/phone/healthRead.ts:324
+F-phone-1235 | Member's saved choices for gym features kept on the phone (reminders from my gym, messages from my gym, name on leaderboard, share workouts with gym mates, share machines I use, share with trainers); the screens live in other areas | apps/mobile/src/tracker/phone/phonePrefs.ts:145
+F-phone-1234 | Erase all data also clears the phone side (Health Connect off, reminders, widgets, app-icon shortcuts) | apps/mobile/src/tracker/phone/phoneSync.ts:128
+F-phone-1218 | Workout reminders on chosen days and time ("Time to train"), skipped on a day already trained or mid-workout | apps/mobile/src/tracker/phone/reminders.ts:356
+F-phone-1228 | "Sleep and workouts": after a lighter workout, one line about last night's short sleep, or a protein tip | apps/mobile/src/tracker/phone/sleepLink.ts:247
+F-phone-1221 | Start or resume a workout straight from the widget (one-time key so no other app can start one) | apps/mobile/src/tracker/phone/widgetLink.ts:36

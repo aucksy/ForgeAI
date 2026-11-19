@@ -1,0 +1,9 @@
+F-phone-416 | The gym's opening hours | apps/mobile/src/shop/gymApi.ts:261
+F-phone-419 | Gym leaderboard and monthly challenge | apps/mobile/src/shop/gymApi.ts:272
+F-phone-417 | How busy the gym is right now | apps/mobile/src/shop/gymApi.ts:283
+F-phone-410 | Ask the desk to pause or renew my plan | apps/mobile/src/shop/gymApi.ts:308
+F-phone-427 | Send my workout report to the gym when the desk asks | apps/mobile/src/shop/gymApi.ts:354
+F-phone-420 | Gym mate profiles: let my gym mates see my workouts, and see theirs | apps/mobile/src/shop/gymApi.ts:384
+F-phone-426 | The gym's workout offer: join, share workout dates, leave, and show my workouts to the desk | apps/mobile/src/shop/gymApi.ts:435
+F-phone-429 | Leave the gym (open orders are cancelled first; an offline leave is sent again later) | apps/mobile/src/shop/gymApi.ts:461
+F-phone-418 | Busy times by exercise (which machines are usually free) | apps/mobile/src/shop/gymApi.ts:494

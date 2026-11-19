@@ -1,0 +1,7 @@
+F-phone-1510 | Download my data: save one backup file (ZIP) with workouts, routines, own exercises, body weight, measurements, photos, profile and settings | apps/mobile/src/backup/backupSave.ts:42
+F-phone-1520 | MettleUp account: Continue with Google, and sign out (offered to every member, gym or not, in a build with a real Google client id) | apps/mobile/src/cloud/account.ts:50
+F-phone-1523 | Delete my MettleUp account and the saved copy of my workouts (a gym owner's or trainer's sign-in is kept, only the copy goes) | apps/mobile/src/cloud/account.ts:149
+F-phone-1530 | Reaching the server when Supabase is blocked: every request goes through our own addresses first (app.mettleup.fit/sb, then the old host, then Supabase direct), switching by itself when one fails | apps/mobile/src/cloud/address.ts:115
+F-phone-1522 | Bring back my workouts: after signing in on a new phone, the saved copy is merged in with no duplicate workouts, newest edit wins | apps/mobile/src/cloud/copySync.ts:223
+F-phone-1521 | Keep your workouts on MettleUp: every saved change is copied to the server by itself in the background, and waits when offline | apps/mobile/src/cloud/copySync.ts:381
+F-phone-1524 | Backup status line in Settings: when the copy was last saved, changes still waiting, sign in again needed, or the copy is full | apps/mobile/src/cloud/copySync.ts:402

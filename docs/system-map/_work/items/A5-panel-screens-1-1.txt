@@ -1,0 +1,10 @@
+F-panel-200 | AI Assistant page (owner asks the assistant; paid from the gym AI credits) | apps/dashboard/src/crm/ui/screens/Assistant.tsx:11
+F-panel-201 | Visits register: find a member and check them in at the desk, undo a check-in, pick a past day or batch, see 30-day visit numbers and busiest hour | apps/dashboard/src/crm/ui/screens/Attendance.tsx:86
+F-panel-203 | Links from Visits to the Check-in QR poster and Pass visits pages (Pass visits button only once the gym has a pass member) | apps/dashboard/src/crm/ui/screens/Attendance.tsx:88
+F-panel-202 | "Losing the habit" list: paying members who stopped coming, filter by risk band, download as CSV, open a WhatsApp chat with the member | apps/dashboard/src/crm/ui/screens/Attendance.tsx:756
+F-panel-204 | Bring a friend: owner sets free days per friend who joins and sees links, asks and joins counts (Settings card) | apps/dashboard/src/crm/ui/screens/BringAFriend.tsx:24
+F-panel-206 | Busy machines: owner switches it on, types how many of each machine, adds a missing machine; desk reads it | apps/dashboard/src/crm/ui/screens/BusyMachines.tsx:82
+F-panel-207 | Challenges: owner creates a monthly challenge (ready-made or own), cancels it, sees who reached the goal and confirms their free days; desk reads | apps/dashboard/src/crm/ui/screens/Challenges.tsx:107
+F-panel-208 | Leaderboard: top 10 of the last 30 days, owner can hide a member from what members see | apps/dashboard/src/crm/ui/screens/Challenges.tsx:791
+F-panel-209 | Diet plans: build a plan (or start from a ready-made Indian plan), edit, copy, withdraw, choose who gets it | apps/dashboard/src/crm/ui/screens/DietPlans.tsx:138
+F-panel-210 | Diet plan on a member page: see the plan this member has and "Send a diet plan" | apps/dashboard/src/crm/ui/screens/DietPlans.tsx:505

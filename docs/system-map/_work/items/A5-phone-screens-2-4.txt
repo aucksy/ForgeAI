@@ -1,0 +1,9 @@
+F-phone-213 | Workout settings: rest timer and sounds, weekly goal, plates and bars, rate how hard each set felt, more workout choices (next weight, previous numbers, muscle tips) | apps/mobile/src/app/settings/rest.tsx:9
+F-phone-214 | Units (kg and km, or lb and miles) and Light or dark (same as phone, light, dark) | apps/mobile/src/app/settings/units.tsx:19
+F-phone-218 | Phone and watch: install or open MettleUp on my watch, send workouts to health apps, home-screen widgets | apps/mobile/src/app/settings/watch.tsx:44
+F-phone-226 | Gym shop: a product's page, the bag, place an order (pay at the desk), my orders with status and cancel | apps/mobile/src/app/shop/[id].tsx:2
+F-phone-228 | Diet plan from my gym's trainer (read-only) | apps/mobile/src/app/shop/diet.tsx:2
+F-phone-229 | Gym timings: open or closed now, the week's hours, special days, the gym's note | apps/mobile/src/app/shop/hours.tsx:2
+F-phone-227 | Gym messages: the inbox of messages from my gym, Message your gym (question, feedback, complaint), and ask a trainer about a workout | apps/mobile/src/app/shop/inbox.tsx:2
+F-phone-230 | A gym mate's shared workouts, opened from the gym leaderboard | apps/mobile/src/app/shop/mate/[id].tsx:2
+F-phone-211 | Start or resume a workout from the home-screen Today widget (link forgeai://workout/start) | apps/mobile/src/app/workout/start.tsx:77

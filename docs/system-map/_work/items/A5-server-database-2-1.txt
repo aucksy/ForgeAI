@@ -1,0 +1,9 @@
+F-server-400 | Sign in to the admin app with a lasting 6-digit PIN (set or change your PIN, wrong-try locks that grow, one-time code still works, session check staff_me with the demo-gym flag) | supabase/migrations/0034_signin_pin.sql:246
+F-server-401 | Sign a person out everywhere and HQ reset of an owner sign-in (both also clear that person's PIN) | supabase/migrations/0034_signin_pin.sql:320
+F-server-402 | Record a member's body measurements at the desk; the member sees them in the app (Progress, Body) | supabase/migrations/0035_trainer_measurements_diet.sql:262
+F-server-403 | Diet plans from the trainer, sent to members by name or by membership plan | supabase/migrations/0035_trainer_measurements_diet.sql:342
+F-server-404 | Gym opening hours for each weekday and special days, shown in the member app | supabase/migrations/0036_gym_timings.sql:168
+F-server-405 | Gym leaderboard: top 10 and your place by workouts and kg lifted (owner can hide a member) | supabase/migrations/0037_leaderboard.sql:299
+F-server-406 | Monthly gym challenge and its free-day rewards (cancel a challenge, owner gives or skips each winner's reward) | supabase/migrations/0037_leaderboard.sql:513
+F-server-407 | Phone pop-ups for the gym's messages and workout offers (save the phone's push address, queue of push jobs, HQ sender reads the next job) | supabase/migrations/0038_member_push.sql:114
+F-server-408 | How busy the gym is right now and its usual busy and quiet hours | supabase/migrations/0039_gym_busy.sql:82

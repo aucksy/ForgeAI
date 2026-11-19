@@ -1,0 +1,8 @@
+F-watch-115 | Watch screen diary for support: the watch keeps a short log of its screen's life and sends it when the phone's Help and feedback asks ("Add my watch's screen log") | apps/mobile/android/wear/src/main/java/com/forgeai/wear/AmbientDiag.kt:148
+F-watch-104 | A running rest keeps its alarm and countdown after the watch restarts, the app updates, or "Alarms & reminders" is switched on | apps/mobile/android/wear/src/main/java/com/forgeai/wear/BootReceiver.kt:12
+F-watch-117 | The watch in the gym's colour (the accent the phone sends, made readable on black; MettleUp orange without a gym) on screens and cards | apps/mobile/android/wear/src/main/java/com/forgeai/wear/BrandColour.kt:12
+F-watch-119 | One buzz, not two: the phone's rest alerts are not copied to the watch while the watch app shows its own | apps/mobile/android/wear/src/main/java/com/forgeai/wear/Bridging.kt:46
+F-watch-116 | The watch follows the phone's workout: rests, the open workout and the next set arrive from the phone, also with the watch app closed, and are kept on the watch | apps/mobile/android/wear/src/main/java/com/forgeai/wear/ForgeListenerService.kt:12
+F-watch-110 | Live heart rate on the workout screens (the watch's own sensor, only while the screen is bright and a workout is open) | apps/mobile/android/wear/src/main/java/com/forgeai/wear/HeartRate.kt:19
+F-watch-106 | Log a set from the watch (tap weight or reps, turn the crown, tap Done; the phone saves it) | apps/mobile/android/wear/src/main/java/com/forgeai/wear/LogScreens.kt:318
+F-watch-107 | Rate the effort of a set (RPE) on the watch after Done; Skip or 4 s untouched saves the set without it | apps/mobile/android/wear/src/main/java/com/forgeai/wear/LogScreens.kt:498

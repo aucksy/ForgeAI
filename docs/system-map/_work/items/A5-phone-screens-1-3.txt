@@ -1,0 +1,10 @@
+F-phone-122 | Find a plan: ready programs, follow one or keep it in your routines | apps/mobile/src/app/programs/index.tsx:54
+F-phone-128 | Muscles ready today, and a quick workout for the time you have | apps/mobile/src/app/ready.tsx:40
+F-phone-107 | Records list by month, and pick any exercise to see its trend | apps/mobile/src/app/records.tsx:23
+F-phone-108 | Monthly report and year in review, with a share picture | apps/mobile/src/app/report/[period].tsx:353
+F-phone-124 | Routines: guided first routine, edit a routine, add an exercise to it, preview it | apps/mobile/src/app/routines/[id].tsx:82
+F-phone-127 | A saved workout's page: details, photos, share, repeat, save as routine, edit, delete | apps/mobile/src/app/session/[id].tsx:68
+F-phone-126 | Log a live workout (sets, add or swap exercises, minimise, discard) and the finish summary with photos | apps/mobile/src/app/session/active.tsx:100
+F-phone-132 | Ask an AI about your workouts (share a 4-week summary to any AI app) | apps/mobile/src/app/settings/ask-ai.tsx:20
+F-phone-131 | Your data: backup and restore, download my data, save as a spreadsheet, bring back a Google Drive backup, this phone's backup (no Settings row, test link only), erase or start over | apps/mobile/src/app/settings/backup.tsx:30
+F-phone-133 | Help and feedback (type or speak, your questions and replies), What's new, About and Credits | apps/mobile/src/app/settings/feedback.tsx:25

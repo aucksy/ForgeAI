@@ -1,0 +1,9 @@
+F-phone-633 | "Your watch app has an update" pop-up (Update on watch, Later for a day) | apps/mobile/src/tracker/services/watchUpdate.ts:176
+F-phone-614 | "Rest is over" alert on the phone, lock screen and watch, and the check that Android will let it arrive on time (Rest alerts status, ask for Alarms and reminders) | apps/mobile/src/tracker/services/workoutAlerts.ts:112
+F-phone-617 | "Workout in progress" card in the phone's shade and on the lock screen | apps/mobile/src/tracker/services/workoutAlerts.ts:122
+F-phone-635 | Delete a saved workout (says truthfully whether it was deleted) | apps/mobile/src/tracker/services/workoutDelete.ts:1
+F-phone-636 | Saved workout page (time, kg lifted, sets, records, muscle split, each set) | apps/mobile/src/tracker/services/workoutDetail.ts:1
+F-phone-637 | Workout tab: folders and routines list | apps/mobile/src/tracker/services/workoutFolders.ts:1
+F-phone-638 | Live workout: move exercises up or down, supersets move as one block, swap an exercise after a tick; pause and resume the workout timer | apps/mobile/src/tracker/services/workoutOrder.ts:1
+F-phone-639 | Photos on a workout (up to 4, private on the phone) and "Watch your trainer" video links from the gym's plans and workout of the day, kept for offline | apps/mobile/src/tracker/services/workoutPhotos.ts:1
+F-phone-616 | Workout sounds and pick your rest-over sound (bell on rest over, chime on a record) | apps/mobile/src/tracker/services/workoutSounds.ts:85

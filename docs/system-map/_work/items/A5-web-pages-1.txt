@@ -1,0 +1,10 @@
+F-web-139 | Company and legal pages: About, Contact, Privacy, Terms, Refunds, Shipping and delivery, Data agreement for gyms, Delete your account | apps/dashboard/public/about.html:1
+F-web-102 | Gym-owner marketing site (gyms.mettleup.fit, /home): what MettleUp does for a gym, English or Hindi, try your gym's name and colour on the phones | apps/dashboard/public/home/index.html:1
+F-web-104 | Member marketing site (mettleup.fit, /member-site): the free workout app for phone and watch, English or Hindi, 'Send to my gym' share | apps/dashboard/public/member-site/index.html:1
+F-web-138 | Install the admin app on the device and open it with no internet (service worker) | apps/dashboard/public/sw.js:1
+F-web-113 | A gym's own free web page (join.mettleup.fit/<gym>): plans, timings, address and maps links, facilities, photos, WhatsApp share, Become a member button | deploy/panel/gymPageServe.js:341
+F-web-114 | Ask the gym a question, or report a page, from the gym's web page | deploy/panel/gymPageServe.js:353
+F-web-115 | AI helper chat on the gym's web page: answers from the page only, else 'I will ask the gym'; the visitor can leave a number for a call or to join | deploy/panel/gymPageServe.js:356
+F-web-100 | Open the right site at each MettleUp address: old and www addresses redirect, mettleup.fit shows the member site, gyms.mettleup.fit the gym-owner site, app.mettleup.fit the admin app; an unknown /api address answers Not found | deploy/panel/hosts.js:110
+F-web-131 | Online payments: the payment company's webhook and the 10-minute check mark open links paid | deploy/panel/pay.js:743
+F-web-127 | Online payments: the desk asks a member to pay by link or QR, checks, cancels, sees who paid, claims and records the payment | deploy/panel/pay.js:1025

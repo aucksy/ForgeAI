@@ -1,0 +1,9 @@
+F-phone-735 | Month report: calendar with the days trained filled in | apps/mobile/src/tracker/components/MonthGrid.tsx:11
+F-phone-736 | Muscle tips: smart suggestion to add or swap an exercise in a routine | apps/mobile/src/tracker/components/MuscleTipNote.tsx:27
+F-phone-727 | Name or rename a routine folder (one-box naming sheet) | apps/mobile/src/tracker/components/NameSheet.tsx:10
+F-phone-719 | Plate calculator: which plates to load on each side | apps/mobile/src/tracker/components/PlateCalcSheet.tsx:26
+F-phone-720 | Plates and bars: say which plates and bar your gym has | apps/mobile/src/tracker/components/PlateSetupCard.tsx:115
+F-phone-722 | Choose a workout setting from a list (weight jumps, rep range, rest-over sound, machine steps) | apps/mobile/src/tracker/components/PrefChoiceSheet.tsx:17
+F-phone-704 | Muscles still resting card on the Workout tab | apps/mobile/src/tracker/components/ReadyCard.tsx:19
+F-phone-706 | New record pop-up with confetti, and the quieter better-than-last-time line | apps/mobile/src/tracker/components/RecordToast.tsx:29
+F-phone-737 | Rest alerts status: says when alerts are blocked, silent or may be late, tap to fix | apps/mobile/src/tracker/components/RestAlertsStatusRow.tsx:17

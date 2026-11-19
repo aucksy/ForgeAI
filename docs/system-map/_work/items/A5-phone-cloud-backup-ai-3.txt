@@ -1,0 +1,7 @@
+F-phone-1525 | Restore from an older Google Drive backup: sign in to Drive, find the newest backup, put it on this phone (kept for members who backed up to Drive before; also checked on the welcome screen) | apps/mobile/src/cloud/drive.ts:110
+F-phone-1526 | Back up to Google Drive (upload a new backup, keep the newest few): code still present but no screen calls it since Drive backup stopped being a choice | apps/mobile/src/cloud/drive.ts:366
+F-phone-1532 | MettleUp Plus limits (paid member plan): more than 7 exercises of your own and charts older than 3 months are refused with a calm pop-up that leads to the Plus screen; nothing is refused while the switch is off (it is false in code) | apps/mobile/src/cloud/limitsFlag.ts:21
+F-phone-1531 | Gym logo and shop photos load through our own address when the saved link is Supabase's | apps/mobile/src/cloud/picture.ts:20
+F-phone-1527 | Old gym link: sign in with email and password, then join a gym by its code (Settings, Gym; switched off in code, FEATURES.gymSync is false) | apps/mobile/src/cloud/session.ts:75
+F-phone-1529 | Old gym link: delete my cloud data and disconnect from the gym (only disconnects after the server confirms the delete) | apps/mobile/src/cloud/session.ts:148
+F-phone-1528 | Old gym sync: after any saved change, and when the internet comes back, one activity summary row of the member is sent to the gym (only when a gym is linked the old way) | apps/mobile/src/cloud/sync.ts:12

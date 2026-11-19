@@ -1,0 +1,9 @@
+F-panel-1012 | Remove a person from the gym's panel | apps/dashboard/src/crm/auth/PeopleScreen.tsx:658
+F-panel-1005 | Set or change my own 6-digit PIN (Staff & sign-in, You card) | apps/dashboard/src/crm/auth/PinForms.tsx:60
+F-panel-1000 | Sign in to the gym panel (mobile number + your PIN, or a one-time code) | apps/dashboard/src/crm/auth/SignInForms.tsx:43
+F-panel-1001 | Set up a new gym online (Create my gym: gym name, your name, mobile, PIN, agree to terms) | apps/dashboard/src/crm/auth/SignInForms.tsx:150
+F-panel-1016 | Agree to the MettleUp terms and data agreement (asked once per version; owner only; shows when you accepted) | apps/dashboard/src/crm/auth/TermsGate.tsx:73
+F-panel-1002 | Verify your mobile number with WhatsApp (send one message from your phone, or scan the QR on a computer; older way: type a code we send) | apps/dashboard/src/crm/auth/WhatsAppVerify.tsx:99
+F-panel-1014 | Told why you were signed out (signed out from another device, or removed from the gym) | apps/dashboard/src/crm/auth/api.ts:111
+F-panel-1009 | Name a staff member's job (for example Manager); kept on this browser until the gym server has job names | apps/dashboard/src/crm/auth/api.ts:140
+F-panel-1017 | MettleUp access: let MettleUp support look at the gym's records for one hour, end it early, and see every time MettleUp looked or acted | apps/dashboard/src/crm/auth/hqAccess.ts:166

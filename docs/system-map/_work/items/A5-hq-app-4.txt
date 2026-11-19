@@ -1,0 +1,8 @@
+F-hq-127 | Delete a gym for ever (type the gym code; every record and picture erased) | apps/hq/public/app.js:1051
+F-hq-128 | Messages: send one message to every gym's admin app bell (title, words, optional button), see sent ones, take one back | apps/hq/public/app.js:1066
+F-hq-129 | Payments to MettleUp: see what gym owners say they paid (UPI or bank), confirm it (plan moves on) or mark not confirmed with a reason the owner reads | apps/hq/public/app.js:1122
+F-hq-130 | Online payments to check: money a gym paid online that did not become a plan; mark refunded or added by hand with a note | apps/hq/public/app.js:1154
+F-hq-131 | Your payment details: set the UPI ID and bank account that gym owners see on Pay MettleUp | apps/hq/public/app.js:1222
+F-hq-132 | Log: everything done in HQ and every look at a gym, 100 lines at a time with Show older | apps/hq/public/app.js:1262
+F-hq-100 | HQ menu and page frame: side menu, phone bottom bar, page router, signed-in email, sign out, sign-in redirect | apps/hq/public/app.js:1286
+F-hq-133 | Install HQ on the phone (Install app button, iPhone hint), the phone More menu sheet, and the plain You're offline page | apps/hq/public/pwa.js:15

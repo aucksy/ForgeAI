@@ -1,0 +1,7 @@
+F-phone-1310 | Update the app: full-screen "A new MettleUp is here" (Update now / Later), the orange update line on the Workout tab with "What's new", and the restart sheet after the download | apps/mobile/src/components/UpdatePrompt.tsx:154
+F-phone-1311 | Workout tab notice: "MettleUp works on your watch too" (Install on watch / Not now) after the first own workout, when a Wear OS watch has no MettleUp app; never during the welcome demo | apps/mobile/src/components/WatchInstallCard.tsx:33
+F-phone-1312 | Watch app update pop-up: "Your watch app has an update" (Update on watch / Later), then "Check your watch" | apps/mobile/src/components/WatchUpdatePrompt.tsx:269
+F-phone-1313 | What's new: the one-time "New in this version" card on the Workout tab, earlier updates, and a button on each change to try it (also the list in Settings, What's new) | apps/mobile/src/components/WhatsNewCard.tsx:19
+F-phone-1315 | Charts page: Balance check, names a muscle trained much less than the rest in the last 4 weeks (Not now; Keep it / Go back for an older focus block) | apps/mobile/src/components/analytics/BalanceCard.tsx:27
+F-phone-1314 | Charts page: body map of muscles trained (7 / 30 / 90 days); tap a muscle for its sets, the exercises that trained it and an "under 10 sets" hint | apps/mobile/src/components/analytics/BodyMapSection.tsx:45
+F-phone-1317 | Charts page: Reports card, opens the monthly report, the year in review and earlier reports | apps/mobile/src/components/analytics/ReportsCard.tsx:54

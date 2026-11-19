@@ -1,0 +1,9 @@
+F-panel-334 | Your web page: owner writes the gym's free public page (address, area, about, facilities, photos, map link, phone / WhatsApp, Google listing) and publishes it; desk sees address and status only | apps/dashboard/src/crm/ui/screens/WebPage.tsx:66
+F-panel-336 | Share the web page: copy link, 'Share on WhatsApp' (wa.me link with a ready line, no recipient) | apps/dashboard/src/crm/ui/screens/WebPage.tsx:563
+F-panel-335 | 'See your page': preview of the web page from what is typed, before saving | apps/dashboard/src/crm/ui/screens/WebPage.tsx:630
+F-panel-337 | Workout of the day: set one workout for everyone for today or a day in the next week (from a plan's day or built here), change or clear it | apps/dashboard/src/crm/ui/screens/WorkoutOfTheDay.tsx:52
+F-panel-338 | Workout plans list: the gym's plans, edit, copy, withdraw (asks first), withdrawn plans folded away | apps/dashboard/src/crm/ui/screens/WorkoutPlans.tsx:94
+F-panel-339 | Workout plan builder: name, note, days, exercises with starting weights, who gets it (members or everyone on a membership plan) | apps/dashboard/src/crm/ui/screens/WorkoutPlans.tsx:299
+F-panel-342 | Your own video link (YouTube) on an exercise in a workout plan | apps/dashboard/src/crm/ui/screens/WorkoutPlans.tsx:337
+F-panel-340 | New workout plan: start from a ready plan or empty | apps/dashboard/src/crm/ui/screens/WorkoutPlans.tsx:951
+F-panel-341 | Send a workout plan to one member (from Member detail): one tap on an existing plan, a ready plan, or build new | apps/dashboard/src/crm/ui/screens/WorkoutPlans.tsx:983

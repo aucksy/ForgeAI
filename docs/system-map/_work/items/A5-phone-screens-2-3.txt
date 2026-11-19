@@ -1,0 +1,9 @@
+F-phone-216 | AI coach settings: provider, model, keys and voice (page sends you to Settings while the coach is switched off) | apps/mobile/src/app/settings/coach.tsx:34
+F-phone-222 | Erase or start over: remove the demo data, or erase everything | apps/mobile/src/app/settings/data.tsx:4
+F-phone-220 | Take my data out: save history and measurements as a spreadsheet, and share a text of my last 4 weeks to an AI app | apps/mobile/src/app/settings/export.tsx:8
+F-phone-223 | Help and feedback: type or speak a message to MettleUp, add my watch's screen log, see my questions and the answers, floating feedback button on or off | apps/mobile/src/app/settings/feedback.tsx:1
+F-phone-217 | Your gym settings: gym logo on my home screen, leave my gym, and What my gym can see (name on leaderboard, gym mates see my workouts, share machines I use, share workouts with my trainers) | apps/mobile/src/app/settings/gym.tsx:28
+F-phone-221 | Bring in from Hevy or Strong: past workouts from an export file (replace or merge) and routines from a Hevy share link (import screens sit outside this helper's file range; read by header only) | apps/mobile/src/app/settings/import.tsx:8
+F-phone-212 | Settings home: one page of six groups (You, Workouts, Your gym, Phone and watch, Your data, Help), each row showing how it is set now | apps/mobile/src/app/settings/index.tsx:135
+F-phone-224 | What's new (last 3 updates, each with a try-it button) and About (credits, app version) | apps/mobile/src/app/settings/news.tsx:14
+F-phone-215 | Reminders: workout reminder days and time, and with a gym joined, reminders and messages from my gym on or off | apps/mobile/src/app/settings/notifications.tsx:11

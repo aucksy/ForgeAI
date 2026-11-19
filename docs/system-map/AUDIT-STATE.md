@@ -36,10 +36,15 @@ weekly stop lines (his words, 19 Nov 2026 09:40 IST: "Lets stop if fable reaches
 | L4 | 1 | 4.4 (177k tokens) |
 
 ## Work items
-Counts: 0 todo, 0 in progress, 98 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 0 todo, 5 in progress, 98 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
+| A5-panel-assistant-1 | A5 | journeys: 9 features (9 feature x role pairs) of panel / panel/assistant; list in _work/items/A5-panel-assistant-1.txt | in progress | _work/A5-panel-assistant-1.md |  |
+| A5-panel-assistant-2 | A5 | journeys: 9 features (9 feature x role pairs) of panel / panel/assistant; list in _work/items/A5-panel-assistant-2.txt | in progress | _work/A5-panel-assistant-2.md |  |
+| A5-panel-auth-data-1 | A5 | journeys: 9 features (14 feature x role pairs) of panel / panel/auth-data; list in _work/items/A5-panel-auth-data-1.txt | in progress | _work/A5-panel-auth-data-1.md |  |
+| A5-panel-auth-data-2 | A5 | journeys: 9 features (18 feature x role pairs) of panel / panel/auth-data; list in _work/items/A5-panel-auth-data-2.txt | in progress | _work/A5-panel-auth-data-2.md |  |
+| A5-panel-auth-data-3 | A5 | journeys: 8 features (19 feature x role pairs) of panel / panel/auth-data; list in _work/items/A5-panel-auth-data-3.txt | in progress | _work/A5-panel-auth-data-3.md |  |
 | A4-rpc-2b | A4 | reader rows only: the 41 candidates left out in docs/system-map/_work/A4-rpc-2.md | done | _work/A4-rpc-2b.md | 41 reader rows for the candidates A4-rpc-2 left out: 21 readers, 20 not-a-reader (17 writes, 3 demo stand-ins); no new entity rows; seen in passing: the table gym_message_seen has no entity row |
 | A4-rpc-3b | A4 | reader rows only: the 43 candidates left out in docs/system-map/_work/A4-rpc-3.md | done | _work/A4-rpc-3b.md | 43 reader rows for the candidates A4-rpc-3 left out: 13 readers (6 screen, 5 list, 1 count, 1 export), 30 not-a-reader; no new entity rows; about 30 were classed from the function name and the wrapper comment, not the function body |
 | A4b-1 | A4b | WRITE THE FACTS FILE FIRST (step 1), then do step 2 for the 37 features listed in docs/system-map/_work/items/ | done | _work/A4b-1.md | facts file written (_sources/live-state-facts.md) and 37 status patches: live 15, behind switch 11, hidden 3, not-a-feature 4, unknown 4; 0 new findings; the live migration list holds only one row (the rest were run by hand), so some files stay unknown |

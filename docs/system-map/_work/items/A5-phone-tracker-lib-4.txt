@@ -1,0 +1,8 @@
+F-phone-1128 | Finish screen: which exercises went up or down against the last workout, and why | apps/mobile/src/tracker/lib/workoutCompare.ts:47
+F-phone-1112 | Workout tab routines and folders (open or close a folder, Following / Up next / Next tags, the menus, move up, down or to a folder, New routine, delete questions) | apps/mobile/src/tracker/lib/workoutTab.ts:48
+F-phone-1129 | A saved workout's name and notes as shown in History, on the workout page and in shared text | apps/mobile/src/tracker/lib/workoutText.ts:11
+F-phone-1134 | Before/after picture from two progress photos (Before, After, the two days, how far apart; never a body number) | apps/mobile/src/tracker/share/beforeAfterCard.ts:78
+F-phone-1131 | Share picture choices: size (Post or Story) and background (Dark or See-through) | apps/mobile/src/tracker/share/frame.ts:147
+F-phone-1132 | The member's gym on every share picture (logo and name on top, 'Logged with MettleUp' at the foot) | apps/mobile/src/tracker/share/gymBrand.ts:108
+F-phone-1133 | Share the monthly report or the year in review as a picture | apps/mobile/src/tracker/share/reportCard.ts:96
+F-phone-1130 | Share a workout as a picture (name, day, duration, kg lifted, sets, records, body map, best set per exercise) | apps/mobile/src/tracker/share/workoutCard.ts:97

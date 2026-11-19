@@ -1,0 +1,9 @@
+F-phone-1600 | First welcome screen: pick a way in (phone number, Google, join my gym, bring workouts, use without an account, demo) | apps/mobile/src/onboarding/components/WelcomeScreen.tsx:252
+F-phone-1602 | Set up the app in 3 steps (name and optional mobile number, kg or lb, goal and experience, Start training) | apps/mobile/src/onboarding/components/WelcomeScreen.tsx:252
+F-phone-1608 | Load demo data (the sample member Arjun: 13 weeks of workouts, records, body weight, meals, a plan and a coach chat) from the welcome screen | apps/mobile/src/onboarding/components/WelcomeScreen.tsx:729
+F-phone-1614 | Exercise library a new member starts with (the bundled 400+ exercises; find an exercise by name or Hindi/Hinglish alias; add your own exercise) | apps/mobile/src/onboarding/db/catalog.ts:55
+F-phone-1613 | Import safety: says how many workouts a Replace import removes, keeps a copy first, and Undo import puts everything back (also an import over the demo) | apps/mobile/src/onboarding/db/importSafety.ts:60
+F-phone-1609 | Remove demo data (the sample member goes, your own workouts stay, then you add your details) | apps/mobile/src/onboarding/demoRemoval.ts:23
+F-phone-1610 | Erase all data (this phone only, or this phone and the MettleUp account; clears the database, files, AI keys, gym link, shop, gym lists, settings; says what stays in Google Drive) | apps/mobile/src/onboarding/eraseWords.ts:48
+F-phone-1605 | A member the gym knows goes straight into the gym (no setup questions), with a one-time Workout-tab note 'We set you up as New to lifting and Build muscle' | apps/mobile/src/onboarding/phoneSignInApi.ts:120
+F-phone-1612 | App start: opens on the welcome (no profile yet), on your own data, or on the error screen; notes when the app was first opened on this phone | apps/mobile/src/onboarding/store/onboardingStore.ts:206

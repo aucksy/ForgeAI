@@ -1,0 +1,8 @@
+F-hq-120 | System page: gym server storage used, totals, AI reads and cost this month, member app downloads per version, Cloudflare free-limit check | apps/hq/public/app.js:702
+F-hq-122 | Feedback inbox: read what members and gyms sent with the AI's answer, filter (needs reply, bug, idea ...), set a status and a private note | apps/hq/public/app.js:758
+F-hq-123 | Reply to feedback: the person reads it in the app's Help and feedback, and gets a phone pop-up when their app can take one | apps/hq/public/app.js:806
+F-hq-124 | English helper: rewrite a reply draft with AI before sending, with Undo and this month's cost | apps/hq/public/app.js:831
+F-hq-102 | Needs you alerts: a short sound and a browser pop-up when something new arrives while HQ is open | apps/hq/public/app.js:921
+F-hq-101 | Needs you: one list of what waits (leads, feedback, new gyms, payments), with a count on the menu and in the tab title, refreshed every minute | apps/hq/public/app.js:938
+F-hq-125 | Leads: gyms that asked for a demo on the website, with status (new, called, demo, won, lost), a note, a call link and Make a gym for this lead | apps/hq/public/app.js:965
+F-hq-126 | Delete requests: write down a request (from the admin app or another way), tick the steps (called, reminded, member erased), see days left of 30, cancel | apps/hq/public/app.js:992

@@ -1,0 +1,10 @@
+F-panel-220 | Gym timings: open hours per day, special days, a note for members; owner edits, desk reads | apps/dashboard/src/crm/ui/screens/GymTimings.tsx:81
+F-panel-221 | Import members from Excel or CSV: pick file, match columns, fix rows, add in batches, download skipped rows and a sample file | apps/dashboard/src/crm/ui/screens/ImportMembers.tsx:125
+F-panel-222 | Import: AI matches the file columns by itself | apps/dashboard/src/crm/ui/screens/ImportMembers.tsx:579
+F-panel-223 | Import: send rows to the right branch (gym with 2 or more branches) | apps/dashboard/src/crm/ui/screens/ImportMembers.tsx:1069
+F-panel-224 | Undo a past import | apps/dashboard/src/crm/ui/screens/ImportMembers.tsx:1524
+F-panel-225 | Member page: status, what they owe, visits and training pattern, memberships, payments, contact details; edit the member | apps/dashboard/src/crm/ui/screens/MemberDetail.tsx:112
+F-panel-226 | Check a member in from their page (for a pass member: count a pass visit) | apps/dashboard/src/crm/ui/screens/MemberDetail.tsx:335
+F-panel-227 | Archive or restore a member | apps/dashboard/src/crm/ui/screens/MemberDetail.tsx:365
+F-panel-228 | Member card (print at the desk) | apps/dashboard/src/crm/ui/screens/MemberDetail.tsx:370
+F-panel-229 | Share app link: WhatsApp the member the app link and gym code | apps/dashboard/src/crm/ui/screens/MemberDetail.tsx:390

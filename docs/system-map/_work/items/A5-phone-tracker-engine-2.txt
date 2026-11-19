@@ -1,0 +1,8 @@
+F-phone-909 | Profile history chart: duration, kg lifted or reps over the last 3 months, 12 months or all time, with a tap on a bar | apps/mobile/src/tracker/engine/historyChart.ts:124
+F-phone-910 | Exercise log types: log a set as weight and reps, reps only, added or assisted weight, time, distance, or distance and time; and say whether a weight is one dumbbell or both, one side or both | apps/mobile/src/tracker/engine/logTypes.ts:70
+F-phone-911 | Body measurements: log body fat and nine lengths (neck to calf) in cm or inches, one value a day | apps/mobile/src/tracker/engine/measurements.ts:77
+F-phone-912 | Missing-muscle tip: one calm suggestion when my planned week leaves a muscle group out; a group can be muted or snoozed | apps/mobile/src/tracker/engine/muscleBalance.ts:118
+F-phone-913 | Progress leads with the answer: this week against my usual week, the lift that went up most, and my most-trained lifts | apps/mobile/src/tracker/engine/progressTop.ts:171
+F-phone-914 | Target line on each exercise: what to lift today (one more rep, or the next weight) worked out from last time, the rep range and my 'Weight jumps' choice | apps/mobile/src/tracker/engine/progression.ts:360
+F-phone-915 | Which muscles are ready today: ready, almost or resting for each muscle, worked out only from logged workouts | apps/mobile/src/tracker/engine/readiness.ts:58
+F-phone-916 | Personal records: eight kinds of best per exercise (heaviest, 1-rep max, best set, best workout, most reps, longest time, best pace, longest distance), worked out from the sets | apps/mobile/src/tracker/engine/records.ts:144

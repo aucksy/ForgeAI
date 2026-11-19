@@ -1,0 +1,10 @@
+F-server-300 | Old sign-in-account link between a gym and its people, the one-row workout summary a member phone sends up, and "erase my cloud data" (the first design, for signed-in accounts only) | supabase/migrations/0001_init.sql:120
+F-server-301 | demo copy of Start my gym: "Start demo" makes a gym with a sample shop and hands back an owner key, no sign-up | supabase/migrations/0002_shop.sql:187
+F-server-302 | Gym shop: add, edit, hide, delete products and add stock | supabase/migrations/0002_shop.sql:219
+F-server-304 | Gym shop: see member orders and mark them ready, collected or cancelled (stock goes back on cancel) | supabase/migrations/0002_shop.sql:262
+F-server-305 | Member shop: see the gym's products, place an order, see my orders, cancel an order | supabase/migrations/0002_shop.sql:347
+F-server-308 | Gym details: load the gym (name, code, brand) in the panel and rename the gym | supabase/migrations/0005_gym_theme.sql:89
+F-server-309 | Invite link and front-desk QR: show the gym's name and logo for a join code before joining | supabase/migrations/0007_invite_link.sql:13
+F-server-313 | Put the gym online: an owner-key gym gets its owner as a signed-in person on this device | supabase/migrations/0010_signin_and_records.sql:219
+F-server-311 | Panel sign-in with mobile number and a 6-digit code the owner makes: device sessions, sign out, guess limits, why a key stopped working, retiring the old owner key, support-made code | supabase/migrations/0010_signin_and_records.sql:349
+F-server-318 | Check in by QR from the member app: mobile matched to the gym roster, with limits on typed numbers | supabase/migrations/0015_qr_checkin.sql:53

@@ -1,0 +1,9 @@
+F-phone-1101 | Exercise library update on app launch (and after demo data or a restore): links old rows, adds new exercises, renames old spellings | apps/mobile/src/tracker/catalog/catalogSync.ts:251
+F-phone-1100 | Built-in exercise library (names, other names incl. Hindi, muscles, gear, how each is logged) | apps/mobile/src/tracker/catalog/exerciseCatalog.ts:19
+F-phone-1102 | Exercise pictures: small picture in lists, start and end pictures on the exercise page and demo sheet, line drawing with credit as fallback | apps/mobile/src/tracker/catalog/pictureChoice.ts:21
+F-phone-1103 | Muscles trained body map (finer muscles, male or female figure, shading by sets) | apps/mobile/src/tracker/lib/bodyMapColors.ts:18
+F-phone-1104 | Pick a date on a month calendar (workout date picker; also used by the plan request panel) | apps/mobile/src/tracker/lib/calendar.ts:5
+F-phone-1105 | Calendar page (workout days by month, and the year view) | apps/mobile/src/tracker/lib/calendarView.ts:8
+F-phone-1106 | Charts spaced by the real date (line charts, sparklines, bar chart) | apps/mobile/src/tracker/lib/chartTime.ts:25
+F-phone-1109 | Reorder routines in a folder by press-and-hold, then drag | apps/mobile/src/tracker/lib/dragOrder.ts:14
+F-phone-1110 | Exercises list and exercise picker order (Recent, Made by you, All exercises, 'Last: date') | apps/mobile/src/tracker/lib/exercisesView.ts:31

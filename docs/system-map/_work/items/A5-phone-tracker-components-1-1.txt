@@ -1,0 +1,9 @@
+F-phone-700 | Share a before-and-after photo picture | apps/mobile/src/tracker/components/BeforeAfterShare.tsx:57
+F-phone-701 | Fix or delete a weigh-in or body measurement | apps/mobile/src/tracker/components/BodyEntrySheet.tsx:127
+F-phone-703 | Body map: muscles shaded by how much they were trained | apps/mobile/src/tracker/components/BodyMap.tsx:45
+F-phone-702 | Pick a past day from a month calendar | apps/mobile/src/tracker/components/DatePickerSheet.tsx:18
+F-phone-710 | Reorder exercises and routines by press, hold and drag | apps/mobile/src/tracker/components/DragList.tsx:36
+F-phone-712 | Easy week note (half the sets, same weights, until a date) | apps/mobile/src/tracker/components/EasyWeekNote.tsx:18
+F-phone-713 | Correct a saved workout's day, start time and length | apps/mobile/src/tracker/components/EditSessionHeader.tsx:68
+F-phone-714 | Workout duration clock, with pause and resume | apps/mobile/src/tracker/components/ElapsedClock.tsx:39
+F-phone-715 | Quick plus/minus steps and Copy to sets below, on the keyboard while typing a set | apps/mobile/src/tracker/components/EntryBar.tsx:45

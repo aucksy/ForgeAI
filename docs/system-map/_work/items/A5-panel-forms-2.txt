@@ -1,0 +1,8 @@
+F-panel-406 | Add a member (name and mobile needed; batch, joining date, gender, birthday, email, address, emergency contact, notes optional) | apps/dashboard/src/crm/ui/forms/MemberFormSheet.tsx:60
+F-panel-408 | Add a member from an enquiry or the "Become a member" page with name, mobile and gender filled in already | apps/dashboard/src/crm/ui/forms/MemberFormSheet.tsx:69
+F-panel-412 | Let a member train at every branch | apps/dashboard/src/crm/ui/forms/MemberFormSheet.tsx:96
+F-panel-409 | Take a member photo with the desk camera while adding a member | apps/dashboard/src/crm/ui/forms/MemberFormSheet.tsx:105
+F-panel-407 | Edit a member's details (never changes archived state or photo) | apps/dashboard/src/crm/ui/forms/MemberFormSheet.tsx:156
+F-panel-413 | Mobile number already used: say who has it, and bring back an archived member or open their page | apps/dashboard/src/crm/ui/forms/MemberFormSheet.tsx:172
+F-panel-410 | Put a member in a batch (tap a batch already in use, None, or type a new one) | apps/dashboard/src/crm/ui/forms/MemberFormSheet.tsx:332
+F-panel-411 | Mark a member as "Comes with a pass" (FITPASS, cultpass or another company): no plan, no dues | apps/dashboard/src/crm/ui/forms/MemberFormSheet.tsx:339

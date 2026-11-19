@@ -12,7 +12,7 @@
 import fs from 'node:fs';
 import { execFileSync } from 'node:child_process';
 
-const N = 8; // features per helper. Change after the pilot (6 to 10).
+const N = 10; // features per helper. Change after the pilot (6 to 10).
 const NEEDS = []; // work item ids every A5 item must wait for (they must exist in work-items.jsonl)
 const WORD_LIMIT = 1200;
 

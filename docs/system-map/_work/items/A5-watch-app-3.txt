@@ -1,0 +1,8 @@
+F-watch-120 | No workout open: "Start a workout on your phone" screen | apps/mobile/android/wear/src/main/java/com/forgeai/wear/WatchScreens.kt:682
+F-watch-121 | "Workout saved" shown for about 4 s after Finish on the phone | apps/mobile/android/wear/src/main/java/com/forgeai/wear/WatchScreens.kt:702
+F-watch-122 | Get MettleUp on your phone: when the phone has no MettleUp app, "Open on phone" opens its Play Store page | apps/mobile/android/wear/src/main/java/com/forgeai/wear/WatchScreens.kt:725
+F-watch-111 | First-launch permission screens: heart rate (1 of 2) and rest alerts incl. Alarms & reminders (2 of 2), Allow / Not now, asked once | apps/mobile/android/wear/src/main/java/com/forgeai/wear/WatchScreens.kt:760
+F-watch-123 | "Phone not connected" screen (a running rest and its buzz still show first) | apps/mobile/android/wear/src/main/java/com/forgeai/wear/WatchScreens.kt:835
+F-watch-118 | Watch update ready: the watch tells the phone it is installed and which version it runs, so the phone can say a watch update is ready | apps/mobile/android/wear/src/main/java/com/forgeai/wear/WatchVersion.kt:23
+F-watch-112 | "Workout in progress" notice for the whole workout: keeps MettleUp up instead of the watch face, icon on the watch face, one tap back; ends itself after 4 h of phone silence | apps/mobile/android/wear/src/main/java/com/forgeai/wear/WorkoutLive.kt:102
+F-watch-113 | The watch opens MettleUp when a workout starts on the phone, or pops up a "Workout started" card with one buzz (once per workout) | apps/mobile/android/wear/src/main/java/com/forgeai/wear/WorkoutStarted.kt:65
