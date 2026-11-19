@@ -34,19 +34,19 @@ weekly stop lines (his words, 19 Nov 2026 09:40 IST: "Lets stop if fable reaches
 | A3 | 11 | 5.2 (207k tokens) |
 | A4 | 13 | 4.1 (162k tokens) |
 | A4b | 2 | 5.1 (204k tokens) |
-| A5 | 23 | 5.2 (207k tokens) |
+| A5 | 24 | 5.2 (208k tokens) |
 | L4 | 1 | 4.4 (177k tokens) |
 
 ## Work items
-Counts: 0 todo, 4 in progress, 120 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 0 todo, 5 in progress, 121 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
-| A5-panel-logic-2-3 | A5 | journeys: 8 features (13 feature x role pairs) of panel / panel/logic-2; list in _work/items/A5-panel-logic-2-3.txt | in progress | _work/A5-panel-logic-2-3.md |  |
 | A5-panel-logic-2-4 | A5 | journeys: 8 features (16 feature x role pairs) of panel / panel/logic-2; list in _work/items/A5-panel-logic-2-4.txt | in progress | _work/A5-panel-logic-2-4.md |  |
 | A5-panel-shop-1 | A5 | journeys: 6 features (12 feature x role pairs) of panel / panel/shop; list in _work/items/A5-panel-shop-1.txt | in progress | _work/A5-panel-shop-1.md |  |
 | A5-panel-shop-2 | A5 | journeys: 5 features (8 feature x role pairs) of panel / panel/shop; list in _work/items/A5-panel-shop-2.txt | in progress | _work/A5-panel-shop-2.md |  |
-| A5-panel-forms-2 | A5 | journeys: 8 features (15 feature x role pairs) of panel / panel/forms; list in _work/items/A5-panel-forms-2.txt | done | _work/A5-panel-forms-2.md | 8 features (15 feature x role pairs): 83 full journeys and 111 type lines; 1 finding (S3): Comes with a pass ticked and no company picked, Add member saves nothing and the message is off screen; 8 seen-in-passing lines in the checkpoint |
+| A5-panel-ui-shell-1 | A5 | journeys: 10 features (23 feature x role pairs) of panel / panel/ui-shell; list in _work/items/A5-panel-ui-shell-1.txt | in progress | _work/A5-panel-ui-shell-1.md |  |
+| A5-panel-ui-shell-2 | A5 | journeys: 10 features (22 feature x role pairs) of panel / panel/ui-shell; list in _work/items/A5-panel-ui-shell-2.txt | in progress | _work/A5-panel-ui-shell-2.md |  |
 | A5-panel-forms-3 | A5 | journeys: 8 features (14 feature x role pairs) of panel / panel/forms; list in _work/items/A5-panel-forms-3.txt | done | _work/A5-panel-forms-3.md | 8 features (14 feature x role pairs): 68 full journeys and 108 type lines; 1 finding (S3): on the sell sheet, a changed plan keeps the old price question and Yes, save; 10 seen-in-passing lines in the checkpoint |
 | A5-panel-logic-1-1 | A5 | journeys: 8 features (17 feature x role pairs) of panel / panel/logic-1; list in _work/items/A5-panel-logic-1-1.txt | done | _work/A5-panel-logic-1-1.md | 8 features (17 feature x role pairs): 81 full journeys and 125 type lines; 1 finding (S3): Latest from your members on Today uses the device clock, so a wrong clock can hide a waiting message; 9 seen-in-passing lines in the checkpoint |
 | A5-panel-logic-1-2 | A5 | journeys: 8 features (14 feature x role pairs) of panel / panel/logic-1; list in _work/items/A5-panel-logic-1-2.txt | done | _work/A5-panel-logic-1-2.md | 8 features (14 feature x role pairs): 70 full journeys and 101 type lines; 3 findings (S3): the ready WhatsApp follow-up shows a system note; the Your growth Excel file gives numbers for months not yet over; Check workout code calls entry-machine check-ins imported; 9 seen-in-passing lines in the checkpoint |
@@ -54,7 +54,8 @@ Counts: 0 todo, 4 in progress, 120 done, 0 blocked. Full list: work-items.jsonl.
 | A5-panel-logic-1-4 | A5 | journeys: 7 features (11 feature x role pairs) of panel / panel/logic-1; list in _work/items/A5-panel-logic-1-4.txt | done | _work/A5-panel-logic-1-4.md | 7 features (11 feature x role pairs): 60 full journeys and 77 type lines; 2 findings: S3 a special day with a date already over is dropped without a word on Gym timings; S4 the import button reads Update 1 members; 11 seen-in-passing lines in the checkpoint (one: a mistyped Aadhaar can stay in imported text) |
 | A5-panel-logic-2-1 | A5 | journeys: 9 features (18 feature x role pairs) of panel / panel/logic-2; list in _work/items/A5-panel-logic-2-1.txt | done | _work/A5-panel-logic-2-1.md | 9 features (18 feature x role pairs): 96 full journeys and 126 type lines; 1 finding (S2): an imported plan named by visits per week, such as 3 Days a Week Monthly, is saved as a 3-day plan and shows as expired; 6 seen-in-passing lines in the checkpoint |
 | A5-panel-logic-2-2 | A5 | journeys: 8 features (17 feature x role pairs) of panel / panel/logic-2; list in _work/items/A5-panel-logic-2-2.txt | done | _work/A5-panel-logic-2-2.md | 8 features (17 feature x role pairs): 81 full journeys and 124 type lines; 1 finding (S2): unticking the pass box removes a member's past QR visits from the monthly pass count, and a changed company moves them, so the gym claims too little or from the wrong company; 8 seen-in-passing lines in the checkpoint |
-(+ 112 older done items, not shown)
+| A5-panel-logic-2-3 | A5 | journeys: 8 features (13 feature x role pairs) of panel / panel/logic-2; list in _work/items/A5-panel-logic-2-3.txt | done | _work/A5-panel-logic-2-3.md | 8 features (13 feature x role pairs): 67 full journeys and 98 type lines; 3 findings: S2 a second friend with the same name gets no free days but the screen says Free days added (same as the earlier screens finding: merge in 3H); S3 the owner's quick buttons are kept on one device only; S3 the arrows in the quick buttons sheet do not move the rows; 13 seen-in-passing lines in the checkpoint |
+(+ 113 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
