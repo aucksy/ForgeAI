@@ -31,18 +31,16 @@ weekly stop lines (his words, 19 Nov 2026 09:40 IST: "Lets stop if fable reaches
 | 3F | 1 | 4.3 (171k tokens) |
 | A3 | 11 | 5.2 (207k tokens) |
 | A4 | 13 | 4.1 (162k tokens) |
-| A4b | 0 | 5 (start value) |
+| A4b | 1 | 5.1 (205k tokens) |
 
 ## Work items
-Counts: 1 todo, 3 in progress, 92 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 1 todo, 2 in progress, 93 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
-| A4b-1 | A4b | WRITE THE FACTS FILE FIRST (step 1), then do step 2 for the 37 features listed in docs/system-map/_work/items/ | in progress | _work/A4b-1.md |  |
 | T-A5 | tools | tooling: A5 template, journey templates, expand script, items script | in progress | _work/T-A5.md |  |
 | T-lens | tools | tooling: lens items, applies grid, lens template, items script for lenses 4, 3, 5 | in progress | _work/T-lens.md |  |
 | A4b-2 | A4b | Do NOT write the facts file: it exists; read it first. Do step 2 for the 47 features listed in docs/system-map | todo | _work/A4b-2.md |  |
-| A4-rpc-4 | A4 | entities and readers: 39 database-function groups, lines 1030-1163 of _sources/readers-raw.txt | done | _work/A4-rpc-4.md | entity rows and 46 reader rows for database-function, storage and table groups (lines 1030-1163): 16 readers, 30 not-a-reader; repeated entity rows dropped; 11 candidates left for item A4-rpc-4b (list in the checkpoint); seen in passing: opening the member-messages list also deletes threads older than 180 days |
 | A4-nocaller-1 | A4 | entities and readers: database functions with no caller found, lines 1166-1261 of _sources/readers-raw.txt | done | _work/A4-nocaller-1.md | 96 reader rows for database functions with no caller in app code (lines 1166-1261): 11 notification, 85 not-a-reader, 0 dead; seen in passing: the low AI credit alert fires at 10 while the wallet says 5; a photo of an unpublished gym page may stay readable by its direct address |
 | A4-nocaller-2 | A4 | entities and readers: database functions with no caller found, lines 1262-1357 of _sources/readers-raw.txt | done | _work/A4-nocaller-2.md | 3 entity rows and 96 reader rows for database functions with no caller in app code (lines 1262-1357): 26 readers, 70 not-a-reader, 0 dead; seen in passing: two word-for-word copies of the owner check can drift apart; old busy-machine and offer rows are cleaned only when someone opens the screen |
 | A4-nocaller-3 | A4 | entities and readers: database functions with no caller found, lines 1358-1451 of _sources/readers-raw.txt | done | _work/A4-nocaller-3.md | 2 entity rows and 94 reader rows for database functions with no caller in app code (lines 1358-1451): 5 notification, 89 not-a-reader, 7 that nothing calls; seen in passing: receipt changes are recorded but no screen shows them to the owner; the log of direct database reads is written but no HQ screen shows it; old web page chats of a quiet gym can stay past 90 days |
@@ -50,7 +48,8 @@ Counts: 1 todo, 3 in progress, 92 done, 0 blocked. Full list: work-items.jsonl. 
 | A4-rpc-1b | A4 | reader rows only: the 47 candidates left out in docs/system-map/_work/A4-rpc-1.md and docs/system-map/_work/A4-rpc-4.md | done | _work/A4-rpc-1b.md | 46 reader rows for the candidates A4-rpc-1 and A4-rpc-4 left out: 22 readers, 24 not-a-reader; 1 candidate is screen text and has no row; seen in passing: with one server secret missing, an AI question is not counted against the gym allowance |
 | A4-rpc-2b | A4 | reader rows only: the 41 candidates left out in docs/system-map/_work/A4-rpc-2.md | done | _work/A4-rpc-2b.md | 41 reader rows for the candidates A4-rpc-2 left out: 21 readers, 20 not-a-reader (17 writes, 3 demo stand-ins); no new entity rows; seen in passing: the table gym_message_seen has no entity row |
 | A4-rpc-3b | A4 | reader rows only: the 43 candidates left out in docs/system-map/_work/A4-rpc-3.md | done | _work/A4-rpc-3b.md | 43 reader rows for the candidates A4-rpc-3 left out: 13 readers (6 screen, 5 list, 1 count, 1 export), 30 not-a-reader; no new entity rows; about 30 were classed from the function name and the wrapper comment, not the function body |
-(+ 84 older done items, not shown)
+| A4b-1 | A4b | WRITE THE FACTS FILE FIRST (step 1), then do step 2 for the 37 features listed in docs/system-map/_work/items/ | done | _work/A4b-1.md | facts file written (_sources/live-state-facts.md) and 37 status patches: live 15, behind switch 11, hidden 3, not-a-feature 4, unknown 4; 0 new findings; the live migration list holds only one row (the rest were run by hand), so some files stay unknown |
+(+ 85 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).

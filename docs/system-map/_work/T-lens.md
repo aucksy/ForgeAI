@@ -1,0 +1,4 @@
+- started 16:29: read brief, lens-source, RUNBOOK, rows, A4, mkbrief, merge (grid part), state, a4b-items.
+- part 1 done: _tools/lens-items.mjs + lens-items.json (106 items; --check re-run gives same ids)
+- part 2 done: applies.json (6 surfaces x 30; 2 no cells: server x lens 9, watch x lens 5)
+- part 3 done: _briefs/lens.md (rules block copied from A4.md by script, identical)

@@ -22,6 +22,10 @@
 // A row with "patch": true changes fields of a row that already exists (written by any work item):
 //   only "kind", "id" and the fields to change are needed.
 // --cover: fails the item if a line of that _sources file range is named by no feature's "sources".
+// kind "jtype" (step A5): one line per feature x role x journey type, kept in journey-types/<feature id>.json.
+// --a5cover <items file>: the A5 done-check. Fails the item unless every feature of that items file (one per
+//   line, "<feature id> | ...") x every role of the feature has: a full journey of type 1, 3 and 6; a full
+//   journey or a "no" type line for types 2 and 12; a type line for each of types 4, 5, 7, 8, 9, 10, 11.
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -39,6 +43,7 @@ const blindFile = opt('--blind');
 const allowRejects = opt('--allow-rejects', false);
 const dry = opt('--dry', false);
 const cover = opt('--cover');
+const a5cover = opt('--a5cover');
 const MAP = path.resolve(opt('--map') || path.join(here, '..'));
 const REPO = path.resolve(opt('--repo') || path.join(MAP, '..', '..'));
 const WI = argv[0];
@@ -77,6 +82,7 @@ const STORES = {
   improvement: { file: 'improvements.jsonl', fmt: 'jsonl' },
   grid: { file: 'LENS-GRID.json', fmt: 'json' },
   journey: { dir: 'journeys' },
+  jtype: { dir: 'journey-types' },
 };
 function readRows(file, fmt) {
   if (!fs.existsSync(file)) return [];
@@ -145,7 +151,7 @@ function srcLine(v) { // "panel.txt#212" = line 212 of _sources/panel.txt
 }
 
 // ---------- field checks (each returns an error text or null) ----------
-const batchIds = { feature: new Set(), entity: new Set(), reader: new Set(), promise: new Set(), finding: new Set(), improvement: new Set(), grid: new Set(), journey: new Set() };
+const batchIds = { feature: new Set(), entity: new Set(), reader: new Set(), promise: new Set(), finding: new Set(), improvement: new Set(), grid: new Set(), journey: new Set(), jtype: new Set() };
 const has = (kind, id) => store[kind].has(id) || batchIds[kind].has(id);
 const PREFIX = [['J-', 'journey'], ['FN-', 'finding'], ['F-', 'feature'], ['E-', 'entity'], ['P-', 'promise'], ['RD-', 'reader'], ['IM-', 'improvement']];
 function refAny(id) {
@@ -221,6 +227,33 @@ const SPEC = {
   },
   grid: { surface, area: str, lens: str, checked_on: date, items: gridItems },
 };
+// A5 type lines. Templates: journey-templates.json (id -> type).
+const TEMPLATES = new Map();
+try { for (const t of JSON.parse(fs.readFileSync(path.join(MAP, 'journey-templates.json'), 'utf8'))) TEMPLATES.set(t.id, t.type); } catch { /* no templates file: every "yes" type line is rejected below */ }
+const TIER2 = [4, 5, 7, 8, 9, 10, 11];
+const roleSlug = (r) => String(r).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+SPEC.jtype = {
+  id: idLike(/^JT-F-.+-(2|4|5|7|8|9|10|11|12)$/, 'JT-<feature id>-<role>-<type>'), feature: (v) => (typeof v === 'string' && has('feature', v) ? null : `feature id does not exist: ${v}`), role: str,
+  type: en(2, 4, 5, 7, 8, 9, 10, 11, 12), applies: en('yes', 'no'), why_not: str, variants: list(str),
+  at_step: (v) => (Number.isInteger(v) && v >= 0 ? null : 'must be a whole number (0 when the type does not apply)'),
+  entity: (v) => (v === 'none' ? null : ref('entity')(v)), note: str,
+};
+function jtypeCross(o) {
+  const errs = [];
+  const feat = store.feature.get(o.feature);
+  if (feat && Array.isArray(feat.roles) && !feat.roles.includes(o.role)) errs.push(`"role" must be one of the feature's roles, spelled the same: ${feat.roles.join(' | ')}`);
+  if (typeof o.role === 'string' && o.id !== `JT-${o.feature}-${roleSlug(o.role)}-${o.type}`) errs.push(`id must be JT-${o.feature}-${roleSlug(o.role)}-${o.type}`);
+  if (o.applies === 'no') {
+    if (typeof o.why_not !== 'string' || o.why_not.trim().length < 8 || /^(none|unknown|n\/?a)$/i.test(o.why_not.trim())) errs.push('"applies": "no" needs a real reason in "why_not"');
+    if (Array.isArray(o.variants) && o.variants.length) errs.push('"applies": "no" must have an empty "variants" list');
+  } else if (o.applies === 'yes') {
+    if (!TIER2.includes(o.type)) errs.push(`type ${o.type} is written as full journeys; its type line may only say "applies": "no"`);
+    if (!Array.isArray(o.variants) || !o.variants.length) errs.push('"applies": "yes" needs at least one template id in "variants"');
+    else for (const v of o.variants) { if (!TEMPLATES.has(v)) errs.push(`variant is not a template id of journey-templates.json: ${v}`); else if (TEMPLATES.get(v) !== o.type) errs.push(`template ${v} belongs to type ${TEMPLATES.get(v)}, not ${o.type}`); }
+    if (!(o.at_step >= 1)) errs.push('"applies": "yes" needs "at_step" 1 or more (a step number of the happy journey)');
+  }
+  return errs;
+}
 const PLAIN = { finding: ['title', 'what', 'who', 'how_often', 'fix_line'] };
 
 // ---------- pass 1: parse, blind check, collect ids ----------
@@ -269,6 +302,7 @@ for (const { n, o } of live) {
     for (const [f, v] of Object.entries(o)) if (v === '' && !spec[f]) errs.push(`"${f}" is empty (write "unknown")`);
     if (o.kind === 'reader' && o.reader_kind === 'not-a-reader' && str(o.reason)) errs.push('"not-a-reader" needs a "reason"');
     if (o.kind === 'journey' && typeof o.id === 'string' && typeof o.feature === 'string' && !o.id.startsWith('J-' + o.feature + '-')) errs.push('journey id must start with J-<its feature id>-');
+    if (o.kind === 'jtype' && !errs.length) errs.push(...jtypeCross(o));
     const prev = store[o.kind].get(o.id);
     if (prev && prev.wi && prev.wi !== WI) errs.push(`id already written by work item ${prev.wi}; pick a new id, or send "patch": true with only the fields to change`);
     for (const f of PLAIN[o.kind] || []) if (typeof o[f] === 'string' && /[\w-]+\.(tsx?|jsx?|mjs|sql|kt|py|json|ya?ml)\b|\w+\(\)/.test(o[f])) warns.push(`${tag}: "${f}" holds a file or function name; the report card needs plain words`);
@@ -280,7 +314,7 @@ for (const { n, o } of live) {
 // ---------- 4. upsert ----------
 const dirty = new Set();
 const dirtyFeatures = new Set();
-const touch = (kind, row) => { dirty.add(kind); if (kind === 'journey' && row) dirtyFeatures.add(row.feature); };
+const touch = (kind, row) => { dirty.add(kind); if (STORES[kind].dir && row) dirtyFeatures.add(row.feature); };
 const counts = { added: 0, replaced: 0, patched: 0, removed: 0 };
 if (rejects.length === 0 || allowRejects) {
   const newIds = new Set(good.filter((o) => !o.patch).map((o) => o.kind + '|' + o.id));
@@ -315,6 +349,39 @@ if (cover) {
   if (miss.length) rejects.push(`cover: ${miss.length} line(s) of _sources/${m[1]} have no feature: ${miss.slice(0, 60).join(', ')}${miss.length > 60 ? ', ...' : ''}`);
 }
 
+// ---------- --a5cover: the A5 done-check for one items file ----------
+if (a5cover) {
+  const file = [a5cover, path.join(MAP, '_work', 'items', a5cover)].find((p) => fs.existsSync(p));
+  if (!file) die('--a5cover: items file not found: ' + a5cover);
+  const ids = fs.readFileSync(file, 'utf8').split(/\r?\n/).map((l) => l.split('|')[0].trim()).filter(Boolean);
+  const NAMES = { 1: 'happy', 2: 'alternate', 3: 'negative', 6: 'state', 12: 'privacy and promise' };
+  const miss = [];
+  let pairs = 0;
+  for (const fid of ids) {
+    const feat = store.feature.get(fid);
+    if (!feat) { miss.push(`${fid}: not in features.json`); continue; }
+    if (feat.status === 'not-a-feature') continue;
+    const js = [...store.journey.values()].filter((j) => j.feature === fid && j.generated === false);
+    const ts = [...store.jtype.values()].filter((t) => t.feature === fid);
+    for (const role of feat.roles) {
+      pairs++;
+      const gaps = [];
+      const full = (type) => js.filter((j) => j.role === role && j.type === type);
+      const line = (type) => ts.find((t) => t.role === role && t.type === type);
+      for (const type of [1, 3, 6]) if (!full(type).length) gaps.push(`no full ${NAMES[type]} journey (type ${type})`);
+      for (const type of [2, 12]) if (!full(type).length && !line(type)) gaps.push(`type ${type} (${NAMES[type]}): no full journey and no "no" type line`);
+      const noLine = TIER2.filter((type) => !line(type));
+      if (noLine.length) gaps.push(`no type line for type ${noLine.join(', ')}`);
+      if (gaps.length) miss.push(`${fid} x ${role}: ${gaps.join('; ')}`);
+      for (const j of js.filter((x) => x.role === role && [1, 2, 3, 6, 12].includes(x.type))) if (!j.writes.length && !j.reads.length) warns.push(`a5cover: ${j.id} lists no entity in writes or reads: check it really touches no stored data`);
+    }
+    for (const j of js) if (!feat.roles.includes(j.role)) miss.push(`${j.id}: role "${j.role}" is not a role of ${fid} (${feat.roles.join(' | ')})`);
+  }
+  console.log(`a5cover: ${ids.length} features, ${pairs} feature x role pairs checked, ${miss.length} with gaps`);
+  for (const m of miss.slice(0, 80)) rejects.push('a5cover: ' + m);
+  if (miss.length > 80) rejects.push(`a5cover: ... and ${miss.length - 80} more`);
+}
+
 // ---------- 6. rejects ----------
 const failed = rejects.length > 0;
 const rejFile = path.join(MAP, '_work', 'rejects', WI + '.txt');
@@ -344,7 +411,7 @@ if (willWrite) {
     if (s.dir) {
       for (const feat of dirtyFeatures) {
         const file = path.join(MAP, s.dir, String(feat).replace(/[^A-Za-z0-9._-]/g, '_') + '.json');
-        const rs = [...store.journey.values()].filter((r) => r.feature === feat).sort(byId);
+        const rs = [...store[kind].values()].filter((r) => r.feature === feat).sort(byId);
         if (rs.length) writeFile(file, rs, 'json'); else if (fs.existsSync(file)) fs.rmSync(file);
       }
     } else writeFile(path.join(MAP, s.file), [...store[kind].values()].sort(byId), s.fmt);

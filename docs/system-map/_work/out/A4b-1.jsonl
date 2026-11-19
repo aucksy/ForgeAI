@@ -1,0 +1,37 @@
+{"kind":"feature","id":"F-hq-3800","patch":true,"status":"not-a-feature"}
+{"kind":"feature","id":"F-hq-3903","patch":true,"status":"not-a-feature"}
+{"kind":"feature","id":"F-server-114","patch":true,"status":"unknown"}
+{"kind":"feature","id":"F-server-118","patch":true,"status":"unknown"}
+{"kind":"feature","id":"F-server-119","patch":true,"status":"unknown"}
+{"kind":"feature","id":"F-server-122","patch":true,"status":"unknown"}
+{"kind":"feature","id":"F-server-124","patch":true,"status":"behind switch","switch":"PAY_LIVE (off = test mode, no real money); PAYMENTS_MASTER_KEY secret"}
+{"kind":"feature","id":"F-server-126","patch":true,"status":"live","switch":"PAY_LIVE (off: company links are test mode; plain UPI requests are real)"}
+{"kind":"feature","id":"F-server-128","patch":true,"status":"live","switch":"PAY_LIVE (off: company links are test mode; plain UPI requests are real); owner switch app_on (on by default)"}
+{"kind":"feature","id":"F-server-130","patch":true,"status":"behind switch","switch":"PAY_LIVE (off = test mode, no real money)"}
+{"kind":"feature","id":"F-server-131","patch":true,"status":"behind switch","switch":"PAY_LIVE (off = test mode, no real money)"}
+{"kind":"feature","id":"F-server-132","patch":true,"status":"behind switch","switch":"JOIN_PAY (off: hides the join switch and join payments list; the member-app switch is reachable)"}
+{"kind":"feature","id":"F-server-133","patch":true,"status":"hidden","switch":"live status answers mode inbound, so the send-a-code way is not offered"}
+{"kind":"feature","id":"F-server-134","patch":true,"status":"live"}
+{"kind":"feature","id":"F-server-135","patch":true,"status":"live"}
+{"kind":"feature","id":"F-server-136","patch":true,"status":"behind switch","switch":"BILLING (HQ setting, not set) + app_config billing_checkout (off)"}
+{"kind":"feature","id":"F-server-137","patch":true,"status":"live"}
+{"kind":"feature","id":"F-server-231","patch":true,"status":"live"}
+{"kind":"feature","id":"F-server-232","patch":true,"status":"behind switch","switch":"PAY_LIVE (off: only test-mode company payments can raise it)"}
+{"kind":"feature","id":"F-server-300","patch":true,"status":"live"}
+{"kind":"feature","id":"F-server-332","patch":true,"status":"live"}
+{"kind":"feature","id":"F-server-333","patch":true,"status":"live"}
+{"kind":"feature","id":"F-server-334","patch":true,"status":"live"}
+{"kind":"feature","id":"F-server-335","patch":true,"status":"hidden","switch":"app_config free_limits.on (default false; the app no longer reads it)"}
+{"kind":"feature","id":"F-server-336","patch":true,"status":"live"}
+{"kind":"feature","id":"F-server-511","patch":true,"status":"live"}
+{"kind":"feature","id":"F-web-126","patch":true,"status":"behind switch","switch":"PAY_LIVE (off = test mode, no real money); PAY_OAUTH_RAZORPAY (off); PAY_OAUTH_CASHFREE (off)"}
+{"kind":"feature","id":"F-web-127","patch":true,"status":"live","switch":"PAY_LIVE (off: company links are test mode; plain UPI requests are real)"}
+{"kind":"feature","id":"F-web-128","patch":true,"status":"behind switch","switch":"JOIN_PAY (off: hides the join switch and join payments list; the member-app switch is reachable)"}
+{"kind":"feature","id":"F-web-129","patch":true,"status":"live","switch":"PAY_LIVE (off: company links are test mode; plain UPI requests are real); owner switch app_on (on by default)"}
+{"kind":"feature","id":"F-web-131","patch":true,"status":"behind switch","switch":"PAY_LIVE (off = test mode, no real money)"}
+{"kind":"feature","id":"F-web-132","patch":true,"status":"behind switch","switch":"BILLING (HQ setting, not set) + app_config billing_checkout (off)"}
+{"kind":"feature","id":"F-web-133","patch":true,"status":"live"}
+{"kind":"feature","id":"F-web-134","patch":true,"status":"hidden","switch":"live status answers mode inbound, so the send-a-code way is not offered"}
+{"kind":"feature","id":"F-web-3401","patch":true,"status":"behind switch","switch":"JOIN_PAY"}
+{"kind":"feature","id":"F-web-4002","patch":true,"status":"not-a-feature"}
+{"kind":"feature","id":"F-web-4003","patch":true,"status":"not-a-feature"}
