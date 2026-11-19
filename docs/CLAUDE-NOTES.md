@@ -7,6 +7,10 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-620. Audit Fable stop line moved to 99% - 19 Nov 2026 09:40 IST
+
+His words: "Lets stop if fable reaches 99% / I will reset Fable Limit and then continue". The audit had paused at weekly Fable 88-91 under the old 90 line. Now: weekly Fable stops at 99 every day (no new helper when Fable + 2 would pass 99; pause and tell him once at 97+). Weekly all-models keeps 90 (95 on its last day). Changed in the pacer task file and the audit plan (section 8C). The pacer deletes the old "resume at 87" line from AUDIT-STATE.md on its next run. At the pause he resets the Fable limit himself and the pacer resumes within 15 minutes.
+
 ## R-619. Audit weekly stop: 90%, or 95% on the last day; the extra 01:02 run removed - 18 Nov 2026 21:20 IST
 
 His words: "Weekly stop at 90% if more than 1 days are remaining for weekly reset. It can go upto 95% if its last day". And: "What do you
