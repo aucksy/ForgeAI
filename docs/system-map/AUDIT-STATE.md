@@ -1,4 +1,4 @@
-status: PAUSED (19 Nov 11:40 IST: weekly Fable is 98 and its stop line is 99, so no helper fits. HE WAS TOLD ONCE for this pause on 19 Nov 11:40 IST: do not tell him again. Set RUNNING by yourself when weekly Fable + 2 is 99 or under: after he resets the Fable limit, or after the weekly reset of 25 Nov 16:30 IST)
+status: RUNNING (19 Nov 11:50 IST: he reset the Fable limit; weekly Fable 0, weekly all 2; the pause is over)
 phase/step: A2 and A7 DONE. A3 running: 5 of 11 items done (help, panel update notes, phone update notes, website 1 and 2). A4 running: pilot done (12 of 313 groups); the other A4 items are not made yet. E1-E4 done; 3F draft done
 expected end: unknown until A2 learned costs (rough: 3 weekly periods = by about 9 Dec 2026)
 mode: ANALYSIS ONLY. No app code, tests, workflows, skills or settings change. "Apply" items in 3E/3F = proposals only.
@@ -33,16 +33,16 @@ weekly stop lines (his words, 19 Nov 2026 09:40 IST: "Lets stop if fable reaches
 | A4 | 1 | 4.6 (185k tokens) |
 
 ## Work items
-Counts: 6 todo, 0 in progress, 74 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 0 todo, 6 in progress, 74 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
-| A3-notes-claude-1 | A3 | human side: redacted notes copy, part 1 | todo | _work/A3-notes-claude-1.md |  |
-| A3-notes-claude-2 | A3 | human side: redacted notes copy, parts 2 and 3 | todo | _work/A3-notes-claude-2.md |  |
-| A3-inbox-1 | A3 | human side: redacted backlog copy, part 1 | todo | _work/A3-inbox-1.md |  |
-| A3-inbox-2 | A3 | human side: redacted backlog copy, part 2 | todo | _work/A3-inbox-2.md |  |
-| A3-inbox-3 | A3 | human side: redacted backlog copy, part 3 | todo | _work/A3-inbox-3.md |  |
-| A3-inbox-4 | A3 | human side: redacted backlog copy, parts 4 and 5 | todo | _work/A3-inbox-4.md |  |
+| A3-notes-claude-1 | A3 | human side: redacted notes copy, part 1 | in progress | _work/A3-notes-claude-1.md |  |
+| A3-notes-claude-2 | A3 | human side: redacted notes copy, parts 2 and 3 | in progress | _work/A3-notes-claude-2.md |  |
+| A3-inbox-1 | A3 | human side: redacted backlog copy, part 1 | in progress | _work/A3-inbox-1.md |  |
+| A3-inbox-2 | A3 | human side: redacted backlog copy, part 2 | in progress | _work/A3-inbox-2.md |  |
+| A3-inbox-3 | A3 | human side: redacted backlog copy, part 3 | in progress | _work/A3-inbox-3.md |  |
+| A3-inbox-4 | A3 | human side: redacted backlog copy, parts 4 and 5 | in progress | _work/A3-inbox-4.md |  |
 | A7-templates-2 | A7 | promises: group templates part 2, lines 1560-1631 of _sources/promises.txt | done | _work/A7-templates-2.md | 50 promises from 72 candidates: 43 kept, 2 partly, 0 GAP, 5 unknown; 22 not a promise; top: Settings says you get a pop-up for gym news, but from the 3rd message of a day none shows |
 | A7-panel-3b | A7 | promises: group panel part 3, second pass: the 63 rows of _work/out/A7-panel-3.jsonl with status unknown (lines 717-836 of _sources/promises.txt); find what keeps each one, privacy and money rows first; write patch rows | done | _work/A7-panel-3b.md | 34 of 63 unknown rows settled: 25 kept, 8 partly, 1 GAP; 29 lower-value rows still unknown (read limit; list in the checkpoint); GAP: MettleUp has never opened your records can show when old records were deleted |
 | A3-help | A3 | human side: help articles | done | _work/A3-help.md | 146 features named in 71 help articles: 145 matched, 1 new row, 7 findings (2 S2, 5 S3); top: help says a payment link puts money in the owner account, but payments are in test mode; help says messages are deleted after 180 days, but no timed clean-up exists |
@@ -57,6 +57,7 @@ Counts: 6 todo, 0 in progress, 74 done, 0 blocked. Full list: work-items.jsonl. 
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
 
 ## Resume notes
+- PACER RUN pacer-1119-1123 (window reset 19 Nov 16:20 IST) STARTED 19 Nov 11:23 IST at F5 1, weekly Fable 0, weekly all 2 (he reset the Fable limit). OPEN: 6 helpers started 11:26 IST, all at once: A3-notes-claude-1, A3-notes-claude-2, A3-inbox-1, A3-inbox-2, A3-inbox-3, A3-inbox-4 (RESERVED = 6 x 6 = 36). If this note is still the newest one and the lock is over 75 minutes old, the run died: set the running items back to todo (state.mjs reset pacer-1119-1123) and restart them from their checkpoint files. After each report: powershell docs/system-map/_tools/finish.ps1 <id> <tokens> "<one line>". NEXT while F5 + RESERVED + 6 <= 80: make the other A4 items (sizes in the pacer-1119-0627 note; briefs by _work/a3a4-items.mjs style, never run state.mjs add twice for one id) and launch them, max 6 at once; then A4b and A5. LESSON (30): two pacer chats started in the same minute (the scheduled run and the chat he typed "continue" in); both wrote the lock and finish.ps1. The chat he types in gave the work to this run. A run must read the lock again right after it writes it, before state.mjs start.
 - PACER RUN pacer-1119-1112 (window reset 19 Nov 16:10 IST) CLOSED 19 Nov 11:40 IST at F5 18 (was 1), weekly Fable 98 (was 93), weekly all 51 (was 48). No helper runs. Lock deleted. 3 helpers ran at once, all merged and pushed, 0 failed: A3-whats-new-phone (173k tokens: 4 findings), A3-website-1 (253k tokens: 7 findings, 5 of them S2), A3-website-2 (201k tokens: 7 findings). findings.jsonl has 31 rows now. MEASURED: 3 helpers = 17 F5 points and 5 weekly-Fable points (1.7 each). WEEKLY FABLE PAUSE: he was told once in this run. NEXT, when weekly Fable + 2 for each helper is 99 or under: the 6 A3 items in todo (notes-claude-1, notes-claude-2, inbox-1 to inbox-4; briefs ready in _work/briefs/), then make the other A4 items (sizes in the pacer-1119-0627 note). LESSONS: (26) one helper wrote a root_cause_key of 7 words and merge rejected the row: say "at most 6 words" in the launch prompt. (27) A3-website-2 says feature row F-watch-106 (log a set from the watch) is marked behind switch, but the phone always sends that switch on: fix the row in A4b. (28) A3-whats-new-phone says three rows (Muscles ready today, Quick workout) are marked live but were switched off on 5 Nov: the finding row holds the ids. (29) finish.ps1 holds this run id and msg.txt path: change both at the start of the next run.
 - PACER RUN 19 Nov 10:58 IST: F5 81 at start (weekly Fable 93, weekly all 48), window resets 19 Nov 11:10 IST. Day rule: start nothing new at F5 >= 75, so nothing started. No helper runs. Model router still off, change-360 still off. Lock deleted. NEXT (after 11:10 IST, day rule, max 6 at once): weekly Fable 93 + 2 for each helper must stay at 99 or under, so 3 helpers fit before the Fable pause: the 9 A3 items in todo first (briefs ready in _work/briefs/).
 - PACER RUN 19 Nov 10:43 IST: F5 79 at start (weekly Fable 93, weekly all 48), window resets 19 Nov 11:10 IST. Day rule: start nothing new at F5 >= 75, so nothing started. No helper runs. Model router still off. Lock deleted. NEXT (after 11:10 IST, day rule, max 6 at once): weekly Fable 93 + 2 for each helper must stay at 99 or under, so 3 helpers fit before the Fable pause: the 9 A3 items in todo first (briefs ready in _work/briefs/).
