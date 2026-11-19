@@ -27,19 +27,19 @@ blind check: never put the held-out rows or hints into a helper brief (ids are i
 | 3F | 1 | 4.3 (171k tokens) |
 
 ## Work items
-Counts: 9 todo, 0 in progress, 59 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 3 todo, 6 in progress, 59 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
-| A7-phone-watch-1 | A7 | promises: group phone-watch part 1, lines 848-967 of _sources/promises.txt | todo | _work/A7-phone-watch-1.md |  |
-| A7-phone-watch-2 | A7 | promises: group phone-watch part 2, lines 968-1087 of _sources/promises.txt | todo | _work/A7-phone-watch-2.md |  |
+| A7-phone-watch-1 | A7 | promises: group phone-watch part 1, lines 848-967 of _sources/promises.txt | in progress | _work/A7-phone-watch-1.md |  |
+| A7-phone-watch-2 | A7 | promises: group phone-watch part 2, lines 968-1087 of _sources/promises.txt | in progress | _work/A7-phone-watch-2.md |  |
+| A7-whats-new-1 | A7 | promises: group whats-new part 1, lines 1127-1246 of _sources/promises.txt | in progress | _work/A7-whats-new-1.md |  |
+| A7-whats-new-2 | A7 | promises: group whats-new part 2, lines 1247-1366 of _sources/promises.txt | in progress | _work/A7-whats-new-2.md |  |
+| A7-templates-1 | A7 | promises: group templates part 1, lines 1440-1559 of _sources/promises.txt | in progress | _work/A7-templates-1.md |  |
+| A7-panel-3b | A7 | promises: group panel part 3, second pass: the 63 rows of _work/out/A7-panel-3.jsonl with status unknown (lines 717-836 of _sources/promises.txt); find what keeps each one, privacy and money rows first; write patch rows | in progress | _work/A7-panel-3b.md |  |
 | A7-phone-watch-3 | A7 | promises: group phone-watch part 3, lines 1088-1126 of _sources/promises.txt | todo | _work/A7-phone-watch-3.md |  |
-| A7-whats-new-1 | A7 | promises: group whats-new part 1, lines 1127-1246 of _sources/promises.txt | todo | _work/A7-whats-new-1.md |  |
-| A7-whats-new-2 | A7 | promises: group whats-new part 2, lines 1247-1366 of _sources/promises.txt | todo | _work/A7-whats-new-2.md |  |
 | A7-whats-new-3 | A7 | promises: group whats-new part 3, lines 1367-1439 of _sources/promises.txt | todo | _work/A7-whats-new-3.md |  |
-| A7-templates-1 | A7 | promises: group templates part 1, lines 1440-1559 of _sources/promises.txt | todo | _work/A7-templates-1.md |  |
 | A7-templates-2 | A7 | promises: group templates part 2, lines 1560-1631 of _sources/promises.txt | todo | _work/A7-templates-2.md |  |
-| A7-panel-3b | A7 | promises: group panel part 3, second pass: the 63 rows of _work/out/A7-panel-3.jsonl with status unknown (lines 717-836 of _sources/promises.txt); find what keeps each one, privacy and money rows first; write patch rows | todo | _work/A7-panel-3b.md |  |
 | A7-legal-3 | A7 | promises: group legal part 3, lines 241-290 of _sources/promises.txt | done | _work/A7-legal-3.md | 31 promises from 50 candidates: 8 kept, 11 partly, 2 GAP, 10 unknown; GAPs: owners and members were not asked or told after the terms page changed |
 | A7-websites-1 | A7 | promises: group websites part 1, lines 291-408 of _sources/promises.txt | done | _work/A7-websites-1.md | 58 promises from 118 candidates: 19 kept, 17 partly, 22 unknown, 0 GAP; 25 not a promise, 35 repeats; top: AI never sees member details is only partly true |
 | A7-store-1 | A7 | promises: group store part 1, lines 409-410 of _sources/promises.txt | done | _work/A7-store-1.md | 2 promises from 2 candidates: 1 kept, 1 partly (no ads is true only by absence); note for legal group: opt-in photo backup against photos never leave your phone |
@@ -54,6 +54,7 @@ Counts: 9 todo, 0 in progress, 59 done, 0 blocked. Full list: work-items.jsonl. 
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
 
 ## Resume notes
+- PACER RUN pacer-1119-0612 (window reset 19 Nov 11:10 IST) STARTED 19 Nov 06:12 IST: F5 2, weekly Fable 73, weekly all 38 (weekly stop line 90; reset 25 Nov 16:30 IST). Day rule. 06:25 IST: 6 helpers started (A7-panel-3b, A7-phone-watch-1, A7-phone-watch-2, A7-whats-new-1, A7-whats-new-2, A7-templates-1). Brief for A7-panel-3b is new: _work/briefs/A7-panel-3b.md (patch rows only). Next in this window: A7-phone-watch-3, A7-whats-new-3, A7-templates-2, then make A3 and A4 items and run one A3 pilot and one A4 pilot ALONE. Weekly room: 17 Fable points = about 15 helpers. If this run dies: items marked running with run pacer-1119-0612 restart from their checkpoint files; finish with _tools/finish.ps1.
 - PACER RUN 19 Nov 03:57 IST: F5 100 at start (weekly Fable 72, weekly all 38), window resets 19 Nov 06:00 IST. Night rule: start nothing new at F5 >= 92, so nothing started. No helper runs. Model router still off, change-360 still off. No lock left. Next launches: the same as the 01:57 note below.
 - PACER RUN 19 Nov 03:42 IST: F5 100 at start (weekly Fable 72, weekly all 37), window resets 19 Nov 06:00 IST. Night rule: start nothing new at F5 >= 92, so nothing started. No helper runs. Model router still off. No lock left. Next launches: the same as the 01:57 note below.
 - PACER RUN 19 Nov 03:27 IST: F5 98 at start (weekly Fable 72, weekly all 37), window resets 19 Nov 06:00 IST. Night rule: start nothing new at F5 >= 92, so nothing started. No helper runs. Model router still off. No lock left. Next launches: the same as the 01:57 note below.
