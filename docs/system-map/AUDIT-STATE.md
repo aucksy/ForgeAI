@@ -34,18 +34,17 @@ weekly stop lines (his words, 19 Nov 2026 09:40 IST: "Lets stop if fable reaches
 | A3 | 11 | 5.2 (207k tokens) |
 | A4 | 13 | 4.1 (162k tokens) |
 | A4b | 2 | 5.1 (204k tokens) |
-| A5 | 27 | 5.2 (208k tokens) |
+| A5 | 28 | 5.2 (207k tokens) |
 | L4 | 1 | 4.4 (177k tokens) |
 
 ## Work items
-Counts: 0 todo, 3 in progress, 124 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 1 todo, 2 in progress, 125 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
 | A5-panel-ui-shell-1 | A5 | journeys: 10 features (23 feature x role pairs) of panel / panel/ui-shell; list in _work/items/A5-panel-ui-shell-1.txt | in progress | _work/A5-panel-ui-shell-1.md |  |
-| A5-panel-ui-shell-2 | A5 | journeys: 10 features (22 feature x role pairs) of panel / panel/ui-shell; list in _work/items/A5-panel-ui-shell-2.txt | in progress | _work/A5-panel-ui-shell-2.md |  |
 | A5-panel-ui-shell-3 | A5 | journeys: 10 features (20 feature x role pairs) of panel / panel/ui-shell; list in _work/items/A5-panel-ui-shell-3.txt | in progress | _work/A5-panel-ui-shell-3.md |  |
-| A5-panel-logic-1-3 | A5 | journeys: 8 features (13 feature x role pairs) of panel / panel/logic-1; list in _work/items/A5-panel-logic-1-3.txt | done | _work/A5-panel-logic-1-3.md | 8 features (13 feature x role pairs): 61 full journeys and 97 type lines; 3 findings (S2): Download all your gym's data leaves out shop, diet plans, trainers, staff, measurements, messages and photos; times in that download are 5.5 hours behind India time with no label; Your questions in Help is kept per browser, so staff on a shared computer see the owner's questions; 15 seen-in-passing lines in the checkpoint |
+| A5-panel-ui-shell-2b | A5 | journeys: 3 features (7 feature x role pairs) of panel / panel/ui-shell (the rest of ui-shell-2); list in _work/items/A5-panel-ui-shell-2b.txt | todo | _work/A5-panel-ui-shell-2b.md |  |
 | A5-panel-logic-1-4 | A5 | journeys: 7 features (11 feature x role pairs) of panel / panel/logic-1; list in _work/items/A5-panel-logic-1-4.txt | done | _work/A5-panel-logic-1-4.md | 7 features (11 feature x role pairs): 60 full journeys and 77 type lines; 2 findings: S3 a special day with a date already over is dropped without a word on Gym timings; S4 the import button reads Update 1 members; 11 seen-in-passing lines in the checkpoint (one: a mistyped Aadhaar can stay in imported text) |
 | A5-panel-logic-2-1 | A5 | journeys: 9 features (18 feature x role pairs) of panel / panel/logic-2; list in _work/items/A5-panel-logic-2-1.txt | done | _work/A5-panel-logic-2-1.md | 9 features (18 feature x role pairs): 96 full journeys and 126 type lines; 1 finding (S2): an imported plan named by visits per week, such as 3 Days a Week Monthly, is saved as a 3-day plan and shows as expired; 6 seen-in-passing lines in the checkpoint |
 | A5-panel-logic-2-2 | A5 | journeys: 8 features (17 feature x role pairs) of panel / panel/logic-2; list in _work/items/A5-panel-logic-2-2.txt | done | _work/A5-panel-logic-2-2.md | 8 features (17 feature x role pairs): 81 full journeys and 124 type lines; 1 finding (S2): unticking the pass box removes a member's past QR visits from the monthly pass count, and a changed company moves them, so the gym claims too little or from the wrong company; 8 seen-in-passing lines in the checkpoint |
@@ -53,7 +52,8 @@ Counts: 0 todo, 3 in progress, 124 done, 0 blocked. Full list: work-items.jsonl.
 | A5-panel-logic-2-4 | A5 | journeys: 8 features (16 feature x role pairs) of panel / panel/logic-2; list in _work/items/A5-panel-logic-2-4.txt | done | _work/A5-panel-logic-2-4.md | 8 features (16 feature x role pairs): 71 full journeys and 125 type lines; 1 finding (S3): a workout offer with a 1-day reward says Give 1 days and 1 days added; 15 seen-in-passing lines in the checkpoint |
 | A5-panel-shop-1 | A5 | journeys: 6 features (12 feature x role pairs) of panel / panel/shop; list in _work/items/A5-panel-shop-1.txt | done | _work/A5-panel-shop-1.md | 6 features (12 feature x role pairs): 70 full journeys and 87 type lines; 3 findings: S3 the empty Shop page names a Shop tab that is now called Gym; S3 the gym-code card always says pay at the desk, also when paying online on joining is on; S4 a heading on Invite members is never drawn; 9 seen-in-passing lines in the checkpoint |
 | A5-panel-shop-2 | A5 | journeys: 5 features (8 feature x role pairs) of panel / panel/shop; list in _work/items/A5-panel-shop-2.txt | done | _work/A5-panel-shop-2.md | 5 features (8 feature x role pairs): 35 full journeys and 62 type lines; 1 finding (S3): an owner whose sign-in ended sees This demo gym is no longer available when they save the gym look or a photo; 8 seen-in-passing lines in the checkpoint (one: disconnect and turn on the shop again makes a new gym and leaves the old one unreachable) |
-(+ 116 older done items, not shown)
+| A5-panel-ui-shell-2 | A5 | journeys: 10 features (22 feature x role pairs) of panel / panel/ui-shell; list in _work/items/A5-panel-ui-shell-2.txt | done | _work/A5-panel-ui-shell-2.md | 7 of 10 features (15 feature x role pairs): 79 full journeys and 110 type lines; 0 findings; limit reached: the 3 features left are item A5-panel-ui-shell-2b; promise_ids are empty on every journey of this item (promises.json was not searched): link them in a later pass; 12 type-10 lines had at_step 0 and were set to 1 by the coordinator; 4 seen-in-passing lines in the checkpoint |
+(+ 117 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).

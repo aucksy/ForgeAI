@@ -5,6 +5,3 @@ F-panel-526 | Diet plans and body measurements: send members what to eat, and re
 F-panel-517 | Enquiries: people who asked about joining, add one, set a follow-up day | apps/dashboard/src/crm/ui/screens/Enquiries.tsx:100
 F-panel-514 | Expenses: what the gym spent month by month, and profit | apps/dashboard/src/crm/ui/screens/Expenses.tsx:51
 F-panel-538 | Help and feedback: write to MettleUp, see every time MettleUp support opened the gym's records, and the support email line | apps/dashboard/src/crm/ui/screens/Feedback.tsx:29
-F-panel-529 | Gym timings: when the gym is open, shown to members in their app | apps/dashboard/src/crm/ui/screens/GymTimings.tsx:81
-F-panel-519 | Import members from Excel or CSV | apps/dashboard/src/crm/ui/screens/ImportMembers.tsx:125
-F-panel-522 | Member messages and Member questions: read and reply to what members sent from the app ('Message your gym', 'Ask a trainer') | apps/dashboard/src/crm/ui/screens/MemberMessages.tsx:58

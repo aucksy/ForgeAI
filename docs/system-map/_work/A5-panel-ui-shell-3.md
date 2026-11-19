@@ -5,3 +5,12 @@ F-panel-520: 13 journeys, 14 type lines
 F-panel-520 note: the done ticks and the message language are kept only in the browser (no entity fits, left out). The Messages section itself (MessagesSection) was not opened: its group picker words are from the promise text only.
 Seen in passing: in the one-member WhatsApp sheet, changing the language rebuilds the words and drops hand edits without a word (apps/dashboard/src/crm/ui/WhatsAppSheet.tsx:93-98).
 Seen in passing: Messages page, WhatsApp sheets and the queue are plain English strings, not translated (Messages.tsx:36-46).
+F-panel-513: 12 journeys, 14 type lines
+F-panel-513 note: the cash book rows and receipts map to E-crm-records; E-receipt-history for the cancel record. The Collections list body (Money.tsx:140-590) was read only by its button and empty-state words.
+F-panel-534: 6 journeys, 7 type lines
+F-panel-534: owner only (1 role).
+Seen in passing: the 'Amount paid' box stops following the plan once the owner types in it, and is not reset after a send, so switching Starter/Pro later can send a proof with the old plan's amount (apps/dashboard/src/crm/ui/screens/PayMettleUp.tsx:96,131-133,206-209).
+Seen in passing: the 'not ready yet' and 'not available yet' cards say 'message MettleUp' but have no button or number to do it (PayMettleUp.tsx:160-176).
+F-panel-515: 8 journeys, 16 type lines
+F-panel-515: plans map to E-crm-records.
+Seen in passing: the plan sheet has no check for a plan name that already exists (apps/dashboard/src/crm/ui/screens/Plans.tsx:283-287), and a comment says plans can only be retired, never deleted (Plans.tsx:53-57).

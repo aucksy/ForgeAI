@@ -1,0 +1,3 @@
+F-panel-529 | Gym timings: when the gym is open, shown to members in their app | apps/dashboard/src/crm/ui/screens/GymTimings.tsx:81
+F-panel-519 | Import members from Excel or CSV | apps/dashboard/src/crm/ui/screens/ImportMembers.tsx:125
+F-panel-522 | Member messages and Member questions: read and reply to what members sent from the app ('Message your gym', 'Ask a trainer') | apps/dashboard/src/crm/ui/screens/MemberMessages.tsx:58
