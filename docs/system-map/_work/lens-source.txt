@@ -1,0 +1,167 @@
+LENSES (word for word)
+## 3B. The 360 lenses (run every lens over every surface; journeys are lens 1)
+
+Each lens is one helper brief per surface. Each writes findings into `findings.jsonl` with `lens` filled, and a row
+per (surface, lens) into `docs/system-map/LENS-GRID.json` {surface, lens, checked_on, items_checked, findings,
+evidence[]}. A lens is "checked" only when every item in its checklist below has a line in the evidence.
+
+**Grid set-up (coordinator, once, after A2).**
+1. lens-items.json: split each lens and hunt cell at every ";" and sentence end into numbered items
+   (L3.1 "every server route and RPC: who can call it", L3.2 ...). An item id never changes.
+2. applies.json: for each surface x lens/hunt write yes, or "no: <reason in 10 words>". A "no" cell is filled
+   in the grid as "does not apply: <reason>" and costs no helper. He sees the list of "no" cells in the
+   Phase A summary.
+3. Bundles (one helper reads an area once and answers several lenses): B-sec = lenses 3 + 19;
+   B-run = lenses 6 + 15 + hunt 8; B-truth = lenses 2 + 17 + hunt 9; B-alerts = lens 11 + hunts 2 + 3 + 4;
+   B-words = lens 10 + hunt 10; B-time = lenses 13 + 20 + hunt 7; B-switch = hunts 1 + 6. Lenses 4, 5, 7, 8,
+   9, 12, 14, 16, hunt 5 run alone. Big surfaces run a bundle per AREA (see A2), small ones per surface.
+4. A grid row: {surface, area, lens, items: [{item, status: checked | does-not-apply | could-not-check,
+   evidence, finding_ids[]}]}. "could-not-check" needs the reason and goes into DEFERRED.md.
+merge.mjs fails a lens work item if any of its item ids has no row.
+
+| # | Lens | What it checks (every item) |
+|---|---|---|
+| 1 | **User journeys** | Phase A/B above: every feature x role x 12 journey types, plus secondary journeys. |
+| 2 | **Data correctness** | Every number shown (dues, counts, dates, streaks, records, credits) is recomputed independently and compared; rounding; time zone (IST); duplicates on double tap / two devices; import and undo-import; what happens to old data after every migration. |
+| 3 | **Security** | Every server route and RPC: who can call it, with what role; row-level rules per table: read every policy from the catalog and the existing database tests in supabase/tests, and for each table state which test proves another gym is refused; a table with no such test = finding. A live cross-gym attempt is NOT run in this audit; secrets in code or in the public repo or in the APK; key exposure (e.g. AI key inside the APK, no spend cap); session expiry, PIN reset, sign-in brute force; injection in every text box; uploads; links that can be guessed (/j/<code>, gym pages). Dependency CVEs (npm audit, Gradle). |
+| 4 | **Privacy and law** | Promise register (A7); India DPDP Act duties (notice, consent, purpose, deletion, breach timing, children); who at MettleUp can see gym data and the record of it (read log); data kept longer than promised; data sent to outside services (AI, WhatsApp, analytics, Health Connect / Google Health / Fitbit) vs what the policy says; account deletion really deletes everywhere (backups noted). |
+| 5 | **Money** | Every price, plan, trial, founding offer, Play Billing / payment flow, refund, receipt, GST wording, credits wallet; test mode vs live; what happens on failed, pending, refunded, cancelled, expired; amounts match across panel, HQ, receipts and messages. |
+| 6 | **Reliability** | Offline and bad network on every write; retries do not double-save; outages of each outside service (Supabase, Cloudflare, Play, WhatsApp, AI): what the user sees; backups exist and a restore was tested; cron jobs that fail silently; error logging (every "try again" logs why). Every recording or timer that runs over time (heart rate, rest timer, workout clock, sync) keeps working in every device state: screen on, dim / always-on, off, app in the background, watch off the wrist; where cloud emulators cannot show it, prove it by reading the code. [tightened 18 Nov 2026] |
+| 7 | **Speed** | Panel load on a slow Indian 4G phone (Core Web Vitals); biggest pages and lists with 500+ members; phone app start time, workout screen with long history; watch battery and screen-on time; database queries without indexes. |
+| 8 | **Cost and limits** | Every paid or capped thing: Supabase free-plan limits (DB size, egress, log retention), Cloudflare limits, GitHub storage, AI spend per gym and per call with no cap, WhatsApp template cost; what happens at each limit; a usage alarm before each one. |
+| 9 | **Accessibility** | Screen reader labels, tap target size, contrast in dark and light, largest font, no meaning by colour only, keyboard use on the panel. Every tappable thing LOOKS tappable (read the screenshot as a first-time user); every pop-up that can be closed leaves a way back to what it offered. [tightened 18 Nov 2026] |
+| 10 | **Language and words** | Every user string in English and Hinglish: plain, true, consistent names for the same thing, no inside words, no banned words, no claims that are not live, Hindi read-aloud list for him. |
+| 11 | **Notifications and messages** | Every alert, push, WhatsApp, email: when it fires, to whom, on/off switch, sound on each phone maker (OPPO etc.), screen off, quiet hours, duplicates, "done means gone", watch bridging. |
+| 12 | **Platform and store rules** | Play policy (target API, billing, data safety form matches the real app, permissions justified, ads/health claims), Wear OS rules, Meta/WhatsApp rules, ASCI ad rules; App Store when iPhone ships. |
+| 13 | **Install, update, upgrade** | Fresh install, update over every older version still in use, data migration on update, sideload vs Play package, watch and phone on different versions, panel cache after deploy (old page still open). |
+| 14 | **Operations and support** | How a gym is set up, moved (data import), helped (support window), billed, and offboarded; what the owner (you) does each day; help articles match the screens; every "contact us" path reaches someone. |
+| 15 | **Observability** | For every S1/S2 failure type: would we know before a gym tells us? Error reports, crash reports, job failure alerts, a daily health line. |
+| 16 | **Code health** | Dead code, duplicated logic (two scorers, two date rules), silent catches, tests that check nothing, frozen areas, files no test touches; flaky tests. |
+| 17 | **Consistency across surfaces** | The same fact, word, colour, icon and rule is the same on panel, phone, watch, website and messages. Trace every value a user enters on one device (watch, phone, panel) to every place that should hold it (the other device, the saved record, the server, Health Connect): it arrives unchanged and stays; where a paired device cannot run in the cloud, trace it in the code. [tightened 18 Nov 2026] |
+| 18 | **Opportunities** | Per surface: extra taps to remove, missing states, what the top 3 apps in the category do better (named sources, dated), features members/owners ask for (feedback, enquiries), growth loops (referral, recommend-to-gym), store listing and website conversion. Write as "My view:" proposals, never built without his yes. |
+| 19 | **Abuse and misuse** | A member, staff or outsider trying to cheat: fake check-ins, editing dues, scraping join links, spamming enquiries, using a gym's AI credits, sharing a Pro feature. |
+| 20 | **Lifecycle and edge of time** | Trial end, plan end, gym pauses or closes, member leaves and returns, staff leaves (access removed), owner changes phone, year end, leap day, app not opened for 6 months. |
+
+**Four added checklist items** [his "take best decisions yourself...", 18 Nov 2026] (no new grid columns):
+- Lens 2 also checks AI answers (assistant, AI import, AI questions, coach): built only from that gym's real data; what a wrong answer costs the owner; what is sent to the AI company.
+- Lens 19 also checks AI injection: can text typed by a member or lead steer the AI.
+- Lens 12 also checks rights to what we ship: exercise pictures and clips, music, voices, fonts, icons, open-source licences, the MettleUp name and logo.
+- Lens 15 also checks product measurement: which sign-up, activation, day-30 and paid numbers exist, and which decisions are made blind.
+- Lens 14 also checks keys, accounts and the one-person risk: every account, domain, signing key and token: who holds it, when it expires, what breaks if the laptop is lost, is there a written way back in.
+
+Order for MettleUp: lenses 4, 3, 5 first (they hold S1 risks), then 1 and 2, then the rest. Lens 18
+(opportunities) runs last, on top of what the others found.
+
+**Machine pass (coordinator, before the lens helpers; each writes one file under _sources/machine/).**
+| for | what | output |
+| lens 3 | Supabase security advisor + the catalog: every table with row-level rules on/off, every policy text, every function marked "security definer" and who may execute it (catalog reads only, no gym data) | db-security.json |
+| lens 3 | open alerts for known-vulnerable packages from GitHub (Dependabot API) or the last CI audit step | cve.json |
+| lens 3 | search the tree for key patterns (sk-, AIza, eyJ, "service_role", BEGIN PRIVATE KEY) -> file:line only, never the value | secrets-hits.txt |
+| lens 7 | Supabase performance advisor (missing indexes, slow queries); Google PageSpeed for each public page URL (no login pages) | db-perf.json, pagespeed.json |
+| lens 8 | database size, table sizes, row counts per table (counts only), storage used, GitHub Actions storage | limits.json |
+| lens 9 | the accessibility results the panel crawl already produces in CI (newest run's files) | a11y.json |
+| lens 12 | Play Console pre-launch report and Android vitals pages, read in his simpleapps108 Chrome window | play-report.md |
+| lens 16 | files no test imports (script over the import graph); functions never called; tests with no assert/expect | code-health.csv |
+| hunt 5 | live version labels of panel, HQ, website; Play version; migration list on the live database vs supabase/migrations | live-state.csv |
+| hunts 2, 6 | one COUNT query per needed field on Crispy Curves ("members with birthday filled: N of M") | field-fill.csv |
+Each lens helper gets its machine file as input and spends its reading on the flagged rows and on what no
+tool can see.
+
+GAP HUNTS (word for word)
+## 3D. Gap hunts: what is MISSING, not only what is wrong (his ask, 16 Nov 2026)
+
+His words (16 Nov 2026): "I keep stumbling into these issues and I am afraid there might be hundreds and hundreds of
+these gaps hidden in the code. I want that audit to be able to surface all of it."
+
+**Why the map alone misses them.** `readers.json` and `impact.json` trace reads that EXIST. The gaps he keeps hitting
+are reads that are MISSING, conditions nobody can see, and features that do not know about each other. Example, 16 Nov:
+the gym switched automatic birthday wishes on, but the AI Assistant still said "Birthdays today: write wishes" (the
+idea never reads the switch: no line in any map joins them). And the wish never reached Digvijay, because it works
+only for members whose app is linked by a proven number, and nothing in the panel shows who is left out.
+
+Run all 10 hunts over every surface. Each is one helper brief per surface (section 0 rules apply). Findings go to
+`findings.jsonl` with `lens: "gap-<n>"`; each hunt gets a LENS-GRID row like the 20 lenses. A hunt is "checked" only
+when every item it lists has a line of evidence.
+
+1. **Should-read matrix (missing links).** List every setting, switch, plan gate, status and automation (from
+   `features.json` + `entities.json`). For EACH one, list every other feature whose result it SHOULD change (the AI
+   ideas, Today, counts, badges, reminders, messages, help, exports, the phone app). Then check in code that each of
+   those really reads it. A should-read with no read = finding. (Seed pairs: coordinator-only, in the calibration list.)
+2. **Hidden conditions (works only if ...).** For every automatic or "on" feature: write ALL conditions for it to
+   reach one person (app installed, app linked by proven number, notifications allowed, phone maker rules, plan
+   running, data filled in like birthday/phone, feature switch, version). Then check: can the owner SEE, per member,
+   who will get it and who will not, and why? If the switch says "on" but some people silently get nothing = finding.
+   Count real reach on Crispy Curves (e.g. "birthday wish: on, reaches 1 of 40 members").
+3. **Did it happen? (proof of every automatic action).** Every automatic send, reminder, push, digest, job: is there
+   a record the owner (or HQ) can open that says it went, to whom, when, and why not when it did not? An automatic
+   action with no record and no "why not" = finding (S2 when the owner believes it ran).
+4. **Two features, one job (overlap and conflict).** Find every pair of features that act on the same people or the
+   same event (manual message vs automatic reminder; AI idea vs Today nudge; bell vs Today vs push; desk link vs
+   phone proof). Check they agree: no double message, no suggestion to do what the system already did, the same
+   count in both places, "done" in one is "done" in the other.
+5. **Built vs live (deploy state).** For every feature in `features.json`: is it on main, deployed, behind a switch,
+   or waiting for a migration? Compare code on main with what the live panel, HQ, website, phone app (Play version)
+   and database really run (check the live version labels, `list_migrations`/catalog, switches). Any feature the
+   notes or What's new call live that is not live = finding. Output `docs/system-map/LIVE-STATE.md` (one row per
+   feature: main / live panel / live DB / Play app), so he can always see what is really live.
+6. **Data a feature needs but nobody fills.** For every field a feature depends on (birthday, phone, check-in
+   phone, app link, plan dates, trainer, batch): how many Crispy Curves rows have it filled? Is there a screen
+   that asks for it at the right moment? A feature that depends on a field most rows lack = finding.
+7. **Old users, new rules.** Every new flow that fixes something only for NEW installs or NEW members (e.g. the
+   phone sign-in shows only on new installs): what happens to existing users? Is there a path for them? None =
+   finding.
+8. **Silent fallbacks.** By script first: docs/system-map/_tools/silent.mjs lists every catch block with file:line and three flags:
+logs? (calls a log, report or crash function inside), tells_user? (sets an error state, toast or alert
+inside), rethrows?. Output _sources/silent.csv. Helpers read ONLY the rows where all three are "no", plus
+every fallback value (?? null, || [], ?? 0) that sits in a file named in a journey that writes money,
+messages, alerts, sign-in or sync. Everything else is counted in the grid as "filtered by script, N rows,
+not read" so the gap is visible. For each: if this path runs, does the user (or owner, or HQ) learn anything? A silent path
+   that hides a failed promise = finding.
+9. **Same fact, every place.** For each fact a user sees (count of alerts, dues, plan end, birthdays today, members
+   using the app): list every place it shows (panel, Today, AI, bell, push, phone app, HQ, export) and compare the
+   values on the Crispy Curves data and the ugly data pack. Any difference = finding.
+10. **Words promise more than the code.** Every switch label, help article, What's new line and button that says what
+   happens ("Members get a birthday wish", "Done items leave the bell"): read the code path end to end and confirm
+   it happens for EVERY member the words cover. Words wider than reality = finding (tie to the promise register).
+
+**Calibration: the audit must re-find the bugs he already found.** Before Phase B starts, a helper that has NOT seen
+the fixes gets only the code at the commit BEFORE each fix and the hunts above, and must find each of these. Every one
+it misses means the hunt is too weak: rewrite the hunt, then run it again.
+
+How to run it.
+C1. Coordinator, script: docs/system-map/_tools/seeds.mjs finds, for each seed, the fix commit (search commit
+    messages for the R-number) and writes calibration/seeds.json {seed id, fix commit, parent commit, area
+    folders the fix touched}. Seeds with no R-number are found by date and file, by the coordinator.
+    seeds.json and the seed list are coordinator-only files.
+C2. For each seed the coordinator makes a read-only copy of the area folders at the PARENT commit into
+    _work/calib/<seed id>/ (git archive of those folders only; removed after scoring). No docs/ folder in it.
+C3. A helper gets: that folder, the full text of the 10 hunts WITHOUT the seed list and WITHOUT the
+    "seed pairs" line, and one sentence: "Run every hunt on this area and list every gap." It is not told
+    what to look for, how many gaps exist, or that this is a calibration. It may not run git or open docs/.
+    3 seeds per helper, areas mixed.
+C4. Score by the coordinator: found / partly / missed per seed, in calibration/RESULT.md.
+C5. A missed seed: rewrite that hunt's text, re-run ONLY that seed with a fresh helper. At most 2 re-runs
+    per seed. Still missed = written in the report as "this audit cannot find this kind of bug: <why>",
+    and that kind is added to the device checks only he can do.
+C6. Device-only seeds (R-590 silent on OPPO, R-575 watch update notice): pass = the helper flags the code
+    path as "cannot be proven in the cloud, needs a real-phone check", not "found the bug". Seed list (extend it with every bug he
+reported in docs/CLAUDE-NOTES.md in the last 60 days, read the R-notes, not summaries):
+- R-604: the 11:00 push counted alerts he had already handled (done lived only in the browser).
+- 16 Nov: AI ideas suggested birthday wishes while automatic birthday wishes were on.
+- 16 Nov: automatic birthday wish silently skipped a member whose app was not linked; no record anywhere.
+- 16 Nov: he could not tell the new bell was only on main and not live.
+- R-593: Today kept items already handled; a member who joined today counted as "not seen".
+- R-603 / R-605: alerts showed the old icon; the badge drew as a white square.
+- R-583: tapping a gym reply notification opened nothing.
+- R-590: gym messages silent on his OPPO phone.
+- R-575: "Your watch app has an update" never showed.
+- R-581: new-feature dots on a first install.
+- R-584: "Save timings" looked broken on a phone.
+- 15 Nov: data agreement promised every look is recorded, but a direct read had no record; the phone form said the
+  number is not kept, but the app kept it.
+
+- (coordinator-only, hunt 1) Seed pairs to prove the hunt works: auto birthday switch -> AI ideas + Today birthday nudge; auto plan-end reminder -> "plans ending" ideas; a member who left -> every list, count and message; Pro off -> every Pro screen and help article.
+The end-of-audit report lists each seed bug and which hunt or lens found it. A seed no hunt finds blocks "audit done".
+
+---
+
