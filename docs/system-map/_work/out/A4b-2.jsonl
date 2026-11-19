@@ -1,0 +1,51 @@
+{"kind":"feature","id":"F-panel-1025","patch":true,"status":"live","switch":"server part 0050 (trainer view; first lines say applied live 3 Nov 2026); the tick stays hidden on a server without it"}
+{"kind":"feature","id":"F-panel-1108","patch":true,"status":"live","switch":"server parts 0075, 0076 (first lines say applied live 14 Nov 2026) and 0098 (in the live migration list)"}
+{"kind":"feature","id":"F-panel-1121","patch":true,"status":"live","switch":"PLAN_GATE_ON is off, so no plan limits it; server part 0025 (first lines say applied live 23 Oct 2026)"}
+{"kind":"feature","id":"F-panel-1132","patch":true,"status":"live","switch":"timings: server part 0036; busy machines: server part 0049 (first lines say applied live). The MettleUp Plus lock card is behind MEMBER_PLAN_GATE_ON (off), so owners do not see it today"}
+{"kind":"feature","id":"F-panel-402","patch":true,"status":"behind switch","switch":"the gym must connect a payment company (Settings, Payments); needs the server secret PAYMENTS_MASTER_KEY (not readable); PAY_LIVE is off in the code, so test mode only"}
+{"kind":"feature","id":"F-panel-405","patch":true,"status":"live","switch":"none (opens from the workout offer on the member page; server part 0025 applied live)"}
+{"kind":"feature","id":"F-panel-531","patch":true,"status":"unknown","switch":"server parts 0058 and 0059 (first lines say NOT APPLIED; live state not proved). The Settings card and page show for every online gym and say so when the server is not ready"}
+{"kind":"feature","id":"F-phone-1215","patch":true,"status":"behind switch","switch":"MEMBER_PLAN_GATE_ON (off)"}
+{"kind":"feature","id":"F-phone-1217","patch":true,"status":"live","switch":"none (the member turns on Send watch log on the feedback page)"}
+{"kind":"feature","id":"F-phone-1620","patch":true,"status":"live"}
+{"kind":"feature","id":"F-phone-1624","patch":true,"status":"live","switch":"none (only bringing back an old Drive backup is left; new Drive backups ended with R-320)"}
+{"kind":"feature","id":"F-phone-1722","patch":true,"status":"hidden","switch":"FEATURES.coach (off)"}
+{"kind":"feature","id":"F-phone-1731","patch":true,"status":"hidden","switch":"none (no iPhone build is with members yet)"}
+{"kind":"feature","id":"F-phone-424","patch":true,"status":"live","switch":"server part 0069 (first lines say applied live)"}
+{"kind":"feature","id":"F-phone-431","patch":true,"status":"behind switch","switch":"shows only when the web server answers and the desk asked for a fee or there is a shop order; online pay needs the gym's payment company; PAY_LIVE is off in the code (test mode)"}
+{"kind":"feature","id":"F-watch-106","patch":true,"status":"live","switch":"none for today's phone app (it always sends logFlow on with a workout; off only on the Plus lock screen, which needs MEMBER_PLAN_GATE_ON)"}
+{"kind":"feature","id":"F-phone-334","patch":true,"status":"hidden","switch":"STAFF_DOOR_ON (off)"}
+{"kind":"feature","id":"F-phone-401","patch":true,"status":"hidden","switch":"STAFF_DOOR_ON (off): the only way in is the card of F-phone-334"}
+{"kind":"feature","id":"F-phone-128","patch":true,"status":"hidden","switch":"none (switched off 5 Nov 2026, R-372; nothing opens the pages)"}
+{"kind":"feature","id":"F-phone-605","patch":true,"status":"hidden","switch":"none (switched off 5 Nov 2026, R-372; only the unreachable Quick workout page uses it)"}
+{"kind":"feature","id":"F-phone-234","patch":true,"status":"live","switch":"none for the Workout tab, Up next and today's workout; its Quick workout and Muscles ready parts are hidden (switched off 5 Nov 2026)"}
+{"kind":"feature","id":"F-panel-3000","patch":true,"status":"not-a-feature","switch":"none (no page to browse help exists; the help pages reach people only as answers in Help and feedback)"}
+{"kind":"feature","id":"F-panel-3500","patch":true,"status":"unknown","switch":"server part 0097 (first lines say NOT APPLIED LIVE; live state not proved)"}
+{"kind":"feature","id":"F-panel-3702","patch":true,"status":"not-a-feature","switch":"none (not built: the AI helper has no product step)"}
+{"kind":"feature","id":"F-panel-3703","patch":true,"status":"not-a-feature","switch":"none (no free UPI link page is built; payment links exist only through a connected payment company, see F-panel-402)"}
+{"kind":"feature","id":"F-panel-3706","patch":true,"status":"not-a-feature","switch":"none (not built: the check-in QR is a printed poster that never changes)"}
+{"kind":"feature","id":"F-panel-3710","patch":true,"status":"not-a-feature","switch":"none (not built: only personal-training bookings with a trainer exist)"}
+{"kind":"feature","id":"F-panel-3711","patch":true,"status":"not-a-feature","switch":"none (not built: the AI answers members itself; nothing drafts a reply for staff)"}
+{"kind":"feature","id":"F-panel-3712","patch":true,"status":"not-a-feature","switch":"none (not built: an enquiry only has a call-back day)"}
+{"kind":"feature","id":"F-panel-3902","patch":true,"status":"not-a-feature","switch":"none (not built: the import takes an Excel or CSV file only)"}
+{"kind":"feature","id":"F-phone-3700","patch":true,"status":"not-a-feature","switch":"none (location check-in is not built: the app has no location part; the usual-time workout reminder is a separate live thing in Settings)"}
+{"kind":"feature","id":"F-phone-3701","patch":true,"status":"unknown"}
+{"kind":"feature","id":"F-phone-3704","patch":true,"status":"not-a-feature","switch":"none (not built: the app keeps a language setting that changes nothing)"}
+{"kind":"feature","id":"F-phone-3705","patch":true,"status":"not-a-feature","switch":"none (not built: speaking is only wired to the coach chat, which is off, and to feedback)"}
+{"kind":"feature","id":"F-phone-3707","patch":true,"status":"not-a-feature","switch":"none (not built)"}
+{"kind":"feature","id":"F-phone-3708","patch":true,"status":"not-a-feature","switch":"none (not built)"}
+{"kind":"feature","id":"F-phone-3709","patch":true,"status":"not-a-feature","switch":"none (not built)"}
+{"kind":"feature","id":"F-phone-3713","patch":true,"status":"not-a-feature","switch":"none (not built)"}
+{"kind":"feature","id":"F-phone-3801","patch":true,"status":"not-a-feature","switch":"none (not built)"}
+{"kind":"feature","id":"F-phone-3900","patch":true,"status":"not-a-feature","switch":"none (not built)"}
+{"kind":"feature","id":"F-phone-3901","patch":true,"status":"not-a-feature","switch":"none (not built)"}
+{"kind":"feature","id":"F-phone-3904","patch":true,"status":"not-a-feature","switch":"none (not built; parked by the owner)"}
+{"kind":"feature","id":"F-phone-3905","patch":true,"status":"not-a-feature","switch":"none (not built; parked by the owner)"}
+{"kind":"feature","id":"F-phone-3906","patch":true,"status":"not-a-feature","switch":"none (not built; parked by the owner)"}
+{"kind":"feature","id":"F-phone-3907","patch":true,"status":"not-a-feature","switch":"none (not built; parked by the owner)"}
+{"kind":"feature","id":"F-phone-3908","patch":true,"status":"not-a-feature","switch":"none (not built; cancelled by the owner)"}
+{"kind":"feature","id":"F-phone-4000","patch":true,"status":"not-a-feature","switch":"none (not built: the app has no location part)"}
+{"kind":"feature","id":"F-phone-4001","patch":true,"status":"not-a-feature","switch":"none (not built)"}
+{"kind":"feature","id":"F-watch-3200","patch":true,"status":"live","switch":"none"}
+{"kind":"feature","id":"F-watch-3400","patch":true,"status":"not-a-feature","switch":"none (not built; the member website says coming soon)"}
+{"kind":"finding","id":"FN-A4b-2-01","date":"2026-11-19","lens":"gap-5","surface":"phone","area":"phone/help","refs":["F-phone-128","F-phone-605","F-phone-234"],"severity":"S2","title":"Help tells members to tap a Muscles ready today card that was switched off on 5 Nov","what":"A member who asks the help box about quick workouts or which muscles are ready is told to open the Workout tab and tap the Muscles ready today card, then Quick workout for the time you have. That card was taken off the Workout tab on 5 Nov and nothing in the app opens either page, so the member looks for a card that is not there.","expected":"Help only describes things a member can open today. A switched-off thing is left out of help until it comes back.","evidence":["deploy/panel/helpArticles.js:913","deploy/panel/helpArticles.js:992","apps/mobile/src/app/(tabs)/workout.tsx:488"],"proof":"code-read","root_cause_key":"help-page-outlived-switched-off-card","who":"members who ask help about quick workouts or rested muscles","how_often":"every time help answers from that page","fix_line":"Mark that help page as not released, the same way the MettleUp Plus help pages are held back","fix_size":"small","needs_him":false,"verified":"pending","status":"open"}
