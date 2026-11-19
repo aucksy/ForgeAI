@@ -29,15 +29,14 @@ weekly stop lines (his words, 19 Nov 2026 09:40 IST: "Lets stop if fable reaches
 | E3 | 1 | 5.0 (198k tokens) |
 | E4 | 1 | 4.6 (184k tokens) |
 | 3F | 1 | 4.3 (171k tokens) |
-| A3 | 10 | 5.2 (207k tokens) |
+| A3 | 11 | 5.2 (207k tokens) |
 | A4 | 2 | 4.1 (164k tokens) |
 
 ## Work items
-Counts: 3 todo, 5 in progress, 80 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 3 todo, 4 in progress, 81 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
-| A3-inbox-2 | A3 | human side: redacted backlog copy, part 2 | in progress | _work/A3-inbox-2.md |  |
 | A4-rpc-1 | A4 | entities and readers: 91 database-function groups, lines 220-500 of _sources/readers-raw.txt | in progress | _work/A4-rpc-1.md |  |
 | A4-rpc-2 | A4 | entities and readers: 89 database-function groups, lines 502-778 of _sources/readers-raw.txt | in progress | _work/A4-rpc-2.md |  |
 | A4-rpc-3 | A4 | entities and readers: 75 database-function groups, lines 780-1028 of _sources/readers-raw.txt | in progress | _work/A4-rpc-3.md |  |
@@ -45,15 +44,15 @@ Counts: 3 todo, 5 in progress, 80 done, 0 blocked. Full list: work-items.jsonl. 
 | A4-nocaller-1 | A4 | entities and readers: database functions with no caller found, lines 1166-1261 of _sources/readers-raw.txt | todo | _work/A4-nocaller-1.md |  |
 | A4-nocaller-2 | A4 | entities and readers: database functions with no caller found, lines 1262-1357 of _sources/readers-raw.txt | todo | _work/A4-nocaller-2.md |  |
 | A4-nocaller-3 | A4 | entities and readers: database functions with no caller found, lines 1358-1451 of _sources/readers-raw.txt | todo | _work/A4-nocaller-3.md |  |
-| A3-website-2 | A3 | human side: the join-online page, the friend page and the member website | done | _work/A3-website-2.md | 52 features named on the join page, friend page and member website: 50 matched, 2 new rows, 7 findings (3 S2, 4 S3); top: the member website promises backup to your own Google Drive, but Drive backup stopped on 4 Nov 2026; it says an Apple Watch app is coming soon, but no Apple Watch code exists |
 | A3-notes-claude-1 | A3 | human side: redacted notes copy, part 1 | done | _work/A3-notes-claude-1.md | 41 features named in notes part 1: 37 matched, 1 new row, 7 findings (4 S2, 3 S3); top: the data agreement says every look at gym records is recorded and listed, but direct database looks are never shown; the panel says a member gets the birthday wish at 9:30, but a phone with gym reminders off shows nothing |
 | A3-notes-claude-2 | A3 | human side: redacted notes copy, parts 2 and 3 | done | _work/A3-notes-claude-2.md | 47 features named in notes parts 2 and 3: 47 matched, 0 new rows, 4 findings (1 S2, 3 S3); top: the Hindi privacy notice does not say that AI Assistant requests go to outside AI companies, the English one does; the watch rest alert still uses the one broken signal to decide if the watch has the app |
 | A3-inbox-1 | A3 | human side: redacted backlog copy, part 1 | done | _work/A3-inbox-1.md | about 205 features named in backlog part 1: 176 matched, 14 new rows, 19 findings (3 S2, 16 S3); top: the backlog says Google Drive backup is live, but it stopped on 4 Nov; long-history trainer charts are marked released, but their database change is not live; Steps and water is marked live, but water does not exist |
+| A3-inbox-2 | A3 | human side: redacted backlog copy, part 2 | done | _work/A3-inbox-2.md | 122 items named in backlog part 2: 102 matched, 2 new rows, 6 findings (2 S2, 4 S3); top: the note says a small trial fee was built, but the fee is always zero; the owner was told Move it moves the routine in one tap, but the member card has only Not now |
 | A3-inbox-3 | A3 | human side: redacted backlog copy, part 3 | done | _work/A3-inbox-3.md | about 75 features named in backlog part 3: about 66 matched, 9 new rows, 12 findings (2 S2, 10 S3); top: the website says staff cannot open a member list unless the owner lets them in, but HQ has an emergency open with no OK from the gym; the panel still shows Check workout code, but the member app stopped showing that code on 2 Nov |
 | A3-inbox-4 | A3 | human side: redacted backlog copy, parts 4 and 5 | done | _work/A3-inbox-4.md | about 60 features named in backlog parts 4 and 5: 4 new rows, 6 findings (1 S2, 5 S3); top: the complaints contact was promised in both apps, but the member app shows it only once at sign-in; a photo of the gym QR poster still earns rewards from home because no location check exists |
 | A4-d1-1 | A4 | entities and readers: 12 d1 tables, lines 4-122 of _sources/readers-raw.txt | done | _work/A4-d1-1.md | 12 entity rows and 100 reader rows for 12 d1 tables (96 candidates + 4 app readers): 55 readers, 45 not-a-reader; seen in passing: HQ cannot show the AI assistant or help cost, ai_usage keep time is stated three ways |
 | A4-d1-2 | A4 | entities and readers: 6 d1 tables, lines 124-218 of _sources/readers-raw.txt | done | _work/A4-d1-2.md | 6 entity rows and 84 reader rows for 6 d1 tables: 37 readers, 47 not-a-reader; seen in passing: an online join payment raises no paid-online alert to the gym; payment request rows are never deleted |
-(+ 72 older done items, not shown)
+(+ 73 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
