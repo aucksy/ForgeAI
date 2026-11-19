@@ -7,6 +7,10 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-622. Audit pacer: no more runs every 15 minutes; one run after each 5-hour reset - 19 Nov 2026 16:00 IST
+
+His words: the pacer was "eating up my limit that is left after 75%". Measured: after the window closed at 11:54 at F5 73, 16 idle pacer runs took F5 to 96 by 15:43 (about 1% each), doing nothing. Now: the pacer task has no repeat schedule. This main chat arms it as a one-time run at each reset + 2 minutes (first: 16:22 IST) and checks it 20 minutes later, then arms the next. The pacer's first step is a limit read; at the stop line it writes nothing and stops. Risk: if the Claude app is closed at a reset, the audit waits until this chat runs again.
+
 ## R-621. Apple App Store groundwork (no app code) - 19 Nov 2026
 He said: Apple developer account approved; set up whatever saves time (listing, images, release path, GitHub) without starting iPhone app development. Mid-way: Apple lives in the simpleapps108 Chrome window (saved to D:/Brain); name must be "MettleUp - Workout Tracker"; the listing must be optimised for App Store search.
 Did: bundle ID com.mettleup.app registered; App Store Connect record 6836681097 made; name, subtitle draft, keywords, category, support/marketing/privacy URLs, copyright saved (all drafts, nothing public). Draft .github/workflows/ios-release.yml (manual start only, green no-op until the ASC_* secrets exist). Full detail and what waits: docs/ios/APP-STORE-SETUP.md. Not done: API key (Apple's API terms are his click), description, privacy answers, age rating, screenshots (all must match a real iPhone build).
