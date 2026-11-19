@@ -33,7 +33,7 @@ weekly stop lines (his words, 19 Nov 2026 09:40 IST: "Lets stop if fable reaches
 | A4 | 1 | 4.6 (185k tokens) |
 
 ## Work items
-Counts: 0 todo, 6 in progress, 74 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 8 todo, 6 in progress, 74 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
@@ -43,6 +43,14 @@ Counts: 0 todo, 6 in progress, 74 done, 0 blocked. Full list: work-items.jsonl. 
 | A3-inbox-2 | A3 | human side: redacted backlog copy, part 2 | in progress | _work/A3-inbox-2.md |  |
 | A3-inbox-3 | A3 | human side: redacted backlog copy, part 3 | in progress | _work/A3-inbox-3.md |  |
 | A3-inbox-4 | A3 | human side: redacted backlog copy, parts 4 and 5 | in progress | _work/A3-inbox-4.md |  |
+| A4-d1-2 | A4 | entities and readers: 6 d1 tables, lines 124-218 of _sources/readers-raw.txt | todo | _work/A4-d1-2.md |  |
+| A4-rpc-1 | A4 | entities and readers: 91 database-function groups, lines 220-500 of _sources/readers-raw.txt | todo | _work/A4-rpc-1.md |  |
+| A4-rpc-2 | A4 | entities and readers: 89 database-function groups, lines 502-778 of _sources/readers-raw.txt | todo | _work/A4-rpc-2.md |  |
+| A4-rpc-3 | A4 | entities and readers: 75 database-function groups, lines 780-1028 of _sources/readers-raw.txt | todo | _work/A4-rpc-3.md |  |
+| A4-rpc-4 | A4 | entities and readers: 39 database-function groups, lines 1030-1163 of _sources/readers-raw.txt | todo | _work/A4-rpc-4.md |  |
+| A4-nocaller-1 | A4 | entities and readers: database functions with no caller found, lines 1166-1261 of _sources/readers-raw.txt | todo | _work/A4-nocaller-1.md |  |
+| A4-nocaller-2 | A4 | entities and readers: database functions with no caller found, lines 1262-1357 of _sources/readers-raw.txt | todo | _work/A4-nocaller-2.md |  |
+| A4-nocaller-3 | A4 | entities and readers: database functions with no caller found, lines 1358-1451 of _sources/readers-raw.txt | todo | _work/A4-nocaller-3.md |  |
 | A7-templates-2 | A7 | promises: group templates part 2, lines 1560-1631 of _sources/promises.txt | done | _work/A7-templates-2.md | 50 promises from 72 candidates: 43 kept, 2 partly, 0 GAP, 5 unknown; 22 not a promise; top: Settings says you get a pop-up for gym news, but from the 3rd message of a day none shows |
 | A7-panel-3b | A7 | promises: group panel part 3, second pass: the 63 rows of _work/out/A7-panel-3.jsonl with status unknown (lines 717-836 of _sources/promises.txt); find what keeps each one, privacy and money rows first; write patch rows | done | _work/A7-panel-3b.md | 34 of 63 unknown rows settled: 25 kept, 8 partly, 1 GAP; 29 lower-value rows still unknown (read limit; list in the checkpoint); GAP: MettleUp has never opened your records can show when old records were deleted |
 | A3-help | A3 | human side: help articles | done | _work/A3-help.md | 146 features named in 71 help articles: 145 matched, 1 new row, 7 findings (2 S2, 5 S3); top: help says a payment link puts money in the owner account, but payments are in test mode; help says messages are deleted after 180 days, but no timed clean-up exists |
