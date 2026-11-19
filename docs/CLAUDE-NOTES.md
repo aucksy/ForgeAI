@@ -9,7 +9,7 @@ Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept her
 
 ## R-620. Audit Fable stop line moved to 99% - 19 Nov 2026 09:40 IST
 
-His words: "Lets stop if fable reaches 99% / I will reset Fable Limit and then continue". The audit had paused at weekly Fable 88-91 under the old 90 line. Now: weekly Fable stops at 99 every day (no new helper when Fable + 2 would pass 99; pause and tell him once at 97+). Weekly all-models keeps 90 (95 on its last day). Changed in the pacer task file and the audit plan (section 8C). The pacer deletes the old "resume at 87" line from AUDIT-STATE.md on its next run. At the pause he resets the Fable limit himself and the pacer resumes within 15 minutes.
+His words: "Lets stop if fable reaches 99% / I will reset Fable Limit and then continue". The audit had paused at weekly Fable 88-91 under the old 90 line. Now: weekly Fable stops at 99 every day (no new helper when Fable + 2 would pass 99; pause and tell him once at 97+). Weekly all-models keeps 90 (95 on its last day). Changed in the pacer task file and the audit plan (section 8C). The pacer deletes the old "resume at 87" line from AUDIT-STATE.md on its next run. At the pause he resets the Fable limit himself and the pacer resumes within 15 minutes. His fact, same day: a Fable reset also gives back the all-models weekly share that Fable used, so the all-models meter does not cap the Fable resets.
 
 ## R-619. Audit weekly stop: 90%, or 95% on the last day; the extra 01:02 run removed - 18 Nov 2026 21:20 IST
 
