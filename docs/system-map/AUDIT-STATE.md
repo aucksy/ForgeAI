@@ -33,16 +33,14 @@ weekly stop lines (his words, 19 Nov 2026 09:40 IST: "Lets stop if fable reaches
 | A4 | 13 | 4.1 (162k tokens) |
 | A4b | 2 | 5.1 (204k tokens) |
 | A5 | 0 | 5 (start value) |
-| L4 | 0 | 5 (start value) |
+| L4 | 1 | 4.4 (177k tokens) |
 
 ## Work items
-Counts: 1 todo, 1 in progress, 96 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 0 todo, 1 in progress, 97 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
-| L4-hq-app | L4 | lens 4 (Privacy and law) x hq / hq/app: 6 items | in progress | _work/L4-hq-app.md |  |
-| A5-phone-components-1-1 | A5 | journeys: 7 features (14 feature x role pairs) of phone / phone/components-1; list in _work/items/A5-phone-components-1-1.txt | todo | _work/A5-phone-components-1-1.md |  |
-| A4-entities-1 | A4 | entity rows only: the tables that A4-rpc-1, A4-rpc-2 and A4-rpc-3 left under entity rows still to write | done | _work/A4-entities-1.md | 45 entity rows (43 tables, 2 storage buckets) for the tables the function-group helpers left out; 17 were already there; seen in passing: door punches are kept for ever; phone numbers left on the public gym page and the online join page are never cleaned up |
+| A5-phone-components-1-1 | A5 | journeys: 7 features (14 feature x role pairs) of phone / phone/components-1; list in _work/items/A5-phone-components-1-1.txt | in progress | _work/A5-phone-components-1-1.md |  |
 | A4-rpc-1b | A4 | reader rows only: the 47 candidates left out in docs/system-map/_work/A4-rpc-1.md and docs/system-map/_work/A4-rpc-4.md | done | _work/A4-rpc-1b.md | 46 reader rows for the candidates A4-rpc-1 and A4-rpc-4 left out: 22 readers, 24 not-a-reader; 1 candidate is screen text and has no row; seen in passing: with one server secret missing, an AI question is not counted against the gym allowance |
 | A4-rpc-2b | A4 | reader rows only: the 41 candidates left out in docs/system-map/_work/A4-rpc-2.md | done | _work/A4-rpc-2b.md | 41 reader rows for the candidates A4-rpc-2 left out: 21 readers, 20 not-a-reader (17 writes, 3 demo stand-ins); no new entity rows; seen in passing: the table gym_message_seen has no entity row |
 | A4-rpc-3b | A4 | reader rows only: the 43 candidates left out in docs/system-map/_work/A4-rpc-3.md | done | _work/A4-rpc-3b.md | 43 reader rows for the candidates A4-rpc-3 left out: 13 readers (6 screen, 5 list, 1 count, 1 export), 30 not-a-reader; no new entity rows; about 30 were classed from the function name and the wrapper comment, not the function body |
@@ -50,7 +48,8 @@ Counts: 1 todo, 1 in progress, 96 done, 0 blocked. Full list: work-items.jsonl. 
 | A4b-2 | A4b | Do NOT write the facts file: it exists; read it first. Do step 2 for the 47 features listed in docs/system-map | done | _work/A4b-2.md | 50 status patches for phone, panel and watch rows: live 12, behind switch 3, hidden 6, not-a-feature 26 (inbox ideas with no code), unknown 3; 1 finding (S2): the help page still tells members to use two things that were taken off on 5 Nov; F-phone-401 is the same as F-phone-334 (merge the two rows later) |
 | T-A5 | tools | tooling: A5 template, journey templates, expand script, items script | done | _work/T-A5.md | A5 is ready: template _briefs/A5.md, 42 journey templates, expand.mjs, a5-items.mjs (175 items at 8 features each), merge.mjs takes type lines and has the --a5cover done-check; pilot item made: A5-phone-components-1-1 |
 | T-lens | tools | tooling: lens items, applies grid, lens template, items script for lenses 4, 3, 5 | done | _work/T-lens.md | lens grid is ready: 106 numbered items, applies.json (2 no cells), template _briefs/lens.md, lens-items-make.mjs (lens 4 = 42 items, lens 3 = 37, lens 5 = 34), lens-cover.mjs done-check, machine-pass.md, secrets-hits.txt (174 hits, file:line only); pilot item made: L4-hq-app |
-(+ 88 older done items, not shown)
+| L4-hq-app | L4 | lens 4 (Privacy and law) x hq / hq/app: 6 items | done | _work/L4-hq-app.md | lens 4 pilot on HQ: 6 items in the grid (5 checked, 1 does not apply), 6 findings: 1 S1 (the HQ English helper sends help questions to Google while the privacy notice names only Anthropic), 2 S2 (HQ cannot erase one member; a deleted gym keeps its web page photos), 3 S3 |
+(+ 89 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
