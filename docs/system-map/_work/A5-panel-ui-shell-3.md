@@ -14,3 +14,10 @@ Seen in passing: the 'not ready yet' and 'not available yet' cards say 'message 
 F-panel-515: 8 journeys, 16 type lines
 F-panel-515: plans map to E-crm-records.
 Seen in passing: the plan sheet has no check for a plan name that already exists (apps/dashboard/src/crm/ui/screens/Plans.tsx:283-287), and a comment says plans can only be retired, never deleted (Plans.tsx:53-57).
+F-panel-528: 10 journeys, 14 type lines
+F-panel-528 note: StaffSettings (the staff page) was not opened; its content is from the code comment at Settings.tsx:95-96. The words of the delete sheet (DELETE_WORDS) were not opened.
+Seen in passing: 'Download all your gym’s data' is switched off with no internet although the file is made from the copy already on the device (apps/dashboard/src/crm/ui/GymDataActions.tsx:63,87).
+Seen in passing: the delete request names the asker as '(role)' and is sent through the feedback channel; nothing stops a second send (GymDataActions.tsx:106-116).
+F-panel-504: 6 journeys, 7 type lines
+F-panel-504: owner only (1 role). Hand ticks, hidden and pageNotNow are kept in browser storage (no entity fits, left out).
+Seen in passing: because hand ticks are per browser, an owner who ticked 'Add your logo and colours' on the laptop sees it not done on the phone (apps/dashboard/src/crm/ui/GetStartedCard.tsx:49, 96-98).
