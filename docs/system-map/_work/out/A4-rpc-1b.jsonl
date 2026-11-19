@@ -1,0 +1,46 @@
+{"kind":"reader","id":"RD-A4-rpc-1b-01","entity":"E-gym-ai-questions","reader_kind":"not-a-reader","reason":"ai_question_back only writes: it gives a counted AI question back","where":"deploy/panel/questionCredits.js:96","surface":"server"}
+{"kind":"reader","id":"RD-A4-rpc-1b-02","entity":"E-gym-ai-questions","reader_kind":"job","where":"deploy/panel/questionCredits.js:82","surface":"server"}
+{"kind":"reader","id":"RD-A4-rpc-1b-03","entity":"E-app-config","reader_kind":"job","where":"apps/mobile/src/cloud/copyApi.ts:119","surface":"phone"}
+{"kind":"reader","id":"RD-A4-rpc-1b-04","entity":"E-gym-friend-invites","reader_kind":"screen","where":"deploy/panel/worker.js:279","surface":"web"}
+{"kind":"reader","id":"RD-A4-rpc-1b-05","entity":"E-gym-friend-referrals","reader_kind":"not-a-reader","reason":"friend_invite_send only writes: the referral, an enquiry record and an alert","where":"deploy/panel/friend.js:118","surface":"server"}
+{"kind":"reader","id":"RD-A4-rpc-1b-06","entity":"E-entry-machines","reader_kind":"job","where":"apps/dashboard/src/crm/machines/supabaseStore.ts:58","surface":"server"}
+{"kind":"reader","id":"RD-A4-rpc-1b-07","entity":"E-entry-machines","reader_kind":"not-a-reader","reason":"gate_seen only writes the machine's last-seen details","where":"apps/dashboard/src/crm/machines/supabaseStore.ts:83","surface":"server"}
+{"kind":"reader","id":"RD-A4-rpc-1b-08","entity":"E-entry-machine-strangers","reader_kind":"not-a-reader","reason":"gate_stranger only writes a row for an unknown machine","where":"apps/dashboard/src/crm/machines/supabaseStore.ts:87","surface":"server"}
+{"kind":"reader","id":"RD-A4-rpc-1b-09","entity":"E-entry-machine-members","reader_kind":"job","where":"apps/dashboard/src/crm/machines/supabaseStore.ts:91","surface":"server"}
+{"kind":"reader","id":"RD-A4-rpc-1b-10","entity":"E-entry-machine-punches","reader_kind":"job","where":"apps/dashboard/src/crm/machines/supabaseStore.ts:96","surface":"server"}
+{"kind":"reader","id":"RD-A4-rpc-1b-11","entity":"E-entry-machine-punches","reader_kind":"not-a-reader","reason":"gate_save_punches only writes punches and visit records","where":"apps/dashboard/src/crm/machines/supabaseStore.ts:112","surface":"server"}
+{"kind":"reader","id":"RD-A4-rpc-1b-12","entity":"E-entry-machine-commands","reader_kind":"job","where":"apps/dashboard/src/crm/machines/supabaseStore.ts:120","surface":"server"}
+{"kind":"reader","id":"RD-A4-rpc-1b-13","entity":"E-entry-machine-commands","reader_kind":"not-a-reader","reason":"gate_command_results only writes the machine's answers","where":"apps/dashboard/src/crm/machines/supabaseStore.ts:135","surface":"server"}
+{"kind":"reader","id":"RD-A4-rpc-1b-14","entity":"E-gym-page-asks","reader_kind":"not-a-reader","reason":"gym_page_ask_send only writes: the question, an enquiry record and an alert","where":"deploy/panel/gymPageServe.js:239","surface":"server"}
+{"kind":"reader","id":"RD-A4-rpc-1b-15","entity":"E-gym-pages","reader_kind":"screen","where":"deploy/panel/gymPageServe.js:146","surface":"web"}
+{"kind":"reader","id":"RD-A4-rpc-1b-16","entity":"E-gym-page-reports","reader_kind":"not-a-reader","reason":"gym_page_report_send only writes a visitor's report","where":"deploy/panel/gymPageServe.js:249","surface":"server"}
+{"kind":"reader","id":"RD-A4-rpc-1b-17","entity":"E-gym-access-log","reader_kind":"list","where":"deploy/hq/api.js:368","surface":"hq"}
+{"kind":"reader","id":"RD-A4-rpc-1b-18","entity":"E-gym-ai-tasks","reader_kind":"job","where":"deploy/hq/worker.js:209","surface":"server"}
+{"kind":"reader","id":"RD-A4-rpc-1b-19","entity":"E-db-read-log-state","reader_kind":"job","where":"deploy/hq/readLog.js:234","surface":"server"}
+{"kind":"reader","id":"RD-A4-rpc-1b-20","entity":"E-hq-grants","reader_kind":"not-a-reader","reason":"hq_end_access only writes: it ends the support access","where":"deploy/hq/api.js:657","surface":"hq"}
+{"kind":"reader","id":"RD-A4-rpc-1b-21","entity":"E-hq-grants","reader_kind":"not-a-reader","reason":"hq_open_emergency only writes: it opens a support access","where":"deploy/hq/api.js:652","surface":"hq"}
+{"kind":"reader","id":"RD-A4-rpc-1b-22","entity":"E-member-push-notes","reader_kind":"not-a-reader","reason":"hq_fee_request_notes only writes notes for members","where":"deploy/hq/payFeed.js:73","surface":"server"}
+{"kind":"reader","id":"RD-A4-rpc-1b-23","entity":"E-member-push-notes","reader_kind":"notification","where":"deploy/hq/push.js:423","surface":"server"}
+{"kind":"reader","id":"RD-A4-rpc-1b-24","entity":"E-gym-groups","reader_kind":"list","where":"deploy/hq/api.js:119","surface":"hq"}
+{"kind":"reader","id":"RD-A4-rpc-1b-25","entity":"E-gym-web-push","reader_kind":"not-a-reader","reason":"hq_panel_drop_push only deletes dead browser addresses","where":"deploy/hq/panelPush.js:181","surface":"server"}
+{"kind":"reader","id":"RD-A4-rpc-1b-26","entity":"E-member-push-tokens","reader_kind":"not-a-reader","reason":"hq_push_drop only deletes dead phone addresses","where":"deploy/hq/push.js:390","surface":"server"}
+{"kind":"reader","id":"RD-A4-rpc-1b-27","entity":"E-member-push-tokens","reader_kind":"not-a-reader","reason":"hq_push_drop only deletes dead phone addresses","where":"deploy/hq/push.js:468","surface":"server"}
+{"kind":"reader","id":"RD-A4-rpc-1b-28","entity":"E-push-jobs","reader_kind":"notification","where":"deploy/hq/push.js:346","surface":"server"}
+{"kind":"reader","id":"RD-A4-rpc-1b-29","entity":"E-gym-staff-pins","reader_kind":"not-a-reader","reason":"hq_reset_owner_signin only writes: it resets the sign-in","where":"deploy/hq/api.js:543","surface":"hq"}
+{"kind":"reader","id":"RD-A4-rpc-1b-30","entity":"E-gym-sessions","reader_kind":"not-a-reader","reason":"hq_sign_out_gym only writes: it ends the gym's sessions","where":"deploy/hq/api.js:548","surface":"hq"}
+{"kind":"reader","id":"RD-A4-rpc-1b-31","entity":"E-gym-report-requests","reader_kind":"not-a-reader","reason":"member_answer_report_request writes the member's yes or no and hands back the changed row","where":"apps/mobile/src/shop/gymApi.ts:363","surface":"phone"}
+{"kind":"reader","id":"RD-A4-rpc-1b-32","entity":"E-gym-report-requests","reader_kind":"not-a-reader","reason":"member_attach_report writes the report file and hands back the changed row","where":"apps/mobile/src/shop/gymApi.ts:372","surface":"phone"}
+{"kind":"reader","id":"RD-A4-rpc-1b-33","entity":"E-gym-staff","reader_kind":"list","where":"apps/mobile/src/shop/gymApi.ts:558","surface":"phone"}
+{"kind":"reader","id":"RD-A4-rpc-1b-34","entity":"E-gym-plan-requests","reader_kind":"not-a-reader","reason":"member_ask_plan_change writes a freeze or renew request and hands back the new row","where":"apps/mobile/src/shop/gymApi.ts:323","surface":"phone"}
+{"kind":"reader","id":"RD-A4-rpc-1b-35","entity":"E-trainer-questions","reader_kind":"not-a-reader","reason":"member_ask_trainer writes a question and hands back the new row","where":"apps/mobile/src/shop/gymApi.ts:566","surface":"phone"}
+{"kind":"reader","id":"RD-A4-rpc-1b-36","entity":"E-gym-auto-reminders","reader_kind":"notification","where":"apps/mobile/src/shop/gymApi.ts:210","surface":"phone"}
+{"kind":"reader","id":"RD-A4-rpc-1b-37","entity":"E-gym-terms-acceptance","reader_kind":"screen","where":"apps/dashboard/src/crm/auth/terms.ts:79","surface":"panel"}
+{"kind":"reader","id":"RD-A4-rpc-1b-38","entity":"E-gym-alerts","reader_kind":"screen","where":"apps/dashboard/src/crm/shop/webPushApi.ts:179","surface":"panel"}
+{"kind":"reader","id":"RD-A4-rpc-1b-39","entity":"E-gym-progress-summaries","reader_kind":"not-a-reader","reason":"demo stand-in: answers from made-up demo data, not the table","where":"apps/dashboard/src/crm/demo/demoServer.ts:456","surface":"panel"}
+{"kind":"reader","id":"RD-A4-rpc-1b-40","entity":"E-gym-progress-summaries","reader_kind":"list","where":"apps/dashboard/src/crm/shop/trainerApi.ts:49","surface":"panel"}
+{"kind":"reader","id":"RD-A4-rpc-1b-41","entity":"E-gym-web-push","reader_kind":"screen","where":"apps/dashboard/src/crm/shop/webPushApi.ts:106","surface":"panel"}
+{"kind":"reader","id":"RD-A4-rpc-1b-42","entity":"E-crm-records","reader_kind":"list","where":"apps/mobile/src/shop/gymApi.ts:701","surface":"phone"}
+{"kind":"reader","id":"RD-A4-rpc-1b-43","entity":"E-gym-self-joins","reader_kind":"not-a-reader","reason":"self_join_send only writes the join request","where":"deploy/panel/selfJoin.js:146","surface":"server"}
+{"kind":"reader","id":"RD-A4-rpc-1b-44","entity":"E-gym-logos","reader_kind":"not-a-reader","reason":"only uploads a logo file","where":"apps/dashboard/src/crm/brand/logoUpload.ts:206","surface":"panel"}
+{"kind":"reader","id":"RD-A4-rpc-1b-45","entity":"E-product-photos","reader_kind":"not-a-reader","reason":"only uploads a product photo","where":"apps/dashboard/src/crm/shop/photoUpload.ts:96","surface":"panel"}
+{"kind":"reader","id":"RD-A4-rpc-1b-46","entity":"E-profiles","reader_kind":"screen","where":"apps/dashboard/src/hooks/useGymData.ts:39","surface":"panel"}
