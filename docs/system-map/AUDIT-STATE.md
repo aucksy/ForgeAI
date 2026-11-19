@@ -19,7 +19,7 @@ blind check: never put the held-out rows or hints into a helper brief (ids are i
 | tools | 2 | 4.7 (190k tokens) |
 | A1b | 1 | 5.0 (201k tokens) |
 | A2 | 37 | 3.9 (158k tokens) |
-| A7 | 18 | 4.4 (175k tokens) |
+| A7 | 19 | 4.4 (176k tokens) |
 | E1 | 1 | 4.7 (189k tokens) |
 | E2 | 1 | 7.5 (299k tokens) |
 | E3 | 1 | 5.0 (198k tokens) |
@@ -27,20 +27,19 @@ blind check: never put the held-out rows or hints into a helper brief (ids are i
 | 3F | 1 | 4.3 (171k tokens) |
 
 ## Work items
-Counts: 0 todo, 1 in progress, 67 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 0 todo, 0 in progress, 68 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
-| A7-templates-2 | A7 | promises: group templates part 2, lines 1560-1631 of _sources/promises.txt | in progress | _work/A7-templates-2.md |  |
-| A7-phone-watch-1 | A7 | promises: group phone-watch part 1, lines 848-967 of _sources/promises.txt | done | _work/A7-phone-watch-1.md | 62 promises from 120 candidates: 13 kept, 19 partly, 1 GAP, 29 unknown; 58 not a promise; GAP: sign-in says we never message you, but the server sends a WhatsApp reply after the number check |
 | A7-phone-watch-2 | A7 | promises: group phone-watch part 2, lines 968-1087 of _sources/promises.txt | done | _work/A7-phone-watch-2.md | 79 promises from 120 candidates: 40 kept, 16 partly, 1 GAP, 22 unknown; 41 not a promise; GAP: only the person you pick sees your question, but the gym owner sees it too |
 | A7-phone-watch-3 | A7 | promises: group phone-watch part 3, lines 1088-1126 of _sources/promises.txt | done | _work/A7-phone-watch-3.md | 26 promises from 39 candidates: 12 kept, 10 partly, 0 GAP, 4 unknown; 13 not a promise; top: share picture never shows your name has no test for the name half |
 | A7-whats-new-1 | A7 | promises: group whats-new part 1, lines 1127-1246 of _sources/promises.txt | done | _work/A7-whats-new-1.md | 99 promises from 120 candidates: 12 kept, 2 partly, 0 GAP, 85 unknown (73 never searched: read limit); 21 not a promise; top: complaints reach only you is partly true, the front desk sees them too |
 | A7-whats-new-2 | A7 | promises: group whats-new part 2, lines 1247-1366 of _sources/promises.txt | done | _work/A7-whats-new-2.md | 99 promises from 120 candidates: 3 kept, 48 partly, 1 GAP, 47 unknown; 21 not a promise; GAP: the update pop-up note says Later asks again in 3 days, but the rule is now the 7th app start |
 | A7-whats-new-3 | A7 | promises: group whats-new part 3, lines 1367-1439 of _sources/promises.txt | done | _work/A7-whats-new-3.md | 54 promises from 73 candidates: 9 kept, 19 partly, 5 GAP, 21 unknown; 19 not a promise; GAPs: old update notes no longer true (microphone, 4 tabs, Progress tab, workout days to front desk, 3-week muscle tip) |
 | A7-templates-1 | A7 | promises: group templates part 1, lines 1440-1559 of _sources/promises.txt | done | _work/A7-templates-1.md | 64 promises from 120 candidates: 12 kept, 50 partly, 2 GAP, 0 unknown; 56 not a promise; GAP: the Longer plan saves money message sends a hand-typed price and saving that nothing checks against the price list |
+| A7-templates-2 | A7 | promises: group templates part 2, lines 1560-1631 of _sources/promises.txt | done | _work/A7-templates-2.md | 50 promises from 72 candidates: 43 kept, 2 partly, 0 GAP, 5 unknown; 22 not a promise; top: Settings says you get a pop-up for gym news, but from the 3rd message of a day none shows |
 | A7-panel-3b | A7 | promises: group panel part 3, second pass: the 63 rows of _work/out/A7-panel-3.jsonl with status unknown (lines 717-836 of _sources/promises.txt); find what keeps each one, privacy and money rows first; write patch rows | done | _work/A7-panel-3b.md | 34 of 63 unknown rows settled: 25 kept, 8 partly, 1 GAP; 29 lower-value rows still unknown (read limit; list in the checkpoint); GAP: MettleUp has never opened your records can show when old records were deleted |
-(+ 59 older done items, not shown)
+(+ 60 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
