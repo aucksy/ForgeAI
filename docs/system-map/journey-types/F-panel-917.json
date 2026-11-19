@@ -1,0 +1,9 @@
+[
+{"kind":"jtype","id":"JT-F-panel-917-owner-10","feature":"F-panel-917","role":"owner","type":10,"applies":"no","why_not":"nothing is stored by this step","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-panel-assistant-1"},
+{"kind":"jtype","id":"JT-F-panel-917-owner-11","feature":"F-panel-917","role":"owner","type":11,"applies":"no","why_not":"one request on one device","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-panel-assistant-1"},
+{"kind":"jtype","id":"JT-F-panel-917-owner-4","feature":"F-panel-917","role":"owner","type":4,"applies":"yes","why_not":"none","variants":["T4-hinglish","T4-long","T4-emoji"],"at_step":1,"entity":"E-gym-ai-tasks","note":"Hindi digits and a 600-letter sentence full of numbers","wi":"A5-panel-assistant-1"},
+{"kind":"jtype","id":"JT-F-panel-917-owner-5","feature":"F-panel-917","role":"owner","type":5,"applies":"no","why_not":"no time edge: hiding a number does not depend on a date","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-panel-assistant-1"},
+{"kind":"jtype","id":"JT-F-panel-917-owner-7","feature":"F-panel-917","role":"owner","type":7,"applies":"no","why_not":"the placeholders live only inside one request; a broken request is dropped whole and nothing is half put back","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-panel-assistant-1"},
+{"kind":"jtype","id":"JT-F-panel-917-owner-8","feature":"F-panel-917","role":"owner","type":8,"applies":"no","why_not":"no setting changes what is hidden","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-panel-assistant-1"},
+{"kind":"jtype","id":"JT-F-panel-917-owner-9","feature":"F-panel-917","role":"owner","type":9,"applies":"no","why_not":"nothing of its own to look at: the result shows on the task cards (F-panel-903)","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-panel-assistant-1"}
+]
