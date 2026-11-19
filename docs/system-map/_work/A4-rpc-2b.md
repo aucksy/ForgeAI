@@ -10,7 +10,7 @@ Input: the 41 left-out candidates listed in docs/system-map/_work/A4-rpc-2.md ("
 - Candidates 31-41 done (rows 31-41): shop_products (2), gym_diet_plans, gym_body_measurements, gym_timings, gym_friend_invites, gym_plus_settings, gym_report_requests, gym_terms_acceptance, entry_machines, gym_alert_settings.
 
 ## Counts
-- 41 reader rows: 20 readers, 21 not-a-reader (18 writes, 3 demo stand-ins).
+- 41 reader rows: 21 readers, 20 not-a-reader (17 writes, 3 demo stand-ins).
 - All 24 entity ids already exist in entities.json; none written here.
 
 ## Notes on choices
