@@ -32,20 +32,18 @@ weekly stop lines (his words, 19 Nov 2026 09:40 IST: "Lets stop if fable reaches
 | A3 | 11 | 5.2 (207k tokens) |
 | A4 | 13 | 4.1 (162k tokens) |
 | A4b | 2 | 5.1 (204k tokens) |
-| A5 | 1 | 4.1 (162k tokens) |
+| A5 | 2 | 4.2 (168k tokens) |
 | L4 | 1 | 4.4 (177k tokens) |
 
 ## Work items
-Counts: 0 todo, 5 in progress, 98 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 0 todo, 4 in progress, 99 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
 | A5-panel-assistant-1 | A5 | journeys: 9 features (9 feature x role pairs) of panel / panel/assistant; list in _work/items/A5-panel-assistant-1.txt | in progress | _work/A5-panel-assistant-1.md |  |
-| A5-panel-assistant-2 | A5 | journeys: 9 features (9 feature x role pairs) of panel / panel/assistant; list in _work/items/A5-panel-assistant-2.txt | in progress | _work/A5-panel-assistant-2.md |  |
 | A5-panel-auth-data-1 | A5 | journeys: 9 features (14 feature x role pairs) of panel / panel/auth-data; list in _work/items/A5-panel-auth-data-1.txt | in progress | _work/A5-panel-auth-data-1.md |  |
 | A5-panel-auth-data-2 | A5 | journeys: 9 features (18 feature x role pairs) of panel / panel/auth-data; list in _work/items/A5-panel-auth-data-2.txt | in progress | _work/A5-panel-auth-data-2.md |  |
 | A5-panel-auth-data-3 | A5 | journeys: 8 features (19 feature x role pairs) of panel / panel/auth-data; list in _work/items/A5-panel-auth-data-3.txt | in progress | _work/A5-panel-auth-data-3.md |  |
-| A4-rpc-2b | A4 | reader rows only: the 41 candidates left out in docs/system-map/_work/A4-rpc-2.md | done | _work/A4-rpc-2b.md | 41 reader rows for the candidates A4-rpc-2 left out: 21 readers, 20 not-a-reader (17 writes, 3 demo stand-ins); no new entity rows; seen in passing: the table gym_message_seen has no entity row |
 | A4-rpc-3b | A4 | reader rows only: the 43 candidates left out in docs/system-map/_work/A4-rpc-3.md | done | _work/A4-rpc-3b.md | 43 reader rows for the candidates A4-rpc-3 left out: 13 readers (6 screen, 5 list, 1 count, 1 export), 30 not-a-reader; no new entity rows; about 30 were classed from the function name and the wrapper comment, not the function body |
 | A4b-1 | A4b | WRITE THE FACTS FILE FIRST (step 1), then do step 2 for the 37 features listed in docs/system-map/_work/items/ | done | _work/A4b-1.md | facts file written (_sources/live-state-facts.md) and 37 status patches: live 15, behind switch 11, hidden 3, not-a-feature 4, unknown 4; 0 new findings; the live migration list holds only one row (the rest were run by hand), so some files stay unknown |
 | A4b-2 | A4b | Do NOT write the facts file: it exists; read it first. Do step 2 for the 47 features listed in docs/system-map | done | _work/A4b-2.md | 50 status patches for phone, panel and watch rows: live 12, behind switch 3, hidden 6, not-a-feature 26 (inbox ideas with no code), unknown 3; 1 finding (S2): the help page still tells members to use two things that were taken off on 5 Nov; F-phone-401 is the same as F-phone-334 (merge the two rows later) |
@@ -53,7 +51,8 @@ Counts: 0 todo, 5 in progress, 98 done, 0 blocked. Full list: work-items.jsonl. 
 | T-lens | tools | tooling: lens items, applies grid, lens template, items script for lenses 4, 3, 5 | done | _work/T-lens.md | lens grid is ready: 106 numbered items, applies.json (2 no cells), template _briefs/lens.md, lens-items-make.mjs (lens 4 = 42 items, lens 3 = 37, lens 5 = 34), lens-cover.mjs done-check, machine-pass.md, secrets-hits.txt (174 hits, file:line only); pilot item made: L4-hq-app |
 | A5-phone-components-1-1 | A5 | journeys: 7 features (14 feature x role pairs) of phone / phone/components-1; list in _work/items/A5-phone-components-1-1.txt | done | _work/A5-phone-components-1-1.md | A5 pilot: 7 features, 62 full journeys (14 happy, 12 alternate, 14 negative, 14 state, 8 privacy) and 110 type lines; 0 findings; 4 seen-in-passing lines in the checkpoint; about 1,250 code lines read |
 | L4-hq-app | L4 | lens 4 (Privacy and law) x hq / hq/app: 6 items | done | _work/L4-hq-app.md | lens 4 pilot on HQ: 6 items in the grid (5 checked, 1 does not apply), 6 findings: 1 S1 (the HQ English helper sends help questions to Google while the privacy notice names only Anthropic), 2 S2 (HQ cannot erase one member; a deleted gym keeps its web page photos), 3 S3 |
-(+ 90 older done items, not shown)
+| A5-panel-assistant-2 | A5 | journeys: 9 features (9 feature x role pairs) of panel / panel/assistant; list in _work/items/A5-panel-assistant-2.txt | done | _work/A5-panel-assistant-2.md | 9 features: 43 full journeys (owner) and 70 type lines; 2 findings (S3): the credits pill on the AI card opens the assistant, not the credits; an idea tapped on Today is dropped with no word when the assistant is busy or the day limit is reached; 6 seen-in-passing lines in the checkpoint |
+(+ 91 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
