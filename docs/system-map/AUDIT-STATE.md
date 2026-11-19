@@ -20,7 +20,7 @@ weekly stop lines (his words, 19 Nov 2026 09:40 IST: "Lets stop if fable reaches
 | step | helpers so far | average cost |
 |---|---|---|
 | plan-review | 1 | 4.3 (171k tokens) |
-| tools | 2 | 4.7 (190k tokens) |
+| tools | 3 | 4.7 (189k tokens) |
 | A1b | 1 | 5.0 (201k tokens) |
 | A2 | 37 | 3.9 (158k tokens) |
 | A7 | 19 | 4.4 (176k tokens) |
@@ -32,16 +32,16 @@ weekly stop lines (his words, 19 Nov 2026 09:40 IST: "Lets stop if fable reaches
 | A3 | 11 | 5.2 (207k tokens) |
 | A4 | 13 | 4.1 (162k tokens) |
 | A4b | 1 | 5.1 (205k tokens) |
+| A5 | 0 | 5 (start value) |
 
 ## Work items
-Counts: 1 todo, 2 in progress, 93 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 1 todo, 2 in progress, 94 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
-| T-A5 | tools | tooling: A5 template, journey templates, expand script, items script | in progress | _work/T-A5.md |  |
+| A4b-2 | A4b | Do NOT write the facts file: it exists; read it first. Do step 2 for the 47 features listed in docs/system-map | in progress | _work/A4b-2.md |  |
 | T-lens | tools | tooling: lens items, applies grid, lens template, items script for lenses 4, 3, 5 | in progress | _work/T-lens.md |  |
-| A4b-2 | A4b | Do NOT write the facts file: it exists; read it first. Do step 2 for the 47 features listed in docs/system-map | todo | _work/A4b-2.md |  |
-| A4-nocaller-1 | A4 | entities and readers: database functions with no caller found, lines 1166-1261 of _sources/readers-raw.txt | done | _work/A4-nocaller-1.md | 96 reader rows for database functions with no caller in app code (lines 1166-1261): 11 notification, 85 not-a-reader, 0 dead; seen in passing: the low AI credit alert fires at 10 while the wallet says 5; a photo of an unpublished gym page may stay readable by its direct address |
+| A5-phone-components-1-1 | A5 | journeys: 7 features (14 feature x role pairs) of phone / phone/components-1; list in _work/items/A5-phone-components-1-1.txt | todo | _work/A5-phone-components-1-1.md |  |
 | A4-nocaller-2 | A4 | entities and readers: database functions with no caller found, lines 1262-1357 of _sources/readers-raw.txt | done | _work/A4-nocaller-2.md | 3 entity rows and 96 reader rows for database functions with no caller in app code (lines 1262-1357): 26 readers, 70 not-a-reader, 0 dead; seen in passing: two word-for-word copies of the owner check can drift apart; old busy-machine and offer rows are cleaned only when someone opens the screen |
 | A4-nocaller-3 | A4 | entities and readers: database functions with no caller found, lines 1358-1451 of _sources/readers-raw.txt | done | _work/A4-nocaller-3.md | 2 entity rows and 94 reader rows for database functions with no caller in app code (lines 1358-1451): 5 notification, 89 not-a-reader, 7 that nothing calls; seen in passing: receipt changes are recorded but no screen shows them to the owner; the log of direct database reads is written but no HQ screen shows it; old web page chats of a quiet gym can stay past 90 days |
 | A4-entities-1 | A4 | entity rows only: the tables that A4-rpc-1, A4-rpc-2 and A4-rpc-3 left under entity rows still to write | done | _work/A4-entities-1.md | 45 entity rows (43 tables, 2 storage buckets) for the tables the function-group helpers left out; 17 were already there; seen in passing: door punches are kept for ever; phone numbers left on the public gym page and the online join page are never cleaned up |
@@ -49,7 +49,8 @@ Counts: 1 todo, 2 in progress, 93 done, 0 blocked. Full list: work-items.jsonl. 
 | A4-rpc-2b | A4 | reader rows only: the 41 candidates left out in docs/system-map/_work/A4-rpc-2.md | done | _work/A4-rpc-2b.md | 41 reader rows for the candidates A4-rpc-2 left out: 21 readers, 20 not-a-reader (17 writes, 3 demo stand-ins); no new entity rows; seen in passing: the table gym_message_seen has no entity row |
 | A4-rpc-3b | A4 | reader rows only: the 43 candidates left out in docs/system-map/_work/A4-rpc-3.md | done | _work/A4-rpc-3b.md | 43 reader rows for the candidates A4-rpc-3 left out: 13 readers (6 screen, 5 list, 1 count, 1 export), 30 not-a-reader; no new entity rows; about 30 were classed from the function name and the wrapper comment, not the function body |
 | A4b-1 | A4b | WRITE THE FACTS FILE FIRST (step 1), then do step 2 for the 37 features listed in docs/system-map/_work/items/ | done | _work/A4b-1.md | facts file written (_sources/live-state-facts.md) and 37 status patches: live 15, behind switch 11, hidden 3, not-a-feature 4, unknown 4; 0 new findings; the live migration list holds only one row (the rest were run by hand), so some files stay unknown |
-(+ 85 older done items, not shown)
+| T-A5 | tools | tooling: A5 template, journey templates, expand script, items script | done | _work/T-A5.md | A5 is ready: template _briefs/A5.md, 42 journey templates, expand.mjs, a5-items.mjs (175 items at 8 features each), merge.mjs takes type lines and has the --a5cover done-check; pilot item made: A5-phone-components-1-1 |
+(+ 86 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).

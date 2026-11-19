@@ -1,0 +1,7 @@
+F-phone-1300 | Workout tab notice: "Backups now go to your MettleUp account" (Sign in / Got it) for a phone that had Google Drive backup linked | apps/mobile/src/components/BackupMovedCard.tsx:19
+F-phone-1301 | Gym's logo full-screen for about a second on launch and after joining a branded gym (tap to skip) | apps/mobile/src/components/BrandOpening.tsx:31
+F-phone-1302 | Gym's logo and name at the top of the Workout, Profile and Shop tabs | apps/mobile/src/components/GymBrandMark.tsx:34
+F-phone-1306 | "New" dots: a small dot on tabs, Profile rows and settings that lead to something new in this version | apps/mobile/src/components/NewDot.tsx:15
+F-phone-1307 | Workout tab notice: "Your workouts are only on this phone" (Sign in to keep them safe / Hide for 30 days), from the 3rd workout with no account | apps/mobile/src/components/SafekeepNudgeCard.tsx:20
+F-phone-1308 | "Couldn't save" banner over every screen while saving fails (storage full); goes by itself on the next good save | apps/mobile/src/components/SaveProblemBanner.tsx:21
+F-phone-1309 | Crash screen: "Something went wrong on this screen. Your workout is safe." with Try again, instead of the app closing | apps/mobile/src/components/ScreenErrorBoundary.tsx:89
