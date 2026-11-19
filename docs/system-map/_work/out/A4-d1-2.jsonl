@@ -1,0 +1,90 @@
+{"kind": "entity", "id": "E-pay-requests", "name": "Payment request (one \"please pay\": a membership fee, an app shop order or an online join)", "stored": ["d1 table pay_requests"], "fields": ["id", "gym_id", "kind", "member_id", "app_member", "ref", "amount_p", "label", "note", "upi", "payee", "provider", "mode", "link_id", "link_url", "status", "payment_id", "paid_p", "method", "paid_at", "late", "claim", "receipt_no", "recorded_at", "checked_at", "created_at", "expires_at"], "visible_to": ["owner", "staff (desk)", "member (own only)", "person joining online (own payment only)", "server"], "personal": "yes", "retention": "unknown", "evidence": ["deploy/panel/migrations/0011_payments.sql:34-70", "deploy/panel/joinPay.js:215-216", "deploy/panel/pay.js:1298-1300"]}
+{"kind": "entity", "id": "E-pay-said", "name": "\"I have paid\" tap for a plain UPI payment (one per payment request)", "stored": ["d1 table pay_said"], "fields": ["request_id", "at"], "visible_to": ["owner", "staff (desk)", "person joining online (own payment only)", "server"], "personal": "no", "retention": "unknown", "evidence": ["deploy/panel/migrations/0016_pay_switches.sql:21-26", "deploy/panel/paySwitches.js:47-60"]}
+{"kind": "entity", "id": "E-pay-switches", "name": "Gym owner's two online-payment switches (member app, web join page)", "stored": ["d1 table pay_switches"], "fields": ["gym_id", "app_on", "web_on", "updated_at"], "visible_to": ["owner", "server"], "personal": "no", "retention": "unknown", "evidence": ["deploy/panel/migrations/0016_pay_switches.sql:13-19", "deploy/panel/paySwitches.js:22-45"]}
+{"kind": "entity", "id": "E-phone-code-asks", "name": "Each \"send me a sign-in code\" ask (hashed number, hashed network address, whether a WhatsApp went out)", "stored": ["d1 table phone_code_asks"], "fields": ["at", "phone_key", "ip_key", "sent"], "visible_to": ["server"], "personal": "yes", "retention": "2 days (daily clean-up)", "evidence": ["deploy/panel/migrations/0012_phone_codes.sql:7-10", "deploy/panel/migrations/0012_phone_codes.sql:24-32", "deploy/panel/phoneCode.js:397-403"]}
+{"kind": "entity", "id": "E-phone-codes", "name": "Sign-in code sent by WhatsApp (hash only, 10 minutes, one use)", "stored": ["d1 table phone_codes"], "fields": ["id", "phone_key", "purpose", "code_hash", "created_at", "expires_at", "wrong_tries", "used_at", "dead"], "visible_to": ["server"], "personal": "yes", "retention": "2 days (daily clean-up)", "evidence": ["deploy/panel/migrations/0012_phone_codes.sql:4-22", "deploy/panel/phoneCode.js:397-403"]}
+{"kind": "entity", "id": "E-phone-inbound", "name": "\"Verify with WhatsApp\" attempt (the person messages us a code; number kept encrypted until the proof is handed out)", "stored": ["d1 table phone_inbound"], "fields": ["id_key", "phone_key", "purpose", "code_key", "created_at", "expires_at", "state", "wrong_msgs", "no_code", "sender_box", "verified_at", "proof_at"], "visible_to": ["server", "person verifying (own state only)"], "personal": "yes", "retention": "2 days (daily clean-up)", "evidence": ["deploy/panel/migrations/0013_phone_inbound.sql:6-31", "deploy/panel/phoneInbound.js:375-379"]}
+{"kind": "reader", "id": "RD-A4-d1-2-01", "entity": "E-pay-requests", "reader_kind": "job", "where": "deploy/hq/payFeed.js:58", "surface": "server"}
+{"kind": "reader", "id": "RD-A4-d1-2-02", "entity": "E-pay-requests", "reader_kind": "job", "where": "deploy/hq/payFeed.js:121", "surface": "server"}
+{"kind": "reader", "id": "RD-A4-d1-2-03", "entity": "E-pay-requests", "reader_kind": "screen", "where": "deploy/panel/joinPay.js:179", "surface": "web"}
+{"kind": "reader", "id": "RD-A4-d1-2-04", "entity": "E-pay-requests", "reader_kind": "job", "where": "deploy/panel/joinPay.js:190", "surface": "server"}
+{"kind": "reader", "id": "RD-A4-d1-2-05", "entity": "E-pay-requests", "reader_kind": "screen", "where": "deploy/panel/joinPay.js:202", "surface": "web"}
+{"kind": "reader", "id": "RD-A4-d1-2-06", "entity": "E-pay-requests", "reader_kind": "not-a-reader", "reason": "only inserts a row", "where": "deploy/panel/joinPay.js:215", "surface": "server"}
+{"kind": "reader", "id": "RD-A4-d1-2-07", "entity": "E-pay-requests", "reader_kind": "screen", "where": "deploy/panel/joinPay.js:220", "surface": "web"}
+{"kind": "reader", "id": "RD-A4-d1-2-08", "entity": "E-pay-requests", "reader_kind": "not-a-reader", "reason": "only updates a row", "where": "deploy/panel/joinPay.js:230", "surface": "server"}
+{"kind": "reader", "id": "RD-A4-d1-2-09", "entity": "E-pay-requests", "reader_kind": "screen", "where": "deploy/panel/joinPay.js:234", "surface": "web"}
+{"kind": "reader", "id": "RD-A4-d1-2-10", "entity": "E-pay-requests", "reader_kind": "screen", "where": "deploy/panel/joinPay.js:260", "surface": "web"}
+{"kind": "reader", "id": "RD-A4-d1-2-11", "entity": "E-pay-requests", "reader_kind": "not-a-reader", "reason": "only checks that the table exists", "where": "deploy/panel/pay.js:249", "surface": "server"}
+{"kind": "reader", "id": "RD-A4-d1-2-12", "entity": "E-pay-requests", "reader_kind": "screen", "where": "deploy/panel/pay.js:257", "surface": "server"}
+{"kind": "reader", "id": "RD-A4-d1-2-13", "entity": "E-pay-requests", "reader_kind": "not-a-reader", "reason": "only updates a row", "where": "deploy/panel/pay.js:335", "surface": "server"}
+{"kind": "reader", "id": "RD-A4-d1-2-14", "entity": "E-pay-requests", "reader_kind": "not-a-reader", "reason": "only updates a row", "where": "deploy/panel/pay.js:352", "surface": "server"}
+{"kind": "reader", "id": "RD-A4-d1-2-15", "entity": "E-pay-requests", "reader_kind": "not-a-reader", "reason": "only updates a row", "where": "deploy/panel/pay.js:512", "surface": "server"}
+{"kind": "reader", "id": "RD-A4-d1-2-16", "entity": "E-pay-requests", "reader_kind": "not-a-reader", "reason": "only updates a row", "where": "deploy/panel/pay.js:536", "surface": "server"}
+{"kind": "reader", "id": "RD-A4-d1-2-17", "entity": "E-pay-requests", "reader_kind": "not-a-reader", "reason": "only updates a row", "where": "deploy/panel/pay.js:537", "surface": "server"}
+{"kind": "reader", "id": "RD-A4-d1-2-18", "entity": "E-pay-requests", "reader_kind": "not-a-reader", "reason": "only updates a row", "where": "deploy/panel/pay.js:553", "surface": "server"}
+{"kind": "reader", "id": "RD-A4-d1-2-19", "entity": "E-pay-requests", "reader_kind": "not-a-reader", "reason": "only updates a row", "where": "deploy/panel/pay.js:577", "surface": "server"}
+{"kind": "reader", "id": "RD-A4-d1-2-20", "entity": "E-pay-requests", "reader_kind": "not-a-reader", "reason": "only updates a row", "where": "deploy/panel/pay.js:615", "surface": "server"}
+{"kind": "reader", "id": "RD-A4-d1-2-21", "entity": "E-pay-requests", "reader_kind": "not-a-reader", "reason": "only updates a row", "where": "deploy/panel/pay.js:700", "surface": "server"}
+{"kind": "reader", "id": "RD-A4-d1-2-22", "entity": "E-pay-requests", "reader_kind": "job", "where": "deploy/panel/pay.js:919", "surface": "server"}
+{"kind": "reader", "id": "RD-A4-d1-2-23", "entity": "E-pay-requests", "reader_kind": "not-a-reader", "reason": "only updates a row", "where": "deploy/panel/pay.js:949", "surface": "server"}
+{"kind": "reader", "id": "RD-A4-d1-2-24", "entity": "E-pay-requests", "reader_kind": "job", "where": "deploy/panel/pay.js:967", "surface": "server"}
+{"kind": "reader", "id": "RD-A4-d1-2-25", "entity": "E-pay-requests", "reader_kind": "not-a-reader", "reason": "only updates a row", "where": "deploy/panel/pay.js:977", "surface": "server"}
+{"kind": "reader", "id": "RD-A4-d1-2-26", "entity": "E-pay-requests", "reader_kind": "job", "where": "deploy/panel/pay.js:1002", "surface": "server"}
+{"kind": "reader", "id": "RD-A4-d1-2-27", "entity": "E-pay-requests", "reader_kind": "job", "where": "deploy/panel/pay.js:1015", "surface": "server"}
+{"kind": "reader", "id": "RD-A4-d1-2-28", "entity": "E-pay-requests", "reader_kind": "job", "where": "deploy/panel/pay.js:1049", "surface": "server"}
+{"kind": "reader", "id": "RD-A4-d1-2-29", "entity": "E-pay-requests", "reader_kind": "screen", "where": "deploy/panel/pay.js:1061", "surface": "panel"}
+{"kind": "reader", "id": "RD-A4-d1-2-30", "entity": "E-pay-requests", "reader_kind": "not-a-reader", "reason": "only inserts a row", "where": "deploy/panel/pay.js:1070", "surface": "server"}
+{"kind": "reader", "id": "RD-A4-d1-2-31", "entity": "E-pay-requests", "reader_kind": "list", "where": "deploy/panel/pay.js:1131", "surface": "panel"}
+{"kind": "reader", "id": "RD-A4-d1-2-32", "entity": "E-pay-requests", "reader_kind": "list", "where": "deploy/panel/pay.js:1141", "surface": "panel"}
+{"kind": "reader", "id": "RD-A4-d1-2-33", "entity": "E-pay-requests", "reader_kind": "not-a-reader", "reason": "only updates a row", "where": "deploy/panel/pay.js:1158", "surface": "server"}
+{"kind": "reader", "id": "RD-A4-d1-2-34", "entity": "E-pay-requests", "reader_kind": "not-a-reader", "reason": "only updates a row", "where": "deploy/panel/pay.js:1176", "surface": "server"}
+{"kind": "reader", "id": "RD-A4-d1-2-35", "entity": "E-pay-requests", "reader_kind": "not-a-reader", "reason": "only updates a row", "where": "deploy/panel/pay.js:1187", "surface": "server"}
+{"kind": "reader", "id": "RD-A4-d1-2-36", "entity": "E-pay-requests", "reader_kind": "job", "where": "deploy/panel/pay.js:1211", "surface": "server"}
+{"kind": "reader", "id": "RD-A4-d1-2-37", "entity": "E-pay-requests", "reader_kind": "job", "where": "deploy/panel/pay.js:1254", "surface": "server"}
+{"kind": "reader", "id": "RD-A4-d1-2-38", "entity": "E-pay-requests", "reader_kind": "list", "where": "deploy/panel/pay.js:1278", "surface": "panel"}
+{"kind": "reader", "id": "RD-A4-d1-2-39", "entity": "E-pay-requests", "reader_kind": "list", "where": "deploy/panel/pay.js:1285", "surface": "panel"}
+{"kind": "reader", "id": "RD-A4-d1-2-40", "entity": "E-pay-requests", "reader_kind": "list", "where": "deploy/panel/pay.js:1298", "surface": "phone"}
+{"kind": "reader", "id": "RD-A4-d1-2-41", "entity": "E-pay-requests", "reader_kind": "not-a-reader", "reason": "only updates a row", "where": "deploy/panel/pay.js:1366", "surface": "server"}
+{"kind": "reader", "id": "RD-A4-d1-2-42", "entity": "E-pay-requests", "reader_kind": "screen", "where": "deploy/panel/pay.js:1389", "surface": "phone"}
+{"kind": "reader", "id": "RD-A4-d1-2-43", "entity": "E-pay-requests", "reader_kind": "not-a-reader", "reason": "only inserts a row", "where": "deploy/panel/pay.js:1407", "surface": "server"}
+{"kind": "reader", "id": "RD-A4-d1-2-44", "entity": "E-pay-requests", "reader_kind": "job", "where": "deploy/panel/pay.js:1491", "surface": "server"}
+{"kind": "reader", "id": "RD-A4-d1-2-45", "entity": "E-pay-requests", "reader_kind": "not-a-reader", "reason": "only updates a row", "where": "deploy/panel/pay.js:1512", "surface": "server"}
+{"kind": "reader", "id": "RD-A4-d1-2-46", "entity": "E-pay-requests", "reader_kind": "not-a-reader", "reason": "only updates a row", "where": "deploy/panel/pay.js:1513", "surface": "server"}
+{"kind": "reader", "id": "RD-A4-d1-2-47", "entity": "E-pay-requests", "reader_kind": "job", "where": "deploy/panel/pay.js:1550", "surface": "server"}
+{"kind": "reader", "id": "RD-A4-d1-2-48", "entity": "E-pay-requests", "reader_kind": "not-a-reader", "reason": "only updates a row", "where": "deploy/panel/pay.js:1564", "surface": "server"}
+{"kind": "reader", "id": "RD-A4-d1-2-49", "entity": "E-pay-requests", "reader_kind": "not-a-reader", "reason": "only updates a row", "where": "deploy/panel/pay.js:1578", "surface": "server"}
+{"kind": "reader", "id": "RD-A4-d1-2-50", "entity": "E-pay-said", "reader_kind": "badge", "where": "deploy/panel/pay.js:1278", "surface": "panel"}
+{"kind": "reader", "id": "RD-A4-d1-2-51", "entity": "E-pay-said", "reader_kind": "not-a-reader", "reason": "only checks that the table exists", "where": "deploy/panel/paySwitches.js:15", "surface": "server"}
+{"kind": "reader", "id": "RD-A4-d1-2-52", "entity": "E-pay-said", "reader_kind": "screen", "where": "deploy/panel/paySwitches.js:50", "surface": "web"}
+{"kind": "reader", "id": "RD-A4-d1-2-53", "entity": "E-pay-said", "reader_kind": "not-a-reader", "reason": "only inserts a row", "where": "deploy/panel/paySwitches.js:59", "surface": "server"}
+{"kind": "reader", "id": "RD-A4-d1-2-54", "entity": "E-pay-switches", "reader_kind": "not-a-reader", "reason": "only checks that the table exists", "where": "deploy/panel/paySwitches.js:15", "surface": "server"}
+{"kind": "reader", "id": "RD-A4-d1-2-55", "entity": "E-pay-switches", "reader_kind": "screen", "where": "deploy/panel/paySwitches.js:25", "surface": "panel"}
+{"kind": "reader", "id": "RD-A4-d1-2-56", "entity": "E-pay-switches", "reader_kind": "not-a-reader", "reason": "only inserts or updates a row", "where": "deploy/panel/paySwitches.js:39", "surface": "server"}
+{"kind": "reader", "id": "RD-A4-d1-2-57", "entity": "E-phone-code-asks", "reader_kind": "count", "where": "deploy/panel/phoneCode.js:193", "surface": "server"}
+{"kind": "reader", "id": "RD-A4-d1-2-58", "entity": "E-phone-code-asks", "reader_kind": "count", "where": "deploy/panel/phoneCode.js:274", "surface": "server"}
+{"kind": "reader", "id": "RD-A4-d1-2-59", "entity": "E-phone-code-asks", "reader_kind": "count", "where": "deploy/panel/phoneCode.js:275", "surface": "server"}
+{"kind": "reader", "id": "RD-A4-d1-2-60", "entity": "E-phone-code-asks", "reader_kind": "not-a-reader", "reason": "only inserts a row", "where": "deploy/panel/phoneCode.js:279", "surface": "server"}
+{"kind": "reader", "id": "RD-A4-d1-2-61", "entity": "E-phone-code-asks", "reader_kind": "not-a-reader", "reason": "only updates a row", "where": "deploy/panel/phoneCode.js:343", "surface": "server"}
+{"kind": "reader", "id": "RD-A4-d1-2-62", "entity": "E-phone-code-asks", "reader_kind": "not-a-reader", "reason": "only updates a row", "where": "deploy/panel/phoneCode.js:344", "surface": "server"}
+{"kind": "reader", "id": "RD-A4-d1-2-63", "entity": "E-phone-code-asks", "reader_kind": "not-a-reader", "reason": "only deletes old rows (daily clean-up)", "where": "deploy/panel/phoneCode.js:401", "surface": "server"}
+{"kind": "reader", "id": "RD-A4-d1-2-64", "entity": "E-phone-code-asks", "reader_kind": "count", "where": "deploy/panel/phoneInbound.js:194", "surface": "server"}
+{"kind": "reader", "id": "RD-A4-d1-2-65", "entity": "E-phone-code-asks", "reader_kind": "count", "where": "deploy/panel/phoneInbound.js:195", "surface": "server"}
+{"kind": "reader", "id": "RD-A4-d1-2-66", "entity": "E-phone-code-asks", "reader_kind": "not-a-reader", "reason": "only inserts a row", "where": "deploy/panel/phoneInbound.js:199", "surface": "server"}
+{"kind": "reader", "id": "RD-A4-d1-2-67", "entity": "E-phone-codes", "reader_kind": "not-a-reader", "reason": "only updates a row", "where": "deploy/panel/phoneCode.js:315", "surface": "server"}
+{"kind": "reader", "id": "RD-A4-d1-2-68", "entity": "E-phone-codes", "reader_kind": "not-a-reader", "reason": "only inserts a row", "where": "deploy/panel/phoneCode.js:318", "surface": "server"}
+{"kind": "reader", "id": "RD-A4-d1-2-69", "entity": "E-phone-codes", "reader_kind": "not-a-reader", "reason": "only updates a row", "where": "deploy/panel/phoneCode.js:335", "surface": "server"}
+{"kind": "reader", "id": "RD-A4-d1-2-70", "entity": "E-phone-codes", "reader_kind": "job", "where": "deploy/panel/phoneCode.js:374", "surface": "server"}
+{"kind": "reader", "id": "RD-A4-d1-2-71", "entity": "E-phone-codes", "reader_kind": "not-a-reader", "reason": "only updates a row", "where": "deploy/panel/phoneCode.js:386", "surface": "server"}
+{"kind": "reader", "id": "RD-A4-d1-2-72", "entity": "E-phone-codes", "reader_kind": "not-a-reader", "reason": "only updates a row", "where": "deploy/panel/phoneCode.js:390", "surface": "server"}
+{"kind": "reader", "id": "RD-A4-d1-2-73", "entity": "E-phone-codes", "reader_kind": "not-a-reader", "reason": "only deletes old rows (daily clean-up)", "where": "deploy/panel/phoneCode.js:400", "surface": "server"}
+{"kind": "reader", "id": "RD-A4-d1-2-74", "entity": "E-phone-inbound", "reader_kind": "not-a-reader", "reason": "only checks that the table exists", "where": "deploy/panel/phoneInbound.js:140", "surface": "server"}
+{"kind": "reader", "id": "RD-A4-d1-2-75", "entity": "E-phone-inbound", "reader_kind": "not-a-reader", "reason": "only updates a row", "where": "deploy/panel/phoneInbound.js:201", "surface": "server"}
+{"kind": "reader", "id": "RD-A4-d1-2-76", "entity": "E-phone-inbound", "reader_kind": "job", "where": "deploy/panel/phoneInbound.js:208", "surface": "server"}
+{"kind": "reader", "id": "RD-A4-d1-2-77", "entity": "E-phone-inbound", "reader_kind": "not-a-reader", "reason": "only inserts a row", "where": "deploy/panel/phoneInbound.js:213", "surface": "server"}
+{"kind": "reader", "id": "RD-A4-d1-2-78", "entity": "E-phone-inbound", "reader_kind": "screen", "where": "deploy/panel/phoneInbound.js:231", "surface": "panel"}
+{"kind": "reader", "id": "RD-A4-d1-2-79", "entity": "E-phone-inbound", "reader_kind": "not-a-reader", "reason": "only updates a row", "where": "deploy/panel/phoneInbound.js:247", "surface": "server"}
+{"kind": "reader", "id": "RD-A4-d1-2-80", "entity": "E-phone-inbound", "reader_kind": "job", "where": "deploy/panel/phoneInbound.js:343", "surface": "server"}
+{"kind": "reader", "id": "RD-A4-d1-2-81", "entity": "E-phone-inbound", "reader_kind": "not-a-reader", "reason": "only updates a row", "where": "deploy/panel/phoneInbound.js:349", "surface": "server"}
+{"kind": "reader", "id": "RD-A4-d1-2-82", "entity": "E-phone-inbound", "reader_kind": "not-a-reader", "reason": "only updates a row", "where": "deploy/panel/phoneInbound.js:358", "surface": "server"}
+{"kind": "reader", "id": "RD-A4-d1-2-83", "entity": "E-phone-inbound", "reader_kind": "not-a-reader", "reason": "only updates a row", "where": "deploy/panel/phoneInbound.js:367", "surface": "server"}
+{"kind": "reader", "id": "RD-A4-d1-2-84", "entity": "E-phone-inbound", "reader_kind": "not-a-reader", "reason": "only deletes old rows (daily clean-up)", "where": "deploy/panel/phoneInbound.js:377", "surface": "server"}
