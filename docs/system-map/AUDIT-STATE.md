@@ -42,10 +42,16 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | L4 | 1 | 4.4 (177k tokens) |
 
 ## Work items
-Counts: 0 todo, 0 in progress, 188 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 0 todo, 6 in progress, 188 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
+| A5-phone-onboarding-db-1 | A5 | journeys: 9 features (19 feature x role pairs) of phone / phone/onboarding-db; list in _work/items/A5-phone-onboarding-db-1.txt | in progress | _work/A5-phone-onboarding-db-1.md |  |
+| A5-phone-onboarding-db-2 | A5 | journeys: 8 features (18 feature x role pairs) of phone / phone/onboarding-db; list in _work/items/A5-phone-onboarding-db-2.txt | in progress | _work/A5-phone-onboarding-db-2.md |  |
+| A5-phone-onboarding-db-3 | A5 | journeys: 8 features (17 feature x role pairs) of phone / phone/onboarding-db; list in _work/items/A5-phone-onboarding-db-3.txt | in progress | _work/A5-phone-onboarding-db-3.md |  |
+| A5-server-ci-workflows-1 | A5 | journeys: 8 features (10 feature x role pairs) of server / server/ci-workflows; list in _work/items/A5-server-ci-workflows-1.txt | in progress | _work/A5-server-ci-workflows-1.md |  |
+| A5-server-ci-workflows-2 | A5 | journeys: 8 features (11 feature x role pairs) of server / server/ci-workflows; list in _work/items/A5-server-ci-workflows-2.txt | in progress | _work/A5-server-ci-workflows-2.md |  |
+| A5-server-database-1-1 | A5 | journeys: 9 features (19 feature x role pairs) of server / server/database-1; list in _work/items/A5-server-database-1-1.txt | in progress | _work/A5-server-database-1-1.md |  |
 | A5-phone-components-2-3 | A5 | journeys: 7 features (14 feature x role pairs) of phone / phone/components-2; list in _work/items/A5-phone-components-2-3.txt | done | _work/A5-phone-components-2-3.md | 7 features (14 pairs): 73 full journeys and 108 type lines; 1 finding (S4): two notices say OK, though the app's rule says Close |
 | A5-phone-lib-core-1 | A5 | journeys: 9 features (10 feature x role pairs) of phone / phone/lib-core; list in _work/items/A5-phone-lib-core-1.txt | done | _work/A5-phone-lib-core-1.md | 9 features (10 pairs): 49 full journeys and 74 type lines; 2 findings (S3): a clock set back stops the app update check; the privacy notice leaves out what help questions send (repeat of components-2-1: merge in 3H) |
 | A5-phone-lib-core-2 | A5 | journeys: 8 features (8 feature x role pairs) of phone / phone/lib-core; list in _work/items/A5-phone-lib-core-2.txt | done | _work/A5-phone-lib-core-2.md | 8 features (8 pairs): 37 full journeys and 59 type lines; 0 findings; seen in passing: the shop-moved hint is decided once at first launch, so an empty product list then hides it for good |
