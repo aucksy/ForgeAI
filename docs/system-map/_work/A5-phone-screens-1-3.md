@@ -9,3 +9,4 @@ F-phone-127: 7 journeys, 7 type lines - seen in passing: the add-photo sheet say
 F-phone-126: 7 journeys, 7 type lines - seen in passing: cloud/summary.ts:81 puts weight_kg (body weight) into member_summary, which entities.json says owner and trainer can read; Settings 'What my gym can see' promises body weight is never sent (P-A7-phone-watch-2-28). Not checked whether this path still runs for today's members
 F-phone-132: 5 journeys, 7 type lines
 F-phone-131: 9 journeys, 7 type lines
+F-phone-133: 7 journeys, 7 type lines
