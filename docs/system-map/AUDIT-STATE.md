@@ -39,15 +39,15 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | A4 | 13 | 4.1 (162k tokens) |
 | A4b | 2 | 5.1 (204k tokens) |
 | A5 | 121 | 5.1 (202k tokens) |
-| L4 | 6 | 4.4 (175k tokens) |
+| L4 | 7 | 4.3 (171k tokens) |
 
 ## Work items
-Counts: 33 todo, 3 in progress, 223 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 32 todo, 3 in progress, 224 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
-| L4-panel-pay-machines | L4 | lens 4 (Privacy and law) x panel / panel/pay-machines: 6 items | in progress | _work/L4-panel-pay-machines.md |  |
 | L4-server-database-1 | L4 | lens 4 (Privacy and law) x server / server/database-1: 6 items | in progress | _work/L4-server-database-1.md |  |
+| L4-server-hq-gate-workers | L4 | lens 4 (Privacy and law) x server / server/hq-gate-workers: 6 items | in progress | _work/L4-server-hq-gate-workers.md |  |
 | L4-server-panel-worker | L4 | lens 4 (Privacy and law) x server / server/panel-worker: 6 items | in progress | _work/L4-server-panel-worker.md |  |
 | L4-panel-assistant | L4 | lens 4 (Privacy and law) x panel / panel/assistant: 6 items | todo | _work/L4-panel-assistant.md |  |
 | L4-panel-brand-shell | L4 | lens 4 (Privacy and law) x panel / panel/brand-shell: 6 items | todo | _work/L4-panel-brand-shell.md |  |
@@ -74,16 +74,16 @@ Counts: 33 todo, 3 in progress, 223 done, 0 blocked. Full list: work-items.jsonl
 | L4-phone-tracker-data | L4 | lens 4 (Privacy and law) x phone / phone/tracker-data: 6 items | todo | _work/L4-phone-tracker-data.md |  |
 | L4-phone-tracker-engine | L4 | lens 4 (Privacy and law) x phone / phone/tracker-engine: 6 items | todo | _work/L4-phone-tracker-engine.md |  |
 | L4-phone-tracker-lib | L4 | lens 4 (Privacy and law) x phone / phone/tracker-lib: 6 items | todo | _work/L4-phone-tracker-lib.md |  |
-| A5-watch-app-1 | A5 | journeys: 10 features (14 feature x role pairs) of watch / watch/app; list in _work/items/A5-watch-app-1.txt | done | _work/A5-watch-app-1.md | 10 features (14 pairs): 55 full journeys and 116 type lines; 2 findings: S3 the heart-rate line keeps the last number after the watch comes off the wrist; S4 a rest ending just before a watch restart is never cleared |
 | A5-watch-app-2 | A5 | journeys: 10 features (13 feature x role pairs) of watch / watch/app; list in _work/items/A5-watch-app-2.txt | done | _work/A5-watch-app-2.md | 10 features (13 pairs): 57 full journeys and 101 type lines; 0 findings; seen in passing: one promise says the rest timer is free, another lists the watch app as Plus |
 | A5-watch-small-1 | A5 | journeys: 1 features (1 feature x role pairs) of watch / small areas; list in _work/items/A5-watch-small-1.txt | done | _work/A5-watch-small-1.md | 1 feature (1 pair): 6 full journeys and 7 type lines; 1 finding (S3): the watch big-text test would pass the old broken code, so the 23% shrink could return unseen |
 | L4-panel-auth-data | L4 | lens 4 (Privacy and law) x panel / panel/auth-data: 6 items | done | _work/L4-panel-auth-data.md | lens 4 x panel/auth-data: 6 items checked; 5 new findings (4 S2: a gym cannot erase a member though the agreement says it handles erase requests; deleted records keep all details for ever; the old browser copy is never deleted on going online; a removed staff member's name, mobile and devices are kept for ever), 1 reused |
+| L4-panel-pay-machines | L4 | lens 4 (Privacy and law) x panel / panel/pay-machines: 6 items | done | _work/L4-panel-pay-machines.md | L4 panel-pay-machines: 3 rows, 2 new S3 (entry machine punches kept for ever; notice silent on punches) |
 | L4-panel-shop | L4 | lens 4 (Privacy and law) x panel / panel/shop: 6 items | done | _work/L4-panel-shop.md | lens 4 x panel/shop: 6 items checked; 2 new findings (S2): a removed member's desk photo and body measurements stay with no end date; trainer questions, summaries and reports are deleted only when a list is opened |
 | L4-phone-shop-2 | L4 | lens 4 (Privacy and law) x phone / phone/shop-2: 6 items | done | _work/L4-phone-shop-2.md | lens 4 x phone/shop-2: 6 items checked; 5 new findings (3 S2: privacy notice says 30 workouts / 3 months but the app sends 400 / 12 months; the offer consent says the gym never gets your sets while trainer sharing sends them; 3 sharings start at joining under legitimate interest, which DPDP lacks (needs a lawyer)), 2 reused |
 | L4-server-database-2 | L4 | lens 4 (Privacy and law) x server / server/database-2: 6 items | done | _work/L4-server-database-2.md | lens 4 x server/database-2: 6 items checked; 5 new findings (S2: promised clean-ups (62/63/60/90/180/30 days) run only when a screen is opened; S2: a deleted member's desk photo and measurements stay (repeat of L4-panel-shop-01: merge in 3H); 3 S3 on not-live features), 1 reused |
 | L4-server-database-3 | L4 | lens 4 (Privacy and law) x server / server/database-3: 6 items | done | _work/L4-server-database-3.md | L4 database-3: 6 rows, 5 new findings (2 S2: notice says 30 workouts/3 months vs 400/12; join form and web-page questions not in the notice) |
-(+ 8 more todo items, not shown)
-(+ 215 older done items, not shown)
+(+ 7 more todo items, not shown)
+(+ 216 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
