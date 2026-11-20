@@ -1,4 +1,4 @@
-﻿YOU ARE RUNNING ONE STEP OF THE METTLEUP FULL SYSTEM AUDIT. Everything you need is in this brief. Do NOT open any file
+YOU ARE RUNNING ONE STEP OF THE METTLEUP FULL SYSTEM AUDIT. Everything you need is in this brief. Do NOT open any file
 under D:\Brain\Dev-Framework\, docs/OWNER-INBOX.md, docs/CLAUDE-NOTES.md or docs/system-map/AUDIT-STATE.md. Search
 inside the folders your brief names, never across docs/. Do only your step.
 - ANALYSIS ONLY: change no file outside docs/system-map/. No commit, no push (the coordinator does both).

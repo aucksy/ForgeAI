@@ -1,4 +1,4 @@
-﻿F-server-504 | Trainer profiles and personal-training bookings (week schedule, save a trainer page, book and cancel a PT class) | supabase/migrations/0065_trainer_schedule.sql:93
+F-server-504 | Trainer profiles and personal-training bookings (week schedule, save a trainer page, book and cancel a PT class) | supabase/migrations/0065_trainer_schedule.sql:93
 F-server-505 | Nightly delete of the phone tests' own 'QA ...' gyms (at most 100 a night, older than 1 day) | supabase/migrations/0066_purge_qa_gyms.sql:18
 F-server-506 | Agree to the new MettleUp terms at sign-in (the list of valid terms versions, now with 2026-11-10) | supabase/migrations/0067_terms_version_2026_11_10.sql:20
 F-server-507 | Find my gym by my number (member proves the number with WhatsApp, sees gyms that have it, links the number to the gym's list) | supabase/migrations/0068_member_find_gym.sql:57
