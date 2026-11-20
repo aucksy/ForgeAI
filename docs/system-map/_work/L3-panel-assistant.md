@@ -1,0 +1,13 @@
+# L3-panel-assistant checkpoint
+- 2026-11-20 L3.1 checked: 4 worker routes (owner sign-in key) + 8 owner-only database functions; reused FN-L5-panel-assistant-02, FN-A5-server-database-3-1-02
+- 2026-11-20 L3.2 checked: 5 tables (gym_ai_tasks, gym_ai_credit_ledger, gym_ai_questions, gym_ai_question_slots, gym_ai_member_rules), all closed to apps; other-gym tests named
+- 2026-11-20 L3.3 checked: FN-L3-panel-assistant-01 (question counts have no other-gym test)
+- 2026-11-20 L3.4 checked (rule; no live cross-gym attempt)
+- 2026-11-20 L3.5 checked: 0 key hits in area
+- 2026-11-20 L3.6 checked: no AI key in the browser
+- 2026-11-20 L3.7 checked: rides panel sign-in; reused FN-L3-panel-auth-data-01
+- 2026-11-20 L3.8 checked: AI actions allow-listed and checked; no raw HTML
+- 2026-11-20 L3.9 checked: voice clip capped 30 s / about 1 MB in the browser
+- 2026-11-20 L3.10 does-not-apply
+- 2026-11-20 L3.11 checked: only react imported; no CVE row
+- DONE: all 11 items in out/L3-panel-assistant.jsonl (1 finding, 1 grid row)

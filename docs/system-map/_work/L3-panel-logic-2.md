@@ -1,0 +1,13 @@
+# L3-panel-logic-2 checkpoint
+- 2026-11-20 L3.1 checked (reuse FN-L4-panel-logic-2-01)
+- 2026-11-20 L3.2 checked (other-gym test named per table)
+- 2026-11-20 L3.3 checked (rule applied, no gap)
+- 2026-11-20 L3.4 checked (rule, nothing live run)
+- 2026-11-20 L3.5 checked
+- 2026-11-20 L3.6 checked
+- 2026-11-20 L3.7 does-not-apply
+- 2026-11-20 L3.8 checked
+- 2026-11-20 L3.9 checked
+- 2026-11-20 L3.10 checked (reuse FN-L3-server-database-1-01)
+- 2026-11-20 L3.11 checked
+- DONE: 1 grid row written to _work/out/L3-panel-logic-2.jsonl; 0 new findings.
