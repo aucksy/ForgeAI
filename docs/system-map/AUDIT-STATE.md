@@ -38,18 +38,18 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | A3 | 11 | 5.2 (207k tokens) |
 | A4 | 13 | 4.1 (162k tokens) |
 | A4b | 2 | 5.1 (204k tokens) |
-| A5 | 117 | 5.1 (203k tokens) |
+| A5 | 118 | 5.1 (202k tokens) |
 | L4 | 1 | 4.4 (177k tokens) |
 
 ## Work items
-Counts: 40 todo, 5 in progress, 214 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 39 todo, 5 in progress, 215 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
 | A5-hq-app-3 | A5 | journeys: 8 features (8 feature x role pairs) of hq / hq/app; list in _work/items/A5-hq-app-3.txt | in progress | _work/A5-hq-app-3.md |  |
 | A5-watch-app-1 | A5 | journeys: 10 features (14 feature x role pairs) of watch / watch/app; list in _work/items/A5-watch-app-1.txt | in progress | _work/A5-watch-app-1.md |  |
 | A5-watch-app-2 | A5 | journeys: 10 features (13 feature x role pairs) of watch / watch/app; list in _work/items/A5-watch-app-2.txt | in progress | _work/A5-watch-app-2.md |  |
-| A5-watch-small-1 | A5 | journeys: 1 features (1 feature x role pairs) of watch / small areas; list in _work/items/A5-watch-small-1.txt | in progress | _work/A5-watch-small-1.md |  |
+| L4-panel-shop | L4 | lens 4 (Privacy and law) x panel / panel/shop: 6 items | in progress | _work/L4-panel-shop.md |  |
 | L4-phone-shop-2 | L4 | lens 4 (Privacy and law) x phone / phone/shop-2: 6 items | in progress | _work/L4-phone-shop-2.md |  |
 | L4-panel-assistant | L4 | lens 4 (Privacy and law) x panel / panel/assistant: 6 items | todo | _work/L4-panel-assistant.md |  |
 | L4-panel-auth-data | L4 | lens 4 (Privacy and law) x panel / panel/auth-data: 6 items | todo | _work/L4-panel-auth-data.md |  |
@@ -61,7 +61,6 @@ Counts: 40 todo, 5 in progress, 214 done, 0 blocked. Full list: work-items.jsonl
 | L4-panel-pay-machines | L4 | lens 4 (Privacy and law) x panel / panel/pay-machines: 6 items | todo | _work/L4-panel-pay-machines.md |  |
 | L4-panel-screens-1 | L4 | lens 4 (Privacy and law) x panel / panel/screens-1: 6 items | todo | _work/L4-panel-screens-1.md |  |
 | L4-panel-screens-2 | L4 | lens 4 (Privacy and law) x panel / panel/screens-2: 6 items | todo | _work/L4-panel-screens-2.md |  |
-| L4-panel-shop | L4 | lens 4 (Privacy and law) x panel / panel/shop: 6 items | todo | _work/L4-panel-shop.md |  |
 | L4-panel-ui-shell | L4 | lens 4 (Privacy and law) x panel / panel/ui-shell: 6 items | todo | _work/L4-panel-ui-shell.md |  |
 | L4-phone-cloud-backup-ai | L4 | lens 4 (Privacy and law) x phone / phone/cloud-backup-ai: 6 items | todo | _work/L4-phone-cloud-backup-ai.md |  |
 | L4-phone-components-1 | L4 | lens 4 (Privacy and law) x phone / phone/components-1: 6 items | todo | _work/L4-phone-components-1.md |  |
@@ -76,7 +75,7 @@ Counts: 40 todo, 5 in progress, 214 done, 0 blocked. Full list: work-items.jsonl
 | L4-phone-shop-1 | L4 | lens 4 (Privacy and law) x phone / phone/shop-1: 6 items | todo | _work/L4-phone-shop-1.md |  |
 | L4-phone-tracker-components-1 | L4 | lens 4 (Privacy and law) x phone / phone/tracker-components-1: 6 items | todo | _work/L4-phone-tracker-components-1.md |  |
 | L4-phone-tracker-components-2 | L4 | lens 4 (Privacy and law) x phone / phone/tracker-components-2: 6 items | todo | _work/L4-phone-tracker-components-2.md |  |
-| A5-server-panel-worker-2 | A5 | journeys: 8 features (23 feature x role pairs) of server / server/panel-worker; list in _work/items/A5-server-panel-worker-2.txt | done | _work/A5-server-panel-worker-2.md | 8 features (23 pairs): 99 full journeys and 184 type lines; 0 findings; seen in passing: a failed friend or self-join send still uses one of the day's allowance |
+| L4-phone-tracker-data | L4 | lens 4 (Privacy and law) x phone / phone/tracker-data: 6 items | todo | _work/L4-phone-tracker-data.md |  |
 | A5-server-panel-worker-3 | A5 | journeys: 8 features (21 feature x role pairs) of server / server/panel-worker; list in _work/items/A5-server-panel-worker-3.txt | done | _work/A5-server-panel-worker-3.md | 8 features (21 pairs): 81 full journeys and 171 type lines; 0 findings; seen in passing: a double tap on send saves a help question twice |
 | A5-server-database-3-1b | A5 | journeys: 1 feature (4 feature x role pairs), the rest of A5-server-database-3-1 of server / server/database-3; list in _work/items/A5-server-database-3-1b.txt | done | _work/A5-server-database-3-1b.md | 1 feature (4 pairs): 20 full journeys and 28 type lines; 0 findings; seen in passing: the bell shows at most 50 alerts from 3 days |
 | A5-web-pages-1 | A5 | journeys: 8 features (20 feature x role pairs) of web / web/pages; list in _work/items/A5-web-pages-1.txt | done | _work/A5-web-pages-1.md | 8 features (20 pairs): 110 full journeys and 142 type lines; 1 finding (S3): the invite page always says You pay at the gym desk even when the gym takes join payments online |
@@ -84,8 +83,9 @@ Counts: 40 todo, 5 in progress, 214 done, 0 blocked. Full list: work-items.jsonl
 | A5-web-pages-3 | A5 | journeys: 8 features (11 feature x role pairs) of web / web/pages; list in _work/items/A5-web-pages-3.txt | done | _work/A5-web-pages-3.md | 8 features (11 pairs): 47 full journeys and 87 type lines; 0 findings; seen in passing: an unanswered AI question still uses one of the gym's daily allowance |
 | A5-hq-app-1 | A5 | journeys: 9 features (9 feature x role pairs) of hq / hq/app; list in _work/items/A5-hq-app-1.txt | done | _work/A5-hq-app-1.md | 9 features (9 pairs): 47 full journeys and 64 type lines; 2 findings: S3 an unchecked gym paused and un-paused comes back marked checked; S4 a page load error hides the read-log warning |
 | A5-hq-app-2 | A5 | journeys: 8 features (8 feature x role pairs) of hq / hq/app; list in _work/items/A5-hq-app-2.txt | done | _work/A5-hq-app-2.md | 8 features (8 pairs): 39 full journeys and 57 type lines; 1 finding (S4): HQ plays its alert sound even when alerts are off |
-(+ 15 more todo items, not shown)
-(+ 206 older done items, not shown)
+| A5-watch-small-1 | A5 | journeys: 1 features (1 feature x role pairs) of watch / small areas; list in _work/items/A5-watch-small-1.txt | done | _work/A5-watch-small-1.md | 1 feature (1 pair): 6 full journeys and 7 type lines; 1 finding (S3): the watch big-text test would pass the old broken code, so the 23% shrink could return unseen |
+(+ 14 more todo items, not shown)
+(+ 207 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
