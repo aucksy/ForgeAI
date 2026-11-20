@@ -43,15 +43,18 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | A5 | 121 | 5.1 (202k tokens) |
 | L4 | 42 | 3.9 (157k tokens) |
 | L5 | 1 | 4.8 (193k tokens) |
-| L3 | 0 | 5 (start value) |
+| L3 | 1 | 5.2 (207k tokens) |
 
 ## Work items
-Counts: 0 todo, 1 in progress, 261 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 0 todo, 5 in progress, 262 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
-| L3-server-hq-gate-workers | L3 | lens 3 (Security) x server / server/hq-gate-workers: 11 items | in progress | _work/L3-server-hq-gate-workers.md |  |
-| L4-server-hq-gate-workers | L4 | lens 4 (Privacy and law) x server / server/hq-gate-workers: 6 items | done | _work/L4-server-hq-gate-workers.md | L4 hq-gate-workers: 5 rows, 4 new S3 (door link unencrypted; plan buy payment company unnamed; backup looks not logged; leak notice duty left to gym) |
+| L5-panel-screens-2 | L5 | lens 5 (Money) x panel / panel/screens-2: 4 items | in progress | _work/L5-panel-screens-2.md |  |
+| L5-panel-screens-1 | L5 | lens 5 (Money) x panel / panel/screens-1: 4 items | in progress | _work/L5-panel-screens-1.md |  |
+| L5-panel-forms | L5 | lens 5 (Money) x panel / panel/forms: 4 items | in progress | _work/L5-panel-forms.md |  |
+| L5-server-panel-worker | L5 | lens 5 (Money) x server / server/panel-worker: 4 items | in progress | _work/L5-server-panel-worker.md |  |
+| L5-server-database-3 | L5 | lens 5 (Money) x server / server/database-3: 4 items | in progress | _work/L5-server-database-3.md |  |
 | L4-server-panel-worker | L4 | lens 4 (Privacy and law) x server / server/panel-worker: 6 items | done | _work/L4-server-panel-worker.md | L4 panel-worker: 2 rows, 1 new S1 (owner voice goes to Sarvam, not named in the notice) |
 | L4-watch-app | L4 | lens 4 (Privacy and law) x watch / watch/app: 6 items | done | _work/L4-watch-app.md | L4 watch-app: 2 rows, 1 new S4 (watch keeps its copy after phone erase) |
 | L4-web-pages-p2 | L4 | lens 4 (Privacy and law) x web / web/pages part 2: 1 items | done | _work/L4-web-pages-p2.md | L4 web-pages-p2: 6 rows, 5 new S3 (AI tag overclaims; web chat kept 90 days; notice changes not told; reminders unused; free-then-3-credits) |
@@ -59,7 +62,8 @@ Counts: 0 todo, 1 in progress, 261 done, 0 blocked. Full list: work-items.jsonl.
 | L4-web-pages | L4 | lens 4 (Privacy and law) x web / web/pages: 6 items | done | _work/L4-web-pages.md | L4 web-pages: 4 rows, 3 new (S2 Play deletion page wrong for phone-only members; S3 Google fonts; S3 friend form lacks notice) |
 | M-machine-pass | tools | machine pass for lens 3: db-security.json and cve.json (catalog reads only) | done | _work/M-machine-pass.md | db-security.json + cve.json made; 109 tables RLS on with 0 policies; ~220 definer fns open to anon; npm 3 critical/17 high; Dependabot off; definer settings query refused (needs his approval box) |
 | L5-panel-pay-machines | L5 | lens 5 (Money) x panel / panel/pay-machines: 4 items | done | _work/L5-panel-pay-machines.md | L5 pilot pay-machines: 4 items, 7 new (2 S1: new branch copies paid plan/founding place; extra branch full price vs promised half; 2 S2 test-mode Connected, paid-twice no refund) |
-(+ 253 older done items, not shown)
+| L3-server-hq-gate-workers | L3 | lens 3 (Security) x server / server/hq-gate-workers: 11 items | done | _work/L3-server-hq-gate-workers.md | L3 pilot hq-gate-workers: 11 items, 4 new (S2 gate trusts serial only, not live; S3 HQ sign-in 30 days no revoke; S3 empty-table test; S4 open pop-up job), 1 reused |
+(+ 254 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
