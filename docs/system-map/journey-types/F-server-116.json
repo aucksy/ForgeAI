@@ -1,0 +1,9 @@
+[
+{"kind":"jtype","id":"JT-F-server-116-system-10","feature":"F-server-116","role":"system","type":10,"applies":"yes","why_not":"none","variants":["T10-olddata"],"at_step":1,"entity":"E-phone-inbound","note":"Before migrations 0010/0012/0013 those parts only warn","wi":"A5-server-panel-worker-3"},
+{"kind":"jtype","id":"JT-F-server-116-system-11","feature":"F-server-116","role":"system","type":11,"applies":"no","why_not":"server job only","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-server-panel-worker-3"},
+{"kind":"jtype","id":"JT-F-server-116-system-4","feature":"F-server-116","role":"system","type":4,"applies":"no","why_not":"deletes by date only; the number of rows changes nothing but time","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-server-panel-worker-3"},
+{"kind":"jtype","id":"JT-F-server-116-system-5","feature":"F-server-116","role":"system","type":5,"applies":"yes","why_not":"none","variants":["T5-midnight"],"at_step":1,"entity":"E-ai-usage","note":"Crash and code rows by UTC time; voice counts by India day","wi":"A5-server-panel-worker-3"},
+{"kind":"jtype","id":"JT-F-server-116-system-7","feature":"F-server-116","role":"system","type":7,"applies":"yes","why_not":"none","variants":["T7-closed"],"at_step":1,"entity":"E-feedback","note":"A run cut part-way leaves the rest to the next night","wi":"A5-server-panel-worker-3"},
+{"kind":"jtype","id":"JT-F-server-116-system-8","feature":"F-server-116","role":"system","type":8,"applies":"no","why_not":"no setting changes the keep times","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-server-panel-worker-3"},
+{"kind":"jtype","id":"JT-F-server-116-system-9","feature":"F-server-116","role":"system","type":9,"applies":"no","why_not":"nothing is shown","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-server-panel-worker-3"}
+]
