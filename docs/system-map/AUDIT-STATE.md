@@ -44,27 +44,26 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | A5 | 121 | 5.1 (202k tokens) |
 | L4 | 42 | 3.9 (157k tokens) |
 | L5 | 32 | 4.1 (164k tokens) |
-| L3 | 10 | 5.2 (206k tokens) |
+| L3 | 11 | 5.2 (207k tokens) |
 
 ## Work items
-Counts: 0 todo, 5 in progress, 302 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 0 todo, 4 in progress, 303 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
-| L3-web-pages | L3 | lens 3 (Security) x web / web/pages: 11 items | in progress | _work/L3-web-pages.md |  |
 | L5-phone-tracker-services-2 | L5 | lens 5 (Money) x phone / phone/tracker-services-2: 4 items | in progress | _work/L5-phone-tracker-services-2.md |  |
 | L3-watch-app | L3 | lens 3 (Security) x watch / watch/app: 11 items | in progress | _work/L3-watch-app.md |  |
 | L3-server-ci-workflows | L3 | lens 3 (Security) x server / server/ci-workflows: 11 items | in progress | _work/L3-server-ci-workflows.md |  |
 | L3-panel-forms | L3 | lens 3 (Security) x panel / panel/forms: 11 items | in progress | _work/L3-panel-forms.md |  |
-| L5-phone-tracker-engine | L5 | lens 5 (Money) x phone / phone/tracker-engine: 4 items | done | _work/L5-phone-tracker-engine.md | L5 phone-tracker-engine: no money code (plan = workout plan); L5.1 checked, L5.2-4 does-not-apply, 0 findings |
 | L3-hq-app | L3 | lens 3 (Security) x hq / hq/app: 11 items | done | _work/L3-hq-app.md | L3 hq-app: 10 checked, 1 does-not-apply, 0 new, 2 reused (hq-gate-workers-02, -04) |
+| L3-web-pages | L3 | lens 3 (Security) x web / web/pages: 11 items | done | _work/L3-web-pages.md | L3 web-pages: 11 checked, 3 new (S3 web chat credits drain, S3 join code on public page, S4 report limit skip), 3 reused |
 | L5-phone-tracker-data | L5 | lens 5 (Money) x phone / phone/tracker-data: 4 items | done | _work/L5-phone-tracker-data.md | L5 phone-tracker-data: 2 checked, 2 does-not-apply, 1 new S3 (Plus bought mid-workout gives no suggested weights until re-check) |
 | L5-phone-tracker-lib | L5 | lens 5 (Money) x phone / phone/tracker-lib: 4 items | done | _work/L5-phone-tracker-lib.md | L5 phone-tracker-lib: no money code; 1 checked, 3 does-not-apply, 0 findings |
 | L5-phone-tracker-components-1 | L5 | lens 5 (Money) x phone / phone/tracker-components-1: 4 items | done | _work/L5-phone-tracker-components-1.md | L5 phone-tracker-components-1: 3 checked, 1 does-not-apply, 0 new, 1 reused (A5 chart range) |
 | L5-phone-tracker-components-2 | L5 | lens 5 (Money) x phone / phone/tracker-components-2: 4 items | done | _work/L5-phone-tracker-components-2.md | L5 phone-tracker-components-2: 2 checked, 2 does-not-apply, 1 new S4 (plan withdrawn on membership end gives unclear words) |
 | L5-phone-tracker-services-1 | L5 | lens 5 (Money) x phone / phone/tracker-services-1: 4 items | done | _work/L5-phone-tracker-services-1.md | L5 phone-tracker-services-1: no money code; 4 does-not-apply, 0 findings |
 | L5-server-ci-workflows | L5 | lens 5 (Money) x server / server/ci-workflows: 4 items | done | _work/L5-server-ci-workflows.md | L5 server-ci-workflows: 4 checked, 1 new S3 (only Razorpay tested against a real company), 1 reused |
-(+ 294 older done items, not shown)
+(+ 295 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
