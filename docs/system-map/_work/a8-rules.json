@@ -1,0 +1,931 @@
+[
+ {
+  "template": "T4-zero",
+  "coverage_default": "none",
+  "evidence": [
+   "apps/dashboard/scripts/crawl.mjs:145-153"
+  ],
+  "note": "No many-screen gate opens a screen with zero rows and checks the empty-state words; the panel crawl uses the demo gym, which has data. Single specs per feature were not read in this step."
+ },
+ {
+  "template": "T4-one",
+  "coverage_default": "none",
+  "evidence": [],
+  "note": "No gate checks singular words or one-row lists; nothing found in the crawl or the device QA tour."
+ },
+ {
+  "template": "T4-many",
+  "coverage_default": "none",
+  "evidence": [
+   "apps/dashboard/scripts/crawl.mjs:145-153"
+  ],
+  "note": "No gate loads 500+ rows; the crawl demo gym is small and checks no counts."
+ },
+ {
+  "template": "T4-long",
+  "coverage_default": "none",
+  "covered_when": {
+   "entry_file_in": [
+    "apps/mobile/android/wear/src/main/java/com/forgeai/wear/WatchScreens.kt",
+    "apps/mobile/android/wear/src/main/java/com/forgeai/wear/WatchLayout.kt",
+    "apps/mobile/android/wear/src/main/java/com/forgeai/wear/LogScreens.kt",
+    "apps/dashboard/src/crm/ui/screens/Today.tsx",
+    "apps/dashboard/src/crm/ui/screens/Assistant.tsx"
+   ]
+  },
+  "coverage_then": "partial",
+  "tests": [
+   {
+    "path": "apps/mobile/android/wear/src/test/java/com/forgeai/wear/WatchScreensRenderTest.kt",
+    "checks": "renders every watch screen on small and large round watches (and at the largest watch font) with long exercise names; fails on anything drawn outside the round screen, text on the ring or within 2 dp of the edge"
+   },
+   {
+    "path": "apps/dashboard/e2e/today-fit-uat.spec.mjs",
+    "checks": "Today and the AI Assistant page at 320/360/390/412 px, English and Hinglish, dark and light: fails on any element past the right edge or words squeezed one per line (support.mjs expectNothingPastScreen); no check for overlapping elements"
+   }
+  ],
+  "evidence": [
+   ".github/workflows/wear-build.yml:81-88",
+   "apps/mobile/android/wear/src/test/java/com/forgeai/wear/WatchScreensRenderTest.kt:28-36",
+   "apps/mobile/android/wear/src/test/java/com/forgeai/wear/WatchScreensRenderTest.kt:121-125",
+   "apps/dashboard/e2e/today-fit-uat.spec.mjs:1-7",
+   "apps/dashboard/e2e/support.mjs:1216-1266"
+  ],
+  "note": "Watch: long exercise names on the rest screens are checked for clipping. Panel: only Today and the AI Assistant with the longest AI idea words. Neither checks a 60-letter member name or a 500-letter note, nor that a cut save tells the user."
+ },
+ {
+  "template": "T4-hinglish",
+  "coverage_default": "none",
+  "evidence": [
+   "apps/dashboard/test/crm/hinglish.test.ts:1-9"
+  ],
+  "note": "No gate types Devanagari or Hinglish into text boxes; hinglish.test.ts checks the dictionary has no Devanagari, not what a user types."
+ },
+ {
+  "template": "T4-emoji",
+  "coverage_default": "none",
+  "evidence": [],
+  "note": "No gate puts emoji into names or notes."
+ },
+ {
+  "template": "T4-nophoto",
+  "coverage_default": "none",
+  "evidence": [
+   "apps/dashboard/scripts/crawl.mjs:24-25"
+  ],
+  "note": "No gate checks the stand-in for a missing photo or logo; the crawl gym has brand null but nothing looks at the logo spot."
+ },
+ {
+  "template": "T4-partpaid",
+  "coverage_default": "none",
+  "covered_when": {
+   "entry_file_in": [
+    "apps/dashboard/src/crm/ui/screens/MemberDetail.tsx",
+    "apps/dashboard/src/crm/ui/screens/Money.tsx",
+    "apps/dashboard/src/crm/ui/screens/Today.tsx"
+   ]
+  },
+  "coverage_then": "full",
+  "tests": [
+   {
+    "path": "apps/dashboard/e2e/money.spec.mjs",
+    "checks": "J2/J3: a part payment shows \"Still due after this\"; the Dues tile, Total due, Today's collection and Fees due all add up; more than the due is refused"
+   },
+   {
+    "path": "apps/dashboard/e2e/clock.spec.mjs",
+    "checks": "J27a: a part-paid sale and the rest collected after midnight land in the right totals"
+   }
+  ],
+  "evidence": [
+   ".github/workflows/ci.yml:186-192",
+   "apps/dashboard/e2e/money.spec.mjs:61-116",
+   "apps/dashboard/e2e/clock.spec.mjs:20-74"
+  ],
+  "note": "Panel only (Admin journeys run on every push). Member app part-paid views not covered by a gate."
+ },
+ {
+  "template": "T4-refund",
+  "coverage_default": "none",
+  "covered_when": {
+   "entry_file_in": [
+    "apps/dashboard/src/crm/ui/screens/MemberDetail.tsx",
+    "apps/dashboard/src/crm/ui/screens/Receipt.tsx",
+    "apps/dashboard/src/crm/ui/screens/Money.tsx",
+    "apps/dashboard/src/crm/ui/screens/Today.tsx"
+   ]
+  },
+  "coverage_then": "full",
+  "tests": [
+   {
+    "path": "apps/dashboard/e2e/money.spec.mjs",
+    "checks": "J4: a cancelled receipt shows Cancelled with its reason, the printable receipt says CANCELLED, Today's collection drops by that amount, the due comes back, the number is never reused"
+   }
+  ],
+  "evidence": [
+   ".github/workflows/ci.yml:186-192",
+   "apps/dashboard/e2e/money.spec.mjs:174-212"
+  ],
+  "note": "A cancelled receipt is the panel reversal; an online (Razorpay) refund is not checked here."
+ },
+ {
+  "template": "T4-zeroprice",
+  "coverage_default": "none",
+  "evidence": [
+   "apps/dashboard/e2e/money.spec.mjs:61"
+  ],
+  "note": "No gate sells a free plan or a full discount; money.spec J2 \"Rs 0 now\" is an unpaid sale, not a zero price."
+ },
+ {
+  "template": "T4-planedge",
+  "coverage_default": "none",
+  "covered_when": {
+   "entry_file_in": [
+    "apps/dashboard/src/crm/ui/screens/MemberDetail.tsx",
+    "apps/dashboard/src/crm/ui/screens/Today.tsx",
+    "apps/dashboard/src/crm/ui/screens/Members.tsx"
+   ]
+  },
+  "coverage_then": "partial",
+  "tests": [
+   {
+    "path": "apps/dashboard/e2e/clock.spec.mjs",
+    "checks": "J27b: a plan whose last day is today is still running (\"Last day is today\", Ending today) and is Expired one day later, on its page, the Today tiles and the Expired list"
+   }
+  ],
+  "evidence": [
+   ".github/workflows/ci.yml:186-192",
+   "apps/dashboard/e2e/clock.spec.mjs:75-121"
+  ],
+  "note": "The end day is checked; a plan that starts today (not active before its first day) is not."
+ },
+ {
+  "template": "T5-midnight",
+  "coverage_default": "none",
+  "covered_when": {
+   "entry_file_in": [
+    "apps/dashboard/src/crm/ui/screens/Attendance.tsx",
+    "apps/dashboard/src/crm/ui/screens/MemberDetail.tsx",
+    "apps/dashboard/src/crm/ui/screens/Money.tsx"
+   ]
+  },
+  "coverage_then": "full",
+  "tests": [
+   {
+    "path": "apps/dashboard/e2e/clock.spec.mjs",
+    "checks": "J27a: 23:55 to 00:01 IST with the page left open: one check-in per day, Check-ins today resets to 0, Total visits 2, receipts switch to the new year series, Money periods hold the right receipt"
+   }
+  ],
+  "evidence": [
+   ".github/workflows/ci.yml:186-192",
+   "apps/dashboard/e2e/clock.spec.mjs:16-74",
+   "apps/dashboard/playwright.config.mjs:30-31"
+  ],
+  "note": "Panel only. Member app midnight is not checked by a screen gate."
+ },
+ {
+  "template": "T5-month1",
+  "coverage_default": "none",
+  "covered_when": {
+   "entry_file_in": [
+    "apps/dashboard/src/crm/ui/screens/Money.tsx"
+   ]
+  },
+  "coverage_then": "partial",
+  "tests": [
+   {
+    "path": "apps/dashboard/e2e/clock.spec.mjs",
+    "checks": "J27a: after 1 April, This financial year holds only the new receipt and Last month keeps the old one"
+   }
+  ],
+  "evidence": [
+   "apps/dashboard/e2e/clock.spec.mjs:63-73"
+  ],
+  "note": "Checked at a financial-year turn, not on an ordinary 1st of the month."
+ },
+ {
+  "template": "T5-monday",
+  "coverage_default": "none",
+  "covered_when": {
+   "entry_file_in": [
+    "apps/dashboard/src/crm/ui/screens/Today.tsx"
+   ]
+  },
+  "coverage_then": "partial",
+  "tests": [
+   {
+    "path": "apps/dashboard/e2e/launch-uat.spec.mjs",
+    "checks": "U1: on Monday 2 Nov 2026 the \"Last week at your gym\" summary covers 26 Oct to 1 Nov (Sunday kept in last week)"
+   }
+  ],
+  "evidence": [
+   "apps/dashboard/e2e/launch-uat.spec.mjs:55-92"
+  ],
+  "note": "Only the Monday summary; streaks and weekly counts in the member app not checked."
+ },
+ {
+  "template": "T5-endstoday",
+  "coverage_default": "none",
+  "covered_when": {
+   "entry_file_in": [
+    "apps/dashboard/src/crm/ui/screens/MemberDetail.tsx",
+    "apps/dashboard/src/crm/ui/screens/Today.tsx",
+    "apps/dashboard/src/crm/ui/screens/Members.tsx"
+   ]
+  },
+  "coverage_then": "full",
+  "tests": [
+   {
+    "path": "apps/dashboard/e2e/clock.spec.mjs",
+    "checks": "J27b: last day today = still active with \"Last day is today\" and the Ending today tile; next day Expired everywhere"
+   }
+  ],
+  "evidence": [
+   "apps/dashboard/e2e/clock.spec.mjs:75-121"
+  ],
+  "note": "Panel only."
+ },
+ {
+  "template": "T5-joinedtoday",
+  "coverage_default": "none",
+  "evidence": [],
+  "note": "No gate checks a member who joined today (day 1 figures, no minus days)."
+ },
+ {
+  "template": "T5-zone",
+  "coverage_default": "none",
+  "evidence": [
+   "apps/dashboard/playwright.config.mjs:30-31",
+   ".github/workflows/ci.yml:125-139"
+  ],
+  "note": "No screen gate sets another time zone: the panel journeys are fixed to Asia/Kolkata; the member app unit tests run under Asia/Kolkata and America/New_York but draw no screen and cannot be matched to a feature here."
+ },
+ {
+  "template": "T7-back",
+  "coverage_default": "none",
+  "evidence": [],
+  "note": "No gate presses back mid-journey and checks for a keep-or-drop question."
+ },
+ {
+  "template": "T7-closed",
+  "coverage_default": "none",
+  "covered_when": {
+   "entry_file_in": [
+    "apps/dashboard/src/crm/ui/screens/MemberDetail.tsx",
+    "apps/dashboard/src/crm/ui/screens/Members.tsx",
+    "apps/mobile/src/app/session/active.tsx",
+    "apps/mobile/src/app/session/finish.tsx"
+   ]
+  },
+  "coverage_then": "partial",
+  "tests": [
+   {
+    "path": "apps/dashboard/e2e/offline3.spec.mjs",
+    "checks": "J34b: the panel page restarted while offline keeps the payment, new member and check-in (\"Waiting to send\"); each reaches the server exactly once"
+   },
+   {
+    "path": "apps/mobile/qa/run-conditions.sh",
+    "checks": "C4 (manual dispatch, advisory): the app killed mid-rest, with the finish sheet open and mid-Hevy-import; workout and rest intact, no half import"
+   }
+  ],
+  "evidence": [
+   "apps/dashboard/e2e/offline3.spec.mjs:40-112",
+   ".github/workflows/qa-conditions.yml:1-12",
+   ".github/workflows/qa-conditions.yml:32-33",
+   "apps/mobile/qa/run-conditions.sh:19-20"
+  ],
+  "note": "Panel: a reload, not a swipe-away. Phone: qa-conditions is manual only and not in the release gate."
+ },
+ {
+  "template": "T7-locked",
+  "coverage_default": "none",
+  "covered_when": {
+   "entry_file_in": [
+    "apps/mobile/src/app/session/active.tsx"
+   ]
+  },
+  "coverage_then": "partial",
+  "tests": [
+   {
+    "path": ".github/workflows/qa-device.yml",
+    "checks": "device QA (release gate): the phone is put to sleep during a rest and \"Rest is over\" must fire"
+   }
+  ],
+  "evidence": [
+   ".github/workflows/qa-device.yml:3-7",
+   "apps/mobile/qa/run-conditions.sh:21-22"
+  ],
+  "note": "Only the rest timer while asleep; typed drafts and sign-out after two minutes locked are not checked."
+ },
+ {
+  "template": "T7-call",
+  "coverage_default": "none",
+  "evidence": [],
+  "note": "No gate takes a phone call mid-journey."
+ },
+ {
+  "template": "T7-offline",
+  "coverage_default": "none",
+  "covered_when": {
+   "entry_file_in": [
+    "apps/dashboard/src/crm/ui/screens/MemberDetail.tsx",
+    "apps/dashboard/src/crm/ui/screens/Members.tsx",
+    "apps/dashboard/src/crm/ui/screens/Receipt.tsx"
+   ]
+  },
+  "coverage_then": "full",
+  "tests": [
+   {
+    "path": "apps/dashboard/e2e/offline3.spec.mjs",
+    "checks": "J34b/J34d: offline payment, new member and check-in say \"saved on this device\", list as waiting, survive a restart and reach the server exactly once; a save with no answer is never taken twice"
+   },
+   {
+    "path": "apps/dashboard/e2e/offline.spec.mjs",
+    "checks": "J34: the panel opens offline, refuses saves in plain words, recovers"
+   }
+  ],
+  "evidence": [
+   ".github/workflows/ci.yml:186-192",
+   "apps/dashboard/e2e/offline3.spec.mjs:40-112",
+   "apps/dashboard/e2e/offline3.spec.mjs:170",
+   "apps/dashboard/e2e/offline.spec.mjs:1-4"
+  ],
+  "note": "Panel only. The member app offline cases (shop order, QR check-in, Leave) are in qa-conditions C2/C3, which is manual and advisory."
+ },
+ {
+  "template": "T7-doubletap",
+  "coverage_default": "none",
+  "evidence": [
+   "apps/dashboard/e2e/offline3.spec.mjs:170"
+  ],
+  "note": "No gate taps a main button twice fast; offline3 J34d covers a lost answer, not a double tap."
+ },
+ {
+  "template": "T7-twostaff",
+  "coverage_default": "none",
+  "evidence": [
+   "apps/dashboard/e2e/people.spec.mjs:1-3"
+  ],
+  "note": "No gate has two staff change the same record at once; people.spec uses two devices but for sign-out, not a clash."
+ },
+ {
+  "template": "T8-language",
+  "coverage_default": "none",
+  "covered_when": {
+   "entry_file_in": [
+    "apps/dashboard/src/crm/ui/screens/Today.tsx",
+    "apps/dashboard/src/crm/ui/screens/Members.tsx",
+    "apps/dashboard/src/crm/ui/screens/ImportMembers.tsx",
+    "apps/dashboard/src/crm/ui/screens/MemberDetail.tsx",
+    "apps/dashboard/src/crm/shop/ShopScreen.tsx",
+    "apps/dashboard/src/crm/ui/screens/Messages.tsx",
+    "apps/dashboard/src/crm/ui/screens/Attendance.tsx",
+    "apps/dashboard/src/crm/ui/screens/Money.tsx",
+    "apps/dashboard/src/crm/ui/screens/Receipt.tsx",
+    "apps/dashboard/src/crm/ui/screens/Plans.tsx",
+    "apps/dashboard/src/crm/ui/screens/Enquiries.tsx",
+    "apps/dashboard/src/crm/ui/screens/Expenses.tsx",
+    "apps/dashboard/src/crm/ui/screens/Settings.tsx",
+    "apps/dashboard/src/crm/shop/InviteScreen.tsx",
+    "apps/dashboard/src/crm/auth/PeopleScreen.tsx",
+    "apps/dashboard/src/crm/brand/BrandingScreen.tsx",
+    "apps/dashboard/src/crm/ui/WhatsNew.tsx",
+    "apps/dashboard/src/crm/pay/PaymentsScreen.tsx",
+    "apps/dashboard/src/crm/ui/screens/More.tsx",
+    "apps/dashboard/src/crm/ui/screens/WorkoutPlans.tsx",
+    "apps/dashboard/src/crm/ui/screens/Feedback.tsx",
+    "apps/dashboard/src/crm/ui/OwnerNumbers.tsx",
+    "apps/dashboard/src/crm/ui/BusinessGrowth.tsx",
+    "apps/dashboard/src/crm/ui/screens/SetupGym.tsx"
+   ]
+  },
+  "coverage_then": "partial",
+  "tests": [
+   {
+    "path": "apps/dashboard/test/crm/hinglish.test.ts",
+    "checks": "every t(...) in src/crm has its Hinglish, placeholders kept, no Devanagari, Hinglish words only in the dictionary (source scan, no screen drawn)"
+   },
+   {
+    "path": "apps/dashboard/e2e/today-fit-uat.spec.mjs",
+    "checks": "Today and the AI Assistant page at 320/360/390/412 px, English and Hinglish, dark and light: fails on any element past the right edge or words squeezed one per line (support.mjs expectNothingPastScreen); no check for overlapping elements"
+   }
+  ],
+  "evidence": [
+   "apps/dashboard/test/crm/hinglish.test.ts:1-9",
+   "apps/dashboard/test/crm/hinglish.test.ts:125-131"
+  ],
+  "note": "Panel only. Words not passed through t() are not caught; only Today and the Assistant are drawn in Hinglish. The test scans all of src/crm, so panel screens off this list are covered the same way but stay \"none\" here."
+ },
+ {
+  "template": "T8-theme",
+  "coverage_default": "none",
+  "covered_when": {
+   "entry_file_in": [
+    "apps/dashboard/src/crm/ui/screens/Today.tsx",
+    "apps/dashboard/src/crm/ui/screens/Members.tsx",
+    "apps/dashboard/src/crm/ui/screens/ImportMembers.tsx",
+    "apps/dashboard/src/crm/ui/screens/MemberDetail.tsx",
+    "apps/dashboard/src/crm/shop/ShopScreen.tsx",
+    "apps/dashboard/src/crm/ui/screens/Messages.tsx",
+    "apps/dashboard/src/crm/ui/screens/Attendance.tsx",
+    "apps/dashboard/src/crm/ui/screens/Money.tsx",
+    "apps/dashboard/src/crm/ui/screens/Receipt.tsx",
+    "apps/dashboard/src/crm/ui/screens/Plans.tsx",
+    "apps/dashboard/src/crm/ui/screens/Enquiries.tsx",
+    "apps/dashboard/src/crm/ui/screens/Expenses.tsx",
+    "apps/dashboard/src/crm/ui/screens/Settings.tsx",
+    "apps/dashboard/src/crm/shop/InviteScreen.tsx",
+    "apps/dashboard/src/crm/auth/PeopleScreen.tsx",
+    "apps/dashboard/src/crm/brand/BrandingScreen.tsx",
+    "apps/dashboard/src/crm/ui/WhatsNew.tsx",
+    "apps/dashboard/src/crm/pay/PaymentsScreen.tsx",
+    "apps/dashboard/src/crm/ui/screens/More.tsx",
+    "apps/dashboard/src/crm/ui/screens/WorkoutPlans.tsx",
+    "apps/dashboard/src/crm/ui/screens/Feedback.tsx",
+    "apps/dashboard/src/crm/ui/OwnerNumbers.tsx",
+    "apps/dashboard/src/crm/ui/BusinessGrowth.tsx",
+    "apps/dashboard/src/crm/ui/screens/SetupGym.tsx"
+   ]
+  },
+  "coverage_then": "partial",
+  "tests": [
+   {
+    "path": "apps/dashboard/test/crm/themeContrast.test.ts",
+    "checks": "every text colour of the dark and of the light palette is 4.5:1 or more on every plane, and screens read colours as CSS variables (token level, no screen is drawn)"
+   },
+   {
+    "path": "apps/dashboard/e2e/today-fit-uat.spec.mjs",
+    "checks": "Today and the AI Assistant page at 320/360/390/412 px, English and Hinglish, dark and light: fails on any element past the right edge or words squeezed one per line (support.mjs expectNothingPastScreen); no check for overlapping elements"
+   }
+  ],
+  "evidence": [
+   "apps/dashboard/test/crm/themeContrast.test.ts:13-29",
+   "apps/dashboard/src/theme.ts:70-79"
+  ],
+  "note": "Palette tokens are checked for both themes; no gate switches the theme and opens every screen. Member app part ulook takes pictures only and runs alone by hand."
+ },
+ {
+  "template": "T8-units",
+  "coverage_default": "none",
+  "evidence": [
+   "apps/mobile/qa/run-conditions.sh:9-12"
+  ],
+  "note": "No gate changes kg to lb and checks figures; qa-conditions C1 carries a lb setting through an upgrade only."
+ },
+ {
+  "template": "T8-alerts",
+  "coverage_default": "none",
+  "evidence": [
+   "apps/dashboard/e2e/alerts-uat.spec.mjs:308-363"
+  ],
+  "note": "No gate turns an alert setting off and proves nothing is sent; alerts-uat checks turning alerts on and the saved timing only."
+ },
+ {
+  "template": "T8-permission",
+  "coverage_default": "none",
+  "covered_when": {
+   "entry_file_in": [
+    "apps/mobile/src/app/photos/index.tsx",
+    "apps/mobile/src/app/settings/notifications.tsx",
+    "apps/mobile/src/app/settings/health.tsx"
+   ]
+  },
+  "coverage_then": "partial",
+  "tests": [
+   {
+    "path": "apps/mobile/qa/p0-permissions-off.yaml",
+    "checks": "camera refused: Take a photo shows the Android question, then \"Camera not allowed\" with the way round"
+   },
+   {
+    "path": "apps/mobile/qa/run-device-qa.sh",
+    "checks": "I2: notifications refused, Settings > Notifications says so and offers Turn on; I: Health Connect permission revoked"
+   }
+  ],
+  "evidence": [
+   "apps/mobile/qa/p0-permissions-off.yaml:1-47",
+   "apps/mobile/qa/run-device-qa.sh:743-762",
+   "apps/mobile/qa/run-device-qa.sh:679"
+  ],
+  "note": "One permission per screen; a prompt returning on every tap is not checked. Location and contacts not covered."
+ },
+ {
+  "template": "T9-360",
+  "coverage_default": "none",
+  "covered_when": {
+   "entry_file_in": [
+    "apps/dashboard/src/crm/ui/screens/Today.tsx",
+    "apps/dashboard/src/crm/ui/screens/Assistant.tsx"
+   ]
+  },
+  "coverage_then": "partial",
+  "tests": [
+   {
+    "path": "apps/dashboard/e2e/today-fit-uat.spec.mjs",
+    "checks": "Today and the AI Assistant page at 320/360/390/412 px, English and Hinglish, dark and light: fails on any element past the right edge or words squeezed one per line (support.mjs expectNothingPastScreen); no check for overlapping elements"
+   }
+  ],
+  "evidence": [
+   "apps/dashboard/e2e/today-fit-uat.spec.mjs:1-7",
+   "apps/dashboard/e2e/today-fit-uat.spec.mjs:148-174",
+   "apps/dashboard/e2e/support.mjs:1216-1266"
+  ],
+  "note": "Panel: only Today and the Assistant are checked element by element at 360 px (no overlap check). The crawl runs at 390, not 360. The phone release gate runs the owner profile at 360 dp but its flows look for words, not cut-off text."
+ },
+ {
+  "template": "T9-390",
+  "coverage_default": "none",
+  "covered_when": {
+   "entry_file_in": [
+    "apps/dashboard/src/crm/ui/screens/Today.tsx",
+    "apps/dashboard/src/crm/ui/screens/Members.tsx",
+    "apps/dashboard/src/crm/ui/screens/ImportMembers.tsx",
+    "apps/dashboard/src/crm/ui/screens/MemberDetail.tsx",
+    "apps/dashboard/src/crm/shop/ShopScreen.tsx",
+    "apps/dashboard/src/crm/ui/screens/Messages.tsx",
+    "apps/dashboard/src/crm/ui/screens/Attendance.tsx",
+    "apps/dashboard/src/crm/ui/screens/Money.tsx",
+    "apps/dashboard/src/crm/ui/screens/Receipt.tsx",
+    "apps/dashboard/src/crm/ui/screens/Plans.tsx",
+    "apps/dashboard/src/crm/ui/screens/Enquiries.tsx",
+    "apps/dashboard/src/crm/ui/screens/Expenses.tsx",
+    "apps/dashboard/src/crm/ui/screens/Settings.tsx",
+    "apps/dashboard/src/crm/shop/InviteScreen.tsx",
+    "apps/dashboard/src/crm/auth/PeopleScreen.tsx",
+    "apps/dashboard/src/crm/brand/BrandingScreen.tsx",
+    "apps/dashboard/src/crm/ui/WhatsNew.tsx",
+    "apps/dashboard/src/crm/pay/PaymentsScreen.tsx",
+    "apps/dashboard/src/crm/ui/screens/More.tsx",
+    "apps/dashboard/src/crm/ui/screens/WorkoutPlans.tsx",
+    "apps/dashboard/src/crm/ui/screens/Feedback.tsx",
+    "apps/dashboard/src/crm/ui/OwnerNumbers.tsx",
+    "apps/dashboard/src/crm/ui/BusinessGrowth.tsx",
+    "apps/dashboard/src/crm/ui/screens/SetupGym.tsx"
+   ]
+  },
+  "coverage_then": "partial",
+  "tests": [
+   {
+    "path": "apps/dashboard/scripts/crawl.mjs",
+    "checks": "opens every listed panel page of a demo gym at 390 px and 1280 px in the default dark theme; fails on a page error, console error, a 4xx/5xx file, a page wider than the screen, no <main>, or a critical axe finding (serious findings such as colour contrast only warn)"
+   }
+  ],
+  "evidence": [
+   ".github/workflows/ci.yml:176-182",
+   "apps/dashboard/scripts/crawl.mjs:33-47",
+   "apps/dashboard/scripts/crawl.mjs:95-96",
+   "apps/dashboard/scripts/crawl.mjs:154-163",
+   "apps/dashboard/src/crm/CrmApp.tsx:391-498"
+  ],
+  "note": "Page-level only: sideways scroll of the whole page, page errors, critical axe. Cut-off text inside a box and overlapping items are not checked. /assistant is on the crawl list but the demo gym redirects it to Today, so the Assistant screen is not crawled."
+ },
+ {
+  "template": "T9-tablet",
+  "coverage_default": "none",
+  "evidence": [],
+  "note": "No gate opens a tablet size or turns the screen."
+ },
+ {
+  "template": "T9-laptop",
+  "coverage_default": "none",
+  "covered_when": {
+   "entry_file_in": [
+    "apps/dashboard/src/crm/ui/screens/Today.tsx",
+    "apps/dashboard/src/crm/ui/screens/Members.tsx",
+    "apps/dashboard/src/crm/ui/screens/ImportMembers.tsx",
+    "apps/dashboard/src/crm/ui/screens/MemberDetail.tsx",
+    "apps/dashboard/src/crm/shop/ShopScreen.tsx",
+    "apps/dashboard/src/crm/ui/screens/Messages.tsx",
+    "apps/dashboard/src/crm/ui/screens/Attendance.tsx",
+    "apps/dashboard/src/crm/ui/screens/Money.tsx",
+    "apps/dashboard/src/crm/ui/screens/Receipt.tsx",
+    "apps/dashboard/src/crm/ui/screens/Plans.tsx",
+    "apps/dashboard/src/crm/ui/screens/Enquiries.tsx",
+    "apps/dashboard/src/crm/ui/screens/Expenses.tsx",
+    "apps/dashboard/src/crm/ui/screens/Settings.tsx",
+    "apps/dashboard/src/crm/shop/InviteScreen.tsx",
+    "apps/dashboard/src/crm/auth/PeopleScreen.tsx",
+    "apps/dashboard/src/crm/brand/BrandingScreen.tsx",
+    "apps/dashboard/src/crm/ui/WhatsNew.tsx",
+    "apps/dashboard/src/crm/pay/PaymentsScreen.tsx",
+    "apps/dashboard/src/crm/ui/screens/More.tsx",
+    "apps/dashboard/src/crm/ui/screens/WorkoutPlans.tsx",
+    "apps/dashboard/src/crm/ui/screens/Feedback.tsx",
+    "apps/dashboard/src/crm/ui/OwnerNumbers.tsx",
+    "apps/dashboard/src/crm/ui/BusinessGrowth.tsx",
+    "apps/dashboard/src/crm/ui/screens/SetupGym.tsx"
+   ]
+  },
+  "coverage_then": "partial",
+  "tests": [
+   {
+    "path": "apps/dashboard/scripts/crawl.mjs",
+    "checks": "opens every listed panel page of a demo gym at 390 px and 1280 px in the default dark theme; fails on a page error, console error, a 4xx/5xx file, a page wider than the screen, no <main>, or a critical axe finding (serious findings such as colour contrast only warn)"
+   }
+  ],
+  "evidence": [
+   ".github/workflows/ci.yml:176-182",
+   "apps/dashboard/scripts/crawl.mjs:33-47",
+   "apps/dashboard/scripts/crawl.mjs:95-96",
+   "apps/dashboard/scripts/crawl.mjs:154-163",
+   "apps/dashboard/src/crm/CrmApp.tsx:391-498"
+  ],
+  "note": "Crawl uses 1280 px, not 1366, and no keyboard: Tab/Enter reach is not checked beyond critical axe rules."
+ },
+ {
+  "template": "T9-bigfont",
+  "coverage_default": "none",
+  "covered_when": {
+   "entry_file_in": [
+    "apps/mobile/android/wear/src/main/java/com/forgeai/wear/WatchScreens.kt",
+    "apps/mobile/android/wear/src/main/java/com/forgeai/wear/WatchLayout.kt",
+    "apps/mobile/android/wear/src/main/java/com/forgeai/wear/LogScreens.kt",
+    "apps/mobile/src/app/(tabs)/workout.tsx",
+    "apps/mobile/src/app/(tabs)/profile.tsx",
+    "apps/mobile/src/app/calendar.tsx",
+    "apps/mobile/src/app/settings/index.tsx",
+    "apps/mobile/src/app/(tabs)/shop.tsx"
+   ]
+  },
+  "coverage_then": "partial",
+  "tests": [
+   {
+    "path": "apps/mobile/android/wear/src/test/java/com/forgeai/wear/WatchScreensRenderTest.kt",
+    "checks": "renders every watch screen on small and large round watches (and at the largest watch font) with long exercise names; fails on anything drawn outside the round screen, text on the ring or within 2 dp of the edge"
+   },
+   {
+    "path": "apps/mobile/qa/phase7-bigtext.yaml",
+    "checks": "device QA part P7: font_scale 2.0, the main member screens opened and photographed; only the screenshot count is checked, a person must read them"
+   }
+  ],
+  "evidence": [
+   "apps/mobile/android/wear/src/test/java/com/forgeai/wear/WatchScreensRenderTest.kt:194-204",
+   "apps/mobile/qa/phase7-bigtext.yaml:1-15",
+   "apps/mobile/qa/run-device-qa.sh:1293-1306"
+  ],
+  "note": "Watch: machine-checked clipping at the largest font. Phone: pictures only. The phone screen list is read from the P7 tour words, mapped to route files by name."
+ },
+ {
+  "template": "T9-dark",
+  "coverage_default": "none",
+  "covered_when": {
+   "entry_file_in": [
+    "apps/dashboard/src/crm/ui/screens/Today.tsx",
+    "apps/dashboard/src/crm/ui/screens/Members.tsx",
+    "apps/dashboard/src/crm/ui/screens/ImportMembers.tsx",
+    "apps/dashboard/src/crm/ui/screens/MemberDetail.tsx",
+    "apps/dashboard/src/crm/shop/ShopScreen.tsx",
+    "apps/dashboard/src/crm/ui/screens/Messages.tsx",
+    "apps/dashboard/src/crm/ui/screens/Attendance.tsx",
+    "apps/dashboard/src/crm/ui/screens/Money.tsx",
+    "apps/dashboard/src/crm/ui/screens/Receipt.tsx",
+    "apps/dashboard/src/crm/ui/screens/Plans.tsx",
+    "apps/dashboard/src/crm/ui/screens/Enquiries.tsx",
+    "apps/dashboard/src/crm/ui/screens/Expenses.tsx",
+    "apps/dashboard/src/crm/ui/screens/Settings.tsx",
+    "apps/dashboard/src/crm/shop/InviteScreen.tsx",
+    "apps/dashboard/src/crm/auth/PeopleScreen.tsx",
+    "apps/dashboard/src/crm/brand/BrandingScreen.tsx",
+    "apps/dashboard/src/crm/ui/WhatsNew.tsx",
+    "apps/dashboard/src/crm/pay/PaymentsScreen.tsx",
+    "apps/dashboard/src/crm/ui/screens/More.tsx",
+    "apps/dashboard/src/crm/ui/screens/WorkoutPlans.tsx",
+    "apps/dashboard/src/crm/ui/screens/Feedback.tsx",
+    "apps/dashboard/src/crm/ui/OwnerNumbers.tsx",
+    "apps/dashboard/src/crm/ui/BusinessGrowth.tsx",
+    "apps/dashboard/src/crm/ui/screens/SetupGym.tsx"
+   ]
+  },
+  "coverage_then": "partial",
+  "tests": [
+   {
+    "path": "apps/dashboard/scripts/crawl.mjs",
+    "checks": "opens every listed panel page of a demo gym at 390 px and 1280 px in the default dark theme; fails on a page error, console error, a 4xx/5xx file, a page wider than the screen, no <main>, or a critical axe finding (serious findings such as colour contrast only warn)"
+   },
+   {
+    "path": "apps/dashboard/test/crm/themeContrast.test.ts",
+    "checks": "every text colour of the dark and of the light palette is 4.5:1 or more on every plane, and screens read colours as CSS variables (token level, no screen is drawn)"
+   }
+  ],
+  "evidence": [
+   ".github/workflows/ci.yml:176-182",
+   "apps/dashboard/scripts/crawl.mjs:33-47",
+   "apps/dashboard/scripts/crawl.mjs:95-96",
+   "apps/dashboard/scripts/crawl.mjs:154-163",
+   "apps/dashboard/src/crm/CrmApp.tsx:391-498",
+   "apps/dashboard/src/theme.ts:70-79",
+   "apps/dashboard/scripts/crawl.mjs:176-185"
+  ],
+  "note": "The crawl runs in dark (the default after it clears storage) but colour contrast is an axe \"serious\" finding, which only warns. Token contrast is unit-tested."
+ },
+ {
+  "template": "T9-light",
+  "coverage_default": "none",
+  "covered_when": {
+   "entry_file_in": [
+    "apps/dashboard/src/crm/ui/screens/Today.tsx",
+    "apps/dashboard/src/crm/ui/screens/Members.tsx",
+    "apps/dashboard/src/crm/ui/screens/ImportMembers.tsx",
+    "apps/dashboard/src/crm/ui/screens/MemberDetail.tsx",
+    "apps/dashboard/src/crm/shop/ShopScreen.tsx",
+    "apps/dashboard/src/crm/ui/screens/Messages.tsx",
+    "apps/dashboard/src/crm/ui/screens/Attendance.tsx",
+    "apps/dashboard/src/crm/ui/screens/Money.tsx",
+    "apps/dashboard/src/crm/ui/screens/Receipt.tsx",
+    "apps/dashboard/src/crm/ui/screens/Plans.tsx",
+    "apps/dashboard/src/crm/ui/screens/Enquiries.tsx",
+    "apps/dashboard/src/crm/ui/screens/Expenses.tsx",
+    "apps/dashboard/src/crm/ui/screens/Settings.tsx",
+    "apps/dashboard/src/crm/shop/InviteScreen.tsx",
+    "apps/dashboard/src/crm/auth/PeopleScreen.tsx",
+    "apps/dashboard/src/crm/brand/BrandingScreen.tsx",
+    "apps/dashboard/src/crm/ui/WhatsNew.tsx",
+    "apps/dashboard/src/crm/pay/PaymentsScreen.tsx",
+    "apps/dashboard/src/crm/ui/screens/More.tsx",
+    "apps/dashboard/src/crm/ui/screens/WorkoutPlans.tsx",
+    "apps/dashboard/src/crm/ui/screens/Feedback.tsx",
+    "apps/dashboard/src/crm/ui/OwnerNumbers.tsx",
+    "apps/dashboard/src/crm/ui/BusinessGrowth.tsx",
+    "apps/dashboard/src/crm/ui/screens/SetupGym.tsx"
+   ]
+  },
+  "coverage_then": "partial",
+  "tests": [
+   {
+    "path": "apps/dashboard/test/crm/themeContrast.test.ts",
+    "checks": "every text colour of the dark and of the light palette is 4.5:1 or more on every plane, and screens read colours as CSS variables (token level, no screen is drawn)"
+   },
+   {
+    "path": "apps/dashboard/e2e/today-fit-uat.spec.mjs",
+    "checks": "Today and the AI Assistant page at 320/360/390/412 px, English and Hinglish, dark and light: fails on any element past the right edge or words squeezed one per line (support.mjs expectNothingPastScreen); no check for overlapping elements"
+   }
+  ],
+  "evidence": [
+   "apps/dashboard/test/crm/themeContrast.test.ts:13-29",
+   "apps/dashboard/e2e/today-fit-uat.spec.mjs:106-117"
+  ],
+  "note": "No gate opens every panel screen in light; only palette tokens and Today/Assistant layout in light."
+ },
+ {
+  "template": "T9-hinglish",
+  "coverage_default": "none",
+  "covered_when": {
+   "entry_file_in": [
+    "apps/dashboard/src/crm/ui/screens/Today.tsx",
+    "apps/dashboard/src/crm/ui/screens/Members.tsx",
+    "apps/dashboard/src/crm/ui/screens/ImportMembers.tsx",
+    "apps/dashboard/src/crm/ui/screens/MemberDetail.tsx",
+    "apps/dashboard/src/crm/shop/ShopScreen.tsx",
+    "apps/dashboard/src/crm/ui/screens/Messages.tsx",
+    "apps/dashboard/src/crm/ui/screens/Attendance.tsx",
+    "apps/dashboard/src/crm/ui/screens/Money.tsx",
+    "apps/dashboard/src/crm/ui/screens/Receipt.tsx",
+    "apps/dashboard/src/crm/ui/screens/Plans.tsx",
+    "apps/dashboard/src/crm/ui/screens/Enquiries.tsx",
+    "apps/dashboard/src/crm/ui/screens/Expenses.tsx",
+    "apps/dashboard/src/crm/ui/screens/Settings.tsx",
+    "apps/dashboard/src/crm/shop/InviteScreen.tsx",
+    "apps/dashboard/src/crm/auth/PeopleScreen.tsx",
+    "apps/dashboard/src/crm/brand/BrandingScreen.tsx",
+    "apps/dashboard/src/crm/ui/WhatsNew.tsx",
+    "apps/dashboard/src/crm/pay/PaymentsScreen.tsx",
+    "apps/dashboard/src/crm/ui/screens/More.tsx",
+    "apps/dashboard/src/crm/ui/screens/WorkoutPlans.tsx",
+    "apps/dashboard/src/crm/ui/screens/Feedback.tsx",
+    "apps/dashboard/src/crm/ui/OwnerNumbers.tsx",
+    "apps/dashboard/src/crm/ui/BusinessGrowth.tsx",
+    "apps/dashboard/src/crm/ui/screens/SetupGym.tsx"
+   ]
+  },
+  "coverage_then": "partial",
+  "tests": [
+   {
+    "path": "apps/dashboard/test/crm/hinglish.test.ts",
+    "checks": "every t(...) has its Hinglish (no English left mid-screen for words through t())"
+   },
+   {
+    "path": "apps/dashboard/e2e/today-fit-uat.spec.mjs",
+    "checks": "Today and the AI Assistant page at 320/360/390/412 px, English and Hinglish, dark and light: fails on any element past the right edge or words squeezed one per line (support.mjs expectNothingPastScreen); no check for overlapping elements"
+   }
+  ],
+  "evidence": [
+   "apps/dashboard/test/crm/hinglish.test.ts:125-131",
+   "apps/dashboard/e2e/today-fit-uat.spec.mjs:106-117"
+  ],
+  "note": "Fit of longer Hinglish words is drawn and checked only on Today and the Assistant."
+ },
+ {
+  "template": "T10-midway",
+  "coverage_default": "none",
+  "covered_when": {
+   "entry_file_in": [
+    "apps/mobile/src/app/session/active.tsx"
+   ]
+  },
+  "coverage_then": "partial",
+  "tests": [
+   {
+    "path": "apps/mobile/qa/run-conditions.sh",
+    "checks": "C1 (manual dispatch, advisory): previous release with a workout open mid-rest, installed over: the open workout and rest alert survive"
+   }
+  ],
+  "evidence": [
+   ".github/workflows/qa-conditions.yml:1-12",
+   ".github/workflows/qa-conditions.yml:32-33",
+   "apps/mobile/qa/run-conditions.sh:9-12",
+   "apps/mobile/qa/run-conditions.sh:71-73"
+  ],
+  "note": "Not in the release gate. Step 4 of C1 is marked an expected fail (U-C1), so the run stays green while that upgrade bug is open."
+ },
+ {
+  "template": "T10-olddata",
+  "coverage_default": "none",
+  "covered_when": {
+   "entry_file_in": [
+    "apps/mobile/src/app/session/active.tsx",
+    "apps/mobile/src/app/history.tsx"
+   ]
+  },
+  "coverage_then": "partial",
+  "tests": [
+   {
+    "path": "apps/mobile/qa/run-conditions.sh",
+    "checks": "C1 (manual dispatch, advisory): real data (2 workouts, a followed plan, body fat, lb, Ring through DND) kept after installing over the previous release"
+   }
+  ],
+  "evidence": [
+   "apps/mobile/qa/run-conditions.sh:9-12",
+   "apps/mobile/qa/run-conditions.sh:71-73"
+  ],
+  "note": "Manual only, advisory, with a known expected fail (U-C1). Panel has no old-version gate."
+ },
+ {
+  "template": "T11-watch",
+  "coverage_default": "none",
+  "covered_when": {
+   "entry_file_in": [
+    "apps/mobile/modules/forge-rest/android/src/main/java/com/forgeai/rest/WearSync.kt",
+    "apps/mobile/android/wear/src/main/java/com/forgeai/wear/WatchSync.kt",
+    "apps/mobile/android/wear/src/main/java/com/forgeai/wear/WatchState.kt"
+   ]
+  },
+  "coverage_then": "partial",
+  "tests": [
+   {
+    "path": "apps/mobile/modules/forge-rest/android/src/test/java/com/forgeai/rest/WearWireTest.kt",
+    "checks": "unit test of the phone-watch wire: the watch Done parsing and the Data Layer outbox"
+   }
+  ],
+  "evidence": [
+   ".github/workflows/wear-build.yml:12-15",
+   ".github/workflows/wear-build.yml:84-88"
+  ],
+  "note": "Unit level only; no gate runs a phone and a watch together and compares both screens."
+ },
+ {
+  "template": "T11-twopanels",
+  "coverage_default": "none",
+  "covered_when": {
+   "entry_file_in": [
+    "apps/dashboard/src/crm/auth/PeopleScreen.tsx"
+   ]
+  },
+  "coverage_then": "partial",
+  "tests": [
+   {
+    "path": "apps/dashboard/e2e/people.spec.mjs",
+    "checks": "J13: two devices on one pretend server; the desk device finds out about the owner change on its next refresh"
+   }
+  ],
+  "evidence": [
+   "apps/dashboard/e2e/people.spec.mjs:1-3",
+   "apps/dashboard/e2e/people.spec.mjs:33"
+  ],
+  "note": "Two different logins, not the same login twice; a laptop saving over the phone with old values is not checked."
+ },
+ {
+  "template": "T11-apppanel",
+  "coverage_default": "none",
+  "covered_when": {
+   "entry_file_in": [
+    "apps/mobile/src/app/shop/bag.tsx",
+    "apps/mobile/src/app/shop/orders.tsx",
+    "apps/mobile/src/app/shop/inbox.tsx",
+    "apps/mobile/src/app/scan.tsx",
+    "apps/dashboard/src/crm/shop/ShopScreen.tsx",
+    "apps/dashboard/src/crm/ui/screens/Messages.tsx",
+    "apps/dashboard/src/crm/ui/screens/Attendance.tsx",
+    "apps/dashboard/src/crm/ui/screens/ImportMembers.tsx"
+   ]
+  },
+  "coverage_then": "partial",
+  "tests": [
+   {
+    "path": "apps/mobile/qa/run-journeys.sh",
+    "checks": "qa-journeys (manual dispatch): order to ready to collected, cancels with stock back, a message to inbox to seen, poster check-in to the desk visit, CSV import to check-in, the gym brand colour on the phone, checked at every hand-off on the live server"
+   }
+  ],
+  "evidence": [
+   ".github/workflows/qa-journeys.yml:1-20"
+  ],
+  "note": "Manual only (about an hour a run). Whether the member sees gym-only facts is not checked. Screen files are mapped from the journey words, not from the flow files."
+ }
+]
