@@ -42,29 +42,29 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | A4b | 2 | 5.1 (204k tokens) |
 | A5 | 121 | 5.1 (202k tokens) |
 | L4 | 42 | 3.9 (157k tokens) |
-| L5 | 4 | 4.9 (195k tokens) |
+| L5 | 5 | 4.9 (196k tokens) |
 | L3 | 1 | 5.2 (207k tokens) |
 
 ## Work items
-Counts: 0 todo, 6 in progress, 265 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 0 todo, 6 in progress, 266 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
-| L5-panel-screens-1 | L5 | lens 5 (Money) x panel / panel/screens-1: 4 items | in progress | _work/L5-panel-screens-1.md |  |
 | L5-server-database-3 | L5 | lens 5 (Money) x server / server/database-3: 4 items | in progress | _work/L5-server-database-3.md |  |
 | L3-server-panel-worker | L3 | lens 3 (Security) x server / server/panel-worker: 11 items | in progress | _work/L3-server-panel-worker.md |  |
 | L5-panel-logic-1 | L5 | lens 5 (Money) x panel / panel/logic-1: 4 items | in progress | _work/L5-panel-logic-1.md |  |
 | L5-panel-logic-2 | L5 | lens 5 (Money) x panel / panel/logic-2: 4 items | in progress | _work/L5-panel-logic-2.md |  |
 | L5-server-database-2 | L5 | lens 5 (Money) x server / server/database-2: 4 items | in progress | _work/L5-server-database-2.md |  |
-| L4-web-pages-p3 | L4 | lens 4 (Privacy and law) x web / web/pages part 3: 1 items | done | _work/L4-web-pages-p3.md | L4 web-pages-p3: 1 grid row, 11 reused, no new |
+| L5-server-database-1 | L5 | lens 5 (Money) x server / server/database-1: 4 items | in progress | _work/L5-server-database-1.md |  |
 | L4-web-pages | L4 | lens 4 (Privacy and law) x web / web/pages: 6 items | done | _work/L4-web-pages.md | L4 web-pages: 4 rows, 3 new (S2 Play deletion page wrong for phone-only members; S3 Google fonts; S3 friend form lacks notice) |
 | M-machine-pass | tools | machine pass for lens 3: db-security.json and cve.json (catalog reads only) | done | _work/M-machine-pass.md | db-security.json + cve.json made; 109 tables RLS on with 0 policies; ~220 definer fns open to anon; npm 3 critical/17 high; Dependabot off; definer settings query refused (needs his approval box) |
 | L5-panel-pay-machines | L5 | lens 5 (Money) x panel / panel/pay-machines: 4 items | done | _work/L5-panel-pay-machines.md | L5 pilot pay-machines: 4 items, 7 new (2 S1: new branch copies paid plan/founding place; extra branch full price vs promised half; 2 S2 test-mode Connected, paid-twice no refund) |
 | L3-server-hq-gate-workers | L3 | lens 3 (Security) x server / server/hq-gate-workers: 11 items | done | _work/L3-server-hq-gate-workers.md | L3 pilot hq-gate-workers: 11 items, 4 new (S2 gate trusts serial only, not live; S3 HQ sign-in 30 days no revoke; S3 empty-table test; S4 open pop-up job), 1 reused |
 | L5-panel-screens-2 | L5 | lens 5 (Money) x panel / panel/screens-2: 4 items | done | _work/L5-panel-screens-2.md | L5 panel-screens-2: 4 items, 4 new (S2 UPI/bank-paid owner can never open receipt; S3 overpay not flagged; two still-due figures; GST silently inside price), 3 reused |
+| L5-panel-screens-1 | L5 | lens 5 (Money) x panel / panel/screens-1: 4 items | done | _work/L5-panel-screens-1.md | L5 panel-screens-1: 4 items, 4 new (S2 online-paid enquiry shows Not paid, desk can charge twice; S3 Make member uses today's price; S3 cancel online receipt no refund note; S3 plan-ending message quotes switched-off plan) |
 | L5-panel-forms | L5 | lens 5 (Money) x panel / panel/forms: 4 items | done | _work/L5-panel-forms.md | L5 panel-forms: 4 items, 4 new (S2 cash saved while online link stays payable; S3 cancel online receipt no refund; 2 S4), 5 reused |
 | L5-server-panel-worker | L5 | lens 5 (Money) x server / server/panel-worker: 4 items | done | _work/L5-server-panel-worker.md | L5 server-panel-worker: 4 items, 2 new (S2 member app shows test payment as paid; S3 trial gym AI stopped despite credits), 5 reused |
-(+ 257 older done items, not shown)
+(+ 258 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).

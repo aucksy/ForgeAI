@@ -5,3 +5,4 @@
 - 0081 read: no new money fault
 - 0088, 0089 read: no new money fault
 - 0070,0073,0074,0075 read: finding test-mode-announced-as-real
+- all 4 items done; out written (4 findings + 1 grid)
