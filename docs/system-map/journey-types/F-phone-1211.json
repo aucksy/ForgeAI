@@ -1,0 +1,10 @@
+[
+{"kind":"jtype","id":"JT-F-phone-1211-member-10","feature":"F-phone-1211","role":"member","type":10,"applies":"yes","why_not":"none","variants":["T10-olddata"],"at_step":2,"entity":"E-gyms","note":"after an update the native colour copy must still match the gym","wi":"A5-phone-native-2"},
+{"kind":"jtype","id":"JT-F-phone-1211-member-11","feature":"F-phone-1211","role":"member","type":11,"applies":"no","why_not":"the watch colour is its own feature (F-phone-1214)","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-phone-native-2"},
+{"kind":"jtype","id":"JT-F-phone-1211-member-12","feature":"F-phone-1211","role":"member","type":12,"applies":"no","why_not":"only a colour; it shows nothing about the member and is the gym's public brand","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-phone-native-2"},
+{"kind":"jtype","id":"JT-F-phone-1211-member-4","feature":"F-phone-1211","role":"member","type":4,"applies":"no","why_not":"one colour value; no lists or text","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-phone-native-2"},
+{"kind":"jtype","id":"JT-F-phone-1211-member-5","feature":"F-phone-1211","role":"member","type":5,"applies":"no","why_not":"nothing is dated","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-phone-native-2"},
+{"kind":"jtype","id":"JT-F-phone-1211-member-7","feature":"F-phone-1211","role":"member","type":7,"applies":"yes","why_not":"none","variants":["T7-closed"],"at_step":2,"entity":"E-gyms","note":"the colour is kept natively so a card posted with the app closed keeps it","wi":"A5-phone-native-2"},
+{"kind":"jtype","id":"JT-F-phone-1211-member-8","feature":"F-phone-1211","role":"member","type":8,"applies":"yes","why_not":"none","variants":["T8-theme"],"at_step":1,"entity":"none","note":"a dark gym colour on a dark notification shade","wi":"A5-phone-native-2"},
+{"kind":"jtype","id":"JT-F-phone-1211-member-9","feature":"F-phone-1211","role":"member","type":9,"applies":"yes","why_not":"none","variants":["T9-dark","T9-light"],"at_step":1,"entity":"none","note":"tint readable in both shade themes","wi":"A5-phone-native-2"}
+]

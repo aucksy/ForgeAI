@@ -1,0 +1,10 @@
+[
+{"kind":"jtype","id":"JT-F-phone-1214-member-10","feature":"F-phone-1214","role":"member","type":10,"applies":"yes","why_not":"none","variants":["T10-olddata"],"at_step":1,"entity":"none","note":"an older watch app that does not know the colour field must stay orange, not break","wi":"A5-phone-native-2"},
+{"kind":"jtype","id":"JT-F-phone-1214-member-11","feature":"F-phone-1214","role":"member","type":11,"applies":"yes","why_not":"none","variants":["T11-watch"],"at_step":1,"entity":"E-gyms","note":"phone and watch must show the same gym colour","wi":"A5-phone-native-2"},
+{"kind":"jtype","id":"JT-F-phone-1214-member-12","feature":"F-phone-1214","role":"member","type":12,"applies":"no","why_not":"only the gym's public colour goes to the member's own watch","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-phone-native-2"},
+{"kind":"jtype","id":"JT-F-phone-1214-member-4","feature":"F-phone-1214","role":"member","type":4,"applies":"no","why_not":"one colour value; no lists or text","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-phone-native-2"},
+{"kind":"jtype","id":"JT-F-phone-1214-member-5","feature":"F-phone-1214","role":"member","type":5,"applies":"no","why_not":"nothing is dated","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-phone-native-2"},
+{"kind":"jtype","id":"JT-F-phone-1214-member-7","feature":"F-phone-1214","role":"member","type":7,"applies":"yes","why_not":"none","variants":["T7-closed"],"at_step":1,"entity":"E-gyms","note":"the colour is sent with the next workout update; app closed before it went","wi":"A5-phone-native-2"},
+{"kind":"jtype","id":"JT-F-phone-1214-member-8","feature":"F-phone-1214","role":"member","type":8,"applies":"no","why_not":"the watch draws on black whatever the phone theme","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-phone-native-2"},
+{"kind":"jtype","id":"JT-F-phone-1214-member-9","feature":"F-phone-1214","role":"member","type":9,"applies":"yes","why_not":"none","variants":["T9-dark"],"at_step":1,"entity":"none","note":"a dark gym colour on the watch's black screen must be lightened","wi":"A5-phone-native-2"}
+]
