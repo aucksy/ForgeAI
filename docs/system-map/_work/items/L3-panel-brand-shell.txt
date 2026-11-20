@@ -1,0 +1,26 @@
+# L3-panel-brand-shell: 3 x panel / panel/brand-shell. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+L3.1 | 3 | Every server route and RPC: who can call it, with what role
+L3.2 | 3 | row-level rules per table: read every policy from the catalog and the existing database tests in supabase/tests, and for each table state which test proves another gym is refused
+L3.3 | 3 | a table with no such test = finding
+L3.4 | 3 | A live cross-gym attempt is NOT run in this audit
+L3.5 | 3 | secrets in code or in the public repo or in the APK
+L3.6 | 3 | key exposure (e.g. AI key inside the APK, no spend cap)
+L3.7 | 3 | session expiry, PIN reset, sign-in brute force
+L3.8 | 3 | injection in every text box
+L3.9 | 3 | uploads
+L3.10 | 3 | links that can be guessed (/j/<code>, gym pages)
+L3.11 | 3 | Dependency CVEs (npm audit, Gradle)
+## SERVER ROUTES AND DATABASE FUNCTIONS IN THIS AREA (line of _sources/server.txt | kind | name | file:line)
+(none)
+## KEY PATTERN HITS IN THIS AREA (file:line | pattern; never the value)
+(none)
+## DATABASE TEST FILES
+(none)
+## MACHINE FILES (docs/system-map/_sources/machine/)
+db-security.json: ready
+cve.json: ready
+secrets-hits.txt: ready
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-panel-1105 | live | Branding: gym logo and colours for the member app, logo upload, remove logo background, phone and shortcut preview | apps/dashboard/src/crm/brand/BrandingScreen.tsx:41
+F-panel-3101 | live | Branding: suggest a gym colour from the uploaded logo | apps/dashboard/src/crm/brand/brandLogic.ts:141

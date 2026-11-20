@@ -1,0 +1,231 @@
+# L3-server-hq-gate-workers: 3 x server / server/hq-gate-workers. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+L3.1 | 3 | Every server route and RPC: who can call it, with what role
+L3.2 | 3 | row-level rules per table: read every policy from the catalog and the existing database tests in supabase/tests, and for each table state which test proves another gym is refused
+L3.3 | 3 | a table with no such test = finding
+L3.4 | 3 | A live cross-gym attempt is NOT run in this audit
+L3.5 | 3 | secrets in code or in the public repo or in the APK
+L3.6 | 3 | key exposure (e.g. AI key inside the APK, no spend cap)
+L3.7 | 3 | session expiry, PIN reset, sign-in brute force
+L3.8 | 3 | injection in every text box
+L3.9 | 3 | uploads
+L3.10 | 3 | links that can be guessed (/j/<code>, gym pages)
+L3.11 | 3 | Dependency CVEs (npm audit, Gradle)
+## SERVER ROUTES AND DATABASE FUNCTIONS IN THIS AREA (line of _sources/server.txt | kind | name | file:line)
+server.txt#3 | cron-worker | 30 21 * * * (hq Worker, UTC) | deploy/hq/wrangler.jsonc:88
+server.txt#4 | cron-worker | * * * * * (hq Worker, UTC) | deploy/hq/wrangler.jsonc:88
+server.txt#5 | cron-worker | 15 22 * * * (hq Worker, UTC) | deploy/hq/wrangler.jsonc:88
+server.txt#8 | cron-worker-none | no crons in deploy/gate/wrangler.jsonc | deploy/gate/wrangler.jsonc:0
+server.txt#9 | d1-sql | pay_requests | deploy/hq/payFeed.js:58
+server.txt#10 | d1-sql | pay_requests | deploy/hq/payFeed.js:121
+server.txt#11 | d1-sql | feedback | deploy/hq/web.js:67
+server.txt#12 | d1-sql | feedback | deploy/hq/web.js:145
+server.txt#13 | d1-sql | feedback | deploy/hq/web.js:149
+server.txt#14 | d1-sql | feedback | deploy/hq/web.js:152
+server.txt#15 | d1-sql | feedback | deploy/hq/web.js:160
+server.txt#16 | d1-sql | feedback | deploy/hq/web.js:177
+server.txt#17 | d1-sql | leads | deploy/hq/web.js:203
+server.txt#18 | d1-sql | feedback | deploy/hq/web.js:206
+server.txt#19 | d1-sql | feedback | deploy/hq/web.js:207
+server.txt#20 | d1-sql | feedback | deploy/hq/web.js:208
+server.txt#21 | d1-sql | feedback | deploy/hq/web.js:214
+server.txt#22 | d1-sql | feedback | deploy/hq/web.js:221
+server.txt#23 | d1-sql | feedback | deploy/hq/web.js:233
+server.txt#24 | d1-sql | leads | deploy/hq/web.js:249
+server.txt#25 | d1-sql | leads | deploy/hq/web.js:252
+server.txt#26 | d1-sql | leads | deploy/hq/web.js:259
+server.txt#27 | d1-sql | leads | deploy/hq/web.js:264
+server.txt#28 | d1-sql | ai_usage | deploy/hq/web.js:271
+server.txt#29 | d1-sql | ai_usage | deploy/hq/web.js:289
+server.txt#30 | d1-sql | ai_usage | deploy/hq/web.js:302
+server.txt#31 | d1-sql | assist_limits | deploy/hq/web.js:327
+server.txt#32 | d1-sql | assist_limits | deploy/hq/web.js:334
+server.txt#33 | d1-sql | assist_limits | deploy/hq/web.js:339
+server.txt#34 | d1-sql | ai_limits | deploy/hq/web.js:349
+server.txt#35 | d1-sql | ai_limits | deploy/hq/web.js:360
+server.txt#36 | d1-sql | ai_limits | deploy/hq/web.js:364
+server.txt#37 | d1-sql | feedback | deploy/hq/web.js:377
+server.txt#38 | d1-sql | leads | deploy/hq/web.js:378
+server.txt#39 | d1-sql | feedback | deploy/hq/web.js:392
+server.txt#40 | d1-sql | leads | deploy/hq/web.js:393
+server.txt#41 | d1-sql | ai_usage | deploy/hq/web.js:394
+server.txt#42 | d1-sql | hq_messages | deploy/hq/web.js:432
+server.txt#43 | d1-sql | hq_messages | deploy/hq/web.js:438
+server.txt#44 | d1-sql | hq_messages | deploy/hq/web.js:447
+server.txt#976 | host | hq.mettleup.fit (hq Worker) | deploy/hq/wrangler.jsonc:51
+server.txt#977 | host | forgeai-hq.aakashpahuja.in (hq Worker) | deploy/hq/wrangler.jsonc:52
+server.txt#985 | host-commented-out | gate.mettleup.fit (gate Worker) | deploy/gate/wrangler.jsonc:15
+server.txt#986 | route | /iclock/ | deploy/gate/worker.ts:24
+server.txt#987 | route | GET /api/me | deploy/hq/api.js:201
+server.txt#988 | route | GET /api/gyms | deploy/hq/api.js:206
+server.txt#989 | route | GET /api/gym | deploy/hq/api.js:225
+server.txt#990 | route | GET /api/system | deploy/hq/api.js:242
+server.txt#991 | route | GET /api/feedback | deploy/hq/api.js:251
+server.txt#992 | route | GET /api/needs | deploy/hq/api.js:259
+server.txt#993 | route | GET /api/payments | deploy/hq/api.js:304
+server.txt#994 | route | GET /api/billing-checks | deploy/hq/api.js:310
+server.txt#995 | route | GET /api/pay-details | deploy/hq/api.js:316
+server.txt#996 | route | GET /api/english | deploy/hq/api.js:322
+server.txt#997 | route | GET /api/leads | deploy/hq/api.js:327
+server.txt#998 | route | GET /api/messages | deploy/hq/api.js:333
+server.txt#999 | route | GET /api/audit | deploy/hq/api.js:344
+server.txt#1000 | route | GET /api/delete-requests | deploy/hq/api.js:356
+server.txt#1001 | route | GET /api/gym/access-log | deploy/hq/api.js:363
+server.txt#1002 | route | GET /api/access/records | deploy/hq/api.js:371
+server.txt#1003 | route | POST /api/feedback/status | deploy/hq/api.js:385
+server.txt#1004 | route | POST /api/feedback/reply | deploy/hq/api.js:395
+server.txt#1005 | route | POST /api/english/rewrite | deploy/hq/api.js:416
+server.txt#1006 | route | POST /api/leads/status | deploy/hq/api.js:433
+server.txt#1007 | route | POST /api/messages/send | deploy/hq/api.js:440
+server.txt#1008 | route | POST /api/messages/remove | deploy/hq/api.js:448
+server.txt#1009 | route | POST /api/gym/status | deploy/hq/api.js:455
+server.txt#1010 | route | POST /api/gym/trial | deploy/hq/api.js:461
+server.txt#1011 | route | POST /api/gym/plan | deploy/hq/api.js:468
+server.txt#1012 | route | POST /api/payments/confirm | deploy/hq/api.js:478
+server.txt#1013 | route | POST /api/billing-checks/done | deploy/hq/api.js:484
+server.txt#1014 | route | POST /api/payments/reject | deploy/hq/api.js:489
+server.txt#1015 | route | POST /api/gyms/export-log | deploy/hq/api.js:496
+server.txt#1016 | route | POST /api/gym/create | deploy/hq/api.js:503
+server.txt#1017 | route | POST /api/pay-details | deploy/hq/api.js:528
+server.txt#1018 | route | POST /api/gym/reset-signin | deploy/hq/api.js:540
+server.txt#1019 | route | POST /api/gym/sign-out-all | deploy/hq/api.js:546
+server.txt#1020 | route | POST /api/delete-requests/add | deploy/hq/api.js:551
+server.txt#1021 | route | POST /api/delete-requests/step | deploy/hq/api.js:570
+server.txt#1022 | route | POST /api/delete-requests/delete-gym | deploy/hq/api.js:575
+server.txt#1023 | route | POST /api/gym/ai-credits | deploy/hq/api.js:597
+server.txt#1024 | route | POST /api/gym/web-page | deploy/hq/api.js:613
+server.txt#1025 | route | POST /api/gym/assist-limit | deploy/hq/api.js:624
+server.txt#1026 | route | POST /api/ai/limit | deploy/hq/api.js:640
+server.txt#1027 | route | POST /api/access/open | deploy/hq/api.js:649
+server.txt#1028 | route | POST /api/access/end | deploy/hq/api.js:655
+server.txt#1029 | route | /billing/checkout | deploy/hq/billing.js:391
+server.txt#1030 | route | /manifest.webmanifest | deploy/hq/worker.js:68
+server.txt#1031 | route | /icons/icon-192-v2.png | deploy/hq/worker.js:69
+server.txt#1032 | route | /icons/icon-512-v2.png | deploy/hq/worker.js:70
+server.txt#1033 | route | /icons/icon-maskable-512-v2.png | deploy/hq/worker.js:71
+server.txt#1034 | route | /icons/apple-touch-icon-v2.png | deploy/hq/worker.js:72
+server.txt#1035 | route | /sw.js | deploy/hq/worker.js:74
+server.txt#1036 | route | /offline.html | deploy/hq/worker.js:75
+server.txt#1037 | route | /offline.css | deploy/hq/worker.js:76
+server.txt#1038 | route | /signin.css | deploy/hq/worker.js:126
+server.txt#1039 | route | /auth/login | deploy/hq/worker.js:134
+server.txt#1040 | route | /auth/callback | deploy/hq/worker.js:138
+server.txt#1041 | route | /auth/logout | deploy/hq/worker.js:157
+server.txt#1042 | route | /cdn-cgi/access/logout | deploy/hq/worker.js:158
+server.txt#1043 | route | /signed-out | deploy/hq/worker.js:159
+server.txt#1044 | route | /api/ | deploy/hq/worker.js:167
+server.txt#1045 | route | /push/run | deploy/hq/worker.js:235
+server.txt#1046 | route | /push/web-key | deploy/hq/worker.js:238
+server.txt#1047 | route | /backup/status | deploy/hq/worker.js:240
+server.txt#1048 | route | /readlog/status | deploy/hq/worker.js:243
+server.txt#1049 | route | /billing/ | deploy/hq/worker.js:246
+server.txt#1169 | route-pattern | ^\/billing\/hook\/(razorpay|cashfree)$ | deploy/hq/billing.js:392
+server.txt#1182 | rpc-call | hq_backup_snapshot (REST address) | deploy/hq/backup.js:96
+server.txt#1185 | rpc-name | hq_groups | deploy/hq/api.js:119
+server.txt#1186 | rpc-name | hq_ai_wallet | deploy/hq/api.js:133
+server.txt#1187 | rpc-name | hq_web_page | deploy/hq/api.js:146
+server.txt#1188 | rpc-name | hq_log | deploy/hq/api.js:195
+server.txt#1189 | rpc-name | hq_gyms | deploy/hq/api.js:207
+server.txt#1190 | rpc-name | hq_gym | deploy/hq/api.js:228
+server.txt#1191 | rpc-name | hq_system | deploy/hq/api.js:243
+server.txt#1192 | rpc-name | hq_gyms | deploy/hq/api.js:263
+server.txt#1193 | rpc-name | hq_mettleup_payments_waiting | deploy/hq/api.js:271
+server.txt#1194 | rpc-name | hq_billing_checks_waiting | deploy/hq/api.js:281
+server.txt#1195 | rpc-name | hq_mettleup_payments | deploy/hq/api.js:306
+server.txt#1196 | rpc-name | hq_billing_checks | deploy/hq/api.js:312
+server.txt#1197 | rpc-name | hq_payment_details | deploy/hq/api.js:317
+server.txt#1198 | rpc-name | hq_audit_list | deploy/hq/api.js:348
+server.txt#1199 | rpc-name | hq_delete_requests | deploy/hq/api.js:357
+server.txt#1200 | rpc-name | hq_access_log | deploy/hq/api.js:368
+server.txt#1201 | rpc-name | hq_gym_records | deploy/hq/api.js:376
+server.txt#1202 | rpc-name | hq_set_gym_status | deploy/hq/api.js:457
+server.txt#1203 | rpc-name | hq_set_trial | deploy/hq/api.js:464
+server.txt#1204 | rpc-name | hq_set_plan | deploy/hq/api.js:473
+server.txt#1205 | rpc-name | hq_confirm_mettleup_payment | deploy/hq/api.js:480
+server.txt#1206 | rpc-name | hq_billing_check_done | deploy/hq/api.js:486
+server.txt#1207 | rpc-name | hq_reject_mettleup_payment | deploy/hq/api.js:491
+server.txt#1208 | rpc-name | hq_create_gym | deploy/hq/api.js:505
+server.txt#1209 | rpc-name | hq_set_payment_details | deploy/hq/api.js:530
+server.txt#1210 | rpc-name | hq_reset_owner_signin | deploy/hq/api.js:543
+server.txt#1211 | rpc-name | hq_sign_out_gym | deploy/hq/api.js:548
+server.txt#1212 | rpc-name | hq_delete_request_add | deploy/hq/api.js:554
+server.txt#1213 | rpc-name | hq_delete_request_step | deploy/hq/api.js:572
+server.txt#1214 | rpc-name | hq_delete_gym | deploy/hq/api.js:580
+server.txt#1215 | rpc-name | hq_ai_grant | deploy/hq/api.js:604
+server.txt#1216 | rpc-name | hq_set_web_page | deploy/hq/api.js:616
+server.txt#1217 | rpc-name | hq_open_emergency | deploy/hq/api.js:652
+server.txt#1218 | rpc-name | hq_end_access | deploy/hq/api.js:657
+server.txt#1219 | rpc-name | hq_billing_checkout_start | deploy/hq/billing.js:300
+server.txt#1220 | rpc-name | hq_billing_checkout_failed | deploy/hq/billing.js:313
+server.txt#1221 | rpc-name | hq_billing_checkout_link | deploy/hq/billing.js:320
+server.txt#1222 | rpc-name | hq_billing_order | deploy/hq/billing.js:348
+server.txt#1223 | rpc-name | hq_billing_paid | deploy/hq/billing.js:362
+server.txt#1224 | rpc-name | hq_billing_daily | deploy/hq/billing.js:414
+server.txt#1225 | rpc-name | hq_billing_open_links | deploy/hq/billing.js:449
+server.txt#1226 | rpc-name | hq_billing_paid | deploy/hq/billing.js:476
+server.txt#1227 | rpc-name | hq_panel_push_instant | deploy/hq/panelPush.js:152
+server.txt#1228 | rpc-name | hq_panel_digest_gyms | deploy/hq/panelPush.js:157
+server.txt#1229 | rpc-name | hq_panel_digest_claim | deploy/hq/panelPush.js:165
+server.txt#1230 | rpc-name | hq_panel_drop_push | deploy/hq/panelPush.js:181
+server.txt#1231 | rpc-name | hq_fee_request_notes | deploy/hq/payFeed.js:73
+server.txt#1232 | rpc-name | hq_paid_alerts | deploy/hq/payFeed.js:136
+server.txt#1233 | rpc-name | hq_push_next | deploy/hq/push.js:346
+server.txt#1234 | rpc-name | hq_push_drop | deploy/hq/push.js:390
+server.txt#1235 | rpc-name | hq_push_direct_next | deploy/hq/push.js:423
+server.txt#1236 | rpc-name | hq_push_drop | deploy/hq/push.js:468
+server.txt#1237 | rpc-name | hq_db_reads_cursor | deploy/hq/readLog.js:234
+server.txt#1238 | rpc-name | hq_db_reads_ingest | deploy/hq/readLog.js:263
+server.txt#1239 | rpc-name | hq_db_reads_ingest | deploy/hq/readLog.js:281
+server.txt#1240 | rpc-name | hq_log | deploy/hq/worker.js:150
+server.txt#1241 | rpc-name | hq_nightly_cleanup | deploy/hq/worker.js:195
+server.txt#1242 | rpc-name | hq_purge_qa_gyms | deploy/hq/worker.js:200
+server.txt#1243 | rpc-name | hq_ai_purge_old | deploy/hq/worker.js:209
+## KEY PATTERN HITS IN THIS AREA (file:line | pattern; never the value)
+deploy/hq/english.test.mjs:27 | AIza
+deploy/hq/backup.js:5 | service_role
+deploy/hq/db.js:3 | service_role
+deploy/hq/push.js:4 | service_role
+deploy/hq/readLog.js:6 | service_role
+## DATABASE TEST FILES
+(none)
+## MACHINE FILES (docs/system-map/_sources/machine/)
+db-security.json: ready
+cve.json: ready
+secrets-hits.txt: ready
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-server-200 | live | Sign in to HQ with the owner's Google account (or Cloudflare Access), and sign out | deploy/hq/worker.js:134
+F-server-201 | live | Install HQ on a phone and see "You're offline" (install files served without sign-in) | deploy/hq/worker.js:67
+F-server-202 | live | See every gym in one list (groups, plan, AI use this month and today, new feedback count) | deploy/hq/api.js:206
+F-server-203 | live | Open one gym's HQ page (gym facts, 30 days of AI use, AI credits, assistant use and allowance, web page switch) | deploy/hq/api.js:225
+F-server-204 | live | System page: whole-system totals, feedback and lead counts, AI cost this month, member-app release downloads | deploy/hq/api.js:242
+F-server-205 | live | Read feedback and help questions from members and gyms, and sort each one (bug, idea, question, praise, spam, done) | deploy/hq/api.js:251
+F-server-206 | live | Reply to a help question; the person's phone gets "The MettleUp team replied" | deploy/hq/api.js:395
+F-server-207 | behind switch | English helper: Gemini rewrites the owner's rough reply before he sends it, and shows this month's rough cost | deploy/hq/api.js:322
+F-server-208 | live | "Needs you" counts on HQ: new leads, new feedback, help questions waiting, new gyms to check, payments waiting, payments | deploy/hq/api.js:259
+F-server-209 | live | Confirm or reject what a gym owner says he paid MettleUp by UPI or bank transfer (confirm moves the gym's plan on) | deploy/hq/api.js:304
+F-server-210 | behind switch | Payments to check: online payments that were taken but did not become a plan; mark each refunded or applied by hand | deploy/hq/api.js:310
+F-server-211 | live | Set MettleUp's own payment details (UPI ID, bank account) that gym owners see on Pay MettleUp; needs a sign-in from the  | deploy/hq/api.js:316
+F-server-212 | live | Leads from the website: see the list and move each lead on (new, called, demo, won, lost) with a note | deploy/hq/api.js:327
+F-server-213 | live | Send a message to every gym's admin app (shown in its bell), list sent ones and remove one | deploy/hq/api.js:333
+F-server-214 | live | HQ audit log: every HQ action is written down, and the owner can read the list (all gyms or one gym) | deploy/hq/api.js:344
+F-server-215 | live | Export the gym list as a CSV file (the download is written to the audit log first) | deploy/hq/api.js:496
+F-server-216 | live | Delete requests: write one down, tick its steps, and delete a whole gym with its pictures (typed code, fresh sign-in) | deploy/hq/api.js:356
+F-server-217 | live | Support access to one gym's data: open it for some minutes with a reason (fresh sign-in), read the gym's records, see wh | deploy/hq/api.js:649
+F-server-218 | live | Suspend a gym or make it active again, with a reason | deploy/hq/api.js:455
+F-server-219 | live | Set a gym's free-trial end date and its MettleUp plan (plan, monthly / yearly / lifetime, paid until) | deploy/hq/api.js:461
+F-server-220 | live | Create a new gym from HQ (gym name, owner name, phone), optionally from a lead, which then moves to "demo" | deploy/hq/api.js:503
+F-server-221 | live | Give a gym owner a new sign-in code (fresh sign-in) and sign everyone of a gym out | deploy/hq/api.js:540
+F-server-222 | live | Add AI credits to a gym (a pack it paid for, or a gift) or take credits back, with a note | deploy/hq/api.js:597
+F-server-223 | behind switch | Switch one gym's public web page off or back on from HQ | deploy/hq/api.js:613
+F-server-224 | live | Set one gym's daily AI limits: AI requests a day, and the AI Assistant's requests and spoken minutes a day (0 = off) | deploy/hq/api.js:624
+F-server-225 | behind switch | Gym owner buys a MettleUp plan online: a payment link is made, and the payment company's call turns the payment into a p | deploy/hq/billing.js:383
+F-server-226 | behind switch | Nightly billing jobs: plans that ran out are downgraded, plan-end reminders are listed (the message is a stub that sends | deploy/hq/billing.js:411
+F-server-227 | live | Nightly backup of all gym data (kept 7 days), and a public "did last night's backup work" answer for the watch | deploy/hq/backup.js:69
+F-server-228 | live | Nightly clean-up: old feedback, old leads without a deal, old AI usage, old logs, the tests' own QA gyms, AI Assistant r | deploy/hq/worker.js:184
+F-server-229 | behind switch | Weekly Cloudflare free-limit check (Mondays): one warning line on HQ when the busiest day passed 60% or 80% of the daily | deploy/hq/usage.js:91
+F-server-230 | behind switch | Pop-ups on members' phones: the gym's messages, new offers, a trainer's or the gym's reply to a question, and the member | deploy/hq/push.js:298
+F-server-231 | live | The desk's "please pay" fee request reaches the member's phone (each new request becomes one note for the member) | deploy/hq/payFeed.js:52
+F-server-232 | behind switch | "Asha paid online" alert: what a member paid online becomes an alert for the gym's admin app | deploy/hq/payFeed.js:115
+F-server-233 | behind switch | Gym alerts reach the staff's browsers with the admin app closed: urgent ones at once, the rest as a daily or weekly summ | deploy/hq/panelPush.js:114
+F-server-234 | behind switch | Direct-read record: every 10 minutes, reads made with the database owner login are copied to the gym server so gym owner | deploy/hq/readLog.js:226
+F-server-235 | hidden | Entry machines (eSSL / ZKTeco) send their punches to MettleUp at /iclock/ (gate Worker: written, NOT deployed, its addre | deploy/gate/worker.ts:24

@@ -1,0 +1,402 @@
+# L3-server-database-1: 3 x server / server/database-1. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+L3.1 | 3 | Every server route and RPC: who can call it, with what role
+L3.2 | 3 | row-level rules per table: read every policy from the catalog and the existing database tests in supabase/tests, and for each table state which test proves another gym is refused
+L3.3 | 3 | a table with no such test = finding
+L3.4 | 3 | A live cross-gym attempt is NOT run in this audit
+L3.5 | 3 | secrets in code or in the public repo or in the APK
+L3.6 | 3 | key exposure (e.g. AI key inside the APK, no spend cap)
+L3.7 | 3 | session expiry, PIN reset, sign-in brute force
+L3.8 | 3 | injection in every text box
+L3.9 | 3 | uploads
+L3.10 | 3 | links that can be guessed (/j/<code>, gym pages)
+L3.11 | 3 | Dependency CVEs (npm audit, Gradle)
+## SERVER ROUTES AND DATABASE FUNCTIONS IN THIS AREA (line of _sources/server.txt | kind | name | file:line)
+server.txt#207 | db-function | guard_summary_version (defined 1x, newest shown) | supabase/migrations/0001_init.sql:58
+server.txt#208 | db-function | auth_gym_id (defined 1x, newest shown) | supabase/migrations/0001_init.sql:72
+server.txt#209 | db-function | auth_role (defined 1x, newest shown) | supabase/migrations/0001_init.sql:77
+server.txt#210 | db-function | create_gym (defined 1x, newest shown) | supabase/migrations/0001_init.sql:120
+server.txt#211 | db-function | join_gym_by_code (defined 1x, newest shown) | supabase/migrations/0001_init.sql:134
+server.txt#212 | db-function | delete_my_cloud_data (defined 1x, newest shown) | supabase/migrations/0001_init.sql:153
+server.txt#213 | db-function | _new_key (defined 1x, newest shown) | supabase/migrations/0002_shop.sql:95
+server.txt#214 | db-function | _hash_key (defined 1x, newest shown) | supabase/migrations/0002_shop.sql:100
+server.txt#215 | db-function | _member (defined 1x, newest shown) | supabase/migrations/0002_shop.sql:116
+server.txt#216 | db-function | _option_stock_sum (defined 1x, newest shown) | supabase/migrations/0002_shop.sql:156
+server.txt#217 | db-function | _seed_shop (defined 1x, newest shown) | supabase/migrations/0002_shop.sql:163
+server.txt#218 | db-function | demo_start_gym (defined 1x, newest shown) | supabase/migrations/0002_shop.sql:187
+server.txt#219 | db-function | owner_products (defined 1x, newest shown) | supabase/migrations/0002_shop.sql:219
+server.txt#220 | db-function | owner_orders (defined 1x, newest shown) | supabase/migrations/0002_shop.sql:262
+server.txt#221 | db-function | owner_set_order_status (defined 1x, newest shown) | supabase/migrations/0002_shop.sql:270
+server.txt#222 | db-function | member_set_name (defined 1x, newest shown) | supabase/migrations/0002_shop.sql:331
+server.txt#223 | db-function | member_products (defined 1x, newest shown) | supabase/migrations/0002_shop.sql:347
+server.txt#224 | db-function | member_orders (defined 1x, newest shown) | supabase/migrations/0002_shop.sql:353
+server.txt#225 | db-function | member_cancel_order (defined 1x, newest shown) | supabase/migrations/0002_shop.sql:421
+server.txt#226 | db-function | _shop_restock (defined 2x, newest shown) | supabase/migrations/0003_shop_fixes.sql:17
+server.txt#227 | db-function | _photo_ticket_ok (defined 1x, newest shown) | supabase/migrations/0004_product_photos.sql:41
+server.txt#228 | db-function | _photo_url_ok (defined 1x, newest shown) | supabase/migrations/0004_product_photos.sql:55
+server.txt#229 | db-function | _logo_url_ok (defined 1x, newest shown) | supabase/migrations/0005_gym_theme.sql:39
+server.txt#230 | db-function | _brand_hex (defined 1x, newest shown) | supabase/migrations/0005_gym_theme.sql:46
+server.txt#231 | db-function | _brand_json (defined 1x, newest shown) | supabase/migrations/0005_gym_theme.sql:57
+server.txt#232 | db-function | owner_gym (defined 2x, newest shown) | supabase/migrations/0005_gym_theme.sql:89
+server.txt#233 | db-function | member_me (defined 2x, newest shown) | supabase/migrations/0005_gym_theme.sql:117
+server.txt#234 | db-function | gym_preview (defined 1x, newest shown) | supabase/migrations/0007_invite_link.sql:13
+server.txt#235 | db-function | owner_app_members (defined 2x, newest shown) | supabase/migrations/0008_gym_messages.sql:148
+server.txt#236 | db-function | _norm_phone (defined 1x, newest shown) | supabase/migrations/0010_signin_and_records.sql:98
+server.txt#237 | db-function | _staff (defined 1x, newest shown) | supabase/migrations/0010_signin_and_records.sql:109
+server.txt#238 | db-function | _owner_gym (defined 2x, newest shown) | supabase/migrations/0010_signin_and_records.sql:121
+server.txt#239 | db-function | _people_admin (defined 1x, newest shown) | supabase/migrations/0010_signin_and_records.sql:136
+server.txt#240 | db-function | _new_session (defined 1x, newest shown) | supabase/migrations/0010_signin_and_records.sql:149
+server.txt#241 | db-function | _person_json (defined 1x, newest shown) | supabase/migrations/0010_signin_and_records.sql:162
+server.txt#242 | db-function | _signed_in_json (defined 1x, newest shown) | supabase/migrations/0010_signin_and_records.sql:167
+server.txt#243 | db-function | _six_digits (defined 1x, newest shown) | supabase/migrations/0010_signin_and_records.sql:175
+server.txt#244 | db-function | _code_hash (defined 1x, newest shown) | supabase/migrations/0010_signin_and_records.sql:180
+server.txt#245 | db-function | owner_go_online (defined 1x, newest shown) | supabase/migrations/0010_signin_and_records.sql:219
+server.txt#246 | db-function | staff_sign_out (defined 1x, newest shown) | supabase/migrations/0010_signin_and_records.sql:287
+server.txt#247 | db-function | owner_make_signin_code (defined 1x, newest shown) | supabase/migrations/0010_signin_and_records.sql:349
+server.txt#248 | db-function | _caller_ip (defined 1x, newest shown) | supabase/migrations/0011_signin_fixes.sql:35
+server.txt#249 | db-function | owner_retire_key (defined 1x, newest shown) | supabase/migrations/0011_signin_fixes.sql:177
+server.txt#250 | db-function | _checkin_roster_member (defined 1x, newest shown) | supabase/migrations/0015_qr_checkin.sql:53
+server.txt#251 | db-function | _iso_day (defined 1x, newest shown) | supabase/migrations/0018_staff_and_owner_rules.sql:48
+server.txt#252 | db-function | _plan_end (defined 1x, newest shown) | supabase/migrations/0018_staff_and_owner_rules.sql:59
+server.txt#253 | db-function | _owner_only_gym (defined 1x, newest shown) | supabase/migrations/0018_staff_and_owner_rules.sql:68
+server.txt#254 | db-function | owner_rename_gym (defined 2x, newest shown) | supabase/migrations/0018_staff_and_owner_rules.sql:245
+server.txt#255 | db-function | owner_delete_product (defined 2x, newest shown) | supabase/migrations/0018_staff_and_owner_rules.sql:255
+server.txt#256 | db-function | owner_add_stock (defined 2x, newest shown) | supabase/migrations/0018_staff_and_owner_rules.sql:262
+server.txt#257 | db-function | owner_set_product_active (defined 2x, newest shown) | supabase/migrations/0018_staff_and_owner_rules.sql:292
+server.txt#258 | db-function | owner_photo_ticket (defined 2x, newest shown) | supabase/migrations/0018_staff_and_owner_rules.sql:303
+server.txt#259 | db-function | owner_set_product_photo (defined 2x, newest shown) | supabase/migrations/0018_staff_and_owner_rules.sql:315
+server.txt#260 | db-function | owner_save_product (defined 4x, newest shown) | supabase/migrations/0018_staff_and_owner_rules.sql:327
+server.txt#261 | db-function | owner_set_brand (defined 2x, newest shown) | supabase/migrations/0018_staff_and_owner_rules.sql:370
+server.txt#262 | db-function | owner_withdraw_message (defined 2x, newest shown) | supabase/migrations/0018_staff_and_owner_rules.sql:422
+server.txt#263 | db-function | _make_code (defined 3x, newest shown) | supabase/migrations/0018_staff_and_owner_rules.sql:480
+server.txt#264 | db-function | _staff_write_ok (defined 2x, newest shown) | supabase/migrations/0019_staff_discount_and_taker.sql:24
+server.txt#265 | db-function | member_place_order (defined 3x, newest shown) | supabase/migrations/0020_gym_side_retries.sql:41
+server.txt#266 | db-function | member_join (defined 3x, newest shown) | supabase/migrations/0020_gym_side_retries.sql:130
+server.txt#267 | db-function | _receipt_history_log (defined 1x, newest shown) | supabase/migrations/0021_receipt_rules.sql:62
+server.txt#268 | db-function | owner_receipt_history (defined 1x, newest shown) | supabase/migrations/0021_receipt_rules.sql:91
+server.txt#269 | db-function | _num (defined 1x, newest shown) | supabase/migrations/0021_receipt_rules.sql:113
+server.txt#270 | db-function | _prices_ok (defined 1x, newest shown) | supabase/migrations/0021_receipt_rules.sql:178
+server.txt#271 | db-function | _gym_creator_ip_private (defined 1x, newest shown) | supabase/migrations/0021_receipt_rules.sql:310
+server.txt#272 | db-function | staff_key_status (defined 1x, newest shown) | supabase/migrations/0022_key_status.sql:11
+server.txt#273 | db-function | _first_name_key (defined 1x, newest shown) | supabase/migrations/0023_member_membership.sql:31
+server.txt#274 | db-function | crm_push (defined 9x, newest shown) | supabase/migrations/0024_workout_plans.sql:55
+server.txt#275 | db-function | member_gym_plans (defined 1x, newest shown) | supabase/migrations/0024_workout_plans.sql:170
+server.txt#276 | db-function | _ist_today (defined 1x, newest shown) | supabase/migrations/0025_workout_offer.sql:152
+server.txt#277 | db-function | _offer_json (defined 1x, newest shown) | supabase/migrations/0025_workout_offer.sql:158
+server.txt#278 | db-function | _offer_plan (defined 1x, newest shown) | supabase/migrations/0025_workout_offer.sql:172
+server.txt#279 | db-function | _offer_identity (defined 1x, newest shown) | supabase/migrations/0025_workout_offer.sql:188
+server.txt#280 | db-function | _offer_me_json (defined 1x, newest shown) | supabase/migrations/0025_workout_offer.sql:214
+server.txt#281 | db-function | _offer_member_offer_json (defined 1x, newest shown) | supabase/migrations/0025_workout_offer.sql:227
+server.txt#282 | db-function | _offer_tidy (defined 1x, newest shown) | supabase/migrations/0025_workout_offer.sql:238
+server.txt#283 | db-function | _offer_give (defined 1x, newest shown) | supabase/migrations/0025_workout_offer.sql:261
+server.txt#284 | db-function | owner_save_offer (defined 1x, newest shown) | supabase/migrations/0025_workout_offer.sql:312
+server.txt#285 | db-function | owner_stop_offer (defined 1x, newest shown) | supabase/migrations/0025_workout_offer.sql:365
+server.txt#286 | db-function | owner_offers (defined 1x, newest shown) | supabase/migrations/0025_workout_offer.sql:380
+server.txt#287 | db-function | staff_give_reward (defined 1x, newest shown) | supabase/migrations/0025_workout_offer.sql:420
+server.txt#288 | db-function | owner_undo_reward (defined 1x, newest shown) | supabase/migrations/0025_workout_offer.sql:433
+server.txt#289 | db-function | member_offers (defined 1x, newest shown) | supabase/migrations/0025_workout_offer.sql:477
+server.txt#290 | db-function | member_join_offer (defined 1x, newest shown) | supabase/migrations/0025_workout_offer.sql:543
+server.txt#291 | db-function | member_offer_days (defined 1x, newest shown) | supabase/migrations/0025_workout_offer.sql:584
+server.txt#292 | db-function | member_leave_offer (defined 1x, newest shown) | supabase/migrations/0025_workout_offer.sql:646
+server.txt#293 | db-function | member_leave (defined 4x, newest shown) | supabase/migrations/0025_workout_offer.sql:659
+server.txt#294 | db-function | owner_messages (defined 3x, newest shown) | supabase/migrations/0025_workout_offer.sql:737
+server.txt#295 | db-function | member_messages (defined 2x, newest shown) | supabase/migrations/0025_workout_offer.sql:762
+server.txt#296 | db-function | member_saw_messages (defined 2x, newest shown) | supabase/migrations/0025_workout_offer.sql:781
+server.txt#297 | db-function | _hq_audit_append_only (defined 1x, newest shown) | supabase/migrations/0026_hq_audit_and_counts.sql:51
+server.txt#298 | db-function | _hq_guard (defined 1x, newest shown) | supabase/migrations/0026_hq_audit_and_counts.sql:70
+server.txt#299 | db-function | _hq_actor (defined 1x, newest shown) | supabase/migrations/0026_hq_audit_and_counts.sql:83
+server.txt#300 | db-function | _hq_ip (defined 1x, newest shown) | supabase/migrations/0026_hq_audit_and_counts.sql:93
+server.txt#301 | db-function | _hq_log (defined 1x, newest shown) | supabase/migrations/0026_hq_audit_and_counts.sql:106
+server.txt#302 | db-function | _hq_gym_counts (defined 1x, newest shown) | supabase/migrations/0026_hq_audit_and_counts.sql:125
+server.txt#303 | db-function | hq_gyms (defined 1x, newest shown) | supabase/migrations/0026_hq_audit_and_counts.sql:175
+server.txt#304 | db-function | hq_gym (defined 1x, newest shown) | supabase/migrations/0026_hq_audit_and_counts.sql:187
+server.txt#305 | db-function | hq_system (defined 1x, newest shown) | supabase/migrations/0026_hq_audit_and_counts.sql:205
+server.txt#306 | db-function | hq_audit_list (defined 1x, newest shown) | supabase/migrations/0026_hq_audit_and_counts.sql:224
+server.txt#307 | db-function | hq_log (defined 1x, newest shown) | supabase/migrations/0026_hq_audit_and_counts.sql:242
+server.txt#308 | db-function | _gym_not_suspended (defined 1x, newest shown) | supabase/migrations/0027_hq_actions.sql:45
+server.txt#309 | db-function | _gym_row_not_suspended (defined 1x, newest shown) | supabase/migrations/0027_hq_actions.sql:57
+server.txt#310 | db-function | _gym_offer_not_suspended (defined 1x, newest shown) | supabase/migrations/0027_hq_actions.sql:85
+server.txt#311 | db-function | _hq_request_json (defined 1x, newest shown) | supabase/migrations/0027_hq_actions.sql:149
+server.txt#312 | db-function | _hq_reason (defined 1x, newest shown) | supabase/migrations/0027_hq_actions.sql:163
+server.txt#313 | db-function | hq_set_gym_status (defined 1x, newest shown) | supabase/migrations/0027_hq_actions.sql:183
+server.txt#314 | db-function | hq_create_gym (defined 1x, newest shown) | supabase/migrations/0027_hq_actions.sql:203
+server.txt#315 | db-function | hq_sign_out_gym (defined 1x, newest shown) | supabase/migrations/0027_hq_actions.sql:252
+server.txt#316 | db-function | hq_delete_requests (defined 1x, newest shown) | supabase/migrations/0027_hq_actions.sql:268
+server.txt#317 | db-function | hq_delete_request_add (defined 1x, newest shown) | supabase/migrations/0027_hq_actions.sql:285
+server.txt#318 | db-function | hq_delete_request_step (defined 1x, newest shown) | supabase/migrations/0027_hq_actions.sql:313
+server.txt#319 | db-function | hq_delete_gym (defined 1x, newest shown) | supabase/migrations/0027_hq_actions.sql:345
+server.txt#320 | db-function | _hq_grant_live (defined 1x, newest shown) | supabase/migrations/0028_hq_breakglass_and_logs.sql:62
+server.txt#321 | db-function | _hq_grant_json (defined 1x, newest shown) | supabase/migrations/0028_hq_breakglass_and_logs.sql:69
+server.txt#322 | db-function | _access_log_session (defined 1x, newest shown) | supabase/migrations/0028_hq_breakglass_and_logs.sql:93
+server.txt#323 | db-function | _access_log_fail (defined 1x, newest shown) | supabase/migrations/0028_hq_breakglass_and_logs.sql:109
+server.txt#324 | db-function | _access_log_push (defined 1x, newest shown) | supabase/migrations/0028_hq_breakglass_and_logs.sql:120
+server.txt#325 | db-function | crm_pull (defined 2x, newest shown) | supabase/migrations/0028_hq_breakglass_and_logs.sql:142
+server.txt#326 | db-function | owner_hq_grant (defined 1x, newest shown) | supabase/migrations/0028_hq_breakglass_and_logs.sql:166
+server.txt#327 | db-function | owner_hq_end (defined 1x, newest shown) | supabase/migrations/0028_hq_breakglass_and_logs.sql:180
+server.txt#328 | db-function | hq_open_emergency (defined 1x, newest shown) | supabase/migrations/0028_hq_breakglass_and_logs.sql:219
+server.txt#329 | db-function | hq_end_access (defined 1x, newest shown) | supabase/migrations/0028_hq_breakglass_and_logs.sql:238
+server.txt#330 | db-function | hq_gym_records (defined 1x, newest shown) | supabase/migrations/0028_hq_breakglass_and_logs.sql:251
+server.txt#331 | db-function | hq_access_log (defined 1x, newest shown) | supabase/migrations/0028_hq_breakglass_and_logs.sql:285
+server.txt#332 | db-function | _access_log_keep (defined 1x, newest shown) | supabase/migrations/0028_hq_breakglass_and_logs.sql:313
+server.txt#333 | db-function | hq_nightly_cleanup (defined 1x, newest shown) | supabase/migrations/0028_hq_breakglass_and_logs.sql:320
+server.txt#334 | db-function | _auto_reminders_clean (defined 1x, newest shown) | supabase/migrations/0029_auto_reminders.sql:54
+server.txt#335 | db-function | _auto_reminders_json (defined 1x, newest shown) | supabase/migrations/0029_auto_reminders.sql:91
+server.txt#336 | db-function | owner_auto_reminders (defined 1x, newest shown) | supabase/migrations/0029_auto_reminders.sql:100
+server.txt#337 | db-function | owner_save_auto_reminders (defined 1x, newest shown) | supabase/migrations/0029_auto_reminders.sql:108
+server.txt#338 | db-function | member_auto_reminders (defined 1x, newest shown) | supabase/migrations/0029_auto_reminders.sql:125
+server.txt#339 | db-function | _gym_billing_hq_only (defined 1x, newest shown) | supabase/migrations/0030_plans_and_trials.sql:77
+server.txt#340 | db-function | _trial_cap (defined 1x, newest shown) | supabase/migrations/0030_plans_and_trials.sql:97
+server.txt#341 | db-function | _hq_gym_extra (defined 4x, newest shown) | supabase/migrations/0030_plans_and_trials.sql:103
+server.txt#342 | db-function | hq_set_trial (defined 1x, newest shown) | supabase/migrations/0030_plans_and_trials.sql:126
+server.txt#343 | db-function | hq_set_plan (defined 1x, newest shown) | supabase/migrations/0030_plans_and_trials.sql:147
+server.txt#344 | db-function | _branch_ids (defined 1x, newest shown) | supabase/migrations/0031_branches.sql:108
+server.txt#345 | db-function | _branch_owner (defined 1x, newest shown) | supabase/migrations/0031_branches.sql:119
+server.txt#346 | db-function | _branch_json (defined 1x, newest shown) | supabase/migrations/0031_branches.sql:131
+server.txt#347 | db-function | _branch_lock (defined 1x, newest shown) | supabase/migrations/0031_branches.sql:139
+server.txt#348 | db-function | _gym_staff_not_suspended (defined 1x, newest shown) | supabase/migrations/0031_branches.sql:150
+server.txt#349 | db-function | _now_ms (defined 1x, newest shown) | supabase/migrations/0031_branches.sql:172
+server.txt#350 | db-function | _crm_branch_rules (defined 1x, newest shown) | supabase/migrations/0031_branches.sql:181
+server.txt#351 | db-function | owner_branches (defined 1x, newest shown) | supabase/migrations/0031_branches.sql:206
+server.txt#352 | db-function | owner_add_branch (defined 1x, newest shown) | supabase/migrations/0031_branches.sql:220
+server.txt#353 | db-function | owner_open_branch (defined 1x, newest shown) | supabase/migrations/0031_branches.sql:300
+server.txt#354 | db-function | owner_rename_group (defined 1x, newest shown) | supabase/migrations/0031_branches.sql:321
+server.txt#355 | db-function | owner_add_person (defined 2x, newest shown) | supabase/migrations/0031_branches.sql:338
+server.txt#356 | db-function | owner_remove_person (defined 2x, newest shown) | supabase/migrations/0031_branches.sql:373
+server.txt#357 | db-function | support_make_signin_code (defined 2x, newest shown) | supabase/migrations/0031_branches.sql:428
+server.txt#358 | db-function | branch_find_visitor (defined 1x, newest shown) | supabase/migrations/0031_branches.sql:449
+server.txt#359 | db-function | branch_check_in_visitor (defined 1x, newest shown) | supabase/migrations/0031_branches.sql:478
+server.txt#360 | db-function | branch_visitors (defined 1x, newest shown) | supabase/migrations/0031_branches.sql:516
+server.txt#361 | db-function | branch_undo_visitor (defined 1x, newest shown) | supabase/migrations/0031_branches.sql:535
+server.txt#362 | db-function | hq_groups (defined 1x, newest shown) | supabase/migrations/0031_branches.sql:697
+server.txt#363 | db-function | app_limits (defined 1x, newest shown) | supabase/migrations/0032_member_cloud.sql:111
+server.txt#364 | db-function | _copy_max_rows (defined 1x, newest shown) | supabase/migrations/0032_member_cloud.sql:117
+server.txt#365 | db-function | member_copy_put (defined 1x, newest shown) | supabase/migrations/0032_member_cloud.sql:121
+server.txt#366 | db-function | member_copy_get (defined 1x, newest shown) | supabase/migrations/0032_member_cloud.sql:182
+server.txt#367 | db-function | member_copy_count (defined 1x, newest shown) | supabase/migrations/0032_member_cloud.sql:195
+server.txt#368 | db-function | member_account_delete (defined 1x, newest shown) | supabase/migrations/0032_member_cloud.sql:216
+server.txt#369 | db-function | _terms_append_only (defined 1x, newest shown) | supabase/migrations/0033_terms_acceptance.sql:52
+server.txt#370 | db-function | _terms_version (defined 1x, newest shown) | supabase/migrations/0033_terms_acceptance.sql:75
+server.txt#371 | db-function | _record_terms (defined 1x, newest shown) | supabase/migrations/0033_terms_acceptance.sql:85
+server.txt#372 | db-function | _terms_json (defined 1x, newest shown) | supabase/migrations/0033_terms_acceptance.sql:95
+server.txt#373 | db-function | owner_terms (defined 1x, newest shown) | supabase/migrations/0033_terms_acceptance.sql:107
+server.txt#374 | db-function | owner_accept_terms (defined 1x, newest shown) | supabase/migrations/0033_terms_acceptance.sql:114
+server.txt#779 | db-table | gyms | supabase/migrations/0001_init.sql:14
+server.txt#780 | db-table | profiles | supabase/migrations/0001_init.sql:23
+server.txt#781 | db-table | member_summary | supabase/migrations/0001_init.sql:34
+server.txt#782 | db-table | gym_owner_keys | supabase/migrations/0002_shop.sql:29
+server.txt#783 | db-table | gym_members | supabase/migrations/0002_shop.sql:35
+server.txt#784 | db-table | shop_products | supabase/migrations/0002_shop.sql:46
+server.txt#785 | db-table | shop_orders | supabase/migrations/0002_shop.sql:67
+server.txt#786 | db-table | photo_tickets | supabase/migrations/0004_product_photos.sql:21
+server.txt#787 | db-table | gym_messages | supabase/migrations/0008_gym_messages.sql:21
+server.txt#788 | db-table | gym_message_seen | supabase/migrations/0008_gym_messages.sql:33
+server.txt#789 | db-table | gym_staff | supabase/migrations/0010_signin_and_records.sql:34
+server.txt#790 | db-table | gym_signin_codes | supabase/migrations/0010_signin_and_records.sql:46
+server.txt#791 | db-table | gym_sessions | supabase/migrations/0010_signin_and_records.sql:57
+server.txt#792 | db-table | gym_signin_fails | supabase/migrations/0010_signin_and_records.sql:68
+server.txt#793 | db-table | crm_records | supabase/migrations/0010_signin_and_records.sql:76
+server.txt#794 | db-table | crm_push_log | supabase/migrations/0011_signin_fixes.sql:20
+server.txt#795 | db-table | member_checkin_tries | supabase/migrations/0015_qr_checkin.sql:40
+server.txt#796 | db-table | gym_checkin_misses | supabase/migrations/0016_checkin_fixes.sql:22
+server.txt#797 | db-table | receipt_history | supabase/migrations/0021_receipt_rules.sql:43
+server.txt#798 | db-table | gym_creator_ips | supabase/migrations/0021_receipt_rules.sql:294
+server.txt#799 | db-table | gym_offers | supabase/migrations/0025_workout_offer.sql:58
+server.txt#800 | db-table | offer_members | supabase/migrations/0025_workout_offer.sql:82
+server.txt#801 | db-table | offer_days | supabase/migrations/0025_workout_offer.sql:110
+server.txt#802 | db-table | offer_log | supabase/migrations/0025_workout_offer.sql:119
+server.txt#803 | db-table | gym_message_to | supabase/migrations/0025_workout_offer.sql:136
+server.txt#804 | db-table | hq_audit | supabase/migrations/0026_hq_audit_and_counts.sql:34
+server.txt#805 | db-table | hq_delete_requests | supabase/migrations/0027_hq_actions.sql:127
+server.txt#806 | db-table | hq_grants | supabase/migrations/0028_hq_breakglass_and_logs.sql:45
+server.txt#807 | db-table | gym_access_log | supabase/migrations/0028_hq_breakglass_and_logs.sql:78
+server.txt#808 | db-table | gym_auto_reminders | supabase/migrations/0029_auto_reminders.sql:42
+server.txt#809 | db-table | gym_groups | supabase/migrations/0031_branches.sql:78
+server.txt#810 | db-table | branch_lookups | supabase/migrations/0031_branches.sql:98
+server.txt#811 | db-table | member_items | supabase/migrations/0032_member_cloud.sql:71
+server.txt#812 | db-table | app_config | supabase/migrations/0032_member_cloud.sql:100
+server.txt#813 | db-table | gym_terms_acceptance | supabase/migrations/0033_terms_acceptance.sql:37
+server.txt#884 | db-trigger | trg_summary_version | supabase/migrations/0001_init.sql:67
+server.txt#885 | db-trigger | crm_records_receipt_history | supabase/migrations/0021_receipt_rules.sql:83
+server.txt#886 | db-trigger | gyms_creator_ip_private | supabase/migrations/0021_receipt_rules.sql:323
+server.txt#887 | db-trigger | hq_audit_append_only | supabase/migrations/0026_hq_audit_and_counts.sql:62
+server.txt#888 | db-trigger | hq_audit_no_truncate | supabase/migrations/0026_hq_audit_and_counts.sql:65
+server.txt#889 | db-trigger | crm_records_not_suspended | supabase/migrations/0027_hq_actions.sql:67
+server.txt#890 | db-trigger | shop_products_not_suspended | supabase/migrations/0027_hq_actions.sql:70
+server.txt#891 | db-trigger | shop_orders_not_suspended | supabase/migrations/0027_hq_actions.sql:73
+server.txt#892 | db-trigger | gym_messages_not_suspended | supabase/migrations/0027_hq_actions.sql:76
+server.txt#893 | db-trigger | gym_staff_not_suspended | supabase/migrations/0027_hq_actions.sql:79
+server.txt#894 | db-trigger | gym_offers_not_suspended | supabase/migrations/0027_hq_actions.sql:109
+server.txt#895 | db-trigger | offer_members_not_suspended | supabase/migrations/0027_hq_actions.sql:112
+server.txt#896 | db-trigger | offer_days_not_suspended | supabase/migrations/0027_hq_actions.sql:115
+server.txt#897 | db-trigger | gym_message_to_not_suspended | supabase/migrations/0027_hq_actions.sql:118
+server.txt#898 | db-trigger | gyms_not_suspended | supabase/migrations/0027_hq_actions.sql:122
+server.txt#899 | db-trigger | gym_sessions_access_log | supabase/migrations/0028_hq_breakglass_and_logs.sql:132
+server.txt#900 | db-trigger | gym_signin_fails_access_log | supabase/migrations/0028_hq_breakglass_and_logs.sql:135
+server.txt#901 | db-trigger | gyms_access_log_push | supabase/migrations/0028_hq_breakglass_and_logs.sql:138
+server.txt#902 | db-trigger | gyms_billing_hq_only | supabase/migrations/0030_plans_and_trials.sql:90
+server.txt#903 | db-trigger | gym_staff_not_suspended | supabase/migrations/0031_branches.sql:168
+server.txt#904 | db-trigger | crm_records_branch_rules | supabase/migrations/0031_branches.sql:202
+server.txt#905 | db-trigger | gym_terms_acceptance_append_only | supabase/migrations/0033_terms_acceptance.sql:64
+## KEY PATTERN HITS IN THIS AREA (file:line | pattern; never the value)
+supabase/migrations/0026_hq_audit_and_counts.sql:9 | service_role
+supabase/migrations/0026_hq_audit_and_counts.sql:10 | service_role
+supabase/migrations/0026_hq_audit_and_counts.sql:173 | service_role
+supabase/migrations/0026_hq_audit_and_counts.sql:263 | service_role
+supabase/migrations/0026_hq_audit_and_counts.sql:264 | service_role
+supabase/migrations/0026_hq_audit_and_counts.sql:265 | service_role
+supabase/migrations/0026_hq_audit_and_counts.sql:266 | service_role
+supabase/migrations/0026_hq_audit_and_counts.sql:267 | service_role
+supabase/migrations/0027_hq_actions.sql:6 | service_role
+supabase/migrations/0027_hq_actions.sql:22 | service_role
+supabase/migrations/0027_hq_actions.sql:181 | service_role
+supabase/migrations/0027_hq_actions.sql:422 | service_role
+supabase/migrations/0027_hq_actions.sql:423 | service_role
+supabase/migrations/0027_hq_actions.sql:424 | service_role
+supabase/migrations/0027_hq_actions.sql:425 | service_role
+supabase/migrations/0027_hq_actions.sql:426 | service_role
+supabase/migrations/0027_hq_actions.sql:427 | service_role
+supabase/migrations/0027_hq_actions.sql:428 | service_role
+supabase/migrations/0027_hq_actions.sql:429 | service_role
+supabase/migrations/0028_hq_breakglass_and_logs.sql:216 | service_role
+supabase/migrations/0028_hq_breakglass_and_logs.sql:375 | service_role
+supabase/migrations/0028_hq_breakglass_and_logs.sql:376 | service_role
+supabase/migrations/0028_hq_breakglass_and_logs.sql:377 | service_role
+supabase/migrations/0028_hq_breakglass_and_logs.sql:378 | service_role
+supabase/migrations/0028_hq_breakglass_and_logs.sql:379 | service_role
+supabase/migrations/0030_plans_and_trials.sql:24 | service_role
+supabase/migrations/0030_plans_and_trials.sql:28 | service_role
+supabase/migrations/0030_plans_and_trials.sql:123 | service_role
+supabase/migrations/0030_plans_and_trials.sql:214 | service_role
+supabase/migrations/0030_plans_and_trials.sql:215 | service_role
+supabase/migrations/0031_branches.sql:54 | service_role
+supabase/migrations/0031_branches.sql:755 | service_role
+## DATABASE TEST FILES
+supabase/tests/0015_qr_checkin.sql
+supabase/tests/0017_undo_import.sql
+supabase/tests/0018_photo_upload.sql
+supabase/tests/0018_staff_and_owner_rules.sql
+supabase/tests/0019_staff_discount_and_taker.sql
+supabase/tests/0020_gym_side_retries.sql
+supabase/tests/0021_receipt_rules.sql
+supabase/tests/0022_key_status.sql
+supabase/tests/0023_member_membership.sql
+supabase/tests/0024_workout_plans.sql
+supabase/tests/0025_workout_offer.sql
+supabase/tests/0026_hq_access.sql
+supabase/tests/0027_hq_actions.sql
+supabase/tests/0028_hq_breakglass_and_logs.sql
+supabase/tests/0029_auto_reminders.sql
+supabase/tests/0030_plans_and_trials.sql
+supabase/tests/0031_branches.sql
+supabase/tests/0032_member_cloud.sql
+supabase/tests/0033_terms_acceptance.sql
+supabase/tests/0034_signin_pin.sql
+supabase/tests/0035_trainer_measurements_diet.sql
+supabase/tests/0036_gym_timings.sql
+supabase/tests/0037_leaderboard.sql
+supabase/tests/0038_member_push.sql
+supabase/tests/0039_gym_busy.sql
+supabase/tests/0040_gym_mate_profiles.sql
+supabase/tests/0041_offline_desk_receipts.sql
+supabase/tests/0042_message_calm.sql
+supabase/tests/0043_member_photos.sql
+supabase/tests/0044_plan_requests.sql
+supabase/tests/0045_report_requests.sql
+supabase/tests/0046_gym_pack.sql
+supabase/tests/0047_challenge_rewards.sql
+supabase/tests/0048_security_fixes.sql
+supabase/tests/0049_busy_by_exercise.sql
+supabase/tests/0050_trainer_view.sql
+supabase/tests/0051_gym_videos_and_wod.sql
+supabase/tests/0052_hq_backup.sql
+supabase/tests/0053_ask_trainer_and_progress.sql
+supabase/tests/0054_member_alerts.sql
+supabase/tests/0055_pass_members.sql
+supabase/tests/0056_bring_a_friend.sql
+supabase/tests/0057_member_pay_me.sql
+supabase/tests/0058_entry_machines.sql
+supabase/tests/0060_pay_mettleup.sql
+supabase/tests/0061_phone_codes.sql
+supabase/tests/0062_plan_features.sql
+supabase/tests/0063_gym_checkout.sql
+supabase/tests/0064_billing_checks.sql
+supabase/tests/0065_trainer_schedule.sql
+supabase/tests/0066_purge_qa_gyms.sql
+supabase/tests/0067_terms_version.sql
+supabase/tests/0068_member_find_gym.sql
+supabase/tests/0069_member_messages.sql
+supabase/tests/0070_member_plus_lock.sql
+supabase/tests/0071_ai_assistant.sql
+supabase/tests/0072_retired_ai_pack_name.sql
+supabase/tests/0073_member_push_more.sql
+supabase/tests/0074_ask_trainer_paid_plan.sql
+supabase/tests/0075_gym_alerts.sql
+supabase/tests/0076_panel_web_push.sql
+supabase/tests/0077_self_join.sql
+supabase/tests/0078_ai_questions.sql
+supabase/tests/0079_staff_job_title.sql
+supabase/tests/0080_gym_page.sql
+supabase/tests/0081_join_pay.sql
+supabase/tests/0082_gym_page_photos.sql
+supabase/tests/0083_ai_members.sql
+supabase/tests/0084_progress_year.sql
+supabase/tests/0085_friend_known_number.sql
+supabase/tests/0086_member_questions_words.sql
+supabase/tests/0087_feedback_owner_desk.sql
+supabase/tests/0088_join_trial.sql
+supabase/tests/0089_trial_alert_words.sql
+supabase/tests/0090_gym_page_switch.sql
+supabase/tests/0091_challenge_checkins.sql
+supabase/tests/0092_member_join_day.sql
+supabase/tests/0093_phone_sign_in.sql
+supabase/tests/0094_page_chat.sql
+supabase/tests/0095_test_alert.sql
+supabase/tests/0096_message_recipient.sql
+supabase/tests/0097_direct_read_log.sql
+supabase/tests/0098_alerts_done_and_read.sql
+supabase/tests/security.sql
+supabase/tests/uat_access_matrix.sql
+supabase/tests/uat_money.sql
+supabase/tests/uat_shop_orders.sql
+## MACHINE FILES (docs/system-map/_sources/machine/)
+db-security.json: ready
+cve.json: ready
+secrets-hits.txt: ready
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-server-300 | live | Old sign-in-account link between a gym and its people, the one-row workout summary a member phone sends up, and "erase m | supabase/migrations/0001_init.sql:120
+F-server-301 | live | demo copy of Start my gym: "Start demo" makes a gym with a sample shop and hands back an owner key, no sign-up | supabase/migrations/0002_shop.sql:187
+F-server-302 | live | Gym shop: add, edit, hide, delete products and add stock | supabase/migrations/0002_shop.sql:219
+F-server-303 | live | Gym shop: upload a product photo | supabase/migrations/0018_staff_and_owner_rules.sql:303
+F-server-304 | live | Gym shop: see member orders and mark them ready, collected or cancelled (stock goes back on cancel) | supabase/migrations/0002_shop.sql:262
+F-server-305 | live | Member shop: see the gym's products, place an order, see my orders, cancel an order | supabase/migrations/0002_shop.sql:347
+F-server-306 | live | Join a gym in the app with its code, set my name, load my gym on launch, leave the gym; the gym sees who joined the app | supabase/migrations/0020_gym_side_retries.sql:130
+F-server-307 | live | Gym branding: brand colour, background tone, logo and heading style shown in the member app | supabase/migrations/0018_staff_and_owner_rules.sql:370
+F-server-308 | live | Gym details: load the gym (name, code, brand) in the panel and rename the gym | supabase/migrations/0005_gym_theme.sql:89
+F-server-309 | live | Invite link and front-desk QR: show the gym's name and logo for a join code before joining | supabase/migrations/0007_invite_link.sql:13
+F-server-310 | live | Gym messages: sent list with "seen by x of y", take a message back, member inbox and unread count, messages to a chosen  | supabase/migrations/0025_workout_offer.sql:737
+F-server-311 | live | Panel sign-in with mobile number and a 6-digit code the owner makes: device sessions, sign out, guess limits, why a key  | supabase/migrations/0010_signin_and_records.sql:349
+F-server-312 | live | Staff and sign-in: add or remove a person of the gym (owner or front desk) | supabase/migrations/0031_branches.sql:338
+F-server-313 | live | Put the gym online: an owner-key gym gets its owner as a signed-in person on this device | supabase/migrations/0010_signin_and_records.sql:219
+F-server-314 | live | Gym records kept online and synced between devices (members, plans, memberships, receipts, check-ins, enquiries, expense | supabase/migrations/0024_workout_plans.sql:55
+F-server-315 | live | Front-desk limits enforced on the server: no plans, expenses, gym details, voids or cancels; saved receipts cannot chang | supabase/migrations/0019_staff_discount_and_taker.sql:24
+F-server-316 | live | Receipt rules and receipt change history: amounts and prices checked on save, every change to a receipt kept and shown t | supabase/migrations/0021_receipt_rules.sql:91
+F-server-317 | live | Undo this import: the owner deletes records a data import created | supabase/migrations/0017_undo_import.sql:1
+F-server-318 | live | Check in by QR from the member app: mobile matched to the gym roster, with limits on typed numbers | supabase/migrations/0015_qr_checkin.sql:53
+F-server-319 | live | My membership in the member app: plan, dates, days left (member matched by first name and check-in number) | supabase/migrations/0023_member_membership.sql:31
+F-server-320 | live | Workout plans from the gym or trainer shown in the member app | supabase/migrations/0024_workout_plans.sql:170
+F-server-321 | live | Workout offer, gym side: create or stop an offer, see who joined and their days, give the reward at the desk, undo a rew | supabase/migrations/0025_workout_offer.sql:312
+F-server-322 | live | Workout offer, member side: see offers, join, see my counted days, leave | supabase/migrations/0025_workout_offer.sql:477
+F-server-323 | live | HQ Look: list of gyms with counts only, one gym, system page, and the audit log of every look | supabase/migrations/0026_hq_audit_and_counts.sql:175
+F-server-324 | live | HQ pauses a gym (suspended = read-only): status change, and every gym table refuses writes while paused | supabase/migrations/0027_hq_actions.sql:183
+F-server-325 | live | HQ makes a gym for an owner and signs every device of a gym out | supabase/migrations/0027_hq_actions.sql:203
+F-server-326 | live | HQ deletes a gym through a delete-request list with steps | supabase/migrations/0027_hq_actions.sql:268
+F-server-327 | live | Support access (break-glass): the owner lets support look for 1 hour or HQ opens emergency access; read-only gym records | supabase/migrations/0028_hq_breakglass_and_logs.sql:166
+F-server-328 | live | Access log of the admin app: sign-ins, sign-outs, wrong codes, saves and whole-copy downloads, shown in HQ | supabase/migrations/0028_hq_breakglass_and_logs.sql:285
+F-server-329 | live | Nightly clean-up of old logs, creator addresses, support-access rows and finished delete requests (run by the HQ Worker  | supabase/migrations/0028_hq_breakglass_and_logs.sql:320
+F-server-330 | behind switch | Automatic reminders to members: the owner's on/off switches per case, handed to the member phone (no server sending) | supabase/migrations/0029_auto_reminders.sql:100
+F-server-331 | live | Free trial and plan of each gym: HQ extends the trial (cap 6 months) and sets the plan, billing and paid-until; nothing  | supabase/migrations/0030_plans_and_trials.sql:126
+F-server-332 | live | Branches: several gyms under one business - list, add, open another branch, rename the business, owners shared across br | supabase/migrations/0031_branches.sql:206
+F-server-333 | live | Branches: find a member of another branch by mobile, check the visitor in, list visitors, undo (file header says NOT APP | supabase/migrations/0031_branches.sql:449
+F-server-334 | live | Member cloud copy: a signed-in member's workouts, routines and body data kept on the server and restored on a new phone; | supabase/migrations/0032_member_cloud.sql:121
+F-server-335 | hidden | Free plan limits for the member app (routines 4, own exercises 7, charts 3 months), one switch, shipped off (file header | supabase/migrations/0032_member_cloud.sql:111
+F-server-336 | live | Accept the terms and the data agreement online: the owner ticks the box, each acceptance kept for ever (file header says | supabase/migrations/0033_terms_acceptance.sql:107

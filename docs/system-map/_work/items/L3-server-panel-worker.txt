@@ -1,0 +1,343 @@
+# L3-server-panel-worker: 3 x server / server/panel-worker. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+L3.1 | 3 | Every server route and RPC: who can call it, with what role
+L3.2 | 3 | row-level rules per table: read every policy from the catalog and the existing database tests in supabase/tests, and for each table state which test proves another gym is refused
+L3.3 | 3 | a table with no such test = finding
+L3.4 | 3 | A live cross-gym attempt is NOT run in this audit
+L3.5 | 3 | secrets in code or in the public repo or in the APK
+L3.6 | 3 | key exposure (e.g. AI key inside the APK, no spend cap)
+L3.7 | 3 | session expiry, PIN reset, sign-in brute force
+L3.8 | 3 | injection in every text box
+L3.9 | 3 | uploads
+L3.10 | 3 | links that can be guessed (/j/<code>, gym pages)
+L3.11 | 3 | Dependency CVEs (npm audit, Gradle)
+## SERVER ROUTES AND DATABASE FUNCTIONS IN THIS AREA (line of _sources/server.txt | kind | name | file:line)
+server.txt#6 | cron-worker | 30 21 * * * (panel Worker, UTC) | deploy/panel/wrangler.jsonc:59
+server.txt#7 | cron-worker | */10 * * * * (panel Worker, UTC) | deploy/panel/wrangler.jsonc:59
+server.txt#45 | d1-sql | ai_limits | deploy/panel/aiMatch.js:663
+server.txt#46 | d1-sql | ai_usage | deploy/panel/aiMatch.js:684
+server.txt#47 | d1-sql | ai_usage | deploy/panel/aiMatch.js:685
+server.txt#48 | d1-sql | ai_usage | deploy/panel/aiMatch.js:687
+server.txt#49 | d1-sql | ai_usage | deploy/panel/aiMatch.js:699
+server.txt#50 | d1-sql | assist_limits | deploy/panel/assist.js:155
+server.txt#51 | d1-sql | assist_usage | deploy/panel/assist.js:471
+server.txt#52 | d1-sql | assist_usage | deploy/panel/assist.js:478
+server.txt#53 | d1-sql | ai_usage | deploy/panel/assist.js:489
+server.txt#54 | d1-sql | ai_usage | deploy/panel/assist.js:503
+server.txt#55 | d1-sql | ai_usage | deploy/panel/assist.js:504
+server.txt#56 | d1-sql | ai_usage | deploy/panel/assist.js:506
+server.txt#57 | d1-sql | feedback | deploy/panel/crash.js:24
+server.txt#58 | d1-sql | feedback | deploy/panel/crash.js:135
+server.txt#59 | d1-sql | feedback | deploy/panel/crash.js:143
+server.txt#60 | d1-sql | feedback | deploy/panel/feedback.js:106
+server.txt#61 | d1-sql | feedback | deploy/panel/feedback.js:114
+server.txt#67 | d1-sql | help_usage | deploy/panel/help.js:152
+server.txt#68 | d1-sql | help_usage | deploy/panel/help.js:159
+server.txt#69 | d1-sql | feedback | deploy/panel/help.js:259
+server.txt#70 | d1-sql | feedback | deploy/panel/help.js:283
+server.txt#71 | d1-sql | feedback | deploy/panel/help.js:289
+server.txt#72 | d1-sql | feedback | deploy/panel/help.js:358
+server.txt#73 | d1-sql | feedback | deploy/panel/help.js:407
+server.txt#74 | d1-sql | hq_messages | deploy/panel/hqNews.js:35
+server.txt#87 | d1-sql | pay_requests | deploy/panel/pay.js:249
+server.txt#88 | d1-sql | pay_gyms | deploy/panel/pay.js:249
+server.txt#89 | d1-sql | pay_connections | deploy/panel/pay.js:256
+server.txt#90 | d1-sql | pay_requests | deploy/panel/pay.js:257
+server.txt#91 | d1-sql | pay_events | deploy/panel/pay.js:332
+server.txt#92 | d1-sql | pay_requests | deploy/panel/pay.js:335
+server.txt#93 | d1-sql | pay_events | deploy/panel/pay.js:338
+server.txt#94 | d1-sql | pay_requests | deploy/panel/pay.js:352
+server.txt#95 | d1-sql | pay_connections | deploy/panel/pay.js:369
+server.txt#96 | d1-sql | pay_connections | deploy/panel/pay.js:397
+server.txt#97 | d1-sql | pay_connections | deploy/panel/pay.js:446
+server.txt#98 | d1-sql | pay_requests | deploy/panel/pay.js:512
+server.txt#99 | d1-sql | pay_requests | deploy/panel/pay.js:536
+server.txt#100 | d1-sql | pay_requests | deploy/panel/pay.js:537
+server.txt#101 | d1-sql | pay_requests | deploy/panel/pay.js:553
+server.txt#102 | d1-sql | pay_requests | deploy/panel/pay.js:577
+server.txt#103 | d1-sql | pay_requests | deploy/panel/pay.js:615
+server.txt#104 | d1-sql | pay_connections | deploy/panel/pay.js:668
+server.txt#105 | d1-sql | pay_requests | deploy/panel/pay.js:700
+server.txt#106 | d1-sql | pay_connections | deploy/panel/pay.js:707
+server.txt#107 | d1-sql | pay_gyms | deploy/panel/pay.js:810
+server.txt#108 | d1-sql | pay_connections | deploy/panel/pay.js:814
+server.txt#109 | d1-sql | pay_connections | deploy/panel/pay.js:865
+server.txt#110 | d1-sql | pay_requests | deploy/panel/pay.js:919
+server.txt#111 | d1-sql | pay_requests | deploy/panel/pay.js:949
+server.txt#112 | d1-sql | pay_requests | deploy/panel/pay.js:967
+server.txt#113 | d1-sql | pay_requests | deploy/panel/pay.js:977
+server.txt#114 | d1-sql | pay_connections | deploy/panel/pay.js:991
+server.txt#115 | d1-sql | pay_requests | deploy/panel/pay.js:1002
+server.txt#116 | d1-sql | pay_connections | deploy/panel/pay.js:1014
+server.txt#117 | d1-sql | pay_requests | deploy/panel/pay.js:1015
+server.txt#118 | d1-sql | pay_gyms | deploy/panel/pay.js:1039
+server.txt#119 | d1-sql | pay_requests | deploy/panel/pay.js:1049
+server.txt#120 | d1-sql | pay_requests | deploy/panel/pay.js:1061
+server.txt#121 | d1-sql | pay_requests | deploy/panel/pay.js:1070
+server.txt#122 | d1-sql | pay_requests | deploy/panel/pay.js:1131
+server.txt#123 | d1-sql | pay_requests | deploy/panel/pay.js:1141
+server.txt#124 | d1-sql | pay_requests | deploy/panel/pay.js:1158
+server.txt#125 | d1-sql | pay_requests | deploy/panel/pay.js:1176
+server.txt#126 | d1-sql | pay_requests | deploy/panel/pay.js:1187
+server.txt#127 | d1-sql | pay_requests | deploy/panel/pay.js:1211
+server.txt#128 | d1-sql | pay_requests | deploy/panel/pay.js:1254
+server.txt#129 | d1-sql | pay_requests | deploy/panel/pay.js:1278
+server.txt#130 | d1-sql | pay_said | deploy/panel/pay.js:1278
+server.txt#131 | d1-sql | pay_requests | deploy/panel/pay.js:1285
+server.txt#132 | d1-sql | pay_requests | deploy/panel/pay.js:1298
+server.txt#133 | d1-sql | pay_gyms | deploy/panel/pay.js:1305
+server.txt#134 | d1-sql | pay_requests | deploy/panel/pay.js:1366
+server.txt#135 | d1-sql | pay_gyms | deploy/panel/pay.js:1387
+server.txt#136 | d1-sql | pay_requests | deploy/panel/pay.js:1389
+server.txt#137 | d1-sql | pay_requests | deploy/panel/pay.js:1407
+server.txt#138 | d1-sql | pay_connections | deploy/panel/pay.js:1445
+server.txt#139 | d1-sql | pay_connections | deploy/panel/pay.js:1484
+server.txt#140 | d1-sql | pay_connections | deploy/panel/pay.js:1485
+server.txt#141 | d1-sql | pay_requests | deploy/panel/pay.js:1491
+server.txt#142 | d1-sql | pay_connections | deploy/panel/pay.js:1496
+server.txt#143 | d1-sql | pay_requests | deploy/panel/pay.js:1512
+server.txt#144 | d1-sql | pay_requests | deploy/panel/pay.js:1513
+server.txt#145 | d1-sql | pay_requests | deploy/panel/pay.js:1550
+server.txt#146 | d1-sql | pay_requests | deploy/panel/pay.js:1564
+server.txt#147 | d1-sql | pay_requests | deploy/panel/pay.js:1578
+server.txt#148 | d1-sql | pay_connections | deploy/panel/pay.js:1655
+server.txt#149 | d1-sql | pay_switches | deploy/panel/paySwitches.js:15
+server.txt#150 | d1-sql | pay_said | deploy/panel/paySwitches.js:15
+server.txt#151 | d1-sql | pay_switches | deploy/panel/paySwitches.js:25
+server.txt#152 | d1-sql | pay_switches | deploy/panel/paySwitches.js:39
+server.txt#153 | d1-sql | pay_said | deploy/panel/paySwitches.js:50
+server.txt#154 | d1-sql | pay_said | deploy/panel/paySwitches.js:59
+server.txt#155 | d1-sql | phone_code_asks | deploy/panel/phoneCode.js:193
+server.txt#156 | d1-sql | phone_code_asks | deploy/panel/phoneCode.js:274
+server.txt#157 | d1-sql | phone_code_asks | deploy/panel/phoneCode.js:275
+server.txt#158 | d1-sql | phone_code_asks | deploy/panel/phoneCode.js:279
+server.txt#159 | d1-sql | phone_codes | deploy/panel/phoneCode.js:315
+server.txt#160 | d1-sql | phone_codes | deploy/panel/phoneCode.js:318
+server.txt#161 | d1-sql | phone_codes | deploy/panel/phoneCode.js:335
+server.txt#162 | d1-sql | phone_code_asks | deploy/panel/phoneCode.js:343
+server.txt#163 | d1-sql | phone_code_asks | deploy/panel/phoneCode.js:344
+server.txt#164 | d1-sql | phone_codes | deploy/panel/phoneCode.js:374
+server.txt#165 | d1-sql | phone_codes | deploy/panel/phoneCode.js:386
+server.txt#166 | d1-sql | phone_codes | deploy/panel/phoneCode.js:390
+server.txt#167 | d1-sql | phone_codes | deploy/panel/phoneCode.js:400
+server.txt#168 | d1-sql | phone_code_asks | deploy/panel/phoneCode.js:401
+server.txt#169 | d1-sql | phone_inbound | deploy/panel/phoneInbound.js:140
+server.txt#170 | d1-sql | phone_code_asks | deploy/panel/phoneInbound.js:194
+server.txt#171 | d1-sql | phone_code_asks | deploy/panel/phoneInbound.js:195
+server.txt#172 | d1-sql | phone_code_asks | deploy/panel/phoneInbound.js:199
+server.txt#173 | d1-sql | phone_inbound | deploy/panel/phoneInbound.js:201
+server.txt#174 | d1-sql | phone_inbound | deploy/panel/phoneInbound.js:208
+server.txt#175 | d1-sql | phone_inbound | deploy/panel/phoneInbound.js:213
+server.txt#176 | d1-sql | phone_inbound | deploy/panel/phoneInbound.js:231
+server.txt#177 | d1-sql | phone_inbound | deploy/panel/phoneInbound.js:247
+server.txt#178 | d1-sql | phone_inbound | deploy/panel/phoneInbound.js:343
+server.txt#179 | d1-sql | phone_inbound | deploy/panel/phoneInbound.js:349
+server.txt#180 | d1-sql | phone_inbound | deploy/panel/phoneInbound.js:358
+server.txt#181 | d1-sql | phone_inbound | deploy/panel/phoneInbound.js:367
+server.txt#182 | d1-sql | phone_inbound | deploy/panel/phoneInbound.js:377
+server.txt#185 | d1-sql | ai_usage | deploy/panel/voice.js:49
+server.txt#186 | d1-sql | ai_usage | deploy/panel/voice.js:74
+server.txt#187 | d1-sql | ai_usage | deploy/panel/voice.js:75
+server.txt#188 | d1-sql | ai_usage | deploy/panel/voice.js:77
+server.txt#189 | d1-table | feedback | deploy/panel/migrations/0001_feedback.sql:3
+server.txt#190 | d1-table | leads | deploy/panel/migrations/0002_leads.sql:3
+server.txt#191 | d1-table | ai_usage | deploy/panel/migrations/0003_ai_usage.sql:8
+server.txt#192 | d1-table | ai_limits | deploy/panel/migrations/0004_ai_limits.sql:6
+server.txt#193 | d1-table | hq_messages | deploy/panel/migrations/0006_hq_messages.sql:6
+server.txt#194 | d1-table | help_usage | deploy/panel/migrations/0008_help_answers.sql:10
+server.txt#195 | d1-table | friend_asks | deploy/panel/migrations/0010_friend_asks.sql:9
+server.txt#196 | d1-table | pay_connections | deploy/panel/migrations/0011_payments.sql:16
+server.txt#197 | d1-table | pay_requests | deploy/panel/migrations/0011_payments.sql:35
+server.txt#198 | d1-table | pay_gyms | deploy/panel/migrations/0011_payments.sql:74
+server.txt#199 | d1-table | pay_events | deploy/panel/migrations/0011_payments.sql:83
+server.txt#200 | d1-table | phone_codes | deploy/panel/migrations/0012_phone_codes.sql:11
+server.txt#201 | d1-table | phone_code_asks | deploy/panel/migrations/0012_phone_codes.sql:24
+server.txt#202 | d1-table | phone_inbound | deploy/panel/migrations/0013_phone_inbound.sql:16
+server.txt#203 | d1-table | assist_usage | deploy/panel/migrations/0015_assist_usage.sql:15
+server.txt#204 | d1-table | assist_limits | deploy/panel/migrations/0015_assist_usage.sql:22
+server.txt#205 | d1-table | pay_switches | deploy/panel/migrations/0016_pay_switches.sql:14
+server.txt#206 | d1-table | pay_said | deploy/panel/migrations/0016_pay_switches.sql:23
+server.txt#978 | host | forgeai.aakashpahuja.in (panel Worker) | deploy/panel/wrangler.jsonc:25
+server.txt#979 | host | app.mettleup.fit (panel Worker) | deploy/panel/wrangler.jsonc:26
+server.txt#980 | host | mettleup.fit (panel Worker) | deploy/panel/wrangler.jsonc:27
+server.txt#981 | host | gyms.mettleup.fit (panel Worker) | deploy/panel/wrangler.jsonc:29
+server.txt#982 | host | www.mettleup.fit (panel Worker) | deploy/panel/wrangler.jsonc:30
+server.txt#983 | host | mettleup.in (panel Worker) | deploy/panel/wrangler.jsonc:31
+server.txt#984 | host | www.mettleup.in (panel Worker) | deploy/panel/wrangler.jsonc:32
+server.txt#1050 | route | /setup | deploy/panel/assistCatalogue.js:104
+server.txt#1051 | route | /members | deploy/panel/assistCatalogue.js:105
+server.txt#1052 | route | /members/new | deploy/panel/assistCatalogue.js:106
+server.txt#1053 | route | /members/:id | deploy/panel/assistCatalogue.js:107
+server.txt#1054 | route | /members/app | deploy/panel/assistCatalogue.js:108
+server.txt#1055 | route | /members/import | deploy/panel/assistCatalogue.js:109
+server.txt#1056 | route | /numbers/renewals | deploy/panel/assistCatalogue.js:110
+server.txt#1057 | route | /numbers/owed | deploy/panel/assistCatalogue.js:111
+server.txt#1058 | route | /numbers/stopped | deploy/panel/assistCatalogue.js:112
+server.txt#1059 | route | /numbers/new | deploy/panel/assistCatalogue.js:113
+server.txt#1060 | route | /numbers/busy | deploy/panel/assistCatalogue.js:114
+server.txt#1061 | route | /money | deploy/panel/assistCatalogue.js:115
+server.txt#1062 | route | /money/today | deploy/panel/assistCatalogue.js:116
+server.txt#1063 | route | /money/dues | deploy/panel/assistCatalogue.js:117
+server.txt#1064 | route | /attendance | deploy/panel/assistCatalogue.js:118
+server.txt#1065 | route | /attendance/risk | deploy/panel/assistCatalogue.js:119
+server.txt#1066 | route | /attendance/qr | deploy/panel/assistCatalogue.js:120
+server.txt#1067 | route | /attendance/pass | deploy/panel/assistCatalogue.js:121
+server.txt#1068 | route | /messages | deploy/panel/assistCatalogue.js:122
+server.txt#1069 | route | /messages/offer | deploy/panel/assistCatalogue.js:123
+server.txt#1070 | route | /messages/reminders | deploy/panel/assistCatalogue.js:124
+server.txt#1071 | route | /member-messages | deploy/panel/assistCatalogue.js:125
+server.txt#1072 | route | /settings/invite | deploy/panel/assistCatalogue.js:126
+server.txt#1073 | route | /plans | deploy/panel/assistCatalogue.js:127
+server.txt#1074 | route | /enquiries | deploy/panel/assistCatalogue.js:128
+server.txt#1075 | route | /enquiries/new | deploy/panel/assistCatalogue.js:129
+server.txt#1076 | route | /expenses | deploy/panel/assistCatalogue.js:130
+server.txt#1077 | route | /growth | deploy/panel/assistCatalogue.js:131
+server.txt#1078 | route | /growth/print | deploy/panel/assistCatalogue.js:132
+server.txt#1079 | route | /trainers | deploy/panel/assistCatalogue.js:133
+server.txt#1080 | route | /trainers/:id | deploy/panel/assistCatalogue.js:134
+server.txt#1081 | route | /trainer | deploy/panel/assistCatalogue.js:135
+server.txt#1082 | route | /questions | deploy/panel/assistCatalogue.js:136
+server.txt#1083 | route | /workouts | deploy/panel/assistCatalogue.js:137
+server.txt#1084 | route | /diet | deploy/panel/assistCatalogue.js:138
+server.txt#1085 | route | /challenges | deploy/panel/assistCatalogue.js:139
+server.txt#1086 | route | /shop | deploy/panel/assistCatalogue.js:140
+server.txt#1087 | route | /shop/products | deploy/panel/assistCatalogue.js:141
+server.txt#1088 | route | /settings/branding | deploy/panel/assistCatalogue.js:142
+server.txt#1089 | route | /settings/timings | deploy/panel/assistCatalogue.js:143
+server.txt#1090 | route | /settings/web-page | deploy/panel/assistCatalogue.js:145
+server.txt#1091 | route | /settings | deploy/panel/assistCatalogue.js:146
+server.txt#1092 | route | /settings/app | deploy/panel/assistCatalogue.js:147
+server.txt#1093 | route | /settings/data | deploy/panel/assistCatalogue.js:148
+server.txt#1094 | route | /settings/payments | deploy/panel/assistCatalogue.js:149
+server.txt#1095 | route | /settings/people | deploy/panel/assistCatalogue.js:150
+server.txt#1096 | route | /settings/machines | deploy/panel/assistCatalogue.js:151
+server.txt#1097 | route | /settings/entry | deploy/panel/assistCatalogue.js:152
+server.txt#1098 | route | /settings/mettleup | deploy/panel/assistCatalogue.js:153
+server.txt#1099 | route | /branches | deploy/panel/assistCatalogue.js:154
+server.txt#1100 | route | /news | deploy/panel/assistCatalogue.js:155
+server.txt#1101 | route | /feedback | deploy/panel/assistCatalogue.js:156
+server.txt#1120 | route | /api/phone-code/status | deploy/panel/phoneCode.js:240
+server.txt#1121 | route | /api/phone-code/inbound/ | deploy/panel/phoneCode.js:247
+server.txt#1122 | route | /api/phone-code/send | deploy/panel/phoneCode.js:248
+server.txt#1123 | route | /api/phone-code/verify | deploy/panel/phoneCode.js:249
+server.txt#1124 | route | /api/phone-code/inbound/start | deploy/panel/phoneInbound.js:150
+server.txt#1125 | route | /api/phone-code/inbound/status | deploy/panel/phoneInbound.js:151
+server.txt#1126 | route | /sb | deploy/panel/proxy.js:12
+server.txt#1127 | route | /api/moved | deploy/panel/worker.js:101
+server.txt#1128 | route | /api/move | deploy/panel/worker.js:107
+server.txt#1129 | route | /j/ | deploy/panel/worker.js:116
+server.txt#1130 | route | /c/ | deploy/panel/worker.js:119
+server.txt#1131 | route | /f/ | deploy/panel/worker.js:123
+server.txt#1132 | route | /api/friend | deploy/panel/worker.js:124
+server.txt#1133 | route | /m/ | deploy/panel/worker.js:128
+server.txt#1134 | route | /api/self-join | deploy/panel/worker.js:129
+server.txt#1135 | route | /api/self-join/ | deploy/panel/worker.js:131
+server.txt#1136 | route | /app/whats-new.json | deploy/panel/worker.js:133
+server.txt#1137 | route | /app | deploy/panel/worker.js:134
+server.txt#1138 | route | /app/ | deploy/panel/worker.js:134
+server.txt#1139 | route | /app/apk | deploy/panel/worker.js:135
+server.txt#1140 | route | /api/feedback | deploy/panel/worker.js:140
+server.txt#1141 | route | /api/help | deploy/panel/worker.js:141
+server.txt#1142 | route | /api/help/rate | deploy/panel/worker.js:142
+server.txt#1143 | route | /api/help/replies | deploy/panel/worker.js:144
+server.txt#1144 | route | /api/feedback/voice | deploy/panel/worker.js:145
+server.txt#1145 | route | /api/crash | deploy/panel/worker.js:146
+server.txt#1146 | route | /api/hq-news | deploy/panel/worker.js:147
+server.txt#1147 | route | /api/ai/match-columns | deploy/panel/worker.js:148
+server.txt#1148 | route | /api/assist | deploy/panel/worker.js:149
+server.txt#1149 | route | /api/assist/rewrite | deploy/panel/worker.js:150
+server.txt#1150 | route | /api/assist/voice | deploy/panel/worker.js:151
+server.txt#1151 | route | /api/assist/plan | deploy/panel/worker.js:152
+server.txt#1152 | route | /api/pay/ | deploy/panel/worker.js:154
+server.txt#1153 | route | /api/billing/checkout | deploy/panel/worker.js:156
+server.txt#1154 | route | /api/push/web-key | deploy/panel/worker.js:158
+server.txt#1155 | route | /api/phone-code/ | deploy/panel/worker.js:160
+server.txt#1156 | route | /api/whatsapp/hook | deploy/panel/worker.js:162
+server.txt#1157 | route | /api/links | deploy/panel/worker.js:164
+server.txt#1158 | route | /api/switches | deploy/panel/worker.js:166
+server.txt#1159 | route | /api/lead | deploy/panel/worker.js:167
+server.txt#1160 | route | /home | deploy/panel/worker.js:169
+server.txt#1161 | route | /home/ | deploy/panel/worker.js:169
+server.txt#1162 | route | /member-site | deploy/panel/worker.js:169
+server.txt#1163 | route | /member-site/ | deploy/panel/worker.js:169
+server.txt#1164 | route | /api/ | deploy/panel/worker.js:172
+server.txt#1165 | route | /join | deploy/panel/worker.js:272
+server.txt#1166 | route | /friend | deploy/panel/worker.js:278
+server.txt#1167 | route | /join-online | deploy/panel/worker.js:285
+server.txt#1168 | route | /checkin | deploy/panel/worker.js:305
+server.txt#1173 | route-pattern | ^\/api\/pay\/hook\/([a-z]+)(?:\/([A-Za-z0-9_-]{8,64}))?$ | deploy/panel/pay.js:743
+server.txt#1174 | route-pattern | ^\/api\/pay\/oauth\/(razorpay|cashfree)\/back$ | deploy/panel/pay.js:745
+server.txt#1175 | route-pattern | ^\/sb\/rest\/v1\/rpc\/([a-z_]+)\/?$ | deploy/panel/proxy.js:78
+server.txt#1176 | route-pattern | ^\/j\/([A-Za-z0-9]{6})\/?$ | deploy/panel/worker.js:111
+server.txt#1177 | route-pattern | ^\/c\/([A-Za-z0-9]{6})\/?$ | deploy/panel/worker.js:117
+server.txt#1178 | route-pattern | ^\/f\/([A-Za-z0-9]{8})\/?$ | deploy/panel/worker.js:121
+server.txt#1179 | route-pattern | ^\/m\/([A-Za-z0-9]{6})\/?$ | deploy/panel/worker.js:126
+server.txt#1180 | route-pattern | ^\/dl\/(v[0-9]+\.[0-9]+\.[0-9]+)\.aab$ | deploy/panel/worker.js:136
+server.txt#1181 | route-pattern | ^\/dl\/(v[0-9]+\.[0-9]+\.[0-9]+)\/(store-[a-z0-9-]+\.png)$ | deploy/panel/worker.js:138
+server.txt#1183 | rpc-call | staff_me (REST address) | deploy/panel/aiMatch.js:623
+server.txt#1184 | rpc-call | owner_ai_status (REST address) | deploy/panel/assist.js:131
+server.txt#1252 | rpc-name | staff_me | deploy/panel/pay.js:220
+server.txt#1253 | rpc-name | member_pay_me | deploy/panel/pay.js:233
+server.txt#1254 | rpc-name | member_me | deploy/panel/pay.js:238
+server.txt#1255 | rpc-name | member_orders | deploy/panel/pay.js:1382
+server.txt#1256 | rpc-name | phone_code_has_account | deploy/panel/phoneCode.js:295
+server.txt#1257 | rpc-name | owner_send_message | deploy/panel/proxy.js:75
+server.txt#1258 | rpc-name | owner_save_offer | deploy/panel/proxy.js:75
+server.txt#1259 | rpc-name | owner_answer_question | deploy/panel/proxy.js:75
+server.txt#1260 | rpc-name | ai_question_take | deploy/panel/questionCredits.js:82
+server.txt#1261 | rpc-name | ai_question_back | deploy/panel/questionCredits.js:96
+server.txt#1263 | rpc-name | gym_preview | deploy/panel/worker.js:249
+server.txt#1264 | rpc-name | gym_preview | deploy/panel/worker.js:251
+server.txt#1265 | rpc-name | friend_invite_preview | deploy/panel/worker.js:279
+server.txt#1266 | rpc-name | self_join_preview | deploy/panel/worker.js:286
+## KEY PATTERN HITS IN THIS AREA (file:line | pattern; never the value)
+deploy/panel/assist.test.mjs:36 | sk-
+deploy/panel/assist.test.mjs:37 | sk-
+deploy/panel/assistCredits.test.mjs:10 | sk-
+deploy/panel/assistPlan.test.mjs:23 | sk-
+deploy/panel/help.test.mjs:24 | sk-
+deploy/panel/helpCredits.test.mjs:10 | sk-
+deploy/panel/pageChat.test.mjs:61 | sk-
+## DATABASE TEST FILES
+(none)
+## MACHINE FILES (docs/system-map/_sources/machine/)
+db-security.json: ready
+cve.json: ready
+secrets-hits.txt: ready
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-server-101 | live | Move a desk from the old admin address to app.mettleup.fit: the old address asks whether to move and hands the sign-in o | deploy/panel/worker.js:101
+F-server-102 | live | Block-proof gym server address: both apps reach the gym server through our own address (/sb) so a block of supabase.co c | deploy/panel/worker.js:110
+F-server-103 | live | Phone pop-ups at once: after the admin app sends a message, starts an offer or answers a member question, HQ is told to  | deploy/panel/proxy.js:75
+F-server-104 | live | Gym invite link page (/j/CODE): shows "Join <gym>" with the gym name and logo for link previews; opens the app on a phon | deploy/panel/worker.js:111
+F-server-105 | live | Check-in poster link page (/c/CODE): "Check in at <gym>"; opens the app's check-in screen, or tells a phone without the  | deploy/panel/worker.js:117
+F-server-106 | live | Bring a friend: a member's invite page (/f/CODE) names the gym and the member, and its form sends the friend's name and  | deploy/panel/worker.js:121
+F-server-107 | live | Join online: the gym's "Become a member" page (/m/CODE) shows the gym's plans and prices (and a free trial when on), and | deploy/panel/worker.js:126
+F-server-108 | behind switch | Pay online on the join page: tells the page whether this gym can be paid online, checks the page's own payment, and take | deploy/panel/worker.js:131
+F-server-109 | live | Smart app link (/app): Android goes to Google Play, an iPhone to the App Store once set ("coming soon" until then), a co | deploy/panel/worker.js:134
+F-server-110 | live | What's new lines for the app's update screen, served from our own server (read from GitHub, cached, last good copy kept  | deploy/panel/worker.js:133
+F-server-111 | live | Release file pass-through for the Play Console page (/dl/<version>.aab and its store pictures): lets the console page fe | deploy/panel/worker.js:136
+F-server-112 | live | Send feedback: both apps post a message; it is kept in MettleUp's own small database (not the gym server), with how it w | deploy/panel/worker.js:140
+F-server-113 | live | Help and feedback with an AI answer: the message is saved, an answer is written from the help articles (or matched from  | deploy/panel/worker.js:141
+F-server-114 | unknown | Spoken feedback: the member app sends a short voice clip, gets the text back to fix and send; the clip is not kept; coun | deploy/panel/worker.js:145
+F-server-115 | live | Crash reports: both apps post an uncaught error with no personal data; kept 90 days as "crash" rows for HQ and the daily | deploy/panel/worker.js:146
+F-server-116 | live | Daily clean-up at 03:00 India time: deletes crash reports older than 90 days, spoken-feedback counts older than 7 days,  | deploy/panel/worker.js:177
+F-server-117 | live | News from MettleUp HQ for the admin app's bell: the latest messages HQ sent to every gym | deploy/panel/worker.js:147
+F-server-118 | unknown | AI column matching in the member import: the AI is shown column names and a few masked example rows and says which colum | deploy/panel/worker.js:148
+F-server-119 | unknown | Owner's AI Assistant: the owner's typed or spoken sentence becomes 1 to 3 cards from a fixed list of tools and admin pag | deploy/panel/worker.js:149
+F-server-122 | unknown | AI workout plan writer: the assistant writes a plan for one member from the goal, level and days the owner gave, using t | deploy/panel/worker.js:152
+F-server-123 | live | AI question credits: before an AI answer, one question is taken from the gym's AI credits (members and page visitors: 10 | deploy/panel/questionCredits.js:82
+F-server-124 | behind switch | Connect the gym's own payment company: the owner types the company's keys (sealed before they are stored), sees the conn | deploy/panel/worker.js:154
+F-server-125 | behind switch | Connect a payment company by signing in (Razorpay or Cashfree "Connect" button) instead of typing keys | deploy/panel/pay.js:745
+F-server-126 | live | Collect a payment online at the desk: make a payment link (or UPI request) for a member through the gym's own account, c | deploy/panel/pay.js:766
+F-server-128 | live | Member pays in the app: the member sees what can be paid online, pays a due or a shop order through the gym's payment li | deploy/panel/pay.js:778
+F-server-130 | behind switch | Payment company webhook: the company tells us a link was paid (signature checked, each event kept once) and the request  | deploy/panel/pay.js:743
+F-server-131 | behind switch | Every 10 minutes: open payment links are checked with each gym's payment company and marked paid when the money has arri | deploy/panel/worker.js:179
+F-server-132 | behind switch | Owner's two payment switches ("Take payments in the member app", "Take payments when people join online") and the desk's | deploy/panel/pay.js:786
+F-server-133 | hidden | Sign-in code by WhatsApp: a 6-digit code sent to a mobile number for Forgot PIN and for the new-gym number check (login_ | deploy/panel/worker.js:160
+F-server-134 | live | "Verify with WhatsApp": the person sends MettleUp's number one WhatsApp message with a code to prove the number is their | deploy/panel/phoneCode.js:247
+F-server-135 | live | WhatsApp delivery news: Meta tells us whether each WhatsApp message was sent, delivered or failed and why (written to th | deploy/panel/worker.js:162
+F-server-136 | behind switch | Pay online for a MettleUp plan: the admin app's "Pay online" request is passed to the HQ server, which makes the payment | deploy/panel/worker.js:156
+F-server-137 | live | Public key for the admin app's alerts when the app is closed (browser push), passed on from the HQ server | deploy/panel/worker.js:158
+F-server-139 | live | Feature switches for the admin app (/api/switches): says whether gym web pages, pay online on the join page, AI credit c | deploy/panel/worker.js:166
+F-server-140 | live | Free demo request form on the gym-owner landing page: the gym's contact details are kept for MettleUp to call back, with | deploy/panel/worker.js:167
+F-server-141 | hidden | Gym's own free web page (join.mettleup.fit/<gym>): the gym's plans and prices, timings, address with map links, faciliti | deploy/panel/worker.js:93

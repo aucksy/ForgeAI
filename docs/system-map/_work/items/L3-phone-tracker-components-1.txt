@@ -1,0 +1,60 @@
+# L3-phone-tracker-components-1: 3 x phone / phone/tracker-components-1. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+L3.1 | 3 | Every server route and RPC: who can call it, with what role
+L3.2 | 3 | row-level rules per table: read every policy from the catalog and the existing database tests in supabase/tests, and for each table state which test proves another gym is refused
+L3.3 | 3 | a table with no such test = finding
+L3.4 | 3 | A live cross-gym attempt is NOT run in this audit
+L3.5 | 3 | secrets in code or in the public repo or in the APK
+L3.6 | 3 | key exposure (e.g. AI key inside the APK, no spend cap)
+L3.7 | 3 | session expiry, PIN reset, sign-in brute force
+L3.8 | 3 | injection in every text box
+L3.9 | 3 | uploads
+L3.10 | 3 | links that can be guessed (/j/<code>, gym pages)
+L3.11 | 3 | Dependency CVEs (npm audit, Gradle)
+## SERVER ROUTES AND DATABASE FUNCTIONS IN THIS AREA (line of _sources/server.txt | kind | name | file:line)
+(none)
+## KEY PATTERN HITS IN THIS AREA (file:line | pattern; never the value)
+(none)
+## DATABASE TEST FILES
+(none)
+## MACHINE FILES (docs/system-map/_sources/machine/)
+db-security.json: ready
+cve.json: ready
+secrets-hits.txt: ready
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-phone-700 | live | Share a before-and-after photo picture | apps/mobile/src/tracker/components/BeforeAfterShare.tsx:57
+F-phone-701 | live | Fix or delete a weigh-in or body measurement | apps/mobile/src/tracker/components/BodyEntrySheet.tsx:127
+F-phone-702 | live | Pick a past day from a month calendar | apps/mobile/src/tracker/components/DatePickerSheet.tsx:18
+F-phone-703 | live | Body map: muscles shaded by how much they were trained | apps/mobile/src/tracker/components/BodyMap.tsx:45
+F-phone-704 | live | Muscles still resting card on the Workout tab | apps/mobile/src/tracker/components/ReadyCard.tsx:19
+F-phone-705 | live | Workout complete: kg lifted compared with last time, exercise by exercise | apps/mobile/src/tracker/components/KgHeroCard.tsx:19
+F-phone-706 | live | New record pop-up with confetti, and the quieter better-than-last-time line | apps/mobile/src/tracker/components/RecordToast.tsx:29
+F-phone-707 | live | Exercise progress charts: pick what to show and the range, tap a point to open that workout | apps/mobile/src/tracker/components/ExerciseMetricChart.tsx:80
+F-phone-708 | live | Exercise records: personal records and set records, tap one to open its workout | apps/mobile/src/tracker/components/ExercisePrRows.tsx:86
+F-phone-710 | live | Reorder exercises and routines by press, hold and drag | apps/mobile/src/tracker/components/DragList.tsx:36
+F-phone-711 | live | See how to do an exercise: small picture, moving demo, start and end pictures, steps, drawing credit | apps/mobile/src/tracker/components/ExerciseDemoSheet.tsx:92
+F-phone-712 | live | Easy week note (half the sets, same weights, until a date) | apps/mobile/src/tracker/components/EasyWeekNote.tsx:18
+F-phone-713 | live | Correct a saved workout's day, start time and length | apps/mobile/src/tracker/components/EditSessionHeader.tsx:68
+F-phone-714 | live | Workout duration clock, with pause and resume | apps/mobile/src/tracker/components/ElapsedClock.tsx:39
+F-phone-715 | live | Quick plus/minus steps and Copy to sets below, on the keyboard while typing a set | apps/mobile/src/tracker/components/EntryBar.tsx:45
+F-phone-716 | live | Start screen: each exercise's target and the kg or reps to beat | apps/mobile/src/tracker/components/ExerciseKgRow.tsx:20
+F-phone-717 | live | Log an exercise in a live workout: sets, add set, note, rest time, warm-up sets, counting, move, superset, swap, remove | apps/mobile/src/tracker/components/ExerciseLogCard.tsx:119
+F-phone-718 | behind switch | Suggested weight for the next set (free members see a locked line that opens MettleUp Plus) | apps/mobile/src/tracker/components/ExerciseLogCard.tsx:158
+F-phone-719 | behind switch | Plate calculator: which plates to load on each side | apps/mobile/src/tracker/components/PlateCalcSheet.tsx:26
+F-phone-720 | live | Plates and bars: say which plates and bar your gym has | apps/mobile/src/tracker/components/PlateSetupCard.tsx:115
+F-phone-721 | live | Machine and cable weight steps setting (Automatic, 2.5 kg or 5 kg) | apps/mobile/src/tracker/components/MachineStepCard.tsx:21
+F-phone-722 | live | Choose a workout setting from a list (weight jumps, rep range, rest-over sound, machine steps) | apps/mobile/src/tracker/components/PrefChoiceSheet.tsx:17
+F-phone-723 | live | Find an exercise: search, muscle and gear filters, recent, hidden, create your own | apps/mobile/src/tracker/components/ExercisePickerList.tsx:44
+F-phone-724 | live | Finish a workout: what will be saved, unticked rows, end time, name and note | apps/mobile/src/tracker/components/FinishSheet.tsx:121
+F-phone-725 | live | Make your first routine card (guide, or Skip for good) | apps/mobile/src/tracker/components/FirstRoutineCard.tsx:20
+F-phone-726 | live | Choose which folder a routine goes in | apps/mobile/src/tracker/components/FolderPickerSheet.tsx:14
+F-phone-727 | live | Name or rename a routine folder (one-box naming sheet) | apps/mobile/src/tracker/components/NameSheet.tsx:10
+F-phone-728 | behind switch | Today at your gym: start the workout the gym set for today | apps/mobile/src/tracker/components/GymWodCard.tsx:22
+F-phone-729 | live | Stopwatch and countdown for a timed set (planks, holds) | apps/mobile/src/tracker/components/HoldTimerSheet.tsx:50
+F-phone-730 | live | Bring in workouts and routines from Hevy or Strong (pick the app, read a Hevy link, match unknown exercise names) | apps/mobile/src/tracker/components/ImportCard.tsx:45
+F-phone-732 | live | Log a past workout: pick the day, start time, length and routine | apps/mobile/src/tracker/components/LogPastSheet.tsx:56
+F-phone-733 | live | Cardio machine details on a set: speed, incline, level | apps/mobile/src/tracker/components/MachineDetailsRow.tsx:34
+F-phone-734 | live | Machine in use: full-screen IN USE sign with the rest countdown | apps/mobile/src/tracker/components/MachineInUse.tsx:42
+F-phone-735 | live | Month report: calendar with the days trained filled in | apps/mobile/src/tracker/components/MonthGrid.tsx:11
+F-phone-736 | live | Muscle tips: smart suggestion to add or swap an exercise in a routine | apps/mobile/src/tracker/components/MuscleTipNote.tsx:27
+F-phone-737 | live | Rest alerts status: says when alerts are blocked, silent or may be late, tap to fix | apps/mobile/src/tracker/components/RestAlertsStatusRow.tsx:17

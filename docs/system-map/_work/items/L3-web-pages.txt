@@ -1,0 +1,80 @@
+# L3-web-pages: 3 x web / web/pages. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+L3.1 | 3 | Every server route and RPC: who can call it, with what role
+L3.2 | 3 | row-level rules per table: read every policy from the catalog and the existing database tests in supabase/tests, and for each table state which test proves another gym is refused
+L3.3 | 3 | a table with no such test = finding
+L3.4 | 3 | A live cross-gym attempt is NOT run in this audit
+L3.5 | 3 | secrets in code or in the public repo or in the APK
+L3.6 | 3 | key exposure (e.g. AI key inside the APK, no spend cap)
+L3.7 | 3 | session expiry, PIN reset, sign-in brute force
+L3.8 | 3 | injection in every text box
+L3.9 | 3 | uploads
+L3.10 | 3 | links that can be guessed (/j/<code>, gym pages)
+L3.11 | 3 | Dependency CVEs (npm audit, Gradle)
+## SERVER ROUTES AND DATABASE FUNCTIONS IN THIS AREA (line of _sources/server.txt | kind | name | file:line)
+server.txt#62 | d1-sql | friend_asks | deploy/panel/friend.js:77
+server.txt#63 | d1-sql | friend_asks | deploy/panel/friend.js:79
+server.txt#64 | d1-sql | friend_asks | deploy/panel/friend.js:89
+server.txt#65 | d1-sql | friend_asks | deploy/panel/gymPageServe.js:186
+server.txt#66 | d1-sql | friend_asks | deploy/panel/gymPageServe.js:188
+server.txt#75 | d1-sql | pay_gyms | deploy/panel/joinPay.js:125
+server.txt#76 | d1-sql | pay_requests | deploy/panel/joinPay.js:179
+server.txt#77 | d1-sql | pay_requests | deploy/panel/joinPay.js:190
+server.txt#78 | d1-sql | pay_requests | deploy/panel/joinPay.js:202
+server.txt#79 | d1-sql | pay_requests | deploy/panel/joinPay.js:215
+server.txt#80 | d1-sql | pay_requests | deploy/panel/joinPay.js:220
+server.txt#81 | d1-sql | pay_requests | deploy/panel/joinPay.js:230
+server.txt#82 | d1-sql | pay_requests | deploy/panel/joinPay.js:234
+server.txt#83 | d1-sql | pay_requests | deploy/panel/joinPay.js:260
+server.txt#84 | d1-sql | leads | deploy/panel/leads.js:79
+server.txt#85 | d1-sql | leads | deploy/panel/leads.js:85
+server.txt#86 | d1-sql | leads | deploy/panel/leads.js:120
+server.txt#183 | d1-sql | friend_asks | deploy/panel/selfJoin.js:111
+server.txt#184 | d1-sql | friend_asks | deploy/panel/selfJoin.js:113
+server.txt#1102 | route | /robots.txt | deploy/panel/gymPageServe.js:343
+server.txt#1103 | route | / | deploy/panel/gymPageServe.js:346
+server.txt#1104 | route | /gym-page/ | deploy/panel/gymPageServe.js:347
+server.txt#1105 | route | /p/ | deploy/panel/gymPageServe.js:349
+server.txt#1106 | route | /api/gym-page/ask | deploy/panel/gymPageServe.js:353
+server.txt#1107 | route | /api/gym-page/report | deploy/panel/gymPageServe.js:354
+server.txt#1108 | route | /api/gym-page/chat | deploy/panel/gymPageServe.js:356
+server.txt#1109 | route | /api/gym-page/chat-contact | deploy/panel/gymPageServe.js:356
+server.txt#1110 | route | /home | deploy/panel/hosts.js:114
+server.txt#1111 | route | /home/ | deploy/panel/hosts.js:114
+server.txt#1112 | route | /home/index.html | deploy/panel/hosts.js:114
+server.txt#1113 | route | /gyms | deploy/panel/hosts.js:115
+server.txt#1114 | route | /gyms/ | deploy/panel/hosts.js:115
+server.txt#1115 | route | /gyms/index.html | deploy/panel/hosts.js:115
+server.txt#1116 | route | / | deploy/panel/hosts.js:120
+server.txt#1117 | route | /api/self-join/pay-info | deploy/panel/joinPay.js:274
+server.txt#1118 | route | /api/self-join/pay-check | deploy/panel/joinPay.js:287
+server.txt#1119 | route | /api/self-join/pay-said | deploy/panel/joinPay.js:293
+server.txt#1170 | route-pattern | ^\/p\/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})\/([0-9a-f]{32})\.webp$ | deploy/panel/gymPageServe.js:267
+server.txt#1171 | route-pattern | ^\/([A-Za-z0-9-]{3,48})\/?$ | deploy/panel/gymPageServe.js:363
+server.txt#1172 | route-pattern | ^\/api(\/|$) | deploy/panel/hosts.js:195
+server.txt#1244 | rpc-name | friend_invite_send | deploy/panel/friend.js:118
+server.txt#1245 | rpc-name | gym_page_public | deploy/panel/gymPageServe.js:146
+server.txt#1246 | rpc-name | gym_page_ask_send | deploy/panel/gymPageServe.js:239
+server.txt#1247 | rpc-name | gym_page_report_send | deploy/panel/gymPageServe.js:249
+server.txt#1248 | rpc-name | self_join_pay_gym | deploy/panel/joinPay.js:103
+server.txt#1249 | rpc-name | page_chat_ask | deploy/panel/pageChat.js:337
+server.txt#1250 | rpc-name | page_chat_reply | deploy/panel/pageChat.js:365
+server.txt#1251 | rpc-name | page_chat_contact | deploy/panel/pageChat.js:414
+server.txt#1262 | rpc-name | self_join_send | deploy/panel/selfJoin.js:146
+## KEY PATTERN HITS IN THIS AREA (file:line | pattern; never the value)
+(none)
+## DATABASE TEST FILES
+(none)
+## MACHINE FILES (docs/system-map/_sources/machine/)
+db-security.json: ready
+cve.json: ready
+secrets-hits.txt: ready
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-web-100 | live | Open the right site at each MettleUp address: old and www addresses redirect, mettleup.fit shows the member site, gyms.m | deploy/panel/hosts.js:110
+F-web-102 | behind switch | Gym-owner marketing site (gyms.mettleup.fit, /home): what MettleUp does for a gym, English or Hindi, try your gym's name | apps/dashboard/public/home/index.html:1
+F-web-104 | behind switch | Member marketing site (mettleup.fit, /member-site): the free workout app for phone and watch, English or Hindi, 'Send to | apps/dashboard/public/member-site/index.html:1
+F-web-113 | behind switch | A gym's own free web page (join.mettleup.fit/<gym>): plans, timings, address and maps links, facilities, photos, WhatsAp | deploy/panel/gymPageServe.js:341
+F-web-114 | behind switch | Ask the gym a question, or report a page, from the gym's web page | deploy/panel/gymPageServe.js:353
+F-web-115 | behind switch | AI helper chat on the gym's web page: answers from the page only, else 'I will ask the gym'; the visitor can leave a num | deploy/panel/gymPageServe.js:356
+F-web-138 | live | Install the admin app on the device and open it with no internet (service worker) | apps/dashboard/public/sw.js:1
+F-web-139 | live | Company and legal pages: About, Contact, Privacy, Terms, Refunds, Shipping and delivery, Data agreement for gyms, Delete | apps/dashboard/public/about.html:1
