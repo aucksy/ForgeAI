@@ -38,28 +38,28 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | A3 | 11 | 5.2 (207k tokens) |
 | A4 | 13 | 4.1 (162k tokens) |
 | A4b | 2 | 5.1 (204k tokens) |
-| A5 | 92 | 5.1 (203k tokens) |
+| A5 | 93 | 5.1 (203k tokens) |
 | L4 | 1 | 4.4 (177k tokens) |
 
 ## Work items
-Counts: 0 todo, 5 in progress, 189 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 0 todo, 5 in progress, 190 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
 | A5-phone-onboarding-db-1 | A5 | journeys: 9 features (19 feature x role pairs) of phone / phone/onboarding-db; list in _work/items/A5-phone-onboarding-db-1.txt | in progress | _work/A5-phone-onboarding-db-1.md |  |
 | A5-phone-onboarding-db-2 | A5 | journeys: 8 features (18 feature x role pairs) of phone / phone/onboarding-db; list in _work/items/A5-phone-onboarding-db-2.txt | in progress | _work/A5-phone-onboarding-db-2.md |  |
 | A5-phone-onboarding-db-3 | A5 | journeys: 8 features (17 feature x role pairs) of phone / phone/onboarding-db; list in _work/items/A5-phone-onboarding-db-3.txt | in progress | _work/A5-phone-onboarding-db-3.md |  |
-| A5-server-ci-workflows-1 | A5 | journeys: 8 features (10 feature x role pairs) of server / server/ci-workflows; list in _work/items/A5-server-ci-workflows-1.txt | in progress | _work/A5-server-ci-workflows-1.md |  |
 | A5-server-database-1-1 | A5 | journeys: 9 features (19 feature x role pairs) of server / server/database-1; list in _work/items/A5-server-database-1-1.txt | in progress | _work/A5-server-database-1-1.md |  |
-| A5-phone-lib-core-1 | A5 | journeys: 9 features (10 feature x role pairs) of phone / phone/lib-core; list in _work/items/A5-phone-lib-core-1.txt | done | _work/A5-phone-lib-core-1.md | 9 features (10 pairs): 49 full journeys and 74 type lines; 2 findings (S3): a clock set back stops the app update check; the privacy notice leaves out what help questions send (repeat of components-2-1: merge in 3H) |
+| A5-server-database-1-2 | A5 | journeys: 9 features (17 feature x role pairs) of server / server/database-1; list in _work/items/A5-server-database-1-2.txt | in progress | _work/A5-server-database-1-2.md |  |
 | A5-phone-lib-core-2 | A5 | journeys: 8 features (8 feature x role pairs) of phone / phone/lib-core; list in _work/items/A5-phone-lib-core-2.txt | done | _work/A5-phone-lib-core-2.md | 8 features (8 pairs): 37 full journeys and 59 type lines; 0 findings; seen in passing: the shop-moved hint is decided once at first launch, so an empty product list then hides it for good |
 | A5-phone-lib-core-3 | A5 | journeys: 8 features (8 feature x role pairs) of phone / phone/lib-core; list in _work/items/A5-phone-lib-core-3.txt | done | _work/A5-phone-lib-core-3.md | 8 features (8 pairs): 36 full journeys and 63 type lines; 1 finding (S3): watch screen-log caption leaves out workout marks, app version and update choice (repeat of native-2: merge in 3H) |
 | A5-phone-native-1 | A5 | journeys: 9 features (10 feature x role pairs) of phone / phone/native; list in _work/items/A5-phone-native-1.txt | done | _work/A5-phone-native-1.md | 9 features (10 pairs): 51 full journeys and 76 type lines; 1 finding (S3): gym messages may stay silent on OPPO and OnePlus phones (backup sound told the wrong channel importance) |
 | A5-phone-native-2 | A5 | journeys: 9 features (9 feature x role pairs) of phone / phone/native; list in _work/items/A5-phone-native-2.txt | done | _work/A5-phone-native-2.md | 9 features (9 pairs): 44 full journeys and 68 type lines; 2 findings (S3): watch screen-log switch text leaves out what is sent; check-up row says turn sound on when the silent alert lost its buzz |
 | A5-phone-native-3 | A5 | journeys: 8 features (9 feature x role pairs) of phone / phone/native; list in _work/items/A5-phone-native-3.txt | done | _work/A5-phone-native-3.md | 8 features (9 pairs): 51 full journeys and 64 type lines; 0 findings; seen in passing: workout notifications show set names on the lock screen; watch taps while disconnected are not queued |
 | A5-phone-native-4 | A5 | journeys: 8 features (9 feature x role pairs) of phone / phone/native; list in _work/items/A5-phone-native-4.txt | done | _work/A5-phone-native-4.md | 8 features (9 pairs): 46 full journeys and 63 type lines; 1 finding (S2): Erase all data can leave reminders and Health Connect on when an unrelated refresh fails |
+| A5-server-ci-workflows-1 | A5 | journeys: 8 features (10 feature x role pairs) of server / server/ci-workflows; list in _work/items/A5-server-ci-workflows-1.txt | done | _work/A5-server-ci-workflows-1.md | 8 features (10 pairs): 44 full journeys and 78 type lines; 2 findings (S3): a third Play run can cancel the release's own upload; missing Razorpay test keys pass green as SKIPPED |
 | A5-server-ci-workflows-2 | A5 | journeys: 8 features (11 feature x role pairs) of server / server/ci-workflows; list in _work/items/A5-server-ci-workflows-2.txt | done | _work/A5-server-ci-workflows-2.md | 8 features (11 pairs): 47 full journeys and 85 type lines; 1 finding (S3): a push that changes only the release signing script starts no signing rehearsal |
-(+ 181 older done items, not shown)
+(+ 182 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).

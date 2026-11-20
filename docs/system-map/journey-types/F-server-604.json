@@ -1,0 +1,9 @@
+[
+{"kind":"jtype","id":"JT-F-server-604-system-10","feature":"F-server-604","role":"system","type":10,"applies":"no","why_not":"uses a fresh in-memory database each run","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-server-ci-workflows-1"},
+{"kind":"jtype","id":"JT-F-server-604-system-11","feature":"F-server-604","role":"system","type":11,"applies":"no","why_not":"one runner, one call path","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-server-ci-workflows-1"},
+{"kind":"jtype","id":"JT-F-server-604-system-4","feature":"F-server-604","role":"system","type":4,"applies":"no","why_not":"fixed Rs 1 amount; no item counts","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-server-ci-workflows-1"},
+{"kind":"jtype","id":"JT-F-server-604-system-5","feature":"F-server-604","role":"system","type":5,"applies":"no","why_not":"the link is made and cancelled within the run; no date edge","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-server-ci-workflows-1"},
+{"kind":"jtype","id":"JT-F-server-604-system-7","feature":"F-server-604","role":"system","type":7,"applies":"yes","why_not":"none","variants":["T7-offline"],"at_step":2,"entity":"E-pay-requests","note":"Razorpay unreachable or the 5-minute timeout after the link is made can leave the Rs 1 test link uncancelled","wi":"A5-server-ci-workflows-1"},
+{"kind":"jtype","id":"JT-F-server-604-system-8","feature":"F-server-604","role":"system","type":8,"applies":"no","why_not":"no settings; test mode is forced (PAY_LIVE not set)","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-server-ci-workflows-1"},
+{"kind":"jtype","id":"JT-F-server-604-system-9","feature":"F-server-604","role":"system","type":9,"applies":"no","why_not":"nothing on a screen","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-server-ci-workflows-1"}
+]
