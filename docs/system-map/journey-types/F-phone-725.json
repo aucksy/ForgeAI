@@ -1,0 +1,9 @@
+[
+{"kind":"jtype","id":"JT-F-phone-725-member-10","feature":"F-phone-725","role":"member","type":10,"applies":"yes","why_not":"none","variants":["T10-olddata"],"at_step":1,"entity":"none","note":"A member updating with routines already saved must never see the card","wi":"A5-phone-tracker-components-1-2"},
+{"kind":"jtype","id":"JT-F-phone-725-member-11","feature":"F-phone-725","role":"member","type":11,"applies":"no","why_not":"phone only: the watch has no routine guide card","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-phone-tracker-components-1-2"},
+{"kind":"jtype","id":"JT-F-phone-725-member-4","feature":"F-phone-725","role":"member","type":4,"applies":"no","why_not":"no list or text: the card is shown or not","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-phone-tracker-components-1-2"},
+{"kind":"jtype","id":"JT-F-phone-725-member-5","feature":"F-phone-725","role":"member","type":5,"applies":"no","why_not":"no time edge: the card depends only on routines and the saved mark","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-phone-tracker-components-1-2"},
+{"kind":"jtype","id":"JT-F-phone-725-member-7","feature":"F-phone-725","role":"member","type":7,"applies":"yes","why_not":"none","variants":["T7-doubletap","T7-closed"],"at_step":2,"entity":"none","note":"Double tap guarded (800 ms); app closed during the mark save","wi":"A5-phone-tracker-components-1-2"},
+{"kind":"jtype","id":"JT-F-phone-725-member-8","feature":"F-phone-725","role":"member","type":8,"applies":"no","why_not":"no setting changes the card","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-phone-tracker-components-1-2"},
+{"kind":"jtype","id":"JT-F-phone-725-member-9","feature":"F-phone-725","role":"member","type":9,"applies":"yes","why_not":"none","variants":["T9-bigfont","T9-360"],"at_step":1,"entity":"none","note":"Two-line text and buttons at large text","wi":"A5-phone-tracker-components-1-2"}
+]
