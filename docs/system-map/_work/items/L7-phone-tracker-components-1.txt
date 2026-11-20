@@ -43,5 +43,5 @@ F-phone-735 | live | Month report: calendar with the days trained filled in | ap
 F-phone-736 | live | Muscle tips: smart suggestion to add or swap an exercise in a routine | apps/mobile/src/tracker/components/MuscleTipNote.tsx:27
 F-phone-737 | live | Rest alerts status: says when alerts are blocked, silent or may be late, tap to fix | apps/mobile/src/tracker/components/RestAlertsStatusRow.tsx:17
 ## MACHINE FILES (docs/system-map/_sources/machine/)
-db-perf.json: MISSING (items that need it = could-not-check)
-pagespeed.json: MISSING (items that need it = could-not-check)
+db-perf.json: ready
+pagespeed.json: ready

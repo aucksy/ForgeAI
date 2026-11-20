@@ -56,4 +56,4 @@ F-watch-121 | live | "Workout saved" shown for about 4 s after Finish on the pho
 F-watch-122 | live | Get MettleUp on your phone: when the phone has no MettleUp app, "Open on phone" opens its Play Store page | apps/mobile/android/wear/src/main/java/com/forgeai/wear/WatchScreens.kt:725
 F-watch-123 | live | "Phone not connected" screen (a running rest and its buzz still show first) | apps/mobile/android/wear/src/main/java/com/forgeai/wear/WatchScreens.kt:835
 ## MACHINE FILES (docs/system-map/_sources/machine/)
-field-fill.csv: MISSING (items that need it = could-not-check)
+field-fill.csv: ready

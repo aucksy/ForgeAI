@@ -41,4 +41,4 @@ F-panel-634 | live | The gym's workout of the day (pick or build one for today o
 F-panel-635 | live | Home tiles: today's collection, active members, expiry buckets, expired, birthdays, came in today; each opens its member | apps/dashboard/src/crm/logic/homeTiles.ts:82
 F-panel-636 | live | Messages from MettleUp HQ in the notification bell | apps/dashboard/src/crm/logic/hqNews.ts:83
 ## MACHINE FILES (docs/system-map/_sources/machine/)
-a11y.json: MISSING (items that need it = could-not-check)
+a11y.json: ready

@@ -31,4 +31,4 @@ F-phone-1023 | live | Plates and bars: my gym's plates and bar for the plate cal
 F-phone-1024 | live | Workout settings kept on the phone (Track RPE, AI coach note, sounds and rest-over sound, body figure, weekly goal, Prev | apps/mobile/src/tracker/store/trackerPrefsStore.ts:240
 F-phone-1025 | live | Progress > Your lifts > 'Any exercise': pick an exercise to chart (forgotten after a restart) | apps/mobile/src/tracker/store/progressPickStore.ts:16
 ## MACHINE FILES (docs/system-map/_sources/machine/)
-limits.json: MISSING (items that need it = could-not-check)
+limits.json: ready

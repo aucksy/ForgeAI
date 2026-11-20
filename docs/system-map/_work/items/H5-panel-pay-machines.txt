@@ -37,4 +37,4 @@ F-panel-125 | live | Payments settings: UPI QR status (uses the gym's UPI ID, no
 F-panel-126 | behind switch | Connect or disconnect a payment company (Razorpay, Cashfree; PayU and PhonePe only if already on them) by keys or compan | apps/dashboard/src/crm/pay/PaymentsScreen.tsx:129
 F-panel-127 | behind switch | Where members can pay online: "Take payments in the member app" and "Take payments when people join online" switches | apps/dashboard/src/crm/pay/PaymentsScreen.tsx:183
 ## MACHINE FILES (docs/system-map/_sources/machine/)
-live-state.csv: MISSING (items that need it = could-not-check)
+live-state.csv: ready

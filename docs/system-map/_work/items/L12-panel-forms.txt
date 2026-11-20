@@ -30,4 +30,4 @@ F-panel-422 | live | No plans yet: the sell sheet tells the owner to add a plan,
 F-panel-423 | live | Cancel (void) a receipt with a written reason; the amount goes back onto the member's dues unless the plan is cancelled | apps/dashboard/src/crm/ui/forms/VoidPaymentSheet.tsx:24
 F-panel-512 | live | Sell or renew a membership, freeze or add extra days, change a future start date, cancel a membership | apps/dashboard/src/crm/ui/forms/SellMembershipSheet.tsx:34
 ## MACHINE FILES (docs/system-map/_sources/machine/)
-play-report.md: MISSING (items that need it = could-not-check)
+play-report.md: ready

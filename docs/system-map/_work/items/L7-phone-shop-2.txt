@@ -41,5 +41,5 @@ F-phone-431 | behind switch | Pay the gym from the app: UPI QR, UPI app, or onli
 F-phone-432 | live | Recommend MettleUp to your gym (share link on the no-gym screen) | apps/mobile/src/shop/recommendGym.ts:1
 F-phone-433 | behind switch | MettleUp Plus: paid extras lock 7 days after the plan ends | apps/mobile/src/shop/gymApi.ts:727
 ## MACHINE FILES (docs/system-map/_sources/machine/)
-db-perf.json: MISSING (items that need it = could-not-check)
-pagespeed.json: MISSING (items that need it = could-not-check)
+db-perf.json: ready
+pagespeed.json: ready

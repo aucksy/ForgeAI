@@ -50,4 +50,4 @@ F-phone-1530 | live | Reaching the server when Supabase is blocked: every reques
 F-phone-1531 | live | Gym logo and shop photos load through our own address when the saved link is Supabase's | apps/mobile/src/cloud/picture.ts:20
 F-phone-1532 | behind switch | MettleUp Plus limits (paid member plan): more than 7 exercises of your own and charts older than 3 months are refused wi | apps/mobile/src/cloud/limitsFlag.ts:21
 ## MACHINE FILES (docs/system-map/_sources/machine/)
-field-fill.csv: MISSING (items that need it = could-not-check)
+field-fill.csv: ready

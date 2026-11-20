@@ -43,4 +43,4 @@ F-phone-637 | live | Workout tab: folders and routines list | apps/mobile/src/tr
 F-phone-638 | live | Live workout: move exercises up or down, supersets move as one block, swap an exercise after a tick; pause and resume th | apps/mobile/src/tracker/services/workoutOrder.ts:1
 F-phone-639 | live | Photos on a workout (up to 4, private on the phone) and "Watch your trainer" video links from the gym's plans and workou | apps/mobile/src/tracker/services/workoutPhotos.ts:1
 ## MACHINE FILES (docs/system-map/_sources/machine/)
-a11y.json: MISSING (items that need it = could-not-check)
+a11y.json: ready

@@ -70,4 +70,4 @@ F-panel-1102 | live | Staff & sign-in: add or remove people, set their job, make
 F-panel-1103 | live | Gym records store: pull and push to the gym server, browser-only gym, saved copy and outbox for an offline front desk, R | apps/dashboard/src/crm/auth/api.ts:208
 F-panel-1136 | live | Demo gym at /demo: made-up sample gym in page memory, locked away from the real gym and the network | apps/dashboard/src/crm/data/demo.ts:1
 ## MACHINE FILES (docs/system-map/_sources/machine/)
-field-fill.csv: MISSING (items that need it = could-not-check)
+field-fill.csv: ready

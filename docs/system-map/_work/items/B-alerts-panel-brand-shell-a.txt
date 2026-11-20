@@ -12,4 +12,4 @@ F-panel-3101 | live | Branding: suggest a gym colour from the uploaded logo | ap
 F-panel-1105 | live | Branding: gym logo and colours for the member app, logo upload, remove logo background, phone and shortcut preview | apps/dashboard/src/crm/brand/BrandingScreen.tsx:41
 F-panel-3101 | live | Branding: suggest a gym colour from the uploaded logo | apps/dashboard/src/crm/brand/brandLogic.ts:141
 ## MACHINE FILES (docs/system-map/_sources/machine/)
-field-fill.csv: MISSING (items that need it = could-not-check)
+field-fill.csv: ready

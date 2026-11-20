@@ -29,4 +29,4 @@ F-phone-236 | live | Exercise library: the exercises list, one exercise's page (
 F-phone-237 | live | Body measures: body weight, ten measurements and photos on one page with a graph, add a day's entry, trainer's measureme | apps/mobile/src/app/measures/index.tsx:66
 F-phone-238 | live | Gym tab: join my gym, the gym's home, join by invite link (forgeai://j), check in by QR link (forgeai://c) and the poste | apps/mobile/src/app/(tabs)/shop.tsx:2
 ## MACHINE FILES (docs/system-map/_sources/machine/)
-live-state.csv: MISSING (items that need it = could-not-check)
+live-state.csv: ready

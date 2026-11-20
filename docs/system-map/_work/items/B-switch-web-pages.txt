@@ -26,4 +26,4 @@ F-web-115 | behind switch | AI helper chat on the gym's web page: answers from t
 F-web-138 | live | Install the admin app on the device and open it with no internet (service worker) | apps/dashboard/public/sw.js:1
 F-web-139 | live | Company and legal pages: About, Contact, Privacy, Terms, Refunds, Shipping and delivery, Data agreement for gyms, Delete | apps/dashboard/public/about.html:1
 ## MACHINE FILES (docs/system-map/_sources/machine/)
-field-fill.csv: MISSING (items that need it = could-not-check)
+field-fill.csv: ready

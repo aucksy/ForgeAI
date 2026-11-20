@@ -23,4 +23,4 @@ F-panel-915 | behind switch | Helper cards: a question back with choices, Where 
 F-panel-916 | behind switch | Find the member the owner named, including Hindi-script and loose spellings; pick one when several match, or offer to ad | apps/dashboard/src/crm/assistant/match.ts:29
 F-panel-917 | behind switch | Privacy: phone numbers and email addresses in the owner's sentence are swapped for placeholders before the AI sees them, | apps/dashboard/src/crm/assistant/mask.ts:23
 ## MACHINE FILES (docs/system-map/_sources/machine/)
-a11y.json: MISSING (items that need it = could-not-check)
+a11y.json: ready

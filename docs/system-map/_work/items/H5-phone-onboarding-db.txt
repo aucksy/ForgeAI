@@ -34,4 +34,4 @@ F-phone-1625 | live | Light or dark look (Same as phone, Light or Dark; follows 
 F-phone-1626 | live | The gym's colours and logo across the whole app (after joining; the logo opening at launch; MettleUp's look comes back o | apps/mobile/src/theme/gymTheme.ts:153
 F-phone-1627 | live | App settings kept on the phone (kg or lb, language, AI provider and model, voice on or off, speak replies) | apps/mobile/src/store/settingsStore.ts:24
 ## MACHINE FILES (docs/system-map/_sources/machine/)
-live-state.csv: MISSING (items that need it = could-not-check)
+live-state.csv: ready

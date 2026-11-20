@@ -45,4 +45,4 @@ F-panel-736 | live | Workout offer: train N times in N days, get free days (set 
 F-panel-737 | live | Workout plans from the gym or trainer, with ready-made programs | apps/dashboard/src/crm/logic/workoutPlans.ts:80
 F-panel-738 | live | What's new in the admin app (card on Today after an update, full list in Settings) | apps/dashboard/src/crm/logic/whatsNew.ts:41
 ## MACHINE FILES (docs/system-map/_sources/machine/)
-live-state.csv: MISSING (items that need it = could-not-check)
+live-state.csv: ready

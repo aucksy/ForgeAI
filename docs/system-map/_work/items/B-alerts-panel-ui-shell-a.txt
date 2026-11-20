@@ -38,4 +38,4 @@ F-panel-521 | live | Workout offer: check a member's workout code at the desk ag
 F-panel-535 | hidden | Pay MettleUp online and open MettleUp receipts | apps/dashboard/src/crm/ui/BillingOnline.tsx:65
 F-panel-536 | hidden | Stopped-paying line on Today: 7 extra days, then basic mode, then read-only, with Pay now for the owner | apps/dashboard/src/crm/ui/LapseBanner.tsx:30
 ## MACHINE FILES (docs/system-map/_sources/machine/)
-field-fill.csv: MISSING (items that need it = could-not-check)
+field-fill.csv: ready

@@ -27,5 +27,5 @@ F-phone-1324 | hidden | Coach chat food cards: a logged meal with its macros, an
 F-phone-1325 | hidden | Coach chat voice: hold the mic to speak a message instead of typing | apps/mobile/src/components/chat/InputBar.tsx:89
 F-phone-1326 | live | Exercise page, History tab: every workout with this exercise, newest first, with its sets and stats; tap one to open tha | apps/mobile/src/components/exercise/SessionHistory.tsx:45
 ## MACHINE FILES (docs/system-map/_sources/machine/)
-db-perf.json: MISSING (items that need it = could-not-check)
-pagespeed.json: MISSING (items that need it = could-not-check)
+db-perf.json: ready
+pagespeed.json: ready

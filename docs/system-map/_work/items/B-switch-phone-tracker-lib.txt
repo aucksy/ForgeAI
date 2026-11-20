@@ -80,4 +80,4 @@ F-phone-1132 | live | The member's gym on every share picture (logo and name on 
 F-phone-1133 | live | Share the monthly report or the year in review as a picture | apps/mobile/src/tracker/share/reportCard.ts:96
 F-phone-1134 | live | Before/after picture from two progress photos (Before, After, the two days, how far apart; never a body number) | apps/mobile/src/tracker/share/beforeAfterCard.ts:78
 ## MACHINE FILES (docs/system-map/_sources/machine/)
-field-fill.csv: MISSING (items that need it = could-not-check)
+field-fill.csv: ready

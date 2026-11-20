@@ -76,4 +76,4 @@ F-phone-1730 | live | Take or pick a picture: the picture is kept when Android c
 F-phone-1731 | hidden | On iPhone, parts not built yet say so on screen instead of showing an Android page (whether an iPhone build is with memb | apps/mobile/src/lib/onIphone.ts:8
 F-phone-1732 | live | Every screen that reads data: loading skeleton, 'Couldn't load' with Try again, quiet retries, a second tap is ignored w | apps/mobile/src/lib/loadState.ts:1
 ## MACHINE FILES (docs/system-map/_sources/machine/)
-field-fill.csv: MISSING (items that need it = could-not-check)
+field-fill.csv: ready

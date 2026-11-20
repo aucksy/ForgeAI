@@ -37,4 +37,4 @@ F-phone-930 | live | Share a routine or a folder as text or as a file, and impor
 F-phone-931 | live | Routine sets: each set of a routine exercise can be a warm-up, normal, drop or failure set with its own target reps, wei | apps/mobile/src/tracker/plans/routineSets.ts:52
 F-phone-932 | live | Today's routine: one answer for Home, the Workout tab, the Today page, reminders and widgets for which routine is next i | apps/mobile/src/tracker/plans/todayPlan.ts:180
 ## MACHINE FILES (docs/system-map/_sources/machine/)
-limits.json: MISSING (items that need it = could-not-check)
+limits.json: ready

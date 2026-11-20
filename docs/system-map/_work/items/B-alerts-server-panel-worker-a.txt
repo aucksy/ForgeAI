@@ -80,4 +80,4 @@ F-server-139 | live | Feature switches for the admin app (/api/switches): says w
 F-server-140 | live | Free demo request form on the gym-owner landing page: the gym's contact details are kept for MettleUp to call back, with | deploy/panel/worker.js:167
 F-server-141 | hidden | Gym's own free web page (join.mettleup.fit/<gym>): the gym's plans and prices, timings, address with map links, faciliti | deploy/panel/worker.js:93
 ## MACHINE FILES (docs/system-map/_sources/machine/)
-field-fill.csv: MISSING (items that need it = could-not-check)
+field-fill.csv: ready

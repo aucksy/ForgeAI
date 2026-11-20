@@ -44,4 +44,4 @@ F-phone-836 | live | Badges row on the Profile (earned count, newest marks, open
 F-phone-837 | live | Profile workouts feed (card per workout with photo or letter, stats, photos; menu: save as routine, repeat, edit, share, | apps/mobile/src/tracker/components/profile/FeedCard.tsx:59
 F-phone-838 | live | Profile history chart (duration, kg lifted, reps over time; tap a point to see those workouts) and the Today goal card | apps/mobile/src/tracker/components/profile/HistoryChartCard.tsx:61
 ## MACHINE FILES (docs/system-map/_sources/machine/)
-limits.json: MISSING (items that need it = could-not-check)
+limits.json: ready

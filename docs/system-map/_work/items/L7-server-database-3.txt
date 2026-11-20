@@ -43,5 +43,5 @@ F-server-533 | hidden | AI helper on the gym web page: every visitor chat lands 
 F-server-534 | hidden | Record of every direct read of gym data made with the database owner login, kept 2 years; the gym owner sees the ones th | supabase/migrations/0097_direct_read_log.sql:162
 F-server-535 | hidden | The bell knows what is done and what each person has read (alerts leave when the thing is handled; read state per person | supabase/migrations/0098_alerts_done_and_read.sql:428
 ## MACHINE FILES (docs/system-map/_sources/machine/)
-db-perf.json: MISSING (items that need it = could-not-check)
-pagespeed.json: MISSING (items that need it = could-not-check)
+db-perf.json: ready
+pagespeed.json: ready

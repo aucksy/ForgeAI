@@ -41,5 +41,5 @@ F-server-431 | hidden | Forgot PIN: a WhatsApp code proves the mobile number, th
 F-server-432 | behind switch | Create my gym online; newest version adds a WhatsApp-checked number and one free trial per number (that version: file he | supabase/migrations/0061_phone_codes.sql:140
 F-server-433 | behind switch | Plan limits checked on the server: Pro extras closed for Starter gyms, and grace, basic and read-only states when a gym  | supabase/migrations/0062_plan_features.sql:99
 ## MACHINE FILES (docs/system-map/_sources/machine/)
-db-perf.json: MISSING (items that need it = could-not-check)
-pagespeed.json: MISSING (items that need it = could-not-check)
+db-perf.json: ready
+pagespeed.json: ready

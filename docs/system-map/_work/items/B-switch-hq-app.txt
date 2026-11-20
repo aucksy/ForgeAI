@@ -76,4 +76,4 @@ F-hq-131 | live | Your payment details: set the UPI ID and bank account that gym
 F-hq-132 | live | Log: everything done in HQ and every look at a gym, 100 lines at a time with Show older | apps/hq/public/app.js:1262
 F-hq-133 | live | Install HQ on the phone (Install app button, iPhone hint), the phone More menu sheet, and the plain You're offline page | apps/hq/public/pwa.js:15
 ## MACHINE FILES (docs/system-map/_sources/machine/)
-field-fill.csv: MISSING (items that need it = could-not-check)
+field-fill.csv: ready

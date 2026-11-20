@@ -72,4 +72,4 @@ F-panel-530 | behind switch | Your web page: make, preview and publish the gym's
 F-panel-533 | hidden | MettleUp Plus lock: the owner decides whether a member's paid app extras lock 7 days after their plan ends | apps/dashboard/src/crm/ui/screens/PlusLock.tsx:28
 F-panel-534 | live | Pay MettleUp: the free-trial line on Today, pick Starter or Pro, pay by UPI or bank transfer and send the proof | apps/dashboard/src/crm/ui/screens/PayMettleUp.tsx:88
 ## MACHINE FILES (docs/system-map/_sources/machine/)
-live-state.csv: MISSING (items that need it = could-not-check)
+live-state.csv: ready

@@ -24,4 +24,4 @@ F-server-619 | live | Record the watch app demo video for Google Play's foregrou
 F-server-620 | live | Watch app build and checks on pushes that touch the watch: unit tests, rendered watch screens, same-signer and signing d | .github/workflows/wear-build.yml:17
 F-server-621 | live | WhatsApp probe: one test message (plain text and/or the login_code template) to the owner's own phone, to learn what Met | .github/workflows/whatsapp-probe.yml:13
 ## MACHINE FILES (docs/system-map/_sources/machine/)
-live-state.csv: MISSING (items that need it = could-not-check)
+live-state.csv: ready

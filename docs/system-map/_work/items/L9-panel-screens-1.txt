@@ -67,4 +67,4 @@ F-panel-532 | behind switch | Busy machines: the owner switches it on and types 
 F-panel-537 | behind switch | AI Assistant: ask a question or give a task in Hindi or English | apps/dashboard/src/crm/ui/screens/Assistant.tsx:11
 F-panel-538 | live | Help and feedback: write to MettleUp, see every time MettleUp support opened the gym's records, and the support email li | apps/dashboard/src/crm/ui/screens/Feedback.tsx:29
 ## MACHINE FILES (docs/system-map/_sources/machine/)
-a11y.json: MISSING (items that need it = could-not-check)
+a11y.json: ready

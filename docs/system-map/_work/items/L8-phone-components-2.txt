@@ -35,4 +35,4 @@ F-phone-1427 | live | Undo bar after a delete (stays at least 6 seconds) | apps/
 F-phone-1428 | live | 'Couldn't load, try again' state and the short error line under a failed button | apps/mobile/src/components/ui/LoadError.tsx:23
 F-phone-1429 | live | Accessibility: text grows with the phone's font size (capped), 48 dp touch areas, screen-reader wording, less motion whe | apps/mobile/src/components/ui/a11y.ts:28
 ## MACHINE FILES (docs/system-map/_sources/machine/)
-limits.json: MISSING (items that need it = could-not-check)
+limits.json: ready

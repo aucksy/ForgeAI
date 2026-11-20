@@ -41,4 +41,4 @@ F-server-233 | behind switch | Gym alerts reach the staff's browsers with the ad
 F-server-234 | behind switch | Direct-read record: every 10 minutes, reads made with the database owner login are copied to the gym server so gym owner | deploy/hq/readLog.js:226
 F-server-235 | hidden | Entry machines (eSSL / ZKTeco) send their punches to MettleUp at /iclock/ (gate Worker: written, NOT deployed, its addre | deploy/gate/worker.ts:24
 ## MACHINE FILES (docs/system-map/_sources/machine/)
-limits.json: MISSING (items that need it = could-not-check)
+limits.json: ready

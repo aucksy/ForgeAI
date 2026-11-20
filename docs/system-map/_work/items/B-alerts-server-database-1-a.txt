@@ -82,4 +82,4 @@ F-server-334 | live | Member cloud copy: a signed-in member's workouts, routines
 F-server-335 | hidden | Free plan limits for the member app (routines 4, own exercises 7, charts 3 months), one switch, shipped off (file header | supabase/migrations/0032_member_cloud.sql:111
 F-server-336 | live | Accept the terms and the data agreement online: the owner ticks the box, each acceptance kept for ever (file header says | supabase/migrations/0033_terms_acceptance.sql:107
 ## MACHINE FILES (docs/system-map/_sources/machine/)
-field-fill.csv: MISSING (items that need it = could-not-check)
+field-fill.csv: ready

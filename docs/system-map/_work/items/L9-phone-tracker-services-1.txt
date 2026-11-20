@@ -45,4 +45,4 @@ F-phone-537 | live | Save a progress photo to the phone gallery (through the pho
 F-phone-538 | live | Followed plan: which week it is and easy weeks (take one now, skip one, how often) | apps/mobile/src/tracker/services/planState.ts:1
 F-phone-539 | live | Get a routine folder from a ready program, the plan builder or a shared file, and follow it as the plan | apps/mobile/src/tracker/services/plansService.ts:1
 ## MACHINE FILES (docs/system-map/_sources/machine/)
-a11y.json: MISSING (items that need it = could-not-check)
+a11y.json: ready

@@ -92,4 +92,4 @@ F-panel-835 | behind switch | Alert settings: when the gym alerts come | apps/da
 F-panel-836 | behind switch | Alerts in this browser with the admin app closed (web push on/off) and send a test alert | apps/dashboard/src/crm/shop/webPushApi.ts:106
 F-panel-837 | behind switch | Workout of the day (and form video links): set or clear a day | apps/dashboard/src/crm/shop/wodApi.ts:35
 ## MACHINE FILES (docs/system-map/_sources/machine/)
-field-fill.csv: MISSING (items that need it = could-not-check)
+field-fill.csv: ready

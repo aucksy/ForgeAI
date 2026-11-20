@@ -41,4 +41,4 @@ F-phone-1233 | live | Gym-branded start-up screen (plain start screen so the gym
 F-phone-1234 | live | Erase all data also clears the phone side (Health Connect off, reminders, widgets, app-icon shortcuts) | apps/mobile/src/tracker/phone/phoneSync.ts:128
 F-phone-1235 | live | Member's saved choices for gym features kept on the phone (reminders from my gym, messages from my gym, name on leaderbo | apps/mobile/src/tracker/phone/phonePrefs.ts:145
 ## MACHINE FILES (docs/system-map/_sources/machine/)
-limits.json: MISSING (items that need it = could-not-check)
+limits.json: ready
