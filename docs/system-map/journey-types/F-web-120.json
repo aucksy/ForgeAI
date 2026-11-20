@@ -1,0 +1,10 @@
+[
+{"kind":"jtype","id":"JT-F-web-120-member-10","feature":"F-web-120","role":"member","type":10,"applies":"no","why_not":"nothing of the clip is stored; an older app without Speak types instead","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-web-pages-2"},
+{"kind":"jtype","id":"JT-F-web-120-member-11","feature":"F-web-120","role":"member","type":11,"applies":"no","why_not":"Speak lives in the member phone app only","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-web-pages-2"},
+{"kind":"jtype","id":"JT-F-web-120-member-2","feature":"F-web-120","role":"member","type":2,"applies":"no","why_not":"Speak is the only way in; typed feedback is F-web-117","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-web-pages-2"},
+{"kind":"jtype","id":"JT-F-web-120-member-4","feature":"F-web-120","role":"member","type":4,"applies":"yes","why_not":"none","variants":["T4-hinglish"],"at_step":1,"entity":"E-feedback","note":"Hindi speech must come back in readable letters","wi":"A5-web-pages-2"},
+{"kind":"jtype","id":"JT-F-web-120-member-5","feature":"F-web-120","role":"member","type":5,"applies":"yes","why_not":"none","variants":["T5-midnight"],"at_step":1,"entity":"E-ai-usage","note":"the clip count is per India day; it restarts at 00:00 IST","wi":"A5-web-pages-2"},
+{"kind":"jtype","id":"JT-F-web-120-member-7","feature":"F-web-120","role":"member","type":7,"applies":"yes","why_not":"none","variants":["T7-offline","T7-call","T7-locked"],"at_step":1,"entity":"E-feedback","note":"the clip stays on the phone on every answer but success","wi":"A5-web-pages-2"},
+{"kind":"jtype","id":"JT-F-web-120-member-8","feature":"F-web-120","role":"member","type":8,"applies":"yes","why_not":"none","variants":["T8-permission"],"at_step":1,"entity":"none","note":"microphone refused: the member must still be able to type","wi":"A5-web-pages-2"},
+{"kind":"jtype","id":"JT-F-web-120-member-9","feature":"F-web-120","role":"member","type":9,"applies":"yes","why_not":"none","variants":["T9-360","T9-bigfont"],"at_step":2,"entity":"none","note":"the check-the-text box with Send reachable","wi":"A5-web-pages-2"}
+]

@@ -1,0 +1,9 @@
+[
+{"kind":"jtype","id":"JT-F-web-106-hq-admin-10","feature":"F-web-106","role":"HQ admin","type":10,"applies":"no","why_not":"each version is fetched by its own tag","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-web-pages-2"},
+{"kind":"jtype","id":"JT-F-web-106-hq-admin-11","feature":"F-web-106","role":"HQ admin","type":11,"applies":"no","why_not":"one browser does the whole step","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-web-pages-2"},
+{"kind":"jtype","id":"JT-F-web-106-hq-admin-4","feature":"F-web-106","role":"HQ admin","type":4,"applies":"no","why_not":"one file per call; no list or text","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-web-pages-2"},
+{"kind":"jtype","id":"JT-F-web-106-hq-admin-5","feature":"F-web-106","role":"HQ admin","type":5,"applies":"no","why_not":"files are picked by version, not by date","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-web-pages-2"},
+{"kind":"jtype","id":"JT-F-web-106-hq-admin-7","feature":"F-web-106","role":"HQ admin","type":7,"applies":"yes","why_not":"none","variants":["T7-offline"],"at_step":1,"entity":"none","note":"a dropped 56 MB transfer must not be uploaded to Play as whole","wi":"A5-web-pages-2"},
+{"kind":"jtype","id":"JT-F-web-106-hq-admin-8","feature":"F-web-106","role":"HQ admin","type":8,"applies":"no","why_not":"no settings","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-web-pages-2"},
+{"kind":"jtype","id":"JT-F-web-106-hq-admin-9","feature":"F-web-106","role":"HQ admin","type":9,"applies":"no","why_not":"no screen; a file download","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-web-pages-2"}
+]
