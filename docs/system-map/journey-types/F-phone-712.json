@@ -1,0 +1,10 @@
+[
+{"kind":"jtype","id":"JT-F-phone-712-member-10","feature":"F-phone-712","role":"member","type":10,"applies":"yes","why_not":"none","variants":["T10-olddata"],"at_step":1,"entity":"none","note":"plans saved before easyUntil existed","wi":"A5-phone-tracker-components-1-1"},
+{"kind":"jtype","id":"JT-F-phone-712-member-11","feature":"F-phone-712","role":"member","type":11,"applies":"yes","why_not":"none","variants":["T11-watch"],"at_step":1,"entity":"none","note":"watch workout may not show half the sets","wi":"A5-phone-tracker-components-1-1"},
+{"kind":"jtype","id":"JT-F-phone-712-member-12","feature":"F-phone-712","role":"member","type":12,"applies":"no","why_not":"a note about the member's own plan; nothing stored or shared","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-phone-tracker-components-1-1"},
+{"kind":"jtype","id":"JT-F-phone-712-member-4","feature":"F-phone-712","role":"member","type":4,"applies":"no","why_not":"no list or text input","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-phone-tracker-components-1-1"},
+{"kind":"jtype","id":"JT-F-phone-712-member-5","feature":"F-phone-712","role":"member","type":5,"applies":"yes","why_not":"none","variants":["T5-monday","T5-midnight"],"at_step":1,"entity":"none","note":"week counted from plan start; last day shown with shortDate","wi":"A5-phone-tracker-components-1-1"},
+{"kind":"jtype","id":"JT-F-phone-712-member-7","feature":"F-phone-712","role":"member","type":7,"applies":"no","why_not":"read-only note","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-phone-tracker-components-1-1"},
+{"kind":"jtype","id":"JT-F-phone-712-member-8","feature":"F-phone-712","role":"member","type":8,"applies":"yes","why_not":"none","variants":["T8-language"],"at_step":1,"entity":"none","note":"fixed English words","wi":"A5-phone-tracker-components-1-1"},
+{"kind":"jtype","id":"JT-F-phone-712-member-9","feature":"F-phone-712","role":"member","type":9,"applies":"yes","why_not":"none","variants":["T9-bigfont","T9-360"],"at_step":1,"entity":"none","note":"one line that wraps","wi":"A5-phone-tracker-components-1-1"}
+]

@@ -1,0 +1,10 @@
+[
+{"kind":"jtype","id":"JT-F-phone-715-member-10","feature":"F-phone-715","role":"member","type":10,"applies":"no","why_not":"no stored state of its own","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-phone-tracker-components-1-1"},
+{"kind":"jtype","id":"JT-F-phone-715-member-11","feature":"F-phone-715","role":"member","type":11,"applies":"yes","why_not":"none","variants":["T11-watch"],"at_step":2,"entity":"none","note":"copied sets on the watch","wi":"A5-phone-tracker-components-1-1"},
+{"kind":"jtype","id":"JT-F-phone-715-member-12","feature":"F-phone-715","role":"member","type":12,"applies":"no","why_not":"edits the member's own sets on the phone; nothing shared","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-phone-tracker-components-1-1"},
+{"kind":"jtype","id":"JT-F-phone-715-member-4","feature":"F-phone-715","role":"member","type":4,"applies":"yes","why_not":"none","variants":["T4-one"],"at_step":2,"entity":"none","note":"last set: no sets below, Copy hidden","wi":"A5-phone-tracker-components-1-1"},
+{"kind":"jtype","id":"JT-F-phone-715-member-5","feature":"F-phone-715","role":"member","type":5,"applies":"no","why_not":"no dates","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-phone-tracker-components-1-1"},
+{"kind":"jtype","id":"JT-F-phone-715-member-7","feature":"F-phone-715","role":"member","type":7,"applies":"yes","why_not":"none","variants":["T7-doubletap"],"at_step":1,"entity":"none","note":"fast taps step twice by design; Copy twice","wi":"A5-phone-tracker-components-1-1"},
+{"kind":"jtype","id":"JT-F-phone-715-member-8","feature":"F-phone-715","role":"member","type":8,"applies":"yes","why_not":"none","variants":["T8-units"],"at_step":1,"entity":"none","note":"lb steps vs kg steps","wi":"A5-phone-tracker-components-1-1"},
+{"kind":"jtype","id":"JT-F-phone-715-member-9","feature":"F-phone-715","role":"member","type":9,"applies":"yes","why_not":"none","variants":["T9-360","T9-bigfont"],"at_step":1,"entity":"none","note":"bar sized to fit, text shrinks to 0.6","wi":"A5-phone-tracker-components-1-1"}
+]
