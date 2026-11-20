@@ -1,0 +1,9 @@
+[
+{"kind":"jtype","id":"JT-F-phone-829-member-10","feature":"F-phone-829","role":"member","type":10,"applies":"yes","why_not":"none","variants":["T10-midway"],"at_step":2,"entity":"unknown","note":"Turning the switch on during an open workout: boxes on the open workout or from the next","wi":"A5-phone-tracker-components-2-3"},
+{"kind":"jtype","id":"JT-F-phone-829-member-11","feature":"F-phone-829","role":"member","type":11,"applies":"yes","why_not":"none","variants":["T11-watch"],"at_step":3,"entity":"unknown","note":"A set rated or ticked on the watch while the effort box is on","wi":"A5-phone-tracker-components-2-3"},
+{"kind":"jtype","id":"JT-F-phone-829-member-4","feature":"F-phone-829","role":"member","type":4,"applies":"no","why_not":"two on-off switches; no data to vary","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-phone-tracker-components-2-3"},
+{"kind":"jtype","id":"JT-F-phone-829-member-5","feature":"F-phone-829","role":"member","type":5,"applies":"no","why_not":"no dates","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-phone-tracker-components-2-3"},
+{"kind":"jtype","id":"JT-F-phone-829-member-7","feature":"F-phone-829","role":"member","type":7,"applies":"yes","why_not":"none","variants":["T7-closed"],"at_step":2,"entity":"none","note":"Switches are in the persisted prefs store","wi":"A5-phone-tracker-components-2-3"},
+{"kind":"jtype","id":"JT-F-phone-829-member-8","feature":"F-phone-829","role":"member","type":8,"applies":"yes","why_not":"none","variants":["T8-alerts"],"at_step":2,"entity":"none","note":"The switches themselves; with the coach turned off elsewhere the notes row must hide","wi":"A5-phone-tracker-components-2-3"},
+{"kind":"jtype","id":"JT-F-phone-829-member-9","feature":"F-phone-829","role":"member","type":9,"applies":"yes","why_not":"none","variants":["T9-bigfont"],"at_step":1,"entity":"none","note":"Two long captions beside switches","wi":"A5-phone-tracker-components-2-3"}
+]
