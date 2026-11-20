@@ -16,3 +16,6 @@ F-phone-123: 6 journeys, 7 type lines
 F-phone-123: tier unknown in features.json; no plan gate seen in build.tsx. Routines/folders live in the phone database (no entity id).
 F-phone-122: 7 journeys, 7 type lines
 F-phone-122: programs are built in; folders live in the phone database (no entity id).
+
+All 8 items done. 52 journeys, 56 type lines, 2 findings (110 rows). Code lines read: about 1,100.
+F-phone-113: added type 12 line (no) after merge check.
