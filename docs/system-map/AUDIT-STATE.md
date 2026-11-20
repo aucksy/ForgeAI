@@ -42,20 +42,18 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | A4b | 2 | 5.1 (204k tokens) |
 | A5 | 121 | 5.1 (202k tokens) |
 | L4 | 42 | 3.9 (157k tokens) |
-| L5 | 15 | 4.8 (193k tokens) |
+| L5 | 16 | 4.8 (192k tokens) |
 | L3 | 5 | 5.1 (204k tokens) |
 
 ## Work items
-Counts: 0 todo, 5 in progress, 280 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 0 todo, 4 in progress, 281 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
-| L5-phone-shop-1 | L5 | lens 5 (Money) x phone / phone/shop-1: 4 items | in progress | _work/L5-phone-shop-1.md |  |
 | L3-panel-screens-2 | L3 | lens 3 (Security) x panel / panel/screens-2: 11 items | in progress | _work/L3-panel-screens-2.md |  |
 | L5-phone-shop-2 | L5 | lens 5 (Money) x phone / phone/shop-2: 4 items | in progress | _work/L5-phone-shop-2.md |  |
 | L3-server-database-1 | L3 | lens 3 (Security) x server / server/database-1: 11 items | in progress | _work/L3-server-database-1.md |  |
 | L3-server-database-2 | L3 | lens 3 (Security) x server / server/database-2: 11 items | in progress | _work/L3-server-database-2.md |  |
-| L5-hq-app | L5 | lens 5 (Money) x hq / hq/app: 4 items | done | _work/L5-hq-app.md | L5 hq-app: 4 items, 8 new (S2 hand-set plan undone by old Starter switch; S2 credits card says 100 for Starter yearly (50); 5 S3; 1 S4), 4 reused; -06 repeats server-database-2-01 (merge in 3H) |
 | L3-panel-auth-data | L3 | lens 3 (Security) x panel / panel/auth-data: 11 items | done | _work/L3-panel-auth-data.md | L3 panel-auth-data: 11 items, 3 new (S3 panel sign-in never expires; S3 stranger can list your mobile, Forgot PIN lands you in their gym; S4 missing cross-gym test), 3 reused |
 | L5-panel-shop | L5 | lens 5 (Money) x panel / panel/shop: 4 items | done | _work/L5-panel-shop.md | L5 panel-shop: 4 items, 4 new (3 S2: online-paid shop order shows unpaid, desk charges again; paid order cancellable, no refund; test payment releases goods; S3 join poster says pay at desk), 6 reused |
 | L5-panel-assistant | L5 | lens 5 (Money) x panel / panel/assistant: 4 items | done | _work/L5-panel-assistant.md | L5 panel-assistant: 4 items, 5 new (3 S3: credit pack price never shown; server trusts app credit count; record payment fails on two plans; 2 S4), 7 reused |
@@ -63,7 +61,8 @@ Counts: 0 todo, 5 in progress, 280 done, 0 blocked. Full list: work-items.jsonl.
 | L3-panel-pay-machines | L3 | lens 3 (Security) x panel / panel/pay-machines: 11 items | done | _work/L3-panel-pay-machines.md | L3 panel-pay-machines: 11 items, 1 new S4 (no cross-business test on branch visits), 3 reused; side: pack-check function not live, Pro features all on |
 | L3-panel-screens-1 | L3 | lens 3 (Security) x panel / panel/screens-1: 11 items | done | _work/L3-panel-screens-1.md | L3 panel-screens-1: 11 items, 1 new S4 (5 owner features lack cross-gym tests), 1 reused; note: phone app uses spreadsheet lib 0.18.5 with 2 high alerts (for L3 phone items) |
 | L5-panel-ui-shell | L5 | lens 5 (Money) x panel / panel/ui-shell: 4 items | done | _work/L5-panel-ui-shell.md | L5 panel-ui-shell: 4 items, 2 new S3 (no paid/failed word after paying MettleUp, can pay twice; no-refund rule never shown, needs him), 9 reused |
-(+ 272 older done items, not shown)
+| L5-phone-shop-1 | L5 | lens 5 (Money) x phone / phone/shop-1: 4 items | done | _work/L5-phone-shop-1.md | L5 phone-shop-1: 4 items, 5 new (S2 old UPI QR shown for 30 days after change; 3 S3: paid order says pay at desk, pay buttons stay after paying, pay box vanishes on expired link; 1 S4), 5 reused |
+(+ 273 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
