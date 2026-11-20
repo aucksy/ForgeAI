@@ -47,14 +47,13 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | L3 | 37 | 4.4 (174k tokens) |
 | CAL | 0 | 5 (start value) |
 | A8r | 1 | 4.9 (197k tokens) |
-| A8 | 5 | 5.3 (211k tokens) |
+| A8 | 6 | 5.5 (220k tokens) |
 
 ## Work items
-Counts: 94 todo, 6 in progress, 340 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 94 todo, 5 in progress, 341 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
-| A8-panel-auth-data-2 | A8 | coverage: 108 Tier 1 journeys of 9 features, panel / panel-auth-data; list in _work/items/A8-panel-auth-data-2.txt | in progress | _work/A8-panel-auth-data-2.md |  |
 | A8-panel-auth-data-3 | A8 | coverage: 93 Tier 1 journeys of 8 features, panel / panel-auth-data; list in _work/items/A8-panel-auth-data-3.txt | in progress | _work/A8-panel-auth-data-3.md |  |
 | A8-panel-brand-shell-1 | A8 | coverage: 93 Tier 1 journeys of 10 features, panel / panel-brand-shell; list in _work/items/A8-panel-brand-shell-1.txt | in progress | _work/A8-panel-brand-shell-1.md |  |
 | A8-panel-brand-shell-2 | A8 | coverage: 90 Tier 1 journeys of 9 features, panel / panel-brand-shell; list in _work/items/A8-panel-brand-shell-2.txt | in progress | _work/A8-panel-brand-shell-2.md |  |
@@ -85,7 +84,6 @@ Counts: 94 todo, 6 in progress, 340 done, 0 blocked. Full list: work-items.jsonl
 | A8-panel-screens-2-1 | A8 | coverage: 90 Tier 1 journeys of 10 features, panel / panel-screens-2; list in _work/items/A8-panel-screens-2-1.txt | todo | _work/A8-panel-screens-2-1.md |  |
 | A8-panel-screens-2-2 | A8 | coverage: 70 Tier 1 journeys of 10 features, panel / panel-screens-2; list in _work/items/A8-panel-screens-2-2.txt | todo | _work/A8-panel-screens-2-2.md |  |
 | A8-panel-screens-2-3 | A8 | coverage: 70 Tier 1 journeys of 10 features, panel / panel-screens-2; list in _work/items/A8-panel-screens-2-3.txt | todo | _work/A8-panel-screens-2-3.md |  |
-| M2-machine-pass | tools | machine pass 2: db-perf.json, pagespeed.json, limits.json, a11y.json, field-fill.csv, live-state.csv (catalog + Crispy Curves only); brief _work/briefs/M2-machine-pass.md | done | _work/M2-machine-pass.md | M2: 6 machine files (db-perf, pagespeed, limits, a11y, field-fill, live-state); live migration history has 1 of 98 rows; 401 GB build files kept |
 | A8-rules | A8r | coverage rule per journey template (42) from the CI gate lists -> _work/a8-rules.json; brief _work/briefs/A8-rules.md | done | _work/A8-rules.md | A8-rules: 42 templates ruled; Tier 2 16,807 journeys: 171 full, 804 partial, 15,832 none |
 | A8-tier2 | A8 | script: _tools/a8-tier2.mjs applies _work/a8-rules.json to the 16,807 Tier 2 journeys -> _work/out/A8-tier2.jsonl; then merge.mjs A8-tier2 | done | - | A8-tier2 merged by rule: 171 full, 804 partial, 15,832 none |
 | A8-hq-app-1 | A8 | coverage: 86 Tier 1 journeys of 17 features, hq / hq-app; list in _work/items/A8-hq-app-1.txt | done | _work/A8-hq-app-1.md | A8 hq-app-1: 86 journeys, 0 full, 70 partial, 16 none; 6 findings |
@@ -93,8 +91,9 @@ Counts: 94 todo, 6 in progress, 340 done, 0 blocked. Full list: work-items.jsonl
 | A8-panel-assistant-1 | A8 | coverage: 58 Tier 1 journeys of 9 features, panel / panel-assistant; list in _work/items/A8-panel-assistant-1.txt | done | _work/A8-panel-assistant-1.md | A8 panel-assistant-1: 58 journeys, 1 full, 55 partial, 2 none; 12 findings (3 S2: names sent to AI by birthday idea, daily limit untested, card after cancel untested) |
 | A8-panel-assistant-2 | A8 | coverage: 43 Tier 1 journeys of 9 features, panel / panel-assistant; list in _work/items/A8-panel-assistant-2.txt | done | _work/A8-panel-assistant-2.md | A8 panel-assistant-2: 43 journeys, 0 full, 36 partial, 7 none; 7 findings |
 | A8-panel-auth-data-1 | A8 | coverage: 70 Tier 1 journeys of 9 features, panel / panel-auth-data; list in _work/items/A8-panel-auth-data-1.txt | done | _work/A8-panel-auth-data-1.md | A8 panel-auth-data-1: 70 journeys, 5 full, 60 partial, 5 none; 9 findings (2 S2) |
+| A8-panel-auth-data-2 | A8 | coverage: 108 Tier 1 journeys of 9 features, panel / panel-auth-data; list in _work/items/A8-panel-auth-data-2.txt | done | _work/A8-panel-auth-data-2.md | A8 panel-auth-data-2: 108 journeys, 4 full, 84 partial, 20 none; 10 findings (2 S2) |
 (+ 69 more todo items, not shown)
-(+ 332 older done items, not shown)
+(+ 333 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
