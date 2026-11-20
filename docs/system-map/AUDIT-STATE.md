@@ -38,24 +38,23 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | A3 | 11 | 5.2 (207k tokens) |
 | A4 | 13 | 4.1 (162k tokens) |
 | A4b | 2 | 5.1 (204k tokens) |
-| A5 | 75 | 5.2 (207k tokens) |
+| A5 | 76 | 5.2 (207k tokens) |
 | L4 | 1 | 4.4 (177k tokens) |
 
 ## Work items
-Counts: 0 todo, 1 in progress, 172 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 0 todo, 0 in progress, 173 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
-| A5-phone-tracker-services-2-1 | A5 | journeys: 10 features (10 feature x role pairs) of phone / phone/tracker-services-2; list in _work/items/A5-phone-tracker-services-2-1.txt | in progress | _work/A5-phone-tracker-services-2-1.md |  |
-| A5-phone-tracker-lib-2 | A5 | journeys: 9 features (10 feature x role pairs) of phone / phone/tracker-lib; list in _work/items/A5-phone-tracker-lib-2.txt | done | _work/A5-phone-tracker-lib-2.md | 9 features (10 pairs): 45 full journeys and 75 type lines; 0 findings; seen in passing: the next-set grey hint can go below last time against a What's new promise |
 | A5-phone-tracker-lib-3 | A5 | journeys: 9 features (9 feature x role pairs) of phone / phone/tracker-lib; list in _work/items/A5-phone-tracker-lib-3.txt | done | _work/A5-phone-tracker-lib-3.md | 9 features: 43 full journeys and 71 type lines; 1 finding (S3): the Up next card counts days trained but calls them workouts |
 | A5-phone-tracker-lib-4 | A5 | journeys: 8 features (8 feature x role pairs) of phone / phone/tracker-lib; list in _work/items/A5-phone-tracker-lib-4.txt | done | _work/A5-phone-tracker-lib-4.md | 8 features: 44 full journeys and 58 type lines; 2 findings: S1 the shared workout picture's +N kg line counts body weight on pull-ups and dips, so it can give away body weight; S3 before and after can swap (repeat of components-1-1) |
 | A5-phone-tracker-services-1-1 | A5 | journeys: 9 features (9 feature x role pairs) of phone / phone/tracker-services-1; list in _work/items/A5-phone-tracker-services-1-1.txt | done | _work/A5-phone-tracker-services-1-1.md | 9 features: 62 full journeys and 68 type lines; 2 findings: S3 before and after swap (third repeat: merge in 3H); S4 home numbers are worked out after every save but no screen shows them |
 | A5-phone-tracker-services-1-2 | A5 | journeys: 8 features (8 feature x role pairs) of phone / phone/tracker-services-1; list in _work/items/A5-phone-tracker-services-1-2.txt | done | _work/A5-phone-tracker-services-1-2.md | 8 features: 43 full journeys and 60 type lines; 0 findings; seen in passing: the minutes box turns 1.5 into 15 with no message |
 | A5-phone-tracker-services-1-3 | A5 | journeys: 8 features (9 feature x role pairs) of phone / phone/tracker-services-1; list in _work/items/A5-phone-tracker-services-1-3.txt | done | _work/A5-phone-tracker-services-1-3.md | 8 features (9 pairs): 50 full journeys and 64 type lines; 1 finding (S3): an opened but not started hold timer stops the idle pause, so the workout length keeps growing |
 | A5-phone-tracker-services-1-4 | A5 | journeys: 8 features (8 feature x role pairs) of phone / phone/tracker-services-1; list in _work/items/A5-phone-tracker-services-1-4.txt | done | _work/A5-phone-tracker-services-1-4.md | 8 features: 40 full journeys and 61 type lines; 0 findings; seen in passing: the 1-rep max calculator is listed free but sends a member without Plus to the Plus screen |
+| A5-phone-tracker-services-2-1 | A5 | journeys: 10 features (10 feature x role pairs) of phone / phone/tracker-services-2; list in _work/items/A5-phone-tracker-services-2-1.txt | done | _work/A5-phone-tracker-services-2-1.md | 10 features: 62 full journeys and 73 type lines; 2 findings (S3): a queued watch Done tap missing a number is dropped silently in the background; the Muscles ready today help article points to a card switched off on 5 Nov |
 | A5-phone-tracker-services-2-2 | A5 | journeys: 9 features (9 feature x role pairs) of phone / phone/tracker-services-2; list in _work/items/A5-phone-tracker-services-2-2.txt | done | _work/A5-phone-tracker-services-2-2.md | 9 features: 41 full journeys and 68 type lines; 0 findings; seen in passing: the Update routine question lives only in memory, so a kill between Finish and the summary loses it |
-(+ 164 older done items, not shown)
+(+ 165 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
