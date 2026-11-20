@@ -1,0 +1,13 @@
+# L3-server-database-1 checkpoint
+- 2026-11-20 L3.1 checked (findings 01, 03)
+- 2026-11-20 L3.2 checked
+- 2026-11-20 L3.3 checked (reused FN-L3-server-hq-gate-workers-04, FN-L3-panel-auth-data-03, FN-L3-panel-pay-machines-01)
+- 2026-11-20 L3.4 checked (rule applied)
+- 2026-11-20 L3.5 checked
+- 2026-11-20 L3.6 checked
+- 2026-11-20 L3.7 checked (reused FN-L3-panel-auth-data-01, FN-L3-server-panel-worker-01)
+- 2026-11-20 L3.8 checked
+- 2026-11-20 L3.9 checked (finding 02)
+- 2026-11-20 L3.10 checked (finding 01)
+- 2026-11-20 L3.11 does-not-apply
+- DONE: 3 findings + 1 grid row in _work/out/L3-server-database-1.jsonl
