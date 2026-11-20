@@ -1,0 +1,9 @@
+[
+{"kind":"jtype","id":"JT-F-phone-1730-member-10","feature":"F-phone-1730","role":"member","type":10,"applies":"yes","why_not":"none","variants":["T10-midway"],"at_step":2,"entity":"none","note":"A pending note from the old version is read by the new one","wi":"A5-phone-lib-core-2"},
+{"kind":"jtype","id":"JT-F-phone-1730-member-11","feature":"F-phone-1730","role":"member","type":11,"applies":"no","why_not":"photos stay on this phone","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-phone-lib-core-2"},
+{"kind":"jtype","id":"JT-F-phone-1730-member-4","feature":"F-phone-1730","role":"member","type":4,"applies":"yes","why_not":"none","variants":["T4-nophoto"],"at_step":2,"entity":"none","note":"The pending result can be empty or cancelled: nothing added","wi":"A5-phone-lib-core-2"},
+{"kind":"jtype","id":"JT-F-phone-1730-member-5","feature":"F-phone-1730","role":"member","type":5,"applies":"no","why_not":"no dates on the pick","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-phone-lib-core-2"},
+{"kind":"jtype","id":"JT-F-phone-1730-member-7","feature":"F-phone-1730","role":"member","type":7,"applies":"yes","why_not":"none","variants":["T7-closed","T7-back","T7-call"],"at_step":2,"entity":"none","note":"The core case: the note of who asked survives the app being closed","wi":"A5-phone-lib-core-2"},
+{"kind":"jtype","id":"JT-F-phone-1730-member-8","feature":"F-phone-1730","role":"member","type":8,"applies":"yes","why_not":"none","variants":["T8-permission"],"at_step":1,"entity":"none","note":"Camera or gallery refused","wi":"A5-phone-lib-core-2"},
+{"kind":"jtype","id":"JT-F-phone-1730-member-9","feature":"F-phone-1730","role":"member","type":9,"applies":"yes","why_not":"none","variants":["T9-tablet"],"at_step":2,"entity":"none","note":"Turning the device in the camera can restart the activity","wi":"A5-phone-lib-core-2"}
+]
