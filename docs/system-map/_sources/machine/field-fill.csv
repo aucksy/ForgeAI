@@ -1,0 +1,9 @@
+field,table.column,filled,total,evidence
+birthday,crm_records.data.dateOfBirth (kind member),1,2,supabase/migrations/0010_signin_and_records.sql:76
+phone,crm_records.data.phone (kind member),2,2,supabase/migrations/0015_qr_checkin.sql:13
+check-in phone,gym_members.phone (app members of the gym),1,2,supabase/migrations/0015_qr_checkin.sql:16
+app link,crm_records.data.appUserId (kind member),0,2,supabase/migrations/0010_signin_and_records.sql:76
+plan start,crm_records.data.startsOn (kind membership),1,1,supabase/migrations/0023_member_membership.sql:78
+plan end,crm_records.data.endsOn (kind membership),1,1,supabase/migrations/0023_member_membership.sql:78
+trainer,gym_trainer_members.roster_id (distinct members with a trainer vs roster members),0,2,supabase/migrations/0050_trainer_view.sql:59
+batch,crm_records.data.batch (kind member),0,2,supabase/migrations/0010_signin_and_records.sql:76
