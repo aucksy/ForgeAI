@@ -1,0 +1,13 @@
+# L3-panel-screens-1 checkpoint
+- L3.1 done (checked) 2026-11-20
+- L3.2 done (checked) 2026-11-20
+- L3.3 done (checked) 2026-11-20
+- L3.4 done (checked) 2026-11-20
+- L3.5 done (checked) 2026-11-20
+- L3.6 done (checked) 2026-11-20
+- L3.7 done (does-not-apply) 2026-11-20
+- L3.8 done (checked) 2026-11-20
+- L3.9 done (checked) 2026-11-20
+- L3.10 done (checked) 2026-11-20
+- L3.11 done (checked) 2026-11-20
+- all 11 items done; 1 finding (FN-L3-panel-screens-1-01), 1 reused (FN-L3-server-hq-gate-workers-01)
