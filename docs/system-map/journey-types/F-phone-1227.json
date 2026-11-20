@@ -1,0 +1,9 @@
+[
+{"kind":"jtype","id":"JT-F-phone-1227-member-10","feature":"F-phone-1227","role":"member","type":10,"applies":"no","why_not":"Only the on/off switch is saved; every count is read fresh from Health Connect","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-phone-native-4"},
+{"kind":"jtype","id":"JT-F-phone-1227-member-11","feature":"F-phone-1227","role":"member","type":11,"applies":"yes","why_not":"none","variants":["T11-watch"],"at_step":3,"entity":"none","note":"Watch and phone steps of one walk must count once (Health Connect aggregates)","wi":"A5-phone-native-4"},
+{"kind":"jtype","id":"JT-F-phone-1227-member-4","feature":"F-phone-1227","role":"member","type":4,"applies":"yes","why_not":"none","variants":["T4-zero","T4-one"],"at_step":3,"entity":"none","note":"0 says 'No steps recorded today yet.'; 1 says '1 step so far today.'","wi":"A5-phone-native-4"},
+{"kind":"jtype","id":"JT-F-phone-1227-member-5","feature":"F-phone-1227","role":"member","type":5,"applies":"yes","why_not":"none","variants":["T5-midnight","T5-zone"],"at_step":3,"entity":"none","note":"Today runs from midnight in the phone's time zone","wi":"A5-phone-native-4"},
+{"kind":"jtype","id":"JT-F-phone-1227-member-7","feature":"F-phone-1227","role":"member","type":7,"applies":"yes","why_not":"none","variants":["T7-locked"],"at_step":3,"entity":"none","note":"Count reloads when the app becomes active","wi":"A5-phone-native-4"},
+{"kind":"jtype","id":"JT-F-phone-1227-member-8","feature":"F-phone-1227","role":"member","type":8,"applies":"yes","why_not":"none","variants":["T8-permission"],"at_step":2,"entity":"none","note":"Refused Steps permission","wi":"A5-phone-native-4"},
+{"kind":"jtype","id":"JT-F-phone-1227-member-9","feature":"F-phone-1227","role":"member","type":9,"applies":"yes","why_not":"none","variants":["T9-bigfont"],"at_step":3,"entity":"none","note":"Count line and Stop button side by side","wi":"A5-phone-native-4"}
+]

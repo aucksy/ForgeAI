@@ -1,0 +1,9 @@
+[
+{"kind":"jtype","id":"JT-F-phone-1235-member-10","feature":"F-phone-1235","role":"member","type":10,"applies":"yes","why_not":"none","variants":["T10-olddata"],"at_step":1,"entity":"none","note":"Saved choices merged over new defaults on update","wi":"A5-phone-native-4"},
+{"kind":"jtype","id":"JT-F-phone-1235-member-11","feature":"F-phone-1235","role":"member","type":11,"applies":"yes","why_not":"none","variants":["T11-apppanel"],"at_step":1,"entity":"E-gym-progress-summaries","note":"Gym panel must agree with the member's switches","wi":"A5-phone-native-4"},
+{"kind":"jtype","id":"JT-F-phone-1235-member-4","feature":"F-phone-1235","role":"member","type":4,"applies":"no","why_not":"Only on/off switches; no list, name or text is typed here","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-phone-native-4"},
+{"kind":"jtype","id":"JT-F-phone-1235-member-5","feature":"F-phone-1235","role":"member","type":5,"applies":"no","why_not":"A switch keeps its value; nothing here is dated on the phone","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-phone-native-4"},
+{"kind":"jtype","id":"JT-F-phone-1235-member-7","feature":"F-phone-1235","role":"member","type":7,"applies":"yes","why_not":"none","variants":["T7-offline","T7-closed"],"at_step":1,"entity":"E-gym-mate-profiles","note":"Pending flags carry an unsent change to the next open","wi":"A5-phone-native-4"},
+{"kind":"jtype","id":"JT-F-phone-1235-member-8","feature":"F-phone-1235","role":"member","type":8,"applies":"yes","why_not":"none","variants":["T8-alerts"],"at_step":1,"entity":"none","note":"'Reminders from my gym' and 'Messages from my gym' off must stop those pop-ups","wi":"A5-phone-native-4"},
+{"kind":"jtype","id":"JT-F-phone-1235-member-9","feature":"F-phone-1235","role":"member","type":9,"applies":"yes","why_not":"none","variants":["T9-bigfont"],"at_step":1,"entity":"none","note":"Long switch titles","wi":"A5-phone-native-4"}
+]

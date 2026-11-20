@@ -1,0 +1,9 @@
+[
+{"kind":"jtype","id":"JT-F-phone-1221-member-10","feature":"F-phone-1221","role":"member","type":10,"applies":"yes","why_not":"none","variants":["T10-olddata"],"at_step":1,"entity":"none","note":"A widget key saved before the update must still unlock one start","wi":"A5-phone-native-4"},
+{"kind":"jtype","id":"JT-F-phone-1221-member-11","feature":"F-phone-1221","role":"member","type":11,"applies":"yes","why_not":"none","variants":["T11-watch"],"at_step":1,"entity":"none","note":"Starting from the widget while the watch shows a workout","wi":"A5-phone-native-4"},
+{"kind":"jtype","id":"JT-F-phone-1221-member-4","feature":"F-phone-1221","role":"member","type":4,"applies":"yes","why_not":"none","variants":["T4-long"],"at_step":1,"entity":"none","note":"Long routine name in 'Start <routine>?'","wi":"A5-phone-native-4"},
+{"kind":"jtype","id":"JT-F-phone-1221-member-5","feature":"F-phone-1221","role":"member","type":5,"applies":"yes","why_not":"none","variants":["T5-midnight"],"at_step":1,"entity":"none","note":"Widget's Today routine after midnight before a refresh","wi":"A5-phone-native-4"},
+{"kind":"jtype","id":"JT-F-phone-1221-member-7","feature":"F-phone-1221","role":"member","type":7,"applies":"yes","why_not":"none","variants":["T7-doubletap","T7-closed"],"at_step":1,"entity":"none","note":"Run once per screen and one at a time; key spent by a start","wi":"A5-phone-native-4"},
+{"kind":"jtype","id":"JT-F-phone-1221-member-8","feature":"F-phone-1221","role":"member","type":8,"applies":"no","why_not":"No setting changes what the widget start does","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-phone-native-4"},
+{"kind":"jtype","id":"JT-F-phone-1221-member-9","feature":"F-phone-1221","role":"member","type":9,"applies":"yes","why_not":"none","variants":["T9-bigfont","T9-tablet"],"at_step":1,"entity":"none","note":"Confirm screen buttons","wi":"A5-phone-native-4"}
+]
