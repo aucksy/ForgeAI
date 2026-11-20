@@ -8,3 +8,4 @@ F-phone-124: 7 journeys, 7 type lines - seen in passing: reorder save failure re
 F-phone-127: 7 journeys, 7 type lines - seen in passing: the add-photo sheet says 'Private: they stay on this phone.' while Settings has 'Include photos in my backup' that copies them to the account; wording may need an 'unless' (not checked further)
 F-phone-126: 7 journeys, 7 type lines - seen in passing: cloud/summary.ts:81 puts weight_kg (body weight) into member_summary, which entities.json says owner and trainer can read; Settings 'What my gym can see' promises body weight is never sent (P-A7-phone-watch-2-28). Not checked whether this path still runs for today's members
 F-phone-132: 5 journeys, 7 type lines
+F-phone-131: 9 journeys, 7 type lines
