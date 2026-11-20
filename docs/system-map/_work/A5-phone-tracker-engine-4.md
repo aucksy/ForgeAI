@@ -6,3 +6,4 @@ F-phone-926: 6 journeys, 7 type lines
 F-phone-927: 5 journeys, 7 type lines
 F-phone-928: 5 journeys, 7 type lines
 F-phone-929: 5 journeys, 7 type lines
+F-phone-930: 7 journeys, 7 type lines
