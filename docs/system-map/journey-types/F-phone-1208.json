@@ -1,0 +1,9 @@
+[
+{"kind":"jtype","id":"JT-F-phone-1208-member-10","feature":"F-phone-1208","role":"member","type":10,"applies":"yes","why_not":"none","variants":["T10-midway"],"at_step":1,"entity":"none","note":"Card words kept in phone storage across an update","wi":"A5-phone-native-3"},
+{"kind":"jtype","id":"JT-F-phone-1208-member-11","feature":"F-phone-1208","role":"member","type":11,"applies":"yes","why_not":"none","variants":["T11-watch"],"at_step":1,"entity":"none","note":"Phone card and watch must name the same set","wi":"A5-phone-native-3"},
+{"kind":"jtype","id":"JT-F-phone-1208-member-4","feature":"F-phone-1208","role":"member","type":4,"applies":"yes","why_not":"none","variants":["T4-long","T4-nophoto"],"at_step":1,"entity":"none","note":"Long exercise name beside the clock; exercise with no picture","wi":"A5-phone-native-3"},
+{"kind":"jtype","id":"JT-F-phone-1208-member-5","feature":"F-phone-1208","role":"member","type":5,"applies":"yes","why_not":"none","variants":["T5-midnight"],"at_step":1,"entity":"none","note":"A workout running across midnight: the clock must keep counting from its base","wi":"A5-phone-native-3"},
+{"kind":"jtype","id":"JT-F-phone-1208-member-7","feature":"F-phone-1208","role":"member","type":7,"applies":"yes","why_not":"none","variants":["T7-locked","T7-closed","T7-doubletap"],"at_step":2,"entity":"none","note":"Two quick 'Complete set' taps","wi":"A5-phone-native-3"},
+{"kind":"jtype","id":"JT-F-phone-1208-member-8","feature":"F-phone-1208","role":"member","type":8,"applies":"yes","why_not":"none","variants":["T8-permission"],"at_step":1,"entity":"none","note":"Notifications refused: the app falls back to its old card","wi":"A5-phone-native-3"},
+{"kind":"jtype","id":"JT-F-phone-1208-member-9","feature":"F-phone-1208","role":"member","type":9,"applies":"yes","why_not":"none","variants":["T9-bigfont","T9-dark","T9-light"],"at_step":1,"entity":"none","note":"Custom view with picture and clock","wi":"A5-phone-native-3"}
+]

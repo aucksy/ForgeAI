@@ -1,0 +1,9 @@
+[
+{"kind":"jtype","id":"JT-F-phone-1229-member-10","feature":"F-phone-1229","role":"member","type":10,"applies":"yes","why_not":"none","variants":["T10-olddata"],"at_step":1,"entity":"none","note":"The 'access removed' flag kept from an older version","wi":"A5-phone-native-3"},
+{"kind":"jtype","id":"JT-F-phone-1229-member-11","feature":"F-phone-1229","role":"member","type":11,"applies":"no","why_not":"Health Connect access is per phone; no other device shows it","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-phone-native-3"},
+{"kind":"jtype","id":"JT-F-phone-1229-member-4","feature":"F-phone-1229","role":"member","type":4,"applies":"no","why_not":"no typed input or list; one button","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-phone-native-3"},
+{"kind":"jtype","id":"JT-F-phone-1229-member-5","feature":"F-phone-1229","role":"member","type":5,"applies":"no","why_not":"nothing dated","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-phone-native-3"},
+{"kind":"jtype","id":"JT-F-phone-1229-member-7","feature":"F-phone-1229","role":"member","type":7,"applies":"yes","why_not":"none","variants":["T7-doubletap","T7-back","T7-closed"],"at_step":2,"entity":"none","note":"Busy guard on the button; back while the pop-up is open; app closed mid-remove","wi":"A5-phone-native-3"},
+{"kind":"jtype","id":"JT-F-phone-1229-member-8","feature":"F-phone-1229","role":"member","type":8,"applies":"yes","why_not":"none","variants":["T8-permission"],"at_step":1,"entity":"none","note":"Health Connect not installed or too old: button hidden, Open goes to Play","wi":"A5-phone-native-3"},
+{"kind":"jtype","id":"JT-F-phone-1229-member-9","feature":"F-phone-1229","role":"member","type":9,"applies":"yes","why_not":"none","variants":["T9-bigfont","T9-360"],"at_step":2,"entity":"none","note":"Long 'Removed...' line at the largest font on a small phone","wi":"A5-phone-native-3"}
+]
