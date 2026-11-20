@@ -14,3 +14,5 @@ F-phone-112: 6 journeys, 7 type lines
 F-phone-112 seen in passing: with backup on the subtitle says photos are in the backup while the member website says progress photos stay on your phone (P-A7-websites-1-51); E-member-items used only for the backup copy, photos otherwise live in the phone (no entity id).
 F-phone-123: 6 journeys, 7 type lines
 F-phone-123: tier unknown in features.json; no plan gate seen in build.tsx. Routines/folders live in the phone database (no entity id).
+F-phone-122: 7 journeys, 7 type lines
+F-phone-122: programs are built in; folders live in the phone database (no entity id).

@@ -37,21 +37,19 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | A3 | 11 | 5.2 (207k tokens) |
 | A4 | 13 | 4.1 (162k tokens) |
 | A4b | 2 | 5.1 (204k tokens) |
-| A5 | 35 | 5.2 (207k tokens) |
+| A5 | 36 | 5.2 (207k tokens) |
 | L4 | 1 | 4.4 (177k tokens) |
 
 ## Work items
-Counts: 0 todo, 6 in progress, 132 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 0 todo, 5 in progress, 133 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
 | A5-panel-demo-2 | A5 | journeys: 8 features (8 feature x role pairs) of panel / panel/demo; list in _work/items/A5-panel-demo-2.txt | in progress | _work/A5-panel-demo-2.md |  |
-| A5-panel-small-1 | A5 | journeys: 7 features (9 feature x role pairs) of panel / small areas; list in _work/items/A5-panel-small-1.txt | in progress | _work/A5-panel-small-1.md |  |
 | A5-phone-screens-1-1 | A5 | journeys: 9 features (9 feature x role pairs) of phone / phone/screens-1; list in _work/items/A5-phone-screens-1-1.txt | in progress | _work/A5-phone-screens-1-1.md |  |
 | A5-phone-screens-1-2 | A5 | journeys: 8 features (8 feature x role pairs) of phone / phone/screens-1; list in _work/items/A5-phone-screens-1-2.txt | in progress | _work/A5-phone-screens-1-2.md |  |
 | A5-phone-screens-1-3 | A5 | journeys: 8 features (8 feature x role pairs) of phone / phone/screens-1; list in _work/items/A5-phone-screens-1-3.txt | in progress | _work/A5-phone-screens-1-3.md |  |
 | A5-phone-screens-1-4 | A5 | journeys: 8 features (8 feature x role pairs) of phone / phone/screens-1; list in _work/items/A5-phone-screens-1-4.txt | in progress | _work/A5-phone-screens-1-4.md |  |
-| A5-panel-ui-shell-1 | A5 | journeys: 10 features (23 feature x role pairs) of panel / panel/ui-shell; list in _work/items/A5-panel-ui-shell-1.txt | done | _work/A5-panel-ui-shell-1.md | 10 features (23 feature x role pairs): 120 full journeys and 170 type lines; 1 finding (S2): a front-desk login can freeze a plan for up to 365 days by Approve on a pause request on Today, though staff rights say staff cannot freeze plans; 5 seen-in-passing lines in the checkpoint |
 | A5-panel-ui-shell-2 | A5 | journeys: 10 features (22 feature x role pairs) of panel / panel/ui-shell; list in _work/items/A5-panel-ui-shell-2.txt | done | _work/A5-panel-ui-shell-2.md | 7 of 10 features (15 feature x role pairs): 79 full journeys and 110 type lines; 0 findings; limit reached: the 3 features left are item A5-panel-ui-shell-2b; promise_ids are empty on every journey of this item (promises.json was not searched): link them in a later pass; 12 type-10 lines had at_step 0 and were set to 1 by the coordinator; 4 seen-in-passing lines in the checkpoint |
 | A5-panel-ui-shell-3 | A5 | journeys: 10 features (20 feature x role pairs) of panel / panel/ui-shell; list in _work/items/A5-panel-ui-shell-3.txt | done | _work/A5-panel-ui-shell-3.md | 10 features (20 feature x role pairs): 116 full journeys and 145 type lines; 1 finding (S3): the owner's quick buttons are saved only in his own browser (same as the logic-2-3 finding: merge in 3H); 12 seen-in-passing lines in the checkpoint (one: a trainer may open other trainers' pages) |
 | A5-panel-ui-shell-2b | A5 | journeys: 3 features (7 feature x role pairs) of panel / panel/ui-shell (the rest of ui-shell-2); list in _work/items/A5-panel-ui-shell-2b.txt | done | _work/A5-panel-ui-shell-2b.md | 3 features (7 feature x role pairs), the rest of ui-shell-2: 32 full journeys and 52 type lines; 0 findings; 7 seen-in-passing lines in the checkpoint |
@@ -59,7 +57,8 @@ Counts: 0 todo, 6 in progress, 132 done, 0 blocked. Full list: work-items.jsonl.
 | A5-panel-brand-shell-2 | A5 | journeys: 9 features (18 feature x role pairs) of panel / panel/brand-shell; list in _work/items/A5-panel-brand-shell-2.txt | done | _work/A5-panel-brand-shell-2.md | 9 features (18 feature x role pairs): 90 full journeys and 135 type lines; 0 findings; 7 seen-in-passing lines in the checkpoint (one: Give extra days from the workout code sheet opens preset to 3 days whatever the offer's reward is) |
 | A5-panel-brand-shell-3 | A5 | journeys: 9 features (20 feature x role pairs) of panel / panel/brand-shell; list in _work/items/A5-panel-brand-shell-3.txt | done | _work/A5-panel-brand-shell-3.md | 9 features (20 feature x role pairs): 120 full journeys and 141 type lines; 1 finding (S4): crash reports never say which page broke; 6 seen-in-passing lines in the checkpoint (one: Archive member works in one tap with no question first); the read limit was reached, so some steps say exact words not read |
 | A5-panel-demo-1 | A5 | journeys: 8 features (8 feature x role pairs) of panel / panel/demo; list in _work/items/A5-panel-demo-1.txt | done | _work/A5-panel-demo-1.md | 8 features (8 feature x role pairs, all prospect): 45 full journeys and 57 type lines; 1 finding (S3): in the front-desk demo the Member messages badge says 3 while only 2 messages wait; 9 seen-in-passing lines in the checkpoint; every journey has empty writes and reads (the demo keeps all in page memory) |
-(+ 124 older done items, not shown)
+| A5-panel-small-1 | A5 | journeys: 7 features (9 feature x role pairs) of panel / small areas; list in _work/items/A5-panel-small-1.txt | done | _work/A5-panel-small-1.md | 7 features (9 feature x role pairs): 41 full journeys and 70 type lines; 3 findings (S3): branch Open buttons skip the unsent-entries check; All branches says one branch to staff who cannot see the rest; member search stops at 50 with no more line; first Opus helper |
+(+ 125 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
