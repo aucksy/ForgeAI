@@ -1,0 +1,9 @@
+[
+{"kind":"jtype","id":"JT-F-phone-301-member-10","feature":"F-phone-301","role":"member","type":10,"applies":"no","why_not":"nothing is saved until a join, which is another feature","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-phone-shop-1-2"},
+{"kind":"jtype","id":"JT-F-phone-301-member-11","feature":"F-phone-301","role":"member","type":11,"applies":"no","why_not":"phone only, no gym yet: nothing to match on the watch or the panel","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-phone-shop-1-2"},
+{"kind":"jtype","id":"JT-F-phone-301-member-4","feature":"F-phone-301","role":"member","type":4,"applies":"yes","why_not":"none","variants":["T4-hinglish","T4-emoji"],"at_step":2,"entity":"E-gyms","note":"Non-letters typed into the code box must be dropped","wi":"A5-phone-shop-1-2"},
+{"kind":"jtype","id":"JT-F-phone-301-member-5","feature":"F-phone-301","role":"member","type":5,"applies":"no","why_not":"no date or time on this screen","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-phone-shop-1-2"},
+{"kind":"jtype","id":"JT-F-phone-301-member-7","feature":"F-phone-301","role":"member","type":7,"applies":"yes","why_not":"none","variants":["T7-back","T7-offline"],"at_step":2,"entity":"E-gyms","note":"Next opens the invite screen, which needs the internet","wi":"A5-phone-shop-1-2"},
+{"kind":"jtype","id":"JT-F-phone-301-member-8","feature":"F-phone-301","role":"member","type":8,"applies":"no","why_not":"no setting on this screen; the find-by-number card follows the plan switch, not a member setting","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-phone-shop-1-2"},
+{"kind":"jtype","id":"JT-F-phone-301-member-9","feature":"F-phone-301","role":"member","type":9,"applies":"yes","why_not":"none","variants":["T9-360","T9-bigfont"],"at_step":1,"entity":"none","note":"Join card, three lines, recommend card on a small screen","wi":"A5-phone-shop-1-2"}
+]
