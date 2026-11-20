@@ -4,3 +4,4 @@
 - 2026-11-21 limits.json DONE (db size + bucket bytes could-not-check: approval box / guard hook)
 - 2026-11-21 a11y.json DONE (run 44800229655: 0 critical, 0 serious; no a11y file exists, log read)
 - 2026-11-21 field-fill.csv DONE (Crispy Curves only; 2 roster members, 1 membership)
+- 2026-11-21 live-state.csv DONE (panel/HQ/site match main; live migration list has 1 of 98)
