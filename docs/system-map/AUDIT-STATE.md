@@ -40,10 +40,10 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | A4 | 13 | 4.1 (162k tokens) |
 | A4b | 2 | 5.1 (204k tokens) |
 | A5 | 121 | 5.1 (202k tokens) |
-| L4 | 26 | 3.9 (157k tokens) |
+| L4 | 27 | 3.9 (155k tokens) |
 
 ## Work items
-Counts: 11 todo, 5 in progress, 243 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 11 todo, 4 in progress, 244 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
@@ -51,7 +51,6 @@ Counts: 11 todo, 5 in progress, 243 done, 0 blocked. Full list: work-items.jsonl
 | L4-phone-components-2 | L4 | lens 4 (Privacy and law) x phone / phone/components-2: 6 items | in progress | _work/L4-phone-components-2.md |  |
 | L4-phone-native | L4 | lens 4 (Privacy and law) x phone / phone/native: 6 items | in progress | _work/L4-phone-native.md |  |
 | L4-phone-tracker-components-2 | L4 | lens 4 (Privacy and law) x phone / phone/tracker-components-2: 6 items | in progress | _work/L4-phone-tracker-components-2.md |  |
-| L4-phone-tracker-lib | L4 | lens 4 (Privacy and law) x phone / phone/tracker-lib: 6 items | in progress | _work/L4-phone-tracker-lib.md |  |
 | L4-panel-logic-2 | L4 | lens 4 (Privacy and law) x panel / panel/logic-2: 6 items | todo | _work/L4-panel-logic-2.md |  |
 | L4-panel-screens-1 | L4 | lens 4 (Privacy and law) x panel / panel/screens-1: 6 items | todo | _work/L4-panel-screens-1.md |  |
 | L4-panel-screens-2 | L4 | lens 4 (Privacy and law) x panel / panel/screens-2: 6 items | todo | _work/L4-panel-screens-2.md |  |
@@ -71,7 +70,7 @@ Counts: 11 todo, 5 in progress, 243 done, 0 blocked. Full list: work-items.jsonl
 | L4-watch-app | L4 | lens 4 (Privacy and law) x watch / watch/app: 6 items | done | _work/L4-watch-app.md | L4 watch-app: 2 rows, 1 new S4 (watch keeps its copy after phone erase) |
 | L4-web-pages-p2 | L4 | lens 4 (Privacy and law) x web / web/pages part 2: 1 items | done | _work/L4-web-pages-p2.md | L4 web-pages-p2: 6 rows, 5 new S3 (AI tag overclaims; web chat kept 90 days; notice changes not told; reminders unused; free-then-3-credits) |
 | L4-web-pages | L4 | lens 4 (Privacy and law) x web / web/pages: 6 items | done | _work/L4-web-pages.md | L4 web-pages: 4 rows, 3 new (S2 Play deletion page wrong for phone-only members; S3 Google fonts; S3 friend form lacks notice) |
-(+ 235 older done items, not shown)
+(+ 236 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
