@@ -1,0 +1,10 @@
+[
+{"kind":"jtype","id":"JT-F-watch-121-member-10","feature":"F-watch-121","role":"member","type":10,"applies":"yes","why_not":"none","variants":["T10-midway"],"at_step":1,"entity":"none","note":"Older phone app never sends 'saved': the watch jumps straight back","wi":"A5-watch-app-2"},
+{"kind":"jtype","id":"JT-F-watch-121-member-11","feature":"F-watch-121","role":"member","type":11,"applies":"yes","why_not":"none","variants":["T11-watch"],"at_step":1,"entity":"none","note":"Finish on the phone, look at both","wi":"A5-watch-app-2"},
+{"kind":"jtype","id":"JT-F-watch-121-member-2","feature":"F-watch-121","role":"member","type":2,"applies":"no","why_not":"one way in only: the phone's saved message after Finish","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-watch-app-2"},
+{"kind":"jtype","id":"JT-F-watch-121-member-4","feature":"F-watch-121","role":"member","type":4,"applies":"no","why_not":"fixed words and a tick; no list or text data","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-watch-app-2"},
+{"kind":"jtype","id":"JT-F-watch-121-member-5","feature":"F-watch-121","role":"member","type":5,"applies":"no","why_not":"4 s of elapsed time from the message's arrival; no date boundary","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-watch-app-2"},
+{"kind":"jtype","id":"JT-F-watch-121-member-7","feature":"F-watch-121","role":"member","type":7,"applies":"yes","why_not":"none","variants":["T7-offline"],"at_step":1,"entity":"none","note":"Phone link drops right after Finish: the saved message may arrive late","wi":"A5-watch-app-2"},
+{"kind":"jtype","id":"JT-F-watch-121-member-8","feature":"F-watch-121","role":"member","type":8,"applies":"no","why_not":"no setting of MettleUp or the watch changes this screen","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-watch-app-2"},
+{"kind":"jtype","id":"JT-F-watch-121-member-9","feature":"F-watch-121","role":"member","type":9,"applies":"yes","why_not":"none","variants":["T9-bigfont"],"at_step":1,"entity":"none","note":"Title 2 lines and reason 3 lines at the largest font","wi":"A5-watch-app-2"}
+]

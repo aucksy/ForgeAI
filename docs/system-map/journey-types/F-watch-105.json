@@ -1,0 +1,9 @@
+[
+{"kind":"jtype","id":"JT-F-watch-105-member-10","feature":"F-watch-105","role":"member","type":10,"applies":"yes","why_not":"none","variants":["T10-midway"],"at_step":1,"entity":"none","note":"Older phone app sends no next-set lines: the fallback text line must show","wi":"A5-watch-app-2"},
+{"kind":"jtype","id":"JT-F-watch-105-member-11","feature":"F-watch-105","role":"member","type":11,"applies":"yes","why_not":"none","variants":["T11-watch"],"at_step":2,"entity":"none","note":"Watch must follow the phone's set within seconds","wi":"A5-watch-app-2"},
+{"kind":"jtype","id":"JT-F-watch-105-member-4","feature":"F-watch-105","role":"member","type":4,"applies":"yes","why_not":"none","variants":["T4-long"],"at_step":1,"entity":"none","note":"Long exercise names use a smaller size and a width cap","wi":"A5-watch-app-2"},
+{"kind":"jtype","id":"JT-F-watch-105-member-5","feature":"F-watch-105","role":"member","type":5,"applies":"no","why_not":"shows the phone's numbers as sent; no date, day or month boundary changes them","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-watch-app-2"},
+{"kind":"jtype","id":"JT-F-watch-105-member-7","feature":"F-watch-105","role":"member","type":7,"applies":"yes","why_not":"none","variants":["T7-offline"],"at_step":2,"entity":"none","note":"Phone link lost between sets: Phone not connected replaces the card","wi":"A5-watch-app-2"},
+{"kind":"jtype","id":"JT-F-watch-105-member-8","feature":"F-watch-105","role":"member","type":8,"applies":"yes","why_not":"none","variants":["T8-units"],"at_step":1,"entity":"none","note":"kg or lb comes from the phone's text; a units change must reach the watch","wi":"A5-watch-app-2"},
+{"kind":"jtype","id":"JT-F-watch-105-member-9","feature":"F-watch-105","role":"member","type":9,"applies":"yes","why_not":"none","variants":["T9-bigfont"],"at_step":1,"entity":"none","note":"Big set number and lines at the largest font","wi":"A5-watch-app-2"}
+]

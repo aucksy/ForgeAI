@@ -1,0 +1,10 @@
+[
+{"kind":"jtype","id":"JT-F-watch-123-member-10","feature":"F-watch-123","role":"member","type":10,"applies":"no","why_not":"no saved data involved; the screen follows the live link","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-watch-app-2"},
+{"kind":"jtype","id":"JT-F-watch-123-member-11","feature":"F-watch-123","role":"member","type":11,"applies":"yes","why_not":"none","variants":["T11-watch"],"at_step":2,"entity":"none","note":"Phone back in range: both must show the same set","wi":"A5-watch-app-2"},
+{"kind":"jtype","id":"JT-F-watch-123-member-12","feature":"F-watch-123","role":"member","type":12,"applies":"no","why_not":"fixed words only; nothing about the member is shown or stored","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-watch-app-2"},
+{"kind":"jtype","id":"JT-F-watch-123-member-4","feature":"F-watch-123","role":"member","type":4,"applies":"no","why_not":"fixed words; no list or text data","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-watch-app-2"},
+{"kind":"jtype","id":"JT-F-watch-123-member-5","feature":"F-watch-123","role":"member","type":5,"applies":"no","why_not":"two empty checks in a row decide it; no date or time boundary","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-watch-app-2"},
+{"kind":"jtype","id":"JT-F-watch-123-member-7","feature":"F-watch-123","role":"member","type":7,"applies":"yes","why_not":"none","variants":["T7-closed"],"at_step":1,"entity":"none","note":"Watch app closed while disconnected and reopened","wi":"A5-watch-app-2"},
+{"kind":"jtype","id":"JT-F-watch-123-member-8","feature":"F-watch-123","role":"member","type":8,"applies":"no","why_not":"no MettleUp setting; the phone's Bluetooth is the cause, covered in journey 1","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-watch-app-2"},
+{"kind":"jtype","id":"JT-F-watch-123-member-9","feature":"F-watch-123","role":"member","type":9,"applies":"yes","why_not":"none","variants":["T9-bigfont"],"at_step":1,"entity":"none","note":"Title and hint on a round screen at the largest font","wi":"A5-watch-app-2"}
+]
