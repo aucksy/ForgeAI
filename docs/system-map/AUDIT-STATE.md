@@ -39,14 +39,14 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | A4 | 13 | 4.1 (162k tokens) |
 | A4b | 2 | 5.1 (204k tokens) |
 | A5 | 121 | 5.1 (202k tokens) |
-| L4 | 11 | 4.3 (171k tokens) |
+| L4 | 12 | 4.2 (169k tokens) |
 
 ## Work items
-Counts: 29 todo, 2 in progress, 228 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 28 todo, 2 in progress, 229 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
-| L4-server-ci-workflows | L4 | lens 4 (Privacy and law) x server / server/ci-workflows: 6 items | in progress | _work/L4-server-ci-workflows.md |  |
+| L4-web-pages-p2 | L4 | lens 4 (Privacy and law) x web / web/pages part 2: 1 items | in progress | _work/L4-web-pages-p2.md |  |
 | L4-web-pages | L4 | lens 4 (Privacy and law) x web / web/pages: 6 items | in progress | _work/L4-web-pages.md |  |
 | L4-panel-assistant | L4 | lens 4 (Privacy and law) x panel / panel/assistant: 6 items | todo | _work/L4-panel-assistant.md |  |
 | L4-panel-brand-shell | L4 | lens 4 (Privacy and law) x panel / panel/brand-shell: 6 items | todo | _work/L4-panel-brand-shell.md |  |
@@ -73,16 +73,16 @@ Counts: 29 todo, 2 in progress, 228 done, 0 blocked. Full list: work-items.jsonl
 | L4-phone-tracker-data | L4 | lens 4 (Privacy and law) x phone / phone/tracker-data: 6 items | todo | _work/L4-phone-tracker-data.md |  |
 | L4-phone-tracker-engine | L4 | lens 4 (Privacy and law) x phone / phone/tracker-engine: 6 items | todo | _work/L4-phone-tracker-engine.md |  |
 | L4-phone-tracker-lib | L4 | lens 4 (Privacy and law) x phone / phone/tracker-lib: 6 items | todo | _work/L4-phone-tracker-lib.md |  |
-| L4-panel-shop | L4 | lens 4 (Privacy and law) x panel / panel/shop: 6 items | done | _work/L4-panel-shop.md | lens 4 x panel/shop: 6 items checked; 2 new findings (S2): a removed member's desk photo and body measurements stay with no end date; trainer questions, summaries and reports are deleted only when a list is opened |
 | L4-phone-shop-2 | L4 | lens 4 (Privacy and law) x phone / phone/shop-2: 6 items | done | _work/L4-phone-shop-2.md | lens 4 x phone/shop-2: 6 items checked; 5 new findings (3 S2: privacy notice says 30 workouts / 3 months but the app sends 400 / 12 months; the offer consent says the gym never gets your sets while trainer sharing sends them; 3 sharings start at joining under legitimate interest, which DPDP lacks (needs a lawyer)), 2 reused |
+| L4-server-ci-workflows | L4 | lens 4 (Privacy and law) x server / server/ci-workflows: 6 items | done | _work/L4-server-ci-workflows.md | L4 ci-workflows: 2 rows, 1 new S3 (cloud tests leave QA gyms with real-looking mobiles on the live server; needs him) |
 | L4-server-database-1 | L4 | lens 4 (Privacy and law) x server / server/database-1: 6 items | done | _work/L4-server-database-1.md | L4 database-1: 5 rows, 4 new (3 S2: gym cannot erase a member; offer data cleaned only when opened; no record of the member's join consent) |
 | L4-server-database-2 | L4 | lens 4 (Privacy and law) x server / server/database-2: 6 items | done | _work/L4-server-database-2.md | lens 4 x server/database-2: 6 items checked; 5 new findings (S2: promised clean-ups (62/63/60/90/180/30 days) run only when a screen is opened; S2: a deleted member's desk photo and measurements stay (repeat of L4-panel-shop-01: merge in 3H); 3 S3 on not-live features), 1 reused |
 | L4-server-database-3 | L4 | lens 4 (Privacy and law) x server / server/database-3: 6 items | done | _work/L4-server-database-3.md | L4 database-3: 6 rows, 5 new findings (2 S2: notice says 30 workouts/3 months vs 400/12; join form and web-page questions not in the notice) |
 | L4-server-hq-gate-workers | L4 | lens 4 (Privacy and law) x server / server/hq-gate-workers: 6 items | done | _work/L4-server-hq-gate-workers.md | L4 hq-gate-workers: 5 rows, 4 new S3 (door link unencrypted; plan buy payment company unnamed; backup looks not logged; leak notice duty left to gym) |
 | L4-server-panel-worker | L4 | lens 4 (Privacy and law) x server / server/panel-worker: 6 items | done | _work/L4-server-panel-worker.md | L4 panel-worker: 2 rows, 1 new S1 (owner voice goes to Sarvam, not named in the notice) |
 | L4-watch-app | L4 | lens 4 (Privacy and law) x watch / watch/app: 6 items | done | _work/L4-watch-app.md | L4 watch-app: 2 rows, 1 new S4 (watch keeps its copy after phone erase) |
-(+ 4 more todo items, not shown)
-(+ 220 older done items, not shown)
+(+ 3 more todo items, not shown)
+(+ 221 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
