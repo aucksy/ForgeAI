@@ -1,0 +1,10 @@
+[
+{"kind":"jtype","id":"JT-F-watch-100-member-10","feature":"F-watch-100","role":"member","type":10,"applies":"yes","why_not":"none","variants":["T10-olddata"],"at_step":2,"entity":"none","note":"an older phone app sends no saved flag or app capability","wi":"A5-watch-app-1"},
+{"kind":"jtype","id":"JT-F-watch-100-member-11","feature":"F-watch-100","role":"member","type":11,"applies":"yes","why_not":"none","variants":["T11-watch"],"at_step":2,"entity":"none","note":"phone and watch show the same rest","wi":"A5-watch-app-1"},
+{"kind":"jtype","id":"JT-F-watch-100-member-12","feature":"F-watch-100","role":"member","type":12,"applies":"no","why_not":"the screens show only the member's own workout from their own phone; nothing is stored for others","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-watch-app-1"},
+{"kind":"jtype","id":"JT-F-watch-100-member-4","feature":"F-watch-100","role":"member","type":4,"applies":"yes","why_not":"none","variants":["T4-long"],"at_step":2,"entity":"none","note":"long exercise names on the rest timer","wi":"A5-watch-app-1"},
+{"kind":"jtype","id":"JT-F-watch-100-member-5","feature":"F-watch-100","role":"member","type":5,"applies":"no","why_not":"the screens use fixed instants (rest end, saved time); no date logic","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-watch-app-1"},
+{"kind":"jtype","id":"JT-F-watch-100-member-7","feature":"F-watch-100","role":"member","type":7,"applies":"yes","why_not":"none","variants":["T7-offline","T7-back"],"at_step":2,"entity":"none","note":"phone away mid-rest must not hide the rest timer","wi":"A5-watch-app-1"},
+{"kind":"jtype","id":"JT-F-watch-100-member-8","feature":"F-watch-100","role":"member","type":8,"applies":"yes","why_not":"none","variants":["T8-permission"],"at_step":2,"entity":"none","note":"notifications or Alarms & reminders refused","wi":"A5-watch-app-1"},
+{"kind":"jtype","id":"JT-F-watch-100-member-9","feature":"F-watch-100","role":"member","type":9,"applies":"yes","why_not":"none","variants":["T9-bigfont","T9-dark"],"at_step":2,"entity":"none","note":"largest text; the dimmed twin of each screen","wi":"A5-watch-app-1"}
+]

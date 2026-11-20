@@ -1,0 +1,10 @@
+[
+{"kind":"jtype","id":"JT-F-watch-103-member-10","feature":"F-watch-103","role":"member","type":10,"applies":"yes","why_not":"none","variants":["T10-midway"],"at_step":1,"entity":"none","note":"update while a rest runs","wi":"A5-watch-app-1"},
+{"kind":"jtype","id":"JT-F-watch-103-member-11","feature":"F-watch-103","role":"member","type":11,"applies":"yes","why_not":"none","variants":["T11-watch"],"at_step":1,"entity":"none","note":"the phone's own \"Rest is over\" must not be copied as a second buzz","wi":"A5-watch-app-1"},
+{"kind":"jtype","id":"JT-F-watch-103-member-12","feature":"F-watch-103","role":"member","type":12,"applies":"no","why_not":"the screen and card show only the member's own next set on their own watch","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-watch-app-1"},
+{"kind":"jtype","id":"JT-F-watch-103-member-4","feature":"F-watch-103","role":"member","type":4,"applies":"yes","why_not":"none","variants":["T4-long"],"at_step":2,"entity":"none","note":"long exercise name in the card's next line","wi":"A5-watch-app-1"},
+{"kind":"jtype","id":"JT-F-watch-103-member-5","feature":"F-watch-103","role":"member","type":5,"applies":"no","why_not":"the end is a fixed instant; no date logic","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-watch-app-1"},
+{"kind":"jtype","id":"JT-F-watch-103-member-7","feature":"F-watch-103","role":"member","type":7,"applies":"yes","why_not":"none","variants":["T7-offline"],"at_step":1,"entity":"none","note":"phone away: the watch's own alarm still buzzes","wi":"A5-watch-app-1"},
+{"kind":"jtype","id":"JT-F-watch-103-member-8","feature":"F-watch-103","role":"member","type":8,"applies":"yes","why_not":"none","variants":["T8-alerts","T8-permission"],"at_step":1,"entity":"none","note":"Ring through Do Not Disturb; notifications refused","wi":"A5-watch-app-1"},
+{"kind":"jtype","id":"JT-F-watch-103-member-9","feature":"F-watch-103","role":"member","type":9,"applies":"yes","why_not":"none","variants":["T9-dark"],"at_step":1,"entity":"none","note":"dimmed screen: no colour fill","wi":"A5-watch-app-1"}
+]

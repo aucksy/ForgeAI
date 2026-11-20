@@ -1,0 +1,10 @@
+[
+{"kind":"jtype","id":"JT-F-watch-102-member-10","feature":"F-watch-102","role":"member","type":10,"applies":"yes","why_not":"none","variants":["T10-olddata"],"at_step":2,"entity":"none","note":"an older phone app sends no row: no Done button","wi":"A5-watch-app-1"},
+{"kind":"jtype","id":"JT-F-watch-102-member-11","feature":"F-watch-102","role":"member","type":11,"applies":"yes","why_not":"none","variants":["T11-watch"],"at_step":2,"entity":"none","note":"card buttons act on the phone's rest","wi":"A5-watch-app-1"},
+{"kind":"jtype","id":"JT-F-watch-102-member-12","feature":"F-watch-102","role":"member","type":12,"applies":"no","why_not":"the card shows only the member's own rest and next set on their own watch","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-watch-app-1"},
+{"kind":"jtype","id":"JT-F-watch-102-member-4","feature":"F-watch-102","role":"member","type":4,"applies":"yes","why_not":"none","variants":["T4-long"],"at_step":1,"entity":"none","note":"long exercise name in the card's next line","wi":"A5-watch-app-1"},
+{"kind":"jtype","id":"JT-F-watch-102-member-5","feature":"F-watch-102","role":"member","type":5,"applies":"no","why_not":"the countdown counts to a fixed instant; no date logic","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-watch-app-1"},
+{"kind":"jtype","id":"JT-F-watch-102-member-7","feature":"F-watch-102","role":"member","type":7,"applies":"yes","why_not":"none","variants":["T7-doubletap","T7-offline"],"at_step":2,"entity":"none","note":"Done tapped twice sends two messages to the phone","wi":"A5-watch-app-1"},
+{"kind":"jtype","id":"JT-F-watch-102-member-8","feature":"F-watch-102","role":"member","type":8,"applies":"yes","why_not":"none","variants":["T8-permission"],"at_step":1,"entity":"none","note":"notifications refused: the phone's card is copied instead, no watch buttons","wi":"A5-watch-app-1"},
+{"kind":"jtype","id":"JT-F-watch-102-member-9","feature":"F-watch-102","role":"member","type":9,"applies":"yes","why_not":"none","variants":["T9-bigfont"],"at_step":1,"entity":"none","note":"card words at the largest text","wi":"A5-watch-app-1"}
+]

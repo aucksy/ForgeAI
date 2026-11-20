@@ -1,0 +1,9 @@
+[
+{"kind":"jtype","id":"JT-F-watch-110-member-10","feature":"F-watch-110","role":"member","type":10,"applies":"no","why_not":"readings are never saved, so an update has no old data to carry","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-watch-app-1"},
+{"kind":"jtype","id":"JT-F-watch-110-member-11","feature":"F-watch-110","role":"member","type":11,"applies":"no","why_not":"the reading is never sent to the phone, so there is nothing for the two to agree on","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-watch-app-1"},
+{"kind":"jtype","id":"JT-F-watch-110-member-4","feature":"F-watch-110","role":"member","type":4,"applies":"no","why_not":"one live number; no list or text; zero and missing readings show \"—\"","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-watch-app-1"},
+{"kind":"jtype","id":"JT-F-watch-110-member-5","feature":"F-watch-110","role":"member","type":5,"applies":"no","why_not":"nothing dated or stored","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-watch-app-1"},
+{"kind":"jtype","id":"JT-F-watch-110-member-7","feature":"F-watch-110","role":"member","type":7,"applies":"yes","why_not":"none","variants":["T7-back"],"at_step":2,"entity":"none","note":"leaving the app must stop the sensor","wi":"A5-watch-app-1"},
+{"kind":"jtype","id":"JT-F-watch-110-member-8","feature":"F-watch-110","role":"member","type":8,"applies":"yes","why_not":"none","variants":["T8-permission"],"at_step":1,"entity":"none","note":"heart-rate permission refused or later revoked","wi":"A5-watch-app-1"},
+{"kind":"jtype","id":"JT-F-watch-110-member-9","feature":"F-watch-110","role":"member","type":9,"applies":"yes","why_not":"none","variants":["T9-dark","T9-bigfont"],"at_step":2,"entity":"none","note":"dimmed screen hides the line; largest text","wi":"A5-watch-app-1"}
+]
