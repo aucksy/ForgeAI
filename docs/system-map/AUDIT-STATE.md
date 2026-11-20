@@ -44,19 +44,18 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | A5 | 121 | 5.1 (202k tokens) |
 | L4 | 42 | 3.9 (157k tokens) |
 | L5 | 33 | 4.1 (163k tokens) |
-| L3 | 20 | 4.7 (187k tokens) |
+| L3 | 21 | 4.7 (187k tokens) |
 
 ## Work items
-Counts: 12 todo, 5 in progress, 313 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 11 todo, 5 in progress, 314 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
-| L3-panel-brand-shell | L3 | lens 3 (Security) x panel / panel/brand-shell: 11 items | in progress | _work/L3-panel-brand-shell.md |  |
 | L3-phone-screens-1 | L3 | lens 3 (Security) x phone / phone/screens-1: 11 items | in progress | _work/L3-phone-screens-1.md |  |
 | L3-phone-screens-2 | L3 | lens 3 (Security) x phone / phone/screens-2: 11 items | in progress | _work/L3-phone-screens-2.md |  |
 | L3-phone-shop-1 | L3 | lens 3 (Security) x phone / phone/shop-1: 11 items | in progress | _work/L3-phone-shop-1.md |  |
 | L3-phone-shop-2 | L3 | lens 3 (Security) x phone / phone/shop-2: 11 items | in progress | _work/L3-phone-shop-2.md |  |
-| L3-phone-tracker-components-2 | L3 | lens 3 (Security) x phone / phone/tracker-components-2: 11 items | todo | _work/L3-phone-tracker-components-2.md |  |
+| L3-phone-tracker-components-2 | L3 | lens 3 (Security) x phone / phone/tracker-components-2: 11 items | in progress | _work/L3-phone-tracker-components-2.md |  |
 | L3-phone-tracker-data | L3 | lens 3 (Security) x phone / phone/tracker-data: 11 items | todo | _work/L3-phone-tracker-data.md |  |
 | L3-phone-tracker-engine | L3 | lens 3 (Security) x phone / phone/tracker-engine: 11 items | todo | _work/L3-phone-tracker-engine.md |  |
 | L3-phone-tracker-lib | L3 | lens 3 (Security) x phone / phone/tracker-lib: 11 items | todo | _work/L3-phone-tracker-lib.md |  |
@@ -68,15 +67,15 @@ Counts: 12 todo, 5 in progress, 313 done, 0 blocked. Full list: work-items.jsonl
 | L3-phone-cloud-backup-ai | L3 | lens 3 (Security) x phone / phone/cloud-backup-ai: 11 items | todo | _work/L3-phone-cloud-backup-ai.md |  |
 | L3-phone-onboarding-db | L3 | lens 3 (Security) x phone / phone/onboarding-db: 11 items | todo | _work/L3-phone-onboarding-db.md |  |
 | L3-phone-lib-core | L3 | lens 3 (Security) x phone / phone/lib-core: 11 items | todo | _work/L3-phone-lib-core.md |  |
-| L3-server-ci-workflows | L3 | lens 3 (Security) x server / server/ci-workflows: 11 items | done | _work/L3-server-ci-workflows.md | L3 server-ci-workflows: 11 done, 3 new (S3 unpinned actions with strong keys, S3 no dependency alerts, S4 public logs show WhatsApp payment id), 1 reused |
 | L3-panel-forms | L3 | lens 3 (Security) x panel / panel/forms: 11 items | done | _work/L3-panel-forms.md | L3 panel-forms: 9 checked, 2 does-not-apply, 1 new S3 (desk login can set train-at-every-branch), 1 reused |
 | L3-panel-ui-shell | L3 | lens 3 (Security) x panel / panel/ui-shell: 11 items | done | _work/L3-panel-ui-shell.md | L3 panel-ui-shell: 10 checked, 1 does-not-apply, 0 new, 4 reused |
 | L3-panel-shop | L3 | lens 3 (Security) x panel / panel/shop: 11 items | done | _work/L3-panel-shop.md | L3 panel-shop: 11 checked, 2 new (S3 desk sets any door end date, S4 shop calls lack cross-gym tests), 9 reused |
 | L3-panel-logic-1 | L3 | lens 3 (Security) x panel / panel/logic-1: 11 items | done | _work/L3-panel-logic-1.md | L3 panel-logic-1: 7 checked, 4 does-not-apply, 0 new, 1 reused (FN-L4-panel-logic-1-01) |
 | L3-panel-logic-2 | L3 | lens 3 (Security) x panel / panel/logic-2: 11 items | done | _work/L3-panel-logic-2.md | L3 panel-logic-2: 10 checked, 1 does-not-apply, 0 new, 2 reused |
 | L3-panel-assistant | L3 | lens 3 (Security) x panel / panel/assistant: 11 items | done | _work/L3-panel-assistant.md | L3 panel-assistant: 10 checked, 1 does-not-apply, 1 new S4 (AI usage counts lack a cross-gym test), 3 reused |
+| L3-panel-brand-shell | L3 | lens 3 (Security) x panel / panel/brand-shell: 11 items | done | _work/L3-panel-brand-shell.md | L3 panel-brand-shell: 11 checked, 3 new S4 (logo not tied to gym, old create-gym step open, profiles cross-gym untested), 5 reused |
 | L3-phone-tracker-components-1 | L3 | lens 3 (Security) x phone / phone/tracker-components-1: 11 items | done | _work/L3-phone-tracker-components-1.md | L3 phone-tracker-components-1: 10 checked, 1 does-not-apply, 2 new (S3 phone spreadsheet library 0.18.5 alerts, S4 navigation library alert), 0 reused |
-(+ 305 older done items, not shown)
+(+ 306 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
