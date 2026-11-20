@@ -35,18 +35,16 @@ weekly stop lines (his words, 19 Nov 2026 09:40 IST: "Lets stop if fable reaches
 | A3 | 11 | 5.2 (207k tokens) |
 | A4 | 13 | 4.1 (162k tokens) |
 | A4b | 2 | 5.1 (204k tokens) |
-| A5 | 32 | 5.2 (207k tokens) |
+| A5 | 33 | 5.2 (206k tokens) |
 | L4 | 1 | 4.4 (177k tokens) |
 
 ## Work items
-Counts: 0 todo, 3 in progress, 129 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 0 todo, 2 in progress, 130 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
 | A5-panel-brand-shell-2 | A5 | journeys: 9 features (18 feature x role pairs) of panel / panel/brand-shell; list in _work/items/A5-panel-brand-shell-2.txt | in progress | _work/A5-panel-brand-shell-2.md |  |
 | A5-panel-brand-shell-3 | A5 | journeys: 9 features (20 feature x role pairs) of panel / panel/brand-shell; list in _work/items/A5-panel-brand-shell-3.txt | in progress | _work/A5-panel-brand-shell-3.md |  |
-| A5-panel-demo-1 | A5 | journeys: 8 features (8 feature x role pairs) of panel / panel/demo; list in _work/items/A5-panel-demo-1.txt | in progress | _work/A5-panel-demo-1.md |  |
-| A5-panel-logic-2-4 | A5 | journeys: 8 features (16 feature x role pairs) of panel / panel/logic-2; list in _work/items/A5-panel-logic-2-4.txt | done | _work/A5-panel-logic-2-4.md | 8 features (16 feature x role pairs): 71 full journeys and 125 type lines; 1 finding (S3): a workout offer with a 1-day reward says Give 1 days and 1 days added; 15 seen-in-passing lines in the checkpoint |
 | A5-panel-shop-1 | A5 | journeys: 6 features (12 feature x role pairs) of panel / panel/shop; list in _work/items/A5-panel-shop-1.txt | done | _work/A5-panel-shop-1.md | 6 features (12 feature x role pairs): 70 full journeys and 87 type lines; 3 findings: S3 the empty Shop page names a Shop tab that is now called Gym; S3 the gym-code card always says pay at the desk, also when paying online on joining is on; S4 a heading on Invite members is never drawn; 9 seen-in-passing lines in the checkpoint |
 | A5-panel-shop-2 | A5 | journeys: 5 features (8 feature x role pairs) of panel / panel/shop; list in _work/items/A5-panel-shop-2.txt | done | _work/A5-panel-shop-2.md | 5 features (8 feature x role pairs): 35 full journeys and 62 type lines; 1 finding (S3): an owner whose sign-in ended sees This demo gym is no longer available when they save the gym look or a photo; 8 seen-in-passing lines in the checkpoint (one: disconnect and turn on the shop again makes a new gym and leaves the old one unreachable) |
 | A5-panel-ui-shell-1 | A5 | journeys: 10 features (23 feature x role pairs) of panel / panel/ui-shell; list in _work/items/A5-panel-ui-shell-1.txt | done | _work/A5-panel-ui-shell-1.md | 10 features (23 feature x role pairs): 120 full journeys and 170 type lines; 1 finding (S2): a front-desk login can freeze a plan for up to 365 days by Approve on a pause request on Today, though staff rights say staff cannot freeze plans; 5 seen-in-passing lines in the checkpoint |
@@ -54,7 +52,8 @@ Counts: 0 todo, 3 in progress, 129 done, 0 blocked. Full list: work-items.jsonl.
 | A5-panel-ui-shell-3 | A5 | journeys: 10 features (20 feature x role pairs) of panel / panel/ui-shell; list in _work/items/A5-panel-ui-shell-3.txt | done | _work/A5-panel-ui-shell-3.md | 10 features (20 feature x role pairs): 116 full journeys and 145 type lines; 1 finding (S3): the owner's quick buttons are saved only in his own browser (same as the logic-2-3 finding: merge in 3H); 12 seen-in-passing lines in the checkpoint (one: a trainer may open other trainers' pages) |
 | A5-panel-ui-shell-2b | A5 | journeys: 3 features (7 feature x role pairs) of panel / panel/ui-shell (the rest of ui-shell-2); list in _work/items/A5-panel-ui-shell-2b.txt | done | _work/A5-panel-ui-shell-2b.md | 3 features (7 feature x role pairs), the rest of ui-shell-2: 32 full journeys and 52 type lines; 0 findings; 7 seen-in-passing lines in the checkpoint |
 | A5-panel-brand-shell-1 | A5 | journeys: 10 features (20 feature x role pairs) of panel / panel/brand-shell; list in _work/items/A5-panel-brand-shell-1.txt | done | _work/A5-panel-brand-shell-1.md | 10 features (20 feature x role pairs): 93 full journeys and 153 type lines; 0 findings; 10 seen-in-passing lines in the checkpoint (one: many panel pages stay English in a Hinglish panel) |
-(+ 121 older done items, not shown)
+| A5-panel-demo-1 | A5 | journeys: 8 features (8 feature x role pairs) of panel / panel/demo; list in _work/items/A5-panel-demo-1.txt | done | _work/A5-panel-demo-1.md | 8 features (8 feature x role pairs, all prospect): 45 full journeys and 57 type lines; 1 finding (S3): in the front-desk demo the Member messages badge says 3 while only 2 messages wait; 9 seen-in-passing lines in the checkpoint; every journey has empty writes and reads (the demo keeps all in page memory) |
+(+ 122 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
