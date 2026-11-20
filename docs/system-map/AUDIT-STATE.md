@@ -37,16 +37,14 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | A3 | 11 | 5.2 (207k tokens) |
 | A4 | 13 | 4.1 (162k tokens) |
 | A4b | 2 | 5.1 (204k tokens) |
-| A5 | 72 | 5.2 (207k tokens) |
+| A5 | 73 | 5.2 (207k tokens) |
 | L4 | 1 | 4.4 (177k tokens) |
 
 ## Work items
-Counts: 0 todo, 1 in progress, 169 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 0 todo, 0 in progress, 170 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
-| A5-phone-tracker-services-1-3 | A5 | journeys: 8 features (9 feature x role pairs) of phone / phone/tracker-services-1; list in _work/items/A5-phone-tracker-services-1-3.txt | in progress | _work/A5-phone-tracker-services-1-3.md |  |
-| A5-phone-tracker-engine-3 | A5 | journeys: 8 features (8 feature x role pairs) of phone / phone/tracker-engine; list in _work/items/A5-phone-tracker-engine-3.txt | done | _work/A5-phone-tracker-engine-3.md | 8 features: 42 full journeys and 62 type lines; 1 finding (S2): the account cloud copy drops rest times, so a workout brought back on a new phone loses its long-rest marks and the next target rises again |
 | A5-phone-tracker-engine-4 | A5 | journeys: 8 features (8 feature x role pairs) of phone / phone/tracker-engine; list in _work/items/A5-phone-tracker-engine-4.txt | done | _work/A5-phone-tracker-engine-4.md | 8 features: 45 full journeys and 56 type lines; 0 findings; seen in passing: the never-give-me list and sore areas count only inside a plan-builder plan |
 | A5-phone-tracker-lib-1 | A5 | journeys: 9 features (10 feature x role pairs) of phone / phone/tracker-lib; list in _work/items/A5-phone-tracker-lib-1.txt | done | _work/A5-phone-tracker-lib-1.md | 9 features (10 pairs): 47 full journeys and 79 type lines; 1 finding (S3): Progress muscle map says nothing trained when it failed to load (repeat of engine-1: merge in 3H) |
 | A5-phone-tracker-lib-2 | A5 | journeys: 9 features (10 feature x role pairs) of phone / phone/tracker-lib; list in _work/items/A5-phone-tracker-lib-2.txt | done | _work/A5-phone-tracker-lib-2.md | 9 features (10 pairs): 45 full journeys and 75 type lines; 0 findings; seen in passing: the next-set grey hint can go below last time against a What's new promise |
@@ -54,7 +52,8 @@ Counts: 0 todo, 1 in progress, 169 done, 0 blocked. Full list: work-items.jsonl.
 | A5-phone-tracker-lib-4 | A5 | journeys: 8 features (8 feature x role pairs) of phone / phone/tracker-lib; list in _work/items/A5-phone-tracker-lib-4.txt | done | _work/A5-phone-tracker-lib-4.md | 8 features: 44 full journeys and 58 type lines; 2 findings: S1 the shared workout picture's +N kg line counts body weight on pull-ups and dips, so it can give away body weight; S3 before and after can swap (repeat of components-1-1) |
 | A5-phone-tracker-services-1-1 | A5 | journeys: 9 features (9 feature x role pairs) of phone / phone/tracker-services-1; list in _work/items/A5-phone-tracker-services-1-1.txt | done | _work/A5-phone-tracker-services-1-1.md | 9 features: 62 full journeys and 68 type lines; 2 findings: S3 before and after swap (third repeat: merge in 3H); S4 home numbers are worked out after every save but no screen shows them |
 | A5-phone-tracker-services-1-2 | A5 | journeys: 8 features (8 feature x role pairs) of phone / phone/tracker-services-1; list in _work/items/A5-phone-tracker-services-1-2.txt | done | _work/A5-phone-tracker-services-1-2.md | 8 features: 43 full journeys and 60 type lines; 0 findings; seen in passing: the minutes box turns 1.5 into 15 with no message |
-(+ 161 older done items, not shown)
+| A5-phone-tracker-services-1-3 | A5 | journeys: 8 features (9 feature x role pairs) of phone / phone/tracker-services-1; list in _work/items/A5-phone-tracker-services-1-3.txt | done | _work/A5-phone-tracker-services-1-3.md | 8 features (9 pairs): 50 full journeys and 64 type lines; 1 finding (S3): an opened but not started hold timer stops the idle pause, so the workout length keeps growing |
+(+ 162 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
