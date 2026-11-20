@@ -3,3 +3,10 @@ Entities: entities.json has no phone-only (on-device SQLite) entity for workouts
 
 F-phone-500: 7 journeys, 7 type lines
 F-phone-501: 7 journeys, 7 type lines
+F-phone-502: 7 journeys, 8 type lines
+F-phone-503: 7 journeys, 7 type lines
+seen in passing F-phone-503: copies are only cleared when the sheet closes; an app killed with the sheet open leaves share copies in the cache until the next close or erase.
+F-phone-504: 7 journeys, 8 type lines
+F-phone-507: 7 journeys, 8 type lines
+seen in passing F-phone-507: getTargetsForPlanDay keeps only the first row of an exercise listed twice, while Home/chat give each row its own card; check which one the live screen uses (targetStore uses getTargetsForCards).
+F-phone-511: 7 journeys, 8 type lines
