@@ -47,25 +47,24 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | L3 | 37 | 4.4 (174k tokens) |
 | CAL | 0 | 5 (start value) |
 | A8r | 1 | 4.9 (197k tokens) |
-| A8 | 16 | 5.7 (228k tokens) |
+| A8 | 17 | 5.7 (227k tokens) |
 
 ## Work items
-Counts: 83 todo, 5 in progress, 352 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 82 todo, 5 in progress, 353 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
 | A8-panel-logic-1-3 | A8 | coverage: 61 Tier 1 journeys of 8 features, panel / panel-logic-1; list in _work/items/A8-panel-logic-1-3.txt | in progress | _work/A8-panel-logic-1-3.md |  |
-| A8-panel-logic-1-4 | A8 | coverage: 60 Tier 1 journeys of 7 features, panel / panel-logic-1; list in _work/items/A8-panel-logic-1-4.txt | in progress | _work/A8-panel-logic-1-4.md |  |
 | A8-panel-logic-2-1 | A8 | coverage: 96 Tier 1 journeys of 9 features, panel / panel-logic-2; list in _work/items/A8-panel-logic-2-1.txt | in progress | _work/A8-panel-logic-2-1.md |  |
 | A8-panel-logic-2-2 | A8 | coverage: 81 Tier 1 journeys of 8 features, panel / panel-logic-2; list in _work/items/A8-panel-logic-2-2.txt | in progress | _work/A8-panel-logic-2-2.md |  |
 | A8-panel-logic-2-3 | A8 | coverage: 67 Tier 1 journeys of 8 features, panel / panel-logic-2; list in _work/items/A8-panel-logic-2-3.txt | in progress | _work/A8-panel-logic-2-3.md |  |
+| A8-panel-logic-2-4 | A8 | coverage: 71 Tier 1 journeys of 8 features, panel / panel-logic-2; list in _work/items/A8-panel-logic-2-4.txt | in progress | _work/A8-panel-logic-2-4.md |  |
 | CAL-prep | coord | coordinator only: calibration C1-C2 (seeds.json outside helper reach; one read-only copy per seed of the area folders at the parent commit into _work/calib/c01.. ; names never name the seed) | todo | - |  |
 | CAL-1 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-1 ...); output is scored, never merged | todo | _work/CAL-1.md |  |
 | CAL-2 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-2 ...); output is scored, never merged | todo | _work/CAL-2.md |  |
 | CAL-3 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-3 ...); output is scored, never merged | todo | _work/CAL-3.md |  |
 | CAL-4 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-4 ...); output is scored, never merged | todo | _work/CAL-4.md |  |
 | CAL-score | coord | coordinator only: C4 score found/partly/missed per seed in calibration/RESULT.md; C5 rewrite a hunt and re-run a missed seed (at most 2 re-runs); then hunts may run on today's code | todo | - |  |
-| A8-panel-logic-2-4 | A8 | coverage: 71 Tier 1 journeys of 8 features, panel / panel-logic-2; list in _work/items/A8-panel-logic-2-4.txt | todo | _work/A8-panel-logic-2-4.md |  |
 | A8-panel-screens-1-1 | A8 | coverage: 101 Tier 1 journeys of 10 features, panel / panel-screens-1; list in _work/items/A8-panel-screens-1-1.txt | todo | _work/A8-panel-screens-1-1.md |  |
 | A8-panel-screens-1-2 | A8 | coverage: 88 Tier 1 journeys of 10 features, panel / panel-screens-1; list in _work/items/A8-panel-screens-1-2.txt | todo | _work/A8-panel-screens-1-2.md |  |
 | A8-panel-screens-1-3 | A8 | coverage: 88 Tier 1 journeys of 10 features, panel / panel-screens-1; list in _work/items/A8-panel-screens-1-3.txt | todo | _work/A8-panel-screens-1-3.md |  |
@@ -84,7 +83,7 @@ Counts: 83 todo, 5 in progress, 352 done, 0 blocked. Full list: work-items.jsonl
 | A8-phone-components-1-1 | A8 | coverage: 62 Tier 1 journeys of 7 features, phone / phone-components-1; list in _work/items/A8-phone-components-1-1.txt | todo | _work/A8-phone-components-1-1.md |  |
 | A8-phone-components-1-2 | A8 | coverage: 116 Tier 1 journeys of 10 features, phone / phone-components-1; list in _work/items/A8-phone-components-1-2.txt | todo | _work/A8-phone-components-1-2.md |  |
 | A8-phone-components-2-1 | A8 | coverage: 70 Tier 1 journeys of 7 features, phone / phone-components-2; list in _work/items/A8-phone-components-2-1.txt | todo | _work/A8-phone-components-2-1.md |  |
-| A8-panel-brand-shell-2 | A8 | coverage: 90 Tier 1 journeys of 9 features, panel / panel-brand-shell; list in _work/items/A8-panel-brand-shell-2.txt | done | _work/A8-panel-brand-shell-2.md | A8 panel-brand-shell-2: 90 journeys, 2 full, 79 partial, 9 none; 11 findings |
+| A8-phone-components-2-2 | A8 | coverage: 70 Tier 1 journeys of 7 features, phone / phone-components-2; list in _work/items/A8-phone-components-2-2.txt | todo | _work/A8-phone-components-2-2.md |  |
 | A8-panel-brand-shell-3 | A8 | coverage: 120 Tier 1 journeys of 9 features, panel / panel-brand-shell; list in _work/items/A8-panel-brand-shell-3.txt | done | _work/A8-panel-brand-shell-3.md | A8 panel-brand-shell-3: 120 journeys, 0 full, 101 partial, 19 none; 12 findings (1 S2) |
 | A8-panel-demo-1 | A8 | coverage: 91 Tier 1 journeys of 16 features, panel / panel-demo; list in _work/items/A8-panel-demo-1.txt | done | _work/A8-panel-demo-1.md | A8 panel-demo-1: 91 journeys, 0 full, 42 partial, 49 none; 7 findings |
 | A8-panel-forms-1 | A8 | coverage: 82 Tier 1 journeys of 9 features, panel / panel-forms; list in _work/items/A8-panel-forms-1.txt | done | _work/A8-panel-forms-1.md | A8 panel-forms-1: 82 journeys, 3 full, 61 partial, 18 none; 10 findings (2 S2) |
@@ -92,8 +91,9 @@ Counts: 83 todo, 5 in progress, 352 done, 0 blocked. Full list: work-items.jsonl
 | A8-panel-forms-3 | A8 | coverage: 68 Tier 1 journeys of 8 features, panel / panel-forms; list in _work/items/A8-panel-forms-3.txt | done | _work/A8-panel-forms-3.md | A8 panel-forms-3: 68 journeys, 1 full, 52 partial, 15 none; 8 findings (2 S2) |
 | A8-panel-logic-1-1 | A8 | coverage: 81 Tier 1 journeys of 8 features, panel / panel-logic-1; list in _work/items/A8-panel-logic-1-1.txt | done | _work/A8-panel-logic-1-1.md | A8 panel-logic-1-1: 81 journeys, 1 full, 78 partial, 2 none; 9 findings |
 | A8-panel-logic-1-2 | A8 | coverage: 70 Tier 1 journeys of 8 features, panel / panel-logic-1; list in _work/items/A8-panel-logic-1-2.txt | done | _work/A8-panel-logic-1-2.md | A8 panel-logic-1-2: 70 journeys, 0 full, 61 partial, 9 none; 8 findings |
-(+ 58 more todo items, not shown)
-(+ 344 older done items, not shown)
+| A8-panel-logic-1-4 | A8 | coverage: 60 Tier 1 journeys of 7 features, panel / panel-logic-1; list in _work/items/A8-panel-logic-1-4.txt | done | _work/A8-panel-logic-1-4.md | A8 panel-logic-1-4: 60 journeys, 1 full, 56 partial, 3 none; 8 findings (1 S2) |
+(+ 57 more todo items, not shown)
+(+ 345 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
